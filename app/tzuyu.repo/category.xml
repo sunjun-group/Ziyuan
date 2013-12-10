@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+	<category-def name="tzuyu" label="Tzuyu" />
+	<feature url="features/tzuyu.feature_0.0.0.qualifier.jar" id="tzuyu.feature">
+		<category name="tzuyu" />
+	</feature>
+</site>

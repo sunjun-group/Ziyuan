@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: TzuyuEclipsePlugin-test
+Bundle-SymbolicName: tzuyuEclipsePlugin-test
+Bundle-Version: 0.0.1.qualifier
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ tzuyuEclipsePlugin;bundle-version="0.0.1",
+ org.eclipse.jdt.junit;bundle-version="3.6.1",
+ org.junit
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
