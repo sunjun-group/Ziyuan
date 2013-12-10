@@ -1,0 +1,9 @@
+1. Check out source code from https://192.168.50.100:443/svn/Tzuyu/trunk (temporary url)
+2. Download maven and jdk, then modify the paths in setenv.bat accordingly.
+3. Open cmd, run (remember to correct your project path):
+setenv.bat
+cd D:\_1_Projects\Tzuyu\workspace\trunk\app\tzuyu.parent
+mvn clean install
+mvn eclipse:eclipse
+4. Import project into eclipse
+
