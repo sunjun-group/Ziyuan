@@ -1,0 +1,39 @@
+package lstar;
+
+import tzuyu.engine.model.Trace;
+import tzuyu.engine.model.dfa.DFA;
+
+/**
+ * This is an abstract teacher, the actual LStar algorithm can extend this class
+ * by overriding the two query functions.
+ * 
+ * @author Spencer Xiao
+ * 
+ */
+public interface Teacher {
+
+  /**
+   * If the @param str is accepted by the unknown DFA then return true; If the 
+   * @param str is rejected by the unknown DFA then return false; Otherwise (
+   * e.g., the system is not a DFA ), throw a {@link QueryException}.
+   * 
+   * @param str
+   *          the string to be decided
+   * @return
+   */
+  public boolean membershipQuery(Trace str);
+
+  /**
+   * Whether the @param dfa is equal to the unknown DFA. If they are equal
+   * return a LString with length 0; If they are not equal, return a
+   * counterexample LString; Otherwise(e.g., the system is not a DFA) throw a
+   * {@link QueryException}.
+   * 
+   * @param dfa
+   * @return the counterexample string if the two are not equal or an empty (not
+   *         null) LString if the tow equal.
+   * 
+   */
+  public Trace candidateQuery(DFA dfa);
+
+}
