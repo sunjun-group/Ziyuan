@@ -11,6 +11,7 @@ package tzuyu.engine.iface.algorithm;
 import java.util.List;
 
 import refiner.Witness;
+import tzuyu.engine.iface.HasTzProject;
 import tzuyu.engine.iface.HasTzReport;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.QueryResult;
@@ -21,7 +22,7 @@ import tzuyu.engine.model.dfa.DFA;
  * @author LLT
  * 
  */
-public interface Refiner extends HasTzReport {
+public interface Refiner extends HasTzReport, HasTzProject {
 
 	/**
 	 * @param result

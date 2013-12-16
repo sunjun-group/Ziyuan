@@ -12,28 +12,28 @@ import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Learner;
 
 /**
- * @author LLT
- * Driver of the Tzuyu engine.
+ * @author LLT Driver of the Tzuyu engine.
  */
 public class Tzuyu {
 
 	private Learner learner;
 	private TzProject project;
-	private TzConfiguration config;
 	private TzReportHandler reporter;
 
-	public Tzuyu(TzProject project, TzConfiguration config,
-			TzReportHandler reporter) {
-		learner = TzuyuAlgorithmFactory.getLearner();
+	public Tzuyu(TzProject project, TzReportHandler reporter) {
 		this.project = project;
-		this.config = config;
 		this.reporter = reporter;
+		learner = TzuyuAlgorithmFactory.getLearner(project);
 	}
 
 	/**
 	 * this function execute the main flow of tzuyu engine.
 	 */
 	public void run() {
+		TzLogger.log().info("============Start of Statistics for",
+				project.getTarget().getSimpleName(), "============");
+		// TODO [LLT]: time measuring.
+		
 		learner.startLearning();
 		learner.report(reporter);
 	}

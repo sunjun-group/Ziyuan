@@ -11,7 +11,7 @@ import libsvm.libsvm.svm_parameter;
 import libsvm.libsvm.svm_problem;
 import refiner.bool.FieldVar;
 import refiner.bool.LIATerm;
-import tzuyu.engine.model.Analytics;
+import tzuyu.engine.TzProject;
 import tzuyu.engine.model.ArtFieldInfo;
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.Formula;
@@ -72,7 +72,7 @@ public class SVMWrapper {
    *         will be returned.
    */
   public Formula candidateDivide(TzuYuAction transition, 
-      List<QueryTrace> positive, List<QueryTrace> negative) {
+      List<QueryTrace> positive, List<QueryTrace> negative, TzProject project) {
     
     long startTime = System.currentTimeMillis();
     if (positive == null || negative == null) {
@@ -111,7 +111,7 @@ public class SVMWrapper {
     int maxLevel = Options.classMaxDepth();
     for (int index = 0; index < inputTypes.size(); index++) {
       Class<?> type = inputTypes.get(index);
-      ClassInfo typeClassInfo = Analytics.getClassInfo(type);
+      ClassInfo typeClassInfo = project.getClassInfo(type);
       wrapperTypes.add(typeClassInfo);
     }
 
@@ -166,7 +166,7 @@ public class SVMWrapper {
    *         cannot be found.
    */
   public Formula memberDivide(List<QueryTrace> positive, 
-      List<QueryTrace> negative) {
+      List<QueryTrace> negative, TzProject project) {
     long startTime = System.currentTimeMillis();
     if (positive == null || negative == null) {
       throw new IllegalArgumentException("The input sets must not be null");
@@ -211,7 +211,7 @@ public class SVMWrapper {
     int maxLevel = Options.classMaxDepth();
     for (int index = 0; index < inputTypes.size(); index++) {   
       Class<?> type  = inputTypes.get(index);
-      ClassInfo targetType = Analytics.getClassInfo(type);
+      ClassInfo targetType = project.getClassInfo(type);
       wrapperTypes.add(targetType);
     }
 

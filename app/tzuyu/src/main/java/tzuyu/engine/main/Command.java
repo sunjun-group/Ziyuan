@@ -7,33 +7,40 @@ import java.util.Map;
 
 public class Command {
 
-  public static final String learn = "learn";
-  public static final String help = "help";
-  public static final String version = "version";
+	public final static Map<CommandType, Command> commands = new HashMap<CommandType, Command>();
 
-  public final static Map<String, Command> commands = 
-      new HashMap<String, Command>();
+	static {
+		commands.put(CommandType.learn, new Command(CommandType.learn));
+		commands.put(CommandType.help, new Command(CommandType.help));
+		commands.put(CommandType.version, new Command(CommandType.version));
+	}
 
-  static {
-    commands.put(learn, new Command(learn));
-    commands.put(help, new Command(help));
-    commands.put(version, new Command(version));
-  }
+	private final CommandType type;
+	private final List<Option<?>> options;
 
-  public final String cmdStr;
-  public final List<Option> options;
+	private Command(CommandType type) {
+		this.type = type;
+		this.options = new ArrayList<Option<?>>();
+	}
 
-  private Command(String cmd) {
-    this.cmdStr = cmd;
-    this.options = new ArrayList<Option>();
-  }
+	public void addOption(Option<?> option) {
+		this.options.add(option);
+	}
 
-  public void addOption(Option option) {
-    this.options.add(option);
-  }
+	public static Command getCommand(String cmdStr) {
+		Command cmd = commands.get(CommandType.valueOf(cmdStr));
+		return cmd;
+	}
 
-  public static Command getCommand(String cmdStr) {
-    Command cmd = commands.get(cmdStr);
-    return cmd;
-  }
+	public List<Option<?>> getOptions() {
+		return options;
+	}
+
+	public CommandType getType() {
+		return type;
+	}
+
+	public enum CommandType {
+		learn, help, version;
+	}
 }

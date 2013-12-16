@@ -1,168 +1,228 @@
 package tzuyu.engine.main;
 
+import static tzuyu.engine.main.Option.OptionType.INHERITED_METHOD;
+import static tzuyu.engine.main.Option.OptionType.METHODS;
+import static tzuyu.engine.main.Option.OptionType.OBJECT_TO_INTEGER;
+import static tzuyu.engine.main.Option.OptionType.OUTPUT;
+import static tzuyu.engine.main.Option.OptionType.TARGET;
+import static tzuyu.engine.main.Option.OptionType.TEST_PERS_QUERY;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class Option {
-  
-  private static final String targetHelpStr = 
-      " the target class for which to learn specifications.";
-  private static final String outputHelpStr = 
-      " directory\t the directory to which the results are put.";
-  private static final String testsPerQueryHelpStr = 
-      " number\t number of test cases for each query.";
-  private static final String object2IntegerHelpStr = 
-      " flag\t whether to use integers as the Object type values.";
-  private static final String inheritedMethodsHelpStr = 
-      " flag\t whether to learn specifications for inherited methods.";
-  private static final String methodsHelpStr = 
-      " only learn specifications for the specified method(s).";
-  
-  public static final StringOption target = 
-      new StringOption("target", "", targetHelpStr);
-  public static final StringOption output = 
-      new StringOption("out", "", outputHelpStr);
-  public static final IntegerOption testsPerQuery = 
-      new IntegerOption("tpq", 1, testsPerQueryHelpStr);
-  public static final BooleanOption object2Integer = 
-      new BooleanOption("o2i", false, object2IntegerHelpStr);
-  public static final BooleanOption inheritedMethods = 
-      new BooleanOption("im", false, inheritedMethodsHelpStr);
-  
-  public static final MultipleValueOption methods = 
-      new MultipleValueOption("methods", methodsHelpStr);
+import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.TzProject;
 
-  public static final Map<String, Option> options = 
-      new HashMap<String, Option>();
+// TODO [LLT]: remove global variable
+public abstract class Option<T extends Object> {
 
-  static {
-    options.put(target.name, target);
-    options.put(output.name, output);
-    options.put(testsPerQuery.name, testsPerQuery);
-    options.put(object2Integer.name, object2Integer);
-    options.put(methods.name, methods);
-    options.put(inheritedMethods.name, inheritedMethods);
-  }
+	private static final String targetHelpStr = " the target class for which to learn specifications.";
+	private static final String outputHelpStr = " directory\t the directory to which the results are put.";
+	private static final String testsPerQueryHelpStr = " number\t number of test cases for each query.";
+	private static final String object2IntegerHelpStr = " flag\t whether to use integers as the Object type values.";
+	private static final String inheritedMethodsHelpStr = " flag\t whether to learn specifications for inherited methods.";
+	private static final String methodsHelpStr = " only learn specifications for the specified method(s).";
 
-  public final String name;
+	public static final StringOption target = new StringOption(TARGET, "",
+			targetHelpStr);
+	public static final StringOption output = new StringOption(OUTPUT, "",
+			outputHelpStr);
+	public static final IntegerOption testsPerQuery = new IntegerOption(
+			TEST_PERS_QUERY, 1, testsPerQueryHelpStr);
+	public static final BooleanOption object2Integer = new BooleanOption(
+			OBJECT_TO_INTEGER, false, object2IntegerHelpStr);
+	public static final BooleanOption inheritedMethods = new BooleanOption(
+			INHERITED_METHOD, false, inheritedMethodsHelpStr);
 
-  protected Option(String optName) {
-    this.name = optName;
-  }
+	public static final MultipleValueOption methods = new MultipleValueOption(
+			METHODS, methodsHelpStr);
 
-  public static Option getOption(String optName) {
-    Option option = options.get(optName);
-    return option;
-  }
+	public static final Map<OptionType, Option<?>> options = new HashMap<OptionType, Option<?>>();
 
-  public abstract boolean parseValue(String val);
-  
-  public abstract String getHelp();
+	static {
+		options.put(TARGET, target);
+		options.put(OUTPUT, output);
+		options.put(TEST_PERS_QUERY, testsPerQuery);
+		options.put(OBJECT_TO_INTEGER, object2Integer);
+		options.put(METHODS, methods);
+		options.put(INHERITED_METHOD, inheritedMethods);
+	}
+
+	private OptionType type;
+
+	protected Option(OptionType type) {
+		this.type = type;
+	}
+
+	public OptionType getType() {
+		return type;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void transferToTzConfig(TzProject project) {
+		TzConfiguration config = project.getConfiguration();
+		switch (type) {
+		case TARGET:
+			project.setClassName((String) getValue());
+			break;
+		case OUTPUT:
+			config.setOutput((String) getValue());
+			break;
+		case TEST_PERS_QUERY:
+			config.setTestsPerQuery((Integer) getValue());
+			break;
+		case OBJECT_TO_INTEGER:
+			config.setObjectToInteger((Boolean) getValue());
+			break;
+		case METHODS:
+			project.setMethods((List<String>) getValue());
+			break;
+		case INHERITED_METHOD:
+			config.setInheritedMethod((Boolean) getValue());
+			break;
+		}
+	}
+
+	public abstract T getValue();
+
+	@Deprecated
+	// too risk to allow access option like this.
+	public static Option<?> getOption(String optName) {
+		Option<?> option = options.get(OptionType.getType(optName));
+		return option;
+	}
+
+	public abstract boolean parseValue(String val);
+
+	public abstract String getHelp();
+
+	public enum OptionType {
+		TARGET("target"), OUTPUT("out"), TEST_PERS_QUERY("tpq"), OBJECT_TO_INTEGER(
+				"o2i"), INHERITED_METHOD("im"), METHODS("methods");
+		private String opt;
+
+		private OptionType(String opt) {
+			this.opt = opt;
+		}
+
+		public String getOpt() {
+			return opt;
+		}
+		
+		public static OptionType getType(String opt) {
+			for (OptionType type : values()) {
+				if (type.getOpt().equals(opt)) {
+					return type;
+				}
+			}
+			return null;
+		}
+	}
 }
 
-class IntegerOption extends Option {
-  private String helpStr;
-  private int val;
+class IntegerOption extends Option<Integer> {
+	private String helpStr;
+	private int val;
 
-  public IntegerOption(String name, int defaultVal, String help) {
-    super(name);
-    val = defaultVal;
-    helpStr = help;
-  }
+	public IntegerOption(OptionType name, int defaultVal, String help) {
+		super(name);
+		val = defaultVal;
+		helpStr = help;
+	}
 
-  public int getValue() {
-    return val;
-  }
+	public Integer getValue() {
+		return val;
+	}
 
-  @Override
-  public boolean parseValue(String val) {
-    this.val = Integer.valueOf(val);
-    return true;
-  }
+	@Override
+	public boolean parseValue(String val) {
+		this.val = Integer.valueOf(val);
+		return true;
+	}
 
-  @Override
-  public String getHelp() {
-    return helpStr;
-  }
+	@Override
+	public String getHelp() {
+		return helpStr;
+	}
 }
 
-class StringOption extends Option {
-  private String val;
-  private String helpStr;
-  
-  public StringOption(String name, String defaultVal, String help) {
-    super(name);
-    this.val = defaultVal;
-    this.helpStr = help;
-  }
+class StringOption extends Option<String> {
+	private String val;
+	private String helpStr;
 
-  @Override
-  public boolean parseValue(String val) {
-    this.val = val;
-    return true;
-  }
+	public StringOption(OptionType name, String defaultVal, String help) {
+		super(name);
+		this.val = defaultVal;
+		this.helpStr = help;
+	}
 
-  public String getValue() {
-    return val;
-  }
+	@Override
+	public boolean parseValue(String val) {
+		this.val = val;
+		return true;
+	}
 
-  @Override
-  public String getHelp() {
-    return helpStr;
-  }
+	public String getValue() {
+		return val;
+	}
+
+	@Override
+	public String getHelp() {
+		return helpStr;
+	}
 }
 
-class BooleanOption extends Option {
-  private boolean val;
-  private String helpStr;
+class BooleanOption extends Option<Boolean> {
+	private boolean val;
+	private String helpStr;
 
-  public BooleanOption(String name, boolean defaultVal, String help) {
-    super(name);
-    val = defaultVal;
-    helpStr = help;
-  }
+	public BooleanOption(OptionType name, boolean defaultVal, String help) {
+		super(name);
+		val = defaultVal;
+		helpStr = help;
+	}
 
-  @Override
-  public boolean parseValue(String val) {
-    this.val = Boolean.valueOf(val);
-    return true;
-  }
+	@Override
+	public boolean parseValue(String val) {
+		this.val = Boolean.valueOf(val);
+		return true;
+	}
 
-  public boolean getValue() {
-    return val;
-  }
+	public Boolean getValue() {
+		return val;
+	}
 
-  @Override
-  public String getHelp() {
-    return helpStr;
-  }
+	@Override
+	public String getHelp() {
+		return helpStr;
+	}
 }
 
-class MultipleValueOption extends Option {
-  private List<String> vals;
+class MultipleValueOption extends Option<List<String>> {
+	private List<String> vals;
 
-  private String helpStr;
-  
-  public MultipleValueOption(String name, String help) {
-    super(name);
-    vals = new ArrayList<String>();
-    helpStr = help;
-  }
+	private String helpStr;
 
-  @Override
-  public boolean parseValue(String val) {
-    vals.add(val);
-    return true;
-  }
+	public MultipleValueOption(OptionType name, String help) {
+		super(name);
+		vals = new ArrayList<String>();
+		helpStr = help;
+	}
 
-  public List<String> getValue() {
-    return vals;
-  }
+	@Override
+	public boolean parseValue(String val) {
+		vals.add(val);
+		return true;
+	}
 
-  @Override
-  public String getHelp() {
-    return helpStr;
-  }
+	public List<String> getValue() {
+		return vals;
+	}
+
+	@Override
+	public String getHelp() {
+		return helpStr;
+	}
 }

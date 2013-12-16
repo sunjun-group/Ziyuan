@@ -13,7 +13,8 @@ public class TestMain {
     alphabet.addSymbol(new TestAlphabet("1"));
 
     Teacher teacher = new TestTeacher();
-    LStar algorithm = new LStar(teacher);
+    LStar algorithm = new LStar();
+    algorithm.setTeacher(teacher);
     algorithm.setAlphabet(alphabet);
 
     algorithm.startLearning();

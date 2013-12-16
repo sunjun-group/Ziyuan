@@ -6,6 +6,7 @@ import java.util.Set;
 import lstar.LStarException.Type;
 
 import tzuyu.engine.TzLogger;
+import tzuyu.engine.TzuyuAlgorithmFactory;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Learner;
 import tzuyu.engine.model.Trace;
@@ -24,6 +25,7 @@ import tzuyu.engine.model.dfa.Transition;
 public class LStar implements Learner {
 
 	// The teacher for the L* algorithm
+//	private Teacher teacher = TzuyuAlgorithmFactory.getTeacher();
 	private Teacher teacher;
 	//
 	private ObservationTable otable;
@@ -35,8 +37,7 @@ public class LStar implements Learner {
 
 	// private boolean runnable;
 
-	public LStar(Teacher teacher) {
-		this.teacher = teacher;
+	public LStar() {
 		this.otable = new ObservationTable();
 		// runnable = false;
 	}
@@ -49,20 +50,6 @@ public class LStar implements Learner {
 	public DFA getDFA() {
 		return lastDFA;
 	}
-
-	// /**
-	// * @return
-	// * false: need to restart
-	// * true: start done ok.
-	// */
-	// public boolean start() {
-	// runnable = true;
-	// return doLearn();
-	// }
-	//
-	// public void stop() {
-	// runnable = false;
-	// }
 
 	public DFA startLearning() {
 		int iterationCount = 0;
@@ -393,6 +380,9 @@ public class LStar implements Learner {
 	 */
 	@Override
 	public void report(TzReportHandler reporter) {
+		if (lastDFA == null) {
+			return;
+		}
 		// last DFA
 		TzLogger.log()
 			.info("Alphabet Size in Final DFA:", (lastDFA.sigma.getSize() -1))
@@ -404,4 +394,9 @@ public class LStar implements Learner {
 		teacher.report(reporter);
 	}
 
+	@Deprecated
+	// only for test
+	public void setTeacher(Teacher teacher) {
+		this.teacher = teacher;
+	}
 }

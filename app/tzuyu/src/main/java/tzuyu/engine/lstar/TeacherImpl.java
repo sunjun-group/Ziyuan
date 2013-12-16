@@ -15,6 +15,7 @@ import lstar.LStarException.Type;
 import lstar.Teacher;
 import refiner.Witness;
 import tester.TzuYuTester;
+import tzuyu.engine.TzProject;
 import tzuyu.engine.bool.True;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Refiner;
@@ -181,6 +182,12 @@ public class TeacherImpl implements Teacher {
 	@Override
 	public void report(TzReportHandler reporter) {
 		tester.report(reporter);
+	}
+
+	@Override
+	public void setProject(TzProject project) {
+		refiner.setProject(project);
+		tester.setProject(project);
 	}
 
 }

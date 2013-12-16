@@ -13,7 +13,11 @@ package tzuyu.engine.iface;
  * 
  */
 public interface HasTzReport {
-	
+
+	/**
+	 * report all useful output from the process. this function will we put this
+	 * separate to make the flow clearer.
+	 */
 	public void report(TzReportHandler reporter);
 	
 }

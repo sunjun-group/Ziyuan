@@ -16,6 +16,7 @@ import lstar.LStarException.Type;
 import lstar.Teacher;
 import refiner.Witness;
 import tzuyu.engine.TzLogger;
+import tzuyu.engine.TzProject;
 import tzuyu.engine.bool.True;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Refiner;
@@ -44,6 +45,7 @@ public class TeacherImplV2 implements Teacher {
 	// TODO-LLT : To refactor later.
 	private Refiner refiner;
 	private TzuYuAlphabet sigma;
+	private TzProject project;
 
 	public void setInitAlphabet(TzuYuAlphabet sigma) {
 		this.sigma = sigma;
@@ -212,6 +214,11 @@ public class TeacherImplV2 implements Teacher {
 		// report its component output
 		refiner.report(reporter);
 		tester.report(reporter);
+	}
+
+	@Override
+	public void setProject(TzProject project) {
+		this.project = project;
 	}
 
 }

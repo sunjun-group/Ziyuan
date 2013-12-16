@@ -3,6 +3,7 @@ package tzuyu.engine.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import tzuyu.engine.TzProject;
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.ObjectInfo;
 
@@ -53,7 +54,7 @@ public class Prestate {
     return vals;
   }
 
-  public static Prestate log(List<Variable> vars, List<Object> values) {
+  public static Prestate log(List<Variable> vars, List<Object> values, TzProject project) {
     if (vars.size() != values.size()) {
      throw new TzuYuException("instrument for incompatable objects.");
     }
@@ -62,7 +63,7 @@ public class Prestate {
     for (int index = 0; index < vars.size(); index++) {
       Class<?> type = vars.get(index).getType();
 
-      ClassInfo param = Analytics.getClassInfo(type);
+      ClassInfo param = project.getClassInfo(type);
 
       ObjectInfo val = param.clone(values.get(index));
       prestate.addValue(val);

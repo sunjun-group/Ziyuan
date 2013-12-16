@@ -1,5 +1,6 @@
 package lstar;
 
+import tzuyu.engine.TzProject;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.model.dfa.DFA;
@@ -59,6 +60,11 @@ public class TestTeacher implements Teacher {
 
 	@Override
 	public void report(TzReportHandler reporter) {
+		
+	}
+
+	@Override
+	public void setProject(TzProject project) {
 		
 	}
 

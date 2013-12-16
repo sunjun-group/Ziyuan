@@ -2,6 +2,7 @@ package lstar;
 
 import org.apache.log4j.Logger;
 
+import tzuyu.engine.iface.HasTzProject;
 import tzuyu.engine.iface.HasTzReport;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.model.dfa.DFA;
@@ -13,7 +14,7 @@ import tzuyu.engine.model.dfa.DFA;
  * @author Spencer Xiao
  * 
  */
-public interface Teacher extends HasTzReport {
+public interface Teacher extends HasTzReport, HasTzProject {
 	static final Logger logger = Logger.getRootLogger();
 	/**
 	 * If the @param str is accepted by the unknown DFA then return true; If the

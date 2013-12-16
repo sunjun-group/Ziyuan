@@ -2,13 +2,12 @@ package tzuyu.engine.main;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+
+import tzuyu.engine.TzLogger;
 
 public class ArgParser {
   private String[] args;
   private int cursor;
-//  private static final Logger logger = Logger.getGlobal();
-  private static final Logger logger = Logger.getLogger(Help.class.getSimpleName());
 
   public ArgParser(String[] arguments) {
     this.args = arguments;
@@ -44,7 +43,7 @@ public class ArgParser {
         break;
       }
 
-      Option option = Option.getOption(opt);
+      Option<?> option = Option.getOption(opt);
 
       if (option == null) {
         error(opt);
@@ -87,7 +86,7 @@ public class ArgParser {
   }
 
   private void error(String str) {
-    logger.info("option \"" + str + "\" cannot be recognized");
+    TzLogger.log().info("option \"" + str + "\" cannot be recognized");
     System.exit(1);
   }
 }

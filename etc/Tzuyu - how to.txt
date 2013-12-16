@@ -7,3 +7,13 @@ mvn clean install
 mvn eclipse:eclipse
 4. Import project into eclipse
 
+Eclipse:
+- install m2e plugin
+- install 
+
+Modules to complete:
+- test
+- project
+- report handler
+- configuration
+- 

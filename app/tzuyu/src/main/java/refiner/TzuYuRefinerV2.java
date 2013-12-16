@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import tzuyu.engine.TzLogger;
+import tzuyu.engine.TzProject;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Refiner;
 import tzuyu.engine.model.Action;
@@ -20,6 +21,7 @@ import tzuyu.engine.utils.Pair;
 public class TzuYuRefinerV2 implements Refiner {
 
 	private SVMWrapper2 classifier;
+	private TzProject project;
 
 	public TzuYuRefinerV2() {
 		this.classifier = new SVMWrapper2();
@@ -47,7 +49,7 @@ public class TzuYuRefinerV2 implements Refiner {
 
 		// Invoke the LibSVM to refine the alphabet.
 		Formula divider = classifier.memberDivide(cex.positiveSet,
-				cex.negativeSet);
+				cex.negativeSet, project);
 
 		return divider;
 	}
@@ -112,7 +114,7 @@ public class TzuYuRefinerV2 implements Refiner {
 		} else {
 			// Invoke LibSVM to refine the alphabet.
 			Formula divider = classifier.candidateDivide(tzuyuSymbol,
-					queryResult.positiveSet, queryResult.negativeSet);
+					queryResult.positiveSet, queryResult.negativeSet, project);
 
 			return new Witness(divider, tzuyuSymbol);
 		}
@@ -207,5 +209,10 @@ public class TzuYuRefinerV2 implements Refiner {
 		TzLogger.log()
 			.info("Total NO. of SVM Calls:", getRefinementCount())
 			.info("Total Time consumed by SVM:", getTimeConsumed());
+	}
+	
+	@Override
+	public void setProject(TzProject project) {
+		this.project = project;
 	}
 }

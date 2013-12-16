@@ -3,6 +3,7 @@ package refiner;
 import java.util.List;
 import java.util.Map;
 
+import tzuyu.engine.TzProject;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Refiner;
 import tzuyu.engine.model.Action;
@@ -27,6 +28,7 @@ import tzuyu.engine.utils.Pair;
 public class TzuYuRefiner implements Refiner {
 	private SVMWrapper classifier;
 	private IQueryTraceStore traceStore;
+	private TzProject project;
 
 	public TzuYuRefiner() {
 		classifier = new SVMWrapper();
@@ -67,7 +69,7 @@ public class TzuYuRefiner implements Refiner {
 
 		// Invoke the LibSVM to refine the alphabet.
 		Formula divider = classifier.memberDivide(cex.positiveSet,
-				cex.negativeSet);
+				cex.negativeSet, project);
 		// If a divider is found we need to clear the traces
 		// for the next learning pass.
 		if (divider != null) {
@@ -124,7 +126,7 @@ public class TzuYuRefiner implements Refiner {
 		} else {
 			// Invoke LibSVM to refine the alphabet.
 			Formula divider = classifier.candidateDivide(tzuyuSymbol,
-					queryResult.positiveSet, queryResult.negativeSet);
+					queryResult.positiveSet, queryResult.negativeSet, project);
 			// If a divider is found, clear the traces to prepare for
 			// next round of learning
 			if (divider != null) {
@@ -207,5 +209,10 @@ public class TzuYuRefiner implements Refiner {
 	public void report(TzReportHandler reporter) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public void setProject(TzProject project) {
+		this.project = project;
 	}
 }

@@ -1,5 +1,6 @@
 package tzuyu.engine.model;
 
+import tzuyu.engine.TzProject;
 import tzuyu.engine.bool.AndFormula;
 import tzuyu.engine.bool.NotFormula;
 import tzuyu.engine.bool.Simplifier;
@@ -12,7 +13,7 @@ public class TzuYuAlphabet extends Alphabet {
 
   }
 
-  public static TzuYuAlphabet constructInitialAlphabet() {
+  public static TzuYuAlphabet constructInitialAlphabet(TzProject project) {
     TzuYuAlphabet sigma = new TzuYuAlphabet();
     // add constructors as the initial alphabet
 
@@ -23,7 +24,7 @@ public class TzuYuAlphabet extends Alphabet {
     }*/
 
     // add methods as the initial alphabet
-    MethodInfo[] methods = Analytics.getTargetClassInfo().getMethods();
+    MethodInfo[] methods = project.getTargetClassInfo().getMethods();
 
     for (MethodInfo method : methods) {
       TzuYuAction action = TzuYuAction.fromMethod(method);

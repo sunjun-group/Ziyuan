@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import tzuyu.engine.TzProject;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Tester;
 import tzuyu.engine.model.Prestate;
@@ -31,6 +32,11 @@ public class TzuYuTesterV2 implements Tester {
 	public TzuYuTesterV2(IInstrumentor instrument) {
 		tcg = new RandomTCGStrategy();
 		instrumentor = instrument;
+	}
+	
+	public void setProject(TzProject project) {
+		tcg.setProject(project);
+		instrumentor.setProject(project);
 	}
 
 	/**

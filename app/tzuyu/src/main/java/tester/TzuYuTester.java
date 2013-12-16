@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import tzuyu.engine.TzProject;
 import tzuyu.engine.iface.TzReportHandler;
-import tzuyu.engine.model.Analytics;
 import tzuyu.engine.model.InputAndSuccessFlag;
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.model.Query;
@@ -25,12 +25,18 @@ import tzuyu.engine.utils.Permutation;
 public class TzuYuTester {
 	private ParameterSelector selector;
 	private IQueryTraceStore traceStore;
+	private TzProject project;
 
 	private HashSet<TzuYuAction> cachedUnkownResult = new HashSet<TzuYuAction>();
 
 	public TzuYuTester() {
 		selector = new ParameterSelector();
 		traceStore = QueryTraceStoreFactory.createStore();
+	}
+	
+	public void setProject(TzProject project) {
+		this.project = project;
+		selector.setProject(project);
 	}
 
 	/*  *//**
@@ -189,7 +195,7 @@ public class TzuYuTester {
 	 */
 	public QueryResult memberTest(Query query) {
 		Query ctorQuery = Query.emptyQuery();
-		InputAndSuccessFlag input = selector.selectCtor(Analytics.getTarget());
+		InputAndSuccessFlag input = selector.selectCtor(ensureProject().getTarget());
 		Sequence ctorSeq = Sequence.concatenate(input.sequences);
 		// We can select a parameter for the constructor
 		if (input.success) {
@@ -277,7 +283,7 @@ public class TzuYuTester {
 
 					if (rslt.isPassing()) {
 						Prestate prestate = Prestate.log(inputVars,
-								rslt.getRuntime());
+								rslt.getRuntime(), ensureProject());
 
 						List<Prestate> states = new ArrayList<Prestate>(
 								currentTrace.getStates());
@@ -307,7 +313,7 @@ public class TzuYuTester {
 						// instrument the
 						// Pre-state.
 						Prestate prestate = Prestate.log(inputVars,
-								rslt.getRuntime());
+								rslt.getRuntime(), project);
 						List<Prestate> states = new ArrayList<Prestate>(
 								currentTrace.getStates());
 						states.add(prestate);
@@ -431,7 +437,7 @@ public class TzuYuTester {
 	public QueryResult candidateTest(Query query) {
 		// First construct a receiver sequence
 		Query ctorQuery = Query.emptyQuery();
-		InputAndSuccessFlag ctor = selector.selectCtor(Analytics.getTarget());
+		InputAndSuccessFlag ctor = selector.selectCtor(ensureProject().getTarget());
 
 		Sequence seq = Sequence.concatenate(ctor.sequences);
 
@@ -529,7 +535,7 @@ public class TzuYuTester {
 
 					if (rslt.isPassing()) {
 						Prestate prestate = Prestate.log(inputVars,
-								rslt.getRuntime());
+								rslt.getRuntime(), ensureProject());
 
 						List<Prestate> states = new ArrayList<Prestate>(
 								currentTrace.getStates());
@@ -559,7 +565,7 @@ public class TzuYuTester {
 						// instrument the
 						// Prestate.
 						Prestate prestate = Prestate.log(inputVars,
-								rslt.getRuntime());
+								rslt.getRuntime(), project);
 						List<Prestate> states = new ArrayList<Prestate>(
 								currentTrace.getStates());
 						states.add(prestate);
@@ -659,7 +665,7 @@ public class TzuYuTester {
 
 				if (rslt.isPassing()) {
 					Prestate prestate = Prestate.log(inputVars,
-							rslt.getRuntime());
+							rslt.getRuntime(), ensureProject());
 
 					List<Prestate> states = new ArrayList<Prestate>(
 							currentTrace.getStates());
@@ -690,7 +696,7 @@ public class TzuYuTester {
 					}
 				} else {
 					Prestate prestate = Prestate.log(inputVars,
-							rslt.getRuntime());
+							rslt.getRuntime(), project);
 					List<Prestate> states = new ArrayList<Prestate>(
 							currentTrace.getStates());
 					states.add(prestate);
@@ -749,5 +755,12 @@ public class TzuYuTester {
 
 	public void report(TzReportHandler reporter) {
 		
+	}
+	
+	private TzProject ensureProject() {
+		if (project == null) {
+			throw new TzuYuException("Tzuyu project not set for tester");
+		}
+		return project;
 	}
 }

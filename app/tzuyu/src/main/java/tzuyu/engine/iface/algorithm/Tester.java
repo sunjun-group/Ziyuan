@@ -8,6 +8,7 @@
 
 package tzuyu.engine.iface.algorithm;
 
+import tzuyu.engine.TzProject;
 import tzuyu.engine.iface.HasTzReport;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.QueryResult;
@@ -24,4 +25,6 @@ public interface Tester extends HasTzReport {
 	boolean confirmWishfulThinking(TzuYuAction stmt);
 
 	QueryResult executeAllOldTestCases();
+	
+	public void setProject(TzProject project);
 }
