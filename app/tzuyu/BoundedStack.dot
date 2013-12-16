@@ -1,0 +1,14 @@
+digraph automaton {
+	center=true;
+	size="9,11";
+	init -> 1 [label="init<>"];
+	1 -> 1 [label="[true]BoundedStack.size()"];
+	1 -> 0 [label="[true]BoundedStack.pop()"];
+	1 -> 1 [label="[true]BoundedStack.push(Integer)"];
+	0 -> 0 [label="[true]BoundedStack.size()"];
+	0 -> 0 [label="[true]BoundedStack.pop()"];
+	0 -> 0 [label="[true]BoundedStack.push(Integer)"];
+	init [shape=point];
+	1 [label="1", shape=doublecircle];
+	0 [label="0", shape=circle, style=filled, color=red];
+}
