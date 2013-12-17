@@ -11,11 +11,11 @@ package tzuyu.engine.lstar;
 import java.util.List;
 
 import lstar.LStarException;
+import lstar.ReportHandler;
 import lstar.LStarException.Type;
 import lstar.Teacher;
 import refiner.Witness;
 import tester.TzuYuTester;
-import tzuyu.engine.TzProject;
 import tzuyu.engine.bool.True;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Refiner;
@@ -34,13 +34,13 @@ import tzuyu.engine.model.dfa.TracesPair;
  * @author LLT
  * 
  */
-public class TeacherImpl implements Teacher {
+public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 	private int maxMemberSize = 0;
 	private int iterationCount = 1;
 	// TODO-LLT : To refactor later.
 	// TzuYuTester and TzuYuTesterV2 are quiet different??
 	private TzuYuTester tester;
-	private Refiner refiner;
+	private Refiner<TzuYuAlphabet> refiner;
 	private TzuYuAlphabet sigma;
 
 	public void setInitAlphabet(TzuYuAlphabet sigma) {
@@ -180,14 +180,7 @@ public class TeacherImpl implements Teacher {
 	}
 
 	@Override
-	public void report(TzReportHandler reporter) {
+	public void report(ReportHandler<TzuYuAlphabet> reporter) {
 		tester.report(reporter);
 	}
-
-	@Override
-	public void setProject(TzProject project) {
-		refiner.setProject(project);
-		tester.setProject(project);
-	}
-
 }

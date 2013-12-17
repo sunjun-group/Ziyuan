@@ -3,28 +3,37 @@ package refiner;
 import java.util.List;
 import java.util.Map;
 
+import lstar.ReportHandler;
+import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzLogger;
 import tzuyu.engine.TzProject;
-import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Refiner;
 import tzuyu.engine.model.Action;
+import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.QueryResult;
 import tzuyu.engine.model.QueryTrace;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.model.TzuYuAction;
+import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.dfa.Transition;
 import tzuyu.engine.store.DFARunner;
 import tzuyu.engine.utils.Pair;
 
-public class TzuYuRefinerV2 implements Refiner {
+public class TzuYuRefinerV2 implements Refiner<TzuYuAlphabet> {
 
 	private SVMWrapper2 classifier;
-	private TzProject project;
+	private Map<Class<?>, ClassInfo> classInfoMap;
 
 	public TzuYuRefinerV2() {
 		this.classifier = new SVMWrapper2();
+	}
+
+	@Override
+	public void init(TzuYuAlphabet sigma) {
+		this.classInfoMap = sigma.getProject().getTypeMap();
+		this.classifier.setClassInDepth(sigma.getProject().getConfiguration().getClassMaxDepth());
 	}
 
 	public int getRefinementCount() {
@@ -49,7 +58,7 @@ public class TzuYuRefinerV2 implements Refiner {
 
 		// Invoke the LibSVM to refine the alphabet.
 		Formula divider = classifier.memberDivide(cex.positiveSet,
-				cex.negativeSet, project);
+				cex.negativeSet, classInfoMap);
 
 		return divider;
 	}
@@ -114,7 +123,8 @@ public class TzuYuRefinerV2 implements Refiner {
 		} else {
 			// Invoke LibSVM to refine the alphabet.
 			Formula divider = classifier.candidateDivide(tzuyuSymbol,
-					queryResult.positiveSet, queryResult.negativeSet, project);
+					queryResult.positiveSet, queryResult.negativeSet,
+					classInfoMap);
 
 			return new Witness(divider, tzuyuSymbol);
 		}
@@ -205,14 +215,9 @@ public class TzuYuRefinerV2 implements Refiner {
 	}
 
 	@Override
-	public void report(TzReportHandler reporter) {
-		TzLogger.log()
-			.info("Total NO. of SVM Calls:", getRefinementCount())
-			.info("Total Time consumed by SVM:", getTimeConsumed());
+	public void report(ReportHandler<TzuYuAlphabet> reporter) {
+		TzLogger.log().info("Total NO. of SVM Calls:", getRefinementCount())
+				.info("Total Time consumed by SVM:", getTimeConsumed());
 	}
-	
-	@Override
-	public void setProject(TzProject project) {
-		this.project = project;
-	}
+
 }

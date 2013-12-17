@@ -11,18 +11,18 @@ package tzuyu.engine.iface.algorithm;
 import java.util.List;
 
 import refiner.Witness;
-import tzuyu.engine.iface.HasTzProject;
-import tzuyu.engine.iface.HasTzReport;
+import tzuyu.engine.iface.HasReport;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.QueryResult;
 import tzuyu.engine.model.QueryTrace;
+import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.dfa.DFA;
 
 /**
  * @author LLT
  * 
  */
-public interface Refiner extends HasTzReport, HasTzProject {
+public interface Refiner<A extends Alphabet> extends HasReport<A> {
 
 	/**
 	 * @param result
@@ -36,5 +36,7 @@ public interface Refiner extends HasTzReport, HasTzProject {
 	 * @return
 	 */
 	Witness refineCandidate(DFA dfa, List<QueryTrace> traces);
+
+	void init(A sigma);
 
 }

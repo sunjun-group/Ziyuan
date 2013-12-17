@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import lstar.ReportHandler;
 import tzuyu.engine.TzProject;
-import tzuyu.engine.iface.TzReportHandler;
+import tzuyu.engine.iface.HasReport;
 import tzuyu.engine.model.InputAndSuccessFlag;
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.model.Query;
@@ -14,15 +15,15 @@ import tzuyu.engine.model.QueryTrace;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.TVAnswer;
 import tzuyu.engine.model.TzuYuAction;
+import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.TzuYuException;
 import tzuyu.engine.model.VarIndex;
 import tzuyu.engine.model.Variable;
 import tzuyu.engine.store.IQueryTraceStore;
 import tzuyu.engine.store.QueryTraceStoreFactory;
-import tzuyu.engine.utils.Options;
 import tzuyu.engine.utils.Permutation;
 
-public class TzuYuTester {
+public class TzuYuTester implements HasReport<TzuYuAlphabet>{
 	private ParameterSelector selector;
 	private IQueryTraceStore traceStore;
 	private TzProject project;
@@ -99,7 +100,7 @@ public class TzuYuTester {
 	 * for multiple tests. Query remainingQuery =
 	 * query.getRemainingQuery(prefix);
 	 * 
-	 * int tracesPerQuery = Options.tracesPerQuery();
+	 * int tracesPerQuery = TzConfiguration.TRACES_PER_QUERY;
 	 * 
 	 * Query currentQuery = prefix; for (int index = 0; index <
 	 * remainingQuery.size(); index++) { QueryTrace currentTrace =
@@ -229,7 +230,7 @@ public class TzuYuTester {
 		}
 
 		Query currentQuery = ctorQuery;
-		int tracesPerQuery = Options.tracesPerQuery();
+		int tracesPerQuery = project.getConfiguration().getTestsPerQuery();
 		for (int index = 0; index < query.size(); index++) {
 			QueryTrace currentTrace = findTrace(currentQuery);
 			if (!currentTrace.isAccepted()) {
@@ -475,7 +476,7 @@ public class TzuYuTester {
 
 		Query currentQuery = ctorQuery;
 
-		int tracesPerQuery = Options.tracesPerQuery();
+		int tracesPerQuery = project.getConfiguration().getTestsPerQuery();
 
 		// For candidate query we start from the beginning to the end,
 		// not reuse the largest prefix as does in memberTest
@@ -753,14 +754,15 @@ public class TzuYuTester {
 		}
 	}
 
-	public void report(TzReportHandler reporter) {
-		
-	}
-	
 	private TzProject ensureProject() {
 		if (project == null) {
 			throw new TzuYuException("Tzuyu project not set for tester");
 		}
 		return project;
+	}
+
+	@Override
+	public void report(ReportHandler<TzuYuAlphabet> reporter) {
+		// TODO Auto-generated method stub
 	}
 }

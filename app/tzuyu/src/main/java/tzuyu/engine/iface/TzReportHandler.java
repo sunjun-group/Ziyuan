@@ -10,20 +10,15 @@ package tzuyu.engine.iface;
 
 import java.util.List;
 
+import lstar.ReportHandler;
 import tzuyu.engine.model.Sequence;
-import tzuyu.engine.model.dfa.DFA;
+import tzuyu.engine.model.TzuYuAlphabet;
 
 /**
  * @author LLT
  *
  */
-public interface TzReportHandler {
-
-	/**
-	 * report last DFA which get from LStar learner.
-	 * (ex: print DFA to files)
-	 */
-	void reportDFA(DFA lastDFA);
+public interface TzReportHandler extends ReportHandler<TzuYuAlphabet>{
 
 	void writeTestCases(List<Sequence> allTestCases);
 	

@@ -13,22 +13,28 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.experiment.JUnitFileWriter;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.model.Sequence;
+import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.utils.Globals;
-import tzuyu.engine.utils.Options;
 
 /**
  * @author LLT
  * 
  */
 public class CommandLineReportHandler implements TzReportHandler {
-
+	private TzConfiguration config;
+	
+	public CommandLineReportHandler(TzConfiguration config) {
+		this.config = config;
+	}
+	
 	@Override
-	public void reportDFA(DFA lastDFA) {
-		saveDFA(lastDFA);
+	public void reportDFA(DFA lastDFA, TzuYuAlphabet sigma) {
+		saveDFA(lastDFA, sigma.getProject().getConfiguration());
 	}
 
 	@Override
@@ -36,12 +42,11 @@ public class CommandLineReportHandler implements TzReportHandler {
 		writeJUnitTestCases(allTestCases);
 	}
 
-	private void saveDFA(DFA dfa) {
+	private void saveDFA(DFA dfa, TzConfiguration config) {
 		if (dfa != null) {
 			String dot = dfa.createDotRepresentation();
 			try {
-				//TODO [LLT]: set target class name
-				String fileName = Options.getAbsoluteAddress(getTargetClassName() + ".dot");
+				String fileName = config.getAbsoluteAddress(getTargetClassName() + ".dot");
 				FileWriter writer = new FileWriter(fileName);
 				writer.write(dot);
 				writer.close();
@@ -65,6 +70,7 @@ public class CommandLineReportHandler implements TzReportHandler {
 		// We group all test cases into one file. The file name ends with the
 		// suffix of the file number.
 		JUnitFileWriter writer = new JUnitFileWriter(dir, "", targetClass, size);
+		writer.config(config);
 		junitFiles.addAll(writer.createJUnitTestFiles(allTestCases));
 		return junitFiles;
 	}

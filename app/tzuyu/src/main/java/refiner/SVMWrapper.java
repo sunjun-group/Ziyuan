@@ -20,7 +20,6 @@ import tzuyu.engine.model.Prestate;
 import tzuyu.engine.model.QueryTrace;
 import tzuyu.engine.model.StatementKind;
 import tzuyu.engine.model.TzuYuAction;
-import tzuyu.engine.utils.Options;
 import tzuyu.engine.utils.Pair;
 
 
@@ -108,7 +107,7 @@ public class SVMWrapper {
     List<Class<?>> inputTypes = stmt.getInputTypes();
     List<ClassInfo> wrapperTypes = new ArrayList<ClassInfo>(inputTypes.size());
 
-    int maxLevel = Options.classMaxDepth();
+    int maxLevel = project.getConfiguration().getClassMaxDepth();
     for (int index = 0; index < inputTypes.size(); index++) {
       Class<?> type = inputTypes.get(index);
       ClassInfo typeClassInfo = project.getClassInfo(type);
@@ -208,7 +207,7 @@ public class SVMWrapper {
     List<Class<?>> inputTypes = stmt.getInputTypes();
     List<ClassInfo> wrapperTypes = new ArrayList<ClassInfo>(inputTypes.size());
 
-    int maxLevel = Options.classMaxDepth();
+    int maxLevel = project.getConfiguration().getClassMaxDepth();
     for (int index = 0; index < inputTypes.size(); index++) {   
       Class<?> type  = inputTypes.get(index);
       ClassInfo targetType = project.getClassInfo(type);

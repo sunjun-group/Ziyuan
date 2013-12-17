@@ -30,9 +30,10 @@ public class PrimitiveGenerator {
    * @param type
    *          the type of the value we want to generate. The type must be a
    *          TzuYu primitive type. Otherwise, exceptions will be thrown.
+ * @param stringMaxLength 
    * @return
    */
-  public static Object chooseValue(Class<?> type) {
+  public static Object chooseValue(Class<?> type, int stringMaxLength) {
     if (type.equals(int.class) || type.equals(Integer.class)) {
       // Here we generate a value in the range [10, 10] for integer types
       return (random.nextInt(21) - 10);
@@ -56,10 +57,10 @@ public class PrimitiveGenerator {
     } else if (type.equals(boolean.class) || type.equals(Boolean.class)) {
       return random.nextBoolean();
     } else if (type.equals(String.class)) {
-      int length = random.nextInt(Options.stringMaxLen());
+      int length = random.nextInt(stringMaxLength);
       StringBuilder sb = new StringBuilder();
       for (int index = 0; index < length; index++) {
-        sb.append(chooseValue(char.class));
+        sb.append(chooseValue(char.class, stringMaxLength));
       }
       return sb.toString();
     } else if (type.isEnum()) {// must be enumeration type

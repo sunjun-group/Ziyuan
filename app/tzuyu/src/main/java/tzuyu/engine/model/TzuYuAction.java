@@ -1,10 +1,10 @@
 package tzuyu.engine.model;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.bool.EquivalenceChecker;
 import tzuyu.engine.runtime.RMethod;
 
@@ -37,13 +37,14 @@ public class TzuYuAction extends Action {
 	// Here we use reflection to circumvent the problem of creating an object of
 	// a subclass without knowing the subclass and without the access to the
 	// package in which the object is contained.
-	public static TzuYuAction fromMethod(MethodInfo method) {
+	public static TzuYuAction fromMethod(MethodInfo method, TzConfiguration config) {
 		try {
-			 Class<?> RMethodClazz = RMethod.class;
-			 Method methodMethod = RMethodClazz.getMethod("getMethod", Method.class);
-			Object resulObject = methodMethod.invoke(null, method.getMethod());
-//			Object resulObject = RMethod.getMethod(method.getMethod());
-			
+			Class<?> RMethodClazz = RMethod.class;
+			Method methodMethod = RMethodClazz.getMethod("getMethod",
+					Method.class, TzConfiguration.class);
+			Object resulObject = methodMethod.invoke(null, method.getMethod(), config);
+			// Object resulObject = RMethod.getMethod(method.getMethod());
+
 			return fromStatmentKind((StatementKind) resulObject);
 			// } catch (ClassNotFoundException | NoSuchMethodException |
 			// SecurityException

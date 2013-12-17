@@ -17,7 +17,8 @@ import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.utils.ReflectionUtils;
 
 /**
- * @author LLT will replace Analytics.
+ * @author LLT 
+ * replace Analytics.
  */
 public class TzProject {
 	// class name
@@ -36,6 +37,10 @@ public class TzProject {
 
 	public ClassInfo getClassInfo(Class<?> type) {
 		return typeMap.get(type);
+	}
+	
+	public Map<Class<?>, ClassInfo> getTypeMap() {
+		return typeMap;
 	}
 
 	public ClassInfo getTargetClassInfo() {

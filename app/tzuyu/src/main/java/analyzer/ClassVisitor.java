@@ -15,162 +15,161 @@ import tzuyu.engine.model.FieldInfo;
 import tzuyu.engine.model.MethodInfo;
 import tzuyu.engine.utils.PrimitiveTypes;
 
-
 public class ClassVisitor {
 
-  private Map<Class<?>, ClassInfo> classesCached = 
-      new HashMap<Class<?>, ClassInfo>();
+	private Map<Class<?>, ClassInfo> classesCached = new HashMap<Class<?>, ClassInfo>();
+	
+	public Map<Class<?>, ClassInfo> getReferencedClasses() {
+		return Collections.unmodifiableMap(classesCached);
+	}
 
-  public ClassVisitor() {
-  }
+	public ClassInfo visitClass(Class<?> type) {
+		if (classesCached.containsKey(type)) {
+			return classesCached.get(type);
+		}
 
-  public Map<Class<?>, ClassInfo> getReferencedClasses() {
-    return Collections.unmodifiableMap(classesCached);
-  }
+		if (PrimitiveTypes.isBoxedOrPrimitiveOrStringOrEnumType(type)
+				|| Filter.isInFilterList(type)) {
+			ClassInfo pritmitive = new ClassInfoPrimitive(type);
+			classesCached.put(type, pritmitive);
+			return pritmitive;
+		} else if (type.isArray()) {
+			Class<?> componentType = type.getComponentType();
 
-  public ClassInfo visitClass(Class<?> type) {
-    if (classesCached.containsKey(type)) {
-      return classesCached.get(type);
-    }
+			ClassInfo base = visitClass(componentType);
 
-    if (PrimitiveTypes.isBoxedOrPrimitiveOrStringOrEnumType(type)
-        || Filter.isInFilterList(type)) {
-      ClassInfo pritmitive = new ClassInfoPrimitive(type);
-      classesCached.put(type, pritmitive);
-      return pritmitive;
-    } else if (type.isArray()) {
-      Class<?> componentType = type.getComponentType();
+			ClassInfoArray array = new ClassInfoArray(type, base);
 
-      ClassInfo base = visitClass(componentType);
+			classesCached.put(type, array);
 
-      ClassInfoArray array = new ClassInfoArray(type, base);
+			return array;
+		} else {
+			ClassInfoReference reference = new ClassInfoReference(type);
+			classesCached.put(type, reference);
 
-      classesCached.put(type, array);
+			ClassInfo sc = null;
+			if (type.getSuperclass() != null) {
+				sc = visitClass(type.getSuperclass());
+			}
 
-      return array;
-    } else {
-      ClassInfoReference reference = new ClassInfoReference(type);
-      classesCached.put(type, reference);
+			Class<?>[] interfaces = type.getInterfaces();
+			List<ClassInfo> inList = new LinkedList<ClassInfo>();
+			for (Class<?> in : interfaces) {
+				if (Filter.filterClass(in)) {
+					inList.add(visitClass(in));
+				}
+			}
+			ClassInfo[] ins = inList.toArray(new ClassInfo[inList.size()]);
 
-      ClassInfo sc = null;
-      if (type.getSuperclass() != null) {
-        sc = visitClass(type.getSuperclass());
-      }
+			Class<?>[] innerClasses = type.getDeclaredClasses();
+			List<ClassInfo> innerList = new LinkedList<ClassInfo>();
+			for (Class<?> innerClass : innerClasses) {
+				if (Filter.filterClass(innerClass)) {
+					innerList.add(visitClass(innerClass));
+				}
+			}
+			ClassInfo[] inners = innerList.toArray(new ClassInfo[innerList
+					.size()]);
 
-      Class<?>[] interfaces = type.getInterfaces();
-      List<ClassInfo> inList = new LinkedList<ClassInfo>();
-      for (Class<?> in : interfaces) {
-        if (Filter.filterClass(in)) {
-          inList.add(visitClass(in));
-        }
-      }
-      ClassInfo[] ins = inList.toArray(new ClassInfo[inList.size()]);
+			Field[] declaredFields = type.getDeclaredFields();
+			List<FieldInfo> fieldList = new LinkedList<FieldInfo>();
+			for (Field field : declaredFields) {
+				if (Filter.filterField(field)) {
+					FieldInfo fieldInfo = visitField(reference, field);
+					fieldList.add(fieldInfo);
+				}
+			}
+			FieldInfo[] fields = fieldList.toArray(new FieldInfo[fieldList
+					.size()]);
 
-      Class<?>[] innerClasses = type.getDeclaredClasses();
-      List<ClassInfo> innerList = new LinkedList<ClassInfo>();
-      for (Class<?> innerClass : innerClasses) {
-        if (Filter.filterClass(innerClass)) {
-          innerList.add(visitClass(innerClass));
-        }
-      }
-      ClassInfo[] inners = innerList.toArray(new ClassInfo[innerList.size()]);
+			Method[] declaredMethods = type.getDeclaredMethods();
+			List<MethodInfo> methodList = new LinkedList<MethodInfo>();
+			for (Method method : declaredMethods) {
+				if (Filter.filterMethod(method)) {
+					methodList.add(visitMethod(reference, method));
+				}
+			}
+			MethodInfo[] methods = methodList.toArray(new MethodInfo[methodList
+					.size()]);
 
-      Field[] declaredFields = type.getDeclaredFields();
-      List<FieldInfo> fieldList = new LinkedList<FieldInfo>();
-      for (Field field : declaredFields) {
-        if (Filter.filterField(field)) {
-          FieldInfo fieldInfo = visitField(reference, field);
-          fieldList.add(fieldInfo);
-        }
-      }
-      FieldInfo[] fields = fieldList.toArray(new FieldInfo[fieldList.size()]);
+			Constructor<?>[] declaredCtors = type.getDeclaredConstructors();
+			List<ConstructorInfo> ctorList = new LinkedList<ConstructorInfo>();
+			for (Constructor<?> ctor : declaredCtors) {
+				if (Filter.filterConstructor(ctor)) {
+					ctorList.add(visitConstructor(reference, ctor));
+				}
+			}
+			ConstructorInfo[] ctors = ctorList
+					.toArray(new ConstructorInfo[ctorList.size()]);
 
-      Method[] declaredMethods = type.getDeclaredMethods();
-      List<MethodInfo> methodList = new LinkedList<MethodInfo>();
-      for (Method method : declaredMethods) {
-        if (Filter.filterMethod(method)) {
-          methodList.add(visitMethod(reference, method));
-        }
-      }
-      MethodInfo[] methods = methodList.toArray(new MethodInfo[methodList
-          .size()]);
+			reference.initialize(sc, ins, inners, fields, methods, ctors);
 
-      Constructor<?>[] declaredCtors = type.getDeclaredConstructors();
-      List<ConstructorInfo> ctorList = new LinkedList<ConstructorInfo>();
-      for (Constructor<?> ctor : declaredCtors) {
-        if (Filter.filterConstructor(ctor)) {
-          ctorList.add(visitConstructor(reference, ctor));
-        }
-      }
-      ConstructorInfo[] ctors = ctorList.toArray(new ConstructorInfo[ctorList
-          .size()]);
+			return reference;
+		}
+	}
 
-      reference.initialize(sc, ins, inners, fields, methods, ctors);
+	private ConstructorInfo visitConstructor(ClassInfo parent,
+			Constructor<?> ctor) {
+		Class<?>[] inputTypes = ctor.getParameterTypes();
+		ClassInfo[] parameterTypes = new ClassInfo[inputTypes.length];
+		for (int i = 0; i < inputTypes.length; i++) {
+			parameterTypes[i] = visitClass(inputTypes[i]);
+		}
 
-      return reference;
-    }
-  }
+		Class<?>[] exceptions = ctor.getExceptionTypes();
+		ClassInfo[] exceptionTypes = new ClassInfo[exceptions.length];
+		for (int i = 0; i < exceptions.length; i++) {
+			exceptionTypes[i] = visitClass(exceptions[i]);
+		}
 
-  private
-      ConstructorInfo visitConstructor(ClassInfo parent, Constructor<?> ctor) {
-    Class<?>[] inputTypes = ctor.getParameterTypes();
-    ClassInfo[] parameterTypes = new ClassInfo[inputTypes.length];
-    for (int i = 0; i < inputTypes.length; i++) {
-      parameterTypes[i] = visitClass(inputTypes[i]);
-    }
+		if (!ctor.isAccessible()) {
+			ctor.setAccessible(true);
+		}
+		int access = ctor.getModifiers();
+		String name = ctor.getName();
+		return new ConstructorInfoImpl(parent, ctor, name, parameterTypes,
+				exceptionTypes, access);
+	}
 
-    Class<?>[] exceptions = ctor.getExceptionTypes();
-    ClassInfo[] exceptionTypes = new ClassInfo[exceptions.length];
-    for (int i = 0; i < exceptions.length; i++) {
-      exceptionTypes[i] = visitClass(exceptions[i]);
-    }
-    
-    if (!ctor.isAccessible()) {
-      ctor.setAccessible(true);
-    }
-    int access = ctor.getModifiers();
-    String name = ctor.getName();
-    return new ConstructorInfoImpl(parent, ctor, name, parameterTypes,
-        exceptionTypes, access);
-  }
+	private FieldInfo visitField(ClassInfo parent, Field field) {
+		Class<?> type = field.getType();
+		ClassInfo classInfo = visitClass(type);
+		String name = field.getName();
 
-  private FieldInfo visitField(ClassInfo parent, Field field) {
-    Class<?> type = field.getType();
-    ClassInfo classInfo = visitClass(type);
-    String name = field.getName();
+		if (!field.isAccessible()) {
+			field.setAccessible(true);
+		}
+		int access = field.getModifiers();
 
-    if (!field.isAccessible()) {
-      field.setAccessible(true);
-    }
-    int access = field.getModifiers();
+		if (PrimitiveTypes.isBoxedOrPrimitiveOrStringOrEnumType(type)) {
+			return new FieldInfoPrimitive(parent, field, name, classInfo,
+					access);
+		} else if (type.isArray()) {
+			return new FieldInfoArray(parent, field, name, classInfo, access);
+		} else {
+			return new FieldInfoReference(parent, field, name, classInfo,
+					access);
+		}
+	}
 
-    if (PrimitiveTypes.isBoxedOrPrimitiveOrStringOrEnumType(type)) {
-      return new FieldInfoPrimitive(parent, field, name, classInfo, access);
-    } else if (type.isArray()) {
-      return new FieldInfoArray(parent, field, name, classInfo, access);
-    } else {
-      return new FieldInfoReference(parent, field, name, classInfo, access);
-    }
-  }
+	private MethodInfo visitMethod(ClassInfo parent, Method method) {
+		String name = method.getName();
+		int access = method.getModifiers();
+		ClassInfo returnType = visitClass(method.getReturnType());
 
-  private MethodInfo visitMethod(ClassInfo parent, Method method) {
-    String name = method.getName();
-    int access = method.getModifiers();
-    ClassInfo returnType = visitClass(method.getReturnType());
+		Class<?>[] inputTypes = method.getParameterTypes();
+		ClassInfo[] parameterTypes = new ClassInfo[inputTypes.length];
+		for (int i = 0; i < inputTypes.length; i++) {
+			parameterTypes[i] = visitClass(inputTypes[i]);
+		}
 
-    Class<?>[] inputTypes = method.getParameterTypes();
-    ClassInfo[] parameterTypes = new ClassInfo[inputTypes.length];
-    for (int i = 0; i < inputTypes.length; i++) {
-      parameterTypes[i] = visitClass(inputTypes[i]);
-    }
+		Class<?>[] excepts = method.getExceptionTypes();
+		ClassInfo[] exceptions = new ClassInfo[excepts.length];
+		for (int i = 0; i < excepts.length; i++) {
+			exceptions[i] = visitClass(excepts[i]);
+		}
 
-    Class<?>[] excepts = method.getExceptionTypes();
-    ClassInfo[] exceptions = new ClassInfo[excepts.length];
-    for (int i = 0; i < excepts.length; i++) {
-      exceptions[i] = visitClass(excepts[i]);
-    }
-
-    return new MethodInfoImpl(parent, method, name, access, returnType,
-        parameterTypes, exceptions);
-  }
+		return new MethodInfoImpl(parent, method, name, access, returnType,
+				parameterTypes, exceptions);
+	}
 }

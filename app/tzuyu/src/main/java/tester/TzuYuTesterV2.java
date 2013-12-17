@@ -4,15 +4,19 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import lstar.ReportHandler;
+
 import tzuyu.engine.TzProject;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Tester;
+import tzuyu.engine.instrument.TzuYuInstrumentor;
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.QueryResult;
 import tzuyu.engine.model.QueryTrace;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.TzuYuAction;
+import tzuyu.engine.model.TzuYuAlphabet;
 
 /**
  * This version of tester treats the constructors defined in the target class as
@@ -29,9 +33,9 @@ public class TzuYuTesterV2 implements Tester {
 
 	private HashSet<TzuYuAction> cachedUnkownResult = new HashSet<TzuYuAction>();
 
-	public TzuYuTesterV2(IInstrumentor instrument) {
+	public TzuYuTesterV2() {
 		tcg = new RandomTCGStrategy();
-		instrumentor = instrument;
+		instrumentor = new TzuYuInstrumentor();
 	}
 	
 	public void setProject(TzProject project) {
@@ -155,7 +159,7 @@ public class TzuYuTesterV2 implements Tester {
 	}
 
 	@Override
-	public void report(TzReportHandler reporter) {
-		reporter.writeTestCases(getAllTestCases());
+	public void report(ReportHandler<TzuYuAlphabet> reporter) {
+		((TzReportHandler)reporter).writeTestCases(getAllTestCases());
 	}
 }

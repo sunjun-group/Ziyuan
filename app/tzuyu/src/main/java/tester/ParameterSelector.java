@@ -3,6 +3,7 @@ package tester;
 import java.util.ArrayList;
 import java.util.List;
 
+import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzProject;
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.ConstructorInfo;
@@ -17,7 +18,6 @@ import tzuyu.engine.runtime.RArrayDeclaration;
 import tzuyu.engine.runtime.RAssignment;
 import tzuyu.engine.runtime.RConstructor;
 import tzuyu.engine.store.MethodParameterStore;
-import tzuyu.engine.utils.Options;
 import tzuyu.engine.utils.PrimitiveGenerator;
 import tzuyu.engine.utils.PrimitiveTypes;
 import tzuyu.engine.utils.Randomness;
@@ -33,9 +33,15 @@ public class ParameterSelector {
 	private MethodParameterStore parameterStore;
 
 	private TzProject project;
+	private TzConfiguration config;
 
 	public ParameterSelector() {
 		parameterStore = new MethodParameterStore();
+	}
+
+	public void setProject(TzProject project) {
+		this.project = project;
+		this.config = project.getConfiguration();
 	}
 
 	/**
@@ -101,17 +107,18 @@ public class ParameterSelector {
 	 * @return
 	 */
 	private Variable generateNewVariableForType(Class<?> type) {
-
-		if (Options.alwaysUseIntsAsObjects() && type.equals(Object.class)) {
+		assert project != null: "Project is not set to class " + this.getClass().getSimpleName();
+		
+		if (config.alwaysUseIntsAsObjects() && type.equals(Object.class)) {
 			type = int.class;
 		}
 
 		if (PrimitiveTypes.isBoxedOrPrimitiveOrStringOrEnumType(type)) {
 
 			// Construct the primitive statement which returns the variable
-			Object value = PrimitiveGenerator.chooseValue(type);
+			Object value = PrimitiveGenerator.chooseValue(type, config.getStringMaxLength());
 			StatementKind stmt = RAssignment
-					.statementForAssignment(type, value);
+					.statementForAssignment(type, value, config);
 			// For primitive assign statement, we add an empty input variables
 			TzuYuAction gStmt = TzuYuAction.fromStatmentKind(stmt);
 			Sequence seq = new Sequence().extend(gStmt,
@@ -124,7 +131,7 @@ public class ParameterSelector {
 			boolean retNull = Randomness.nextRandomBool();
 			if (retNull) {
 				StatementKind stmt = RAssignment.statementForAssignment(type,
-						null);
+						null, config);
 				TzuYuAction gStmt = TzuYuAction.fromStatmentKind(stmt);
 				Sequence seq = new Sequence().extend(gStmt,
 						new ArrayList<Variable>());
@@ -158,21 +165,20 @@ public class ParameterSelector {
 				}
 
 				// Construct the statement which create the return variable
-				RArrayDeclaration array = new RArrayDeclaration(elementType,
-						length);
+				RArrayDeclaration array = initRArrayDeclaration(elementType, length);
 				TzuYuAction gStmt = TzuYuAction.fromStatmentKind(array);
 				Sequence seq = paramSeq.extend(gStmt, parameters);
 				// Construct the return variable
 				Variable var = new Variable(seq, seq.size() - 1);
 				return var;
 			} else { // Object type
-				ClassInfo ci = ensureProject().getClassInfo(type);
+				ClassInfo ci = project.getClassInfo(type);
 				ConstructorInfo[] ctors = ci.getConstructors();
 
 				if (ctors.length == 0) {
 					// we choose an accessible constructor of a subclass of this
 					// type
-					List<ClassInfo> subClasses = ensureProject()
+					List<ClassInfo> subClasses = project
 							.getAccessibleClasses(type);
 					if (subClasses.size() == 0) {
 						// TODO what to do if there is no accessible constructor
@@ -211,7 +217,7 @@ public class ParameterSelector {
 				}
 				// Construct the statement which creates the variable
 				RConstructor rctor = RConstructor.getCtor(ctors[index]
-						.getConstructor());
+						.getConstructor(), config);
 				TzuYuAction gStmt = TzuYuAction.fromStatmentKind(rctor);
 				Sequence seq = paramSeq.extend(gStmt, parameters);
 
@@ -224,17 +230,18 @@ public class ParameterSelector {
 	}
 
 	private Variable generateNewVariableForCtor(Class<?> type) {
-
-		if (Options.alwaysUseIntsAsObjects() && type.equals(Object.class)) {
+		assert project != null: "Project is not set to class " + this.getClass().getSimpleName();
+		
+		if (config.alwaysUseIntsAsObjects() && type.equals(Object.class)) {
 			type = int.class;
 		}
 
 		if (PrimitiveTypes.isBoxedOrPrimitiveOrStringOrEnumType(type)) {
 
 			// Construct the primitive statement which returns the variable
-			Object value = PrimitiveGenerator.chooseValue(type);
+			Object value = PrimitiveGenerator.chooseValue(type, config.getStringMaxLength());
 			StatementKind stmt = RAssignment
-					.statementForAssignment(type, value);
+					.statementForAssignment(type, value, config);
 			// For primitive assign statement, we add an empty input variables
 			TzuYuAction gStmt = TzuYuAction.fromStatmentKind(stmt);
 			Sequence seq = new Sequence().extend(gStmt,
@@ -248,7 +255,7 @@ public class ParameterSelector {
 			boolean retNull = false;
 			if (retNull) {
 				StatementKind stmt = RAssignment.statementForAssignment(type,
-						null);
+						null, config);
 				TzuYuAction gStmt = TzuYuAction.fromStatmentKind(stmt);
 				Sequence seq = new Sequence().extend(gStmt,
 						new ArrayList<Variable>());
@@ -282,21 +289,20 @@ public class ParameterSelector {
 				}
 
 				// Construct the statement which create the return variable
-				RArrayDeclaration array = new RArrayDeclaration(elementType,
-						length);
+				RArrayDeclaration array = initRArrayDeclaration(elementType, length);
 				TzuYuAction gStmt = TzuYuAction.fromStatmentKind(array);
 				Sequence seq = paramSeq.extend(gStmt, parameters);
 				// Construct the return variable
 				Variable var = new Variable(seq, seq.size() - 1);
 				return var;
 			} else { // Object type
-				ClassInfo ci = ensureProject().getClassInfo(type);
+				ClassInfo ci = project.getClassInfo(type);
 				ConstructorInfo[] ctors = ci.getConstructors();
 
 				if (ctors.length == 0) {
 					// we choose an accessible constructor of a subclass of this
 					// type
-					List<ClassInfo> subClasses = ensureProject()
+					List<ClassInfo> subClasses = project
 							.getAccessibleClasses(type);
 					if (subClasses.size() == 0) {
 						// TODO what to do if there is no accessible constructor
@@ -335,7 +341,7 @@ public class ParameterSelector {
 				}
 				// Construct the statement which creates the variable
 				RConstructor rctor = RConstructor.getCtor(ctors[index]
-						.getConstructor());
+						.getConstructor(), config);
 				TzuYuAction gStmt = TzuYuAction.fromStatmentKind(rctor);
 				Sequence seq = paramSeq.extend(gStmt, parameters);
 
@@ -345,6 +351,13 @@ public class ParameterSelector {
 				return var;
 			}
 		}
+	}
+
+	private RArrayDeclaration initRArrayDeclaration(Class<?> elementType,
+			int length) {
+		RArrayDeclaration rArrayDeclaration = new RArrayDeclaration(elementType,
+						length, config);
+		return rArrayDeclaration;
 	}
 
 	/*
@@ -467,7 +480,8 @@ public class ParameterSelector {
 	 * @return
 	 */
 	public InputAndSuccessFlag selectCtor(Class<?> target) {
-
+		assert project != null: "Project is not set to class " + this.getClass().getSimpleName();
+		
 		List<Sequence> sequences = new ArrayList<Sequence>(1);
 
 		List<VarIndex> variables = new ArrayList<VarIndex>(1);
@@ -476,7 +490,7 @@ public class ParameterSelector {
 			return new InputAndSuccessFlag(false, null, null);
 		}
 
-		ConstructorInfo[] ctors = ensureProject().getClassInfo(target)
+		ConstructorInfo[] ctors = project.getClassInfo(target)
 				.getConstructors();
 		// TODO if there is no accessible constructors
 		// we should try to use the static methods which returns an
@@ -484,7 +498,8 @@ public class ParameterSelector {
 		// cannot generate a constructor for this, thus return null.
 		if (ctors.length == 0) {
 			// we should choose a constructor of a subclass of this type.
-			List<ClassInfo> subClasses = ensureProject().getAccessibleClasses(target);
+			List<ClassInfo> subClasses = project.getAccessibleClasses(
+					target);
 			if (subClasses.size() == 0) {
 				throw new TzuYuException(
 						"no accessible constructor for class: " + target);
@@ -519,7 +534,7 @@ public class ParameterSelector {
 		}
 		// Construct the statement which creates the variable
 		RConstructor rctor = RConstructor
-				.getCtor(ctors[index].getConstructor());
+				.getCtor(ctors[index].getConstructor(), config);
 		TzuYuAction gStmt = TzuYuAction.fromStatmentKind(rctor);
 		Sequence seq = paramSeq.extend(gStmt, parameters);
 
@@ -614,16 +629,5 @@ public class ParameterSelector {
 			}
 		}
 		return inputSizes;
-	}
-
-	public void setProject(TzProject project) {
-		this.project = project;
-	}
-
-	private TzProject ensureProject() {
-		if (project == null) {
-			throw new TzuYuException("Tzuyu project not set for tester");
-		}
-		return project;
 	}
 }

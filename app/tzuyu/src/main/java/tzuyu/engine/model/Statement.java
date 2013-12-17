@@ -10,79 +10,78 @@ import java.util.List;
  */
 public class Statement {
 
-  public final TzuYuAction statement;
-  private final List<RelativeNegativeIndex> inputVars;
+	public final TzuYuAction statement;
+	private final List<RelativeNegativeIndex> inputVars;
 
-  public Statement(TzuYuAction stmt, List<RelativeNegativeIndex> indexList) {
-    if (!checkParameterCompatability(stmt, indexList)) {
-      throw new TzuYuException("parameter types do not match");
-    }
-    this.statement = stmt;
-    this.inputVars = indexList;
-  }
+	public Statement(TzuYuAction stmt, List<RelativeNegativeIndex> indexList) {
+		if (!checkParameterCompatability(stmt, indexList)) {
+			throw new TzuYuException("parameter types do not match");
+		}
+		this.statement = stmt;
+		this.inputVars = indexList;
+	}
 
-  public List<RelativeNegativeIndex> getInputVars() {
-    return this.inputVars;
-  }
+	public List<RelativeNegativeIndex> getInputVars() {
+		return this.inputVars;
+	}
 
-  private boolean checkParameterCompatability(
-      TzuYuAction stmt, List<RelativeNegativeIndex> params) {
-    if (stmt.getInputTypes().size() != params.size())
-      return false;
-    for (int i = 0; i < params.size(); i++) {
-      // check type compatibility
-    }
-    return true;
-  }
+	private boolean checkParameterCompatability(TzuYuAction stmt,
+			List<RelativeNegativeIndex> params) {
+		if (stmt.getInputTypes().size() != params.size())
+			return false;
+		for (int i = 0; i < params.size(); i++) {
+			// check type compatibility
+		}
+		return true;
+	}
 
-  public TzuYuAction getAction() {
-    return statement;
-  }
+	public TzuYuAction getAction() {
+		return statement;
+	}
 
-  public Class<?> getOutputType() {
-    return statement.getOutputType();
-  }
+	public Class<?> getOutputType() {
+		return statement.getOutputType();
+	}
 
-  public boolean isVoidMethodCall() {
-    return statement.getOutputType().equals(void.class);
-  }
+	public boolean isVoidMethodCall() {
+		return statement.getOutputType().equals(void.class);
+	}
 
-  public boolean isPrimitive() {
-    return statement.isPrimitive();
-  }
+	public boolean isPrimitive() {
+		return statement.isPrimitive();
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (o == this) {
-      return true;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
 
-    if (!(o instanceof Statement)) {
-      return false;
-    }
+		if (!(o instanceof Statement)) {
+			return false;
+		}
 
-    Statement obj = (Statement) o;
+		Statement obj = (Statement) o;
 
-    return this.inputVars.equals(obj.inputVars);
-  }
+		return this.inputVars.equals(obj.inputVars);
+	}
 
-  @Override
-  public int hashCode() {
-    return inputVars.hashCode();
-  }
+	@Override
+	public int hashCode() {
+		return inputVars.hashCode();
+	}
 
-  public List<Class<?>> getInputTypes() {
-    return statement.getInputTypes();
-  }
+	public List<Class<?>> getInputTypes() {
+		return statement.getInputTypes();
+	}
 
-  @Override
-  public String toString() {
-    return statement.toString();
-  }
+	@Override
+	public String toString() {
+		return statement.toString();
+	}
 
-  public void appendCode(Variable newVar, List<Variable> inputs, 
-      StringBuilder b) {
-    statement.getAction().appendCode(newVar, inputs, b);
-    
-  }
+	public void appendCode(Variable newVar, List<Variable> inputs,
+			StringBuilder b) {
+		statement.getAction().appendCode(newVar, inputs, b);
+	}
 }

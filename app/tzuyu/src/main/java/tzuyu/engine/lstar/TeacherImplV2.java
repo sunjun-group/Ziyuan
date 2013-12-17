@@ -12,11 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lstar.LStarException;
+import lstar.ReportHandler;
 import lstar.LStarException.Type;
 import lstar.Teacher;
 import refiner.Witness;
 import tzuyu.engine.TzLogger;
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzuyuAlgorithmFactory;
 import tzuyu.engine.bool.True;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Refiner;
@@ -36,31 +37,24 @@ import tzuyu.engine.model.dfa.TracesPair;
  * @author LLT extracted from QueryHandlerV2, and only keep the part that
  *         implement the Lstar teacher.
  */
-public class TeacherImplV2 implements Teacher {
+public class TeacherImplV2 implements Teacher<TzuYuAlphabet> {
 	private int membershipCount = 0;
 	private int candidateCount = 1;
 	private int maxMemberSize = 0;
 
-	private Tester tester;
-	// TODO-LLT : To refactor later.
-	private Refiner refiner;
+	private Tester tester = TzuyuAlgorithmFactory.getTester();
+	private Refiner<TzuYuAlphabet> refiner = TzuyuAlgorithmFactory.getRefiner();
 	private TzuYuAlphabet sigma;
-	private TzProject project;
 
 	public void setInitAlphabet(TzuYuAlphabet sigma) {
 		this.sigma = sigma;
-	}
-
-	public void setRefiner(Refiner refiner) {
-		this.refiner = refiner;
-	}
-
-	public void setTester(Tester tester) {
-		this.tester = tester;
+		refiner.init(sigma);
+		tester.setProject(sigma.getProject());
 	}
 
 	@Override
 	public boolean membershipQuery(Trace str) throws LStarException {
+		assert sigma != null : "Sigma in teacherImplV2 is not set!!";
 		membershipCount++;
 		// Update maximum membership query size
 		if (str.size() > maxMemberSize) {
@@ -204,9 +198,9 @@ public class TeacherImplV2 implements Teacher {
 			throw new LStarException(Type.RestartLearning);
 		}
 	}
-
+	
 	@Override
-	public void report(TzReportHandler reporter) {
+	public void report(ReportHandler<TzuYuAlphabet> reporter) {
 		// report it output
 		TzLogger.log()
 				.info("Total NO. of membership queries:", membershipCount)
@@ -215,10 +209,4 @@ public class TeacherImplV2 implements Teacher {
 		refiner.report(reporter);
 		tester.report(reporter);
 	}
-
-	@Override
-	public void setProject(TzProject project) {
-		this.project = project;
-	}
-
 }

@@ -1,10 +1,9 @@
 package lstar;
 
-import tzuyu.engine.TzProject;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.model.Trace;
+import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.dfa.DFA;
-import lstar.Teacher;
 
 /**
  * This class is a testing teacher which is implemented for the example in the
@@ -13,7 +12,7 @@ import lstar.Teacher;
  * @author Spencer Xiao
  * 
  */
-public class TestTeacher implements Teacher {
+public class TestTeacher implements Teacher<TzuYuAlphabet> {
 
 	public boolean membershipQuery(Trace str) {
 		if (str.isEpsilon()) {
@@ -59,12 +58,12 @@ public class TestTeacher implements Teacher {
 	}
 
 	@Override
-	public void report(TzReportHandler reporter) {
+	public void report(ReportHandler<TzuYuAlphabet> reporter) {
 		
 	}
 
 	@Override
-	public void setProject(TzProject project) {
+	public void setInitAlphabet(TzuYuAlphabet sig) {
 		
 	}
 

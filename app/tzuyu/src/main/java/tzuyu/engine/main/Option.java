@@ -15,7 +15,6 @@ import java.util.Map;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzProject;
 
-// TODO [LLT]: remove global variable
 public abstract class Option<T extends Object> {
 
 	private static final String targetHelpStr = " the target class for which to learn specifications.";

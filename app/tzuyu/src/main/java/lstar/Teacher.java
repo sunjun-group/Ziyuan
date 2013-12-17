@@ -2,9 +2,9 @@ package lstar;
 
 import org.apache.log4j.Logger;
 
-import tzuyu.engine.iface.HasTzProject;
-import tzuyu.engine.iface.HasTzReport;
+import tzuyu.engine.iface.HasReport;
 import tzuyu.engine.model.Trace;
+import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.dfa.DFA;
 
 /**
@@ -14,7 +14,7 @@ import tzuyu.engine.model.dfa.DFA;
  * @author Spencer Xiao
  * 
  */
-public interface Teacher extends HasTzReport, HasTzProject {
+public interface Teacher<A extends Alphabet> extends HasReport<A> {
 	static final Logger logger = Logger.getRootLogger();
 	/**
 	 * If the @param str is accepted by the unknown DFA then return true; If the
@@ -40,5 +40,7 @@ public interface Teacher extends HasTzReport, HasTzProject {
 	 *         (not null) LString if the tow equal.
 	 */
 	public Trace candidateQuery(DFA dfa) throws LStarException;
+
+	public void setInitAlphabet(A sig);
 
 }

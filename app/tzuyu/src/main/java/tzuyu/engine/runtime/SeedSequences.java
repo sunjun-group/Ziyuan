@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.utils.PrimitiveTypes;
 import tzuyu.engine.utils.ReflectionUtils;
@@ -31,20 +32,22 @@ public final class SeedSequences {
   /**
    * A set of sequences that create primitive values, e.g. int i = 0; or String
    * s = "hi";
+ * @param config 
    */
-  public static Set<Sequence> defaultSeeds() {
+  public static Set<Sequence> defaultSeeds(TzConfiguration config) {
     List<Object> seeds = new ArrayList<Object>(primitiveSeeds);
-    return SeedSequences.objectsToSeeds(seeds);
+    return SeedSequences.objectsToSeeds(seeds, config);
   }
 
   /**
    * Precondition: objs consists exclusively of boxed primitives and strings.
    * Returns a set of sequences that create the given objects.
+ * @param config 
    */
-  private static Set<Sequence> objectsToSeeds(Collection<Object> objs) {
+  private static Set<Sequence> objectsToSeeds(Collection<Object> objs, TzConfiguration config) {
     Set<Sequence> retval = new LinkedHashSet<Sequence>();
     for (Object o : objs) {
-      retval.add(RAssignment.sequenceForPrimitive(o));
+      retval.add(RAssignment.sequenceForPrimitive(o, config));
     }
     return retval;
   }

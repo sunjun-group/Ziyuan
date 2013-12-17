@@ -53,7 +53,7 @@ public class ArgParser {
     }
   }
 
-  public Option parseOption(Option opt) {
+  public Option<?> parseOption(Option<?> opt) {
     while (true) {
       String val = match("");
       if (val == null) {

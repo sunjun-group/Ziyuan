@@ -3,6 +3,8 @@ package refiner;
 import java.util.List;
 import java.util.Map;
 
+import lstar.ReportHandler;
+
 import tzuyu.engine.TzProject;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Refiner;
@@ -12,6 +14,7 @@ import tzuyu.engine.model.QueryResult;
 import tzuyu.engine.model.QueryTrace;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.model.TzuYuAction;
+import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.dfa.Transition;
 import tzuyu.engine.store.IQueryTraceStore;
@@ -25,7 +28,7 @@ import tzuyu.engine.utils.Pair;
  * @author Spencer Xiao
  * 
  */
-public class TzuYuRefiner implements Refiner {
+public class TzuYuRefiner implements Refiner <TzuYuAlphabet>{
 	private SVMWrapper classifier;
 	private IQueryTraceStore traceStore;
 	private TzProject project;
@@ -206,13 +209,14 @@ public class TzuYuRefiner implements Refiner {
 	}
 	
 	@Override
-	public void report(TzReportHandler reporter) {
+	public void report(ReportHandler<TzuYuAlphabet> reporter) {
 		// TODO Auto-generated method stub
 		
 	}
 	
 	@Override
-	public void setProject(TzProject project) {
-		this.project = project;
+	public void init(TzuYuAlphabet sigma) {
+		// TODO Auto-generated method stub
+		
 	}
 }

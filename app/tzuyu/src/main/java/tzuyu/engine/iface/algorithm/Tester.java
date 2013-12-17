@@ -9,16 +9,17 @@
 package tzuyu.engine.iface.algorithm;
 
 import tzuyu.engine.TzProject;
-import tzuyu.engine.iface.HasTzReport;
+import tzuyu.engine.iface.HasReport;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.QueryResult;
 import tzuyu.engine.model.TzuYuAction;
+import tzuyu.engine.model.TzuYuAlphabet;
 
 /**
  * @author LLT
  * 
  */
-public interface Tester extends HasTzReport {
+public interface Tester extends HasReport<TzuYuAlphabet> {
 
 	QueryResult test(Query query);
 

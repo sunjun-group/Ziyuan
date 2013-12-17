@@ -3,6 +3,7 @@ package tester;
 import java.util.ArrayList;
 import java.util.List;
 
+import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzProject;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.RelativeNegativeIndex;
@@ -15,7 +16,6 @@ import tzuyu.engine.model.TzuYuException;
 import tzuyu.engine.model.VarIndex;
 import tzuyu.engine.model.Variable;
 import tzuyu.engine.store.MethodParameterStore;
-import tzuyu.engine.utils.Options;
 import tzuyu.engine.utils.Pair;
 import tzuyu.engine.utils.Permutation;
 import tzuyu.engine.utils.Randomness;
@@ -36,6 +36,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 
 	private MethodParameterStore parameterStore;
 	private TzProject project;
+	private TzConfiguration config;
 
 	public RandomTCGStrategy() {
 		selector = new ParameterSelectorV2();
@@ -45,6 +46,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 
 	public void setProject(TzProject project) {
 		this.project = project;
+		this.config = project.getConfiguration();
 		selector.setProject(project);
 	}
 
@@ -79,7 +81,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 			boolean noArgument = stmt.getAction().hasNoArguments();
 			// ensure the statement will be executed once
 			boolean hasArg = true;
-			for (int count = 0; count < Options.tracesPerQuery() && hasArg; count++) {
+			for (int count = 0; count < config.getTestsPerQuery() && hasArg; count++) {
 				hasArg = !noArgument;
 				List<Variable> rawParams = generateParamsForStatement(receiver,
 						stmt);
@@ -223,7 +225,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 			boolean noArgument = stmt.getAction().hasNoArguments();
 			// ensure the statement will be executed once
 			boolean hasArg = true;
-			for (int count = 0; count < Options.tracesPerQuery() && hasArg; count++) {
+			for (int count = 0; count < config.getTestsPerQuery() && hasArg; count++) {
 				hasArg = !noArgument;
 				List<Variable> rawParams = generateParamsForStatement2(
 						receiver, stmt);

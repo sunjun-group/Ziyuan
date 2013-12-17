@@ -4,10 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import lstar.LStarException.Type;
-
 import tzuyu.engine.TzLogger;
-import tzuyu.engine.TzuyuAlgorithmFactory;
-import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Learner;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.model.TzuYuException;
@@ -22,36 +19,35 @@ import tzuyu.engine.model.dfa.Transition;
  * @author Spencer Xiao
  * 
  */
-public class LStar implements Learner {
+public class LStar<A extends Alphabet> implements Learner<A> {
 
 	// The teacher for the L* algorithm
-//	private Teacher teacher = TzuyuAlgorithmFactory.getTeacher();
-	private Teacher teacher;
-	//
+	private Teacher<A> teacher;
+
 	private ObservationTable otable;
 
 	// The alphabet for this L* algorithm
-	private Alphabet sigma;
+	private A sigma;
 
 	private DFA lastDFA;
 
-	// private boolean runnable;
-
 	public LStar() {
 		this.otable = new ObservationTable();
-		// runnable = false;
 	}
-
-	public void setAlphabet(Alphabet sig) {
-		this.sigma = sig;
-		this.otable.clear();
-	}
-
+	
 	public DFA getDFA() {
 		return lastDFA;
 	}
 
+	public void setAlphabet(A sig) {
+		this.sigma = sig;
+		teacher.setInitAlphabet(sig);
+	}
+
 	public DFA startLearning() {
+		assert sigma != null : "Init Alphabet for L* learner is not set";
+		reset();
+		
 		int iterationCount = 0;
 		boolean restart;
 		do {
@@ -76,6 +72,11 @@ public class LStar implements Learner {
 		} while (restart);
 
 		return getDFA();
+	}
+
+	private void reset() {
+		this.lastDFA = null;
+		this.otable.clear();
 	}
 
 	private void learn() throws LStarException {
@@ -174,7 +175,7 @@ public class LStar implements Learner {
 	 * 
 	 * @param conflict
 	 *            the string whose row is not included in the S row.
-	 * @throws LStarException 
+	 * @throws LStarException
 	 */
 	private void updateWhenOpen(Trace conflict) throws LStarException {
 		// add the conflict into the S set
@@ -329,7 +330,7 @@ public class LStar implements Learner {
 	 * refine the observation table according to the counter example
 	 * 
 	 * @param cea
-	 * @throws LStarException 
+	 * @throws LStarException
 	 */
 	private void refineWithCounterExample(Trace cea) throws LStarException {
 		// Generate all prefix except the epsilon prefix which already exists
@@ -379,24 +380,23 @@ public class LStar implements Learner {
 	 * report all output of the learning.
 	 */
 	@Override
-	public void report(TzReportHandler reporter) {
+	public void report(ReportHandler<A> reporter) {
 		if (lastDFA == null) {
 			return;
 		}
 		// last DFA
 		TzLogger.log()
-			.info("Alphabet Size in Final DFA:", (lastDFA.sigma.getSize() -1))
-			.info("Number of States in Final DFA:", lastDFA.getStateSize());
-	    lastDFA.print();
-	    
-		reporter.reportDFA(lastDFA);
+				.info("Alphabet Size in Final DFA:",
+						(lastDFA.sigma.getSize() - 1))
+				.info("Number of States in Final DFA:", lastDFA.getStateSize());
+		lastDFA.print();
+
+		reporter.reportDFA(lastDFA, sigma);
 		// make report from all it component
 		teacher.report(reporter);
 	}
 
-	@Deprecated
-	// only for test
-	public void setTeacher(Teacher teacher) {
+	public void setTeacher(Teacher<A> teacher) {
 		this.teacher = teacher;
 	}
 }

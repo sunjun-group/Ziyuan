@@ -16,7 +16,7 @@ public class Learn implements CommandHandler {
 	@Override
 	public boolean handle(Command command) {
 		TzProject project = processCommand(command);
-		CommandLineReportHandler reporter = new CommandLineReportHandler();
+		CommandLineReportHandler reporter = new CommandLineReportHandler(project.getConfiguration());
 		
 		Tzuyu tzuyuEngine = new Tzuyu(project, reporter);
 		tzuyuEngine.run();

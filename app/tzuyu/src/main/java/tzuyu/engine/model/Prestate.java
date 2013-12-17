@@ -65,7 +65,7 @@ public class Prestate {
 
       ClassInfo param = project.getClassInfo(type);
 
-      ObjectInfo val = param.clone(values.get(index));
+      ObjectInfo val = param.clone(values.get(index), project.getConfiguration());
       prestate.addValue(val);
     }
 

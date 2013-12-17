@@ -8,22 +8,27 @@
 
 package tzuyu.engine;
 
+import lstar.Teacher;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Learner;
+import tzuyu.engine.model.TzuYuAlphabet;
 
 /**
- * @author LLT Driver of the Tzuyu engine.
+ * @author LLT 
+ * Driver of the Tzuyu engine.
  */
 public class Tzuyu {
 
-	private Learner learner;
+	private Learner<TzuYuAlphabet> learner = TzuyuAlgorithmFactory.getLearner();
+	private Teacher<TzuYuAlphabet> teacher = TzuyuAlgorithmFactory.getTeacher();
 	private TzProject project;
 	private TzReportHandler reporter;
 
 	public Tzuyu(TzProject project, TzReportHandler reporter) {
 		this.project = project;
 		this.reporter = reporter;
-		learner = TzuyuAlgorithmFactory.getLearner(project);
+		learner.setTeacher(teacher);
+		learner.setAlphabet(new TzuYuAlphabet(project));
 	}
 
 	/**

@@ -8,12 +8,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.TzuYuException;
 import tzuyu.engine.utils.CollectionsExt;
 import tzuyu.engine.utils.Globals;
 import tzuyu.engine.utils.Log;
-import tzuyu.engine.utils.Options;
 
 
 public class JUnitFileWriter {
@@ -28,6 +28,8 @@ public class JUnitFileWriter {
   
   private int testsPerFile;
   
+  private TzConfiguration config;
+  
   private Map<String, List<List<Sequence>>> createdSequencesAndClasses =
       new LinkedHashMap<String, List<List<Sequence>>>();
   
@@ -37,6 +39,10 @@ public class JUnitFileWriter {
     this.packageName = packageName;
     this.junitDirName = dirName;
     this.testsPerFile = testcasesPerFile;
+  }
+  
+  public void config(TzConfiguration config) {
+	  this.config = config;
   }
   
   public List<File> createJUnitTestFiles(List<Sequence> sequences) {
@@ -59,9 +65,9 @@ public class JUnitFileWriter {
   
   
   private File writeSubSuite(List<Sequence> sequences, String junitClassName) {
-    if (Options.prettyPrint()) {
+    if (config.isPrettyPrint()) {
       SequencePrettyPrinter printer = 
-          new SequencePrettyPrinter(sequences, packageName, junitClassName);
+          new SequencePrettyPrinter(sequences, packageName, junitClassName, config);
         return printer.createFile(getDir().getAbsolutePath());
     }
     

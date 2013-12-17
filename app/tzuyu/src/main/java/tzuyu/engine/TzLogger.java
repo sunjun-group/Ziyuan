@@ -35,4 +35,5 @@ public class TzLogger {
 		logger.error(StringUtils.spaceJoin(msgs));
 		return this;
 	}
+	
 }
