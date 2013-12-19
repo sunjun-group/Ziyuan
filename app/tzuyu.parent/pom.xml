@@ -43,6 +43,11 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>tzuyu</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>log4j</groupId>
 				<artifactId>log4j</artifactId>
 				<version>${log4j-version}</version>

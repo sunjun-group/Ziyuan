@@ -9,7 +9,10 @@ mvn eclipse:eclipse
 
 Eclipse:
 - install m2e plugin
-- install 
+- install svn plugin
+- edit maven setting [open Window/Preferences/Maven/User setting:  point maven setting to ..\trunk\etc\maven\settings.xml]
+
+
 
 Modules to complete:
 - test

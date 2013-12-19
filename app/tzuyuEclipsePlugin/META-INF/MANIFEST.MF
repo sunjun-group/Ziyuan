@@ -13,3 +13,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Localization: plugin
 Import-Package: org.eclipse.jdt.internal.ui.javaeditor,
  org.eclipse.ui.texteditor
+Bundle-ClassPath: .,
+ tzuyuCore/,
+ tzuyuLib/commons-lang-2.6.jar,
+ tzuyuLib/log4j-1.2.17.jar

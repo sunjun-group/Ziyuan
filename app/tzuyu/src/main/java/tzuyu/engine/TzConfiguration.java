@@ -13,7 +13,7 @@ import java.io.File;
 import tzuyu.engine.utils.Globals;
 
 /**
- * @author LLT will be replace Option (not be global variable anymore).
+ * @author LLT
  */
 public class TzConfiguration {
 	// TODO [LLT]: should these constants be configurable or not?
