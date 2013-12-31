@@ -16,13 +16,13 @@ package tzuyu.engine.utils;
 public class CollectionUtils {
 	private CollectionUtils() {}
 
-	public static <T extends Enum<?>> boolean existIn(T val, T... valList) {
+	public static <T> boolean existIn(T val, T... valList) {
 		return existInArray(val, valList);
 	}
 	
-	public static <T extends Enum<?>> boolean existInArray(T val, T[] valList) {
+	public static <T> boolean existInArray(T val, T[] valList) {
 		for (T valInList : valList) {
-			if (val == valInList) {
+			if (val.equals(valInList)) {
 				return true;
 			}
 		}

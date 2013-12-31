@@ -1,4 +1,4 @@
-package tzuyu.plugin.constant;
+package tzuyu.plugin.core.constant;
 
 
 public enum JElementType {

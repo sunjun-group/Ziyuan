@@ -44,6 +44,11 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 		teacher.setInitAlphabet(sig);
 	}
 
+	/**
+	 * every time starting learning, we need to reset every state and variable in the object.
+	 * make sure all clean
+	 * TODO [LLT]: to recheck. 
+	 */
 	public DFA startLearning() {
 		assert sigma != null : "Init Alphabet for L* learner is not set";
 		reset();
@@ -55,7 +60,6 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 			try {
 				logger.info("-------restart iteration " + iterationCount++
 						+ "-------");
-				// restart = start();
 				learn();
 			} catch (TzuYuException tzuyu) {
 				// handle TzuYu specific exceptions here

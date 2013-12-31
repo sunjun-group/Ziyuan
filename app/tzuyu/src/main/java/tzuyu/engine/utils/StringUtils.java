@@ -26,4 +26,8 @@ public class StringUtils {
 		return org.apache.commons.lang.StringUtils.join(Arrays.asList(params),
 				separator);
 	}
+	
+	public static <T extends Object> String dotJoin(T[] params) {
+		return org.apache.commons.lang.StringUtils.join(params, ".");
+	}
 }

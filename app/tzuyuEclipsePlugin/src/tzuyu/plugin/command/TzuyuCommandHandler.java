@@ -5,28 +5,45 @@
  * 	Author: SUTD
  *  Version:  $Revision: 1 $
  */
-package tzuyu.plugin.action;
 
-import org.eclipse.jface.action.IAction;
+package tzuyu.plugin.command;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 import tzuyu.plugin.core.dto.RunConfiguration;
 import tzuyu.plugin.core.dto.WorkObject;
 
 /**
  * @author LLT
+ * 
  */
-public abstract class TzuyuAction<C extends RunConfiguration> implements IObjectActionDelegate {
+public abstract class TzuyuCommandHandler<C extends RunConfiguration> extends
+		AbstractHandler {
 	// current selection
 	protected ISelection selection;
-	private IWorkbenchPart targetPart;
 
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		ISelection selection = HandlerUtil.getActiveMenuSelection(event);
+		
+		if (selection == null || selection.isEmpty()) {
+			openDialog("selection is null or empty");
+		} else if (selection instanceof IStructuredSelection) {
+			WorkObject workObject = WorkObject
+					.getResourcesPerProject((IStructuredSelection) selection);
+			run(workObject, initConfiguration());
+		}
+		return null;
+	}
+	
 	protected void openDialog(String msg) {
 		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getShell();
@@ -36,27 +53,9 @@ public abstract class TzuyuAction<C extends RunConfiguration> implements IObject
 		dialog.open();
 	}
 
-	@Override
-	public void run(IAction action) {
-		if (selection == null || selection.isEmpty()) {
-			openDialog("selection is null or empty");
-		} else if (selection instanceof IStructuredSelection) {
-			WorkObject workObject = WorkObject.getResourcesPerProject((IStructuredSelection) selection);
-			run(workObject, initConfiguration());
-		}
-	}
-	
 	protected abstract void run(WorkObject workObject, C config);
 
 	protected abstract C initConfiguration();
 
-	@Override
-	public void selectionChanged(IAction action, ISelection selection) {
-		this.selection = selection;
-	}
 
-	@Override
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		this.targetPart = targetPart;
-	}
 }

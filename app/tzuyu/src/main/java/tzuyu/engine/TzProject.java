@@ -13,11 +13,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import analyzer.ClassAnalyzer;
+
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.utils.ReflectionUtils;
 
 /**
  * @author LLT 
+ * @author Spencer Xiao
  * replace Analytics.
  */
 public class TzProject {
@@ -29,6 +32,15 @@ public class TzProject {
 	private Class<?> target;
 
 	private TzConfiguration configuration;
+	
+	public TzProject() {
+		
+	}
+	
+	public TzProject(Class<?> targetClass, List<String> methods) {
+		ClassAnalyzer analyzer = new ClassAnalyzer(targetClass, methods);
+		setClasses(targetClass, analyzer.analysis());
+	}
 
 	public void setClasses(Class<?> targetClass, Map<Class<?>, ClassInfo> map) {
 		typeMap = map;

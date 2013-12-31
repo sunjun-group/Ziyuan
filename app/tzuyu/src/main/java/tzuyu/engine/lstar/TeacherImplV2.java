@@ -12,14 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lstar.LStarException;
-import lstar.ReportHandler;
 import lstar.LStarException.Type;
+import lstar.ReportHandler;
 import lstar.Teacher;
 import refiner.Witness;
 import tzuyu.engine.TzLogger;
-import tzuyu.engine.TzuyuAlgorithmFactory;
+import tzuyu.engine.TzuyuFactory;
 import tzuyu.engine.bool.True;
-import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Refiner;
 import tzuyu.engine.iface.algorithm.Tester;
 import tzuyu.engine.model.Formula;
@@ -34,16 +33,17 @@ import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.dfa.TracesPair;
 
 /**
- * @author LLT extracted from QueryHandlerV2, and only keep the part that
- *         implement the Lstar teacher.
+ * @author LLT 
+ * extracted from QueryHandlerV2, and only keep the part that
+ *         implements the Lstar teacher.
  */
 public class TeacherImplV2 implements Teacher<TzuYuAlphabet> {
 	private int membershipCount = 0;
 	private int candidateCount = 1;
 	private int maxMemberSize = 0;
 
-	private Tester tester = TzuyuAlgorithmFactory.getTester();
-	private Refiner<TzuYuAlphabet> refiner = TzuyuAlgorithmFactory.getRefiner();
+	private Tester tester = TzuyuFactory.getTester();
+	private Refiner<TzuYuAlphabet> refiner = TzuyuFactory.getRefiner();
 	private TzuYuAlphabet sigma;
 
 	public void setInitAlphabet(TzuYuAlphabet sigma) {

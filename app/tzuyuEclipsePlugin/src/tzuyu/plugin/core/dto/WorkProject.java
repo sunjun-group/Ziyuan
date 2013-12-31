@@ -6,16 +6,12 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.iface;
-
-import tzuyu.engine.TzProject;
+package tzuyu.plugin.core.dto;
 
 /**
  * @author LLT
- * 
+ *
  */
-public interface HasTzProject {
+public class WorkProject {
 	
-	public void setProject(TzProject project);
-
 }
