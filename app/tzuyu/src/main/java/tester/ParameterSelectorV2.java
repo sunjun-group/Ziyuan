@@ -41,7 +41,7 @@ public class ParameterSelectorV2 implements IParameterSelector {
 		assert project != null : "Project is not set to class "
 				+ this.getClass().getSimpleName();
 
-		if (config.alwaysUseIntsAsObjects() && type.equals(Object.class)) {
+		if (config.isObjectToInteger() && type.equals(Object.class)) {
 			type = int.class;
 		}
 
@@ -187,7 +187,7 @@ public class ParameterSelectorV2 implements IParameterSelector {
 	@Override
 	public Variable selectCachedVariable(Class<?> type) {
 		SimpleList<Sequence> l = null;
-		if (config.alwaysUseIntsAsObjects() && type.equals(Object.class)) {
+		if (config.isObjectToInteger() && type.equals(Object.class)) {
 			l = componentManager.getSequencesForType(int.class, false);
 		} else if (type.isArray()) {
 			SimpleList<Sequence> l1 = componentManager.getSequencesForType(

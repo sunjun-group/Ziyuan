@@ -8,12 +8,12 @@
 
 package tzuyu.plugin.ui.option.classSelector;
 
-import tzuyu.plugin.core.dto.RunConfiguration;
+import tzuyu.plugin.core.dto.TzuyuPreferences;
 
 /**
  * @author LLT
  * @author Peter Kalauskas (Randoop)
  */
-public abstract class Option<T extends RunConfiguration> {
+public abstract class Option<T extends TzuyuPreferences> {
 	public abstract void initFrom(T config);
 }

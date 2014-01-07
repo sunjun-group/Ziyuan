@@ -8,6 +8,7 @@
 
 package tzuyu.engine.iface.algorithm;
 
+import lstar.LStarException;
 import lstar.Teacher;
 
 import org.apache.log4j.Logger;
@@ -28,7 +29,7 @@ public interface Learner<A extends Alphabet> extends HasReport<A> {
 	/**
 	 * main function of the algorithm
 	 */
-	public DFA startLearning();
+	public DFA startLearning() throws LStarException;
 	
 	public void setTeacher(Teacher<A> teacher);
 }

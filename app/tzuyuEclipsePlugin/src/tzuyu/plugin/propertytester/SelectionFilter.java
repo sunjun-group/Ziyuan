@@ -39,7 +39,7 @@ public class SelectionFilter extends PropertyTester {
 			// multiple selection
 			ITypeRoot typeRoot = null;
 			for (Iterator<?> it = selection.iterator(); it.hasNext();) {
-				// only methods in the same class are accepted.
+				// only methods and in the same class are accepted.
 				Object element = it.next();
 				if (!(element instanceof IMethod)) {
 					return false;

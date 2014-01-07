@@ -57,7 +57,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
-import tzuyu.plugin.action.testgen.GenTestConfiguration;
+import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.core.dto.MethodMnemonic;
 import tzuyu.plugin.core.dto.TypeMnemonic;
 import tzuyu.plugin.core.utils.ResourcesUtils;
@@ -68,7 +68,7 @@ import tzuyu.plugin.ui.ClasspathLabelProvider;
  * @author LLT
  * @author Peter Kalauskas [Randoop, ClassSelectorOption]
  */
-public class ClassSelectorOption extends Option<GenTestConfiguration> {
+public class ClassSelectorOption extends Option<GenTestPreferences> {
 	private TreeInput fTreeInput;
 	private CheckboxTreeViewer fTypeTreeViewer;
 	private HashSet<String> fDeletedTypeNodes;
@@ -533,7 +533,7 @@ public class ClassSelectorOption extends Option<GenTestConfiguration> {
 	}
 
 	@Override
-	public void initFrom(GenTestConfiguration config) {
+	public void initFrom(GenTestPreferences config) {
 		fTreeInput.reset();
 		fCheckedMethodsByType = new HashMap<IType, List<String>>();
 

@@ -12,11 +12,9 @@ package tzuyu.plugin.core.exception;
  * @author LLT
  *
  */
-public enum PluginExceptionType {
-	SELECTION_MORE_THAN_ONE_PROJ_SELECTED;
+public enum ErrorType {
+	SELECTION_MORE_THAN_ONE_PROJ_SELECTED, 
+	CANNOT_SAVE_PROJECT_PREFERENCES,
+	;
 
-	// TODO [LLT, to review)
-	public static String getMsg(PluginExceptionType type) {
-		return type.name();
-	}
 }

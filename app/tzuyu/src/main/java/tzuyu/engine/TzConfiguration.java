@@ -15,26 +15,25 @@ import tzuyu.engine.utils.Globals;
 /**
  * @author LLT
  */
-public class TzConfiguration {
-	// TODO [LLT]: should these constants be configurable or not?
+public class TzConfiguration implements Cloneable {
+	// TODO [LLT]: put default value in configuration file?
 	/**
 	 * The maximum number of elements in an array when cloning an object. The
 	 * array field in a target object may be too long to clone (results in out
 	 * of memory problem, so we only want to clone the maximum number of
 	 * elements to eradicate the out of memory problem.
 	 */
-	private static final int ARRAY_MAX_LENGTH = 5;
+	private int arrayMaxLength = 5;
 	/**
 	 * The maximum class definition depth used for static analysis and
 	 * instrumentation.
 	 */
-	private static final int CLASS_MAX_DEPTH = 5;
-	private static final boolean DEBUG_CHECKS = false;
-	private static final boolean FORBID_NULL = true;
-	private static final boolean LONG_FORMAT = true;
-	private static final boolean PRETTY_PRINT = true;
-	private static int STRING_MAX_LEN = 10;
-
+	private int classMaxDepth = 5;
+	private boolean debugChecks = false;
+	private boolean forbidNull = true;
+	private boolean longFormat = true;
+	private boolean prettyPrint = true;
+	private int stringMaxLength = 10;
 	/**
 	 * The number of different test cases should we generate for each query
 	 */
@@ -42,6 +41,23 @@ public class TzConfiguration {
 	private boolean objectToInteger = true;
 	private boolean inheritedMethod = false;
 	private File outputDir;
+	
+	public TzConfiguration() {
+		
+	}
+	
+	public TzConfiguration(TzConfiguration config) {
+		arrayMaxLength = config.getArrayMaxLength();
+		classMaxDepth = config.getClassMaxDepth();
+		debugChecks = config.isDebugChecks();
+		forbidNull = config.isForbidNull();
+		longFormat = config.isLongFormat();
+		prettyPrint = config.isPrettyPrint();
+		stringMaxLength = config.getStringMaxLength();
+		testsPerQuery = config.getTestsPerQuery();
+		objectToInteger = config.isObjectToInteger();
+		inheritedMethod = config.isInheritedMethod();
+	}
 
 	public int getTestsPerQuery() {
 		return testsPerQuery;
@@ -49,10 +65,6 @@ public class TzConfiguration {
 
 	public void setTestsPerQuery(int testsPerQuery) {
 		this.testsPerQuery = testsPerQuery;
-	}
-
-	public boolean isObjectToInteger() {
-		return objectToInteger;
 	}
 
 	public void setObjectToInteger(boolean objectToInteger) {
@@ -86,7 +98,7 @@ public class TzConfiguration {
 		this.outputDir = outputDir;
 	}
 
-	public boolean alwaysUseIntsAsObjects() {
+	public boolean isObjectToInteger() {
 		return objectToInteger;
 	}
 
@@ -95,31 +107,67 @@ public class TzConfiguration {
 	}
 
 	public int getArrayMaxLength() {
-		return ARRAY_MAX_LENGTH;
+		return arrayMaxLength;
 	}
 
 	public int getClassMaxDepth() {
-		return CLASS_MAX_DEPTH;
+		return classMaxDepth;
 	}
 
 	public boolean isDebugChecks() {
-		return DEBUG_CHECKS;
+		return debugChecks;
 	}
 
 	public boolean isForbidNull() {
-		return FORBID_NULL;
+		return forbidNull;
 	}
 
 	public boolean isLongFormat() {
-		return LONG_FORMAT;
+		return longFormat;
 	}
 
 	public boolean isPrettyPrint() {
-		return PRETTY_PRINT;
+		return prettyPrint;
 	}
 
 	public int getStringMaxLength() {
-		return STRING_MAX_LEN;
+		return stringMaxLength;
 	}
 
+	public void setStringMaxLength(int stringMaxLength) {
+		this.stringMaxLength = stringMaxLength;
+	}
+
+	public void setOutputDir(File outputDir) {
+		this.outputDir = outputDir;
+	}
+
+	public void setArrayMaxLength(int arrayMaxLength) {
+		this.arrayMaxLength = arrayMaxLength;
+	}
+
+	public void setClassMaxDepth(int classMaxDepth) {
+		this.classMaxDepth = classMaxDepth;
+	}
+
+	public void setDebugChecks(boolean debugChecks) {
+		this.debugChecks = debugChecks;
+	}
+
+	public void setForbidNull(boolean forbidNull) {
+		this.forbidNull = forbidNull;
+	}
+
+	public void setLongFormat(boolean longFormat) {
+		this.longFormat = longFormat;
+	}
+
+	public void setPrettyPrint(boolean prettyPrint) {
+		this.prettyPrint = prettyPrint;
+	}
+
+	@Override
+	public TzConfiguration clone() {
+		return new TzConfiguration(this);
+	}
 }

@@ -12,7 +12,7 @@ import tzuyu.engine.TzProject;
 import tzuyu.engine.Tzuyu;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.TzuyuEngine;
-import tzuyu.plugin.action.testgen.GenTestConfiguration;
+import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.core.dto.WorkObject;
 import tzuyu.plugin.core.exception.PluginException;
 import tzuyu.plugin.reporter.PluginLogger;
@@ -34,7 +34,7 @@ public class TzuyuEngineProxy implements TzuyuEngine {
 		tzuyu.run();
 	}
 
-	public static void run(WorkObject workObject, GenTestConfiguration config) {
+	public static void run(WorkObject workObject, GenTestPreferences config) {
 		try {
 			TzProject tzProject = ProjectConverter.from(workObject, config);
 			new TzuyuEngineProxy(tzProject, new Reporter(tzProject.getConfiguration())).run();

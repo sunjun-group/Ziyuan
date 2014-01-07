@@ -6,7 +6,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 
-import tzuyu.plugin.action.TzuyuPlugin;
+import tzuyu.plugin.TzuyuPlugin;
 
 /**
  * Status class used to create new <code>IStatus</code> objects for both error

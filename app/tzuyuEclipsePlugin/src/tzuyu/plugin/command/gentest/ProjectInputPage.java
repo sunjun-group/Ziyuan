@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.plugin.action.testgen;
+package tzuyu.plugin.command.gentest;
 
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.core.IJavaProject;
@@ -20,13 +20,14 @@ import tzuyu.plugin.ui.option.classSelector.ClassSelectorOption;
  * @author LLT
  * 
  */
-public class ProjectInputPage extends OptionWizardPage<GenTestConfiguration> {
+@Deprecated
+public class ProjectInputPage extends OptionWizardPage<GenTestPreferences> {
 	private static final String PAGE_NAME = "Test Project Inputs";
 	private IJavaProject project;
-	private GenTestConfiguration config;
+	private GenTestPreferences config;
 	private ClassSelectorOption classSelectorOpt;
 
-	public ProjectInputPage(IJavaProject project, GenTestConfiguration config) {
+	public ProjectInputPage(IJavaProject project, GenTestPreferences config) {
 		super(PAGE_NAME);
 		this.project = project;
 		this.config = config;
@@ -45,7 +46,7 @@ public class ProjectInputPage extends OptionWizardPage<GenTestConfiguration> {
 	}
 
 	@Override
-	public boolean isValid(GenTestConfiguration config) {
+	public boolean isValid(GenTestPreferences config) {
 		// TODO Auto-generated method stub
 		return false;
 	}

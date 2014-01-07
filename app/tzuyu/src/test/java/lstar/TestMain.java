@@ -17,7 +17,12 @@ public class TestMain {
     algorithm.setTeacher(teacher);
     algorithm.setAlphabet(alphabet);
 
-    algorithm.startLearning();
+    try {
+		algorithm.startLearning();
+	} catch (LStarException e) {
+		e.printStackTrace();
+		System.exit(0);
+	}
     DFA dfa = algorithm.getDFA();
     dfa.print();
 

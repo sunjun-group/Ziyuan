@@ -25,6 +25,7 @@ public class LStarException extends Exception {
 	}
 	
 	public enum Type {
-		RestartLearning;
+		RestartLearning,
+		AlphabetEmptyAction;
 	}
 }

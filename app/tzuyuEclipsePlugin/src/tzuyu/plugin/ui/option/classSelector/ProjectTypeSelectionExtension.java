@@ -20,7 +20,7 @@ import org.eclipse.jdt.ui.dialogs.ITypeInfoRequestor;
 import org.eclipse.jdt.ui.dialogs.TypeSelectionExtension;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 
-import tzuyu.plugin.action.TzuyuPlugin;
+import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.reporter.PluginLogger;
 
 /**

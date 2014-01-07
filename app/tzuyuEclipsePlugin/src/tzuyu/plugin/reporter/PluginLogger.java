@@ -8,7 +8,8 @@
 
 package tzuyu.plugin.reporter;
 
-import org.eclipse.core.runtime.CoreException;
+import tzuyu.plugin.TzuyuPlugin;
+import tzuyu.plugin.core.exception.ErrorType;
 
 /**
  * @author LLT
@@ -17,11 +18,15 @@ import org.eclipse.core.runtime.CoreException;
 public class PluginLogger {
 	
 	public static void logEx(Exception e) {
-
+		
 	}
 
-	public static void logEx(CoreException e, String string) {
+	public static void logEx(Exception e, String msg) {
 		
+	}
+
+	public static void logEx(Exception e, ErrorType errorType) {
+		System.out.println(TzuyuPlugin.getDefault().getMessages().getMessage(errorType));
 	}
 
 }

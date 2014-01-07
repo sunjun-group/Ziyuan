@@ -18,28 +18,30 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import tzuyu.plugin.core.dto.RunConfiguration;
+import tzuyu.plugin.core.constants.Messages;
+import tzuyu.plugin.core.dto.TzuyuPreferences;
 import tzuyu.plugin.core.dto.WorkObject;
 
 /**
  * @author LLT
  * 
  */
-public abstract class TzuyuCommandHandler<C extends RunConfiguration> extends
+public abstract class TzuyuCommandHandler<C extends TzuyuPreferences> extends
 		AbstractHandler {
 	// current selection
 	protected ISelection selection;
+	protected Messages messages;
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getActiveMenuSelection(event);
 		
 		if (selection == null || selection.isEmpty()) {
-			openDialog("selection is null or empty");
+			openDialog(messages.gentest_selection_empty());
 		} else if (selection instanceof IStructuredSelection) {
 			WorkObject workObject = WorkObject
 					.getResourcesPerProject((IStructuredSelection) selection);
-			run(workObject, initConfiguration());
+			run(workObject, initConfiguration(workObject));
 		}
 		return null;
 	}
@@ -55,7 +57,6 @@ public abstract class TzuyuCommandHandler<C extends RunConfiguration> extends
 
 	protected abstract void run(WorkObject workObject, C config);
 
-	protected abstract C initConfiguration();
-
+	protected abstract C initConfiguration(WorkObject workObject);
 
 }

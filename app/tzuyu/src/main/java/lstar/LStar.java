@@ -49,7 +49,7 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 	 * make sure all clean
 	 * TODO [LLT]: to recheck. 
 	 */
-	public DFA startLearning() {
+	public DFA startLearning() throws LStarException {
 		assert sigma != null : "Init Alphabet for L* learner is not set";
 		reset();
 		
@@ -69,8 +69,8 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 				if (e.getType() == Type.RestartLearning) {
 					restart = true;
 				} else {
-					e.printStackTrace();
-					return null;
+					// rethrow for other type of LStarException.
+					throw e;
 				}
 			}
 		} while (restart);
@@ -84,10 +84,9 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 	}
 
 	private void learn() throws LStarException {
-		if (sigma == null || sigma.getSize() == 1) {
-			System.out.println("The alphabet is not set "
-					+ "and the algorithm cannot proceed.");
-			System.exit(0);
+		if (sigma.getSize() == 1) {
+			// only epsilon, => no method for test detected.
+			throw new LStarException(Type.AlphabetEmptyAction);
 		}
 
 		// step 1: initialize the observation table for the case where

@@ -8,6 +8,7 @@
 
 package tzuyu.engine;
 
+import lstar.LStarException;
 import lstar.Teacher;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.TzuyuEngine;
@@ -47,7 +48,12 @@ public class Tzuyu implements TzuyuEngine {
 		TzLogger.log().info("============Start of Statistics for",
 				project.getTarget().getSimpleName(), "============");
 		// TODO [LLT]: time measuring.
-		learner.startLearning();
+		try {
+			learner.startLearning();
+		} catch (LStarException e) {
+			// TODO [LLT]: exception handling.
+			TzLogger.log().info("Exception::", e.getType());
+		}
 		learner.report(reporter);
 	}
 }

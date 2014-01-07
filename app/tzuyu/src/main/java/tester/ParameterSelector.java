@@ -109,7 +109,7 @@ public class ParameterSelector {
 	private Variable generateNewVariableForType(Class<?> type) {
 		assert project != null: "Project is not set to class " + this.getClass().getSimpleName();
 		
-		if (config.alwaysUseIntsAsObjects() && type.equals(Object.class)) {
+		if (config.isObjectToInteger() && type.equals(Object.class)) {
 			type = int.class;
 		}
 
@@ -232,7 +232,7 @@ public class ParameterSelector {
 	private Variable generateNewVariableForCtor(Class<?> type) {
 		assert project != null: "Project is not set to class " + this.getClass().getSimpleName();
 		
-		if (config.alwaysUseIntsAsObjects() && type.equals(Object.class)) {
+		if (config.isObjectToInteger() && type.equals(Object.class)) {
 			type = int.class;
 		}
 

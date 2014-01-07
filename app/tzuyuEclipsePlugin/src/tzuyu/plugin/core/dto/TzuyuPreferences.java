@@ -18,13 +18,18 @@ import org.eclipse.jdt.core.IJavaProject;
  * act like a wrapper of the real configuration 
  * (can be the iLaunchConfigurationor or UserPreferences depend on our solution of action launching)
  */
-public class RunConfiguration {
+public class TzuyuPreferences {
+	@Deprecated
 	protected IJavaProject project;
+	@Deprecated
+	// TODO LLT: remove from the configuration.
 	private List<String> availableTypes;
+	@Deprecated
 	private List<String> grayedTypes;
+	@Deprecated
 	private List<String> checkedTypes;
 	
-	public RunConfiguration() {
+	public TzuyuPreferences() {
 		availableTypes = new ArrayList<String>();
 		grayedTypes = new ArrayList<String>();
 		checkedTypes = new ArrayList<String>();

@@ -30,4 +30,8 @@ public class StringUtils {
 	public static <T extends Object> String dotJoin(T[] params) {
 		return org.apache.commons.lang.StringUtils.join(params, ".");
 	}
+	
+	public static String dotJoinStr(String... params) {
+		return org.apache.commons.lang.StringUtils.join(params, ".");
+	}
 }

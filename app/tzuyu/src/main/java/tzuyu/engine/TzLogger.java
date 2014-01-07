@@ -27,12 +27,16 @@ public class TzLogger {
 	}
 	
 	public TzLogger info(Object... msgs) {
-		logger.info(StringUtils.spaceJoin(msgs));
+		String msg = StringUtils.spaceJoin(msgs);
+		logger.info(msg);
+		System.out.println(msg);
 		return this;
 	}
 	
 	public TzLogger error(Object... msgs) {
-		logger.error(StringUtils.spaceJoin(msgs));
+		String msg = StringUtils.spaceJoin(msgs);
+		logger.error(msg);
+		System.out.println(msg);
 		return this;
 	}
 	

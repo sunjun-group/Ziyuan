@@ -8,7 +8,7 @@
 
 package tzuyu.plugin.core.exception;
 
-import org.eclipse.core.runtime.CoreException;
+import tzuyu.plugin.TzuyuPlugin;
 
 /**
  * @author LLT
@@ -16,16 +16,16 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PluginException extends Exception {
 	private static final long serialVersionUID = 1L;
-	private PluginExceptionType type;
+	private ErrorType type;
 	
 	public PluginException() {}
 	
-	public PluginException(PluginExceptionType type) {
-		super(PluginExceptionType.getMsg(type));
+	public PluginException(ErrorType type) {
+		super(TzuyuPlugin.getDefault().getMessages().getMessage(type));
 		this.type = type;
 	}
 
-	public PluginExceptionType getType() {
+	public ErrorType getType() {
 		return type;
 	}
 

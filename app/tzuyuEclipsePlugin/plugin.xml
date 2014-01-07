@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+ 	<extension
+          point="org.eclipse.core.expressions.propertyTesters">
+       <propertyTester
+             class="tzuyu.plugin.propertytester.SelectionFilter"
+             id="tzuyu.plugin.tester"
+             namespace="tzuyu.plugin.tester"
+             properties="isSuitableForTest"
+             type="java.lang.Object">
+       </propertyTester>
+    </extension>
     <extension
           id="tzuyu"
           point="org.eclipse.ui.menus">
@@ -10,11 +20,11 @@
           <menu
                 id="tzuyu"
                 label="Tzuyu">
-             <visibleWhen>
-                <with variable="selection">
-                   <test property="tzuyu.plugin.tester.isSuitableForTest"/>
-                </with>
-             </visibleWhen>
+             <visibleWhen checkEnabled="false">
+	                <with variable="selection">
+	                   <test property="tzuyu.plugin.tester.isSuitableForTest"/>
+	                </with>
+	         </visibleWhen>
              <command
                    commandId="tzuyu.menu.command.generateTestcases"
                    id="tzuyu.group.generateTestcases"
@@ -26,14 +36,13 @@
                    label="%menu.openDialog"
                    style="push">
              </command>
-             
           </menu>
        </menuContribution>
     </extension>
     <extension
           point="org.eclipse.ui.commands">
        <command
-             defaultHandler="tzuyu.plugin.command.GenTestHandler"
+             defaultHandler="tzuyu.plugin.command.gentest.GenTestHandler"
              id="tzuyu.menu.command.generateTestcases"
              name="Generate test cases">
        </command>
@@ -42,15 +51,21 @@
              name="Open Dialog">
        </command>
     </extension>
-    
     <extension
-          point="org.eclipse.core.expressions.propertyTesters">
-       <propertyTester
-             class="tzuyu.plugin.propertytester.SelectionFilter"
-             id="tzuyu.plugin.tester"
-             namespace="tzuyu.plugin.tester"
-             properties="isSuitableForTest"
-             type="org.eclipse.jface.viewers.ISelection">
-       </propertyTester>
+          point="org.eclipse.ui.propertyPages">
+       <page
+             class="tzuyu.plugin.preferences.ProjectPropertyPage"
+             id="tzuyu.configuration.propertypages"
+             name="%tzuyu.configuration.propertypages.name">
+       </page>
+    </extension>
+    <extension
+          id="preferences"
+          name="preferences"
+          point="org.eclipse.core.runtime.preferences">
+       <scope
+             class="org.eclipse.core.internal.resources.ProjectPreferences"
+             name="project">
+       </scope>
     </extension>
 </plugin>

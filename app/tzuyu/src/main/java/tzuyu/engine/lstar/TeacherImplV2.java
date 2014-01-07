@@ -112,11 +112,8 @@ public class TeacherImplV2 implements Teacher<TzuYuAlphabet> {
 				sigma = newSigma;
 
 				/* should stop learner in learner itself. */
-				// needRestart = true;
 				// At this point, we need to notify the learner
 				// to refine the alphabet and restart to learn.
-				// learner.stop();
-				// return false;
 				throw new LStarException(Type.RestartLearning);
 			}
 		}
