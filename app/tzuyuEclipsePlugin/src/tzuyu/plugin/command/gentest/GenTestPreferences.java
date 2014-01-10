@@ -8,51 +8,128 @@
 
 package tzuyu.plugin.command.gentest;
 
-import org.eclipse.jface.preference.IPreferenceStore;
+import static tzuyu.engine.TzConstants.TzParamType.*;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaModelException;
 import org.osgi.service.prefs.Preferences;
 
 import tzuyu.engine.TzConfiguration;
-import tzuyu.plugin.core.dto.TzuyuPreferences;
+import tzuyu.plugin.core.dto.TzPreferences;
+import tzuyu.plugin.core.utils.IProjectUtils;
+import tzuyu.plugin.reporter.PluginLogger;
 
 /**
  * @author LLT
  * 
  */
-public class GenTestPreferences extends TzuyuPreferences implements Cloneable {
-	public static final String CONFIG_NAME = "Start GenTest";
-	private static final String ATT_ARRAY_MAX_LENGTH = "arrayMaxLength";
-	private static final String ATT_PRETTY_PRINT = "prettyPrint";
+/**
+ * @author LLT
+ *
+ */
+public class GenTestPreferences extends TzPreferences implements Cloneable {
+	public static final String ATT_OUTPUT_FOLDER = "outputSourceFolder";
+	public static final String ATT_OUTPUT_PACKAGE = "outputPackage";
+	
+	public static final String OUTPUT_FOLDER = "src/test";
+	public static final String OUTPUT_PACKAGE = "tzuyu";
+//	public static final String OUTPUT_CLASS_NAME = "Tzuyu";
+	
+	private IPackageFragmentRoot outputFolder;
+	private IPackageFragment outputPackage;
 	
 	private TzConfiguration config;
 
-	public GenTestPreferences() {
-		config = new TzConfiguration();
+	public GenTestPreferences(IJavaProject project, boolean setDefault) {
+		setJavaProject(project);
+		config = new TzConfiguration(setDefault);
+		if (setDefault) {
+			outputFolder = IProjectUtils.toPackageFragmentRoot(project, OUTPUT_FOLDER);
+			outputPackage = IProjectUtils.toPackageFragment(outputFolder, OUTPUT_PACKAGE);
+		}
+	}
+	
+	public static GenTestPreferences createDefault(IJavaProject project) {
+		return new GenTestPreferences(project, true);
 	}
 
 	private GenTestPreferences(GenTestPreferences initPrefs) {
 		config = initPrefs.getTzConfig().clone();
-	}
-
-	public void read(Preferences pref) {
-		config.setArrayMaxLength(pref.getInt(ATT_ARRAY_MAX_LENGTH,
-				config.getArrayMaxLength())); 
-		config.setPrettyPrint(pref.getBoolean(ATT_PRETTY_PRINT,
-				config.isPrettyPrint()));
+		project = initPrefs.getProject();
+		outputFolder = initPrefs.getOutputFolder();
+		outputPackage = initPrefs.getOutputPackage();
 	}
 	
-	public void read(IPreferenceStore store) {
-		config.setArrayMaxLength(store.getInt(ATT_ARRAY_MAX_LENGTH));
+	public void read(Preferences pref) {
+		outputFolder = IProjectUtils.toPackageFragmentRoot(project, 
+				pref.get(ATT_OUTPUT_FOLDER, OUTPUT_FOLDER));
+		outputPackage = IProjectUtils.toPackageFragment(outputFolder, 
+				pref.get(ATT_OUTPUT_PACKAGE, OUTPUT_PACKAGE));
+		config.setArrayMaxLength(pref.getInt(arrayMaxLength.name(),
+				(Integer) arrayMaxLength.defaultVal())); 
+		config.setClassMaxDepth(pref.getInt(classMaxDepth.name(), 
+				(Integer) classMaxDepth.defaultVal()));
+		config.setDebugChecks(pref.getBoolean(debugChecks.name(),
+				(Boolean) debugChecks.defaultVal()));
+		config.setForbidNull(pref.getBoolean(forbitNull.name(),
+				(Boolean) forbitNull.defaultVal()));
+		config.setLongFormat(pref.getBoolean(longFormat.name(),
+				(Boolean) longFormat.defaultVal()));
+		config.setPrettyPrint(pref.getBoolean(prettyPrint.name(),
+				(Boolean) prettyPrint.defaultVal()));
+		config.setStringMaxLength(pref.getInt(stringMaxLength.name(),
+				(Integer) stringMaxLength.defaultVal()));
+		config.setTestsPerQuery(pref.getInt(testsPerQuery.name(),
+				(Integer) testsPerQuery.defaultVal()));
+		config.setObjectToInteger(pref.getBoolean(objectToInteger.name(),
+				(Boolean) objectToInteger.defaultVal()));
+		config.setInheritedMethod(pref.getBoolean(inheritMethod.name(),
+				 (Boolean) inheritMethod.defaultVal()));
 	}
 
 	public void write(Preferences projectNode) {
-		projectNode.putInt(ATT_ARRAY_MAX_LENGTH, config.getArrayMaxLength());
-		projectNode.putBoolean(ATT_PRETTY_PRINT, config.isPrettyPrint());
+		projectNode.putInt(arrayMaxLength.name(), config.getArrayMaxLength());
+		projectNode.putBoolean(prettyPrint.name(), config.isPrettyPrint());
+		projectNode.put(ATT_OUTPUT_FOLDER, IProjectUtils.toRelativePath(outputFolder, project));
+		projectNode.put(ATT_OUTPUT_PACKAGE, IProjectUtils.toRelativePath(outputPackage, outputFolder));
 	}
 
 	public TzConfiguration getTzConfig() {
+		// update output folder
+		if (outputFolder != null && outputPackage != null) {
+			if (!outputPackage.isOpen()) {
+				try {
+					outputPackage = outputFolder.createPackageFragment(
+							outputPackage.getElementName(), true, null);
+				} catch (JavaModelException e) {
+					PluginLogger.logEx(e);
+				}
+			}
+		}
+		IPath outputPath = IProjectUtils.relativeToAbsolute(outputPackage.getPath());
+		config.setOutputDir(outputPath.toFile());
 		return config;
 	}
 	
+	public IPackageFragmentRoot getOutputFolder() {
+		return outputFolder;
+	}
+
+	public void setOutputFolder(IPackageFragmentRoot outputFolder) {
+		this.outputFolder = outputFolder;
+	}
+
+	public IPackageFragment getOutputPackage() {
+		return outputPackage;
+	}
+
+	public void setOutputPackage(IPackageFragment outputPackage) {
+		this.outputPackage = outputPackage;
+	}
+
 	@Override
 	public GenTestPreferences clone() {
 		return new GenTestPreferences(this);

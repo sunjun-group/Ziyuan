@@ -26,7 +26,7 @@ public class PluginLogger {
 	}
 
 	public static void logEx(Exception e, ErrorType errorType) {
-		System.out.println(TzuyuPlugin.getDefault().getMessages().getMessage(errorType));
+		System.out.println(TzuyuPlugin.getMessages().getMessage(errorType));
 	}
 
 }

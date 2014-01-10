@@ -56,16 +56,13 @@
        <page
              class="tzuyu.plugin.preferences.ProjectPropertyPage"
              id="tzuyu.configuration.propertypages"
-             name="%tzuyu.configuration.propertypages.name">
+             name="%propertypages.name">
        </page>
     </extension>
     <extension
-          id="preferences"
-          name="preferences"
           point="org.eclipse.core.runtime.preferences">
-       <scope
-             class="org.eclipse.core.internal.resources.ProjectPreferences"
-             name="project">
-       </scope>
+       <initializer
+             class="tzuyueclipseplugin.AbstractPreferenceInitializer1">
+       </initializer>
     </extension>
 </plugin>

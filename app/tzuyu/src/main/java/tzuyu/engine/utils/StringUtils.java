@@ -9,6 +9,7 @@
 package tzuyu.engine.utils;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author LLT
@@ -33,5 +34,23 @@ public class StringUtils {
 	
 	public static String dotJoinStr(String... params) {
 		return org.apache.commons.lang.StringUtils.join(params, ".");
+	}
+	
+	public static String toStringNullToEmpty(Object val) {
+		if (val == null) {
+			return org.apache.commons.lang.StringUtils.EMPTY;
+		}
+		return val.toString();
+	}
+	
+	public static boolean isStartWithUppercaseLetter(String text) {
+		if (org.apache.commons.lang.StringUtils.isEmpty(text)) {
+			return false;
+		}
+		return Character.isUpperCase(text.charAt(0));
+	}
+
+	public static String newLineJoin(List<String> value) {
+		return org.apache.commons.lang.StringUtils.join(value, "\n");
 	}
 }

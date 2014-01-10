@@ -8,23 +8,23 @@
 
 package tzuyu.plugin.command;
 
-import tzuyu.plugin.core.dto.TzuyuPreferences;
+import tzuyu.plugin.core.dto.TzPreferences;
 import tzuyu.plugin.core.dto.WorkObject;
 
 /**
  * @author LLT
  *
  */
-public class OpenDialogHandler extends TzuyuCommandHandler<TzuyuPreferences> {
+public class OpenDialogHandler extends TzCommandHandler<TzPreferences> {
 
 	@Override
-	protected void run(WorkObject workObject, TzuyuPreferences config) {
+	protected void run(WorkObject workObject, TzPreferences config) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	protected TzuyuPreferences initConfiguration(WorkObject workObject) {
+	protected TzPreferences initConfiguration(WorkObject workObject) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -22,7 +22,7 @@ import tzuyu.engine.model.TzuYuAlphabet;
  * @author LLT
  * TODO [LLT]: consider to make cache for services if needed.
  */
-public class TzuyuFactory {
+public class TzFactory {
 
 	public static Learner<TzuYuAlphabet> getLearner() {
 		return new LStar<TzuYuAlphabet>();

@@ -13,14 +13,14 @@ import java.util.List;
 
 import org.eclipse.jface.wizard.WizardPage;
 
-import tzuyu.plugin.core.dto.TzuyuPreferences;
+import tzuyu.plugin.core.dto.TzPreferences;
 import tzuyu.plugin.ui.option.classSelector.Option;
 
 /**
  * @author LLT
  * 
  */
-public abstract class OptionWizardPage<T extends TzuyuPreferences> extends WizardPage {
+public abstract class OptionWizardPage<T extends TzPreferences> extends WizardPage {
 	private List<Option<T>> options;
 	
 	protected OptionWizardPage(String pageName) {

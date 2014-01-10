@@ -21,7 +21,7 @@ public class PluginException extends Exception {
 	public PluginException() {}
 	
 	public PluginException(ErrorType type) {
-		super(TzuyuPlugin.getDefault().getMessages().getMessage(type));
+		super(TzuyuPlugin.getMessages().getMessage(type));
 		this.type = type;
 	}
 

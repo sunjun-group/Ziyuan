@@ -3,6 +3,7 @@ package tzuyu.plugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.prefs.BackingStoreException;
@@ -42,8 +43,12 @@ public class TzuyuPlugin extends AbstractUIPlugin {
 		super.stop(context);
 	}
 	
-	public Messages getMessages() {
+	public Messages getInternalMessages() {
 		return messages;
+	}
+	
+	public static Messages getMessages() {
+		return getDefault().getInternalMessages();
 	}
 
 	/**
@@ -53,9 +58,9 @@ public class TzuyuPlugin extends AbstractUIPlugin {
 		return plugin;
 	}
 	
-	public GenTestPreferences getGenTestPreferences(IProject project) {
-		GenTestPreferences prefs = new GenTestPreferences();
-		Preferences projectNode = getProjectPreferencesNode(project);
+	public GenTestPreferences getGenTestPreferences(IJavaProject project) {
+		GenTestPreferences prefs = new GenTestPreferences(project, false);
+		Preferences projectNode = getProjectPreferencesNode(project.getProject());
 		if (projectNode != null) {
 			prefs.read(projectNode);
 		}

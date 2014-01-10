@@ -19,14 +19,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import tzuyu.plugin.core.constants.Messages;
-import tzuyu.plugin.core.dto.TzuyuPreferences;
+import tzuyu.plugin.core.dto.TzPreferences;
 import tzuyu.plugin.core.dto.WorkObject;
 
 /**
  * @author LLT
  * 
  */
-public abstract class TzuyuCommandHandler<C extends TzuyuPreferences> extends
+public abstract class TzCommandHandler<C extends TzPreferences> extends
 		AbstractHandler {
 	// current selection
 	protected ISelection selection;

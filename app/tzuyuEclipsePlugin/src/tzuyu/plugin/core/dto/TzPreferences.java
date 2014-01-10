@@ -18,8 +18,7 @@ import org.eclipse.jdt.core.IJavaProject;
  * act like a wrapper of the real configuration 
  * (can be the iLaunchConfigurationor or UserPreferences depend on our solution of action launching)
  */
-public class TzuyuPreferences {
-	@Deprecated
+public class TzPreferences {
 	protected IJavaProject project;
 	@Deprecated
 	// TODO LLT: remove from the configuration.
@@ -29,7 +28,7 @@ public class TzuyuPreferences {
 	@Deprecated
 	private List<String> checkedTypes;
 	
-	public TzuyuPreferences() {
+	public TzPreferences() {
 		availableTypes = new ArrayList<String>();
 		grayedTypes = new ArrayList<String>();
 		checkedTypes = new ArrayList<String>();
@@ -66,5 +65,9 @@ public class TzuyuPreferences {
 	public String getProjectName() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public IJavaProject getProject() {
+		return project;
 	}
 }

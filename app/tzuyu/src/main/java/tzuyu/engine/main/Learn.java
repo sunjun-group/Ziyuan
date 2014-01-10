@@ -26,7 +26,7 @@ public class Learn implements CommandHandler {
 
 	private TzProject processCommand(Command cmd) {
 		TzProject project = new TzProject();
-		TzConfiguration config = new TzConfiguration();
+		TzConfiguration config = new TzConfiguration(true);
 		project.setConfiguration(config);
 		
 		for (Option<?> opt : cmd.getOptions()) {

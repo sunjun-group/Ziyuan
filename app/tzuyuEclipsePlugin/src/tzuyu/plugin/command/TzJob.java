@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.jobs.Job;
  * @author LLT
  *
  */
-public abstract class TzuyuJob extends Job {
+public abstract class TzJob extends Job {
 
-	public TzuyuJob(String name) {
+	public TzJob(String name) {
 		super(name);
 	}
 

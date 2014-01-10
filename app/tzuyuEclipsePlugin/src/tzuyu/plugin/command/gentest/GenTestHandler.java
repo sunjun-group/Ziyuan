@@ -9,7 +9,7 @@
 package tzuyu.plugin.command.gentest;
 
 import tzuyu.plugin.TzuyuPlugin;
-import tzuyu.plugin.command.TzuyuCommandHandler;
+import tzuyu.plugin.command.TzCommandHandler;
 import tzuyu.plugin.core.dto.WorkObject;
 import tzuyu.plugin.proxy.TzuyuEngineProxy;
 
@@ -17,7 +17,7 @@ import tzuyu.plugin.proxy.TzuyuEngineProxy;
  * @author LLT
  *
  */
-public class GenTestHandler extends TzuyuCommandHandler<GenTestPreferences> {
+public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 
 	@Override
 	protected void run(WorkObject workObject, GenTestPreferences config) {
@@ -27,7 +27,7 @@ public class GenTestHandler extends TzuyuCommandHandler<GenTestPreferences> {
 
 	@Override
 	protected GenTestPreferences initConfiguration(WorkObject workObject) {
-		return TzuyuPlugin.getDefault().getGenTestPreferences(workObject.getFirstProject().getProject());
+		return TzuyuPlugin.getDefault().getGenTestPreferences(workObject.getFirstProject());
 	}
 	
 }

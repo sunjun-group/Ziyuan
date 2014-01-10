@@ -21,8 +21,8 @@ import tzuyu.engine.model.TzuYuAlphabet;
  */
 public class Tzuyu implements TzuyuEngine {
 
-	private Learner<TzuYuAlphabet> learner = TzuyuFactory.getLearner();
-	private Teacher<TzuYuAlphabet> teacher = TzuyuFactory.getTeacher();
+	private Learner<TzuYuAlphabet> learner = TzFactory.getLearner();
+	private Teacher<TzuYuAlphabet> teacher = TzFactory.getTeacher();
 	private TzProject project;
 	private TzReportHandler reporter;
 

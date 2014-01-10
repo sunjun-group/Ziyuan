@@ -8,12 +8,12 @@
 
 package tzuyu.plugin.ui.option.classSelector;
 
-import tzuyu.plugin.core.dto.TzuyuPreferences;
+import tzuyu.plugin.core.dto.TzPreferences;
 
 /**
  * @author LLT
  * @author Peter Kalauskas (Randoop)
  */
-public abstract class Option<T extends TzuyuPreferences> {
+public abstract class Option<T extends TzPreferences> {
 	public abstract void initFrom(T config);
 }

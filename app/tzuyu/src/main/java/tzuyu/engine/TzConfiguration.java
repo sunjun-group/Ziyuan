@@ -8,6 +8,7 @@
 
 package tzuyu.engine;
 
+import tzuyu.engine.TzConstants.*;
 import java.io.File;
 
 import tzuyu.engine.utils.Globals;
@@ -23,27 +24,42 @@ public class TzConfiguration implements Cloneable {
 	 * of memory problem, so we only want to clone the maximum number of
 	 * elements to eradicate the out of memory problem.
 	 */
-	private int arrayMaxLength = 5;
+	private int arrayMaxLength;
 	/**
 	 * The maximum class definition depth used for static analysis and
 	 * instrumentation.
 	 */
-	private int classMaxDepth = 5;
-	private boolean debugChecks = false;
-	private boolean forbidNull = true;
-	private boolean longFormat = true;
-	private boolean prettyPrint = true;
-	private int stringMaxLength = 10;
+	private int classMaxDepth;
+	private boolean debugChecks;
+	private boolean forbidNull;
+	private boolean longFormat;
+	private boolean prettyPrint;
+	private int stringMaxLength;
 	/**
 	 * The number of different test cases should we generate for each query
 	 */
-	private int testsPerQuery = 1;
-	private boolean objectToInteger = true;
-	private boolean inheritedMethod = false;
+	private int testsPerQuery;
+	private boolean objectToInteger;
+	private boolean inheritedMethod;
 	private File outputDir;
 	
-	public TzConfiguration() {
-		
+	public TzConfiguration(boolean setDefault) {
+		if (setDefault) {
+			setDefault();
+		}
+	}
+	
+	public void setDefault() {
+		arrayMaxLength = (Integer) TzParamType.arrayMaxLength.defaultVal();
+		classMaxDepth = (Integer) TzParamType.classMaxDepth.defaultVal();
+		debugChecks = (Boolean) TzParamType.debugChecks.defaultVal();
+		forbidNull = (Boolean) TzParamType.forbitNull.defaultVal();
+		longFormat = (Boolean) TzParamType.longFormat.defaultVal();
+		prettyPrint = (Boolean) TzParamType.prettyPrint.defaultVal(); 
+		stringMaxLength = (Integer) TzParamType.stringMaxLength.defaultVal();
+		testsPerQuery = (Integer) TzParamType.testsPerQuery.defaultVal();
+		objectToInteger = (Boolean) TzParamType.objectToInteger.defaultVal();
+		inheritedMethod = (Boolean) TzParamType.inheritMethod.defaultVal();
 	}
 	
 	public TzConfiguration(TzConfiguration config) {

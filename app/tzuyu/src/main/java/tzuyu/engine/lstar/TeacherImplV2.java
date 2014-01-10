@@ -17,7 +17,7 @@ import lstar.ReportHandler;
 import lstar.Teacher;
 import refiner.Witness;
 import tzuyu.engine.TzLogger;
-import tzuyu.engine.TzuyuFactory;
+import tzuyu.engine.TzFactory;
 import tzuyu.engine.bool.True;
 import tzuyu.engine.iface.algorithm.Refiner;
 import tzuyu.engine.iface.algorithm.Tester;
@@ -42,8 +42,8 @@ public class TeacherImplV2 implements Teacher<TzuYuAlphabet> {
 	private int candidateCount = 1;
 	private int maxMemberSize = 0;
 
-	private Tester tester = TzuyuFactory.getTester();
-	private Refiner<TzuYuAlphabet> refiner = TzuyuFactory.getRefiner();
+	private Tester tester = TzFactory.getTester();
+	private Refiner<TzuYuAlphabet> refiner = TzFactory.getRefiner();
 	private TzuYuAlphabet sigma;
 
 	public void setInitAlphabet(TzuYuAlphabet sigma) {

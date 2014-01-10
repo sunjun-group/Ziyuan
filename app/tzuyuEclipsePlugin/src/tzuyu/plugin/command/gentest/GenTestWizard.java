@@ -31,7 +31,7 @@ public class GenTestWizard extends Wizard {
 
 	public GenTestWizard(IJavaProject project, GenTestPreferences config) {
 		super();
-		messages = TzuyuPlugin.getDefault().getMessages();
+		messages = TzuyuPlugin.getMessages();
 		this.project = project;
 		this.config = config;
 		testProjectInputPage = new ProjectInputPage(project, config);

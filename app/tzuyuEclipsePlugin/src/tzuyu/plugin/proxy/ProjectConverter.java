@@ -19,13 +19,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 
-import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzProject;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.core.dto.WorkObject;
 import tzuyu.plugin.core.dto.WorkObject.WorkItem;
-import tzuyu.plugin.core.exception.PluginException;
 import tzuyu.plugin.core.exception.ErrorType;
+import tzuyu.plugin.core.exception.PluginException;
 import tzuyu.plugin.core.utils.ClassLoaderUtils;
 import tzuyu.plugin.core.utils.ResourcesUtils;
 import tzuyu.plugin.reporter.PluginLogger;
@@ -39,15 +38,8 @@ public class ProjectConverter {
 	
 	public static TzProject from(WorkObject workObject, GenTestPreferences config) throws PluginException {
 		TzProject tzProject = toTzProject(workObject);
-		TzConfiguration tzConfig = toTzConfig(config);
-		tzProject.setConfiguration(tzConfig);
+		tzProject.setConfiguration(config.getTzConfig());
 		return tzProject;
-	}
-
-	private static TzConfiguration toTzConfig(GenTestPreferences config) {
-		TzConfiguration tzConfig = new TzConfiguration();
-		tzConfig.setOutput("D:/_1_Projects/Tzuyu/workspace/trunk/runtime-EclipseApplication/TzuyuTest/testcases");
-		return tzConfig;
 	}
 
 	private static TzProject toTzProject(WorkObject workObject)
