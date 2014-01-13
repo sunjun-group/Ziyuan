@@ -88,11 +88,25 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 				(Boolean) objectToInteger.defaultVal()));
 		config.setInheritedMethod(pref.getBoolean(inheritMethod.name(),
 				 (Boolean) inheritMethod.defaultVal()));
+		config.setPrintFailTests(pref.getBoolean(printFailTests.name(),
+				(Boolean) printFailTests.defaultVal()));
+		config.setPrintPassTests(pref.getBoolean(printPassTests.name(),
+				(Boolean) printPassTests.defaultVal()));
 	}
 
 	public void write(Preferences projectNode) {
 		projectNode.putInt(arrayMaxLength.name(), config.getArrayMaxLength());
+		projectNode.putInt(classMaxDepth.name(), config.getClassMaxDepth());
+		projectNode.putBoolean(debugChecks.name(), config.isDebugChecks());
+		projectNode.putBoolean(forbitNull.name(), config.isForbidNull());
+		projectNode.putBoolean(longFormat.name(), config.isLongFormat());
 		projectNode.putBoolean(prettyPrint.name(), config.isPrettyPrint());
+		projectNode.putInt(stringMaxLength.name(), config.getStringMaxLength());
+		projectNode.putInt(testsPerQuery.name(), config.getTestsPerQuery());
+		projectNode.putBoolean(objectToInteger.name(), config.isObjectToInteger());
+		projectNode.putBoolean(inheritMethod.name(), config.isInheritedMethod());
+		projectNode.putBoolean(printFailTests.name(), config.isPrintFailTests());
+		projectNode.putBoolean(printPassTests.name(), config.isPrintPassTests());
 		projectNode.put(ATT_OUTPUT_FOLDER, IProjectUtils.toRelativePath(outputFolder, project));
 		projectNode.put(ATT_OUTPUT_PACKAGE, IProjectUtils.toRelativePath(outputPackage, outputFolder));
 	}

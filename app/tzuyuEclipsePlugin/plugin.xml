@@ -47,6 +47,7 @@
              name="Generate test cases">
        </command>
        <command
+             defaultHandler="tzuyu.plugin.command.gentestwizard.GenTestWizardHandler"
              id="tzuyu.menu.command.openDialog"
              name="Open Dialog">
        </command>

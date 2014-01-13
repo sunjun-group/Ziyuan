@@ -9,7 +9,6 @@
 package tzuyu.plugin.preferences;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -20,7 +19,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
@@ -62,14 +60,13 @@ public class ProjectPropertyPage extends PropertyPage {
 				| GridData.GRAB_VERTICAL);
 		tabFolder.setLayoutData(layoutData);
 		// output tab
-		outputPanel = new OutputPanel(tabFolder, JavaCore.create(project), getShell());
+		outputPanel = new OutputPanel(this, tabFolder, JavaCore.create(project), getShell());
 		TabItem outputTab = new TabItem(tabFolder, SWT.NONE);
 		outputTab.setText(msg.gentest_prefs_tab_output());
 		outputTab.setControl(outputPanel);
-		outputPanel.setMessageContainer(this);
 		
 		// parameters tab
-		paramPanel = new ParameterPanel(tabFolder);
+		paramPanel = new ParameterPanel(this, tabFolder);
 		TabItem paramTab = new TabItem(tabFolder, SWT.NONE);
 		paramTab.setText(msg.gentest_prefs_tab_param());
 		paramTab.setControl(paramPanel);

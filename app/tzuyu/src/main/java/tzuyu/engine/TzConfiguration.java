@@ -42,6 +42,9 @@ public class TzConfiguration implements Cloneable {
 	private boolean objectToInteger;
 	private boolean inheritedMethod;
 	private File outputDir;
+	private boolean printFailTests;
+	private boolean printPassTests;
+	
 	
 	public TzConfiguration(boolean setDefault) {
 		if (setDefault) {
@@ -60,6 +63,8 @@ public class TzConfiguration implements Cloneable {
 		testsPerQuery = (Integer) TzParamType.testsPerQuery.defaultVal();
 		objectToInteger = (Boolean) TzParamType.objectToInteger.defaultVal();
 		inheritedMethod = (Boolean) TzParamType.inheritMethod.defaultVal();
+		printFailTests = (Boolean) TzParamType.printFailTests.defaultVal();
+		printPassTests = (Boolean) TzParamType.printPassTests.defaultVal();
 	}
 	
 	public TzConfiguration(TzConfiguration config) {
@@ -73,6 +78,8 @@ public class TzConfiguration implements Cloneable {
 		testsPerQuery = config.getTestsPerQuery();
 		objectToInteger = config.isObjectToInteger();
 		inheritedMethod = config.isInheritedMethod();
+		printFailTests = config.isPrintFailTests();
+		printPassTests = config.isPrintPassTests();
 	}
 
 	public int getTestsPerQuery() {
@@ -180,6 +187,22 @@ public class TzConfiguration implements Cloneable {
 
 	public void setPrettyPrint(boolean prettyPrint) {
 		this.prettyPrint = prettyPrint;
+	}
+
+	public boolean isPrintFailTests() {
+		return printFailTests;
+	}
+
+	public void setPrintFailTests(boolean printFailTests) {
+		this.printFailTests = printFailTests;
+	}
+
+	public boolean isPrintPassTests() {
+		return printPassTests;
+	}
+
+	public void setPrintPassTests(boolean printPassTests) {
+		this.printPassTests = printPassTests;
 	}
 
 	@Override

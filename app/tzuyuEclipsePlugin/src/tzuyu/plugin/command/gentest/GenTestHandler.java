@@ -22,12 +22,12 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 	@Override
 	protected void run(WorkObject workObject, GenTestPreferences config) {
 		TzuyuEngineProxy.run(workObject, config); 
-		TzuyuPlugin.getDefault().persistGenTestPreferences(workObject.getFirstProject().getProject(), config);
+		TzuyuPlugin.getDefault().persistGenTestPreferences(workObject.getProject().getProject(), config);
 	}
 
 	@Override
 	protected GenTestPreferences initConfiguration(WorkObject workObject) {
-		return TzuyuPlugin.getDefault().getGenTestPreferences(workObject.getFirstProject());
+		return TzuyuPlugin.getDefault().getGenTestPreferences(workObject.getProject());
 	}
 	
 }

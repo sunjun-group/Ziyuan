@@ -37,7 +37,7 @@ public class PackageEditor extends StringButtonFieldEditor {
 		super("packageEditor", "", parent);
 		setErrorMessage(msg.packageEditor_errorMessage());
 		setChangeButtonText(msg.common_openBrowse());
-		setValidateStrategy(VALIDATE_ON_FOCUS_LOST);
+		setValidateStrategy(VALIDATE_ON_KEY_STROKE);
 	}
 
 	@Override

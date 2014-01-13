@@ -8,9 +8,12 @@
 
 package tzuyu.plugin.preferences;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.DialogPage;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
@@ -26,9 +29,11 @@ import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.core.constants.Messages;
+import tzuyu.plugin.core.utils.IStatusUtils;
+import tzuyu.plugin.preferences.component.CheckboxGroup;
 import tzuyu.plugin.ui.AppEventManager;
 import tzuyu.plugin.ui.PropertyPanel;
-
+import tzuyu.plugin.ui.SWTFactory;
 
 /**
  * @author LLT
@@ -42,20 +47,17 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 	private SourceFolderEditor folderEditor;
 	private PackageEditor packageEditor;
 	private Label classNameLb;
-	private Text className;
-	private DialogPage msgContainer;
-	
+	private Text classNameTx;
+	private CheckboxGroup<TestCaseType> passFailCbGroup;
 	private AppEventManager eventManager;
 	
-	public OutputPanel(Composite parent, IJavaProject project, Shell shell) {
-		super(parent);
+	public OutputPanel(DialogPage msgContainer, Composite parent, IJavaProject project, Shell shell) {
+		super(parent, msgContainer);
 		
 		eventManager = new AppEventManager();
 		setLayout(new GridLayout());
 		
-		Label desc = new Label(this, SWT.NONE);
-		desc.setText(msg.sourceFolderEditor_description());
-		
+		// output folder panel
 		Composite contentPanel = new Composite(this, SWT.NONE);
 		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL
 				| GridData.GRAB_HORIZONTAL | GridData.FILL_VERTICAL
@@ -65,14 +67,17 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		this.project = project;
 		decorateContent(contentPanel);
 		classNameLb.setVisible(false);
-		className.setVisible(false);
+		classNameTx.setVisible(false);
 	}
 
 	private void decorateContent(Composite contentPanel) {
+		int colSpan = 3;
+		SWTFactory.createHorizontalSpacer(contentPanel, colSpan);
 		// target folder
 		folderEditor = new SourceFolderEditor(contentPanel, project, shell);
 		folderEditor.setLabelText(msg.gentest_prefs_output_folder());
 		folderEditor.setEventManager(eventManager);
+		folderEditor.setPage(messageContainer);
 		
 		// target package
 		packageEditor = new PackageEditor(contentPanel);
@@ -82,9 +87,9 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		// test class name
 		classNameLb = new Label(contentPanel, SWT.NONE);
 		classNameLb.setText(msg.gentest_prefs_output_className());
-		className = new Text(contentPanel, SWT.SINGLE | SWT.BORDER);
-		className.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		className.addFocusListener(new FocusListener() {
+		classNameTx = new Text(contentPanel, SWT.SINGLE | SWT.BORDER);
+		classNameTx.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		classNameTx.addFocusListener(new FocusListener() {
 			
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -96,36 +101,31 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 				validateClassName();
 			}
 		});
+		
+		passFailCbGroup = new CheckboxGroup<TestCaseType>(contentPanel,
+				msg.gentest_prefs_output_testcaseType_question(), colSpan);
+		passFailCbGroup.addCb(msg.gentest_prefs_output_testcaseType_pass(), TestCaseType.PASS);
+		passFailCbGroup.addCb(msg.gentest_prefs_output_testcaseType_fail(), TestCaseType.FAIL);
 	}
 	
 	private void validateClassName() {
-		String warningMsg = msg.gentest_prefs_output_warning_className_lowercase();
-		String errorMsg = msg.gentest_prefs_output_error_className_empty();
-		String text = StringUtils.toStringNullToEmpty(className.getText());
-		// clear msg
-		if (warningMsg.equals(msgContainer.getMessage())) {
-			msgContainer.setMessage(null);
-		}
-		if (errorMsg.equals(msgContainer.getErrorMessage())) {
-			msgContainer.setErrorMessage(null);
-		}
+		String text = StringUtils.toStringNullToEmpty(classNameTx.getText());
+		
+		IStatus status = IStatusUtils.OK_STATUS;
 		if (text.isEmpty()) {
-			msgContainer.setErrorMessage(errorMsg);
+			status = IStatusUtils.error(msg.gentest_prefs_output_error_className_empty());
 		} else if (!StringUtils.isStartWithUppercaseLetter(text)) {
-			msgContainer.setMessage(warningMsg, 
-					IMessageProvider.WARNING);
+			status = IStatusUtils.warning(msg.gentest_prefs_output_warning_className_lowercase());
 		} 
+		updateStatus(OutputField.CLASS_NAME, status);
 	}
 	
-	public void setMessageContainer(DialogPage page) {
-		this.msgContainer = page;
-		folderEditor.setPage(page);
-	}
-
 	@Override
 	public void refresh(GenTestPreferences data) {
 		folderEditor.setOutSourceFolder(data.getOutputFolder());
 		packageEditor.setSelectedPackage(data.getOutputPackage());
+		passFailCbGroup.setValue(TestCaseType.values(data.getTzConfig().isPrintPassTests(),
+				data.getTzConfig().isPrintFailTests()));
 	}
 
 	@Override
@@ -138,12 +138,15 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 	public void performOk(GenTestPreferences prefs) {
 		prefs.setOutputFolder(folderEditor.getValue());
 		prefs.setOutputPackage(packageEditor.getValue());
+		List<TestCaseType> passFailValue = passFailCbGroup.getValue();
+		prefs.getTzConfig().setPrintPassTests(passFailValue.contains(TestCaseType.PASS));
+		prefs.getTzConfig().setPrintFailTests(passFailValue.contains(TestCaseType.FAIL));
 	}
 	
 	@Override
 	protected void registerValueChangeListener() {
 		super.registerValueChangeListener();
-		className.addFocusListener(new FocusListener() {
+		classNameTx.addFocusListener(new FocusListener() {
 			
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -162,5 +165,30 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		return new FieldEditor[]{folderEditor, packageEditor};
 	}
 	
+	private enum TestCaseType {
+		PASS, FAIL;
+
+		public static List<TestCaseType> values(boolean printPassTests,
+				boolean printFailTests) {
+			List<TestCaseType> types = new ArrayList<OutputPanel.TestCaseType>();
+			if (printFailTests) {
+				types.add(FAIL);
+			}
+			if (printPassTests) {
+				types.add(PASS);
+			}
+			return types;
+		}
+	}
 	
+	private enum OutputField {
+		FOLDER,
+		PACKAGE,
+		CLASS_NAME
+	}
+
+	@Override
+	protected int getFieldNums() {
+		return OutputField.values().length;
+	}
 }

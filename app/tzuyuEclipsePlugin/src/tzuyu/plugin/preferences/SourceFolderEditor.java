@@ -25,7 +25,6 @@ import tzuyu.plugin.ui.AppEventManager;
  * @author LLT
  *
  */
-@SuppressWarnings("restriction")
 public class SourceFolderEditor extends StringButtonFieldEditor {
 	private final Messages msg = TzuyuPlugin.getMessages();
 	private IJavaProject project;
@@ -39,7 +38,7 @@ public class SourceFolderEditor extends StringButtonFieldEditor {
 		setEmptyStringAllowed(false);
         setErrorMessage(msg.sourceFolderEditor_errorMessage());
         setChangeButtonText(msg.common_openBrowse());
-        setValidateStrategy(VALIDATE_ON_FOCUS_LOST);
+        setValidateStrategy(VALIDATE_ON_KEY_STROKE);
         createControl(parent);
         // init reference data
 		this.project = project;
@@ -53,6 +52,7 @@ public class SourceFolderEditor extends StringButtonFieldEditor {
 		return outSourceFolder != null;
 	}
 	
+	@SuppressWarnings("restriction")
 	@Override
 	protected String changePressed() {
 		updateSourceFolderFromText();

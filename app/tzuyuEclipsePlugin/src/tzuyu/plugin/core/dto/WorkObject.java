@@ -9,14 +9,10 @@
 package tzuyu.plugin.core.dto;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaElement;
@@ -33,40 +29,35 @@ import tzuyu.plugin.core.utils.ResourcesUtils;
  * @author LLT
  */
 public class WorkObject {
-	private Map<IJavaProject, List<WorkItem>> projectMap = new HashMap<IJavaProject, List<WorkItem>>();
+	private IJavaProject project;
+	private List<WorkItem> workItems = new ArrayList<WorkObject.WorkItem>();
 	
-	public IJavaProject getFirstProject() {
-		return projectMap.keySet().iterator().next();
+	public WorkObject() {
+
+	}
+	
+	public void update(List<WorkItem> items) {
+		this.workItems.clear();
+		this.workItems.addAll(items);
+	}
+	
+	public WorkObject(IJavaProject project, List<WorkItem> items) {
+		this.project = project;
+		this.workItems = items;
+	}
+
+	public IJavaProject getProject() {
+		return project;
 	}
 	
 	public boolean isEmtpy() {
-		return projectMap == null || projectMap.isEmpty();
+		return project == null || workItems.isEmpty();
 	}
 	
-	public int size() {
-		if (isEmtpy()) {
-			return -1;
-		}
-		return projectMap.size();
+	public List<WorkItem> getWorkItems() {
+		return workItems;
 	}
 	
-	public Map<IJavaProject, List<WorkItem>> getProjectMap() {
-		return projectMap;
-	}
-	
-	public Set<IJavaProject> getProjects() {
-		return projectMap.keySet();
-	}
-	
-	public List<WorkItem> getWorkItems(IJavaProject project) {
-		return projectMap.get(project);
-	}
-	
-	public List<WorkItem> getFirstItem() {
-		Assert.isLegal(size() == 1);
-		return projectMap.entrySet().iterator().next().getValue();
-	}
-
 	/**
 	 * Collects and combines the selection which may contain sources from
 	 * different projects and / or multiple sources from same project.
@@ -124,8 +115,7 @@ public class WorkObject {
 	private WorkObject extendFromIJavaElement(IJavaElement element) {
 		List<WorkItem> projectItems = getProjectItems(element.getJavaProject());
 		if (!isAlreadyIncluded(element, projectItems)) {
-			projectItems.add(new WorkItem(element.getJavaProject(), null,
-					element));
+			projectItems.add(new WorkItem(null, element));
 		}
 		return this;
 	}
@@ -141,7 +131,7 @@ public class WorkObject {
 			return this;
 		}
 		IJavaProject project = JavaCore.create(resource.getProject());
-		getProjectItems(project).add(new WorkItem(project, resource, null));
+		getProjectItems(project).add(new WorkItem(resource, null));
 		return this;
 	}
 
@@ -163,25 +153,26 @@ public class WorkObject {
 	}
 
 	private List<WorkItem> getProjectItems(IJavaProject project) {
-		List<WorkItem> items = projectMap.get(project);
-		if (items == null) {
-			items = new ArrayList<WorkItem>();
-			projectMap.put(project, items);
+		if (this.project == null) {
+			this.project = project;
 		}
-		return items;
+		if (this.project.equals(project)) {
+			return workItems;
+		} else {
+			//TODO LLT: throw exception
+		}
+		return new ArrayList<WorkObject.WorkItem>();
 	}
 
 	/**
 	 * @author LLT
 	 */
 	public static class WorkItem {
-		IJavaProject project;
 		IResource resource;
 		IJavaElement jEle;
 
-		public WorkItem(IJavaProject project, IResource resource,
+		public WorkItem(IResource resource,
 				IJavaElement jele) {
-			this.project = project;
 			this.resource = resource;
 			this.jEle = jele;
 		}

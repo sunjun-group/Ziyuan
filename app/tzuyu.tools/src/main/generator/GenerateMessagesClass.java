@@ -65,13 +65,32 @@ public class GenerateMessagesClass {
 		StringBuilder content = new StringBuilder();
 		for (Object k : props.keySet()) {
 			String key = (String) k;
+			String value = props.getProperty(key);
+			int argNo = -1;
+			for (int i = 0; i < 10; i++) {
+				if (value.indexOf("{" + i + "}") > -1) {
+					argNo = i;
+				}
+			}
+			
 			content.append("\n")
 					.append("\tpublic String ")
 					.append(key.replace(".", "_"))
-					.append("() {")
+					.append("(");
+			for (int i = 0; i <= argNo; i++) {
+				content.append("Object arg" + i);
+				if (i < argNo) {
+					content.append(", ");
+				}
+			}
+			content.append(") {")
 					.append("\n\t\treturn getMessage(\"")
-					.append(key)
-					.append("\");")
+					.append(key).append("\"");
+			for (int i = 0; i <= argNo; i++) {
+				content.append(", ")
+						.append("arg" + i);
+			}
+			content.append(");")
 					.append("\n\t}\n");
 					
 		}

@@ -8,31 +8,107 @@
 
 package tzuyu.plugin.preferences;
 
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
+import tzuyu.engine.TzConfiguration;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
+import tzuyu.plugin.preferences.component.IntText;
 import tzuyu.plugin.ui.PropertyPanel;
+import tzuyu.plugin.ui.SWTFactory;
 
 /**
  * @author LLT
- *
+ * 
  */
 public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
-	
-	public ParameterPanel(Composite parent) {
-		super(parent);
-		Label title = new Label(this, SWT.NONE);
-		title.setText(msg.gentest_prefs_param());
+	private Label arrayMaxLengthLb;
+	private IntText arrayMaxLengthTx;
+	private Label classMaxDepthLb;
+	private IntText classMaxDepthTx;
+	private Label stringMaxLengthLb;
+	private IntText stringMaxLengthTx;
+	private Button longFormatCb;
+	private Button objToIntCb;
+	private Label testsPerQueryLb;
+	private IntText testsPerQueryTx;
+
+	public ParameterPanel(DialogPage msgContainer, Composite parent) {
+		super(parent, msgContainer);
+		GridLayout grid = new GridLayout(2, false);
+		setLayout(grid);
+		GridData layoutData = new GridData(GridData.FILL_BOTH); 
+		setLayoutData(layoutData);
+		grid.marginRight = 20;
+		
+		decorateContent(this);
+	}
+
+	private void decorateContent(Composite contentPanel) {
+		int colNum = 2;
+		Group group1 = SWTFactory.createGroup(contentPanel, "", colNum);
+		group1.setLayout(new GridLayout(2, false));
+		arrayMaxLengthLb = SWTFactory.createLabel(group1,
+				msg.gentest_prefs_param_arrayMaxDepth());
+		arrayMaxLengthTx = new IntText(group1,
+				ParamField.ARRAY_MAX_LENGTH);
+		classMaxDepthLb = SWTFactory.createLabel(group1,
+				msg.gentest_prefs_param_classMaxDepth());
+		classMaxDepthTx = new IntText(group1, ParamField.CLASS_MAX_DEPTH);
+		stringMaxLengthLb = SWTFactory.createLabel(group1,
+				msg.gentest_prefs_param_stringMaxLength());
+		stringMaxLengthTx = new IntText(group1,
+				ParamField.STRING_MAX_LENGTH);
+		
+		Group group2 = SWTFactory.createGroup(contentPanel, "", colNum);
+		longFormatCb = SWTFactory.createCheckbox(group2,
+				msg.gentest_prefs_param_longFormat(), colNum);
+		objToIntCb = SWTFactory.createCheckbox(group2,
+				msg.gentest_prefs_param_objectToInteger(), colNum);
+		
+		Group group3 = SWTFactory.createGroup(contentPanel, "", colNum);
+		group3.setLayout(new GridLayout(2, false));
+		testsPerQueryLb = SWTFactory.createLabel(group3,
+				msg.gentest_prefs_param_testPerQuery());
+		testsPerQueryTx = new IntText(group3, ParamField.TESTS_PER_QUERY);
+		addModifyListener();
 	}
 
 	@Override
 	public void refresh(GenTestPreferences data) {
-		// TODO Auto-generated method stub
-		
+		TzConfiguration tzConfig = data.getTzConfig();
+		arrayMaxLengthTx.setValue(tzConfig.getArrayMaxLength());
+		classMaxDepthTx.setValue(tzConfig.getClassMaxDepth());
+		stringMaxLengthTx.setValue(tzConfig.getStringMaxLength());
+		longFormatCb.setSelection(tzConfig.isLongFormat());
+		objToIntCb.setSelection(tzConfig.isObjectToInteger());
+		testsPerQueryTx.setValue(tzConfig.getTestsPerQuery());
+	}
+
+	private void addModifyListener() {
+		addModifyListener(ParamField.ARRAY_MAX_LENGTH, arrayMaxLengthTx);
+		addModifyListener(ParamField.CLASS_MAX_DEPTH, classMaxDepthTx);
+		addModifyListener(ParamField.STRING_MAX_LENGTH, stringMaxLengthTx);
+		addModifyListener(ParamField.TESTS_PER_QUERY, testsPerQueryTx);
+	}
+
+	private void addModifyListener(final ParamField field, final IntText txt) {
+		txt.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				updateStatus(field, txt.validate());
+			}
+		});
 	}
 
 	@Override
@@ -43,14 +119,25 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 
 	@Override
 	public void performOk(GenTestPreferences prefs) {
-		// TODO Auto-generated method stub
-		
+		TzConfiguration tzConfig = prefs.getTzConfig();
+		tzConfig.setArrayMaxLength(arrayMaxLengthTx.getValue());
+		tzConfig.setClassMaxDepth(classMaxDepthTx.getValue());
+		tzConfig.setStringMaxLength(stringMaxLengthTx.getValue());
+		tzConfig.setLongFormat(longFormatCb.getSelection());
+		tzConfig.setObjectToInteger(objToIntCb.getSelection());
+		tzConfig.setTestsPerQuery(testsPerQueryTx.getValue());
 	}
 
 	@Override
-	public FieldEditor[] getFieldEditors() {
-		// TODO Auto-generated method stub
-		return null;
+	protected int getFieldNums() {
+		return ParamField.values().length;
+	}
+
+	/**
+	 * for error field display order
+	 */
+	private static enum ParamField {
+		ARRAY_MAX_LENGTH, CLASS_MAX_DEPTH, STRING_MAX_LENGTH, LONG_FORMAT, OBJ_TO_INT, TESTS_PER_QUERY
 	}
 
 }

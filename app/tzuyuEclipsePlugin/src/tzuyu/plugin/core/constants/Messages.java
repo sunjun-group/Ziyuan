@@ -8,6 +8,7 @@
 
 package tzuyu.plugin.core.constants;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -39,11 +40,25 @@ public final class Messages {
 		return enumConstantResourceBundle.getString(key);
 	}
 	
+	public String getMessage(String key, Object... args) {
+		String msg = getMessage(key);
+		Object[] convertedArgs = new Object[args.length];
+		for (int i = 0; i < args.length; i++) {
+			Object arg = args[i];
+			if (arg instanceof Enum<?>) {
+				convertedArgs[i] = getMessage((Enum<?>) arg);
+			} else {
+				convertedArgs[i] = arg;
+			}
+		}
+		return MessageFormat.format(msg, convertedArgs);
+	}
+	
 	private String getMessage(String key) {
 		return messagesResourceBundle.getString(key); 
 	}
 	
-	/* see GenerateMessagesClass in Tzuyu.tools for generation detail*/
+	/* see Tzuyu.tools.GenerateMessagesClass for generation detail*/
 	//	Generated part
 
 	public String gentest_prefs_tab_output() {
@@ -66,12 +81,28 @@ public final class Messages {
 		return getMessage("gentest_prefs_tab_param");
 	}
 
+	public String gentest_prefs_param_prettyPrint() {
+		return getMessage("gentest_prefs_param_prettyPrint");
+	}
+
+	public String inputWizardPage_name() {
+		return getMessage("inputWizardPage_name");
+	}
+
 	public String common_openBrowse() {
 		return getMessage("common_openBrowse");
 	}
 
+	public String gentest_prefs_param_forbitNull() {
+		return getMessage("gentest_prefs_param_forbitNull");
+	}
+
 	public String gentest_prefs_param_testPerQuery() {
 		return getMessage("gentest_prefs_param_testPerQuery");
+	}
+
+	public String intText_parse_error(Object arg0) {
+		return getMessage("intText_parse_error", arg0);
 	}
 
 	public String gentest_prefs_output_warning_className_lowercase() {
@@ -80,6 +111,10 @@ public final class Messages {
 
 	public String gentest_prefs_output_package() {
 		return getMessage("gentest_prefs_output_package");
+	}
+
+	public String gentest_prefs_param_arrayMaxDepth() {
+		return getMessage("gentest_prefs_param_arrayMaxDepth");
 	}
 
 	public String sourceFolderEditor_errorMessage() {
@@ -114,6 +149,10 @@ public final class Messages {
 		return getMessage("packageEditor_selection_popup_desc");
 	}
 
+	public String gentest_prefs_param_objectToInteger() {
+		return getMessage("gentest_prefs_param_objectToInteger");
+	}
+
 	public String gentest_prefs_output_testcaseType_fail() {
 		return getMessage("gentest_prefs_output_testcaseType_fail");
 	}
@@ -124,6 +163,10 @@ public final class Messages {
 
 	public String packageEditor_selection_popup_title() {
 		return getMessage("packageEditor_selection_popup_title");
+	}
+
+	public String genTestWizard_title() {
+		return getMessage("genTestWizard_title");
 	}
 
 	public String packageEditor_errorMessage() {
@@ -138,8 +181,20 @@ public final class Messages {
 		return getMessage("gentest_prefs_param_debugCheck");
 	}
 
+	public String gentest_prefs_param_longFormat() {
+		return getMessage("gentest_prefs_param_longFormat");
+	}
+
 	public String gentest_prefs_output_folder() {
 		return getMessage("gentest_prefs_output_folder");
+	}
+
+	public String gentest_prefs_param_inheritMethod() {
+		return getMessage("gentest_prefs_param_inheritMethod");
+	}
+
+	public String gentest_prefs_param_stringMaxLength() {
+		return getMessage("gentest_prefs_param_stringMaxLength");
 	}
 
 	//	End generated part
