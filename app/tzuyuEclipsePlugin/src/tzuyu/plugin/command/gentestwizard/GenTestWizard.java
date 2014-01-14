@@ -15,6 +15,7 @@ import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.core.constants.Messages;
 import tzuyu.plugin.core.dto.WorkObject;
+import tzuyu.plugin.ui.AppEventManager;
 
 /**
  * @author LLT
@@ -25,14 +26,16 @@ public class GenTestWizard extends Wizard {
 	private InputWizardPage inputPage;
 	private OutputWizardPage outputPage;
 	private ParameterWizardPage paramPage;
+	private AppEventManager eventManager;
 
 	public GenTestWizard(WorkObject workObject, GenTestPreferences prefs) {
 		setWindowTitle(msg.genTestWizard_title());
-		inputPage = new InputWizardPage(workObject, prefs);
+		eventManager = new AppEventManager();
+		inputPage = new InputWizardPage(workObject, prefs, eventManager);
 		addPage(inputPage);
-		outputPage = new OutputWizardPage(workObject.getProject(), prefs);
+		outputPage = new OutputWizardPage(workObject.getProject(), prefs, eventManager);
 		addPage(outputPage);
-		paramPage = new ParameterWizardPage(prefs);
+		paramPage = new ParameterWizardPage(prefs, eventManager);
 		addPage(paramPage);
 	}
 	

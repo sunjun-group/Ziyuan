@@ -9,10 +9,8 @@
 package tzuyu.plugin.preferences;
 
 import org.eclipse.jface.dialogs.DialogPage;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -60,14 +58,16 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 		arrayMaxLengthLb = SWTFactory.createLabel(group1,
 				msg.gentest_prefs_param_arrayMaxDepth());
 		arrayMaxLengthTx = new IntText(group1,
-				ParamField.ARRAY_MAX_LENGTH);
+				ParamField.ARRAY_MAX_LENGTH).positive().mandatory();
+		
 		classMaxDepthLb = SWTFactory.createLabel(group1,
 				msg.gentest_prefs_param_classMaxDepth());
-		classMaxDepthTx = new IntText(group1, ParamField.CLASS_MAX_DEPTH);
+		classMaxDepthTx = new IntText(group1, ParamField.CLASS_MAX_DEPTH).positive().mandatory();
+		
 		stringMaxLengthLb = SWTFactory.createLabel(group1,
 				msg.gentest_prefs_param_stringMaxLength());
 		stringMaxLengthTx = new IntText(group1,
-				ParamField.STRING_MAX_LENGTH);
+				ParamField.STRING_MAX_LENGTH).positive().mandatory();
 		
 		Group group2 = SWTFactory.createGroup(contentPanel, "", colNum);
 		longFormatCb = SWTFactory.createCheckbox(group2,
@@ -79,7 +79,8 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 		group3.setLayout(new GridLayout(2, false));
 		testsPerQueryLb = SWTFactory.createLabel(group3,
 				msg.gentest_prefs_param_testPerQuery());
-		testsPerQueryTx = new IntText(group3, ParamField.TESTS_PER_QUERY);
+		testsPerQueryTx = new IntText(group3, ParamField.TESTS_PER_QUERY).positive().mandatory();
+		
 		addModifyListener();
 	}
 
@@ -109,12 +110,6 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 				updateStatus(field, txt.validate());
 			}
 		});
-	}
-
-	@Override
-	public boolean isValid() {
-		// TODO Auto-generated method stub
-		return true;
 	}
 
 	@Override

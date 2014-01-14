@@ -34,7 +34,7 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 	public static final String ATT_OUTPUT_FOLDER = "outputSourceFolder";
 	public static final String ATT_OUTPUT_PACKAGE = "outputPackage";
 	
-	public static final String OUTPUT_FOLDER = "src/test";
+	public static final String OUTPUT_FOLDER = "src";
 	public static final String OUTPUT_PACKAGE = "tzuyu";
 //	public static final String OUTPUT_CLASS_NAME = "Tzuyu";
 	
@@ -122,9 +122,9 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 					PluginLogger.logEx(e);
 				}
 			}
+			IPath outputPath = IProjectUtils.relativeToAbsolute(outputPackage.getPath());
+			config.setOutputDir(outputPath.toFile());
 		}
-		IPath outputPath = IProjectUtils.relativeToAbsolute(outputPackage.getPath());
-		config.setOutputDir(outputPath.toFile());
 		return config;
 	}
 	

@@ -30,6 +30,9 @@ import org.eclipse.swt.widgets.Composite;
 import tzuyu.plugin.core.dto.WorkObject;
 import tzuyu.plugin.core.dto.WorkObject.WorkItem;
 import tzuyu.plugin.reporter.PluginLogger;
+import tzuyu.plugin.ui.AppEvent;
+import tzuyu.plugin.ui.AppEventManager;
+import tzuyu.plugin.ui.ValueChangedEvent;
 
 /**
  * @author LLT
@@ -38,9 +41,11 @@ import tzuyu.plugin.reporter.PluginLogger;
 public class InputTreeViewer extends CheckboxTreeViewer {
 	private ContentProvider contentProvider;
 	private ILabelProvider labelProvider;
+	private AppEventManager eventManager;
 
-	public InputTreeViewer(Composite parent) {
+	public InputTreeViewer(Composite parent, AppEventManager eventManager) {
 		super(parent, SWT.BORDER);
+		this.eventManager = eventManager;
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		getControl().setLayoutData(gd);
 		contentProvider = new ContentProvider();
@@ -51,6 +56,7 @@ public class InputTreeViewer extends CheckboxTreeViewer {
 			
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
+				Object[] oldValue = getCheckedElements();
 				// select all its children if selected
 				Object[] children;
 				Object parent;
@@ -67,8 +73,17 @@ public class InputTreeViewer extends CheckboxTreeViewer {
 						parent = contentProvider.getParent(parent);
 					} 
 				}
+				
+				fireEvent(new ValueChangedEvent<Object[]>(InputTreeViewer.this, oldValue, 
+						getCheckedElements()));
 			}
 		});
+	}
+
+	protected void fireEvent(AppEvent event) {
+		if (eventManager != null) {
+			eventManager.fireEvent(event);
+		}
 	}
 
 	public void setData(WorkObject workObject) {

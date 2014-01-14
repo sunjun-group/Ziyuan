@@ -13,8 +13,6 @@ import org.eclipse.jdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
@@ -28,9 +26,10 @@ import tzuyu.plugin.core.utils.IStatusUtils;
  */
 public abstract class PropertyPanel<T> extends Composite {
 	protected Messages msg;
-	protected boolean dirty = false;
 	protected DialogPage messageContainer;
 	private IStatus[] statusArr;
+	protected AppEventManager eventManager;
+	private boolean autoUpdateContainerMsg = true;
 	
 	public PropertyPanel(Composite parent, DialogPage messageContainer) {
 		this(parent, SWT.NONE);
@@ -53,30 +52,33 @@ public abstract class PropertyPanel<T> extends Composite {
 		if (statusArr == null) {
 			return;
 		}
+
 		statusArr[field.ordinal()] = status;
-		IStatus mostSevere = StatusUtil.getMostSevere(statusArr);
-		if (mostSevere.getSeverity() == IStatus.ERROR) {
-			messageContainer.setErrorMessage(mostSevere.getMessage());
-		} else if (mostSevere.getSeverity() == IStatus.WARNING) {
-			messageContainer.setMessage(mostSevere.getMessage(), IMessageProvider.WARNING);
-		} else {
-			messageContainer.setErrorMessage(null);
+		// only update message container page if this flat is on
+		// (in case of wizard, we prefer to let the wizard page update by itself,
+		// using event handler
+		if (autoUpdateContainerMsg) {
+			IStatus mostSevere = StatusUtil.getMostSevere(statusArr);
+			if (mostSevere.getSeverity() == IStatus.ERROR) {
+				messageContainer.setErrorMessage(mostSevere.getMessage());
+			} else if (mostSevere.getSeverity() == IStatus.WARNING) {
+				messageContainer.setMessage(mostSevere.getMessage(),
+						IMessageProvider.WARNING);
+			} else {
+				messageContainer.setErrorMessage(null);
+			}
+		}
+		fireEvent(new ValueChangedEvent<IStatus[]>(this, null,
+					statusArr));
+	}
+	
+	public void fireEvent(AppEvent event) {
+		if (eventManager != null) {
+			eventManager.fireEvent(event);
 		}
 	}
 	
 	protected abstract int getFieldNums();
-	
-	protected void registerValueChangeListener() {
-		for (FieldEditor editor : getFieldEditors()) {
-			editor.setPropertyChangeListener(new IPropertyChangeListener() {
-				
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					dirty = true;
-				}
-			});
-		}
-	}
 	
 	public boolean isDirty() {
 		return true;
@@ -84,11 +86,29 @@ public abstract class PropertyPanel<T> extends Composite {
 	
 	public abstract void refresh(T data);
 
-	public abstract boolean isValid();
+	public boolean isValid() {
+		if (statusArr == null) {
+			return true;
+		}
+		for (IStatus status : statusArr) {
+			if (status != IStatusUtils.OK_STATUS) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	public abstract void performOk(T data);
 	
 	public FieldEditor[] getFieldEditors() {
 		return new FieldEditor[]{};
+	}
+	
+	public void setEventManager(AppEventManager eventManager) {
+		this.eventManager = eventManager;
+	}
+	
+	public void setAutoUpdateContainerMsg(boolean autoUpdateContainerMsg) {
+		this.autoUpdateContainerMsg = autoUpdateContainerMsg;
 	}
 }

@@ -13,13 +13,17 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.internal.ui.refactoring.nls.SourceContainerDialog;
 import org.eclipse.jface.preference.StringButtonFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.core.constants.Messages;
 import tzuyu.plugin.core.utils.IProjectUtils;
+import tzuyu.plugin.ui.AppEvent;
 import tzuyu.plugin.ui.AppEventManager;
+import tzuyu.plugin.ui.ValueChangedEvent;
 
 /**
  * @author LLT
@@ -36,16 +40,28 @@ public class SourceFolderEditor extends StringButtonFieldEditor {
 	public SourceFolderEditor(Composite parent, IJavaProject project, Shell shell) {
 		init("sourceFolderEditor", "");
 		setEmptyStringAllowed(false);
-        setErrorMessage(msg.sourceFolderEditor_errorMessage());
         setChangeButtonText(msg.common_openBrowse());
-        setValidateStrategy(VALIDATE_ON_KEY_STROKE);
         createControl(parent);
         // init reference data
 		this.project = project;
 		this.shell = shell;
 		workspaceRoot = project.getProject().getWorkspace().getRoot();
+		setPropertyChangeListener(new IPropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				fireEvent(new ValueChangedEvent<IPackageFragmentRoot>(SourceFolderEditor.this,
+						null, outSourceFolder));
+			}
+		});
 	}
 	
+	protected void fireEvent(AppEvent event) {
+		if (eventManager != null) {
+			eventManager.fireEvent(event);
+		}
+	}
+
 	@Override
 	protected boolean doCheckState() {
 		updateSourceFolderFromText();

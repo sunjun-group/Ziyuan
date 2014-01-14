@@ -28,9 +28,12 @@ public class AppEventManager {
 		}
 		listeners.add(listener);
 	}
-	
+
 	public void fireEvent(AppEvent event) {
 		Set<AppListener> listeners = listenersMap.get(event.getType());
+		if (listeners == null || listeners.isEmpty()) {
+			return;
+		}
 		for (AppListener listener : listeners) {
 			event.execute(listener);
 		}

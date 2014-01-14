@@ -14,6 +14,8 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.preference.StringButtonFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -23,6 +25,7 @@ import tzuyu.plugin.core.constants.Messages;
 import tzuyu.plugin.core.utils.IProjectUtils;
 import tzuyu.plugin.reporter.PluginLogger;
 import tzuyu.plugin.ui.AppEventManager;
+import tzuyu.plugin.ui.ValueChangedEvent;
 
 /**
  * @author LLT
@@ -33,11 +36,20 @@ public class PackageEditor extends StringButtonFieldEditor {
 	private IPackageFragment selectedPackage;
 	private IPackageFragmentRoot root;
 
-	public PackageEditor(Composite parent) {
+	public PackageEditor(Composite parent, final AppEventManager eventManager) {
 		super("packageEditor", "", parent);
-		setErrorMessage(msg.packageEditor_errorMessage());
 		setChangeButtonText(msg.common_openBrowse());
-		setValidateStrategy(VALIDATE_ON_KEY_STROKE);
+		
+		setPropertyChangeListener(new IPropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (eventManager != null) {
+					eventManager.fireEvent(new ValueChangedEvent<IPackageFragment>(PackageEditor.this, 
+							null, selectedPackage));
+				}
+			}
+		});
 	}
 
 	@Override

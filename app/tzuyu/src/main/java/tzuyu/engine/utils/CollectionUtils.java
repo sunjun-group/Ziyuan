@@ -28,4 +28,8 @@ public class CollectionUtils {
 		}
 		return false;
 	}
+	
+	public static <T> boolean isEmpty(T[] vals) {
+		return vals == null || vals.length == 0;
+	}
 }

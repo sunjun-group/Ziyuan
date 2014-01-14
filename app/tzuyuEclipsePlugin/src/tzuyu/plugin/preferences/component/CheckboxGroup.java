@@ -12,11 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+
+import tzuyu.plugin.ui.AppListener;
+import tzuyu.plugin.ui.ValueChangedEvent;
+import tzuyu.plugin.ui.ValueChangedListener;
 
 /**
  * @author LLT
@@ -61,6 +67,26 @@ public class CheckboxGroup<T> {
 	public void setValue(List<T> values) {
 		for (Button btn : btns) {
 			btn.setSelection(values.contains(btn.getData()));
+		}
+	}
+	
+	public void addValueChangedListener(final ValueChangedListener<List<T>> listener, final boolean excludeDefault) {
+		for (Button btn : btns) {
+			btn.addSelectionListener(new SelectionListener() {
+				
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					listener.onValueChanged(new ValueChangedEvent<List<T>>(this, null, getValue()));
+				}
+				
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					if (!excludeDefault) {
+						listener.onValueChanged(new ValueChangedEvent<List<T>>(this, null, getValue()));
+					}
+					
+				}
+			});
 		}
 	}
 }

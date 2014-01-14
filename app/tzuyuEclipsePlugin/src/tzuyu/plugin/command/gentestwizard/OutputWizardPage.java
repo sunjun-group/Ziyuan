@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.preferences.OutputPanel;
+import tzuyu.plugin.ui.AppEventManager;
 
 /**
  * @author LLT
@@ -22,8 +23,8 @@ public class OutputWizardPage extends GenTestWizardPage {
 	private IJavaProject project;
 	private OutputPanel outputPanel;
 
-	protected OutputWizardPage(IJavaProject project, GenTestPreferences prefs) {
-		super("outputWizard", prefs);
+	protected OutputWizardPage(IJavaProject project, GenTestPreferences prefs, AppEventManager eventManager) {
+		super("outputWizard", prefs, eventManager);
 		setTitle(msg.gentest_prefs_output());
 		this.project = project;
 		this.prefs = prefs;
@@ -32,13 +33,15 @@ public class OutputWizardPage extends GenTestWizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		outputPanel = new OutputPanel(this, parent, project, getShell());
+		outputPanel.setAutoUpdateContainerMsg(false);
+		outputPanel.setEventManager(eventManager);
 		outputPanel.refresh(prefs);
 		setControl(outputPanel);
+		registerListener();
 	}
 	
-	@Override
-	public boolean canFlipToNextPage() {
-		return outputPanel.isValid();
+	private void registerListener() {
+		registerStatusChangeListener(outputPanel);
 	}
 
 	@Override

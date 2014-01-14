@@ -29,6 +29,7 @@ public class TzPreferenceInitializer extends AbstractPreferenceInitializer {
 	}
 
 	public static void restoreDefault(IPreferenceStore store) {
+		store = TzuyuPlugin.getDefault().getPreferenceStore();
 		for (TzParamType param : TzParamType.values()) {
 			store.setToDefault(param.name());
 		}

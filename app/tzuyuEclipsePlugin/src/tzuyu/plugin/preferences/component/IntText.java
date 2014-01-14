@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Text;
 
 import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.TzuyuPlugin;
+import tzuyu.plugin.core.constants.Messages;
 import tzuyu.plugin.core.utils.IStatusUtils;
 
 /**
@@ -26,6 +27,8 @@ import tzuyu.plugin.core.utils.IStatusUtils;
 public class IntText {
 	private Object fieldEnumOrFieldName;
 	private Text text;
+	private boolean positive;
+	private boolean mandatory;
 	
 	public IntText(Composite parent, Object fieldEnumOrFieldName) {
 		text = new Text(parent, SWT.BORDER);
@@ -33,12 +36,30 @@ public class IntText {
 		this.fieldEnumOrFieldName = fieldEnumOrFieldName;
 	}
 	
+	public IntText mandatory() {
+		this.mandatory = true;
+		return this;
+	}
+	
+	public IntText positive() {
+		this.positive = true;
+		return this;
+	}
+	
 	public IStatus validate() {
+		Messages msg = TzuyuPlugin.getMessages();
 		try {
-			Integer.parseInt(text.getText());
+			if (org.apache.commons.lang.StringUtils.isBlank(text.getText())
+					&& mandatory) {
+				return IStatusUtils.error(msg.intText_error_mandatory(fieldEnumOrFieldName));
+			}
+			int val = Integer.parseInt(text.getText());
+			if (positive && val < 0) {
+				return IStatusUtils.error(msg.intText_error_not_positive(fieldEnumOrFieldName));
+			}
 		} catch (NumberFormatException e) {
-			return IStatusUtils.error(TzuyuPlugin.getMessages()
-					.intText_parse_error(fieldEnumOrFieldName));
+			return IStatusUtils.error(msg
+					.intText_error_parse(fieldEnumOrFieldName));
 		}
 		return IStatusUtils.OK_STATUS;
 	}

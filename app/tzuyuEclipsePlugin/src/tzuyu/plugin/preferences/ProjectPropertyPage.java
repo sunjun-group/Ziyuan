@@ -10,6 +10,7 @@ package tzuyu.plugin.preferences;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
@@ -23,7 +24,10 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.core.constants.Messages;
+import tzuyu.plugin.ui.AppEventManager;
 import tzuyu.plugin.ui.PropertyPanel;
+import tzuyu.plugin.ui.ValueChangedEvent;
+import tzuyu.plugin.ui.ValueChangedListener;
 
 /**
  * @author LLT
@@ -38,6 +42,11 @@ public class ProjectPropertyPage extends PropertyPage {
 	private GenTestPreferences orgPrefs;
 	private GenTestPreferences curPrefs;
 	private Messages msg = TzuyuPlugin.getMessages();
+	private AppEventManager eventManager;
+	
+	public ProjectPropertyPage() {
+		eventManager = new AppEventManager();
+	}
 	
 	@Override
 	protected Control createContents(Composite parent) {
@@ -61,23 +70,37 @@ public class ProjectPropertyPage extends PropertyPage {
 		tabFolder.setLayoutData(layoutData);
 		// output tab
 		outputPanel = new OutputPanel(this, tabFolder, JavaCore.create(project), getShell());
+		outputPanel.setEventManager(eventManager);
 		TabItem outputTab = new TabItem(tabFolder, SWT.NONE);
 		outputTab.setText(msg.gentest_prefs_tab_output());
 		outputTab.setControl(outputPanel);
 		
 		// parameters tab
 		paramPanel = new ParameterPanel(this, tabFolder);
+		paramPanel.setEventManager(eventManager);
 		TabItem paramTab = new TabItem(tabFolder, SWT.NONE);
 		paramTab.setText(msg.gentest_prefs_tab_param());
 		paramTab.setControl(paramPanel);
+		registerListener();
+	}
+
+	private void registerListener() {
+		registerStatusChangeListener(outputPanel);
+		registerStatusChangeListener(paramPanel);
+	}
+
+	protected void registerStatusChangeListener(Object source) {
+		eventManager.register(ValueChangedEvent.TYPE, new ValueChangedListener<IStatus[]>(source) {
+
+			@Override
+			public void onValueChanged(ValueChangedEvent<IStatus[]> event) {
+				updateApplyButton();
+			}
+		});
 	}
 
 	private void initPreferenceStore(IProject curProject) {
 		assert curProject != null;
-		// TODO LLT: curProject null if select properties on class
-//		projectStore = new ScopedPreferenceStore(new ProjectScope(curProject),
-//				TzuyuPlugin.PLUGIN_ID);
-//		setPreferenceStore(projectStore);
 		loadPreferences(curProject);
 	}
 
@@ -102,14 +125,13 @@ public class ProjectPropertyPage extends PropertyPage {
 	
 	@Override
 	public boolean performOk() {
-		boolean dirty = false;
+		if (!isValid()) {
+			return false;
+		}
 		for (PropertyPanel<GenTestPreferences> widget : getWidgets()) {
 			widget.performOk(curPrefs);
-			dirty |= widget.isDirty();
 		}
-		if (dirty) {
-			TzuyuPlugin.getDefault().persistGenTestPreferences(project, curPrefs);
-		}
+		TzuyuPlugin.getDefault().persistGenTestPreferences(project, curPrefs);
 		return true;
 	}
 

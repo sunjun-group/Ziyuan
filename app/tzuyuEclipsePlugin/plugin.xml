@@ -58,12 +58,17 @@
              class="tzuyu.plugin.preferences.ProjectPropertyPage"
              id="tzuyu.configuration.propertypages"
              name="%propertypages.name">
+          <enabledWhen>
+             <adapt
+                   type="org.eclipse.core.resources.IProject">
+             </adapt>
+          </enabledWhen>
        </page>
     </extension>
     <extension
           point="org.eclipse.core.runtime.preferences">
        <initializer
-             class="tzuyueclipseplugin.AbstractPreferenceInitializer1">
+             class="tzuyu.plugin.preferences.TzPreferenceInitializer">
        </initializer>
     </extension>
 </plugin>

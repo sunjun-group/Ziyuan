@@ -8,6 +8,7 @@
 
 package tzuyu.plugin.core.utils;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -52,6 +53,9 @@ public class IProjectUtils {
 
 	public static IPackageFragment toPackageFragment(
 			IPackageFragmentRoot root, String packageName) {
+		if (StringUtils.isBlank(packageName)) {
+			return null;
+		}
 		if (root != null) {
 			return root.getPackageFragment(packageName);
 		}

@@ -61,60 +61,12 @@ public final class Messages {
 	/* see Tzuyu.tools.GenerateMessagesClass for generation detail*/
 	//	Generated part
 
-	public String gentest_prefs_tab_output() {
-		return getMessage("gentest_prefs_tab_output");
-	}
-
-	public String gentest_selection_empty() {
-		return getMessage("gentest_selection_empty");
-	}
-
-	public String gentest_prefs_output_error_className_empty() {
-		return getMessage("gentest_prefs_output_error_className_empty");
-	}
-
-	public String gentest_prefs_param_classMaxDepth() {
-		return getMessage("gentest_prefs_param_classMaxDepth");
-	}
-
-	public String gentest_prefs_tab_param() {
-		return getMessage("gentest_prefs_tab_param");
-	}
-
-	public String gentest_prefs_param_prettyPrint() {
-		return getMessage("gentest_prefs_param_prettyPrint");
+	public String gentest_prefs_output_error_testCaseType_empty() {
+		return getMessage("gentest_prefs_output_error_testCaseType_empty");
 	}
 
 	public String inputWizardPage_name() {
 		return getMessage("inputWizardPage_name");
-	}
-
-	public String common_openBrowse() {
-		return getMessage("common_openBrowse");
-	}
-
-	public String gentest_prefs_param_forbitNull() {
-		return getMessage("gentest_prefs_param_forbitNull");
-	}
-
-	public String gentest_prefs_param_testPerQuery() {
-		return getMessage("gentest_prefs_param_testPerQuery");
-	}
-
-	public String intText_parse_error(Object arg0) {
-		return getMessage("intText_parse_error", arg0);
-	}
-
-	public String gentest_prefs_output_warning_className_lowercase() {
-		return getMessage("gentest_prefs_output_warning_className_lowercase");
-	}
-
-	public String gentest_prefs_output_package() {
-		return getMessage("gentest_prefs_output_package");
-	}
-
-	public String gentest_prefs_param_arrayMaxDepth() {
-		return getMessage("gentest_prefs_param_arrayMaxDepth");
 	}
 
 	public String sourceFolderEditor_errorMessage() {
@@ -125,40 +77,28 @@ public final class Messages {
 		return getMessage("gentest_prefs_param");
 	}
 
-	public String gentest_prefs_output_className() {
-		return getMessage("gentest_prefs_output_className");
-	}
-
-	public String gentest_prefs_output_testcaseType_question() {
-		return getMessage("gentest_prefs_output_testcaseType_question");
-	}
-
 	public String gentest_prefs_output_testcaseType_pass() {
 		return getMessage("gentest_prefs_output_testcaseType_pass");
 	}
 
-	public String gentest_prefs_input() {
-		return getMessage("gentest_prefs_input");
-	}
-
-	public String gentest_prefs_output() {
-		return getMessage("gentest_prefs_output");
+	public String gentest_prefs_output_className() {
+		return getMessage("gentest_prefs_output_className");
 	}
 
 	public String packageEditor_selection_popup_desc() {
 		return getMessage("packageEditor_selection_popup_desc");
 	}
 
-	public String gentest_prefs_param_objectToInteger() {
-		return getMessage("gentest_prefs_param_objectToInteger");
+	public String gentest_prefs_tab_param() {
+		return getMessage("gentest_prefs_tab_param");
 	}
 
-	public String gentest_prefs_output_testcaseType_fail() {
-		return getMessage("gentest_prefs_output_testcaseType_fail");
+	public String gentest_prefs_tab_output() {
+		return getMessage("gentest_prefs_tab_output");
 	}
 
-	public String gentest_config_wizard_title() {
-		return getMessage("gentest_config_wizard_title");
+	public String gentest_prefs_param_inheritMethod() {
+		return getMessage("gentest_prefs_param_inheritMethod");
 	}
 
 	public String packageEditor_selection_popup_title() {
@@ -169,32 +109,108 @@ public final class Messages {
 		return getMessage("genTestWizard_title");
 	}
 
-	public String packageEditor_errorMessage() {
-		return getMessage("packageEditor_errorMessage");
+	public String gentest_prefs_output() {
+		return getMessage("gentest_prefs_output");
 	}
 
 	public String sourceFolderEditor_description() {
 		return getMessage("sourceFolderEditor_description");
 	}
 
-	public String gentest_prefs_param_debugCheck() {
-		return getMessage("gentest_prefs_param_debugCheck");
+	public String gentest_prefs_output_testcaseType_fail() {
+		return getMessage("gentest_prefs_output_testcaseType_fail");
 	}
 
 	public String gentest_prefs_param_longFormat() {
 		return getMessage("gentest_prefs_param_longFormat");
 	}
 
-	public String gentest_prefs_output_folder() {
-		return getMessage("gentest_prefs_output_folder");
+	public String common_openBrowse() {
+		return getMessage("common_openBrowse");
 	}
 
-	public String gentest_prefs_param_inheritMethod() {
-		return getMessage("gentest_prefs_param_inheritMethod");
+	public String intText_error_parse(Object arg0) {
+		return getMessage("intText_error_parse", arg0);
+	}
+
+	public String packageEditor_errorMessage() {
+		return getMessage("packageEditor_errorMessage");
+	}
+
+	public String gentest_prefs_param_classMaxDepth() {
+		return getMessage("gentest_prefs_param_classMaxDepth");
+	}
+
+	public String gentest_prefs_param_arrayMaxDepth() {
+		return getMessage("gentest_prefs_param_arrayMaxDepth");
+	}
+
+	public String gentest_selection_empty() {
+		return getMessage("gentest_selection_empty");
 	}
 
 	public String gentest_prefs_param_stringMaxLength() {
 		return getMessage("gentest_prefs_param_stringMaxLength");
+	}
+
+	public String gentest_prefs_output_folder() {
+		return getMessage("gentest_prefs_output_folder");
+	}
+
+	public String gentest_prefs_param_objectToInteger() {
+		return getMessage("gentest_prefs_param_objectToInteger");
+	}
+
+	public String intText_error_not_positive(Object arg0) {
+		return getMessage("intText_error_not_positive", arg0);
+	}
+
+	public String gentest_prefs_param_prettyPrint() {
+		return getMessage("gentest_prefs_param_prettyPrint");
+	}
+
+	public String gentest_prefs_param_testPerQuery() {
+		return getMessage("gentest_prefs_param_testPerQuery");
+	}
+
+	public String intText_error_mandatory(Object arg0) {
+		return getMessage("intText_error_mandatory", arg0);
+	}
+
+	public String gentest_prefs_input_error_empty_selection() {
+		return getMessage("gentest_prefs_input_error_empty_selection");
+	}
+
+	public String gentest_prefs_output_error_className_empty() {
+		return getMessage("gentest_prefs_output_error_className_empty");
+	}
+
+	public String gentest_prefs_output_testcaseType_question() {
+		return getMessage("gentest_prefs_output_testcaseType_question");
+	}
+
+	public String gentest_config_wizard_title() {
+		return getMessage("gentest_config_wizard_title");
+	}
+
+	public String gentest_prefs_output_warning_className_lowercase() {
+		return getMessage("gentest_prefs_output_warning_className_lowercase");
+	}
+
+	public String gentest_prefs_param_debugCheck() {
+		return getMessage("gentest_prefs_param_debugCheck");
+	}
+
+	public String gentest_prefs_param_forbitNull() {
+		return getMessage("gentest_prefs_param_forbitNull");
+	}
+
+	public String gentest_prefs_input() {
+		return getMessage("gentest_prefs_input");
+	}
+
+	public String gentest_prefs_output_package() {
+		return getMessage("gentest_prefs_output_package");
 	}
 
 	//	End generated part
