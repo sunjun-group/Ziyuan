@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.iface.JClassWriter;
+import tzuyu.engine.iface.DefaultClassCreator;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.TzuYuException;
 import tzuyu.engine.utils.CollectionsExt;
@@ -28,7 +30,8 @@ public class JUnitFileWriter {
 	private int testsPerFile;
 
 	private TzConfiguration config;
-
+	private JClassWriter classCreator;
+	
 	private Map<String, List<List<Sequence>>> createdSequencesAndClasses = new LinkedHashMap<String, List<List<Sequence>>>();
 
 	public JUnitFileWriter(String dirName, String packageName,
@@ -100,19 +103,6 @@ public class JUnitFileWriter {
 				out.println("  }");
 				out.println();
 			}
-			// Output the main function which calls all the test cases.
-			out.println("public static void main(String[] args) {");
-			out.println("  " + className + " mainObject = new " + className
-					+ "();");
-			out.println("  try {");
-			for (int index = 0; index < sequences.size(); index++) {
-				out.println("  mainOjbect.test" + index + "();");
-			}
-			out.println("  catch (Throwable e) {");
-			out.println("  }");
-			out.println(" }");
-			out.println();
-			out.println("}");
 		} finally {
 			if (out != null)
 				out.close();
@@ -180,6 +170,13 @@ public class JUnitFileWriter {
 			dir = new File(dir, s);
 		}
 		return dir;
+	}
+	
+	public JClassWriter getClassCreator() {
+		if (classCreator == null) {
+			return new DefaultClassCreator();
+		}
+		return classCreator;
 	}
 
 	public static String indent(String str) {

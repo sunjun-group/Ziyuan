@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.core.dto.WorkObject;
 import tzuyu.plugin.core.dto.WorkObject.WorkItem;
@@ -36,13 +36,13 @@ import tzuyu.plugin.reporter.PluginLogger;
 public class ProjectConverter {
 	private ProjectConverter(){}
 	
-	public static TzProject from(WorkObject workObject, GenTestPreferences config) throws PluginException {
-		TzProject tzProject = toTzProject(workObject);
-		tzProject.setConfiguration(config.getTzConfig());
+	public static TzClass from(WorkObject workObject, GenTestPreferences config) throws PluginException {
+		TzClass tzProject = toTzProject(workObject);
+		tzProject.setConfiguration(config.getTzConfig(true));
 		return tzProject;
 	}
 
-	private static TzProject toTzProject(WorkObject workObject)
+	private static TzClass toTzProject(WorkObject workObject)
 			throws PluginException {
 		Map<Class<?>, List<String>> classMethodsMap = new HashMap<Class<?>, List<String>>();
 		if (workObject.isEmtpy()) {
@@ -85,9 +85,9 @@ public class ProjectConverter {
 				break;
 			}
 		}
-		TzProject tzProject = null;
+		TzClass tzProject = null;
 		for (Entry<Class<?>, List<String>> entry : classMethodsMap.entrySet()) {
-			tzProject = new TzProject(entry.getKey(), entry.getValue());
+			tzProject = new TzClass(entry.getKey(), entry.getValue());
 		}
 		// just support selecting on 1 selected class only right now.
 		return tzProject;

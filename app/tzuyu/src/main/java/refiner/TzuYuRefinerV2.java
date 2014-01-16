@@ -6,7 +6,7 @@ import java.util.Map;
 import lstar.ReportHandler;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzLogger;
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.iface.algorithm.Refiner;
 import tzuyu.engine.model.Action;
 import tzuyu.engine.model.ClassInfo;

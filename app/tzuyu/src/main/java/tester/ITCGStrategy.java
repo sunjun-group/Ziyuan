@@ -2,7 +2,7 @@ package tester;
 
 import java.util.List;
 
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.TzuYuAction;
 
@@ -35,5 +35,5 @@ public interface ITCGStrategy {
 
 	public List<TestCase> getAllGoodTestCases();
 
-	public void setProject(TzProject project);
+	public void setProject(TzClass project);
 }

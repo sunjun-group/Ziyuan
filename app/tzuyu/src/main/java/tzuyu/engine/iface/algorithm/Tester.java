@@ -8,7 +8,7 @@
 
 package tzuyu.engine.iface.algorithm;
 
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.iface.HasReport;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.QueryResult;
@@ -27,5 +27,5 @@ public interface Tester extends HasReport<TzuYuAlphabet> {
 
 	QueryResult executeAllOldTestCases();
 	
-	public void setProject(TzProject project);
+	public void setProject(TzClass project);
 }

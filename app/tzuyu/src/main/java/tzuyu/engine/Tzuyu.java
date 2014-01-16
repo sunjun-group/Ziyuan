@@ -23,18 +23,18 @@ public class Tzuyu implements TzuyuEngine {
 
 	private Learner<TzuYuAlphabet> learner = TzFactory.getLearner();
 	private Teacher<TzuYuAlphabet> teacher = TzFactory.getTeacher();
-	private TzProject project;
+	private TzClass project;
 	private TzReportHandler reporter;
 
 	public Tzuyu() {
 
 	}
 
-	public Tzuyu(TzProject project, TzReportHandler reporter) {
+	public Tzuyu(TzClass project, TzReportHandler reporter) {
 		init(project, reporter);
 	}
 
-	private void init(TzProject project, TzReportHandler reporter) {
+	private void init(TzClass project, TzReportHandler reporter) {
 		this.project = project;
 		this.reporter = reporter;
 		learner.setTeacher(teacher);

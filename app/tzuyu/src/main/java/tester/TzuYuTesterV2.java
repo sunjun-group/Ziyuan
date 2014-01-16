@@ -6,7 +6,7 @@ import java.util.List;
 
 import lstar.ReportHandler;
 
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Tester;
 import tzuyu.engine.instrument.TzuYuInstrumentor;
@@ -32,13 +32,15 @@ public class TzuYuTesterV2 implements Tester {
 	private IInstrumentor instrumentor;
 
 	private HashSet<TzuYuAction> cachedUnkownResult = new HashSet<TzuYuAction>();
+	private TzClass project;
 
 	public TzuYuTesterV2() {
 		tcg = new RandomTCGStrategy();
 		instrumentor = new TzuYuInstrumentor();
 	}
 	
-	public void setProject(TzProject project) {
+	public void setProject(TzClass project) {
+		this.project = project;
 		tcg.setProject(project);
 		instrumentor.setProject(project);
 	}
@@ -160,6 +162,6 @@ public class TzuYuTesterV2 implements Tester {
 
 	@Override
 	public void report(ReportHandler<TzuYuAlphabet> reporter) {
-		((TzReportHandler)reporter).writeTestCases(getAllTestCases());
+		((TzReportHandler)reporter).writeTestCases(getAllTestCases(), project);
 	}
 }

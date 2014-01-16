@@ -61,12 +61,12 @@ public final class Messages {
 	/* see Tzuyu.tools.GenerateMessagesClass for generation detail*/
 	//	Generated part
 
-	public String gentest_prefs_output_error_testCaseType_empty() {
-		return getMessage("gentest_prefs_output_error_testCaseType_empty");
-	}
-
 	public String inputWizardPage_name() {
 		return getMessage("inputWizardPage_name");
+	}
+
+	public String gentest_prefs_output_error_testCaseType_empty() {
+		return getMessage("gentest_prefs_output_error_testCaseType_empty");
 	}
 
 	public String sourceFolderEditor_errorMessage() {
@@ -121,8 +121,16 @@ public final class Messages {
 		return getMessage("gentest_prefs_output_testcaseType_fail");
 	}
 
+	public String gentest_prefs_output_maxMethodsPerClass() {
+		return getMessage("gentest_prefs_output_maxMethodsPerClass");
+	}
+
 	public String gentest_prefs_param_longFormat() {
 		return getMessage("gentest_prefs_param_longFormat");
+	}
+
+	public String gentest_prefs_output_maxLinesPerClass() {
+		return getMessage("gentest_prefs_output_maxLinesPerClass");
 	}
 
 	public String common_openBrowse() {

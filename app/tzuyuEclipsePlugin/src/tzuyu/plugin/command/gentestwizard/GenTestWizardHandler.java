@@ -32,7 +32,7 @@ public class GenTestWizardHandler extends GenTestHandler {
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		if (dialog.open() == WizardDialog.OK) {
-			TzuyuEngineProxy.run(workObject, config);
+			TzuyuEngineProxy.generateTestCases(workObject, config);
 		}
 	}
 

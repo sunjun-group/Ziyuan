@@ -11,7 +11,7 @@ import libsvm.libsvm.svm_parameter;
 import libsvm.libsvm.svm_problem;
 import refiner.bool.FieldVar;
 import refiner.bool.LIATerm;
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.model.ArtFieldInfo;
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.Formula;
@@ -71,7 +71,7 @@ public class SVMWrapper {
    *         will be returned.
    */
   public Formula candidateDivide(TzuYuAction transition, 
-      List<QueryTrace> positive, List<QueryTrace> negative, TzProject project) {
+      List<QueryTrace> positive, List<QueryTrace> negative, TzClass project) {
     
     long startTime = System.currentTimeMillis();
     if (positive == null || negative == null) {
@@ -165,7 +165,7 @@ public class SVMWrapper {
    *         cannot be found.
    */
   public Formula memberDivide(List<QueryTrace> positive, 
-      List<QueryTrace> negative, TzProject project) {
+      List<QueryTrace> negative, TzClass project) {
     long startTime = System.currentTimeMillis();
     if (positive == null || negative == null) {
       throw new IllegalArgumentException("The input sets must not be null");

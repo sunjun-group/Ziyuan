@@ -11,6 +11,7 @@ package tzuyu.engine.main;
 import java.io.FileWriter;
 
 import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.dfa.DFA;
@@ -27,14 +28,14 @@ public class CommandLineReportHandler extends TzReportHandler {
 	
 	@Override
 	public void reportDFA(DFA lastDFA, TzuYuAlphabet sigma) {
-		saveDFA(lastDFA, sigma.getProject().getConfiguration());
+		saveDFA(lastDFA, sigma.getProject());
 	}
 
-	private void saveDFA(DFA dfa, TzConfiguration config) {
+	private void saveDFA(DFA dfa, TzClass tzProject) {
 		if (dfa != null) {
 			String dot = dfa.createDotRepresentation();
 			try {
-				String fileName = config.getAbsoluteAddress(getTargetClassName() + ".dot");
+				String fileName = tzProject.getConfiguration().getAbsoluteAddress(getTargetClassName(tzProject) + ".dot");
 				FileWriter writer = new FileWriter(fileName);
 				writer.write(dot);
 				writer.close();

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tzuyu.engine.TzConfiguration;
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.ConstructorInfo;
 import tzuyu.engine.model.Sequence;
@@ -24,14 +24,14 @@ import tzuyu.engine.utils.SimpleList;
 
 public class ParameterSelectorV2 implements IParameterSelector {
 	private final ComponentManager componentManager;
-	private TzProject project;
+	private TzClass project;
 	private TzConfiguration config;
 
 	public ParameterSelectorV2() {
 		componentManager = new ComponentManager();
 	}
 
-	public void setProject(TzProject project) {
+	public void setProject(TzClass project) {
 		this.project = project;
 		this.config = project.getConfiguration();
 		componentManager.config(project.getConfiguration());

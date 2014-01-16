@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import lstar.ReportHandler;
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.iface.HasReport;
 import tzuyu.engine.model.InputAndSuccessFlag;
 import tzuyu.engine.model.Prestate;
@@ -26,7 +26,7 @@ import tzuyu.engine.utils.Permutation;
 public class TzuYuTester implements HasReport<TzuYuAlphabet>{
 	private ParameterSelector selector;
 	private IQueryTraceStore traceStore;
-	private TzProject project;
+	private TzClass project;
 
 	private HashSet<TzuYuAction> cachedUnkownResult = new HashSet<TzuYuAction>();
 
@@ -35,7 +35,7 @@ public class TzuYuTester implements HasReport<TzuYuAlphabet>{
 		traceStore = QueryTraceStoreFactory.createStore();
 	}
 	
-	public void setProject(TzProject project) {
+	public void setProject(TzClass project) {
 		this.project = project;
 		selector.setProject(project);
 	}
@@ -754,7 +754,7 @@ public class TzuYuTester implements HasReport<TzuYuAlphabet>{
 		}
 	}
 
-	private TzProject ensureProject() {
+	private TzClass ensureProject() {
 		if (project == null) {
 			throw new TzuYuException("Tzuyu project not set for tester");
 		}

@@ -14,6 +14,7 @@ import java.util.List;
 
 import lstar.ReportHandler;
 import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.experiment.JUnitFileWriter;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.TzuYuAlphabet;
@@ -30,10 +31,10 @@ public abstract class TzReportHandler implements ReportHandler<TzuYuAlphabet>{
 		this.config = config;
 	}
 	
-	public List<File> writeJUnitTestCases(List<Sequence> allTestCases) {
+	public List<File> writeJUnitTestCases(List<Sequence> allTestCases, TzClass project) {
 		List<File> junitFiles = new ArrayList<File>();
 
-		String targetClass = getTargetClassName();
+		String targetClass = getTargetClassName(project);
 		String dir = Globals.userDir + Globals.fileSep + "testcases";
 		int size = allTestCases.size();
 		// We group all test cases into one file. The file name ends with the
@@ -44,13 +45,12 @@ public abstract class TzReportHandler implements ReportHandler<TzuYuAlphabet>{
 		return junitFiles;
 	}
 	
-	public void writeTestCases(List<Sequence> allTestCases) {
-		writeJUnitTestCases(allTestCases);
+	public void writeTestCases(List<Sequence> allTestCases, TzClass project) {
+		writeJUnitTestCases(allTestCases, project);
 	}
 	
 
-	protected String getTargetClassName() {
-//		Analytics.getTarget().getSimpleName();
-		return "temp";
+	protected String getTargetClassName(TzClass project) {
+		return project.getClassName();
 	}
 }

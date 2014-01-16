@@ -8,7 +8,7 @@
 
 package tzuyu.plugin.command.gentest;
 
-import static tzuyu.engine.TzConstants.TzParamType.*;
+import static tzuyu.engine.TzConstants.*;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaProject;
@@ -26,17 +26,12 @@ import tzuyu.plugin.reporter.PluginLogger;
  * @author LLT
  * 
  */
-/**
- * @author LLT
- *
- */
 public class GenTestPreferences extends TzPreferences implements Cloneable {
 	public static final String ATT_OUTPUT_FOLDER = "outputSourceFolder";
 	public static final String ATT_OUTPUT_PACKAGE = "outputPackage";
 	
 	public static final String OUTPUT_FOLDER = "src";
 	public static final String OUTPUT_PACKAGE = "tzuyu";
-//	public static final String OUTPUT_CLASS_NAME = "Tzuyu";
 	
 	private IPackageFragmentRoot outputFolder;
 	private IPackageFragment outputPackage;
@@ -64,68 +59,81 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 	}
 	
 	public void read(Preferences pref) {
-		outputFolder = IProjectUtils.toPackageFragmentRoot(project, 
+		outputFolder = IProjectUtils.toPackageFragmentRoot(project,
 				pref.get(ATT_OUTPUT_FOLDER, OUTPUT_FOLDER));
-		outputPackage = IProjectUtils.toPackageFragment(outputFolder, 
+		outputPackage = IProjectUtils.toPackageFragment(outputFolder,
 				pref.get(ATT_OUTPUT_PACKAGE, OUTPUT_PACKAGE));
-		config.setArrayMaxLength(pref.getInt(arrayMaxLength.name(),
-				(Integer) arrayMaxLength.defaultVal())); 
-		config.setClassMaxDepth(pref.getInt(classMaxDepth.name(), 
-				(Integer) classMaxDepth.defaultVal()));
-		config.setDebugChecks(pref.getBoolean(debugChecks.name(),
-				(Boolean) debugChecks.defaultVal()));
-		config.setForbidNull(pref.getBoolean(forbitNull.name(),
-				(Boolean) forbitNull.defaultVal()));
-		config.setLongFormat(pref.getBoolean(longFormat.name(),
-				(Boolean) longFormat.defaultVal()));
-		config.setPrettyPrint(pref.getBoolean(prettyPrint.name(),
-				(Boolean) prettyPrint.defaultVal()));
-		config.setStringMaxLength(pref.getInt(stringMaxLength.name(),
-				(Integer) stringMaxLength.defaultVal()));
-		config.setTestsPerQuery(pref.getInt(testsPerQuery.name(),
-				(Integer) testsPerQuery.defaultVal()));
-		config.setObjectToInteger(pref.getBoolean(objectToInteger.name(),
-				(Boolean) objectToInteger.defaultVal()));
-		config.setInheritedMethod(pref.getBoolean(inheritMethod.name(),
-				 (Boolean) inheritMethod.defaultVal()));
-		config.setPrintFailTests(pref.getBoolean(printFailTests.name(),
-				(Boolean) printFailTests.defaultVal()));
-		config.setPrintPassTests(pref.getBoolean(printPassTests.name(),
-				(Boolean) printPassTests.defaultVal()));
+		config.setArrayMaxLength(pref.getInt(ARRAY_MAX_LENGTH.a,
+				ARRAY_MAX_LENGTH.b));
+		config.setClassMaxDepth(pref.getInt(CLASS_MAX_DEPTH.a,
+				CLASS_MAX_DEPTH.b));
+		config.setDebugChecks(pref.getBoolean(DEBUG_CHECKS.a, DEBUG_CHECKS.b));
+		config.setForbidNull(pref.getBoolean(FORBIT_NULL.a, FORBIT_NULL.b));
+		config.setLongFormat(pref.getBoolean(LONG_FORMAT.a, LONG_FORMAT.b));
+		config.setPrettyPrint(pref.getBoolean(PRETTY_PRINT.a, PRETTY_PRINT.b));
+		config.setStringMaxLength(pref.getInt(STRING_MAX_LENGTH.a,
+				STRING_MAX_LENGTH.b));
+		config.setTestsPerQuery(pref.getInt(TESTS_PER_QUERY.a,
+				TESTS_PER_QUERY.b));
+		config.setObjectToInteger(pref.getBoolean(OBJECT_TO_INTEGER.a,
+				OBJECT_TO_INTEGER.b));
+		config.setInheritedMethod(pref.getBoolean(INHERIT_METHOD.a,
+				INHERIT_METHOD.b));
+		config.setPrintFailTests(pref.getBoolean(PRINT_FAIL_TESTS.a,
+				PRINT_FAIL_TESTS.b));
+		config.setPrintPassTests(pref.getBoolean(PRINT_PASS_TESTS.a,
+				PRINT_PASS_TESTS.b));
+		config.setMaxMethodsPerGenTestClass(pref.getInt(
+				MAX_METHODS_PER_GEN_TEST_CLASS.a,
+				MAX_METHODS_PER_GEN_TEST_CLASS.b));
+		config.setMaxLinesPerGenTestClass(pref.getInt(
+				MAX_LINES_PER_GEN_TEST_CLASS.a, MAX_LINES_PER_GEN_TEST_CLASS.b));
 	}
 
 	public void write(Preferences projectNode) {
-		projectNode.putInt(arrayMaxLength.name(), config.getArrayMaxLength());
-		projectNode.putInt(classMaxDepth.name(), config.getClassMaxDepth());
-		projectNode.putBoolean(debugChecks.name(), config.isDebugChecks());
-		projectNode.putBoolean(forbitNull.name(), config.isForbidNull());
-		projectNode.putBoolean(longFormat.name(), config.isLongFormat());
-		projectNode.putBoolean(prettyPrint.name(), config.isPrettyPrint());
-		projectNode.putInt(stringMaxLength.name(), config.getStringMaxLength());
-		projectNode.putInt(testsPerQuery.name(), config.getTestsPerQuery());
-		projectNode.putBoolean(objectToInteger.name(), config.isObjectToInteger());
-		projectNode.putBoolean(inheritMethod.name(), config.isInheritedMethod());
-		projectNode.putBoolean(printFailTests.name(), config.isPrintFailTests());
-		projectNode.putBoolean(printPassTests.name(), config.isPrintPassTests());
-		projectNode.put(ATT_OUTPUT_FOLDER, IProjectUtils.toRelativePath(outputFolder, project));
+		projectNode.putInt(ARRAY_MAX_LENGTH.a, config.getArrayMaxLength());
+		projectNode.putInt(CLASS_MAX_DEPTH.a, config.getClassMaxDepth());
+		projectNode.putBoolean(DEBUG_CHECKS.a, config.isDebugChecks());
+		projectNode.putBoolean(FORBIT_NULL.a, config.isForbidNull());
+		projectNode.putBoolean(LONG_FORMAT.a, config.isLongFormat());
+		projectNode.putBoolean(PRETTY_PRINT.a, config.isPrettyPrint());
+		projectNode.putInt(STRING_MAX_LENGTH.a, config.getStringMaxLength());
+		projectNode.putInt(TESTS_PER_QUERY.a, config.getTestsPerQuery());
+		projectNode.putBoolean(OBJECT_TO_INTEGER.a, config.isObjectToInteger());
+		projectNode.putBoolean(INHERIT_METHOD.a, config.isInheritedMethod());
+		projectNode.putBoolean(PRINT_FAIL_TESTS.a, config.isPrintFailTests());
+		projectNode.putBoolean(PRINT_PASS_TESTS.a, config.isPrintPassTests());
+		projectNode.putInt(MAX_METHODS_PER_GEN_TEST_CLASS.a,
+				config.getMaxMethodsPerGenTestClass());
+		projectNode.putInt(MAX_LINES_PER_GEN_TEST_CLASS.a,
+				config.getMaxLinesPerGenTestClass());
+		projectNode.put(ATT_OUTPUT_FOLDER,
+				IProjectUtils.toRelativePath(outputFolder, project));
 		projectNode.put(ATT_OUTPUT_PACKAGE, IProjectUtils.toRelativePath(outputPackage, outputFolder));
+	}
+	
+	public TzConfiguration getTzConfig(boolean runningTzuyu) {
+		if (runningTzuyu) {
+			// update output folder
+			if (outputFolder != null && outputPackage != null) {
+				if (!outputPackage.isOpen()) {
+					try {
+						outputPackage = outputFolder.createPackageFragment(
+								outputPackage.getElementName(), true, null);
+					} catch (JavaModelException e) {
+						PluginLogger.logEx(e);
+					}
+				}
+				IPath outputPath = IProjectUtils.relativeToAbsolute(outputPackage.getPath());
+				config.setOutputDir(outputPath.toFile());
+				config.setOutputPackageName(outputPackage.getElementName());
+			}
+		}
+		return config;
 	}
 
 	public TzConfiguration getTzConfig() {
-		// update output folder
-		if (outputFolder != null && outputPackage != null) {
-			if (!outputPackage.isOpen()) {
-				try {
-					outputPackage = outputFolder.createPackageFragment(
-							outputPackage.getElementName(), true, null);
-				} catch (JavaModelException e) {
-					PluginLogger.logEx(e);
-				}
-			}
-			IPath outputPath = IProjectUtils.relativeToAbsolute(outputPackage.getPath());
-			config.setOutputDir(outputPath.toFile());
-		}
-		return config;
+		return getTzConfig(false);
 	}
 	
 	public IPackageFragmentRoot getOutputFolder() {

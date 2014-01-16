@@ -3,7 +3,7 @@ package tzuyu.engine.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.ObjectInfo;
 
@@ -54,7 +54,7 @@ public class Prestate {
     return vals;
   }
 
-  public static Prestate log(List<Variable> vars, List<Object> values, TzProject project) {
+  public static Prestate log(List<Variable> vars, List<Object> values, TzClass project) {
     if (vars.size() != values.size()) {
      throw new TzuYuException("instrument for incompatable objects.");
     }

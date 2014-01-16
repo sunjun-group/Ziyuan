@@ -11,6 +11,7 @@ package tzuyu.plugin.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -21,6 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -30,6 +32,7 @@ import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.core.constants.Messages;
 import tzuyu.plugin.core.utils.IStatusUtils;
 import tzuyu.plugin.preferences.component.CheckboxGroup;
+import tzuyu.plugin.preferences.component.IntText;
 import tzuyu.plugin.ui.AppEventManager;
 import tzuyu.plugin.ui.PropertyPanel;
 import tzuyu.plugin.ui.SWTFactory;
@@ -50,6 +53,10 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 	private Label classNameLb;
 	private Text classNameTx;
 	private CheckboxGroup<TestCaseType> passFailCbGroup;
+
+	private IntText maxMethods;
+
+	private IntText maxLine;
 	
 	public OutputPanel(DialogPage msgContainer, Composite parent, IJavaProject project, Shell shell) {
 		super(parent, msgContainer);
@@ -89,10 +96,23 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		classNameTx = new Text(contentPanel, SWT.SINGLE | SWT.BORDER);
 		classNameTx.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
+		// pass fail testcases
 		passFailCbGroup = new CheckboxGroup<TestCaseType>(contentPanel,
 				msg.gentest_prefs_output_testcaseType_question(), colSpan);
 		passFailCbGroup.addCb(msg.gentest_prefs_output_testcaseType_pass(), TestCaseType.PASS);
 		passFailCbGroup.addCb(msg.gentest_prefs_output_testcaseType_fail(), TestCaseType.FAIL);
+		
+		// format test class
+		Group formatGroup = SWTFactory.createGroup(contentPanel, StringUtils.EMPTY, colSpan);
+		formatGroup.setLayout(new GridLayout(2, false));
+		Label maxMethodsLb = SWTFactory.createLabel(formatGroup, msg.gentest_prefs_output_maxMethodsPerClass());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		maxMethodsLb.setLayoutData(gd);
+		gd.minimumWidth = 60;
+		
+		maxMethods = new IntText(formatGroup, OutputField.MAX_METHODS_NUM);
+		SWTFactory.createLabel(formatGroup, msg.gentest_prefs_output_maxLinesPerClass());
+		maxLine = new IntText(formatGroup, OutputField.MAX_LINE_NUM);
 		registerListener();
 	}
 
@@ -134,6 +154,8 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 				updateStatus(OutputField.PASS_FAIL, status);
 			}
 		}, true);
+		addModifyListener(OutputField.MAX_METHODS_NUM, maxMethods);
+		addModifyListener(OutputField.MAX_LINE_NUM, maxLine);
 	}
 	
 	@Override
@@ -142,6 +164,8 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		packageEditor.setSelectedPackage(data.getOutputPackage());
 		passFailCbGroup.setValue(TestCaseType.values(data.getTzConfig().isPrintPassTests(),
 				data.getTzConfig().isPrintFailTests()));
+		maxMethods.setValue(data.getTzConfig().getMaxMethodsPerGenTestClass());
+		maxLine.setValue(data.getTzConfig().getMaxLinesPerGenTestClass());
 	}
 
 	@Override
@@ -151,6 +175,8 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		List<TestCaseType> passFailValue = passFailCbGroup.getValue();
 		prefs.getTzConfig().setPrintPassTests(passFailValue.contains(TestCaseType.PASS));
 		prefs.getTzConfig().setPrintFailTests(passFailValue.contains(TestCaseType.FAIL));
+		prefs.getTzConfig().setMaxMethodsPerGenTestClass(maxMethods.getValue());
+		prefs.getTzConfig().setMaxLinesPerGenTestClass(maxLine.getValue());
 	}
 
 	@Override
@@ -177,7 +203,9 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 	private enum OutputField {
 		FOLDER,
 		PACKAGE,
-		PASS_FAIL
+		PASS_FAIL,
+		MAX_METHODS_NUM,
+		MAX_LINE_NUM
 	}
 
 	@Override

@@ -2,7 +2,7 @@ package tester;
 
 import java.util.List;
 
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.model.Statement;
 import tzuyu.engine.model.Variable;
@@ -23,6 +23,6 @@ public interface IInstrumentor {
 	 */
 	public List<Prestate> getRuntimeTrace();
 
-	public void setProject(TzProject project);
+	public void setProject(TzClass project);
 
 }

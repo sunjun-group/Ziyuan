@@ -9,8 +9,6 @@
 package tzuyu.plugin.preferences;
 
 import org.eclipse.jface.dialogs.DialogPage;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -100,16 +98,6 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 		addModifyListener(ParamField.CLASS_MAX_DEPTH, classMaxDepthTx);
 		addModifyListener(ParamField.STRING_MAX_LENGTH, stringMaxLengthTx);
 		addModifyListener(ParamField.TESTS_PER_QUERY, testsPerQueryTx);
-	}
-
-	private void addModifyListener(final ParamField field, final IntText txt) {
-		txt.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateStatus(field, txt.validate());
-			}
-		});
 	}
 
 	@Override

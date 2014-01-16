@@ -9,6 +9,7 @@
 package tzuyu.plugin.preferences;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaCore;
@@ -20,6 +21,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
@@ -101,6 +103,7 @@ public class ProjectPropertyPage extends PropertyPage {
 
 	private void initPreferenceStore(IProject curProject) {
 		assert curProject != null;
+		projectStore = new ScopedPreferenceStore(new ProjectScope(curProject), TzuyuPlugin.PLUGIN_ID);
 		loadPreferences(curProject);
 	}
 
@@ -112,6 +115,7 @@ public class ProjectPropertyPage extends PropertyPage {
 	@Override
 	protected void performDefaults() {
 		TzPreferenceInitializer.restoreDefault(projectStore);
+//		TzPreferenceInitializer.restoreDefault(TzuyuPlugin.getDefault().getPreferenceStore());
 		curPrefs = GenTestPreferences.createDefault(JavaCore.create(project));
 		refreshData();
 		super.performDefaults();

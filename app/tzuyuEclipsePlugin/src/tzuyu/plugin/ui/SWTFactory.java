@@ -77,6 +77,7 @@ public class SWTFactory {
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL
 				| GridData.GRAB_HORIZONTAL);
 		gridData.horizontalSpan = colSpan;
+		gridData.horizontalIndent = 3; 
 		group.setLayoutData(gridData);
 		return group;
 	}

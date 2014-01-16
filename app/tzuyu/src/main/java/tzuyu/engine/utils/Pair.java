@@ -1,23 +1,23 @@
 package tzuyu.engine.utils;
 
 public class Pair<A, B> {
-  private A first;
-  private B second;
+	public A a;
+	public B b;
 
-  public static <A, B>Pair<A, B> of (A a, B b) {
-	  return new Pair<A, B>(a, b);
-  }
-  
-  public Pair(A a, B b) {
-    first = a;
-    second = b;
-  }
+	public static <A, B> Pair<A, B> of(A a, B b) {
+		return new Pair<A, B>(a, b);
+	}
 
-  public A first() {
-    return first;
-  }
+	public Pair(A a, B b) {
+		this.a = a;
+		this.b = b;
+	}
 
-  public B second() {
-    return second;
-  }
+	public A first() {
+		return a;
+	}
+
+	public B second() {
+		return b;
+	}
 }

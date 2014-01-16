@@ -23,7 +23,7 @@ import tzuyu.engine.utils.ReflectionUtils;
  * @author Spencer Xiao
  * replace Analytics.
  */
-public class TzProject {
+public class TzClass {
 	// class name
 	private String className;
 	private List<String> methods;
@@ -33,11 +33,11 @@ public class TzProject {
 
 	private TzConfiguration configuration;
 	
-	public TzProject() {
+	public TzClass() {
 		
 	}
 	
-	public TzProject(Class<?> targetClass, List<String> methods) {
+	public TzClass(Class<?> targetClass, List<String> methods) {
 		ClassAnalyzer analyzer = new ClassAnalyzer(targetClass, methods);
 		setClasses(targetClass, analyzer.analysis());
 	}
@@ -45,6 +45,7 @@ public class TzProject {
 	public void setClasses(Class<?> targetClass, Map<Class<?>, ClassInfo> map) {
 		typeMap = map;
 		target = targetClass;
+		className = targetClass.getSimpleName();
 	}
 
 	public ClassInfo getClassInfo(Class<?> type) {
@@ -109,4 +110,5 @@ public class TzProject {
 	public void setMethods(List<String> methods) {
 		this.methods = methods;
 	}
+
 }

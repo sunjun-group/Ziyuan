@@ -14,11 +14,14 @@ import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.core.constants.Messages;
 import tzuyu.plugin.core.utils.IStatusUtils;
+import tzuyu.plugin.preferences.component.IntText;
 
 /**
  * @author LLT
@@ -70,6 +73,16 @@ public abstract class PropertyPanel<T> extends Composite {
 		}
 		fireEvent(new ValueChangedEvent<IStatus[]>(this, null,
 					statusArr));
+	}
+	
+	protected void addModifyListener(final Enum<?> field, final IntText txt) {
+		txt.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				updateStatus(field, txt.validate());
+			}
+		});
 	}
 	
 	public void fireEvent(AppEvent event) {

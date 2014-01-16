@@ -5,7 +5,7 @@ import java.util.Map;
 
 import lstar.ReportHandler;
 
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Refiner;
 import tzuyu.engine.model.Action;
@@ -31,7 +31,7 @@ import tzuyu.engine.utils.Pair;
 public class TzuYuRefiner implements Refiner <TzuYuAlphabet>{
 	private SVMWrapper classifier;
 	private IQueryTraceStore traceStore;
-	private TzProject project;
+	private TzClass project;
 
 	public TzuYuRefiner() {
 		classifier = new SVMWrapper();

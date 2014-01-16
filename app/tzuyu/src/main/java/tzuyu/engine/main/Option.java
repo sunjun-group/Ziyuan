@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import tzuyu.engine.TzConfiguration;
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 
 public abstract class Option<T extends Object> {
 
@@ -60,7 +60,7 @@ public abstract class Option<T extends Object> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void transferToTzConfig(TzProject project) {
+	public void transferToTzConfig(TzClass project) {
 		TzConfiguration config = project.getConfiguration();
 		switch (type) {
 		case TARGET:

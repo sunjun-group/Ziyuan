@@ -5,7 +5,7 @@ import java.util.Map;
 
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzLogger;
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.Tzuyu;
 import tzuyu.engine.main.Command.CommandType;
 import tzuyu.engine.model.ClassInfo;
@@ -15,7 +15,7 @@ public class Learn implements CommandHandler {
 
 	@Override
 	public boolean handle(Command command) {
-		TzProject project = processCommand(command);
+		TzClass project = processCommand(command);
 		CommandLineReportHandler reporter = new CommandLineReportHandler(project.getConfiguration());
 		
 		Tzuyu tzuyuEngine = new Tzuyu(project, reporter);
@@ -24,8 +24,8 @@ public class Learn implements CommandHandler {
 		return true;
 	}
 
-	private TzProject processCommand(Command cmd) {
-		TzProject project = new TzProject();
+	private TzClass processCommand(Command cmd) {
+		TzClass project = new TzClass();
 		TzConfiguration config = new TzConfiguration(true);
 		project.setConfiguration(config);
 		

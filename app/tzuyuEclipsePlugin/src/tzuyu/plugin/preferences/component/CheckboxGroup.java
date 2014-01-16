@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
-import tzuyu.plugin.ui.AppListener;
 import tzuyu.plugin.ui.ValueChangedEvent;
 import tzuyu.plugin.ui.ValueChangedListener;
 

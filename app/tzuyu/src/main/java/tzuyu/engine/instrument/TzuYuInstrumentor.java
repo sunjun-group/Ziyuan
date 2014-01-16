@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tester.IInstrumentor;
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.model.Statement;
 import tzuyu.engine.model.TzuYuException;
@@ -15,7 +15,7 @@ public class TzuYuInstrumentor implements IInstrumentor {
 	private boolean isInProgress;
 
 	private List<Prestate> prestates;
-	private TzProject project;
+	private TzClass project;
 
 	public TzuYuInstrumentor() {
 		isInProgress = false;
@@ -61,7 +61,7 @@ public class TzuYuInstrumentor implements IInstrumentor {
 	}
 
 	@Override
-	public void setProject(TzProject project) {
+	public void setProject(TzClass project) {
 		this.project = project;
 	}
 }

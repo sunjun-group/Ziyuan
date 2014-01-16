@@ -1,20 +1,20 @@
 package tzuyu.engine.model;
 
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.bool.AndFormula;
 import tzuyu.engine.bool.NotFormula;
 import tzuyu.engine.bool.Simplifier;
 import tzuyu.engine.model.dfa.Alphabet;
 
 public class TzuYuAlphabet extends Alphabet {
-	private TzProject project; 
+	private TzClass project; 
 	
 	private TzuYuAlphabet(TzuYuAlphabet from) {
 		super();
 		this.project = from.project;
 	}
 
-	public TzuYuAlphabet(TzProject project) {
+	public TzuYuAlphabet(TzClass project) {
 		super();
 		this.project = project;
 		// add constructors as the initial alphabet
@@ -171,7 +171,7 @@ public class TzuYuAlphabet extends Alphabet {
 		return newSigma;
 	}
 
-	public TzProject getProject() {
+	public TzClass getProject() {
 		return project;
 	}
 }

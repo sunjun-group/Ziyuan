@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tzuyu.engine.TzConfiguration;
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.ConstructorInfo;
 import tzuyu.engine.model.InputAndSuccessFlag;
@@ -32,14 +32,14 @@ import tzuyu.engine.utils.ReflectionUtils;
 public class ParameterSelector {
 	private MethodParameterStore parameterStore;
 
-	private TzProject project;
+	private TzClass project;
 	private TzConfiguration config;
 
 	public ParameterSelector() {
 		parameterStore = new MethodParameterStore();
 	}
 
-	public void setProject(TzProject project) {
+	public void setProject(TzClass project) {
 		this.project = project;
 		this.config = project.getConfiguration();
 	}

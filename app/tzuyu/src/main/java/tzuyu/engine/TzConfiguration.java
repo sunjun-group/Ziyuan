@@ -8,7 +8,7 @@
 
 package tzuyu.engine;
 
-import tzuyu.engine.TzConstants.*;
+import static tzuyu.engine.TzConstants.*;
 import java.io.File;
 
 import tzuyu.engine.utils.Globals;
@@ -44,7 +44,9 @@ public class TzConfiguration implements Cloneable {
 	private File outputDir;
 	private boolean printFailTests;
 	private boolean printPassTests;
-	
+	private int maxMethodsPerGenTestClass;
+	private int maxLinesPerGenTestClass;
+	private String outputPackageName;
 	
 	public TzConfiguration(boolean setDefault) {
 		if (setDefault) {
@@ -53,18 +55,20 @@ public class TzConfiguration implements Cloneable {
 	}
 	
 	public void setDefault() {
-		arrayMaxLength = (Integer) TzParamType.arrayMaxLength.defaultVal();
-		classMaxDepth = (Integer) TzParamType.classMaxDepth.defaultVal();
-		debugChecks = (Boolean) TzParamType.debugChecks.defaultVal();
-		forbidNull = (Boolean) TzParamType.forbitNull.defaultVal();
-		longFormat = (Boolean) TzParamType.longFormat.defaultVal();
-		prettyPrint = (Boolean) TzParamType.prettyPrint.defaultVal(); 
-		stringMaxLength = (Integer) TzParamType.stringMaxLength.defaultVal();
-		testsPerQuery = (Integer) TzParamType.testsPerQuery.defaultVal();
-		objectToInteger = (Boolean) TzParamType.objectToInteger.defaultVal();
-		inheritedMethod = (Boolean) TzParamType.inheritMethod.defaultVal();
-		printFailTests = (Boolean) TzParamType.printFailTests.defaultVal();
-		printPassTests = (Boolean) TzParamType.printPassTests.defaultVal();
+		arrayMaxLength = ARRAY_MAX_LENGTH.b;
+		classMaxDepth = CLASS_MAX_DEPTH.b;
+		stringMaxLength = STRING_MAX_LENGTH.b;
+		debugChecks = DEBUG_CHECKS.b;
+		forbidNull = FORBIT_NULL.b;
+		longFormat = LONG_FORMAT.b;
+		prettyPrint = PRETTY_PRINT.b; 
+		testsPerQuery = TESTS_PER_QUERY.b;
+		objectToInteger = OBJECT_TO_INTEGER.b;
+		inheritedMethod = INHERIT_METHOD.b;
+		printFailTests = PRINT_FAIL_TESTS.b;
+		printPassTests = PRINT_PASS_TESTS.b;
+		maxMethodsPerGenTestClass = MAX_METHODS_PER_GEN_TEST_CLASS.b;
+		maxLinesPerGenTestClass = MAX_LINES_PER_GEN_TEST_CLASS.b;
 	}
 	
 	public TzConfiguration(TzConfiguration config) {
@@ -80,6 +84,8 @@ public class TzConfiguration implements Cloneable {
 		inheritedMethod = config.isInheritedMethod();
 		printFailTests = config.isPrintFailTests();
 		printPassTests = config.isPrintPassTests();
+		maxMethodsPerGenTestClass = config.getMaxMethodsPerGenTestClass();
+		maxLinesPerGenTestClass = config.getMaxLinesPerGenTestClass();
 	}
 
 	public int getTestsPerQuery() {
@@ -204,9 +210,33 @@ public class TzConfiguration implements Cloneable {
 	public void setPrintPassTests(boolean printPassTests) {
 		this.printPassTests = printPassTests;
 	}
-
+	
 	@Override
 	public TzConfiguration clone() {
 		return new TzConfiguration(this);
+	}
+
+	public int getMaxMethodsPerGenTestClass() {
+		return maxMethodsPerGenTestClass;
+	}
+
+	public int getMaxLinesPerGenTestClass() {
+		return maxLinesPerGenTestClass;
+	}
+
+	public void setMaxMethodsPerGenTestClass(int maxMethodsPerGenTestClass) {
+		this.maxMethodsPerGenTestClass = maxMethodsPerGenTestClass;
+	}
+
+	public void setMaxLinesPerGenTestClass(int maxLinesPerGenTestClass) {
+		this.maxLinesPerGenTestClass = maxLinesPerGenTestClass;
+	}
+
+	public String getOutputPackageName() {
+		return outputPackageName;
+	}
+
+	public void setOutputPackageName(String outputPackageName) {
+		this.outputPackageName = outputPackageName;
 	}
 }

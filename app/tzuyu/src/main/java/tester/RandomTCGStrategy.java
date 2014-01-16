@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tzuyu.engine.TzConfiguration;
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.RelativeNegativeIndex;
 import tzuyu.engine.model.Sequence;
@@ -35,7 +35,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 	private TestCaseStore store;
 
 	private MethodParameterStore parameterStore;
-	private TzProject project;
+	private TzClass project;
 	private TzConfiguration config;
 
 	public RandomTCGStrategy() {
@@ -44,7 +44,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 		parameterStore = new MethodParameterStore();
 	}
 
-	public void setProject(TzProject project) {
+	public void setProject(TzClass project) {
 		this.project = project;
 		this.config = project.getConfiguration();
 		selector.setProject(project);
@@ -557,7 +557,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 	}
 	
 	// TODO [LLT]: duplicate code
-	private TzProject ensureProject() {
+	private TzClass ensureProject() {
 		if (project == null) {
 			throw new TzuYuException("Tzuyu project not set for tester");
 		}

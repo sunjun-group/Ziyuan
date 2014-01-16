@@ -1,6 +1,6 @@
 package tester;
 
-import tzuyu.engine.TzProject;
+import tzuyu.engine.TzClass;
 import tzuyu.engine.model.Variable;
 
 /**
@@ -45,6 +45,6 @@ public interface IParameterSelector {
 	 */
 	public Variable selectDefaultReceiver(Class<?> type);
 
-	public void setProject(TzProject project);
+	public void setProject(TzClass project);
 
 }

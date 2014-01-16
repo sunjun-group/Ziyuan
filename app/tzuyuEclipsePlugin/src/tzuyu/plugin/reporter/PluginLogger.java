@@ -18,11 +18,11 @@ import tzuyu.plugin.core.exception.ErrorType;
 public class PluginLogger {
 	
 	public static void logEx(Exception e) {
-		
+		System.out.println(e.getMessage());
 	}
 
 	public static void logEx(Exception e, String msg) {
-		
+		System.out.println(msg);
 	}
 
 	public static void logEx(Exception e, ErrorType errorType) {
