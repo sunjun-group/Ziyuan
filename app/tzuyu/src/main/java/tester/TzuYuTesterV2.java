@@ -160,7 +160,6 @@ public class TzuYuTesterV2 implements Tester {
 		return sequences;
 	}
 
-	@Override
 	public void report(ReportHandler<TzuYuAlphabet> reporter) {
 		((TzReportHandler)reporter).writeTestCases(getAllTestCases(), project);
 	}

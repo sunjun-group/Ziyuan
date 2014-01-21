@@ -54,7 +54,6 @@ public class InputTreeViewer extends CheckboxTreeViewer {
 		setContentProvider(contentProvider);
 		addCheckStateListener(new ICheckStateListener() {
 			
-			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Object[] oldValue = getCheckedElements();
 				// select all its children if selected
@@ -119,22 +118,18 @@ public class InputTreeViewer extends CheckboxTreeViewer {
 	private static class ContentProvider implements ITreeContentProvider {
 		protected static final Object[] EMPTY = new Object[0];
 
-		@Override
 		public void dispose() {
 
 		}
 
-		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 		}
 
-		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
 		}
 
-		@Override
 		public Object[] getChildren(Object parentElement) {
 			// if class
 			try {
@@ -177,7 +172,6 @@ public class InputTreeViewer extends CheckboxTreeViewer {
 			
 		}
 
-		@Override
 		public Object getParent(Object element) {
 			if (element instanceof IType) {
 				return ((IType) element).getParent();
@@ -187,7 +181,6 @@ public class InputTreeViewer extends CheckboxTreeViewer {
 			return null;
 		}
 
-		@Override
 		public boolean hasChildren(Object element) {
 			return getChildren(element).length > 0;
 		}

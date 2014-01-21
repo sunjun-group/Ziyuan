@@ -55,7 +55,6 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 		this.tester = tester;
 	}
 
-	@Override
 	public boolean membershipQuery(Trace str) throws LStarException {
 		// Update maximum membership query size
 		if (str.size() > maxMemberSize) {
@@ -119,7 +118,6 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 		}
 	}
 
-	@Override
 	public Trace candidateQuery(DFA dfa) throws LStarException {
 		logger.info("------------Candidate Query Iteration " + iterationCount++
 				+ "------------------");
@@ -179,7 +177,6 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 		}
 	}
 
-	@Override
 	public void report(ReportHandler<TzuYuAlphabet> reporter) {
 		tester.report(reporter);
 	}

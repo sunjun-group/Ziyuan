@@ -110,19 +110,16 @@ class AtomicTest extends Atom {
 		return "2*" + var.toString() + " >= " + value;
 	}
 
-	@Override
 	public boolean evaluate(Object[] objects) {
 		return false;
 	}
 
-	@Override
 	public List<Var> getReferencedVariables() {
 		List<Var> result = new ArrayList<Var>();
 		result.add(var);
 		return result;
 	}
 
-	@Override
 	public boolean evaluate(Prestate state) {
 		return false;
 	}
@@ -141,7 +138,6 @@ class VariableTest implements Var {
 		return name;
 	}
 
-	@Override
 	public Object getValue(Object[] objs) {
 		return null;
 	}

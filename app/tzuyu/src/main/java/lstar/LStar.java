@@ -382,7 +382,6 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 	/**
 	 * report all output of the learning.
 	 */
-	@Override
 	public void report(ReportHandler<A> reporter) {
 		if (lastDFA == null) {
 			return;

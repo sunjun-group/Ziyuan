@@ -33,7 +33,6 @@ public class StringEqualsValueAtom extends Atom {
     return variable.toString() + " == " + strValue;
   }
 
-  @Override
   public boolean evaluate(Object[] objects) {
     Object obj = variable.getValue(objects);
 
@@ -44,7 +43,6 @@ public class StringEqualsValueAtom extends Atom {
     }
   }
 
-  @Override
   public List<Var> getReferencedVariables() {
     List<Var> vars = new ArrayList<Var>(1);
     vars.add(variable);
@@ -71,7 +69,6 @@ public class StringEqualsValueAtom extends Atom {
     return obj.variable.equals(variable) && obj.strValue.equals(strValue);
   }
 
-  @Override
   public boolean evaluate(Prestate state) {
     ObjectInfo objectInfo = variable.getObjectInfo(state);
 

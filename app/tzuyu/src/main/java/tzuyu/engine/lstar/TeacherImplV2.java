@@ -33,8 +33,7 @@ import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.dfa.TracesPair;
 
 /**
- * @author LLT 
- * extracted from QueryHandlerV2, and only keep the part that
+ * @author LLT extracted from QueryHandlerV2, and only keep the part that
  *         implements the Lstar teacher.
  */
 public class TeacherImplV2 implements Teacher<TzuYuAlphabet> {
@@ -52,7 +51,6 @@ public class TeacherImplV2 implements Teacher<TzuYuAlphabet> {
 		tester.setProject(sigma.getProject());
 	}
 
-	@Override
 	public boolean membershipQuery(Trace str) throws LStarException {
 		assert sigma != null : "Sigma in teacherImplV2 is not set!!";
 		membershipCount++;
@@ -119,7 +117,6 @@ public class TeacherImplV2 implements Teacher<TzuYuAlphabet> {
 		}
 	}
 
-	@Override
 	public Trace candidateQuery(DFA dfa) throws LStarException {
 		logger.info("------------Candidate Query Iteration " + candidateCount++
 				+ "------------------");
@@ -195,8 +192,7 @@ public class TeacherImplV2 implements Teacher<TzuYuAlphabet> {
 			throw new LStarException(Type.RestartLearning);
 		}
 	}
-	
-	@Override
+
 	public void report(ReportHandler<TzuYuAlphabet> reporter) {
 		// report it output
 		TzLogger.log()

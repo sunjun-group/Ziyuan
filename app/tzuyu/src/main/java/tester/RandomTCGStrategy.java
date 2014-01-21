@@ -61,7 +61,6 @@ public class RandomTCGStrategy implements ITCGStrategy {
 	 * 
 	 * @see tester.ITCGStrategy#generate(core.Query)
 	 */
-	@Override
 	public List<TestCase> generate(Query trace) {
 
 		// Get the main object
@@ -375,8 +374,8 @@ public class RandomTCGStrategy implements ITCGStrategy {
 			// The first argument of an instance method is the receiver object
 			if (index == 0 && !isStatic) {
 				if (receiver == null) {
-					receiver = selector.selectDefaultReceiver(
-							ensureProject().getTarget());
+					receiver = selector.selectDefaultReceiver(ensureProject()
+							.getTarget());
 					parameters.add(receiver);
 				} else {
 					// Variable receiver = receiver.getReceiver();
@@ -533,12 +532,10 @@ public class RandomTCGStrategy implements ITCGStrategy {
 		return inputSizes;
 	}
 
-	@Override
 	public List<TestCase> findFailedEvidenceForUnknownStatement(TzuYuAction stmt) {
 		return store.findFailedEvidence(stmt);
 	}
 
-	@Override
 	public List<TestCase> getAllGeneratedTestCases() {
 
 		Pair<List<TestCase>, List<TestCase>> representatives = store
@@ -550,12 +547,11 @@ public class RandomTCGStrategy implements ITCGStrategy {
 		return resultCases;
 	}
 
-	@Override
 	public List<TestCase> getAllGoodTestCases() {
 		// Only return good traces
 		return store.getAllGoodTestCases();
 	}
-	
+
 	// TODO [LLT]: duplicate code
 	private TzClass ensureProject() {
 		if (project == null) {

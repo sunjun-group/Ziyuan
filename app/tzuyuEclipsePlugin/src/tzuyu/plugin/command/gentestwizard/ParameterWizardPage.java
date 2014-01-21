@@ -26,7 +26,6 @@ public class ParameterWizardPage extends GenTestWizardPage {
 		setTitle(msg.gentest_prefs_param());
 	}
 
-	@Override
 	public void createControl(Composite parent) {
 		paramPanel = new ParameterPanel(this, parent);
 		paramPanel.setEventManager(eventManager); 

@@ -18,7 +18,7 @@
              allPopups="false"
              locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
           <menu
-                id="tzuyu"
+                id="tzuyu.plugin.menu"
                 label="Tzuyu">
              <visibleWhen checkEnabled="false">
 	                <with variable="selection">
@@ -26,13 +26,13 @@
 	                </with>
 	         </visibleWhen>
              <command
-                   commandId="tzuyu.menu.command.generateTestcases"
-                   id="tzuyu.group.generateTestcases"
+                   commandId="tzuyu.plugin.command.generateTestcases"
+                   id="tzuyu.plugin.menu.generateTestcases"
                    label="%menu.generateTestCase"
                    style="push">
              </command>
              <command
-                   commandId="tzuyu.menu.command.openDialog"
+                   commandId="tzuyu.plugin.command.genTestWizard"
                    label="%menu.openDialog"
                    style="push">
              </command>
@@ -43,20 +43,20 @@
           point="org.eclipse.ui.commands">
        <command
              defaultHandler="tzuyu.plugin.command.gentest.GenTestHandler"
-             id="tzuyu.menu.command.generateTestcases"
+             id="tzuyu.plugin.command.generateTestcases"
              name="Generate test cases">
        </command>
        <command
              defaultHandler="tzuyu.plugin.command.gentestwizard.GenTestWizardHandler"
-             id="tzuyu.menu.command.openDialog"
-             name="Open Dialog">
+             id="tzuyu.plugin.command.genTestWizard"
+             name="GenTest Wizard">
        </command>
     </extension>
     <extension
           point="org.eclipse.ui.propertyPages">
        <page
              class="tzuyu.plugin.preferences.ProjectPropertyPage"
-             id="tzuyu.configuration.propertypages"
+             id="tzuyu.plugin.propertypages"
              name="%propertypages.name">
           <enabledWhen>
              <adapt
@@ -70,5 +70,19 @@
        <initializer
              class="tzuyu.plugin.preferences.TzPreferenceInitializer">
        </initializer>
+    </extension>
+    <extension
+          point="org.eclipse.ui.views">
+       <category
+             id="tzuyu.plugin.view.category.general"
+             name="%view.category.name">
+       </category>
+       <view
+             category="tzuyu.plugin.view.category.general"
+             class="tzuyu.plugin.view.dfa.DfaView"
+             id="tzuyu.plugin.view.dfa"
+             name="%view.dfa.name"
+             restorable="true">
+       </view>
     </extension>
 </plugin>

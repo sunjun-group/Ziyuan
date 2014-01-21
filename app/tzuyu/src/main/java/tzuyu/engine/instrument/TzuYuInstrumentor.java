@@ -22,7 +22,6 @@ public class TzuYuInstrumentor implements IInstrumentor {
 		prestates = new ArrayList<Prestate>();
 	}
 
-	@Override
 	public List<Prestate> getRuntimeTrace() {
 		List<Prestate> retCopy = new ArrayList<Prestate>();
 		retCopy.addAll(prestates);
@@ -32,14 +31,12 @@ public class TzuYuInstrumentor implements IInstrumentor {
 		return retCopy;
 	}
 
-	@Override
 	public void instrument(Statement stmt, List<Variable> vars,
 			List<Object> runtimeObjects) {
 		Prestate state = Prestate.log(vars, runtimeObjects, project);
 		prestates.add(state);
 	}
 
-	@Override
 	public void startInstrument() {
 		if (isInProgress) {
 			throw new TzuYuException(
@@ -50,7 +47,6 @@ public class TzuYuInstrumentor implements IInstrumentor {
 		}
 	}
 
-	@Override
 	public void endInstrument() {
 		if (!isInProgress) {
 			throw new TzuYuException("the instrumentation is finished");
@@ -60,7 +56,6 @@ public class TzuYuInstrumentor implements IInstrumentor {
 
 	}
 
-	@Override
 	public void setProject(TzClass project) {
 		this.project = project;
 	}

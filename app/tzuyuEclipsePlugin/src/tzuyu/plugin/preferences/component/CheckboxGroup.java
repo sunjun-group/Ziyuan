@@ -73,12 +73,10 @@ public class CheckboxGroup<T> {
 		for (Button btn : btns) {
 			btn.addSelectionListener(new SelectionListener() {
 				
-				@Override
 				public void widgetSelected(SelectionEvent e) {
 					listener.onValueChanged(new ValueChangedEvent<List<T>>(this, null, getValue()));
 				}
 				
-				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					if (!excludeDefault) {
 						listener.onValueChanged(new ValueChangedEvent<List<T>>(this, null, getValue()));

@@ -22,12 +22,10 @@ public class ObjectInfoReference implements ObjectInfo {
     this.isValueNull = nullValue;
   }
 
-  @Override
   public double getNumericValue() {
     return isValueNull ? 0 : 1;
   }
 
-  @Override
   public List<ObjectInfo> getValues(int level) {
     if (level < this.level) {
       return new ArrayList<ObjectInfo>();
@@ -44,12 +42,10 @@ public class ObjectInfoReference implements ObjectInfo {
     }
   }
 
-  @Override
   public boolean isValueNull() {
     return isValueNull;
   }
 
-  @Override
   public ClassInfo getType() {
     return type;
   }

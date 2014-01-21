@@ -40,7 +40,6 @@ public class GenTestReporter extends TzReportHandler {
 		return null;
 	}
 
-	@Override
 	public void reportDFA(DFA lastDFA, TzuYuAlphabet sigma) {
 
 	}

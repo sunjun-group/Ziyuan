@@ -15,7 +15,6 @@ package tzuyu.engine.iface;
  */
 public class DefaultClassCreator implements JClassWriter {
 
-	@Override
 	public void writeClass(String className, String packageName,
 			String content) {
 	}

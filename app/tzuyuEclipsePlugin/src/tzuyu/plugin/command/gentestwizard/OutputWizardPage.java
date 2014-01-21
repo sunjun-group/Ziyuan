@@ -30,7 +30,6 @@ public class OutputWizardPage extends GenTestWizardPage {
 		this.prefs = prefs;
 	}
 
-	@Override
 	public void createControl(Composite parent) {
 		outputPanel = new OutputPanel(this, parent, project, getShell());
 		outputPanel.setAutoUpdateContainerMsg(false);

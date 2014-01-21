@@ -184,7 +184,6 @@ public class ParameterSelectorV2 implements IParameterSelector {
 		return rArrayDeclaration;
 	}
 
-	@Override
 	public Variable selectCachedVariable(Class<?> type) {
 		SimpleList<Sequence> l = null;
 		if (config.isObjectToInteger() && type.equals(Object.class)) {
@@ -221,7 +220,6 @@ public class ParameterSelectorV2 implements IParameterSelector {
 	 * @param type
 	 * @return
 	 */
-	@Override
 	public Variable selectExistingVariable(Variable receiver, Class<?> type) {
 
 		List<Variable> vars = receiver.owner.getMatchedVariable(type);
@@ -233,7 +231,6 @@ public class ParameterSelectorV2 implements IParameterSelector {
 		}
 	}
 
-	@Override
 	public Variable selectNullReceiver(Class<?> type) {
 		StatementKind stmt = RAssignment.statementForAssignment(type, null, config);
 		TzuYuAction gStmt = TzuYuAction.fromStatmentKind(stmt);
@@ -248,7 +245,6 @@ public class ParameterSelectorV2 implements IParameterSelector {
 	 * don't allow to generate null objects for the main object and the class
 	 * must be a reference type with accessible constructor.
 	 */
-	@Override
 	public Variable selectDefaultReceiver(Class<?> type) {
 		ConstructorInfo[] ctors = project.getClassInfo(type)
 				.getConstructors();

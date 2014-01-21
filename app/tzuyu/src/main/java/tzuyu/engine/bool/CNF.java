@@ -28,7 +28,6 @@ public class CNF implements Formula {
     }
   }
 
-  @Override
   public List<Var> getReferencedVariables() {
     List<Var> result = new ArrayList<Var>();
     for (CNFClause clause : clauses) {
@@ -55,7 +54,6 @@ public class CNF implements Formula {
     return sb.toString();
   }
 
-  @Override
   public boolean evaluate(Object[] objects) {
     boolean result = true;
 
@@ -68,7 +66,6 @@ public class CNF implements Formula {
     return true;
   }
 
-  @Override
   public Formula restrict(List<Atom> vars, List<Integer> vals) {
     CNF result = new CNF();
     for (CNFClause clause : clauses) {
@@ -86,7 +83,6 @@ public class CNF implements Formula {
     return result;
   }
 
-  @Override
   public List<Atom> getAtomics() {
     List<Atom> result = new ArrayList<Atom>();
     for (CNFClause clause : clauses) {
@@ -97,7 +93,6 @@ public class CNF implements Formula {
     return result;
   }
 
-  @Override
   public Formula simplify() {
     CNF result = new CNF();
     for (CNFClause clause : clauses) {
@@ -115,7 +110,6 @@ public class CNF implements Formula {
     return result;
   }
 
-  @Override
   public boolean evaluate(Prestate state) {
     boolean result = true;
 

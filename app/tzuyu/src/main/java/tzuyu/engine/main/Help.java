@@ -1,13 +1,17 @@
 package tzuyu.engine.main;
 
+import static tzuyu.engine.main.Option.OptionType.INHERITED_METHOD;
+import static tzuyu.engine.main.Option.OptionType.METHODS;
+import static tzuyu.engine.main.Option.OptionType.OBJECT_TO_INTEGER;
+import static tzuyu.engine.main.Option.OptionType.OUTPUT;
+import static tzuyu.engine.main.Option.OptionType.TARGET;
+import static tzuyu.engine.main.Option.OptionType.TEST_PERS_QUERY;
 import tzuyu.engine.TzLogger;
 import tzuyu.engine.main.Command.CommandType;
 import tzuyu.engine.utils.Globals;
-import static tzuyu.engine.main.Option.OptionType.*;
 
 public class Help implements CommandHandler {
 
-	@Override
 	public boolean handle(Command command) {
 		if (command.getType() == CommandType.help) {
 			printHelp();
@@ -42,7 +46,6 @@ public class Help implements CommandHandler {
 		TzLogger.log().info(Globals.TZUYU_VERSION);
 	}
 
-	@Override
 	public CommandType[] getCmdTypes() {
 		return new CommandType[] { CommandType.help, CommandType.version };
 	}

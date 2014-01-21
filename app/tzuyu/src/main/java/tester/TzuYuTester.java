@@ -761,7 +761,6 @@ public class TzuYuTester implements HasReport<TzuYuAlphabet>{
 		return project;
 	}
 
-	@Override
 	public void report(ReportHandler<TzuYuAlphabet> reporter) {
 		// TODO Auto-generated method stub
 	}

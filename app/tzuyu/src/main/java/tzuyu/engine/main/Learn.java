@@ -3,9 +3,9 @@ package tzuyu.engine.main;
 import java.util.List;
 import java.util.Map;
 
+import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzLogger;
-import tzuyu.engine.TzClass;
 import tzuyu.engine.Tzuyu;
 import tzuyu.engine.main.Command.CommandType;
 import tzuyu.engine.model.ClassInfo;
@@ -13,7 +13,6 @@ import analyzer.ClassAnalyzer;
 
 public class Learn implements CommandHandler {
 
-	@Override
 	public boolean handle(Command command) {
 		TzClass project = processCommand(command);
 		CommandLineReportHandler reporter = new CommandLineReportHandler(project.getConfiguration());
@@ -58,7 +57,6 @@ public class Learn implements CommandHandler {
 		return project;
 	}
 
-	@Override
 	public CommandType[] getCmdTypes() {
 		return new CommandType[] {CommandType.learn};
 	}

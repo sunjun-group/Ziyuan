@@ -29,7 +29,6 @@ public class TzuyuEngineProxy implements TzuyuEngine {
 		tzuyu = new Tzuyu(project, reporter);
 	}
 
-	@Override
 	public void run() {
 		tzuyu.run();
 	}

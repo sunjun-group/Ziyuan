@@ -4,21 +4,20 @@ import tzuyu.engine.model.ExecutionOutcome;
 
 public class ExceptionExecution implements ExecutionOutcome {
 
-  private final Throwable exception;
-  private final long executionTime;
+	private final Throwable exception;
+	private final long executionTime;
 
-  public ExceptionExecution(Throwable throwable, long time) {
-    this.exception = throwable;
-    this.executionTime = time;
-  }
+	public ExceptionExecution(Throwable throwable, long time) {
+		this.exception = throwable;
+		this.executionTime = time;
+	}
 
-  @Override
-  public long getExecutionTime() {
-    return this.executionTime;
-  }
+	public long getExecutionTime() {
+		return this.executionTime;
+	}
 
-  public Throwable getException() {
-    return this.exception;
-  }
+	public Throwable getException() {
+		return this.exception;
+	}
 
 }

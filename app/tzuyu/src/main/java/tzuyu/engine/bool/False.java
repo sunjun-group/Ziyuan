@@ -6,57 +6,53 @@ import java.util.List;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Prestate;
 
-
 public class False extends Atom {
 
-  private final List<Var> variables = new ArrayList<Var>();
+	private final List<Var> variables = new ArrayList<Var>();
 
-  private static final False instance = new False();
-  
-  private False() {
-  }
+	private static final False instance = new False();
 
-  public static False getInstance() {
-    return instance;
-  }
-  
-  @Override
-  public List<Var> getReferencedVariables() {
-    return variables;
-  }
+	private False() {
+	}
 
-  @Override
-  public String toString() {
-    return "false";
-  }
+	public static False getInstance() {
+		return instance;
+	}
 
-  @Override
-  public boolean evaluate(Object[] objects) {
-    return false;
-  }
+	public List<Var> getReferencedVariables() {
+		return variables;
+	}
 
-  @Override
-  public Formula restrict(List<Atom> vars, List<Integer> vals) {
-    return this;
-  }
+	@Override
+	public String toString() {
+		return "false";
+	}
 
-  @Override
-  public int hashCode() {
-    return 3;
-  }
+	public boolean evaluate(Object[] objects) {
+		return false;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (o == this) {
-      return true;
-    }
+	@Override
+	public Formula restrict(List<Atom> vars, List<Integer> vals) {
+		return this;
+	}
 
-    return o instanceof False;
-  }
+	@Override
+	public int hashCode() {
+		return 3;
+	}
 
-  @Override
-  public boolean evaluate(Prestate state) {
-    return false;
-  }
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+
+		return o instanceof False;
+	}
+
+	public boolean evaluate(Prestate state) {
+		return false;
+	}
 
 }

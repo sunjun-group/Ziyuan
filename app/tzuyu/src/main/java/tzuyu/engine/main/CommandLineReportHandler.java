@@ -26,7 +26,6 @@ public class CommandLineReportHandler extends TzReportHandler {
 		super(config);
 	}
 	
-	@Override
 	public void reportDFA(DFA lastDFA, TzuYuAlphabet sigma) {
 		saveDFA(lastDFA, sigma.getProject());
 	}

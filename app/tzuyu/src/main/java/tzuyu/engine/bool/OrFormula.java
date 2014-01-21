@@ -17,7 +17,6 @@ public final class OrFormula implements Formula {
     this.right = right;
   }
 
-  @Override
   public List<Var> getReferencedVariables() {
     List<Var> leftVars = left.getReferencedVariables();
     List<Var> rightVars = right.getReferencedVariables();
@@ -32,12 +31,10 @@ public final class OrFormula implements Formula {
     return left.toString() + " || " + right.toString();
   }
 
-  @Override
   public boolean evaluate(Object[] objects) {
     return left.evaluate(objects) || right.evaluate(objects);
   }
 
-  @Override
   public Formula restrict(List<Atom> vars, List<Integer> vals) {
     Formula leftExpr = left.restrict(vars, vals);
     Formula rightExpr = right.restrict(vars, vals);
@@ -56,7 +53,6 @@ public final class OrFormula implements Formula {
     return new OrFormula(leftExpr, rightExpr);
   }
 
-  @Override
   public List<Atom> getAtomics() {
     List<Atom> leftAtoms = left.getAtomics();
     List<Atom> rightAtoms = right.getAtomics();
@@ -65,7 +61,6 @@ public final class OrFormula implements Formula {
     return leftAtoms;
   }
 
-  @Override
   public Formula simplify() {
     Formula leftExpr = left.simplify();
     Formula rightExpr = right.simplify();
@@ -84,7 +79,6 @@ public final class OrFormula implements Formula {
     return new OrFormula(leftExpr, rightExpr);
   }
 
-  @Override
   public boolean evaluate(Prestate state) {
     return left.evaluate(state) || right.evaluate(state);
   }

@@ -57,12 +57,10 @@ public class TestTeacher implements Teacher<TzuYuAlphabet> {
 	public TestTeacher() {
 	}
 
-	@Override
 	public void report(ReportHandler<TzuYuAlphabet> reporter) {
 		
 	}
 
-	@Override
 	public void setInitAlphabet(TzuYuAlphabet sig) {
 		
 	}

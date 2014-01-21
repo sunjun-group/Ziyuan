@@ -28,12 +28,10 @@ public class FolderSelectionEvent implements AppEvent {
 		this.root = root;
 	}
 
-	@Override
 	public String getType() {
 		return TYPE;
 	}
 
-	@Override
 	public void execute(AppListener listener) {
 		if (listener instanceof Listener) {
 			((Listener)listener).onFolderChange(root);

@@ -6,56 +6,52 @@ import java.util.List;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Prestate;
 
-
 public class True extends Atom {
 
-  private final List<Var> variables = new ArrayList<Var>();
+	private final List<Var> variables = new ArrayList<Var>();
 
-  private static final True instance = new True();
-  
-  private True() {
-  }
-  
-  public static True getInstance() {
-    return instance;
-  }
+	private static final True instance = new True();
 
-  @Override
-  public List<Var> getReferencedVariables() {
-    return variables;
-  }
+	private True() {
+	}
 
-  @Override
-  public String toString() {
-    return "true";
-  }
+	public static True getInstance() {
+		return instance;
+	}
 
-  @Override
-  public boolean evaluate(Object[] objects) {
-    return true;
-  }
+	public List<Var> getReferencedVariables() {
+		return variables;
+	}
 
-  @Override
-  public Formula restrict(List<Atom> vars, List<Integer> vals) {
-    return this;
-  }
+	@Override
+	public String toString() {
+		return "true";
+	}
 
-  @Override
-  public int hashCode() {
-    return 11;
-  }
+	public boolean evaluate(Object[] objects) {
+		return true;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (o == this) {
-      return true;
-    }
-    return o instanceof True;
-  }
+	@Override
+	public Formula restrict(List<Atom> vars, List<Integer> vals) {
+		return this;
+	}
 
-  @Override
-  public boolean evaluate(Prestate state) {
-    return true;
-  }
+	@Override
+	public int hashCode() {
+		return 11;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		return o instanceof True;
+	}
+
+	public boolean evaluate(Prestate state) {
+		return true;
+	}
 
 }

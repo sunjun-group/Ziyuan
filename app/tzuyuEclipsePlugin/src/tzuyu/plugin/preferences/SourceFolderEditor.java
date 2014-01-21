@@ -48,7 +48,6 @@ public class SourceFolderEditor extends StringButtonFieldEditor {
 		workspaceRoot = project.getProject().getWorkspace().getRoot();
 		setPropertyChangeListener(new IPropertyChangeListener() {
 			
-			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				fireEvent(new ValueChangedEvent<IPackageFragmentRoot>(SourceFolderEditor.this,
 						null, outSourceFolder));

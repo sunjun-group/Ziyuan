@@ -78,7 +78,6 @@ public abstract class PropertyPanel<T> extends Composite {
 	protected void addModifyListener(final Enum<?> field, final IntText txt) {
 		txt.addModifyListener(new ModifyListener() {
 
-			@Override
 			public void modifyText(ModifyEvent e) {
 				updateStatus(field, txt.validate());
 			}

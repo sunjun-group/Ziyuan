@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import lstar.ReportHandler;
-import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzLogger;
-import tzuyu.engine.TzClass;
 import tzuyu.engine.iface.algorithm.Refiner;
 import tzuyu.engine.model.Action;
 import tzuyu.engine.model.ClassInfo;
@@ -30,7 +28,6 @@ public class TzuYuRefinerV2 implements Refiner<TzuYuAlphabet> {
 		this.classifier = new SVMWrapper2();
 	}
 
-	@Override
 	public void init(TzuYuAlphabet sigma) {
 		this.classInfoMap = sigma.getProject().getTypeMap();
 		this.classifier.setClassInDepth(sigma.getProject().getConfiguration().getClassMaxDepth());
@@ -214,7 +211,6 @@ public class TzuYuRefinerV2 implements Refiner<TzuYuAlphabet> {
 
 	}
 
-	@Override
 	public void report(ReportHandler<TzuYuAlphabet> reporter) {
 		TzLogger.log().info("Total NO. of SVM Calls:", getRefinementCount())
 				.info("Total Time consumed by SVM:", getTimeConsumed());

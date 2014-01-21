@@ -37,7 +37,6 @@ public class InputWizardPage extends GenTestWizardPage {
 		this.workObject = workObject;
 	}
 
-	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(1, false));

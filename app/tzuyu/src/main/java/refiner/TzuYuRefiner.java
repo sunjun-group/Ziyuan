@@ -38,12 +38,10 @@ public class TzuYuRefiner implements Refiner <TzuYuAlphabet>{
 		traceStore = QueryTraceStoreFactory.createStore();
 	}
 
-	@Override
 	public Formula refineMembership(QueryResult result) {
 		return membershipRefinement(result);
 	}
 
-	@Override
 	public Witness refineCandidate(DFA dfa, List<QueryTrace> traces) {
 		return candidateRefinement(dfa);
 	}
@@ -208,13 +206,11 @@ public class TzuYuRefiner implements Refiner <TzuYuAlphabet>{
 
 	}
 	
-	@Override
 	public void report(ReportHandler<TzuYuAlphabet> reporter) {
 		// TODO Auto-generated method stub
 		
 	}
 	
-	@Override
 	public void init(TzuYuAlphabet sigma) {
 		// TODO Auto-generated method stub
 		

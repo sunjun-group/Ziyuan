@@ -32,7 +32,6 @@ public abstract class TzCommandHandler<C extends TzPreferences> extends
 	protected ISelection selection;
 	protected Messages messages;
 
-	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getActiveMenuSelection(event);
 		

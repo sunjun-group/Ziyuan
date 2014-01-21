@@ -24,7 +24,6 @@ public class PluginClassWriter implements JClassWriter {
 		this.prefs = prefs;
 	}
 
-	@Override
 	public void writeClass(String className, String packageName,
 			String content) {
 		try {

@@ -41,18 +41,15 @@ public class ObjectList {
       cur = head;
     }
 
-    @Override
     public java.util.Iterator<Object> iterator() {
       // TODO Auto-generated method stub
       return null;
     }
 
-    @Override
     public boolean hasNext() {
       return cur != null;
     }
 
-    @Override
     public Object next() {
       if (cur != null) {
         if (cur instanceof Node) {
@@ -69,7 +66,6 @@ public class ObjectList {
       }
     }
 
-    @Override
     public void remove() {
       throw new UnsupportedOperationException();
     }
@@ -107,17 +103,14 @@ public class ObjectList {
       }
     }
 
-    @Override
     public java.util.Iterator<A> iterator() {
       return null;
     }
 
-    @Override
     public boolean hasNext() {
       return cur != null;
     }
 
-    @Override
     public A next() {
       if (cur != null) {
         if (cur instanceof Node) {
@@ -145,7 +138,6 @@ public class ObjectList {
       }
     }
 
-    @Override
     public void remove() {
       throw new UnsupportedOperationException();
     }

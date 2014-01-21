@@ -32,13 +32,11 @@ public class ValueChangedEvent<T> implements AppEvent {
 		return newVal;
 	}
 	
-	@Override
 	public String getType() {
 		return TYPE;
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
 	public void execute(AppListener listener) {
 		if (listener instanceof ValueChangedListener<?>) {
 			ValueChangedListener<?> valueChangedListener = (ValueChangedListener<?>) listener;

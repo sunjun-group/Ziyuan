@@ -24,7 +24,6 @@ import tzuyu.engine.utils.CollectionUtils;
  */
 public class SelectionFilter extends PropertyTester {
 
-	@Override
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
 		if (!(receiver instanceof ISelection)) {

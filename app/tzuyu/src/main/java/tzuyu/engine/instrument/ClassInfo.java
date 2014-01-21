@@ -102,7 +102,6 @@ public class ClassInfo extends InfoObject implements Iterable<MethodInfo> {
     return isEnum;
   }
 
-  @Override
   public Iterator<MethodInfo> iterator() {
     // TODO Auto-generated method stub
     return null;

@@ -42,7 +42,6 @@ public class PackageEditor extends StringButtonFieldEditor {
 		
 		setPropertyChangeListener(new IPropertyChangeListener() {
 			
-			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (eventManager != null) {
 					eventManager.fireEvent(new ValueChangedEvent<IPackageFragment>(PackageEditor.this, 
@@ -119,7 +118,6 @@ public class PackageEditor extends StringButtonFieldEditor {
 		eventManager.register(FolderSelectionEvent.TYPE,
 				new FolderSelectionEvent.Listener() {
 
-					@Override
 					public void onFolderChange(IPackageFragmentRoot packageRoot) {
 						root = packageRoot;
 					}
