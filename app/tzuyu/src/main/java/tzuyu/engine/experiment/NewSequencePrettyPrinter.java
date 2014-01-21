@@ -27,6 +27,7 @@ import tzuyu.engine.utils.ReflectionUtils;
  * 
  */
 public class NewSequencePrettyPrinter {
+	private static final int MIN_METHOD_LENGTH = 6;
 
 	/**
 	 * The output package name
@@ -41,7 +42,6 @@ public class NewSequencePrettyPrinter {
 	
 	private TzConfiguration config;
 	private JClassWriter classCreator;
-	
 	
 	private NewSequencePrettyPrinter() { }
 
@@ -72,7 +72,7 @@ public class NewSequencePrettyPrinter {
 			JStringBuilder packageSb = buildPackageSection(packageName);
 			
 			/* import class for import section*/
-			List<Class<?>> imports = resetImports(null);
+			Set<Class<?>> imports = resetImports(null);
 			
 			/* class section prefix */
 			String newClassName = buildClassName(className, classIdx);
@@ -90,12 +90,12 @@ public class NewSequencePrettyPrinter {
 				Set<Class<?>> seqImports = getImportClasses(seq, imports);
 				
 				/* method section */
-				JStringBuilder methodSb = buildSingleMethodSection(seq, curNoMethods);
+				JStringBuilder methodSb = buildTestMethodContent(seq);
 				
 				/* print out */
 				// decide to add to current test class or create a new one
 				// + 1 because we need to include import junit.framework.TestCase;
-				curNoLines += (seqImports.size() + 1) + methodSb.noLines;
+				curNoLines += (seqImports.size() + 1) + methodSb.noLines + MIN_METHOD_LENGTH;
 				/*	if number of methods or number of lines exceeds the limit,
 				 * 	then write the current string to file
 				 * and start a new String for the other file 
@@ -109,16 +109,19 @@ public class NewSequencePrettyPrinter {
 								.append(classPrefixSb)
 								.append(methodSbList)
 								.append(classSurfixSb).toString());
+					
 					// create and prepare new class
 					newClassName = buildClassName(className, ++ classIdx);
 					classPrefixSb = buildClassPrefixSection(newClassName);
 					imports = resetImports(imports);
 					methodSbList.clear();
-					curNoMethods = 0;
+					// rebuild method
+					curNoMethods = 1;
 					curNoLines = packageSb.noLines + classPrefixSb.noLines + classSurfixSb.noLines;
+					
 				} 
 				imports.addAll(seqImports);
-				methodSbList.add(methodSb);
+				methodSbList.add(buildSingleMethodSection(newClassName, methodSb, curNoMethods));
 			}
 			/**
 			 * for the last generated class
@@ -137,7 +140,7 @@ public class NewSequencePrettyPrinter {
 		}
 	}
 	
-	private JStringBuilder buildImportsSection(List<Class<?>> imports) {
+	private JStringBuilder buildImportsSection(Set<Class<?>> imports) {
 		JStringBuilder sb = new JStringBuilder()
 							.append("import junit.framework.TestCase;")
 							.newLine();
@@ -152,28 +155,39 @@ public class NewSequencePrettyPrinter {
 		return sb;
 	}
 
-	public List<Class<?>> resetImports(List<Class<?>> imports) {
+	public Set<Class<?>> resetImports(Set<Class<?>> imports) {
 		if (imports == null) {
-			imports = new ArrayList<Class<?>>();
+			imports = new HashSet<Class<?>>();
 		} else {
 			imports.clear();
 		}
 		return imports;
 	}
 
-	private JStringBuilder buildSingleMethodSection(Sequence eseq, int methodIdx) {
+	// update min method length.
+	private JStringBuilder buildSingleMethodSection(String newClassName, JStringBuilder content, int methodIdx) {
 		JStringBuilder sb = new JStringBuilder();
-		VariableRenamer renamer = new VariableRenamer(eseq);
 		// print the test method
 		sb.tab().append("public void test" + (methodIdx)
 				+ "() throws Throwable {");
 		sb.newLine();
-		sb.tab().tab().append("if (debug) {")
-			.newLine().tab().tab().tab().append("System.out.println(\"%n" + this.className
-				+ ".test" + methodIdx + "\");")
-			.newLine().tab().tab().append("}");
+		sb.tab().tab()
+			.append("if (debug) {")
+			.newLine().tab().tab().tab()
+			.append("System.out.println(\"%n" + newClassName + ".test" + methodIdx + "\");")
+			.newLine().tab().tab()
+			.append("}");
 		sb.newLine();
-		// makes 4 indentation here
+		sb.append(content);
+		sb.tab().append("}");
+		sb.newLine();
+		sb.newLine();
+		return sb;
+	}
+
+	private JStringBuilder buildTestMethodContent(Sequence eseq) {
+		VariableRenamer renamer = new VariableRenamer(eseq);
+		JStringBuilder sb = new JStringBuilder();
 		SequenceDumper printer = new SequenceDumper(eseq, renamer, config);
 		String codelines = printer.printSequenceAsCodeString();
 		String[] all_code_lines = codelines.split(Globals.lineSep);
@@ -182,10 +196,6 @@ public class NewSequencePrettyPrinter {
 			sb.tab().tab().append(codeline);
 			sb.newLine();
 		}
-
-		sb.tab().append("}");
-		sb.newLine();
-		sb.newLine();
 		return sb;
 	}
 	
@@ -216,7 +226,7 @@ public class NewSequencePrettyPrinter {
 	/**
 	 * extract all new import classes from sequence that doesn't exist in curImportClaz list
 	 */
-	private Set<Class<?>> getImportClasses(Sequence sequence, List<Class<?>> curImportClaz) {
+	private Set<Class<?>> getImportClasses(Sequence sequence, Set<Class<?>> imports) {
 		// keep all needed import
 		Set<Class<?>> seqNewImportClaz = new HashSet<Class<?>>();
 		
@@ -241,7 +251,7 @@ public class NewSequencePrettyPrinter {
 		while(it.hasNext()) {
 			Class<?> clazz = it.next();
 			clazz = getComponentType(clazz);
-			if (!needImport(clazz) || curImportClaz.contains(clazz)) {
+			if (!needImport(clazz)) {
 				it.remove();
 			}
 		}
