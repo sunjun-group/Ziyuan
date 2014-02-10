@@ -45,9 +45,6 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 
 	/**
 	 * every time starting learning, we need to reset every state and variable in the object.
-	 * make sure all clean
-	 * TODO [LLT]: to recheck. 
-	 * @param alphabet 
 	 */
 	@SuppressWarnings("unchecked")
 	public DFA startLearning(A sig) throws LStarException {
@@ -133,7 +130,6 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 			// is not equal to the unknown automata.
 			refineWithCounterExample(cex);
 		}
-
 	}
 
 	/**
