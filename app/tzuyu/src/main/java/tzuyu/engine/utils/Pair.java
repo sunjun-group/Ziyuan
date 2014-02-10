@@ -1,5 +1,7 @@
 package tzuyu.engine.utils;
 
+import java.util.Arrays;
+
 public class Pair<A, B> {
 	public A a;
 	public B b;
@@ -19,5 +21,20 @@ public class Pair<A, B> {
 
 	public B second() {
 		return b;
+	}
+	
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Pair)) {
+			return false;
+		}
+		Pair<?, ?> that = (Pair<?, ?>)obj;
+		return LogicUtils.equalsWithNull(this.a, that.a) && LogicUtils.equalsWithNull(this.b, that.b);
+	}
+	
+	public int hashCode() {
+		return Arrays.hashCode(new Object[]{a, b});
+	}
+	public String toString() {
+		return "("+a+", "+b+")";
 	}
 }

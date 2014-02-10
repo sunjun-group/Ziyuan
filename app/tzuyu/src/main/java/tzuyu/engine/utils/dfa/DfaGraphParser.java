@@ -6,12 +6,19 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.plugin.command;
+package tzuyu.engine.utils.dfa;
 
 /**
  * @author LLT
  *
  */
-public class GenTestWorker {
+public class DfaGraphParser {
+
+	public void read() {
+		
+	}
 	
+	public void write() {
+		
+	}
 }

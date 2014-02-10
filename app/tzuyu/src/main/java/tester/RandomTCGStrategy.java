@@ -552,7 +552,6 @@ public class RandomTCGStrategy implements ITCGStrategy {
 		return store.getAllGoodTestCases();
 	}
 
-	// TODO [LLT]: duplicate code
 	private TzClass ensureProject() {
 		if (project == null) {
 			throw new TzuYuException("Tzuyu project not set for tester");

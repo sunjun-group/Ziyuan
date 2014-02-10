@@ -1,6 +1,5 @@
 package lstar;
 
-import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.dfa.DFA;

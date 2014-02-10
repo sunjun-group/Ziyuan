@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import lstar.LStarException.Type;
-import tzuyu.engine.TzLogger;
 import tzuyu.engine.iface.algorithm.Learner;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.model.TzuYuException;
@@ -40,23 +39,25 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 	}
 
 	public void setAlphabet(A sig) {
-		this.sigma = sig;
 		teacher.setInitAlphabet(sig);
+		otable.clear();
 	}
 
 	/**
 	 * every time starting learning, we need to reset every state and variable in the object.
 	 * make sure all clean
 	 * TODO [LLT]: to recheck. 
+	 * @param alphabet 
 	 */
-	public DFA startLearning() throws LStarException {
+	@SuppressWarnings("unchecked")
+	public DFA startLearning(A sig) throws LStarException {
+		this.sigma = sig;
 		assert sigma != null : "Init Alphabet for L* learner is not set";
-		reset();
-		
 		int iterationCount = 0;
 		boolean restart;
 		do {
 			restart = false;
+			setAlphabet(sigma);
 			try {
 				logger.info("-------restart iteration " + iterationCount++
 						+ "-------");
@@ -68,19 +69,15 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 			} catch (LStarException e) {
 				if (e.getType() == Type.RestartLearning) {
 					restart = true;
+					this.sigma = (A) e.getNewSigma();
 				} else {
-					// rethrow for other type of LStarException.
+					// rethrow for other types of LStarException.
 					throw e;
 				}
 			}
 		} while (restart);
 
 		return getDFA();
-	}
-
-	private void reset() {
-		this.lastDFA = null;
-		this.otable.clear();
 	}
 
 	private void learn() throws LStarException {
@@ -108,7 +105,6 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 			otable.addSARow(str, membership);
 		}
 
-		// while (runnable) {
 		while (true) { // run until cex is empty or when need to restart
 						// learning.
 
@@ -387,7 +383,7 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 			return;
 		}
 		// last DFA
-		TzLogger.log()
+		reporter.getLogger()
 				.info("Alphabet Size in Final DFA:",
 						(lastDFA.sigma.getSize() - 1))
 				.info("Number of States in Final DFA:", lastDFA.getStateSize());

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import lstar.ReportHandler;
-import tzuyu.engine.TzLogger;
 import tzuyu.engine.iface.algorithm.Refiner;
 import tzuyu.engine.model.Action;
 import tzuyu.engine.model.ClassInfo;
@@ -212,7 +211,7 @@ public class TzuYuRefinerV2 implements Refiner<TzuYuAlphabet> {
 	}
 
 	public void report(ReportHandler<TzuYuAlphabet> reporter) {
-		TzLogger.log().info("Total NO. of SVM Calls:", getRefinementCount())
+		reporter.getLogger().info("Total NO. of SVM Calls:", getRefinementCount())
 				.info("Total Time consumed by SVM:", getTimeConsumed());
 	}
 

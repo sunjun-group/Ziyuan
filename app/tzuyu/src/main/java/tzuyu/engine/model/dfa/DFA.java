@@ -10,6 +10,7 @@ import java.util.Random;
 import tzuyu.engine.model.Action;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.utils.Randomness;
+import tzuyu.engine.utils.dfa.DfaGraph;
 
 public class DFA {
 	public Alphabet sigma;
@@ -267,6 +268,29 @@ public class DFA {
 			}
 		}
 		return new RunningResult(lastMatchedTran, index);
+	}
+
+	public DfaGraph toDfaGraph() {
+		DfaGraph graph = new DfaGraph();
+		graph.setInit(states.get(initStateID).id);
+		// nodes
+		for (int i = 0; i < states.size(); i++) {
+			State state = states.get(i);
+			if (acceptingStates.contains(i)) {
+				graph.addNode(state.id, true);
+			} else {
+				graph.addNode(state.id, false);
+			}
+		}
+		// edges
+		for (State state : states) {
+			for (Transition tran : state.trans) {
+				graph.addEdge(state.id, states.get(tran.target).id,
+						tran.action.toString());
+			}
+		}
+		graph.commit();
+		return graph;
 	}
 
 	public String createDotRepresentation() {

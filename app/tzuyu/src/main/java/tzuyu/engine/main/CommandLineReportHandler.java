@@ -12,6 +12,7 @@ import java.io.FileWriter;
 
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzClass;
+import tzuyu.engine.iface.ILogger;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.dfa.DFA;
@@ -42,5 +43,15 @@ public class CommandLineReportHandler extends TzReportHandler {
 				System.out.println(e.getMessage());
 			}
 		}
+	}
+
+	@Override
+	public ILogger<?> getLogger() {
+		return CommandLineLogger.instance();
+	}
+
+	@Override
+	public void done() {
+		
 	}
 }

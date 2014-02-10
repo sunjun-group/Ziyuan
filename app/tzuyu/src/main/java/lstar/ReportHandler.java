@@ -8,6 +8,7 @@
 
 package lstar;
 
+import tzuyu.engine.iface.ILogger;
 import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.dfa.DFA;
 
@@ -21,4 +22,8 @@ public interface ReportHandler <A extends Alphabet>{
 	 * (ex: print DFA to files)
 	 */
 	void reportDFA(DFA lastDFA, A sigma);
+
+	ILogger<?> getLogger();
+	
+	public void done();
 }

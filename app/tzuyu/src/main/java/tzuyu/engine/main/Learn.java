@@ -5,7 +5,6 @@ import java.util.Map;
 
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
-import tzuyu.engine.TzLogger;
 import tzuyu.engine.Tzuyu;
 import tzuyu.engine.main.Command.CommandType;
 import tzuyu.engine.model.ClassInfo;
@@ -36,14 +35,14 @@ public class Learn implements CommandHandler {
 		try {
 			String className = project.getClassName();
 			if (className.equals("")) {
-				TzLogger.log().error(
+				CommandLineLogger.instance().error(
 						"Target class is not specified, system aborts");
 				System.exit(1);
 			}
 
 			targetClass = Class.forName(className);
 		} catch (ClassNotFoundException e) {
-			TzLogger.log().error(
+			CommandLineLogger.instance().error(
 					"Invalid target class is specified, system aborts");
 			System.exit(1);
 		}

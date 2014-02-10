@@ -10,6 +10,13 @@
              properties="isSuitableForTest"
              type="java.lang.Object">
        </propertyTester>
+       <propertyTester
+             class="tzuyu.plugin.propertytester.SelectionFilter"
+             id="tzuyu.plugin.tester.dfaFile"
+             namespace="tzuyu.plugin.tester"
+             properties="dfaFile"
+             type="java.lang.Object">
+       </propertyTester>
     </extension>
     <extension
           id="tzuyu"
@@ -37,6 +44,33 @@
                    style="push">
              </command>
           </menu>
+          <menu
+                label="Tzuyu">
+             <command
+                   commandId="tzuyu.plugin.command.readDfa"
+                   style="push">
+             </command>
+             <visibleWhen
+                   checkEnabled="false">
+                <and>
+                   <with
+                         variable="selection">
+                      <count
+                            value="1">
+                      </count>
+                      <iterate
+                            ifEmpty="false"
+                            operator="and">
+                         <and>
+                            <test
+                                  property="tzuyu.plugin.tester.dfaFile">
+                            </test>
+                         </and>
+                      </iterate>
+                   </with>
+                </and>
+             </visibleWhen>
+          </menu>
        </menuContribution>
     </extension>
     <extension
@@ -50,6 +84,11 @@
              defaultHandler="tzuyu.plugin.command.gentestwizard.GenTestWizardHandler"
              id="tzuyu.plugin.command.genTestWizard"
              name="GenTest Wizard">
+       </command>
+       <command
+             defaultHandler="tzuyu.plugin.command.readDfa.ReadDfaHandler"
+             id="tzuyu.plugin.command.readDfa"
+             name="%menu.readDfa">
        </command>
     </extension>
     <extension
@@ -84,5 +123,30 @@
              name="%view.dfa.name"
              restorable="true">
        </view>
+       <view
+             category="tzuyu.plugin.view.category.general"
+             class="tzuyu.plugin.view.example.WordView"
+             id="tzuyu.plugin.view.ex"
+             name="Word view"
+             restorable="true">
+       </view>
+    </extension>
+    <extension
+          point="org.eclipse.ui.console.consoleFactories">
+       <consoleFactory
+             class="tzuyu.plugin.console.TzConsoleFactory"
+             label="%console.name">
+       </consoleFactory>
+    </extension>
+    <extension
+          point="org.eclipse.ui.console.consolePageParticipants">
+       <consolePageParticipant
+             class="tzuyu.plugin.console.TzConsoleParticipant"
+             id="tzuyu.plugin.console.TzConsoleFactory.consolePageParticipant">
+          <enablement>
+             <instanceof
+                   value="tzuyu.plugin.console.TzConsole">
+             </instanceof></enablement>
+       </consolePageParticipant>
     </extension>
 </plugin>

@@ -11,6 +11,8 @@
 		<log4j-version>1.2.17</log4j-version>
 		<junit-version>4.11</junit-version>
 		<commons-lang-version>2.6</commons-lang-version>
+		<commons-io-verson>1.4</commons-io-verson>
+<!-- 		<graphstream-version>1.2</graphstream-version> -->
 	</properties>
 
 	<repositories>
@@ -28,7 +30,7 @@
 		<module>../tzuyu.repo</module>
 		<module>../tzuyu</module>
 	</modules>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -39,7 +41,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -62,6 +64,11 @@
 				<groupId>commons-lang</groupId>
 				<artifactId>commons-lang</artifactId>
 				<version>${commons-lang-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commons-io-verson}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

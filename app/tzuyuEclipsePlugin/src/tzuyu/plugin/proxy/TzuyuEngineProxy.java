@@ -13,10 +13,11 @@ import tzuyu.engine.Tzuyu;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.TzuyuEngine;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
+import tzuyu.plugin.console.TzConsole;
 import tzuyu.plugin.core.dto.WorkObject;
 import tzuyu.plugin.core.exception.PluginException;
-import tzuyu.plugin.reporter.PluginLogger;
 import tzuyu.plugin.reporter.GenTestReporter;
+import tzuyu.plugin.reporter.PluginLogger;
 
 /**
  * @author LLT
@@ -36,11 +37,12 @@ public class TzuyuEngineProxy implements TzuyuEngine {
 	public static void generateTestCases(WorkObject workObject,
 			GenTestPreferences config) {
 		try {
+			TzConsole.showConsole();
 			TzClass tzProject = ProjectConverter.from(workObject, config);
 			new TzuyuEngineProxy(tzProject, new GenTestReporter(config)).run();
 		} catch (PluginException e) {
 			PluginLogger.logEx(e);
-		}
+		} 
 	}
 
 }

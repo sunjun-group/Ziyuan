@@ -11,6 +11,7 @@ package tzuyu.engine;
 import static tzuyu.engine.TzConstants.*;
 import java.io.File;
 
+import tzuyu.engine.main.CommandLineLogger;
 import tzuyu.engine.utils.Globals;
 
 /**
@@ -119,7 +120,7 @@ public class TzConfiguration implements Cloneable {
 		if (!output.equals("")) {
 			outputDir = new File(output);
 			if (!outputDir.exists() || !outputDir.isDirectory()) {
-				TzLogger.log().error(
+				CommandLineLogger.instance().error(
 						"Invalid output directory, use the default");
 				outputDir = null;
 			}

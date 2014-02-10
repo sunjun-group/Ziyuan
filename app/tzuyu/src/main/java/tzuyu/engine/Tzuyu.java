@@ -38,22 +38,22 @@ public class Tzuyu implements TzuyuEngine {
 		this.project = project;
 		this.reporter = reporter;
 		learner.setTeacher(teacher);
-		learner.setAlphabet(new TzuYuAlphabet(project));
 	}
 
 	/**
 	 * this function execute the main flow of tzuyu engine.
 	 */
 	public void run() {
-		TzLogger.log().info("============Start of Statistics for",
+		reporter.getLogger().info("============Start of Statistics for",
 				project.getTarget().getSimpleName(), "============");
 		// TODO [LLT]: time measuring.
 		try {
-			learner.startLearning();
+			learner.startLearning(new TzuYuAlphabet(project));
 		} catch (LStarException e) {
 			// TODO [LLT]: exception handling.
-			TzLogger.log().info("Exception::", e.getType());
+			reporter.getLogger().info("Exception::", e.getType());
 		}
 		learner.report(reporter);
+		reporter.done();
 	}
 }

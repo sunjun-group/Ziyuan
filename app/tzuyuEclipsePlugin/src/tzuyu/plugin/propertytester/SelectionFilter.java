@@ -10,6 +10,7 @@ package tzuyu.plugin.propertytester;
 import java.util.Iterator;
 
 import org.eclipse.core.expressions.PropertyTester;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
@@ -18,19 +19,27 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 import tzuyu.engine.utils.CollectionUtils;
+import tzuyu.plugin.core.constants.Constants;
 
 /**
  * @author LLT
  */
 public class SelectionFilter extends PropertyTester {
-
+	private static final String DFA_FILE_TEST_PROPERTY = "dfaFile";
+	private static final String TZUYU_TEST_PROPERTY = "isSuitableForTest";
+	
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
+		if (DFA_FILE_TEST_PROPERTY.equals(property) && 
+				receiver instanceof IFile) {
+			return testForDfaView((IFile) receiver);
+		}		
 		if (!(receiver instanceof ISelection)) {
 			return false;
 		}
 		if (receiver instanceof IStructuredSelection) {
 			IStructuredSelection selection = (IStructuredSelection) receiver;
+			
 			// single selection
 			if (selection.size() == 1) {
 				return testIfOneSelected(selection.getFirstElement());
@@ -54,6 +63,10 @@ public class SelectionFilter extends PropertyTester {
 			return true;
 		}
 		return false;
+	}
+
+	private boolean testForDfaView(IFile file) {
+		return Constants.DFA_FILE_EXTENSION.equals(file.getFileExtension());
 	}
 
 	private boolean testIfOneSelected(Object element) {

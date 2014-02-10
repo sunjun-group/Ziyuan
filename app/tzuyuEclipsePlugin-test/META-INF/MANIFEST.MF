@@ -6,7 +6,7 @@ Bundle-Version: 0.0.1.qualifier
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  tzuyuEclipsePlugin;bundle-version="0.0.1",
- org.eclipse.jdt.junit;bundle-version="3.6.1",
- org.junit
+ org.junit,
+ org.eclipse.jdt.junit;bundle-version="3.6.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

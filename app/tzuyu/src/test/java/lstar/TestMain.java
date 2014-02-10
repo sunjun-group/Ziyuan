@@ -18,7 +18,7 @@ public class TestMain {
     algorithm.setAlphabet(alphabet);
 
     try {
-		algorithm.startLearning();
+		algorithm.startLearning(alphabet);
 	} catch (LStarException e) {
 		e.printStackTrace();
 		System.exit(0);

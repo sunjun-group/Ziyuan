@@ -12,6 +12,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 
+import tzuyu.plugin.TzuyuPlugin;
+import tzuyu.plugin.core.utils.IStatusUtils;
+
 /**
  * @author LLT
  *
@@ -23,10 +26,25 @@ public abstract class TzJob extends Job {
 	}
 
 	@Override
-	protected IStatus run(IProgressMonitor monitor) {
-		
-		return null;
+	protected final IStatus run(IProgressMonitor monitor) {
+		try {
+			doJob(monitor);
+		} finally {
+			monitor.done();
+		}
+		return IStatusUtils.OK_STATUS;
 	}
 
+	protected abstract IStatus doJob(IProgressMonitor monitor);
+
+	@Override
+	public boolean belongsTo(Object family) {
+		return family == TzuyuPlugin.class;
+	}
 	
+	public void scheduleJob() {
+		setUser(true);
+		setPriority(Job.INTERACTIVE);
+		schedule();
+	}
 }

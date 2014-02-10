@@ -8,9 +8,14 @@
 
 package tzuyu.plugin.command.gentest;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.command.TzCommandHandler;
+import tzuyu.plugin.command.TzJob;
 import tzuyu.plugin.core.dto.WorkObject;
+import tzuyu.plugin.core.utils.IStatusUtils;
 import tzuyu.plugin.proxy.TzuyuEngineProxy;
 
 /**
@@ -21,8 +26,8 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 
 	@Override
 	protected void run(WorkObject workObject, GenTestPreferences config) {
-		TzuyuEngineProxy.generateTestCases(workObject, config); 
-		TzuyuPlugin.getDefault().persistGenTestPreferences(workObject.getProject().getProject(), config);
+		GenTestJob job = new GenTestJob("Generate testcases", workObject, config);
+		job.scheduleJob();
 	}
 
 	@Override
@@ -30,4 +35,22 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 		return TzuyuPlugin.getDefault().getGenTestPreferences(workObject.getProject());
 	}
 	
+	private static class GenTestJob extends TzJob {
+		private WorkObject workObject;
+		private GenTestPreferences config;
+
+		public GenTestJob(String name, WorkObject workObject, GenTestPreferences config) {
+			super(name);
+			this.workObject = workObject;
+			this.config = config;
+		}
+
+		@Override
+		protected IStatus doJob(IProgressMonitor monitor) {
+			TzuyuEngineProxy.generateTestCases(workObject, config);
+			monitor.done();
+			return IStatusUtils.OK_STATUS;
+		}
+		
+	}
 }

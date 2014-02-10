@@ -6,21 +6,31 @@ Bundle-Version: 0.0.1.qualifier
 Bundle-Activator: tzuyu.plugin.TzuyuPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.jdt.core;bundle-version="3.6.2",
- org.eclipse.jface.text;bundle-version="3.6.1",
- org.eclipse.core.resources;bundle-version="3.6.1",
  org.eclipse.debug.core;bundle-version="3.6.0",
- org.eclipse.jdt.launching;bundle-version="3.5.200",
- org.eclipse.debug.ui;bundle-version="3.6.3",
- org.eclipse.jdt.ui;bundle-version="3.6.2",
  org.eclipse.core.expressions;bundle-version="3.4.200",
- org.eclipse.ui.ide;bundle-version="3.6.2"
+ org.eclipse.jdt.core;bundle-version="3.6.0",
+ org.eclipse.jdt.launching;bundle-version="3.5.100",
+ org.eclipse.jface.text;bundle-version="3.6.0",
+ org.eclipse.debug.ui;bundle-version="3.6.0",
+ org.eclipse.jdt.ui;bundle-version="3.6.0",
+ org.eclipse.ui.ide;bundle-version="3.6.0",
+ org.eclipse.zest.core;bundle-version="1.2.0",
+ org.eclipse.zest.layouts;bundle-version="1.1.0",
+ org.eclipse.ui.console;bundle-version="3.5.0",
+ org.eclipse.jdt.debug.ui;bundle-version="3.5.0",
+ org.eclipse.pde.ui;bundle-version="3.6.0",
+ org.eclipse.jdt.debug;bundle-version="3.6.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Localization: plugin
-Import-Package: org.eclipse.jdt.internal.ui.javaeditor,
+Import-Package: org.eclipse.jdt.internal.ui.dialogs,
+ org.eclipse.jdt.internal.ui.javaeditor,
+ org.eclipse.jdt.internal.ui.refactoring.nls,
+ org.eclipse.jdt.ui,
+ org.eclipse.jdt.ui.wizards,
  org.eclipse.ui.texteditor
 Bundle-ClassPath: .,
  tzuyuCore/,
  tzuyuLib/commons-lang-2.6.jar,
- tzuyuLib/log4j-1.2.17.jar
+ tzuyuLib/log4j-1.2.17.jar,
+ tzuyuLib/commons-io-1.4.jar

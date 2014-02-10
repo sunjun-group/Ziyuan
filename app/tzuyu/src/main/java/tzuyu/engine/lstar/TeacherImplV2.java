@@ -16,7 +16,6 @@ import lstar.LStarException.Type;
 import lstar.ReportHandler;
 import lstar.Teacher;
 import refiner.Witness;
-import tzuyu.engine.TzLogger;
 import tzuyu.engine.TzFactory;
 import tzuyu.engine.bool.True;
 import tzuyu.engine.iface.algorithm.Refiner;
@@ -112,7 +111,7 @@ public class TeacherImplV2 implements Teacher<TzuYuAlphabet> {
 				/* should stop learner in learner itself. */
 				// At this point, we need to notify the learner
 				// to refine the alphabet and restart to learn.
-				throw new LStarException(Type.RestartLearning);
+				throw new LStarException(Type.RestartLearning, newSigma);
 			}
 		}
 	}
@@ -189,13 +188,13 @@ public class TeacherImplV2 implements Teacher<TzuYuAlphabet> {
 			// needRestart = true;
 			// learner.stop();
 			// return Trace.epsilon;
-			throw new LStarException(Type.RestartLearning);
+			throw new LStarException(Type.RestartLearning, newSigma);
 		}
 	}
 
 	public void report(ReportHandler<TzuYuAlphabet> reporter) {
 		// report it output
-		TzLogger.log()
+		reporter.getLogger()
 				.info("Total NO. of membership queries:", membershipCount)
 				.info("Total NO. of candidate queries:", candidateCount);
 		// report its component output
