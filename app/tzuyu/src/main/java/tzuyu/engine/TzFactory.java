@@ -10,12 +10,12 @@ package tzuyu.engine;
 
 import lstar.LStar;
 import lstar.Teacher;
-import refiner.TzuYuRefinerV2;
-import tester.TzuYuTesterV2;
+import refiner.TzuYuRefiner;
+import tester.TzuYuTester;
 import tzuyu.engine.iface.algorithm.Learner;
 import tzuyu.engine.iface.algorithm.Refiner;
 import tzuyu.engine.iface.algorithm.Tester;
-import tzuyu.engine.lstar.TeacherImplV2;
+import tzuyu.engine.lstar.TeacherImpl;
 import tzuyu.engine.model.TzuYuAlphabet;
 
 /**
@@ -29,15 +29,15 @@ public class TzFactory {
 	}
 	
 	public static Teacher<TzuYuAlphabet> getTeacher() {
-		return new TeacherImplV2();
+		return new TeacherImpl();
 	}
 	
 	public static Tester getTester() {
-		return new TzuYuTesterV2();
+		return new TzuYuTester();
 	}
 	
 	public static Refiner<TzuYuAlphabet> getRefiner() {
-		return new TzuYuRefinerV2();
+		return new TzuYuRefiner();
 	}
 	
 }

@@ -4,11 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import lstar.ReportHandler;
-
-import tzuyu.engine.TzClass;
-import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.algorithm.Refiner;
 import tzuyu.engine.model.Action;
+import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.QueryResult;
 import tzuyu.engine.model.QueryTrace;
@@ -17,46 +15,37 @@ import tzuyu.engine.model.TzuYuAction;
 import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.dfa.Transition;
-import tzuyu.engine.store.IQueryTraceStore;
-import tzuyu.engine.store.QueryTraceStoreFactory;
+import tzuyu.engine.store.DFARunner;
 import tzuyu.engine.utils.Pair;
 
 /**
- * This version of refiner is based on the version based trace store and use all
- * the traces generated so far to find the inconsistent transition.
  * 
  * @author Spencer Xiao
- * 
+ *
  */
-public class TzuYuRefiner implements Refiner <TzuYuAlphabet>{
+public class TzuYuRefiner implements Refiner<TzuYuAlphabet> {
+
 	private SVMWrapper classifier;
-	private IQueryTraceStore traceStore;
-	private TzClass project;
+	private Map<Class<?>, ClassInfo> classInfoMap;
 
 	public TzuYuRefiner() {
-		classifier = new SVMWrapper();
-		traceStore = QueryTraceStoreFactory.createStore();
+		this.classifier = new SVMWrapper();
 	}
 
-	public Formula refineMembership(QueryResult result) {
-		return membershipRefinement(result);
+	public void init(TzuYuAlphabet sigma) {
+		this.classInfoMap = sigma.getProject().getTypeMap();
+		this.classifier.setClassInDepth(sigma.getProject().getConfiguration().getClassMaxDepth());
 	}
 
-	public Witness refineCandidate(DFA dfa, List<QueryTrace> traces) {
-		return candidateRefinement(dfa);
+	public int getRefinementCount() {
+		return classifier.getSVMCallCount();
 	}
-	
-	
-	/**
-	 * Generate a boolean formula divider which separates positive data set from
-	 * the negative data set. The divider are generated from SVM classifier.
-	 * 
-	 * @param cex
-	 *            the query result returned by membership query to a teacher
-	 * @return the divider or null if we cannot find one.
-	 */
-	public Formula membershipRefinement(QueryResult cex) {
 
+	public int getTimeConsumed() {
+		return classifier.getTimeConsumed();
+	}
+
+	public Formula refineMembership(QueryResult cex) {
 		if (cex == null) {
 			throw new IllegalArgumentException(
 					"the counter example cannot be null");
@@ -70,35 +59,33 @@ public class TzuYuRefiner implements Refiner <TzuYuAlphabet>{
 
 		// Invoke the LibSVM to refine the alphabet.
 		Formula divider = classifier.memberDivide(cex.positiveSet,
-				cex.negativeSet, project);
-		// If a divider is found we need to clear the traces
-		// for the next learning pass.
-		if (divider != null) {
-			this.traceStore.clear();
-		}
+				cex.negativeSet, classInfoMap);
 
 		return divider;
 	}
 
 	/**
-	 * Generate a divider for an inconsistent transition on the DFA. It search
-	 * all the traces generated so far and try to find an inconsistent
-	 * transition and the two sets of data states on the source state of the
-	 * DFA. Then it use SVM to generate the divider. If only one of the two
-	 * inconsistent data sets exists, we just return a counterexample query for
-	 * the inconsistent transition. and
+	 * Refine the query results based on the DFA in order to find inconsistent
+	 * transitions and generate the divider which can distinguish the
+	 * inconsistent transition. In dealing with the counterexamples traces, we
+	 * prefer alphabet refinement to control refinement, since control
+	 * refinement by L* may waste efforts to construct a DFA which would be
+	 * destroyed later in case we find a divider which leads to a refined
+	 * alphabet, since TzuYu will restart the whole learning process when the
+	 * alphabet is refined.
 	 * 
 	 * @param dfa
-	 *            the DFA on which inconsistent transition happens
-	 * @return the transition and its associated data states or the transition
-	 *         and the counterexample query.
+	 *            the DFA based on which the traces were generated
+	 * @param traces
+	 *            the query results for traces to refine DFA.
+	 * 
+	 * @return the witness which contains the divider for the inconsistent
+	 *         transition or the counterexample trace
 	 */
-	public Witness candidateRefinement(DFA dfa) {
+	public Witness refineCandidate(DFA dfa, List<QueryTrace> traces) {
 
-		Map<Transition, QueryResult> resultMap = traceStore
-				.findAllInconsitentTrans(dfa);
-		// Find one transition to refine
-
+		Map<Transition, QueryResult> resultMap = dispatchTraces(dfa, traces);
+		// Find the first inconsistent transition
 		Pair<Transition, QueryResult> result = findInconsistentTransition(dfa,
 				resultMap);
 
@@ -117,25 +104,47 @@ public class TzuYuRefiner implements Refiner <TzuYuAlphabet>{
 			QueryTrace ctexample = queryResult.negativeSet.get(0);
 			Trace counterexampleLString = converter
 					.convertToNewString(ctexample);
+			// The counterexample string returned by convertToNewString only
+			// contains the prefix string that reach the inconsistent state,
+			// So as a counterexample to return to L*, we need to append the
+			// inconsistent action at the end.
+			counterexampleLString.appendAtTail(tzuyuSymbol);
 			return new Witness(counterexampleLString, tzuyuSymbol);
 		} else if (queryResult.negativeSet.size() == 0) {
 			StringConverter converter = new StringConverter(dfa);
 			QueryTrace ctexample = queryResult.positiveSet.get(0);
 			Trace counterexampleLString = converter
 					.convertToNewString(ctexample);
+			// The counterexample string returned by convertToNewString only
+			// contains the prefix string that reach the inconsistent state,
+			// So as a counterexample to return to L*, we need to append the
+			// inconsistent action at the end.
+			counterexampleLString.appendAtTail(tzuyuSymbol);
 			return new Witness(counterexampleLString, tzuyuSymbol);
 		} else {
 			// Invoke LibSVM to refine the alphabet.
 			Formula divider = classifier.candidateDivide(tzuyuSymbol,
-					queryResult.positiveSet, queryResult.negativeSet, project);
-			// If a divider is found, clear the traces to prepare for
-			// next round of learning
-			if (divider != null) {
-				traceStore.clear();
-			}
+					queryResult.positiveSet, queryResult.negativeSet,
+					classInfoMap);
 
 			return new Witness(divider, tzuyuSymbol);
 		}
+
+	}
+
+	public Map<Transition, QueryResult> dispatchTraces(DFA dfa,
+			List<QueryTrace> traces) {
+
+		DFARunner runner = new DFARunner(dfa);
+
+		for (QueryTrace trace : traces) {
+			if (trace.query.isEpsilon() && (!trace.isAccepted())) {
+				continue;
+			}
+			runner.runOldTrace(trace);
+		}
+
+		return runner.getStatesByTransition();
 	}
 
 	/**
@@ -205,14 +214,10 @@ public class TzuYuRefiner implements Refiner <TzuYuAlphabet>{
 		return null;
 
 	}
-	
+
 	public void report(ReportHandler<TzuYuAlphabet> reporter) {
-		// TODO Auto-generated method stub
-		
+		reporter.getLogger().info("Total NO. of SVM Calls:", getRefinementCount())
+				.info("Total Time consumed by SVM:", getTimeConsumed());
 	}
-	
-	public void init(TzuYuAlphabet sigma) {
-		// TODO Auto-generated method stub
-		
-	}
+
 }

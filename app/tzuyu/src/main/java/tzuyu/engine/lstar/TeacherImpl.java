@@ -8,6 +8,7 @@
 
 package tzuyu.engine.lstar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lstar.LStarException;
@@ -15,9 +16,10 @@ import lstar.LStarException.Type;
 import lstar.ReportHandler;
 import lstar.Teacher;
 import refiner.Witness;
-import tester.TzuYuTester;
+import tzuyu.engine.TzFactory;
 import tzuyu.engine.bool.True;
 import tzuyu.engine.iface.algorithm.Refiner;
+import tzuyu.engine.iface.algorithm.Tester;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.QueryResult;
@@ -30,31 +32,27 @@ import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.dfa.TracesPair;
 
 /**
- * @author LLT
- * 
+ * @author LLT extracted from QueryHandlerV2, and only keep the part that
+ *         implements the Lstar teacher.
  */
 public class TeacherImpl implements Teacher<TzuYuAlphabet> {
+	private int membershipCount = 0;
+	private int candidateCount = 1;
 	private int maxMemberSize = 0;
-	private int iterationCount = 1;
-	// TODO-LLT : To refactor later.
-	// TzuYuTester and TzuYuTesterV2 are quiet different??
-	private TzuYuTester tester;
-	private Refiner<TzuYuAlphabet> refiner;
+
+	private Tester tester = TzFactory.getTester();
+	private Refiner<TzuYuAlphabet> refiner = TzFactory.getRefiner();
 	private TzuYuAlphabet sigma;
 
 	public void setInitAlphabet(TzuYuAlphabet sigma) {
 		this.sigma = sigma;
-	}
-
-	public void setRefiner(Refiner refiner) {
-		this.refiner = refiner;
-	}
-
-	public void setTester(TzuYuTester tester) {
-		this.tester = tester;
+		refiner.init(sigma);
+		tester.setProject(sigma.getProject());
 	}
 
 	public boolean membershipQuery(Trace str) throws LStarException {
+		assert sigma != null : "Sigma in teacherImplV2 is not set!!";
+		membershipCount++;
 		// Update maximum membership query size
 		if (str.size() > maxMemberSize) {
 			maxMemberSize = str.size();
@@ -63,7 +61,7 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 		// Step 2: relay this query as membership query to the Oracle.
 		Query query = new Query(str);
 
-		QueryResult result = tester.memberTest(query);
+		QueryResult result = tester.test(query);
 
 		if (query.isEpsilon()) {
 			return true;
@@ -77,7 +75,10 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 
 			List<QueryTrace> traces = result.unknownSet;
 
-			boolean wishful = tester.confirmWishfulThinking(traces.get(0));
+			QueryTrace queryTrace = traces.get(0);
+
+			TzuYuAction stmt = queryTrace.getNextAction();
+			boolean wishful = tester.confirmWishfulThinking(stmt);
 
 			// Return true for unknown test trace as the wishful thinking, but
 			// we
@@ -92,52 +93,73 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 			return true;
 		} else {
 			Formula divider = refiner.refineMembership(result);
-			if (divider == null) {
+			if (divider == null || divider.equals(Formula.FALSE)) {
 				throw new TzuYuException("Cannot find "
 						+ "divider for the inconsistent transitons");
 			}
-
 			QueryTrace trace = result.negativeSet.get(0);
 
 			TzuYuAction action = trace.query
 					.getStatement(trace.lastActionIdx + 1);
-			TzuYuAlphabet newSigma = sigma.incrementalRefine(divider, action);
+			TzuYuAlphabet newSigma = sigma.refine(divider, action);
 
 			if (newSigma.equals(sigma)) {
 				return false;
 			} else {
 				sigma = newSigma;
+
+				/* should stop learner in learner itself. */
+				// At this point, we need to notify the learner
+				// to refine the alphabet and restart to learn.
 				throw new LStarException(Type.RestartLearning, newSigma);
 			}
 		}
 	}
 
 	public Trace candidateQuery(DFA dfa) throws LStarException {
-		logger.info("------------Candidate Query Iteration " + iterationCount++
+		logger.info("------------Candidate Query Iteration " + candidateCount++
 				+ "------------------");
 		dfa.print();
 		logger.info("dfa state size: " + dfa.getStateSize());
-		// Step 1: Use automata testing strategies to generate the positive and
-		// negative traces.
+		logger.info("alphabet size: " + (dfa.sigma.getSize() - 1));
+		List<QueryTrace> traces = new ArrayList<QueryTrace>();
 
-		TracesPair pair = dfa.randomWalk(maxMemberSize * 20, maxMemberSize + 2);
+		// Step 1: Find all the generated test cases and execute them in order
+		// to
+		// get a better judgment of DFA based on more information (the old test
+		// cases).
+		QueryResult oldResult = tester.executeAllOldTestCases();
+
+		// Step 2: Use automata testing strategies to generate the positive and
+		// negative traces.
+		TracesPair pair = dfa.randomWalk(maxMemberSize * 20, maxMemberSize + 3);
 
 		List<Trace> acceptingTraces = pair.acceptingTraces;
 		List<Trace> refusingTraces = pair.refusingTraces;
 		logger.info("positive traces size:" + acceptingTraces.size());
 		logger.info("negative traces size:" + refusingTraces.size());
+
 		for (Trace trace : acceptingTraces) {
 			Query query = new Query(trace);
-			tester.candidateTest(query);
+			QueryResult result = tester.test(query);
+			traces.addAll(result.positiveSet);
+			traces.addAll(result.negativeSet);
 		}
 
 		for (Trace trace : refusingTraces) {
 			Query query = new Query(trace);
-			tester.candidateTest(query);
+			QueryResult result = tester.test(query);
+			traces.addAll(result.positiveSet);
+			traces.addAll(result.negativeSet);
 		}
 
-		// Witness evid = refiner.candidateRefinement(dfa);
-		Witness evid = refiner.refineCandidate(dfa, null);
+		// Step 3: merge old traces with the newly generated one by appending
+		// the
+		// old traces after the newly generated traces.
+		traces.addAll(oldResult.positiveSet);
+		traces.addAll(oldResult.negativeSet);
+
+		Witness evid = refiner.refineCandidate(dfa, traces);
 
 		if (!evid.success) {
 			// If we can't find the counterpart data for the specified query,
@@ -154,8 +176,7 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 			return Trace.epsilon;
 		}
 
-		TzuYuAlphabet newSigma = sigma.incrementalRefine(evid.divider,
-				evid.action);
+		TzuYuAlphabet newSigma = sigma.refine(evid.divider, evid.action);
 		logger.info("alphabet refined");
 		if (newSigma.equals(sigma)) {
 			// We find an alphabet which was found before, is this possible?
@@ -164,11 +185,20 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 			// At this point we need to notify the learner
 			// to refine the alphabet and restart to learn.
 			sigma = newSigma;
+			// needRestart = true;
+			// learner.stop();
+			// return Trace.epsilon;
 			throw new LStarException(Type.RestartLearning, newSigma);
 		}
 	}
 
 	public void report(ReportHandler<TzuYuAlphabet> reporter) {
+		// report it output
+		reporter.getLogger()
+				.info("Total NO. of membership queries:", membershipCount)
+				.info("Total NO. of candidate queries:", candidateCount);
+		// report its component output
+		refiner.report(reporter);
 		tester.report(reporter);
 	}
 }
