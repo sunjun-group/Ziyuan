@@ -99,7 +99,7 @@ public class TestCase {
         // Do nothing
       }
     } else {
-      newNode.upateReceiver();
+      newNode.updateReceiver();
     }
 
     return new TestCase(newQuery, newNode);

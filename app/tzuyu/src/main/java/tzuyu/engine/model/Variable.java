@@ -22,7 +22,7 @@ public class Variable implements Comparable<Variable>, Serializable {
 	/**
 	 * The statement index which the variable refers to
 	 */
-	public final int stmtIdx;
+	private final int stmtIdx;
 
 	private Class<?> type = null;
 
@@ -113,4 +113,11 @@ public class Variable implements Comparable<Variable>, Serializable {
 		return "var" + Integer.toString(stmtIdx);
 	}
 
+	public int getStmtIdx() {
+		return stmtIdx;
+	}
+	
+	public Sequence getOwner() {
+		return owner;
+	}
 }

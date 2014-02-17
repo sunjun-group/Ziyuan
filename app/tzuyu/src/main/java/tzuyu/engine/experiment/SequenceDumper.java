@@ -90,12 +90,12 @@ class SequenceDumper {
 					.getReturnType()));
 			String cast = "";
 			sb.append(" "
-					+ renamer.getRenamedVar(newVar.stmtIdx, newVar.argIdx)
+					+ renamer.getRenamedVar(newVar.getStmtIdx(), newVar.argIdx)
 					+ " = " + cast);
 		}
 
 		String receiverString = rmethod.isStatic() ? null : renamer
-				.getRenamedVar(inputVars.get(0).stmtIdx,
+				.getRenamedVar(inputVars.get(0).getStmtIdx(),
 						inputVars.get(0).argIdx);
 		appendReceiverOrClassForStatics(rmethod, receiverString, sb);
 
@@ -131,7 +131,7 @@ class SequenceDumper {
 						((RAssignment) stmt).getValue(),
 						config.getStringMaxLength()));
 			} else {
-				sb.append(renamer.getRenamedVar(var.stmtIdx, var.argIdx));
+				sb.append(renamer.getRenamedVar(var.getStmtIdx(), var.argIdx));
 			}
 		}
 
@@ -159,10 +159,10 @@ class SequenceDumper {
 		String declaringStr = getSimpleCompilableName(declaringClass);
 		sb.append(declaringStr
 				+ " "
-				+ renamer.getRenamedVar(newVar.stmtIdx, newVar.argIdx)
+				+ renamer.getRenamedVar(newVar.getStmtIdx(), newVar.argIdx)
 				+ " = "
 				+ (isNonStaticMember ? renamer.getRenamedVar(
-						inputVars.get(0).stmtIdx, inputVars.get(0).argIdx)
+						inputVars.get(0).getStmtIdx(), inputVars.get(0).argIdx)
 						+ "." : "")
 				+ "new "
 				+ (isNonStaticMember ? declaringClass.getSimpleName()
@@ -188,7 +188,7 @@ class SequenceDumper {
 						((RAssignment) sk).getValue(),
 						config.getStringMaxLength()));
 			} else {
-				sb.append(renamer.getRenamedVar(var.stmtIdx, var.argIdx));
+				sb.append(renamer.getRenamedVar(var.getStmtIdx(), var.argIdx));
 			}
 		}
 		sb.append(");");
@@ -202,7 +202,7 @@ class SequenceDumper {
 		if (type.isPrimitive()) {
 			sb.append(PrimitiveTypes.boxedType(type).getSimpleName());
 			sb.append(" ");
-			sb.append(renamer.getRenamedVar(newVar.stmtIdx, newVar.argIdx));
+			sb.append(renamer.getRenamedVar(newVar.getStmtIdx(), newVar.argIdx));
 			sb.append(" = new ");
 			sb.append(PrimitiveTypes.boxedType(type).getSimpleName());
 			sb.append("(");
@@ -214,7 +214,7 @@ class SequenceDumper {
 		} else {
 			sb.append(getSimpleCompilableName(type));
 			sb.append(" ");
-			sb.append(this.renamer.getRenamedVar(newVar.stmtIdx, newVar.argIdx));
+			sb.append(this.renamer.getRenamedVar(newVar.getStmtIdx(), newVar.argIdx));
 			sb.append(" = ");
 			sb.append(PrimitiveTypes.toCodeString(statement.getValue(),
 					config.getStringMaxLength()));
@@ -231,7 +231,7 @@ class SequenceDumper {
 					+ inputVars.size() + " capacity:" + length);
 		String declaringClass = statement.getElementType().getSimpleName();
 		sb.append(declaringClass + "[] "
-				+ renamer.getRenamedVar(newVar.stmtIdx, newVar.argIdx)
+				+ renamer.getRenamedVar(newVar.getStmtIdx(), newVar.argIdx)
 				+ " = new " + declaringClass + "[] { ");
 		for (int i = 0; i < inputVars.size(); i++) {
 			if (i > 0) {
@@ -250,7 +250,7 @@ class SequenceDumper {
 						((RAssignment) sk).getValue(),
 						config.getStringMaxLength()));
 			} else {
-				sb.append(renamer.getRenamedVar(var.stmtIdx, var.argIdx));
+				sb.append(renamer.getRenamedVar(var.getStmtIdx(), var.argIdx));
 			}
 		}
 		sb.append("};");

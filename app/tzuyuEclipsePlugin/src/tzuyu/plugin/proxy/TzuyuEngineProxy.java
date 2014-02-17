@@ -37,7 +37,7 @@ public class TzuyuEngineProxy implements TzuyuEngine {
 	public static void generateTestCases(WorkObject workObject,
 			GenTestPreferences config) {
 		try {
-			TzConsole.showConsole();
+			TzConsole.showConsole().clearConsole();
 			TzClass tzProject = ProjectConverter.from(workObject, config);
 			new TzuyuEngineProxy(tzProject, new GenTestReporter(config)).run();
 		} catch (PluginException e) {

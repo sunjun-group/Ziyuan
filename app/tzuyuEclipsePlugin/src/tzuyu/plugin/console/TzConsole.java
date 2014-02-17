@@ -40,7 +40,7 @@ public class TzConsole extends MessageConsole implements IPropertyChangeListener
 
 	}
 
-	public static void showConsole() {
+	public static TzConsole showConsole() {
 		IConsoleManager manager = ConsolePlugin.getDefault()
 				.getConsoleManager();
 		getConsole().activate();
@@ -53,6 +53,7 @@ public class TzConsole extends MessageConsole implements IPropertyChangeListener
 		PrintStream ps = new PrintStream(stream, true);
 		System.setOut(ps);
 	    System.setErr(ps);
+	    return console;
 	}
 
 	private static TzConsole getConsole() {

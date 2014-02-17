@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.core.constants.Messages;
 import tzuyu.plugin.core.dto.TzPreferences;
 import tzuyu.plugin.core.dto.WorkObject;
@@ -30,7 +31,7 @@ public abstract class TzCommandHandler<C extends TzPreferences> extends
 		AbstractHandler {
 	// current selection
 	protected ISelection selection;
-	protected Messages messages;
+	protected Messages messages = TzuyuPlugin.getMessages();
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getActiveMenuSelection(event);

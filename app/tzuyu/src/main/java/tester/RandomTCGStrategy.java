@@ -39,7 +39,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 	private TzConfiguration config;
 
 	public RandomTCGStrategy() {
-		selector = new ParameterSelectorV2();
+		selector = new ParameterSelector();
 		store = new TestCaseStore();
 		parameterStore = new MethodParameterStore();
 	}
@@ -69,7 +69,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 
 		int size = trace.size();
 		for (int index = 0; index < size; index++) {
-
+			// LLT: receiver == null if this is epsilon testCase.
 			Variable receiver = current.getReceiver();
 			List<TestCase> goodTraces = new ArrayList<TestCase>();
 
@@ -95,7 +95,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 				List<VarIndex> indices = new ArrayList<VarIndex>();
 
 				for (Variable raw : rawParams) {
-					indices.add(new VarIndex(raw.stmtIdx + stmtCount,
+					indices.add(new VarIndex(raw.getStmtIdx() + stmtCount,
 							raw.argIdx));
 					sequences.add(raw.owner);
 					stmtCount += raw.owner.size();
@@ -123,7 +123,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 
 				for (Variable var : parameters) {
 					RelativeNegativeIndex relIdx = new RelativeNegativeIndex(
-							-(seqSize - var.stmtIdx), var.argIdx);
+							-(seqSize - var.getStmtIdx()), var.argIdx);
 					inputs.add(relIdx);
 				}
 
@@ -239,7 +239,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 				List<VarIndex> indices = new ArrayList<VarIndex>();
 
 				for (Variable raw : rawParams) {
-					indices.add(new VarIndex(raw.stmtIdx + stmtCount,
+					indices.add(new VarIndex(raw.getStmtIdx() + stmtCount,
 							raw.argIdx));
 					sequences.add(raw.owner);
 					stmtCount += raw.owner.size();
@@ -267,7 +267,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 
 				for (Variable var : parameters) {
 					RelativeNegativeIndex relIdx = new RelativeNegativeIndex(
-							-(seqSize - var.stmtIdx), var.argIdx);
+							-(seqSize - var.getStmtIdx()), var.argIdx);
 					inputs.add(relIdx);
 				}
 
@@ -373,6 +373,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 			Class<?> type = paramTypes.get(index);
 			// The first argument of an instance method is the receiver object
 			if (index == 0 && !isStatic) {
+				// LLT: why receiver is only initialized if null here? 
 				if (receiver == null) {
 					receiver = selector.selectDefaultReceiver(ensureProject()
 							.getTarget());

@@ -93,7 +93,7 @@ public class DividerChecker {
             input = posTrace.getVariableForStatement(posStmtIndex + 1, index);
           }
 
-          indices.add(new VarIndex(input.stmtIdx + totStmts, input.argIdx));
+          indices.add(new VarIndex(input.getStmtIdx() + totStmts, input.argIdx));
           sequences.add(input.owner);
           totStmts += input.owner.size();
         }
@@ -171,7 +171,7 @@ public class DividerChecker {
             input = negTrace.getVariableForStatement(posStmtIndex + 1, index);
           }
 
-          indices.add(new VarIndex(input.stmtIdx + totStmts, input.argIdx));
+          indices.add(new VarIndex(input.getStmtIdx() + totStmts, input.argIdx));
           sequences.add(input.owner);
           totStmts += input.owner.size();
         }

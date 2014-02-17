@@ -102,7 +102,7 @@ public class ParameterSelector implements IParameterSelector {
 				int totStmts = 0;
 				for (Variable var : inputVars) {
 					parameters.add(new Variable(paramSeq, totStmts
-							+ var.stmtIdx));
+							+ var.getStmtIdx()));
 					totStmts += var.owner.size();
 				}
 
@@ -167,7 +167,7 @@ public class ParameterSelector implements IParameterSelector {
 
 				for (Variable var : inputVars) {
 					parameters.add(new Variable(paramSeq, totStmts
-							+ var.stmtIdx));
+							+ var.getStmtIdx()));
 					totStmts += var.owner.size();
 				}
 				// Construct the statement which creates the variable
@@ -298,7 +298,7 @@ public class ParameterSelector implements IParameterSelector {
 		int totStmts = 0;
 
 		for (Variable var : inputVars) {
-			parameters.add(new Variable(paramSeq, totStmts + var.stmtIdx));
+			parameters.add(new Variable(paramSeq, totStmts + var.getStmtIdx()));
 			totStmts += var.owner.size();
 		}
 		// Construct the statement which creates the variable

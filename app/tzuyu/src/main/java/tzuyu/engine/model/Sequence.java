@@ -184,10 +184,10 @@ public class Sequence implements Serializable {
    */
   private static RelativeNegativeIndex getRelativeIndexForVariable(
       int stmtIndex, Variable v) {
-    if (v.stmtIdx >= stmtIndex) {
+    if (v.getStmtIdx() >= stmtIndex) {
       throw new IllegalArgumentException("the statement index out of range");
     }
-    return new RelativeNegativeIndex(-(stmtIndex - v.stmtIdx), v.argIdx);
+    return new RelativeNegativeIndex(-(stmtIndex - v.getStmtIdx()), v.argIdx);
   }
 
   public List<Variable> getAllVariables() {
@@ -273,7 +273,7 @@ public class Sequence implements Serializable {
     List<Variable> indices = new ArrayList<Variable>(lastStmtVariables.size());
     for (int index = 0; index < this.lastStmtVariables.size(); index++) {
       Variable var = this.lastStmtVariables.get(index);
-      Statement s = statements.get(var.stmtIdx);
+      Statement s = statements.get(var.getStmtIdx());
       if (!s.isVoidMethodCall()
           && varTypeMatches(s.getOutputType(), clazz, match)) {
         indices.add(var);
@@ -282,7 +282,7 @@ public class Sequence implements Serializable {
     
     for (int index = 0; index < this.returnVar.size(); index++) {
       Variable var = this.returnVar.get(index);
-      Statement s = statements.get(var.stmtIdx);
+      Statement s = statements.get(var.getStmtIdx());
       if (!s.isVoidMethodCall()
           && varTypeMatches(s.getOutputType(), clazz, match)) {
         indices.add(var);

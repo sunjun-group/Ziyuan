@@ -42,7 +42,9 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 
 	private Tester tester = TzFactory.getTester();
 	private Refiner<TzuYuAlphabet> refiner = TzFactory.getRefiner();
-	private TzuYuAlphabet sigma;
+	// sigma should not changed inside teacher and always point to the same
+	// entity as in learner. 
+	private TzuYuAlphabet sigma; 
 
 	public void setInitAlphabet(TzuYuAlphabet sigma) {
 		this.sigma = sigma;
@@ -106,8 +108,6 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 			if (newSigma.equals(sigma)) {
 				return false;
 			} else {
-				sigma = newSigma;
-
 				/* should stop learner in learner itself. */
 				// At this point, we need to notify the learner
 				// to refine the alphabet and restart to learn.
@@ -184,7 +184,6 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 		} else {
 			// At this point we need to notify the learner
 			// to refine the alphabet and restart to learn.
-			sigma = newSigma;
 			// needRestart = true;
 			// learner.stop();
 			// return Trace.epsilon;
