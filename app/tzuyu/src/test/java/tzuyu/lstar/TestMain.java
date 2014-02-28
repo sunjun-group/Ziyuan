@@ -1,10 +1,10 @@
 package tzuyu.lstar;
 
+import lstar.LStar;
+import lstar.LStarException;
 import tzuyu.engine.algorithm.iface.Teacher;
 import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.dfa.DFA;
-import lstar.LStar;
-import lstar.LStarException;
 
 public class TestMain {
   public static void main(String[] argv) {

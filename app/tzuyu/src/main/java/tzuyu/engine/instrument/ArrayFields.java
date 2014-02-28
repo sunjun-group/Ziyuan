@@ -1,6 +1,6 @@
 package tzuyu.engine.instrument;
 
-import java.io.PrintStream;
+import tzuyu.engine.iface.TzPrintStream;
 
 import tzuyu.engine.model.exception.TzRuntimeException;
 
@@ -21,7 +21,7 @@ public abstract class ArrayFields extends Fields {
     return 0;
   }
 
-  public void printElements(PrintStream ps, int max) {
+  public void printElements(TzPrintStream ps, int max) {
     int len = arrayLength();
     if (max < 0) {
       max = len;
@@ -38,7 +38,7 @@ public abstract class ArrayFields extends Fields {
     }
   }
 
-  protected abstract void printValue(PrintStream ps, int index);
+  protected abstract void printValue(TzPrintStream ps, int index);
 
   public abstract Object getValues();
 

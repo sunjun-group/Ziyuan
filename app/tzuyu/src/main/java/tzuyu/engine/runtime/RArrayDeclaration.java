@@ -1,6 +1,6 @@
 package tzuyu.engine.runtime;
 
-import java.io.PrintStream;
+import tzuyu.engine.iface.TzPrintStream;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class RArrayDeclaration extends StatementKind implements Serializable {
 	}
 
 	@Override
-	public ExecutionOutcome execute(Object[] inputVals, PrintStream out) {
+	public ExecutionOutcome execute(Object[] inputVals, TzPrintStream out) {
 		if (inputVals.length > length)
 			throw new IllegalArgumentException("Too many arguments:"
 					+ inputVals.length + " capacity:" + length);

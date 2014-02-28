@@ -1,6 +1,6 @@
 package tzuyu.engine.model;
 
-import java.io.PrintStream;
+import tzuyu.engine.iface.TzPrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +15,7 @@ public abstract class StatementKind {
 
 	public abstract List<Class<?>> getInputTypes();
 
-	public abstract ExecutionOutcome execute(Object[] inputVals, PrintStream out);
+	public abstract ExecutionOutcome execute(Object[] inputVals, TzPrintStream out);
 
 	public abstract boolean isPrimitive();
 

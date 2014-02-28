@@ -1,16 +1,17 @@
 package tester;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import tzuyu.engine.iface.TzPrintStream;
 import tzuyu.engine.model.ExecutionOutcome;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.Statement;
 import tzuyu.engine.model.TzuYuAction;
 import tzuyu.engine.model.Variable;
 import tzuyu.engine.runtime.NormalExecution;
+import tzuyu.engine.utils.Globals;
 import tzuyu.engine.utils.SimpleList;
 
 /**
@@ -21,7 +22,7 @@ import tzuyu.engine.utils.SimpleList;
  */
 public final class RuntimeExecutor {
 	// The default message printer
-	private static PrintStream out = System.out;
+	private static TzPrintStream out = Globals.getTcRtExecutorOutStream();
 
 	private RuntimeExecutor() {
 
@@ -169,7 +170,7 @@ public final class RuntimeExecutor {
 		}
 	}
 
-	public static void setPrintStream(PrintStream ps) {
+	public static void setPrintStream(TzPrintStream ps) {
 		out = ps;
 	}
 }

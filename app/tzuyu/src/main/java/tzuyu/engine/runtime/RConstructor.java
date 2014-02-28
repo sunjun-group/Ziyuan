@@ -1,6 +1,6 @@
 package tzuyu.engine.runtime;
 
-import java.io.PrintStream;
+import tzuyu.engine.iface.TzPrintStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -64,7 +64,7 @@ public class RConstructor extends StatementKind implements Serializable {
 	}
 
 	@Override
-	public ExecutionOutcome execute(Object[] inputVals, PrintStream out) {
+	public ExecutionOutcome execute(Object[] inputVals, TzPrintStream out) {
 		assert inputVals.length == getInputTypes().size();
 		ConstructorReflectionCode code = new ConstructorReflectionCode(
 				this.constructor, inputVals);

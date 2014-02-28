@@ -1,6 +1,6 @@
 package tzuyu.engine.runtime;
 
-import java.io.PrintStream;
+import tzuyu.engine.iface.TzPrintStream;
 import java.io.Serializable;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
@@ -102,7 +102,7 @@ public class RMethod extends StatementKind implements Serializable {
 	}
 
 	@Override
-	public ExecutionOutcome execute(Object[] inputVals, PrintStream out) {
+	public ExecutionOutcome execute(Object[] inputVals, TzPrintStream out) {
 		assert inputVals.length == getInputTypes().size();
 
 		Object receiver = null;

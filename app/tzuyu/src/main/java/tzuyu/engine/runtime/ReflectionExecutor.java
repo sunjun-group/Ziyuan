@@ -1,6 +1,6 @@
 package tzuyu.engine.runtime;
 
-import java.io.PrintStream;
+import tzuyu.engine.iface.TzPrintStream;
 
 public final class ReflectionExecutor {
 
@@ -10,7 +10,7 @@ public final class ReflectionExecutor {
 	private static int excepExecCount = 0;
 
 	public static Throwable executeReflectionCode(ReflectionCode code,
-			PrintStream out) {
+			TzPrintStream out) {
 		Throwable ret = null;
 
 		long start = System.nanoTime();
@@ -48,7 +48,7 @@ public final class ReflectionExecutor {
 	}
 
 	private static Throwable executeReflectionCodeUnThreaded(
-			ReflectionCode code, PrintStream out) {
+			ReflectionCode code, TzPrintStream out) {
 		try {
 			code.runReflectionCode();
 			return null;
@@ -73,11 +73,11 @@ public final class ReflectionExecutor {
 		}
 	}
 
-	private static void printExceptionDetails(Throwable e, PrintStream out) {
+	private static void printExceptionDetails(Throwable e, TzPrintStream out) {
 		out.println("Exception thrown:" + e.toString());
 		out.println("Message: " + e.getMessage());
 		out.println("Stack trace: ");
-		e.printStackTrace(out);
+		out.println(e.getStackTrace());
 	}
 
 }

@@ -1,6 +1,6 @@
 package tzuyu.engine.instrument;
 
-import java.io.PrintStream;
+import tzuyu.engine.iface.TzPrintStream;
 
 import tzuyu.engine.utils.HashData;
 
@@ -45,7 +45,7 @@ public class DoubleArrayFields extends ArrayFields {
   }
 
   @Override
-  protected void printValue(PrintStream ps, int index) {
+  protected void printValue(TzPrintStream ps, int index) {
     ps.print(values[index]);
 
   }
