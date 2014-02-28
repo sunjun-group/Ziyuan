@@ -8,36 +8,56 @@
 
 package tzuyu.engine;
 
+import lstar.LStar;
 import lstar.LStarException;
-import lstar.Teacher;
+import refiner.TzuYuRefiner;
+import tester.ITCGStrategy;
+import tester.TzuYuTester;
+import tzuyu.engine.algorithm.iface.Learner;
+import tzuyu.engine.algorithm.iface.Refiner;
+import tzuyu.engine.algorithm.iface.Teacher;
+import tzuyu.engine.algorithm.iface.Tester;
+import tzuyu.engine.iface.IAlgorithmFactory;
+import tzuyu.engine.iface.IReferencesAnalyzer;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.TzuyuEngine;
-import tzuyu.engine.iface.algorithm.Learner;
+import tzuyu.engine.lstar.TeacherImpl;
 import tzuyu.engine.model.TzuYuAlphabet;
 
 /**
  * @author LLT 
  * Driver of the Tzuyu engine.
  */
-public class Tzuyu implements TzuyuEngine {
+public class Tzuyu implements TzuyuEngine, IAlgorithmFactory<TzuYuAlphabet> {
 
-	private Learner<TzuYuAlphabet> learner = TzFactory.getLearner();
-	private Teacher<TzuYuAlphabet> teacher = TzFactory.getTeacher();
+	/* learner */
+	private Learner<TzuYuAlphabet> learner;
+	/* teacher */
+	private Teacher<TzuYuAlphabet> teacher;
+	/* tester */
+	private Tester tester;
+	private ITCGStrategy tcgStrategy;
+	private IReferencesAnalyzer refAnalyzer;
+	/* refiner */
+	private Refiner<TzuYuAlphabet> refiner;
+	
 	private TzClass project;
 	private TzReportHandler reporter;
 
-	public Tzuyu() {
-
+	public Tzuyu(TzClass project, TzReportHandler reporter,
+			IReferencesAnalyzer refAnalyzer) {
+		init(project, reporter, refAnalyzer);
 	}
 
-	public Tzuyu(TzClass project, TzReportHandler reporter) {
-		init(project, reporter);
-	}
-
-	private void init(TzClass project, TzReportHandler reporter) {
+	private void init(TzClass project, TzReportHandler reporter,
+			IReferencesAnalyzer refAnalyzer) {
 		this.project = project;
 		this.reporter = reporter;
-		learner.setTeacher(teacher);
+		this.refAnalyzer = refAnalyzer;
+		tester = new TzuYuTester(this);
+		refiner = new TzuYuRefiner();
+		teacher = new TeacherImpl(this);
+		learner = new LStar<TzuYuAlphabet>(this);
 	}
 
 	/**
@@ -55,5 +75,41 @@ public class Tzuyu implements TzuyuEngine {
 		}
 		learner.report(reporter);
 		reporter.done();
+	}
+
+	public Learner<TzuYuAlphabet> getLearner() {
+		return learner;
+	}
+
+	@Override
+	public Teacher<TzuYuAlphabet> getTeacher() {
+		return teacher;
+	}
+
+	public Tester getTester() {
+		return tester;
+	}
+
+	public TzClass getProject() {
+		return project;
+	}
+
+	public TzReportHandler getReporter() {
+		return reporter;
+	}
+
+	@Override
+	public IReferencesAnalyzer getRefAnalyzer() {
+		return refAnalyzer;
+	}
+
+	@Override
+	public Refiner<TzuYuAlphabet> getRefiner() {
+		return refiner;
+	}
+	
+	@Override
+	public ITCGStrategy getTCGStrategy() {
+		return tcgStrategy;
 	}
 }

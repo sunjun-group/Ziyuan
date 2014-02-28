@@ -6,10 +6,9 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.iface.algorithm;
+package tzuyu.engine.algorithm.iface;
 
 import lstar.LStarException;
-import lstar.Teacher;
 
 import org.apache.log4j.Logger;
 

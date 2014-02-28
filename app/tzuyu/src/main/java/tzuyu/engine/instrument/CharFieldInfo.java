@@ -1,6 +1,6 @@
 package tzuyu.engine.instrument;
 
-import tzuyu.engine.model.TzuYuException;
+import tzuyu.engine.model.exception.TzRuntimeException;
 
 public class CharFieldInfo extends SingleSlotFieldInfo {
 
@@ -40,7 +40,7 @@ public class CharFieldInfo extends SingleSlotFieldInfo {
       cv = constValue;
       init = (char) ((Integer) constValue).shortValue();
     } else {
-      throw new TzuYuException("illegal char ConstValue=" + constValue);
+      throw new TzRuntimeException("illegal char ConstValue=" + constValue);
     }
   }
 }

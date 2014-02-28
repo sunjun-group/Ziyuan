@@ -1,6 +1,6 @@
 package tzuyu.engine.instrument;
 
-import tzuyu.engine.model.TzuYuException;
+import tzuyu.engine.model.exception.TzRuntimeException;
 
 public class ReferenceFieldInfo extends SingleSlotFieldInfo {
 
@@ -59,7 +59,7 @@ public class ReferenceFieldInfo extends SingleSlotFieldInfo {
       cv = constValue;
       sInit = (String) constValue;
     } else {
-      throw new TzuYuException("unsupported reference initialization:"
+      throw new TzRuntimeException("unsupported reference initialization:"
           + constValue);
     }
   }

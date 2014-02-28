@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.FieldInfo;
-import tzuyu.engine.model.TzuYuException;
+import tzuyu.engine.model.exception.TzRuntimeException;
 
 public class FieldInfoPrimitive implements FieldInfo {
 
@@ -43,10 +43,10 @@ public class FieldInfoPrimitive implements FieldInfo {
 		try {
 			return field.get(object);
 		} catch (IllegalArgumentException e) {
-			throw new TzuYuException(
+			throw new TzRuntimeException(
 					"get field value on a type incompatible object");
 		} catch (IllegalAccessException e) {
-			throw new TzuYuException(
+			throw new TzRuntimeException(
 					"get field value on a type incompatible object");
 		}
 	}

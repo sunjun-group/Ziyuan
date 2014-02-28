@@ -14,12 +14,12 @@ import java.util.List;
 import lstar.LStarException;
 import lstar.LStarException.Type;
 import lstar.ReportHandler;
-import lstar.Teacher;
 import refiner.Witness;
-import tzuyu.engine.TzFactory;
+import tzuyu.engine.algorithm.iface.Refiner;
+import tzuyu.engine.algorithm.iface.Teacher;
+import tzuyu.engine.algorithm.iface.Tester;
 import tzuyu.engine.bool.True;
-import tzuyu.engine.iface.algorithm.Refiner;
-import tzuyu.engine.iface.algorithm.Tester;
+import tzuyu.engine.iface.IAlgorithmFactory;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.QueryResult;
@@ -27,24 +27,29 @@ import tzuyu.engine.model.QueryTrace;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.model.TzuYuAction;
 import tzuyu.engine.model.TzuYuAlphabet;
-import tzuyu.engine.model.TzuYuException;
 import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.dfa.TracesPair;
+import tzuyu.engine.model.exception.TzRuntimeException;
 
 /**
  * @author LLT extracted from QueryHandlerV2, and only keep the part that
  *         implements the Lstar teacher.
  */
 public class TeacherImpl implements Teacher<TzuYuAlphabet> {
-	private int membershipCount = 0;
-	private int candidateCount = 1;
-	private int maxMemberSize = 0;
+	protected int membershipCount = 0;
+	protected int candidateCount = 1;
+	protected int maxMemberSize = 0;
 
-	private Tester tester = TzFactory.getTester();
-	private Refiner<TzuYuAlphabet> refiner = TzFactory.getRefiner();
+	protected Tester tester;
+	protected Refiner<TzuYuAlphabet> refiner;
 	// sigma should not changed inside teacher and always point to the same
 	// entity as in learner. 
-	private TzuYuAlphabet sigma; 
+	protected TzuYuAlphabet sigma; 
+
+	public TeacherImpl(IAlgorithmFactory<TzuYuAlphabet> tzFactory) {
+		tester = tzFactory.getTester();
+		refiner = tzFactory.getRefiner();
+	}
 
 	public void setInitAlphabet(TzuYuAlphabet sigma) {
 		this.sigma = sigma;
@@ -96,7 +101,7 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 		} else {
 			Formula divider = refiner.refineMembership(result);
 			if (divider == null || divider.equals(Formula.FALSE)) {
-				throw new TzuYuException("Cannot find "
+				throw new TzRuntimeException("Cannot find "
 						+ "divider for the inconsistent transitons");
 			}
 			QueryTrace trace = result.negativeSet.get(0);
@@ -170,7 +175,7 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 		} else if (evid.divider == null) {
 			// There is inconsistency, while TzuYu cannot find a divider,
 			// we terminate TzuYu.
-			throw new TzuYuException("cannot find a divider "
+			throw new TzRuntimeException("cannot find a divider "
 					+ "for inconsistent transtion");
 		} else if (evid.divider instanceof True) {
 			return Trace.epsilon;

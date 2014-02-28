@@ -4,13 +4,15 @@ import java.util.List;
 import java.util.Set;
 
 import lstar.LStarException.Type;
-import tzuyu.engine.iface.algorithm.Learner;
+import tzuyu.engine.algorithm.iface.Learner;
+import tzuyu.engine.algorithm.iface.Teacher;
+import tzuyu.engine.iface.IAlgorithmFactory;
 import tzuyu.engine.model.Trace;
-import tzuyu.engine.model.TzuYuException;
 import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.dfa.State;
 import tzuyu.engine.model.dfa.Transition;
+import tzuyu.engine.model.exception.TzRuntimeException;
 
 /**
  * The main interface where the client interacts with the library
@@ -30,7 +32,8 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 
 	private DFA lastDFA;
 
-	public LStar() {
+	public LStar(IAlgorithmFactory<A> tzFactory) {
+		teacher = tzFactory.getTeacher();
 		this.otable = new ObservationTable();
 	}
 	
@@ -59,7 +62,7 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 				logger.info("-------restart iteration " + iterationCount++
 						+ "-------");
 				learn();
-			} catch (TzuYuException tzuyu) {
+			} catch (TzRuntimeException tzuyu) {
 				// handle TzuYu specific exceptions here
 				tzuyu.printStackTrace(System.out);
 				return null;

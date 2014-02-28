@@ -5,10 +5,10 @@ import java.util.HashSet;
 import java.util.List;
 
 import lstar.ReportHandler;
-
 import tzuyu.engine.TzClass;
+import tzuyu.engine.algorithm.iface.Tester;
+import tzuyu.engine.iface.IAlgorithmFactory;
 import tzuyu.engine.iface.TzReportHandler;
-import tzuyu.engine.iface.algorithm.Tester;
 import tzuyu.engine.instrument.TzuYuInstrumentor;
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.model.Query;
@@ -34,8 +34,9 @@ public class TzuYuTester implements Tester {
 	private HashSet<TzuYuAction> cachedUnkownResult = new HashSet<TzuYuAction>();
 	private TzClass project;
 
-	public TzuYuTester() {
-		tcg = new RandomTCGStrategy();
+	public TzuYuTester(IAlgorithmFactory<?> prjFactory) {
+		tcg = prjFactory.getTCGStrategy();
+		tcg = new RandomTCGStrategy(prjFactory);
 		instrumentor = new TzuYuInstrumentor();
 	}
 	

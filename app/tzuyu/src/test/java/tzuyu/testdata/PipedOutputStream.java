@@ -1,4 +1,4 @@
-package testdata;
+package tzuyu.testdata;
 
 /**
  * This example is adapted from SAS 2012 paper "Symbolic Learning of Component

@@ -6,6 +6,7 @@ import java.util.List;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.ObjectInfo;
+import tzuyu.engine.model.exception.TzRuntimeException;
 
 public class Prestate {
 	private List<ObjectInfo> valuation;
@@ -58,7 +59,7 @@ public class Prestate {
 	public static Prestate log(List<Variable> vars, List<Object> values,
 			TzClass project) {
 		if (vars.size() != values.size()) {
-			throw new TzuYuException("instrument for incompatable objects.");
+			throw new TzRuntimeException("instrument for incompatable objects.");
 		}
 
 		Prestate prestate = new Prestate();

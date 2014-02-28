@@ -1,4 +1,4 @@
-package testdata;
+package tzuyu.testdata;
 
 /**
  * Bounded Stack implementation, cased adapted from paper "Active Automata

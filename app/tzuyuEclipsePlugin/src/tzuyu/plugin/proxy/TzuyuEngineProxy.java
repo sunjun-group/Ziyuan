@@ -10,6 +10,7 @@ package tzuyu.plugin.proxy;
 
 import tzuyu.engine.TzClass;
 import tzuyu.engine.Tzuyu;
+import tzuyu.engine.iface.IReferencesAnalyzer;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.TzuyuEngine;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
@@ -26,8 +27,9 @@ import tzuyu.plugin.reporter.PluginLogger;
 public class TzuyuEngineProxy implements TzuyuEngine {
 	private Tzuyu tzuyu;
 
-	public TzuyuEngineProxy(TzClass project, TzReportHandler reporter) {
-		tzuyu = new Tzuyu(project, reporter);
+	public TzuyuEngineProxy(TzClass project, TzReportHandler reporter,
+			IReferencesAnalyzer refAnalyzer) {
+		tzuyu = new Tzuyu(project, reporter, refAnalyzer);
 	}
 
 	public void run() {
@@ -39,7 +41,8 @@ public class TzuyuEngineProxy implements TzuyuEngine {
 		try {
 			TzConsole.showConsole().clearConsole();
 			TzClass tzProject = ProjectConverter.from(workObject, config);
-			new TzuyuEngineProxy(tzProject, new GenTestReporter(config)).run();
+			new TzuyuEngineProxy(tzProject, new GenTestReporter(config),
+					new PluginReferencesAnalyzer(workObject.getProject())).run();
 		} catch (PluginException e) {
 			PluginLogger.logEx(e);
 		} 

@@ -6,6 +6,7 @@ import java.util.Map;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.Tzuyu;
+import tzuyu.engine.iface.IReferencesAnalyzer;
 import tzuyu.engine.main.Command.CommandType;
 import tzuyu.engine.model.ClassInfo;
 import analyzer.ClassAnalyzer;
@@ -16,7 +17,26 @@ public class Learn implements CommandHandler {
 		TzClass project = processCommand(command);
 		CommandLineReportHandler reporter = new CommandLineReportHandler(project.getConfiguration());
 		
-		Tzuyu tzuyuEngine = new Tzuyu(project, reporter);
+		Tzuyu tzuyuEngine = new Tzuyu(project, reporter, new IReferencesAnalyzer() {
+
+			@Override
+			public Class<?> getRandomImplClzz(Class<?> iface) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Class<?> getRandomClass() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Class<?> getRandomEnum() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
 		tzuyuEngine.run();
 		
 		return true;

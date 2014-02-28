@@ -1,6 +1,6 @@
 package tzuyu.engine.instrument;
 
-import tzuyu.engine.model.TzuYuException;
+import tzuyu.engine.model.exception.TzRuntimeException;
 
 public class ByteFieldInfo extends SingleSlotFieldInfo {
 
@@ -44,7 +44,7 @@ public class ByteFieldInfo extends SingleSlotFieldInfo {
       cv = constValue;
       init = ((Integer) constValue).byteValue();
     } else {
-      throw new TzuYuException("illegal byte ConstValue=" + constValue);
+      throw new TzRuntimeException("illegal byte ConstValue=" + constValue);
     }
   }
 

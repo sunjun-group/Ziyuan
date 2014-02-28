@@ -12,7 +12,7 @@ import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.iface.JClassWriter;
 import tzuyu.engine.iface.DefaultClassCreator;
 import tzuyu.engine.model.Sequence;
-import tzuyu.engine.model.TzuYuException;
+import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.utils.CollectionsExt;
 import tzuyu.engine.utils.Globals;
 import tzuyu.engine.utils.Log;
@@ -134,7 +134,7 @@ public class JUnitFileWriter {
 		if (!dir.exists()) {
 			boolean success = dir.mkdir();
 			if (!success) {
-				throw new TzuYuException("Unable to create the directory: "
+				throw new TzRuntimeException("Unable to create the directory: "
 						+ dir.getAbsolutePath());
 			}
 		}

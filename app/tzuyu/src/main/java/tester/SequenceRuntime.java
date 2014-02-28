@@ -48,7 +48,7 @@ public class SequenceRuntime {
     }
 
     int stmtIndex = inputVar.getDeclIndex();
-    int paramIndex = inputVar.getVarIndex();
+    int paramIndex = inputVar.getArgIdx();
 
     if (paramIndex == -1) {
       return retValues.get(stmtIndex);

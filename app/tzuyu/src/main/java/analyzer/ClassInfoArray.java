@@ -11,7 +11,7 @@ import tzuyu.engine.model.ConstructorInfo;
 import tzuyu.engine.model.FieldInfo;
 import tzuyu.engine.model.MethodInfo;
 import tzuyu.engine.model.ObjectInfo;
-import tzuyu.engine.model.TzuYuException;
+import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.utils.ReflectionUtils;
 
 public class ClassInfoArray extends ClassInfo {
@@ -122,7 +122,7 @@ public class ClassInfoArray extends ClassInfo {
 		}
 
 		if (!ReflectionUtils.canBeUsedAs(object.getClass(), type)) {
-			throw new TzuYuException("try to clone incompatable object");
+			throw new TzRuntimeException("try to clone incompatable object");
 		} else {
 			int length = Array.getLength(object);
 			// To eradicate the out of memory problem when the target array

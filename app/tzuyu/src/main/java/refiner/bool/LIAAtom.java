@@ -7,7 +7,7 @@ import tzuyu.engine.bool.Atom;
 import tzuyu.engine.bool.Var;
 import tzuyu.engine.model.ObjectInfo;
 import tzuyu.engine.model.Prestate;
-import tzuyu.engine.model.TzuYuException;
+import tzuyu.engine.model.exception.TzRuntimeException;
 
 /**
  * The relational expression in Linear Integer Arithmetic establish the relation
@@ -57,7 +57,7 @@ public class LIAAtom extends Atom {
 						.doubleValue();
 				leftValue += fieldValue * term.getCoefficient();
 			} catch (NumberFormatException e) {
-				throw new TzuYuException(
+				throw new TzRuntimeException(
 						"Try to convert non-numerical value to "
 								+ "numerical value");
 			}

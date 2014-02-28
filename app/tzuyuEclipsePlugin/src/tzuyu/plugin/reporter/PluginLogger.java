@@ -11,9 +11,11 @@ package tzuyu.plugin.reporter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import org.eclipse.jdt.core.IType;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 
 import tzuyu.engine.iface.ILogger;
+import tzuyu.engine.utils.CollectionUtils;
 import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.core.exception.ErrorType;
@@ -25,6 +27,7 @@ import tzuyu.plugin.core.exception.ErrorType;
 public class PluginLogger implements ILogger<PluginLogger>{
 	private PrintWriter pw;
 	private IOConsoleOutputStream stream;
+	private boolean debug = true;
 	
 	public PluginLogger(IOConsoleOutputStream out) {
 		if (out != null) {
@@ -75,5 +78,19 @@ public class PluginLogger implements ILogger<PluginLogger>{
 
 	public static void logEx(Exception e, ErrorType errorType) {
 		System.out.println(TzuyuPlugin.getMessages().getMessage(errorType));
+	}
+
+	public static void debug(IType[] types) {
+		if (CollectionUtils.isEmpty(types, true)) {
+			log("object is empty");
+		}
+		for (IType type : types) {
+			log(type.getElementName());
+			log("\t");
+		}
+	}
+
+	public static void log(String str) {
+		System.out.println(str);
 	}
 }

@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.iface.algorithm;
+package tzuyu.engine.algorithm.iface;
 
 import java.util.List;
 

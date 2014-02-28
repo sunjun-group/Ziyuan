@@ -1,5 +1,7 @@
-package lstar;
+package tzuyu.lstar;
 
+import lstar.ReportHandler;
+import tzuyu.engine.algorithm.iface.Teacher;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.dfa.DFA;

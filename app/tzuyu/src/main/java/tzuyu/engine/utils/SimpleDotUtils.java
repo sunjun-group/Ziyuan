@@ -14,7 +14,7 @@ import java.io.OutputStream;
 
 import org.apache.commons.io.IOUtils;
 
-import tzuyu.engine.model.TzuYuException;
+import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.utils.dfa.DfaGraph;
 import tzuyu.engine.utils.dfa.DfaGraph.Edge;
 import tzuyu.engine.utils.dfa.DfaGraph.Node;
@@ -66,7 +66,7 @@ public class SimpleDotUtils {
 		try {
 			out.write(result.toString().getBytes());
 		} catch (IOException e) {
-			throw new TzuYuException("Can not write .dot file");
+			throw new TzRuntimeException("Can not write .dot file");
 		}
 	}
 	

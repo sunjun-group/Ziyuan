@@ -157,6 +157,7 @@ public class RMethod extends StatementKind implements Serializable {
 
 	@Override
 	public boolean hasNoArguments() {
+		// LLT: Why isStatic means hasArguments?
 		return getInputTypes().size() <= 1 && (!isStatic());
 	}
 

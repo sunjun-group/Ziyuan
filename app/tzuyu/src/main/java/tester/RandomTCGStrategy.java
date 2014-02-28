@@ -5,6 +5,7 @@ import java.util.List;
 
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzClass;
+import tzuyu.engine.iface.IAlgorithmFactory;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.RelativeNegativeIndex;
 import tzuyu.engine.model.Sequence;
@@ -12,9 +13,9 @@ import tzuyu.engine.model.Statement;
 import tzuyu.engine.model.StatementKind;
 import tzuyu.engine.model.TVAnswer;
 import tzuyu.engine.model.TzuYuAction;
-import tzuyu.engine.model.TzuYuException;
 import tzuyu.engine.model.VarIndex;
 import tzuyu.engine.model.Variable;
+import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.store.MethodParameterStore;
 import tzuyu.engine.utils.Pair;
 import tzuyu.engine.utils.Permutation;
@@ -38,8 +39,8 @@ public class RandomTCGStrategy implements ITCGStrategy {
 	private TzClass project;
 	private TzConfiguration config;
 
-	public RandomTCGStrategy() {
-		selector = new ParameterSelector();
+	public RandomTCGStrategy(IAlgorithmFactory<?> prjFactory) {
+		selector = new ParameterSelector(prjFactory);
 		store = new TestCaseStore();
 		parameterStore = new MethodParameterStore();
 	}
@@ -95,8 +96,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 				List<VarIndex> indices = new ArrayList<VarIndex>();
 
 				for (Variable raw : rawParams) {
-					indices.add(new VarIndex(raw.getStmtIdx() + stmtCount,
-							raw.argIdx));
+					indices.add(VarIndex.plus(raw.getVarIndex(), stmtCount));
 					sequences.add(raw.owner);
 					stmtCount += raw.owner.size();
 				}
@@ -105,8 +105,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 				int seqSize = newSeq.size();
 
 				for (VarIndex varIdx : indices) {
-					parameters.add(new Variable(newSeq, varIdx.stmtIdx,
-							varIdx.argIdx));
+					parameters.add(new Variable(newSeq, varIdx));
 				}
 				// End of processing of raw parameters
 				// ////////////////////////////////////////////////////////////////////
@@ -123,7 +122,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 
 				for (Variable var : parameters) {
 					RelativeNegativeIndex relIdx = new RelativeNegativeIndex(
-							-(seqSize - var.getStmtIdx()), var.argIdx);
+							-(seqSize - var.getStmtIdx()), var.getArgIdx());
 					inputs.add(relIdx);
 				}
 
@@ -240,7 +239,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 
 				for (Variable raw : rawParams) {
 					indices.add(new VarIndex(raw.getStmtIdx() + stmtCount,
-							raw.argIdx));
+							raw.getArgIdx()));
 					sequences.add(raw.owner);
 					stmtCount += raw.owner.size();
 				}
@@ -249,8 +248,8 @@ public class RandomTCGStrategy implements ITCGStrategy {
 				int seqSize = newSeq.size();
 
 				for (VarIndex varIdx : indices) {
-					parameters.add(new Variable(newSeq, varIdx.stmtIdx,
-							varIdx.argIdx));
+					parameters.add(new Variable(newSeq, varIdx.getStmtIdx(),
+							varIdx.getArgIdx()));
 				}
 				// End of processing of raw parameters
 				// ////////////////////////////////////////////////////////////////////
@@ -267,7 +266,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 
 				for (Variable var : parameters) {
 					RelativeNegativeIndex relIdx = new RelativeNegativeIndex(
-							-(seqSize - var.getStmtIdx()), var.argIdx);
+							-(seqSize - var.getStmtIdx()), var.getArgIdx());
 					inputs.add(relIdx);
 				}
 
@@ -377,12 +376,10 @@ public class RandomTCGStrategy implements ITCGStrategy {
 				if (receiver == null) {
 					receiver = selector.selectDefaultReceiver(ensureProject()
 							.getTarget());
-					parameters.add(receiver);
-				} else {
-					// Variable receiver = receiver.getReceiver();
-					parameters.add(receiver);
-				}
+				} 
+				parameters.add(receiver);
 			} else {
+				// LLT: 3? what does this mean?
 				for (int i = 0; i < 3; i++) {
 					Variable arg = null;
 					int source = Randomness.nextRandomInt(3);
@@ -555,7 +552,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 
 	private TzClass ensureProject() {
 		if (project == null) {
-			throw new TzuYuException("Tzuyu project not set for tester");
+			throw new TzRuntimeException("Tzuyu project not set for tester");
 		}
 		return project;
 	}

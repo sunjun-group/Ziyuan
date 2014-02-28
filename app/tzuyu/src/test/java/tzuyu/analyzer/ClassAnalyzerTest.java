@@ -6,16 +6,12 @@
  *  Version:  $Revision: 1 $
  */
 
-package main;
-
+package tzuyu.analyzer;
 
 /**
  * @author LLT
  *
  */
-public class Main {
-
-	public static void main(String[] args) {
-		tzuyu.engine.main.Main.main(args);
-	}
+public class ClassAnalyzerTest {
+	
 }

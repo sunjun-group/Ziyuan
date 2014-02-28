@@ -1,4 +1,4 @@
-package testdata;
+package tzuyu.testdata;
 
 public class PipedInputStream {
   public boolean connected;

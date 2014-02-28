@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import analyzer.ClassAnalyzer;
-
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.utils.ReflectionUtils;
+import analyzer.ClassAnalyzer;
+import analyzer.ClassVisitor;
 
 /**
  * @author LLT 
@@ -49,7 +49,13 @@ public class TzClass {
 	}
 
 	public ClassInfo getClassInfo(Class<?> type) {
-		return typeMap.get(type);
+		// TODO LLT: for test, to be removed.
+		// return typeMap.get(type);
+		ClassInfo classInfo = typeMap.get(type);
+		if (classInfo == null) {
+			return ClassVisitor.forStore(typeMap).visitClass(type);
+		}
+		return classInfo;
 	}
 	
 	public Map<Class<?>, ClassInfo> getTypeMap() {

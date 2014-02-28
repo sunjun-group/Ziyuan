@@ -8,6 +8,8 @@
 
 package tzuyu.engine.utils;
 
+import java.util.Collection;
+
 
 /**
  * @author LLT
@@ -15,6 +17,13 @@ package tzuyu.engine.utils;
  */
 public class CollectionUtils {
 	private CollectionUtils() {}
+	
+	public static <T> T getFirstElement(T[] vals) {
+		if (isEmpty(vals, true)) {
+			return null;
+		}
+		return vals[0];
+	}
 
 	public static <T> boolean existIn(T val, T... valList) {
 		return existInArray(val, valList);
@@ -29,7 +38,34 @@ public class CollectionUtils {
 		return false;
 	}
 	
+	public static <T> void addIfNotNull(Collection<T> col, T val) {
+		if (val != null) {
+			col.add(val);
+		}
+	}
+	
 	public static <T> boolean isEmpty(T[] vals) {
 		return vals == null || vals.length == 0;
 	}
+	
+	public static <T> boolean isEmpty(T[] vals, boolean checkNullVal) {
+		boolean isEmpty = vals == null || vals.length == 0;
+		if (isEmpty) {
+			return true;
+		}
+		if (checkNullVal) {
+			for (T val : vals) {
+				if (val != null) {
+					return false;
+				}
+			}
+			isEmpty = true;
+		}
+		return isEmpty;
+	}
+
+	public static boolean isEmpty(Collection<?> col) {
+		return col == null || col.isEmpty();
+	}
+
 }

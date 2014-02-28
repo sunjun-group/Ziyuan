@@ -138,7 +138,7 @@ public class SVMPreprocessor {
               input = posTrace.getVariableForStatement(posStmtIndex + 1, index);
             }
   
-            indices.add(new VarIndex(input.getStmtIdx() + totStmts, input.argIdx));
+            indices.add(new VarIndex(input.getStmtIdx() + totStmts, input.getArgIdx()));
             sequences.add(input.owner);
             totStmts += input.owner.size();
           }
@@ -148,7 +148,7 @@ public class SVMPreprocessor {
           List<Variable> newInputVars = new ArrayList<Variable>(argSize);
           for (int index = 0; index < argSize; index++) {
             VarIndex vIdx = indices.get(index);
-            newInputVars.add(new Variable(newSeq, vIdx.stmtIdx, vIdx.argIdx));
+            newInputVars.add(new Variable(newSeq, vIdx.getStmtIdx(), vIdx.getArgIdx()));
           }
           // Execute the statement with new relevant inputs from negative trace
           // and other inputs from positive trace. So if the execution result is
@@ -212,7 +212,7 @@ public class SVMPreprocessor {
               input = negTrace.getVariableForStatement(posStmtIndex + 1, index);
             }
   
-            indices.add(new VarIndex(input.getStmtIdx() + totStmts, input.argIdx));
+            indices.add(new VarIndex(input.getStmtIdx() + totStmts, input.getArgIdx()));
             sequences.add(input.owner);
             totStmts += input.owner.size();
           }
@@ -222,7 +222,7 @@ public class SVMPreprocessor {
           List<Variable> newInputVars = new ArrayList<Variable>(argSize);
           for (int index = 0; index < argSize; index++) {
             VarIndex vIdx = indices.get(index);
-            newInputVars.add(new Variable(newSeq, vIdx.stmtIdx, vIdx.argIdx));
+            newInputVars.add(new Variable(newSeq, vIdx.getStmtIdx(), vIdx.getArgIdx()));
           }
           // Execute the statement with new relevant inputs from positive trace
           // and other inputs from negative trace. So if the execution result is

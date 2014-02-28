@@ -47,7 +47,7 @@ class VariableRenamer {
       // Other out reference parameters (including the receiver object)
       // other than the return value
       Variable var = this.sequence.getInputs(stmtIdx).get(varIdx);
-      String name = getRenamedVar(var.getStmtIdx(), var.argIdx);
+      String name = getRenamedVar(var.getStmtIdx(), var.getArgIdx());
       if (name == null) {
         throw new Error ("Error in TzuYu, please report it.");
       }

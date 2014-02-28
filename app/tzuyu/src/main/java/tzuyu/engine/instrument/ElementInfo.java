@@ -1,6 +1,6 @@
 package tzuyu.engine.instrument;
 
-import tzuyu.engine.model.TzuYuException;
+import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.utils.Types;
 
 /**
@@ -87,7 +87,7 @@ public abstract class ElementInfo implements Cloneable {
     if (fields instanceof ArrayFields) {
       return ((ArrayFields) fields).arrayLength();
     } else {
-      throw new TzuYuException("not an array: " + ci.getName());
+      throw new TzRuntimeException("not an array: " + ci.getName());
     }
   }
 
@@ -99,7 +99,7 @@ public abstract class ElementInfo implements Cloneable {
     if (fields instanceof ArrayFields) {
       return ((ArrayFields) fields).asBooleanArray();
     } else {
-      throw new TzuYuException("not an array: " + ci.getName());
+      throw new TzRuntimeException("not an array: " + ci.getName());
     }
   }
 
@@ -107,7 +107,7 @@ public abstract class ElementInfo implements Cloneable {
     if (fields instanceof ArrayFields) {
       return ((ArrayFields) fields).asByteArray();
     } else {
-      throw new TzuYuException("not an array: " + ci.getName());
+      throw new TzRuntimeException("not an array: " + ci.getName());
     }
   }
 
@@ -115,7 +115,7 @@ public abstract class ElementInfo implements Cloneable {
     if (fields instanceof ArrayFields) {
       return ((ArrayFields) fields).asCharArray();
     } else {
-      throw new TzuYuException("not an array: " + ci.getName());
+      throw new TzRuntimeException("not an array: " + ci.getName());
     }
   }
 
@@ -123,7 +123,7 @@ public abstract class ElementInfo implements Cloneable {
     if (fields instanceof ArrayFields) {
       return ((ArrayFields) fields).asDoubleArray();
     } else {
-      throw new TzuYuException("not an array: " + ci.getName());
+      throw new TzRuntimeException("not an array: " + ci.getName());
     }
   }
 
@@ -131,7 +131,7 @@ public abstract class ElementInfo implements Cloneable {
     if (fields instanceof ArrayFields) {
       return ((ArrayFields) fields).asFloatArray();
     } else {
-      throw new TzuYuException("not an array: " + ci.getName());
+      throw new TzRuntimeException("not an array: " + ci.getName());
     }
   }
 
@@ -139,7 +139,7 @@ public abstract class ElementInfo implements Cloneable {
     if (fields instanceof ArrayFields) {
       return ((ArrayFields) fields).asIntArray();
     } else {
-      throw new TzuYuException("not an array: " + ci.getName());
+      throw new TzRuntimeException("not an array: " + ci.getName());
     }
   }
 
@@ -147,7 +147,7 @@ public abstract class ElementInfo implements Cloneable {
     if (fields instanceof ArrayFields) {
       return ((ArrayFields) fields).asLongArray();
     } else {
-      throw new TzuYuException("not an array: " + ci.getName());
+      throw new TzRuntimeException("not an array: " + ci.getName());
     }
   }
 
@@ -155,7 +155,7 @@ public abstract class ElementInfo implements Cloneable {
     if (fields instanceof ArrayFields) {
       return ((ArrayFields) fields).asReferenceArray();
     } else {
-      throw new TzuYuException("not an array: " + ci.getName());
+      throw new TzRuntimeException("not an array: " + ci.getName());
     }
   }
 
@@ -163,16 +163,16 @@ public abstract class ElementInfo implements Cloneable {
     if (fields instanceof ArrayFields) {
       return ((ArrayFields) fields).asShortArray();
     } else {
-      throw new TzuYuException("not an array: " + ci.getName());
+      throw new TzRuntimeException("not an array: " + ci.getName());
     }
   }
 
   public String asString() {
-    throw new TzuYuException("not a String object: " + this);
+    throw new TzRuntimeException("not a String object: " + this);
   }
 
   public boolean equalsString(String s) {
-    throw new TzuYuException("not a String object: " + this);
+    throw new TzRuntimeException("not a String object: " + this);
   }
 
   public boolean isBoxedObject() {
@@ -193,7 +193,7 @@ public abstract class ElementInfo implements Cloneable {
 
   public String getArrayType() {
     if (!ci.isArray()) {
-      throw new TzuYuException("object is not an array");
+      throw new TzRuntimeException("object is not an array");
     }
     return Types.getArrayElementType(ci.getType());
   }

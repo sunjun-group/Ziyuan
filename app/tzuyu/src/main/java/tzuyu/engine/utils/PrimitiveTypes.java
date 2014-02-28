@@ -351,4 +351,8 @@ public final class PrimitiveTypes {
 		stringLengthOKCached.put(s, retval);
 		return retval;
 	}
+
+	public static boolean isEnum(Class<?> type) {
+		return type.isEnum();
+	}
 }

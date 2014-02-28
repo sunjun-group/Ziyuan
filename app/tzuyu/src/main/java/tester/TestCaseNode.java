@@ -75,12 +75,14 @@ public class TestCaseNode {
 	public void updateReceiver() {
 		if (statement.getAction().getAction().hasReceiverParameter()) {
 			Sequence newSeq = parameterSequence.extend(statement);
-			this.receiver = new Variable(newSeq, newSeq.size() - 1, 0);
+			// LLT : 0 = Variable.RECEIVER_OF_LAST_STATEMENT 
+			this.receiver = new Variable(newSeq, newSeq.size() - 1, Variable.RECEIVER_OF_LAST_STATEMENT);
 		}
 	}
 
 	public void setReceiver() {
 		Sequence newSeq = parameterSequence.extend(statement);
+		// // LLT : 1 = Variable.VALUE_OF_LAST_STATEMENT; ??
 		this.receiver = new Variable(newSeq, newSeq.size() - 1, -1);
 	}
 

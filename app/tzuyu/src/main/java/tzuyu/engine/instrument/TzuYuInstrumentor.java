@@ -7,8 +7,8 @@ import tester.IInstrumentor;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.model.Statement;
-import tzuyu.engine.model.TzuYuException;
 import tzuyu.engine.model.Variable;
+import tzuyu.engine.model.exception.TzRuntimeException;
 
 public class TzuYuInstrumentor implements IInstrumentor {
 
@@ -39,7 +39,7 @@ public class TzuYuInstrumentor implements IInstrumentor {
 
 	public void startInstrument() {
 		if (isInProgress) {
-			throw new TzuYuException(
+			throw new TzRuntimeException(
 					"the instrumentation is alreay in progress");
 		} else {
 			isInProgress = true;
@@ -49,7 +49,7 @@ public class TzuYuInstrumentor implements IInstrumentor {
 
 	public void endInstrument() {
 		if (!isInProgress) {
-			throw new TzuYuException("the instrumentation is finished");
+			throw new TzRuntimeException("the instrumentation is finished");
 		} else {
 			isInProgress = false;
 		}

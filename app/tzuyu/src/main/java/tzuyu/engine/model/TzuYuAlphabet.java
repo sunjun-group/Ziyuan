@@ -5,6 +5,7 @@ import tzuyu.engine.bool.AndFormula;
 import tzuyu.engine.bool.NotFormula;
 import tzuyu.engine.bool.Simplifier;
 import tzuyu.engine.model.dfa.Alphabet;
+import tzuyu.engine.model.exception.TzRuntimeException;
 
 public class TzuYuAlphabet extends Alphabet {
 	private TzClass project; 
@@ -32,7 +33,7 @@ public class TzuYuAlphabet extends Alphabet {
 		for (MethodInfo method : methods) {
 			TzuYuAction action = TzuYuAction.fromMethod(method, project.getConfiguration());
 			if (action == null) {
-				throw new TzuYuException("Cannot create the initial alphabet");
+				throw new TzRuntimeException("Cannot create the initial alphabet");
 			}
 			addSymbol(action);
 		}
@@ -53,7 +54,7 @@ public class TzuYuAlphabet extends Alphabet {
 	public TzuYuAlphabet incrementalRefine(Formula divider, Action action) {
 
 		if (!(action instanceof TzuYuAction)) {
-			throw new TzuYuException("The action is not an TzuYu alphabet");
+			throw new TzRuntimeException("The action is not an TzuYu alphabet");
 		}
 
 		TzuYuAction tzuyuAction = (TzuYuAction) action;
@@ -113,7 +114,7 @@ public class TzuYuAlphabet extends Alphabet {
 	 */
 	public TzuYuAlphabet refine(Formula divider, Action action) {
 		if (!(action instanceof TzuYuAction)) {
-			throw new TzuYuException("The action is not an TzuYu alphabet");
+			throw new TzRuntimeException("The action is not an TzuYu alphabet");
 		}
 
 		TzuYuAction positiveAction = (TzuYuAction) action;

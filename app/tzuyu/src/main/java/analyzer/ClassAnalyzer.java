@@ -3,6 +3,7 @@ package analyzer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,13 +49,13 @@ public class ClassAnalyzer {
 	}
 
 	public Map<Class<?>, ClassInfo> analysis() {
-		ClassVisitor cv = new ClassVisitor();
+		Map<Class<?>, ClassInfo> result = new HashMap<Class<?>, ClassInfo>();
+		ClassVisitor cv = new ClassVisitor(result);
 		if (methods.size() != 0) {
 			Filter.setMethodFileter(target, methods);
 		}
 		cv.visitClass(target);
-		Map<Class<?>, ClassInfo> allClasses = cv.getReferencedClasses();
-		return allClasses;
+		return result;
 	}
 
 	/**

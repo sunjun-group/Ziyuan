@@ -1,9 +1,10 @@
-package lstar;
+package tzuyu.lstar;
 
+import tzuyu.engine.algorithm.iface.Teacher;
 import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.dfa.DFA;
 import lstar.LStar;
-import lstar.Teacher;
+import lstar.LStarException;
 
 public class TestMain {
   public static void main(String[] argv) {
@@ -13,7 +14,7 @@ public class TestMain {
     alphabet.addSymbol(new TestAlphabet("1"));
 
     Teacher teacher = new TestTeacher();
-    LStar algorithm = new LStar();
+    LStar algorithm = new LStar(null);
     algorithm.setTeacher(teacher);
     algorithm.setAlphabet(alphabet);
 

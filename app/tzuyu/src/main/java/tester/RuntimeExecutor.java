@@ -49,11 +49,11 @@ public final class RuntimeExecutor {
 			List<Variable> inputs = sequence.getInputs(index);
 			List<Object> inputVals = new ArrayList<Object>(inputs.size());
 			for (Variable var : inputs) {
-				if (var.argIdx == -1) {
+				if (var.getArgIdx() == -1) {
 					inputVals.add(retVals.get(var.getStmtIdx()));
 				} else {
 					Object value = runtimeValues.get(var.getStmtIdx()).get(
-							var.argIdx);
+							var.getArgIdx());
 					inputVals.add(value);
 				}
 			}
@@ -103,6 +103,8 @@ public final class RuntimeExecutor {
 		// Since all the input variables refers to the same sequence,
 		// we only need to execute one sequence and then we can get
 		// all the runtime values.
+		// LLT: what runtime values we need to get here? since seems like all
+		// statements in sequence here is the assignment statements? 
 		SequenceRuntime runtime = executeSequence(inputVars.get(0).owner);
 		if (!runtime.isSuccessful()) {
 			return new ExecutionResult(false, inputVals);

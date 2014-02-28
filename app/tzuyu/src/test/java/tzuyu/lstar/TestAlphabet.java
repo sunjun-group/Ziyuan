@@ -1,4 +1,4 @@
-package lstar;
+package tzuyu.lstar;
 
 import tzuyu.engine.model.Action;
 

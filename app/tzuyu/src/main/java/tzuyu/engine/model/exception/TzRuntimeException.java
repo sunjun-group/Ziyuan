@@ -1,20 +1,20 @@
-package tzuyu.engine.model;
+package tzuyu.engine.model.exception;
 
 import java.io.PrintStream;
 
-public class TzuYuException extends RuntimeException {
+public class TzRuntimeException extends RuntimeException {
 
   private static final long serialVersionUID = 8435042626559004241L;
 
-  public TzuYuException(String details) {
+  public TzRuntimeException(String details) {
     super(details);
   }
 
-  public TzuYuException(Throwable cause) {
+  public TzRuntimeException(Throwable cause) {
     super(cause);
   }
 
-  public TzuYuException(String details, Throwable cause) {
+  public TzRuntimeException(String details, Throwable cause) {
     super(details, cause);
   }
 

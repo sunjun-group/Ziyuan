@@ -1,6 +1,6 @@
 package tzuyu.engine.instrument;
 
-import tzuyu.engine.model.TzuYuException;
+import tzuyu.engine.model.exception.TzRuntimeException;
 
 public class IntergerFieldInfo extends SingleSlotFieldInfo {
 
@@ -43,7 +43,7 @@ public class IntergerFieldInfo extends SingleSlotFieldInfo {
       cv = constValue;
       init = (Integer) constValue;
     } else {
-      throw new TzuYuException("illegal int ConstValue=" + constValue);
+      throw new TzRuntimeException("illegal int ConstValue=" + constValue);
     }
   }
 }

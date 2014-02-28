@@ -1,4 +1,7 @@
-package lstar;
+package tzuyu.engine.algorithm.iface;
+
+import lstar.LStarException;
+import lstar.QueryException;
 
 import org.apache.log4j.Logger;
 

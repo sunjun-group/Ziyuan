@@ -10,7 +10,7 @@ import tzuyu.engine.model.ConstructorInfo;
 import tzuyu.engine.model.FieldInfo;
 import tzuyu.engine.model.MethodInfo;
 import tzuyu.engine.model.ObjectInfo;
-import tzuyu.engine.model.TzuYuException;
+import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.utils.ReflectionUtils;
 
 public class ClassInfoReference extends ClassInfo {
@@ -41,7 +41,7 @@ public class ClassInfoReference extends ClassInfo {
 			this.declaredMethods = methods;
 			this.constructors = ctors;
 		} else {
-			throw new TzuYuException("try to initialize an initialized object");
+			throw new TzRuntimeException("try to initialize an initialized object");
 		}
 	}
 
@@ -148,7 +148,7 @@ public class ClassInfoReference extends ClassInfo {
 			return new ObjectInfoReference(this, level, innerObjects, true);
 
 		} else if (!ReflectionUtils.canBeUsedAs(object.getClass(), type)) {
-			throw new TzuYuException("try to clone imcompatable object");
+			throw new TzRuntimeException("try to clone imcompatable object");
 		} else {
 			List<ObjectInfo> innerObjects = new ArrayList<ObjectInfo>();
 			// Use all the fields, not just the fields declared in this class

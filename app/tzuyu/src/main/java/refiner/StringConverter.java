@@ -6,9 +6,9 @@ import tzuyu.engine.model.Prestate;
 import tzuyu.engine.model.QueryTrace;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.model.TzuYuAction;
-import tzuyu.engine.model.TzuYuException;
 import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.dfa.Transition;
+import tzuyu.engine.model.exception.TzRuntimeException;
 
 
 public class StringConverter {
@@ -61,7 +61,7 @@ public class StringConverter {
       }
       // This should not happen
       if (!matchingTransitionFound) {
-        throw new TzuYuException("no matching transtion");
+        throw new TzRuntimeException("no matching transtion");
       }
     }
     return string;

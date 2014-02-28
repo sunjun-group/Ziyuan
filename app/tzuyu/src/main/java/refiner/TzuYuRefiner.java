@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import lstar.ReportHandler;
-import tzuyu.engine.iface.algorithm.Refiner;
+import tzuyu.engine.algorithm.iface.Refiner;
 import tzuyu.engine.model.Action;
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.Formula;

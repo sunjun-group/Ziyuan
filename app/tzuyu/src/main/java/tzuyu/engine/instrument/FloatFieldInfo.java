@@ -1,6 +1,6 @@
 package tzuyu.engine.instrument;
 
-import tzuyu.engine.model.TzuYuException;
+import tzuyu.engine.model.exception.TzRuntimeException;
 
 public class FloatFieldInfo extends SingleSlotFieldInfo {
 
@@ -44,7 +44,7 @@ public class FloatFieldInfo extends SingleSlotFieldInfo {
       cv = constValue;
       init = (Float) constValue;
     } else {
-      throw new TzuYuException("illegal float ConstValue=" + constValue);
+      throw new TzRuntimeException("illegal float ConstValue=" + constValue);
     }
   }
 

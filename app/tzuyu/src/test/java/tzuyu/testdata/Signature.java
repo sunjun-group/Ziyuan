@@ -1,4 +1,4 @@
-package testdata;
+package tzuyu.testdata;
 
 import java.security.InvalidKeyException;
 import java.security.SignatureException;

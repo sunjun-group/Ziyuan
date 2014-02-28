@@ -1,6 +1,6 @@
 package tzuyu.engine.instrument;
 
-import tzuyu.engine.model.TzuYuException;
+import tzuyu.engine.model.exception.TzRuntimeException;
 
 public class LongFieldInfo extends DoubleSlotFieldInfo {
 
@@ -17,7 +17,7 @@ public class LongFieldInfo extends DoubleSlotFieldInfo {
       cv = constValue;
       init = (Long) constValue;
     } else {
-      throw new TzuYuException("illegal long ConstValue=" + constValue);
+      throw new TzRuntimeException("illegal long ConstValue=" + constValue);
     }
   }
 

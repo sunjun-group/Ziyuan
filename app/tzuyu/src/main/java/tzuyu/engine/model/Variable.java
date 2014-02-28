@@ -4,8 +4,12 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Variable implements Comparable<Variable>, Serializable {
-
 	private static final long serialVersionUID = 3401683653584869789L;
+	
+	public static final int VALUE_OF_LAST_STATEMENT = -1;
+	public static final int RECEIVER_OF_LAST_STATEMENT = 0;
+	public static final int PARAMETERS_OF_THE_LAST_STATEMENT = 1;
+	
 	/**
 	 * The sequence that creates this variable, the variable is created or last
 	 * modified by the last statement in the sequence.
@@ -17,15 +21,10 @@ public class Variable implements Comparable<Variable>, Serializable {
 	 * statement if it is an instance method; 1 to other positive index are the
 	 * parameters of the last statement
 	 */
-	public final int argIdx;
-
-	/**
-	 * The statement index which the variable refers to
-	 */
-	private final int stmtIdx;
+	private VarIndex varIdx;
 
 	private Class<?> type = null;
-
+	
 	public Variable(Sequence seq, int stmtIdx, int varIdx) {
 		if (seq == null) {
 			throw new IllegalArgumentException("missing owner");
@@ -36,12 +35,15 @@ public class Variable implements Comparable<Variable>, Serializable {
 					"index falls out [0,owner.size()-1]:" + stmtIdx);
 		}
 		this.owner = seq;
-		this.stmtIdx = stmtIdx;
-		this.argIdx = varIdx;
+		this.varIdx = new VarIndex(stmtIdx, varIdx);
 	}
 
 	public Variable(Sequence sequence, int index) {
 		this(sequence, index, -1);
+	}
+
+	public Variable(Sequence seq, VarIndex varIdx) {
+		this(seq, varIdx.getStmtIdx(), varIdx.getArgIdx());
 	}
 
 	public Class<?> getType() {
@@ -49,26 +51,22 @@ public class Variable implements Comparable<Variable>, Serializable {
 			return type;
 		}
 
-		Statement stmt = owner.getStatement(stmtIdx);
-		if (argIdx == -1) {
+		Statement stmt = owner.getStatement(varIdx.getStmtIdx());
+		if (varIdx.isValueOfLastStmt()) {
 			type = stmt.getOutputType();
 		} else {
 			List<Class<?>> types = stmt.getInputTypes();
-			type = types.get(argIdx);
+			type = types.get(varIdx.getArgIdx());
 		}
 		return type;
 	}
 
 	public int getDeclIndex() {
-		return stmtIdx;
-	}
-
-	public int getVarIndex() {
-		return this.argIdx;
+		return varIdx.getStmtIdx();
 	}
 
 	public Statement getDeclaringStatement() {
-		return owner.getStatement(stmtIdx);
+		return owner.getStatement(varIdx.getStmtIdx());
 	}
 
 	public int compareTo(Variable o) {
@@ -76,12 +74,7 @@ public class Variable implements Comparable<Variable>, Serializable {
 			throw new IllegalArgumentException();
 		if (o.owner != this.owner)
 			throw new IllegalArgumentException();
-		int compare1 = (new Integer(stmtIdx).compareTo(new Integer(o.stmtIdx)));
-		if (compare1 == 0) {
-			return new Integer(this.argIdx).compareTo(new Integer(o.argIdx));
-		} else {
-			return compare1;
-		}
+		return this.varIdx.compareTo(o.getVarIndex());
 	}
 
 	@Override
@@ -95,29 +88,38 @@ public class Variable implements Comparable<Variable>, Serializable {
 
 		Variable other = (Variable) o;
 
-		return this.owner.equals(other.owner) && this.stmtIdx == other.stmtIdx
-				&& this.argIdx == other.argIdx;
+		return this.owner.equals(other.owner) && getStmtIdx()
+				== other.getStmtIdx()
+				&& getArgIdx() == other.getArgIdx();
 	}
 
 	@Override
 	public int hashCode() {
-		return this.stmtIdx * 31 + this.owner.hashCode() * 19 + this.argIdx;
+		return this.getStmtIdx() * 31 + this.owner.hashCode() * 19 + this.getArgIdx();
 	}
 
 	@Override
 	public String toString() {
-		return getType().getSimpleName() + "(" + stmtIdx + "," + argIdx + ")";
+		return getType().getSimpleName() + "(" + getStmtIdx() + "," + getArgIdx() + ")";
 	}
 
 	public String getName() {
-		return "var" + Integer.toString(stmtIdx);
+		return "var" + Integer.toString(getStmtIdx());
 	}
 
 	public int getStmtIdx() {
-		return stmtIdx;
+		return varIdx.getStmtIdx();
 	}
 	
 	public Sequence getOwner() {
 		return owner;
+	}
+	
+	public int getArgIdx() {
+		return varIdx.getArgIdx();
+	}
+	
+	public VarIndex getVarIndex() {
+		return varIdx;
 	}
 }

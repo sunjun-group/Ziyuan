@@ -8,11 +8,22 @@
 
 package tzuyu.plugin.core.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.core.PackageFragment;
+
+import tzuyu.engine.model.exception.TzuyuException;
+import tzuyu.engine.utils.CollectionUtils;
+import tzuyu.plugin.reporter.PluginLogger;
 
 /**
  * @author LLT
@@ -61,4 +72,23 @@ public class IResourceUtils {
 		}
 		return null;
 	}
+
+	public static IPackageFragment[] filterSourcePkgs(
+			IPackageFragment[] packageFragments) {
+		if (CollectionUtils.isEmpty(packageFragments)) {
+			return packageFragments;
+		}
+		List<IPackageFragment> result = new ArrayList<IPackageFragment>();
+		for (IPackageFragment pkg : packageFragments) {
+			try {
+				if (pkg.getKind() == IPackageFragmentRoot.K_SOURCE) {
+					result.add(pkg);
+				}
+			} catch (JavaModelException e) {
+				PluginLogger.logEx(e);
+			}
+		}
+		return result.toArray(new IPackageFragment[result.size()]);
+	}
+	
 }

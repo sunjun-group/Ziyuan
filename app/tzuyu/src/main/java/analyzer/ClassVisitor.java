@@ -3,6 +3,7 @@ package analyzer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -13,11 +14,20 @@ import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.ConstructorInfo;
 import tzuyu.engine.model.FieldInfo;
 import tzuyu.engine.model.MethodInfo;
+import tzuyu.engine.utils.CollectionUtils;
 import tzuyu.engine.utils.PrimitiveTypes;
 
 public class ClassVisitor {
 
-	private Map<Class<?>, ClassInfo> classesCached = new HashMap<Class<?>, ClassInfo>();
+	private Map<Class<?>, ClassInfo> classesCached;
+	
+	public ClassVisitor() {
+		classesCached = new HashMap<Class<?>, ClassInfo>();
+	}
+	
+	public ClassVisitor(Map<Class<?>, ClassInfo> classesCached) {
+		this.classesCached = classesCached;
+	}
 	
 	public Map<Class<?>, ClassInfo> getReferencedClasses() {
 		return Collections.unmodifiableMap(classesCached);
@@ -96,7 +106,8 @@ public class ClassVisitor {
 			List<ConstructorInfo> ctorList = new LinkedList<ConstructorInfo>();
 			for (Constructor<?> ctor : declaredCtors) {
 				if (Filter.filterConstructor(ctor)) {
-					ctorList.add(visitConstructor(reference, ctor));
+					ConstructorInfo constructor = visitConstructor(reference, ctor);
+					CollectionUtils.addIfNotNull(ctorList, constructor);
 				}
 			}
 			ConstructorInfo[] ctors = ctorList
@@ -127,8 +138,12 @@ public class ClassVisitor {
 		}
 		int access = ctor.getModifiers();
 		String name = ctor.getName();
-		return new ConstructorInfoImpl(parent, ctor, name, parameterTypes,
-				exceptionTypes, access);
+		// LLT: 
+		if (Modifier.isPublic(access)) {
+			return new ConstructorInfoImpl(parent, ctor, name, parameterTypes,
+					exceptionTypes, access);
+		}
+		return null;
 	}
 
 	private FieldInfo visitField(ClassInfo parent, Field field) {
@@ -171,5 +186,9 @@ public class ClassVisitor {
 
 		return new MethodInfoImpl(parent, method, name, access, returnType,
 				parameterTypes, exceptions);
+	}
+
+	public static ClassVisitor forStore(Map<Class<?>, ClassInfo> typeMap) {
+		return new ClassVisitor(typeMap);
 	}
 }
