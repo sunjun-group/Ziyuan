@@ -76,6 +76,10 @@ public class Statement {
 	public List<Class<?>> getInputTypes() {
 		return statement.getInputTypes();
 	}
+	
+	public StatementKind getOrgStatement() {
+		return statement.getAction();
+	}
 
 	@Override
 	public String toString() {

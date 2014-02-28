@@ -154,20 +154,11 @@ public class SequencePrettyPrinter {
 			int length = sequence.size();
 			for (int i = 0; i < length; i++) {
 				Statement statement = sequence.getStatement(i);
-				Class<?> outputType = statement.getOutputType();
-				outputType = this.getComponentType(outputType);
-
-				// add return type
-				if (needImport(outputType)) {
-					import_clz_set.add(ReflectionUtils
-							.getCompilableName(outputType));
-				}
-				// add input types
-				for (Class<?> inputType : statement.getInputTypes()) {
-					inputType = this.getComponentType(inputType);
-					if (needImport(inputType)) {
+				for (Class<?> type : statement.getOrgStatement().getAllDeclaredTypes()) {
+					Class<?> corrType = correctTypeIfNeeded(type);
+					if (needImport(corrType)) {
 						import_clz_set.add(ReflectionUtils
-								.getCompilableName(inputType));
+								.getCompilableName(corrType));
 					}
 				}
 				// if it is a RMethod, consider the case it may be
@@ -208,7 +199,7 @@ public class SequencePrettyPrinter {
 		return sb.toString();
 	}
 
-	private Class<?> getComponentType(Class<?> type) {
+	private Class<?> correctTypeIfNeeded(Class<?> type) {
 		if (type.isArray()) {
 			while (type.isArray()) {
 				type = type.getComponentType();

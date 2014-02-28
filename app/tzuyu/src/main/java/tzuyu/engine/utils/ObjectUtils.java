@@ -17,4 +17,15 @@ public class ObjectUtils {
 	public static int compare(int o1, int o2) {
 		return (o1 < o2 ? -1 : (o1 == o2 ? 0 : 1));
 	}
+	
+	public static Class<?> getObjClass(Object obj, Class<?> defaultIfNull) {
+		if (obj == null) {
+			return defaultIfNull;
+		}
+		if (obj instanceof Class) {
+			return (Class<?>) obj;
+		}
+		return obj.getClass();
+	}
+	
 }

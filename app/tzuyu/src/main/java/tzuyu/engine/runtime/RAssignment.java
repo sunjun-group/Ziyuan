@@ -13,6 +13,7 @@ import tzuyu.engine.model.StatementKind;
 import tzuyu.engine.model.Variable;
 import tzuyu.engine.utils.Globals;
 import tzuyu.engine.utils.LogicUtils;
+import tzuyu.engine.utils.ObjectUtils;
 import tzuyu.engine.utils.PrimitiveTypes;
 import tzuyu.engine.utils.ReflectionUtils;
 import tzuyu.engine.utils.StringEscapeUtils;
@@ -42,6 +43,21 @@ public class RAssignment extends StatementKind implements Serializable {
 	@Override
 	public List<Class<?>> getInputTypes() {
 		return Collections.emptyList();
+	}
+	
+	/**
+	 * if the return type is not the same with assigned value
+	 * (in that case, type of assigned value must be 
+	 * 					the implementation of the return type)
+	 */
+	@Override
+	public List<Class<?>> getAllDeclaredTypes() {
+		List<Class<?>> types = super.getAllDeclaredTypes();
+		Class<?> objClass = ObjectUtils.getObjClass(value, type);
+		if (type != objClass) {
+			types.add(objClass);
+		}
+		return types;
 	}
 
 	@Override

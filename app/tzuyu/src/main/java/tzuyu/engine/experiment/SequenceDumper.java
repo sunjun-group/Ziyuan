@@ -3,11 +3,14 @@ package tzuyu.engine.experiment;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
+import tester.ObjectType;
 import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.experiment.tcbuilder.StatementBuilder;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.Statement;
 import tzuyu.engine.model.StatementKind;
 import tzuyu.engine.model.Variable;
+import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.runtime.RArrayDeclaration;
 import tzuyu.engine.runtime.RAssignment;
 import tzuyu.engine.runtime.RConstructor;
@@ -15,6 +18,7 @@ import tzuyu.engine.runtime.RMethod;
 import tzuyu.engine.utils.Globals;
 import tzuyu.engine.utils.LogicUtils;
 import tzuyu.engine.utils.PrimitiveTypes;
+import tzuyu.engine.utils.StringUtils;
 import tzuyu.engine.utils.Types;
 
 /**
@@ -66,8 +70,8 @@ class SequenceDumper {
 		StatementKind statement = stmt.getAction().getAction();
 		if (statement instanceof RAssignment) {
 			if (config.isLongFormat()) {
-				RAssignment primiveStatement = (RAssignment) statement;
-				this.printPrimitiveType(primiveStatement, newVar, inputVars, sb);
+				RAssignment rAssginment = (RAssignment) statement;
+				printRAssignment(rAssginment, newVar, sb);
 			}
 		} else if (statement instanceof RMethod) {
 			this.printRMethod((RMethod) statement, newVar, inputVars, sb);
@@ -195,32 +199,63 @@ class SequenceDumper {
 		sb.append(Globals.lineSep);
 	}
 
-	private void printPrimitiveType(RAssignment statement, Variable newVar,
-			List<Variable> inputVars, StringBuilder sb) {
+	private void printRAssignment(RAssignment statement, Variable newVar,
+			StringBuilder sb) {
 		Class<?> type = statement.getReturnType();
-		// print primitive type
-		if (type.isPrimitive()) {
-			sb.append(PrimitiveTypes.boxedType(type).getSimpleName());
-			sb.append(" ");
-			sb.append(renamer.getRenamedVar(newVar.getStmtIdx(), newVar.getArgIdx()));
-			sb.append(" = new ");
-			sb.append(PrimitiveTypes.boxedType(type).getSimpleName());
-			sb.append("(");
-			sb.append(PrimitiveTypes.toCodeString(statement.getValue(),
-					config.getStringMaxLength()));
-			sb.append(");");
-			sb.append(Globals.lineSep);
-
-		} else {
-			sb.append(getSimpleCompilableName(type));
-			sb.append(" ");
-			sb.append(this.renamer.getRenamedVar(newVar.getStmtIdx(), newVar.getArgIdx()));
-			sb.append(" = ");
-			sb.append(PrimitiveTypes.toCodeString(statement.getValue(),
-					config.getStringMaxLength()));
-			sb.append(";");
-			sb.append(Globals.lineSep);
+		String declaredClass = type.getSimpleName();
+		String declaredName = renamer.getRenamedVar(newVar.getStmtIdx(),
+				newVar.getArgIdx());
+		String instanceClass = null;
+		String[] vals = null;
+		if (statement.getValue() != null) {
+			switch (ObjectType.ofClass(type)) {
+			/** @see java.lang.Class#isPrimitiveType() **/
+			case PRIMITIVE_TYPE: // int, double, char,...
+				declaredClass = PrimitiveTypes.boxedType(type).getSimpleName();
+				instanceClass = declaredClass;
+				vals = new String[] { PrimitiveTypes.toCodeString(
+						statement.getValue(), config.getStringMaxLength()) };
+				break;
+			case PRIMITIVE_OBJECT: // String, Integer, Double,...
+				declaredClass = getSimpleCompilableName(type);
+				vals = new String[] { PrimitiveTypes.toCodeString(
+						statement.getValue(), config.getStringMaxLength()) };
+				break;
+			case ENUM:
+				declaredClass = type.getSimpleName();
+				if (statement.getValue() != null) {
+					vals = new String[] { StringUtils.dotJoinStr(declaredClass,
+							statement.getValue().toString()) };
+				}
+				break;
+			case GENERIC_ENUM: // Enum<?>
+				if (statement.getValue() == null) {
+					declaredClass = Enum.class.getSimpleName();
+				} else {
+					declaredClass = statement.getValue().getClass()
+							.getSimpleName();
+					vals = new String[] { StringUtils.dotJoinStr(declaredClass,
+							statement.getValue().toString()) };
+				}
+				break;
+			case GENERIC_CLASS: // Class<?>
+				declaredClass = Class.class.getSimpleName();
+				if (statement.getValue() != null) {
+					vals = new String[] { StringUtils.dotJoinStr(
+							((Class<?>) statement.getValue()).getSimpleName(),
+							"class") };
+				}
+				break;
+			default:
+				throw new TzRuntimeException(
+						"Can not build Assginment statement for type: "
+								+ type.getName()
+								+ " .Try to use Constructor statement instead!!");
+			}
 		}
+		StatementBuilder.appendRAssignmentStmt(sb, declaredClass, declaredName,
+				instanceClass, vals);
+		sb.append(Globals.lineSep);
 	}
 
 	private void printArrayDeclaration(RArrayDeclaration statement,

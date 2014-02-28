@@ -232,11 +232,14 @@ public class NewSequencePrettyPrinter {
 		
 		for (int i = 0; i < sequence.size(); i++) {
 			Statement statement = sequence.getStatement(i);
-			// add return type
-			seqNewImportClaz.add(statement.getOutputType());
+			// add return type, input types and more than that.
+			for (Class<?> type : statement.getOrgStatement().getAllDeclaredTypes()) {
+				Class<?> corrType = correctTypeIfNeeded(type);
+				if (needImport(corrType)) {
+					seqNewImportClaz.add(corrType);
+				}
+			}
 			
-			// add input types
-			seqNewImportClaz.addAll(statement.getInputTypes());
 			// if it is a RMethod, consider the case it may be
 			// static method
 			if ((statement.getAction().getAction()) instanceof RMethod) {
@@ -247,14 +250,7 @@ public class NewSequencePrettyPrinter {
 				}
 			}
 		}
-		java.util.Iterator<Class<?>> it = seqNewImportClaz.iterator();
-		while(it.hasNext()) {
-			Class<?> clazz = it.next();
-			clazz = getComponentType(clazz);
-			if (!needImport(clazz)) {
-				it.remove();
-			}
-		}
+		
 		return seqNewImportClaz;
 	}
 
@@ -265,7 +261,7 @@ public class NewSequencePrettyPrinter {
 		return !clazz.equals(void.class) && !clazz.isPrimitive();
 	}
 
-	private Class<?> getComponentType(Class<?> type) {
+	private Class<?> correctTypeIfNeeded(Class<?> type) {
 		if (type.isArray()) {
 			while (type.isArray()) {
 				type = type.getComponentType();

@@ -1,6 +1,7 @@
 package tzuyu.engine.model;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import tzuyu.engine.TzConfiguration;
@@ -51,5 +52,17 @@ public abstract class StatementKind {
 	@Override
 	public String toString() {
 		return toParseableString();
+	}
+
+	/**
+	 * By default, only input and output types need to be declared,
+	 * but in some cases, inside the statement we declare the other type
+	 * which should be imported as well 
+	 * => override this method for those specific cases.
+	 */
+	public List<Class<?>> getAllDeclaredTypes() {
+		List<Class<?>> result = new ArrayList<Class<?>>(getInputTypes());
+		result.add(getReturnType());
+		return result;
 	}
 }

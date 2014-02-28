@@ -134,6 +134,7 @@ public class ParameterSelector implements IParameterSelector {
 			} catch (TzuyuException e) {
 				if (e.getType() == Type.ParameterSelector_Fail_Init_Class) {
 					retry = true;
+					i++;
 				} else {
 					throw new TzRuntimeException(e);
 				}
