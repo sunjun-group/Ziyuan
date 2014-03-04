@@ -424,7 +424,7 @@ public class Sequence implements Serializable {
 
 		for (int index = 0; index < reverseQueryIndex; index++) {
 			Statement statement = statements.get(stmtIndex);
-
+			// LLT: statement inputVars can be empty!!
 			RelativeNegativeIndex relativeIndex = statement.getInputVars().get(
 					0);
 			stmtIndex = stmtIndex + relativeIndex.stmtIdx;

@@ -81,7 +81,7 @@ public class PluginLogger implements ILogger<PluginLogger>{
 	}
 
 	public static void debug(IType[] types) {
-		if (CollectionUtils.isEmpty(types, true)) {
+		if (CollectionUtils.isEmptyCheckNull(types)) {
 			log("object is empty");
 		}
 		for (IType type : types) {

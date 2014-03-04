@@ -3,6 +3,7 @@ package tzuyu.engine.utils;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
+import tzuyu.engine.iface.NullTzPrintStream;
 import tzuyu.engine.iface.TzPrintStream;
 
 /**
@@ -20,6 +21,8 @@ public final class Globals {
 	public static final String fileSep = System.getProperty("file.separator");
 
 	public static final String userDir = System.getProperty("user.dir");
+	
+	public static final boolean DEV_MODE = true;
 
 	// Setting the Constant to any number greater than zero will cause models
 	// to have a maximal depth MAX_MODEL_DEPTH+1
@@ -29,11 +32,15 @@ public final class Globals {
 	private static PrintStream oldStdErr;
 
 	static {
-		try {
-			tcExPrintStream = new TzPrintStream(new PrintStream(
-					DUMMY_TC_EX_LOG_FILE));
-		} catch (FileNotFoundException e) {
-			tcExPrintStream = new TzPrintStream(null);
+		if (DEV_MODE) {
+			try {
+				tcExPrintStream = new TzPrintStream(new PrintStream(
+						DUMMY_TC_EX_LOG_FILE));
+			} catch (FileNotFoundException e) {
+				tcExPrintStream = new NullTzPrintStream();
+			}
+		} else {
+			tcExPrintStream = new NullTzPrintStream();
 		}
 	}
 
@@ -67,7 +74,7 @@ public final class Globals {
 
 	public static final int INDENTWIDTH = 8;
 
-	public static TzPrintStream getTcRtExecutorOutStream() {
+	public static TzPrintStream getTcExecutionOutStream() {
 		return tcExPrintStream;
 	}
 

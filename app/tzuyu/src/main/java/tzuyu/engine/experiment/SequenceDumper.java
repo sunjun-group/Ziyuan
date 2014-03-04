@@ -216,7 +216,7 @@ class SequenceDumper {
 				vals = new String[] { PrimitiveTypes.toCodeString(
 						statement.getValue(), config.getStringMaxLength()) };
 				break;
-			case PRIMITIVE_OBJECT: // String, Integer, Double,...
+			case STRING_OR_PRIMITIVE_OBJECT: // String, Integer, Double,...
 				declaredClass = getSimpleCompilableName(type);
 				vals = new String[] { PrimitiveTypes.toCodeString(
 						statement.getValue(), config.getStringMaxLength()) };
@@ -224,8 +224,8 @@ class SequenceDumper {
 			case ENUM:
 				declaredClass = type.getSimpleName();
 				if (statement.getValue() != null) {
-					vals = new String[] { StringUtils.dotJoinStr(declaredClass,
-							statement.getValue().toString()) };
+					vals = new String[] { StringUtils.enumToString(declaredClass, 
+							statement.getValue()) };
 				}
 				break;
 			case GENERIC_ENUM: // Enum<?>
@@ -234,14 +234,14 @@ class SequenceDumper {
 				} else {
 					declaredClass = statement.getValue().getClass()
 							.getSimpleName();
-					vals = new String[] { StringUtils.dotJoinStr(declaredClass,
-							statement.getValue().toString()) };
+					vals = new String[] { StringUtils.enumToString(declaredClass, 
+							statement.getValue()) };
 				}
 				break;
 			case GENERIC_CLASS: // Class<?>
 				declaredClass = Class.class.getSimpleName();
 				if (statement.getValue() != null) {
-					vals = new String[] { StringUtils.dotJoinStr(
+					vals = new String[] { StringUtils.dotJoin(
 							((Class<?>) statement.getValue()).getSimpleName(),
 							"class") };
 				}

@@ -6,8 +6,8 @@ public final class ExecutionResult {
   private boolean passing;
   private List<Object> values;
 
-  public ExecutionResult(boolean rst, List<Object> inputVals) {
-    this.passing = rst;
+  public ExecutionResult(boolean result, List<Object> inputVals) {
+    this.passing = result;
     this.values = inputVals;
   }
 

@@ -19,7 +19,7 @@ public class CollectionUtils {
 	private CollectionUtils() {}
 	
 	public static <T> T getFirstElement(T[] vals) {
-		if (isEmpty(vals, true)) {
+		if (isEmptyCheckNull(vals)) {
 			return null;
 		}
 		return vals[0];
@@ -46,6 +46,10 @@ public class CollectionUtils {
 	
 	public static <T> boolean isEmpty(T[] vals) {
 		return vals == null || vals.length == 0;
+	}
+	
+	public static <T> boolean isEmptyCheckNull(T[] vals) {
+		return isEmpty(vals, true);
 	}
 	
 	public static <T> boolean isEmpty(T[] vals, boolean checkNullVal) {

@@ -8,7 +8,9 @@
 
 package tzuyu.engine.utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -16,29 +18,43 @@ import java.util.List;
  * 
  */
 public class StringUtils {
+	public static final String EMPTY = org.apache.commons.lang.StringUtils.EMPTY;
 	private StringUtils() {
 	}
+	
+	public static boolean isEmpty(final String str) {
+        return str == null || str.isEmpty();
+    }
+	
+	public static String join(Collection<?> vals, String separator) {
+		if (CollectionUtils.isEmpty(vals)) {
+			return EMPTY;
+		}
+		List<String> valStrs = new ArrayList<String>();
+		for (Object val : vals) {
+			String valStr = toStringNullToEmpty(val);
+			if (!isEmpty(valStr)) {
+				valStrs.add(valStr);
+			}
+		}
+		return org.apache.commons.lang.StringUtils.join(valStrs, separator);
+	}
 
+	public static String join(String separator, Object... params) {
+		return join(Arrays.asList(params), separator);
+	}
+	
 	public static String spaceJoin(Object...params) {
 		return join(" ", params);
 	}
 	
-	public static String join(String separator, Object... params) {
-		return org.apache.commons.lang.StringUtils.join(Arrays.asList(params),
-				separator);
-	}
-	
-	public static <T extends Object> String dotJoin(T[] params) {
-		return org.apache.commons.lang.StringUtils.join(params, ".");
-	}
-	
-	public static String dotJoinStr(String... params) {
-		return org.apache.commons.lang.StringUtils.join(params, ".");
+	public static String dotJoin(Object... params) {
+		return join(Arrays.asList(params), ".");
 	}
 	
 	public static String toStringNullToEmpty(Object val) {
 		if (val == null) {
-			return org.apache.commons.lang.StringUtils.EMPTY;
+			return EMPTY;
 		}
 		return val.toString();
 	}
@@ -52,5 +68,32 @@ public class StringUtils {
 
 	public static String newLineJoin(List<String> value) {
 		return org.apache.commons.lang.StringUtils.join(value, "\n");
+	}
+	
+	public static String enumToString(String enumClzz, Object enumVal) {
+		return dotJoin(enumClzz, ((Enum<?>) enumVal).name());
+	}
+
+	/**
+	 * @param packageName
+	 *            the package name as specified in the package declaration (i.e.
+	 *            a dot-separated name)
+	 * @param simpleTypeName
+	 *            the simple name of the type
+	 * @param enclosingTypeNames
+	 *            if the type is a member type, the simple names of the
+	 *            enclosing types from the outer-most to the direct parent of
+	 *            the type (for example, if the class is x.y.A$B$C then the
+	 *            enclosing types are [A, B]. This is an empty array if the type
+	 *            is a top-level type.
+	 */
+	public static String dotJoinStr(char[] packageName,
+			char[][] enclosingTypeNames, char[] simpleTypeName) {
+		Object[] enclosing = new Object[enclosingTypeNames.length];
+		for (int i = 0; i < enclosingTypeNames.length; i++) {
+			enclosing[i] = new String(enclosingTypeNames[i]);
+		}
+		return dotJoin(new String(packageName), dotJoin(enclosing),
+				new String(simpleTypeName));
 	}
 }

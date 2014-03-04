@@ -15,7 +15,7 @@ import java.io.PrintStream;
  *
  */
 public class TzPrintStream {
-	private java.io.PrintStream out;
+	private PrintStream out;
 	
 	public TzPrintStream(PrintStream out) {
 		this.out = out;

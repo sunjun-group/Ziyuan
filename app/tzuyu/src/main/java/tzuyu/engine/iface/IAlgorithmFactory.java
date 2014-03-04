@@ -28,9 +28,6 @@ public interface IAlgorithmFactory<A extends Alphabet> {
 
 	ITCGStrategy getTCGStrategy();
 
-	/**
-	 * @return
-	 */
 	IReferencesAnalyzer getRefAnalyzer();
 	
 }

@@ -22,7 +22,6 @@ import tzuyu.engine.runtime.RConstructor;
 import tzuyu.engine.utils.CollectionUtils;
 import tzuyu.engine.utils.ListOfLists;
 import tzuyu.engine.utils.PrimitiveGenerator;
-import tzuyu.engine.utils.PrimitiveTypes;
 import tzuyu.engine.utils.Randomness;
 import tzuyu.engine.utils.ReflectionUtils.Match;
 import tzuyu.engine.utils.SimpleList;
@@ -53,13 +52,39 @@ public class ParameterSelector implements IParameterSelector {
 	}
 	
 	public Variable selectNewVariable(Class<?> inputType) {
-		Class<?> type = adaptConfiguration(inputType); 
-		ParamType paramType = ParamType.getParamType(type);
+		ObjectType paramType = ObjectType.ofClass(inputType);
 		Object inputVal = null;
+		
+		// if paramType is not primitive, it's probably null.
+		if (paramType != ObjectType.PRIMITIVE_TYPE &&
+				Randomness.nextBoolean(8)) {
+			// Randomly return null for reference type with probability of 1/4
+			// We may use nextRandomBool() method which return true with
+			// probability
+			// of 1/2 which is to high to run some normal cases, thus we use
+			// 1/4. (LLT: 1/4 seems still to high rate, try 1/8 instead.
+			return createAssignmentVariable(inputType, null);
+		}
+		
 		switch (paramType) {
-		case EXT_PRIMITIVE:
-			inputVal = PrimitiveGenerator.chooseValue(type,
-					config.getStringMaxLength());
+		case ARRAY:
+			return selectVariableForArray(inputType);
+		case GENERIC_OBJ:
+			inputType = refAnalyzer.getRandomClass();
+			// no break, after select a specific class for object
+			// continue to do selectNewVariableForObjectWithTry(inputType)
+		case OTHER_OBJECT:
+			Variable var = selectNewVariableForObjectWithTry(inputType);
+			// already try, but no successful, just put it null
+			if (var != null) {
+				return var;
+			}
+			break;
+		// for other cases, an assignment variable will be created.	
+		case PRIMITIVE_TYPE:
+		case STRING_OR_PRIMITIVE_OBJECT:
+		case ENUM:
+			inputVal = PrimitiveGenerator.chooseValue(inputType, config);
 			break;
 		case GENERIC_CLASS:
 			inputVal = refAnalyzer.getRandomClass();
@@ -67,19 +92,12 @@ public class ParameterSelector implements IParameterSelector {
 		case GENERIC_ENUM:
 			Class<?> enumType = refAnalyzer.getRandomEnum();
 			if (enumType != null) {
-				inputVal = PrimitiveGenerator.chooseValue(enumType,
-						config.getStringMaxLength());
+				inputVal = PrimitiveGenerator.chooseValue(enumType, config);
 			}
 			break;
-		case ARRAY_OBJECT_NULL:
-			inputVal = null;
-			break;
-		case ARRAY:
-			return selectVariableForArray(type);
-		case OBJECT:
-			return selectNewVariableForObjectWithTry(type);
 		}
-		return createAssignmentVariable(type, inputVal);
+		
+		return createAssignmentVariable(inputType, inputVal);
 	}
 
 	private Variable selectVariableForArray(Class<?> type) {
@@ -116,14 +134,6 @@ public class ParameterSelector implements IParameterSelector {
 		return var;
 	}
 
-	private Class<?> adaptConfiguration(Class<?> inputType) {
-		//TODO-LLT: why??? why we need this??
-		if (config.isObjectToInteger() && inputType.equals(Object.class)) {
-			return int.class;
-		}
-		return inputType;
-	}
-	
 	private Variable selectNewVariableForObjectWithTry(Class<?> type) {
 		int i = 0;
 		boolean retry = true;
@@ -152,7 +162,7 @@ public class ParameterSelector implements IParameterSelector {
 		ClassInfo ci = project.getClassInfo(type);
 		ConstructorInfo[] ctors = ci.getConstructors();
 
-		if (CollectionUtils.isEmpty(ctors, true)) {
+		if (CollectionUtils.isEmptyCheckNull(ctors)) {
 			throw new TzuyuException(Type.ParameterSelector_Fail_Init_Class,
 					"no accessible constructor for class: " + type);
 			// we choose an accessible constructor of a subclass of this
@@ -355,40 +365,5 @@ public class ParameterSelector implements IParameterSelector {
 		// Construct the variable which is created by the above statement
 		Variable var = new Variable(seq, seq.size() - 1);
 		return var;
-	}
-
-	private static enum ParamType {
-		EXT_PRIMITIVE, // include original Primitive types and String type 
-		GENERIC_ENUM, // Enum<?>
-		GENERIC_CLASS, // Class<?>
-		ARRAY_OBJECT_NULL,
-		ARRAY,
-		OBJECT;
-		
-		public static ParamType getParamType(Class<?> type) {
-			if (PrimitiveTypes.isBoxedOrPrimitiveOrStringOrEnumType(type)) {
-				return ParamType.EXT_PRIMITIVE;
-			}
-			// Randomly return null for reference type with probability of 1/4
-			// We may use nextRandomBool() method which return true with
-			// probability
-			// of 1/2 which is to high to run some normal cases, thus we use
-			// 1/4.
-			boolean retNull = Randomness.nextBoolean(4);
-			if (retNull) {
-				return ParamType.ARRAY_OBJECT_NULL;
-			}
-
-			if (type == Enum.class) {
-				return ParamType.GENERIC_ENUM;
-			}
-			if (type == Class.class) {
-				return ParamType.GENERIC_CLASS;
-			}
-			if (type.isArray()) {
-				return ParamType.ARRAY;
-			}
-			return ParamType.OBJECT;
-		}
 	}
 }

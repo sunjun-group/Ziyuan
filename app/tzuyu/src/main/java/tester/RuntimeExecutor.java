@@ -22,7 +22,7 @@ import tzuyu.engine.utils.SimpleList;
  */
 public final class RuntimeExecutor {
 	// The default message printer
-	private static TzPrintStream out = Globals.getTcRtExecutorOutStream();
+	private static TzPrintStream out = Globals.getTcExecutionOutStream();
 
 	private RuntimeExecutor() {
 
@@ -104,8 +104,6 @@ public final class RuntimeExecutor {
 		// Since all the input variables refers to the same sequence,
 		// we only need to execute one sequence and then we can get
 		// all the runtime values.
-		// LLT: what runtime values we need to get here? since seems like all
-		// statements in sequence here is the assignment statements? 
 		SequenceRuntime runtime = executeSequence(inputVars.get(0).owner);
 		if (!runtime.isSuccessful()) {
 			return new ExecutionResult(false, inputVals);

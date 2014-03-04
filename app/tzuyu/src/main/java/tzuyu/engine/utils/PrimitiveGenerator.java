@@ -2,8 +2,6 @@ package tzuyu.engine.utils;
 
 import java.util.Random;
 
-import tzuyu.engine.main.Option.OptionType;
-
 /**
  * The value generator for TzuYu 'primitive' types. We can generate a random
  * value of the specified type with this value generator. PLEASE NOTE THAT: Java
@@ -11,7 +9,6 @@ import tzuyu.engine.main.Option.OptionType;
  * {@link TzuYuPrimtiveTypes}.
  * 
  * @author Spencer Xiao
- * FORMAT ONLY.
  */
 public class PrimitiveGenerator {
 	private static Random random = new Random();
@@ -36,7 +33,7 @@ public class PrimitiveGenerator {
 	 * @param stringMaxLength
 	 * @return
 	 */
-	public static Object chooseValue(Class<?> type, int stringMaxLength) {
+	public static Object chooseValue(Class<?> type, PrimitiveGeneratorConfig config) {
 		if (type.equals(int.class) || type.equals(Integer.class)) {
 			// Here we generate a value in the range [10, 10] for integer types
 			return (random.nextInt(21) - 10);
@@ -61,22 +58,14 @@ public class PrimitiveGenerator {
 		} else if (type.equals(boolean.class) || type.equals(Boolean.class)) {
 			return random.nextBoolean();
 		} else if (type.equals(String.class)) {
-			int length = random.nextInt(stringMaxLength);
+			int length = random.nextInt(config.getStringMaxLength());
 			StringBuilder sb = new StringBuilder();
 			for (int index = 0; index < length; index++) {
-				sb.append(chooseValue(char.class, stringMaxLength));
+				sb.append(chooseValue(char.class, config));
 			}
 			return sb.toString();
 		} else if (PrimitiveTypes.isEnum(type)) {// must be enumeration type
 			Class<?> eType = type;
-			if (!type.isEnum()) {
-				// pick up our specific enum to test, if there is any statement
-				// checks instance of enum inside the method,
-				// this approach can not cover that case at all
-				// try to look up randomly an enum type in project, or create a
-				// new one just for test inside test class.
-				eType = OptionType.class; 
-			}
 			Object[] constValues = eType.getEnumConstants();
 			int index = random.nextInt(constValues.length);
 			return constValues[index];
@@ -85,6 +74,10 @@ public class PrimitiveGenerator {
 					+ "TzuYu primtive type:" + type.toString());
 		}
 	}
-	
-	
+	 
+	public interface PrimitiveGeneratorConfig {
+
+		public int getStringMaxLength();
+		
+	}
 }

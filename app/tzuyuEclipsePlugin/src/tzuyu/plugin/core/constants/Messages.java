@@ -35,8 +35,8 @@ public final class Messages {
 	}
 	
 	public String getMessage(Enum<?> val) {
-		String key = StringUtils.dotJoinStr(
-				val.getClass().getSimpleName(), val.name());
+		String key = StringUtils.dotJoin(val.getClass().getSimpleName(),
+				val.name());
 		return enumConstantResourceBundle.getString(key);
 	}
 	

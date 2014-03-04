@@ -13,11 +13,12 @@ import java.io.File;
 
 import tzuyu.engine.main.CommandLineLogger;
 import tzuyu.engine.utils.Globals;
+import tzuyu.engine.utils.PrimitiveGenerator.PrimitiveGeneratorConfig;
 
 /**
  * @author LLT
  */
-public class TzConfiguration implements Cloneable {
+public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 	// TODO [LLT]: put default value in configuration file?
 	/**
 	 * The maximum number of elements in an array when cloning an object. The

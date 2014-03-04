@@ -16,10 +16,12 @@ import tzuyu.engine.utils.PrimitiveTypes;
  */
 public enum ObjectType {
 	PRIMITIVE_TYPE, // int, char, double, float,..
-	PRIMITIVE_OBJECT, // Integer, Double, String
+	STRING_OR_PRIMITIVE_OBJECT, // Integer, Double, String
 	ENUM, // specific enum type
 	GENERIC_ENUM, // Enum<?>
 	GENERIC_CLASS, // Class<?>
+	GENERIC_OBJ,
+	ARRAY,
 	INTERFACE,
 	OTHER_OBJECT;
 	
@@ -27,20 +29,26 @@ public enum ObjectType {
 		if (type == null) {
 			return null;
 		}
-		if (PrimitiveTypes.isPrimitive(type)) {
-			return PRIMITIVE_TYPE;
-		}
-		if (PrimitiveTypes.primitiveType(type) != null) {
-			return PRIMITIVE_OBJECT;
-		}
-		if (type.isEnum()) {
-			return ENUM;
-		}
 		if (type == Enum.class) {
 			return GENERIC_ENUM;
 		}
 		if (type == Class.class) {
 			return GENERIC_CLASS;
+		}
+		if (type == Object.class) {
+			return GENERIC_OBJ;
+		}
+		if (PrimitiveTypes.isPrimitive(type)) {
+			return PRIMITIVE_TYPE;
+		}
+		if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(type)) {
+			return STRING_OR_PRIMITIVE_OBJECT;
+		}
+		if (type.isEnum()) {
+			return ENUM;
+		}
+		if (type.isArray()) {
+			return ARRAY;
 		}
 		return OTHER_OBJECT;
 	}

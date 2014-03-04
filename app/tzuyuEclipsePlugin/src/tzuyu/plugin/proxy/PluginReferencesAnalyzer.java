@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -36,6 +37,7 @@ import tzuyu.engine.iface.IReferencesAnalyzer;
 import tzuyu.engine.model.exception.TzuyuException;
 import tzuyu.engine.utils.CollectionUtils;
 import tzuyu.engine.utils.Randomness;
+import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.core.exception.PluginException;
 import tzuyu.plugin.core.utils.ClassLoaderUtils;
 import tzuyu.plugin.core.utils.IResourceUtils;
@@ -115,10 +117,8 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 			public void acceptType(int modifiers, char[] packageName,
 					char[] simpleTypeName, char[][] enclosingTypeNames,
 					String path) {
-				String className = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf("."));
-				if (className.equals(String.copyValueOf(simpleTypeName))) {
-					result.add(new StringBuilder().append(packageName).append(".")
-									.append(className).toString());
+				if (Flags.isPublic(modifiers)) {
+					result.add(StringUtils.dotJoinStr(packageName, enclosingTypeNames, simpleTypeName));
 				}
 				if (result.size() == limit) {
 					progressMonitor.setCanceled(true);
@@ -134,7 +134,7 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 					progressMonitor);
 			return result;
 		} catch (OperationCanceledException e) {
-			// do nothing
+			// do nothing, just return.
 			return result;
 		} catch (JavaModelException e) {
 			PluginLogger.logEx(e);
@@ -148,7 +148,7 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 			if (!clazz.isInterface() && clazz != Enum.class) {
 				return clazz;
 			}
-			// for interface, using eclipse utils to get its implemetation.
+			// for interface, using eclipse API to get its implemetation.
 			List<IType> availableSubTypes = itypeCache.get(clazz);
 			if (availableSubTypes == null) {
 				IType type = getIType(project, clazz);
@@ -225,8 +225,9 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		for (Iterator<IType> it = allList.iterator(); it.hasNext() && i < size;) {
 			IType iType = it.next();
 			try {
-				if (!iType.isAnonymous() && !iType.isInterface()
-						&& !iType.isMember()) {
+				int flags = iType.getFlags();
+				if (!Flags.isAbstract(flags) && Flags.isPublic(flags)
+						&& !Flags.isInterface(flags)) {
 					result.add(iType);
 					PluginLogger.log(iType.getElementName());
 					i++;
