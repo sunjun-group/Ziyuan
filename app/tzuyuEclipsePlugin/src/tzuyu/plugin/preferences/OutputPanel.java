@@ -21,6 +21,7 @@ import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -53,6 +54,7 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 	private Label classNameLb;
 	private Text classNameTx;
 	private CheckboxGroup<TestCaseType> passFailCbGroup;
+	private Button longFormatCb;
 
 	private IntText maxMethods;
 
@@ -105,11 +107,13 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		// format test class
 		Group formatGroup = SWTFactory.createGroup(contentPanel, StringUtils.EMPTY, colSpan);
 		formatGroup.setLayout(new GridLayout(2, false));
+		longFormatCb = SWTFactory.createCheckbox(formatGroup,
+				msg.gentest_prefs_param_longFormat(), 2);
+		
 		Label maxMethodsLb = SWTFactory.createLabel(formatGroup, msg.gentest_prefs_output_maxMethodsPerClass());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		maxMethodsLb.setLayoutData(gd);
 		gd.minimumWidth = 60;
-		
 		maxMethods = new IntText(formatGroup, OutputField.MAX_METHODS_NUM);
 		SWTFactory.createLabel(formatGroup, msg.gentest_prefs_output_maxLinesPerClass());
 		maxLine = new IntText(formatGroup, OutputField.MAX_LINE_NUM);
@@ -166,6 +170,7 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 				data.getTzConfig().isPrintFailTests()));
 		maxMethods.setValue(data.getTzConfig().getMaxMethodsPerGenTestClass());
 		maxLine.setValue(data.getTzConfig().getMaxLinesPerGenTestClass());
+		longFormatCb.setSelection(data.getTzConfig().isLongFormat());
 	}
 
 	@Override
@@ -177,6 +182,7 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		prefs.getTzConfig().setPrintFailTests(passFailValue.contains(TestCaseType.FAIL));
 		prefs.getTzConfig().setMaxMethodsPerGenTestClass(maxMethods.getValue());
 		prefs.getTzConfig().setMaxLinesPerGenTestClass(maxLine.getValue());
+		prefs.getTzConfig().setLongFormat(longFormatCb.getSelection());
 	}
 
 	@Override
@@ -205,7 +211,8 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		PACKAGE,
 		PASS_FAIL,
 		MAX_METHODS_NUM,
-		MAX_LINE_NUM
+		MAX_LINE_NUM,
+		FILE_FORMAT_LONG
 	}
 
 	@Override

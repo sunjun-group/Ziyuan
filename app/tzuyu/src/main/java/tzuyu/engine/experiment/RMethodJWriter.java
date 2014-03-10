@@ -8,19 +8,14 @@
 
 package tzuyu.engine.experiment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import tzuyu.engine.experiment.JWriterFactory.JunitConfig;
-import tzuyu.engine.model.StatementKind;
 import tzuyu.engine.model.Variable;
-import tzuyu.engine.runtime.RAssignment;
 import tzuyu.engine.runtime.RMethod;
 import tzuyu.engine.utils.ClassUtils;
-import tzuyu.engine.utils.Globals;
 import tzuyu.engine.utils.PrimitiveTypes;
 import tzuyu.engine.utils.StringUtils;
-import tzuyu.engine.utils.TzUtils;
 
 /**
  * @author LLT
@@ -48,14 +43,16 @@ public class RMethodJWriter extends AbstractJWriter {
 					.getReturnType());
 			varReturnedName = renamer.getRenamedVar(newVar.getStmtIdx(), newVar.getArgIdx());
 		}
-		if (rmethod.isStatic()) {
+		List<Class<?>> methodInputTypes = rmethod.getInputTypes();
+		boolean isStatic = rmethod.isStatic();
+		if (isStatic) {
 			instanceNameOrClass = rmethod.getMethod().getDeclaringClass().getSimpleName()
 					.replace('$', '.'); // TODO combine this with last if clause
 		} else {
 			instanceNameOrClass = renamer
 					.getRenamedVar(inputVars.get(0).getStmtIdx(),
 							inputVars.get(0).getArgIdx());
-			Class<?> expectedType = rmethod.getInputTypes().get(0);
+			Class<?> expectedType = methodInputTypes.get(0);
 			String className = expectedType.getSimpleName();
 			boolean mustCast = className != null
 					&& PrimitiveTypes
@@ -70,38 +67,9 @@ public class RMethodJWriter extends AbstractJWriter {
 		typeArguments = rmethod.getTypeArguments();
 		methodName = rmethod.getMethod().getName();
 		// init params
-		params = new ArrayList<String>();
-		int startIndex = (rmethod.isStatic() ? 0 : 1);
-		for (int i = startIndex; i < inputVars.size(); i++) {
-			Class<?> type = rmethod.getInputTypes().get(i);
-			Variable var = inputVars.get(i);
-			// CASTING.
-			// We cast whenever the variable and input types are not identical.
-			// We also cast if input type is a primitive, because Randoop uses
-			// boxed primitives, and need to convert back to primitive.
-			String param = StringUtils.EMPTY;
-			if (PrimitiveTypes.isPrimitive(type) && config.isLongFormat()) {
-				param = "(" + type.getSimpleName() + ")";
-			} else if (!var.getType().equals(type)) {
-				param = "(" + type.getSimpleName() + ")";
-			}
-
-			// In the short output format, statements like "int x = 3" are not
-			// added
-			// to a sequence; instead, the value (e.g. "3") is inserted directly
-			// added as arguments to method calls.
-			StatementKind stmt = TzUtils.getFirstDeclareStmt(var);
-			if (!config.isLongFormat() && stmt instanceof RAssignment) {
-				RAssignmentJWriter rAssWriter = new RAssignmentJWriter(config, renamer, (RAssignment)stmt,
-						null);
-				param += rAssWriter.getVal();
-			} else {
-				param += renamer.getRenamedVar(var.getStmtIdx(), var.getArgIdx());
-			}
-			params.add(param);
-		}
+		params = buildParamList(inputVars, methodInputTypes, isStatic);
 	}
-	
+
 	/**
 	 * cases:
 	 * 1. void
@@ -114,7 +82,7 @@ public class RMethodJWriter extends AbstractJWriter {
 	 * 					<{typeArguments}>{methodName}({varType1 var1, varType2 var2});
 	 * 
 	 */
-	public void writeCode(StringBuilder sb) {
+	public void write(StringBuilder sb) {
 		if (returnedType != null) {
 			sb.append(returnedType).append(" ")
 					.append(varReturnedName)
@@ -131,7 +99,6 @@ public class RMethodJWriter extends AbstractJWriter {
 		sb.append(StringUtils.nullToEmpty(typeArguments));
 		sb.append(methodName).append("(");
 		sb.append(StringUtils.join(params, ", "));
-		sb.append(");");
-		sb.append(Globals.lineSep);
+		sb.append(")");
 	}
 }

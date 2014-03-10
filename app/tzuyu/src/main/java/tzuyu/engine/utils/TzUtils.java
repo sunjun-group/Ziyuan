@@ -11,7 +11,6 @@ package tzuyu.engine.utils;
 import tzuyu.engine.model.Statement;
 import tzuyu.engine.model.StatementKind;
 import tzuyu.engine.model.Variable;
-import tzuyu.engine.runtime.RMethod;
 
 /**
  * @author LLT
@@ -23,7 +22,7 @@ public class TzUtils {
 	public static StatementKind getFirstDeclareStmt(Variable var) {
 		Statement stmt = var.getDeclaringStatement();
 		StatementKind stmtKind = stmt.getAction().getAction();
-		if (stmtKind instanceof RMethod && !var.getVarIndex().isValueOfLastStmt()) {
+		if (!var.getVarIndex().isValueOfLastStmt()) {
 			return getFirstDeclareStmt(var.getOwner().getInputs(var.getStmtIdx())
 					.get(var.getArgIdx()));
 		}

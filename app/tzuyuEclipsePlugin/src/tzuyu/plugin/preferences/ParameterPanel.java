@@ -33,7 +33,6 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 	private IntText classMaxDepthTx;
 	private Label stringMaxLengthLb;
 	private IntText stringMaxLengthTx;
-	private Button longFormatCb;
 	private Button objToIntCb;
 	private Label testsPerQueryLb;
 	private IntText testsPerQueryTx;
@@ -68,8 +67,6 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 				ParamField.STRING_MAX_LENGTH).positive().mandatory();
 		
 		Group group2 = SWTFactory.createGroup(contentPanel, "", colNum);
-		longFormatCb = SWTFactory.createCheckbox(group2,
-				msg.gentest_prefs_param_longFormat(), colNum);
 		objToIntCb = SWTFactory.createCheckbox(group2,
 				msg.gentest_prefs_param_objectToInteger(), colNum);
 		
@@ -88,7 +85,6 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 		arrayMaxLengthTx.setValue(tzConfig.getArrayMaxLength());
 		classMaxDepthTx.setValue(tzConfig.getClassMaxDepth());
 		stringMaxLengthTx.setValue(tzConfig.getStringMaxLength());
-		longFormatCb.setSelection(tzConfig.isLongFormat());
 		objToIntCb.setSelection(tzConfig.isObjectToInteger());
 		testsPerQueryTx.setValue(tzConfig.getTestsPerQuery());
 	}
@@ -106,7 +102,6 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 		tzConfig.setArrayMaxLength(arrayMaxLengthTx.getValue());
 		tzConfig.setClassMaxDepth(classMaxDepthTx.getValue());
 		tzConfig.setStringMaxLength(stringMaxLengthTx.getValue());
-		tzConfig.setLongFormat(longFormatCb.getSelection());
 		tzConfig.setObjectToInteger(objToIntCb.getSelection());
 		tzConfig.setTestsPerQuery(testsPerQueryTx.getValue());
 	}

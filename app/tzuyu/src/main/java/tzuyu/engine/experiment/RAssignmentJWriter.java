@@ -14,7 +14,6 @@ import tzuyu.engine.model.Variable;
 import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.runtime.RAssignment;
 import tzuyu.engine.utils.ClassUtils;
-import tzuyu.engine.utils.Globals;
 import tzuyu.engine.utils.PrimitiveTypes;
 import tzuyu.engine.utils.StringUtils;
 
@@ -79,9 +78,10 @@ public class RAssignmentJWriter extends AbstractJWriter {
 								+ " .Try to use Constructor statement instead!!");
 			}
 		}
+		System.out.println();
 	}
 	
-	public void writeCode(StringBuilder sb) {
+	public void write(StringBuilder sb) {
 		sb.append(declaredClass).append(" ").append(declaredName).append(" = ");
 		if (instanceClass != null) {
 			sb.append("new ").append(instanceClass).append("(")
@@ -90,8 +90,7 @@ public class RAssignmentJWriter extends AbstractJWriter {
 			
 		} else {
 			sb.append(val);
-		}
-		sb.append(";").append(Globals.lineSep);
+		};
 	}
 	
 	public String getVal() {
