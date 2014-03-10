@@ -56,6 +56,8 @@ public class Trace implements Serializable {
     StringBuilder sb = new StringBuilder();
     for (Action action : str) {
       sb.append(action.toString());
+      //LLT: to test
+      sb.append("\n");
     }
     return sb.toString();
   }

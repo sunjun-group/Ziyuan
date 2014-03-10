@@ -9,6 +9,7 @@
 package tzuyu.engine.utils;
 
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -72,4 +73,11 @@ public class CollectionUtils {
 		return col == null || col.isEmpty();
 	}
 
+	public static <T extends Object> T getWithoutRangeCheck(List<T> col, int i) {
+		try {
+			return col.get(i);
+		} catch (IndexOutOfBoundsException e){
+			return null;
+		}
+	}
 }

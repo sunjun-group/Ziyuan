@@ -19,9 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.core.PackageFragment;
 
-import tzuyu.engine.model.exception.TzuyuException;
 import tzuyu.engine.utils.CollectionUtils;
 import tzuyu.plugin.reporter.PluginLogger;
 
@@ -81,7 +79,8 @@ public class IResourceUtils {
 		List<IPackageFragment> result = new ArrayList<IPackageFragment>();
 		for (IPackageFragment pkg : packageFragments) {
 			try {
-				if (pkg.getKind() == IPackageFragmentRoot.K_SOURCE) {
+				if (pkg.getKind() == IPackageFragmentRoot.K_SOURCE
+						&& !CollectionUtils.isEmpty(pkg.getCompilationUnits())) {
 					result.add(pkg);
 				}
 			} catch (JavaModelException e) {

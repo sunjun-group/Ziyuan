@@ -110,7 +110,7 @@ public final class Randomness {
 	}
 	
 	public static boolean nextBoolean(int denominatorForTrueProbability) {
-		int nextInt = nextRandomInt(denominatorForTrueProbability - 1);
+		int nextInt = nextRandomInt(denominatorForTrueProbability);
 		return nextInt == 0;
 	}
 	

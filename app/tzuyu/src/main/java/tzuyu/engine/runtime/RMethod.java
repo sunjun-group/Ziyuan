@@ -37,8 +37,8 @@ public class RMethod extends StatementKind implements Serializable {
 	private int hashCodeCached = 0;
 	private boolean isVoidComputed = false;
 	private boolean isVoidCached = false;
-	private boolean isStaticComputed = false;
-	private boolean isStaticCached = false;
+	// null: have not checked yet, true/false: is static or not.  
+	private Boolean isStatic = null; 
 
 	private RMethod(TzConfiguration config) {
 		super(config);
@@ -71,11 +71,10 @@ public class RMethod extends StatementKind implements Serializable {
 
 	@Override
 	public boolean isStatic() {
-		if (!isStaticComputed) {
-			isStaticCached = Modifier.isStatic(method.getModifiers());
-			isStaticComputed = true;
+		if (isStatic == null) {
+			isStatic = Modifier.isStatic(method.getModifiers());
 		}
-		return isStaticCached;
+		return isStatic;
 	}
 
 	@Override

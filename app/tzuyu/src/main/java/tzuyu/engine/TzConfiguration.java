@@ -11,6 +11,7 @@ package tzuyu.engine;
 import static tzuyu.engine.TzConstants.*;
 import java.io.File;
 
+import tzuyu.engine.experiment.JWriterFactory.JunitConfig;
 import tzuyu.engine.main.CommandLineLogger;
 import tzuyu.engine.utils.Globals;
 import tzuyu.engine.utils.PrimitiveGenerator.PrimitiveGeneratorConfig;
@@ -19,7 +20,6 @@ import tzuyu.engine.utils.PrimitiveGenerator.PrimitiveGeneratorConfig;
  * @author LLT
  */
 public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
-	// TODO [LLT]: put default value in configuration file?
 	/**
 	 * The maximum number of elements in an array when cloning an object. The
 	 * array field in a target object may be too long to clone (results in out
@@ -240,5 +240,9 @@ public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 
 	public void setOutputPackageName(String outputPackageName) {
 		this.outputPackageName = outputPackageName;
+	}
+
+	public JunitConfig getJunitConfig() {
+		return new JunitConfig(stringMaxLength, longFormat);
 	}
 }

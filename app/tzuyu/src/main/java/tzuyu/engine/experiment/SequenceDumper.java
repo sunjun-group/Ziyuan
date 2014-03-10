@@ -3,23 +3,19 @@ package tzuyu.engine.experiment;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
-import tester.ObjectType;
 import tzuyu.engine.TzConfiguration;
-import tzuyu.engine.experiment.tcbuilder.StatementBuilder;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.Statement;
 import tzuyu.engine.model.StatementKind;
 import tzuyu.engine.model.Variable;
-import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.runtime.RArrayDeclaration;
 import tzuyu.engine.runtime.RAssignment;
 import tzuyu.engine.runtime.RConstructor;
 import tzuyu.engine.runtime.RMethod;
+import tzuyu.engine.utils.ClassUtils;
 import tzuyu.engine.utils.Globals;
 import tzuyu.engine.utils.LogicUtils;
 import tzuyu.engine.utils.PrimitiveTypes;
-import tzuyu.engine.utils.StringUtils;
-import tzuyu.engine.utils.Types;
 
 /**
  * This class prints a sequence with all variables renamed
@@ -32,14 +28,17 @@ class SequenceDumper {
 	/**
 	 * The class for renaming all output variables
 	 * */
-	public final VariableRenamer renamer;
+	private final VariableRenamer renamer;
 	private TzConfiguration config;
+	private JWriterFactory junitWriterFactory;
 
 	public SequenceDumper(Sequence sequenceToPrint, VariableRenamer renamer,
 			TzConfiguration config) {
 		this.sequenceToPrint = sequenceToPrint;
 		this.renamer = renamer;
 		this.config = config;
+		this.junitWriterFactory = new JWriterFactory(config.getJunitConfig(),
+				renamer);
 	}
 
 	/**
@@ -71,10 +70,12 @@ class SequenceDumper {
 		if (statement instanceof RAssignment) {
 			if (config.isLongFormat()) {
 				RAssignment rAssginment = (RAssignment) statement;
-				printRAssignment(rAssginment, newVar, sb);
+				junitWriterFactory.createRAssgnmentWriter(rAssginment, newVar)
+						.writeCode(sb);
 			}
 		} else if (statement instanceof RMethod) {
-			this.printRMethod((RMethod) statement, newVar, inputVars, sb);
+			junitWriterFactory.createRMethodWriter((RMethod) statement, newVar,
+					inputVars).writeCode(sb);
 		} else if (statement instanceof RConstructor) {
 			this.printRConstructor((RConstructor) statement, newVar, inputVars,
 					sb);
@@ -84,62 +85,6 @@ class SequenceDumper {
 		} else {
 			throw new Error("Wrong type of statement: " + statement);
 		}
-	}
-
-	private void printRMethod(RMethod rmethod, Variable newVar,
-			List<Variable> inputVars, StringBuilder sb) {
-
-		if (!rmethod.isVoid()) {
-			sb.append(getSimpleCompilableName(rmethod.getMethod()
-					.getReturnType()));
-			String cast = "";
-			sb.append(" "
-					+ renamer.getRenamedVar(newVar.getStmtIdx(), newVar.getArgIdx())
-					+ " = " + cast);
-		}
-
-		String receiverString = rmethod.isStatic() ? null : renamer
-				.getRenamedVar(inputVars.get(0).getStmtIdx(),
-						inputVars.get(0).getArgIdx());
-		appendReceiverOrClassForStatics(rmethod, receiverString, sb);
-
-		sb.append(".");
-		sb.append(rmethod.getTypeArguments());
-		sb.append(rmethod.getMethod().getName() + "(");
-
-		int startIndex = (rmethod.isStatic() ? 0 : 1);
-		for (int i = startIndex; i < inputVars.size(); i++) {
-			if (i > startIndex) {
-				sb.append(", ");
-			}
-			Class<?> type = rmethod.getInputTypes().get(i);
-			Variable var = inputVars.get(i);
-			// CASTING.
-			// We cast whenever the variable and input types are not identical.
-			// We also cast if input type is a primitive, because Randoop uses
-			// boxed primitives, and need to convert back to primitive.
-			if (PrimitiveTypes.isPrimitive(type) && config.isLongFormat()) {
-				sb.append("(" + type.getSimpleName() + ")");
-			} else if (!var.getType().equals(type)) {
-				sb.append("(" + type.getSimpleName() + ")");
-			}
-
-			// In the short output format, statements like "int x = 3" are not
-			// added
-			// to a sequence; instead, the value (e.g. "3") is inserted directly
-			// added as arguments to method calls.
-			Statement statementCreatingVar = var.getDeclaringStatement();
-			StatementKind stmt = statementCreatingVar.getAction().getAction();
-			if (!config.isLongFormat() && stmt instanceof RAssignment) {
-				sb.append(PrimitiveTypes.toCodeString(
-						((RAssignment) stmt).getValue(),
-						config.getStringMaxLength()));
-			} else {
-				sb.append(renamer.getRenamedVar(var.getStmtIdx(), var.getArgIdx()));
-			}
-		}
-
-		sb.append(");" + Globals.lineSep);
 	}
 
 	private void printRConstructor(RConstructor ctor, Variable newVar,
@@ -160,7 +105,7 @@ class SequenceDumper {
 		// "x.new Foo(y,z)".
 
 		// TODO the last replace is ugly. There should be a method that does it.
-		String declaringStr = getSimpleCompilableName(declaringClass);
+		String declaringStr = ClassUtils.getSimpleCompilableName(declaringClass);
 		sb.append(declaringStr
 				+ " "
 				+ renamer.getRenamedVar(newVar.getStmtIdx(), newVar.getArgIdx())
@@ -199,64 +144,6 @@ class SequenceDumper {
 		sb.append(Globals.lineSep);
 	}
 
-	private void printRAssignment(RAssignment statement, Variable newVar,
-			StringBuilder sb) {
-		Class<?> type = statement.getReturnType();
-		String declaredClass = type.getSimpleName();
-		String declaredName = renamer.getRenamedVar(newVar.getStmtIdx(),
-				newVar.getArgIdx());
-		String instanceClass = null;
-		String[] vals = null;
-		if (statement.getValue() != null) {
-			switch (ObjectType.ofClass(type)) {
-			/** @see java.lang.Class#isPrimitiveType() **/
-			case PRIMITIVE_TYPE: // int, double, char,...
-				declaredClass = PrimitiveTypes.boxedType(type).getSimpleName();
-				instanceClass = declaredClass;
-				vals = new String[] { PrimitiveTypes.toCodeString(
-						statement.getValue(), config.getStringMaxLength()) };
-				break;
-			case STRING_OR_PRIMITIVE_OBJECT: // String, Integer, Double,...
-				declaredClass = getSimpleCompilableName(type);
-				vals = new String[] { PrimitiveTypes.toCodeString(
-						statement.getValue(), config.getStringMaxLength()) };
-				break;
-			case ENUM:
-				declaredClass = type.getSimpleName();
-				if (statement.getValue() != null) {
-					vals = new String[] { StringUtils.enumToString(declaredClass, 
-							statement.getValue()) };
-				}
-				break;
-			case GENERIC_ENUM: // Enum<?>
-				if (statement.getValue() == null) {
-					declaredClass = Enum.class.getSimpleName();
-				} else {
-					declaredClass = statement.getValue().getClass()
-							.getSimpleName();
-					vals = new String[] { StringUtils.enumToString(declaredClass, 
-							statement.getValue()) };
-				}
-				break;
-			case GENERIC_CLASS: // Class<?>
-				declaredClass = Class.class.getSimpleName();
-				if (statement.getValue() != null) {
-					vals = new String[] { StringUtils.dotJoin(
-							((Class<?>) statement.getValue()).getSimpleName(),
-							"class") };
-				}
-				break;
-			default:
-				throw new TzRuntimeException(
-						"Can not build Assginment statement for type: "
-								+ type.getName()
-								+ " .Try to use Constructor statement instead!!");
-			}
-		}
-		StatementBuilder.appendRAssignmentStmt(sb, declaredClass, declaredName,
-				instanceClass, vals);
-		sb.append(Globals.lineSep);
-	}
 
 	private void printArrayDeclaration(RArrayDeclaration statement,
 			Variable newVar, List<Variable> inputVars, StringBuilder sb) {
@@ -290,49 +177,5 @@ class SequenceDumper {
 		}
 		sb.append("};");
 		sb.append(Globals.lineSep);
-	}
-
-	private static String getSimpleCompilableName(Class<?> cls) {
-		String retval = cls.getSimpleName();
-
-		// If it's an array, it starts with "[".
-		if (retval.charAt(0) == '[') {
-			// Class.getName() returns a a string that is almost in JVML
-			// format, except that it slashes are periods. So before calling
-			// classnameFromJvm, we replace the period with slashes to
-			// make the string true JVML.
-			retval = Types.getTypeName(retval.replace('.', '/'));
-		}
-
-		// If inner classes are involved, Class.getName() will return
-		// a string with "$" characters. To make it compilable, must replace
-		// with
-		// dots.
-		retval = retval.replace('$', '.');
-
-		return retval;
-	}
-
-	private static void appendReceiverOrClassForStatics(RMethod rmethod,
-			String receiverString, StringBuilder b) {
-		if (rmethod.isStatic()) {
-			String s2 = rmethod.getMethod().getDeclaringClass().getSimpleName()
-					.replace('$', '.'); // TODO combine this with last if clause
-			b.append(s2);
-		} else {
-			Class<?> expectedType = rmethod.getInputTypes().get(0);
-			String className = expectedType.getSimpleName();
-			boolean mustCast = className != null
-					&& PrimitiveTypes
-							.isBoxedPrimitiveTypeOrString(expectedType)
-					&& !expectedType.equals(String.class);
-			if (mustCast) {
-				// this is a little paranoid but we need to cast primitives in
-				// order to get them boxed.
-				b.append("((" + className + ")" + receiverString + ")");
-			} else {
-				b.append(receiverString);
-			}
-		}
 	}
 }

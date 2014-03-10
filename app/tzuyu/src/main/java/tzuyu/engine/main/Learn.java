@@ -24,18 +24,6 @@ public class Learn implements CommandHandler {
 				// TODO Auto-generated method stub
 				return null;
 			}
-
-			@Override
-			public Class<?> getRandomClass() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public Class<?> getRandomEnum() {
-				// TODO Auto-generated method stub
-				return null;
-			}
 		});
 		tzuyuEngine.run();
 		

@@ -85,7 +85,6 @@ public class TestCaseNode {
 		// // LLT : 1 = Variable.VALUE_OF_LAST_STATEMENT; ??
 		this.receiver = new Variable(newSeq, newSeq.size() - 1, -1);
 	}
-
 }
 
 class TestCaseNodeEpsilon extends TestCaseNode {

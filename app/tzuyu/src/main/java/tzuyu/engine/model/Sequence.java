@@ -13,8 +13,9 @@ import tzuyu.engine.utils.Log;
 import tzuyu.engine.utils.OneMoreElementList;
 import tzuyu.engine.utils.Randomness;
 import tzuyu.engine.utils.ReflectionUtils;
-import tzuyu.engine.utils.SimpleList;
 import tzuyu.engine.utils.ReflectionUtils.Match;
+import tzuyu.engine.utils.SimpleList;
+import tzuyu.engine.utils.StringUtils;
 
 public class Sequence implements Serializable {
 
@@ -414,17 +415,12 @@ public class Sequence implements Serializable {
 	 * at index <code>reverseQueryIndex</code> in reverse order. The variable
 	 * sequence is an independent sequence that generated the parameter value in
 	 * the statement at index <code>reverseStmtIndex</code> in reverse order.
-	 * 
-	 * @param reverseQueryIndex
-	 * @param varIndex
-	 * @return
 	 */
 	public Variable getVariableSequence(int reverseQueryIndex, int varIndex) {
 		int stmtIndex = this.size() - 1;
 
 		for (int index = 0; index < reverseQueryIndex; index++) {
 			Statement statement = statements.get(stmtIndex);
-			// LLT: statement inputVars can be empty!!
 			RelativeNegativeIndex relativeIndex = statement.getInputVars().get(
 					0);
 			stmtIndex = stmtIndex + relativeIndex.stmtIdx;
@@ -480,6 +476,8 @@ public class Sequence implements Serializable {
 			printStatement(oneStatement, i);
 
 			b.append(oneStatement);
+			//LLT: for debugging
+			b.append("\n");
 		}
 		return b.toString(); // + "/*" + this.toString() + "*/";
 	}
@@ -489,6 +487,20 @@ public class Sequence implements Serializable {
 		// Example: { "var2", "(int)3" }
 		statements.get(index).appendCode(getVariable(index), getInputs(index),
 				b);
+	}
+	
+	//LLT: for debugging
+	@Override
+	public String toString() {
+		if (statements == null || statements.size() == 0) {
+			return StringUtils.EMPTY;
+		}
+		List<Statement> stmts = statements.toJDKList();
+		StringBuilder sb = new StringBuilder();
+		for (Statement stmt : stmts) {
+			sb.append(stmt.toString()).append("\n");
+		}
+		return sb.toString();
 	}
 
 	public static boolean canUseShortFormat(Statement stmt) {

@@ -135,7 +135,7 @@ public class TestCaseStore {
     if (unknownTraces.containsKey(trace)) {
       List<TestCase> cases = unknownTraces.get(trace);
       for (TestCase tc : cases) {
-        if (tc.isUnkonw()){
+        if (tc.isUnknown()){
           failedTraces.add(tc);
         }
       }

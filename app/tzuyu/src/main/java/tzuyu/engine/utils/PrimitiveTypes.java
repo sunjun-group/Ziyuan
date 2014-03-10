@@ -5,9 +5,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import tzuyu.engine.model.exception.ExceptionType;
-import tzuyu.engine.model.exception.TzRuntimeException;
-
 public final class PrimitiveTypes {
 	private PrimitiveTypes() {
 		throw new IllegalStateException("no instances");
@@ -160,21 +157,15 @@ public final class PrimitiveTypes {
 	 *            the value to create a String representation for. The value's
 	 *            type must be a primitive type, a String, or null.
 	 * @param stringMaxLength 
-	 * LLT: Why we need to do this?
-	 * if we have parameter: int i = 2;
-	 * it turns into: Integer i = new Integer(2);
-	 * why is that?
 	 */
 	public static String toCodeString(Object value, int stringMaxLength) {
 		if (value == null) {
 			return "null";
 		}
 		Class<?> valueClass = primitiveType(value.getClass());
-		if (valueClass == null) {
-			throw new TzRuntimeException(ExceptionType.IllegalArgument, 
-					"Expected: primitive type, received: " + value.getClass());
-		}
-		assert valueClass != null : value + " " + value.getClass();
+		
+		Assert.assertNotNull(value,
+				"Expected: primitive type, received: " + value.getClass());
 
 		if (String.class.equals(valueClass)) {
 			String escaped = StringEscapeUtils.escapeJava(value.toString());

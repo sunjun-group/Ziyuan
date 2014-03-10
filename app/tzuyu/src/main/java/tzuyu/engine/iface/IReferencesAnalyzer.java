@@ -17,9 +17,5 @@ public interface IReferencesAnalyzer {
 	/**
 	 * return an implementation for the interface. will be picked up randomly.
 	 */
-	public Class<?> getRandomImplClzz(Class<?> iface);
-
-	public Class<?> getRandomClass();
-
-	public Class<?> getRandomEnum();
+	public Class<?> getRandomImplClzz(Class<?> clazz);
 }

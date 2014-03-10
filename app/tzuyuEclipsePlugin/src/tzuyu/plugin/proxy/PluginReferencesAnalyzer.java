@@ -50,6 +50,7 @@ import tzuyu.plugin.reporter.PluginLogger;
 public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 	// add this into the configuration
 	private int numOfRandomClzzToCache = 10;
+	private int MAX_TO_TRY = 3;
 	private IJavaProject project;
 	private Map<Class<?>, List<IType>> itypeCache;
 
@@ -57,27 +58,47 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		itypeCache = new HashMap<Class<?>, List<IType>>();
 		this.project = project;
 	}
-
+	
 	@Override
+	public Class<?> getRandomImplClzz(Class<?> clazz) {
+		Class<?> result = null;
+		for (int i = 0; i < MAX_TO_TRY && result == null; i++) {
+			if (clazz == Class.class || clazz == Object.class) {
+				result = getRandomClass();
+			} else if (clazz == Enum.class) {
+				result = getRandomEnum();
+			} else {
+				result = getRandomImplForSpecificType(clazz); 
+			}
+		}
+		return result;
+		
+	}
+
 	public Class<?> getRandomClass() {
-		IType type;
+		Class<?> result = null;
 		List<IType> itypes = itypeCache.get(Class.class);
 		if (CollectionUtils.isEmpty(itypes)) {
 			itypes = new ArrayList<IType>();
-		}
-		if (itypes.size() < numOfRandomClzzToCache) {
-			type = getRandomClassFromProject(project);
-		} else {
-			type = Randomness.randomMember(itypes);
+			itypeCache.put(Class.class, itypes);
 		}
 		try {
-			return toClass(type);
-		} catch (TzuyuException e) {
-			return null;
+			IType type;
+			if (itypes.size() < numOfRandomClzzToCache) {
+				type = getRandomClassFromProject(project);
+				if (type != null && !type.isInterface()) {
+					itypes.add(type);
+				}
+			} else {
+				type = Randomness.randomMember(itypes);
+			}
+			result = toClass(type);
+		} catch (Exception e) {
+			// do nothing
 		}
+		return result;
 	}
 
-	@Override
 	public Class<?> getRandomEnum() {
 		List<IType> enums = itypeCache.get(Enum.class);
 		if (CollectionUtils.isEmpty(enums)) {
@@ -142,8 +163,7 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		}
 	}
 
-	@Override
-	public Class<?> getRandomImplClzz(Class<?> clazz) {
+	private Class<?> getRandomImplForSpecificType(Class<?> clazz) {
 		try {
 			if (!clazz.isInterface() && clazz != Enum.class) {
 				return clazz;
@@ -199,6 +219,9 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 				return null;
 			}
 			IType type = CollectionUtils.getFirstElement(cu.getTypes());
+			if (type == null) {
+				System.out.println("selected type is null");
+			}
 			return type;
 		} catch (JavaModelException e) {
 			PluginLogger.logEx(e);

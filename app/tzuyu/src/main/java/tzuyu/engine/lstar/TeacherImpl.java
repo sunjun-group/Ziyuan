@@ -189,9 +189,6 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 		} else {
 			// At this point we need to notify the learner
 			// to refine the alphabet and restart to learn.
-			// needRestart = true;
-			// learner.stop();
-			// return Trace.epsilon;
 			throw new LStarException(Type.RestartLearning, newSigma);
 		}
 	}

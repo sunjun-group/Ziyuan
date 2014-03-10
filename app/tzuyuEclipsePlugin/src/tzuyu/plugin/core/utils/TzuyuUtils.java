@@ -8,11 +8,17 @@
 
 package tzuyu.plugin.core.utils;
 
+import tzuyu.engine.runtime.RAssignment;
+
 /**
  * @author LLT
  *
  */
 public class TzuyuUtils {
 	private TzuyuUtils() {}
+	
+	public static RAssignment getAssociateRaStmt() {
+		return null;
+	}
 	
 }

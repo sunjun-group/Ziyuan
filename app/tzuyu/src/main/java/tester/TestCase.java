@@ -19,7 +19,6 @@ import tzuyu.engine.model.Variable;
  * concrete parameters but without the instrumented states. In order to get the
  * instrumented states, one have to execute the test case with an instance of
  * the {@link IInstrumentor}.
- * // ONLY FORMATTED, NO CHANGED.
  * @author Spencer Xiao
  * 
  */
@@ -58,7 +57,7 @@ public class TestCase {
 		return lastStatement.getResult() == TVAnswer.Accepting;
 	}
 
-	public boolean isUnkonw() {
+	public boolean isUnknown() {
 		return lastStatement.getResult() == TVAnswer.Unknown;
 	}
 
@@ -96,9 +95,7 @@ public class TestCase {
 			if (receiver == null) {
 				// set the initial receiver.
 				newNode.setReceiver();
-			} else {
-				// Do nothing
-			}
+			} 
 		} else {
 			newNode.updateReceiver();
 		}

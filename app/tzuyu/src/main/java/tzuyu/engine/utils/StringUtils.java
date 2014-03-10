@@ -59,6 +59,13 @@ public class StringUtils {
 		return val.toString();
 	}
 	
+	public static String nullToEmpty(String val) {
+		if (val == null) {
+			return EMPTY;
+		}
+		return val;
+	}
+	
 	public static boolean isStartWithUppercaseLetter(String text) {
 		if (org.apache.commons.lang.StringUtils.isEmpty(text)) {
 			return false;

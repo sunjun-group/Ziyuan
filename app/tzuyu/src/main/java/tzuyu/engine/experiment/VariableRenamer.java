@@ -6,6 +6,7 @@ import java.util.Map;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.Statement;
 import tzuyu.engine.model.Variable;
+import tzuyu.engine.utils.Assert;
 
 
 /**
@@ -24,36 +25,37 @@ class VariableRenamer {
    * */
   public final Map<Integer, String> name_mapping;
   
-  public VariableRenamer(Sequence sequence) {
-    assert sequence != null : "The given sequence to rename can not be null";
-    this.sequence = sequence;
-    this.name_mapping = this.renameVarsInSequence();
-  }
+	public VariableRenamer(Sequence sequence) {
+		assert sequence != null : "The given sequence to rename can not be null";
+		this.sequence = sequence;
+		this.name_mapping = this.renameVarsInSequence();
+	}
   
   /**
    * Gets the name for the index-th variable (output by the i-th statement)
    * */
-  public String getRenamedVar(int stmtIdx, int varIdx) {
-    if (varIdx == -1) {
-      //the return value of the statement in stmtIdx
-      String name = this.name_mapping.get(stmtIdx);
-      if (name == null) {
-        assert sequence.getStatement(stmtIdx).getOutputType().equals(void.class) :
-            "The index: " + stmtIdx + "-th output should be void.";
-        throw new Error("Error in TzuYu, please report it.");
-      }
-      return name;
-    } else {
-      // Other out reference parameters (including the receiver object)
-      // other than the return value
-      Variable var = this.sequence.getInputs(stmtIdx).get(varIdx);
-      String name = getRenamedVar(var.getStmtIdx(), var.getArgIdx());
-      if (name == null) {
-        throw new Error ("Error in TzuYu, please report it.");
-      }
-      return name;
-    }
-  }
+	public String getRenamedVar(int stmtIdx, int varIdx) {
+		if (varIdx == -1) {
+			// the return value of the statement in stmtIdx
+			String name = this.name_mapping.get(stmtIdx);
+			if (name == null) {
+				Assert.assertTrue(sequence.getStatement(stmtIdx)
+						.getOutputType().equals(void.class), "The index: "
+						+ stmtIdx + "-th output should be void.");
+				throw new Error("Error in TzuYu, please report it.");
+			}
+			return name;
+		} else {
+			// Other out reference parameters (including the receiver object)
+			// other than the return value
+			Variable var = this.sequence.getInputs(stmtIdx).get(varIdx);
+			String name = getRenamedVar(var.getStmtIdx(), var.getArgIdx());
+			if (name == null) {
+				throw new Error("Error in TzuYu, please report it.");
+			}
+			return name;
+		}
+	}
   
   /**
    * The map storing the occurrence number of the same class. The key is the 

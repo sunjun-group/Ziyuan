@@ -62,7 +62,7 @@ public class ParameterSelector implements IParameterSelector {
 			// We may use nextRandomBool() method which return true with
 			// probability
 			// of 1/2 which is to high to run some normal cases, thus we use
-			// 1/4. (LLT: 1/4 seems still to high rate, try 1/8 instead.
+			// 1/4. (LLT: 1/4 seems still too high rate, try 1/8 instead.
 			return createAssignmentVariable(inputType, null);
 		}
 		
@@ -70,12 +70,15 @@ public class ParameterSelector implements IParameterSelector {
 		case ARRAY:
 			return selectVariableForArray(inputType);
 		case GENERIC_OBJ:
-			inputType = refAnalyzer.getRandomClass();
-			// no break, after select a specific class for object
+			inputType = refAnalyzer.getRandomImplClzz(inputType);
+			// NO BREAK, after select a specific class for object
 			// continue to do selectNewVariableForObjectWithTry(inputType)
+			if (inputType == null) {
+				inputType = Integer.class;
+			}
 		case OTHER_OBJECT:
 			Variable var = selectNewVariableForObjectWithTry(inputType);
-			// already try, but no successful, just put it null
+			// already tried, but no successful, just assign it null
 			if (var != null) {
 				return var;
 			}
@@ -87,10 +90,10 @@ public class ParameterSelector implements IParameterSelector {
 			inputVal = PrimitiveGenerator.chooseValue(inputType, config);
 			break;
 		case GENERIC_CLASS:
-			inputVal = refAnalyzer.getRandomClass();
+			inputVal = refAnalyzer.getRandomImplClzz(inputType);
 			break;
 		case GENERIC_ENUM:
-			Class<?> enumType = refAnalyzer.getRandomEnum();
+			Class<?> enumType = refAnalyzer.getRandomImplClzz(inputType);
 			if (enumType != null) {
 				inputVal = PrimitiveGenerator.chooseValue(enumType, config);
 			}

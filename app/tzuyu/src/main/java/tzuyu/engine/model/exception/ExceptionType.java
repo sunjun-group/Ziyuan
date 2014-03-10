@@ -13,6 +13,7 @@ package tzuyu.engine.model.exception;
  *
  */
 public enum ExceptionType {
+	AssertException,
 	IllegalArgument,
 	Undefined
 }

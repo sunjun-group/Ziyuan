@@ -67,11 +67,10 @@ public class RandomTCGStrategy implements ITCGStrategy {
 		// Get the main object
 
 		TestCase current = TestCase.epsilon;
-
+		Variable receiver = null;
 		int size = trace.size();
 		for (int index = 0; index < size; index++) {
-			// LLT: receiver == null if this is epsilon testCase.
-			Variable receiver = current.getReceiver();
+			receiver = current.getReceiver();
 			List<TestCase> goodTraces = new ArrayList<TestCase>();
 
 			TzuYuAction stmt = trace.getStatement(index);
@@ -81,6 +80,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 			boolean noArgument = stmt.getAction().hasNoArguments();
 			// ensure the statement will be executed once
 			boolean hasArg = true;
+			// test sub queries.
 			for (int count = 0; count < config.getTestsPerQuery() && hasArg; count++) {
 				hasArg = !noArgument;
 				List<Variable> rawParams = generateParamsForStatement(receiver,
@@ -127,7 +127,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 				}
 
 				Statement statement = new Statement(stmt, inputs);
-
+				TestCase newCase;
 				if (result.isPassing()) {
 					List<Object> runtime = result.getRuntime();
 					boolean isNormal = RuntimeExecutor.executeStatement(stmt,
@@ -137,27 +137,24 @@ public class RandomTCGStrategy implements ITCGStrategy {
 								&& receiver != null) {
 							TestCaseNode node = new TestCaseNode(
 									TVAnswer.Rejecting, statement, newSeq);
-							TestCase newCase = current.extend(node);
-							store.addTestCase(newCase);
+							newCase = current.extend(node);
 						} else {
 							TestCaseNode node = new TestCaseNode(
 									TVAnswer.Accepting, statement, newSeq);
-							TestCase newCase = current.extend(node);
+							newCase = current.extend(node);
 							goodTraces.add(newCase);
-							store.addTestCase(newCase);
 						}
 					} else {
 						TestCaseNode node = new TestCaseNode(
 								TVAnswer.Rejecting, statement, newSeq);
-						TestCase newCase = current.extend(node);
-						store.addTestCase(newCase);
+						newCase = current.extend(node);
 					}
 				} else {
 					TestCaseNode node = new TestCaseNode(TVAnswer.Unknown,
 							statement, newSeq);
-					TestCase newCase = current.extend(node);
-					store.addTestCase(newCase);
+					newCase = current.extend(node);
 				}
+				store.addTestCase(newCase);
 			}
 
 			if (goodTraces.size() > 0) {
@@ -198,6 +195,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 	 * @param trace
 	 * @return
 	 */
+	@Deprecated
 	public List<TestCase> generate2(Query trace) {
 
 		TestCase prefix = findAGoodMaximumPrefix(trace);
@@ -411,6 +409,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 		return parameters;
 	}
 
+	@Deprecated
 	private List<Variable> generateParamsForStatement2(Variable receiver,
 			TzuYuAction stmt) {
 
