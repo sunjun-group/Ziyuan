@@ -6,12 +6,13 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.experiment;
+package tzuyu.engine.junit;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import tzuyu.engine.experiment.JWriterFactory.JunitConfig;
+import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.junit.printer.JOutputPrinter;
 import tzuyu.engine.model.Variable;
 import tzuyu.engine.runtime.RArrayDeclaration;
 import tzuyu.engine.utils.StringUtils;
@@ -20,12 +21,12 @@ import tzuyu.engine.utils.StringUtils;
  * @author LLT
  * 
  */
-public class RArrayDeclarationJWriter extends AbstractJWriter {
+public class RArrayDeclarationJWriter extends AbstractStmtJWriter {
 	private String declaredClass;
 	private String declaredName;
 	private List<String> params;
 
-	public RArrayDeclarationJWriter(JunitConfig config,
+	public RArrayDeclarationJWriter(TzConfiguration config,
 			VariableRenamer renamer, RArrayDeclaration rArrayDeclaration,
 			Variable newVar, List<Variable> inputVars) {
 		super(config, renamer);
@@ -48,7 +49,7 @@ public class RArrayDeclarationJWriter extends AbstractJWriter {
 	}
 
 	@Override
-	public void write(StringBuilder sb) {
+	public void write(JOutputPrinter sb) {
 		sb.append(declaredClass).append("[] ").append(declaredName).append(" = ")
 			.append(newClazzToken).append(declaredClass).append("[]{ ");
 		sb.append(StringUtils.join(params, ", "));

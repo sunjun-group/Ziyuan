@@ -6,12 +6,13 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.experiment;
+package tzuyu.engine.junit;
 
 import java.lang.reflect.Modifier;
 import java.util.List;
 
-import tzuyu.engine.experiment.JWriterFactory.JunitConfig;
+import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.junit.printer.JOutputPrinter;
 import tzuyu.engine.model.Variable;
 import tzuyu.engine.runtime.RConstructor;
 import tzuyu.engine.utils.Assert;
@@ -23,13 +24,13 @@ import tzuyu.engine.utils.StringUtils;
  * @author LLT
  * 
  */
-public class RConstructJWriter extends AbstractJWriter {
+public class RConstructJWriter extends AbstractStmtJWriter {
 	private String declaredClass;
 	private String declaredName;
 	private String instanceClass;
 	private List<String> params;
 	
-	public RConstructJWriter(JunitConfig config, VariableRenamer renamer,
+	public RConstructJWriter(TzConfiguration config, VariableRenamer renamer,
 			RConstructor ctor, Variable newVar, List<Variable> inputVars) {
 		super(config, renamer);
 		init(ctor, newVar, inputVars);
@@ -64,7 +65,7 @@ public class RConstructJWriter extends AbstractJWriter {
 	}
 
 	@Override
-	public void write(StringBuilder sb) {
+	public void write(JOutputPrinter sb) {
 		sb.append(declaredClass).append(" ").append(declaredName).append(" = ");
 		sb.append(newClazzToken).append(instanceClass).append("(");
 		sb.append(StringUtils.join(params, ", "));

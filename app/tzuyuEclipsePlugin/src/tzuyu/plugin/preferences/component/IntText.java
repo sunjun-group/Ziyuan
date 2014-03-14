@@ -15,6 +15,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
+import tzuyu.engine.utils.ObjectUtils;
 import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.core.constants.Messages;
@@ -36,12 +37,12 @@ public class IntText {
 		this.fieldEnumOrFieldName = fieldEnumOrFieldName;
 	}
 	
-	public IntText mandatory() {
+	public IntText setMandatory() {
 		this.mandatory = true;
 		return this;
 	}
 	
-	public IntText positive() {
+	public IntText setPositive() {
 		this.positive = true;
 		return this;
 	}
@@ -51,11 +52,13 @@ public class IntText {
 		try {
 			if (org.apache.commons.lang.StringUtils.isBlank(text.getText())
 					&& mandatory) {
-				return IStatusUtils.error(msg.intText_error_mandatory(fieldEnumOrFieldName));
+				return IStatusUtils.error(msg
+						.intText_error_mandatory(fieldEnumOrFieldName));
 			}
 			int val = Integer.parseInt(text.getText());
-			if (positive && val < 0) {
-				return IStatusUtils.error(msg.intText_error_not_positive(fieldEnumOrFieldName));
+			if (positive && !ObjectUtils.isPositive(val)) {
+				return IStatusUtils.error(msg
+						.intText_error_not_positive(fieldEnumOrFieldName));
 			}
 		} catch (NumberFormatException e) {
 			return IStatusUtils.error(msg
@@ -76,4 +79,7 @@ public class IntText {
 		text.setText(StringUtils.toStringNullToEmpty(value));
 	}
 
+	public Text asWidget() {
+		return text;
+	}
 }

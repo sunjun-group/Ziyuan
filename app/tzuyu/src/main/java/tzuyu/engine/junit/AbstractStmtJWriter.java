@@ -6,12 +6,13 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.experiment;
+package tzuyu.engine.junit;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import tzuyu.engine.experiment.JWriterFactory.JunitConfig;
+import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.junit.printer.JOutputPrinter;
 import tzuyu.engine.model.StatementKind;
 import tzuyu.engine.model.Variable;
 import tzuyu.engine.runtime.RAssignment;
@@ -24,8 +25,8 @@ import tzuyu.engine.utils.TzUtils;
  * @author LLT
  *
  */
-public abstract class AbstractJWriter {
-	protected JunitConfig config;
+public abstract class AbstractStmtJWriter {
+	protected TzConfiguration config;
 	protected VariableRenamer renamer;
 	/* newClazz will be modified for other cases like: 
 	 * b = A.new B();
@@ -33,17 +34,17 @@ public abstract class AbstractJWriter {
 	 */
 	protected String newClazzToken = "new ";  
 
-	public AbstractJWriter(JunitConfig config, VariableRenamer renamer) {
+	public AbstractStmtJWriter(TzConfiguration config, VariableRenamer renamer) {
 		this.config = config;
 		this.renamer = renamer;
 	}
 	
-	public void writeCode(StringBuilder sb) {
-		write(sb);
-		sb.append(";").append(Globals.lineSep);
+	public void writeCode(JOutputPrinter content) {
+		write(content);
+		content.append(";").append(Globals.lineSep);
 	}
 	
-	public abstract void write(StringBuilder sb);
+	public abstract void write(JOutputPrinter content);
 	
 
 	/**
@@ -59,8 +60,8 @@ public abstract class AbstractJWriter {
 		StatementKind stmt = TzUtils.getFirstDeclareStmt(var);
 		String paramStr;
 		if (!config.isLongFormat() && stmt instanceof RAssignment) {
-			RAssignmentJWriter rAssWriter = new RAssignmentJWriter(config, renamer, (RAssignment)stmt,
-					null);
+			RAssignmentJWriter rAssWriter = new RAssignmentJWriter(config,
+					renamer, (RAssignment) stmt, null);
 			paramStr = rAssWriter.getVal();
 		} else {
 			paramStr = renamer.getRenamedVar(var.getStmtIdx(), var.getArgIdx());

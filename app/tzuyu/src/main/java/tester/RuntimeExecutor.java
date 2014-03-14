@@ -105,9 +105,11 @@ public final class RuntimeExecutor {
 		// we only need to execute one sequence and then we can get
 		// all the runtime values.
 		SequenceRuntime runtime = executeSequence(inputVars.get(0).owner);
+		
 		if (!runtime.isSuccessful()) {
 			return new ExecutionResult(false, inputVals);
 		}
+		
 		// Then get all the value for parameters
 		for (Variable inputVar : inputVars) {
 			Object value = runtime.getValue(inputVar);

@@ -75,8 +75,7 @@ public class PackageEditor extends StringButtonFieldEditor {
 
 		if (dialog.open() == Window.OK) {
 			selectedPackage = (IPackageFragment) dialog.getFirstResult();
-			return selectedPackage.getPath().makeRelativeTo(root.getPath())
-					.toString();
+			return selectedPackage.getElementName();
 		}
 		return null;
 	}
@@ -106,12 +105,7 @@ public class PackageEditor extends StringButtonFieldEditor {
 			setStringValue(null);
 			return;
 		}
-		if (root != null) {
-			setStringValue(IProjectUtils.toRelativePath(selectedPackage, root));
-		} else {
-			setStringValue(selectedPackage.getElementName());
-		}
-		
+		setStringValue(selectedPackage.getElementName());
 	}
 
 	public void setEventManager(AppEventManager eventManager) {

@@ -85,8 +85,16 @@ public final class Messages {
 		return getMessage("gentest_prefs_output_className");
 	}
 
+	public String gentest_prefs_param_group_learning_config() {
+		return getMessage("gentest_prefs_param_group_learning_config");
+	}
+
 	public String packageEditor_selection_popup_desc() {
 		return getMessage("packageEditor_selection_popup_desc");
+	}
+
+	public String gentest_prefs_param_primitiveTitle() {
+		return getMessage("gentest_prefs_param_primitiveTitle");
 	}
 
 	public String gentest_prefs_tab_param() {
@@ -97,12 +105,12 @@ public final class Messages {
 		return getMessage("gentest_prefs_tab_output");
 	}
 
-	public String gentest_prefs_param_inheritMethod() {
-		return getMessage("gentest_prefs_param_inheritMethod");
-	}
-
 	public String packageEditor_selection_popup_title() {
 		return getMessage("packageEditor_selection_popup_title");
+	}
+
+	public String gentest_prefs_param_inheritMethod() {
+		return getMessage("gentest_prefs_param_inheritMethod");
 	}
 
 	public String genTestWizard_title() {
@@ -125,8 +133,8 @@ public final class Messages {
 		return getMessage("gentest_prefs_output_maxMethodsPerClass");
 	}
 
-	public String gentest_prefs_param_longFormat() {
-		return getMessage("gentest_prefs_param_longFormat");
+	public String gentest_prefs_param_group_parameter_config() {
+		return getMessage("gentest_prefs_param_group_parameter_config");
 	}
 
 	public String gentest_prefs_output_maxLinesPerClass() {
@@ -177,6 +185,10 @@ public final class Messages {
 		return getMessage("gentest_prefs_param_prettyPrint");
 	}
 
+	public String gentest_prefs_output_testClassFormat() {
+		return getMessage("gentest_prefs_output_testClassFormat");
+	}
+
 	public String gentest_prefs_param_testPerQuery() {
 		return getMessage("gentest_prefs_param_testPerQuery");
 	}
@@ -205,6 +217,10 @@ public final class Messages {
 		return getMessage("gentest_prefs_output_warning_className_lowercase");
 	}
 
+	public String gentest_prefs_output_paramDeclarationFormat() {
+		return getMessage("gentest_prefs_output_paramDeclarationFormat");
+	}
+
 	public String gentest_prefs_param_debugCheck() {
 		return getMessage("gentest_prefs_param_debugCheck");
 	}
@@ -215,6 +231,10 @@ public final class Messages {
 
 	public String gentest_prefs_input() {
 		return getMessage("gentest_prefs_input");
+	}
+
+	public String gentest_prefs_param_description() {
+		return getMessage("gentest_prefs_param_description");
 	}
 
 	public String gentest_prefs_output_package() {

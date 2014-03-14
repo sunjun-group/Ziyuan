@@ -1,20 +1,14 @@
 package tzuyu.engine.runtime;
 
-import tzuyu.engine.iface.TzPrintStream;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.iface.TzPrintStream;
 import tzuyu.engine.model.ExecutionOutcome;
-import tzuyu.engine.model.Sequence;
-import tzuyu.engine.model.Statement;
 import tzuyu.engine.model.StatementKind;
-import tzuyu.engine.model.Variable;
-import tzuyu.engine.utils.Globals;
-import tzuyu.engine.utils.PrimitiveTypes;
 
 public class RArrayDeclaration extends StatementKind implements Serializable {
 
@@ -28,9 +22,7 @@ public class RArrayDeclaration extends StatementKind implements Serializable {
 	private int hashCodeCached;
 	private boolean hashCodeComputed = false;
 
-	public RArrayDeclaration(Class<?> componentType, int size,
-			TzConfiguration config) {
-		super(config);
+	public RArrayDeclaration(Class<?> componentType, int size) {
 		if (componentType == null) {
 			throw new IllegalArgumentException("array element type is null");
 		}
@@ -134,35 +126,5 @@ public class RArrayDeclaration extends StatementKind implements Serializable {
 	@Override
 	public boolean isPrimitive() {
 		return false;
-	}
-
-	@Override
-	public void appendCode(Variable newVar, List<Variable> inputVars,
-			StringBuilder b) {
-		if (inputVars.size() > length)
-			throw new IllegalArgumentException("Too many arguments:"
-					+ inputVars.size() + " capacity:" + length);
-		String declaringClass = this.elementType.getCanonicalName();
-		b.append(declaringClass + "[] " + newVar.getName() + " = new "
-				+ declaringClass + "[] { ");
-		for (int i = 0; i < inputVars.size(); i++) {
-			if (i > 0)
-				b.append(", ");
-
-			// In the short output format, statements like "int x = 3" are not
-			// added
-			// to a sequence; instead, the value (e.g. "3") is inserted directly
-			// added
-			// as arguments to method calls.
-			Statement stmt = inputVars.get(i).getDeclaringStatement();
-			if (!longFormat && Sequence.canUseShortFormat(stmt)) {
-				b.append(PrimitiveTypes.toCodeString(((RAssignment) stmt
-						.getAction().getAction()).getValue(), stringMaxLength));
-			} else {
-				b.append(inputVars.get(i).getName());
-			}
-		}
-		b.append("};");
-		b.append(Globals.lineSep);
 	}
 }

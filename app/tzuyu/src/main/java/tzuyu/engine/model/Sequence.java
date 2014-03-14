@@ -468,26 +468,6 @@ public class Sequence implements Serializable {
 			return new Variable(newSeq, newSeq.size() - 1, relVarIdx.argIdx);
 		}
 	}
-
-	public String toCodeString() {
-		StringBuilder b = new StringBuilder();
-		for (int i = 0; i < statements.size(); i++) {
-			StringBuilder oneStatement = new StringBuilder();
-			printStatement(oneStatement, i);
-
-			b.append(oneStatement);
-			//LLT: for debugging
-			b.append("\n");
-		}
-		return b.toString(); // + "/*" + this.toString() + "*/";
-	}
-
-	public void printStatement(StringBuilder b, int index) {
-		// Get strings representing the inputs to this statement.
-		// Example: { "var2", "(int)3" }
-		statements.get(index).appendCode(getVariable(index), getInputs(index),
-				b);
-	}
 	
 	//LLT: for debugging
 	@Override

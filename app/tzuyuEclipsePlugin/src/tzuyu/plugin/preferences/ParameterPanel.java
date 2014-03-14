@@ -50,31 +50,47 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 
 	private void decorateContent(Composite contentPanel) {
 		int colNum = 2;
-		Group group1 = SWTFactory.createGroup(contentPanel, "", colNum);
+		/* description */
+		Label decsLb = SWTFactory.createLabel(contentPanel, /* msg.gentest_prefs_param_description()*/
+				"The parameters in this section will be applied to the learning process, as well as the parameter generator \nof tester module.", colNum);
+		GridData data = new GridData();
+        data.verticalAlignment = GridData.FILL;
+        data.horizontalAlignment = GridData.FILL;
+        decsLb.setLayoutData(data);
+        /* learning configuration section */
+		SWTFactory.createLabel(contentPanel,
+				msg.gentest_prefs_param_group_learning_config(), colNum);
+		Group lcGroup = SWTFactory.createGroup(contentPanel, "", colNum);
+		lcGroup.setLayout(new GridLayout(2, false));
+		testsPerQueryLb = SWTFactory.createLabel(lcGroup,
+				msg.gentest_prefs_param_testPerQuery());
+		testsPerQueryTx = new IntText(lcGroup, ParamField.TESTS_PER_QUERY)
+				.setPositive().setMandatory();
+		
+        /* parameter section */
+		SWTFactory.createLabel(contentPanel,
+				msg.gentest_prefs_param_group_parameter_config(), colNum);
+		Group group1 = SWTFactory.createGroup(contentPanel,
+				msg.gentest_prefs_param_primitiveTitle(), colNum);
 		group1.setLayout(new GridLayout(2, false));
 		arrayMaxLengthLb = SWTFactory.createLabel(group1,
 				msg.gentest_prefs_param_arrayMaxDepth());
 		arrayMaxLengthTx = new IntText(group1,
-				ParamField.ARRAY_MAX_LENGTH).positive().mandatory();
+				ParamField.ARRAY_MAX_LENGTH).setPositive().setMandatory();
 		
 		classMaxDepthLb = SWTFactory.createLabel(group1,
 				msg.gentest_prefs_param_classMaxDepth());
-		classMaxDepthTx = new IntText(group1, ParamField.CLASS_MAX_DEPTH).positive().mandatory();
+		classMaxDepthTx = new IntText(group1, ParamField.CLASS_MAX_DEPTH)
+				.setPositive().setMandatory();
 		
 		stringMaxLengthLb = SWTFactory.createLabel(group1,
 				msg.gentest_prefs_param_stringMaxLength());
 		stringMaxLengthTx = new IntText(group1,
-				ParamField.STRING_MAX_LENGTH).positive().mandatory();
+				ParamField.STRING_MAX_LENGTH).setPositive().setMandatory();
 		
 		Group group2 = SWTFactory.createGroup(contentPanel, "", colNum);
 		objToIntCb = SWTFactory.createCheckbox(group2,
 				msg.gentest_prefs_param_objectToInteger(), colNum);
-		
-		Group group3 = SWTFactory.createGroup(contentPanel, "", colNum);
-		group3.setLayout(new GridLayout(2, false));
-		testsPerQueryLb = SWTFactory.createLabel(group3,
-				msg.gentest_prefs_param_testPerQuery());
-		testsPerQueryTx = new IntText(group3, ParamField.TESTS_PER_QUERY).positive().mandatory();
 		
 		addModifyListener();
 	}

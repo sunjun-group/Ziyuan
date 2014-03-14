@@ -8,9 +8,21 @@
 
 package tzuyu.plugin.command.gentest;
 
-import static tzuyu.engine.TzConstants.*;
+import static tzuyu.engine.TzConstants.ARRAY_MAX_LENGTH;
+import static tzuyu.engine.TzConstants.CLASS_MAX_DEPTH;
+import static tzuyu.engine.TzConstants.DEBUG_CHECKS;
+import static tzuyu.engine.TzConstants.FORBIT_NULL;
+import static tzuyu.engine.TzConstants.INHERIT_METHOD;
+import static tzuyu.engine.TzConstants.LONG_FORMAT;
+import static tzuyu.engine.TzConstants.MAX_LINES_PER_GEN_TEST_CLASS;
+import static tzuyu.engine.TzConstants.MAX_METHODS_PER_GEN_TEST_CLASS;
+import static tzuyu.engine.TzConstants.OBJECT_TO_INTEGER;
+import static tzuyu.engine.TzConstants.PRETTY_PRINT;
+import static tzuyu.engine.TzConstants.PRINT_FAIL_TESTS;
+import static tzuyu.engine.TzConstants.PRINT_PASS_TESTS;
+import static tzuyu.engine.TzConstants.STRING_MAX_LENGTH;
+import static tzuyu.engine.TzConstants.TESTS_PER_QUERY;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -18,6 +30,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.osgi.service.prefs.Preferences;
 
 import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.TzConstants;
 import tzuyu.plugin.core.dto.TzPreferences;
 import tzuyu.plugin.core.utils.IProjectUtils;
 import tzuyu.plugin.reporter.PluginLogger;
@@ -30,9 +43,6 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 	public static final String ATT_OUTPUT_FOLDER = "outputSourceFolder";
 	public static final String ATT_OUTPUT_PACKAGE = "outputPackage";
 	
-	public static final String OUTPUT_FOLDER = "src";
-	public static final String OUTPUT_PACKAGE = "tzuyu";
-	
 	private IPackageFragmentRoot outputFolder;
 	private IPackageFragment outputPackage;
 	
@@ -42,8 +52,8 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 		setJavaProject(project);
 		config = new TzConfiguration(setDefault);
 		if (setDefault) {
-			outputFolder = IProjectUtils.toPackageFragmentRoot(project, OUTPUT_FOLDER);
-			outputPackage = IProjectUtils.toPackageFragment(outputFolder, OUTPUT_PACKAGE);
+			outputFolder = IProjectUtils.toPackageFragmentRoot(project, TzConstants.DEFAULT_OUTPUT_FOLDER);
+			outputPackage = IProjectUtils.toPackageFragment(outputFolder, TzConstants.DEFAULT_OUTPUT_PACKAGE);
 		}
 	}
 	
@@ -59,10 +69,12 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 	}
 	
 	public void read(Preferences pref) {
+		/* output folder & package */
 		outputFolder = IProjectUtils.toPackageFragmentRoot(project,
-				pref.get(ATT_OUTPUT_FOLDER, OUTPUT_FOLDER));
+				pref.get(ATT_OUTPUT_FOLDER, TzConstants.DEFAULT_OUTPUT_FOLDER));
 		outputPackage = IProjectUtils.toPackageFragment(outputFolder,
-				pref.get(ATT_OUTPUT_PACKAGE, OUTPUT_PACKAGE));
+				pref.get(ATT_OUTPUT_PACKAGE, TzConstants.DEFAULT_OUTPUT_PACKAGE));
+		/* parameters configuration */
 		config.setArrayMaxLength(pref.getInt(ARRAY_MAX_LENGTH.a,
 				ARRAY_MAX_LENGTH.b));
 		config.setClassMaxDepth(pref.getInt(CLASS_MAX_DEPTH.a,
@@ -109,24 +121,23 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 				config.getMaxLinesPerGenTestClass());
 		projectNode.put(ATT_OUTPUT_FOLDER,
 				IProjectUtils.toRelativePath(outputFolder, project));
-		projectNode.put(ATT_OUTPUT_PACKAGE, IProjectUtils.toRelativePath(outputPackage, outputFolder));
+		projectNode.put(ATT_OUTPUT_PACKAGE, outputPackage.getElementName());
 	}
 	
 	public TzConfiguration getTzConfig(boolean runningTzuyu) {
 		if (runningTzuyu) {
 			// update output folder
 			if (outputFolder != null && outputPackage != null) {
-				if (!outputPackage.isOpen()) {
-					try {
+				try {
+					if (!outputPackage.isOpen()) {
 						outputPackage = outputFolder.createPackageFragment(
 								outputPackage.getElementName(), true, null);
-					} catch (JavaModelException e) {
-						PluginLogger.logEx(e);
 					}
+				} catch (JavaModelException e) {
+					PluginLogger.logEx(e);
 				}
-				IPath outputPath = IProjectUtils.relativeToAbsolute(outputPackage.getPath());
-				config.setOutputDir(outputPath.toFile());
-				config.setOutputPackageName(outputPackage.getElementName());
+				config.setOutputPath(IProjectUtils.relativeToAbsolute(outputFolder.getPath()).toString());
+				config.setOutputPackage(outputPackage.getElementName());
 			}
 		}
 		return config;
@@ -143,7 +154,7 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 	public void setOutputFolder(IPackageFragmentRoot outputFolder) {
 		this.outputFolder = outputFolder;
 	}
-
+	
 	public IPackageFragment getOutputPackage() {
 		return outputPackage;
 	}

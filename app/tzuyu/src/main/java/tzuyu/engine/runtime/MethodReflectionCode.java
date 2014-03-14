@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
+import tzuyu.engine.utils.Globals;
 import tzuyu.engine.utils.ReflectionUtils;
 
 public final class MethodReflectionCode extends ReflectionCode {
@@ -14,7 +15,6 @@ public final class MethodReflectionCode extends ReflectionCode {
 	private final Object[] inputs;
 	private Object retval;
 	private Throwable exceptionThrown;
-	private boolean debugCheck = false;
 
 	public MethodReflectionCode(Method method, Object receiver, Object[] inputs) {
 		if (method == null)
@@ -41,7 +41,7 @@ public final class MethodReflectionCode extends ReflectionCode {
 	}
 
 	private void checkCompatability() {
-		if (!debugCheck) {
+		if (!Globals.DEBUG_CHECK) {
 			return;
 		}
 		String error = ReflectionUtils.checkArgumentTypes(inputs,

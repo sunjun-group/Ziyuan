@@ -23,8 +23,16 @@ public class Assert {
 
 	public static <T> void assertTrue(boolean condition, String... msgs) {
 		if (!condition) {
-			throw new TzRuntimeException(ExceptionType.AssertException,
-					StringUtils.join(", ", (Object[]) msgs));
+			String msg = StringUtils.EMPTY;
+			if (msgs != null) {
+				msg = StringUtils.join(", ", (Object[]) msgs);
+			}
+			throw new TzRuntimeException(ExceptionType.AssertException, msg);
 		}
 	}
+
+	public static void error(String msg) {
+		throw new TzRuntimeException(msg);
+	}
+
 }

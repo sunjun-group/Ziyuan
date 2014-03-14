@@ -23,6 +23,7 @@ public final class Globals {
 	public static final String userDir = System.getProperty("user.dir");
 	
 	public static final boolean DEV_MODE = true;
+	public static boolean DEBUG_CHECK = false;
 
 	// Setting the Constant to any number greater than zero will cause models
 	// to have a maximal depth MAX_MODEL_DEPTH+1

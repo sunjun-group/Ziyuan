@@ -41,17 +41,11 @@ public class TzuYuAction extends Action {
 		try {
 			Class<?> RMethodClazz = RMethod.class;
 			Method methodMethod = RMethodClazz.getMethod("getMethod",
-					Method.class, TzConfiguration.class);
-			Object resulObject = methodMethod.invoke(null, method.getMethod(), config);
+					Method.class);
+			Object resulObject = methodMethod.invoke(null, method.getMethod());
 			// Object resulObject = RMethod.getMethod(method.getMethod());
 
 			return fromStatmentKind((StatementKind) resulObject);
-			// } catch (ClassNotFoundException | NoSuchMethodException |
-			// SecurityException
-			// | IllegalAccessException | IllegalArgumentException
-			// | InvocationTargetException e) {
-			// e.printStackTrace();
-			// }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -67,12 +61,6 @@ public class TzuYuAction extends Action {
 					.invoke(null, ctor.getConstructor());
 
 			return fromStatmentKind((StatementKind) resulObject);
-			// } catch (ClassNotFoundException | NoSuchMethodException |
-			// SecurityException
-			// | IllegalAccessException | IllegalArgumentException
-			// | InvocationTargetException e) {
-			// e.printStackTrace();
-			// }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

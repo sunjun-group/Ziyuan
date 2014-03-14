@@ -85,9 +85,4 @@ public class Statement {
 	public String toString() {
 		return statement.toString();
 	}
-
-	public void appendCode(Variable newVar, List<Variable> inputs,
-			StringBuilder b) {
-		statement.getAction().appendCode(newVar, inputs, b);
-	}
 }

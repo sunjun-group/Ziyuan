@@ -103,7 +103,7 @@ public abstract class PropertyPanel<T> extends Composite {
 			return true;
 		}
 		for (IStatus status : statusArr) {
-			if (status != IStatusUtils.OK_STATUS) {
+			if (!status.isOK()) {
 				return false;
 			}
 		}

@@ -3,8 +3,8 @@ package tester;
 import java.util.ArrayList;
 import java.util.List;
 
-import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzClass;
+import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.iface.IAlgorithmFactory;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.RelativeNegativeIndex;
@@ -544,9 +544,9 @@ public class RandomTCGStrategy implements ITCGStrategy {
 		return resultCases;
 	}
 
-	public List<TestCase> getAllGoodTestCases() {
-		// Only return good traces
-		return store.getAllGoodTestCases();
+	@Override
+	public Pair<List<TestCase>, List<TestCase>> getAllTestcases(boolean pass, boolean fail) {
+		return store.getTestcases(pass, fail);
 	}
 
 	private TzClass ensureProject() {

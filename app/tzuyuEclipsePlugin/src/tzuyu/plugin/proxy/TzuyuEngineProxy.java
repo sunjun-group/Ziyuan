@@ -37,15 +37,15 @@ public class TzuyuEngineProxy implements TzuyuEngine {
 	}
 
 	public static void generateTestCases(WorkObject workObject,
-			GenTestPreferences config) {
+			GenTestPreferences config, GenTestReporter reporter) {
 		try {
 			TzConsole.showConsole().clearConsole();
 			TzClass tzProject = ProjectConverter.from(workObject, config);
-			new TzuyuEngineProxy(tzProject, new GenTestReporter(config),
+			new TzuyuEngineProxy(tzProject, reporter,
 					new PluginReferencesAnalyzer(workObject.getProject())).run();
 		} catch (PluginException e) {
 			PluginLogger.logEx(e);
-		} 
+		}
 	}
 
 }

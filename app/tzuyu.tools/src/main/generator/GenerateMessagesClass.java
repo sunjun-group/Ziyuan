@@ -25,23 +25,27 @@ public class GenerateMessagesClass {
 
 	private static final String START_GENERATED_PART_TOKEN = "//	Generated part";
 	private static final String END_GENERATED_PART_TOKEN = "//	End generated part";
-	private static String pathname = "D:/_1_Projects/Tzuyu/workspace/trunk/app/tzuyuEclipsePlugin/src/tzuyu/plugin/messages.properties";
-	private static String messageClassPath = "D:/_1_Projects/Tzuyu/workspace/trunk/app/tzuyuEclipsePlugin/src/tzuyu/plugin/core/constants/Messages.java";
+	private static String BASE = "D:/_1_Projects/Tzuyu/";
+	private static String TRUNK = BASE + "workspace/trunk-refactor/";
+	private static String MESSAGES_PROPERTIES_PATH = TRUNK
+			+ "app/tzuyuEclipsePlugin/src/tzuyu/plugin/messages.properties";
+	private static String GENERATED_MESSAGES_CLASS_PATH = TRUNK
+			+ "app/tzuyuEclipsePlugin/src/tzuyu/plugin/core/constants/Messages.java";
 	
 
 	public static void main(String[] args) {
 		try {
 			generateMessagesClass();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	private static void generateMessagesClass() throws IOException {
+		System.out.println("Start generating Messages.java from messages.properties");
 		Properties props = loadProperties();
 		String propsContent = buildPropsContent(props);
-		File messageCl = new File(messageClassPath);
+		File messageCl = new File(GENERATED_MESSAGES_CLASS_PATH);
 		StringBuilder content = new StringBuilder();
 		boolean inGeneratedZone = false;
 		for (Object ln : FileUtils.readLines(messageCl)) {
@@ -49,7 +53,6 @@ public class GenerateMessagesClass {
 			if (!inGeneratedZone || line.contains(END_GENERATED_PART_TOKEN)) {
 				content.append(line).append("\n");
 			}
-			
 			if (line.contains(START_GENERATED_PART_TOKEN)) {
 				inGeneratedZone = true;
 				content.append(propsContent);
@@ -59,6 +62,7 @@ public class GenerateMessagesClass {
 		}
 		// update class
 		FileUtils.writeStringToFile(messageCl, content.toString());
+		System.out.println("Finished!!");
 	}
 
 	private static String buildPropsContent(Properties props) {
@@ -99,7 +103,7 @@ public class GenerateMessagesClass {
 
 	private static Properties loadProperties() {
 		Properties prop = new Properties();
-		File file = new File(pathname);
+		File file = new File(MESSAGES_PROPERTIES_PATH);
 		BufferedInputStream in = null;
 		try {
 			in = new BufferedInputStream(new FileInputStream(file));

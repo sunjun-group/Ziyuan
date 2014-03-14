@@ -1,21 +1,18 @@
 package tzuyu.engine.runtime;
 
-import tzuyu.engine.iface.TzPrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.iface.TzPrintStream;
 import tzuyu.engine.model.ExecutionOutcome;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.StatementKind;
-import tzuyu.engine.model.Variable;
-import tzuyu.engine.utils.Globals;
 import tzuyu.engine.utils.LogicUtils;
 import tzuyu.engine.utils.ObjectUtils;
 import tzuyu.engine.utils.PrimitiveTypes;
-import tzuyu.engine.utils.ReflectionUtils;
 import tzuyu.engine.utils.StringEscapeUtils;
 
 public class RAssignment extends StatementKind implements Serializable {
@@ -25,8 +22,7 @@ public class RAssignment extends StatementKind implements Serializable {
 	private final Class<?> type;
 	private Object value;
 
-	private RAssignment(Class<?> t, Object v, TzConfiguration config) {
-		super(config);
+	private RAssignment(Class<?> t, Object v) {
 		this.type = t;
 		this.value = v;
 	}
@@ -69,7 +65,7 @@ public class RAssignment extends StatementKind implements Serializable {
 
 	public static StatementKind statementForAssignment(Class<?> t, Object v,
 			TzConfiguration config) {
-		return new RAssignment(t, v, config);
+		return new RAssignment(t, v);
 	}
 
 	@Override
@@ -105,28 +101,26 @@ public class RAssignment extends StatementKind implements Serializable {
 	public static RAssignment nullOrZeroDecl(Class<?> type,
 			TzConfiguration config) {
 		if (String.class.equals(type))
-			return new RAssignment(String.class, "", config);
+			return new RAssignment(String.class, "");
 		if (Character.TYPE.equals(type))
-			return new RAssignment(Character.TYPE, 'a', config);
+			return new RAssignment(Character.TYPE, 'a');
 		if (Byte.TYPE.equals(type))
-			return new RAssignment(Byte.TYPE, (byte) 0, config);
+			return new RAssignment(Byte.TYPE, (byte) 0);
 		if (Short.TYPE.equals(type))
-			return new RAssignment(Short.TYPE, (short) 0, config);
+			return new RAssignment(Short.TYPE, (short) 0);
 		if (Integer.TYPE.equals(type))
 			return new RAssignment(Integer.TYPE,
-					(Integer.valueOf(0)).intValue(), config);
+					(Integer.valueOf(0)).intValue());
 		if (Long.TYPE.equals(type))
-			return new RAssignment(Long.TYPE, (Long.valueOf(0)).longValue(),
-					config);
+			return new RAssignment(Long.TYPE, (Long.valueOf(0)).longValue());
 		if (Float.TYPE.equals(type))
-			return new RAssignment(Float.TYPE, (Float.valueOf(0)).floatValue(),
-					config);
+			return new RAssignment(Float.TYPE, (Float.valueOf(0)).floatValue());
 		if (Double.TYPE.equals(type))
 			return new RAssignment(Double.TYPE,
-					(Double.valueOf(0)).doubleValue(), config);
+					(Double.valueOf(0)).doubleValue());
 		if (Boolean.TYPE.equals(type))
-			return new RAssignment(Boolean.TYPE, false, config);
-		return new RAssignment(type, null, config);
+			return new RAssignment(Boolean.TYPE, false);
+		return new RAssignment(type, null);
 	}
 
 	public static Sequence sequenceForPrimitive(Object o, TzConfiguration config) {
@@ -175,32 +169,6 @@ public class RAssignment extends StatementKind implements Serializable {
 	@Override
 	public boolean hasReceiverParameter() {
 		return false;
-	}
-
-	@Override
-	public void appendCode(Variable newVar, List<Variable> inputVars,
-			StringBuilder b) {
-		if (!type.isPrimitive()) {
-
-			b.append(PrimitiveTypes.boxedType(type).getName());
-			b.append(" ");
-			b.append(newVar.getName());
-			b.append(" = new ");
-			b.append(PrimitiveTypes.boxedType(type).getName());
-			b.append("(");
-			b.append(PrimitiveTypes.toCodeString(value, stringMaxLength));
-			b.append(");");
-			b.append(Globals.lineSep);
-		} else {
-			b.append(ReflectionUtils.getCompilableName(type));
-			b.append(" ");
-			b.append(newVar.getName());
-			b.append(" = ");
-			b.append(PrimitiveTypes.toCodeString(value, stringMaxLength));
-			b.append(";");
-			b.append(Globals.lineSep);
-		}
-
 	}
 
 }

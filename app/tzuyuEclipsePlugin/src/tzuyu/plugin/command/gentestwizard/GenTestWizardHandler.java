@@ -15,7 +15,6 @@ import org.eclipse.ui.PlatformUI;
 import tzuyu.plugin.command.gentest.GenTestHandler;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.core.dto.WorkObject;
-import tzuyu.plugin.proxy.TzuyuEngineProxy;
 
 /**
  * @author LLT
@@ -28,11 +27,10 @@ public class GenTestWizardHandler extends GenTestHandler {
 		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getShell();
 		GenTestWizard wizard = new GenTestWizard(workObject, config);
-
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		if (dialog.open() == WizardDialog.OK) {
-			TzuyuEngineProxy.generateTestCases(workObject, config);
+			super.run(workObject, config);
 		}
 	}
 

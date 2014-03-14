@@ -1,15 +1,11 @@
 package tzuyu.engine.model;
 
-import tzuyu.engine.iface.TzPrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.iface.TzPrintStream;
 
 public abstract class StatementKind {
-
-	protected Boolean longFormat;
-	protected Integer stringMaxLength; 
 	
 	public abstract Class<?> getReturnType();
 
@@ -23,22 +19,10 @@ public abstract class StatementKind {
 
 	public abstract String toParseableString();
 
-	public StatementKind(TzConfiguration configuration) {
-		config(configuration);
+	public StatementKind() {
+		
 	}
 	
-	public void config(TzConfiguration config) {
-		config(config.isLongFormat(), config.getStringMaxLength());
-	}
-	
-	public void config (boolean longFormat, int stringMaxLength) {
-		this.longFormat = longFormat;
-		this.stringMaxLength = stringMaxLength;
-	}
-	
-	public abstract void appendCode(Variable newVar, List<Variable> inputVars,
-			StringBuilder b);
-
 	public abstract boolean hasReceiverParameter();
 
 	public boolean isConstructor() {

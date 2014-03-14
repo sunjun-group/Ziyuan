@@ -52,10 +52,10 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 	private int numOfRandomClzzToCache = 10;
 	private int MAX_TO_TRY = 3;
 	private IJavaProject project;
-	private Map<Class<?>, List<IType>> itypeCache;
+	private Map<Class<?>, List<String>> classMapCache;
 
 	public PluginReferencesAnalyzer(IJavaProject project) {
-		itypeCache = new HashMap<Class<?>, List<IType>>();
+		classMapCache = new HashMap<Class<?>, List<String>>();
 		this.project = project;
 	}
 	
@@ -74,41 +74,72 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		return result;
 		
 	}
-
+	
 	public Class<?> getRandomClass() {
 		Class<?> result = null;
-		List<IType> itypes = itypeCache.get(Class.class);
-		if (CollectionUtils.isEmpty(itypes)) {
-			itypes = new ArrayList<IType>();
-			itypeCache.put(Class.class, itypes);
+		List<String> mappedList = classMapCache.get(Class.class);
+		if (CollectionUtils.isEmpty(mappedList)) {
+			mappedList = new ArrayList<String>();
+			classMapCache.put(Class.class, mappedList);
 		}
 		try {
-			IType type;
-			if (itypes.size() < numOfRandomClzzToCache) {
-				type = getRandomClassFromProject(project);
+			String mappedClz = null;
+			if (mappedList.size() < numOfRandomClzzToCache) {
+				IType type = getRandomClassFromProject(project);
 				if (type != null && !type.isInterface()) {
-					itypes.add(type);
+					mappedClz = toClassName(type);
+					mappedList.add(mappedClz);
 				}
 			} else {
-				type = Randomness.randomMember(itypes);
+				mappedClz = Randomness.randomMember(mappedList);
 			}
-			result = toClass(type);
+			result = toClass(mappedClz);
 		} catch (Exception e) {
 			// do nothing
 		}
 		return result;
 	}
+	
+	private Class<?> toClass(String mappedClz) throws TzuyuException {
+		try {
+			if (mappedClz == null) {
+				return null;
+			}
+			return ClassLoaderUtils.getClassLoader(project)
+					.loadClass(mappedClz);
+		} catch (ClassNotFoundException e) {
+			PluginLogger.logEx(e);
+			TzuyuException.rethrow(e);
+		} catch (PluginException e) {
+			PluginLogger.logEx(e);
+			TzuyuException.rethrow(e);
+		}
+		return null;
+	}
 
+	private String toClassName(IType type) {
+		return type.getFullyQualifiedName();
+	}
+	
+	private List<String> toClassName(List<IType> types) {
+		List<String> result = new ArrayList<String>();
+		for (IType type : types) {
+			result.add(toClassName(type));
+		}
+		return result;
+	}
+
+	
 	public Class<?> getRandomEnum() {
-		List<IType> enums = itypeCache.get(Enum.class);
+		List<String> enums = classMapCache.get(Enum.class);
 		if (CollectionUtils.isEmpty(enums)) {
-			enums = new ArrayList<IType>();
-			itypeCache.put(Enum.class, enums);
+			enums = new ArrayList<String>();
+			classMapCache.put(Enum.class, enums);
 		}
 		try {
 			List<String> enumTypes = performSearchEnums(project, numOfRandomClzzToCache);
 			for (String eString : enumTypes) {
-				CollectionUtils.addIfNotNull(enums, project.findType(eString));
+				CollectionUtils.addIfNotNull(enums, toClassName(project.findType(eString)));
 			}
 		} catch (CoreException e) {
 			PluginLogger.logEx(e);
@@ -169,44 +200,27 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 				return clazz;
 			}
 			// for interface, using eclipse API to get its implemetation.
-			List<IType> availableSubTypes = itypeCache.get(clazz);
+			List<String> availableSubTypes = classMapCache.get(clazz);
 			if (availableSubTypes == null) {
 				IType type = getIType(project, clazz);
 				IType[] allSubtypes;
 				try {
 					allSubtypes = getAllSubtypes(project, type);
-					availableSubTypes = getRandomSublist(allSubtypes);
+					availableSubTypes = toClassName(getRandomSublist(allSubtypes));
 				} catch (JavaModelException e) {
 					PluginLogger.logEx(e);
 				}
-				itypeCache.put(clazz, availableSubTypes);
+				classMapCache.put(clazz, availableSubTypes);
 			}
 
-			IType subType = Randomness.randomMember(availableSubTypes);
+			String subType = Randomness.randomMember(availableSubTypes);
 			System.out.println("Randomness. selected for interface: "
 					+ clazz.getName() + "\n Result: "
-					+ (subType == null ? "" : subType.getElementName()));
+					+ StringUtils.nullToEmpty(subType));
 			return toClass(subType);
 		} catch (TzuyuException e) {
 			return null;
 		}
-	}
-
-	private Class<?> toClass(IType type) throws TzuyuException {
-		try {
-			if (type == null) {
-				return null;
-			}
-			return ClassLoaderUtils.getClassLoader(project).loadClass(
-					type.getFullyQualifiedName());
-		} catch (ClassNotFoundException e) {
-			PluginLogger.logEx(e);
-			TzuyuException.rethrow(e);
-		} catch (PluginException e) {
-			PluginLogger.logEx(e);
-			TzuyuException.rethrow(e);
-		}
-		return null;
 	}
 
 	private IType getRandomClassFromProject(IJavaProject proj) {

@@ -14,6 +14,7 @@ import tzuyu.engine.runtime.RArrayDeclaration;
 import tzuyu.engine.runtime.RAssignment;
 import tzuyu.engine.runtime.SeedSequences;
 import tzuyu.engine.utils.ArrayListSimpleList;
+import tzuyu.engine.utils.Assert;
 import tzuyu.engine.utils.Randomness;
 import tzuyu.engine.utils.ReflectionUtils.Match;
 import tzuyu.engine.utils.SimpleList;
@@ -51,7 +52,7 @@ public class HelperSequenceCreator {
 					// null forbidden.
 					// Return the empty array.
 					RArrayDeclaration decl = new RArrayDeclaration(
-							cls.getComponentType(), 0, config);
+							cls.getComponentType(), 0);
 					s = new Sequence();
 					TzuYuAction array = TzuYuAction.fromStatmentKind(decl);
 					s = s.extend(array, Collections.<Variable> emptyList());
@@ -65,7 +66,7 @@ public class HelperSequenceCreator {
 					// even if null is allowed.
 					// Return the array [ null ].
 					RArrayDeclaration decl = new RArrayDeclaration(
-							cls.getComponentType(), 1, config);
+							cls.getComponentType(), 1);
 					s = new Sequence();
 					RAssignment assign = RAssignment.nullOrZeroDecl(
 							cls.getComponentType(), config);
@@ -79,7 +80,7 @@ public class HelperSequenceCreator {
 				// Return the array [ x ] where x is the last value in the
 				// sequence.
 				RArrayDeclaration decl = new RArrayDeclaration(
-						cls.getComponentType(), 1, config);
+						cls.getComponentType(), 1);
 				s = candidates.get(Randomness.nextRandomInt(candidates.size()));
 				List<Variable> ins = new ArrayList<Variable>();
 				// XXX IS THIS OLD COMMENT TRUE? : this assumes that last
@@ -92,7 +93,8 @@ public class HelperSequenceCreator {
 				s = s.extend(TzuYuAction.fromStatmentKind(decl), ins);
 			}
 		}
-		assert s != null;
+		Assert.assertNotNull(s);
+//		assert s != null;
 		ArrayListSimpleList<Sequence> l = new ArrayListSimpleList<Sequence>();
 		l.add(s);
 		return l;
@@ -115,8 +117,7 @@ public class HelperSequenceCreator {
 		for (int i = 0; i < length; i++) {
 			inputs.add(s.getVariable(i));
 		}
-		RArrayDeclaration array = new RArrayDeclaration(componentType, length,
-				config);
+		RArrayDeclaration array = new RArrayDeclaration(componentType, length);
 		s = s.extend(TzuYuAction.fromStatmentKind(array), inputs);
 		return s;
 	}

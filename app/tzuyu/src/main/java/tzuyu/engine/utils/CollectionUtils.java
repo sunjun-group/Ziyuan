@@ -8,6 +8,7 @@
 
 package tzuyu.engine.utils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,11 +27,11 @@ public class CollectionUtils {
 		return vals[0];
 	}
 
-	public static <T> boolean existIn(T val, T... valList) {
+	public static <T extends Object> boolean existIn(T val, T... valList) {
 		return existInArray(val, valList);
 	}
 	
-	public static <T> boolean existInArray(T val, T[] valList) {
+	public static <T extends Object> boolean existInArray(T val, T[] valList) {
 		for (T valInList : valList) {
 			if (val.equals(valInList)) {
 				return true;
@@ -41,6 +42,12 @@ public class CollectionUtils {
 	
 	public static <T> void addIfNotNull(Collection<T> col, T val) {
 		if (val != null) {
+			col.add(val);
+		}
+	}
+	
+	public static <T> void addIfNotNullNotExist(Collection<T> col, T val) {
+		if (val != null && !col.contains(val)) {
 			col.add(val);
 		}
 	}
@@ -79,5 +86,12 @@ public class CollectionUtils {
 		} catch (IndexOutOfBoundsException e){
 			return null;
 		}
+	}
+	
+	public static <T>List<T> nullToEmpty(List<T> val) {
+		if (val == null) {
+			return new ArrayList<T>();
+		}
+		return val;
 	}
 }

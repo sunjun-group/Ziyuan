@@ -1,6 +1,5 @@
 package tzuyu.engine.runtime;
 
-import tzuyu.engine.iface.TzPrintStream;
 import java.io.Serializable;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
@@ -13,15 +12,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.iface.TzPrintStream;
 import tzuyu.engine.model.ExecutionOutcome;
-import tzuyu.engine.model.Sequence;
-import tzuyu.engine.model.Statement;
 import tzuyu.engine.model.StatementKind;
-import tzuyu.engine.model.Variable;
 import tzuyu.engine.utils.CollectionsExt;
-import tzuyu.engine.utils.Globals;
-import tzuyu.engine.utils.PrimitiveTypes;
 import tzuyu.engine.utils.ReflectionUtils;
 
 public class RMethod extends StatementKind implements Serializable {
@@ -40,21 +34,19 @@ public class RMethod extends StatementKind implements Serializable {
 	// null: have not checked yet, true/false: is static or not.  
 	private Boolean isStatic = null; 
 
-	private RMethod(TzConfiguration config) {
-		super(config);
+	private RMethod() {
 		method = null;
 	}
 
-	private RMethod(Method prototype, TzConfiguration config) {
-		super(config);
+	private RMethod(Method prototype) {
 		if (prototype == null) {
 			throw new IllegalArgumentException("the method should not be null");
 		}
 		this.method = prototype;
 	}
 
-	public static RMethod getMethod(Method m, TzConfiguration config) {
-		return new RMethod(m, config);
+	public static RMethod getMethod(Method m) {
+		return new RMethod(m);
 	}
 
 	public Method getMethod() {
@@ -175,58 +167,6 @@ public class RMethod extends StatementKind implements Serializable {
 		return false;
 	}
 
-	@Override
-	public void appendCode(Variable newVar, List<Variable> inputVars,
-			StringBuilder b) {
-		if (!isVoid()) {
-			b.append(ReflectionUtils.getCompilableName(this.method
-					.getReturnType()));
-			String cast = "";
-			b.append(" " + newVar.getName() + " = " + cast);
-		}
-		String receiverString = isStatic() ? null : inputVars.get(0).getName();
-		appendReceiverOrClassForStatics(receiverString, b);
-
-		b.append(".");
-		b.append(getTypeArguments());
-		b.append(this.method.getName() + "(");
-
-		int startIndex = (isStatic() ? 0 : 1);
-		for (int i = startIndex; i < inputVars.size(); i++) {
-			if (i > startIndex)
-				b.append(", ");
-
-			// CASTING.
-			// We cast whenever the variable and input types are not identical.
-			// We also cast if input type is a primitive, because Randoop uses
-			// boxed primitives, and need to convert back to primitive.
-			if (PrimitiveTypes.isPrimitive(getInputTypes().get(i))
-					&& longFormat) {
-				b.append("(" + getInputTypes().get(i).getName() + ")");
-			} else if (!inputVars.get(i).getType()
-					.equals(getInputTypes().get(i))) {
-				b.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
-			}
-
-			// In the short output format, statements like "int x = 3" are not
-			// added to a sequence; instead,
-			// the value (e.g. "3") is inserted directly added as arguments to
-			// method calls.
-			Statement stmt = inputVars.get(i).getDeclaringStatement();
-			if (!longFormat
-					&& Sequence.canUseShortFormat(stmt)) {
-				Object val = ((RAssignment) stmt.getAction().getAction())
-						.getValue();
-				b.append(PrimitiveTypes.toCodeString(val, stringMaxLength));
-			} else {
-				b.append(inputVars.get(i).getName());
-			}
-		}
-
-		b.append(");" + Globals.lineSep);
-
-	}
-
 	public String getTypeArguments() {
 		TypeVariable<Method>[] typeParameters = method.getTypeParameters();
 		if (typeParameters.length == 0)
@@ -277,30 +217,6 @@ public class RMethod extends StatementKind implements Serializable {
 		}
 
 		throw new IllegalStateException("unexpected type " + t);
-	}
-
-	private void appendReceiverOrClassForStatics(String receiverString,
-			StringBuilder b) {
-		if (isStatic()) {
-			String s2 = this.method.getDeclaringClass().getName()
-					.replace('$', '.');
-			// TODO combine this with last if clause
-			b.append(s2);
-		} else {
-			Class<?> expectedType = getInputTypes().get(0);
-			String canonicalName = expectedType.getCanonicalName();
-			boolean mustCast = canonicalName != null
-					&& PrimitiveTypes
-							.isBoxedPrimitiveTypeOrString(expectedType)
-					&& !expectedType.equals(String.class);
-			if (mustCast) {
-				// this is a little paranoid but we need to cast primitives in
-				// order to get them boxed.
-				b.append("((" + canonicalName + ")" + receiverString + ")");
-			} else {
-				b.append(receiverString);
-			}
-		}
 	}
 
 }

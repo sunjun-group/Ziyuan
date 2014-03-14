@@ -35,7 +35,8 @@ public class CommandLineReportHandler extends TzReportHandler {
 		if (dfa != null) {
 			String dot = dfa.createDotRepresentation();
 			try {
-				String fileName = tzProject.getConfiguration().getAbsoluteAddress(getTargetClassName(tzProject) + ".dot");
+				String fileName = tzProject.getConfiguration()
+						.getAbsoluteAddress(tzProject.getClassName() + ".dot");
 				FileWriter writer = new FileWriter(fileName);
 				writer.write(dot);
 				writer.close();

@@ -12,10 +12,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+
+import tzuyu.engine.utils.Assert;
+import tzuyu.plugin.TzuyuPlugin;
+import tzuyu.plugin.preferences.ParamDeclarationFormat;
 
 /**
  * @author LLT
@@ -80,5 +85,20 @@ public class SWTFactory {
 		gridData.horizontalIndent = 3; 
 		group.setLayoutData(gridData);
 		return group;
+	}
+
+	public static Combo creatDropdown(Composite parent) {
+		Combo comb = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
+		return comb;
+	}
+
+	public static <T extends Enum<?>>Combo creatDropdown(Composite parent,
+			T[] values) {
+		Combo comb = creatDropdown(parent);
+		Assert.assertNotNull(values, "Values to creat dropdown can not be null!!");
+		for (T val : values) { 
+			comb.add(TzuyuPlugin.getMessages().getMessage(val));
+		}
+		return comb;
 	}
 }

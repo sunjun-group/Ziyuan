@@ -56,7 +56,8 @@ public class ParameterSelector implements IParameterSelector {
 		Object inputVal = null;
 		
 		// if paramType is not primitive, it's probably null.
-		if (paramType != ObjectType.PRIMITIVE_TYPE &&
+		if (!CollectionUtils.existIn(paramType, ObjectType.PRIMITIVE_TYPE,
+				ObjectType.STRING_OR_PRIMITIVE_OBJECT) &&
 				Randomness.nextBoolean(8)) {
 			// Randomly return null for reference type with probability of 1/4
 			// We may use nextRandomBool() method which return true with
@@ -220,8 +221,7 @@ public class ParameterSelector implements IParameterSelector {
 			totStmts += var.owner.size();
 		}
 		// Construct the statement which creates the variable
-		RConstructor rctor = RConstructor.getCtor(
-				ctors[index].getConstructor(), config);
+		RConstructor rctor = RConstructor.getCtor(ctors[index].getConstructor());
 		TzuYuAction gStmt = TzuYuAction.fromStatmentKind(rctor);
 		Sequence seq = paramSeq.extend(gStmt, parameters);
 
@@ -244,7 +244,7 @@ public class ParameterSelector implements IParameterSelector {
 	private RArrayDeclaration initRArrayDeclaration(Class<?> elementType,
 			int length) {
 		RArrayDeclaration rArrayDeclaration = new RArrayDeclaration(
-				elementType, length, config);
+				elementType, length);
 		return rArrayDeclaration;
 	}
 
@@ -360,8 +360,7 @@ public class ParameterSelector implements IParameterSelector {
 			totStmts += var.owner.size();
 		}
 		// Construct the statement which creates the variable
-		RConstructor rctor = RConstructor.getCtor(
-				ctors[index].getConstructor(), config);
+		RConstructor rctor = RConstructor.getCtor(ctors[index].getConstructor());
 		TzuYuAction gStmt = TzuYuAction.fromStatmentKind(rctor);
 		Sequence seq = paramSeq.extend(gStmt, parameters);
 

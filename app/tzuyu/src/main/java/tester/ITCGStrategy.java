@@ -5,6 +5,7 @@ import java.util.List;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.TzuYuAction;
+import tzuyu.engine.utils.Pair;
 
 /**
  * 
@@ -33,7 +34,7 @@ public interface ITCGStrategy {
 
 	public List<TestCase> getAllGeneratedTestCases();
 
-	public List<TestCase> getAllGoodTestCases();
-
 	public void setProject(TzClass project);
+
+	public Pair<List<TestCase>, List<TestCase>> getAllTestcases(boolean pass, boolean fail);
 }

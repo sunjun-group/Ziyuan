@@ -16,23 +16,26 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaConventions;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import tzuyu.engine.TzConfiguration;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.core.constants.Messages;
 import tzuyu.plugin.core.utils.IStatusUtils;
 import tzuyu.plugin.preferences.component.CheckboxGroup;
+import tzuyu.plugin.preferences.component.Dropdown;
 import tzuyu.plugin.preferences.component.IntText;
 import tzuyu.plugin.ui.AppEventManager;
 import tzuyu.plugin.ui.PropertyPanel;
@@ -54,8 +57,10 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 	private Label classNameLb;
 	private Text classNameTx;
 	private CheckboxGroup<TestCaseType> passFailCbGroup;
-	private Button longFormatCb;
-
+	/* Parameter declaration format: */
+	private Dropdown<ParamDeclarationFormat> paramDeclFormatComb;
+	private Dropdown<TcPrintMode> tcPrintModeComb;
+	
 	private IntText maxMethods;
 
 	private IntText maxLine;
@@ -104,20 +109,29 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		passFailCbGroup.addCb(msg.gentest_prefs_output_testcaseType_pass(), TestCaseType.PASS);
 		passFailCbGroup.addCb(msg.gentest_prefs_output_testcaseType_fail(), TestCaseType.FAIL);
 		
-		// format test class
 		Group formatGroup = SWTFactory.createGroup(contentPanel, StringUtils.EMPTY, colSpan);
 		formatGroup.setLayout(new GridLayout(2, false));
-		longFormatCb = SWTFactory.createCheckbox(formatGroup,
-				msg.gentest_prefs_param_longFormat(), 2);
+		// parameter declaration format:
+		SWTFactory.createLabel(formatGroup,
+				msg.gentest_prefs_output_paramDeclarationFormat());
+		paramDeclFormatComb = new Dropdown<ParamDeclarationFormat>(formatGroup,
+				ParamDeclarationFormat.values());
+		
+		SWTFactory.createLabel(formatGroup,
+				msg.gentest_prefs_output_testClassFormat());
+		tcPrintModeComb = new Dropdown<OutputPanel.TcPrintMode>(formatGroup,
+				TcPrintMode.values());
 		
 		Label maxMethodsLb = SWTFactory.createLabel(formatGroup, msg.gentest_prefs_output_maxMethodsPerClass());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		maxMethodsLb.setLayoutData(gd);
 		gd.minimumWidth = 60;
 		maxMethods = new IntText(formatGroup, OutputField.MAX_METHODS_NUM);
-		SWTFactory.createLabel(formatGroup, msg.gentest_prefs_output_maxLinesPerClass());
+//		SWTFactory.createLabel(formatGroup, msg.gentest_prefs_output_maxLinesPerClass());
 		maxLine = new IntText(formatGroup, OutputField.MAX_LINE_NUM);
+		maxLine.asWidget().setVisible(false);
 		registerListener();
+		
 	}
 
 	private void registerListener() {
@@ -139,8 +153,16 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 			@Override
 			public void onValueChanged(ValueChangedEvent<IPackageFragment> event) {
 				IStatus status = IStatusUtils.OK_STATUS;
-				if (event.getNewVal() == null) {
+				IPackageFragment pkg = event.getNewVal();
+				if (pkg == null) {
 					status = IStatusUtils.error(msg.packageEditor_errorMessage());
+				} else {
+					status = JavaConventions.validatePackageName(pkg.getElementName(), 
+							project.getOption(JavaCore.COMPILER_SOURCE, true), 
+							project.getOption(JavaCore.COMPILER_COMPLIANCE, true));
+					if (status.isOK()) {
+						status = IStatusUtils.OK_STATUS;
+					}
 				}
 				updateStatus(OutputField.PACKAGE, status);
 			}
@@ -166,11 +188,14 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 	public void refresh(GenTestPreferences data) {
 		folderEditor.setOutSourceFolder(data.getOutputFolder());
 		packageEditor.setSelectedPackage(data.getOutputPackage());
-		passFailCbGroup.setValue(TestCaseType.values(data.getTzConfig().isPrintPassTests(),
-				data.getTzConfig().isPrintFailTests()));
-		maxMethods.setValue(data.getTzConfig().getMaxMethodsPerGenTestClass());
-		maxLine.setValue(data.getTzConfig().getMaxLinesPerGenTestClass());
-		longFormatCb.setSelection(data.getTzConfig().isLongFormat());
+		TzConfiguration tzConfig = data
+				.getTzConfig();
+		passFailCbGroup.setValue(TestCaseType.values(tzConfig.isPrintPassTests(),
+				tzConfig.isPrintFailTests()));
+		maxMethods.setValue(tzConfig.getMaxMethodsPerGenTestClass());
+		maxLine.setValue(tzConfig.getMaxLinesPerGenTestClass());
+		paramDeclFormatComb.setValue(ParamDeclarationFormat.getTypeIf(tzConfig.isLongFormat()));
+		tcPrintModeComb.setValue(TcPrintMode.getTypeIf(tzConfig.isPrettyPrint())); 
 	}
 
 	@Override
@@ -178,11 +203,16 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		prefs.setOutputFolder(folderEditor.getValue());
 		prefs.setOutputPackage(packageEditor.getValue());
 		List<TestCaseType> passFailValue = passFailCbGroup.getValue();
-		prefs.getTzConfig().setPrintPassTests(passFailValue.contains(TestCaseType.PASS));
-		prefs.getTzConfig().setPrintFailTests(passFailValue.contains(TestCaseType.FAIL));
-		prefs.getTzConfig().setMaxMethodsPerGenTestClass(maxMethods.getValue());
-		prefs.getTzConfig().setMaxLinesPerGenTestClass(maxLine.getValue());
-		prefs.getTzConfig().setLongFormat(longFormatCb.getSelection());
+		TzConfiguration tzConfig = prefs.getTzConfig();
+		tzConfig.setPrintPassTests(
+				passFailValue.contains(TestCaseType.PASS));
+		tzConfig.setPrintFailTests(
+				passFailValue.contains(TestCaseType.FAIL));
+		tzConfig.setMaxMethodsPerGenTestClass(maxMethods.getValue());
+		tzConfig.setMaxLinesPerGenTestClass(maxLine.getValue());
+		tzConfig.setLongFormat(
+				paramDeclFormatComb.getValue().isLongFormat());
+		tzConfig.setPrettyPrint(tcPrintModeComb.getValue() == TcPrintMode.PRETTY);
 	}
 
 	@Override
@@ -218,5 +248,17 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 	@Override
 	protected int getFieldNums() {
 		return OutputField.values().length;
+	}
+	
+	enum TcPrintMode {
+		PRETTY,
+		UNFORMATTED;
+
+		public static TcPrintMode getTypeIf(boolean prettyPrint) {
+			if (prettyPrint) {
+				return PRETTY;
+			}
+			return UNFORMATTED;
+		}
 	}
 }

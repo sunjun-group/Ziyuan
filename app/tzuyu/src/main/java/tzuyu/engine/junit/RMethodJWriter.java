@@ -6,11 +6,12 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.experiment;
+package tzuyu.engine.junit;
 
 import java.util.List;
 
-import tzuyu.engine.experiment.JWriterFactory.JunitConfig;
+import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.junit.printer.JOutputPrinter;
 import tzuyu.engine.model.Variable;
 import tzuyu.engine.runtime.RMethod;
 import tzuyu.engine.utils.ClassUtils;
@@ -21,7 +22,7 @@ import tzuyu.engine.utils.StringUtils;
  * @author LLT
  *
  */
-public class RMethodJWriter extends AbstractJWriter {
+public class RMethodJWriter extends AbstractStmtJWriter {
 	private String returnedType;
 	private String varReturnedName;
 	private String instanceNameOrClass;
@@ -30,7 +31,7 @@ public class RMethodJWriter extends AbstractJWriter {
 	private String typeArguments;
 	private List<String> params;
 	
-	public RMethodJWriter(JunitConfig config, VariableRenamer renamer,
+	public RMethodJWriter(TzConfiguration config, VariableRenamer renamer,
 			RMethod rmethod, Variable newVar, List<Variable> inputVars) {
 		super(config, renamer);
 		init(rmethod, newVar, inputVars);
@@ -82,7 +83,7 @@ public class RMethodJWriter extends AbstractJWriter {
 	 * 					<{typeArguments}>{methodName}({varType1 var1, varType2 var2});
 	 * 
 	 */
-	public void write(StringBuilder sb) {
+	public void write(JOutputPrinter sb) {
 		if (returnedType != null) {
 			sb.append(returnedType).append(" ")
 					.append(varReturnedName)

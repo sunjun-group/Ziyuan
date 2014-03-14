@@ -28,4 +28,10 @@ public class ObjectUtils {
 		return obj.getClass();
 	}
 	
+	public static boolean isPositive(int val) {
+		if (val > 0) {
+			return true;
+		}
+		return false;
+	}
 }

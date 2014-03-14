@@ -9,17 +9,20 @@
 package tzuyu.engine;
 
 import static tzuyu.engine.TzConstants.*;
+
 import java.io.File;
 
-import tzuyu.engine.experiment.JWriterFactory.JunitConfig;
 import tzuyu.engine.main.CommandLineLogger;
 import tzuyu.engine.utils.Globals;
 import tzuyu.engine.utils.PrimitiveGenerator.PrimitiveGeneratorConfig;
+import tzuyu.engine.utils.StringUtils;
 
 /**
  * @author LLT
  */
 public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
+	private static final String PASS_PKG_NAME = "pass";
+	private static final String FAIL_PKG_NAME = "fail";
 	/**
 	 * The maximum number of elements in an array when cloning an object. The
 	 * array field in a target object may be too long to clone (results in out
@@ -34,6 +37,14 @@ public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 	private int classMaxDepth;
 	private boolean debugChecks;
 	private boolean forbidNull;
+	/*
+	 *format junit file
+	 * if long, we will have something like this:
+	 * int x = a;
+	 * method(x);
+	 * if short format, it will turn into:
+	 * method(a); 
+	 */
 	private boolean longFormat;
 	private boolean prettyPrint;
 	private int stringMaxLength;
@@ -43,12 +54,14 @@ public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 	private int testsPerQuery;
 	private boolean objectToInteger;
 	private boolean inheritedMethod;
-	private File outputDir;
 	private boolean printFailTests;
 	private boolean printPassTests;
 	private int maxMethodsPerGenTestClass;
 	private int maxLinesPerGenTestClass;
-	private String outputPackageName;
+	private File outputDir;
+	private String outputPath;	// D:/workspace/tzuyu/scr
+	private String outputPackage; // ex: tzuyu.test
+	
 	
 	public TzConfiguration(boolean setDefault) {
 		if (setDefault) {
@@ -113,6 +126,18 @@ public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 	public File getOutputDir() {
 		return outputDir;
 	}
+	
+	public void setOutputPath(String outputPath) {
+		this.outputPath = outputPath;
+	}
+	
+	public void setOutputPackage(String pkgName) {
+		this.outputPackage = pkgName;
+	}
+	
+	public String getOutputPath() {
+		return outputPath;
+	}
 
 	public void setOutput(String output) {
 		// check if entered output dir is exist, if not , reset to null.(move
@@ -128,13 +153,16 @@ public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 		}
 		this.outputDir = outputDir;
 	}
+	
+	
 
 	public boolean isObjectToInteger() {
 		return objectToInteger;
 	}
 
 	public String getAbsoluteAddress(String filename) {
-		return outputDir.getAbsolutePath() + Globals.fileSep + filename;
+		return StringUtils.join(Globals.fileSep, 
+				outputPath, outputPackage, filename);
 	}
 
 	public int getArrayMaxLength() {
@@ -171,6 +199,7 @@ public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 
 	public void setOutputDir(File outputDir) {
 		this.outputDir = outputDir;
+		this.outputPath = outputDir.getAbsolutePath();
 	}
 
 	public void setArrayMaxLength(int arrayMaxLength) {
@@ -233,16 +262,11 @@ public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 	public void setMaxLinesPerGenTestClass(int maxLinesPerGenTestClass) {
 		this.maxLinesPerGenTestClass = maxLinesPerGenTestClass;
 	}
-
-	public String getOutputPackageName() {
-		return outputPackageName;
-	}
-
-	public void setOutputPackageName(String outputPackageName) {
-		this.outputPackageName = outputPackageName;
-	}
-
-	public JunitConfig getJunitConfig() {
-		return new JunitConfig(stringMaxLength, longFormat);
+	
+	public String getPackageName(boolean forPassTcs) {
+		if (forPassTcs) {
+			return StringUtils.dotJoin(outputPackage, PASS_PKG_NAME);
+		}
+		return StringUtils.dotJoin(outputPackage, FAIL_PKG_NAME);
 	}
 }

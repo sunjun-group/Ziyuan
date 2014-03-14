@@ -1,4 +1,4 @@
-package tzuyu.engine.experiment;
+package tzuyu.engine.junit;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ import tzuyu.engine.utils.Assert;
  * Copywright @ Randoop Team
  *
  */
-class VariableRenamer {
+public class VariableRenamer {
 
   /**
    * The sequence in which every variable will be renamed

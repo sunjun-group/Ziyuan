@@ -17,6 +17,7 @@ import tzuyu.engine.model.QueryTrace;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.TzuYuAction;
 import tzuyu.engine.model.TzuYuAlphabet;
+import tzuyu.engine.utils.Pair;
 
 /**
  * This version of tester treats the constructors defined in the target class as
@@ -149,16 +150,22 @@ public class TzuYuTester implements Tester {
 		return result;
 	}
 
-	private List<Sequence> getAllTestCases() {
-		List<Sequence> sequences = new ArrayList<Sequence>();
+	private Pair<List<Sequence>, List<Sequence>> getAllTestCases() {
 		// Only retrieve good test cases
-		List<TestCase> cases = tcg.getAllGoodTestCases();
+		Pair<List<TestCase>, List<TestCase>> cases = tcg.getAllTestcases(project.getConfiguration()
+				.isPrintPassTests(), project.getConfiguration()
+				.isPrintFailTests());
 		// Retrieve all good and error traces
 		// List<TestCase> cases = tcg.getAllGeneratedTestCases();
-		for (TestCase tc : cases) {
-			sequences.add(tc.getSequence());
+		return Pair.of(extractSequences(cases.a), extractSequences(cases.b));
+	}
+	
+	private List<Sequence> extractSequences(List<TestCase> tcs) {
+		List<Sequence> seqs = new ArrayList<Sequence>(tcs.size());
+		for (TestCase tc : tcs) {
+			seqs.add(tc.getSequence());
 		}
-		return sequences;
+		return seqs;
 	}
 
 	public void report(ReportHandler<TzuYuAlphabet> reporter) {

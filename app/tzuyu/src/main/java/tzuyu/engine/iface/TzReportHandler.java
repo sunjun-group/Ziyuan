@@ -9,16 +9,15 @@
 package tzuyu.engine.iface;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import lstar.ReportHandler;
-import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzClass;
-import tzuyu.engine.experiment.JUnitFileWriter;
+import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.junit.JFileWriter;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.TzuYuAlphabet;
-import tzuyu.engine.utils.Globals;
+import tzuyu.engine.utils.Pair;
 
 /**
  * @author LLT
@@ -26,31 +25,35 @@ import tzuyu.engine.utils.Globals;
  */
 public abstract class TzReportHandler implements ReportHandler<TzuYuAlphabet>{
 	private TzConfiguration config;
+	private List<File> testFiles;
 	
 	public TzReportHandler(TzConfiguration config) {
 		this.config = config;
 	}
 	
-	public List<File> writeJUnitTestCases(List<Sequence> allTestCases, TzClass project) {
-		List<File> junitFiles = new ArrayList<File>();
-
-		String targetClass = getTargetClassName(project);
-		String dir = Globals.userDir + Globals.fileSep + "testcases";
-		int size = allTestCases.size();
-		// We group all test cases into one file. The file name ends with the
-		// suffix of the file number.
-		JUnitFileWriter writer = new JUnitFileWriter(dir, "", targetClass, size);
-		writer.config(config);
-		junitFiles.addAll(writer.createJUnitTestFiles(allTestCases));
-		return junitFiles;
+	public List<File> writeJUnitTestCases(List<Sequence> allTestCases,
+			TzClass project, boolean passTcs, int firstFileIdx) {
+		JFileWriter writer = new JFileWriter(project.getConfiguration(),
+				project.getClassName(), passTcs);
+		testFiles = writer.createJUnitTestFiles(allTestCases, firstFileIdx);
+		return testFiles;
 	}
 	
-	public void writeTestCases(List<Sequence> allTestCases, TzClass project) {
-		writeJUnitTestCases(allTestCases, project);
+	/*
+	 *  pair.a : pass testcases,
+	 *  pair.b : fail testcases
+	 * */
+	public void writeTestCases(Pair<List<Sequence>, List<Sequence>> allSeqs, TzClass project) {
+		int firstFileIdx = 0; 
+		if (!allSeqs.a.isEmpty()) {
+			firstFileIdx = writeJUnitTestCases(allSeqs.a, project, true, firstFileIdx).size();
+		}
+		if (!allSeqs.b.isEmpty()) {
+			writeJUnitTestCases(allSeqs.b, project, false, firstFileIdx);
+		}
 	}
 	
-
-	protected String getTargetClassName(TzClass project) {
-		return project.getClassName();
+	public List<File> getTestFiles() {
+		return testFiles;
 	}
 }

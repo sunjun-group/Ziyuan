@@ -6,10 +6,11 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.experiment;
+package tzuyu.engine.junit;
 
 import java.util.List;
 
+import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.model.Statement;
 import tzuyu.engine.model.StatementKind;
 import tzuyu.engine.model.Variable;
@@ -22,16 +23,16 @@ import tzuyu.engine.runtime.RMethod;
  * @author LLT
  *
  */
-public class JWriterFactory {
-	private JunitConfig config;
+public class StmtJWriterFactory {
 	private VariableRenamer renamer;
+	private TzConfiguration config;
 	
-	public JWriterFactory(JunitConfig config, VariableRenamer renamer) {
+	public StmtJWriterFactory(TzConfiguration config, VariableRenamer renamer) {
 		this.config = config;
 		this.renamer = renamer;
 	}
 	
-	public AbstractJWriter getJWriter(Statement stmt, Variable newVar,
+	public AbstractStmtJWriter getStmtJWriter(Statement stmt, Variable newVar,
 			List<Variable> inputVars) {
 		StatementKind statement = stmt.getAction().getAction();
 		if (statement instanceof RAssignment) {
@@ -71,31 +72,5 @@ public class JWriterFactory {
 			List<Variable> inputVars) {
 		return new RArrayDeclarationJWriter(config, renamer, rArrayDeclaration,
 				newVar, inputVars);
-	}
-	
-	public static class JunitConfig {
-		private int stringMaxLength;
-		/*
-		 *format junit file
-		 * if long, we will have something like this:
-		 * int x = a;
-		 * method(x);
-		 * if short format, it will turn into:
-		 * method(a); 
-		 */
-		private boolean longFormat;
-		
-		public JunitConfig(int stringMaxLength, boolean longFormat) {
-			this.stringMaxLength = stringMaxLength;
-			this.longFormat = longFormat;
-		}
-
-		public int getStringMaxLength() {
-			return stringMaxLength;
-		}	
-		
-		public boolean isLongFormat() {
-			return longFormat;
-		}
 	}
 }

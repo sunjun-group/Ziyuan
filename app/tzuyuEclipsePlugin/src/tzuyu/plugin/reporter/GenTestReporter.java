@@ -15,7 +15,6 @@ import java.util.List;
 import org.eclipse.swt.widgets.Display;
 
 import tzuyu.engine.TzClass;
-import tzuyu.engine.experiment.NewSequencePrettyPrinter;
 import tzuyu.engine.iface.ILogger;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.model.Sequence;
@@ -34,21 +33,12 @@ public class GenTestReporter extends TzReportHandler {
 	private GenTestPreferences prefs;
 	private PluginLogger logger;
 	
-	
 	public GenTestReporter(GenTestPreferences prefs) {
 		super(prefs.getTzConfig());
 		this.prefs = prefs;
 		logger = new PluginLogger(TzConsole.getOutputStream());
 	}
 	
-	@Override
-	public List<File> writeJUnitTestCases(List<Sequence> allTestCases,
-			TzClass tzClazz) {
-		NewSequencePrettyPrinter.setUp(new PluginClassWriter(prefs), 
-				tzClazz, tzClazz.getConfiguration())
-						.print(allTestCases);
-		return null;
-	}
 
 	public void reportDFA(final DFA lastDFA, TzuYuAlphabet sigma) {
 		saveDFA(lastDFA, sigma.getProject());
@@ -69,7 +59,8 @@ public class GenTestReporter extends TzReportHandler {
 		if (dfa != null) {
 			String dot = dfa.createDotRepresentation();
 			try {
-				String fileName = tzProject.getConfiguration().getAbsoluteAddress(getTargetClassName(tzProject) + ".dot");
+				String fileName = tzProject.getConfiguration()
+						.getAbsoluteAddress(tzProject.getClassName() + ".dot");
 				FileWriter writer = new FileWriter(fileName);
 				writer.write(dot);
 				writer.close();
@@ -88,4 +79,7 @@ public class GenTestReporter extends TzReportHandler {
 		logger.close();
 	}
 
+	public GenTestPreferences getPrefs() {
+		return prefs;
+	}
 }

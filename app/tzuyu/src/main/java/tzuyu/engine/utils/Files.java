@@ -239,4 +239,20 @@ public final class Files {
     }
     return lines;
   }
+
+	public static File newFile(String basePath, String fileName,
+			String ext) {
+		Assert.assertNotNull(basePath, "The output dir can not be null.");
+		File f = new File(basePath);
+		if (f.exists()) {
+			Assert.assertTrue(f.isDirectory(), "The output dir: " + basePath
+					+ " should be a dir.");
+		} else {
+			f.mkdirs();
+		}
+		return new File(basePath
+				+ System.getProperty("file.separator") + fileName
+				+ "."
+				+ ext);
+	}
 }

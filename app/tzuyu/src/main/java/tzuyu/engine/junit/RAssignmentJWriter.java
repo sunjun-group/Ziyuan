@@ -6,10 +6,11 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.experiment;
+package tzuyu.engine.junit;
 
 import tester.ObjectType;
-import tzuyu.engine.experiment.JWriterFactory.JunitConfig;
+import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.junit.printer.JOutputPrinter;
 import tzuyu.engine.model.Variable;
 import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.runtime.RAssignment;
@@ -21,13 +22,13 @@ import tzuyu.engine.utils.StringUtils;
  * @author LLT
  *
  */
-public class RAssignmentJWriter extends AbstractJWriter {
+public class RAssignmentJWriter extends AbstractStmtJWriter {
 	private String declaredClass;
 	private String declaredName = StringUtils.EMPTY;
 	private String instanceClass;
 	private String val;
 	
-	public RAssignmentJWriter(JunitConfig config, VariableRenamer renamer,
+	public RAssignmentJWriter(TzConfiguration config, VariableRenamer renamer,
 			RAssignment stmt, Variable newVar) {
 		super(config, renamer);
 		init(stmt, newVar);
@@ -78,10 +79,9 @@ public class RAssignmentJWriter extends AbstractJWriter {
 								+ " .Try to use Constructor statement instead!!");
 			}
 		}
-		System.out.println();
 	}
 	
-	public void write(StringBuilder sb) {
+	public void write(JOutputPrinter sb) {
 		sb.append(declaredClass).append(" ").append(declaredName).append(" = ");
 		if (instanceClass != null) {
 			sb.append("new ").append(instanceClass).append("(")

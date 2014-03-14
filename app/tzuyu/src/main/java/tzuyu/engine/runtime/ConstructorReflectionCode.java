@@ -7,6 +7,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
+import tzuyu.engine.utils.Globals;
 import tzuyu.engine.utils.ReflectionUtils;
 
 public class ConstructorReflectionCode extends ReflectionCode {
@@ -27,10 +28,12 @@ public class ConstructorReflectionCode extends ReflectionCode {
 	}
 
 	private void checkRepetion() {
-		String error = ReflectionUtils.checkArgumentTypes(inputs,
-				constructor.getParameterTypes(), constructor);
-		if (error != null)
-			throw new IllegalArgumentException(error);
+		if (Globals.DEBUG_CHECK) {
+			String error = ReflectionUtils.checkArgumentTypes(inputs,
+					constructor.getParameterTypes(), constructor);
+			if (error != null)
+				throw new IllegalArgumentException(error);
+		}
 	}
 
 	public Constructor<?> getConstructor() {
