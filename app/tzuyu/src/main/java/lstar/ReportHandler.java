@@ -25,5 +25,5 @@ public interface ReportHandler <A extends Alphabet>{
 
 	ILogger<?> getLogger();
 	
-	public void done();
+	public void comit();
 }

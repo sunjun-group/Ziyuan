@@ -169,9 +169,8 @@ public final class PrimitiveTypes {
 
 		if (String.class.equals(valueClass)) {
 			String escaped = StringEscapeUtils.escapeJava(value.toString());
-			if (escaped.length() > stringMaxLength) {
-				throw new Error("Longer string, length = " + escaped.length());
-			}
+//			Assert.assertTrue(escaped.length() < stringMaxLength,
+//					"Longer string, length = " + escaped.length());
 			return "\"" + escaped + "\""; // + "/*length=" + escaped.length() +
 			// "*/"
 		} else if (char.class.equals(valueClass)) {

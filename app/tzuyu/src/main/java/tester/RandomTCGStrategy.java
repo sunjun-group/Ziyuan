@@ -15,7 +15,6 @@ import tzuyu.engine.model.TVAnswer;
 import tzuyu.engine.model.TzuYuAction;
 import tzuyu.engine.model.VarIndex;
 import tzuyu.engine.model.Variable;
-import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.store.MethodParameterStore;
 import tzuyu.engine.utils.Pair;
 import tzuyu.engine.utils.Permutation;
@@ -370,9 +369,9 @@ public class RandomTCGStrategy implements ITCGStrategy {
 			Class<?> type = paramTypes.get(index);
 			// The first argument of an instance method is the receiver object
 			if (index == 0 && !isStatic) {
-				// LLT: why receiver is only initialized if null here? 
+				// LLT-only initialize for non-static methods.
 				if (receiver == null) {
-					receiver = selector.selectDefaultReceiver(ensureProject()
+					receiver = selector.selectDefaultReceiver(project
 							.getTarget());
 				} 
 				parameters.add(receiver);
@@ -430,7 +429,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 					// generate
 					// the receiver
 					Variable mainVariable = selector
-							.selectNullReceiver(ensureProject().getTarget());
+							.selectNullReceiver(project.getTarget());
 					parameters.add(mainVariable);
 				} else {
 					// Variable receiver = receiver.getReceiver();
@@ -534,7 +533,6 @@ public class RandomTCGStrategy implements ITCGStrategy {
 	}
 
 	public List<TestCase> getAllGeneratedTestCases() {
-
 		Pair<List<TestCase>, List<TestCase>> representatives = store
 				.getRepresentativeForAllTestCases();
 
@@ -547,12 +545,5 @@ public class RandomTCGStrategy implements ITCGStrategy {
 	@Override
 	public Pair<List<TestCase>, List<TestCase>> getAllTestcases(boolean pass, boolean fail) {
 		return store.getTestcases(pass, fail);
-	}
-
-	private TzClass ensureProject() {
-		if (project == null) {
-			throw new TzRuntimeException("Tzuyu project not set for tester");
-		}
-		return project;
 	}
 }

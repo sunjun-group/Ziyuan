@@ -75,7 +75,7 @@ public class GenTestReporter extends TzReportHandler {
 		return logger;
 	}
 	
-	public void done() {
+	public void comit() {
 		logger.close();
 	}
 

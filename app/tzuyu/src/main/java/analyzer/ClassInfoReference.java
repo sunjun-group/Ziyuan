@@ -11,6 +11,7 @@ import tzuyu.engine.model.FieldInfo;
 import tzuyu.engine.model.MethodInfo;
 import tzuyu.engine.model.ObjectInfo;
 import tzuyu.engine.model.exception.TzRuntimeException;
+import tzuyu.engine.utils.Assert;
 import tzuyu.engine.utils.ReflectionUtils;
 
 public class ClassInfoReference extends ClassInfo {
@@ -32,6 +33,7 @@ public class ClassInfoReference extends ClassInfo {
 
 	public void initialize(ClassInfo sc, ClassInfo[] ins, ClassInfo[] inners,
 			FieldInfo[] fields, MethodInfo[] methods, ConstructorInfo[] ctors) {
+		Assert.assertTrue(!isInitialized, "try to initialize an initialized object");
 		if (!isInitialized) {
 			isInitialized = true;
 			this.superClass = sc;
@@ -40,9 +42,7 @@ public class ClassInfoReference extends ClassInfo {
 			this.declaredFields = fields;
 			this.declaredMethods = methods;
 			this.constructors = ctors;
-		} else {
-			throw new TzRuntimeException("try to initialize an initialized object");
-		}
+		} 
 	}
 
 	@Override

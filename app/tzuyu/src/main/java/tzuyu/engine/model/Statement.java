@@ -3,6 +3,8 @@ package tzuyu.engine.model;
 import java.util.List;
 
 import tzuyu.engine.model.exception.TzRuntimeException;
+import tzuyu.engine.utils.ClassUtils;
+import tzuyu.engine.utils.CollectionUtils;
 
 /**
  * A wrapper for a guarded statement with input variables.
@@ -17,7 +19,8 @@ public class Statement {
 
 	public Statement(TzuYuAction stmt, List<RelativeNegativeIndex> indexList) {
 		if (!checkParameterCompatability(stmt, indexList)) {
-			throw new TzRuntimeException("parameter types do not match");
+			throw new TzRuntimeException("parameter types do not match",
+					stmt.getInputTypes(), indexList);
 		}
 		this.statement = stmt;
 		this.inputVars = indexList;
@@ -29,8 +32,9 @@ public class Statement {
 
 	private boolean checkParameterCompatability(TzuYuAction stmt,
 			List<RelativeNegativeIndex> params) {
-		if (stmt.getInputTypes().size() != params.size())
+		if (stmt.getInputTypes().size() != params.size()) {
 			return false;
+		}
 		for (int i = 0; i < params.size(); i++) {
 			// check type compatibility
 		}

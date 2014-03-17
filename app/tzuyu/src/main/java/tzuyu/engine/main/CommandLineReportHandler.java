@@ -52,7 +52,7 @@ public class CommandLineReportHandler extends TzReportHandler {
 	}
 
 	@Override
-	public void done() {
+	public void comit() {
 		
 	}
 }

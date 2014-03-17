@@ -8,7 +8,7 @@ import tzuyu.engine.model.Trace;
 import tzuyu.engine.model.TzuYuAction;
 import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.dfa.Transition;
-import tzuyu.engine.model.exception.TzRuntimeException;
+import tzuyu.engine.utils.Assert;
 
 
 public class StringConverter {
@@ -59,10 +59,7 @@ public class StringConverter {
           }
         }
       }
-      // This should not happen
-      if (!matchingTransitionFound) {
-        throw new TzRuntimeException("no matching transtion");
-      }
+      Assert.assertTrue(!matchingTransitionFound, "no matching transtion");
     }
     return string;
   }

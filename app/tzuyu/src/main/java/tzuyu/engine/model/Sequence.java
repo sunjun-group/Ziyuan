@@ -95,7 +95,8 @@ public class Sequence implements Serializable {
 			List<RelativeNegativeIndex> inputVars = si.getInputVars();
 			List<Class<?>> inputTypes = si.getInputTypes();
 			if (inputVars.size() != inputTypes.size()) {
-				throw new TzRuntimeException("number of parameters does not match");
+				throw new TzRuntimeException("number of parameters does not match",
+						inputVars, inputTypes);
 			}
 
 			List<Variable> vars = this.getInputs(statements.size() - 1);

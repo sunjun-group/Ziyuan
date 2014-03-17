@@ -13,7 +13,7 @@ import tzuyu.engine.model.exception.TzRuntimeException;
 
 /**
  * @author LLT
- * 
+ * If the exception because of Assertion error, means it need to be fixed.
  */
 public class Assert {
 

@@ -67,6 +67,10 @@ public class Tzuyu implements TzuyuEngine, IAlgorithmFactory<TzuYuAlphabet> {
 		reporter.getLogger().info("============Start of Statistics for",
 				project.getTarget().getSimpleName(), "============");
 		// TODO [LLT]: time measuring.
+		runForASingleMethodGroup();
+	}
+
+	private void runForASingleMethodGroup() {
 		try {
 			learner.startLearning(new TzuYuAlphabet(project));
 		} catch (LStarException e) {
@@ -74,7 +78,7 @@ public class Tzuyu implements TzuyuEngine, IAlgorithmFactory<TzuYuAlphabet> {
 			reporter.getLogger().info("Exception::", e.getType());
 		}
 		learner.report(reporter);
-		reporter.done();
+		reporter.comit();
 	}
 
 	public Learner<TzuYuAlphabet> getLearner() {
