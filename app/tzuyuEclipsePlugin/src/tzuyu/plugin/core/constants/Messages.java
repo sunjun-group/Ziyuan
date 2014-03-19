@@ -65,8 +65,16 @@ public final class Messages {
 		return getMessage("inputWizardPage_name");
 	}
 
+	public String genericSearchScopeDialog_type() {
+		return getMessage("genericSearchScopeDialog_type");
+	}
+
 	public String gentest_prefs_output_error_testCaseType_empty() {
 		return getMessage("gentest_prefs_output_error_testCaseType_empty");
+	}
+
+	public String genericSearchScopeDialog_title() {
+		return getMessage("genericSearchScopeDialog_title");
 	}
 
 	public String sourceFolderEditor_errorMessage() {
@@ -77,6 +85,18 @@ public final class Messages {
 		return getMessage("gentest_prefs_param");
 	}
 
+	public String gentest_prefs_param_group_primitive() {
+		return getMessage("gentest_prefs_param_group_primitive");
+	}
+
+	public String genericSearchScopeDialog_scope() {
+		return getMessage("genericSearchScopeDialog_scope");
+	}
+
+	public String editDialog_new_title(Object arg0) {
+		return getMessage("editDialog_new_title", arg0);
+	}
+
 	public String gentest_prefs_output_testcaseType_pass() {
 		return getMessage("gentest_prefs_output_testcaseType_pass");
 	}
@@ -85,16 +105,8 @@ public final class Messages {
 		return getMessage("gentest_prefs_output_className");
 	}
 
-	public String gentest_prefs_param_group_learning_config() {
-		return getMessage("gentest_prefs_param_group_learning_config");
-	}
-
 	public String packageEditor_selection_popup_desc() {
 		return getMessage("packageEditor_selection_popup_desc");
-	}
-
-	public String gentest_prefs_param_primitiveTitle() {
-		return getMessage("gentest_prefs_param_primitiveTitle");
 	}
 
 	public String gentest_prefs_tab_param() {
@@ -117,12 +129,24 @@ public final class Messages {
 		return getMessage("genTestWizard_title");
 	}
 
+	public String gentest_prefs_param_group_generic() {
+		return getMessage("gentest_prefs_param_group_generic");
+	}
+
 	public String gentest_prefs_output() {
 		return getMessage("gentest_prefs_output");
 	}
 
+	public String common_editButton() {
+		return getMessage("common_editButton");
+	}
+
 	public String sourceFolderEditor_description() {
 		return getMessage("sourceFolderEditor_description");
+	}
+
+	public String common_select() {
+		return getMessage("common_select");
 	}
 
 	public String gentest_prefs_output_testcaseType_fail() {
@@ -133,8 +157,8 @@ public final class Messages {
 		return getMessage("gentest_prefs_output_maxMethodsPerClass");
 	}
 
-	public String gentest_prefs_param_group_parameter_config() {
-		return getMessage("gentest_prefs_param_group_parameter_config");
+	public String gentest_prefs_param_group_learning() {
+		return getMessage("gentest_prefs_param_group_learning");
 	}
 
 	public String gentest_prefs_output_maxLinesPerClass() {
@@ -165,12 +189,20 @@ public final class Messages {
 		return getMessage("gentest_selection_empty");
 	}
 
+	public String gentest_prefs_param_generic_table_value_col() {
+		return getMessage("gentest_prefs_param_generic_table_value_col");
+	}
+
 	public String gentest_prefs_param_stringMaxLength() {
 		return getMessage("gentest_prefs_param_stringMaxLength");
 	}
 
 	public String gentest_prefs_output_folder() {
 		return getMessage("gentest_prefs_output_folder");
+	}
+
+	public String gentest_prefs_param_objectTypeTitle() {
+		return getMessage("gentest_prefs_param_objectTypeTitle");
 	}
 
 	public String gentest_prefs_param_objectToInteger() {
@@ -183,6 +215,10 @@ public final class Messages {
 
 	public String gentest_prefs_param_prettyPrint() {
 		return getMessage("gentest_prefs_param_prettyPrint");
+	}
+
+	public String common_addButton() {
+		return getMessage("common_addButton");
 	}
 
 	public String gentest_prefs_output_testClassFormat() {
@@ -209,12 +245,20 @@ public final class Messages {
 		return getMessage("gentest_prefs_output_testcaseType_question");
 	}
 
+	public String gentest_prefs_param_generic_table_name_col() {
+		return getMessage("gentest_prefs_param_generic_table_name_col");
+	}
+
 	public String gentest_config_wizard_title() {
 		return getMessage("gentest_config_wizard_title");
 	}
 
 	public String gentest_prefs_output_warning_className_lowercase() {
 		return getMessage("gentest_prefs_output_warning_className_lowercase");
+	}
+
+	public String common_removeButton() {
+		return getMessage("common_removeButton");
 	}
 
 	public String gentest_prefs_output_paramDeclarationFormat() {
@@ -235,6 +279,10 @@ public final class Messages {
 
 	public String gentest_prefs_param_description() {
 		return getMessage("gentest_prefs_param_description");
+	}
+
+	public String editDialog_edit_title(Object arg0) {
+		return getMessage("editDialog_edit_title", arg0);
 	}
 
 	public String gentest_prefs_output_package() {

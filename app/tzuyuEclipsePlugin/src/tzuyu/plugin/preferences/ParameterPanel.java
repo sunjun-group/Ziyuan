@@ -36,20 +36,22 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 	private Button objToIntCb;
 	private Label testsPerQueryLb;
 	private IntText testsPerQueryTx;
+	private GenericParamGroup genericTypeGroup;
 
 	public ParameterPanel(DialogPage msgContainer, Composite parent) {
 		super(parent, msgContainer);
-		GridLayout grid = new GridLayout(2, false);
+		GridLayout grid = new GridLayout(1, false);
 		setLayout(grid);
 		GridData layoutData = new GridData(GridData.FILL_BOTH); 
 		setLayoutData(layoutData);
 		grid.marginRight = 20;
 		
 		decorateContent(this);
+		addModifyListener();
 	}
 
 	private void decorateContent(Composite contentPanel) {
-		int colNum = 2;
+		int colNum = 1;
 		/* description */
 		Label decsLb = SWTFactory.createLabel(contentPanel, /* msg.gentest_prefs_param_description()*/
 				"The parameters in this section will be applied to the learning process, as well as the parameter generator \nof tester module.", colNum);
@@ -57,43 +59,61 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
         data.verticalAlignment = GridData.FILL;
         data.horizontalAlignment = GridData.FILL;
         decsLb.setLayoutData(data);
+        
+        Composite row2 = SWTFactory.createGridPanel(contentPanel, 2);
         /* learning configuration section */
-		SWTFactory.createLabel(contentPanel,
-				msg.gentest_prefs_param_group_learning_config(), colNum);
-		Group lcGroup = SWTFactory.createGroup(contentPanel, "", colNum);
+		createLearningSection(row2, colNum);
+		
+        /* parameter section */
+		createPrimitiveParamSection(row2, colNum);
+		
+		createGenericParamSection(contentPanel, colNum);
+	}
+
+	private void createLearningSection(Composite contentPanel, int colNum) {
+//		SWTFactory.createLabel(contentPanel,
+//				msg.gentest_prefs_param_group_learning_config(), colNum);
+		Group lcGroup = SWTFactory.createGroup(contentPanel,
+				msg.gentest_prefs_param_group_learning(), colNum);
 		lcGroup.setLayout(new GridLayout(2, false));
 		testsPerQueryLb = SWTFactory.createLabel(lcGroup,
 				msg.gentest_prefs_param_testPerQuery());
 		testsPerQueryTx = new IntText(lcGroup, ParamField.TESTS_PER_QUERY)
-				.setPositive().setMandatory();
-		
-        /* parameter section */
-		SWTFactory.createLabel(contentPanel,
-				msg.gentest_prefs_param_group_parameter_config(), colNum);
-		Group group1 = SWTFactory.createGroup(contentPanel,
-				msg.gentest_prefs_param_primitiveTitle(), colNum);
-		group1.setLayout(new GridLayout(2, false));
-		arrayMaxLengthLb = SWTFactory.createLabel(group1,
+		.setPositive().setMandatory();
+	}
+	
+	private void createPrimitiveParamSection(Composite contentPanel, int colNum) {
+//		SWTFactory.createLabel(contentPanel,
+//				msg.gentest_prefs_param_group_parameter_config(), colNum);
+		Group primitiveGroup = SWTFactory.createGroup(contentPanel,
+				msg.gentest_prefs_param_group_primitive(), colNum);
+		primitiveGroup.setLayout(new GridLayout(2, false));
+		arrayMaxLengthLb = SWTFactory.createLabel(primitiveGroup,
 				msg.gentest_prefs_param_arrayMaxDepth());
-		arrayMaxLengthTx = new IntText(group1,
+		arrayMaxLengthTx = new IntText(primitiveGroup,
 				ParamField.ARRAY_MAX_LENGTH).setPositive().setMandatory();
 		
-		classMaxDepthLb = SWTFactory.createLabel(group1,
+		classMaxDepthLb = SWTFactory.createLabel(primitiveGroup,
 				msg.gentest_prefs_param_classMaxDepth());
-		classMaxDepthTx = new IntText(group1, ParamField.CLASS_MAX_DEPTH)
-				.setPositive().setMandatory();
+		classMaxDepthTx = new IntText(primitiveGroup, ParamField.CLASS_MAX_DEPTH)
+		.setPositive().setMandatory();
 		
-		stringMaxLengthLb = SWTFactory.createLabel(group1,
+		stringMaxLengthLb = SWTFactory.createLabel(primitiveGroup,
 				msg.gentest_prefs_param_stringMaxLength());
-		stringMaxLengthTx = new IntText(group1,
+		stringMaxLengthTx = new IntText(primitiveGroup,
 				ParamField.STRING_MAX_LENGTH).setPositive().setMandatory();
-		
-		Group group2 = SWTFactory.createGroup(contentPanel, "", colNum);
-		objToIntCb = SWTFactory.createCheckbox(group2,
+	}
+	
+	private void createGenericParamSection(Composite contentPanel, int colNum) {
+		Group genericGroup = SWTFactory.createGroup(contentPanel,
+				msg.gentest_prefs_param_group_generic(), colNum);
+		objToIntCb = SWTFactory.createCheckbox(genericGroup,
 				msg.gentest_prefs_param_objectToInteger(), colNum);
 		
-		addModifyListener();
+		genericTypeGroup = new GenericParamGroup(genericGroup);
+		SWTFactory.horizontalSpan(genericTypeGroup, colNum);
 	}
+
 
 	@Override
 	public void refresh(GenTestPreferences data) {
@@ -103,6 +123,7 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 		stringMaxLengthTx.setValue(tzConfig.getStringMaxLength());
 		objToIntCb.setSelection(tzConfig.isObjectToInteger());
 		testsPerQueryTx.setValue(tzConfig.getTestsPerQuery());
+		genericTypeGroup.setValue(data);
 	}
 
 	private void addModifyListener() {

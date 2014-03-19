@@ -65,7 +65,8 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 
 	private IntText maxLine;
 	
-	public OutputPanel(DialogPage msgContainer, Composite parent, IJavaProject project, Shell shell) {
+	public OutputPanel(DialogPage msgContainer, Composite parent,
+			IJavaProject project, Shell shell) {
 		super(parent, msgContainer);
 		
 		eventManager = new AppEventManager();
@@ -106,8 +107,8 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		// pass fail testcases
 		passFailCbGroup = new CheckboxGroup<TestCaseType>(contentPanel,
 				msg.gentest_prefs_output_testcaseType_question(), colSpan);
-		passFailCbGroup.addCb(msg.gentest_prefs_output_testcaseType_pass(), TestCaseType.PASS);
-		passFailCbGroup.addCb(msg.gentest_prefs_output_testcaseType_fail(), TestCaseType.FAIL);
+		passFailCbGroup.add(msg.gentest_prefs_output_testcaseType_pass(), TestCaseType.PASS);
+		passFailCbGroup.add(msg.gentest_prefs_output_testcaseType_fail(), TestCaseType.FAIL);
 		
 		Group formatGroup = SWTFactory.createGroup(contentPanel, StringUtils.EMPTY, colSpan);
 		formatGroup.setLayout(new GridLayout(2, false));
@@ -131,7 +132,6 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		maxLine = new IntText(formatGroup, OutputField.MAX_LINE_NUM);
 		maxLine.asWidget().setVisible(false);
 		registerListener();
-		
 	}
 
 	private void registerListener() {

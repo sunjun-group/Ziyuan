@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Label;
 
 import tzuyu.engine.utils.Assert;
 import tzuyu.plugin.TzuyuPlugin;
-import tzuyu.plugin.preferences.ParamDeclarationFormat;
 
 /**
  * @author LLT
@@ -83,6 +82,7 @@ public class SWTFactory {
 				| GridData.GRAB_HORIZONTAL);
 		gridData.horizontalSpan = colSpan;
 		gridData.horizontalIndent = 3; 
+		gridData.verticalAlignment = GridData.BEGINNING;
 		group.setLayoutData(gridData);
 		return group;
 	}
@@ -100,5 +100,33 @@ public class SWTFactory {
 			comb.add(TzuyuPlugin.getMessages().getMessage(val));
 		}
 		return comb;
+	}
+	
+	public static Button createBtnAlignFill(Composite parent, String text) {
+		Button btn = createBtn(parent, text);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		btn.setLayoutData(data);
+		return btn;
+	}
+	
+	public static Button createBtn(Composite parent, String text) {
+		Button btn = new Button(parent, SWT.PUSH);
+		btn.setText(text);
+		return btn;
+	}
+
+	public static Composite createGridPanel(Composite parent, int col) {
+		Composite panel = new Composite(parent, SWT.NONE);
+		GridLayout grid = new GridLayout(col, false);
+		panel.setLayout(grid);
+		GridData layoutData = new GridData(GridData.FILL_BOTH); 
+		panel.setLayoutData(layoutData);
+		return panel;
+	}
+	
+	public static Button createRadioBtn(Composite parent, String text) {
+		Button radio = new Button(parent, SWT.RADIO);
+		radio.setText(text);
+		return radio;
 	}
 }

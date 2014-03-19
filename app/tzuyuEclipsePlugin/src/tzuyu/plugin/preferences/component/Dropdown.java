@@ -51,7 +51,7 @@ public class Dropdown<T extends Enum<?>> {
 				return;
 			}
 		}
-		Assert.error("Dropdonw: error when try to select an item. Item " + item
+		Assert.assertFail("Dropdonw: error when try to select an item. Item " + item
 				+ " is not found in data");
 	}
 }

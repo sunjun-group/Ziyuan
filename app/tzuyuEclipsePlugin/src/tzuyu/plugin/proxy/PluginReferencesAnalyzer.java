@@ -277,7 +277,7 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		return result;
 	}
 
-	private static IType[] getAllSubtypes(IJavaProject project, IType type)
+	public static IType[] getAllSubtypes(IJavaProject project, IType type)
 			throws JavaModelException {
 		IType[] allSubtypes = type.newTypeHierarchy(project, null)
 				.getAllSubtypes(type);

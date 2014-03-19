@@ -21,7 +21,7 @@ import org.apache.commons.io.FileUtils;
  * @author LLT
  *
  */
-public class GenerateMessagesClass {
+public class MessagesGenerator {
 
 	private static final String START_GENERATED_PART_TOKEN = "//	Generated part";
 	private static final String END_GENERATED_PART_TOKEN = "//	End generated part";

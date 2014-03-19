@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -320,5 +321,30 @@ public class ResourcesUtils {
 				.removeFileExtension().segments());
 	}
 	
+	public static String getFullName(IType type) {
+		if (type == null) {
+			return StringUtils.EMPTY;
+		}
+		return StringUtils.dotJoin(getTypeContainerName(type), type.getElementName());
+	}
 	
+	public static String getTypeContainerName(IType type) {
+		IType outerType = type.getDeclaringType();
+		if (outerType != null) {
+			return outerType.getFullyQualifiedName('.');
+		} else {
+			return type.getPackageFragment().getElementName();
+		}
+	}
+	
+	public static boolean isPublicNotInterfaceOrAbstract(IType type) {
+		int flags;
+		try {
+			flags = type.getFlags();
+			return Flags.isPublic(flags) && !Flags.isInterface(flags)
+					&& !Flags.isAbstract(flags);
+		} catch (JavaModelException e) {
+			return false;
+		}
+	}
 }
