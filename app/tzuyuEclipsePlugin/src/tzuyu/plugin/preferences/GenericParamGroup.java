@@ -8,7 +8,6 @@
 
 package tzuyu.plugin.preferences;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -16,7 +15,10 @@ import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -32,9 +34,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 
-import tzuyu.engine.TzConfiguration;
-import tzuyu.engine.utils.Assert;
-import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.core.constants.Messages;
@@ -49,20 +48,29 @@ public class GenericParamGroup extends Composite {
 	private Button addBtn;
 	private Button editBtn;
 	private Button removeBtn;
-	
 	private TableViewer tableViewer;
-	private Map<String, String> typesMap;
+	
 	private GenTestPreferences data;
+	private Map<String, TypeScope> scopeMap;
 	
 	public GenericParamGroup(Composite parent) {
 		super(parent, SWT.NONE);
-		typesMap = new HashMap<String, String>();
 		setLayout();
 		createContent(this);
 		registerListener();
 	}
 
 	private void registerListener() {
+		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				StructuredSelection selection = (StructuredSelection)event.getSelection();
+				int size = selection.size();
+				editBtn.setEnabled(size == 1);
+				removeBtn.setEnabled(size > 0);
+			}
+		});
 		addBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -90,15 +98,36 @@ public class GenericParamGroup extends Composite {
 	}
 
 	protected void onEdit() {
-		// TODO Auto-generated method stub
+		TypeScope typeScope = (TypeScope) ((StructuredSelection) tableViewer
+				.getSelection()).getFirstElement();
+		GenericSearchScopeDialog dialog = new GenericSearchScopeDialog(getShell(), 
+				data.getProject(), typeScope);
+		if (dialog.open() != Window.CANCEL) {
+			tableViewer.refresh(dialog.getData());
+		}
 	}
 
 	protected void onAdd() {
 		GenericSearchScopeDialog dialog = new GenericSearchScopeDialog(
-				getShell(), data);
-		if (dialog.open() == Window.CANCEL) {
+				getShell(), data.getProject(), null);
+		if (dialog.open() != Window.CANCEL) {
+			TypeScope typeScope = dialog.getData();
+			if (isDuplicateScope(typeScope)) {
+				 
+			}
+			addScopeToList(typeScope);
 			return;
 		}
+	}
+
+	private void addScopeToList(TypeScope typeScope) {
+		scopeMap.put(typeScope.getFullyQualifiedName(), typeScope);
+		tableViewer.add(typeScope);
+	}
+
+	private boolean isDuplicateScope(TypeScope typeScope) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	private void setLayout() {
@@ -140,7 +169,6 @@ public class GenericParamGroup extends Composite {
 		
 		table.setHeaderVisible(true);
 		tableViewer.setContentProvider(initTableContentProvider());
-		tableViewer.setInput(typesMap);
 		
 		TableColumnLayout tableLayout = new TableColumnLayout();
 		tableLayout.setColumnData(typeCol.getColumn(), new ColumnWeightData(100));
@@ -165,8 +193,8 @@ public class GenericParamGroup extends Composite {
 			
 			@Override
 			public Object[] getElements(Object inputElement) {
-				if (inputElement == typesMap) {
-					return typesMap.keySet().toArray();
+				if (inputElement == scopeMap) {
+					return scopeMap.keySet().toArray();
 				}
 				return null;
 			}
@@ -193,8 +221,7 @@ public class GenericParamGroup extends Composite {
 			
 			@Override
 			public void update(ViewerCell cell) {
-				// TODO Auto-generated method stub
-				
+				cell.setText(((TypeScope)cell.getElement()).getDisplayImplTypes());
 			}
 		};
 	}
@@ -204,13 +231,15 @@ public class GenericParamGroup extends Composite {
 			
 			@Override
 			public void update(ViewerCell cell) {
-				// TODO Auto-generated method stub
-				
+				cell.setText(((TypeScope) cell.getElement()).getDisplayType());
 			}
 		};
 	}
 
 	public void setValue(GenTestPreferences data) {
 		this.data = data;
+		this.scopeMap = data.getSearchScopeMap();
+		editBtn.setEnabled(false);
+		removeBtn.setEnabled(false);
 	}
 }

@@ -23,6 +23,9 @@ import static tzuyu.engine.TzConstants.PRINT_PASS_TESTS;
 import static tzuyu.engine.TzConstants.STRING_MAX_LENGTH;
 import static tzuyu.engine.TzConstants.TESTS_PER_QUERY;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -33,6 +36,7 @@ import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzConstants;
 import tzuyu.plugin.core.dto.TzPreferences;
 import tzuyu.plugin.core.utils.IProjectUtils;
+import tzuyu.plugin.preferences.TypeScope;
 import tzuyu.plugin.reporter.PluginLogger;
 
 /**
@@ -47,6 +51,7 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 	private IPackageFragment outputPackage;
 	
 	private TzConfiguration config;
+	private Map<String, TypeScope> searchScopeMap;
 
 	public GenTestPreferences(IJavaProject project, boolean setDefault) {
 		setJavaProject(project);
@@ -55,6 +60,7 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 			outputFolder = IProjectUtils.toPackageFragmentRoot(project, TzConstants.DEFAULT_OUTPUT_FOLDER);
 			outputPackage = IProjectUtils.toPackageFragment(outputFolder, TzConstants.DEFAULT_OUTPUT_PACKAGE);
 		}
+		searchScopeMap = new HashMap<String, TypeScope>();
 	}
 	
 	public static GenTestPreferences createDefault(IJavaProject project) {
@@ -66,6 +72,7 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 		project = initPrefs.getProject();
 		outputFolder = initPrefs.getOutputFolder();
 		outputPackage = initPrefs.getOutputPackage();
+		searchScopeMap = initPrefs.getSearchScopeMap();
 	}
 	
 	public void read(Preferences pref) {
@@ -166,5 +173,9 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 	@Override
 	public GenTestPreferences clone() {
 		return new GenTestPreferences(this);
+	}
+	
+	public Map<String, TypeScope> getSearchScopeMap() {
+		return searchScopeMap;
 	}
 }

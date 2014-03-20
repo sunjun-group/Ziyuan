@@ -14,15 +14,9 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 
-import tzuyu.engine.utils.Assert;
-import tzuyu.plugin.TzuyuPlugin;
-import tzuyu.plugin.core.constants.Messages;
 import tzuyu.plugin.ui.ValueChangedEvent;
 import tzuyu.plugin.ui.ValueChangedListener;
 
@@ -30,49 +24,14 @@ import tzuyu.plugin.ui.ValueChangedListener;
  * @author LLT
  * 
  */
-public class CheckboxGroup<T> {
-	private Group cbGroup;
-	private List<Button> btns = new ArrayList<Button>();
-	private Messages msg = TzuyuPlugin.getMessages();
-	private int colNum;
+public class CheckboxGroup<T> extends SelectionBoxGroup<T> {
 	
 	public CheckboxGroup(Composite parent, String text, int colSpan, int colNum) {
-		cbGroup = new Group(parent, SWT.SHADOW_ETCHED_OUT);
-		cbGroup.setText(text);
-		cbGroup.setLayout(new GridLayout(colNum, true));
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL
-				| GridData.GRAB_HORIZONTAL);
-		gridData.horizontalSpan = colSpan;
-		cbGroup.setLayoutData(gridData);
-		this.colNum = colNum;
+		super(parent, text, colSpan, colNum);
 	}
 
 	public CheckboxGroup(Composite parent, String text, int colSpan) {
-		this(parent, text, colSpan, 1);
-	}
-	
-	public Button add(Button btn, int colSpan) {
-		GridData layoutData = new GridData();
-		layoutData.horizontalIndent = 20;
-		layoutData.verticalIndent = 5;
-		layoutData.horizontalSpan = colSpan;
-		btn.setLayoutData(layoutData);
-		btns.add(btn);
-		return btn;
-	}
-	
-	public Button add(String text, T value) {
-		Button btn = new Button(cbGroup, getButtonStyle());
-		btn.setText(text);
-		btn.setData(value);
-		return add(btn, colNum);
-	}
-	
-	public Button add(T value) {
-		// only accepted if T is Enum type
-		Assert.assertTrue(value instanceof Enum<?>,
-				"Illegal Argument: expected Enum<?>");
-		return add(msg.getMessage((Enum<?>) value), value);
+		super(parent, text, colSpan);
 	}
 	
 	protected int getButtonStyle() {
@@ -116,9 +75,5 @@ public class CheckboxGroup<T> {
 				}
 			});
 		}
-	}
-	
-	public Group getWidget() {
-		return cbGroup;
 	}
 }

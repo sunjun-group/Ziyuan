@@ -45,34 +45,40 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
-import tzuyu.engine.utils.Assert;
 import tzuyu.engine.utils.CollectionUtils;
 import tzuyu.engine.utils.StringUtils;
-import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.core.utils.ResourcesUtils;
 import tzuyu.plugin.preferences.component.EditDialog;
 import tzuyu.plugin.preferences.component.RadioBtnGroup;
 import tzuyu.plugin.proxy.PluginReferencesAnalyzer;
 import tzuyu.plugin.ui.SWTFactory;
+import tzuyu.plugin.ui.ValueChangedEvent;
+import tzuyu.plugin.ui.ValueChangedListener;
 
 /**
  * @author LLT
  *
  */
-public class GenericSearchScopeDialog extends EditDialog {
+public class GenericSearchScopeDialog extends EditDialog<TypeScope> {
 	private Label typeTx;
 	private Button selectTypeBtn;
 	private RadioBtnGroup<SearchScope> scopeGroup;
 	private TableViewer classesViewer;
 	
-	private GenTestPreferences pref;
 	private IType selectedType;
 	private List<IType> selectedClasses;
+	private Button addImplBtn;
+	private IJavaProject project;
 	
-	public GenericSearchScopeDialog(Shell parentShell, GenTestPreferences data) {
-		super(parentShell);
-		this.pref = data;
+	public GenericSearchScopeDialog(Shell parentShell, IJavaProject project, TypeScope data) {
+		super(parentShell, data);
+		this.project = project;
 		selectedClasses = new ArrayList<IType>();
+	}
+	
+	@Override
+	protected TypeScope initData() {
+		return new TypeScope();
 	}
 
 	protected void createContent(Composite parent) {
@@ -92,7 +98,7 @@ public class GenericSearchScopeDialog extends EditDialog {
 				msg.common_select());
 		
 		/* scope */
-		scopeGroup = new RadioBtnGroup<GenericSearchScopeDialog.SearchScope>(parent, 
+		scopeGroup = new RadioBtnGroup<SearchScope>(parent, 
 				msg.genericSearchScopeDialog_scope(), contentCol);
 		scopeGroup.add(SearchScope.SOURCE);
 		scopeGroup.add(SearchScope.SOURCE_JARS);
@@ -100,6 +106,22 @@ public class GenericSearchScopeDialog extends EditDialog {
 		userDefinedRd.setData(SearchScope.USER_DEFINED);
 		scopeGroup.add(userDefinedRd, 1);
 		createUserDefinedScopePanel(scopeGroup.getWidget());
+	}
+	
+	@Override
+	protected void refresh(TypeScope data) {
+		selectedType = data.getType();
+		updateTypeTx();
+		scopeGroup.setValue(data.getScope());
+		onSelectScope(data.getScope());
+		addImplClassToResult(data.getImplTypes().toArray());
+	}
+	
+	@Override
+	protected void updateData(TypeScope data) {
+		data.setType(selectedType);
+		data.setScope(scopeGroup.getValue());
+		data.setImplTypes(selectedClasses);
 	}
 	
 	private void createUserDefinedScopePanel(Composite parent) {
@@ -125,18 +147,8 @@ public class GenericSearchScopeDialog extends EditDialog {
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
 		btnGroup.setLayoutData(data);
-		Button addImplBtn = SWTFactory.createBtnAlignFill(btnGroup, msg.common_addButton());
+		addImplBtn = SWTFactory.createBtnAlignFill(btnGroup, msg.common_addButton());
 		addImplBtn.setText(msg.common_addButton());
-		addImplBtn.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					onAddImplTypes();
-				} catch (JavaModelException e1) {
-					// ignore
-				}
-			}
-		});	
 	}
 
 	private IBaseLabelProvider initImplClassesLabelProvider() {
@@ -149,12 +161,12 @@ public class GenericSearchScopeDialog extends EditDialog {
 		JavaSearchScope scope;
 		if (Enum.class.getName().equals(selectedType.getFullyQualifiedName())) {
 			scope = (JavaSearchScope) BasicSearchEngine.createJavaSearchScope(
-					new IJavaElement[] { pref.getProject() }, false);
+					new IJavaElement[] { project }, false);
 			elementKinds = IJavaSearchConstants.ENUM;
 		} else {
 			scope = new JavaSearchScope();
 			for (IType ele : PluginReferencesAnalyzer
-					.getAllSubtypes(pref.getProject(), selectedType)) {
+					.getAllSubtypes(project, selectedType)) {
 				if (ResourcesUtils.isPublicNotInterfaceOrAbstract(ele)) {
 					scope.add(ele);
 				}
@@ -195,9 +207,36 @@ public class GenericSearchScopeDialog extends EditDialog {
 				onSelectType();
 			}
 		});
+		
+		scopeGroup.addValueChangedListener(new ValueChangedListener<SearchScope>(
+				scopeGroup) {
+			@Override
+			public void onValueChanged(ValueChangedEvent<SearchScope> event) {
+				onSelectScope(event.getNewVal());
+			}
+		}, false);
+		
+		addImplBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					onAddImplTypes();
+				} catch (JavaModelException e1) {
+					// ignore
+				}
+			}
+		});
 	}
 	
-	@SuppressWarnings({ "restriction"})
+	/**
+	 * change behavior of the classesViewer whenever a scope is selected.
+	 */
+	protected void onSelectScope(SearchScope scope) {
+		boolean enabled = (scope == SearchScope.USER_DEFINED); 
+		addImplBtn.setEnabled(enabled && selectedType != null);
+		classesViewer.getTable().setEnabled(enabled);
+	}
+
 	protected void onSelectType() {
 		JavaSearchScope scope = getSearchScopeForType();
 		SelectionDialog dialog = new OpenTypeSelectionDialog(getShell(), false, 
@@ -213,14 +252,29 @@ public class GenericSearchScopeDialog extends EditDialog {
 		if (CollectionUtils.isEmpty(types) || types.length != 1) {
 			return;
 		}
-		selectedType = (IType) types[0];
-		typeTx.setText(selectedType.getFullyQualifiedName());
+		IType newType = (IType) types[0];
+		if (!newType.equals(selectedType)) {
+			selectedType = newType;
+			updateTypeTx();
+			selectedClasses.clear();
+			classesViewer.remove(selectedClasses
+					.toArray(new IType[selectedClasses.size()]));
+			classesViewer.refresh();
+			// update add button
+			onSelectScope(scopeGroup.getValue());
+		}
+	}
+
+	private void updateTypeTx() {
+		String text = selectedType == null ? StringUtils.EMPTY : selectedType
+				.getFullyQualifiedName();
+		typeTx.setText(text);
 	}
 
 	@SuppressWarnings({ "restriction", "rawtypes", "unchecked" })
 	private JavaSearchScope getSearchScopeForType() {
 		JavaSearchScope scope = (JavaSearchScope) BasicSearchEngine.createJavaSearchScope(
-				new IJavaElement[]{pref.getProject()}, false);
+				new IJavaElement[]{project}, false);
 		scope = new JavaSearchScope() {
 			@Override
 			public boolean encloses(IJavaElement element) {
@@ -239,9 +293,9 @@ public class GenericSearchScopeDialog extends EditDialog {
 			}
 		};
 		HashSet projs = new HashSet<IJavaProject>();
-		projs.add(pref.getProject());
+		projs.add(project);
 		try {
-			scope.add((JavaProject) pref.getProject(), IJavaSearchScope.SOURCES
+			scope.add((JavaProject) project, IJavaSearchScope.SOURCES
 					| IJavaSearchScope.APPLICATION_LIBRARIES
 					| IJavaSearchScope.SYSTEM_LIBRARIES, projs);
 		} catch (JavaModelException e) {
@@ -253,23 +307,6 @@ public class GenericSearchScopeDialog extends EditDialog {
 	@Override
 	protected String getTitleSuffix(OperationMode mode) {
 		return msg.genericSearchScopeDialog_title();
-	}
-	
-	public static enum SearchScope {
-		SOURCE,
-		SOURCE_JARS,
-		USER_DEFINED;
-		
-		public SearchScope findScope(String str) {
-			Assert.assertTrue(!StringUtils.isEmpty(str));
-			for (SearchScope scope : values()) {
-				if (str.startsWith(scope.name())) {
-					return scope;
-				}
-			}
-			Assert.assertFail("Can not find scope with string: "+ str);
-			return null; 
-		}
 	}
 	
 	private static class ImplClassItemLabelProvider extends LabelProvider {
@@ -287,9 +324,7 @@ public class GenericSearchScopeDialog extends EditDialog {
 		
 		@Override
 		public String getText(Object element) {
-			IType type = (IType) element;
-			return type.getElementName() + " (" + 
-					type.getFullyQualifiedName() + ")";
+			return TypeScope.getDisplayString((IType) element);
 		}
 	}
 }

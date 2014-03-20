@@ -21,13 +21,23 @@ import tzuyu.plugin.core.constants.Messages;
  * @author LLT
  * 
  */
-public abstract class EditDialog extends TitleAreaDialog {
+public abstract class EditDialog<T> extends TitleAreaDialog {
 	private OperationMode mode = OperationMode.NEW;
 	protected Messages msg = TzuyuPlugin.getMessages();
+	private T data;
 	
-	public EditDialog(Shell parentShell) {
+	public EditDialog(Shell parentShell, T data) {
 		super(parentShell);
+		if (data != null) {
+			this.data = data;
+			mode = OperationMode.EDIT;
+		} else {
+			this.data = initData();
+			mode = OperationMode.NEW;
+		}
 	}
+
+	protected abstract T initData();
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
@@ -36,8 +46,28 @@ public abstract class EditDialog extends TitleAreaDialog {
 		setTitle(initTitle());
 		createContent(content);
 		registerListener();
+		refresh(data);
 		return content;
 	}
+	
+	public void setData(T data) {
+		this.data = data;
+		refresh(data);
+	}
+	
+	@Override
+	protected void okPressed() {
+		updateData(data);
+		super.okPressed();
+	}
+	
+	protected abstract void refresh(T data);
+
+	public T getData() {
+		return data;
+	}
+
+	protected abstract void updateData(T data);
 
 	protected void registerListener() {
 		// Do nothing at this time.
@@ -53,7 +83,7 @@ public abstract class EditDialog extends TitleAreaDialog {
 	protected String getTitleSuffix(OperationMode mode) {
 		return StringUtils.EMPTY;
 	}
-
+	
 	protected abstract void createContent(Composite parent);
 	
 	public void setMode(OperationMode mode) {
