@@ -53,7 +53,7 @@ public class IntText {
 			if (org.apache.commons.lang.StringUtils.isBlank(text.getText())
 					&& mandatory) {
 				return IStatusUtils.error(msg
-						.intText_error_mandatory(fieldEnumOrFieldName));
+						.error_mandatory(fieldEnumOrFieldName));
 			}
 			int val = Integer.parseInt(text.getText());
 			if (positive && !ObjectUtils.isPositive(val)) {

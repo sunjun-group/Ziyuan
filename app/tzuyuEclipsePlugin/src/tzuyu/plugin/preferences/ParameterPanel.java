@@ -11,7 +11,6 @@ package tzuyu.plugin.preferences;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -27,16 +26,11 @@ import tzuyu.plugin.ui.SWTFactory;
  * 
  */
 public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
-	private Label arrayMaxLengthLb;
 	private IntText arrayMaxLengthTx;
-	private Label classMaxDepthLb;
 	private IntText classMaxDepthTx;
-	private Label stringMaxLengthLb;
 	private IntText stringMaxLengthTx;
-	private Button objToIntCb;
-	private Label testsPerQueryLb;
 	private IntText testsPerQueryTx;
-	private GenericParamGroup genericTypeGroup;
+	private TypeScopesTablePanel genericTypePanel;
 
 	public ParameterPanel(DialogPage msgContainer, Composite parent) {
 		super(parent, msgContainer);
@@ -53,8 +47,8 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 	private void decorateContent(Composite contentPanel) {
 		int colNum = 1;
 		/* description */
-		Label decsLb = SWTFactory.createLabel(contentPanel, /* msg.gentest_prefs_param_description()*/
-				"The parameters in this section will be applied to the learning process, as well as the parameter generator \nof tester module.", colNum);
+		Label decsLb = SWTFactory.createLabel(contentPanel,
+				msg.gentest_prefs_param_description(), colNum);
 		GridData data = new GridData();
         data.verticalAlignment = GridData.FILL;
         data.horizontalAlignment = GridData.FILL;
@@ -71,34 +65,30 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 	}
 
 	private void createLearningSection(Composite contentPanel, int colNum) {
-//		SWTFactory.createLabel(contentPanel,
-//				msg.gentest_prefs_param_group_learning_config(), colNum);
 		Group lcGroup = SWTFactory.createGroup(contentPanel,
 				msg.gentest_prefs_param_group_learning(), colNum);
 		lcGroup.setLayout(new GridLayout(2, false));
-		testsPerQueryLb = SWTFactory.createLabel(lcGroup,
+		SWTFactory.createLabel(lcGroup,
 				msg.gentest_prefs_param_testPerQuery());
 		testsPerQueryTx = new IntText(lcGroup, ParamField.TESTS_PER_QUERY)
 		.setPositive().setMandatory();
 	}
 	
 	private void createPrimitiveParamSection(Composite contentPanel, int colNum) {
-//		SWTFactory.createLabel(contentPanel,
-//				msg.gentest_prefs_param_group_parameter_config(), colNum);
 		Group primitiveGroup = SWTFactory.createGroup(contentPanel,
 				msg.gentest_prefs_param_group_primitive(), colNum);
 		primitiveGroup.setLayout(new GridLayout(2, false));
-		arrayMaxLengthLb = SWTFactory.createLabel(primitiveGroup,
+		SWTFactory.createLabel(primitiveGroup,
 				msg.gentest_prefs_param_arrayMaxDepth());
 		arrayMaxLengthTx = new IntText(primitiveGroup,
 				ParamField.ARRAY_MAX_LENGTH).setPositive().setMandatory();
 		
-		classMaxDepthLb = SWTFactory.createLabel(primitiveGroup,
+		SWTFactory.createLabel(primitiveGroup,
 				msg.gentest_prefs_param_classMaxDepth());
 		classMaxDepthTx = new IntText(primitiveGroup, ParamField.CLASS_MAX_DEPTH)
 		.setPositive().setMandatory();
 		
-		stringMaxLengthLb = SWTFactory.createLabel(primitiveGroup,
+		SWTFactory.createLabel(primitiveGroup,
 				msg.gentest_prefs_param_stringMaxLength());
 		stringMaxLengthTx = new IntText(primitiveGroup,
 				ParamField.STRING_MAX_LENGTH).setPositive().setMandatory();
@@ -107,11 +97,9 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 	private void createGenericParamSection(Composite contentPanel, int colNum) {
 		Group genericGroup = SWTFactory.createGroup(contentPanel,
 				msg.gentest_prefs_param_group_generic(), colNum);
-		objToIntCb = SWTFactory.createCheckbox(genericGroup,
-				msg.gentest_prefs_param_objectToInteger(), colNum);
 		
-		genericTypeGroup = new GenericParamGroup(genericGroup);
-		SWTFactory.horizontalSpan(genericTypeGroup, colNum);
+		genericTypePanel = new TypeScopesTablePanel(genericGroup);
+		SWTFactory.horizontalSpan(genericTypePanel.getWidget(), colNum);
 	}
 
 
@@ -121,9 +109,8 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 		arrayMaxLengthTx.setValue(tzConfig.getArrayMaxLength());
 		classMaxDepthTx.setValue(tzConfig.getClassMaxDepth());
 		stringMaxLengthTx.setValue(tzConfig.getStringMaxLength());
-		objToIntCb.setSelection(tzConfig.isObjectToInteger());
 		testsPerQueryTx.setValue(tzConfig.getTestsPerQuery());
-		genericTypeGroup.setValue(data);
+		genericTypePanel.setValue(data);
 	}
 
 	private void addModifyListener() {
@@ -139,8 +126,8 @@ public class ParameterPanel extends PropertyPanel<GenTestPreferences> {
 		tzConfig.setArrayMaxLength(arrayMaxLengthTx.getValue());
 		tzConfig.setClassMaxDepth(classMaxDepthTx.getValue());
 		tzConfig.setStringMaxLength(stringMaxLengthTx.getValue());
-		tzConfig.setObjectToInteger(objToIntCb.getSelection());
 		tzConfig.setTestsPerQuery(testsPerQueryTx.getValue());
+		genericTypePanel.updateData(prefs);
 	}
 
 	@Override

@@ -65,16 +65,12 @@ public final class Messages {
 		return getMessage("inputWizardPage_name");
 	}
 
-	public String genericSearchScopeDialog_type() {
-		return getMessage("genericSearchScopeDialog_type");
-	}
-
 	public String gentest_prefs_output_error_testCaseType_empty() {
 		return getMessage("gentest_prefs_output_error_testCaseType_empty");
 	}
 
-	public String genericSearchScopeDialog_title() {
-		return getMessage("genericSearchScopeDialog_title");
+	public String gentest_prefs_param_generic_table_duplicate_confirm(Object arg0) {
+		return getMessage("gentest_prefs_param_generic_table_duplicate_confirm", arg0);
 	}
 
 	public String sourceFolderEditor_errorMessage() {
@@ -87,10 +83,6 @@ public final class Messages {
 
 	public String gentest_prefs_param_group_primitive() {
 		return getMessage("gentest_prefs_param_group_primitive");
-	}
-
-	public String genericSearchScopeDialog_scope() {
-		return getMessage("genericSearchScopeDialog_scope");
 	}
 
 	public String editDialog_new_title(Object arg0) {
@@ -127,6 +119,10 @@ public final class Messages {
 
 	public String genTestWizard_title() {
 		return getMessage("genTestWizard_title");
+	}
+
+	public String typeScopeDialog_desc() {
+		return getMessage("typeScopeDialog_desc");
 	}
 
 	public String gentest_prefs_param_group_generic() {
@@ -177,8 +173,20 @@ public final class Messages {
 		return getMessage("packageEditor_errorMessage");
 	}
 
+	public String typeScopeDialog_title() {
+		return getMessage("typeScopeDialog_title");
+	}
+
 	public String gentest_prefs_param_classMaxDepth() {
 		return getMessage("gentest_prefs_param_classMaxDepth");
+	}
+
+	public String typeScopeDialog_type() {
+		return getMessage("typeScopeDialog_type");
+	}
+
+	public String typeScopeDialog_scope() {
+		return getMessage("typeScopeDialog_scope");
 	}
 
 	public String gentest_prefs_param_arrayMaxDepth() {
@@ -213,6 +221,10 @@ public final class Messages {
 		return getMessage("intText_error_not_positive", arg0);
 	}
 
+	public String error_not_defined(Object arg0) {
+		return getMessage("error_not_defined", arg0);
+	}
+
 	public String gentest_prefs_param_prettyPrint() {
 		return getMessage("gentest_prefs_param_prettyPrint");
 	}
@@ -229,8 +241,8 @@ public final class Messages {
 		return getMessage("gentest_prefs_param_testPerQuery");
 	}
 
-	public String intText_error_mandatory(Object arg0) {
-		return getMessage("intText_error_mandatory", arg0);
+	public String error_mandatory(Object arg0) {
+		return getMessage("error_mandatory", arg0);
 	}
 
 	public String gentest_prefs_input_error_empty_selection() {
@@ -243,6 +255,10 @@ public final class Messages {
 
 	public String gentest_prefs_output_testcaseType_question() {
 		return getMessage("gentest_prefs_output_testcaseType_question");
+	}
+
+	public String typeScopeDialog_impl_type() {
+		return getMessage("typeScopeDialog_impl_type");
 	}
 
 	public String gentest_prefs_param_generic_table_name_col() {

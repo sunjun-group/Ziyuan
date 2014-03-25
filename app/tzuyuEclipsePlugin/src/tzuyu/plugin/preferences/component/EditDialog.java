@@ -22,7 +22,7 @@ import tzuyu.plugin.core.constants.Messages;
  * 
  */
 public abstract class EditDialog<T> extends TitleAreaDialog {
-	private OperationMode mode = OperationMode.NEW;
+	protected OperationMode mode = OperationMode.NEW;
 	protected Messages msg = TzuyuPlugin.getMessages();
 	private T data;
 	
@@ -36,6 +36,16 @@ public abstract class EditDialog<T> extends TitleAreaDialog {
 			mode = OperationMode.NEW;
 		}
 	}
+	
+	@Override
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		if (mode == OperationMode.NEW) {
+			newShell.setText(msg.editDialog_new_title(getShellTitleSuffix(mode)));
+		} else {
+			newShell.setText(msg.editDialog_edit_title(getShellTitleSuffix(mode)));
+		}
+	}
 
 	protected abstract T initData();
 
@@ -43,10 +53,10 @@ public abstract class EditDialog<T> extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite content = (Composite) super.createDialogArea(parent);
 		initializeDialogUnits(content);
-		setTitle(initTitle());
 		createContent(content);
 		registerListener();
 		refresh(data);
+		setTitle(initShellTitle());
 		return content;
 	}
 	
@@ -57,10 +67,19 @@ public abstract class EditDialog<T> extends TitleAreaDialog {
 	
 	@Override
 	protected void okPressed() {
-		updateData(data);
-		super.okPressed();
+		String error = validate();
+		if (error == null) {
+			updateData(data);
+			super.okPressed();
+		} else {
+			setErrorMessage(error);
+		}
 	}
 	
+	protected String validate() {
+		return null;
+	}
+
 	protected abstract void refresh(T data);
 
 	public T getData() {
@@ -73,14 +92,14 @@ public abstract class EditDialog<T> extends TitleAreaDialog {
 		// Do nothing at this time.
 	}
 
-	protected String initTitle() {
+	protected String initShellTitle() {
 		if (mode == OperationMode.NEW) {
-			return msg.editDialog_new_title(getTitleSuffix(mode));
+			return msg.editDialog_new_title(getShellTitleSuffix(mode));
 		}
-		return msg.editDialog_edit_title(getTitleSuffix(mode));
+		return msg.editDialog_edit_title(getShellTitleSuffix(mode));
 	}
 
-	protected String getTitleSuffix(OperationMode mode) {
+	protected String getShellTitleSuffix(OperationMode mode) {
 		return StringUtils.EMPTY;
 	}
 	

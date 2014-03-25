@@ -8,8 +8,10 @@
 
 package tzuyu.plugin.preferences;
 
-import tzuyu.engine.utils.Assert;
-import tzuyu.engine.utils.StringUtils;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
+
 
 /**
  * @author LLT
@@ -19,15 +21,18 @@ public enum SearchScope {
 	SOURCE,
 	SOURCE_JARS,
 	USER_DEFINED;
-	
-	public SearchScope findScope(String str) {
-		Assert.assertTrue(!StringUtils.isEmpty(str));
-		for (SearchScope scope : values()) {
-			if (str.startsWith(scope.name())) {
-				return scope;
-			}
+
+	public int getIncludeMask() {
+		if (this == SOURCE) {
+			return IJavaSearchScope.SOURCES;
 		}
-		Assert.assertFail("Can not find scope with string: "+ str);
-		return null; 
+		return IJavaSearchScope.SOURCES
+				| IJavaSearchScope.APPLICATION_LIBRARIES
+				| IJavaSearchScope.SYSTEM_LIBRARIES;
+	}
+	
+	public IJavaSearchScope getIJavaSearchScope(IJavaElement jEle) {
+		return SearchEngine.createJavaSearchScope(new IJavaElement[] { jEle },
+				getIncludeMask());
 	}
 }

@@ -19,6 +19,7 @@ import java.util.List;
  */
 public class StringUtils {
 	public static final String EMPTY = org.apache.commons.lang.StringUtils.EMPTY;
+	
 	private StringUtils() {
 	}
 	

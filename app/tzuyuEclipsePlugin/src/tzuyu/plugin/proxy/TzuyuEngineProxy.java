@@ -42,7 +42,7 @@ public class TzuyuEngineProxy implements TzuyuEngine {
 			TzConsole.showConsole().clearConsole();
 			TzClass tzProject = ProjectConverter.from(workObject, config);
 			new TzuyuEngineProxy(tzProject, reporter,
-					new PluginReferencesAnalyzer(workObject.getProject())).run();
+					new PluginReferencesAnalyzer(workObject.getProject(), config)).run();
 		} catch (PluginException e) {
 			PluginLogger.logEx(e);
 		}

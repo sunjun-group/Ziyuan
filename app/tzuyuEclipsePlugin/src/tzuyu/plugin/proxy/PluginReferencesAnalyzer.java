@@ -8,6 +8,7 @@
 
 package tzuyu.plugin.proxy;
 
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,10 +23,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
@@ -36,11 +37,15 @@ import org.eclipse.jdt.core.search.TypeNameRequestor;
 import tzuyu.engine.iface.IReferencesAnalyzer;
 import tzuyu.engine.model.exception.TzuyuException;
 import tzuyu.engine.utils.CollectionUtils;
+import tzuyu.engine.utils.Pair;
 import tzuyu.engine.utils.Randomness;
 import tzuyu.engine.utils.StringUtils;
+import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.core.exception.PluginException;
 import tzuyu.plugin.core.utils.ClassLoaderUtils;
 import tzuyu.plugin.core.utils.IResourceUtils;
+import tzuyu.plugin.preferences.SearchScope;
+import tzuyu.plugin.preferences.TypeScope;
 import tzuyu.plugin.reporter.PluginLogger;
 
 /**
@@ -53,30 +58,52 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 	private int MAX_TO_TRY = 3;
 	private IJavaProject project;
 	private Map<Class<?>, List<String>> classMapCache;
+	private Map<String, TypeScope> typeScopeMap;
+	private URLClassLoader classLoader;
 
-	public PluginReferencesAnalyzer(IJavaProject project) {
+	public PluginReferencesAnalyzer(IJavaProject project,
+			GenTestPreferences config) throws PluginException {
 		classMapCache = new HashMap<Class<?>, List<String>>();
 		this.project = project;
+		this.typeScopeMap = config.getSearchScopeMap();
+		classLoader = ClassLoaderUtils.getClassLoader(project);
 	}
 	
 	@Override
 	public Class<?> getRandomImplClzz(Class<?> clazz) {
 		Class<?> result = null;
-		for (int i = 0; i < MAX_TO_TRY && result == null; i++) {
-			if (clazz == Class.class || clazz == Object.class) {
-				result = getRandomClass();
-			} else if (clazz == Enum.class) {
-				result = getRandomEnum();
-			} else {
-				result = getRandomImplForSpecificType(clazz); 
+		try {
+			// find in type scope first, if user_defined => randomly pick up a class
+			// in defined implementation list
+			SearchScope searchScope = SearchScope.SOURCE_JARS;
+			TypeScope typeScope = typeScopeMap.get(clazz.getName());
+			if (typeScope != null) {
+				searchScope = typeScope.getScope();
 			}
+			if (searchScope == SearchScope.USER_DEFINED) {
+				Pair<String, IType> implType = Randomness
+						.randomMember(typeScope.getImplTypes());
+				return toClass(implType.a);
+			}
+			for (int i = 0; i < MAX_TO_TRY && result == null; i++) {
+				if (clazz == Class.class || clazz == Object.class) {
+					result = getRandomClass(searchScope);
+				} else if (clazz == Enum.class) {
+					result = getRandomEnum(searchScope);
+				} else {
+					result = getRandomImplForSpecificType(clazz,
+							searchScope);
+				}
+			}
+		} catch (TzuyuException e) {
+			PluginLogger.logEx(e);
 		}
 		return result;
-		
 	}
 	
-	public Class<?> getRandomClass() {
+	public Class<?> getRandomClass(SearchScope searchScope) {
 		Class<?> result = null;
+		// search the cache first
 		List<String> mappedList = classMapCache.get(Class.class);
 		if (CollectionUtils.isEmpty(mappedList)) {
 			mappedList = new ArrayList<String>();
@@ -85,7 +112,7 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		try {
 			String mappedClz = null;
 			if (mappedList.size() < numOfRandomClzzToCache) {
-				IType type = getRandomClassFromProject(project);
+				IType type = getRandomClassFromProject(project, searchScope);
 				if (type != null && !type.isInterface()) {
 					mappedClz = toClassName(type);
 					mappedList.add(mappedClz);
@@ -105,12 +132,8 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 			if (mappedClz == null) {
 				return null;
 			}
-			return ClassLoaderUtils.getClassLoader(project)
-					.loadClass(mappedClz);
+			return classLoader.loadClass(mappedClz);
 		} catch (ClassNotFoundException e) {
-			PluginLogger.logEx(e);
-			TzuyuException.rethrow(e);
-		} catch (PluginException e) {
 			PluginLogger.logEx(e);
 			TzuyuException.rethrow(e);
 		}
@@ -130,20 +153,20 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 	}
 
 	
-	public Class<?> getRandomEnum() {
+	public Class<?> getRandomEnum(SearchScope searchScope) {
 		List<String> enums = classMapCache.get(Enum.class);
 		if (CollectionUtils.isEmpty(enums)) {
 			enums = new ArrayList<String>();
 			classMapCache.put(Enum.class, enums);
-		}
-		try {
-			List<String> enumTypes = performSearchEnums(project, numOfRandomClzzToCache);
-			for (String eString : enumTypes) {
-				CollectionUtils.addIfNotNull(enums, toClassName(project.findType(eString)));
+			try {
+				List<String> enumTypes = performSearchEnums(project,
+						numOfRandomClzzToCache, searchScope);
+				for (String eString : enumTypes) {
+					CollectionUtils.addIfNotNull(enums, toClassName(project.findType(eString)));
+				}
+			} catch (CoreException e) {
+				PluginLogger.logEx(e);
 			}
-		} catch (CoreException e) {
-			PluginLogger.logEx(e);
-			return null;
 		}
 		try {
 			return toClass(Randomness.randomMember(enums));
@@ -159,9 +182,10 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 	 * then on the binary sources.
 	 * So, we should limit the size of result list for the performance. 
 	 */
-	private List<String> performSearchEnums(IJavaProject proj, final int limit) {
+	private List<String> performSearchEnums(IJavaProject proj, final int limit, SearchScope searchScope) {
 		final List<String> result = new ArrayList<String>();
-		IJavaSearchScope scope = SearchEngine.createJavaSearchScope(new IJavaElement[]{proj});
+		IJavaSearchScope scope = searchScope.getIJavaSearchScope(proj);
+		
 		// for cancel the the search perform when we found enough enum for test.
 		final IProgressMonitor progressMonitor = new NullProgressMonitor();  
 		TypeNameRequestor nameRequestor = new TypeNameRequestor() {
@@ -170,7 +194,8 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 					char[] simpleTypeName, char[][] enclosingTypeNames,
 					String path) {
 				if (Flags.isPublic(modifiers)) {
-					result.add(StringUtils.dotJoinStr(packageName, enclosingTypeNames, simpleTypeName));
+					result.add(StringUtils.dotJoinStr(packageName,
+							enclosingTypeNames, simpleTypeName));
 				}
 				if (result.size() == limit) {
 					progressMonitor.setCanceled(true);
@@ -194,7 +219,8 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		}
 	}
 
-	private Class<?> getRandomImplForSpecificType(Class<?> clazz) {
+	private Class<?> getRandomImplForSpecificType(Class<?> clazz,
+			SearchScope searchScope) {
 		try {
 			if (!clazz.isInterface() && clazz != Enum.class) {
 				return clazz;
@@ -205,7 +231,7 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 				IType type = getIType(project, clazz);
 				IType[] allSubtypes;
 				try {
-					allSubtypes = getAllSubtypes(project, type);
+					allSubtypes = getAllSubtypes(project, type, searchScope);
 					availableSubTypes = toClassName(getRandomSublist(allSubtypes));
 				} catch (JavaModelException e) {
 					PluginLogger.logEx(e);
@@ -223,7 +249,7 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		}
 	}
 
-	private IType getRandomClassFromProject(IJavaProject proj) {
+	private IType getRandomClassFromProject(IJavaProject proj, SearchScope searchScope) {
 		try {
 			IPackageFragment pkg = Randomness.randomMember(IResourceUtils
 					.filterSourcePkgs(proj.getPackageFragments()));
@@ -277,11 +303,28 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		return result;
 	}
 
+	public static IType[] getAllSubtypes(IJavaProject project, IType type, SearchScope scope)
+			throws JavaModelException {
+		IType[] allSubtypes = getAllSubtypes(project, type);
+		if (scope == SearchScope.SOURCE_JARS) {
+			return allSubtypes;
+		}
+		List<IType> types = new ArrayList<IType>();
+		for (IType subType : allSubtypes) {
+			if (!subType.isBinary()) {
+				types.add(subType);
+			}
+		}
+		return types.toArray(new IType[types.size()]);
+	}
+	
 	public static IType[] getAllSubtypes(IJavaProject project, IType type)
 			throws JavaModelException {
-		IType[] allSubtypes = type.newTypeHierarchy(project, null)
-				.getAllSubtypes(type);
-		return allSubtypes;
+		ITypeHierarchy typeHierachy = type.newTypeHierarchy(project, null);
+		if (type.isInterface()) {
+			return typeHierachy.getImplementingClasses(type);
+		}
+		return typeHierachy.getSubclasses(type);
 	}
 
 	private static IType getIType(IJavaProject project, Class<?> clazz) {

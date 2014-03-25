@@ -46,6 +46,8 @@ import tzuyu.plugin.reporter.PluginLogger;
 public class GenTestPreferences extends TzPreferences implements Cloneable {
 	public static final String ATT_OUTPUT_FOLDER = "outputSourceFolder";
 	public static final String ATT_OUTPUT_PACKAGE = "outputPackage";
+	public static final String ATT_TYPE_SEARCH_SCOPE = "typeSearchScopes";
+	private static final String EMPTY_SEARCH_SCOPE = "{}"; 
 	
 	private IPackageFragmentRoot outputFolder;
 	private IPackageFragment outputPackage;
@@ -107,6 +109,8 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 				MAX_METHODS_PER_GEN_TEST_CLASS.b));
 		config.setMaxLinesPerGenTestClass(pref.getInt(
 				MAX_LINES_PER_GEN_TEST_CLASS.a, MAX_LINES_PER_GEN_TEST_CLASS.b));
+		searchScopeMap = TypeScopeParser.parse(
+				pref.get(ATT_TYPE_SEARCH_SCOPE, EMPTY_SEARCH_SCOPE), project);
 	}
 
 	public void write(Preferences projectNode) {
@@ -129,6 +133,9 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 		projectNode.put(ATT_OUTPUT_FOLDER,
 				IProjectUtils.toRelativePath(outputFolder, project));
 		projectNode.put(ATT_OUTPUT_PACKAGE, outputPackage.getElementName());
+		/* search scope */
+		projectNode.put(ATT_TYPE_SEARCH_SCOPE,
+				TypeScopeParser.toString(searchScopeMap));
 	}
 	
 	public TzConfiguration getTzConfig(boolean runningTzuyu) {
@@ -177,5 +184,9 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 	
 	public Map<String, TypeScope> getSearchScopeMap() {
 		return searchScopeMap;
+	}
+	
+	public void setSearchScopeMap(Map<String, TypeScope> searchScopeMap) {
+		this.searchScopeMap = searchScopeMap;
 	}
 }

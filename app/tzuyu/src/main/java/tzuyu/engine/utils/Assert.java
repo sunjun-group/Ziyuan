@@ -31,7 +31,7 @@ public class Assert {
 		}
 	}
 
-	public static void error(String msg) {
+	public static void assertFail(String msg) {
 		throw new TzRuntimeException(msg);
 	}
 

@@ -50,7 +50,6 @@ public abstract class PropertyPanel<T> extends Composite {
 		msg = TzuyuPlugin.getMessages();
 	}
 	
-	@SuppressWarnings("restriction")
 	protected void updateStatus(Enum<?> field, IStatus status) {
 		if (statusArr == null) {
 			return;
@@ -61,6 +60,7 @@ public abstract class PropertyPanel<T> extends Composite {
 		// (in case of wizard, we prefer to let the wizard page update by itself,
 		// using event handler
 		if (autoUpdateContainerMsg) {
+			@SuppressWarnings("restriction")
 			IStatus mostSevere = StatusUtil.getMostSevere(statusArr);
 			if (mostSevere.getSeverity() == IStatus.ERROR) {
 				messageContainer.setErrorMessage(mostSevere.getMessage());

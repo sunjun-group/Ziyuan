@@ -13,8 +13,11 @@ import java.util.List;
 
 import org.eclipse.jdt.core.IType;
 
-import tzuyu.engine.utils.CollectionUtils;
+import tzuyu.engine.utils.Assert;
+import tzuyu.engine.utils.Pair;
 import tzuyu.engine.utils.StringUtils;
+import tzuyu.plugin.TzuyuPlugin;
+import tzuyu.plugin.command.gentest.TypeScopeParser;
 
 /**
  * @author LLT
@@ -24,11 +27,11 @@ public class TypeScope {
 	private String fullyQualifiedName;
 	private IType type;
 	private SearchScope scope;
-	private List<IType> implTypes;
+	private List<Pair<String, IType>> implTypes;
 	
 	public TypeScope() {
 		scope = SearchScope.SOURCE;
-		implTypes = new ArrayList<IType>();
+		implTypes = new ArrayList<Pair<String,IType>>();
 	}
 	
 	public IType getType() {
@@ -37,6 +40,9 @@ public class TypeScope {
 
 	public void setType(IType type) {
 		this.type = type;
+		if (type != null) {
+			this.fullyQualifiedName = type.getFullyQualifiedName();
+		}
 	}
 
 	public SearchScope getScope() {
@@ -46,33 +52,65 @@ public class TypeScope {
 	public void setScope(SearchScope scope) {
 		this.scope = scope;
 	}
-
-	public List<IType> getImplTypes() {
+	
+	public List<Pair<String, IType>> getImplTypes() {
 		return implTypes;
 	}
 
-	public void setImplTypes(List<IType> implTypes) {
-		this.implTypes = CollectionUtils.nullToEmpty(implTypes);
+	public void setImplTypes(List<Pair<String, IType>> implTypes) {
+		this.implTypes = implTypes;
+	}
+	
+	public void setFullyQualifiedName(String fullyQualifiedName) {
+		this.fullyQualifiedName = fullyQualifiedName;
 	}
 	
 	public String getFullyQualifiedName() {
+		Assert.assertNotNull(fullyQualifiedName,
+				"fullyQualifiedName or type must be set for typeScope!!");
 		return fullyQualifiedName;
 	}
 
 	public String getDisplayType() {
-		return getDisplayString(type);
+		return getDisplayString(type, fullyQualifiedName);
 	}
 
-	public String getDisplayImplTypes() {
-		List<String> typesStr = new ArrayList<String>(implTypes.size());
-		for (IType implType : implTypes) {
-			typesStr.add(implType.getFullyQualifiedName()); 
+	public String getDisplayScope() {
+		if (type == null) {
+			return StringUtils.EMPTY;
 		}
-		return StringUtils.join(typesStr, ", ");
+		StringBuilder sb = new StringBuilder(TzuyuPlugin.getMessages()
+				.getMessage(scope));
+		if (scope == SearchScope.USER_DEFINED) {
+			sb.append(" (");
+			TypeScopeParser.appendImplTypes(implTypes, sb);
+			sb.append(")");
+		}
+		return sb.toString();
 	}
 
-	public static String getDisplayString(IType type) {
+	public static String getDisplayString(IType type, String defaultName) {
+		if (type == null) {
+			return "[Missing]" + defaultName;
+		}
 		return type.getElementName() + " (" + type.getFullyQualifiedName()
 				+ ")";
+	}
+	
+	@Override
+	public String toString() {
+		return TypeScopeParser.typeScopeToString(this);
+	}
+
+	public boolean hasError() {
+		if (type == null) {
+			return true;
+		}
+		for (Pair<String, IType> implPair : implTypes) {
+			if (implPair.b == null) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
