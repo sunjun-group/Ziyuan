@@ -54,8 +54,12 @@ public class StringUtils {
 	}
 	
 	public static String toStringNullToEmpty(Object val) {
+		return toString(val, EMPTY);
+	}
+	
+	public static String toString(Object val, String defaultIfNull) {
 		if (val == null) {
-			return EMPTY;
+			return defaultIfNull;
 		}
 		return val.toString();
 	}

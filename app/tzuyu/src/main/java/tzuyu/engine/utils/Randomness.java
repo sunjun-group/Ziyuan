@@ -1,6 +1,9 @@
 package tzuyu.engine.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -56,6 +59,12 @@ public final class Randomness {
 			throw new IllegalArgumentException("Expected non-empty list");
 		}
 		return list.get(nextRandomInt(list.size()));
+	}
+	
+	public static <T> List<T> randomSubList(List<T> allList, int subSize) {
+		ArrayList<T> shuffleList = new ArrayList<T>(allList);
+		Collections.shuffle(shuffleList, random);
+		return shuffleList.subList(0, subSize);
 	}
 
 	// Warning: iterates through the entire list twice (

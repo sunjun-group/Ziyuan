@@ -18,7 +18,6 @@ import tzuyu.engine.TzConstants;
  */
 public class Constants extends TzConstants {
 	public static final String SHOW_DFA_ICON = "dfa.jpg";
-	public static final String DFA_FILE_EXTENSION = "dot";
 	
 	private Constants() {
 	}

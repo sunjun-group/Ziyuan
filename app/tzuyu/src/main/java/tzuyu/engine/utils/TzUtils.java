@@ -8,6 +8,8 @@
 
 package tzuyu.engine.utils;
 
+import tzuyu.engine.TzClass;
+import tzuyu.engine.TzConstants;
 import tzuyu.engine.model.Statement;
 import tzuyu.engine.model.StatementKind;
 import tzuyu.engine.model.Variable;
@@ -27,5 +29,13 @@ public class TzUtils {
 					.get(var.getArgIdx()));
 		}
 		return stmtKind;
+	}
+	
+	public static String getDfaFileName(TzClass tzClass) {
+		return getDfaFileName(tzClass.getClassName());
+	}
+
+	public static String getDfaFileName(String name) {
+		return StringUtils.dotJoin(name, TzConstants.DFA_FILE_EXTENSION);
 	}
 }

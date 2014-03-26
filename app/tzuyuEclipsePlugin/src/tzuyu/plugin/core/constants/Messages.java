@@ -85,6 +85,10 @@ public final class Messages {
 		return getMessage("gentest_prefs_param_group_primitive");
 	}
 
+	public String message_dialog_title() {
+		return getMessage("message_dialog_title");
+	}
+
 	public String editDialog_new_title(Object arg0) {
 		return getMessage("editDialog_new_title", arg0);
 	}
@@ -127,6 +131,10 @@ public final class Messages {
 
 	public String gentest_prefs_param_group_generic() {
 		return getMessage("gentest_prefs_param_group_generic");
+	}
+
+	public String gentest_pkg_out_files_conflict_delete_first() {
+		return getMessage("gentest_pkg_out_files_conflict_delete_first");
 	}
 
 	public String gentest_prefs_output() {
@@ -177,6 +185,10 @@ public final class Messages {
 		return getMessage("typeScopeDialog_title");
 	}
 
+	public String gentest_pkg_out_files_conflict_allow_override() {
+		return getMessage("gentest_pkg_out_files_conflict_allow_override");
+	}
+
 	public String gentest_prefs_param_classMaxDepth() {
 		return getMessage("gentest_prefs_param_classMaxDepth");
 	}
@@ -203,6 +215,10 @@ public final class Messages {
 
 	public String gentest_prefs_param_stringMaxLength() {
 		return getMessage("gentest_prefs_param_stringMaxLength");
+	}
+
+	public String gentest_warning_output_package_open() {
+		return getMessage("gentest_warning_output_package_open");
 	}
 
 	public String gentest_prefs_output_folder() {
@@ -253,6 +269,10 @@ public final class Messages {
 		return getMessage("gentest_prefs_output_error_className_empty");
 	}
 
+	public String gentest_pkg_out_files_conflict_save_selection() {
+		return getMessage("gentest_pkg_out_files_conflict_save_selection");
+	}
+
 	public String gentest_prefs_output_testcaseType_question() {
 		return getMessage("gentest_prefs_output_testcaseType_question");
 	}
@@ -279,6 +299,10 @@ public final class Messages {
 
 	public String gentest_prefs_output_paramDeclarationFormat() {
 		return getMessage("gentest_prefs_output_paramDeclarationFormat");
+	}
+
+	public String gentest_prefs_output_output_files_conflict_handle() {
+		return getMessage("gentest_prefs_output_output_files_conflict_handle");
 	}
 
 	public String gentest_prefs_param_debugCheck() {

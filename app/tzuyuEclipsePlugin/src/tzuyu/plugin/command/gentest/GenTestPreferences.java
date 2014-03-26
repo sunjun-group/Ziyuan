@@ -23,21 +23,27 @@ import static tzuyu.engine.TzConstants.PRINT_PASS_TESTS;
 import static tzuyu.engine.TzConstants.STRING_MAX_LENGTH;
 import static tzuyu.engine.TzConstants.TESTS_PER_QUERY;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.IType;
 import org.osgi.service.prefs.Preferences;
 
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzConstants;
+import tzuyu.engine.utils.Pair;
+import tzuyu.engine.utils.StringUtils;
+import tzuyu.engine.utils.TzUtils;
+import tzuyu.plugin.core.constants.Constants;
 import tzuyu.plugin.core.dto.TzPreferences;
 import tzuyu.plugin.core.utils.IProjectUtils;
+import tzuyu.plugin.preferences.SearchScope;
 import tzuyu.plugin.preferences.TypeScope;
-import tzuyu.plugin.reporter.PluginLogger;
 
 /**
  * @author LLT
@@ -47,13 +53,18 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 	public static final String ATT_OUTPUT_FOLDER = "outputSourceFolder";
 	public static final String ATT_OUTPUT_PACKAGE = "outputPackage";
 	public static final String ATT_TYPE_SEARCH_SCOPE = "typeSearchScopes";
-	private static final String EMPTY_SEARCH_SCOPE = "{}"; 
+	private static final String DEFAULT_SEARCH_SCOPE = getDefaultSearchScope(); 
+	public static final Pair<String, OutputConflictHandle> OUT_PKG_CONFLICT_HANDLE = Pair.of(
+			"outputPkgFilesPotentialOverridden", OutputConflictHandle.ASK_WHEN_EXECUTION);
 	
 	private IPackageFragmentRoot outputFolder;
 	private IPackageFragment outputPackage;
+	private IPackageFragment passPackage;
+	private IPackageFragment failPackage;
 	
 	private TzConfiguration config;
 	private Map<String, TypeScope> searchScopeMap;
+	private OutputConflictHandle outPkgConflictHandleOption; 
 
 	public GenTestPreferences(IJavaProject project, boolean setDefault) {
 		setJavaProject(project);
@@ -65,6 +76,25 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 		searchScopeMap = new HashMap<String, TypeScope>();
 	}
 	
+	private static String getDefaultSearchScope() {
+		Map<String, TypeScope> defaultScope = new HashMap<String, TypeScope>();
+		TypeScope objectTypeScope = new TypeScope();
+		objectTypeScope.setFullyQualifiedName(Constants.OBJECT_CLASS_NAME);
+		objectTypeScope.setScope(SearchScope.USER_DEFINED);
+		List<Pair<String, IType>> implTypes = new ArrayList<Pair<String,IType>>();
+		implTypes.add(Pair.<String, IType>of(Integer.class.getName(), null));
+		implTypes.add(Pair.<String, IType>of(String.class.getName(), null));
+		implTypes.add(Pair.<String, IType>of(Boolean.class.getName(), null));
+		objectTypeScope.setImplTypes(implTypes);
+		defaultScope.put(Constants.OBJECT_CLASS_NAME, objectTypeScope);
+		
+		TypeScope classTypeScope = new TypeScope();
+		classTypeScope.setFullyQualifiedName(Constants.CLASS_CLASS_NAME);
+		classTypeScope.setScope(SearchScope.SOURCE);
+		defaultScope.put(Constants.CLASS_CLASS_NAME, classTypeScope);
+		return TypeScopeParser.toString(defaultScope);
+	}
+
 	public static GenTestPreferences createDefault(IJavaProject project) {
 		return new GenTestPreferences(project, true);
 	}
@@ -75,6 +105,7 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 		outputFolder = initPrefs.getOutputFolder();
 		outputPackage = initPrefs.getOutputPackage();
 		searchScopeMap = initPrefs.getSearchScopeMap();
+		outPkgConflictHandleOption = initPrefs.outPkgConflictHandleOption;
 	}
 	
 	public void read(Preferences pref) {
@@ -110,7 +141,9 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 		config.setMaxLinesPerGenTestClass(pref.getInt(
 				MAX_LINES_PER_GEN_TEST_CLASS.a, MAX_LINES_PER_GEN_TEST_CLASS.b));
 		searchScopeMap = TypeScopeParser.parse(
-				pref.get(ATT_TYPE_SEARCH_SCOPE, EMPTY_SEARCH_SCOPE), project);
+				pref.get(ATT_TYPE_SEARCH_SCOPE, DEFAULT_SEARCH_SCOPE), project);
+		outPkgConflictHandleOption = OutputConflictHandle.valueOf(pref.get(
+				OUT_PKG_CONFLICT_HANDLE.a, OUT_PKG_CONFLICT_HANDLE.b.name()));
 	}
 
 	public void write(Preferences projectNode) {
@@ -133,27 +166,18 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 		projectNode.put(ATT_OUTPUT_FOLDER,
 				IProjectUtils.toRelativePath(outputFolder, project));
 		projectNode.put(ATT_OUTPUT_PACKAGE, outputPackage.getElementName());
+		projectNode.put(OUT_PKG_CONFLICT_HANDLE.a, outPkgConflictHandleOption.name());
 		/* search scope */
 		projectNode.put(ATT_TYPE_SEARCH_SCOPE,
 				TypeScopeParser.toString(searchScopeMap));
 	}
 	
 	public TzConfiguration getTzConfig(boolean runningTzuyu) {
-		if (runningTzuyu) {
-			// update output folder
-			if (outputFolder != null && outputPackage != null) {
-				try {
-					if (!outputPackage.isOpen()) {
-						outputPackage = outputFolder.createPackageFragment(
-								outputPackage.getElementName(), true, null);
-					}
-				} catch (JavaModelException e) {
-					PluginLogger.logEx(e);
-				}
-				config.setOutputPath(IProjectUtils.relativeToAbsolute(outputFolder.getPath()).toString());
-				config.setOutputPackage(outputPackage.getElementName());
-			}
+		if (config.getOutputPath() == null) {
+			config.setOutputPath(IProjectUtils.relativeToAbsolute(outputFolder.getPath()).toString());
+			config.setOutputPackage(outputPackage.getElementName());
 		}
+		
 		return config;
 	}
 
@@ -188,5 +212,39 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 	
 	public void setSearchScopeMap(Map<String, TypeScope> searchScopeMap) {
 		this.searchScopeMap = searchScopeMap;
+	}
+
+	public IPackageFragment getPassFailPkg(boolean pass) {
+		return outputFolder.getPackageFragment(StringUtils.dotJoin(
+				outputPackage.getElementName(),
+				pass ? TzConstants.DEFAULT_PASS_PKG_NAME
+						: TzConstants.DEFAULT_FAIL_PKG_NAME));
+	}
+	
+	public IPackageFragment getFailPackage() {
+		if (failPackage == null) {
+			failPackage = getPassFailPkg(false);
+		}
+		return failPackage;
+	}
+	
+	public IPackageFragment getPassPackage() {
+		if (passPackage == null) {
+			passPackage = getPassFailPkg(true);
+		}
+		return passPackage;
+	}
+
+	public OutputConflictHandle getOutPkgConflictHandleOption() {
+		return outPkgConflictHandleOption;
+	}
+
+	public void setOutPkgConflictHandleOption(
+			OutputConflictHandle outPkgConflict) {
+		this.outPkgConflictHandleOption = outPkgConflict;
+	}
+
+	public String getDotFileName() {
+		return TzUtils.getDfaFileName(getTzConfig().getClass().getName());
 	}
 }
