@@ -16,10 +16,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 
 import tzuyu.engine.TzClass;
+import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.core.dto.WorkObject;
 import tzuyu.plugin.core.dto.WorkObject.WorkItem;
@@ -51,38 +53,46 @@ public class ProjectConverter {
 		IJavaProject project = workObject.getProject();
 		List<IPath> sourcePaths = ResourcesUtils.getSourcePaths(project);
 		URLClassLoader classLoader = ClassLoaderUtils.getClassLoader(project);
+		String fullyQualifiedName = null;
 		for (WorkItem item : workObject.getWorkItems()) {
 			String methodName = null;
-			switch (item.getCorrespondingJavaElement().getElementType()) {
+			IJavaElement ele = item.getCorrespondingJavaElement();
+			switch (ele.getElementType()) {
+			case IJavaElement.CLASS_FILE:
+				fullyQualifiedName = StringUtils.dotJoin(ele.getParent()
+						.getElementName(), ((IClassFile)ele).getType().getElementName());
+				break;
 			case IJavaElement.METHOD:
-				methodName = item.getCorrespondingJavaElement()
+				methodName = ele
 						.getElementName();
 				// no break, get class of the selected method just like the
 				// selected class.
 			case IJavaElement.COMPILATION_UNIT:
 			case IJavaElement.TYPE:
+				ele.getElementName();
 				IPath filePath = item.getPath();
 				IPath scr = ResourcesUtils.getCorrespondingSource(filePath,
 						sourcePaths);
-				String fullyQualifiedName = ResourcesUtils
+				fullyQualifiedName = ResourcesUtils
 						.getFullQualifiedName(filePath, scr);
-				Class<?> clazz;
-				List<String> methods;
-				try {
-					clazz = classLoader.loadClass(fullyQualifiedName);
-					if ((methods = classMethodsMap.get(clazz)) == null) {
-						methods = new ArrayList<String>();
-						classMethodsMap.put(clazz, methods);
-					}
-				} catch (ClassNotFoundException e) {
-					PluginLogger.logEx(e);
-					throw new PluginException();
-				}
-				if (methodName != null) {
-					methods.add(methodName);
-				}
+				break;
 			default:
 				break;
+			}
+			Class<?> clazz;
+			List<String> methods;
+			try {
+				clazz = classLoader.loadClass(fullyQualifiedName);
+				if ((methods = classMethodsMap.get(clazz)) == null) {
+					methods = new ArrayList<String>();
+					classMethodsMap.put(clazz, methods);
+				}
+			} catch (ClassNotFoundException e) {
+				PluginLogger.logEx(e);
+				throw new PluginException();
+			}
+			if (methodName != null) {
+				methods.add(methodName);
 			}
 		}
 		TzClass tzProject = null;

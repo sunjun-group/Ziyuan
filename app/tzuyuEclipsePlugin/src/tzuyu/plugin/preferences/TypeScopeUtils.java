@@ -10,7 +10,6 @@ package tzuyu.plugin.preferences;
 
 import java.util.HashSet;
 
-import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -42,6 +41,7 @@ import tzuyu.plugin.proxy.PluginReferencesAnalyzer;
  *         TODO LLT: is this safe enough? It's okay if we fix the eclipse version, 
  *         but check the differences between versions.
  */
+@SuppressWarnings("restriction")
 public class TypeScopeUtils {
 	
 	public static Image getTypeErrorImg() {
@@ -77,26 +77,8 @@ public class TypeScopeUtils {
 	private static JavaSearchScope getSearchScopeForType(IJavaProject project) {
 		JavaSearchScope scope = (JavaSearchScope) BasicSearchEngine.createJavaSearchScope(
 				new IJavaElement[]{project}, false);
-		scope = new JavaSearchScope() {
-			@Override
-			public boolean encloses(IJavaElement element) {
-				if (element.getElementType() == IJavaElement.TYPE) {
-					try {
-						IType type = (IType)element;
-						int flags = type.getFlags();
-						if (
-								Flags.isAbstract(flags) ||
-								Flags.isInterface(flags)) {
-							return super.encloses(element);
-						}
-					} catch (JavaModelException e) {
-						// ignore
-					}
-				}
-				return false;
-			}
-		};
-		HashSet projs = new HashSet<IJavaProject>();
+		scope = new JavaSearchScope();
+		HashSet<IJavaProject> projs = new HashSet<IJavaProject>();
 		projs.add(project);
 		try {
 			scope.add((JavaProject) project, IJavaSearchScope.SOURCES

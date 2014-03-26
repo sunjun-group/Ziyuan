@@ -69,7 +69,7 @@ public class PluginLogger implements ILogger<PluginLogger>{
 	}
 	
 	public static void logEx(Exception e) {
-		System.out.println(e.getMessage());
+		System.out.println(e.getStackTrace());
 	}
 
 	public static void logEx(Exception e, String msg) {

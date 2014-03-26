@@ -9,6 +9,7 @@
 package tzuyu.plugin.core.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -21,6 +22,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 
 import tzuyu.engine.utils.CollectionUtils;
+import tzuyu.plugin.preferences.SearchScope;
 import tzuyu.plugin.reporter.PluginLogger;
 
 /**
@@ -71,15 +73,16 @@ public class IResourceUtils {
 		return null;
 	}
 
-	public static IPackageFragment[] filterSourcePkgs(
-			IPackageFragment[] packageFragments) {
+	public static List<IPackageFragment> filterSourcePkgs(
+			IPackageFragment[] packageFragments, SearchScope scope) {
 		if (CollectionUtils.isEmpty(packageFragments)) {
-			return packageFragments;
+			return Arrays.asList(packageFragments);
 		}
 		List<IPackageFragment> result = new ArrayList<IPackageFragment>();
+		boolean sourceJars = (scope == SearchScope.SOURCE_JARS);
 		for (IPackageFragment pkg : packageFragments) {
 			try {
-				if (pkg.getKind() == IPackageFragmentRoot.K_SOURCE
+				if ((sourceJars || (pkg.getKind() == IPackageFragmentRoot.K_SOURCE))
 						&& !CollectionUtils.isEmpty(pkg.getCompilationUnits())) {
 					result.add(pkg);
 				}
@@ -87,7 +90,7 @@ public class IResourceUtils {
 				PluginLogger.logEx(e);
 			}
 		}
-		return result.toArray(new IPackageFragment[result.size()]);
+		return result;
 	}
 	
 }

@@ -11,6 +11,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
@@ -26,7 +27,6 @@ import tzuyu.plugin.core.constants.Constants;
  */
 public class SelectionFilter extends PropertyTester {
 	private static final String DFA_FILE_TEST_PROPERTY = "dfaFile";
-	private static final String TZUYU_TEST_PROPERTY = "isSuitableForTest";
 	
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
@@ -82,7 +82,7 @@ public class SelectionFilter extends PropertyTester {
 	 * all accepted type of selection element.
 	 */
 	private Class<?>[] getValidSelectedClasses() {
-		return new Class<?>[] { ICompilationUnit.class, IMethod.class,
+		return new Class<?>[] { IClassFile.class, ICompilationUnit.class, IMethod.class,
 				IType.class };
 
 	}

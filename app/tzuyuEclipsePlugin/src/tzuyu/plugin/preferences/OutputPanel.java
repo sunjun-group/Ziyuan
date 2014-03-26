@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Text;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
+import tzuyu.plugin.command.gentest.OutputConflictHandle;
 import tzuyu.plugin.core.constants.Messages;
 import tzuyu.plugin.core.utils.IStatusUtils;
 import tzuyu.plugin.preferences.component.CheckboxGroup;
@@ -60,6 +61,7 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 	/* Parameter declaration format: */
 	private Dropdown<ParamDeclarationFormat> paramDeclFormatComb;
 	private Dropdown<TcPrintMode> tcPrintModeComb;
+	private Dropdown<OutputConflictHandle> outputConflictHandling;
 	
 	private IntText maxMethods;
 
@@ -109,7 +111,12 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 				msg.gentest_prefs_output_testcaseType_question(), colSpan);
 		passFailCbGroup.add(msg.gentest_prefs_output_testcaseType_pass(), TestCaseType.PASS);
 		passFailCbGroup.add(msg.gentest_prefs_output_testcaseType_fail(), TestCaseType.FAIL);
-		
+		Composite panel = SWTFactory.createGridPanel(passFailCbGroup.getWidget(), 2);
+		SWTFactory.horizontalSpan(panel, colSpan);
+		SWTFactory.createLabel(panel,msg.gentest_prefs_output_output_files_conflict_handle());
+		outputConflictHandling = new Dropdown<OutputConflictHandle>(panel,
+																OutputConflictHandle.values());
+				
 		Group formatGroup = SWTFactory.createGroup(contentPanel, StringUtils.EMPTY, colSpan);
 		formatGroup.setLayout(new GridLayout(2, false));
 		// parameter declaration format:
@@ -128,7 +135,6 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		maxMethodsLb.setLayoutData(gd);
 		gd.minimumWidth = 60;
 		maxMethods = new IntText(formatGroup, OutputField.MAX_METHODS_NUM);
-//		SWTFactory.createLabel(formatGroup, msg.gentest_prefs_output_maxLinesPerClass());
 		maxLine = new IntText(formatGroup, OutputField.MAX_LINE_NUM);
 		maxLine.asWidget().setVisible(false);
 		registerListener();
@@ -196,6 +202,7 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		maxLine.setValue(tzConfig.getMaxLinesPerGenTestClass());
 		paramDeclFormatComb.setValue(ParamDeclarationFormat.getTypeIf(tzConfig.isLongFormat()));
 		tcPrintModeComb.setValue(TcPrintMode.getTypeIf(tzConfig.isPrettyPrint())); 
+		outputConflictHandling.setValue(data.getOutPkgConflictHandleOption());
 	}
 
 	@Override
@@ -213,6 +220,7 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		tzConfig.setLongFormat(
 				paramDeclFormatComb.getValue().isLongFormat());
 		tzConfig.setPrettyPrint(tcPrintModeComb.getValue() == TcPrintMode.PRETTY);
+		prefs.setOutPkgConflictHandleOption(outputConflictHandling.getValue());
 	}
 
 	@Override

@@ -8,18 +8,16 @@
 
 package tzuyu.plugin.reporter;
 
-import java.io.File;
 import java.io.FileWriter;
-import java.util.List;
 
 import org.eclipse.swt.widgets.Display;
 
 import tzuyu.engine.TzClass;
 import tzuyu.engine.iface.ILogger;
 import tzuyu.engine.iface.TzReportHandler;
-import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.dfa.DFA;
+import tzuyu.engine.utils.TzUtils;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.console.TzConsole;
@@ -60,7 +58,7 @@ public class GenTestReporter extends TzReportHandler {
 			String dot = dfa.createDotRepresentation();
 			try {
 				String fileName = tzProject.getConfiguration()
-						.getAbsoluteAddress(tzProject.getClassName() + ".dot");
+						.getAbsoluteAddress(TzUtils.getDfaFileName(tzProject));
 				FileWriter writer = new FileWriter(fileName);
 				writer.write(dot);
 				writer.close();

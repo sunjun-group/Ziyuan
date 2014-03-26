@@ -18,6 +18,8 @@ import tzuyu.engine.utils.Pair;
 public class TzConstants {
 	protected TzConstants() {}
 	public static final String JAVA_SUFFIX = "java";
+	public static final String DFA_FILE_EXTENSION = "dot";
+	
 	public static final Pair<String, Integer> ARRAY_MAX_LENGTH = Pair.of("arrayMaxLength", 5);
 	public static final Pair<String, Integer> CLASS_MAX_DEPTH = Pair.of("classMaxDepth", 5);
 	public static final Pair<String, Integer> STRING_MAX_LENGTH = Pair.of("stringMaxLength", 10);
@@ -34,6 +36,8 @@ public class TzConstants {
 	public static final Pair<String, Integer> MAX_LINES_PER_GEN_TEST_CLASS = Pair.of("maxLinesPerGenTestClass", 500);
 	public static final String DEFAULT_OUTPUT_FOLDER = "src";
 	public static final String DEFAULT_OUTPUT_PACKAGE = "tzuyu";
+	public static final String DEFAULT_PASS_PKG_NAME = "pass";
+	public static final String DEFAULT_FAIL_PKG_NAME = "fail";
 	public static final String CLASS_CLASS_NAME = Class.class.getName();// Class.class.getName();
 	public static final String OBJECT_CLASS_NAME = Object.class.getName();
 	

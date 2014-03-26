@@ -20,6 +20,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
+import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.core.constants.Messages;
 import tzuyu.plugin.core.exception.ErrorType;
@@ -92,6 +93,19 @@ public class TzuyuPlugin extends AbstractUIPlugin {
 		Preferences projectNode = getProjectPreferencesNode(project);
 		if (projectNode != null) {
 			prefs.write(projectNode);
+			try {
+				projectNode.flush();
+			} catch (BackingStoreException e) {
+				PluginLogger.logEx(e, ErrorType.CANNOT_SAVE_PROJECT_PREFERENCES);
+			}
+		}
+	}
+	
+	public void persistPreferences(IProject project, String key, Object value,
+			String defaultIfNull) {
+		Preferences projectNode = getProjectPreferencesNode(project);
+		if (projectNode != null) {
+			projectNode.put(key, StringUtils.toString(value, defaultIfNull));
 			try {
 				projectNode.flush();
 			} catch (BackingStoreException e) {

@@ -21,8 +21,6 @@ import tzuyu.engine.utils.StringUtils;
  * @author LLT
  */
 public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
-	private static final String PASS_PKG_NAME = "pass";
-	private static final String FAIL_PKG_NAME = "fail";
 	/**
 	 * The maximum number of elements in an array when cloning an object. The
 	 * array field in a target object may be too long to clone (results in out
@@ -263,10 +261,10 @@ public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 		this.maxLinesPerGenTestClass = maxLinesPerGenTestClass;
 	}
 	
-	public String getPackageName(boolean forPassTcs) {
-		if (forPassTcs) {
-			return StringUtils.dotJoin(outputPackage, PASS_PKG_NAME);
+	public String getPackageName(boolean type) {
+		if (type) {
+			return StringUtils.dotJoin(outputPackage, TzConstants.DEFAULT_PASS_PKG_NAME);
 		}
-		return StringUtils.dotJoin(outputPackage, FAIL_PKG_NAME);
+		return StringUtils.dotJoin(outputPackage, TzConstants.DEFAULT_FAIL_PKG_NAME);
 	}
 }

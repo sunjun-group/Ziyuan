@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
@@ -60,6 +61,7 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 	private Map<Class<?>, List<String>> classMapCache;
 	private Map<String, TypeScope> typeScopeMap;
 	private URLClassLoader classLoader;
+	private GenTestPreferences config;
 
 	public PluginReferencesAnalyzer(IJavaProject project,
 			GenTestPreferences config) throws PluginException {
@@ -67,6 +69,7 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		this.project = project;
 		this.typeScopeMap = config.getSearchScopeMap();
 		classLoader = ClassLoaderUtils.getClassLoader(project);
+		this.config = config;
 	}
 	
 	@Override
@@ -85,6 +88,10 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 						.randomMember(typeScope.getImplTypes());
 				return toClass(implType.a);
 			}
+			/*
+			 * for search scope = (SOURCE/SOURCE_JARS), we need to pick up an
+			 * implementation class in project randomly
+			 */
 			for (int i = 0; i < MAX_TO_TRY && result == null; i++) {
 				if (clazz == Class.class || clazz == Object.class) {
 					result = getRandomClass(searchScope);
@@ -101,6 +108,10 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		return result;
 	}
 	
+	/**
+	 * this function is used for searching a certain class for type Class<?> or
+	 * Object
+	 */
 	public Class<?> getRandomClass(SearchScope searchScope) {
 		Class<?> result = null;
 		// search the cache first
@@ -127,6 +138,9 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		return result;
 	}
 	
+	/**
+	 * load a class by fullyQualifiedName
+	 */
 	private Class<?> toClass(String mappedClz) throws TzuyuException {
 		try {
 			if (mappedClz == null) {
@@ -144,6 +158,9 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		return type.getFullyQualifiedName();
 	}
 	
+	/**
+	 * extract fullyQualifiedNames of types
+	 */
 	private List<String> toClassName(List<IType> types) {
 		List<String> result = new ArrayList<String>();
 		for (IType type : types) {
@@ -162,7 +179,8 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 				List<String> enumTypes = performSearchEnums(project,
 						numOfRandomClzzToCache, searchScope);
 				for (String eString : enumTypes) {
-					CollectionUtils.addIfNotNull(enums, toClassName(project.findType(eString)));
+					CollectionUtils.addIfNotNull(enums, 
+							toClassName(project.findType(eString)));
 				}
 			} catch (CoreException e) {
 				PluginLogger.logEx(e);
@@ -182,7 +200,8 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 	 * then on the binary sources.
 	 * So, we should limit the size of result list for the performance. 
 	 */
-	private List<String> performSearchEnums(IJavaProject proj, final int limit, SearchScope searchScope) {
+	private List<String> performSearchEnums(IJavaProject proj, final int limit,
+			SearchScope searchScope) {
 		final List<String> result = new ArrayList<String>();
 		IJavaSearchScope scope = searchScope.getIJavaSearchScope(proj);
 		
@@ -219,10 +238,14 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		}
 	}
 
+	/**
+	 * currently, this function only support for interface and 
+	 * abstract class (includes Enum<?>).
+	 */
 	private Class<?> getRandomImplForSpecificType(Class<?> clazz,
 			SearchScope searchScope) {
 		try {
-			if (!clazz.isInterface() && clazz != Enum.class) {
+			if (!clazz.isInterface() && Modifier.isAbstract(clazz.getModifiers())) {
 				return clazz;
 			}
 			// for interface, using eclipse API to get its implemetation.
@@ -231,8 +254,9 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 				IType type = getIType(project, clazz);
 				IType[] allSubtypes;
 				try {
-					allSubtypes = getAllSubtypes(project, type, searchScope);
-					availableSubTypes = toClassName(getRandomSublist(allSubtypes));
+					allSubtypes = getSubtypesByScope(project, type, searchScope);
+					availableSubTypes = toClassName(getFilteredRandomSubList(
+							Arrays.asList(allSubtypes), numOfRandomClzzToCache));
 				} catch (JavaModelException e) {
 					PluginLogger.logEx(e);
 				}
@@ -251,8 +275,11 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 
 	private IType getRandomClassFromProject(IJavaProject proj, SearchScope searchScope) {
 		try {
-			IPackageFragment pkg = Randomness.randomMember(IResourceUtils
-					.filterSourcePkgs(proj.getPackageFragments()));
+			List<IPackageFragment> filteredPkgs = IResourceUtils
+					.filterSourcePkgs(proj.getPackageFragments(), searchScope);
+			filteredPkgs.remove(config.getPassPackage());
+			filteredPkgs.remove(config.getFailPackage());
+			IPackageFragment pkg = Randomness.randomMember(filteredPkgs);
 			ICompilationUnit cu = Randomness.randomMember(pkg
 					.getCompilationUnits());
 			if (cu == null) {
@@ -269,12 +296,8 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		}
 	}
 
-	private List<IType> getRandomSublist(IType[] allSubtypes) {
-		List<IType> allList = Arrays.asList(allSubtypes);
-		return getRandomSubList(allList, numOfRandomClzzToCache);
-	}
-
-	private List<IType> getRandomSubList(List<IType> allList, int sublistMaxSize) {
+	private List<IType> getFilteredRandomSubList(List<IType> allList,
+			int sublistMaxSize) {
 		if (CollectionUtils.isEmpty(allList)) {
 			return new ArrayList<IType>();
 		}
@@ -302,9 +325,9 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		}
 		return result;
 	}
-
-	public static IType[] getAllSubtypes(IJavaProject project, IType type, SearchScope scope)
-			throws JavaModelException {
+	
+	public static IType[] getSubtypesByScope(IJavaProject project, IType type,
+			SearchScope scope) throws JavaModelException {
 		IType[] allSubtypes = getAllSubtypes(project, type);
 		if (scope == SearchScope.SOURCE_JARS) {
 			return allSubtypes;
@@ -318,6 +341,9 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		return types.toArray(new IType[types.size()]);
 	}
 	
+	/**
+	 * get all subtypes for an interface or abstract classes
+	 */
 	public static IType[] getAllSubtypes(IJavaProject project, IType type)
 			throws JavaModelException {
 		ITypeHierarchy typeHierachy = type.newTypeHierarchy(project, null);
@@ -329,7 +355,7 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 
 	private static IType getIType(IJavaProject project, Class<?> clazz) {
 		try {
-			return project.findType(clazz.getName());
+			return project.findType(clazz.getCanonicalName());
 		} catch (JavaModelException e) {
 			PluginLogger.logEx(e);
 			return null;
