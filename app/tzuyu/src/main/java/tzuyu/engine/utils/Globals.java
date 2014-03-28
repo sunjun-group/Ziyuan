@@ -71,10 +71,6 @@ public final class Globals {
 		return System.getProperty("java.class.path");
 	}
 
-	public static final int COLWIDTH = 70;
-
-	public static final int INDENTWIDTH = 8;
-
 	public static TzPrintStream getTcExecutionOutStream() {
 		return tcExPrintStream;
 	}
