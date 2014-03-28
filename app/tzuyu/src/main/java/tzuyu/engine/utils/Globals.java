@@ -74,6 +74,4 @@ public final class Globals {
 	public static TzPrintStream getTcExecutionOutStream() {
 		return tcExPrintStream;
 	}
-
-	
 }
