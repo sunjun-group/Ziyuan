@@ -41,7 +41,7 @@ public final class MethodReflectionCode extends ReflectionCode {
 	}
 
 	private void checkCompatability() {
-		if (!Globals.DEBUG_CHECK) {
+		if (!Globals.DEBUG) {
 			return;
 		}
 		String error = ReflectionUtils.checkArgumentTypes(inputs,

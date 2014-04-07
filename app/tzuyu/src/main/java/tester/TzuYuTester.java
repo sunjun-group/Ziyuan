@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import lstar.ReportHandler;
+import lstar.IReportHandler;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.algorithm.iface.Tester;
-import tzuyu.engine.iface.IAlgorithmFactory;
+import tzuyu.engine.iface.ITzManager;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.instrument.TzuYuInstrumentor;
 import tzuyu.engine.model.Prestate;
@@ -17,6 +17,8 @@ import tzuyu.engine.model.QueryTrace;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.TzuYuAction;
 import tzuyu.engine.model.TzuYuAlphabet;
+import tzuyu.engine.model.exception.ReportException;
+import tzuyu.engine.model.exception.TzException;
 import tzuyu.engine.utils.Pair;
 
 /**
@@ -35,7 +37,7 @@ public class TzuYuTester implements Tester {
 	private HashSet<TzuYuAction> cachedUnkownResult = new HashSet<TzuYuAction>();
 	private TzClass project;
 
-	public TzuYuTester(IAlgorithmFactory<?> prjFactory) {
+	public TzuYuTester(ITzManager<?> prjFactory) {
 		tcg = prjFactory.getTCGStrategy();
 		tcg = new RandomTCGStrategy(prjFactory);
 		instrumentor = new TzuYuInstrumentor();
@@ -168,7 +170,12 @@ public class TzuYuTester implements Tester {
 		return seqs;
 	}
 
-	public void report(ReportHandler<TzuYuAlphabet> reporter) {
-		((TzReportHandler)reporter).writeTestCases(getAllTestCases(), project);
+	public void report(IReportHandler<TzuYuAlphabet> reporter)
+			throws ReportException {
+		try {
+			((TzReportHandler)reporter).writeTestCases(getAllTestCases(), project);
+		} catch (TzException e) {
+			throw new ReportException(e);
+		}
 	}
 }

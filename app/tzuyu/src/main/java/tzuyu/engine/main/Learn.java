@@ -9,6 +9,8 @@ import tzuyu.engine.Tzuyu;
 import tzuyu.engine.iface.IReferencesAnalyzer;
 import tzuyu.engine.main.Command.CommandType;
 import tzuyu.engine.model.ClassInfo;
+import tzuyu.engine.model.exception.ReportException;
+import tzuyu.engine.model.exception.TzException;
 import analyzer.ClassAnalyzer;
 
 public class Learn implements CommandHandler {
@@ -25,7 +27,18 @@ public class Learn implements CommandHandler {
 				return null;
 			}
 		});
-		tzuyuEngine.run();
+		try {
+			tzuyuEngine.run();
+		} catch (ReportException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TzException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		return true;
 	}

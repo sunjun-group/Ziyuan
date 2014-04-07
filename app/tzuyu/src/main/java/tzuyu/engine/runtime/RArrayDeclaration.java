@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import tzuyu.engine.iface.TzPrintStream;
+import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.model.ExecutionOutcome;
 import tzuyu.engine.model.StatementKind;
 
@@ -62,7 +62,7 @@ public class RArrayDeclaration extends StatementKind implements Serializable {
 	}
 
 	@Override
-	public ExecutionOutcome execute(Object[] inputVals, TzPrintStream out) {
+	public ExecutionOutcome execute(Object[] inputVals, IPrintStream out) {
 		if (inputVals.length > length)
 			throw new IllegalArgumentException("Too many arguments:"
 					+ inputVals.length + " capacity:" + length);

@@ -1,41 +1,64 @@
 package tzuyu.engine.model;
 
+import java.lang.reflect.Modifier;
+
 import tzuyu.engine.TzClass;
 import tzuyu.engine.bool.AndFormula;
 import tzuyu.engine.bool.NotFormula;
 import tzuyu.engine.bool.Simplifier;
+import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.exception.TzRuntimeException;
 
 public class TzuYuAlphabet extends Alphabet {
-	private TzClass project; 
+	private TzClass project;
+	private IPrintStream out;
 	
 	private TzuYuAlphabet(TzuYuAlphabet from) {
 		super();
 		this.project = from.project;
 	}
+	
+	public static TzuYuAlphabet forClass(TzClass project) {
+		return new TzuYuAlphabet(project, null);
+	}
+	
+	public static TzuYuAlphabet forStaticGroup(TzClass project) {
+		return new TzuYuAlphabet(project, true);
+	}
+	
+	public static TzuYuAlphabet forNonStaticGroup(TzClass project) {
+		return new TzuYuAlphabet(project, false);
+	}
 
-	public TzuYuAlphabet(TzClass project) {
+	/**
+	 * TODO LLT: still need to decide which solution
+	 * separate the static and non-static methods or not.
+	 */
+	private TzuYuAlphabet(TzClass project, Boolean staticGroup) {
 		super();
 		this.project = project;
 		// add constructors as the initial alphabet
 
 		/*
-		 * ConstructorInfo[] ctors =
-		 * Analytics.getTargetClassInfo().getConstructors(); for
-		 * (ConstructorInfo ctor : ctors) { TzuYuAction action =
-		 * TzuYuAction.fromCtor(ctor); sigma.addSymbol(action); }
+		 * ConstructorInfo[] ctors = Analytics.getTargetClassInfo().getConstructors(); 
+		 * for (ConstructorInfo ctor : ctors) { 
+		 * 		TzuYuAction action = TzuYuAction.fromCtor(ctor); 
+		 * 		sigma.addSymbol(action); 
+		 * }
 		 */
 
 		// add methods as the initial alphabet
 		MethodInfo[] methods = project.getTargetClassInfo().getMethods(project.getConfiguration());
 
 		for (MethodInfo method : methods) {
-			TzuYuAction action = TzuYuAction.fromMethod(method, project.getConfiguration());
-			if (action == null) {
-				throw new TzRuntimeException("Cannot create the initial alphabet");
+			if (staticGroup == null || Modifier.isStatic(method.getModifiers()) == staticGroup) {
+				TzuYuAction action = TzuYuAction.fromMethod(method, project.getConfiguration());
+				if (action == null) {
+					throw new TzRuntimeException("Cannot create the initial alphabet");
+				}
+				addSymbol(action);
 			}
-			addSymbol(action);
 		}
 	}
 
@@ -81,14 +104,14 @@ public class TzuYuAlphabet extends Alphabet {
 						falseDivider);
 				newFalseFormula = Simplifier.simplify(newFalseFormula);
 				if (newTrueFormula.equals(Formula.FALSE)) {
-					System.out.println("new guard evaluates to false.");
+					out.println("new guard evaluates to false.");
 				} else {
 					TzuYuAction trueAction = new TzuYuAction(newTrueFormula,
 							stmt);
 					newSigma.addSymbol(trueAction);
 				}
 				if (newFalseFormula.equals(Formula.FALSE)) {
-					System.out.println("new guard evaluates to false.");
+					out.println("new guard evaluates to false.");
 				} else {
 					TzuYuAction falseAction = new TzuYuAction(newFalseFormula,
 							stmt);
@@ -144,7 +167,7 @@ public class TzuYuAlphabet extends Alphabet {
 				newTrueFormula = Simplifier.simplify(newTrueFormula);
 
 				if (newTrueFormula.equals(Formula.FALSE)) {
-					System.out.println("new guard evaluates to false.");
+					out.println("new guard evaluates to false.");
 				} else {
 					TzuYuAction trueAction = new TzuYuAction(newTrueFormula,
 							stmt);
@@ -156,13 +179,13 @@ public class TzuYuAlphabet extends Alphabet {
 				newFalseFormula = Simplifier.simplify(newFalseFormula);
 
 				if (newFalseFormula.equals(Formula.FALSE)) {
-					System.out.println("new guard evaluates to false.");
+					out.println("new guard evaluates to false.");
 				} else {
 					TzuYuAction falseAction = new TzuYuAction(newFalseFormula,
 							stmt);
 					newSigma.addSymbol(falseAction);
 				}
-			} else if (!negativeAction.equals(act)) {
+			} else if (!negativeAction.equals(act)) { 
 				// we also need to remove the negation of the original alphabet
 				// symbol.
 				newSigma.addSymbol(symbol);
@@ -174,5 +197,9 @@ public class TzuYuAlphabet extends Alphabet {
 
 	public TzClass getProject() {
 		return project;
+	}
+
+	public void setOutStream(IPrintStream outStream) {
+		this.out = outStream;
 	}
 }

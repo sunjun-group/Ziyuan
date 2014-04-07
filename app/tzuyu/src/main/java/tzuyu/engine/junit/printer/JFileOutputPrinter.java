@@ -12,7 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import tzuyu.engine.utils.Log;
+import tzuyu.engine.model.exception.TzException;
+import tzuyu.engine.model.exception.TzExceptionType;
 
 /**
  * @author LLT
@@ -21,15 +22,12 @@ import tzuyu.engine.utils.Log;
 public class JFileOutputPrinter extends JOutputPrinter {
 	private PrintStream out;
 
-	public JFileOutputPrinter(File file) {
+	public JFileOutputPrinter(File file) throws TzException {
 		try {
 			out = new PrintStream(file);
 		} catch (IOException e) {
-			Log.out.println("Exception thrown while creating file:"
-					+ file.getName());
-			e.printStackTrace();
-			System.exit(1);
-			throw new Error("This can't happen");
+			throw new TzException(TzExceptionType.JUNIT_FAIL_WRITE_FILE,
+					file.getAbsolutePath());
 		}
 	}
 

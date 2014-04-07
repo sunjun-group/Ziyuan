@@ -87,7 +87,7 @@ public class PackageEditor extends StringButtonFieldEditor {
 				packages = root.getChildren();
 			}
 		} catch (JavaModelException e) {
-			PluginLogger.logEx(e);
+			PluginLogger.getLogger().logEx(e);
 		}
 		if (packages == null) {
 			packages = new IJavaElement[0];

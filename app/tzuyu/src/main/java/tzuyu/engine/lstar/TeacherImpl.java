@@ -11,15 +11,16 @@ package tzuyu.engine.lstar;
 import java.util.ArrayList;
 import java.util.List;
 
+import lstar.IReportHandler;
 import lstar.LStarException;
 import lstar.LStarException.Type;
-import lstar.ReportHandler;
 import refiner.Witness;
 import tzuyu.engine.algorithm.iface.Refiner;
 import tzuyu.engine.algorithm.iface.Teacher;
 import tzuyu.engine.algorithm.iface.Tester;
 import tzuyu.engine.bool.True;
-import tzuyu.engine.iface.IAlgorithmFactory;
+import tzuyu.engine.iface.ITzManager;
+import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.QueryResult;
@@ -29,6 +30,7 @@ import tzuyu.engine.model.TzuYuAction;
 import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.dfa.TracesPair;
+import tzuyu.engine.model.exception.ReportException;
 import tzuyu.engine.model.exception.TzRuntimeException;
 
 /**
@@ -45,10 +47,12 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 	// sigma should not changed inside teacher and always point to the same
 	// entity as in learner. 
 	protected TzuYuAlphabet sigma; 
+	private IPrintStream outStream;
 
-	public TeacherImpl(IAlgorithmFactory<TzuYuAlphabet> tzFactory) {
+	public TeacherImpl(ITzManager<TzuYuAlphabet> tzFactory) {
 		tester = tzFactory.getTester();
 		refiner = tzFactory.getRefiner();
+		outStream = tzFactory.getOutStream();
 	}
 
 	public void setInitAlphabet(TzuYuAlphabet sigma) {
@@ -57,7 +61,7 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 		tester.setProject(sigma.getProject());
 	}
 
-	public boolean membershipQuery(Trace str) throws LStarException {
+	public boolean membershipQuery(Trace str) throws LStarException, InterruptedException {
 		assert sigma != null : "Sigma in teacherImplV2 is not set!!";
 		membershipCount++;
 		// Update maximum membership query size
@@ -121,10 +125,10 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 		}
 	}
 
-	public Trace candidateQuery(DFA dfa) throws LStarException {
+	public Trace candidateQuery(DFA dfa) throws LStarException, InterruptedException {
 		logger.info("------------Candidate Query Iteration " + candidateCount++
 				+ "------------------");
-		dfa.print();
+		dfa.print(outStream);
 		logger.info("dfa state size: " + dfa.getStateSize());
 		logger.info("alphabet size: " + (dfa.sigma.getSize() - 1));
 		List<QueryTrace> traces = new ArrayList<QueryTrace>();
@@ -176,7 +180,7 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 			// There is inconsistency, while TzuYu cannot find a divider,
 			// we terminate TzuYu.
 			throw new TzRuntimeException("cannot find a divider "
-					+ "for inconsistent transtion");
+					+ "for inconsistent transition");
 		} else if (evid.divider instanceof True) {
 			return Trace.epsilon;
 		}
@@ -193,11 +197,10 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 		}
 	}
 
-	public void report(ReportHandler<TzuYuAlphabet> reporter) {
+	public void report(IReportHandler<TzuYuAlphabet> reporter) throws ReportException {
 		// report it output
-		reporter.getLogger()
-				.info("Total NO. of membership queries:", membershipCount)
-				.info("Total NO. of candidate queries:", candidateCount);
+		outStream.writeln("Total NO. of membership queries:" + membershipCount)
+				.writeln("Total NO. of candidate queries:" + candidateCount);
 		// report its component output
 		refiner.report(reporter);
 		tester.report(reporter);

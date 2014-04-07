@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import tzuyu.engine.Tzuyu;
+
 public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
 
 	public static boolean verbose_log = false;
@@ -37,8 +39,7 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
 	 * @see randoop.util.IMultiMap#add(T1, T2)
 	 */
 	public void add(T1 key, T2 value) {
-		if (verbose_log && Log.isLoggingOn())
-			Log.logLine("ADD " + key + " ->" + value);
+		Tzuyu.getLog().debug("Add", key, "->", value);
 		add_bare(key, value);
 		ops.add(new Triple<Ops, T1, T2>(Ops.ADD, key, value));
 		steps++;
@@ -66,8 +67,7 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
 	 * @see randoop.util.IMultiMap#remove(T1, T2)
 	 */
 	public void remove(T1 key, T2 value) {
-		if (verbose_log && Log.isLoggingOn())
-			Log.logLine("REMOVE " + key + " ->" + value);
+		Tzuyu.getLog().debug("REMOVE ", key, " ->", value);
 		remove_bare(key, value);
 		ops.add(new Triple<Ops, T1, T2>(Ops.REMOVE, key, value));
 		steps++;
@@ -99,8 +99,7 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
 		if (marks.isEmpty()) {
 			throw new IllegalArgumentException("No marks.");
 		}
-		if (Log.isLoggingOn())
-			Log.logLine("marks: " + marks);
+		Tzuyu.getLog().debug("marks:", marks);
 		for (int i = 0; i < steps; i++) {
 			undoLastOp();
 		}
@@ -114,13 +113,11 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
 
 		if (last.a == Ops.ADD) {
 			// Remove the mapping.
-			if (Log.isLoggingOn())
-				Log.logLine("REMOVE " + last.b + " ->" + last.c);
+			Tzuyu.getLog().debug("REMOVE ", last.b, " ->", last.c);
 			remove_bare(last.b, last.c);
 		} else if (last.a == Ops.REMOVE) {
 			// Add the mapping.
-			if (Log.isLoggingOn())
-				Log.logLine("ADD " + last.b + " ->" + last.c);
+			Tzuyu.getLog().debug("ADD ", last.b, " ->", last.c);
 			add_bare(last.b, last.c);
 		} else {
 			// Really, we should never get here.

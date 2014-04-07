@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.model.Action;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.utils.Randomness;
@@ -83,23 +84,22 @@ public class DFA {
 		}
 	}
 
-	public void print() {
-		System.out.println("state#:" + states.size());
-		System.out
-				.println("initial state:<" + states.get(initStateID).id + ">");
-		System.out.print("accepting state:{");
+	public void print(IPrintStream out) {
+		out.println("state#:" + states.size());
+		out.println("initial state:<" + states.get(initStateID).id + ">");
+		out.print("accepting state:{");
 		for (int k = 0; k < acceptingStates.size(); k++) {
-			System.out.print(states.get(acceptingStates.get(k)).id);
+			out.print(states.get(acceptingStates.get(k)).id);
 			if (acceptingStates.size() - k >= 2) {
-				System.out.print(",");
+				out.print(",");
 			}
 		}
 
-		System.out.println("}");
+		out.println("}");
 
 		for (State state : states) {
 			for (Transition tran : state.trans) {
-				System.out.println("(" + state.id + "--"
+				out.println("(" + state.id + "--"
 						+ tran.action.toString() + "-->"
 						+ states.get(tran.target).id + ")");
 			}

@@ -87,7 +87,7 @@ public class IResourceUtils {
 					result.add(pkg);
 				}
 			} catch (JavaModelException e) {
-				PluginLogger.logEx(e);
+				PluginLogger.getLogger().logEx(e);
 			}
 		}
 		return result;

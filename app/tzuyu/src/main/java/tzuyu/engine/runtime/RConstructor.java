@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import tzuyu.engine.iface.TzPrintStream;
+import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.model.ExecutionOutcome;
 import tzuyu.engine.model.StatementKind;
 import tzuyu.engine.utils.ReflectionUtils;
@@ -55,7 +55,7 @@ public class RConstructor extends StatementKind implements Serializable {
 	}
 
 	@Override
-	public ExecutionOutcome execute(Object[] inputVals, TzPrintStream out) {
+	public ExecutionOutcome execute(Object[] inputVals, IPrintStream out) {
 		assert inputVals.length == getInputTypes().size();
 		ConstructorReflectionCode code = new ConstructorReflectionCode(
 				this.constructor, inputVals);

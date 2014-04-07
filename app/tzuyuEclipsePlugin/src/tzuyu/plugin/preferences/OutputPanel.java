@@ -60,7 +60,7 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 	private CheckboxGroup<TestCaseType> passFailCbGroup;
 	/* Parameter declaration format: */
 	private Dropdown<ParamDeclarationFormat> paramDeclFormatComb;
-	private Dropdown<TcPrintMode> tcPrintModeComb;
+//	private Dropdown<TcPrintMode> tcPrintModeComb;
 	private Dropdown<OutputConflictHandle> outputConflictHandling;
 	
 	private IntText maxMethods;
@@ -125,10 +125,10 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		paramDeclFormatComb = new Dropdown<ParamDeclarationFormat>(formatGroup,
 				ParamDeclarationFormat.values());
 		
-		SWTFactory.createLabel(formatGroup,
-				msg.gentest_prefs_output_testClassFormat());
-		tcPrintModeComb = new Dropdown<OutputPanel.TcPrintMode>(formatGroup,
-				TcPrintMode.values());
+//		SWTFactory.createLabel(formatGroup,
+//				msg.gentest_prefs_output_testClassFormat());
+//		tcPrintModeComb = new Dropdown<OutputPanel.TcPrintMode>(formatGroup,
+//				TcPrintMode.values());
 		
 		Label maxMethodsLb = SWTFactory.createLabel(formatGroup, msg.gentest_prefs_output_maxMethodsPerClass());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -201,7 +201,7 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		maxMethods.setValue(tzConfig.getMaxMethodsPerGenTestClass());
 		maxLine.setValue(tzConfig.getMaxLinesPerGenTestClass());
 		paramDeclFormatComb.setValue(ParamDeclarationFormat.getTypeIf(tzConfig.isLongFormat()));
-		tcPrintModeComb.setValue(TcPrintMode.getTypeIf(tzConfig.isPrettyPrint())); 
+//		tcPrintModeComb.setValue(TcPrintMode.getTypeIf(tzConfig.isPrettyPrint())); 
 		outputConflictHandling.setValue(data.getOutPkgConflictHandleOption());
 	}
 
@@ -219,7 +219,7 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		tzConfig.setMaxLinesPerGenTestClass(maxLine.getValue());
 		tzConfig.setLongFormat(
 				paramDeclFormatComb.getValue().isLongFormat());
-		tzConfig.setPrettyPrint(tcPrintModeComb.getValue() == TcPrintMode.PRETTY);
+//		tzConfig.setPrettyPrint(tcPrintModeComb.getValue() == TcPrintMode.PRETTY);
 		prefs.setOutPkgConflictHandleOption(outputConflictHandling.getValue());
 	}
 

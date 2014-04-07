@@ -10,14 +10,18 @@ package tzuyu.engine.iface;
 
 import java.io.PrintStream;
 
+import tzuyu.engine.utils.Assert;
+
 /**
  * @author LLT
- *
+ * 
  */
-public class TzPrintStream {
+public class TzPrintStream extends AbstractPrintStream {
 	private PrintStream out;
-	
+
 	public TzPrintStream(PrintStream out) {
+		Assert.assertNotNull(out,
+				"PrintStream can not be null. Use NullTzPrintStream instead!");
 		this.out = out;
 	}
 
@@ -50,7 +54,7 @@ public class TzPrintStream {
 			out.println(s);
 		}
 	}
-	
+
 	public void println(Object[] e) {
 		if (out != null) {
 			out.println(e);

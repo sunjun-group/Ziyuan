@@ -179,7 +179,7 @@ public class ResourcesUtils {
 				types.addAll(findTestableTypes(pf, ignoreJUnitTestCases));
 			}
 		} catch (JavaModelException e) {
-			PluginLogger.logEx(e);
+			PluginLogger.getLogger().logEx(e);
 		}
 
 		return types;
@@ -196,7 +196,7 @@ public class ResourcesUtils {
 					}
 				}
 			} catch (JavaModelException e) {
-				PluginLogger.logEx(e);
+				PluginLogger.getLogger().logEx(e);
 			}
 		}
 
@@ -272,7 +272,7 @@ public class ResourcesUtils {
 			return project != null && project.isAccessible()
 					&& project.hasNature(JavaCore.NATURE_ID);
 		} catch (CoreException e) {
-			PluginLogger.logEx(e, "couldn't determine project nature");
+			PluginLogger.getLogger().logEx(e, "couldn't determine project nature");
 			return false;
 		}
 	}
@@ -316,7 +316,7 @@ public class ResourcesUtils {
 	public static String getFullQualifiedName(IPath filePath, IPath scr) {
 		int classFirstSegment = filePath.matchingFirstSegments(scr);
 		// from relative path to package string
-		return StringUtils.dotJoin(filePath
+		return StringUtils.dotJoin((Object[])filePath
 				.removeFirstSegments(classFirstSegment)
 				.removeFileExtension().segments());
 	}

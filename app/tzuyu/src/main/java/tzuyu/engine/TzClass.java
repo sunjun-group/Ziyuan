@@ -49,8 +49,11 @@ public class TzClass {
 	}
 
 	public ClassInfo getClassInfo(Class<?> type) {
-		// TODO LLT: for test, to be removed.
-		// return typeMap.get(type);
+		/*
+		 * TODO LLT: because there's a case that the type does not exist in the current map
+		 * (ex: the field of the class)
+		 * so we need to make another try to visit the class.
+		 */
 		ClassInfo classInfo = typeMap.get(type);
 		if (classInfo == null) {
 			return ClassVisitor.forStore(typeMap).visitClass(type);

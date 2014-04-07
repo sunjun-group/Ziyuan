@@ -11,8 +11,8 @@ import java.util.Random;
  * @author Spencer Xiao
  */
 public class PrimitiveGenerator {
-	private static Random random = new Random();
 	public static final char SPACE = ' ';
+	private static Random random = new Random();
 
 	/**
 	 * Randomly generate a value for the given TzuYu primitive type.
@@ -35,10 +35,9 @@ public class PrimitiveGenerator {
 	 */
 	public static Object chooseValue(Class<?> type, PrimitiveGeneratorConfig config) {
 		if (type.equals(int.class) || type.equals(Integer.class)) {
-			// Here we generate a value in the range [10, 10] for integer types
-			return (random.nextInt(21) - 10);
+			return PrimitiveValueZones.INTEGER_ZONES.nextRandom();
 		} else if (type.equals(long.class) || type.equals(Long.class)) {
-			return random.nextLong();
+			return PrimitiveValueZones.LONG_ZONES.nextRandom();
 		} else if (type.equals(float.class) || type.equals(Float.class)) {
 			return random.nextFloat();
 		} else if (type.equals(double.class) || type.equals(Double.class)) {
@@ -74,10 +73,10 @@ public class PrimitiveGenerator {
 					+ "TzuYu primtive type:" + type.toString());
 		}
 	}
-	 
+	
+	
+	
 	public interface PrimitiveGeneratorConfig {
-
 		public int getStringMaxLength();
-		
 	}
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import tzuyu.engine.iface.TzPrintStream;
+import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.model.ExecutionOutcome;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.Statement;
@@ -22,7 +22,7 @@ import tzuyu.engine.utils.SimpleList;
  */
 public final class RuntimeExecutor {
 	// The default message printer
-	private static TzPrintStream out = Globals.getTcExecutionOutStream();
+	private static IPrintStream out = Globals.getTcExecutionOutStream();
 
 	private RuntimeExecutor() {
 
@@ -170,7 +170,7 @@ public final class RuntimeExecutor {
 		}
 	}
 
-	public static void setPrintStream(TzPrintStream ps) {
+	public static void setPrintStream(IPrintStream ps) {
 		out = ps;
 	}
 }

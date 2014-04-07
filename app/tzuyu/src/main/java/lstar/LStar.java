@@ -6,12 +6,13 @@ import java.util.Set;
 import lstar.LStarException.Type;
 import tzuyu.engine.algorithm.iface.Learner;
 import tzuyu.engine.algorithm.iface.Teacher;
-import tzuyu.engine.iface.IAlgorithmFactory;
+import tzuyu.engine.iface.ITzManager;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.dfa.State;
 import tzuyu.engine.model.dfa.Transition;
+import tzuyu.engine.model.exception.ReportException;
 import tzuyu.engine.model.exception.TzRuntimeException;
 
 /**
@@ -31,10 +32,12 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 	private A sigma;
 
 	private DFA lastDFA;
+	private ITzManager<A> factory;
 
-	public LStar(IAlgorithmFactory<A> tzFactory) {
+	public LStar(ITzManager<A> tzFactory) {
 		teacher = tzFactory.getTeacher();
 		this.otable = new ObservationTable();
+		factory = tzFactory;
 	}
 	
 	public DFA getDFA() {
@@ -50,7 +53,7 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 	 * every time starting learning, we need to reset every state and variable in the object.
 	 */
 	@SuppressWarnings("unchecked")
-	public DFA startLearning(A sig) throws LStarException {
+	public DFA startLearning(A sig) throws LStarException, InterruptedException {
 		this.sigma = sig;
 		assert sigma != null : "Init Alphabet for L* learner is not set";
 		int iterationCount = 0;
@@ -59,15 +62,16 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 			restart = false;
 			setAlphabet(sigma);
 			try {
-				logger.info("-------restart iteration " + iterationCount++
-						+ "-------");
+				factory.getOutStream().writeln("-------restart iteration" + 
+						iterationCount++ + "-------");
 				learn();
-			} catch (TzRuntimeException tzuyu) {
+			} catch (TzRuntimeException ex) {
 				// handle TzuYu specific exceptions here
-				tzuyu.printStackTrace(System.out);
+				factory.getLogger().logEx(ex);
 				return null;
 			} catch (LStarException e) {
 				if (e.getType() == Type.RestartLearning) {
+					factory.getLogger().info("Tzuyu - Restart Learning");
 					restart = true;
 					this.sigma = (A) e.getNewSigma();
 				} else {
@@ -80,8 +84,8 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 		return getDFA();
 	}
 
-	private void learn() throws LStarException {
-		if (sigma.getSize() == 1) {
+	private void learn() throws LStarException, InterruptedException {
+		if (sigma.isEmpty()) {
 			// only epsilon, => no method for test detected.
 			throw new LStarException(Type.AlphabetEmptyAction);
 		}
@@ -107,7 +111,9 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 
 		while (true) { // run until cex is empty or when need to restart
 						// learning.
-
+			if (Thread.currentThread().isInterrupted()) {
+				throw new InterruptedException();
+			}
 			Trace closedCex = null;
 			Trace consistentCex = null;
 
@@ -141,9 +147,8 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 	 * 
 	 * @param conflict
 	 *            the string for which the table is inconsistent.
-	 * @throws LStarException
 	 */
-	private void updateWhenInconsistent(Trace conflict) throws LStarException {
+	private void updateWhenInconsistent(Trace conflict) throws LStarException, InterruptedException {
 		// add the conflict into the columns
 		otable.columns.add(conflict);
 		// update the rows with the result of membership query
@@ -175,7 +180,7 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 	 *            the string whose row is not included in the S row.
 	 * @throws LStarException
 	 */
-	private void updateWhenOpen(Trace conflict) throws LStarException {
+	private void updateWhenOpen(Trace conflict) throws LStarException, InterruptedException {
 		// add the conflict into the S set
 		otable.sRows.put(conflict, otable.saRows.get(conflict));
 		otable.saRows.remove(conflict);
@@ -330,7 +335,7 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 	 * @param cea
 	 * @throws LStarException
 	 */
-	private void refineWithCounterExample(Trace cea) throws LStarException {
+	private void refineWithCounterExample(Trace cea) throws LStarException, InterruptedException {
 		// Generate all prefix except the epsilon prefix which already exists
 		// in S.
 		List<Trace> prefix = cea.getPrefix();
@@ -377,16 +382,16 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 	/**
 	 * report all output of the learning.
 	 */
-	public void report(ReportHandler<A> reporter) {
+	public void report(IReportHandler<A> reporter) throws ReportException {
 		if (lastDFA == null) {
 			return;
 		}
 		// last DFA
-		reporter.getLogger()
-				.info("Alphabet Size in Final DFA:",
-						(lastDFA.sigma.getSize() - 1))
-				.info("Number of States in Final DFA:", lastDFA.getStateSize());
-		lastDFA.print();
+		factory.getOutStream().writeln("Alphabet Size in Final DFA:"
+						+ (lastDFA.sigma.getSize() - 1))
+			.writeln("Number of States in Final DFA:"
+						+ lastDFA.getStateSize());
+		lastDFA.print(factory.getOutStream());
 
 		reporter.reportDFA(lastDFA, sigma);
 		// make report from all it component
@@ -396,4 +401,5 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 	public void setTeacher(Teacher<A> teacher) {
 		this.teacher = teacher;
 	}
+	
 }

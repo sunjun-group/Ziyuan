@@ -37,4 +37,8 @@ public class MessageDialogs {
 				0);
 		return dialog.open() == 0;
 	}
+	
+	public static void error(Shell shell, String msg) {
+		MessageDialog.openError(shell, msgs.message_dialog_title(), msg);
+	}
 }

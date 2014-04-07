@@ -1,11 +1,12 @@
 package tzuyu.engine.utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+
+import tzuyu.engine.model.exception.TzRuntimeException;
 
 public final class Randomness {
 
@@ -18,8 +19,15 @@ public final class Randomness {
 	/**
 	 * The random number used any test time a random choice is made. (Developer
 	 * note: do not declare new Random objects; use this one instead).
+	 * only get random via the function getRandom();
 	 */
+	@Deprecated 
 	static Random random = new Random(SEED);
+	
+	public static Random getRandom() {
+		totalCallsToRandom++;
+		return random;
+	}
 
 	public static void reset(long newSeed) {
 		random = new Random(newSeed);
@@ -28,16 +36,23 @@ public final class Randomness {
 	public static int totalCallsToRandom = 0;
 
 	public static boolean nextRandomBool() {
-		totalCallsToRandom++;
-		return random.nextBoolean();
+		return getRandom().nextBoolean();
 	}
 
 	/**
 	 * Uniformly random int from [0, i)
 	 */
 	public static int nextRandomInt(int i) {
-		totalCallsToRandom++;
-		return random.nextInt(i);
+		return getRandom().nextInt(i);
+	}
+	
+	public static int nextRandomInt(int lower, int upper) {
+		return nextRandomInt(upper - lower) + lower;
+	}
+	
+	public static long nextRandomLong(long lower, long upper) {
+		double r = getRandom().nextDouble();
+		return (long) ((r * upper) + ((1.0 - r) * lower) + r);
 	}
 	
 	public static <T> T randomMember(T[] arr) {
@@ -63,7 +78,7 @@ public final class Randomness {
 	
 	public static <T> List<T> randomSubList(List<T> allList, int subSize) {
 		ArrayList<T> shuffleList = new ArrayList<T>(allList);
-		Collections.shuffle(shuffleList, random);
+		Collections.shuffle(shuffleList, getRandom());
 		return shuffleList.subList(0, subSize);
 	}
 
@@ -84,9 +99,8 @@ public final class Randomness {
 		assert max > 0;
 
 		// Select a random point in interval and find its corresponding element.
-		totalCallsToRandom++;
 
-		double randomPoint = Randomness.random.nextDouble() * max;
+		double randomPoint = Randomness.getRandom().nextDouble() * max;
 		double currentPoint = 0;
 		for (int i = 0; i < list.size(); i++) {
 			currentPoint += list.get(i).getWeight();
@@ -107,15 +121,13 @@ public final class Randomness {
 			throw new IllegalArgumentException("arg must be between 0 and 1.");
 		}
 		double falseProb = 1 - trueProb;
-		totalCallsToRandom++;
-		return (Randomness.random.nextDouble() >= falseProb);
+		return (Randomness.getRandom().nextDouble() >= falseProb);
 	}
 
 	public static boolean randomBoolFromDistribution(double falseProb_,
 			double trueProb_) {
 		double falseProb = falseProb_ / (falseProb_ + trueProb_);
-		totalCallsToRandom++;
-		return (Randomness.random.nextDouble() >= falseProb);
+		return (Randomness.getRandom().nextDouble() >= falseProb);
 	}
 	
 	public static boolean nextBoolean(int denominatorForTrueProbability) {
@@ -123,4 +135,28 @@ public final class Randomness {
 		return nextInt == 0;
 	}
 	
+//	public static int randomRange(int[] factors) {
+//		int sum = factors[0];
+//		for (int i = 1; i < factors.length; i++) {
+//			factors[i] += factors[i - 1];
+//			sum += factors[i];
+//		}
+//		int r = nextRandomInt(sum);
+//		for (int i = 1; i < factors.length; i++) {
+//			if (factors[i] > r) {
+//				return i;
+//			}
+//		}
+//		throw new TzRuntimeException("random Range fail");
+//	}
+	
+	public static int randomRange(int[] factors) {
+		int r = nextRandomInt(factors[factors.length - 1]);
+		for (int i = 0; i < factors.length; i++) {
+			if (factors[i] > r) {
+				return i;
+			}
+		}
+		throw new TzRuntimeException("random Range fail");
+	}
 }

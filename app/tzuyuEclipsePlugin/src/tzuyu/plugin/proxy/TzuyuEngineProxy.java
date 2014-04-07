@@ -8,11 +8,16 @@
 
 package tzuyu.plugin.proxy;
 
+import org.eclipse.core.runtime.Platform;
+
 import tzuyu.engine.TzClass;
 import tzuyu.engine.Tzuyu;
 import tzuyu.engine.iface.IReferencesAnalyzer;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.TzuyuEngine;
+import tzuyu.engine.model.exception.ReportException;
+import tzuyu.engine.model.exception.TzException;
+import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.console.TzConsole;
 import tzuyu.plugin.core.dto.WorkObject;
@@ -26,26 +31,34 @@ import tzuyu.plugin.reporter.PluginLogger;
  */
 public class TzuyuEngineProxy implements TzuyuEngine {
 	private Tzuyu tzuyu;
+	private static final String DEBUG_ONE = "tzuyu.eclipse.plugin/debug/gentest";
+	
+	private static boolean isDebugging() {
+		String debugOption = Platform.getDebugOption(DEBUG_ONE);
+		return TzuyuPlugin.getDefault().isDebugging() && "true".equalsIgnoreCase(debugOption);
+	}
 
 	public TzuyuEngineProxy(TzClass project, TzReportHandler reporter,
 			IReferencesAnalyzer refAnalyzer) {
 		tzuyu = new Tzuyu(project, reporter, refAnalyzer);
 	}
 
-	public void run() {
+	public void run() throws ReportException, InterruptedException, TzException {
+		isDebugging();
 		tzuyu.run();
 	}
 
 	public static void generateTestCases(WorkObject workObject,
-			GenTestPreferences config, GenTestReporter reporter) {
+			GenTestPreferences config, GenTestReporter reporter)
+			throws InterruptedException, TzException {
 		try {
 			TzConsole.showConsole().clearConsole();
 			TzClass tzProject = ProjectConverter.from(workObject, config);
 			new TzuyuEngineProxy(tzProject, reporter,
 					new PluginReferencesAnalyzer(workObject.getProject(), config)).run();
 		} catch (PluginException e) {
-			PluginLogger.logEx(e);
-		}
+			PluginLogger.getLogger().logEx(e);
+		} 
 	}
 
 }

@@ -1,16 +1,16 @@
 package tzuyu.engine.model.exception;
 
-import tzuyu.engine.iface.TzPrintStream;
+import tzuyu.engine.iface.IPrintStream;
 
 public class TzRuntimeException extends RuntimeException {
 	private static final long serialVersionUID = 8435042626559004241L;
-	private ExceptionType type;
+	private TzRtExceptionType type;
 	
 	public TzRuntimeException(String details, Object... params) {
 		this(toString(details, params));
 	}
 	
-	public TzRuntimeException(ExceptionType type, String msg) {
+	public TzRuntimeException(TzRtExceptionType type, String msg) {
 		this(msg);
 		this.type = type;
 	}
@@ -27,7 +27,7 @@ public class TzRuntimeException extends RuntimeException {
 		super(details, cause);
 	}
 	
-	public ExceptionType getType() {
+	public TzRtExceptionType getType() {
 		return type;
 	}
 	
@@ -42,7 +42,7 @@ public class TzRuntimeException extends RuntimeException {
 		return msg.toString();
 	}
 
-	public void printStackTrace(TzPrintStream out) {
+	public void printStackTrace(IPrintStream out) {
 		out.println("-----------------TzuYu error stack trace-------------------");
 		out.println(super.getStackTrace());
 	}

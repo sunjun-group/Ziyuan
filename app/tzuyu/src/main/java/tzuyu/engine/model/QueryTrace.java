@@ -3,6 +3,8 @@ package tzuyu.engine.model;
 import java.util.Collections;
 import java.util.List;
 
+import tzuyu.engine.Tzuyu;
+
 /**
  * A query trace is a particular execution trace of the sequence with specific
  * parameters for a query. The sequence is an extended serial of methods with a
@@ -63,8 +65,8 @@ public class QueryTrace {
 	 * @return
 	 */
 	public Variable getVariableForStatement(int queryIndex, int varIndex) {
-
 		int reverseQueryIndex = query.size() - 1 - queryIndex;
+		Tzuyu.getLog().debug(this, queryIndex, varIndex);
 		return sequence.getVariableSequence(reverseQueryIndex, varIndex);
 	}
 
@@ -120,5 +122,9 @@ public class QueryTrace {
 	public QueryTrace getQueryTraceWithSubStates(int len) {
 		List<Prestate> subStateList = states.subList(0, len + 1);
 		return new QueryTrace(query, sequence, subStateList, answer, len - 1);
+	}
+	
+	public Query getQuery() {
+		return query;
 	}
 }

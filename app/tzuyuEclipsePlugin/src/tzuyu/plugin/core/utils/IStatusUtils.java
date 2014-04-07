@@ -18,16 +18,25 @@ import tzuyu.plugin.TzuyuPlugin;
  *
  */
 public class IStatusUtils {
-	public static final IStatus OK_STATUS = new Status(IStatus.OK, TzuyuPlugin.PLUGIN_ID, ""); //$NON-NLS-1$
+	public static final IStatus OK_STATUS = status(IStatus.OK, ""); //$NON-NLS-1$
 	
 	public static IStatus error(String msg) {
-		return new Status(IStatus.ERROR, TzuyuPlugin.PLUGIN_ID, 
-				msg);
+		return status(IStatus.ERROR, msg);
 	}
 
 	public static IStatus warning(String msg) {
-		return new Status(IStatus.WARNING, TzuyuPlugin.PLUGIN_ID, 
-				msg);
+		return status(IStatus.WARNING, msg);
 	}
 
+	public static IStatus info(String msg) {
+		return status(IStatus.INFO, msg);
+	}
+	
+	public static IStatus status(int type, String msg) {
+		return new Status(type, TzuyuPlugin.PLUGIN_ID, msg);
+	}
+	
+	public static IStatus exception(Throwable ex, String msg) {
+		return new Status(IStatus.ERROR, TzuyuPlugin.PLUGIN_ID, msg, ex);
+	}
 }

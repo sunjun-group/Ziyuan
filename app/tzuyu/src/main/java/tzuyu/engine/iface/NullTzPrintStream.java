@@ -12,11 +12,7 @@ package tzuyu.engine.iface;
  * @author LLT
  * 
  */
-public class NullTzPrintStream extends TzPrintStream {
-
-	public NullTzPrintStream() {
-		super(null);
-	}
+public class NullTzPrintStream implements IPrintStream {
 
 	public void print(byte b) {
 	}
@@ -34,6 +30,11 @@ public class NullTzPrintStream extends TzPrintStream {
 	}
 
 	public void println(Object[] e) {
+	}
+
+	@Override
+	public IPrintStream writeln(String msg) {
+		return this;
 	}
 
 }

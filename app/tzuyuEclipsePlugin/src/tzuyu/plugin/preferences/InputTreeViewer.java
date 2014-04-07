@@ -142,7 +142,7 @@ public class InputTreeViewer extends CheckboxTreeViewer {
 					return ((IType) parentElement).getMethods();
 				}
 			} catch (JavaModelException e) {
-				PluginLogger.logEx(e);
+				PluginLogger.getLogger().logEx(e);
 			}
 			return EMPTY;
 		}

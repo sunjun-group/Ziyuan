@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
 import tzuyu.engine.iface.NullTzPrintStream;
+import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.iface.TzPrintStream;
 
 /**
@@ -22,21 +23,22 @@ public final class Globals {
 
 	public static final String userDir = System.getProperty("user.dir");
 	
-	public static final boolean DEV_MODE = true;
-	public static boolean DEBUG_CHECK = false;
+	public static boolean DEV_MODE = true;
+	public static boolean DEBUG = false;
 
 	// Setting the Constant to any number greater than zero will cause models
 	// to have a maximal depth MAX_MODEL_DEPTH+1
 	public static final int MAX_MODEL_DEPTH = 100;
-	private static TzPrintStream tcExPrintStream;
+	private static IPrintStream tcExPrintStream;
+	public static PrintStream tcExStream;
 
 	private static PrintStream oldStdErr;
 
 	static {
 		if (DEV_MODE) {
 			try {
-				tcExPrintStream = new TzPrintStream(new PrintStream(
-						DUMMY_TC_EX_LOG_FILE));
+				tcExStream = new PrintStream(DUMMY_TC_EX_LOG_FILE);
+				tcExPrintStream = new TzPrintStream(tcExStream);
 			} catch (FileNotFoundException e) {
 				tcExPrintStream = new NullTzPrintStream();
 			}
@@ -71,7 +73,7 @@ public final class Globals {
 		return System.getProperty("java.class.path");
 	}
 
-	public static TzPrintStream getTcExecutionOutStream() {
+	public static IPrintStream getTcExecutionOutStream() {
 		return tcExPrintStream;
 	}
 }

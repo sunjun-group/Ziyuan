@@ -8,8 +8,9 @@
 
 package tzuyu.engine.iface;
 
+import lstar.IReportHandler;
 import tzuyu.engine.model.dfa.Alphabet;
-import lstar.ReportHandler;
+import tzuyu.engine.model.exception.ReportException;
 
 /**
  * @author LLT
@@ -21,6 +22,6 @@ public interface HasReport<A extends Alphabet> {
 	 * report all useful output from the process. this function will we put this
 	 * separate to make the flow clearer.
 	 */
-	public void report(ReportHandler<A> reporter);
+	public void report(IReportHandler<A> reporter) throws ReportException;
 
 }

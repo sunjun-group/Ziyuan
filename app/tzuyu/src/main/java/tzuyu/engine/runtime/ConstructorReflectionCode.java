@@ -28,7 +28,7 @@ public class ConstructorReflectionCode extends ReflectionCode {
 	}
 
 	private void checkRepetion() {
-		if (Globals.DEBUG_CHECK) {
+		if (Globals.DEBUG) {
 			String error = ReflectionUtils.checkArgumentTypes(inputs,
 					constructor.getParameterTypes(), constructor);
 			if (error != null)

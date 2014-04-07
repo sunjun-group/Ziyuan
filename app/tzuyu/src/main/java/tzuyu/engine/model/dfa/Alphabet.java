@@ -34,6 +34,11 @@ public class Alphabet {
 	public int getSize() {
 		return actions.size();
 	}
+	
+	public boolean isEmpty() {
+		// alphabet is always contains at least 1 action which is epsilon
+		return getSize() == 1; 
+	}
 
 	public int getElpsilonActionIndex() {
 		return 0;

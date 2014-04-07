@@ -30,7 +30,7 @@ public final class Messages {
 			messagesResourceBundle = ResourceBundle.getBundle(MESSAGES_PATH);
 			enumConstantResourceBundle = ResourceBundle.getBundle(ENUM_CONSTANTS_PATH);
 		} catch (MissingResourceException ex) {
-			PluginLogger.logEx(ex);
+			PluginLogger.getLogger().logEx(ex);
 		}
 	}
 	

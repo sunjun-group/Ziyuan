@@ -24,18 +24,9 @@ import tzuyu.engine.model.dfa.DFA;
  */
 public interface Refiner<A extends Alphabet> extends HasReport<A> {
 
-	/**
-	 * @param result
-	 * @return
-	 */
-	Formula refineMembership(QueryResult result);
+	Formula refineMembership(QueryResult result) throws InterruptedException;
 
-	/**
-	 * @param dfa
-	 * @param traces
-	 * @return
-	 */
-	Witness refineCandidate(DFA dfa, List<QueryTrace> traces);
+	Witness refineCandidate(DFA dfa, List<QueryTrace> traces) throws InterruptedException;
 
 	void init(A sigma);
 

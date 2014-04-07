@@ -3,8 +3,10 @@ package refiner;
 import java.util.List;
 import java.util.Map;
 
-import lstar.ReportHandler;
+import lstar.IReportHandler;
+import lstar.IReportHandler.OutputType;
 import tzuyu.engine.algorithm.iface.Refiner;
+import tzuyu.engine.iface.ITzManager;
 import tzuyu.engine.model.Action;
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.Formula;
@@ -27,9 +29,11 @@ public class TzuYuRefiner implements Refiner<TzuYuAlphabet> {
 
 	private SVMWrapper classifier;
 	private Map<Class<?>, ClassInfo> classInfoMap;
+	private ITzManager<TzuYuAlphabet> manager;
 
-	public TzuYuRefiner() {
-		this.classifier = new SVMWrapper();
+	public TzuYuRefiner(ITzManager<TzuYuAlphabet> manager) {
+		this.classifier = new SVMWrapper(manager);
+		this.manager = manager;
 	}
 
 	public void init(TzuYuAlphabet sigma) {
@@ -45,7 +49,8 @@ public class TzuYuRefiner implements Refiner<TzuYuAlphabet> {
 		return classifier.getTimeConsumed();
 	}
 
-	public Formula refineMembership(QueryResult cex) {
+	public Formula refineMembership(QueryResult cex) throws InterruptedException {
+		manager.checkProgress();
 		if (cex == null) {
 			throw new IllegalArgumentException(
 					"the counter example cannot be null");
@@ -82,8 +87,8 @@ public class TzuYuRefiner implements Refiner<TzuYuAlphabet> {
 	 * @return the witness which contains the divider for the inconsistent
 	 *         transition or the counterexample trace
 	 */
-	public Witness refineCandidate(DFA dfa, List<QueryTrace> traces) {
-
+	public Witness refineCandidate(DFA dfa, List<QueryTrace> traces) throws InterruptedException {
+		manager.checkProgress();
 		Map<Transition, QueryResult> resultMap = dispatchTraces(dfa, traces);
 		// Find the first inconsistent transition
 		Pair<Transition, QueryResult> result = findInconsistentTransition(dfa,
@@ -96,8 +101,7 @@ public class TzuYuRefiner implements Refiner<TzuYuAlphabet> {
 
 		QueryResult queryResult = result.second();
 
-		Action symbol = result.first().action;
-		TzuYuAction tzuyuSymbol = (TzuYuAction) symbol;
+		TzuYuAction tzuyuSymbol = (TzuYuAction)result.first().action;
 
 		if (queryResult.positiveSet.size() == 0) {
 			StringConverter converter = new StringConverter(dfa);
@@ -215,9 +219,10 @@ public class TzuYuRefiner implements Refiner<TzuYuAlphabet> {
 
 	}
 
-	public void report(ReportHandler<TzuYuAlphabet> reporter) {
-		reporter.getLogger().info("Total NO. of SVM Calls:", getRefinementCount())
-				.info("Total Time consumed by SVM:", getTimeConsumed());
+	public void report(IReportHandler<TzuYuAlphabet> reporter) {
+		reporter.getOutStream(OutputType.TZ_OUTPUT)
+				.writeln("Total NO. of SVM Calls: " + getRefinementCount())
+				.writeln("Total Time consumed by SVM: " + getTimeConsumed() + "ms");
 	}
 
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
-import tzuyu.engine.iface.IAlgorithmFactory;
+import tzuyu.engine.iface.ITzManager;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.RelativeNegativeIndex;
 import tzuyu.engine.model.Sequence;
@@ -38,7 +38,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 	private TzClass project;
 	private TzConfiguration config;
 
-	public RandomTCGStrategy(IAlgorithmFactory<?> prjFactory) {
+	public RandomTCGStrategy(ITzManager<?> prjFactory) {
 		selector = new ParameterSelector(prjFactory);
 		store = new TestCaseStore();
 		parameterStore = new MethodParameterStore();
@@ -69,10 +69,14 @@ public class RandomTCGStrategy implements ITCGStrategy {
 		Variable receiver = null;
 		int size = trace.size();
 		for (int index = 0; index < size; index++) {
+			TzuYuAction stmt = trace.getStatement(index);
+//			TODO LLT: the statements in comments are for support static methods			
+//			boolean isStatic = stmt.getAction().isStatic();
+//			if (current.getReceiver() != null) {
+//				receiver = current.getReceiver();
+//			}
 			receiver = current.getReceiver();
 			List<TestCase> goodTraces = new ArrayList<TestCase>();
-
-			TzuYuAction stmt = trace.getStatement(index);
 
 			int currentSize = index + 1;
 			Query currentQuery = trace.getSubQuery(currentSize);
@@ -93,7 +97,42 @@ public class RandomTCGStrategy implements ITCGStrategy {
 				int stmtCount = 0;
 				List<Sequence> sequences = new ArrayList<Sequence>();
 				List<VarIndex> indices = new ArrayList<VarIndex>();
+				
+				/* TODO LLT: for static methods
+				int firstIdx = 0;
+				if (isStatic && receiver != null) {
+					// if the current method is static, it won't have a
+					// constructor receiver from the previous stmts, but we
+					// still need to collect the previous sequence to
+					// concatenate with the new one.
+					sequences.add(receiver.owner);
+					stmtCount += receiver.owner.size();
+				} else if (current.getReceiver() == null
+						&& current != TestCase.epsilon
+						&& current.getTrace()
+								.getStatement(current.getTrace().size() - 1)
+								.getAction().isStatic()) {
+					// the previous one is static
+					Sequence lastSequence = current.getSequence();
+					sequences.add(lastSequence);
+					if (!isStatic && receiver != null) {
+						// the previous one is static, and this is non-static
+						// and before static method is also a non-static method.
+						firstIdx = 1;
+						indices.add(VarIndex.plus(rawParams.get(0).getVarIndex(), stmtCount));
+					}
+					stmtCount += lastSequence.size();
+				}
+				
 
+				for (int i = firstIdx; i < rawParams.size(); i++) {
+					Variable raw = rawParams.get(i);
+					indices.add(VarIndex.plus(raw.getVarIndex(), stmtCount));
+					sequences.add(raw.owner);
+					stmtCount += raw.owner.size();
+				}
+				*/
+				
 				for (Variable raw : rawParams) {
 					indices.add(VarIndex.plus(raw.getVarIndex(), stmtCount));
 					sequences.add(raw.owner);
@@ -369,14 +408,14 @@ public class RandomTCGStrategy implements ITCGStrategy {
 			Class<?> type = paramTypes.get(index);
 			// The first argument of an instance method is the receiver object
 			if (index == 0 && !isStatic) {
-				// LLT-only initialize for non-static methods.
+				// initialize the receiver for a non-static method.
 				if (receiver == null) {
 					receiver = selector.selectDefaultReceiver(project
 							.getTarget());
 				} 
 				parameters.add(receiver);
 			} else {
-				// LLT: 3? what does this mean?
+				// try 3 times.
 				for (int i = 0; i < 3; i++) {
 					Variable arg = null;
 					int source = Randomness.nextRandomInt(3);

@@ -9,7 +9,6 @@ import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.runtime.RAssignment;
 import tzuyu.engine.utils.ArrayListSimpleList;
 import tzuyu.engine.utils.ListOfLists;
-import tzuyu.engine.utils.Log;
 import tzuyu.engine.utils.OneMoreElementList;
 import tzuyu.engine.utils.Randomness;
 import tzuyu.engine.utils.ReflectionUtils;
@@ -372,10 +371,6 @@ public class Sequence implements Serializable {
 		return variables;
 	}
 
-	public void log() {
-		Log.logSequence(this.toString());
-	}
-
 	public Variable getVariable(int i) {
 		checkIndex(i);
 		return new Variable(this, i);
@@ -418,6 +413,23 @@ public class Sequence implements Serializable {
 	 * the statement at index <code>reverseStmtIndex</code> in reverse order.
 	 */
 	public Variable getVariableSequence(int reverseQueryIndex, int varIndex) {
+		/* TODO LLT: for supporting static methods
+		 * but still get problem with this solution because
+		 * sometimes the statements is duplicated in the sequence 
+		 * (see the mail) 
+		 *  */
+//		int stmtIndex = this.size() - 1;
+//		int curRevQueryIdx = -1;
+//		Statement stmt = null;
+//		for (; stmtIndex > 0; stmtIndex --) {
+//			stmt = statements.get(stmtIndex);
+//			if (stmt.getAction().getAction() instanceof RMethod) {
+//				if (++ curRevQueryIdx == reverseQueryIndex) {
+//					break;
+//				}
+//			}
+//		}
+//		Assert.assertNotNull(stmt, "Cannot find statement in the squence");
 		int stmtIndex = this.size() - 1;
 
 		for (int index = 0; index < reverseQueryIndex; index++) {
@@ -446,20 +458,13 @@ public class Sequence implements Serializable {
 					varIndex - 1);
 			RelativeNegativeIndex relVarIdx = stmt.getInputVars().get(varIndex);
 
-			// NOTES: Here we increase the stmtIndex of the previous statement
-			// by 1
-			// to get the starting address of the next statement. This is
-			// guaranteed
-			// that the referenced variables are the output of the last
-			// statement in
-			// its parameters sequence. Even when the variable referenced are in
-			// the
-			// middle of the original parameter sequence, but the original
-			// sequence
-			// was chopped off before passing to this sequence. Thus, increasing
-			// 1
-			// will not result in the mix of the remaining statements in the
-			// original
+	 		// NOTES: Here we increase the stmtIndex of the previous statement by 1
+			// to get the starting address of the next statement. This is guaranteed 
+			// that the referenced variables are the output of the last statement in 
+			// its parameters sequence. Even when the variable referenced are in the 
+			// middle of the original parameter sequence, but the original sequence 
+			// was chopped off before passing to this sequence. Thus, increasing 1 
+			// will not result in the mix of the remaining statements in the original 
 			// sequence with the whole of the next parameter sequence.
 			int startIdx = stmtIndex + preVarIdx.stmtIdx + 1;
 			int endIdx = stmtIndex + relVarIdx.stmtIdx;

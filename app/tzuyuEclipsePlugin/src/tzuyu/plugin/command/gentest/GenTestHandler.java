@@ -18,14 +18,19 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.statushandlers.StatusManager;
 
+import tzuyu.engine.model.exception.ReportException;
+import tzuyu.engine.model.exception.TzException;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.command.TzCommandHandler;
 import tzuyu.plugin.command.TzJob;
@@ -33,6 +38,7 @@ import tzuyu.plugin.core.constants.Constants;
 import tzuyu.plugin.core.constants.Messages;
 import tzuyu.plugin.core.dto.WorkObject;
 import tzuyu.plugin.core.utils.IStatusUtils;
+import tzuyu.plugin.preferences.component.MessageDialogs;
 import tzuyu.plugin.proxy.TzuyuEngineProxy;
 import tzuyu.plugin.reporter.GenTestReporter;
 import tzuyu.plugin.reporter.PluginLogger;
@@ -48,14 +54,14 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 	@Override
 	protected void run(WorkObject workObject, final GenTestPreferences config) {
 		final GenTestReporter reporter = new GenTestReporter(config);
-		if (prepareOutputFolder(config)) {
+		if (preProcess(config)) {
 			GenTestJob job = new GenTestJob("Generate testcases", workObject,
 					config, reporter);
 			job.scheduleJob();
 		}
 	}
 	
-	public boolean prepareOutputFolder(GenTestPreferences config) {
+	public boolean preProcess(GenTestPreferences config) {
 		/* open package */
 		try {
 			if (!config.getOutputPackage().isOpen()) {
@@ -85,9 +91,9 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 				return confirm == PkgConfirmMsgDialog.OVERRIDE_IDX;
 			}
 		} catch (JavaModelException e) {
-			PluginLogger.logEx(e);
+			PluginLogger.getLogger().logEx(e);
 		} catch (CoreException e) {
-			PluginLogger.logEx(e);
+			PluginLogger.getLogger().logEx(e);
 		}
 		return false;
 	}
@@ -98,24 +104,29 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 	 */
 	private List<IResource> findConflictResource(GenTestPreferences config)
 			throws JavaModelException {
-		List<IResource> conflitResource = new ArrayList<IResource>();
+		List<IResource> conflictResource = new ArrayList<IResource>();
 		// find dot file
 		for (Object child : config.getOutputPackage().getNonJavaResources()) {
 			if (child instanceof IFile) {
 				IFile file = (IFile) child;
 				if (Constants.DFA_FILE_EXTENSION.equals(file
 						.getFileExtension())) {
-					conflitResource.add(file);
+					conflictResource.add(file);
 				}
 			}
 		}
-		for (IJavaElement child : config.getPassPackage().getChildren()) {
-			conflitResource.add(child.getResource());
+		addAllChildrenToResources(conflictResource, config.getPassPackage());
+		addAllChildrenToResources(conflictResource, config.getFailPackage());
+		return conflictResource;
+	}
+
+	private void addAllChildrenToResources(List<IResource> resources,
+			IPackageFragment pkg) throws JavaModelException {
+		if (pkg.isOpen()) {
+			for (IJavaElement child : pkg.getChildren()) {
+				resources.add(child.getResource());
+			}
 		}
-		for (IJavaElement child : config.getFailPackage().getChildren()) {
-			conflitResource.add(child.getResource());
-		}
-		return conflitResource;
 	}
 	
 	@Override
@@ -135,16 +146,37 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 			this.config = config;
 			this.reporter = reporter;
 		}
+		
+		@Override
+		protected void canceling() {
+			reporter.isInterrupted();
+		}
 
 		@Override
 		protected IStatus doJob(IProgressMonitor monitor) {
-			TzuyuEngineProxy.generateTestCases(workObject, config, reporter);
-			// refresh output folder
+			reporter.setProgressMonitor(monitor);
 			try {
+				TzuyuEngineProxy.generateTestCases(workObject, config, reporter);
+				// refresh output folder
 				config.getOutputPackage().getResource().refreshLocal(2, null);
 			} catch (CoreException e) {
-				PluginLogger.logEx(e);
+				PluginLogger.getLogger().logEx(e);
+			} catch (final ReportException e) {
+				Display.getDefault().asyncExec(new Runnable() {
+					
+					@Override
+					public void run() {
+						MessageDialogs.error(TzuyuPlugin.getActiveWorkbenchWindow().getShell(),
+								msg.getMessage(e.getType()) + e.getMessage());
+					}
+				});
+			} catch (InterruptedException e) {
+				PluginLogger.getLogger().info("User cancel the job!!");
+			} catch (TzException e) {
+				StatusManager.getManager().handle(IStatusUtils.error(msg.getMessage(e.getType())),
+						StatusManager.BLOCK);
 			}
+			
 			monitor.done();
 			return IStatusUtils.OK_STATUS;
 		}
@@ -192,9 +224,9 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 		/**
 		 * @param project 
 		 * @return:
-		 * 0: delete
-		 * 1: continue
-		 * 2: cancel
+		 * DELETE_IDX
+		 * OVERRIDE_IDX
+		 * CANCEL_IDX
 		 */
 		public static int confirm(Shell parentShell, IJavaProject project) {
 			return (new PkgConfirmMsgDialog(parentShell, project)).open();

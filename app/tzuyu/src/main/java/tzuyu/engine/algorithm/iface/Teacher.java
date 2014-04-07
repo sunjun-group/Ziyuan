@@ -30,7 +30,7 @@ public interface Teacher<A extends Alphabet> extends HasReport<A> {
 	 * @param str
 	 *            the string to be decided
 	 */
-	public boolean membershipQuery(Trace str) throws LStarException;
+	public boolean membershipQuery(Trace str) throws LStarException, InterruptedException;
 
 	/**
 	 * Whether the @param dfa is equal to the unknown DFA. If they are equal
@@ -42,7 +42,7 @@ public interface Teacher<A extends Alphabet> extends HasReport<A> {
 	 * @return the counterexample string if the two are not equal or an empty
 	 *         (not null) LString if the tow equal.
 	 */
-	public Trace candidateQuery(DFA dfa) throws LStarException;
+	public Trace candidateQuery(DFA dfa) throws LStarException, InterruptedException;
 
 	public void setInitAlphabet(A sig);
 

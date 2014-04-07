@@ -13,10 +13,10 @@ package tzuyu.engine.iface;
  * @author LLT
  *
  */
-public class DefaultClassCreator implements JClassWriter {
-
-	public void writeClass(String className, String packageName,
-			String content) {
-	}
+public abstract class AbstractPrintStream implements IPrintStream{
 	
+	public AbstractPrintStream writeln(String msg) {
+		println(msg);
+		return this;
+	}
 }

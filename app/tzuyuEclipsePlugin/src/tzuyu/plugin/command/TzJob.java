@@ -20,19 +20,23 @@ import tzuyu.plugin.core.utils.IStatusUtils;
  *
  */
 public abstract class TzJob extends Job {
-
 	public TzJob(String name) {
 		super(name);
 	}
 
 	@Override
-	protected final IStatus run(IProgressMonitor monitor) {
+	protected final IStatus run(final IProgressMonitor monitor) {
 		try {
 			doJob(monitor);
 		} finally {
 			monitor.done();
 		}
 		return IStatusUtils.OK_STATUS;
+	}
+	
+	@Override
+	protected void canceling() {
+		Thread.currentThread().interrupt();
 	}
 
 	protected abstract IStatus doJob(IProgressMonitor monitor);

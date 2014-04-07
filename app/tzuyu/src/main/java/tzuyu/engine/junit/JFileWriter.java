@@ -17,11 +17,15 @@ import java.util.Map;
 
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzConstants;
+import tzuyu.engine.iface.IPrintStream;
+import tzuyu.engine.iface.NullTzPrintStream;
 import tzuyu.engine.junit.printer.JFileOutputPrinter;
 import tzuyu.engine.junit.printer.JOutputPrinter;
 import tzuyu.engine.junit.printer.JStrOutputPrinter;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.Statement;
+import tzuyu.engine.model.exception.TzException;
+import tzuyu.engine.model.exception.TzExceptionType;
 import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.runtime.RMethod;
 import tzuyu.engine.utils.Assert;
@@ -46,6 +50,7 @@ public class JFileWriter {
 	protected int testsPerFile;
 	
 	private Map<String, List<List<Sequence>>> createdSequencesAndClasses = new LinkedHashMap<String, List<List<Sequence>>>();
+	private IPrintStream outStream = new NullTzPrintStream();
 
 	public JFileWriter(String driverClassName) {
 		this.junitDriverClassName = driverClassName;
@@ -64,9 +69,13 @@ public class JFileWriter {
 		this.junitDirName = config.getOutputPath();
 	}
 	
-	public List<File> createJUnitTestFiles(List<Sequence> sequences, int firstIdx) {
+	/**
+	 * start point of junit files generator.
+	 */
+	public List<File> createJUnitTestFiles(List<Sequence> sequences,
+			int firstIdx) throws TzException {
 		if (sequences.size() == 0) {
-			System.out.println("No sequences are given, No Junit class created.");
+			outStream.println("No sequences are given, No Junit class created.");
 			return new ArrayList<File>();
 		}
 		
@@ -76,7 +85,8 @@ public class JFileWriter {
 		List<List<Sequence>> subSuites = CollectionsExt.<Sequence> chunkUp(
 				sequences, testsPerFile);
 		for (int i = 0; i < subSuites.size(); i++) {
-			files.add(writeSubSuite(subSuites.get(i), junitDriverClassName + (i + firstIdx)));
+			files.add(writeSubSuite(subSuites.get(i), junitDriverClassName
+					+ (i + firstIdx)));
 		}
 		createdSequencesAndClasses.put(junitDriverClassName, subSuites);
 		return files;
@@ -88,18 +98,20 @@ public class JFileWriter {
 		return outputFile;
 	}
 	
-	public File writeClass(String newClassName, String content) {
+	public File writeClass(String newClassName, String content) throws TzException {
 		File outputFile = Files.newFile(getDir().getAbsolutePath(),
 				newClassName, TzConstants.JAVA_SUFFIX);
 		try {
 			Files.writeToFile(content, outputFile);
 		} catch (IOException e) {
-			throw new Error("Can not write in file: " + outputFile);
+			throw new TzException(TzExceptionType.JUNIT_FAIL_WRITE_FILE,
+					outputFile.getAbsolutePath());
 		}
 		return outputFile;
 	}
 
-	protected File writeSubSuite(List<Sequence> seqs, String newClassName) {
+	protected File writeSubSuite(List<Sequence> seqs, String newClassName)
+			throws TzException {
 		Assert.assertNotNull(seqs, "The sequences can not be null.");
 
 		File classFile = createClassFile(newClassName);
@@ -229,7 +241,8 @@ public class JFileWriter {
 	}
 
 	/**
-	 * Needs import a class?
+	 * to check whether the reference class of a type using in the statement is
+	 * need to import or not
 	 * */
 	private boolean needImport(Class<?> clazz) {
 		return !clazz.equals(void.class) && !clazz.isPrimitive();
@@ -280,5 +293,9 @@ public class JFileWriter {
 			}
 		}
 		return dir;
+	}
+
+	public void setOutStream(IPrintStream outStream) {
+		this.outStream = outStream;
 	}
 }

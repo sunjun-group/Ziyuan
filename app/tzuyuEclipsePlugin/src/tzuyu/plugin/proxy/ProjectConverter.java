@@ -57,11 +57,12 @@ public class ProjectConverter {
 		for (WorkItem item : workObject.getWorkItems()) {
 			String methodName = null;
 			IJavaElement ele = item.getCorrespondingJavaElement();
+			//TODO LLT: just temporary, it's messy.
 			switch (ele.getElementType()) {
 			case IJavaElement.CLASS_FILE:
 				fullyQualifiedName = StringUtils.dotJoin(ele.getParent()
 						.getElementName(), ((IClassFile)ele).getType().getElementName());
-				break;
+				break;			
 			case IJavaElement.METHOD:
 				methodName = ele
 						.getElementName();
@@ -88,7 +89,7 @@ public class ProjectConverter {
 					classMethodsMap.put(clazz, methods);
 				}
 			} catch (ClassNotFoundException e) {
-				PluginLogger.logEx(e);
+				PluginLogger.getLogger().logEx(e);
 				throw new PluginException();
 			}
 			if (methodName != null) {

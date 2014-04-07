@@ -8,10 +8,13 @@
 
 package tzuyu.engine.iface;
 
+import tzuyu.engine.model.exception.ReportException;
+import tzuyu.engine.model.exception.TzException;
+
 /**
  * @author LLT
  * 
  */
 public interface TzuyuEngine {
-	public void run();
+	public void run() throws ReportException, InterruptedException, TzException;
 }

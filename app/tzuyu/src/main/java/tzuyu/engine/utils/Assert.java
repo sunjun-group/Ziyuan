@@ -8,7 +8,7 @@
 
 package tzuyu.engine.utils;
 
-import tzuyu.engine.model.exception.ExceptionType;
+import tzuyu.engine.model.exception.TzRtExceptionType;
 import tzuyu.engine.model.exception.TzRuntimeException;
 
 /**
@@ -27,7 +27,7 @@ public class Assert {
 			if (msgs != null) {
 				msg = StringUtils.join(", ", (Object[]) msgs);
 			}
-			throw new TzRuntimeException(ExceptionType.AssertException, msg);
+			throw new TzRuntimeException(TzRtExceptionType.AssertException, msg);
 		}
 	}
 

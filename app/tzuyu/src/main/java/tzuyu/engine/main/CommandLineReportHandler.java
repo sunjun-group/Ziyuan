@@ -10,9 +10,11 @@ package tzuyu.engine.main;
 
 import java.io.FileWriter;
 
-import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzClass;
+import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.iface.ILogger;
+import tzuyu.engine.iface.IPrintStream;
+import tzuyu.engine.iface.TzPrintStream;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.dfa.DFA;
@@ -45,14 +47,19 @@ public class CommandLineReportHandler extends TzReportHandler {
 			}
 		}
 	}
-
+	
 	@Override
-	public ILogger<?> getLogger() {
-		return CommandLineLogger.instance();
+	public IPrintStream getOutStream(lstar.IReportHandler.OutputType type) {
+		return new TzPrintStream(System.out);
 	}
 
 	@Override
 	public void comit() {
 		
+	}
+
+	@Override
+	public ILogger<?> getLogger() {
+		return CommandLineLogger.instance();
 	}
 }

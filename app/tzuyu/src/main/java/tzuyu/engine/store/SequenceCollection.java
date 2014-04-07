@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.Tzuyu;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.Statement;
 import tzuyu.engine.model.TzuYuAction;
@@ -17,7 +18,6 @@ import tzuyu.engine.model.Variable;
 import tzuyu.engine.utils.ArrayListSimpleList;
 import tzuyu.engine.utils.Globals;
 import tzuyu.engine.utils.ListOfLists;
-import tzuyu.engine.utils.Log;
 import tzuyu.engine.utils.ReflectionUtils;
 import tzuyu.engine.utils.ReflectionUtils.Match;
 import tzuyu.engine.utils.SimpleList;
@@ -64,9 +64,7 @@ public class SequenceCollection {
 	 * Removes all sequences from this collection.
 	 */
 	public void clear() {
-		if (Log.isLoggingOn()) {
-			Log.logLine("Clearing sequence collection.");
-		}
+		Tzuyu.getLog().debug("Clearing sequence collection.");
 		this.activeSequences = new LinkedHashMap<Class<?>, ArrayListSimpleList<Sequence>>();
 		this.typesWithSequencesMap = new SubTypeSet(false);
 		numActivesequences = 0;

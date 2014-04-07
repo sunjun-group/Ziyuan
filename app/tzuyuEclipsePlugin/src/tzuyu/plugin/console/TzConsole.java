@@ -28,7 +28,7 @@ import org.eclipse.ui.themes.ITheme;
 public class TzConsole extends MessageConsole implements IPropertyChangeListener {
 	public static final String NAME = "Tzuyu Console";
 	private static final String CONSOLE_FONT = "tzuyu.plugin.consoleFont";
-	static TzConsole console;
+	private static TzConsole console;
 	
 	public TzConsole() {
 		super(NAME, null, true);
@@ -50,13 +50,16 @@ public class TzConsole extends MessageConsole implements IPropertyChangeListener
 		manager.showConsoleView(console);
 		MessageConsoleStream stream = console.newMessageStream();
 		stream.setActivateOnWrite(true);
-		PrintStream ps = new PrintStream(stream, true);
-		System.setOut(ps);
-	    System.setErr(ps);
 	    return console;
 	}
+	
+	public static PrintStream getPrintStream() {
+		MessageConsoleStream stream = getConsole().newMessageStream();
+		stream.setActivateOnWrite(true);
+		return new PrintStream(stream, true);
+	}
 
-	private static TzConsole getConsole() {
+	public static TzConsole getConsole() {
 		IConsoleManager manager = ConsolePlugin.getDefault()
 				.getConsoleManager();
 		boolean exists = false;
@@ -77,9 +80,6 @@ public class TzConsole extends MessageConsole implements IPropertyChangeListener
 	}
 
 	public static IOConsoleOutputStream getOutputStream() {
-		if (console == null) {
-			return null;
-		}
 		IOConsoleOutputStream out = getConsole().newOutputStream();
 		out.setActivateOnWrite(true);
 		return out;

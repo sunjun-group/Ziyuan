@@ -36,7 +36,7 @@ import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.TypeNameRequestor;
 
 import tzuyu.engine.iface.IReferencesAnalyzer;
-import tzuyu.engine.model.exception.TzuyuException;
+import tzuyu.engine.model.exception.TzException;
 import tzuyu.engine.utils.CollectionUtils;
 import tzuyu.engine.utils.Pair;
 import tzuyu.engine.utils.Randomness;
@@ -102,8 +102,8 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 							searchScope);
 				}
 			}
-		} catch (TzuyuException e) {
-			PluginLogger.logEx(e);
+		} catch (TzException e) {
+			PluginLogger.getLogger().logEx(e);
 		}
 		return result;
 	}
@@ -141,15 +141,15 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 	/**
 	 * load a class by fullyQualifiedName
 	 */
-	private Class<?> toClass(String mappedClz) throws TzuyuException {
+	private Class<?> toClass(String mappedClz) throws TzException {
 		try {
 			if (mappedClz == null) {
 				return null;
 			}
 			return classLoader.loadClass(mappedClz);
 		} catch (ClassNotFoundException e) {
-			PluginLogger.logEx(e);
-			TzuyuException.rethrow(e);
+			PluginLogger.getLogger().logEx(e);
+			TzException.rethrow(e);
 		}
 		return null;
 	}
@@ -183,12 +183,12 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 							toClassName(project.findType(eString)));
 				}
 			} catch (CoreException e) {
-				PluginLogger.logEx(e);
+				PluginLogger.getLogger().logEx(e);
 			}
 		}
 		try {
 			return toClass(Randomness.randomMember(enums));
-		} catch (TzuyuException e) {
+		} catch (TzException e) {
 			return null;
 		}
 	}
@@ -233,7 +233,7 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 			// do nothing, just return.
 			return result;
 		} catch (JavaModelException e) {
-			PluginLogger.logEx(e);
+			PluginLogger.getLogger().logEx(e);
 			return new ArrayList<String>();
 		}
 	}
@@ -258,17 +258,15 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 					availableSubTypes = toClassName(getFilteredRandomSubList(
 							Arrays.asList(allSubtypes), numOfRandomClzzToCache));
 				} catch (JavaModelException e) {
-					PluginLogger.logEx(e);
+					PluginLogger.getLogger().logEx(e);
 				}
 				classMapCache.put(clazz, availableSubTypes);
 			}
 
 			String subType = Randomness.randomMember(availableSubTypes);
-			System.out.println("Randomness. selected for interface: "
-					+ clazz.getName() + "\n Result: "
-					+ StringUtils.nullToEmpty(subType));
+			PluginLogger.getLogger().debugGetImplForType(clazz, subType);
 			return toClass(subType);
-		} catch (TzuyuException e) {
+		} catch (TzException e) {
 			return null;
 		}
 	}
@@ -285,13 +283,14 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 			if (cu == null) {
 				return null;
 			}
-			IType type = CollectionUtils.getFirstElement(cu.getTypes());
-			if (type == null) {
-				System.out.println("selected type is null");
+			for (IType type : cu.getTypes()) {
+				if (Flags.isPublic(type.getFlags())) {
+					return type;
+				}
 			}
-			return type;
+			return null;
 		} catch (JavaModelException e) {
-			PluginLogger.logEx(e);
+			PluginLogger.getLogger().logEx(e);
 			return null;
 		}
 	}
@@ -315,11 +314,10 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 				if (!Flags.isAbstract(flags) && Flags.isPublic(flags)
 						&& !Flags.isInterface(flags)) {
 					result.add(iType);
-					PluginLogger.log(iType.getElementName());
 					i++;
 				}
 			} catch (JavaModelException e) {
-				PluginLogger.logEx(e);
+				PluginLogger.getLogger().logEx(e);
 			}
 
 		}
@@ -357,7 +355,7 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 		try {
 			return project.findType(clazz.getCanonicalName());
 		} catch (JavaModelException e) {
-			PluginLogger.logEx(e);
+			PluginLogger.getLogger().logEx(e);
 			return null;
 		}
 	}

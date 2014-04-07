@@ -42,7 +42,7 @@ public class ReadDfaHandler extends AbstractHandler {
 					DfaView dfaView = (DfaView) TzuyuPlugin.showDfaView();
 					dfaView.displayDfaGraph(dfaGraph);
 				} catch (CoreException e) {
-					PluginLogger.logEx(e);
+					PluginLogger.getLogger().logEx(e);
 				}
 			}
 		}

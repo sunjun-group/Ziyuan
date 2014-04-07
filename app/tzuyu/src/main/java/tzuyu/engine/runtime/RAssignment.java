@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import tzuyu.engine.TzConfiguration;
-import tzuyu.engine.iface.TzPrintStream;
+import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.model.ExecutionOutcome;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.StatementKind;
@@ -57,7 +57,7 @@ public class RAssignment extends StatementKind implements Serializable {
 	}
 
 	@Override
-	public ExecutionOutcome execute(Object[] inputVals, TzPrintStream out) {
+	public ExecutionOutcome execute(Object[] inputVals, IPrintStream out) {
 		List<Object> outVars = new ArrayList<Object>(1);
 		outVars.add(this.value);
 		return new NormalExecution(this.value, outVars.toArray(), 0);

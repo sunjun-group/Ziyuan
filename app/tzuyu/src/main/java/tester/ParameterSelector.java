@@ -5,7 +5,7 @@ import java.util.List;
 
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
-import tzuyu.engine.iface.IAlgorithmFactory;
+import tzuyu.engine.iface.ITzManager;
 import tzuyu.engine.iface.IReferencesAnalyzer;
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.ConstructorInfo;
@@ -13,12 +13,13 @@ import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.StatementKind;
 import tzuyu.engine.model.TzuYuAction;
 import tzuyu.engine.model.Variable;
+import tzuyu.engine.model.exception.TzException;
+import tzuyu.engine.model.exception.TzExceptionType;
 import tzuyu.engine.model.exception.TzRuntimeException;
-import tzuyu.engine.model.exception.TzuyuException;
-import tzuyu.engine.model.exception.TzuyuException.Type;
 import tzuyu.engine.runtime.RArrayDeclaration;
 import tzuyu.engine.runtime.RAssignment;
 import tzuyu.engine.runtime.RConstructor;
+import tzuyu.engine.utils.Assert;
 import tzuyu.engine.utils.CollectionUtils;
 import tzuyu.engine.utils.ListOfLists;
 import tzuyu.engine.utils.PrimitiveGenerator;
@@ -40,7 +41,7 @@ public class ParameterSelector implements IParameterSelector {
 	private TzClass project;
 	private TzConfiguration config;
 
-	public ParameterSelector(IAlgorithmFactory<?> prjFactory) {
+	public ParameterSelector(ITzManager<?> prjFactory) {
 		componentManager = new ComponentManager();
 		refAnalyzer = prjFactory.getRefAnalyzer();
 	}
@@ -145,8 +146,8 @@ public class ParameterSelector implements IParameterSelector {
 			retry = false;
 			try {
 				return selectNewVariableForObject(type);
-			} catch (TzuyuException e) {
-				if (e.getType() == Type.ParameterSelector_Fail_Init_Class) {
+			} catch (TzException e) {
+				if (e.getType() == TzExceptionType.ParameterSelector_Fail_Init_Class) {
 					retry = true;
 					i++;
 				} else {
@@ -157,7 +158,7 @@ public class ParameterSelector implements IParameterSelector {
 		return null;
 	}
 
-	private Variable selectNewVariableForObject(Class<?> type) throws TzuyuException {
+	private Variable selectNewVariableForObject(Class<?> type) throws TzException {
 		Class<?> implClazz = refAnalyzer.getRandomImplClzz(type);
 		if (implClazz == null) {
 			return createAssignmentVariable(type, null);
@@ -167,7 +168,7 @@ public class ParameterSelector implements IParameterSelector {
 		ConstructorInfo[] ctors = ci.getConstructors();
 
 		if (CollectionUtils.isEmptyCheckNull(ctors)) {
-			throw new TzuyuException(Type.ParameterSelector_Fail_Init_Class,
+			throw new TzException(TzExceptionType.ParameterSelector_Fail_Init_Class,
 					"no accessible constructor for class: " + type);
 			// we choose an accessible constructor of a subclass of this
 			// type
@@ -342,7 +343,18 @@ public class ParameterSelector implements IParameterSelector {
 			}
 		}
 
+		/*
+		 * TODO LLT
+		 * we should be in the case that the class doesn't have a public
+		 * constructor
+		 */
+		if (ctors.length == 0) {
+			
+		}
+			
 		// Construct the input variables
+		Assert.assertTrue(ctors.length > index && ctors[index] != null, 
+				"can not find constructor for class: " + type.getName());
 		ClassInfo[] types = ctors[index].getParameterTypes();
 		List<Variable> inputVars = new ArrayList<Variable>(types.length);
 		List<Sequence> seqs = new ArrayList<Sequence>(types.length);

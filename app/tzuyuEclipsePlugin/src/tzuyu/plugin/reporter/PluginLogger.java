@@ -8,89 +8,86 @@
 
 package tzuyu.plugin.reporter;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.ui.statushandlers.StatusManager;
 
-import org.eclipse.jdt.core.IType;
-import org.eclipse.ui.console.IOConsoleOutputStream;
-
+import tzuyu.engine.iface.AbstractLogger;
 import tzuyu.engine.iface.ILogger;
-import tzuyu.engine.utils.CollectionUtils;
 import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.TzuyuPlugin;
-import tzuyu.plugin.core.exception.ErrorType;
+import tzuyu.plugin.core.constants.Messages;
+import tzuyu.plugin.core.utils.IStatusUtils;
 
 /**
  * @author LLT
  * for logging in plugin.
  */
-public class PluginLogger implements ILogger<PluginLogger>{
-	private PrintWriter pw;
-	private IOConsoleOutputStream stream;
-	private boolean debug = true;
+public class PluginLogger extends AbstractLogger<PluginLogger> implements
+		ILogger<PluginLogger> {
+	private static boolean debug = TzuyuPlugin.getDefault().isDebugging();
+	private static final Messages msg = TzuyuPlugin.getMessages();
+	private static final PluginLogger instance = new PluginLogger();
 	
-	public PluginLogger(IOConsoleOutputStream out) {
-		if (out != null) {
-			pw = new PrintWriter(out);
-			this.stream = out;
-		}
+	public static PluginLogger getLogger() {
+		return instance;
 	}
 	
 	@Override
 	public PluginLogger info(Object... msgs) {
-		if (consoleOpen()) {
-			String msg = StringUtils.spaceJoin(msgs);
-			try {
-				stream.write(msg);
-				stream.write("\n");
-			} catch (IOException e) {
-				logEx(e);
-			}
-//			pw.println(msg);
-		}
+		log(StringUtils.spaceJoin(msgs), IStatus.INFO);
 		return this;
-	}
-
-	private boolean consoleOpen() {
-		return pw != null;
-	}
-	
-	public void close() {
-		if (consoleOpen()) {
-			pw.flush();
-			pw.close();
-		}
 	}
 
 	@Override
 	public PluginLogger error(Object... msgs) {
-		// TODO Auto-generated method stub
-		return null;
+		log(StringUtils.spaceJoin(msgs), IStatus.ERROR);
+		return this;
 	}
 	
-	public static void logEx(Exception e) {
-		System.out.println(e.getStackTrace());
-	}
-
-	public static void logEx(Exception e, String msg) {
-		System.out.println(msg);
-	}
-
-	public static void logEx(Exception e, ErrorType errorType) {
-		System.out.println(TzuyuPlugin.getMessages().getMessage(errorType));
-	}
-
-	public static void debug(IType[] types) {
-		if (CollectionUtils.isEmptyCheckNull(types)) {
-			log("object is empty");
-		}
-		for (IType type : types) {
-			log(type.getElementName());
-			log("\t");
+	@Override
+	public void debug(String msg) {
+		if (debug) {
+			info(msg);
 		}
 	}
+	
+	/**
+	 * type = 
+	 * {@link org.eclipse.core.runtime.IStatus#INFO},
+	 * {@link org.eclipse.core.runtime.IStatus#WARNING},
+	 * {@link org.eclipse.core.runtime.IStatus#ERROR}
+	 */
+	public void log(String str, int type) {
+		StatusManager.getManager().handle(IStatusUtils.status(type, str));
+	}
+	
+	public void logEx(Exception e, String msg) {
+		StatusManager.getManager().handle(IStatusUtils.exception(e, msg));
+	}
+	
+	public void logEx(Exception e) {
+		logEx(e, "");
+	}
 
-	public static void log(String str) {
-		System.out.println(str);
+	@Override
+	public void close() {
+		// do nothing
+	}
+
+	@Override
+	public void logEx(Exception ex, Enum<?> type) {
+		logEx(ex, type == null ? "" : msg.getMessage(type));
+	}
+
+	@Override
+	protected boolean isDebug() {
+		return debug;
+	}
+
+	public void debugGetImplForType(Class<?> clazz, String subType) {
+		if (debug) {
+			debug("Randomness. selected for interface: ", clazz.getName(), 
+					"\n Result: ", StringUtils.nullToEmpty(subType));
+		}
 	}
 }

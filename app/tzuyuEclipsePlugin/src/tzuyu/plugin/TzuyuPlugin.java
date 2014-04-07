@@ -46,6 +46,7 @@ public class TzuyuPlugin extends AbstractUIPlugin {
 	 */
 	public TzuyuPlugin() {
 		imageDescriptors = new HashMap<String, ImageDescriptor>();
+		setDebugging(true);
 	}
 
 	public void start(BundleContext context) throws Exception {
@@ -96,7 +97,7 @@ public class TzuyuPlugin extends AbstractUIPlugin {
 			try {
 				projectNode.flush();
 			} catch (BackingStoreException e) {
-				PluginLogger.logEx(e, ErrorType.CANNOT_SAVE_PROJECT_PREFERENCES);
+				PluginLogger.getLogger().logEx(e, ErrorType.CANNOT_SAVE_PROJECT_PREFERENCES);
 			}
 		}
 	}
@@ -109,7 +110,7 @@ public class TzuyuPlugin extends AbstractUIPlugin {
 			try {
 				projectNode.flush();
 			} catch (BackingStoreException e) {
-				PluginLogger.logEx(e, ErrorType.CANNOT_SAVE_PROJECT_PREFERENCES);
+				PluginLogger.getLogger().logEx(e, ErrorType.CANNOT_SAVE_PROJECT_PREFERENCES);
 			}
 		}
 	}
@@ -167,7 +168,7 @@ public class TzuyuPlugin extends AbstractUIPlugin {
         try {
             return page.showView(viewId);
         } catch (PartInitException e) {
-        	PluginLogger.logEx(e, "Could not show view with Id=" + viewId);
+        	PluginLogger.getLogger().logEx(e, "Could not show view with Id=" + viewId);
         }
         return null;
     }

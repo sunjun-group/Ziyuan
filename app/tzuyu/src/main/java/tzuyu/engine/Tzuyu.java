@@ -8,6 +8,8 @@
 
 package tzuyu.engine;
 
+import libsvm.libsvm.svm;
+import lstar.IReportHandler.OutputType;
 import lstar.LStar;
 import lstar.LStarException;
 import refiner.TzuYuRefiner;
@@ -17,18 +19,22 @@ import tzuyu.engine.algorithm.iface.Learner;
 import tzuyu.engine.algorithm.iface.Refiner;
 import tzuyu.engine.algorithm.iface.Teacher;
 import tzuyu.engine.algorithm.iface.Tester;
-import tzuyu.engine.iface.IAlgorithmFactory;
+import tzuyu.engine.iface.ITzManager;
+import tzuyu.engine.iface.ILogger;
+import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.iface.IReferencesAnalyzer;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.TzuyuEngine;
 import tzuyu.engine.lstar.TeacherImpl;
 import tzuyu.engine.model.TzuYuAlphabet;
+import tzuyu.engine.model.exception.ReportException;
+import tzuyu.engine.model.exception.TzException;
 
 /**
  * @author LLT 
  * Driver of the Tzuyu engine.
  */
-public class Tzuyu implements TzuyuEngine, IAlgorithmFactory<TzuYuAlphabet> {
+public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 
 	/* learner */
 	private Learner<TzuYuAlphabet> learner;
@@ -43,6 +49,8 @@ public class Tzuyu implements TzuyuEngine, IAlgorithmFactory<TzuYuAlphabet> {
 	
 	private TzClass project;
 	private TzReportHandler reporter;
+	private IPrintStream tzOut;
+	private static ILogger<?> logger;
 
 	public Tzuyu(TzClass project, TzReportHandler reporter,
 			IReferencesAnalyzer refAnalyzer) {
@@ -54,31 +62,53 @@ public class Tzuyu implements TzuyuEngine, IAlgorithmFactory<TzuYuAlphabet> {
 		this.project = project;
 		this.reporter = reporter;
 		this.refAnalyzer = refAnalyzer;
+		// set print stream for output
+		// svm
+		svm.svm_set_print_string_function(reporter.getOutStream(OutputType.SVM));
+		// system out, or error (output from the tested classes)
+		if (reporter.getSystemOutStream() != null) {
+			System.setOut(reporter.getSystemOutStream());
+			System.setErr(reporter.getSystemOutStream());
+		}
+		tzOut = reporter.getOutStream(OutputType.TZ_OUTPUT);
 		tester = new TzuYuTester(this);
-		refiner = new TzuYuRefiner();
+		refiner = new TzuYuRefiner(this);
 		teacher = new TeacherImpl(this);
 		learner = new LStar<TzuYuAlphabet>(this);
+		logger = reporter.getLogger();
 	}
 
 	/**
 	 * this function execute the main flow of tzuyu engine.
 	 */
-	public void run() {
-		reporter.getLogger().info("============Start of Statistics for",
-				project.getTarget().getSimpleName(), "============");
+	public void run() throws ReportException, InterruptedException, TzException {
+		tzOut.writeln(
+				"============Start of Statistics for" + 
+				project.getTarget().getSimpleName()+ "============");
 		// TODO [LLT]: time measuring.
-		runForASingleMethodGroup();
+		// divide all class methods into 2 groups: static and non-static
+		// and start learning separately.
+//		run(TzuYuAlphabet.forStaticGroup(project));
+		TzuYuAlphabet alphabet = TzuYuAlphabet.forNonStaticGroup(project);
+		alphabet.setOutStream(tzOut);
+		run(alphabet);
+//		run(TzuYuAlphabet.forClass(project));
+		try {
+			learner.startLearning(alphabet);
+		} catch (LStarException e) {
+			getLogger().logEx(e, "The progress has been cancelled!");
+			throw new TzException(e);
+		} catch (InterruptedException e) {
+			tzOut.writeln("").writeln("Tzuyu is stopped due to user cancelled the request");
+			throw e;
+		} finally {
+			learner.report(reporter);
+			reporter.comit();
+		}
+		tzOut.writeln("================= End of TzuYu run ====================");
 	}
 
-	private void runForASingleMethodGroup() {
-		try {
-			learner.startLearning(new TzuYuAlphabet(project));
-		} catch (LStarException e) {
-			// TODO [LLT]: exception handling.
-			reporter.getLogger().info("Exception::", e.getType());
-		}
-		learner.report(reporter);
-		reporter.comit();
+	private void run(TzuYuAlphabet alphabet) throws ReportException, InterruptedException {
 	}
 
 	public Learner<TzuYuAlphabet> getLearner() {
@@ -115,5 +145,26 @@ public class Tzuyu implements TzuyuEngine, IAlgorithmFactory<TzuYuAlphabet> {
 	@Override
 	public ITCGStrategy getTCGStrategy() {
 		return tcgStrategy;
+	}
+	
+	@Override
+	public IPrintStream getOutStream() {
+		return tzOut;
+	}
+	
+	@Override
+	public ILogger<?> getLogger() {
+		return logger;
+	}
+	
+	public static ILogger<?> getLog() {
+		return logger;
+	}
+
+	@Override
+	public void checkProgress() throws InterruptedException {
+		if (reporter.isInterrupted()) {
+			throw new InterruptedException("User cancel request!!");
+		}
 	}
 }

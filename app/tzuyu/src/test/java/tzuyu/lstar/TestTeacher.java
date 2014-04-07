@@ -1,6 +1,6 @@
 package tzuyu.lstar;
 
-import lstar.ReportHandler;
+import lstar.IReportHandler;
 import tzuyu.engine.algorithm.iface.Teacher;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.model.TzuYuAlphabet;
@@ -58,7 +58,7 @@ public class TestTeacher implements Teacher<TzuYuAlphabet> {
 	public TestTeacher() {
 	}
 
-	public void report(ReportHandler<TzuYuAlphabet> reporter) {
+	public void report(IReportHandler<TzuYuAlphabet> reporter) {
 		
 	}
 

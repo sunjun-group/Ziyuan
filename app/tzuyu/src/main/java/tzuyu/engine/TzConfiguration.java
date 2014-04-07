@@ -57,7 +57,7 @@ public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 	private int maxMethodsPerGenTestClass;
 	private int maxLinesPerGenTestClass;
 	private File outputDir;
-	private String outputPath;	// D:/workspace/tzuyu/scr
+	private String outputPath;	//ex: D:/workspace/tzuyu/scr
 	private String outputPackage; // ex: tzuyu.test
 	
 	

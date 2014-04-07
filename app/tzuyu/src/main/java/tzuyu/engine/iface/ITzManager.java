@@ -18,7 +18,7 @@ import tzuyu.engine.model.dfa.Alphabet;
  * @author LLT
  *
  */
-public interface IAlgorithmFactory<A extends Alphabet> {
+public interface ITzManager<A extends Alphabet> {
 
 	Tester getTester();
 
@@ -29,5 +29,10 @@ public interface IAlgorithmFactory<A extends Alphabet> {
 	ITCGStrategy getTCGStrategy();
 
 	IReferencesAnalyzer getRefAnalyzer();
+
+	IPrintStream getOutStream();
 	
+	ILogger<?> getLogger();
+
+	void checkProgress() throws InterruptedException;
 }

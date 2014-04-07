@@ -13,6 +13,7 @@ import libsvm.libsvm.svm_problem;
 import refiner.bool.FieldVar;
 import refiner.bool.LIATerm;
 import tzuyu.engine.bool.AndFormula;
+import tzuyu.engine.iface.ITzManager;
 import tzuyu.engine.model.ArtFieldInfo;
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.Formula;
@@ -61,8 +62,9 @@ public class SVMWrapper {
 	private int timeConsumed = 0;
 
 	private int classInDepth;
+	private ITzManager<?> manager;
 
-	public SVMWrapper() {
+	public SVMWrapper(ITzManager<?> manager) {
 		this.configuration = new svm_parameter();
 		configuration.svm_type = svm_parameter.C_SVC;
 		configuration.kernel_type = svm_parameter.LINEAR;
@@ -74,6 +76,7 @@ public class SVMWrapper {
 		configuration.nr_weight = 0;
 
 		properties = new ArrayList<FieldVar>();
+		this.manager = manager;
 	}
 
 	public void setClassInDepth(int classInDepth) {
@@ -90,7 +93,7 @@ public class SVMWrapper {
 
 	public Formula candidateDivide(TzuYuAction action,
 			List<QueryTrace> positive, List<QueryTrace> negative,
-			Map<Class<?>, ClassInfo> classInfoMap) {
+			Map<Class<?>, ClassInfo> classInfoMap) throws InterruptedException {
 		long startTime = System.currentTimeMillis();
 		if (positive == null || negative == null) {
 			throw new IllegalArgumentException(
@@ -162,7 +165,7 @@ public class SVMWrapper {
 			if (!divider.equals(Formula.TRUE)) {
 				timeConsumed += (System.currentTimeMillis() - startTime);
 				return divider;
-			} else if (divider.equals(Formula.FALSE)) {
+			} else if (divider.equals(Formula.FALSE)) { // Unreachable code!?!
 				return null;
 			} else {
 				continue;
@@ -175,7 +178,8 @@ public class SVMWrapper {
 	}
 
 	public Formula memberDivide(List<QueryTrace> positive,
-			List<QueryTrace> negative, Map<Class<?>, ClassInfo> classInfoMap) {
+			List<QueryTrace> negative, Map<Class<?>, ClassInfo> classInfoMap)
+			throws InterruptedException {
 
 		long startTime = System.currentTimeMillis();
 		if (positive == null || negative == null) {
@@ -260,7 +264,7 @@ public class SVMWrapper {
 	}
 
 	private Formula internalDivide(List<Prestate> positive,
-			List<Prestate> negative, List<Boolean> relevance) {
+			List<Prestate> negative, List<Boolean> relevance) throws InterruptedException {
 		svm_problem problem = initializeProblem(positive, negative, relevance);
 
 		svm_model model = solveSimple(problem);
@@ -342,21 +346,16 @@ public class SVMWrapper {
 	/**
 	 * Generate the simple QFLRA separator directly from the positive training
 	 * data set and the negative training data set.
-	 * 
-	 * @param problem
-	 * @return
 	 */
-	private svm_model solveSimple(svm_problem problem) {
+	private svm_model solveSimple(svm_problem problem) throws InterruptedException {
+		beforeSvm();
 		return svm.svm_train(problem, configuration);
 	}
 
 	/**
 	 * Generate the intersections of the half-spaces with simple QFLRA
-	 * 
-	 * @param problem
-	 * @return
 	 */
-	private Formula solveIntersection(svm_problem problem) {
+	private Formula solveIntersection(svm_problem problem) throws InterruptedException {
 		// There is the assumption that the size of negative and positive set
 		// are
 		// the same in the input problem.
@@ -385,6 +384,7 @@ public class SVMWrapper {
 			newProblem.x[size] = dataPoint;
 			newProblem.y[size] = -1;
 			// Generate the sub-formula
+			beforeSvm();
 			svm_model model = svm.svm_train(newProblem, configuration);
 			Formula subDivider = getHalfspace(model, newProblem, misclassified);
 			// Intersection of half-spaces
@@ -397,6 +397,11 @@ public class SVMWrapper {
 		} while (misclassified.size() != 0);
 
 		return formula;
+	}
+	
+	private void beforeSvm() throws InterruptedException {
+		manager.checkProgress();
+		svmCallCount ++;
 	}
 
 	private Formula generateDivider(svm_model model, svm_problem problem) {
@@ -573,7 +578,7 @@ public class SVMWrapper {
 		List<LIATerm> terms = new ArrayList<LIATerm>();
 		for (int i = 0; i < propertySize; i++) {
 			// If the coefficient is zero, ignore the field.
-			if (Math.abs(hyperplane[i].value) < EPSILON) {
+			if (Math.abs(hyperplane[i].value) < 1e-10) {
 				continue;
 			}
 			FieldVar field = properties.get(hyperplane[i].index);
@@ -607,5 +612,4 @@ public class SVMWrapper {
 		Formula divider = DividerProcessor.process(terms, bias);
 		return divider;
 	}
-
 }

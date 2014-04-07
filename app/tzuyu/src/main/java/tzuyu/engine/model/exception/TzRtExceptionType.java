@@ -6,15 +6,14 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.iface;
-
+package tzuyu.engine.model.exception;
 
 /**
  * @author LLT
  *
  */
-public interface JClassWriter {
-
-	void writeClass(String className, String packageName, String content);
-
+public enum TzRtExceptionType {
+	AssertException,
+	IllegalArgument,
+	Undefined
 }

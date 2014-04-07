@@ -109,7 +109,7 @@ public class TypeScopeParser {
 			typeScope.setType(project.findType(typeScope
 					.getFullyQualifiedName()));
 		} catch (JavaModelException e) {
-			PluginLogger.logEx(e);
+			PluginLogger.getLogger().logEx(e);
 			// do nothing
 		}
 		
@@ -126,7 +126,7 @@ public class TypeScopeParser {
 					try {
 						impType = project.findType(impStr);
 					} catch (JavaModelException e) {
-						PluginLogger.logEx(e);
+						PluginLogger.getLogger().logEx(e);
 						// ignore
 					}
 					typeScope.getImplTypes().add(Pair.of(impStr, impType));

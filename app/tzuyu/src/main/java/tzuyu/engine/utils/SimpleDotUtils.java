@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.io.IOUtils;
-
 import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.utils.dfa.DfaGraph;
 import tzuyu.engine.utils.dfa.DfaGraph.Edge;

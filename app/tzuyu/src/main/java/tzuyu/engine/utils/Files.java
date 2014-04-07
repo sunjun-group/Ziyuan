@@ -24,103 +24,113 @@ public final class Files {
   // Returns true if all deletions were successful.
   // If a deletion fails, the method stops attempting to delete and returns false.
   // Attempts to detect symbolic links, and fails if it finds one.
-  public static boolean deleteRecursive(File dir) {
-    if (dir == null) throw new IllegalArgumentException("dir cannot be null.");
-    String canonicalPath = null;
-    try {
-      canonicalPath = dir.getCanonicalPath();
-    } catch (IOException e) {
-      System.out.println("IOException while obtaining canonical file of " + dir);
-      System.out.println("Will not delete file or its children.");
-      return false;
-    }
-    if (!canonicalPath.equals(dir.getAbsolutePath())) {
-      System.out.println("Warning: potential symbolic link: " + dir);
-      System.out.println("Will not delete file or its children.");
-      return false;
-    }
-    if (dir.isDirectory()) {
-      String[] children = dir.list();
-      for (int i=0; i<children.length; i++) {
-        boolean success = deleteRecursive(new File(dir, children[i]));
-        if (!success) {
-          return false;
-        }
-      }
-    }
+	public static boolean deleteRecursive(File dir) {
+		if (dir == null)
+			throw new IllegalArgumentException("dir cannot be null.");
+		String canonicalPath = null;
+		try {
+			canonicalPath = dir.getCanonicalPath();
+		} catch (IOException e) {
+			System.out.println("IOException while obtaining canonical file of "
+					+ dir);
+			System.out.println("Will not delete file or its children.");
+			return false;
+		}
+		if (!canonicalPath.equals(dir.getAbsolutePath())) {
+			System.out.println("Warning: potential symbolic link: " + dir);
+			System.out.println("Will not delete file or its children.");
+			return false;
+		}
+		if (dir.isDirectory()) {
+			String[] children = dir.list();
+			for (int i = 0; i < children.length; i++) {
+				boolean success = deleteRecursive(new File(dir, children[i]));
+				if (!success) {
+					return false;
+				}
+			}
+		}
 
-    // The directory is now empty so delete it
-    return dir.delete();
-  }
+		// The directory is now empty so delete it
+		return dir.delete();
+	}
 
-  public static List<String> findFilesInDir(File dir, String startsWith, String endsWith) {
-    if (!dir.isDirectory()) throw new IllegalArgumentException("not a directory: " + dir.getAbsolutePath());
-    File currentDir = dir;
-    List<String> retval = new ArrayList<String>();
-    for (String fileName : currentDir.list()) {
-      if (fileName.startsWith(startsWith) && fileName.endsWith(endsWith))
-        retval.add(fileName);
-    }
-    return retval;
-  }
+	public static List<String> findFilesInDir(File dir, String startsWith,
+			String endsWith) {
+		if (!dir.isDirectory())
+			throw new IllegalArgumentException("not a directory: "
+					+ dir.getAbsolutePath());
+		File currentDir = dir;
+		List<String> retval = new ArrayList<String>();
+		for (String fileName : currentDir.list()) {
+			if (fileName.startsWith(startsWith) && fileName.endsWith(endsWith))
+				retval.add(fileName);
+		}
+		return retval;
+	}
 
-  public static void writeToFile(String s, File file) throws IOException {
-    writeToFile(s, file, false);
-  }
+	public static void writeToFile(String s, File file) throws IOException {
+		writeToFile(s, file, false);
+	}
 
-  public static void writeToFile(String s, String fileName) throws IOException {
-    writeToFile(s, fileName, false);
-  }
+	public static void writeToFile(String s, String fileName)
+			throws IOException {
+		writeToFile(s, fileName, false);
+	}
 
-  public static void writeToFile(String s, File file, Boolean append) throws IOException {
-    BufferedWriter writer= new BufferedWriter(new FileWriter(file, append));
-    try{
-      writer.append(s);
-    } finally {
-      writer.close();
-    }        
-  }
+	public static void writeToFile(String s, File file, Boolean append)
+			throws IOException {
+		BufferedWriter writer = new BufferedWriter(new FileWriter(file, append));
+		try {
+			writer.append(s);
+		} finally {
+			writer.close();
+		}
+	}
 
-  public static void writeToFile(String s, String fileName, Boolean append) throws IOException {
-    writeToFile(s, new File(fileName));
-  }
+	public static void writeToFile(String s, String fileName, Boolean append)
+			throws IOException {
+		writeToFile(s, new File(fileName));
+	}
 
-  public static void writeToFile(List<String> lines, String fileName) throws IOException {
-    writeToFile(CollectionsExt.toStringInLines(lines), fileName);
-  }
+	public static void writeToFile(List<String> lines, String fileName)
+			throws IOException {
+		writeToFile(CollectionsExt.toStringInLines(lines), fileName);
+	}
 
   /**
    * Reads the whole file. Does not close the reader.
    * Returns the list of lines.  
    */
-  public static List<String> readWhole(BufferedReader reader) throws IOException {
-    List<String> result= new ArrayList<String>();
-    String line= reader.readLine();
-    while(line != null) {
-      result.add(line);
-      line= reader.readLine();
-    }
-    return Collections.unmodifiableList(result);
-  }
+	public static List<String> readWhole(BufferedReader reader)
+			throws IOException {
+		List<String> result = new ArrayList<String>();
+		String line = reader.readLine();
+		while (line != null) {
+			result.add(line);
+			line = reader.readLine();
+		}
+		return Collections.unmodifiableList(result);
+	}
 
   /**
    * Reads the whole file. Returns the list of lines.  
    */
-  public static List<String> readWhole(String fileName) throws IOException {
-    return readWhole(new File(fileName));
-  }
+	public static List<String> readWhole(String fileName) throws IOException {
+		return readWhole(new File(fileName));
+	}
 
   /**
    * Reads the whole file. Returns the list of lines.  
    */
-  public static List<String> readWhole(File file) throws IOException {
-    BufferedReader in = new BufferedReader(new FileReader(file));
-    try{
-      return readWhole(in);
-    } finally{
-      in.close();
-    }
-  }    
+	public static List<String> readWhole(File file) throws IOException {
+		BufferedReader in = new BufferedReader(new FileReader(file));
+		try {
+			return readWhole(in);
+		} finally {
+			in.close();
+		}
+	}  
 
   /**
    * Reads the whole file. Returns the list of lines.
