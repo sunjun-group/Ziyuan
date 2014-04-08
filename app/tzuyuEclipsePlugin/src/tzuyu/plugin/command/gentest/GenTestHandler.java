@@ -25,12 +25,12 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import tzuyu.engine.model.exception.ReportException;
 import tzuyu.engine.model.exception.TzException;
+import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.command.TzCommandHandler;
 import tzuyu.plugin.command.TzJob;
@@ -158,22 +158,22 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 			try {
 				TzuyuEngineProxy.generateTestCases(workObject, config, reporter);
 				// refresh output folder
-				config.getOutputPackage().getResource().refreshLocal(2, null);
+				config.getOutputPackage().getResource().refreshLocal(2, monitor);
 			} catch (CoreException e) {
 				PluginLogger.getLogger().logEx(e);
+				StatusManager.getManager().handle(IStatusUtils.error(e.getMessage()),
+						StatusManager.BLOCK);
 			} catch (final ReportException e) {
-				Display.getDefault().asyncExec(new Runnable() {
-					
-					@Override
-					public void run() {
-						MessageDialogs.error(TzuyuPlugin.getActiveWorkbenchWindow().getShell(),
-								msg.getMessage(e.getType()) + e.getMessage());
-					}
-				});
+				MessageDialogs.showErrorInUI(msg.getMessage(e.getType(), e.getParams()));
 			} catch (InterruptedException e) {
-				PluginLogger.getLogger().info("User cancel the job!!");
-			} catch (TzException e) {
-				StatusManager.getManager().handle(IStatusUtils.error(msg.getMessage(e.getType())),
+				PluginLogger.getLogger().info("User cancelled the job!!");
+			} catch (final TzException e) {
+				// expected error
+				MessageDialogs.showErrorInUI(msg.getMessage(e.getType(), e.getParams()));
+			} catch (TzRuntimeException e) {
+				// unexpected error
+				StatusManager.getManager().handle(
+						IStatusUtils.error(msg.getMessage(e.getType()) + e.getMessage()),
 						StatusManager.BLOCK);
 			}
 			

@@ -149,7 +149,6 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 			return classLoader.loadClass(mappedClz);
 		} catch (ClassNotFoundException e) {
 			PluginLogger.getLogger().logEx(e);
-			TzException.rethrow(e);
 		}
 		return null;
 	}

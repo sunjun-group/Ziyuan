@@ -24,7 +24,7 @@ import tzuyu.plugin.core.utils.IStatusUtils;
  */
 public class PluginLogger extends AbstractLogger<PluginLogger> implements
 		ILogger<PluginLogger> {
-	private static boolean debug = TzuyuPlugin.getDefault().isDebugging();
+	private static boolean debug = TzuyuPlugin.debug();
 	private static final Messages msg = TzuyuPlugin.getMessages();
 	private static final PluginLogger instance = new PluginLogger();
 	

@@ -15,7 +15,7 @@
              id="tzuyu.plugin.tester.dfaFile"
              namespace="tzuyu.plugin.tester"
              properties="dfaFile"
-             type="java.lang.Object">
+             type="org.eclipse.jface.viewers.IStructuredSelection">
        </propertyTester>
     </extension>
     <extension
@@ -27,9 +27,11 @@
           <menu
                 id="tzuyu.plugin.menu"
                 label="Tzuyu">
-             <visibleWhen checkEnabled="false">
+             <visibleWhen>
 	                <with variable="selection">
-	                   <test property="tzuyu.plugin.tester.isSuitableForTest"/>
+	                   <test
+                          forcePluginActivation="true"
+                          property="tzuyu.plugin.tester.isSuitableForTest"/>
 	                </with>
 	         </visibleWhen>
              <command
@@ -63,6 +65,7 @@
                             operator="and">
                          <and>
                             <test
+                                  forcePluginActivation="true"
                                   property="tzuyu.plugin.tester.dfaFile">
                             </test>
                          </and>

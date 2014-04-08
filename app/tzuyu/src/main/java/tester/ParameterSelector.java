@@ -147,7 +147,7 @@ public class ParameterSelector implements IParameterSelector {
 			try {
 				return selectNewVariableForObject(type);
 			} catch (TzException e) {
-				if (e.getType() == TzExceptionType.ParameterSelector_Fail_Init_Class) {
+				if (e.getType() == TzExceptionType.PARAMETER_SELECTOR_FAIL_INIT_CLASS) {
 					retry = true;
 					i++;
 				} else {
@@ -168,8 +168,8 @@ public class ParameterSelector implements IParameterSelector {
 		ConstructorInfo[] ctors = ci.getConstructors();
 
 		if (CollectionUtils.isEmptyCheckNull(ctors)) {
-			throw new TzException(TzExceptionType.ParameterSelector_Fail_Init_Class,
-					"no accessible constructor for class: " + type);
+			throw new TzException(
+					TzExceptionType.PARAMETER_SELECTOR_FAIL_INIT_CLASS, type);
 			// we choose an accessible constructor of a subclass of this
 			// type
 //			List<ClassInfo> subClasses = project

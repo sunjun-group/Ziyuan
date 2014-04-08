@@ -1,2 +1,2 @@
 # Debugging options for the org.eclipse.pde.build plug-in.
-tzuyu.eclipse.plugin/debug/gentest = true
+tzuyu.eclipse.plugin/debug = true

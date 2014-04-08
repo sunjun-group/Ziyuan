@@ -34,14 +34,28 @@ public final class Messages {
 		}
 	}
 	
-	public String getMessage(Enum<?> val) {
-		String key = StringUtils.dotJoin(val.getClass().getSimpleName(),
-				val.name());
-		return enumConstantResourceBundle.getString(key);
+	public String getMessage(Enum<?> val, Object...args) {
+		try {
+			String key = StringUtils.dotJoin(val.getClass().getSimpleName(),
+					val.name());
+			String msg = enumConstantResourceBundle.getString(key);
+			if (args != null) {
+				msg = MessageFormat.format(msg, convertArgs(args)); 
+			}
+			return msg;
+		} catch (Exception e) {
+			PluginLogger.getLogger().logEx(e);
+			return val == null ? StringUtils.EMPTY : val.name();
+		}
 	}
 	
-	public String getMessage(String key, Object... args) {
+	private String getMessage(String key, Object... args) {
 		String msg = getMessage(key);
+		Object[] convertedArgs = convertArgs(args);
+		return MessageFormat.format(msg, convertedArgs);
+	}
+
+	private Object[] convertArgs(Object... args) {
 		Object[] convertedArgs = new Object[args.length];
 		for (int i = 0; i < args.length; i++) {
 			Object arg = args[i];
@@ -51,14 +65,14 @@ public final class Messages {
 				convertedArgs[i] = arg;
 			}
 		}
-		return MessageFormat.format(msg, convertedArgs);
+		return convertedArgs;
 	}
 	
 	private String getMessage(String key) {
 		return messagesResourceBundle.getString(key); 
 	}
 	
-	/* see Tzuyu.tools.GenerateMessagesClass for generation detail*/
+	/** see {@link Tzuyu.tools.MessagesGenerator} for generation detail */
 	//	Generated part
 
 	public String inputWizardPage_name() {

@@ -10,6 +10,7 @@ package tzuyu.plugin.preferences.component;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import tzuyu.plugin.TzuyuPlugin;
@@ -40,5 +41,16 @@ public class MessageDialogs {
 	
 	public static void error(Shell shell, String msg) {
 		MessageDialog.openError(shell, msgs.message_dialog_title(), msg);
+	}
+	
+	public static void showErrorInUI(final String msg) { 
+		Display.getDefault().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				MessageDialogs.error(TzuyuPlugin.getActiveWorkbenchWindow()
+						.getShell(), msg);
+			}
+		});
 	}
 }

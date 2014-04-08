@@ -18,9 +18,4 @@ public class ReportException extends TzException {
 	public ReportException(TzException ex) {
 		super(ex.getType(), ex.getMessage());
 	}
-	
-	public ReportException(String message) {
-		super(message);
-	}
-	
 }

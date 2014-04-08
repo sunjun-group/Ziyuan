@@ -34,11 +34,6 @@ public abstract class TzJob extends Job {
 		return IStatusUtils.OK_STATUS;
 	}
 	
-	@Override
-	protected void canceling() {
-		Thread.currentThread().interrupt();
-	}
-
 	protected abstract IStatus doJob(IProgressMonitor monitor);
 
 	@Override

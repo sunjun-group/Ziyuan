@@ -8,8 +8,6 @@
 
 package tzuyu.plugin.proxy;
 
-import org.eclipse.core.runtime.Platform;
-
 import tzuyu.engine.TzClass;
 import tzuyu.engine.Tzuyu;
 import tzuyu.engine.iface.IReferencesAnalyzer;
@@ -17,7 +15,6 @@ import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.TzuyuEngine;
 import tzuyu.engine.model.exception.ReportException;
 import tzuyu.engine.model.exception.TzException;
-import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.console.TzConsole;
 import tzuyu.plugin.core.dto.WorkObject;
@@ -31,12 +28,6 @@ import tzuyu.plugin.reporter.PluginLogger;
  */
 public class TzuyuEngineProxy implements TzuyuEngine {
 	private Tzuyu tzuyu;
-	private static final String DEBUG_ONE = "tzuyu.eclipse.plugin/debug/gentest";
-	
-	private static boolean isDebugging() {
-		String debugOption = Platform.getDebugOption(DEBUG_ONE);
-		return TzuyuPlugin.getDefault().isDebugging() && "true".equalsIgnoreCase(debugOption);
-	}
 
 	public TzuyuEngineProxy(TzClass project, TzReportHandler reporter,
 			IReferencesAnalyzer refAnalyzer) {
@@ -44,7 +35,6 @@ public class TzuyuEngineProxy implements TzuyuEngine {
 	}
 
 	public void run() throws ReportException, InterruptedException, TzException {
-		isDebugging();
 		tzuyu.run();
 	}
 

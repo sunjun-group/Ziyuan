@@ -13,7 +13,6 @@ import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.dfa.State;
 import tzuyu.engine.model.dfa.Transition;
 import tzuyu.engine.model.exception.ReportException;
-import tzuyu.engine.model.exception.TzRuntimeException;
 
 /**
  * The main interface where the client interacts with the library
@@ -32,12 +31,12 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 	private A sigma;
 
 	private DFA lastDFA;
-	private ITzManager<A> factory;
+	private ITzManager<A> manager;
 
-	public LStar(ITzManager<A> tzFactory) {
-		teacher = tzFactory.getTeacher();
+	public LStar(ITzManager<A> tzManager) {
+		teacher = tzManager.getTeacher();
 		this.otable = new ObservationTable();
-		factory = tzFactory;
+		manager = tzManager;
 	}
 	
 	public DFA getDFA() {
@@ -62,16 +61,12 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 			restart = false;
 			setAlphabet(sigma);
 			try {
-				factory.getOutStream().writeln("-------restart iteration" + 
+				manager.getOutStream().writeln("-------restart iteration" + 
 						iterationCount++ + "-------");
 				learn();
-			} catch (TzRuntimeException ex) {
-				// handle TzuYu specific exceptions here
-				factory.getLogger().logEx(ex);
-				return null;
 			} catch (LStarException e) {
 				if (e.getType() == Type.RestartLearning) {
-					factory.getLogger().info("Tzuyu - Restart Learning");
+					manager.getLogger().info("Tzuyu - Restart Learning");
 					restart = true;
 					this.sigma = (A) e.getNewSigma();
 				} else {
@@ -111,9 +106,7 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 
 		while (true) { // run until cex is empty or when need to restart
 						// learning.
-			if (Thread.currentThread().isInterrupted()) {
-				throw new InterruptedException();
-			}
+			manager.checkProgress();
 			Trace closedCex = null;
 			Trace consistentCex = null;
 
@@ -387,11 +380,11 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 			return;
 		}
 		// last DFA
-		factory.getOutStream().writeln("Alphabet Size in Final DFA:"
+		manager.getOutStream().writeln("Alphabet Size in Final DFA:"
 						+ (lastDFA.sigma.getSize() - 1))
 			.writeln("Number of States in Final DFA:"
 						+ lastDFA.getStateSize());
-		lastDFA.print(factory.getOutStream());
+		lastDFA.print(manager.getOutStream());
 
 		reporter.reportDFA(lastDFA, sigma);
 		// make report from all it component

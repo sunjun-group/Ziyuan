@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-	<category-def name="tzuyu" label="Tzuyu" />
-	<feature url="features/tzuyu.feature_0.0.0.qualifier.jar" id="tzuyu.feature">
-		<category name="tzuyu" />
-	</feature>
+   <feature url="features/tzuyu.feature_0.0.0.qualifier.jar" id="tzuyu.feature">
+      <category name="tzuyu"/>
+   </feature>
+   <category-def name="tzuyu" label="Tzuyu">
+      <description>
+         Tool for testing the program automatically based on random testing technique.
+      </description>
+   </category-def>
 </site>

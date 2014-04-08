@@ -15,11 +15,12 @@ import lstar.LStarException.Type;
  *
  */
 public enum TzExceptionType {
-	ParameterSelector_Fail_Init_Class,
+	PARAMETER_SELECTOR_FAIL_INIT_CLASS,
 	//need file name.
 	JUNIT_FAIL_WRITE_FILE,  
-	INTERUPT,
-	ALPHABET_EMPTY;
+	INTERRUPT,
+	ALPHABET_EMPTY,
+	RETHROW;
 
 	public static TzExceptionType fromLStar(Type type) {
 		switch (type) {

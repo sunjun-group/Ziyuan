@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -36,6 +37,7 @@ public class TzuyuPlugin extends AbstractUIPlugin {
 	public static final String DFA_VIEW_ID = "tzuyu.plugin.view.dfa"; //$NON-NLS-1$
 	public static final String ICON_PATH = "icons/";
 	
+	private static final String DEBUG_ONE = "tzuyu.eclipse.plugin/debug";
 	// The shared instance
 	private static TzuyuPlugin plugin;
 	private Messages messages;
@@ -172,4 +174,9 @@ public class TzuyuPlugin extends AbstractUIPlugin {
         }
         return null;
     }
+	
+	public static boolean debug() {
+		String debugOption = Platform.getDebugOption(DEBUG_ONE);
+		return getDefault().isDebugging() && "true".equalsIgnoreCase(debugOption);
+	}
 }

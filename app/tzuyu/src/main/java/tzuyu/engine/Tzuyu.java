@@ -96,10 +96,10 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 		try {
 			learner.startLearning(alphabet);
 		} catch (LStarException e) {
-			getLogger().logEx(e, "The progress has been cancelled!");
+			getLogger().logEx(e, "Error when running Lstar module");
 			throw new TzException(e);
 		} catch (InterruptedException e) {
-			tzOut.writeln("").writeln("Tzuyu is stopped due to user cancelled the request");
+			tzOut.writeln("").writeln("The progress has been cancelled!");
 			throw e;
 		} finally {
 			learner.report(reporter);
