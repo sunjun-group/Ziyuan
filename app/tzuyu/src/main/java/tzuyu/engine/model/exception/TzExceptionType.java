@@ -8,6 +8,7 @@
 
 package tzuyu.engine.model.exception;
 
+import tzuyu.engine.utils.Assert;
 import lstar.LStarException.Type;
 
 /**
@@ -20,13 +21,16 @@ public enum TzExceptionType {
 	JUNIT_FAIL_WRITE_FILE,  
 	INTERRUPT,
 	ALPHABET_EMPTY,
-	RETHROW;
+	RETHROW,
+	CANNOT_FIND_DEVIDER;
 
 	public static TzExceptionType fromLStar(Type type) {
 		switch (type) {
 		case AlphabetEmptyAction:
 			return ALPHABET_EMPTY;
 		}
+		Assert.assertFail("Cannot map the LstarExceptionType " + type
+				+ " into TzExceptionType");
 		return null;
 	}
 }

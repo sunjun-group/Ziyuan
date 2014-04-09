@@ -19,8 +19,8 @@ import tzuyu.engine.algorithm.iface.Refiner;
 import tzuyu.engine.algorithm.iface.Teacher;
 import tzuyu.engine.algorithm.iface.Tester;
 import tzuyu.engine.bool.True;
-import tzuyu.engine.iface.ITzManager;
 import tzuyu.engine.iface.IPrintStream;
+import tzuyu.engine.iface.ITzManager;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.QueryResult;
@@ -31,7 +31,8 @@ import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.dfa.TracesPair;
 import tzuyu.engine.model.exception.ReportException;
-import tzuyu.engine.model.exception.TzRuntimeException;
+import tzuyu.engine.model.exception.TzException;
+import tzuyu.engine.model.exception.TzExceptionType;
 
 /**
  * @author LLT extracted from QueryHandlerV2, and only keep the part that
@@ -61,7 +62,8 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 		tester.setProject(sigma.getProject());
 	}
 
-	public boolean membershipQuery(Trace str) throws LStarException, InterruptedException {
+	public boolean membershipQuery(Trace str) throws LStarException,
+			InterruptedException, TzException {
 		assert sigma != null : "Sigma in teacherImplV2 is not set!!";
 		membershipCount++;
 		// Update maximum membership query size
@@ -105,8 +107,7 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 		} else {
 			Formula divider = refiner.refineMembership(result);
 			if (divider == null || divider.equals(Formula.FALSE)) {
-				throw new TzRuntimeException("Cannot find "
-						+ "divider for the inconsistent transitons");
+				throw new TzException(TzExceptionType.CANNOT_FIND_DEVIDER);
 			}
 			QueryTrace trace = result.negativeSet.get(0);
 
@@ -125,7 +126,8 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 		}
 	}
 
-	public Trace candidateQuery(DFA dfa) throws LStarException, InterruptedException {
+	public Trace candidateQuery(DFA dfa) throws LStarException,
+			InterruptedException, TzException {
 		logger.info("------------Candidate Query Iteration " + candidateCount++
 				+ "------------------");
 		dfa.print(outStream);
@@ -179,8 +181,7 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 		} else if (evid.divider == null) {
 			// There is inconsistency, while TzuYu cannot find a divider,
 			// we terminate TzuYu.
-			throw new TzRuntimeException("cannot find a divider "
-					+ "for inconsistent transition");
+			throw new TzException(TzExceptionType.CANNOT_FIND_DEVIDER);
 		} else if (evid.divider instanceof True) {
 			return Trace.epsilon;
 		}

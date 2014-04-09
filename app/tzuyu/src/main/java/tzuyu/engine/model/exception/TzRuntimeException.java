@@ -4,7 +4,7 @@ import tzuyu.engine.iface.IPrintStream;
 
 public class TzRuntimeException extends RuntimeException {
 	private static final long serialVersionUID = 8435042626559004241L;
-	private TzRtExceptionType type;
+	private TzRtExceptionType type = TzRtExceptionType.Undefined;
 	
 	public TzRuntimeException(String details, Object... params) {
 		this(toString(details, params));

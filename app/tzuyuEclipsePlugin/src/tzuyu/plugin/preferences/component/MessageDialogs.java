@@ -43,12 +43,27 @@ public class MessageDialogs {
 		MessageDialog.openError(shell, msgs.message_dialog_title(), msg);
 	}
 	
+	public static void warn(Shell shell, String msg) {
+		MessageDialog.openWarning(shell, msgs.message_dialog_title(), msg);
+	}
+	
 	public static void showErrorInUI(final String msg) { 
 		Display.getDefault().asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
 				MessageDialogs.error(TzuyuPlugin.getActiveWorkbenchWindow()
+						.getShell(), msg);
+			}
+		});
+	}
+	
+	public static void showWarningInUI(final String msg) { 
+		Display.getDefault().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				MessageDialogs.warn(TzuyuPlugin.getActiveWorkbenchWindow()
 						.getShell(), msg);
 			}
 		});

@@ -9,6 +9,7 @@ import tzuyu.engine.iface.HasReport;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.dfa.DFA;
+import tzuyu.engine.model.exception.TzException;
 
 /**
  * This is an abstract teacher, the actual LStar algorithm can extend this class
@@ -30,7 +31,8 @@ public interface Teacher<A extends Alphabet> extends HasReport<A> {
 	 * @param str
 	 *            the string to be decided
 	 */
-	public boolean membershipQuery(Trace str) throws LStarException, InterruptedException;
+	public boolean membershipQuery(Trace str) throws LStarException,
+			InterruptedException, TzException;
 
 	/**
 	 * Whether the @param dfa is equal to the unknown DFA. If they are equal
@@ -42,7 +44,8 @@ public interface Teacher<A extends Alphabet> extends HasReport<A> {
 	 * @return the counterexample string if the two are not equal or an empty
 	 *         (not null) LString if the tow equal.
 	 */
-	public Trace candidateQuery(DFA dfa) throws LStarException, InterruptedException;
+	public Trace candidateQuery(DFA dfa) throws LStarException,
+			InterruptedException, TzException;
 
 	public void setInitAlphabet(A sig);
 

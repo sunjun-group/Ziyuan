@@ -13,6 +13,7 @@ import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.dfa.State;
 import tzuyu.engine.model.dfa.Transition;
 import tzuyu.engine.model.exception.ReportException;
+import tzuyu.engine.model.exception.TzException;
 
 /**
  * The main interface where the client interacts with the library
@@ -52,7 +53,7 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 	 * every time starting learning, we need to reset every state and variable in the object.
 	 */
 	@SuppressWarnings("unchecked")
-	public DFA startLearning(A sig) throws LStarException, InterruptedException {
+	public DFA startLearning(A sig) throws LStarException, InterruptedException, TzException {
 		this.sigma = sig;
 		assert sigma != null : "Init Alphabet for L* learner is not set";
 		int iterationCount = 0;
@@ -79,7 +80,7 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 		return getDFA();
 	}
 
-	private void learn() throws LStarException, InterruptedException {
+	private void learn() throws LStarException, InterruptedException, TzException {
 		if (sigma.isEmpty()) {
 			// only epsilon, => no method for test detected.
 			throw new LStarException(Type.AlphabetEmptyAction);
@@ -141,7 +142,8 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 	 * @param conflict
 	 *            the string for which the table is inconsistent.
 	 */
-	private void updateWhenInconsistent(Trace conflict) throws LStarException, InterruptedException {
+	private void updateWhenInconsistent(Trace conflict) throws LStarException,
+			InterruptedException, TzException {
 		// add the conflict into the columns
 		otable.columns.add(conflict);
 		// update the rows with the result of membership query
@@ -171,9 +173,9 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 	 * 
 	 * @param conflict
 	 *            the string whose row is not included in the S row.
-	 * @throws LStarException
 	 */
-	private void updateWhenOpen(Trace conflict) throws LStarException, InterruptedException {
+	private void updateWhenOpen(Trace conflict) throws LStarException,
+			InterruptedException, TzException {
 		// add the conflict into the S set
 		otable.sRows.put(conflict, otable.saRows.get(conflict));
 		otable.saRows.remove(conflict);
@@ -324,11 +326,9 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 
 	/**
 	 * refine the observation table according to the counter example
-	 * 
-	 * @param cea
-	 * @throws LStarException
 	 */
-	private void refineWithCounterExample(Trace cea) throws LStarException, InterruptedException {
+	private void refineWithCounterExample(Trace cea) throws LStarException,
+			InterruptedException, TzException {
 		// Generate all prefix except the epsilon prefix which already exists
 		// in S.
 		List<Trace> prefix = cea.getPrefix();

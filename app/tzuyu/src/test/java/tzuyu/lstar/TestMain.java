@@ -6,6 +6,7 @@ import tzuyu.engine.algorithm.iface.Teacher;
 import tzuyu.engine.iface.NullTzPrintStream;
 import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.dfa.DFA;
+import tzuyu.engine.model.exception.TzException;
 
 public class TestMain {
 	public static void main(String[] argv) throws InterruptedException {
@@ -24,6 +25,9 @@ public class TestMain {
 		} catch (LStarException e) {
 			e.printStackTrace();
 			System.exit(0);
+		} catch (TzException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		DFA dfa = algorithm.getDFA();
 		dfa.print(new NullTzPrintStream());

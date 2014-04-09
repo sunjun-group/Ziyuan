@@ -164,16 +164,22 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 				StatusManager.getManager().handle(IStatusUtils.error(e.getMessage()),
 						StatusManager.BLOCK);
 			} catch (final ReportException e) {
-				MessageDialogs.showErrorInUI(msg.getMessage(e.getType(), e.getParams()));
+				PluginLogger.getLogger().logEx(e);
+				MessageDialogs.showWarningInUI(msg.getMessage(e.getType(), e.getParams()));
 			} catch (InterruptedException e) {
 				PluginLogger.getLogger().info("User cancelled the job!!");
 			} catch (final TzException e) {
 				// expected error
-				MessageDialogs.showErrorInUI(msg.getMessage(e.getType(), e.getParams()));
+				PluginLogger.getLogger().logEx(e);
+				MessageDialogs.showWarningInUI(msg.getMessage(e.getType(), e.getParams()));
 			} catch (TzRuntimeException e) {
 				// unexpected error
-				StatusManager.getManager().handle(
-						IStatusUtils.error(msg.getMessage(e.getType()) + e.getMessage()),
+				PluginLogger.getLogger().logEx(e);
+				String eMsg = e.getMessage();
+				if (e.getType() != null) {
+					eMsg = msg.getMessage(e.getType()) + eMsg;
+				}
+				StatusManager.getManager().handle(IStatusUtils.error(eMsg),
 						StatusManager.BLOCK);
 			}
 			

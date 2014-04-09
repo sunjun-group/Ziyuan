@@ -3,8 +3,6 @@ package tzuyu.engine.model;
 import java.util.List;
 
 import tzuyu.engine.model.exception.TzRuntimeException;
-import tzuyu.engine.utils.ClassUtils;
-import tzuyu.engine.utils.CollectionUtils;
 
 /**
  * A wrapper for a guarded statement with input variables.

@@ -1,6 +1,7 @@
 package tzuyu.engine.model;
 
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 
 import tzuyu.engine.TzClass;
 import tzuyu.engine.bool.AndFormula;
@@ -9,6 +10,7 @@ import tzuyu.engine.bool.Simplifier;
 import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.exception.TzRuntimeException;
+import tzuyu.engine.utils.Randomness;
 
 public class TzuYuAlphabet extends Alphabet {
 	private TzClass project;
@@ -31,10 +33,6 @@ public class TzuYuAlphabet extends Alphabet {
 		return new TzuYuAlphabet(project, false);
 	}
 
-	/**
-	 * TODO LLT: still need to decide which solution
-	 * separate the static and non-static methods or not.
-	 */
 	private TzuYuAlphabet(TzClass project, Boolean staticGroup) {
 		super();
 		this.project = project;
@@ -51,11 +49,15 @@ public class TzuYuAlphabet extends Alphabet {
 		// add methods as the initial alphabet
 		MethodInfo[] methods = project.getTargetClassInfo().getMethods(project.getConfiguration());
 
-		for (MethodInfo method : methods) {
-			if (staticGroup == null || Modifier.isStatic(method.getModifiers()) == staticGroup) {
-				TzuYuAction action = TzuYuAction.fromMethod(method, project.getConfiguration());
+		for (MethodInfo method : Randomness.randomSubList(
+				Arrays.asList(methods), methods.length)) {
+			if (staticGroup == null
+					|| Modifier.isStatic(method.getModifiers()) == staticGroup) {
+				TzuYuAction action = TzuYuAction.fromMethod(method,
+						project.getConfiguration());
 				if (action == null) {
-					throw new TzRuntimeException("Cannot create the initial alphabet");
+					throw new TzRuntimeException(
+							"Cannot create the initial alphabet");
 				}
 				addSymbol(action);
 			}
@@ -140,14 +142,16 @@ public class TzuYuAlphabet extends Alphabet {
 			throw new TzRuntimeException("The action is not an TzuYu alphabet");
 		}
 
+		/*
+		 * this action is not always positiveAction, it can be negative action
+		 */
 		TzuYuAction positiveAction = (TzuYuAction) action;
 
 		StatementKind stmt = positiveAction.getAction();
 
 		Formula negativeGuard = new NotFormula(positiveAction.getGuard());
 		negativeGuard = Simplifier.simplify(negativeGuard);
-
-		TzuYuAction negativeAction = new TzuYuAction(negativeGuard, stmt);
+//		TzuYuAction negativeAction = new TzuYuAction(negativeGuard, stmt);
 
 		Formula trueDivider = divider;
 
@@ -185,9 +189,14 @@ public class TzuYuAlphabet extends Alphabet {
 							stmt);
 					newSigma.addSymbol(falseAction);
 				}
-			} else if (!negativeAction.equals(act)) { 
+			} else { 
+				/* TODO LLT: STILL NOT TO FIGURE OUT WHY WE NEED THIS??
+				 * COMMENT THIS CONDITION BECAUSE THIS WILL LEAD TO THE ERROR "no matching transtion"
+				 * IN THE DFARunner 
+				 */
+//			else if (!negativeAction.equals(act)) { 
 				// we also need to remove the negation of the original alphabet
-				// symbol.
+				// symbol. => WHY?
 				newSigma.addSymbol(symbol);
 			}
 		}

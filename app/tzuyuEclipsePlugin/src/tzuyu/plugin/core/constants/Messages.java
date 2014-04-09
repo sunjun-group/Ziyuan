@@ -12,6 +12,7 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import tzuyu.engine.utils.Assert;
 import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.reporter.PluginLogger;
 
@@ -35,6 +36,7 @@ public final class Messages {
 	}
 	
 	public String getMessage(Enum<?> val, Object...args) {
+		Assert.assertNotNull(val);
 		try {
 			String key = StringUtils.dotJoin(val.getClass().getSimpleName(),
 					val.name());
@@ -44,7 +46,7 @@ public final class Messages {
 			}
 			return msg;
 		} catch (Exception e) {
-			PluginLogger.getLogger().logEx(e);
+			PluginLogger.getLogger().logEx(e, "cannot get message for enum: " + val);
 			return val == null ? StringUtils.EMPTY : val.name();
 		}
 	}
