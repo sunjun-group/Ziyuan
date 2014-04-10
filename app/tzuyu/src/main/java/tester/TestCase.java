@@ -66,7 +66,6 @@ public class TestCase {
 	}
 
 	public Variable getReceiver() {
-
 		return lastStatement.getReceiver();
 	}
 

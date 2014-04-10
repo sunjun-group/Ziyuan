@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
+import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.plugin.core.utils.ResourcesUtils;
 
 /**
@@ -158,9 +159,7 @@ public class WorkObject {
 		}
 		if (this.project.equals(project)) {
 			return workItems;
-		} else {
-			//TODO LLT: throw exception
-		}
+		} 
 		return new ArrayList<WorkObject.WorkItem>();
 	}
 

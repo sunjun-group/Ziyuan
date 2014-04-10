@@ -11,10 +11,13 @@ package tzuyu.plugin.console;
 import java.io.IOException;
 
 import org.eclipse.ui.console.IOConsoleOutputStream;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import tzuyu.engine.iface.AbstractPrintStream;
 import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.utils.StringUtils;
+import tzuyu.plugin.core.utils.IStatusUtils;
+import tzuyu.plugin.reporter.PluginLogger;
 
 /**
  * @author LLT
@@ -48,8 +51,9 @@ public class PluginConsolePrintStream extends AbstractPrintStream implements
 		try {
 			out.write(s);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			PluginLogger.getLogger().logEx(e);
+			StatusManager.getManager().handle(
+					IStatusUtils.error(e.getMessage()), StatusManager.BLOCK);
 		}
 	}
 

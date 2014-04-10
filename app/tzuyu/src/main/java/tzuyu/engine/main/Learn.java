@@ -30,13 +30,13 @@ public class Learn implements CommandHandler {
 		try {
 			tzuyuEngine.run();
 		} catch (ReportException e) {
-			// TODO Auto-generated catch block
+			// TODO nice to have
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			// TODO nice to have
 			e.printStackTrace();
 		} catch (TzException e) {
-			// TODO Auto-generated catch block
+			// TODO nice to have
 			e.printStackTrace();
 		}
 		

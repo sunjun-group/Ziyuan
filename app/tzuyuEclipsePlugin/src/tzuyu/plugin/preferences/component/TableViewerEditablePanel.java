@@ -31,7 +31,7 @@ import tzuyu.plugin.ui.SWTFactory;
  * @author LLT
  *
  */
-public class TableViewerEditablePanel<T> {
+public abstract class TableViewerEditablePanel<T> {
 	protected static Messages msg = TzuyuPlugin.getMessages();
 	public static final int ADD_BTN = 0;
 	public static final int EDIT_BTN = 1;
@@ -139,10 +139,7 @@ public class TableViewerEditablePanel<T> {
 		return false;
 	}
 
-	protected void onAdd() {
-		// TODO Auto-generated method stub
-		
-	}
+	protected abstract void onAdd();
 
 	/**
 	 * @param kind 

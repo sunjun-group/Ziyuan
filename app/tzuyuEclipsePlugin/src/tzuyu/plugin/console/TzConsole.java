@@ -12,6 +12,8 @@ import java.io.PrintStream;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
@@ -20,6 +22,8 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 import org.eclipse.ui.themes.ITheme;
+
+import tzuyu.plugin.reporter.PluginLogger;
 
 /**
  * @author LLT
@@ -36,8 +40,30 @@ public class TzConsole extends MessageConsole implements IPropertyChangeListener
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		// TODO Auto-generated method stub
+		if (CONSOLE_FONT.equals(event.getProperty())) {
+			setConsoleFont();
+		}
+		PluginLogger
+				.getLogger()
+				.debug(String
+						.format("TzConsole.propertyChange- source=%s, property=%s, oldValue=%s, newValue=%s",
+								event.getSource(), event.getProperty(),
+								event.getOldValue(), event.getNewValue()));
+	}
 
+	private void setConsoleFont() {
+		if (Display.getCurrent() == null) {
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					setConsoleFont();
+				}
+			});
+		} else {
+			ITheme theme = PlatformUI.getWorkbench().getThemeManager()
+					.getCurrentTheme();
+			Font font = theme.getFontRegistry().get(CONSOLE_FONT);
+			console.setFont(font);
+		}
 	}
 
 	public static TzConsole showConsole() {

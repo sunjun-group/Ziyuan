@@ -209,7 +209,8 @@ public class ResourcesUtils {
 	}
 
 	/**
-	 * TODO: Find out why IJavaProject.findPackageFragmentRoots returns an empty
+	 * TODO nice to have
+	 * Find out why IJavaProject.findPackageFragmentRoots returns an empty
 	 * list for IClasspathEntrys of kind CPE_PROJECT.
 	 * 
 	 * This is a workaround that find the actual project that is referenced and

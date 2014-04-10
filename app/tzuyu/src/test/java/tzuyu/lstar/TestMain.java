@@ -26,7 +26,6 @@ public class TestMain {
 			e.printStackTrace();
 			System.exit(0);
 		} catch (TzException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		DFA dfa = algorithm.getDFA();

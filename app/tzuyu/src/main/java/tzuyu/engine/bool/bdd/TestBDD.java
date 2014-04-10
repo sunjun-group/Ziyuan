@@ -80,7 +80,6 @@ public class TestBDD {
 		String notStr = notBdd.createDotRepresentation();
 
 		try {
-			// TODO [LLT] FIX THIS
 			// String fileName = Options.getAbsoluteAddress("BDD.dot");
 			String fileName = "BDD.dot";
 			FileWriter writer = new FileWriter(fileName);

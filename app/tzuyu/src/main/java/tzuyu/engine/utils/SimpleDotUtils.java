@@ -30,7 +30,7 @@ public class SimpleDotUtils {
 //			IOUtils.readLines(input)
 			in.read();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// TODO nice to have
 			e.printStackTrace();
 		}
 		return new DfaGraph();

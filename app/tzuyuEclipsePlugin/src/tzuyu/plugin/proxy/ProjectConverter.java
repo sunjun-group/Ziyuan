@@ -57,7 +57,7 @@ public class ProjectConverter {
 		for (WorkItem item : workObject.getWorkItems()) {
 			String methodName = null;
 			IJavaElement ele = item.getCorrespondingJavaElement();
-			//TODO LLT: just temporary, it's messy.
+			//TODO LLT: just temporary, this is messy.
 			switch (ele.getElementType()) {
 			case IJavaElement.CLASS_FILE:
 				fullyQualifiedName = StringUtils.dotJoin(ele.getParent()

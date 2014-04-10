@@ -148,11 +148,6 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 		}
 		
 		@Override
-		protected void canceling() {
-			reporter.isInterrupted();
-		}
-
-		@Override
 		protected IStatus doJob(IProgressMonitor monitor) {
 			reporter.setProgressMonitor(monitor);
 			try {

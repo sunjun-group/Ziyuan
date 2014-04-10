@@ -40,20 +40,17 @@ public class TzConsoleParticipant implements IConsolePageParticipant {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
+		showDfaAction = null;
 	}
 
 	@Override
 	public void activated() {
-		// TODO Auto-generated method stub
-
+		// do nothing
 	}
 
 	@Override
 	public void deactivated() {
-		// TODO Auto-generated method stub
-
+		// do nothing
 	}
 
 	private static class ShowDfaViewAction extends Action {

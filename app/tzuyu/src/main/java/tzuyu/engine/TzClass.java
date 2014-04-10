@@ -50,7 +50,7 @@ public class TzClass {
 
 	public ClassInfo getClassInfo(Class<?> type) {
 		/*
-		 * TODO LLT: because there's a case that the type does not exist in the current map
+		 * LLT: because there's a case that the type does not exist in the current map
 		 * (ex: the field of the class)
 		 * so we need to make another try to visit the class.
 		 */
@@ -75,11 +75,7 @@ public class TzClass {
 
 	/**
 	 * Get a list of accessible subclasses(exclusive interfaces) of the
-	 * specified class or interface from the referenced class list. TODO [LLT]:
-	 * move to utils?
-	 * 
-	 * @param superClass
-	 * @return
+	 * specified class or interface from the referenced class list. 
 	 */
 	public List<ClassInfo> getAccessibleClasses(Class<?> superClass) {
 		List<ClassInfo> subClasses = new ArrayList<ClassInfo>();

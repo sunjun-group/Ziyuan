@@ -152,4 +152,17 @@
              </instanceof></enablement>
        </consolePageParticipant>
     </extension>
+    <extension
+          point="org.eclipse.ui.themes">
+       <fontDefinition
+             categoryId="tzuyu.plugin.theme"
+             defaultsTo="org.eclipse.jface.textfont"
+             id="tzuyu.plugin.consoleFont"
+             label="%console.name">
+       </fontDefinition>
+       <themeElementCategory
+             id="tzuyu.plugin.theme"
+             label="%plugin.name">
+       </themeElementCategory>
+    </extension>
 </plugin>
