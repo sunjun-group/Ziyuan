@@ -48,7 +48,7 @@ public class RMethodJWriter extends AbstractStmtJWriter {
 		boolean isStatic = rmethod.isStatic();
 		if (isStatic) {
 			instanceNameOrClass = rmethod.getMethod().getDeclaringClass().getSimpleName()
-					.replace('$', '.'); // TODO combine this with last if clause
+					.replace('$', '.'); 
 		} else {
 			instanceNameOrClass = renamer
 					.getRenamedVar(inputVars.get(0).getStmtIdx(),

@@ -12,6 +12,7 @@ import tzuyu.engine.model.Variable;
  */
 public interface IParameterSelector {
 
+	public Variable selectVariable(Variable receiver, Class<?> type);
 	/**
 	 * Generate a variable for the given type. The type could be primitive or
 	 * reference types.
@@ -46,5 +47,4 @@ public interface IParameterSelector {
 	public Variable selectDefaultReceiver(Class<?> type);
 
 	public void setProject(TzClass project);
-
 }

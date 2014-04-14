@@ -132,7 +132,7 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 				+ "------------------");
 		dfa.print(outStream);
 		logger.info("dfa state size: " + dfa.getStateSize());
-		logger.info("alphabet size: " + (dfa.sigma.getSize() - 1));
+		logger.info("alphabet size: " + (dfa.sigma.getFullSize() - 1));
 		List<QueryTrace> traces = new ArrayList<QueryTrace>();
 
 		// Step 1: Find all the generated test cases and execute them in order

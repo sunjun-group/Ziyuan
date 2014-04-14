@@ -52,6 +52,19 @@ public class ParameterSelector implements IParameterSelector {
 		componentManager.config(project.getConfiguration());
 	}
 	
+	@Override
+	public Variable selectVariable(Variable receiver, Class<?> type) {
+		switch (ParamSelectionType.randomType(receiver, type)) {
+		case NEW:
+			return selectNewVariable(type);
+		case CACHE:
+			return selectCachedVariable(type);
+		case EXISTING:
+			return selectExistingVariable(receiver, type);
+		}
+		return null;
+	}
+	
 	public Variable selectNewVariable(Class<?> inputType) {
 		ObjectType paramType = ObjectType.ofClass(inputType);
 		Object inputVal = null;
@@ -282,11 +295,8 @@ public class ParameterSelector implements IParameterSelector {
 	 * variable for the given type.
 	 */
 	public Variable selectExistingVariable(Variable receiver, Class<?> type) {
-		// TODO LLT: to test
-		if (receiver == null) {
-			return selectNullReceiver(type); 
-		}
-		//
+		Assert.assertNotNull(receiver,
+				"receiver for selecting existing variable must not be null");
 		List<Variable> vars = receiver.owner.getMatchedVariable(type);
 
 		if (vars.size() != 0) {
@@ -379,5 +389,19 @@ public class ParameterSelector implements IParameterSelector {
 		// Construct the variable which is created by the above statement
 		Variable var = new Variable(seq, seq.size() - 1);
 		return var;
+	}
+	
+	private enum ParamSelectionType {
+		NEW,
+		CACHE,
+		EXISTING;
+
+		public static ParamSelectionType randomType(Variable receiver,
+				Class<?> type) {
+			if (receiver == null) {
+				return Randomness.randomMember(new ParamSelectionType[]{NEW, CACHE});
+			}
+			return Randomness.randomMember(values());
+		}
 	}
 }

@@ -135,21 +135,6 @@ public final class Randomness {
 		return nextInt == 0;
 	}
 	
-//	public static int randomRange(int[] factors) {
-//		int sum = factors[0];
-//		for (int i = 1; i < factors.length; i++) {
-//			factors[i] += factors[i - 1];
-//			sum += factors[i];
-//		}
-//		int r = nextRandomInt(sum);
-//		for (int i = 1; i < factors.length; i++) {
-//			if (factors[i] > r) {
-//				return i;
-//			}
-//		}
-//		throw new TzRuntimeException("random Range fail");
-//	}
-	
 	public static int randomRange(int[] factors) {
 		int r = nextRandomInt(factors[factors.length - 1]);
 		for (int i = 0; i < factors.length; i++) {

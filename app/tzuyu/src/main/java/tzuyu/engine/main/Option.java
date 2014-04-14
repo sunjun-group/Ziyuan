@@ -75,9 +75,9 @@ public abstract class Option<T extends Object> {
 		case OBJECT_TO_INTEGER:
 			config.setObjectToInteger((Boolean) getValue());
 			break;
-		case METHODS:
-			project.setMethods((List<String>) getValue());
-			break;
+//		case METHODS:
+//			project.setMethods((List<String>) getValue());
+//			break;
 		case INHERITED_METHOD:
 			config.setInheritedMethod((Boolean) getValue());
 			break;

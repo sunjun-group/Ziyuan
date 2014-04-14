@@ -16,7 +16,7 @@ import tzuyu.engine.model.exception.ReportException;
  * @author LLT
  * 
  */
-public interface HasReport<A extends Alphabet> {
+public interface HasReport<A extends Alphabet<?>> {
 
 	/**
 	 * report all useful output from the process. this function will we put this

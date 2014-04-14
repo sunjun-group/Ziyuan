@@ -26,7 +26,6 @@ import analyzer.ClassVisitor;
 public class TzClass {
 	// class name
 	private String className;
-	private List<String> methods;
 	
 	private Map<Class<?>, ClassInfo> typeMap;
 	private Class<?> target;
@@ -107,13 +106,4 @@ public class TzClass {
 	public void setClassName(String clazzName) {
 		this.className = clazzName;
 	}
-	
-	public List<String> getMethods() {
-		return methods;
-	}
-	
-	public void setMethods(List<String> methods) {
-		this.methods = methods;
-	}
-
 }

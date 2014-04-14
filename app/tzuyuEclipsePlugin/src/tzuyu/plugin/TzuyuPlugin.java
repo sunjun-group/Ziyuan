@@ -176,7 +176,8 @@ public class TzuyuPlugin extends AbstractUIPlugin {
     }
 	
 	public static boolean debug() {
-		String debugOption = Platform.getDebugOption(DEBUG_ONE);
-		return getDefault().isDebugging() && "true".equalsIgnoreCase(debugOption);
+		return true;
+//		String debugOption = Platform.getDebugOption(DEBUG_ONE);
+//		return getDefault().isDebugging() && "true".equalsIgnoreCase(debugOption);
 	}
 }

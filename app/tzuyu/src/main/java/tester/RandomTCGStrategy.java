@@ -417,16 +417,7 @@ public class RandomTCGStrategy implements ITCGStrategy {
 			} else {
 				// try 3 times.
 				for (int i = 0; i < 3; i++) {
-					Variable arg = null;
-					int source = Randomness.nextRandomInt(3);
-
-					if (source == 0) {
-						arg = selector.selectNewVariable(type);
-					} else if (source == 1) {
-						arg = selector.selectCachedVariable(type);
-					} else {
-						arg = selector.selectExistingVariable(receiver, type);
-					}
+					Variable arg = selector.selectVariable(receiver, type);
 					// Variable arg = selector.selectNewParameter(type);
 					SequenceRuntime result = RuntimeExecutor
 							.executeSequence(arg.owner);
@@ -585,4 +576,5 @@ public class RandomTCGStrategy implements ITCGStrategy {
 	public Pair<List<TestCase>, List<TestCase>> getAllTestcases(boolean pass, boolean fail) {
 		return store.getTestcases(pass, fail);
 	}
+	
 }

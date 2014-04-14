@@ -23,7 +23,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.plugin.core.utils.ResourcesUtils;
 
 /**

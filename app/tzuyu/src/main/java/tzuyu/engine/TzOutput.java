@@ -15,6 +15,7 @@ import tzuyu.engine.model.dfa.DFA;
  *
  */
 public class TzOutput {
+	private TzClass tzClazz;
 	private DFA dfa;
 	private int dfaAlphabetSize;
 	private int membershipCount;
@@ -22,4 +23,5 @@ public class TzOutput {
 	public TzOutput() {
 		
 	}
+	
 }

@@ -12,7 +12,7 @@ import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.utils.Randomness;
 
-public class TzuYuAlphabet extends Alphabet {
+public class TzuYuAlphabet extends Alphabet<TzuYuAction> {
 	private TzClass project;
 	private IPrintStream out;
 	
@@ -47,7 +47,8 @@ public class TzuYuAlphabet extends Alphabet {
 		 */
 
 		// add methods as the initial alphabet
-		MethodInfo[] methods = project.getTargetClassInfo().getMethods(project.getConfiguration());
+		MethodInfo[] methods = project.getTargetClassInfo().getMethods(
+				project.getConfiguration());
 
 		for (MethodInfo method : Randomness.randomSubList(
 				Arrays.asList(methods), methods.length)) {
@@ -76,7 +77,7 @@ public class TzuYuAlphabet extends Alphabet {
 	 *            the negative action which is the negation of divider.
 	 * @return the new alphabet which contains the two alphabets.
 	 */
-	public TzuYuAlphabet incrementalRefine(Formula divider, Action action) {
+	public TzuYuAlphabet refineIncremental(Formula divider, Action action) {
 
 		if (!(action instanceof TzuYuAction)) {
 			throw new TzRuntimeException("The action is not an TzuYu alphabet");
@@ -92,11 +93,7 @@ public class TzuYuAlphabet extends Alphabet {
 
 		TzuYuAlphabet newSigma = new TzuYuAlphabet(this);
 
-		for (int index = 1; index < this.getSize(); index++) {
-			Action symbol = this.getAction(index);
-
-			TzuYuAction act = (TzuYuAction) symbol;
-
+		for (TzuYuAction act : getActions()) {
 			if (tzuyuAction.equals(act)) {
 				Formula newTrueFormula = new AndFormula(act.getGuard(),
 						trueDivider);
@@ -120,88 +117,15 @@ public class TzuYuAlphabet extends Alphabet {
 					newSigma.addSymbol(falseAction);
 				}
 			} else {
-				newSigma.addSymbol(symbol);
+				newSigma.addSymbol(act);
 			}
 		}
-
+		
 		return newSigma;
 	}
-
-	/**
-	 * Refine the alphabet with the newly discovered alphabet to substitute the
-	 * old alphabet such that the old actions with the guard and the negation of
-	 * guard are removed and add tow new alphabet symbols with the new guard and
-	 * its negation to the alphabet.
-	 * 
-	 * @param divider
-	 * @param action
-	 * @return
-	 */
+	
 	public TzuYuAlphabet refine(Formula divider, Action action) {
-		if (!(action instanceof TzuYuAction)) {
-			throw new TzRuntimeException("The action is not an TzuYu alphabet");
-		}
-
-		/*
-		 * this action is not always positiveAction, it can be negative action
-		 */
-		TzuYuAction positiveAction = (TzuYuAction) action;
-
-		StatementKind stmt = positiveAction.getAction();
-
-		Formula negativeGuard = new NotFormula(positiveAction.getGuard());
-		negativeGuard = Simplifier.simplify(negativeGuard);
-//		TzuYuAction negativeAction = new TzuYuAction(negativeGuard, stmt);
-
-		Formula trueDivider = divider;
-
-		Formula falseDivider = new NotFormula(divider);
-
-		TzuYuAlphabet newSigma = new TzuYuAlphabet(this);
-
-		for (int index = 1; index < this.getSize(); index++) {
-			Action symbol = this.getAction(index);
-
-			TzuYuAction act = (TzuYuAction) symbol;
-
-			// Remove the alphabet symbol and add the two new alphabet symbol.
-			if (positiveAction.equals(act)) {
-				Formula newTrueFormula = new AndFormula(act.getGuard(),
-						trueDivider);
-				newTrueFormula = Simplifier.simplify(newTrueFormula);
-
-				if (newTrueFormula.equals(Formula.FALSE)) {
-					out.println("new guard evaluates to false.");
-				} else {
-					TzuYuAction trueAction = new TzuYuAction(newTrueFormula,
-							stmt);
-					newSigma.addSymbol(trueAction);
-				}
-
-				Formula newFalseFormula = new AndFormula(act.getGuard(),
-						falseDivider);
-				newFalseFormula = Simplifier.simplify(newFalseFormula);
-
-				if (newFalseFormula.equals(Formula.FALSE)) {
-					out.println("new guard evaluates to false.");
-				} else {
-					TzuYuAction falseAction = new TzuYuAction(newFalseFormula,
-							stmt);
-					newSigma.addSymbol(falseAction);
-				}
-			} else { 
-				/* TODO LLT: STILL NOT TO FIGURE OUT WHY WE NEED THIS??
-				 * COMMENT THIS CONDITION BECAUSE THIS WILL LEAD TO THE ERROR "no matching transtion"
-				 * IN THE DFARunner 
-				 */
-//			else if (!negativeAction.equals(act)) { 
-				// we also need to remove the negation of the original alphabet
-				// symbol. => WHY?
-				newSigma.addSymbol(symbol);
-			}
-		}
-
-		return newSigma;
+		return refineIncremental(divider, action);
 	}
 
 	public TzClass getProject() {

@@ -16,7 +16,7 @@ import tzuyu.engine.model.dfa.DFA;
  * @author LLT
  *
  */
-public interface IReportHandler <A extends Alphabet>{
+public interface IReportHandler <A extends Alphabet<?>>{
 	/**
 	 * report last DFA which get from LStar learner.
 	 * (ex: print DFA to files)

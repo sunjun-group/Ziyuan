@@ -23,14 +23,14 @@ public abstract class PrimitiveValueZones<T extends Object> {
 							.point(-1000, 7)
 							.point(1000, 1)
 							.finishPoint(Integer.MAX_VALUE);
-		LONG_ZONES = (LongValueZones) new LongValueZones(6)
+		LONG_ZONES = (LongValueZones) new LongValueZones(8)
 							.point(Long.MIN_VALUE + 1, 1)
-//							.point((long) -1e10, 2)
+							.point((long) -1e10, 2)
 							.point(-1000l, 10)
 							.point(0l, 1)
-							.point(0l, 1)
+							.point(0l, 10)
 							.point(1000l, 2)
-//							.point((long) 1e10, 1)
+							.point((long) 1e10, 1)
 							.finishPoint(Long.MAX_VALUE);
 	}
 	

@@ -19,10 +19,10 @@ import tzuyu.engine.algorithm.iface.Learner;
 import tzuyu.engine.algorithm.iface.Refiner;
 import tzuyu.engine.algorithm.iface.Teacher;
 import tzuyu.engine.algorithm.iface.Tester;
-import tzuyu.engine.iface.ITzManager;
 import tzuyu.engine.iface.ILogger;
 import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.iface.IReferencesAnalyzer;
+import tzuyu.engine.iface.ITzManager;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.TzuyuEngine;
 import tzuyu.engine.lstar.TeacherImpl;
@@ -85,14 +85,15 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 		tzOut.writeln(
 				"============Start of Statistics for" + 
 				project.getTarget().getSimpleName()+ "============");
-		// TODO [LLT]: time measuring.
 		// divide all class methods into 2 groups: static and non-static
 		// and start learning separately.
-//		run(TzuYuAlphabet.forStaticGroup(project));
 		TzuYuAlphabet alphabet = TzuYuAlphabet.forNonStaticGroup(project);
+		// UNCOMMENT TO TEST STATIC GROUP
+//		alphabet = TzuYuAlphabet.forStaticGroup(project);
+		// UNCOMMENT TO TEST THE WHOLE CLASS
+//		alphabet = TzuYuAlphabet.forClass(project);
 		alphabet.setOutStream(tzOut);
 		run(alphabet);
-//		run(TzuYuAlphabet.forClass(project));
 		try {
 			learner.startLearning(alphabet);
 		} catch (LStarException e) {

@@ -7,6 +7,7 @@ import lstar.LStarException.Type;
 import tzuyu.engine.algorithm.iface.Learner;
 import tzuyu.engine.algorithm.iface.Teacher;
 import tzuyu.engine.iface.ITzManager;
+import tzuyu.engine.model.Action;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.dfa.DFA;
@@ -21,7 +22,7 @@ import tzuyu.engine.model.exception.TzException;
  * @author Spencer Xiao
  * 
  */
-public class LStar<A extends Alphabet> implements Learner<A> {
+public class LStar<A extends Alphabet<?>> implements Learner<A> {
 
 	// The teacher for the L* algorithm
 	private Teacher<A> teacher;
@@ -98,8 +99,8 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 
 		// Initialize the SA rows with each alphabet symbol
 		// ignore the epsilon alphabet, thus starts from index 1
-		for (int j = 1; j < sigma.getSize(); j++) {
-			Trace str = new Trace(sigma.getAction(j));
+		for (Action action : sigma.getActions()) {
+			Trace str = new Trace(action);
 			boolean isMember = teacher.membershipQuery(str);
 			String membership = BitString.extend("", isMember);
 			otable.addSARow(str, membership);
@@ -181,8 +182,8 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 		otable.saRows.remove(conflict);
 		// extend the added conflict with elements from Sigma
 
-		for (int i = 1; i < sigma.getSize(); i++) {
-			Trace newKey = conflict.concatenateAtTail(sigma.getAction(i));
+		for (Action action : sigma.getActions()) {
+			Trace newKey = conflict.concatenateAtTail(action);
 			String newValue = "";
 			for (int j = 0; j < otable.columns.size(); j++) {
 				Trace newStr = newKey.concatenateAtTail(otable.columns.get(j));
@@ -209,11 +210,9 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 				if (!key1.equals(key2)
 						&& otable.sRows.get(key1)
 								.equals(otable.sRows.get(key2))) {
-					for (int i = 1; i < sigma.getSize(); i++) {
-						Trace newKey1 = key1.concatenateAtTail(sigma
-								.getAction(i));
-						Trace newKey2 = key2.concatenateAtTail(sigma
-								.getAction(i));
+					for (Action action : sigma.getActions()) {
+						Trace newKey1 = key1.concatenateAtTail(action);
+						Trace newKey2 = key2.concatenateAtTail(action);
 						if (!otable.getRow(newKey1).equals(
 								otable.getRow(newKey2))) {
 							Trace conflict = null;
@@ -224,8 +223,7 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 										.getRow(newKey2).charAt(j)) {
 									// save j;
 									conflict = otable.columns.get(j)
-											.concatenateAtFront(
-													sigma.getAction(i));
+											.concatenateAtFront(action);
 									break;
 								}
 							}
@@ -303,13 +301,13 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 			if (source.trans.size() != 0) {
 				continue;
 			}
-
-			for (int action = 1; action < sigma.getSize(); action++) {
+			
+			for (Action action : sigma.getActions()) {
 				Transition tran = new Transition();
 				tran.source = state;
-				tran.action = sigma.getAction(action);
+				tran.action = action;
 
-				Trace newStr = key1.concatenateAtTail(sigma.getAction(action));
+				Trace newStr = key1.concatenateAtTail(action);
 				String value = otable.saRows.get(newStr);
 				if (value == null) {
 					value = otable.sRows.get(newStr);
@@ -349,8 +347,8 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 				otable.saRows.remove(str);
 
 				// extends the newly added row by adding rows to SA rows
-				for (int i = 1; i < sigma.getSize(); i++) {
-					Trace newStr = str.concatenateAtTail(sigma.getAction(i));
+				for (Action action : sigma.getActions()) {
+					Trace newStr = str.concatenateAtTail(action);
 					// Don't add the counter example string into SA rows,
 					// since it has been added to S rows
 					if (newStr.equals(cea)) {
@@ -381,7 +379,7 @@ public class LStar<A extends Alphabet> implements Learner<A> {
 		}
 		// last DFA
 		manager.getOutStream().writeln("Alphabet Size in Final DFA:"
-						+ (lastDFA.sigma.getSize() - 1))
+						+ (lastDFA.sigma.getFullSize() - 1))
 			.writeln("Number of States in Final DFA:"
 						+ lastDFA.getStateSize());
 		lastDFA.print(manager.getOutStream());

@@ -138,7 +138,7 @@ public class ClassVisitor {
 		}
 		int access = ctor.getModifiers();
 		String name = ctor.getName();
-		// LLT: 
+		// TODO LLT: private constructor
 		if (Modifier.isPublic(access)) {
 			return new ConstructorInfoImpl(parent, ctor, name, parameterTypes,
 					exceptionTypes, access);

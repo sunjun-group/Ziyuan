@@ -14,7 +14,7 @@ import tzuyu.engine.utils.Randomness;
 import tzuyu.engine.utils.dfa.DfaGraph;
 
 public class DFA {
-	public Alphabet sigma;
+	public Alphabet<?> sigma;
 	private int initStateID;
 	// private IntList acceptingStates;
 	private List<Integer> acceptingStates;

@@ -35,10 +35,6 @@ public class RArrayDeclarationJWriter extends AbstractStmtJWriter {
 
 	private void init(RArrayDeclaration statement, Variable newVar,
 			List<Variable> inputVars) {
-		// TODO LLT: assert fail in some cases, check!! 
-//		int length = statement.getLength();
-//		Assert.assertTrue(inputVars.size() > length, "Too many arguments:"
-//				+ inputVars.size() + " capacity:" + length);
 		declaredClass = statement.getElementType().getSimpleName();
 		declaredName = renamer.getRenamedVar(newVar.getStmtIdx(), newVar.getArgIdx());
 		params = new ArrayList<String>();

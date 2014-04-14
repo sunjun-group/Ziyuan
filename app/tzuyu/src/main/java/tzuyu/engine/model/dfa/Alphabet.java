@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tzuyu.engine.model.Action;
+import tzuyu.engine.utils.StringUtils;
 
 /**
  * A set of the actions that compose the alphabet of the DFA
@@ -11,46 +12,33 @@ import tzuyu.engine.model.Action;
  * @author Spencer Xiao
  * 
  */
-public class Alphabet {
-
-	private List<Action> actions;
+public class Alphabet<T extends Action> {
+	private Action epsilon = Action.epsilon;
+	private List<T> actions;
 
 	public Alphabet() {
-		actions = new ArrayList<Action>();
-		actions.add(Action.epsilon);
+		actions = new ArrayList<T>();
 	}
 
-	public Action getAction(int index) {
-		if (index < 0 && index > actions.size() - 1)
-			return null;
-		return actions.get(index);
-	}
-
-	public int addSymbol(Action action) {
+	public void addSymbol(T action) {
 		actions.add(action);
-		return actions.size() - 1;
 	}
 
-	public int getSize() {
+	public int getFullSize() {
+		return actions.size() + 1; // all actions plus epsilon action.
+	}
+	
+	public int getActionsSize() {
 		return actions.size();
 	}
 	
 	public boolean isEmpty() {
 		// alphabet is always contains at least 1 action which is epsilon
-		return getSize() == 1; 
-	}
-
-	public int getElpsilonActionIndex() {
-		return 0;
+		return actions.isEmpty();
 	}
 
 	public void clear() {
 		actions.clear();
-		actions.add(Action.epsilon);
-	}
-
-	public void removeSymbol(int index) {
-		this.actions.remove(index);
 	}
 
 	@Override
@@ -60,11 +48,22 @@ public class Alphabet {
 		}
 
 		if (o instanceof Alphabet) {
-			Alphabet sigma = (Alphabet) o;
+			Alphabet<?> sigma = (Alphabet<?>) o;
 			return sigma.actions.equals(this.actions);
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * all actions excludes epsilon action.
+	 */
+	public List<T> getActions() {
+		return actions;
+	}
+	
+	public Action getEpsilon() {
+		return epsilon;
 	}
 
 	@Override
@@ -74,6 +73,7 @@ public class Alphabet {
 
 	@Override
 	public String toString() {
-		return actions.toString();
+		return StringUtils.join(", ", 
+				StringUtils.join(actions, ", "));
 	}
 }
