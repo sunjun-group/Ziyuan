@@ -3,20 +3,18 @@ package refiner.bool;
 import java.util.ArrayList;
 import java.util.List;
 
-import tzuyu.engine.bool.Atom;
 import tzuyu.engine.bool.Var;
+import tzuyu.engine.iface.BoolVisitor;
 import tzuyu.engine.model.ObjectInfo;
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.utils.TzuYuPrimtiveTypes;
 
-public class CharEqualsValueAtom extends Atom {
-
-	private FieldVar variable;
+public class CharEqualsValueAtom extends FieldAtom {
 
 	private char unicodeValue;
 
 	public CharEqualsValueAtom(FieldVar fieldVar, char codepoint) {
-		variable = fieldVar;
+		super(fieldVar);
 		unicodeValue = codepoint;
 	}
 
@@ -72,4 +70,12 @@ public class CharEqualsValueAtom extends Atom {
 		return unicodeValue == value;
 	}
 
+	@Override
+	public void accept(BoolVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	public char getValue() {
+		return unicodeValue;
+	}
 }

@@ -3,8 +3,8 @@ package refiner.bool;
 import java.util.ArrayList;
 import java.util.List;
 
-import tzuyu.engine.bool.Atom;
 import tzuyu.engine.bool.Var;
+import tzuyu.engine.iface.BoolVisitor;
 import tzuyu.engine.model.ObjectInfo;
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.utils.TzuYuPrimtiveTypes;
@@ -15,12 +15,10 @@ import tzuyu.engine.utils.TzuYuPrimtiveTypes;
  * @author Spencer Xiao
  * 
  */
-public class BooleanIsFalseAtom extends Atom {
-
-	private FieldVar variable;
+public class BooleanIsFalseAtom extends FieldAtom {
 
 	public BooleanIsFalseAtom(FieldVar var) {
-		this.variable = var;
+		super(var);
 	}
 
 	@Override
@@ -70,6 +68,11 @@ public class BooleanIsFalseAtom extends Atom {
 
 		return !TzuYuPrimtiveTypes.isBooleanTrue(boolean.class,
 				(int) objectInfo.getNumericValue());
+	}
+
+	@Override
+	public void accept(BoolVisitor visitor) {
+		visitor.visit(this);
 	}
 
 }

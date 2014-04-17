@@ -3,8 +3,8 @@ package refiner.bool;
 import java.util.ArrayList;
 import java.util.List;
 
-import tzuyu.engine.bool.Atom;
 import tzuyu.engine.bool.Var;
+import tzuyu.engine.iface.BoolVisitor;
 import tzuyu.engine.model.ObjectInfo;
 import tzuyu.engine.model.Prestate;
 
@@ -14,12 +14,10 @@ import tzuyu.engine.model.Prestate;
  * @author Spencer Xiao
  * 
  */
-public class ObjectIsNullAtom extends Atom {
-
-	private FieldVar variable;
+public class ObjectIsNullAtom extends FieldAtom {
 
 	public ObjectIsNullAtom(FieldVar var) {
-		this.variable = var;
+		super(var);
 	}
 
 	@Override
@@ -61,5 +59,10 @@ public class ObjectIsNullAtom extends Atom {
 	public boolean evaluate(Prestate state) {
 		ObjectInfo objectInfo = variable.getObjectInfo(state);
 		return objectInfo.isValueNull();
+	}
+
+	@Override
+	public void accept(BoolVisitor visitor) {
+		visitor.visit(this);
 	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import tzuyu.engine.bool.Atom;
 import tzuyu.engine.bool.Var;
+import tzuyu.engine.iface.BoolVisitor;
 import tzuyu.engine.model.ObjectInfo;
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.model.exception.TzRuntimeException;
@@ -110,4 +111,20 @@ public class LIAAtom extends Atom {
 		return operator.evaluate(leftValue, constant);
 	}
 
+	@Override
+	public void accept(BoolVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	public List<LIATerm> getMVFOExpr() {
+		return MVFOExpr;
+	}
+	
+	public Operator getOperator() {
+		return operator;
+	}
+	
+	public double getConstant() {
+		return constant;
+	}
 }

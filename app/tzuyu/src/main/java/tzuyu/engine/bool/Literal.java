@@ -3,6 +3,7 @@ package tzuyu.engine.bool;
 import java.util.ArrayList;
 import java.util.List;
 
+import tzuyu.engine.iface.BoolVisitor;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Prestate;
 
@@ -110,5 +111,18 @@ public final class Literal implements Formula {
 		} else {
 			return atom.evaluate(state);
 		}
+	}
+	
+	@Override
+	public void accept(BoolVisitor visitor) {
+		visitor.visit(this);
+	}
+	
+	public boolean isNegation() {
+		return negation;
+	}
+	
+	public Atom getAtom() {
+		return atom;
 	}
 }

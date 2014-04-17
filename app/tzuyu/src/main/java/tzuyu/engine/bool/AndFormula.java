@@ -1,33 +1,14 @@
 package tzuyu.engine.bool;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Prestate;
 
-public final class AndFormula implements Formula {
-
-	private final Formula left;
-	private final Formula right;
+public final class AndFormula extends ConjunctionFormula implements Formula {
 
 	public AndFormula(Formula left, Formula right) {
-		this.left = left;
-		this.right = right;
-	}
-
-	public List<Var> getReferencedVariables() {
-		List<Var> leftVars = left.getReferencedVariables();
-		List<Var> rightVars = right.getReferencedVariables();
-		List<Var> result = new ArrayList<Var>(leftVars);
-		result.removeAll(rightVars);
-		result.addAll(rightVars);
-		return result;
-	}
-
-	@Override
-	public String toString() {
-		return left.toString() + " && " + right.toString();
+		super(left, right);
 	}
 
 	public boolean evaluate(Object[] objects) {
@@ -52,14 +33,6 @@ public final class AndFormula implements Formula {
 		return new AndFormula(leftExpr, rightExpr);
 	}
 
-	public List<Atom> getAtomics() {
-		List<Atom> leftAtoms = left.getAtomics();
-		List<Atom> rightAtoms = right.getAtomics();
-		leftAtoms.removeAll(rightAtoms);
-		leftAtoms.addAll(rightAtoms);
-		return leftAtoms;
-	}
-
 	public Formula simplify() {
 		Formula leftExpr = left.simplify();
 		Formula rightExpr = right.simplify();
@@ -80,5 +53,10 @@ public final class AndFormula implements Formula {
 
 	public boolean evaluate(Prestate state) {
 		return left.evaluate(state) && right.evaluate(state);
+	}
+
+	@Override
+	public String getOperation() {
+		return " && ";
 	}
 }

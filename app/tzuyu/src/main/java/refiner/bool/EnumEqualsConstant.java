@@ -3,8 +3,8 @@ package refiner.bool;
 import java.util.ArrayList;
 import java.util.List;
 
-import tzuyu.engine.bool.Atom;
 import tzuyu.engine.bool.Var;
+import tzuyu.engine.iface.BoolVisitor;
 import tzuyu.engine.model.ObjectInfo;
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.utils.TzuYuPrimtiveTypes;
@@ -16,23 +16,22 @@ import tzuyu.engine.utils.TzuYuPrimtiveTypes;
  * @author Spencer Xiao
  * 
  */
-public class EnumEqualsConstant extends Atom {
-	private final FieldVar enumVar;
+public class EnumEqualsConstant extends FieldAtom {
 	private final Object constantVal;
 
 	public EnumEqualsConstant(FieldVar variable, Object value) {
-		enumVar = variable;
+		super(variable);
 		constantVal = value;
 	}
 
 	@Override
 	public String toString() {
-		return enumVar.toString() + " == " + constantVal.toString();
+		return variable.toString() + " == " + constantVal.toString();
 	}
 
 	@Override
 	public int hashCode() {
-		return enumVar.hashCode() * 31 + constantVal.hashCode();
+		return variable.hashCode() * 31 + constantVal.hashCode();
 	}
 
 	@Override
@@ -47,18 +46,18 @@ public class EnumEqualsConstant extends Atom {
 
 		EnumEqualsConstant obj = (EnumEqualsConstant) o;
 
-		return obj.enumVar.equals(enumVar)
+		return obj.variable.equals(variable)
 				&& obj.constantVal.equals(constantVal);
 	}
 
 	public List<Var> getReferencedVariables() {
 		List<Var> referencedVars = new ArrayList<Var>(1);
-		referencedVars.add(enumVar);
+		referencedVars.add(variable);
 		return referencedVars;
 	}
 
 	public boolean evaluate(Object[] objects) {
-		Object object = enumVar.getValue(objects);
+		Object object = variable.getValue(objects);
 		if (object == null) {
 			return false;
 		} else {
@@ -67,7 +66,7 @@ public class EnumEqualsConstant extends Atom {
 	}
 
 	public boolean evaluate(Prestate state) {
-		ObjectInfo objectInfo = enumVar.getObjectInfo(state);
+		ObjectInfo objectInfo = variable.getObjectInfo(state);
 		// ObjectInfoPrimitive enumObjectInfo = (ObjectInfoPrimitive)
 		// objectInfo;
 
@@ -77,4 +76,12 @@ public class EnumEqualsConstant extends Atom {
 		return constantVal == value;
 	}
 
+	@Override
+	public void accept(BoolVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	public Object getConstantVal() {
+		return constantVal;
+	}
 }

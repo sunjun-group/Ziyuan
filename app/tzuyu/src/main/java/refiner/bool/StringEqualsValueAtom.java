@@ -3,8 +3,8 @@ package refiner.bool;
 import java.util.ArrayList;
 import java.util.List;
 
-import tzuyu.engine.bool.Atom;
 import tzuyu.engine.bool.Var;
+import tzuyu.engine.iface.BoolVisitor;
 import tzuyu.engine.model.ObjectInfo;
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.utils.TzuYuPrimtiveTypes;
@@ -18,65 +18,72 @@ import tzuyu.engine.utils.TzuYuPrimtiveTypes;
  * @author Spencer Xiao
  * 
  */
-public class StringEqualsValueAtom extends Atom {
+public class StringEqualsValueAtom extends FieldAtom {
+	private String strValue;
 
-  private FieldVar variable;
-  private String strValue;
+	public StringEqualsValueAtom(FieldVar var, String value) {
+		super(var);
+		this.strValue = value;
+	}
 
-  public StringEqualsValueAtom(FieldVar var, String value) {
-    this.variable = var;
-    this.strValue = value;
-  }
+	@Override
+	public String toString() {
+		return variable.toString() + " == " + strValue;
+	}
 
-  @Override
-  public String toString() {
-    return variable.toString() + " == " + strValue;
-  }
+	public boolean evaluate(Object[] objects) {
+		Object obj = variable.getValue(objects);
 
-  public boolean evaluate(Object[] objects) {
-    Object obj = variable.getValue(objects);
+		if (obj == null) {
+			return false;
+		} else {
+			return (obj.toString().equals(strValue));
+		}
+	}
 
-    if (obj == null) {
-      return false;
-    } else {
-      return (obj.toString().equals(strValue));
-    }
-  }
+	public List<Var> getReferencedVariables() {
+		List<Var> vars = new ArrayList<Var>(1);
+		vars.add(variable);
+		return vars;
+	}
 
-  public List<Var> getReferencedVariables() {
-    List<Var> vars = new ArrayList<Var>(1);
-    vars.add(variable);
-    return vars;
-  }
+	@Override
+	public int hashCode() {
+		return variable.hashCode() * 31 + strValue.hashCode();
+	}
 
-  @Override
-  public int hashCode() {
-    return variable.hashCode() * 31 + strValue.hashCode();
-  }
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
 
-  @Override
-  public boolean equals(Object o) {
-    if (o == this) {
-      return true;
-    }
+		if (!(o instanceof StringEqualsValueAtom)) {
+			return false;
+		}
 
-    if (!(o instanceof StringEqualsValueAtom)) {
-      return false;
-    }
+		StringEqualsValueAtom obj = (StringEqualsValueAtom) o;
 
-    StringEqualsValueAtom obj = (StringEqualsValueAtom) o;
+		return obj.variable.equals(variable) && obj.strValue.equals(strValue);
+	}
 
-    return obj.variable.equals(variable) && obj.strValue.equals(strValue);
-  }
+	public boolean evaluate(Prestate state) {
+		ObjectInfo objectInfo = variable.getObjectInfo(state);
 
-  public boolean evaluate(Prestate state) {
-    ObjectInfo objectInfo = variable.getObjectInfo(state);
+		// ObjectInfoPrimitive stringInfo = (ObjectInfoPrimitive) objectInfo;
 
-    // ObjectInfoPrimitive stringInfo = (ObjectInfoPrimitive) objectInfo;
+		String value = TzuYuPrimtiveTypes.getString(String.class,
+				(int) objectInfo.getNumericValue());
 
-    String value = TzuYuPrimtiveTypes.getString(String.class,
-        (int) objectInfo.getNumericValue());
+		return strValue.equals(value);
+	}
 
-    return strValue.equals(value);
-  }
+	@Override
+	public void accept(BoolVisitor visitor) {
+		visitor.visit(this);
+	}
+	
+	public String getValue() {
+		return strValue;
+	}
 }

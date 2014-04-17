@@ -3,6 +3,7 @@ package tzuyu.engine.bool;
 import java.util.ArrayList;
 import java.util.List;
 
+import tzuyu.engine.iface.BoolVisitor;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Prestate;
 
@@ -130,5 +131,14 @@ public class CNFClause implements Formula {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void accept(BoolVisitor visitor) {
+		visitor.visit(this);
+	}
+	
+	public List<Literal> getChildren() {
+		return literals;
 	}
 }

@@ -1,5 +1,7 @@
 package refiner.bool;
 
+import tzuyu.engine.iface.BoolVisitor;
+
 /**
  * The term in the linear integer arithmetic {@link LIAAtom} formula contains an
  * integer coefficient and a field variable which refers to a field defined in
@@ -39,4 +41,8 @@ public class LIATerm {
   public String toString() {
     return toCodeString();
   }
+
+	public void accept(BoolVisitor visitor) {
+		visitor.visit(this);
+	}
 }

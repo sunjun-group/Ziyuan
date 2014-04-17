@@ -6,6 +6,7 @@ import tzuyu.engine.bool.Atom;
 import tzuyu.engine.bool.False;
 import tzuyu.engine.bool.True;
 import tzuyu.engine.bool.Var;
+import tzuyu.engine.iface.BoolVisitor;
 
 
 
@@ -25,4 +26,6 @@ public interface Formula {
   public List<Atom> getAtomics();
 
   public Formula simplify();
+
+  public void accept(BoolVisitor visitor);
 }

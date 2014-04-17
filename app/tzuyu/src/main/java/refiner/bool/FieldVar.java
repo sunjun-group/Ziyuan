@@ -3,6 +3,7 @@ package refiner.bool;
 import java.util.List;
 
 import tzuyu.engine.bool.Var;
+import tzuyu.engine.iface.BoolVisitor;
 import tzuyu.engine.model.ArtFieldInfo;
 import tzuyu.engine.model.ObjectInfo;
 import tzuyu.engine.model.Prestate;
@@ -109,4 +110,15 @@ public class FieldVar implements Var {
 		return argIndex;
 	}
 
+	public void accept(BoolVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	public ArtFieldInfo getField() {
+		return field;
+	}
+
+	public String getName() {
+		return field.getFullName();
+	}
 }

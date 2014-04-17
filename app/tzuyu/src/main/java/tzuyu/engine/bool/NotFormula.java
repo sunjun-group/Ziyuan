@@ -2,11 +2,12 @@ package tzuyu.engine.bool;
 
 import java.util.List;
 
+import tzuyu.engine.iface.BoolVisitor;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Prestate;
 
 public final class NotFormula implements Formula {
-	private final Formula operand;
+	private Formula operand;
 
 	public NotFormula(Formula operand) {
 		this.operand = operand;
@@ -77,5 +78,14 @@ public final class NotFormula implements Formula {
 
 	public boolean evaluate(Prestate state) {
 		return !operand.evaluate(state);
+	}
+
+	@Override
+	public void accept(BoolVisitor visitor) {
+		visitor.visit(this);
+	}
+	
+	public Formula getChild() {
+		return operand;
 	}
 }

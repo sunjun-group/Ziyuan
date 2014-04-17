@@ -12,6 +12,7 @@ import tzuyu.engine.bool.DNFTerm;
 import tzuyu.engine.bool.EquivalenceChecker;
 import tzuyu.engine.bool.Literal;
 import tzuyu.engine.bool.Var;
+import tzuyu.engine.iface.BoolVisitor;
 import tzuyu.engine.model.Prestate;
 
 public class TestBDD {
@@ -121,6 +122,12 @@ class AtomicTest extends Atom {
 
 	public boolean evaluate(Prestate state) {
 		return false;
+	}
+
+	@Override
+	public void accept(BoolVisitor visitor) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
