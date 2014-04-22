@@ -28,6 +28,10 @@ import tzuyu.plugin.reporter.PluginLogger;
  */
 public class TzuyuEngineProxy implements TzuyuEngine {
 	private Tzuyu tzuyu;
+	
+	static {
+		Tzuyu.setLogger(PluginLogger.getLogger());
+	}
 
 	public TzuyuEngineProxy(TzClass project, TzReportHandler reporter,
 			IReferencesAnalyzer refAnalyzer) {

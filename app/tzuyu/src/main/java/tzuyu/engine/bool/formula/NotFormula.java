@@ -1,7 +1,8 @@
-package tzuyu.engine.bool;
+package tzuyu.engine.bool.formula;
 
 import java.util.List;
 
+import tzuyu.engine.bool.Var;
 import tzuyu.engine.iface.BoolVisitor;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Prestate;

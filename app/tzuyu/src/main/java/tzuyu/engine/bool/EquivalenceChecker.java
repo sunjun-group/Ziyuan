@@ -6,6 +6,7 @@ import java.util.Set;
 
 import tzuyu.engine.bool.bdd.BDDManager;
 import tzuyu.engine.bool.bdd.BDDNode;
+import tzuyu.engine.bool.formula.Atom;
 import tzuyu.engine.model.Formula;
 
 

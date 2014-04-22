@@ -1,8 +1,23 @@
-package refiner.bool;
+package tzuyu.engine.bool;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import tzuyu.engine.utils.Pair;
 
 public enum Operator {
-	GE(">="), LE("<="), GT(">"), LT("<"), EQ("=="), NE("!=");
+	GE(">="), LE("<="), GT(">"), LT("<"), EQ("=="), NE("!="),
+	AND("&&"), OR("||");
 
+	public static final List<Pair<Operator, Operator>> OPPOSITE_PAIRS;
+	
+	static {
+		OPPOSITE_PAIRS = new ArrayList<Pair<Operator,Operator>>();
+		OPPOSITE_PAIRS.add(Pair.of(GE, LT));
+		OPPOSITE_PAIRS.add(Pair.of(LE, GT));
+		OPPOSITE_PAIRS.add(Pair.of(EQ, NE));
+		OPPOSITE_PAIRS.add(Pair.of(AND, OR));
+	}
 	private final String operator;
 
 	private Operator(String op) {
@@ -27,13 +42,13 @@ public enum Operator {
 			return false;
 		}
 	}
-
+	
 	@Override
 	public String toString() {
 		return operator;
 	}
 
-	public String getOperator() {
+	public String getCode() {
 		return operator;
 	}
 }

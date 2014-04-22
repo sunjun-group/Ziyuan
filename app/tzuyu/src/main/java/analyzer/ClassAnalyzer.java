@@ -2,7 +2,6 @@ package analyzer;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -10,26 +9,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import tzuyu.engine.TzMethod;
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.utils.PrimitiveTypes;
 
 public class ClassAnalyzer {
 
-	public static void main(String[] args) throws ClassNotFoundException {
-		Class<?> targetClassName = Class.forName("java.security.Signature");
-		List<String> methods = new ArrayList<String>();
-		methods.add("initVerify");
-		methods.add("initSign");
-		methods.add("update");
-		methods.add("verify");
-		methods.add("sign");
-		ClassAnalyzer ca = new ClassAnalyzer(targetClassName, methods);
-		ca.analysis();
-	}
+//	public static void main(String[] args) throws ClassNotFoundException {
+//		Class<?> targetClassName = Class.forName("java.security.Signature");
+//		List<String> methods = new ArrayList<String>();
+//		methods.add("initVerify");
+//		methods.add("initSign");
+//		methods.add("update");
+//		methods.add("verify");
+//		methods.add("sign");
+//		ClassAnalyzer ca = new ClassAnalyzer(targetClassName, methods);
+//		ca.analysis();
+//	}
 
 	private Class<?> target;
 
-	List<String> methods;
+	List<TzMethod> methods;
 
 	Set<Class<?>> referencedTypes;
 
@@ -39,12 +39,12 @@ public class ClassAnalyzer {
 	 * all public methods defined in the target class will be analyzed.
 	 * 
 	 * @param targetClassName
-	 * @param methodNames
+	 * @param methods2
 	 * @throws ClassNotFoundException
 	 */
-	public ClassAnalyzer(Class<?> targetClass, List<String> methodNames) {
+	public ClassAnalyzer(Class<?> targetClass, List<TzMethod> methods) {
 		this.target = targetClass;
-		this.methods = methodNames;
+		this.methods = methods;
 		referencedTypes = new HashSet<Class<?>>();
 	}
 

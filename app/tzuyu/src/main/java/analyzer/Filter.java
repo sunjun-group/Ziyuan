@@ -14,13 +14,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Filter {
-	
-	private static Map<Class<?>, Set<String>> filters = new HashMap<Class<?>, Set<String>>();
+import tzuyu.engine.TzMethod;
 
-	public static void setMethodFileter(Class<?> clazz, List<String> methods) {
-		Set<String> set = new HashSet<String>();
-		for (String element : methods) {
+public class Filter {
+	/* TODO LLT: this field can not be static!*/
+	private static Map<Class<?>, Set<TzMethod>> filters = new HashMap<Class<?>, Set<TzMethod>>();
+
+	public static void setMethodFileter(Class<?> clazz, List<TzMethod> methods) {
+		Set<TzMethod> set = new HashSet<TzMethod>();
+		for (TzMethod element : methods) {
 			set.add(element);
 		}
 		filters.put(clazz, set);
@@ -44,20 +46,25 @@ public class Filter {
 	public static boolean isInFilterList(Class<?> type) {
 		return filterdTypes.contains(type);
 	}
-
+	
 	public static boolean filterMethod(Method method) {
 		// We only handle public non-abstract method
 		if (Modifier.isPublic(method.getModifiers())
 				&& !Modifier.isAbstract(method.getModifiers())) {
 			if (filters.containsKey(method.getDeclaringClass())) {
-				return filters.get(method.getDeclaringClass()).contains(
-						method.getName());
+				for (TzMethod tzMethod : filters.get(method.getDeclaringClass())) {
+					if (method.getName().equals(tzMethod.getName())
+							&& SignatureUtils.getSignature(method).equals(
+									tzMethod.getSignature())) {
+						return true;
+					}
+					 
+				}
 			} else {
 				return true;
 			}
-		} else {
-			return false;
-		}
+		} 
+		return false;
 	}
 
 	public static boolean filterConstructor(Constructor<?> ctor) {

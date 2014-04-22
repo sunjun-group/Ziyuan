@@ -161,6 +161,10 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 	public static ILogger<?> getLog() {
 		return logger;
 	}
+	
+	public static void setLogger(ILogger<?> logger) {
+		Tzuyu.logger = logger;
+	}
 
 	@Override
 	public void checkProgress() throws InterruptedException {

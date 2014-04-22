@@ -332,4 +332,8 @@ public class DFA {
 	public boolean isAccepting(int state) {
 		return acceptingStates.contains(state);
 	}
+	
+	public List<State> getAllStates() {
+		return states;
+	}
 }

@@ -11,6 +11,7 @@ package tzuyu.engine.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -19,6 +20,12 @@ import java.util.List;
  */
 public class CollectionUtils {
 	private CollectionUtils() {}
+	
+	public static <T> List<T> listOf(T value) {
+		List<T> list = new ArrayList<T>();
+		list.add(value);
+		return list;
+	}
 	
 	public static <T> T getFirstElement(T[] vals) {
 		if (isEmptyCheckNull(vals)) {
@@ -93,5 +100,32 @@ public class CollectionUtils {
 			return new ArrayList<T>();
 		}
 		return val;
+	}
+	
+	public static <T>boolean equal(T[] a0, T[] a1) {
+		if (a0 == a1) {
+			return true;
+		}
+		if (a0 == null || a1 == null) {
+			return false;
+		}
+		if (a0.length != a1.length) {
+			return false;
+		}
+		for (int i = 0; i < a0.length; i++) {
+			if (!ObjectUtils.equalsWithNull(a0[i], a1[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static <K, E>List<E> getListInitIfEmpty(Map<K, List<E>> map, K key) {
+		List<E> value = map.get(key);
+		if (value == null) {
+			value = new ArrayList<E>();
+			map.put(key, value);
+		}
+		return value;
 	}
 }

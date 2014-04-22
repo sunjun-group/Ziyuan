@@ -250,7 +250,7 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 			// for interface, using eclipse API to get its implemetation.
 			List<String> availableSubTypes = classMapCache.get(clazz);
 			if (availableSubTypes == null) {
-				IType type = getIType(project, clazz);
+				IType type = IResourceUtils.getIType(project, clazz);
 				IType[] allSubtypes;
 				try {
 					allSubtypes = getSubtypesByScope(project, type, searchScope);
@@ -348,14 +348,5 @@ public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
 			return typeHierachy.getImplementingClasses(type);
 		}
 		return typeHierachy.getSubclasses(type);
-	}
-
-	private static IType getIType(IJavaProject project, Class<?> clazz) {
-		try {
-			return project.findType(clazz.getCanonicalName());
-		} catch (JavaModelException e) {
-			PluginLogger.getLogger().logEx(e);
-			return null;
-		}
 	}
 }

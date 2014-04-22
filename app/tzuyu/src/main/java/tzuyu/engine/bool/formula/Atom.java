@@ -1,4 +1,4 @@
-package tzuyu.engine.bool;
+package tzuyu.engine.bool.formula;
 
 import java.util.ArrayList;
 import java.util.List;

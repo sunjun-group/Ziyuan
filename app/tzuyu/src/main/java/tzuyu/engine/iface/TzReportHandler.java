@@ -47,7 +47,7 @@ public abstract class TzReportHandler implements IReportHandler<TzuYuAlphabet>{
 	/*
 	 *  pair.a : pass testcases,
 	 *  pair.b : fail testcases
-	 * */
+	 **/
 	public void writeTestCases(Pair<List<Sequence>, List<Sequence>> allSeqs,
 			TzClass project) throws TzException {
 		getOutStream(OutputType.TZ_OUTPUT).println(

@@ -22,7 +22,8 @@ public enum TzExceptionType {
 	INTERRUPT,
 	ALPHABET_EMPTY,
 	RETHROW,
-	CANNOT_FIND_DEVIDER;
+	CANNOT_FIND_DEVIDER,
+	ASSERTION_WRITER;
 
 	public static TzExceptionType fromLStar(Type type) {
 		switch (type) {

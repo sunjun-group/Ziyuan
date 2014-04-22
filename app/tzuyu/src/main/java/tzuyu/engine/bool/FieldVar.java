@@ -1,8 +1,7 @@
-package refiner.bool;
+package tzuyu.engine.bool;
 
 import java.util.List;
 
-import tzuyu.engine.bool.Var;
 import tzuyu.engine.iface.BoolVisitor;
 import tzuyu.engine.model.ArtFieldInfo;
 import tzuyu.engine.model.ObjectInfo;

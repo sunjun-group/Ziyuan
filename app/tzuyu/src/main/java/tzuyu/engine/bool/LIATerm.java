@@ -1,5 +1,6 @@
-package refiner.bool;
+package tzuyu.engine.bool;
 
+import tzuyu.engine.bool.formula.LIAAtom;
 import tzuyu.engine.iface.BoolVisitor;
 
 /**

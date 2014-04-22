@@ -3,8 +3,8 @@ package refiner;
 import java.util.ArrayList;
 import java.util.List;
 
-import refiner.bool.FieldVar;
 import tester.RuntimeExecutor;
+import tzuyu.engine.bool.FieldVar;
 import tzuyu.engine.bool.Var;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.QueryTrace;

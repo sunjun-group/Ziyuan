@@ -3,21 +3,17 @@ package refiner;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import refiner.bool.BooleanIsFalseAtom;
-import refiner.bool.CharEqualsValueAtom;
-import refiner.bool.EnumEqualsConstant;
-import refiner.bool.FieldVar;
-import refiner.bool.LIAAtom;
-import refiner.bool.LIATerm;
-import refiner.bool.ObjectIsNullAtom;
-import refiner.bool.Operator;
-import refiner.bool.StringEqualsValueAtom;
-
-import tzuyu.engine.bool.Atom;
-import tzuyu.engine.bool.DNF;
-import tzuyu.engine.bool.DNFTerm;
-import tzuyu.engine.bool.Literal;
+import tzuyu.engine.bool.FieldVar;
+import tzuyu.engine.bool.FormulaNegation;
+import tzuyu.engine.bool.LIATerm;
+import tzuyu.engine.bool.Operator;
+import tzuyu.engine.bool.formula.AndFormula;
+import tzuyu.engine.bool.formula.Atom;
+import tzuyu.engine.bool.formula.Box;
+import tzuyu.engine.bool.formula.Eq;
+import tzuyu.engine.bool.formula.LIAAtom;
+import tzuyu.engine.bool.formula.NotEq;
+import tzuyu.engine.bool.formula.OrFormula;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.utils.Pair;
 import tzuyu.engine.utils.Permutation;
@@ -96,7 +92,7 @@ public class DividerProcessor {
         domains.add(size);
       }
 
-      DNF divider = new DNF();
+      OrFormula divider = new OrFormula();
       // Step 2:Generate one assignment for categorical types
       Permutation permutation = new Permutation(domains, true);
       while (permutation.hasNext()) {
@@ -116,8 +112,8 @@ public class DividerProcessor {
           // The raw divider is valid under current assignment
 
           // Construct the term of valid assignment of the final DNF.
-          DNFTerm term = constructCategoricalConstraint(categoricals, indices);
-          divider.addTerm(term);
+            AndFormula term = constructCategoricalConstraint(categoricals, indices);
+            divider.add(term);
         }
       }
       return divider;
@@ -137,7 +133,7 @@ public class DividerProcessor {
         domains.add(size);
       }
 
-      DNF divider = new DNF();
+      OrFormula divider = new OrFormula();
 
       Permutation permutation = new Permutation(domains, true);
       while (permutation.hasNext()) {
@@ -153,15 +149,15 @@ public class DividerProcessor {
         }
 
         // construct the categorical part of the term of current assignment
-        DNFTerm dnfTerm = constructCategoricalConstraint(categoricals, indices);
+        AndFormula dnfTerm = constructCategoricalConstraint(categoricals, indices);
         // Construct the numerical part of the term of current assignment
-        Literal numericalLiteral = constructNumericalContraint(numericals,
-            Operator.GE, bias - offset);
+        Formula numericalLiteral = constructNumericalContraint(numericals,
+                Operator.GE, bias - offset);
         // Add both categorical and numerical part to form the term of
         // current assignment.
-        dnfTerm.addLiteral(numericalLiteral);
+        dnfTerm.add(numericalLiteral);
 
-        divider.addTerm(dnfTerm);
+        divider.add(dnfTerm);
       }
 
       return divider;
@@ -176,7 +172,7 @@ public class DividerProcessor {
    * @param bias
    * @return
    */
-  private static Literal constructNumericalContraint(
+  private static /*Literal*/Formula constructNumericalContraint(
       List<TypeTerm> numericals, Operator op, double bias) {
 
     // post-process the numerical coefficients 
@@ -184,6 +180,7 @@ public class DividerProcessor {
       LIATerm term = numericals.get(0).second();
       double coeff = term.getCoefficient();
       FieldVar var = term.getVariable();
+      LIAAtom newAtom;
       if (var.getType().equals(int.class)) {
         double b = bias/coeff;
         long intPart = (long) b;
@@ -193,24 +190,29 @@ public class DividerProcessor {
         long newBias  = intPart;
         if (coeff > 0) {
           newBias = ( intPart == b || b < 0) ? intPart : (intPart + 1);
-          LIAAtom newAtom = new LIAAtom(liaTerms, op, newBias);
-          return new Literal(newAtom, false);
+          newAtom = new LIAAtom(liaTerms, op, newBias);
         } else {
           newBias = (intPart == b || b > 0) ? intPart : (intPart - 1);
-          LIAAtom newAtom = new LIAAtom(liaTerms, Operator.LE, newBias);
-          return new Literal(newAtom, false);
+          newAtom = new LIAAtom(liaTerms, Operator.LE, newBias);
         } 
+        return newAtom;
       } else {
+    	  boolean negation = false;
         if (Math.abs(coeff) < 1) {
           List<LIATerm> liaTerms = new ArrayList<LIATerm>(1);
           if (Math.abs(coeff) > Math.abs(bias)) {     
             liaTerms.add(new LIATerm(var, Math.round(coeff/bias)));
-            LIAAtom newAtom = new LIAAtom(liaTerms, op, 1);
-            return new Literal(newAtom, bias < 0);
+            newAtom = new LIAAtom(liaTerms, op, 1);
+            negation = bias > 0;
           } else {
             liaTerms.add(new LIATerm(term.getVariable(), 1));
-            LIAAtom newAtom = new LIAAtom(liaTerms, op, Math.round(bias/coeff));
-            return new Literal(newAtom, coeff < 0);
+            newAtom = new LIAAtom(liaTerms, op, Math.round(bias/coeff));
+            negation = coeff > 0;
+          }
+          if (!negation) {
+        	  return newAtom;
+          } else {
+        	  return FormulaNegation.notOf(newAtom);
           }
         } 
       }
@@ -224,10 +226,7 @@ public class DividerProcessor {
           term.getCoefficient());
       liaTerms.add(newTerm);
     }
-    
-    Atom liaAtom = new LIAAtom(liaTerms, op, bias);
-
-    return new Literal(liaAtom, false);
+    return new LIAAtom(liaTerms, op, bias);
   }
 
   /**
@@ -238,7 +237,8 @@ public class DividerProcessor {
    * @param indices
    * @return
    */
-  private static DNFTerm constructCategoricalConstraint(
+  	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static AndFormula constructCategoricalConstraint(
       List<TypeTerm> categorical, List<Integer> indices) {
 
     if (categorical.size() != indices.size()) {
@@ -246,36 +246,40 @@ public class DividerProcessor {
           + "valuation do not have same size");
     }
 
-    DNFTerm constraint = new DNFTerm();
+    AndFormula constraint = new AndFormula();
+    
     for (int index = 0; index < indices.size(); index++) {
+    	Atom newCond;
+    	
       TypeTerm term = categorical.get(index);
       Class<?> type = term.first();
       int valueIndex = indices.get(index);
+      Object value;
+      
       if (type.equals(boolean.class) || type.equals(Boolean.class)) {
-        Atom atom = new BooleanIsFalseAtom(term.second().getVariable());
-        boolean isTrue = TzuYuPrimtiveTypes.isBooleanTrue(type, valueIndex);
-        constraint.addLiteral(new Literal(atom, isTrue));
-      } else if (type.equals(String.class)) {
-        Atom atom = new StringEqualsValueAtom(term.second().getVariable(),
-            TzuYuPrimtiveTypes.getString(type, valueIndex));
-        constraint.addLiteral(new Literal(atom, false));
-      } else if (type.equals(char.class) || type.equals(Character.class)) {
-        Atom atom = new CharEqualsValueAtom(term.second().getVariable(),
-            TzuYuPrimtiveTypes.getChar(type, valueIndex));
-        constraint.addLiteral(new Literal(atom, false));
-      } else if (type.isEnum()) {
-        Atom atom = new EnumEqualsConstant(term.second().getVariable(),
-            TzuYuPrimtiveTypes.getEnum(type, valueIndex));
-        constraint.addLiteral(new Literal(atom, false));
-      } else {// The reference type variable
-        Atom atom = new ObjectIsNullAtom(term.second().getVariable());
-        boolean isNull = TzuYuPrimtiveTypes.isNullReference(type, valueIndex);
-        constraint.addLiteral(new Literal(atom, !isNull));
+    	  value = TzuYuPrimtiveTypes.isBooleanTrue(type, valueIndex);
+        } else if (type.equals(String.class)) {
+          value = TzuYuPrimtiveTypes.getString(type, valueIndex);
+        } else if (type.equals(char.class) || type.equals(Character.class)) {
+          value = TzuYuPrimtiveTypes.getChar(type, valueIndex);
+        } else if (type.isEnum()) {
+        	value = TzuYuPrimtiveTypes.getEnum(type, valueIndex);
+        } else {// The reference type variable
+        	value = TzuYuPrimtiveTypes.isNullReference(type, valueIndex);
+        }
+      
+      Box<?> box = Box.capture(value, type);
+      if (box.isNullBox()) {
+    	  newCond = new NotEq(term.second().getVariable(), box);
+      } else {
+    	  newCond = new Eq(term.second().getVariable(), box);
       }
+      constraint.add(newCond);
     }
     return constraint;
   }
 }
+
 
 /**
  * The internal helper class is a pair of the type of variable referenced in the

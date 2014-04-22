@@ -348,4 +348,42 @@ public class ResourcesUtils {
 			return false;
 		}
 	}
+	
+	/**
+	 * Returns a method signature in which every type is uses its
+	 * fully-qualified name and is written using the identifier for unresolved
+	 * types.
+	 */
+	public static String getParamTypeName(IMethod method, String typeSignature)
+			throws JavaModelException {
+		IType type = method.getDeclaringType();
+
+		int arrayCount = Signature.getArrayCount(typeSignature);
+		String typeSignatureWithoutArray = typeSignature.substring(arrayCount);
+
+		String typeName = Signature.toString(typeSignatureWithoutArray);
+		if (method.getTypeParameter(typeName).exists()
+				|| type.getTypeParameter(typeName).exists()) {
+			String typeSig = Signature.C_TYPE_VARIABLE + typeName
+					+ Signature.C_SEMICOLON;
+			return Signature.createArraySignature(typeSig, arrayCount);
+		}
+		String[][] types = type.resolveType(typeName);
+
+		StringBuilder fqname = new StringBuilder();
+		if (types != null) {
+			// Write the first type that was resolved
+			fqname.append(types[0][0]); // the package name
+			fqname.append('.');
+			fqname.append(types[0][1]); // the class name
+
+			String typeSig = Signature.createTypeSignature(fqname.toString(),
+					false);
+			return Signature.createArraySignature(typeSig, arrayCount);
+		} else {
+			// Otherwise this is a primitive type, return the signature as it is
+			return typeSignature;
+		}
+
+	}
 }

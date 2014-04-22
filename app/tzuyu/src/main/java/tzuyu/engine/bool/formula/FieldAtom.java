@@ -6,22 +6,23 @@
  *  Version:  $Revision: 1 $
  */
 
-package refiner.bool;
+package tzuyu.engine.bool.formula;
 
-import tzuyu.engine.bool.Atom;
+import tzuyu.engine.bool.FieldVar;
+
 
 /**
  * @author LLT
  *
  */
 public abstract class FieldAtom extends Atom{
-	protected FieldVar variable;
+	protected FieldVar attribute;
 	
 	public FieldAtom(FieldVar var) {
-		this.variable = var;
+		this.attribute = var;
 	}
 
 	public FieldVar getKey() {
-		return variable;
+		return attribute;
 	}
 }

@@ -1,22 +1,23 @@
-package tzuyu.engine.bool;
+package tzuyu.engine.bool.formula;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import tzuyu.engine.bool.Var;
 import tzuyu.engine.iface.BoolVisitor;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Prestate;
 
-public class False extends Atom {
+public class True extends Atom {
 
 	private final List<Var> variables = new ArrayList<Var>();
 
-	private static final False instance = new False();
+	private static final True instance = new True();
 
-	private False() {
+	private True() {
 	}
 
-	public static False getInstance() {
+	public static True getInstance() {
 		return instance;
 	}
 
@@ -26,11 +27,11 @@ public class False extends Atom {
 
 	@Override
 	public String toString() {
-		return "false";
+		return "true";
 	}
 
 	public boolean evaluate(Object[] objects) {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -40,7 +41,7 @@ public class False extends Atom {
 
 	@Override
 	public int hashCode() {
-		return 3;
+		return 11;
 	}
 
 	@Override
@@ -48,12 +49,11 @@ public class False extends Atom {
 		if (o == this) {
 			return true;
 		}
-
-		return o instanceof False;
+		return o instanceof True;
 	}
 
 	public boolean evaluate(Prestate state) {
-		return false;
+		return true;
 	}
 
 	@Override

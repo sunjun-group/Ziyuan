@@ -18,7 +18,7 @@ import refiner.Witness;
 import tzuyu.engine.algorithm.iface.Refiner;
 import tzuyu.engine.algorithm.iface.Teacher;
 import tzuyu.engine.algorithm.iface.Tester;
-import tzuyu.engine.bool.True;
+import tzuyu.engine.bool.formula.True;
 import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.iface.ITzManager;
 import tzuyu.engine.model.Formula;

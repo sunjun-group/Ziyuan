@@ -4,9 +4,9 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 import tzuyu.engine.TzClass;
-import tzuyu.engine.bool.AndFormula;
-import tzuyu.engine.bool.NotFormula;
+import tzuyu.engine.bool.FormulaNegation;
 import tzuyu.engine.bool.Simplifier;
+import tzuyu.engine.bool.formula.AndFormula;
 import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.exception.TzRuntimeException;
@@ -77,7 +77,7 @@ public class TzuYuAlphabet extends Alphabet<TzuYuAction> {
 	 *            the negative action which is the negation of divider.
 	 * @return the new alphabet which contains the two alphabets.
 	 */
-	public TzuYuAlphabet refineIncremental(Formula divider, Action action) {
+	public TzuYuAlphabet refine(Formula divider, Action action) {
 
 		if (!(action instanceof TzuYuAction)) {
 			throw new TzRuntimeException("The action is not an TzuYu alphabet");
@@ -89,7 +89,7 @@ public class TzuYuAlphabet extends Alphabet<TzuYuAction> {
 
 		Formula trueDivider = divider;
 
-		Formula falseDivider = new NotFormula(divider);
+		Formula falseDivider = FormulaNegation.notOf(divider);
 
 		TzuYuAlphabet newSigma = new TzuYuAlphabet(this);
 
@@ -122,10 +122,6 @@ public class TzuYuAlphabet extends Alphabet<TzuYuAction> {
 		}
 		
 		return newSigma;
-	}
-	
-	public TzuYuAlphabet refine(Formula divider, Action action) {
-		return refineIncremental(divider, action);
 	}
 
 	public TzClass getProject() {

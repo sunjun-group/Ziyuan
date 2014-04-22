@@ -28,7 +28,8 @@ public class Pair<A, B> {
 			return false;
 		}
 		Pair<?, ?> that = (Pair<?, ?>)obj;
-		return LogicUtils.equalsWithNull(this.a, that.a) && LogicUtils.equalsWithNull(this.b, that.b);
+		return ObjectUtils.equalsWithNull(this.a, that.a)
+				&& ObjectUtils.equalsWithNull(this.b, that.b);
 	}
 	
 	public int hashCode() {

@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import tzuyu.engine.bool.Atom;
-import tzuyu.engine.bool.CNFClause;
-import tzuyu.engine.bool.DNF;
-import tzuyu.engine.bool.DNFTerm;
 import tzuyu.engine.bool.EquivalenceChecker;
-import tzuyu.engine.bool.Literal;
+import tzuyu.engine.bool.FormulaNegation;
 import tzuyu.engine.bool.Var;
+import tzuyu.engine.bool.formula.AndFormula;
+import tzuyu.engine.bool.formula.Atom;
+import tzuyu.engine.bool.formula.OrFormula;
 import tzuyu.engine.iface.BoolVisitor;
+import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Prestate;
 
 public class TestBDD {
@@ -28,31 +28,31 @@ public class TestBDD {
 		atoms.add(p);
 		atoms.add(q);
 
-		Literal pLit = new Literal(p, false);
-		Literal nPLit = new Literal(p, true);
-		Literal qLit = new Literal(q, false);
-		Literal nQLit = new Literal(q, true);
+		Formula pLit = p;
+		Formula nPLit = FormulaNegation.notOf(p);
+		Formula qLit = q;
+		Formula nQLit = FormulaNegation.notOf(q);
 
-		DNFTerm t1 = new DNFTerm();
-		t1.addLiteral(pLit);
-		t1.addLiteral(qLit);
+		AndFormula t1 = new AndFormula();
+		t1.add(pLit);
+		t1.add(qLit);
 
-		DNFTerm t2 = new DNFTerm();
-		t2.addLiteral(pLit);
-		t2.addLiteral(nQLit);
+		AndFormula t2 = new AndFormula();
+		t2.add(pLit);
+		t2.add(nQLit);
 
-		DNFTerm t3 = new DNFTerm();
-		t3.addLiteral(nPLit);
-		t3.addLiteral(qLit);
+		AndFormula t3 = new AndFormula();
+		t3.add(nPLit);
+		t3.add(qLit);
 
-		DNF t = new DNF();
-		t.addTerm(t1);
-		t.addTerm(t2);
-		t.addTerm(t3);
+		OrFormula t = new OrFormula();
+		t.add(t1);
+		t.add(t2);
+		t.add(t3);
 
-		CNFClause c = new CNFClause();
-		c.addLiteral(pLit);
-		c.addLiteral(qLit);
+		OrFormula c = new OrFormula();
+		c.add(pLit);
+		c.add(qLit);
 
 		BDDManager manager = new BDDManager(atoms);
 

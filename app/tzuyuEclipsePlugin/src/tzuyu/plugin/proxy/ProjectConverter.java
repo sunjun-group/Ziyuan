@@ -19,8 +19,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 
 import tzuyu.engine.TzClass;
+import tzuyu.engine.TzMethod;
 import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.core.dto.WorkObject;
@@ -29,6 +33,7 @@ import tzuyu.plugin.core.exception.ErrorType;
 import tzuyu.plugin.core.exception.PluginException;
 import tzuyu.plugin.core.utils.ClassLoaderUtils;
 import tzuyu.plugin.core.utils.ResourcesUtils;
+import tzuyu.plugin.core.utils.SignatureParser;
 import tzuyu.plugin.reporter.PluginLogger;
 
 /**
@@ -46,7 +51,7 @@ public class ProjectConverter {
 
 	private static TzClass toTzProject(WorkObject workObject)
 			throws PluginException {
-		Map<Class<?>, List<String>> classMethodsMap = new HashMap<Class<?>, List<String>>();
+		Map<Class<?>, List<TzMethod>> classMethodsMap = new HashMap<Class<?>, List<TzMethod>>();
 		if (workObject.isEmtpy()) {
 			throw new PluginException(ErrorType.SELECTION_MORE_THAN_ONE_PROJ_SELECTED);
 		}
@@ -55,19 +60,24 @@ public class ProjectConverter {
 		URLClassLoader classLoader = ClassLoaderUtils.getClassLoader(project);
 		String fullyQualifiedName = null;
 		for (WorkItem item : workObject.getWorkItems()) {
-			String methodName = null;
+			TzMethod method = null;
 			IJavaElement ele = item.getCorrespondingJavaElement();
 			//TODO LLT: just temporary, this is messy.
+			// 	TO REFACTOR
 			switch (ele.getElementType()) {
 			case IJavaElement.CLASS_FILE:
 				fullyQualifiedName = StringUtils.dotJoin(ele.getParent()
 						.getElementName(), ((IClassFile)ele).getType().getElementName());
 				break;			
 			case IJavaElement.METHOD:
-				methodName = ele
-						.getElementName();
+				method = toTzMethod((IMethod) ele);
 				// no break, get class of the selected method just like the
 				// selected class.
+				if (((IMethod)ele).isBinary()) {
+					IType type = (IType) ele.getParent();
+					fullyQualifiedName = type.getFullyQualifiedName();
+					break;
+				}
 			case IJavaElement.COMPILATION_UNIT:
 			case IJavaElement.TYPE:
 				ele.getElementName();
@@ -81,28 +91,40 @@ public class ProjectConverter {
 				break;
 			}
 			Class<?> clazz;
-			List<String> methods;
+			List<TzMethod> methods;
 			try {
 				clazz = classLoader.loadClass(fullyQualifiedName);
 				if ((methods = classMethodsMap.get(clazz)) == null) {
-					methods = new ArrayList<String>();
+					methods = new ArrayList<TzMethod>();
 					classMethodsMap.put(clazz, methods);
 				}
 			} catch (ClassNotFoundException e) {
 				PluginLogger.getLogger().logEx(e);
 				throw new PluginException();
 			}
-			if (methodName != null) {
-				methods.add(methodName);
+			if (method != null) {
+				methods.add(method);
 			}
 		}
 		TzClass tzProject = null;
-		for (Entry<Class<?>, List<String>> entry : classMethodsMap.entrySet()) {
+		for (Entry<Class<?>, List<TzMethod>> entry : classMethodsMap.entrySet()) {
 			tzProject = new TzClass(entry.getKey(), entry.getValue());
 		}
 		// just support selecting on 1 selected class only right now.
 		return tzProject;
 	}
-	
+
+	private static TzMethod toTzMethod(IMethod jMethod) throws PluginException {
+		SignatureParser parser = new SignatureParser((IType)jMethod.getParent());
+		try {
+			String methodJVMSignature = parser.toMethodJVMSignature(
+					jMethod.getParameterTypes(), jMethod.getReturnType());
+			PluginLogger.getLogger().info(methodJVMSignature);
+			return new TzMethod(jMethod.getElementName(), methodJVMSignature);
+		} catch (JavaModelException e) {
+			PluginLogger.getLogger().logEx(e);
+			throw new PluginException();
+		}
+	}
 	
 }

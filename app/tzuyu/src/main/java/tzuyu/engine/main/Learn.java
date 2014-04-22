@@ -1,10 +1,12 @@
 package tzuyu.engine.main;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
+import tzuyu.engine.TzMethod;
 import tzuyu.engine.Tzuyu;
 import tzuyu.engine.iface.IReferencesAnalyzer;
 import tzuyu.engine.main.Command.CommandType;
@@ -68,7 +70,10 @@ public class Learn implements CommandHandler {
 			System.exit(1);
 		}
 		
-		List<String> methods = Option.methods.getValue();
+		List<TzMethod> methods = new ArrayList<TzMethod>();
+		for (String name : Option.methods.getValue()) {
+			methods.add(new TzMethod(name, ""));
+		}
 
 		ClassAnalyzer analyzer = new ClassAnalyzer(targetClass, methods);
 		Map<Class<?>, ClassInfo> classes = analyzer.analysis();

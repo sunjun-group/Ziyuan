@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import tzuyu.engine.bool.AndFormula;
-import tzuyu.engine.bool.NotFormula;
-import tzuyu.engine.bool.OrFormula;
+import tzuyu.engine.bool.FormulaNegation;
+import tzuyu.engine.bool.formula.AndFormula;
+import tzuyu.engine.bool.formula.OrFormula;
 import tzuyu.engine.model.Formula;
 
 
@@ -204,7 +204,7 @@ public class BDDNode {
         for (Integer key : map.keySet()) {
           if (map.get(key) == 0) {
             term = new AndFormula(term,
-                new NotFormula(manager.getAtom(key - 1)));
+            		FormulaNegation.notOf(manager.getAtom(key - 1)));
           } else {
             term = new AndFormula(term, manager.getAtom(key - 1));
           }

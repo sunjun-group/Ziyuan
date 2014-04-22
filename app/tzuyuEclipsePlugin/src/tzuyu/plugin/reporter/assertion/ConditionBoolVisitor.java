@@ -11,22 +11,15 @@ package tzuyu.plugin.reporter.assertion;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaModelException;
 
-import refiner.bool.BooleanIsFalseAtom;
-import refiner.bool.CharEqualsValueAtom;
-import refiner.bool.EnumEqualsConstant;
-import refiner.bool.FieldVar;
-import refiner.bool.LIAAtom;
-import refiner.bool.LIATerm;
-import refiner.bool.ObjectIsNullAtom;
-import refiner.bool.StringEqualsValueAtom;
-import tzuyu.engine.bool.CNF;
-import tzuyu.engine.bool.CNFClause;
-import tzuyu.engine.bool.ConjunctionFormula;
-import tzuyu.engine.bool.DNF;
-import tzuyu.engine.bool.DNFTerm;
-import tzuyu.engine.bool.Literal;
-import tzuyu.engine.bool.NotFormula;
+import tzuyu.engine.bool.FieldVar;
+import tzuyu.engine.bool.LIATerm;
+import tzuyu.engine.bool.formula.ConjunctionFormula;
+import tzuyu.engine.bool.formula.Eq;
+import tzuyu.engine.bool.formula.LIAAtom;
+import tzuyu.engine.bool.formula.NotEq;
+import tzuyu.engine.bool.formula.NotFormula;
 import tzuyu.engine.iface.BoolVisitor;
+import tzuyu.engine.model.Formula;
 import tzuyu.engine.utils.StringUtils;
 
 /**
@@ -43,83 +36,10 @@ public class ConditionBoolVisitor extends BoolVisitor {
 	}
 
 	@Override
-	public void visit(ConjunctionFormula conj) {
-		sb.append("(");
-		conj.getLeft().accept(this);
-		sb.append(")");
-		sb.append(conj.getOperation());
-		sb.append("(");
-		conj.getRight().accept(this);
-		sb.append(")");
-	}
-
-	@Override
 	public void visit(NotFormula formula) {
 		sb.append("!(");
 		formula.getChild().accept(this);
 		sb.append(")");
-	}
-	
-	@Override
-	public void visit(Literal literal) {
-		if (literal.isNegation()) {
-			sb.append("!");
-		}
-		literal.getAtom().accept(this);
-	}
-	
-	/**
-	 * TODO LLT: refactor a little bit?? (all methods below)
-	 * something like and(a, b)
-	 * and(a, and(b, c)) instead of this thing.
-	 */
-	@Override
-	public void visit(DNFTerm dnfTerm) {
-		int size = dnfTerm.getChildren().size();
-		for (int index = 0; index < size; index++) {
-			dnfTerm.getChildren().get(index).accept(this);
-			if (index < size - 1) {
-				sb.append(" && ");
-			}
-		}
-	}
-	
-	@Override
-	public void visit(DNF dnf) {
-		StringBuilder sb = new StringBuilder();
-		int size = dnf.getChildren().size();
-		for (int index = 0; index < size; index++) {
-			sb.append("(");
-			dnf.getChildren().get(index).accept(this);
-			sb.append(")");
-			if (index < size - 1) {
-				sb.append("||");
-			}
-		}
-	}
-	
-	@Override
-	public void visit(CNFClause cnfClause) {
-		int size = cnfClause.getChildren().size();
-		for (int i = 0; i < size; i++) {
-			cnfClause.getChildren().get(i).accept(this);
-			if (i < size - 1) {
-				sb.append("||");
-			}
-		}
-	}
-	
-	@Override
-	public void visit(CNF cnf) {
-		int size = cnf.getChildren().size();
-		for (int i = 0; i < size; i++) {
-			sb.append("(");
-			cnf.getChildren().get(i).accept(this);			
-			sb.append(")");
-			if (i < size - 1) {
-				sb.append("&&");
-			}
-		}
 	}
 	
 	@Override
@@ -133,7 +53,7 @@ public class ConditionBoolVisitor extends BoolVisitor {
 		}
 
 		sb.append(" ");
-		sb.append(liaAtom.getOperator().getOperator());
+		sb.append(liaAtom.getOperator().getCode());
 		sb.append(" ");
 		sb.append(liaAtom.getConstant());
 	}
@@ -144,12 +64,6 @@ public class ConditionBoolVisitor extends BoolVisitor {
 			sb.append("").append(liaTerm.getCoefficient()).append("*");
 		}
 		liaTerm.getVariable().accept(this);
-	}
-	
-	@Override
-	public void visit(ObjectIsNullAtom atom) {
-		atom.getKey().accept(this);
-		sb.append(" == ").append("null");	
 	}
 	
 	@Override
@@ -166,34 +80,36 @@ public class ConditionBoolVisitor extends BoolVisitor {
 		sb.append(pName);
 	}
 	
-	/**
-	 * TODO LLT: totally duplicate code, will refactor further.
-	 */
 	@Override
-	public void visit(StringEqualsValueAtom atom) {
-		atom.getKey().accept(this);
-		sb.append(" == ").append(atom.getValue());	
+	public <T> void visit(Eq<T> eq) {
+		eq.getKey().accept(this);
+		sb.append(" == ");
+		sb.append(eq.getValueBox().getDisplayValue());
 	}
 	
 	@Override
-	public void visit(EnumEqualsConstant atom) {
-		atom.getKey().accept(this);
-		sb.append(" == ").append(atom.getConstantVal());	
+	public <T> void visit(NotEq<T> eq) {
+		eq.getKey().accept(this);
+		sb.append(" != ");
+		sb.append(eq.getValueBox().getDisplayValue());
 	}
 	
 	@Override
-	public void visit(CharEqualsValueAtom atom) {
-		atom.getKey().accept(this);
-		sb.append(" == ").append(atom.getValue());	
-	}
-	
-	@Override
-	public void visit(BooleanIsFalseAtom atom) {
-		atom.getKey().accept(this);
-		sb.append(" == ").append("false");	
+	public void visit(ConjunctionFormula cond) {
+		int size = cond.getElements().size();
+		for (int index = 0; index < size; index++) {
+			Formula clause = cond.getElements().get(index);
+			sb.append("(");
+			sb.append(clause.toString());
+			sb.append(")");
+			if (index < size - 1) {
+				sb.append(cond.getOperator());
+			}
+		}
 	}
 	
 	public String getResult() {
 		return sb.toString();
 	}
+	
 }

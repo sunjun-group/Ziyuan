@@ -115,4 +115,5 @@ public class StringUtils {
 		return dotJoin(new String(packageName), dotJoin(enclosing),
 				new String(simpleTypeName));
 	}
+	
 }

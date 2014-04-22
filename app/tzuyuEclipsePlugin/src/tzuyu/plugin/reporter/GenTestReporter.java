@@ -20,10 +20,13 @@ import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.dfa.DFA;
+import tzuyu.engine.model.exception.ReportException;
+import tzuyu.engine.model.exception.TzException;
 import tzuyu.engine.utils.TzUtils;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.command.gentest.GenTestPreferences;
 import tzuyu.plugin.console.PluginConsolePrintStream;
+import tzuyu.plugin.reporter.assertion.AssertionWriter;
 import tzuyu.plugin.view.dfa.DfaView;
 
 /**
@@ -39,9 +42,9 @@ public class GenTestReporter extends TzReportHandler {
 		super(prefs.getTzConfig());
 		this.prefs = prefs;
 	}
-	
 
-	public void reportDFA(final DFA lastDFA, TzuYuAlphabet sigma) {
+	public void reportDFA(final DFA lastDFA, TzuYuAlphabet sigma) throws ReportException {
+		// we can handle the tzuyu output data right away, or further.
 		saveDFA(lastDFA, sigma.getProject());
 		Display.getDefault().asyncExec(new Runnable() {
 			
@@ -54,6 +57,15 @@ public class GenTestReporter extends TzReportHandler {
 				}
 			}
 		});
+		
+		AssertionWriter assertWriter = new AssertionWriter(lastDFA, sigma
+				.getProject().getTarget(), prefs.getProject());
+		
+		try {
+			assertWriter.writeAssertion();
+		} catch (TzException e) {
+			throw new ReportException(e);
+		}
 	}
 
 	private void saveDFA(DFA dfa, TzClass tzProject) {

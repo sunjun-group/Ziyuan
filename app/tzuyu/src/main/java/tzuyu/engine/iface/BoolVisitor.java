@@ -8,33 +8,21 @@
 
 package tzuyu.engine.iface;
 
-import refiner.bool.BooleanIsFalseAtom;
-import refiner.bool.CharEqualsValueAtom;
-import refiner.bool.EnumEqualsConstant;
-import refiner.bool.FieldVar;
-import refiner.bool.LIAAtom;
-import refiner.bool.LIATerm;
-import refiner.bool.ObjectIsNullAtom;
-import refiner.bool.StringEqualsValueAtom;
-import tzuyu.engine.bool.CNF;
-import tzuyu.engine.bool.CNFClause;
-import tzuyu.engine.bool.ConjunctionFormula;
-import tzuyu.engine.bool.DNF;
-import tzuyu.engine.bool.DNFTerm;
-import tzuyu.engine.bool.False;
-import tzuyu.engine.bool.Literal;
-import tzuyu.engine.bool.NotFormula;
-import tzuyu.engine.bool.True;
+import tzuyu.engine.bool.FieldVar;
+import tzuyu.engine.bool.LIATerm;
+import tzuyu.engine.bool.formula.ConjunctionFormula;
+import tzuyu.engine.bool.formula.Eq;
+import tzuyu.engine.bool.formula.False;
+import tzuyu.engine.bool.formula.LIAAtom;
+import tzuyu.engine.bool.formula.NotEq;
+import tzuyu.engine.bool.formula.NotFormula;
+import tzuyu.engine.bool.formula.True;
 
 /**
  * @author LLT
  *
  */
 public abstract class BoolVisitor {
-
-	public void visit(ConjunctionFormula conjFormula) {
-		// do nothing by default 
-	}
 
 	public void visit(NotFormula notFormula) {
 		// do nothing by default 		
@@ -48,26 +36,6 @@ public abstract class BoolVisitor {
 		// do nothing by default 		
 	}
 
-	public void visit(Literal literal) {
-		// do nothing by default 				
-	}
-
-	public void visit(DNFTerm dnfTerm) {
-		// do nothing by default
-	}
-
-	public void visit(DNF dnf) {
-		// do nothing by default
-	}
-
-	public void visit(CNFClause cnfClause) {
-		// do nothing by default
-	}
-
-	public void visit(CNF cnf) {
-		// do nothing by default
-	}
-
 	public void visit(LIAAtom liaAtom) {
 		// do nothing by default		
 	}
@@ -76,28 +44,20 @@ public abstract class BoolVisitor {
 		// do nothing by default
 	}
 
-	public void visit(ObjectIsNullAtom objectIsNullAtom) {
-		// do nothing by default		
-	}
-
 	public void visit(FieldVar fieldVar) {
 		// do nothing by default
 	}
 
-	public void visit(StringEqualsValueAtom atom) {
+	public <T>void visit(Eq<T> formula) {
 		// do nothing by default
 	}
 
-	public void visit(EnumEqualsConstant enumEqualsConstant) {
-		// do nothing by default
+	public <T>void visit(NotEq<T> formula) {
+		// TODO Auto-generated method stub
 	}
-
-	public void visit(CharEqualsValueAtom charEqualsValueAtom) {
-		// do nothing by default
+	
+	public void visit(ConjunctionFormula conjunctionExtFormula) {
+		// TODO Auto-generated method stub
+		
 	}
-
-	public void visit(BooleanIsFalseAtom atom) {
-		// do nothing by default
-	}
-
 }

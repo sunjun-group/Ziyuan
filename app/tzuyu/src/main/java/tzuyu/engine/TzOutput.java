@@ -24,4 +24,7 @@ public class TzOutput {
 		
 	}
 	
+	public DFA getDfa() {
+		return dfa;
+	}
 }

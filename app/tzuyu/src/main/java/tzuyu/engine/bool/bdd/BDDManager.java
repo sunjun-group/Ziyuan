@@ -3,8 +3,8 @@ package tzuyu.engine.bool.bdd;
 import java.util.ArrayList;
 import java.util.List;
 
-import tzuyu.engine.bool.Atom;
-import tzuyu.engine.bool.True;
+import tzuyu.engine.bool.formula.Atom;
+import tzuyu.engine.bool.formula.True;
 import tzuyu.engine.model.Formula;
 
 

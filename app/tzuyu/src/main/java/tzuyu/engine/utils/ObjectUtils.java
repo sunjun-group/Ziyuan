@@ -14,6 +14,10 @@ package tzuyu.engine.utils;
  */
 public class ObjectUtils {
 
+	public static boolean equalsWithNull(Object a, Object b) {
+		return a == b || (a != null && a.equals(b));
+	}
+	
 	public static int compare(int o1, int o2) {
 		return (o1 < o2 ? -1 : (o1 == o2 ? 0 : 1));
 	}

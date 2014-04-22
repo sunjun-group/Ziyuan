@@ -10,7 +10,6 @@ import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.model.ExecutionOutcome;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.StatementKind;
-import tzuyu.engine.utils.LogicUtils;
 import tzuyu.engine.utils.ObjectUtils;
 import tzuyu.engine.utils.PrimitiveTypes;
 import tzuyu.engine.utils.StringEscapeUtils;
@@ -86,7 +85,7 @@ public class RAssignment extends StatementKind implements Serializable {
 		RAssignment other = (RAssignment) o;
 
 		return this.type.equals(other.type)
-				&& LogicUtils.equalsWithNull(this.value, other.value);
+				&& ObjectUtils.equalsWithNull(this.value, other.value);
 	}
 
 	/**

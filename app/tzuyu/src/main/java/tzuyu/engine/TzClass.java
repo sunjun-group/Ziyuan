@@ -36,7 +36,7 @@ public class TzClass {
 		
 	}
 	
-	public TzClass(Class<?> targetClass, List<String> methods) {
+	public TzClass(Class<?> targetClass, List<TzMethod> methods) {
 		ClassAnalyzer analyzer = new ClassAnalyzer(targetClass, methods);
 		setClasses(targetClass, analyzer.analysis());
 	}

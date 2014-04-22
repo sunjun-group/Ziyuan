@@ -11,6 +11,7 @@ package lstar;
 import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.dfa.DFA;
+import tzuyu.engine.model.exception.ReportException;
 
 /**
  * @author LLT
@@ -21,7 +22,7 @@ public interface IReportHandler <A extends Alphabet<?>>{
 	 * report last DFA which get from LStar learner.
 	 * (ex: print DFA to files)
 	 */
-	void reportDFA(DFA lastDFA, A sigma);
+	void reportDFA(DFA lastDFA, A sigma) throws ReportException;
 
 	public void comit();
 	

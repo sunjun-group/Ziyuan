@@ -1,9 +1,11 @@
-package refiner.bool;
+package tzuyu.engine.bool.formula;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import tzuyu.engine.bool.Atom;
+import tzuyu.engine.bool.FieldVar;
+import tzuyu.engine.bool.LIATerm;
+import tzuyu.engine.bool.Operator;
 import tzuyu.engine.bool.Var;
 import tzuyu.engine.iface.BoolVisitor;
 import tzuyu.engine.model.ObjectInfo;

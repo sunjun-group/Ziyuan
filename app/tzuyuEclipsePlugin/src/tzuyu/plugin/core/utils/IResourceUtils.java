@@ -17,8 +17,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
 import tzuyu.engine.utils.CollectionUtils;
@@ -93,4 +95,12 @@ public class IResourceUtils {
 		return result;
 	}
 	
+	public static IType getIType(IJavaProject project, Class<?> clazz) {
+		try {
+			return project.findType(clazz.getCanonicalName());
+		} catch (JavaModelException e) {
+			PluginLogger.getLogger().logEx(e);
+			return null;
+		}
+	}
 }

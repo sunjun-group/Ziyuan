@@ -15,6 +15,7 @@ package tzuyu.plugin.core.exception;
 public enum ErrorType {
 	SELECTION_MORE_THAN_ONE_PROJ_SELECTED, 
 	CANNOT_SAVE_PROJECT_PREFERENCES,
+	SIGNATURE_PARSER
 	;
 
 }
