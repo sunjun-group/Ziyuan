@@ -44,28 +44,35 @@ public class GenTestReporter extends TzReportHandler {
 	}
 
 	public void reportDFA(final DFA lastDFA, TzuYuAlphabet sigma) throws ReportException {
+		monitor.beginTask("report DFA", 3);
 		// we can handle the tzuyu output data right away, or further.
+		monitor.subTask("generate testcases");
 		saveDFA(lastDFA, sigma.getProject());
+		monitor.worked(1);
 		Display.getDefault().asyncExec(new Runnable() {
 			
 			@Override
 			public void run() {
+				monitor.subTask("show DFA viewer");
 				DfaView dfaView = (DfaView) TzuyuPlugin
 						.getShowedView(TzuyuPlugin.DFA_VIEW_ID);
 				if (dfaView != null) {
 					dfaView.displayDFA(lastDFA);
 				}
+				monitor.worked(1);
 			}
 		});
 		
+		monitor.subTask("generate assert statement");
 		AssertionWriter assertWriter = new AssertionWriter(lastDFA, sigma
 				.getProject().getTarget(), prefs.getProject());
-		
+		monitor.worked(1);
 		try {
-			assertWriter.writeAssertion();
+			assertWriter.writeAssertion(monitor);
 		} catch (TzException e) {
 			throw new ReportException(e);
 		}
+		monitor.done();
 	}
 
 	private void saveDFA(DFA dfa, TzClass tzProject) {

@@ -4,9 +4,9 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 import tzuyu.engine.TzClass;
-import tzuyu.engine.bool.FormulaNegation;
-import tzuyu.engine.bool.Simplifier;
-import tzuyu.engine.bool.formula.AndFormula;
+import tzuyu.engine.bool.utils.FormulaNegation;
+import tzuyu.engine.bool.utils.FormulaUtils;
+import tzuyu.engine.bool.utils.Simplifier;
 import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.exception.TzRuntimeException;
@@ -19,6 +19,7 @@ public class TzuYuAlphabet extends Alphabet<TzuYuAction> {
 	private TzuYuAlphabet(TzuYuAlphabet from) {
 		super();
 		this.project = from.project;
+		this.out = from.out;
 	}
 	
 	public static TzuYuAlphabet forClass(TzClass project) {
@@ -83,9 +84,9 @@ public class TzuYuAlphabet extends Alphabet<TzuYuAction> {
 			throw new TzRuntimeException("The action is not an TzuYu alphabet");
 		}
 
-		TzuYuAction tzuyuAction = (TzuYuAction) action;
+		TzuYuAction dividedAction = (TzuYuAction) action;
 
-		StatementKind stmt = tzuyuAction.getAction();
+		StatementKind stmt = dividedAction.getAction();
 
 		Formula trueDivider = divider;
 
@@ -94,12 +95,12 @@ public class TzuYuAlphabet extends Alphabet<TzuYuAction> {
 		TzuYuAlphabet newSigma = new TzuYuAlphabet(this);
 
 		for (TzuYuAction act : getActions()) {
-			if (tzuyuAction.equals(act)) {
-				Formula newTrueFormula = new AndFormula(act.getGuard(),
+			if (dividedAction.equals(act)) {
+				Formula newTrueFormula = FormulaUtils.andOf(act.getGuard(),
 						trueDivider);
 				newTrueFormula = Simplifier.simplify(newTrueFormula);
 
-				Formula newFalseFormula = new AndFormula(act.getGuard(),
+				Formula newFalseFormula = FormulaUtils.andOf(act.getGuard(),
 						falseDivider);
 				newFalseFormula = Simplifier.simplify(newFalseFormula);
 				if (newTrueFormula.equals(Formula.FALSE)) {

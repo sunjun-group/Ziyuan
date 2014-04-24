@@ -10,7 +10,7 @@ package tzuyu.engine.bool.formula;
 
 import tzuyu.engine.bool.FieldVar;
 import tzuyu.engine.bool.Operator;
-import tzuyu.engine.iface.BoolVisitor;
+import tzuyu.engine.iface.ExpressionVisitor;
 import tzuyu.engine.model.Prestate;
 
 /**
@@ -45,7 +45,7 @@ public class NotEq<T> extends Eq<T> {
 	}
 	
 	@Override
-	public void accept(BoolVisitor visitor) {
+	public void accept(ExpressionVisitor visitor) {
 		visitor.visit(this);
 	}
 }

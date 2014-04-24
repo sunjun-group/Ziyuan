@@ -13,7 +13,7 @@ import java.util.List;
 
 import tzuyu.engine.bool.Operator;
 import tzuyu.engine.bool.Var;
-import tzuyu.engine.iface.BoolVisitor;
+import tzuyu.engine.bool.utils.FormulaUtils;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.utils.CollectionUtils;
 
@@ -34,6 +34,14 @@ public abstract class ConjunctionFormula implements Formula {
 		add(right);
 	}
 
+	/**
+	 * @deprecated
+	 * only for internal usage.
+	 * do not use this function,
+	 * try {@link FormulaUtils#andOf(Formula, Formula)}
+	 * or {@link FormulaUtils#orOf(Formula, Formula)}
+	 */
+	@Deprecated
 	public void add(Formula formula) {
 		CollectionUtils.addIfNotNullNotExist(elements, formula);
 	}
@@ -58,7 +66,7 @@ public abstract class ConjunctionFormula implements Formula {
 		return result;
 	}
 	
-	protected abstract ConjunctionFormula createNew();
+	public abstract ConjunctionFormula createNew();
 
 	@Override
 	public String toString() {
@@ -74,11 +82,6 @@ public abstract class ConjunctionFormula implements Formula {
 			}
 		}
 		return sb.toString();
-	}
-
-	@Override
-	public void accept(BoolVisitor visitor) {
-		visitor.visit(this);
 	}
 
 	public abstract Operator getOperator();

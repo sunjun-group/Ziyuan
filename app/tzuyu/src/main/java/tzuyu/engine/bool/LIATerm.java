@@ -1,7 +1,7 @@
 package tzuyu.engine.bool;
 
 import tzuyu.engine.bool.formula.LIAAtom;
-import tzuyu.engine.iface.BoolVisitor;
+import tzuyu.engine.iface.ExpressionVisitor;
 
 /**
  * The term in the linear integer arithmetic {@link LIAAtom} formula contains an
@@ -43,7 +43,7 @@ public class LIATerm {
     return toCodeString();
   }
 
-	public void accept(BoolVisitor visitor) {
+	public void accept(ExpressionVisitor visitor) {
 		visitor.visit(this);
 	}
 }

@@ -1,4 +1,4 @@
-package tzuyu.engine.bool;
+package tzuyu.engine.bool.utils;
 
 import java.util.HashSet;
 import java.util.List;

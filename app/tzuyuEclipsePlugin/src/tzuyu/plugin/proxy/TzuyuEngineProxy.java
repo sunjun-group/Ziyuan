@@ -8,6 +8,8 @@
 
 package tzuyu.plugin.proxy;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import tzuyu.engine.TzClass;
 import tzuyu.engine.Tzuyu;
 import tzuyu.engine.iface.IReferencesAnalyzer;
@@ -43,13 +45,17 @@ public class TzuyuEngineProxy implements TzuyuEngine {
 	}
 
 	public static void generateTestCases(WorkObject workObject,
-			GenTestPreferences config, GenTestReporter reporter)
+			GenTestPreferences config, GenTestReporter reporter, IProgressMonitor monitor)
 			throws InterruptedException, TzException {
 		try {
 			TzConsole.showConsole().clearConsole();
+			monitor.beginTask("converting working object", 1);
 			TzClass tzProject = ProjectConverter.from(workObject, config);
+			monitor.done();
+			monitor.beginTask("learning", IProgressMonitor.UNKNOWN);
 			new TzuyuEngineProxy(tzProject, reporter,
 					new PluginReferencesAnalyzer(workObject.getProject(), config)).run();
+			monitor.done();
 		} catch (PluginException e) {
 			PluginLogger.getLogger().logEx(e);
 		} 

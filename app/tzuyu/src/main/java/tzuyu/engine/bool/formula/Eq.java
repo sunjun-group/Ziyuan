@@ -14,7 +14,7 @@ import java.util.List;
 import tzuyu.engine.bool.FieldVar;
 import tzuyu.engine.bool.Operator;
 import tzuyu.engine.bool.Var;
-import tzuyu.engine.iface.BoolVisitor;
+import tzuyu.engine.iface.ExpressionVisitor;
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.utils.ObjectUtils;
 
@@ -24,10 +24,9 @@ import tzuyu.engine.utils.ObjectUtils;
  */
 public class Eq<T> extends FieldAtom {
 	protected Box<T> valueBox;
-	protected Operator op = Operator.EQ;
 
 	public Eq(FieldVar var, Box<T> value) {
-		super(var);
+		super(var, Operator.EQ);
 		this.valueBox = value;
 	}
 	
@@ -55,11 +54,6 @@ public class Eq<T> extends FieldAtom {
 
 	public Box<T> getValueBox() {
 		return valueBox;
-	}
-	
-	@Override
-	public void accept(BoolVisitor visitor) {
-		visitor.visit(this);
 	}
 	
 	@Override
@@ -91,5 +85,15 @@ public class Eq<T> extends FieldAtom {
 		return this.attribute.equals(oEq.attribute)
 				&& ObjectUtils.equalsWithNull(valueBox.getValue(), oEq
 						.getValueBox().getValue());
+	}
+
+	@Override
+	public String getDisplayValue() {
+		return valueBox.getDisplayValue();
+	}
+	
+	@Override
+	public void accept(ExpressionVisitor visitor) {
+		visitor.visit(this);
 	}
 }

@@ -12,7 +12,7 @@ import libsvm.libsvm.svm_parameter;
 import libsvm.libsvm.svm_problem;
 import tzuyu.engine.bool.FieldVar;
 import tzuyu.engine.bool.LIATerm;
-import tzuyu.engine.bool.formula.AndFormula;
+import tzuyu.engine.bool.utils.FormulaUtils;
 import tzuyu.engine.iface.ITzManager;
 import tzuyu.engine.model.ArtFieldInfo;
 import tzuyu.engine.model.ClassInfo;
@@ -392,7 +392,7 @@ public class SVMWrapper {
 				// SVM cannot differentiate the data set
 				return Formula.TRUE;
 			} else {
-				formula = new AndFormula(formula, subDivider);
+				formula = FormulaUtils.andOf(formula, subDivider); 
 			}
 		} while (misclassified.size() != 0);
 

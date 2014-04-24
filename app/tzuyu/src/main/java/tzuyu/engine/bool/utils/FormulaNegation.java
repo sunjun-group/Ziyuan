@@ -6,8 +6,9 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.bool;
+package tzuyu.engine.bool.utils;
 
+import tzuyu.engine.bool.Operator;
 import tzuyu.engine.bool.formula.AndFormula;
 import tzuyu.engine.bool.formula.ConjunctionFormula;
 import tzuyu.engine.bool.formula.Eq;
@@ -17,7 +18,7 @@ import tzuyu.engine.bool.formula.NotEq;
 import tzuyu.engine.bool.formula.NotFormula;
 import tzuyu.engine.bool.formula.OrFormula;
 import tzuyu.engine.bool.formula.True;
-import tzuyu.engine.iface.BoolVisitor;
+import tzuyu.engine.iface.ExpressionVisitor;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.utils.Pair;
 
@@ -25,7 +26,7 @@ import tzuyu.engine.utils.Pair;
  * @author LLT
  *
  */
-public class FormulaNegation extends BoolVisitor {
+public class FormulaNegation extends ExpressionVisitor {
 	private Formula notFormula;
 	
 	@Override
@@ -39,12 +40,19 @@ public class FormulaNegation extends BoolVisitor {
 	}
 	
 	@Override
-	public void visit(ConjunctionFormula cond) {
-		if (cond.getOperator() == Operator.AND) {
-			notFormula = new OrFormula();
-		} else {
-			notFormula = new AndFormula();
-		}
+	public void visit(AndFormula and) {
+		notFormula = new OrFormula();
+		visitConjunctionFormula(and);
+	}
+	
+	@Override
+	public void visit(OrFormula or) {
+		notFormula = new AndFormula();
+		visitConjunctionFormula(or);
+	}
+	
+	@Override
+	public void visitConjunctionFormula(ConjunctionFormula cond) {
 		for (Formula ele : cond.getElements()) {
 			((ConjunctionFormula)notFormula).add(notOf(ele));
 		}

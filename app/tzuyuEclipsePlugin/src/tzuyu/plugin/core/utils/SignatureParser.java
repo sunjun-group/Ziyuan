@@ -8,9 +8,19 @@
 
 package tzuyu.plugin.core.utils;
 
-import static org.eclipse.jdt.core.Signature.*;
-
-import java.lang.reflect.Method;
+import static org.eclipse.jdt.core.Signature.ARRAY_TYPE_SIGNATURE;
+import static org.eclipse.jdt.core.Signature.BASE_TYPE_SIGNATURE;
+import static org.eclipse.jdt.core.Signature.CAPTURE_TYPE_SIGNATURE;
+import static org.eclipse.jdt.core.Signature.CLASS_TYPE_SIGNATURE;
+import static org.eclipse.jdt.core.Signature.C_DOLLAR;
+import static org.eclipse.jdt.core.Signature.C_DOT;
+import static org.eclipse.jdt.core.Signature.C_GENERIC_START;
+import static org.eclipse.jdt.core.Signature.C_RESOLVED;
+import static org.eclipse.jdt.core.Signature.C_SEMICOLON;
+import static org.eclipse.jdt.core.Signature.C_TYPE_VARIABLE;
+import static org.eclipse.jdt.core.Signature.C_UNRESOLVED;
+import static org.eclipse.jdt.core.Signature.TYPE_VARIABLE_SIGNATURE;
+import static org.eclipse.jdt.core.Signature.WILDCARD_TYPE_SIGNATURE;
 
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -133,22 +143,4 @@ public class SignatureParser {
 		throw new IllegalArgumentException("paramType: " + paramType);
 	}
 
-	/**
-	 * create signature for method
-	 * according to eclipse syntax
-	 */
-	public static String[] createParamTypesSignature(Method method,
-			boolean resolved) {
-		Class<?>[] params = method.getParameterTypes();
-		String[] parameterTypes = new String[params.length];
-		int i = 0;
-		for (Class<?> param : params) {
-			parameterTypes[i++] = Signature.createTypeSignature(
-					param.getName(), resolved);
-		}
-		
-		return parameterTypes;
-	}
-
-	
 }

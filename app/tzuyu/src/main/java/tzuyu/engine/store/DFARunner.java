@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import tzuyu.engine.Tzuyu;
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.model.QueryResult;
 import tzuyu.engine.model.QueryTrace;
@@ -92,6 +93,8 @@ public class DFARunner {
 
 			// This should not happen
 			if (!matchingTransitionFound) {
+				Tzuyu.getLog().error("No matching transition!!", "\ntrace: ",
+						trace, "\nsigma: " + currentDFA.getSigma());
 				throw new TzRuntimeException("no matching transtion");
 			}
 		}

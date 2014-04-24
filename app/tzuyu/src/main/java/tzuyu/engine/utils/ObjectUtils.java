@@ -38,4 +38,11 @@ public class ObjectUtils {
 		}
 		return false;
 	}
+	
+	public static <T> T returnValueOrAlt(T value, T altValue) {
+		if (value == null) {
+			return altValue;
+		}
+		return value;
+	}
 }

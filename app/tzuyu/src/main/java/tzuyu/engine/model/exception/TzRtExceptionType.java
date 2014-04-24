@@ -15,5 +15,6 @@ package tzuyu.engine.model.exception;
 public enum TzRtExceptionType {
 	AssertException,
 	IllegalArgument,
+	NoMatchingFound,
 	Undefined
 }

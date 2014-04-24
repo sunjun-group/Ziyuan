@@ -4,16 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tzuyu.engine.bool.FieldVar;
-import tzuyu.engine.bool.FormulaNegation;
 import tzuyu.engine.bool.LIATerm;
 import tzuyu.engine.bool.Operator;
-import tzuyu.engine.bool.formula.AndFormula;
 import tzuyu.engine.bool.formula.Atom;
 import tzuyu.engine.bool.formula.Box;
 import tzuyu.engine.bool.formula.Eq;
 import tzuyu.engine.bool.formula.LIAAtom;
 import tzuyu.engine.bool.formula.NotEq;
 import tzuyu.engine.bool.formula.OrFormula;
+import tzuyu.engine.bool.utils.FormulaUtils;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.utils.Pair;
 import tzuyu.engine.utils.Permutation;
@@ -92,7 +91,7 @@ public class DividerProcessor {
         domains.add(size);
       }
 
-      OrFormula divider = new OrFormula();
+      Formula divider = null;
       // Step 2:Generate one assignment for categorical types
       Permutation permutation = new Permutation(domains, true);
       while (permutation.hasNext()) {
@@ -112,8 +111,8 @@ public class DividerProcessor {
           // The raw divider is valid under current assignment
 
           // Construct the term of valid assignment of the final DNF.
-            AndFormula term = constructCategoricalConstraint(categoricals, indices);
-            divider.add(term);
+            Formula term = constructCategoricalConstraint(categoricals, indices);
+            divider = FormulaUtils.orOf(divider, term);
         }
       }
       return divider;
@@ -133,8 +132,7 @@ public class DividerProcessor {
         domains.add(size);
       }
 
-      OrFormula divider = new OrFormula();
-
+      Formula divider = null;
       Permutation permutation = new Permutation(domains, true);
       while (permutation.hasNext()) {
         // Generate one assignment
@@ -149,15 +147,15 @@ public class DividerProcessor {
         }
 
         // construct the categorical part of the term of current assignment
-        AndFormula dnfTerm = constructCategoricalConstraint(categoricals, indices);
+        Formula dnfTerm = constructCategoricalConstraint(categoricals, indices);
         // Construct the numerical part of the term of current assignment
         Formula numericalLiteral = constructNumericalContraint(numericals,
                 Operator.GE, bias - offset);
         // Add both categorical and numerical part to form the term of
         // current assignment.
-        dnfTerm.add(numericalLiteral);
-
-        divider.add(dnfTerm);
+        dnfTerm = FormulaUtils.andOf(dnfTerm, numericalLiteral);
+        divider = FormulaUtils.orOf(divider, dnfTerm);
+//        divider.add(dnfTerm);
       }
 
       return divider;
@@ -212,7 +210,7 @@ public class DividerProcessor {
           if (!negation) {
         	  return newAtom;
           } else {
-        	  return FormulaNegation.notOf(newAtom);
+        	  return FormulaUtils.notOf(newAtom);
           }
         } 
       }
@@ -238,7 +236,7 @@ public class DividerProcessor {
    * @return
    */
   	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static AndFormula constructCategoricalConstraint(
+	private static Formula constructCategoricalConstraint(
       List<TypeTerm> categorical, List<Integer> indices) {
 
     if (categorical.size() != indices.size()) {
@@ -246,8 +244,7 @@ public class DividerProcessor {
           + "valuation do not have same size");
     }
 
-    AndFormula constraint = new AndFormula();
-    
+    Formula constraint = null;
     for (int index = 0; index < indices.size(); index++) {
     	Atom newCond;
     	
@@ -274,7 +271,7 @@ public class DividerProcessor {
       } else {
     	  newCond = new Eq(term.second().getVariable(), box);
       }
-      constraint.add(newCond);
+      constraint = FormulaUtils.andOf(constraint, newCond);
     }
     return constraint;
   }

@@ -5,7 +5,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import tzuyu.engine.TzConfiguration;
-import tzuyu.engine.bool.EquivalenceChecker;
+import tzuyu.engine.bool.utils.EquivalenceChecker;
+import tzuyu.engine.bool.utils.FormulaUtils;
 import tzuyu.engine.runtime.RMethod;
 
 /**
@@ -111,7 +112,7 @@ public class TzuYuAction extends Action {
 
 	@Override
 	public String toString() {
-		return "[" + guard.toString() + "]" + method.toString();
+		return FormulaUtils.toString(guard) + method.toString();
 	}
 
 	public StatementKind getAction() {

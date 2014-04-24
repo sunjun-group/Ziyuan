@@ -3,13 +3,18 @@ package tzuyu.engine.bool.formula;
 import java.util.List;
 
 import tzuyu.engine.bool.Var;
-import tzuyu.engine.iface.BoolVisitor;
+import tzuyu.engine.iface.ExpressionVisitor;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Prestate;
 
+/**
+ * donot init this formula, call FormulaNegation instead.
+ *
+ */
 public final class NotFormula implements Formula {
 	private Formula operand;
 
+	@Deprecated
 	public NotFormula(Formula operand) {
 		this.operand = operand;
 	}
@@ -27,34 +32,8 @@ public final class NotFormula implements Formula {
 		return !operand.evaluate(objects);
 	}
 
-	public Formula restrict(List<Atom> vars, List<Integer> vals) {
-		Formula expr = this.operand.restrict(vars, vals);
-		if (expr instanceof True) {
-			return Formula.FALSE;
-		}
-
-		if (expr instanceof False) {
-			return Formula.TRUE;
-		}
-
-		return new NotFormula(expr);
-	}
-
 	public List<Atom> getAtomics() {
 		return this.operand.getAtomics();
-	}
-
-	public Formula simplify() {
-		Formula expr = this.operand.simplify();
-		if (expr instanceof True) {
-			return Formula.FALSE;
-		}
-
-		if (expr instanceof False) {
-			return Formula.TRUE;
-		}
-
-		return new NotFormula(expr);
 	}
 
 	@Override
@@ -82,7 +61,7 @@ public final class NotFormula implements Formula {
 	}
 
 	@Override
-	public void accept(BoolVisitor visitor) {
+	public void accept(ExpressionVisitor visitor) {
 		visitor.visit(this);
 	}
 	

@@ -6,9 +6,7 @@ import tzuyu.engine.bool.Var;
 import tzuyu.engine.bool.formula.Atom;
 import tzuyu.engine.bool.formula.False;
 import tzuyu.engine.bool.formula.True;
-import tzuyu.engine.iface.BoolVisitor;
-
-
+import tzuyu.engine.iface.ExpressionVisitor;
 
 public interface Formula {
 
@@ -21,11 +19,7 @@ public interface Formula {
 
   public boolean evaluate(Prestate state);
 
-  public Formula restrict(List<Atom> vars, List<Integer> vals);
-
   public List<Atom> getAtomics();
 
-  public Formula simplify();
-
-  public void accept(BoolVisitor visitor);
+  public void accept(ExpressionVisitor visitor);
 }

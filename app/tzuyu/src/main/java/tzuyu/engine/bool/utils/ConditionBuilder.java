@@ -6,32 +6,26 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.plugin.reporter.assertion;
-
-import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.JavaModelException;
+package tzuyu.engine.bool.utils;
 
 import tzuyu.engine.bool.FieldVar;
 import tzuyu.engine.bool.LIATerm;
 import tzuyu.engine.bool.formula.ConjunctionFormula;
-import tzuyu.engine.bool.formula.Eq;
+import tzuyu.engine.bool.formula.FieldAtom;
 import tzuyu.engine.bool.formula.LIAAtom;
-import tzuyu.engine.bool.formula.NotEq;
 import tzuyu.engine.bool.formula.NotFormula;
-import tzuyu.engine.iface.BoolVisitor;
+import tzuyu.engine.iface.ExpressionVisitor;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.utils.StringUtils;
 
 /**
  * @author LLT
- * 
+ *
  */
-public class ConditionBoolVisitor extends BoolVisitor {
-	private IMethod method;
+public class ConditionBuilder extends ExpressionVisitor {
 	private StringBuilder sb;
 
-	public ConditionBoolVisitor(IMethod method) {
-		this.method = method;
+	public ConditionBuilder() {
 		sb = new StringBuilder();
 	}
 
@@ -51,10 +45,7 @@ public class ConditionBoolVisitor extends BoolVisitor {
 				sb.append("+");
 			}
 		}
-
-		sb.append(" ");
-		sb.append(liaAtom.getOperator().getCode());
-		sb.append(" ");
+		sb.append(liaAtom.getOperator().getCodeWithSpace());
 		sb.append(liaAtom.getConstant());
 	}
 	
@@ -70,40 +61,34 @@ public class ConditionBoolVisitor extends BoolVisitor {
 	public void visit(FieldVar fieldVar) {
 		String pName = fieldVar.getName();
 		if (StringUtils.isEmpty(pName)) {
-			try {
-				pName = method.getParameterNames()[fieldVar.getArgIndex() - 1];
-			} catch (JavaModelException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			pName = getParameterName(fieldVar);
 		}
 		sb.append(pName);
 	}
-	
-	@Override
-	public <T> void visit(Eq<T> eq) {
-		eq.getKey().accept(this);
-		sb.append(" == ");
-		sb.append(eq.getValueBox().getDisplayValue());
+
+	protected String getParameterName(FieldVar fieldVar) {
+		String type = fieldVar.getStatement().getInputTypes()
+				.get(fieldVar.getArgIndex()).getSimpleName();
+		return type + "(" + Integer.toString(fieldVar.getArgIndex()) + ")";
 	}
 	
 	@Override
-	public <T> void visit(NotEq<T> eq) {
-		eq.getKey().accept(this);
-		sb.append(" != ");
-		sb.append(eq.getValueBox().getDisplayValue());
+	public void visitFieldAtom(FieldAtom atom) {
+		atom.getKey().accept(this);
+		sb.append(atom.getOperator().getCodeWithSpace());
+		sb.append(atom.getDisplayValue());
 	}
 	
 	@Override
-	public void visit(ConjunctionFormula cond) {
+	public void visitConjunctionFormula(ConjunctionFormula cond) {
 		int size = cond.getElements().size();
 		for (int index = 0; index < size; index++) {
 			Formula clause = cond.getElements().get(index);
 			sb.append("(");
-			sb.append(clause.toString());
+			clause.accept(this);
 			sb.append(")");
 			if (index < size - 1) {
-				sb.append(cond.getOperator());
+				sb.append(cond.getOperator().getCodeWithSpace());
 			}
 		}
 	}
@@ -111,5 +96,4 @@ public class ConditionBoolVisitor extends BoolVisitor {
 	public String getResult() {
 		return sb.toString();
 	}
-	
 }

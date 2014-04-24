@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tzuyu.engine.bool.Var;
-import tzuyu.engine.iface.BoolVisitor;
+import tzuyu.engine.iface.ExpressionVisitor;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Prestate;
 
@@ -58,7 +58,7 @@ public class False extends Atom {
 	}
 
 	@Override
-	public void accept(BoolVisitor visitor) {
+	public void accept(ExpressionVisitor visitor) {
 		visitor.visit(this);
 	}
 

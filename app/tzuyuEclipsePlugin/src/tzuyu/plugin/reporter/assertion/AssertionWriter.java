@@ -8,25 +8,24 @@
 
 package tzuyu.plugin.reporter.assertion;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
+import tzuyu.engine.bool.utils.FormulaUtils;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.TzuYuAction;
 import tzuyu.engine.model.dfa.DFA;
@@ -37,10 +36,8 @@ import tzuyu.engine.model.exception.TzExceptionType;
 import tzuyu.engine.runtime.RMethod;
 import tzuyu.engine.utils.Assert;
 import tzuyu.engine.utils.CollectionUtils;
-import tzuyu.plugin.core.exception.PluginException;
 import tzuyu.plugin.core.utils.IResourceUtils;
 import tzuyu.plugin.core.utils.MethodUtils;
-import tzuyu.plugin.core.utils.SignatureParser;
 import tzuyu.plugin.reporter.PluginLogger;
 
 /**
@@ -81,34 +78,29 @@ public class AssertionWriter {
 		}
 	}
 	
-	public void writeAssertion() throws TzException {
-		writeAssertion(type.getCompilationUnit());
+	public void writeAssertion(IProgressMonitor monitor) throws TzException {
+		writeAssertion(type.getCompilationUnit(), monitor);
 	}
 	
-	private void writeAssertion(ICompilationUnit cu) throws TzException {
+	private void writeAssertion(ICompilationUnit cu, IProgressMonitor monitor)
+			throws TzException {
 		try {
-
-			Document document = new Document(cu.getSource());
+			ICompilationUnit workingCopy = cu.getWorkingCopy(monitor);
 			// Create working copy
-			ICompilationUnit workingCopy;
-			workingCopy = cu.getWorkingCopy(null);
 			for (Entry<RMethod, List<Formula>> actCond : actionConditions
 					.entrySet()) {
 				TextEdit edit = writeAssertionToMethod(cu, actCond);
-				edit.apply(document);
-				// update of the compilation unit
-				cu.getBuffer().setContents(document.get());
+				workingCopy.applyTextEdit(edit, monitor);
+				workingCopy.reconcile(ICompilationUnit.NO_AST, false, null, monitor);
+				// Commit changes
+				workingCopy.commitWorkingCopy(false, monitor);
 			}
-
-			cu.save(null, true);
-
-			// Destroy working copy
-			workingCopy.discardWorkingCopy();
+		    
+		    // Destroy working copy
+		    workingCopy.discardWorkingCopy();
 		} catch (JavaModelException e) {
 			throwTzException(e);
 		} catch (MalformedTreeException e) {
-			throwTzException(e);
-		} catch (BadLocationException e) {
 			throwTzException(e);
 		}
 	}
@@ -139,11 +131,15 @@ public class AssertionWriter {
 	private String getAssertStmts(IMethod method, List<Formula> value) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\n\t\t").append("// Tzuyu Auto-generated assertion");
-		for (Formula cond : value) {
-			ConditionBoolVisitor visitor = new ConditionBoolVisitor(method);
-			cond.accept(visitor);
-			sb.append("\n\t\t").append("assert ").append(visitor.getResult()).append(";");
+		Formula condition = value.get(0);
+		for (int i = 1; i < value.size(); i++) {
+			condition = FormulaUtils.orOf(condition, value.get(i));
 		}
+//		condition = Simplifier.simplify(condition);
+		MethodConditionBuilder visitor = new MethodConditionBuilder(method);
+		condition.accept(visitor);
+		sb.append("\n\t\t").append("assert ").append(visitor.getResult()).append(";");
+		
 		return sb.toString();
 	}
 

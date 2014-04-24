@@ -8,9 +8,9 @@
 
 package tzuyu.engine.bool.formula;
 
-import java.util.List;
-
 import tzuyu.engine.bool.Operator;
+import tzuyu.engine.bool.utils.FormulaUtils;
+import tzuyu.engine.iface.ExpressionVisitor;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Prestate;
 
@@ -20,10 +20,20 @@ import tzuyu.engine.model.Prestate;
  */
 public class OrFormula extends ConjunctionFormula {
 	
+	/**
+	 * @deprecated 
+	 * try {@link FormulaUtils#orOf(Formula, Formula)}
+	 */
+	@Deprecated
 	public OrFormula() {
 		super();
 	}
 	
+	/**
+	 * @deprecated 
+	 * try {@link FormulaUtils#orOf(Formula, Formula)}
+	 */
+	@Deprecated
 	public OrFormula(Formula left, Formula right) {
 		super(left, right);
 	}
@@ -49,58 +59,17 @@ public class OrFormula extends ConjunctionFormula {
 	}
 
 	@Override
-	public Formula restrict(List<Atom> vars, List<Integer> vals) {
-		OrFormula result = new OrFormula();
-		for (Formula term : elements) {
-			Formula expr = term.restrict(vars, vals);
-			if (expr instanceof True) {
-				return Formula.TRUE;
-			} else if (!(expr instanceof False)) {
-				result.add(expr);
-			}
-		}
-
-		if (result.elements.size() == 0) {
-			return Formula.FALSE;
-		}
-		
-		if (result.elements.size() == 1) {
-			return result.elements.get(0);
-		}
-		
-		return result;
-	}
-
-	@Override
-	public Formula simplify() {
-		OrFormula result = new OrFormula();
-		for (Formula term : elements) {
-			Formula expr = term.simplify();
-			if (expr instanceof True) {
-				return Formula.TRUE;
-			} else if (!(expr instanceof False)) {
-				result.add(expr);
-			}
-		}
-
-		if (result.elements.size() == 0) {
-			return Formula.FALSE;
-		}
-		
-		if (result.elements.size() == 1) {
-			return result.elements.get(0);
-		}
-		
-		return result;
-	}
-
-	@Override
 	public Operator getOperator() {
 		return Operator.OR;
 	}
 
 	@Override
-	protected ConjunctionFormula createNew() {
+	public ConjunctionFormula createNew() {
 		return new OrFormula();
+	}
+	
+	@Override
+	public void accept(ExpressionVisitor visitor) {
+		visitor.visit(this);
 	}
 }

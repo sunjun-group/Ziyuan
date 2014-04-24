@@ -51,4 +51,35 @@ public enum Operator {
 	public String getCode() {
 		return operator;
 	}
+	
+	public String getCodeWithSpace() {
+		return " " + getCode() + " ";
+	}
+
+	public Operator negateIfPlusNegValue(double coefficient) {
+		if (coefficient < 0) {
+			return notOf(this);
+		}
+		return this;
+	}
+	
+	public static Operator notOf(Operator op) {
+		for (Pair<Operator, Operator> pair : Operator.OPPOSITE_PAIRS) {
+			if (op == pair.a) {
+				return pair.b;
+			}
+			if (op == pair.b) {
+				return pair.a;
+			}
+		}
+		return null;
+	}
+	
+	public boolean isGT() {
+		return this == GT || this == GE;
+	}
+	
+	public boolean isLT() {
+		return this == LT || this == LE;
+	}
 }

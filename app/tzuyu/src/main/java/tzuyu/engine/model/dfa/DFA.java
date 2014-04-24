@@ -336,4 +336,8 @@ public class DFA {
 	public List<State> getAllStates() {
 		return states;
 	}
+	
+	public Alphabet<?> getSigma() {
+		return sigma;
+	}
 }

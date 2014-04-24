@@ -1,4 +1,4 @@
-package tzuyu.engine.bool;
+package tzuyu.engine.bool.utils;
 
 import tzuyu.engine.bool.bdd.BDDManager;
 import tzuyu.engine.bool.bdd.BDDNode;
@@ -15,7 +15,8 @@ import tzuyu.engine.model.Formula;
 public class Simplifier {
 
   public static Formula simplify(Formula f) {
-    Formula newFormula = f.simplify();
+    Formula newFormula = FormulaUtils.simplify(f); 
+//    		f.simplify();
 
     BDDManager manager = new BDDManager(newFormula.getAtomics());
 
@@ -23,4 +24,5 @@ public class Simplifier {
 
     return root.getFormula();
   }
+  
 }

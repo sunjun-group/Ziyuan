@@ -7,7 +7,7 @@ import tzuyu.engine.bool.FieldVar;
 import tzuyu.engine.bool.LIATerm;
 import tzuyu.engine.bool.Operator;
 import tzuyu.engine.bool.Var;
-import tzuyu.engine.iface.BoolVisitor;
+import tzuyu.engine.iface.ExpressionVisitor;
 import tzuyu.engine.model.ObjectInfo;
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.model.exception.TzRuntimeException;
@@ -109,12 +109,11 @@ public class LIAAtom extends Atom {
 			double fieldValue = objectInfo.getNumericValue();
 			leftValue += fieldValue * term.getCoefficient();
 		}
-
 		return operator.evaluate(leftValue, constant);
 	}
 
 	@Override
-	public void accept(BoolVisitor visitor) {
+	public void accept(ExpressionVisitor visitor) {
 		visitor.visit(this);
 	}
 
@@ -128,5 +127,15 @@ public class LIAAtom extends Atom {
 	
 	public double getConstant() {
 		return constant;
+	}
+
+	/**
+	 * only return first term is if the expression is only for 1 variable.
+	 */
+	public LIATerm getSingleTerm() {
+		if (MVFOExpr.size() == 1) {
+			return MVFOExpr.get(0);
+		}
+		return null;
 	}
 }

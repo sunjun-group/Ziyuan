@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import tzuyu.engine.bool.EquivalenceChecker;
-import tzuyu.engine.bool.FormulaNegation;
 import tzuyu.engine.bool.Var;
 import tzuyu.engine.bool.formula.AndFormula;
 import tzuyu.engine.bool.formula.Atom;
 import tzuyu.engine.bool.formula.OrFormula;
-import tzuyu.engine.iface.BoolVisitor;
+import tzuyu.engine.bool.utils.EquivalenceChecker;
+import tzuyu.engine.bool.utils.FormulaNegation;
+import tzuyu.engine.iface.ExpressionVisitor;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.Prestate;
 
@@ -125,7 +125,7 @@ class AtomicTest extends Atom {
 	}
 
 	@Override
-	public void accept(BoolVisitor visitor) {
+	public void accept(ExpressionVisitor visitor) {
 		// TODO Auto-generated method stub
 		
 	}

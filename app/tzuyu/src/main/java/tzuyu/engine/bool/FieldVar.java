@@ -2,7 +2,7 @@ package tzuyu.engine.bool;
 
 import java.util.List;
 
-import tzuyu.engine.iface.BoolVisitor;
+import tzuyu.engine.iface.ExpressionVisitor;
 import tzuyu.engine.model.ArtFieldInfo;
 import tzuyu.engine.model.ObjectInfo;
 import tzuyu.engine.model.Prestate;
@@ -109,7 +109,7 @@ public class FieldVar implements Var {
 		return argIndex;
 	}
 
-	public void accept(BoolVisitor visitor) {
+	public void accept(ExpressionVisitor visitor) {
 		visitor.visit(this);
 	}
 

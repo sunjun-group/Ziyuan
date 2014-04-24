@@ -20,7 +20,7 @@ public abstract class PrimitiveValueZones<T extends Object> {
 	static {
 		INTEGER_ZONES = (IntegerValueZones) new IntegerValueZones(4)
 							.point(Integer.MIN_VALUE, 1)
-							.point(-1000, 7)
+							.point(-1000, 100)
 							.point(1000, 1)
 							.finishPoint(Integer.MAX_VALUE);
 		LONG_ZONES = (LongValueZones) new LongValueZones(8)
