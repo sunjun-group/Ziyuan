@@ -22,7 +22,7 @@ public class OrFormula extends ConjunctionFormula {
 	
 	/**
 	 * @deprecated 
-	 * try {@link FormulaUtils#orOf(Formula, Formula)}
+	 * try {@link FormulaUtils#or(Formula, Formula)}
 	 */
 	@Deprecated
 	public OrFormula() {
@@ -31,7 +31,7 @@ public class OrFormula extends ConjunctionFormula {
 	
 	/**
 	 * @deprecated 
-	 * try {@link FormulaUtils#orOf(Formula, Formula)}
+	 * try {@link FormulaUtils#or(Formula, Formula)}
 	 */
 	@Deprecated
 	public OrFormula(Formula left, Formula right) {

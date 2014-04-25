@@ -72,7 +72,7 @@ public class FormulaRestriction extends ExpressionVisitor {
 	@Override
 	public void visit(OrFormula or) {
 		OrFormula newOr = new OrFormula();
-		for (Formula term : newOr.getElements()) {
+		for (Formula term : or.getElements()) {
 			Formula expr = restrict(term, vars, vals);
 			if (Formula.TRUE.equals(expr)) {
 				result = Formula.TRUE;
@@ -121,7 +121,7 @@ public class FormulaRestriction extends ExpressionVisitor {
 					break;
 				}					
 				if (relationship == ATOMS_HALF_NEGATION) {
-					result = FormulaUtils.notOf(curVal);
+					result = FormulaUtils.not(curVal);
 					break;
 				}
 				if (relationship == ATOMS_A_BOUND_B && curVal == Formula.TRUE) {
@@ -167,8 +167,9 @@ public class FormulaRestriction extends ExpressionVisitor {
 			 }
 			 double curConst = curAtom.getConstant() / curTerm.getCoefficient();
 			 double liaConst = liaAtom.getConstant() / liaTerm.getCoefficient();
-			 if (isHalfNegation(opPair.a, opPair.b, curConst, liaConst)
-					 || isHalfNegation(opPair.b, opPair.a, liaConst, curConst)) {
+			if (isNegation(opPair.a, opPair.b, curConst, liaConst)
+					|| isHalfNegation(opPair.a, opPair.b, curConst, liaConst)
+					|| isHalfNegation(opPair.b, opPair.a, liaConst, curConst)) {
 				 return ATOMS_HALF_NEGATION;
 			 }
 			 if (isBound(opPair.a, opPair.b, curConst, liaConst)) {
@@ -187,6 +188,11 @@ public class FormulaRestriction extends ExpressionVisitor {
 				(a.isLT() && b.isLT() && aConst < bConst);
 	}
 	
+	private static boolean isNegation(Operator a, Operator b, double aConst,
+			double bConst) {
+		return (aConst == bConst) && (a.negative() == b);
+	}
+	
 	private static boolean isHalfNegation(Operator a, Operator b, double aConst,
 			double bConst) {
 		if (a.isGT() && b.isLT() && (aConst > bConst)) {
@@ -197,7 +203,7 @@ public class FormulaRestriction extends ExpressionVisitor {
 
 	@Override
 	public void visit(NotFormula notFormula) {
-		result = FormulaUtils.notOf(restrict(notFormula.getChild(), vars, vals));
+		result = FormulaUtils.not(restrict(notFormula.getChild(), vars, vals));
 	}
 	
 	public static Formula restrict(Formula formula, List<Atom> vars, List<Integer> vals) {

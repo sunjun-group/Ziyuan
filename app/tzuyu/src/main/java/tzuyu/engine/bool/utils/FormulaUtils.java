@@ -22,16 +22,16 @@ public class FormulaUtils {
 	private FormulaUtils() {
 	}
 	
-	public static Formula notOf(Formula cond) {
-		return FormulaNegation.notOf(cond);
+	public static Formula not(Formula cond) {
+		return FormulaNegation.not(cond);
 	}
 	
-	public static Formula andOf(Formula curCond, Formula newCond) {
-		return FormulaConjunction.andOf(curCond, newCond);
+	public static Formula and(Formula curCond, Formula newCond) {
+		return FormulaConjunction.and(curCond, newCond);
 	}
 	
-	public static Formula orOf(Formula curCond, Formula newCond) {
-		return FormulaConjunction.orOf(curCond, newCond);
+	public static Formula or(Formula curCond, Formula newCond) {
+		return FormulaConjunction.or(curCond, newCond);
 	}
 
 	public static Formula restrict(Formula formula, List<Atom> vars,

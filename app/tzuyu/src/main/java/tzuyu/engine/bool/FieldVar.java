@@ -59,9 +59,13 @@ public class FieldVar implements Var {
 
 	@Override
 	public String toString() {
-		String type = statement.getInputTypes().get(argIndex).getSimpleName();
-		return type + "." + field.getFullName() + "("
-				+ Integer.toString(argIndex) + ")";
+		try {
+			String type = statement.getInputTypes().get(argIndex).getSimpleName();
+			return type + "." + field.getFullName() + "("
+			+ Integer.toString(argIndex) + ")";
+		} catch (Exception e) {
+			return "[" + argIndex + "]";
+		}
 	}
 
 	@Override

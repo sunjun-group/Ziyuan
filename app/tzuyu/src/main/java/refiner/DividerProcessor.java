@@ -112,7 +112,7 @@ public class DividerProcessor {
 
           // Construct the term of valid assignment of the final DNF.
             Formula term = constructCategoricalConstraint(categoricals, indices);
-            divider = FormulaUtils.orOf(divider, term);
+            divider = FormulaUtils.or(divider, term);
         }
       }
       return divider;
@@ -153,8 +153,8 @@ public class DividerProcessor {
                 Operator.GE, bias - offset);
         // Add both categorical and numerical part to form the term of
         // current assignment.
-        dnfTerm = FormulaUtils.andOf(dnfTerm, numericalLiteral);
-        divider = FormulaUtils.orOf(divider, dnfTerm);
+        dnfTerm = FormulaUtils.and(dnfTerm, numericalLiteral);
+        divider = FormulaUtils.or(divider, dnfTerm);
 //        divider.add(dnfTerm);
       }
 
@@ -210,7 +210,7 @@ public class DividerProcessor {
           if (!negation) {
         	  return newAtom;
           } else {
-        	  return FormulaUtils.notOf(newAtom);
+        	  return FormulaUtils.not(newAtom);
           }
         } 
       }
@@ -271,7 +271,7 @@ public class DividerProcessor {
       } else {
     	  newCond = new Eq(term.second().getVariable(), box);
       }
-      constraint = FormulaUtils.andOf(constraint, newCond);
+      constraint = FormulaUtils.and(constraint, newCond);
     }
     return constraint;
   }

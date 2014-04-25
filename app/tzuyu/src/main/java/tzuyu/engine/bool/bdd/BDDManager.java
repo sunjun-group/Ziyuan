@@ -59,12 +59,9 @@ public class BDDManager {
 			vars.add(atoms.get(varIndex - 1));
 			List<Integer> vals = new ArrayList<Integer>();
 			vals.add(0);
-			//TODO LLT: test & replace
-//			BDDNode v0 = recursiveBuild(t.restrict(vars, vals), varIndex + 1);
 			BDDNode v0 = recursiveBuild(FormulaUtils.restrict(t, vars, vals), varIndex + 1);
 			vals.clear();
 			vals.add(1);
-//			BDDNode v1 = recursiveBuild(t.restrict(vars, vals), varIndex + 1);
 			BDDNode v1 = recursiveBuild(FormulaUtils.restrict(t, vars, vals), varIndex + 1);
 			return mk(varIndex, v0, v1);
 		}

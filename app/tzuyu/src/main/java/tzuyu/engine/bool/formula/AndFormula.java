@@ -21,7 +21,7 @@ import tzuyu.engine.model.Prestate;
 public class AndFormula extends ConjunctionFormula {
 	
 	/**
-	 * @deprecated use {@link FormulaUtils#andOf(Formula, Formula)} instead
+	 * @deprecated use {@link FormulaUtils#and(Formula, Formula)} instead
 	 */
 	@Deprecated
 	public AndFormula(Formula left, Formula right) {
@@ -29,7 +29,7 @@ public class AndFormula extends ConjunctionFormula {
 	}
 	
 	/**
-	 * @deprecated use {@link FormulaUtils#andOf(Formula, Formula)} instead
+	 * @deprecated use {@link FormulaUtils#and(Formula, Formula)} instead
 	 */
 	@Deprecated
 	public AndFormula() {

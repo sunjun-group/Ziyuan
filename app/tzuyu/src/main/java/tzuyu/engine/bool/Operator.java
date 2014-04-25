@@ -63,6 +63,10 @@ public enum Operator {
 		return this;
 	}
 	
+	public Operator negative() {
+		return notOf(this);
+	}
+	
 	public static Operator notOf(Operator op) {
 		for (Pair<Operator, Operator> pair : Operator.OPPOSITE_PAIRS) {
 			if (op == pair.a) {

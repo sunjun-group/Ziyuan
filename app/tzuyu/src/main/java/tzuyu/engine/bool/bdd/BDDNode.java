@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import tzuyu.engine.bool.formula.OrFormula;
 import tzuyu.engine.bool.utils.FormulaNegation;
 import tzuyu.engine.bool.utils.FormulaUtils;
 import tzuyu.engine.model.Formula;
@@ -203,14 +202,14 @@ public class BDDNode {
         Formula term = Formula.TRUE;
         for (Integer key : map.keySet()) {
           if (map.get(key) == 0) {
-            term = FormulaUtils.andOf(term,
-            		FormulaNegation.notOf(manager.getAtom(key - 1)));
+            term = FormulaUtils.and(term,
+            		FormulaNegation.not(manager.getAtom(key - 1)));
           } else {
-            term = FormulaUtils.andOf(term, manager.getAtom(key - 1));
+            term = FormulaUtils.and(term, manager.getAtom(key - 1));
           }
         }
-        term = FormulaUtils.simplify(term); //TODO LLT: consider to remove this.
-        formula = FormulaUtils.orOf(formula, term);
+        term = FormulaUtils.simplify(term); 
+        formula = FormulaUtils.or(formula, term);
       }
       formula = FormulaUtils.simplify(formula);
       return formula;

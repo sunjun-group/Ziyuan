@@ -79,7 +79,10 @@ public class AssertionWriter {
 	}
 	
 	public void writeAssertion(IProgressMonitor monitor) throws TzException {
-		writeAssertion(type.getCompilationUnit(), monitor);
+		ICompilationUnit cu = type.getCompilationUnit();
+		if (cu != null) {
+			writeAssertion(cu, monitor);
+		}
 	}
 	
 	private void writeAssertion(ICompilationUnit cu, IProgressMonitor monitor)
@@ -133,9 +136,8 @@ public class AssertionWriter {
 		sb.append("\n\t\t").append("// Tzuyu Auto-generated assertion");
 		Formula condition = value.get(0);
 		for (int i = 1; i < value.size(); i++) {
-			condition = FormulaUtils.orOf(condition, value.get(i));
+			condition = FormulaUtils.or(condition, value.get(i));
 		}
-//		condition = Simplifier.simplify(condition);
 		MethodConditionBuilder visitor = new MethodConditionBuilder(method);
 		condition.accept(visitor);
 		sb.append("\n\t\t").append("assert ").append(visitor.getResult()).append(";");

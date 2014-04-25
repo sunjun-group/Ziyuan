@@ -69,7 +69,7 @@ public class FormulaSimplifier extends ExpressionVisitor {
 	
 	@Override
 	public void visit(NotFormula notFormula) {
-		result = FormulaUtils.notOf(simplify(notFormula.getChild()));
+		result = FormulaUtils.not(simplify(notFormula.getChild()));
 	}
 	
 	public static Formula simplify(Formula formula) {

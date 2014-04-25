@@ -54,7 +54,7 @@ public class FormulaNegation extends ExpressionVisitor {
 	@Override
 	public void visitConjunctionFormula(ConjunctionFormula cond) {
 		for (Formula ele : cond.getElements()) {
-			((ConjunctionFormula)notFormula).add(notOf(ele));
+			((ConjunctionFormula)notFormula).add(not(ele));
 		}
 	}
 	
@@ -75,22 +75,14 @@ public class FormulaNegation extends ExpressionVisitor {
 	}
 	
 	private Operator notOf(Operator op) {
-		for (Pair<Operator, Operator> pair : Operator.OPPOSITE_PAIRS) {
-			if (op == pair.a) {
-				return pair.b;
-			}
-			if (op == pair.b) {
-				return pair.a;
-			}
-		}
-		return null;
+		return Operator.notOf(op);
 	}
 	
 	public Formula getNotFormula() {
 		return notFormula;
 	}
 	
-	public static Formula notOf(Formula cond) {
+	public static Formula not(Formula cond) {
 		FormulaNegation visitor = new FormulaNegation();
 		cond.accept(visitor);
 		if (visitor.getNotFormula() == null) {

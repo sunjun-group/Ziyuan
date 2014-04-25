@@ -70,7 +70,7 @@ public class FormulaConjunction extends ExpressionVisitor {
 	 * remember that the order of the conjunction formula can impact on the
 	 * simplifier result!!.
 	 */
-	public static Formula andOf(Formula curCond, Formula newCond) {
+	public static Formula and(Formula curCond, Formula newCond) {
 		if (curCond == null || TRUE.equals(curCond)) {
 			return newCond;
 		}
@@ -92,12 +92,13 @@ public class FormulaConjunction extends ExpressionVisitor {
 		visitor.op = op;
 		curCond.accept(visitor);
 		if (visitor.result == null) {
+			visitor.newCond = curCond;
 			newCond.accept(visitor);
 		}
 		return visitor.result;
 	}
 	
-	public static Formula orOf(Formula curCond, Formula newCond) {
+	public static Formula or(Formula curCond, Formula newCond) {
 		if (curCond == null || FALSE.equals(curCond)) {
 			return newCond;
 		}

@@ -29,9 +29,9 @@ public class TestBDD {
 		atoms.add(q);
 
 		Formula pLit = p;
-		Formula nPLit = FormulaNegation.notOf(p);
+		Formula nPLit = FormulaNegation.not(p);
 		Formula qLit = q;
-		Formula nQLit = FormulaNegation.notOf(q);
+		Formula nQLit = FormulaNegation.not(q);
 
 		AndFormula t1 = new AndFormula();
 		t1.add(pLit);

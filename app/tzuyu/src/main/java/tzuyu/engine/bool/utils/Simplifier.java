@@ -16,7 +16,6 @@ public class Simplifier {
 
   public static Formula simplify(Formula f) {
     Formula newFormula = FormulaUtils.simplify(f); 
-//    		f.simplify();
 
     BDDManager manager = new BDDManager(newFormula.getAtomics());
 

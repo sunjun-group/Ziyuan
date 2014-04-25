@@ -90,17 +90,17 @@ public class TzuYuAlphabet extends Alphabet<TzuYuAction> {
 
 		Formula trueDivider = divider;
 
-		Formula falseDivider = FormulaNegation.notOf(divider);
+		Formula falseDivider = FormulaNegation.not(divider);
 
 		TzuYuAlphabet newSigma = new TzuYuAlphabet(this);
 
 		for (TzuYuAction act : getActions()) {
 			if (dividedAction.equals(act)) {
-				Formula newTrueFormula = FormulaUtils.andOf(act.getGuard(),
+				Formula newTrueFormula = FormulaUtils.and(act.getGuard(),
 						trueDivider);
 				newTrueFormula = Simplifier.simplify(newTrueFormula);
 
-				Formula newFalseFormula = FormulaUtils.andOf(act.getGuard(),
+				Formula newFalseFormula = FormulaUtils.and(act.getGuard(),
 						falseDivider);
 				newFalseFormula = Simplifier.simplify(newFalseFormula);
 				if (newTrueFormula.equals(Formula.FALSE)) {
@@ -112,6 +112,8 @@ public class TzuYuAlphabet extends Alphabet<TzuYuAction> {
 				}
 				if (newFalseFormula.equals(Formula.FALSE)) {
 					out.println("new guard evaluates to false.");
+					Simplifier.simplify(FormulaUtils.and(act.getGuard(),
+							falseDivider));
 				} else {
 					TzuYuAction falseAction = new TzuYuAction(newFalseFormula,
 							stmt);

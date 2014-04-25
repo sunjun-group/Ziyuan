@@ -38,8 +38,8 @@ public abstract class ConjunctionFormula implements Formula {
 	 * @deprecated
 	 * only for internal usage.
 	 * do not use this function,
-	 * try {@link FormulaUtils#andOf(Formula, Formula)}
-	 * or {@link FormulaUtils#orOf(Formula, Formula)}
+	 * try {@link FormulaUtils#and(Formula, Formula)}
+	 * or {@link FormulaUtils#or(Formula, Formula)}
 	 */
 	@Deprecated
 	public void add(Formula formula) {

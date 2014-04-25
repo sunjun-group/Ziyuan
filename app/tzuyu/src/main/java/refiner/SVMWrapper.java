@@ -392,7 +392,7 @@ public class SVMWrapper {
 				// SVM cannot differentiate the data set
 				return Formula.TRUE;
 			} else {
-				formula = FormulaUtils.andOf(formula, subDivider); 
+				formula = FormulaUtils.and(formula, subDivider); 
 			}
 		} while (misclassified.size() != 0);
 
