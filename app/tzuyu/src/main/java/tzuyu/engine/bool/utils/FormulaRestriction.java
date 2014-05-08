@@ -143,7 +143,7 @@ public class FormulaRestriction extends ExpressionVisitor {
 		}
 		if (binaryValue == 1) {
 			return Formula.TRUE;
-		}
+		} 
 		throw new TzRuntimeException("Expect binary value(0, 1), get "
 				+ binaryValue);
 	}
