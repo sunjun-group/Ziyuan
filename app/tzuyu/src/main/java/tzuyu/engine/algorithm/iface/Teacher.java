@@ -18,7 +18,7 @@ import tzuyu.engine.model.exception.TzException;
  * @author Spencer Xiao
  * 
  */
-public interface Teacher<A extends Alphabet> extends HasReport<A> {
+public interface Teacher<A extends Alphabet<?>> extends HasReport<A> {
 	static final Logger logger = Logger.getRootLogger();
 	/**
 	 * If the @param str is accepted by the unknown DFA then return true; If the

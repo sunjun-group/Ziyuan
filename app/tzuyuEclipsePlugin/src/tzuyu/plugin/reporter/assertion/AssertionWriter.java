@@ -26,6 +26,7 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
 import tzuyu.engine.bool.utils.FormulaUtils;
+import tzuyu.engine.bool.utils.Simplifier;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.TzuYuAction;
 import tzuyu.engine.model.dfa.DFA;
@@ -136,8 +137,9 @@ public class AssertionWriter {
 		sb.append("\n\t\t").append("// Tzuyu Auto-generated assertion");
 		Formula condition = value.get(0);
 		for (int i = 1; i < value.size(); i++) {
-			condition = FormulaUtils.or(condition, value.get(i));
+			condition = FormulaUtils.or(value.get(i), condition);
 		}
+		condition = Simplifier.simplify(condition);
 		MethodConditionBuilder visitor = new MethodConditionBuilder(method);
 		condition.accept(visitor);
 		sb.append("\n\t\t").append("assert ").append(visitor.getResult()).append(";");

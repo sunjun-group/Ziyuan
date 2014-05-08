@@ -8,12 +8,14 @@
 
 package tzuyu.engine.bool.utils;
 
-import static tzuyu.engine.bool.Operator.EQ;
+import static tzuyu.engine.bool.utils.AtomUtils.ATOMS_A_BOUND_B;
+import static tzuyu.engine.bool.utils.AtomUtils.ATOMS_B_BOUND_A;
+import static tzuyu.engine.bool.utils.AtomUtils.ATOMS_EQUAL;
+import static tzuyu.engine.bool.utils.AtomUtils.ATOMS_NEGATION;
+import static tzuyu.engine.bool.utils.AtomUtils.ATOMS_NO_RELATIONSHIP;
 
 import java.util.List;
 
-import tzuyu.engine.bool.LIATerm;
-import tzuyu.engine.bool.Operator;
 import tzuyu.engine.bool.formula.AndFormula;
 import tzuyu.engine.bool.formula.Atom;
 import tzuyu.engine.bool.formula.False;
@@ -24,7 +26,6 @@ import tzuyu.engine.bool.formula.True;
 import tzuyu.engine.iface.ExpressionVisitor;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.exception.TzRuntimeException;
-import tzuyu.engine.utils.Pair;
 
 /**
  * @author LLT
@@ -111,7 +112,7 @@ public class FormulaRestriction extends ExpressionVisitor {
 		for (int index = 0; index < vars.size(); index++) {
 			Atom curAtom = vars.get(index);
 			if (curAtom instanceof LIAAtom) {
-				int relationship = getRelationship((LIAAtom)curAtom, liaAtom);
+				int relationship = AtomUtils.getRelationship((LIAAtom)curAtom, liaAtom);
 				if (relationship == ATOMS_NO_RELATIONSHIP) {
 					continue;
 				}
@@ -120,7 +121,7 @@ public class FormulaRestriction extends ExpressionVisitor {
 					result = curVal;
 					break;
 				}					
-				if (relationship == ATOMS_HALF_NEGATION) {
+				if (relationship == ATOMS_NEGATION) {
 					result = FormulaUtils.not(curVal);
 					break;
 				}
@@ -145,60 +146,6 @@ public class FormulaRestriction extends ExpressionVisitor {
 		}
 		throw new TzRuntimeException("Expect binary value(0, 1), get "
 				+ binaryValue);
-	}
-	
-	public static final int ATOMS_NO_RELATIONSHIP = 0;
-	public static final int ATOMS_EQUAL = 1;
-	public static final int ATOMS_A_BOUND_B = 2;
-	public static final int ATOMS_B_BOUND_A = 3;
-	public static final int ATOMS_HALF_NEGATION = 4;
-	public static int getRelationship(LIAAtom curAtom, LIAAtom liaAtom) {
-		if (liaAtom.equals(curAtom)) {
-			return ATOMS_EQUAL;
-		}
-		LIATerm curTerm = curAtom.getSingleTerm();
-		LIATerm liaTerm = liaAtom.getSingleTerm();
-		if (curTerm != null && curTerm.getVariable().equals(liaTerm.getVariable())) {
-			Pair<Operator, Operator> opPair = Pair.of(
-					curAtom.getOperator().negateIfPlusNegValue(curTerm.getCoefficient()), 
-					liaAtom.getOperator().negateIfPlusNegValue(liaTerm.getCoefficient()));
-			 if (opPair.equals(Pair.of(EQ, EQ))) {
-				 return ATOMS_HALF_NEGATION;
-			 }
-			 double curConst = curAtom.getConstant() / curTerm.getCoefficient();
-			 double liaConst = liaAtom.getConstant() / liaTerm.getCoefficient();
-			if (isNegation(opPair.a, opPair.b, curConst, liaConst)
-					|| isHalfNegation(opPair.a, opPair.b, curConst, liaConst)
-					|| isHalfNegation(opPair.b, opPair.a, liaConst, curConst)) {
-				 return ATOMS_HALF_NEGATION;
-			 }
-			 if (isBound(opPair.a, opPair.b, curConst, liaConst)) {
-				 return ATOMS_A_BOUND_B;
-			 }
-			 if (isBound(opPair.b, opPair.a, liaConst, curConst)) {
-				 return ATOMS_B_BOUND_A;
-			 }
-		}
-		return ATOMS_NO_RELATIONSHIP;
-	}
-	
-	private static boolean isBound(Operator a, Operator b,
-			double aConst, double bConst) {
-		return (a.isGT() && b.isGT() && aConst > bConst) || 
-				(a.isLT() && b.isLT() && aConst < bConst);
-	}
-	
-	private static boolean isNegation(Operator a, Operator b, double aConst,
-			double bConst) {
-		return (aConst == bConst) && (a.negative() == b);
-	}
-	
-	private static boolean isHalfNegation(Operator a, Operator b, double aConst,
-			double bConst) {
-		if (a.isGT() && b.isLT() && (aConst > bConst)) {
-			return true;
-		}
-		return false;
 	}
 
 	@Override

@@ -32,10 +32,13 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.osgi.service.prefs.Preferences;
 
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzConstants;
+import tzuyu.engine.model.exception.TzRuntimeException;
+import tzuyu.engine.utils.CollectionUtils;
 import tzuyu.engine.utils.Pair;
 import tzuyu.engine.utils.StringUtils;
 import tzuyu.engine.utils.TzUtils;
@@ -70,12 +73,12 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 		setJavaProject(project);
 		config = new TzConfiguration(setDefault);
 		if (setDefault) {
-			outputFolder = IProjectUtils.toPackageFragmentRoot(project, TzConstants.DEFAULT_OUTPUT_FOLDER);
+			outputFolder = IProjectUtils.toPackageFragmentRoot(project, getDefaultOutputFolder(project));
 			outputPackage = IProjectUtils.toPackageFragment(outputFolder, TzConstants.DEFAULT_OUTPUT_PACKAGE);
 		}
 		searchScopeMap = new HashMap<String, TypeScope>();
 	}
-	
+
 	private static String getDefaultSearchScope() {
 		Map<String, TypeScope> defaultScope = new HashMap<String, TypeScope>();
 		TypeScope objectTypeScope = new TypeScope();
@@ -111,7 +114,7 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 	public void read(Preferences pref) {
 		/* output folder & package */
 		outputFolder = IProjectUtils.toPackageFragmentRoot(project,
-				pref.get(ATT_OUTPUT_FOLDER, TzConstants.DEFAULT_OUTPUT_FOLDER));
+				pref.get(ATT_OUTPUT_FOLDER, getDefaultOutputFolder(project)));
 		outputPackage = IProjectUtils.toPackageFragment(outputFolder,
 				pref.get(ATT_OUTPUT_PACKAGE, TzConstants.DEFAULT_OUTPUT_PACKAGE));
 		/* parameters configuration */
@@ -146,6 +149,19 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 				OUT_PKG_CONFLICT_HANDLE.a, OUT_PKG_CONFLICT_HANDLE.b.name()));
 	}
 
+	private String getDefaultOutputFolder(IJavaProject project) {
+		try {
+			IPackageFragmentRoot[] packageFragmentRoots = project
+					.getPackageFragmentRoots();
+			if (!CollectionUtils.isEmpty(packageFragmentRoots)) {
+				IPackageFragmentRoot root = packageFragmentRoots[0];
+				return IProjectUtils.toRelativePath(root, project);
+			}
+		} catch (JavaModelException e1) {
+		}
+		throw new TzRuntimeException("cannot find package roots");
+	}
+
 	public void write(Preferences projectNode) {
 		projectNode.putInt(ARRAY_MAX_LENGTH.a, config.getArrayMaxLength());
 		projectNode.putInt(CLASS_MAX_DEPTH.a, config.getClassMaxDepth());
@@ -173,7 +189,7 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 	}
 	
 	public TzConfiguration getTzConfig(boolean runningTzuyu) {
-		if (config.getOutputPath() == null) {
+		if (config.getOutputPath() == null && runningTzuyu) {
 			config.setOutputPath(IProjectUtils.relativeToAbsolute(outputFolder.getPath()).toString());
 			config.setOutputPackage(outputPackage.getElementName());
 		}

@@ -22,7 +22,7 @@ import tzuyu.engine.model.dfa.DFA;
  * @author LLT
  * 
  */
-public interface Refiner<A extends Alphabet> extends HasReport<A> {
+public interface Refiner<A extends Alphabet<?>> extends HasReport<A> {
 
 	Formula refineMembership(QueryResult result) throws InterruptedException;
 

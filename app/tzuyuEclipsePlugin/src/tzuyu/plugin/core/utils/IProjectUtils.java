@@ -9,7 +9,6 @@
 package tzuyu.plugin.core.utils;
 
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -18,8 +17,9 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+
+import tzuyu.engine.model.exception.TzRuntimeException;
 
 /**
  * @author LLT
@@ -33,24 +33,17 @@ public class IProjectUtils {
 	}
 	
 	public static IPackageFragmentRoot toPackageFragmentRoot(IJavaProject project, String relativePath) {
-		IWorkspaceRoot workspaceRoot = project.getProject().getWorkspace().getRoot();
 		// convert from text to iPackageFragementRoot;
-		IPath pkgFrgRootPath = project.getPath().append(relativePath);
 		IPackageFragmentRoot result = null;
-		for (IProject proj : workspaceRoot.getProjects()) {
-			IJavaProject javaProj = JavaCore.create(proj);
-			try {
-				result = javaProj.findPackageFragmentRoot(pkgFrgRootPath);
-			} catch (JavaModelException e) {
-				result = null;
-			}
-			if (result != null) {
-				break;
-			}
+		IPath pkgFrgRootPath = project.getPath().append(relativePath);
+		try {
+			result = project.findPackageFragmentRoot(pkgFrgRootPath);
+		} catch (JavaModelException e1) {
+			throw new TzRuntimeException("cannot find package roots");
 		}
 		return result;
 	}
-
+	
 	public static IPackageFragment toPackageFragment(
 			IPackageFragmentRoot root, String packageName) {
 		if (StringUtils.isBlank(packageName)) {

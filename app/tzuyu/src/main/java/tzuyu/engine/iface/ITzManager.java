@@ -18,7 +18,7 @@ import tzuyu.engine.model.dfa.Alphabet;
  * @author LLT
  *
  */
-public interface ITzManager<A extends Alphabet> {
+public interface ITzManager<A extends Alphabet<?>> {
 
 	Tester getTester();
 

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.resource.ImageDescriptor;

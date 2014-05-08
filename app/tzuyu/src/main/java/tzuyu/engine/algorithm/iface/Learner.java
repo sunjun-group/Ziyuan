@@ -16,9 +16,8 @@ import tzuyu.engine.model.exception.TzException;
 
 /**
  * @author LLT
- * The learner should not know anything about the alphabet instant.
  */
-public interface Learner<A extends Alphabet> extends HasReport<A> {
+public interface Learner<A extends Alphabet<?>> extends HasReport<A> {
 	/**
 	 * main function of the algorithm
 	 */
