@@ -16,6 +16,8 @@ import tzuyu.engine.bool.formula.LIAAtom;
 import tzuyu.engine.bool.formula.NotFormula;
 import tzuyu.engine.iface.ExpressionVisitor;
 import tzuyu.engine.model.Formula;
+import tzuyu.engine.runtime.RMethod;
+import tzuyu.engine.utils.Assert;
 import tzuyu.engine.utils.StringUtils;
 
 /**
@@ -24,6 +26,12 @@ import tzuyu.engine.utils.StringUtils;
  */
 public class ConditionBuilder extends ExpressionVisitor {
 	private StringBuilder sb;
+	private String[] paramNames;
+
+	public ConditionBuilder(RMethod method) {
+		this();
+		paramNames = method.getParamNames();
+	}
 
 	public ConditionBuilder() {
 		sb = new StringBuilder();
@@ -67,9 +75,11 @@ public class ConditionBuilder extends ExpressionVisitor {
 	}
 
 	protected String getParameterName(FieldVar fieldVar) {
-		String type = fieldVar.getStatement().getInputTypes()
-				.get(fieldVar.getArgIndex()).getSimpleName();
-		return type + "(" + Integer.toString(fieldVar.getArgIndex()) + ")";
+		int argIndex = fieldVar.getArgIndex() - 1;
+		Assert.assertTrue(paramNames != null && argIndex <= paramNames.length,
+				"argIndex and paramNames not match: argIndex=" + argIndex
+						+ ", paramNames=" + paramNames);
+		return paramNames[argIndex];
 	}
 	
 	@Override

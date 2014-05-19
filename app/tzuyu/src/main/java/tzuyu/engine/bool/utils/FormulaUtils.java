@@ -12,6 +12,7 @@ import java.util.List;
 
 import tzuyu.engine.bool.formula.Atom;
 import tzuyu.engine.model.Formula;
+import tzuyu.engine.runtime.RMethod;
 import tzuyu.engine.utils.StringUtils;
 
 /**
@@ -46,8 +47,8 @@ public class FormulaUtils {
 		return formula;
 	}
 	
-	public static String toString(Formula formula) {
-		ConditionBuilder condBuilder = new ConditionBuilder();
+	public static String toString(Formula formula, RMethod method) {
+		ConditionBuilder condBuilder = new ConditionBuilder(method);
 		formula.accept(condBuilder);
 		String str = condBuilder.getResult();
 		if (!StringUtils.isEmpty(str)) {

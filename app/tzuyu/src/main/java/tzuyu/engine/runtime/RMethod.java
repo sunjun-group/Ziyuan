@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import tzuyu.engine.Tzuyu;
 import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.model.ExecutionOutcome;
 import tzuyu.engine.model.StatementKind;
@@ -33,6 +34,7 @@ public class RMethod extends StatementKind implements Serializable {
 	private boolean isVoidCached = false;
 	// null: have not checked yet, true/false: is static or not.  
 	private Boolean isStatic = null; 
+	private String[] params;
 
 	private RMethod() {
 		method = null;
@@ -154,7 +156,14 @@ public class RMethod extends StatementKind implements Serializable {
 
 	@Override
 	public String toParseableString() {
-		return ReflectionUtils.getSignature(method);
+		return ReflectionUtils.getSignature(method, getParamNames());
+	}
+	
+	public String[] getParamNames() {
+		if (params == null) {
+			params = Tzuyu.getParamNameDiscoverer().getParameterNames(method);
+		}
+		return params;
 	}
 
 	@Override

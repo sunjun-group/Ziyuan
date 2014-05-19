@@ -109,10 +109,19 @@ public class TzuYuAction extends Action {
 			return savedHashCode;
 		}
 	}
+	
+	public String getString() {
+		return toString();
+	}
 
 	@Override
 	public String toString() {
-		return FormulaUtils.toString(guard) + method.toString();
+		// only for debugging.
+		if (method instanceof RMethod) {
+			return FormulaUtils.toString(guard, (RMethod) method)
+					+ method.toString();
+		}
+		return method.toString();
 	}
 
 	public StatementKind getAction() {

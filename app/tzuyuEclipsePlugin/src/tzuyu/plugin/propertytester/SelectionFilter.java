@@ -84,7 +84,6 @@ public class SelectionFilter extends PropertyTester {
 	private Class<?>[] getValidSelectedClasses() {
 		return new Class<?>[] { IClassFile.class, ICompilationUnit.class, IMethod.class,
 				IType.class };
-
 	}
 
 }

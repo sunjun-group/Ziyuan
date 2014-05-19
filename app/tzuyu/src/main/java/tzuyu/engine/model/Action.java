@@ -10,6 +10,10 @@ public abstract class Action {
 	public static final Action epsilon = new Epsilon();
 
 	public abstract boolean isConstructor();
+	
+	public String getString() {
+		return toString();
+	}
 }
 
 class Epsilon extends Action {

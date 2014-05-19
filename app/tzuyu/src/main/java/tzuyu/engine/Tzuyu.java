@@ -8,6 +8,9 @@
 
 package tzuyu.engine;
 
+import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.core.ParameterNameDiscoverer;
+
 import libsvm.libsvm.svm;
 import lstar.IReportHandler.OutputType;
 import lstar.LStar;
@@ -51,6 +54,7 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 	private TzReportHandler reporter;
 	private IPrintStream tzOut;
 	private static ILogger<?> logger;
+	private static ParameterNameDiscoverer paramNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
 
 	public Tzuyu(TzClass project, TzReportHandler reporter,
 			IReferencesAnalyzer refAnalyzer) {
@@ -171,5 +175,9 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 		if (reporter.isInterrupted()) {
 			throw new InterruptedException("User cancel request!!");
 		}
+	}
+	
+	public static ParameterNameDiscoverer getParamNameDiscoverer() {
+		return paramNameDiscoverer;
 	}
 }

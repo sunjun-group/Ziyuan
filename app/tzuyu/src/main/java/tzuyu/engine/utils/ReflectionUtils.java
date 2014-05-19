@@ -195,21 +195,18 @@ public class ReflectionUtils {
 		return Modifier.isPublic(modifiers);
 	}
 
-	public static String getSignature(Method method) {
+	public static String getSignature(Method method, String[] parameterNames) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(method.getDeclaringClass().getSimpleName() + ".");
 		sb.append(method.getName() + "(");
 		Class<?>[] params = method.getParameterTypes();
 		for (int j = 0; j < params.length; j++) {
-			sb.append(params[j].getSimpleName());
+			sb.append(params[j].getSimpleName())
+				.append(" ").append(parameterNames[j]);
 			if (j < (params.length - 1))
 				sb.append(",");
 		}
 		sb.append(")");
-		/*
-		 * StringBuilder sb = new StringBuilder(); sb.append(method.getName());
-		 * sb.append("()");
-		 */
 		return sb.toString();
 	}
 

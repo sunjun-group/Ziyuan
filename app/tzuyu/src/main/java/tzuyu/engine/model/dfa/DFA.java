@@ -100,7 +100,7 @@ public class DFA {
 		for (State state : states) {
 			for (Transition tran : state.trans) {
 				out.println("(" + state.id + "--"
-						+ tran.action.toString() + "-->"
+						+ tran.action.getString() + "-->"
 						+ states.get(tran.target).id + ")");
 			}
 		}

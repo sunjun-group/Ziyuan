@@ -22,8 +22,8 @@
           id="tzuyu"
           point="org.eclipse.ui.menus">
        <menuContribution
-             allPopups="false"
-             locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+             allPopups="true"
+             locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?before=additions">
           <menu
                 id="tzuyu.plugin.menu"
                 label="Tzuyu">
@@ -65,7 +65,6 @@
                             operator="and">
                          <and>
                             <test
-                                  forcePluginActivation="true"
                                   property="tzuyu.plugin.tester.dfaFile">
                             </test>
                          </and>
@@ -74,6 +73,16 @@
                 </and>
              </visibleWhen>
           </menu>
+       </menuContribution>
+       <menuContribution
+             locationURI="popup:org.eclipse.jdt.ui.PackageExplorer?before=additions">
+             <menu id="tzuyu.plugin.menu"
+                label="Tzuyu"/>
+       </menuContribution>
+       <menuContribution
+             locationURI="popup:org.eclipse.jdt.ui.ProjectsView?before=additions">
+             <menu id="tzuyu.plugin.menu"
+                label="Tzuyu"/>
        </menuContribution>
     </extension>
     <extension
