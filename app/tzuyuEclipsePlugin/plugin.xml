@@ -27,7 +27,8 @@
           <menu
                 id="tzuyu.plugin.menu"
                 label="Tzuyu">
-             <visibleWhen>
+             <visibleWhen
+                   checkEnabled="true">
 	                <with variable="selection">
 	                   <test
                           forcePluginActivation="true"
@@ -53,7 +54,7 @@
                    style="push">
              </command>
              <visibleWhen
-                   checkEnabled="false">
+                   checkEnabled="true">
                 <and>
                    <with
                          variable="selection">
@@ -75,11 +76,13 @@
           </menu>
        </menuContribution>
        <menuContribution
+             allPopups="true"
              locationURI="popup:org.eclipse.jdt.ui.PackageExplorer?before=additions">
              <menu id="tzuyu.plugin.menu"
                 label="Tzuyu"/>
        </menuContribution>
        <menuContribution
+             allPopups="true"
              locationURI="popup:org.eclipse.jdt.ui.ProjectsView?before=additions">
              <menu id="tzuyu.plugin.menu"
                 label="Tzuyu"/>

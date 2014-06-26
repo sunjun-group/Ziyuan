@@ -91,11 +91,11 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 				project.getTarget().getSimpleName()+ "============");
 		// divide all class methods into 2 groups: static and non-static
 		// and start learning separately.
-		TzuYuAlphabet alphabet = TzuYuAlphabet.forNonStaticGroup(project);
+//		TzuYuAlphabet alphabet = TzuYuAlphabet.forNonStaticGroup(project);
 		// UNCOMMENT TO TEST STATIC GROUP
 //		alphabet = TzuYuAlphabet.forStaticGroup(project);
 		// UNCOMMENT TO TEST THE WHOLE CLASS
-//		alphabet = TzuYuAlphabet.forClass(project);
+		TzuYuAlphabet alphabet = TzuYuAlphabet.forClass(project);
 		alphabet.setOutStream(tzOut);
 		run(alphabet);
 		try {

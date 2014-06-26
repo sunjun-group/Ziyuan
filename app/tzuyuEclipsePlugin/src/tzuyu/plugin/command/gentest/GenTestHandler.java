@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaElement;
@@ -28,7 +27,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import tzuyu.engine.model.exception.ReportException;
 import tzuyu.engine.model.exception.TzException;
 import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.plugin.TzuyuPlugin;
@@ -37,6 +35,8 @@ import tzuyu.plugin.command.TzJob;
 import tzuyu.plugin.core.constants.Constants;
 import tzuyu.plugin.core.constants.Messages;
 import tzuyu.plugin.core.dto.WorkObject;
+import tzuyu.plugin.core.exception.ErrorType;
+import tzuyu.plugin.core.exception.PluginException;
 import tzuyu.plugin.core.utils.IStatusUtils;
 import tzuyu.plugin.preferences.component.MessageDialogs;
 import tzuyu.plugin.proxy.TzuyuEngineProxy;
@@ -64,6 +64,11 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 	public boolean preProcess(GenTestPreferences config) {
 		/* open package */
 		try {
+			if (config.getOutputFolder() == null
+					|| config.getOutputPackage() == null) {
+				// TODO LLT: open preferences page for user to edit
+				throw new PluginException(ErrorType.UNDEFINED_OUTPUT_FOLDER);
+			}
 			if (!config.getOutputPackage().isOpen()) {
 				config.setOutputPackage(config.getOutputFolder()
 						.createPackageFragment(
@@ -90,10 +95,8 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 				}
 				return confirm == PkgConfirmMsgDialog.OVERRIDE_IDX;
 			}
-		} catch (JavaModelException e) {
-			PluginLogger.getLogger().logEx(e);
-		} catch (CoreException e) {
-			PluginLogger.getLogger().logEx(e);
+		} catch (Exception e) {
+			handleException(e);
 		}
 		return false;
 	}
@@ -155,32 +158,39 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 				TzuyuEngineProxy.generateTestCases(workObject, config, reporter, monitor);
 				// refresh output folder
 				config.getOutputPackage().getResource().refreshLocal(2, monitor);
-			} catch (CoreException e) {
-				PluginLogger.getLogger().logEx(e);
-				StatusManager.getManager().handle(IStatusUtils.error(e.getMessage()),
-						StatusManager.BLOCK);
-			} catch (final ReportException e) {
-				PluginLogger.getLogger().logEx(e);
-				MessageDialogs.showWarningInUI(msg.getMessage(e.getType(), e.getParams()));
-			} catch (InterruptedException e) {
-				PluginLogger.getLogger().info("User cancelled the job!!");
-			} catch (final TzException e) {
-				// expected error
-				PluginLogger.getLogger().logEx(e);
-				MessageDialogs.showWarningInUI(msg.getMessage(e.getType(), e.getParams()));
-			} catch (TzRuntimeException e) {
-				// unexpected error
-				PluginLogger.getLogger().logEx(e);
-				String eMsg = e.getMessage();
-				if (e.getType() != null) {
-					eMsg = msg.getMessage(e.getType()) + eMsg;
-				}
-				StatusManager.getManager().handle(IStatusUtils.error(eMsg),
-						StatusManager.BLOCK);
+			} catch (Exception e) {
+				handleException(e);
 			}
 			
 			monitor.done();
 			return IStatusUtils.OK_STATUS;
+		}
+	}
+	
+	protected static void handleException(Exception e) {
+		if (e instanceof InterruptedException) {
+			PluginLogger.getLogger().info("User cancelled the job!!");
+			return;
+		}
+		PluginLogger.getLogger().logEx(e);
+		if (e instanceof PluginException) {
+			MessageDialogs.showErrorInUI(msg.getMessage(((PluginException)e).getType()));
+		} else if (e instanceof TzException) {
+			// expected error
+			TzException tzEx = (TzException) e;
+			MessageDialogs.showWarningInUI(msg.getMessage(tzEx.getType(), tzEx.getParams()));
+		} else if (e instanceof TzRuntimeException) {
+			// unexpected error
+			TzRuntimeException tzRtEx = (TzRuntimeException) e;
+			String eMsg = e.getMessage();
+			if (tzRtEx.getType() != null) {
+				eMsg = msg.getMessage(tzRtEx.getType()) + eMsg;
+			}
+			StatusManager.getManager().handle(IStatusUtils.error(eMsg),
+					StatusManager.BLOCK);
+		} else {
+			StatusManager.getManager().handle(IStatusUtils.error(e.getMessage()),
+					StatusManager.BLOCK);
 		}
 	}
 
