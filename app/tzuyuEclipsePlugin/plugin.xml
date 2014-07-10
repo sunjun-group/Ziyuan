@@ -4,14 +4,14 @@
  	<extension
           point="org.eclipse.core.expressions.propertyTesters">
        <propertyTester
-             class="tzuyu.plugin.propertytester.SelectionFilter"
+             class="tzuyu.plugin.tester.propertytester.SelectionFilter"
              id="tzuyu.plugin.tester"
              namespace="tzuyu.plugin.tester"
              properties="isSuitableForTest"
              type="java.lang.Object">
        </propertyTester>
        <propertyTester
-             class="tzuyu.plugin.propertytester.SelectionFilter"
+             class="tzuyu.plugin.tester.propertytester.SelectionFilter"
              id="tzuyu.plugin.tester.dfaFile"
              namespace="tzuyu.plugin.tester"
              properties="dfaFile"
@@ -91,17 +91,17 @@
     <extension
           point="org.eclipse.ui.commands">
        <command
-             defaultHandler="tzuyu.plugin.command.gentest.GenTestHandler"
+             defaultHandler="tzuyu.plugin.tester.command.gentest.GenTestHandler"
              id="tzuyu.plugin.command.generateTestcases"
              name="Generate test cases">
        </command>
        <command
-             defaultHandler="tzuyu.plugin.command.gentestwizard.GenTestWizardHandler"
+             defaultHandler="tzuyu.plugin.tester.command.gentestwizard.GenTestWizardHandler"
              id="tzuyu.plugin.command.genTestWizard"
              name="GenTest Wizard">
        </command>
        <command
-             defaultHandler="tzuyu.plugin.command.readDfa.ReadDfaHandler"
+             defaultHandler="tzuyu.plugin.tester.command.readDfa.ReadDfaHandler"
              id="tzuyu.plugin.command.readDfa"
              name="%menu.readDfa">
        </command>
@@ -109,7 +109,7 @@
     <extension
           point="org.eclipse.ui.propertyPages">
        <page
-             class="tzuyu.plugin.preferences.ProjectPropertyPage"
+             class="tzuyu.plugin.tester.preferences.ProjectPropertyPage"
              id="tzuyu.plugin.propertypages"
              name="%propertypages.name">
           <enabledWhen>
@@ -122,7 +122,7 @@
     <extension
           point="org.eclipse.core.runtime.preferences">
        <initializer
-             class="tzuyu.plugin.preferences.TzPreferenceInitializer">
+             class="tzuyu.plugin.tester.preferences.TzPreferenceInitializer">
        </initializer>
     </extension>
     <extension
@@ -133,7 +133,7 @@
        </category>
        <view
              category="tzuyu.plugin.view.category.general"
-             class="tzuyu.plugin.view.dfa.DfaView"
+             class="tzuyu.plugin.tester.view.dfa.DfaView"
              id="tzuyu.plugin.view.dfa"
              name="%view.dfa.name"
              restorable="true">
@@ -149,18 +149,18 @@
     <extension
           point="org.eclipse.ui.console.consoleFactories">
        <consoleFactory
-             class="tzuyu.plugin.console.TzConsoleFactory"
+             class="tzuyu.plugin.tester.console.TzConsoleFactory"
              label="%console.name">
        </consoleFactory>
     </extension>
     <extension
           point="org.eclipse.ui.console.consolePageParticipants">
        <consolePageParticipant
-             class="tzuyu.plugin.console.TzConsoleParticipant"
+             class="tzuyu.plugin.tester.console.TzConsoleParticipant"
              id="tzuyu.plugin.console.TzConsoleFactory.consolePageParticipant">
           <enablement>
              <instanceof
-                   value="tzuyu.plugin.console.TzConsole">
+                   value="tzuyu.plugin.tester.console.TzConsole">
              </instanceof></enablement>
        </consolePageParticipant>
     </extension>
@@ -176,5 +176,46 @@
              id="tzuyu.plugin.theme"
              label="%plugin.name">
        </themeElementCategory>
+    </extension>
+    <extension
+          id="tzuyu.plugin.analyzer.slicing.marker"
+          name="%analyzer.slicing.marker.name"
+          point="org.eclipse.core.resources.markers">
+       <super
+             type="org.eclipse.core.resources.textmarker">
+       </super>
+       <persistent
+             value="true">
+       </persistent>
+    </extension>
+    <extension
+          point="org.eclipse.ui.editors.annotationTypes">
+       <type
+             markerSeverity="0"
+             markerType="tzuyu.plugin.analyzer.slicing.marker"
+             name="tzuyu.plugin.analyzer.slicing.marker.annotation"
+             super="org.eclipse.ui.workbench.texteditor.bookmark">
+       </type>
+    </extension>
+    <extension
+          point="org.eclipse.ui.editors.markerAnnotationSpecification">
+       <specification
+             annotationType="tzuyu.plugin.analyzer.slicing.marker.annotation"
+             colorPreferenceKey="tzslcolor"
+             colorPreferenceValue="252, 240, 160"
+             highlightPreferenceKey="tzslhighlight"
+             highlightPreferenceValue="true"
+             includeOnPreferencePage="true"
+             label="%analyzer.slicing.marker.annotation.label"
+             overviewRulerPreferenceKey="tzslruler"
+             overviewRulerPreferenceValue="true"
+             presentationLayer="6"
+             textPreferenceKey="tzsltext"
+             textPreferenceValue="true"
+             textStylePreferenceKey="tzslstyle"
+             textStylePreferenceValue="SQUIGGLES"
+             verticalRulerPreferenceKey="tzslvertical"
+             verticalRulerPreferenceValue="true">
+       </specification>
     </extension>
 </plugin>

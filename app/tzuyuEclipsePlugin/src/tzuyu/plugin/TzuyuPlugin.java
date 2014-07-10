@@ -21,11 +21,12 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 import tzuyu.engine.utils.StringUtils;
-import tzuyu.plugin.command.gentest.GenTestPreferences;
-import tzuyu.plugin.core.constants.Messages;
-import tzuyu.plugin.core.exception.ErrorType;
-import tzuyu.plugin.reporter.PluginLogger;
-import tzuyu.plugin.view.dfa.DfaView;
+import tzuyu.plugin.commons.constants.Messages;
+import tzuyu.plugin.commons.constants.PluginConstants;
+import tzuyu.plugin.commons.exception.ErrorType;
+import tzuyu.plugin.tester.command.gentest.GenTestPreferences;
+import tzuyu.plugin.tester.reporter.PluginLogger;
+import tzuyu.plugin.tester.view.dfa.DfaView;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -33,7 +34,6 @@ import tzuyu.plugin.view.dfa.DfaView;
 public class TzuyuPlugin extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "tzuyu.eclipse.plugin"; //$NON-NLS-1$
-	public static final String DFA_VIEW_ID = "tzuyu.plugin.view.dfa"; //$NON-NLS-1$
 	public static final String ICON_PATH = "icons/";
 	
 	private static final String DEBUG_ONE = "tzuyu.eclipse.plugin/debug";
@@ -132,7 +132,7 @@ public class TzuyuPlugin extends AbstractUIPlugin {
     }
     
     public static IViewPart showDfaView() {
-    	return showView(DFA_VIEW_ID);
+    	return showView(PluginConstants.ID_DFA_VIEW);
     }
     
     public ImageDescriptor getImageDescriptor(String id) {
@@ -146,7 +146,7 @@ public class TzuyuPlugin extends AbstractUIPlugin {
     }
     
     public static DfaView getDfaShowedView() {
-    	IViewPart view = getShowedView(DFA_VIEW_ID);
+    	IViewPart view = getShowedView(PluginConstants.ID_DFA_VIEW);
     	if (view == null || !(view instanceof DfaView)) {
     		return null;
     	}
