@@ -145,7 +145,7 @@ public class JFileWriter {
 	}
 
 	private void appendImportsSection(List<Class<?>> imports, JOutputPrinter out) {
-		out.append("import junit.framework.TestCase;").newLine();
+		out.append("import org.junit.Test;").newLine();
 		// print import
 		for (Class<?> importClz : imports) {
 			out.append("import ");
@@ -159,6 +159,7 @@ public class JFileWriter {
 	private void appendStartMethod(String newClassName, int methodIdx,
 			JOutputPrinter out) {
 		// print the test method
+		out.tab().append("@Test").newLine();
 		out.tab().append(
 				"public void test" + (methodIdx) + "() throws Throwable {");
 		out.newLine();
@@ -197,7 +198,7 @@ public class JFileWriter {
 
 	private void appendStartClass(String className, JOutputPrinter out) {
 		out.append("public class " + className)
-				.append(" extends TestCase { ").newLine().tab()
+				.append(" { ").newLine().tab()
 				.append("public static boolean debug = false;").newLine()
 				.newLine();
 	}

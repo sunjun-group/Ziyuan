@@ -16,7 +16,7 @@
 			<artifactId>log4j</artifactId>
 		</dependency>
 
-		<!-- Testing -->
+		<!-- for testcase generation -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -24,10 +24,6 @@
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

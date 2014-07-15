@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>icsetlv</artifactId>
+	<parent>
+		<groupId>tzuyu-project</groupId>
+		<artifactId>tzuyu.parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../tzuyu.parent/pom.xml</relativePath>
+	</parent>
+	
+	<dependencies>
+		<dependency>
+			<groupId>com.sun</groupId>
+			<artifactId>tools</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.javaparser</groupId>
+			<artifactId>javaparser</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>tw.edu.ntu.csie</groupId>
+			<artifactId>libsvm</artifactId>
+		</dependency>
+
+		<!-- wala -->
+		<dependency>
+			<artifactId>com.ibm.wala.core</artifactId>
+			<groupId>com.ibm.wala</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>com.ibm.wala.shrike</artifactId>
+			<groupId>com.ibm.wala</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>com.ibm.wala.util</artifactId>
+			<groupId>com.ibm.wala</groupId>
+		</dependency>
+
+		<!-- svm part -->
+		<dependency>
+			<groupId>net.sourceforge</groupId>
+			<artifactId>javaml</artifactId>
+		</dependency>
+	</dependencies>
+</project>

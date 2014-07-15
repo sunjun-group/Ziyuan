@@ -46,6 +46,15 @@
                    label="%menu.openDialog"
                    style="push">
              </command>
+             <command
+                   commandId="tzuyu.plugin.command.analyze"
+                   id="tzuyu.plugin.menu.icsetlv"
+                   label="%menu.icsetlv"
+                   style="push">
+                <visibleWhen
+                      checkEnabled="true">
+                </visibleWhen>
+             </command>
           </menu>
           <menu
                 label="Tzuyu">
