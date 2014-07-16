@@ -14,7 +14,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import tzuyu.engine.utils.CollectionUtils;
+import sav.common.core.utils.CollectionUtils;
 import tzuyu.plugin.commons.dto.WorkObject;
 import tzuyu.plugin.commons.utils.IStatusUtils;
 import tzuyu.plugin.tester.command.gentest.GenTestPreferences;

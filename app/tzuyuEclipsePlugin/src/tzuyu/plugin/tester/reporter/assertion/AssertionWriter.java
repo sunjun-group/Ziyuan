@@ -25,6 +25,7 @@ import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
+import sav.common.core.utils.CollectionUtils;
 import tzuyu.engine.bool.utils.FormulaUtils;
 import tzuyu.engine.bool.utils.Simplifier;
 import tzuyu.engine.model.Formula;
@@ -36,7 +37,6 @@ import tzuyu.engine.model.exception.TzException;
 import tzuyu.engine.model.exception.TzExceptionType;
 import tzuyu.engine.runtime.RMethod;
 import tzuyu.engine.utils.Assert;
-import tzuyu.engine.utils.CollectionUtils;
 import tzuyu.plugin.commons.utils.IResourceUtils;
 import tzuyu.plugin.commons.utils.MethodUtils;
 import tzuyu.plugin.tester.reporter.PluginLogger;

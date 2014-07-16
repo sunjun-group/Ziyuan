@@ -8,8 +8,8 @@
 
 package tzuyu.engine.bool.formula;
 
+import sav.common.core.utils.StringUtils;
 import tzuyu.engine.model.ObjectInfo;
-import tzuyu.engine.utils.StringUtils;
 import tzuyu.engine.utils.TzuYuPrimtiveTypes;
 
 /**

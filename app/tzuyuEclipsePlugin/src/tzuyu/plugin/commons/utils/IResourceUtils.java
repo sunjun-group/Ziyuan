@@ -23,7 +23,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
-import tzuyu.engine.utils.CollectionUtils;
+import sav.common.core.utils.CollectionUtils;
 import tzuyu.plugin.tester.preferences.SearchScope;
 import tzuyu.plugin.tester.reporter.PluginLogger;
 

@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package icsetlv;
+package icsetlv.iface;
 
 /**
  * @author LLT

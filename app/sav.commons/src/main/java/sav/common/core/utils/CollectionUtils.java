@@ -8,27 +8,26 @@
 
 package sav.common.core.utils;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * @author LLT
- *
+ * 
  */
 public class CollectionUtils {
-	private CollectionUtils() {}
-	
+	private CollectionUtils() {
+	}
+
 	public static <T> List<T> listOf(T value) {
 		List<T> list = new ArrayList<T>();
 		list.add(value);
 		return list;
 	}
-	
+
 	public static <T> T getFirstElement(T[] vals) {
 		if (isEmptyCheckNull(vals)) {
 			return null;
@@ -44,19 +43,19 @@ public class CollectionUtils {
 		}
 		return false;
 	}
-	
+
 	public static <T> void addIfNotNull(Collection<T> col, T val) {
 		if (val != null) {
 			col.add(val);
 		}
 	}
-	
+
 	public static <T> void addIfNotNullNotExist(Collection<T> col, T val) {
 		if (val != null && !col.contains(val)) {
 			col.add(val);
 		}
 	}
-	
+
 	public static <T> void addIfNotNullNotExist(Collection<T> col, T[] arr) {
 		if (isEmpty(arr)) {
 			return;
@@ -65,15 +64,15 @@ public class CollectionUtils {
 			addIfNotNullNotExist(col, val);
 		}
 	}
-	
+
 	public static <T> boolean isEmpty(T[] vals) {
 		return vals == null || vals.length == 0;
 	}
-	
+
 	public static <T> boolean isEmptyCheckNull(T[] vals) {
 		return isEmpty(vals, true);
 	}
-	
+
 	public static <T> boolean isEmpty(T[] vals, boolean checkNullVal) {
 		boolean isEmpty = vals == null || vals.length == 0;
 		if (isEmpty) {
@@ -97,19 +96,19 @@ public class CollectionUtils {
 	public static <T extends Object> T getWithoutRangeCheck(List<T> col, int i) {
 		try {
 			return col.get(i);
-		} catch (IndexOutOfBoundsException e){
+		} catch (IndexOutOfBoundsException e) {
 			return null;
 		}
 	}
-	
-	public static <T>List<T> nullToEmpty(List<T> val) {
+
+	public static <T> List<T> nullToEmpty(List<T> val) {
 		if (val == null) {
 			return new ArrayList<T>();
 		}
 		return val;
 	}
 
-	public static <K, E>List<E> getListInitIfEmpty(Map<K, List<E>> map, K key) {
+	public static <K, E> List<E> getListInitIfEmpty(Map<K, List<E>> map, K key) {
 		List<E> value = map.get(key);
 		if (value == null) {
 			value = new ArrayList<E>();
@@ -125,5 +124,4 @@ public class CollectionUtils {
 			}
 		}
 	}
-
 }

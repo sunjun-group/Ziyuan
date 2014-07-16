@@ -12,7 +12,8 @@ import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.dto.VariablesExtractorResult;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.common.utils.ExecutionResultFileUtils;
-import icsetlv.slicer.ISlicer;
+import icsetlv.iface.IErrorFillter;
+import icsetlv.iface.ISlicer;
 import icsetlv.slicer.SlicerInput;
 import icsetlv.slicer.WalaSlicer;
 import icsetlv.variable.AssertionDetector;
@@ -35,11 +36,14 @@ import com.sun.jdi.IncompatibleThreadStateException;
  *
  */
 public class IcsetlvEngine {
+	private IErrorFillter errorFilter;
+	
 	
 	public void analyze(IcsetlvInput input) throws IcsetlvException {
 		// scan all assertion statements and create breakpoints 
 		List<BreakPoint> breakpoints = AssertionDetector.scan(input
 				.getTestcasesSourcePaths());
+		
 	}
 	
 	public void run(IcsetlvInput input) throws IcsetlvException {

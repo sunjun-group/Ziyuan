@@ -24,6 +24,7 @@
 		<svm-version>3.17</svm-version>
 		<jdk-tool-version>1.6.0</jdk-tool-version>
 		<javaml-version>0.1.5</javaml-version>
+		<tzuyu.libs>D:\_1_Projects\Tzuyu\workspace\trunk\app\tzuyuEclipsePlugin\libs</tzuyu.libs>
 	</properties>
 
 	<repositories>
@@ -40,13 +41,14 @@
 	</repositories>
 
 	<modules>
+		<module>../sav.commons</module>
+		<!-- <module>../tzuyu.commons</module> -->
+		<module>../tzuyu</module>
+		<module>../icsetlv</module>
 		<module>../tzuyuEclipsePlugin</module>
 		<module>../tzuyuEclipsePlugin-test</module>
 		<module>../tzuyu.feature</module>
 		<module>../tzuyu.repo</module>
-		<module>../tzuyu</module>
-		<module>../icsetlv</module>
-		<!-- <module>../tzuyu.commons</module> -->
 	</modules>
 
 	<build>
@@ -57,17 +59,38 @@
 				<version>${tycho-version}</version>
 				<extensions>true</extensions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<outputDirectory>${tzuyu.libs}</outputDirectory>
+					<excludeGroupIds>tzuyu-project</excludeGroupIds>
+					<excludeClassifiers>osgi.bundle</excludeClassifiers>
+					<packaging>eclipse-plugin</packaging>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- for tzuyu -->
+			<dependency>
+				<!-- <groupId>sav-projects</groupId> -->
+				<groupId>sav-projects</groupId>
+				<artifactId>sav.commons</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>tzuyu-project</groupId>
 				<artifactId>tzuyu</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>icsetlv</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<!-- for tzuyu -->
 			<dependency>
 				<groupId>log4j</groupId>
 				<artifactId>log4j</artifactId>

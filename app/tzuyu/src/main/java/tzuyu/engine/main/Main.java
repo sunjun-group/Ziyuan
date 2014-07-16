@@ -3,7 +3,7 @@ package tzuyu.engine.main;
 import java.util.ArrayList;
 import java.util.List;
 
-import tzuyu.engine.utils.CollectionUtils;
+import sav.common.core.utils.CollectionUtils;
 
 public class Main {
 
@@ -19,7 +19,7 @@ public class Main {
 		List<Command> commands = new ArgParser(args).parse();
 		for (Command command : commands) {
 			for (CommandHandler handler : handlers) {
-				if (CollectionUtils.existInArray(command.getType(),
+				if (CollectionUtils.existIn(command.getType(),
 						handler.getCmdTypes())) {
 					handler.handle(command);
 				}

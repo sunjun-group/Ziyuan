@@ -8,6 +8,7 @@
 
 package tzuyu.engine.bool.utils;
 
+import sav.common.core.utils.StringUtils;
 import tzuyu.engine.bool.FieldVar;
 import tzuyu.engine.bool.LIATerm;
 import tzuyu.engine.bool.formula.ConjunctionFormula;
@@ -18,7 +19,6 @@ import tzuyu.engine.iface.ExpressionVisitor;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.runtime.RMethod;
 import tzuyu.engine.utils.Assert;
-import tzuyu.engine.utils.StringUtils;
 
 /**
  * @author LLT

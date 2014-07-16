@@ -44,12 +44,16 @@ public class IcsetlvEngineTest extends AbstractTest {
 			InterruptedException, IncompatibleThreadStateException,
 			AbsentInformationException {
 		IcsetlvInput input = initInput();
+		// scan assertion statements
 		List<BreakPoint> bkps = AssertionDetector.scan(input.getTestcasesSourcePaths());
 		printBkps(bkps);
+		// detect which assertion statements are potentially the cause of the problem
 		VariablesExtractor extractor = new VariablesExtractor(
 				input.getConfig(), input.getPassTestcases(),
 				input.getFailTestcases(), bkps);
 		VariablesExtractorResult result = extractor.execute();
+		
+		
 		print(result);
 	}
 

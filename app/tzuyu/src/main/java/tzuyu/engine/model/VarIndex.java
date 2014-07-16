@@ -1,6 +1,6 @@
 package tzuyu.engine.model;
 
-import tzuyu.engine.utils.ObjectUtils;
+import sav.common.core.utils.ObjectUtils;
 
 /**
  * Represents the two indices(statement index and argument index) of a variable.

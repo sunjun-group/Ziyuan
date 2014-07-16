@@ -12,6 +12,7 @@ import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.common.utils.Assert;
 import icsetlv.common.utils.ClassUtils;
+import icsetlv.iface.ISlicer;
 
 import java.io.File;
 import java.io.IOException;

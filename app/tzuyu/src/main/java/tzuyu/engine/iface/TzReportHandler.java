@@ -13,6 +13,7 @@ import java.io.PrintStream;
 import java.util.List;
 
 import lstar.IReportHandler;
+import sav.common.core.iface.ILogger;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.junit.JFileWriter;

@@ -3,8 +3,8 @@ package tzuyu.engine.model.dfa;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.common.core.utils.StringUtils;
 import tzuyu.engine.model.Action;
-import tzuyu.engine.utils.StringUtils;
 
 /**
  * A set of the actions that compose the alphabet of the DFA

@@ -19,7 +19,7 @@ import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-import tzuyu.engine.utils.CollectionUtils;
+import sav.common.core.utils.CollectionUtils;
 import tzuyu.plugin.commons.constants.PluginConstants;
 
 /**
@@ -71,7 +71,7 @@ public class SelectionFilter extends PropertyTester {
 
 	private boolean testIfOneSelected(Object element) {
 		for (Class<?> clazz : element.getClass().getInterfaces()) {
-			if (CollectionUtils.existInArray(clazz, getValidSelectedClasses())) {
+			if (CollectionUtils.existIn(clazz, getValidSelectedClasses())) {
 				return true;
 			}
 		}

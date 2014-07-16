@@ -10,9 +10,9 @@ package tzuyu.engine.main;
 
 import java.io.FileWriter;
 
+import sav.common.core.iface.ILogger;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
-import tzuyu.engine.iface.ILogger;
 import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.iface.TzPrintStream;
 import tzuyu.engine.iface.TzReportHandler;

@@ -10,13 +10,13 @@ package tzuyu.engine.junit;
 
 import java.util.List;
 
+import sav.common.core.utils.StringUtils;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.junit.printer.JOutputPrinter;
 import tzuyu.engine.model.Variable;
 import tzuyu.engine.runtime.RMethod;
 import tzuyu.engine.utils.ClassUtils;
 import tzuyu.engine.utils.PrimitiveTypes;
-import tzuyu.engine.utils.StringUtils;
 
 /**
  * @author LLT

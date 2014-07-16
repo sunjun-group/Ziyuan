@@ -8,6 +8,7 @@
 
 package tzuyu.engine.junit;
 
+import sav.common.core.utils.StringUtils;
 import tester.ObjectType;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.junit.printer.JOutputPrinter;
@@ -16,7 +17,6 @@ import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.runtime.RAssignment;
 import tzuyu.engine.utils.ClassUtils;
 import tzuyu.engine.utils.PrimitiveTypes;
-import tzuyu.engine.utils.StringUtils;
 
 /**
  * @author LLT

@@ -35,12 +35,12 @@ import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.TypeNameRequestor;
 
+import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.StringUtils;
 import tzuyu.engine.iface.IReferencesAnalyzer;
 import tzuyu.engine.model.exception.TzException;
-import tzuyu.engine.utils.CollectionUtils;
 import tzuyu.engine.utils.Pair;
 import tzuyu.engine.utils.Randomness;
-import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.commons.exception.PluginException;
 import tzuyu.plugin.commons.utils.ClassLoaderUtils;
 import tzuyu.plugin.commons.utils.IResourceUtils;

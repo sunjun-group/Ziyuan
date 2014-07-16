@@ -14,8 +14,8 @@ import java.io.PrintStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 
+import sav.common.core.iface.ILogger;
 import tzuyu.engine.TzClass;
-import tzuyu.engine.iface.ILogger;
 import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.model.TzuYuAlphabet;

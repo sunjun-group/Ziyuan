@@ -19,9 +19,9 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
+import sav.common.core.utils.StringUtils;
 import tzuyu.engine.utils.Assert;
 import tzuyu.engine.utils.Pair;
-import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.tester.preferences.SearchScope;
 import tzuyu.plugin.tester.preferences.TypeScope;
 import tzuyu.plugin.tester.reporter.PluginLogger;

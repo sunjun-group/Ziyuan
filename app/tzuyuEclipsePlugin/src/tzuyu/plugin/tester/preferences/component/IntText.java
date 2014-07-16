@@ -15,8 +15,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-import tzuyu.engine.utils.ObjectUtils;
-import tzuyu.engine.utils.StringUtils;
+import sav.common.core.utils.ObjectUtils;
+import sav.common.core.utils.StringUtils;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.commons.constants.Messages;
 import tzuyu.plugin.commons.utils.IStatusUtils;

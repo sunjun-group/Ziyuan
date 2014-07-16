@@ -23,9 +23,9 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
+import sav.common.core.utils.StringUtils;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzMethod;
-import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.commons.dto.WorkObject;
 import tzuyu.plugin.commons.dto.WorkObject.WorkItem;
 import tzuyu.plugin.commons.exception.ErrorType;

@@ -27,7 +27,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
-import tzuyu.engine.utils.StringUtils;
+import sav.common.core.utils.StringUtils;
 import tzuyu.plugin.commons.exception.PluginException;
 import tzuyu.plugin.tester.reporter.PluginLogger;
 

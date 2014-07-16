@@ -35,12 +35,12 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.osgi.service.prefs.Preferences;
 
+import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.StringUtils;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzConstants;
 import tzuyu.engine.model.exception.TzRuntimeException;
-import tzuyu.engine.utils.CollectionUtils;
 import tzuyu.engine.utils.Pair;
-import tzuyu.engine.utils.StringUtils;
 import tzuyu.engine.utils.TzUtils;
 import tzuyu.plugin.commons.constants.PluginConstants;
 import tzuyu.plugin.commons.dto.TzPreferences;

@@ -20,7 +20,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
-import tzuyu.engine.utils.StringUtils;
+import sav.common.core.utils.StringUtils;
 import tzuyu.plugin.commons.constants.Messages;
 import tzuyu.plugin.commons.constants.PluginConstants;
 import tzuyu.plugin.commons.exception.ErrorType;

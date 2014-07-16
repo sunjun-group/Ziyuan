@@ -11,12 +11,12 @@ package tzuyu.engine.bool.formula;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.common.core.utils.ObjectUtils;
 import tzuyu.engine.bool.FieldVar;
 import tzuyu.engine.bool.Operator;
 import tzuyu.engine.bool.Var;
 import tzuyu.engine.iface.ExpressionVisitor;
 import tzuyu.engine.model.Prestate;
-import tzuyu.engine.utils.ObjectUtils;
 
 /**
  * @author LLT

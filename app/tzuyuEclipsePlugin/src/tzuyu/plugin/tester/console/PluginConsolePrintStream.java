@@ -13,9 +13,9 @@ import java.io.IOException;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import sav.common.core.utils.StringUtils;
 import tzuyu.engine.iface.AbstractPrintStream;
 import tzuyu.engine.iface.IPrintStream;
-import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.commons.utils.IStatusUtils;
 import tzuyu.plugin.tester.reporter.PluginLogger;
 
