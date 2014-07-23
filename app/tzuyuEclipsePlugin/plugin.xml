@@ -227,7 +227,7 @@
        <specification
              annotationType="tzuyu.plugin.analyzer.slicing.marker.annotation"
              colorPreferenceKey="tzslcolor"
-             colorPreferenceValue="252, 240, 160"
+             colorPreferenceValue="255, 255, 128"
              highlightPreferenceKey="tzslhighlight"
              highlightPreferenceValue="true"
              includeOnPreferencePage="true"

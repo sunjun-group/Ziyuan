@@ -115,8 +115,8 @@ public class SlicingMarker {
 			for (BreakPoint bkp : bkps) {
 				IMarker marker = SlicingMarker.createMarker(bkp, project);
 				marker.setAttributes(toAttributes(bkp));
-	            marker.setAttribute(IMarker.CHAR_START, null);
-	            marker.setAttribute(IMarker.CHAR_END, null);
+	            marker.setAttribute(IMarker.CHAR_START, bkp.getCharStart());
+	            marker.setAttribute(IMarker.CHAR_END, bkp.getCharEnd());
 			}
 		}
 
