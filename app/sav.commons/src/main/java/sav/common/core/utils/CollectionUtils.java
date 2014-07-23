@@ -27,6 +27,14 @@ public class CollectionUtils {
 		list.add(value);
 		return list;
 	}
+	
+	public static <T> List<T> join(List<T>... lists) {
+		List<T> result = new ArrayList<T>();
+		for (List<T> list : lists) {
+			result.addAll(list);
+		}
+		return result;
+	}
 
 	public static <T> T getFirstElement(T[] vals) {
 		if (isEmptyCheckNull(vals)) {

@@ -29,9 +29,10 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import tzuyu.engine.model.exception.TzException;
 import tzuyu.engine.model.exception.TzRuntimeException;
+import tzuyu.plugin.AppAdaptorFactory;
 import tzuyu.plugin.TzuyuPlugin;
-import tzuyu.plugin.commons.constants.PluginConstants;
 import tzuyu.plugin.commons.constants.Messages;
+import tzuyu.plugin.commons.constants.PluginConstants;
 import tzuyu.plugin.commons.dto.WorkObject;
 import tzuyu.plugin.commons.exception.ErrorType;
 import tzuyu.plugin.commons.exception.PluginException;
@@ -39,7 +40,6 @@ import tzuyu.plugin.commons.utils.IStatusUtils;
 import tzuyu.plugin.tester.command.TzCommandHandler;
 import tzuyu.plugin.tester.command.TzJob;
 import tzuyu.plugin.tester.preferences.component.MessageDialogs;
-import tzuyu.plugin.tester.proxy.TzuyuEngineProxy;
 import tzuyu.plugin.tester.reporter.GenTestReporter;
 import tzuyu.plugin.tester.reporter.PluginLogger;
 import tzuyu.plugin.tester.ui.SWTFactory;
@@ -53,10 +53,9 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 
 	@Override
 	protected void run(WorkObject workObject, final GenTestPreferences config) {
-		final GenTestReporter reporter = new GenTestReporter(config);
 		if (preProcess(config)) {
 			GenTestJob job = new GenTestJob("Generate testcases", workObject,
-					config, reporter);
+					config);
 			job.scheduleJob();
 		}
 	}
@@ -143,11 +142,11 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 		private GenTestReporter reporter;
 
 		public GenTestJob(String name, WorkObject workObject,
-				GenTestPreferences config, GenTestReporter reporter) {
+				GenTestPreferences config) {
 			super(name);
 			this.workObject = workObject;
 			this.config = config;
-			this.reporter = reporter;
+			this.reporter = new GenTestReporter(config);
 		}
 		
 		@Override
@@ -155,7 +154,8 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 			monitor.beginTask("start test generation", 1);
 			reporter.setProgressMonitor(monitor);
 			try {
-				TzuyuEngineProxy.generateTestCases(workObject, config, reporter, monitor);
+				AppAdaptorFactory.getTzuyuAdaptor().generateTestCases(workObject,
+						config, reporter, monitor);
 				// refresh output folder
 				config.getOutputPackage().getResource().refreshLocal(2, monitor);
 			} catch (Exception e) {

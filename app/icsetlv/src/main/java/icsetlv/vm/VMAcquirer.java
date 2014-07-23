@@ -8,6 +8,8 @@
 
 package icsetlv.vm;
 
+import icsetlv.common.exception.IcsetlvException;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -22,8 +24,9 @@ public class VMAcquirer {
 
 	/**
 	 * Call this with the localhost port to connect to.
+	 * @throws IcsetlvException 
 	 */
-	public VirtualMachine connect(int port) throws IOException {
+	public VirtualMachine connect(int port) throws IcsetlvException {
 		String strPort = Integer.toString(port);
 		AttachingConnector connector = getConnector();
 		try {
@@ -31,7 +34,10 @@ public class VMAcquirer {
 			return vm;
 		} catch (IllegalConnectorArgumentsException e) {
 			throw new IllegalStateException(e);
+		} catch (IOException e) {
+			IcsetlvException.rethrow(e, "cannot connect to current running jvm");
 		}
+		return null;
 	}
 
 	private AttachingConnector getConnector() {

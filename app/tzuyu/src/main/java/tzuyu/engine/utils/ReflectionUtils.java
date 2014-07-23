@@ -9,6 +9,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import tzuyu.engine.bool.utils.ConditionBuilder;
+
 public class ReflectionUtils {
 
 	public static enum Match {
@@ -202,7 +204,7 @@ public class ReflectionUtils {
 		Class<?>[] params = method.getParameterTypes();
 		for (int j = 0; j < params.length; j++) {
 			sb.append(params[j].getSimpleName())
-				.append(" ").append(parameterNames[j]);
+				.append(" ").append(ConditionBuilder.getParamName(parameterNames, j));
 			if (j < (params.length - 1))
 				sb.append(",");
 		}

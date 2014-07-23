@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.plugin.tester.proxy;
+package tzuyu.plugin.tester.adapter;
 
 import java.net.URLClassLoader;
 import java.util.ArrayList;

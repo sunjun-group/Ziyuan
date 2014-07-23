@@ -15,7 +15,7 @@ package icsetlv;
 public class TestConfiguration {
 	private static TestConfiguration config;
 	private static final String junitCore = "org.junit.runner.JUnitCore";
-	private static final String TRUNK = "D:\\_1_Projects\\icsetlv\\workspace\\trunk\\";
+	private static final String TRUNK = "D:\\_1_Projects\\tzuyu\\workspace\\trunk\\";
 	private String javaHome = "D:\\_1_Projects\\_Tools\\jdk1.7.0_51";
 	private String sourcePath = TRUNK + "app\\icsetlv\\src\\test\\java";
 	private String binPath = TRUNK + "app\\icsetlv\\target\\test-classes";

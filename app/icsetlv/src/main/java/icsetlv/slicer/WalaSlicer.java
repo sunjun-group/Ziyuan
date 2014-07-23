@@ -26,6 +26,7 @@ import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Predicate;
 
 import com.ibm.wala.classLoader.BinaryDirectoryTreeModule;
+import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.classLoader.ShrikeBTMethod;
 import com.ibm.wala.ipa.callgraph.AnalysisCache;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions;
@@ -105,14 +106,18 @@ public class WalaSlicer implements ISlicer {
 					StatementWithInstructionIndex stwI = (StatementWithInstructionIndex) s;
 					int instructionIndex = stwI.getInstructionIndex();
 					ShrikeBTMethod method = (ShrikeBTMethod) s.getNode().getMethod();
-					int bcIndex = method.getBytecodeIndex(instructionIndex);
-					int src_line_number = method.getLineNumber(bcIndex);
+					if (!method.isClinit()) {
 
-					// create new breakpoint
-					BreakPoint bkp = new BreakPoint(getClassCanonicalName(method), 
-															method.getName().toString());
-					bkp.setLineNo(src_line_number);
-					result.add(bkp);
+						int bcIndex = method.getBytecodeIndex(instructionIndex);
+						int src_line_number = method.getLineNumber(bcIndex);
+
+						// create new breakpoint
+						BreakPoint bkp = new BreakPoint(
+								getClassCanonicalName(method), method.getName()
+										.toString());
+						bkp.setLineNo(src_line_number);
+						result.add(bkp);
+					}
 				}
 			}
 		} catch (InvalidClassFileException e) {
@@ -121,7 +126,7 @@ public class WalaSlicer implements ISlicer {
 		return result;
 	}
 
-	private static String getClassCanonicalName(ShrikeBTMethod method) {
+	private static String getClassCanonicalName(IMethod method) {
 		TypeName clazz = method.getDeclaringClass().getName();
 		return ClassUtils.getCanonicalName(clazz.getPackage().toString(), clazz
 				.getClassName().toString());
@@ -130,7 +135,7 @@ public class WalaSlicer implements ISlicer {
 	private List<Statement> findSeedStmts(CallGraph cg, List<BreakPoint> breakpoints) {
 		List<Statement> stmts = new ArrayList<Statement>();
 		for (BreakPoint bkp : breakpoints) {
-			CGNode node = findMethod(cg, bkp.getMethodName());
+			CGNode node = findMethod(cg, bkp.getClassCanonicalName(), bkp.getMethodName());
 			CollectionUtils.addIfNotNullNotExist(stmts,
 					findSingleSeedStmt(node, bkp.getLineNo()));
 		}
@@ -164,15 +169,17 @@ public class WalaSlicer implements ISlicer {
 		return null;
 	}
 	
-	public static CGNode findMethod(CallGraph cg, String name) {
-		Atom a = Atom.findOrCreateUnicodeAtom(name);
+	public static CGNode findMethod(CallGraph cg, String className, String methodName) {
+		Atom a = Atom.findOrCreateUnicodeAtom(methodName);
 		for (Iterator<? extends CGNode> it = cg.iterator(); it.hasNext();) {
 			CGNode n = it.next();
-			if (n.getMethod().getName().equals(a)) {
+			IMethod method = n.getMethod();
+			if (getClassCanonicalName(method).equals(className)
+					&& method.getName().equals(a)) {
 				return n;
 			}
 		}
-		Assert.assertFail("failed to find method " + name);
+		Assert.assertFail("failed to find method " + methodName);
 		return null;
 	}
 

@@ -53,9 +53,6 @@ import tzuyu.plugin.tester.preferences.TypeScope;
  * 
  */
 public class GenTestPreferences extends TzPreferences implements Cloneable {
-	public static final String ATT_OUTPUT_FOLDER = "outputSourceFolder";
-	public static final String ATT_OUTPUT_PACKAGE = "outputPackage";
-	public static final String ATT_TYPE_SEARCH_SCOPE = "typeSearchScopes";
 	private static final String DEFAULT_SEARCH_SCOPE = getDefaultSearchScope(); 
 	public static final Pair<String, OutputConflictHandle> OUT_PKG_CONFLICT_HANDLE = Pair.of(
 			"outputPkgFilesPotentialOverridden", OutputConflictHandle.ASK_WHEN_EXECUTION);
@@ -111,6 +108,7 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 		outPkgConflictHandleOption = initPrefs.outPkgConflictHandleOption;
 	}
 	
+	@Override
 	public void read(Preferences pref) {
 		/* output folder & package */
 		outputFolder = IProjectUtils.toPackageFragmentRoot(project,

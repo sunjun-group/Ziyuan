@@ -32,7 +32,7 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 
 import tzuyu.plugin.commons.constants.PluginConstants;
 import tzuyu.plugin.commons.utils.ResourcesUtils;
-import tzuyu.plugin.tester.proxy.PluginReferencesAnalyzer;
+import tzuyu.plugin.tester.adapter.PluginReferencesAnalyzer;
 
 /**
  * @author LLT 

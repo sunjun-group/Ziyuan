@@ -23,7 +23,9 @@ import org.osgi.service.prefs.Preferences;
 import sav.common.core.utils.StringUtils;
 import tzuyu.plugin.commons.constants.Messages;
 import tzuyu.plugin.commons.constants.PluginConstants;
+import tzuyu.plugin.commons.dto.TzPreferences;
 import tzuyu.plugin.commons.exception.ErrorType;
+import tzuyu.plugin.icsetlv.command.AnalysisPreferences;
 import tzuyu.plugin.tester.command.gentest.GenTestPreferences;
 import tzuyu.plugin.tester.reporter.PluginLogger;
 import tzuyu.plugin.tester.view.dfa.DfaView;
@@ -77,12 +79,23 @@ public class TzuyuPlugin extends AbstractUIPlugin {
 	}
 	
 	public GenTestPreferences getGenTestPreferences(IJavaProject project) {
-		GenTestPreferences prefs = new GenTestPreferences(project, false);
-		Preferences projectNode = getProjectPreferencesNode(project.getProject());
+		return readFromProjectPreferences(
+				new GenTestPreferences(project, false), project);
+	}
+	
+	public AnalysisPreferences getAnalysisPreferences(IJavaProject project) {
+		return readFromProjectPreferences(new AnalysisPreferences(project),
+				project);
+	}
+
+	private <T extends TzPreferences> T readFromProjectPreferences(
+			T localPrefs, IJavaProject project) {
+		Preferences projectNode = getProjectPreferencesNode(project
+				.getProject());
 		if (projectNode != null) {
-			prefs.read(projectNode);
+			localPrefs.read(projectNode);
 		}
-		return prefs;
+		return localPrefs;
 	}
 
 	private Preferences getProjectPreferencesNode(IProject project) {

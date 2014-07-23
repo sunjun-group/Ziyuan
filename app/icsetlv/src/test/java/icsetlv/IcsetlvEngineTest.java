@@ -45,7 +45,7 @@ public class IcsetlvEngineTest extends AbstractTest {
 			AbsentInformationException {
 		IcsetlvInput input = initInput();
 		// scan assertion statements
-		List<BreakPoint> bkps = AssertionDetector.scan(input.getTestcasesSourcePaths());
+		List<BreakPoint> bkps = AssertionDetector.scan(input.getAssertionSourcePaths());
 		printBkps(bkps);
 		// detect which assertion statements are potentially the cause of the problem
 		VariablesExtractor extractor = new VariablesExtractor(
@@ -61,7 +61,7 @@ public class IcsetlvEngineTest extends AbstractTest {
 		IcsetlvInput input = new IcsetlvInput();
 		VMConfiguration vmConfig = initVmConfig();
 		input.setConfig(vmConfig);
-		input.setTestcasesSourcePaths(getTestcasesSourcePaths());
+		input.setAssertionSourcePaths(getTestcasesSourcePaths());
 		input.setPassTestcases(Arrays.asList(getPassTestcases()));
 		input.setFailTestcases(Arrays.asList(getFailTestcases()));
 		return input;

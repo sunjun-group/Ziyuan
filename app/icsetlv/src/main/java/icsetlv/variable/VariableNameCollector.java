@@ -48,18 +48,19 @@ public class VariableNameCollector {
 	public VariableNameCollector(List<String> srcFolders) {
 		this.srcFolders = srcFolders;
 	}
-	
+
 	public void updateVariables(List<BreakPoint> brkps) throws IcsetlvException {
 		Map<String, List<BreakPoint>> brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
 		for (String clzName : brkpsMap.keySet()) {
 			try {
-				List<?> lines = FileUtils.readLines(getSourceFile(clzName));
+				List<?> lines = FileUtils.readLines(getSourceFile(clzName), "utf-8");
 				int i = 0;
-				int charCount = 0;
+				int charCount = -1;
 				List<BreakPoint> sortedBkps = sortByLineNum(brkpsMap.get(clzName));
 				for (BreakPoint bkp : sortedBkps) {
 					int bkpLine = getLineNoFromZero(bkp);
 					for (; i < lines.size(); i++) {
+						charCount += 1;
 						String line = (String) lines.get(i);
 						if (i == bkpLine) {
 							bkp.setCharStart(charCount);
@@ -69,9 +70,7 @@ public class VariableNameCollector {
 								stmtStr.append(lines.get(j));
 							}
 							Node statement = parseStmt(stmtStr);
-							charCount += countChar(lines,
-									statement.getBeginLine(),
-									statement.getEndLine());
+							charCount += countChar(lines, statement, bkpLine);
 							bkp.addVars(extractVarNames(statement));
 							bkp.setCharEnd(charCount);
 							LogUtils.log("breakpoint: ", bkp);
@@ -86,6 +85,8 @@ public class VariableNameCollector {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (IcsetlvException e) {
+				// do nothing
 			}
 		}
 	}
@@ -94,9 +95,10 @@ public class VariableNameCollector {
 		return bkp.getLineNo() - 1;
 	}
 
-	private int countChar(List<?> lines, int beginLine, int endLine) {
+	private int countChar(List<?> lines, Node statement, int startLine) {
 		int count = 0;
-		for (int i = beginLine; i <= endLine; i++) {
+		int endLine = statement.getEndLine() + startLine - 1;
+		for (int i = statement.getBeginLine() + startLine - 1; i <= endLine; i++) {
 			count += ((String)lines.get(i)).length();
 		}
 		return count;

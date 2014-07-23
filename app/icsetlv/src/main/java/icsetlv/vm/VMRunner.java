@@ -8,6 +8,7 @@
 
 package icsetlv.vm;
 
+import icsetlv.common.exception.IcsetlvException;
 import icsetlv.common.utils.CollectionBuilder;
 
 import java.io.IOException;
@@ -24,8 +25,7 @@ public class VMRunner {
 	private static final String socketToken = "-Xrunjdwp:transport=dt_socket,address=%d,server=%s,suspend=%s";
 	private static final String enableAssertionToken = "-ea";
 
-	public static Process startJVM(VMConfiguration config) throws IOException,
-			InterruptedException {
+	public static Process startJVM(VMConfiguration config) throws IcsetlvException {
 		List<String> commands = CollectionBuilder.init(new ArrayList<String>())
 				.add(config.getPath())
 				.add(debugToken)
@@ -40,7 +40,12 @@ public class VMRunner {
 		}
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
 		processBuilder.redirectErrorStream(true);
-		Process process = processBuilder.start();
+		Process process = null;
+		try {
+			process = processBuilder.start();
+		} catch (IOException e) {
+			IcsetlvException.rethrow(e, "cannot start jvm process");
+		}
 		return process;
 	}
 }

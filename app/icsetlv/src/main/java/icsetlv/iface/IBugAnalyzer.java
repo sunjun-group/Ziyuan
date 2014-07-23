@@ -16,6 +16,6 @@ import java.util.List;
  * @author LLT
  *
  */
-public interface IErrorFillter {
-	public List<BreakPoint> filterError(List<BreakPoint> breakpoints);
+public interface IBugAnalyzer {
+	public List<BreakPoint> analyze(List<BreakPoint> breakpoints);
 }

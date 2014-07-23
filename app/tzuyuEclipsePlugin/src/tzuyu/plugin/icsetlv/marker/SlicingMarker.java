@@ -8,6 +8,8 @@
 
 package tzuyu.plugin.icsetlv.marker;
 
+import icsetlv.common.dto.BreakPoint;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

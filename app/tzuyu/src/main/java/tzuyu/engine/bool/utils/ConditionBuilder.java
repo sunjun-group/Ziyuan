@@ -18,7 +18,6 @@ import tzuyu.engine.bool.formula.NotFormula;
 import tzuyu.engine.iface.ExpressionVisitor;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.runtime.RMethod;
-import tzuyu.engine.utils.Assert;
 
 /**
  * @author LLT
@@ -76,10 +75,14 @@ public class ConditionBuilder extends ExpressionVisitor {
 
 	protected String getParameterName(FieldVar fieldVar) {
 		int argIndex = fieldVar.getArgIndex() - 1;
-		Assert.assertTrue(paramNames != null && argIndex <= paramNames.length,
-				"argIndex and paramNames not match: argIndex=" + argIndex
-						+ ", paramNames=" + paramNames);
-		return paramNames[argIndex];
+		return getParamName(paramNames, argIndex);
+	}
+	
+	public static String getParamName(String[] parameterNames, int j) {
+		if (parameterNames == null || parameterNames.length < j) {
+			return "var" + j;
+		}
+		return parameterNames[j];
 	}
 	
 	@Override

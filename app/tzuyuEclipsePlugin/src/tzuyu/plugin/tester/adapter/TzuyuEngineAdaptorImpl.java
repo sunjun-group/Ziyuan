@@ -6,16 +6,13 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.plugin.tester.proxy;
+package tzuyu.plugin.tester.adapter;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import tzuyu.engine.TzClass;
 import tzuyu.engine.Tzuyu;
-import tzuyu.engine.iface.IReferencesAnalyzer;
-import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.TzuyuEngine;
-import tzuyu.engine.model.exception.ReportException;
 import tzuyu.engine.model.exception.TzException;
 import tzuyu.plugin.commons.dto.WorkObject;
 import tzuyu.plugin.commons.exception.PluginException;
@@ -28,23 +25,18 @@ import tzuyu.plugin.tester.reporter.PluginLogger;
  * @author LLT
  * 
  */
-public class TzuyuEngineProxy implements TzuyuEngine {
-	private Tzuyu tzuyu;
+public class TzuyuEngineAdaptorImpl implements TzuyuEngineAdaptor {
 	
 	static {
 		Tzuyu.setLogger(PluginLogger.getLogger());
 	}
-
-	public TzuyuEngineProxy(TzClass project, TzReportHandler reporter,
-			IReferencesAnalyzer refAnalyzer) {
-		tzuyu = new Tzuyu(project, reporter, refAnalyzer);
+	
+	public TzuyuEngineAdaptorImpl() {
+		
 	}
 
-	public void run() throws ReportException, InterruptedException, TzException {
-		tzuyu.run();
-	}
-
-	public static void generateTestCases(WorkObject workObject,
+	@Override
+	public void generateTestCases(WorkObject workObject,
 			GenTestPreferences config, GenTestReporter reporter, IProgressMonitor monitor)
 			throws InterruptedException, TzException {
 		try {
@@ -53,8 +45,10 @@ public class TzuyuEngineProxy implements TzuyuEngine {
 			TzClass tzProject = ProjectConverter.from(workObject, config);
 			monitor.done();
 			monitor.beginTask("learning", IProgressMonitor.UNKNOWN);
-			new TzuyuEngineProxy(tzProject, reporter,
-					new PluginReferencesAnalyzer(workObject.getProject(), config)).run();
+			TzuyuEngine tzuyu = new Tzuyu(tzProject, reporter,
+					new PluginReferencesAnalyzer(workObject.getProject(),
+							config));
+			tzuyu.run();
 			monitor.done();
 		} catch (PluginException e) {
 			PluginLogger.getLogger().logEx(e);

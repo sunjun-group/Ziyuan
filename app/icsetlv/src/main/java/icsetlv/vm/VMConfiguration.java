@@ -25,7 +25,8 @@ public class VMConfiguration {
 	private String clazzName;
 	private boolean debug;
 	private int port;
-	private List<String> args; // for internal use only
+	// for internal use only
+	private List<String> args; 
 
 	public VMConfiguration() {
 		classpath = new ArrayList<String>();

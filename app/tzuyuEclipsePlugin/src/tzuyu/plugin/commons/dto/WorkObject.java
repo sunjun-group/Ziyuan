@@ -58,6 +58,18 @@ public class WorkObject {
 		return workItems;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public <T extends IJavaElement> List<T> getItems(Class<T> clazz) {
+		List<T> items = new ArrayList<T>();
+		for (WorkItem item : workItems) {
+			IJavaElement e = item.getCorrespondingJavaElement();
+			if (clazz.isAssignableFrom(e.getClass())) {
+				items.add((T) e);
+			}
+		}
+		return items;
+	}
+	
 	/**
 	 * Collects and combines the selection which may contain sources from
 	 * different projects and / or multiple sources from same project.

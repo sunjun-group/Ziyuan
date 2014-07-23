@@ -26,14 +26,43 @@ import tzuyu.plugin.commons.constants.PluginConstants;
  * @author LLT
  */
 public class SelectionFilter extends PropertyTester {
-	private static final String DFA_FILE_TEST_PROPERTY = "dfaFile";
+	private static final String DFA_FILE_TEST_PROPERTY = "isForDfaReader";
+	private static final String ANALYSIS_TEST_PROPERTY = "isForAnalysis";
+	private static final String TZUYU_TEST_PROPERTY = "isForTzuyuTest"; 
 	
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
 		if (DFA_FILE_TEST_PROPERTY.equals(property) && 
 				receiver instanceof IFile) {
 			return testForDfaView((IFile) receiver);
-		}		
+		}
+		
+		if (ANALYSIS_TEST_PROPERTY.equals(property)) {
+			return testForAnalysis(receiver);
+		}
+		
+		if (TZUYU_TEST_PROPERTY.equals(property)) {
+			return testForTzuyuTest(receiver);
+		}
+		
+		return false;
+	}
+
+	private boolean testForTzuyuTest(Object receiver) {
+		Class<?>[] validSingleSelectedTypes = new Class<?>[] {
+				IClassFile.class, ICompilationUnit.class, IMethod.class,
+				IType.class };
+		return isSingleSelectedTypeOrMultiMethods(receiver, validSingleSelectedTypes);
+	}
+
+	private boolean testForAnalysis(Object receiver) {
+		Class<?>[] validSingleSelectedTypes = new Class<?>[] {
+				ICompilationUnit.class, IMethod.class, IType.class };
+		return isSingleSelectedTypeOrMultiMethods(receiver, validSingleSelectedTypes);
+	}
+
+	private boolean isSingleSelectedTypeOrMultiMethods(Object receiver,
+			Class<?>[] validSingleSelectedTypes) {
 		if (!(receiver instanceof ISelection)) {
 			return false;
 		}
@@ -42,8 +71,16 @@ public class SelectionFilter extends PropertyTester {
 			
 			// single selection
 			if (selection.size() == 1) {
-				return testIfOneSelected(selection.getFirstElement());
+				for (Class<?> clazz : selection.getFirstElement().getClass()
+						.getInterfaces()) {
+					if (CollectionUtils
+							.existIn(clazz, validSingleSelectedTypes)) {
+						return true;
+					}
+				}
+				return false;
 			}
+			
 			// multiple selection
 			ITypeRoot typeRoot = null;
 			for (Iterator<?> it = selection.iterator(); it.hasNext();) {
@@ -67,23 +104,6 @@ public class SelectionFilter extends PropertyTester {
 
 	private boolean testForDfaView(IFile file) {
 		return PluginConstants.DFA_FILE_EXTENSION.equals(file.getFileExtension());
-	}
-
-	private boolean testIfOneSelected(Object element) {
-		for (Class<?> clazz : element.getClass().getInterfaces()) {
-			if (CollectionUtils.existIn(clazz, getValidSelectedClasses())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * all accepted type of selection element.
-	 */
-	private Class<?>[] getValidSelectedClasses() {
-		return new Class<?>[] { IClassFile.class, ICompilationUnit.class, IMethod.class,
-				IType.class };
 	}
 
 }
