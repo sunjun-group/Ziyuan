@@ -60,7 +60,6 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
 	private IcsetlvInput initIcsetlvInput(WorkObject workObject,
 			AnalysisPreferences prefs) throws IcsetlvException, PluginException {
 		IcsetlvInput input = new IcsetlvInput();
@@ -92,7 +91,7 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 		List<IType> failTcs = extractSourceByNames(sourceNames, prefs.getFailPkg());
 		input.setPassTestcases(toFullyQualifiedName(passTcs));
 		input.setFailTestcases(toFullyQualifiedName(failTcs));
-		input.setTestMethods(extractAllTestMethods(CollectionUtils.join(passTcs, failTcs)));
+		input.setTestMethods(extractAllTestMethods(failTcs));
 		// add source folders
 		try {
 			for (IPackageFragmentRoot root : project.getAllPackageFragmentRoots()) {

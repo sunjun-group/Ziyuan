@@ -10,9 +10,11 @@ package sav.common.core.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author LLT
@@ -120,6 +122,15 @@ public class CollectionUtils {
 		List<E> value = map.get(key);
 		if (value == null) {
 			value = new ArrayList<E>();
+			map.put(key, value);
+		}
+		return value;
+	}
+	
+	public static <K, E> Set<E> getSetInitIfEmpty(Map<K, Set<E>> map, K key) {
+		Set<E> value = map.get(key);
+		if (value == null) {
+			value = new HashSet<E>();
 			map.put(key, value);
 		}
 		return value;

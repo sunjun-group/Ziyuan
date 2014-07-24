@@ -18,12 +18,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.jar.JarFile;
 
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Predicate;
+import sav.common.core.utils.StringUtils;
 
 import com.ibm.wala.classLoader.BinaryDirectoryTreeModule;
 import com.ibm.wala.classLoader.IMethod;
@@ -81,11 +85,12 @@ public class WalaSlicer implements ISlicer {
 		CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope);
 		CallGraph cg = makeCallGraph(options, builder);
 		List<Statement> stmt = findSeedStmts(cg, input.getBreakpoints());
+
 		Collection<Statement> computeBackwardSlice = new CISlicer(cg,
 				builder.getPointerAnalysis(), DataDependenceOptions.REFLECTION,
 				ControlDependenceOptions.NONE).computeBackwardThinSlice(stmt);
 		CollectionUtils.filter(computeBackwardSlice, new Predicate<Statement>() {
-
+			
 			public boolean apply(Statement val) {
 				return val.getNode().getMethod().getDeclaringClass()
 						.getClassLoader().getReference()
@@ -98,6 +103,8 @@ public class WalaSlicer implements ISlicer {
 	public static List<BreakPoint> toBreakpoints(Collection<Statement> slice)
 			throws IcsetlvException {
 		List<BreakPoint> result = new ArrayList<BreakPoint>();
+		
+		Map<String, Set<Integer>> bkpMap = new HashMap<String, Set<Integer>>();
 		try {
 			for (Statement s : slice) {
 				if (s instanceof StatementWithInstructionIndex
@@ -112,12 +119,16 @@ public class WalaSlicer implements ISlicer {
 						int src_line_number = method.getLineNumber(bcIndex);
 
 						// create new breakpoint
-						BreakPoint bkp = new BreakPoint(
-								getClassCanonicalName(method), method.getName()
-										.toString());
-						bkp.setLineNo(src_line_number);
-						result.add(bkp);
+						Set<Integer> lineNos = CollectionUtils.getSetInitIfEmpty(bkpMap, 
+								StringUtils.spaceJoin(getClassCanonicalName(method), method.getName().toString()));
+						lineNos.add(src_line_number);
 					}
+				}
+			}
+			for (String key : bkpMap.keySet()) {
+				String[] clzzMethod = key.split(StringUtils.SPACE);
+				for (Integer lineNo : bkpMap.get(key)) {
+					result.add(new BreakPoint(clzzMethod[0], clzzMethod[1], lineNo));
 				}
 			}
 		} catch (InvalidClassFileException e) {
@@ -128,25 +139,28 @@ public class WalaSlicer implements ISlicer {
 
 	private static String getClassCanonicalName(IMethod method) {
 		TypeName clazz = method.getDeclaringClass().getName();
-		return ClassUtils.getCanonicalName(clazz.getPackage().toString(), clazz
-				.getClassName().toString());
+		return ClassUtils.getCanonicalName(clazz.getPackage().toString()
+				.replace("/", "."), clazz.getClassName().toString());
 	}
 
 	private List<Statement> findSeedStmts(CallGraph cg, List<BreakPoint> breakpoints) {
 		List<Statement> stmts = new ArrayList<Statement>();
 		for (BreakPoint bkp : breakpoints) {
 			CGNode node = findMethod(cg, bkp.getClassCanonicalName(), bkp.getMethodName());
-			CollectionUtils.addIfNotNullNotExist(stmts,
-					findSingleSeedStmt(node, bkp.getLineNo()));
+			List<Statement> seedStmts = findSingleSeedStmt(node, bkp.getLineNo());
+			for (Statement stmt : seedStmts) {
+				CollectionUtils.addIfNotNullNotExist(stmts, stmt);
+			}
 		}
 		return stmts;
 	}
 	
-	private Statement findSingleSeedStmt(CGNode n, int lineNo) {
+	private List<Statement> findSingleSeedStmt(CGNode n, int lineNo) {
 		IR ir = n.getIR();
 		SSACFG cfg = ir.getControlFlowGraph();
 		ShrikeBTMethod btMethod = (ShrikeBTMethod)n.getMethod();
 		SSAInstruction[] instructions = ir.getInstructions();
+		List<Statement> stmts = new ArrayList<Statement>();
 		for (int i = 0; i <= cfg.getMaxNumber(); i++) {
 			BasicBlock bb = cfg.getNode(i);
 			int start = bb.getFirstInstructionIndex();
@@ -158,7 +172,7 @@ public class WalaSlicer implements ISlicer {
 						bcIdx = btMethod.getBytecodeIndex(j);
 						int lineNumber = btMethod.getLineNumber(bcIdx);
 						if (lineNumber == lineNo) {
-							return new NormalStatement(n, j);
+							stmts.add(new NormalStatement(n, j));
 						}
 					} catch (InvalidClassFileException e) {
 						// TODO LLT logging
@@ -166,7 +180,7 @@ public class WalaSlicer implements ISlicer {
 				}
 			}
 		}
-		return null;
+		return stmts;
 	}
 	
 	public static CGNode findMethod(CallGraph cg, String className, String methodName) {

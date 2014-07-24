@@ -19,7 +19,8 @@ import java.util.List;
  * 
  */
 public class StringUtils {
-public static final String EMPTY = org.apache.commons.lang.StringUtils.EMPTY;
+	public static final String EMPTY = org.apache.commons.lang.StringUtils.EMPTY;
+	public static final String SPACE = " ";
 	
 	private StringUtils() {
 	}
@@ -47,7 +48,7 @@ public static final String EMPTY = org.apache.commons.lang.StringUtils.EMPTY;
 	}
 	
 	public static String spaceJoin(Object...params) {
-		return join(" ", params);
+		return join(SPACE, params);
 	}
 	
 	public static String dotJoin(Object... params) {

@@ -99,7 +99,8 @@ public class VariableNameCollector {
 	}
 	
 	private int getStmtLength(Node statement, String content,  int startOffset) {
-		return getStmtOffset(content, startOffset, statement.getBeginLine() - 1, statement.getEndLine());
+//		return getStmtOffset(content, startOffset, statement.getBeginLine() - 1, statement.getEndLine());
+		return getStmtOffset(content, startOffset, statement.getBeginLine() - 1, statement.getBeginLine());
 	}
 
 	private String getExtStmt(String content, int stmtOffset) {
