@@ -16,6 +16,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeRoot;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -66,40 +67,58 @@ public class SelectionFilter extends PropertyTester {
 		if (!(receiver instanceof ISelection)) {
 			return false;
 		}
+		
+		if (receiver instanceof ITextSelection) {
+			return checkIfTextSelection((ITextSelection)receiver);
+		}
+		
 		if (receiver instanceof IStructuredSelection) {
-			IStructuredSelection selection = (IStructuredSelection) receiver;
-			
-			// single selection
-			if (selection.size() == 1) {
-				for (Class<?> clazz : selection.getFirstElement().getClass()
-						.getInterfaces()) {
-					if (CollectionUtils
-							.existIn(clazz, validSingleSelectedTypes)) {
-						return true;
-					}
-				}
-				return false;
-			}
-			
-			// multiple selection
-			ITypeRoot typeRoot = null;
-			for (Iterator<?> it = selection.iterator(); it.hasNext();) {
-				// only methods and in the same class are accepted.
-				Object element = it.next();
-				if (!(element instanceof IMethod)) {
-					return false;
-				} 
-				IMethod method = (IMethod) element;
-				if (typeRoot == null) {
-					typeRoot = method.getTypeRoot();
-				}
-				if (!typeRoot.equals(method.getTypeRoot())) {
-					return false;
-				}
-			}
-			return true;
+			return checkIfStructuredSelection((IStructuredSelection) receiver, validSingleSelectedTypes);
 		}
 		return false;
+	}
+
+	/**
+	 * menu in editor view.
+	 */
+	private boolean checkIfTextSelection(ITextSelection selection) {
+		return true;
+	}
+
+	/**
+	 * menu in tree explorer views.
+	 */
+	private boolean checkIfStructuredSelection(IStructuredSelection selection,
+			Class<?>[] validSingleSelectedTypes) {
+		// single selection
+		if (selection.size() == 1) {
+			for (Class<?> clazz : selection.getFirstElement().getClass()
+					.getInterfaces()) {
+				if (CollectionUtils
+						.existIn(clazz, validSingleSelectedTypes)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		// multiple selection
+		ITypeRoot typeRoot = null;
+		for (Iterator<?> it = selection.iterator(); it.hasNext();) {
+			// only methods and in the same class are accepted.
+			Object element = it.next();
+			if (!(element instanceof IMethod)) {
+				return false;
+			} 
+			IMethod method = (IMethod) element;
+			if (typeRoot == null) {
+				typeRoot = method.getTypeRoot();
+			}
+			if (!typeRoot.equals(method.getTypeRoot())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private boolean testForDfaView(IFile file) {

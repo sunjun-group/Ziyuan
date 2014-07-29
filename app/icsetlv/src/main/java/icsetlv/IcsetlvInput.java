@@ -10,6 +10,7 @@ package icsetlv;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.ibm.wala.util.collections.Pair;
 
@@ -21,7 +22,7 @@ import icsetlv.vm.VMConfiguration;
  */
 public class IcsetlvInput {
 	private VMConfiguration config;
-	private List<String> assertionSourcePaths;
+	private Map<String, List<String>> assertionSourcePaths;
 	private String appOutput;
 	private List<Pair<String, String>> testMethods;
 	private List<String> srcFolders;
@@ -42,11 +43,11 @@ public class IcsetlvInput {
 		this.config = config;
 	}
 
-	public List<String> getAssertionSourcePaths() {
+	public Map<String, List<String>> getAssertionSourcePaths() {
 		return assertionSourcePaths;
 	}
 
-	public void setAssertionSourcePaths(List<String> assertionSourcePaths) {
+	public void setAssertionSourcePaths(Map<String, List<String>> assertionSourcePaths) {
 		this.assertionSourcePaths = assertionSourcePaths;
 	}
 

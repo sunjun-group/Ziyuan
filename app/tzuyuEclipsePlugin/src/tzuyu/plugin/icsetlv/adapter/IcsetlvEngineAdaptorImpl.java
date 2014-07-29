@@ -14,7 +14,10 @@ import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.exception.IcsetlvException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -84,9 +87,9 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 			IcsetlvException.rethrow(e);
 			PluginLogger.getLogger().logEx(e);
 		}
-		List<IPath> assertionSources = getAssertionSources(workObject, prefs);
-		input.setAssertionSourcePaths(toOsString(assertionSources));
-		List<String> sourceNames = getName(assertionSources);
+		Map<IPath, List<String>> assertionSources = getAssertionSources(workObject, prefs);
+		input.setAssertionSourcePaths(toOsstring(assertionSources));
+		List<String> sourceNames = getName(assertionSources.keySet());
 		List<IType> passTcs = extractSourceByNames(sourceNames, prefs.getPassPkg());
 		List<IType> failTcs = extractSourceByNames(sourceNames, prefs.getFailPkg());
 		input.setPassTestcases(toFullyQualifiedName(passTcs));
@@ -106,6 +109,16 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 		return input;
 	}
 	
+	
+	private Map<String, List<String>> toOsstring(
+			Map<IPath, List<String>> assertionSources) {
+		Map<String, List<String>> result = new HashMap<String, List<String>>();
+		for (IPath path : assertionSources.keySet()) {
+			result.put(path.toOSString(), assertionSources.get(path));
+		}
+		return result;
+	}
+
 	private List<Pair<String, String>> extractAllTestMethods(List<IType> tcs) {
 		List<Pair<String, String>> result = new ArrayList<Pair<String, String>>();
 		for (IType type : tcs) {
@@ -133,7 +146,7 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 		return result;
 	}
 
-	private List<String> getName(List<IPath> paths) throws PluginException {
+	private List<String> getName(Set<IPath> paths) throws PluginException {
 		List<String> names =  new ArrayList<String>();
 		for (IPath path : paths) {
 			String name = path.removeFileExtension().segment(
@@ -141,14 +154,6 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 			names.add(name);
 		}
 		return names;
-	}
-
-	private List<String> toOsString(List<IPath> paths) {
-		List<String> result = new ArrayList<String>();
-		for (IPath path : paths) {
-			CollectionUtils.addIfNotNullNotExist(result, path.toOSString());
-		}
-		return result;
 	}
 
 	private List<IType> extractSourceByNames(List<String> sourceNames,
@@ -173,27 +178,30 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 		return sourceFiles;
 	}
 
-	private List<IPath> getAssertionSources(WorkObject workObject,
+	private Map<IPath, List<String>> getAssertionSources(WorkObject workObject,
 			AnalysisPreferences prefs) throws PluginException {
-		List<IPath> assertionSources = new ArrayList<IPath>();
+		Map<IPath, List<String>> typeMethods = new HashMap<IPath, List<String>>();
 		if (workObject.isEmtpy()) {
-			return assertionSources;
+			return typeMethods;
 		}
 		// for each case
 		for (WorkItem item : workObject.getWorkItems()) {
 			IJavaElement ele = item.getCorrespondingJavaElement();
 			switch (ele.getElementType()) {
 			case IJavaElement.METHOD:
+				List<String> methods = CollectionUtils.getListInitIfEmpty(typeMethods, IProjectUtils.relativeToAbsolute(ele
+						.getPath()));
+				methods.add(ele.getElementName());
 			case IJavaElement.TYPE:
 			case IJavaElement.COMPILATION_UNIT:
-				assertionSources.add(IProjectUtils.relativeToAbsolute(ele
+				CollectionUtils.getListInitIfEmpty(typeMethods, IProjectUtils.relativeToAbsolute(ele
 						.getPath()));
 				break;
 			default:
 				break;
 			}
 		}
-		return assertionSources;
+		return typeMethods;
 	}
 
 	private static List<String> getPrjClasspaths(IJavaProject project)

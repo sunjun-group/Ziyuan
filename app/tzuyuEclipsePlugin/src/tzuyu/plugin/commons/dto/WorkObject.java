@@ -92,7 +92,13 @@ public class WorkObject {
 		}
 		return workObject;
 	}
-
+	
+	public static WorkObject from(IJavaElement ele) {
+		WorkObject workObj = new WorkObject();
+		workObj.extendFrom(ele);
+		return workObj;
+	}
+	
 	public WorkObject extendFrom(Object element) {
 		if (element instanceof IResource) {
 			return extendFromIResource((IResource) element);
