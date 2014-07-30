@@ -39,10 +39,10 @@ public class AssertionDetectorTest extends AbstractTest {
 		return Arrays
 				.asList(new Object[][] {
 						{ CollectionUtils
-								.listOf("D:/_1_Projects/icsetlv/workspace/trunk/app/icsetlv/src/test/java/testdata/boundedStack/BoundedStack.java") },
+								.listOf("F:/project/Tzuyu/app/icsetlv/src/test/java/testdata/boundedStack/BoundedStack.java") },
 						{ CollectionUtils.listOf(TestConfiguration
 								.getInstance().getSourcepath()
-								+ "\\testdata\\slice\\FindMaxCallerTest.java") } });
+								+ "\\testdata\\slice\\FindMaxCallerFailTest1.java") } });
 	}
 
 	@Test
@@ -50,5 +50,6 @@ public class AssertionDetectorTest extends AbstractTest {
 		List<BreakPoint> breakpoints = AssertionDetector.scan(assertionsClazzes);
 		printBkps(breakpoints);
 		Assert.assertEquals(breakpoints.size(), 2);
+		
 	}
 }

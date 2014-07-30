@@ -17,7 +17,7 @@ import net.sf.javaml.core.Instance;
  * More clear and easier interface. 
  */
 public class LibSVM extends AbstractClassifier {
-	
+
 	public static svm_print_interface svm_print_console = null;
 	public static svm_print_interface svm_print_null = new svm_print_interface() {
 		public void print(String s) {
@@ -88,8 +88,9 @@ public class LibSVM extends AbstractClassifier {
 	private svm_parameter param;
 	private Dataset data;
 	private svm_model model;
-	
+
 	public svm_model getModel(){
+		assert ClassifierBuiltDone == true;
 		return model;
 	}
 
@@ -103,7 +104,7 @@ public class LibSVM extends AbstractClassifier {
 		this.param = param;
 	}
 
-	
+
 
 	/**
 	 * Set the print interface that will be used for training.
@@ -118,6 +119,9 @@ public class LibSVM extends AbstractClassifier {
 		svm.svm_set_print_string_function(print);
 	}
 
+
+	public static boolean ClassifierBuiltDone = false;
+
 	@Override
 	public void buildClassifier(Dataset data) {
 		super.buildClassifier(data);
@@ -125,7 +129,7 @@ public class LibSVM extends AbstractClassifier {
 		svm_problem p = transformDataset(data);
 
 		model = svm.svm_train(p, param);
-	
+
 		double[][] coef = model.sv_coef;
 
 		assert model.SV != null;
@@ -145,7 +149,7 @@ public class LibSVM extends AbstractClassifier {
 		/* Weights are only available for linear SVMs */
 		if (param.svm_type == svm_parameter.C_SVC) {
 			double w_list[][][] = new double[model.nr_class][model.nr_class - 1][data
-					.noAttributes()];
+			                                                                     .noAttributes()];
 
 			for (int i = 0; i < data.noAttributes(); ++i) {
 				for (int j = 0; j < model.nr_class - 1; ++j) {
@@ -176,7 +180,7 @@ public class LibSVM extends AbstractClassifier {
 		} else {
 			weights = null;
 		}
-
+		ClassifierBuiltDone = true;
 	}
 
 	private double[] weights;
@@ -188,6 +192,7 @@ public class LibSVM extends AbstractClassifier {
 	 * @return weight vector
 	 */
 	public double[] getWeights() {
+		assert ClassifierBuiltDone == true;
 		return weights;
 	}
 
@@ -234,17 +239,18 @@ public class LibSVM extends AbstractClassifier {
 		svm.svm_get_labels(model, res);
 		return res;
 	}
-	
-	
+
+
 	public divider getExplicitDivider(){
+		assert ClassifierBuiltDone == true;
 		int pSize = data.noAttributes();
 		double bias = 0;
 		double[] wVec = new double[pSize];
-		
+
 		if(model.nr_class!=2){
 			System.out.println("Can not be binary divided...");
 		}
-		
+
 		int[] sIndex = new int[model.nr_class];	
 		for (int i = 1; i < model.nr_class; i++) {
 			sIndex[i] = sIndex[i - 1] + model.nSV[i - 1];
@@ -269,7 +275,7 @@ public class LibSVM extends AbstractClassifier {
 						wVec[m] += coef2[sj + k] * model.SV[sj + k][m].value;
 					}
 				}
-				
+
 				bias = model.rho[p];
 				p++;
 			}
@@ -277,5 +283,25 @@ public class LibSVM extends AbstractClassifier {
 		divider dv = new divider(wVec, bias);
 		return dv;
 	}
+	
+	/**
+	 * Provides access to the accuracy of the trained model
+	 * @return modelAccuracy
+	 */
 
+	public double modelAccuracy(){
+		int[] tfrecord = {0,0};
+		for(Instance ins : data){
+			if(classify(ins)==ins.classValue()){
+				tfrecord[0]++;
+			}else{
+				tfrecord[1]++;
+			}
+		}
+		assert tfrecord[0] + tfrecord[1] == data.size();
+		double accuracy = 0;
+		System.out.println(tfrecord[0]);
+		accuracy = (double)tfrecord[0]/(double)data.size();
+		return accuracy;
+	}
 }

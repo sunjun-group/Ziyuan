@@ -10,8 +10,11 @@ package icsetlv;
 
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.dto.VariablesExtractorResult;
+import icsetlv.common.dto.VariablesExtractorResult.BreakpointResult;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.common.utils.CollectionBuilder;
+import icsetlv.svm.DatasetBuilder;
+import icsetlv.svm.LibSVM;
 import icsetlv.variable.AssertionDetector;
 import icsetlv.variable.VariablesExtractor;
 import icsetlv.vm.VMConfiguration;
@@ -51,6 +54,20 @@ public class IcsetlvEngineTest extends AbstractTest {
 				input.getFailTestcases(), bkps);
 		VariablesExtractorResult result = extractor.execute();
 		print(result);
+		List<BreakpointResult> bprs = result.getResult();
+		List<DatasetBuilder> dbs = new ArrayList<DatasetBuilder>();
+		for(BreakpointResult bpr : bprs){
+			dbs.add(new DatasetBuilder(bpr));
+		}
+		LibSVM svmrunner = new LibSVM();
+		for(DatasetBuilder db : dbs){
+			svmrunner.buildClassifier(db.buildDataset());
+			System.out.println(svmrunner.getExplicitDivider().toString());
+			System.out.println(svmrunner.modelAccuracy());
+		}
+		
+		
+		
 	}
 
 	private IcsetlvInput initInput() {
