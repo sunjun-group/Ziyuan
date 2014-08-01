@@ -82,25 +82,28 @@ public class IcsetlvEngineTest extends AbstractTest {
 	
 	private String[] getPassTestcases() {
 		return new String[] {
-				"testdata.boundedStack.tzuyu.pass.BoundedStack0",
-				"testdata.boundedStack.tzuyu.pass.BoundedStack1",
-				"testdata.boundedStack.tzuyu.pass.BoundedStack2",
-				"testdata.boundedStack.tzuyu.pass.BoundedStack3",
-				"testdata.boundedStack.tzuyu.pass.BoundedStack4",
-				"testdata.boundedStack.tzuyu.pass.BoundedStack5",
-				"testdata.boundedStack.tzuyu.pass.BoundedStack6"
+				"example.MaxFind.test.MaxFindPassTest"
+//				"testdata.boundedStack.tzuyu.pass.BoundedStack0",
+//				"testdata.boundedStack.tzuyu.pass.BoundedStack1",
+//				"testdata.boundedStack.tzuyu.pass.BoundedStack2",
+//				"testdata.boundedStack.tzuyu.pass.BoundedStack3",
+//				"testdata.boundedStack.tzuyu.pass.BoundedStack4",
+//				"testdata.boundedStack.tzuyu.pass.BoundedStack5",
+//				"testdata.boundedStack.tzuyu.pass.BoundedStack6"
 			};
 	}
 	
 	private String[] getFailTestcases() {
 		return new String[] {
-				"testdata.boundedStack.tzuyu.fail.BoundedStack7",
+				//"testdata.boundedStack.tzuyu.fail.BoundedStack7",
+				"example.MaxFind.test.MaxFindFailTest"
 			};
 	}
 
 	private List<String> getTestcasesSourcePaths() {
 		return CollectionBuilder.init(new ArrayList<String>())
-				.add(config.getSourcepath() + "/testdata/boundedStack/BoundedStack.java")
+				.add(config.getSourcepath() + "/example/MaxFind/MaxFindError.java")
+	//					"/testdata/boundedStack/BoundedStack.java")
 				.getResult();
 	}
 }
