@@ -7,14 +7,21 @@
              class="tzuyu.plugin.tester.propertytester.SelectionFilter"
              id="tzuyu.plugin.tester"
              namespace="tzuyu.plugin.tester"
-             properties="isSuitableForTest"
+             properties="isForTzuyuTest"
+             type="java.lang.Object">
+       </propertyTester>
+       <propertyTester
+             class="tzuyu.plugin.tester.propertytester.SelectionFilter"
+             id="tzuyu.plugin.tester.analysis"
+             namespace="tzuyu.plugin.tester"
+             properties="isForAnalysis"
              type="java.lang.Object">
        </propertyTester>
        <propertyTester
              class="tzuyu.plugin.tester.propertytester.SelectionFilter"
              id="tzuyu.plugin.tester.dfaFile"
              namespace="tzuyu.plugin.tester"
-             properties="dfaFile"
+             properties="isForDfaReader"
              type="org.eclipse.jface.viewers.IStructuredSelection">
        </propertyTester>
     </extension>
@@ -27,25 +34,37 @@
           <menu
                 id="tzuyu.plugin.menu"
                 label="Tzuyu">
-             <visibleWhen
-                   checkEnabled="true">
-	                <with variable="selection">
-	                   <test
-                          forcePluginActivation="true"
-                          property="tzuyu.plugin.tester.isSuitableForTest"/>
-	                </with>
-	         </visibleWhen>
              <command
                    commandId="tzuyu.plugin.command.generateTestcases"
                    id="tzuyu.plugin.menu.generateTestcases"
                    label="%menu.generateTestCase"
                    style="push">
+                 <visibleWhen
+	                   checkEnabled="true">
+		                <with variable="selection">
+		                   <test
+	                          forcePluginActivation="true"
+	                          property="tzuyu.plugin.tester.isForTzuyuTest"/>
+		                </with>
+		         </visibleWhen>
              </command>
              <command
                    commandId="tzuyu.plugin.command.genTestWizard"
                    label="%menu.openDialog"
                    style="push">
+                <visibleWhen
+	                   checkEnabled="true">
+		                <with variable="selection">
+		                   <test
+	                          forcePluginActivation="true"
+	                          property="tzuyu.plugin.tester.isForTzuyuTest"/>
+		                </with>
+		         </visibleWhen>
              </command>
+             <separator
+                   name="tzuyu.plugin.menu.testAnalyze.separator"
+                   visible="true">
+             </separator>
              <command
                    commandId="tzuyu.plugin.command.analyze"
                    id="tzuyu.plugin.menu.icsetlv"
@@ -53,6 +72,11 @@
                    style="push">
                 <visibleWhen
                       checkEnabled="true">
+                       <with variable="selection">
+	                   		<test
+	                          forcePluginActivation="true"
+	                          property="tzuyu.plugin.tester.isForAnalysis"/>
+	                	</with>
                 </visibleWhen>
              </command>
           </menu>
@@ -75,7 +99,7 @@
                             operator="and">
                          <and>
                             <test
-                                  property="tzuyu.plugin.tester.dfaFile">
+                                  property="tzuyu.plugin.tester.isForDfaReader">
                             </test>
                          </and>
                       </iterate>
@@ -87,14 +111,17 @@
        <menuContribution
              allPopups="true"
              locationURI="popup:org.eclipse.jdt.ui.PackageExplorer?before=additions">
-             <menu id="tzuyu.plugin.menu"
-                label="Tzuyu"/>
+             <menu id="tzuyu.plugin.menu" label="Tzuyu"/>
        </menuContribution>
        <menuContribution
              allPopups="true"
              locationURI="popup:org.eclipse.jdt.ui.ProjectsView?before=additions">
-             <menu id="tzuyu.plugin.menu"
-                label="Tzuyu"/>
+             <menu id="tzuyu.plugin.menu" label="Tzuyu"/>
+       </menuContribution>
+  	   <menuContribution
+             allPopups="true"
+             locationURI="popup:org.eclipse.jdt.ui.CompilationUnitEditor.EditorContext?before=additions">
+             <menu id="tzuyu.plugin.menu" label="Tzuyu"/>
        </menuContribution>
     </extension>
     <extension
@@ -113,6 +140,11 @@
              defaultHandler="tzuyu.plugin.tester.command.readDfa.ReadDfaHandler"
              id="tzuyu.plugin.command.readDfa"
              name="%menu.readDfa">
+       </command>
+       <command
+             defaultHandler="tzuyu.plugin.icsetlv.command.AnalysisHandler"
+             id="tzuyu.plugin.command.analyze"
+             name="%menu.icsetlv">
        </command>
     </extension>
     <extension
@@ -152,6 +184,14 @@
              class="tzuyu.plugin.view.example.WordView"
              id="tzuyu.plugin.view.ex"
              name="Word view"
+             restorable="true">
+       </view>
+       <view
+             allowMultiple="true"
+             category="tzuyu.plugin.view.category.general"
+             class="tzuyu.plugin.icsetlv.view.BugTraceView"
+             id="tzuyu.plugin.view.slicingmarker"
+             name="%view.slicingmarker.name"
              restorable="true">
        </view>
     </extension>
@@ -194,7 +234,7 @@
              type="org.eclipse.core.resources.textmarker">
        </super>
        <persistent
-             value="true">
+             value="false">
        </persistent>
     </extension>
     <extension
@@ -202,8 +242,7 @@
        <type
              markerSeverity="0"
              markerType="tzuyu.plugin.analyzer.slicing.marker"
-             name="tzuyu.plugin.analyzer.slicing.marker.annotation"
-             super="org.eclipse.ui.workbench.texteditor.bookmark">
+             name="tzuyu.plugin.analyzer.slicing.marker.annotation">
        </type>
     </extension>
     <extension
@@ -211,7 +250,7 @@
        <specification
              annotationType="tzuyu.plugin.analyzer.slicing.marker.annotation"
              colorPreferenceKey="tzslcolor"
-             colorPreferenceValue="252, 240, 160"
+             colorPreferenceValue="255, 255, 128"
              highlightPreferenceKey="tzslhighlight"
              highlightPreferenceValue="true"
              includeOnPreferencePage="true"

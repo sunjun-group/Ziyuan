@@ -18,19 +18,19 @@ import sav.common.core.utils.StringUtils;
 public abstract class AbstractLogger<T extends AbstractLogger<T>> implements
 		ILogger<T> {
 
-	//@Override
+	@Override
 	public void logEx(SavException ex) {
 		logEx(ex, ex.getType());
 	}
 
-	//@Override
+	@Override
 	public void logEx(SavRtException ex) {
 		logEx(ex, ex.getType());
 	}
 
 	protected abstract void logEx(Exception ex, Enum<?> type);
 
-	//@Override
+	@Override
 	public void debug(Object... msgs) {
 		if (isDebug()) {
 			info(StringUtils.spaceJoin(msgs));

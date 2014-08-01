@@ -14,8 +14,8 @@ package sav.common.core;
  */
 public class SavException extends Exception {
 	private static final long serialVersionUID = 1L;
-	private Enum<?> type;
-	private Object[] params;
+	protected Enum<?> type;
+	protected Object[] params;
 	
 	public SavException(Enum<?> type, Object... params) {
 		this.type = type;

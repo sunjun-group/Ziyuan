@@ -10,12 +10,12 @@ package tzuyu.engine.model.exception;
 
 /**
  * @author LLT
- *
+ * 
  */
 public class ReportException extends TzException {
 	private static final long serialVersionUID = 1L;
 
 	public ReportException(TzException ex) {
-		super(ex.getType(), ex.getMessage());
+		super((TzExceptionType) ex.getType(), ex.getMessage());
 	}
 }

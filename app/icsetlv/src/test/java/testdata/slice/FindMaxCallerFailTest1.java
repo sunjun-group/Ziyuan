@@ -8,6 +8,7 @@
 
 package testdata.slice;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -17,7 +18,7 @@ import org.junit.Test;
  * @author LLT
  *
  */
-public class FindMaxCallerFailTest1 extends FindMaxCallerPassTest1 {
+public class FindMaxCallerFailTest1 {
 
 	@Test
 	public void test2() {
@@ -26,6 +27,10 @@ public class FindMaxCallerFailTest1 extends FindMaxCallerPassTest1 {
 		int max = FindMax.findMax(arr);
 		Assert.assertEquals(max, 100);
 		Assert.assertTrue(a==3);
+	}
+
+	protected List<Integer> intList(Integer... values) {
+		return Arrays.asList(values);
 	}
 
 }

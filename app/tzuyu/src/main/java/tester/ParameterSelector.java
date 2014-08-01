@@ -3,6 +3,7 @@ package tester;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.common.core.utils.CollectionUtils;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.iface.ITzManager;
@@ -20,7 +21,6 @@ import tzuyu.engine.runtime.RArrayDeclaration;
 import tzuyu.engine.runtime.RAssignment;
 import tzuyu.engine.runtime.RConstructor;
 import tzuyu.engine.utils.Assert;
-import tzuyu.engine.utils.CollectionUtils;
 import tzuyu.engine.utils.ListOfLists;
 import tzuyu.engine.utils.PrimitiveGenerator;
 import tzuyu.engine.utils.Randomness;

@@ -10,11 +10,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import sav.common.core.utils.CollectionUtils;
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.ConstructorInfo;
 import tzuyu.engine.model.FieldInfo;
 import tzuyu.engine.model.MethodInfo;
-import tzuyu.engine.utils.CollectionUtils;
 import tzuyu.engine.utils.PrimitiveTypes;
 
 public class ClassVisitor {

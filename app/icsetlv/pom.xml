@@ -8,7 +8,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../tzuyu.parent/pom.xml</relativePath>
 	</parent>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>com.sun</groupId>
@@ -54,6 +54,12 @@
 		<dependency>
 			<groupId>net.sourceforge</groupId>
 			<artifactId>javaml</artifactId>
+		</dependency>
+
+		<!-- commons -->
+		<dependency>
+			<groupId>sav-projects</groupId>
+			<artifactId>sav.commons</artifactId>
 		</dependency>
 	</dependencies>
 </project>

@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 
 import org.eclipse.jface.dialogs.DialogPage;
 
-import tzuyu.engine.utils.StringUtils;
+import sav.common.core.utils.StringUtils;
 
 /**
  * @author LLT

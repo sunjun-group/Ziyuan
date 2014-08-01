@@ -8,6 +8,8 @@
 
 package tzuyu.plugin.icsetlv.marker;
 
+import icsetlv.common.dto.BreakPoint;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,6 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.ui.views.markers.internal.Util;
 
 import tzuyu.plugin.commons.constants.PluginConstants;
 import tzuyu.plugin.commons.utils.IStatusUtils;
@@ -113,15 +116,41 @@ public class SlicingMarker {
 			for (BreakPoint bkp : bkps) {
 				IMarker marker = SlicingMarker.createMarker(bkp, project);
 				marker.setAttributes(toAttributes(bkp));
-	            marker.setAttribute(IMarker.CHAR_START, null);
-	            marker.setAttribute(IMarker.CHAR_END, null);
+				marker.setAttribute(SlicingMarkerCol.RESOURCE.getAttKey(),
+						marker.getResource().getName());
+				marker.setAttribute(SlicingMarkerCol.PATH.getAttKey(), 
+						Util.getContainerName(marker));
+				
 			}
 		}
 
 		private Map<String, Object> toAttributes(BreakPoint bkp) {
 			Map<String, Object> atts = new HashMap<String, Object>();
 			atts.put(IMarker.LINE_NUMBER, bkp.getLineNo());
+			atts.put(IMarker.CHAR_START, bkp.getCharStart());
+			atts.put(IMarker.CHAR_END, bkp.getCharEnd());
 			return atts;
+		}
+	}
+	
+	public static enum SlicingMarkerCol {
+		RESOURCE,
+		PATH,
+		LOCATION (IMarker.LINE_NUMBER);
+
+		private String attKey;
+		private SlicingMarkerCol() {
+		}
+		
+		private SlicingMarkerCol(String attKey) {
+			this.attKey = attKey;
+		}
+		
+		public String getAttKey() {
+			if (attKey != null) {
+				return attKey;
+			}
+			return name();
 		}
 	}
 }

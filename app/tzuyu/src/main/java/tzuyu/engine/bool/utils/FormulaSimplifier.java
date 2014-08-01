@@ -8,12 +8,12 @@
 
 package tzuyu.engine.bool.utils;
 
+import sav.common.core.utils.ObjectUtils;
 import tzuyu.engine.bool.formula.AndFormula;
 import tzuyu.engine.bool.formula.NotFormula;
 import tzuyu.engine.bool.formula.OrFormula;
 import tzuyu.engine.iface.ExpressionVisitor;
 import tzuyu.engine.model.Formula;
-import tzuyu.engine.utils.ObjectUtils;
 
 /**
  * @author LLT

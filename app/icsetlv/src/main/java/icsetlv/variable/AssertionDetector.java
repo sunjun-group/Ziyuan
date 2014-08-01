@@ -28,6 +28,7 @@ import japa.parser.ast.visitor.VoidVisitorAdapter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Predicate;
@@ -39,18 +40,18 @@ import sav.common.core.utils.Predicate;
  */
 public class AssertionDetector {
 	
-	public static List<BreakPoint> scan(List<String> jfilePaths) throws IcsetlvException {
+	public static List<BreakPoint> scan(Map<String, List<String>> map) throws IcsetlvException {
 		List<BreakPoint> result = new ArrayList<BreakPoint>();
-		for (String jfilePath : jfilePaths) {
-			result.addAll(scan(jfilePath));
+		for (String jfilePath : map.keySet()) {
+			result.addAll(scan(jfilePath, map.get(jfilePath)));
 		}
 		return result;
 	}
 	
-	public static List<BreakPoint> scan(String jfilepath) throws IcsetlvException {
+	public static List<BreakPoint> scan(String jfilepath, List<String> methods) throws IcsetlvException {
 		try {
 			CompilationUnit cu = JavaParser.parse(new File(jfilepath));
-			AssertStmtToBreakpointVisitor visitor = new AssertStmtToBreakpointVisitor();
+			AssertStmtToBreakpointVisitor visitor = new AssertStmtToBreakpointVisitor(methods);
 			cu.accept(visitor, "");
 			CollectionUtils.filter(visitor.result, new Predicate<BreakPoint>() {
 				
@@ -71,7 +72,14 @@ public class AssertionDetector {
 		private MethodDeclaration curMethod;
 		private BreakPoint curBreakpoint;
 		private List<BreakPoint> result = new ArrayList<BreakPoint>();
+		private List<String> selectedMths;
 		
+		public AssertStmtToBreakpointVisitor(List<String> methods) {
+			if (!CollectionUtils.isEmpty(methods)) {
+				selectedMths = methods;
+			}
+		}
+
 		@Override
 		public void visit(PackageDeclaration n, String arg) {
 			curClass = new StringBuilder(n.getName().toString());
@@ -90,8 +98,10 @@ public class AssertionDetector {
 		
 		@Override
 		public void visit(MethodDeclaration n, String arg) {
-			curMethod = n;
-			super.visit(n, arg);
+			if (selectedMths == null || selectedMths.contains(n.getName())) {
+				curMethod = n;
+				super.visit(n, arg);
+			}
 		}
 		
 		@Override

@@ -10,10 +10,10 @@ package tzuyu.engine.bool.utils;
 
 import java.util.List;
 
+import sav.common.core.utils.StringUtils;
 import tzuyu.engine.bool.formula.Atom;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.runtime.RMethod;
-import tzuyu.engine.utils.StringUtils;
 
 /**
  * @author LLT

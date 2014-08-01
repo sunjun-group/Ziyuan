@@ -29,9 +29,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
-import tzuyu.engine.utils.CollectionUtils;
+import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.StringUtils;
 import tzuyu.engine.utils.Pair;
-import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.tester.preferences.component.EditDialog;
 import tzuyu.plugin.tester.preferences.component.RadioBtnGroup;
 import tzuyu.plugin.tester.preferences.component.TableViewerEditablePanel;

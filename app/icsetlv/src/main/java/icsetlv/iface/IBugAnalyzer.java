@@ -6,10 +6,9 @@
  *  Version:  $Revision: 1 $
  */
 
-package icsetlv.slicer;
+package icsetlv.iface;
 
 import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.exception.IcsetlvException;
 
 import java.util.List;
 
@@ -17,8 +16,6 @@ import java.util.List;
  * @author LLT
  *
  */
-public interface ISlicer {
-
-	List<BreakPoint> slice(SlicerInput input) throws IcsetlvException;
-	
+public interface IBugAnalyzer {
+	public List<BreakPoint> analyze(List<BreakPoint> breakpoints);
 }

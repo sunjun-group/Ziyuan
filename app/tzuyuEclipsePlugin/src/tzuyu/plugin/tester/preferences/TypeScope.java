@@ -13,9 +13,9 @@ import java.util.List;
 
 import org.eclipse.jdt.core.IType;
 
+import sav.common.core.utils.StringUtils;
 import tzuyu.engine.utils.Assert;
 import tzuyu.engine.utils.Pair;
-import tzuyu.engine.utils.StringUtils;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.tester.command.gentest.TypeScopeParser;
 

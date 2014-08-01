@@ -11,11 +11,11 @@ package tzuyu.engine.junit;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.common.core.utils.StringUtils;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.junit.printer.JOutputPrinter;
 import tzuyu.engine.model.Variable;
 import tzuyu.engine.runtime.RArrayDeclaration;
-import tzuyu.engine.utils.StringUtils;
 
 /**
  * @author LLT

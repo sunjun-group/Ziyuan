@@ -5,8 +5,6 @@ tzuyuLib
 .settings
 bin
 RemoteSystemsTempFiles
-.classpath
-.project
 runtime-EclipseApplication
 /app/tzuyuEclipsePlugin/icsetlvCore
 /app/tzuyuEclipsePlugin/icsetlvLib

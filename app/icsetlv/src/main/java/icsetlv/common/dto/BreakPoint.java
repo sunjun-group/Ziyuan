@@ -31,6 +31,11 @@ public class BreakPoint {
 		vars = new ArrayList<Variable>();
 	}
 	
+	public BreakPoint(String className, String methodName, int lineNo) {
+		this(className, methodName);
+		setLineNo(lineNo);
+	}
+	
 	public BreakPoint(String className, int lineNo, Variable... newVars) {
 		this(className, null);
 		this.lineNo = lineNo;

@@ -8,40 +8,29 @@
 
 package tzuyu.engine.model.exception;
 
+import sav.common.core.SavException;
 import lstar.LStarException;
 
 /**
  * @author LLT
  *
  */
-public class TzException extends Exception {
+public class TzException extends SavException {
 	private static final long serialVersionUID = 1L;
-	private TzExceptionType type;
-	private Object[] params;
 	
 	public TzException(TzExceptionType type, Object... params) {
-		this.type = type;
-		this.params = params;
+		super(type, params);
 	}
 	
 	public TzException(Exception e) {
 		super(e);
 		type = TzExceptionType.RETHROW;
-		params = new Object[]{e.getClass().getSimpleName()};
 	}
 	
 	public TzException(LStarException e) {
 		this(TzExceptionType.fromLStar(e.getType()));
 	}
-
-	public TzExceptionType getType() {
-		return type;
-	}
 	
-	public Object[] getParams() {
-		return params;
-	}
-
 	public static void rethrow(Exception e) throws TzException {
 		throw new TzException(e);
 	}

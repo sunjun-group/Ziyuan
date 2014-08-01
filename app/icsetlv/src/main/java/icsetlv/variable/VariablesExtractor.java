@@ -20,7 +20,6 @@ import icsetlv.vm.VMAcquirer;
 import icsetlv.vm.VMConfiguration;
 import icsetlv.vm.VMRunner;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,9 +68,7 @@ public class VariablesExtractor {
 		this.failTcs = failTestcases;
 	}
 
-	public VariablesExtractorResult execute() throws IOException,
-			InterruptedException, IncompatibleThreadStateException,
-			AbsentInformationException, IcsetlvException {
+	public VariablesExtractorResult execute() throws IcsetlvException {
 		Map<String, BreakPoint> locBrpMap = new HashMap<String, BreakPoint>();
 		Map<String, BreakpointResult> valuesMap = new HashMap<String, BreakpointResult>();
 		executeJunitTests(locBrpMap, valuesMap, true);
@@ -82,9 +79,7 @@ public class VariablesExtractor {
 
 	private VariablesExtractorResult executeJunitTests(
 			Map<String, BreakPoint> locBrpMap, Map<String, BreakpointResult> valuesMap,
-			boolean forPassTcs) throws IOException,
-			InterruptedException, AbsentInformationException,
-			IncompatibleThreadStateException, IcsetlvException {
+			boolean forPassTcs) throws IcsetlvException {
 		if (forPassTcs) {
 			config.setArgs(passTcs);
 		} else {
@@ -92,22 +87,32 @@ public class VariablesExtractor {
 		}
 		// start jvm in debug mode
 		VMRunner.startJVM(config);
+		
 		// remote debug
-		VirtualMachine vm = new VMAcquirer().connect(config.getPort());
+		VirtualMachine vm;
+		vm = new VMAcquirer().connect(config.getPort());
 		addClassWatch(vm);
 		// process events
 		EventQueue eventQueue = vm.eventQueue();
-		while (true) {
-			EventSet eventSet = eventQueue.remove(1000);
+		boolean stop = false;
+		while (!stop) {
+			EventSet eventSet;
+			try {
+				eventSet = eventQueue.remove(1000);
+			} catch (InterruptedException e) {
+				// do nothing, just return.
+				break;
+			}
 			if (eventSet == null) {
-				continue;
+				break;
+				// TODO LLT: try to get event from queue again until time
+				// out is reached.
 			}
 			for (Event event : eventSet) {
 				if (event instanceof VMDeathEvent
 						|| event instanceof VMDisconnectEvent) {
-					vm.resume();
-					// exit
-					return new VariablesExtractorResult(valuesMap.values());
+					stop = true;
+					break;
 				} else if (event instanceof ClassPrepareEvent) {
 					// watch field on loaded class
 					ClassPrepareEvent classPrepEvent = (ClassPrepareEvent) event;
@@ -116,12 +121,20 @@ public class VariablesExtractor {
 					addBreakpointWatch(vm, refType, locBrpMap);
 				} else if (event instanceof BreakpointEvent) {
 					BreakpointEvent bkpEvent = (BreakpointEvent) event;
-					extractValuesAtLocation(bkpEvent.location(),
-							bkpEvent, locBrpMap, valuesMap, forPassTcs);
-				} 
+					try {
+						extractValuesAtLocation(bkpEvent.location(), bkpEvent,
+								locBrpMap, valuesMap, forPassTcs);
+					} catch (IncompatibleThreadStateException e) {
+						// TODO LLT log
+					} catch (AbsentInformationException e) {
+						// TODO LLT log
+					}
+				}
 			}
 			eventSet.resume();
 		}
+		vm.resume();
+		return new VariablesExtractorResult(valuesMap.values());
 	}
 
 	private BreakpointResult extractValuesAtLocation(Location location, LocatableEvent event,
@@ -188,12 +201,17 @@ public class VariablesExtractor {
 	}
 
 	private void addBreakpointWatch(VirtualMachine vm, ReferenceType refType,
-			Map<String, BreakPoint> locBrpMap)
-			throws AbsentInformationException {
+			Map<String, BreakPoint> locBrpMap) {
 		EventRequestManager erm = vm.eventRequestManager();
 		for (BreakPoint brkp : brkpsMap.get(refType.name())) {
-			List<Location> locations = refType
-					.locationsOfLine(brkp.getLineNo());
+			List<Location> locations;
+			try {
+				locations = refType
+						.locationsOfLine(brkp.getLineNo());
+			} catch (AbsentInformationException e) {
+				// TODO LLT: log
+				continue;
+			}
 			if (!locations.isEmpty()) {
 				Location location = locations.get(0);
 				BreakpointRequest breakpointRequest = erm
@@ -204,8 +222,7 @@ public class VariablesExtractor {
 		}
 	}
 
-	private void addClassWatch(VirtualMachine vm)
-			throws AbsentInformationException {
+	private void addClassWatch(VirtualMachine vm) {
 		EventRequestManager erm = vm.eventRequestManager();
 		for (String className : brkpsMap.keySet()) {
 			registerClassRequest(erm, className);

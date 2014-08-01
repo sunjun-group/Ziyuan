@@ -8,6 +8,7 @@
 
 package tzuyu.engine.utils;
 
+import sav.common.core.utils.StringUtils;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConstants;
 import tzuyu.engine.model.Statement;

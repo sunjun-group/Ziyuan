@@ -19,8 +19,16 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>sav-projects</groupId>
+			<artifactId>sav.commons</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>tzuyu</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>icsetlv</artifactId>
 		</dependency>
 	</dependencies>
 </project>

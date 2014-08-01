@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import sav.common.core.utils.StringUtils;
 import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.runtime.RAssignment;
 import tzuyu.engine.utils.ArrayListSimpleList;
@@ -14,7 +15,6 @@ import tzuyu.engine.utils.Randomness;
 import tzuyu.engine.utils.ReflectionUtils;
 import tzuyu.engine.utils.ReflectionUtils.Match;
 import tzuyu.engine.utils.SimpleList;
-import tzuyu.engine.utils.StringUtils;
 
 public class Sequence implements Serializable {
 

@@ -10,6 +10,7 @@ package icsetlv;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.ibm.wala.util.collections.Pair;
 
@@ -21,7 +22,7 @@ import icsetlv.vm.VMConfiguration;
  */
 public class IcsetlvInput {
 	private VMConfiguration config;
-	private List<String> testcasesSourcePaths;
+	private Map<String, List<String>> assertionSourcePaths;
 	private String appOutput;
 	private List<Pair<String, String>> testMethods;
 	private List<String> srcFolders;
@@ -30,6 +31,7 @@ public class IcsetlvInput {
 	
 	public IcsetlvInput() {
 		config = new VMConfiguration();
+		config.setDebug(true);
 		srcFolders = new ArrayList<String>();
 	}
 
@@ -41,12 +43,12 @@ public class IcsetlvInput {
 		this.config = config;
 	}
 
-	public List<String> getTestcasesSourcePaths() {
-		return testcasesSourcePaths;
+	public Map<String, List<String>> getAssertionSourcePaths() {
+		return assertionSourcePaths;
 	}
 
-	public void setTestcasesSourcePaths(List<String> testcasesSourcePaths) {
-		this.testcasesSourcePaths = testcasesSourcePaths;
+	public void setAssertionSourcePaths(Map<String, List<String>> assertionSourcePaths) {
+		this.assertionSourcePaths = assertionSourcePaths;
 	}
 
 	public String getAppOutput() {
@@ -55,6 +57,7 @@ public class IcsetlvInput {
 
 	public void setAppOutput(String appOutput) {
 		this.appOutput = appOutput;
+		config.addClasspath(appOutput);
 	}
 
 	public List<Pair<String, String>> getTestMethods() {
@@ -87,5 +90,23 @@ public class IcsetlvInput {
 
 	public void setFailTestcases(List<String> failTestcases) {
 		this.failTestcases = failTestcases;
+	}
+
+	public void setJavaHome(String javaHome) {
+		config.setJavaHome(javaHome);
+	}
+
+	public void setJvmPort(int port) {
+		config.setPort(port);
+	}
+
+	public void setPrjClasspath(List<String> prjClasspaths) {
+		config.setClasspath(prjClasspaths);
+	}
+
+	public void setRunJunit(boolean cond) {
+		if (cond) {
+			config.setClazzName("org.junit.runner.JUnitCore");
+		}
 	}
 }

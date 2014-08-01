@@ -53,53 +53,62 @@ public class VariableNameCollector {
 		Map<String, List<BreakPoint>> brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
 		for (String clzName : brkpsMap.keySet()) {
 			try {
-				List<?> lines = FileUtils.readLines(getSourceFile(clzName));
-				int i = 0;
+				String content = FileUtils.readFileToString(getSourceFile(clzName));
 				int charCount = 0;
+				int line = 0;
 				List<BreakPoint> sortedBkps = sortByLineNum(brkpsMap.get(clzName));
 				for (BreakPoint bkp : sortedBkps) {
 					int bkpLine = getLineNoFromZero(bkp);
-					for (; i < lines.size(); i++) {
-						String line = (String) lines.get(i);
-						if (i == bkpLine) {
-							bkp.setCharStart(charCount);
-							StringBuilder stmtStr = new StringBuilder(line);
-							// find the end of the statement (in case statement is on multiple lines)
-							for (int j = i + 1; j < lines.size(); j++) {
-								stmtStr.append(lines.get(j));
-							}
-							Node statement = parseStmt(stmtStr);
-							charCount += countChar(lines,
-									statement.getBeginLine(),
-									statement.getEndLine());
-							bkp.addVars(extractVarNames(statement));
-							bkp.setCharEnd(charCount);
-							LogUtils.log("breakpoint: ", bkp);
-							LogUtils.log("statement: ", statement);
-							i++;
-							break;
-						} else {
-							charCount += line.length();
-						}
-					}
+					int stmtStart = getStmtOffset(content, charCount, line, bkpLine);
+					Node statement = parseStmt(getExtStmt(content, stmtStart));
+					int stmtEnd = getStmtLength(statement, content, stmtStart);
+					bkp.addVars(extractVarNames(statement));
+					bkp.setCharStart(stmtStart);
+					bkp.setCharEnd(stmtEnd);
+					LogUtils.log("breakpoint: ", bkp);
+					LogUtils.log("statement: ", statement);
+					// update indices 
+					line = bkpLine;
+					charCount = bkp.getCharStart();
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				IcsetlvException.rethrow(e, "cannot read the source file of class "
+						+ clzName);
 			}
 		}
 	}
 
-	private int getLineNoFromZero(BreakPoint bkp) {
-		return bkp.getLineNo() - 1;
+	private int getStmtOffset(String content, int startOffset, int startLine,
+			int bkpLine) {
+		int i = startOffset;
+		while (startLine < bkpLine) {
+			for (; i < content.length(); i++) {
+				char ch = content.charAt(i);
+				if (ch == '\n' || ch == '\r') {
+					if (ch == '\r' && i < content.length() - 1
+							&& content.charAt(i + 1) == '\n') {
+						i++;
+					}
+					startLine++;
+					i++;
+					break;
+				}
+			}
+		}
+		return i;
+	}
+	
+	private int getStmtLength(Node statement, String content,  int startOffset) {
+//		return getStmtOffset(content, startOffset, statement.getBeginLine() - 1, statement.getEndLine());
+		return getStmtOffset(content, startOffset, statement.getBeginLine() - 1, statement.getBeginLine());
 	}
 
-	private int countChar(List<?> lines, int beginLine, int endLine) {
-		int count = 0;
-		for (int i = beginLine; i <= endLine; i++) {
-			count += ((String)lines.get(i)).length();
-		}
-		return count;
+	private String getExtStmt(String content, int stmtOffset) {
+		return content.substring(stmtOffset);
+	}
+
+	private int getLineNoFromZero(BreakPoint bkp) {
+		return bkp.getLineNo() - 1;
 	}
 
 	private File getSourceFile(String clzName) {
@@ -112,17 +121,17 @@ public class VariableNameCollector {
 		return null;
 	}
 
-	private Node parseStmt(StringBuilder stmt) throws IcsetlvException {
+	private Node parseStmt(String extStmt) throws IcsetlvException {
 		Node result = null;
 		try {
-			result = JavaParser.parseStatement(stmt.toString());
+			result = JavaParser.parseStatement(extStmt);
 		} catch (ParseException e) {
 			try {
-				result = JavaParser.parseBodyDeclaration(stmt.toString());
+				result = JavaParser.parseBodyDeclaration(extStmt);
 				return result;
 			} catch (ParseException e1) {
 				IcsetlvException.rethrow(e,
-						"Cannot parse to the statment the block of code: " + stmt);
+						"Cannot parse to the statment the block of code: " + extStmt);
 			}
 		}
 		return result;

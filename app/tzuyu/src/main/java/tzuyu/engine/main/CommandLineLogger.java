@@ -10,16 +10,16 @@ package tzuyu.engine.main;
 
 import org.apache.log4j.Logger;
 
-import tzuyu.engine.iface.AbstractLogger;
-import tzuyu.engine.iface.ILogger;
+import sav.common.core.iface.ILogger;
+import sav.common.core.utils.StringUtils;
+import tzuyu.engine.iface.TzAbstractLogger;
 import tzuyu.engine.utils.Globals;
-import tzuyu.engine.utils.StringUtils;
 
 /**
  * @author LLT
  *
  */
-public class CommandLineLogger extends AbstractLogger<CommandLineLogger>
+public class CommandLineLogger extends TzAbstractLogger<CommandLineLogger>
 		implements ILogger<CommandLineLogger> {
 	private static final Logger logger = Logger.getRootLogger();
 	private static final CommandLineLogger instance = new CommandLineLogger(); 

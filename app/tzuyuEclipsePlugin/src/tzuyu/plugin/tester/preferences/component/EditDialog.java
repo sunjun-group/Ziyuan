@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import tzuyu.engine.utils.StringUtils;
+import sav.common.core.utils.StringUtils;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.commons.constants.Messages;
 
