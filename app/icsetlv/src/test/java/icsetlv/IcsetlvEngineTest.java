@@ -11,15 +11,15 @@ package icsetlv;
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.dto.VariablesExtractorResult;
 import icsetlv.common.exception.IcsetlvException;
-import icsetlv.common.utils.CollectionBuilder;
 import icsetlv.variable.AssertionDetector;
 import icsetlv.variable.VariablesExtractor;
 import icsetlv.vm.VMConfiguration;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -85,9 +85,10 @@ public class IcsetlvEngineTest extends AbstractTest {
 			};
 	}
 
-	private List<String> getTestcasesSourcePaths() {
-		return CollectionBuilder.init(new ArrayList<String>())
-				.add(config.getSourcepath() + "/testdata/boundedStack/BoundedStack.java")
-				.getResult();
+	private Map<String, List<String>> getTestcasesSourcePaths() {
+		Map<String, List<String>> result = new HashMap<String, List<String>>();
+		result.put(config.getSourcepath() + "/testdata/boundedStack/BoundedStack.java", 
+				null);
+		return result;
 	}
 }
