@@ -9,6 +9,7 @@
 package icsetlv.iface;
 
 import icsetlv.common.dto.BreakPoint;
+import icsetlv.common.exception.IcsetlvException;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ import java.util.List;
  *
  */
 public interface IBugAnalyzer {
-	public List<BreakPoint> analyze(List<BreakPoint> breakpoints);
+	public List<BreakPoint> analyze(List<BreakPoint> breakpoints) throws IcsetlvException;
 }

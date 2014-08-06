@@ -300,7 +300,8 @@ public class LibSVM extends AbstractClassifier {
 		}
 		assert tfrecord[0] + tfrecord[1] == data.size();
 		double accuracy = 0;
-		System.out.println(tfrecord[0]);
+		System.out.println("# Training point: " + (tfrecord[0] + tfrecord[1]));
+		System.out.println("# Right classification: " + tfrecord[0]);
 		accuracy = (double)tfrecord[0]/(double)data.size();
 		return accuracy;
 	}
