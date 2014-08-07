@@ -12,14 +12,16 @@ public class divider {
 	public String toString(){
 		int thlength = thetas.length;
 		StringBuilder dsb = new StringBuilder();
+		dsb.append("[ ");
 		for(int i = 0; i < thlength; i++){
 			if(i == thlength - 1){
-				dsb.append(thetas[i] + " * x" + i + " " + theta0 + " = 0;");
+				dsb.append(thetas[i] +", " + theta0);
 			}
 			else{
-				dsb.append(thetas[i] + " * x" + i + " +");
+				dsb.append(thetas[i] + "  ");
 			}
 		}
+		dsb.append("; ]");
 		return dsb.toString();
 	}
 }

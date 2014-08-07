@@ -14,9 +14,7 @@ import icsetlv.variable.AssertionDetector;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,6 +23,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import sav.common.core.utils.CollectionUtils;
+
 /**
  * @author LLT
  * 
@@ -32,18 +32,17 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class AssertionDetectorTest extends AbstractTest {
 	@Parameter
-	public Map<String, List<String>> assertionsClazzes;
+	public List<String> assertionsClazzes;
 
 	@Parameters
 	public static Collection<Object[]> data() {
 		return Arrays
-				.asList(new Object[][] { { singleEleMap("D:/_1_Projects/icsetlv/workspace/trunk/app/icsetlv/src/test/java/testdata/boundedStack/BoundedStack.java") } });
-	}
-	
-	private static <T, V>Map<T, V> singleEleMap(T key) {
-		Map<T, V> result = new HashMap<T, V>();
-		result.put(key, null);
-		return result;
+				.asList(new Object[][] {
+						{ CollectionUtils
+								.listOf("F:/project/Tzuyu/app/icsetlv/src/test/java/testdata/boundedStack/BoundedStack.java") },
+						{ CollectionUtils.listOf(TestConfiguration
+								.getInstance().getSourcepath()
+								+ "\\testdata\\slice\\FindMaxCallerFailTest1.java") } });
 	}
 
 	@Test
@@ -51,5 +50,6 @@ public class AssertionDetectorTest extends AbstractTest {
 		List<BreakPoint> breakpoints = AssertionDetector.scan(assertionsClazzes);
 		printBkps(breakpoints);
 		Assert.assertEquals(breakpoints.size(), 2);
+		
 	}
 }

@@ -22,9 +22,11 @@ public class FindMaxCallerFailTest1 {
 
 	@Test
 	public void test2() {
+		int a = 2;
 		List<Integer> arr = intList(10, 60, 30, 50, 100);
 		int max = FindMax.findMax(arr);
 		Assert.assertEquals(max, 100);
+		Assert.assertTrue(a==3);
 	}
 
 	protected List<Integer> intList(Integer... values) {

@@ -10,16 +10,19 @@ package icsetlv;
 
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.dto.VariablesExtractorResult;
+import icsetlv.common.dto.VariablesExtractorResult.BreakpointResult;
 import icsetlv.common.exception.IcsetlvException;
+import icsetlv.common.utils.CollectionBuilder;
+import icsetlv.svm.DatasetBuilder;
+import icsetlv.svm.LibSVM;
 import icsetlv.variable.AssertionDetector;
 import icsetlv.variable.VariablesExtractor;
 import icsetlv.vm.VMConfiguration;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,24 +47,34 @@ public class IcsetlvEngineTest extends AbstractTest {
 			InterruptedException, IncompatibleThreadStateException,
 			AbsentInformationException {
 		IcsetlvInput input = initInput();
-		// scan assertion statements
-		List<BreakPoint> bkps = AssertionDetector.scan(input.getAssertionSourcePaths());
+		List<BreakPoint> bkps = AssertionDetector.scan(input.getTestcasesSourcePaths());
 		printBkps(bkps);
-		// detect which assertion statements are potentially the cause of the problem
 		VariablesExtractor extractor = new VariablesExtractor(
 				input.getConfig(), input.getPassTestcases(),
 				input.getFailTestcases(), bkps);
 		VariablesExtractorResult result = extractor.execute();
-		
-		
 		print(result);
+		List<BreakpointResult> bprs = result.getResult();
+		List<DatasetBuilder> dbs = new ArrayList<DatasetBuilder>();
+		for(BreakpointResult bpr : bprs){
+			dbs.add(new DatasetBuilder(bpr));
+		}
+		LibSVM svmrunner = new LibSVM();
+		for(DatasetBuilder db : dbs){
+			svmrunner.buildClassifier(db.buildDataset());
+			System.out.println(svmrunner.getExplicitDivider().toString());
+			System.out.println(svmrunner.modelAccuracy());
+		}
+		
+		
+		
 	}
 
 	private IcsetlvInput initInput() {
 		IcsetlvInput input = new IcsetlvInput();
 		VMConfiguration vmConfig = initVmConfig();
 		input.setConfig(vmConfig);
-		input.setAssertionSourcePaths(getTestcasesSourcePaths());
+		input.setTestcasesSourcePaths(getTestcasesSourcePaths());
 		input.setPassTestcases(Arrays.asList(getPassTestcases()));
 		input.setFailTestcases(Arrays.asList(getFailTestcases()));
 		return input;
@@ -69,26 +82,28 @@ public class IcsetlvEngineTest extends AbstractTest {
 	
 	private String[] getPassTestcases() {
 		return new String[] {
-				"testdata.boundedStack.tzuyu.pass.BoundedStack0",
-				"testdata.boundedStack.tzuyu.pass.BoundedStack1",
-				"testdata.boundedStack.tzuyu.pass.BoundedStack2",
-				"testdata.boundedStack.tzuyu.pass.BoundedStack3",
-				"testdata.boundedStack.tzuyu.pass.BoundedStack4",
-				"testdata.boundedStack.tzuyu.pass.BoundedStack5",
-				"testdata.boundedStack.tzuyu.pass.BoundedStack6"
+				"example.MaxFind.test.MaxFindPassTest"
+//				"testdata.boundedStack.tzuyu.pass.BoundedStack0",
+//				"testdata.boundedStack.tzuyu.pass.BoundedStack1",
+//				"testdata.boundedStack.tzuyu.pass.BoundedStack2",
+//				"testdata.boundedStack.tzuyu.pass.BoundedStack3",
+//				"testdata.boundedStack.tzuyu.pass.BoundedStack4",
+//				"testdata.boundedStack.tzuyu.pass.BoundedStack5",
+//				"testdata.boundedStack.tzuyu.pass.BoundedStack6"
 			};
 	}
 	
 	private String[] getFailTestcases() {
 		return new String[] {
-				"testdata.boundedStack.tzuyu.fail.BoundedStack7",
+				//"testdata.boundedStack.tzuyu.fail.BoundedStack7",
+				"example.MaxFind.test.MaxFindFailTest"
 			};
 	}
 
-	private Map<String, List<String>> getTestcasesSourcePaths() {
-		Map<String, List<String>> result = new HashMap<String, List<String>>();
-		result.put(config.getSourcepath() + "/testdata/boundedStack/BoundedStack.java", 
-				null);
-		return result;
+	private List<String> getTestcasesSourcePaths() {
+		return CollectionBuilder.init(new ArrayList<String>())
+				.add(config.getSourcepath() + "/example/MaxFind/MaxFindError.java")
+	//					"/testdata/boundedStack/BoundedStack.java")
+				.getResult();
 	}
 }
