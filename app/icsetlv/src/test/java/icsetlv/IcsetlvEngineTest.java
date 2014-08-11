@@ -66,10 +66,9 @@ public class IcsetlvEngineTest extends AbstractTest {
 		bkps.add(bkp3);
 		
 		printBkps(bkps);
-		VariablesExtractor extractor = new VariablesExtractor(
-				input.getConfig(), input.getPassTestcases(),
-				input.getFailTestcases(), bkps);
-		VariablesExtractorResult result = extractor.execute();
+		VariablesExtractor extractor = new VariablesExtractor(input.getConfig());
+		VariablesExtractorResult result = extractor.execute(input.getPassTestcases(), input.getFailTestcases(),
+				bkps);
 		print(result);
 		List<BreakpointResult> bprs = result.getResult();
 		List<DatasetBuilder> dbs = new ArrayList<DatasetBuilder>();

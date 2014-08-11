@@ -17,7 +17,6 @@ public class BugAnalyzerTest extends AbstractTest {
 	private List<BreakPoint> bprsin = new ArrayList<BreakPoint>();
 	private List<BreakPoint> bprsout = new ArrayList<BreakPoint>();
 	
-	
 	@Before
 	public void beforeTest(){
 		BreakPoint bkp1 = new BreakPoint("testdata.slice.FindMax", "findMax");
@@ -35,11 +34,11 @@ public class BugAnalyzerTest extends AbstractTest {
 	public void testBugAnalyzer() throws IcsetlvException{
 		System.out.println("Before analyzing:");
 		printBkps(bprsin);
-		BugAnalyzer bga = new BugAnalyzer(
-				CollectionUtils.listOf("example.MaxFind.test.MaxFindPassTest"),
-				CollectionUtils.listOf("example.MaxFind.test.MaxFindFailTest"),
-				initVmConfig());
-		bprsout = bga.analyze(bprsin);
+//		BugAnalyzer bga = new BugAnalyzer(
+//				CollectionUtils.listOf("example.MaxFind.test.MaxFindPassTest"),
+//				CollectionUtils.listOf("example.MaxFind.test.MaxFindFailTest"),
+//				initVmConfig());
+//		bprsout = bga.analyze(bprsin);
 		System.out.println("After analyzing");
 		printBkps(bprsout);
 	}

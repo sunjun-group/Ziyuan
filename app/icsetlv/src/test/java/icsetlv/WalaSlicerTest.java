@@ -27,8 +27,8 @@ public class WalaSlicerTest extends AbstractTest {
 	
 	@Test
 	public void testSlice() throws IcsetlvException {
-		WalaSlicer slicer = new WalaSlicer();
 		SlicerInput input = new SlicerInput();
+		WalaSlicer slicer = new WalaSlicer(input);
 		input.setAppBinFolder(config.getAppBinpath());
 		input.setJre(config.getJavahome());
 		// entry points
@@ -37,8 +37,7 @@ public class WalaSlicerTest extends AbstractTest {
 		// breakpoints
 		List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
 		addBreakpoints(breakpoints);
-		input.setBreakpoints(breakpoints);
-		List<BreakPoint> slicingResult = slicer.slice(input);
+		List<BreakPoint> slicingResult = slicer.slice(breakpoints);
 		printBkps(slicingResult);
 	}
 

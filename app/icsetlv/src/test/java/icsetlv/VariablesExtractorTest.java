@@ -49,11 +49,10 @@ public class VariablesExtractorTest extends AbstractTest {
 		bkp2.setLineNo(14);
 		breakpoints.add(bkp2);
 		
-		VariablesExtractor varExtr = new VariablesExtractor(vmConfig, 
-				CollectionUtils.listOf("testdata.slice.FindMaxCallerPassTest1"),
+		VariablesExtractor varExtr = new VariablesExtractor(vmConfig);
+		VariablesExtractorResult extractedResult = varExtr.execute(CollectionUtils.listOf("testdata.slice.FindMaxCallerPassTest1"),
 				CollectionUtils.listOf("testdata.slice.FindMaxCallerFailTest1"),
 				breakpoints);
-		VariablesExtractorResult extractedResult = varExtr.execute();
 		print(extractedResult);
 	}
 }
