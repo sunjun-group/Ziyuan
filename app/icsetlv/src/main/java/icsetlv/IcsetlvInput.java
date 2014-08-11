@@ -8,13 +8,12 @@
 
 package icsetlv;
 
+import icsetlv.common.dto.BreakPoint;
+import icsetlv.vm.VMConfiguration;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import com.ibm.wala.util.collections.Pair;
-
-import icsetlv.vm.VMConfiguration;
 
 /**
  * @author LLT
@@ -24,10 +23,11 @@ public class IcsetlvInput {
 	private VMConfiguration config;
 	private Map<String, List<String>> assertionSourcePaths;
 	private String appOutput;
-	private List<Pair<String, String>> testMethods;
+	private List<String[]> testMethods;
 	private List<String> srcFolders;
 	private List<String> passTestcases;
 	private List<String> failTestcases;
+	private List<BreakPoint> bkps;
 	
 	public IcsetlvInput() {
 		config = new VMConfiguration();
@@ -60,12 +60,12 @@ public class IcsetlvInput {
 		config.addClasspath(appOutput);
 	}
 
-	public List<Pair<String, String>> getTestMethods() {
+	public List<String[]> getTestMethods() {
 		return testMethods;
 	}
 
-	public void setTestMethods(List<Pair<String, String>> testMethods) {
-		this.testMethods = testMethods;
+	public void setTestMethods(List<String[]> list) {
+		this.testMethods = list;
 	}
 	
 	public void addSrcFolder(String path) {
@@ -108,5 +108,13 @@ public class IcsetlvInput {
 		if (cond) {
 			config.setClazzName("org.junit.runner.JUnitCore");
 		}
+	}
+
+	public void setBreakpoints(List<BreakPoint> bkps) {
+		this.bkps = bkps;
+	}
+	
+	public List<BreakPoint> getBreakpoints() {
+		return bkps;
 	}
 }

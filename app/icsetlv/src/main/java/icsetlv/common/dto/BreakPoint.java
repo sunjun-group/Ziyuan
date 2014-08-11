@@ -9,6 +9,9 @@
 package icsetlv.common.dto;
 
 import icsetlv.common.utils.Assert;
+import icsetlv.common.utils.SignatureUtils;
+
+import japa.parser.ast.body.MethodDeclaration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +22,7 @@ import java.util.List;
  */
 public class BreakPoint {
 	private String classCanonicalName;
-	private String methodName;
+	private String methodSign; // signature
 	private int lineNo = -1;
 	private List<Variable> vars;
 	private int charStart;
@@ -27,8 +30,9 @@ public class BreakPoint {
 	
 	public BreakPoint(String className, String methodName) {
 		this.classCanonicalName = className;
-		this.methodName = methodName;
 		vars = new ArrayList<Variable>();
+		setClassCanonicalName(className);
+		setMethodSign(methodName);
 	}
 	
 	public BreakPoint(String className, String methodName, int lineNo) {
@@ -42,6 +46,10 @@ public class BreakPoint {
 		if (newVars != null) {
 			addVars(newVars);
 		}
+	}
+	
+	public static BreakPoint from(String classCanonicalName, MethodDeclaration method) {
+		return new BreakPoint(classCanonicalName, SignatureUtils.getSignature(method));
 	}
 
 	public void addVars(Variable... newVars) {
@@ -62,8 +70,12 @@ public class BreakPoint {
 		this.lineNo = lineNo;
 	}
 	
-	public void setMethodName(String methodName) {
-		this.methodName = methodName;
+	public void setClassCanonicalName(String classCanonicalName) {
+		this.classCanonicalName = classCanonicalName;
+	}
+	
+	public void setMethodSign(String sign) {
+		this.methodSign = sign;
 	}
 
 	public List<Variable> getVars() {
@@ -78,9 +90,13 @@ public class BreakPoint {
 		return lineNo > 0;
 	}
 	
+	public String getMethodSign() {
+		Assert.assertNotNull(methodSign, "missing method name!");
+		return methodSign;
+	}
+	
 	public String getMethodName() {
-		Assert.assertNotNull(methodName, "missing method name!");
-		return methodName;
+		return SignatureUtils.extractMethodName(methodSign);
 	}
 
 	public int getCharStart() {
@@ -102,7 +118,7 @@ public class BreakPoint {
 	@Override
 	public String toString() {
 		return "BreakPoint [classCanonicalName=" + classCanonicalName
-				+ ", methodName=" + methodName + ", lineNo=" + lineNo
+				+ ", methodName=" + methodSign + ", lineNo=" + lineNo
 				+ ", vars=" + vars + ", charStart=" + charStart + ", charEnd="
 				+ charEnd + "]";
 	}

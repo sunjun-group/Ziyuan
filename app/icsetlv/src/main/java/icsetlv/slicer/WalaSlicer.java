@@ -40,7 +40,6 @@ import com.ibm.wala.ipa.callgraph.CallGraph;
 import com.ibm.wala.ipa.callgraph.CallGraphBuilder;
 import com.ibm.wala.ipa.callgraph.CallGraphBuilderCancelException;
 import com.ibm.wala.ipa.callgraph.Entrypoint;
-import com.ibm.wala.ipa.callgraph.impl.DefaultEntrypoint;
 import com.ibm.wala.ipa.callgraph.impl.Util;
 import com.ibm.wala.ipa.cha.ClassHierarchy;
 import com.ibm.wala.ipa.cha.ClassHierarchyException;
@@ -59,11 +58,7 @@ import com.ibm.wala.ssa.SSACFG;
 import com.ibm.wala.ssa.SSACFG.BasicBlock;
 import com.ibm.wala.ssa.SSAInstruction;
 import com.ibm.wala.types.ClassLoaderReference;
-import com.ibm.wala.types.Descriptor;
-import com.ibm.wala.types.MethodReference;
 import com.ibm.wala.types.TypeName;
-import com.ibm.wala.types.TypeReference;
-import com.ibm.wala.util.collections.Pair;
 import com.ibm.wala.util.config.FileOfClasses;
 import com.ibm.wala.util.strings.Atom;
 
@@ -79,8 +74,7 @@ public class WalaSlicer implements ISlicer {
 		this.input = input;
 		AnalysisScope scope = makeJ2SEAnalysisScope();
 		IClassHierarchy cha = makeClassHierarchy(scope);
-		Iterable<Entrypoint> entrypoints = makeEntrypoints(
-				scope.getApplicationLoader(), cha, input.getClassEntryPoints());
+		Iterable<Entrypoint> entrypoints = makeEntrypoints(scope.getApplicationLoader(), cha, input);
 		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
 		CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope);
 		CallGraph cg = makeCallGraph(options, builder);
@@ -120,7 +114,8 @@ public class WalaSlicer implements ISlicer {
 
 						// create new breakpoint
 						Set<Integer> lineNos = CollectionUtils.getSetInitIfEmpty(bkpMap, 
-								StringUtils.spaceJoin(getClassCanonicalName(method), method.getName().toString()));
+								StringUtils.spaceJoin(getClassCanonicalName(method), 
+										method.getSignature()));
 						lineNos.add(src_line_number);
 					}
 				}
@@ -249,49 +244,15 @@ public class WalaSlicer implements ISlicer {
 	 * ********************************************************************************/
 	public static Iterable<Entrypoint> makeEntrypoints(
 			final ClassLoaderReference loaderRef, final IClassHierarchy cha,
-			final List<Pair<String, String>> classEntryPoints)
-			throws IcsetlvException {
-		Assert.assertTrue(!CollectionUtils.isEmpty(classEntryPoints),
-				"no entrypoint detected!");
-		for (Pair<String, String> classEntry : classEntryPoints) {
-			if (classEntry.fst.indexOf("L") != 0) {
-				throw new IllegalArgumentException(
-						"Expected class name to start with L " + classEntry);
-			}
-			if (classEntry.fst.indexOf(".") > 0) {
-				throw new IcsetlvException(
-						"Expected class name formatted with /, not . "
-								+ classEntry);
-			}
+			final SlicerInput input) throws IcsetlvException {
+		EntrypointMaker<?> entrypointMaker;
+		if (!CollectionUtils.isEmpty(input.getClassEntryPoints())) {
+			entrypointMaker = new DefaultEntrypointMaker(loaderRef, cha, input.getClassEntryPoints());
+		} else {
+			entrypointMaker = new BkpEntrypointMaker(
+					loaderRef, cha, input.getBreakpoints());
 		}
-
-		return new Iterable<Entrypoint>() {
-			public Iterator<Entrypoint> iterator() {
-				return new Iterator<Entrypoint>() {
-					private int index = 0;
-
-					public void remove() {
-						Assert.assertFail("unsupported!!");
-					}
-
-					public boolean hasNext() {
-						return index < classEntryPoints.size();
-					}
-
-					public Entrypoint next() {
-						TypeReference T = TypeReference.findOrCreate(loaderRef,
-								TypeName.string2TypeName(classEntryPoints.get(index).fst));
-						Atom method = Atom
-								.findOrCreateAsciiAtom(classEntryPoints.get(index).snd);
-						MethodReference mainRef = MethodReference.findOrCreate(
-								T, method, Descriptor.findOrCreate(new TypeName[0],
-																TypeReference.VoidName));
-						index++;
-						return new DefaultEntrypoint(mainRef, cha);
-					}
-				};
-			}
-		};
+		return entrypointMaker.makeEntrypoints();
 	}
 
 }

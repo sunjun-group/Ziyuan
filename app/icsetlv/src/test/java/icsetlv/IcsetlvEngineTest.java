@@ -9,12 +9,10 @@
 package icsetlv;
 
 import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.dto.VariablesExtractorResult;
 import icsetlv.common.dto.BreakPoint.Variable;
+import icsetlv.common.dto.VariablesExtractorResult;
 import icsetlv.common.dto.VariablesExtractorResult.BreakpointResult;
 import icsetlv.common.exception.IcsetlvException;
-import icsetlv.slicer.SlicerInput;
-import icsetlv.slicer.WalaSlicer;
 import icsetlv.svm.DatasetBuilder;
 import icsetlv.svm.LibSVM;
 import icsetlv.variable.AssertionDetector;
@@ -34,7 +32,6 @@ import net.sf.javaml.featureselection.ranking.RecursiveFeatureEliminationSVM;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.ibm.wala.util.collections.Pair;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.IncompatibleThreadStateException;
 

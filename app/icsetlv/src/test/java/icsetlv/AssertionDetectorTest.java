@@ -36,11 +36,11 @@ public class AssertionDetectorTest extends AbstractTest {
 
 	@Parameters
 	public static Collection<Object[]> data() {
-		return Arrays
-				.asList(new Object[][] { { 
-					singleEleMap(TestConfiguration.getInstance().getSourcepath() + "testdata/boundedStack/BoundedStack.java") } });
+		return Arrays.asList(new Object[][] { { singleEleMap(TestConfiguration
+				.getInstance().getSourcepath()
+				+ "testdata/boundedStack/BoundedStack.java") } });
 	}
-	
+
 	private static <T, V>Map<T, V> singleEleMap(T key) {
 		Map<T, V> result = new HashMap<T, V>();
 		result.put(key, null);

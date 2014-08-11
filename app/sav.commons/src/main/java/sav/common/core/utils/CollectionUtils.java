@@ -143,4 +143,11 @@ public class CollectionUtils {
 			}
 		}
 	}
+
+	public static <T>List<T> emptyToNull(List<T> list) {
+		if (isEmpty(list)) {
+			return null;
+		}
+		return list;
+	}
 }

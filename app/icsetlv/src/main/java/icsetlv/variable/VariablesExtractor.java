@@ -32,9 +32,11 @@ import com.sun.jdi.LocalVariable;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.PrimitiveType;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadReference;
+import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.BreakpointEvent;
@@ -125,8 +127,10 @@ public class VariablesExtractor {
 						extractValuesAtLocation(bkpEvent.location(), bkpEvent,
 								locBrpMap, valuesMap, forPassTcs);
 					} catch (IncompatibleThreadStateException e) {
+						System.err.println(e);
 						// TODO LLT log
 					} catch (AbsentInformationException e) {
+						System.err.println(e);
 						// TODO LLT log
 					}
 				}
@@ -137,7 +141,7 @@ public class VariablesExtractor {
 		return new VariablesExtractorResult(valuesMap.values());
 	}
 
-	private BreakpointResult extractValuesAtLocation(Location location, LocatableEvent event,
+	private void extractValuesAtLocation(Location location, LocatableEvent event,
 			Map<String, BreakPoint> locBrpMap,
 			Map<String, BreakpointResult> valuesMap, boolean arePassTcs)
 			throws IncompatibleThreadStateException,
@@ -145,7 +149,7 @@ public class VariablesExtractor {
 		List<VarValue> result = new ArrayList<VariablesExtractorResult.VarValue>();
 		BreakPoint brp = locBrpMap.get(location.toString());
 		if (brp == null) {
-			return null;
+			return;
 		}
 		
 		ThreadReference thread = event.thread();
@@ -185,19 +189,34 @@ public class VariablesExtractor {
 			}
 		}
 		
-		BreakpointResult bkpResult = valuesMap.get(location.toString());
-		if (bkpResult == null) {
-			bkpResult = new BreakpointResult(brp);
-			valuesMap.put(location.toString(), bkpResult);
+		if (!result.isEmpty()) {
+			BreakpointResult bkpResult = valuesMap.get(location.toString());
+			if (bkpResult == null) {
+				bkpResult = new BreakpointResult(brp);
+				valuesMap.put(location.toString(), bkpResult);
+			}
+			bkpResult.add(result, arePassTcs);
 		}
-		bkpResult.add(result, arePassTcs);
-		return bkpResult;
 	}
 
 	private void appendVarVal(List<VarValue> varValList, Variable inVar,
 			Value value) {
-		VarValue varValue = new VarValue(inVar.getCode(), value.toString());
-		varValList.add(varValue);
+		Type type = value.type();
+		if (isPrimitiveOrString(type)) {
+			VarValue varValue = new VarValue(inVar.getCode(), value.toString());
+			varValList.add(varValue);
+		}
+	}
+
+	private boolean isPrimitiveOrString(Type type) {
+		if (type instanceof PrimitiveType) {
+			return true;
+		}
+//		if (type instanceof ReferenceType) {
+//			ReferenceType refType = (ReferenceType) type;
+//			return refType.name().equals(String.class.getName());
+//		}
+		return false;
 	}
 
 	private void addBreakpointWatch(VirtualMachine vm, ReferenceType refType,

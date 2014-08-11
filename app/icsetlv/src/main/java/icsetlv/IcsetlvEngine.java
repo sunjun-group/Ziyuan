@@ -9,14 +9,13 @@
 package icsetlv;
 
 import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.dto.VariablesExtractorResult;
 import icsetlv.common.exception.IcsetlvException;
+import icsetlv.iface.IBugAnalyzer;
 import icsetlv.iface.ISlicer;
 import icsetlv.slicer.SlicerInput;
 import icsetlv.slicer.WalaSlicer;
-import icsetlv.variable.AssertionDetector;
 import icsetlv.variable.VariableNameCollector;
-import icsetlv.variable.VariablesExtractor;
+import icsetlv.vm.BugAnalyzer;
 import icsetlv.vm.VMConfiguration;
 
 import java.util.List;
@@ -29,15 +28,24 @@ public class IcsetlvEngine {
 	
 	public List<BreakPoint> run(IcsetlvInput input) throws IcsetlvException {
 		// scan all assertion statements and create breakpoints 
-		List<BreakPoint> breakpoints = AssertionDetector.scan(input
-				.getAssertionSourcePaths());
+//		List<BreakPoint> breakpoints = AssertionDetector.scan(input
+//				.getAssertionSourcePaths());
+		List<BreakPoint> breakpoints = input.getBreakpoints();
 		
-		VariablesExtractor extractor = new VariablesExtractor(
-				input.getConfig(), input.getPassTestcases(),
-				input.getFailTestcases(), breakpoints);
-		VariablesExtractorResult result = extractor.execute();
-		System.out.println(result);
+//		VariablesExtractor extractor = new VariablesExtractor(
+//				input.getConfig(), input.getPassTestcases(),
+//				input.getFailTestcases(), breakpoints);
+//		VariablesExtractorResult result = extractor.execute();
+//		System.out.println(result);
 		
+		IBugAnalyzer bugAnalyzer = new BugAnalyzer(input.getPassTestcases(),
+				input.getFailTestcases(), input.getConfig());
+		breakpoints = bugAnalyzer.analyze(breakpoints);
+		
+		if (breakpoints.isEmpty()) {
+			System.out.println("Done!");
+			return breakpoints;
+		}
 		// do slicing
 		SlicerInput sliceInput = new SlicerInput();
 		VMConfiguration config = input.getConfig();
@@ -49,7 +57,7 @@ public class IcsetlvEngine {
 		ISlicer slicer = new WalaSlicer();
 		List<BreakPoint> slicingResult = slicer.slice(sliceInput);
 		new VariableNameCollector(input.getSrcFolders()).updateVariables(slicingResult);
-		
+		System.out.println("Done!");
 		return slicingResult;
 	}
 

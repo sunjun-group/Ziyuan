@@ -12,8 +12,6 @@ import icsetlv.common.dto.BreakPoint;
 
 import java.util.List;
 
-import com.ibm.wala.util.collections.Pair;
-
 /**
  * @author LLT
  * 
@@ -24,7 +22,7 @@ public class SlicerInput {
 	private String appBinFolder;
 	private List<String> appSrcFolder;
 	// void methods only.
-	private List<Pair<String, String>> classEntryPoints;
+	private List<String[]> classEntryPoints;
 	private List<BreakPoint> breakpoints;
 
 	public ClassLoader getClassLoader() {
@@ -59,12 +57,12 @@ public class SlicerInput {
 		this.appSrcFolder = appSrcFolder;
 	}
 
-	public List<Pair<String, String>> getClassEntryPoints() {
+	public List<String[]> getClassEntryPoints() {
 		return classEntryPoints;
 	}
 
-	public void setClassEntryPoints(List<Pair<String, String>> classEntryPoints) {
-		this.classEntryPoints = classEntryPoints;
+	public void setClassEntryPoints(List<String[]> entrypoints) {
+		this.classEntryPoints = entrypoints;
 	}
 
 	public List<BreakPoint> getBreakpoints() {

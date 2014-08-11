@@ -72,11 +72,16 @@ public class AssertionDetector {
 		private MethodDeclaration curMethod;
 		private BreakPoint curBreakpoint;
 		private List<BreakPoint> result = new ArrayList<BreakPoint>();
-		private List<String> selectedMths;
+		private List<String[]> selectedMths;
 		
 		public AssertStmtToBreakpointVisitor(List<String> methods) {
 			if (!CollectionUtils.isEmpty(methods)) {
-				selectedMths = methods;
+				selectedMths = new ArrayList<String[]>();
+				for (String method : methods) {
+					int idx = method.indexOf("(");
+					selectedMths.add(new String[] {method.substring(0, idx - 1),
+							method.substring(idx, method.length() - 1)});
+				}
 			}
 		}
 
@@ -98,10 +103,22 @@ public class AssertionDetector {
 		
 		@Override
 		public void visit(MethodDeclaration n, String arg) {
-			if (selectedMths == null || selectedMths.contains(n.getName())) {
+			if (isSelectedMth(n.getName())) {
 				curMethod = n;
 				super.visit(n, arg);
 			}
+		}
+		
+		private boolean isSelectedMth(String name) {
+			if (selectedMths == null) {
+				return true;
+			}
+			for (String[] mth : selectedMths) {
+				if (name.equals(mth[0])) {
+					return true;
+				}
+			}
+			return false;
 		}
 		
 		@Override
@@ -134,7 +151,7 @@ public class AssertionDetector {
 		}
 
 		private void initBreakpoint(Node n) {
-			curBreakpoint = new BreakPoint(curClass.toString(), curMethod.getName());
+			curBreakpoint = BreakPoint.from(curClass.toString(), curMethod);
 			curBreakpoint.setLineNo(n.getBeginLine());
 		}
 		

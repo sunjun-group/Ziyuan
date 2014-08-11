@@ -10,6 +10,7 @@ package icsetlv.slicer;
 
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.common.utils.Assert;
+import icsetlv.common.utils.SignatureUtils;
 
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +25,8 @@ import com.ibm.wala.types.Descriptor;
 import com.ibm.wala.types.MethodReference;
 import com.ibm.wala.types.TypeName;
 import com.ibm.wala.types.TypeReference;
+import com.ibm.wala.types.generics.MethodTypeSignature;
+import com.ibm.wala.types.generics.TypeSignature;
 import com.ibm.wala.util.strings.Atom;
 
 /**
@@ -74,15 +77,15 @@ public abstract class EntrypointMaker<T> {
 					}
 
 					public Entrypoint next() {
+						T entry = classEntryPoints
+								.get(index);
 						TypeReference T = TypeReference
 								.findOrCreate(loaderRef,
-										TypeName.string2TypeName(getClassRef(classEntryPoints
-												.get(index))));
+										TypeName.string2TypeName(getClassRef(entry)));
 						Atom method = Atom
-								.findOrCreateAsciiAtom(getMethodName(classEntryPoints
-										.get(index)));
+								.findOrCreateAsciiAtom(getMethodName(entry));
 						MethodReference mainRef = MethodReference
-								.findOrCreate(T, method, getMethodDescriptor());
+								.findOrCreate(T, method, getMethodDescriptor(entry));
 						index++;
 						return new DefaultEntrypoint(mainRef, cha);
 					}
@@ -91,11 +94,36 @@ public abstract class EntrypointMaker<T> {
 		};
 	}
 	
-	protected Descriptor getMethodDescriptor() {
+	protected Descriptor getMethodDescriptor(T entry) {
 		return Descriptor.findOrCreate(new TypeName[0], TypeReference.VoidName);
 	}
 	
 	protected abstract String getMethodName(T entry);
 
 	protected abstract String getClassRef(T entry);
+	
+	protected Descriptor createDescriptor(String methodSign) {
+		MethodTypeSignature methodTypeSign = MethodTypeSignature.make(methodSign);
+		TypeName[] types;
+		TypeSignature[] arguments = methodTypeSign.getArguments();
+		if (CollectionUtils.isEmpty(arguments)) {
+			types = new TypeName[0];
+		} else {
+			types = new TypeName[arguments.length];
+			for (int i = 0; i < arguments.length; i++) {
+				types[i] = toTypeName(arguments[i].toString());
+			}
+		}
+		TypeName returnType;
+		if (methodSign.substring(methodSign.lastIndexOf(")") + 1, methodSign.length()).equals("V")) {
+			returnType = TypeReference.VoidName; 
+		} else {
+			returnType = toTypeName(methodTypeSign.getReturnType().toString());
+		}
+		return Descriptor.findOrCreate(types, returnType);
+	}
+	
+	private TypeName toTypeName(String sign) {
+		return TypeName.findOrCreate(SignatureUtils.trimSignature(sign));
+	}
 }

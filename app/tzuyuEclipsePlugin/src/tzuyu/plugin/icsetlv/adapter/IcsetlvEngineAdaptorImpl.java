@@ -12,6 +12,7 @@ import icsetlv.IcsetlvEngine;
 import icsetlv.IcsetlvInput;
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.exception.IcsetlvException;
+import icsetlv.common.utils.SignatureUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -41,10 +41,9 @@ import tzuyu.plugin.commons.dto.WorkObject.WorkItem;
 import tzuyu.plugin.commons.exception.PluginException;
 import tzuyu.plugin.commons.utils.IProjectUtils;
 import tzuyu.plugin.commons.utils.ResourcesUtils;
+import tzuyu.plugin.commons.utils.SignatureParser;
 import tzuyu.plugin.icsetlv.command.AnalysisPreferences;
 import tzuyu.plugin.tester.reporter.PluginLogger;
-
-import com.ibm.wala.util.collections.Pair;
 
 
 /**
@@ -87,14 +86,16 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 			IcsetlvException.rethrow(e);
 			PluginLogger.getLogger().logEx(e);
 		}
-		Map<IPath, List<String>> assertionSources = getAssertionSources(workObject, prefs);
+		Map<ICompilationUnit, List<IMethod>> assertionSources = getAssertionSources(workObject, prefs);
+		List<BreakPoint> bkps = AssertionDetector.scan(assertionSources);
 		input.setAssertionSourcePaths(toOsstring(assertionSources));
+		input.setBreakpoints(bkps);
 		List<String> sourceNames = getName(assertionSources.keySet());
 		List<IType> passTcs = extractSourceByNames(sourceNames, prefs.getPassPkg());
 		List<IType> failTcs = extractSourceByNames(sourceNames, prefs.getFailPkg());
 		input.setPassTestcases(toFullyQualifiedName(passTcs));
 		input.setFailTestcases(toFullyQualifiedName(failTcs));
-		input.setTestMethods(extractAllTestMethods(failTcs));
+//		input.setTestMethods(extractAllTestMethods(failTcs));
 		// add source folders
 		try {
 			for (IPackageFragmentRoot root : project.getAllPackageFragmentRoots()) {
@@ -109,35 +110,54 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 		return input;
 	}
 	
-	
 	private Map<String, List<String>> toOsstring(
-			Map<IPath, List<String>> assertionSources) {
+			Map<ICompilationUnit, List<IMethod>> assertionSources) {
 		Map<String, List<String>> result = new HashMap<String, List<String>>();
-		for (IPath path : assertionSources.keySet()) {
-			result.put(path.toOSString(), assertionSources.get(path));
+		for (ICompilationUnit cu : assertionSources.keySet()) {
+			List<IMethod> methods = assertionSources.get(cu);
+			String path = ResourcesUtils.relativeToAbsolute(cu.getPath()).toOSString();
+			if (methods == null) {
+				result.put(path, null);
+			} else {
+				List<String> methodSigns = new ArrayList<String>();
+				for (IMethod method : methods) {
+					try {
+						methodSigns.add(SignatureUtils.createMethodNameSign(
+								method.getElementName(), method.getSignature()));
+					} catch (JavaModelException e) {
+						PluginLogger.getLogger().logEx(e);
+					}
+				}
+				result.put(path, methodSigns);
+			}
 		}
 		return result;
 	}
 
-	private List<Pair<String, String>> extractAllTestMethods(List<IType> tcs) {
-		List<Pair<String, String>> result = new ArrayList<Pair<String, String>>();
+	private List<String[]> extractAllTestMethods(List<IType> tcs) {
+		List<String[]> result = new ArrayList<String[]>();
 		for (IType type : tcs) {
 			try {
 				for (IMethod method : type.getMethods()) {
 					if (method.getAnnotation(Test.class.getSimpleName()) != null) {
-						result.add(Pair.make(type.getKey().replace(";", ""),
-								method.getElementName()));
+						result.add(new String[]{type.getKey().replace(";", ""),
+								SignatureUtils.createMethodNameSign(method.getElementName(), 
+										new SignatureParser(method.getDeclaringType()).toMethodJVMSignature(
+												method.getParameterTypes(), method.getReturnType()))});
 					}
 				}
 			} catch (JavaModelException e) {
 				PluginLogger.getLogger().logEx(e,
 								"cannot find methods for type: " + type.getElementName());
+			} catch (PluginException e) {
+				PluginLogger.getLogger().logEx(e,
+						"cannot find methods for type: " + type.getElementName());
 			}
 		}
 
 		return result;
 	}
-
+	
 	private List<String> toFullyQualifiedName(List<IType> types) {
 		List<String> result = new ArrayList<String>(types.size());
 		for (IType type : types) {
@@ -146,12 +166,16 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 		return result;
 	}
 
-	private List<String> getName(Set<IPath> paths) throws PluginException {
+	private List<String> getName(Set<ICompilationUnit> set) throws PluginException {
 		List<String> names =  new ArrayList<String>();
-		for (IPath path : paths) {
-			String name = path.removeFileExtension().segment(
-					path.segmentCount() - 1);
-			names.add(name);
+		for (ICompilationUnit cu : set) {
+			try {
+				for (IType type : cu.getTypes()) {
+					names.add(type.getElementName());
+				}
+			} catch (JavaModelException e) {
+				PluginLogger.getLogger().logEx(e);
+			}
 		}
 		return names;
 	}
@@ -178,9 +202,9 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 		return sourceFiles;
 	}
 
-	private Map<IPath, List<String>> getAssertionSources(WorkObject workObject,
+	private Map<ICompilationUnit, List<IMethod>> getAssertionSources(WorkObject workObject,
 			AnalysisPreferences prefs) throws PluginException {
-		Map<IPath, List<String>> typeMethods = new HashMap<IPath, List<String>>();
+		Map<ICompilationUnit, List<IMethod>> typeMethods = new HashMap<ICompilationUnit, List<IMethod>>();
 		if (workObject.isEmtpy()) {
 			return typeMethods;
 		}
@@ -189,13 +213,17 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 			IJavaElement ele = item.getCorrespondingJavaElement();
 			switch (ele.getElementType()) {
 			case IJavaElement.METHOD:
-				List<String> methods = CollectionUtils.getListInitIfEmpty(typeMethods, IProjectUtils.relativeToAbsolute(ele
-						.getPath()));
-				methods.add(ele.getElementName());
+				IMethod method = (IMethod) ele;
+				List<IMethod> methods = CollectionUtils.getListInitIfEmpty(
+						typeMethods, method.getDeclaringType().getCompilationUnit());
+				methods.add(method);
+				break;
 			case IJavaElement.TYPE:
+				IType type = (IType) ele;
+				addCompilationUnit(typeMethods, type.getCompilationUnit());
+				break;
 			case IJavaElement.COMPILATION_UNIT:
-				CollectionUtils.getListInitIfEmpty(typeMethods, IProjectUtils.relativeToAbsolute(ele
-						.getPath()));
+				addCompilationUnit(typeMethods, (ICompilationUnit) ele);
 				break;
 			default:
 				break;
@@ -204,6 +232,12 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 		return typeMethods;
 	}
 
+	private void addCompilationUnit(Map<ICompilationUnit, List<IMethod>> typeMethods, ICompilationUnit cu) {
+		if (!typeMethods.containsKey(cu)) {
+			typeMethods.put(cu, null);
+		}
+	}
+	
 	private static List<String> getPrjClasspaths(IJavaProject project)
 			throws IcsetlvException {
 		List<String> paths = new ArrayList<String>();
@@ -224,7 +258,6 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 			PluginLogger.getLogger().logEx(e);
 		}
 		return paths;
-
 	}
 }
 

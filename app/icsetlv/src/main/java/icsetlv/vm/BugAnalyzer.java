@@ -1,7 +1,12 @@
-package icsetlv.vm;
+/*
+ * Copyright (C) 2013 by SUTD (Singapore)
+ * All rights reserved.
+ *
+ * 	Author: SUTD
+ *  Version:  $Revision: 1 $
+ */
 
-import java.util.ArrayList;
-import java.util.List;
+package icsetlv.vm;
 
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.dto.VariablesExtractorResult;
@@ -12,32 +17,42 @@ import icsetlv.svm.DatasetBuilder;
 import icsetlv.svm.LibSVM;
 import icsetlv.variable.VariablesExtractor;
 
-public class BugAnalyzer implements IBugAnalyzer {
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * @author Jingyi
+ * 
+ */
+public class BugAnalyzer implements IBugAnalyzer {
 	private VMConfiguration vmConfig;
 	private List<String> passTestcases;
 	private List<String> failTestcases;
 
-	public BugAnalyzer(List<String> passTestcases, List<String> failTestcases, VMConfiguration vmConfig){
+	public BugAnalyzer(List<String> passTestcases, List<String> failTestcases,
+			VMConfiguration vmConfig) {
 		this.passTestcases = passTestcases;
 		this.failTestcases = failTestcases;
 		this.vmConfig = vmConfig;
 	}
 
 	@Override
-	public List<BreakPoint> analyze(List<BreakPoint> breakpoints) throws IcsetlvException {
+	public List<BreakPoint> analyze(List<BreakPoint> breakpoints)
+			throws IcsetlvException {
 		List<BreakPoint> bprsout = new ArrayList<BreakPoint>();
-		for(BreakPoint bp : breakpoints){
+		List<BreakpointResult> valueExtractedResult = CollectData(breakpoints);
+		for (BreakpointResult bkp : valueExtractedResult) {
+			if (bkp.getFailValues().isEmpty() || bkp.getPassValues().isEmpty()) {
+				continue;
+			}
 			boolean bugIsFound = false;
-			List<BreakpointResult> bprs = CollectData(bp);
-			assert bprs.size() == 1;
-			DatasetBuilder db = new DatasetBuilder(bprs.get(0));
+			DatasetBuilder db = new DatasetBuilder(bkp);
 			LibSVM svmer = new LibSVM();
 			svmer.buildClassifier(db.buildDataset());
 			Metric metric = new Metric(svmer.modelAccuracy());
 			bugIsFound = bugFoundOrNot(metric);
-			if(bugIsFound){
-				bprsout.add(bp);
+			if (bugIsFound) {
+				bprsout.add(bkp.getBreakpoint());
 				break;
 			}
 		}
@@ -45,36 +60,35 @@ public class BugAnalyzer implements IBugAnalyzer {
 	}
 
 	/*
-	 * Metric for assertion generation using svm
-	 * For now, we use classification accuracy 
-	 * and set a hard threshold
-	 * */
-	private class Metric{
+	 * Metric for assertion generation using svm For now, we use classification
+	 * accuracy and set a hard threshold
+	 */
+	private class Metric {
 		double modelAccuracy;
-		public Metric(double macc){
+
+		public Metric(double macc) {
 			this.modelAccuracy = macc;
 		}
 	}
 
 	/*
-	 * Check if we can still generate assertions.
-	 * Set the threshold for classification accuracy
-	 * */
+	 * Check if we can still generate assertions. Set the threshold for
+	 * classification accuracy
+	 */
 	private boolean bugFoundOrNot(Metric metric) {
-		if(metric.modelAccuracy > 0.7){
+		if (metric.modelAccuracy > 0.7) {
 			return false;
 		}
 		return true;
 	}
 
 	/*
-	 * Collect data values at a certain BreakPoint
-	 * for svm
-	 * */
-	private List<BreakpointResult> CollectData(BreakPoint bp) throws IcsetlvException {
-		List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
-		breakpoints.add(bp);
-		VariablesExtractor varExtr = new VariablesExtractor(vmConfig, passTestcases, failTestcases, breakpoints);
+	 * Collect data values at a certain BreakPoint for svm
+	 */
+	private List<BreakpointResult> CollectData(List<BreakPoint> bkps)
+			throws IcsetlvException {
+		VariablesExtractor varExtr = new VariablesExtractor(vmConfig,
+				passTestcases, failTestcases, bkps);
 		VariablesExtractorResult extractedResult = varExtr.execute();
 		return extractedResult.getResult();
 	}
