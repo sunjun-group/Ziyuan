@@ -13,50 +13,68 @@ import icsetlv.common.dto.VariablesExtractorResult;
 import icsetlv.common.dto.VariablesExtractorResult.BreakpointResult;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.iface.IBugAnalyzer;
+import icsetlv.iface.IManager;
 import icsetlv.svm.DatasetBuilder;
 import icsetlv.svm.LibSVM;
-import icsetlv.variable.VariablesExtractor;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author Jingyi
  * 
  */
 public class BugAnalyzer implements IBugAnalyzer {
-	private VMConfiguration vmConfig;
+	private IManager manager;
 	private List<String> passTestcases;
 	private List<String> failTestcases;
 
-	public BugAnalyzer(List<String> passTestcases, List<String> failTestcases,
-			VMConfiguration vmConfig) {
+	public BugAnalyzer(IManager manager, List<String> passTestcases,
+			List<String> failTestcases) {
+		this.manager = manager;
 		this.passTestcases = passTestcases;
 		this.failTestcases = failTestcases;
-		this.vmConfig = vmConfig;
 	}
 
 	@Override
-	public List<BreakPoint> analyze(List<BreakPoint> breakpoints)
+	public List<BreakPoint> analyze(List<BreakPoint> initBkps)
 			throws IcsetlvException {
-		List<BreakPoint> bprsout = new ArrayList<BreakPoint>();
-		List<BreakpointResult> valueExtractedResult = CollectData(breakpoints);
-		for (BreakpointResult bkp : valueExtractedResult) {
-			if (bkp.getFailValues().isEmpty() || bkp.getPassValues().isEmpty()) {
-				continue;
-			}
-			boolean bugIsFound = false;
-			DatasetBuilder db = new DatasetBuilder(bkp);
-			LibSVM svmer = new LibSVM();
-			svmer.buildClassifier(db.buildDataset());
-			Metric metric = new Metric(svmer.modelAccuracy());
-			bugIsFound = bugFoundOrNot(metric);
-			if (bugIsFound) {
-				bprsout.add(bkp.getBreakpoint());
-				break;
+		List<BreakPoint> rootCause = new ArrayList<BreakPoint>();
+		List<BreakPoint> allBkps = initBkps;
+		boolean firstRound = true;
+		while (!allBkps.isEmpty()) {
+			List<BreakPoint> executeBkps = next(allBkps);
+			VariablesExtractorResult result = manager.getVariableExtractor()
+					.execute(passTestcases, failTestcases, executeBkps);
+			for (BreakpointResult bkpRes : result.getResult()) {
+				if (isTheRootCause(bkpRes)) {
+					rootCause.add(bkpRes.getBreakpoint());
+				} else if (firstRound){
+					List<BreakPoint> sliceResult = manager.getSlicer().slice(executeBkps);
+					allBkps.addAll(sliceResult);
+					firstRound = false;
+				}
 			}
 		}
-		return bprsout;
+		return rootCause;
+	}
+	
+	private List<BreakPoint> next(List<BreakPoint> allBkps) {
+		return CollectionUtils.listOf(allBkps.remove(0));
+	}
+
+	@Override
+	public boolean isTheRootCause(BreakpointResult bkp) {
+		if (bkp.getFailValues().isEmpty() || bkp.getPassValues().isEmpty()) {
+			return false;
+		}
+		DatasetBuilder db = new DatasetBuilder(bkp);
+		LibSVM svmer = new LibSVM();
+		svmer.buildClassifier(db.buildDataset());
+		Metric metric = new Metric(svmer.modelAccuracy());
+		return bugFoundOrNot(metric);
 	}
 
 	/*
@@ -80,40 +98,5 @@ public class BugAnalyzer implements IBugAnalyzer {
 			return false;
 		}
 		return true;
-	}
-
-	/*
-	 * Collect data values at a certain BreakPoint for svm
-	 */
-	private List<BreakpointResult> CollectData(List<BreakPoint> bkps)
-			throws IcsetlvException {
-		VariablesExtractor varExtr = new VariablesExtractor(vmConfig,
-				passTestcases, failTestcases, bkps);
-		VariablesExtractorResult extractedResult = varExtr.execute();
-		return extractedResult.getResult();
-	}
-
-	public List<String> getPassTestcases() {
-		return passTestcases;
-	}
-
-	public void setPassTestcases(List<String> passTestcases) {
-		this.passTestcases = passTestcases;
-	}
-
-	public List<String> getFailTestcases() {
-		return failTestcases;
-	}
-
-	public void setFailTestcases(List<String> failTestcases) {
-		this.failTestcases = failTestcases;
-	}
-
-	public VMConfiguration getVmConfig() {
-		return vmConfig;
-	}
-
-	public void setVmConfig(VMConfiguration vmConfig) {
-		this.vmConfig = vmConfig;
 	}
 }

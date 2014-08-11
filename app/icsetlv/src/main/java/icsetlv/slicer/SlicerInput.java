@@ -8,8 +8,6 @@
 
 package icsetlv.slicer;
 
-import icsetlv.common.dto.BreakPoint;
-
 import java.util.List;
 
 /**
@@ -21,9 +19,7 @@ public class SlicerInput {
 	private String jre;
 	private String appBinFolder;
 	private List<String> appSrcFolder;
-	// void methods only.
 	private List<String[]> classEntryPoints;
-	private List<BreakPoint> breakpoints;
 
 	public ClassLoader getClassLoader() {
 		return classLoader;
@@ -61,15 +57,8 @@ public class SlicerInput {
 		return classEntryPoints;
 	}
 
-	public void setClassEntryPoints(List<String[]> entrypoints) {
-		this.classEntryPoints = entrypoints;
+	public void setClassEntryPoints(List<String[]> classEntryPoints) {
+		this.classEntryPoints = classEntryPoints;
 	}
-
-	public List<BreakPoint> getBreakpoints() {
-		return breakpoints;
-	}
-
-	public void setBreakpoints(List<BreakPoint> breakpoints) {
-		this.breakpoints = breakpoints;
-	}
+	
 }

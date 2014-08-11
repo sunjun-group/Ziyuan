@@ -10,11 +10,12 @@ package icsetlv;
 
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.exception.IcsetlvException;
-import icsetlv.iface.IBugAnalyzer;
+import icsetlv.iface.IManager;
 import icsetlv.iface.ISlicer;
+import icsetlv.iface.IVariableExtractor;
 import icsetlv.slicer.SlicerInput;
 import icsetlv.slicer.WalaSlicer;
-import icsetlv.variable.VariableNameCollector;
+import icsetlv.variable.VariablesExtractor;
 import icsetlv.vm.BugAnalyzer;
 import icsetlv.vm.VMConfiguration;
 
@@ -24,41 +25,38 @@ import java.util.List;
  * @author LLT
  *
  */
-public class IcsetlvEngine {
+public class IcsetlvEngine implements IManager {
+	private VMConfiguration config;
+	private SlicerInput sliceInput;
+	private BugAnalyzer bugAnalyzer;
 	
 	public List<BreakPoint> run(IcsetlvInput input) throws IcsetlvException {
-		// scan all assertion statements and create breakpoints 
-//		List<BreakPoint> breakpoints = AssertionDetector.scan(input
-//				.getAssertionSourcePaths());
-		List<BreakPoint> breakpoints = input.getBreakpoints();
-		
-//		VariablesExtractor extractor = new VariablesExtractor(
-//				input.getConfig(), input.getPassTestcases(),
-//				input.getFailTestcases(), breakpoints);
-//		VariablesExtractorResult result = extractor.execute();
-//		System.out.println(result);
-		
-		IBugAnalyzer bugAnalyzer = new BugAnalyzer(input.getPassTestcases(),
-				input.getFailTestcases(), input.getConfig());
-		breakpoints = bugAnalyzer.analyze(breakpoints);
-		
-		if (breakpoints.isEmpty()) {
-			System.out.println("Done!");
-			return breakpoints;
-		}
+		config = input.getConfig();
 		// do slicing
-		SlicerInput sliceInput = new SlicerInput();
-		VMConfiguration config = input.getConfig();
+		sliceInput = new SlicerInput();
 		sliceInput.setAppBinFolder(input.getAppOutput());
-		sliceInput.setBreakpoints(breakpoints);
 		sliceInput.setJre(config.getJavaHome());
-		sliceInput.setClassEntryPoints(input.getTestMethods());
 		sliceInput.setAppSrcFolder(input.getSrcFolders());
-		ISlicer slicer = new WalaSlicer();
-		List<BreakPoint> slicingResult = slicer.slice(sliceInput);
-		new VariableNameCollector(input.getSrcFolders()).updateVariables(slicingResult);
-		System.out.println("Done!");
-		return slicingResult;
+		sliceInput.setClassEntryPoints(input.getTestMethods());
+		return run(input.getPassTestcases(), input.getFailTestcases(),
+				input.getBreakpoints());
+	}
+
+	private List<BreakPoint> run(List<String> passTestcases,
+			List<String> failTestcases, List<BreakPoint> initBkps)
+			throws IcsetlvException {
+		bugAnalyzer = new BugAnalyzer(this, passTestcases, failTestcases);
+		return bugAnalyzer.analyze(initBkps);
+	}
+
+	@Override
+	public IVariableExtractor getVariableExtractor() {
+		return new VariablesExtractor(config);
+	}
+
+	@Override
+	public ISlicer getSlicer() throws IcsetlvException {
+		return new WalaSlicer(sliceInput);
 	}
 
 }

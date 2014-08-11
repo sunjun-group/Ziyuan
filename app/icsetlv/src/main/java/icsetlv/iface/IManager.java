@@ -8,18 +8,16 @@
 
 package icsetlv.iface;
 
-import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.exception.IcsetlvException;
-
-import java.util.List;
 
 /**
  * @author LLT
  *
  */
-public interface ISlicer {
+public interface IManager {
 
-	List<BreakPoint> slice(List<BreakPoint> breakpoints)
-			throws IcsetlvException;
-	
+	IVariableExtractor getVariableExtractor();
+
+	ISlicer getSlicer() throws IcsetlvException;
+
 }

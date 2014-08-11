@@ -9,7 +9,7 @@
 package icsetlv.iface;
 
 import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.dto.VariablesExtractorResult.BreakpointResult;
+import icsetlv.common.dto.VariablesExtractorResult;
 import icsetlv.common.exception.IcsetlvException;
 
 import java.util.List;
@@ -18,8 +18,10 @@ import java.util.List;
  * @author LLT
  *
  */
-public interface IBugAnalyzer {
-	public List<BreakPoint> analyze(List<BreakPoint> breakpoints) throws IcsetlvException;
+public interface IVariableExtractor {
 
-	public boolean isTheRootCause(BreakpointResult bkp);
+	VariablesExtractorResult execute(List<String> passTestcases,
+			List<String> failTestcases, List<BreakPoint> brkps)
+			throws IcsetlvException;
+
 }

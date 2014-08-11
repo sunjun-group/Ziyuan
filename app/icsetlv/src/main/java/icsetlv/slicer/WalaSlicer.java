@@ -69,16 +69,22 @@ import com.ibm.wala.util.strings.Atom;
 public class WalaSlicer implements ISlicer {
 	private static final String JAVA_REGRESSION_EXCLUSIONS = "/Java60RegressionExclusions.txt";
 	private SlicerInput input;
-
-	public List<BreakPoint> slice(SlicerInput input) throws IcsetlvException {
+	private AnalysisScope scope;
+	private IClassHierarchy cha;
+	
+	public WalaSlicer(SlicerInput input) throws IcsetlvException {
 		this.input = input;
-		AnalysisScope scope = makeJ2SEAnalysisScope();
-		IClassHierarchy cha = makeClassHierarchy(scope);
-		Iterable<Entrypoint> entrypoints = makeEntrypoints(scope.getApplicationLoader(), cha, input);
+		this.scope = makeJ2SEAnalysisScope();
+		this.cha = makeClassHierarchy(scope);
+	}
+
+	@Override
+	public List<BreakPoint> slice(List<BreakPoint> breakpoints) throws IcsetlvException {
+		Iterable<Entrypoint> entrypoints = makeEntrypoints(scope.getApplicationLoader(), cha, breakpoints);
 		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
 		CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope);
 		CallGraph cg = makeCallGraph(options, builder);
-		List<Statement> stmt = findSeedStmts(cg, input.getBreakpoints());
+		List<Statement> stmt = findSeedStmts(cg, breakpoints);
 
 		Collection<Statement> computeBackwardSlice = new CISlicer(cg,
 				builder.getPointerAnalysis(), DataDependenceOptions.REFLECTION,
@@ -242,15 +248,15 @@ public class WalaSlicer implements ISlicer {
 
 	/**
 	 * ********************************************************************************/
-	public static Iterable<Entrypoint> makeEntrypoints(
+	public Iterable<Entrypoint> makeEntrypoints(
 			final ClassLoaderReference loaderRef, final IClassHierarchy cha,
-			final SlicerInput input) throws IcsetlvException {
+			final List<BreakPoint> breakpoints) throws IcsetlvException {
 		EntrypointMaker<?> entrypointMaker;
-		if (!CollectionUtils.isEmpty(input.getClassEntryPoints())) {
-			entrypointMaker = new DefaultEntrypointMaker(loaderRef, cha, input.getClassEntryPoints());
+		if (input.getClassEntryPoints() == null) {
+			entrypointMaker = new BkpEntrypointMaker(loaderRef, cha, breakpoints);
 		} else {
-			entrypointMaker = new BkpEntrypointMaker(
-					loaderRef, cha, input.getBreakpoints());
+			entrypointMaker = new DefaultEntrypointMaker(loaderRef, cha,
+					input.getClassEntryPoints());
 		}
 		return entrypointMaker.makeEntrypoints();
 	}

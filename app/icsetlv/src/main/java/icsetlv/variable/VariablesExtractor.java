@@ -16,6 +16,7 @@ import icsetlv.common.dto.VariablesExtractorResult.VarValue;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.common.utils.BreakpointUtils;
 import icsetlv.common.utils.VariableUtils;
+import icsetlv.iface.IVariableExtractor;
 import icsetlv.vm.VMAcquirer;
 import icsetlv.vm.VMConfiguration;
 import icsetlv.vm.VMRunner;
@@ -55,22 +56,23 @@ import com.sun.jdi.request.EventRequestManager;
  * @author LLT
  * 
  */
-public class VariablesExtractor {
+public class VariablesExtractor implements IVariableExtractor {
 	private VMConfiguration config;
 	private Map<String, List<BreakPoint>> brkpsMap;
 	private List<String> passTcs;
 	private List<String> failTcs;
 
-	public VariablesExtractor(VMConfiguration config,
-			List<String> passTestcases, List<String> failTestcases,
-			List<BreakPoint> brkps) {
+	public VariablesExtractor(VMConfiguration config) {
 		this.config = config;
+	}
+
+	@Override
+	public VariablesExtractorResult execute(List<String> passTestcases,
+			List<String> failTestcases, List<BreakPoint> brkps)
+			throws IcsetlvException {
 		this.brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
 		this.passTcs = passTestcases;
 		this.failTcs = failTestcases;
-	}
-
-	public VariablesExtractorResult execute() throws IcsetlvException {
 		Map<String, BreakPoint> locBrpMap = new HashMap<String, BreakPoint>();
 		Map<String, BreakpointResult> valuesMap = new HashMap<String, BreakpointResult>();
 		executeJunitTests(locBrpMap, valuesMap, true);
