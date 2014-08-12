@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Eclipse
+Exec=/home/projects/Tzuyu/tools/startEclipse.sh
+Icon=/home/projects/Tzuyu/tools/eclipse-standard-luna-R-linux-gtk-x86_64/eclipse/icon.xpm
+Type=Application
+

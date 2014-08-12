@@ -11,7 +11,6 @@ package tzuyu.plugin.commons.utils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.swt.internal.ole.win32.IMoniker;
 
 import tzuyu.plugin.TzuyuPlugin;
 
