@@ -17,9 +17,8 @@ import icsetlv.common.exception.IcsetlvException;
 import icsetlv.common.utils.BreakpointUtils;
 import icsetlv.common.utils.VariableUtils;
 import icsetlv.iface.IVariableExtractor;
-import icsetlv.vm.VMAcquirer;
+import icsetlv.vm.SimpleDebugger;
 import icsetlv.vm.VMConfiguration;
-import icsetlv.vm.VMRunner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,9 +60,11 @@ public class VariablesExtractor implements IVariableExtractor {
 	private Map<String, List<BreakPoint>> brkpsMap;
 	private List<String> passTcs;
 	private List<String> failTcs;
+	private SimpleDebugger debugger;
 
 	public VariablesExtractor(VMConfiguration config) {
 		this.config = config;
+		debugger = new SimpleDebugger();
 	}
 
 	@Override
@@ -85,16 +86,13 @@ public class VariablesExtractor implements IVariableExtractor {
 			Map<String, BreakPoint> locBrpMap, Map<String, BreakpointResult> valuesMap,
 			boolean forPassTcs) throws IcsetlvException {
 		if (forPassTcs) {
-			config.setArgs(passTcs);
+			config.setProgramArgs(passTcs);
 		} else {
-			config.setArgs(failTcs);
+			config.setProgramArgs(failTcs);
 		}
-		// start jvm in debug mode
-		VMRunner.startJVM(config);
 		
-		// remote debug
-		VirtualMachine vm;
-		vm = new VMAcquirer().connect(config.getPort());
+		VirtualMachine vm = debugger.run(config);
+		
 		addClassWatch(vm);
 		// process events
 		EventQueue eventQueue = vm.eventQueue();

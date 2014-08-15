@@ -20,4 +20,6 @@ public interface IManager {
 
 	ISlicer getSlicer() throws IcsetlvException;
 
+	IBugExpert getBugExpert();
+
 }

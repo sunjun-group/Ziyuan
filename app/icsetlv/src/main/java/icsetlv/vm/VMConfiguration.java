@@ -8,12 +8,8 @@
 
 package icsetlv.vm;
 
-import icsetlv.common.Constants;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import sav.common.core.utils.StringUtils;
 
 /**
  * @author LLT
@@ -21,41 +17,37 @@ import sav.common.core.utils.StringUtils;
  */
 public class VMConfiguration {
 	private String javaHome;
-	private List<String> classpath;
-	private String clazzName;
+	private List<String> classpaths;
+	private String launchClass;
 	private boolean debug;
 	private int port;
 	// for internal use only
 	private List<String> args; 
 
 	public VMConfiguration() {
-		classpath = new ArrayList<String>();
+		classpaths = new ArrayList<String>();
 		debug = true;
 		port = 8787;
 	}
-
-	public String getPath() {
-		return StringUtils.join(Constants.FILE_SEPARATOR, javaHome, "bin", "java");
+	
+	public List<String> getClasspaths() {
+		return classpaths;
 	}
 
-	public String getClasspaths() {
-		return StringUtils.join(classpath, ";");
+	public String getLaunchClass() {
+		return launchClass;
 	}
 
-	public String getClazzName() {
-		return clazzName;
-	}
-
-	public void setClazzName(String clazzName) {
-		this.clazzName = clazzName;
+	public void setLaunchClass(String launchClass) {
+		this.launchClass = launchClass;
 	}
 
 	public void addClasspath(String path) {
-		classpath.add(path);
+		classpaths.add(path);
 	}
 	
 	public void setClasspath(List<String> classpath) {
-		this.classpath = classpath;
+		this.classpaths = classpath;
 	}
 
 	public String getJavaHome() {
@@ -82,11 +74,11 @@ public class VMConfiguration {
 		this.port = port;
 	}
 
-	public List<String> getArgs() {
+	public List<String> getProgramArgs() {
 		return args;
 	}
 
-	public void setArgs(List<String> args) {
+	public void setProgramArgs(List<String> args) {
 		this.args = args;
 	}
 }

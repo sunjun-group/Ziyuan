@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package icsetlv.vm;
+package icsetlv;
 
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.dto.VariablesExtractorResult;
@@ -14,8 +14,6 @@ import icsetlv.common.dto.VariablesExtractorResult.BreakpointResult;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.iface.IBugAnalyzer;
 import icsetlv.iface.IManager;
-import icsetlv.svm.DatasetBuilder;
-import icsetlv.svm.LibSVM;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +47,7 @@ public class BugAnalyzer implements IBugAnalyzer {
 			VariablesExtractorResult result = manager.getVariableExtractor()
 					.execute(passTestcases, failTestcases, executeBkps);
 			for (BreakpointResult bkpRes : result.getResult()) {
-				if (isTheRootCause(bkpRes)) {
+				if (manager.getBugExpert().isRootCause(bkpRes)) {
 					rootCause.add(bkpRes.getBreakpoint());
 				} else if (firstRound){
 					List<BreakPoint> sliceResult = manager.getSlicer().slice(executeBkps);
@@ -63,40 +61,5 @@ public class BugAnalyzer implements IBugAnalyzer {
 	
 	private List<BreakPoint> next(List<BreakPoint> allBkps) {
 		return CollectionUtils.listOf(allBkps.remove(0));
-	}
-
-	@Override
-	public boolean isTheRootCause(BreakpointResult bkp) {
-		if (bkp.getFailValues().isEmpty() || bkp.getPassValues().isEmpty()) {
-			return false;
-		}
-		DatasetBuilder db = new DatasetBuilder(bkp);
-		LibSVM svmer = new LibSVM();
-		svmer.buildClassifier(db.buildDataset());
-		Metric metric = new Metric(svmer.modelAccuracy());
-		return bugFoundOrNot(metric);
-	}
-
-	/*
-	 * Metric for assertion generation using svm For now, we use classification
-	 * accuracy and set a hard threshold
-	 */
-	private class Metric {
-		double modelAccuracy;
-
-		public Metric(double macc) {
-			this.modelAccuracy = macc;
-		}
-	}
-
-	/*
-	 * Check if we can still generate assertions. Set the threshold for
-	 * classification accuracy
-	 */
-	private boolean bugFoundOrNot(Metric metric) {
-		if (metric.modelAccuracy > 0.7) {
-			return false;
-		}
-		return true;
 	}
 }

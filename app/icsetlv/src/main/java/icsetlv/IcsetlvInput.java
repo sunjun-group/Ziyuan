@@ -106,7 +106,7 @@ public class IcsetlvInput {
 
 	public void setRunJunit(boolean cond) {
 		if (cond) {
-			config.setClazzName("org.junit.runner.JUnitCore");
+			config.setLaunchClass("org.junit.runner.JUnitCore");
 		}
 	}
 

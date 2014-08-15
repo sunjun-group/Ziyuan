@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package icsetlv.vm;
+package icsetlv;
 
 import icsetlv.common.dto.VariablesExtractorResult.BreakpointResult;
 import icsetlv.iface.IBugExpert;

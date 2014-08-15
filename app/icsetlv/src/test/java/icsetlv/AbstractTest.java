@@ -11,6 +11,8 @@ package icsetlv;
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.vm.VMConfiguration;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.List;
 
 import sav.common.core.utils.StringUtils;
@@ -40,11 +42,28 @@ public class AbstractTest {
 		VMConfiguration vmConfig = new VMConfiguration();
 		vmConfig.setJavaHome(config.getJavahome());
 		vmConfig.setDebug(true);
-		vmConfig.setPort(config.getVmDefaultPort());
-		vmConfig.setClazzName(config.getJunitcore());
+		vmConfig.setPort(findFreePort());
+		vmConfig.setLaunchClass(config.getJunitcore());
 		vmConfig.addClasspath(config.getJavaBin());
 		vmConfig.addClasspath(config.getAppBinpath());
 		vmConfig.addClasspath(config.getJunitLib());
 		return vmConfig;
 	}
+	
+	public static int findFreePort() {
+		ServerSocket socket= null;
+		try {
+			socket= new ServerSocket(0);
+			return socket.getLocalPort();
+		} catch (IOException e) { 
+		} finally {
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+		return -1;		
+	}	
 }

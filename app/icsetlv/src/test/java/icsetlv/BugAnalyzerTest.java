@@ -3,7 +3,6 @@ package icsetlv;
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.dto.BreakPoint.Variable;
 import icsetlv.common.exception.IcsetlvException;
-import icsetlv.vm.BugAnalyzer;
 
 import java.util.ArrayList;
 import java.util.List;

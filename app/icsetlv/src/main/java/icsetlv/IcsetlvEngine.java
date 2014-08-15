@@ -10,13 +10,13 @@ package icsetlv;
 
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.exception.IcsetlvException;
+import icsetlv.iface.IBugExpert;
 import icsetlv.iface.IManager;
 import icsetlv.iface.ISlicer;
 import icsetlv.iface.IVariableExtractor;
 import icsetlv.slicer.SlicerInput;
 import icsetlv.slicer.WalaSlicer;
 import icsetlv.variable.VariablesExtractor;
-import icsetlv.vm.BugAnalyzer;
 import icsetlv.vm.VMConfiguration;
 
 import java.util.List;
@@ -59,4 +59,8 @@ public class IcsetlvEngine implements IManager {
 		return new WalaSlicer(sliceInput);
 	}
 
+	@Override
+	public IBugExpert getBugExpert() {
+		return new BugExpert();
+	}
 }
