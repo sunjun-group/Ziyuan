@@ -8,12 +8,16 @@
 
 package icsetlv.iface;
 
-import icsetlv.common.dto.VariablesExtractorResult.BreakpointResult;
+import icsetlv.common.dto.BreakpointValue;
+
+import java.util.List;
 
 /**
  * @author LLT
  *
  */
 public interface IBugExpert {
-	public boolean isRootCause(BreakpointResult bkp);
+
+	public boolean isRootCause(List<BreakpointValue> passValues,
+			List<BreakpointValue> failValues);
 }

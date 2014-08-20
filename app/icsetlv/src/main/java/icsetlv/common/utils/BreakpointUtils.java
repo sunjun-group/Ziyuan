@@ -33,4 +33,9 @@ public class BreakpointUtils {
 		}
 		return brkpsMap;
 	}
+	
+	public static String getLocationId(BreakPoint bkp) {
+		return String.format("%s:%s", bkp.getClassCanonicalName(), bkp.getLineNo());
+	}
+	
 }

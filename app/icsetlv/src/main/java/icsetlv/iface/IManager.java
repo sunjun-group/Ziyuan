@@ -16,10 +16,10 @@ import icsetlv.common.exception.IcsetlvException;
  */
 public interface IManager {
 
-	IVariableExtractor getVariableExtractor();
-
 	ISlicer getSlicer() throws IcsetlvException;
 
 	IBugExpert getBugExpert();
+
+	ITestcasesExecutor getTestcasesExecutor();
 
 }

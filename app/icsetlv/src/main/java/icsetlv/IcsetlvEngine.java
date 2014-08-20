@@ -13,11 +13,10 @@ import icsetlv.common.exception.IcsetlvException;
 import icsetlv.iface.IBugExpert;
 import icsetlv.iface.IManager;
 import icsetlv.iface.ISlicer;
-import icsetlv.iface.IVariableExtractor;
+import icsetlv.iface.ITestcasesExecutor;
 import icsetlv.slicer.SlicerInput;
 import icsetlv.slicer.WalaSlicer;
-import icsetlv.variable.VariablesExtractor;
-import icsetlv.vm.VMConfiguration;
+import icsetlv.variable.TestcasesExecutor;
 
 import java.util.List;
 
@@ -26,16 +25,16 @@ import java.util.List;
  *
  */
 public class IcsetlvEngine implements IManager {
-	private VMConfiguration config;
+	private IcsetlvInput input;
 	private SlicerInput sliceInput;
 	private BugAnalyzer bugAnalyzer;
 	
 	public List<BreakPoint> run(IcsetlvInput input) throws IcsetlvException {
-		config = input.getConfig();
+		this.input = input;
 		// do slicing
 		sliceInput = new SlicerInput();
 		sliceInput.setAppBinFolder(input.getAppOutput());
-		sliceInput.setJre(config.getJavaHome());
+		sliceInput.setJre(input.getConfig().getJavaHome());
 		sliceInput.setAppSrcFolder(input.getSrcFolders());
 		sliceInput.setClassEntryPoints(input.getTestMethods());
 		return run(input.getPassTestcases(), input.getFailTestcases(),
@@ -48,10 +47,11 @@ public class IcsetlvEngine implements IManager {
 		bugAnalyzer = new BugAnalyzer(this, passTestcases, failTestcases);
 		return bugAnalyzer.analyze(initBkps);
 	}
-
+	
 	@Override
-	public IVariableExtractor getVariableExtractor() {
-		return new VariablesExtractor(config);
+	public ITestcasesExecutor getTestcasesExecutor() {
+		return new TestcasesExecutor(input.getConfig(),
+				input.getVarRetrieveLevel());
 	}
 
 	@Override

@@ -28,6 +28,7 @@ public class IcsetlvInput {
 	private List<String> passTestcases;
 	private List<String> failTestcases;
 	private List<BreakPoint> bkps;
+	private int varRetrieveLevel = 4;
 	
 	public IcsetlvInput() {
 		config = new VMConfiguration();
@@ -116,5 +117,13 @@ public class IcsetlvInput {
 	
 	public List<BreakPoint> getBreakpoints() {
 		return bkps;
+	}
+
+	public int getVarRetrieveLevel() {
+		return varRetrieveLevel;
+	}
+
+	public void setVarRetrieveLevel(int varRetrieveLevel) {
+		this.varRetrieveLevel = varRetrieveLevel;
 	}
 }

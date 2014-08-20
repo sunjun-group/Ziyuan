@@ -9,8 +9,7 @@
 package icsetlv;
 
 import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.dto.VariablesExtractorResult;
-import icsetlv.common.dto.VariablesExtractorResult.BreakpointResult;
+import icsetlv.common.dto.TcExecResult;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.iface.IBugAnalyzer;
 import icsetlv.iface.IManager;
@@ -35,7 +34,7 @@ public class BugAnalyzer implements IBugAnalyzer {
 		this.passTestcases = passTestcases;
 		this.failTestcases = failTestcases;
 	}
-
+	
 	@Override
 	public List<BreakPoint> analyze(List<BreakPoint> initBkps)
 			throws IcsetlvException {
@@ -44,11 +43,12 @@ public class BugAnalyzer implements IBugAnalyzer {
 		boolean firstRound = true;
 		while (!allBkps.isEmpty()) {
 			List<BreakPoint> executeBkps = next(allBkps);
-			VariablesExtractorResult result = manager.getVariableExtractor()
-					.execute(passTestcases, failTestcases, executeBkps);
-			for (BreakpointResult bkpRes : result.getResult()) {
-				if (manager.getBugExpert().isRootCause(bkpRes)) {
-					rootCause.add(bkpRes.getBreakpoint());
+			TcExecResult execResult = manager.getTestcasesExecutor().execute(
+					passTestcases, failTestcases, executeBkps);
+			for (BreakPoint bkp : executeBkps) {
+				if (manager.getBugExpert().isRootCause(execResult.getPassValues(bkp),
+						execResult.getFailValues(bkp))) {
+					rootCause.add(bkp);
 				} else if (firstRound){
 					List<BreakPoint> sliceResult = manager.getSlicer().slice(executeBkps);
 					allBkps.addAll(sliceResult);

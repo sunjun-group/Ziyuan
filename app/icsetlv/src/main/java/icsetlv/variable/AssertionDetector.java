@@ -151,8 +151,7 @@ public class AssertionDetector {
 		}
 
 		private void initBreakpoint(Node n) {
-			curBreakpoint = BreakPoint.from(curClass.toString(), curMethod);
-			curBreakpoint.setLineNo(n.getBeginLine());
+			curBreakpoint = BreakPoint.from(curClass.toString(), curMethod, n.getBeginLine());
 		}
 		
 		@Override

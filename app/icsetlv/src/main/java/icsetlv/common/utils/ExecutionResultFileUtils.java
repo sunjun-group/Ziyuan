@@ -10,8 +10,6 @@ package icsetlv.common.utils;
 
 import icsetlv.common.Pair;
 import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.dto.VariablesExtractorResult;
-import icsetlv.common.dto.VariablesExtractorResult.BreakpointResult;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,20 +37,20 @@ public class ExecutionResultFileUtils {
 	private static int BREAKPOINT_STATE = 1;
 	private static int VAR_VALUE_STATE = 2;
 	
-	public static void writeToFile(VariablesExtractorResult extractedResult,
-			String filePath) throws FileNotFoundException {
-		List<Pair<BreakPoint, String>> brpValPairs = new ArrayList<Pair<BreakPoint,String>>();
-		for (BreakpointResult bkp : extractedResult.getResult()) {
-			brpValPairs.add(Pair.of(bkp.getBreakpoint(), 
-					new StringBuilder()
-						.append("pass: \n")
-						.append(bkp.getPassValues())
-						.append("\nfail: \n")
-						.append(bkp.getFailValues())
-						.toString()));
-		}
-		writeToFile(brpValPairs, filePath);
-	}
+//	public static void writeToFile(VariablesExtractorResult extractedResult,
+//			String filePath) throws FileNotFoundException {
+//		List<Pair<BreakPoint, String>> brpValPairs = new ArrayList<Pair<BreakPoint,String>>();
+//		for (BreakpointResult bkp : extractedResult.getResult()) {
+//			brpValPairs.add(Pair.of(bkp.getBreakpoint(), 
+//					new StringBuilder()
+//						.append("pass: \n")
+//						.append(bkp.getPassValues())
+//						.append("\nfail: \n")
+//						.append(bkp.getFailValues())
+//						.toString()));
+//		}
+//		writeToFile(brpValPairs, filePath);
+//	}
 
 	public static void writeToFile(List<Pair<BreakPoint, String>> brpValPairs,
 			String filePath) throws FileNotFoundException {

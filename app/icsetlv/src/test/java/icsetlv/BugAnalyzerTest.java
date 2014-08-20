@@ -10,22 +10,20 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import sav.common.core.utils.CollectionUtils;
-
 public class BugAnalyzerTest extends AbstractTest {
 	private List<BreakPoint> bprsin = new ArrayList<BreakPoint>();
 	private List<BreakPoint> bprsout = new ArrayList<BreakPoint>();
 	
 	@Before
 	public void beforeTest(){
-		BreakPoint bkp1 = new BreakPoint("testdata.slice.FindMax", "findMax");
+		BreakPoint bkp1 = new BreakPoint("testdata.slice.FindMax", "findMax",
+				15);
 		bkp1.addVars(new Variable("max"));
-		bkp1.setLineNo(15);
 		bprsin.add(bkp1);
 
-		BreakPoint bkp2 = new BreakPoint("testdata.slice.FindMax", "findMax");
+		BreakPoint bkp2 = new BreakPoint("testdata.slice.FindMax", "findMax",
+				11);
 		bkp2.addVars(new Variable("max"));
-		bkp2.setLineNo(11);
 		bprsin.add(bkp2);
 	}
 	

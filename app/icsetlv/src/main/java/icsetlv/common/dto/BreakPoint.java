@@ -9,6 +9,7 @@
 package icsetlv.common.dto;
 
 import icsetlv.common.utils.Assert;
+import icsetlv.common.utils.BreakpointUtils;
 import icsetlv.common.utils.SignatureUtils;
 
 import japa.parser.ast.body.MethodDeclaration;
@@ -21,6 +22,7 @@ import java.util.List;
  * 
  */
 public class BreakPoint {
+	private String id;
 	private String classCanonicalName;
 	private String methodSign; // signature
 	private int lineNo = -1;
@@ -28,28 +30,23 @@ public class BreakPoint {
 	private int charStart;
 	private int charEnd;
 	
-	public BreakPoint(String className, String methodName) {
+	public BreakPoint(String className, String methodSign, int lineNo) {
 		this.classCanonicalName = className;
 		vars = new ArrayList<Variable>();
 		setClassCanonicalName(className);
-		setMethodSign(methodName);
-	}
-	
-	public BreakPoint(String className, String methodName, int lineNo) {
-		this(className, methodName);
+		setMethodSign(methodSign);
 		setLineNo(lineNo);
 	}
 	
 	public BreakPoint(String className, int lineNo, Variable... newVars) {
-		this(className, null);
-		this.lineNo = lineNo;
+		this(className, null, lineNo);
 		if (newVars != null) {
 			addVars(newVars);
 		}
 	}
 	
-	public static BreakPoint from(String classCanonicalName, MethodDeclaration method) {
-		return new BreakPoint(classCanonicalName, SignatureUtils.getSignature(method));
+	public static BreakPoint from(String classCanonicalName, MethodDeclaration method, int lineNo) {
+		return new BreakPoint(classCanonicalName, SignatureUtils.getSignature(method), lineNo);
 	}
 
 	public void addVars(Variable... newVars) {
@@ -115,6 +112,13 @@ public class BreakPoint {
 		this.charEnd = charEnd;
 	}
 	
+	public String getId() {
+		if (id == null) {
+			id = BreakpointUtils.getLocationId(this);
+		}
+		return id;
+	}
+	
 	@Override
 	public String toString() {
 		return "BreakPoint [classCanonicalName=" + classCanonicalName
@@ -178,4 +182,5 @@ public class BreakPoint {
 		LOCAL,
 		UNKNOWN
 	}
+
 }

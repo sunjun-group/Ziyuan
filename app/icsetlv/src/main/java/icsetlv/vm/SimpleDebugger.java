@@ -19,6 +19,9 @@ import com.sun.jdi.connect.IllegalConnectorArgumentsException;
  */
 public class SimpleDebugger {
 
+	/**
+	 * using scenario Target VM attaches to previously-running debugger.
+	 */
 	public VirtualMachine run(VMConfiguration config) throws IcsetlvException {
 		VMListener listener = new VMListener();
 		listener.startListening(config);

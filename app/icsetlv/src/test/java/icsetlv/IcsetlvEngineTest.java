@@ -10,17 +10,14 @@ package icsetlv;
 
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.dto.BreakPoint.Variable;
-import icsetlv.common.dto.VariablesExtractorResult;
-import icsetlv.common.dto.VariablesExtractorResult.BreakpointResult;
+import icsetlv.common.dto.TcExecResult;
 import icsetlv.common.exception.IcsetlvException;
-import icsetlv.svm.DatasetBuilder;
 import icsetlv.svm.LibSVM;
 import icsetlv.variable.AssertionDetector;
-import icsetlv.variable.VariablesExtractor;
+import icsetlv.variable.TestcasesExecutor;
 import icsetlv.vm.VMConfiguration;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -54,30 +51,24 @@ public class IcsetlvEngineTest extends AbstractTest {
 		IcsetlvInput input = initInput();
 		List<BreakPoint> bkps = AssertionDetector.scan(input.getAssertionSourcePaths());
 		
-		BreakPoint bkp4 = new BreakPoint("testdata.slice.FindMax", "findMax");
+		BreakPoint bkp4 = new BreakPoint("testdata.slice.FindMax", "findMax", 15);
 		bkp4.addVars(new Variable("max"));
 		bkp4.addVars(new Variable("i"));
-		bkp4.setLineNo(15);
 		bkps.add(bkp4);	
 		
-		BreakPoint bkp3 = new BreakPoint("testdata.slice.FindMax", "findMax"); 
+		BreakPoint bkp3 = new BreakPoint("testdata.slice.FindMax", "findMax", 11); 
 		bkp3.addVars(new Variable("max"));
-		bkp3.setLineNo(11);
 		bkps.add(bkp3);
 		
 		printBkps(bkps);
-		VariablesExtractor extractor = new VariablesExtractor(input.getConfig());
-		VariablesExtractorResult result = extractor.execute(input.getPassTestcases(), input.getFailTestcases(),
+		TestcasesExecutor extractor = new TestcasesExecutor(input.getConfig(), 4);
+		TcExecResult result = extractor.execute(input.getPassTestcases(), input.getFailTestcases(),
 				bkps);
 		print(result);
-		List<BreakpointResult> bprs = result.getResult();
-		List<DatasetBuilder> dbs = new ArrayList<DatasetBuilder>();
-		for(BreakpointResult bpr : bprs){
-			dbs.add(new DatasetBuilder(bpr));
-		}
 		LibSVM svmrunner = new LibSVM();
-		for(DatasetBuilder db : dbs){
-			Dataset tmpDS = db.buildDataset();
+		for (BreakPoint bkp : bkps) {
+			Dataset tmpDS = BugExpert.buildDataset(result.getPassValues(bkp),
+					result.getFailValues(bkp));
 			svmrunner.buildClassifier(tmpDS);
 			System.out.println(svmrunner.getExplicitDivider().toString());
 			System.out.println(svmrunner.modelAccuracy());

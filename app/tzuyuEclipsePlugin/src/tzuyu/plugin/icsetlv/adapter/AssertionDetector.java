@@ -92,11 +92,12 @@ public class AssertionDetector {
 		
 		private void initBreakpoint(AssertStatement n) {
 			try {
-				curBreakpoint = new BreakPoint(curMethod.getDeclaringType().getFullyQualifiedName(), 
-						SignatureUtils.createMethodNameSign(curMethod.getElementName(), 
-								new SignatureParser(curMethod.getDeclaringType()).toMethodJVMSignature(
-										curMethod.getParameterTypes(), curMethod.getReturnType())));
-				curBreakpoint.setLineNo(cu.getLineNumber(n.getStartPosition()));
+				String className = curMethod.getDeclaringType().getFullyQualifiedName();
+				String methodSign = SignatureUtils.createMethodNameSign(curMethod.getElementName(), 
+						new SignatureParser(curMethod.getDeclaringType()).toMethodJVMSignature(
+								curMethod.getParameterTypes(), curMethod.getReturnType()));
+				curBreakpoint = new BreakPoint(className, methodSign,
+						cu.getLineNumber(n.getStartPosition()));
 			} catch (JavaModelException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
