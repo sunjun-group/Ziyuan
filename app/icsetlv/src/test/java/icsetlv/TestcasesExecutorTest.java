@@ -51,7 +51,7 @@ public class TestcasesExecutorTest extends AbstractTest {
 		bkp2.addVars(new Variable("arr"));
 		breakpoints.add(bkp2);
 
-		TestcasesExecutor varExtr = new TestcasesExecutor(vmConfig, 3);
+		TestcasesExecutor varExtr = new TestcasesExecutor(vmConfig, 6);
 		TcExecResult extractedResult = varExtr
 				.execute(
 						CollectionUtils

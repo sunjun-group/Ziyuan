@@ -18,6 +18,7 @@ import icsetlv.common.dto.ReferenceValue;
 import icsetlv.common.dto.TcExecResult;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.common.utils.BreakpointUtils;
+import icsetlv.common.utils.PrimitiveUtils;
 import icsetlv.common.utils.VariableUtils;
 import icsetlv.iface.ITestcasesExecutor;
 import icsetlv.vm.SimpleDebugger;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import sav.common.core.utils.CollectionUtils;
 
@@ -64,6 +66,8 @@ import com.sun.jdi.request.EventRequestManager;
  * 
  */
 public class TestcasesExecutor implements ITestcasesExecutor {
+	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
+	private static final String TO_STRING_NAME= "toString"; 
 	private SimpleDebugger debugger;
 	private VMConfiguration config;
 	// class and its breakpoints
@@ -168,15 +172,16 @@ public class TestcasesExecutor implements ITestcasesExecutor {
 					objRef = frame.thisObject();
 					refType = objRef.referenceType();
 				}
+				Map<String, Value> allVariables = new HashMap<String, Value>();
 				// class fields (static & non static)
 				for (Field field : refType.allFields()) {
 					Variable inVar = VariableUtils.lookupVarInBreakpoint(field,
 							bkp);
 					if (inVar != null) {
 						if (field.isStatic()) {
-							appendVarVal(bkVal, inVar.getCode(), refType.getValue(field), 1);
+							allVariables.put(inVar.getCode(), refType.getValue(field));
 						} else if (objRef != null) {
-							appendVarVal(bkVal, inVar.getCode(), objRef.getValue(field), 1);
+							allVariables.put(inVar.getCode(), objRef.getValue(field));
 						}
 					}
 				}
@@ -185,60 +190,77 @@ public class TestcasesExecutor implements ITestcasesExecutor {
 					Variable inVar = VariableUtils.lookupVarInBreakpoint(var,
 							bkp);
 					if (inVar != null) {
-						appendVarVal(bkVal, inVar.getCode(), frame.getValue(var), 1);
+						allVariables.put(inVar.getCode(), frame.getValue(var));
+					}
+				}
+				if (!allVariables.isEmpty()) {
+					for (Entry<String, Value> entry : allVariables.entrySet()) {
+						appendVarVal(bkVal, entry.getKey(), entry.getValue(), 1, thread);
 					}
 				}
 			}
 		}
 		return bkVal;
 	}
-	
+
 	private void appendVarVal(ExecValue parent, String varId,
-			Value value, int level) {
-		if (level == valRetrieveLevel || varId.endsWith("serialVersionUID")) {
+			Value value, int level, ThreadReference thread) {
+		if (level == valRetrieveLevel || varId.endsWith("serialVersionUID")
+				|| value == null) {
 			return;
 		}
 		level++;
 		Type type = value.type();
-		if (isPrimitiveOrString(type)) {
+		if (type instanceof PrimitiveType) {
 			parent.add(new PrimitiveValue(varId, value.toString()));
+		} else if (type instanceof ClassType && PrimitiveUtils.isPrimitiveTypeOrString(type.name())) {
+			parent.add(new PrimitiveValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread)));
 		} else if (type instanceof ArrayType) {
-			appendArrVarVal(parent, varId, (ArrayReference)value, level);
+			appendArrVarVal(parent, varId, (ArrayReference)value, level, thread);
 		} else if (type instanceof ClassType) {
-			appendClassVarVal(parent, varId, (ObjectReference) value, level);
+			appendClassVarVal(parent, varId, (ObjectReference) value, level, thread);
 		}
 	}
 
+	private synchronized String toPrimitiveValue(ClassType type, ObjectReference value,
+			ThreadReference thread) {
+		Method method = type.concreteMethodByName(TO_STRING_NAME,
+				TO_STRING_SIGN);
+		if (method != null) {
+			try {
+				if (thread.isSuspended()) {
+					Value toStringValue = value.invokeMethod(thread, method,
+							new ArrayList<Value>(),
+							ObjectReference.INVOKE_SINGLE_THREADED);
+					return toStringValue.toString();
+				}
+			} catch (Exception e) {
+				// ignore.
+				System.err.println(e);
+			}
+		}
+		return null;
+	}
+
 	private void appendClassVarVal(ExecValue parent, String varId,
-			ObjectReference value, int level) {
+			ObjectReference value, int level, ThreadReference thread) {
 		ReferenceValue val = new ReferenceValue(varId);
 		ClassType type = (ClassType) value.type();
 		for (Field field : type.allFields()) {
 			appendVarVal(val, val.getChildId(field.name()),
-					value.getValue(field), level);
+					value.getValue(field), level, thread);
 		}
 		parent.add(val);
 	}
 
 	private void appendArrVarVal(ExecValue parent, String varId,
-			ArrayReference value, int level) {
+			ArrayReference value, int level, ThreadReference thread) {
 		ArrayValue val = new ArrayValue(varId);
 		val.setLength(value.length());
 		for (int i = 0; i < value.length(); i++) {
-			appendVarVal(val, val.getChildId(i), value, level);
+			appendVarVal(val, val.getChildId(i), value.getValue(i), level, thread);
 		}
 		parent.add(val);
-	}
-
-	private boolean isPrimitiveOrString(Type type) {
-		if (type instanceof PrimitiveType) {
-			return true;
-		}
-		if (type instanceof ReferenceType) {
-			ReferenceType refType = (ReferenceType) type;
-			return refType.name().equals(String.class.getName());
-		}
-		return false;
 	}
 
 	private void addBreakpointWatch(VirtualMachine vm, ReferenceType refType,

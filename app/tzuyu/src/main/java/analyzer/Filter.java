@@ -17,7 +17,6 @@ import java.util.Set;
 import tzuyu.engine.TzMethod;
 
 public class Filter {
-	/* TODO LLT: this field can not be static!*/
 	private static Map<Class<?>, Set<TzMethod>> filters = new HashMap<Class<?>, Set<TzMethod>>();
 
 	public static void setMethodFileter(Class<?> clazz, List<TzMethod> methods) {

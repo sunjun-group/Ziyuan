@@ -8,9 +8,6 @@
 
 package icsetlv.common.dto;
 
-
-
-
 /**
  * @author LLT
  *
@@ -23,6 +20,11 @@ public class BreakpointValue extends ExecValue {
 	
 	public String getBkpId() {
 		return getVarId();
+	}
+	
+	@Override
+	public String getChildId(String childCode) {
+		return childCode;
 	}
 
 }
