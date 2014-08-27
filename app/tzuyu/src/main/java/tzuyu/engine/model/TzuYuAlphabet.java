@@ -49,7 +49,7 @@ public class TzuYuAlphabet extends Alphabet<TzuYuAction> {
 
 		// add methods as the initial alphabet
 		MethodInfo[] methods = project.getTargetClassInfo().getMethods(
-				project.getConfiguration());
+				project.getConfiguration().isInheritedMethod());
 
 		for (MethodInfo method : Randomness.randomSubList(
 				Arrays.asList(methods), methods.length)) {

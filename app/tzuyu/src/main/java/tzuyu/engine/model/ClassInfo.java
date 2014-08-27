@@ -108,7 +108,7 @@ public abstract class ClassInfo {
 		return result.toArray(new FieldInfo[result.size()]);
 	}
 
-	public MethodInfo[] getMethods(TzConfiguration config) {
+	public MethodInfo[] getMethods(boolean isInheritedMethod) {
 		if (isArray() || isPrimitive()) {
 			return new MethodInfo[0];
 		}
@@ -124,7 +124,7 @@ public abstract class ClassInfo {
 			}
 		}
 
-		if (!config.isInheritedMethod()) {
+		if (!isInheritedMethod) {
 			return localMethods;
 		}
 
@@ -132,7 +132,7 @@ public abstract class ClassInfo {
 		// include the methods defined in the interface.
 		ClassInfo superClass = getSuperClass();
 		MethodInfo[] supMethods = (superClass == null) ? new MethodInfo[0]
-				: superClass.getMethods(config);
+				: superClass.getMethods(isInheritedMethod);
 
 		// Filter out those methods overridden by current class
 		List<MethodInfo> normal = filterOverriddenMethods(result, supMethods);

@@ -79,6 +79,10 @@
 	                	</with>
                 </visibleWhen>
              </command>
+             <command
+                   commandId="tzuyu.plugin.command.generateTestcases"
+                   style="push">
+             </command>
           </menu>
           <menu
                 label="Tzuyu">
@@ -145,6 +149,10 @@
              defaultHandler="tzuyu.plugin.icsetlv.command.AnalysisHandler"
              id="tzuyu.plugin.command.analyze"
              name="%menu.icsetlv">
+       </command>
+       <command
+             id="tzuyu.plugin.command.dfalearning"
+             name="DFA learning">
        </command>
     </extension>
     <extension

@@ -59,6 +59,7 @@ public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 	private File outputDir;
 	private String outputPath;	//ex: D:/workspace/tzuyu/scr
 	private String outputPackage; // ex: tzuyu.test
+	private int tcTotal;
 	
 	
 	public TzConfiguration(boolean setDefault) {
@@ -267,4 +268,13 @@ public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 		}
 		return StringUtils.dotJoin(outputPackage, TzConstants.DEFAULT_FAIL_PKG_NAME);
 	}
+
+	public int getTcTotal() {
+		return tcTotal;
+	}
+
+	public void setTcTotal(int tcTotal) {
+		this.tcTotal = tcTotal;
+	}
+	
 }
