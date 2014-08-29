@@ -26,11 +26,11 @@ public class MessagesGenerator {
 	private static final String START_GENERATED_PART_TOKEN = "//	Generated part";
 	private static final String END_GENERATED_PART_TOKEN = "//	End generated part";
 	private static String BASE = "D:/_1_Projects/Tzuyu/";
-	private static String TRUNK = BASE + "workspace/trunk-refactor/";
+	private static String TRUNK = BASE + "workspace/trunk/";
 	private static String MESSAGES_PROPERTIES_PATH = TRUNK
 			+ "app/tzuyuEclipsePlugin/src/tzuyu/plugin/messages.properties";
 	private static String GENERATED_MESSAGES_CLASS_PATH = TRUNK
-			+ "app/tzuyuEclipsePlugin/src/tzuyu/plugin/core/constants/Messages.java";
+			+ "app/tzuyuEclipsePlugin/src/tzuyu/plugin/commons/constants/Messages.java";
 	
 
 	public static void main(String[] args) {
@@ -62,7 +62,8 @@ public class MessagesGenerator {
 		}
 		// update class
 		FileUtils.writeStringToFile(messageCl, content.toString());
-		System.out.println("Finished!!");
+		System.err.println("Success!!");
+		System.err.println("\nWarning: Refresh tzuyu.plugin.commons.constants.Messages.java!");
 	}
 
 	private static String buildPropsContent(Properties props) {

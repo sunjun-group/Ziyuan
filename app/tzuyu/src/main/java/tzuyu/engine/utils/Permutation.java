@@ -25,7 +25,7 @@ public class Permutation {
    * @param sizes
    *          the max size of each domain
    * @param right
-   *          true generate from the right, false generate from right.
+   *          true generate from the right, false generate from left.
    */
   public Permutation(List<Integer> sizes, boolean right) {
     // Check the input such that only every elements in the
@@ -66,8 +66,6 @@ public class Permutation {
 
   /**
    * Get the next permutation if it has one.
-   * 
-   * @return
    */
   public List<Integer> next() {
     if (current == null) {

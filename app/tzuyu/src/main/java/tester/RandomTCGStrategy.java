@@ -404,7 +404,8 @@ public class RandomTCGStrategy implements ITCGStrategy {
 
 		List<Class<?>> paramTypes = stmt.getInputTypes();
 		List<Variable> parameters = new ArrayList<Variable>(paramTypes.size());
-		for (int index = 0; index < paramTypes.size(); index++) {
+		boolean selectVarFail = false;
+		for (int index = 0; index < paramTypes.size() && !selectVarFail; index++) {
 			Class<?> type = paramTypes.get(index);
 			// The first argument of an instance method is the receiver object
 			if (index == 0 && !isStatic) {
@@ -415,20 +416,24 @@ public class RandomTCGStrategy implements ITCGStrategy {
 				} 
 				parameters.add(receiver);
 			} else {
+				Variable arg = null;
 				// try 3 times.
 				for (int i = 0; i < 3; i++) {
-					Variable arg = selector.selectVariable(receiver, type);
+					arg = selector.selectVariable(receiver, type);
 					// Variable arg = selector.selectNewParameter(type);
 					SequenceRuntime result = RuntimeExecutor
 							.executeSequence(arg.owner);
 					if (!result.isSuccessful()) {
+						selectVarFail = true;
 						continue;
 					} else {
 						parameters.add(arg);
 						parameterStore.add(stmt.getAction(), index, arg);
+						selectVarFail = false;
 						break;
 					}
 				}
+				
 			}
 		}
 		// Test whether the parameter generation successes
@@ -572,9 +577,33 @@ public class RandomTCGStrategy implements ITCGStrategy {
 		return resultCases;
 	}
 
-	@Override
 	public Pair<List<TestCase>, List<TestCase>> getAllTestcases(boolean pass, boolean fail) {
 		return store.getTestcases(pass, fail);
 	}
 	
+	@Override
+	public Pair<List<Sequence>, List<Sequence>> getAllTestSequences(boolean pass, boolean fail) {
+		// Only retrieve good test cases
+		Pair<List<TestCase>, List<TestCase>> cases = getAllTestcases(project.getConfiguration()
+				.isPrintPassTests(), project.getConfiguration()
+				.isPrintFailTests());
+		return Pair.of(extractSequences(cases.a), extractSequences(cases.b));
+	}
+	
+	private List<Sequence> extractSequences(List<TestCase> tcs) {
+		List<Sequence> seqs = new ArrayList<Sequence>(tcs.size());
+		for (TestCase tc : tcs) {
+			seqs.add(tc.getSequence());
+		}
+		return seqs;
+	}
+	
+	@Override
+	/*
+	 * (non-Javadoc)
+	 * @see tester.ITCGStrategy#countTcs(java.lang.Boolean)
+	 */
+	public int countTcs(Boolean option) {
+		return store.countTcs(option);
+	}
 }

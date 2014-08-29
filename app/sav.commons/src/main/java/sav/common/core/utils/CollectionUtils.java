@@ -150,4 +150,8 @@ public class CollectionUtils {
 		}
 		return list;
 	}
+	
+	public static <T>List<T> copy(List<T> list) {
+		return new ArrayList<T>(nullToEmpty(list));
+	}
 }

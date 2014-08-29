@@ -21,7 +21,11 @@ import tzuyu.plugin.tester.reporter.GenTestReporter;
  */
 public interface TzuyuEngineAdaptor {
 
-	void generateTestCases(WorkObject workObject, GenTestPreferences config,
+	void dfaLearning(WorkObject workObject, GenTestPreferences config,
+			GenTestReporter reporter, IProgressMonitor monitor)
+			throws InterruptedException, TzException;
+
+	void generateTestcases(WorkObject workObject, GenTestPreferences config,
 			GenTestReporter reporter, IProgressMonitor monitor)
 			throws InterruptedException, TzException;
 

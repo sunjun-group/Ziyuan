@@ -34,6 +34,8 @@ public class TzConstants {
 	public static final Pair<String, Boolean> PRINT_PASS_TESTS = Pair.of("printPassTests", true);
 	public static final Pair<String, Integer> MAX_METHODS_PER_GEN_TEST_CLASS = Pair.of("maxMethodsPerGenTestClass", 10);
 	public static final Pair<String, Integer> MAX_LINES_PER_GEN_TEST_CLASS = Pair.of("maxLinesPerGenTestClass", 500);
+	public static final Pair<String, Integer> NUMBER_OF_TESTCASES = Pair.of("numberOfTestcases", 100);
+	public static final Pair<String, Integer> TRACE_MAX_LENGTH = Pair.of("traceMaxLength", 3);
 	public static final String DEFAULT_OUTPUT_PACKAGE = "tzuyu";
 	public static final String DEFAULT_PASS_PKG_NAME = "pass";
 	public static final String DEFAULT_FAIL_PKG_NAME = "fail";
@@ -54,6 +56,8 @@ public class TzConstants {
 		PRINT_FAIL_TESTS,
 		PRINT_PASS_TESTS,
 		MAX_METHODS_PER_GEN_TEST_CLASS,
-		MAX_LINES_PER_GEN_TEST_CLASS
+		MAX_LINES_PER_GEN_TEST_CLASS,
+		NUMBER_OF_TESTCASES,
+		TRACE_MAX_LENGTH
 	};
 }

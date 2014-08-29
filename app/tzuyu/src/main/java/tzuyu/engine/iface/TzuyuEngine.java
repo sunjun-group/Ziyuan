@@ -8,6 +8,7 @@
 
 package tzuyu.engine.iface;
 
+import tzuyu.engine.TzClass;
 import tzuyu.engine.model.exception.ReportException;
 import tzuyu.engine.model.exception.TzException;
 
@@ -16,5 +17,13 @@ import tzuyu.engine.model.exception.TzException;
  * 
  */
 public interface TzuyuEngine {
-	public void run() throws ReportException, InterruptedException, TzException;
+
+	/**
+	 * generate testcases randomly
+	 */
+	void generateTest(TzClass project) throws TzException;
+
+	void dfaLearning(TzClass project) throws ReportException,
+			InterruptedException, TzException;
+
 }

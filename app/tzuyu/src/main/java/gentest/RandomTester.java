@@ -8,21 +8,22 @@
 
 package gentest;
 
-import gentest.dto.TesterResult;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import tester.IInstrumentor;
 import tester.ITCGStrategy;
 import tester.RandomTCGStrategy;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.iface.ITzManager;
-import tzuyu.engine.instrument.TzuYuInstrumentor;
+import tzuyu.engine.model.Action;
 import tzuyu.engine.model.MethodInfo;
+import tzuyu.engine.model.Query;
 import tzuyu.engine.model.Sequence;
+import tzuyu.engine.model.Trace;
+import tzuyu.engine.model.TzuYuAction;
 import tzuyu.engine.runtime.RMethod;
+import tzuyu.engine.utils.Pair;
 import tzuyu.engine.utils.Randomness;
 
 /**
@@ -31,55 +32,60 @@ import tzuyu.engine.utils.Randomness;
  *
  */
 public class RandomTester {
-
 	private ITCGStrategy tcg;
-
-	private IInstrumentor instrumentor;
-
+	private int traceMaxLength;
+	private ITzManager<?> manager;
+	
 	public RandomTester(ITzManager<?> prjFactory) {
 		tcg = prjFactory.getTCGStrategy();
 		tcg = new RandomTCGStrategy(prjFactory);
-		instrumentor = new TzuYuInstrumentor();
+		this.manager = prjFactory;
 	}
 	
-	public TesterResult test(TzClass project, TzConfiguration config) {
-		TesterResult testResult = new TesterResult();
+	public Pair<List<Sequence>, List<Sequence>> test(TzClass project,
+			TzConfiguration config) {
+		traceMaxLength = config.getTraceMaxLength();
+		tcg.setProject(project);
 		List<RMethod> methods = initMethods(project, config);
 
-		while (!finish(config, testResult)) {
-			List<RMethod> query = randomWalk(methods);
-			Sequence stmtsSeq = generateStmtsSequence(query);
-			boolean execRes = executeSequence(stmtsSeq);
-			testResult.add(stmtsSeq, execRes);
+		try {
+			while (!finish(config)) {
+				List<RMethod> query = randomWalk(methods);
+				generateStmtsSequence(query);
+			}
+		} catch (InterruptedException e) {
+			// do nothing
 		}
-		return testResult;
+		return getallTestcases();
 	}
 
-	private boolean executeSequence(Sequence stmtsSeq) {
-		// TODO Auto-generated method stub
-		return true;
+	private Pair<List<Sequence>, List<Sequence>> getallTestcases() {
+		return tcg.getAllTestSequences(true, true);
 	}
 
-	/**
-	 * generate a sequence of statements which initializes 
-	 * instance of method declared class and 
-	 * parameters for the method.  
-	 */
-	private Sequence generateStmtsSequence(List<RMethod> query) {
-		RMethod method = Randomness.randomMember(query);
-		for (Class<?> type : method.getInputTypes()) {
-			
+	private void generateStmtsSequence(List<RMethod> methods) {
+		List<Action> actions = new ArrayList<Action>(methods.size());
+		for (RMethod method : methods) {
+			actions.add(TzuYuAction.fromStatmentKind(method));
 		}
-		// TODO Auto-generated method stub
-		return null;
+		Trace trace = new Trace(actions);
+		Query query = new Query(trace);
+		tcg.generate(query);
 	}
 
 	private List<RMethod> randomWalk(List<RMethod> methods) {
-		return methods;
+		List<RMethod> trace = new ArrayList<RMethod>();
+		int traceLength = Randomness.nextRandomInt(traceMaxLength);
+		for (int i = 0; i < traceLength; i++) {
+			RMethod nextMethodCall = Randomness.randomMember(methods);
+			trace.add(nextMethodCall);
+		}
+		return trace;
 	}
 
-	private boolean finish(TzConfiguration config, TesterResult testResult) {
-		return testResult.getTotal() >= config.getTcTotal(); 
+	private boolean finish(TzConfiguration config) throws InterruptedException {
+		manager.checkProgress();
+		return tcg.countTcs(null) >= config.getNumberOfTcs();
 	}
 
 	/**
@@ -94,11 +100,6 @@ public class RandomTester {
 			methods.add(method);
 		}
 		return methods;
-	}
-
-	public void setProject(TzClass project) {
-		tcg.setProject(project);
-		instrumentor.setProject(project);
 	}
 
 }

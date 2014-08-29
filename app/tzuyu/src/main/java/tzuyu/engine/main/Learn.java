@@ -21,27 +21,28 @@ public class Learn implements CommandHandler {
 		TzClass project = processCommand(command);
 		CommandLineReportHandler reporter = new CommandLineReportHandler(project.getConfiguration());
 		
-		Tzuyu tzuyuEngine = new Tzuyu(project, reporter, new IReferencesAnalyzer() {
-
-			@Override
-			public Class<?> getRandomImplClzz(Class<?> iface) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		});
-		try {
-			tzuyuEngine.run();
-		} catch (ReportException e) {
-			// TODO nice to have
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO nice to have
-			e.printStackTrace();
-		} catch (TzException e) {
-			// TODO nice to have
-			e.printStackTrace();
-		}
-		
+//		Tzuyu tzuyuEngine = new Tzuyu(project, reporter, new IReferencesAnalyzer() {
+//
+//			@Override
+//			public Class<?> getRandomImplClzz(Class<?> iface) {
+//				// TODO Auto-generated method stub
+//				return null;
+//			}
+//		});
+//		try {
+//			tzuyuEngine.dfaLearning();
+//			
+//		} catch (ReportException e) {
+//			// TODO nice to have
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			// TODO nice to have
+//			e.printStackTrace();
+//		} catch (TzException e) {
+//			// TODO nice to have
+//			e.printStackTrace();
+//		}
+//		
 		return true;
 	}
 

@@ -8,20 +8,7 @@
 
 package tzuyu.plugin.tester.command.gentest;
 
-import static tzuyu.engine.TzConstants.ARRAY_MAX_LENGTH;
-import static tzuyu.engine.TzConstants.CLASS_MAX_DEPTH;
-import static tzuyu.engine.TzConstants.DEBUG_CHECKS;
-import static tzuyu.engine.TzConstants.FORBIT_NULL;
-import static tzuyu.engine.TzConstants.INHERIT_METHOD;
-import static tzuyu.engine.TzConstants.LONG_FORMAT;
-import static tzuyu.engine.TzConstants.MAX_LINES_PER_GEN_TEST_CLASS;
-import static tzuyu.engine.TzConstants.MAX_METHODS_PER_GEN_TEST_CLASS;
-import static tzuyu.engine.TzConstants.OBJECT_TO_INTEGER;
-import static tzuyu.engine.TzConstants.PRETTY_PRINT;
-import static tzuyu.engine.TzConstants.PRINT_FAIL_TESTS;
-import static tzuyu.engine.TzConstants.PRINT_PASS_TESTS;
-import static tzuyu.engine.TzConstants.STRING_MAX_LENGTH;
-import static tzuyu.engine.TzConstants.TESTS_PER_QUERY;
+import static tzuyu.engine.TzConstants.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -120,7 +107,7 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 				ARRAY_MAX_LENGTH.b));
 		config.setClassMaxDepth(pref.getInt(CLASS_MAX_DEPTH.a,
 				CLASS_MAX_DEPTH.b));
-		config.setDebugChecks(pref.getBoolean(DEBUG_CHECKS.a, DEBUG_CHECKS.b));
+		config.setDebugChecks(getBoolean(pref, DEBUG_CHECKS));
 		config.setForbidNull(pref.getBoolean(FORBIT_NULL.a, FORBIT_NULL.b));
 		config.setLongFormat(pref.getBoolean(LONG_FORMAT.a, LONG_FORMAT.b));
 		config.setPrettyPrint(pref.getBoolean(PRETTY_PRINT.a, PRETTY_PRINT.b));
@@ -145,8 +132,18 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 				pref.get(ATT_TYPE_SEARCH_SCOPE, DEFAULT_SEARCH_SCOPE), project);
 		outPkgConflictHandleOption = OutputConflictHandle.valueOf(pref.get(
 				OUT_PKG_CONFLICT_HANDLE.a, OUT_PKG_CONFLICT_HANDLE.b.name()));
+		config.setTcNum(getInt(pref, NUMBER_OF_TESTCASES));
+		config.setTraceMaxLength(getInt(pref, TRACE_MAX_LENGTH));
 	}
 
+	private boolean getBoolean(Preferences pref, Pair<String, Boolean> keyDefaultValue) {
+		return pref.getBoolean(keyDefaultValue.a, keyDefaultValue.b);
+	}
+
+	private int getInt(Preferences pref, Pair<String, Integer> keyDefaultValue) {
+		return pref.getInt(keyDefaultValue.a, keyDefaultValue.b);
+	}
+	
 	private String getDefaultOutputFolder(IJavaProject project) {
 		try {
 			IPackageFragmentRoot[] packageFragmentRoots = project
@@ -184,6 +181,8 @@ public class GenTestPreferences extends TzPreferences implements Cloneable {
 		/* search scope */
 		projectNode.put(ATT_TYPE_SEARCH_SCOPE,
 				TypeScopeParser.toString(searchScopeMap));
+		projectNode.putInt(NUMBER_OF_TESTCASES.a, config.getNumberOfTcs());
+		projectNode.putInt(TRACE_MAX_LENGTH.a, config.getTraceMaxLength());
 	}
 	
 	public TzConfiguration getTzConfig(boolean runningTzuyu) {

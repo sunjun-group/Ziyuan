@@ -4,6 +4,7 @@ import java.util.List;
 
 import tzuyu.engine.TzClass;
 import tzuyu.engine.model.Query;
+import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.TzuYuAction;
 import tzuyu.engine.utils.Pair;
 
@@ -24,9 +25,6 @@ public interface ITCGStrategy {
 	 * types of test cases may be generated i.e., the good traces, bad traces
 	 * and unknown traces. For the traces that contains more than instance call
 	 * to constructor, we treat it as an error traces.
-	 * 
-	 * @param trace
-	 * @return
 	 */
 	public List<TestCase> generate(Query trace);
 
@@ -36,5 +34,12 @@ public interface ITCGStrategy {
 
 	public void setProject(TzClass project);
 
-	public Pair<List<TestCase>, List<TestCase>> getAllTestcases(boolean pass, boolean fail);
+	public Pair<List<Sequence>, List<Sequence>> getAllTestSequences(boolean pass,
+			boolean fail);
+
+	/**
+	 * @param option (null, true, false) : 
+	 * (all, passOnly, failOnly)
+	 */
+	public int countTcs(Boolean option);
 }

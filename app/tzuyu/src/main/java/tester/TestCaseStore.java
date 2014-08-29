@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import sav.common.core.utils.CollectionUtils;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.TzuYuAction;
 import tzuyu.engine.utils.Pair;
@@ -32,7 +33,6 @@ public class TestCaseStore {
       new HashMap<Query, List<TestCase>>();
   
   public void addTestCase(TestCase tc) {
-    
     if (tc.isNormal()) {
       if (normalTraces.containsKey(tc.getTrace())) {
         List<TestCase> cases = normalTraces.get(tc.getTrace());
@@ -64,84 +64,99 @@ public class TestCaseStore {
   }
 
   public TestCase selectANormalTrace(Query trace) {
-    if (normalTraces.containsKey(trace)) {
-      List<TestCase> goodCases = new ArrayList<TestCase>();
-      List<TestCase> cases = normalTraces.get(trace);
-      for (TestCase tc : cases) {
-        if (tc.isNormal()) {
-          goodCases.add(tc);
-        }
-      }
-      if (goodCases.size() > 0) {
-        return Randomness.randomMember(goodCases);
-      } else {
-        return null;
-      }
-    } else {
-      return null;
-    }
-
+//	  List<TestCase> cases = normalTraces.get(trace);
+//    if (!CollectionUtils.isEmpty(cases)) {
+//      List<TestCase> goodCases = new ArrayList<TestCase>();
+//      for (TestCase tc : cases) {
+    	  // already check if testcase is normal in add method	
+    	  // TODO TO REMOVE
+//        if (tc.isNormal()) {
+//          goodCases.add(tc);
+//        }
+//    	  goodCases.add(tc);
+//      }
+//      return Randomness.randomMember(goodCases);
+      // redundant check
+      //  TODO TO REMOVE
+//      if (goodCases.size() > 0) {
+//        return Randomness.randomMember(goodCases);
+//      } else {
+//        return null;
+//      }
+//    } else {
+//      return null;
+//    }
+	  return selectRandomTcTrace(normalTraces, trace);
   }
 
 	public TestCase selectAnErroneousTrace(Query trace) {
-		if (errorTraces.containsKey(trace)) {
-			List<TestCase> badCases = new ArrayList<TestCase>();
-			List<TestCase> cases = errorTraces.get(trace);
-			for (TestCase tc : cases) {
-				if (tc.isErroneous()) {
-					badCases.add(tc);
-				}
-			}
-			if (badCases.size() > 0) {
-				return Randomness.randomMember(badCases);
-			} else {
-				return null;
-			}
-		} else {
-			return null;
-		}
+		// TODO redundant check -> TO REMOVE
+//		if (errorTraces.containsKey(trace)) {
+//			List<TestCase> badCases = new ArrayList<TestCase>();
+//			List<TestCase> cases = errorTraces.get(trace);
+//			for (TestCase tc : cases) {
+//				if (tc.isErroneous()) {
+//					badCases.add(tc);
+//				}
+//			}
+//			if (badCases.size() > 0) {
+//				return Randomness.randomMember(badCases);
+//			} else {
+//				return null;
+//			}
+//		} else {
+//			return null;
+//		}
+		return selectRandomTcTrace(errorTraces, trace);
+	}
+	
+	public TestCase selectRandomTcTrace(Map<Query, List<TestCase>> traces, Query trace) {
+		return Randomness.randomMember(traces.get(trace));
 	}
 
 	public List<TestCase> selectNormalTraces(Query trace) {
-		List<TestCase> goodTraces = new ArrayList<TestCase>();
-		if (normalTraces.containsKey(trace)) {
-			List<TestCase> cases = normalTraces.get(trace);
-			for (TestCase tc : cases) {
-				if (tc.isNormal()) {
-					goodTraces.add(tc);
-				}
-			}
-		}
-
-		return goodTraces;
+//		List<TestCase> goodTraces = new ArrayList<TestCase>();
+//		if (normalTraces.containsKey(trace)) {
+//			List<TestCase> cases = normalTraces.get(trace);
+//			for (TestCase tc : cases) {
+//				if (tc.isNormal()) {
+//					goodTraces.add(tc);
+//				}
+//			}
+//		}
+//
+//		return goodTraces;
+		return CollectionUtils.copy(normalTraces.get(trace));
 	}
 
   public List<TestCase> selectErrorTraces(Query trace) {
-    List<TestCase> badTraces = new ArrayList<TestCase>();
-    if (errorTraces.containsKey(trace)) {
-      List<TestCase> cases = errorTraces.get(trace);
-      for (TestCase tc : cases) {
-        if (tc.isErroneous()){
-          badTraces.add(tc);
-        }
-      }
-    }
-
-    return badTraces;
+//    List<TestCase> badTraces = new ArrayList<TestCase>();
+//    if (errorTraces.containsKey(trace)) {
+//      List<TestCase> cases = errorTraces.get(trace);
+//      for (TestCase tc : cases) {
+//        if (tc.isErroneous()){
+//          badTraces.add(tc);
+//        }
+//      }
+//    }
+//
+//    return badTraces;
+	  return CollectionUtils.copy(errorTraces.get(trace));
   }
   
 	public List<TestCase> selectUnkownTraces(Query trace) {
-		List<TestCase> failedTraces = new ArrayList<TestCase>();
-		if (unknownTraces.containsKey(trace)) {
-			List<TestCase> cases = unknownTraces.get(trace);
-			for (TestCase tc : cases) {
-				if (tc.isUnknown()) {
-					failedTraces.add(tc);
-				}
-			}
-		}
-
-		return failedTraces;
+//		List<TestCase> failedTraces = new ArrayList<TestCase>();
+//		if (unknownTraces.containsKey(trace)) {
+//			List<TestCase> cases = unknownTraces.get(trace);
+//			for (TestCase tc : cases) {
+//				if (tc.isUnknown()) {
+//					failedTraces.add(tc);
+//				}
+//			}
+//		}
+//
+//		return failedTraces;
+		return CollectionUtils.copy(unknownTraces.get(trace));
 	}
   
 	public List<TestCase> findFailedEvidence(TzuYuAction statement) {
@@ -172,10 +187,10 @@ public class TestCaseStore {
   		List<TestCase> goodTcs = new ArrayList<TestCase>();
   		List<TestCase> errorTcs = new ArrayList<TestCase>();
   		if (pass) {
-  			goodTcs = getAllGoodTestCases();
+  			goodTcs = getQueryTestCases(normalTraces, false);
   		}
   		if (fail) {
-  			errorTcs = getAllErrorTestCases();
+  			errorTcs = getQueryTestCases(errorTraces, false);
   		}
   		return Pair.of(goodTcs, errorTcs); 
   	}
@@ -186,30 +201,47 @@ public class TestCaseStore {
      * @return
      */
 	public Pair<List<TestCase>, List<TestCase>> getRepresentativeForAllTestCases() {
-		return new Pair<List<TestCase>, List<TestCase>>(getAllGoodTestCases(),
-				getAllErrorTestCases());
+		return new Pair<List<TestCase>, List<TestCase>>(getQueryTestCases(
+				normalTraces, true), getQueryTestCases(errorTraces, true));
 	}
 
-	private List<TestCase> getAllErrorTestCases() {
-		List<TestCase> errorCases = new ArrayList<TestCase>();
-		for (Query query : errorTraces.keySet()) {
+	private List<TestCase> getQueryTestCases(Map<Query, List<TestCase>> traces,
+			boolean selectOnePerQuery) {
+		List<TestCase> result = new ArrayList<TestCase>();
+		for (Query query : traces.keySet()) {
 			// Randomly select one not all the error test cases in order to
 			// improve
 			// performance of testing
-			errorCases.add(selectAnErroneousTrace(query));
+			if (selectOnePerQuery) {
+				result.add(selectRandomTcTrace(traces, query));
+			} else {
+				result.addAll(traces.get(query));
+			}
 		}
-		return errorCases;
+		return result;
+	}
+
+	/**
+	 * @param option (null, true, false)
+	 * (all, passOnly, failOnly)
+	 */
+	public int countTcs(Boolean option) {
+		int count = 0;
+		if (option == null || option == true) {
+			count += countTcs(normalTraces);
+		}
+		if (option == null || option  == false) {
+			count += countTcs(errorTraces);
+		}
+		return count;
 	}
 	
-	public List<TestCase> getAllGoodTestCases() {
-		List<TestCase> normalCases = new ArrayList<TestCase>();
-		for (Query query : normalTraces.keySet()) {
-			// Randomly select one not all the normal test cases in order to
-			// improve
-			// performance of testing.
-			normalCases.add(selectANormalTrace(query));
+	private int countTcs(Map<Query, List<TestCase>> traces) {
+		int count = 0;
+		for (List<TestCase> val : traces.values()) {
+			count += val.size();
 		}
-		return normalCases;
+		return count;
 	}
 
 }

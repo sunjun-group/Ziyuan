@@ -8,13 +8,18 @@
 
 package tzuyu.engine;
 
-import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
-import org.springframework.core.ParameterNameDiscoverer;
+import gentest.RandomTester;
+
+import java.util.List;
 
 import libsvm.libsvm.svm;
 import lstar.IReportHandler.OutputType;
 import lstar.LStar;
 import lstar.LStarException;
+
+import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.core.ParameterNameDiscoverer;
+
 import refiner.TzuYuRefiner;
 import sav.common.core.iface.ILogger;
 import tester.ITCGStrategy;
@@ -29,9 +34,11 @@ import tzuyu.engine.iface.ITzManager;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.iface.TzuyuEngine;
 import tzuyu.engine.lstar.TeacherImpl;
+import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.exception.ReportException;
 import tzuyu.engine.model.exception.TzException;
+import tzuyu.engine.utils.Pair;
 
 /**
  * @author LLT 
@@ -55,17 +62,9 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 	private IPrintStream tzOut;
 	private static ILogger<?> logger;
 	private static ParameterNameDiscoverer paramNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
-
-	public Tzuyu(TzClass project, TzReportHandler reporter,
-			IReferencesAnalyzer refAnalyzer) {
-		init(project, reporter, refAnalyzer);
-	}
-
-	private void init(TzClass project, TzReportHandler reporter,
-			IReferencesAnalyzer refAnalyzer) {
-		this.project = project;
+	
+	public void setReporter(TzReportHandler reporter) {
 		this.reporter = reporter;
-		this.refAnalyzer = refAnalyzer;
 		// set print stream for output
 		// svm
 		svm.svm_set_print_string_function(reporter.getOutStream(OutputType.SVM));
@@ -75,17 +74,28 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 			System.setErr(reporter.getSystemOutStream());
 		}
 		tzOut = reporter.getOutStream(OutputType.TZ_OUTPUT);
-		tester = new TzuYuTester(this);
-		refiner = new TzuYuRefiner(this);
-		teacher = new TeacherImpl(this);
-		learner = new LStar<TzuYuAlphabet>(this);
 		logger = reporter.getLogger();
+	}
+	
+	@Override
+	public void generateTest(TzClass project) throws TzException {
+		setProject(project);
+		RandomTester tester = new RandomTester(this);
+		Pair<List<Sequence>, List<Sequence>> testSeqs = tester.test(project,
+				project.getConfiguration());
+		reporter.writeTestCases(testSeqs, project);
 	}
 
 	/**
 	 * this function execute the main flow of tzuyu engine.
 	 */
-	public void run() throws ReportException, InterruptedException, TzException {
+	@Override
+	public void dfaLearning(TzClass project) throws ReportException, InterruptedException, TzException {
+		setProject(project);
+		tester = new TzuYuTester(this);
+		refiner = new TzuYuRefiner(this);
+		teacher = new TeacherImpl(this);
+		learner = new LStar<TzuYuAlphabet>(this);
 		tzOut.writeln(
 				"============Start of Statistics for" + 
 				project.getTarget().getSimpleName()+ "============");
@@ -179,5 +189,13 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 	
 	public static ParameterNameDiscoverer getParamNameDiscoverer() {
 		return paramNameDiscoverer;
+	}
+	
+	public void setRefAnalyzer(IReferencesAnalyzer refAnalyzer) {
+		this.refAnalyzer = refAnalyzer;
+	}
+	
+	public void setProject(TzClass project) {
+		this.project = project;
 	}
 }

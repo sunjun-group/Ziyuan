@@ -136,7 +136,7 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 		return TzuyuPlugin.getDefault().getGenTestPreferences(workObject.getProject());
 	}
 	
-	private static class GenTestJob extends TzJob {
+	private class GenTestJob extends TzJob {
 		private WorkObject workObject;
 		private GenTestPreferences config;
 		private GenTestReporter reporter;
@@ -154,8 +154,9 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 			monitor.beginTask("start test generation", 1);
 			reporter.setProgressMonitor(monitor);
 			try {
-				AppAdaptorFactory.getTzuyuAdaptor().generateTestCases(workObject,
-						config, reporter, monitor);
+//				AppAdaptorFactory.getTzuyuAdaptor().dfaLearning(workObject,
+//						config, reporter, monitor);
+				runJob(workObject, config, reporter, monitor);
 				// refresh output folder
 				config.getOutputPackage().getResource().refreshLocal(2, monitor);
 			} catch (Exception e) {
@@ -165,6 +166,14 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 			monitor.done();
 			return IStatusUtils.OK_STATUS;
 		}
+
+	}
+	
+	protected void runJob(WorkObject workObject, GenTestPreferences config,
+			GenTestReporter reporter, IProgressMonitor monitor)
+			throws InterruptedException, TzException {
+		AppAdaptorFactory.getTzuyuAdaptor().generateTestcases(workObject,
+				config, reporter, monitor);
 	}
 	
 	protected static void handleException(Exception e) {

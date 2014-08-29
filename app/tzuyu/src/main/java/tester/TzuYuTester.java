@@ -1,6 +1,5 @@
 package tester;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -14,12 +13,10 @@ import tzuyu.engine.model.Prestate;
 import tzuyu.engine.model.Query;
 import tzuyu.engine.model.QueryResult;
 import tzuyu.engine.model.QueryTrace;
-import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.TzuYuAction;
 import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.exception.ReportException;
 import tzuyu.engine.model.exception.TzException;
-import tzuyu.engine.utils.Pair;
 
 /**
  * This version of tester treats the constructors defined in the target class as
@@ -152,28 +149,13 @@ public class TzuYuTester implements Tester {
 		return result;
 	}
 
-	private Pair<List<Sequence>, List<Sequence>> getAllTestCases() {
-		// Only retrieve good test cases
-		Pair<List<TestCase>, List<TestCase>> cases = tcg.getAllTestcases(project.getConfiguration()
-				.isPrintPassTests(), project.getConfiguration()
-				.isPrintFailTests());
-		// Retrieve all good and error traces
-		// List<TestCase> cases = tcg.getAllGeneratedTestCases();
-		return Pair.of(extractSequences(cases.a), extractSequences(cases.b));
-	}
-	
-	private List<Sequence> extractSequences(List<TestCase> tcs) {
-		List<Sequence> seqs = new ArrayList<Sequence>(tcs.size());
-		for (TestCase tc : tcs) {
-			seqs.add(tc.getSequence());
-		}
-		return seqs;
-	}
-
 	public void report(IReportHandler<TzuYuAlphabet> reporter)
 			throws ReportException {
 		try {
-			((TzReportHandler)reporter).writeTestCases(getAllTestCases(), project);
+			((TzReportHandler) reporter).writeTestCases(tcg
+					.getAllTestSequences(project.getConfiguration()
+							.isPrintPassTests(), project.getConfiguration()
+							.isPrintFailTests()), project);
 		} catch (TzException e) {
 			throw new ReportException(e);
 		}

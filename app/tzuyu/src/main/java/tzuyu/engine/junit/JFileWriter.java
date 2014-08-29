@@ -259,7 +259,7 @@ public class JFileWriter {
 	}
 
 	public File getDir() {
-		if (dir != null) {
+		if (dir == null) {
 			return createOutputDir();
 		}
 		return dir;

@@ -35,6 +35,10 @@ public final class Messages {
 		}
 	}
 	
+	public String getFieldLabel(Enum<?> val) {
+		return getMessage(val) + ":";
+	}
+	
 	public String getMessage(Enum<?> val, Object...args) {
 		Assert.assertNotNull(val);
 		try {
@@ -109,6 +113,10 @@ public final class Messages {
 		return getMessage("editDialog_new_title", arg0);
 	}
 
+	public String gentest_prefs_param_trace_max_length() {
+		return getMessage("gentest_prefs_param_trace_max_length");
+	}
+
 	public String gentest_prefs_output_testcaseType_pass() {
 		return getMessage("gentest_prefs_output_testcaseType_pass");
 	}
@@ -171,6 +179,10 @@ public final class Messages {
 
 	public String gentest_prefs_output_testcaseType_fail() {
 		return getMessage("gentest_prefs_output_testcaseType_fail");
+	}
+
+	public String gentest_prefs_param_testcase_number() {
+		return getMessage("gentest_prefs_param_testcase_number");
 	}
 
 	public String gentest_prefs_output_maxMethodsPerClass() {

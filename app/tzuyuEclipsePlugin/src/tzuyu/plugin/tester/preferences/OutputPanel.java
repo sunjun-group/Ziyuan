@@ -63,9 +63,9 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 //	private Dropdown<TcPrintMode> tcPrintModeComb;
 	private Dropdown<OutputConflictHandle> outputConflictHandling;
 	
-	private IntText maxMethods;
-
-	private IntText maxLine;
+	private IntText methodsPerClass;
+	private IntText testcaseNumber;
+	private IntText traceMaxLength;
 	
 	public OutputPanel(DialogPage msgContainer, Composite parent,
 			IJavaProject project, Shell shell) {
@@ -134,9 +134,11 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		maxMethodsLb.setLayoutData(gd);
 		gd.minimumWidth = 60;
-		maxMethods = new IntText(formatGroup, OutputField.MAX_METHODS_NUM);
-		maxLine = new IntText(formatGroup, OutputField.MAX_LINE_NUM);
-		maxLine.asWidget().setVisible(false);
+		methodsPerClass = new IntText(formatGroup, OutputField.MAX_METHODS_NUM);
+		SWTFactory.createLabel(formatGroup, msg.getFieldLabel(OutputField.TESTCASE_NUMBER));
+		testcaseNumber = new IntText(formatGroup, OutputField.TESTCASE_NUMBER);
+		SWTFactory.createLabel(formatGroup, msg.getFieldLabel(OutputField.TRACE_MAX_LENGTH));
+		traceMaxLength = new IntText(formatGroup, OutputField.TRACE_MAX_LENGTH);
 		registerListener();
 	}
 
@@ -186,8 +188,9 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 				updateStatus(OutputField.PASS_FAIL, status);
 			}
 		}, true);
-		addModifyListener(OutputField.MAX_METHODS_NUM, maxMethods);
-		addModifyListener(OutputField.MAX_LINE_NUM, maxLine);
+		addModifyListener(OutputField.MAX_METHODS_NUM, methodsPerClass);
+		addModifyListener(OutputField.TESTCASE_NUMBER, testcaseNumber);
+		addModifyListener(OutputField.TRACE_MAX_LENGTH, traceMaxLength);
 	}
 	
 	@Override
@@ -198,8 +201,9 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 				.getTzConfig();
 		passFailCbGroup.setValue(TestCaseType.values(tzConfig.isPrintPassTests(),
 				tzConfig.isPrintFailTests()));
-		maxMethods.setValue(tzConfig.getMaxMethodsPerGenTestClass());
-		maxLine.setValue(tzConfig.getMaxLinesPerGenTestClass());
+		methodsPerClass.setValue(tzConfig.getMaxMethodsPerGenTestClass());
+		testcaseNumber.setValue(tzConfig.getNumberOfTcs());
+		traceMaxLength.setValue(tzConfig.getTraceMaxLength());
 		paramDeclFormatComb.setValue(ParamDeclarationFormat.getTypeIf(tzConfig.isLongFormat()));
 //		tcPrintModeComb.setValue(TcPrintMode.getTypeIf(tzConfig.isPrettyPrint())); 
 		outputConflictHandling.setValue(data.getOutPkgConflictHandleOption());
@@ -215,8 +219,9 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 				passFailValue.contains(TestCaseType.PASS));
 		tzConfig.setPrintFailTests(
 				passFailValue.contains(TestCaseType.FAIL));
-		tzConfig.setMaxMethodsPerGenTestClass(maxMethods.getValue());
-		tzConfig.setMaxLinesPerGenTestClass(maxLine.getValue());
+		tzConfig.setMaxMethodsPerGenTestClass(methodsPerClass.getValue());
+		tzConfig.setTcNum(testcaseNumber.getValue());
+		tzConfig.setTraceMaxLength(traceMaxLength.getValue());
 		tzConfig.setLongFormat(
 				paramDeclFormatComb.getValue().isLongFormat());
 //		tzConfig.setPrettyPrint(tcPrintModeComb.getValue() == TcPrintMode.PRETTY);
@@ -250,7 +255,9 @@ public class OutputPanel extends PropertyPanel<GenTestPreferences> {
 		PASS_FAIL,
 		MAX_METHODS_NUM,
 		MAX_LINE_NUM,
-		FILE_FORMAT_LONG
+		FILE_FORMAT_LONG,
+		TESTCASE_NUMBER,
+		TRACE_MAX_LENGTH
 	}
 
 	@Override

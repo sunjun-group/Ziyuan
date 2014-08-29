@@ -59,7 +59,8 @@ public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 	private File outputDir;
 	private String outputPath;	//ex: D:/workspace/tzuyu/scr
 	private String outputPackage; // ex: tzuyu.test
-	private int tcTotal;
+	private int tcNum;
+	private int traceMaxLength;
 	
 	
 	public TzConfiguration(boolean setDefault) {
@@ -83,6 +84,8 @@ public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 		printPassTests = PRINT_PASS_TESTS.b;
 		maxMethodsPerGenTestClass = MAX_METHODS_PER_GEN_TEST_CLASS.b;
 		maxLinesPerGenTestClass = MAX_LINES_PER_GEN_TEST_CLASS.b;
+		tcNum = NUMBER_OF_TESTCASES.b;
+		traceMaxLength = TRACE_MAX_LENGTH.b;
 	}
 	
 	public TzConfiguration(TzConfiguration config) {
@@ -100,6 +103,8 @@ public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 		printPassTests = config.isPrintPassTests();
 		maxMethodsPerGenTestClass = config.getMaxMethodsPerGenTestClass();
 		maxLinesPerGenTestClass = config.getMaxLinesPerGenTestClass();
+		tcNum = config.getNumberOfTcs();
+		traceMaxLength = config.getTraceMaxLength();
 	}
 
 	public int getTestsPerQuery() {
@@ -269,12 +274,20 @@ public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 		return StringUtils.dotJoin(outputPackage, TzConstants.DEFAULT_FAIL_PKG_NAME);
 	}
 
-	public int getTcTotal() {
-		return tcTotal;
+	public int getNumberOfTcs() {
+		return tcNum;
 	}
 
-	public void setTcTotal(int tcTotal) {
-		this.tcTotal = tcTotal;
+	public void setTcNum(int tcNum) {
+		this.tcNum = tcNum;
+	}
+
+	public int getTraceMaxLength() {
+		return traceMaxLength;
+	}
+
+	public void setTraceMaxLength(int traceMaxLength) {
+		this.traceMaxLength = traceMaxLength;
 	}
 	
 }
