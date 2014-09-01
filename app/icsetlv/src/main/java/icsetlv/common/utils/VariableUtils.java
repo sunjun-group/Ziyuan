@@ -25,7 +25,8 @@ import japa.parser.ast.expr.NameExpr;
  *
  */
 public class VariableUtils {
-
+	private static boolean NOT_FILTER = false;
+	private static boolean filterBreakpointVar = NOT_FILTER;
 	/**
 	 * currently, this method will ignore the case of method access.
 	 */
@@ -59,6 +60,9 @@ public class VariableUtils {
 				return bpVar;
 			}
 		}
+		if (!filterBreakpointVar) {
+			return new Variable(var.name());
+		}
 		return null;
 	}
 
@@ -68,6 +72,9 @@ public class VariableUtils {
 					VarScope.UNKNOWN) && var.name().equals(bpVar.getName())) {
 				return bpVar;
 			}
+		}
+		if (!filterBreakpointVar) {
+			return new Variable(var.name());
 		}
 		return null;
 	}
