@@ -12,8 +12,8 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.StringUtils;
-import tzuyu.engine.utils.Assert;
 import tzuyu.plugin.tester.reporter.PluginLogger;
 
 /**
@@ -40,7 +40,7 @@ public final class Messages {
 	}
 	
 	public String getMessage(Enum<?> val, Object...args) {
-		Assert.assertNotNull(val);
+		Assert.notNull(val);
 		try {
 			String key = StringUtils.dotJoin(val.getClass().getSimpleName(),
 					val.name());

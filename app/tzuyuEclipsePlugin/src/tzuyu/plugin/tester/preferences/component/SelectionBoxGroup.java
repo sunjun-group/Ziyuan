@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
-import tzuyu.engine.utils.Assert;
+import sav.common.core.utils.Assert;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.commons.constants.Messages;
 

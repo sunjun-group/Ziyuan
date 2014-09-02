@@ -8,7 +8,7 @@
 
 package tzuyu.engine.model.exception;
 
-import tzuyu.engine.utils.Assert;
+import sav.common.core.utils.Assert;
 import lstar.LStarException.Type;
 
 /**
@@ -30,7 +30,7 @@ public enum TzExceptionType {
 		case AlphabetEmptyAction:
 			return ALPHABET_EMPTY;
 		}
-		Assert.assertFail("Cannot map the LstarExceptionType " + type
+		Assert.fail("Cannot map the LstarExceptionType " + type
 				+ " into TzExceptionType");
 		return null;
 	}

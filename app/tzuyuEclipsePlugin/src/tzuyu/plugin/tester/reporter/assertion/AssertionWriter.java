@@ -25,6 +25,7 @@ import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import tzuyu.engine.bool.utils.FormulaUtils;
 import tzuyu.engine.bool.utils.Simplifier;
@@ -36,7 +37,6 @@ import tzuyu.engine.model.dfa.Transition;
 import tzuyu.engine.model.exception.TzException;
 import tzuyu.engine.model.exception.TzExceptionType;
 import tzuyu.engine.runtime.RMethod;
-import tzuyu.engine.utils.Assert;
 import tzuyu.plugin.commons.utils.IResourceUtils;
 import tzuyu.plugin.commons.utils.MethodUtils;
 import tzuyu.plugin.tester.reporter.PluginLogger;
@@ -52,7 +52,7 @@ public class AssertionWriter {
 	public AssertionWriter(DFA dfa, Class<?> clazz, IJavaProject project) {
 		initAcceptedActions(dfa);
 		type = IResourceUtils.getIType(project, clazz);
-		Assert.assertNotNull(type, "Type of clazz ", clazz.getName(),
+		Assert.notNull(type, "Type of clazz ", clazz.getName(),
 				"in the project ", project.getElementName(), "cannot be null!!");
 	}
 
@@ -122,7 +122,7 @@ public class AssertionWriter {
 						+ firstStmtOffset + 1, getAssertStmts(method, actCond.getValue()));
 			}
 			
-			Assert.assertFail("Cannot find associated method of "
+			Assert.fail("Cannot find associated method of "
 					+ actCond.getKey().getMethod().getName() + " in the class "
 					+ cu.getElementName());
 		} catch (JavaModelException e) {

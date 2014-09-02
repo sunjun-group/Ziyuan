@@ -8,7 +8,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>0.14.1</tycho-version>
+		<tycho-version>0.21.0</tycho-version>
 		<log4j-version>1.2.17</log4j-version>
 		<junit-version>4.11</junit-version>
 		<commons-lang-version>2.6</commons-lang-version>
@@ -25,7 +25,8 @@
 		<svm-version>3.17</svm-version>
 		<jdk-tool-version>1.6.0</jdk-tool-version>
 		<javaml-version>0.1.7</javaml-version>
-		<tzuyu.libs>F:\project\Tzuyu\app\tzuyuEclipsePlugin\libs</tzuyu.libs>
+<!-- 		<tzuyu.libs>F:\project\Tzuyu\app\tzuyuEclipsePlugin\libs</tzuyu.libs> -->
+		<tzuyu.libs>D:/_1_Projects/Tzuyu/workspace/trunk/app/tzuyuEclipsePlugin/libs</tzuyu.libs>
 	</properties>
 
 	<repositories>
@@ -43,7 +44,7 @@
 
 	<modules>
 		<module>../sav.commons</module>
-		<!-- <module>../tzuyu.commons</module> -->
+		<module>../tzuyu.commons</module>
 		<module>../tzuyuEclipsePlugin</module>
 		<module>../tzuyuEclipsePlugin-test</module>
 		<module>../tzuyu.feature</module>

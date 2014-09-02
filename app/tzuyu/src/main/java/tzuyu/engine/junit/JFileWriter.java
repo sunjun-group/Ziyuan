@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzConstants;
@@ -29,7 +30,6 @@ import tzuyu.engine.model.exception.TzException;
 import tzuyu.engine.model.exception.TzExceptionType;
 import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.runtime.RMethod;
-import tzuyu.engine.utils.Assert;
 import tzuyu.engine.utils.CollectionsExt;
 import tzuyu.engine.utils.Files;
 import tzuyu.engine.utils.Globals;
@@ -112,7 +112,7 @@ public class JFileWriter {
 
 	protected File writeSubSuite(List<Sequence> seqs, String newClassName)
 			throws TzException {
-		Assert.assertNotNull(seqs, "The sequences can not be null.");
+		Assert.notNull(seqs, "The sequences can not be null.");
 
 		File classFile = createClassFile(newClassName);
 		JOutputPrinter out = new JFileOutputPrinter(classFile);

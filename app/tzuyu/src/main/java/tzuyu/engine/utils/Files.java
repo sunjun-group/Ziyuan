@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import sav.common.core.utils.Assert;
+
 public final class Files {
   private Files() {
     throw new IllegalStateException("no instances");
@@ -252,7 +254,7 @@ public final class Files {
 
 	public static File newFile(String basePath, String fileName,
 			String ext) {
-		Assert.assertNotNull(basePath, "The output dir can not be null.");
+		Assert.notNull(basePath, "The output dir can not be null.");
 		File f = new File(basePath);
 		if (f.exists()) {
 			Assert.assertTrue(f.isDirectory(), "The output dir: " + basePath

@@ -2,13 +2,13 @@ package refiner;
 
 import java.util.List;
 
+import sav.common.core.utils.Assert;
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.model.QueryTrace;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.model.TzuYuAction;
 import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.dfa.Transition;
-import tzuyu.engine.utils.Assert;
 
 
 public class StringConverter {

@@ -13,8 +13,8 @@ import java.util.List;
 
 import org.eclipse.jdt.core.IType;
 
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.StringUtils;
-import tzuyu.engine.utils.Assert;
 import tzuyu.engine.utils.Pair;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.tester.command.gentest.TypeScopeParser;
@@ -66,7 +66,7 @@ public class TypeScope {
 	}
 	
 	public String getFullyQualifiedName() {
-		Assert.assertNotNull(fullyQualifiedName,
+		Assert.notNull(fullyQualifiedName,
 				"fullyQualifiedName or type must be set for typeScope!!");
 		return fullyQualifiedName;
 	}

@@ -14,7 +14,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-import tzuyu.engine.utils.Assert;
+import sav.common.core.utils.Assert;
 import tzuyu.plugin.tester.ui.ValueChangedEvent;
 import tzuyu.plugin.tester.ui.ValueChangedListener;
 
@@ -43,7 +43,7 @@ public class RadioBtnGroup<T> extends SelectionBoxGroup<T> {
 	}
 	
 	public void setValue(T value) {
-		Assert.assertNotNull(value, "Value for an radio group can not be null");
+		Assert.notNull(value, "Value for an radio group can not be null");
 		for (Button btn : btns) {
 			if (value.equals(btn.getData())) {
 				btn.setSelection(true);

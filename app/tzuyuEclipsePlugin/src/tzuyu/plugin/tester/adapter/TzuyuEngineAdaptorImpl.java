@@ -66,6 +66,8 @@ public class TzuyuEngineAdaptorImpl implements TzuyuEngineAdaptor {
 			monitor.done();
 			monitor.beginTask("generate testcases", IProgressMonitor.UNKNOWN);
 			Tzuyu tzuyu = new Tzuyu();
+			tzuyu.setRefAnalyzer(new PluginReferencesAnalyzer(workObject.getProject(),
+					config));
 			tzuyu.setReporter(reporter);
 			tzuyu.generateTest(tzProject);
 			monitor.done();

@@ -3,6 +3,7 @@ package analyzer;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.common.core.utils.Assert;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.model.ArtFieldInfo;
 import tzuyu.engine.model.ClassInfo;
@@ -11,7 +12,6 @@ import tzuyu.engine.model.FieldInfo;
 import tzuyu.engine.model.MethodInfo;
 import tzuyu.engine.model.ObjectInfo;
 import tzuyu.engine.model.exception.TzRuntimeException;
-import tzuyu.engine.utils.Assert;
 import tzuyu.engine.utils.ReflectionUtils;
 
 public class ClassInfoReference extends ClassInfo {
