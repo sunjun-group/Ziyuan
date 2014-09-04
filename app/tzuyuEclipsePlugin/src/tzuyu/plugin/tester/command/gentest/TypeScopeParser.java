@@ -19,8 +19,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.StringUtils;
-import tzuyu.engine.utils.Assert;
 import tzuyu.engine.utils.Pair;
 import tzuyu.plugin.tester.preferences.SearchScope;
 import tzuyu.plugin.tester.preferences.TypeScope;
@@ -142,7 +142,7 @@ public class TypeScopeParser {
 				return scope;
 			}
 		}
-		Assert.assertFail("Can not find scope with string: "+ str);
+		Assert.fail("Can not find scope with string: "+ str);
 		return null; 
 	}
 }

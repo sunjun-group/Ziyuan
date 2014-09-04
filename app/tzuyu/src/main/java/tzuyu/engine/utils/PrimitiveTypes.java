@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import sav.common.core.utils.Assert;
+
 public final class PrimitiveTypes {
 	private PrimitiveTypes() {
 		throw new IllegalStateException("no instances");
@@ -164,7 +166,7 @@ public final class PrimitiveTypes {
 		}
 		Class<?> valueClass = primitiveType(value.getClass());
 		
-		Assert.assertNotNull(value,
+		Assert.notNull(value,
 				"Expected: primitive type, received: " + value.getClass());
 
 		if (String.class.equals(valueClass)) {

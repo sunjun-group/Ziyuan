@@ -11,7 +11,7 @@ package tzuyu.plugin.tester.preferences.component;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 
-import tzuyu.engine.utils.Assert;
+import sav.common.core.utils.Assert;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.tester.ui.SWTFactory;
 
@@ -33,7 +33,7 @@ public class Dropdown<T extends Enum<?>> {
 	}
 
 	public void setData(T[] data) {
-		Assert.assertNotNull(data, "Values to creat dropdown can not be null!!");
+		Assert.notNull(data, "Values to creat dropdown can not be null!!");
 		this.data = data;
 		for (T item : data) { 
 			comb.add(TzuyuPlugin.getMessages().getMessage(item));
@@ -51,7 +51,7 @@ public class Dropdown<T extends Enum<?>> {
 				return;
 			}
 		}
-		Assert.assertFail("Dropdonw: error when try to select an item. Item " + item
+		Assert.fail("Dropdonw: error when try to select an item. Item " + item
 				+ " is not found in data");
 	}
 }

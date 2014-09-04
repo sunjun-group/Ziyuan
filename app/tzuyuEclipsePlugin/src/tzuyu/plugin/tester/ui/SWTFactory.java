@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
-import tzuyu.engine.utils.Assert;
+import sav.common.core.utils.Assert;
 import tzuyu.plugin.TzuyuPlugin;
 
 /**
@@ -95,7 +95,7 @@ public class SWTFactory {
 	public static <T extends Enum<?>>Combo creatDropdown(Composite parent,
 			T[] values) {
 		Combo comb = creatDropdown(parent);
-		Assert.assertNotNull(values, "Values to creat dropdown can not be null!!");
+		Assert.notNull(values, "Values to creat dropdown can not be null!!");
 		for (T val : values) { 
 			comb.add(TzuyuPlugin.getMessages().getMessage(val));
 		}

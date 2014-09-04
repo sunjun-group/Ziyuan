@@ -30,7 +30,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
-import tzuyu.engine.utils.Assert;
+import sav.common.core.utils.Assert;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.commons.constants.PluginConstants;
 import tzuyu.plugin.commons.constants.Messages;

@@ -11,12 +11,12 @@ package tzuyu.engine.junit;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.StringUtils;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.junit.printer.JOutputPrinter;
 import tzuyu.engine.model.Variable;
 import tzuyu.engine.runtime.RConstructor;
-import tzuyu.engine.utils.Assert;
 import tzuyu.engine.utils.ClassUtils;
 import tzuyu.engine.utils.LogicUtils;
 

@@ -3,6 +3,7 @@ package tester;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
@@ -20,7 +21,6 @@ import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.runtime.RArrayDeclaration;
 import tzuyu.engine.runtime.RAssignment;
 import tzuyu.engine.runtime.RConstructor;
-import tzuyu.engine.utils.Assert;
 import tzuyu.engine.utils.ListOfLists;
 import tzuyu.engine.utils.PrimitiveGenerator;
 import tzuyu.engine.utils.Randomness;
@@ -295,7 +295,7 @@ public class ParameterSelector implements IParameterSelector {
 	 * variable for the given type.
 	 */
 	public Variable selectExistingVariable(Variable receiver, Class<?> type) {
-		Assert.assertNotNull(receiver,
+		Assert.notNull(receiver,
 				"receiver for selecting existing variable must not be null");
 		List<Variable> vars = receiver.owner.getMatchedVariable(type);
 

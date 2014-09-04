@@ -6,11 +6,8 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.utils;
+package sav.common.core.utils;
 
-import sav.common.core.utils.StringUtils;
-import tzuyu.engine.model.exception.TzRtExceptionType;
-import tzuyu.engine.model.exception.TzRuntimeException;
 
 /**
  * @author LLT
@@ -18,7 +15,7 @@ import tzuyu.engine.model.exception.TzRuntimeException;
  */
 public class Assert {
 
-	public static <T> void assertNotNull(T value, String... msgs) {
+	public static <T> void notNull(T value, String... msgs) {
 		assertTrue(value != null, msgs);
 	}
 
@@ -26,14 +23,14 @@ public class Assert {
 		if (!condition) {
 			String msg = StringUtils.EMPTY;
 			if (msgs != null) {
-				msg = StringUtils.join(", ", (Object[]) msgs);
+				msg = StringUtils.spaceJoin((Object[]) msgs);
 			}
-			throw new TzRuntimeException(TzRtExceptionType.AssertException, msg);
+			throw new IllegalArgumentException(msg);
 		}
 	}
 
-	public static void assertFail(String msg) {
-		throw new TzRuntimeException(msg);
+	public static void fail(String msg) {
+		throw new IllegalArgumentException(msg);
 	}
 
 }

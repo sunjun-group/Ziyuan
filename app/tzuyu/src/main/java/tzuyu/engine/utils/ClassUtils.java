@@ -8,6 +8,7 @@
 
 package tzuyu.engine.utils;
 
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.StringUtils;
 
 
@@ -19,7 +20,7 @@ public class ClassUtils {
 	private ClassUtils() {}
 	
 	public static String getClassNameWithSuffix(Class<?> clazz) {
-		Assert.assertNotNull(clazz);
+		Assert.notNull(clazz);
 		return StringUtils.join(".", clazz.getSimpleName(), "class");
 	}
 	

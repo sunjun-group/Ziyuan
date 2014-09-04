@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import sav.common.core.utils.Assert;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.StatementKind;
@@ -14,7 +15,6 @@ import tzuyu.engine.runtime.RArrayDeclaration;
 import tzuyu.engine.runtime.RAssignment;
 import tzuyu.engine.runtime.SeedSequences;
 import tzuyu.engine.utils.ArrayListSimpleList;
-import tzuyu.engine.utils.Assert;
 import tzuyu.engine.utils.Randomness;
 import tzuyu.engine.utils.ReflectionUtils.Match;
 import tzuyu.engine.utils.SimpleList;
@@ -93,7 +93,7 @@ public class HelperSequenceCreator {
 				s = s.extend(TzuYuAction.fromStatmentKind(decl), ins);
 			}
 		}
-		Assert.assertNotNull(s);
+		Assert.notNull(s);
 //		assert s != null;
 		ArrayListSimpleList<Sequence> l = new ArrayListSimpleList<Sequence>();
 		l.add(s);

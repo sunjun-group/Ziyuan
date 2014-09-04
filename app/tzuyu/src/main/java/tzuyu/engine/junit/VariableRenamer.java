@@ -3,10 +3,10 @@ package tzuyu.engine.junit;
 import java.util.HashMap;
 import java.util.Map;
 
+import sav.common.core.utils.Assert;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.Statement;
 import tzuyu.engine.model.Variable;
-import tzuyu.engine.utils.Assert;
 
 
 /**
