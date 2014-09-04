@@ -2,6 +2,10 @@ package javacocoWrapper;
 
 import java.util.ArrayList;
 
+import faultLocaliation.sample.SampleProgramTest;
+import faultLocaliation.sample.SamplePrograms;
+
+
 public class Program {
 	public static void main(final String[] args) throws Exception {
 		String testingClassName1 = SamplePrograms.class.getName();

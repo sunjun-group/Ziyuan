@@ -4,9 +4,9 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import junit.framework.TestCase;
+import java.util.Map;
 
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -19,10 +19,9 @@ import org.jacoco.core.runtime.IRuntime;
 import org.jacoco.core.runtime.LoggerRuntime;
 import org.jacoco.core.runtime.RuntimeData;
 import org.junit.Test;
-import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
-import org.junit.runner.Result;
-import org.junit.runner.notification.Failure;
+
+import faultLocalization.dto.LineCoverage;
 
 
 public class JavaCoCo {
@@ -90,8 +89,9 @@ public class JavaCoCo {
 		return null;
 	}
 	
-	public void run(List<String> testingClassNames, Class<?> junitClass)
+	public Map<String, LineCoverage> run(List<String> testingClassNames, Class<?> junitClass)
 			throws Exception {
+		Map<String, LineCoverage> result = new HashMap<String, LineCoverage>();
 		ArrayList<String> classNameForCoCo = new ArrayList<String>(testingClassNames);
 		classNameForCoCo.add(junitClass.getName());
 		
@@ -138,7 +138,7 @@ public class JavaCoCo {
 			targetInstance.run();
 			
 			Method getResult = targetClass.getMethod("getResult");
-			Boolean isPassed = (Boolean) getResult.invoke(targetInstance);
+			boolean isPassed = (Boolean) getResult.invoke(targetInstance);
 			System.out.println(isPassed);
 			
 			// At the end of test execution we collect execution data and shutdown
@@ -161,6 +161,7 @@ public class JavaCoCo {
 				
 				//do not display data for junit test file
 				if (!cc.getName().endsWith(junitClass.getSimpleName())) {
+						
 					out.printf("Coverage of class %s%n", cc.getName());
 
 					printCounter("instructions", cc.getInstructionCounter());
@@ -169,17 +170,30 @@ public class JavaCoCo {
 					printCounter("methods", cc.getMethodCounter());
 					printCounter("complexity", cc.getComplexityCounter());
 
+					LineCoverage lineCover = result.get(cc.getName());
+					if (lineCover == null) {
+						lineCover = new LineCoverage(cc.getName());
+						result.put(cc.getName(), lineCover);
+					}
 					for (int j = cc.getFirstLine(); j <= cc.getLastLine(); j++) {
-						out.printf("Line %s: %s%n", Integer.valueOf(j),
-								getColor(cc.getLine(j).getStatus()));
+						switch (cc.getLine(j).getStatus()) {
+						case ICounter.NOT_COVERED:
+							lineCover.addResult(isPassed, j, false);
+							break;
+						case ICounter.PARTLY_COVERED:
+						case ICounter.FULLY_COVERED:
+							lineCover.addResult(isPassed, j, true);
+							break;
+						}
+						 out.printf("Line %s: %s%n", Integer.valueOf(j),
+						 getColor(cc.getLine(j).getStatus()));
 					}
 				}
 			}
 		}
-
+		return result;
 	}
 
-	
 	private InputStream getTargetClass(final String name) {
 		final String resource = '/' + name.replace('.', '/') + ".class";
 		return getClass().getResourceAsStream(resource);
@@ -194,6 +208,7 @@ public class JavaCoCo {
 	}
 
 	private String getColor(final int status) {
+			
 		switch (status) {
 		case ICounter.NOT_COVERED:
 			return "red";

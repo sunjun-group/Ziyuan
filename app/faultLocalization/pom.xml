@@ -13,5 +13,13 @@
 			<groupId>org.jacoco</groupId>
 			<artifactId>org.jacoco.core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>sav-projects</groupId>
+			<artifactId>sav.commons</artifactId>
+		</dependency>
 	</dependencies>
 </project>
