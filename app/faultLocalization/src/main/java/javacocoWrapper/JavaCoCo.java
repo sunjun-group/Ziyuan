@@ -55,12 +55,49 @@ public class JavaCoCo {
 		return requests;
 	}
 	
+	private int getNumberOfTestCases(Class<?> junitClass){
+		int numTestCases = 0;
+		Method[] methods = junitClass.getMethods();
+		for (Method method : methods) {
+			Test test = method.getAnnotation(Test.class);
+
+			if (test != null) {
+				numTestCases++;
+			}
+
+		}
+
+		return numTestCases;
+	}
+	
+	private Request getTestCase(Class<?> junitClass, int index){
+		
+		int count = 0;
+		Method[] methods = junitClass.getMethods();
+		for (Method method : methods) {
+			Test test = method.getAnnotation(Test.class);
+
+			if (test != null) {
+				if(count == index){
+					return Request.method(junitClass, method.getName());
+				}
+				
+				count++;
+			}
+
+		}
+
+		return null;
+	}
+	
 	public void run(List<String> testingClassNames, Class<?> junitClass)
 			throws Exception {
+		ArrayList<String> classNameForCoCo = new ArrayList<String>(testingClassNames);
+		classNameForCoCo.add(junitClass.getName());
+		
+		int numberOfTestCases = getNumberOfTestCases(junitClass);
 
-		List<Request> requests = extractTestCasesAsRequests(junitClass);
-
-		for (Request request : requests) {
+		for(int i = 0; i < numberOfTestCases; i++){
 			// For instrumentation and runtime we need a IRuntime instance
 			// to collect execution data:
 			final IRuntime runtime = new LoggerRuntime();
@@ -70,7 +107,7 @@ public class JavaCoCo {
 			final Instrumenter instr = new Instrumenter(runtime);
 			ArrayList<byte[]> instrumenteds = new ArrayList<byte[]>();
 						
-			for(String testingClassName: testingClassNames){
+			for(String testingClassName: classNameForCoCo){
 				instrumenteds.add(instr.instrument(getTargetClass(testingClassName), testingClassName));
 			}
 			
@@ -84,9 +121,9 @@ public class JavaCoCo {
 			// instrumented class definition from a byte[] instances.
 			final MemoryClassLoader memoryClassLoader = new MemoryClassLoader();
 			
-			for(int i = 0; i < testingClassNames.size(); i++){
-				String testingClassName = testingClassNames.get(i);
-				memoryClassLoader.addDefinition(testingClassName, instrumenteds.get(i));
+			for(int j = 0; j < classNameForCoCo.size(); j++){
+				String testingClassName = classNameForCoCo.get(j);
+				memoryClassLoader.addDefinition(testingClassName, instrumenteds.get(j));
 			}
 			
 
@@ -96,7 +133,7 @@ public class JavaCoCo {
 			final Runnable targetInstance = (Runnable) targetClass.newInstance();
 			
 			Method setRequest = targetClass.getMethod("setRequest", Request.class);
-			setRequest.invoke(targetInstance, request);
+			setRequest.invoke(targetInstance, getTestCase(memoryClassLoader.loadClass(junitClass.getName()), i));
 			
 			targetInstance.run();
 
@@ -111,28 +148,33 @@ public class JavaCoCo {
 			// information:
 			final CoverageBuilder coverageBuilder = new CoverageBuilder();
 			final Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
-			for(String testingClassName: testingClassNames){
+			for(String testingClassName: classNameForCoCo){
 				analyzer.analyzeClass(getTargetClass(testingClassName), testingClassName);
 			}
 			
 			// Let's dump some metrics and line coverage information:
 			for (final IClassCoverage cc : coverageBuilder.getClasses()) {
-				out.printf("Coverage of class %s%n", cc.getName());
+				
+				//do not display data for junit test file
+				if (!cc.getName().endsWith(junitClass.getSimpleName())) {
+					out.printf("Coverage of class %s%n", cc.getName());
 
-				printCounter("instructions", cc.getInstructionCounter());
-				printCounter("branches", cc.getBranchCounter());
-				printCounter("lines", cc.getLineCounter());
-				printCounter("methods", cc.getMethodCounter());
-				printCounter("complexity", cc.getComplexityCounter());
+					printCounter("instructions", cc.getInstructionCounter());
+					printCounter("branches", cc.getBranchCounter());
+					printCounter("lines", cc.getLineCounter());
+					printCounter("methods", cc.getMethodCounter());
+					printCounter("complexity", cc.getComplexityCounter());
 
-				for (int i = cc.getFirstLine(); i <= cc.getLastLine(); i++) {
-					out.printf("Line %s: %s%n", Integer.valueOf(i), getColor(cc
-							.getLine(i).getStatus()));
+					for (int j = cc.getFirstLine(); j <= cc.getLastLine(); j++) {
+						out.printf("Line %s: %s%n", Integer.valueOf(j),
+								getColor(cc.getLine(j).getStatus()));
+					}
 				}
 			}
 		}
 
 	}
+
 	
 	private InputStream getTargetClass(final String name) {
 		final String resource = '/' + name.replace('.', '/') + ".class";

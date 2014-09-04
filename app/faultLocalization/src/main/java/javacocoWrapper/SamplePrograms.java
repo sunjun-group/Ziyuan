@@ -5,16 +5,16 @@ public class SamplePrograms {
 	{
 		int result = a;
 		
-		if(result > b)
+		if(b > result)
 		{
 			//result = b;
 			result = a; //wrong assignment
 		}
-		else if(result > c)
+		
+		if(c > result)
 		{
 			result = c;
 		}
-		
 		return c;
 	}
 }

@@ -48,6 +48,7 @@ public class SampleProgramTest {
 		SamplePrograms sampleProgram = new SamplePrograms();
 		int max = sampleProgram.Max(3, 1, 2);
 		
+		System.out.println("run test 4");
 		assertEquals(max, 3);
 	}
 	
@@ -56,6 +57,7 @@ public class SampleProgramTest {
 		SamplePrograms sampleProgram = new SamplePrograms();
 		int max = sampleProgram.Max(1, 3, 2);
 		
+		System.out.println("run test 5");
 		assertEquals(max, 3);
 	}
 
