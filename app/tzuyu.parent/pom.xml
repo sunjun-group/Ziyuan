@@ -25,8 +25,9 @@
 		<svm-version>3.17</svm-version>
 		<jdk-tool-version>1.6.0</jdk-tool-version>
 		<javaml-version>0.1.7</javaml-version>
-<!-- 		<tzuyu.libs>F:\project\Tzuyu\app\tzuyuEclipsePlugin\libs</tzuyu.libs> -->
+		<!-- <tzuyu.libs>F:\project\Tzuyu\app\tzuyuEclipsePlugin\libs</tzuyu.libs> -->
 		<tzuyu.libs>D:/_1_Projects/Tzuyu/workspace/trunk/app/tzuyuEclipsePlugin/libs</tzuyu.libs>
+		<jacoco-version>0.7.1.201405082137</jacoco-version>
 	</properties>
 
 	<repositories>
@@ -158,6 +159,11 @@
 				<artifactId>com.ibm.wala.util</artifactId>
 				<groupId>com.ibm.wala</groupId>
 				<version>${wala-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jacoco</groupId>
+				<artifactId>org.jacoco.core</artifactId>
+				<version>${jacoco-version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

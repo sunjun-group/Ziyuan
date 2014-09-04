@@ -45,7 +45,7 @@ public class CollectionUtils {
 		return vals[0];
 	}
 
-	public static <T extends Object> boolean existIn(T val, T... valList) {
+	public static <T> boolean existIn(T val, T... valList) {
 		for (T valInList : valList) {
 			if (val.equals(valInList)) {
 				return true;
@@ -154,4 +154,5 @@ public class CollectionUtils {
 	public static <T>List<T> copy(List<T> list) {
 		return new ArrayList<T>(nullToEmpty(list));
 	}
+
 }

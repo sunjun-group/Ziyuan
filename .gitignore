@@ -8,3 +8,4 @@ RemoteSystemsTempFiles
 runtime-EclipseApplication
 /app/tzuyuEclipsePlugin/icsetlvCore
 /app/tzuyuEclipsePlugin/icsetlvLib
+/app/faultLocalization/target

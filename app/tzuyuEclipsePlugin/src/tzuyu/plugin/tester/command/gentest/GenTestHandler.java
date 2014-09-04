@@ -154,8 +154,6 @@ public class GenTestHandler extends TzCommandHandler<GenTestPreferences> {
 			monitor.beginTask("start test generation", 1);
 			reporter.setProgressMonitor(monitor);
 			try {
-//				AppAdaptorFactory.getTzuyuAdaptor().dfaLearning(workObject,
-//						config, reporter, monitor);
 				runJob(workObject, config, reporter, monitor);
 				// refresh output folder
 				config.getOutputPackage().getResource().refreshLocal(2, monitor);
