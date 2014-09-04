@@ -15,6 +15,6 @@ public class SamplePrograms {
 		{
 			result = c;
 		}
-		return c;
+		return result;
 	}
 }

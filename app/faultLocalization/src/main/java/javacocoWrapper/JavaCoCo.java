@@ -136,7 +136,11 @@ public class JavaCoCo {
 			setRequest.invoke(targetInstance, getTestCase(memoryClassLoader.loadClass(junitClass.getName()), i));
 			
 			targetInstance.run();
-
+			
+			Method getResult = targetClass.getMethod("getResult");
+			Boolean isPassed = (Boolean) getResult.invoke(targetInstance);
+			System.out.println(isPassed);
+			
 			// At the end of test execution we collect execution data and shutdown
 			// the runtime:
 			final ExecutionDataStore executionData = new ExecutionDataStore();
