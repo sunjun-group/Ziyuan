@@ -95,11 +95,6 @@ public class JavaCoCo {
 			// Here we execute our test target class through its Runnable interface:
 			final Runnable targetInstance = (Runnable) targetClass.newInstance();
 			
-//			for (Method method : targetClass.getMethods()) {
-//				if(method.getName().equals(anObject))
-//				System.out.println(method.getName());
-//			}
-			
 			Method setRequest = targetClass.getMethod("setRequest", Request.class);
 			setRequest.invoke(targetInstance, request);
 			
