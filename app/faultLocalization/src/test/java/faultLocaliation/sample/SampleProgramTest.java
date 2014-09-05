@@ -1,15 +1,7 @@
-package javacocoWrapper;
+package faultLocaliation.sample;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import org.jacoco.core.instr.Instrumenter;
-import org.jacoco.core.runtime.IRuntime;
-import org.jacoco.core.runtime.LoggerRuntime;
-import org.jacoco.core.runtime.RuntimeData;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 
@@ -58,6 +50,15 @@ public class SampleProgramTest {
 		int max = sampleProgram.Max(1, 3, 2);
 		
 		System.out.println("run test 5");
+		assertEquals(max, 3);
+	}
+	
+	@Test
+	public void test6() {
+		SamplePrograms sampleProgram = new SamplePrograms();
+		int max = sampleProgram.Max(2, 3, 1);
+		
+		System.out.println("run test 6");
 		assertEquals(max, 3);
 	}
 

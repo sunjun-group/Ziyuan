@@ -3,9 +3,8 @@ package faultLocalization;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
+import javacocoWrapper.MemoryClassLoader;
 
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -17,7 +16,6 @@ import org.jacoco.core.instr.Instrumenter;
 import org.jacoco.core.runtime.IRuntime;
 import org.jacoco.core.runtime.LoggerRuntime;
 import org.jacoco.core.runtime.RuntimeData;
-import org.junit.runner.Request;
 
 /**
  * Example usage of the JaCoCo core API. In this tutorial a single target class
@@ -50,37 +48,6 @@ public final class CoreTutorial {
 		public void setRequest(){
 			System.out.println("set request");
 			this.variable = 100;
-		}
-
-	}
-
-	/**
-	 * A class loader that loads classes from in-memory data.
-	 */
-	public static class MemoryClassLoader extends ClassLoader {
-
-		private final Map<String, byte[]> definitions = new HashMap<String, byte[]>();
-
-		/**
-		 * Add a in-memory representation of a class.
-		 * 
-		 * @param name
-		 *            name of the class
-		 * @param bytes
-		 *            class definition
-		 */
-		public void addDefinition(final String name, final byte[] bytes) {
-			definitions.put(name, bytes);
-		}
-
-		@Override
-		protected Class<?> loadClass(final String name, final boolean resolve)
-				throws ClassNotFoundException {
-			final byte[] bytes = definitions.get(name);
-			if (bytes != null) {
-				return defineClass(name, bytes, 0, bytes.length);
-			}
-			return super.loadClass(name, resolve);
 		}
 
 	}

@@ -27,9 +27,11 @@ public class MemoryClassLoader extends ClassLoader {
 			throws ClassNotFoundException {
 		final byte[] bytes = definitions.get(name);
 		if (bytes != null) {
-			return defineClass(name, bytes, 0, bytes.length);
+			Class<?> result = defineClass(name, bytes, 0, bytes.length);
+			// prevent defining class second time.
+			definitions.remove(name);
+			return result;
 		}
 		return super.loadClass(name, resolve);
 	}
-
 }

@@ -23,14 +23,10 @@ import org.junit.runner.Request;
 
 import faultLocalization.dto.LineCoverage;
 
-
 public class JavaCoCo {
 	
 	/**
 	 * Creates a new example instance printing to the given stream.
-	 * 
-	 * @param out
-	 *            stream for outputs
 	 */
 	public JavaCoCo(final PrintStream out) {
 		this.out = out;
@@ -97,36 +93,35 @@ public class JavaCoCo {
 		
 		int numberOfTestCases = getNumberOfTestCases(junitClass);
 
+		// For instrumentation and runtime we need a IRuntime instance
+		// to collect execution data:
+		final IRuntime runtime = new LoggerRuntime();
+		
+		// The Instrumenter creates a modified version of our test target class
+		// that contains additional probes for execution data recording:
+		final Instrumenter instr = new Instrumenter(runtime);
+		ArrayList<byte[]> instrumenteds = new ArrayList<byte[]>();
+		
+		for(String testingClassName: classNameForCoCo){
+			instrumenteds.add(instr.instrument(getTargetClass(testingClassName), testingClassName));
+		}
+		
+		
+		// In this tutorial we use a special class loader to directly load the
+		// instrumented class definition from a byte[] instances.
+		final MemoryClassLoader memoryClassLoader = new MemoryClassLoader();
+		
+		for(int j = 0; j < classNameForCoCo.size(); j++){
+			String testingClassName = classNameForCoCo.get(j);
+			memoryClassLoader.addDefinition(testingClassName, instrumenteds.get(j));
+		}
+		
+		// Now we're ready to run our instrumented class and need to startup the
+		// runtime first:
+		final RuntimeData data = new RuntimeData();
+		runtime.startup(data);
 		for(int i = 0; i < numberOfTestCases; i++){
-			// For instrumentation and runtime we need a IRuntime instance
-			// to collect execution data:
-			final IRuntime runtime = new LoggerRuntime();
-
-			// The Instrumenter creates a modified version of our test target class
-			// that contains additional probes for execution data recording:
-			final Instrumenter instr = new Instrumenter(runtime);
-			ArrayList<byte[]> instrumenteds = new ArrayList<byte[]>();
-						
-			for(String testingClassName: classNameForCoCo){
-				instrumenteds.add(instr.instrument(getTargetClass(testingClassName), testingClassName));
-			}
-			
-
-			// Now we're ready to run our instrumented class and need to startup the
-			// runtime first:
-			final RuntimeData data = new RuntimeData();
-			runtime.startup(data);
-
-			// In this tutorial we use a special class loader to directly load the
-			// instrumented class definition from a byte[] instances.
-			final MemoryClassLoader memoryClassLoader = new MemoryClassLoader();
-			
-			for(int j = 0; j < classNameForCoCo.size(); j++){
-				String testingClassName = classNameForCoCo.get(j);
-				memoryClassLoader.addDefinition(testingClassName, instrumenteds.get(j));
-			}
-			
-
+			data.reset();
 			final Class<?> targetClass = memoryClassLoader.loadClass(RequestExecution.class.getName());
 
 			// Here we execute our test target class through its Runnable interface:
@@ -146,7 +141,6 @@ public class JavaCoCo {
 			final ExecutionDataStore executionData = new ExecutionDataStore();
 			final SessionInfoStore sessionInfos = new SessionInfoStore();
 			data.collect(executionData, sessionInfos, false);
-			runtime.shutdown();
 
 			// Together with the original class definition we can calculate coverage
 			// information:
@@ -191,6 +185,7 @@ public class JavaCoCo {
 				}
 			}
 		}
+		runtime.shutdown();
 		return result;
 	}
 
