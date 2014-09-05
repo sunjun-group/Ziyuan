@@ -23,7 +23,6 @@ public class RequestExecution implements Runnable{
 	}
 	
 	public void setRequest(Request request){
-		System.out.println("set request");
 		this.request = request;
 	}
 

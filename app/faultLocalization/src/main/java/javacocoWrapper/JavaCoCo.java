@@ -12,6 +12,7 @@ import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.ICounter;
+import org.jacoco.core.analysis.ILine;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
 import org.jacoco.core.instr.Instrumenter;
@@ -21,18 +22,12 @@ import org.jacoco.core.runtime.RuntimeData;
 import org.junit.Test;
 import org.junit.runner.Request;
 
-import faultLocalization.dto.LineCoverage;
+import faultLocalization.dto.ClassCoverageInSingleTestcase;
+import faultLocalization.dto.CoverageReport;
+import faultLocalization.dto.TestcaseCoverageInfo;
 
 public class JavaCoCo {
-	
-	/**
-	 * Creates a new example instance printing to the given stream.
-	 */
-	public JavaCoCo(final PrintStream out) {
-		this.out = out;
-	}
-	
-	
+
 	private List<Request> extractTestCasesAsRequests(Class<?> junitClass) {
 		ArrayList<Request> requests = new ArrayList<Request>();
 
@@ -50,49 +45,13 @@ public class JavaCoCo {
 		return requests;
 	}
 	
-	private int getNumberOfTestCases(Class<?> junitClass){
-		int numTestCases = 0;
-		Method[] methods = junitClass.getMethods();
-		for (Method method : methods) {
-			Test test = method.getAnnotation(Test.class);
-
-			if (test != null) {
-				numTestCases++;
-			}
-
-		}
-
-		return numTestCases;
-	}
-	
-	private Request getTestCase(Class<?> junitClass, int index){
-		
-		int count = 0;
-		Method[] methods = junitClass.getMethods();
-		for (Method method : methods) {
-			Test test = method.getAnnotation(Test.class);
-
-			if (test != null) {
-				if(count == index){
-					return Request.method(junitClass, method.getName());
-				}
-				
-				count++;
-			}
-
-		}
-
-		return null;
-	}
-	
-	public Map<String, LineCoverage> run(List<String> testingClassNames, Class<?> junitClass)
+	public CoverageReport run(List<String> testingClassNames, Class<?> junitClass)
 			throws Exception {
-		Map<String, LineCoverage> result = new HashMap<String, LineCoverage>();
+		CoverageReport report = new CoverageReport();
+		
 		ArrayList<String> classNameForCoCo = new ArrayList<String>(testingClassNames);
 		classNameForCoCo.add(junitClass.getName());
 		
-		int numberOfTestCases = getNumberOfTestCases(junitClass);
-
 		// For instrumentation and runtime we need a IRuntime instance
 		// to collect execution data:
 		final IRuntime runtime = new LoggerRuntime();
@@ -120,7 +79,11 @@ public class JavaCoCo {
 		// runtime first:
 		final RuntimeData data = new RuntimeData();
 		runtime.startup(data);
-		for(int i = 0; i < numberOfTestCases; i++){
+		
+		List<Request> testcases = extractTestCasesAsRequests(memoryClassLoader.loadClass(junitClass.getName()));
+		for(int i = 0; i < testcases.size(); i++){
+			Request testcase = testcases.get(i);
+			
 			data.reset();
 			final Class<?> targetClass = memoryClassLoader.loadClass(RequestExecution.class.getName());
 
@@ -128,13 +91,13 @@ public class JavaCoCo {
 			final Runnable targetInstance = (Runnable) targetClass.newInstance();
 			
 			Method setRequest = targetClass.getMethod("setRequest", Request.class);
-			setRequest.invoke(targetInstance, getTestCase(memoryClassLoader.loadClass(junitClass.getName()), i));
+			setRequest.invoke(targetInstance, testcase);
 			
 			targetInstance.run();
 			
 			Method getResult = targetClass.getMethod("getResult");
 			boolean isPassed = (Boolean) getResult.invoke(targetInstance);
-			System.out.println(isPassed);
+
 			
 			// At the end of test execution we collect execution data and shutdown
 			// the runtime:
@@ -155,65 +118,25 @@ public class JavaCoCo {
 				
 				//do not display data for junit test file
 				if (!cc.getName().endsWith(junitClass.getSimpleName())) {
-						
-					out.printf("Coverage of class %s%n", cc.getName());
 
-					printCounter("instructions", cc.getInstructionCounter());
-					printCounter("branches", cc.getBranchCounter());
-					printCounter("lines", cc.getLineCounter());
-					printCounter("methods", cc.getMethodCounter());
-					printCounter("complexity", cc.getComplexityCounter());
-
-					LineCoverage lineCover = result.get(cc.getName());
-					if (lineCover == null) {
-						lineCover = new LineCoverage(cc.getName());
-						result.put(cc.getName(), lineCover);
-					}
 					for (int j = cc.getFirstLine(); j <= cc.getLastLine(); j++) {
-						switch (cc.getLine(j).getStatus()) {
-						case ICounter.NOT_COVERED:
-							lineCover.addResult(isPassed, j, false);
-							break;
-						case ICounter.PARTLY_COVERED:
-						case ICounter.FULLY_COVERED:
-							lineCover.addResult(isPassed, j, true);
-							break;
+						ILine lineInfo = cc.getLine(j);
+						if(lineInfo.getStatus() != ICounter.EMPTY){
+							boolean isCovered = lineInfo.getStatus() != ICounter.NOT_COVERED;
+							report.addInfo(i, cc.getName(), j, isPassed, isCovered);
 						}
-						 out.printf("Line %s: %s%n", Integer.valueOf(j),
-						 getColor(cc.getLine(j).getStatus()));
+						
 					}
 				}
 			}
 		}
 		runtime.shutdown();
-		return result;
+		return report;
 	}
 
 	private InputStream getTargetClass(final String name) {
 		final String resource = '/' + name.replace('.', '/') + ".class";
 		return getClass().getResourceAsStream(resource);
 	}
-	
-	private final PrintStream out;
-	
-	private void printCounter(final String unit, final ICounter counter) {
-		final Integer missed = Integer.valueOf(counter.getMissedCount());
-		final Integer total = Integer.valueOf(counter.getTotalCount());
-		out.printf("%s of %s %s missed%n", missed, total, unit);
-	}
-
-	private String getColor(final int status) {
-			
-		switch (status) {
-		case ICounter.NOT_COVERED:
-			return "red";
-		case ICounter.PARTLY_COVERED:
-			return "yellow";
-		case ICounter.FULLY_COVERED:
-			return "green";
-		}
-		return "";
-	}
-	
 
 }
