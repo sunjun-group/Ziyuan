@@ -48,6 +48,7 @@ public class JFileWriter {
 	protected TzConfiguration config;
 	protected File dir;
 	protected int testsPerFile;
+	private boolean passTcs;
 	
 	private Map<String, List<List<Sequence>>> createdSequencesAndClasses = new LinkedHashMap<String, List<List<Sequence>>>();
 	private IPrintStream outStream = new NullTzPrintStream();
@@ -67,6 +68,7 @@ public class JFileWriter {
 		this.testsPerFile = config.getMaxMethodsPerGenTestClass();
 		this.packageName = config.getPackageName(passTcs);
 		this.junitDirName = config.getOutputPath();
+		this.passTcs = passTcs;
 	}
 	
 	/**
@@ -161,7 +163,7 @@ public class JFileWriter {
 		// print the test method
 		out.tab().append("@Test").newLine();
 		out.tab().append(
-				"public void test" + (methodIdx) + "() throws Throwable {");
+				"public void " + getTestMethodName() + (methodIdx) + "() throws Throwable {");
 		out.newLine();
 		out.tab()
 				.tab()
@@ -173,6 +175,10 @@ public class JFileWriter {
 				.append("System.out.println(\"%n" + newClassName + ".test"
 						+ methodIdx + "\");").newLine().tab().tab().append("}");
 		out.newLine();
+	}
+
+	private String getTestMethodName() {
+		return "test" + (passTcs ? "P" : "F");
 	}
 
 	private void appendEndMethod(JOutputPrinter out) {

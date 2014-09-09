@@ -1,10 +1,20 @@
-package faultLocalization;
+/*******************************************************************************
+ * Copyright (c) 2009, 2014 Mountainminds GmbH & Co. KG and Contributors
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Marc R. Hoffmann - initial API and implementation
+ *    
+ *******************************************************************************/
+package javacocoWrapper;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Method;
-
-import javacocoWrapper.MemoryClassLoader;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -29,10 +39,7 @@ public final class CoreTutorial {
 	 */
 	public static class TestTarget implements Runnable {
 
-		public int variable = 0;
-		
 		public void run() {
-			System.out.println(this.variable);
 			isPrime(7);
 		}
 
@@ -44,10 +51,36 @@ public final class CoreTutorial {
 			}
 			return true;
 		}
-		
-		public void setRequest(){
-			System.out.println("set request");
-			this.variable = 100;
+
+	}
+
+	/**
+	 * A class loader that loads classes from in-memory data.
+	 */
+	public static class MemoryClassLoader extends ClassLoader {
+
+		private final Map<String, byte[]> definitions = new HashMap<String, byte[]>();
+
+		/**
+		 * Add a in-memory representation of a class.
+		 * 
+		 * @param name
+		 *            name of the class
+		 * @param bytes
+		 *            class definition
+		 */
+		public void addDefinition(final String name, final byte[] bytes) {
+			definitions.put(name, bytes);
+		}
+
+		@Override
+		protected Class<?> loadClass(final String name, final boolean resolve)
+				throws ClassNotFoundException {
+			final byte[] bytes = definitions.get(name);
+			if (bytes != null) {
+				return defineClass(name, bytes, 0, bytes.length);
+			}
+			return super.loadClass(name, resolve);
 		}
 
 	}
@@ -96,11 +129,6 @@ public final class CoreTutorial {
 
 		// Here we execute our test target class through its Runnable interface:
 		final Runnable targetInstance = (Runnable) targetClass.newInstance();
-		
-		Method setRequest = targetClass.getMethod("setRequest");
-		setRequest.invoke(targetInstance);
-		
-		
 		targetInstance.run();
 
 		// At the end of test execution we collect execution data and shutdown
