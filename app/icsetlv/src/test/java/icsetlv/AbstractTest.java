@@ -9,6 +9,7 @@
 package icsetlv;
 
 import icsetlv.common.dto.BreakPoint;
+import icsetlv.slicer.SlicerInput;
 import icsetlv.vm.VMConfiguration;
 
 import java.io.IOException;
@@ -66,4 +67,11 @@ public class AbstractTest {
 		}
 		return -1;		
 	}	
+	
+	protected SlicerInput initSlicerInput() {
+		SlicerInput input = new SlicerInput();
+		input.setAppBinFolder(config.getAppBinpath());
+		input.setJre(config.getJavahome());
+		return input;
+	}
 }
