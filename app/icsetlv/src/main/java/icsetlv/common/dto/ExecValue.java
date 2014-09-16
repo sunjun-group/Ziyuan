@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import sav.common.core.utils.CollectionUtils;
+
 /**
  * @author LLT
  *
@@ -52,13 +54,23 @@ public abstract class ExecValue {
 		return getChildId(String.valueOf(i));
 	}
 	
+	/**
+	 * the value of this node will be stored in allLongsVals.get(varId)[i];
+	 * 
+	 * @param allLongsVals: a map of Variable and its values in all testcases.
+	 * @param i: current index of allLongsVals.get(varId)
+	 * @param size: size of allLongsVals
+	 */
 	public void retrieveValue(Map<String, double[]> allLongsVals, int i,
 			int size) {
-		if (!allLongsVals.containsKey(varId)) {
-			allLongsVals.put(varId, new double[size]);
+		if (needToRetrieveValue()) {
+			if (!allLongsVals.containsKey(varId)) {
+				allLongsVals.put(varId, new double[size]);
+			}
+			
+			double[] valuesOfVarId = allLongsVals.get(varId);
+			valuesOfVarId[i] = getDoubleVal();
 		}
-		double[] valuesOfVarId = allLongsVals.get(varId);
-		valuesOfVarId[i] = getDoubleVal();
 		if (children != null) {
 			for (ExecValue child : children) {
 				child.retrieveValue(allLongsVals, i, size);
@@ -66,6 +78,30 @@ public abstract class ExecValue {
 		}
 	}
 	
+	public List<Double> appendVal(List<Double> values) {
+		if (needToRetrieveValue()) {
+			values.add(getDoubleVal());
+		}
+		for (ExecValue child : CollectionUtils.nullToEmpty(children)) {
+			child.appendVal(values);
+		}
+		return values;
+	}
+	
+	public List<String> appendVarId(List<String> vars) {
+		if (needToRetrieveValue()) {
+			vars.add(varId);
+		}
+		for (ExecValue child : CollectionUtils.nullToEmpty(children)) {
+			child.appendVarId(vars);
+		}
+		return vars;
+	}
+	
+	protected boolean needToRetrieveValue() {
+		return true;
+	}
+
 	@Override
 	public String toString() {
 		return String.format("(%s:%s)", varId, children);

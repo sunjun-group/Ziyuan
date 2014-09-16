@@ -23,12 +23,11 @@ import org.junit.Test;
  *
  */
 public class WalaSlicerTest extends AbstractTest {
-	private TestData type = TestData.BOUNDED_STACK;
+	private TestData type = TestData.FIND_MAX;
 	
 	@Test
 	public void testSlice() throws IcsetlvException {
 		SlicerInput input = new SlicerInput();
-		WalaSlicer slicer = new WalaSlicer(input);
 		input.setAppBinFolder(config.getAppBinpath());
 		input.setJre(config.getJavahome());
 		// entry points
@@ -37,6 +36,7 @@ public class WalaSlicerTest extends AbstractTest {
 		// breakpoints
 		List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
 		addBreakpoints(breakpoints);
+		WalaSlicer slicer = new WalaSlicer(input);
 		List<BreakPoint> slicingResult = slicer.slice(breakpoints);
 		printBkps(slicingResult);
 	}
@@ -44,8 +44,9 @@ public class WalaSlicerTest extends AbstractTest {
 	private void addBreakpoints(List<BreakPoint> breakpoints) {
 		switch (type) {
 		case BOUNDED_STACK:
-			breakpoints.add(new BreakPoint("testdata.boundedStack.BoundedStack", "push(Ljava/lang/Integer;J)Z", 30));
-			breakpoints.add(new BreakPoint("testdata.boundedStack.BoundedStack", "pop()Ljava/lang/Integer;", 43));
+			breakpoints.add(new BreakPoint("testdata.boundedStack.BoundedStack", "push(Ljava/lang/Integer;)Z", 37));
+//			breakpoints.add(new BreakPoint("testdata.boundedStack.BoundedStack", "pop()Ljava/lang/Integer;", 43));
+//			breakpoints.add(new BreakPoint("testdata.SamplePrograms", "Max(Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;)Ljava/lang/Integer;", 21));
 			break;
 		case TEST_DEVIDER:
 			breakpoints.add(new BreakPoint("testdata.testDevider.TestDevider", "stop", 9));
@@ -63,13 +64,18 @@ public class WalaSlicerTest extends AbstractTest {
 		List<String[]> classEntryPoints = new ArrayList<String[]>();
 		switch (type) {
 		case BOUNDED_STACK:
-			classEntryPoints.add(make("Ltestdata/boundedStack/tzuyu/fail/BoundedStack7", "test1()V"));
-			classEntryPoints.add(make("Ltestdata/boundedStack/tzuyu/fail/BoundedStack7", "test2()V"));
-			classEntryPoints.add(make("Ltestdata/boundedStack/tzuyu/fail/BoundedStack7", "test3()V"));
-			classEntryPoints.add(make("Ltestdata/boundedStack/tzuyu/fail/BoundedStack7", "test4()V"));
-			classEntryPoints.add(make("Ltestdata/boundedStack/tzuyu/fail/BoundedStack7", "test5()V"));
-			classEntryPoints.add(make("Ltestdata/boundedStack/tzuyu/fail/BoundedStack7", "test6()V"));
-			classEntryPoints.add(make("Ltestdata/boundedStack/tzuyu/fail/BoundedStack7", "test7()V"));
+			classEntryPoints.add(make("Ltestdata/boundedStack/BoundedStack", "push(Ljava/lang/Integer;)Z"));
+//			classEntryPoints
+//					.add(make(
+//							"Ltestdata/SamplePrograms",
+//							"Max(Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;)Ljava/lang/Integer;"));
+//			classEntryPoints.add(make("Ltestdata/boundedStack/tzuyu/fail/BoundedStack7", "test1()V"));
+//			classEntryPoints.add(make("Ltestdata/boundedStack/tzuyu/fail/BoundedStack7", "test2()V"));
+//			classEntryPoints.add(make("Ltestdata/boundedStack/tzuyu/fail/BoundedStack7", "test3()V"));
+//			classEntryPoints.add(make("Ltestdata/boundedStack/tzuyu/fail/BoundedStack7", "test4()V"));
+//			classEntryPoints.add(make("Ltestdata/boundedStack/tzuyu/fail/BoundedStack7", "test5()V"));
+//			classEntryPoints.add(make("Ltestdata/boundedStack/tzuyu/fail/BoundedStack7", "test6()V"));
+//			classEntryPoints.add(make("Ltestdata/boundedStack/tzuyu/fail/BoundedStack7", "test7()V"));
 			break;
 		case TEST_DEVIDER:
 			classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test1"));
@@ -115,6 +121,7 @@ public class WalaSlicerTest extends AbstractTest {
 
 	private enum TestData{
 		BOUNDED_STACK,
-		TEST_DEVIDER
+		TEST_DEVIDER,
+		FIND_MAX
 	}
 }

@@ -53,6 +53,16 @@ public class BugExpert implements IBugExpert {
 			BreakpointValue bkpVals = passFailVals.get(i);
 			bkpVals.retrieveValue(allLongsVals, i, passFailVals.size());
 		}
+		/*--------------------*/
+		
+		for (String key : allLongsVals.keySet()) {
+			double[] ds = allLongsVals.get(key);
+			if (key.contains("result")) {
+				ds = multi(ds, 10);
+			}
+//			allLongsVals.put(key, scale(ds));
+		}
+		/*--------------------*/
 		int featureSize = allLongsVals.keySet().size();
 		for (int i = 0; i < passFailVals.size(); i++) {
 			double[] lineVals = new double[featureSize];
@@ -68,7 +78,37 @@ public class BugExpert implements IBugExpert {
 			}
 			dataset.add(instance);
 		}
+		
 		return dataset;
+	}
+	
+	private static double[] multi(double[] ds, int f) {
+		for (int i = 0; i < ds.length; i++) {
+			ds[i] = ds[i] * f;
+		}
+		return ds;
+	}
+
+	private static double[] scale(double[] ds) {
+		if (ds.length <= 0) {
+			return ds;
+		}
+		double[] result = new double[ds.length];
+		double max = ds[0];
+		double min = ds[0];
+		for (double val : ds) {
+			if (max < val) {
+				max = val;
+			}
+			if (min > val) {
+				min = val;
+			}
+		}
+		double d = max - min;
+		for (int i = 0; i < ds.length; i++) {
+			result[i] = (ds[i] - min)/d;
+		}
+		return result;
 	}
 
 	/*

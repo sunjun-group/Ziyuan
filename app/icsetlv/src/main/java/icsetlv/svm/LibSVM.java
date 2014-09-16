@@ -47,10 +47,10 @@ public class LibSVM extends AbstractClassifier {
 		param.eps = 1e-3;
 		param.p = 0.1;
 		param.shrinking = 1;
-		param.probability = 0;
-		param.nr_weight = 0;
-		param.weight_label = new int[0];
-		param.weight = new double[0];
+		param.probability = 1;
+		param.nr_weight = 0;/*4;*/
+		param.weight_label = /*new int[]{1, 1, 0, 0};*/new int[0];
+		param.weight = /*new double[]{1, 1, 0, 0};*/ new double[0];
 	}
 
 	/**
@@ -127,7 +127,10 @@ public class LibSVM extends AbstractClassifier {
 		super.buildClassifier(data);
 		this.data = data;
 		svm_problem p = transformDataset(data);
-
+		for (int i = 0; i < data.size(); i++) {
+			System.out.println(data.get(i));
+		}
+		System.out.println();
 		model = svm.svm_train(p, param);
 
 		double[][] coef = model.sv_coef;
@@ -184,6 +187,7 @@ public class LibSVM extends AbstractClassifier {
 	}
 
 	private double[] weights;
+	private double[] prob_estimates;
 
 	/**
 	 * Provides access to the weights the support vectors obtained during

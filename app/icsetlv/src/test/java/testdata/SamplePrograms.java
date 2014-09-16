@@ -1,18 +1,20 @@
 package testdata;
 
 public class SamplePrograms {
+	private int a = 10;
+	private int b = 20;
+	private int c = 30;
 	
-	public static int max(int a, int b, int c)
+	public int max(int g, int e, int f)
 	{
 		int result = a;
 		
 		if(b > result)
 		{
-			//result = b;
 			int d = 0;
 			d++;
 			System.out.println(d);
-			result = a; //wrong assignment
+			result = a; 
 		}
 		
 		if(c > result)
@@ -20,7 +22,6 @@ public class SamplePrograms {
 			result = c;
 		}
 		
-//		System.out.println(result);
 		return result;
 	}
 }

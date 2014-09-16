@@ -45,6 +45,8 @@ import com.ibm.wala.ipa.cha.ClassHierarchy;
 import com.ibm.wala.ipa.cha.ClassHierarchyException;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.ipa.slicer.NormalStatement;
+import com.ibm.wala.ipa.slicer.SDG;
+import com.ibm.wala.ipa.slicer.Slicer;
 import com.ibm.wala.ipa.slicer.Slicer.ControlDependenceOptions;
 import com.ibm.wala.ipa.slicer.Slicer.DataDependenceOptions;
 import com.ibm.wala.ipa.slicer.Statement;
@@ -59,6 +61,7 @@ import com.ibm.wala.ssa.SSACFG.BasicBlock;
 import com.ibm.wala.ssa.SSAInstruction;
 import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.types.TypeName;
+import com.ibm.wala.util.CancelException;
 import com.ibm.wala.util.config.FileOfClasses;
 import com.ibm.wala.util.strings.Atom;
 
@@ -86,9 +89,16 @@ public class WalaSlicer implements ISlicer {
 		CallGraph cg = makeCallGraph(options, builder);
 		List<Statement> stmt = findSeedStmts(cg, breakpoints);
 
-		Collection<Statement> computeBackwardSlice = new CISlicer(cg,
-				builder.getPointerAnalysis(), DataDependenceOptions.REFLECTION,
-				ControlDependenceOptions.NONE).computeBackwardThinSlice(stmt);
+		SDG sdg = new SDG(cg, builder.getPointerAnalysis(),
+				DataDependenceOptions.NO_BASE_PTRS ,
+				ControlDependenceOptions.NONE);
+//		Collection<Statement> computeBackwardSlice = new CISlicer(cg,
+//				builder.getPointerAnalysis(), DataDependenceOptions.NO_HEAP,
+//				ControlDependenceOptions.NONE).computeBackwardThinSlice(stmt);
+		try {
+		Collection<Statement> computeBackwardSlice;
+			computeBackwardSlice = Slicer.computeBackwardSlice(sdg, 
+					stmt);
 		CollectionUtils.filter(computeBackwardSlice, new Predicate<Statement>() {
 			
 			public boolean apply(Statement val) {
@@ -98,9 +108,18 @@ public class WalaSlicer implements ISlicer {
 			}
 		});
 		return toBreakpoints(computeBackwardSlice);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		catch (CancelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
-	public static List<BreakPoint> toBreakpoints(Collection<Statement> slice)
+	public List<BreakPoint> toBreakpoints(Collection<Statement> slice)
 			throws IcsetlvException {
 		List<BreakPoint> result = new ArrayList<BreakPoint>();
 		
@@ -123,8 +142,34 @@ public class WalaSlicer implements ISlicer {
 								StringUtils.spaceJoin(getClassCanonicalName(method), 
 										method.getSignature()));
 						lineNos.add(src_line_number);
+						System.out.println("line: " + src_line_number);
 					}
 				}
+				//System.out.println(s);
+//				if (s.getKind() == Statement.Kind.NORMAL) { // ignore special
+//															// kinds of
+//															// statements
+//					int bcIndex, instructionIndex = ((NormalStatement) s)
+//							.getInstructionIndex();
+//					try {
+//						bcIndex = ((ShrikeBTMethod) s.getNode().getMethod())
+//								.getBytecodeIndex(instructionIndex);
+//						try {
+//							int src_line_number = s.getNode().getMethod()
+//									.getLineNumber(bcIndex);
+//							System.err.println("Source line number = "
+//									+ src_line_number);
+//						} catch (Exception e) {
+//							System.err.println("Bytecode index no good");
+//							System.err.println(e.getMessage());
+//						}
+//					} catch (Exception e) {
+//						System.err
+//								.println("it's probably not a BT method (e.g. it's a fakeroot method)");
+//						System.err.println(e.getMessage());
+//					}
+//				}
+//				System.out.println(s);
 			}
 			for (String key : bkpMap.keySet()) {
 				String[] clzzMethod = key.split(StringUtils.SPACE);
@@ -138,7 +183,7 @@ public class WalaSlicer implements ISlicer {
 		return result;
 	}
 
-	private static String getClassCanonicalName(IMethod method) {
+	private String getClassCanonicalName(IMethod method) {
 		TypeName clazz = method.getDeclaringClass().getName();
 		return ClassUtils.getCanonicalName(clazz.getPackage().toString()
 				.replace("/", "."), clazz.getClassName().toString());
@@ -184,7 +229,7 @@ public class WalaSlicer implements ISlicer {
 		return stmts;
 	}
 	
-	public static CGNode findMethod(CallGraph cg, String className, String methodName) {
+	public CGNode findMethod(CallGraph cg, String className, String methodName) {
 		Atom a = Atom.findOrCreateUnicodeAtom(methodName);
 		for (Iterator<? extends CGNode> it = cg.iterator(); it.hasNext();) {
 			CGNode n = it.next();

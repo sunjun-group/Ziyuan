@@ -9,9 +9,9 @@
 package faultLocalization.dto;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import faultLocalization.dto.LineCoverageInfo.LineCoverageInfoComparator;
 
@@ -21,7 +21,6 @@ import faultLocalization.dto.LineCoverageInfo.LineCoverageInfoComparator;
  */
 public class CoverageReport {
 	private HashMap<String, ClassCoverageInAllTestcases> mapClassLineToTestCasesCover = new HashMap<String, ClassCoverageInAllTestcases>();
-	
 	private HashMap<Integer, TestcaseCoverageInfo> passedTestcaseCoverageInfo = new HashMap<Integer, TestcaseCoverageInfo>();
 	private HashMap<Integer, TestcaseCoverageInfo> failedTestcaseCoverageInfo = new HashMap<Integer, TestcaseCoverageInfo>();
 	
@@ -56,8 +55,8 @@ public class CoverageReport {
 		testcaseCoverage.addInfo(className, lineIndex, isCovered);
 	}
 	
-	public void LocalizeFault(){
-		ArrayList<LineCoverageInfo> linesCoverageInfo = new ArrayList<LineCoverageInfo>();
+	public List<LineCoverageInfo> LocalizeFault(){
+		List<LineCoverageInfo> linesCoverageInfo = new ArrayList<LineCoverageInfo>();
 		
 		for(String key: mapClassLineToTestCasesCover.keySet()){
 			ClassCoverageInAllTestcases classCoverage = mapClassLineToTestCasesCover.get(key);
@@ -73,5 +72,6 @@ public class CoverageReport {
 		for(LineCoverageInfo lineCoverageInfo: linesCoverageInfo){
 			System.out.println(lineCoverageInfo.toString());
 		}
+		return linesCoverageInfo;
 	}
 }

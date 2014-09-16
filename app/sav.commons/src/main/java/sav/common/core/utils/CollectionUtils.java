@@ -154,5 +154,12 @@ public class CollectionUtils {
 	public static <T>List<T> copy(List<T> list) {
 		return new ArrayList<T>(nullToEmpty(list));
 	}
+	
+	public static <T> T getLast(List<T> list) {
+		if (isEmpty(list)) {
+			return null;
+		}
+		return list.get(list.size() - 1);
+	}
 
 }

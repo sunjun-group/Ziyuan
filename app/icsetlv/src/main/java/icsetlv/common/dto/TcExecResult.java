@@ -47,7 +47,36 @@ public class TcExecResult {
 
 	@Override
 	public String toString() {
-		return "TcExecResult [passValues=" + passValues + ", failValues="
+		return "TcExecResult [passValues=" + passValues + ", \nfailValues="
 				+ failValues + "]";
+	}
+	
+	public String toString(List<BreakPoint> bkps) {
+		StringBuilder sb = new StringBuilder("TcExecResult: \n");
+		for (BreakPoint bkp : bkps) {
+			sb.append(bkp.getId()).append("\n");
+			append(sb, bkp);
+		}
+		return sb.toString();
+	}
+	
+	private String append(StringBuilder sb, BreakPoint bkp) {
+		sb.append("passValues: \n");
+		append(sb, getPassValues(bkp));
+		sb.append("failValues: \n");
+		append(sb, getFailValues(bkp));
+		return sb.toString();
+	}
+
+	private void append(StringBuilder sb, List<BreakpointValue> pv) {
+		if (!pv.isEmpty()) {
+			List<String> vars = pv.get(0).appendVarId(new ArrayList<String>());
+			sb.append(vars).append("\n");
+			for (BreakpointValue bkVal : pv) {
+				List<Double> values = bkVal.appendVal(new ArrayList<Double>());
+				sb.append(values).append("\n");
+			}
+			
+		}
 	}
 }

@@ -8,7 +8,6 @@
 
 package faultLocalization.dto;
 
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -36,6 +35,18 @@ public class LineCoverageInfo {
 		this.lineIndex = lineIndex;
 	}
 	
+	public String getClassName() {
+		return className;
+	}
+
+
+
+	public int getLineIndex() {
+		return lineIndex;
+	}
+
+
+
 	public void addInfo(int testcaseIndex, boolean isPassed){
 		if(isPassed){
 			passedTestcaseIndexesCover.add(testcaseIndex);
@@ -50,8 +61,6 @@ public class LineCoverageInfo {
 		
 		this.suspiciousness = failedRate / (passRate + failedRate);
 	}
-	
-	
 	
 	public String toString() {
 		return className + "@" + lineIndex + ":" + suspiciousness;

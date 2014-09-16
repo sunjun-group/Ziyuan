@@ -51,12 +51,12 @@ public class IcsetlvEngineTest extends AbstractTest {
 		IcsetlvInput input = initInput();
 		List<BreakPoint> bkps = AssertionDetector.scan(input.getAssertionSourcePaths());
 		
-		BreakPoint bkp4 = new BreakPoint("testdata.slice.FindMax", "findMax", 15);
+		BreakPoint bkp4 = new BreakPoint("testdata.slice.FindMax", "findMax", 22);
 		bkp4.addVars(new Variable("max"));
 		bkp4.addVars(new Variable("i"));
 		bkps.add(bkp4);	
 		
-		BreakPoint bkp3 = new BreakPoint("testdata.slice.FindMax", "findMax", 11); 
+		BreakPoint bkp3 = new BreakPoint("testdata.slice.FindMax", "findMax", 17); 
 		bkp3.addVars(new Variable("max"));
 		bkps.add(bkp3);
 		

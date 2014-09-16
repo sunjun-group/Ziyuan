@@ -27,6 +27,14 @@ public class BoundedStack {
 	public boolean push(java.lang.Integer element) {
 		System.out.println(size);
 		// Tzuyu Auto-generated assertion
+		
+		int a = 0;
+		int b = 1;
+		int c = a + b;
+		size = size + 1;
+		
+		c = c - a;
+		a = a * 2;
 		assert size <= 2.0;
 		if (size == MaxSize) {
 			throw new RuntimeException("Push on full stack.");
@@ -35,6 +43,18 @@ public class BoundedStack {
 		data[size] = element;
 		size++;
 		return true;
+		
+//		int a = 0;
+//		int b = 1;
+//		
+//		int c = 2;
+//		c++;
+//		System.out.print(c);
+//		
+//		int d = element - a;
+//		System.out.print(d);
+//		
+//		return true;
 	}
 
 	public Integer pop() throws Exception {

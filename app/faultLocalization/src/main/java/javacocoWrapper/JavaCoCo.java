@@ -1,12 +1,9 @@
 package javacocoWrapper;
 
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -22,9 +19,7 @@ import org.jacoco.core.runtime.RuntimeData;
 import org.junit.Test;
 import org.junit.runner.Request;
 
-import faultLocalization.dto.ClassCoverageInSingleTestcase;
 import faultLocalization.dto.CoverageReport;
-import faultLocalization.dto.TestcaseCoverageInfo;
 
 public class JavaCoCo {
 

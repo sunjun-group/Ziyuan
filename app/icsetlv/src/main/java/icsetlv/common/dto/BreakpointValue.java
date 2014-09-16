@@ -8,6 +8,7 @@
 
 package icsetlv.common.dto;
 
+
 /**
  * @author LLT
  *
@@ -25,6 +26,11 @@ public class BreakpointValue extends ExecValue {
 	@Override
 	public String getChildId(String childCode) {
 		return childCode;
+	}
+	
+	@Override
+	protected boolean needToRetrieveValue() {
+		return false;
 	}
 
 }
