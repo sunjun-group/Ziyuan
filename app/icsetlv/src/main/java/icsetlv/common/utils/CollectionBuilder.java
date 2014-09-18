@@ -31,6 +31,13 @@ public class CollectionBuilder<E, T extends Collection<E>> {
 		return this;
 	}
 	
+	public CollectionBuilder<E, T> addIf(E newVal, boolean add) {
+		if (add) {
+			add(newVal);
+		}
+		return this;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public <R extends Collection<?>>R getResult() {
 		return (R) orgCol;

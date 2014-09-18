@@ -22,12 +22,14 @@ public class VMConfiguration {
 	private boolean debug;
 	private int port;
 	// for internal use only
-	private List<String> args; 
+	private List<String> programArgs; 
+	private boolean enableAssertion;
 
 	public VMConfiguration() {
 		classpaths = new ArrayList<String>();
 		debug = true;
 		port = 8787;
+		enableAssertion = true;
 	}
 	
 	public List<String> getClasspaths() {
@@ -75,10 +77,26 @@ public class VMConfiguration {
 	}
 
 	public List<String> getProgramArgs() {
-		return args;
+		if (programArgs == null) {
+			programArgs = new ArrayList<String>();
+		}
+		return programArgs;
 	}
 
-	public void setProgramArgs(List<String> args) {
-		this.args = args;
+	public void setProgramArgs(List<String> programArgs) {
+		this.programArgs = programArgs;
 	}
+	
+	public void addProgramArgs(String newArg) {
+		getProgramArgs().add(newArg);
+	}
+
+	public boolean isEnableAssertion() {
+		return enableAssertion;
+	}
+
+	public void setEnableAssertion(boolean enableAssertion) {
+		this.enableAssertion = enableAssertion;
+	}
+	
 }

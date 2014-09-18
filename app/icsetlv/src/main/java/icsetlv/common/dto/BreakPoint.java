@@ -127,6 +127,37 @@ public class BreakPoint {
 				+ charEnd + "]";
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((classCanonicalName == null) ? 0 : classCanonicalName
+						.hashCode());
+		result = prime * result + lineNo;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BreakPoint other = (BreakPoint) obj;
+		if (classCanonicalName == null) {
+			if (other.classCanonicalName != null)
+				return false;
+		} else if (!classCanonicalName.equals(other.classCanonicalName))
+			return false;
+		if (lineNo != other.lineNo)
+			return false;
+		return true;
+	}
+
 
 
 	public static class Variable {

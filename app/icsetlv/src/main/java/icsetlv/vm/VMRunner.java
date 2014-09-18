@@ -15,16 +15,18 @@ import icsetlv.common.utils.CollectionBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import sav.common.core.utils.StringUtils;
+import sun.misc.VM;
 
 /**
  * @author LLT
  * 
  */
 public class VMRunner {
-	private static final String cpToken = "-cp";
+	protected static final String cpToken = "-cp";
 	/*
 	 * from jdk 1.5, we can use new JVM option: -agentlib 
 	 * Benefits of using the new -agentlib args is, it doesn't contain any whitespace, so
@@ -32,25 +34,49 @@ public class VMRunner {
 	 * want to use the old flags, be careful about when to quote the value and
 	 * when to not quote.
 	 */
-	private static final String debugToken = "-agentlib:jdwp=transport=dt_socket,suspend=y,address=%s";
-	private static final String enableAssertionToken = "-ea";
-
+	protected static final String debugToken = "-agentlib:jdwp=transport=dt_socket,suspend=y,address=%s";
+	protected static final String enableAssertionToken = "-ea";
+	
 	public static Process startJVM(VMConfiguration config) throws IcsetlvException {
+		VMRunner vmRunner = new VMRunner();
+		return vmRunner.start(config);
+	}
+	
+	public Process start(VMConfiguration config) throws IcsetlvException {
 		if (config.getPort() == -1) {
 			throw new IcsetlvException("Cannot find free port to start jvm!");
 		}
 		
-		List<String> commands = CollectionBuilder.init(new ArrayList<String>())
-				.add(buildJavaExecArg(config))
-				.add(String.format(debugToken, config.getPort()))
-				.add(enableAssertionToken)
-				.add(cpToken)
+		CollectionBuilder<String, Collection<String>> builder = CollectionBuilder
+						.init(new ArrayList<String>())
+						.add(buildJavaExecArg(config));
+		buildVmOption(builder, config);
+//		List<String> commands = 
+		buildProgramArgs(config, builder);
+		return startVm((List<String>)builder.getResult());
+	}
+
+	protected void buildProgramArgs(VMConfiguration config,
+			CollectionBuilder<String, Collection<String>> builder) {
+		builder.add(cpToken)
 				.add(toClasspathStr(config.getClasspaths()))
-				.add(config.getLaunchClass())
-				.getResult();
+				.add(config.getLaunchClass());
+//		List<String> commands = builder.getResult();
 		for (String arg : config.getProgramArgs()) {
-			commands.add(arg);
+//			commands.add(arg);
+			builder.add(arg);
 		}
+//		return commands;
+//		return builder;
+	}
+	
+	protected void buildVmOption(CollectionBuilder<String, ?> builder, VMConfiguration config) {
+		builder.addIf(String.format(debugToken, config.getPort()), config.isDebug())
+				.addIf(enableAssertionToken, config.isEnableAssertion());
+	}
+
+	protected Process startVm(List<String> commands)
+			throws IcsetlvException {
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
 		processBuilder.redirectErrorStream(true);
 		Process process = null;
@@ -62,11 +88,11 @@ public class VMRunner {
 		return process;
 	}
 	
-	private static String toClasspathStr(List<String> classpaths) {
+	private String toClasspathStr(List<String> classpaths) {
 		return StringUtils.join(classpaths, File.pathSeparator);
 	}
 
-	private static String buildJavaExecArg(VMConfiguration config) {
+	private String buildJavaExecArg(VMConfiguration config) {
 		return StringUtils.join(Constants.FILE_SEPARATOR, config.getJavaHome(), "bin", "java");
 	}
 }

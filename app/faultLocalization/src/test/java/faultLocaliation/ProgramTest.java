@@ -17,7 +17,6 @@ import icsetlv.BugExpert;
 import icsetlv.IcsetlvInput;
 import icsetlv.TestConfiguration;
 import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.dto.BreakPoint.Variable;
 import icsetlv.common.dto.TcExecResult;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.svm.LibSVM;
@@ -28,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javacocoWrapper.JavaCoCo;
+import javaslicer.JavaSlicer;
 import net.sf.javaml.core.Dataset;
 import net.sf.javaml.featureselection.ranking.RecursiveFeatureEliminationSVM;
 
@@ -54,6 +54,45 @@ public class ProgramTest extends AbstractTest {
 
 		result.LocalizeFault();
 	}
+	
+	@Test
+	public void testIntegrateSlicing() throws Exception {
+		List<BreakPoint> bkps = new ArrayList<BreakPoint>();
+		String clazz = SampleProgramTest.class.getName();
+//		bkps.add(new BreakPoint(clazz, "test1()V", 17));
+		bkps.add(new BreakPoint(clazz, "test2()V", 26));
+//		bkps.add(new BreakPoint(clazz, "test3()V", 35));
+//		bkps.add(new BreakPoint(clazz, "test4()V", 44));
+//		bkps.add(new BreakPoint(clazz, "test5()V", 53));
+		JavaSlicer jSlicer = new JavaSlicer("/home/lylytran/projects/Tzuyu/workspace/REF-CODE/javaslicer/assembly/tracer.jar");
+		jSlicer.setVmConfig(initVmConfig());
+		List<BreakPoint> result = jSlicer.run(bkps,
+				CollectionUtils.listOf(SampleProgramTest.class.getName()));
+		for (BreakPoint bkp : result) {
+			if (CollectionUtils.existIn(bkp.getClassCanonicalName(), SamplePrograms.class.getName(),
+					SampleProgramTest.class.getName())) {
+				System.out.println(bkp.getId());
+			}
+		}
+	}
+	
+	protected VMConfiguration initVmConfig() {
+		VMConfiguration vmConfig = super.initVmConfig();
+		vmConfig.setClasspath(new ArrayList<String>());
+		vmConfig.addClasspath(config.getJavaBin());
+		vmConfig.addClasspath("/home/lylytran/projects/Tzuyu/workspace/trunk/app/icsetlv/src/test/lib/*");
+		vmConfig.addClasspath("/home/lylytran/projects/Tzuyu/workspace/trunk/app/faultLocalization/target/test-classes");
+		vmConfig.addClasspath("/home/lylytran/projects/Tzuyu/workspace/trunk/app/faultLocalization/target/classes");
+		return vmConfig;
+	};
+	
+	private List<BreakPoint> appendBreakpoints(List<BreakPoint> bkps, String className, int...lines) {
+		for (int line : lines) {
+			bkps.add(new BreakPoint(className, line));
+		}
+		return bkps;
+	}
+
 
 	@Test
 	public void testIntegrateSvm() throws Exception {

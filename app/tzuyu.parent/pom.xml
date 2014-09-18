@@ -16,8 +16,9 @@
 		<!-- <graphstream-version>1.2</graphstream-version> -->
 
 		<!-- for icsetlv -->
-		<toolsjar>F:\project\tools\jdk1.6.0_26-64b\lib\tools.jar</toolsjar>
+		<!--toolsjar>F:\project\tools\jdk1.6.0_26-64b\lib\tools.jar</toolsjar-->
 <!-- 		<toolsjar>D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/lib/tools.jar</toolsjar> -->
+		<toolsjar>/home/lylytran/projects/Tzuyu/tools/java-7-openjdk-amd64/lib/tools.jar</toolsjar>
 		<commons-beanutils-version>1.9.1</commons-beanutils-version>
 		<javaparser-version>1.0.11</javaparser-version>
 		<wala-version>1.3.4-SNAPSHOT</wala-version>
@@ -26,8 +27,9 @@
 		<jdk-tool-version>1.6.0</jdk-tool-version>
 		<javaml-version>0.1.7</javaml-version>
 		<!-- <tzuyu.libs>F:\project\Tzuyu\app\tzuyuEclipsePlugin\libs</tzuyu.libs> -->
-		<tzuyu.libs>D:/_1_Projects/Tzuyu/workspace/trunk/app/tzuyuEclipsePlugin/libs</tzuyu.libs>
+		<tzuyu.libs>D:/_1_Projects/Tzuyu/workspace/trunk/app/tzuyuEclipsePlugin/lijavaslicerbs</tzuyu.libs>
 		<jacoco-version>0.7.1.201405082137</jacoco-version>
+		<javaslicer-version>20101004</javaslicer-version>
 	</properties>
 
 	<repositories>
@@ -45,13 +47,14 @@
 
 	<modules>
 		<module>../sav.commons</module>
-		<module>../tzuyu.commons</module>
+		<!--module>../tzuyu.commons</module-->
 		<module>../tzuyuEclipsePlugin</module>
 		<module>../tzuyuEclipsePlugin-test</module>
 		<module>../tzuyu.feature</module>
 		<module>../tzuyu.repo</module>
 		<module>../tzuyu</module>
 		<module>../icsetlv</module>
+		<module>../faultLocalization</module>
 	</modules>
 
 	<build>
@@ -164,6 +167,31 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>org.jacoco.core</artifactId>
 				<version>${jacoco-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-cli</groupId>
+				<artifactId>commons-cli</artifactId>
+				<version>1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>de.javaslicer</groupId>
+				<artifactId>slicer</artifactId>
+				<version>${javaslicer-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>de.javaslicer</groupId>
+				<artifactId>tracer</artifactId>
+				<version>${javaslicer-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>de.javaslicer</groupId>
+				<artifactId>traceReader</artifactId>
+				<version>${javaslicer-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>de.javaslicer</groupId>
+				<artifactId>visualize</artifactId>
+				<version>${javaslicer-version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
