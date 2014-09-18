@@ -19,3 +19,4 @@ echo PATH = $PATH
 
 sh ./setup-linux.sh
 sh ./install-wala-linux.sh
+sh ./install-javaslicer-linux.sh
