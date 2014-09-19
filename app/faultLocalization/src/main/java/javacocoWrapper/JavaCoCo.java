@@ -42,7 +42,7 @@ public class JavaCoCo {
 	
 	public CoverageReport run(List<String> testingClassNames, Class<?> junitClass)
 			throws Exception {
-		CoverageReport report = new CoverageReport();
+		CoverageReport report = new CoverageReport(testingClassNames);
 		
 		ArrayList<String> classNameForCoCo = new ArrayList<String>(testingClassNames);
 		classNameForCoCo.add(junitClass.getName());

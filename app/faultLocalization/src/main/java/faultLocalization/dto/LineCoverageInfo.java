@@ -10,6 +10,8 @@ package faultLocalization.dto;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author khanh
@@ -76,6 +78,19 @@ public class LineCoverageInfo {
 			}else{
 				return Integer.valueOf(c1.lineIndex).compareTo(c2.lineIndex);
 			}
+		}
+	}
+	
+	/**
+	 * @param map update the difference of passed commpared with failed testcase
+	 */
+	public void updateDifference(Map<Integer, Integer> map, Integer failedTest){
+		boolean isCoveredByFailTest = this.failedTestcaseIndexesCover.contains(failedTest);
+		
+		for(Entry<Integer, Integer> entry: map.entrySet()){
+			int value = (this.passedTestcaseIndexesCover.contains(entry.getKey()) == isCoveredByFailTest)? 0: 1;
+			
+			entry.setValue(entry.getValue() + value);
 		}
 	}
 }

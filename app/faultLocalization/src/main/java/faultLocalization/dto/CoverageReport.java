@@ -12,9 +12,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import faultLocalization.dto.LineCoverageInfo.LineCoverageInfoComparator;
 
+/**
+ * @author khanh
+ *
+ */
 /**
  * @author khanh
  *
@@ -24,9 +29,10 @@ public class CoverageReport {
 	private HashMap<Integer, TestcaseCoverageInfo> passedTestcaseCoverageInfo = new HashMap<Integer, TestcaseCoverageInfo>();
 	private HashMap<Integer, TestcaseCoverageInfo> failedTestcaseCoverageInfo = new HashMap<Integer, TestcaseCoverageInfo>();
 	
+	private List<String> testingClassNames;
 	
-	public CoverageReport(){
-		
+	public CoverageReport(List<String> testingClassNames){
+		this.testingClassNames = testingClassNames;
 	}
 	
 	public void addInfo(int testcaseIndex, String className, int lineIndex, boolean isPassed, boolean isCovered){
@@ -55,11 +61,10 @@ public class CoverageReport {
 		testcaseCoverage.addInfo(className, lineIndex, isCovered);
 	}
 	
-	public List<LineCoverageInfo> LocalizeFault(){
+	public List<LineCoverageInfo> Tarantula(){
 		List<LineCoverageInfo> linesCoverageInfo = new ArrayList<LineCoverageInfo>();
 		
-		for(String key: mapClassLineToTestCasesCover.keySet()){
-			ClassCoverageInAllTestcases classCoverage = mapClassLineToTestCasesCover.get(key);
+		for(ClassCoverageInAllTestcases classCoverage: mapClassLineToTestCasesCover.values()){
 			linesCoverageInfo.addAll(classCoverage.getLineCoverageInfo());
 		}
 		
@@ -73,5 +78,50 @@ public class CoverageReport {
 			System.out.println(lineCoverageInfo.toString());
 		}
 		return linesCoverageInfo;
+	}
+	
+	
+	/**
+	 * @param failedTestcaseIndex
+	 * @return return the passed testcase with the spectrum which is nearest compared with the one of the failed testcase
+	 */
+	public int getNearestPassedTestcase(int failedTestcaseIndex)
+	{
+		HashMap<Integer, Integer> mapPassedTest2Difference = new HashMap<Integer, Integer>();
+		//init value
+		for(Integer passedTest: passedTestcaseCoverageInfo.keySet())
+		{
+			mapPassedTest2Difference.put(passedTest, 0);
+		}
+		
+		for(Entry<String, ClassCoverageInAllTestcases> entry: mapClassLineToTestCasesCover.entrySet()){
+			String tempClassName = entry.getKey().replace('/', '.');
+			if(this.testingClassNames.contains(tempClassName))
+			{
+				ClassCoverageInAllTestcases classCoverage = entry.getValue();
+				classCoverage.updateDifference(mapPassedTest2Difference, failedTestcaseIndex);
+			}
+		}
+		
+		int minDifference = Integer.MAX_VALUE;
+		int nearestPassedIndex = -1;
+		
+		for(Entry<Integer, Integer> entry : mapPassedTest2Difference.entrySet()){
+			Integer difference = entry.getValue();
+			
+			if(difference > 0 &&  difference < minDifference){
+				minDifference = entry.getKey();
+				nearestPassedIndex = entry.getKey();
+			}
+		}
+		
+		System.out.println("nearest " + nearestPassedIndex);
+		return nearestPassedIndex;
+	}
+	
+	public void Test(){
+		for(Integer failTest: failedTestcaseCoverageInfo.keySet()){
+			getNearestPassedTestcase(failTest);
+		}
 	}
 }

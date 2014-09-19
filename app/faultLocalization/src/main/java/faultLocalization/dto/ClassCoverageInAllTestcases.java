@@ -45,4 +45,11 @@ public class ClassCoverageInAllTestcases {
 	public Collection<LineCoverageInfo> getLineCoverageInfo(){
 		return mapLines2CoverageInfo.values();
 	}
+	
+	public void updateDifference(Map<Integer, Integer> map, Integer failedTest){
+		for(LineCoverageInfo lineInfo: mapLines2CoverageInfo.values()){
+			lineInfo.updateDifference(map, failedTest);
+		}
+	}
+	
 }
