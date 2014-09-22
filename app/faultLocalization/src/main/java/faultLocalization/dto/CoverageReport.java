@@ -20,10 +20,6 @@ import faultLocalization.dto.LineCoverageInfo.LineCoverageInfoComparator;
  * @author khanh
  *
  */
-/**
- * @author khanh
- *
- */
 public class CoverageReport {
 	private HashMap<String, ClassCoverageInAllTestcases> mapClassLineToTestCasesCover = new HashMap<String, ClassCoverageInAllTestcases>();
 	private HashMap<Integer, TestcaseCoverageInfo> passedTestcaseCoverageInfo = new HashMap<Integer, TestcaseCoverageInfo>();
@@ -67,6 +63,10 @@ public class CoverageReport {
 		for(ClassCoverageInAllTestcases classCoverage: mapClassLineToTestCasesCover.values()){
 			linesCoverageInfo.addAll(classCoverage.getLineCoverageInfo());
 		}
+		
+		//use slicing to remove unrelated lines in linesCoverageInfo
+		//failed test -> where failed assertion -> line -> slicing
+		//
 		
 		for(LineCoverageInfo lineCoverageInfo: linesCoverageInfo){
 			lineCoverageInfo.computeSuspiciousness(passedTestcaseCoverageInfo.size(), failedTestcaseCoverageInfo.size());
