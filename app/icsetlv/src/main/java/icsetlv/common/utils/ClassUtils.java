@@ -35,7 +35,7 @@ public class ClassUtils {
 	public static String getSimpleName(String className) {
 		int idx = className.lastIndexOf(".");
 		if (idx > 0) {
-			return className.substring(idx);
+			return className.substring(idx + 1);
 		}
 		return className;
 	}

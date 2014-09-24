@@ -25,7 +25,7 @@ import sav.common.core.utils.StringUtils;
  * 
  */
 public class VMRunner {
-	public static boolean debug = false;
+	public static boolean debug = true;
 	protected static final String cpToken = "-cp";
 	/*
 	 * from jdk 1.5, we can use new JVM option: -agentlib 

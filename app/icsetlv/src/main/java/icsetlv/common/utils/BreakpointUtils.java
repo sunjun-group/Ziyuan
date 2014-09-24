@@ -8,6 +8,7 @@
 
 package icsetlv.common.utils;
 
+import icsetlv.common.Constants;
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.dto.ClassLocation;
 
@@ -40,8 +41,8 @@ public class BreakpointUtils {
 		return getLocationId(bkp.getClassCanonicalName(), bkp.getLineNo());
 	}
 	
-	public static String getLocationId(String className, int lineNo) {
-		return String.format("%s:%s", className, lineNo);
+	public static String getLocationId(String classPath, int lineNo) {
+		return String.format("%s:%s", classPath.replace(Constants.FILE_SEPARATOR, "."), lineNo);
 	}
 
 	public static <T extends ClassLocation> List<String> toLocationIds(List<T> bkps) {

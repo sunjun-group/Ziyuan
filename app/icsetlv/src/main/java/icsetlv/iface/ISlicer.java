@@ -21,4 +21,5 @@ public interface ISlicer {
 	List<BreakPoint> slice(List<BreakPoint> breakpoints, List<String> junitClassNames)
 			throws Exception;
 	
+	void setAnalyzedClasses(List<String> analyzedClasses);
 }

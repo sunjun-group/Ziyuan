@@ -281,4 +281,9 @@ public class WalaSlicer implements ISlicer {
 		return entrypointMaker.makeEntrypoints();
 	}
 
+	@Override
+	public void setAnalyzedClasses(List<String> analyzedClasses) {
+		//TODO
+	}
+
 }

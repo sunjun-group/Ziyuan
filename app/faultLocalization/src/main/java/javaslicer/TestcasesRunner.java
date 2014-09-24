@@ -46,8 +46,8 @@ public class TestcasesRunner {
 					instance = testClass.getConstructor().newInstance();
 					for (Method method : testMethods) {
 						try {
-							System.out.println("run: " + method.getName());
 							method.invoke(instance);
+							System.out.println("already run: " + method.getName());
 						} catch (Throwable e) {
 							 e.printStackTrace();
 							// ignore all classes cannot run as expected

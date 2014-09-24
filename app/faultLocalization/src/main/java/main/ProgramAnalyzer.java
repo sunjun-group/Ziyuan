@@ -34,6 +34,7 @@ public class ProgramAnalyzer {
 				junitClassNames);
 
 		/* do slicing */
+		slicer.setAnalyzedClasses(testingClasses);
 		List<BreakPoint> causeTraces = slicer.slice(result.getFailureTraces(),
 				junitClassNames);
 

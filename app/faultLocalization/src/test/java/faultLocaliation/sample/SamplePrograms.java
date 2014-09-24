@@ -12,7 +12,7 @@ public class SamplePrograms {
 		{
 			//result = b;
 			x += 6;
-			System.out.println(x);
+			x *= 3;
 			result = a; //wrong assignment
 		}
 		
