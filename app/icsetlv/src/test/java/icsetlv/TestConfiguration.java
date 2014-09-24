@@ -17,11 +17,14 @@ import sav.common.core.utils.StringUtils;
  *
  */
 public class TestConfiguration {
+	public static final String ICSETLV = "icsetlv";
+	public static final String FALTLOCALISATION = "faultLocalization";
+	
 	private static TestConfiguration config;
 	private static final String junitCore = "org.junit.runner.JUnitCore";
-	private String javaHome = System.getProperty("java.home");
-	private String TRUNK;
-	private String junitLib;
+	public String javaHome = System.getProperty("java.home");
+	public String TRUNK;
+	public String junitLib;
 	public String tracerLibPath;
 	public String javaSlicerPath;
 	
@@ -29,9 +32,7 @@ public class TestConfiguration {
 		ResourceBundle res = ResourceBundle.getBundle("test_configuration");
 		TRUNK = res.getString("trunk");
 		junitLib = TRUNK + "/app/icsetlv/src/test/lib/*";
-		tracerLibPath = TRUNK + "/etc/javaslicer/assembly/new/tracer.jar";
-//		tracerLibPath = TRUNK + "/etc/javaslicer/assembly/new/libs/javaslicer-tracer-1.1.1-SNAPSHOT.jar";
-//		javaSlicerPath = TRUNK + "/etc/javaslicer/assembly/new/libs/*";
+		tracerLibPath = TRUNK + "/etc/javaslicer/tracer.jar";
 	}
 	
 	public String getSourcepath(String module) {

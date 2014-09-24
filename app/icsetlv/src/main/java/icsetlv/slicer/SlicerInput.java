@@ -15,19 +15,10 @@ import java.util.List;
  * 
  */
 public class SlicerInput {
-	private ClassLoader classLoader;
 	private String jre;
 	private String appBinFolder;
 	private List<String> appSrcFolder;
 	private List<String[]> classEntryPoints;
-
-	public ClassLoader getClassLoader() {
-		return classLoader;
-	}
-
-	public void setClassLoader(ClassLoader classLoader) {
-		this.classLoader = classLoader;
-	}
 
 	public String getJavaHome() {
 		return jre;

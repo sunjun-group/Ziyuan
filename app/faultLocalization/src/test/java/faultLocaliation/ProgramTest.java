@@ -15,6 +15,7 @@ import faultLocalization.dto.LineCoverageInfo;
 import icsetlv.AbstractTest;
 import icsetlv.BugExpert;
 import icsetlv.IcsetlvInput;
+import icsetlv.TestConfiguration;
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.dto.TcExecResult;
 import icsetlv.common.exception.IcsetlvException;
@@ -26,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javacocoWrapper.JavaCoCo;
-import javaslicer.JavaSlicer;
 import net.sf.javaml.core.Dataset;
 import net.sf.javaml.featureselection.ranking.RecursiveFeatureEliminationSVM;
 
@@ -41,7 +41,7 @@ import sav.common.core.utils.CollectionUtils;
 public class ProgramTest extends AbstractTest {
 	
 	public ProgramTest() {
-		module = FALTLOCALISATION;
+		module = TestConfiguration.FALTLOCALISATION;
 	}
 
 	@Test
@@ -60,26 +60,7 @@ public class ProgramTest extends AbstractTest {
 	
 	@Test
 	public void testIntegrateSlicing() throws Exception {
-		List<BreakPoint> bkps = new ArrayList<BreakPoint>();
-		String clazz = SampleProgramTest.class.getName();
-//		bkps.add(new BreakPoint(clazz, "test1()V", 17));
-		bkps.add(new BreakPoint(clazz, "test2()V", 26));
-//		bkps.add(new BreakPoint(clazz, "test3()V", 35));
-//		bkps.add(new BreakPoint(clazz, "test4()V", 44));
-//		bkps.add(new BreakPoint(clazz, "test5()V", 53));
-		JavaSlicer jSlicer = new JavaSlicer(config.tracerLibPath);
-		VMConfiguration vmConfig = initVmConfig();
-		vmConfig.addClasspath(config.getTarget(FALTLOCALISATION));
-//		vmConfig.addClasspath(config.javaSlicerPath);
-		jSlicer.setVmConfig(vmConfig);
-		List<BreakPoint> result = jSlicer.run(bkps,
-				CollectionUtils.listOf(SampleProgramTest.class.getName()));
-		for (BreakPoint bkp : result) {
-			if (CollectionUtils.existIn(bkp.getClassCanonicalName(), SamplePrograms.class.getName(),
-					SampleProgramTest.class.getName())) {
-				System.out.println(bkp.getId());
-			}
-		}
+			
 	}
 	
 	@Test
@@ -115,7 +96,7 @@ public class ProgramTest extends AbstractTest {
 		input.setConfig(vmConfig);
 		input.setPassTestcases(CollectionUtils.listOf("faultLocaliation.sample.SampleProgramTestPass"));
 		input.setFailTestcases(CollectionUtils.listOf("faultLocaliation.sample.SampleProgramTestFail"));
-		input.getConfig().addClasspath(config.getTestTarget(FALTLOCALISATION));
+		input.getConfig().addClasspath(config.getTestTarget(TestConfiguration.FALTLOCALISATION));
 		return input;
 	}
 	

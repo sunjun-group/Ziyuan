@@ -9,7 +9,6 @@
 package icsetlv.iface;
 
 import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.exception.IcsetlvException;
 
 import java.util.List;
 
@@ -19,7 +18,7 @@ import java.util.List;
  */
 public interface ISlicer {
 
-	List<BreakPoint> slice(List<BreakPoint> breakpoints)
-			throws IcsetlvException;
+	List<BreakPoint> slice(List<BreakPoint> breakpoints, List<String> junitClassNames)
+			throws Exception;
 	
 }

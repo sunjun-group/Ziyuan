@@ -8,11 +8,9 @@
 
 package icsetlv.common.utils;
 
-import icsetlv.common.exception.IcsetlvRuntimeException;
+import japa.parser.ast.body.MethodDeclaration;
 
 import org.apache.commons.lang.StringUtils;
-
-import japa.parser.ast.body.MethodDeclaration;
 
 /**
  * @author LLT
@@ -38,8 +36,7 @@ public class SignatureUtils {
 	public static String extractMethodName(String methodSign) {
 		int endNameIdx = methodSign.indexOf("(");
 		if (endNameIdx < 0) {
-			throw new IcsetlvRuntimeException(
-					"Expected: method signature, Receive: " + methodSign);
+			return methodSign;
 		}
 		String fullMethodName = methodSign.substring(0, endNameIdx);
 		if (fullMethodName.contains(".")) {

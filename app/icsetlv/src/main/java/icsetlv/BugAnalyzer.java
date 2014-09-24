@@ -50,9 +50,16 @@ public class BugAnalyzer implements IBugAnalyzer {
 						execResult.getFailValues(bkp))) {
 					rootCause.add(bkp);
 				} else if (firstRound){
-					List<BreakPoint> sliceResult = manager.getSlicer().slice(executeBkps);
-					allBkps.addAll(sliceResult);
-					firstRound = false;
+					List<BreakPoint> sliceResult;
+					try {
+						//TODO to adapt
+						sliceResult = manager.getSlicer().slice(executeBkps, new ArrayList<String>());
+						allBkps.addAll(sliceResult);
+						firstRound = false;
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 		}

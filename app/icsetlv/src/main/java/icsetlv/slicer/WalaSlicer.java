@@ -52,7 +52,6 @@ import com.ibm.wala.ipa.slicer.Slicer.DataDependenceOptions;
 import com.ibm.wala.ipa.slicer.Statement;
 import com.ibm.wala.ipa.slicer.Statement.Kind;
 import com.ibm.wala.ipa.slicer.StatementWithInstructionIndex;
-import com.ibm.wala.ipa.slicer.thin.CISlicer;
 import com.ibm.wala.properties.WalaProperties;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.ssa.IR;
@@ -82,7 +81,8 @@ public class WalaSlicer implements ISlicer {
 	}
 
 	@Override
-	public List<BreakPoint> slice(List<BreakPoint> breakpoints) throws IcsetlvException {
+	public List<BreakPoint> slice(List<BreakPoint> breakpoints,
+			List<String> junitClassNames) throws Exception {
 		Iterable<Entrypoint> entrypoints = makeEntrypoints(scope.getApplicationLoader(), cha, breakpoints);
 		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
 		CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope);
@@ -145,31 +145,6 @@ public class WalaSlicer implements ISlicer {
 						System.out.println("line: " + src_line_number);
 					}
 				}
-				//System.out.println(s);
-//				if (s.getKind() == Statement.Kind.NORMAL) { // ignore special
-//															// kinds of
-//															// statements
-//					int bcIndex, instructionIndex = ((NormalStatement) s)
-//							.getInstructionIndex();
-//					try {
-//						bcIndex = ((ShrikeBTMethod) s.getNode().getMethod())
-//								.getBytecodeIndex(instructionIndex);
-//						try {
-//							int src_line_number = s.getNode().getMethod()
-//									.getLineNumber(bcIndex);
-//							System.err.println("Source line number = "
-//									+ src_line_number);
-//						} catch (Exception e) {
-//							System.err.println("Bytecode index no good");
-//							System.err.println(e.getMessage());
-//						}
-//					} catch (Exception e) {
-//						System.err
-//								.println("it's probably not a BT method (e.g. it's a fakeroot method)");
-//						System.err.println(e.getMessage());
-//					}
-//				}
-//				System.out.println(s);
 			}
 			for (String key : bkpMap.keySet()) {
 				String[] clzzMethod = key.split(StringUtils.SPACE);

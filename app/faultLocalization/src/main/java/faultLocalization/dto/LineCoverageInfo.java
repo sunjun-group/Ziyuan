@@ -8,6 +8,8 @@
 
 package faultLocalization.dto;
 
+import icsetlv.common.utils.BreakpointUtils;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
@@ -18,9 +20,10 @@ import java.util.Map.Entry;
  *
  */
 public class LineCoverageInfo {
-	private String className;
-	private int lineIndex;
+	private final String className;
+	private final int lineIndex;
 	private float suspiciousness;
+	private String locId;
 	
 	/**
 	 * @return the suspiciousness
@@ -35,6 +38,7 @@ public class LineCoverageInfo {
 	public LineCoverageInfo(String className, int lineIndex){
 		this.className = className;
 		this.lineIndex = lineIndex;
+		locId = BreakpointUtils.getLocationId(className, lineIndex);
 	}
 	
 	public String getClassName() {
@@ -92,6 +96,10 @@ public class LineCoverageInfo {
 			
 			entry.setValue(entry.getValue() + value);
 		}
+	}
+	
+	public String getLocId() {
+		return locId;
 	}
 }
 

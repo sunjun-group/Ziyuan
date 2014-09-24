@@ -10,6 +10,7 @@ package javaslicer;
 
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.exception.IcsetlvException;
+import icsetlv.iface.ISlicer;
 import icsetlv.vm.VMConfiguration;
 
 import java.io.File;
@@ -33,26 +34,29 @@ import de.unisb.cs.st.javaslicer.traceResult.TraceResult;
  * @author LLT
  * 
  */
-public class JavaSlicer {
+public class JavaSlicer implements ISlicer {
 	private JavaSlicerVmRunner vmRunner;
 	private VMConfiguration vmConfig;
 	
-	
-	public JavaSlicer(String tracerJarPath) {
-		this.vmRunner = new JavaSlicerVmRunner(tracerJarPath);
+	public void setTracerJarPath(String tracerJarPath) {
+		vmRunner = new JavaSlicerVmRunner(tracerJarPath);
 	}
-
+	
+	public void setVmConfig(VMConfiguration vmConfig) {
+		this.vmConfig = vmConfig;
+	}
+	
 	/**
 	 * @param vmConfig:
 	 * requires: javaHome, classpaths
 	 */
-	public List<BreakPoint> run(List<BreakPoint> bkps, List<String> testClasses)
+	public List<BreakPoint> slice(List<BreakPoint> bkps, List<String> junitClassNames)
 			throws IcsetlvException, IOException, InterruptedException {
-		File tempFile = File.createTempFile(getTraceFileName(), "trace");
+		File tempFile = File.createTempFile(getTraceFileName(), ".trace");
 		String tempFileName = tempFile.getAbsolutePath();
 		/* run program and create trace file */
 		vmConfig.setLaunchClass(TestcasesRunner.class.getCanonicalName());
-		vmConfig.addProgramArgs(TestcasesRunner.toArgs(testClasses));
+		vmConfig.addProgramArgs(TestcasesRunner.toArgs(junitClassNames));
 		Process process = vmRunner.start(vmConfig, tempFileName);
 		while(true) {
 			try {
@@ -137,11 +141,6 @@ public class JavaSlicer {
 	}
 
 	private String getTraceFileName() {
-		return "test";
+		return "javaSlicer";
 	}
-
-	public void setVmConfig(VMConfiguration vmConfig) {
-		this.vmConfig = vmConfig;
-	}
-	
 }

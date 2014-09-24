@@ -9,7 +9,6 @@
 package icsetlv;
 
 import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.exception.IcsetlvException;
 import icsetlv.slicer.SlicerInput;
 import icsetlv.slicer.WalaSlicer;
 
@@ -26,9 +25,9 @@ public class WalaSlicerTest extends AbstractTest {
 	private TestData type = TestData.FIND_MAX;
 	
 	@Test
-	public void testSlice() throws IcsetlvException {
+	public void testSlice() throws Exception {
 		SlicerInput input = new SlicerInput();
-		input.setAppBinFolder(config.getTestTarget(ICSETLV));
+		input.setAppBinFolder(config.getTestTarget(TestConfiguration.ICSETLV));
 		input.setJre(config.getJavahome());
 		// entry points
 		List<String[]> classEntryPoints = makeEntryPoints();
@@ -37,7 +36,7 @@ public class WalaSlicerTest extends AbstractTest {
 		List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
 		addBreakpoints(breakpoints);
 		WalaSlicer slicer = new WalaSlicer(input);
-		List<BreakPoint> slicingResult = slicer.slice(breakpoints);
+		List<BreakPoint> slicingResult = slicer.slice(breakpoints, new ArrayList<String>());
 		printBkps(slicingResult);
 	}
 

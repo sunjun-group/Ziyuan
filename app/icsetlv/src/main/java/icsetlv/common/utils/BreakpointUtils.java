@@ -9,7 +9,9 @@
 package icsetlv.common.utils;
 
 import icsetlv.common.dto.BreakPoint;
+import icsetlv.common.dto.ClassLocation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +36,20 @@ public class BreakpointUtils {
 		return brkpsMap;
 	}
 	
-	public static String getLocationId(BreakPoint bkp) {
-		return String.format("%s:%s", bkp.getClassCanonicalName(), bkp.getLineNo());
+	public static <T extends ClassLocation>String getLocationId(T bkp) {
+		return getLocationId(bkp.getClassCanonicalName(), bkp.getLineNo());
+	}
+	
+	public static String getLocationId(String className, int lineNo) {
+		return String.format("%s:%s", className, lineNo);
+	}
+
+	public static <T extends ClassLocation> List<String> toLocationIds(List<T> bkps) {
+		List<String> locs = new ArrayList<String>(bkps.size());
+		for (T bkp : bkps) {
+			locs.add(getLocationId(bkp));
+		}
+		return locs;
 	}
 	
 }

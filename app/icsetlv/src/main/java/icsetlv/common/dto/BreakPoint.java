@@ -21,11 +21,8 @@ import java.util.List;
  * @author LLT
  * 
  */
-public class BreakPoint {
+public class BreakPoint extends ClassLocation {
 	private String id;
-	private String classCanonicalName;
-	private String methodSign; // signature
-	private int lineNo = -1;
 	private List<Variable> vars;
 	private int charStart;
 	private int charEnd;
@@ -55,26 +52,6 @@ public class BreakPoint {
 		}
 	}
 	
-	public String getClassCanonicalName() {
-		return classCanonicalName;
-	}
-
-	public int getLineNo() {
-		return lineNo;
-	}
-
-	public void setLineNo(int lineNo) {
-		this.lineNo = lineNo;
-	}
-	
-	public void setClassCanonicalName(String classCanonicalName) {
-		this.classCanonicalName = classCanonicalName;
-	}
-	
-	public void setMethodSign(String sign) {
-		this.methodSign = sign;
-	}
-
 	public List<Variable> getVars() {
 		return vars;
 	}
@@ -92,10 +69,6 @@ public class BreakPoint {
 		return methodSign;
 	}
 	
-	public String getMethodName() {
-		return SignatureUtils.extractMethodName(methodSign);
-	}
-
 	public int getCharStart() {
 		return charStart;
 	}

@@ -23,10 +23,8 @@ import sav.common.core.utils.StringUtils;
  * 
  */
 public class AbstractTest {
-	public static final String ICSETLV = "icsetlv";
-	public static final String FALTLOCALISATION = "faultLocalization";
 	protected static TestConfiguration config = TestConfiguration.getInstance();
-	protected String module = ICSETLV;
+	protected String module = TestConfiguration.ICSETLV;
 	
 	public void print(Object... objs) {
 		System.out.println(StringUtils.spaceJoin(objs));

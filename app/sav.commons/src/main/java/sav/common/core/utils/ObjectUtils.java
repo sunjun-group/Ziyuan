@@ -9,6 +9,7 @@
 package sav.common.core.utils;
 
 
+
 /**
  * @author LLT
  * 
@@ -31,6 +32,10 @@ public class ObjectUtils {
 			}
 		}
 		return true;
+	}
+	
+	public static boolean safeEquals(Object a, Object b) {
+		return a != null && a.equals(b);
 	}
 
 	public static boolean equalsWithNull(Object a, Object b) {

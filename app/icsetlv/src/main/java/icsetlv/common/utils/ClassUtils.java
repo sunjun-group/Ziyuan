@@ -31,4 +31,12 @@ public class ClassUtils {
 				+ className.replace(".", Constants.FILE_SEPARATOR)
 				+ Constants.JAVA_EXT;
 	}
+	
+	public static String getSimpleName(String className) {
+		int idx = className.lastIndexOf(".");
+		if (idx > 0) {
+			return className.substring(idx);
+		}
+		return className;
+	}
 }

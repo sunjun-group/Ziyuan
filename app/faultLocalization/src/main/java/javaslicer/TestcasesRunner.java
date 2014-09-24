@@ -48,12 +48,12 @@ public class TestcasesRunner {
 						try {
 							System.out.println("run: " + method.getName());
 							method.invoke(instance);
-						} catch (Exception e) {
+						} catch (Throwable e) {
 							 e.printStackTrace();
 							// ignore all classes cannot run as expected
 						}
 					}
-				} catch (Exception ex) {
+				} catch (Throwable ex) {
 					System.out.println(String.format(
 							"cannot init %s due to error: %s",
 							testClass.getName(), ex));

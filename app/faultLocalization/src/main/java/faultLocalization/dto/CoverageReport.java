@@ -8,27 +8,35 @@
 
 package faultLocalization.dto;
 
+import faultLocalization.dto.LineCoverageInfo.LineCoverageInfoComparator;
+import icsetlv.common.dto.BreakPoint;
+import icsetlv.common.dto.ClassLocation;
+import icsetlv.common.utils.BreakpointUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-
-import faultLocalization.dto.LineCoverageInfo.LineCoverageInfoComparator;
 
 /**
  * @author khanh
  *
  */
 public class CoverageReport {
-	private HashMap<String, ClassCoverageInAllTestcases> mapClassLineToTestCasesCover = new HashMap<String, ClassCoverageInAllTestcases>();
-	private HashMap<Integer, TestcaseCoverageInfo> passedTestcaseCoverageInfo = new HashMap<Integer, TestcaseCoverageInfo>();
-	private HashMap<Integer, TestcaseCoverageInfo> failedTestcaseCoverageInfo = new HashMap<Integer, TestcaseCoverageInfo>();
+	private Map<String, ClassCoverageInAllTestcases> mapClassLineToTestCasesCover = new HashMap<String, ClassCoverageInAllTestcases>();
+	private Map<Integer, TestcaseCoverageInfo> passedTestcaseCoverageInfo = new HashMap<Integer, TestcaseCoverageInfo>();
+	private Map<Integer, TestcaseCoverageInfo> failedTestcaseCoverageInfo = new HashMap<Integer, TestcaseCoverageInfo>();
+	
+	private List<BreakPoint> failureTraces;
 	
 	private List<String> testingClassNames;
 	
+	
 	public CoverageReport(List<String> testingClassNames){
 		this.testingClassNames = testingClassNames;
+		failureTraces = new ArrayList<BreakPoint>();
 	}
 	
 	public void addInfo(int testcaseIndex, String className, int lineIndex, boolean isPassed, boolean isCovered){
@@ -45,8 +53,9 @@ public class CoverageReport {
 			classCoverage.addInfo(lineIndex, testcaseIndex, isPassed);
 		}
 		
-		//update passedTestcaseCoverageInfo, failedTestcaseCoverageInfo
-		HashMap<Integer, TestcaseCoverageInfo> allTestcasesCoverageInfo = (isPassed)? passedTestcaseCoverageInfo: failedTestcaseCoverageInfo;
+		// update passedTestcaseCoverageInfo, failedTestcaseCoverageInfo
+		Map<Integer, TestcaseCoverageInfo> allTestcasesCoverageInfo = (isPassed) ? passedTestcaseCoverageInfo
+				: failedTestcaseCoverageInfo;
 		TestcaseCoverageInfo testcaseCoverage;
 		if(allTestcasesCoverageInfo.containsKey(testcaseIndex)){
 			testcaseCoverage = allTestcasesCoverageInfo.get(testcaseIndex);
@@ -58,26 +67,7 @@ public class CoverageReport {
 	}
 	
 	public List<LineCoverageInfo> Tarantula(){
-		List<LineCoverageInfo> linesCoverageInfo = new ArrayList<LineCoverageInfo>();
-		
-		for(ClassCoverageInAllTestcases classCoverage: mapClassLineToTestCasesCover.values()){
-			linesCoverageInfo.addAll(classCoverage.getLineCoverageInfo());
-		}
-		
-		//use slicing to remove unrelated lines in linesCoverageInfo
-		//failed test -> where failed assertion -> line -> slicing
-		//
-		
-		for(LineCoverageInfo lineCoverageInfo: linesCoverageInfo){
-			lineCoverageInfo.computeSuspiciousness(passedTestcaseCoverageInfo.size(), failedTestcaseCoverageInfo.size());
-		}
-		
-		Collections.sort(linesCoverageInfo, new LineCoverageInfoComparator());
-		
-		for(LineCoverageInfo lineCoverageInfo: linesCoverageInfo){
-			System.out.println(lineCoverageInfo.toString());
-		}
-		return linesCoverageInfo;
+		return Tarantula(new ArrayList<ClassLocation>());
 	}
 	
 	
@@ -123,5 +113,47 @@ public class CoverageReport {
 		for(Integer failTest: failedTestcaseCoverageInfo.keySet()){
 			getNearestPassedTestcase(failTest);
 		}
+	}
+	
+	public void addFailureTrace(List<BreakPoint> traces) {
+		failureTraces.addAll(traces);
+	}
+	
+	public List<BreakPoint> getFailureTraces() {
+		return failureTraces;
+	}
+
+	public <T extends ClassLocation>List<LineCoverageInfo> Tarantula(List<T> filteredPoints) {
+		List<LineCoverageInfo> linesCoverageInfo = new ArrayList<LineCoverageInfo>();
+
+		List<String> pointLocIds = BreakpointUtils.toLocationIds(filteredPoints);
+		for (ClassCoverageInAllTestcases classCoverage : mapClassLineToTestCasesCover
+				.values()) {
+			if (pointLocIds.isEmpty()) {
+				linesCoverageInfo.addAll(classCoverage.getLineCoverageInfo());
+				continue;
+			}
+			for (LineCoverageInfo lineInfo : classCoverage.getLineCoverageInfo()) {
+				if (pointLocIds.contains(lineInfo.getLocId())) {
+					linesCoverageInfo.add(lineInfo);
+				}
+			}
+		}
+
+		// use slicing to remove unrelated lines in linesCoverageInfo
+		// failed test -> where failed assertion -> line -> slicing
+		//
+		for (LineCoverageInfo lineCoverageInfo : linesCoverageInfo) {
+			lineCoverageInfo.computeSuspiciousness(
+					passedTestcaseCoverageInfo.size(),
+					failedTestcaseCoverageInfo.size());
+		}
+
+		Collections.sort(linesCoverageInfo, new LineCoverageInfoComparator());
+
+		for (LineCoverageInfo lineCoverageInfo : linesCoverageInfo) {
+			System.out.println(lineCoverageInfo.toString());
+		}
+		return linesCoverageInfo;
 	}
 }
