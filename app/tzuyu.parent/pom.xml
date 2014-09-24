@@ -44,7 +44,6 @@
 
 	<modules>
 		<module>../sav.commons</module>
-		<!--module>../tzuyu.commons</module-->
 		<module>../tzuyuEclipsePlugin</module>
 		<module>../tzuyuEclipsePlugin-test</module>
 		<module>../tzuyu.feature</module>

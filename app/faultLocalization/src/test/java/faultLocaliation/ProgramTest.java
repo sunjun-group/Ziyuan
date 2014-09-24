@@ -24,6 +24,7 @@ import icsetlv.variable.TestcasesExecutor;
 import icsetlv.vm.VMConfiguration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javacocoWrapper.JavaCoCo;
@@ -53,8 +54,9 @@ public class ProgramTest extends AbstractTest {
 
 		JavaCoCo javacoco = new JavaCoCo();
 		CoverageReport result = javacoco.run(testingClassNames,
-				SampleProgramTest.class);
+				Arrays.asList(SampleProgramTest.class.getName()));
 
+		System.out.println(result.getFailureTraces());
 		result.Tarantula();
 	}
 	
@@ -71,7 +73,7 @@ public class ProgramTest extends AbstractTest {
 		
 		JavaCoCo javacoco = new JavaCoCo();
 		CoverageReport result = javacoco.run(testingClassNames,
-				SampleProgramTest.class);
+				Arrays.asList(SampleProgramTest.class.getName()));
 		List<LineCoverageInfo> lineCoverageInfo = result.Tarantula();
 		if (lineCoverageInfo.isEmpty()) {
 			return;

@@ -16,13 +16,13 @@ import icsetlv.vm.VMConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 import sav.common.core.utils.CollectionUtils;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.Instruction;
+import de.unisb.cs.st.javaslicer.common.classRepresentation.ReadClass;
 import de.unisb.cs.st.javaslicer.slicing.SliceInstructionsCollector;
 import de.unisb.cs.st.javaslicer.slicing.Slicer;
 import de.unisb.cs.st.javaslicer.slicing.SlicingCriterion;
@@ -120,19 +120,24 @@ public class JavaSlicer implements ISlicer {
 		slicer.process(tracing, criteria, false);
 		Set<Instruction> slice = collector.getDynamicSlice();
 		long endTime = System.nanoTime();
-
-		Instruction[] sliceArray = slice.toArray(new Instruction[slice.size()]);
-		Arrays.sort(sliceArray);
 		List<BreakPoint> result = new ArrayList<BreakPoint>();
-		for (Instruction inst : sliceArray) {
-			BreakPoint bkp = new BreakPoint(inst.getMethod().getReadClass().getName(), 
-					inst.getMethod().getName(), inst.getLineNumber());
-			CollectionUtils.addIfNotNullNotExist(result, bkp);
+		for (Instruction inst : slice) {
+			ReadClass clazz = inst.getMethod().getReadClass();
+			if (appClass(clazz)) {
+				BreakPoint bkp = new BreakPoint(clazz.getName(), 
+						inst.getMethod().getName(), inst.getLineNumber());
+				result.add(bkp);
+				System.out.println(bkp.getId());
+			}
 		}
-
+		
 		System.out.format((Locale) null, "Computation took %.2f seconds.%n",
 				1e-9 * (endTime - startTime));
 		return result;
+	}
+
+	private boolean appClass(ReadClass clazz) {
+		return true;
 	}
 
 	private String buildSlicingCriterionStr(BreakPoint bkp) {

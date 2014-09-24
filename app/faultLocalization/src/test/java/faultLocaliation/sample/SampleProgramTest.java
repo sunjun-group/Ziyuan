@@ -53,13 +53,5 @@ public class SampleProgramTest {
 		assertEquals(max, 3);
 	}
 	
-//	@Test
-//	public void test6() {
-//		SamplePrograms sampleProgram = new SamplePrograms();
-//		int max = sampleProgram.Max(2, 3, 1);
-//		
-//		System.out.println("run test 6");
-//		assertEquals(max, 3);
-//	}
 
 }

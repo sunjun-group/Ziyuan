@@ -32,7 +32,7 @@ public class TestConfiguration {
 		ResourceBundle res = ResourceBundle.getBundle("test_configuration");
 		TRUNK = res.getString("trunk");
 		junitLib = TRUNK + "/app/icsetlv/src/test/lib/*";
-		tracerLibPath = TRUNK + "/etc/javaslicer/tracer.jar";
+		tracerLibPath = TRUNK + "/etc/javaslicer/assembly/tracer.jar";
 	}
 	
 	public String getSourcepath(String module) {
