@@ -6,15 +6,14 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.iface;
+package sav.common.core.iface;
 
-import libsvm.libsvm.svm_print_interface;
 
 /**
  * @author LLT
  * 
  */
-public interface IPrintStream extends svm_print_interface {
+public interface IPrintStream {
 	public void print(byte b);
 
 	public void print(char c);
@@ -28,4 +27,5 @@ public interface IPrintStream extends svm_print_interface {
 	public void println(Object[] e);
 	
 	public IPrintStream writeln(String msg);
+	
 }

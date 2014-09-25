@@ -12,12 +12,17 @@ import icsetlv.common.Constants;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.common.utils.CollectionBuilder;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import sav.common.core.NullPrintStream;
+import sav.common.core.iface.IPrintStream;
 import sav.common.core.utils.StringUtils;
 
 /**
@@ -36,6 +41,7 @@ public class VMRunner {
 	 */
 	protected static final String debugToken = "-agentlib:jdwp=transport=dt_socket,suspend=y,address=%s";
 	protected static final String enableAssertionToken = "-ea";
+	protected IPrintStream out;
 	
 	public static Process startJVM(VMConfiguration config) throws IcsetlvException {
 		VMRunner vmRunner = new VMRunner();
@@ -61,6 +67,40 @@ public class VMRunner {
 			}
 		}
 		return startVm(commands);
+	}
+	
+	public void startAndWaitUntilStop(VMConfiguration config)
+			throws IcsetlvException, IOException, InterruptedException {
+		Process process = start(config);
+		while (true) {
+			try {
+				process.exitValue();
+				break;
+			} catch (IllegalThreadStateException ex) {
+				// means: not yet terminated
+				Thread.currentThread();
+				Thread.sleep(100);
+				printStream(process.getInputStream());
+				printStream(process.getErrorStream());
+			}
+		}
+	}
+	
+	private void printStream(InputStream stream) throws IOException {
+		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
+		String inputLine;
+		IPrintStream out = getOut();
+		while ((inputLine = in.readLine()) != null) {
+			out.println(inputLine);
+		}
+		in.close();
+	}
+
+	private IPrintStream getOut() {
+		if (out == null) {
+			out = NullPrintStream.instance();
+		}
+		return out;
 	}
 
 	protected void buildProgramArgs(VMConfiguration config,
@@ -97,5 +137,9 @@ public class VMRunner {
 
 	private String buildJavaExecArg(VMConfiguration config) {
 		return StringUtils.join(Constants.FILE_SEPARATOR, config.getJavaHome(), "bin", "java");
+	}
+	
+	public void setOut(IPrintStream out) {
+		this.out = out;
 	}
 }

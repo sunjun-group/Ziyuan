@@ -1,6 +1,6 @@
 package tzuyu.engine.instrument;
 
-import tzuyu.engine.iface.IPrintStream;
+import sav.common.core.iface.IPrintStream;
 import tzuyu.engine.utils.HashData;
 
 public class ReferenceArrayFields extends ArrayFields {

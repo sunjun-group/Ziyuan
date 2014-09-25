@@ -27,9 +27,9 @@ public class ProgramAnalyzerTest extends AbstractFLTest {
 	public void testAnalyse() throws Exception {
 		ProgramAnalyzer analyzer = new ProgramAnalyzer(getDataProvider());
 		List<String> testingClasses = Arrays.asList("faultLocaliation.sample.SamplePrograms");
-//		List<String> junitClassNames = Arrays.asList("faultLocaliation.sample.SampleProgramTestPass",
-//				"faultLocaliation.sample.SampleProgramTestFail");
-		List<String> junitClassNames = Arrays.asList("faultLocaliation.sample.SampleProgramTestFail");
+		List<String> junitClassNames = Arrays.asList("faultLocaliation.sample.SampleProgramTestPass",
+				"faultLocaliation.sample.SampleProgramTestFail");
+//		List<String> junitClassNames = Arrays.asList("faultLocaliation.sample.SampleProgramTestFail");
 		List<LineCoverageInfo> result = analyzer.analyse(testingClasses, junitClassNames);
 //		for (LineCoverageInfo info : result) {
 //			System.out.println(info.getLocId());

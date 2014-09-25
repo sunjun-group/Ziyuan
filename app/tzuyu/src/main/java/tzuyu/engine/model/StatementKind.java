@@ -3,7 +3,7 @@ package tzuyu.engine.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import tzuyu.engine.iface.IPrintStream;
+import sav.common.core.iface.IPrintStream;
 
 public abstract class StatementKind {
 	

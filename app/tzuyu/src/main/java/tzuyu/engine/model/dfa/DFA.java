@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import tzuyu.engine.iface.IPrintStream;
+import sav.common.core.iface.IPrintStream;
 import tzuyu.engine.model.Action;
 import tzuyu.engine.model.Trace;
 import tzuyu.engine.utils.Randomness;

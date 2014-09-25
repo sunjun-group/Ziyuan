@@ -3,11 +3,11 @@ package tzuyu.engine.model;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
+import sav.common.core.iface.IPrintStream;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.bool.utils.FormulaNegation;
 import tzuyu.engine.bool.utils.FormulaUtils;
 import tzuyu.engine.bool.utils.Simplifier;
-import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.engine.utils.Randomness;

@@ -1,6 +1,6 @@
 package tzuyu.engine.model.exception;
 
-import tzuyu.engine.iface.IPrintStream;
+import sav.common.core.iface.IPrintStream;
 
 public class TzRuntimeException extends RuntimeException {
 	private static final long serialVersionUID = 8435042626559004241L;

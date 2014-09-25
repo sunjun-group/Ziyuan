@@ -6,13 +6,15 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.iface;
+package sav.common.core;
+
+import sav.common.core.iface.IPrintStream;
 
 /**
  * @author LLT
  * 
  */
-public class NullTzPrintStream implements IPrintStream {
+public class NullPrintStream implements IPrintStream {
 
 	public void print(byte b) {
 	}
@@ -35,6 +37,10 @@ public class NullTzPrintStream implements IPrintStream {
 	@Override
 	public IPrintStream writeln(String msg) {
 		return this;
+	}
+
+	public static IPrintStream instance() {
+		return new NullPrintStream();
 	}
 
 }

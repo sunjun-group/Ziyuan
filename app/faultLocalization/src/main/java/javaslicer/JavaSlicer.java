@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import sav.common.core.SavPrintStream;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.Instruction;
@@ -27,7 +28,6 @@ import de.unisb.cs.st.javaslicer.common.classRepresentation.ReadClass;
 import de.unisb.cs.st.javaslicer.slicing.SliceInstructionsCollector;
 import de.unisb.cs.st.javaslicer.slicing.Slicer;
 import de.unisb.cs.st.javaslicer.slicing.SlicingCriterion;
-import de.unisb.cs.st.javaslicer.traceResult.PrintUniqueUntracedMethods;
 import de.unisb.cs.st.javaslicer.traceResult.ThreadId;
 import de.unisb.cs.st.javaslicer.traceResult.TraceResult;
 
@@ -70,19 +70,12 @@ public class JavaSlicer implements ISlicer {
 		File tempFile = File.createTempFile(getTraceFileName(), ".trace");
 		String tempFileName = tempFile.getAbsolutePath();
 		/* run program and create trace file */
-		vmConfig.setLaunchClass(TestcasesRunner.class.getCanonicalName());
-		vmConfig.addProgramArgs(TestcasesRunner.toArgs(junitClassNames));
-		Process process = vmRunner.start(vmConfig, tempFileName);
-		while(true) {
-			try {
-				process.exitValue();
-				break;
-			} catch (IllegalThreadStateException ex) {
-				// means: not yet terminated
-				Thread.currentThread();
-				Thread.sleep(1000);
-			}
-		}
+		vmConfig.setLaunchClass(TestcasesRunner.class.getCanonicalName())
+			.addProgramArgs(TestcasesRunner.toArgs(junitClassNames));
+		vmRunner.setTraceFilePath(tempFileName);
+		vmRunner.setOut(new SavPrintStream(System.out));
+		vmRunner.startAndWaitUntilStop(vmConfig);
+		
 		return tempFileName;
 	}
 	
@@ -126,10 +119,9 @@ public class JavaSlicer implements ISlicer {
 
 		long startTime = System.nanoTime();
 		Slicer slicer = new Slicer(trace);
-		
 		SliceInstructionsCollector collector = new SliceInstructionsCollector();
 		slicer.addSliceVisitor(collector);
-		slicer.addUntracedCallVisitor(new PrintUniqueUntracedMethods());
+//		slicer.addUntracedCallVisitor(new PrintUniqueUntracedMethods());
 		slicer.process(tracing, criteria, false);
 		Set<Instruction> slice = collector.getDynamicSlice();
 		long endTime = System.nanoTime();

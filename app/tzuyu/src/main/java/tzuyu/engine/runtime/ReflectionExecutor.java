@@ -1,6 +1,6 @@
 package tzuyu.engine.runtime;
 
-import tzuyu.engine.iface.IPrintStream;
+import sav.common.core.iface.IPrintStream;
 
 public final class ReflectionExecutor {
 

@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import sav.common.core.iface.IPrintStream;
 import tzuyu.engine.Tzuyu;
-import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.model.ExecutionOutcome;
 import tzuyu.engine.model.StatementKind;
 import tzuyu.engine.utils.CollectionsExt;

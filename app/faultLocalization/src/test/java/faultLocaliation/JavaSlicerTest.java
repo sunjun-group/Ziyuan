@@ -9,7 +9,6 @@
 package faultLocaliation;
 
 import icsetlv.common.dto.BreakPoint;
-import icsetlv.iface.ISlicer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,14 +27,17 @@ public class JavaSlicerTest extends AbstractFLTest {
 	@Test
 	public void testSlice() throws Exception {
 		IDataProvider dataProvider = getDataProvider();
-		ISlicer slicer = dataProvider.getSlicer();
+		JavaSlicer slicer = (JavaSlicer)dataProvider.getSlicer();
+		slicer.setAnalyzedClasses(Arrays.asList("faultLocaliation.sample.SamplePrograms"));
 		List<BreakPoint> breakpoints = Arrays.asList(new BreakPoint(
 				"faultLocaliation.sample.SampleProgramTest", "test5", 53),
 				new BreakPoint("faultLocaliation.sample.SamplePrograms", 
 						"Max", 26));
 		List<BreakPoint> result = slicer.slice(breakpoints,
 				Arrays.asList("faultLocaliation.sample.SampleProgramTest"));
-		System.out.println(result);
+		for (BreakPoint bkp : result) {
+			System.out.println(bkp);
+		}
 	}
 	
 	@Test

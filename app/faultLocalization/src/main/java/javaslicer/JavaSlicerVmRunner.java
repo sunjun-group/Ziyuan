@@ -8,12 +8,11 @@
 
 package javaslicer;
 
-import java.util.Collection;
-
-import icsetlv.common.exception.IcsetlvException;
 import icsetlv.common.utils.CollectionBuilder;
 import icsetlv.vm.VMConfiguration;
 import icsetlv.vm.VMRunner;
+
+import java.util.Collection;
 
 /**
  * @author LLT
@@ -25,12 +24,6 @@ public class JavaSlicerVmRunner extends VMRunner {
 	
 	public JavaSlicerVmRunner(String tracerJarPath) {
 		this.tracerJarPath = tracerJarPath;
-	}
-	
-	public Process start(VMConfiguration config, String traceFilePath)
-			throws IcsetlvException {
-		this.traceFilePath = traceFilePath;
-		return super.start(config);
 	}
 
 	@Override
@@ -51,4 +44,7 @@ public class JavaSlicerVmRunner extends VMRunner {
 		this.tracerJarPath = tracerJarPath;
 	}
 
+	public void setTraceFilePath(String traceFilePath) {
+		this.traceFilePath = traceFilePath;
+	}
 }

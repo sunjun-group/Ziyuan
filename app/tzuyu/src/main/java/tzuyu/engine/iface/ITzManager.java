@@ -9,6 +9,7 @@
 package tzuyu.engine.iface;
 
 import sav.common.core.iface.ILogger;
+import sav.common.core.iface.IPrintStream;
 import tester.ITCGStrategy;
 import tzuyu.engine.algorithm.iface.Refiner;
 import tzuyu.engine.algorithm.iface.Teacher;

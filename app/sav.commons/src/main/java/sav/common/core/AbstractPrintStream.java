@@ -6,7 +6,9 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.iface;
+package sav.common.core;
+
+import sav.common.core.iface.IPrintStream;
 
 
 /**

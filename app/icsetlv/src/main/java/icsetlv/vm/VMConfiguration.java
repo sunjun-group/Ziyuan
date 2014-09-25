@@ -40,8 +40,9 @@ public class VMConfiguration {
 		return launchClass;
 	}
 
-	public void setLaunchClass(String launchClass) {
+	public VMConfiguration setLaunchClass(String launchClass) {
 		this.launchClass = launchClass;
+		return this;
 	}
 
 	public void addClasspath(String path) {
@@ -87,8 +88,9 @@ public class VMConfiguration {
 		this.programArgs = programArgs;
 	}
 	
-	public void addProgramArgs(String newArg) {
+	public VMConfiguration addProgramArgs(String newArg) {
 		getProgramArgs().add(newArg);
+		return this;
 	}
 
 	public boolean isEnableAssertion() {

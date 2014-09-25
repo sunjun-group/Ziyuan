@@ -3,9 +3,9 @@ package tzuyu.engine.utils;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
-import tzuyu.engine.iface.NullTzPrintStream;
-import tzuyu.engine.iface.IPrintStream;
-import tzuyu.engine.iface.TzPrintStream;
+import sav.common.core.NullPrintStream;
+import sav.common.core.SavPrintStream;
+import sav.common.core.iface.IPrintStream;
 
 /**
  * Various general global settings
@@ -38,12 +38,12 @@ public final class Globals {
 		if (DEV_MODE) {
 			try {
 				tcExStream = new PrintStream(DUMMY_TC_EX_LOG_FILE);
-				tcExPrintStream = new TzPrintStream(tcExStream);
+				tcExPrintStream = new SavPrintStream(tcExStream);
 			} catch (FileNotFoundException e) {
-				tcExPrintStream = new NullTzPrintStream();
+				tcExPrintStream = new NullPrintStream();
 			}
 		} else {
-			tcExPrintStream = new NullTzPrintStream();
+			tcExPrintStream = new NullPrintStream();
 		}
 	}
 

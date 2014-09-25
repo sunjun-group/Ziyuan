@@ -10,11 +10,11 @@ package tzuyu.engine.main;
 
 import java.io.FileWriter;
 
+import sav.common.core.SavPrintStream;
 import sav.common.core.iface.ILogger;
+import sav.common.core.iface.IPrintStream;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
-import tzuyu.engine.iface.IPrintStream;
-import tzuyu.engine.iface.TzPrintStream;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.dfa.DFA;
@@ -50,7 +50,7 @@ public class CommandLineReportHandler extends TzReportHandler {
 	
 	@Override
 	public IPrintStream getOutStream(lstar.IReportHandler.OutputType type) {
-		return new TzPrintStream(System.out);
+		return new SavPrintStream(System.out);
 	}
 
 	@Override

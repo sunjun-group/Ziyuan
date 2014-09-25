@@ -8,7 +8,7 @@
 
 package lstar;
 
-import tzuyu.engine.iface.IPrintStream;
+import sav.common.core.iface.IPrintStream;
 import tzuyu.engine.model.dfa.Alphabet;
 import tzuyu.engine.model.dfa.DFA;
 import tzuyu.engine.model.exception.ReportException;

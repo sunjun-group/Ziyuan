@@ -13,13 +13,13 @@ import java.util.List;
 
 import org.junit.Test;
 
+import sav.common.core.iface.IPrintStream;
 import tzuyu.engine.bool.FieldVar;
 import tzuyu.engine.bool.LIATerm;
 import tzuyu.engine.bool.Operator;
 import tzuyu.engine.bool.formula.LIAAtom;
 import static tzuyu.engine.bool.utils.FormulaUtils.*;
 import tzuyu.engine.bool.utils.Simplifier;
-import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.model.ExecutionOutcome;
 import tzuyu.engine.model.Formula;
 import tzuyu.engine.model.StatementKind;

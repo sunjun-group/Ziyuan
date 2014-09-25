@@ -44,7 +44,7 @@ public class SampleProgramTest {
 		assertEquals(max, 3);
 	}
 	
-//	@Test
+	@Test
 	public void test5() {
 		SamplePrograms sampleProgram = new SamplePrograms();
 		int max = sampleProgram.Max(1, 3, 2);

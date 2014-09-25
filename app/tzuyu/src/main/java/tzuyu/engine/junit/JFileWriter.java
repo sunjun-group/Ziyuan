@@ -15,12 +15,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import sav.common.core.NullPrintStream;
+import sav.common.core.iface.IPrintStream;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzConstants;
-import tzuyu.engine.iface.IPrintStream;
-import tzuyu.engine.iface.NullTzPrintStream;
 import tzuyu.engine.junit.printer.JFileOutputPrinter;
 import tzuyu.engine.junit.printer.JOutputPrinter;
 import tzuyu.engine.junit.printer.JStrOutputPrinter;
@@ -51,7 +51,7 @@ public class JFileWriter {
 	private boolean passTcs;
 	
 	private Map<String, List<List<Sequence>>> createdSequencesAndClasses = new LinkedHashMap<String, List<List<Sequence>>>();
-	private IPrintStream outStream = new NullTzPrintStream();
+	private IPrintStream outStream = new NullPrintStream();
 
 	public JFileWriter(String driverClassName) {
 		this.junitDriverClassName = driverClassName;

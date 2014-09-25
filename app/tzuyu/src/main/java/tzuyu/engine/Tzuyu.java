@@ -13,6 +13,7 @@ import gentest.RandomTester;
 import java.util.List;
 
 import libsvm.libsvm.svm;
+import libsvm.libsvm.svm_print_interface;
 import lstar.IReportHandler.OutputType;
 import lstar.LStar;
 import lstar.LStarException;
@@ -22,13 +23,13 @@ import org.springframework.core.ParameterNameDiscoverer;
 
 import refiner.TzuYuRefiner;
 import sav.common.core.iface.ILogger;
+import sav.common.core.iface.IPrintStream;
 import tester.ITCGStrategy;
 import tester.TzuYuTester;
 import tzuyu.engine.algorithm.iface.Learner;
 import tzuyu.engine.algorithm.iface.Refiner;
 import tzuyu.engine.algorithm.iface.Teacher;
 import tzuyu.engine.algorithm.iface.Tester;
-import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.iface.IReferencesAnalyzer;
 import tzuyu.engine.iface.ITzManager;
 import tzuyu.engine.iface.TzReportHandler;
@@ -63,11 +64,19 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 	private static ILogger<?> logger;
 	private static ParameterNameDiscoverer paramNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
 	
-	public void setReporter(TzReportHandler reporter) {
+	public void setReporter(final TzReportHandler reporter) {
 		this.reporter = reporter;
 		// set print stream for output
 		// svm
-		svm.svm_set_print_string_function(reporter.getOutStream(OutputType.SVM));
+		final IPrintStream svmOutStream = reporter.getOutStream(OutputType.SVM);
+		svm.svm_set_print_string_function(
+				new svm_print_interface() {
+					
+					@Override
+					public void print(String s) {
+						svmOutStream.print(s);
+					}
+				});
 		// system out, or error (output from the tested classes)
 		if (reporter.getSystemOutStream() != null) {
 			System.setOut(reporter.getSystemOutStream());

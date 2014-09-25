@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.iface;
+package sav.common.core;
 
 import java.io.PrintStream;
 
@@ -16,12 +16,12 @@ import sav.common.core.utils.Assert;
  * @author LLT
  * 
  */
-public class TzPrintStream extends AbstractPrintStream {
+public class SavPrintStream extends AbstractPrintStream {
 	private PrintStream out;
 
-	public TzPrintStream(PrintStream out) {
+	public SavPrintStream(PrintStream out) {
 		Assert.notNull(out,
-				"PrintStream can not be null. Use NullTzPrintStream instead!");
+				"PrintStream can not be null. Use NullPrintStream instead!");
 		this.out = out;
 	}
 
