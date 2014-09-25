@@ -8,6 +8,7 @@
 
 package faultLocalization.dto;
 
+import faultLocalization.dto.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
 import icsetlv.common.utils.BreakpointUtils;
 
 import java.util.ArrayList;
@@ -24,13 +25,13 @@ import org.apache.commons.lang.builder.CompareToBuilder;
 public class LineCoverageInfo {
 	private final String className;
 	private final int lineIndex;
-	private float suspiciousness;
+	private double suspiciousness;
 	private final String locId;
 
 	/**
 	 * @return the suspiciousness
 	 */
-	public float getSuspiciousness() {
+	public double getSuspiciousness() {
 		return suspiciousness;
 	}
 
@@ -51,13 +52,16 @@ public class LineCoverageInfo {
 		}
 	}
 
-	public void computeSuspiciousness(int totalPassed, int totalFailed) {
-		float failedRate = failedTestcaseIndexesCover.size() / (float) totalFailed;
-		float passRate = passedTestcaseIndexesCover.size() / (float) totalPassed;
+	public void computeSuspiciousness(int totalPassed, int totalFailed, SuspiciousnessCalculationAlgorithm algorithm) {
+		final SuspiciousnessCalculator calculator = new SuspiciousnessCalculator();
+		calculator.setCoveredAndFailed(failedTestcaseIndexesCover.size());
+		calculator.setCoveredAndPassed(passedTestcaseIndexesCover.size());
+		calculator.setFailed(totalFailed);
+		calculator.setPassed(totalPassed);
 
-		this.suspiciousness = failedRate / (passRate + failedRate);
+		this.suspiciousness = calculator.getSuspiciousness(algorithm);
 	}
-
+	
 	public String toString() {
 		return className + "@" + lineIndex + ":" + suspiciousness;
 	}

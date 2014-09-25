@@ -90,7 +90,7 @@ public class VMRunner {
 		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
 		String inputLine;
 		IPrintStream out = getOut();
-		while ((inputLine = in.readLine()) != null) {
+		while (in.ready() && (inputLine = in.readLine()) != null) {
 			out.println(inputLine);
 		}
 		in.close();

@@ -9,6 +9,7 @@
 package faultLocalization.dto;
 
 import faultLocalization.dto.LineCoverageInfo.LineCoverageInfoComparator;
+import faultLocalization.dto.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.dto.ClassLocation;
 import icsetlv.common.utils.BreakpointUtils;
@@ -137,7 +138,7 @@ public class CoverageReport {
 		//
 		for (LineCoverageInfo lineCoverageInfo : linesCoverageInfo) {
 			lineCoverageInfo.computeSuspiciousness(passedTestcaseCoverageInfo.size(),
-					failedTestcaseCoverageInfo.size());
+					failedTestcaseCoverageInfo.size(), SuspiciousnessCalculationAlgorithm.JACCARD);
 		}
 
 		Collections.sort(linesCoverageInfo, new LineCoverageInfoComparator());

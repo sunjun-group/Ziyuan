@@ -78,7 +78,7 @@ public class ProgramTest extends AbstractTest {
 		if (lineCoverageInfo.isEmpty()) {
 			return;
 		}
-		float maxSpi = lineCoverageInfo.get(0).getSuspiciousness();
+		double maxSpi = lineCoverageInfo.get(0).getSuspiciousness();
 		List<LineCoverageInfo> maxSpiList = new ArrayList<LineCoverageInfo>();
 		for (LineCoverageInfo info : lineCoverageInfo) {
 			if (info.getSuspiciousness() == maxSpi) {
