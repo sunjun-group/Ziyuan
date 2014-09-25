@@ -57,7 +57,7 @@ public class ProgramTest extends AbstractTest {
 				Arrays.asList(SampleProgramTest.class.getName()));
 
 		System.out.println(result.getFailureTraces());
-		result.Tarantula();
+		result.tarantula();
 	}
 	
 	@Test
@@ -74,7 +74,7 @@ public class ProgramTest extends AbstractTest {
 		JavaCoCo javacoco = new JavaCoCo();
 		CoverageReport result = javacoco.run(testingClassNames,
 				Arrays.asList(SampleProgramTest.class.getName()));
-		List<LineCoverageInfo> lineCoverageInfo = result.Tarantula();
+		List<LineCoverageInfo> lineCoverageInfo = result.tarantula();
 		if (lineCoverageInfo.isEmpty()) {
 			return;
 		}

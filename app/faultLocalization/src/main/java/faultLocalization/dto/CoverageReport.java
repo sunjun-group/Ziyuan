@@ -22,113 +22,105 @@ import java.util.Map.Entry;
 
 /**
  * @author khanh
- *
+ * 
  */
 public class CoverageReport {
 	private Map<String, ClassCoverageInAllTestcases> mapClassLineToTestCasesCover = new HashMap<String, ClassCoverageInAllTestcases>();
 	private Map<Integer, TestcaseCoverageInfo> passedTestcaseCoverageInfo = new HashMap<Integer, TestcaseCoverageInfo>();
 	private Map<Integer, TestcaseCoverageInfo> failedTestcaseCoverageInfo = new HashMap<Integer, TestcaseCoverageInfo>();
-	
-	private List<BreakPoint> failureTraces;
-	
-	private List<String> testingClassNames;
-	
-	
-	public CoverageReport(List<String> testingClassNames){
+
+	private final List<BreakPoint> failureTraces = new ArrayList<BreakPoint>();
+
+	private final List<String> testingClassNames;
+
+	public CoverageReport(final List<String> testingClassNames) {
 		this.testingClassNames = testingClassNames;
-		failureTraces = new ArrayList<BreakPoint>();
 	}
-	
-	public void addInfo(int testcaseIndex, String className, int lineIndex, boolean isPassed, boolean isCovered){
-		//update mapClassLineToTestCasesCover
+
+	public void addInfo(final int testcaseIndex, final String className, final int lineIndex,
+			final boolean isPassed, final boolean isCovered) {
+		// update mapClassLineToTestCasesCover
 		if (isCovered) {
-			ClassCoverageInAllTestcases classCoverage;
-			if (mapClassLineToTestCasesCover.containsKey(className)) {
-				classCoverage = mapClassLineToTestCasesCover.get(className);
-			} else {
+			ClassCoverageInAllTestcases classCoverage = mapClassLineToTestCasesCover.get(className);
+			if (classCoverage == null) {
 				classCoverage = new ClassCoverageInAllTestcases(className);
 				mapClassLineToTestCasesCover.put(className, classCoverage);
 			}
 
 			classCoverage.addInfo(lineIndex, testcaseIndex, isPassed);
 		}
-		
+
 		// update passedTestcaseCoverageInfo, failedTestcaseCoverageInfo
-		Map<Integer, TestcaseCoverageInfo> allTestcasesCoverageInfo = (isPassed) ? passedTestcaseCoverageInfo
+		final Map<Integer, TestcaseCoverageInfo> allTestcasesCoverageInfo = (isPassed) ? passedTestcaseCoverageInfo
 				: failedTestcaseCoverageInfo;
-		TestcaseCoverageInfo testcaseCoverage;
-		if(allTestcasesCoverageInfo.containsKey(testcaseIndex)){
-			testcaseCoverage = allTestcasesCoverageInfo.get(testcaseIndex);
-		}else{
+		TestcaseCoverageInfo testcaseCoverage = allTestcasesCoverageInfo.get(testcaseIndex);
+		if (testcaseCoverage == null) {
 			testcaseCoverage = new TestcaseCoverageInfo(testcaseIndex);
 			allTestcasesCoverageInfo.put(testcaseIndex, testcaseCoverage);
 		}
 		testcaseCoverage.addInfo(className, lineIndex, isCovered);
 	}
-	
-	public List<LineCoverageInfo> Tarantula(){
-		return Tarantula(new ArrayList<ClassLocation>());
+
+	public List<LineCoverageInfo> tarantula() {
+		return tarantula(new ArrayList<ClassLocation>());
 	}
-	
-	
+
 	/**
 	 * @param failedTestcaseIndex
-	 * @return return the passed testcase with the spectrum which is nearest compared with the one of the failed testcase
+	 * @return return the passed testcase with the spectrum which is nearest
+	 *         compared with the one of the failed testcase
 	 */
-	public int getNearestPassedTestcase(int failedTestcaseIndex)
-	{
-		HashMap<Integer, Integer> mapPassedTest2Difference = new HashMap<Integer, Integer>();
-		//init value
-		for(Integer passedTest: passedTestcaseCoverageInfo.keySet())
-		{
+	public int getNearestPassedTestcase(final int failedTestcaseIndex) {
+		final Map<Integer, Integer> mapPassedTest2Difference = new HashMap<Integer, Integer>();
+		// init value
+		for (Integer passedTest : passedTestcaseCoverageInfo.keySet()) {
 			mapPassedTest2Difference.put(passedTest, 0);
 		}
-		
-		for(Entry<String, ClassCoverageInAllTestcases> entry: mapClassLineToTestCasesCover.entrySet()){
-			String tempClassName = entry.getKey().replace('/', '.');
-			if(this.testingClassNames.contains(tempClassName))
-			{
-				ClassCoverageInAllTestcases classCoverage = entry.getValue();
-				classCoverage.updateDifference(mapPassedTest2Difference, failedTestcaseIndex);
+
+		for (Entry<String, ClassCoverageInAllTestcases> entry : mapClassLineToTestCasesCover
+				.entrySet()) {
+			final String tempClassName = entry.getKey().replace('/', '.');
+			if (testingClassNames.contains(tempClassName)) {
+				entry.getValue().updateDifference(mapPassedTest2Difference, failedTestcaseIndex);
 			}
 		}
-		
+
 		int minDifference = Integer.MAX_VALUE;
 		int nearestPassedIndex = -1;
-		
-		for(Entry<Integer, Integer> entry : mapPassedTest2Difference.entrySet()){
+
+		for (Entry<Integer, Integer> entry : mapPassedTest2Difference.entrySet()) {
 			Integer difference = entry.getValue();
-			
-			if(difference > 0 &&  difference < minDifference){
+
+			if (difference > 0 && difference < minDifference) {
 				minDifference = entry.getKey();
 				nearestPassedIndex = entry.getKey();
 			}
 		}
-		
+
+		// TODO replace with log4j?
 		System.out.println("nearest " + nearestPassedIndex);
 		return nearestPassedIndex;
 	}
-	
-	public void Test(){
-		for(Integer failTest: failedTestcaseCoverageInfo.keySet()){
+
+	public void test() {
+		for (Integer failTest : failedTestcaseCoverageInfo.keySet()) {
 			getNearestPassedTestcase(failTest);
 		}
 	}
-	
-	public void addFailureTrace(List<BreakPoint> traces) {
+
+	public void addFailureTrace(final List<BreakPoint> traces) {
 		failureTraces.addAll(traces);
 	}
-	
+
 	public List<BreakPoint> getFailureTraces() {
 		return failureTraces;
 	}
 
-	public <T extends ClassLocation>List<LineCoverageInfo> Tarantula(List<T> filteredPoints) {
-		List<LineCoverageInfo> linesCoverageInfo = new ArrayList<LineCoverageInfo>();
+	public <T extends ClassLocation> List<LineCoverageInfo> tarantula(final List<T> filteredPoints) {
+		final List<LineCoverageInfo> linesCoverageInfo = new ArrayList<LineCoverageInfo>();
 
-		List<String> pointLocIds = BreakpointUtils.toLocationIds(filteredPoints);
-		for (ClassCoverageInAllTestcases classCoverage : mapClassLineToTestCasesCover
-				.values()) {
+		final List<String> pointLocIds = BreakpointUtils.toLocationIds(filteredPoints);
+		for (ClassCoverageInAllTestcases classCoverage : mapClassLineToTestCasesCover.values()) {
 			if (pointLocIds.isEmpty()) {
 				linesCoverageInfo.addAll(classCoverage.getLineCoverageInfo());
 				continue;
@@ -144,14 +136,14 @@ public class CoverageReport {
 		// failed test -> where failed assertion -> line -> slicing
 		//
 		for (LineCoverageInfo lineCoverageInfo : linesCoverageInfo) {
-			lineCoverageInfo.computeSuspiciousness(
-					passedTestcaseCoverageInfo.size(),
+			lineCoverageInfo.computeSuspiciousness(passedTestcaseCoverageInfo.size(),
 					failedTestcaseCoverageInfo.size());
 		}
 
 		Collections.sort(linesCoverageInfo, new LineCoverageInfoComparator());
 
 		for (LineCoverageInfo lineCoverageInfo : linesCoverageInfo) {
+			// TODO replace with log4j?
 			System.out.println(lineCoverageInfo.toString());
 		}
 		return linesCoverageInfo;

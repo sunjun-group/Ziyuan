@@ -38,7 +38,7 @@ public class ProgramAnalyzer {
 		List<BreakPoint> causeTraces = slicer.slice(result.getFailureTraces(),
 				junitClassNames);
 
-		return result.Tarantula(causeTraces);
+		return result.tarantula(causeTraces);
 	}
 	
 }

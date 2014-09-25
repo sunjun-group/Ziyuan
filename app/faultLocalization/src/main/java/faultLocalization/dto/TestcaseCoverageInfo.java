@@ -11,8 +11,6 @@ package faultLocalization.dto;
 import java.util.HashMap;
 import java.util.Map;
 
-import faultLocalization.dto.LineCoverageInfo.LineCoverageInfoComparator;
-
 /**
  * @author khanh
  *
