@@ -15,8 +15,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 
 import sav.common.core.iface.ILogger;
+import sav.common.core.iface.IPrintStream;
 import tzuyu.engine.TzClass;
-import tzuyu.engine.iface.IPrintStream;
 import tzuyu.engine.iface.TzReportHandler;
 import tzuyu.engine.model.TzuYuAlphabet;
 import tzuyu.engine.model.dfa.DFA;

@@ -4,7 +4,6 @@
 	<groupId>sav-projects</groupId>
 	<artifactId>sav.commons</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<description>	</description>
 
 	<properties>
 		<commons-lang-version>2.6</commons-lang-version>
