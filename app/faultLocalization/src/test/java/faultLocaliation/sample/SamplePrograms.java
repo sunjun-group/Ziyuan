@@ -2,6 +2,16 @@ package faultLocaliation.sample;
 
 public class SamplePrograms {
 	
+	public boolean Check(int a, int b, int c, int result){
+		return (result >= a && result >= b && result >= c && (result == a || result == b || result == c));
+	}
+	
+	public void test() {
+		int a = 1;
+		int b = 2;
+		int c = 3;
+		
+	}
 	
 	public int Max(int a, int b, int c)
 	{
@@ -25,4 +35,5 @@ public class SamplePrograms {
 		}
 		return result;
 	}
+
 }

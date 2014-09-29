@@ -19,7 +19,6 @@ import sav.common.core.utils.StringUtils;
 public class CommandLineLogger extends sav.common.core.Logger<CommandLineLogger> {
 	private static final Logger logger = Logger.getRootLogger();
 	private static final CommandLineLogger instance = new CommandLineLogger(); 
-	public static boolean debug;
 	
 	public static CommandLineLogger instance() {
 		return instance;
@@ -53,11 +52,6 @@ public class CommandLineLogger extends sav.common.core.Logger<CommandLineLogger>
 	@Override
 	protected void logEx(Exception ex, Enum<?> type) {
 		logEx(ex, type == null ? "" : type.name());
-	}
-
-	@Override
-	protected boolean isDebug() {
-		return debug;
 	}
 
 	@Override

@@ -15,6 +15,8 @@ import main.ProgramAnalyzer;
 
 import org.junit.Test;
 
+import sav.common.core.Logger;
+
 import faultLocalization.dto.LineCoverageInfo;
 
 /**
@@ -29,11 +31,7 @@ public class ProgramAnalyzerTest extends AbstractFLTest {
 		List<String> testingClasses = Arrays.asList("faultLocaliation.sample.SamplePrograms");
 		List<String> junitClassNames = Arrays.asList("faultLocaliation.sample.SampleProgramTestPass",
 				"faultLocaliation.sample.SampleProgramTestFail");
-//		List<String> junitClassNames = Arrays.asList("faultLocaliation.sample.SampleProgramTestFail");
 		List<LineCoverageInfo> result = analyzer.analyse(testingClasses, junitClassNames);
-//		for (LineCoverageInfo info : result) {
-//			System.out.println(info.getLocId());
-//		}
 	}
 
 	

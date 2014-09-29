@@ -17,8 +17,12 @@ import sav.common.core.utils.StringUtils;
 public abstract class Logger<T extends Logger<T>> {
 	/* TODO - nice to have: better manage logger if having time */
 	private static Logger<?> defaultLogger;
+	public static boolean debug;
 	
 	public static Logger<?> getDefaultLogger() {
+		if (defaultLogger == null) {
+			return CommandLineLogger.instance();
+		}
 		return defaultLogger;
 	}
 	
@@ -52,5 +56,7 @@ public abstract class Logger<T extends Logger<T>> {
 		}
 	}
 
-	protected abstract boolean isDebug();
+	protected boolean isDebug() {
+		return debug;
+	}
 }

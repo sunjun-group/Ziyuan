@@ -21,11 +21,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import sav.common.core.Logger;
+
 /**
  * @author khanh
  * 
  */
 public class CoverageReport {
+	private Logger<?> logger = Logger.getDefaultLogger();
 	private Map<String, ClassCoverageInAllTestcases> mapClassLineToTestCasesCover = new HashMap<String, ClassCoverageInAllTestcases>();
 	private Map<Integer, TestcaseCoverageInfo> passedTestcaseCoverageInfo = new HashMap<Integer, TestcaseCoverageInfo>();
 	private Map<Integer, TestcaseCoverageInfo> failedTestcaseCoverageInfo = new HashMap<Integer, TestcaseCoverageInfo>();
@@ -98,8 +101,7 @@ public class CoverageReport {
 			}
 		}
 
-		// TODO replace with log4j?
-		System.out.println("nearest " + nearestPassedIndex);
+		logger.debug("nearest " + nearestPassedIndex);
 		return nearestPassedIndex;
 	}
 

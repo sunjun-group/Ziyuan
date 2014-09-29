@@ -8,18 +8,28 @@
 
 package faultLocaliation;
 
+import icsetlv.AbstractTest;
+import icsetlv.TestConfiguration;
+
 import java.util.Arrays;
 import java.util.List;
 
 import main.IDataProvider;
-import icsetlv.AbstractTest;
-import icsetlv.TestConfiguration;
+
+import org.junit.BeforeClass;
+
+import sav.common.core.Logger;
 
 /**
  * @author LLT
  *
  */
 public class AbstractFLTest extends AbstractTest {
+	
+	@BeforeClass
+	public static void setup() {
+		Logger.debug = true;
+	}
 	
 	protected IDataProvider getDataProvider() {
 		return new MockDataProvider() {
