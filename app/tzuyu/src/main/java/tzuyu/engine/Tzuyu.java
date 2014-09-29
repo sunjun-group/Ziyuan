@@ -22,7 +22,7 @@ import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 
 import refiner.TzuYuRefiner;
-import sav.common.core.iface.ILogger;
+import sav.common.core.Logger;
 import sav.common.core.iface.IPrintStream;
 import tester.ITCGStrategy;
 import tester.TzuYuTester;
@@ -61,7 +61,7 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 	private TzClass project;
 	private TzReportHandler reporter;
 	private IPrintStream tzOut;
-	private static ILogger<?> logger;
+	private static Logger<?> logger;
 	private static ParameterNameDiscoverer paramNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
 	
 	public void setReporter(final TzReportHandler reporter) {
@@ -177,15 +177,15 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 	}
 	
 	@Override
-	public ILogger<?> getLogger() {
+	public Logger<?> getLogger() {
 		return logger;
 	}
 	
-	public static ILogger<?> getLog() {
+	public static Logger<?> getLog() {
 		return logger;
 	}
 	
-	public static void setLogger(ILogger<?> logger) {
+	public static void setLogger(Logger<?> logger) {
 		Tzuyu.logger = logger;
 	}
 

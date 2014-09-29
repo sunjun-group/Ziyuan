@@ -14,7 +14,7 @@ import java.io.PrintStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 
-import sav.common.core.iface.ILogger;
+import sav.common.core.Logger;
 import sav.common.core.iface.IPrintStream;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.iface.TzReportHandler;
@@ -117,7 +117,7 @@ public class GenTestReporter extends TzReportHandler {
 	}
 	
 	@Override
-	public ILogger<?> getLogger() {
+	public Logger<?> getLogger() {
 		return PluginLogger.getLogger();
 	}
 	

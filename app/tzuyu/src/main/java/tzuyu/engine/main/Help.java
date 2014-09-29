@@ -6,6 +6,7 @@ import static tzuyu.engine.main.Option.OptionType.OBJECT_TO_INTEGER;
 import static tzuyu.engine.main.Option.OptionType.OUTPUT;
 import static tzuyu.engine.main.Option.OptionType.TARGET;
 import static tzuyu.engine.main.Option.OptionType.TEST_PERS_QUERY;
+import sav.common.core.CommandLineLogger;
 import tzuyu.engine.main.Command.CommandType;
 import tzuyu.engine.utils.Globals;
 

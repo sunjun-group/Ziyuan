@@ -77,20 +77,29 @@ public class VMRunner {
 				process.exitValue();
 				break;
 			} catch (IllegalThreadStateException ex) {
+				printStream(process.getInputStream());
+				printStream(process.getErrorStream());
 				// means: not yet terminated
 				Thread.currentThread();
 				Thread.sleep(100);
-				printStream(process.getInputStream());
-				printStream(process.getErrorStream());
 			}
 		}
 	}
 	
 	private void printStream(InputStream stream) throws IOException {
+		try {
+			stream.available();
+		} catch (IOException ex) {
+			// stream closed already!
+			return;
+		}
 		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
 		String inputLine;
 		IPrintStream out = getOut();
-		while (in.ready() && (inputLine = in.readLine()) != null) {
+		/* Note: The input stream must be read if available to be closed, 
+		 * otherwise, the process will never end. So, keep doing this even if 
+		 * the printStream is not set */
+		while ((inputLine = in.readLine()) != null) {
 			out.println(inputLine);
 		}
 		in.close();

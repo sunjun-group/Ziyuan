@@ -7,6 +7,7 @@
 
 	<properties>
 		<commons-lang-version>2.6</commons-lang-version>
+		<log4j-version>1.2.17</log4j-version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -15,12 +16,21 @@
 				<artifactId>commons-lang</artifactId>
 				<version>${commons-lang-version}</version>
 			</dependency>
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>${log4j-version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
 		</dependency>
 	</dependencies>
 </project>

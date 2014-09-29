@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import sav.common.core.CommandLineLogger;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzMethod;

@@ -9,14 +9,13 @@
 
 	<properties>
 		<tycho-version>0.21.0</tycho-version>
-		<log4j-version>1.2.17</log4j-version>
 		<junit-version>4.11</junit-version>
 		<commons-lang-version>2.6</commons-lang-version>
 		<spring-core-version>4.0.3.RELEASE</spring-core-version>
-		<!-- <graphstream-version>1.2</graphstream-version> -->
 
 		<!-- for icsetlv -->
 		<toolsjar>${java.home}/../lib/tools.jar</toolsjar>
+		<toolsjar-version>${java.version}</toolsjar-version>
 		<commons-beanutils-version>1.9.1</commons-beanutils-version>
 		<javaparser-version>1.0.11</javaparser-version>
 		<wala-version>1.3.4-SNAPSHOT</wala-version>
@@ -26,7 +25,6 @@
 		<tzuyu.libs>${basedir}/../tzuyuEclipsePlugin/libs</tzuyu.libs>
 		<jacoco-version>0.7.1.201405082137</jacoco-version>
 		<javaslicer-version>20101004</javaslicer-version>
-		
 	</properties>
 
 	<repositories>
@@ -55,6 +53,15 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
@@ -95,11 +102,6 @@
 			</dependency>
 			<!-- for tzuyu -->
 			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>${log4j-version}</version>
-			</dependency>
-			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>${junit-version}</version>
@@ -119,7 +121,7 @@
 			<dependency>
 				<groupId>com.sun</groupId>
 				<artifactId>tools</artifactId>
-				<version>${java.version}</version>
+				<version>${toolsjar-version}</version>
 				<scope>system</scope>
 				<systemPath>${toolsjar}</systemPath>
 			</dependency>
@@ -169,46 +171,26 @@
 				<artifactId>commons-cli</artifactId>
 				<version>1.2</version>
 			</dependency>
-<!-- 			<dependency> -->
-<!-- 				<groupId>de.javaslicer</groupId> -->
-<!-- 				<artifactId>slicer</artifactId> -->
-<!-- 				<version>${javaslicer-version}</version> -->
-<!-- 			</dependency> -->
-<!-- 			<dependency> -->
-<!-- 				<groupId>de.javaslicer</groupId> -->
-<!-- 				<artifactId>tracer</artifactId> -->
-<!-- 				<version>${javaslicer-version}</version> -->
-<!-- 			</dependency> -->
-<!-- 			<dependency> -->
-<!-- 				<groupId>de.javaslicer</groupId> -->
-<!-- 				<artifactId>traceReader</artifactId> -->
-<!-- 				<version>${javaslicer-version}</version> -->
-<!-- 			</dependency> -->
-<!-- 			<dependency> -->
-<!-- 				<groupId>de.javaslicer</groupId> -->
-<!-- 				<artifactId>visualize</artifactId> -->
-<!-- 				<version>${javaslicer-version}</version> -->
-<!-- 			</dependency> -->
-            <dependency>
-                <groupId>de.unisb.cs.st</groupId>
-                <artifactId>slicer</artifactId>
-                <version>${javaslicer-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.unisb.cs.st</groupId>
-                <artifactId>tracer</artifactId>
-                <version>${javaslicer-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.unisb.cs.st</groupId>
-                <artifactId>traceReader</artifactId>
-                <version>${javaslicer-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.unisb.cs.st</groupId>
-                <artifactId>visualize</artifactId>
-                <version>${javaslicer-version}</version>
-            </dependency>
+			<dependency>
+				<groupId>de.unisb.cs.st</groupId>
+				<artifactId>slicer</artifactId>
+				<version>${javaslicer-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>de.unisb.cs.st</groupId>
+				<artifactId>tracer</artifactId>
+				<version>${javaslicer-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>de.unisb.cs.st</groupId>
+				<artifactId>traceReader</artifactId>
+				<version>${javaslicer-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>de.unisb.cs.st</groupId>
+				<artifactId>visualize</artifactId>
+				<version>${javaslicer-version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 </project>

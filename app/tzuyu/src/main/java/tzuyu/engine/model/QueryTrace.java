@@ -66,7 +66,7 @@ public class QueryTrace {
 	 */
 	public Variable getVariableForStatement(int queryIndex, int varIndex) {
 		int reverseQueryIndex = query.size() - 1 - queryIndex;
-		Tzuyu.getLog().debug(this, queryIndex, varIndex);
+//		Tzuyu.getLog().debug(this, queryIndex, varIndex);
 		return sequence.getVariableSequence(reverseQueryIndex, varIndex);
 	}
 

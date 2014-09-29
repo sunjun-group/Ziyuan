@@ -12,8 +12,8 @@ import static tzuyu.engine.TzConstants.*;
 
 import java.io.File;
 
+import sav.common.core.CommandLineLogger;
 import sav.common.core.utils.StringUtils;
-import tzuyu.engine.main.CommandLineLogger;
 import tzuyu.engine.utils.Globals;
 import tzuyu.engine.utils.PrimitiveGenerator.PrimitiveGeneratorConfig;
 

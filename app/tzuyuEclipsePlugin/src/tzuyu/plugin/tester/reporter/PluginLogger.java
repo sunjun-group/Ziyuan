@@ -11,9 +11,8 @@ package tzuyu.plugin.tester.reporter;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import sav.common.core.iface.ILogger;
+import sav.common.core.Logger;
 import sav.common.core.utils.StringUtils;
-import tzuyu.engine.iface.TzAbstractLogger;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.commons.constants.Messages;
 import tzuyu.plugin.commons.utils.IStatusUtils;
@@ -22,8 +21,7 @@ import tzuyu.plugin.commons.utils.IStatusUtils;
  * @author LLT
  * for logging in plugin.
  */
-public class PluginLogger extends TzAbstractLogger<PluginLogger> implements
-		ILogger<PluginLogger> {
+public class PluginLogger extends Logger<PluginLogger> {
 	private static boolean debug = TzuyuPlugin.debug();
 	private static final Messages msg = TzuyuPlugin.getMessages();
 	private static final PluginLogger instance = new PluginLogger();

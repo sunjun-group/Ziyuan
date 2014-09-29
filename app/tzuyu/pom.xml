@@ -11,11 +11,6 @@
 	<artifactId>tzuyu</artifactId>
 
 	<dependencies>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-		</dependency>
-
 		<!-- for testcase generation -->
 		<dependency>
 			<groupId>junit</groupId>

@@ -13,7 +13,7 @@ import java.io.PrintStream;
 import java.util.List;
 
 import lstar.IReportHandler;
-import sav.common.core.iface.ILogger;
+import sav.common.core.Logger;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.junit.JFileWriter;
@@ -71,7 +71,7 @@ public abstract class TzReportHandler implements IReportHandler<TzuYuAlphabet>{
 		return Globals.tcExStream;
 	}
 	
-	public abstract ILogger<?> getLogger();
+	public abstract Logger<?> getLogger();
 
 	public boolean isInterrupted() {
 		return false;

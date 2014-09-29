@@ -6,23 +6,20 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.engine.main;
+package sav.common.core;
 
 import org.apache.log4j.Logger;
 
-import sav.common.core.iface.ILogger;
 import sav.common.core.utils.StringUtils;
-import tzuyu.engine.iface.TzAbstractLogger;
-import tzuyu.engine.utils.Globals;
 
 /**
  * @author LLT
  *
  */
-public class CommandLineLogger extends TzAbstractLogger<CommandLineLogger>
-		implements ILogger<CommandLineLogger> {
+public class CommandLineLogger extends sav.common.core.Logger<CommandLineLogger> {
 	private static final Logger logger = Logger.getRootLogger();
 	private static final CommandLineLogger instance = new CommandLineLogger(); 
+	public static boolean debug;
 	
 	public static CommandLineLogger instance() {
 		return instance;
@@ -59,14 +56,14 @@ public class CommandLineLogger extends TzAbstractLogger<CommandLineLogger>
 	}
 
 	@Override
-	public void debug(String msg) {
-		if (Globals.DEBUG) {
-			info(msg);
-		}
+	protected boolean isDebug() {
+		return debug;
 	}
 
 	@Override
-	protected boolean isDebug() {
-		return Globals.DEBUG;
+	public void debug(String msg) {
+		if (debug) {
+			info(msg);
+		}
 	}
 }

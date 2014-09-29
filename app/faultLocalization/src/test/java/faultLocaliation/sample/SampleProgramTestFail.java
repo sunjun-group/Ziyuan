@@ -41,6 +41,6 @@ public class SampleProgramTestFail {
 		int max = sampleProgram.Max(3, 8, 2);
 		
 		System.out.println("run test 7");
-		assertEquals(max, 3);
+		assertEquals(max, 8);
 	}
 }
