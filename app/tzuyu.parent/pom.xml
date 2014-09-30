@@ -91,6 +91,13 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>sav-projects</groupId>
+				<artifactId>sav.commons</artifactId>
+				<type>test-jar</type>
+				<scope>test</scope>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>tzuyu-project</groupId>
 				<artifactId>tzuyu</artifactId>
 				<version>${project.version}</version>

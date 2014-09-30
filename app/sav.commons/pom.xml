@@ -9,6 +9,24 @@
 		<commons-lang-version>2.6</commons-lang-version>
 		<log4j-version>1.2.17</log4j-version>
 	</properties>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.5</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
