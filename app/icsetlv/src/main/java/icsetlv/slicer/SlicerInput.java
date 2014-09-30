@@ -8,6 +8,7 @@
 
 package icsetlv.slicer;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -15,6 +16,7 @@ import java.util.List;
  * 
  */
 public class SlicerInput {
+	private static final String JRE_FOLDER = "jre";
 	private String jre;
 	private String appBinFolder;
 	private List<String> appSrcFolder;
@@ -25,7 +27,14 @@ public class SlicerInput {
 	}
 
 	public void setJre(String javaHome) {
-		this.jre = javaHome + "\\jre";
+		// TODO Check documentation here:
+		// http://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
+		// In short: java.home system variable already points to jre folder
+		if (javaHome.contains(JRE_FOLDER)) {
+			this.jre = javaHome;
+		} else {			
+			this.jre = javaHome + File.separator + "jre";
+		}
 	}
 
 	public String getAppBinFolder() {

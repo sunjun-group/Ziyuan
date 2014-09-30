@@ -58,10 +58,6 @@ public class TestConfiguration {
 		return javaHome;
 	}
 	
-	public String getJreFolder() {
-		return getJavahome() + "/jre";
-	}
-
 	public String getJunitcore() {
 		return junitCore;
 	}
