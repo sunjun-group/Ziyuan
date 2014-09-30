@@ -100,6 +100,13 @@
 				<artifactId>icsetlv</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>icsetlv</artifactId>
+				<type>test-jar</type>
+				<scope>test</scope>
+				<version>${project.version}</version>
+			</dependency>
 			<!-- for tzuyu -->
 			<dependency>
 				<groupId>junit</groupId>
