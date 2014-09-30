@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE_PATH=.
+BASE_PATH=$WORKSPACE
 echo BASE_PATH = $BASE_PATH
 
 export TRUNK=$BASE_PATH
