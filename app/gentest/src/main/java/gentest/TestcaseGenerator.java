@@ -7,7 +7,7 @@ package gentest;
 import gentest.data.LocalVariable;
 import gentest.data.MethodCall;
 import gentest.data.Sequence;
-import gentest.data.statement.Rmethod;
+import gentest.data.statement.RqueryMethod;
 import gentest.data.variable.ISelectedVariable;
 
 import java.lang.reflect.Method;
@@ -46,25 +46,30 @@ public class TestcaseGenerator {
 			throws SavException {
 		Sequence seq = new Sequence();
 		refresh(seq);
+		/* append sequence for each method */
 		for (int i = 0; i < methods.size(); i++) {
 			MethodCall method = methods.get(i);
 			/* prepare method receiver */
 			LocalVariable receiver = seq.getReceiver(method.getDeclaringType());
 			if (receiver == null) {
+				/* if the instance of method receiver still didnot exist in the sequence,
+				 * initialize one */
 				ISelectedVariable param = parameterSelector.selectParam(
 						method.getDeclaringType(), seq.getStmtsSize(),
 						seq.getVarsSize());
 				seq.appendReceiver(param, method.getDeclaringType());
 				executor.executeReceiver(param);
 			}
+			/* select parameters for methods and append statements 
+			 * which initializes those values into the sequence */
 			List<ISelectedVariable> selectParams = selectParams(method);
 			int[] inVars = new int[selectParams.size()];
 			for (int j = 0; j < selectParams.size(); j++) {
 				ISelectedVariable param = selectParams.get(j);
 				inVars[j] = param.getReturnVarId();
 			}
-			Rmethod rmethod = Rmethod.of(method.getMethod(),
-					seq.getReceiver(method.getDeclaringType()).getVarId());
+			RqueryMethod rmethod = new RqueryMethod(method, seq.getReceiver(
+					method.getDeclaringType()).getVarId());
 			rmethod.setInVarIds(inVars);
 			seq.appendMethodExecStmts(rmethod, selectParams);
 			if (!executor.execute(rmethod, selectParams)) {

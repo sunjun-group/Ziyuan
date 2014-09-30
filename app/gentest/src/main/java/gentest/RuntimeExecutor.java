@@ -6,6 +6,7 @@ package gentest;
 import gentest.data.Sequence;
 import gentest.data.statement.RAssignment;
 import gentest.data.statement.RConstructor;
+import gentest.data.statement.REvaluationMethod;
 import gentest.data.statement.Rmethod;
 import gentest.data.statement.Statement;
 import gentest.data.statement.StatementVisitor;
@@ -14,6 +15,8 @@ import gentest.data.variable.ISelectedVariable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+
+import junit.framework.AssertionFailedError;
 
 import sav.common.core.utils.Assert;
 
@@ -99,7 +102,7 @@ public class RuntimeExecutor implements StatementVisitor {
 	}
 	
 	@Override
-	public void visit(Rmethod stmt) throws IllegalArgumentException,
+	public void visitRmethod(Rmethod stmt) throws IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException {
 		List<Object> inputs = new ArrayList<Object>(stmt.getInVarIds().length);
 		for (int var : stmt.getInVarIds()) {
@@ -117,6 +120,15 @@ public class RuntimeExecutor implements StatementVisitor {
 		}
 	}
 	
+	@Override
+	public void visit(REvaluationMethod stmt) throws IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException {
+		visitRmethod(stmt);
+		if (!Boolean.TRUE.equals(data.getExecData(stmt.getOutVarId()))) {
+			throw new AssertionFailedError("Assert true fail");
+		}
+	}
+	
 	/*----------*/
 	public boolean isSuccessful() {
 		Assert.assertTrue(successful != null);
@@ -126,5 +138,4 @@ public class RuntimeExecutor implements StatementVisitor {
 	public Sequence getSequence() {
 		return sequence;
 	}
-
 }

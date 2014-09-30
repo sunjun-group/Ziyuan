@@ -8,7 +8,6 @@
 
 package icsetlv.vm;
 
-import icsetlv.common.Constants;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.common.utils.CollectionBuilder;
 
@@ -21,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import sav.common.core.Constants;
 import sav.common.core.NullPrintStream;
 import sav.common.core.iface.IPrintStream;
 import sav.common.core.utils.StringUtils;

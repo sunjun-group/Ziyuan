@@ -18,6 +18,15 @@ import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
+ * VariableId : variable Ids are only used for Local variables using in the sequence,
+ * from localVariables to method parameter, receiver, and output of
+ * the method.
+ * VariableId is actually the index of a localVariable in sequence's localVariables list.
+ * therefore, a variableId is valid iff there is a localVariables at that index in sequence local variables. 
+ * Except for methodcall, variableId for each statement will be set at initialized time,
+ * 		 based on the last indices of stored lists in the sequence,
+ * 		not when it is attached to the sequence.
+ * For methodCall statement, its outputVarId will be set at the attaching time. 
  */
 public class Sequence {
 	private List<LocalVariable> localVariables;
@@ -74,11 +83,7 @@ public class Sequence {
 	public void setStmts(List<Statement> stmts) {
 		this.stmts = stmts;
 	}
-	
-	public int newVarId() {
-		return localVariables.size();
-	}
-	
+
 	public Map<Class<?>, List<LocalVariable>> getTypeVariableMap() {
 		return typeVariableMap;
 	}
@@ -105,4 +110,14 @@ public class Sequence {
 		append(rmethod);
 	}
 
+	@SuppressWarnings("unchecked")
+	public <T extends Statement>List<T> getStatementByType(Enum<?> type) {
+		List<T> result = new ArrayList<T>();
+		for (Statement stmt : stmts) {
+			if (stmt.getKind() == type) {
+				result.add((T) stmt);
+			}
+		}
+		return result;
+	}
 }

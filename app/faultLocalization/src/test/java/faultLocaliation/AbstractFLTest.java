@@ -9,7 +9,6 @@
 package faultLocaliation;
 
 import icsetlv.AbstractTest;
-import icsetlv.TestConfiguration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +16,8 @@ import java.util.List;
 import main.IDataProvider;
 
 import org.junit.BeforeClass;
+
+import commons.TestConfiguration;
 
 import sav.common.core.Logger;
 

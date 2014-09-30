@@ -16,8 +16,8 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
-import analyzer.SignatureUtils;
 
+import sav.common.core.utils.SignatureUtils;
 import tzuyu.engine.model.exception.TzRuntimeException;
 import tzuyu.plugin.commons.exception.PluginException;
 

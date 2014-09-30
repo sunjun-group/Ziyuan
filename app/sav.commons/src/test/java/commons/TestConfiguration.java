@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package icsetlv;
+package commons;
 
 import java.util.ResourceBundle;
 
@@ -35,7 +35,7 @@ public class TestConfiguration {
 		tracerLibPath = TRUNK + "/etc/javaslicer/assembly/tracer.jar";
 	}
 	
-	public String getSourcepath(String module) {
+	public String getTestScrPath(String module) {
 		return StringUtils.join("", TRUNK, "/app/", module, "/src/test/java");
 	}
 	

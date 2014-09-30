@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package analyzer;
+package sav.common.core.utils;
 
 import java.lang.reflect.Method;
 

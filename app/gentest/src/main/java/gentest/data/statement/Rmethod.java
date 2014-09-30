@@ -11,15 +11,22 @@ import java.lang.reflect.Method;
  *
  */
 public class Rmethod extends Statement {
+	private Class<?> declaringType;
 	private Method method;
-	private int receiverVarId; // varId of declared class
+	private final int receiverVarId; // varId of declared class
+	
+	public Rmethod(Method staticMethod) {
+		super(RStatementKind.METHOD_INVOKE);
+		this.method = staticMethod;
+		receiverVarId = INVALID_VAR_ID;
+	}
 	
 	public Rmethod(Method method, int scopeId) {
 		super(RStatementKind.METHOD_INVOKE);
 		this.method = method;
 		this.receiverVarId = scopeId;
 	}
-
+	
 	public static Rmethod of(Method method, int scopeId) {
 		return new Rmethod(method, scopeId);
 	}
@@ -39,10 +46,22 @@ public class Rmethod extends Statement {
 	public Method getMethod() {
 		return method;
 	}
-
+	
 	@Override
 	public void accept(StatementVisitor visitor) throws Throwable {
-		visitor.visit(this);
+		visitor.visitRmethod(this);
+	}
+	
+	@Override
+	public boolean hasOutputVar() {
+		return getReturnType() != Void.class;
+	}
+	
+	public Class<?> getDeclaringType() {
+		if (declaringType == null) {
+			declaringType = method.getDeclaringClass();
+		}
+		return declaringType;
 	}
 
 }

@@ -31,6 +31,7 @@ import org.junit.Test;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.IncompatibleThreadStateException;
+import commons.TestConfiguration;
 
 /**
  * @author LLT
@@ -107,7 +108,7 @@ public class IcsetlvEngineTest extends AbstractTest {
 	
 	private Map<String, List<String>> getTestcasesSourcePaths() {
 		Map<String, List<String>> result = new HashMap<String, List<String>>();
-		result.put(config.getSourcepath(TestConfiguration.ICSETLV) + "/testdata/slice/FindMax.java",
+		result.put(config.getTestScrPath(TestConfiguration.ICSETLV) + "/testdata/slice/FindMax.java",
 				//"/testdata/boundedStack/BoundedStack.java", 
 				null);
 		return result;

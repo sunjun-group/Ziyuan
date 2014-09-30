@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 
+import commons.TestConfiguration;
+
 import sav.common.core.utils.StringUtils;
 
 /**

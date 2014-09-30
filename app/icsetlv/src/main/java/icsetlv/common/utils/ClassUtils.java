@@ -8,7 +8,7 @@
 
 package icsetlv.common.utils;
 
-import icsetlv.common.Constants;
+import sav.common.core.Constants;
 import sav.common.core.utils.StringUtils;
 
 

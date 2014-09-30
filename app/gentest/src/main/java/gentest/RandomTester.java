@@ -7,34 +7,39 @@ import gentest.commons.utils.Randomness;
 import gentest.data.MethodCall;
 import gentest.data.Sequence;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.common.core.Pair;
 import sav.common.core.SavException;
-
-import net.java.quickcheck.collection.Pair;
 
 /**
  * @author LLT
  *
  */
 public class RandomTester {
+	private GentestListener listener;
 	// max length of joined methods.
 	private int queryMaxLength;
 	private int testPerQuery;
+	private int numberOfTcs;
 	
-	public RandomTester(int queryMaxLength, int testPerQuery) {
+	public RandomTester(int queryMaxLength, int testPerQuery,
+			int numberOfTcs) {
 		this.queryMaxLength = queryMaxLength;
 		this.testPerQuery = testPerQuery;
+		this.numberOfTcs = numberOfTcs;
 	}
 	
+	/**
+	 * generate test sequences from seed methods.
+	 * The result will be in the order passTcs, failTcs;
+	 */
 	public Pair<List<Sequence>, List<Sequence>> test(
-			List<Method> methods) throws SavException {
+			List<MethodCall> methodcalls) throws SavException {
 		List<Sequence> passTcs = new ArrayList<Sequence>();
 		List<Sequence> failTcs = new ArrayList<Sequence>();
 		TestcaseGenerator tcGenerator = new TestcaseGenerator();
-		List<MethodCall> methodcalls = initMethodCalls(methods);
 		int testsOnQuery = testPerQuery;
 		List<MethodCall> query = null;
 		while (!finish(passTcs.size(), failTcs.size())) {
@@ -43,6 +48,9 @@ public class RandomTester {
 				testsOnQuery = 0;
 			}
 			Sequence testcase = tcGenerator.generateSequence(query);
+			if (listener != null) {
+				listener.onFinishGenerateSeq(tcGenerator, testcase);
+			}
 			if (tcGenerator.getExecutor().isSuccessful()) {
 				passTcs.add(testcase);
 			} else {
@@ -54,19 +62,11 @@ public class RandomTester {
 				passTcs, failTcs);
 	}
 
-	private List<MethodCall> initMethodCalls(List<Method> methods) {
-		List<MethodCall> methodCalls = new ArrayList<MethodCall>(methods.size());
-		for (Method method : methods) {
-			methodCalls.add(MethodCall.of(method));
-		}
-		return methodCalls;
-	}
-
 	private boolean finish(int passTcSize, int failTcSize) {
-		return passTcSize + failTcSize >= 100; 
+		return passTcSize + failTcSize >= numberOfTcs; 
 	}
 
-	private <T>List<T> randomWalk(List<T> methodcalls) {
+	protected <T>List<T> randomWalk(List<T> methodcalls) {
 		List<T> query = new ArrayList<T>();
 		int traceLength = Randomness.nextRandomInt(queryMaxLength) + 1;
 		for (int i = 0; i < traceLength; i++) {
@@ -74,5 +74,9 @@ public class RandomTester {
 			query.add(nextMethodCall);
 		}
 		return query;
+	}
+	
+	public void setListener(GentestListener listener) {
+		this.listener = listener;
 	}
 }

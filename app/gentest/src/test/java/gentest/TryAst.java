@@ -16,17 +16,19 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import commons.TestConfiguration;
+
 /**
  * @author LLT
  *
  */
-public class TryAst {
+public class TryAst extends AbstractGTTest {
 	
 	@Test
 	public void test() throws ParseException, IOException {
 		CompilationUnit cu = JavaParser
-				.parse(new File(
-						"D:/_1_Projects/LLT/Gentest/workspace/trunk/app/gentest/src/test/java/testdata/Program.java"));
+				.parse(new File(config.getTestScrPath("gentest") + 
+						"/testdata/Program.java"));
 		TypeDeclaration type = cu.getTypes().get(0);
 		for (BodyDeclaration member : type.getMembers()) {
 			if (member instanceof MethodDeclaration) {

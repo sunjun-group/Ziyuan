@@ -8,7 +8,6 @@
 
 package icsetlv.common.utils;
 
-import icsetlv.common.Pair;
 import icsetlv.common.dto.BreakPoint;
 
 import java.io.File;
@@ -20,6 +19,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
+import sav.common.core.Pair;
 import sav.common.core.utils.StringUtils;
 
 /**

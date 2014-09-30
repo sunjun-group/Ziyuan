@@ -26,10 +26,10 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
+import sav.common.core.utils.SignatureUtils;
 import sav.common.core.utils.StringUtils;
 import tzuyu.plugin.commons.exception.PluginException;
 import tzuyu.plugin.tester.reporter.PluginLogger;
-import analyzer.SignatureUtils;
 
 /**
  * @author LLT

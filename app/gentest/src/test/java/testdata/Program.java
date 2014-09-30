@@ -1,15 +1,17 @@
 package testdata;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import japa.parser.ast.type.PrimitiveType.Primitive;
+
+import java.util.ArrayList;
+
+import org.junit.Assert;
 
 
 
 public class Program {
 	
 	public void testBoundedStack(BoundedStack stack) {
+		Assert.assertTrue(SampleProgram.checkMax(1, 3, 3, 3));
 		stack.push(23);
 		System.out.println(stack.toString());
 	}

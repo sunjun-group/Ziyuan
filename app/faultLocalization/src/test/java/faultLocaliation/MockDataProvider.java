@@ -8,9 +8,10 @@
 
 package faultLocaliation;
 
-import icsetlv.TestConfiguration;
 
 import java.util.List;
+
+import commons.TestConfiguration;
 
 import main.AbstractDataProvider;
 import sav.common.core.utils.CollectionUtils;

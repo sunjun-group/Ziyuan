@@ -15,7 +15,6 @@ import faultLocalization.dto.LineCoverageInfo;
 import icsetlv.AbstractTest;
 import icsetlv.BugExpert;
 import icsetlv.IcsetlvInput;
-import icsetlv.TestConfiguration;
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.dto.TcExecResult;
 import icsetlv.common.exception.IcsetlvException;
@@ -32,6 +31,8 @@ import net.sf.javaml.core.Dataset;
 import net.sf.javaml.featureselection.ranking.RecursiveFeatureEliminationSVM;
 
 import org.junit.Test;
+
+import commons.TestConfiguration;
 
 import sav.common.core.utils.CollectionUtils;
 

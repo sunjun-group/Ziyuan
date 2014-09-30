@@ -10,6 +10,7 @@ import gentest.VariableNamer;
 import gentest.commons.utils.TypeUtils;
 import gentest.data.statement.RAssignment;
 import gentest.data.statement.RConstructor;
+import gentest.data.statement.REvaluationMethod;
 import gentest.data.statement.Rmethod;
 import japa.parser.ASTHelper;
 import japa.parser.ast.body.VariableDeclarator;
@@ -161,9 +162,27 @@ public class AstNodeConverter {
 		ExpressionStmt stmt = new ExpressionStmt(expr);
 		return stmt;
 	}
+	
+	public Statement fromREvalMethod(REvaluationMethod stmt) {
+		NameExpr scope = new NameExpr("Assert");
+		MethodCallExpr assertTrue = new MethodCallExpr(scope, "assertTrue",
+				CollectionUtils.listOf(createMethodCallExpression(stmt, false)));
+
+		return new ExpressionStmt(assertTrue);
+	}
 
 	public Statement fromRMethod(Rmethod rmethod) {
-		NameExpr scope = new NameExpr(varNamer.getName(rmethod.getReceiverVarId()));
+		Expression stmtExpr = createMethodCallExpression(rmethod, rmethod.hasOutputVar());
+		return new ExpressionStmt(stmtExpr);
+	}
+
+	private Expression createMethodCallExpression(Rmethod rmethod, boolean declareValue) {
+		NameExpr scope;
+		if (rmethod.getReceiverVarId() == gentest.data.statement.Statement.INVALID_VAR_ID) {
+			scope = new NameExpr(rmethod.getDeclaringType().getSimpleName());
+		} else {
+			scope = new NameExpr(varNamer.getName(rmethod.getReceiverVarId()));
+		}
 		List<Expression> inputs = new ArrayList<Expression>();
 		for (int inId : rmethod.getInVarIds()) {
 			inputs.add(new NameExpr(varNamer.getName(inId)));
@@ -171,7 +190,7 @@ public class AstNodeConverter {
 		MethodCallExpr callExpr = new MethodCallExpr(scope, rmethod.getName(), inputs);
 		
 		Expression stmtExpr = null;
-		if (rmethod.hasOutputVar()) {
+		if (declareValue) {
 			List<VariableDeclarator> vars = new ArrayList<VariableDeclarator>();
 			VariableDeclarator varDecl = new VariableDeclarator(
 					new VariableDeclaratorId(varNamer.getName(rmethod.getOutVarId())), 
@@ -182,10 +201,11 @@ public class AstNodeConverter {
 		} else {
 			stmtExpr = callExpr;
 		}
-		return new ExpressionStmt(stmtExpr);
+		return stmtExpr;
 	}
 	
 	private ReferenceType toReferenceType(String typeName) {
 		return new ReferenceType(new ClassOrInterfaceType(typeName));
 	}
+
 }

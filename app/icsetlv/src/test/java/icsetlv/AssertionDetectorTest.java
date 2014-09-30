@@ -25,6 +25,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import commons.TestConfiguration;
+
 /**
  * @author LLT
  * 
@@ -37,7 +39,7 @@ public class AssertionDetectorTest extends AbstractTest {
 	@Parameters
 	public static Collection<Object[]> data() {
 		return Arrays.asList(new Object[][] { { singleEleMap(TestConfiguration
-				.getInstance().getSourcepath(TestConfiguration.ICSETLV)
+				.getInstance().getTestScrPath(TestConfiguration.ICSETLV)
 				+ "testdata/boundedStack/BoundedStack.java") } });
 	}
 

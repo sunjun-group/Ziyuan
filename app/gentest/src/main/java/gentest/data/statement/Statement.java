@@ -29,6 +29,9 @@ public abstract class Statement {
 		return inVarIds;
 	}
 	
+	/**
+	 * outVarId must be set for the execution
+	 */
 	public void setOutVarId(int outVarId) {
 		this.outVarId = outVarId;
 	}
@@ -37,9 +40,10 @@ public abstract class Statement {
 		this.inVarIds = inVarIds;
 	}
 
-	public boolean hasOutputVar() {
-		return outVarId != INVALID_VAR_ID;
-	}
+	public abstract boolean hasOutputVar();
+//	public boolean hasOutputVar() {
+//		return outVarId != INVALID_VAR_ID;
+//	}
 
 	public RStatementKind getKind() {
 		return kind;
@@ -50,6 +54,8 @@ public abstract class Statement {
 	public static enum RStatementKind {
 		ASSIGNMENT,
 		CONSTRUCTOR,
-		METHOD_INVOKE
+		METHOD_INVOKE,
+		QUERY_METHOD_INVOKE, 
+		EVALUATION_METHOD,
 	}
 }

@@ -56,4 +56,9 @@ public class RConstructor extends Statement {
 	public void accept(StatementVisitor visitor) throws Throwable {
 		visitor.visit(this);
 	}
+	
+	@Override
+	public boolean hasOutputVar() {
+		return true;
+	}
 }

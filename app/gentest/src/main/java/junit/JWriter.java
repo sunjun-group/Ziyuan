@@ -7,6 +7,7 @@ import gentest.VariableNamer;
 import gentest.data.Sequence;
 import gentest.data.statement.RAssignment;
 import gentest.data.statement.RConstructor;
+import gentest.data.statement.REvaluationMethod;
 import gentest.data.statement.Rmethod;
 import gentest.data.statement.Statement;
 
@@ -26,6 +27,9 @@ import junit.CompilationUnitBuilder.MethodBuilder;
  */
 public class JWriter {
 	private static final String JUNIT_TEST_ANNOTATION = Test.class.getSimpleName();
+	private String clazzName;
+	private String packageName;
+	private String methodPrefix;
 	
 	public CompilationUnit write(List<Sequence> methods) {
 		AstNodeConverter converter = new AstNodeConverter(new VariableNamer());
@@ -37,7 +41,7 @@ public class JWriter {
 		for (Sequence method : methods) {
 			cu.imports(method.getDeclaredTypes());
 		}
-		cu.startType(getClassName());
+		cu.startType(getClazzName());
 		for (int i = 0; i < methods.size(); i++) {
 			Sequence method = methods.get(i);
 			MethodBuilder methodBuilder = cu.startMethod(getMethodName(i));
@@ -53,7 +57,12 @@ public class JWriter {
 					astStmt = converter.fromRConstructor((RConstructor) stmt);
 					break;
 				case METHOD_INVOKE:
+				case QUERY_METHOD_INVOKE:
 					astStmt = converter.fromRMethod((Rmethod) stmt);
+					break;
+				case EVALUATION_METHOD:
+					cu.imports(org.junit.Assert.class);
+					astStmt = converter.fromREvalMethod((REvaluationMethod) stmt);
 					break;
 				default:
 					Assert.fail("not convert to ast from " + stmt);
@@ -66,16 +75,30 @@ public class JWriter {
 	}
 
 	private String getMethodName(int i) {
-		return "method" + i;
+		return getMethodPrefix() + i;
 	}
 
-	private String getClassName() {
-		// TODO Auto-generated method stub
-		return "TestResult";
+	public String getClazzName() {
+		return clazzName;
 	}
 
-	private String getPackageName() {
-		// TODO Auto-generated method stub
-		return "testdata";
+	public void setClazzName(String clazzName) {
+		this.clazzName = clazzName;
+	}
+
+	public String getPackageName() {
+		return packageName;
+	}
+
+	public void setPackageName(String packageName) {
+		this.packageName = packageName;
+	}
+
+	public String getMethodPrefix() {
+		return methodPrefix;
+	}
+
+	public void setMethodPrefix(String methodPrefix) {
+		this.methodPrefix = methodPrefix;
 	}
 }

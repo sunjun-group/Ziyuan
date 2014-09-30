@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package icsetlv.common;
+package sav.common.core;
 
 /**
  * @author LLT
