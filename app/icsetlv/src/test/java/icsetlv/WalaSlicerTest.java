@@ -27,6 +27,7 @@ public class WalaSlicerTest extends AbstractTest {
 	private TestData type = TestData.FIND_MAX;
 	
 	@Test
+	// TODO NPN I cannot make this work!
 	public void testSlice() throws Exception {
 		SlicerInput input = new SlicerInput();
 		input.setAppBinFolder(config.getTestTarget(TestConfiguration.ICSETLV));

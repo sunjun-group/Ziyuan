@@ -17,6 +17,7 @@ import javaslicer.JavaSlicer;
 import main.IDataProvider;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 /**
  * @author LLT
@@ -25,6 +26,7 @@ import org.junit.Test;
 public class JavaSlicerTest extends AbstractFLTest {
 
 	@Test
+	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
 	public void testSlice() throws Exception {
 		IDataProvider dataProvider = getDataProvider();
 		JavaSlicer slicer = (JavaSlicer)dataProvider.getSlicer();
@@ -41,6 +43,7 @@ public class JavaSlicerTest extends AbstractFLTest {
 	}
 	
 	@Test
+	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
 	public void testInnerSlice() throws InterruptedException {
 		IDataProvider dataProvider = getDataProvider();
 		JavaSlicer slicer = (JavaSlicer)dataProvider.getSlicer();

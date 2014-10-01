@@ -31,9 +31,9 @@ import net.sf.javaml.core.Dataset;
 import net.sf.javaml.featureselection.ranking.RecursiveFeatureEliminationSVM;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import commons.TestConfiguration;
-
 import sav.common.core.utils.CollectionUtils;
 
 /**
@@ -47,6 +47,7 @@ public class ProgramTest extends AbstractTest {
 	}
 
 	@Test
+	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
 	public void testLineCounter() throws Exception {
 		String testingClassName1 = SamplePrograms.class.getName();
 

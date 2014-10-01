@@ -2,21 +2,21 @@ package icsetlv;
 
 import icsetlv.svm.LibSVM;
 
-import java.io.File;
 import java.io.IOException;
 
 import net.sf.javaml.core.Dataset;
 import net.sf.javaml.core.DefaultDataset;
 import net.sf.javaml.core.DenseInstance;
 import net.sf.javaml.core.Instance;
-import net.sf.javaml.tools.data.FileHandler;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 public class SVMTest {
 	
 	
 	@Test
+	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
 	public void svmTest() throws IOException{
 		
 		Dataset ds = new DefaultDataset();

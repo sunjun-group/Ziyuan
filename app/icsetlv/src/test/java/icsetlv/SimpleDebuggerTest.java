@@ -14,6 +14,7 @@ import icsetlv.vm.VMConfiguration;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import com.sun.jdi.VirtualMachine;
 
@@ -26,6 +27,7 @@ import sav.common.core.utils.CollectionUtils;
 public class SimpleDebuggerTest extends AbstractTest {
 	
 	@Test
+	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
 	public void test() throws IcsetlvException {
 		VMConfiguration config = initVmConfig();
 		config.setProgramArgs(CollectionUtils.listOf("testdata.slice.FindMaxCallerPassTest1"));

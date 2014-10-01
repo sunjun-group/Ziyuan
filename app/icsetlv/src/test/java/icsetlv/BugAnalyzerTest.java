@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 public class BugAnalyzerTest extends AbstractTest {
 	private List<BreakPoint> bprsin = new ArrayList<BreakPoint>();
@@ -28,6 +29,7 @@ public class BugAnalyzerTest extends AbstractTest {
 	}
 	
 	@Test
+	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
 	public void testBugAnalyzer() throws IcsetlvException{
 		System.out.println("Before analyzing:");
 		printBkps(bprsin);

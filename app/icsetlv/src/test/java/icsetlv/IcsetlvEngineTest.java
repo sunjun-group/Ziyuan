@@ -28,6 +28,7 @@ import net.sf.javaml.featureselection.ranking.RecursiveFeatureEliminationSVM;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.IncompatibleThreadStateException;
@@ -46,18 +47,19 @@ public class IcsetlvEngineTest extends AbstractTest {
 	}
 
 	@Test
+	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
 	public void testAnalyze() throws IcsetlvException, IOException,
 			InterruptedException, IncompatibleThreadStateException,
 			AbsentInformationException {
 		IcsetlvInput input = initInput();
 		List<BreakPoint> bkps = AssertionDetector.scan(input.getAssertionSourcePaths());
 		
-		BreakPoint bkp4 = new BreakPoint("testdata.slice.FindMax", "findMax", 22);
+		BreakPoint bkp4 = new BreakPoint("testdata.slice.FindMax", "findMax", 10);
 		bkp4.addVars(new Variable("max"));
 		bkp4.addVars(new Variable("i"));
 		bkps.add(bkp4);	
 		
-		BreakPoint bkp3 = new BreakPoint("testdata.slice.FindMax", "findMax", 17); 
+		BreakPoint bkp3 = new BreakPoint("testdata.slice.FindMax", "findMax", 14); 
 		bkp3.addVars(new Variable("max"));
 		bkps.add(bkp3);
 		
@@ -96,13 +98,13 @@ public class IcsetlvEngineTest extends AbstractTest {
 	
 	private String[] getPassTestcases() {
 		return new String[] {
-				"example.MaxFind.test.MaxFindPassTest"
+				"testdata.slice.FindMaxCallerPassTest1"
 			};
 	}
 	
 	private String[] getFailTestcases() {
 		return new String[] {
-				"example.MaxFind.test.MaxFindFailTest"
+				"testdata.slice.FindMaxCallerFailTest1"
 			};
 	}
 	

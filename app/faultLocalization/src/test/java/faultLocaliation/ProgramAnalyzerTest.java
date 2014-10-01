@@ -14,8 +14,7 @@ import java.util.List;
 import main.ProgramAnalyzer;
 
 import org.junit.Test;
-
-import sav.common.core.Logger;
+import org.junit.experimental.categories.Category;
 
 import faultLocalization.dto.LineCoverageInfo;
 
@@ -26,6 +25,7 @@ import faultLocalization.dto.LineCoverageInfo;
 public class ProgramAnalyzerTest extends AbstractFLTest {
 	
 	@Test
+	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
 	public void testAnalyse() throws Exception {
 		ProgramAnalyzer analyzer = new ProgramAnalyzer(getDataProvider());
 		List<String> testingClasses = Arrays.asList("faultLocaliation.sample.SamplePrograms");
