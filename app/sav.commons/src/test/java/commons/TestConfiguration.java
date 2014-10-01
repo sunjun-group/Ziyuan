@@ -27,7 +27,7 @@ public class TestConfiguration {
 	public String javaSlicerPath;
 	
 	private TestConfiguration() {
-		TRUNK = System.getenv("TZUYU_HOME");
+		TRUNK = System.getProperty("TZUYU_HOME");
 		junitLib = TRUNK + "/app/icsetlv/src/test/lib/*";
 		tracerLibPath = TRUNK + "/etc/javaslicer/assembly/tracer.jar";
 	}
