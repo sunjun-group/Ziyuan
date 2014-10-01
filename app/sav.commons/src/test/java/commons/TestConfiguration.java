@@ -8,8 +8,6 @@
 
 package commons;
 
-import java.util.ResourceBundle;
-
 import sav.common.core.utils.StringUtils;
 
 /**
@@ -29,8 +27,7 @@ public class TestConfiguration {
 	public String javaSlicerPath;
 	
 	private TestConfiguration() {
-		ResourceBundle res = ResourceBundle.getBundle("test_configuration");
-		TRUNK = res.getString("trunk");
+		TRUNK = System.getenv("TZUYU_HOME");
 		junitLib = TRUNK + "/app/icsetlv/src/test/lib/*";
 		tracerLibPath = TRUNK + "/etc/javaslicer/assembly/tracer.jar";
 	}
