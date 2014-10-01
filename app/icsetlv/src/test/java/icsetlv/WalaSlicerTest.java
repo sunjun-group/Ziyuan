@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import commons.TestConfiguration;
 
@@ -27,7 +28,7 @@ public class WalaSlicerTest extends AbstractTest {
 	private TestData type = TestData.FIND_MAX;
 	
 	@Test
-	// TODO NPN I cannot make this work!
+	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
 	public void testSlice() throws Exception {
 		SlicerInput input = new SlicerInput();
 		input.setAppBinFolder(config.getTestTarget(TestConfiguration.ICSETLV));
@@ -80,39 +81,39 @@ public class WalaSlicerTest extends AbstractTest {
 //			classEntryPoints.add(make("Ltestdata/boundedStack/tzuyu/fail/BoundedStack7", "test7()V"));
 			break;
 		case TEST_DEVIDER:
-			classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test1"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test2"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test3"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test4"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test5"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test6"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test7"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test8"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test9"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test10"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test1"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test2"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test3"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test4"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test5"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test6"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test7"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test8"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test9"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test10"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test1"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test2"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test3"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test4"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test5"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test6"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test7"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test8"));
-			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test9"));
+			classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test1()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test2()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test3()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test4()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test5()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test6()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test7()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test8()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test9()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider3", "test10()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test1()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test2()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test3()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test4()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test5()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test6()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test7()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test8()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test9()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider4", "test10()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test1()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test2()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test3()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test4()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test5()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test6()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test7()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test8()V"));
+			 classEntryPoints.add(make("Ltestdata/testDevider/tzuyu/fail/TestDevider5", "test9()V"));
 			break;
 		default:
-			classEntryPoints.add(make("Ltestdata/slice/FindMaxCallerFailTest1", "test2"));
-			classEntryPoints.add(make("Ltestdata/slice/FindMaxCallerPassTest1", "test1"));
+			classEntryPoints.add(make("Ltestdata/slice/FindMaxCallerFailTest1", "test2()V"));
+			classEntryPoints.add(make("Ltestdata/slice/FindMaxCallerPassTest1", "test1()V"));
 		}
 		return classEntryPoints;
 	}
