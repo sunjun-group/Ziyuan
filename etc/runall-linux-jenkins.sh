@@ -19,7 +19,7 @@ export M2_BIN=$M2_HOME/bin
 
 echo PATH = $PATH
 
-sh etc/setenv.sh
+source etc/setenv.sh
 sh etc/setup-linux.sh
 sh etc/install-wala-linux.sh
 sh etc/install-javaslicer-linux.sh
