@@ -10,6 +10,7 @@ package main;
 
 import faultLocalization.dto.CoverageReport;
 import faultLocalization.dto.LineCoverageInfo;
+import faultLocalization.dto.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
 import icsetlv.common.dto.BreakPoint;
 import icsetlv.iface.ISlicer;
 
@@ -30,6 +31,11 @@ public class ProgramAnalyzer {
 	
 	public List<LineCoverageInfo> analyse(List<String> testingClasses,
 			List<String> junitClassNames) throws Exception {
+		return analyse(testingClasses, junitClassNames, SuspiciousnessCalculationAlgorithm.TARANTULA);
+	}
+	
+	public List<LineCoverageInfo> analyse(List<String> testingClasses,
+			List<String> junitClassNames, SuspiciousnessCalculationAlgorithm algorithm) throws Exception {
 		CoverageReport result = codeCoverageTool.run(testingClasses,
 				junitClassNames);
 
@@ -38,7 +44,7 @@ public class ProgramAnalyzer {
 		List<BreakPoint> causeTraces = slicer.slice(result.getFailureTraces(),
 				junitClassNames);
 
-		return result.tarantula(causeTraces);
+		return result.tarantula(causeTraces, algorithm);
 	}
 	
 }

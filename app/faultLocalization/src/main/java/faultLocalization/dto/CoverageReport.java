@@ -120,6 +120,11 @@ public class CoverageReport {
 	}
 
 	public <T extends ClassLocation> List<LineCoverageInfo> tarantula(final List<T> filteredPoints) {
+		return tarantula(filteredPoints, SuspiciousnessCalculationAlgorithm.TARANTULA);
+	}
+
+	public <T extends ClassLocation> List<LineCoverageInfo> tarantula(final List<T> filteredPoints,
+			final SuspiciousnessCalculationAlgorithm algorithm) {
 		final List<LineCoverageInfo> linesCoverageInfo = new ArrayList<LineCoverageInfo>();
 
 		final List<String> pointLocIds = BreakpointUtils.toLocationIds(filteredPoints);
@@ -140,7 +145,7 @@ public class CoverageReport {
 		//
 		for (LineCoverageInfo lineCoverageInfo : linesCoverageInfo) {
 			lineCoverageInfo.computeSuspiciousness(passedTestcaseCoverageInfo.size(),
-					failedTestcaseCoverageInfo.size(), SuspiciousnessCalculationAlgorithm.JACCARD);
+					failedTestcaseCoverageInfo.size(), algorithm);
 		}
 
 		Collections.sort(linesCoverageInfo, new LineCoverageInfoComparator());
