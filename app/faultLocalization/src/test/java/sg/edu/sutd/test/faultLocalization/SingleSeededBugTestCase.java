@@ -18,6 +18,7 @@ import main.ProgramAnalyzer;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -73,7 +74,9 @@ public class SingleSeededBugTestCase extends AbstractFLTest {
 	}
 
 	@Test
+	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
 	public void run() throws Exception {
+		// TODO NPN correct CLASSPATH here?
 		final List<LineCoverageInfo> infos = analyzer.analyse(programClasses, programTestClasses);
 		double maxSuspiciousness = -1.0;
 		double foundLineSuspiciousness = -1.0;
