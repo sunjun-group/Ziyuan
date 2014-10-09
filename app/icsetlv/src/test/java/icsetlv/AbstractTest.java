@@ -16,9 +16,10 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 
-import commons.TestConfiguration;
-
+import sav.common.core.utils.ConfigUtils;
 import sav.common.core.utils.StringUtils;
+
+import commons.TestConfiguration;
 
 /**
  * @author LLT
@@ -44,7 +45,7 @@ public class AbstractTest {
 
 	protected VMConfiguration initVmConfig() {
 		VMConfiguration vmConfig = new VMConfiguration();
-		vmConfig.setJavaHome(config.getJavahome());
+		vmConfig.setJavaHome(ConfigUtils.getJavaHome());
 		vmConfig.setDebug(true);
 		vmConfig.setPort(findFreePort());
 		vmConfig.setLaunchClass(config.getJunitcore());
@@ -74,7 +75,7 @@ public class AbstractTest {
 	protected SlicerInput initSlicerInput() {
 		SlicerInput input = new SlicerInput();
 		input.setAppBinFolder(config.getTestTarget(module));
-		input.setJre(config.getJavahome());
+		input.setJre(ConfigUtils.getJavaHome());
 		return input;
 	}
 }

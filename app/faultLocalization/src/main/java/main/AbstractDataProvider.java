@@ -8,71 +8,62 @@
 
 package main;
 
+import icsetlv.iface.ISlicer;
+import icsetlv.vm.VMConfiguration;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 
-import icsetlv.iface.ISlicer;
-import icsetlv.vm.VMConfiguration;
 import javacocoWrapper.JavaCoCo;
 import javaslicer.JavaSlicer;
+import sav.common.core.utils.ConfigUtils;
 
 /**
  * @author LLT
- *
+ * 
  */
 public abstract class AbstractDataProvider implements IDataProvider {
 	private ISlicer slicer;
 	private VMConfiguration vmConfig;
 	private ICodeCoverage codeCoverageTool;
-	
+
 	public AbstractDataProvider() {
-		
+		vmConfig = initVmConfig();
+		slicer = initSlicer();
+		codeCoverageTool = new JavaCoCo();
 	}
-	
-	protected VMConfiguration initVmConfig() {
+
+	private VMConfiguration initVmConfig() {
 		VMConfiguration config = new VMConfiguration();
-		config.setJavaHome(getJavaHome());
+		config.setJavaHome(ConfigUtils.getJavaHome());
 		config.setClasspath(getProjectClasspath());
 		return config;
 	}
-	
-	protected ISlicer initSlicer() {
+
+	private ISlicer initSlicer() {
 		JavaSlicer javaSlicer = new JavaSlicer();
-		javaSlicer.setVmConfig(getVmConfig());
+		javaSlicer.setVmConfig(vmConfig);
 		javaSlicer.setTracerJarPath(getTracerJarPath());
 		return javaSlicer;
-	}
-	
-	public VMConfiguration getVmConfig() {
-		if (vmConfig == null) {
-			vmConfig = initVmConfig();
-		}
-		return vmConfig;
 	}
 
 	@Override
 	public ISlicer getSlicer() {
-		if (slicer == null) {
-			slicer = initSlicer();
-		}
 		return slicer;
 	}
-	
+
 	@Override
 	public ICodeCoverage getCodeCoverageTool() {
-		if (codeCoverageTool == null) {
-			codeCoverageTool = new JavaCoCo();
-		}
 		return codeCoverageTool;
 	}
-	
+
 	public int getAvailableDebuggingPort() {
-		ServerSocket socket= null;
+		ServerSocket socket = null;
 		try {
-			socket= new ServerSocket(0);
+			socket = new ServerSocket(0);
 			return socket.getLocalPort();
-		} catch (IOException e) { 
+		} catch (IOException e) {
 		} finally {
 			if (socket != null) {
 				try {
@@ -81,13 +72,12 @@ public abstract class AbstractDataProvider implements IDataProvider {
 				}
 			}
 		}
-		return -1;		
-	}	
-	
-	/* Declare data */
-	protected abstract String getJavaHome();
+		return -1;
+	}
 
-	protected abstract String getTracerJarPath();
+	protected String getTracerJarPath() {
+		return ConfigUtils.getTracerLibPath();
+	}
 
 	protected abstract List<String> getProjectClasspath();
 

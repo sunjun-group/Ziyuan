@@ -38,16 +38,6 @@ public class CmdDataProvider extends AbstractDataProvider {
 	}
 
 	@Override
-	protected String getJavaHome() {
-		return null;
-	}
-
-	@Override
-	protected String getTracerJarPath() {
-		return null;
-	}
-
-	@Override
 	protected List<String> getProjectClasspath() {
 		// TODO Auto-generated method stub
 		return null;

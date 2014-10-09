@@ -18,6 +18,8 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import sav.common.core.utils.ConfigUtils;
+
 import commons.TestConfiguration;
 
 /**
@@ -32,7 +34,7 @@ public class WalaSlicerTest extends AbstractTest {
 	public void testSlice() throws Exception {
 		SlicerInput input = new SlicerInput();
 		input.setAppBinFolder(config.getTestTarget(TestConfiguration.ICSETLV));
-		input.setJre(config.getJavahome());
+		input.setJre(ConfigUtils.getJavaHome());
 		// entry points
 		List<String[]> classEntryPoints = makeEntryPoints();
 		input.setClassEntryPoints(classEntryPoints);
