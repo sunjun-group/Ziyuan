@@ -25,6 +25,7 @@
 		<tzuyu.libs>${basedir}/../tzuyuEclipsePlugin/libs</tzuyu.libs>
 		<jacoco-version>0.7.1.201405082137</jacoco-version>
 		<javaslicer-version>20101004</javaslicer-version>
+		<fitnesse-version>20140901</fitnesse-version>
 	</properties>
 
 	<repositories>
@@ -204,6 +205,13 @@
 				<groupId>de.unisb.cs.st</groupId>
 				<artifactId>visualize</artifactId>
 				<version>${javaslicer-version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.fitnesse</groupId>
+				<artifactId>fitnesse</artifactId>
+				<version>${fitnesse-version}</version>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
