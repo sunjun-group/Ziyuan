@@ -130,4 +130,139 @@ public class SimplePrograms {
 		
 		return false;
 	}
+	
+	
+	/**
+	 * 
+	 * @param s
+	 * @return
+	 */
+	public String reverseWord(String s){
+		char[] sentence = s.toCharArray();
+		
+		reverseWord(sentence, 0, sentence.length-1);
+		int start = 0;
+		int end = 0;
+		
+		char SPACE = ' ';
+		
+		while (start < sentence.length) {
+			while (start < sentence.length && sentence[start] == SPACE) {
+				start++;
+			}
+
+			end = start;
+			while (end < sentence.length && sentence[end] != SPACE) {
+				end++;
+			}
+
+			reverseWord(sentence, start, end - 1);
+			start = end;
+		}
+		
+		return new String(sentence);
+		
+	}
+	
+	/**
+	 * Reverse the char[] from i to j
+	 * @param s
+	 * @param i
+	 * @param j
+	 */
+	private void reverseWord(char[] s, int i, int j){
+		if(!(i >= 0 && j <= s.length && i <= j)){
+			return;
+		}
+		
+		while(i <= j){
+			char temp = s[i];
+			s[i] = s[j];
+			s[j] = temp;
+			
+			//
+			i++;
+			j--;
+		}		
+	}
+	
+	/**
+	 * pattern can contain . for all chars, * for a sequence of the preceding char
+	 * @param s
+	 * @param pattern
+	 * @return
+	 */
+	public boolean match(String s, String pattern){
+		char[] sentence = s.toCharArray();
+		char[] p = pattern.toCharArray();
+		
+		return match(sentence, 0, p, 0);
+	}
+	
+	private boolean match(char[] s, int startS, char[] pattern, int startP){
+		char DOT = '.';
+		char START = '*';
+		
+		if(startS >= s.length && startP >= pattern.length){
+			return true;
+		}
+		
+		if(startS >= s.length && startP < pattern.length){
+			return false;
+		}
+		
+		if(startP < s.length && startP > pattern.length){
+			return false;
+		}
+		
+		if(startP + 1 >= s.length){
+			return (pattern[startP] == DOT || s[startS] == pattern[startP]) && match(s, startS + 1, pattern, startP + 1);
+		}
+		else if(pattern[startP + 1] == START){
+			if(pattern[startP] == DOT || s[startS] == pattern[startP]){
+				return match(s, startS, pattern, startP + 2) || //no char in s matches ?*
+						match(s, startS+1, pattern, startP) || //one char in s matches  but still have ?*
+						match(s, startS+1, pattern, startP + 2);//one char in s matches and finish .?* where ? can be . or any char
+			}
+			else{
+				return match(s, startS, pattern, startP + 2);
+			}			
+		}
+		else{
+			return (pattern[startP] == DOT || s[startS] == pattern[startP]) && match(s, startS + 1, pattern, startP + 1);
+		}	
+		
+	}
+	
+	public int findInRotatedSortedArray(int[] A, int num){
+		int start = 0;
+		int end = A.length - 1;
+		
+		while(start <= end){
+			int middle = start + (end - start)/2;
+			
+			if(A[middle] == num){
+				return middle;
+			}
+			
+			if(A[start] <= A[middle]){
+				if(num >= A[start] && num < A[middle]){
+					end = middle - 1;
+				}
+				else{
+					start = middle + 1;
+				}
+			}
+			else{
+				if(num > A[middle] && num <= A[end]){
+					start = middle + 1;
+				}
+				else{
+					end = middle - 1;
+				}
+			}
+		}
+		
+		return -1;
+	}
 }
