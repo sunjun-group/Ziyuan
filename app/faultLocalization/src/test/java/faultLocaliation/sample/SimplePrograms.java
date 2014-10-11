@@ -55,6 +55,8 @@ public class SimplePrograms {
 	 * @return
 	 */
 	public boolean isPalindrome2(int number){
+		int backupNumber = number;
+		
 		int reverseNumber = 0;
 		
 		while(number > 0){
@@ -63,7 +65,7 @@ public class SimplePrograms {
 			number = number / 10;
 		}
 		
-		return (reverseNumber == number);
+		return (reverseNumber == backupNumber);
 	}
 	
 	/**
@@ -208,14 +210,14 @@ public class SimplePrograms {
 		}
 		
 		if(startS >= s.length && startP < pattern.length){
+			return (startP + 1 < pattern.length && pattern[startP + 1] == START && match(s, startS, pattern, startP + 2));
+		}
+		
+		if(startS < s.length && startP >= pattern.length){
 			return false;
 		}
 		
-		if(startP < s.length && startP > pattern.length){
-			return false;
-		}
-		
-		if(startP + 1 >= s.length){
+		if(startP + 1 >= pattern.length){
 			return (pattern[startP] == DOT || s[startS] == pattern[startP]) && match(s, startS + 1, pattern, startP + 1);
 		}
 		else if(pattern[startP + 1] == START){

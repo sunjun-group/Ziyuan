@@ -104,7 +104,7 @@ public class SimpleProgramTests {
 	public void test14() {
 		SimplePrograms simpleProgram = new SimplePrograms();
 		int duplicateNumber = simpleProgram.duplicatedNumber(new int[]{0, 2, 4, 2, 3});
-		assertEquals(1, duplicateNumber);
+		assertEquals(2, duplicateNumber);
 	}
 	
 	@Test
@@ -162,7 +162,7 @@ public class SimpleProgramTests {
 	public void test22() {
 		SimplePrograms simpleProgram = new SimplePrograms();
 		boolean isFound = simpleProgram.searchInSortingMatrix1(new int[][]{{1,3,5},{7,9,11},{13,15,17}}, 17);
-		assertEquals(false, isFound);
+		assertEquals(true, isFound);
 	}
 	
 	//---------------------------
@@ -263,7 +263,7 @@ public class SimpleProgramTests {
 	public void test36() {
 		SimplePrograms simpleProgram = new SimplePrograms();
 		boolean match = simpleProgram.match("aaaaaab", "a*");
-		assertEquals(true, match);
+		assertEquals(false, match);
 	}
 	
 	@Test
