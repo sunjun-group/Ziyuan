@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import sav.common.core.utils.CollectionUtils;
 
@@ -27,7 +26,6 @@ import sav.common.core.utils.CollectionUtils;
 public class TryWala extends AbstractTest {
 	
 	@Test
-	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
 	public void runTest() throws Exception {
 		SlicerInput input = initSlicerInput();
 //		input.setClassEntryPoints(CollectionUtils.listOf(

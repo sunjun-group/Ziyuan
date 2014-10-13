@@ -12,27 +12,53 @@ import java.util.Arrays;
 import java.util.List;
 
 import main.ProgramAnalyzer;
-
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import faultLocalization.dto.LineCoverageInfo;
+import sav.commons.testdata.SampleProgramTestFail;
+import sav.commons.testdata.SamplePrograms;
+import sav.strategies.IDataProvider;
+import sav.strategies.codecoverage.ICodeCoverage;
+import sav.strategies.dto.BreakPoint;
+import sav.strategies.slicing.ISlicer;
+import faultLocalization.LineCoverageInfo;
 
 /**
  * @author LLT
  *
  */
-public class ProgramAnalyzerTest extends AbstractFLTest {
+public class ProgramAnalyzerTest {
 	
-	@Test
-	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
 	public void testAnalyse() throws Exception {
-		ProgramAnalyzer analyzer = new ProgramAnalyzer(getDataProvider());
-		List<String> testingClasses = Arrays.asList("faultLocaliation.sample.SamplePrograms");
-		List<String> junitClassNames = Arrays.asList("faultLocaliation.sample.SampleProgramTestPass",
-				"faultLocaliation.sample.SampleProgramTestFail");
+		ProgramAnalyzer analyzer = new ProgramAnalyzer(new IDataProvider() {
+			
+			@Override
+			public ISlicer getSlicer() {
+				return new ISlicer() {
+					
+					@Override
+					public List<BreakPoint> slice(List<BreakPoint> breakpoints,
+							List<String> junitClassNames) throws Exception {
+						// TODO Auto-generated method stub
+						return null;
+					}
+					
+					@Override
+					public void setAnalyzedClasses(List<String> analyzedClasses) {
+						// TODO Auto-generated method stub
+						
+					}
+				};
+			}
+			
+			@Override
+			public ICodeCoverage getCodeCoverageTool() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
+		List<String> testingClasses = Arrays.asList(SamplePrograms.class.getName());
+		List<String> junitClassNames = Arrays.asList(
+				SampleProgramTestFail.class.getName(),
+				SampleProgramTestFail.class.getName());
 		List<LineCoverageInfo> result = analyzer.analyse(testingClasses, junitClassNames);
 	}
-
 	
 }

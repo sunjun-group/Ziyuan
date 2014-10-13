@@ -18,11 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
 
 import com.ibm.wala.util.collections.Pair;
-
-import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT

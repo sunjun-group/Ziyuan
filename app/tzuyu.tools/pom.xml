@@ -5,6 +5,20 @@
 	<artifactId>tzuyu.tools</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
+	<build>
+		<plugins>
+			<plugin>
+				<inherited>true</inherited>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -16,6 +30,7 @@
 			<artifactId>guava</artifactId>
 			<version>18.0-rc2</version>
 		</dependency>
+
 	</dependencies>
 </project>
 

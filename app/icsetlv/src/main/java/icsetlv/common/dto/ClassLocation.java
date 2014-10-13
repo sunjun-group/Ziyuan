@@ -8,7 +8,7 @@
 
 package icsetlv.common.dto;
 
-import icsetlv.common.utils.SignatureUtils;
+import sav.common.core.utils.SignatureUtils;
 
 /**
  * @author LLT

@@ -8,6 +8,8 @@
 
 package sav.common.core;
 
+
+
 /**
  * @author LLT
  *
@@ -22,9 +24,13 @@ public class SavException extends Exception {
 		this.params = params;
 	}
 	
-	public SavException(Exception e) {
-		super(e);
-		params = new Object[]{e.getClass().getSimpleName()};
+	public SavException(Enum<?> type, Exception ex, Object... params) {
+		super(ex);
+		this.type = type;
+		this.params = params;
+		if (params == null) {
+			params = new Object[] { ex.getClass().getSimpleName() };
+		}
 	}
 
 	public Enum<?> getType() {

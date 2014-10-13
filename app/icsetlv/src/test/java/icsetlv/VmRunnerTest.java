@@ -24,7 +24,7 @@ import sav.common.core.utils.CollectionUtils;
 public class VmRunnerTest extends AbstractTest {
 	
 	@Test
-	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
+	@Category(sav.commons.TzuyuTestCase.class)
 	public void test() throws IcsetlvException {
 		VMConfiguration config = initVmConfig();
 		config.setProgramArgs(CollectionUtils.listOf("testdata.slice.FindMaxCallerPassTest1"));

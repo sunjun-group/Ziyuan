@@ -22,8 +22,7 @@ import org.junit.Test;
 
 import sav.common.core.Pair;
 import sav.common.core.SavException;
-import testdata.BoundedStack;
-import testdata.Program;
+import sav.commons.testdata.BoundedStack;
 
 /**
  * @author LLT
@@ -36,7 +35,6 @@ public class GentestTest {
 		RandomTester tester = new RandomTester(5, 5, 100);
 		List<Method> methods = new ArrayList<Method>();
 		addMethods(methods, BoundedStack.class);
-		addMethods(methods, Program.class);
 		Pair<List<Sequence>, List<Sequence>> result = tester.test(toMethodCalls(methods));
 		JWriter jwriter = new JWriter();
 		CompilationUnit cu1 = jwriter.write(result.first());
@@ -64,22 +62,11 @@ public class GentestTest {
 		return methodCalls;
 	}
 
-	/**
-	 * @param methods
-	 */
 	private void addMethods(List<Method> methods, Class<?> clazz) {
 		for (Method method : clazz.getDeclaredMethods()) {
 			if (Modifier.isPublic(method.getModifiers())) {
 				methods.add(method);
 			}
 		}
-	}
-	
-	@Test
-	public void run() throws IOException {
-		File file = new File("D:/a/b/c");
-		file.mkdirs();
-		file = new File("D:/a/b/c/text.txt");
-		file.createNewFile();
 	}
 }

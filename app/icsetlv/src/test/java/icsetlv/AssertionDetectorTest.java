@@ -20,13 +20,13 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import commons.TestConfiguration;
+import sav.commons.TestConfiguration;
+
 
 /**
  * @author LLT
@@ -40,7 +40,7 @@ public class AssertionDetectorTest extends AbstractTest {
 	@Parameters
 	public static Collection<Object[]> data() {
 		return Arrays.asList(new Object[][] { { singleEleMap(TestConfiguration
-				.getInstance().getTestScrPath(TestConfiguration.ICSETLV)
+				.getInstance().testTarget
 				+ "/testdata/boundedStack/BoundedStack.java") } });
 	}
 
@@ -51,7 +51,6 @@ public class AssertionDetectorTest extends AbstractTest {
 	}
 
 	@Test
-	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
 	public void testScan() throws IcsetlvException {
 		List<BreakPoint> breakpoints = AssertionDetector.scan(assertionsClazzes);
 		printBkps(breakpoints);

@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutionException;
 import net.java.quickcheck.Generator;
 import net.java.quickcheck.generator.CombinedGenerators;
 import net.java.quickcheck.generator.PrimitiveGenerators;
+import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 
 import com.google.common.cache.CacheBuilder;
@@ -109,7 +110,7 @@ public class ParamGeneratorFactory {
 		try {
 			return generatorCache.get(type);
 		} catch (ExecutionException e) {
-			throw new SavException(e);
+			throw new SavException(ModuleEnum.TESTCASE_GENERATION, e);
 		}
 	}
 	
