@@ -43,6 +43,9 @@
 
 	<modules>
 		<module>../sav.commons</module>
+		<!-- algorithm modules -->
+		<module>../gentest</module>
+		<!-- -->
 		<module>../tzuyuEclipsePlugin</module>
 		<module>../tzuyuEclipsePlugin-test</module>
 		<module>../tzuyu.feature</module>
@@ -84,20 +87,37 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- for tzuyu -->
+			<!-- internal dependencies -->
 			<dependency>
-				<!-- <groupId>sav-projects</groupId> -->
 				<groupId>sav-projects</groupId>
 				<artifactId>sav.commons</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			
 			<dependency>
-				<groupId>sav-projects</groupId>
-				<artifactId>sav.commons</artifactId>
-				<type>test-jar</type>
-				<scope>test</scope>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>gentest</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			
+			<dependency>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>slicer.javaslicer</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>codecoverage.jacoco</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>faultLocalization</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
 			<dependency>
 				<groupId>tzuyu-project</groupId>
 				<artifactId>tzuyu</artifactId>
@@ -108,9 +128,11 @@
 				<artifactId>icsetlv</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			
+			<!-- specific for test -->
 			<dependency>
-				<groupId>tzuyu-project</groupId>
-				<artifactId>icsetlv</artifactId>
+				<groupId>sav-projects</groupId>
+				<artifactId>sav.commons</artifactId>
 				<type>test-jar</type>
 				<scope>test</scope>
 				<version>${project.version}</version>
@@ -206,7 +228,6 @@
 				<artifactId>visualize</artifactId>
 				<version>${javaslicer-version}</version>
 			</dependency>
-			
 			<dependency>
 				<groupId>org.fitnesse</groupId>
 				<artifactId>fitnesse</artifactId>

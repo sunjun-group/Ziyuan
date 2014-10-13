@@ -8,7 +8,7 @@
 
 package gentest;
 
-import commons.TestConfiguration;
+import sav.commons.TestConfiguration;
 
 /**
  * @author LLT

@@ -80,4 +80,16 @@ public class SignatureUtils {
 		return "L" + className.replace('.', '/') + ";";
 	}
 
+	public static String extractMethodName(String methodNameOrSign) {
+		int endNameIdx = methodNameOrSign.indexOf("(");
+		if (endNameIdx < 0) {
+			return methodNameOrSign;
+		}
+		String fullMethodName = methodNameOrSign.substring(0, endNameIdx);
+		if (fullMethodName.contains(".")) {
+			return fullMethodName.substring(fullMethodName.lastIndexOf("."),
+					fullMethodName.length() - 1);
+		}
+		return fullMethodName;
+	}
 }

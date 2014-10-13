@@ -8,8 +8,8 @@
 
 package tzuyu.engine.model.exception;
 
-import sav.common.core.SavException;
 import lstar.LStarException;
+import sav.common.core.SavException;
 
 /**
  * @author LLT
@@ -23,7 +23,7 @@ public class TzException extends SavException {
 	}
 	
 	public TzException(Exception e) {
-		super(e);
+		super(TzExceptionType.RETHROW, e);
 		type = TzExceptionType.RETHROW;
 	}
 	

@@ -16,10 +16,10 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 
-import sav.common.core.utils.ConfigUtils;
 import sav.common.core.utils.StringUtils;
+import sav.commons.TestConfiguration;
+import sav.commons.utils.ConfigUtils;
 
-import commons.TestConfiguration;
 
 /**
  * @author LLT
@@ -27,7 +27,6 @@ import commons.TestConfiguration;
  */
 public class AbstractTest {
 	protected static TestConfiguration config = TestConfiguration.getInstance();
-	protected String module = TestConfiguration.ICSETLV;
 	
 	public void print(Object... objs) {
 		System.out.println(StringUtils.spaceJoin(objs));
@@ -50,7 +49,7 @@ public class AbstractTest {
 		vmConfig.setPort(findFreePort());
 		vmConfig.setLaunchClass(config.getJunitcore());
 		vmConfig.addClasspath(config.getJavaBin());
-		vmConfig.addClasspath(config.getTestTarget(module));
+		vmConfig.addClasspath(config.testTarget);
 		vmConfig.addClasspath(config.getJunitLib());
 		return vmConfig;
 	}
@@ -74,7 +73,7 @@ public class AbstractTest {
 	
 	protected SlicerInput initSlicerInput() {
 		SlicerInput input = new SlicerInput();
-		input.setAppBinFolder(config.getTestTarget(module));
+		input.setAppBinFolder(config.testTarget);
 		input.setJre(ConfigUtils.getJavaHome());
 		return input;
 	}

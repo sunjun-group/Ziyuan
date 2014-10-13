@@ -16,7 +16,8 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import commons.TestConfiguration;
+import sav.commons.TestConfiguration;
+
 
 /**
  * @author LLT

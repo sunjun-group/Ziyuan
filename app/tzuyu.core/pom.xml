@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>tzuyu.core</artifactId>
+
+	<parent>
+		<groupId>tzuyu-project</groupId>
+		<artifactId>tzuyu.parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../tzuyu.parent/pom.xml</relativePath>
+	</parent>
+
+	<dependencies>
+		<!-- internal dependencies -->
+		<dependency>
+			<groupId>sav-projects</groupId>
+			<artifactId>sav.commons</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>codecoverage.jacoco</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>slicer.javaslicer</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>faultLocalization</artifactId>
+		</dependency>
+		<!-- specific for test -->
+		<dependency>
+			<groupId>sav-projects</groupId>
+			<artifactId>sav.commons</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

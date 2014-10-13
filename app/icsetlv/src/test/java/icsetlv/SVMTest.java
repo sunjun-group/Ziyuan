@@ -10,13 +10,11 @@ import net.sf.javaml.core.DenseInstance;
 import net.sf.javaml.core.Instance;
 
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 public class SVMTest {
 	
 	
 	@Test
-	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
 	public void svmTest() throws IOException{
 		
 		Dataset ds = new DefaultDataset();

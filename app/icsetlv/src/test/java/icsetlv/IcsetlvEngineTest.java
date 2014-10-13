@@ -28,11 +28,11 @@ import net.sf.javaml.featureselection.ranking.RecursiveFeatureEliminationSVM;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
+
+import sav.commons.TestConfiguration;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.IncompatibleThreadStateException;
-import commons.TestConfiguration;
 
 /**
  * @author LLT
@@ -47,7 +47,6 @@ public class IcsetlvEngineTest extends AbstractTest {
 	}
 
 	@Test
-	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
 	public void testAnalyze() throws IcsetlvException, IOException,
 			InterruptedException, IncompatibleThreadStateException,
 			AbsentInformationException {
@@ -110,7 +109,7 @@ public class IcsetlvEngineTest extends AbstractTest {
 	
 	private Map<String, List<String>> getTestcasesSourcePaths() {
 		Map<String, List<String>> result = new HashMap<String, List<String>>();
-		result.put(config.getTestScrPath(TestConfiguration.ICSETLV) + "/testdata/slice/FindMax.java",
+		result.put(config.testTarget + "/testdata/slice/FindMax.java",
 				//"/testdata/boundedStack/BoundedStack.java", 
 				null);
 		return result;

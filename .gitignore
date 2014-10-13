@@ -10,3 +10,5 @@ runtime-EclipseApplication
 /app/tzuyuEclipsePlugin/icsetlvCore
 /app/tzuyuEclipsePlugin/icsetlvLib
 /app/faultLocalization/target
+/app/tzuyuEclipsePlugin/savCommons
+/app/sav.commons/src/test/resources/test_configuration.properties

@@ -8,13 +8,16 @@
 
 package main;
 
-import faultLocalization.dto.CoverageReport;
-import faultLocalization.dto.LineCoverageInfo;
-import faultLocalization.dto.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
-import icsetlv.common.dto.BreakPoint;
-import icsetlv.iface.ISlicer;
-
 import java.util.List;
+
+import sav.strategies.IDataProvider;
+import sav.strategies.codecoverage.ICodeCoverage;
+import sav.strategies.dto.BreakPoint;
+import sav.strategies.slicing.ISlicer;
+import faultLocalization.CoverageReport;
+import faultLocalization.LineCoverageInfo;
+import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
+
 
 /**
  * @author LLT
@@ -36,14 +39,12 @@ public class ProgramAnalyzer {
 	
 	public List<LineCoverageInfo> analyse(List<String> testingClasses,
 			List<String> junitClassNames, SuspiciousnessCalculationAlgorithm algorithm) throws Exception {
-		CoverageReport result = codeCoverageTool.run(testingClasses,
-				junitClassNames);
-
+		CoverageReport result = new CoverageReport();
+		codeCoverageTool.run(result, testingClasses, junitClassNames);
 		/* do slicing */
 		slicer.setAnalyzedClasses(testingClasses);
 		List<BreakPoint> causeTraces = slicer.slice(result.getFailureTraces(),
 				junitClassNames);
-
 		return result.tarantula(causeTraces, algorithm);
 	}
 	

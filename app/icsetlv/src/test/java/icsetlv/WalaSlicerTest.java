@@ -15,12 +15,8 @@ import icsetlv.slicer.WalaSlicer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import sav.commons.utils.ConfigUtils;
 
-import sav.common.core.utils.ConfigUtils;
-
-import commons.TestConfiguration;
 
 /**
  * @author LLT
@@ -29,11 +25,9 @@ import commons.TestConfiguration;
 public class WalaSlicerTest extends AbstractTest {
 	private TestData type = TestData.FIND_MAX;
 	
-	@Test
-	@Category(sg.edu.sutd.test.core.TzuyuTestCase.class)
 	public void testSlice() throws Exception {
 		SlicerInput input = new SlicerInput();
-		input.setAppBinFolder(config.getTestTarget(TestConfiguration.ICSETLV));
+		input.setAppBinFolder(config.testTarget);
 		input.setJre(ConfigUtils.getJavaHome());
 		// entry points
 		List<String[]> classEntryPoints = makeEntryPoints();
@@ -42,7 +36,8 @@ public class WalaSlicerTest extends AbstractTest {
 		List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
 		addBreakpoints(breakpoints);
 		WalaSlicer slicer = new WalaSlicer(input);
-		List<BreakPoint> slicingResult = slicer.slice(breakpoints, new ArrayList<String>());
+		List<BreakPoint> slicingResult = slicer.slice(breakpoints,
+				new ArrayList<String>());
 		printBkps(slicingResult);
 	}
 
