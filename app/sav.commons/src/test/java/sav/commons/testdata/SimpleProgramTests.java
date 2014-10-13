@@ -164,4 +164,186 @@ public class SimpleProgramTests {
 		boolean isFound = simpleProgram.searchInSortingMatrix1(new int[][]{{1,3,5},{7,9,11},{13,15,17}}, 17);
 		assertEquals(false, isFound);
 	}
+	
+	//---------------------------
+	@Test
+	public void test23() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		String reverse = simpleProgram.reverseWord("hello world hello world");
+		assertEquals("world hello world hello", reverse);
+	}
+	
+	@Test
+	public void test24() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		String reverse = simpleProgram.reverseWord("  hello world hello world  ");
+		assertEquals("  world hello world hello  ", reverse);
+	}
+	
+	@Test
+	public void test25() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		String reverse = simpleProgram.reverseWord("");
+		assertEquals("", reverse);
+	}
+	
+	@Test
+	public void test26() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		String reverse = simpleProgram.reverseWord("    ");
+		assertEquals("    ", reverse);
+	}
+	
+	@Test
+	public void test27() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		String reverse = simpleProgram.reverseWord("h");
+		assertEquals("h", reverse);
+	}
+	
+	@Test
+	public void test28() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		String reverse = simpleProgram.reverseWord(" h ");
+		assertEquals(" h ", reverse);
+	}
+	
+	//---------------------------------------------
+	
+	@Test
+	public void test29() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		boolean match = simpleProgram.match("a", "a");
+		assertEquals(true, match);
+	}
+	
+	@Test
+	public void test30() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		boolean match = simpleProgram.match("a", "b");
+		assertEquals(false, match);
+	}
+	
+	@Test
+	public void test31() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		boolean match = simpleProgram.match("ba", "b");
+		assertEquals(false, match);
+	}
+	
+	@Test
+	public void test32() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		boolean match = simpleProgram.match("acb", "a.b");
+		assertEquals(true, match);
+	}
+	
+	@Test
+	public void test33() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		boolean match = simpleProgram.match("", "a*");
+		assertEquals(true, match);
+	}
+	
+	@Test
+	public void test34() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		boolean match = simpleProgram.match("a", "a*");
+		assertEquals(true, match);
+	}
+	
+	@Test
+	public void test35() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		boolean match = simpleProgram.match("aaaaaa", "a*");
+		assertEquals(true, match);
+	}
+	
+	@Test
+	public void test36() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		boolean match = simpleProgram.match("aaaaaab", "a*");
+		assertEquals(true, match);
+	}
+	
+	@Test
+	public void test37() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		boolean match = simpleProgram.match("cacbbbb", ".a.b*");
+		assertEquals(true, match);
+	}
+	
+	@Test
+	public void test38() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		boolean match = simpleProgram.match("cabbbb", ".a.b*");
+		assertEquals(true, match);
+	}
+	
+	@Test
+	public void test39() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		boolean match = simpleProgram.match("", ".");
+		assertEquals(false, match);
+	}
+	
+	@Test
+	public void test40() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		boolean match = simpleProgram.match("c", ".");
+		assertEquals(true, match);
+	}
+	
+	//-----------------------------------
+	@Test
+	public void test41() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		int index = simpleProgram.findInRotatedSortedArray(new int[]{1}, 1);
+		assertEquals(0, index);
+	}
+	
+	@Test
+	public void test42() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		int index = simpleProgram.findInRotatedSortedArray(new int[]{0,1,2}, 1);
+		assertEquals(1, index);
+	}
+	
+	@Test
+	public void test43() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		int index = simpleProgram.findInRotatedSortedArray(new int[]{0,1,4}, 3);
+		assertEquals(-1, index);
+	}
+	
+	@Test
+	public void test44() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		int index = simpleProgram.findInRotatedSortedArray(new int[]{3,4,5,1,2}, 1);
+		assertEquals(3, index);
+	}
+	
+	@Test
+	public void test45() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		int index = simpleProgram.findInRotatedSortedArray(new int[]{3,4,5,1}, 1);
+		assertEquals(3, index);
+	}
+	
+	@Test
+	public void test46() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		int index = simpleProgram.findInRotatedSortedArray(new int[]{2,2,2,2,3}, 3);
+		assertEquals(4, index);
+	}
+	
+	@Test
+	public void test47() {
+		SimplePrograms simpleProgram = new SimplePrograms();
+		int index = simpleProgram.findInRotatedSortedArray(new int[]{2,2,2,2,2}, 0);
+		assertEquals(-1, index);
+	}
+	
+	
+	
 }
