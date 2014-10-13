@@ -23,11 +23,16 @@ public class TestConfiguration {
 	public String junitLib;
 	public String javaSlicerPath;
 	public String testTarget;
+	// do not remove this one, this is not the current java home of the
+	// application
+	public String javaHome;
 
 	private TestConfiguration() {
 		TRUNK = ConfigUtils.getTrunkPath();
 		junitLib = TRUNK + "/app/icsetlv/src/test/lib/*";
 		testTarget = getTestTarget("sav.commons");
+		//TODO: just by default, will load from test_configuration.properties.
+		javaHome = ConfigUtils.getJavaHome();
 	}
 	
 	public String getTestScrPath(String module) {
@@ -54,7 +59,7 @@ public class TestConfiguration {
 	}
 
 	public String getJavaBin() {
-		return ConfigUtils.getJavaHome() + "/bin";
+		return javaHome + "/bin";
 	}
 
 	public String getJunitLib() {

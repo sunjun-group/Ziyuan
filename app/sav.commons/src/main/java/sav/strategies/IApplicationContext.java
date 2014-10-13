@@ -15,7 +15,7 @@ import sav.strategies.slicing.ISlicer;
  * @author LLT
  *
  */
-public interface IDataProvider {
+public interface IApplicationContext {
 
 	ISlicer getSlicer();
 

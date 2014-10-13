@@ -10,7 +10,7 @@ package main;
 
 import java.util.List;
 
-import sav.strategies.IDataProvider;
+import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.slicing.ISlicer;
@@ -27,7 +27,7 @@ public class ProgramAnalyzer {
 	private ISlicer slicer;
 	private ICodeCoverage codeCoverageTool;
 	
-	public ProgramAnalyzer(IDataProvider dataProvider) {
+	public ProgramAnalyzer(IApplicationContext dataProvider) {
 		slicer = dataProvider.getSlicer();
 		codeCoverageTool = dataProvider.getCodeCoverageTool();
 	}

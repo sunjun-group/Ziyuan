@@ -8,19 +8,14 @@
 
 package sav.commons.testdata;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Test;
 
 /**
  * @author khanh
  *
  */
 public class SimplePrograms {
-	
 
 	/**
 	 * Check whether a number is a palindrome
@@ -133,12 +128,6 @@ public class SimplePrograms {
 		return false;
 	}
 	
-	
-	/**
-	 * 
-	 * @param s
-	 * @return
-	 */
 	public String reverseWord(String s){
 		char[] sentence = s.toCharArray();
 		

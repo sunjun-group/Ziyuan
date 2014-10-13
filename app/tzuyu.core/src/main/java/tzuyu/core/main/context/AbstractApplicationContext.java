@@ -6,29 +6,34 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.core.main;
+package tzuyu.core.main.context;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 
-import sav.commons.utils.ConfigUtils;
-import sav.strategies.IDataProvider;
+import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
+
+import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.slicing.ISlicer;
 import sav.strategies.vm.VMConfiguration;
 import slicer.javaslicer.JavaSlicer;
 
 /**
- * @author LLT
- * 
+ * @author LLT 
+ * This application context is for application configuration
+ * centralization, necessary implementation for an algorithm interface
+ * will be initialized lazily upon purpose, and different parameters
+ * will be required depend on what we need for selected algorithm
+ * implementation.
  */
-public abstract class AbstractDataProvider implements IDataProvider {
+public abstract class AbstractApplicationContext implements IApplicationContext {
 	private ISlicer slicer;
 	private VMConfiguration vmConfig;
 	private ICodeCoverage codeCoverageTool;
 
-	public AbstractDataProvider() {
+	public AbstractApplicationContext() {
 		vmConfig = initVmConfig();
 		slicer = initSlicer();
 		codeCoverageTool = initCodeCoverage();
@@ -41,7 +46,7 @@ public abstract class AbstractDataProvider implements IDataProvider {
 
 	private VMConfiguration initVmConfig() {
 		VMConfiguration config = new VMConfiguration();
-		config.setJavaHome(ConfigUtils.getJavaHome());
+		config.setJavaHome(getJavahome());
 		config.setClasspath(getProjectClasspath());
 		return config;
 	}
@@ -79,9 +84,12 @@ public abstract class AbstractDataProvider implements IDataProvider {
 		}
 		return -1;
 	}
+	
+	protected abstract String getJavahome();
 
 	protected abstract String getTracerJarPath();
 	
 	protected abstract List<String> getProjectClasspath();
 
+	public abstract SuspiciousnessCalculationAlgorithm getSuspiciousnessCalculationAlgorithm();
 }

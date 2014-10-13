@@ -51,7 +51,7 @@ public class SingleSeededBugTestCase extends AbstractTzTest {
 
 	@Before
 	public void init() {
-		this.analyzer = new ProgramAnalyzer(getDataProvider());
+		this.analyzer = new ProgramAnalyzer(appContext);
 	}
 
 	public SingleSeededBugTestCase(final List<String> programClasses,

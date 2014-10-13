@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.core.main;
+package tzuyu.core.main.context;
 
 import java.util.List;
 
@@ -14,13 +14,15 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
+import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
+
 /**
  * @author LLT
  *
  */
-public class CmdDataProvider extends AbstractDataProvider {
+public class CmdApplicationContext extends AbstractApplicationContext {
 	
-	public CmdDataProvider(String[] args) {
+	public CmdApplicationContext(String[] args) {
 		Options opts = createOptions();
 	}
 
@@ -44,6 +46,18 @@ public class CmdDataProvider extends AbstractDataProvider {
 
 	@Override
 	protected List<String> getProjectClasspath() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected String getJavahome() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SuspiciousnessCalculationAlgorithm getSuspiciousnessCalculationAlgorithm() {
 		// TODO Auto-generated method stub
 		return null;
 	}

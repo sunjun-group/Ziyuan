@@ -14,7 +14,7 @@ import java.util.List;
 import main.ProgramAnalyzer;
 import sav.commons.testdata.SampleProgramTestFail;
 import sav.commons.testdata.SamplePrograms;
-import sav.strategies.IDataProvider;
+import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.slicing.ISlicer;
@@ -27,7 +27,7 @@ import faultLocalization.LineCoverageInfo;
 public class ProgramAnalyzerTest {
 	
 	public void testAnalyse() throws Exception {
-		ProgramAnalyzer analyzer = new ProgramAnalyzer(new IDataProvider() {
+		ProgramAnalyzer analyzer = new ProgramAnalyzer(new IApplicationContext() {
 			
 			@Override
 			public ISlicer getSlicer() {

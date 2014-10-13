@@ -9,15 +9,16 @@
 package tzuyu.core.main;
 
 import sav.commons.AbstractTest;
-import sav.strategies.IDataProvider;
+import tzuyu.core.main.context.AbstractApplicationContext;
 
 /**
  * @author LLT
  * 
  */
 public class AbstractTzTest extends AbstractTest {
+	protected AbstractApplicationContext appContext;
 	
-	protected IDataProvider getDataProvider() {
-		return new MockDataProvider();
+	public AbstractTzTest() {
+		appContext = new TestApplicationContext();
 	}
 }

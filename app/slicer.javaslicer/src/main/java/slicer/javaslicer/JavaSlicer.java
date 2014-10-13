@@ -120,7 +120,6 @@ public class JavaSlicer implements ISlicer {
 		Slicer slicer = new Slicer(trace);
 		SliceInstructionsCollector collector = new SliceInstructionsCollector();
 		slicer.addSliceVisitor(collector);
-//		slicer.addUntracedCallVisitor(new PrintUniqueUntracedMethods());
 		slicer.process(tracing, criteria, false);
 		Set<Instruction> slice = collector.getDynamicSlice();
 		long endTime = System.nanoTime();
