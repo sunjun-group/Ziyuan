@@ -38,5 +38,10 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.fitnesse</groupId>
+			<artifactId>fitnesse</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
