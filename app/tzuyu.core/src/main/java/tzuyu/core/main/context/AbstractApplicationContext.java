@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 
+import codecoverage.jacoco.JavaCoCo;
+
 import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
 
 import sav.strategies.IApplicationContext;
@@ -33,17 +35,24 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 	private VMConfiguration vmConfig;
 	private ICodeCoverage codeCoverageTool;
 
-	public AbstractApplicationContext() {
-		vmConfig = initVmConfig();
-		slicer = initSlicer();
-		codeCoverageTool = initCodeCoverage();
-	}
-
 	private ICodeCoverage initCodeCoverage() {
-		// TODO Auto-generated method stub
-		return null;
+		return new JavaCoCo();
 	}
-
+	
+	private ISlicer initSlicer() {
+		JavaSlicer javaSlicer = new JavaSlicer();
+		javaSlicer.setVmConfig(getVmConfig());
+		javaSlicer.setTracerJarPath(getTracerJarPath());
+		return javaSlicer;
+	}
+	
+	public VMConfiguration getVmConfig() {
+		if (vmConfig == null) {
+			vmConfig = initVmConfig();
+		}
+		return vmConfig;
+	}
+	
 	private VMConfiguration initVmConfig() {
 		VMConfiguration config = new VMConfiguration();
 		config.setJavaHome(getJavahome());
@@ -51,20 +60,19 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 		return config;
 	}
 
-	private ISlicer initSlicer() {
-		JavaSlicer javaSlicer = new JavaSlicer();
-		javaSlicer.setVmConfig(vmConfig);
-		javaSlicer.setTracerJarPath(getTracerJarPath());
-		return javaSlicer;
-	}
-
 	@Override
 	public ISlicer getSlicer() {
+		if (slicer == null) {
+			slicer = initSlicer();
+		}
 		return slicer;
 	}
 
 	@Override
 	public ICodeCoverage getCodeCoverageTool() {
+		if (codeCoverageTool == null) {
+			codeCoverageTool = initCodeCoverage();
+		}
 		return codeCoverageTool;
 	}
 

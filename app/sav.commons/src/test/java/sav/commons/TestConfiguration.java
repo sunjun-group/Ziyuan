@@ -17,7 +17,7 @@ import sav.commons.utils.ConfigUtils;
  * 
  */
 public class TestConfiguration {
-	private static TestConfiguration config;
+	private static TestConfiguration config = new TestConfiguration();
 	private static final String junitCore = "org.junit.runner.JUnitCore";
 	public String TRUNK;
 	public String junitLib;
@@ -48,9 +48,6 @@ public class TestConfiguration {
 	}
 
 	public static TestConfiguration getInstance() {
-		if (config == null) {
-			config = new TestConfiguration();
-		}
 		return config;
 	}
 

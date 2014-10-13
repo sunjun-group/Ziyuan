@@ -9,16 +9,18 @@
 package tzuyu.core.main;
 
 import sav.commons.AbstractTest;
-import tzuyu.core.main.context.AbstractApplicationContext;
+import sav.commons.TestConfiguration;
 
 /**
  * @author LLT
  * 
  */
 public class AbstractTzTest extends AbstractTest {
-	protected AbstractApplicationContext appContext;
+	protected TestConfiguration config;
+	protected TestApplicationContext testContext;
 	
 	public AbstractTzTest() {
-		appContext = new TestApplicationContext();
+		config = TestConfiguration.getInstance();
+		testContext = new TestApplicationContext();
 	}
 }

@@ -27,14 +27,14 @@ public class ProgramAnalyzer {
 	private ISlicer slicer;
 	private ICodeCoverage codeCoverageTool;
 	
-	public ProgramAnalyzer(IApplicationContext dataProvider) {
-		slicer = dataProvider.getSlicer();
-		codeCoverageTool = dataProvider.getCodeCoverageTool();
+	public ProgramAnalyzer(IApplicationContext appContext) {
+		slicer = appContext.getSlicer();
+		codeCoverageTool = appContext.getCodeCoverageTool();
 	}
 	
-	public List<LineCoverageInfo> analyse(List<String> testingClasses,
+	public List<LineCoverageInfo> analyse(List<String> testingClasseNames,
 			List<String> junitClassNames) throws Exception {
-		return analyse(testingClasses, junitClassNames, SuspiciousnessCalculationAlgorithm.TARANTULA);
+		return analyse(testingClasseNames, junitClassNames, SuspiciousnessCalculationAlgorithm.TARANTULA);
 	}
 	
 	public List<LineCoverageInfo> analyse(List<String> testingClasses,

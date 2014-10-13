@@ -26,15 +26,20 @@ import tzuyu.core.main.context.AbstractApplicationContext;
 public class TestApplicationContext extends AbstractApplicationContext {
 	private TestConfiguration testConfig;
 	private SuspiciousnessCalculationAlgorithm suspiciousnessCalcul;
+	private List<String> projectClasspath;
 
 	public TestApplicationContext() {
 		testConfig = TestConfiguration.getInstance();
+		projectClasspath = CollectionUtils.listOf(testConfig.testTarget);
 	}
 
 	@Override
-	protected List<String> getProjectClasspath() {
-		return CollectionUtils.listOf(testConfig
-				.getTestTarget(TestConfiguration.getInstance().testTarget));
+	public List<String> getProjectClasspath() {
+		return projectClasspath; 
+	}
+	
+	public void setProjectClasspath(List<String> projectClasspath) {
+		this.projectClasspath = projectClasspath;
 	}
 
 	@Override
