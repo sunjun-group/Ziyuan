@@ -24,7 +24,7 @@ import sav.strategies.dto.BreakPoint;
  */
 public class WalaSlicerTest extends AbstractTest {
 	
-	@Test
+//	@Test
 	public void testSlice() throws Exception {
 		SlicerInput input = new SlicerInput();
 		input.setAppBinFolder(config.testTarget);

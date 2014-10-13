@@ -14,10 +14,8 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import sav.commons.AbstractTest;
-import sav.commons.TzuyuTestCase;
 import sav.strategies.dto.BreakPoint;
 
 
@@ -33,8 +31,7 @@ public class JavaSlicerTest extends AbstractTest {
 		slicer = new JavaSlicer();
 	}
 
-	@Test
-	@Category(TzuyuTestCase.class)
+//	@Test
 	public void testSlice() throws Exception {
 		slicer.setAnalyzedClasses(Arrays.asList("faultLocaliation.sample.SamplePrograms"));
 		List<BreakPoint> breakpoints = Arrays.asList(new BreakPoint(
@@ -48,8 +45,7 @@ public class JavaSlicerTest extends AbstractTest {
 		}
 	}
 	
-	@Test
-	@Category(TzuyuTestCase.class)
+//	@Test
 	public void testInnerSlice() throws InterruptedException {
 		List<BreakPoint> breakpoints = Arrays.asList(new BreakPoint(
 				"faultLocaliation.sample.SampleProgramTest", "test5", 53),

@@ -18,12 +18,10 @@ import main.ProgramAnalyzer;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import sav.commons.TzuyuTestCase;
 import faultLocalization.LineCoverageInfo;
 
 /**
@@ -39,7 +37,7 @@ import faultLocalization.LineCoverageInfo;
  * @author Nguyen Phuoc Nguong Phuc (phuc@sutd.edu.sg)
  * 
  */
-@RunWith(Parameterized.class)
+//@RunWith(Parameterized.class)
 public class SingleSeededBugTestCase extends AbstractTzTest {
 
 	private ProgramAnalyzer analyzer;
@@ -66,15 +64,14 @@ public class SingleSeededBugTestCase extends AbstractTzTest {
 		Collection<Object[]> data = new ArrayList<Object[]>();
 		// TODO NPN Build this list automatically, ex.: read it from a resource file
 		data.add(new Object[] {
-				Arrays.asList("faultLocaliation.sample.SamplePrograms"),
-				Arrays.asList("faultLocaliation.sample.SampleProgramTestPass",
-						"faultLocaliation.sample.SampleProgramTestFail"),
-				"faultLocaliation.sample.SamplePrograms:26" });
+				Arrays.asList("sav.commons.testdata.SamplePrograms"),
+				Arrays.asList("sav.commons.testdata.SampleProgramTestPass",
+						"sav.commons.testdata.SampleProgramTestFail"),
+				"sav.commons.testdata.SamplePrograms:26" });
 		return data;
 	}
 
-	@Test
-	@Category(TzuyuTestCase.class)
+//	@Test
 	public void run() throws Exception {
 		// TODO NPN correct CLASSPATH here?
 		final List<LineCoverageInfo> infos = analyzer.analyse(programClasses, programTestClasses);
