@@ -21,6 +21,7 @@
 				<version>2.12.4</version>
 				<configuration>
 					<excludes>
+					    <exclude>**/GentestTest.java</exclude>
 						<exclude>**/testdata/**.java</exclude>
 					</excludes>
 				</configuration>
