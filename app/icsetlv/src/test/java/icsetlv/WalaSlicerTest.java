@@ -15,7 +15,7 @@ import icsetlv.slicer.WalaSlicer;
 import java.util.ArrayList;
 import java.util.List;
 
-import sav.commons.utils.ConfigUtils;
+import sav.commons.utils.TestConfigUtils;
 
 
 /**
@@ -28,7 +28,7 @@ public class WalaSlicerTest extends AbstractTest {
 	public void testSlice() throws Exception {
 		SlicerInput input = new SlicerInput();
 		input.setAppBinFolder(config.testTarget);
-		input.setJre(ConfigUtils.getJavaHome());
+		input.setJre(TestConfigUtils.getJavaHome());
 		// entry points
 		List<String[]> classEntryPoints = makeEntryPoints();
 		input.setClassEntryPoints(classEntryPoints);

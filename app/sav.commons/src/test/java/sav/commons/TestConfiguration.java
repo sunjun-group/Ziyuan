@@ -10,7 +10,7 @@ package sav.commons;
 
 
 import sav.common.core.utils.StringUtils;
-import sav.commons.utils.ConfigUtils;
+import sav.commons.utils.TestConfigUtils;
 
 /**
  * @author LLT
@@ -28,11 +28,11 @@ public class TestConfiguration {
 	public String javaHome;
 
 	private TestConfiguration() {
-		TRUNK = ConfigUtils.getTrunkPath();
+		TRUNK = TestConfigUtils.getTrunkPath();
 		junitLib = TRUNK + "/app/icsetlv/src/test/lib/*";
 		testTarget = getTestTarget("sav.commons");
 		//TODO: just by default, will load from test_configuration.properties.
-		javaHome = ConfigUtils.getJavaHome();
+		javaHome = TestConfigUtils.getJavaHome();
 	}
 	
 	public String getTestScrPath(String module) {
