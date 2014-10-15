@@ -8,6 +8,7 @@
 
 package codecoverage.jacoco;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import org.junit.Test;
 import org.junit.runner.Request;
 import org.junit.runner.notification.Failure;
 
+import sav.common.core.Logger;
 import sav.common.core.utils.ClassUtils;
 import sav.strategies.codecoverage.ICoverageReport;
 import sav.strategies.codecoverage.ICodeCoverage;
@@ -41,6 +43,7 @@ import sav.strategies.dto.BreakPoint;
  *
  */
 public class JavaCoCo implements ICodeCoverage {
+	private Logger<?> logger = Logger.getDefaultLogger();
 	private static final String JUNIT_TEST_METHOD_PREFIX = "test";
 	private static final String JUNIT_TEST_SUITE_PREFIX = "suite";
 	private MemoryClassLoader memoryClassLoader;
@@ -82,7 +85,12 @@ public class JavaCoCo implements ICodeCoverage {
 		ArrayList<byte[]> instrumenteds = new ArrayList<byte[]>();
 		
 		for(String junit: classNameForJaCoco){
-			instrumenteds.add(instr.instrument(getTargetClass(junit), junit));
+			try {
+				instrumenteds.add(instr.instrument(getTargetClass(junit), junit));
+			} catch (IOException e) {
+				logger.logEx(e, "cannot load class " + junit);
+				throw e;
+			}
 		}
 		
 		for(int j = 0; j < classNameForJaCoco.size(); j++){
@@ -116,7 +124,7 @@ public class JavaCoCo implements ICodeCoverage {
 			List<Failure> failures = RequestExecution.getFailureTrace(
 					targetClass, targetInstance);
 			report.addFailureTrace(extractBrkpsFromTrace(failures,
-					junitClassNames));
+					testingClassNames));
 
 			// At the end of test execution we collect execution data and shutdown
 			// the runtime:
