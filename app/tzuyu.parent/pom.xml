@@ -45,7 +45,11 @@
 		<module>../sav.commons</module>
 		<!-- algorithm modules -->
 		<module>../gentest</module>
+		<module>../slicer.wala</module>
+		<module>../slicer.javaslicer</module>
+		<module>../codecoverage.jacoco</module>
 		<!-- -->
+		<module>../tzuyu.core</module>
 		<module>../tzuyuEclipsePlugin</module>
 		<module>../tzuyuEclipsePlugin-test</module>
 		<module>../tzuyu.feature</module>
@@ -53,6 +57,8 @@
 		<module>../tzuyu</module>
 		<module>../icsetlv</module>
 		<module>../faultLocalization</module>
+		<!-- Others -->
+		<module>../tzuyu.tools</module>
 	</modules>
 
 	<build>

@@ -29,6 +29,10 @@
 			<groupId>de.unisb.cs.st</groupId>
 			<artifactId>visualize</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
 		
 		<!-- scope test -->
 		<dependency>
@@ -37,10 +41,6 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
+
 	</dependencies>
 </project>

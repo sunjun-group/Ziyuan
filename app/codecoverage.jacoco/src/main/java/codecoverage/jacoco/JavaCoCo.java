@@ -13,6 +13,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
@@ -39,8 +41,8 @@ import sav.strategies.dto.BreakPoint;
  *
  */
 public class JavaCoCo implements ICodeCoverage {
-	// In this tutorial we use a special class loader to directly load the
-	// instrumented class definition from a byte[] instances.
+	private static final String JUNIT_TEST_METHOD_PREFIX = "test";
+	private static final String JUNIT_TEST_SUITE_PREFIX = "suite";
 	private MemoryClassLoader memoryClassLoader;
 	
 	private List<Request> extractTestCasesAsRequests(
@@ -51,9 +53,11 @@ public class JavaCoCo implements ICodeCoverage {
 			Method[] methods = junitClass.getMethods();
 			for (Method method : methods) {
 				Test test = method.getAnnotation(Test.class);
-				if (test != null) {
-					Request request = Request.method(junitClass,
-							method.getName());
+				if (test != null
+						|| (TestCase.class.isAssignableFrom(junitClass) && (method.getName()
+								.startsWith(JUNIT_TEST_METHOD_PREFIX) || method.getName()
+								.startsWith(JUNIT_TEST_SUITE_PREFIX)))) {
+					Request request = Request.method(junitClass, method.getName());
 					requests.add(request);
 				}
 			}

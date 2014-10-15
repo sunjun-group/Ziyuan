@@ -13,7 +13,7 @@ import java.net.ServerSocket;
 import java.util.List;
 
 import sav.common.core.utils.StringUtils;
-import sav.commons.utils.ConfigUtils;
+import sav.commons.utils.TestConfigUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
 
@@ -41,7 +41,7 @@ public class AbstractTest {
 
 	protected VMConfiguration initVmConfig() {
 		VMConfiguration vmConfig = new VMConfiguration();
-		vmConfig.setJavaHome(ConfigUtils.getJavaHome());
+		vmConfig.setJavaHome(TestConfigUtils.getJavaHome());
 		vmConfig.setDebug(true);
 		vmConfig.setPort(findFreePort());
 		vmConfig.setLaunchClass(config.getJunitcore());

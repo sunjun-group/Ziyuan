@@ -15,7 +15,7 @@ import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgor
 
 import sav.common.core.utils.CollectionUtils;
 import sav.commons.TestConfiguration;
-import sav.commons.utils.ConfigUtils;
+import sav.commons.utils.TestConfigUtils;
 import tzuyu.core.main.context.AbstractApplicationContext;
 
 
@@ -44,12 +44,12 @@ public class TestApplicationContext extends AbstractApplicationContext {
 
 	@Override
 	protected String getTracerJarPath() {
-		return ConfigUtils.getTracerLibPath();
+		return TestConfigUtils.getTracerLibPath();
 	}
 
 	@Override
 	protected String getJavahome() {
-		return ConfigUtils.getJavaHome();
+		return TestConfigUtils.getJavaHome();
 	}
 
 	@Override
