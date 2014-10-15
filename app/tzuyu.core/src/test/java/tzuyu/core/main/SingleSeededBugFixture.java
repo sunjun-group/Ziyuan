@@ -22,7 +22,7 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 	private SystemConfiguredDataProvider context = new SystemConfiguredDataProvider();
 	private TzuyuCore program;
 
-	public void addProjectClassPath(final String path) throws FileNotFoundException {
+	public void projectClassPath(final String path) throws FileNotFoundException {
 		context.addProjectClassPath(path);
 	}
 
