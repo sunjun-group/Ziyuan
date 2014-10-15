@@ -115,10 +115,10 @@ public class SimplePrograms {
 				return true;
 			} else if (matrix[r][c] > number) {
 //				end = middle - 1;
-				start = middle + 1;
+				start = middle + 1; // (seeded)!!
 			} else {
 //				start = middle + 1;
-				end = middle - 1;
+				end = middle - 1; // (seeded)!!
 			}
 		}
 		
@@ -135,12 +135,12 @@ public class SimplePrograms {
 		char SPACE = ' ';
 		
 		while (start < sentence.length) {
-			end = start;
+			end = start;// (seeded)!!
 			while (start < sentence.length && sentence[start] == SPACE) {
 				start++;
 			}
 
-//			end = start;
+//			end = start; 
 			while (end < sentence.length && sentence[end] != SPACE) {
 				end++;
 			}
@@ -231,10 +231,10 @@ public class SimplePrograms {
 			if (A[start] <= A[middle]) {
 				if (num >= A[start] && num < A[middle]) {
 //					end = middle - 1;
-					start = middle + 1;
+					start = middle + 1; // (seeded)!!
 				} else {
 //					start = middle + 1;
-					end = middle - 1;
+					end = middle - 1; // (seeded)!!
 				}
 			} else if (num > A[middle] && num <= A[end]) {
 				start = middle + 1;

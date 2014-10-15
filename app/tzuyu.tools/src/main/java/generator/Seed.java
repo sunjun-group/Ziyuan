@@ -124,11 +124,11 @@ public abstract class Seed {
 			String toLine = result.get(to);
 			String fromLine = result.get(from);
 			if (type == SeedType.MOVE) {
-				result.set(to, String.format("%s\n%s", fromLine, toLine));
-				result.set(from, String.format("//%s", fromLine));
+				result.set(to, String.format("%s// (seeded)!!\n%s", fromLine, toLine));
+				result.set(from, String.format("//%s ", fromLine));
 			} else if (type == SeedType.SWAP) {
-				result.set(to, String.format("//%s\n%s", toLine, fromLine));
-				result.set(from, String.format("//%s\n%s", fromLine, toLine));
+				result.set(to, String.format("//%s\n%s // (seeded)!!", toLine, fromLine));
+				result.set(from, String.format("//%s\n%s // (seeded)!!", fromLine, toLine));
 			}
 		}
 	}

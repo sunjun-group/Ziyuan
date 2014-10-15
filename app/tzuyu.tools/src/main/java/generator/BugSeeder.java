@@ -18,14 +18,14 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
 import sav.common.core.Constants;
-import sav.commons.utils.ConfigUtils;
+import sav.commons.utils.TestConfigUtils;
 
 /**
  * @author LLT
  *
  */
 public class BugSeeder {
-	private static final String TEST_SCR_FOLDER = ConfigUtils.getTrunkPath()
+	private static final String TEST_SCR_FOLDER = TestConfigUtils.getTrunkPath()
 			+ "/app/sav.commons" + "/src/test/java"; 
 	private static final String ORG_TEST_CLASS_SUFIX = "Org";
 	private SeedParser seedParser = new SeedParser();
