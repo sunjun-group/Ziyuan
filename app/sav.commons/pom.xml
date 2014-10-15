@@ -32,7 +32,7 @@
 				<version>2.12.4</version>
 				<configuration>
 					<excludes>
-						<exclude>**/testdata/**.java</exclude>
+						<exclude>**/testdata/**/*.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
