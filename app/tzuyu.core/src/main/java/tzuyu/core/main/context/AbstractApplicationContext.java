@@ -16,6 +16,7 @@ import codecoverage.jacoco.JavaCoCo;
 
 import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
 
+import sav.common.core.iface.IPrintStream;
 import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.slicing.ISlicer;
@@ -43,6 +44,7 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 		JavaSlicer javaSlicer = new JavaSlicer();
 		javaSlicer.setVmConfig(getVmConfig());
 		javaSlicer.setTracerJarPath(getTracerJarPath());
+		javaSlicer.setVmRunnerPrintStream(getVmRunnerPrintStream());
 		return javaSlicer;
 	}
 	
@@ -100,4 +102,6 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 	protected abstract List<String> getProjectClasspath();
 
 	public abstract SuspiciousnessCalculationAlgorithm getSuspiciousnessCalculationAlgorithm();
+	
+	public abstract IPrintStream getVmRunnerPrintStream();
 }

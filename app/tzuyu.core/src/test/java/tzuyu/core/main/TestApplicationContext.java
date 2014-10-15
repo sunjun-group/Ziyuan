@@ -13,6 +13,8 @@ import java.util.List;
 
 import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
 
+import sav.common.core.SavPrintStream;
+import sav.common.core.iface.IPrintStream;
 import sav.common.core.utils.CollectionUtils;
 import sav.commons.TestConfiguration;
 import sav.commons.utils.TestConfigUtils;
@@ -60,5 +62,10 @@ public class TestApplicationContext extends AbstractApplicationContext {
 	protected void setSuspiciousnessCalculationAlgorithm(
 			SuspiciousnessCalculationAlgorithm algorithm) {
 		this.suspiciousnessCalcul = algorithm;
+	}
+
+	@Override
+	public IPrintStream getVmRunnerPrintStream() {
+		return new SavPrintStream(System.out);
 	}
 }

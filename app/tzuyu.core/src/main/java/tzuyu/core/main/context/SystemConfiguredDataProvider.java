@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import sav.common.core.SavLog4jPrintStream;
+import sav.common.core.iface.IPrintStream;
 import sav.common.core.utils.ConfigUtils;
 import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
 
@@ -69,6 +71,11 @@ public class SystemConfiguredDataProvider extends AbstractApplicationContext {
 		} else {
 			return SuspiciousnessCalculationAlgorithm.TARANTULA;
 		}
+	}
+
+	@Override
+	public IPrintStream getVmRunnerPrintStream() {
+		return new SavLog4jPrintStream();
 	}
 
 }

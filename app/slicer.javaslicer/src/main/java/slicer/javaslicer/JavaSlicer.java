@@ -16,7 +16,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import sav.common.core.SavException;
-import sav.common.core.SavPrintStream;
+import sav.common.core.iface.IPrintStream;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint;
@@ -38,6 +38,7 @@ public class JavaSlicer implements ISlicer {
 	private JavaSlicerVmRunner vmRunner;
 	private VMConfiguration vmConfig;
 	private List<String> analyzedClasses;
+	private IPrintStream vmRunnerPrintStream;
 
 	public void setTracerJarPath(String tracerJarPath) {
 		vmRunner = new JavaSlicerVmRunner(tracerJarPath);
@@ -45,6 +46,10 @@ public class JavaSlicer implements ISlicer {
 	
 	public void setVmConfig(VMConfiguration vmConfig) {
 		this.vmConfig = vmConfig;
+	}
+	
+	public void setVmRunnerPrintStream(IPrintStream vmRunnerPrintStream) {
+		this.vmRunnerPrintStream = vmRunnerPrintStream;
 	}
 	
 	@Override
@@ -72,7 +77,7 @@ public class JavaSlicer implements ISlicer {
 		vmConfig.setLaunchClass(TestcasesRunner.class.getCanonicalName())
 				.addProgramArgs(TestcasesRunner.toArgs(junitClassNames));
 		vmRunner.setTraceFilePath(tempFileName);
-		vmRunner.setOut(new SavPrintStream(System.out));
+		vmRunner.setOut(vmRunnerPrintStream);
 		vmRunner.startAndWaitUntilStop(vmConfig);
 
 		return tempFileName;
