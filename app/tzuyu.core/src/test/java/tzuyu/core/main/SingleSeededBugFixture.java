@@ -19,10 +19,18 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 	private double maxSuspiciousness = -1.0;
 	private double foundLineSuspiciousness = -1.0;
 
+	private SystemConfiguredDataProvider context = new SystemConfiguredDataProvider();
 	private TzuyuCore program;
 
-	public void projectClassPath(final String path) throws FileNotFoundException {
-		program = new TzuyuCore(new SystemConfiguredDataProvider(path));
+	public void addProjectClassPath(final String path) throws FileNotFoundException {
+		context.addProjectClassPath(path);
+	}
+
+	private TzuyuCore getProgram() {
+		if (program == null) {
+			program = new TzuyuCore(context);
+		}
+		return program;
 	}
 
 	public void programClass(final String clazz) {
@@ -38,7 +46,7 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 	}
 
 	public boolean analyze() throws Exception {
-		infos = program.faultLocalization(programClasses, programTestClasses);
+		infos = getProgram().faultLocalization(programClasses, programTestClasses);
 
 		for (LineCoverageInfo info : infos) {
 			if (maxSuspiciousness < info.getSuspiciousness()) {
