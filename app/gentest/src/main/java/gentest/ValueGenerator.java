@@ -47,6 +47,8 @@ public class ValueGenerator {
 			variable.append(RAssignment.assignmentFor(type, value));
 		} else if (type.isInterface()) {
 			throw new SavRtException("Generate for interface: NOT YET UNSUPPORTED!!");
+		} else if (type.isArray()) {
+			//TODO LLT: complete this
 		} else {
 			RConstructor rconstructor = RConstructor
 					.of(type.getConstructors()[0]);

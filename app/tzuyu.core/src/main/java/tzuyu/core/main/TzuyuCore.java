@@ -27,14 +27,7 @@ public class TzuyuCore {
 		this.appContext = appContext;
 	}
 	
-	/**
-	 * 
-	 * @param testingClasses: 
-	 * 		
-	 * @param junitClassNames
-	 * @return
-	 * @throws Exception
-	 */
+
 	public List<LineCoverageInfo> faultLocalization(List<String> testingClassNames,
 			List<String> junitClassNames) throws Exception {
 		ProgramAnalyzer analyzer = new ProgramAnalyzer(appContext);

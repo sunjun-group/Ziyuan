@@ -6,11 +6,14 @@
  *  Version:  $Revision: 1 $
  */
 
-package sav.commons.testdata;
+package sav.commons.testdata.simplePrograms.org;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
+import sav.commons.testdata.simplePrograms.SimplePrograms;
+
 
 /**
  * @author khanh

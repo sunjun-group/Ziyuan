@@ -14,8 +14,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import sav.commons.testdata.SimplePrograms;
-import sav.commons.testdata.palindrome.PalindromeTest;
+import sav.commons.testdata.simplePrograms.DuplicateNumberTest;
+import sav.commons.testdata.simplePrograms.Palindrome1Test;
+import sav.commons.testdata.simplePrograms.Palindrome2Test;
+import sav.commons.testdata.simplePrograms.SimplePrograms;
 
 /**
  * @author LLT
@@ -32,12 +34,29 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	}
 	
 	@Test
-	public void testFaultLocalization() throws Exception {
+	public void runDuplicateNumber() throws Exception {
+		faultLocalization(SimplePrograms.class.getName(),
+				DuplicateNumberTest.class.getName());
+	}
+	
+	@Test
+	public void runPalindrome2() throws Exception {
+		faultLocalization(SimplePrograms.class.getName(),
+				Palindrome2Test.class.getName());
+	}
+	
+	@Test
+	public void runPalindrome1() throws Exception {
+		faultLocalization(SimplePrograms.class.getName(),
+				Palindrome1Test.class.getName());
+	}
+	
+	public void faultLocalization(String program, String junit) throws Exception {
 		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> testingClasses = new ArrayList<String>();
-		testingClasses.add(SimplePrograms.class.getName());
+		testingClasses.add(program);
 		List<String> junitClassNames = new ArrayList<String>();
-		junitClassNames.add(PalindromeTest.class.getName());
+		junitClassNames.add(junit);
 		app.faultLocalization(testingClasses, junitClassNames);
 	}
 

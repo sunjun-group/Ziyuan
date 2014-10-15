@@ -6,17 +6,17 @@
  *  Version:  $Revision: 1 $
  */
 
-package sav.commons.testdata;
+package sav.commons.testdata.simplePrograms;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author khanh
+ * @author LLT
  *
  */
-public class SimplePrograms {
-
+public class SimpleProgramsOrg {
+	
 	/**
 	 * Check whether a number is a palindrome
 	 * 121 is a palindrome but 123 is not
@@ -24,21 +24,20 @@ public class SimplePrograms {
 	 * @param number
 	 * @return
 	 */
-	public boolean isPalindrome1(int number){
+	public boolean isPalindrome1(int x) {
 		List<Integer> digits = new ArrayList<Integer>();
-		
-		while(number > 0){
-			int digit = number % 10;
+		while (x > 0) {
+			int digit = x % 10;
 			digits.add(digit);
-			number = number / 10;
+			x = x / 10;
 		}
-		
-		for(int i = 0; i < digits.size()/ 2; i++){
-			if(digits.get(i) != digits.get(digits.size() - 1 - i)){
+		int i = 0;
+		int j = digits.size();
+		while (i < j) {
+			if (digits.get(i++) != digits.get(--j)) {
 				return false;
 			}
 		}
-		
 		return true;
 	}
 	
@@ -53,14 +52,14 @@ public class SimplePrograms {
 		int backupNumber = number;
 		
 		int reverseNumber = 0;
-		
+		 
 		while(number > 0){
 			int digit = number % 10;
 			reverseNumber = reverseNumber * 10 + digit;
 			number = number / 10;
 		}
 		
-		return (reverseNumber == backupNumber);
+		return (reverseNumber != backupNumber);
 	}
 	
 	/**
@@ -70,18 +69,18 @@ public class SimplePrograms {
 	 * @return
 	 */
 	public int duplicatedNumber(int[] numbers){
-		
+		int temp;
 		for(int i = 0; i < numbers.length; i++){
-			while(numbers[i] != i){
-				int temp = numbers[numbers[i]];
+			int j;
+			while((j = numbers[i]) != i){
+				temp = numbers[j];
 				
-				if(numbers[i] == temp){
-					return numbers[i];
+				if(j == temp){
+					return j;
 				}
 				
-				numbers[numbers[i]] = numbers[i];
+				numbers[j] = j;
 				numbers[i] = temp;
-				
 			}
 		}
 		
@@ -95,9 +94,6 @@ public class SimplePrograms {
 		13 15 17
 		left to right, and the last number in each
 		row is not greater than the first number of the next row
-	 * @param matrix
-	 * @param number
-	 * @return
 	 */
 	public boolean searchInSortingMatrix1(int[][] matrix, int number){
 		int row = matrix.length;
@@ -106,24 +102,20 @@ public class SimplePrograms {
 		int start = 0;
 		int end = row * col - 1;
 		
-		while(start <= end){
+		while (start <= end) {
 			int middle = start + (end - start) / 2;
-			
+
 			int c = middle % col;
 			int r = middle / col;
-			
-			if(matrix[r][c] == number){
+
+			if (matrix[r][c] == number) {
 				return true;
-			}
-			else if(matrix[r][c] > number){
+			} else if (matrix[r][c] > number) {
 				end = middle - 1;
-			}
-			else{
+			} else {
 				start = middle + 1;
 			}
-			
 		}
-		
 		
 		return false;
 	}
@@ -157,9 +149,6 @@ public class SimplePrograms {
 	
 	/**
 	 * Reverse the char[] from i to j
-	 * @param s
-	 * @param i
-	 * @param j
 	 */
 	private void reverseWord(char[] s, int i, int j){
 		if(!(i >= 0 && j <= s.length && i <= j)){
@@ -194,66 +183,57 @@ public class SimplePrograms {
 		char DOT = '.';
 		char START = '*';
 		
-		if(startS >= s.length && startP >= pattern.length){
+		if (startS >= s.length && startP >= pattern.length) {
 			return true;
 		}
 		
-		if(startS >= s.length && startP < pattern.length){
+		if (startS >= s.length && startP < pattern.length){
 			return (startP + 1 < pattern.length && pattern[startP + 1] == START && match(s, startS, pattern, startP + 2));
 		}
 		
-		if(startS < s.length && startP >= pattern.length){
+		if (startS < s.length && startP >= pattern.length){
 			return false;
 		}
 		
-		if(startP + 1 >= pattern.length){
+		if (startP + 1 >= pattern.length){
 			return (pattern[startP] == DOT || s[startS] == pattern[startP]) && match(s, startS + 1, pattern, startP + 1);
-		}
-		else if(pattern[startP + 1] == START){
-			if(pattern[startP] == DOT || s[startS] == pattern[startP]){
+		} else if (pattern[startP + 1] == START){
+			if (pattern[startP] == DOT || s[startS] == pattern[startP]){
 				return match(s, startS, pattern, startP + 2) || //no char in s matches ?*
 						match(s, startS+1, pattern, startP) || //one char in s matches  but still have ?*
 						match(s, startS+1, pattern, startP + 2);//one char in s matches and finish .?* where ? can be . or any char
-			}
-			else{
+			} else {
 				return match(s, startS, pattern, startP + 2);
 			}			
-		}
-		else{
+		} else {
 			return (pattern[startP] == DOT || s[startS] == pattern[startP]) && match(s, startS + 1, pattern, startP + 1);
 		}	
-		
 	}
-	
-	public int findInRotatedSortedArray(int[] A, int num){
+
+	public int findInRotatedSortedArray(int[] A, int num) {
 		int start = 0;
 		int end = A.length - 1;
-		
-		while(start <= end){
-			int middle = start + (end - start)/2;
-			
-			if(A[middle] == num){
+
+		while (start <= end) {
+			int middle = start + (end - start) / 2;
+
+			if (A[middle] == num) {
 				return middle;
 			}
-			
-			if(A[start] <= A[middle]){
-				if(num >= A[start] && num < A[middle]){
+
+			if (A[start] <= A[middle]) {
+				if (num >= A[start] && num < A[middle]) {
 					end = middle - 1;
-				}
-				else{
+				} else {
 					start = middle + 1;
 				}
-			}
-			else{
-				if(num > A[middle] && num <= A[end]){
-					start = middle + 1;
-				}
-				else{
-					end = middle - 1;
-				}
+			} else if (num > A[middle] && num <= A[end]) {
+				start = middle + 1;
+			} else {
+				end = middle - 1;
 			}
 		}
-		
+
 		return -1;
 	}
 }

@@ -8,10 +8,7 @@
 
 package generator;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -43,7 +40,7 @@ public class MessagesGenerator {
 
 	private static void generateMessagesClass() throws IOException {
 		System.out.println("Start generating Messages.java from messages.properties");
-		Properties props = loadProperties();
+		Properties props = ToolsUtils.loadProperties(MESSAGES_PROPERTIES_PATH);
 		String propsContent = buildPropsContent(props);
 		File messageCl = new File(GENERATED_MESSAGES_CLASS_PATH);
 		StringBuilder content = new StringBuilder();
@@ -100,29 +97,6 @@ public class MessagesGenerator {
 					
 		}
 		return content.append("\n").toString();
-	}
-
-	private static Properties loadProperties() {
-		Properties prop = new Properties();
-		File file = new File(MESSAGES_PROPERTIES_PATH);
-		BufferedInputStream in = null;
-		try {
-			in = new BufferedInputStream(new FileInputStream(file));
-			prop.load(in);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					// do nothing
-				}
-			}
-		}
-		return prop;
 	}
 
 }

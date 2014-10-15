@@ -6,20 +6,18 @@
  *  Version:  $Revision: 1 $
  */
 
-package sav.commons.testdata.palindrome;
+package sav.commons.testdata.simplePrograms;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import sav.commons.testdata.SimplePrograms;
 
 /**
  * @author LLT
  *
  */
-public class PalindromeTest {
+public class Palindrome1Test {
 	
 	@Test
 	public void test1() {
@@ -49,5 +47,11 @@ public class PalindromeTest {
 	public void test5() {
 		SimplePrograms program = new SimplePrograms();
 		assertEquals(false, program.isPalindrome1(10000));
+	}
+	
+	@Test
+	public void test6() {
+		SimplePrograms program = new SimplePrograms();
+		assertEquals(false, program.isPalindrome1(12131));
 	}
 }
