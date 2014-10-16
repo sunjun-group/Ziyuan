@@ -26,6 +26,6 @@ public class BugSeederRunner {
 		BugSeeder seeder = new BugSeeder(
 				SimplePrograms.class, seedFilePath);
 		seeder.seedBug(new String[]{"bug3", "bug11", "bug22", "bug31",
-				"bug42", "bug53", "bug62"});
+				"bug40", "bug53", "bug62"});
 	}
 }

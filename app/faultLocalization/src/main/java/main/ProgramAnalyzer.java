@@ -10,6 +10,7 @@ package main;
 
 import java.util.List;
 
+import sav.common.core.utils.CollectionUtils;
 import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.dto.BreakPoint;
@@ -45,6 +46,9 @@ public class ProgramAnalyzer {
 		slicer.setAnalyzedClasses(testingClasses);
 		List<BreakPoint> causeTraces = slicer.slice(result.getFailureTraces(),
 				junitClassNames);
+		for (BreakPoint bkp : result.getFailureTraces()) {
+			CollectionUtils.addIfNotNullNotExist(causeTraces, bkp);
+		}
 		return result.tarantula(causeTraces, algorithm);
 	}
 	
