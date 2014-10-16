@@ -19,37 +19,48 @@ import faultLocalization.CoverageReport;
 import faultLocalization.LineCoverageInfo;
 import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
 
-
 /**
  * @author LLT
- *
+ * 
  */
 public class ProgramAnalyzer {
 	private ISlicer slicer;
 	private ICodeCoverage codeCoverageTool;
-	
+	private boolean useSlicer = true; // Use slicer by default
+
 	public ProgramAnalyzer(IApplicationContext appContext) {
 		slicer = appContext.getSlicer();
 		codeCoverageTool = appContext.getCodeCoverageTool();
 	}
-	
+
 	public List<LineCoverageInfo> analyse(List<String> testingClasseNames,
 			List<String> junitClassNames) throws Exception {
-		return analyse(testingClasseNames, junitClassNames, SuspiciousnessCalculationAlgorithm.TARANTULA);
+		return analyse(testingClasseNames, junitClassNames,
+				SuspiciousnessCalculationAlgorithm.TARANTULA);
 	}
-	
+
 	public List<LineCoverageInfo> analyse(List<String> testingClasses,
-			List<String> junitClassNames, SuspiciousnessCalculationAlgorithm algorithm) throws Exception {
+			List<String> junitClassNames, SuspiciousnessCalculationAlgorithm algorithm)
+			throws Exception {
 		CoverageReport result = new CoverageReport();
 		codeCoverageTool.run(result, testingClasses, junitClassNames);
 		/* do slicing */
 		slicer.setAnalyzedClasses(testingClasses);
-		List<BreakPoint> causeTraces = slicer.slice(result.getFailureTraces(),
-				junitClassNames);
-		for (BreakPoint bkp : result.getFailureTraces()) {
-			CollectionUtils.addIfNotNullNotExist(causeTraces, bkp);
+		List<BreakPoint> traces = result.getFailureTraces();
+		if (useSlicer) {
+			List<BreakPoint> causeTraces = slicer.slice(result.getFailureTraces(),
+					junitClassNames);
+			for (BreakPoint bkp : causeTraces) {
+				CollectionUtils.addIfNotNullNotExist(traces, bkp);
+			}
 		}
-		return result.tarantula(causeTraces, algorithm);
+		return result.tarantula(traces, algorithm);
+
 	}
-	
+
+	public void setUseSlicer(boolean useSlicer) {
+		this.useSlicer = useSlicer;
+>>>>>>> 01ac7e7fc80d609d40338c19fed5b1c1afa375e5
+	}
+
 }
