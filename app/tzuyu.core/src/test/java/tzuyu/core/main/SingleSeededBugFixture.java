@@ -38,11 +38,11 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 	public void javaHome(final String path) {
 		context.setJavaHome(path);
 	}
-	
+
 	public void tracerJarPath(final String path) {
 		context.setTracerJarPath(path);
 	}
-	
+
 	public void programClass(final String clazz) {
 		programClasses.add(clazz);
 	}
@@ -53,6 +53,10 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 
 	public void expectedBugLine(final String line) {
 		expectedBugLine = line;
+	}
+
+	public void useSlicer(final boolean useSlicer) {
+		this.useSlicer = useSlicer;
 	}
 
 	public boolean analyze() throws Exception {
