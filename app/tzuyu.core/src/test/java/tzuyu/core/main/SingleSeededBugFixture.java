@@ -14,6 +14,7 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 	private List<String> programClasses = new ArrayList<String>();
 	private List<String> programTestClasses = new ArrayList<String>();
 	private String expectedBugLine;
+	private boolean useSlicer = true;
 
 	// Results
 	private List<LineCoverageInfo> infos;
@@ -55,7 +56,7 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 	}
 
 	public boolean analyze() throws Exception {
-		infos = getProgram().faultLocalization(programClasses, programTestClasses);
+		infos = getProgram().faultLocalization(programClasses, programTestClasses, useSlicer);
 
 		for (LineCoverageInfo info : infos) {
 			if (maxSuspiciousness < info.getSuspiciousness()) {
