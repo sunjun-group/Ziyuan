@@ -22,6 +22,7 @@ public class SystemConfiguredDataProvider extends AbstractApplicationContext {
 	private static final String TZUYU_ALGO = "TZUYU_ALGO";
 	private static final String JAVA_HOME = "java.home";
 	private static final String JAVA_CLASS_FILE_EXTENSION = ".class";
+	private static final String JAVA_JAR_FILE_EXTENSION = ".jar";
 	private List<String> projectClassPath = new ArrayList<String>();
 
 	public void addProjectClassPath(final String path) throws FileNotFoundException {
@@ -33,19 +34,23 @@ public class SystemConfiguredDataProvider extends AbstractApplicationContext {
 			// Only 1 file is provided
 			// That file must contain both program code + test code
 			projectClassPath.add(folder.getParent());
-		} else if (folder.isDirectory()) {
-			// A directory is provided
+		} else if (folder.isDirectory() || isJarFile(folder)) {
+			// A directory or a JAR file is provided
 			// Scan the directory for classes and mark them as either program
 			// code or test code
 			projectClassPath.add(folder.getAbsolutePath());
 		} else {
 			throw new UnsupportedOperationException("The path " + path
-					+ " is neither a .class file nor a directory.");
+					+ " is neither a .class/.jar file nor a directory.");
 		}
 	}
 
 	private boolean isClassFile(File file) {
 		return file.isFile() && file.getName().endsWith(JAVA_CLASS_FILE_EXTENSION);
+	}
+
+	private boolean isJarFile(File file) {
+		return file.isFile() && file.getName().endsWith(JAVA_JAR_FILE_EXTENSION);
 	}
 
 	@Override
