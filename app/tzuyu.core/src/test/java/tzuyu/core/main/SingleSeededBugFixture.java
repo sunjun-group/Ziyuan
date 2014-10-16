@@ -9,6 +9,7 @@ import faultLocalization.LineCoverageInfo;
 import fit.TimedActionFixture;
 
 public class SingleSeededBugFixture extends TimedActionFixture {
+	private static final Object LINE_FEED = "<br/>";
 	// Parameters
 	private List<String> programClasses = new ArrayList<String>();
 	private List<String> programTestClasses = new ArrayList<String>();
@@ -26,11 +27,11 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 	public void javaHome(final String path) {
 		context.setJavaHome(path);
 	}
-	
+
 	public void tracerJarPath(final String path) {
 		context.setTracerJarPath(path);
 	}
-	
+
 	public void projectClassPath(final String path) throws FileNotFoundException {
 		context.addProjectClassPath(path);
 	}
@@ -52,6 +53,10 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 
 	public void expectedBugLine(final String line) {
 		expectedBugLine = line;
+	}
+
+	public void useSlicer(boolean useSlicer) {
+		this.useSlicer = useSlicer;
 	}
 
 	public boolean analyze() throws Exception {
@@ -76,7 +81,15 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 		return bugWasFound() && foundLineSuspiciousness == maxSuspiciousness;
 	}
 
-	public void setUseSlicer(boolean useSlicer) {
-		this.useSlicer = useSlicer;
+	public String showLineCoverageInfo() {
+		final StringBuilder builder = new StringBuilder();
+		if (infos == null || infos.size() == 0) {
+			builder.append("No line coverage information was detected.");
+		} else {
+			for (LineCoverageInfo info : infos) {
+				builder.append(info.toString()).append(LINE_FEED);
+			}
+		}
+		return builder.toString();
 	}
 }
