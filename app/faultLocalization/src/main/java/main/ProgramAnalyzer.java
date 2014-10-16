@@ -60,7 +60,6 @@ public class ProgramAnalyzer {
 
 	public void setUseSlicer(boolean useSlicer) {
 		this.useSlicer = useSlicer;
->>>>>>> 01ac7e7fc80d609d40338c19fed5b1c1afa375e5
 	}
 
 }
