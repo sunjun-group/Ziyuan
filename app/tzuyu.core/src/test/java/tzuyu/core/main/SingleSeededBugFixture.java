@@ -9,6 +9,7 @@ import faultLocalization.LineCoverageInfo;
 import fit.TimedActionFixture;
 
 public class SingleSeededBugFixture extends TimedActionFixture {
+	private static final String LINE_FEED = "<br/>";
 	// Parameters
 	private List<String> programClasses = new ArrayList<String>();
 	private List<String> programTestClasses = new ArrayList<String>();
@@ -65,5 +66,22 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 
 	public boolean foundBugHasMaxSuspiciousness() {
 		return bugWasFound() && foundLineSuspiciousness == maxSuspiciousness;
+	}
+
+	public void show() throws Exception {
+		final Object result = method(0).invoke(getActor());
+		cells.last().more = td(result.toString());
+	}
+
+	public String lineCoverageInfo() {
+		final StringBuilder builder = new StringBuilder();
+		if (infos == null || infos.size() == 0) {
+			builder.append("No line coverage information was detected.");
+		} else {
+			for (LineCoverageInfo info : infos) {
+				builder.append(info.toString()).append(LINE_FEED);
+			}
+		}
+		return builder.toString();
 	}
 }
