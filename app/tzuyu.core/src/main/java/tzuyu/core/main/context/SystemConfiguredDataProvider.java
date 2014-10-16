@@ -25,6 +25,9 @@ public class SystemConfiguredDataProvider extends AbstractApplicationContext {
 	private static final String JAVA_JAR_FILE_EXTENSION = ".jar";
 	private List<String> projectClassPath = new ArrayList<String>();
 
+	private String tracerJarPath;
+	private String javaHome;
+	
 	public void addProjectClassPath(final String path) throws FileNotFoundException {
 		File folder = new File(path);
 		if (!folder.exists()) {
@@ -58,14 +61,22 @@ public class SystemConfiguredDataProvider extends AbstractApplicationContext {
 		return projectClassPath;
 	}
 
+	public void setTracerJarPath(final String path) {
+		tracerJarPath = path;
+	}
+	
 	@Override
 	protected String getTracerJarPath() {
-		return null;
+		return tracerJarPath;
 	}
 
+	public void setJavaHome(final String path) {
+		javaHome = path;
+	}
+	
 	@Override
 	protected String getJavahome() {
-		return ConfigUtils.getProperty(JAVA_HOME);
+		return StringUtils.isNotBlank(javaHome) ? javaHome : ConfigUtils.getProperty(JAVA_HOME);
 	}
 
 	@Override

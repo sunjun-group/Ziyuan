@@ -22,6 +22,14 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 	private SystemConfiguredDataProvider context = new SystemConfiguredDataProvider();
 	private TzuyuCore program;
 
+	public void javaHome(final String path) {
+		context.setJavaHome(path);
+	}
+	
+	public void tracerJarPath(final String path) {
+		context.setTracerJarPath(path);
+	}
+	
 	public void projectClassPath(final String path) throws FileNotFoundException {
 		context.addProjectClassPath(path);
 	}
