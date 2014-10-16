@@ -19,32 +19,32 @@ public class SavLog4jPrintStream extends AbstractPrintStream {
 	
 	@Override
 	public void print(byte b) {
-		logger.debug(b);
+		logger.info(b);
 	}
 
 	@Override
 	public void print(char c) {
-		logger.debug(c);
+		logger.info(c);
 	}
 
 	@Override
 	public void print(double d) {
-		logger.debug(d);
+		logger.info(d);
 	}
 
 	@Override
 	public void print(String s) {
-		logger.debug(s);
+		logger.info(s);
 	}
 
 	@Override
 	public void println(String s) {
-		logger.debug(s);
+		logger.info(s);
 	}
 
 	@Override
 	public void println(Object[] e) {
-		logger.debug(e);
+		logger.info(e);
 	}
 
 }
