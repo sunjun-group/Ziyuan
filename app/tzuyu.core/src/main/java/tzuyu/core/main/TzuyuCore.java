@@ -26,11 +26,16 @@ public class TzuyuCore {
 	public TzuyuCore(AbstractApplicationContext appContext) {
 		this.appContext = appContext;
 	}
-	
 
 	public List<LineCoverageInfo> faultLocalization(List<String> testingClassNames,
 			List<String> junitClassNames) throws Exception {
+		return faultLocalization(testingClassNames, junitClassNames, true);
+	}
+	
+	public List<LineCoverageInfo> faultLocalization(List<String> testingClassNames,
+			List<String> junitClassNames, boolean useSlicer) throws Exception {
 		ProgramAnalyzer analyzer = new ProgramAnalyzer(appContext);
+		analyzer.setUseSlicer(useSlicer);
 		return analyzer.analyse(testingClassNames, junitClassNames,
 				appContext.getSuspiciousnessCalculationAlgorithm());
 	}
