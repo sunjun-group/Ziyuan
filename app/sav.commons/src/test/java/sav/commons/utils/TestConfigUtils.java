@@ -9,7 +9,11 @@ import sav.common.core.utils.ConfigUtils;
 
 public class TestConfigUtils extends ConfigUtils {
 	private static final String TZUYU_HOME = "TZUYU_HOME";
+	private static ResourceBundle testConfiguration;
 
+	static {
+		testConfiguration = ResourceBundle.getBundle("test_configuration");
+	}
 	/**
 	 * Try to get the trunk path from either:
 	 * <ol>
@@ -26,9 +30,17 @@ public class TestConfigUtils extends ConfigUtils {
 	public static String getTrunkPath() {
 		String trunk = getProperty(TZUYU_HOME);
 		if (StringUtils.isBlank(trunk)) {
-			trunk = ResourceBundle.getBundle("test_configuration").getString("trunk");
+			trunk = getTestProperties().getString("trunk");
 		}
 		return trunk;
+	}
+
+	public static ResourceBundle getTestProperties() {
+		return testConfiguration;
+	}
+	
+	public static String getConfig(String key) {
+		return testConfiguration.getString(key);
 	}
 
 	public static String getJavaHome() {

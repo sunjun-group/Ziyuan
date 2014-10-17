@@ -97,4 +97,8 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 		}
 		return builder.toString();
 	}
+
+	public SystemConfiguredDataProvider getContext() {
+		return context;
+	}
 }

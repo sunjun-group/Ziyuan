@@ -7,9 +7,12 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import codecoverage.jacoco.JavaCoCo;
+
 import sav.common.core.SavLog4jPrintStream;
 import sav.common.core.iface.IPrintStream;
 import sav.common.core.utils.ConfigUtils;
+import sav.strategies.codecoverage.ICodeCoverage;
 import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
 
 /**
@@ -26,7 +29,7 @@ public class SystemConfiguredDataProvider extends AbstractApplicationContext {
 	private List<String> projectClassPath = new ArrayList<String>();
 	private String javaHome;
 	private String tracerJarPath;
-
+	
 	public void addProjectClassPath(final String path) throws FileNotFoundException {
 		File folder = new File(path);
 		if (!folder.exists()) {
@@ -93,4 +96,17 @@ public class SystemConfiguredDataProvider extends AbstractApplicationContext {
 		return new SavLog4jPrintStream();
 	}
 
+	public List<String> getProjectClassPath() {
+		return projectClassPath;
+	}
+	
+	@Override
+	protected ICodeCoverage initCodeCoverage() {
+		JavaCoCo jacoco = new JavaCoCo();
+		return jacoco;
+	}
+	
+	public JavaCoCo getJaCoco() {
+		return (JavaCoCo)codeCoverageTool;
+	}
 }

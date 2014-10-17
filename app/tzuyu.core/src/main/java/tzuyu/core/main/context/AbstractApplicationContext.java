@@ -34,9 +34,9 @@ import slicer.javaslicer.JavaSlicer;
 public abstract class AbstractApplicationContext implements IApplicationContext {
 	private ISlicer slicer;
 	private VMConfiguration vmConfig;
-	private ICodeCoverage codeCoverageTool;
+	protected ICodeCoverage codeCoverageTool;
 
-	private ICodeCoverage initCodeCoverage() {
+	protected ICodeCoverage initCodeCoverage() {
 		return new JavaCoCo();
 	}
 	
