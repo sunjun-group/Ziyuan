@@ -8,12 +8,13 @@ import org.apache.commons.lang.StringUtils;
 import sav.common.core.utils.ConfigUtils;
 
 public class TestConfigUtils extends ConfigUtils {
-	private static final String TZUYU_HOME = "TZUYU_HOME";
+	private static final String TRUNK = "trunk";
 	private static ResourceBundle testConfiguration;
 
-	static {
-		testConfiguration = ResourceBundle.getBundle("test_configuration");
+	private TestConfigUtils() {
+		// To hide the constructor
 	}
+
 	/**
 	 * Try to get the trunk path from either:
 	 * <ol>
@@ -28,19 +29,22 @@ public class TestConfigUtils extends ConfigUtils {
 	 * @return path to trunk if defined in one of the three locations.
 	 */
 	public static String getTrunkPath() {
-		String trunk = getProperty(TZUYU_HOME);
-		if (StringUtils.isBlank(trunk)) {
-			trunk = getTestProperties().getString("trunk");
-		}
-		return trunk;
+		return getConfig(TRUNK);
 	}
 
 	public static ResourceBundle getTestProperties() {
+		if (testConfiguration == null) {
+			testConfiguration = ResourceBundle.getBundle("test_configuration");
+		}
 		return testConfiguration;
 	}
-	
+
 	public static String getConfig(String key) {
-		return testConfiguration.getString(key);
+		String value = getProperty(key);
+		if (StringUtils.isBlank(value)) {
+			value = getTestProperties().getString(key);
+		}
+		return value;
 	}
 
 	public static String getJavaHome() {
