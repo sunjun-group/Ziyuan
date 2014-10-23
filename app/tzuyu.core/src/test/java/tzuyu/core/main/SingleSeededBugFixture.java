@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import tzuyu.core.main.context.SystemConfiguredDataProvider;
 import faultLocalization.LineCoverageInfo;
 import fit.TimedActionFixture;
 
@@ -18,7 +17,7 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 
 	// Results
 	protected List<LineCoverageInfo> infos;
-	private double maxSuspiciousness = -1.0;
+	protected double maxSuspiciousness = -1.0;
 	private double foundLineSuspiciousness = -1.0;
 
 	private SystemConfiguredDataProvider context = new SystemConfiguredDataProvider();
