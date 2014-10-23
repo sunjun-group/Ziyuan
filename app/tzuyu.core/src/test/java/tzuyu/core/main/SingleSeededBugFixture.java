@@ -9,15 +9,15 @@ import faultLocalization.LineCoverageInfo;
 import fit.TimedActionFixture;
 
 public class SingleSeededBugFixture extends TimedActionFixture {
-	private static final String LINE_FEED = "<br/>";
+	protected static final String LINE_FEED = "<br/>";
 	// Parameters
-	private List<String> programClasses = new ArrayList<String>();
-	private List<String> programTestClasses = new ArrayList<String>();
+	protected List<String> programClasses = new ArrayList<String>();
+	protected List<String> programTestClasses = new ArrayList<String>();
+	protected boolean useSlicer = true;
 	private String expectedBugLine;
-	private boolean useSlicer = true;
 
 	// Results
-	private List<LineCoverageInfo> infos;
+	protected List<LineCoverageInfo> infos;
 	private double maxSuspiciousness = -1.0;
 	private double foundLineSuspiciousness = -1.0;
 
@@ -28,7 +28,7 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 		context.addProjectClassPath(path);
 	}
 
-	private TzuyuCore getProgram() {
+	protected TzuyuCore getProgram() {
 		if (program == null) {
 			program = new TzuyuCore(context);
 		}
@@ -59,9 +59,13 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 		this.useSlicer = useSlicer;
 	}
 
-	public boolean analyze() throws Exception {
+	public final boolean analyze() throws Exception {
 		infos = getProgram().faultLocalization(programClasses, programTestClasses, useSlicer);
+		checkAnalyzedResults();
+		return true;
+	}
 
+	protected void checkAnalyzedResults() {
 		for (LineCoverageInfo info : infos) {
 			if (maxSuspiciousness < info.getSuspiciousness()) {
 				maxSuspiciousness = info.getSuspiciousness();
@@ -70,7 +74,6 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 				foundLineSuspiciousness = info.getSuspiciousness();
 			}
 		}
-		return true;
 	}
 
 	public boolean bugWasFound() {
