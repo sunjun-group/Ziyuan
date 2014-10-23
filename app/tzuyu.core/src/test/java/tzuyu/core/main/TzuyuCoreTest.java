@@ -15,9 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sav.commons.TestConfiguration;
-import sav.commons.testdata.ext.Class2;
-import sav.commons.testdata.ext.Class3;
-import sav.commons.testdata.ext.TestClass;
 import sav.commons.testdata.simplePrograms.DuplicateNumberTest;
 import sav.commons.testdata.simplePrograms.Palindrome1Test;
 import sav.commons.testdata.simplePrograms.Palindrome2Test;
@@ -42,17 +39,6 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	public void runDuplicateNumber() throws Exception {
 		faultLocalization(SimplePrograms.class.getName(),
 				DuplicateNumberTest.class.getName());
-	}
-	
-	@Test
-	public void testExt() throws Exception{
-		TzuyuCore app = new TzuyuCore(testContext);
-		List<String> testingClasses = new ArrayList<String>();
-		testingClasses.add(TestClass.class.getName());
-		List<String> junitClassNames = new ArrayList<String>();
-		junitClassNames.add(Class2.class.getName());
-		junitClassNames.add(Class3.class.getName());
-		app.faultLocalization(testingClasses, junitClassNames, false);
 	}
 	
 	@Test

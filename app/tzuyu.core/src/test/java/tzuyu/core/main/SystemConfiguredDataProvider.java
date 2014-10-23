@@ -1,4 +1,4 @@
-package tzuyu.core.main.context;
+package tzuyu.core.main;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import sav.common.core.SavLog4jPrintStream;
 import sav.common.core.iface.IPrintStream;
 import sav.common.core.utils.ConfigUtils;
-import tzuyu.core.main.TestApplicationContext;
 import codecoverage.jacoco.JavaCoCo;
 import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
 

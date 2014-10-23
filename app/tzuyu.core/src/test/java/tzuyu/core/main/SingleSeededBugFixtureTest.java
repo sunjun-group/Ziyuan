@@ -16,7 +16,6 @@ import org.junit.Test;
 
 import sav.commons.TestConfiguration;
 import sav.commons.utils.TestConfigUtils;
-import tzuyu.core.main.context.SystemConfiguredDataProvider;
 
 /**
  * @author LLT
