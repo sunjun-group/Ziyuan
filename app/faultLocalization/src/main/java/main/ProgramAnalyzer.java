@@ -8,6 +8,7 @@
 
 package main;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import sav.common.core.utils.CollectionUtils;
@@ -44,18 +45,19 @@ public class ProgramAnalyzer {
 			throws Exception {
 		CoverageReport result = new CoverageReport();
 		codeCoverageTool.run(result, testingClasses, junitClassNames);
-		/* do slicing */
-		List<BreakPoint> traces = result.getFailureTraces();
 		if (useSlicer) {
+			/* do slicing */
+			List<BreakPoint> traces = result.getFailureTraces();
 			slicer.setAnalyzedClasses(testingClasses);
 			List<BreakPoint> causeTraces = slicer.slice(result.getFailureTraces(),
 					junitClassNames);
 			for (BreakPoint bkp : causeTraces) {
 				CollectionUtils.addIfNotNullNotExist(traces, bkp);
 			}
+			return result.tarantula(traces, algorithm);
+		} else {
+			return result.tarantula(new ArrayList<BreakPoint>(), algorithm);
 		}
-		return result.tarantula(traces, algorithm);
-
 	}
 
 	public void setUseSlicer(boolean useSlicer) {

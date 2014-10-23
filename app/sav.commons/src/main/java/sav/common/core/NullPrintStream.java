@@ -14,7 +14,10 @@ import sav.common.core.iface.IPrintStream;
  * @author LLT
  * 
  */
-public class NullPrintStream implements IPrintStream {
+public class NullPrintStream extends AbstractPrintStream {
+	private NullPrintStream() {
+		
+	}
 
 	public void print(byte b) {
 	}
@@ -32,11 +35,6 @@ public class NullPrintStream implements IPrintStream {
 	}
 
 	public void println(Object[] e) {
-	}
-
-	@Override
-	public IPrintStream writeln(String msg) {
-		return this;
 	}
 
 	public static IPrintStream instance() {

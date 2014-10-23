@@ -9,6 +9,7 @@
 package sav.common.core.utils;
 
 import sav.common.core.Constants;
+import sav.common.core.Pair;
 
 
 /**
@@ -37,5 +38,19 @@ public class ClassUtils {
 			return className.substring(idx + 1);
 		}
 		return className;
+	}
+	
+	/**
+	 * return pair of class name, and method name
+	 */
+	public static Pair<String, String> splitClassMethod(String name) {
+		int idx = name.lastIndexOf(".");
+		if (idx > 0) {
+			return Pair.of(name.substring(0, idx), 
+					name.substring(idx + 1));
+		}
+		throw new IllegalArgumentException(
+				"Cannot extract method from string, expect [classname].[method], get "
+						+ name);
 	}
 }

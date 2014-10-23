@@ -8,29 +8,28 @@
 
 package slicer.javaslicer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import sav.common.core.utils.CollectionBuilder;
+import sav.strategies.vm.AgentVmRunner;
 import sav.strategies.vm.VMConfiguration;
-import sav.strategies.vm.VMRunner;
 
 /**
  * @author LLT
  *
  */
-public class JavaSlicerVmRunner extends VMRunner {
-	private String tracerJarPath;
+public class JavaSlicerVmRunner extends AgentVmRunner {
 	private String traceFilePath;
 	
 	public JavaSlicerVmRunner(String tracerJarPath) {
-		this.tracerJarPath = tracerJarPath;
+		super(tracerJarPath);
 	}
 	
 	@Override
-	protected void buildVmOption(CollectionBuilder<String, ?> builder,
-			VMConfiguration config) {
-		builder.add(String.format("-javaagent:%s=tracefile:%s", tracerJarPath,
-				traceFilePath));
+	protected void appendAgentParams(ArrayList<String> params) {
+		params.add(newAgentOption("tracefile", traceFilePath));
+		
 	}
 	
 	@Override
@@ -41,7 +40,7 @@ public class JavaSlicerVmRunner extends VMRunner {
 	}
 	
 	public void setTracerJarPath(String tracerJarPath) {
-		this.tracerJarPath = tracerJarPath;
+		agentJarPath = tracerJarPath;
 	}
 
 	public void setTraceFilePath(String traceFilePath) {

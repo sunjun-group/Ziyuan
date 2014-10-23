@@ -40,7 +40,7 @@ public class AssertionDetectorTest extends AbstractTest {
 	@Parameters
 	public static Collection<Object[]> data() {
 		return Arrays.asList(new Object[][] { { singleEleMap(TestConfiguration
-				.getInstance().testTarget
+				.getInstance().SAV_COMMONS_TEST_TARGET
 				+ "/testdata/boundedStack/BoundedStack.java") } });
 	}
 

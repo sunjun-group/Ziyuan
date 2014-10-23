@@ -69,19 +69,36 @@ public class VMRunner {
 		return startVm(commands);
 	}
 	
+	protected void buildProgramArgs(VMConfiguration config,
+			CollectionBuilder<String, Collection<String>> builder) {
+		builder.add(cpToken)
+				.add(toClasspathStr(config.getClasspaths()))
+				.add(config.getLaunchClass());
+		for (String arg : config.getProgramArgs()) {
+			builder.add(arg);
+		}
+	}
+	
+	
 	public void startAndWaitUntilStop(VMConfiguration config)
-			throws SavException, IOException, InterruptedException {
+			throws SavException {
 		Process process = start(config);
 		while (true) {
 			try {
 				process.exitValue();
 				break;
 			} catch (IllegalThreadStateException ex) {
-				printStream(process.getInputStream());
-				printStream(process.getErrorStream());
-				// means: not yet terminated
-				Thread.currentThread();
-				Thread.sleep(100);
+				try {
+					printStream(process.getInputStream());
+					printStream(process.getErrorStream());
+					// means: not yet terminated
+					Thread.currentThread();
+					Thread.sleep(100);
+				} catch (IOException e) {
+					throw new SavException(ModuleEnum.JVM, e);
+				} catch (InterruptedException e) {
+					throw new SavException(ModuleEnum.JVM, e);
+				}
 			}
 		}
 	}
@@ -112,16 +129,6 @@ public class VMRunner {
 		return out;
 	}
 
-	protected void buildProgramArgs(VMConfiguration config,
-			CollectionBuilder<String, Collection<String>> builder) {
-		builder.add(cpToken)
-				.add(toClasspathStr(config.getClasspaths()))
-				.add(config.getLaunchClass());
-		for (String arg : config.getProgramArgs()) {
-			builder.add(arg);
-		}
-	}
-	
 	protected void buildVmOption(CollectionBuilder<String, ?> builder, VMConfiguration config) {
 		builder.addIf(String.format(debugToken, config.getPort()), config.isDebug())
 				.addIf(enableAssertionToken, config.isEnableAssertion());
@@ -140,6 +147,13 @@ public class VMRunner {
 		return process;
 	}
 	
+	public String newProgramOption(String opt, String...values) {
+		return new StringBuilder("-").append(opt)
+				.append(" ")
+				.append(StringUtils.spaceJoin((Object[]) values))
+				.toString();
+	}
+	
 	private String toClasspathStr(List<String> classpaths) {
 		return StringUtils.join(classpaths, File.pathSeparator);
 	}
@@ -148,7 +162,8 @@ public class VMRunner {
 		return StringUtils.join(Constants.FILE_SEPARATOR, config.getJavaHome(), "bin", "java");
 	}
 	
-	public void setOut(IPrintStream out) {
+	public VMRunner setOut(IPrintStream out) {
 		this.out = out;
+		return this;
 	}
 }

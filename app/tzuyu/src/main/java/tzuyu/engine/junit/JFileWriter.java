@@ -51,7 +51,7 @@ public class JFileWriter {
 	private boolean passTcs;
 	
 	private Map<String, List<List<Sequence>>> createdSequencesAndClasses = new LinkedHashMap<String, List<List<Sequence>>>();
-	private IPrintStream outStream = new NullPrintStream();
+	private IPrintStream outStream = NullPrintStream.instance();
 
 	public JFileWriter(String driverClassName) {
 		this.junitDriverClassName = driverClassName;

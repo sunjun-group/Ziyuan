@@ -27,5 +27,7 @@ public interface IPrintStream {
 	public void println(Object[] e);
 	
 	public IPrintStream writeln(String msg);
+
+	void printf(String format, Object... args);
 	
 }

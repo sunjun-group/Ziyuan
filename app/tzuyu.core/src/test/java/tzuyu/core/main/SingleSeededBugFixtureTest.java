@@ -9,10 +9,8 @@
 package tzuyu.core.main;
 
 import java.io.File;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,15 +34,15 @@ public class SingleSeededBugFixtureTest {
 	public void test() throws Exception {
 		fixture.javaHome(TestConfigUtils.getJavaHome());
 		fixture.tracerJarPath(TestConfigUtils.getTracerLibPath());
-		fixture.projectClassPath(TestConfigUtils.getConfig("jtopas.scr"));
+		fixture.projectClassPath(TestConfigUtils.getConfig("jtopas.src"));
 		fixture.projectClassPath(TestConfigUtils.getConfig("jtopas.test"));
-		fixture.projectClassPath(TestConfiguration.getInstance().getTarget(
+		fixture.projectClassPath(TestConfiguration.getTarget(
 				"slicer.javaslicer"));
 		fixture.useSlicer(false);
 		fixture.programClass("de.susebox.java.io.ExtIOException");
 		fixture.programClass("de.susebox.java.lang.ExtIndexOutOfBoundsException");
 		fixture.programClass("de.susebox.java.util.InputStreamTokenizer");
-		fixture.programClass("de.susebox.jtopas.PluginTokenizer");
+		fixture.programClass("de.susebox.java.util.AbstractTokenizer");
 		fixture.programTestClass("de.susebox.java.util.TestTokenizerProperties");
 		fixture.programTestClass("de.susebox.java.util.TestTokenProperties");
 		fixture.programTestClass("de.susebox.java.util.TestInputStreamTokenizer");
@@ -52,17 +50,12 @@ public class SingleSeededBugFixtureTest {
 		fixture.programTestClass("de.susebox.jtopas.TestPluginTokenizer");
 		fixture.programTestClass("de.susebox.jtopas.TestTokenizerSpeed");
 		fixture.programTestClass("de.susebox.jtopas.TestJavaTokenizing");
-		
 		SystemConfiguredDataProvider context = fixture.getContext();
+		fixture.expectedBugLine("de.susebox.java.util.AbstractTokenizer:766");
 		for (String path : context.getProjectClassPath()) {
-			addSoftwareLibrary(new File(path));
+			TestConfigUtils.addToSysClassLoader(new File(path));
 		}
 		fixture.analyze();
-	}
-	
-	private static void addSoftwareLibrary(File file) throws Exception {
-	    Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
-	    method.setAccessible(true);
-	    method.invoke(ClassLoader.getSystemClassLoader(), new Object[]{file.toURI().toURL()});
+		Assert.assertTrue(fixture.bugWasFound());
 	}
 }

@@ -2,17 +2,15 @@ package tzuyu.core.main.context;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import codecoverage.jacoco.JavaCoCo;
-
 import sav.common.core.SavLog4jPrintStream;
 import sav.common.core.iface.IPrintStream;
 import sav.common.core.utils.ConfigUtils;
-import sav.strategies.codecoverage.ICodeCoverage;
+import tzuyu.core.main.TestApplicationContext;
+import codecoverage.jacoco.JavaCoCo;
 import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
 
 /**
@@ -21,14 +19,18 @@ import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgor
  * @author Nguyen Phuoc Nguong Phuc (phuc@sutd.edu.sg)
  * 
  */
-public class SystemConfiguredDataProvider extends AbstractApplicationContext {
+public class SystemConfiguredDataProvider extends TestApplicationContext {
 	private static final String TZUYU_ALGO = "TZUYU_ALGO";
 	private static final String JAVA_HOME = "java.home";
 	private static final String JAVA_CLASS_FILE_EXTENSION = ".class";
 	private static final String JAVA_JAR_FILE_EXTENSION = ".jar";
-	private List<String> projectClassPath = new ArrayList<String>();
 	private String javaHome;
 	private String tracerJarPath;
+	
+	@Override
+	protected void initClasspath() {
+		// do nothing
+	}
 	
 	public void addProjectClassPath(final String path) throws FileNotFoundException {
 		File folder = new File(path);
@@ -38,12 +40,12 @@ public class SystemConfiguredDataProvider extends AbstractApplicationContext {
 		if (isClassFile(folder)) {
 			// Only 1 file is provided
 			// That file must contain both program code + test code
-			projectClassPath.add(folder.getParent());
+			projectClasspath.add(folder.getParent());
 		} else if (folder.isDirectory() || isJarFile(folder)) {
 			// A directory or a JAR file is provided
 			// Scan the directory for classes and mark them as either program
 			// code or test code
-			projectClassPath.add(folder.getAbsolutePath());
+			projectClasspath.add(folder.getAbsolutePath());
 		} else {
 			throw new UnsupportedOperationException("The path " + path
 					+ " is neither a .class/.jar file nor a directory.");
@@ -59,8 +61,8 @@ public class SystemConfiguredDataProvider extends AbstractApplicationContext {
 	}
 
 	@Override
-	protected List<String> getProjectClasspath() {
-		return projectClassPath;
+	public List<String> getProjectClasspath() {
+		return projectClasspath;
 	}
 
 	public void setTracerJarPath(final String path) {
@@ -97,13 +99,7 @@ public class SystemConfiguredDataProvider extends AbstractApplicationContext {
 	}
 
 	public List<String> getProjectClassPath() {
-		return projectClassPath;
-	}
-	
-	@Override
-	protected ICodeCoverage initCodeCoverage() {
-		JavaCoCo jacoco = new JavaCoCo();
-		return jacoco;
+		return projectClasspath;
 	}
 	
 	public JavaCoCo getJaCoco() {

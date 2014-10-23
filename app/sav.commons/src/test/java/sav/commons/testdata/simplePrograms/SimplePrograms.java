@@ -135,12 +135,11 @@ public class SimplePrograms {
 		char SPACE = ' ';
 		
 		while (start < sentence.length) {
-			end = start;// (seeded)!!
 			while (start < sentence.length && sentence[start] == SPACE) {
 				start++;
 			}
 
-//			end = start; 
+			end = start;
 			while (end < sentence.length && sentence[end] != SPACE) {
 				end++;
 			}
@@ -157,7 +156,8 @@ public class SimplePrograms {
 	 * Reverse the char[] from i to j
 	 */
 	private void reverseWord(char[] s, int i, int j){
-		if(!(i >= 0 && j <= s.length && i <= j)){
+//		if(!(i >= 0 && j <= s.length && i <= j)){
+		if((i >= 0 && j <= s.length && i <= j)){// (seeded)!!
 			return;
 		}
 		

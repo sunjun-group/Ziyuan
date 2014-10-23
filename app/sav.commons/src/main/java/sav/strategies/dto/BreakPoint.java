@@ -12,24 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sav.common.core.utils.Assert;
-import sav.common.core.utils.BreakpointUtils;
 
 /**
  * @author LLT
  * 
  */
 public class BreakPoint extends ClassLocation {
-	private String id;
 	private List<Variable> vars;
 	private int charStart;
 	private int charEnd;
 	
 	public BreakPoint(String className, String methodSign, int lineNo) {
-		this.classCanonicalName = className;
+		super(className, methodSign, lineNo);
 		vars = new ArrayList<Variable>();
-		setClassCanonicalName(className);
-		setMethodSign(methodSign);
-		setLineNo(lineNo);
 	}
 	
 	public BreakPoint(String className, int lineNo, Variable... newVars) {
@@ -76,13 +71,6 @@ public class BreakPoint extends ClassLocation {
 
 	public void setCharEnd(int charEnd) {
 		this.charEnd = charEnd;
-	}
-	
-	public String getId() {
-		if (id == null) {
-			id = BreakpointUtils.getLocationId(this);
-		}
-		return id;
 	}
 	
 	@Override

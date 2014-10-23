@@ -10,6 +10,7 @@ package sav.commons.testdata.simplePrograms.org;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.After;
 import org.junit.Test;
 
 import sav.commons.testdata.simplePrograms.SimplePrograms;
@@ -20,6 +21,13 @@ import sav.commons.testdata.simplePrograms.SimplePrograms;
  *
  */
 public class SimpleProgramTests {
+	private static int i = 1;
+	
+	@After
+	public void tearDown() {
+		System.out.println("complete method!" + i++);
+	}
+	
 	@Test
 	public void test1() {
 		SimplePrograms simpleProgram = new SimplePrograms();

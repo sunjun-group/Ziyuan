@@ -21,6 +21,7 @@ import org.junit.Test;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.commons.testdata.SamplePrograms;
+import sav.commons.testdata.simplePrograms.SimplePrograms;
 import builder.FixTraceGentestBuilder;
 
 /**
@@ -46,6 +47,22 @@ public class FixTraceGentestBuilderTest extends AbstractGTTest {
 		TestsPrinter printer = new TestsPrinter(srcPath, 
 				"testdata.gentest.pass", "testdata.gentest.fail", 
 				"test", SamplePrograms.class.getSimpleName());
+		printer.setCuPrinter(new FileCompilationUnitPrinter());
+		printer.printTests(tcs);
+	}
+	
+	
+	@Test
+	public void generateTc() throws SavException {
+		FixTraceGentestBuilder builder = new FixTraceGentestBuilder(100);
+		Pair<List<Sequence>, List<Sequence>> tcs = builder.forClass(SimplePrograms.class)
+			.method("duplicatedNumber", "dup")
+//			.evaluationMethod(SamplePrograms.class, "checkMax")
+//			.param("m.a", "m.b", "m.c", "m.return")
+			.generate();
+		TestsPrinter printer = new TestsPrinter(srcPath, 
+				"testdata.gentest", null, 
+				"test", SimplePrograms.class.getSimpleName());
 		printer.setCuPrinter(new FileCompilationUnitPrinter());
 		printer.printTests(tcs);
 	}

@@ -8,6 +8,10 @@
 
 package sav.commons;
 
+import static sav.commons.TestConfiguration.JUNIT_CORE;
+import static sav.commons.TestConfiguration.JUNIT_LIB;
+import static sav.commons.TestConfiguration.SAV_COMMONS_TEST_TARGET;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
@@ -23,6 +27,7 @@ import sav.strategies.vm.VMConfiguration;
  * 
  */
 public class AbstractTest {
+	public static final String SAV_COMMONS = "sav.commons";
 	protected static TestConfiguration config = TestConfiguration.getInstance();
 	
 	public void print(Object... objs) {
@@ -44,10 +49,10 @@ public class AbstractTest {
 		vmConfig.setJavaHome(TestConfigUtils.getJavaHome());
 		vmConfig.setDebug(true);
 		vmConfig.setPort(findFreePort());
-		vmConfig.setLaunchClass(config.getJunitcore());
+		vmConfig.setLaunchClass(JUNIT_CORE);
 		vmConfig.addClasspath(config.getJavaBin());
-		vmConfig.addClasspath(config.testTarget);
-		vmConfig.addClasspath(config.getJunitLib());
+		vmConfig.addClasspath(SAV_COMMONS_TEST_TARGET);
+		vmConfig.addClasspath(JUNIT_LIB);
 		return vmConfig;
 	}
 	

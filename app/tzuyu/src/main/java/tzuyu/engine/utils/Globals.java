@@ -40,10 +40,10 @@ public final class Globals {
 				tcExStream = new PrintStream(DUMMY_TC_EX_LOG_FILE);
 				tcExPrintStream = new SavPrintStream(tcExStream);
 			} catch (FileNotFoundException e) {
-				tcExPrintStream = new NullPrintStream();
+				tcExPrintStream = NullPrintStream.instance();
 			}
 		} else {
-			tcExPrintStream = new NullPrintStream();
+			tcExPrintStream = NullPrintStream.instance();
 		}
 	}
 

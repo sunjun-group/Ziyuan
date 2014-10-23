@@ -109,7 +109,7 @@ public class IcsetlvEngineTest extends AbstractTest {
 	
 	private Map<String, List<String>> getTestcasesSourcePaths() {
 		Map<String, List<String>> result = new HashMap<String, List<String>>();
-		result.put(config.testTarget + "/testdata/slice/FindMax.java",
+		result.put(config.SAV_COMMONS_TEST_TARGET + "/testdata/slice/FindMax.java",
 				//"/testdata/boundedStack/BoundedStack.java", 
 				null);
 		return result;

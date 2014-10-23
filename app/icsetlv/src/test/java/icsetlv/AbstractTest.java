@@ -49,7 +49,7 @@ public class AbstractTest {
 		vmConfig.setPort(findFreePort());
 		vmConfig.setLaunchClass(config.getJunitcore());
 		vmConfig.addClasspath(config.getJavaBin());
-		vmConfig.addClasspath(config.testTarget);
+		vmConfig.addClasspath(config.SAV_COMMONS_TEST_TARGET);
 		vmConfig.addClasspath(config.getJunitLib());
 		return vmConfig;
 	}
@@ -73,7 +73,7 @@ public class AbstractTest {
 	
 	protected SlicerInput initSlicerInput() {
 		SlicerInput input = new SlicerInput();
-		input.setAppBinFolder(config.testTarget);
+		input.setAppBinFolder(config.SAV_COMMONS_TEST_TARGET);
 		input.setJre(TestConfigUtils.getJavaHome());
 		return input;
 	}

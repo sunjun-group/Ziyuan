@@ -23,9 +23,10 @@
 		<svm-version>3.17</svm-version>
 		<javaml-version>0.1.7</javaml-version>
 		<tzuyu.libs>${basedir}/../tzuyuEclipsePlugin/libs</tzuyu.libs>
-		<jacoco-version>0.7.1.201405082137</jacoco-version>
+		<jacoco-version>0.7.2.201409121644</jacoco-version>
 		<javaslicer-version>20101004</javaslicer-version>
 		<fitnesse-version>20140901</fitnesse-version>
+		<commons-cli-version>1.2</commons-cli-version>
 	</properties>
 
 	<repositories>
@@ -99,31 +100,31 @@
 				<artifactId>sav.commons</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>tzuyu-project</groupId>
 				<artifactId>gentest</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>tzuyu-project</groupId>
 				<artifactId>slicer.javaslicer</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>tzuyu-project</groupId>
 				<artifactId>codecoverage.jacoco</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>tzuyu-project</groupId>
 				<artifactId>faultLocalization</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>tzuyu-project</groupId>
 				<artifactId>tzuyu</artifactId>
@@ -134,11 +135,18 @@
 				<artifactId>icsetlv</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			
+
 			<!-- specific for test -->
 			<dependency>
 				<groupId>sav-projects</groupId>
 				<artifactId>sav.commons</artifactId>
+				<type>test-jar</type>
+				<scope>test</scope>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>codecoverage.jacoco</artifactId>
 				<type>test-jar</type>
 				<scope>test</scope>
 				<version>${project.version}</version>
@@ -210,9 +218,9 @@
 				<version>${jacoco-version}</version>
 			</dependency>
 			<dependency>
-				<groupId>commons-cli</groupId>
-				<artifactId>commons-cli</artifactId>
-				<version>1.2</version>
+				<groupId>org.jacoco</groupId>
+				<artifactId>org.jacoco.agent</artifactId>
+				<version>${jacoco-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>de.unisb.cs.st</groupId>
@@ -234,6 +242,14 @@
 				<artifactId>visualize</artifactId>
 				<version>${javaslicer-version}</version>
 			</dependency>
+
+			<dependency>
+				<groupId>commons-cli</groupId>
+				<artifactId>commons-cli</artifactId>
+				<version>1.2</version>
+			</dependency>
+
+			<!-- scope test -->
 			<dependency>
 				<groupId>org.fitnesse</groupId>
 				<artifactId>fitnesse</artifactId>

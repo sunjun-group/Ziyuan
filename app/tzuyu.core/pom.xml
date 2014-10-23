@@ -68,5 +68,11 @@
 			<artifactId>fitnesse</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>codecoverage.jacoco</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

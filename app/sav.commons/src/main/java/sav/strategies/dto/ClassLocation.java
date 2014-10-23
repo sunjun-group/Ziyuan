@@ -8,6 +8,7 @@
 
 package sav.strategies.dto;
 
+import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.SignatureUtils;
 
 /**
@@ -15,9 +16,16 @@ import sav.common.core.utils.SignatureUtils;
  * 
  */
 public class ClassLocation {
+	protected String id;
 	protected String classCanonicalName;
 	protected String methodSign; // methodName or signature
 	protected int lineNo = -1;
+
+	public ClassLocation(String className, String methodName, int lineNumber) {
+		this.classCanonicalName = className;
+		this.methodSign = methodName;
+		this.lineNo = lineNumber;
+	}
 
 	public String getClassCanonicalName() {
 		return classCanonicalName;
@@ -41,6 +49,13 @@ public class ClassLocation {
 
 	public void setLineNo(int lineNo) {
 		this.lineNo = lineNo;
+	}
+	
+	public String getId() {
+		if (id == null) {
+			id = BreakpointUtils.getLocationId(this);
+		}
+		return id;
 	}
 
 	public String getMethodName() {

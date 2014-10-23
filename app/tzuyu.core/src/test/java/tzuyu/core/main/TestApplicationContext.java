@@ -9,16 +9,15 @@
 package tzuyu.core.main;
 
 
+import java.util.ArrayList;
 import java.util.List;
-
-import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
 
 import sav.common.core.SavPrintStream;
 import sav.common.core.iface.IPrintStream;
-import sav.common.core.utils.CollectionUtils;
 import sav.commons.TestConfiguration;
 import sav.commons.utils.TestConfigUtils;
 import tzuyu.core.main.context.AbstractApplicationContext;
+import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
 
 
 /**
@@ -26,13 +25,16 @@ import tzuyu.core.main.context.AbstractApplicationContext;
  *
  */
 public class TestApplicationContext extends AbstractApplicationContext {
-	private TestConfiguration testConfig;
 	private SuspiciousnessCalculationAlgorithm suspiciousnessCalcul;
-	private List<String> projectClasspath;
+	protected List<String> projectClasspath;
 
 	public TestApplicationContext() {
-		testConfig = TestConfiguration.getInstance();
-		projectClasspath = CollectionUtils.listOf(testConfig.testTarget);
+		projectClasspath = new ArrayList<String>();
+		initClasspath();
+	}
+
+	protected void initClasspath() {
+		projectClasspath.add(TestConfiguration.SAV_COMMONS_TEST_TARGET);
 	}
 
 	@Override
@@ -67,5 +69,10 @@ public class TestApplicationContext extends AbstractApplicationContext {
 	@Override
 	public IPrintStream getVmRunnerPrintStream() {
 		return new SavPrintStream(System.out);
+	}
+
+	@Override
+	protected String getAssembly(String assemblyName) {
+		return TestConfiguration.getTzAssembly(assemblyName);
 	}
 }

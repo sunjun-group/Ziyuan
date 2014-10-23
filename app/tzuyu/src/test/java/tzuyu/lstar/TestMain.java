@@ -29,7 +29,7 @@ public class TestMain {
 			e.printStackTrace();
 		}
 		DFA dfa = algorithm.getDFA();
-		dfa.print(new NullPrintStream());
+		dfa.print(NullPrintStream.instance());
 	}
 
 }

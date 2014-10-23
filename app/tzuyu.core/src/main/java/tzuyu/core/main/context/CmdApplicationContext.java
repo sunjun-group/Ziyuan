@@ -15,7 +15,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 import sav.common.core.iface.IPrintStream;
-
 import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
 
 /**
@@ -69,6 +68,15 @@ public class CmdApplicationContext extends AbstractApplicationContext {
 	 */
 	@Override
 	public IPrintStream getVmRunnerPrintStream() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see tzuyu.core.main.context.AbstractApplicationContext#getAssembly(java.lang.String)
+	 */
+	@Override
+	protected String getAssembly(String tzuyuJacocoAssembly) {
 		// TODO Auto-generated method stub
 		return null;
 	}

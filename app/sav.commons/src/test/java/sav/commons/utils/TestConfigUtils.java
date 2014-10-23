@@ -1,5 +1,9 @@
 package sav.commons.utils;
 
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -28,6 +32,7 @@ public class TestConfigUtils extends ConfigUtils {
 	 * 
 	 * @return path to trunk if defined in one of the three locations.
 	 */
+	@Deprecated
 	public static String getTrunkPath() {
 		return getConfig(TRUNK);
 	}
@@ -55,4 +60,9 @@ public class TestConfigUtils extends ConfigUtils {
 		return getTrunkPath() + "/etc/javaslicer/assembly/tracer.jar";
 	}
 
+	public static void addToSysClassLoader(File file) throws Exception {
+	    Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
+	    method.setAccessible(true);
+	    method.invoke(ClassLoader.getSystemClassLoader(), new Object[]{file.toURI().toURL()});
+	}
 }

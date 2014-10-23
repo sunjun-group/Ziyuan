@@ -27,7 +27,7 @@ public class WalaSlicerTest extends AbstractTest {
 	
 	public void testSlice() throws Exception {
 		SlicerInput input = new SlicerInput();
-		input.setAppBinFolder(config.testTarget);
+		input.setAppBinFolder(config.SAV_COMMONS_TEST_TARGET);
 		input.setJre(TestConfigUtils.getJavaHome());
 		// entry points
 		List<String[]> classEntryPoints = makeEntryPoints();

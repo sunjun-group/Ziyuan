@@ -21,4 +21,9 @@ public abstract class AbstractPrintStream implements IPrintStream{
 		println(msg);
 		return this;
 	}
+	
+	@Override
+	public void printf(String format, Object... args) {
+		println(String.format(format, args));
+	}
 }

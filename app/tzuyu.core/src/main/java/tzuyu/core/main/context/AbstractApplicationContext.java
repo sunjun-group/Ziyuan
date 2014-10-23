@@ -12,16 +12,15 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 
-import codecoverage.jacoco.JavaCoCo;
-
-import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
-
+import sav.common.core.Constants;
 import sav.common.core.iface.IPrintStream;
 import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.slicing.ISlicer;
 import sav.strategies.vm.VMConfiguration;
 import slicer.javaslicer.JavaSlicer;
+import codecoverage.jacoco.agent.JaCoCoAgent;
+import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
 
 /**
  * @author LLT 
@@ -37,9 +36,21 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 	protected ICodeCoverage codeCoverageTool;
 
 	protected ICodeCoverage initCodeCoverage() {
-		return new JavaCoCo();
+//		return new JavaCoCo();
+		return initJacocoAgent();
 	}
 	
+	private ICodeCoverage initJacocoAgent() {
+		JaCoCoAgent jacoco = new JaCoCoAgent();
+		jacoco.setOut(getVmRunnerPrintStream());
+		VMConfiguration config = getVmConfig();
+		config.addClasspath(getAssembly(Constants.TZUYU_JACOCO_ASSEMBLY));
+		jacoco.setVmConfig(config);
+		return jacoco;
+	}
+	
+	protected abstract String getAssembly(String assemblyName);
+
 	private ISlicer initSlicer() {
 		JavaSlicer javaSlicer = new JavaSlicer();
 		javaSlicer.setVmConfig(getVmConfig());
