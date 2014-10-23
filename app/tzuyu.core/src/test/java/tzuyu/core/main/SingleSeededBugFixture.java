@@ -1,9 +1,11 @@
 package tzuyu.core.main;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.commons.utils.TestConfigUtils;
 import faultLocalization.LineCoverageInfo;
 import fit.TimedActionFixture;
 
@@ -58,6 +60,12 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 		this.useSlicer = useSlicer;
 	}
 
+	public void updateSysClassLoader() throws Exception {
+		for (String path : context.getProjectClassPath()) {
+			TestConfigUtils.addToSysClassLoader(new File(path));
+		}
+	}
+	
 	public final boolean analyze() throws Exception {
 		infos = getProgram().faultLocalization(programClasses, programTestClasses, useSlicer);
 		checkAnalyzedResults();

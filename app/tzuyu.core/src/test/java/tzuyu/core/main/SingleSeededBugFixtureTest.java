@@ -8,8 +8,6 @@
 
 package tzuyu.core.main;
 
-import java.io.File;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,11 +47,8 @@ public class SingleSeededBugFixtureTest {
 		fixture.programTestClass("de.susebox.jtopas.TestPluginTokenizer");
 		fixture.programTestClass("de.susebox.jtopas.TestTokenizerSpeed");
 		fixture.programTestClass("de.susebox.jtopas.TestJavaTokenizing");
-		SystemConfiguredDataProvider context = fixture.getContext();
 		fixture.expectedBugLine("de.susebox.java.util.AbstractTokenizer:766");
-		for (String path : context.getProjectClassPath()) {
-			TestConfigUtils.addToSysClassLoader(new File(path));
-		}
+		fixture.updateSysClassLoader();
 		fixture.analyze();
 		Assert.assertTrue(fixture.bugWasFound());
 	}
