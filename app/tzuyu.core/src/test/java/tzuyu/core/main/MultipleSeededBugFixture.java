@@ -45,6 +45,9 @@ public class MultipleSeededBugFixture extends SingleSeededBugFixture {
 	
 	@Override
 	public boolean foundBugHasMaxSuspiciousness() {
+		if (infos == null || infos.size() == 0) {
+			return false;
+		}
 		List<String> maxSuspiciousnessLines = new ArrayList<String>();
 		for (LineCoverageInfo info: infos) {
 			if (info.getSuspiciousness() >= maxSuspiciousness) {
