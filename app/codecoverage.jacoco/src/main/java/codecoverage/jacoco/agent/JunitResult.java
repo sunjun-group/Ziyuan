@@ -48,6 +48,9 @@ public class JunitResult {
 	}
 	
 	public boolean getResult(int idx) {
+		if (idx < 0 || idx >= result.size()) {
+			return false;
+		}
 		return result.get(idx);
 	}
 
