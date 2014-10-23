@@ -8,7 +8,6 @@
 
 package codecoverage.jacoco.agent;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +31,7 @@ public class JaCoCoVmRunner extends AgentVmRunner {
 	
 	public JaCoCoVmRunner() throws IOException {
 		super(AgentJar.extractToTempLocation().getAbsolutePath());
-		AgentJar.extractTo(new File("D:/jacocoagent.jar"));
+		AgentJar.extractToTempLocation();
 		analyzedClassNames = new ArrayList<String>();
 		programArgs = new ArrayList<String>();
 	}
