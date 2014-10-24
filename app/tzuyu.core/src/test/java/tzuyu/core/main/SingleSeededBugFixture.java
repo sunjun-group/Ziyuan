@@ -1,10 +1,11 @@
 package tzuyu.core.main;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import tzuyu.core.main.context.SystemConfiguredDataProvider;
+import sav.commons.utils.TestConfigUtils;
 import faultLocalization.LineCoverageInfo;
 import fit.TimedActionFixture;
 
@@ -18,7 +19,7 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 
 	// Results
 	protected List<LineCoverageInfo> infos;
-	private double maxSuspiciousness = -1.0;
+	protected double maxSuspiciousness = -1.0;
 	private double foundLineSuspiciousness = -1.0;
 
 	private SystemConfiguredDataProvider context = new SystemConfiguredDataProvider();
@@ -59,6 +60,12 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 		this.useSlicer = useSlicer;
 	}
 
+	public void updateSysClassLoader() throws Exception {
+		for (String path : context.getProjectClassPath()) {
+			TestConfigUtils.addToSysClassLoader(new File(path));
+		}
+	}
+
 	public final boolean analyze() throws Exception {
 		infos = getProgram().faultLocalization(programClasses, programTestClasses, useSlicer);
 		checkAnalyzedResults();
@@ -95,7 +102,9 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 			builder.append("No line coverage information was detected.");
 		} else {
 			for (LineCoverageInfo info : infos) {
-				builder.append(info.toString()).append(LINE_FEED);
+				if (info.getSuspiciousness() > 0.0) {
+					builder.append(info.toString()).append(LINE_FEED);
+				}
 			}
 		}
 		return builder.toString();

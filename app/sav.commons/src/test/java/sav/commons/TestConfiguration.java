@@ -31,7 +31,7 @@ public class TestConfiguration {
 	public static String ASSEMBLY;
 	
 	static {
-		TRUNK = specifyTrunk();
+		TRUNK = TestConfigUtils.getConfig("trunk");
 		ETC = TRUNK + "/etc/";
 		APP = TRUNK + "/app/";
 		JUNIT_LIB = TRUNK + "/app/icsetlv/src/test/lib/*";
@@ -39,12 +39,6 @@ public class TestConfiguration {
 		JAVA_HOME = TestConfigUtils.getJavaHome();
 	}
 
-	private static String specifyTrunk() {
-		String path = TestConfiguration.class.getResource(
-				TestConfiguration.class.getSimpleName() + ".class").getPath();
-		return path.substring(0, path.indexOf("/app"));
-	}
-	
 	public static String getTzAssembly(String assemblyName) {
 		return StringUtils.join("", ETC, "app_assembly/", assemblyName); 
 	}

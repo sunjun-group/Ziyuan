@@ -1,6 +1,8 @@
 package tzuyu.core.main;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -19,9 +21,13 @@ public class MultipleSeededBugFixture extends SingleSeededBugFixture {
 	@Override
 	protected void checkAnalyzedResults() {
 		for (LineCoverageInfo info : infos) {
-			final Double value = expectedBugLines.get(info.toString());
+			final Double value = expectedBugLines.get(info.getLocId());
 			if (value != null && value.doubleValue() < info.getSuspiciousness()) {
-				expectedBugLines.put(info.toString(), info.getSuspiciousness());
+				expectedBugLines.put(info.getLocId(), info.getSuspiciousness());
+			}
+
+			if (maxSuspiciousness < info.getSuspiciousness()) {
+				maxSuspiciousness = info.getSuspiciousness();
 			}
 		}
 	}
@@ -29,21 +35,33 @@ public class MultipleSeededBugFixture extends SingleSeededBugFixture {
 	@Override
 	public boolean bugWasFound() {
 		// At least 1 bug was found
-		for (Entry<String, Double> entry : expectedBugLines.entrySet()) {
-			final double suspiciousness = entry.getValue().doubleValue();
+		for (Double suspiciousness : expectedBugLines.values()) {
 			if (suspiciousness > 0.0) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean foundBugHasMaxSuspiciousness() {
-		// TODO correct this
-		return bugWasFound();
+		if (infos == null || infos.size() == 0) {
+			return false;
+		}
+		List<String> maxSuspiciousnessLines = new ArrayList<String>();
+		for (LineCoverageInfo info : infos) {
+			if (info.getSuspiciousness() >= maxSuspiciousness) {
+				maxSuspiciousnessLines.add(info.getLocId());
+			}
+		}
+		for (String codeLine : expectedBugLines.keySet()) {
+			if (maxSuspiciousnessLines.contains(codeLine)) {
+				return true;
+			}
+		}
+		return false;
 	}
-	
+
 	public String lineSuspiciousness() {
 		final StringBuilder builder = new StringBuilder();
 		for (Entry<String, Double> entry : expectedBugLines.entrySet()) {
