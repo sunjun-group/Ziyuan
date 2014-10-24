@@ -65,7 +65,7 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 			TestConfigUtils.addToSysClassLoader(new File(path));
 		}
 	}
-	
+
 	public final boolean analyze() throws Exception {
 		infos = getProgram().faultLocalization(programClasses, programTestClasses, useSlicer);
 		checkAnalyzedResults();
@@ -102,7 +102,9 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 			builder.append("No line coverage information was detected.");
 		} else {
 			for (LineCoverageInfo info : infos) {
-				builder.append(info.toString()).append(LINE_FEED);
+				if (info.getSuspiciousness() > 0.0) {
+					builder.append(info.toString()).append(LINE_FEED);
+				}
 			}
 		}
 		return builder.toString();

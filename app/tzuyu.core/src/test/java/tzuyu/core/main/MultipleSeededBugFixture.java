@@ -21,11 +21,11 @@ public class MultipleSeededBugFixture extends SingleSeededBugFixture {
 	@Override
 	protected void checkAnalyzedResults() {
 		for (LineCoverageInfo info : infos) {
-			final Double value = expectedBugLines.get(info.toString());
+			final Double value = expectedBugLines.get(info.getLocId());
 			if (value != null && value.doubleValue() < info.getSuspiciousness()) {
-				expectedBugLines.put(info.toString(), info.getSuspiciousness());
+				expectedBugLines.put(info.getLocId(), info.getSuspiciousness());
 			}
-			
+
 			if (maxSuspiciousness < info.getSuspiciousness()) {
 				maxSuspiciousness = info.getSuspiciousness();
 			}
@@ -42,16 +42,16 @@ public class MultipleSeededBugFixture extends SingleSeededBugFixture {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean foundBugHasMaxSuspiciousness() {
 		if (infos == null || infos.size() == 0) {
 			return false;
 		}
 		List<String> maxSuspiciousnessLines = new ArrayList<String>();
-		for (LineCoverageInfo info: infos) {
+		for (LineCoverageInfo info : infos) {
 			if (info.getSuspiciousness() >= maxSuspiciousness) {
-				maxSuspiciousnessLines.add(info.toString());
+				maxSuspiciousnessLines.add(info.getLocId());
 			}
 		}
 		for (String codeLine : expectedBugLines.keySet()) {
@@ -61,7 +61,7 @@ public class MultipleSeededBugFixture extends SingleSeededBugFixture {
 		}
 		return false;
 	}
-	
+
 	public String lineSuspiciousness() {
 		final StringBuilder builder = new StringBuilder();
 		for (Entry<String, Double> entry : expectedBugLines.entrySet()) {
