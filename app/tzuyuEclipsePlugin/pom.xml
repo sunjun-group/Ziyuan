@@ -19,7 +19,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>sav-projects</groupId>
+			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
 		</dependency>
 		<dependency>

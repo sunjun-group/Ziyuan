@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import sav.common.core.Logger;
+import sav.common.core.Pair;
 import sav.common.core.utils.BreakpointUtils;
 import sav.strategies.codecoverage.ICoverageReport;
 import sav.strategies.dto.BreakPoint;
@@ -35,6 +36,7 @@ public class CoverageReport implements ICoverageReport{
 
 	private List<BreakPoint> failureTraces;
 	private List<String> testingClassNames;
+	private List<Pair<String, String>> failTests;
 
 	public CoverageReport() {
 		failureTraces = new ArrayList<BreakPoint>();
@@ -159,5 +161,14 @@ public class CoverageReport implements ICoverageReport{
 			System.out.println(lineCoverageInfo.toString());
 		}
 		return linesCoverageInfo;
+	}
+
+	@Override
+	public void setFailTests(List<Pair<String, String>> failTests) {
+		this.failTests = failTests;
+	}
+	
+	public List<Pair<String, String>> getFailTests() {
+		return failTests;
 	}
 }

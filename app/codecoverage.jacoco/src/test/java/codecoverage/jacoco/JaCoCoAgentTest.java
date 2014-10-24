@@ -8,7 +8,8 @@
 
 package codecoverage.jacoco;
 
-import static sav.common.core.Constants.*;
+import static sav.common.core.Constants.TZUYU_JACOCO_ASSEMBLY;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import sav.common.core.Pair;
 import sav.common.core.SavPrintStream;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.SampleProgramTest;
@@ -66,6 +68,14 @@ public class JaCoCoAgentTest extends JacocoAbstractTest {
 
 			@Override
 			public void addFailureTrace(List<BreakPoint> traces) {
+				for (BreakPoint bkp : traces) {
+					System.out.println(bkp.getId());
+				}
+			}
+
+			@Override
+			public void setFailTests(List<Pair<String, String>> failTests) {
+				
 			}
 		};
 	}

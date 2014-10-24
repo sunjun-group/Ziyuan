@@ -10,6 +10,7 @@ package sav.strategies.codecoverage;
 
 import java.util.List;
 
+import sav.common.core.Pair;
 import sav.strategies.dto.BreakPoint;
 
 /**
@@ -24,4 +25,6 @@ public interface ICoverageReport {
 			final int lineIndex, final boolean isPassed, final boolean isCovered);
 
 	public void setTestingClassNames(List<String> testingClassNames);
+
+	public void setFailTests(List<Pair<String, String>> failTests);
 }

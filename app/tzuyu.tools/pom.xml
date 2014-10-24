@@ -35,12 +35,12 @@
 			<version>18.0-rc2</version>
 		</dependency>
 		<dependency>
-			<groupId>sav-projects</groupId>
+			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
 			<version>${sav.commons.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>sav-projects</groupId>
+			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
 			<version>${sav.commons.version}</version>
 			<type>test-jar</type>

@@ -9,6 +9,8 @@
 package sav.strategies.vm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +26,12 @@ import sav.common.core.utils.StringUtils;
 public class AgentVmRunner extends VMRunner {
 	protected String agentJarPath;
 	protected Map<String, String> agentParams;
+	private List<String> programArgs;
 
 	public AgentVmRunner(String agentJarPath) {
 		this.agentJarPath = agentJarPath;
 		agentParams = new HashMap<String, String>();
+		programArgs = new ArrayList<String>();
 	}
 	
 	@Override
@@ -40,6 +44,35 @@ public class AgentVmRunner extends VMRunner {
 				.append(StringUtils.join(agentParams, ","));
 		}
 		builder.add(sb.toString());
+	}
+	
+	@Override
+	protected void buildProgramArgs(VMConfiguration config,
+			CollectionBuilder<String, Collection<String>> builder) {
+		super.buildProgramArgs(config, builder);
+		for (String arg : programArgs) {
+			builder.add(arg);
+		}
+	}
+	
+	public List<String> getProgramArgs() {
+		return programArgs;
+	}
+	
+	public void addProgramArg(String opt, String... values) {
+		addProgramArg(opt, Arrays.asList(values));
+	}
+	
+	public void addProgramArg(String opt, List<String> values) {
+		programArgs.add("-" + opt);
+		for (String value : values) {
+			programArgs.add(value);
+		}
+	}
+	
+	public void setProgramArgs(String opt, String... values) {
+		programArgs = new ArrayList<String>();
+		addProgramArg(opt, values);
 	}
 
 	private List<String> getAgentParams() {
@@ -58,6 +91,10 @@ public class AgentVmRunner extends VMRunner {
 	}
 
 	protected String newAgentOption(String opt, String value) {
-		return StringUtils.join("=", opt, value);
+		return StringUtils.join(getAgentOptionSeparator(), opt, value);
+	}
+
+	protected String getAgentOptionSeparator() {
+		return "=";
 	}
 }

@@ -20,6 +20,7 @@ import sav.strategies.vm.VMConfiguration;
  *
  */
 public class JavaSlicerVmRunner extends AgentVmRunner {
+	private static final String AGENT_PARAM_SEPARATOR = ":";
 	private String traceFilePath;
 	
 	public JavaSlicerVmRunner(String tracerJarPath) {
@@ -36,7 +37,7 @@ public class JavaSlicerVmRunner extends AgentVmRunner {
 	protected void buildProgramArgs(VMConfiguration config,
 			CollectionBuilder<String, Collection<String>> builder) {
 		super.buildProgramArgs(config, builder);
-		builder.add("-s small pmd");
+//		builder.add("-s small pmd");
 	}
 	
 	public void setTracerJarPath(String tracerJarPath) {
@@ -45,5 +46,10 @@ public class JavaSlicerVmRunner extends AgentVmRunner {
 
 	public void setTraceFilePath(String traceFilePath) {
 		this.traceFilePath = traceFilePath;
+	}
+	
+	@Override
+	protected String getAgentOptionSeparator() {
+		return AGENT_PARAM_SEPARATOR;
 	}
 }

@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package codecoverage.jacoco.agent;
+package sav.strategies.junit;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,7 +35,7 @@ public class JunitResult {
 	private static final String JUNIT_RUNNER_BLOCK = "JunitRunner Result";
 	private static final String JUNIT_RUNNER_FAILURE_TRACE = "FailureTraces";
 	private Set<BreakPoint> failureTraces = new HashSet<BreakPoint>();
-	private Map<Pair<String, String>, Boolean> testResult = new HashMap<Pair<String, String>, Boolean>();
+	private Map<Pair<String, String>, Boolean> testResult = new HashMap<Pair<String,String>, Boolean>();
 	private List<Boolean> result = new ArrayList<Boolean>();
 
 	public Set<BreakPoint> getFailureTraces() {
@@ -45,6 +45,16 @@ public class JunitResult {
 	public void addResult(Pair<String, String> classMethod, boolean pass) {
 		testResult.put(classMethod, pass);
 		result.add(pass);
+	}
+	
+	public List<Pair<String, String>> getFailTests() {
+		List<Pair<String, String>> tests = new ArrayList<Pair<String,String>>();
+		for (Entry<Pair<String, String>, Boolean> entry : testResult.entrySet()) {
+			if (!entry.getValue()) {
+				tests.add(entry.getKey());
+			}
+		}
+		return tests;
 	}
 	
 	public boolean getResult(int idx) {
@@ -95,7 +105,14 @@ public class JunitResult {
 			}
 			if (block == JUNIT_RUNNER_BLOCK) {
 				String[] strs = line.split(" ");
-				result.result.add(Boolean.valueOf(strs[strs.length - 1]));
+				if (strs.length != 3) {
+					throw new IllegalArgumentException(
+							"junit runner block was written incorrectly, expect \"{class} {method} {line}, get \""
+									+ line);
+				}
+				Boolean pass = Boolean.valueOf(strs[strs.length - 1]);
+				result.testResult.put(Pair.of(strs[0], strs[1]), pass);
+				result.result.add(pass);
 			} else if (block == JUNIT_RUNNER_FAILURE_TRACE) {
 				String[] strs = line.split(" ");
 				result.failureTraces.add(new BreakPoint(strs[0], 

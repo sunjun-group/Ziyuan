@@ -36,6 +36,7 @@ import sav.common.core.iface.IPrintStream;
 import sav.common.core.utils.ClassUtils;
 import sav.strategies.codecoverage.ICoverageReport;
 import sav.strategies.dto.BreakPoint;
+import sav.strategies.junit.JunitResult;
 
 /**
  * @author LLT
@@ -53,6 +54,7 @@ public class ExecutionDataReporter {
 		try {
 			Map<String, List<ExecutionData>> execDataMap = read(execFile);
 			JunitResult junitResult = JunitResult.readFrom(junitResultFile);
+			report.setFailTests(junitResult.getFailTests());
 			final CoverageBuilder coverageBuilder = new CoverageBuilder();
 			ExecutionDataStore dataStore = new ExecutionDataStore();
 			final Analyzer analyzer = new Analyzer(dataStore, coverageBuilder);

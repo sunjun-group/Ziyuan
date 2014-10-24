@@ -36,6 +36,7 @@ import sav.common.core.utils.ClassUtils;
 import sav.strategies.codecoverage.ICoverageReport;
 import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.dto.BreakPoint;
+import sav.strategies.junit.RequestExecution;
 
 /**
  * 

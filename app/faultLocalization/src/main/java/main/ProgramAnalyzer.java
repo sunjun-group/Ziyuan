@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.JunitUtils;
 import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.dto.BreakPoint;
@@ -50,7 +51,7 @@ public class ProgramAnalyzer {
 			List<BreakPoint> traces = result.getFailureTraces();
 			slicer.setAnalyzedClasses(testingClasses);
 			List<BreakPoint> causeTraces = slicer.slice(result.getFailureTraces(),
-					junitClassNames);
+					JunitUtils.toClassMethodStrs(result.getFailTests()));
 			for (BreakPoint bkp : causeTraces) {
 				CollectionUtils.addIfNotNullNotExist(traces, bkp);
 			}

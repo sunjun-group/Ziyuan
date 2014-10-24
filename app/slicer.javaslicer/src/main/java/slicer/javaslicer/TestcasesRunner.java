@@ -12,12 +12,14 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import sav.common.core.utils.JunitUtils;
+import sav.strategies.junit.JunitRunner;
 
 /**
  * @author LLT
- * 
+ * see {@link JunitRunner}
  */
+@Deprecated
 public class TestcasesRunner {
 
 	/**
@@ -34,7 +36,7 @@ public class TestcasesRunner {
 			List<Method> testMethods = new ArrayList<Method>();
 			System.out.println("scan: " + testClass.getCanonicalName());
 			for (Method method : testClass.getMethods()) {
-				if (method.getAnnotation(Test.class) != null) {
+				if (JunitUtils.isTestMethod(testClass, method)) {
 					testMethods.add(method);
 					System.out.println("found: " + method.getName());
 				}

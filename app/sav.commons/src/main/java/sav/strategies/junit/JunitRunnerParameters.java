@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package codecoverage.jacoco.agent;
+package sav.strategies.junit;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,7 +46,8 @@ public class JunitRunnerParameters {
 				.withArgName(CLASS_METHODS)
 				.withDescription(
 						"methods with full name includes className and method name")
-				.hasArgs().isRequired()
+				.hasArgs()
+				.isRequired()
 				.create(CLASS_METHODS);
 	}
 
@@ -55,7 +56,7 @@ public class JunitRunnerParameters {
 				.withArgName(DEST_FILE)
 				.withDescription("Name of file to save testing result")
 				.hasArg()
-				.isRequired()
+				.isRequired(false)
 				.create(DEST_FILE);
 	}
 
@@ -65,7 +66,7 @@ public class JunitRunnerParameters {
 				.withDescription(
 						"Testing class names for extracting failure traces")
 				.hasArgs()
-				.isRequired()
+				.isRequired(false)
 				.create(TESTING_CLASS_NAMES);
 	}
 

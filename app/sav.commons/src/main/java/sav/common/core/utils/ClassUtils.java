@@ -53,4 +53,12 @@ public class ClassUtils {
 				"Cannot extract method from string, expect [classname].[method], get "
 						+ name);
 	}
+	
+	public static String toClassMethodStr(Pair<String, String> classMethod) {
+		return toClassMethodStr(classMethod.a, classMethod.b);
+	}
+	
+	public static String toClassMethodStr(String clazz, String method) {
+		return StringUtils.dotJoin(clazz, method);
+	}
 }

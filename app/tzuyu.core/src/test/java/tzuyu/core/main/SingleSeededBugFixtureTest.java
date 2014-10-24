@@ -32,13 +32,13 @@ public class SingleSeededBugFixtureTest {
 	
 	@Test
 	public void test() throws Exception {
+		fixture.useSlicer(true);
 		fixture.javaHome(TestConfigUtils.getJavaHome());
 		fixture.tracerJarPath(TestConfigUtils.getTracerLibPath());
 		fixture.projectClassPath(TestConfigUtils.getConfig("jtopas.src"));
 		fixture.projectClassPath(TestConfigUtils.getConfig("jtopas.test"));
 		fixture.projectClassPath(TestConfiguration.getTarget(
 				"slicer.javaslicer"));
-		fixture.useSlicer(false);
 		fixture.programClass("de.susebox.java.io.ExtIOException");
 		fixture.programClass("de.susebox.java.lang.ExtIndexOutOfBoundsException");
 		fixture.programClass("de.susebox.java.util.InputStreamTokenizer");

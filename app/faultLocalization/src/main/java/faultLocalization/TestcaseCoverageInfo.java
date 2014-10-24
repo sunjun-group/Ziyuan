@@ -27,9 +27,9 @@ public class TestcaseCoverageInfo {
 
 	public void addInfo(String className, int lineIndex, boolean isCovered){
 		ClassCoverageInSingleTestcase classCoverage;
-		if(mapClass2LineCoverage.containsKey(className)){
+		if (mapClass2LineCoverage.containsKey(className)) {
 			classCoverage = mapClass2LineCoverage.get(className);
-		}else{
+		} else {
 			classCoverage = new ClassCoverageInSingleTestcase(className);
 			mapClass2LineCoverage.put(className, classCoverage);
 		}

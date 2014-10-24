@@ -49,11 +49,11 @@
 
 		<!-- sav.commons -->
 		<dependency>
-			<groupId>sav-projects</groupId>
+			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>sav-projects</groupId>
+			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
 			<type>test-jar</type>
 			<scope>test</scope>

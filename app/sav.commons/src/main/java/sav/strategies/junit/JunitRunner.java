@@ -6,11 +6,10 @@
  *  Version:  $Revision: 1 $
  */
 
-package codecoverage.jacoco.agent;
+package sav.strategies.junit;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -18,10 +17,9 @@ import org.junit.runner.Request;
 import org.junit.runner.notification.Failure;
 
 import sav.common.core.Pair;
-import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.BreakPoint;
-import codecoverage.jacoco.RequestExecution;
 
 /**
  * @author LLT
@@ -34,7 +32,8 @@ public class JunitRunner {
 			System.exit(0);
 		}
 		JunitRunnerParameters params = JunitRunnerParameters.parse(args);
-		List<Pair<String, String>> classMethods = toPair(params.getClassMethods());
+		List<Pair<String, String>> classMethods = JunitUtils.toPair(params
+				.getClassMethods());
 		RequestExecution requestExec = new RequestExecution();
 		JunitResult result = new JunitResult();
 		for (Pair<String, String> classMethod : classMethods) {
@@ -48,13 +47,17 @@ public class JunitRunner {
 					result.getFailureTraces());
 			result.addResult(classMethod, requestExec.getFailures().isEmpty());
 		}
-		
-		File file = new File(params.getDestfile());
-		result.save(file);
+		if (params.getDestfile() != null) {
+			File file = new File(params.getDestfile());
+			result.save(file);
+		}
 	}
 	
 	private static void extractBrkpsFromTrace(List<Failure> failureTrace,
 			List<String> testingClassNames, Set<BreakPoint> failureTraces) {
+		if (testingClassNames == null) {
+			return;
+		}
 		for (Failure failure : failureTrace) {
 			for (StackTraceElement trace : failure.getException()
 					.getStackTrace()) {
@@ -79,14 +82,6 @@ public class JunitRunner {
 		return null;
 	}
 	
-	private static List<Pair<String, String>> toPair(List<String> junitClassTestMethods) {
-		List<Pair<String, String>> result = new ArrayList<Pair<String,String>>(junitClassTestMethods.size());
-		for (String classMethod : junitClassTestMethods) {
-			result.add(ClassUtils.splitClassMethod(classMethod));
-		}
-		return result;
-	}
-
 	private static Class<?> loadClass(String className) throws ClassNotFoundException {
 		return Class.forName(className);
 	}

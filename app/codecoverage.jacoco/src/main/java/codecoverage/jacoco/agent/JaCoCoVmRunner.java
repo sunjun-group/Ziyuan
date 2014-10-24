@@ -8,19 +8,14 @@
 
 package codecoverage.jacoco.agent;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.jacoco.agent.AgentJar;
 
-import sav.common.core.utils.CollectionBuilder;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.vm.AgentVmRunner;
-import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT
@@ -28,13 +23,12 @@ import sav.strategies.vm.VMConfiguration;
  */
 public class JaCoCoVmRunner extends AgentVmRunner {
 	private List<String> analyzedClassNames;
-	private List<String> programArgs;
+	
 	
 	public JaCoCoVmRunner() throws IOException {
 		super(AgentJar.extractToTempLocation().getAbsolutePath());
-		AgentJar.extractTo(new File("D:/jacocoagent.jar"));
+		AgentJar.extractToTempLocation();
 		analyzedClassNames = new ArrayList<String>();
-		programArgs = new ArrayList<String>();
 	}
 	
 	@Override
@@ -42,36 +36,6 @@ public class JaCoCoVmRunner extends AgentVmRunner {
 		if (analyzedClassNames != null) {
 			params.add(newAgentOption("includes", StringUtils.join(analyzedClassNames, ":")));
 		}
-	}
-	
-	@Override
-	protected void buildProgramArgs(VMConfiguration config,
-			CollectionBuilder<String, Collection<String>> builder) {
-		super.buildProgramArgs(config, builder);
-		for (String arg : programArgs) {
-			builder.add(arg);
-		}
-	}
-	
-	public List<String> getProgramArgs() {
-		return programArgs;
-	}
-	
-	public void addProgramArg(String opt, String... values) {
-		addProgramArg(opt, Arrays.asList(values));
-	}
-	
-	public void addProgramArg(String opt, List<String> values) {
-		programArgs.add("-" + opt);
-		for (String value : values) {
-			programArgs.add(value);
-		}
-		
-	}
-	
-	public void setProgramArgs(String opt, String... values) {
-		programArgs = new ArrayList<String>();
-		addProgramArg(opt, values);
 	}
 	
 	public JaCoCoVmRunner setAppend(boolean append) {

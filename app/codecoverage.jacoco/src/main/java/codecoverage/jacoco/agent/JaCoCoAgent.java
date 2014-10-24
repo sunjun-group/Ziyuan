@@ -10,22 +10,18 @@ package codecoverage.jacoco.agent;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
-
-import org.junit.Test;
 
 import sav.common.core.ModuleEnum;
 import sav.common.core.NullPrintStream;
 import sav.common.core.SavException;
 import sav.common.core.iface.IPrintStream;
 import sav.common.core.utils.CollectionUtils;
-import sav.common.core.utils.StringUtils;
+import sav.common.core.utils.JunitUtils;
 import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.codecoverage.ICoverageReport;
+import sav.strategies.junit.JunitRunner;
+import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.vm.VMConfiguration;
 
 /**
@@ -33,8 +29,6 @@ import sav.strategies.vm.VMConfiguration;
  *
  */
 public class JaCoCoAgent implements ICodeCoverage {
-	private static final String JUNIT_TEST_METHOD_PREFIX = "test";
-	private static final String JUNIT_TEST_SUITE_PREFIX = "suite";
 	private VMConfiguration vmConfig;
 	private IPrintStream out = NullPrintStream.instance();
 	private ICoverageReport report;
@@ -72,7 +66,7 @@ public class JaCoCoAgent implements ICodeCoverage {
 		vmConfig.setLaunchClass(JunitRunner.class.getName());
 		reporter.setOut(out);
 		reporter.setReport(report);
-		List<String> testMethods = extractTestMethods(junitClassNames);
+		List<String> testMethods = JunitUtils.extractTestMethods(junitClassNames);
 		@SuppressWarnings("unchecked")
 		List<String> allClassNames = CollectionUtils.join(testingClassNames,
 				junitClassNames);
@@ -88,25 +82,6 @@ public class JaCoCoAgent implements ICodeCoverage {
 		}
 		
 		reporter.report(destfile, junitResultFile, testingClassNames);
-	}
-
-	private List<String> extractTestMethods(List<String> junitClassNames)
-			throws ClassNotFoundException {
-		List<String> result = new ArrayList<String>();
-		for (String className : junitClassNames) {
-			Class<?> junitClass = Class.forName(className);
-			Method[] methods = junitClass.getMethods();
-			for (Method method : methods) {
-				Test test = method.getAnnotation(Test.class);
-				if (test != null
-						|| (TestCase.class.isAssignableFrom(junitClass) && (method.getName()
-								.startsWith(JUNIT_TEST_METHOD_PREFIX) || method.getName()
-								.startsWith(JUNIT_TEST_SUITE_PREFIX)))) {
-					result.add(StringUtils.dotJoin(className, method.getName()));
-				}
-			}
-		}
-		return result;
 	}
 
 	public void setVmConfig(VMConfiguration vmConfig) {

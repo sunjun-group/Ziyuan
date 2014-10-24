@@ -8,9 +8,40 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../tzuyu.parent/pom.xml</relativePath>
 	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<!-- NOTE: We don't need a groupId specification because the group is 
+					org.apache.maven.plugins ...which is assumed by default. -->
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<finalName>tzuyu-javaslicer</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
+					<attach>false</attach>
+					<outputDirectory>${basedir}/../../etc/app_assembly</outputDirectory>
+					<useProjectArtifact>true</useProjectArtifact>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
-			<groupId>sav-projects</groupId>
+			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
 		</dependency>
 		<dependency>
@@ -33,14 +64,13 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
-		
+
 		<!-- scope test -->
 		<dependency>
-			<groupId>sav-projects</groupId>
+			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 </project>

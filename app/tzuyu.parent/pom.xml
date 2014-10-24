@@ -27,6 +27,7 @@
 		<javaslicer-version>20101004</javaslicer-version>
 		<fitnesse-version>20140901</fitnesse-version>
 		<commons-cli-version>1.2</commons-cli-version>
+		<log4j-version>1.2.17</log4j-version>
 	</properties>
 
 	<repositories>
@@ -96,7 +97,7 @@
 		<dependencies>
 			<!-- internal dependencies -->
 			<dependency>
-				<groupId>sav-projects</groupId>
+				<groupId>tzuyu-project</groupId>
 				<artifactId>sav.commons</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -138,7 +139,7 @@
 
 			<!-- specific for test -->
 			<dependency>
-				<groupId>sav-projects</groupId>
+				<groupId>tzuyu-project</groupId>
 				<artifactId>sav.commons</artifactId>
 				<type>test-jar</type>
 				<scope>test</scope>
@@ -249,6 +250,11 @@
 				<version>1.2</version>
 			</dependency>
 
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>${log4j-version}</version>
+			</dependency>
 			<!-- scope test -->
 			<dependency>
 				<groupId>org.fitnesse</groupId>

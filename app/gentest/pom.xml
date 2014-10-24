@@ -58,12 +58,12 @@
 			<artifactId>javaparser</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>sav-projects</groupId>
+			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
 		</dependency>
 		<!-- scope test -->
 		<dependency>
-			<groupId>sav-projects</groupId>
+			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
 			<type>test-jar</type>
 			<scope>test</scope>

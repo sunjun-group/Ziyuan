@@ -15,11 +15,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.commons.lang.time.StopWatch;
+
+import sav.common.core.Logger;
 import sav.common.core.SavException;
 import sav.common.core.iface.IPrintStream;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint;
+import sav.strategies.junit.JunitRunner;
+import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.slicing.ISlicer;
 import sav.strategies.vm.VMConfiguration;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.Instruction;
@@ -35,6 +40,7 @@ import de.unisb.cs.st.javaslicer.traceResult.TraceResult;
  * 
  */
 public class JavaSlicer implements ISlicer {
+	private Logger<?> logger = Logger.getDefaultLogger();
 	private JavaSlicerVmRunner vmRunner;
 	private VMConfiguration vmConfig;
 	private List<String> analyzedClasses;
@@ -61,21 +67,29 @@ public class JavaSlicer implements ISlicer {
 	 * @param vmConfig:
 	 * requires: javaHome, classpaths
 	 */
-	public List<BreakPoint> slice(List<BreakPoint> bkps, List<String> junitClassNames)
-			throws SavException, IOException, InterruptedException {
-		String tempFileName = createTraceFile(junitClassNames);
+	public List<BreakPoint> slice(List<BreakPoint> bkps, List<String> junitClassMethos)
+			throws SavException, IOException, InterruptedException, ClassNotFoundException {
+		StopWatch watch = new StopWatch();
+		watch.start();
+		String tempFileName = createTraceFile(junitClassMethos);
 		
 		/* do slicing */
-		return slice(tempFileName, bkps);
+		List<BreakPoint> result = slice(tempFileName, bkps);
+		watch.stop();
+		logger.info("Java slicing took: " + watch.getTime() / 1000 + " seconds");
+		return result;
 	}
 
 	public String createTraceFile(List<String> junitClassNames)
-			throws IOException, SavException, InterruptedException {
+			throws IOException, SavException, InterruptedException,
+			ClassNotFoundException {
 		File tempFile = File.createTempFile(getTraceFileName(), ".trace");
 		String tempFileName = tempFile.getAbsolutePath();
 		/* run program and create trace file */
-		vmConfig.setLaunchClass(TestcasesRunner.class.getCanonicalName())
-				.addProgramArgs(TestcasesRunner.toArgs(junitClassNames));
+		vmConfig.setLaunchClass(JunitRunner.class.getName());
+		vmRunner.addProgramArg(JunitRunnerParameters.CLASS_METHODS,
+				junitClassNames);
+		/**/
 		vmRunner.setTraceFilePath(tempFileName);
 		vmRunner.setOut(vmRunnerPrintStream);
 		vmRunner.startAndWaitUntilStop(vmConfig);
