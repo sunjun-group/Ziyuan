@@ -91,6 +91,25 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 		return bugWasFound() && foundLineSuspiciousness == maxSuspiciousness;
 	}
 
+	protected double getSmallestSuspiciousnessInTopThree() {
+		int i = 0;
+		double min = 2;
+		for (LineCoverageInfo info: infos) {
+			if (info.getSuspiciousness() < min) {
+				min = info.getSuspiciousness();
+				i++;
+			}
+			if (i >= 3) {
+				break;
+			}
+		}
+		return min;
+	}
+	
+	public boolean foundBugIsInTopThree() {
+		return foundLineSuspiciousness >= getSmallestSuspiciousnessInTopThree();
+	}
+	
 	public void show() throws Exception {
 		final Object result = method(0).invoke(getActor());
 		cells.last().more = td(result.toString());

@@ -61,6 +61,17 @@ public class MultipleSeededBugFixture extends SingleSeededBugFixture {
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean foundBugIsInTopThree() {
+		final double min = getSmallestSuspiciousnessInTopThree();
+		for (Double suspiciousness : expectedBugLines.values()) {
+			if (suspiciousness >= min) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public String lineSuspiciousness() {
 		final StringBuilder builder = new StringBuilder();
