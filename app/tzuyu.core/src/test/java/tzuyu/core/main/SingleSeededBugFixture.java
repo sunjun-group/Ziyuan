@@ -84,6 +84,11 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 		}
 	}
 
+	public boolean hasNoFailedTest() {
+		return report.getCoverageReport().getFailTests() == null
+				|| report.getCoverageReport().getFailTests().size() <= 0;
+	}
+
 	public boolean bugWasFound() {
 		return foundLineSuspiciousness > 0;
 	}
