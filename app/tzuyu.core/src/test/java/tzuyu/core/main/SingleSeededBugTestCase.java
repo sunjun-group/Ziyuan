@@ -74,7 +74,7 @@ public class SingleSeededBugTestCase extends AbstractTzTest {
 //	@Test
 	public void run() throws Exception {
 		// TODO NPN correct CLASSPATH here?
-		final List<LineCoverageInfo> infos = analyzer.analyse(programClasses, programTestClasses);
+		final List<LineCoverageInfo> infos = analyzer.analyse(programClasses, programTestClasses).getLineCoverageInfos();
 		double maxSuspiciousness = -1.0;
 		double foundLineSuspiciousness = -1.0;
 		for (LineCoverageInfo info : infos) {

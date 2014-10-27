@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sav.commons.utils.TestConfigUtils;
+import faultLocalization.FaultLocalizationReport;
 import faultLocalization.LineCoverageInfo;
 import fit.TimedActionFixture;
 
@@ -18,7 +19,7 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 	private String expectedBugLine;
 
 	// Results
-	protected List<LineCoverageInfo> infos;
+	protected FaultLocalizationReport report;
 	protected double maxSuspiciousness = -1.0;
 	private double foundLineSuspiciousness = -1.0;
 
@@ -67,13 +68,13 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 	}
 
 	public final boolean analyze() throws Exception {
-		infos = getProgram().faultLocalization(programClasses, programTestClasses, useSlicer);
+		report = getProgram().faultLocalization(programClasses, programTestClasses, useSlicer);
 		checkAnalyzedResults();
 		return true;
 	}
 
 	protected void checkAnalyzedResults() {
-		for (LineCoverageInfo info : infos) {
+		for (LineCoverageInfo info : report.getLineCoverageInfos()) {
 			if (maxSuspiciousness < info.getSuspiciousness()) {
 				maxSuspiciousness = info.getSuspiciousness();
 			}
@@ -94,7 +95,7 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 	protected double getSmallestSuspiciousnessInTopThree() {
 		int i = 0;
 		double min = 2;
-		for (LineCoverageInfo info: infos) {
+		for (LineCoverageInfo info : report.getLineCoverageInfos()) {
 			if (info.getSuspiciousness() < min) {
 				min = info.getSuspiciousness();
 				i++;
@@ -105,11 +106,11 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 		}
 		return min;
 	}
-	
+
 	public boolean foundBugIsInTopThree() {
 		return foundLineSuspiciousness >= getSmallestSuspiciousnessInTopThree();
 	}
-	
+
 	public void show() throws Exception {
 		final Object result = method(0).invoke(getActor());
 		cells.last().more = td(result.toString());
@@ -117,10 +118,10 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 
 	public String lineCoverageInfo() {
 		final StringBuilder builder = new StringBuilder();
-		if (infos == null || infos.size() == 0) {
+		if (report.getLineCoverageInfos() == null || report.getLineCoverageInfos().size() == 0) {
 			builder.append("No line coverage information was detected.");
 		} else {
-			for (LineCoverageInfo info : infos) {
+			for (LineCoverageInfo info : report.getLineCoverageInfos()) {
 				if (info.getSuspiciousness() > 0.0) {
 					builder.append(info.toString()).append(LINE_FEED);
 				}

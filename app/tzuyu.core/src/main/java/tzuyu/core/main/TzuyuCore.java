@@ -10,10 +10,9 @@ package tzuyu.core.main;
 
 import java.util.List;
 
-import faultLocalization.LineCoverageInfo;
-
 import main.ProgramAnalyzer;
 import tzuyu.core.main.context.AbstractApplicationContext;
+import faultLocalization.FaultLocalizationReport;
 
 
 /**
@@ -27,12 +26,12 @@ public class TzuyuCore {
 		this.appContext = appContext;
 	}
 
-	public List<LineCoverageInfo> faultLocalization(List<String> testingClassNames,
+	public FaultLocalizationReport faultLocalization(List<String> testingClassNames,
 			List<String> junitClassNames) throws Exception {
 		return faultLocalization(testingClassNames, junitClassNames, true);
 	}
 	
-	public List<LineCoverageInfo> faultLocalization(List<String> testingClassNames,
+	public FaultLocalizationReport faultLocalization(List<String> testingClassNames,
 			List<String> junitClassNames, boolean useSlicer) throws Exception {
 		ProgramAnalyzer analyzer = new ProgramAnalyzer(appContext);
 		analyzer.setUseSlicer(useSlicer);

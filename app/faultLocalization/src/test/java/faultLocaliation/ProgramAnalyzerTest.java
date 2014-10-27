@@ -58,7 +58,7 @@ public class ProgramAnalyzerTest {
 		List<String> junitClassNames = Arrays.asList(
 				SampleProgramTestFail.class.getName(),
 				SampleProgramTestFail.class.getName());
-		List<LineCoverageInfo> result = analyzer.analyse(testingClasses, junitClassNames);
+		List<LineCoverageInfo> result = analyzer.analyse(testingClasses, junitClassNames).getLineCoverageInfos();
 	}
 	
 }

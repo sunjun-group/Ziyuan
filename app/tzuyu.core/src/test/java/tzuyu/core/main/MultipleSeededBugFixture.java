@@ -20,7 +20,7 @@ public class MultipleSeededBugFixture extends SingleSeededBugFixture {
 
 	@Override
 	protected void checkAnalyzedResults() {
-		for (LineCoverageInfo info : infos) {
+		for (LineCoverageInfo info : report.getLineCoverageInfos()) {
 			final Double value = expectedBugLines.get(info.getLocId());
 			if (value != null && value.doubleValue() < info.getSuspiciousness()) {
 				expectedBugLines.put(info.getLocId(), info.getSuspiciousness());
@@ -45,11 +45,11 @@ public class MultipleSeededBugFixture extends SingleSeededBugFixture {
 
 	@Override
 	public boolean foundBugHasMaxSuspiciousness() {
-		if (infos == null || infos.size() == 0) {
+		if (report.getLineCoverageInfos() == null || report.getLineCoverageInfos().size() == 0) {
 			return false;
 		}
 		List<String> maxSuspiciousnessLines = new ArrayList<String>();
-		for (LineCoverageInfo info : infos) {
+		for (LineCoverageInfo info : report.getLineCoverageInfos()) {
 			if (info.getSuspiciousness() >= maxSuspiciousness) {
 				maxSuspiciousnessLines.add(info.getLocId());
 			}
@@ -61,7 +61,7 @@ public class MultipleSeededBugFixture extends SingleSeededBugFixture {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean foundBugIsInTopThree() {
 		final double min = getSmallestSuspiciousnessInTopThree();

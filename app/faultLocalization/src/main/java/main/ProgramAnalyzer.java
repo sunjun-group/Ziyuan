@@ -18,7 +18,7 @@ import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.slicing.ISlicer;
 import faultLocalization.CoverageReport;
-import faultLocalization.LineCoverageInfo;
+import faultLocalization.FaultLocalizationReport;
 import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
 
 /**
@@ -35,17 +35,19 @@ public class ProgramAnalyzer {
 		codeCoverageTool = appContext.getCodeCoverageTool();
 	}
 
-	public List<LineCoverageInfo> analyse(List<String> testingClasseNames,
+	public FaultLocalizationReport analyse(List<String> testingClasseNames,
 			List<String> junitClassNames) throws Exception {
 		return analyse(testingClasseNames, junitClassNames,
 				SuspiciousnessCalculationAlgorithm.TARANTULA);
 	}
 
-	public List<LineCoverageInfo> analyse(List<String> testingClasses,
+	public FaultLocalizationReport analyse(List<String> testingClasses,
 			List<String> junitClassNames, SuspiciousnessCalculationAlgorithm algorithm)
 			throws Exception {
+		FaultLocalizationReport report = new FaultLocalizationReport();
 		CoverageReport result = new CoverageReport();
 		codeCoverageTool.run(result, testingClasses, junitClassNames);
+		report.setCoverageReport(result);
 		if (useSlicer) {
 			/* do slicing */
 			List<BreakPoint> traces = result.getFailureTraces();
@@ -55,10 +57,11 @@ public class ProgramAnalyzer {
 			for (BreakPoint bkp : causeTraces) {
 				CollectionUtils.addIfNotNullNotExist(traces, bkp);
 			}
-			return result.tarantula(traces, algorithm);
+			report.setLineCoverageInfos(result.tarantula(traces, algorithm));
 		} else {
-			return result.tarantula(new ArrayList<BreakPoint>(), algorithm);
+			report.setLineCoverageInfos(result.tarantula(new ArrayList<BreakPoint>(), algorithm));
 		}
+		return report;
 	}
 
 	public void setUseSlicer(boolean useSlicer) {
