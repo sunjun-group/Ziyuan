@@ -12,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
 import sav.commons.utils.TestConfigUtils;
 
@@ -19,7 +20,7 @@ import sav.commons.utils.TestConfigUtils;
  * @author LLT
  *
  */
-public class SingleSeededBugFixtureTest {
+public class SingleSeededBugFixtureTest extends AbstractTest {
 	private SingleSeededBugFixture fixture;
 	
 	@Before

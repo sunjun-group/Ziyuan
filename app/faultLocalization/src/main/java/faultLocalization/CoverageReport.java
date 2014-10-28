@@ -157,8 +157,7 @@ public class CoverageReport implements ICoverageReport{
 		Collections.sort(linesCoverageInfo, new LineCoverageInfoComparator());
 
 		for (LineCoverageInfo lineCoverageInfo : linesCoverageInfo) {
-			// TODO replace with log4j?
-			System.out.println(lineCoverageInfo.toString());
+			logger.info(lineCoverageInfo.toString());
 		}
 		return linesCoverageInfo;
 	}

@@ -12,16 +12,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
-import org.apache.commons.lang.time.StopWatch;
-
 import sav.common.core.Logger;
+import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
-import sav.common.core.iface.IPrintStream;
 import sav.common.core.utils.Assert;
+import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.StopTimer;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunnerParameters;
@@ -40,11 +39,10 @@ import de.unisb.cs.st.javaslicer.traceResult.TraceResult;
  * 
  */
 public class JavaSlicer implements ISlicer {
-	private Logger<?> logger = Logger.getDefaultLogger();
+	private Logger<?> log = Logger.getDefaultLogger();
 	private JavaSlicerVmRunner vmRunner;
 	private VMConfiguration vmConfig;
 	private List<String> analyzedClasses;
-	private IPrintStream vmRunnerPrintStream;
 
 	public void setTracerJarPath(String tracerJarPath) {
 		vmRunner = new JavaSlicerVmRunner(tracerJarPath);
@@ -52,10 +50,6 @@ public class JavaSlicer implements ISlicer {
 	
 	public void setVmConfig(VMConfiguration vmConfig) {
 		this.vmConfig = vmConfig;
-	}
-	
-	public void setVmRunnerPrintStream(IPrintStream vmRunnerPrintStream) {
-		this.vmRunnerPrintStream = vmRunnerPrintStream;
 	}
 	
 	@Override
@@ -69,14 +63,15 @@ public class JavaSlicer implements ISlicer {
 	 */
 	public List<BreakPoint> slice(List<BreakPoint> bkps, List<String> junitClassMethos)
 			throws SavException, IOException, InterruptedException, ClassNotFoundException {
-		StopWatch watch = new StopWatch();
-		watch.start();
+		StopTimer timer = new StopTimer("Slicing");
+		timer.newPoint("create Trace file");
 		String tempFileName = createTraceFile(junitClassMethos);
 		
 		/* do slicing */
-		List<BreakPoint> result = slice(tempFileName, bkps);
-		watch.stop();
-		logger.info("Java slicing took: " + watch.getTime() / 1000 + " seconds");
+		timer.newPoint("slice");
+		List<BreakPoint> result = slice(tempFileName, bkps, timer);
+		
+		timer.logResults(log);
 		return result;
 	}
 
@@ -91,16 +86,23 @@ public class JavaSlicer implements ISlicer {
 				junitClassNames);
 		/**/
 		vmRunner.setTraceFilePath(tempFileName);
-		vmRunner.setOut(vmRunnerPrintStream);
 		vmRunner.startAndWaitUntilStop(vmConfig);
 
 		return tempFileName;
 	}
 	
-	public List<BreakPoint> slice(String traceFilePath, List<BreakPoint> bkps) throws InterruptedException {
+	public List<BreakPoint> slice(String traceFilePath, List<BreakPoint> bkps,
+			StopTimer timer)
+			throws InterruptedException, SavException {
+		log.info("Running slicing...");
+		if (log.isDebug()) {
+			log.debug("traceFilePath=", traceFilePath);
+		}
+		log.info("entry points=", BreakpointUtils.getPrintStr(bkps));
 		File traceFile = new File(traceFilePath);
 		TraceResult trace;
 		try {
+			timer.newPoint("read trace file");
 			trace = TraceResult.readFrom(traceFile);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -116,10 +118,7 @@ public class JavaSlicer implements ISlicer {
 
 		List<ThreadId> threads = trace.getThreads();
 		if (threads.size() == 0) {
-			//TODO
-			System.err
-					.println("The trace file contains no tracing information.");
-			System.exit(-1);
+			throw new SavException(ModuleEnum.SLICING, "trace.threads.size=0");
 		}
 
 		ThreadId tracing = null;
@@ -131,17 +130,14 @@ public class JavaSlicer implements ISlicer {
 		}
 
 		if (tracing == null) {
-			System.err.println("Couldn't find the main thread.");
+			log.error("Couldn't find the main thread.");
 			return new ArrayList<BreakPoint>();
 		}
-
-		long startTime = System.nanoTime();
 		Slicer slicer = new Slicer(trace);
 		SliceInstructionsCollector collector = new SliceInstructionsCollector();
 		slicer.addSliceVisitor(collector);
 		slicer.process(tracing, criteria, false);
 		Set<Instruction> slice = collector.getDynamicSlice();
-		long endTime = System.nanoTime();
 		List<BreakPoint> result = new ArrayList<BreakPoint>();
 		for (Instruction inst : slice) {
 			ReadClass clazz = inst.getMethod().getReadClass();
@@ -152,8 +148,6 @@ public class JavaSlicer implements ISlicer {
 			}
 		}
 		
-		System.out.format((Locale) null, "Computation took %.2f seconds.%n",
-				1e-9 * (endTime - startTime));
 		return result;
 	}
 

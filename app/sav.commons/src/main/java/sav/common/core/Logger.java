@@ -36,9 +36,7 @@ public abstract class Logger<T extends Logger<T>> {
 
 	public abstract void logEx(Exception ex, String msg);
 
-	public abstract void close();
-
-	public abstract void debug(String msg);
+	public abstract T debug(String msg);
 
 	public void logEx(SavException ex) {
 		logEx(ex, ex.getType());
@@ -50,13 +48,15 @@ public abstract class Logger<T extends Logger<T>> {
 
 	protected abstract void logEx(Exception ex, Enum<?> type);
 
-	public void debug(Object... msgs) {
+	@SuppressWarnings("unchecked")
+	public T debug(Object... msgs) {
 		if (isDebug()) {
-			info(StringUtils.spaceJoin(msgs));
+			debug(StringUtils.spaceJoin(msgs));
 		}
+		return (T) this;
 	}
 
-	protected boolean isDebug() {
+	public boolean isDebug() {
 		return debug;
 	}
 }

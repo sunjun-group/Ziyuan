@@ -48,7 +48,7 @@ public class SingleSeededBugTestCase extends AbstractTzTest {
 	private String expectedBugLine;
 
 	@Before
-	public void init() {
+	public void setup() {
 		this.analyzer = new ProgramAnalyzer(testContext);
 	}
 

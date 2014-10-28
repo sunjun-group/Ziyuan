@@ -20,6 +20,10 @@ public class CommandLineLogger extends sav.common.core.Logger<CommandLineLogger>
 	private static final Logger logger = Logger.getRootLogger();
 	private static final CommandLineLogger instance = new CommandLineLogger(); 
 	
+	public CommandLineLogger() {
+		debug = logger.isDebugEnabled();
+	}
+	
 	public static CommandLineLogger instance() {
 		return instance;
 	}
@@ -27,26 +31,18 @@ public class CommandLineLogger extends sav.common.core.Logger<CommandLineLogger>
 	public CommandLineLogger info(Object... msgs) {
 		String msg = StringUtils.spaceJoin(msgs);
 		logger.info(msg);
-		System.out.println(msg);
 		return this;
 	}
 	
 	public CommandLineLogger error(Object... msgs) {
 		String msg = StringUtils.spaceJoin(msgs);
 		logger.error(msg);
-		System.out.println(msg);
 		return this;
-	}
-
-	@Override
-	public void close() {
-		// do nothing
 	}
 
 	@Override
 	public void logEx(Exception ex, String msg) {
 		logger.error(msg, ex);
-		ex.printStackTrace(System.err);
 	}
 
 	@Override
@@ -55,9 +51,9 @@ public class CommandLineLogger extends sav.common.core.Logger<CommandLineLogger>
 	}
 
 	@Override
-	public void debug(String msg) {
-		if (debug) {
-			info(msg);
-		}
+	public CommandLineLogger debug(String msg) {
+		logger.debug(msg);
+		return this;
 	}
+	
 }

@@ -55,7 +55,6 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 		JavaSlicer javaSlicer = new JavaSlicer();
 		javaSlicer.setVmConfig(getVmConfig());
 		javaSlicer.setTracerJarPath(getTracerJarPath());
-		javaSlicer.setVmRunnerPrintStream(getVmRunnerPrintStream());
 		return javaSlicer;
 	}
 	

@@ -13,9 +13,9 @@ import sav.common.core.iface.IPrintStream;
 
 /**
  * @author LLT
- *
+ * 
  */
-public abstract class AbstractPrintStream implements IPrintStream{
+public abstract class AbstractPrintStream implements IPrintStream {
 	
 	public AbstractPrintStream writeln(String msg) {
 		println(msg);

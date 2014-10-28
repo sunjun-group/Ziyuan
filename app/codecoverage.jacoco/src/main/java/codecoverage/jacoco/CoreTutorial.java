@@ -32,6 +32,7 @@ import org.jacoco.core.runtime.RuntimeData;
  * will be instrumented and executed. Finally the coverage information will be
  * dumped.
  */
+//TODO TO REMOVE
 public final class CoreTutorial {
 
 	/**

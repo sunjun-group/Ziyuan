@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import sav.common.core.Logger;
 import sav.common.core.ModuleEnum;
 import sav.common.core.NullPrintStream;
 import sav.common.core.SavException;
@@ -29,6 +30,7 @@ import sav.strategies.vm.VMConfiguration;
  *
  */
 public class JaCoCoAgent implements ICodeCoverage {
+	private Logger<?> log = Logger.getDefaultLogger();
 	private VMConfiguration vmConfig;
 	private IPrintStream out = NullPrintStream.instance();
 	private ICoverageReport report;
@@ -55,21 +57,28 @@ public class JaCoCoAgent implements ICodeCoverage {
 	private void run(List<String> testingClassNames,
 			List<String> junitClassNames) throws SavException, IOException,
 			ClassNotFoundException {
+		log.debug("Running jacoco..");
 		String destfile = File.createTempFile("tzJacoco", ".exec").getAbsolutePath();
 		String junitResultFile = File.createTempFile("tzJunitRes", ".txt")
 				.getAbsolutePath();
 		JaCoCoVmRunner vmRunner = new JaCoCoVmRunner()
 					.setDestfile(destfile)
 					.setAppend(true);
-		vmRunner.setOut(out);
 		vmRunner.setAnalyzedClassNames(testingClassNames);
 		vmConfig.setLaunchClass(JunitRunner.class.getName());
-		reporter.setOut(out);
 		reporter.setReport(report);
 		List<String> testMethods = JunitUtils.extractTestMethods(junitClassNames);
 		@SuppressWarnings("unchecked")
 		List<String> allClassNames = CollectionUtils.join(testingClassNames,
 				junitClassNames);
+		if (log.isDebug()) {
+			log.debug("Start vmRunner..")
+				.debug("destfile=", destfile)
+				.debug("junitResultFile=", junitResultFile)
+				.debug("append=true")
+				.debug("testMethods=", testMethods)
+				.debug("allClassNames=", allClassNames);
+		}
 		for (String testMethod : testMethods) {
 			/* define arguments for JunitRunner */
 			vmRunner.getProgramArgs().clear();

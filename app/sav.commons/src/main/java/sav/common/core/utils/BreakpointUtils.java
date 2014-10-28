@@ -50,5 +50,10 @@ public class BreakpointUtils {
 		}
 		return locs;
 	}
+
+	public static String getPrintStr(List<BreakPoint> bkps) {
+		return StringUtils.join(toLocationIds(bkps), ", ");
+	}
+	
 	
 }

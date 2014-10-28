@@ -32,6 +32,7 @@ public class JunitRunner {
 			System.exit(0);
 		}
 		JunitRunnerParameters params = JunitRunnerParameters.parse(args);
+		System.out.println("Run testcases: ");
 		List<Pair<String, String>> classMethods = JunitUtils.toPair(params
 				.getClassMethods());
 		RequestExecution requestExec = new RequestExecution();
@@ -45,7 +46,9 @@ public class JunitRunner {
 			requestExec.run();
 			extractBrkpsFromTrace(requestExec.getFailures(), params.getTestingClassNames(),
 					result.getFailureTraces());
-			result.addResult(classMethod, requestExec.getFailures().isEmpty());
+			boolean isPass = requestExec.getFailures().isEmpty();
+			result.addResult(classMethod, isPass);
+			System.out.println(classMethod + ", result: " + isPass);
 		}
 		if (params.getDestfile() != null) {
 			File file = new File(params.getDestfile());

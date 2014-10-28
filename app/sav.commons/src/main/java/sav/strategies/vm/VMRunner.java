@@ -18,10 +18,9 @@ import java.util.Collection;
 import java.util.List;
 
 import sav.common.core.Constants;
+import sav.common.core.Logger;
 import sav.common.core.ModuleEnum;
-import sav.common.core.NullPrintStream;
 import sav.common.core.SavException;
-import sav.common.core.iface.IPrintStream;
 import sav.common.core.utils.CollectionBuilder;
 import sav.common.core.utils.StringUtils;
 
@@ -30,7 +29,7 @@ import sav.common.core.utils.StringUtils;
  * 
  */
 public class VMRunner {
-	public static boolean debug = true;
+	private Logger<?> log = Logger.getDefaultLogger();
 	protected static final String cpToken = "-cp";
 	/*
 	 * from jdk 1.5, we can use new JVM option: -agentlib 
@@ -41,7 +40,6 @@ public class VMRunner {
 	 */
 	protected static final String debugToken = "-agentlib:jdwp=transport=dt_socket,suspend=y,address=%s";
 	protected static final String enableAssertionToken = "-ea";
-	protected IPrintStream out;
 	
 	public static Process startJVM(VMConfiguration config) throws SavException {
 		VMRunner vmRunner = new VMRunner();
@@ -60,10 +58,11 @@ public class VMRunner {
 		buildVmOption(builder, config);
 		buildProgramArgs(config, builder);
 		List<String> commands = (List<String>)builder.getResult();
-		if (debug) {
-			System.out.println(StringUtils.join(commands, " "));
+		if (log.isDebug()) {
+			log.debug("start cmd..");
+			log.debug(StringUtils.join(commands, " "));
 			for (String cmd : commands) {
-				System.out.println(cmd);
+				log.debug(cmd);
 			}
 		}
 		return startVm(commands);
@@ -95,8 +94,10 @@ public class VMRunner {
 					Thread.currentThread();
 					Thread.sleep(100);
 				} catch (IOException e) {
+					log.logEx(e, "");
 					throw new SavException(ModuleEnum.JVM, e);
 				} catch (InterruptedException e) {
+					log.logEx(e, "");
 					throw new SavException(ModuleEnum.JVM, e);
 				}
 			}
@@ -112,21 +113,15 @@ public class VMRunner {
 		}
 		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
 		String inputLine;
-		IPrintStream out = getOut();
 		/* Note: The input stream must be read if available to be closed, 
 		 * otherwise, the process will never end. So, keep doing this even if 
 		 * the printStream is not set */
 		while ((inputLine = in.readLine()) != null) {
-			out.println(inputLine);
+			if(log.isDebug()) {
+				log.debug(inputLine);
+			}
 		}
 		in.close();
-	}
-
-	private IPrintStream getOut() {
-		if (out == null) {
-			out = NullPrintStream.instance();
-		}
-		return out;
 	}
 
 	protected void buildVmOption(CollectionBuilder<String, ?> builder, VMConfiguration config) {
@@ -142,6 +137,7 @@ public class VMRunner {
 		try {
 			process = processBuilder.start();
 		} catch (IOException e) {
+			log.logEx(e, "");
 			new SavException(ModuleEnum.JVM, e, "cannot start jvm process");
 		}
 		return process;
@@ -162,8 +158,4 @@ public class VMRunner {
 		return StringUtils.join(Constants.FILE_SEPARATOR, config.getJavaHome(), "bin", "java");
 	}
 	
-	public VMRunner setOut(IPrintStream out) {
-		this.out = out;
-		return this;
-	}
 }

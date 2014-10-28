@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 
+import org.apache.log4j.PropertyConfigurator;
+import org.junit.BeforeClass;
+
 import sav.common.core.utils.StringUtils;
 import sav.commons.utils.TestConfigUtils;
 import sav.strategies.dto.BreakPoint;
@@ -26,9 +29,16 @@ import sav.strategies.vm.VMConfiguration;
  * @author LLT
  * 
  */
+
 public class AbstractTest {
 	public static final String SAV_COMMONS = "sav.commons";
 	protected static TestConfiguration config = TestConfiguration.getInstance();
+	
+	@BeforeClass
+	public static void init() {
+		PropertyConfigurator.configure(TestConfiguration
+				.getTestResources(SAV_COMMONS) + "/test-log4j.properties");
+	}
 	
 	public void print(Object... objs) {
 		System.out.println(StringUtils.spaceJoin(objs));

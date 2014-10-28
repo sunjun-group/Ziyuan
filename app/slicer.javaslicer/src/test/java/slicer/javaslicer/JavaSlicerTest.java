@@ -19,8 +19,8 @@ import org.junit.Test;
 
 import sav.common.core.Constants;
 import sav.common.core.SavException;
-import sav.common.core.SavPrintStream;
 import sav.common.core.utils.JunitUtils;
+import sav.common.core.utils.StopTimer;
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.SampleProgramTest;
@@ -46,7 +46,6 @@ public class JavaSlicerTest extends AbstractTest {
 		vmConfig = initVmConfig();
 		vmConfig.addClasspath(TestConfiguration
 				.getTzAssembly(Constants.TZUYU_JAVASLICER_ASSEMBLY));
-		slicer.setVmRunnerPrintStream(new SavPrintStream(System.out));
 		slicer.setTracerJarPath(TestConfigUtils.getTracerLibPath());
 		slicer.setVmConfig(vmConfig);
 	}
@@ -93,12 +92,12 @@ public class JavaSlicerTest extends AbstractTest {
 	}
 
 	@Test
-	public void testInnerSlice() throws InterruptedException {
+	public void testInnerSlice() throws InterruptedException, SavException {
 		List<BreakPoint> breakpoints = Arrays.asList(new BreakPoint(
 				"faultLocaliation.sample.SampleProgramTest", "test5", 53),
 
 				new BreakPoint("faultLocaliation.sample.SampleProgram", 
 						"Max", 26));
-		slicer.slice("/tmp/javaSlicer.trace", breakpoints);
+		slicer.slice("/tmp/javaSlicer.trace", breakpoints, new StopTimer("test"));
 	}
 }

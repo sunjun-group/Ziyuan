@@ -11,11 +11,15 @@ package faultLocaliation;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Test;
+
 import main.ProgramAnalyzer;
+import sav.commons.AbstractTest;
 import sav.commons.testdata.SampleProgramTestFail;
 import sav.commons.testdata.SamplePrograms;
 import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
+import sav.strategies.codecoverage.ICoverageReport;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.slicing.ISlicer;
 import faultLocalization.LineCoverageInfo;
@@ -24,7 +28,7 @@ import faultLocalization.LineCoverageInfo;
  * @author LLT
  *
  */
-public class ProgramAnalyzerTest {
+public class ProgramAnalyzerTest extends AbstractTest {
 	
 	public void testAnalyse() throws Exception {
 		ProgramAnalyzer analyzer = new ProgramAnalyzer(new IApplicationContext() {
@@ -36,8 +40,7 @@ public class ProgramAnalyzerTest {
 					@Override
 					public List<BreakPoint> slice(List<BreakPoint> breakpoints,
 							List<String> junitClassNames) throws Exception {
-						// TODO Auto-generated method stub
-						return null;
+						return breakpoints;
 					}
 					
 					@Override
@@ -50,8 +53,14 @@ public class ProgramAnalyzerTest {
 			
 			@Override
 			public ICodeCoverage getCodeCoverageTool() {
-				// TODO Auto-generated method stub
-				return null;
+				return new ICodeCoverage() {
+					
+					@Override
+					public void run(ICoverageReport reporter, List<String> testingClassNames,
+							List<String> junitClassNames) throws Exception {
+						
+					}
+				};
 			}
 		});
 		List<String> testingClasses = Arrays.asList(SamplePrograms.class.getName());
