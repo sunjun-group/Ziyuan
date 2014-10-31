@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.PropertyConfigurator;
+
+import sav.commons.TestConfiguration;
 import sav.commons.utils.TestConfigUtils;
 import faultLocalization.FaultLocalizationReport;
 import faultLocalization.LineCoverageInfo;
@@ -25,6 +28,12 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 
 	private SystemConfiguredDataProvider context = new SystemConfiguredDataProvider();
 	private TzuyuCore program;
+	
+	/* set up log4j to use test configuration */
+	static {
+		PropertyConfigurator.configure(TestConfiguration
+				.getTestResources("sav.commons") + "/test-log4j.properties");
+	}
 
 	public void projectClassPath(final String path) throws FileNotFoundException {
 		context.addProjectClassPath(path);
