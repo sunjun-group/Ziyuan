@@ -29,6 +29,7 @@ public class TestConfiguration {
 	// application
 	public static String JAVA_HOME;
 	public static String ASSEMBLY;
+	public static String TESTCASE_BASE;
 	
 	static {
 		TRUNK = TestConfigUtils.getConfig("trunk");
@@ -37,6 +38,7 @@ public class TestConfiguration {
 		JUNIT_LIB = TRUNK + "/app/icsetlv/src/test/lib/*";
 		SAV_COMMONS_TEST_TARGET = getTestTarget("sav.commons");
 		JAVA_HOME = TestConfigUtils.getJavaHome();
+		TESTCASE_BASE = TestConfigUtils.getConfig("testcase.base");
 	}
 
 	public static String getTzAssembly(String assemblyName) {
