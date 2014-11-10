@@ -8,14 +8,18 @@
 
 package tzuyu.core.main;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Collection;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
+import sav.commons.testdata.opensource.TestPackage;
 import sav.commons.utils.TestConfigUtils;
 
 /**
@@ -29,31 +33,54 @@ public class SingleSeededBugFixtureTest extends AbstractTest {
 	@Before
 	public void setup() throws FileNotFoundException {
 		fixture = new SingleSeededBugFixture();
-		fixture.useSlicer(true);
+		fixture.useSlicer(false);
 		fixture.javaHome(TestConfigUtils.getJavaHome());
 		fixture.tracerJarPath(TestConfigUtils.getTracerLibPath());
 		fixture.projectClassPath(TestConfiguration.getTarget("slicer.javaslicer"));
 	}
+	
+	@Test
+	public void testJavaParser() throws Exception {
+		runTest(TestPackage.JAVA_PARSER);
+	}
+	
+	public void runTest(TestPackage testPkg) throws Exception {
+		fixture.projectClassPaths(testPkg.classPaths);
+		if (testPkg.libsPath != null) {
+			addLibs(testPkg.libsPath);
+		}
+		for (String clazz : testPkg.analyzingClasses) {
+			fixture.programClass(clazz);
+		}
+		for (String clazz : testPkg.testClasses) {
+			fixture.programTestClass(clazz);
+		}		
+		fixture.expectedBugLine("japa.parser.ASTParser:1810");
+		fixture.updateSysClassLoader();
+		fixture.analyze();
+		Assert.assertTrue(fixture.bugWasFound());
+	}
+	
+	@Test
+	public void testCommonsLang() throws Exception {
+		String prjFolder = TESTCASE_BASE + "/commons-lang";
+		fixture.projectClassPath(prjFolder + "/trunk/target/classes");
+		fixture.projectClassPath(prjFolder  + "/trunk/target/test-classes");
+		addLibs(prjFolder + "/bin/libs");
+		fixture.programClass("org.apache.commons.lang3.AnnotationUtils");
+		fixture.programTestClass("org.apache.commons.lang3.AnnotationUtilsTest");
+		fixture.expectedBugLine("org.apache.commons.lang3.AnnotationUtils:56");
+		fixture.updateSysClassLoader();
+		fixture.analyze();
+		Assert.assertTrue(fixture.bugWasFound());
+	}
 
-//	@Test
+	@Test
 	public void testApacheXmlSecurity() throws Exception {
 		String prjFolder = TESTCASE_BASE + "/apache-xml-security";
 		String libs = prjFolder + "/libs";
 		fixture.projectClassPath(prjFolder + "/v1/s1/classes");
-//		fixture.projectClassPath(prjFolder + "/libs/*");
-		fixture.projectClassPath(libs + "/bc-jce-jdk13-114.jar");
-		fixture.projectClassPath(libs + "/commons-logging-api.jar");
-		fixture.projectClassPath(libs + "/commons-logging.jar");
-		fixture.projectClassPath(libs + "/junit-4.8.2.jar");
-		fixture.projectClassPath(libs + "/junit3.8.1.jar");
-		fixture.projectClassPath(libs + "/junitSIR.jar");
-		fixture.projectClassPath(libs + "/log4j-1.2.8.jar");
-		fixture.projectClassPath(libs + "/style-apachexml.jar");
-		fixture.projectClassPath(libs + "/stylebook-1.0-b3_xalan-2.jar");
-		fixture.projectClassPath(libs + "/xalan.jar");
-		fixture.projectClassPath(libs + "/xercesImpl.jar");
-		fixture.projectClassPath(libs + "/xml-apis.jar");
-		fixture.projectClassPath(libs + "/xmlParserAPIs.jar");
+		addLibs(libs);
 		fixture.programClass("org.apache.xml.security.c14n.implementations.Canonicalizer20010315Excl");
 		fixture.programClass("org.apache.xml.security.c14n.implementations.Canonicalizer20010315ExclOmitComments");
 		fixture.programClass("org.apache.xml.security.transforms.params.InclusiveNamespaces");
@@ -89,5 +116,13 @@ public class SingleSeededBugFixtureTest extends AbstractTest {
 		fixture.updateSysClassLoader();
 		fixture.analyze();
 		Assert.assertTrue(fixture.bugWasFound());
+	}
+
+	private void addLibs(String libFolder) throws Exception {
+		Collection<?> files = FileUtils.listFiles(new File(libFolder), new String[] { "jar" }, true);
+		for (Object obj : files) {
+			File file = (File) obj;
+			fixture.projectClassPath(file.getAbsolutePath());
+		}
 	}
 }

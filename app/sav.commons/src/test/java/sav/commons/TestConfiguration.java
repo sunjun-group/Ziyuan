@@ -17,6 +17,8 @@ import sav.commons.utils.TestConfigUtils;
  * 
  */
 public class TestConfiguration {
+	public static final String PROPERTY_TESTCASE_BASE = "testcase.base";
+	
 	private static TestConfiguration config = new TestConfiguration();
 	public static final String JUNIT_CORE = "org.junit.runner.JUnitCore";
 	public static final String TRUNK;
@@ -38,7 +40,7 @@ public class TestConfiguration {
 		JUNIT_LIB = TRUNK + "/app/icsetlv/src/test/lib/*";
 		SAV_COMMONS_TEST_TARGET = getTestTarget("sav.commons");
 		JAVA_HOME = TestConfigUtils.getJavaHome();
-		TESTCASE_BASE = TestConfigUtils.getConfig("testcase.base");
+		TESTCASE_BASE = TestConfigUtils.getConfig(PROPERTY_TESTCASE_BASE);
 	}
 
 	public static String getTzAssembly(String assemblyName) {

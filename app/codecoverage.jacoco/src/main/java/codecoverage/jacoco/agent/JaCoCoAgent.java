@@ -57,7 +57,7 @@ public class JaCoCoAgent implements ICodeCoverage {
 	private void run(List<String> testingClassNames,
 			List<String> junitClassNames) throws SavException, IOException,
 			ClassNotFoundException {
-		log.debug("Running jacoco..");
+		log.debug("RUNNING JACOCO..");
 		String destfile = File.createTempFile("tzJacoco", ".exec").getAbsolutePath();
 		String junitResultFile = File.createTempFile("tzJunitRes", ".txt")
 				.getAbsolutePath();

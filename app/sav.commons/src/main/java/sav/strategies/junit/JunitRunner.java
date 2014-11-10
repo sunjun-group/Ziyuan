@@ -61,13 +61,17 @@ public class JunitRunner {
 		if (testingClassNames == null) {
 			return;
 		}
+		System.out.println("FailureTrace: ");
 		for (Failure failure : failureTrace) {
 			for (StackTraceElement trace : failure.getException()
 					.getStackTrace()) {
-				if (trace.getClassName() != null
-						&& testingClassNames.contains(trace.getClassName())) {
-					failureTraces.add(new BreakPoint(trace.getClassName(),
-							trace.getMethodName(), trace.getLineNumber()));
+				String className = trace.getClassName();
+				int lineNumber = trace.getLineNumber();
+				System.out.println(String.format("%s@%s", className, lineNumber));
+				if (className != null
+						&& testingClassNames.contains(className)) {
+					failureTraces.add(new BreakPoint(className,
+							trace.getMethodName(), lineNumber));
 				}
 			}
 		}

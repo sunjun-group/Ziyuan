@@ -51,6 +51,57 @@ public class JavaSlicerTest extends AbstractTest {
 	}
 	
 	@Test
+	public void testCommonsLang2() throws Exception {
+		String prjFolder = TestConfiguration.TESTCASE_BASE + "/commons-lang";
+		String projClasses = prjFolder + "/trunk/target/classes";
+		String projTestClasses = prjFolder  + "/trunk/target/test-classes";
+		String libs = prjFolder + "/bin/libs";
+		TestConfigUtils.addToSysClassLoader(new File(projClasses));
+		TestConfigUtils.addToSysClassLoader(new File(projTestClasses));
+		analyzedClasses = Arrays.asList("org.apache.commons.lang3.SamplePrograms");
+		testClassMethods = Arrays.asList("org.apache.commons.lang3.SampleProgramTest.test5");
+		vmConfig.addClasspath(projClasses);
+		vmConfig.addClasspath(projTestClasses);
+		vmConfig.addClasspath(libs);
+//		run(Arrays.asList(new BreakPoint(
+//				"org.apache.commons.lang3.AnnotationUtils", "toString", 210)));
+		run(Arrays.asList(new BreakPoint(
+				"org.apache.commons.lang3.SampleProgramTest", "test5", 53)));
+	}
+	
+	@Test
+	public void testSampleProgram() throws Exception {
+		String sampleProgramsClassName = SamplePrograms.class.getName();
+		String sampleProgramTestClassName = SampleProgramTest.class.getName();
+		BreakPoint bkp1 = new BreakPoint(sampleProgramTestClassName, "test5", 53);
+		BreakPoint bkp2 = new BreakPoint(sampleProgramsClassName, "Max", 10);
+		List<BreakPoint> breakpoints = Arrays.asList(bkp1);
+		analyzedClasses = Arrays.asList(sampleProgramsClassName);
+		testClassMethods = JunitUtils.extractTestMethods(Arrays
+				.asList(sampleProgramTestClassName));
+		run(breakpoints);
+	}
+	
+	@Test
+	public void testCommonsLang() throws Exception {
+		String prjFolder = TestConfiguration.TESTCASE_BASE + "/commons-lang";
+		String projClasses = prjFolder + "/trunk/target/classes";
+		String projTestClasses = prjFolder  + "/trunk/target/test-classes";
+		String libs = prjFolder + "/bin/libs";
+		TestConfigUtils.addToSysClassLoader(new File(projClasses));
+		TestConfigUtils.addToSysClassLoader(new File(projTestClasses));
+		analyzedClasses = Arrays.asList("org.apache.commons.lang3.AnnotationUtils");
+		testClassMethods = Arrays.asList("org.apache.commons.lang3.AnnotationUtilsTest.testToString");
+		vmConfig.addClasspath(projClasses);
+		vmConfig.addClasspath(projTestClasses);
+		vmConfig.addClasspath(libs);
+//		run(Arrays.asList(new BreakPoint(
+//				"org.apache.commons.lang3.AnnotationUtils", "toString", 210)));
+		run(Arrays.asList(new BreakPoint(
+				"org.apache.commons.lang3.AnnotationUtilsTest", "testToString", 507)));
+	}
+	
+	@Test
 	public void testOnTestdata() throws Exception {
 		String jtopasSrc = TestConfigUtils.getConfig("jtopas.src");
 		analyzedClasses = Arrays.asList(
@@ -69,19 +120,6 @@ public class JavaSlicerTest extends AbstractTest {
 				"de.susebox.java.util.AbstractTokenizer", "isKeyword", 772)));
 	}
 
-	@Test
-	public void testSlice() throws Exception {
-		String sampleProgramsClassName = SamplePrograms.class.getName();
-		String sampleProgramTestClassName = SampleProgramTest.class.getName();
-		BreakPoint bkp1 = new BreakPoint(sampleProgramTestClassName, "test5", 53);
-		BreakPoint bkp2 = new BreakPoint(sampleProgramsClassName, "Max", 10);
-		List<BreakPoint> breakpoints = Arrays.asList(bkp1);
-		analyzedClasses = Arrays.asList(sampleProgramsClassName);
-		testClassMethods = JunitUtils.extractTestMethods(Arrays
-				.asList(sampleProgramTestClassName));
-		run(breakpoints);
-	}
-
 	private void run(List<BreakPoint> breakpoints) throws SavException, IOException,
 			InterruptedException, ClassNotFoundException {
 		slicer.setAnalyzedClasses(analyzedClasses);
@@ -95,7 +133,6 @@ public class JavaSlicerTest extends AbstractTest {
 	public void testInnerSlice() throws InterruptedException, SavException {
 		List<BreakPoint> breakpoints = Arrays.asList(new BreakPoint(
 				"faultLocaliation.sample.SampleProgramTest", "test5", 53),
-
 				new BreakPoint("faultLocaliation.sample.SampleProgram", 
 						"Max", 26));
 		slicer.slice("/tmp/javaSlicer.trace", breakpoints, new StopTimer("test"));

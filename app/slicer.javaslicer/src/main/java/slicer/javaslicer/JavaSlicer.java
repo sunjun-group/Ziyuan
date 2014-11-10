@@ -75,9 +75,17 @@ public class JavaSlicer implements ISlicer {
 		return result;
 	}
 
+	/**
+	 * we start jvm to execute this cmd:
+	 * 
+	 * java -javaagent:[/tracer.jar]=tracefile:[temfile.trace] 
+	 * 		-cp [project classpath + path of tzuyuSlicer.jar] sav.strategies.junit.JunitRunner
+	 * 		-methods [classMethods]
+	 */
 	public String createTraceFile(List<String> junitClassNames)
 			throws IOException, SavException, InterruptedException,
 			ClassNotFoundException {
+		log.info("Slicing-creating trace file...");
 		File tempFile = File.createTempFile(getTraceFileName(), ".trace");
 		String tempFileName = tempFile.getAbsolutePath();
 		/* run program and create trace file */
@@ -94,7 +102,7 @@ public class JavaSlicer implements ISlicer {
 	public List<BreakPoint> slice(String traceFilePath, List<BreakPoint> bkps,
 			StopTimer timer)
 			throws InterruptedException, SavException {
-		log.info("Running slicing...");
+		log.info("Slicing-slicing...");
 		if (log.isDebug()) {
 			log.debug("traceFilePath=", traceFilePath);
 		}
@@ -139,12 +147,16 @@ public class JavaSlicer implements ISlicer {
 		slicer.process(tracing, criteria, false);
 		Set<Instruction> slice = collector.getDynamicSlice();
 		List<BreakPoint> result = new ArrayList<BreakPoint>();
+		log.debug("Read Slicing Result:");
 		for (Instruction inst : slice) {
 			ReadClass clazz = inst.getMethod().getReadClass();
 			if (appClass(clazz)) {
 				BreakPoint bkp = new BreakPoint(clazz.getName(), 
 						inst.getMethod().getName(), inst.getLineNumber());
 				CollectionUtils.addIfNotNullNotExist(result, bkp);
+				if (log.isDebug()) {
+					log.debug(BreakpointUtils.getLocationId(bkp));
+				}
 			}
 		}
 		

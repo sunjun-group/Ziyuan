@@ -38,6 +38,12 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 	public void projectClassPath(final String path) throws FileNotFoundException {
 		context.addProjectClassPath(path);
 	}
+	
+	public void projectClassPaths(List<String> paths) throws FileNotFoundException {
+		for (String path : paths) {
+			context.addProjectClassPath(path);
+		}
+	}
 
 	protected TzuyuCore getProgram() {
 		if (program == null) {
