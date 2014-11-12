@@ -13,6 +13,9 @@ rem set up links for sav.commons reference
 mklink  /D savCommons %TRUNK%\app\sav.commons\target\classes
 rem mklink  /D icsetlvLib %TRUNK%\app\icsetlv\lib
 
-cd %TRUNK%\app\tzuyu.parent
+rem cd %TRUNK%\app\tzuyu.parent
 rem call mvn clean install
 rem call mvn eclipse:eclipse
+cd %TRUNK%\etc
+call install-javaslicer.bat
+call install-wala.bat
