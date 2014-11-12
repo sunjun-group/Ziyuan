@@ -9,7 +9,10 @@
 package sav.strategies.junit;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -32,11 +35,21 @@ public class JunitRunner {
 			System.exit(0);
 		}
 		JunitRunnerParameters params = JunitRunnerParameters.parse(args);
+		JunitResult result = runTestcases(params);
+		if (params.getDestfile() != null) {
+			File file = new File(params.getDestfile());
+			result.save(file);
+		}
+	}
+
+	public static JunitResult runTestcases(JunitRunnerParameters params)
+			throws ClassNotFoundException, IOException {
 		System.out.println("Run testcases: ");
 		List<Pair<String, String>> classMethods = JunitUtils.toPair(params
 				.getClassMethods());
 		RequestExecution requestExec = new RequestExecution();
 		JunitResult result = new JunitResult();
+		List<Failure> falures = new ArrayList<Failure>();
 		for (Pair<String, String> classMethod : classMethods) {
 			Request request = toRequest(classMethod);
 			if (request == null) {
@@ -44,23 +57,55 @@ public class JunitRunner {
 			}
 			requestExec.setRequest(request);
 			requestExec.run();
-			extractBrkpsFromTrace(requestExec.getFailures(), params.getTestingClassNames(),
-					result.getFailureTraces());
+			falures.addAll(requestExec.getFailures());
 			boolean isPass = requestExec.getFailures().isEmpty();
 			result.addResult(classMethod, isPass);
 			System.out.println(classMethod + ", result: " + isPass);
 		}
-		if (params.getDestfile() != null) {
-			File file = new File(params.getDestfile());
-			result.save(file);
-		}
+		extractBrkpsFromTrace(falures, params, result.getFailureTraces());
+//		extractBrkpsFromTrace(falures, params.getTestingClassNames(),
+//				result.getFailureTraces());
+		return result;
 	}
 	
+	private static void extractBrkpsFromTrace(List<Failure> falures,
+			JunitRunnerParameters params, Set<BreakPoint> bkps) {
+		Set<String> acceptedClasses = new HashSet<String>();
+		List<String> testingClassNames = CollectionUtils.nullToEmpty(params
+				.getTestingClassNames());
+		List<String> testingPkgs = CollectionUtils.nullToEmpty(params
+				.getTestingPkgs());
+		System.out.println("FailureTrace: ");
+		for (Failure failure : falures) {
+			for (StackTraceElement trace : failure.getException()
+					.getStackTrace()) {
+				String className = trace.getClassName();
+				int lineNumber = trace.getLineNumber();
+				System.out.println(String
+						.format("%s@%s", className, lineNumber));
+				if (className == null) {
+					continue;
+				}
+				if (acceptedClasses.contains(className)
+						|| testingClassNames.contains(className)) {
+					bkps.add(new BreakPoint(className, trace.getMethodName(),
+							lineNumber));
+					continue;
+				}
+				for (String pkg : testingPkgs) {
+					if (className.startsWith(pkg)) {
+						acceptedClasses.add(className);
+						bkps.add(new BreakPoint(className, trace
+								.getMethodName(), lineNumber));
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	private static void extractBrkpsFromTrace(List<Failure> failureTrace,
 			List<String> testingClassNames, Set<BreakPoint> failureTraces) {
-		if (testingClassNames == null) {
-			return;
-		}
 		System.out.println("FailureTrace: ");
 		for (Failure failure : failureTrace) {
 			for (StackTraceElement trace : failure.getException()
@@ -69,7 +114,8 @@ public class JunitRunner {
 				int lineNumber = trace.getLineNumber();
 				System.out.println(String.format("%s@%s", className, lineNumber));
 				if (className != null
-						&& testingClassNames.contains(className)) {
+						&& (testingClassNames == null || testingClassNames
+								.contains(className))) {
 					failureTraces.add(new BreakPoint(className,
 							trace.getMethodName(), lineNumber));
 				}

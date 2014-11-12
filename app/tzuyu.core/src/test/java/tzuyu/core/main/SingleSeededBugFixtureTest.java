@@ -10,7 +10,9 @@ package tzuyu.core.main;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
@@ -33,18 +35,27 @@ public class SingleSeededBugFixtureTest extends AbstractTest {
 	@Before
 	public void setup() throws FileNotFoundException {
 		fixture = new SingleSeededBugFixture();
-		fixture.useSlicer(false);
+		fixture.useSlicer(true);
 		fixture.javaHome(TestConfigUtils.getJavaHome());
 		fixture.tracerJarPath(TestConfigUtils.getTracerLibPath());
 		fixture.projectClassPath(TestConfiguration.getTarget("slicer.javaslicer"));
 	}
 	
 	@Test
-	public void testJavaParser() throws Exception {
-		runTest(TestPackage.JAVA_PARSER);
+	public void testApacheCommonsMath() throws Exception {
+		runTest2(TestPackage.APACHE_COMMONS_MATH,
+				"",
+				Arrays.asList("org.apache.commons.math3.analysis.differentiation"));
 	}
 	
-	public void runTest(TestPackage testPkg) throws Exception {
+	@Test
+	public void testJavaParser() throws Exception {
+		runTest2(TestPackage.JAVA_PARSER, 
+				"", Arrays.asList("japa.parser"));
+	}
+	
+	public void runTest2(TestPackage testPkg, String expectedBugLine,
+			List<String> testingPackages) throws Exception {
 		fixture.projectClassPaths(testPkg.classPaths);
 		if (testPkg.libsPath != null) {
 			addLibs(testPkg.libsPath);
@@ -55,9 +66,9 @@ public class SingleSeededBugFixtureTest extends AbstractTest {
 		for (String clazz : testPkg.testClasses) {
 			fixture.programTestClass(clazz);
 		}		
-		fixture.expectedBugLine("japa.parser.ASTParser:1810");
-		fixture.updateSysClassLoader();
-		fixture.analyze();
+		fixture.expectedBugLine(expectedBugLine);
+		updateSystemClasspath(fixture.getContext().getProjectClasspath());
+		fixture.analyze2(testingPackages);
 		Assert.assertTrue(fixture.bugWasFound());
 	}
 	
@@ -70,7 +81,7 @@ public class SingleSeededBugFixtureTest extends AbstractTest {
 		fixture.programClass("org.apache.commons.lang3.AnnotationUtils");
 		fixture.programTestClass("org.apache.commons.lang3.AnnotationUtilsTest");
 		fixture.expectedBugLine("org.apache.commons.lang3.AnnotationUtils:56");
-		fixture.updateSysClassLoader();
+		updateSystemClasspath(fixture.getContext().getProjectClasspath());
 		fixture.analyze();
 		Assert.assertTrue(fixture.bugWasFound());
 	}
@@ -93,7 +104,7 @@ public class SingleSeededBugFixtureTest extends AbstractTest {
 		fixture.programClass("org.apache.xml.security.signature.XMLSignatureInput");
 		fixture.programTestClass("org.apache.xml.security.test.AllTests");
 		fixture.expectedBugLine("org.apache.xml.security.c14n.implementations.Canonicalizer20010315Excl:96");
-		fixture.updateSysClassLoader();
+		updateSystemClasspath(fixture.getContext().getProjectClasspath());
 		fixture.analyze();
 	}
 	
@@ -113,7 +124,7 @@ public class SingleSeededBugFixtureTest extends AbstractTest {
 		fixture.programTestClass("de.susebox.jtopas.TestTokenizerSpeed");
 		fixture.programTestClass("de.susebox.jtopas.TestJavaTokenizing");
 		fixture.expectedBugLine("de.susebox.java.util.AbstractTokenizer:766");
-		fixture.updateSysClassLoader();
+		updateSystemClasspath(fixture.getContext().getProjectClasspath());
 		fixture.analyze();
 		Assert.assertTrue(fixture.bugWasFound());
 	}

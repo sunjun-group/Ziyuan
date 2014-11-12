@@ -11,8 +11,6 @@ package faultLocaliation;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
-
 import main.ProgramAnalyzer;
 import sav.commons.AbstractTest;
 import sav.commons.testdata.SampleProgramTestFail;
@@ -44,8 +42,8 @@ public class ProgramAnalyzerTest extends AbstractTest {
 					}
 					
 					@Override
-					public void setAnalyzedClasses(List<String> analyzedClasses) {
-						// TODO Auto-generated method stub
+					public void setFiltering(List<String> analyzedClasses,
+							List<String> analyzedPackages) {
 						
 					}
 				};

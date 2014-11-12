@@ -1,6 +1,5 @@
 package tzuyu.core.main;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.List;
 import org.apache.log4j.PropertyConfigurator;
 
 import sav.commons.TestConfiguration;
-import sav.commons.utils.TestConfigUtils;
 import faultLocalization.FaultLocalizationReport;
 import faultLocalization.LineCoverageInfo;
 import fit.TimedActionFixture;
@@ -76,14 +74,15 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 		this.useSlicer = useSlicer;
 	}
 
-	public void updateSysClassLoader() throws Exception {
-		for (String path : context.getProjectClassPath()) {
-			TestConfigUtils.addToSysClassLoader(new File(path));
-		}
-	}
-
 	public final boolean analyze() throws Exception {
 		report = getProgram().faultLocalization(programClasses, programTestClasses, useSlicer);
+		checkAnalyzedResults();
+		return true;
+	}
+	
+	public final boolean analyze2(List<String> testingPackages) throws Exception {
+		report = getProgram().faultLocalization2(programClasses,
+				testingPackages, programTestClasses, useSlicer);
 		checkAnalyzedResults();
 		return true;
 	}

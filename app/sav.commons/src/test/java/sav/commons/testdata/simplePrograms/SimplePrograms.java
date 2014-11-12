@@ -56,13 +56,13 @@ public class SimplePrograms {
 		 
 		while(number > 0){
 			int digit = number % 10;
-//			reverseNumber = reverseNumber * 10 + digit;
-			reverseNumber = digit * 10 + reverseNumber;// (seeded)!!
+			reverseNumber = digit * 10 + reverseNumber;
 			number = number / 10;
 		}
 		
-		return (reverseNumber != backupNumber);
+		return (reverseNumber == backupNumber);
 	}
+	
 	
 	/**
 	 * array length n of numbers from 0-n-1
@@ -230,11 +230,11 @@ public class SimplePrograms {
 
 			if (A[start] <= A[middle]) {
 				if (num >= A[start] && num < A[middle]) {
-//					end = middle - 1;
-					start = middle + 1; // (seeded)!!
+					end = middle - 1;
+//					start = middle + 1; // (seeded)!!
 				} else {
-//					start = middle + 1;
-					end = middle - 1; // (seeded)!!
+					start = middle + 1;
+//					end = middle - 1; // (seeded)!!
 				}
 			} else if (num > A[middle] && num <= A[end]) {
 				start = middle + 1;

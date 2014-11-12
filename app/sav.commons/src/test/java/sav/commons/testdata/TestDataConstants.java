@@ -19,4 +19,5 @@ public class TestDataConstants {
 	public static final String TEST_DATA_FOLDER = TestConfigUtils
 			.getConfig(TestConfiguration.PROPERTY_TESTCASE_BASE);
 	public static final String TEST_PROJECT_LIBS = "libs";
+	
 }

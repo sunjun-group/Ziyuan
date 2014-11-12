@@ -283,8 +283,9 @@ public class WalaSlicer implements ISlicer {
 	}
 
 	@Override
-	public void setAnalyzedClasses(List<String> analyzedClasses) {
-		//TODO
+	public void setFiltering(List<String> analyzedClasses,
+			List<String> analyzedPackages) {
+		// TODO Auto-generated method stub
 	}
 
 }

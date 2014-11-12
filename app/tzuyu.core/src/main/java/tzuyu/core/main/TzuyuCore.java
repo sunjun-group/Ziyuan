@@ -38,4 +38,14 @@ public class TzuyuCore {
 		return analyzer.analyse(testingClassNames, junitClassNames,
 				appContext.getSuspiciousnessCalculationAlgorithm());
 	}
+	
+	public FaultLocalizationReport faultLocalization2(
+			List<String> testingClassNames, List<String> testingPackages,
+			List<String> junitClassNames, boolean useSlicer) throws Exception {
+		ProgramAnalyzer analyzer = new ProgramAnalyzer(appContext);
+		analyzer.setUseSlicer(useSlicer);
+		return analyzer.analyseSlicingFirst(testingClassNames, testingPackages,
+				junitClassNames,
+				appContext.getSuspiciousnessCalculationAlgorithm());
+	}
 }

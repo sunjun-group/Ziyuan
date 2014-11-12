@@ -28,16 +28,19 @@ public class JunitRunnerParameters {
 	private static final Options opts;
 	public static final String CLASS_METHODS = "methods";
 	public static final String TESTING_CLASS_NAMES = "testingclass";
+	public static final String TESTING_PACKAGE_NAMES = "testingpkgs";
 	public static final String DEST_FILE = "destfile";
 	
 	private List<String> classMethods;
 	private List<String> testingClassNames;
+	private List<String> testingPkgs;
 	private String destfile;
 
 	static {
 		opts = new Options();
 		opts.addOption(classMethods());
 		opts.addOption(testingClassNames());
+		opts.addOption(testingPkgs());
 		opts.addOption(destfile());
 	}
 
@@ -49,6 +52,16 @@ public class JunitRunnerParameters {
 				.hasArgs()
 				.isRequired()
 				.create(CLASS_METHODS);
+	}
+
+	private static Option testingPkgs() {
+		return OptionBuilder
+				.withArgName(TESTING_PACKAGE_NAMES)
+				.withDescription(
+						"Testing packages contain classes for extracting failure traces")
+				.hasArgs()
+				.isRequired(false)
+				.create(TESTING_PACKAGE_NAMES);
 	}
 
 	private static Option destfile() {
@@ -83,6 +96,9 @@ public class JunitRunnerParameters {
 		if (cmd.hasOption(TESTING_CLASS_NAMES)) {
 			params.testingClassNames = Arrays.asList(cmd.getOptionValues(TESTING_CLASS_NAMES));
 		}
+		if (cmd.hasOption(TESTING_PACKAGE_NAMES)) {
+			params.testingClassNames = Arrays.asList(cmd.getOptionValues(TESTING_PACKAGE_NAMES));
+		}
 		if (cmd.hasOption(DEST_FILE)) {
 			params.destfile = cmd.getOptionValue(DEST_FILE);
 		}
@@ -97,6 +113,10 @@ public class JunitRunnerParameters {
 		return testingClassNames;
 	}
 	
+	public List<String> getTestingPkgs() {
+		return testingPkgs;
+	}
+	
 	public String getDestfile() {
 		return destfile;
 	}
@@ -107,6 +127,10 @@ public class JunitRunnerParameters {
 
 	public void setTestingClassNames(List<String> testingClassNames) {
 		this.testingClassNames = testingClassNames;
+	}
+	
+	public void setTestingPkgs(List<String> testingPkgs) {
+		this.testingPkgs = testingPkgs;
 	}
 
 	public void setDestfile(String destfile) {

@@ -49,6 +49,10 @@ public class VMConfiguration {
 		classpaths.add(path);
 	}
 	
+	public void addClasspaths(List<String> paths) {
+		classpaths.addAll(paths);
+	}
+	
 	public void setClasspath(List<String> classpath) {
 		this.classpaths = classpath;
 	}

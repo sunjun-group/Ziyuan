@@ -9,6 +9,7 @@
 package tzuyu.core.main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -16,6 +17,7 @@ import org.junit.Test;
 
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.simplePrograms.DuplicateNumberTest;
+import sav.commons.testdata.simplePrograms.FindInRotatedSortedArrayTest;
 import sav.commons.testdata.simplePrograms.Palindrome1Test;
 import sav.commons.testdata.simplePrograms.Palindrome2Test;
 import sav.commons.testdata.simplePrograms.ReverseWordTest;
@@ -33,6 +35,12 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		projectClasspath.add(
 				TestConfiguration.getTarget("slicer.javaslicer"));
 		projectClasspath.add(config.getJunitLib());
+	}
+	
+	@Test
+	public void runFindInRotatedSortedArray() throws Exception {
+		faultLocalization(SimplePrograms.class.getName(),
+				FindInRotatedSortedArrayTest.class.getName());
 	}
 	
 	@Test
@@ -71,7 +79,8 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		testingClasses.add(program);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add(junit);
-		app.faultLocalization(testingClasses, junitClassNames, false);
+//		app.faultLocalization(testingClasses, junitClassNames, false);
+		app.faultLocalization2(null, Arrays.asList("sav.commons.testdata.simplePrograms"), junitClassNames, false);
 	}
 	
 	public void run() {

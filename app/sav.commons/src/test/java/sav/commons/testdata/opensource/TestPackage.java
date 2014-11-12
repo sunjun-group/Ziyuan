@@ -27,8 +27,10 @@ public class TestPackage {
 	public final List<String> analyzingClasses = new ArrayList<String>();
 	public final List<String> testClasses = new ArrayList<String>();
 	public final List<String> classPaths = new ArrayList<String>();
-	
+	public final List<String> failTestMethods = new ArrayList<String>();
 	public static final TestPackage JAVA_PARSER = javaParser();
+	public static final TestPackage GOOGLE_COLLECTIONS = googleCollections();
+	public static final TestPackage APACHE_COMMONS_MATH = apacheCommonsMath();
 	
 	private TestPackage(String prjName) {
 		projectPath = appendPath(TEST_DATA_FOLDER, prjName);
@@ -38,19 +40,39 @@ public class TestPackage {
 		}
 	}
 	
+	private static TestPackage apacheCommonsMath() {
+		return createNew("apache-commons-math")
+				.prjClassPaths("target/classes")
+				.prjClassPaths("target/test-classes")
+				.testClasses(
+						"org.apache.commons.math3.analysis.differentiation.DerivativeStructureTest");
+	}
+
+	private static TestPackage googleCollections() {
+		return createNew("google-collections")
+				.prjClassPaths("build/eclipse-bin")
+				.testClasses("")
+				.testClassMethods("");
+	}
+
 	private static TestPackage createNew(String prjName) {
 		return new TestPackage(prjName);
 	}
 
 	private static TestPackage javaParser() {
 		return createNew("javaparser")
-				.classPaths("bin")
+				.prjClassPaths("bin")
 				.analyzingClasses("japa.parser.ast.visitor.DumpVisitor",
 						"japa.parser.JavaParser",
 						"japa.parser.ASTParser",
-						"japa.parser.ast.test.Helper"
-						)
-				.testClasses("japa.parser.ast.test.TestDumper");
+						"japa.parser.ast.test.Helper")
+				.testClasses("japa.parser.ast.test.TestDumper")
+				.testClassMethods("japa.parser.ast.test.TestDumper.testCommentsIssue46");
+	}
+
+	private TestPackage testClassMethods(String... failTestMethods) {
+		this.failTestMethods.addAll(Arrays.asList(failTestMethods));
+		return this;
 	}
 
 	private TestPackage analyzingClasses(String... analyzingClasses) {
@@ -63,7 +85,7 @@ public class TestPackage {
 		return this;
 	}
 
-	private TestPackage classPaths(String... classPathFragments) {
+	private TestPackage prjClassPaths(String... classPathFragments) {
 		for (String classPath : classPathFragments) {
 			classPaths.add(appendPath(projectPath, classPath));
 		}

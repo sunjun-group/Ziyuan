@@ -10,9 +10,12 @@ package sav.common.core.utils;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.ClassLocation;
@@ -43,7 +46,8 @@ public class BreakpointUtils {
 		return String.format("%s:%s", classPath.replace("/", "."), lineNo);
 	}
 
-	public static <T extends ClassLocation> List<String> toLocationIds(List<T> bkps) {
+	public static <T extends ClassLocation> List<String> toLocationIds(
+			Collection<T> bkps) {
 		List<String> locs = new ArrayList<String>(bkps.size());
 		for (T bkp : bkps) {
 			locs.add(getLocationId(bkp));
@@ -51,9 +55,16 @@ public class BreakpointUtils {
 		return locs;
 	}
 
-	public static String getPrintStr(List<BreakPoint> bkps) {
+	public static String getPrintStr(Collection<BreakPoint> bkps) {
 		return StringUtils.join(toLocationIds(bkps), ", ");
 	}
-	
+
+	public static List<String> extractClasses(Set<BreakPoint> bkps) {
+		Set<String> classNames = new HashSet<String>();
+		for (BreakPoint bkp : bkps) {
+			classNames.add(bkp.getClassCanonicalName());
+		}
+		return new ArrayList<String>(classNames);
+	}
 	
 }

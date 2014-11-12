@@ -25,6 +25,7 @@ import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.SampleProgramTest;
 import sav.commons.testdata.SamplePrograms;
+import sav.commons.testdata.opensource.TestPackage;
 import sav.commons.utils.TestConfigUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
@@ -48,6 +49,21 @@ public class JavaSlicerTest extends AbstractTest {
 				.getTzAssembly(Constants.TZUYU_JAVASLICER_ASSEMBLY));
 		slicer.setTracerJarPath(TestConfigUtils.getTracerLibPath());
 		slicer.setVmConfig(vmConfig);
+	}
+	
+	@Test
+	public void testJavaParserIssue46() throws Exception {
+		setupTestPackage(TestPackage.JAVA_PARSER);
+		slicer.setAnalyzedPackages(Arrays.asList("japa.parser"));
+		run(Arrays.asList(new BreakPoint(
+				"java.lang.String", "concat", 32)));
+//				"japa.parser.ast.test.TestDumper", "testCommentsIssue46", 46)));
+	}
+	
+	public void setupTestPackage(TestPackage pkg) throws Exception {
+		updateSystemClasspath(pkg.classPaths);
+		testClassMethods = pkg.failTestMethods;
+		vmConfig.addClasspaths(pkg.classPaths);
 	}
 	
 	@Test
@@ -122,7 +138,7 @@ public class JavaSlicerTest extends AbstractTest {
 
 	private void run(List<BreakPoint> breakpoints) throws SavException, IOException,
 			InterruptedException, ClassNotFoundException {
-		slicer.setAnalyzedClasses(analyzedClasses);
+		slicer.setFiltering(analyzedClasses, null);
 		List<BreakPoint> result = slicer.slice(breakpoints, testClassMethods);
 		for (BreakPoint bkp : result) {
 			System.out.println(bkp);

@@ -12,6 +12,7 @@ import static sav.commons.TestConfiguration.JUNIT_CORE;
 import static sav.commons.TestConfiguration.JUNIT_LIB;
 import static sav.commons.TestConfiguration.SAV_COMMONS_TEST_TARGET;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
@@ -82,4 +83,11 @@ public class AbstractTest {
 		}
 		return -1;		
 	}	
+	
+	protected void updateSystemClasspath(List<String> classpaths)
+			throws Exception {
+		for (String path : classpaths) {
+			TestConfigUtils.addToSysClassLoader(new File(path));
+		}
+	}
 }
