@@ -43,10 +43,11 @@ public class PluginLogger extends Logger<PluginLogger> {
 	}
 	
 	@Override
-	public void debug(String msg) {
+	public PluginLogger debug(String msg) {
 		if (debug) {
 			info(msg);
 		}
+		return this;
 	}
 	
 	/**
@@ -68,17 +69,12 @@ public class PluginLogger extends Logger<PluginLogger> {
 	}
 
 	@Override
-	public void close() {
-		// do nothing
-	}
-
-	@Override
 	public void logEx(Exception ex, Enum<?> type) {
 		logEx(ex, type == null ? "" : msg.getMessage(type));
 	}
 
 	@Override
-	protected boolean isDebug() {
+	public boolean isDebug() {
 		return debug;
 	}
 
