@@ -6,32 +6,13 @@
  *  Version:  $Revision: 1 $
  */
 
-package sav.commons.testdata;
+package sav.commons.testdata.candies;
 
 /**
  * @author khanh
  *
  */
-import java.util.Scanner;
-
-public class Candies {
-	public static void main(String[] args){
-		Scanner in = new Scanner(System.in);
-		
-		int N = in.nextInt();
-		int[] ratings = ReadArray(in, N);
-		
-		System.out.println(computeMinCandies(ratings));
-	}
-	
-	public static int[] ReadArray(Scanner in, int size){
-		int[] result = new int[size];
-		for(int i = 0; i < size; i++){
-			result[i] = in.nextInt();
-		}
-		
-		return result;
-	}
+public class CandiesOrg {
 	public static long computeMinCandies(int[] ratings){
 		int length = ratings.length;
 		int[] candies = new int[length];

@@ -6,14 +6,14 @@
  *  Version:  $Revision: 1 $
  */
 
-package sav.commons.testdata;
+package sav.commons.testdata.hill;
 
 /**
  * @author khanh
  *
  */
-public class Hill {
-	public static void hill(Integer[] v) {
+public class HillOrg {
+	public static int hill(int[] v) {
         // Write your code here
         // To print results to the standard output you can use System.out.println()
         // Example: System.out.println("Hello world!");
@@ -24,8 +24,8 @@ public class Hill {
 		
 		if(v[1] > v[0]){
 			minX[1] = 0;
-			maxLasts[1] = v[1];
 			minLasts[1] = v[1];
+			maxLasts[1] = v[1];
 		}
 		else{
 			minX[1] = (v[0] - v[1])/2 + 1;
@@ -54,6 +54,6 @@ public class Hill {
 			}
 		}
 		
-        System.out.println(minX[length-1]);
+		return minX[length - 1];
     }
 }
