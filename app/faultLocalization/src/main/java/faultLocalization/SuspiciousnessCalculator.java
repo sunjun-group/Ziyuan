@@ -26,8 +26,12 @@ public class SuspiciousnessCalculator {
 		} else {
 			// TARANTULA
 			// sT = [a11/(a11+a01)] / {[a11/(a11+a01)] + [a10/(a10+a00)]}
+			if(failed == 0){
+				return 1;
+			}
 			double failedRate = coveredAndFailed / failed;
-			double passRate = coveredAndPassed / passed;
+			
+			double passRate = (passed == 0)? 0: coveredAndPassed / passed;
 
 			result = failedRate / (passRate + failedRate);
 		}
