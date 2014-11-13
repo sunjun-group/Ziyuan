@@ -10,7 +10,6 @@ package tzuyu.core.main;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -43,13 +42,6 @@ public class SingleSeededBugFixtureTest extends AbstractTest {
 	}
 	
 	@Test
-	public void testApacheCommonsMath() throws Exception {
-		runTest2(TestPackage.APACHE_COMMONS_MATH,
-				"",
-				Arrays.asList("org.apache.commons.math3.analysis.differentiation"));
-	}
-	
-	@Test
 	public void testJavaParser() throws Exception {
 		runTest2(TestPackage.getPackage("javaparser", "46"));
 	}
@@ -71,24 +63,6 @@ public class SingleSeededBugFixtureTest extends AbstractTest {
 		}
 		updateSystemClasspath(fixture.getContext().getProjectClasspath());
 		fixture.analyze2(testPkg.getValues(TestDataColumn.ANALYZING_PACKAGES));
-		Assert.assertTrue(fixture.bugWasFound());
-	}
-	
-	public void runTest2(TestPackage testPkg, String expectedBugLine,
-			List<String> testingPackages) throws Exception {
-		fixture.projectClassPaths(testPkg.classPaths);
-		if (testPkg.libsPath != null) {
-			addLibs(testPkg.libsPath);
-		}
-		for (String clazz : testPkg.analyzingClasses) {
-			fixture.programClass(clazz);
-		}
-		for (String clazz : testPkg.testClasses) {
-			fixture.programTestClass(clazz);
-		}		
-		fixture.expectedBugLine(expectedBugLine);
-		updateSystemClasspath(fixture.getContext().getProjectClasspath());
-		fixture.analyze2(testingPackages);
 		Assert.assertTrue(fixture.bugWasFound());
 	}
 	
@@ -151,7 +125,8 @@ public class SingleSeededBugFixtureTest extends AbstractTest {
 
 	private void addLibs(String... libFolders) throws Exception {
 		for (String libFolder : libFolders) {
-			Collection<?> files = FileUtils.listFiles(new File(libFolder), new String[] { "jar" }, true);
+			Collection<?> files = FileUtils.listFiles(new File(libFolder),
+					new String[] { "jar" }, true);
 			for (Object obj : files) {
 				File file = (File) obj;
 				fixture.projectClassPath(file.getAbsolutePath());
