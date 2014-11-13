@@ -85,15 +85,15 @@ public class ExecutionDataReporter {
 								if (lineInfo.getStatus() != ICounter.EMPTY) {
 									boolean isCovered = lineInfo.getStatus() != ICounter.NOT_COVERED;
 									boolean isPass = junitResult.getResult(testcaseIdx);
-									if (log.isDebug()) {
-										log.debug(String.format(
-												"report.addInfo: %s=%s, %s=%s, %s=%s, %s=%s, %s=%s", 
-												"testcaseIdx", testcaseIdx, 
-												"className", cc.getName(),
-												"lineIdx", j,
-												"isPass", isPass,
-												"isCovered", isCovered));
-									}
+//									if (log.isDebug()) {
+//										log.debug(String.format(
+//												"report.addInfo: %s=%s, %s=%s, %s=%s, %s=%s, %s=%s", 
+//												"testcaseIdx", testcaseIdx, 
+//												"className", cc.getName(),
+//												"lineIdx", j,
+//												"isPass", isPass,
+//												"isCovered", isCovered));
+//									}
 									report.addInfo(testcaseIdx, cc.getName(),
 											j,
 											isPass,

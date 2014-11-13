@@ -22,6 +22,7 @@ import org.junit.Test;
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.opensource.TestPackage;
+import sav.commons.testdata.opensource.TestPackage.TestDataColumn;
 import sav.commons.utils.TestConfigUtils;
 
 /**
@@ -50,8 +51,27 @@ public class SingleSeededBugFixtureTest extends AbstractTest {
 	
 	@Test
 	public void testJavaParser() throws Exception {
-		runTest2(TestPackage.JAVA_PARSER, 
-				"", Arrays.asList("japa.parser"));
+		runTest2(TestPackage.getPackage("javaparser", "46"));
+	}
+	
+	public void runTest2(TestPackage testPkg) throws Exception {
+		fixture.projectClassPaths(testPkg.getClassPaths());
+		for (String libs : testPkg.getLibFolders()) {
+			addLibs(libs);
+		}
+		for (String clazz : testPkg.getValues(TestDataColumn.ANALYZING_CLASSES)) {
+			fixture.programClass(clazz);
+		}
+		for (String clazz : testPkg.getValues(TestDataColumn.TEST_CLASSES)) {
+			fixture.programTestClass(clazz);
+		}		
+		List<String> expectedBugLocations = testPkg.getValues(TestDataColumn.EXPECTED_BUG_LOCATION);
+		if (!expectedBugLocations.isEmpty()) {
+			fixture.expectedBugLine(expectedBugLocations.get(0));
+		}
+		updateSystemClasspath(fixture.getContext().getProjectClasspath());
+		fixture.analyze2(testPkg.getValues(TestDataColumn.ANALYZING_PACKAGES));
+		Assert.assertTrue(fixture.bugWasFound());
 	}
 	
 	public void runTest2(TestPackage testPkg, String expectedBugLine,
@@ -129,11 +149,13 @@ public class SingleSeededBugFixtureTest extends AbstractTest {
 		Assert.assertTrue(fixture.bugWasFound());
 	}
 
-	private void addLibs(String libFolder) throws Exception {
-		Collection<?> files = FileUtils.listFiles(new File(libFolder), new String[] { "jar" }, true);
-		for (Object obj : files) {
-			File file = (File) obj;
-			fixture.projectClassPath(file.getAbsolutePath());
+	private void addLibs(String... libFolders) throws Exception {
+		for (String libFolder : libFolders) {
+			Collection<?> files = FileUtils.listFiles(new File(libFolder), new String[] { "jar" }, true);
+			for (Object obj : files) {
+				File file = (File) obj;
+				fixture.projectClassPath(file.getAbsolutePath());
+			}
 		}
 	}
 }

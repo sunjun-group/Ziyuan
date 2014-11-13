@@ -30,6 +30,14 @@ public class CollectionUtils {
 		return list;
 	}
 	
+	public static <T> List<T> toArrayList(T[] vals) {
+		List<T> list = new ArrayList<T>();
+		for (T val : vals) {
+			list.add(val);
+		}
+		return list;
+	}
+	
 	public static <T> List<T> join(List<T>... lists) {
 		List<T> result = new ArrayList<T>();
 		for (List<T> list : lists) {

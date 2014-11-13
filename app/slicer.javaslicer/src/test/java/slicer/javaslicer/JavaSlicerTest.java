@@ -54,7 +54,7 @@ public class JavaSlicerTest extends AbstractTest {
 	@Test
 	public void testJavaParserIssue46() throws Exception {
 		setupTestPackage(TestPackage.JAVA_PARSER);
-		slicer.setAnalyzedPackages(Arrays.asList("japa.parser"));
+		slicer.setFiltering(null, Arrays.asList("japa.parser"));
 		run(Arrays.asList(new BreakPoint(
 				"java.lang.String", "concat", 32)));
 //				"japa.parser.ast.test.TestDumper", "testCommentsIssue46", 46)));

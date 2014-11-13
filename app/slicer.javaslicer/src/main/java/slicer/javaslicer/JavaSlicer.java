@@ -21,7 +21,6 @@ import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.slicing.ISlicer;
@@ -40,14 +39,12 @@ public class JavaSlicer implements ISlicer {
 	private JavaSlicerVmRunner vmRunner;
 	private VMConfiguration vmConfig;
 	private SliceBreakpointCollector sliceCollector;
-	private List<String> analyzedPackages;
 	
 	public JavaSlicer() {
 		this(new SliceBreakpointCollector());
 	}
 	
 	public JavaSlicer(SliceBreakpointCollector sliceCollector) {
-		analyzedPackages = new ArrayList<String>();
 		this.sliceCollector = sliceCollector;
 	}
 	
@@ -57,10 +54,6 @@ public class JavaSlicer implements ISlicer {
 	
 	public void setVmConfig(VMConfiguration vmConfig) {
 		this.vmConfig = vmConfig;
-	}
-	
-	public void setAnalyzedPackages(List<String> analyzedPackages) {
-		this.analyzedPackages = CollectionUtils.nullToEmpty(analyzedPackages);
 	}
 	
 	/**
@@ -167,10 +160,9 @@ public class JavaSlicer implements ISlicer {
 	@Override
 	public void setFiltering(List<String> analyzedClasses,
 			List<String> analyzedPackages) {
-		if (analyzedClasses != null) {
+		if (!CollectionUtils.isEmpty(analyzedClasses)) {
 			sliceCollector = new SliceBkpByClassesCollector(analyzedClasses);
-		}
-		if (analyzedPackages != null) {
+		} else if (!CollectionUtils.isEmpty(analyzedPackages)) {
 			sliceCollector = new SliceBkpByPackagesCollector(analyzedPackages);
 		}
 	}

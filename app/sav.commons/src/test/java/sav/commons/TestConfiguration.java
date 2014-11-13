@@ -32,6 +32,7 @@ public class TestConfiguration {
 	public static String JAVA_HOME;
 	public static String ASSEMBLY;
 	public static String TESTCASE_BASE;
+	public static String TESTDATA_CSV;
 	
 	static {
 		TRUNK = TestConfigUtils.getConfig("trunk");
@@ -41,6 +42,7 @@ public class TestConfiguration {
 		SAV_COMMONS_TEST_TARGET = getTestTarget("sav.commons");
 		JAVA_HOME = TestConfigUtils.getJavaHome();
 		TESTCASE_BASE = TestConfigUtils.getConfig(PROPERTY_TESTCASE_BASE);
+		TESTDATA_CSV  = ETC + "testdata.csv";
 	}
 
 	public static String getTzAssembly(String assemblyName) {

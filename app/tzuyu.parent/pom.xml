@@ -12,7 +12,7 @@
 		<junit-version>4.11</junit-version>
 		<commons-lang-version>2.6</commons-lang-version>
 		<spring-core-version>4.0.3.RELEASE</spring-core-version>
-
+		<commons-csv-version>1.0</commons-csv-version>
 		<!-- for icsetlv -->
 		<toolsjar>${java.home}/../lib/tools.jar</toolsjar>
 		<toolsjar-version>${java.version}</toolsjar-version>
@@ -254,6 +254,13 @@
 				<groupId>log4j</groupId>
 				<artifactId>log4j</artifactId>
 				<version>${log4j-version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-csv</artifactId>
+				<version>${commons-csv-version}</version>
+				<scope>test</scope>
 			</dependency>
 			<!-- scope test -->
 			<dependency>
