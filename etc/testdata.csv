@@ -1,0 +1,6 @@
+Note,"Check all parsed colums in TestDataColumn enum , see TestPackage for csv parsing",,,,,,
+,All testdata projects must be stored in testdata folder which path is defined in test-configuration.properties ,,,,,,
+,and the projectname is exactly the project folder name under testdata folder,,,,,,
+PROJECT_NAME,BUG_NUMBER,CLASS_PATH,LIB_FOLDERS,TEST_CLASSES,ANALYZING_CLASSES,ANALYZING_PACKAGES,EXPECTED_BUG_LOCATION
+javaparser,46,bin,,japa.parser.ast.test.TestDumper,,japa.parser,
+javaparser,57,bin,,japa.parser.ast.test.TestDumper,,japa.parser,
