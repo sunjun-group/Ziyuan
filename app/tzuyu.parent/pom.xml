@@ -134,6 +134,11 @@
 				<artifactId>icsetlv</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>extcos</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
 			<!-- specific for test -->
 			<dependency>

@@ -3,12 +3,14 @@
  */
 package gentest;
 
+import java.lang.reflect.Modifier;
+
+import extcos.ReferenceAnalyser;
 import gentest.commons.utils.TypeUtils;
 import gentest.data.statement.RAssignment;
 import gentest.data.statement.RConstructor;
 import gentest.data.variable.GeneratedVariable;
 import sav.common.core.SavException;
-import sav.common.core.SavRtException;
 import sav.strategies.gentest.IReferencesAnalyzer;
 
 /**
@@ -39,6 +41,10 @@ public class ValueGenerator {
 		return variable;
 	}
 	
+	private boolean isInterfaceOrAbstract(Class<?> type){
+		return (type.isInterface() || Modifier.isAbstract(type.getModifiers()));
+	}
+	
 	public void append(GeneratedVariable variable, int level, Class<?> type)
 			throws SavException {
 		if (level == maxLevel) {
@@ -48,9 +54,9 @@ public class ValueGenerator {
 		if (isSimpleType(type)) {
 			Object value = generatorFactory.getGeneratorFor(type).next();
 			variable.append(RAssignment.assignmentFor(type, value));
-		} else if (type.isInterface()) {
-			
-			throw new SavRtException("Generate for interface: NOT YET UNSUPPORTED!!");
+		} else if (isInterfaceOrAbstract(type)) {
+			Class<?> randomImpl = new ReferenceAnalyser().getRandomImplClzz(type);
+			append(variable, level, randomImpl);
 		} else if (type.isArray()) {
 //			Randomness.nextRandomInt(i)
 			//TODO LLT: complete this

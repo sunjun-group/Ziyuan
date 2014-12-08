@@ -4,8 +4,6 @@
 package gentest;
 
 
-import gentest.commons.utils.Randomness;
-
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -15,6 +13,7 @@ import net.java.quickcheck.generator.CombinedGenerators;
 import net.java.quickcheck.generator.PrimitiveGenerators;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
+import sav.common.core.utils.Randomness;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

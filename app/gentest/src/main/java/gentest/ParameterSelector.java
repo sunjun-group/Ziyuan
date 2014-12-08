@@ -3,7 +3,6 @@
  */
 package gentest;
 
-import gentest.commons.utils.Randomness;
 import gentest.data.LocalVariable;
 import gentest.data.Sequence;
 import gentest.data.variable.ISelectedVariable;
@@ -13,6 +12,7 @@ import java.util.List;
 
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.Randomness;
 
 
 

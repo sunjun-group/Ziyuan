@@ -21,7 +21,7 @@
 				<version>2.12.4</version>
 				<configuration>
 					<excludes>
-					    <exclude>**/GentestTest.java</exclude>
+						<exclude>**/GentestTest.java</exclude>
 						<exclude>**/testdata/**.java</exclude>
 					</excludes>
 				</configuration>
@@ -67,6 +67,10 @@
 			<artifactId>sav.commons</artifactId>
 			<type>test-jar</type>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>extcos</artifactId>
 		</dependency>
 	</dependencies>
 

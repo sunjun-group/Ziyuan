@@ -3,7 +3,6 @@
  */
 package gentest;
 
-import gentest.commons.utils.Randomness;
 import gentest.data.MethodCall;
 import gentest.data.Sequence;
 
@@ -12,6 +11,7 @@ import java.util.List;
 
 import sav.common.core.Pair;
 import sav.common.core.SavException;
+import sav.common.core.utils.Randomness;
 
 /**
  * @author LLT

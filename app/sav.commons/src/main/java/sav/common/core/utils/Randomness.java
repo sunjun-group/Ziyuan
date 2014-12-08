@@ -1,14 +1,12 @@
 /**
  * Copyright TODO
  */
-package gentest.commons.utils;
+package sav.common.core.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-
-import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
