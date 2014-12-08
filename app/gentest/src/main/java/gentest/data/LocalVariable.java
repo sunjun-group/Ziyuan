@@ -8,10 +8,9 @@ package gentest.data;
  * 
  */
 public class LocalVariable {
-	private int declareStmt = 1; // always
+	private int declareStmt = -1;
 	private int varId = 1;
 	private Class<?> type;
-	private boolean modified;
 	
 	public LocalVariable(int declareStmt, int varId, Class<?> type) {
 		this.declareStmt = declareStmt;
@@ -26,7 +25,6 @@ public class LocalVariable {
 	public void update(int stmt, int varId) {
 		this.declareStmt = stmt;
 		this.varId = varId;
-		modified = true;
 	}
 
 	public void setDeclareStmt(int declareStmt) {
@@ -47,9 +45,5 @@ public class LocalVariable {
 
 	public void setType(Class<?> type) {
 		this.type = type;
-	}
-
-	public boolean isModified() {
-		return modified;
 	}
 }

@@ -34,6 +34,12 @@ public class CommandLineLogger extends sav.common.core.Logger<CommandLineLogger>
 		return this;
 	}
 	
+	@Override
+	public CommandLineLogger warn(Object... msgs) {
+		logger.warn(StringUtils.spaceJoin(msgs));
+		return this;
+	}
+	
 	public CommandLineLogger error(Object... msgs) {
 		String msg = StringUtils.spaceJoin(msgs);
 		logger.error(msg);
@@ -55,5 +61,5 @@ public class CommandLineLogger extends sav.common.core.Logger<CommandLineLogger>
 		logger.debug(msg);
 		return this;
 	}
-	
+
 }

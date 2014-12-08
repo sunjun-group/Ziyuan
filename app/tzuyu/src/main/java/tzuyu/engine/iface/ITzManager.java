@@ -10,6 +10,7 @@ package tzuyu.engine.iface;
 
 import sav.common.core.Logger;
 import sav.common.core.iface.IPrintStream;
+import sav.strategies.gentest.IReferencesAnalyzer;
 import tester.ITCGStrategy;
 import tzuyu.engine.algorithm.iface.Refiner;
 import tzuyu.engine.algorithm.iface.Teacher;

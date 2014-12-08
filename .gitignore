@@ -12,3 +12,4 @@ runtime-EclipseApplication
 /app/faultLocalization/target
 /app/tzuyuEclipsePlugin/savCommons
 /app/sav.commons/src/test/resources/test_configuration.properties
+logs

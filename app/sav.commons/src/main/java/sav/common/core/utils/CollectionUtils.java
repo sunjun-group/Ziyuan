@@ -82,6 +82,10 @@ public class CollectionUtils {
 			addIfNotNullNotExist(col, val);
 		}
 	}
+	
+	public static <T> boolean isNotEmpty(Collection<T> values) {
+		return ! isEmpty(values);
+	}
 
 	public static <T> boolean isEmpty(T[] vals) {
 		return vals == null || vals.length == 0;

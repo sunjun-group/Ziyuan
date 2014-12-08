@@ -54,7 +54,10 @@ public class ProgramAnalyzer {
 			List<String> junitClassNames,
 			SuspiciousnessCalculationAlgorithm algorithm) throws Exception {
 		List<String> testMethods = JunitUtils.extractTestMethods(junitClassNames);
-		/* do slicing first, but we must run testcases first, and only slice the fail testcases */
+		/*
+		 * do slicing first, but we must run testcases first, and only slice the
+		 * fail testcases
+		 */
 		JunitRunnerParameters params = new JunitRunnerParameters();
 		params.setClassMethods(testMethods);
 		params.setTestingPkgs(analyzedPackages);
@@ -69,14 +72,17 @@ public class ProgramAnalyzer {
 		List<BreakPoint> causeTraces = slicer.slice(
 				new ArrayList<BreakPoint>(jresult.getFailureTraces()),
 				JunitUtils.toClassMethodStrs(jresult.getFailTests()));
-		if (log.isDebug()) {
-			log.debug("causeTraces=", BreakpointUtils.getPrintStr(causeTraces));
-		}
 		traces.addAll(causeTraces);
+		if (log.isDebug()) {
+			log.debug("causeTraces=", BreakpointUtils.getPrintStr(traces));
+		}
 		// coverage
 		FaultLocalizationReport report = new FaultLocalizationReport();
 		CoverageReport result = new CoverageReport();
 		List<String> testingClasses = BreakpointUtils.extractClasses(traces);
+		if (testingClasses.isEmpty()) {
+			return report;
+		}
 		if (log.isDebug()) {
 			log.debug("Analyzing classes: ");
 			log.debug(StringUtils.join(testingClasses, "\n"));
@@ -88,6 +94,7 @@ public class ProgramAnalyzer {
 		} else {
 			report.setLineCoverageInfos(result.tarantula(new ArrayList<BreakPoint>(), algorithm));
 		}
+		
 		return report;
 	}
 

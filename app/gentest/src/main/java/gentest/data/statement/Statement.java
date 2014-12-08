@@ -40,10 +40,9 @@ public abstract class Statement {
 		this.inVarIds = inVarIds;
 	}
 
-	public abstract boolean hasOutputVar();
-//	public boolean hasOutputVar() {
-//		return outVarId != INVALID_VAR_ID;
-//	}
+	public boolean hasOutputVar() {
+		return true;
+	}
 
 	public RStatementKind getKind() {
 		return kind;
@@ -54,6 +53,7 @@ public abstract class Statement {
 	public static enum RStatementKind {
 		ASSIGNMENT,
 		CONSTRUCTOR,
+		ARRAY_DECLARATION,
 		METHOD_INVOKE,
 		QUERY_METHOD_INVOKE, 
 		EVALUATION_METHOD,

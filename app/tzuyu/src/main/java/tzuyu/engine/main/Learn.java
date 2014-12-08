@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import sav.common.core.CommandLineLogger;
+import sav.strategies.gentest.IReferencesAnalyzer;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzMethod;
 import tzuyu.engine.Tzuyu;
-import tzuyu.engine.iface.IReferencesAnalyzer;
 import tzuyu.engine.main.Command.CommandType;
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.exception.ReportException;

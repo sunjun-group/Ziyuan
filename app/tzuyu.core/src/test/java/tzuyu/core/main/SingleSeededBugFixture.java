@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.PropertyConfigurator;
 
 import sav.commons.TestConfiguration;
@@ -92,7 +93,8 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 			if (maxSuspiciousness < info.getSuspiciousness()) {
 				maxSuspiciousness = info.getSuspiciousness();
 			}
-			if (expectedBugLine.equals(info.getLocId())) {
+			if (StringUtils.isNotEmpty(expectedBugLine)
+					&& expectedBugLine.equals(info.getLocId())) {
 				foundLineSuspiciousness = info.getSuspiciousness();
 			}
 		}

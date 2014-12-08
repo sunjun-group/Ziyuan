@@ -58,6 +58,8 @@ public class GeneratedVariable extends SelectedVariable {
 		for (int i = 0; i < stmt.getInputTypes().size(); i++) {
 			inVarIds[i] = varId - i;
 		}
+		/* TODO LLT: check if update inputVarIds for this stnt is redundant or not*/
+		stmt.setInVarIds(inVarIds);
 		/* update stmt list and variables list */
 		updateDataLists(stmt, stmt.getOutputType());
 	}

@@ -60,10 +60,6 @@
 			<groupId>de.unisb.cs.st</groupId>
 			<artifactId>visualize</artifactId>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>junit</groupId> -->
-<!-- 			<artifactId>junit</artifactId> -->
-<!-- 		</dependency> -->
 
 		<!-- scope test -->
 		<dependency>

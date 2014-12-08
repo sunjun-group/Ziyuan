@@ -33,6 +33,8 @@ public abstract class Logger<T extends Logger<T>> {
 	public abstract T info(Object... msgs);
 
 	public abstract T error(Object... msgs);
+	
+	public abstract T warn(Object... msgs);
 
 	public abstract void logEx(Exception ex, String msg);
 

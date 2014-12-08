@@ -15,8 +15,11 @@ import static sav.commons.TestConfiguration.SAV_COMMONS_TEST_TARGET;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 
@@ -84,10 +87,24 @@ public class AbstractTest {
 		return -1;		
 	}	
 	
+	protected List<String> getLibJars(String... libFolders) throws Exception {
+		List<String> jars = new ArrayList<String>();
+		for (String libFolder : libFolders) {
+			Collection<?> files = FileUtils.listFiles(new File(libFolder),
+					new String[] { "jar" }, true);
+			for (Object obj : files) {
+				File file = (File) obj;
+				jars.add(file.getAbsolutePath());
+			}
+		}
+		return jars;
+	}
+	
 	protected void updateSystemClasspath(List<String> classpaths)
 			throws Exception {
 		for (String path : classpaths) {
 			TestConfigUtils.addToSysClassLoader(new File(path));
 		}
+		
 	}
 }

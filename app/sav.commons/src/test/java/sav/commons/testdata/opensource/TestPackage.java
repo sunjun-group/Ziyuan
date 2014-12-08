@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +56,7 @@ public class TestPackage {
 		CSVParser parser = CSVParser.parse(new File(
 				TestConfiguration.TESTDATA_CSV), Charset.forName("UTF-8"), format);
 		List<CSVRecord> records = parser.getRecords();
-		Map<String, TestPackage> allTests = new HashMap<String, TestPackage>();
+		Map<String, TestPackage> allTests = new LinkedHashMap<String, TestPackage>();
 		for (int i = TESTDATA_START_RECORD; i < records.size(); i++) {
 			TestPackage pkg = new TestPackage();
 			CSVRecord record = records.get(i);
