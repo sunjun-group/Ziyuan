@@ -27,8 +27,8 @@ Import-Package: org.eclipse.jdt.internal.ui.dialogs,
  org.eclipse.ui.texteditor
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
- libs/icsetlv-assembly.jar,
- libs/tzuyu-assembly.jar,
  icsetlvCore/,
  savCommons/,
- tzuyuCore/
+ tzuyuCore/,
+ libs/icsetlv-assembly.jar,
+ libs/tzuyu-assembly.jar

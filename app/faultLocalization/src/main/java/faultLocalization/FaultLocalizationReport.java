@@ -2,6 +2,8 @@ package faultLocalization;
 
 import java.util.List;
 
+import sav.common.core.utils.CollectionUtils;
+
 public class FaultLocalizationReport {
 
 	private CoverageReport coverageReport;
@@ -16,7 +18,7 @@ public class FaultLocalizationReport {
 	}
 
 	public List<LineCoverageInfo> getLineCoverageInfos() {
-		return lineCoverageInfos;
+		return CollectionUtils.nullToEmpty(lineCoverageInfos);
 	}
 
 	public void setLineCoverageInfos(List<LineCoverageInfo> lineCoverageInfos) {

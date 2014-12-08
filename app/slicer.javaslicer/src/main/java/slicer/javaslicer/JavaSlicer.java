@@ -60,8 +60,13 @@ public class JavaSlicer implements ISlicer {
 	 * @param vmConfig:
 	 * requires: javaHome, classpaths
 	 */
-	public List<BreakPoint> slice(List<BreakPoint> bkps, List<String> junitClassMethods)
-			throws SavException, IOException, InterruptedException, ClassNotFoundException {
+	public List<BreakPoint> slice(List<BreakPoint> bkps,
+			List<String> junitClassMethods) throws SavException, IOException,
+			InterruptedException, ClassNotFoundException {
+		if (CollectionUtils.isEmpty(bkps)) {
+			log.warn("List of breakpoints to slice is empty");
+			return new ArrayList<BreakPoint>();
+		}
 		StopTimer timer = new StopTimer("Slicing");
 		
 		timer.newPoint("create Trace file");

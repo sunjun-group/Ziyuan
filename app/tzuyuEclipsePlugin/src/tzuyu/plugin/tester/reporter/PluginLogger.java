@@ -35,6 +35,12 @@ public class PluginLogger extends Logger<PluginLogger> {
 		log(StringUtils.spaceJoin(msgs), IStatus.INFO);
 		return this;
 	}
+	
+	@Override
+	public PluginLogger warn(Object... msgs) {
+		log(StringUtils.spaceJoin(msgs), IStatus.WARNING);
+		return this;
+	}
 
 	@Override
 	public PluginLogger error(Object... msgs) {

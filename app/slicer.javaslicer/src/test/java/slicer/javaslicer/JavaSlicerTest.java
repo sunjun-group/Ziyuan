@@ -26,6 +26,7 @@ import sav.commons.TestConfiguration;
 import sav.commons.testdata.SampleProgramTest;
 import sav.commons.testdata.SamplePrograms;
 import sav.commons.testdata.opensource.TestPackage;
+import sav.commons.testdata.opensource.TestPackage.TestDataColumn;
 import sav.commons.utils.TestConfigUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
@@ -51,19 +52,40 @@ public class JavaSlicerTest extends AbstractTest {
 		slicer.setVmConfig(vmConfig);
 	}
 	
+	@Test
+	public void testJodaTimeIssue194() throws Exception {
+		testClassMethods = Arrays.asList("org.joda.time.format.TestIssue194.test");
+		run(TestPackage.getPackage("joda-time", "194"),
+				new BreakPoint("org.joda.time.format.TestIssue194", 
+						"test", 36));
+	}
+	
+	@Test
+	public void testJodaTimeIssue187() throws Exception {
+		testClassMethods = Arrays.asList("org.joda.time.issues.TestIssue187.test");
+		run(TestPackage.getPackage("joda-time", "187"),
+				new BreakPoint("org.joda.time.format.PeriodFormatter", 
+						"print", 241));
+	}
+	
 //	@Test
 	public void testJavaParserIssue46() throws Exception {
-//		setupTestPackage(TestPackage.JAVA_PARSER);
 		slicer.setFiltering(null, Arrays.asList("japa.parser"));
 		run(Arrays.asList(new BreakPoint(
 				"java.lang.String", "concat", 32)));
-//				"japa.parser.ast.test.TestDumper", "testCommentsIssue46", 46)));
 	}
 	
-	public void setupTestPackage(TestPackage pkg) throws Exception {
+	public void run(TestPackage pkg, BreakPoint bkp) throws Exception {
+		run(pkg, Arrays.asList(bkp));
+	}
+	
+	public void run(TestPackage pkg, List<BreakPoint> bkps) throws Exception {
 		updateSystemClasspath(pkg.getClassPaths());
-//		testClassMethods = pkg.failTestMethods;
-//		vmConfig.addClasspaths(pkg.classPaths);
+		vmConfig.addClasspaths(pkg.getClassPaths());
+		vmConfig.addClasspaths(pkg.getLibFolders());
+		slicer.setFiltering(pkg.getValues(TestDataColumn.ANALYZING_CLASSES),
+				pkg.getValues(TestDataColumn.ANALYZING_PACKAGES));
+		run(bkps);
 	}
 	
 	@Test
@@ -138,6 +160,9 @@ public class JavaSlicerTest extends AbstractTest {
 			InterruptedException, ClassNotFoundException {
 		slicer.setFiltering(analyzedClasses, null);
 		List<BreakPoint> result = slicer.slice(breakpoints, testClassMethods);
+		if (result.isEmpty()) {
+			System.out.println("EMPTY RESULT!!");
+		}
 		for (BreakPoint bkp : result) {
 			System.out.println(bkp);
 		}

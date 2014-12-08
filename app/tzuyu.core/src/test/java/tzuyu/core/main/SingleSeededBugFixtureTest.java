@@ -8,16 +8,16 @@
 
 package tzuyu.core.main;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import sav.common.core.utils.StringUtils;
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.opensource.TestPackage;
@@ -42,7 +42,25 @@ public class SingleSeededBugFixtureTest extends AbstractTest {
 	}
 	
 	@Test
-	public void testJavaParser() throws Exception {
+	public void testAll() {
+		List<String> passTests = new ArrayList<String>();
+		List<String> failTests = new ArrayList<String>();
+		for (Entry<String, TestPackage> entry : TestPackage.getAllTestData().entrySet()) {
+			try {
+				runTest2(entry.getValue());
+				passTests.add(entry.getKey());
+			} catch (Throwable e) {
+				e.printStackTrace();
+				failTests.add(entry.getKey());
+			}
+		}
+		System.out.println("pass tests: " + StringUtils.join(passTests, ", "));
+		System.out.println("fail tests: " + StringUtils.join(failTests, ", "));
+		Assert.assertTrue(failTests.isEmpty());
+	}
+	
+	@Test
+	public void testJavaParser46() throws Exception {
 		runTest2(TestPackage.getPackage("javaparser", "46"));
 	}
 	
@@ -57,7 +75,8 @@ public class SingleSeededBugFixtureTest extends AbstractTest {
 		for (String clazz : testPkg.getValues(TestDataColumn.TEST_CLASSES)) {
 			fixture.programTestClass(clazz);
 		}		
-		List<String> expectedBugLocations = testPkg.getValues(TestDataColumn.EXPECTED_BUG_LOCATION);
+		List<String> expectedBugLocations = testPkg
+				.getValues(TestDataColumn.EXPECTED_BUG_LOCATION);
 		if (!expectedBugLocations.isEmpty()) {
 			fixture.expectedBugLine(expectedBugLocations.get(0));
 		}
@@ -124,13 +143,8 @@ public class SingleSeededBugFixtureTest extends AbstractTest {
 	}
 
 	private void addLibs(String... libFolders) throws Exception {
-		for (String libFolder : libFolders) {
-			Collection<?> files = FileUtils.listFiles(new File(libFolder),
-					new String[] { "jar" }, true);
-			for (Object obj : files) {
-				File file = (File) obj;
-				fixture.projectClassPath(file.getAbsolutePath());
-			}
+		for (String jar : getLibJars(libFolders)) {
+			fixture.projectClassPath(jar);
 		}
 	}
 }

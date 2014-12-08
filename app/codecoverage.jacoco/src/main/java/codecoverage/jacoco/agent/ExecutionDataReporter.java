@@ -31,7 +31,6 @@ import org.jacoco.core.data.SessionInfo;
 import sav.common.core.Logger;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
-import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.StopTimer;
 import sav.strategies.codecoverage.ICoverageReport;
 import sav.strategies.dto.BreakPoint;
@@ -77,23 +76,13 @@ public class ExecutionDataReporter {
 				for (final IClassCoverage cc : coverageBuilder.getClasses()) {
 					// do not display data for junit test file
 					for (String className : testingClassNames) {
-						if (getClassSimpleName(cc.getSourceFileName()).equals(
-								ClassUtils.getSimpleName(className))) {
+						if (getClassName(cc.getName()).equals(className)) {
 							for (int j = cc.getFirstLine(); j <= cc
 									.getLastLine(); j++) {
 								ILine lineInfo = cc.getLine(j);
 								if (lineInfo.getStatus() != ICounter.EMPTY) {
 									boolean isCovered = lineInfo.getStatus() != ICounter.NOT_COVERED;
 									boolean isPass = junitResult.getResult(testcaseIdx);
-//									if (log.isDebug()) {
-//										log.debug(String.format(
-//												"report.addInfo: %s=%s, %s=%s, %s=%s, %s=%s, %s=%s", 
-//												"testcaseIdx", testcaseIdx, 
-//												"className", cc.getName(),
-//												"lineIdx", j,
-//												"isPass", isPass,
-//												"isCovered", isCovered));
-//									}
 									report.addInfo(testcaseIdx, cc.getName(),
 											j,
 											isPass,
@@ -114,10 +103,10 @@ public class ExecutionDataReporter {
 		}
 	}
 
-	private String getClassSimpleName(String sourceFileName) {
-		return org.apache.commons.lang.StringUtils.split(sourceFileName, ".")[0];
+	private String getClassName(String name) {
+		return name.replace("/", ".");
 	}
-	
+
 	private InputStream getTargetClass(String className) throws IOException {
 		final String resource = '/' + className.replace('.', '/') + ".class";
 		return getClass().getResourceAsStream(resource);

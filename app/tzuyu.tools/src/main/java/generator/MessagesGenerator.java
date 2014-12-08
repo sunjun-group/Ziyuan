@@ -8,22 +8,14 @@
 
 package generator;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
-
-import org.apache.commons.io.FileUtils;
 
 /**
  * @author LLT
  *
  */
-public class MessagesGenerator {
-
-	private static final String START_GENERATED_PART_TOKEN = "//	Generated part";
-	private static final String END_GENERATED_PART_TOKEN = "//	End generated part";
-	private static String BASE = "D:/_1_Projects/Tzuyu/";
-	private static String TRUNK = BASE + "workspace/trunk/";
+public class MessagesGenerator extends ClassAppender {
 	private static String MESSAGES_PROPERTIES_PATH = TRUNK
 			+ "app/tzuyuEclipsePlugin/src/tzuyu/plugin/messages.properties";
 	private static String GENERATED_MESSAGES_CLASS_PATH = TRUNK
@@ -32,34 +24,27 @@ public class MessagesGenerator {
 
 	public static void main(String[] args) {
 		try {
-			generateMessagesClass();
+			MessagesGenerator generator = new MessagesGenerator();
+			generator.generateMessagesClass();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
-	private static void generateMessagesClass() throws IOException {
-		System.out.println("Start generating Messages.java from messages.properties");
+	
+	@Override
+	protected String getClassPath() {
+		return GENERATED_MESSAGES_CLASS_PATH;
+	}
+	
+	@Override
+	protected String getGeneratedContent() {
 		Properties props = ToolsUtils.loadProperties(MESSAGES_PROPERTIES_PATH);
-		String propsContent = buildPropsContent(props);
-		File messageCl = new File(GENERATED_MESSAGES_CLASS_PATH);
-		StringBuilder content = new StringBuilder();
-		boolean inGeneratedZone = false;
-		for (Object ln : FileUtils.readLines(messageCl)) {
-			String line = (String) ln;
-			if (!inGeneratedZone || line.contains(END_GENERATED_PART_TOKEN)) {
-				content.append(line).append("\n");
-			}
-			if (line.contains(START_GENERATED_PART_TOKEN)) {
-				inGeneratedZone = true;
-				content.append(propsContent);
-			} else if (line.contains(END_GENERATED_PART_TOKEN)) {
-				inGeneratedZone = false;
-			} 
-		}
-		// update class
-		FileUtils.writeStringToFile(messageCl, content.toString());
-		System.err.println("Success!!");
+		return buildPropsContent(props);
+	}
+
+	protected void generateMessagesClass() throws IOException {
+		System.out.println("Start generating Messages.java from messages.properties");
+		super.generateMessagesClass();
 		System.err.println("\nWarning: Refresh tzuyu.plugin.commons.constants.Messages.java!");
 	}
 
@@ -98,5 +83,4 @@ public class MessagesGenerator {
 		}
 		return content.append("\n").toString();
 	}
-
 }

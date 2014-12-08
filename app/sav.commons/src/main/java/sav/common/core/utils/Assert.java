@@ -8,12 +8,15 @@
 
 package sav.common.core.utils;
 
+import sav.common.core.Logger;
+
 
 /**
  * @author LLT
  * If the exception because of Assertion error, means it needs to be fixed.
  */
 public class Assert {
+	private static Logger<?> log = Logger.getDefaultLogger();
 
 	public static <T> void notNull(T value, String... msgs) {
 		assertTrue(value != null, msgs);
@@ -25,6 +28,7 @@ public class Assert {
 			if (msgs != null) {
 				msg = StringUtils.spaceJoin((Object[]) msgs);
 			}
+			log.error((Object[])msgs);
 			throw new IllegalArgumentException(msg);
 		}
 	}

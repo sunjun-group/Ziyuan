@@ -37,7 +37,7 @@ import org.eclipse.jdt.core.search.TypeNameRequestor;
 
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
-import tzuyu.engine.iface.IReferencesAnalyzer;
+import sav.strategies.gentest.IReferencesAnalyzer;
 import tzuyu.engine.model.exception.TzException;
 import tzuyu.engine.utils.Pair;
 import tzuyu.engine.utils.Randomness;

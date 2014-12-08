@@ -156,8 +156,9 @@ public class CoverageReport implements ICoverageReport{
 
 		Collections.sort(linesCoverageInfo, new LineCoverageInfoComparator());
 
-		for (LineCoverageInfo lineCoverageInfo : linesCoverageInfo) {
-			logger.info(lineCoverageInfo.toString());
+		/* reverse the order for easier to read */
+		for (int i = linesCoverageInfo.size() - 1; i >= 0; i--) {
+			logger.info(linesCoverageInfo.get(i).toString());
 		}
 		return linesCoverageInfo;
 	}

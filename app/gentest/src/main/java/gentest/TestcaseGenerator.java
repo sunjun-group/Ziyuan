@@ -52,7 +52,7 @@ public class TestcaseGenerator {
 			/* prepare method receiver */
 			LocalVariable receiver = seq.getReceiver(method.getDeclaringType());
 			if (receiver == null) {
-				/* if the instance of method receiver still didnot exist in the sequence,
+				/* if the instance of method receiver still did not exist in the sequence,
 				 * initialize one */
 				ISelectedVariable param = parameterSelector.selectParam(
 						method.getDeclaringType(), seq.getStmtsSize(),

@@ -5,10 +5,10 @@ import java.util.List;
 
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
+import sav.strategies.gentest.IReferencesAnalyzer;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.iface.ITzManager;
-import tzuyu.engine.iface.IReferencesAnalyzer;
 import tzuyu.engine.model.ClassInfo;
 import tzuyu.engine.model.ConstructorInfo;
 import tzuyu.engine.model.Sequence;
