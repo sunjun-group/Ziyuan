@@ -52,8 +52,10 @@ public abstract class Statement {
 
 	public static enum RStatementKind {
 		ASSIGNMENT,
+		ARRAY_ASSIGNMENT,
 		CONSTRUCTOR,
 		ARRAY_DECLARATION,
+		ARRAY_CONSTRUCTOR,
 		METHOD_INVOKE,
 		QUERY_METHOD_INVOKE, 
 		EVALUATION_METHOD,

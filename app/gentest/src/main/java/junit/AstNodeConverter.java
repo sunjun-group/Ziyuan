@@ -3,11 +3,9 @@
  */
 package junit;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import gentest.VariableNamer;
 import gentest.commons.utils.TypeUtils;
+import gentest.data.statement.RArrayConstructor;
 import gentest.data.statement.RAssignment;
 import gentest.data.statement.RConstructor;
 import gentest.data.statement.REvaluationMethod;
@@ -15,6 +13,8 @@ import gentest.data.statement.Rmethod;
 import japa.parser.ASTHelper;
 import japa.parser.ast.body.VariableDeclarator;
 import japa.parser.ast.body.VariableDeclaratorId;
+import japa.parser.ast.expr.ArrayCreationExpr;
+import japa.parser.ast.expr.ArrayInitializerExpr;
 import japa.parser.ast.expr.BooleanLiteralExpr;
 import japa.parser.ast.expr.CharLiteralExpr;
 import japa.parser.ast.expr.DoubleLiteralExpr;
@@ -36,20 +36,26 @@ import japa.parser.ast.type.PrimitiveType;
 import japa.parser.ast.type.PrimitiveType.Primitive;
 import japa.parser.ast.type.ReferenceType;
 import japa.parser.ast.type.Type;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
- *
+ * 
  */
 public class AstNodeConverter {
 	private VariableNamer varNamer;
-	
+
 	public AstNodeConverter(VariableNamer varNamer) {
 		this.varNamer = varNamer;
 	}
-	
+
 	/**
 	 * assignment for primitive types, String, enum (constantTypes)
 	 */
@@ -61,10 +67,10 @@ public class AstNodeConverter {
 			/* primitive */
 			paramType = new PrimitiveType(TypeUtils.getAssociatePrimitiveType(vartype));
 		} else {
-			/* primitive wrapper, enum or String*/
+			/* primitive wrapper, enum or String */
 			paramType = toReferenceType(vartype.getSimpleName());
 		}
-		
+
 		/* value */
 		Object varValue = assignment.getValue();
 		/* primitive or primitive wrapper */
@@ -75,7 +81,7 @@ public class AstNodeConverter {
 		if (initExpr == null) {
 			/* string */
 			initExpr = toStringLiteralExpr(vartype, varValue);
-		} 
+		}
 		if (initExpr == null) {
 			/* enum */
 			initExpr = toEnumFieldExpr(vartype, varValue);
@@ -83,8 +89,7 @@ public class AstNodeConverter {
 		Assert.assertTrue(initExpr != null);
 
 		VariableDeclarator varDecl = new VariableDeclarator();
-		varDecl.setId(new VariableDeclaratorId(varNamer.getName(assignment
-				.getOutVarId())));
+		varDecl.setId(new VariableDeclaratorId(varNamer.getName(assignment.getOutVarId())));
 		varDecl.setInit(initExpr);
 		Expression expr = new VariableDeclarationExpr(paramType, CollectionUtils.listOf(varDecl));
 		ExpressionStmt stmt = new ExpressionStmt(expr);
@@ -101,8 +106,8 @@ public class AstNodeConverter {
 	private FieldAccessExpr toEnumFieldExpr(Class<?> vartype, Object varValue) {
 		if (TypeUtils.isEnum(varValue)) {
 			Enum<?> enumValue = (Enum<?>) varValue;
-			NameExpr scope = ASTHelper.createNameExpr(enumValue
-					.getDeclaringClass().getSimpleName());
+			NameExpr scope = ASTHelper
+					.createNameExpr(enumValue.getDeclaringClass().getSimpleName());
 			return new FieldAccessExpr(scope, enumValue.name());
 		}
 		return null;
@@ -144,25 +149,60 @@ public class AstNodeConverter {
 		/* Type */
 		Type type = toReferenceType(constructor.getName());
 		List<VariableDeclarator> vars = new ArrayList<VariableDeclarator>();
-		/* variable name*/
-		VariableDeclarator var = new VariableDeclarator(
-				new VariableDeclaratorId(varNamer.getName(constructor
-						.getOutVarId())));
+		/* variable name */
+		VariableDeclarator var = new VariableDeclarator(new VariableDeclaratorId(
+				varNamer.getName(constructor.getOutVarId())));
 		/* constructor input */
 		List<Expression> constructorArgs = new ArrayList<Expression>();
 		for (int inVar : constructor.getInVarIds()) {
 			constructorArgs.add(new NameExpr(varNamer.getName(inVar)));
 		}
 		/* statement */
-		Expression initExpr = new ObjectCreationExpr(null,
-				new ClassOrInterfaceType(constructor.getName()), constructorArgs);
+		Expression initExpr = new ObjectCreationExpr(null, new ClassOrInterfaceType(
+				constructor.getName()), constructorArgs);
 		var.setInit(initExpr);
 		vars.add(var);
-		Expression expr = new VariableDeclarationExpr(type , vars );
+		Expression expr = new VariableDeclarationExpr(type, vars);
 		ExpressionStmt stmt = new ExpressionStmt(expr);
 		return stmt;
 	}
-	
+
+	public Statement fromRArrayConstructor(RArrayConstructor arrayConstructor) {
+		Type arrayContentType = toReferenceType(arrayConstructor.getContentType().getName());
+		Type arrayType = new ReferenceType(arrayContentType, arrayConstructor.getSizes().length);
+		VariableDeclarator var = new VariableDeclarator(new VariableDeclaratorId(
+				varNamer.getName(arrayConstructor.getOutVarId())));
+		
+		List<Expression> dimensions = new ArrayList<Expression>(arrayConstructor.getSizes().length);
+		for (int i = 0; i < arrayConstructor.getSizes().length; i++) {
+			IntegerLiteralExpr ile = new IntegerLiteralExpr(String.valueOf(arrayConstructor
+					.getSizes()[i]));
+			dimensions.add(ile);
+		}
+		Expression arrayInitStatement = new ArrayCreationExpr(arrayContentType, dimensions, 0);
+		var.setInit(arrayInitStatement);
+
+		Expression variableDeclarationStatement = new VariableDeclarationExpr(arrayType, Arrays.asList(var));
+		return new ExpressionStmt(variableDeclarationStatement);
+	}
+
+	/*
+	private ArrayInitializerExpr getArrayInitializer(Object array, int[] sizes) {
+		List<Expression> contentInits = new ArrayList<Expression>(sizes[0]);
+		for (int i = 0; i < sizes[0]; i++) {
+			if (sizes.length == 1) {
+
+				contentInits.add(getInitializer(object));
+			} else {
+				contentInits.add(getArrayInitializer(Array.get(array, i),
+						Arrays.copyOfRange(sizes, 1, sizes.length)));
+			}
+		}
+
+		return new ArrayInitializerExpr(contentInits);
+	}
+	*/
+
 	public Statement fromREvalMethod(REvaluationMethod stmt) {
 		NameExpr scope = new NameExpr("Assert");
 		MethodCallExpr assertTrue = new MethodCallExpr(scope, "assertTrue",
@@ -188,22 +228,21 @@ public class AstNodeConverter {
 			inputs.add(new NameExpr(varNamer.getName(inId)));
 		}
 		MethodCallExpr callExpr = new MethodCallExpr(scope, rmethod.getName(), inputs);
-		
+
 		Expression stmtExpr = null;
 		if (declareValue) {
 			List<VariableDeclarator> vars = new ArrayList<VariableDeclarator>();
-			VariableDeclarator varDecl = new VariableDeclarator(
-					new VariableDeclaratorId(varNamer.getName(rmethod.getOutVarId())), 
-					callExpr);
+			VariableDeclarator varDecl = new VariableDeclarator(new VariableDeclaratorId(
+					varNamer.getName(rmethod.getOutVarId())), callExpr);
 			vars.add(varDecl);
-			stmtExpr = new VariableDeclarationExpr(toReferenceType(rmethod
-					.getReturnType().getSimpleName()), vars);
+			stmtExpr = new VariableDeclarationExpr(toReferenceType(rmethod.getReturnType()
+					.getSimpleName()), vars);
 		} else {
 			stmtExpr = callExpr;
 		}
 		return stmtExpr;
 	}
-	
+
 	private ReferenceType toReferenceType(String typeName) {
 		return new ReferenceType(new ClassOrInterfaceType(typeName));
 	}

@@ -6,6 +6,7 @@ package gentest.data.variable;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import gentest.data.LocalVariable;
+import gentest.data.statement.RArrayConstructor;
 import gentest.data.statement.RAssignment;
 import gentest.data.statement.RConstructor;
 import gentest.data.statement.Statement;
@@ -21,6 +22,8 @@ public class GeneratedVariable extends SelectedVariable {
 	private int firstVarIdx;
 	
 	public GeneratedVariable(int firstStmtIdx, int firstVarId) {
+		Assert.assertTrue(firstStmtIdx >=0, "Negative firstStmtIdx");
+		Assert.assertTrue(firstVarId >=0, "Negative firstVarId");
 		this.firstStmtIdx = firstStmtIdx;
 		this.firstVarIdx = firstVarId;
 	}
@@ -69,5 +72,10 @@ public class GeneratedVariable extends SelectedVariable {
 		LocalVariable lastVar = CollectionUtils.getLast(newVariables);
 		Assert.assertTrue(lastVar != null); 
 		return lastVar.getVarId();
+	}
+
+	public void append(final RArrayConstructor arrayConstructor) {
+		arrayConstructor.setOutVarId(getNewVarIdx());
+		updateDataLists(arrayConstructor, arrayConstructor.getOutputType());
 	}
 }

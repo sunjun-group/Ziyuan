@@ -4,6 +4,7 @@
 package gentest;
 
 import gentest.commons.utils.TypeUtils;
+import gentest.data.statement.RArrayConstructor;
 import gentest.data.statement.RAssignment;
 import gentest.data.statement.RConstructor;
 import gentest.data.variable.GeneratedVariable;
@@ -15,7 +16,7 @@ import sav.strategies.gentest.IReferencesAnalyzer;
 
 /**
  * @author LLT
- *
+ * 
  */
 public class ValueGenerator {
 	protected Class<?> type;
@@ -31,12 +32,11 @@ public class ValueGenerator {
 	public void setGeneratorFactory(ParamGeneratorFactory generatorFactory) {
 		this.generatorFactory = generatorFactory;
 	}
-	
-	public GeneratedVariable generate(Class<?> type, int firstStmtIdx,
-			int firstVarId) throws SavException {
+
+	public GeneratedVariable generate(Class<?> type, int firstStmtIdx, int firstVarId)
+			throws SavException {
 		this.type = type;
-		GeneratedVariable variable = new GeneratedVariable(firstStmtIdx,
-				firstVarId);
+		GeneratedVariable variable = new GeneratedVariable(firstStmtIdx, firstVarId);
 		append(variable, 1, type);
 		return variable;
 	}
@@ -45,8 +45,7 @@ public class ValueGenerator {
 		return (type.isInterface() || Modifier.isAbstract(type.getModifiers()));
 	}
 	
-	public void append(GeneratedVariable variable, int level, Class<?> type)
-			throws SavException {
+	public void append(GeneratedVariable variable, int level, Class<?> type) throws SavException {
 		if (level == maxLevel) {
 			variable.append(RAssignment.assignmentFor(type, null));
 			return;
@@ -58,12 +57,16 @@ public class ValueGenerator {
 //			Class<?> randomImpl = new ReferenceAnalyser().getRandomImplClzz(type);
 //			append(variable, level, randomImpl);
 		} else if (type.isArray()) {
-//			Randomness.nextRandomInt(i)
-			//TODO LLT: complete this
+			// Generate the array
+			final int dimension = 1 + type.getName().lastIndexOf('[');
+			final RArrayConstructor arrayConstructor = new RArrayConstructor(dimension, type);
+			variable.append(arrayConstructor);
 			
+			// Generate the array content
+			arrayConstructor.getOutVarId();
+			// TODO NPN
 		} else {
-			RConstructor rconstructor = RConstructor
-					.of(type.getConstructors()[0]);
+			RConstructor rconstructor = RConstructor.of(type.getConstructors()[0]);
 			for (Class<?> paramType : rconstructor.getInputTypes()) {
 				append(variable, level, paramType);
 			}
@@ -72,10 +75,8 @@ public class ValueGenerator {
 	}
 
 	private static boolean isSimpleType(Class<?> type) {
-		 return TypeUtils.isPrimitive(type)
-			|| TypeUtils.isPrimitiveObject(type)
-			|| TypeUtils.isString(type)
-			|| TypeUtils.isEnumType(type);
+		return TypeUtils.isPrimitive(type) || TypeUtils.isPrimitiveObject(type)
+				|| TypeUtils.isString(type) || TypeUtils.isEnumType(type);
 	}
 	
 	public static void setRefAnalyzer(IReferencesAnalyzer refAnalyzer) {

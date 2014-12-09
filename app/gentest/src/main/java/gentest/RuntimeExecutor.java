@@ -4,6 +4,7 @@
 package gentest;
 
 import gentest.data.Sequence;
+import gentest.data.statement.RArrayConstructor;
 import gentest.data.statement.RAssignment;
 import gentest.data.statement.RConstructor;
 import gentest.data.statement.REvaluationMethod;
@@ -12,12 +13,15 @@ import gentest.data.statement.Statement;
 import gentest.data.statement.StatementVisitor;
 import gentest.data.variable.ISelectedVariable;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.AssertionFailedError;
+import org.apache.commons.lang.ClassUtils;
 
+import junit.framework.AssertionFailedError;
 import sav.common.core.utils.Assert;
 
 
@@ -128,6 +132,45 @@ public class RuntimeExecutor implements StatementVisitor {
 			throw new AssertionFailedError("Assert true fail");
 		}
 	}
+
+	@Override
+	public void visit(RArrayConstructor arrayConstructor) {
+		Class<?> arrayContentType = arrayConstructor.getContentType();
+		Object array = Array.newInstance(arrayContentType, arrayConstructor.getSizes());
+		
+		data.addExecData(arrayConstructor.getOutVarId(), array);
+	}
+
+	private <T> void fillArrayContent(final Object array, Class<T> clazz, final int... sizes) {
+		Assert.assertTrue(array.getClass().isArray());
+		for (int i = 0; i < sizes[0]; i++) {
+			if (sizes.length == 1) {
+
+				Array.set(array, i, generateNewValue(clazz));
+			} else {
+				fillArrayContent(Array.get(array, i), clazz.getComponentType(),
+						Arrays.copyOfRange(sizes, 1, sizes.length));
+			}
+		}
+	}
+
+	private <T> T generateNewValue(Class<T> clazz) {
+		Class<T> theClass = clazz;
+		if (clazz.isPrimitive()) {
+			theClass = ClassUtils.primitiveToWrapper(clazz);
+		}
+		try {
+			return theClass.newInstance();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	
 	/*----------*/
 	public boolean isSuccessful() {
