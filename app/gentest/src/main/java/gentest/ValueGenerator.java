@@ -3,13 +3,13 @@
  */
 package gentest;
 
-import java.lang.reflect.Modifier;
-
-import extcos.ReferenceAnalyser;
 import gentest.commons.utils.TypeUtils;
 import gentest.data.statement.RAssignment;
 import gentest.data.statement.RConstructor;
 import gentest.data.variable.GeneratedVariable;
+
+import java.lang.reflect.Modifier;
+
 import sav.common.core.SavException;
 import sav.strategies.gentest.IReferencesAnalyzer;
 
@@ -55,8 +55,8 @@ public class ValueGenerator {
 			Object value = generatorFactory.getGeneratorFor(type).next();
 			variable.append(RAssignment.assignmentFor(type, value));
 		} else if (isInterfaceOrAbstract(type)) {
-			Class<?> randomImpl = new ReferenceAnalyser().getRandomImplClzz(type);
-			append(variable, level, randomImpl);
+//			Class<?> randomImpl = new ReferenceAnalyser().getRandomImplClzz(type);
+//			append(variable, level, randomImpl);
 		} else if (type.isArray()) {
 //			Randomness.nextRandomInt(i)
 			//TODO LLT: complete this
