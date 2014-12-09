@@ -119,7 +119,7 @@ public class CompilationUnitBuilder {
 	public CompilationUnit getResult() {
 		List<ImportDeclaration> importDecls = new ArrayList<ImportDeclaration>();
 		for (Class<?> type : imports) {
-			if (!TypeUtils.isPrimitive(type)) {
+			if (!TypeUtils.isPrimitive(type) && !type.isArray()) {
 				ImportDeclaration importDecl = new ImportDeclaration();
 				importDecl.setName(new NameExpr(type.getCanonicalName()));
 				importDecls.add(importDecl);

@@ -97,14 +97,14 @@ public class ParamGeneratorFactory {
 				}
 				if (key.isArray()) {
 					return CombinedGenerators.arrays(
-							(Generator)getGeneratorFor(key.getComponentType()), (Class)key);
+							getGeneratorFor(key.getComponentType()), (Class)key);
 				}
 				return PrimitiveGenerators.nulls();
 			}
 			
 		};
 	}
-
+	
 	public Generator<?> getGeneratorFor(final Class<?> type) throws SavException {
 		try {
 			return generatorCache.get(type);
