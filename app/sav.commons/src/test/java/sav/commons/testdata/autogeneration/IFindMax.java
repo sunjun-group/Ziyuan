@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package sav.commons.testdata;
+package sav.commons.testdata.autogeneration;
 
 /**
  * @author khanh

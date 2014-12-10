@@ -6,18 +6,18 @@
  *  Version:  $Revision: 1 $
  */
 
-package sav.commons.testdata;
+package sav.commons.testdata.autogeneration;
 
 /**
  * @author khanh
  *
  */
-public class FindMax implements IFindMax{
+public class FindMaxNums implements IFindMax{
 	private int a ;
 	private int b;
 	private int c;
 	
-	public FindMax(int a, int b, int c){
+	public FindMaxNums(int a, int b, int c){
 		this.a = a;
 		this.b = b;
 		this.c = c;
@@ -29,8 +29,7 @@ public class FindMax implements IFindMax{
 		
 		if(b > result)
 		{
-			//result = b;
-			result = a; //wrong assignment
+			result = b;
 		}
 		
 		if(c > result)
@@ -42,6 +41,10 @@ public class FindMax implements IFindMax{
 
 	public boolean check(int result){
 		if (a > result || b > result || c > result) {
+			return false;
+		}
+		
+		if(result != a && result != b && result != c){
 			return false;
 		}
 		return true;
