@@ -4,6 +4,7 @@
 package gentest;
 
 import gentest.data.Sequence;
+import gentest.data.statement.RArrayAssignment;
 import gentest.data.statement.RArrayConstructor;
 import gentest.data.statement.RAssignment;
 import gentest.data.statement.RConstructor;
@@ -141,37 +142,20 @@ public class RuntimeExecutor implements StatementVisitor {
 		data.addExecData(arrayConstructor.getOutVarId(), array);
 	}
 
-	private <T> void fillArrayContent(final Object array, Class<T> clazz, final int... sizes) {
-		Assert.assertTrue(array.getClass().isArray());
-		for (int i = 0; i < sizes[0]; i++) {
-			if (sizes.length == 1) {
+	@Override
+	public void visit(RArrayAssignment rArrayAssignment) {
+		final Object array = data.getExecData(rArrayAssignment.getArrayVarID());
+		final Object element = data.getExecData(rArrayAssignment.getLocalVariableID());
 
-				Array.set(array, i, generateNewValue(clazz));
-			} else {
-				fillArrayContent(Array.get(array, i), clazz.getComponentType(),
-						Arrays.copyOfRange(sizes, 1, sizes.length));
-			}
+		int[] location = rArrayAssignment.getIndex();
+		Object innerArray = array;
+		for (int i = 0; i < location.length - 1; i++) {
+			innerArray = Array.get(innerArray, location[i]);
 		}
+		Array.set(innerArray, location[location.length - 1], element);
+		// No need to update exec data
 	}
 
-	private <T> T generateNewValue(Class<T> clazz) {
-		Class<T> theClass = clazz;
-		if (clazz.isPrimitive()) {
-			theClass = ClassUtils.primitiveToWrapper(clazz);
-		}
-		try {
-			return theClass.newInstance();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	
 	/*----------*/
 	public boolean isSuccessful() {
 		Assert.assertTrue(successful != null);

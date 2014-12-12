@@ -5,6 +5,7 @@ package junit;
 
 import gentest.VariableNamer;
 import gentest.data.Sequence;
+import gentest.data.statement.RArrayAssignment;
 import gentest.data.statement.RArrayConstructor;
 import gentest.data.statement.RAssignment;
 import gentest.data.statement.RConstructor;
@@ -15,10 +16,11 @@ import japa.parser.ast.CompilationUnit;
 
 import java.util.List;
 
+import junit.CompilationUnitBuilder.MethodBuilder;
+
 import org.junit.Test;
 
 import sav.common.core.utils.Assert;
-import junit.CompilationUnitBuilder.MethodBuilder;
 
 /**
  * @author LLT
@@ -57,6 +59,9 @@ public class JWriter {
 					break;
 				case ARRAY_CONSTRUCTOR:
 					astStmt = converter.fromRArrayConstructor((RArrayConstructor) stmt);
+					break;
+				case ARRAY_ASSIGNMENT:
+					astStmt = converter.fromRArrayAssigment((RArrayAssignment) stmt);
 					break;
 				case METHOD_INVOKE:
 				case QUERY_METHOD_INVOKE:

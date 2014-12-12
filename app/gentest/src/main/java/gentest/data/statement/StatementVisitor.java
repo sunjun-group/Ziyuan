@@ -18,5 +18,7 @@ public interface StatementVisitor {
 	void visit(REvaluationMethod stmt) throws Throwable;
 
 	void visit(RArrayConstructor rArrayConstructor);
+
+	void visit(RArrayAssignment rArrayAssignment);
 	
 }

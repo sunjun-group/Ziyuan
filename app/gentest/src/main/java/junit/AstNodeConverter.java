@@ -5,6 +5,7 @@ package junit;
 
 import gentest.VariableNamer;
 import gentest.commons.utils.TypeUtils;
+import gentest.data.statement.RArrayAssignment;
 import gentest.data.statement.RArrayConstructor;
 import gentest.data.statement.RAssignment;
 import gentest.data.statement.RConstructor;
@@ -13,8 +14,11 @@ import gentest.data.statement.Rmethod;
 import japa.parser.ASTHelper;
 import japa.parser.ast.body.VariableDeclarator;
 import japa.parser.ast.body.VariableDeclaratorId;
+import japa.parser.ast.expr.ArrayAccessExpr;
 import japa.parser.ast.expr.ArrayCreationExpr;
 import japa.parser.ast.expr.ArrayInitializerExpr;
+import japa.parser.ast.expr.AssignExpr;
+import japa.parser.ast.expr.AssignExpr.Operator;
 import japa.parser.ast.expr.BooleanLiteralExpr;
 import japa.parser.ast.expr.CharLiteralExpr;
 import japa.parser.ast.expr.DoubleLiteralExpr;
@@ -167,7 +171,7 @@ public class AstNodeConverter {
 		return stmt;
 	}
 
-	public Statement fromRArrayConstructor(RArrayConstructor arrayConstructor) {
+	public Statement fromRArrayConstructor(final RArrayConstructor arrayConstructor) {
 		Type arrayContentType = toReferenceType(arrayConstructor.getContentType().getName());
 		Type arrayType = new ReferenceType(arrayContentType, arrayConstructor.getSizes().length);
 		VariableDeclarator var = new VariableDeclarator(new VariableDeclaratorId(
@@ -186,22 +190,25 @@ public class AstNodeConverter {
 		return new ExpressionStmt(variableDeclarationStatement);
 	}
 
-	/*
-	private ArrayInitializerExpr getArrayInitializer(Object array, int[] sizes) {
-		List<Expression> contentInits = new ArrayList<Expression>(sizes[0]);
-		for (int i = 0; i < sizes[0]; i++) {
-			if (sizes.length == 1) {
-
-				contentInits.add(getInitializer(object));
-			} else {
-				contentInits.add(getArrayInitializer(Array.get(array, i),
-						Arrays.copyOfRange(sizes, 1, sizes.length)));
-			}
+	private Expression getArrayAccessExp(final String arrayName, final int[] location) {
+		final int arrayLength = location.length;
+		if (arrayLength <= 0) {
+			return new NameExpr(arrayName);
+		} else {
+			return new ArrayAccessExpr(getArrayAccessExp(arrayName,
+					Arrays.copyOfRange(location, 1, arrayLength)), new NameExpr(
+					String.valueOf(location[0])));
 		}
-
-		return new ArrayInitializerExpr(contentInits);
 	}
-	*/
+
+	public Statement fromRArrayAssigment(final RArrayAssignment stmt) {
+		final Expression arrayAccessExp = getArrayAccessExp(varNamer.getName(stmt.getArrayVarID()),
+				stmt.getIndex());
+		final Expression valueExp = new NameExpr(varNamer.getName(stmt.getLocalVariableID()));
+		final Expression assignmentExpression = new AssignExpr(arrayAccessExp, valueExp,
+				Operator.assign);
+		return new ExpressionStmt(assignmentExpression);
+	}
 
 	public Statement fromREvalMethod(REvaluationMethod stmt) {
 		NameExpr scope = new NameExpr("Assert");

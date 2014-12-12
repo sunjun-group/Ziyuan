@@ -2,20 +2,19 @@ package gentest.data.statement;
 
 import java.util.Arrays;
 
-
 public class RArrayAssignment extends Statement {
 
-	private String arrayVarName;
-	private int[] location;
-	private Object value;
-	
-	public RArrayAssignment(String arrayVarName, int[] location, Object value) {
+	private final int arrayVarID;
+	private final int index[];
+	private final int localVariableID;
+
+	public RArrayAssignment(int arrayVarID, int[] index, int localVariableID) {
 		super(RStatementKind.ARRAY_ASSIGNMENT);
-		this.arrayVarName = arrayVarName;
-		this.location = location;
-		this.value = value;
+		this.arrayVarID = arrayVarID;
+		this.index = Arrays.copyOf(index, index.length);
+		this.localVariableID = localVariableID;
 	}
-	
+
 	@Override
 	public boolean hasOutputVar() {
 		return false;
@@ -23,8 +22,19 @@ public class RArrayAssignment extends Statement {
 
 	@Override
 	public void accept(StatementVisitor visitor) throws Throwable {
-		// TODO Auto-generated method stub
+		visitor.visit(this);
+	}
 
+	public int getArrayVarID() {
+		return arrayVarID;
+	}
+
+	public int[] getIndex() {
+		return index;
+	}
+
+	public int getLocalVariableID() {
+		return localVariableID;
 	}
 
 }
