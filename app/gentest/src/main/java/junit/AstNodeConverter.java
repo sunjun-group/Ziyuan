@@ -196,8 +196,8 @@ public class AstNodeConverter {
 			return new NameExpr(arrayName);
 		} else {
 			return new ArrayAccessExpr(getArrayAccessExp(arrayName,
-					Arrays.copyOfRange(location, 1, arrayLength)), new NameExpr(
-					String.valueOf(location[0])));
+					Arrays.copyOfRange(location, 0, arrayLength - 1)), new NameExpr(
+					String.valueOf(location[arrayLength - 1])));
 		}
 	}
 
