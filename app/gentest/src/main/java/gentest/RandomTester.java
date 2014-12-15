@@ -67,8 +67,8 @@ public class RandomTester {
 	}
 
 	protected <T>List<T> randomWalk(List<T> methodcalls) {
-		List<T> query = new ArrayList<T>();
 		int traceLength = Randomness.nextRandomInt(queryMaxLength) + 1;
+		List<T> query = new ArrayList<T>(traceLength);
 		for (int i = 0; i < traceLength; i++) {
 			T nextMethodCall = Randomness.randomMember(methodcalls);
 			query.add(nextMethodCall);

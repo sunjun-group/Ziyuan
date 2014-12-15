@@ -68,10 +68,10 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>tzuyu-project</groupId>
-			<artifactId>extcos</artifactId>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>tzuyu-project</groupId> -->
+<!-- 			<artifactId>extcos</artifactId> -->
+<!-- 		</dependency> -->
 	</dependencies>
 
 </project>

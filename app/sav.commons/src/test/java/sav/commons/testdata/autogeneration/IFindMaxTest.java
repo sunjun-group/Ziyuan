@@ -1,4 +1,4 @@
-package sav.commons.testdata;
+package sav.commons.testdata.autogeneration;
 import org.junit.Assert;
 
 /*

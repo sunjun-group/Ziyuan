@@ -1,0 +1,40 @@
+package sav.commons.testdata.autogeneration;
+
+import java.util.List;
+
+public class FindMaxCompositionList implements IFindMax{
+	private List<IFindMax> numbers;
+
+	public FindMaxCompositionList(List<IFindMax> num) {
+		this.numbers = num;
+	}
+
+	public int Max() {
+		int result = numbers.get(0).Max();
+		for (int i = 1; i < numbers.size(); i++) {
+			if (result < numbers.get(i).Max()) {
+				result = numbers.get(i).Max();
+			}
+		}
+
+		return result;
+	}
+
+	public boolean check(int result) {
+
+		for (int i = 0; i < numbers.size(); i++) {
+			if (result < numbers.get(i).Max()) {
+				return false;
+			}
+		}
+
+		for (int i = 0; i < numbers.size(); i++) {
+			if (result == numbers.get(i).Max()) {
+				return true;
+			}
+		}
+		
+		
+		return false;
+	}
+}
