@@ -88,7 +88,7 @@ public class ValueGenerator {
 	}
 	
 	public static void main(String[] args) {
-		int[] size = {10, 20};
+		int[] size = {0};
 		int[] array = next(null, size);
 		while (array!= null) {
 			for (int i=0; i<array.length; i++) {
@@ -102,8 +102,12 @@ public class ValueGenerator {
 	private static int[] next(int[] array, int[] limit) {
 		if (array == null) {
 			final int[] result = new int[limit.length];
-			for (int i=0; i< result.length; i++) {
-				result[i] = 0;
+			for (int i = 0; i < result.length; i++) {
+				if (limit[i] > 0) {
+					result[i] = 0;
+				} else {
+					return null;
+				}
 			}
 			return result;
 		}
