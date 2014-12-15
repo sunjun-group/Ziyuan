@@ -10,8 +10,8 @@ public class FindMaxList implements IFindMax {
 	}
 
 	public int Max() {
-		int result = numbers.get(0);
-		for (int i = 1; i < numbers.size(); i++) {
+		int result = Integer.MIN_VALUE;
+		for (int i = 0; i < numbers.size(); i++) {
 			if (result < numbers.get(i)) {
 				result = numbers.get(i);
 			}

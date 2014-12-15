@@ -9,8 +9,8 @@ public class FindMaxCompositionArray implements IFindMax{
 	
 	public int Max()
 	{
-		int result = numbers[0].Max();
-		for(int i = 1; i < numbers.length; i++){
+		int result = Integer.MIN_VALUE;
+		for(int i = 0; i < numbers.length; i++){
 			int tempMax = numbers[i].Max();
 			if(result < tempMax){
 				result = tempMax;

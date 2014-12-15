@@ -9,8 +9,8 @@ public class FindMaxArray implements IFindMax{
 	
 	public int Max()
 	{
-		int result = numbers[0];
-		for(int i = 1; i < numbers.length; i++){
+		int result = Integer.MIN_VALUE;
+		for(int i = 0; i < numbers.length; i++){
 			if(result < numbers[i]){
 				result = numbers[i];
 			}

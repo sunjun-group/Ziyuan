@@ -10,10 +10,11 @@ public class FindMaxCompositionList implements IFindMax{
 	}
 
 	public int Max() {
-		int result = numbers.get(0).Max();
-		for (int i = 1; i < numbers.size(); i++) {
-			if (result < numbers.get(i).Max()) {
-				result = numbers.get(i).Max();
+		int result = Integer.MIN_VALUE;
+		for (int i = 0; i < numbers.size(); i++) {
+			int tempMax = numbers.get(i).Max();
+			if (result < tempMax) {
+				result = tempMax;
 			}
 		}
 
