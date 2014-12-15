@@ -59,6 +59,7 @@
 		<module>../tzuyu</module>
 		<module>../icsetlv</module>
 		<module>../faultLocalization</module>
+		<module>../extcos</module>
 	</modules>
 
 	<build>

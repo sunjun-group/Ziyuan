@@ -29,8 +29,6 @@ import net.sf.javaml.featureselection.ranking.RecursiveFeatureEliminationSVM;
 import org.junit.Before;
 import org.junit.Test;
 
-import sav.commons.TestConfiguration;
-
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.IncompatibleThreadStateException;
 

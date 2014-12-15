@@ -54,7 +54,7 @@ public class Rmethod extends Statement {
 	
 	@Override
 	public boolean hasOutputVar() {
-		return getReturnType() != Void.class;
+		return !getReturnType().equals(Void.TYPE);
 	}
 	
 	public Class<?> getDeclaringType() {
