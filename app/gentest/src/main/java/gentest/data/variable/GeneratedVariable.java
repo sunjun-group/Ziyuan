@@ -3,16 +3,14 @@
  */
 package gentest.data.variable;
 
-import sav.common.core.utils.Assert;
-import sav.common.core.utils.CollectionUtils;
 import gentest.data.LocalVariable;
 import gentest.data.statement.RArrayAssignment;
 import gentest.data.statement.RArrayConstructor;
 import gentest.data.statement.RAssignment;
 import gentest.data.statement.RConstructor;
 import gentest.data.statement.Statement;
-
-
+import sav.common.core.utils.Assert;
+import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
@@ -87,8 +85,17 @@ public class GeneratedVariable extends SelectedVariable {
 	}
 
 	public void append(final RArrayAssignment arrayAssignment) {
-		// No new variable
 		addStatement(arrayAssignment);
+		// Search for the previous array constructor statement
+		LocalVariable arrayVar = null;
+		for (LocalVariable var: getNewVariables()) {
+			if (var.getVarId() == arrayAssignment.getArrayVarID()) {
+				arrayVar = var;
+				break;
+			}
+		}
+		// Re-add it at the last position
+		getNewVariables().add(arrayVar);
 	}
 
 }
