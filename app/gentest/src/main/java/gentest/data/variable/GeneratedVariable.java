@@ -52,11 +52,12 @@ public class GeneratedVariable extends SelectedVariable {
 		int varId = getNewVarIdx();
 		/* update stmt */
 		stmt.setOutVarId(varId);
-		int[] inVarIds = new int[stmt.getInputTypes().size()];
+		int size = stmt.getInputTypes().size();
+		int[] inVarIds = new int[size];
 		/* previous newVariables must be the input of this constructor
 		 * so we loop back the newVariables list to set back to the stmt inputs */
-		for (int i = 0; i < stmt.getInputTypes().size(); i++) {
-			inVarIds[i] = varId - i;
+		for (int i = 0; i < size; i++) {
+			inVarIds[i] = varId - size + i;
 		}
 		/* TODO LLT: check if update inputVarIds for this stnt is redundant or not*/
 		stmt.setInVarIds(inVarIds);
