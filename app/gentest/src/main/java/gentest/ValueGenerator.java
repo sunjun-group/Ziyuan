@@ -3,6 +3,7 @@
  */
 package gentest;
 
+import extcos.ReferenceAnalyser;
 import gentest.commons.utils.TypeUtils;
 import gentest.data.statement.RArrayAssignment;
 import gentest.data.statement.RArrayConstructor;
@@ -74,9 +75,9 @@ public class ValueGenerator {
 		} else if (isInterfaceOrAbstract(type)) {
 			// (!) NOTE: must check this AFTER the check for array
 			// Because Modifier.isAbstract() return true for array types
-			// Class<?> randomImpl = new
-			// ReferenceAnalyser().getRandomImplClzz(type);
-			// append(variable, level, randomImpl);
+			Class<?> randomImpl = new ReferenceAnalyser()
+					.getRandomImplClzz(type);
+			append(variable, level, randomImpl);
 		} else {
 			RConstructor rconstructor = RConstructor.of(type.getConstructors()[0]);
 			for (Class<?> paramType : rconstructor.getInputTypes()) {
