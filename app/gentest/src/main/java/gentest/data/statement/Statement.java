@@ -3,8 +3,6 @@
  */
 package gentest.data.statement;
 
-
-
 /**
  * @author LLT
  */

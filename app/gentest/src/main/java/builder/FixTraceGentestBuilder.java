@@ -28,72 +28,40 @@ import org.apache.commons.lang.StringUtils;
 
 import sav.common.core.Pair;
 import sav.common.core.SavException;
-import sav.common.core.utils.SignatureUtils;
 
 /**
  * @author LLT
- *
+ * usage:
+ * start builder with number of testcase,
+ * .forClass to start generating testcases for a class
+ * 		forClass can be called many times
+ * .forMethod to add method of the class including in the test
+ * 		like forClass, forMethod can be called many times to,
+ * 		but note that the method will be check only in the class 
+ * 		defined right before it.
+ * .generate to generate sequences of testcases
+ * .evaluationMethod to start defining evaluation method for return value of tested method.
+ * 		.param to define parameters of the evaluation method. 
+ * Then the generated sequences can be printed to file 
+ * using TestsPrinter 
+ * 
  */
-public class FixTraceGentestBuilder extends GentestBuilder {
+public class FixTraceGentestBuilder extends
+		GentestBuilder<FixTraceGentestBuilder> {
 	public static final String RETURN_METHOD_PARAM_NAME = "return";
-	private int numberOfTcs;
-	private Class<?> clazz;
-	private List<Method> testingMethods;
 	private Map<Integer, String> aliasMethodMap;
 	private List<EvaluationMethod> evalMethods;
 	
 	public FixTraceGentestBuilder(int numberOfTcs) {
+		super(numberOfTcs);
 		this.aliasMethodMap = new HashMap<Integer, String>();
-		testingMethods = new ArrayList<Method>();
 		evalMethods = new ArrayList<EvaluationMethod>();
-		this.numberOfTcs = numberOfTcs;
-	}
-	
-	public FixTraceGentestBuilder forClass(Class<?> clazz) {
-		this.clazz = clazz;
-		return this;
 	}
 	
 	public FixTraceGentestBuilder method(String methodNameOrSign, String alias) {
 		findAndAddTestingMethod(methodNameOrSign);
 		aliasMethodMap.put(testingMethods.size() - 1, alias);
 		return this;
-	}
-	
-	public FixTraceGentestBuilder method(String methodNameOrSign) {
-		findAndAddTestingMethod(methodNameOrSign);
-		return this;
-	}
-
-	private Method findAndAddTestingMethod(String methodNameOrSign) {
-		Method testingMethod = findTestingMethod(clazz, methodNameOrSign);
-		testingMethods.add(testingMethod);
-		return testingMethod;
-	}
-	
-	private static Method findTestingMethod(Class<?> clazz, String methodNameOrSign) {
-		if (clazz != null) {
-			/* try to find if input is method name */
-			for (Method method : clazz.getMethods()) {
-				if (method.getName().equals(methodNameOrSign)) {
-					return method;
-				}
-			}
-			/* try to find if input is method signature */
-			for (Method method : clazz.getMethods()) {
-				if (SignatureUtils.getSignature(method).equals(methodNameOrSign)) {
-					return method;
-				}
-			}
-			/* cannot find class */
-			throw new IllegalArgumentException(String.format("cannot find method %s in class %s", methodNameOrSign
-					, clazz.getName()));
-		}
-		/* class not yet declared */
-		throw new IllegalArgumentException(
-				String.format(
-						"The class for method %s is not set. Expect forClass() is called before method(String methodNameOrSign)",
-						methodNameOrSign));
 	}
 	
 	public EvaluationMethod evaluationMethod(Class<?> clazz,
@@ -204,15 +172,13 @@ public class FixTraceGentestBuilder extends GentestBuilder {
 		throw new RuntimeException(String.format(
 				"Cannot find method with alias: %s in the rqueryMethod", alias));
 	}
-
-	private List<MethodCall> initMethodCalls() {
-		List<MethodCall> methodCalls = new ArrayList<MethodCall>(
-				testingMethods.size());
-		for (int i = 0; i < testingMethods.size(); i++) {
-			Method method = testingMethods.get(i);
-			MethodCall methodCall = MethodCall.of(method);
+	
+	@Override
+	protected List<MethodCall> initMethodCalls() {
+		List<MethodCall> methodCalls = super.initMethodCalls();
+		for (int i = 0; i < methodCalls.size(); i++) {
+			MethodCall methodCall = methodCalls.get(i);
 			methodCall.setAlias(aliasMethodMap.get(i));
-			methodCalls.add(methodCall);
 		}
 		return methodCalls;
 	}

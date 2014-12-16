@@ -18,7 +18,7 @@ public class RConstructor extends Statement {
 	private List<Class<?>> inputTypesCached;
 	private Class<?> outputTypeCached;
 
-	private RConstructor(Constructor<?> ctor) {
+	public RConstructor(Constructor<?> ctor) {
 		super(RStatementKind.CONSTRUCTOR);
 		if (ctor == null) {
 			throw new IllegalArgumentException("input constructor is null");
