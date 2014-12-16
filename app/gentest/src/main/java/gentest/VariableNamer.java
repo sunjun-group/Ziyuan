@@ -12,7 +12,7 @@ public class VariableNamer {
 	public VariableNamer() {}
 
 	public String getName(int varId) {
-		return "var" + varId;
+		return "var" + (varId + 1);
 	}
 	
 }

@@ -8,6 +8,7 @@ import gentest.data.statement.RArrayAssignment;
 import gentest.data.statement.RArrayConstructor;
 import gentest.data.statement.RAssignment;
 import gentest.data.statement.RConstructor;
+import gentest.data.statement.Rmethod;
 import gentest.data.statement.Statement;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
@@ -17,14 +18,15 @@ import sav.common.core.utils.CollectionUtils;
  *
  */
 public class GeneratedVariable extends SelectedVariable {
+	private int returnedVarId = Statement.INVALID_VAR_ID;
 	private int firstStmtIdx;
-	private int firstVarIdx;
+	private int firstVarId;
 	
 	public GeneratedVariable(int firstStmtIdx, int firstVarId) {
 		Assert.assertTrue(firstStmtIdx >=0, "Negative firstStmtIdx");
 		Assert.assertTrue(firstVarId >=0, "Negative firstVarId");
 		this.firstStmtIdx = firstStmtIdx;
-		this.firstVarIdx = firstVarId;
+		this.firstVarId = firstVarId;
 	}
 	
 	private int getNewStmtIdx() {
@@ -32,9 +34,19 @@ public class GeneratedVariable extends SelectedVariable {
 	}
 	
 	private int getNewVarIdx() {
-		return newVariables.size() + firstVarIdx;
+		return newVariables.size() + firstVarId;
 	}
 	
+	public int getLastVarId() {
+		return newVariables.size() - 1 + firstVarId;
+	}
+	
+	public void commitReturnVarIdIfNotExist() {
+		if (returnedVarId == Statement.INVALID_VAR_ID) {
+			returnedVarId = getReturnVarId();
+		}
+	}
+
 	public void append(RAssignment stmt) {
 		/* update stmt */
 		stmt.setOutVarId(getNewVarIdx());
@@ -50,33 +62,41 @@ public class GeneratedVariable extends SelectedVariable {
 	
 	private void updateDataLists(Statement stmt, Class<?> type) {
 		int stmtIdx = addStatement(stmt);
-		int varId = getNewVarIdx();
-		LocalVariable var = new LocalVariable(stmtIdx, varId, type);
-		getNewVariables().add(var);
+		if (type != Void.class) {
+			int varId = getNewVarIdx();
+			LocalVariable var = new LocalVariable(stmtIdx, varId, type);
+			getNewVariables().add(var);
+		}
 	}
 
-	public void append(RConstructor stmt) {
+	public void append(RConstructor stmt, int[] paramIds) {
 		int varId = getNewVarIdx();
 		/* update stmt */
 		stmt.setOutVarId(varId);
 		int size = stmt.getInputTypes().size();
 		int[] inVarIds = new int[size];
-		/* previous newVariables must be the input of this constructor
-		 * so we loop back the newVariables list to set back to the stmt inputs */
-		for (int i = 0; i < size; i++) {
-			inVarIds[i] = varId - size + i;
-		}
-		/* TODO LLT: check if update inputVarIds for this stnt is redundant or not*/
 		stmt.setInVarIds(inVarIds);
 		/* update stmt list and variables list */
 		updateDataLists(stmt, stmt.getOutputType());
 	}
 	
+	public void append(Rmethod stmt, int[] paramIds) {
+		if (stmt.hasOutputVar()) {
+			int outVarId = getNewVarIdx();
+			stmt.setOutVarId(outVarId);
+		}
+		stmt.setInVarIds(paramIds);
+		updateDataLists(stmt, stmt.getReturnType());
+	}
+	
 	@Override
 	public int getReturnVarId() {
-		LocalVariable lastVar = CollectionUtils.getLast(newVariables);
-		Assert.assertTrue(lastVar != null); 
-		return lastVar.getVarId();
+		if (returnedVarId == Statement.INVALID_VAR_ID) {
+			LocalVariable lastVar = CollectionUtils.getLast(newVariables);
+			Assert.assertTrue(lastVar != null); 
+			return lastVar.getVarId();
+		}
+		return returnedVarId;
 	}
 
 	public void append(final RArrayConstructor arrayConstructor) {
@@ -98,4 +118,12 @@ public class GeneratedVariable extends SelectedVariable {
 		getNewVariables().add(arrayVar);
 	}
 
+	public GeneratedVariable newVariable() {
+		return new GeneratedVariable(getNewStmtIdx(), getNewVarIdx());
+	}
+	
+	public void append(GeneratedVariable subVariable) {
+		stmts.addAll(subVariable.stmts);
+		newVariables.addAll(subVariable.newVariables);
+	}
 }

@@ -8,10 +8,18 @@
 
 package junit;
 
+import gentest.data.Sequence;
+
+import java.util.List;
+
+import sav.common.core.Pair;
+
 /**
  * @author LLT
  *
  */
 public interface ITestsPrinter {
+
+	void printTests(Pair<List<Sequence>, List<Sequence>> testSeqss);
 
 }

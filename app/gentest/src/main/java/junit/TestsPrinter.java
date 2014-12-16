@@ -48,6 +48,7 @@ public class TestsPrinter implements ITestsPrinter {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Override
 	public void printTests(Pair<List<Sequence>, List<Sequence>> testSeqss) {
 		List<CompilationUnit> units;
 		if (!separatePassFail) {

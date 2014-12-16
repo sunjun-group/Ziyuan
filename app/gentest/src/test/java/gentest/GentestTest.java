@@ -53,6 +53,8 @@ public class GentestTest {
 		System.out.println(cu2.toString());
 	}
 	
+	
+	
 //	private File newTestFile(String targetClassName) {
 //		String testResultFolder = this.getClass().getResource("/testdata/gentest").getPath();
 //		File file = new File(testResultFolder + "/pass/TestResultPass.java");

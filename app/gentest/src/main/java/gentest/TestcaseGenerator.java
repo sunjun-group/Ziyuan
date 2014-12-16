@@ -11,6 +11,7 @@ import gentest.data.statement.RqueryMethod;
 import gentest.data.variable.ISelectedVariable;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class TestcaseGenerator {
 				/* if the instance of method receiver still did not exist in the sequence,
 				 * initialize one */
 				ISelectedVariable param = parameterSelector.selectParam(
-						method.getDeclaringType(), seq.getStmtsSize(),
+						method.getDeclaringType(), null, seq.getStmtsSize(),
 						seq.getVarsSize());
 				seq.appendReceiver(param, method.getDeclaringType());
 				executor.executeReceiver(param);
@@ -85,16 +86,18 @@ public class TestcaseGenerator {
 	 */
 	private List<ISelectedVariable> selectParams(MethodCall methodCall) throws SavException {
 		Method method = methodCall.getMethod();
-		return selectParams(method.getParameterTypes());
+		method.getGenericParameterTypes();
+		return selectParams(method.getParameterTypes(), method.getGenericParameterTypes());
 	}
 
-	private List<ISelectedVariable> selectParams(Class<?>[] paramTypes)
+	private List<ISelectedVariable> selectParams(Class<?>[] paramTypes, Type[] types)
 			throws SavException {
 		List<ISelectedVariable> params = new ArrayList<ISelectedVariable>();
 		int firstStmtIdx = seq.getStmtsSize();
 		int firstVarIdx = seq.getVarsSize();
-		for (Class<?> paramType : paramTypes) {
-			ISelectedVariable param = parameterSelector.selectParam(paramType,
+		for (int i = 0; i < paramTypes.length; i++) {
+			Class<?> paramType = paramTypes[i];
+			ISelectedVariable param = parameterSelector.selectParam(paramType, types[i],
 					firstStmtIdx, firstVarIdx);
 			params.add(param);
 			firstStmtIdx += param.getStmts().size();

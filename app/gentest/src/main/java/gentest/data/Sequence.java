@@ -8,8 +8,10 @@ import gentest.data.statement.Rmethod;
 import gentest.data.statement.Statement;
 import gentest.data.variable.ISelectedVariable;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,13 +32,13 @@ import sav.common.core.utils.CollectionUtils;
  */
 public class Sequence {
 	private List<LocalVariable> localVariables;
-	private Map<Class<?>, List<LocalVariable>> typeVariableMap;
+	private Map<Type, List<LocalVariable>> typeVariableMap;
 	private Map<Class<?>, LocalVariable> receiversMap;
 	private List<Statement> stmts;
 
 	public Sequence() {
 		localVariables = new ArrayList<LocalVariable>();
-		typeVariableMap = new HashMap<Class<?>, List<LocalVariable>>();
+		typeVariableMap = new HashMap<Type, List<LocalVariable>>();
 		receiversMap = new HashMap<Class<?>, LocalVariable>();
 		stmts = new ArrayList<Statement>();
 	}
@@ -84,18 +86,25 @@ public class Sequence {
 		this.stmts = stmts;
 	}
 
-	public Map<Class<?>, List<LocalVariable>> getTypeVariableMap() {
+	public Map<Type, List<LocalVariable>> getTypeVariableMap() {
 		return typeVariableMap;
 	}
 	
-	public List<LocalVariable> getVariablesByType(Class<?> type) {
-		return getTypeVariableMap().get(type);
+	public List<LocalVariable> getVariablesByType(Type paramType) {
+		return getTypeVariableMap().get(paramType);
 	}
 	
 	public Set<Class<?>> getDeclaredTypes() {
-		return typeVariableMap.keySet();
+		Set<Class<?>> declaredTypes = new HashSet<Class<?>>();
+		for (Type type : typeVariableMap.keySet()) {
+			if (type instanceof Class<?>) {
+				declaredTypes.add((Class<?>) type);
+			} 
+//			else if (type instanceof generic)
+		}
+		return declaredTypes;
 	}
-
+	
 	public LocalVariable getReceiver(Class<?> declaringType) {
 		return receiversMap.get(declaringType);
 	}

@@ -4,7 +4,7 @@ import sav.common.core.utils.Randomness;
 
 public class RArrayConstructor extends Statement {
 	// NOTE This must be less than 255
-	private static final int GENERATED_ARRAY_MAX_LENGTH = 32;
+	private static final int GENERATED_ARRAY_MAX_LENGTH = 3;
 
 	private int[] sizes;
 	private Class<?> outputType; // Type of the array itself

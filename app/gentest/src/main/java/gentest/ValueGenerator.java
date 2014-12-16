@@ -77,6 +77,10 @@ public class ValueGenerator {
 			// Because Modifier.isAbstract() return true for array types
 			Class<?> randomImpl = new ReferenceAnalyser()
 					.getRandomImplClzz(type);
+			if (randomImpl == null) {
+				variable.append(RAssignment.assignmentFor(type, null));
+				return;
+			}
 			append(variable, level, randomImpl);
 		} else {
 			RConstructor rconstructor = RConstructor.of(type.getConstructors()[0]);

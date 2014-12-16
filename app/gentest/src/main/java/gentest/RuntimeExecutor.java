@@ -17,10 +17,7 @@ import gentest.data.variable.ISelectedVariable;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import org.apache.commons.lang.ClassUtils;
 
 import junit.framework.AssertionFailedError;
 import sav.common.core.utils.Assert;

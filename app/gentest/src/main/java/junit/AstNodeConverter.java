@@ -16,7 +16,6 @@ import japa.parser.ast.body.VariableDeclarator;
 import japa.parser.ast.body.VariableDeclaratorId;
 import japa.parser.ast.expr.ArrayAccessExpr;
 import japa.parser.ast.expr.ArrayCreationExpr;
-import japa.parser.ast.expr.ArrayInitializerExpr;
 import japa.parser.ast.expr.AssignExpr;
 import japa.parser.ast.expr.AssignExpr.Operator;
 import japa.parser.ast.expr.BooleanLiteralExpr;
@@ -41,7 +40,6 @@ import japa.parser.ast.type.PrimitiveType.Primitive;
 import japa.parser.ast.type.ReferenceType;
 import japa.parser.ast.type.Type;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

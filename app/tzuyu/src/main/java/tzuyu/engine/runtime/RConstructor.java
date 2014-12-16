@@ -22,7 +22,7 @@ public class RConstructor extends StatementKind implements Serializable {
 	private int hashCodeCached = 0;
 	private boolean hashCodeComputed = false;
 
-	private RConstructor(Constructor<?> ctor) {
+	public RConstructor(Constructor<?> ctor) {
 		if (ctor == null) {
 			throw new IllegalArgumentException("input constructor is null");
 		}

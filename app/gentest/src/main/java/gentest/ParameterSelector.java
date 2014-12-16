@@ -7,14 +7,14 @@ import gentest.data.LocalVariable;
 import gentest.data.Sequence;
 import gentest.data.variable.ISelectedVariable;
 import gentest.data.variable.ReferenceVariable;
+import gentest.value.generator.AbstractValueGenerator;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
-
-
 
 /**
  * @author LLT
@@ -32,24 +32,25 @@ public class ParameterSelector {
 		this.seq = methodDecl;
 	}
 	
-	public ISelectedVariable selectParam(Class<?> type, int firstStmtIdx,
+	public ISelectedVariable selectParam(Class<?> clazz, Type type, int firstStmtIdx,
 			int firstVarIdx) throws SavException {
-		SelectionMode selectingMode = randomChooseSelectorType(type);
+		SelectionMode selectingMode = randomChooseSelectorType(clazz);
 		switch (selectingMode) {
 		case REFERENCE:
-			return selectReferenceParam(type);
+			return selectReferenceParam(clazz);
 		default:
-			return selectGeneratedParam(type, firstStmtIdx, firstVarIdx);
+			return selectGeneratedParam(clazz, type, firstStmtIdx, firstVarIdx);
 		}
 	}
 	
 	/**
 	 * generate new value for parameter.
 	 */
-	private ISelectedVariable selectGeneratedParam(Class<?> type,
-			int firstStmtIdx, int firstVarIdx) throws SavException {
-		return new ValueGenerator(new ParamGeneratorFactory()).generate(type,
-				firstStmtIdx, firstVarIdx);
+	private ISelectedVariable selectGeneratedParam(Class<?> clazz,
+			Type type, int firstStmtIdx, int firstVarIdx) throws SavException {
+		return AbstractValueGenerator.generate(clazz, type, firstStmtIdx, firstVarIdx);
+//		return new ValueGenerator(new ParamGeneratorFactory()).generate(type,
+//				firstStmtIdx, firstVarIdx);
 	}
 
 	/**
