@@ -29,11 +29,6 @@ import builder.GentestBuilder;
 public class GentestForTestdataRunner extends AbstractGTTest {
 
 	@Test
-	public void testFindMaxList() throws SavException {
-		generateTestcase(FindMaxList.class);
-	}
-	
-	@Test
 	public void testFindMaxNums() throws SavException {
 		generateTestcase(FindMaxNums.class);
 	}

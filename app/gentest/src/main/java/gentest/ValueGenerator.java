@@ -84,10 +84,13 @@ public class ValueGenerator {
 			append(variable, level, randomImpl);
 		} else {
 			RConstructor rconstructor = RConstructor.of(type.getConstructors()[0]);
+			int[] paramIds = new int[rconstructor.getInputTypes().size()];
+			int i = 0;
 			for (Class<?> paramType : rconstructor.getInputTypes()) {
 				append(variable, level, paramType);
+				paramIds[i ++] = variable.getLastVarId();
 			}
-			variable.append(rconstructor);
+			variable.append(rconstructor, paramIds);
 		}
 	}
 	

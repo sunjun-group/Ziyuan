@@ -15,12 +15,12 @@ import java.util.List;
 import junit.FileCompilationUnitPrinter;
 import junit.TestsPrinter;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.commons.testdata.SamplePrograms;
+import sav.commons.testdata.simplePrograms.SimplePrograms;
 import builder.FixTraceGentestBuilder;
 
 /**
@@ -28,12 +28,6 @@ import builder.FixTraceGentestBuilder;
  *
  */
 public class FixTraceGentestBuilderTest extends AbstractGTTest {
-	private String srcPath;
-	
-	@Before
-	public void beforeMethod()  {
-		srcPath = config.getTestScrPath("gentest");
-	}
 	
 	@Test
 	public void testGenerate() throws SavException {
@@ -54,13 +48,11 @@ public class FixTraceGentestBuilderTest extends AbstractGTTest {
 	@Test
 	public void generateTc() throws SavException {
 		FixTraceGentestBuilder builder = new FixTraceGentestBuilder(100);
-		Class<FindMaxList> targetClazz = FindMaxList.class;
-		Pair<List<Sequence>, List<Sequence>> tcs = builder.forClass(targetClazz)
-			.method("findMax")
-			.generate();
-		TestsPrinter printer = new TestsPrinter(srcPath, 
-				"testdata.gentest", null, 
-				"test", targetClazz.getSimpleName());
+		Pair<List<Sequence>, List<Sequence>> tcs = builder.forClass(
+				SimplePrograms.class).generate();
+		TestsPrinter printer = new TestsPrinter(srcPath,
+				"testdata.gentest.simpleprogram", null, "test",
+				SimplePrograms.class.getSimpleName());
 		printer.setCuPrinter(new FileCompilationUnitPrinter());
 		printer.printTests(tcs);
 	}
