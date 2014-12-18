@@ -34,11 +34,8 @@ public class ArrayValueGenerator extends AbstractValueGenerator {
 			GeneratedVariable newVariable = variable;
 			AbstractValueGenerator.append(newVariable, level + 1, arrayConstructor.getContentType(),
 					null);
-<<<<<<< HEAD
 			int localVariableID = newVariable.getLastVarId(); // the last ID
-=======
-			int localVariableID = variable.getLastVarId(); // the last ID
->>>>>>> a42c68466e63b0d5aac5005c9faed9a146b69e50
+
 			// get the variable
 			RArrayAssignment arrayAssignment = new RArrayAssignment(
 					arrayConstructor.getOutVarId(), location, localVariableID);
