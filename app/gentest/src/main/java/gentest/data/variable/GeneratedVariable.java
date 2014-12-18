@@ -106,16 +106,7 @@ public class GeneratedVariable extends SelectedVariable {
 
 	public void append(final RArrayAssignment arrayAssignment) {
 		addStatement(arrayAssignment);
-		// Search for the previous array constructor statement
-		LocalVariable arrayVar = null;
-		for (LocalVariable var: getNewVariables()) {
-			if (var.getVarId() == arrayAssignment.getArrayVarID()) {
-				arrayVar = var;
-				break;
-			}
-		}
-		// Re-add it at the last position
-		getNewVariables().add(arrayVar);
+		// there is no new generated variable to add to newVariables list
 	}
 
 	public GeneratedVariable newVariable() {
