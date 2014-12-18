@@ -18,7 +18,7 @@ import sav.strategies.gentest.IReferencesAnalyzer;
 
 /**
  * @author LLT
- * 
+ * TODO LLT: TO REMOVE
  */
 public class ValueGenerator {
 	protected Class<?> type;

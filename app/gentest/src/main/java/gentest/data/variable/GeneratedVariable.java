@@ -51,7 +51,7 @@ public class GeneratedVariable extends SelectedVariable {
 		/* update stmt */
 		stmt.setOutVarId(getNewVarIdx());
 		/* update stmt list and variables list */
-		updateDataLists(stmt, stmt.getType());
+		updateDataLists(stmt, stmt.getType(), true);
 	}
 
 	private int addStatement(Statement stmt) {
@@ -60,9 +60,9 @@ public class GeneratedVariable extends SelectedVariable {
 		return stmtIdx;
 	}
 	
-	private void updateDataLists(Statement stmt, Class<?> type) {
+	private void updateDataLists(Statement stmt, Class<?> type, boolean addVariable) {
 		int stmtIdx = addStatement(stmt);
-		if (type != Void.class) {
+		if (addVariable && type != Void.class) {
 			int varId = getNewVarIdx();
 			LocalVariable var = new LocalVariable(stmtIdx, varId, type);
 			getNewVariables().add(var);
@@ -73,20 +73,18 @@ public class GeneratedVariable extends SelectedVariable {
 		int varId = getNewVarIdx();
 		/* update stmt */
 		stmt.setOutVarId(varId);
-		int size = stmt.getInputTypes().size();
-		int[] inVarIds = new int[size];
-		stmt.setInVarIds(inVarIds);
+		stmt.setInVarIds(paramIds);
 		/* update stmt list and variables list */
-		updateDataLists(stmt, stmt.getOutputType());
+		updateDataLists(stmt, stmt.getOutputType(), true);
 	}
 	
-	public void append(Rmethod stmt, int[] paramIds) {
-		if (stmt.hasOutputVar()) {
+	public void append(Rmethod stmt, int[] paramIds, boolean addVariable) {
+		if (stmt.hasReturnType() && addVariable) {
 			int outVarId = getNewVarIdx();
 			stmt.setOutVarId(outVarId);
 		}
 		stmt.setInVarIds(paramIds);
-		updateDataLists(stmt, stmt.getReturnType());
+		updateDataLists(stmt, stmt.getReturnType(), addVariable);
 	}
 	
 	@Override
@@ -101,21 +99,12 @@ public class GeneratedVariable extends SelectedVariable {
 
 	public void append(final RArrayConstructor arrayConstructor) {
 		arrayConstructor.setOutVarId(getNewVarIdx());
-		updateDataLists(arrayConstructor, arrayConstructor.getOutputType());
+		updateDataLists(arrayConstructor, arrayConstructor.getOutputType(), true);
 	}
 
 	public void append(final RArrayAssignment arrayAssignment) {
 		addStatement(arrayAssignment);
-		// Search for the previous array constructor statement
-		LocalVariable arrayVar = null;
-		for (LocalVariable var: getNewVariables()) {
-			if (var.getVarId() == arrayAssignment.getArrayVarID()) {
-				arrayVar = var;
-				break;
-			}
-		}
-		// Re-add it at the last position
-		getNewVariables().add(arrayVar);
+		// there is no new generated variable to add to newVariables list
 	}
 
 	public GeneratedVariable newVariable() {

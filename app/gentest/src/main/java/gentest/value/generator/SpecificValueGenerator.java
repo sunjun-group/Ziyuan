@@ -9,7 +9,6 @@
 package gentest.value.generator;
 
 import gentest.commons.utils.MethodUtils;
-import gentest.data.statement.Rmethod;
 import gentest.data.variable.GeneratedVariable;
 
 import java.lang.reflect.Method;
@@ -42,22 +41,7 @@ public abstract class SpecificValueGenerator extends AbstractValueGenerator {
 		getGenerator(ObjectValueGenerator.class).doAppend(variable, level, implType);
 		int varId = variable.getLastVarId();
 		variable.commitReturnVarIdIfNotExist();
-		doAppendMethods(variable, level, varId);
+		doAppendMethods(variable, level, varId, methodcalls);
 	}
 
-	protected void doAppendMethods(GeneratedVariable variable, int level,
-			int varId) throws SavException {
-		// generate value for method call
-		for (Method method : methodcalls) {
-			Class<?>[] parameterTypes = method.getParameterTypes();
-			int[] paramIds = new int[parameterTypes.length];
-			for (int i = 0; i < paramIds.length; i++) {
-				Class<?> paramType = parameterTypes[i];
-				AbstractValueGenerator.append(variable, level + 2, paramType, null);
-				paramIds[i] = variable.getLastVarId();
-			}
-			Rmethod rmethod = new Rmethod(method, varId);
-			variable.append(rmethod, paramIds);
-		}
-	}
 }

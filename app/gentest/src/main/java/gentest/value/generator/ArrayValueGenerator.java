@@ -27,17 +27,18 @@ public class ArrayValueGenerator extends AbstractValueGenerator {
 		final RArrayConstructor arrayConstructor = new RArrayConstructor(
 				dimension, type);
 		variable.append(arrayConstructor);
-
+		variable.commitReturnVarIdIfNotExist();
 		// Generate the array content
 		int[] location = next(null, arrayConstructor.getSizes());
 		while (location != null) {
-			AbstractValueGenerator.append(variable, level + 1, arrayConstructor.getContentType(),
+			GeneratedVariable newVariable = variable;
+			AbstractValueGenerator.append(newVariable, level + 1, arrayConstructor.getContentType(),
 					null);
-			int localVariableID = variable.getReturnVarId(); // the last ID
+			int localVariableID = newVariable.getLastVarId(); // the last ID
 			// get the variable
 			RArrayAssignment arrayAssignment = new RArrayAssignment(
 					arrayConstructor.getOutVarId(), location, localVariableID);
-			variable.append(arrayAssignment);
+			newVariable.append(arrayAssignment);
 			location = next(location, arrayConstructor.getSizes());
 		}
 	}

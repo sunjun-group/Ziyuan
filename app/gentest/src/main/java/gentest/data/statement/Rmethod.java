@@ -54,6 +54,10 @@ public class Rmethod extends Statement {
 	
 	@Override
 	public boolean hasOutputVar() {
+		return outVarId != INVALID_VAR_ID;
+	}
+	
+	public boolean hasReturnType() {
 		return !getReturnType().equals(Void.TYPE);
 	}
 	

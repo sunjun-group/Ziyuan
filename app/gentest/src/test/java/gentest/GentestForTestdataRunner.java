@@ -17,8 +17,10 @@ import sav.common.core.SavException;
 import sav.common.core.utils.StringUtils;
 import sav.commons.testdata.autogeneration.FindMaxArray;
 import sav.commons.testdata.autogeneration.FindMaxArray2D;
+import sav.commons.testdata.autogeneration.FindMaxWrapper;
 import sav.commons.testdata.autogeneration.FindMaxList;
 import sav.commons.testdata.autogeneration.FindMaxNums;
+import sav.commons.testdata.autogeneration.FindMaxSet;
 import builder.FixTraceGentestBuilder;
 import builder.GentestBuilder;
 
@@ -28,6 +30,21 @@ import builder.GentestBuilder;
  */
 public class GentestForTestdataRunner extends AbstractGTTest {
 
+	@Test
+	public void testFindMaxInterface() throws SavException {
+		generateTestcase(FindMaxWrapper.class); 
+	}
+	
+	@Test
+	public void testFindMaxSet() throws SavException {
+		generateTestcase(FindMaxSet.class);
+	}
+	
+	@Test
+	public void testFindMaxList() throws SavException {
+		generateTestcase(FindMaxList.class);
+	}
+	
 	@Test
 	public void testFindMaxNums() throws SavException {
 		generateTestcase(FindMaxNums.class);
@@ -66,6 +83,9 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 		printer.printTests(builder.generate());
 	}
 
+	private String getTestFailPkg(Class<?> targetClazz) {
+		return StringUtils.dotJoin(getTestPkg(targetClazz), "fail");
+	}
 
 	private String getTestPkg(Class<?> targetClazz) {
 		return StringUtils.dotJoin("testdata.gentest", targetClazz.getSimpleName());

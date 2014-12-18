@@ -100,7 +100,7 @@ public class TestsPrinter implements ITestsPrinter {
 	}
 
 	private String getClassName() {
-		return classPrefix + (classIdx ++);
+		return classPrefix + "Test" + (classIdx ++);
 	}
 
 	public void setSeparatePassFail(boolean separatePassFail) {

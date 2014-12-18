@@ -28,8 +28,12 @@ import sav.common.core.utils.Randomness;
 public class ListValueGenerator extends SpecificValueGenerator {
 	private Type type;
 
-	public ListValueGenerator(Class<?> clazz, Type type) {
-		super(ArrayList.class, null);
+	public ListValueGenerator(Type type) {
+		this(ArrayList.class, type);
+	}
+	
+	protected ListValueGenerator(Class<?> implClazz, Type type) {
+		super(implClazz, null);
 		this.type = type;
 	}
 
@@ -43,25 +47,29 @@ public class ListValueGenerator extends SpecificValueGenerator {
 		super.doAppend(variable, level, type);
 	}
 
+	@Override
 	protected void doAppendMethods(GeneratedVariable variable, int level,
-			int varId) throws SavException {
-		// generate value for method call
+			int scopeId, List<Method> methodcalls) throws SavException {
 		try {
-			Method method = ArrayList.class.getMethod("add", Object.class);
+			Method method = getAddMethod();
 			int elementNum = Randomness.nextRandomInt(10);
 			Pair<Class<?>, Type> paramType = getContentType();
 			for (int eleI = 0; eleI < elementNum; eleI++) {
 				GeneratedVariable newVariable = variable.newVariable();
 				AbstractValueGenerator.append(newVariable, level + 2, paramType.a,
 						paramType.b);
-				Rmethod rmethod = new Rmethod(method, varId);
+				Rmethod rmethod = new Rmethod(method, scopeId);
 				variable.append(newVariable);
-				variable.append(rmethod, new int[]{newVariable.getReturnVarId()});
+				variable.append(rmethod, new int[]{newVariable.getReturnVarId()}, false);
 			}
 		} catch (NoSuchMethodException e) {
 			throw new RuntimeException(
 					"cannot find method add in ArrayList class");
 		}
+	}
+
+	protected Method getAddMethod() throws NoSuchMethodException {
+		return ArrayList.class.getMethod("add", Object.class);
 	}
 
 	private Pair<Class<?>, Type> getContentType() {
