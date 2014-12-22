@@ -34,27 +34,24 @@ public class LibSVM extends AbstractClassifier {
 
 	private static final long serialVersionUID = -8901871714620581945L;
 
-	/**
-	 * Create a new instance of libsvm.
-	 */
-	public LibSVM() {
-		param = new svm_parameter();
-		// default values
-		param.svm_type = svm_parameter.C_SVC;
-		param.C = 1;
-		param.kernel_type = svm_parameter.LINEAR;
-		param.degree = 1;
-		param.gamma = 0; // 1/k
-		param.coef0 = 0;
-		param.nu = 0.5;
-		param.cache_size = 100;
-		param.eps = 1e-3;
-		param.p = 0.1;
-		param.shrinking = 1;
-		param.probability = 1;
-		param.nr_weight = 0;/*4;*/
-		param.weight_label = /*new int[]{1, 1, 0, 0};*/new int[0];
-		param.weight = /*new double[]{1, 1, 0, 0};*/ new double[0];
+	private svm_parameter getDefaultParameters() {
+		svm_parameter svmParam = new svm_parameter();
+		svmParam.svm_type = svm_parameter.C_SVC;
+		svmParam.C = 1;
+		svmParam.kernel_type = svm_parameter.LINEAR;
+		svmParam.degree = 1;
+		svmParam.gamma = 0; // 1/k
+		svmParam.coef0 = 0;
+		svmParam.nu = 0.5;
+		svmParam.cache_size = 100;
+		svmParam.eps = 1e-3;
+		svmParam.p = 0.1;
+		svmParam.shrinking = 1;
+		svmParam.probability = 1;
+		svmParam.nr_weight = 0;/*4;*/
+		svmParam.weight_label = /*new int[]{1, 1, 0, 0};*/new int[0];
+		svmParam.weight = /*new double[]{1, 1, 0, 0};*/ new double[0];
+		return svmParam;
 	}
 
 	/**
@@ -63,6 +60,9 @@ public class LibSVM extends AbstractClassifier {
 	 * @return the current configuration
 	 */
 	public svm_parameter getParameters() {
+		if (param == null) {
+			param = getDefaultParameters();
+		}
 		return param;
 	}
 
