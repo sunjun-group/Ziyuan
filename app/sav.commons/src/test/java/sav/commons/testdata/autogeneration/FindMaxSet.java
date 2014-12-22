@@ -1,10 +1,10 @@
 package sav.commons.testdata.autogeneration;
 
-import java.util.Collection;
+import java.util.Set;
 
 public class FindMaxSet extends FindMaxCollection implements IFindMax {
 
-	public FindMaxSet(Collection<Integer> num) {
+	public FindMaxSet(Set<Integer> num) {
 		super(num);
 	}
 	

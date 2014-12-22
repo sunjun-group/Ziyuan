@@ -36,15 +36,15 @@ public class MapValueGenerator extends SpecificValueGenerator {
 		super.doAppendMethod(variable, level, varId);
 	}
 	
-//	private Class<?> pickClassFromType(Type type) {
-//			if (type instanceof ParameterizedType) {
-//				Type compType = ((ParameterizedType) type).getActualTypeArguments()[0];
-//				if (compType instanceof Class<?>) {
-//					return new Pair<Class<?>, Type>((Class<?>) compType, null);
-//				}
-//			}
-//		if (type instanceof  )
-//	}
+	private Pair<Class<?>, Type> getContentType() {
+		if (type instanceof ParameterizedType) {
+			Type compType = ((ParameterizedType) type).getActualTypeArguments()[0];
+			if (compType instanceof Class<?>) {
+				return new Pair<Class<?>, Type>((Class<?>) compType, null);
+			}
+		}
+		return new Pair<Class<?>, Type>(Object.class, null);
+	}
 
 	public static boolean accept(Class<?> type) {
 		return type.isAssignableFrom(Map.class);

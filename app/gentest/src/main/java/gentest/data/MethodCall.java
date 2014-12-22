@@ -13,10 +13,10 @@ import org.springframework.core.DefaultParameterNameDiscoverer;
  */
 public class MethodCall {
 	private DefaultParameterNameDiscoverer paramNameDiscover = new DefaultParameterNameDiscoverer();
-	private Class<?> declaringType;
 	private Method method;
 	private String alias;
 	private String[] paramNames;
+	private Class<?> receiverType;
 	
 	public void execute() {
 
@@ -26,9 +26,10 @@ public class MethodCall {
 		return method;
 	}
 	
-	public static MethodCall of(Method method) {
+	public static MethodCall of(Method method, Class<?> receiverType) {
 		MethodCall methodCall = new MethodCall();
 		methodCall.method = method;
+		methodCall.receiverType = receiverType;
 		return methodCall;
 	}
 	
@@ -39,13 +40,10 @@ public class MethodCall {
 		return paramNames;
 	}
 	
-	public Class<?> getDeclaringType() {
-		if (declaringType == null) {
-			declaringType = method.getDeclaringClass();
-		}
-		return declaringType;
+	public Class<?> getReceiverType() {
+		return receiverType;
 	}
-
+	
 	public String getAlias() {
 		return alias;
 	}

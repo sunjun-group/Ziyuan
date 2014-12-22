@@ -100,13 +100,23 @@ public class Sequence {
 			if (type instanceof Class<?>) {
 				declaredTypes.add((Class<?>) type);
 			} 
-//			else if (type instanceof generic)
+//		TODO LLT: REVIEW	else if (type instanceof generic)
 		}
 		return declaredTypes;
 	}
 	
 	public LocalVariable getReceiver(Class<?> declaringType) {
-		return receiversMap.get(declaringType);
+		LocalVariable receiver = receiversMap.get(declaringType);
+		if (receiver == null) {
+			// another chance
+			for (Class<?> type : receiversMap.keySet()) {
+				if (type.isAssignableFrom(declaringType)) {
+					receiver = receiversMap.get(type);
+					break;
+				}
+			}
+		}
+		return receiver;
 	}
 
 	public void appendMethodExecStmts(Rmethod rmethod,

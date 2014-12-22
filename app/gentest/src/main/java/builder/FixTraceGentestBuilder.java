@@ -46,8 +46,7 @@ import sav.common.core.SavException;
  * using TestsPrinter 
  * 
  */
-public class FixTraceGentestBuilder extends
-		GentestBuilder<FixTraceGentestBuilder> {
+public class FixTraceGentestBuilder extends GentestBuilder<FixTraceGentestBuilder> {
 	public static final String RETURN_METHOD_PARAM_NAME = "return";
 	private Map<Integer, String> aliasMethodMap;
 	private List<EvaluationMethod> evalMethods;
@@ -59,8 +58,9 @@ public class FixTraceGentestBuilder extends
 	}
 	
 	public FixTraceGentestBuilder method(String methodNameOrSign, String alias) {
-		findAndAddTestingMethod(methodNameOrSign);
-		aliasMethodMap.put(testingMethods.size() - 1, alias);
+		MethodCall methodCall = findAndAddTestingMethod(methodNameOrSign);
+		methodCall.setAlias(alias);
+		aliasMethodMap.put(methodCalls.size() - 1, alias);
 		return this;
 	}
 	
@@ -159,7 +159,7 @@ public class FixTraceGentestBuilder extends
 				}
 			}
 		});
-		return tester.test(initMethodCalls());
+		return tester.test(methodCalls);
 	}
 
 	private RqueryMethod getMethodByAlias(List<RqueryMethod> rqueryMethods,
@@ -173,13 +173,4 @@ public class FixTraceGentestBuilder extends
 				"Cannot find method with alias: %s in the rqueryMethod", alias));
 	}
 	
-	@Override
-	protected List<MethodCall> initMethodCalls() {
-		List<MethodCall> methodCalls = super.initMethodCalls();
-		for (int i = 0; i < methodCalls.size(); i++) {
-			MethodCall methodCall = methodCalls.get(i);
-			methodCall.setAlias(aliasMethodMap.get(i));
-		}
-		return methodCalls;
-	}
 }

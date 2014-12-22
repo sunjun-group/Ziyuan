@@ -77,10 +77,6 @@ public class ObjectValueGenerator extends ValueGenerator {
 			return Randomness.randomMember(candidates);
 		}
 		
-		// check if it is interface or abstract
-		if (type.isInterface() || Modifier.isAbstract(type.getModifiers())) {
-			return findConstructor(refAnalyzer.getRandomImplClzz(type));
-		}
 		/* try to find static method for initialization inside class */
 		for (Method method : type.getMethods()) {
 			if (Modifier.isStatic(method.getModifiers())
@@ -89,6 +85,12 @@ public class ObjectValueGenerator extends ValueGenerator {
 					return method;
 				}
 			}
+		}
+		
+		// try to search subclass
+		Class<?> subClass = refAnalyzer.getRandomImplClzz(type);
+		if (subClass != null) {
+			return findConstructor(subClass);
 		}
 		// cannot find constructor;
 		return null;

@@ -17,11 +17,10 @@ import sav.common.core.SavException;
 import sav.common.core.utils.StringUtils;
 import sav.commons.testdata.autogeneration.FindMaxArray;
 import sav.commons.testdata.autogeneration.FindMaxArray2D;
-import sav.commons.testdata.autogeneration.FindMaxMap;
-import sav.commons.testdata.autogeneration.FindMaxWrapper;
 import sav.commons.testdata.autogeneration.FindMaxList;
 import sav.commons.testdata.autogeneration.FindMaxNums;
 import sav.commons.testdata.autogeneration.FindMaxSet;
+import sav.commons.testdata.autogeneration.FindMaxWrapper;
 import builder.FixTraceGentestBuilder;
 import builder.GentestBuilder;
 

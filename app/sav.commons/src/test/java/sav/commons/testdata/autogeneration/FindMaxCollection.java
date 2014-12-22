@@ -17,7 +17,7 @@ import java.util.Collection;
 public class FindMaxCollection implements IFindMax {
 	private Collection<Integer> numbers;
 
-	public FindMaxCollection(Collection<Integer> num) {
+	protected FindMaxCollection(Collection<Integer> num) {
 		this.numbers = num;
 	}
 

@@ -34,11 +34,9 @@ public class ReferenceAnalyser implements IReferencesAnalyzer {
 	 */
 	@Override
 	public Class<?> getRandomImplClzz(Class<?> clazz) {
-
 		if(clazz.isInterface()){
 			return getRandomImplInterface(clazz, new ImplementingTypeFilterImpl(clazz));
-		}
-		else{
+		} else{
 			return getRandomImplInterface(clazz, new ExtendingTypeFilterImpl(clazz));
 		}
 	}

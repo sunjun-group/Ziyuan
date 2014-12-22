@@ -63,7 +63,7 @@ public class GentestTest {
 	private List<MethodCall> toMethodCalls(List<Method> methods) {
 		List<MethodCall> methodCalls = new ArrayList<MethodCall>(methods.size());
 		for (Method method : methods) {
-			methodCalls.add(MethodCall.of(method));
+			methodCalls.add(MethodCall.of(method, method.getDeclaringClass()));
 		}
 		return methodCalls;
 	}
