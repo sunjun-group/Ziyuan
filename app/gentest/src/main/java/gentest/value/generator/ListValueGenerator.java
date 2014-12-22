@@ -42,21 +42,15 @@ public class ListValueGenerator extends SpecificValueGenerator {
 	}
 
 	@Override
-	public void doAppend(GeneratedVariable variable, int level, Class<?> type)
-			throws SavException {
-		super.doAppend(variable, level, type);
-	}
-
-	@Override
-	protected void doAppendMethods(GeneratedVariable variable, int level,
-			int scopeId, List<Method> methodcalls) throws SavException {
+	protected void doAppendMethod(GeneratedVariable variable, int level,
+			int scopeId) throws SavException {
 		try {
 			Method method = getAddMethod();
 			int elementNum = Randomness.nextRandomInt(10);
 			Pair<Class<?>, Type> paramType = getContentType();
 			for (int eleI = 0; eleI < elementNum; eleI++) {
 				GeneratedVariable newVariable = variable.newVariable();
-				AbstractValueGenerator.append(newVariable, level + 2, paramType.a,
+				ValueGenerator.append(newVariable, level + 2, paramType.a,
 						paramType.b);
 				Rmethod rmethod = new Rmethod(method, scopeId);
 				variable.append(newVariable);

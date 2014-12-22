@@ -17,7 +17,7 @@ import sav.common.core.SavException;
  * @author LLT
  * 
  */
-public class ArrayValueGenerator extends AbstractValueGenerator {
+public class ArrayValueGenerator extends ValueGenerator {
 
 	@Override
 	public void doAppend(GeneratedVariable variable, int level, Class<?> type)
@@ -32,7 +32,7 @@ public class ArrayValueGenerator extends AbstractValueGenerator {
 		int[] location = next(null, arrayConstructor.getSizes());
 		while (location != null) {
 			GeneratedVariable newVariable = variable;
-			AbstractValueGenerator.append(newVariable, level + 1, arrayConstructor.getContentType(),
+			ValueGenerator.append(newVariable, level + 1, arrayConstructor.getContentType(),
 					null);
 			int localVariableID = newVariable.getLastVarId(); // the last ID
 

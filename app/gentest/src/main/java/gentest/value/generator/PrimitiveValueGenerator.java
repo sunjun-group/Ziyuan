@@ -18,7 +18,7 @@ import gentest.data.variable.GeneratedVariable;
  * @author LLT
  *
  */
-public class PrimitiveValueGenerator extends AbstractValueGenerator {
+public class PrimitiveValueGenerator extends ValueGenerator {
 	protected ParamGeneratorFactory generatorFactory;
 	
 	public PrimitiveValueGenerator() {

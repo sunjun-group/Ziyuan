@@ -15,13 +15,14 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import sav.common.core.SavException;
+import sav.common.core.utils.CollectionUtils;
 
 
 /**
  * @author LLT
  *
  */
-public abstract class SpecificValueGenerator extends AbstractValueGenerator {
+public abstract class SpecificValueGenerator extends ValueGenerator {
 	private Class<?> implType;
 	private List<Method> methodcalls;
 	
@@ -36,12 +37,17 @@ public abstract class SpecificValueGenerator extends AbstractValueGenerator {
 	}
 	
 	@Override
-	public void doAppend(GeneratedVariable variable, int level, Class<?> type)
+	public final void doAppend(GeneratedVariable variable, int level, Class<?> type)
 			throws SavException {
 		getGenerator(ObjectValueGenerator.class).doAppend(variable, level, implType);
 		int varId = variable.getLastVarId();
 		variable.commitReturnVarIdIfNotExist();
-		doAppendMethods(variable, level, varId, methodcalls);
+		doAppendMethod(variable, level, varId);
+	}
+
+	protected void doAppendMethod(GeneratedVariable variable, int level, int varId)
+			throws SavException {
+		doAppendMethods(variable, level, varId, CollectionUtils.nullToEmpty(methodcalls));
 	}
 
 }

@@ -28,7 +28,7 @@ import sav.common.core.utils.Randomness;
  * @author LLT
  *
  */
-public class ObjectValueGenerator extends AbstractValueGenerator {
+public class ObjectValueGenerator extends ValueGenerator {
 	private ReferenceAnalyser refAnalyzer = new ReferenceAnalyser();
 	
 	@Override
@@ -52,14 +52,14 @@ public class ObjectValueGenerator extends AbstractValueGenerator {
 			doAppendStaticMethods(variable, level,
 					CollectionUtils.listOf((Method) initializedStmt));
 		} else {
+			/* we accept to init null for the obj*/
 			assignNull(variable, type);
 		}
-		/* we accept to init null for the obj*/
 	}
 
 	private Member findConstructor(Class<?> type) {
 		try {
-			/* try with the perfect one which is public constructor with */
+			/* try with the perfect one which is public constructor with no parameter*/
 			Constructor<?> constructor = type.getConstructor();
 			if (isAccessibleAndPublic(constructor)) {
 				return constructor;

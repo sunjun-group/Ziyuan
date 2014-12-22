@@ -7,7 +7,7 @@ import gentest.data.LocalVariable;
 import gentest.data.Sequence;
 import gentest.data.variable.ISelectedVariable;
 import gentest.data.variable.ReferenceVariable;
-import gentest.value.generator.AbstractValueGenerator;
+import gentest.value.generator.ValueGenerator;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -48,9 +48,7 @@ public class ParameterSelector {
 	 */
 	private ISelectedVariable selectGeneratedParam(Class<?> clazz,
 			Type type, int firstStmtIdx, int firstVarIdx) throws SavException {
-		return AbstractValueGenerator.generate(clazz, type, firstStmtIdx, firstVarIdx);
-//		return new ValueGenerator(new ParamGeneratorFactory()).generate(type,
-//				firstStmtIdx, firstVarIdx);
+		return ValueGenerator.generate(clazz, type, firstStmtIdx, firstVarIdx);
 	}
 
 	/**

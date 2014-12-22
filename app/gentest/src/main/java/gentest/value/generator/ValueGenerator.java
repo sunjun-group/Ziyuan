@@ -22,7 +22,7 @@ import sav.common.core.SavException;
  * @author LLT
  *
  */
-public abstract class AbstractValueGenerator {
+public abstract class ValueGenerator {
 	/* level of generated value from root statment
 	 * ex: generate value for parameter p1 of method:
 	 * methodA(List<Interger> p1, p2)
@@ -30,7 +30,7 @@ public abstract class AbstractValueGenerator {
 	 * generate list -> level 1
 	 * generate values for list -> level 2
 	 * */
-	protected static int maxLevel = 4;
+	protected static int maxLevel = 5;
 
 	public static GeneratedVariable generate(Class<?> clazz, Type type, int firstStmtIdx,
 			int firstVarId) throws SavException {
@@ -51,7 +51,7 @@ public abstract class AbstractValueGenerator {
 			return;
 		}
 
-		AbstractValueGenerator generator = findGenerator(clazz, type);
+		ValueGenerator generator = findGenerator(clazz, type);
 		generator.doAppend(variable, level, clazz);
 	}
 
@@ -59,12 +59,12 @@ public abstract class AbstractValueGenerator {
 		variable.append(RAssignment.assignmentFor(clazz, null));
 	}
 	
-	protected void doAppendMethods(GeneratedVariable variable, int level,
+	protected final void doAppendMethods(GeneratedVariable variable, int level,
 			int scopeId, List<Method> methodcalls) throws SavException {
 		doAppendMethods(variable, level, methodcalls, scopeId, false);
 	}
 
-	protected void doAppendStaticMethods(GeneratedVariable variable, int level,
+	protected final void doAppendStaticMethods(GeneratedVariable variable, int level,
 			List<Method> methodcalls) throws SavException {
 		doAppendMethods(variable, level, methodcalls, Statement.INVALID_VAR_ID,
 				true);
@@ -78,7 +78,7 @@ public abstract class AbstractValueGenerator {
 			int[] paramIds = new int[parameterTypes.length];
 			for (int i = 0; i < paramIds.length; i++) {
 				Class<?> paramType = parameterTypes[i];
-				AbstractValueGenerator.append(variable, level + 2, paramType, null);
+				ValueGenerator.append(variable, level + 2, paramType, null);
 				paramIds[i] = variable.getLastVarId();
 			}
 			Rmethod rmethod = new Rmethod(method, scopeId);
@@ -89,7 +89,7 @@ public abstract class AbstractValueGenerator {
 	public abstract void doAppend(GeneratedVariable variable, int level,
 			Class<?> type) throws SavException;
 
-	private static AbstractValueGenerator findGenerator(Class<?> clazz, Type type) {
+	private static ValueGenerator findGenerator(Class<?> clazz, Type type) {
 		if (clazz.isArray()) {
 			return new ArrayValueGenerator();
 		}
@@ -99,11 +99,13 @@ public abstract class AbstractValueGenerator {
 		if (SetValueGenerator.accept(clazz)) {
 			return new SetValueGenerator(type);
 		}
+		if (MapValueGenerator.accept(clazz)) {
+			return new MapValueGenerator(type);
+		}
 		return getGenerator(ObjectValueGenerator.class);
 	}
 	
-	/*TODO LLT: temp, to complete*/
-	protected static AbstractValueGenerator getGenerator(Class<?> clazz) {
+	protected static ValueGenerator getGenerator(Class<?> clazz) {
 		if (clazz == ObjectValueGenerator.class) {
 			return new ObjectValueGenerator();
 		}

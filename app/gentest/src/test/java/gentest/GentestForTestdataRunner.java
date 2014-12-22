@@ -17,6 +17,7 @@ import sav.common.core.SavException;
 import sav.common.core.utils.StringUtils;
 import sav.commons.testdata.autogeneration.FindMaxArray;
 import sav.commons.testdata.autogeneration.FindMaxArray2D;
+import sav.commons.testdata.autogeneration.FindMaxMap;
 import sav.commons.testdata.autogeneration.FindMaxWrapper;
 import sav.commons.testdata.autogeneration.FindMaxList;
 import sav.commons.testdata.autogeneration.FindMaxNums;
@@ -29,7 +30,12 @@ import builder.GentestBuilder;
  *
  */
 public class GentestForTestdataRunner extends AbstractGTTest {
-
+//
+//	@Test
+//	public void testFindMaxMap() throws SavException {
+//		generateTestcase(FindMaxMap.class); 
+//	}
+	
 	@Test
 	public void testFindMaxInterface() throws SavException {
 		generateTestcase(FindMaxWrapper.class); 
