@@ -30,7 +30,9 @@ public abstract class ValueGenerator {
 	 * generate list -> level 1
 	 * generate values for list -> level 2
 	 * */
-	protected static int maxLevel = 5;
+	protected static int maxLevel = 10;
+	// NOTE This must be less than 255
+	public static final int GENERATED_ARRAY_MAX_LENGTH = 10;
 
 	public static GeneratedVariable generate(Class<?> clazz, Type type, int firstStmtIdx,
 			int firstVarId) throws SavException {

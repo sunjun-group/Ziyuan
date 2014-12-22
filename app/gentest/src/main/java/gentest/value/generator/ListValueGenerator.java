@@ -12,7 +12,6 @@ import gentest.data.statement.Rmethod;
 import gentest.data.variable.GeneratedVariable;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +46,7 @@ public class ListValueGenerator extends SpecificValueGenerator {
 		try {
 			Method method = getAddMethod();
 			int elementNum = Randomness.nextRandomInt(10);
-			Pair<Class<?>, Type> paramType = getContentType();
+			Pair<Class<?>, Type> paramType = getContentType(type, 0);
 			for (int eleI = 0; eleI < elementNum; eleI++) {
 				GeneratedVariable newVariable = variable.newVariable();
 				ValueGenerator.append(newVariable, level + 2, paramType.a,
@@ -64,15 +63,5 @@ public class ListValueGenerator extends SpecificValueGenerator {
 
 	protected Method getAddMethod() throws NoSuchMethodException {
 		return ArrayList.class.getMethod("add", Object.class);
-	}
-
-	private Pair<Class<?>, Type> getContentType() {
-		if (type instanceof ParameterizedType) {
-			Type compType = ((ParameterizedType) type).getActualTypeArguments()[0];
-			if (compType instanceof Class<?>) {
-				return new Pair<Class<?>, Type>((Class<?>) compType, null);
-			}
-		}
-		return new Pair<Class<?>, Type>(Object.class, null);
 	}
 }

@@ -12,8 +12,11 @@ import gentest.commons.utils.MethodUtils;
 import gentest.data.variable.GeneratedVariable;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 
+import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 
@@ -45,9 +48,24 @@ public abstract class SpecificValueGenerator extends ValueGenerator {
 		doAppendMethod(variable, level, varId);
 	}
 
-	protected void doAppendMethod(GeneratedVariable variable, int level, int varId)
+	protected void doAppendMethod(GeneratedVariable variable, int level, int scopeId)
 			throws SavException {
-		doAppendMethods(variable, level, varId, CollectionUtils.nullToEmpty(methodcalls));
+		doAppendMethods(variable, level, scopeId, CollectionUtils.nullToEmpty(methodcalls));
+	}
+	
+	protected Pair<Class<?>, Type> getContentType(Type type, int idxType) {
+		if (type instanceof ParameterizedType) {
+			Type compType = ((ParameterizedType) type).getActualTypeArguments()[idxType];
+			if (compType instanceof Class<?>) {
+				return new Pair<Class<?>, Type>((Class<?>) compType, null);
+			}
+			if (compType instanceof ParameterizedType) {
+				return new Pair<Class<?>, Type>(
+						(Class<?>) ((ParameterizedType) compType).getRawType(),
+						compType);
+			}
+		}
+		return new Pair<Class<?>, Type>(Object.class, null);
 	}
 
 }

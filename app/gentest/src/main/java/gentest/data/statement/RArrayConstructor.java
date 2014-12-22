@@ -1,11 +1,9 @@
 package gentest.data.statement;
 
+import gentest.value.generator.ValueGenerator;
 import sav.common.core.utils.Randomness;
 
 public class RArrayConstructor extends Statement {
-	// NOTE This must be less than 255
-	private static final int GENERATED_ARRAY_MAX_LENGTH = 3;
-
 	private int[] sizes;
 	private Class<?> outputType; // Type of the array itself
 	private Class<?> contentType; // Type of the array content
@@ -19,7 +17,8 @@ public class RArrayConstructor extends Statement {
 		}
 		this.sizes = new int[dimension];
 		for (int i = 0; i < dimension; i++) {
-			this.sizes[i] = Randomness.nextRandomInt(GENERATED_ARRAY_MAX_LENGTH);
+			this.sizes[i] = Randomness
+					.nextRandomInt(ValueGenerator.GENERATED_ARRAY_MAX_LENGTH);
 		}
 	}
 
