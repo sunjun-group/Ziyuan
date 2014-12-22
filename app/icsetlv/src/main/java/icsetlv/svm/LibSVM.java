@@ -35,23 +35,23 @@ public class LibSVM extends AbstractClassifier {
 	private static final long serialVersionUID = -8901871714620581945L;
 
 	private svm_parameter getDefaultParameters() {
-		svm_parameter svmParam = new svm_parameter();
-		svmParam.svm_type = svm_parameter.C_SVC;
-		svmParam.C = 1;
-		svmParam.kernel_type = svm_parameter.LINEAR;
-		svmParam.degree = 1;
-		svmParam.gamma = 0; // 1/k
-		svmParam.coef0 = 0;
-		svmParam.nu = 0.5;
-		svmParam.cache_size = 100;
-		svmParam.eps = 1e-3;
-		svmParam.p = 0.1;
-		svmParam.shrinking = 1;
-		svmParam.probability = 1;
-		svmParam.nr_weight = 0;/*4;*/
-		svmParam.weight_label = /*new int[]{1, 1, 0, 0};*/new int[0];
-		svmParam.weight = /*new double[]{1, 1, 0, 0};*/ new double[0];
-		return svmParam;
+		svm_parameter param = new svm_parameter();
+		param.svm_type = svm_parameter.C_SVC;
+		param.C = 1;
+		param.kernel_type = svm_parameter.LINEAR;
+		param.degree = 1;
+		param.gamma = 0; // 1/k
+		param.coef0 = 0;
+		param.nu = 0.5;
+		param.cache_size = 100;
+		param.eps = 1e-3;
+		param.p = 0.1;
+		param.shrinking = 1;
+		param.probability = 1;
+		param.nr_weight = 0;/*4;*/
+		param.weight_label = /*new int[]{1, 1, 0, 0};*/new int[0];
+		param.weight = /*new double[]{1, 1, 0, 0};*/ new double[0];
+		return param;
 	}
 
 	/**
@@ -60,10 +60,10 @@ public class LibSVM extends AbstractClassifier {
 	 * @return the current configuration
 	 */
 	public svm_parameter getParameters() {
-		if (param == null) {
-			param = getDefaultParameters();
+		if (svmParam == null) {
+			svmParam = getDefaultParameters();
 		}
-		return param;
+		return svmParam;
 	}
 
 	private static svm_problem transformDataset(Dataset data) {
@@ -89,7 +89,7 @@ public class LibSVM extends AbstractClassifier {
 		return p;
 	}
 
-	private svm_parameter param;
+	private svm_parameter svmParam;
 	private Dataset data;
 	private svm_model model;
 
@@ -105,7 +105,7 @@ public class LibSVM extends AbstractClassifier {
 	 *            a set of parameters
 	 */
 	public void setParameters(svm_parameter param) {
-		this.param = param;
+		this.svmParam = param;
 	}
 
 
@@ -135,7 +135,7 @@ public class LibSVM extends AbstractClassifier {
 			System.out.println(data.get(i));
 		}
 		System.out.println();
-		model = svm.svm_train(p, param);
+		model = svm.svm_train(p, getParameters());
 
 		double[][] coef = model.sv_coef;
 
@@ -154,7 +154,7 @@ public class LibSVM extends AbstractClassifier {
 			}
 		}
 		/* Weights are only available for linear SVMs */
-		if (param.svm_type == svm_parameter.C_SVC) {
+		if (getParameters().svm_type == svm_parameter.C_SVC) {
 			double w_list[][][] = new double[model.nr_class][model.nr_class - 1][data
 			                                                                     .noAttributes()];
 
