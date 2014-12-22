@@ -94,7 +94,7 @@ public class LibSVM extends AbstractClassifier {
 	private svm_model model;
 
 	public svm_model getModel(){
-		assert ClassifierBuiltDone == true;
+		Assert.assertTrue(isClassifierBuiltDone);
 		return model;
 	}
 
@@ -124,7 +124,7 @@ public class LibSVM extends AbstractClassifier {
 	}
 
 
-	public static boolean ClassifierBuiltDone = false;
+	private boolean isClassifierBuiltDone = false;
 
 	@Override
 	public void buildClassifier(Dataset data) {
@@ -187,7 +187,7 @@ public class LibSVM extends AbstractClassifier {
 		} else {
 			weights = null;
 		}
-		ClassifierBuiltDone = true;
+		isClassifierBuiltDone = true;
 	}
 
 	private double[] weights;
@@ -200,7 +200,7 @@ public class LibSVM extends AbstractClassifier {
 	 * @return weight vector
 	 */
 	public double[] getWeights() {
-		assert ClassifierBuiltDone == true;
+		Assert.assertTrue(isClassifierBuiltDone);
 		return weights;
 	}
 
@@ -250,7 +250,7 @@ public class LibSVM extends AbstractClassifier {
 
 
 	public divider getExplicitDivider(){
-		assert ClassifierBuiltDone == true;
+		Assert.assertTrue(isClassifierBuiltDone);
 		int pSize = data.noAttributes();
 		double bias = 0;
 		double[] wVec = new double[pSize];
