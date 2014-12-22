@@ -1,5 +1,7 @@
 package icsetlv.svm;
 
+import icsetlv.common.utils.Assert;
+
 import java.util.SortedSet;
 
 import libsvm.svm;
@@ -11,6 +13,8 @@ import libsvm.svm_problem;
 import net.sf.javaml.classification.AbstractClassifier;
 import net.sf.javaml.core.Dataset;
 import net.sf.javaml.core.Instance;
+
+import org.apache.commons.lang.ObjectUtils;
 
 /**
  * Wrapper for the libSVM library.
@@ -287,26 +291,24 @@ public class LibSVM extends AbstractClassifier {
 		divider dv = new divider(wVec, bias);
 		return dv;
 	}
-	
+
 	/**
 	 * Provides access to the accuracy of the trained model
+	 * 
 	 * @return modelAccuracy
 	 */
-
-	public double modelAccuracy(){
-		int[] tfrecord = {0,0};
-		for(Instance ins : data){
-			if(classify(ins)==ins.classValue()){
-				tfrecord[0]++;
-			}else{
-				tfrecord[1]++;
+	public double modelAccuracy() {
+		int rightClassification = 0, wrongClassification = 0;
+		for (Instance ins : data) {
+			if (ObjectUtils.equals(classify(ins), ins.classValue())) {
+				rightClassification++;
+			} else {
+				wrongClassification++;
 			}
 		}
-		assert tfrecord[0] + tfrecord[1] == data.size();
-		double accuracy = 0;
-		System.out.println("# Training point: " + (tfrecord[0] + tfrecord[1]));
-		System.out.println("# Right classification: " + tfrecord[0]);
-		accuracy = (double)tfrecord[0]/(double)data.size();
-		return accuracy;
+		Assert.assertTrue(rightClassification + wrongClassification == data.size());
+		System.out.println("# Training point: " + data.size());
+		System.out.println("# Right classification: " + rightClassification);
+		return (double) rightClassification / (double) data.size();
 	}
 }
