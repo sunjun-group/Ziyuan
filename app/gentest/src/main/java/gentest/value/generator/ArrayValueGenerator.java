@@ -15,7 +15,7 @@ import sav.common.core.SavException;
 
 /**
  * @author LLT
- * 
+ * @author Nguyen Phuoc Nguong Phuc
  */
 public class ArrayValueGenerator extends ValueGenerator {
 

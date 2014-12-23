@@ -8,14 +8,15 @@
 
 package gentest.value.generator;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.List;
-
 import gentest.data.statement.RAssignment;
 import gentest.data.statement.Rmethod;
 import gentest.data.statement.Statement;
 import gentest.data.variable.GeneratedVariable;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.List;
+
 import sav.common.core.SavException;
 
 /**
@@ -72,16 +73,22 @@ public abstract class ValueGenerator {
 				true);
 	}
 	
-	private void doAppendMethods(GeneratedVariable variable, int level, 
+	protected final void doAppendMethods(GeneratedVariable variable, int level, 
 			List<Method> methodcalls, int scopeId, boolean addVariable) throws SavException {
 		// generate value for method call
 		for (Method method : methodcalls) {
-			Class<?>[] parameterTypes = method.getParameterTypes();
-			int[] paramIds = new int[parameterTypes.length];
+			/* check generic types */
+			Type[] genericParamTypes = method.getGenericParameterTypes();
+			Class<?>[] types = method.getParameterTypes();
+			int[] paramIds = new int[genericParamTypes.length];
 			for (int i = 0; i < paramIds.length; i++) {
-				Class<?> paramType = parameterTypes[i];
-				ValueGenerator.append(variable, level + 2, paramType, null);
-				paramIds[i] = variable.getLastVarId();
+				Type type = genericParamTypes[i];
+//				Class<?> paramType = (Class<?>) type;
+				Class<?> paramType = types[i];
+				GeneratedVariable newVar = variable.newVariable();
+				ValueGenerator.append(newVar, level + 2, paramType, null);
+				paramIds[i] = newVar.getLastVarId();
+				variable.append(newVar);
 			}
 			Rmethod rmethod = new Rmethod(method, scopeId);
 			variable.append(rmethod, paramIds, addVariable);

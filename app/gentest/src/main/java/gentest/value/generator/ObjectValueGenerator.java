@@ -9,20 +9,19 @@
 package gentest.value.generator;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import extcos.ReferenceAnalyser;
-
-import gentest.data.statement.RConstructor;
-import gentest.data.variable.GeneratedVariable;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
+import extcos.ReferenceAnalyser;
+import gentest.data.MethodCall;
+import gentest.data.statement.RConstructor;
+import gentest.data.variable.GeneratedVariable;
 
 /**
  * @author LLT
@@ -34,7 +33,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 	@Override
 	public void doAppend(GeneratedVariable variable, int level, Class<?> type)
 			throws SavException {
-		Member initializedStmt = findConstructor(type);
+ 		Object initializedStmt = findConstructor(type);
 		if (initializedStmt instanceof Constructor<?>) {
 			Constructor<?> constructor = (Constructor<?>) initializedStmt;
 			RConstructor rconstructor = RConstructor.of(constructor);
@@ -51,13 +50,28 @@ public class ObjectValueGenerator extends ValueGenerator {
 		} else if (initializedStmt instanceof Method) {
 			doAppendStaticMethods(variable, level,
 					CollectionUtils.listOf((Method) initializedStmt));
+		} else if (initializedStmt instanceof MethodCall) {
+			MethodCall methodCall = (MethodCall) initializedStmt;
+			GeneratedVariable newVar = variable.newVariable();
+			append(newVar, level + 1, methodCall.getReceiverType(), null);
+			variable.append(newVar);
+			doAppendMethods(variable, level,
+					CollectionUtils.listOf(methodCall.getMethod()),
+					newVar.getReturnVarId(), true);
 		} else {
 			/* we accept to init null for the obj*/
 			assignNull(variable, type);
 		}
 	}
 
-	private Member findConstructor(Class<?> type) {
+	/**
+	 * return 
+	 * constructor: if the class has it own visible constructor 
+	 * 			or if not, the visible constructor of extended class will be returned
+	 * method: means static method, if the class does not have visible constructor but static initialization method
+	 * methodCall: if the class has a builder inside. 
+	 */
+	private Object findConstructor(Class<?> type) {
 		try {
 			/* try with the perfect one which is public constructor with no parameter*/
 			Constructor<?> constructor = type.getConstructor();
@@ -83,6 +97,18 @@ public class ObjectValueGenerator extends ValueGenerator {
 					&& Modifier.isPublic(method.getModifiers())) {
 				if (method.getReturnType().equals(type)) {
 					return method;
+				}
+			}
+		}
+		
+		/* try to find a builder inside class */
+		Class<?>[] declaredClasses = type.getDeclaredClasses();
+		if (declaredClasses != null) {
+			for (Class<?> innerClazz : declaredClasses) {
+				for (Method method : innerClazz.getMethods()) {
+					if (method.getReturnType().equals(type)) {
+						return MethodCall.of(method, innerClazz);
+					}
 				}
 			}
 		}

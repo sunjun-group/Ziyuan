@@ -80,7 +80,7 @@ public class ParamGeneratorFactory {
 					return PrimitiveGenerators.integers(Short.MIN_VALUE, Short.MAX_VALUE);
 				}
 				if (key == String.class) {
-					return PrimitiveGenerators.printableStrings();
+					return PrimitiveGenerators.letterStrings();
 				}
 				if (key == Date.class) {
 					return PrimitiveGenerators.dates();
