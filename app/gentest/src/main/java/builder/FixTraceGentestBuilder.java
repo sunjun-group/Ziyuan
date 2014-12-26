@@ -121,7 +121,7 @@ public class FixTraceGentestBuilder extends GentestBuilder<FixTraceGentestBuilde
 	 * Pair<passTcs, failTcs>
 	 */
 	@Override
-	public Pair<List<Sequence>, List<Sequence>> generate() throws SavException {
+	public Pair<List<Sequence>, List<Sequence>> doGenerate() throws SavException {
 		FixTraceTester tester = new FixTraceTester(numberOfTcs);
 		tester.setListener(new GentestListener() {
 			

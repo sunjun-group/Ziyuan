@@ -47,16 +47,20 @@ public abstract class GentestBuilder<T extends GentestBuilder<T>> {
 		 * otherwise, just reset the current class
 		 * and reset flat specificMethod to
 		 */
-		if (this.clazz != null && !specificMethod) {
-			addAllMethods(methodCalls, clazz);
-		}
+		addAllMethodsForLastClazzIfNotSpecified();
 		specificMethod = false;
 		this.clazz = clazz;
 		return (T) this;
 	}
+
+	private void addAllMethodsForLastClazzIfNotSpecified() {
+		if (this.clazz != null && !specificMethod) {
+			addAllMethods(methodCalls, this.clazz);
+		}
+	}
 	
 	private void addAllMethods(List<MethodCall> methodCalls, Class<?> targetClass) {
-		for (Method method : targetClass.getMethods()) {
+		for (Method method : targetClass.getDeclaredMethods()) {
 			addMethodCall(targetClass, method);
 		}
 	}
@@ -67,8 +71,6 @@ public abstract class GentestBuilder<T extends GentestBuilder<T>> {
 				methodCall);
 		return methodCall;
 	}
-	
-	
 
 	public T method(String methodNameOrSign) {
 		specificMethod = true;
@@ -117,6 +119,12 @@ public abstract class GentestBuilder<T extends GentestBuilder<T>> {
 						methodNameOrSign));
 	}
 	
-	public abstract Pair<List<Sequence>, List<Sequence>> generate()
+	public final Pair<List<Sequence>, List<Sequence>> generate()
+			throws SavException {
+		addAllMethodsForLastClazzIfNotSpecified();
+		return doGenerate();
+	}
+	
+	public abstract Pair<List<Sequence>, List<Sequence>> doGenerate()
 			throws SavException;
 }

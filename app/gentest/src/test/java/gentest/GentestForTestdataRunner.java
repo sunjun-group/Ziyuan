@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import sav.common.core.SavException;
 import sav.common.core.utils.StringUtils;
+import sav.commons.testdata.BoundedStack;
 import sav.commons.testdata.autogeneration.FindMaxArray;
 import sav.commons.testdata.autogeneration.FindMaxArray2D;
 import sav.commons.testdata.autogeneration.FindMaxComplexMap;
@@ -28,6 +29,7 @@ import sav.commons.testdata.autogeneration.FindMaxString;
 import sav.commons.testdata.autogeneration.FindMaxWrapper;
 import builder.FixTraceGentestBuilder;
 import builder.GentestBuilder;
+import builder.RandomTraceGentestBuilder;
 
 /**
  * @author LLT
@@ -35,6 +37,16 @@ import builder.GentestBuilder;
  */
 public class GentestForTestdataRunner extends AbstractGTTest {
 
+	@Test
+	public void testBoundedStack() throws SavException {
+		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(100);
+		builder.queryMaxLength(7)
+				.testPerQuery(10);
+		Class<BoundedStack> targetClazz = BoundedStack.class;
+		builder.forClass(targetClazz);
+		printTc(builder, targetClazz);
+	}
+	
 	@Test
 	public void testFindMaxString() throws SavException {
 		generateTestcase(FindMaxString.class); 

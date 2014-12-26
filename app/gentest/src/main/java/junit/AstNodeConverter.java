@@ -139,7 +139,7 @@ public class AstNodeConverter {
 				return new DoubleLiteralExpr(value.toString());
 			case Float:
 			case Long:
-				return new LongLiteralExpr(value.toString());
+				return new LongLiteralExpr(value.toString() + "l");
 			default:
 				return new StringLiteralExpr(value.toString());
 			}

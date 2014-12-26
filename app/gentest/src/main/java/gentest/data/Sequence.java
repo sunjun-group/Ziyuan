@@ -60,7 +60,7 @@ public class Sequence {
 	
 	public void append(Rmethod method) {
 		stmts.add(method);
-		if (method.hasOutputVar()) {
+		if (method.hasReturnType()) {
 			int newVarId = getVarsSize();
 			LocalVariable newVar = new LocalVariable(getStmtsSize() - 1, newVarId, 
 					method.getReturnType());
