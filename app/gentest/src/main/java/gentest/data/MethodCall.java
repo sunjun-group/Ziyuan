@@ -4,6 +4,7 @@
 package gentest.data;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import org.springframework.core.DefaultParameterNameDiscoverer;
 
@@ -62,5 +63,9 @@ public class MethodCall {
 		throw new IllegalArgumentException(String.format(
 				"Cannot find parameter of method %s with name %s",
 				method.getName(), paramName));
+	}
+
+	public boolean requireReceiver() {
+		return !Modifier.isStatic(method.getModifiers());
 	}
 }

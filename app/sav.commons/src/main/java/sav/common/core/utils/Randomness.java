@@ -60,4 +60,8 @@ public final class Randomness {
 		return shuffleList.subList(0, subSize);
 	}
 
+	public static boolean randomBoolFromDistribution(double trueProb_, double falseProb_) {
+		double falseProb = falseProb_ / (falseProb_ + trueProb_);
+		return (Randomness.getRandom().nextDouble() >= falseProb);
+	}
 }

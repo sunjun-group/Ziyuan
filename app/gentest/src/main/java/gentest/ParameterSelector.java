@@ -71,7 +71,10 @@ public class ParameterSelector {
 		if (CollectionUtils.isEmpty(existedVars)) {
 			return SelectionMode.GENERATE_NEW;
 		}
-		return Randomness.randomMember(SelectionMode.values());
+		if (Randomness.randomBoolFromDistribution(3, 2)) {
+			return SelectionMode.REFERENCE;
+		}
+		return SelectionMode.GENERATE_NEW;
 	}
 	
 	private static enum SelectionMode {

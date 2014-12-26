@@ -25,6 +25,7 @@ import sav.commons.testdata.autogeneration.FindMaxList3D;
 import sav.commons.testdata.autogeneration.FindMaxMap;
 import sav.commons.testdata.autogeneration.FindMaxNums;
 import sav.commons.testdata.autogeneration.FindMaxSet;
+import sav.commons.testdata.autogeneration.FindMaxStatic;
 import sav.commons.testdata.autogeneration.FindMaxString;
 import sav.commons.testdata.autogeneration.FindMaxWrapper;
 import builder.FixTraceGentestBuilder;
@@ -45,6 +46,11 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 		Class<BoundedStack> targetClazz = BoundedStack.class;
 		builder.forClass(targetClazz);
 		printTc(builder, targetClazz);
+	}
+	
+	@Test
+	public void testFindMaxStatic() throws SavException {
+		generateTestcase(FindMaxStatic.class); 
 	}
 	
 	@Test

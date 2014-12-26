@@ -50,17 +50,6 @@ public class TestcaseGenerator {
 		/* append sequence for each method */
 		for (int i = 0; i < methods.size(); i++) {
 			MethodCall method = methods.get(i);
-			/* prepare method receiver */
-			LocalVariable receiver = seq.getReceiver(method.getReceiverType());
-			if (receiver == null) {
-				/* if the instance of method receiver still did not exist in the sequence,
-				 * initialize one */
-				ISelectedVariable param = parameterSelector.selectParam(
-						method.getReceiverType(), null, seq.getStmtsSize(),
-						seq.getVarsSize());
-				seq.appendReceiver(param, method.getReceiverType());
-				executor.executeReceiver(param);
-			}
 			/* select parameters for methods and append statements 
 			 * which initializes those values into the sequence */
 			List<ISelectedVariable> selectParams = selectParams(method);
@@ -69,8 +58,25 @@ public class TestcaseGenerator {
 				ISelectedVariable param = selectParams.get(j);
 				inVars[j] = param.getReturnVarId();
 			}
-			RqueryMethod rmethod = new RqueryMethod(method, seq.getReceiver(
-					method.getReceiverType()).getVarId());
+			RqueryMethod rmethod = null;
+			ISelectedVariable recieverParam = null;
+			if (method.requireReceiver()) {
+				/* prepare method receiver if method is not static */
+				LocalVariable receiver = seq.getReceiver(method.getReceiverType());
+				if (receiver == null) {
+					/* if the instance of method receiver still did not exist in the sequence,
+					 * initialize one */
+					recieverParam = parameterSelector.selectParam(
+							method.getReceiverType(), null, seq.getStmtsSize(),
+							seq.getVarsSize());
+					seq.appendReceiver(recieverParam, method.getReceiverType());
+				}
+				rmethod = new RqueryMethod(method, seq.getReceiver(
+						method.getReceiverType()).getVarId());
+			} else {
+				rmethod = new RqueryMethod(method);
+			}
+			executor.start(recieverParam);
 			rmethod.setInVarIds(inVars);
 			seq.appendMethodExecStmts(rmethod, selectParams);
 			if (!executor.execute(rmethod, selectParams)) {

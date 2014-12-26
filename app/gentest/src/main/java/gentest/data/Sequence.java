@@ -35,23 +35,29 @@ public class Sequence {
 	private Map<Type, List<LocalVariable>> typeVariableMap;
 	private Map<Class<?>, LocalVariable> receiversMap;
 	private List<Statement> stmts;
+	private Set<Class<?>> staticClasses; // which the methodCalls belong to
 
 	public Sequence() {
 		localVariables = new ArrayList<LocalVariable>();
 		typeVariableMap = new HashMap<Type, List<LocalVariable>>();
 		receiversMap = new HashMap<Class<?>, LocalVariable>();
 		stmts = new ArrayList<Statement>();
+		staticClasses = new HashSet<Class<?>>();
 	}
 	
 	public void append(ISelectedVariable param) {
 		stmts.addAll(param.getStmts());
 		for (LocalVariable var : param.getNewVariables()) {
-			localVariables.add(var);
-			CollectionUtils.getListInitIfEmpty(typeVariableMap, var.getType())
-					.add(var);
+			addLocalVariable(var);
 		}
 	}
-	
+
+	private void addLocalVariable(LocalVariable var) {
+		localVariables.add(var);
+		CollectionUtils.getListInitIfEmpty(typeVariableMap, var.getType()).add(
+				var);
+	}
+
 	public void appendReceiver(ISelectedVariable param, Class<?> type) {
 		append(param);
 		/* the last localvariables must be the receiver constructor statement */
@@ -64,8 +70,11 @@ public class Sequence {
 			int newVarId = getVarsSize();
 			LocalVariable newVar = new LocalVariable(getStmtsSize() - 1, newVarId, 
 					method.getReturnType());
-			localVariables.add(newVar);
+			addLocalVariable(newVar);
 			method.setOutVarId(newVarId);
+		}
+		if (method.isStatic()) {
+			staticClasses.add(method.getDeclaringType());
 		}
 	}
 	
@@ -96,6 +105,7 @@ public class Sequence {
 	
 	public Set<Class<?>> getDeclaredTypes() {
 		Set<Class<?>> declaredTypes = new HashSet<Class<?>>();
+		declaredTypes.addAll(staticClasses);
 		for (Type type : typeVariableMap.keySet()) {
 			if (type instanceof Class<?>) {
 				declaredTypes.add((Class<?>) type);

@@ -5,6 +5,7 @@ package gentest.data.statement;
 
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 /**
  * @author LLT
@@ -68,5 +69,8 @@ public class Rmethod extends Statement {
 		return declaringType;
 	}
 
+	public boolean isStatic() {
+		return Modifier.isStatic(method.getModifiers());
+	}
 }
  

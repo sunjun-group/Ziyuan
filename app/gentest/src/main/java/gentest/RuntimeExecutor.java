@@ -44,12 +44,14 @@ public class RuntimeExecutor implements StatementVisitor {
 		data.reset();
 	}
 	
-	public boolean executeReceiver(ISelectedVariable param) {
+	public boolean start(ISelectedVariable receiver) {
 		if (successful == null) {
 			successful = true;
 		}
-
-		return execute(param);
+		if (receiver != null) {
+			execute(receiver);
+		}
+		return successful;
 	}
 
 	private boolean execute(ISelectedVariable param) {
