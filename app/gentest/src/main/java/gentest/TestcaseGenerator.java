@@ -48,18 +48,11 @@ public class TestcaseGenerator {
 		Sequence seq = new Sequence();
 		refresh(seq);
 		/* append sequence for each method */
+		RqueryMethod rmethod = null;
+		ISelectedVariable recieverParam = null;
 		for (int i = 0; i < methods.size(); i++) {
 			MethodCall method = methods.get(i);
-			/* select parameters for methods and append statements 
-			 * which initializes those values into the sequence */
-			List<ISelectedVariable> selectParams = selectParams(method);
-			int[] inVars = new int[selectParams.size()];
-			for (int j = 0; j < selectParams.size(); j++) {
-				ISelectedVariable param = selectParams.get(j);
-				inVars[j] = param.getReturnVarId();
-			}
-			RqueryMethod rmethod = null;
-			ISelectedVariable recieverParam = null;
+			/* prepare method receiver if method is not static */
 			if (method.requireReceiver()) {
 				/* prepare method receiver if method is not static */
 				LocalVariable receiver = seq.getReceiver(method.getReceiverType());
@@ -75,6 +68,15 @@ public class TestcaseGenerator {
 						method.getReceiverType()).getVarId());
 			} else {
 				rmethod = new RqueryMethod(method);
+			}
+			
+			/* select parameters for methods and append statements 
+			 * which initializes those values into the sequence */
+			List<ISelectedVariable> selectParams = selectParams(method);
+			int[] inVars = new int[selectParams.size()];
+			for (int j = 0; j < selectParams.size(); j++) {
+				ISelectedVariable param = selectParams.get(j);
+				inVars[j] = param.getReturnVarId();
 			}
 			executor.start(recieverParam);
 			rmethod.setInVarIds(inVars);
