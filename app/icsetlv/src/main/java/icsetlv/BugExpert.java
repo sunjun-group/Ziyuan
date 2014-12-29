@@ -28,6 +28,8 @@ import net.sf.javaml.core.Instance;
  */
 public class BugExpert implements IBugExpert {
 	
+	private static final double ACCURACY_THRESHOLD = 0.7;
+
 	@Override
 	public boolean isRootCause(List<BreakpointValue> passValues,
 			List<BreakpointValue> failValues) {
@@ -128,9 +130,6 @@ public class BugExpert implements IBugExpert {
 	 * classification accuracy
 	 */
 	private boolean bugFoundOrNot(Metric metric) {
-		if (metric.modelAccuracy > 0.7) {
-			return false;
-		}
-		return true;
+		return metric.modelAccuracy > ACCURACY_THRESHOLD;
 	}
 }
