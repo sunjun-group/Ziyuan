@@ -13,7 +13,6 @@ import icsetlv.common.dto.BreakPoint.Variable;
 import icsetlv.common.dto.TcExecResult;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.variable.TestcasesExecutor;
-import icsetlv.vm.VMConfiguration;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +20,9 @@ import java.util.List;
 
 import org.junit.Test;
 
+import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
+import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.IncompatibleThreadStateException;
@@ -35,7 +36,7 @@ public class TestcasesExecutorTest extends AbstractTest {
 	@Test
 	public void testExecute() throws IOException, InterruptedException,
 			IncompatibleThreadStateException, AbsentInformationException,
-			IcsetlvException {
+			IcsetlvException, SavException {
 		VMConfiguration vmConfig = initVmConfig();
 
 		// breakpoints

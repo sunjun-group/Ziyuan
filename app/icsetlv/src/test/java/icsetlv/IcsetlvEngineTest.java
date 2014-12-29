@@ -15,7 +15,6 @@ import icsetlv.common.exception.IcsetlvException;
 import icsetlv.svm.LibSVM;
 import icsetlv.variable.AssertionDetector;
 import icsetlv.variable.TestcasesExecutor;
-import icsetlv.vm.VMConfiguration;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -28,6 +27,9 @@ import net.sf.javaml.featureselection.ranking.RecursiveFeatureEliminationSVM;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import sav.common.core.SavException;
+import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.IncompatibleThreadStateException;
@@ -47,7 +49,7 @@ public class IcsetlvEngineTest extends AbstractTest {
 	@Test
 	public void testAnalyze() throws IcsetlvException, IOException,
 			InterruptedException, IncompatibleThreadStateException,
-			AbsentInformationException {
+			AbsentInformationException, SavException {
 		IcsetlvInput input = initInput();
 		List<BreakPoint> bkps = AssertionDetector.scan(input.getAssertionSourcePaths());
 		

@@ -22,7 +22,6 @@ import icsetlv.common.utils.PrimitiveUtils;
 import icsetlv.common.utils.VariableUtils;
 import icsetlv.iface.ITestcasesExecutor;
 import icsetlv.vm.SimpleDebugger;
-import icsetlv.vm.VMConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +29,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
+import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayReference;
@@ -57,6 +58,7 @@ import com.sun.jdi.event.EventSet;
 import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
+import com.sun.jdi.event.VMStartEvent;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequestManager;
@@ -83,7 +85,7 @@ public class TestcasesExecutor implements ITestcasesExecutor {
 	@Override
 	public TcExecResult execute(List<String> passTestcases,
 			List<String> failTestcases, List<BreakPoint> brkps)
-			throws IcsetlvException {
+			throws IcsetlvException, SavException {
 		this.brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
 		Map<String, BreakPoint> locBrpMap = new HashMap<String, BreakPoint>();
 		List<BreakpointValue> passVals = executeJunitTests(locBrpMap, passTestcases);
@@ -92,7 +94,7 @@ public class TestcasesExecutor implements ITestcasesExecutor {
 	}
 
 	private List<BreakpointValue> executeJunitTests(
-			Map<String, BreakPoint> locBrpMap, List<String> tcs) throws IcsetlvException {
+			Map<String, BreakPoint> locBrpMap, List<String> tcs) throws IcsetlvException, SavException {
 		List<BreakpointValue> result = new ArrayList<BreakpointValue>();
 		config.setProgramArgs(tcs);
 		VirtualMachine vm = debugger.run(config);

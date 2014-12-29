@@ -14,6 +14,8 @@ import icsetlv.common.exception.IcsetlvException;
 
 import java.util.List;
 
+import sav.common.core.SavException;
+
 /**
  * @author LLT
  *
@@ -22,6 +24,6 @@ public interface ITestcasesExecutor {
 
 	TcExecResult execute(List<String> passTestcases,
 			List<String> failTestcases, List<BreakPoint> brkps)
-			throws IcsetlvException;
+			throws IcsetlvException, SavException;
 	
 }

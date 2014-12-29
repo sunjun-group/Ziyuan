@@ -13,10 +13,12 @@ import icsetlv.common.exception.IcsetlvException;
 
 import java.util.List;
 
+import sav.common.core.SavException;
+
 /**
  * @author LLT
  *
  */
 public interface IBugAnalyzer {
-	public List<BreakPoint> analyze(List<BreakPoint> breakpoints) throws IcsetlvException;
+	public List<BreakPoint> analyze(List<BreakPoint> breakpoints) throws IcsetlvException, SavException;
 }

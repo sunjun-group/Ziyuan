@@ -9,11 +9,12 @@
 package icsetlv;
 
 import icsetlv.common.dto.BreakPoint;
-import icsetlv.vm.VMConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT

@@ -9,6 +9,9 @@
 package icsetlv.vm;
 
 import icsetlv.common.exception.IcsetlvException;
+import sav.common.core.SavException;
+import sav.strategies.vm.VMConfiguration;
+import sav.strategies.vm.VMListener;
 
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
@@ -21,8 +24,9 @@ public class SimpleDebugger {
 
 	/**
 	 * using scenario Target VM attaches to previously-running debugger.
+	 * @throws SavException 
 	 */
-	public VirtualMachine run(VMConfiguration config) throws IcsetlvException {
+	public VirtualMachine run(VMConfiguration config) throws IcsetlvException, SavException {
 		VMListener listener = new VMListener();
 		listener.startListening(config);
 		try {

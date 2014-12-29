@@ -24,6 +24,7 @@ import sav.common.core.Constants;
 import sav.common.core.NullPrintStream;
 import sav.common.core.iface.IPrintStream;
 import sav.common.core.utils.StringUtils;
+import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT
