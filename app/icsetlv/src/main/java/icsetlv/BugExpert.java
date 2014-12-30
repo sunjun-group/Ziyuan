@@ -130,6 +130,11 @@ public class BugExpert implements IBugExpert {
 	 * classification accuracy
 	 */
 	private boolean bugFoundOrNot(Metric metric) {
-		return metric.modelAccuracy > ACCURACY_THRESHOLD;
+		// TODO NPN
+		// The idea is that if we can clearly divide the vectors then the line
+		// at the breakpoint is bug-affected and likely not the cause of the
+		// bug. We need to backtrack that line to find the first line at which
+		// it is not possible to divide the vectors.
+		return metric.modelAccuracy < ACCURACY_THRESHOLD;
 	}
 }
