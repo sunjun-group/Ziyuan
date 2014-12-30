@@ -110,7 +110,6 @@ public class Sequence {
 			if (type instanceof Class<?>) {
 				declaredTypes.add((Class<?>) type);
 			} 
-//		TODO LLT: REVIEW	else if (type instanceof generic)
 		}
 		return declaredTypes;
 	}

@@ -33,7 +33,8 @@ public class JWriter {
 	private String methodPrefix;
 	
 	public CompilationUnit write(List<Sequence> methods) {
-		AstNodeConverter converter = new AstNodeConverter(new VariableNamer());
+		VariableNamer varNamer = new VariableNamer();
+		AstNodeConverter converter = new AstNodeConverter(varNamer);
 		CompilationUnitBuilder cu = new CompilationUnitBuilder();
 		/* package */
 		cu.pakage(getPackageName());
@@ -45,6 +46,7 @@ public class JWriter {
 		cu.startType(getClazzName());
 		for (int i = 0; i < methods.size(); i++) {
 			Sequence method = methods.get(i);
+			varNamer.reset(method);
 			MethodBuilder methodBuilder = cu.startMethod(getMethodName(i + 1));
 			methodBuilder.throwException(Throwable.class.getSimpleName());
 			methodBuilder.markAnnotation(JUNIT_TEST_ANNOTATION);

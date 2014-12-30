@@ -19,6 +19,7 @@ import sav.commons.testdata.BoundedStack;
 import sav.commons.testdata.autogeneration.FindMaxArray;
 import sav.commons.testdata.autogeneration.FindMaxArray2D;
 import sav.commons.testdata.autogeneration.FindMaxComplexMap;
+import sav.commons.testdata.autogeneration.FindMaxCompositionArray;
 import sav.commons.testdata.autogeneration.FindMaxList;
 import sav.commons.testdata.autogeneration.FindMaxList2D;
 import sav.commons.testdata.autogeneration.FindMaxList3D;
@@ -46,6 +47,11 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 		Class<BoundedStack> targetClazz = BoundedStack.class;
 		builder.forClass(targetClazz);
 		printTc(builder, targetClazz);
+	}
+	
+	@Test
+	public void testFindMaxCompositionArray() throws SavException {
+		generateTestcase(FindMaxCompositionArray.class); 
 	}
 	
 	@Test

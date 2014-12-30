@@ -91,7 +91,9 @@ public class AstNodeConverter {
 		Assert.assertTrue(initExpr != null);
 
 		VariableDeclarator varDecl = new VariableDeclarator();
-		varDecl.setId(new VariableDeclaratorId(varNamer.getName(assignment.getOutVarId())));
+		varDecl.setId(new VariableDeclaratorId(varNamer.getName(
+				assignment.getType(),
+				assignment.getOutVarId())));
 		varDecl.setInit(initExpr);
 		Expression expr = new VariableDeclarationExpr(paramType, CollectionUtils.listOf(varDecl));
 		ExpressionStmt stmt = new ExpressionStmt(expr);
@@ -153,11 +155,13 @@ public class AstNodeConverter {
 		List<VariableDeclarator> vars = new ArrayList<VariableDeclarator>();
 		/* variable name */
 		VariableDeclarator var = new VariableDeclarator(new VariableDeclaratorId(
-				varNamer.getName(constructor.getOutVarId())));
+				varNamer.getName(constructor.getOutputType(), constructor.getOutVarId())));
 		/* constructor input */
 		List<Expression> constructorArgs = new ArrayList<Expression>();
-		for (int inVar : constructor.getInVarIds()) {
-			constructorArgs.add(new NameExpr(varNamer.getName(inVar)));
+		for (int i = 0; i < constructor.getInVarIds().length; i++) {
+			constructorArgs.add(new NameExpr(varNamer.getName(constructor.getInputTypes().get(i),
+					constructor.getInVarIds()[i])));
+			
 		}
 		/* statement */
 		Expression initExpr = new ObjectCreationExpr(null, new ClassOrInterfaceType(
@@ -173,7 +177,7 @@ public class AstNodeConverter {
 		Type arrayContentType = toReferenceType(arrayConstructor.getContentType().getName());
 		Type arrayType = new ReferenceType(arrayContentType, arrayConstructor.getSizes().length);
 		VariableDeclarator var = new VariableDeclarator(new VariableDeclaratorId(
-				varNamer.getName(arrayConstructor.getOutVarId())));
+				varNamer.getArrVarName(arrayConstructor.getOutVarId())));
 		
 		List<Expression> dimensions = new ArrayList<Expression>(arrayConstructor.getSizes().length);
 		for (int i = 0; i < arrayConstructor.getSizes().length; i++) {
@@ -200,9 +204,9 @@ public class AstNodeConverter {
 	}
 
 	public Statement fromRArrayAssigment(final RArrayAssignment stmt) {
-		final Expression arrayAccessExp = getArrayAccessExp(varNamer.getName(stmt.getArrayVarID()),
+		final Expression arrayAccessExp = getArrayAccessExp(varNamer.getExistVarName(stmt.getArrayVarID()),
 				stmt.getIndex());
-		final Expression valueExp = new NameExpr(varNamer.getName(stmt.getLocalVariableID()));
+		final Expression valueExp = new NameExpr(varNamer.getExistVarName(stmt.getLocalVariableID()));
 		final Expression assignmentExpression = new AssignExpr(arrayAccessExp, valueExp,
 				Operator.assign);
 		return new ExpressionStmt(assignmentExpression);
@@ -226,11 +230,11 @@ public class AstNodeConverter {
 		if (rmethod.getReceiverVarId() == gentest.data.statement.Statement.INVALID_VAR_ID) {
 			scope = new NameExpr(rmethod.getDeclaringType().getSimpleName());
 		} else {
-			scope = new NameExpr(varNamer.getName(rmethod.getReceiverVarId()));
+			scope = new NameExpr(varNamer.getExistVarName(rmethod.getReceiverVarId()));
 		}
 		List<Expression> inputs = new ArrayList<Expression>();
 		for (int inId : rmethod.getInVarIds()) {
-			inputs.add(new NameExpr(varNamer.getName(inId)));
+			inputs.add(new NameExpr(varNamer.getExistVarName(inId)));
 		}
 		MethodCallExpr callExpr = new MethodCallExpr(scope, rmethod.getName(), inputs);
 
@@ -238,7 +242,7 @@ public class AstNodeConverter {
 		if (declareValue) {
 			List<VariableDeclarator> vars = new ArrayList<VariableDeclarator>();
 			VariableDeclarator varDecl = new VariableDeclarator(new VariableDeclaratorId(
-					varNamer.getName(rmethod.getOutVarId())), callExpr);
+					varNamer.getName(rmethod.getReturnType(), rmethod.getOutVarId())), callExpr);
 			vars.add(varDecl);
 			stmtExpr = new VariableDeclarationExpr(toReferenceType(rmethod.getReturnType()
 					.getSimpleName()), vars);
