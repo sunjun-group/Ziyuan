@@ -9,12 +9,12 @@
 package icsetlv;
 
 import icsetlv.common.exception.IcsetlvException;
-import icsetlv.vm.VMConfiguration;
 import icsetlv.vm.VMRunner;
 
 import org.junit.Test;
 
 import sav.common.core.utils.CollectionUtils;
+import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT

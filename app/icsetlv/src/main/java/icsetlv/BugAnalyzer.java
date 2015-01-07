@@ -17,6 +17,7 @@ import icsetlv.iface.IManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 
 /**
@@ -37,7 +38,7 @@ public class BugAnalyzer implements IBugAnalyzer {
 	
 	@Override
 	public List<BreakPoint> analyze(List<BreakPoint> initBkps)
-			throws IcsetlvException {
+			throws IcsetlvException, SavException {
 		List<BreakPoint> rootCause = new ArrayList<BreakPoint>();
 		List<BreakPoint> allBkps = initBkps;
 		boolean firstRound = true;

@@ -28,6 +28,8 @@ import net.sf.javaml.core.Instance;
  */
 public class BugExpert implements IBugExpert {
 	
+	private static final double ACCURACY_THRESHOLD = 0.7;
+
 	@Override
 	public boolean isRootCause(List<BreakpointValue> passValues,
 			List<BreakpointValue> failValues) {
@@ -128,9 +130,11 @@ public class BugExpert implements IBugExpert {
 	 * classification accuracy
 	 */
 	private boolean bugFoundOrNot(Metric metric) {
-		if (metric.modelAccuracy > 0.7) {
-			return false;
-		}
-		return true;
+		// TODO NPN
+		// The idea is that if we can clearly divide the vectors then the line
+		// at the breakpoint is bug-affected and likely not the cause of the
+		// bug. We need to backtrack that line to find the first line at which
+		// it is not possible to divide the vectors.
+		return metric.modelAccuracy < ACCURACY_THRESHOLD;
 	}
 }

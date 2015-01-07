@@ -20,6 +20,8 @@ import icsetlv.variable.TestcasesExecutor;
 
 import java.util.List;
 
+import sav.common.core.SavException;
+
 /**
  * @author LLT
  *
@@ -29,7 +31,7 @@ public class IcsetlvEngine implements IManager {
 	private SlicerInput sliceInput;
 	private BugAnalyzer bugAnalyzer;
 	
-	public List<BreakPoint> run(IcsetlvInput input) throws IcsetlvException {
+	public List<BreakPoint> run(IcsetlvInput input) throws IcsetlvException, SavException {
 		this.input = input;
 		// do slicing
 		sliceInput = new SlicerInput();
@@ -43,7 +45,7 @@ public class IcsetlvEngine implements IManager {
 
 	private List<BreakPoint> run(List<String> passTestcases,
 			List<String> failTestcases, List<BreakPoint> initBkps)
-			throws IcsetlvException {
+			throws IcsetlvException, SavException {
 		bugAnalyzer = new BugAnalyzer(this, passTestcases, failTestcases);
 		return bugAnalyzer.analyze(initBkps);
 	}

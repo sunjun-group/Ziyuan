@@ -10,12 +10,13 @@ package icsetlv;
 
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.vm.SimpleDebugger;
-import icsetlv.vm.VMConfiguration;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
+import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.VirtualMachine;
 
@@ -26,7 +27,7 @@ import com.sun.jdi.VirtualMachine;
 public class SimpleDebuggerTest extends AbstractTest {
 	
 	@Test
-	public void test() throws IcsetlvException {
+	public void test() throws IcsetlvException, SavException {
 		VMConfiguration config = initVmConfig();
 		config.setProgramArgs(CollectionUtils.listOf("testdata.slice.FindMaxCallerPassTest1"));
 		SimpleDebugger debugger = new SimpleDebugger();
