@@ -79,7 +79,7 @@ public class SignatureUtils {
 	public static String getSignature(String className) {
 		return "L" + className.replace('.', '/') + ";";
 	}
-
+	
 	public static String extractMethodName(String methodNameOrSign) {
 		int endNameIdx = methodNameOrSign.indexOf("(");
 		if (endNameIdx < 0) {
@@ -91,5 +91,13 @@ public class SignatureUtils {
 					fullMethodName.length() - 1);
 		}
 		return fullMethodName;
+	}
+	
+	public static String extractSignature(String methodNameAndSign) {
+		int endNameIdx = methodNameAndSign.indexOf("(");
+		if (endNameIdx > 1) {
+			return methodNameAndSign.substring(endNameIdx);
+		}
+		return methodNameAndSign;
 	}
 }

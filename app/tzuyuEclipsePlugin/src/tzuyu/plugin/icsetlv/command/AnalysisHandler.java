@@ -16,6 +16,7 @@ import icsetlv.common.exception.IcsetlvException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
+import sav.common.core.SavException;
 import tzuyu.plugin.AppAdaptorFactory;
 import tzuyu.plugin.TzuyuPlugin;
 import tzuyu.plugin.commons.dto.WorkObject;
@@ -62,6 +63,9 @@ public class AnalysisHandler extends TzCommandHandler<AnalysisPreferences> {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (PluginException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SavException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

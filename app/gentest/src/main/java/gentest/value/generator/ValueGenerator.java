@@ -8,38 +8,38 @@
 
 package gentest.value.generator;
 
+import static sav.common.core.utils.CollectionUtils.listOf;
 import gentest.data.statement.RAssignment;
 import gentest.data.statement.Rmethod;
 import gentest.data.statement.Statement;
 import gentest.data.variable.GeneratedVariable;
+import gentest.value.VariableCache;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import main.GentestConstants;
+import sav.common.core.Pair;
 import sav.common.core.SavException;
 
 /**
  * @author LLT
  *
  */
+@SuppressWarnings("rawtypes")
 public abstract class ValueGenerator {
-	/* level of generated value from root statment
-	 * ex: generate value for parameter p1 of method:
-	 * methodA(List<Interger> p1, p2)
-	 * we do 2 generation step:
-	 * generate list -> level 1
-	 * generate values for list -> level 2
-	 * */
-	protected static int maxLevel = 10;
-	// NOTE This must be less than 255
-	public static final int GENERATED_ARRAY_MAX_LENGTH = 10;
 
-	public static GeneratedVariable generate(Class<?> clazz, Type type, int firstStmtIdx,
+	public static GeneratedVariable generate(Class<?> clazz, Type type, 
 			int firstVarId) throws SavException {
-		GeneratedVariable variable = new GeneratedVariable(firstStmtIdx,
-				firstVarId);
+		GeneratedVariable variable = new GeneratedVariable(firstVarId);
 		append(variable, 1, clazz, type);
+		VariableCache.getInstance().put(clazz, variable);
 		return variable;
 	}
 
@@ -49,7 +49,7 @@ public abstract class ValueGenerator {
 			new PrimitiveValueGenerator().doAppend(variable, level, clazz);
 			return;
 		} 
-		if (level > maxLevel) {
+		if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL) {
 			assignNull(variable, clazz);
 			return;
 		}
@@ -62,11 +62,6 @@ public abstract class ValueGenerator {
 		variable.append(RAssignment.assignmentFor(clazz, null));
 	}
 	
-	protected final void doAppendMethods(GeneratedVariable variable, int level,
-			int scopeId, List<Method> methodcalls) throws SavException {
-		doAppendMethods(variable, level, methodcalls, scopeId, false);
-	}
-
 	protected final void doAppendStaticMethods(GeneratedVariable variable, int level,
 			List<Method> methodcalls) throws SavException {
 		doAppendMethods(variable, level, methodcalls, Statement.INVALID_VAR_ID,
@@ -83,10 +78,10 @@ public abstract class ValueGenerator {
 			int[] paramIds = new int[genericParamTypes.length];
 			for (int i = 0; i < paramIds.length; i++) {
 				Type type = genericParamTypes[i];
-//				Class<?> paramType = (Class<?>) type;
-				Class<?> paramType = types[i];
+				Pair<Class<?>, Type> paramType = getParamType(types[i], type);
 				GeneratedVariable newVar = variable.newVariable();
-				ValueGenerator.append(newVar, level + 2, paramType, null);
+				ValueGenerator.append(newVar, level + 2, paramType.a,
+						paramType.b);
 				paramIds[i] = newVar.getLastVarId();
 				variable.append(newVar);
 			}
@@ -95,23 +90,33 @@ public abstract class ValueGenerator {
 		}
 	}
 
-	public abstract void doAppend(GeneratedVariable variable, int level,
+	protected Pair<Class<?>, Type> getParamType(Class<?> clazz, Type type) {
+		return new Pair<Class<?>, Type>(clazz, null);
+	}
+
+	public abstract boolean doAppend(GeneratedVariable variable, int level,
 			Class<?> type) throws SavException;
 
 	private static ValueGenerator findGenerator(Class<?> clazz, Type type) {
 		if (clazz.isArray()) {
 			return new ArrayValueGenerator();
 		}
-		if (ListValueGenerator.accept(clazz)) {
-			return new ListValueGenerator(type);
-		}
-		if (SetValueGenerator.accept(clazz)) {
-			return new SetValueGenerator(type);
-		}
-		if (MapValueGenerator.accept(clazz)) {
-			return new MapValueGenerator(type);
+		Pair<Class<?>, List<String>> typeDef = specificObjectMap.get(clazz);
+		if (typeDef != null) {
+			return new ExtObjectValueGenerator(typeDef.a, type, 
+					typeDef.b);
 		}
 		return getGenerator(ObjectValueGenerator.class);
+	}
+	
+	private static Map<Class<?>, Pair<Class<?>, List<String>>> specificObjectMap;
+	static {
+		specificObjectMap = new HashMap<Class<?>, Pair<Class<?>,List<String>>>();
+		specificObjectMap.put(List.class, new Pair(ArrayList.class, listOf("add(Ljava/lang/Object;)Z")));
+		specificObjectMap.put(Set.class, new Pair(HashSet.class, listOf("add(Ljava/lang/Object;)Z")));
+		specificObjectMap.put(Map.class,
+									new Pair(HashMap.class,
+											listOf("put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")));
 	}
 	
 	protected static ValueGenerator getGenerator(Class<?> clazz) {

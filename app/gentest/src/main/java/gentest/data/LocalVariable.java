@@ -3,32 +3,23 @@
  */
 package gentest.data;
 
+import gentest.data.statement.Statement;
+
+import java.util.List;
+
 /**
  * @author LLT
  * 
  */
 public class LocalVariable {
-	private int declareStmt = -1;
-	private int varId = 1;
+	// varId actually is the variable index in its sequence
+	private int varId;
 	private Class<?> type;
+	private List<Statement> initializedStmt;
 	
-	public LocalVariable(int declareStmt, int varId, Class<?> type) {
-		this.declareStmt = declareStmt;
+	public LocalVariable(int varId, Class<?> type) {
 		this.varId = varId;
 		this.type = type;
-	}
-
-	public int getDeclareStmt() {
-		return declareStmt;
-	}
-	
-	public void update(int stmt, int varId) {
-		this.declareStmt = stmt;
-		this.varId = varId;
-	}
-
-	public void setDeclareStmt(int declareStmt) {
-		this.declareStmt = declareStmt;
 	}
 
 	public int getVarId() {
@@ -46,4 +37,26 @@ public class LocalVariable {
 	public void setType(Class<?> type) {
 		this.type = type;
 	}
+
+	@Override
+	public int hashCode() {
+		/* we assume that varId in a sequence is unique */
+		return varId;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LocalVariable other = (LocalVariable) obj;
+		if (varId != other.varId)
+			return false;
+		return true;
+	}
+
+	
 }

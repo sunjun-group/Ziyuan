@@ -68,7 +68,7 @@ public class Sequence {
 		stmts.add(method);
 		if (method.hasReturnType()) {
 			int newVarId = getVarsSize();
-			LocalVariable newVar = new LocalVariable(getStmtsSize() - 1, newVarId, 
+			LocalVariable newVar = new LocalVariable(newVarId,
 					method.getReturnType());
 			addLocalVariable(newVar);
 			method.setOutVarId(newVarId);
@@ -86,7 +86,6 @@ public class Sequence {
 		return localVariables.size();
 	}
 	
-
 	public List<Statement> getStmts() {
 		return stmts;
 	}

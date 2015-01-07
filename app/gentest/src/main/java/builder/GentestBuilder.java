@@ -8,6 +8,7 @@
 
 package builder;
 
+import gentest.commons.utils.MethodUtils;
 import gentest.data.MethodCall;
 import gentest.data.Sequence;
 
@@ -20,7 +21,6 @@ import sav.common.core.Logger;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
-import sav.common.core.utils.SignatureUtils;
 
 /**
  * @author LLT
@@ -96,21 +96,7 @@ public abstract class GentestBuilder<T extends GentestBuilder<T>> {
 	
 	protected static Method findTestingMethod(Class<?> clazz, String methodNameOrSign) {
 		if (clazz != null) {
-			/* try to find if input is method name */
-			for (Method method : clazz.getMethods()) {
-				if (method.getName().equals(methodNameOrSign)) {
-					return method;
-				}
-			}
-			/* try to find if input is method signature */
-			for (Method method : clazz.getMethods()) {
-				if (SignatureUtils.getSignature(method).equals(methodNameOrSign)) {
-					return method;
-				}
-			}
-			/* cannot find class */
-			throw new IllegalArgumentException(String.format("cannot find method %s in class %s", methodNameOrSign
-					, clazz.getName()));
+			return MethodUtils.findMethod(clazz, methodNameOrSign);
 		}
 		/* class not yet declared */
 		throw new IllegalArgumentException(

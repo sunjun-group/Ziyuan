@@ -20,7 +20,7 @@ import sav.common.core.SavException;
 public class ArrayValueGenerator extends ValueGenerator {
 
 	@Override
-	public void doAppend(GeneratedVariable variable, int level, Class<?> type)
+	public boolean doAppend(GeneratedVariable variable, int level, Class<?> type)
 			throws SavException {
 		// Generate the array
 		final int dimension = 1 + type.getName().lastIndexOf('[');
@@ -42,6 +42,7 @@ public class ArrayValueGenerator extends ValueGenerator {
 			newVariable.append(arrayAssignment);
 			location = next(location, arrayConstructor.getSizes());
 		}
+		return true;
 	}
 
 	private static int[] next(int[] array, int[] limit) {

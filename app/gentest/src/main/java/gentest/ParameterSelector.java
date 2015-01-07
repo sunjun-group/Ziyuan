@@ -39,7 +39,7 @@ public class ParameterSelector {
 		case REFERENCE:
 			return selectReferenceParam(clazz);
 		default:
-			return selectGeneratedParam(clazz, type, firstStmtIdx, firstVarIdx);
+			return selectGeneratedParam(clazz, type, firstVarIdx);
 		}
 	}
 	
@@ -47,8 +47,8 @@ public class ParameterSelector {
 	 * generate new value for parameter.
 	 */
 	private ISelectedVariable selectGeneratedParam(Class<?> clazz,
-			Type type, int firstStmtIdx, int firstVarIdx) throws SavException {
-		return ValueGenerator.generate(clazz, type, firstStmtIdx, firstVarIdx);
+			Type type, int firstVarIdx) throws SavException {
+		return ValueGenerator.generate(clazz, type, firstVarIdx);
 	}
 
 	/**

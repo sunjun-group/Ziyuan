@@ -34,10 +34,11 @@ public class PrimitiveValueGenerator extends ValueGenerator {
 	}
 
 	@Override
-	public void doAppend(GeneratedVariable variable, int level, Class<?> type)
+	public boolean doAppend(GeneratedVariable variable, int level, Class<?> type)
 			throws SavException {
 		Object value = generatorFactory.getGeneratorFor(type).next();
 		variable.append(RAssignment.assignmentFor(type, value));
+		return true;
 	}
 
 }

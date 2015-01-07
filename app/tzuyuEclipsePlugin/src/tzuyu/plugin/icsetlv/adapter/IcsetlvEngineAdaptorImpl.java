@@ -35,6 +35,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.SocketUtil;
 import org.junit.Test;
 
+import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import tzuyu.plugin.commons.dto.WorkObject;
 import tzuyu.plugin.commons.dto.WorkObject.WorkItem;
@@ -54,7 +55,7 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 	
 	@Override
 	public List<BreakPoint> analyse(WorkObject workObj, AnalysisPreferences prefs)
-			throws IcsetlvException, PluginException {
+			throws PluginException, SavException, IcsetlvException {
 		IcsetlvEngine icsetlv = new IcsetlvEngine();
 		IcsetlvInput input = initIcsetlvInput(workObj, prefs);
 

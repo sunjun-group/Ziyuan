@@ -13,7 +13,7 @@ import gentest.data.Sequence;
 
 import java.util.List;
 
-import main.GentestConstant;
+import main.GentestConstants;
 
 import sav.common.core.Pair;
 import sav.common.core.SavException;
@@ -23,8 +23,8 @@ import sav.common.core.SavException;
  *
  */
 public class RandomTraceGentestBuilder extends GentestBuilder<RandomTraceGentestBuilder> {
-	private int queryMaxLength = GentestConstant.DEFAULT_QUERY_MAX_LENGTH;
-	private int testPerQuery = GentestConstant.DEFAULT_TEST_PER_QUERY;
+	private int queryMaxLength = GentestConstants.DEFAULT_QUERY_MAX_LENGTH;
+	private int testPerQuery = GentestConstants.DEFAULT_TEST_PER_QUERY;
 
 	public RandomTraceGentestBuilder(int numberOfTcs) {
 		super(numberOfTcs);

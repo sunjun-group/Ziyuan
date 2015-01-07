@@ -19,18 +19,11 @@ import sav.common.core.utils.CollectionUtils;
  */
 public class GeneratedVariable extends SelectedVariable {
 	private int returnedVarId = Statement.INVALID_VAR_ID;
-	private int firstStmtIdx;
 	private int firstVarId;
 	
-	public GeneratedVariable(int firstStmtIdx, int firstVarId) {
-		Assert.assertTrue(firstStmtIdx >=0, "Negative firstStmtIdx");
+	public GeneratedVariable(int firstVarId) {
 		Assert.assertTrue(firstVarId >=0, "Negative firstVarId");
-		this.firstStmtIdx = firstStmtIdx;
 		this.firstVarId = firstVarId;
-	}
-	
-	private int getNewStmtIdx() {
-		return stmts.size() + firstStmtIdx;
 	}
 	
 	private int getNewVarIdx() {
@@ -54,17 +47,15 @@ public class GeneratedVariable extends SelectedVariable {
 		updateDataLists(stmt, stmt.getType(), true);
 	}
 
-	private int addStatement(Statement stmt) {
-		int stmtIdx = getNewStmtIdx();
+	private void addStatement(Statement stmt) {
 		getStmts().add(stmt);
-		return stmtIdx;
 	}
 	
 	private void updateDataLists(Statement stmt, Class<?> type, boolean addVariable) {
-		int stmtIdx = addStatement(stmt);
+		addStatement(stmt);
 		if (addVariable && type != Void.class) {
 			int varId = getNewVarIdx();
-			LocalVariable var = new LocalVariable(stmtIdx, varId, type);
+			LocalVariable var = new LocalVariable(varId, type);
 			getNewVariables().add(var);
 		}
 	}
@@ -108,7 +99,7 @@ public class GeneratedVariable extends SelectedVariable {
 	}
 
 	public GeneratedVariable newVariable() {
-		return new GeneratedVariable(getNewStmtIdx(), getNewVarIdx());
+		return new GeneratedVariable(getNewVarIdx());
 	}
 	
 	public void append(GeneratedVariable subVariable) {

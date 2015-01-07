@@ -31,7 +31,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 	private ReferenceAnalyser refAnalyzer = new ReferenceAnalyser();
 	
 	@Override
-	public void doAppend(GeneratedVariable variable, int level, Class<?> type)
+	public boolean doAppend(GeneratedVariable variable, int level, Class<?> type)
 			throws SavException {
  		Object initializedStmt = findConstructor(type);
 		if (initializedStmt instanceof Constructor<?>) {
@@ -61,7 +61,9 @@ public class ObjectValueGenerator extends ValueGenerator {
 		} else {
 			/* we accept to init null for the obj*/
 			assignNull(variable, type);
+			return false;
 		}
+		return true;
 	}
 
 	/**

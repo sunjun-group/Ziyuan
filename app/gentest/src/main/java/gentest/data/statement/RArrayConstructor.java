@@ -1,6 +1,6 @@
 package gentest.data.statement;
 
-import gentest.value.generator.ValueGenerator;
+import main.GentestConstants;
 import sav.common.core.utils.Randomness;
 
 public class RArrayConstructor extends Statement {
@@ -18,7 +18,7 @@ public class RArrayConstructor extends Statement {
 		this.sizes = new int[dimension];
 		for (int i = 0; i < dimension; i++) {
 			this.sizes[i] = Randomness
-					.nextRandomInt(ValueGenerator.GENERATED_ARRAY_MAX_LENGTH);
+					.nextRandomInt(GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH);
 		}
 	}
 
