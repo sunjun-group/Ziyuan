@@ -38,6 +38,8 @@ import builder.RandomTraceGentestBuilder;
  *
  */
 public class GentestForTestdataRunner extends AbstractGTTest {
+	private static final int NUMBER_OF_TESTCASES = 1000;
+	private static final int METHOD_PER_CLASS = 10;
 
 	@Test
 	public void testBoundedStack() throws SavException {
@@ -80,7 +82,7 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 	}
 	
 	@Test
-	public void testFindMaxComplexList() throws SavException {
+	public void testFindMaxList2D() throws SavException {
 		generateTestcase(FindMaxList2D.class); 
 	}
 	
@@ -124,7 +126,7 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 	}
 	
 	public GentestBuilder<?> getBuilderForFindMax(Class<?> targetClazz) {
-		FixTraceGentestBuilder builder = new FixTraceGentestBuilder(10);
+		FixTraceGentestBuilder builder = new FixTraceGentestBuilder(NUMBER_OF_TESTCASES);
 		builder.forClass(targetClazz).method("Max");
 		return builder;
 	}
@@ -133,6 +135,7 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 		TestsPrinter printer = new TestsPrinter(srcPath,
 				getTestPkg(targetClazz), null, "test",
 				targetClazz.getSimpleName());
+		printer.setMethodSPerClass(METHOD_PER_CLASS);
 		printer.setCuPrinter(new FileCompilationUnitPrinter());
 		printer.printTests(builder.generate());
 	}

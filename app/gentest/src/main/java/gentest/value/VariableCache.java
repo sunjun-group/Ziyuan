@@ -16,17 +16,18 @@ import java.util.List;
 import java.util.Map;
 
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.Randomness;
 
 
 /**
  * @author LLT
- *
+ * TODO LLT: to continue
  */
 public class VariableCache {
 	private Map<Type, List<GeneratedVariable>> generatedVarMap;
 	private static VariableCache instance;
 
-	public VariableCache() {
+	private VariableCache() {
 		generatedVarMap = new HashMap<Type, List<GeneratedVariable>>();
 	}
 	
@@ -35,12 +36,24 @@ public class VariableCache {
 						.add(variable);
 	}
 	
-	
 	public static VariableCache getInstance() {
 		if (instance == null) {
 			instance = new VariableCache();
 		}
 		return instance;
+	}
+
+	public GeneratedVariable select(Class<?> clazz) {
+		List<GeneratedVariable> existingValue = generatedVarMap.get(clazz);
+		GeneratedVariable selectedValue = Randomness.randomMember(existingValue);
+		if (selectedValue != null) {
+			System.out.println("class: " + clazz);
+		}
+		return selectedValue;
+	}
+
+	public void reset() {
+		generatedVarMap.clear();
 	}
 	
 }

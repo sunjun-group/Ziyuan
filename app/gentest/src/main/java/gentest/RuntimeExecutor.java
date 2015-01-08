@@ -61,6 +61,12 @@ public class RuntimeExecutor implements StatementVisitor {
 			} catch(Throwable ex) {
 				//TODO LOG
 				System.err.println(ex);
+				try {
+					stmt.accept(this);
+				} catch (Throwable e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				successful = false;
 				return successful;
 			}

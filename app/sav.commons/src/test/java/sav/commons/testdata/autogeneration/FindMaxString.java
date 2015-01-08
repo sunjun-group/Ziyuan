@@ -27,7 +27,7 @@ public class FindMaxString {
 			findMax = new FindMaxString(values);
 		}
 		
-		public static FindMaxStringBuilder forStrings(String... values) {
+		public static FindMaxStringBuilder forStrings(String[] values) {
 			return new FindMaxStringBuilder(values);
 		}
 		
@@ -52,6 +52,9 @@ public class FindMaxString {
 	}
 
 	private int compareTo(String val, String max) {
+		if (max == null) {
+			return 1;
+		}
 		if (caseSensitive) {
 			return val.compareTo(max);
 		}

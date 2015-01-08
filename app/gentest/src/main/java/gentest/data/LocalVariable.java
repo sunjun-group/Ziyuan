@@ -3,9 +3,6 @@
  */
 package gentest.data;
 
-import gentest.data.statement.Statement;
-
-import java.util.List;
 
 /**
  * @author LLT
@@ -15,7 +12,6 @@ public class LocalVariable {
 	// varId actually is the variable index in its sequence
 	private int varId;
 	private Class<?> type;
-	private List<Statement> initializedStmt;
 	
 	public LocalVariable(int varId, Class<?> type) {
 		this.varId = varId;
@@ -57,6 +53,4 @@ public class LocalVariable {
 			return false;
 		return true;
 	}
-
-	
 }

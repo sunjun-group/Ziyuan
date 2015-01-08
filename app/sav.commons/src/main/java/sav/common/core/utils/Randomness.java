@@ -10,12 +10,12 @@ import java.util.Random;
 
 /**
  * @author LLT
- * for centralization.
+ * for centralization. most function adopted from Randoop
  */
 public final class Randomness {
 	private Randomness() {}
 
-	public static final long SEED = 0;
+	public static final long SEED = System.currentTimeMillis();
 	public static int totalCallsToRandom = 0;
 	static Random random = new Random(SEED);
 	
@@ -122,6 +122,14 @@ public final class Randomness {
 			n--;
 		}
 		return sublist;
+	}
+	
+	public static boolean weighedCoinFlip(double trueProb) {
+		if (trueProb < 0 || trueProb > 1) {
+			throw new IllegalArgumentException("arg must be between 0 and 1.");
+		}
+		double falseProb = 1 - trueProb;
+		return (Randomness.getRandom().nextDouble() >= falseProb);
 	}
 
 	public static boolean randomBoolFromDistribution(double trueProb_, double falseProb_) {

@@ -8,10 +8,12 @@
 
 package gentest.value.generator;
 
+import main.GentestConstants;
 import gentest.data.statement.RArrayAssignment;
 import gentest.data.statement.RArrayConstructor;
 import gentest.data.variable.GeneratedVariable;
 import sav.common.core.SavException;
+import sav.common.core.utils.Randomness;
 
 /**
  * @author LLT
@@ -24,22 +26,30 @@ public class ArrayValueGenerator extends ValueGenerator {
 			throws SavException {
 		// Generate the array
 		final int dimension = 1 + type.getName().lastIndexOf('[');
-		final RArrayConstructor arrayConstructor = new RArrayConstructor(
-				dimension, type);
+		Class<?> contentType = type;
+		while (contentType.isArray()) {
+			contentType = contentType.getComponentType();
+		}
+		int sizes[] = new int[dimension];
+		for (int i = 0; i < dimension; i++) {
+			sizes[i] = Randomness
+					.nextRandomInt(GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH);
+		}
+		final RArrayConstructor arrayConstructor = new RArrayConstructor(sizes,
+				type, contentType);
 		variable.append(arrayConstructor);
 		variable.commitReturnVarIdIfNotExist();
 		// Generate the array content
 		int[] location = next(null, arrayConstructor.getSizes());
 		while (location != null) {
-			GeneratedVariable newVariable = variable;
-			ValueGenerator.append(newVariable, level + 1, arrayConstructor.getContentType(),
-					null);
-			int localVariableID = newVariable.getLastVarId(); // the last ID
+			GeneratedVariable newVar = ValueGenerator.append(variable,
+					level + 1, arrayConstructor.getContentType(), null);
+			int localVariableID = newVar.getLastVarId(); // the last ID
 
 			// get the variable
 			RArrayAssignment arrayAssignment = new RArrayAssignment(
 					arrayConstructor.getOutVarId(), location, localVariableID);
-			newVariable.append(arrayAssignment);
+			variable.append(arrayAssignment);
 			location = next(location, arrayConstructor.getSizes());
 		}
 		return true;

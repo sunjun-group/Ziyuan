@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 
 /**
@@ -54,6 +55,10 @@ public class Sequence {
 
 	private void addLocalVariable(LocalVariable var) {
 		localVariables.add(var);
+		Class<?> arrayContentType = ClassUtils.getArrayContentType(var.getType());
+		if (arrayContentType != null) {
+			CollectionUtils.getListInitIfEmpty(typeVariableMap, arrayContentType);
+		}
 		CollectionUtils.getListInitIfEmpty(typeVariableMap, var.getType()).add(
 				var);
 	}

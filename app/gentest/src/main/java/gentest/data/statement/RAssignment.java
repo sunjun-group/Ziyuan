@@ -39,11 +39,6 @@ public class RAssignment extends Statement {
 	public boolean hasOutputVar() {
 		return true;
 	}
-	
-	@Override
-	public int[] getInVarIds() {
-		throw new IllegalArgumentException();
-	}
 
 	@Override
 	public void accept(StatementVisitor visitor) throws Throwable {

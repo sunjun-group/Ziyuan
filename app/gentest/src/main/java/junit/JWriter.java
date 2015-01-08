@@ -3,7 +3,6 @@
  */
 package junit;
 
-import gentest.VariableNamer;
 import gentest.data.Sequence;
 import gentest.data.statement.RArrayAssignment;
 import gentest.data.statement.RArrayConstructor;
@@ -17,6 +16,7 @@ import japa.parser.ast.CompilationUnit;
 import java.util.List;
 
 import junit.CompilationUnitBuilder.MethodBuilder;
+import junit.variable.VariableNamer;
 
 import org.junit.Test;
 

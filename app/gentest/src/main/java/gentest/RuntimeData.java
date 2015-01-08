@@ -3,8 +3,8 @@
  */
 package gentest;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author LLT
@@ -12,21 +12,35 @@ import java.util.Map;
  */
 public class RuntimeData {
 	/* map to store executed value for each varId */
-	private Map<Integer, Object> variableValues;
+	private List<Object> variableValuesList;
 	
 	public RuntimeData() {
-		variableValues = new HashMap<Integer, Object>();
+		variableValuesList = new ArrayList<Object>();
 	}
 
 	public void reset() {
-		variableValues.clear();
+		variableValuesList.clear();
 	}
 
 	public void addExecData(int varId, Object value) {
-		variableValues.put(varId, value);
+		if (varId < 0 || varId > variableValuesList.size()) {
+			throw new IllegalArgumentException("varId is invalid!!");
+		}
+		if (varId == variableValuesList.size()) {
+			variableValuesList.add(value);
+		} else {
+			variableValuesList.set(varId, value);
+		}
 	}
 
 	public Object getExecData(int varId) {
-		return variableValues.get(varId);
+		if (isInvalid(varId)) {
+			return null;
+		}
+		return variableValuesList.get(varId);
+	}
+
+	private boolean isInvalid(int varId) {
+		return varId < 0 || varId >= variableValuesList.size();
 	}
 }

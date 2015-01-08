@@ -1,25 +1,28 @@
+/*
+ * Copyright (C) 2013 by SUTD (Singapore)
+ * All rights reserved.
+ *
+ * 	Author: SUTD
+ *  Version:  $Revision: 1 $
+ */
 package gentest.data.statement;
 
-import main.GentestConstants;
-import sav.common.core.utils.Randomness;
-
+/**
+ * 
+ * @author Nguyen Phuoc Nguong Phuc
+ *
+ */
 public class RArrayConstructor extends Statement {
 	private int[] sizes;
 	private Class<?> outputType; // Type of the array itself
 	private Class<?> contentType; // Type of the array content
 
-	public RArrayConstructor(final int dimension, final Class<?> contentType) {
+	public RArrayConstructor(int[] sizes, Class<?> outputType,
+			Class<?> contentType) {
 		super(RStatementKind.ARRAY_CONSTRUCTOR);
-		this.outputType = contentType;
+		this.outputType = outputType;
 		this.contentType = contentType;
-		while (this.contentType.isArray()) {
-			this.contentType = this.contentType.getComponentType();
-		}
-		this.sizes = new int[dimension];
-		for (int i = 0; i < dimension; i++) {
-			this.sizes[i] = Randomness
-					.nextRandomInt(GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH);
-		}
+		this.sizes = sizes;
 	}
 
 	@Override

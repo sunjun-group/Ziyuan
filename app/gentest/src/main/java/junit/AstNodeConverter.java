@@ -3,7 +3,6 @@
  */
 package junit;
 
-import gentest.VariableNamer;
 import gentest.commons.utils.TypeUtils;
 import gentest.data.statement.RArrayAssignment;
 import gentest.data.statement.RArrayConstructor;
@@ -44,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import junit.variable.IVariableNamer;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 
@@ -52,9 +52,9 @@ import sav.common.core.utils.CollectionUtils;
  * 
  */
 public class AstNodeConverter {
-	private VariableNamer varNamer;
+	private IVariableNamer varNamer;
 
-	public AstNodeConverter(VariableNamer varNamer) {
+	public AstNodeConverter(IVariableNamer varNamer) {
 		this.varNamer = varNamer;
 	}
 
@@ -174,7 +174,7 @@ public class AstNodeConverter {
 	}
 
 	public Statement fromRArrayConstructor(final RArrayConstructor arrayConstructor) {
-		Type arrayContentType = toReferenceType(arrayConstructor.getContentType().getName());
+		Type arrayContentType = toReferenceType(arrayConstructor.getContentType().getSimpleName());
 		Type arrayType = new ReferenceType(arrayContentType, arrayConstructor.getSizes().length);
 		VariableDeclarator var = new VariableDeclarator(new VariableDeclaratorId(
 				varNamer.getArrVarName(arrayConstructor.getOutVarId())));

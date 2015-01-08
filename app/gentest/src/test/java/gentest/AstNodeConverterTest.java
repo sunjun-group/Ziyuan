@@ -11,6 +11,7 @@ import gentest.data.statement.Rmethod;
 import japa.parser.ast.stmt.Statement;
 import japa.parser.ast.type.PrimitiveType.Primitive;
 import junit.AstNodeConverter;
+import junit.variable.VariableNamer;
 
 import org.junit.Before;
 import org.junit.Test;

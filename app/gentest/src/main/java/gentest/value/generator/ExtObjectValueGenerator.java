@@ -84,7 +84,11 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 
 	protected void doAppendMethod(GeneratedVariable variable, int level, int scopeId)
 			throws SavException {
-		doAppendMethods(variable, level, methodcalls, scopeId, false);
+		// generate value for method call
+		for (Method method : methodcalls) {
+			variable.newCuttingPoint();
+			doAppendMethod(variable, level, scopeId, false, method);
+		}
 	}
 	
 	@Override

@@ -61,4 +61,15 @@ public class ClassUtils {
 	public static String toClassMethodStr(String clazz, String method) {
 		return StringUtils.dotJoin(clazz, method);
 	}
+	
+	public static Class<?> getArrayContentType(Class<?> type) {
+		Class<?> contentType = type;
+		while (contentType.isArray()) {
+			contentType = contentType.getComponentType();
+		}
+		if (contentType == type) {
+			return null;
+		}
+		return contentType;
+	}
 }

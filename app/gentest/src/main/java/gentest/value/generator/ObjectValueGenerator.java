@@ -41,20 +41,21 @@ public class ObjectValueGenerator extends ValueGenerator {
 			int[] paramIds = new int[types.length];
 			for (int i = 0; i < rconstructor.getInputTypes().size(); i++) {
 				Class<?> paramType = rconstructor.getInputTypes().get(i);
-				GeneratedVariable newVariable = variable.newVariable();
-				append(newVariable, level + 1, paramType, types[i]);
-				variable.append(newVariable);
+				GeneratedVariable newVariable = append(variable, level + 1,
+						paramType, types[i]);
 				paramIds[i] = newVariable.getReturnVarId();
 			}
 			variable.append(rconstructor, paramIds);
 		} else if (initializedStmt instanceof Method) {
+			// init by static method
 			doAppendStaticMethods(variable, level,
 					CollectionUtils.listOf((Method) initializedStmt));
 		} else if (initializedStmt instanceof MethodCall) {
+			// init by a builder
 			MethodCall methodCall = (MethodCall) initializedStmt;
-			GeneratedVariable newVar = variable.newVariable();
-			append(newVar, level + 1, methodCall.getReceiverType(), null);
-			variable.append(newVar);
+			GeneratedVariable newVar = append(variable, level + 1,
+					methodCall.getReceiverType(), null);
+			// append methods
 			doAppendMethods(variable, level,
 					CollectionUtils.listOf(methodCall.getMethod()),
 					newVar.getReturnVarId(), true);
@@ -65,7 +66,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 		}
 		return true;
 	}
-
+	
 	/**
 	 * return 
 	 * constructor: if the class has it own visible constructor 

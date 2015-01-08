@@ -18,8 +18,12 @@ public abstract class SelectedVariable implements ISelectedVariable {
 	protected List<LocalVariable> newVariables;
 	
 	public SelectedVariable() {
-		stmts = new ArrayList<Statement>();
-		newVariables = new ArrayList<LocalVariable>();
+		this(new ArrayList<Statement>(), new ArrayList<LocalVariable>());
+	}
+	
+	public SelectedVariable(List<Statement> stmts, List<LocalVariable> vars) {
+		this.stmts = stmts;
+		this.newVariables = vars;
 	}
 	
 	@Override

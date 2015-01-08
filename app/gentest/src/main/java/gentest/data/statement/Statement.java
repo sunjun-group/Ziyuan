@@ -5,6 +5,11 @@ package gentest.data.statement;
 
 /**
  * @author LLT
+ * This is a data class, it suppose to content data only,
+ * not any specific business function.
+ * If we have a need to have any abstract business function for any kind of statement,
+ * just implement {@link StatementVisitor}
+ * and using method {@link Statement#accept(StatementVisitor)} to navigate
  */
 public abstract class Statement {
 	public static final int INVALID_VAR_ID = -1;

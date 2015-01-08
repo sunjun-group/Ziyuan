@@ -27,35 +27,62 @@ import java.util.Set;
 import main.GentestConstants;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
+import sav.common.core.utils.Randomness;
 
 /**
  * @author LLT
  *
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class ValueGenerator {
 
 	public static GeneratedVariable generate(Class<?> clazz, Type type, 
 			int firstVarId) throws SavException {
 		GeneratedVariable variable = new GeneratedVariable(firstVarId);
-		append(variable, 1, clazz, type);
-		VariableCache.getInstance().put(clazz, variable);
-		return variable;
+		return append(variable, 1, clazz, type);
 	}
 
-	public static void append(GeneratedVariable variable, int level,
-			Class<?> clazz, Type type) throws SavException {
-		if (PrimitiveValueGenerator.accept(clazz)) {
-			new PrimitiveValueGenerator().doAppend(variable, level, clazz);
-			return;
-		} 
-		if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL) {
-			assignNull(variable, clazz);
-			return;
-		}
+	private static VariableCache getVariableCache() {
+		return VariableCache.getInstance();
+	}
 
-		ValueGenerator generator = findGenerator(clazz, type);
-		generator.doAppend(variable, level, clazz);
+	public static GeneratedVariable append(GeneratedVariable rootVariable, int level,
+			Class<?> clazz, Type type) throws SavException {
+		GeneratedVariable variable = null;
+		boolean selectFromCache = Randomness
+				.weighedCoinFlip(GentestConstants.CACHE_VALE_PROBABILITY);
+		if (selectFromCache) {
+			/* trying to lookup in cache */
+			variable = getVariableCache().select(clazz);
+			if (variable != null) {
+				int toVarId = variable.getNewVariables().size();
+				int toStmtIdx = variable.getStmts().size();
+				if (variable.getObjCuttingPoints() != null) {
+					int[] stopPoint = Randomness.randomMember(variable
+							.getObjCuttingPoints());
+					toVarId = stopPoint[0];
+					toStmtIdx = stopPoint[1];
+				}
+				variable = variable.duplicate(rootVariable.getNextVarId(),
+						toVarId, toStmtIdx);
+			}
+		}
+		
+		if (variable == null) {
+			variable = rootVariable.newVariable();
+			/* generate the new one*/
+			if (PrimitiveValueGenerator.accept(clazz)) {
+				new PrimitiveValueGenerator().doAppend(variable, level, clazz);
+			}  else if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL) {
+				assignNull(variable, clazz);
+			} else {
+				ValueGenerator generator = findGenerator(clazz, type);
+				generator.doAppend(variable, level, clazz);
+			}
+			getVariableCache().put(clazz, variable);
+		}
+		rootVariable.append(variable);
+		return variable;
 	}
 
 	protected static void assignNull(GeneratedVariable variable, Class<?> clazz) {
@@ -68,26 +95,30 @@ public abstract class ValueGenerator {
 				true);
 	}
 	
-	protected final void doAppendMethods(GeneratedVariable variable, int level, 
+	protected void doAppendMethods(GeneratedVariable variable, int level, 
 			List<Method> methodcalls, int scopeId, boolean addVariable) throws SavException {
 		// generate value for method call
 		for (Method method : methodcalls) {
-			/* check generic types */
-			Type[] genericParamTypes = method.getGenericParameterTypes();
-			Class<?>[] types = method.getParameterTypes();
-			int[] paramIds = new int[genericParamTypes.length];
-			for (int i = 0; i < paramIds.length; i++) {
-				Type type = genericParamTypes[i];
-				Pair<Class<?>, Type> paramType = getParamType(types[i], type);
-				GeneratedVariable newVar = variable.newVariable();
-				ValueGenerator.append(newVar, level + 2, paramType.a,
-						paramType.b);
-				paramIds[i] = newVar.getLastVarId();
-				variable.append(newVar);
-			}
-			Rmethod rmethod = new Rmethod(method, scopeId);
-			variable.append(rmethod, paramIds, addVariable);
+			doAppendMethod(variable, level, scopeId, addVariable, method);
 		}
+	}
+
+	protected void doAppendMethod(GeneratedVariable variable, int level,
+			int scopeId, boolean addVariable, Method method)
+			throws SavException {
+		/* check generic types */
+		Type[] genericParamTypes = method.getGenericParameterTypes();
+		Class<?>[] types = method.getParameterTypes();
+		int[] paramIds = new int[genericParamTypes.length];
+		for (int i = 0; i < paramIds.length; i++) {
+			Type type = genericParamTypes[i];
+			Pair<Class<?>, Type> paramType = getParamType(types[i], type);
+			GeneratedVariable newVar = ValueGenerator.append(variable,
+					level + 2, paramType.a, paramType.b);
+			paramIds[i] = newVar.getReturnVarId();
+		}
+		Rmethod rmethod = new Rmethod(method, scopeId);
+		variable.append(rmethod, paramIds, addVariable);
 	}
 
 	protected Pair<Class<?>, Type> getParamType(Class<?> clazz, Type type) {

@@ -1,7 +1,7 @@
 /**
  * Copyright TODO
  */
-package gentest;
+package junit.variable;
 
 import gentest.commons.utils.TypeUtils;
 import gentest.data.Sequence;
@@ -20,7 +20,7 @@ import java.util.Map;
  * ClassName className = new ClassName() Class var0 = null will be
  * transformed to Class clazz = null
  * */
-public class VariableNamer {
+public class VariableNamer implements IVariableNamer {
 	private static final int VAR_FIRST_IDX = 0;
 	private static final String ARRAY_VAR_PREFIX = "arr";
 	private Map<Integer, String> vars;
@@ -46,6 +46,7 @@ public class VariableNamer {
 		varPrefixIdxMap = new HashMap<String, Integer>();
 	}
 	
+	@Override
 	public String getName(Class<?> type, int varId) {
 		String var = vars.get(varId);
 		if (var == null) {
@@ -65,10 +66,12 @@ public class VariableNamer {
 		return var;
 	}
 	
+	@Override
 	public String getArrVarName(int varId) {
 		return nextVar(ARRAY_VAR_PREFIX, varId);
 	}
 	
+	@Override
 	public String getExistVarName(int varIdx) {
 		return vars.get(varIdx);
 	}

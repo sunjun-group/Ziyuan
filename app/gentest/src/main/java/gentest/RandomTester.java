@@ -5,6 +5,7 @@ package gentest;
 
 import gentest.data.MethodCall;
 import gentest.data.Sequence;
+import gentest.value.VariableCache;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,8 @@ public class RandomTester {
 	 */
 	public Pair<List<Sequence>, List<Sequence>> test(
 			List<MethodCall> methodcalls) throws SavException {
+		// TODO LLT: just temporary. do review	
+		VariableCache.getInstance().reset();
 		List<Sequence> passTcs = new ArrayList<Sequence>();
 		List<Sequence> failTcs = new ArrayList<Sequence>();
 		TestcaseGenerator tcGenerator = new TestcaseGenerator();

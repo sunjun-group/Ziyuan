@@ -1,9 +1,20 @@
+/*
+ * Copyright (C) 2013 by SUTD (Singapore)
+ * All rights reserved.
+ *
+ * 	Author: SUTD
+ *  Version:  $Revision: 1 $
+ */
 package gentest.data.statement;
 
 import java.util.Arrays;
 
+/**
+ * 
+ * @author Nguyen Phuoc Nguong Phuc
+ *
+ */
 public class RArrayAssignment extends Statement {
-
 	private final int arrayVarID;
 	private final int index[];
 	private final int localVariableID;

@@ -33,5 +33,6 @@ public class GentestConstants {
 	 * NOTE This must be less than 255
 	 */
 	public static final int VALUE_GENERATION_ARRAY_MAXLENGTH = 10;
-	public static final int OBJECT_VALUE_GENERATOR_MAX_SELECTED_METHODS = 3;
+	public static final int OBJECT_VALUE_GENERATOR_MAX_SELECTED_METHODS = 10;
+	public static final double CACHE_VALE_PROBABILITY = 0.5;
 }
