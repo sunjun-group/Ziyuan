@@ -35,7 +35,7 @@ public class SVMTest {
 		runsvm.buildClassifier(ds);
 		double[] dd = runsvm.getWeights();
 		for(double d1 : dd){
-			System.out.println(dd);
+			System.out.println(d1);
 		}
 		System.out.println(runsvm.getExplicitDivider().toString());
 		System.out.println(runsvm.modelAccuracy());
