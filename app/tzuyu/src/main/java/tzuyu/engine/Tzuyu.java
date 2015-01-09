@@ -12,8 +12,8 @@ import gentest.RandomTester;
 
 import java.util.List;
 
-import libsvm.libsvm.svm;
-import libsvm.libsvm.svm_print_interface;
+import libsvm.svm;
+import libsvm.svm_print_interface;
 import lstar.IReportHandler.OutputType;
 import lstar.LStar;
 import lstar.LStarException;

@@ -8,10 +8,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-import libsvm.libsvm.svm;
-import libsvm.libsvm.svm_model;
-import libsvm.libsvm.svm_node;
-import libsvm.libsvm.svm_parameter;
+import libsvm.svm;
+import libsvm.svm_model;
+import libsvm.svm_node;
+import libsvm.svm_parameter;
 
 class svm_predict {
   private static double atof(String s) {

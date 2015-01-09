@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import libsvm.libsvm.svm;
-import libsvm.libsvm.svm_model;
-import libsvm.libsvm.svm_node;
-import libsvm.libsvm.svm_parameter;
-import libsvm.libsvm.svm_problem;
+import libsvm.svm;
+import libsvm.svm_model;
+import libsvm.svm_node;
+import libsvm.svm_parameter;
+import libsvm.svm_problem;
 import tzuyu.engine.bool.FieldVar;
 import tzuyu.engine.bool.LIATerm;
 import tzuyu.engine.bool.utils.FormulaUtils;
@@ -51,34 +51,31 @@ public class SVMWrapper {
 
 	private static final double EPSILON = 1e-3;
 
-	private svm_parameter configuration;
-
-	private List<FieldVar> properties;
-
-	private int currentLevel;
-
+	private svm_parameter configuration = getDefaultParameters();
+	private List<FieldVar> properties = new ArrayList<FieldVar>();
+	private int currentLevel = 0;
 	private int svmCallCount = 0;
-
 	private int timeConsumed = 0;
-
-	private int classInDepth;
-	private ITzManager<?> manager;
+	private int classInDepth = 0;
+	private ITzManager<?> manager = null;
 
 	public SVMWrapper(ITzManager<?> manager) {
-		this.configuration = new svm_parameter();
-		configuration.svm_type = svm_parameter.C_SVC;
-		configuration.kernel_type = svm_parameter.LINEAR;
-		configuration.C = 1000.0;
-		configuration.cache_size = 40;
-		configuration.eps = 1e-3;
-		configuration.shrinking = 1;
-		configuration.probability = 1;
-		configuration.nr_weight = 0;
-
-		properties = new ArrayList<FieldVar>();
 		this.manager = manager;
 	}
 
+	private svm_parameter getDefaultParameters() {
+		svm_parameter param = new svm_parameter();
+		param.svm_type = svm_parameter.C_SVC;
+		param.kernel_type = svm_parameter.LINEAR;
+		param.C = 1000.0;
+		param.cache_size = 40;
+		param.eps = 1e-3;
+		param.shrinking = 1;
+		param.probability = 1;
+		param.nr_weight = 0;
+		return param;
+	}
+	
 	public void setClassInDepth(int classInDepth) {
 		this.classInDepth = classInDepth;
 	}
@@ -400,7 +397,9 @@ public class SVMWrapper {
 	}
 	
 	private void beforeSvm() throws InterruptedException {
-		manager.checkProgress();
+		if (manager != null) {			
+			manager.checkProgress();
+		}
 		svmCallCount ++;
 	}
 

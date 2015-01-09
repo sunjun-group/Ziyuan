@@ -27,11 +27,11 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import libsvm.libsvm.svm;
-import libsvm.libsvm.svm_model;
-import libsvm.libsvm.svm_node;
-import libsvm.libsvm.svm_parameter;
-import libsvm.libsvm.svm_problem;
+import libsvm.svm;
+import libsvm.svm_model;
+import libsvm.svm_node;
+import libsvm.svm_parameter;
+import libsvm.svm_problem;
 
 public class svm_toy extends Applet {
 
