@@ -34,5 +34,6 @@ public class GentestConstants {
 	 */
 	public static final int VALUE_GENERATION_ARRAY_MAXLENGTH = 10;
 	public static final int OBJECT_VALUE_GENERATOR_MAX_SELECTED_METHODS = 10;
-	public static final double CACHE_VALE_PROBABILITY = 0.5;
+	public static final double CACHE_VALUE_PROBABILITY = 0.5;
+	public static final double PUBLIC_CONSTRUCTOR_PROBABILITY = 0.5;
 }

@@ -28,7 +28,9 @@ import sav.commons.testdata.autogeneration.FindMaxNums;
 import sav.commons.testdata.autogeneration.FindMaxSet;
 import sav.commons.testdata.autogeneration.FindMaxStatic;
 import sav.commons.testdata.autogeneration.FindMaxString;
+import sav.commons.testdata.autogeneration.FindMaxUtils;
 import sav.commons.testdata.autogeneration.FindMaxWrapper;
+import sav.commons.testdata.autogeneration.FindMaxWrapper1;
 import builder.FixTraceGentestBuilder;
 import builder.GentestBuilder;
 import builder.RandomTraceGentestBuilder;
@@ -38,7 +40,7 @@ import builder.RandomTraceGentestBuilder;
  *
  */
 public class GentestForTestdataRunner extends AbstractGTTest {
-	private static final int NUMBER_OF_TESTCASES = 1000;
+	private static final int NUMBER_OF_TESTCASES = 10;
 	private static final int METHOD_PER_CLASS = 10;
 
 	@Test
@@ -49,6 +51,19 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 		Class<BoundedStack> targetClazz = BoundedStack.class;
 		builder.forClass(targetClazz);
 		printTc(builder, targetClazz);
+	}
+	
+	@Test
+	public void testFindMaxUtils() throws SavException {
+		FixTraceGentestBuilder builder = new FixTraceGentestBuilder(NUMBER_OF_TESTCASES);
+		builder.forClass(FindMaxUtils.class)
+				.method("findMaxByToString");
+		printTc(builder, FindMaxUtils.class);
+	}
+	
+	@Test
+	public void testFindMaxWrapper1() throws SavException {
+		generateTestcase(FindMaxWrapper1.class);
 	}
 	
 	@Test

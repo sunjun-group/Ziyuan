@@ -8,6 +8,8 @@
 
 package gentest.value.generator;
 
+import java.lang.reflect.Type;
+
 import main.GentestConstants;
 import gentest.data.statement.RArrayAssignment;
 import gentest.data.statement.RArrayConstructor;
@@ -20,13 +22,18 @@ import sav.common.core.utils.Randomness;
  * @author Nguyen Phuoc Nguong Phuc
  */
 public class ArrayValueGenerator extends ValueGenerator {
+	private Type type;
+	
+	public ArrayValueGenerator(Type type) {
+		this.type = type;
+	}
 
 	@Override
-	public boolean doAppend(GeneratedVariable variable, int level, Class<?> type)
+	public boolean doAppend(GeneratedVariable variable, int level, Class<?> clazz)
 			throws SavException {
 		// Generate the array
-		final int dimension = 1 + type.getName().lastIndexOf('[');
-		Class<?> contentType = type;
+		final int dimension = 1 + clazz.getName().lastIndexOf('[');
+		Class<?> contentType = clazz;
 		while (contentType.isArray()) {
 			contentType = contentType.getComponentType();
 		}
@@ -36,7 +43,7 @@ public class ArrayValueGenerator extends ValueGenerator {
 					.nextRandomInt(GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH);
 		}
 		final RArrayConstructor arrayConstructor = new RArrayConstructor(sizes,
-				type, contentType);
+				clazz, contentType);
 		variable.append(arrayConstructor);
 		variable.commitReturnVarIdIfNotExist();
 		// Generate the array content

@@ -55,7 +55,7 @@ public abstract class ValueGenerator {
 			Class<?> clazz, Type type, boolean isReceiver) throws SavException {
 		GeneratedVariable variable = null;
 		boolean selectFromCache = Randomness
-				.weighedCoinFlip(GentestConstants.CACHE_VALE_PROBABILITY);
+				.weighedCoinFlip(GentestConstants.CACHE_VALUE_PROBABILITY);
 		if (selectFromCache) {
 			/* trying to lookup in cache */
 			variable = getVariableCache().select(type, clazz);
@@ -136,7 +136,7 @@ public abstract class ValueGenerator {
 	private static ValueGenerator findGenerator(Class<?> clazz, Type type,
 			boolean isReceiver) {
 		if (clazz.isArray()) {
-			return new ArrayValueGenerator();
+			return new ArrayValueGenerator(type);
 		}
 		Pair<Class<?>, List<String>> typeDef = specificObjectMap.get(clazz);
 		if (typeDef != null) {
