@@ -59,7 +59,7 @@ public class TestcaseGenerator {
 				if (receiver == null) {
 					/* if the instance of method receiver still did not exist in the sequence,
 					 * initialize one */
-					recieverParam = parameterSelector.selectParam(
+					recieverParam = parameterSelector.selectReceiver(
 							method.getReceiverType(), null, seq.getStmtsSize(),
 							seq.getVarsSize());
 					seq.appendReceiver(recieverParam, method.getReceiverType());

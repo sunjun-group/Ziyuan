@@ -32,14 +32,25 @@ public class ParameterSelector {
 		this.seq = methodDecl;
 	}
 	
+	public ISelectedVariable selectReceiver(Class<?> clazz, Type type,
+			int firstStmtIdx, int firstVarIdx) throws SavException {
+		return selectParam(clazz, type, firstStmtIdx, firstVarIdx, true);
+	}
+	
 	public ISelectedVariable selectParam(Class<?> clazz, Type type, int firstStmtIdx,
 			int firstVarIdx) throws SavException {
+		return selectParam(clazz, type, firstStmtIdx, firstVarIdx, false);
+	}
+	
+	public ISelectedVariable selectParam(Class<?> clazz, Type type,
+			int firstStmtIdx, int firstVarIdx, boolean isReceiver)
+			throws SavException {
 		SelectionMode selectingMode = randomChooseSelectorType(clazz);
 		switch (selectingMode) {
 		case REFERENCE:
 			return selectReferenceParam(clazz);
 		default:
-			return selectGeneratedParam(clazz, type, firstVarIdx);
+			return selectGeneratedParam(clazz, type, firstVarIdx, isReceiver);
 		}
 	}
 	
@@ -47,8 +58,8 @@ public class ParameterSelector {
 	 * generate new value for parameter.
 	 */
 	private ISelectedVariable selectGeneratedParam(Class<?> clazz,
-			Type type, int firstVarIdx) throws SavException {
-		return ValueGenerator.generate(clazz, type, firstVarIdx);
+			Type type, int firstVarIdx, boolean isReceiver) throws SavException {
+		return ValueGenerator.generate(clazz, type, firstVarIdx, isReceiver);
 	}
 
 	/**
@@ -81,4 +92,5 @@ public class ParameterSelector {
 		REFERENCE,
 		GENERATE_NEW
 	}
+
 }

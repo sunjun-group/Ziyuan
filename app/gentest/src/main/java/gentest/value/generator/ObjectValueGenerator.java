@@ -75,6 +75,36 @@ public class ObjectValueGenerator extends ValueGenerator {
 	 * methodCall: if the class has a builder inside. 
 	 */
 	private Object findConstructor(Class<?> type) {
+		/* try to find static method for initialization inside class */
+		for (Method method : type.getMethods()) {
+			if (Modifier.isStatic(method.getModifiers())
+					&& Modifier.isPublic(method.getModifiers())) {
+				if (method.getReturnType().equals(type)) {
+					return method;
+				}
+			}
+		}
+		
+		if (type.isInterface() || Modifier.isAbstract(type.getModifiers())) {
+			// try to search subclass
+			Class<?> subClass = refAnalyzer.getRandomImplClzz(type);
+			if (subClass != null) {
+				return findConstructor(subClass);
+			}
+		}
+		
+		/* try to find a builder inside class */
+		Class<?>[] declaredClasses = type.getDeclaredClasses();
+		if (declaredClasses != null) {
+			for (Class<?> innerClazz : declaredClasses) {
+				for (Method method : innerClazz.getMethods()) {
+					if (method.getReturnType().equals(type)) {
+						return MethodCall.of(method, innerClazz);
+					}
+				}
+			}
+		}
+		
 		try {
 			/* try with the perfect one which is public constructor with no parameter*/
 			Constructor<?> constructor = type.getConstructor();
@@ -94,33 +124,15 @@ public class ObjectValueGenerator extends ValueGenerator {
 			return Randomness.randomMember(candidates);
 		}
 		
-		/* try to find static method for initialization inside class */
-		for (Method method : type.getMethods()) {
-			if (Modifier.isStatic(method.getModifiers())
-					&& Modifier.isPublic(method.getModifiers())) {
-				if (method.getReturnType().equals(type)) {
-					return method;
-				}
+		// if still cannot get constructor,
+		// try to search subclass if it's not an abstract class
+		if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())) {
+			Class<?> subClass = refAnalyzer.getRandomImplClzz(type);
+			if (subClass != null) {
+				return findConstructor(subClass);
 			}
 		}
 		
-		/* try to find a builder inside class */
-		Class<?>[] declaredClasses = type.getDeclaredClasses();
-		if (declaredClasses != null) {
-			for (Class<?> innerClazz : declaredClasses) {
-				for (Method method : innerClazz.getMethods()) {
-					if (method.getReturnType().equals(type)) {
-						return MethodCall.of(method, innerClazz);
-					}
-				}
-			}
-		}
-		
-		// try to search subclass
-		Class<?> subClass = refAnalyzer.getRandomImplClzz(type);
-		if (subClass != null) {
-			return findConstructor(subClass);
-		}
 		// cannot find constructor;
 		return null;
 	}

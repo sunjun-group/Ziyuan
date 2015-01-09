@@ -37,23 +37,28 @@ import sav.common.core.utils.Randomness;
 public abstract class ValueGenerator {
 
 	public static GeneratedVariable generate(Class<?> clazz, Type type, 
-			int firstVarId) throws SavException {
+			int firstVarId, boolean isReceiver) throws SavException {
 		GeneratedVariable variable = new GeneratedVariable(firstVarId);
-		return append(variable, 1, clazz, type);
+		return append(variable, 1, clazz, type, isReceiver);
 	}
 
 	private static VariableCache getVariableCache() {
 		return VariableCache.getInstance();
 	}
-
+	
 	public static GeneratedVariable append(GeneratedVariable rootVariable, int level,
 			Class<?> clazz, Type type) throws SavException {
+		return append(rootVariable, level, clazz, type, false);
+	}
+
+	public static GeneratedVariable append(GeneratedVariable rootVariable, int level,
+			Class<?> clazz, Type type, boolean isReceiver) throws SavException {
 		GeneratedVariable variable = null;
 		boolean selectFromCache = Randomness
 				.weighedCoinFlip(GentestConstants.CACHE_VALE_PROBABILITY);
 		if (selectFromCache) {
 			/* trying to lookup in cache */
-			variable = getVariableCache().select(clazz);
+			variable = getVariableCache().select(type, clazz);
 			if (variable != null) {
 				int toVarId = variable.getNewVariables().size();
 				int toStmtIdx = variable.getStmts().size();
@@ -76,10 +81,10 @@ public abstract class ValueGenerator {
 			}  else if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL) {
 				assignNull(variable, clazz);
 			} else {
-				ValueGenerator generator = findGenerator(clazz, type);
+				ValueGenerator generator = findGenerator(clazz, type, isReceiver);
 				generator.doAppend(variable, level, clazz);
 			}
-			getVariableCache().put(clazz, variable);
+			getVariableCache().put(type, clazz, variable);
 		}
 		rootVariable.append(variable);
 		return variable;
@@ -128,7 +133,8 @@ public abstract class ValueGenerator {
 	public abstract boolean doAppend(GeneratedVariable variable, int level,
 			Class<?> type) throws SavException;
 
-	private static ValueGenerator findGenerator(Class<?> clazz, Type type) {
+	private static ValueGenerator findGenerator(Class<?> clazz, Type type,
+			boolean isReceiver) {
 		if (clazz.isArray()) {
 			return new ArrayValueGenerator();
 		}
@@ -137,7 +143,10 @@ public abstract class ValueGenerator {
 			return new ExtObjectValueGenerator(typeDef.a, type, 
 					typeDef.b);
 		}
-		return getGenerator(ObjectValueGenerator.class);
+		if (isReceiver) {
+			return new ObjectValueGenerator();
+		}
+		return new ExtObjectValueGenerator(clazz, type, null);
 	}
 	
 	private static Map<Class<?>, Pair<Class<?>, List<String>>> specificObjectMap;
@@ -150,10 +159,4 @@ public abstract class ValueGenerator {
 											listOf("put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")));
 	}
 	
-	protected static ValueGenerator getGenerator(Class<?> clazz) {
-		if (clazz == ObjectValueGenerator.class) {
-			return new ObjectValueGenerator();
-		}
-		return null;
-	}
 }

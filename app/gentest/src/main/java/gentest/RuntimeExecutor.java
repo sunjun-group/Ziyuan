@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.AssertionFailedError;
+import sav.common.core.Logger;
 import sav.common.core.utils.Assert;
 
 
@@ -30,6 +31,7 @@ import sav.common.core.utils.Assert;
  * and run whenever a new method added to the {@link Sequence}
  */
 public class RuntimeExecutor implements StatementVisitor {
+	private Logger<?> log = Logger.getDefaultLogger();
 	private RuntimeData data;
 	private Sequence sequence;
 	private Boolean successful;
@@ -59,14 +61,8 @@ public class RuntimeExecutor implements StatementVisitor {
 			try {
 				stmt.accept(this);
 			} catch(Throwable ex) {
-				//TODO LOG
-				System.err.println(ex);
-				try {
-					stmt.accept(this);
-				} catch (Throwable e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				System.out.println(ex);
+				log.debug(ex);
 				successful = false;
 				return successful;
 			}

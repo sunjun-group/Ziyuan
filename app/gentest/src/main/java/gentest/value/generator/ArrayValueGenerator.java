@@ -44,7 +44,7 @@ public class ArrayValueGenerator extends ValueGenerator {
 		while (location != null) {
 			GeneratedVariable newVar = ValueGenerator.append(variable,
 					level + 1, arrayConstructor.getContentType(), null);
-			int localVariableID = newVar.getLastVarId(); // the last ID
+			int localVariableID = newVar.getReturnVarId(); // the last ID
 
 			// get the variable
 			RArrayAssignment arrayAssignment = new RArrayAssignment(

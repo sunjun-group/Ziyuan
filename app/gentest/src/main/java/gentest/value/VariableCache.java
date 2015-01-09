@@ -30,10 +30,15 @@ public class VariableCache {
 	private VariableCache() {
 		generatedVarMap = new HashMap<Type, List<GeneratedVariable>>();
 	}
-	
-	public void put(Class<?> clazz, GeneratedVariable variable) {
-		CollectionUtils.getListInitIfEmpty(generatedVarMap, clazz)
-						.add(variable);
+
+	public void put(Type type, Class<?> clazz, GeneratedVariable variable) {
+		if (type != null) {
+			CollectionUtils.getListInitIfEmpty(generatedVarMap, type).add(
+					variable);
+		} else {
+			CollectionUtils.getListInitIfEmpty(generatedVarMap, clazz).add(
+					variable);
+		}
 	}
 	
 	public static VariableCache getInstance() {
@@ -43,13 +48,20 @@ public class VariableCache {
 		return instance;
 	}
 
-	public GeneratedVariable select(Class<?> clazz) {
-		List<GeneratedVariable> existingValue = generatedVarMap.get(clazz);
+	public GeneratedVariable select(Type type, Class<?> clazz) {
+		List<GeneratedVariable> existingValue = getVariableByType(type, clazz);
 		GeneratedVariable selectedValue = Randomness.randomMember(existingValue);
 		if (selectedValue != null) {
 			System.out.println("class: " + clazz);
 		}
 		return selectedValue;
+	}
+
+	private List<GeneratedVariable> getVariableByType(Type type, Class<?> clazz) {
+		if (type != null) {
+			return generatedVarMap.get(type);
+		}
+		return generatedVarMap.get(clazz);
 	}
 
 	public void reset() {
