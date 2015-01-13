@@ -77,37 +77,36 @@ public class ObjectValueGenerator extends ValueGenerator {
 	 * methodCall: if the class has a builder inside. 
 	 */
 	private Object findConstructor(Class<?> type) {
-		
 		if (type.isInterface() || Modifier.isAbstract(type.getModifiers())) {
 			// try to search subclass
 			Class<?> subClass = refAnalyzer.getRandomImplClzz(type);
 			if (subClass != null) {
 				return findConstructor(subClass);
 			}
-		}
-		
-		if (Randomness.weighedCoinFlip(GentestConstants.PUBLIC_CONSTRUCTOR_PROBABILITY)) {
-			try {
-				/*
-				 * try with the perfect one which is public constructor with no
-				 * parameter
-				 */
-				Constructor<?> constructor = type.getConstructor();
-				if (isAccessibleAndPublic(constructor)) {
-					return constructor;
+		} else {
+			if (Randomness.weighedCoinFlip(GentestConstants.PUBLIC_CONSTRUCTOR_PROBABILITY)) {
+				try {
+					/*
+					 * try with the perfect one which is public constructor with no
+					 * parameter
+					 */
+					Constructor<?> constructor = type.getConstructor();
+					if (isAccessibleAndPublic(constructor)) {
+						return constructor;
+					}
+				} catch (Exception e) {
+					// do nothing, just keep trying.
 				}
-			} catch (Exception e) {
-				// do nothing, just keep trying.
 			}
-		}
-		List<Constructor<?>> candidates = new ArrayList<Constructor<?>>();
-		for (Constructor<?> constructor : type.getConstructors()) {
-			if (isAccessibleAndPublic(constructor)) {
-				candidates.add(constructor);
+			List<Constructor<?>> candidates = new ArrayList<Constructor<?>>();
+			for (Constructor<?> constructor : type.getConstructors()) {
+				if (isAccessibleAndPublic(constructor)) {
+					candidates.add(constructor);
+				}
 			}
-		}
-		if (!candidates.isEmpty()) {
-			return Randomness.randomMember(candidates);
+			if (!candidates.isEmpty()) {
+				return Randomness.randomMember(candidates);
+			}
 		}
 		
 		/* try to find static method for initialization inside class */

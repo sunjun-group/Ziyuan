@@ -8,6 +8,7 @@
 
 package gentest.value.generator;
 
+import gentest.commons.utils.GenTestUtils;
 import gentest.commons.utils.MethodUtils;
 import gentest.data.variable.GeneratedVariable;
 
@@ -33,6 +34,7 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 	private Class<?> implClazz;
 	private Type type;
 	private List<Method> methodcalls;
+	private Pair<Class<?>, Type>[] paramTypes;
 	
 	public ExtObjectValueGenerator(Class<?> implClazz, Type type,
 			List<String> methodSigns) {
@@ -95,7 +97,6 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 	protected Pair<Class<?>, Type> getParamType(Class<?> clazz, Type type) {
 		if (type instanceof TypeVariable<?>) {
 			TypeVariable<?> typeVar = (TypeVariable<?>) type;
-			typeVar.getName();
 			return getContentType((Class<?>)typeVar.getGenericDeclaration(), typeVar.getName());
 		}
 		return super.getParamType(clazz, type);
@@ -111,22 +112,37 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 				}
 			}
 			if (paramIdx < typeParameters.length) {
-				Type compType = ((ParameterizedType) type)
-						.getActualTypeArguments()[paramIdx];
-				if (compType instanceof Class<?>) {
-					return new Pair<Class<?>, Type>((Class<?>) compType, null);
-				}
-				if (compType instanceof ParameterizedType) {
-					return new Pair<Class<?>, Type>(
-							(Class<?>) ((ParameterizedType) compType)
-									.getRawType(),
-							compType);
-				}
+				return getParamType(paramIdx);
 			}
 		}
 		return new Pair<Class<?>, Type>(Object.class, null);
 	}
-
+	
+	public Pair<Class<?>, Type> getParamType(int paramIdx) {
+		if (paramTypes == null) {
+			paramTypes = new Pair[((ParameterizedType) type).getActualTypeArguments().length];
+		}
+		Pair<Class<?>, Type> paramType = paramTypes[paramIdx];
+		if (paramType == null) {
+			Type compType = ((ParameterizedType) type)
+					.getActualTypeArguments()[paramIdx];
+			if (compType instanceof Class<?>) {
+				paramType = new Pair<Class<?>, Type>(
+						GenTestUtils.toClassItselfOrItsDelegate((Class<?>) compType),
+						null);
+			} else if (compType instanceof ParameterizedType) {
+				paramType = new Pair<Class<?>, Type>(
+						(Class<?>) ((ParameterizedType) compType)
+						.getRawType(),
+						compType);
+			} else {
+				paramType = new Pair<Class<?>, Type>(Object.class, null);
+			}
+			paramTypes[paramIdx] = paramType;
+		}
+		return paramType;
+	}
+	
 	protected Pair<Class<?>, Type> getContentType(Type type, int idxType) {
 		if (type instanceof ParameterizedType) {
 			Type compType = ((ParameterizedType) type).getActualTypeArguments()[idxType];

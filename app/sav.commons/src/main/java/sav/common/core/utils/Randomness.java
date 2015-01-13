@@ -86,6 +86,9 @@ public final class Randomness {
 	}
 	
 	public static <T> List<T> randomSequence(List<T> allList, int maxSeqSize) {
+		if (allList.isEmpty()) {
+			return allList;
+		}
 		return randomSequenceFixSize(allList, nextRandomInt(maxSeqSize + 1));
 	}
 	

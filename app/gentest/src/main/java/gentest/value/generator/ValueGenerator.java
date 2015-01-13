@@ -76,8 +76,8 @@ public abstract class ValueGenerator {
 		if (variable == null) {
 			variable = rootVariable.newVariable();
 			/* generate the new one*/
-			if (PrimitiveValueGenerator.accept(clazz)) {
-				new PrimitiveValueGenerator().doAppend(variable, level, clazz);
+			if (PrimitiveValueGenerator.accept(clazz, type)) {
+				PrimitiveValueGenerator.doAppend(variable, level, clazz);
 			}  else if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL) {
 				assignNull(variable, clazz);
 			} else {

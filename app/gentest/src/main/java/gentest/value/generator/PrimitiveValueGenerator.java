@@ -8,37 +8,44 @@
 
 package gentest.value.generator;
 
-import sav.common.core.SavException;
 import gentest.ParamGeneratorFactory;
+import gentest.commons.utils.GenTestUtils;
 import gentest.commons.utils.TypeUtils;
 import gentest.data.statement.RAssignment;
 import gentest.data.variable.GeneratedVariable;
+
+import java.lang.reflect.Type;
+
+import sav.common.core.SavException;
 
 /**
  * @author LLT
  *
  */
-public class PrimitiveValueGenerator extends ValueGenerator {
-	protected ParamGeneratorFactory generatorFactory;
-	
-	public PrimitiveValueGenerator() {
-		generatorFactory = ParamGeneratorFactory.getInstance();
+public class PrimitiveValueGenerator {
+	protected static ParamGeneratorFactory generatorFactory = ParamGeneratorFactory.getInstance();
+	private PrimitiveValueGenerator() {
+		
 	}
 	
-	public static boolean accept(Class<?> type) {
-		return TypeUtils.isPrimitive(type) 
-				|| TypeUtils.isPrimitiveObject(type)
-				|| TypeUtils.isString(type) 
-				|| TypeUtils.isEnumType(type);
+	public static boolean accept(Class<?> clazz, Type type) {
+		return TypeUtils.isPrimitive(clazz) 
+				|| TypeUtils.isPrimitiveObject(clazz)
+				|| TypeUtils.isString(clazz) 
+				|| TypeUtils.isEnumType(clazz)
+				|| (isObject(clazz) && type == null);
 
 	}
 
-	@Override
-	public boolean doAppend(GeneratedVariable variable, int level, Class<?> type)
+	public static boolean doAppend(GeneratedVariable variable, int level, Class<?> type)
 			throws SavException {
+		type = GenTestUtils.toClassItselfOrItsDelegate(type);
 		Object value = generatorFactory.getGeneratorFor(type).next();
 		variable.append(RAssignment.assignmentFor(type, value));
 		return true;
 	}
 
+	private static boolean isObject(Class<?> clazz) {
+		return Object.class.equals(clazz);
+	}
 }

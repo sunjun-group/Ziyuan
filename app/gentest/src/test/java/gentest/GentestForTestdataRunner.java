@@ -40,8 +40,8 @@ import builder.RandomTraceGentestBuilder;
  *
  */
 public class GentestForTestdataRunner extends AbstractGTTest {
-	private static final int NUMBER_OF_TESTCASES = 10;
-	private static final int METHOD_PER_CLASS = 10;
+	protected static final int NUMBER_OF_TESTCASES = 100;
+	protected static final int METHOD_PER_CLASS = 10;
 
 	@Test
 	public void testBoundedStack() throws SavException {

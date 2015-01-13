@@ -38,7 +38,6 @@ public class RandomTester {
 	 */
 	public Pair<List<Sequence>, List<Sequence>> test(
 			List<MethodCall> methodcalls) throws SavException {
-		// TODO LLT: just temporary. do review	
 		List<Sequence> passTcs = new ArrayList<Sequence>();
 		List<Sequence> failTcs = new ArrayList<Sequence>();
 		TestcaseGenerator tcGenerator = new TestcaseGenerator();
@@ -60,6 +59,7 @@ public class RandomTester {
 			}
 			testsOnQuery++;
 		}
+		// TODO LLT review the cache	
 		VariableCache.getInstance().reset();
 		return new Pair<List<Sequence>, List<Sequence>>(
 				passTcs, failTcs);
