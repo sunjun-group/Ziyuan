@@ -52,14 +52,13 @@
 		<module>../codecoverage.jacoco</module>
 		<!-- -->
 		<module>../tzuyu.core</module>
-		<module>../tzuyuEclipsePlugin</module>
-		<module>../tzuyuEclipsePlugin-test</module>
 		<module>../tzuyu.feature</module>
 		<module>../tzuyu.repo</module>
 		<module>../tzuyu</module>
 		<module>../icsetlv</module>
 		<module>../faultLocalization</module>
 		<module>../extcos</module>
+		<module>../svmlib</module>
 	</modules>
 
 	<build>
