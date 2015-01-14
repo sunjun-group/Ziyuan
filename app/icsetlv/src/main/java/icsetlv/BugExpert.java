@@ -10,7 +10,6 @@ package icsetlv;
 
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.iface.IBugExpert;
-import icsetlv.svm.LibSVM;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +20,6 @@ import libsvm.core.DataPoint;
 import libsvm.core.KernelType;
 import libsvm.core.Machine;
 import libsvm.core.MachineType;
-import libsvm.core.Model;
 import libsvm.core.Parameter;
 import net.sf.javaml.core.Dataset;
 import net.sf.javaml.core.DefaultDataset;
@@ -44,19 +42,10 @@ public class BugExpert implements IBugExpert {
 			return false;
 		}
 
-		final Parameter parameter = new Parameter();
-		parameter.setMachineType(MachineType.C_SVC);
-		parameter.setKernelType(KernelType.LINEAR);
-		parameter.setC(1.0);
-		parameter.setCacheSize(100.0);
-		parameter.setEps(1e-3);
-		parameter.setShrinking(1);
-		parameter.setProbability(1);
-		parameter.setNrWeight(0);
-		parameter.setWeight(new double[0]);
-		parameter.setWeightLabel(new int[0]);
-
-		final Machine machine = new Machine().setParameter(parameter);
+		final Machine machine = new Machine().setParameter(new Parameter()
+				.setMachineType(MachineType.C_SVC).setKernelType(KernelType.LINEAR).setC(1.0)
+				.setCacheSize(100.0).setEps(1e-3).setShrinking(1).setProbability(1).setNrWeight(0)
+				.setWeight(new double[0]).setWeightLabel(new int[0]));
 
 		// TODO NPN enhance this part
 		// Build up the map between a variable and its values (for different test cases)

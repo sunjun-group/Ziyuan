@@ -12,8 +12,9 @@ public class Parameter {
 
 	private svm_parameter param = new svm_parameter();
 
-	public void setMachineType(final MachineType type) {
+	public Parameter setMachineType(final MachineType type) {
 		param.svm_type = type.index();
+		return this;
 	}
 
 	public MachineType getMachineType() {
@@ -37,8 +38,9 @@ public class Parameter {
 		}
 	}
 
-	public void setKernelType(final KernelType type) {
+	public Parameter setKernelType(final KernelType type) {
 		param.kernel_type = type.index();
+		return this;
 	}
 
 	public KernelType getKernelType() {
@@ -62,27 +64,30 @@ public class Parameter {
 		}
 	}
 
-	public void setDegree(final int degree) {
+	public Parameter setDegree(final int degree) {
 		ensureKernelTypeIn(KernelType.POLY);
 		param.degree = degree;
+		return this;
 	}
 
 	public int getDegree() {
 		return param.degree;
 	}
 
-	public void setGamma(final double gamma) {
+	public Parameter setGamma(final double gamma) {
 		ensureKernelTypeIn(KernelType.POLY, KernelType.RBF, KernelType.SIGMOID);
 		param.gamma = gamma;
+		return this;
 	}
 
 	public double getGamma() {
 		return param.gamma;
 	}
 
-	public void setCoef0(final double coef0) {
+	public Parameter setCoef0(final double coef0) {
 		ensureKernelTypeIn(KernelType.POLY, KernelType.SIGMOID);
 		param.coef0 = coef0;
+		return this;
 	}
 
 	public double getCoef0() {
@@ -93,8 +98,9 @@ public class Parameter {
 	 * @param cacheSize
 	 *            Cache size in MB
 	 */
-	public void setCacheSize(final double cacheSize) {
+	public Parameter setCacheSize(final double cacheSize) {
 		param.cache_size = cacheSize;
+		return this;
 	}
 
 	public double getCacheSize() {
@@ -104,62 +110,69 @@ public class Parameter {
 	/**
 	 * Stopping criteria
 	 */
-	public void setEps(final double eps) {
+	public Parameter setEps(final double eps) {
 		param.eps = eps;
+		return this;
 	}
 
 	public double getEps() {
 		return param.eps;
 	}
 
-	public void setC(final double c) {
+	public Parameter setC(final double c) {
 		ensureMachineTypeIn(MachineType.C_SVC, MachineType.EPSILON_SVR, MachineType.NU_SVR);
 		param.C = c;
+		return this;
 	}
 
 	public double getC() {
 		return param.C;
 	}
 
-	public void setNrWeight(final int nrWeight) {
+	public Parameter setNrWeight(final int nrWeight) {
 		ensureMachineTypeIn(MachineType.C_SVC);
 		param.nr_weight = nrWeight;
+		return this;
 	}
 
 	public int getNrWeight() {
 		return param.nr_weight;
 	}
 
-	public void setWeightLabel(final int[] weightLabel) {
+	public Parameter setWeightLabel(final int[] weightLabel) {
 		ensureMachineTypeIn(MachineType.C_SVC);
 		param.weight_label = weightLabel;
+		return this;
 	}
 
 	public int[] getWeightLabel() {
 		return param.weight_label;
 	}
 
-	public void setWeight(final double[] weight) {
+	public Parameter setWeight(final double[] weight) {
 		ensureMachineTypeIn(MachineType.C_SVC);
 		param.weight = weight;
+		return this;
 	}
 
 	public double[] getWeight() {
 		return param.weight;
 	}
 
-	public void setNU(final double nu) {
+	public Parameter setNU(final double nu) {
 		ensureMachineTypeIn(MachineType.NU_SVC, MachineType.ONE_CLASS, MachineType.NU_SVR);
 		param.nu = nu;
+		return this;
 	}
 
 	public double getNU() {
 		return param.nu;
 	}
 
-	public void setP(final double p) {
+	public Parameter setP(final double p) {
 		ensureMachineTypeIn(MachineType.EPSILON_SVR);
 		param.p = p;
+		return this;
 	}
 
 	public double getP() {
@@ -169,8 +182,9 @@ public class Parameter {
 	/**
 	 * Use the shrinking heuristics
 	 */
-	public void setShrinking(final int shrinking) {
+	public Parameter setShrinking(final int shrinking) {
 		param.shrinking = shrinking;
+		return this;
 	}
 
 	public int getShrinking() {
@@ -180,8 +194,9 @@ public class Parameter {
 	/**
 	 * Do probability estimates
 	 */
-	public void setProbability(final int probability) {
+	public Parameter setProbability(final int probability) {
 		param.probability = probability;
+		return this;
 	}
 
 	public int getProbability() {
