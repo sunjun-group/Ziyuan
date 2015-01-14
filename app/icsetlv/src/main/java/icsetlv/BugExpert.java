@@ -17,37 +17,100 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import libsvm.core.DataPoint;
+import libsvm.core.KernelType;
+import libsvm.core.Machine;
+import libsvm.core.MachineType;
+import libsvm.core.Model;
+import libsvm.core.Parameter;
 import net.sf.javaml.core.Dataset;
 import net.sf.javaml.core.DefaultDataset;
 import net.sf.javaml.core.DenseInstance;
 import net.sf.javaml.core.Instance;
 
 /**
- *  @author Jingyi
- *
+ * @author Jingyi
+ * 
  */
 public class BugExpert implements IBugExpert {
-	
+
 	private static final double ACCURACY_THRESHOLD = 0.7;
+	private static final String POSITIVE = "positive";
+	private static final String NEGATIVE = "negative";
 
 	@Override
-	public boolean isRootCause(List<BreakpointValue> passValues,
-			List<BreakpointValue> failValues) {
+	public boolean isRootCause(List<BreakpointValue> passValues, List<BreakpointValue> failValues) {
 		if (passValues.isEmpty() || failValues.isEmpty()) {
 			return false;
 		}
-		LibSVM svmer = new LibSVM();
-		svmer.buildClassifier(buildDataset(passValues, failValues));
-		Metric metric = new Metric(svmer.modelAccuracy());
-		return bugFoundOrNot(metric);
+
+		final Parameter parameter = new Parameter();
+		parameter.setMachineType(MachineType.C_SVC);
+		parameter.setKernelType(KernelType.LINEAR);
+		parameter.setC(1.0);
+		parameter.setCacheSize(100.0);
+		parameter.setEps(1e-3);
+		parameter.setShrinking(1);
+		parameter.setProbability(1);
+		parameter.setNrWeight(0);
+		parameter.setWeight(new double[0]);
+		parameter.setWeightLabel(new int[0]);
+
+		final Machine machine = new Machine().setParameter(parameter);
+
+		// TODO NPN enhance this part
+		// Build up the map between a variable and its values (for different test cases)
+		final int passTestCaseSize = passValues.size();
+		final int failedTestCaseSize = failValues.size();
+		final int dataSize = passTestCaseSize + failedTestCaseSize;
+		final Map<String, double[]> variableValueMap = new HashMap<String, double[]>();
+		int i = 0;
+		for (BreakpointValue value : passValues) {
+			value.retrieveValue(variableValueMap, i++, dataSize);
+		}
+		for (BreakpointValue value : failValues) {
+			value.retrieveValue(variableValueMap, i++, dataSize);
+		}
+		// Number of all available variables a breakpoint
+		final int numberOfFeatures = variableValueMap.keySet().size();
+
+		// Build data points
+		List<DataPoint> dataPoints = new ArrayList<DataPoint>(dataSize);
+		i = 0;
+		for (int j = 0; j < passTestCaseSize; j++) {
+			DataPoint dp = new DataPoint(numberOfFeatures);
+			dp.setCategory(machine.getCategory(POSITIVE));
+			dp.setValues(getVariableValueAtLine(variableValueMap, i++));
+			dataPoints.add(dp);
+		}
+		for (int j = 0; j < failedTestCaseSize; j++) {
+			DataPoint dp = new DataPoint(numberOfFeatures);
+			dp.setCategory(machine.getCategory(NEGATIVE));
+			dp.setValues(getVariableValueAtLine(variableValueMap, i++));
+			dataPoints.add(dp);
+		}
+
+		// Train SVM
+		return bugFoundOrNot(new Metric(machine.addDataPoints(dataPoints).train()
+				.getModelAccuracy()));
+	}
+
+	private double[] getVariableValueAtLine(final Map<String, double[]> allLongsVals,
+			final int index) {
+		final int numberOfFeatures = allLongsVals.keySet().size();
+		double[] lineVals = new double[numberOfFeatures];
+		int j = 0;
+		for (String key : allLongsVals.keySet()) {
+			lineVals[j++] = allLongsVals.get(key)[index];
+		}
+		return lineVals;
 	}
 
 	public static Dataset buildDataset(List<BreakpointValue> passValues,
 			List<BreakpointValue> failValues) {
 		Dataset dataset = new DefaultDataset();
 		int failStartIdx = passValues.size();
-		List<BreakpointValue> passFailVals = new ArrayList<BreakpointValue>(
-				passValues);
+		List<BreakpointValue> passFailVals = new ArrayList<BreakpointValue>(passValues);
 		passFailVals.addAll(failValues);
 
 		Map<String, double[]> allLongsVals = new HashMap<String, double[]>();
@@ -56,13 +119,13 @@ public class BugExpert implements IBugExpert {
 			bkpVals.retrieveValue(allLongsVals, i, passFailVals.size());
 		}
 		/*--------------------*/
-		
+
 		for (String key : allLongsVals.keySet()) {
 			double[] ds = allLongsVals.get(key);
 			if (key.contains("result")) {
 				ds = multi(ds, 10);
 			}
-//			allLongsVals.put(key, scale(ds));
+			// allLongsVals.put(key, scale(ds));
 		}
 		/*--------------------*/
 		int featureSize = allLongsVals.keySet().size();
@@ -74,16 +137,16 @@ public class BugExpert implements IBugExpert {
 			}
 			Instance instance = new DenseInstance(lineVals);
 			if (i < failStartIdx) {
-				instance.setClassValue("positive");
+				instance.setClassValue(POSITIVE);
 			} else {
-				instance.setClassValue("negative");
+				instance.setClassValue(NEGATIVE);
 			}
 			dataset.add(instance);
 		}
-		
+
 		return dataset;
 	}
-	
+
 	private static double[] multi(double[] ds, int f) {
 		for (int i = 0; i < ds.length; i++) {
 			ds[i] = ds[i] * f;
@@ -108,7 +171,7 @@ public class BugExpert implements IBugExpert {
 		}
 		double d = max - min;
 		for (int i = 0; i < ds.length; i++) {
-			result[i] = (ds[i] - min)/d;
+			result[i] = (ds[i] - min) / d;
 		}
 		return result;
 	}

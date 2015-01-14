@@ -64,7 +64,7 @@ public class Machine {
 		return this;
 	}
 
-	public Machine addDataPoints(final DataPoint... dataPoints) {
+	public Machine addDataPoints(final List<DataPoint> dataPoints) {
 		for (DataPoint point : dataPoints) {
 			data.add(point);
 			// TODO NPN should we deep copy here?
@@ -74,7 +74,7 @@ public class Machine {
 
 	public Machine train() {
 		Assert.assertNotNull("SVM parameters is not set.", parameter);
-		Assert.assertTrue("SVM training data is empty.", data.isEmpty());
+		Assert.assertTrue("SVM training data is empty.", !data.isEmpty());
 
 		final svm_problem problem = new svm_problem();
 		final int length = data.size();
@@ -85,18 +85,23 @@ public class Machine {
 		for (int i = 0; i < length; i++) {
 			final DataPoint point = data.get(i);
 			problem.y[i] = getCategoryIndex(point.getCategory());
-			final int numberOfFeatures = point.getNumberOfFeatures();
-			problem.x[i] = new svm_node[numberOfFeatures];
-			for (int j = 0; j < numberOfFeatures; j++) {
-				final svm_node svmNode = new svm_node();
-				svmNode.index = j;
-				svmNode.value = point.getValue(j);
-				problem.x[i][j] = svmNode;
-			}
+			problem.x[i] = getSvmNode(point);
 		}
 
 		model = svm.svm_train(problem, parameter);
 		return this;
+	}
+
+	private svm_node[] getSvmNode(final DataPoint dp) {
+		final int numberOfFeatures = dp.getNumberOfFeatures();
+		final svm_node[] node = new svm_node[numberOfFeatures];
+		for (int i = 0; i < numberOfFeatures; i++) {
+			final svm_node svmNode = new svm_node();
+			svmNode.index = i;
+			svmNode.value = dp.getValue(i);
+			node[i] = svmNode;
+		}
+		return node;
 	}
 
 	public Model getModel() {
@@ -150,6 +155,23 @@ public class Machine {
 		private Category(final String category) {
 			this.category = category;
 		}
+	}
+
+	public double getModelAccuracy() {
+		Assert.assertNotNull("SVM model is not available yet.", model);
+		int rightClassification = 0, wrongClassification = 0;
+		for (DataPoint dp : data) {
+			final double predictValue = svm.svm_predict(model, getSvmNode(dp));
+			final int realValue = getCategoryIndex(dp.getCategory());
+			if (predictValue > Integer.MAX_VALUE || predictValue < Integer.MIN_VALUE
+					|| realValue != (double) predictValue) {
+				wrongClassification++;
+			} else {
+				rightClassification++;
+			}
+		}
+		Assert.assertTrue(rightClassification + wrongClassification == data.size());
+		return (double) rightClassification / (double) data.size();
 	}
 
 }
