@@ -91,10 +91,6 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>tw.edu.ntu.csie</groupId>
-			<artifactId>libsvm</artifactId>
-		</dependency>
 
 		<!-- wala -->
 		<dependency>
@@ -127,6 +123,10 @@
 			<artifactId>sav.commons</artifactId>
 			<type>test-jar</type>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>tzuyu-project</groupId>
+			<artifactId>svmlib</artifactId>
 		</dependency>
 	</dependencies>
 </project>
