@@ -17,7 +17,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import main.GentestConstants;
@@ -57,7 +56,7 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 		methodcalls = new ArrayList<Method>();
 		List<Method> initMethods;
 		if (methodSigns == null) {
-			initMethods = Arrays.asList(implClazz.getDeclaredMethods());
+			initMethods = getCandidatesMethodForObjInit(implClazz);
 		} else {
 			initMethods = MethodUtils.findMethods(implClazz, methodSigns);
 		}
@@ -70,6 +69,24 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 				methodcalls.add(method);
 			}
 		}
+	}
+
+	private List<Method> getCandidatesMethodForObjInit(Class<?> targetClazz) {
+		Method[] declaredMethods = targetClazz.getDeclaredMethods();
+		List<Method> methods = new ArrayList<Method>(declaredMethods.length);
+		for (Method method : declaredMethods) {
+			boolean isExcluded = false;
+			for (String excludePref : GentestConstants.OBJ_INIT_EXCLUDED_METHOD_PREFIXIES) {
+				if (method.getName().startsWith(excludePref)) {
+					isExcluded = true;
+					continue;
+				}
+			}
+			if (!isExcluded) {
+				methods.add(method);
+			}
+		}
+		return methods;
 	}
 	
 	@Override
@@ -118,6 +135,7 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 		return new Pair<Class<?>, Type>(Object.class, null);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Pair<Class<?>, Type> getParamType(int paramIdx) {
 		if (paramTypes == null) {
 			paramTypes = new Pair[((ParameterizedType) type).getActualTypeArguments().length];

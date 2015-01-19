@@ -54,11 +54,13 @@ public abstract class ValueGenerator {
 	public static GeneratedVariable append(GeneratedVariable rootVariable, int level,
 			Class<?> clazz, Type type, boolean isReceiver) throws SavException {
 		GeneratedVariable variable = null;
+		List<GeneratedVariable> candidatesInCache = getVariableCache()
+				.getVariableByType(type, clazz);
 		boolean selectFromCache = Randomness
-				.weighedCoinFlip(GentestConstants.CACHE_VALUE_PROBABILITY);
+				.weighedCoinFlip(calculateProbToGetValFromCache(candidatesInCache.size()));
 		if (selectFromCache) {
 			/* trying to lookup in cache */
-			variable = getVariableCache().select(type, clazz);
+			variable = Randomness.randomMember(candidatesInCache);
 			if (variable != null) {
 				int toVarId = variable.getNewVariables().size();
 				int toStmtIdx = variable.getStmts().size();
@@ -88,6 +90,16 @@ public abstract class ValueGenerator {
 		}
 		rootVariable.append(variable);
 		return variable;
+	}
+
+	public static double calculateProbToGetValFromCache(int varsSizeInCache) {
+		double prob = GentestConstants.CACHE_VALUE_PROBABILITY
+				+ ((double) varsSizeInCache / GentestConstants.MAX_VALUE_FOR_A_CLASS_STORED_IN_CACHE)
+					* (1 - GentestConstants.CACHE_VALUE_PROBABILITY);
+		if (prob == 1) {
+			prob -= 0.1;
+		}
+		return prob;
 	}
 
 	protected static void assignNull(GeneratedVariable variable, Class<?> clazz) {

@@ -61,7 +61,6 @@ public class RuntimeExecutor implements StatementVisitor {
 			try {
 				stmt.accept(this);
 			} catch(Throwable ex) {
-				System.out.println(ex);
 				log.debug(ex);
 				successful = false;
 				return successful;

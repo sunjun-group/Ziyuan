@@ -59,7 +59,6 @@ public class RandomTester {
 			}
 			testsOnQuery++;
 		}
-		// TODO LLT review the cache	
 		VariableCache.getInstance().reset();
 		return new Pair<List<Sequence>, List<Sequence>>(
 				passTcs, failTcs);

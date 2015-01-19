@@ -9,6 +9,7 @@
 package main;
 
 import gentest.value.generator.ArrayValueGenerator;
+import gentest.value.generator.ExtObjectValueGenerator;
 import gentest.value.generator.ValueGenerator;
 
 /**
@@ -35,5 +36,11 @@ public class GentestConstants {
 	public static final int VALUE_GENERATION_ARRAY_MAXLENGTH = 10;
 	public static final int OBJECT_VALUE_GENERATOR_MAX_SELECTED_METHODS = 10;
 	public static final double CACHE_VALUE_PROBABILITY = 0.5;
-	public static final double PUBLIC_CONSTRUCTOR_PROBABILITY = 0.5;
+	public static final double PUBLIC_NO_PARAM_CONSTRUCTOR_PROBABILITY = 0.8;
+	public static final int MAX_VALUE_FOR_A_CLASS_STORED_IN_CACHE = 50; 
+	/**
+	 * for {@link ExtObjectValueGenerator}
+	 */
+	public static final String[] OBJ_INIT_EXCLUDED_METHOD_PREFIXIES = new String[] {
+			"get", "is", "equal" };
 }

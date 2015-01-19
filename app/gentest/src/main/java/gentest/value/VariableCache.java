@@ -11,19 +11,23 @@ package gentest.value;
 import gentest.data.variable.GeneratedVariable;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import main.GentestConstants;
+
+import sav.common.core.Logger;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
 
 
 /**
  * @author LLT
- * TODO LLT: to continue
  */
 public class VariableCache {
+	private Logger<?> log = Logger.getDefaultLogger();
 	private Map<Type, List<GeneratedVariable>> generatedVarMap;
 	private static VariableCache instance;
 
@@ -32,12 +36,19 @@ public class VariableCache {
 	}
 
 	public void put(Type type, Class<?> clazz, GeneratedVariable variable) {
+		List<GeneratedVariable> valueList;
 		if (type != null) {
-			CollectionUtils.getListInitIfEmpty(generatedVarMap, type).add(
-					variable);
+			valueList = CollectionUtils.getListInitIfEmpty(generatedVarMap, type);
 		} else {
-			CollectionUtils.getListInitIfEmpty(generatedVarMap, clazz).add(
-					variable);
+			valueList = CollectionUtils.getListInitIfEmpty(generatedVarMap, clazz);
+		}
+		if (valueList.size() == GentestConstants.MAX_VALUE_FOR_A_CLASS_STORED_IN_CACHE) {
+			log.debug("VariableCache.MAX_VALUE_FOR_A_CLASS_STORED_IN_CACHE reach (class: ",
+					clazz.getName(), ", type: ", type);
+			int randomPos = Randomness.nextRandomInt(valueList.size());
+			valueList.set(randomPos, variable);
+		} else {
+			valueList.add(variable);
 		}
 	}
 	
@@ -57,11 +68,17 @@ public class VariableCache {
 		return selectedValue;
 	}
 
-	private List<GeneratedVariable> getVariableByType(Type type, Class<?> clazz) {
+	public List<GeneratedVariable> getVariableByType(Type type, Class<?> clazz) {
+		List<GeneratedVariable> result = null;
 		if (type != null) {
-			return generatedVarMap.get(type);
+			result = generatedVarMap.get(type);
+		} else {
+			result = generatedVarMap.get(clazz);
 		}
-		return generatedVarMap.get(clazz);
+		if (result == null) {
+			return new ArrayList<GeneratedVariable>(0);
+		}
+		return result;
 	}
 
 	public void reset() {

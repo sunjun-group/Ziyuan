@@ -37,7 +37,7 @@ public final class Randomness {
 	}
 	
 	/**
-	 * return random value from 0 to i 
+	 * return random value from 0 to i - 1 
 	 */
 	public static int nextRandomInt(int i) {
 		return getRandom().nextInt(i);

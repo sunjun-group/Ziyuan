@@ -84,14 +84,15 @@ public class ObjectValueGenerator extends ValueGenerator {
 				return findConstructor(subClass);
 			}
 		} else {
-			if (Randomness.weighedCoinFlip(GentestConstants.PUBLIC_CONSTRUCTOR_PROBABILITY)) {
+			if (Randomness
+					.weighedCoinFlip(GentestConstants.PUBLIC_NO_PARAM_CONSTRUCTOR_PROBABILITY)) {
 				try {
 					/*
 					 * try with the perfect one which is public constructor with no
 					 * parameter
 					 */
 					Constructor<?> constructor = type.getConstructor();
-					if (isAccessibleAndPublic(constructor)) {
+					if (canBeCandidateForConstructor(constructor)) {
 						return constructor;
 					}
 				} catch (Exception e) {
@@ -100,7 +101,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 			}
 			List<Constructor<?>> candidates = new ArrayList<Constructor<?>>();
 			for (Constructor<?> constructor : type.getConstructors()) {
-				if (isAccessibleAndPublic(constructor)) {
+				if (canBeCandidateForConstructor(constructor)) {
 					candidates.add(constructor);
 				}
 			}
@@ -144,7 +145,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 		return null;
 	}
 
-	private boolean isAccessibleAndPublic(Constructor<?> constructor) {
+	private boolean canBeCandidateForConstructor(Constructor<?> constructor) {
 		return Modifier.isPublic(constructor.getModifiers());
 	}
 
