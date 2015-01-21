@@ -35,12 +35,19 @@ public class GentestConstants {
 	 */
 	public static final int VALUE_GENERATION_ARRAY_MAXLENGTH = 10;
 	public static final int OBJECT_VALUE_GENERATOR_MAX_SELECTED_METHODS = 10;
-	public static final double CACHE_VALUE_PROBABILITY = 0.5;
-	public static final double PUBLIC_NO_PARAM_CONSTRUCTOR_PROBABILITY = 0.99;
+	public static final double PROBABILITY_OF_CACHE_VALUE = 0.5;
+	public static final double PROBABILITY_OF_PUBLIC_NO_PARAM_CONSTRUCTOR = 0.99;
 	public static final int MAX_VALUE_FOR_A_CLASS_STORED_IN_CACHE = 50; 
 	/**
 	 * for {@link ExtObjectValueGenerator}
 	 */
 	public static final String[] OBJ_INIT_EXCLUDED_METHOD_PREFIXIES = new String[] {
 			"get", "is", "equal" };
+	public static final Class<?>[] CANDIDATE_DELEGATES_FOR_OBJECT = new Class<?>[] {
+			Integer.class, Long.class, String.class, Short.class, Byte.class };
+	public static final Class<?>[] CANDIDATE_DELEGATES_FOR_NUMBER = new Class<?>[] {
+		Integer.class, Long.class, Short.class
+	};
+	public static final double PROBABILITY_OF_UNCLOSED_SUBTYPES = 0.1;
+	public static final char PACKAGE_SEPARATOR = '.';
 }

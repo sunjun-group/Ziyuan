@@ -85,7 +85,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 			}
 		} else {
 			if (Randomness
-					.weighedCoinFlip(GentestConstants.PUBLIC_NO_PARAM_CONSTRUCTOR_PROBABILITY)) {
+					.weighedCoinFlip(GentestConstants.PROBABILITY_OF_PUBLIC_NO_PARAM_CONSTRUCTOR)) {
 				try {
 					/*
 					 * try with the perfect one which is public constructor with no

@@ -93,9 +93,9 @@ public abstract class ValueGenerator {
 	}
 
 	public static double calculateProbToGetValFromCache(int varsSizeInCache) {
-		double prob = GentestConstants.CACHE_VALUE_PROBABILITY
+		double prob = GentestConstants.PROBABILITY_OF_CACHE_VALUE
 				+ ((double) varsSizeInCache / GentestConstants.MAX_VALUE_FOR_A_CLASS_STORED_IN_CACHE)
-					* (1 - GentestConstants.CACHE_VALUE_PROBABILITY);
+					* (1 - GentestConstants.PROBABILITY_OF_CACHE_VALUE);
 		if (prob == 1) {
 			prob -= 0.1;
 		}

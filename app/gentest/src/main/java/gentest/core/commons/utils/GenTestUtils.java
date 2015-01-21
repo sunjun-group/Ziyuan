@@ -3,6 +3,7 @@
  */
 package gentest.core.commons.utils;
 
+import gentest.main.GentestConstants;
 import sav.common.core.utils.Randomness;
 
 /**
@@ -14,8 +15,12 @@ public class GenTestUtils {
 
 	public static Class<?> toClassItselfOrItsDelegate(Class<?> clazz) {
 		if (Object.class.equals(clazz)) {
-			return Randomness.randomMember(new Class<?>[] { Integer.class,
-					Long.class, String.class, Short.class, Byte.class });
+			return Randomness
+					.randomMember(GentestConstants.CANDIDATE_DELEGATES_FOR_OBJECT);
+		}
+		if (Number.class.equals(clazz)) {
+			return Randomness
+					.randomMember(GentestConstants.CANDIDATE_DELEGATES_FOR_NUMBER);
 		}
 		return clazz;
 	}

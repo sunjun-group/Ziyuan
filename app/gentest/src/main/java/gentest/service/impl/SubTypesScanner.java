@@ -8,9 +8,12 @@
 
 package gentest.service.impl;
 
+import gentest.main.GentestConstants;
+
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -52,21 +55,66 @@ public class SubTypesScanner implements ISubTypesScanner {
 				});
 	}
 
+	/**
+	 * from all found subTypes of a class, 
+	 * filter all subTypes not public
+	 * and 
+	 */
 	protected Set<Class<?>> filterAndSelect(Set<?> subTypes, Class<?> type) {
 		Set<Class<?>> selectedSubTypes = new HashSet<Class<?>>();
 		String typePkg = type.getPackage().getName();
-		for (Object obj : subTypes) {
-			Class<?> subType = (Class<?>) obj;
+		for (Iterator<?> it = subTypes.iterator(); it.hasNext();) {
+			Class<?> subType = (Class<?>) it.next();
 			int modifiers = subType.getModifiers();
 			/* subType must be accessible */
 			if (Modifier.isPublic(modifiers)) {
-				/**/
-				if (typePkg.equals(subType.getPackage().getName())) {
+				if (areClosePkgs(subType.getPackage().getName(), typePkg)) {
 					selectedSubTypes.add(subType);
+					it.remove();
 				}
+			} else {
+				it.remove();
+			}
+		}
+		boolean noCloseSubTypes = selectedSubTypes.isEmpty();
+		for (Iterator<?> it = subTypes.iterator(); it.hasNext();) {
+			if (noCloseSubTypes
+					|| Randomness
+							.weighedCoinFlip(GentestConstants.PROBABILITY_OF_UNCLOSED_SUBTYPES)) {
+				selectedSubTypes.add((Class<?>) it.next());
 			}
 		}
 		return selectedSubTypes;
+	}
+
+	/**
+	 * 2 packages are close together if they are equal or have the same parent
+	 * package
+	 */
+	protected boolean areClosePkgs(String subTypePkg, String typePkg) {
+		int i = 0;
+		int minLength = Math.min(subTypePkg.length(), typePkg.length());
+		while (i < minLength) {
+			char si = subTypePkg.charAt(i);
+			char ti = typePkg.charAt(i);
+			if (si != ti) {
+				return false;
+			}
+			/* have same parent package */
+			if (si == GentestConstants.PACKAGE_SEPARATOR) {
+				return true;
+			}
+			i++;
+		}
+		/* check if first fragments are equal */
+		if (subTypePkg.length() == typePkg.length()) {
+			return true;
+		}
+		if ((subTypePkg.length() > minLength && subTypePkg.charAt(i) == GentestConstants.PACKAGE_SEPARATOR)
+				|| (typePkg.length() > minLength && typePkg.charAt(i) == GentestConstants.PACKAGE_SEPARATOR)) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
