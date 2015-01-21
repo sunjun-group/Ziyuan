@@ -19,7 +19,7 @@ public class ReferenceAnalyserTest {
 	@Test
 	public void test1(){
 		Class<?> abstractClass = Abstract1.class;
-		Class<?> output = new ReferenceAnalyser().getRandomImplClzz(abstractClass);
+		Class<?> output = new SubTypesScanner().getRandomImplClzz(abstractClass);
 		
 		Assert.assertEquals(Abstract1Impl1.class.getName(), output.getName());
 	}
@@ -28,7 +28,7 @@ public class ReferenceAnalyserTest {
 	public void test2(){
 		for(int i = 0; i < 100; i++){
 			Class<?> abstractClass = Abstract2.class;
-			Class<?> output = new ReferenceAnalyser().getRandomImplClzz(abstractClass);
+			Class<?> output = new SubTypesScanner().getRandomImplClzz(abstractClass);
 			
 			boolean impl1 = output.getName().equals(Abstract2Impl1.class.getName());
 			boolean impl2 = output.getName().equals(Abstract2Impl2.class.getName());
@@ -42,7 +42,7 @@ public class ReferenceAnalyserTest {
 	public void test3(){
 		for(int i = 0; i < 100; i++){
 			Class<?> interfaceClass = Interface1.class;
-			Class<?> output = new ReferenceAnalyser().getRandomImplClzz(interfaceClass);
+			Class<?> output = new SubTypesScanner().getRandomImplClzz(interfaceClass);
 			
 			boolean impl1 = output.getName().equals(Interface1Impl1.class.getName());
 			boolean impl2 = output.getName().equals(Interface1Impl2.class.getName());

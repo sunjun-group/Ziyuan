@@ -24,7 +24,6 @@ public class SimpleDebugger {
 
 	/**
 	 * using scenario Target VM attaches to previously-running debugger.
-	 * @throws SavException 
 	 */
 	public VirtualMachine run(VMConfiguration config) throws IcsetlvException, SavException {
 		VMListener listener = new VMListener();

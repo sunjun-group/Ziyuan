@@ -5,7 +5,6 @@ import java.util.List;
 
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
-import sav.strategies.gentest.IReferencesAnalyzer;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.iface.ITzManager;
@@ -37,7 +36,7 @@ public class ParameterSelector implements IParameterSelector {
 	private static final int IMPL_CLASS_MAX_TRY = 5;
 	
 	private final ComponentManager componentManager;
-	private IReferencesAnalyzer refAnalyzer;
+	private sav.strategies.gentest.ISubTypesScanner refAnalyzer;
 	private TzClass project;
 	private TzConfiguration config;
 

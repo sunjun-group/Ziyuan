@@ -8,8 +8,11 @@
 
 package gentest;
 
-import junit.FileCompilationUnitPrinter;
-import junit.TestsPrinter;
+import gentest.builder.FixTraceGentestBuilder;
+import gentest.builder.GentestBuilder;
+import gentest.builder.RandomTraceGentestBuilder;
+import gentest.junit.FileCompilationUnitPrinter;
+import gentest.junit.TestsPrinter;
 
 import org.junit.Test;
 
@@ -31,9 +34,6 @@ import sav.commons.testdata.autogeneration.FindMaxString;
 import sav.commons.testdata.autogeneration.FindMaxUtils;
 import sav.commons.testdata.autogeneration.FindMaxWrapper;
 import sav.commons.testdata.autogeneration.FindMaxWrapper1;
-import builder.FixTraceGentestBuilder;
-import builder.GentestBuilder;
-import builder.RandomTraceGentestBuilder;
 
 /**
  * @author LLT

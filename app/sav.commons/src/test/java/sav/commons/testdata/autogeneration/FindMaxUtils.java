@@ -26,7 +26,7 @@ public class FindMaxUtils {
 			toStrings.add(value.toString());
 		}
 		FindMaxStringBuilder builder = FindMaxStringBuilder
-				.forStrings((String[]) toStrings.toArray());
+				.forStrings(toStrings.toArray(new String[toStrings.size()]));
 		String max = builder.toFindMax().Max();
 		return values[toStrings.indexOf(max)];
 	}

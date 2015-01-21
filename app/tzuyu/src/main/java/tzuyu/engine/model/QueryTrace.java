@@ -3,8 +3,6 @@ package tzuyu.engine.model;
 import java.util.Collections;
 import java.util.List;
 
-import tzuyu.engine.Tzuyu;
-
 /**
  * A query trace is a particular execution trace of the sequence with specific
  * parameters for a query. The sequence is an extended serial of methods with a

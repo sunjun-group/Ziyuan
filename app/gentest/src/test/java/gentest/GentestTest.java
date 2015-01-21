@@ -3,8 +3,10 @@
  */
 package gentest;
 
-import gentest.data.MethodCall;
-import gentest.data.Sequence;
+import gentest.core.RandomTester;
+import gentest.core.data.MethodCall;
+import gentest.core.data.Sequence;
+import gentest.junit.JWriter;
 import japa.parser.ast.CompilationUnit;
 
 import java.io.File;
@@ -15,7 +17,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.JWriter;
 
 import org.junit.Test;
 

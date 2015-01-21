@@ -5,13 +5,13 @@ package gentest;
 
 import java.lang.reflect.Constructor;
 
-import gentest.data.statement.RAssignment;
-import gentest.data.statement.RConstructor;
-import gentest.data.statement.Rmethod;
+import gentest.core.data.statement.RAssignment;
+import gentest.core.data.statement.RConstructor;
+import gentest.core.data.statement.Rmethod;
+import gentest.junit.AstNodeConverter;
+import gentest.junit.variable.VariableNamer;
 import japa.parser.ast.stmt.Statement;
 import japa.parser.ast.type.PrimitiveType.Primitive;
-import junit.AstNodeConverter;
-import junit.variable.VariableNamer;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import sav.common.core.Logger;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.vm.VMConfiguration;
@@ -58,7 +59,6 @@ import com.sun.jdi.event.EventSet;
 import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
-import com.sun.jdi.event.VMStartEvent;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequestManager;
@@ -68,6 +68,7 @@ import com.sun.jdi.request.EventRequestManager;
  * 
  */
 public class TestcasesExecutor implements ITestcasesExecutor {
+	private Logger<?> log = Logger.getDefaultLogger();
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
 	private static final String TO_STRING_NAME= "toString"; 
 	private SimpleDebugger debugger;
@@ -136,11 +137,9 @@ public class TestcasesExecutor implements ITestcasesExecutor {
 								locBrpMap);
 						CollectionUtils.addIfNotNull(result, bkpVal);
 					} catch (IncompatibleThreadStateException e) {
-						System.err.println(e);
-						// TODO LLT log
+						log.error((Object[])e.getStackTrace());
 					} catch (AbsentInformationException e) {
-						System.err.println(e);
-						// TODO LLT log
+						log.error((Object[])e.getStackTrace());
 					}
 				}
 			}
@@ -238,7 +237,7 @@ public class TestcasesExecutor implements ITestcasesExecutor {
 				}
 			} catch (Exception e) {
 				// ignore.
-				System.err.println(e);
+				log.warn((Object[])e.getStackTrace());
 			}
 		}
 		return null;
@@ -274,8 +273,7 @@ public class TestcasesExecutor implements ITestcasesExecutor {
 				locations = refType
 						.locationsOfLine(brkp.getLineNo());
 			} catch (AbsentInformationException e) {
-				System.err.println(e);
-				// TODO LLT: log
+				log.warn((Object[])e.getStackTrace());
 				continue;
 			}
 			if (!locations.isEmpty()) {

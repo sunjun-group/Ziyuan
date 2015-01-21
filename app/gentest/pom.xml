@@ -12,6 +12,7 @@
 	<properties>
 		<java-quickcheck-version>0.6</java-quickcheck-version>
 		<guava-version>18.0</guava-version>
+		<reflections-version>0.9.9-RC2</reflections-version>
 	</properties>
 
 	<build>
@@ -69,8 +70,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>tzuyu-project</groupId>
-			<artifactId>extcos</artifactId>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections-maven</artifactId>
+			<version>${reflections-version}</version>
 		</dependency>
 	</dependencies>
 

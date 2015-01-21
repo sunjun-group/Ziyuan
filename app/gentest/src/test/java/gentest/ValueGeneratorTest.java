@@ -8,12 +8,12 @@
 
 package gentest;
 
-import main.GentestConstants;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import gentest.value.generator.ValueGenerator;
+import gentest.core.value.generator.ValueGenerator;
+import gentest.main.GentestConstants;
 
 /**
  * @author LLT

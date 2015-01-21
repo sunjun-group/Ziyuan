@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import sav.common.core.CommandLineLogger;
-import sav.strategies.gentest.IReferencesAnalyzer;
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzMethod;
@@ -22,7 +21,7 @@ public class Learn implements CommandHandler {
 		TzClass project = processCommand(command);
 		CommandLineReportHandler reporter = new CommandLineReportHandler(project.getConfiguration());
 		
-//		Tzuyu tzuyuEngine = new Tzuyu(project, reporter, new IReferencesAnalyzer() {
+//		Tzuyu tzuyuEngine = new Tzuyu(project, reporter, new ISubTypesScanner() {
 //
 //			@Override
 //			public Class<?> getRandomImplClzz(Class<?> iface) {

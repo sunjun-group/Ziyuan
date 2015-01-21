@@ -3,9 +3,10 @@
  */
 package gentest;
 
-import gentest.data.Sequence;
-import gentest.data.statement.RAssignment;
-import gentest.data.statement.Statement;
+import gentest.core.data.Sequence;
+import gentest.core.data.statement.RAssignment;
+import gentest.core.data.statement.Statement;
+import gentest.junit.JWriter;
 
 import japa.parser.ast.CompilationUnit;
 
@@ -14,7 +15,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import junit.JWriter;
 
 /**
  * @author LLT

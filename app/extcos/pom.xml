@@ -18,5 +18,10 @@
 			<artifactId>extcos</artifactId>
 			<version>0.4b</version>
 		</dependency>
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections-maven</artifactId>
+			<version>0.9.9-RC2</version>
+		</dependency>
 	</dependencies>
 </project>

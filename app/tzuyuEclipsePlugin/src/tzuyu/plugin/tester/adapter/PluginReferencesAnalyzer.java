@@ -37,7 +37,7 @@ import org.eclipse.jdt.core.search.TypeNameRequestor;
 
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
-import sav.strategies.gentest.IReferencesAnalyzer;
+import sav.strategies.gentest.ISubTypesScanner;
 import tzuyu.engine.model.exception.TzException;
 import tzuyu.engine.utils.Pair;
 import tzuyu.engine.utils.Randomness;
@@ -53,7 +53,7 @@ import tzuyu.plugin.tester.reporter.PluginLogger;
  * @author LLT
  * 
  */
-public class PluginReferencesAnalyzer implements IReferencesAnalyzer {
+public class PluginReferencesAnalyzer implements ISubTypesScanner {
 	// add this into the configuration
 	private int numOfRandomClzzToCache = 10;
 	private int MAX_TO_TRY = 3;

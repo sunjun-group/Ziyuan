@@ -24,7 +24,7 @@ import org.springframework.core.ParameterNameDiscoverer;
 import refiner.TzuYuRefiner;
 import sav.common.core.Logger;
 import sav.common.core.iface.IPrintStream;
-import sav.strategies.gentest.IReferencesAnalyzer;
+import sav.strategies.gentest.ISubTypesScanner;
 import tester.ITCGStrategy;
 import tester.TzuYuTester;
 import tzuyu.engine.algorithm.iface.Learner;
@@ -54,7 +54,7 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 	/* tester */
 	private Tester tester;
 	private ITCGStrategy tcgStrategy;
-	private IReferencesAnalyzer refAnalyzer;
+	private ISubTypesScanner refAnalyzer;
 	/* refiner */
 	private Refiner<TzuYuAlphabet> refiner;
 	
@@ -157,7 +157,7 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 	}
 
 	@Override
-	public IReferencesAnalyzer getRefAnalyzer() {
+	public ISubTypesScanner getRefAnalyzer() {
 		return refAnalyzer;
 	}
 
@@ -200,7 +200,7 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 		return paramNameDiscoverer;
 	}
 	
-	public void setRefAnalyzer(IReferencesAnalyzer refAnalyzer) {
+	public void setRefAnalyzer(ISubTypesScanner refAnalyzer) {
 		this.refAnalyzer = refAnalyzer;
 	}
 	

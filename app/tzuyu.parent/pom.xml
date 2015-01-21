@@ -118,6 +118,12 @@
 				<version>${project.version}</version>
 			</dependency>
 
+		<dependency>
+		    <groupId>tzuyu-project</groupId>
+			<artifactId>svmlib</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
 			<dependency>
 				<groupId>tzuyu-project</groupId>
 				<artifactId>faultLocalization</artifactId>

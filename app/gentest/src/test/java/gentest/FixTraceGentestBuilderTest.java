@@ -8,12 +8,13 @@
 
 package gentest;
 
-import gentest.data.Sequence;
+import gentest.builder.FixTraceGentestBuilder;
+import gentest.core.data.Sequence;
+import gentest.junit.FileCompilationUnitPrinter;
+import gentest.junit.TestsPrinter;
 
 import java.util.List;
 
-import junit.FileCompilationUnitPrinter;
-import junit.TestsPrinter;
 
 import org.junit.Test;
 
@@ -21,7 +22,6 @@ import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.commons.testdata.SamplePrograms;
 import sav.commons.testdata.simplePrograms.SimplePrograms;
-import builder.FixTraceGentestBuilder;
 
 /**
  * @author LLT
