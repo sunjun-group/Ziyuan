@@ -28,6 +28,7 @@
 		<fitnesse-version>20140901</fitnesse-version>
 		<commons-cli-version>1.2</commons-cli-version>
 		<log4j-version>1.2.17</log4j-version>
+		<linear-algebra-for-java-version>1.2.3</linear-algebra-for-java-version>
 	</properties>
 
 	<repositories>
@@ -55,10 +56,10 @@
 		<module>../tzuyu.feature</module>
 		<module>../tzuyu.repo</module>
 		<module>../tzuyu</module>
-		<module>../icsetlv</module>
 		<module>../faultLocalization</module>
 		<module>../extcos</module>
 		<module>../svmlib</module>
+		<module>../icsetlv</module>
 	</modules>
 
 	<build>
@@ -143,6 +144,12 @@
 			<dependency>
 				<groupId>tzuyu-project</groupId>
 				<artifactId>extcos</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>svmlib</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
@@ -251,6 +258,12 @@
 				<groupId>de.unisb.cs.st</groupId>
 				<artifactId>visualize</artifactId>
 				<version>${javaslicer-version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jblas</groupId>
+				<artifactId>jblas</artifactId>
+				<version>${linear-algebra-for-java-version}</version>
 			</dependency>
 
 			<dependency>
