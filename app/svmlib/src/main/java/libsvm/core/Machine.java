@@ -171,13 +171,25 @@ public class Machine {
 		}
 	}
 
-	private List<DataPoint> getWrongClassifiedDataPoint() {
+	/**
+	 * Calculate the category of the given data point, based on the learned
+	 * model and defined categories.
+	 * 
+	 * @param dataPoint
+	 *            The data point to check.
+	 * @return The category of the data point, or <code>null</code> if such
+	 *         category is not available.
+	 */
+	public Category calculateCategory(final DataPoint dataPoint) {
+		Assert.assertNotNull("SVM model is not ready yet.", model);
+		final double predictValue = svm.svm_predict(model, getSvmNode(dataPoint));
+		return categoryMap.get(new Double(predictValue).intValue());
+	}
+
+	private List<DataPoint> getWrongClassifiedDataPoints() {
 		final List<DataPoint> wrong = new ArrayList<DataPoint>();
 		for (DataPoint dp : data) {
-			final double predictValue = svm.svm_predict(model, getSvmNode(dp));
-			final int realValue = getCategoryIndex(dp.getCategory());
-			if (predictValue > Integer.MAX_VALUE || predictValue < Integer.MIN_VALUE
-					|| realValue != (int) predictValue) {
+			if (!dp.getCategory().equals(calculateCategory(dp))) {
 				wrong.add(dp);
 			}
 		}
@@ -186,7 +198,7 @@ public class Machine {
 
 	public double getModelAccuracy() {
 		Assert.assertNotNull("SVM model is not available yet.", model);
-		return 1.0 - ((double) getWrongClassifiedDataPoint().size() / data.size());
+		return 1.0 - ((double) getWrongClassifiedDataPoints().size() / data.size());
 	}
 
 }

@@ -91,7 +91,7 @@ public class Model {
 
 	/**
 	 * Get the {@link Divider} for this {@link Model}.<br/>
-	 * The linear function is <code>wT * x + b = 0</code>. <br/>
+	 * The linear function is <code>wT * x = b </code>. <br/>
 	 * In which:
 	 * <ul>
 	 * <li>the weight matrix <code>W = model.SV * model.coef</code></li>
@@ -142,7 +142,7 @@ public class Model {
 		}
 
 		// b = [x] = [model.rho]
-		// The function is wT * x + b = 0
+		// The function is wT * x = b
 		return new Divider(result, model.rho[0]);
 	}
 
