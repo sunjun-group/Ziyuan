@@ -60,6 +60,14 @@ public class MultiCutMachine extends Machine {
 					}
 				}
 				trainingData = newTraninigData;
+
+				if (trainingData.isEmpty()) {
+					// The SVM divider failed to separate any points at all
+					// I.e.: it simply divides the space into 2 parts:
+					// - 1 with all points
+					// - 1 with no point
+					stop = true;
+				}
 			} else {
 				// There may still be inaccuracy but we cannot do anything more
 				stop = true;
