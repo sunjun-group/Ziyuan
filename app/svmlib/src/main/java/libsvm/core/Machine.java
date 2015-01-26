@@ -26,7 +26,7 @@ public class Machine {
 
 	private svm_parameter parameter = null;
 	private List<DataPoint> data = new ArrayList<DataPoint>();
-	private svm_model model = null;
+	protected svm_model model = null;
 	private Map<Integer, Category> categoryMap = new HashMap<Integer, Category>();
 
 	public Machine() {
@@ -72,6 +72,14 @@ public class Machine {
 		return this;
 	}
 
+	/**
+	 * Train the current machine using the preset parameters and data.
+	 * <p>
+	 * <b>Preconditions</b>: The parameters and data are set.
+	 * </p>
+	 * 
+	 * @return The instance of the current machine after training completed.
+	 */
 	public Machine train() {
 		Assert.assertNotNull("SVM parameters is not set.", parameter);
 		Assert.assertTrue("SVM training data is empty.", !data.isEmpty());
@@ -79,7 +87,17 @@ public class Machine {
 		return this;
 	}
 
-	private Machine train(final List<DataPoint> dataPoints) {
+	/**
+	 * Train the current machine using the preset parameters and the given data.
+	 * <p>
+	 * <b>Preconditions</b>: The parameters are set.
+	 * </p>
+	 * 
+	 * @param dataPoints
+	 *            The data used to learn.
+	 * @return The instance of the current machine after training completed.
+	 */
+	protected Machine train(final List<DataPoint> dataPoints) {
 		Assert.assertNotNull("SVM parameters is not set.", parameter);
 		Assert.assertTrue("SVM training data is empty.", !dataPoints.isEmpty());
 
@@ -117,7 +135,7 @@ public class Machine {
 	 * @return The learned model or <code>null</code> if the learning process
 	 *         was not completed.
 	 */
-	public Model getModel() {
+	protected Model getModel() {
 		return model == null || data == null || data.size() <= 0 ? null : new Model(model, data
 				.get(0).getNumberOfFeatures());
 	}
@@ -169,6 +187,24 @@ public class Machine {
 		private Category(final String category) {
 			this.category = category;
 		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) {
+				return false;
+			}
+
+			if (!(obj instanceof Category)) {
+				return false;
+			}
+
+			return ((Category) obj).category.equals(category);
+		}
+
+		@Override
+		public int hashCode() {
+			return category.hashCode();
+		}
 	}
 
 	/**
@@ -181,12 +217,29 @@ public class Machine {
 	 *         category is not available.
 	 */
 	public Category calculateCategory(final DataPoint dataPoint) {
-		Assert.assertNotNull("SVM model is not ready yet.", model);
-		final double predictValue = svm.svm_predict(model, getSvmNode(dataPoint));
+		return calculateCategory(dataPoint, model);
+	}
+
+	protected Category calculateCategory(final DataPoint dataPoint, final svm_model rawModel) {
+		Assert.assertNotNull("Data point cannot be null.", dataPoint);
+		Assert.assertNotNull("SVM model is not ready yet.", rawModel);
+		final double predictValue = svm.svm_predict(rawModel, getSvmNode(dataPoint));
 		return categoryMap.get(new Double(predictValue).intValue());
 	}
 
-	private List<DataPoint> getWrongClassifiedDataPoints() {
+	protected int countAvailableCategories() {
+		return categoryMap.size();
+	}
+
+	/**
+	 * Get the data points which are not correctly categorized using the current
+	 * model.
+	 * 
+	 * @return A list containing wrongly categorized data points, or empty if
+	 *         all are categorized correctly. This method never return
+	 *         <code>null</code>.
+	 */
+	protected List<DataPoint> getWrongClassifiedDataPoints() {
 		final List<DataPoint> wrong = new ArrayList<DataPoint>();
 		for (DataPoint dp : data) {
 			if (!dp.getCategory().equals(calculateCategory(dp))) {
