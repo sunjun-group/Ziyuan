@@ -66,9 +66,14 @@ public class Machine {
 
 	public Machine addDataPoints(final List<DataPoint> dataPoints) {
 		for (DataPoint point : dataPoints) {
-			data.add(point);
-			// TODO NPN should we deep copy here?
+			addDataPoint(point);
 		}
+		return this;
+	}
+
+	public Machine addDataPoint(final DataPoint dataPoint) {
+		// TODO NPN should we deep copy here?
+		data.add(dataPoint);
 		return this;
 	}
 
@@ -205,6 +210,11 @@ public class Machine {
 		public int hashCode() {
 			return category.hashCode();
 		}
+
+		@Override
+		public String toString() {
+			return category;
+		}
 	}
 
 	/**
@@ -239,10 +249,14 @@ public class Machine {
 	 *         all are categorized correctly. This method never return
 	 *         <code>null</code>.
 	 */
-	protected List<DataPoint> getWrongClassifiedDataPoints() {
+	private List<DataPoint> getWrongClassifiedDataPoints() {
+		return getWrongClassifiedDataPoints(data);
+	}
+
+	protected List<DataPoint> getWrongClassifiedDataPoints(final List<DataPoint> dataPoints) {
 		final List<DataPoint> wrong = new ArrayList<DataPoint>();
-		for (DataPoint dp : data) {
-			if (!dp.getCategory().equals(calculateCategory(dp))) {
+		for (DataPoint dp : dataPoints) {
+			if (!dp.getCategory().equals(calculateCategory(dp, model))) {
 				wrong.add(dp);
 			}
 		}

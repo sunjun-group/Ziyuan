@@ -33,26 +33,33 @@ public class MultiCutMachine extends Machine {
 
 	@Override
 	protected Machine train(final List<DataPoint> dataPoints) {
-		Assert.assertTrue("There must be exactly 2 categories defined for a BinaryMachine.",
-				2 == countAvailableCategories());
-
 		List<DataPoint> trainingData = dataPoints;
 		boolean stop = false;
 		while (!stop) {
 			super.train(trainingData);
-			final List<DataPoint> wrongClassifications = getWrongClassifiedDataPoints();
+			final List<DataPoint> wrongClassifications = getWrongClassifiedDataPoints(trainingData);
 
 			LearnedData learnedData = new LearnedData();
 			learnedData.model = model;
+			Category wrongCategory = null; // Only valid if wrongCategories == 1
 			for (DataPoint dp : wrongClassifications) {
-				learnedData.wrongSides.add(dp.getCategory());
+				wrongCategory = dp.getCategory();
+				learnedData.wrongSides.add(wrongCategory);
 			}
 			learnedDatas.add(learnedData);
 
 			int wrongCategories = learnedData.wrongSides.size();
 			if (wrongCategories == 1) {
 				// Try to improve the result
-				trainingData = wrongClassifications;
+				List<DataPoint> newTraninigData = new ArrayList<DataPoint>();
+				for (DataPoint dp : trainingData) {
+					// Points on the same side of the wrong classification
+					final Category calculatedCategory = calculateCategory(dp, learnedData.model);
+					if (calculatedCategory.equals(wrongCategory)) {
+						newTraninigData.add(dp);
+					}
+				}
+				trainingData = newTraninigData;
 			} else {
 				// There may still be inaccuracy but we cannot do anything more
 				stop = true;
