@@ -21,7 +21,12 @@
 			<groupId>org.jblas</groupId>
 			<artifactId>jblas</artifactId>
 		</dependency>
-	    <!-- For testing -->
+		<!-- For logging -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+	    <!-- For testing and assertions -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
