@@ -37,7 +37,8 @@ public class MultiCutMachine extends Machine {
 		boolean stop = false;
 		while (!stop) {
 			super.train(trainingData);
-			final List<DataPoint> wrongClassifications = getWrongClassifiedDataPoints(trainingData);
+			final List<DataPoint> wrongClassifications = getWrongClassifiedDataPoints(trainingData,
+					null);
 
 			LearnedData learnedData = new LearnedData();
 			learnedData.model = model;
@@ -54,7 +55,8 @@ public class MultiCutMachine extends Machine {
 				List<DataPoint> newTraninigData = new ArrayList<DataPoint>();
 				for (DataPoint dp : trainingData) {
 					// Points on the same side of the wrong classification
-					final Category calculatedCategory = calculateCategory(dp, learnedData.model);
+					final Category calculatedCategory = calculateCategory(dp, learnedData.model,
+							null);
 					if (calculatedCategory.equals(wrongCategory)) {
 						newTraninigData.add(dp);
 					}
@@ -78,17 +80,30 @@ public class MultiCutMachine extends Machine {
 	}
 
 	@Override
-	public Category calculateCategory(DataPoint dataPoint) {
-		Assert.assertTrue("There is no learned data.", !learnedDatas.isEmpty());
-		Category result = null;
-		for (LearnedData data : learnedDatas) {
-			result = calculateCategory(dataPoint, data.model);
-			if (!data.wrongSides.contains(result)) {
-				// Correct data found
-				break;
-			}
+	protected List<DataPoint> getWrongClassifiedDataPoints(List<DataPoint> dataPoints) {
+		return getWrongClassifiedDataPoints(dataPoints, new LearnedDataBasedCategoryCalculator(
+				learnedDatas));
+	}
+
+	private class LearnedDataBasedCategoryCalculator implements CategoryCalculator {
+		private List<LearnedData> learnedDatas;
+
+		public LearnedDataBasedCategoryCalculator(final List<LearnedData> learnedDatas) {
+			this.learnedDatas = learnedDatas;
 		}
-		return result; // Can be null or incorrect
+
+		public Integer getCategoryIndex(DataPoint dataPoint) {
+			Assert.assertTrue("There is no learned data.", !learnedDatas.isEmpty());
+			Integer result = null;
+			for (LearnedData data : learnedDatas) {
+				result = new ModelBasedCategoryCalculator(data.model).getCategoryIndex(dataPoint);
+				if (!data.wrongSides.contains(result)) {
+					// Correct data found
+					break;
+				}
+			}
+			return result; // Can be null or incorrect
+		}
 	}
 
 }

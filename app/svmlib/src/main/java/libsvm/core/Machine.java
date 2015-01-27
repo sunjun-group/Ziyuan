@@ -217,46 +217,46 @@ public class Machine {
 		}
 	}
 
-	/**
-	 * Calculate the category of the given data point, based on the learned
-	 * model and defined categories.
-	 * 
-	 * @param dataPoint
-	 *            The data point to check.
-	 * @return The category of the data point, or <code>null</code> if such
-	 *         category is not available.
-	 */
-	public Category calculateCategory(final DataPoint dataPoint) {
-		return calculateCategory(dataPoint, model);
+	protected interface CategoryCalculator {
+		Integer getCategoryIndex(DataPoint dataPoint);
 	}
 
-	protected Category calculateCategory(final DataPoint dataPoint, final svm_model rawModel) {
-		Assert.assertNotNull("Data point cannot be null.", dataPoint);
-		Assert.assertNotNull("SVM model is not ready yet.", rawModel);
-		final double predictValue = svm.svm_predict(rawModel, getSvmNode(dataPoint));
-		return categoryMap.get(new Double(predictValue).intValue());
+	protected class ModelBasedCategoryCalculator implements CategoryCalculator {
+		private final svm_model rawModel;
+
+		public ModelBasedCategoryCalculator(final svm_model model) {
+			this.rawModel = model;
+		}
+
+		public Integer getCategoryIndex(DataPoint dataPoint) {
+			Assert.assertNotNull("Data point cannot be null.", dataPoint);
+			Assert.assertNotNull("SVM model is not ready yet.", rawModel);
+			final double predictValue = svm.svm_predict(rawModel, getSvmNode(dataPoint));
+			return new Double(predictValue).intValue();
+		}
+	}
+
+	protected Category calculateCategory(final DataPoint dataPoint, final svm_model rawModel,
+			final CategoryCalculator calculator) {
+		// Use default calculator if none specified
+		final CategoryCalculator calculatorToUse = calculator != null ? calculator
+				: new ModelBasedCategoryCalculator(rawModel);
+		return categoryMap.get(calculatorToUse.getCategoryIndex(dataPoint));
 	}
 
 	protected int countAvailableCategories() {
 		return categoryMap.size();
 	}
 
-	/**
-	 * Get the data points which are not correctly categorized using the current
-	 * model.
-	 * 
-	 * @return A list containing wrongly categorized data points, or empty if
-	 *         all are categorized correctly. This method never return
-	 *         <code>null</code>.
-	 */
-	private List<DataPoint> getWrongClassifiedDataPoints() {
-		return getWrongClassifiedDataPoints(data);
+	protected List<DataPoint> getWrongClassifiedDataPoints(final List<DataPoint> dataPoints) {
+		return getWrongClassifiedDataPoints(dataPoints, null);
 	}
 
-	protected List<DataPoint> getWrongClassifiedDataPoints(final List<DataPoint> dataPoints) {
+	protected List<DataPoint> getWrongClassifiedDataPoints(final List<DataPoint> dataPoints,
+			final CategoryCalculator calculator) {
 		final List<DataPoint> wrong = new ArrayList<DataPoint>();
 		for (DataPoint dp : dataPoints) {
-			if (!dp.getCategory().equals(calculateCategory(dp, model))) {
+			if (!dp.getCategory().equals(calculateCategory(dp, model, calculator))) {
 				wrong.add(dp);
 			}
 		}
@@ -265,7 +265,7 @@ public class Machine {
 
 	public double getModelAccuracy() {
 		Assert.assertNotNull("SVM model is not available yet.", model);
-		return 1.0 - ((double) getWrongClassifiedDataPoints().size() / data.size());
+		return 1.0 - ((double) getWrongClassifiedDataPoints(data).size() / data.size());
 	}
 
 }
