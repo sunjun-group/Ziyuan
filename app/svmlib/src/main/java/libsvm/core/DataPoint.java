@@ -51,4 +51,20 @@ public class DataPoint {
 		}
 		return values[index];
 	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		boolean first = true;
+		for (double val : values) {
+			if (!first) {
+				sb.append(", ");
+				first = false;
+			}
+			sb.append(val);
+		}
+		sb.append("] : ").append(category);
+		return sb.toString();
+	}
 }
