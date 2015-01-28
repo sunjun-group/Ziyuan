@@ -178,4 +178,18 @@ public class CollectionUtils {
 		return list.get(list.size() - 1);
 	}
 
+	/**
+	 * fromIndex, inclusive, 
+	 * and toIndex, exclusive
+	 */
+	public static <E> void removeLastElements(List<E> list, int fromIdx) {
+		list.subList(fromIdx, list.size()).clear();
+	}
+	
+	public static <E> void removeLast(List<E> list) {
+		if (isEmpty(list)) {
+			return;
+		}
+		list.remove(list.size() - 1);
+	}
 }

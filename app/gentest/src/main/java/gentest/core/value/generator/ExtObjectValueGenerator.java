@@ -11,6 +11,7 @@ package gentest.core.value.generator;
 import gentest.core.commons.utils.GenTestUtils;
 import gentest.core.commons.utils.MethodUtils;
 import gentest.core.data.variable.GeneratedVariable;
+import gentest.core.execution.VariableRuntimeExecutor;
 import gentest.main.GentestConstants;
 
 import java.lang.reflect.Method;
@@ -92,21 +93,35 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 	@Override
 	public final boolean doAppend(GeneratedVariable variable, int level, Class<?> type)
 			throws SavException {
-		boolean canInit = super.doAppend(variable, level, implClazz);
+		boolean goodVariable = super.doAppend(variable, level, implClazz);
 		int varId = variable.getLastVarId();
-		variable.commitReturnVarIdIfNotExist();
-		if (canInit) {
+		if (goodVariable) {
+			variable.commitReturnVarIdIfNotExist();
 			doAppendMethod(variable, level, varId);
 		}
-		return canInit;
+		return goodVariable;
 	}
 
 	protected void doAppendMethod(GeneratedVariable variable, int level, int scopeId)
 			throws SavException {
+		VariableRuntimeExecutor executor = getExecutor();
+		executor.reset(variable.getFirstVarId());
+		executor.start(null);
+		executor.execute(variable);
 		// generate value for method call
 		for (Method method : methodcalls) {
 			variable.newCuttingPoint();
 			doAppendMethod(variable, level, scopeId, false, method);
+			boolean pass = executor.execute(variable.getLastFragmentStmts());
+			if (pass) {
+				//TODO LLT: store to good traces, to make it systematic?
+			} else {
+				// undo
+				variable.removeLastFragment();
+				executor.reset(variable.getFirstVarId());
+				executor.start(null);
+				executor.execute(variable);
+			}
 		}
 	}
 	

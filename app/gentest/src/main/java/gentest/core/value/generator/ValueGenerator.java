@@ -10,13 +10,10 @@ package gentest.core.value.generator;
 
 import static sav.common.core.utils.CollectionUtils.listOf;
 import gentest.core.data.statement.RAssignment;
-import gentest.core.data.statement.Rmethod;
-import gentest.core.data.statement.Statement;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.value.VariableCache;
 import gentest.main.GentestConstants;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,17 +73,20 @@ public abstract class ValueGenerator {
 		}
 		
 		if (variable == null) {
+			boolean goodVariable = false;
 			variable = rootVariable.newVariable();
 			/* generate the new one*/
 			if (PrimitiveValueGenerator.accept(clazz, type)) {
-				PrimitiveValueGenerator.doAppend(variable, level, clazz);
+				goodVariable = PrimitiveValueGenerator.doAppend(variable, level, clazz);
 			}  else if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL) {
 				assignNull(variable, clazz);
 			} else {
 				ValueGenerator generator = findGenerator(clazz, type, isReceiver);
-				generator.doAppend(variable, level, clazz);
+				goodVariable = generator.doAppend(variable, level, clazz);
 			}
-			getVariableCache().put(type, clazz, variable);
+			if (goodVariable) {
+				getVariableCache().put(type, clazz, variable);
+			}
 		}
 		rootVariable.append(variable);
 		return variable;
@@ -106,38 +106,6 @@ public abstract class ValueGenerator {
 		variable.append(RAssignment.assignmentFor(clazz, null));
 	}
 	
-	protected final void doAppendStaticMethods(GeneratedVariable variable, int level,
-			List<Method> methodcalls) throws SavException {
-		doAppendMethods(variable, level, methodcalls, Statement.INVALID_VAR_ID,
-				true);
-	}
-	
-	protected void doAppendMethods(GeneratedVariable variable, int level, 
-			List<Method> methodcalls, int scopeId, boolean addVariable) throws SavException {
-		// generate value for method call
-		for (Method method : methodcalls) {
-			doAppendMethod(variable, level, scopeId, addVariable, method);
-		}
-	}
-
-	protected void doAppendMethod(GeneratedVariable variable, int level,
-			int scopeId, boolean addVariable, Method method)
-			throws SavException {
-		/* check generic types */
-		Type[] genericParamTypes = method.getGenericParameterTypes();
-		Class<?>[] types = method.getParameterTypes();
-		int[] paramIds = new int[genericParamTypes.length];
-		for (int i = 0; i < paramIds.length; i++) {
-			Type type = genericParamTypes[i];
-			Pair<Class<?>, Type> paramType = getParamType(types[i], type);
-			GeneratedVariable newVar = ValueGenerator.append(variable,
-					level + 2, paramType.a, paramType.b);
-			paramIds[i] = newVar.getReturnVarId();
-		}
-		Rmethod rmethod = new Rmethod(method, scopeId);
-		variable.append(rmethod, paramIds, addVariable);
-	}
-
 	protected Pair<Class<?>, Type> getParamType(Class<?> clazz, Type type) {
 		return new Pair<Class<?>, Type>(clazz, null);
 	}

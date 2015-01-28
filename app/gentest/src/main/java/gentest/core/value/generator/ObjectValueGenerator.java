@@ -10,7 +10,10 @@ package gentest.core.value.generator;
 
 import gentest.core.data.MethodCall;
 import gentest.core.data.statement.RConstructor;
+import gentest.core.data.statement.Rmethod;
+import gentest.core.data.statement.Statement;
 import gentest.core.data.variable.GeneratedVariable;
+import gentest.core.execution.VariableRuntimeExecutor;
 import gentest.main.GentestConstants;
 import gentest.service.impl.SubTypesScanner;
 
@@ -21,6 +24,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
@@ -30,12 +34,42 @@ import sav.common.core.utils.Randomness;
  *
  */
 public class ObjectValueGenerator extends ValueGenerator {
-	private SubTypesScanner subTypesScanner = new SubTypesScanner();
+	private SubTypesScanner subTypesScanner = SubTypesScanner.getInstance();
+	private VariableRuntimeExecutor rtExecutor = new VariableRuntimeExecutor();
 	
 	@Override
 	public boolean doAppend(GeneratedVariable variable, int level, Class<?> type)
 			throws SavException {
- 		Object initializedStmt = findConstructor(type);
+		for (int i = 0; i < GentestConstants.OBJECT_VALUE_GENERATOR_MAX_TRY_SELECTING_CONSTRUCTOR; i++) {
+			Object initializedStmt = findConstructor(type);
+			if (!appendConstructor(variable, level, type, initializedStmt)) {
+				// if fail, retry
+				continue;
+			}
+			// validate the generated variable by executing it
+			rtExecutor.reset(variable.getFirstVarId());
+			rtExecutor.start(null);
+			if (rtExecutor.execute(variable)) {
+				break;
+			} else {
+				variable.reset();
+			}
+		}
+		if (variable.isEmpty()) {
+			/* we have to assign null to the obj */
+			assignNull(variable, type);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	protected VariableRuntimeExecutor getExecutor() {
+		return rtExecutor;
+	}
+
+	private boolean appendConstructor(GeneratedVariable variable, int level,
+			Class<?> type, Object initializedStmt) throws SavException {
 		if (initializedStmt instanceof Constructor<?>) {
 			Constructor<?> constructor = (Constructor<?>) initializedStmt;
 			RConstructor rconstructor = RConstructor.of(constructor);
@@ -57,13 +91,11 @@ public class ObjectValueGenerator extends ValueGenerator {
 			MethodCall methodCall = (MethodCall) initializedStmt;
 			GeneratedVariable newVar = append(variable, level + 1,
 					methodCall.getReceiverType(), null);
-			// append methods
+			// call the method of builder to get the object for current type.
 			doAppendMethods(variable, level,
 					CollectionUtils.listOf(methodCall.getMethod()),
 					newVar.getReturnVarId(), true);
 		} else {
-			/* we accept to init null for the obj*/
-			assignNull(variable, type);
 			return false;
 		}
 		return true;
@@ -92,7 +124,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 					 * parameter
 					 */
 					Constructor<?> constructor = type.getConstructor();
-					if (canBeCandidateForConstructor(constructor)) {
+					if (canBeCandidateForConstructor(constructor, type)) {
 						return constructor;
 					}
 				} catch (Exception e) {
@@ -101,7 +133,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 			}
 			List<Constructor<?>> candidates = new ArrayList<Constructor<?>>();
 			for (Constructor<?> constructor : type.getConstructors()) {
-				if (canBeCandidateForConstructor(constructor)) {
+				if (canBeCandidateForConstructor(constructor, type)) {
 					candidates.add(constructor);
 				}
 			}
@@ -145,8 +177,44 @@ public class ObjectValueGenerator extends ValueGenerator {
 		return null;
 	}
 
-	private boolean canBeCandidateForConstructor(Constructor<?> constructor) {
+	private boolean canBeCandidateForConstructor(Constructor<?> constructor, Class<?> type) {
+		for (Class<?> paramType : constructor.getParameterTypes()) {
+			if (type.equals(paramType)) {
+				return false;
+			}
+		}
 		return Modifier.isPublic(constructor.getModifiers());
 	}
 
+	protected final void doAppendStaticMethods(GeneratedVariable variable, int level,
+			List<Method> methodcalls) throws SavException {
+		doAppendMethods(variable, level, methodcalls, Statement.INVALID_VAR_ID,
+				true);
+	}
+	
+	protected void doAppendMethods(GeneratedVariable variable, int level, 
+			List<Method> methodcalls, int scopeId, boolean addVariable) throws SavException {
+		// generate value for method call
+		for (Method method : methodcalls) {
+			doAppendMethod(variable, level, scopeId, addVariable, method);
+		}
+	}
+
+	protected void doAppendMethod(GeneratedVariable variable, int level,
+			int scopeId, boolean addVariable, Method method)
+			throws SavException {
+		/* check generic types */
+		Type[] genericParamTypes = method.getGenericParameterTypes();
+		Class<?>[] types = method.getParameterTypes();
+		int[] paramIds = new int[genericParamTypes.length];
+		for (int i = 0; i < paramIds.length; i++) {
+			Type type = genericParamTypes[i];
+			Pair<Class<?>, Type> paramType = getParamType(types[i], type);
+			GeneratedVariable newVar = ValueGenerator.append(variable,
+					level + 2, paramType.a, paramType.b);
+			paramIds[i] = newVar.getReturnVarId();
+		}
+		Rmethod rmethod = new Rmethod(method, scopeId);
+		variable.append(rmethod, paramIds, addVariable);
+	}
 }

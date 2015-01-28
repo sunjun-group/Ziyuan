@@ -18,7 +18,6 @@ import sav.common.core.SavException;
 import sav.common.core.utils.Randomness;
 
 /**
- * @author LLT
  * @author Nguyen Phuoc Nguong Phuc
  */
 public class ArrayValueGenerator extends ValueGenerator {

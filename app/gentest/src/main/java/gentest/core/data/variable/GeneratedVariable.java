@@ -3,9 +3,6 @@
  */
 package gentest.core.data.variable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import gentest.core.data.LocalVariable;
 import gentest.core.data.statement.RArrayAssignment;
 import gentest.core.data.statement.RArrayConstructor;
@@ -14,6 +11,10 @@ import gentest.core.data.statement.RConstructor;
 import gentest.core.data.statement.Rmethod;
 import gentest.core.data.statement.Statement;
 import gentest.core.value.StatementDuplicator;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 
@@ -33,11 +34,20 @@ public class GeneratedVariable extends SelectedVariable {
 	 * ..
 	 * objCuttingPoints will store the points at which object method will be call (to change state of the object itself)
 	 * this field is added for select random sequence of object initialization in cache.  
+	 * this stores list of [varId, stmtIdx]
 	 */
 	private List<int[]> objCuttingPoints;
 	
 	public GeneratedVariable(int firstVarId) {
 		this(firstVarId, new ArrayList<Statement>(), new ArrayList<LocalVariable>());
+	}
+	
+	public void reset() {
+		if (objCuttingPoints != null) {
+			objCuttingPoints.clear();
+		}
+		stmts.clear();
+		newVariables.clear();
 	}
 	
 	public GeneratedVariable(int firstVarId, List<Statement> stmts,
@@ -65,6 +75,9 @@ public class GeneratedVariable extends SelectedVariable {
 		this.returnedVarId = returnedVarId;
 	}
 
+	/**
+	 * append statement
+	 **/
 	public void append(RAssignment stmt) {
 		/* update stmt */
 		stmt.setOutVarId(getNextVarId());
@@ -76,22 +89,24 @@ public class GeneratedVariable extends SelectedVariable {
 		getStmts().add(stmt);
 	}
 	
-	private void updateDataLists(Statement stmt, Class<?> type, boolean addVariable) {
+	private boolean updateDataLists(Statement stmt, Class<?> type,
+			boolean addVariable) {
 		addStatement(stmt);
 		if (addVariable && type != Void.class) {
 			int varId = getNextVarId();
 			LocalVariable var = new LocalVariable(varId, type);
 			getNewVariables().add(var);
 		}
+		return true;
 	}
 
-	public void append(RConstructor stmt, int[] paramIds) {
+	public boolean append(RConstructor stmt, int[] paramIds) {
 		int varId = getNextVarId();
 		/* update stmt */
 		stmt.setOutVarId(varId);
 		stmt.setInVarIds(paramIds);
 		/* update stmt list and variables list */
-		updateDataLists(stmt, stmt.getOutputType(), true);
+		return updateDataLists(stmt, stmt.getOutputType(), true);
 	}
 	
 	public void append(Rmethod stmt, int[] paramIds, boolean addVariable) {
@@ -160,14 +175,9 @@ public class GeneratedVariable extends SelectedVariable {
 		}
 		StatementDuplicator duplicator = new StatementDuplicator(duplicateVar.stmts,
 				offset);
-		try {
-			for (int i = 0; i < toStmtIdx; i++) {
-				Statement stmt = stmts.get(i);
-				stmt.accept(duplicator);
-			}
-		} catch (Throwable e) {
-			// TODO LLT: exception handling
-			e.printStackTrace();
+		for (int i = 0; i < toStmtIdx; i++) {
+			Statement stmt = stmts.get(i);
+			stmt.accept(duplicator);
 		}
 		if (returnedVarId != Statement.INVALID_VAR_ID) {
 			duplicateVar.returnedVarId = returnedVarId + offset;
@@ -175,4 +185,35 @@ public class GeneratedVariable extends SelectedVariable {
 		return duplicateVar;
 	}
 
+	public int getFirstVarId() {
+		return firstVarId;
+	}
+	
+	public boolean isEmpty() {
+		return stmts.isEmpty();
+	}
+	
+	public int[] getLastFragmentIdx() {
+		if (objCuttingPoints == null) {
+			return new int[] { 0, 0 };
+		}
+		return objCuttingPoints.get(objCuttingPoints.size() - 1);
+	}
+	
+	public int getLastFragmentIdxStmtId() {
+		return getLastFragmentIdx()[1];
+	}
+
+	public void removeLastFragment() {
+		int[] lastFragmentIdx = getLastFragmentIdx();
+		CollectionUtils.removeLastElements(newVariables, lastFragmentIdx[0]);
+		CollectionUtils.removeLastElements(stmts, lastFragmentIdx[1]);
+		CollectionUtils.removeLast(objCuttingPoints);
+	}
+
+	public List<Statement> getLastFragmentStmts() {
+		return stmts.subList(getLastFragmentIdxStmtId(), stmts.size());
+	}
+	
+	
 }

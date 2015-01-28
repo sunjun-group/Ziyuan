@@ -9,6 +9,7 @@ import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
 import gentest.core.data.statement.RqueryMethod;
 import gentest.core.data.variable.ISelectedVariable;
+import gentest.core.execution.RuntimeExecutor;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -49,7 +50,7 @@ public class TestcaseGenerator {
 		refresh(seq);
 		/* append sequence for each method */
 		RqueryMethod rmethod = null;
-		ISelectedVariable recieverParam = null;
+		ISelectedVariable receiverParam = null;
 		for (int i = 0; i < methods.size(); i++) {
 			MethodCall method = methods.get(i);
 			/* prepare method receiver if method is not static */
@@ -59,10 +60,10 @@ public class TestcaseGenerator {
 				if (receiver == null) {
 					/* if the instance of method receiver still did not exist in the sequence,
 					 * initialize one */
-					recieverParam = parameterSelector.selectReceiver(
+					receiverParam = parameterSelector.selectReceiver(
 							method.getReceiverType(), null, seq.getStmtsSize(),
 							seq.getVarsSize());
-					seq.appendReceiver(recieverParam, method.getReceiverType());
+					seq.appendReceiver(receiverParam, method.getReceiverType());
 				}
 				rmethod = new RqueryMethod(method, seq.getReceiver(
 						method.getReceiverType()).getVarId());
@@ -78,7 +79,7 @@ public class TestcaseGenerator {
 				ISelectedVariable param = selectParams.get(j);
 				inVars[j] = param.getReturnVarId();
 			}
-			executor.start(recieverParam);
+			executor.start(receiverParam);
 			rmethod.setInVarIds(inVars);
 			seq.appendMethodExecStmts(rmethod, selectParams);
 			if (!executor.execute(rmethod, selectParams)) {

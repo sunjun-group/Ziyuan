@@ -21,8 +21,8 @@ public class REvaluationMethod extends Rmethod {
 	}
 
 	@Override
-	public void accept(StatementVisitor visitor) throws Throwable {
-		visitor.visit(this);
+	public boolean accept(StatementVisitor visitor) {
+		return visitor.visit(this);
 	}
 	
 	@Override

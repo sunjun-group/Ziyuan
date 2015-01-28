@@ -6,6 +6,7 @@ package gentest.core;
 import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
 import gentest.core.value.VariableCache;
+import gentest.service.impl.SubTypesScanner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,9 @@ public class RandomTester {
 			}
 			testsOnQuery++;
 		}
+		// TODO LLT: refactor
 		VariableCache.getInstance().reset();
+		SubTypesScanner.getInstance().reset();
 		return new Pair<List<Sequence>, List<Sequence>>(
 				passTcs, failTcs);
 	}

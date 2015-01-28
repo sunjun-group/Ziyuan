@@ -13,7 +13,7 @@ import org.springframework.core.DefaultParameterNameDiscoverer;
  * 
  */
 public class MethodCall {
-	private DefaultParameterNameDiscoverer paramNameDiscover = new DefaultParameterNameDiscoverer();
+	private DefaultParameterNameDiscoverer paramNameDiscover;
 	private Method method;
 	private String alias;
 	private String[] paramNames;
@@ -36,9 +36,16 @@ public class MethodCall {
 	
 	public String[] getParamNames() {
 		if (paramNames == null) {
-			paramNames = paramNameDiscover.getParameterNames(method);
+			paramNames = getParamNameDiscoverer().getParameterNames(method);
 		}
 		return paramNames;
+	}
+
+	private DefaultParameterNameDiscoverer getParamNameDiscoverer() {
+		if (paramNameDiscover == null) {
+			paramNameDiscover = new DefaultParameterNameDiscoverer();
+		}
+		return paramNameDiscover;
 	}
 	
 	public Class<?> getReceiverType() {

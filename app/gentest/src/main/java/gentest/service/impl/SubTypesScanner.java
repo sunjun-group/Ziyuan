@@ -39,6 +39,8 @@ import com.google.common.cache.LoadingCache;
 public class SubTypesScanner implements ISubTypesScanner {
 	private Logger<?> log = Logger.getDefaultLogger();
 	private LoadingCache<Class<?>, Set<Class<?>>> subTypesCache;
+	//TODO LLT: to clean up, using manager, with scope(like session?)?
+	private static SubTypesScanner instance;
 	
 	public SubTypesScanner() {
 		subTypesCache = CacheBuilder.newBuilder().build(
@@ -88,7 +90,7 @@ public class SubTypesScanner implements ISubTypesScanner {
 	}
 
 	/**
-	 * 2 packages are close together if they are equal or have the same parent
+	 * 2 packages are closed if they are equal or have the same parent
 	 * package
 	 */
 	protected boolean areClosePkgs(String subTypePkg, String typePkg) {
@@ -131,5 +133,16 @@ public class SubTypesScanner implements ISubTypesScanner {
 			throw new SavRtException(ModuleEnum.TESTCASE_GENERATION,
 					"error when executing cache to get subtypes");
 		}
+	}
+	
+	public static SubTypesScanner getInstance() {
+		if (instance == null) {
+			instance = new SubTypesScanner();
+		}
+		return instance;
+	}
+	
+	public void reset() {
+		subTypesCache.cleanUp();
 	}
 }

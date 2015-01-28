@@ -54,43 +54,49 @@ public class StatementDuplicator implements StatementVisitor {
 	}
 
 	@Override
-	public void visit(RAssignment stmt) throws Throwable {
+	public boolean visit(RAssignment stmt) {
 		RAssignment newStmt = new RAssignment(stmt.getType(), stmt.getValue());
 		transferVarIdsAndCommit(stmt, newStmt);
+		return true;
 	}
 
 	@Override
-	public void visitRmethod(Rmethod stmt) throws Throwable {
+	public boolean visitRmethod(Rmethod stmt) {
 		Rmethod newStmt = new Rmethod(stmt.getMethod(),
 				toNewStmtVarId(stmt.getReceiverVarId()));
 		transferVarIdsAndCommit(stmt, newStmt);
+		return true;
 	}
 
 	@Override
-	public void visit(RConstructor stmt) throws Throwable {
+	public boolean visit(RConstructor stmt) {
 		RConstructor newStmt = new RConstructor(stmt.getConstructor());
 		transferVarIdsAndCommit(stmt, newStmt);
+		return true;
 	}
 
 	@Override
-	public void visit(REvaluationMethod stmt) throws Throwable {
+	public boolean visit(REvaluationMethod stmt) {
 		REvaluationMethod newStmt = new REvaluationMethod(stmt.getMethod());
 		transferVarIdsAndCommit(stmt, newStmt);
+		return true;
 	}
 
 	@Override
-	public void visit(RArrayConstructor stmt) {
+	public boolean visit(RArrayConstructor stmt) {
 		RArrayConstructor newStmt = new RArrayConstructor(stmt.getSizes(),
 				stmt.getOutputType(), stmt.getContentType());
 		transferVarIdsAndCommit(stmt, newStmt);
+		return true;
 	}
 
 	@Override
-	public void visit(RArrayAssignment stmt) {
+	public boolean visit(RArrayAssignment stmt) {
 		RArrayAssignment newStmt = new RArrayAssignment(
 				toNewStmtVarId(stmt.getArrayVarID()), stmt.getIndex(),
 				toNewStmtVarId(stmt.getLocalVariableID()));
 		transferVarIdsAndCommit(stmt, newStmt);
+		return true;
 	}
 
 }

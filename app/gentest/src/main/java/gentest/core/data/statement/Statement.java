@@ -3,6 +3,7 @@
  */
 package gentest.core.data.statement;
 
+
 /**
  * @author LLT
  * This is a data class, it suppose to content data only,
@@ -51,7 +52,7 @@ public abstract class Statement {
 		return kind;
 	}
 	
-	public abstract void accept(StatementVisitor visitor) throws Throwable;
+	public abstract boolean accept(StatementVisitor visitor);
 
 	public static enum RStatementKind {
 		ASSIGNMENT,

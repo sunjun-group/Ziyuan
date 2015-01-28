@@ -49,8 +49,8 @@ public class Rmethod extends Statement {
 	}
 	
 	@Override
-	public void accept(StatementVisitor visitor) throws Throwable {
-		visitor.visitRmethod(this);
+	public boolean accept(StatementVisitor visitor) {
+		return visitor.visitRmethod(this);
 	}
 	
 	@Override
