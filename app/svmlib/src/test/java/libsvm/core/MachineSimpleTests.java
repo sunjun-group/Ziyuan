@@ -33,9 +33,8 @@ public class MachineSimpleTests {
 
 	private Machine setupMachine(final Machine machine) {
 		return machine.setParameter(new Parameter().setMachineType(MachineType.C_SVC)
-				.setKernelType(KernelType.LINEAR).setC(1.0).setCacheSize(100.0).setEps(1e-3)
-				.setShrinking(1).setProbability(1).setNrWeight(0).setWeight(new double[0])
-				.setWeightLabel(new int[0]));
+				.setKernelType(KernelType.LINEAR).setEps(1e-3).setShrinking(1).setProbability(1)
+				.setNrWeight(0).setWeight(new double[0]).setWeightLabel(new int[0]));
 	}
 
 	@Test

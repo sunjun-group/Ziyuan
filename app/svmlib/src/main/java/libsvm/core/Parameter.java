@@ -12,6 +12,16 @@ public class Parameter {
 
 	private svm_parameter param = new svm_parameter();
 
+	public Parameter() {
+		// Default cache size
+		// Higher value is recommended if more RAM is available
+		param.cache_size = 200.0;
+		// Default C is 1
+		// If there are a lot of noisy observations this should be decreased
+		// It corresponds to regularize more the estimation.
+		param.C = 1.0;
+	}
+
 	public Parameter setMachineType(final MachineType type) {
 		param.svm_type = type.index();
 		return this;
@@ -159,6 +169,14 @@ public class Parameter {
 		return param.weight;
 	}
 
+	/**
+	 * Set value for the parameter nu in NuSVC/OneClassSVM/NuSVR, which
+	 * approximates the fraction of training errors and support vectors.
+	 * 
+	 * @param nu
+	 *            Value for NU
+	 * @return Current parameter object
+	 */
 	public Parameter setNU(final double nu) {
 		ensureMachineTypeIn(MachineType.NU_SVC, MachineType.ONE_CLASS, MachineType.NU_SVR);
 		param.nu = nu;
