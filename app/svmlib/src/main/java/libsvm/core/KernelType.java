@@ -6,9 +6,9 @@ import java.util.Map;
 /**
  * The values for kernel type (function) is defined as follows:
  * <ul>
- * <li>Linear: <code>(x, x')</code></li>
+ * <li>Linear: <code>&ltx, x'&gt</code></li>
  * <li>Polynomial: <code>(γ&ltx, x'&gt + r)^d</code>.</li>
- * <li>RBF: <code>exp(-γ|x - x'}^2)</code></li>
+ * <li>RBF: <code>exp(-γ|x - x'|^2)</code></li>
  * <li>Sigmoid: <code>tanh(γ&ltx, x'&gt + r)</code></li>
  * </ul>
  * 

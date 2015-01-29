@@ -20,6 +20,10 @@ public class Parameter {
 		// If there are a lot of noisy observations this should be decreased
 		// It corresponds to regularize more the estimation.
 		param.C = 1.0;
+		// By default do not use weights
+		param.nr_weight = 0;
+		param.weight_label = new int[0];
+		param.weight = new double[0];
 	}
 
 	public Parameter setMachineType(final MachineType type) {
@@ -217,26 +221,26 @@ public class Parameter {
 	}
 
 	/**
-	 * Use the shrinking heuristics
+	 * Specify to use the shrinking heuristics or not.
 	 */
-	public Parameter setShrinking(final int shrinking) {
-		param.shrinking = shrinking;
+	public Parameter setUseShrinking(final boolean doShrinking) {
+		param.shrinking = doShrinking ? 1 : 0;
 		return this;
 	}
 
-	public int getShrinking() {
-		return param.shrinking;
+	public boolean isUseShrinking() {
+		return param.shrinking != 0;
 	}
 
 	/**
-	 * Do probability estimates
+	 * Specify whether probability estimates should be performed
 	 */
-	public Parameter setProbability(final int probability) {
-		param.probability = probability;
+	public Parameter setPredictProbability(final boolean probability) {
+		param.probability = probability ? 1 : 0;
 		return this;
 	}
 
-	public int getProbability() {
-		return param.probability;
+	public boolean isPredictProbability() {
+		return param.probability != 1;
 	}
 }

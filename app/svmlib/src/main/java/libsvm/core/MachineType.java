@@ -4,14 +4,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * SVC = Support Vector Classification<br/>
- * SVR = Support Vector Regression<br/>
+ * There are five formulations supported:
+ * <ol>
+ * <li>C-support vector classification (C-SVC)</li>
+ * <li>ν-support vector classification (ν-SVC)</li>
+ * <li>distribution estimation (one-class SVM)</li>
+ * <li>ε-support vector regression (ε-SVR)</li>
+ * <li>ν-support vector regression (ν-SVR)</li>
+ * </ol>
+ * 
  * 
  * One-class SVM is used for novelty detection, that is, given a set of samples,
  * it will detect the soft boundary of that set so as to classify new points as
  * belonging to that set or not.
  * 
  * @author Nguyen Phuoc Nguong Phuc (npn)
+ * @see <a href="http://www.csie.ntu.edu.tw/~cjlin/papers/libsvm.pdf">LIBSVM: A
+ *      Library for Support Vector Machines</a>
  * 
  */
 public enum MachineType {
