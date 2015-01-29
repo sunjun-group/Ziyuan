@@ -10,6 +10,7 @@ import gentest.core.data.statement.RAssignment;
 import gentest.core.data.statement.RConstructor;
 import gentest.core.data.statement.REvaluationMethod;
 import gentest.core.data.statement.Rmethod;
+import gentest.core.data.statement.StatementVisitor;
 import gentest.junit.variable.IVariableNamer;
 import japa.parser.ASTHelper;
 import japa.parser.ast.body.VariableDeclarator;
@@ -51,23 +52,30 @@ import sav.common.core.utils.CollectionUtils;
  * @author LLT
  * 
  */
-public class AstNodeConverter {
+public class AstNodeConverter implements StatementVisitor {
 	private IVariableNamer varNamer;
+	private Statement result;
 
 	public AstNodeConverter(IVariableNamer varNamer) {
 		this.varNamer = varNamer;
 	}
-
+	
+	public void reset() {
+		result = null;
+	}
+	
 	/**
 	 * assignment for primitive types, String, enum (constantTypes)
 	 */
-	public Statement fromRAssignment(RAssignment assignment) {
+	@Override
+	public boolean visit(RAssignment assignment) {
 		/* type */
 		Type paramType = null;
 		Class<?> vartype = assignment.getType();
 		if (TypeUtils.isPrimitive(vartype)) {
 			/* primitive */
-			paramType = new PrimitiveType(TypeUtils.getAssociatePrimitiveType(vartype));
+			paramType = new PrimitiveType(
+					TypeUtils.getAssociatePrimitiveType(vartype));
 		} else {
 			/* primitive wrapper, enum or String */
 			paramType = toReferenceType(vartype.getSimpleName());
@@ -92,12 +100,96 @@ public class AstNodeConverter {
 
 		VariableDeclarator varDecl = new VariableDeclarator();
 		varDecl.setId(new VariableDeclaratorId(varNamer.getName(
-				assignment.getType(),
-				assignment.getOutVarId())));
+				assignment.getType(), assignment.getOutVarId())));
 		varDecl.setInit(initExpr);
-		Expression expr = new VariableDeclarationExpr(paramType, CollectionUtils.listOf(varDecl));
-		ExpressionStmt stmt = new ExpressionStmt(expr);
-		return stmt;
+		Expression expr = new VariableDeclarationExpr(paramType,
+				CollectionUtils.listOf(varDecl));
+		result = new ExpressionStmt(expr);
+		return true;
+	}
+
+	@Override
+	public boolean visitRmethod(Rmethod rmethod) {
+		Expression stmtExpr = createMethodCallExpression(rmethod,
+				rmethod.hasOutputVar());
+		result = new ExpressionStmt(stmtExpr);
+		return true;
+	}
+
+	@Override
+	public boolean visit(RConstructor constructor) {
+		/* Type */
+		Type type = toReferenceType(constructor.getName());
+		List<VariableDeclarator> vars = new ArrayList<VariableDeclarator>();
+		/* variable name */
+		VariableDeclarator var = new VariableDeclarator(
+				new VariableDeclaratorId(varNamer.getName(
+						constructor.getOutputType(), constructor.getOutVarId())));
+		/* constructor input */
+		List<Expression> constructorArgs = new ArrayList<Expression>();
+		for (int i = 0; i < constructor.getInVarIds().length; i++) {
+			constructorArgs.add(new NameExpr(varNamer.getName(constructor
+					.getInputTypes().get(i), constructor.getInVarIds()[i])));
+
+		}
+		/* statement */
+		Expression initExpr = new ObjectCreationExpr(null,
+				new ClassOrInterfaceType(constructor.getName()),
+				constructorArgs);
+		var.setInit(initExpr);
+		vars.add(var);
+		Expression expr = new VariableDeclarationExpr(type, vars);
+		result = new ExpressionStmt(expr);
+		return true;
+	}
+
+	@Override
+	public boolean visit(REvaluationMethod stmt) {
+		NameExpr scope = new NameExpr("Assert");
+		MethodCallExpr assertTrue = new MethodCallExpr(scope, "assertTrue",
+				CollectionUtils.listOf(createMethodCallExpression(stmt, false)));
+
+		result = new ExpressionStmt(assertTrue);
+		return true;
+	}
+
+	@Override
+	public boolean visit(RArrayConstructor arrayConstructor) {
+		Type arrayContentType = toReferenceType(arrayConstructor
+				.getContentType().getSimpleName());
+		Type arrayType = new ReferenceType(arrayContentType,
+				arrayConstructor.getSizes().length);
+		VariableDeclarator var = new VariableDeclarator(
+				new VariableDeclaratorId(
+						varNamer.getArrVarName(arrayConstructor.getOutVarId())));
+
+		List<Expression> dimensions = new ArrayList<Expression>(
+				arrayConstructor.getSizes().length);
+		for (int i = 0; i < arrayConstructor.getSizes().length; i++) {
+			IntegerLiteralExpr ile = new IntegerLiteralExpr(
+					String.valueOf(arrayConstructor.getSizes()[i]));
+			dimensions.add(ile);
+		}
+		Expression arrayInitStatement = new ArrayCreationExpr(arrayContentType,
+				dimensions, 0);
+		var.setInit(arrayInitStatement);
+
+		Expression variableDeclarationStatement = new VariableDeclarationExpr(
+				arrayType, Arrays.asList(var));
+		result = new ExpressionStmt(variableDeclarationStatement);
+		return true;
+	}
+
+	@Override
+	public boolean visit(RArrayAssignment stmt) {
+		final Expression arrayAccessExp = getArrayAccessExp(
+				varNamer.getExistVarName(stmt.getArrayVarID()), stmt.getIndex());
+		final Expression valueExp = new NameExpr(varNamer.getExistVarName(stmt
+				.getLocalVariableID()));
+		final Expression assignmentExpression = new AssignExpr(arrayAccessExp,
+				valueExp, Operator.assign);
+		result = new ExpressionStmt(assignmentExpression);
+		return true;
 	}
 
 	private Expression toNullLiteralExpr(Object varValue) {
@@ -150,49 +242,6 @@ public class AstNodeConverter {
 		return null;
 	}
 
-	public Statement fromRConstructor(RConstructor constructor) {
-		/* Type */
-		Type type = toReferenceType(constructor.getName());
-		List<VariableDeclarator> vars = new ArrayList<VariableDeclarator>();
-		/* variable name */
-		VariableDeclarator var = new VariableDeclarator(new VariableDeclaratorId(
-				varNamer.getName(constructor.getOutputType(), constructor.getOutVarId())));
-		/* constructor input */
-		List<Expression> constructorArgs = new ArrayList<Expression>();
-		for (int i = 0; i < constructor.getInVarIds().length; i++) {
-			constructorArgs.add(new NameExpr(varNamer.getName(constructor.getInputTypes().get(i),
-					constructor.getInVarIds()[i])));
-			
-		}
-		/* statement */
-		Expression initExpr = new ObjectCreationExpr(null, new ClassOrInterfaceType(
-				constructor.getName()), constructorArgs);
-		var.setInit(initExpr);
-		vars.add(var);
-		Expression expr = new VariableDeclarationExpr(type, vars);
-		ExpressionStmt stmt = new ExpressionStmt(expr);
-		return stmt;
-	}
-
-	public Statement fromRArrayConstructor(final RArrayConstructor arrayConstructor) {
-		Type arrayContentType = toReferenceType(arrayConstructor.getContentType().getSimpleName());
-		Type arrayType = new ReferenceType(arrayContentType, arrayConstructor.getSizes().length);
-		VariableDeclarator var = new VariableDeclarator(new VariableDeclaratorId(
-				varNamer.getArrVarName(arrayConstructor.getOutVarId())));
-		
-		List<Expression> dimensions = new ArrayList<Expression>(arrayConstructor.getSizes().length);
-		for (int i = 0; i < arrayConstructor.getSizes().length; i++) {
-			IntegerLiteralExpr ile = new IntegerLiteralExpr(String.valueOf(arrayConstructor
-					.getSizes()[i]));
-			dimensions.add(ile);
-		}
-		Expression arrayInitStatement = new ArrayCreationExpr(arrayContentType, dimensions, 0);
-		var.setInit(arrayInitStatement);
-
-		Expression variableDeclarationStatement = new VariableDeclarationExpr(arrayType, Arrays.asList(var));
-		return new ExpressionStmt(variableDeclarationStatement);
-	}
-
 	private Expression getArrayAccessExp(final String arrayName, final int[] location) {
 		final int arrayLength = location.length;
 		if (arrayLength <= 0) {
@@ -202,28 +251,6 @@ public class AstNodeConverter {
 					Arrays.copyOfRange(location, 0, arrayLength - 1)), new NameExpr(
 					String.valueOf(location[arrayLength - 1])));
 		}
-	}
-
-	public Statement fromRArrayAssigment(final RArrayAssignment stmt) {
-		final Expression arrayAccessExp = getArrayAccessExp(varNamer.getExistVarName(stmt.getArrayVarID()),
-				stmt.getIndex());
-		final Expression valueExp = new NameExpr(varNamer.getExistVarName(stmt.getLocalVariableID()));
-		final Expression assignmentExpression = new AssignExpr(arrayAccessExp, valueExp,
-				Operator.assign);
-		return new ExpressionStmt(assignmentExpression);
-	}
-
-	public Statement fromREvalMethod(REvaluationMethod stmt) {
-		NameExpr scope = new NameExpr("Assert");
-		MethodCallExpr assertTrue = new MethodCallExpr(scope, "assertTrue",
-				CollectionUtils.listOf(createMethodCallExpression(stmt, false)));
-
-		return new ExpressionStmt(assertTrue);
-	}
-
-	public Statement fromRMethod(Rmethod rmethod) {
-		Expression stmtExpr = createMethodCallExpression(rmethod, rmethod.hasOutputVar());
-		return new ExpressionStmt(stmtExpr);
 	}
 
 	private Expression createMethodCallExpression(Rmethod rmethod, boolean declareValue) {
@@ -257,4 +284,7 @@ public class AstNodeConverter {
 		return new ReferenceType(new ClassOrInterfaceType(typeName));
 	}
 
+	public Statement getResult() {
+		return result;
+	}
 }

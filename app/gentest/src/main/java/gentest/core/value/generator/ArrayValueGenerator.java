@@ -8,12 +8,13 @@
 
 package gentest.core.value.generator;
 
-import java.lang.reflect.Type;
-
 import gentest.core.data.statement.RArrayAssignment;
 import gentest.core.data.statement.RArrayConstructor;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.main.GentestConstants;
+
+import java.lang.reflect.Type;
+
 import sav.common.core.SavException;
 import sav.common.core.utils.Randomness;
 
@@ -48,7 +49,7 @@ public class ArrayValueGenerator extends ValueGenerator {
 		// Generate the array content
 		int[] location = next(null, arrayConstructor.getSizes());
 		while (location != null) {
-			GeneratedVariable newVar = ValueGenerator.append(variable,
+			GeneratedVariable newVar = appendVariable(variable,
 					level + 1, arrayConstructor.getContentType(), null);
 			int localVariableID = newVar.getReturnVarId(); // the last ID
 

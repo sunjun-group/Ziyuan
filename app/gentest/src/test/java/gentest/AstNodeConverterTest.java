@@ -3,15 +3,14 @@
  */
 package gentest;
 
-import java.lang.reflect.Constructor;
-
 import gentest.core.data.statement.RAssignment;
 import gentest.core.data.statement.RConstructor;
 import gentest.core.data.statement.Rmethod;
 import gentest.junit.AstNodeConverter;
 import gentest.junit.variable.VariableNamer;
-import japa.parser.ast.stmt.Statement;
 import japa.parser.ast.type.PrimitiveType.Primitive;
+
+import java.lang.reflect.Constructor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,8 +33,9 @@ public class AstNodeConverterTest {
 				"substring", int.class, int.class), 3);
 		method.setInVarIds(new int[]{1, 2});
 		method.setOutVarId(4);
-		Statement stmt = astConverter.fromRMethod(method);
-		System.out.println(stmt.toString());
+		astConverter.reset();
+		astConverter.visitRmethod(method);
+		System.out.println(astConverter.getResult());
 	}
 	
 	@Test
@@ -48,8 +48,9 @@ public class AstNodeConverterTest {
 	private void convert(Constructor<?> ctor, int... inVar) {
 		RConstructor constructor = RConstructor.of(ctor);
 		constructor.setInVarIds(inVar);
-		Statement stmt = astConverter.fromRConstructor(constructor);
-		System.out.println(stmt.toString());
+		astConverter.reset();
+		astConverter.visit(constructor);
+		System.out.println(astConverter.getResult());
 	}
 
 	@Test
@@ -66,7 +67,8 @@ public class AstNodeConverterTest {
 
 	private void convert(Class<?> clazz, Object value) {
 		RAssignment assignment = RAssignment.assignmentFor(clazz, value);
-		Statement stmt = astConverter.fromRAssignment(assignment);
-		System.out.println(stmt);
+		astConverter.reset();
+		astConverter.visit(assignment);
+		System.out.println(astConverter.getResult());
 	}
 }

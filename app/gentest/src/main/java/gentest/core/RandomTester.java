@@ -5,8 +5,7 @@ package gentest.core;
 
 import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
-import gentest.core.value.VariableCache;
-import gentest.service.impl.SubTypesScanner;
+import gentest.injection.GentestInjector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +14,15 @@ import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.Randomness;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 /**
  * @author LLT
  *
  */
 public class RandomTester {
+	private GentestInjector injectorModule = new GentestInjector();
 	private GentestListener listener;
 	// max length of joined methods.
 	private int queryMaxLength;
@@ -41,7 +44,7 @@ public class RandomTester {
 			List<MethodCall> methodcalls) throws SavException {
 		List<Sequence> passTcs = new ArrayList<Sequence>();
 		List<Sequence> failTcs = new ArrayList<Sequence>();
-		TestcaseGenerator tcGenerator = new TestcaseGenerator();
+		TestcaseGenerator tcGenerator = getTestcaseGenerator();
 		int testsOnQuery = testPerQuery;
 		List<MethodCall> query = null;
 		while (!finish(passTcs.size(), failTcs.size())) {
@@ -60,11 +63,19 @@ public class RandomTester {
 			}
 			testsOnQuery++;
 		}
-		// TODO LLT: refactor
-		VariableCache.getInstance().reset();
-		SubTypesScanner.getInstance().reset();
+		
+		afterTest();
 		return new Pair<List<Sequence>, List<Sequence>>(
 				passTcs, failTcs);
+	}
+
+	private void afterTest() {
+		injectorModule.release();
+	}
+
+	private TestcaseGenerator getTestcaseGenerator() {
+		Injector injector = Guice.createInjector(injectorModule);
+		return injector.getInstance(TestcaseGenerator.class);
 	}
 
 	private boolean finish(int passTcSize, int failTcSize) {

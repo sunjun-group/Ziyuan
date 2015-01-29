@@ -9,7 +9,6 @@
 package gentest.core.value.generator;
 
 import gentest.core.ParamGeneratorFactory;
-import gentest.core.commons.utils.GenTestUtils;
 import gentest.core.commons.utils.TypeUtils;
 import gentest.core.data.statement.RAssignment;
 import gentest.core.data.variable.GeneratedVariable;

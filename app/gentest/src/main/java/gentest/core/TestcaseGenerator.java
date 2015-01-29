@@ -18,18 +18,18 @@ import java.util.List;
 
 import sav.common.core.SavException;
 
+import com.google.inject.Inject;
+
 /**
  * @author LLT
  */
 public class TestcaseGenerator {
+	@Inject
 	private ParameterSelector parameterSelector;
+	
+	@Inject
 	private RuntimeExecutor executor;
 	private Sequence seq;
-	
-	public TestcaseGenerator() {
-		executor = new RuntimeExecutor();
-		parameterSelector = new ParameterSelector();
-	}
 	
 	private void refresh(Sequence seq) {
 		this.seq = seq;
@@ -118,4 +118,9 @@ public class TestcaseGenerator {
 	public RuntimeExecutor getExecutor() {
 		return executor;
 	}
+
+	public void setExecutor(RuntimeExecutor executor) {
+		this.executor = executor;
+	}
+	
 }

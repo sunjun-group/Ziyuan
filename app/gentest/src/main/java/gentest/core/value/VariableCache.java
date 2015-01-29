@@ -9,6 +9,7 @@
 package gentest.core.value;
 
 import gentest.core.data.variable.GeneratedVariable;
+import gentest.core.value.store.iface.IVariableCache;
 import gentest.main.GentestConstants;
 
 import java.lang.reflect.Type;
@@ -26,12 +27,11 @@ import sav.common.core.utils.Randomness;
 /**
  * @author LLT
  */
-public class VariableCache {
+public class VariableCache implements IVariableCache {
 	private Logger<?> log = Logger.getDefaultLogger();
 	private Map<Type, List<GeneratedVariable>> generatedVarMap;
-	private static VariableCache instance;
 
-	private VariableCache() {
+	public VariableCache() {
 		generatedVarMap = new HashMap<Type, List<GeneratedVariable>>();
 	}
 
@@ -50,13 +50,6 @@ public class VariableCache {
 		} else {
 			valueList.add(variable);
 		}
-	}
-	
-	public static VariableCache getInstance() {
-		if (instance == null) {
-			instance = new VariableCache();
-		}
-		return instance;
 	}
 
 	public GeneratedVariable select(Type type, Class<?> clazz) {

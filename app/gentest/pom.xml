@@ -13,6 +13,7 @@
 		<java-quickcheck-version>0.6</java-quickcheck-version>
 		<guava-version>18.0</guava-version>
 		<reflections-version>0.9.9-RC2</reflections-version>
+		<guice-version>3.0</guice-version>
 	</properties>
 
 	<build>
@@ -73,6 +74,11 @@
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections-maven</artifactId>
 			<version>${reflections-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>${guice-version}</version>
 		</dependency>
 	</dependencies>
 

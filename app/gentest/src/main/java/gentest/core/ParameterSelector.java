@@ -7,10 +7,12 @@ import gentest.core.data.LocalVariable;
 import gentest.core.data.Sequence;
 import gentest.core.data.variable.ISelectedVariable;
 import gentest.core.data.variable.ReferenceVariable;
-import gentest.core.value.generator.ValueGenerator;
+import gentest.core.value.generator.ValueGeneratorMediator;
 
 import java.lang.reflect.Type;
 import java.util.List;
+
+import com.google.inject.Inject;
 
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
@@ -25,8 +27,8 @@ import sav.common.core.utils.Randomness;
 public class ParameterSelector {
 	private Sequence seq;
 	
-	public ParameterSelector() {
-	}
+	@Inject
+	private ValueGeneratorMediator valueGenerator;
 	
 	public void setSequence(Sequence methodDecl) {
 		this.seq = methodDecl;
@@ -59,7 +61,7 @@ public class ParameterSelector {
 	 */
 	private ISelectedVariable selectGeneratedParam(Class<?> clazz,
 			Type type, int firstVarIdx, boolean isReceiver) throws SavException {
-		return ValueGenerator.generate(clazz, type, firstVarIdx, isReceiver);
+		return valueGenerator.generate(clazz, type, firstVarIdx, isReceiver);
 	}
 
 	/**
@@ -93,4 +95,7 @@ public class ParameterSelector {
 		GENERATE_NEW
 	}
 
+	public void setValueGenerator(ValueGeneratorMediator valueGenerator) {
+		this.valueGenerator = valueGenerator;
+	}
 }

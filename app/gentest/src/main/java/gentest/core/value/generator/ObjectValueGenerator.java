@@ -77,7 +77,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 			int[] paramIds = new int[types.length];
 			for (int i = 0; i < rconstructor.getInputTypes().size(); i++) {
 				Class<?> paramType = rconstructor.getInputTypes().get(i);
-				GeneratedVariable newVariable = append(variable, level + 1,
+				GeneratedVariable newVariable = appendVariable(variable, level + 1,
 						paramType, types[i]);
 				paramIds[i] = newVariable.getReturnVarId();
 			}
@@ -89,7 +89,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 		} else if (initializedStmt instanceof MethodCall) {
 			// init by a builder
 			MethodCall methodCall = (MethodCall) initializedStmt;
-			GeneratedVariable newVar = append(variable, level + 1,
+			GeneratedVariable newVar = appendVariable(variable, level + 1,
 					methodCall.getReceiverType(), null);
 			// call the method of builder to get the object for current type.
 			doAppendMethods(variable, level,
@@ -210,11 +210,12 @@ public class ObjectValueGenerator extends ValueGenerator {
 		for (int i = 0; i < paramIds.length; i++) {
 			Type type = genericParamTypes[i];
 			Pair<Class<?>, Type> paramType = getParamType(types[i], type);
-			GeneratedVariable newVar = ValueGenerator.append(variable,
+			GeneratedVariable newVar = appendVariable(variable,
 					level + 2, paramType.a, paramType.b);
 			paramIds[i] = newVar.getReturnVarId();
 		}
 		Rmethod rmethod = new Rmethod(method, scopeId);
 		variable.append(rmethod, paramIds, addVariable);
 	}
+
 }
