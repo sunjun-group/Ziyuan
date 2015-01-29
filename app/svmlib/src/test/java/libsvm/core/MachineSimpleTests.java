@@ -33,9 +33,8 @@ public class MachineSimpleTests {
 
 	private Machine setupMachine(final Machine machine) {
 		return machine.setParameter(new Parameter().setMachineType(MachineType.C_SVC)
-				.setKernelType(KernelType.LINEAR).setC(1.0).setCacheSize(100.0).setEps(1e-3)
-				.setShrinking(1).setProbability(1).setNrWeight(0).setWeight(new double[0])
-				.setWeightLabel(new int[0]));
+				.setKernelType(KernelType.LINEAR).setEps(1e-3).setUseShrinking(true)
+				.setPredictProbability(false));
 	}
 
 	@Test
@@ -56,7 +55,7 @@ public class MachineSimpleTests {
 		LOGGER.log(Level.DEBUG, "Improved SVM:" + improvedModelAccuracy);
 
 		Assert.assertTrue("Improved algorithm produces lower accuracy model than normal one.",
-				improvedModelAccuracy >= normalModelAccuracy);
+				Double.compare(normalModelAccuracy, improvedModelAccuracy) <= 0);
 	}
 
 	private DataPoint randomDataPoint(final Category category, final double... values) {
@@ -114,5 +113,44 @@ public class MachineSimpleTests {
 		// And the two results should be the same
 		Assert.assertTrue("Inconsistent results.",
 				Double.compare(normalModelAccuracy, improvedModelAccuracy) == 0);
+	}
+
+	@Test
+	public void testWithTwoLinearSeparableData() {
+		// x => 3 ^ y <= 5 are considered POSITIVE
+		int countPositive = 0, countNegative = 0;
+		for (int i = 0; i < NUMBER_OF_DATA_POINTS; i++) {
+			double x = RANDOM.nextInt();
+			double y = RANDOM.nextInt();
+			final String categoryString = x >= 3 && y <= 5 ? POSITIVE : NEGATIVE;
+			if (categoryString.equals(POSITIVE)) {
+				countPositive++;
+			} else {
+				countNegative++;
+			}
+			normalMachine.addDataPoint(randomDataPoint(normalMachine.getCategory(categoryString),
+					x, y));
+			improvedMachine.addDataPoint(randomDataPoint(
+					improvedMachine.getCategory(categoryString), x, y));
+		}
+
+		Assert.assertTrue("Incompleted generated input data.",
+				normalMachine.countAvailableCategories() > 1);
+		Assert.assertTrue("Incompleted generated input data.",
+				improvedMachine.countAvailableCategories() > 1);
+
+		LOGGER.log(Level.DEBUG, "Possitive cases =" + countPositive);
+		LOGGER.log(Level.DEBUG, "Negative cases =" + countNegative);
+
+		final double normalModelAccuracy = normalMachine.train().getModelAccuracy();
+		LOGGER.log(Level.DEBUG, "Normal SVM:" + normalModelAccuracy);
+		final double improvedModelAccuracy = improvedMachine.train().getModelAccuracy();
+		LOGGER.log(Level.DEBUG, "Improved SVM:" + improvedModelAccuracy);
+
+		// We expect the improved model must perform better in this case
+		Assert.assertTrue(
+				"Improved algorithm does not produce higer accuracy model than normal one."
+						+ " Normal:" + normalModelAccuracy + "; Improved:" + improvedModelAccuracy,
+				Double.compare(normalModelAccuracy, improvedModelAccuracy) < 0);
 	}
 }
