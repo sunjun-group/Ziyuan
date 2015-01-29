@@ -84,6 +84,15 @@ public class Parameter {
 		return param.degree;
 	}
 
+	/**
+	 * Set value for the parameter gamma, which defines how much influence a
+	 * single training example has. The larger gamma is, the closer other
+	 * examples must be to be affected.
+	 * 
+	 * @param gamma
+	 *            Value for the gamma in SVM algorithm
+	 * @return The current parameter object
+	 */
 	public Parameter setGamma(final double gamma) {
 		ensureKernelTypeIn(KernelType.POLY, KernelType.RBF, KernelType.SIGMOID);
 		param.gamma = gamma;
@@ -129,6 +138,16 @@ public class Parameter {
 		return param.eps;
 	}
 
+	/**
+	 * Set value for C, the parameter defines the trades off misclassification
+	 * of training examples against simplicity of the decision surface. A low C
+	 * makes the decision surface smooth, while a high C aims at classifying all
+	 * training examples correctly.
+	 * 
+	 * @param c
+	 *            value of C for the SVM algorithm
+	 * @return The current parameter object
+	 */
 	public Parameter setC(final double c) {
 		ensureMachineTypeIn(MachineType.C_SVC, MachineType.EPSILON_SVR, MachineType.NU_SVR);
 		param.C = c;
