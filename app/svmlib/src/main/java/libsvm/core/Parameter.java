@@ -78,6 +78,14 @@ public class Parameter {
 		}
 	}
 
+	/**
+	 * Set degree used in Polynomial kernel function.
+	 * 
+	 * @param degree
+	 *            The degree to set
+	 * @return The current parameter object
+	 * @see KernelType
+	 */
 	public Parameter setDegree(final int degree) {
 		ensureKernelTypeIn(KernelType.POLY);
 		param.degree = degree;
@@ -89,13 +97,14 @@ public class Parameter {
 	}
 
 	/**
-	 * Set value for the parameter gamma, which defines how much influence a
-	 * single training example has. The larger gamma is, the closer other
-	 * examples must be to be affected.
+	 * Set value for the parameter gamma for Polynomial/RBF/Sigmoid kernel
+	 * function, which defines how much influence a single training example has.
+	 * The larger gamma is, the closer other examples must be to be affected.
 	 * 
 	 * @param gamma
 	 *            Value for the gamma in SVM algorithm
 	 * @return The current parameter object
+	 * @see KernelType
 	 */
 	public Parameter setGamma(final double gamma) {
 		ensureKernelTypeIn(KernelType.POLY, KernelType.RBF, KernelType.SIGMOID);
@@ -107,6 +116,14 @@ public class Parameter {
 		return param.gamma;
 	}
 
+	/**
+	 * Set value r for Polynomial/Sigmoid kernel function.
+	 * 
+	 * @param coef0
+	 *            Value of r to set
+	 * @return The current parameter object
+	 * @see KernelType
+	 */
 	public Parameter setCoef0(final double coef0) {
 		ensureKernelTypeIn(KernelType.POLY, KernelType.SIGMOID);
 		param.coef0 = coef0;
@@ -131,7 +148,8 @@ public class Parameter {
 	}
 
 	/**
-	 * Stopping criteria
+	 * Set stopping criteria, the larger this value is, the more loosely the
+	 * optimization problem will be solved.
 	 */
 	public Parameter setEps(final double eps) {
 		param.eps = eps;
@@ -221,7 +239,14 @@ public class Parameter {
 	}
 
 	/**
-	 * Specify to use the shrinking heuristics or not.
+	 * Specify to use the shrinking heuristics or not. <br/>
+	 * If the number of iterations is large, shrinking can shorten the training
+	 * time. However, if we <i>loosely solve the optimization problem</i> (i.e.:
+	 * by setting large stopping tolerance eps), it may be faster <i>not to
+	 * use</i> shrinking. <br/>
+	 * That is, because of the small number of iterations, the time spent on all
+	 * decomposition iterations can be even less than one single gradient
+	 * reconstruction.
 	 */
 	public Parameter setUseShrinking(final boolean doShrinking) {
 		param.shrinking = doShrinking ? 1 : 0;

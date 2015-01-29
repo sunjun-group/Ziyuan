@@ -59,8 +59,8 @@ public class Machine {
 		this.parameter.weight = parameter.getWeight();
 		this.parameter.nu = parameter.getNU();
 		this.parameter.p = parameter.getP();
-		this.parameter.shrinking = parameter.getShrinking();
-		this.parameter.probability = parameter.getProbability();
+		this.parameter.shrinking = parameter.isUseShrinking() ? 1 : 0;
+		this.parameter.probability = parameter.isPredictProbability() ? 1 : 0;
 		return this;
 	}
 
