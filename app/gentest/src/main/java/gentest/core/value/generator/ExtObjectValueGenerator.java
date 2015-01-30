@@ -8,13 +8,13 @@
 
 package gentest.core.value.generator;
 
-import gentest.core.commons.utils.GenTestUtils;
 import gentest.core.commons.utils.MethodUtils;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.execution.VariableRuntimeExecutor;
 import gentest.main.GentestConstants;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -161,7 +161,7 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 					.getActualTypeArguments()[paramIdx];
 			if (compType instanceof Class<?>) {
 				paramType = new Pair<Class<?>, Type>(
-						GenTestUtils.toClassItselfOrItsDelegate((Class<?>) compType),
+						toClassItselfOrItsDelegate((Class<?>) compType),
 						null);
 			} else if (compType instanceof ParameterizedType) {
 				paramType = new Pair<Class<?>, Type>(
@@ -174,6 +174,17 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 			paramTypes[paramIdx] = paramType;
 		}
 		return paramType;
+	}
+	
+	private Class<?> toClassItselfOrItsDelegate(Class<?> clazz) {
+		if (Object.class.equals(clazz)) {
+			return Randomness
+					.randomMember(GentestConstants.CANDIDATE_DELEGATES_FOR_OBJECT);
+		}
+		if (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) {
+			return getSubTypesScanner().getRandomImplClzz(clazz);
+		}
+		return clazz;
 	}
 	
 	protected Pair<Class<?>, Type> getContentType(Type type, int idxType) {

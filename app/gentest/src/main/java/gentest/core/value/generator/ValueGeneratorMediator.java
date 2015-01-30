@@ -18,7 +18,9 @@ import java.util.List;
 import com.google.inject.Inject;
 
 import sav.common.core.SavException;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
+import sav.strategies.gentest.ISubTypesScanner;
 
 /**
  * @author LLT
@@ -27,6 +29,8 @@ import sav.common.core.utils.Randomness;
 public class ValueGeneratorMediator {
 	@Inject
 	protected IVariableCache variableCache;
+	@Inject
+	private ISubTypesScanner subTypeScanner;
 	
 	public GeneratedVariable generate(Class<?> clazz, Type type, 
 			int firstVarId, boolean isReceiver) throws SavException {
@@ -52,7 +56,7 @@ public class ValueGeneratorMediator {
 			if (variable != null) {
 				int toVarId = variable.getNewVariables().size();
 				int toStmtIdx = variable.getStmts().size();
-				if (variable.getObjCuttingPoints() != null) {
+				if (CollectionUtils.isNotEmpty(variable.getObjCuttingPoints())) {
 					int[] stopPoint = Randomness.randomMember(variable
 							.getObjCuttingPoints());
 					toVarId = stopPoint[0];
@@ -101,5 +105,13 @@ public class ValueGeneratorMediator {
  
 	public void setVariableCache(IVariableCache variableCache) {
 		this.variableCache = variableCache;
+	}
+
+	public ISubTypesScanner getSubTypeScanner() {
+		return subTypeScanner;
+	}
+
+	public void setSubTypeScanner(ISubTypesScanner subTypeScanner) {
+		this.subTypeScanner = subTypeScanner;
 	}
 }

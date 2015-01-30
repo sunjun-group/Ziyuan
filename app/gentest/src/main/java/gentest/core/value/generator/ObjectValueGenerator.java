@@ -15,7 +15,6 @@ import gentest.core.data.statement.Statement;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.execution.VariableRuntimeExecutor;
 import gentest.main.GentestConstants;
-import gentest.service.impl.SubTypesScanner;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -34,7 +33,6 @@ import sav.common.core.utils.Randomness;
  *
  */
 public class ObjectValueGenerator extends ValueGenerator {
-	private SubTypesScanner subTypesScanner = SubTypesScanner.getInstance();
 	private VariableRuntimeExecutor rtExecutor = new VariableRuntimeExecutor();
 	
 	@Override
@@ -111,7 +109,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 	private Object findConstructor(Class<?> type) {
 		if (type.isInterface() || Modifier.isAbstract(type.getModifiers())) {
 			// try to search subclass
-			Class<?> subClass = subTypesScanner.getRandomImplClzz(type);
+			Class<?> subClass = getSubTypesScanner().getRandomImplClzz(type);
 			if (subClass != null) {
 				return findConstructor(subClass);
 			}
@@ -167,7 +165,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 		// if still cannot get constructor,
 		// try to search subclass if it's not an abstract class
 		if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())) {
-			Class<?> subClass = subTypesScanner.getRandomImplClzz(type);
+			Class<?> subClass = getSubTypesScanner().getRandomImplClzz(type);
 			if (subClass != null) {
 				return findConstructor(subClass);
 			}
