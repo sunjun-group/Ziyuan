@@ -1,4 +1,4 @@
-package libsvm.binary;
+package libsvm.extension;
 
 import java.util.ArrayList;
 import java.util.HashSet;
