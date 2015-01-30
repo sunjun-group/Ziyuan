@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package gentest.service.impl;
+package gentest.core.value.store;
 
 import gentest.main.GentestConstants;
 
@@ -50,6 +50,8 @@ public class SubTypesScanner implements ISubTypesScanner {
 								new ConfigurationBuilder().setUrls(Arrays
 										.asList(ClasspathHelper.forClass(key))));
 						Set<?> subTypes = reflections.getSubTypesOf(key);
+						log.debug("Subtypes of ", key.getSimpleName());
+						log.debug(subTypes);
 						return filterAndSelect(subTypes, key);
 					}
 				});
@@ -133,7 +135,7 @@ public class SubTypesScanner implements ISubTypesScanner {
 		}
 	}
 	
-	public void reset() {
+	public void clear() {
 		subTypesCache.cleanUp();
 	}
 }

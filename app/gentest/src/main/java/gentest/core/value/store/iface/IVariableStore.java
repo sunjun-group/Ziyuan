@@ -17,7 +17,7 @@ import java.util.List;
  * @author LLT
  * 
  */
-public interface IVariableCache {
+public interface IVariableStore {
 	
 	public void put(Type type, Class<?> clazz, GeneratedVariable variable);
 	

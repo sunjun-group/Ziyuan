@@ -9,7 +9,7 @@
 package gentest;
 
 import gentest.builder.FixTraceGentestBuilder;
-import gentest.core.value.VariableCache;
+import gentest.core.value.store.VariableCache;
 import gentest.variableCacheTest.ClazzWithListObjectAndListInteger;
 
 import org.junit.Test;

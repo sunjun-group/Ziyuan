@@ -8,6 +8,8 @@
 
 package gentest.service.impl;
 
+import gentest.core.value.store.SubTypesScanner;
+
 import org.junit.Assert;
 import org.junit.Test;
 
