@@ -12,8 +12,25 @@ import libsvm.core.Machine;
 import org.junit.Assert;
 
 /**
- * SVM machine which will try to divide the given data points many times if
- * possible to increase accuracy.
+ * This SVM machine will try to divide the given data points many times if
+ * possible to increase accuracy.<br/>
+ * The training algorithm for this Machine is as follows:<br/>
+ * <ul>
+ * <li>Run SVM algorithm on the current data set to find a divider</li>
+ * <li>Find the collection of all points which are (A) and are not (B)
+ * classified correctly using the divider</li>
+ * <li>While (B) is not empty, <b>and only if <i>all points</i> in (B) resides
+ * on 1 side of the divider</b>, do the following steps:</li>
+ * <ul>
+ * <li>Use (B) as the new training data set.</li>
+ * <li>Run SVM algorithm on (B).</li>
+ * <li>Use the new divider in conjunction with the old divider.</li>
+ * </ul>
+ * </ul> <br/>
+ * The limit of this algorithm is that it <b>depends on the ability of SVM</b>
+ * to give out a divider which can separate data points into a state in which
+ * there is only 1 side contains wrong data. I.e.: the algorithm may stop
+ * without being able to improve the learning result at all.
  * 
  * @author Nguyen Phuoc Nguong Phuc (npn)
  * 
