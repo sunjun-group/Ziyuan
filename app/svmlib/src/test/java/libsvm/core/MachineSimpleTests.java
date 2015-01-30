@@ -2,8 +2,8 @@ package libsvm.core;
 
 import java.util.Random;
 
-import libsvm.binary.MultiCutMachine;
 import libsvm.core.Machine.Category;
+import libsvm.extension.MultiCutMachine;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
