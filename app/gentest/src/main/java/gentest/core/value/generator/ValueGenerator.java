@@ -11,6 +11,7 @@ package gentest.core.value.generator;
 import static sav.common.core.utils.CollectionUtils.listOf;
 import gentest.core.data.statement.RAssignment;
 import gentest.core.data.variable.GeneratedVariable;
+import gentest.core.value.store.iface.ITypeMethodCallStore;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.Set;
 
 import sav.common.core.Pair;
 import sav.common.core.SavException;
+import sav.strategies.gentest.ISubTypesScanner;
 
 /**
  * @author LLT
@@ -72,8 +74,17 @@ public abstract class ValueGenerator {
 									new Pair(HashMap.class,
 											listOf("put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")));
 	}
+	
+	protected ISubTypesScanner getSubTypesScanner() {
+		return valueGeneratorMediator.getSubTypeScanner();
+	}
+	
 	public ValueGeneratorMediator getValueGeneratorMediator() {
 		return valueGeneratorMediator;
+	}
+	
+	protected ITypeMethodCallStore getTypeMethodCallsStore() {
+		return valueGeneratorMediator.getTypeMethodCallsStore();
 	}
 
 	public void setValueGeneratorMediator(

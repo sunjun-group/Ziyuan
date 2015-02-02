@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package gentest.service.impl;
+package gentest.core.value.store;
 
 import gentest.main.GentestConstants;
 
@@ -39,8 +39,6 @@ import com.google.common.cache.LoadingCache;
 public class SubTypesScanner implements ISubTypesScanner {
 	private Logger<?> log = Logger.getDefaultLogger();
 	private LoadingCache<Class<?>, Set<Class<?>>> subTypesCache;
-	//TODO LLT: to clean up, using manager, with scope(like session?)?
-	private static SubTypesScanner instance;
 	
 	public SubTypesScanner() {
 		subTypesCache = CacheBuilder.newBuilder().build(
@@ -52,6 +50,8 @@ public class SubTypesScanner implements ISubTypesScanner {
 								new ConfigurationBuilder().setUrls(Arrays
 										.asList(ClasspathHelper.forClass(key))));
 						Set<?> subTypes = reflections.getSubTypesOf(key);
+						log.debug("Subtypes of ", key.getSimpleName());
+						log.debug(subTypes);
 						return filterAndSelect(subTypes, key);
 					}
 				});
@@ -135,14 +135,7 @@ public class SubTypesScanner implements ISubTypesScanner {
 		}
 	}
 	
-	public static SubTypesScanner getInstance() {
-		if (instance == null) {
-			instance = new SubTypesScanner();
-		}
-		return instance;
-	}
-	
-	public void reset() {
+	public void clear() {
 		subTypesCache.cleanUp();
 	}
 }

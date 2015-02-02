@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import sav.common.core.iface.HasProbabilityType;
+
 /**
  * @author LLT
  * for centralization. most function adopted from Randoop
@@ -140,4 +142,23 @@ public final class Randomness {
 		return (Randomness.getRandom().nextDouble() >= falseProb);
 	}
 
+	public static <T extends HasProbabilityType> T randomWithDistribution(
+			T[] eles) {
+		int sum = 0;
+		double[] distr = new double[eles.length];
+		for (int i = 0; i < eles.length; i++) {
+			sum += eles[i].getProb();
+			distr[i] = (double) sum;
+		}
+		for (int i = 0; i < distr.length; i++) {
+			distr[i] = distr[i] / sum;
+		}
+		double randVal = Randomness.getRandom().nextDouble();
+		for (int i = 0; i < distr.length; i++) {
+			if (randVal < distr[i]) {
+				return eles[i];
+			}
+		}
+		return eles[eles.length - 1];
+	}
 }

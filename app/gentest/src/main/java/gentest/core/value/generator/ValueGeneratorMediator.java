@@ -9,7 +9,8 @@
 package gentest.core.value.generator;
 
 import gentest.core.data.variable.GeneratedVariable;
-import gentest.core.value.store.iface.IVariableCache;
+import gentest.core.value.store.iface.ITypeMethodCallStore;
+import gentest.core.value.store.iface.IVariableStore;
 import gentest.main.GentestConstants;
 
 import java.lang.reflect.Type;
@@ -18,7 +19,9 @@ import java.util.List;
 import com.google.inject.Inject;
 
 import sav.common.core.SavException;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
+import sav.strategies.gentest.ISubTypesScanner;
 
 /**
  * @author LLT
@@ -26,7 +29,11 @@ import sav.common.core.utils.Randomness;
  */
 public class ValueGeneratorMediator {
 	@Inject
-	protected IVariableCache variableCache;
+	private IVariableStore variableStore;
+	@Inject
+	private ISubTypesScanner subTypeScanner;
+	@Inject
+	private ITypeMethodCallStore typeMethodCallsStore;
 	
 	public GeneratedVariable generate(Class<?> clazz, Type type, 
 			int firstVarId, boolean isReceiver) throws SavException {
@@ -42,7 +49,7 @@ public class ValueGeneratorMediator {
 	public GeneratedVariable append(GeneratedVariable rootVariable, int level,
 			Class<?> clazz, Type type, boolean isReceiver) throws SavException {
 		GeneratedVariable variable = null;
-		List<GeneratedVariable> candidatesInCache = getVariableCache()
+		List<GeneratedVariable> candidatesInCache = getVariableStore()
 				.getVariableByType(type, clazz);
 		boolean selectFromCache = Randomness
 				.weighedCoinFlip(calculateProbToGetValFromCache(candidatesInCache.size()));
@@ -52,7 +59,7 @@ public class ValueGeneratorMediator {
 			if (variable != null) {
 				int toVarId = variable.getNewVariables().size();
 				int toStmtIdx = variable.getStmts().size();
-				if (variable.getObjCuttingPoints() != null) {
+				if (CollectionUtils.isNotEmpty(variable.getObjCuttingPoints())) {
 					int[] stopPoint = Randomness.randomMember(variable
 							.getObjCuttingPoints());
 					toVarId = stopPoint[0];
@@ -78,7 +85,7 @@ public class ValueGeneratorMediator {
 				goodVariable = generator.doAppend(variable, level, clazz);
 			}
 			if (goodVariable) {
-				getVariableCache().put(type, clazz, variable);
+				getVariableStore().put(type, clazz, variable);
 			}
 		}
 		rootVariable.append(variable);
@@ -94,12 +101,28 @@ public class ValueGeneratorMediator {
 		}
 		return prob;
 	}
-	
-	public IVariableCache getVariableCache() {
-		return variableCache;
+
+	public IVariableStore getVariableStore() {
+		return variableStore;
 	}
- 
-	public void setVariableCache(IVariableCache variableCache) {
-		this.variableCache = variableCache;
+
+	public void setVariableStore(IVariableStore variableStore) {
+		this.variableStore = variableStore;
+	}
+
+	public ISubTypesScanner getSubTypeScanner() {
+		return subTypeScanner;
+	}
+
+	public void setSubTypeScanner(ISubTypesScanner subTypeScanner) {
+		this.subTypeScanner = subTypeScanner;
+	}
+
+	public ITypeMethodCallStore getTypeMethodCallsStore() {
+		return typeMethodCallsStore;
+	}
+
+	public void setTypeMethodCallsStore(ITypeMethodCallStore typeMethodCallsStore) {
+		this.typeMethodCallsStore = typeMethodCallsStore;
 	}
 }

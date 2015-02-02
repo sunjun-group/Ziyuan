@@ -13,6 +13,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import sav.common.core.iface.HasProbabilityType;
+
 /**
  * @author LLT
  *
@@ -32,5 +34,31 @@ public class RandomnessTest {
 		for (int i = 0; i < 100; i++) {
 			System.out.println(Randomness.nextRandomInt(15));
 		}
+	}
+	
+	@Test
+	public void testRandomWithDistribution() {
+		HasProbabilityType[] eles = TypeWithProbability.values();
+		for (int i = 0; i < 100; i++) {
+			System.out.println(Randomness.randomWithDistribution(eles));
+		}
+	}
+	
+	private static enum TypeWithProbability implements HasProbabilityType {
+		TYPE1(10),
+		TYPE2(4),
+		TYPE3(2),
+		TYPE4(1);
+		
+		private int prob;
+		private TypeWithProbability(int prob) {
+			this.prob = prob;
+		}
+		
+		@Override
+		public int getProb() {
+			return prob;
+		}
+		
 	}
 }

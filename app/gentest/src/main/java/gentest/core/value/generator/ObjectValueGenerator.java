@@ -9,32 +9,29 @@
 package gentest.core.value.generator;
 
 import gentest.core.data.MethodCall;
+import gentest.core.data.dto.TypeInitializer;
 import gentest.core.data.statement.RConstructor;
 import gentest.core.data.statement.Rmethod;
 import gentest.core.data.statement.Statement;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.execution.VariableRuntimeExecutor;
 import gentest.main.GentestConstants;
-import gentest.service.impl.SubTypesScanner;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
-import sav.common.core.utils.Randomness;
 
 /**
  * @author LLT
  *
  */
 public class ObjectValueGenerator extends ValueGenerator {
-	private SubTypesScanner subTypesScanner = SubTypesScanner.getInstance();
 	private VariableRuntimeExecutor rtExecutor = new VariableRuntimeExecutor();
 	
 	@Override
@@ -101,90 +98,6 @@ public class ObjectValueGenerator extends ValueGenerator {
 		return true;
 	}
 	
-	/**
-	 * return 
-	 * constructor: if the class has it own visible constructor 
-	 * 			or if not, the visible constructor of extended class will be returned
-	 * method: means static method, if the class does not have visible constructor but static initialization method
-	 * methodCall: if the class has a builder inside. 
-	 */
-	private Object findConstructor(Class<?> type) {
-		if (type.isInterface() || Modifier.isAbstract(type.getModifiers())) {
-			// try to search subclass
-			Class<?> subClass = subTypesScanner.getRandomImplClzz(type);
-			if (subClass != null) {
-				return findConstructor(subClass);
-			}
-		} else {
-			if (Randomness
-					.weighedCoinFlip(GentestConstants.PROBABILITY_OF_PUBLIC_NO_PARAM_CONSTRUCTOR)) {
-				try {
-					/*
-					 * try with the perfect one which is public constructor with no
-					 * parameter
-					 */
-					Constructor<?> constructor = type.getConstructor();
-					if (canBeCandidateForConstructor(constructor, type)) {
-						return constructor;
-					}
-				} catch (Exception e) {
-					// do nothing, just keep trying.
-				}
-			}
-			List<Constructor<?>> candidates = new ArrayList<Constructor<?>>();
-			for (Constructor<?> constructor : type.getConstructors()) {
-				if (canBeCandidateForConstructor(constructor, type)) {
-					candidates.add(constructor);
-				}
-			}
-			if (!candidates.isEmpty()) {
-				return Randomness.randomMember(candidates);
-			}
-		}
-		
-		/* try to find static method for initialization inside class */
-		for (Method method : type.getMethods()) {
-			if (Modifier.isStatic(method.getModifiers())
-					&& Modifier.isPublic(method.getModifiers())) {
-				if (method.getReturnType().equals(type)) {
-					return method;
-				}
-			}
-		}
-		
-		/* try to find a builder inside class */
-		Class<?>[] declaredClasses = type.getDeclaredClasses();
-		if (declaredClasses != null) {
-			for (Class<?> innerClazz : declaredClasses) {
-				for (Method method : innerClazz.getMethods()) {
-					if (method.getReturnType().equals(type)) {
-						return MethodCall.of(method, innerClazz);
-					}
-				}
-			}
-		}
-
-		// if still cannot get constructor,
-		// try to search subclass if it's not an abstract class
-		if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())) {
-			Class<?> subClass = subTypesScanner.getRandomImplClzz(type);
-			if (subClass != null) {
-				return findConstructor(subClass);
-			}
-		}
-		
-		// cannot find constructor;
-		return null;
-	}
-
-	private boolean canBeCandidateForConstructor(Constructor<?> constructor, Class<?> type) {
-		for (Class<?> paramType : constructor.getParameterTypes()) {
-			if (type.equals(paramType)) {
-				return false;
-			}
-		}
-		return Modifier.isPublic(constructor.getModifiers());
-	}
 
 	protected final void doAppendStaticMethods(GeneratedVariable variable, int level,
 			List<Method> methodcalls) throws SavException {
@@ -216,6 +129,94 @@ public class ObjectValueGenerator extends ValueGenerator {
 		}
 		Rmethod rmethod = new Rmethod(method, scopeId);
 		variable.append(rmethod, paramIds, addVariable);
+	}
+	
+	/**
+	 * return 
+	 * constructor: if the class has it own visible constructor 
+	 * 			or if not, the visible constructor of extended class will be returned
+	 * method: means static method, if the class does not have visible constructor but static initialization method
+	 * methodCall: if the class has a builder inside. 
+	 */
+	private Object findConstructor(Class<?> type) {
+		TypeInitializer constructors = getTypeMethodCallsStore()
+				.loadConstructors(type);
+		if (constructors == null) {
+			constructors = new TypeInitializer();
+			loadConstructors(type, constructors);
+			getTypeMethodCallsStore().storeConstructors(type, constructors);
+		}
+		return constructors.getRandomConstructor();
+	}
+	
+	private void loadConstructors(Class<?> type, TypeInitializer constructors) {
+		if (type.isInterface() || Modifier.isAbstract(type.getModifiers())) {
+			// try to search subclass
+			Class<?> subClass = getSubTypesScanner().getRandomImplClzz(type);
+			if (subClass != null) {
+				loadConstructors(subClass, constructors);
+			}
+		} else {
+			try {
+				/*
+				 * try with the perfect one which is public constructor with no
+				 * parameter
+				 */
+				Constructor<?> constructor = type.getConstructor();
+				if (canBeCandidateForConstructor(constructor, type)) {
+					constructors.addNoParamConstructors(constructor);
+				}
+			} catch (Exception e) {
+				// do nothing, just keep trying.
+			}
+			for (Constructor<?> constructor : type.getConstructors()) {
+				if (canBeCandidateForConstructor(constructor, type)) {
+					constructors.addOtherConstructors(constructor);
+				}
+			}
+		}
+		
+		/* try to find static method for initialization inside class */
+		for (Method method : type.getMethods()) {
+			if (Modifier.isStatic(method.getModifiers())
+					&& Modifier.isPublic(method.getModifiers())) {
+				if (method.getReturnType().equals(type)) {
+					constructors.addStaticMethod(method);
+				}
+			}
+		}
+		
+		/* try to find a builder inside class */
+		Class<?>[] declaredClasses = type.getDeclaredClasses();
+		if (declaredClasses != null) {
+			for (Class<?> innerClazz : declaredClasses) {
+				for (Method method : innerClazz.getMethods()) {
+					if (method.getReturnType().equals(type)) {
+						constructors.addBuilderMethodCall(MethodCall.of(method, innerClazz));
+					}
+				}
+			}
+		}
+
+		// if still cannot get constructor,
+		// try to search subclass if it's not an abstract class
+		if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())
+				&& constructors.isEmpty()) {
+			Class<?> subClass = getSubTypesScanner().getRandomImplClzz(type);
+			if (subClass != null) {
+				loadConstructors(subClass, constructors);
+			}
+		}
+	}
+
+	private boolean canBeCandidateForConstructor(Constructor<?> constructor,
+			Class<?> type) {
+		for (Class<?> paramType : constructor.getParameterTypes()) {
+			if (type.equals(paramType) || paramType.isAssignableFrom(type)) {
+				return false;
+			}
+		}
+		return Modifier.isPublic(constructor.getModifiers());
 	}
 
 }
