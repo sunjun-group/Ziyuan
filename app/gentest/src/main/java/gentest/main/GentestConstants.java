@@ -47,7 +47,7 @@ public class GentestConstants {
 	 */
 	public static final String[] OBJ_INIT_EXCLUDED_METHOD_PREFIXIES = new String[] {
 			"get", "is", "equal" };
-	public static final Class<?>[] CANDIDATE_DELEGATES_FOR_OBJECT = new Class<?>[] {
+	public static final Class<?>[] DELEGATING_CANDIDATES_FOR_OBJECT = new Class<?>[] {
 			Integer.class, Long.class, String.class, Short.class, Byte.class };
 	public static final Class<?>[] CANDIDATE_DELEGATES_FOR_NUMBER = new Class<?>[] {
 		Integer.class, Long.class, Short.class

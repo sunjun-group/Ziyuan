@@ -179,7 +179,7 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 	private Class<?> toClassItselfOrItsDelegate(Class<?> clazz) {
 		if (Object.class.equals(clazz)) {
 			return Randomness
-					.randomMember(GentestConstants.CANDIDATE_DELEGATES_FOR_OBJECT);
+					.randomMember(GentestConstants.DELEGATING_CANDIDATES_FOR_OBJECT);
 		}
 		if (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) {
 			return getSubTypesScanner().getRandomImplClzz(clazz);

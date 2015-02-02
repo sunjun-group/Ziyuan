@@ -42,7 +42,7 @@ public class PrimitiveValueGenerator {
 			throws SavException {
 		if (Object.class.equals(type)) {
 			type = Randomness
-					.randomMember(GentestConstants.CANDIDATE_DELEGATES_FOR_OBJECT);
+					.randomMember(GentestConstants.DELEGATING_CANDIDATES_FOR_OBJECT);
 		}
 		Object value = generatorFactory.getGeneratorFor(type).next();
 		variable.append(RAssignment.assignmentFor(type, value));
