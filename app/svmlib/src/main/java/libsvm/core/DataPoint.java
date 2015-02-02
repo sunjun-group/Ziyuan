@@ -2,8 +2,6 @@ package libsvm.core;
 
 import java.security.InvalidParameterException;
 
-import libsvm.core.Machine.Category;
-
 /**
  * This class represents a data point to be used in SVM machine. It consists the
  * values of that data point and its classification/category.
@@ -50,6 +48,38 @@ public class DataPoint {
 			throw new InvalidParameterException("Index must be less than " + numberOfFeatures);
 		}
 		return values[index];
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+
+		if (obj instanceof DataPoint) {
+			DataPoint other = (DataPoint) obj;
+			if (other.numberOfFeatures != numberOfFeatures || !other.category.equals(category)) {
+				return false;
+			} else {
+				for (int i = 0; i < values.length; i++) {
+					if (values[i] != other.values[i]) {
+						return false;
+					}
+				}
+				return true;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 31 * hash + numberOfFeatures;
+		hash = 31 * hash + (category == null ? 0 : category.hashCode());
+		hash = 31 * hash + (values == null ? 0 : values.hashCode());
+		return hash;
 	}
 
 	@Override

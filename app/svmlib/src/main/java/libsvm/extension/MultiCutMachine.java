@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import libsvm.svm_model;
+import libsvm.core.Category;
 import libsvm.core.DataPoint;
 import libsvm.core.Machine;
 
@@ -43,57 +44,75 @@ public class MultiCutMachine extends Machine {
 		learnedDatas = new ArrayList<LearnedData>();
 	}
 
-	private class LearnedData {
+	protected class LearnedData {
 		private svm_model model;
 		private Set<Category> wrongSides = new HashSet<Category>();
+	}
+
+	protected boolean keepTraining(final List<DataPoint> trainingData, final int wrongCategories) {
+		// Keep training if there's data to learn from
+		// and there's only 1 wrong category
+		return trainingData != null && !trainingData.isEmpty() && wrongCategories == 1;
 	}
 
 	@Override
 	protected Machine train(final List<DataPoint> dataPoints) {
 		List<DataPoint> trainingData = dataPoints;
-		boolean stop = false;
-		while (!stop) {
+		// We learned nothing, so all points are wrong
+		int wrongCategories = Category.getValues().size();
+		do {
 			super.train(trainingData);
-			final List<DataPoint> wrongClassifications = getWrongClassifiedDataPoints(trainingData,
-					null);
-
-			LearnedData learnedData = new LearnedData();
-			learnedData.model = model;
-			Category wrongCategory = null; // Only valid if wrongCategories == 1
-			for (DataPoint dp : wrongClassifications) {
-				wrongCategory = dp.getCategory();
-				learnedData.wrongSides.add(wrongCategory);
-			}
+			final LearnedData learnedData = getLearnedData(trainingData, model);
 			learnedDatas.add(learnedData);
 
-			int wrongCategories = learnedData.wrongSides.size();
+			wrongCategories = learnedData.wrongSides.size();
 			if (wrongCategories == 1) {
+				final Category wrongCategory = getWrongCategory(learnedData);
+				Assert.assertNotNull(wrongCategory);
 				// Try to improve the result
-				List<DataPoint> newTraninigData = new ArrayList<DataPoint>();
-				for (DataPoint dp : trainingData) {
-					// Points on the same side of the wrong classification
-					final Category calculatedCategory = calculateCategory(dp, learnedData.model,
-							null);
-					if (calculatedCategory.equals(wrongCategory)) {
-						newTraninigData.add(dp);
-					}
-				}
-				trainingData = newTraninigData;
-
-				if (trainingData.isEmpty()) {
-					// The SVM divider failed to separate any points at all
-					// I.e.: it simply divides the space into 2 parts:
-					// - 1 with all points
-					// - 1 with no point
-					stop = true;
-				}
-			} else {
-				// There may still be inaccuracy but we cannot do anything more
-				stop = true;
+				trainingData = buildNextTrainingData(trainingData, learnedData, wrongCategory);
 			}
-		}
+		} while (keepTraining(trainingData, wrongCategories));
 
 		return this;
+	}
+
+	private LearnedData getLearnedData(final List<DataPoint> trainingData,
+			final svm_model learnedModel) {
+		final List<DataPoint> wrongClassifications = getWrongClassifiedDataPoints(trainingData,
+				null);
+
+		LearnedData learnedData = new LearnedData();
+		learnedData.model = learnedModel;
+		for (DataPoint dp : wrongClassifications) {
+			learnedData.wrongSides.add(dp.getCategory());
+		}
+		return learnedData;
+	}
+
+	private Category getWrongCategory(final LearnedData learnedData) {
+		Category category = null;
+		for (Category cat : learnedData.wrongSides) {
+			if (category == null) {
+				category = cat;
+			} else {
+				return null; // Multiple values found
+			}
+		}
+		return category;
+	}
+
+	protected List<DataPoint> buildNextTrainingData(final List<DataPoint> currentTrainingData,
+			final LearnedData learnedData, final Category wrongCategory) {
+		final List<DataPoint> newTrainingData = new ArrayList<DataPoint>();
+		for (DataPoint dp : currentTrainingData) {
+			// Points on the same side of the wrong classification
+			final Category calculatedCategory = calculateCategory(dp, learnedData.model, null);
+			if (calculatedCategory.equals(wrongCategory)) {
+				newTrainingData.add(dp);
+			}
+		}
+		return newTrainingData;
 	}
 
 	@Override
@@ -109,11 +128,11 @@ public class MultiCutMachine extends Machine {
 			this.learnedDatas = learnedDatas;
 		}
 
-		public Integer getCategoryIndex(DataPoint dataPoint) {
+		public Category getCategory(DataPoint dataPoint) {
 			Assert.assertTrue("There is no learned data.", !learnedDatas.isEmpty());
-			Integer result = null;
+			Category result = null;
 			for (LearnedData data : learnedDatas) {
-				result = new ModelBasedCategoryCalculator(data.model).getCategoryIndex(dataPoint);
+				result = new ModelBasedCategoryCalculator(data.model).getCategory(dataPoint);
 				if (!data.wrongSides.contains(result)) {
 					// Correct data found
 					break;
