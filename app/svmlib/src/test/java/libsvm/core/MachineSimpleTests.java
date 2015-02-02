@@ -2,7 +2,6 @@ package libsvm.core;
 
 import java.util.Random;
 
-import libsvm.core.Machine.Category;
 import libsvm.extension.MultiCutMachine;
 
 import org.apache.log4j.Level;
@@ -17,9 +16,6 @@ public class MachineSimpleTests {
 
 	private static final int NUMBER_OF_FEATURES = 2;
 	private static final int NUMBER_OF_DATA_POINTS = 1000;
-	private static final String POSITIVE = "POSITIVE";
-	private static final String NEGATIVE = "NEGATIVE";
-	private static final String[] CATEGORIES = { POSITIVE, NEGATIVE };
 	private static final Random RANDOM = new Random();
 
 	private Machine normalMachine;
@@ -33,20 +29,17 @@ public class MachineSimpleTests {
 
 	private Machine setupMachine(final Machine machine) {
 		return machine.setParameter(new Parameter().setMachineType(MachineType.C_SVC)
-				.setKernelType(KernelType.LINEAR).setEps(1e-3).setUseShrinking(true)
+				.setKernelType(KernelType.LINEAR).setEps(1.0).setUseShrinking(false)
 				.setPredictProbability(false));
 	}
 
 	@Test
 	public void testWithRandomData() {
 		for (int i = 0; i < NUMBER_OF_DATA_POINTS; i++) {
-			final String categoryString = CATEGORIES[RANDOM.nextInt(CATEGORIES.length)];
 			final double[] values = { Math.random(), Math.random() };
-
-			normalMachine.addDataPoint(randomDataPoint(normalMachine.getCategory(categoryString),
-					values));
-			improvedMachine.addDataPoint(randomDataPoint(
-					improvedMachine.getCategory(categoryString), values));
+			final Category category = Category.random();
+			normalMachine.addDataPoint(randomDataPoint(category, values));
+			improvedMachine.addDataPoint(randomDataPoint(category, values));
 		}
 
 		final double normalModelAccuracy = normalMachine.train().getModelAccuracy();
@@ -69,10 +62,10 @@ public class MachineSimpleTests {
 	public void testWithSingleLinearLineSeparableData() {
 		// Separator: 2x + 3y = 10
 		for (int i = 0; i < NUMBER_OF_DATA_POINTS; i++) {
-			final String categoryString = CATEGORIES[RANDOM.nextInt(CATEGORIES.length)];
+			final Category category = Category.random();
 			double x, y, z;
 			// Positive values: 2x + 3y < 10
-			if (POSITIVE.equals(categoryString)) {
+			if (Category.POSITIVE == category) {
 				// Generate a number between 0 and 10
 				z = 10 * RANDOM.nextDouble();
 				// Generate x
@@ -88,20 +81,12 @@ public class MachineSimpleTests {
 				// Calculate y
 				y = (z - 2 * x) / 3;
 			}
-			Assert.assertTrue(
-					"Category and values are not consistent.",
-					(POSITIVE.equals(categoryString) && (2 * x + 3 * y < 10))
-							|| (NEGATIVE.equals(categoryString) && (2 * x + 3 * y > 10)));
-			normalMachine.addDataPoint(randomDataPoint(normalMachine.getCategory(categoryString),
-					x, y));
-			improvedMachine.addDataPoint(randomDataPoint(
-					improvedMachine.getCategory(categoryString), x, y));
+			Assert.assertTrue("Category and values are not consistent.",
+					(Category.POSITIVE == category && (2 * x + 3 * y < 10))
+							|| (Category.NEGATIVE == category && (2 * x + 3 * y > 10)));
+			normalMachine.addDataPoint(randomDataPoint(category, x, y));
+			improvedMachine.addDataPoint(randomDataPoint(category, x, y));
 		}
-
-		Assert.assertTrue("Incompleted generated input data.",
-				normalMachine.countAvailableCategories() > 1);
-		Assert.assertTrue("Incompleted generated input data.",
-				improvedMachine.countAvailableCategories() > 1);
 
 		final double normalModelAccuracy = normalMachine.train().getModelAccuracy();
 		LOGGER.log(Level.DEBUG, "Normal SVM:" + normalModelAccuracy);
@@ -122,22 +107,15 @@ public class MachineSimpleTests {
 		for (int i = 0; i < NUMBER_OF_DATA_POINTS; i++) {
 			double x = RANDOM.nextInt();
 			double y = RANDOM.nextInt();
-			final String categoryString = x >= 3 && y <= 5 ? POSITIVE : NEGATIVE;
-			if (categoryString.equals(POSITIVE)) {
+			final Category category = x >= 3 && y <= 5 ? Category.POSITIVE : Category.NEGATIVE;
+			if (Category.POSITIVE == category) {
 				countPositive++;
 			} else {
 				countNegative++;
 			}
-			normalMachine.addDataPoint(randomDataPoint(normalMachine.getCategory(categoryString),
-					x, y));
-			improvedMachine.addDataPoint(randomDataPoint(
-					improvedMachine.getCategory(categoryString), x, y));
+			normalMachine.addDataPoint(randomDataPoint(category, x, y));
+			improvedMachine.addDataPoint(randomDataPoint(category, x, y));
 		}
-
-		Assert.assertTrue("Incompleted generated input data.",
-				normalMachine.countAvailableCategories() > 1);
-		Assert.assertTrue("Incompleted generated input data.",
-				improvedMachine.countAvailableCategories() > 1);
 
 		LOGGER.log(Level.DEBUG, "Possitive cases =" + countPositive);
 		LOGGER.log(Level.DEBUG, "Negative cases =" + countNegative);

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import libsvm.core.Category;
 import libsvm.core.DataPoint;
 import libsvm.core.KernelType;
 import libsvm.core.Machine;
@@ -44,11 +45,12 @@ public class BugExpert implements IBugExpert {
 
 		final Machine machine = new Machine().setParameter(new Parameter()
 				.setMachineType(MachineType.C_SVC).setKernelType(KernelType.LINEAR).setC(1.0)
-				.setCacheSize(100.0).setEps(1e-3).setShrinking(1).setProbability(1).setNrWeight(0)
-				.setWeight(new double[0]).setWeightLabel(new int[0]));
+				.setCacheSize(100.0).setEps(1e-3).setUseShrinking(true).setPredictProbability(true)
+				.setNrWeight(0).setWeight(new double[0]).setWeightLabel(new int[0]));
 
 		// TODO NPN enhance this part
-		// Build up the map between a variable and its values (for different test cases)
+		// Build up the map between a variable and its values (for different
+		// test cases)
 		final int passTestCaseSize = passValues.size();
 		final int failedTestCaseSize = failValues.size();
 		final int dataSize = passTestCaseSize + failedTestCaseSize;
@@ -68,13 +70,13 @@ public class BugExpert implements IBugExpert {
 		i = 0;
 		for (int j = 0; j < passTestCaseSize; j++) {
 			DataPoint dp = new DataPoint(numberOfFeatures);
-			dp.setCategory(machine.getCategory(POSITIVE));
+			dp.setCategory(Category.POSITIVE);
 			dp.setValues(getVariableValueAtLine(variableValueMap, i++));
 			dataPoints.add(dp);
 		}
 		for (int j = 0; j < failedTestCaseSize; j++) {
 			DataPoint dp = new DataPoint(numberOfFeatures);
-			dp.setCategory(machine.getCategory(NEGATIVE));
+			dp.setCategory(Category.NEGATIVE);
 			dp.setValues(getVariableValueAtLine(variableValueMap, i++));
 			dataPoints.add(dp);
 		}
