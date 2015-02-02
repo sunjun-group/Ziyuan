@@ -47,6 +47,10 @@ public class MultiCutMachine extends Machine {
 	protected class LearnedData {
 		private svm_model model;
 		private Set<Category> wrongSides = new HashSet<Category>();
+
+		public svm_model getModel() {
+			return model;
+		}
 	}
 
 	protected boolean keepTraining(final List<DataPoint> trainingData, final int wrongCategories) {
@@ -107,7 +111,7 @@ public class MultiCutMachine extends Machine {
 		final List<DataPoint> newTrainingData = new ArrayList<DataPoint>();
 		for (DataPoint dp : currentTrainingData) {
 			// Points on the same side of the wrong classification
-			final Category calculatedCategory = calculateCategory(dp, learnedData.model, null);
+			final Category calculatedCategory = calculateCategory(dp, learnedData.getModel(), null);
 			if (calculatedCategory.equals(wrongCategory)) {
 				newTrainingData.add(dp);
 			}
