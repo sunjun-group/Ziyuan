@@ -3,6 +3,7 @@ package libsvm.core;
 import java.util.Random;
 
 import libsvm.extension.MultiCutMachine;
+import libsvm.extension.PositiveSeparationMachine;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -20,11 +21,13 @@ public class MachineSimpleTests {
 
 	private Machine normalMachine;
 	private Machine improvedMachine;
+	private Machine positiveSeparationMachine;
 
 	@Before
 	public void prepareMachines() {
 		normalMachine = setupMachine(new Machine());
 		improvedMachine = setupMachine(new MultiCutMachine());
+		positiveSeparationMachine = setupMachine(new PositiveSeparationMachine());
 	}
 
 	private Machine setupMachine(final Machine machine) {
@@ -114,7 +117,7 @@ public class MachineSimpleTests {
 				countNegative++;
 			}
 			normalMachine.addDataPoint(randomDataPoint(category, x, y));
-			improvedMachine.addDataPoint(randomDataPoint(category, x, y));
+			positiveSeparationMachine.addDataPoint(randomDataPoint(category, x, y));
 		}
 
 		LOGGER.log(Level.DEBUG, "Possitive cases =" + countPositive);
@@ -122,7 +125,7 @@ public class MachineSimpleTests {
 
 		final double normalModelAccuracy = normalMachine.train().getModelAccuracy();
 		LOGGER.log(Level.DEBUG, "Normal SVM:" + normalModelAccuracy);
-		final double improvedModelAccuracy = improvedMachine.train().getModelAccuracy();
+		final double improvedModelAccuracy = positiveSeparationMachine.train().getModelAccuracy();
 		LOGGER.log(Level.DEBUG, "Improved SVM:" + improvedModelAccuracy);
 
 		// We expect the improved model must perform better in this case

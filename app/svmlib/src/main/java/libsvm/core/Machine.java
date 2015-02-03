@@ -25,12 +25,6 @@ public class Machine {
 	private List<DataPoint> data = new ArrayList<DataPoint>();
 	protected svm_model model = null;
 
-	public Machine() {
-		parameter = null;
-		data = new ArrayList<DataPoint>();
-		model = null;
-	}
-
 	public Machine reset() {
 		return new Machine();
 	}
@@ -80,7 +74,7 @@ public class Machine {
 	 * 
 	 * @return The instance of the current machine after training completed.
 	 */
-	public Machine train() {
+	public final Machine train() {
 		Assert.assertNotNull("SVM parameters is not set.", parameter);
 		Assert.assertTrue("SVM training data is empty.", !data.isEmpty());
 		train(data);
