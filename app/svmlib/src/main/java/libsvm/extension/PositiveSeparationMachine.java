@@ -6,7 +6,6 @@ import java.util.List;
 
 import libsvm.svm_model;
 import libsvm.core.Category;
-import libsvm.core.DataPoint;
 import libsvm.core.Machine;
 
 /**

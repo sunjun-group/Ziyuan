@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import libsvm.core.Category;
-import libsvm.core.DataPoint;
 
 /**
  * The training algorithm for this Machine is as follows:<br/>

@@ -1,5 +1,6 @@
 package libsvm.core;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,9 +22,12 @@ import org.junit.Assert;
  */
 public class Machine {
 
+	private static final String DEFAULT_FEATURE_PREFIX = "x";
+
 	private svm_parameter parameter = null;
 	private List<DataPoint> data = new ArrayList<DataPoint>();
 	protected svm_model model = null;
+	private List<String> dataLabels = new ArrayList<String>();
 
 	public Machine reset() {
 		return new Machine();
@@ -53,6 +57,39 @@ public class Machine {
 		return this;
 	}
 
+	/**
+	 * Set the labels for the features. This will also determine the number of
+	 * features of the {@link DataPoint} to be produced by this Machine.
+	 * 
+	 * @param dataLabels
+	 *            List of labels for the features to be watched.
+	 * @return The configured Machine.
+	 */
+	public Machine setDataLabels(final List<String> dataLabels) {
+		this.dataLabels = dataLabels;
+		return this;
+	}
+
+	/**
+	 * Set the number of features to be watched. This will also set the labels
+	 * for the features as ["x0", "x1", ..., "x{NumberOfFeature-1}"].
+	 * 
+	 * @param numberOfFeatures
+	 *            The number of features to set.
+	 * @return The configured Machine.
+	 */
+	public Machine setNumberOfFeatures(final int numberOfFeatures) {
+		this.dataLabels = new ArrayList<String>(numberOfFeatures);
+		for (int i = 0; i < numberOfFeatures; i++) {
+			this.dataLabels.add(DEFAULT_FEATURE_PREFIX + i);
+		}
+		return this;
+	}
+
+	public int getNumberOfFeatures() {
+		return this.dataLabels.size();
+	}
+
 	public Machine addDataPoints(final List<DataPoint> dataPoints) {
 		for (DataPoint point : dataPoints) {
 			addDataPoint(point);
@@ -63,6 +100,16 @@ public class Machine {
 	public Machine addDataPoint(final DataPoint dataPoint) {
 		// TODO NPN should we deep copy here?
 		data.add(dataPoint);
+		return this;
+	}
+
+	public Machine addDataPoint(final Category category, final double... values) {
+		final int numberOfFeatures = getNumberOfFeatures();
+		Assert.assertTrue("Must specify " + numberOfFeatures + " items as values.",
+				values != null && values.length == numberOfFeatures);
+		final DataPoint dp = new DataPoint(numberOfFeatures);
+		dp.setCategory(category);
+		dp.setValues(values);
 		return this;
 	}
 
@@ -179,6 +226,103 @@ public class Machine {
 	public double getModelAccuracy() {
 		Assert.assertNotNull("SVM model is not available yet.", model);
 		return 1.0 - ((double) getWrongClassifiedDataPoints(data).size() / data.size());
+	}
+
+	/**
+	 * This class represents a data point to be used in SVM machine. It consists
+	 * the values of that data point and its classification/category.
+	 * 
+	 * @author Nguyen Phuoc Nguong Phuc (npn)
+	 * 
+	 */
+	public class DataPoint {
+
+		private final int numberOfFeatures;
+		private final double[] values;
+		private Category category;
+
+		private DataPoint(final int numberOfFeatures) {
+			// Hide the constructor
+			// I.e.: can only be created using Machine's factory method
+			this.numberOfFeatures = numberOfFeatures;
+			this.values = new double[this.numberOfFeatures];
+		}
+
+		public int getNumberOfFeatures() {
+			return numberOfFeatures;
+		}
+
+		public void setCategory(final Category category) {
+			this.category = category;
+		}
+
+		public Category getCategory() {
+			return category;
+		}
+
+		public void setValues(final double... values) {
+			for (int i = 0; i < values.length; i++) {
+				if (i == numberOfFeatures) {
+					break;
+				}
+				this.values[i] = values[i];
+			}
+		}
+
+		public double getValue(final int index) {
+			if (index >= numberOfFeatures) {
+				throw new InvalidParameterException("Index must be less than " + numberOfFeatures);
+			}
+			return values[index];
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) {
+				return false;
+			}
+
+			if (obj instanceof DataPoint) {
+				DataPoint other = (DataPoint) obj;
+				if (other.numberOfFeatures != numberOfFeatures || !other.category.equals(category)) {
+					return false;
+				} else {
+					for (int i = 0; i < values.length; i++) {
+						if (values[i] != other.values[i]) {
+							return false;
+						}
+					}
+					return true;
+				}
+			} else {
+				return false;
+			}
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 7;
+			hash = 31 * hash + numberOfFeatures;
+			hash = 31 * hash + (category == null ? 0 : category.hashCode());
+			hash = 31 * hash + (values == null ? 0 : values.hashCode());
+			return hash;
+		}
+
+		@Override
+		public String toString() {
+			final StringBuilder sb = new StringBuilder();
+			sb.append("[");
+			boolean first = true;
+			for (double val : values) {
+				if (!first) {
+					sb.append(", ");
+					first = false;
+				}
+				sb.append(val);
+			}
+			sb.append("] : ").append(category);
+			return sb.toString();
+		}
 	}
 
 }

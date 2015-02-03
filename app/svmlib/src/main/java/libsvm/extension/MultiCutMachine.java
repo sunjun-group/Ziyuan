@@ -7,7 +7,6 @@ import java.util.Set;
 
 import libsvm.svm_model;
 import libsvm.core.Category;
-import libsvm.core.DataPoint;
 import libsvm.core.Machine;
 
 import org.junit.Assert;

@@ -31,9 +31,9 @@ public class MachineSimpleTests {
 	}
 
 	private Machine setupMachine(final Machine machine) {
-		return machine.setParameter(new Parameter().setMachineType(MachineType.C_SVC)
-				.setKernelType(KernelType.LINEAR).setEps(1.0).setUseShrinking(false)
-				.setPredictProbability(false));
+		return machine.setNumberOfFeatures(NUMBER_OF_FEATURES).setParameter(
+				new Parameter().setMachineType(MachineType.C_SVC).setKernelType(KernelType.LINEAR)
+						.setEps(1.0).setUseShrinking(false).setPredictProbability(false));
 	}
 
 	@Test
@@ -41,8 +41,8 @@ public class MachineSimpleTests {
 		for (int i = 0; i < NUMBER_OF_DATA_POINTS; i++) {
 			final double[] values = { Math.random(), Math.random() };
 			final Category category = Category.random();
-			normalMachine.addDataPoint(randomDataPoint(category, values));
-			improvedMachine.addDataPoint(randomDataPoint(category, values));
+			normalMachine.addDataPoint(category, values);
+			improvedMachine.addDataPoint(category, values);
 		}
 
 		final double normalModelAccuracy = normalMachine.train().getModelAccuracy();
@@ -52,13 +52,6 @@ public class MachineSimpleTests {
 
 		Assert.assertTrue("Improved algorithm produces lower accuracy model than normal one.",
 				Double.compare(normalModelAccuracy, improvedModelAccuracy) <= 0);
-	}
-
-	private DataPoint randomDataPoint(final Category category, final double... values) {
-		final DataPoint dp = new DataPoint(NUMBER_OF_FEATURES);
-		dp.setValues(values);
-		dp.setCategory(category);
-		return dp;
 	}
 
 	@Test
@@ -87,8 +80,8 @@ public class MachineSimpleTests {
 			Assert.assertTrue("Category and values are not consistent.",
 					(Category.POSITIVE == category && (2 * x + 3 * y < 10))
 							|| (Category.NEGATIVE == category && (2 * x + 3 * y > 10)));
-			normalMachine.addDataPoint(randomDataPoint(category, x, y));
-			improvedMachine.addDataPoint(randomDataPoint(category, x, y));
+			normalMachine.addDataPoint(category, x, y);
+			improvedMachine.addDataPoint(category, x, y);
 		}
 
 		final double normalModelAccuracy = normalMachine.train().getModelAccuracy();
@@ -116,8 +109,8 @@ public class MachineSimpleTests {
 			} else {
 				countNegative++;
 			}
-			normalMachine.addDataPoint(randomDataPoint(category, x, y));
-			positiveSeparationMachine.addDataPoint(randomDataPoint(category, x, y));
+			normalMachine.addDataPoint(category, x, y);
+			positiveSeparationMachine.addDataPoint(category, x, y);
 		}
 
 		LOGGER.log(Level.DEBUG, "Possitive cases =" + countPositive);
