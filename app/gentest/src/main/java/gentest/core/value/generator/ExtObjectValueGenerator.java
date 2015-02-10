@@ -15,14 +15,9 @@ import gentest.core.execution.VariableRuntimeExecutor;
 import gentest.main.GentestConstants;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
 
-import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.Randomness;
 
@@ -33,7 +28,6 @@ import sav.common.core.utils.Randomness;
  */
 public class ExtObjectValueGenerator extends ObjectValueGenerator {
 	private List<Method> methodcalls;
-	private Pair<Class<?>, Type>[] paramTypes;
 	
 	public ExtObjectValueGenerator(IType type, List<String> methodSigns) {
 		super(type);
@@ -110,83 +104,6 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 				executor.execute(variable);
 			}
 		}
-	}
-	
-	@Override
-	protected Pair<Class<?>, Type> getParamType(Class<?> clazz, Type type) {
-		if (type instanceof TypeVariable<?>) {
-			TypeVariable<?> typeVar = (TypeVariable<?>) type;
-			return getContentType((Class<?>)typeVar.getGenericDeclaration(), typeVar.getName());
-		}
-		return super.getParamType(clazz, type);
-	}
-	
-	protected Pair<Class<?>, Type> getContentType(Class<?> declaredClazz, String name) {
-		if (type instanceof ParameterizedType) {
-			TypeVariable<?>[] typeParameters = declaredClazz.getTypeParameters();
-			int paramIdx = 0;
-			for (;paramIdx < typeParameters.length; paramIdx++) {
-				if (name.equals(typeParameters[paramIdx].getName())) {
-					break;
-				}
-			}
-			if (paramIdx < typeParameters.length) {
-				return getParamType(paramIdx);
-			}
-		}
-		return new Pair<Class<?>, Type>(Object.class, null);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public Pair<Class<?>, Type> getParamType(int paramIdx) {
-		if (paramTypes == null) {
-			paramTypes = new Pair[((ParameterizedType) type).getActualTypeArguments().length];
-		}
-		Pair<Class<?>, Type> paramType = paramTypes[paramIdx];
-		if (paramType == null) {
-			Type compType = ((ParameterizedType) type)
-					.getActualTypeArguments()[paramIdx];
-			if (compType instanceof Class<?>) {
-				paramType = new Pair<Class<?>, Type>(
-						toClassItselfOrItsDelegate((Class<?>) compType),
-						null);
-			} else if (compType instanceof ParameterizedType) {
-				paramType = new Pair<Class<?>, Type>(
-						(Class<?>) ((ParameterizedType) compType)
-						.getRawType(),
-						compType);
-			} else {
-				paramType = new Pair<Class<?>, Type>(Object.class, null);
-			}
-			paramTypes[paramIdx] = paramType;
-		}
-		return paramType;
-	}
-	
-	private Class<?> toClassItselfOrItsDelegate(Class<?> clazz) {
-		if (Object.class.equals(clazz)) {
-			return Randomness
-					.randomMember(GentestConstants.DELEGATING_CANDIDATES_FOR_OBJECT);
-		}
-		if (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) {
-			return getSubTypesScanner().getRandomImplClzz(clazz);
-		}
-		return clazz;
-	}
-	
-	protected Pair<Class<?>, Type> getContentType(Type type, int idxType) {
-		if (type instanceof ParameterizedType) {
-			Type compType = ((ParameterizedType) type).getActualTypeArguments()[idxType];
-			if (compType instanceof Class<?>) {
-				return new Pair<Class<?>, Type>((Class<?>) compType, null);
-			}
-			if (compType instanceof ParameterizedType) {
-				return new Pair<Class<?>, Type>(
-						(Class<?>) ((ParameterizedType) compType).getRawType(),
-						compType);
-			}
-		}
-		return new Pair<Class<?>, Type>(Object.class, null);
 	}
 
 }

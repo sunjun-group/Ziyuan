@@ -34,6 +34,7 @@ import sav.common.core.utils.CollectionUtils;
  */
 public class ObjectValueGenerator extends ValueGenerator {
 	private VariableRuntimeExecutor rtExecutor = new VariableRuntimeExecutor();
+	private IType selectedType;
 	
 	public ObjectValueGenerator(IType type) {
 		super(type);
@@ -44,12 +45,12 @@ public class ObjectValueGenerator extends ValueGenerator {
 			throws SavException {
 		for (int i = 0; i < GentestConstants.OBJECT_VALUE_GENERATOR_MAX_TRY_SELECTING_CONSTRUCTOR; i++) {
 			TypeInitializer initializer = loadInitializer(type);
-			IType newType = type;
+			selectedType = type;
 			if (!initializer.getType().equals(type.getRawType())) {
-				newType = type.resolveSubType(initializer.getType());
+				selectedType = type.resolveType(initializer.getType());
 			} 
 			Object initializedStmt = initializer.getRandomConstructor();
-			if (!appendConstructor(variable, level,	newType, initializedStmt)) {
+			if (!appendConstructor(variable, level,	initializedStmt)) {
 				// if fail, retry
 				continue;
 			}
@@ -63,6 +64,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 			}
 		}
 		if (variable.isEmpty()) {
+			selectedType = null;
 			/* we have to assign null to the obj */
 			assignNull(variable, type.getRawType());
 			return false;
@@ -76,7 +78,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 	}
 
 	private boolean appendConstructor(GeneratedVariable variable, int level,
-			IType type, Object initializedStmt) throws SavException {
+			Object initializedStmt) throws SavException {
 		if (initializedStmt instanceof Constructor<?>) {
 			Constructor<?> constructor = (Constructor<?>) initializedStmt;
 			RConstructor rconstructor = RConstructor.of(constructor);
@@ -85,7 +87,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 			int[] paramIds = new int[types.length];
 			for (int i = 0; i < types.length; i++) {
 				GeneratedVariable newVariable = appendVariable(variable, level + 1,
-						this.type.resolveType(types[i]));
+						selectedType.resolveType(types[i]));
 				paramIds[i] = newVariable.getReturnVarId();
 			}
 			variable.append(rconstructor, paramIds);
@@ -97,7 +99,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 			// init by a builder
 			MethodCall methodCall = (MethodCall) initializedStmt;
 			GeneratedVariable newVar = appendVariable(variable, level + 1,
-					this.type.resolveType(methodCall.getReceiverType()));
+					selectedType.resolveType(methodCall.getReceiverType()));
 			// call the method of builder to get the object for current type.
 			doAppendMethods(variable, level,
 					CollectionUtils.listOf(methodCall.getMethod()),
@@ -132,7 +134,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 		for (int i = 0; i < paramIds.length; i++) {
 			Type paramType = genericParamTypes[i];
 			GeneratedVariable newVar = appendVariable(variable,
-					level + 2, this.type.resolveType(paramType));
+					level + 2, selectedType.resolveType(paramType));
 			paramIds[i] = newVar.getReturnVarId();
 		}
 		Rmethod rmethod = new Rmethod(method, scopeId);

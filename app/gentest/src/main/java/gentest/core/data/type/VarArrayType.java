@@ -75,11 +75,6 @@ public class VarArrayType implements IType {
 	}
 
 	@Override
-	public IType resolveSubType(Class<?> a) {
-		return componentType.resolveSubType(a);
-	}
-
-	@Override
 	public String toString() {
 		return "VarArrayType [componentType=" + componentType + "]";
 	}

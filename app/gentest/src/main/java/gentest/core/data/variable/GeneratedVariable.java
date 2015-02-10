@@ -214,6 +214,10 @@ public class GeneratedVariable extends SelectedVariable {
 	public List<Statement> getLastFragmentStmts() {
 		return stmts.subList(getLastFragmentIdxStmtId(), stmts.size());
 	}
-	
+
+	@Override
+	public String toString() {
+		return "GeneratedVariable [stmts=" + stmts + "]";
+	}
 	
 }

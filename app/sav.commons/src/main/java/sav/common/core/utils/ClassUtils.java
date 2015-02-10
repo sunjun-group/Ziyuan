@@ -72,4 +72,8 @@ public class ClassUtils {
 		}
 		return contentType;
 	}
+	
+	public static boolean isAupperB(Class<?> a, Class<?> b) {
+		return a.isAssignableFrom(b);
+	}
 }

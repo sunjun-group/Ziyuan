@@ -14,7 +14,6 @@ import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.value.store.iface.ITypeMethodCallStore;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,10 +46,6 @@ public abstract class ValueGenerator {
 			IType type) throws SavException {
 		return getValueGeneratorMediator().append(rootVariable, level, type);
 	}
-	
-	protected Pair<Class<?>, Type> getParamType(Class<?> clazz, Type type) {
-		return new Pair<Class<?>, Type>(clazz, null);
-	}
 
 	public abstract boolean doAppendVariable(GeneratedVariable variable, int level)
 			throws SavException;
@@ -61,7 +56,7 @@ public abstract class ValueGenerator {
 		}
 		Pair<Class<?>, List<String>> typeDef = specificObjectMap.get(type.getRawType());
 		if (typeDef != null) {
-			return new ExtObjectValueGenerator(type.resolveSubType(typeDef.a),
+			return new ExtObjectValueGenerator(type.resolveType(typeDef.a),
 					typeDef.b);
 		}
 		if (isReceiver) {

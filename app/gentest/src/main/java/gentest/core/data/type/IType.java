@@ -27,8 +27,6 @@ public interface IType {
 
 	public IType[] resolveType(Type[] type);
 
-	public IType resolveSubType(Class<?> a); 
-	
 	public boolean isArray();
 	
 	public IType getComponentType();

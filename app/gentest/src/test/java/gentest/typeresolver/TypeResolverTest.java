@@ -90,7 +90,7 @@ public class TypeResolverTest extends AbstractGTTest {
 	@Test
 	public void resolveSubType() throws Exception {
 		IType type = creator.forParamClass(List.class, String.class);
-		IType subtype = type.resolveSubType(ArrayList.class);
+		IType subtype = type.resolveType(ArrayList.class);
 		IType paramType = subtype.resolveType(ArrayList.class
 				.getTypeParameters()[0]);
 		Assert.assertEquals(String.class, paramType.getRawType());

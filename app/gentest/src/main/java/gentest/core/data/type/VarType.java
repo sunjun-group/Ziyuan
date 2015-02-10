@@ -11,6 +11,7 @@ package gentest.core.data.type;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 
+import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 
 /**
@@ -31,6 +32,7 @@ public class VarType implements IType {
 		}
 	}
 	
+	//TODO LLT: to remove
 	public VarType(VarTypeResolver resolver, Class<?> clazz, Type type) {
 		this(resolver, clazz);
 		this.type = type;
@@ -48,6 +50,9 @@ public class VarType implements IType {
 
 	@Override
 	public IType resolveType(Class<?> a) {
+		if (ClassUtils.isAupperB(rawType, a)) {
+			return resolveSubType(a);
+		}
 		TypeVariable<?>[] typeParameters = a.getTypeParameters();
 		if (CollectionUtils.isNotEmpty(typeParameters)) {
 			Class<?>[] paramTypes = getResolver().resolve(typeParameters);
@@ -56,7 +61,6 @@ public class VarType implements IType {
 		return creator.forClass(a);
 	}
 
-	@Override
 	public IType resolveSubType(Class<?> a) {
 		VarType subtype = (VarType)creator.forClass(a);
 		if (CollectionUtils.isNotEmpty(this.rawType.getTypeParameters())) {
