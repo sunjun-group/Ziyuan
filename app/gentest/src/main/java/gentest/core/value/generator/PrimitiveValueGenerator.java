@@ -13,9 +13,6 @@ import gentest.core.commons.utils.TypeUtils;
 import gentest.core.data.statement.RAssignment;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.main.GentestConstants;
-
-import java.lang.reflect.Type;
-
 import sav.common.core.SavException;
 import sav.common.core.utils.Randomness;
 
@@ -29,12 +26,12 @@ public class PrimitiveValueGenerator {
 		
 	}
 	
-	public static boolean accept(Class<?> clazz, Type type) {
+	public static boolean accept(Class<?> clazz) {
 		return TypeUtils.isPrimitive(clazz) 
 				|| TypeUtils.isPrimitiveObject(clazz)
 				|| TypeUtils.isString(clazz) 
 				|| TypeUtils.isEnumType(clazz)
-				|| (isObject(clazz) && type == null);
+				|| (isObject(clazz));
 
 	}
 

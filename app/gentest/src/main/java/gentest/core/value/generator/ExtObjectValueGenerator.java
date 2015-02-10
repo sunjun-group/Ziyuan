@@ -9,6 +9,7 @@
 package gentest.core.value.generator;
 
 import gentest.core.commons.utils.MethodUtils;
+import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.execution.VariableRuntimeExecutor;
 import gentest.main.GentestConstants;
@@ -31,35 +32,21 @@ import sav.common.core.utils.Randomness;
  *
  */
 public class ExtObjectValueGenerator extends ObjectValueGenerator {
-	private Class<?> implClazz;
-	private Type type;
 	private List<Method> methodcalls;
 	private Pair<Class<?>, Type>[] paramTypes;
 	
-	public ExtObjectValueGenerator(Class<?> implClazz, Type type,
-			List<String> methodSigns) {
-		this.implClazz = implClazz;
+	public ExtObjectValueGenerator(IType type, List<String> methodSigns) {
+		super(type);
 		initMethodCalls(methodSigns);
-		this.type = type;
-	}
-	
-	public ExtObjectValueGenerator(List<String> methodSigns, Class<?> implClazz) {
-		this.implClazz = implClazz;
-		methodcalls = MethodUtils.findMethods(implClazz, methodSigns);
-	}
-	
-	protected ExtObjectValueGenerator(Class<?> implClazz, List<Method> methods) {
-		this.implClazz = implClazz;
-		this.methodcalls = methods;
 	}
 
 	private void initMethodCalls(List<String> methodSigns) {
 		methodcalls = new ArrayList<Method>();
 		List<Method> initMethods;
 		if (methodSigns == null) {
-			initMethods = getCandidatesMethodForObjInit(implClazz);
+			initMethods = getCandidatesMethodForObjInit(type.getRawType());
 		} else {
-			initMethods = MethodUtils.findMethods(implClazz, methodSigns);
+			initMethods = MethodUtils.findMethods(type.getRawType(), methodSigns);
 		}
 		List<Method> methodsSeq = Randomness
 				.randomSequence(
@@ -91,18 +78,18 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 	}
 	
 	@Override
-	public final boolean doAppend(GeneratedVariable variable, int level, Class<?> type)
+	public final boolean doAppendVariable(GeneratedVariable variable, int level)
 			throws SavException {
-		boolean goodVariable = super.doAppend(variable, level, implClazz);
+		boolean goodVariable = super.doAppendVariable(variable, level);
 		int varId = variable.getLastVarId();
 		if (goodVariable) {
 			variable.commitReturnVarIdIfNotExist();
-			doAppendMethod(variable, level, varId);
+			appendMethod(variable, level, varId);
 		}
 		return goodVariable;
 	}
 
-	protected void doAppendMethod(GeneratedVariable variable, int level, int scopeId)
+	protected void appendMethod(GeneratedVariable variable, int level, int scopeId)
 			throws SavException {
 		VariableRuntimeExecutor executor = getExecutor();
 		executor.reset(variable.getFirstVarId());

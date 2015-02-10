@@ -10,6 +10,7 @@ package gentest.core.value.generator;
 
 import static sav.common.core.utils.CollectionUtils.listOf;
 import gentest.core.data.statement.RAssignment;
+import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.value.store.iface.ITypeMethodCallStore;
 
@@ -31,38 +32,42 @@ import sav.strategies.gentest.ISubTypesScanner;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class ValueGenerator {
+	protected IType type;
 	protected ValueGeneratorMediator valueGeneratorMediator;
+	
+	protected ValueGenerator(IType type) {
+		this.type = type;
+	}
 
 	public static void assignNull(GeneratedVariable variable, Class<?> clazz) {
 		variable.append(RAssignment.assignmentFor(clazz, null));
 	}
 	
 	protected GeneratedVariable appendVariable(GeneratedVariable rootVariable, int level,
-			Class<?> clazz, Type type) throws SavException {
-		return getValueGeneratorMediator().append(rootVariable, level, clazz, type);
+			IType type) throws SavException {
+		return getValueGeneratorMediator().append(rootVariable, level, type);
 	}
 	
 	protected Pair<Class<?>, Type> getParamType(Class<?> clazz, Type type) {
 		return new Pair<Class<?>, Type>(clazz, null);
 	}
 
-	public abstract boolean doAppend(GeneratedVariable variable, int level,
-			Class<?> type) throws SavException;
+	public abstract boolean doAppendVariable(GeneratedVariable variable, int level)
+			throws SavException;
 
-	public static ValueGenerator findGenerator(Class<?> clazz, Type type,
-			boolean isReceiver) {
-		if (clazz.isArray()) {
+	public static ValueGenerator findGenerator(IType type, boolean isReceiver) {
+		if (type.isArray()) {
 			return new ArrayValueGenerator(type);
 		}
-		Pair<Class<?>, List<String>> typeDef = specificObjectMap.get(clazz);
+		Pair<Class<?>, List<String>> typeDef = specificObjectMap.get(type.getRawType());
 		if (typeDef != null) {
-			return new ExtObjectValueGenerator(typeDef.a, type, 
+			return new ExtObjectValueGenerator(type.resolveSubType(typeDef.a),
 					typeDef.b);
 		}
 		if (isReceiver) {
-			return new ObjectValueGenerator();
+			return new ObjectValueGenerator(type);
 		}
-		return new ExtObjectValueGenerator(clazz, type, null);
+		return new ExtObjectValueGenerator(type, null);
 	}
 	
 	private static Map<Class<?>, Pair<Class<?>, List<String>>> specificObjectMap;

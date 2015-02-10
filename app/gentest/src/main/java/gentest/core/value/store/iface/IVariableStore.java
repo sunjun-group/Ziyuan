@@ -8,9 +8,9 @@
 
 package gentest.core.value.store.iface;
 
+import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -19,7 +19,7 @@ import java.util.List;
  */
 public interface IVariableStore {
 	
-	public void put(Type type, Class<?> clazz, GeneratedVariable variable);
+	public void put(IType type, GeneratedVariable variable);
 	
-	public List<GeneratedVariable> getVariableByType(Type type, Class<?> clazz);
+	public List<GeneratedVariable> getVariableByType(IType type);
 }

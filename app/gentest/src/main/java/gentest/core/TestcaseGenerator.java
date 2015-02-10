@@ -8,14 +8,18 @@ import gentest.core.data.LocalVariable;
 import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
 import gentest.core.data.statement.RqueryMethod;
+import gentest.core.data.type.IType;
+import gentest.core.data.type.ITypeCreator;
 import gentest.core.data.variable.ISelectedVariable;
 import gentest.core.execution.RuntimeExecutor;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import sav.common.core.Logger;
 import sav.common.core.SavException;
 
 import com.google.inject.Inject;
@@ -29,6 +33,10 @@ public class TestcaseGenerator {
 	
 	@Inject
 	private RuntimeExecutor executor;
+	
+	@Inject
+	private ITypeCreator typeCreator;
+	
 	private Sequence seq;
 	
 	private void refresh(Sequence seq) {
@@ -51,18 +59,26 @@ public class TestcaseGenerator {
 		/* append sequence for each method */
 		RqueryMethod rmethod = null;
 		ISelectedVariable receiverParam = null;
+		Map<Class<?>, IType> receiverTypes = new HashMap<Class<?>, IType>();
 		for (int i = 0; i < methods.size(); i++) {
 			MethodCall method = methods.get(i);
+			IType receiverType = null;
 			/* prepare method receiver if method is not static */
 			if (method.requireReceiver()) {
+				/* select itype for receiver */
+				receiverType = receiverTypes.get(method.getReceiverType());
+				if (receiverType == null) {
+					receiverType = typeCreator.forClass(method.getReceiverType());
+					receiverTypes.put(method.getReceiverType(), receiverType);
+				}
 				/* prepare method receiver if method is not static */
 				LocalVariable receiver = seq.getReceiver(method.getReceiverType());
 				if (receiver == null) {
 					/* if the instance of method receiver still did not exist in the sequence,
 					 * initialize one */
-					receiverParam = parameterSelector.selectReceiver(
-							method.getReceiverType(), null, seq.getStmtsSize(),
-							seq.getVarsSize());
+					receiverParam = parameterSelector
+							.selectReceiver(receiverType, seq.getStmtsSize(),
+									seq.getVarsSize());
 					seq.appendReceiver(receiverParam, method.getReceiverType());
 				}
 				rmethod = new RqueryMethod(method, seq.getReceiver(
@@ -73,19 +89,22 @@ public class TestcaseGenerator {
 			
 			/* select parameters for methods and append statements 
 			 * which initializes those values into the sequence */
-			List<ISelectedVariable> selectParams = selectParams(method);
+			List<ISelectedVariable> selectParams = selectParams(method, receiverType);
 			int[] inVars = new int[selectParams.size()];
 			for (int j = 0; j < selectParams.size(); j++) {
 				ISelectedVariable param = selectParams.get(j);
 				inVars[j] = param.getReturnVarId();
 			}
+			Logger.getDefaultLogger().debug("executing the sequence");
 			executor.start(receiverParam);
 			rmethod.setInVarIds(inVars);
 			seq.appendMethodExecStmts(rmethod, selectParams);
 			if (!executor.execute(rmethod, selectParams)) {
 				// stop append method whenever execution fail.
+				Logger.getDefaultLogger().debug("finish executing the sequence");
 				return seq;
 			}
+			Logger.getDefaultLogger().debug("finish executing the sequence");
 		}
 		return seq;
 	}
@@ -93,20 +112,27 @@ public class TestcaseGenerator {
 	/**
 	 * auto generate value for all needed parameters of method
 	 */
-	private List<ISelectedVariable> selectParams(MethodCall methodCall) throws SavException {
+	private List<ISelectedVariable> selectParams(MethodCall methodCall,
+			IType receiverType) throws SavException {
 		Method method = methodCall.getMethod();
-		method.getGenericParameterTypes();
-		return selectParams(method.getParameterTypes(), method.getGenericParameterTypes());
+		IType[] paramTypes = null;
+		if (receiverType == null) {
+			paramTypes = typeCreator.forType(method.getGenericParameterTypes());
+		} else {
+			paramTypes = receiverType.resolveType(method.getGenericParameterTypes());
+		}
+		
+		return selectParams(paramTypes);
 	}
 
-	private List<ISelectedVariable> selectParams(Class<?>[] paramTypes, Type[] types)
+	private List<ISelectedVariable> selectParams(IType[] paramTypes)
 			throws SavException {
 		List<ISelectedVariable> params = new ArrayList<ISelectedVariable>();
 		int firstStmtIdx = seq.getStmtsSize();
 		int firstVarIdx = seq.getVarsSize();
 		for (int i = 0; i < paramTypes.length; i++) {
-			Class<?> paramType = paramTypes[i];
-			ISelectedVariable param = parameterSelector.selectParam(paramType, types[i],
+			IType paramType = paramTypes[i];
+			ISelectedVariable param = parameterSelector.selectParam(paramType,
 					firstStmtIdx, firstVarIdx);
 			params.add(param);
 			firstStmtIdx += param.getStmts().size();

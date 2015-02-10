@@ -144,6 +144,9 @@ public final class Randomness {
 
 	public static <T extends HasProbabilityType> T randomWithDistribution(
 			T[] eles) {
+		if (CollectionUtils.isEmpty(eles)) {
+			return null;
+		}
 		int sum = 0;
 		double[] distr = new double[eles.length];
 		for (int i = 0; i < eles.length; i++) {

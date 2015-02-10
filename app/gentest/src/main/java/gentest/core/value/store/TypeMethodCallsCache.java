@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import gentest.core.data.dto.TypeInitializer;
+import gentest.core.data.typeinitilizer.TypeInitializer;
 import gentest.core.value.store.iface.ITypeMethodCallStore;
 
 /**
@@ -28,8 +28,6 @@ public class TypeMethodCallsCache implements ITypeMethodCallStore {
 		constructors = new HashMap<Class<?>, TypeInitializer>();
 		methodCalls = new HashMap<Class<?>, List<List<Method>>>();
 	}
-	
-	
 	
 	public void clear() {
 		constructors.clear();

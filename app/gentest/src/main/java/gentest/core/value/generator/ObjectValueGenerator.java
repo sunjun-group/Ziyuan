@@ -9,10 +9,11 @@
 package gentest.core.value.generator;
 
 import gentest.core.data.MethodCall;
-import gentest.core.data.dto.TypeInitializer;
 import gentest.core.data.statement.RConstructor;
 import gentest.core.data.statement.Rmethod;
 import gentest.core.data.statement.Statement;
+import gentest.core.data.type.IType;
+import gentest.core.data.typeinitilizer.TypeInitializer;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.execution.VariableRuntimeExecutor;
 import gentest.main.GentestConstants;
@@ -21,9 +22,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
-import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 
@@ -34,12 +35,21 @@ import sav.common.core.utils.CollectionUtils;
 public class ObjectValueGenerator extends ValueGenerator {
 	private VariableRuntimeExecutor rtExecutor = new VariableRuntimeExecutor();
 	
+	public ObjectValueGenerator(IType type) {
+		super(type);
+	}
+	
 	@Override
-	public boolean doAppend(GeneratedVariable variable, int level, Class<?> type)
+	public boolean doAppendVariable(GeneratedVariable variable, int level)
 			throws SavException {
 		for (int i = 0; i < GentestConstants.OBJECT_VALUE_GENERATOR_MAX_TRY_SELECTING_CONSTRUCTOR; i++) {
-			Object initializedStmt = findConstructor(type);
-			if (!appendConstructor(variable, level, type, initializedStmt)) {
+			TypeInitializer initializer = loadInitializer(type);
+			IType newType = type;
+			if (!initializer.getType().equals(type.getRawType())) {
+				newType = type.resolveSubType(initializer.getType());
+			} 
+			Object initializedStmt = initializer.getRandomConstructor();
+			if (!appendConstructor(variable, level,	newType, initializedStmt)) {
 				// if fail, retry
 				continue;
 			}
@@ -54,7 +64,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 		}
 		if (variable.isEmpty()) {
 			/* we have to assign null to the obj */
-			assignNull(variable, type);
+			assignNull(variable, type.getRawType());
 			return false;
 		}
 		
@@ -66,16 +76,16 @@ public class ObjectValueGenerator extends ValueGenerator {
 	}
 
 	private boolean appendConstructor(GeneratedVariable variable, int level,
-			Class<?> type, Object initializedStmt) throws SavException {
+			IType type, Object initializedStmt) throws SavException {
 		if (initializedStmt instanceof Constructor<?>) {
 			Constructor<?> constructor = (Constructor<?>) initializedStmt;
 			RConstructor rconstructor = RConstructor.of(constructor);
+			
 			Type[] types = constructor.getGenericParameterTypes();
 			int[] paramIds = new int[types.length];
-			for (int i = 0; i < rconstructor.getInputTypes().size(); i++) {
-				Class<?> paramType = rconstructor.getInputTypes().get(i);
+			for (int i = 0; i < types.length; i++) {
 				GeneratedVariable newVariable = appendVariable(variable, level + 1,
-						paramType, types[i]);
+						this.type.resolveType(types[i]));
 				paramIds[i] = newVariable.getReturnVarId();
 			}
 			variable.append(rconstructor, paramIds);
@@ -87,7 +97,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 			// init by a builder
 			MethodCall methodCall = (MethodCall) initializedStmt;
 			GeneratedVariable newVar = appendVariable(variable, level + 1,
-					methodCall.getReceiverType(), null);
+					this.type.resolveType(methodCall.getReceiverType()));
 			// call the method of builder to get the object for current type.
 			doAppendMethods(variable, level,
 					CollectionUtils.listOf(methodCall.getMethod()),
@@ -118,13 +128,11 @@ public class ObjectValueGenerator extends ValueGenerator {
 			throws SavException {
 		/* check generic types */
 		Type[] genericParamTypes = method.getGenericParameterTypes();
-		Class<?>[] types = method.getParameterTypes();
 		int[] paramIds = new int[genericParamTypes.length];
 		for (int i = 0; i < paramIds.length; i++) {
-			Type type = genericParamTypes[i];
-			Pair<Class<?>, Type> paramType = getParamType(types[i], type);
+			Type paramType = genericParamTypes[i];
 			GeneratedVariable newVar = appendVariable(variable,
-					level + 2, paramType.a, paramType.b);
+					level + 2, this.type.resolveType(paramType));
 			paramIds[i] = newVar.getReturnVarId();
 		}
 		Rmethod rmethod = new Rmethod(method, scopeId);
@@ -138,41 +146,55 @@ public class ObjectValueGenerator extends ValueGenerator {
 	 * method: means static method, if the class does not have visible constructor but static initialization method
 	 * methodCall: if the class has a builder inside. 
 	 */
-	private Object findConstructor(Class<?> type) {
-		TypeInitializer constructors = getTypeMethodCallsStore()
+	public TypeInitializer loadInitializer(IType itype) {
+		Class<?> type = itype.getRawType();
+		TypeInitializer initializer = getTypeMethodCallsStore()
 				.loadConstructors(type);
-		if (constructors == null) {
-			constructors = new TypeInitializer();
-			loadConstructors(type, constructors);
-			getTypeMethodCallsStore().storeConstructors(type, constructors);
+		if (initializer == null) {
+			// if type is an interface or abstract, look up for constructor of
+			// its subclass instead.
+			if (type.isInterface() || Modifier.isAbstract(type.getModifiers())) {
+				// try to search subclass
+				Class<?> subClass = getSubTypesScanner().getRandomImplClzz(type);
+				if (subClass != null) {
+					return loadInitializer(itype.resolveType(subClass));
+				}
+			} 
+			initializer = new TypeInitializer(type);
+			loadConstructors(type, initializer);
+			
+			getTypeMethodCallsStore().storeConstructors(type, initializer);
+			
+			// if still cannot get constructor,
+			// try to search subclass if it's not an abstract class
+			if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())
+					&& initializer.hasNoConstructor()) {
+				Class<?> subClass = getSubTypesScanner().getRandomImplClzz(type);
+				if (subClass != null) {
+					loadInitializer(itype.resolveType(subClass));
+				}
+			}
 		}
-		return constructors.getRandomConstructor();
+		return initializer;
 	}
 	
-	private void loadConstructors(Class<?> type, TypeInitializer constructors) {
-		if (type.isInterface() || Modifier.isAbstract(type.getModifiers())) {
-			// try to search subclass
-			Class<?> subClass = getSubTypesScanner().getRandomImplClzz(type);
-			if (subClass != null) {
-				loadConstructors(subClass, constructors);
+	private void loadConstructors(Class<?> type, TypeInitializer initializer) {
+		List<Constructor<?>> mightCreateLoopList = new ArrayList<Constructor<?>>();
+		try {
+			/*
+			 * try with the perfect one which is public constructor with no
+			 * parameter
+			 */
+			Constructor<?> constructor = type.getConstructor();
+			if (canBeCandidateForConstructor(constructor, type, mightCreateLoopList)) {
+				initializer.addConstructor(constructor, false);
 			}
-		} else {
-			try {
-				/*
-				 * try with the perfect one which is public constructor with no
-				 * parameter
-				 */
-				Constructor<?> constructor = type.getConstructor();
-				if (canBeCandidateForConstructor(constructor, type)) {
-					constructors.addNoParamConstructors(constructor);
-				}
-			} catch (Exception e) {
-				// do nothing, just keep trying.
-			}
-			for (Constructor<?> constructor : type.getConstructors()) {
-				if (canBeCandidateForConstructor(constructor, type)) {
-					constructors.addOtherConstructors(constructor);
-				}
+		} catch (Exception e) {
+			// do nothing, just keep trying.
+		}
+		for (Constructor<?> constructor : type.getConstructors()) {
+			if (canBeCandidateForConstructor(constructor, type, mightCreateLoopList)) {
+				initializer.addConstructor(constructor, true);
 			}
 		}
 		
@@ -181,7 +203,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 			if (Modifier.isStatic(method.getModifiers())
 					&& Modifier.isPublic(method.getModifiers())) {
 				if (method.getReturnType().equals(type)) {
-					constructors.addStaticMethod(method);
+					initializer.addStaticMethod(method);
 				}
 			}
 		}
@@ -192,27 +214,22 @@ public class ObjectValueGenerator extends ValueGenerator {
 			for (Class<?> innerClazz : declaredClasses) {
 				for (Method method : innerClazz.getMethods()) {
 					if (method.getReturnType().equals(type)) {
-						constructors.addBuilderMethodCall(MethodCall.of(method, innerClazz));
+						initializer.addBuilderMethodCall(MethodCall.of(method, innerClazz));
 					}
 				}
 			}
 		}
-
-		// if still cannot get constructor,
-		// try to search subclass if it's not an abstract class
-		if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())
-				&& constructors.isEmpty()) {
-			Class<?> subClass = getSubTypesScanner().getRandomImplClzz(type);
-			if (subClass != null) {
-				loadConstructors(subClass, constructors);
-			}
+		if (initializer.hasNoConstructor()) {
+			initializer.addConstructors(mightCreateLoopList);
 		}
 	}
 
 	private boolean canBeCandidateForConstructor(Constructor<?> constructor,
-			Class<?> type) {
-		for (Class<?> paramType : constructor.getParameterTypes()) {
+			Class<?> type, List<Constructor<?>> mightCreateLoopList) {
+		Class<?>[] parameterTypes = constructor.getParameterTypes();
+		for (Class<?> paramType : parameterTypes) {
 			if (type.equals(paramType) || paramType.isAssignableFrom(type)) {
+				mightCreateLoopList.add(constructor);
 				return false;
 			}
 		}

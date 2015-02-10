@@ -21,6 +21,7 @@ import sav.common.core.utils.StringUtils;
 import sav.commons.testdata.BoundedStack;
 import sav.commons.testdata.autogeneration.FindMaxArray;
 import sav.commons.testdata.autogeneration.FindMaxArray2D;
+import sav.commons.testdata.autogeneration.FindMaxArrayNumber;
 import sav.commons.testdata.autogeneration.FindMaxComplexMap;
 import sav.commons.testdata.autogeneration.FindMaxCompositionArray;
 import sav.commons.testdata.autogeneration.FindMaxList;
@@ -59,6 +60,11 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 		builder.forClass(FindMaxUtils.class)
 				.method("findMaxByToString");
 		printTc(builder, FindMaxUtils.class);
+	}
+	
+	@Test
+	public void testFindMaxArrayNumber() throws Exception {
+		generateTestcase(FindMaxArrayNumber.class);
 	}
 	
 	@Test
@@ -102,7 +108,7 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 	}
 	
 	@Test
-	public void testFindMaxInterface() throws SavException {
+	public void testFindMaxWrapper() throws SavException {
 		generateTestcase(FindMaxWrapper.class); 
 	}
 	

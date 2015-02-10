@@ -1,9 +1,9 @@
 package sav.commons.testdata.autogeneration;
 
-public class FindMaxArray implements IFindMax{
+public class FindMaxArray implements IFindMax {
 	private int[] numbers;
 	
-	public FindMaxArray(int[] num){
+	public FindMaxArray(int[] num) {
 		this.numbers = num;
 	}
 	

@@ -6,6 +6,7 @@ package gentest.core.data;
 
 import gentest.core.data.statement.Rmethod;
 import gentest.core.data.statement.Statement;
+import gentest.core.data.type.IType;
 import gentest.core.data.variable.ISelectedVariable;
 
 import java.lang.reflect.Type;
@@ -103,8 +104,8 @@ public class Sequence {
 		return typeVariableMap;
 	}
 	
-	public List<LocalVariable> getVariablesByType(Type paramType) {
-		return getTypeVariableMap().get(paramType);
+	public List<LocalVariable> getVariablesByType(IType paramType) {
+		return getTypeVariableMap().get(paramType.getRawType());
 	}
 	
 	public Set<Class<?>> getDeclaredTypes() {
