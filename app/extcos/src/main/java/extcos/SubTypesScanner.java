@@ -39,6 +39,12 @@ public class SubTypesScanner implements ISubTypesScanner {
 			return getRandomImplInterface(clazz, new ExtendingTypeFilterImpl(clazz));
 		}
 	}
+	
+	@Override
+	public Class<?> getRandomImplClzz(Class<?>[] bounds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	private Class<?> getRandomImplInterface(final Class<?> clazz, final TypeFilter typeFilter ) {
 		ComponentScanner scanner = new ComponentScanner();
