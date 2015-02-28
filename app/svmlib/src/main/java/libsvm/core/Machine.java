@@ -110,6 +110,7 @@ public class Machine {
 		final DataPoint dp = new DataPoint(numberOfFeatures);
 		dp.setCategory(category);
 		dp.setValues(values);
+		this.addDataPoint(dp);
 		return this;
 	}
 
