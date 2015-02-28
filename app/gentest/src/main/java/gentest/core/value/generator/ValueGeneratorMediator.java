@@ -67,7 +67,7 @@ public class ValueGeneratorMediator {
 					toVarId = stopPoint[0];
 					toStmtIdx = stopPoint[1];
 				}
-				variable = variable.duplicate(rootVariable.getNextVarId(),
+				variable = variable.clone(rootVariable.getNextVarId(),
 						toVarId, toStmtIdx);
 			}
 		}

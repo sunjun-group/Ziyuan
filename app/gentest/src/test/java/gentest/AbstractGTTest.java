@@ -10,6 +10,7 @@ package gentest;
 
 import org.junit.Before;
 
+import sav.common.core.Logger;
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
 
@@ -18,6 +19,7 @@ import sav.commons.TestConfiguration;
  * 
  */
 public class AbstractGTTest extends AbstractTest {
+	protected Logger<?> log = Logger.getDefaultLogger();
 	protected TestConfiguration config = TestConfiguration.getInstance();
 	protected String srcPath;
 

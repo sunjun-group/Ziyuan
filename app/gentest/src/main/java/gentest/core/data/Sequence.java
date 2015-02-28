@@ -74,6 +74,7 @@ public class Sequence {
 		stmts.add(method);
 		if (method.hasReturnType()) {
 			int newVarId = getVarsSize();
+			// TODO LLT(class to type)
 			LocalVariable newVar = new LocalVariable(newVarId,
 					method.getReturnType());
 			addLocalVariable(newVar);
@@ -100,7 +101,7 @@ public class Sequence {
 		this.stmts = stmts;
 	}
 
-	public Map<Type, List<LocalVariable>> getTypeVariableMap() {
+	private Map<Type, List<LocalVariable>> getTypeVariableMap() {
 		return typeVariableMap;
 	}
 	

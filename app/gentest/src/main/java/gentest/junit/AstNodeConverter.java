@@ -127,10 +127,11 @@ public class AstNodeConverter implements StatementVisitor {
 						constructor.getOutputType(), constructor.getOutVarId())));
 		/* constructor input */
 		List<Expression> constructorArgs = new ArrayList<Expression>();
-		for (int i = 0; i < constructor.getInVarIds().length; i++) {
-			constructorArgs.add(new NameExpr(varNamer.getName(constructor
-					.getInputTypes().get(i), constructor.getInVarIds()[i])));
-
+		Class<?>[] inputTypes = constructor.getInputTypes();
+		int inVarsLength = constructor.getInVarIds().length;
+		for (int i = 0; i < inVarsLength; i++) {
+			constructorArgs.add(new NameExpr(varNamer.getName(
+					inputTypes[i], constructor.getInVarIds()[i])));
 		}
 		/* statement */
 		Expression initExpr = new ObjectCreationExpr(null,

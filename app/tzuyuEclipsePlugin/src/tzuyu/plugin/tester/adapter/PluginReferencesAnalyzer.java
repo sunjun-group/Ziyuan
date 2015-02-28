@@ -349,4 +349,13 @@ public class PluginReferencesAnalyzer implements ISubTypesScanner {
 		}
 		return typeHierachy.getSubclasses(type);
 	}
+
+	/* (non-Javadoc)
+	 * @see sav.strategies.gentest.ISubTypesScanner#getRandomImplClzz(java.lang.Class<?>[])
+	 */
+	@Override
+	public Class<?> getRandomImplClzz(Class<?>[] bounds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

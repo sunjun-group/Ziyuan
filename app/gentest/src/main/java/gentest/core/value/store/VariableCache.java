@@ -53,15 +53,6 @@ public class VariableCache implements IVariableStore {
 		}
 	}
 
-	public GeneratedVariable select(IType type) {
-		List<GeneratedVariable> existingValue = getVariableByType(type);
-		GeneratedVariable selectedValue = Randomness.randomMember(existingValue);
-		if (selectedValue != null) {
-			log.debug("class: " + type.getRawType());
-		}
-		return selectedValue;
-	}
-
 	public List<GeneratedVariable> getVariableByType(IType type) {
 		List<GeneratedVariable> result = null;
 		if (type.getType() != null) {
