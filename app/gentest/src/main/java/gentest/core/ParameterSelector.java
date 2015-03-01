@@ -5,18 +5,18 @@ package gentest.core;
 
 import gentest.core.data.LocalVariable;
 import gentest.core.data.Sequence;
+import gentest.core.data.type.IType;
 import gentest.core.data.variable.ISelectedVariable;
 import gentest.core.data.variable.ReferenceVariable;
 import gentest.core.value.generator.ValueGeneratorMediator;
 
-import java.lang.reflect.Type;
 import java.util.List;
-
-import com.google.inject.Inject;
 
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
+
+import com.google.inject.Inject;
 
 /**
  * @author LLT
@@ -34,41 +34,41 @@ public class ParameterSelector {
 		this.seq = methodDecl;
 	}
 	
-	public ISelectedVariable selectReceiver(Class<?> clazz, Type type,
+	public ISelectedVariable selectReceiver(IType type,
 			int firstStmtIdx, int firstVarIdx) throws SavException {
-		return selectParam(clazz, type, firstStmtIdx, firstVarIdx, true);
+		return selectParam(type, firstStmtIdx, firstVarIdx, true);
 	}
 	
-	public ISelectedVariable selectParam(Class<?> clazz, Type type, int firstStmtIdx,
+	public ISelectedVariable selectParam(IType type, int firstStmtIdx,
 			int firstVarIdx) throws SavException {
-		return selectParam(clazz, type, firstStmtIdx, firstVarIdx, false);
+		return selectParam(type, firstStmtIdx, firstVarIdx, false);
 	}
 	
-	public ISelectedVariable selectParam(Class<?> clazz, Type type,
+	private ISelectedVariable selectParam(IType type,
 			int firstStmtIdx, int firstVarIdx, boolean isReceiver)
 			throws SavException {
-		SelectionMode selectingMode = randomChooseSelectorType(clazz);
+		SelectionMode selectingMode = randomChooseSelectorType(type);
 		switch (selectingMode) {
 		case REFERENCE:
-			return selectReferenceParam(clazz);
+			return selectReferenceParam(type);
 		default:
-			return selectGeneratedParam(clazz, type, firstVarIdx, isReceiver);
+			return selectGeneratedParam(type, firstVarIdx, isReceiver);
 		}
 	}
 	
 	/**
 	 * generate new value for parameter.
 	 */
-	private ISelectedVariable selectGeneratedParam(Class<?> clazz,
-			Type type, int firstVarIdx, boolean isReceiver) throws SavException {
-		return valueGenerator.generate(clazz, type, firstVarIdx, isReceiver);
+	private ISelectedVariable selectGeneratedParam(IType type, int firstVarIdx,
+			boolean isReceiver) throws SavException {
+		return valueGenerator.generate(type, firstVarIdx, isReceiver);
 	}
 
 	/**
 	 * return value of parameter by selecting from variables of
 	 * previous method call.
 	 */
-	private ISelectedVariable selectReferenceParam(Class<?> type) {
+	private ISelectedVariable selectReferenceParam(IType type) {
 		LocalVariable randomVisibleVar = Randomness.randomMember(seq
 				.getVariablesByType(type));
 		return new ReferenceVariable(randomVisibleVar);
@@ -79,7 +79,7 @@ public class ParameterSelector {
 	 * available in the sequence.
 	 * Otherwise, just exclude REFERENCE option out of selectionMode.
 	 */
-	public SelectionMode randomChooseSelectorType(Class<?> type) {
+	public SelectionMode randomChooseSelectorType(IType type) {
 		List<LocalVariable> existedVars = seq.getVariablesByType(type);
 		if (CollectionUtils.isEmpty(existedVars)) {
 			return SelectionMode.GENERATE_NEW;

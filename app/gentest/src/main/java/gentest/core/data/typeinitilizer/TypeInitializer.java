@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package gentest.core.data.dto;
+package gentest.core.data.typeinitilizer;
 
 import gentest.core.data.MethodCall;
 import gentest.main.GentestConstants;
@@ -27,20 +27,41 @@ import sav.common.core.utils.Randomness;
  * 
  */
 public class TypeInitializer {
+	private Class<?> type;
 	private Map<ConstructorType, List<Object>> constructors;
 	
-	public TypeInitializer() {
+	public TypeInitializer(Class<?> type) {
+		this.type = type;
 		constructors = new HashMap<TypeInitializer.ConstructorType, List<Object>>();
 	}
 
-	public boolean isEmpty() {
+	public boolean hasNoConstructor() {
 		return constructors.isEmpty();
+	}
+	
+	public void addConstructors(List<Constructor<?>> constructors) {
+		for (Constructor<?> constructor : constructors) {
+			ConstructorType type = ConstructorType.NO_PARAM_CONSTRUCTOR;
+			if (CollectionUtils.isEmpty(constructor.getParameterTypes())) {
+				type = ConstructorType.VISIBLE_CONSTRUCTOR;
+			}
+			addToConstructors(type, constructor);
+		}
+	}
+	
+	public void addConstructor(Constructor<?> constructor, boolean hasParam) {
+		ConstructorType type = ConstructorType.NO_PARAM_CONSTRUCTOR;
+		if(hasParam) {
+			type = ConstructorType.VISIBLE_CONSTRUCTOR;
+		}
+		addToConstructors(type, constructor);
 	}
 	
 	private void addToConstructors(ConstructorType type, Object constructor) {
 		CollectionUtils.getListInitIfEmpty(constructors, type)
 				.add(constructor);
 	}
+	
 	
 	public void addNoParamConstructors(Constructor<?> constructor) {
 		addToConstructors(ConstructorType.NO_PARAM_CONSTRUCTOR, constructor);
@@ -59,6 +80,9 @@ public class TypeInitializer {
 	}
 	
 	public Object getRandomConstructor() {
+		if (constructors.isEmpty()) {
+			return null;
+		}
 		Set<ConstructorType> keys = constructors.keySet();
 		ConstructorType key = Randomness.randomWithDistribution(keys
 				.toArray(new ConstructorType[keys.size()]));
@@ -81,4 +105,7 @@ public class TypeInitializer {
 		}
 	}
 
+	public Class<?> getType() {
+		return type;
+	}
 }

@@ -10,11 +10,9 @@ package gentest.core.value.generator;
 
 import gentest.core.data.statement.RArrayAssignment;
 import gentest.core.data.statement.RArrayConstructor;
+import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.main.GentestConstants;
-
-import java.lang.reflect.Type;
-
 import sav.common.core.SavException;
 import sav.common.core.utils.Randomness;
 
@@ -22,35 +20,32 @@ import sav.common.core.utils.Randomness;
  * @author Nguyen Phuoc Nguong Phuc
  */
 public class ArrayValueGenerator extends ValueGenerator {
-	private Type type;
+	private int dimension;
+	private IType lastContenType;
 	
-	public ArrayValueGenerator(Type type) {
-		this.type = type;
+	public ArrayValueGenerator(IType type) {
+		super(type);
+		dimension = getArrayDimension();
+		lastContenType = getLastContentType();
 	}
 
 	@Override
-	public boolean doAppend(GeneratedVariable variable, int level, Class<?> clazz)
-			throws SavException {
+	public boolean doAppendVariable(GeneratedVariable variable, int level) throws SavException {
 		// Generate the array
-		final int dimension = 1 + clazz.getName().lastIndexOf('[');
-		Class<?> contentType = clazz;
-		while (contentType.isArray()) {
-			contentType = contentType.getComponentType();
-		}
 		int sizes[] = new int[dimension];
 		for (int i = 0; i < dimension; i++) {
 			sizes[i] = Randomness
 					.nextRandomInt(GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH);
 		}
 		final RArrayConstructor arrayConstructor = new RArrayConstructor(sizes,
-				clazz, contentType);
+				type.getRawType(), lastContenType.getRawType());
 		variable.append(arrayConstructor);
 		variable.commitReturnVarIdIfNotExist();
 		// Generate the array content
 		int[] location = next(null, arrayConstructor.getSizes());
 		while (location != null) {
 			GeneratedVariable newVar = appendVariable(variable,
-					level + 1, arrayConstructor.getContentType(), null);
+					level + 1, lastContenType);
 			int localVariableID = newVar.getReturnVarId(); // the last ID
 
 			// get the variable
@@ -60,6 +55,24 @@ public class ArrayValueGenerator extends ValueGenerator {
 			location = next(location, arrayConstructor.getSizes());
 		}
 		return true;
+	}
+	
+	private IType getLastContentType() {
+		IType contentType = type;
+		while (contentType.isArray()) {
+			contentType = contentType.getComponentType();
+		}
+		return contentType;
+	}
+
+	private int getArrayDimension() {
+		int dimension = 0;
+		IType arrayType = type;
+		while (arrayType.isArray()) {
+			arrayType = arrayType.getComponentType();
+			dimension++;
+		}
+		return dimension;
 	}
 
 	private static int[] next(int[] array, int[] limit) {

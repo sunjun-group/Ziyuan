@@ -8,7 +8,7 @@
 
 package gentest.core.value.store.iface;
 
-import gentest.core.data.dto.TypeInitializer;
+import gentest.core.data.typeinitilizer.TypeInitializer;
 
 /**
  * @author LLT

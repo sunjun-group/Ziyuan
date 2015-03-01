@@ -23,19 +23,19 @@ import gentest.core.data.statement.StatementVisitor;
  * @author LLT
  *
  */
-public class StatementDuplicator implements StatementVisitor {
-	private List<Statement> duplicateStmts;
+public class StatementCloner implements StatementVisitor {
+	private List<Statement> returnedStmts;
 	private int varIdOffset;
 
-	public StatementDuplicator(List<Statement> stmts, int varIdOffset) {
-		this.duplicateStmts = stmts;
+	public StatementCloner(List<Statement> stmts, int varIdOffset) {
+		this.returnedStmts = stmts;
 		this.varIdOffset = varIdOffset;
 	}
 
 	private void transferVarIdsAndCommit(Statement stmt, Statement newStmt) {
 		newStmt.setInVarIds(toNewStmtVarIds(stmt.getInVarIds()));
 		newStmt.setOutVarId(toNewStmtVarId(stmt.getOutVarId()));
-		duplicateStmts.add(newStmt);
+		returnedStmts.add(newStmt);
 	}
 	
 	private int[] toNewStmtVarIds(int[] varIds) {

@@ -3,6 +3,7 @@
  */
 package gentest.core.data.variable;
 
+import static gentest.main.GentestConstants.INVALID_VAR_ID;
 import gentest.core.data.LocalVariable;
 import gentest.core.data.statement.RArrayAssignment;
 import gentest.core.data.statement.RArrayConstructor;
@@ -10,7 +11,7 @@ import gentest.core.data.statement.RAssignment;
 import gentest.core.data.statement.RConstructor;
 import gentest.core.data.statement.Rmethod;
 import gentest.core.data.statement.Statement;
-import gentest.core.value.StatementDuplicator;
+import gentest.core.value.StatementCloner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ import sav.common.core.utils.CollectionUtils;
  *
  */
 public class GeneratedVariable extends SelectedVariable {
-	private int returnedVarId = Statement.INVALID_VAR_ID;
+	private int returnedVarId = INVALID_VAR_ID;
 	private int firstVarId;
 	/**
 	 * the field objCuttingPoints is used for Object value.
@@ -66,7 +67,7 @@ public class GeneratedVariable extends SelectedVariable {
 	}
 	
 	public void commitReturnVarIdIfNotExist() {
-		if (returnedVarId == Statement.INVALID_VAR_ID) {
+		if (returnedVarId == INVALID_VAR_ID) {
 			returnedVarId = getReturnVarId();
 		}
 	}
@@ -94,6 +95,7 @@ public class GeneratedVariable extends SelectedVariable {
 		addStatement(stmt);
 		if (addVariable && type != Void.class) {
 			int varId = getNextVarId();
+			// TODO LLT(class to type)
 			LocalVariable var = new LocalVariable(varId, type);
 			getNewVariables().add(var);
 		}
@@ -120,7 +122,7 @@ public class GeneratedVariable extends SelectedVariable {
 	
 	@Override
 	public int getReturnVarId() {
-		if (returnedVarId == Statement.INVALID_VAR_ID) {
+		if (returnedVarId == INVALID_VAR_ID) {
 			LocalVariable lastVar = CollectionUtils.getLast(newVariables);
 			Assert.assertTrue(lastVar != null); 
 			return lastVar.getVarId();
@@ -162,27 +164,28 @@ public class GeneratedVariable extends SelectedVariable {
 		return objCuttingPoints;
 	}
 
-	public GeneratedVariable duplicate(int firstVarId, int toVarId, int toStmtIdx) {
-		GeneratedVariable duplicateVar = new GeneratedVariable(firstVarId,
+	public GeneratedVariable clone(int firstVarId, int toVarId, int toStmtIdx) {
+		GeneratedVariable cloneVar = new GeneratedVariable(firstVarId,
 				new ArrayList<Statement>(toStmtIdx),
 				new ArrayList<LocalVariable>(toVarId));
 		int offset = firstVarId - this.firstVarId;
 		for (int i = 0; i < toVarId; i++) {
 			LocalVariable var = newVariables.get(i);
+			// TODO LLT(class to type)
 			LocalVariable newVar = new LocalVariable(var.getVarId() + offset, 
 					var.getType());
-			duplicateVar.newVariables.add(newVar);
+			cloneVar.newVariables.add(newVar);
 		}
-		StatementDuplicator duplicator = new StatementDuplicator(duplicateVar.stmts,
+		StatementCloner cloner = new StatementCloner(cloneVar.stmts,
 				offset);
 		for (int i = 0; i < toStmtIdx; i++) {
 			Statement stmt = stmts.get(i);
-			stmt.accept(duplicator);
+			stmt.accept(cloner);
 		}
-		if (returnedVarId != Statement.INVALID_VAR_ID) {
-			duplicateVar.returnedVarId = returnedVarId + offset;
+		if (returnedVarId != INVALID_VAR_ID) {
+			cloneVar.returnedVarId = returnedVarId + offset;
 		}
-		return duplicateVar;
+		return cloneVar;
 	}
 
 	public int getFirstVarId() {
@@ -214,6 +217,10 @@ public class GeneratedVariable extends SelectedVariable {
 	public List<Statement> getLastFragmentStmts() {
 		return stmts.subList(getLastFragmentIdxStmtId(), stmts.size());
 	}
-	
+
+	@Override
+	public String toString() {
+		return "GeneratedVariable [stmts=" + stmts + "]";
+	}
 	
 }

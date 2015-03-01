@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 import libsvm.core.Category;
-import libsvm.core.DataPoint;
 import libsvm.core.KernelType;
 import libsvm.core.Machine;
+import libsvm.core.Machine.DataPoint;
 import libsvm.core.MachineType;
 import libsvm.core.Parameter;
 import net.sf.javaml.core.Dataset;
@@ -65,20 +65,16 @@ public class BugExpert implements IBugExpert {
 		// Number of all available variables a breakpoint
 		final int numberOfFeatures = variableValueMap.keySet().size();
 
+		machine.setNumberOfFeatures(numberOfFeatures);
+
 		// Build data points
 		List<DataPoint> dataPoints = new ArrayList<DataPoint>(dataSize);
 		i = 0;
 		for (int j = 0; j < passTestCaseSize; j++) {
-			DataPoint dp = new DataPoint(numberOfFeatures);
-			dp.setCategory(Category.POSITIVE);
-			dp.setValues(getVariableValueAtLine(variableValueMap, i++));
-			dataPoints.add(dp);
+			machine.addDataPoint(Category.POSITIVE, getVariableValueAtLine(variableValueMap, i++));
 		}
 		for (int j = 0; j < failedTestCaseSize; j++) {
-			DataPoint dp = new DataPoint(numberOfFeatures);
-			dp.setCategory(Category.NEGATIVE);
-			dp.setValues(getVariableValueAtLine(variableValueMap, i++));
-			dataPoints.add(dp);
+			machine.addDataPoint(Category.NEGATIVE, getVariableValueAtLine(variableValueMap, i++));
 		}
 
 		// Train SVM

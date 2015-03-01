@@ -107,7 +107,7 @@ public class TestsPrinter implements ITestsPrinter {
 		this.separatePassFail = separatePassFail;
 	}
 
-	public void setMethodSPerClass(int methodSPerClass) {
+	public void setMethodsPerClass(int methodSPerClass) {
 		this.methodSPerClass = methodSPerClass;
 	}
 

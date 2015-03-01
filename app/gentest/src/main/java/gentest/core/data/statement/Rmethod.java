@@ -12,7 +12,6 @@ import java.lang.reflect.Modifier;
  *
  */
 public class Rmethod extends Statement {
-	private Class<?> declaringType;
 	private Method method;
 	private final int receiverVarId; // varId of declared class
 	
@@ -63,10 +62,7 @@ public class Rmethod extends Statement {
 	}
 	
 	public Class<?> getDeclaringType() {
-		if (declaringType == null) {
-			declaringType = method.getDeclaringClass();
-		}
-		return declaringType;
+		return method.getDeclaringClass();
 	}
 
 	public boolean isStatic() {

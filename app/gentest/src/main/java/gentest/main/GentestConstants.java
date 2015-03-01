@@ -54,5 +54,5 @@ public class GentestConstants {
 	};
 	public static final double PROBABILITY_OF_UNCLOSED_SUBTYPES = 0;
 	public static final char PACKAGE_SEPARATOR = '.';
-	
+	public static final int INVALID_VAR_ID = -1;
 }

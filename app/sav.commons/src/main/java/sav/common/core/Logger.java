@@ -53,7 +53,8 @@ public abstract class Logger<T extends Logger<T>> {
 	@SuppressWarnings("unchecked")
 	public T debug(Object... msgs) {
 		if (isDebug()) {
-			debug(StringUtils.spaceJoin(msgs));
+			String msg = StringUtils.spaceJoin(msgs);
+			debug(msg);
 		}
 		return (T) this;
 	}

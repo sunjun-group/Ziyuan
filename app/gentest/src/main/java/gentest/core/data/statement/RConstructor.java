@@ -5,8 +5,6 @@ package gentest.core.data.statement;
 
 
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author LLT
@@ -14,9 +12,6 @@ import java.util.List;
  */
 public class RConstructor extends Statement {
 	private final Constructor<?> constructor;
-
-	private List<Class<?>> inputTypesCached;
-	private Class<?> outputTypeCached;
 
 	public RConstructor(Constructor<?> ctor) {
 		super(RStatementKind.CONSTRUCTOR);
@@ -38,18 +33,12 @@ public class RConstructor extends Statement {
 		return constructor.getDeclaringClass().getSimpleName();
 	}
 	
-	public List<Class<?>> getInputTypes() {
-		if (inputTypesCached == null) {
-			inputTypesCached = Arrays.asList(constructor.getParameterTypes());
-		}
-		return inputTypesCached;
+	public Class<?>[] getInputTypes() {
+		return constructor.getParameterTypes();
 	}
 	
 	public Class<?> getOutputType() {
-		if (outputTypeCached == null) {
-			outputTypeCached = constructor.getDeclaringClass();
-		}
-		return outputTypeCached;
+		return constructor.getDeclaringClass();
 	}
 
 	@Override

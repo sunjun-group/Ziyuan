@@ -8,6 +8,7 @@
 
 package gentest.core.value.store;
 
+import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.value.store.iface.IVariableStore;
 import gentest.main.GentestConstants;
@@ -35,16 +36,16 @@ public class VariableCache implements IVariableStore {
 		generatedVarMap = new HashMap<Type, List<GeneratedVariable>>();
 	}
 
-	public void put(Type type, Class<?> clazz, GeneratedVariable variable) {
+	public void put(IType type, GeneratedVariable variable) {
 		List<GeneratedVariable> valueList;
-		if (type != null) {
-			valueList = CollectionUtils.getListInitIfEmpty(generatedVarMap, type);
+		if (type.getType() != null) {
+			valueList = CollectionUtils.getListInitIfEmpty(generatedVarMap, type.getType());
 		} else {
-			valueList = CollectionUtils.getListInitIfEmpty(generatedVarMap, clazz);
+			valueList = CollectionUtils.getListInitIfEmpty(generatedVarMap, type.getRawType());
 		}
 		if (valueList.size() == GentestConstants.MAX_VALUE_FOR_A_CLASS_STORED_IN_CACHE) {
 			log.debug("VariableCache.MAX_VALUE_FOR_A_CLASS_STORED_IN_CACHE reach (class: ",
-					clazz.getName(), ", type: ", type);
+					type.getRawType().getName(), ", type: ", type);
 			int randomPos = Randomness.nextRandomInt(valueList.size());
 			valueList.set(randomPos, variable);
 		} else {
@@ -52,21 +53,12 @@ public class VariableCache implements IVariableStore {
 		}
 	}
 
-	public GeneratedVariable select(Type type, Class<?> clazz) {
-		List<GeneratedVariable> existingValue = getVariableByType(type, clazz);
-		GeneratedVariable selectedValue = Randomness.randomMember(existingValue);
-		if (selectedValue != null) {
-			System.out.println("class: " + clazz);
-		}
-		return selectedValue;
-	}
-
-	public List<GeneratedVariable> getVariableByType(Type type, Class<?> clazz) {
+	public List<GeneratedVariable> getVariableByType(IType type) {
 		List<GeneratedVariable> result = null;
-		if (type != null) {
-			result = generatedVarMap.get(type);
+		if (type.getType() != null) {
+			result = generatedVarMap.get(type.getType());
 		} else {
-			result = generatedVarMap.get(clazz);
+			result = generatedVarMap.get(type.getRawType());
 		}
 		if (result == null) {
 			return new ArrayList<GeneratedVariable>(0);

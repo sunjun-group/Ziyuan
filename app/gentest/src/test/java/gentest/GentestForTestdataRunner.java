@@ -11,16 +11,25 @@ package gentest;
 import gentest.builder.FixTraceGentestBuilder;
 import gentest.builder.GentestBuilder;
 import gentest.builder.RandomTraceGentestBuilder;
+import gentest.core.data.Sequence;
+import gentest.core.data.statement.Statement;
+import gentest.core.data.statement.Statement.RStatementKind;
 import gentest.junit.FileCompilationUnitPrinter;
 import gentest.junit.TestsPrinter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 
+import sav.common.core.Pair;
 import sav.common.core.SavException;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
 import sav.commons.testdata.BoundedStack;
 import sav.commons.testdata.autogeneration.FindMaxArray;
 import sav.commons.testdata.autogeneration.FindMaxArray2D;
+import sav.commons.testdata.autogeneration.FindMaxArrayNumber;
 import sav.commons.testdata.autogeneration.FindMaxComplexMap;
 import sav.commons.testdata.autogeneration.FindMaxCompositionArray;
 import sav.commons.testdata.autogeneration.FindMaxList;
@@ -59,6 +68,11 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 		builder.forClass(FindMaxUtils.class)
 				.method("findMaxByToString");
 		printTc(builder, FindMaxUtils.class);
+	}
+	
+	@Test
+	public void testFindMaxArrayNumber() throws Exception {
+		generateTestcase(FindMaxArrayNumber.class);
 	}
 	
 	@Test
@@ -102,7 +116,7 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 	}
 	
 	@Test
-	public void testFindMaxInterface() throws SavException {
+	public void testFindMaxWrapper() throws SavException {
 		generateTestcase(FindMaxWrapper.class); 
 	}
 	
@@ -150,9 +164,20 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 		TestsPrinter printer = new TestsPrinter(srcPath,
 				getTestPkg(targetClazz), null, "test",
 				targetClazz.getSimpleName());
-		printer.setMethodSPerClass(METHOD_PER_CLASS);
+		printer.setMethodsPerClass(METHOD_PER_CLASS);
 		printer.setCuPrinter(new FileCompilationUnitPrinter());
-		printer.printTests(builder.generate());
+		Pair<List<Sequence>, List<Sequence>> testcases = builder.generate();
+		List<Sequence> allTcs = new ArrayList<Sequence>(testcases.a);
+		allTcs.addAll(testcases.b);
+		for (Sequence seq : allTcs) {
+			for (Statement stmt : seq.getStmts()) {
+				if (!CollectionUtils.existIn(stmt.getKind(),
+						RStatementKind.ARRAY_ASSIGNMENT)) {
+					log.debug(stmt);
+				}
+			}
+		}
+		printer.printTests(testcases);
 	}
 
 	private String getTestFailPkg(Class<?> targetClazz) {
