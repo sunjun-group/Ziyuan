@@ -24,8 +24,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -1038,15 +1036,15 @@ public class Mutator
 
     private static MethodDeclaration cloneMethod(MethodDeclaration decl)
     {
-        //MethodDeclaration(JavadocComment javaDoc, int modifiers, List<AnnotationExpr> annotations, List<TypeParameter> typeParameters, Type type, String name, List<Parameter> parameters, int arrayCount, List<NameExpr> throws_, BlockStmt block) {
-        MethodDeclaration clone = new MethodDeclaration(decl.getJavaDoc(), decl.getModifiers(), decl.getAnnotations(), decl.getTypeParameters(), decl.getType(), decl.getName(), decl.getParameters(), decl.getArrayCount(), decl.getThrows(), decl.getBody());
+//        MethodDeclaration clone = new MethodDeclaration(decl.getJavaDoc(), decl.getModifiers(), decl.getAnnotations(), decl.getTypeParameters(), decl.getType(), decl.getName(), decl.getParameters(), decl.getArrayCount(), decl.getThrows(), decl.getBody());
+    	MethodDeclaration clone = new MethodDeclaration(decl.getModifiers(), decl.getAnnotations(), decl.getTypeParameters(), decl.getType(), decl.getName(), decl.getParameters(), decl.getArrayCount(), decl.getThrows(), decl.getBody());
         copyBoudary(clone, decl);
         return clone;
     }
 
     private static ClassOrInterfaceDeclaration cloneClassDecl(ClassOrInterfaceDeclaration source)
     {
-        ClassOrInterfaceDeclaration clone = new ClassOrInterfaceDeclaration(source.getJavaDoc(), source.getModifiers(), source.getAnnotations(), source.isInterface(), source.getName(), source.getTypeParameters(), source.getExtends(), source.getImplements(), source.getMembers());
+        ClassOrInterfaceDeclaration clone = new ClassOrInterfaceDeclaration(source.getModifiers(), source.getAnnotations(), source.isInterface(), source.getName(), source.getTypeParameters(), source.getExtends(), source.getImplements(), source.getMembers());
         copyBoudary(clone, source);
         return clone;
     }
@@ -1126,7 +1124,6 @@ public class Mutator
         String srcFolder = "C:\\Users\\1001385\\Dropbox\\MutantBug\\src\\";
         loadClassDescriptor(new File(srcFolder));
         File javaFile = new File(srcFolder + "test/TestForStmt.java");
-        System.out.println(new File(Paths.get("").toString()));
         mutateFile(javaFile, new File("C:\\Users\\1001385\\Dropbox\\MutantBug\\mutatedSource"));
     }
 }
