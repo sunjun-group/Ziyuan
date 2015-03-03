@@ -1,5 +1,7 @@
 package libsvm.core;
 
+import libsvm.core.Machine.DataPoint;
+
 /**
  * Represents a way to divide a set of {@link DataPoint} into two separated sets
  * with two different characteristics. It is a 'line' specified by: <br/>
@@ -27,5 +29,21 @@ public class Divider {
 		}
 		dsb.append(" : ").append(theta0).append("]");
 		return dsb.toString();
+	}
+	
+	public double[] getThetas() {
+		return thetas;
+	}
+	
+	public double getTheta0() {
+		return theta0;
+	}
+	
+	public double valueOf(DataPoint dataPoint) {
+		double result = 0;
+		for (int i = 0; i< thetas.length; i++) {
+			result += thetas[i] * dataPoint.getValue(i);
+		}
+		return result;
 	}
 }
