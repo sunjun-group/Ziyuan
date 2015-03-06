@@ -105,8 +105,8 @@ public class Machine {
 
 	public Machine addDataPoint(final Category category, final double... values) {
 		final int numberOfFeatures = getNumberOfFeatures();
-		Assert.assertTrue("Must specify " + numberOfFeatures + " items as values.",
-				values != null && values.length == numberOfFeatures);
+		Assert.assertTrue("Must specify " + numberOfFeatures + " items as values.", values != null
+				&& values.length == numberOfFeatures);
 		final DataPoint dp = new DataPoint(numberOfFeatures);
 		dp.setCategory(category);
 		dp.setValues(values);
@@ -227,6 +227,61 @@ public class Machine {
 	public double getModelAccuracy() {
 		Assert.assertNotNull("SVM model is not available yet.", model);
 		return 1.0 - ((double) getWrongClassifiedDataPoints(data).size() / data.size());
+	}
+
+	public String getLearnedLogic() {
+		// Print out the learned logic
+		// I.e.: the predicate about the POSITIVE points
+		// This basic machine only produces 1 divider so the logic is in the
+		// form of a1*x1 + a2*x2 + ... + an*xn >= b
+		StringBuilder str = new StringBuilder();
+
+		Model currentModel = getModel();
+		if (currentModel != null) {
+			str.append(getLearnedLogic(currentModel.getExplicitDivider(), getRandomData()));
+		}
+
+		return str.toString();
+	}
+	
+	protected String getLearnedLogic(final Divider divider, final DataPoint sampleDataPoint) {
+		StringBuilder str = new StringBuilder();
+		
+		final double[] thetas = divider.getThetas();
+		Assert.assertTrue(thetas.length == dataLabels.size());
+		for (int i = 0; i < thetas.length; i++) {
+			if (Double.compare(thetas[i], 0.0) == 0) {
+				if (str.length() > 0) {
+					str.append(" + ");
+				}
+				str.append(thetas[i]);
+				str.append(" * ");
+				str.append(dataLabels.get(i));
+			}
+		}
+		
+		final Category category = calculateCategory(sampleDataPoint, model, null);
+		final double value = divider.valueOf(sampleDataPoint);
+		if (Category.POSITIVE == category) {
+			if (Double.compare(value, divider.getTheta0()) >= 0) {
+				str.append(" >= ");
+			} else {
+				str.append(" < ");
+			}
+		} else {
+			if (Double.compare(value, divider.getTheta0()) >= 0) {
+				str.append(" < ");
+			} else {
+				str.append(" >= ");
+			}
+		}
+		str.append(divider.getTheta0());
+		
+		return str.toString();
+	}
+
+	protected DataPoint getRandomData() {
+		return data.get(0);
 	}
 
 	/**

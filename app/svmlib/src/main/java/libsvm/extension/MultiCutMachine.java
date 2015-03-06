@@ -7,7 +7,10 @@ import java.util.Set;
 
 import libsvm.svm_model;
 import libsvm.core.Category;
+import libsvm.core.Divider;
 import libsvm.core.Machine;
+import libsvm.core.Model;
+import libsvm.core.Machine.DataPoint;
 
 import org.junit.Assert;
 
@@ -143,6 +146,23 @@ public class MultiCutMachine extends Machine {
 			}
 			return result; // Can be null or incorrect
 		}
+	}
+	
+	@Override
+	public String getLearnedLogic() {
+		StringBuilder str = new StringBuilder();
+
+		DataPoint randomData = getRandomData();
+		for (LearnedData data : learnedDatas) {
+			final Divider explicitDivider = new Model(data.model, randomData.getNumberOfFeatures())
+					.getExplicitDivider();
+			if (str.length() != 0) {
+				str.append(" ^ ");
+			}
+			str.append(getLearnedLogic(explicitDivider, randomData));
+		}
+
+		return str.toString();
 	}
 
 }

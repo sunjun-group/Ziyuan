@@ -14,8 +14,8 @@
 		<spring-core-version>4.0.3.RELEASE</spring-core-version>
 		<commons-csv-version>1.0</commons-csv-version>
 		<!-- for icsetlv -->
-<!-- 		<toolsjar>${java.home}/../lib/tools.jar</toolsjar> -->
-		<toolsjar>C:/Users/1001385/Documents/GitHub/tools/jdk1.6.0_26-64b/lib/tools.jar</toolsjar>
+		<toolsjar>${java.home}/../lib/tools.jar</toolsjar>
+<!-- 	<toolsjar>C:/Users/1001385/Documents/GitHub/tools/jdk1.6.0_26-64b/lib/tools.jar</toolsjar> -->
 		<toolsjar-version>${java.version}</toolsjar-version>
 		<commons-beanutils-version>1.9.1</commons-beanutils-version>
 		<javaparser-version>1.0.11</javaparser-version>
@@ -53,14 +53,14 @@
 <!-- 		<module>../slicer.javaslicer</module> -->
 <!-- 		<module>../codecoverage.jacoco</module> -->
 		<!-- -->
-<!-- 		<module>../tzuyu.core</module> -->
-<!-- 		<module>../tzuyu.feature</module> -->
-<!-- 		<module>../tzuyu.repo</module> -->
-<!-- 		<module>../tzuyu</module> -->
-<!-- 		<module>../faultLocalization</module> -->
-<!-- 		<module>../extcos</module> -->
-<!-- 		<module>../svmlib</module> -->
-<!-- 		<module>../icsetlv</module> -->
+ 		<module>../tzuyu.core</module>
+ 		<module>../tzuyu.feature</module>
+ 		<module>../tzuyu.repo</module>
+ 		<module>../tzuyu</module>
+ 		<module>../faultLocalization</module>
+ 		<module>../extcos</module>
+ 		<module>../svmlib</module>
+ 		<module>../icsetlv</module> 
 	</modules>
 
 	<build>

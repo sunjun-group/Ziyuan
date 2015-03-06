@@ -6,7 +6,9 @@ import java.util.List;
 
 import libsvm.svm_model;
 import libsvm.core.Category;
+import libsvm.core.Divider;
 import libsvm.core.Machine;
+import libsvm.core.Model;
 
 /**
  * This machine tries to separate the positive points from negative points by
@@ -86,6 +88,23 @@ public class PositiveSeparationMachine extends Machine {
 				return Category.POSITIVE;
 			}
 		});
+	}
+
+	@Override
+	public String getLearnedLogic() {
+		StringBuilder str = new StringBuilder();
+
+		DataPoint randomData = getRandomData();
+		for (svm_model svmModel : learnedModels) {
+			final Divider explicitDivider = new Model(svmModel, randomData.getNumberOfFeatures())
+					.getExplicitDivider();
+			if (str.length() != 0) {
+				str.append(" ^ ");
+			}
+			str.append(getLearnedLogic(explicitDivider, randomData));
+		}
+
+		return str.toString();
 	}
 
 }
