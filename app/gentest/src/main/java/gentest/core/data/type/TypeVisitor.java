@@ -43,21 +43,41 @@ public abstract class TypeVisitor {
 			break;
 		case PARAMETER_TYPE:
 			visit((ParameterizedType) type);
+			break;
+		case GENERIC_ARRAY_TYPE:
+			visit((GenericArrayType) type);
+			break;
+		case WILDCARDS_TYPE:
+			visit((WildcardType) type);
 		}
 	}
 	
-	protected abstract void visit(Class<?> type);
-	
-	protected abstract void visit(ParameterizedType type);
-	
-	protected abstract void visit(TypeVariable<?> type);
+	private void visit(WildcardType type) {
+		// implement when needed.		
+	}
 
-	protected static enum TypeEnum {
+	protected void visit(GenericArrayType type) {
+		// implement when needed.		
+	}
+
+	protected void visit(Class<?> type) {
+		// implement when needed.
+	}
+	
+	protected void visit(ParameterizedType type) {
+		// implement when needed.
+	}
+	
+	protected void visit(TypeVariable<?> type) {
+		// implement when needed.
+	}
+
+	public static enum TypeEnum {
 		CLASS,
-		TYPE_VARIABLE,
-		GENERIC_ARRAY_TYPE,
-		PARAMETER_TYPE,
-		WILDCARDS_TYPE;
+		TYPE_VARIABLE, /* T */
+		GENERIC_ARRAY_TYPE, /* T[] */
+		PARAMETER_TYPE,  /* <T> */
+		WILDCARDS_TYPE; /* <?> */
 
 		public static TypeEnum of(Type type) {
 			if (isClass(type)) {

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import sav.common.core.Logger;
 import sav.common.core.utils.CollectionUtils;
@@ -28,7 +29,7 @@ import sav.strategies.gentest.ISubTypesScanner;
  */
 public class VarTypeResolver extends TypeVisitor {
 	private Logger<?> log = Logger.getDefaultLogger();
-	private Map<TypeVariable<?>, Type> rTypeMap;
+	private Map<TypeVariable<?>, Type> rTypeMap; // value can be either Class, TypeVariable or ParameterizedType
 	private Set<Type> visitedTypes;
 	
 	private ISubTypesScanner subTypeScanner;
@@ -82,7 +83,7 @@ public class VarTypeResolver extends TypeVisitor {
 			return selectResolveTypeByUpperbounds(variable.getBounds());
 		}
 		Class<?> resolvedType = resolve(mappedType);
-		if (resolvedType != mappedType) {
+		if ((TypeEnum.isClass(mappedType) && resolvedType != mappedType)) {
 			rTypeMap.put((TypeVariable<?>) variable, resolvedType);
 		}
 		return resolvedType;
@@ -118,9 +119,6 @@ public class VarTypeResolver extends TypeVisitor {
 	}
 	
 	public void assignParamTypes(Class<?> clazz, Class<?>[] paramTypes) {
-		if (isVisited(clazz)) {
-			return;
-		}
 		// check state
 		if (clazz.getTypeParameters().length != paramTypes.length) {
 			log.error(getClass().getSimpleName(), "paramTypes and class variables mismatch, paramTypes=",
@@ -128,28 +126,13 @@ public class VarTypeResolver extends TypeVisitor {
 			throw new IllegalArgumentException("paramTypes and class variables mismatch!!");
 		}
 		TypeVariable<?>[] vars = clazz.getTypeParameters();
+		Map<TypeVariable<?>, Type> assignTypes = new HashMap<TypeVariable<?>, Type>();
 		for (int i = 0; i < paramTypes.length; i++) {
-			assignParamType(vars[i], paramTypes[i]);
-			visitedTypes.add(vars[i]);
+			assignTypes.put(vars[i], paramTypes[i]);
 		}
+		importTypeMap(assignTypes);
 	}
 	
-	private void assignParamType(TypeVariable<?> type, Class<?> param) {
-		TypeVariable<?> paramKey = type;
-		TypeVariable<?> assignedParam = paramKey;
-		while (assignedParam != null) {
-			Type assignedParamType = rTypeMap.get(assignedParam);
-			assignedParam = null;
-			if (assignedParamType != null
-					&& TypeEnum.isTypeVariable(assignedParamType)) {
-				assignedParam = (TypeVariable<?>) assignedParamType;
-				paramKey = assignedParam;
-				visitedTypes.add(paramKey);
-			}
-		}
-		rTypeMap.put(paramKey, param);
-	}
-
 	protected void visit(Class<?> type) {
 		if (!CollectionUtils.isEmpty(type.getTypeParameters())) {
 			for (Type paramType : type.getTypeParameters()) {
@@ -165,7 +148,6 @@ public class VarTypeResolver extends TypeVisitor {
 	
 	protected void visit(TypeVariable<?> variable) {
 		//LLT: should not resolve type here, only resolve when resolve function is called.
-//		rTypeMap.put(variable, resolveTypeVariable(variable));
 	}
 
 	@Override
@@ -176,7 +158,9 @@ public class VarTypeResolver extends TypeVisitor {
 		for (int i = 0; i < vars.length; i++) {
 			Type argType = typeArgs[i];
 			log.debug("visit parameterized type-argType=", argType);
-			rTypeMap.put(vars[i], argType);
+			if (!rTypeMap.containsKey(vars[i])) {
+				rTypeMap.put(vars[i], argType);
+			}
 		}
 	}
 	
@@ -188,5 +172,26 @@ public class VarTypeResolver extends TypeVisitor {
 	public String toString() {
 		return "VarTypeResolver [rTypeMap=" + rTypeMap + ", visitedTypes="
 				+ visitedTypes + "]";
+	}
+	
+	Map<TypeVariable<?>, Type> getrTypeMap() {
+		return ResolverTypeMap.of(rTypeMap);
+	}
+
+	/**
+	 * only import if the value for TypeVariable is not defined yet.
+	 */
+	public void importTypeMap(Map<TypeVariable<?>, Type> typeMap) {
+		for (Entry<TypeVariable<?>, Type> entry : typeMap.entrySet()) {
+			TypeVariable<?> lastType = entry.getKey();
+			Type mappedType = lastType;
+			while (TypeEnum.isTypeVariable(mappedType)) {
+				lastType = (TypeVariable<?>) mappedType;
+				mappedType = rTypeMap.get(lastType);
+			}
+			if (mappedType == null) {
+				rTypeMap.put(lastType, entry.getValue());
+			}
+		}
 	}
 }

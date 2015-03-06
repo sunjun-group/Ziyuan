@@ -14,10 +14,13 @@ import gentest.core.data.type.VarTypeCreator;
 import gentest.core.value.store.SubTypesScanner;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,13 +42,14 @@ public class TypeResolverTest extends AbstractGTTest {
 	}
 	
 	@Test
-	public void resolveArrayType() throws Exception {
+	public void resolveType_genericArray() throws Exception {
 		Method method = getMethodByName(Test1.class, "staticMethodWithGenericArrayParam");
-		IType[] itypes = creator.forType(method.getGenericParameterTypes());
+		Type[] genericParameterTypes = method.getGenericParameterTypes();
+		IType[] itypes = creator.forType(genericParameterTypes);
 		System.out.println(Arrays.toString(itypes));
 		
 		IType type = creator.forParamClass(Test1.class, String.class);
-		IType paramType = type.resolveType(method.getGenericParameterTypes())[0];
+		IType paramType = type.resolveType(genericParameterTypes)[0];
 		System.out.println(paramType);
 	}
 	
@@ -71,10 +75,26 @@ public class TypeResolverTest extends AbstractGTTest {
 	@Test
 	public void resolveType_wildcardParam() throws Exception {
 		Method method = getMethodByName(Test1.class, "wildcardMethod");
-		IType[] paramType = creator.forType(method.getGenericParameterTypes());
+		Type[] genericParameterTypes = method.getGenericParameterTypes();
+		IType[] paramType = creator.forType(genericParameterTypes);
 		System.out.println(Arrays.toString(paramType));
 	}
 	
+	@Test
+	public void resolveType_missingInfoClass() throws Exception {
+		Method method = getMethodByName(Test1.class, "missingInfoClassMethod");
+		Type[] genericParameterTypes = method.getGenericParameterTypes();
+		IType[] paramType = creator.forType(genericParameterTypes);
+		System.out.println(Arrays.toString(paramType));
+	}
+	
+	@Test
+	public void resolveType_wildcardParam2() {
+		Method method = getMethodByName(Test1.class, "staticMethodWithTest1Param");
+		Type[] genericParameterTypes = method.getGenericParameterTypes();
+		IType[] paramType = creator.forType(genericParameterTypes);
+		System.out.println(Arrays.toString(paramType));
+	}
 
 	private Method getMethodByName(Class<?> clazz, String methodName) {
 		for (Method method : clazz.getMethods()) {
@@ -107,7 +127,7 @@ public class TypeResolverTest extends AbstractGTTest {
 	}
 	
 	@Test
-	public void resolveType_VarTypeOfSuper_Copied() throws Exception {
+	public void resolveType_inheritVarType_copyFromSubClass() throws Exception {
 		IType type = creator.forParamClass(ArrayList.class, String.class);
 		type = type.resolveType(List.class);
 		Method addMethod = List.class.getMethod("add", Object.class);
@@ -118,10 +138,48 @@ public class TypeResolverTest extends AbstractGTTest {
 	}
 	
 	@Test
+	public void resolveType_inheritVarType() throws Exception {
+		IType type = creator.forParamClass(Test1.class, String.class);
+		Method method = Test1.class.getMethod("mMapParam", Map.class);
+		Type[] genericParameterTypes = method.getGenericParameterTypes();
+		IType mapType = type.resolveType(genericParameterTypes)[0];
+		IType hashMapType = mapType.resolveType(HashMap.class);
+		IType list = hashMapType.resolveType(List.class);
+		Method addMethod = List.class.getMethod("add", Object.class);
+		IType[] itypes = list.resolveType(addMethod.getGenericParameterTypes());
+		System.out.println(Arrays.toString(itypes));
+		Assert.assertTrue(itypes.length == 1);
+		Assert.assertEquals(String.class, itypes[0].getRawType());
+	}
+	
+	@Test
+	public void resolveType_inheriVarType2() throws Exception {
+		IType type = creator.forParamClass(Test1.class, String.class);
+		Method method = Test1.class.getMethod("mListListParam", List.class);
+		Type[] genericParameterTypes = method.getGenericParameterTypes();
+		IType listlistType = type.resolveType(genericParameterTypes)[0];
+		Method addMethod = List.class.getMethod("add", Object.class);
+		IType addParam = listlistType.resolveType(addMethod.getGenericParameterTypes())[0];
+		Assert.assertEquals(List.class, addParam.getRawType());
+		addParam = addParam.resolveType(addMethod.getGenericParameterTypes())[0];
+		Assert.assertEquals(Integer.class, addParam.getRawType());
+	}
+	
+	@Test
+	public void resolveType_inheriVarType3() throws Exception {
+		Method method = Test1.class.getMethod("mListParam", List.class);
+		IType listType = creator.forType(method.getGenericParameterTypes())[0];
+		Method addMethod = List.class.getMethod("add", Object.class);
+		IType addParamType = listType.resolveType(addMethod.getGenericParameterTypes())[0];
+		Assert.assertEquals(Integer.class, addParamType.getRawType());
+	}
+	
+	@Test
 	public void varTypeResolveType_methodWithClassParam() throws Exception {
 		IType type = creator.forParamClass(Test1.class, String.class);
 		Method method = Test1.class.getMethod("methodWithClassParam", Object.class);
-		IType[] itypes = type.resolveType(method.getGenericParameterTypes());
+		Type[] genericParameterTypes = method.getGenericParameterTypes();
+		IType[] itypes = type.resolveType(genericParameterTypes);
 		System.out.println(Arrays.toString(itypes));
 	}
 	
@@ -136,7 +194,8 @@ public class TypeResolverTest extends AbstractGTTest {
 	@Test
 	public void varTypeResolveType_staticMethodWithObjectParam() throws Exception {
 		Method method = Test1.class.getMethod("staticMethodWithObjectParam", Object.class);
-		IType[] itypes = creator.forType(method.getGenericParameterTypes());
+		Type[] genericParameterTypes = method.getGenericParameterTypes();
+		IType[] itypes = creator.forType(genericParameterTypes);
 		System.out.println(Arrays.toString(itypes));
 	}
 	
@@ -174,7 +233,27 @@ public class TypeResolverTest extends AbstractGTTest {
 			
 		}
 		
+		public static <T> void staticMethodWithTest1Param(Test1<T> param) {
+			
+		}
+		
 		public static void wildcardMethod(Test1<? extends AbstractList<?>> test1) {
+			
+		}
+		
+		public static void missingInfoClassMethod(Test1 test1) {
+			
+		}
+		
+		public static void mMapParam(Map<Integer, List<String>> map) {
+			
+		}
+		
+		public static void mListListParam(List<List<Integer>> list) {
+			
+		}
+		
+		public static void mListParam(List<Integer> list) {
 			
 		}
 	}

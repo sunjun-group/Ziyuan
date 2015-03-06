@@ -12,8 +12,9 @@
 	<properties>
 		<java-quickcheck-version>0.6</java-quickcheck-version>
 		<guava-version>18.0</guava-version>
-		<reflections-version>0.9.9-RC2</reflections-version>
+		<reflections-version>0.9.8</reflections-version>
 		<guice-version>3.0</guice-version>
+		<commons-lang3-version>3.3.2</commons-lang3-version>
 	</properties>
 
 	<build>
@@ -33,14 +34,13 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons-lang3-version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -78,7 +78,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.reflections</groupId>
-			<artifactId>reflections-maven</artifactId>
+			<artifactId>reflections</artifactId>
 			<version>${reflections-version}</version>
 		</dependency>
 		<dependency>

@@ -3,6 +3,8 @@
  */
 package gentest.core.data;
 
+import java.lang.reflect.Type;
+
 
 /**
  * @author LLT
@@ -11,11 +13,16 @@ package gentest.core.data;
 public class LocalVariable {
 	// varId actually is the variable index in its sequence
 	private int varId;
-	private Class<?> type;
+	private Class<?> clazz;
+	private Type type;
 	
-	public LocalVariable(int varId, Class<?> type) {
+	public LocalVariable(int varId, Class<?> clazz, Type type) {
+		
+	}
+	
+	public LocalVariable(int varId, Class<?> clazz) {
 		this.varId = varId;
-		this.type = type;
+		this.clazz = clazz;
 	}
 
 	public int getVarId() {
@@ -27,16 +34,12 @@ public class LocalVariable {
 	}
 
 	public Class<?> getType() {
-		return type;
-	}
-
-	public void setType(Class<?> type) {
-		this.type = type;
+		return clazz;
 	}
 
 	@Override
 	public int hashCode() {
-		/* we assume that varId in a sequence is unique */
+		/* varId in a sequence is unique */
 		return varId;
 	}
 
