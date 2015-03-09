@@ -5,6 +5,7 @@ package gentest.core;
 
 import gentest.core.data.LocalVariable;
 import gentest.core.data.Sequence;
+import gentest.core.data.dto.IDataProvider;
 import gentest.core.data.type.IType;
 import gentest.core.data.variable.ISelectedVariable;
 import gentest.core.data.variable.ReferenceVariable;
@@ -25,13 +26,14 @@ import com.google.inject.Inject;
  * for that value.
  */
 public class ParameterSelector {
-	private Sequence seq;
+	@Inject
+	private IDataProvider<Sequence> sequenceProvider;
 	
 	@Inject
 	private ValueGeneratorMediator valueGenerator;
 	
-	public void setSequence(Sequence methodDecl) {
-		this.seq = methodDecl;
+	public Sequence getSequence() {
+		return sequenceProvider.getData();
 	}
 	
 	public ISelectedVariable selectReceiver(IType type,
@@ -69,7 +71,7 @@ public class ParameterSelector {
 	 * previous method call.
 	 */
 	private ISelectedVariable selectReferenceParam(IType type) {
-		LocalVariable randomVisibleVar = Randomness.randomMember(seq
+		LocalVariable randomVisibleVar = Randomness.randomMember(getSequence()
 				.getVariablesByType(type));
 		return new ReferenceVariable(randomVisibleVar);
 	}
@@ -80,7 +82,7 @@ public class ParameterSelector {
 	 * Otherwise, just exclude REFERENCE option out of selectionMode.
 	 */
 	public SelectionMode randomChooseSelectorType(IType type) {
-		List<LocalVariable> existedVars = seq.getVariablesByType(type);
+		List<LocalVariable> existedVars = getSequence().getVariablesByType(type);
 		if (CollectionUtils.isEmpty(existedVars)) {
 			return SelectionMode.GENERATE_NEW;
 		}

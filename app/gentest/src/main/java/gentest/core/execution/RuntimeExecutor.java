@@ -19,15 +19,9 @@ import java.util.List;
  */
 public class RuntimeExecutor extends VariableRuntimeExecutor implements
 		StatementVisitor {
-	protected Sequence sequence;
 	
 	public RuntimeExecutor() {
 		data = new RuntimeData();
-	}
-
-	public void reset(Sequence sequence) {
-		super.reset();
-		this.sequence = sequence;
 	}
 	
 	public boolean execute(Rmethod rmethod, List<ISelectedVariable> selectParams) {
@@ -44,7 +38,4 @@ public class RuntimeExecutor extends VariableRuntimeExecutor implements
 		return successful;
 	}
 	
-	public Sequence getSequence() {
-		return sequence;
-	}
 }

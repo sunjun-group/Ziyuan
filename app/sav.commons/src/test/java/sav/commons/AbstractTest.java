@@ -18,6 +18,8 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.PropertyConfigurator;
@@ -39,9 +41,13 @@ public class AbstractTest {
 	protected static TestConfiguration config = TestConfiguration.getInstance();
 	
 	@BeforeClass
-	public static void init() {
-		PropertyConfigurator.configure(TestConfiguration
-				.getTestResources(SAV_COMMONS) + "/test-log4j.properties");
+	public static void init() throws Exception {
+		ResourceBundle log4jtest = ResourceBundle.getBundle("test-log4j");
+		Properties props = new Properties();
+		for (String key : log4jtest.keySet()) {
+			props.setProperty(key, log4jtest.getString(key));
+		}
+		PropertyConfigurator.configure(props);
 	}
 	
 	public void print(Object... objs) {

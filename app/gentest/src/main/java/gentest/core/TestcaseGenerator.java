@@ -7,6 +7,7 @@ package gentest.core;
 import gentest.core.data.LocalVariable;
 import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
+import gentest.core.data.dto.IDataProvider;
 import gentest.core.data.statement.RqueryMethod;
 import gentest.core.data.type.IType;
 import gentest.core.data.type.ITypeCreator;
@@ -37,13 +38,8 @@ public class TestcaseGenerator {
 	@Inject
 	private ITypeCreator typeCreator;
 	
-	private Sequence seq;
-	
-	private void refresh(Sequence seq) {
-		this.seq = seq;
-		executor.reset(seq);
-		parameterSelector.setSequence(seq);
-	}
+	@Inject
+	private IDataProvider<Sequence> sequenceProvider;
 	
 	/**
 	 * For each method in init list,
@@ -55,7 +51,7 @@ public class TestcaseGenerator {
 	public Sequence generateSequence(List<MethodCall> methods)
 			throws SavException {
 		Sequence seq = new Sequence();
-		refresh(seq);
+		sequenceProvider.setData(seq);
 		/* append sequence for each method */
 		RqueryMethod rmethod = null;
 		ISelectedVariable receiverParam = null;
@@ -128,8 +124,8 @@ public class TestcaseGenerator {
 	private List<ISelectedVariable> selectParams(IType[] paramTypes)
 			throws SavException {
 		List<ISelectedVariable> params = new ArrayList<ISelectedVariable>();
-		int firstStmtIdx = seq.getStmtsSize();
-		int firstVarIdx = seq.getVarsSize();
+		int firstStmtIdx = getSequence().getStmtsSize();
+		int firstVarIdx = getSequence().getVarsSize();
 		for (int i = 0; i < paramTypes.length; i++) {
 			IType paramType = paramTypes[i];
 			ISelectedVariable param = parameterSelector.selectParam(paramType,
@@ -139,6 +135,10 @@ public class TestcaseGenerator {
 			firstVarIdx += param.getNewVariables().size();
 		}
 		return params;
+	}
+	
+	private Sequence getSequence() {
+		return sequenceProvider.getData();
 	}
 	
 	public RuntimeExecutor getExecutor() {

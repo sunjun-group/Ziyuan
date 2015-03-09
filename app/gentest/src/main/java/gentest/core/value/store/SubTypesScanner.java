@@ -8,6 +8,7 @@
 
 package gentest.core.value.store;
 
+import gentest.injection.TestcaseGenerationScope;
 import gentest.main.GentestConstants;
 
 import java.lang.reflect.Modifier;
@@ -36,6 +37,7 @@ import com.google.common.cache.LoadingCache;
  * @author LLT
  *
  */
+@TestcaseGenerationScope
 public class SubTypesScanner implements ISubTypesScanner {
 	private Logger<?> log = Logger.getDefaultLogger();
 	private LoadingCache<Class<?>, Set<Class<?>>> subTypesCache;

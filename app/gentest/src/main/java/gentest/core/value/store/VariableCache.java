@@ -11,6 +11,7 @@ package gentest.core.value.store;
 import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.value.store.iface.IVariableStore;
+import gentest.injection.TestcaseGenerationScope;
 import gentest.main.GentestConstants;
 
 import java.lang.reflect.Type;
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 import sav.common.core.Logger;
 import sav.common.core.utils.CollectionUtils;
@@ -28,6 +28,7 @@ import sav.common.core.utils.Randomness;
 /**
  * @author LLT
  */
+@TestcaseGenerationScope
 public class VariableCache implements IVariableStore {
 	private Logger<?> log = Logger.getDefaultLogger();
 	private Map<Type, List<GeneratedVariable>> generatedVarMap;
@@ -64,10 +65,6 @@ public class VariableCache implements IVariableStore {
 			return new ArrayList<GeneratedVariable>(0);
 		}
 		return result;
-	}
-
-	public void clear() {
-		generatedVarMap.clear();
 	}
 	
 }

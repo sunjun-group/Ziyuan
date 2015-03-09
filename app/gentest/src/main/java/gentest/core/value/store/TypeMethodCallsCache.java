@@ -15,11 +15,13 @@ import java.util.Map;
 
 import gentest.core.data.typeinitilizer.TypeInitializer;
 import gentest.core.value.store.iface.ITypeMethodCallStore;
+import gentest.injection.TestcaseGenerationScope;
 
 /**
  * @author LLT
  *
  */
+@TestcaseGenerationScope
 public class TypeMethodCallsCache implements ITypeMethodCallStore {
 	private Map<Class<?>, TypeInitializer> constructors;
 	private Map<Class<?>, List<List<Method>>> methodCalls;
