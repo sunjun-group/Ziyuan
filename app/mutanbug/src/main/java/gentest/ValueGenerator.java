@@ -4,7 +4,6 @@ import gentest.core.TestcaseGenerator;
 import gentest.core.data.statement.Statement;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.value.generator.ValueGeneratorMediator;
-import gentest.injection.GentestInjector;
 import gentest.junit.AstNodeConverter;
 import gentest.junit.variable.VariableNamer;
 

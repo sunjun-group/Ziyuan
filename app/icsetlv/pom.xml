@@ -70,6 +70,14 @@
 		</plugins>
 	</build>
 
+	<repositories>
+		<repository>
+			<id>devel</id>
+			<name>devel</name>
+			<url>http://devel.summitsystemsinc.net/artifactory/repo</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.sun</groupId>
@@ -111,8 +119,8 @@
 		<dependency>
 			<groupId>net.sourceforge</groupId>
 			<artifactId>javaml</artifactId>
+			<version>${javaml-version}</version>
 		</dependency>
-
 		<!-- commons -->
 		<dependency>
 			<groupId>tzuyu-project</groupId>
@@ -125,7 +133,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>tzuyu-project</groupId>
+			<groupId>tzuyu-project</groupId>
 			<artifactId>svmlib</artifactId>
 		</dependency>
 	</dependencies>

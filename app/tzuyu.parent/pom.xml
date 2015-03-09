@@ -38,11 +38,6 @@
 			<layout>p2</layout>
 			<url>http://download.eclipse.org/releases/indigo</url>
 		</repository>
-		<repository>
-			<id>devel</id>
-			<name>devel</name>
-			<url>http://devel.summitsystemsinc.net/artifactory/repo</url>
-		</repository>
 	</repositories>
 
 	<modules>
@@ -60,7 +55,7 @@
  		<module>../faultLocalization</module>
  		<module>../extcos</module>
  		<module>../svmlib</module>
- 		<module>../icsetlv</module> 
+<!--  		<module>../icsetlv</module>  -->
 	</modules>
 
 	<build>
@@ -208,11 +203,6 @@
 				<groupId>tw.edu.ntu.csie</groupId>
 				<artifactId>libsvm</artifactId>
 				<version>${svm-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>net.sourceforge</groupId>
-				<artifactId>javaml</artifactId>
-				<version>${javaml-version}</version>
 			</dependency>
 			<!-- icsetlv - wala -->
 			<dependency>

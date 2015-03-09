@@ -44,15 +44,9 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 	}
 	
 	public void reset(int firstVarId) {
-		reset();
 		data.setFirstVarId(firstVarId);
 	} 
 	
-	public void reset() {
-		successful = null;
-		data.reset();
-	}
-
 	public boolean start(ISelectedVariable receiver) {
 		log.debug("start runtime execution");
 		if (successful == null) {

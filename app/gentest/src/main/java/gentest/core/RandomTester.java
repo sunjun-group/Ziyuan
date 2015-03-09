@@ -5,7 +5,8 @@ package gentest.core;
 
 import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
-import gentest.injection.GentestInjector;
+import gentest.injection.GentestModules;
+import gentest.injection.TestcaseGenerationScope;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ import com.google.inject.Injector;
  *
  */
 public class RandomTester {
-	private GentestInjector injectorModule = new GentestInjector();
+	private GentestModules injectorModule = new GentestModules();
 	private GentestListener listener;
 	// max length of joined methods.
 	private int queryMaxLength;
@@ -42,6 +43,8 @@ public class RandomTester {
 	 */
 	public Pair<List<Sequence>, List<Sequence>> test(
 			List<MethodCall> methodcalls) throws SavException {
+		injectorModule.enter(TestcaseGenerationScope.class);
+		
 		List<Sequence> passTcs = new ArrayList<Sequence>();
 		List<Sequence> failTcs = new ArrayList<Sequence>();
 		TestcaseGenerator tcGenerator = getTestcaseGenerator();
@@ -64,13 +67,9 @@ public class RandomTester {
 			testsOnQuery++;
 		}
 		
-		afterTest();
+		injectorModule.exit(TestcaseGenerationScope.class);
 		return new Pair<List<Sequence>, List<Sequence>>(
 				passTcs, failTcs);
-	}
-
-	private void afterTest() {
-		injectorModule.release();
 	}
 
 	private TestcaseGenerator getTestcaseGenerator() {

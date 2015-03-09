@@ -9,6 +9,7 @@
 package sav.commons;
 
 
+import sav.common.core.Constants;
 import sav.common.core.utils.StringUtils;
 import sav.commons.utils.TestConfigUtils;
 
@@ -35,7 +36,7 @@ public class TestConfiguration {
 	public static String TESTDATA_CSV;
 	
 	static {
-		TRUNK = TestConfigUtils.getConfig("trunk");
+		TRUNK = getTrunk();
 		ETC = TRUNK + "/etc/";
 		APP = TRUNK + "/app/";
 		JUNIT_LIB = TRUNK + "/app/icsetlv/src/test/lib/*";
@@ -43,6 +44,15 @@ public class TestConfiguration {
 		JAVA_HOME = TestConfigUtils.getJavaHome();
 		TESTCASE_BASE = TestConfigUtils.getConfig(PROPERTY_TESTCASE_BASE);
 		TESTDATA_CSV  = ETC + "testdata.csv";
+	}
+
+	private static String getTrunk() {
+		String userdir = System.getProperty("user.dir");
+		int indexOfapp = userdir.indexOf(Constants.FILE_SEPARATOR + "app");
+		if (indexOfapp < 0) {
+			return TestConfigUtils.getConfig("trunk");
+		}
+		return userdir.substring(0, indexOfapp);
 	}
 
 	public static String getTzAssembly(String assemblyName) {
