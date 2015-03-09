@@ -38,6 +38,7 @@ public class MachineSimpleTests {
 
 	@Test
 	public void testWithRandomData() {
+		LOGGER.info("===========[testWithRandomData]===========");
 		for (int i = 0; i < NUMBER_OF_DATA_POINTS; i++) {
 			final double[] values = { Math.random(), Math.random() };
 			final Category category = Category.random();
@@ -52,10 +53,15 @@ public class MachineSimpleTests {
 
 		Assert.assertTrue("Improved algorithm produces lower accuracy model than normal one.",
 				Double.compare(normalModelAccuracy, improvedModelAccuracy) <= 0);
+		
+		LOGGER.info("Learned logic:");
+		LOGGER.info("Normal machine: " + normalMachine.getLearnedLogic());
+		LOGGER.info("Improved machine: " + improvedMachine.getLearnedLogic());
 	}
 
 	@Test
 	public void testWithSingleLinearLineSeparableData() {
+		LOGGER.info("===========[testWithSingleLinearLineSeparableData]===========");
 		// Separator: 2x + 3y = 10
 		for (int i = 0; i < NUMBER_OF_DATA_POINTS; i++) {
 			final Category category = Category.random();
@@ -94,10 +100,16 @@ public class MachineSimpleTests {
 		// And the two results should be the same
 		Assert.assertTrue("Inconsistent results.",
 				Double.compare(normalModelAccuracy, improvedModelAccuracy) == 0);
+		
+		LOGGER.info("Learned logic:");
+		LOGGER.info("Normal machine: " + normalMachine.getLearnedLogic());
+		LOGGER.info("Improved machine: " + improvedMachine.getLearnedLogic());
 	}
 
 	@Test
 	public void testWithTwoLinearSeparableData() {
+		LOGGER.info("===========[testWithTwoLinearSeparableData]===========");
+		
 		// x => 3 ^ y <= 5 are considered POSITIVE
 		int countPositive = 0, countNegative = 0;
 		for (int i = 0; i < NUMBER_OF_DATA_POINTS; i++) {
@@ -113,7 +125,7 @@ public class MachineSimpleTests {
 			positiveSeparationMachine.addDataPoint(category, x, y);
 		}
 
-		LOGGER.log(Level.DEBUG, "Possitive cases =" + countPositive);
+		LOGGER.log(Level.DEBUG, "Positive cases =" + countPositive);
 		LOGGER.log(Level.DEBUG, "Negative cases =" + countNegative);
 
 		final double normalModelAccuracy = normalMachine.train().getModelAccuracy();
@@ -126,5 +138,9 @@ public class MachineSimpleTests {
 				"Improved algorithm does not produce higer accuracy model than normal one."
 						+ " Normal:" + normalModelAccuracy + "; Improved:" + improvedModelAccuracy,
 				Double.compare(normalModelAccuracy, improvedModelAccuracy) < 0);
+
+		LOGGER.info("Learned logic:");
+		LOGGER.info("Normal machine: " + normalMachine.getLearnedLogic());
+		LOGGER.info("PS machine: " + positiveSeparationMachine.getLearnedLogic());
 	}
 }
