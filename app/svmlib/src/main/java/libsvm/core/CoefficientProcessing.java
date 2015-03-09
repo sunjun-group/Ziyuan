@@ -14,14 +14,18 @@ package libsvm.core;
  */
 public class CoefficientProcessing {
 
+	//keep 9 digit in decimal
+	private static int NUMBER_DECIMAL_TO_KEEP = 1000000000;
 	private static final int BOUND_MIN_COEFFICIENT = 100;
 	private static final double EPSILON = Math.pow(10, -1);
 	
 	public double[] process(Divider divider){
 		double[] thetas = getFullThetas(divider);
+		thetas = round(thetas);
 		thetas = pivotMinCoefficient(thetas);
+		thetas = integerRound(thetas);
 		
-		return integerRound(thetas);
+		return thetas;
 	}
 
 	private double[] getFullThetas(Divider divider) {
@@ -35,6 +39,15 @@ public class CoefficientProcessing {
 		return thetas;
 	}
 	
+	private double[] round(double[] thetas){
+		double[] result = new double[thetas.length];
+		for(int i = 0; i < thetas.length; i++){
+			result[i] = (double) Math.round(thetas[i] * NUMBER_DECIMAL_TO_KEEP) / NUMBER_DECIMAL_TO_KEEP;
+		}
+		
+		return result;
+	}
+	
 	private double[] pivotMinCoefficient(double[] thetas) {
 		double min = Double.MAX_VALUE;
 		for(int i = 0; i < thetas.length; i++){
@@ -44,19 +57,13 @@ public class CoefficientProcessing {
 			}
 		}
 		
-		if(min < 1){
-			double[] result = new double[thetas.length];
-			for(int i = 0; i < thetas.length; i++){
-				result[i] = thetas[i] / min;
-			}
-			
-			return result;
+		double[] result = new double[thetas.length];
+		for(int i = 0; i < thetas.length; i++){
+			result[i] = thetas[i] / min;
 		}
-		else{
-			return thetas;
-		}
+		
+		return result;
 	}
-
 	
 	/**
 	 * Only make the coefficient of variables as integer

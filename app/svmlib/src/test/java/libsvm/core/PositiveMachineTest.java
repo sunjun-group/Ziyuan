@@ -33,8 +33,14 @@ public class PositiveMachineTest extends TestUltility{
 	}
 	
 	@Test
-	public void whenRequireManyDuplicateDividers() {
+	public void whenContainsManyDuplicateDividers() {
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ManyDuplicatedCuts.txt");
 		runTest(new PositiveSeparationMachine(), 3, new double[]{3, 7, 19, 80}, inputStream);
 	}
+	
+//	@Test
+//	public void whenRequireTwoDividers() {
+//		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("RequireTwoDividers.txt");
+//		runTest(new PositiveSeparationMachine(), 2, new double[]{3, 7, 80}, inputStream);
+//	}
 }

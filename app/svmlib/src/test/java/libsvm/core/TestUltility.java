@@ -9,6 +9,8 @@
 package libsvm.core;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import org.apache.log4j.Level;
@@ -72,7 +74,7 @@ public class TestUltility {
 		LOGGER.log(Level.DEBUG, "Normal SVM:" + normalModelAccuracy);
 		
 		LOGGER.info("Learned logic:");
-		LOGGER.info("Normal machine:\n" + machine.getLearnedLogic());
+		LOGGER.info(machine.getLearnedLogic());
 	}
 	
 	private void checkLastDivider(double[] expectedCoefficients) {
@@ -93,4 +95,38 @@ public class TestUltility {
 			Assert.assertTrue(errorRate < EPSILON);
 		}
 	}
+	
+//	public void templateToGenerateRandomData(){
+//		//x + y >= 5;
+//		//-5x + 3y >= -10
+//		List<int[]> positives = new ArrayList<int[]>();
+//		List<int[]> negatives = new ArrayList<int[]>();
+//		for(int i = -20; i <= 20; i++){
+//			for(int j = -20; j <= 20; j++){
+//				if(i + j >= 5 && -5*i + 3*j >= -10){
+//					positives.add(new int[]{i, j});
+//				}
+//				else{
+//					negatives.add(new int[]{i, j});
+//				}
+//			}
+//		}
+//		
+//		logPoints(positives);
+//		logPoints(negatives);
+//	}
+//
+//	/**
+//	 * @param points
+//	 */
+//	private void logPoints(List<int[]> points) {
+//		LOGGER.info(points.size());
+//		for(int[] point: points){
+//			StringBuilder line = new StringBuilder();
+//			for(int number: point){
+//				line.append(number + " ");
+//			}
+//			LOGGER.info(line);
+//		}
+//	}
 }
