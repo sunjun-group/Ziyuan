@@ -1,65 +1,36 @@
 package libsvm.core;
 
-import java.util.Arrays;
-import java.util.Random;
-
-import libsvm.extension.MultiCutMachine;
-import libsvm.extension.PositiveSeparationMachine;
-
+import java.io.InputStream;
+import java.util.Scanner;
 import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-public class MachineSimpleTests {
-
-	private static final Logger LOGGER = Logger.getLogger(MachineSimpleTests.class);
-
-	private static final int NUMBER_OF_FEATURES = 2;
-	private static final int NUMBER_OF_DATA_POINTS = 1000;
-	
-	private static final Random RANDOM = new Random();
+public class MachineSimpleTests extends TestUltility{
 
 	private Machine normalMachine;
-	private Machine improvedMachine;
-	private Machine positiveSeparationMachine;
-
-	@Before
-	public void prepareMachinesForTwoFeatures() {
-		normalMachine = setupMachine(new Machine(), NUMBER_OF_FEATURES);
-		improvedMachine = setupMachine(new MultiCutMachine(), NUMBER_OF_FEATURES);
-		positiveSeparationMachine = setupMachine(new PositiveSeparationMachine(), NUMBER_OF_FEATURES);
-	}
-
-	private Machine setupMachine(final Machine machine, int numberOfFeatures) {
-		return machine.setNumberOfFeatures(numberOfFeatures).setParameter(
-				new Parameter().setMachineType(MachineType.C_SVC).setKernelType(KernelType.LINEAR)
-						.setEps(1.0).setUseShrinking(false).setPredictProbability(false));
-	}
-
-
 	
 	@Test
 	public void whenThereAreTwoFeatures() {
+		normalMachine = setupMachine(new Machine(), 2);
+		
 		// Separator: ax + by = c
-		int a=  2;
-		int b = 3;
-		int c = 15;
 		int x, y;
-		for (int i = 0; i < NUMBER_OF_DATA_POINTS; i++) {
+		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("TwoFeatures.txt");
+		Scanner scanner = new Scanner(inputStream);
+		int numberOfPositivePoints = scanner.nextInt();
+		
+		for (int i = 0; i < numberOfPositivePoints; i++) {
 			Category category = Category.POSITIVE;
-			x = i;
-			y = (c - a * x) / b - 1;
-
+			x = scanner.nextInt();
+			y = scanner.nextInt();
 			normalMachine.addDataPoint(category, x, y);
 		}
-		
-		for (int i = 0; i < NUMBER_OF_DATA_POINTS; i++) {
-			Category category = Category.NEGATIVE;
-			x = i;
-			y = (c - a * x) / b + 1;
 
+		int numberOfNegativePoints = scanner.nextInt();
+		for (int i = 0; i < numberOfNegativePoints; i++) {
+			Category category = Category.NEGATIVE;
+			x = scanner.nextInt();
+			y = scanner.nextInt();
 			normalMachine.addDataPoint(category, x, y);
 		}
 
@@ -67,13 +38,12 @@ public class MachineSimpleTests {
 		LOGGER.log(Level.DEBUG, "Normal SVM:" + normalModelAccuracy);
 		
 		LOGGER.info("Learned logic:");
-		LOGGER.info("Normal machine: " + normalMachine.getLearnedLogic());
+		LOGGER.info("Normal machine:\n" + normalMachine.getLearnedLogic());
 		
 		Divider divider = normalMachine.getModel().getExplicitDivider();
 		double[] expectedCoefficients = new double[]{-2, -3, -15};
 		
 		double[] coefficients = new CoefficientProcessing().process(divider);
-		LOGGER.info("After trying to make result as integer: " + Arrays.toString(coefficients));
 		compareCoefficients(expectedCoefficients, coefficients);
 	}
 
@@ -82,25 +52,27 @@ public class MachineSimpleTests {
 		normalMachine = setupMachine(new Machine(), 3);
 		
 		// Separator: ax + by + cz = d
-		int a =  3;
-		int b = 7;
-		int c = 19;
-		int d = 80;
 		int x, y, z;
-		for (int i = 0; i < NUMBER_OF_DATA_POINTS; i++) {
+		
+		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ThreeFeatures.txt");
+		Scanner scanner = new Scanner(inputStream);
+		int numberOfPositivePoints = scanner.nextInt();
+		
+		for (int i = 0; i < numberOfPositivePoints; i++) {
 			Category category = Category.POSITIVE;
-			x = (int)(NUMBER_OF_DATA_POINTS * Math.random());
-			y = (int)(NUMBER_OF_DATA_POINTS * Math.random());
-			z = (d - a * x - b * y) / c + 1;
+			x = scanner.nextInt();
+			y = scanner.nextInt();
+			z = scanner.nextInt();
 
 			normalMachine.addDataPoint(category, x, y, z);
 		}
 		
-		for (int i = 0; i < NUMBER_OF_DATA_POINTS; i++) {
+		int numberOfNegativePoints = scanner.nextInt();
+		for (int i = 0; i < numberOfNegativePoints; i++) {
 			Category category = Category.NEGATIVE;
-			x = (int)(NUMBER_OF_DATA_POINTS * Math.random());
-			y = (int)(NUMBER_OF_DATA_POINTS * Math.random());
-			z = (d - a * x - b * y) / c - 1;
+			x = scanner.nextInt();
+			y = scanner.nextInt();
+			z = scanner.nextInt();
 
 			normalMachine.addDataPoint(category, x, y, z);
 		}
@@ -109,13 +81,12 @@ public class MachineSimpleTests {
 		LOGGER.log(Level.DEBUG, "Normal SVM:" + normalModelAccuracy);
 		
 		LOGGER.info("Learned logic:");
-		LOGGER.info("Normal machine: " + normalMachine.getLearnedLogic());		
+		LOGGER.info("Normal machine:\n" + normalMachine.getLearnedLogic());		
 		
 		Divider divider = normalMachine.getModel().getExplicitDivider();
 		double[] expectedCoefficients = new double[]{3, 7, 19, 80};
 		
 		double[] coefficients = new CoefficientProcessing().process(divider);
-		LOGGER.info("After trying to make result as integer: " + Arrays.toString(coefficients));
 		compareCoefficients(expectedCoefficients, coefficients);
 	}
 	
@@ -180,16 +151,5 @@ public class MachineSimpleTests {
 //		LOGGER.info("PS machine: " + positiveSeparationMachine.getLearnedLogic());
 //	}
 	
-	/**
-	 * @param expectedCoefficients
-	 * @param coefficients
-	 */
-	private void compareCoefficients(double[] expectedCoefficients,
-			double[] coefficients) {
-		double EPSILON = 0.2;
-		for(int i = 0; i < coefficients.length; i++){
-			double errorRate = Math.abs((coefficients[i] - expectedCoefficients[i]) / expectedCoefficients[i]);
-			Assert.assertTrue(errorRate < EPSILON);
-		}
-	}
+
 }

@@ -246,36 +246,26 @@ public class Machine {
 	
 	protected String getLearnedLogic(final Divider divider, final DataPoint sampleDataPoint) {
 		StringBuilder str = new StringBuilder();
+		CoefficientProcessing coefficientProcessing = new CoefficientProcessing();
+		double[] thetas = coefficientProcessing.process(divider);
 		
-		final double[] thetas = divider.getThetas();
-		Assert.assertTrue(thetas.length == dataLabels.size());
-		for (int i = 0; i < thetas.length; i++) {
-			if (Double.compare(thetas[i], 0.0) != 0) {
-				if (str.length() > 0) {
+		for(int i = 0; i < thetas.length - 1; i++){
+			if(thetas[i] != 0){
+				if (str.length() > 0 && thetas[i] > 0) {
 					str.append(" + ");
 				}
+				
+				if(thetas[i] < 0){
+					str.append(" ");
+				}
+				
 				str.append(thetas[i]);
-				str.append(" * ");
+				str.append("*");
 				str.append(dataLabels.get(i));
 			}
 		}
-		
-		final Category category = calculateCategory(sampleDataPoint, model, null);
-		final double value = divider.valueOf(sampleDataPoint);
-		if (Category.POSITIVE == category) {
-			if (Double.compare(value, divider.getTheta0()) >= 0) {
-				str.append(" >= ");
-			} else {
-				str.append(" < ");
-			}
-		} else {
-			if (Double.compare(value, divider.getTheta0()) >= 0) {
-				str.append(" < ");
-			} else {
-				str.append(" >= ");
-			}
-		}
-		str.append(divider.getTheta0());
+		str.append(" >= ");
+		str.append(thetas[thetas.length - 1]);
 		
 		return str.toString();
 	}

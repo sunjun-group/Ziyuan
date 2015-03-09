@@ -99,7 +99,7 @@ public class PositiveSeparationMachine extends Machine {
 			final Divider explicitDivider = new Model(svmModel, randomData.getNumberOfFeatures())
 					.getExplicitDivider();
 			if (str.length() != 0) {
-				str.append(" ^ ");
+				str.append("\n");
 			}
 			str.append(getLearnedLogic(explicitDivider, randomData));
 		}
