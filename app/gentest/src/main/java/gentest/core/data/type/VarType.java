@@ -10,8 +10,11 @@ package gentest.core.data.type;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.HashMap;
+import java.util.Map;
 
-import sav.common.core.utils.ClassUtils;
+import org.apache.commons.lang3.reflect.TypeUtils;
+
 import sav.common.core.utils.CollectionUtils;
 
 /**
@@ -20,24 +23,19 @@ import sav.common.core.utils.CollectionUtils;
  */
 public class VarType implements IType {
 	private Class<?> rawType;
-	private Type type;
+	private Type genericType;
 	private VarTypeResolver resolver;
 	private VarTypeCreator creator;
-
+	
 	VarType(VarTypeResolver resolver, Class<?> clazz, Class<?>... paramTypes) {
 		setResolver(resolver);
 		rawType = clazz;
+		resolver.visitType(rawType);
 		if (CollectionUtils.isNotEmpty(paramTypes)) {
 			resolver.assignParamTypes(clazz, paramTypes);
 		}
 	}
 	
-	//TODO LLT: to remove
-	public VarType(VarTypeResolver resolver, Class<?> clazz, Type type) {
-		this(resolver, clazz);
-		this.type = type;
-	}
-
 	@Override
 	public Class<?> getRawType() {
 		return rawType;
@@ -45,20 +43,24 @@ public class VarType implements IType {
 
 	@Override
 	public Type getType() {
-		return type;
+		if (genericType == null) {
+			TypeVariable<?>[] typeParameters = rawType.getTypeParameters();
+			if (CollectionUtils.isEmpty(typeParameters)) {
+				return rawType;
+			}
+			Map<TypeVariable<?>, Type> typeMap = new HashMap<TypeVariable<?>, Type>();
+			for (TypeVariable<?> paramType : typeParameters) {
+				typeMap.put(paramType, getResolver().resolve(paramType));
+			}
+			genericType = TypeUtils.parameterize(rawType, typeMap);
+		}
+		return genericType; 
+		
 	}
 
 	@Override
 	public IType resolveType(Class<?> a) {
-		if (ClassUtils.isAupperB(rawType, a)) {
-			return resolveSubType(a);
-		}
-		TypeVariable<?>[] typeParameters = a.getTypeParameters();
-		if (CollectionUtils.isNotEmpty(typeParameters)) {
-			Class<?>[] paramTypes = getResolver().resolve(typeParameters);
-			return creator.forParamClass(a, paramTypes);
-		}
-		return creator.forClass(a);
+		return creator.forType(a, rawType, getResolver());
 	}
 
 	public IType resolveSubType(Class<?> a) {
@@ -74,7 +76,7 @@ public class VarType implements IType {
 
 	@Override
 	public IType resolveType(Type type) {
-		return creator.forType(type, resolver);
+		return creator.forType(type, rawType, getResolver());
 	}
 	
 	@Override
@@ -86,9 +88,7 @@ public class VarType implements IType {
 		return types;
 	}
 
-	
-	private VarTypeResolver getResolver() {
-		resolver.visitType(rawType);
+	protected VarTypeResolver getResolver() {
 		return resolver;
 	}
 	

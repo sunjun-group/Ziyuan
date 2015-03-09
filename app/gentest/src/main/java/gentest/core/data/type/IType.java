@@ -16,7 +16,6 @@ import java.lang.reflect.Type;
  *
  */
 public interface IType {
-	//TODO LLT[gentest clean up]: to remove this method
 	public Type getType();
 	
 	public Class<?> getRawType();

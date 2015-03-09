@@ -15,6 +15,8 @@ import java.lang.reflect.Type;
  * 
  */
 public interface ITypeCreator {
+	public IType forType(Type type, Type... paramTypes);
+	
 	public IType forClass(Class<?> type);
 
 	public IType[] forType(Type[] genericParameterTypes);
