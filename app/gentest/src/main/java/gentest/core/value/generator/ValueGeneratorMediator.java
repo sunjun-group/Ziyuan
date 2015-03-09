@@ -35,6 +35,8 @@ public class ValueGeneratorMediator {
 	private ISubTypesScanner subTypeScanner;
 	@Inject
 	private ITypeMethodCallStore typeMethodCallsStore;
+	@Inject
+	private PrimitiveValueGenerator primitiveGenerator;
 	
 	public GeneratedVariable generate(IType type, 
 			int firstVarId, boolean isReceiver) throws SavException {
@@ -77,7 +79,7 @@ public class ValueGeneratorMediator {
 			variable = rootVariable.newVariable();
 			/* generate the new one*/
 			if (PrimitiveValueGenerator.accept(type.getRawType())) {
-				goodVariable = PrimitiveValueGenerator.doAppend(variable, level, type.getRawType());
+				goodVariable = primitiveGenerator.doAppend(variable, level, type.getRawType());
 			}  else if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL) {
 				ValueGenerator.assignNull(variable, type.getRawType());
 			} else {
@@ -128,4 +130,7 @@ public class ValueGeneratorMediator {
 		this.typeMethodCallsStore = typeMethodCallsStore;
 	}
 
+	public void setPrimitiveGenerator(PrimitiveValueGenerator primitiveGenerator) {
+		this.primitiveGenerator = primitiveGenerator;
+	}
 }

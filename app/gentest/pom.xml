@@ -10,8 +10,6 @@
 	</parent>
 
 	<properties>
-		<java-quickcheck-version>0.6</java-quickcheck-version>
-		<guava-version>18.0</guava-version>
 		<reflections-version>0.9.8</reflections-version>
 		<guice-version>3.0</guice-version>
 		<commons-lang3-version>3.3.2</commons-lang3-version>
@@ -45,16 +43,6 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.java</groupId>
-			<artifactId>quickcheck</artifactId>
-			<version>${java-quickcheck-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${guava-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.javaparser</groupId>
