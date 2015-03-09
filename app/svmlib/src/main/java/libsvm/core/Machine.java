@@ -250,7 +250,7 @@ public class Machine {
 		final double[] thetas = divider.getThetas();
 		Assert.assertTrue(thetas.length == dataLabels.size());
 		for (int i = 0; i < thetas.length; i++) {
-			if (Double.compare(thetas[i], 0.0) == 0) {
+			if (Double.compare(thetas[i], 0.0) != 0) {
 				if (str.length() > 0) {
 					str.append(" + ");
 				}
