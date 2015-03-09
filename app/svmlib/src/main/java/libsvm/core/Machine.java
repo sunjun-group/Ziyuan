@@ -307,10 +307,10 @@ public class Machine {
 		}
 
 		public void setValues(final double... values) {
+			if(values.length != numberOfFeatures){
+				throw new InvalidParameterException("The array values must have exactly " + numberOfFeatures + " number of elements");
+			}
 			for (int i = 0; i < values.length; i++) {
-				if (i == numberOfFeatures) {
-					break;
-				}
 				this.values[i] = values[i];
 			}
 		}
