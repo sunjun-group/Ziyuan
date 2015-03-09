@@ -37,24 +37,31 @@ public class PrimitiveGeneratorFactory {
 			generator = getGeneratorIfString(key);
 		}
 		if (generator == null) {
-			generator = getGeneratorIfEnum(key);
-		}
-		if (generator == null) {
 			throw new SavRtException("Primitive value generator for type " + key + " is not defined!");
 		}
 		return generator;
 	}
 	
-	private PrimitiveGenerator<?> getGeneratorIfEnum(Class<?> key) {
+	public PrimitiveGenerator<?> getGeneratorIfEnum(Class<?> key) {
 		if (TypeUtils.isEnum(key)) {
-			return new EnumGenerator(key);
+			PrimitiveGenerator<?> generator = generators.get(Enum.class);
+			if (generator == null) {
+				generator = new EnumGenerator();
+				generators.put(String.class, generator);
+			}
+			return generator;
 		}
 		return null;
 	}
 
 	private PrimitiveGenerator<?> getGeneratorIfString(Class<?> key) {
 		if (TypeUtils.isString(key)) {
-			return new StringGenerator();
+			PrimitiveGenerator<?> generator = generators.get(String.class);
+			if (generator == null) {
+				generator = new StringGenerator();
+				generators.put(String.class, generator);
+			}
+			return generator;
 		}
 		return null;
 	}
@@ -106,6 +113,10 @@ public class PrimitiveGeneratorFactory {
 		
 		public PrimitiveGenerator() {
 			random = new Random(System.currentTimeMillis());
+		}
+		
+		public T next(Class<?> type) {
+			return next();
 		}
 	}
 	
@@ -188,18 +199,17 @@ public class PrimitiveGeneratorFactory {
 	}
 	
 	private static class EnumGenerator extends PrimitiveGenerator<Enum<?>> {
-		private Class<?> type;
 		
-		private EnumGenerator(Class<?> type) {
-			this.type = type;
+		@Override
+		public Enum<?> next(Class<?> type) {
+			Object[] constValues = type.getEnumConstants();
+			int index = random.nextInt(constValues.length);
+			return (Enum<?>) constValues[index];
 		}
 		
 		@Override
 		public Enum<?> next() {
-			Class<?> eType = type;
-			Object[] constValues = eType.getEnumConstants();
-			int index = random.nextInt(constValues.length);
-			return (Enum<?>) constValues[index];
+			throw new SavRtException("next() function is not supported for enum, call next(Class<?> type) instead");
 		}
 		
 	}

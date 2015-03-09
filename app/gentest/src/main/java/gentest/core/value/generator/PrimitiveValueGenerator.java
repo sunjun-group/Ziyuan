@@ -11,6 +11,7 @@ package gentest.core.value.generator;
 import gentest.core.commons.utils.TypeUtils;
 import gentest.core.data.statement.RAssignment;
 import gentest.core.data.variable.GeneratedVariable;
+import gentest.core.value.generator.PrimitiveGeneratorFactory.PrimitiveGenerator;
 import gentest.main.GentestConstants;
 import sav.common.core.SavException;
 import sav.common.core.utils.Randomness;
@@ -42,7 +43,13 @@ public class PrimitiveValueGenerator {
 			type = Randomness
 					.randomMember(GentestConstants.DELEGATING_CANDIDATES_FOR_OBJECT);
 		}
-		Object value = generatorFactory.getGenerator(type).next();
+		Object value = null;
+		PrimitiveGenerator<?> generator = generatorFactory.getGenerator(type);
+		if (generator != null) {
+			value = generator.next(type);
+		} else {
+			value = generatorFactory.getGenerator(type).next();
+		}
 		variable.append(RAssignment.assignmentFor(type, value));
 		return true;
 	}
