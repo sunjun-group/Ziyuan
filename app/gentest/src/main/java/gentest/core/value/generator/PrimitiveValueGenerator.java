@@ -8,7 +8,6 @@
 
 package gentest.core.value.generator;
 
-import gentest.core.ParamGeneratorFactory;
 import gentest.core.commons.utils.TypeUtils;
 import gentest.core.data.statement.RAssignment;
 import gentest.core.data.variable.GeneratedVariable;
@@ -16,15 +15,17 @@ import gentest.main.GentestConstants;
 import sav.common.core.SavException;
 import sav.common.core.utils.Randomness;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 /**
  * @author LLT
  *
  */
+@Singleton
 public class PrimitiveValueGenerator {
-	protected static ParamGeneratorFactory generatorFactory = ParamGeneratorFactory.getInstance();
-	private PrimitiveValueGenerator() {
-		
-	}
+	@Inject
+	private PrimitiveGeneratorFactory generatorFactory;
 	
 	public static boolean accept(Class<?> clazz) {
 		return TypeUtils.isPrimitive(clazz) 
@@ -35,18 +36,22 @@ public class PrimitiveValueGenerator {
 
 	}
 
-	public static boolean doAppend(GeneratedVariable variable, int level, Class<?> type)
+	public boolean doAppend(GeneratedVariable variable, int level, Class<?> type)
 			throws SavException {
 		if (Object.class.equals(type)) {
 			type = Randomness
 					.randomMember(GentestConstants.DELEGATING_CANDIDATES_FOR_OBJECT);
 		}
-		Object value = generatorFactory.getGeneratorFor(type).next();
+		Object value = generatorFactory.getGenerator(type).next();
 		variable.append(RAssignment.assignmentFor(type, value));
 		return true;
 	}
 
 	private static boolean isObject(Class<?> clazz) {
 		return Object.class.equals(clazz);
+	}
+		
+	public void setGeneratorFactory(PrimitiveGeneratorFactory generatorFactory) {
+		this.generatorFactory = generatorFactory;
 	}
 }
