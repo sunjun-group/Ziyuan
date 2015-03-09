@@ -24,14 +24,14 @@ public class MachineSimpleTests {
 	private Machine positiveSeparationMachine;
 
 	@Before
-	public void prepareMachines() {
-		normalMachine = setupMachine(new Machine());
-		improvedMachine = setupMachine(new MultiCutMachine());
-		positiveSeparationMachine = setupMachine(new PositiveSeparationMachine());
+	public void prepareMachinesForTwoFeatures() {
+		normalMachine = setupMachine(new Machine(), NUMBER_OF_FEATURES);
+		improvedMachine = setupMachine(new MultiCutMachine(), NUMBER_OF_FEATURES);
+		positiveSeparationMachine = setupMachine(new PositiveSeparationMachine(), NUMBER_OF_FEATURES);
 	}
 
-	private Machine setupMachine(final Machine machine) {
-		return machine.setNumberOfFeatures(NUMBER_OF_FEATURES).setParameter(
+	private Machine setupMachine(final Machine machine, int numberOfFeatures) {
+		return machine.setNumberOfFeatures(numberOfFeatures).setParameter(
 				new Parameter().setMachineType(MachineType.C_SVC).setKernelType(KernelType.LINEAR)
 						.setEps(1.0).setUseShrinking(false).setPredictProbability(false));
 	}
@@ -58,54 +58,70 @@ public class MachineSimpleTests {
 		LOGGER.info("Normal machine: " + normalMachine.getLearnedLogic());
 		LOGGER.info("Improved machine: " + improvedMachine.getLearnedLogic());
 	}
-
+	
 	@Test
-	public void testWithSingleLinearLineSeparableData() {
-		LOGGER.info("===========[testWithSingleLinearLineSeparableData]===========");
-		// Separator: 2x + 3y = 10
+	public void whenThereAreTwoFeatures() {
+		// Separator: ax + by = c
+		int a=  2;
+		int b = 3;
+		int c = 100;
 		for (int i = 0; i < NUMBER_OF_DATA_POINTS; i++) {
-			final Category category = Category.random();
-			double x, y, z;
-			// Positive values: 2x + 3y < 10
-			if (Category.POSITIVE == category) {
-				// Generate a number between 0 and 10
-				z = 10 * RANDOM.nextDouble();
-				// Generate x
-				x = 10 * RANDOM.nextDouble();
-				// Calculate y
-				y = (z - 2 * x) / 3;
+			Category category = Category.POSITIVE;
+			int x = i;
+			int y = (c - a * x) / b - 1;
 
-			} else {
-				// Generate a number larger than 10
-				z = 10 + 100 * RANDOM.nextDouble();
-				// Generate x
-				x = 100 * RANDOM.nextDouble();
-				// Calculate y
-				y = (z - 2 * x) / 3;
-			}
-			Assert.assertTrue("Category and values are not consistent.",
-					(Category.POSITIVE == category && (2 * x + 3 * y < 10))
-							|| (Category.NEGATIVE == category && (2 * x + 3 * y > 10)));
 			normalMachine.addDataPoint(category, x, y);
-			improvedMachine.addDataPoint(category, x, y);
+		}
+		
+		for (int i = 0; i < NUMBER_OF_DATA_POINTS; i++) {
+			Category category = Category.NEGATIVE;
+			int x = i;
+			int y = (c - a * x) / b + 1;
+
+			normalMachine.addDataPoint(category, x, y);
 		}
 
 		final double normalModelAccuracy = normalMachine.train().getModelAccuracy();
 		LOGGER.log(Level.DEBUG, "Normal SVM:" + normalModelAccuracy);
-		final double improvedModelAccuracy = improvedMachine.train().getModelAccuracy();
-		LOGGER.log(Level.DEBUG, "Improved SVM:" + improvedModelAccuracy);
-
-		// In this case, because there exists a single linear divider
-		// Both machines should be able to find that single divider
-		// And the two results should be the same
-		Assert.assertTrue("Inconsistent results.",
-				Double.compare(normalModelAccuracy, improvedModelAccuracy) == 0);
 		
 		LOGGER.info("Learned logic:");
 		LOGGER.info("Normal machine: " + normalMachine.getLearnedLogic());
-		LOGGER.info("Improved machine: " + improvedMachine.getLearnedLogic());
 	}
+	
+	@Test
+	public void whenThereAreThreeFeatures() {
+		normalMachine = setupMachine(new Machine(), 3);
+		
+		// Separator: ax + by + cz = d
+		int a=  2;
+		int b = 5;
+		int c = 6;
+		int d = 80;
+		for (int i = 0; i < NUMBER_OF_DATA_POINTS; i++) {
+			Category category = Category.POSITIVE;
+			int x = (int)(NUMBER_OF_DATA_POINTS * Math.random());
+			int y = (int)(NUMBER_OF_DATA_POINTS * Math.random());
+			int z = (d - a * x - b * y) / c + 1;
 
+			normalMachine.addDataPoint(category, x, y, z);
+		}
+		
+		for (int i = 0; i < NUMBER_OF_DATA_POINTS; i++) {
+			Category category = Category.NEGATIVE;
+			int x = (int)(NUMBER_OF_DATA_POINTS * Math.random());
+			int y = (int)(NUMBER_OF_DATA_POINTS * Math.random());
+			int z = (d - a * x - b * y) / c - 1;
+
+			normalMachine.addDataPoint(category, x, y, z);
+		}
+
+		final double normalModelAccuracy = normalMachine.train().getModelAccuracy();
+		LOGGER.log(Level.DEBUG, "Normal SVM:" + normalModelAccuracy);
+		
+		LOGGER.info("Learned logic:");
+		LOGGER.info("Normal machine: " + normalMachine.getLearnedLogic());
+	}
+	
 	@Test
 	public void testWithTwoLinearSeparableData() {
 		LOGGER.info("===========[testWithTwoLinearSeparableData]===========");
