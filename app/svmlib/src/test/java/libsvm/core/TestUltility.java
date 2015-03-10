@@ -33,18 +33,14 @@ public class TestUltility {
 						.setEps(1.0).setUseShrinking(false).setPredictProbability(false));
 	}
 	
-	protected void runTest(Machine defaultMachine, int numOfFeatures, double[] expectedCoefficients, InputStream inputStream) {
+	protected void runTest(Machine defaultMachine, int numOfFeatures, InputStream inputStream) {
 		machine = setupMachine(defaultMachine, numOfFeatures);
 		
 		readDataFromFile(inputStream, numOfFeatures);
 
 		final double normalModelAccuracy = machine.train().getModelAccuracy();
 		log(normalModelAccuracy);
-		
-		checkLastDivider(expectedCoefficients);
 	}
-
-	
 	
 	private void readDataFromFile(InputStream inputStream, int numberOfFeatures){
 		Scanner scanner = new Scanner(inputStream);
@@ -71,13 +67,13 @@ public class TestUltility {
 	}
 	
 	private void log(final double normalModelAccuracy) {
-		LOGGER.log(Level.DEBUG, "Normal SVM:" + normalModelAccuracy);
+		LOGGER.log(Level.DEBUG, "SVM:" + normalModelAccuracy);
 		
 		LOGGER.info("Learned logic:");
 		LOGGER.info(machine.getLearnedLogic());
 	}
 	
-	private void checkLastDivider(double[] expectedCoefficients) {
+	protected void checkLastDividerFound(double[] expectedCoefficients) {
 		Divider divider = machine.getModel().getExplicitDivider();
 		double[] coefficients = new CoefficientProcessing().process(divider);
 		compareCoefficients(expectedCoefficients, coefficients);

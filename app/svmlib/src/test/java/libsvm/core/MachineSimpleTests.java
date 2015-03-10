@@ -8,19 +8,22 @@ public class MachineSimpleTests extends TestUltility{
 	@Test
 	public void whenThereAreTwoFeatures() {
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("TwoFeatures.txt");
-		runTest(new Machine(), 2, new double[]{-2, -3, -15}, inputStream);
+		runTest(new Machine(), 2, inputStream);
+		checkLastDividerFound(new double[]{-2, -3, -15});
 	}
 
 	@Test
 	public void whenThereAreThreeFeatures() {
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ThreeFeatures.txt");
-		runTest(new Machine(), 3, new double[]{3, 7, 19, 80}, inputStream);
+		runTest(new Machine(), 3, inputStream);
+		checkLastDividerFound(new double[]{3, 7, 19, 80});
 	}
 	
 	@Test
 	public void whenRequireManyDividersInPositiveMachine() {
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ManyDuplicatedCuts.txt");
-		runTest(new Machine(), 3, new double[]{3, 7, 19, 80}, inputStream);
+		runTest(new Machine(), 3, inputStream);
+		checkLastDividerFound(new double[]{3, 7, 19, 80});
 	}
 	
 //	@Test
