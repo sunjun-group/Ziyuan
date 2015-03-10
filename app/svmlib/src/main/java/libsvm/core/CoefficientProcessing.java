@@ -42,7 +42,7 @@ public class CoefficientProcessing {
 	private double[] round(double[] thetas){
 		double[] result = new double[thetas.length];
 		for(int i = 0; i < thetas.length; i++){
-			result[i] = (double) Math.round(thetas[i] * NUMBER_DECIMAL_TO_KEEP) / NUMBER_DECIMAL_TO_KEEP;
+			result[i] = Math.floor(thetas[i] * NUMBER_DECIMAL_TO_KEEP) / NUMBER_DECIMAL_TO_KEEP;
 		}
 		
 		return result;
