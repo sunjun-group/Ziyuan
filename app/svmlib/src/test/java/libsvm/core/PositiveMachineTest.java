@@ -51,4 +51,31 @@ public class PositiveMachineTest extends TestUltility{
 		
 		//TODO: find a way to test result when model includes 2 dividers
 	}
+	
+	@Test
+	public void whenThereAre120PointsLessPositive() {
+		//x0 + x1 <= 5 && x0 - x1 >= 1
+		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("2Div40Pos80Neg.txt");
+		runTest(new PositiveSeparationMachine(new RandomNegativePointSelection()), 2, inputStream);
+		
+		//TODO: find a way to test result when model includes 2 dividers
+	}
+	
+	@Test
+	public void whenThereAre120PointsMorePositive() {
+		//x0 + x1 <= 5 && x0 - x1 <=5
+		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("2Div90Pos30Neg.txt");
+		runTest(new PositiveSeparationMachine(new RandomNegativePointSelection()), 2, inputStream);
+		
+		//TODO: find a way to test result when model includes 2 dividers
+	}
+	
+	@Test
+	public void whenThereAre60Points() {
+		//x0 + x1 <= 2 && x0 - x1 <= 3
+		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("2Div30PosNeg.txt");
+		runTest(new PositiveSeparationMachine(new RandomNegativePointSelection()), 2, inputStream);
+		
+		//TODO: find a way to test result when model includes 2 dividers
+	}
 }

@@ -26,7 +26,6 @@ public class PositiveSeparationMachine extends Machine {
 
 	private List<svm_model> learnedModels = new ArrayList<svm_model>();
 	private int maxNumberOfDividers = 3;
-	private int maxNumberOfTries = 50;
 	
 	private NegativePointSelection negativePointSelection;
 
