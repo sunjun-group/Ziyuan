@@ -18,7 +18,6 @@ import sav.common.core.SavException;
 import sav.common.core.utils.Randomness;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 /**
  * @author LLT

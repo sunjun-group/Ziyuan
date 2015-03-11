@@ -18,7 +18,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import sav.common.core.SavRtException;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 /**
  * @author LLT

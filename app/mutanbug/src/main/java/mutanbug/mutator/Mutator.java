@@ -1,4 +1,4 @@
-package mutator;
+package mutanbug.mutator;
 
 import japa.parser.ASTHelper;
 import japa.parser.JavaParser;
@@ -7,23 +7,67 @@ import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.ImportDeclaration;
 import japa.parser.ast.Node;
 import japa.parser.ast.PackageDeclaration;
-import japa.parser.ast.body.*;
-import japa.parser.ast.expr.*;
-import japa.parser.ast.stmt.*;
+import japa.parser.ast.body.BodyDeclaration;
+import japa.parser.ast.body.ClassOrInterfaceDeclaration;
+import japa.parser.ast.body.FieldDeclaration;
+import japa.parser.ast.body.MethodDeclaration;
+import japa.parser.ast.body.Parameter;
+import japa.parser.ast.body.TypeDeclaration;
+import japa.parser.ast.body.VariableDeclarator;
+import japa.parser.ast.body.VariableDeclaratorId;
+import japa.parser.ast.expr.AssignExpr;
+import japa.parser.ast.expr.AssignExpr.Operator;
+import japa.parser.ast.expr.BinaryExpr;
+import japa.parser.ast.expr.BooleanLiteralExpr;
+import japa.parser.ast.expr.CastExpr;
+import japa.parser.ast.expr.CharLiteralExpr;
+import japa.parser.ast.expr.DoubleLiteralExpr;
+import japa.parser.ast.expr.EnclosedExpr;
+import japa.parser.ast.expr.Expression;
+import japa.parser.ast.expr.FieldAccessExpr;
+import japa.parser.ast.expr.IntegerLiteralExpr;
+import japa.parser.ast.expr.LiteralExpr;
+import japa.parser.ast.expr.LongLiteralExpr;
+import japa.parser.ast.expr.MethodCallExpr;
+import japa.parser.ast.expr.NameExpr;
+import japa.parser.ast.expr.NullLiteralExpr;
+import japa.parser.ast.expr.StringLiteralExpr;
+import japa.parser.ast.expr.SuperExpr;
+import japa.parser.ast.expr.ThisExpr;
+import japa.parser.ast.expr.UnaryExpr;
+import japa.parser.ast.expr.VariableDeclarationExpr;
+import japa.parser.ast.stmt.BlockStmt;
+import japa.parser.ast.stmt.BreakStmt;
+import japa.parser.ast.stmt.ContinueStmt;
+import japa.parser.ast.stmt.ExpressionStmt;
+import japa.parser.ast.stmt.ForStmt;
+import japa.parser.ast.stmt.IfStmt;
+import japa.parser.ast.stmt.ReturnStmt;
+import japa.parser.ast.stmt.Statement;
+import japa.parser.ast.stmt.SwitchStmt;
+import japa.parser.ast.stmt.WhileStmt;
 import japa.parser.ast.type.ClassOrInterfaceType;
 import japa.parser.ast.type.PrimitiveType;
 import japa.parser.ast.type.ReferenceType;
 import japa.parser.ast.type.Type;
-import parser.ClassDescriptor;
-import parser.FolderParser;
-import parser.Method;
-import parser.Variable;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+import mutanbug.commons.utils.FileUtils;
+import mutanbug.parser.ClassDescriptor;
+import mutanbug.parser.FolderParser;
+import mutanbug.parser.Method;
+import mutanbug.parser.Variable;
 
 /**
  * Created by sutd on 1/3/15.
@@ -185,7 +229,7 @@ public class Mutator
         AssignExpr.Operator operator = assignExpr.getOperator();
         Expression target = assignExpr.getTarget();
         Expression value = assignExpr.getValue();
-        List<AssignExpr.Operator> muOps = MutationMap.getMutationOp(operator.getClass() + operator.toString());
+        List<AssignExpr.Operator> muOps = (List<Operator>) MutationMap.getMutationOp(operator.getClass() + operator.toString());
         if (muOps != null && muOps.size() > 0)
         {
             for (AssignExpr.Operator muOp : muOps)
@@ -734,13 +778,7 @@ public class Mutator
                         }
 
                         String folderName = cu.getBeginLine() + "_" + cu.getBeginColumn();
-                        File lineFolder = new File(outputFolder, folderName);
-                        if (!lineFolder.exists())
-                        {
-                            lineFolder.mkdir();
-                        }
-                        File verFolder = new File(lineFolder, version + "");
-                        verFolder.mkdir();
+                        File verFolder = FileUtils.createFolder(outputFolder, folderName + version + "");
                         File muFile = new File(verFolder, javaFile.getName());
 
                         BufferedWriter bw = new BufferedWriter(new FileWriter(muFile));
@@ -1120,9 +1158,11 @@ public class Mutator
 //        int b = - -(a++);
 
 //        String srcFolder = "/Users/sutd/Dropbox/MutantBug/src/";
-        String srcFolder = "C:\\Users\\1001385\\Dropbox\\MutantBug\\src\\";
+//        String srcFolder = "C:\\Users\\1001385\\Dropbox\\MutantBug\\src\\";
+    	String srcFolder = "D:/_1_Projects/Tzuyu/workspace/trunk/app/sav.commons/src/test/java/sav/commons/testdata/";
         loadClassDescriptor(new File(srcFolder));
-        File javaFile = new File(srcFolder + "test/TestForStmt.java");
-        mutateFile(javaFile, new File("C:\\Users\\1001385\\Dropbox\\MutantBug\\mutatedSource"));
+//        File javaFile = new File(srcFolder + "test/TestForStmt.java");
+        File javaFile = new File(srcFolder + "SamplePrograms.java");
+        mutateFile(javaFile, new File(srcFolder + "mutatedSource"));
     }
 }

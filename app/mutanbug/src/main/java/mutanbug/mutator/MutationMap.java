@@ -1,4 +1,4 @@
-package mutator;
+package mutanbug.mutator;
 
 import japa.parser.ast.expr.AssignExpr;
 import japa.parser.ast.expr.BinaryExpr;
@@ -6,22 +6,25 @@ import japa.parser.ast.expr.UnaryExpr;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import sav.common.core.utils.CollectionUtils;
 
 /**
  * Created by sutd on 1/4/15.
  */
 public class MutationMap
 {
+	private static final String OPERATOR_MAP_FILE = "/OperatorMap.txt";
     public static final String UNARY_OPERATOR = "UNARY_OPERATOR";
     public static final String IDENTIFIER = "IDENTIFIER";
 
-    private static Map<Object, List> operatorMap;
+    private static Map<Object, List<?>> operatorMap;
 
     static
     {
@@ -30,11 +33,13 @@ public class MutationMap
 
     private static void loadOperatorMap()
     {
-        operatorMap = new TreeMap<Object, List>();
+        operatorMap = new TreeMap<Object, List<?>>();
 
         try
         {
-            BufferedReader br = new BufferedReader(new FileReader("OperatorMap.txt"));
+//            BufferedReader br = new BufferedReader(new FileReader("OperatorMap.txt"));
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					MutationMap.class.getResourceAsStream(OPERATOR_MAP_FILE)));
             String s = null;
 
             while ((s = br.readLine()) != null)
@@ -56,7 +61,7 @@ public class MutationMap
                     for (String op : opStrings)
                     {
                         UnaryExpr.Operator uOp = getUnaryOperator(op);
-                        opList.add(uOp);
+                        CollectionUtils.addIfNotNull(opList, uOp);
                     }
 
                     operatorMap.put(IDENTIFIER, opList);
@@ -69,7 +74,7 @@ public class MutationMap
                     for (String op : opStrings)
                     {
                         BinaryExpr.Operator binaryOperator = getBinaryOperator(op);
-                        opList.add(binaryOperator);
+                        CollectionUtils.addIfNotNull(opList, binaryOperator);
                     }
 
                     operatorMap.put(bOp.getClass() + bOp.toString(), opList);
@@ -83,7 +88,7 @@ public class MutationMap
                     for (String op : opStrings)
                     {
                         UnaryExpr.Operator unaryOperator = getUnaryOperator(op);
-                        opList.add(unaryOperator);
+                        CollectionUtils.addIfNotNull(opList, unaryOperator);
                     }
 
                     operatorMap.put(uOp.getClass() + uOp.toString(), opList);
@@ -97,7 +102,7 @@ public class MutationMap
                     for (String op : opStrings)
                     {
                         AssignExpr.Operator assignOp = getAssignOperator(op);
-                        opList.add(assignOp);
+                        CollectionUtils.addIfNotNull(opList, assignOp);
                     }
 
                     operatorMap.put(aOp.getClass() + aOp.toString(), opList);
