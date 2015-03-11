@@ -22,7 +22,6 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.AssertionFailedError;
 import sav.common.core.Logger;
 import sav.common.core.utils.Assert;
 
@@ -144,9 +143,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 	@Override
 	public boolean visit(REvaluationMethod stmt) {
 		visitRmethod(stmt);
-		if (!Boolean.TRUE.equals(getExecData(stmt.getOutVarId()))) {
-			throw new AssertionFailedError("Assert true fail");
-		}
+		Assert.assertTrue(Boolean.TRUE.equals(getExecData(stmt.getOutVarId())));
 		return successful;
 	}
 

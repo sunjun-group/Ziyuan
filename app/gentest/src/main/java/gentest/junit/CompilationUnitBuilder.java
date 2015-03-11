@@ -31,12 +31,12 @@ import java.util.Set;
  */
 public class CompilationUnitBuilder {
 	private CompilationUnit cu;
-	private Set<Class<?>> imports;
+	private Set<String> imports;
 	private TypeDeclaration curType;
 	
 	public CompilationUnitBuilder() {
 		cu = new CompilationUnit();
-		imports = new HashSet<Class<?>>();
+		imports = new HashSet<String>();
 		cu.setTypes(new ArrayList<TypeDeclaration>());
 	}
 	
@@ -48,11 +48,15 @@ public class CompilationUnitBuilder {
 	}
 	
 	public CompilationUnitBuilder imports(Set<Class<?>> declaredTypes) {
-		imports.addAll(declaredTypes);
+		for (Class<?> type : declaredTypes) {
+			if (!TypeUtils.isPrimitive(type) && !type.isArray()) {
+				imports.add(type.getCanonicalName());
+			}
+		}
 		return this;
 	}
 	
-	public CompilationUnitBuilder imports(Class<?> importType) {
+	public CompilationUnitBuilder imports(String importType) {
 		imports.add(importType);
 		return this;
 	}
@@ -118,12 +122,10 @@ public class CompilationUnitBuilder {
 	
 	public CompilationUnit getResult() {
 		List<ImportDeclaration> importDecls = new ArrayList<ImportDeclaration>();
-		for (Class<?> type : imports) {
-			if (!TypeUtils.isPrimitive(type) && !type.isArray()) {
-				ImportDeclaration importDecl = new ImportDeclaration();
-				importDecl.setName(new NameExpr(type.getCanonicalName()));
-				importDecls.add(importDecl);
-			}
+		for (String type : imports) {
+			ImportDeclaration importDecl = new ImportDeclaration();
+			importDecl.setName(new NameExpr(type));
+			importDecls.add(importDecl);
 		}
 		cu.setImports(importDecls);
 		return cu;

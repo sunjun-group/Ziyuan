@@ -12,6 +12,7 @@ import gentest.core.commons.utils.TypeUtils;
 import gentest.core.data.statement.RAssignment;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.value.generator.PrimitiveGeneratorFactory.PrimitiveGenerator;
+import gentest.injection.TestcaseGenerationScope;
 import gentest.main.GentestConstants;
 import sav.common.core.SavException;
 import sav.common.core.utils.Randomness;
@@ -23,7 +24,7 @@ import com.google.inject.Singleton;
  * @author LLT
  *
  */
-@Singleton
+@TestcaseGenerationScope
 public class PrimitiveValueGenerator {
 	@Inject
 	private PrimitiveGeneratorFactory generatorFactory;

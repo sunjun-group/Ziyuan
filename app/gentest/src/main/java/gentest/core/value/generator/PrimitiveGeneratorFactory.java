@@ -6,6 +6,7 @@ package gentest.core.value.generator;
 
 import gentest.core.ParamGeneratorConfig;
 import gentest.core.commons.utils.TypeUtils;
+import gentest.injection.TestcaseGenerationScope;
 import japa.parser.ast.type.PrimitiveType.Primitive;
 
 import java.util.HashMap;
@@ -17,10 +18,12 @@ import org.apache.commons.lang.RandomStringUtils;
 import sav.common.core.SavRtException;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 /**
  * @author LLT
  */
+@TestcaseGenerationScope
 public class PrimitiveGeneratorFactory {
 	@Inject
 	private ParamGeneratorConfig config;

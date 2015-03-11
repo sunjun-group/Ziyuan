@@ -11,8 +11,6 @@ import japa.parser.ast.CompilationUnit;
 
 import java.util.List;
 
-import org.junit.Test;
-
 import sav.common.core.Logger;
 
 /**
@@ -20,7 +18,8 @@ import sav.common.core.Logger;
  *
  */
 public class JWriter {
-	private static final String JUNIT_TEST_ANNOTATION = Test.class.getSimpleName();
+	private static final String JUNIT_TEST_ANNOTATION = "org.junit.Test";
+	private static final String JUNIT_ASSERT_CLAZZ = "org.junit.Assert";
 	private String clazzName;
 	private String packageName;
 	private String methodPrefix;
@@ -33,7 +32,7 @@ public class JWriter {
 		/* package */
 		cu.pakage(getPackageName());
 		/* import */
-		cu.imports(Test.class);
+		cu.imports(JUNIT_TEST_ANNOTATION);
 		for (Sequence method : methods) {
 			cu.imports(method.getDeclaredTypes());
 		}
@@ -46,7 +45,7 @@ public class JWriter {
 			methodBuilder.markAnnotation(JUNIT_TEST_ANNOTATION);
 			if (!method.getStatementByType(
 					Statement.RStatementKind.EVALUATION_METHOD).isEmpty()) {
-				cu.imports(org.junit.Assert.class);
+				cu.imports(JUNIT_ASSERT_CLAZZ);
 			}
 			for (Statement stmt : method.getStmts()) {
 				converter.reset();
