@@ -25,20 +25,47 @@ import libsvm.core.Model;
 public class PositiveSeparationMachine extends Machine {
 
 	private List<svm_model> learnedModels = new ArrayList<svm_model>();
-	private int maxLoopCounter = 100;
+	private int maxNumberOfDividers = 3;
+	private int maxNumberOfTries = 50;
+	
+	private NegativePointSelection negativePointSelection;
 
-	public PositiveSeparationMachine() {
-		// Nothing special
-	}
-
-	public PositiveSeparationMachine(final int maxLoopCounter) {
-		this.maxLoopCounter = maxLoopCounter;
+	public PositiveSeparationMachine(NegativePointSelection pointSelection) {
+		this.negativePointSelection = pointSelection;
 	}
 
 	@Override
 	protected Machine train(final List<DataPoint> dataPoints) {
 		final List<DataPoint> positives = new ArrayList<DataPoint>(dataPoints.size());
 		final List<DataPoint> negatives = new ArrayList<DataPoint>(dataPoints.size());
+		
+		classifyNegativePositivePoints(dataPoints, positives, negatives);
+
+		List<DataPoint> trainingData = positives;
+		int loopCount = 0;
+		while (!negatives.isEmpty() && loopCount < maxNumberOfDividers) {
+			loopCount++;
+			// Training set = all positives + 1 negative
+			trainingData.add(negativePointSelection.select(negatives));
+			super.train(trainingData);
+
+			learnedModels.add(model);
+
+			trainingData.remove(trainingData.size() - 1);
+			removeClassifiedNegativePoints(negatives);
+		}
+
+		return this;
+	}
+
+	/**
+	 * @param dataPoints
+	 * @param positives
+	 * @param negatives
+	 */
+	private void classifyNegativePositivePoints(
+			final List<DataPoint> dataPoints, final List<DataPoint> positives,
+			final List<DataPoint> negatives) {
 		for (DataPoint point : dataPoints) {
 			if (Category.POSITIVE == point.getCategory()) {
 				positives.add(point);
@@ -46,28 +73,19 @@ public class PositiveSeparationMachine extends Machine {
 				negatives.add(point);
 			}
 		}
-
-		int loopCount = 0;
-		while (!negatives.isEmpty() && loopCount < maxLoopCounter) {
-			loopCount++;
-			// Training set = all positives + 1 negative
-			final List<DataPoint> trainingData = new ArrayList<DataPoint>(dataPoints.size());
-			trainingData.addAll(positives);
-			trainingData.add(negatives.get(0));
-			super.train(trainingData);
-
-			learnedModels.add(model);
-
-			// Remove all negatives which are correctly separated
-			for (Iterator<DataPoint> it = negatives.iterator(); it.hasNext();) {
-				DataPoint dp = it.next();
-				if (Category.NEGATIVE == calculateCategory(dp, model, null)) {
-					it.remove();
-				}
+	}
+	
+	/**
+	 * @param negatives
+	 */
+	private void removeClassifiedNegativePoints(final List<DataPoint> negatives) {
+		// Remove all negatives which are correctly separated
+		for (Iterator<DataPoint> it = negatives.iterator(); it.hasNext();) {
+			DataPoint dp = it.next();
+			if (Category.NEGATIVE == calculateCategory(dp, model, null)) {
+				it.remove();
 			}
 		}
-
-		return this;
 	}
 
 	@Override
