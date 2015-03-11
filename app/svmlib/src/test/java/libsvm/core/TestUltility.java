@@ -92,6 +92,11 @@ public class TestUltility {
 		}
 	}
 	
+	protected void checkAccuracy(double expectAccuracy){
+		double accuracy = machine.getModelAccuracy();
+		Assert.assertTrue(accuracy >= expectAccuracy);
+	}
+	
 //	public void templateToGenerateRandomData(){
 //		//x + y >= 5;
 //		//-5x + 3y >= -10
