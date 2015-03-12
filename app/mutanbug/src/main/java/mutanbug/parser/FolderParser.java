@@ -1,4 +1,4 @@
-package parser;
+package mutanbug.parser;
 
 import japa.parser.ParseException;
 import japa.parser.ast.expr.FieldAccessExpr;

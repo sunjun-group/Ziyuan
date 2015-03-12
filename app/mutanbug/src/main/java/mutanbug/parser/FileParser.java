@@ -1,4 +1,4 @@
-package parser;
+package mutanbug.parser;
 
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
@@ -96,27 +96,25 @@ public class FileParser
         }
 
         BlockStmt body = funcDecl.getBody();
-        List<Statement> stmts = body.getStmts();
-        for (Statement stmt : stmts)
-        {
-            if (stmt instanceof ExpressionStmt)
-            {
-                ExpressionStmt expStmt = (ExpressionStmt) stmt;
-                Expression exp = expStmt.getExpression();
-                if (exp instanceof VariableDeclarationExpr)
-                {
-                    VariableDeclarationExpr varDeclExp = (VariableDeclarationExpr)exp;
-                    List<VariableDeclarator> vList = varDeclExp.getVars();
+        if (body != null) {
+			List<Statement> stmts = body.getStmts();
+			for (Statement stmt : stmts) {
+				if (stmt instanceof ExpressionStmt) {
+					ExpressionStmt expStmt = (ExpressionStmt) stmt;
+					Expression exp = expStmt.getExpression();
+					if (exp instanceof VariableDeclarationExpr) {
+						VariableDeclarationExpr varDeclExp = (VariableDeclarationExpr) exp;
+						List<VariableDeclarator> vList = varDeclExp.getVars();
 
-                    for (VariableDeclarator vd : vList)
-                    {
-                        Variable v = new Variable(varDeclExp.getType(), vd.getId().getName(), null);
-                        function.addLocalVar(v);
-                    }
-                }
-            }
-        }
-
+						for (VariableDeclarator vd : vList) {
+							Variable v = new Variable(varDeclExp.getType(), vd
+									.getId().getName(), null);
+							function.addLocalVar(v);
+						}
+					}
+				}
+			}
+		}
         return function;
     }
 

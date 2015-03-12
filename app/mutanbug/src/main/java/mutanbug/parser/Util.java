@@ -1,4 +1,4 @@
-package parser;
+package mutanbug.parser;
 
 import japa.parser.ASTHelper;
 import japa.parser.ast.type.ClassOrInterfaceType;
