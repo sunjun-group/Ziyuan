@@ -58,4 +58,22 @@ public class PositiveMachineTest extends TestUltility{
 		
 		checkAccuracy(1);
 	}
+	
+	@Test
+	public void when60PointsSparse() {
+		//i + 2*j >= 15 && i - j <= 10
+		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("2Div25Pos38NegSparse.txt");
+		runTest(new PositiveSeparationMachine(negativeSelection), 2, inputStream);
+		
+		checkAccuracy(1);
+	}
+	
+	@Test
+	public void when30PointsSparse() {
+		//i + 2*j >= 15 && i - j <= 10
+		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("2Div9Pos19NegSparse.txt");
+		runTest(new PositiveSeparationMachine(negativeSelection), 2, inputStream);
+		
+		checkAccuracy(1);
+	}
 }
