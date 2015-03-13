@@ -2,6 +2,7 @@ package libsvm.core;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import libsvm.svm;
@@ -357,16 +358,8 @@ public class Machine {
 		@Override
 		public String toString() {
 			final StringBuilder sb = new StringBuilder();
-			sb.append("[");
-			boolean first = true;
-			for (double val : values) {
-				if (!first) {
-					sb.append(", ");
-					first = false;
-				}
-				sb.append(val);
-			}
-			sb.append("] : ").append(category);
+			sb.append(Arrays.toString(values));
+			sb.append(" : ").append(category);
 			return sb.toString();
 		}
 	}
