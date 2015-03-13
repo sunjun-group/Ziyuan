@@ -20,6 +20,10 @@ import libsvm.core.Machine.DataPoint;
  */
 public class MaxMinNegativePointSelection implements NegativePointSelection{
 
+	/**
+	 * Return Pareto points
+	 * No other points has value greater/smaller
+	 */
 	public DataPoint select(List<DataPoint> negatives){
 		List<DataPoint> minMaxPoints = findMaxMin(negatives);
 		
@@ -30,34 +34,70 @@ public class MaxMinNegativePointSelection implements NegativePointSelection{
 	private List<DataPoint> findMaxMin(List<DataPoint> negatives){
 		int numberOfFeatures = negatives.get(0).getNumberOfFeatures();
 		
-		double [] minOfFeatures = new double[numberOfFeatures];
-		DataPoint[] minPoints = new DataPoint[numberOfFeatures];
-		double [] maxOfFeatures = new double[numberOfFeatures];
-		DataPoint[] maxPoints = new DataPoint[numberOfFeatures];
+		List<DataPoint> result =  new ArrayList<Machine.DataPoint>(numberOfFeatures * 2);
 		
-		for(int i = 0; i < numberOfFeatures; i++){
-			minOfFeatures[i] = Double.MAX_VALUE;
-			maxOfFeatures[i] = Double.MIN_VALUE;
+		for(DataPoint point: negatives){
 			
-			for(DataPoint point: negatives){
-				double value = point.getValue(i);
-				if(value < minOfFeatures[i]){
-					minOfFeatures[i] = value;
-					minPoints[i] = point;
-				}
-				if(value > maxOfFeatures[i]){
-					maxOfFeatures[i] = value;
-					maxPoints[i] = point;
-				}
+			if(isAdded(point, negatives, numberOfFeatures)){
+				result.add(point);
 			}
 		}
 		
-		List<DataPoint> result =  new ArrayList<Machine.DataPoint>(numberOfFeatures * 2);
-		for(int i = 0; i < numberOfFeatures; i++){
-			result.add(minPoints[i]);
-			result.add(maxPoints[i]);
-		}
-		
 		return result;
+	}
+
+	private boolean isAdded(DataPoint point, List<DataPoint> negatives,
+			int numberOfFeatures){
+		return isMax(point, negatives, numberOfFeatures) || isMin(point, negatives, numberOfFeatures);
+	}
+	
+	/**
+	 * no other point larger in all features
+	 */
+	private boolean isMax(DataPoint point, List<DataPoint> negatives,
+			int numberOfFeatures) {
+		boolean isMax = true;
+		for(DataPoint other: negatives){
+			if(point != other){
+				boolean isOtherGreaterAll = true;
+				for(int i = 0; i < numberOfFeatures; i++){
+					if(other.getValue(i) < point.getValue(i)){
+						isOtherGreaterAll = false;
+						break;
+					}
+				}
+				
+				if(isOtherGreaterAll){
+					isMax = false;
+					break;
+				}
+			}
+		}
+		return isMax;
+	}
+	
+	/**
+	 * no other point smaller in all features
+	 */
+	private boolean isMin(DataPoint point, List<DataPoint> negatives,
+			int numberOfFeatures) {
+		boolean isMin = true;
+		for(DataPoint other: negatives){
+			if(point != other){
+				boolean isOtherSmallerAll = true;
+				for(int i = 0; i < numberOfFeatures; i++){
+					if(other.getValue(i) > point.getValue(i)){
+						isOtherSmallerAll = false;
+						break;
+					}
+				}
+				
+				if(isOtherSmallerAll){
+					isMin = false;
+					break;
+				}
+			}
+		}
+		return isMin;
 	}
 }
