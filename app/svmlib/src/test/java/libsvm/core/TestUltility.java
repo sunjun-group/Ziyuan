@@ -42,16 +42,24 @@ public class TestUltility {
 		log(normalModelAccuracy);
 	}
 	
+	/**
+	 * File structure
+	 * numberOfPositives numberOfNegatives
+	 * (positive point)*
+	 * (negative point)*
+	 */
 	private void readDataFromFile(InputStream inputStream, int numberOfFeatures){
 		Scanner scanner = new Scanner(inputStream);
-		readDataOfCategory(scanner, numberOfFeatures, Category.POSITIVE);
-		readDataOfCategory(scanner, numberOfFeatures, Category.NEGATIVE);
+		int numberOfPositives = scanner.nextInt();
+		int numberOfNegatives = scanner.nextInt();
+		
+		readDataOfCategory(scanner, numberOfFeatures, numberOfPositives, Category.POSITIVE);
+		readDataOfCategory(scanner, numberOfFeatures, numberOfNegatives, Category.NEGATIVE);
 	}
 
-	private void readDataOfCategory(Scanner scanner, int numberOfFeatures,
+	private void readDataOfCategory(Scanner scanner, int numberOfFeatures, int numberOfPoints,
 			Category category) {
-		int numberOfPositivePoints = scanner.nextInt();
-		for (int i = 0; i < numberOfPositivePoints; i++) {
+		for (int i = 0; i < numberOfPoints; i++) {
 			double [] data = readIntegerArray(scanner, numberOfFeatures);
 			machine.addDataPoint(category, data);
 		}
