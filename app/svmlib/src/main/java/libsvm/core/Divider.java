@@ -46,4 +46,25 @@ public class Divider {
 		}
 		return result;
 	}
+	
+	public Divider round() {
+		final double[] roundedAllThetas = new CoefficientProcessing().process(this);
+		final int lastIndex = roundedAllThetas.length - 1;
+		final double[] roundedThetas = new double[lastIndex];
+		for (int i=0; i<lastIndex; i++) {
+			roundedThetas[i] = roundedAllThetas[i];
+		}
+		return new Divider(roundedThetas, roundedAllThetas[lastIndex]);
+	}
+	
+	public Category getCategory(final DataPoint dataPoint) {
+		double value = 0.0;
+		for (int i = 0; i<dataPoint.getNumberOfFeatures(); i++) {
+			if (i < thetas.length) {
+				value += thetas[i] * dataPoint.getValue(i);
+			}
+		}
+		value -= theta0;
+		return value < 0 ? Category.NEGATIVE : Category.POSITIVE;
+	}
 }
