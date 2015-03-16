@@ -8,6 +8,8 @@
 
 package libsvm.core;
 
+import java.util.Arrays;
+
 /**
  * @author khanh
  *
@@ -16,15 +18,13 @@ public class CoefficientProcessing {
 
 	private static final int BOUND_MIN_COEFFICIENT = 100;
 	private static final double MAX_DIFFERENCE_TO_NEAREST_INTEGER = Math.pow(10, -1);
-	private static final double EPSILON = Math.pow(10, -9);
+	private static final double EPSILON = Math.pow(10, -6);
+	private static final double NUMBER_DECIMAL_TO_KEEP = 1000000000;
 	
 	public double[] process(Divider divider){
 		double[] thetas = getFullThetas(divider);
-		thetas = detectZeroCoefficient(thetas);
-		thetas = pivotMinCoefficient(thetas);
-		thetas = integerRound(thetas);
 		
-		return thetas;
+		return integerRounding(thetas);
 	}
 
 	private double[] getFullThetas(Divider divider) {
@@ -38,18 +38,28 @@ public class CoefficientProcessing {
 		return thetas;
 	}
 	
+	/**
+	 * @param thetas
+	 * @return
+	 */
+	public double[] integerRounding(double[] thetas) {
+		thetas = detectZeroCoefficient(thetas);
+		thetas = truncateDecimal(thetas);
+		thetas = pivotMinCoefficient(thetas);
+		thetas = integerRound(thetas);
+		
+		return thetas;
+	}
 
 	/**
 	 * Value less than EPSILON considered as zero
 	 * But if after that having all zero, then just return original
-	 * @param thetas
-	 * @return
 	 */
 	private double[] detectZeroCoefficient(double[] thetas){
 		double[] result = new double[thetas.length];
 		int countZero = 0;
 		for(int i = 0; i < thetas.length; i++){
-			if(thetas[i] < EPSILON){
+			if(Math.abs(thetas[i]) < EPSILON){
 				result[i] = 0;
 				countZero++;
 			}
@@ -60,6 +70,14 @@ public class CoefficientProcessing {
 		
 		if(countZero == thetas.length){
 			return thetas;
+		}
+		return result;
+	}
+
+	private double[] truncateDecimal(double[] thetas){
+		double[] result = new double[thetas.length];
+		for(int i = 0; i < thetas.length; i++){
+			result[i] = Math.round(thetas[i] * NUMBER_DECIMAL_TO_KEEP)/ NUMBER_DECIMAL_TO_KEEP;
 		}
 		return result;
 	}
@@ -84,8 +102,6 @@ public class CoefficientProcessing {
 	/**
 	 * Only make the coefficient of variables as integer
 	 * Constant will rounded accordingly
-	 * @param coefficients
-	 * @return
 	 */
 	private double[] integerRound(double[] coefficients){
 		double[] result = new double[coefficients.length];
@@ -106,8 +122,14 @@ public class CoefficientProcessing {
 			
 			if(allCoefficientsInteger){
 				//update constant accordingly, we must take the floor because the divider for positive is in the form
-				//ax+by >= c
-				result[coefficients.length - 1] = Math.floor(coefficients[coefficients.length - 1] * i);
+				//ax+by >= c, unless the difference is extremmely small, 1.99999999999999
+				double value = coefficients[coefficients.length - 1] * i;
+				if(Math.ceil(value) - value < EPSILON){
+					result[coefficients.length - 1] = Math.ceil(value);
+				}
+				else{
+					result[coefficients.length - 1] = Math.floor(value);
+				}
 				return result;
 			}
 		}
