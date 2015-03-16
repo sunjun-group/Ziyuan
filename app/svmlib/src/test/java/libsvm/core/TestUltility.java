@@ -102,7 +102,7 @@ public class TestUltility {
 	
 	protected void checkAccuracy(double expectAccuracy){
 		double accuracy = machine.getModelAccuracy();
-		Assert.assertTrue(accuracy >= expectAccuracy);
+		Assert.assertTrue("Expected accuracy of " + expectAccuracy + " but only have " + accuracy, accuracy >= expectAccuracy);
 	}
 	
 //	public void templateToGenerateRandomData(){
