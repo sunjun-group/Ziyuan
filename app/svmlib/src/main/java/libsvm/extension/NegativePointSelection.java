@@ -18,5 +18,5 @@ import libsvm.core.Machine.DataPoint;
  */
 public interface NegativePointSelection {
 
-	public DataPoint select(List<DataPoint> negatives);
+	public DataPoint select(List<DataPoint> negatives, List<DataPoint> positives);
 }

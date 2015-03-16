@@ -10,9 +10,9 @@ package libsvm.core;
 
 import java.io.InputStream;
 
+import libsvm.extension.ByDistanceNegativePointSelection;
 import libsvm.extension.NegativePointSelection;
 import libsvm.extension.PositiveSeparationMachine;
-import libsvm.extension.RandomNegativePointSelection;
 
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ import org.junit.Test;
  */
 public class PositiveMachineTest extends TestUltility{
 
-	private NegativePointSelection negativeSelection = new RandomNegativePointSelection();
+	private NegativePointSelection negativeSelection = new ByDistanceNegativePointSelection();
 	
 	@Test
 	public void whenRequireTwoDividers() {

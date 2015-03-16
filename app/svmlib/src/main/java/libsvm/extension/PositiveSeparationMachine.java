@@ -66,7 +66,7 @@ public class PositiveSeparationMachine extends Machine {
 		while (!negatives.isEmpty() && loopCount < MAXIMUM_DIVIDER_COUNT) {
 			loopCount++;
 			// Training set = all positives + 1 negative
-			trainingData.add(negativePointSelection.select(negatives));
+			trainingData.add(negativePointSelection.select(negatives, positives));
 			super.train(trainingData);
 
 			learnedModels.add(model);

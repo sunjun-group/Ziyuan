@@ -9,8 +9,6 @@
 package libsvm.core;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 import org.apache.log4j.Level;

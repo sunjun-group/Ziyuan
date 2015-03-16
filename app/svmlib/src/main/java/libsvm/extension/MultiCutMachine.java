@@ -10,7 +10,6 @@ import libsvm.core.Category;
 import libsvm.core.Divider;
 import libsvm.core.Machine;
 import libsvm.core.Model;
-import libsvm.core.Machine.DataPoint;
 
 import org.junit.Assert;
 

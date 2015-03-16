@@ -18,7 +18,7 @@ import libsvm.core.Machine.DataPoint;
  */
 public class RandomNegativePointSelection implements NegativePointSelection{
 
-	public DataPoint select(List<DataPoint> negatives){
+	public DataPoint select(List<DataPoint> negatives, List<DataPoint> positives){
 		int randomIndex = (int) (negatives.size() * Math.random());
 		return negatives.get(randomIndex);
 	}
