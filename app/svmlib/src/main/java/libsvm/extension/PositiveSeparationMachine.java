@@ -25,7 +25,9 @@ import libsvm.core.Model;
 public class PositiveSeparationMachine extends Machine {
 
 	private List<svm_model> learnedModels = new ArrayList<svm_model>();
-	private int maxNumberOfDividers = 3;
+	
+	private static final int MAXIMUM_ATTEMPT_COUNT = 100;
+	private static final int MAXIMUM_DIVIDER_COUNT = 3;
 	
 	private NegativePointSelection negativePointSelection;
 
@@ -35,6 +37,25 @@ public class PositiveSeparationMachine extends Machine {
 
 	@Override
 	protected Machine train(final List<DataPoint> dataPoints) {
+		int attemptCount = 0;
+		double bestAccuracy = 0.0;
+		List<svm_model> bestLearnedModels = null;
+		while (Double.compare(bestAccuracy, 1.0) < 0 && attemptCount < MAXIMUM_ATTEMPT_COUNT) {
+			attemptCount++;
+			learnedModels = new ArrayList<svm_model>();
+			attemptTraining(dataPoints);
+			double currentAccuracy = getModelAccuracy();
+			if (bestAccuracy < currentAccuracy) {
+				bestAccuracy = currentAccuracy;
+				bestLearnedModels = learnedModels;
+			}
+		}
+		learnedModels = bestLearnedModels;
+
+		return this;
+	}
+	
+	private Machine attemptTraining(final List<DataPoint> dataPoints) {
 		final List<DataPoint> positives = new ArrayList<DataPoint>(dataPoints.size());
 		final List<DataPoint> negatives = new ArrayList<DataPoint>(dataPoints.size());
 		
@@ -42,7 +63,7 @@ public class PositiveSeparationMachine extends Machine {
 
 		List<DataPoint> trainingData = positives;
 		int loopCount = 0;
-		while (!negatives.isEmpty() && loopCount < maxNumberOfDividers) {
+		while (!negatives.isEmpty() && loopCount < MAXIMUM_DIVIDER_COUNT) {
 			loopCount++;
 			// Training set = all positives + 1 negative
 			trainingData.add(negativePointSelection.select(negatives));
