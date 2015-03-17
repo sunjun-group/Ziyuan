@@ -198,7 +198,7 @@ public class Machine {
 			Assert.assertNotNull("Data point cannot be null.", dataPoint);
 			Assert.assertNotNull("SVM model is not ready yet.", rawModel);
 			final double predictValue = svm.svm_predict(rawModel, getSvmNode(dataPoint));
-			return predictValue > 0 ? Category.POSITIVE : Category.NEGATIVE;
+			return Category.fromDouble(predictValue);
 		}
 	}
 	

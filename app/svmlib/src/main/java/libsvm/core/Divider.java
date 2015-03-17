@@ -75,6 +75,6 @@ public class Divider {
 			}
 		}
 		value -= theta0;
-		return value < 0 ? Category.NEGATIVE : Category.POSITIVE;
+		return Category.fromDouble(value);
 	}
 }

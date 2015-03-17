@@ -30,4 +30,8 @@ public enum Category {
 	public static List<Category> getValues() {
 		return VALUES; // Use the cached one to optimize performance
 	}
+	
+	public static Category fromDouble(double value){
+		return (Double.compare(value, 0) >= 0? POSITIVE: NEGATIVE);
+	}
 }
