@@ -103,7 +103,7 @@ public class PositiveSeparationMachine extends Machine {
 		// Remove all negatives which are correctly separated
 		for (Iterator<DataPoint> it = negatives.iterator(); it.hasNext();) {
 			DataPoint dp = it.next();
-			if (Category.NEGATIVE == Model.getCategoryCalculator(model).getCategory(dp)) {
+			if (Category.NEGATIVE == new Model(model, getNumberOfFeatures()).getExplicitDivider().round().getCategory(dp)) {
 				it.remove();
 			}
 		}
@@ -111,7 +111,13 @@ public class PositiveSeparationMachine extends Machine {
 
 	@Override
 	protected List<DataPoint> getWrongClassifiedDataPoints(List<DataPoint> dataPoints) {
-		return getWrongClassifiedDataPoints(dataPoints, new MultiModelBasedCategoryCalculator(learnedModels));
+		List<Divider> roundDividers = new ArrayList<Divider>();
+		for(svm_model learnModel: this.learnedModels){
+			roundDividers.add(new Model(learnModel, getNumberOfFeatures()).getExplicitDivider().round());
+		}
+		
+		return getWrongClassifiedDataPoints(dataPoints, 
+				new MultiDividerBasedCategoryCalculator(roundDividers));
 	}
 
 	@Override
