@@ -101,9 +101,10 @@ public class PositiveSeparationMachine extends Machine {
 	 */
 	private void removeClassifiedNegativePoints(final List<DataPoint> negatives) {
 		// Remove all negatives which are correctly separated
+		Divider roundDivider = new Model(model, getNumberOfFeatures()).getExplicitDivider().round();
 		for (Iterator<DataPoint> it = negatives.iterator(); it.hasNext();) {
 			DataPoint dp = it.next();
-			if (Category.NEGATIVE == new Model(model, getNumberOfFeatures()).getExplicitDivider().round().getCategory(dp)) {
+			if (Category.NEGATIVE == roundDivider.getCategory(dp)) {
 				it.remove();
 			}
 		}

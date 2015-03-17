@@ -172,7 +172,7 @@ public class Machine {
 	}
 
 	protected List<DataPoint> getWrongClassifiedDataPoints(final List<DataPoint> dataPoints) {
-		return getWrongClassifiedDataPoints(dataPoints, null);
+		return getWrongClassifiedDataPoints(dataPoints, new ModelBasedCategoryCalculator(model));
 	}
 
 	protected List<DataPoint> getWrongClassifiedDataPoints(final List<DataPoint> dataPoints,
