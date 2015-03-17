@@ -8,7 +8,6 @@
 
 package libsvm.core;
 
-import java.util.Arrays;
 
 /**
  * @author khanh

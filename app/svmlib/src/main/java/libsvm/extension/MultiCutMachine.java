@@ -7,9 +7,11 @@ import java.util.Set;
 
 import libsvm.svm_model;
 import libsvm.core.Category;
+import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import libsvm.core.Machine;
 import libsvm.core.Model;
+import libsvm.core.ModelBasedCategoryCalculator;
 
 import org.junit.Assert;
 
@@ -110,9 +112,11 @@ public class MultiCutMachine extends Machine {
 	protected List<DataPoint> buildNextTrainingData(final List<DataPoint> currentTrainingData,
 			final LearnedData learnedData, final Category wrongCategory) {
 		final List<DataPoint> newTrainingData = new ArrayList<DataPoint>();
+		final svm_model rawModel = learnedData.getModel();
+		final CategoryCalculator categoryCalculator = Model.getCategoryCalculator(rawModel);
 		for (DataPoint dp : currentTrainingData) {
 			// Points on the same side of the wrong classification
-			final Category calculatedCategory = calculateCategory(dp, learnedData.getModel(), null);
+			final Category calculatedCategory = categoryCalculator.getCategory(dp);
 			if (calculatedCategory.equals(wrongCategory)) {
 				newTrainingData.add(dp);
 			}

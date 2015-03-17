@@ -5,7 +5,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import libsvm.svm_model;
 import libsvm.core.Category;
+import libsvm.core.CategoryCalculator;
+import libsvm.core.Model;
 
 /**
  * The training algorithm for this Machine is as follows:<br/>
@@ -54,10 +57,12 @@ public class MultiAttemptMachine extends MultiCutMachine {
 	protected List<DataPoint> buildNextTrainingData(List<DataPoint> currentTrainingData,
 			LearnedData learnedData, Category wrongCategory) {
 		loopCount++;
+		final svm_model rawModel = learnedData.getModel();
+		final CategoryCalculator categoryCalculator = Model.getCategoryCalculator(rawModel);
 		if (1 == loopCount) {
 			// Only build list of right/wrong points in the 1st loop
 			for (DataPoint dp : currentTrainingData) {
-				if (calculateCategory(dp, learnedData.getModel(), null).equals(dp.getCategory())) {
+				if (categoryCalculator.getCategory(dp).equals(dp.getCategory())) {
 					rightPoints.add(dp);
 				} else {
 					wrongPoints.add(dp);
@@ -68,7 +73,7 @@ public class MultiAttemptMachine extends MultiCutMachine {
 			// correctly using the current divider
 			for (Iterator<DataPoint> it = wrongPoints.iterator(); it.hasNext();) {
 				final DataPoint dp = it.next();
-				if (calculateCategory(dp, learnedData.getModel(), null).equals(dp.getCategory())) {
+				if (categoryCalculator.getCategory(dp).equals(dp.getCategory())) {
 					it.remove();
 				}
 			}

@@ -77,4 +77,8 @@ public class Divider {
 		value -= theta0;
 		return Category.fromDouble(value);
 	}
+	
+	public CategoryCalculator getCategoryCalculator() {
+		return new DividerBasedCategoryCalculator(this);
+	}
 }

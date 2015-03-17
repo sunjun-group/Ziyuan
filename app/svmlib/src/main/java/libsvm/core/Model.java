@@ -145,5 +145,13 @@ public class Model {
 		// The function is wT * x = b
 		return new Divider(result, model.rho[0]);
 	}
+	
+	public CategoryCalculator getCategoryCalculator() {
+		return new ModelBasedCategoryCalculator(model);
+	}
+	
+	public static CategoryCalculator getCategoryCalculator(final svm_model rawModel) {
+		return new ModelBasedCategoryCalculator(rawModel);
+	}
 
 }

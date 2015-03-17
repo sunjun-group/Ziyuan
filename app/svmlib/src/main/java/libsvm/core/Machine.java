@@ -153,23 +153,11 @@ public class Machine {
 		for (int i = 0; i < length; i++) {
 			final DataPoint point = dataPoints.get(i);
 			problem.y[i] = point.getCategory().intValue();
-			problem.x[i] = getSvmNode(point);
+			problem.x[i] = point.getSvmNode();
 		}
 
 		model = svm.svm_train(problem, parameter);
 		return this;
-	}
-
-	private svm_node[] getSvmNode(final DataPoint dp) {
-		final int numberOfFeatures = dp.getNumberOfFeatures();
-		final svm_node[] node = new svm_node[numberOfFeatures];
-		for (int i = 0; i < numberOfFeatures; i++) {
-			final svm_node svmNode = new svm_node();
-			svmNode.index = i;
-			svmNode.value = dp.getValue(i);
-			node[i] = svmNode;
-		}
-		return node;
 	}
 
 	/**
@@ -183,49 +171,6 @@ public class Machine {
 				.get(0).getNumberOfFeatures());
 	}
 
-	protected interface CategoryCalculator {
-		Category getCategory(DataPoint dataPoint);
-	}
-
-	protected class ModelBasedCategoryCalculator implements CategoryCalculator {
-		private final svm_model rawModel;
-
-		public ModelBasedCategoryCalculator(final svm_model model) {
-			this.rawModel = model;
-		}
-
-		public Category getCategory(DataPoint dataPoint) {
-			Assert.assertNotNull("Data point cannot be null.", dataPoint);
-			Assert.assertNotNull("SVM model is not ready yet.", rawModel);
-			final double predictValue = svm.svm_predict(rawModel, getSvmNode(dataPoint));
-			return Category.fromDouble(predictValue);
-		}
-	}
-	
-	protected class DividerBasedCategoryCalculator implements CategoryCalculator {
-		private final Divider divider;
-		
-		public DividerBasedCategoryCalculator(final Divider divider) {
-			Assert.assertNotNull("Divider cannot be null.", divider);
-			this.divider = divider;
-		}
-		
-		@Override
-		public Category getCategory(DataPoint dataPoint) {
-			Assert.assertNotNull("Data point cannot be null.", dataPoint);
-			// Calculate the category based on the existing Divider
-			return divider.getCategory(dataPoint);
-		}
-	}
-
-	protected Category calculateCategory(final DataPoint dataPoint, final svm_model rawModel,
-			final CategoryCalculator calculator) {
-		// Use default calculator if none specified
-		final CategoryCalculator calculatorToUse = calculator != null ? calculator
-				: new ModelBasedCategoryCalculator(rawModel);
-		return calculatorToUse.getCategory(dataPoint);
-	}
-
 	protected List<DataPoint> getWrongClassifiedDataPoints(final List<DataPoint> dataPoints) {
 		return getWrongClassifiedDataPoints(dataPoints, null);
 	}
@@ -234,7 +179,7 @@ public class Machine {
 			final CategoryCalculator calculator) {
 		final List<DataPoint> wrong = new ArrayList<DataPoint>();
 		for (DataPoint dp : dataPoints) {
-			if (!dp.getCategory().equals(calculateCategory(dp, model, calculator))) {
+			if (!dp.getCategory().equals(calculator.getCategory(dp))) {
 				wrong.add(dp);
 			}
 		}
@@ -377,6 +322,18 @@ public class Machine {
 			sb.append(Arrays.toString(values));
 			sb.append(" : ").append(category);
 			return sb.toString();
+		}
+		
+		public svm_node[] getSvmNode() {
+			final int numberOfFeatures = this.getNumberOfFeatures();
+			final svm_node[] node = new svm_node[numberOfFeatures];
+			for (int i = 0; i < numberOfFeatures; i++) {
+				final svm_node svmNode = new svm_node();
+				svmNode.index = i;
+				svmNode.value = this.getValue(i);
+				node[i] = svmNode;
+			}
+			return node;
 		}
 	}
 

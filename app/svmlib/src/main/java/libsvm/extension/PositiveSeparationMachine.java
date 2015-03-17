@@ -6,6 +6,7 @@ import java.util.List;
 
 import libsvm.svm_model;
 import libsvm.core.Category;
+import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import libsvm.core.Machine;
 import libsvm.core.Model;
@@ -102,7 +103,7 @@ public class PositiveSeparationMachine extends Machine {
 		// Remove all negatives which are correctly separated
 		for (Iterator<DataPoint> it = negatives.iterator(); it.hasNext();) {
 			DataPoint dp = it.next();
-			if (Category.NEGATIVE == calculateCategory(dp, model, null)) {
+			if (Category.NEGATIVE == Model.getCategoryCalculator(model).getCategory(dp)) {
 				it.remove();
 			}
 		}
@@ -110,22 +111,7 @@ public class PositiveSeparationMachine extends Machine {
 
 	@Override
 	protected List<DataPoint> getWrongClassifiedDataPoints(List<DataPoint> dataPoints) {
-		return getWrongClassifiedDataPoints(dataPoints, new CategoryCalculator() {
-			@Override
-			public Category getCategory(final DataPoint dataPoint) {
-				// Loop on learned models
-				// If the category is NEGATIVE, return it
-				// Else keep looping
-				// If the point passed all learned model, return POSITIVE
-				for (svm_model model : learnedModels) {
-					if (Category.NEGATIVE == calculateCategory(dataPoint, model, null)) {
-						return Category.NEGATIVE;
-					}
-				}
-				// The point satisfies all dividers
-				return Category.POSITIVE;
-			}
-		});
+		return getWrongClassifiedDataPoints(dataPoints, new MultiModelBasedCategoryCalculator(learnedModels));
 	}
 
 	@Override
