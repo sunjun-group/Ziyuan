@@ -9,7 +9,6 @@
 package libsvm.core;
 
 import java.io.InputStream;
-
 import libsvm.extension.ByDistanceNegativePointSelection;
 import libsvm.extension.NegativePointSelection;
 import libsvm.extension.PositiveSeparationMachine;
@@ -72,6 +71,24 @@ public class PositiveMachineTest extends TestUltility{
 	public void when30PointsSparse() {
 		//i + 2*j >= 15 && i - j <= 10
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("2Div9Pos19NegSparse.txt");
+		runTest(new PositiveSeparationMachine(negativeSelection), 2, inputStream);
+		
+		checkAccuracy(1);
+	}
+	
+	@Test
+	public void whenSparseAndOddCoefficient50Points() {
+		//2*i + 3*j >= 10 && 3*i - 8*j >= 14
+		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("2DivSparse50PointsOddCoefficient.txt");
+		runTest(new PositiveSeparationMachine(negativeSelection), 2, inputStream);
+		
+		checkAccuracy(1);
+	}
+	
+	@Test
+	public void whenSparseAndOddCoefficient40Points() {
+		//2*i + 3*j >= 10 && 3*i - 8*j >= 14
+		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("2DivSparse40PointsOddCoefficient.txt");
 		runTest(new PositiveSeparationMachine(negativeSelection), 2, inputStream);
 		
 		checkAccuracy(1);
