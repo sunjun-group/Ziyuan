@@ -6,7 +6,6 @@ import java.util.List;
 
 import libsvm.svm_model;
 import libsvm.core.Category;
-import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import libsvm.core.Machine;
 import libsvm.core.Model;

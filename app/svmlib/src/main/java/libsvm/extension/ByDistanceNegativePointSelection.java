@@ -13,14 +13,13 @@ import java.util.List;
 import libsvm.core.Machine.DataPoint;
 
 /**
+ * Select a negative point on the border
+ * Work well with sparse data
  * @author khanh
  *
  */
 public class ByDistanceNegativePointSelection implements NegativePointSelection{
-	/**
-	 * Return Pareto points
-	 * No other points has value greater/smaller
-	 */
+
 	public DataPoint select(List<DataPoint> negatives, List<DataPoint> positives){
 		DataPoint randomPositive = getRandomPositive(positives);
 		
@@ -35,7 +34,6 @@ public class ByDistanceNegativePointSelection implements NegativePointSelection{
 			}
 		}
 		
-		System.out.print("Selection Negative: " + result);
 		return result;
 	}
 	

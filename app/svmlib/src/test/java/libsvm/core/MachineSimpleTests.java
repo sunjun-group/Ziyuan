@@ -26,6 +26,13 @@ public class MachineSimpleTests extends TestUltility{
 		checkLastDividerFound(new double[]{3, 7, 19, 80});
 	}
 	
+	@Test
+	public void whenThereIsOneNegativePoint() {
+		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("1Div1Negative.txt");
+		runTest(new Machine(), 2, inputStream);
+		checkLastDividerFound(new double[]{1, -1, -10});
+	}
+	
 //	@Test
 //	public void testWithRandomData() {
 //		LOGGER.info("===========[testWithRandomData]===========");
