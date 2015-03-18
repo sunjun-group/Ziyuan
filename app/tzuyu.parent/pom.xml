@@ -55,7 +55,7 @@
  		<module>../faultLocalization</module>
  		<module>../extcos</module>
  		<module>../svmlib</module>
-<!--  		<module>../icsetlv</module>  -->
+  		<module>../icsetlv</module>
 	</modules>
 
 	<build>
