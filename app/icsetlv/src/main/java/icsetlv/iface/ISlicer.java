@@ -8,9 +8,9 @@
 
 package icsetlv.iface;
 
-import icsetlv.common.dto.BreakPoint;
-
 import java.util.List;
+
+import sav.strategies.dto.BreakPoint;
 
 /**
  * @author LLT

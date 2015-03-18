@@ -8,9 +8,6 @@
 
 package icsetlv.slicer;
 
-import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.utils.BreakpointUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+
+import sav.common.core.utils.BreakpointUtils;
+import sav.strategies.dto.BreakPoint;
 
 import com.ibm.wala.util.collections.Pair;
 

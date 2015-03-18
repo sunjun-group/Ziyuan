@@ -8,9 +8,9 @@
 
 package icsetlv.slicer;
 
-import icsetlv.common.utils.SignatureUtils;
-
 import java.util.List;
+
+import sav.common.core.utils.SignatureUtils;
 
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.types.ClassLoaderReference;

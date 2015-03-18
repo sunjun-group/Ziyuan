@@ -1,7 +1,5 @@
 package icsetlv.svm;
 
-import icsetlv.common.utils.Assert;
-
 import java.util.SortedSet;
 
 import libsvm.svm;
@@ -15,6 +13,8 @@ import net.sf.javaml.core.Dataset;
 import net.sf.javaml.core.Instance;
 
 import org.apache.commons.lang.ObjectUtils;
+
+import sav.common.core.utils.Assert;
 
 /**
  * Wrapper for the libSVM library.

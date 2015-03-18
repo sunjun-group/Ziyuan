@@ -8,7 +8,6 @@
 
 package icsetlv;
 
-import icsetlv.common.dto.BreakPoint;
 import icsetlv.slicer.SlicerInput;
 import icsetlv.slicer.WalaSlicer;
 
@@ -18,6 +17,7 @@ import java.util.List;
 import org.junit.Test;
 
 import sav.common.core.utils.CollectionUtils;
+import sav.strategies.dto.BreakPoint;
 
 /**
  * @author LLT

@@ -1,7 +1,5 @@
 package icsetlv;
 
-import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.dto.BreakPoint.Variable;
 import icsetlv.common.exception.IcsetlvException;
 
 import java.util.ArrayList;
@@ -9,6 +7,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.BreakPoint.Variable;
 
 public class BugAnalyzerTest extends AbstractTest {
 	private List<BreakPoint> bprsin = new ArrayList<BreakPoint>();

@@ -8,7 +8,6 @@
 
 package icsetlv;
 
-import icsetlv.common.dto.BreakPoint;
 import icsetlv.slicer.SlicerInput;
 
 import java.io.IOException;
@@ -18,6 +17,7 @@ import java.util.List;
 import sav.common.core.utils.StringUtils;
 import sav.commons.TestConfiguration;
 import sav.commons.utils.TestConfigUtils;
+import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
 
 

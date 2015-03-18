@@ -8,17 +8,16 @@
 
 package icsetlv.common.utils;
 
-import sav.common.core.utils.CollectionUtils;
-import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.dto.BreakPoint.VarScope;
-import icsetlv.common.dto.BreakPoint.Variable;
-
-import com.sun.jdi.Field;
-import com.sun.jdi.LocalVariable;
-
 import japa.parser.ast.body.VariableDeclaratorId;
 import japa.parser.ast.expr.FieldAccessExpr;
 import japa.parser.ast.expr.NameExpr;
+import sav.common.core.utils.CollectionUtils;
+import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.BreakPoint.VarScope;
+import sav.strategies.dto.BreakPoint.Variable;
+
+import com.sun.jdi.Field;
+import com.sun.jdi.LocalVariable;
 
 /**
  * @author LLT

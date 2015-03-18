@@ -8,7 +8,6 @@
 
 package icsetlv.variable;
 
-import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.common.utils.VariableUtils;
 import japa.parser.JavaParser;
@@ -32,6 +31,7 @@ import java.util.Map;
 
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Predicate;
+import sav.strategies.dto.BreakPoint;
 
 
 /**
@@ -151,7 +151,8 @@ public class AssertionDetector {
 		}
 
 		private void initBreakpoint(Node n) {
-			curBreakpoint = BreakPoint.from(curClass.toString(), curMethod, n.getBeginLine());
+			// TODO NPN double-check this
+			curBreakpoint = new BreakPoint(curClass.toString(), curMethod.getName(), n.getBeginLine());
 		}
 		
 		@Override

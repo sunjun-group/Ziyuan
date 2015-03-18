@@ -9,13 +9,13 @@
 package icsetlv.slicer;
 
 import icsetlv.common.exception.IcsetlvException;
-import icsetlv.common.utils.Assert;
-import icsetlv.common.utils.SignatureUtils;
 
 import java.util.Iterator;
 import java.util.List;
 
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.SignatureUtils;
 
 import com.ibm.wala.ipa.callgraph.Entrypoint;
 import com.ibm.wala.ipa.callgraph.impl.DefaultEntrypoint;
@@ -69,7 +69,7 @@ public abstract class EntrypointMaker<T> {
 					private int index = 0;
 
 					public void remove() {
-						Assert.assertFail("unsupported!!");
+						Assert.fail("unsupported!!");
 					}
 
 					public boolean hasNext() {

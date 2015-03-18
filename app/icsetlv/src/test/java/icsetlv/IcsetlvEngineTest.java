@@ -8,8 +8,6 @@
 
 package icsetlv;
 
-import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.dto.BreakPoint.Variable;
 import icsetlv.common.dto.TcExecResult;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.svm.LibSVM;
@@ -29,6 +27,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sav.common.core.SavException;
+import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;

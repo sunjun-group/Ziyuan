@@ -8,7 +8,6 @@
 
 package icsetlv;
 
-import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.iface.IBugExpert;
 import icsetlv.iface.IManager;
@@ -21,6 +20,7 @@ import icsetlv.variable.TestcasesExecutor;
 import java.util.List;
 
 import sav.common.core.SavException;
+import sav.strategies.dto.BreakPoint;
 
 /**
  * @author LLT

@@ -8,12 +8,12 @@
 
 package icsetlv.iface;
 
-import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.exception.IcsetlvException;
 
 import java.util.List;
 
 import sav.common.core.SavException;
+import sav.strategies.dto.BreakPoint;
 
 /**
  * @author LLT

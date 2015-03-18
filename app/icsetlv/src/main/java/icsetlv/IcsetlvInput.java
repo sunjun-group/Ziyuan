@@ -8,12 +8,11 @@
 
 package icsetlv;
 
-import icsetlv.common.dto.BreakPoint;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
 
 /**

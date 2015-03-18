@@ -8,10 +8,7 @@
 
 package icsetlv.slicer;
 
-import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.exception.IcsetlvException;
-import icsetlv.common.utils.Assert;
-import icsetlv.common.utils.ClassUtils;
 import icsetlv.iface.ISlicer;
 
 import java.io.File;
@@ -25,9 +22,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarFile;
 
+import sav.common.core.utils.Assert;
+import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Predicate;
 import sav.common.core.utils.StringUtils;
+import sav.strategies.dto.BreakPoint;
 
 import com.ibm.wala.classLoader.BinaryDirectoryTreeModule;
 import com.ibm.wala.classLoader.IMethod;
@@ -214,7 +214,7 @@ public class WalaSlicer implements ISlicer {
 				return n;
 			}
 		}
-		Assert.assertFail("failed to find method " + methodName);
+		Assert.fail("failed to find method " + methodName);
 		return null;
 	}
 
