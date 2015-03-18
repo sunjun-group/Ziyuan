@@ -18,7 +18,7 @@ public class MultiDividerBasedCategoryCalculator implements CategoryCalculator {
 	@Override
 	public Category getCategory(final DataPoint dataPoint) {
 		for (Divider divider : dividers) {
-			if (Category.NEGATIVE == divider.getCategory(dataPoint)) {
+			if(divider.dataPointBelongTo(dataPoint, Category.NEGATIVE)){
 				return Category.NEGATIVE;
 			}
 		}

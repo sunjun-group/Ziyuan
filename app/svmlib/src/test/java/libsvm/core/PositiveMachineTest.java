@@ -25,6 +25,7 @@ public class PositiveMachineTest extends TestUltility{
 	
 	@Test
 	public void whenRequireTwoDividers() {
+		// -1.0*x0 -1.0*x1 >= -10.0 && 1.0*x0 -1.0*x1 >= -10.0
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("RequireTwoDividers.txt");
 		runTest(new PositiveSeparationMachine(negativeSelection), 2, inputStream);
 		
