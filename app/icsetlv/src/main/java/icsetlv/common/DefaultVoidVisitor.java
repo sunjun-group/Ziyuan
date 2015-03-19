@@ -94,7 +94,7 @@ import japa.parser.ast.visitor.VoidVisitor;
  * @author LLT
  *
  */
-public class NullVoidVisitor<A> implements VoidVisitor<A> {
+public class DefaultVoidVisitor<A> implements VoidVisitor<A> {
 
 	public void visit(CompilationUnit n, A arg) {
 		// do nothing by default

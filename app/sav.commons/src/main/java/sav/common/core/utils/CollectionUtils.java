@@ -192,4 +192,10 @@ public class CollectionUtils {
 		}
 		list.remove(list.size() - 1);
 	}
+	
+	public static <K, V> void putIfNotExist(Map<K, V> map, K key, V value) {
+		if (!map.containsKey(key)) {
+			map.put(key, value);
+		}
+	}
 }

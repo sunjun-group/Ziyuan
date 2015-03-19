@@ -56,6 +56,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,22 +69,32 @@ import mutanbug.parser.ClassDescriptor;
 import mutanbug.parser.FolderParser;
 import mutanbug.parser.Method;
 import mutanbug.parser.Variable;
+import sav.common.core.utils.CollectionUtils;
+import sav.strategies.dto.ClassLocation;
 
 /**
  * Created by sutd on 1/3/15.
  */
 public class Mutator
 {
-    static Map<String, ClassDescriptor> classDescriptors;
-    static List<Map<String, Variable>> variables;
-    static Set<Method> functions;
-    static Map<String, ClassDescriptor> classMap;
-    static ClassOrInterfaceType curClassType;
-    static ClassOrInterfaceType curPackage;
-    static List<ImportDeclaration> importDeclarations;
-    static long NUMERIC_RANGE = Integer.MAX_VALUE;
-
-    public static void loadClassDescriptor(File sourceFolder)
+    private Map<String, ClassDescriptor> classDescriptors;
+    private List<Map<String, Variable>> variables;
+    private Set<Method> functions;
+    private Map<String, ClassDescriptor> classMap;
+    private ClassOrInterfaceType curClassType;
+    private ClassOrInterfaceType curPackage;
+    private List<ImportDeclaration> importDeclarations;
+    private long NUMERIC_RANGE = Integer.MAX_VALUE;
+    private ExpressionMutator expresionMutator;
+    private StatementMutator stmtMutator;
+    private List<Integer> mutationLines;
+    
+    public Mutator() {
+    	expresionMutator = new ExpressionMutator(this);
+    	stmtMutator = new StatementMutator(this);
+    }
+    
+    public void loadClassDescriptor(File sourceFolder)
     {
         FolderParser folderParser;
         try
@@ -97,23 +108,23 @@ public class Mutator
         }
     }
 
-    static void openScope()
+    private void openScope()
     {
         variables.add(0, new TreeMap<String, Variable>());
     }
 
-    static void closeScope()
+    private void closeScope()
     {
         variables.remove(0);
     }
 
 
-    public static void addVariables(Variable v)
+    private void addVariables(Variable v)
     {
         variables.get(0).put(v.name, v);
     }
 
-    static void addVariables(List<? extends Variable> varList)
+    private void addVariables(List<? extends Variable> varList)
     {
         Map<String, Variable> currentScope = variables.get(0);
         for (Variable var : varList)
@@ -122,7 +133,7 @@ public class Mutator
         }
     }
 
-    public static List<Expression> mutateVarDecExpr(VariableDeclarationExpr varDecExpr)
+    private List<Expression> doMutateVarDecExpr(VariableDeclarationExpr varDecExpr)
     {
         Type type = varDecExpr.getType();
         List<Expression> muExps = new ArrayList<Expression>();
@@ -159,12 +170,12 @@ public class Mutator
         return muExps;
     }
 
-    public static List<AssignExpr.Operator> mutateOperator(AssignExpr.Operator operator)
+    public List<AssignExpr.Operator> mutateOperator(AssignExpr.Operator operator)
     {
         return null;
     }
 
-    public static List<Expression> mutateNameExpr(NameExpr identifier)
+    List<Expression> doMutateNameExpr(NameExpr identifier)
     {
         List<Expression> ret = new ArrayList<Expression>();
 
@@ -187,7 +198,7 @@ public class Mutator
         return ret;
     }
 
-    public static List<Expression> mutateUnaryExpr(UnaryExpr unaryExpr)
+    List<Expression> doMutateUnaryExpr(UnaryExpr unaryExpr)
     {
         UnaryExpr.Operator operator = unaryExpr.getOperator();
         Expression exp = unaryExpr.getExpr();
@@ -206,7 +217,7 @@ public class Mutator
         return muExps;
     }
 
-    public static List<Expression> mutateCastExpr(CastExpr castExpr)
+    List<Expression> doMutateCastExpr(CastExpr castExpr)
     {
         Expression exp = castExpr.getExpr();
         List<Expression> muInner = mutateExpression(exp);
@@ -222,7 +233,7 @@ public class Mutator
         return muExps;
     }
 
-    public static List<Expression> mutateAssignExpr(AssignExpr assignExpr)
+    List<Expression> doMutateAssignExpr(AssignExpr assignExpr)
     {
         List<Expression> muExps = new ArrayList<Expression>();
 
@@ -249,7 +260,7 @@ public class Mutator
         return muExps;
     }
 
-    public static List<Expression> mutateFieldAccessExpr(FieldAccessExpr fieldAccessExpr)
+    List<Expression> doMutateFieldAccessExpr(FieldAccessExpr fieldAccessExpr)
     {
         List<Expression> muExps = new ArrayList<Expression>();
         Variable field = getFieldFromExpr(fieldAccessExpr);
@@ -270,7 +281,7 @@ public class Mutator
         return muExps;
     }
 
-    public static List<Expression> mutateMethodCallExpr(MethodCallExpr methodCallExpr)
+    List<Expression> doMutateMethodCallExpr(MethodCallExpr methodCallExpr)
     {
         List<Expression> muExps = new ArrayList<Expression>();
 
@@ -309,7 +320,7 @@ public class Mutator
         return muExps;
     }
 
-    public static List<Expression> mutateBinaryExpr(BinaryExpr binaryExpr)
+    List<Expression> doMutateBinaryExpr(BinaryExpr binaryExpr)
     {
         BinaryExpr.Operator op = binaryExpr.getOperator();
         Expression left = binaryExpr.getLeft();
@@ -347,7 +358,7 @@ public class Mutator
         return muExps;
     }
 
-    public static List<Expression> mutateExpression(Expression expression)
+    public List<Expression> mutateExpression(Expression expression)
     {
         if (expression instanceof VariableDeclarationExpr)
         {
@@ -360,44 +371,34 @@ public class Mutator
                 Variable v = new Variable(varDeclExpr.getType(), vd.getId().getName(), null);
                 addVariables(v);
             }
-
-            return mutateVarDecExpr(varDeclExpr);
+            return expresionMutator.visitNode(expression);
         }
         else if (expression instanceof UnaryExpr)
         {
             System.out.println("UnaryExpr" + " " + expression);
-            UnaryExpr unaryExpr = (UnaryExpr)expression;
-
-            return mutateUnaryExpr(unaryExpr);
+            return expresionMutator.visitNode(expression);
         }
         else if (expression instanceof NameExpr)
         {
             System.out.println("NameExpr" + " " + expression);
-            NameExpr nameExpr = (NameExpr)expression;
-
-            return mutateNameExpr(nameExpr);
+            return expresionMutator.visitNode(expression);
         }
         else if (expression instanceof AssignExpr)
         {
             System.out.println("AssignExpr" + " " + expression);
-            AssignExpr assignExpr = (AssignExpr)expression;
-
-            return mutateAssignExpr(assignExpr);
+            return expresionMutator.visitNode(expression);
         }
         else if (expression instanceof MethodCallExpr)
         {
             System.out.println("MethodCallExpr" + " " + expression);
-            MethodCallExpr methodCallExpr = (MethodCallExpr)expression;
-
-            return mutateMethodCallExpr(methodCallExpr);
+            return expresionMutator.visitNode(expression);
         }
         else if (expression instanceof BinaryExpr)
         {
             System.out.println("BinaryExpr" + " " + expression);
-            BinaryExpr binaryExpr = (BinaryExpr)expression;
-
-            return mutateBinaryExpr(binaryExpr);
+            return expresionMutator.visitNode(expression);
         }
+        /* visit children */
         else if (expression instanceof EnclosedExpr)
         {
             System.out.println("EnclosedExpr" + " " + expression);
@@ -415,16 +416,12 @@ public class Mutator
         else if (expression instanceof FieldAccessExpr)
         {
             System.out.println("FieldAccessExpr" + " " + expression);
-            FieldAccessExpr fieldAccessExpr = (FieldAccessExpr)expression;
-
-            return mutateFieldAccessExpr(fieldAccessExpr);
+            return expresionMutator.visitNode(expression);
         }
         else if (expression instanceof CastExpr)
         {
             System.out.print("CastExpr" + " " + expression);
-            CastExpr castExpr = (CastExpr)expression;
-
-            return mutateCastExpr(castExpr);
+            return expresionMutator.visitNode(expression);
         }
 
         // if this expression cannot be mutated
@@ -432,15 +429,16 @@ public class Mutator
         return identity;
     }
 
-    public static List<Statement> mutateStatement(Statement stmt)
+    /**
+     * do mutation for 
+     * BreakStmt --> ContinueStmt
+     * ContinueStmt --> BreakStmt
+     */
+    public List<Statement> mutateStatement(Statement stmt)
     {
         if (stmt != null)
         {
-            int beginCol = stmt.getBeginColumn();
-            int beginLine = stmt.getBeginLine();
-            int endLine = stmt.getEndLine();
-            int endCol = stmt.getEndColumn();
-
+            /* visit children */
             if (stmt instanceof ExpressionStmt)
             {
                 Expression exp = ((ExpressionStmt) stmt).getExpression();
@@ -459,18 +457,17 @@ public class Mutator
 
                 return muStmts;
             }
+            /* mutate */
             else if (stmt instanceof BreakStmt)
             {
-                List<Statement> muStmts = new ArrayList<Statement>();
-                muStmts.add(new ContinueStmt(beginLine, beginCol, endLine, endCol, null));
-                return muStmts;
+            	return stmtMutator.visitNode(stmt);
             }
+            /* mutate */
             else if (stmt instanceof ContinueStmt)
             {
-                List<Statement> muStmts = new ArrayList<Statement>();
-                muStmts.add(new BreakStmt(beginLine, beginCol, endLine, endCol, null));
-                return muStmts;
+                return stmtMutator.visitNode(stmt);
             }
+            /* visit children */
             else if (stmt instanceof IfStmt)
             {
                 List<Statement> muStmts = new ArrayList<Statement>();
@@ -505,6 +502,7 @@ public class Mutator
 
                 return muStmts;
             }
+            /* visit children */
             else if (stmt instanceof ForStmt)
             {
                 System.out.println("ForStmt");
@@ -568,6 +566,7 @@ public class Mutator
 
                 return muStmts;
             }
+            /* visit children */
             else if (stmt instanceof WhileStmt)
             {
                 WhileStmt whileStmt = (WhileStmt)stmt;
@@ -593,10 +592,12 @@ public class Mutator
 
                 return muStmts;
             }
+            /* not mutate */
             else if (stmt instanceof SwitchStmt)
             {
                 //throw new NotImplementedException();
             }
+            /* visit children */
             else if (stmt instanceof BlockStmt)
             {
                 List<Statement> muStmts = new ArrayList<Statement>();
@@ -625,6 +626,7 @@ public class Mutator
 
                 return muStmts;
             }
+            /* visit children */
             else if (stmt instanceof ReturnStmt)
             {
                 ReturnStmt returnStmt = (ReturnStmt) stmt;
@@ -647,8 +649,25 @@ public class Mutator
         return identity;
     }
 
+	/**
+	 * mutate continue statement
+	 */
+	List<Statement> doMutate(ContinueStmt stmt) {
+		Statement breakStmt = new BreakStmt(null);
+		copyBoudary(breakStmt, stmt);
+		return CollectionUtils.listOf(breakStmt);
+	}
 
-    public static List<MethodDeclaration> mutateMethod(MethodDeclaration funcDecl)
+	/**
+	 * mutate break statement
+	 */
+	List<Statement> doMutate(BreakStmt stmt) {
+		Statement continueStmt = new ContinueStmt(null);
+		copyBoudary(continueStmt, stmt);
+		return CollectionUtils.listOf(continueStmt);
+	}
+
+	public List<MethodDeclaration> mutateMethod(MethodDeclaration funcDecl)
     {
         openScope();
 
@@ -664,7 +683,7 @@ public class Mutator
         BlockStmt body = funcDecl.getBody();
         List<Statement> stmts = body.getStmts();
         List<MethodDeclaration> muMethods = new ArrayList<MethodDeclaration>();
-
+        /* visit children */
         List<Statement> muBodies = mutateStatement(body);
         for (Statement muBody : muBodies)
         {
@@ -681,7 +700,7 @@ public class Mutator
         return muMethods;
     }
 
-    public static List<ClassOrInterfaceDeclaration> mutateClass(ClassOrInterfaceDeclaration classDecl)
+    public List<ClassOrInterfaceDeclaration> mutateClass(ClassOrInterfaceDeclaration classDecl)
     {
         List<ClassOrInterfaceDeclaration> muClasses = new ArrayList<ClassOrInterfaceDeclaration>();
         List<BodyDeclaration> members = classDecl.getMembers();
@@ -705,6 +724,7 @@ public class Mutator
             BodyDeclaration member = members.get(i);
             if (member instanceof MethodDeclaration)
             {
+            	// visit children 
                 List<MethodDeclaration> muMethods = mutateMethod((MethodDeclaration) member);
                 for (MethodDeclaration muMethod : muMethods)
                 {
@@ -714,7 +734,6 @@ public class Mutator
                     muClassDecl.setMembers(muMembers);
                     copyBoudary(muClassDecl, muMethod);
                     muClasses.add(muClassDecl);
-//                    System.out.println("Class " + muClassDecl.getName() + " " + muClassDecl.getBeginLine() + " " + muClassDecl.getBeginColumn());
                 }
             }
         }
@@ -727,8 +746,12 @@ public class Mutator
         return muClasses;
     }
 
-    public static void mutateFile(File javaFile, File outputFolder)
+    public void mutateFile(File javaFile, File outputFolder, List<Integer> mutationLines)
     {
+    	if (CollectionUtils.isEmpty(mutationLines)) {
+    		return;
+    	}
+    	this.mutationLines = mutationLines;
         try
         {
             CompilationUnit cu = JavaParser.parse(javaFile);
@@ -807,7 +830,7 @@ public class Mutator
      * @param type the type object
      * @return the class corresponding the type
      */
-    public static ClassDescriptor getClassDescriptor(Type type)
+    public ClassDescriptor getClassDescriptor(Type type)
     {
         if (type != null)
         {
@@ -841,7 +864,7 @@ public class Mutator
         return null;
     }
 
-    private static String createQuantifiedName(String packageName, String className)
+    private String createQuantifiedName(String packageName, String className)
     {
         if (packageName.endsWith("."))
         {
@@ -851,7 +874,7 @@ public class Mutator
         return packageName + "." + className;
     }
 
-    public static Expression genRandomVal(Type type)
+    public Expression genRandomVal(Type type)
     {
         if (type.equals(ASTHelper.BOOLEAN_TYPE))
         {
@@ -881,7 +904,7 @@ public class Mutator
         return null;
     }
 
-    public static Type getExpressionType(Expression expression)
+    public Type getExpressionType(Expression expression)
     {
         if (expression == null || expression instanceof ThisExpr)
         {
@@ -961,7 +984,7 @@ public class Mutator
         return null;
     }
 
-    static Variable getVariableFromName(String variableName)
+    private Variable getVariableFromName(String variableName)
     {
         Iterator<Map<String, Variable>> varIt = variables.iterator();
 
@@ -979,7 +1002,7 @@ public class Mutator
         return null;
     }
 
-    public static Variable getVariableFromExpr(Expression expression)
+    public Variable getVariableFromExpr(Expression expression)
     {
         if (expression instanceof NameExpr)
         {
@@ -997,7 +1020,7 @@ public class Mutator
         return null;
     }
 
-    public static Variable getFieldFromExpr(FieldAccessExpr fieldAccessExpr)
+    public Variable getFieldFromExpr(FieldAccessExpr fieldAccessExpr)
     {
         Expression scope = fieldAccessExpr.getScope();
         Type type = getExpressionType(scope);
@@ -1015,7 +1038,7 @@ public class Mutator
         return null;
     }
 
-    public static Method getMethodFromExpr(MethodCallExpr methodCallExpr)
+    public Method getMethodFromExpr(MethodCallExpr methodCallExpr)
     {
         Expression scope = methodCallExpr.getScope();
         Type type = getExpressionType(scope);
@@ -1042,7 +1065,7 @@ public class Mutator
         return null;
     }
 
-    private static List<Variable> parseField(FieldDeclaration varDecl)
+    private List<Variable> parseField(FieldDeclaration varDecl)
     {
         List<Variable> variables = new ArrayList<Variable>();
 
@@ -1057,7 +1080,7 @@ public class Mutator
         return variables;
     }
 
-    private static void setBoundary(Node node, int beginLine, int endLine, int beginColumn, int endColumn)
+    private void setBoundary(Node node, int beginLine, int endLine, int beginColumn, int endColumn)
     {
         node.setBeginLine(beginLine);
         node.setEndColumn(endColumn);
@@ -1065,13 +1088,13 @@ public class Mutator
         node.setBeginColumn(beginColumn);
     }
 
-    private static void copyBoudary(Node dest, Node source)
+    private void copyBoudary(Node dest, Node source)
     {
         if (dest != null && source != null)
             setBoundary(dest, source.getBeginLine(), source.getEndLine(), source.getBeginColumn(), source.getEndColumn());
     }
 
-    private static MethodDeclaration cloneMethod(MethodDeclaration decl)
+    private MethodDeclaration cloneMethod(MethodDeclaration decl)
     {
 //        MethodDeclaration clone = new MethodDeclaration(decl.getJavaDoc(), decl.getModifiers(), decl.getAnnotations(), decl.getTypeParameters(), decl.getType(), decl.getName(), decl.getParameters(), decl.getArrayCount(), decl.getThrows(), decl.getBody());
     	MethodDeclaration clone = new MethodDeclaration(decl.getModifiers(), decl.getAnnotations(), decl.getTypeParameters(), decl.getType(), decl.getName(), decl.getParameters(), decl.getArrayCount(), decl.getThrows(), decl.getBody());
@@ -1079,14 +1102,14 @@ public class Mutator
         return clone;
     }
 
-    private static ClassOrInterfaceDeclaration cloneClassDecl(ClassOrInterfaceDeclaration source)
+    private ClassOrInterfaceDeclaration cloneClassDecl(ClassOrInterfaceDeclaration source)
     {
         ClassOrInterfaceDeclaration clone = new ClassOrInterfaceDeclaration(source.getModifiers(), source.getAnnotations(), source.isInterface(), source.getName(), source.getTypeParameters(), source.getExtends(), source.getImplements(), source.getMembers());
         copyBoudary(clone, source);
         return clone;
     }
 
-    private static Type getMaxType(Type leftType, Type rightType)
+    private Type getMaxType(Type leftType, Type rightType)
     {
         if (leftType instanceof PrimitiveType && rightType instanceof PrimitiveType)
         {
@@ -1138,31 +1161,28 @@ public class Mutator
 
         return leftType;
     }
+    
+	boolean needToMutate(Node node) {
+		for (Integer lineNo : mutationLines) {
+			if (lineNo >= node.getBeginLine() && lineNo <= node.getEndLine()) {
+				return true;
+			}
+		}
+		return false;
+	}
 
     public static void main(String[] args)
     {
-//        double a = 2, b = 2.4;
-//        int c = ~2;
-//        boolean d = !true;
-//
-//        BinaryExpr.Operator op = BinaryExpr.Operator.plus;
-//        BinaryExpr left = new BinaryExpr(new IntegerLiteralExpr("3"), new IntegerLiteralExpr("10"), BinaryExpr.Operator.times);
-//        BinaryExpr right = new BinaryExpr(new DoubleLiteralExpr("2.0"), new IntegerLiteralExpr("2"), BinaryExpr.Operator.divide);
-//        BinaryExpr binaryExpr = new BinaryExpr(left, right, op);
-//
-//        System.out.println(binaryExpr);
-//        System.out.println(getExpressionType(left));
-//        System.out.println(getExpressionType(right));
-//        System.out.println(getExpressionType(binaryExpr));
-//        int a = 2;
-//        int b = - -(a++);
-
 //        String srcFolder = "/Users/sutd/Dropbox/MutantBug/src/";
 //        String srcFolder = "C:\\Users\\1001385\\Dropbox\\MutantBug\\src\\";
     	String srcFolder = "D:/_1_Projects/Tzuyu/workspace/trunk/app/sav.commons/src/test/java/sav/commons/testdata/";
-        loadClassDescriptor(new File(srcFolder));
+//        loadClassDescriptor(new File(srcFolder));
 //        File javaFile = new File(srcFolder + "test/TestForStmt.java");
         File javaFile = new File(srcFolder + "SamplePrograms.java");
-        mutateFile(javaFile, new File(srcFolder + "mutatedSource"));
+        File outputFolder = FileUtils.createFolder(new File(srcFolder), "mutatedSource");
+        Mutator mutator = new Mutator();
+		mutator.mutateFile(javaFile, outputFolder,
+				Arrays.asList(10, 13));
     }
+   
 }
