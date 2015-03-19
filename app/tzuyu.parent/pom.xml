@@ -115,11 +115,17 @@
 				<version>${project.version}</version>
 			</dependency>
 
-		<dependency>
-		    <groupId>tzuyu-project</groupId>
-			<artifactId>svmlib</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+			<dependency>
+			    <groupId>tzuyu-project</groupId>
+				<artifactId>svmlib</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>slicer.wala</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>tzuyu-project</groupId>

@@ -12,6 +12,10 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 
+import libsvm.core.KernelType;
+import libsvm.core.Machine;
+import libsvm.core.MachineType;
+import libsvm.core.Parameter;
 import sav.common.core.utils.StringUtils;
 import sav.commons.TestConfiguration;
 import sav.commons.utils.TestConfigUtils;
@@ -75,5 +79,11 @@ public class AbstractTest {
 		input.setAppBinFolder(config.SAV_COMMONS_TEST_TARGET);
 		input.setJre(TestConfigUtils.getJavaHome());
 		return input;
+	}
+
+	protected Machine setupMachine(Machine defaultMachine, int numberOfFeatures) {
+		return defaultMachine.setNumberOfFeatures(numberOfFeatures).setParameter(
+				new Parameter().setMachineType(MachineType.C_SVC).setKernelType(KernelType.LINEAR)
+						.setEps(1.0).setUseShrinking(false).setPredictProbability(false).setC(Double.MAX_VALUE));
 	}
 }
