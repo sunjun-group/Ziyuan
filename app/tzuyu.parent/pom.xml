@@ -43,10 +43,10 @@
 	<modules>
 		<module>../sav.commons</module>
 		<!-- algorithm modules -->
-		<module>../gentest</module>
-<!-- 		<module>../slicer.wala</module> -->
-<!-- 		<module>../slicer.javaslicer</module> -->
-<!-- 		<module>../codecoverage.jacoco</module> -->
+		<!-- <module>../gentest</module> -->
+ 		<module>../slicer.wala</module>
+ 		<module>../slicer.javaslicer</module>
+ 		<module>../codecoverage.jacoco</module>
 		<!-- -->
  		<module>../tzuyu.core</module>
  		<module>../tzuyu.feature</module>
@@ -55,7 +55,7 @@
  		<module>../faultLocalization</module>
  		<module>../extcos</module>
  		<module>../svmlib</module>
-<!--  		<module>../icsetlv</module>  -->
+  		<module>../icsetlv</module>
 	</modules>
 
 	<build>
@@ -115,11 +115,17 @@
 				<version>${project.version}</version>
 			</dependency>
 
-		<dependency>
-		    <groupId>tzuyu-project</groupId>
-			<artifactId>svmlib</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+			<dependency>
+			    <groupId>tzuyu-project</groupId>
+				<artifactId>svmlib</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>slicer.wala</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>tzuyu-project</groupId>

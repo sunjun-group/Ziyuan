@@ -102,17 +102,8 @@
 
 		<!-- wala -->
 		<dependency>
-			<groupId>com.ibm.wala</groupId>
-			<artifactId>com.ibm.wala.core</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.ibm.wala</groupId>
-			<artifactId>com.ibm.wala.shrike</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.ibm.wala</groupId>
-			<artifactId>com.ibm.wala.util</artifactId>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>slicer.wala</artifactId>
 		</dependency>
 
 		<!-- svm part -->

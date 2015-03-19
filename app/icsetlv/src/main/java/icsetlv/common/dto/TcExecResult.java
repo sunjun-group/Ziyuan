@@ -11,6 +11,8 @@ package icsetlv.common.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.strategies.dto.BreakPoint;
+
 /**
  * @author LLT 
  * Testcases execution result.

@@ -8,7 +8,6 @@
 
 package icsetlv;
 
-import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.variable.AssertionDetector;
 
@@ -26,6 +25,7 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 import sav.commons.TestConfiguration;
+import sav.strategies.dto.BreakPoint;
 
 
 /**

@@ -8,19 +8,19 @@
 
 package icsetlv;
 
-import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.iface.IBugExpert;
 import icsetlv.iface.IManager;
-import icsetlv.iface.ISlicer;
 import icsetlv.iface.ITestcasesExecutor;
-import icsetlv.slicer.SlicerInput;
-import icsetlv.slicer.WalaSlicer;
 import icsetlv.variable.TestcasesExecutor;
 
 import java.util.List;
 
 import sav.common.core.SavException;
+import sav.strategies.dto.BreakPoint;
+import sav.strategies.slicing.ISlicer;
+import slicer.wala.SlicerInput;
+import slicer.wala.WalaSlicer;
 
 /**
  * @author LLT
@@ -58,7 +58,11 @@ public class IcsetlvEngine implements IManager {
 
 	@Override
 	public ISlicer getSlicer() throws IcsetlvException {
-		return new WalaSlicer(sliceInput);
+		try {
+			return new WalaSlicer(sliceInput);
+		} catch (SavException e) {
+			throw new IcsetlvException(e);
+		}
 	}
 
 	@Override
