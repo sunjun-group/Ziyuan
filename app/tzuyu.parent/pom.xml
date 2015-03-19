@@ -43,10 +43,10 @@
 	<modules>
 		<module>../sav.commons</module>
 		<!-- algorithm modules -->
-		<module>../gentest</module>
-<!-- 		<module>../slicer.wala</module> -->
-<!-- 		<module>../slicer.javaslicer</module> -->
-<!-- 		<module>../codecoverage.jacoco</module> -->
+		<!-- <module>../gentest</module> -->
+ 		<module>../slicer.wala</module>
+ 		<module>../slicer.javaslicer</module>
+ 		<module>../codecoverage.jacoco</module>
 		<!-- -->
  		<module>../tzuyu.core</module>
  		<module>../tzuyu.feature</module>
