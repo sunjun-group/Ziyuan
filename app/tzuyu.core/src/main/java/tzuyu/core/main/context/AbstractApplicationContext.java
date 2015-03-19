@@ -20,7 +20,7 @@ import sav.strategies.slicing.ISlicer;
 import sav.strategies.vm.VMConfiguration;
 import slicer.javaslicer.JavaSlicer;
 import codecoverage.jacoco.agent.JaCoCoAgent;
-import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
+import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 /**
  * @author LLT 
@@ -111,7 +111,7 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 	
 	protected abstract List<String> getProjectClasspath();
 
-	public abstract SuspiciousnessCalculationAlgorithm getSuspiciousnessCalculationAlgorithm();
+	public abstract SpectrumAlgorithm getSuspiciousnessCalculationAlgorithm();
 	
 	public abstract IPrintStream getVmRunnerPrintStream();
 }
