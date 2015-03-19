@@ -6,12 +6,13 @@
  *  Version:  $Revision: 1 $
  */
 
-package icsetlv.iface;
+package faultLocalization;
 
 /**
- * @author LLT
+ * @author khanh
  *
  */
-public interface IIcsetlvEngine {
+public interface SuspiciousCalculator {
 
+	public double compute();
 }

@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 
 import sav.common.core.utils.ConfigUtils;
 import codecoverage.jacoco.JavaCoCo;
-import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
+import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 /**
  * Data provider which gets configurations from System properties.
@@ -81,12 +81,12 @@ public class SystemConfiguredDataProvider extends TestApplicationContext {
 	}
 
 	@Override
-	public SuspiciousnessCalculationAlgorithm getSuspiciousnessCalculationAlgorithm() {
+	public SpectrumAlgorithm getSuspiciousnessCalculationAlgorithm() {
 		final String algo = ConfigUtils.getProperty(TZUYU_ALGO);
 		if (StringUtils.isNotBlank(algo)) {
-			return SuspiciousnessCalculationAlgorithm.valueOf(algo);
+			return SpectrumAlgorithm.valueOf(algo);
 		} else {
-			return SuspiciousnessCalculationAlgorithm.TARANTULA;
+			return SpectrumAlgorithm.TARANTULA;
 		}
 	}
 

@@ -8,16 +8,15 @@
 
 package icsetlv;
 
-import icsetlv.common.dto.BreakPoint;
-import icsetlv.slicer.SlicerInput;
-import icsetlv.slicer.WalaSlicer;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 
 import sav.common.core.utils.CollectionUtils;
+import sav.strategies.dto.BreakPoint;
+import slicer.wala.SlicerInput;
+import slicer.wala.WalaSlicer;
 
 /**
  * @author LLT

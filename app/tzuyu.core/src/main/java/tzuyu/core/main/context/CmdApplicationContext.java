@@ -15,7 +15,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 import sav.common.core.iface.IPrintStream;
-import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
+import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 /**
  * @author LLT
@@ -58,7 +58,7 @@ public class CmdApplicationContext extends AbstractApplicationContext {
 	}
 
 	@Override
-	public SuspiciousnessCalculationAlgorithm getSuspiciousnessCalculationAlgorithm() {
+	public SpectrumAlgorithm getSuspiciousnessCalculationAlgorithm() {
 		// TODO Auto-generated method stub
 		return null;
 	}

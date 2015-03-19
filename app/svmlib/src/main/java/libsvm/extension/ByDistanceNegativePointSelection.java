@@ -9,7 +9,7 @@
 package libsvm.extension;
 
 import java.util.List;
-
+import org.apache.log4j.Logger;
 import libsvm.core.Machine.DataPoint;
 
 /**
@@ -19,7 +19,8 @@ import libsvm.core.Machine.DataPoint;
  *
  */
 public class ByDistanceNegativePointSelection implements NegativePointSelection{
-
+	protected static final Logger LOGGER = Logger.getLogger(ByDistanceNegativePointSelection.class);
+	
 	public DataPoint select(List<DataPoint> negatives, List<DataPoint> positives){
 		DataPoint randomPositive = getRandomPositive(positives);
 		
@@ -34,6 +35,7 @@ public class ByDistanceNegativePointSelection implements NegativePointSelection{
 			}
 		}
 		
+		LOGGER.info("Negative selection: " + result);
 		return result;
 	}
 	

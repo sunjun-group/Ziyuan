@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import libsvm.svm_model;
 import libsvm.core.Category;
 import libsvm.core.Divider;
@@ -23,11 +25,12 @@ import libsvm.core.Model;
  * 
  */
 public class PositiveSeparationMachine extends Machine {
-
+	protected static final Logger LOGGER = Logger.getLogger(PositiveSeparationMachine.class);
+	
 	private List<svm_model> learnedModels = new ArrayList<svm_model>();
 	
 	private static final int MAXIMUM_ATTEMPT_COUNT = 100;
-	private static final int MAXIMUM_DIVIDER_COUNT = 3;
+	private static final int MAXIMUM_DIVIDER_COUNT = 2;
 	
 	private NegativePointSelection negativePointSelection;
 
@@ -103,7 +106,7 @@ public class PositiveSeparationMachine extends Machine {
 		Divider roundDivider = new Model(model, getNumberOfFeatures()).getExplicitDivider().round();
 		for (Iterator<DataPoint> it = negatives.iterator(); it.hasNext();) {
 			DataPoint dp = it.next();
-			if (Category.NEGATIVE == roundDivider.getCategory(dp)) {
+			if(roundDivider.dataPointBelongTo(dp, Category.NEGATIVE)){
 				it.remove();
 			}
 		}

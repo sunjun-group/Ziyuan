@@ -26,19 +26,19 @@ import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.slicing.ISlicer;
 import faultLocalization.CoverageReport;
 import faultLocalization.FaultLocalizationReport;
-import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
+import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 /**
  * @author LLT
  * 
  */
-public class ProgramAnalyzer {
+public class FaultLocalization {
 	private Logger<?> log = Logger.getDefaultLogger();
 	private ISlicer slicer;
 	private ICodeCoverage codeCoverageTool;
 	private boolean useSlicer = true; // Use slicer by default
 
-	public ProgramAnalyzer(IApplicationContext appContext) {
+	public FaultLocalization(IApplicationContext appContext) {
 		slicer = appContext.getSlicer();
 		codeCoverageTool = appContext.getCodeCoverageTool();
 	}
@@ -46,13 +46,13 @@ public class ProgramAnalyzer {
 	public FaultLocalizationReport analyse(List<String> testingClasseNames,
 			List<String> junitClassNames) throws Exception {
 		return analyse(testingClasseNames, junitClassNames,
-				SuspiciousnessCalculationAlgorithm.TARANTULA);
+				SpectrumAlgorithm.TARANTULA);
 	}
 	
 	public FaultLocalizationReport analyseSlicingFirst(
 			List<String> analyzedClasses, List<String> analyzedPackages,
 			List<String> junitClassNames,
-			SuspiciousnessCalculationAlgorithm algorithm) throws Exception {
+			SpectrumAlgorithm algorithm) throws Exception {
 		List<String> testMethods = JunitUtils.extractTestMethods(junitClassNames);
 		/*
 		 * do slicing first, but we must run testcases first, and only slice the
@@ -99,7 +99,7 @@ public class ProgramAnalyzer {
 	}
 
 	public FaultLocalizationReport analyse(List<String> testingClasses,
-			List<String> junitClassNames, SuspiciousnessCalculationAlgorithm algorithm)
+			List<String> junitClassNames, SpectrumAlgorithm algorithm)
 			throws Exception {
 		log.info("Start analyzing..")
 			.info("testingClasses=", testingClasses)

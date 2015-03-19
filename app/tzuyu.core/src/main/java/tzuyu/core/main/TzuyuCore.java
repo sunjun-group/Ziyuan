@@ -10,7 +10,7 @@ package tzuyu.core.main;
 
 import java.util.List;
 
-import main.ProgramAnalyzer;
+import main.FaultLocalization;
 import tzuyu.core.main.context.AbstractApplicationContext;
 import faultLocalization.FaultLocalizationReport;
 
@@ -33,7 +33,7 @@ public class TzuyuCore {
 	
 	public FaultLocalizationReport faultLocalization(List<String> testingClassNames,
 			List<String> junitClassNames, boolean useSlicer) throws Exception {
-		ProgramAnalyzer analyzer = new ProgramAnalyzer(appContext);
+		FaultLocalization analyzer = new FaultLocalization(appContext);
 		analyzer.setUseSlicer(useSlicer);
 		return analyzer.analyse(testingClassNames, junitClassNames,
 				appContext.getSuspiciousnessCalculationAlgorithm());
@@ -42,7 +42,7 @@ public class TzuyuCore {
 	public FaultLocalizationReport faultLocalization2(
 			List<String> testingClassNames, List<String> testingPackages,
 			List<String> junitClassNames, boolean useSlicer) throws Exception {
-		ProgramAnalyzer analyzer = new ProgramAnalyzer(appContext);
+		FaultLocalization analyzer = new FaultLocalization(appContext);
 		analyzer.setUseSlicer(useSlicer);
 		return analyzer.analyseSlicingFirst(testingClassNames, testingPackages,
 				junitClassNames,

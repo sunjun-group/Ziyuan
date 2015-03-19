@@ -9,7 +9,6 @@
 package icsetlv.vm;
 
 import icsetlv.common.exception.IcsetlvException;
-import icsetlv.common.utils.CollectionBuilder;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -23,6 +22,7 @@ import java.util.List;
 import sav.common.core.Constants;
 import sav.common.core.NullPrintStream;
 import sav.common.core.iface.IPrintStream;
+import sav.common.core.utils.CollectionBuilder;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.vm.VMConfiguration;
 

@@ -17,7 +17,7 @@ import sav.common.core.iface.IPrintStream;
 import sav.commons.TestConfiguration;
 import sav.commons.utils.TestConfigUtils;
 import tzuyu.core.main.context.AbstractApplicationContext;
-import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
+import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 
 /**
@@ -25,7 +25,7 @@ import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgor
  *
  */
 public class TestApplicationContext extends AbstractApplicationContext {
-	private SuspiciousnessCalculationAlgorithm suspiciousnessCalcul;
+	private SpectrumAlgorithm suspiciousnessCalcul;
 	protected List<String> projectClasspath;
 
 	public TestApplicationContext() {
@@ -57,12 +57,12 @@ public class TestApplicationContext extends AbstractApplicationContext {
 	}
 
 	@Override
-	public SuspiciousnessCalculationAlgorithm getSuspiciousnessCalculationAlgorithm() {
+	public SpectrumAlgorithm getSuspiciousnessCalculationAlgorithm() {
 		return suspiciousnessCalcul;
 	}
 	
 	protected void setSuspiciousnessCalculationAlgorithm(
-			SuspiciousnessCalculationAlgorithm algorithm) {
+			SpectrumAlgorithm algorithm) {
 		this.suspiciousnessCalcul = algorithm;
 	}
 

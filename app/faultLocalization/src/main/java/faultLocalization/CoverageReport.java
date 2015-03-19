@@ -22,7 +22,7 @@ import sav.strategies.codecoverage.ICoverageReport;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.ClassLocation;
 import faultLocalization.LineCoverageInfo.LineCoverageInfoComparator;
-import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
+import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 /**
  * @author khanh
@@ -126,11 +126,11 @@ public class CoverageReport implements ICoverageReport{
 	}
 
 	public <T extends ClassLocation> List<LineCoverageInfo> tarantula(final List<T> filteredPoints) {
-		return tarantula(filteredPoints, SuspiciousnessCalculationAlgorithm.TARANTULA);
+		return tarantula(filteredPoints, SpectrumAlgorithm.TARANTULA);
 	}
 
 	public <T extends ClassLocation> List<LineCoverageInfo> tarantula(final List<T> filteredPoints,
-			final SuspiciousnessCalculationAlgorithm algorithm) {
+			final SpectrumAlgorithm algorithm) {
 		final List<LineCoverageInfo> linesCoverageInfo = new ArrayList<LineCoverageInfo>();
 
 		final List<String> pointLocIds = BreakpointUtils.toLocationIds(filteredPoints);
@@ -160,6 +160,7 @@ public class CoverageReport implements ICoverageReport{
 		for (int i = linesCoverageInfo.size() - 1; i >= 0; i--) {
 			logger.info(linesCoverageInfo.get(i).toString());
 		}
+		
 		return linesCoverageInfo;
 	}
 

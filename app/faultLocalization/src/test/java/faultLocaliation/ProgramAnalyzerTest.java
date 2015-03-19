@@ -11,7 +11,7 @@ package faultLocaliation;
 import java.util.Arrays;
 import java.util.List;
 
-import main.ProgramAnalyzer;
+import main.FaultLocalization;
 import sav.commons.AbstractTest;
 import sav.commons.testdata.SampleProgramTestFail;
 import sav.commons.testdata.SamplePrograms;
@@ -29,7 +29,7 @@ import faultLocalization.LineCoverageInfo;
 public class ProgramAnalyzerTest extends AbstractTest {
 	
 	public void testAnalyse() throws Exception {
-		ProgramAnalyzer analyzer = new ProgramAnalyzer(new IApplicationContext() {
+		FaultLocalization analyzer = new FaultLocalization(new IApplicationContext() {
 			
 			@Override
 			public ISlicer getSlicer() {

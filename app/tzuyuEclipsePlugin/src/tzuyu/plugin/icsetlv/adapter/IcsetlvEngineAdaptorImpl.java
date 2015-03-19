@@ -59,8 +59,9 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 		IcsetlvEngine icsetlv = new IcsetlvEngine();
 		IcsetlvInput input = initIcsetlvInput(workObj, prefs);
 
-		List<BreakPoint> result = icsetlv.run(input);
-		return result;
+//		List<BreakPoint> result = icsetlv.run(input);
+//		return result;
+		return null;
 	}
 
 	private IcsetlvInput initIcsetlvInput(WorkObject workObject,
@@ -90,7 +91,7 @@ public class IcsetlvEngineAdaptorImpl implements IcsetlvEngineAdaptor {
 		Map<ICompilationUnit, List<IMethod>> assertionSources = getAssertionSources(workObject, prefs);
 		List<BreakPoint> bkps = AssertionDetector.scan(assertionSources);
 		input.setAssertionSourcePaths(toOsstring(assertionSources));
-		input.setBreakpoints(bkps);
+//		input.setBreakpoints(bkps);
 		List<String> sourceNames = getName(assertionSources.keySet());
 		List<IType> passTcs = extractSourceByNames(sourceNames, prefs.getPassPkg());
 		List<IType> failTcs = extractSourceByNames(sourceNames, prefs.getFailPkg());

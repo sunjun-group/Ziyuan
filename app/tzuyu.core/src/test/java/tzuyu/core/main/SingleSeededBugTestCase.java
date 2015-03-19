@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import main.ProgramAnalyzer;
+import main.FaultLocalization;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +40,7 @@ import faultLocalization.LineCoverageInfo;
 //@RunWith(Parameterized.class)
 public class SingleSeededBugTestCase extends AbstractTzTest {
 
-	private ProgramAnalyzer analyzer;
+	private FaultLocalization analyzer;
 
 	// Parameters
 	private List<String> programClasses;
@@ -49,7 +49,7 @@ public class SingleSeededBugTestCase extends AbstractTzTest {
 
 	@Before
 	public void setup() {
-		this.analyzer = new ProgramAnalyzer(testContext);
+		this.analyzer = new FaultLocalization(testContext);
 	}
 
 	public SingleSeededBugTestCase(final List<String> programClasses,

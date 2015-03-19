@@ -134,6 +134,33 @@ public class BugExpert implements IBugExpert {
 		return dataset;
 	}
 
+	public static void addDataPoints(Machine machine, List<BreakpointValue> passValues,
+			List<BreakpointValue> failValues) {
+		final int size = passValues.size() + failValues.size();
+		Map<String, double[]> allLongsVals = new HashMap<String, double[]>(size);
+		for (int i = 0; i < passValues.size(); i++) {
+			addDataPoint(machine, passValues, size, allLongsVals, i, Category.POSITIVE);
+		}
+
+		for (int i = 0; i < failValues.size(); i++) {
+			addDataPoint(machine, passValues, size, allLongsVals, i, Category.NEGATIVE);
+		}
+	}
+
+	private static void addDataPoint(Machine machine, List<BreakpointValue> passValues,
+			final int size, Map<String, double[]> allLongsVals, int i, Category category) {
+		BreakpointValue value = passValues.get(i);
+		value.retrieveValue(allLongsVals, i, size);
+
+		double[] lineVals = new double[machine.getNumberOfFeatures()];
+		int j = 0;
+		for (String key : allLongsVals.keySet()) {
+			lineVals[j++] = allLongsVals.get(key)[i];
+		}
+
+		machine.addDataPoint(category, lineVals);
+	}
+
 	private static double[] multi(double[] ds, int f) {
 		for (int i = 0; i < ds.length; i++) {
 			ds[i] = ds[i] * f;

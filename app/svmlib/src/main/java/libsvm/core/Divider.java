@@ -67,7 +67,22 @@ public class Divider {
 		return new Divider(roundedThetas, roundedAllThetas[lastIndex], true);
 	}
 
+	/**
+	 * Based on the divider, we compute the category of dataPoint and compare with category
+	 * However, here, if the value is zero, then we classify this datapoint as either negative or positive
+	 * This function should be called during computing the accuracy of the divider
+	 */
+	public boolean dataPointBelongTo(DataPoint dataPoint, Category category){
+		double value = computeValueOfDataPoint(dataPoint);
+		return (Double.compare(value, 0) == 0) || (Category.fromDouble(value) == category);
+	}
+	
 	public Category getCategory(final DataPoint dataPoint) {
+		double value = computeValueOfDataPoint(dataPoint);
+		return Category.fromDouble(value);
+	}
+
+	private double computeValueOfDataPoint(final DataPoint dataPoint) {
 		double value = 0.0;
 		for (int i = 0; i < dataPoint.getNumberOfFeatures(); i++) {
 			if (i < thetas.length) {
@@ -75,7 +90,7 @@ public class Divider {
 			}
 		}
 		value -= theta0;
-		return Category.fromDouble(value);
+		return value;
 	}
 	
 	public CategoryCalculator getCategoryCalculator() {

@@ -28,7 +28,7 @@ public class TestUltility {
 	protected Machine setupMachine(Machine defaultMachine, int numberOfFeatures) {
 		return defaultMachine.setNumberOfFeatures(numberOfFeatures).setParameter(
 				new Parameter().setMachineType(MachineType.C_SVC).setKernelType(KernelType.LINEAR)
-						.setEps(1.0).setUseShrinking(false).setPredictProbability(false));
+						.setEps(1.0).setUseShrinking(false).setPredictProbability(false).setC(Double.MAX_VALUE));
 	}
 	
 	protected void runTest(Machine defaultMachine, int numOfFeatures, InputStream inputStream) {

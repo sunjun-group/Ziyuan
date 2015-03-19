@@ -18,9 +18,11 @@ import org.junit.Test;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.simplePrograms.DuplicateNumberTest;
 import sav.commons.testdata.simplePrograms.FindInRotatedSortedArrayTest;
+import sav.commons.testdata.simplePrograms.MatchStringTest;
 import sav.commons.testdata.simplePrograms.Palindrome1Test;
 import sav.commons.testdata.simplePrograms.Palindrome2Test;
 import sav.commons.testdata.simplePrograms.ReverseWordTest;
+import sav.commons.testdata.simplePrograms.SearchInSortingMatrix1Test;
 import sav.commons.testdata.simplePrograms.SimplePrograms;
 
 /**
@@ -35,6 +37,18 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		projectClasspath.add(
 				TestConfiguration.getTarget("slicer.javaslicer"));
 		projectClasspath.add(config.getJunitLib());
+	}
+	
+	@Test
+	public void runSearchInSortingMatrix1() throws Exception {
+		faultLocalization(SimplePrograms.class.getName(),
+				SearchInSortingMatrix1Test.class.getName());
+	}
+	
+	@Test
+	public void runMatchString() throws Exception {
+		faultLocalization(SimplePrograms.class.getName(),
+				MatchStringTest.class.getName());
 	}
 	
 	@Test
@@ -56,7 +70,7 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		testingClasses.add(SimplePrograms.class.getName());
 		testingClasses.add(Integer.class.getName());
 		List<String> junitClassNames = new ArrayList<String>();
-		junitClassNames.add(DuplicateNumberTest.class.getName());
+//		junitClassNames.add(DuplicateNumberTest.class.getName());
 		junitClassNames.add(ReverseWordTest.class.getName());
 		app.faultLocalization(testingClasses, junitClassNames, false);
 	}

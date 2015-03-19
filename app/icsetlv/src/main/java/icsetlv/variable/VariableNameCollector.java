@@ -8,11 +8,7 @@
 
 package icsetlv.variable;
 
-import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.dto.BreakPoint.Variable;
 import icsetlv.common.exception.IcsetlvException;
-import icsetlv.common.utils.BreakpointUtils;
-import icsetlv.common.utils.ClassUtils;
 import icsetlv.common.utils.LogUtils;
 import icsetlv.common.utils.VariableUtils;
 import japa.parser.JavaParser;
@@ -36,7 +32,11 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
+import sav.common.core.utils.BreakpointUtils;
+import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.ObjectUtils;
+import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.BreakPoint.Variable;
 
 
 /**

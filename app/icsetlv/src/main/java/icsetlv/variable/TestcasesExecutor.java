@@ -9,15 +9,12 @@
 package icsetlv.variable;
 
 import icsetlv.common.dto.ArrayValue;
-import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.dto.BreakPoint.Variable;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.dto.ExecValue;
 import icsetlv.common.dto.PrimitiveValue;
 import icsetlv.common.dto.ReferenceValue;
 import icsetlv.common.dto.TcExecResult;
 import icsetlv.common.exception.IcsetlvException;
-import icsetlv.common.utils.BreakpointUtils;
 import icsetlv.common.utils.PrimitiveUtils;
 import icsetlv.common.utils.VariableUtils;
 import icsetlv.iface.ITestcasesExecutor;
@@ -31,7 +28,10 @@ import java.util.Map.Entry;
 
 import sav.common.core.Logger;
 import sav.common.core.SavException;
+import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.CollectionUtils;
+import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;

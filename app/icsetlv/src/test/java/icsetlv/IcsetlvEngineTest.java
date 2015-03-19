@@ -8,11 +8,8 @@
 
 package icsetlv;
 
-import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.dto.BreakPoint.Variable;
 import icsetlv.common.dto.TcExecResult;
 import icsetlv.common.exception.IcsetlvException;
-import icsetlv.svm.LibSVM;
 import icsetlv.variable.AssertionDetector;
 import icsetlv.variable.TestcasesExecutor;
 
@@ -22,13 +19,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.javaml.core.Dataset;
-import net.sf.javaml.featureselection.ranking.RecursiveFeatureEliminationSVM;
+import libsvm.core.Machine;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import sav.common.core.SavException;
+import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;
@@ -67,21 +65,12 @@ public class IcsetlvEngineTest extends AbstractTest {
 		TcExecResult result = extractor.execute(input.getPassTestcases(), input.getFailTestcases(),
 				bkps);
 		print(result);
-		LibSVM svmrunner = new LibSVM();
+		Machine machine = setupMachine(new Machine(), 2);
 		for (BreakPoint bkp : bkps) {
-			Dataset tmpDS = BugExpert.buildDataset(result.getPassValues(bkp),
-					result.getFailValues(bkp));
-			svmrunner.buildClassifier(tmpDS);
-			System.out.println(svmrunner.getExplicitDivider().toString());
-			System.out.println(svmrunner.modelAccuracy());
-			/* Create a feature ranking algorithm */
-			RecursiveFeatureEliminationSVM svmrfe = new RecursiveFeatureEliminationSVM(0.2);
-			/* Apply the algorithm to the data set */
-			svmrfe.build(tmpDS);
-			/* Print out the rank of each attribute */
-			for (int i = 0; i < svmrfe.noAttributes(); i++)
-			    System.out.println(svmrfe.rank(i));
-			
+			BugExpert.addDataPoints(machine, result.getPassValues(bkp), result.getFailValues(bkp));
+			machine.train();
+			System.out.println(machine.getLearnedLogic());
+			System.out.println(machine.getModelAccuracy());
 		}
 	}
 	
