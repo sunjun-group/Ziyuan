@@ -8,7 +8,7 @@
 
 package faultLocalization;
 
-import faultLocalization.SuspiciousnessCalculator.SuspiciousnessCalculationAlgorithm;
+import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -53,14 +53,11 @@ public class LineCoverageInfo {
 		}
 	}
 
-	public void computeSuspiciousness(int totalPassed, int totalFailed, SuspiciousnessCalculationAlgorithm algorithm) {
-		final SuspiciousnessCalculator calculator = new SuspiciousnessCalculator();
-		calculator.setCoveredAndFailed(failedTestcaseIndexesCover.size());
-		calculator.setCoveredAndPassed(passedTestcaseIndexesCover.size());
-		calculator.setFailed(totalFailed);
-		calculator.setPassed(totalPassed);
+	public void computeSuspiciousness(int totalPassed, int totalFailed, SpectrumAlgorithm algorithm) {
+		final SpectrumBasedSuspiciousnessCalculator calculator = new SpectrumBasedSuspiciousnessCalculator(totalPassed, totalFailed,
+				passedTestcaseIndexesCover.size(), failedTestcaseIndexesCover.size(), algorithm);
 
-		this.suspiciousness = calculator.getSuspiciousness(algorithm);
+		this.suspiciousness = calculator.compute();
 	}
 	
 	public String toString() {
