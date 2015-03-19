@@ -9,6 +9,7 @@
 package icsetlv.iface;
 
 import icsetlv.common.exception.IcsetlvException;
+import sav.strategies.slicing.ISlicer;
 
 /**
  * @author LLT

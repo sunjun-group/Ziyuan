@@ -8,8 +8,6 @@
 
 package icsetlv;
 
-import icsetlv.slicer.SlicerInput;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
@@ -19,6 +17,7 @@ import sav.commons.TestConfiguration;
 import sav.commons.utils.TestConfigUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
+import slicer.wala.SlicerInput;
 
 
 /**
