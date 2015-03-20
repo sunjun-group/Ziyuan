@@ -8,7 +8,6 @@
 
 package mutanbug.mutator;
 
-import japa.parser.ast.Node;
 import japa.parser.ast.expr.AssignExpr;
 import japa.parser.ast.expr.BinaryExpr;
 import japa.parser.ast.expr.CastExpr;
@@ -19,33 +18,16 @@ import japa.parser.ast.expr.NameExpr;
 import japa.parser.ast.expr.UnaryExpr;
 import japa.parser.ast.expr.VariableDeclarationExpr;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import mutanbug.commons.utils.DefaultGenericVisitor;
 
 /**
  * @author LLT
  *
  */
-public class ExpressionMutator extends DefaultGenericVisitor<List<Expression>, Boolean> {
-	private Mutator mutator;
+public class ExpressionMutator extends MutatorVisitor<Expression> {
 	
 	public ExpressionMutator(Mutator mutator) {
-		this.mutator = mutator;
-	}
-	
-	public List<Expression> visitNode(Node node) {
-		return super.visitNode(node, true);
-	}
-	
-	protected boolean accept(Node node) {
-		return mutator.needToMutate(node);
-	};
-	
-	@Override
-	protected List<Expression> getDefaultReturnValue() {
-		return new ArrayList<Expression>();
+		super(mutator);
 	}
 	
 	@Override
@@ -85,15 +67,7 @@ public class ExpressionMutator extends DefaultGenericVisitor<List<Expression>, B
 	
 	@Override
 	public List<Expression> visit(VariableDeclarationExpr n, Boolean arg) {
-		return doMutateVarDecExpr(n);
+		return mutator.doMutateVarDecExpr(n);
 	}
 
-	/**
-	 * @param n
-	 * @return
-	 */
-	private List<Expression> doMutateVarDecExpr(VariableDeclarationExpr n) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

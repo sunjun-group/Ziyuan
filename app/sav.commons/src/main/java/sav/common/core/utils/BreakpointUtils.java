@@ -27,11 +27,14 @@ import sav.strategies.dto.ClassLocation;
 public class BreakpointUtils {
 	private BreakpointUtils(){}
 	
-	public static Map<String, List<BreakPoint>> initBrkpsMap(
-			List<BreakPoint> brkps) {
-		HashMap<String, List<BreakPoint>> brkpsMap = new HashMap<String, List<BreakPoint>>();
-		for (BreakPoint brkp : brkps) {
-			List<BreakPoint> bps = CollectionUtils.getListInitIfEmpty(brkpsMap,
+	/**
+	 * make the map of className and its breakpoint
+	 */
+	public static <T extends ClassLocation> Map<String, List<T>> initBrkpsMap(
+			List<T> brkps) {
+		HashMap<String, List<T>> brkpsMap = new HashMap<String, List<T>>();
+		for (T brkp : brkps) {
+			List<T> bps = CollectionUtils.getListInitIfEmpty(brkpsMap,
 					brkp.getClassCanonicalName());
 			bps.add(brkp);
 		}

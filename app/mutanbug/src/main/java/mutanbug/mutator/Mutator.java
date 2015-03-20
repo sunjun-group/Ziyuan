@@ -57,6 +57,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,13 +66,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.StringUtils;
+
 import mutanbug.commons.utils.FileUtils;
 import mutanbug.parser.ClassDescriptor;
 import mutanbug.parser.FolderParser;
 import mutanbug.parser.Method;
 import mutanbug.parser.Variable;
 import sav.common.core.utils.CollectionUtils;
-import sav.strategies.dto.ClassLocation;
 
 /**
  * Created by sutd on 1/3/15.
@@ -87,7 +90,7 @@ public class Mutator
     private long NUMERIC_RANGE = Integer.MAX_VALUE;
     private ExpressionMutator expresionMutator;
     private StatementMutator stmtMutator;
-    private List<Integer> mutationLines;
+    private Set<Integer> mutationLines;
     
     public Mutator() {
     	expresionMutator = new ExpressionMutator(this);
@@ -133,7 +136,7 @@ public class Mutator
         }
     }
 
-    private List<Expression> doMutateVarDecExpr(VariableDeclarationExpr varDecExpr)
+    List<Expression> doMutateVarDecExpr(VariableDeclarationExpr varDecExpr)
     {
         Type type = varDecExpr.getType();
         List<Expression> muExps = new ArrayList<Expression>();
@@ -746,10 +749,10 @@ public class Mutator
         return muClasses;
     }
 
-    public void mutateFile(File javaFile, File outputFolder, List<Integer> mutationLines)
+    public Map<Node, List<Node>> mutateFile(File javaFile, File outputFolder, Set<Integer> mutationLines)
     {
     	if (CollectionUtils.isEmpty(mutationLines)) {
-    		return;
+    		return new HashMap<Node, List<Node>>();
     	}
     	this.mutationLines = mutationLines;
         try
@@ -800,13 +803,13 @@ public class Mutator
                             ++version;
                         }
 
-                        String folderName = cu.getBeginLine() + "_" + cu.getBeginColumn();
-                        File verFolder = FileUtils.createFolder(outputFolder, folderName + version + "");
-                        File muFile = new File(verFolder, javaFile.getName());
-
-                        BufferedWriter bw = new BufferedWriter(new FileWriter(muFile));
-                        bw.write(cu.toString());
-                        bw.close();
+//                        String folderName = cu.getBeginLine() + "_" + cu.getBeginColumn();
+//                        File verFolder = FileUtils.createFolder(outputFolder, folderName + version + "");
+//                        File muFile = new File(verFolder, javaFile.getName());
+//
+//                        BufferedWriter bw = new BufferedWriter(new FileWriter(muFile));
+//                        bw.write(cu.toString());
+//                        bw.close();
 
                         cu.getTypes().set(i,  type);
 //                        System.out.println("File " + cu.getBeginLine() + " " + cu.getBeginColumn());
@@ -823,6 +826,9 @@ public class Mutator
         {
             e.printStackTrace();
         }
+        Map<Node, List<Node>> mutations = expresionMutator.getMutations();
+		mutations.putAll(stmtMutator.getMutations());
+        return mutations;
     }
 
     /**
@@ -1182,7 +1188,8 @@ public class Mutator
         File outputFolder = FileUtils.createFolder(new File(srcFolder), "mutatedSource");
         Mutator mutator = new Mutator();
 		mutator.mutateFile(javaFile, outputFolder,
-				Arrays.asList(10, 13));
+				new HashSet<Integer>(Arrays.asList(10, 13)));
+
     }
    
 }

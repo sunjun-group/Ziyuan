@@ -9,7 +9,9 @@
 package mutanbug.commons.utils;
 
 import java.io.File;
+import java.io.IOException;
 
+import sav.common.core.SavRtException;
 import sav.common.core.utils.Assert;
 
 /**
@@ -25,5 +27,17 @@ public class FileUtils {
 			folder.mkdirs();
 		}
 		return folder;
+	}
+
+	public static File createTempFolder(String string) {
+		try {
+			File file;
+			file = File.createTempFile("mutatedSource", "");
+			file.delete();
+			file.mkdir();
+			return file;
+		} catch (IOException e) {
+			throw new SavRtException("cannot create temp dir");
+		}
 	}
 }
