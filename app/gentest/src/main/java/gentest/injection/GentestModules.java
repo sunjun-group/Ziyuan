@@ -52,9 +52,10 @@ public class GentestModules extends AbstractModule {
 		bind(ISubTypesScanner.class).to(SubTypesScanner.class);
 		bind(ITypeMethodCallStore.class).to(TypeMethodCallsCache.class);
 		bind(ITypeCreator.class).to(VarTypeCreator.class);
-		bind(new TypeLiteral<IDataProvider<Sequence>>(){})
-				.to((Class<? extends IDataProvider<Sequence>>) DataProvider.class)
-				.in(scopes.get(TestcaseGenerationScope.class));
+		bind(new TypeLiteral<IDataProvider<Sequence>>() {})
+				.toInstance(new DataProvider<Sequence>());
+				// .to((Class<? extends IDataProvider<?>>) DataProvider.class)
+				// .in(scopes.get(TestcaseGenerationScope.class));
 	}
 
 	public void enter(Class<? extends Annotation> scope) {

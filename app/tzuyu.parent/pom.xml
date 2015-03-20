@@ -33,6 +33,14 @@
 		<guice-version>3.0</guice-version>
 	</properties>
 
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<url>http://202.94.70.100:8081/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<repositories>
 		<repository>
 			<id>eclipse-indigo</id>
@@ -44,25 +52,37 @@
 	<modules>
 		<module>../sav.commons</module>
 		<!-- algorithm modules -->
-		<!-- <module>../gentest</module> -->
- 		<module>../slicer.wala</module>
- 		<module>../slicer.javaslicer</module>
- 		<module>../codecoverage.jacoco</module>
+		<module>../gentest</module>
+		<module>../slicer.wala</module>
+		<module>../slicer.javaslicer</module>
+		<module>../codecoverage.jacoco</module>
 		<!-- -->
- 		<module>../tzuyu.core</module>
- 		<module>../tzuyu.feature</module>
- 		<module>../tzuyu.repo</module>
- 		<module>../tzuyu</module>
- 		<module>../faultLocalization</module>
- 		<module>../extcos</module>
- 		<module>../svmlib</module>
-  		<module>../icsetlv</module>
+		<module>../tzuyu.core</module>
+		<!-- <module>../tzuyu.feature</module> -->
+		<!-- <module>../tzuyu.repo</module> -->
+		<module>../tzuyu</module>
+		<module>../faultLocalization</module>
+		<module>../svmlib</module>
+		<module>../icsetlv</module>
 		<module>../mutanbug</module>
 
 	</modules>
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -126,7 +146,7 @@
 			</dependency>
 
 			<dependency>
-			    <groupId>tzuyu-project</groupId>
+				<groupId>tzuyu-project</groupId>
 				<artifactId>svmlib</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -153,17 +173,11 @@
 				<artifactId>icsetlv</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>tzuyu-project</groupId>
-				<artifactId>extcos</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>tzuyu-project</groupId>
-				<artifactId>svmlib</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+<!-- 			<dependency> -->
+<!-- 				<groupId>tzuyu-project</groupId> -->
+<!-- 				<artifactId>extcos</artifactId> -->
+<!-- 				<version>${project.version}</version> -->
+<!-- 			</dependency> -->
 
 			<dependency>
 				<groupId>tzuyu-project</groupId>
