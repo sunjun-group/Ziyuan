@@ -6,9 +6,10 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.core.main;
+package tzuyu.core.inject;
 
 import java.util.List;
+
 
 import main.FaultLocalization;
 
@@ -20,7 +21,7 @@ import faultLocalization.FaultLocalizationReport;
  * @author LLT
  *
  */
-public class Main {
+class Main {
 	@Inject
 	private FaultLocalization faultLocalization;
 	@Inject 

@@ -14,9 +14,7 @@ import com.google.inject.AbstractModule;
  * @author LLT
  *
  */
-public class TzuyuModules extends AbstractModule {
-
-	
+class TzuyuModules extends AbstractModule {
 	
 	@Override
 	protected void configure() {

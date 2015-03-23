@@ -23,13 +23,15 @@ import mutanbug.mutator.Mutator;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
 import sav.strategies.dto.ClassLocation;
+import sav.strategies.mutanbug.IMutator;
 
 /**
  * @author LLT
  *
  */
-public class Main {
+public class MutatorMain implements IMutator {
 
+	@Override
 	public <T extends ClassLocation> Map<T, List<File>> mutate(List<T> locations,
 			String srcFolder) {
 		Map<String, List<T>> locMap = BreakpointUtils.initBrkpsMap(locations);
@@ -87,7 +89,7 @@ public class Main {
 		locs.add(new ClassLocation("SamplePrograms", "Max", 10)); 
 		locs.add(new ClassLocation("SamplePrograms", "Max", 13));
 		locs.add(new ClassLocation("SamplePrograms", "Max", 31));
-		Main main = new Main();
+		MutatorMain main = new MutatorMain();
 		main.mutate(locs, srcFolder);
 	}
 

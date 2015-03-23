@@ -8,8 +8,11 @@
 
 package sav.strategies.vm;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import sav.common.core.utils.StringUtils;
 
 /**
  * @author LLT
@@ -104,5 +107,8 @@ public class VMConfiguration {
 	public void setEnableAssertion(boolean enableAssertion) {
 		this.enableAssertion = enableAssertion;
 	}
-	
+
+	public String getClasspathStr() {
+		return StringUtils.join(classpaths, File.pathSeparator);
+	}
 }

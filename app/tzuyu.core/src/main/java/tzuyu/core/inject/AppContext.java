@@ -15,7 +15,7 @@ import com.google.inject.Injector;
  * @author LLT
  *
  */
-public class AppContext {
+class AppContext {
 	
 	@Inject
 	private Injector injector;

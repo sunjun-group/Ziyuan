@@ -6,29 +6,16 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.core.main;
+package tzuyu.core.inject;
 
 import java.util.Properties;
 
-import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
-
 /**
  * @author LLT
- * 
+ *
  */
-public class ApplicationData {
+public class PropertiesApplicationData {
 	private Properties properties;
-	
-	private SpectrumAlgorithm suspiciousCalculAlgo;
-
-	public SpectrumAlgorithm getSuspiciousCalculAlgo() {
-		return suspiciousCalculAlgo;
-	}
-
-	public void setSuspiciousCalculAlgo(
-			SpectrumAlgorithm suspiciousCalculAlgo) {
-		this.suspiciousCalculAlgo = suspiciousCalculAlgo;
-	}
 	
 	public boolean getBoolean(String key) {
 		return Boolean.valueOf(getProperty(key));

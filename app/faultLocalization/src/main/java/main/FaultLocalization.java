@@ -53,13 +53,12 @@ public class FaultLocalization {
 			List<String> analyzedClasses, List<String> analyzedPackages,
 			List<String> junitClassNames,
 			SpectrumAlgorithm algorithm) throws Exception {
-		List<String> testMethods = JunitUtils.extractTestMethods(junitClassNames);
 		/*
 		 * do slicing first, but we must run testcases first, and only slice the
 		 * fail testcases
 		 */
 		JunitRunnerParameters params = new JunitRunnerParameters();
-		params.setClassMethods(testMethods);
+		params.setJunitClasses(junitClassNames);
 		params.setTestingPkgs(analyzedPackages);
 		JunitResult jresult = JunitRunner.runTestcases(params);
 		// slice

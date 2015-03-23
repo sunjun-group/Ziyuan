@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.core.main.context;
+package tzuyu.core.inject;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -20,7 +20,7 @@ import sav.strategies.slicing.ISlicer;
  * @author LLT
  *
  */
-public class ApplicationContext implements IApplicationContext {
+class ApplicationContext implements IApplicationContext {
 	private Injector injector;
 	
 	private ApplicationContext(Injector injector) {

@@ -19,12 +19,17 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import sav.common.core.Logger;
+import sav.common.core.SavRtException;
+import sav.common.core.utils.JunitUtils;
+
 /**
  * @author LLT
  * 
  */
 @SuppressWarnings("static-access")
 public class JunitRunnerParameters {
+	private Logger<?> log = Logger.getDefaultLogger();
 	private static final Options opts;
 	public static final String CLASS_METHODS = "methods";
 	public static final String TESTING_CLASS_NAMES = "testingclass";
@@ -123,6 +128,21 @@ public class JunitRunnerParameters {
 
 	public void setClassMethods(List<String> classMethods) {
 		this.classMethods = classMethods;
+	}
+	
+	/**
+	 * all test methods in the given junit classes will be detected automatically
+	 * and add to the classMethods for the test.
+	 */
+	public void setJunitClasses(List<String> junitClassNames) {
+		try {
+			this.classMethods = JunitUtils.extractTestMethods(junitClassNames);
+		} catch (ClassNotFoundException e) {
+			log.debug(e);
+			throw new SavRtException(
+					"cannot extract test methods from junit classes: ",
+					e.getMessage());
+		} 
 	}
 
 	public void setTestingClassNames(List<String> testingClassNames) {

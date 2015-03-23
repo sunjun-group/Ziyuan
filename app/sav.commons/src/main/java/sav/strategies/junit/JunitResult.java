@@ -63,6 +63,10 @@ public class JunitResult {
 		}
 		return result.get(idx);
 	}
+	
+	public List<Boolean> getTestResult() {
+		return result;
+	}
 
 	public void save(File file) throws IOException {
 		FileOutputStream output = null;
@@ -125,4 +129,5 @@ public class JunitResult {
 		return result;
 	}
 
+	
 }

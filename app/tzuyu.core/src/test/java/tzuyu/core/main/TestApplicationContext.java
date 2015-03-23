@@ -9,10 +9,15 @@
 package tzuyu.core.main;
 
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.unisb.cs.st.javaslicer.tracer.Tracer;
+
 import sav.common.core.SavPrintStream;
+import sav.common.core.SavRtException;
 import sav.common.core.iface.IPrintStream;
 import sav.commons.TestConfiguration;
 import sav.commons.utils.TestConfigUtils;
@@ -48,7 +53,14 @@ public class TestApplicationContext extends AbstractApplicationContext {
 
 	@Override
 	protected String getTracerJarPath() {
-		return TestConfigUtils.getTracerLibPath();
+		String path = Tracer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		System.out.println(path);
+		try {
+			return URLDecoder.decode(path, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new SavRtException("cannot get path of Tracer.jar");
+		}
+//		return TestConfigUtils.getTracerLibPath();
 	}
 
 	@Override
