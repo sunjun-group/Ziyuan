@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.ClassLocation;
 import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunnerParameters;
@@ -30,19 +31,16 @@ public class MutanBug {
 	private ApplicationData appData;
 	@Inject
 	private IMutator mutator;
+
 	
-	public void filter(List<BreakPoint> bkps, List<String> junitClassNames) throws Exception {
-		MutansResult mutanResult = mutateAndRunTests(bkps, junitClassNames);
-	}
-	
-	public MutansResult mutateAndRunTests(List<BreakPoint> bkps, List<String> junitClassNames) throws Exception {
+	public <T extends ClassLocation> MutansResult mutateAndRunTests(List<T> bkps, List<String> junitClassNames) throws Exception {
 		MutansResult result = new MutansResult();
-		Map<BreakPoint, List<File>> mutatedResult = mutator.mutate(bkps, appData.getScrFolder());
+		Map<T, List<File>> mutatedResult = mutator.mutate(bkps, appData.getScrFolder());
 		Recompiler compiler = new Recompiler(appData.getAppClasspathStr(), appData.getScrFolder());
 		JunitRunnerParameters params = new JunitRunnerParameters();
 		params.setJunitClasses(junitClassNames);
 		// recompile and rerun test cases
-		for (BreakPoint bkp : bkps) {
+		for (T bkp : bkps) {
 			bkp.getClassCanonicalName();
 			List<File> mutatedFiles = mutatedResult.get(bkp);
 			for (File mutatedFile : mutatedFiles) {

@@ -14,14 +14,13 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.unisb.cs.st.javaslicer.tracer.Tracer;
-
-import sav.common.core.SavPrintStream;
+import sav.common.core.Constants;
 import sav.common.core.SavRtException;
-import sav.common.core.iface.IPrintStream;
 import sav.commons.TestConfiguration;
 import sav.commons.utils.TestConfigUtils;
+import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.main.context.AbstractApplicationContext;
+import de.unisb.cs.st.javaslicer.tracer.Tracer;
 import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 
@@ -34,24 +33,17 @@ public class TestApplicationContext extends AbstractApplicationContext {
 	protected List<String> projectClasspath;
 
 	public TestApplicationContext() {
+		ApplicationData appData = new ApplicationData();
 		projectClasspath = new ArrayList<String>();
-		initClasspath();
-	}
-
-	protected void initClasspath() {
 		projectClasspath.add(TestConfiguration.SAV_COMMONS_TEST_TARGET);
-	}
-
-	@Override
-	public List<String> getProjectClasspath() {
-		return projectClasspath; 
+		appData.setClasspaths(projectClasspath);
+		appData.setTracerJarPath(getTracerJarPath());
+		appData.setJavaHome(TestConfigUtils.getJavaHome());
+		appData.setSuspiciousCalculAlgo(suspiciousnessCalcul);
+		appData.setTzuyuJacocoAssembly(TestConfiguration.getTzAssembly(Constants.TZUYU_JACOCO_ASSEMBLY));
+		setAppData(appData);
 	}
 	
-	public void setProjectClasspath(List<String> projectClasspath) {
-		this.projectClasspath = projectClasspath;
-	}
-
-	@Override
 	protected String getTracerJarPath() {
 		String path = Tracer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		System.out.println(path);
@@ -61,30 +53,5 @@ public class TestApplicationContext extends AbstractApplicationContext {
 			throw new SavRtException("cannot get path of Tracer.jar");
 		}
 //		return TestConfigUtils.getTracerLibPath();
-	}
-
-	@Override
-	protected String getJavahome() {
-		return TestConfigUtils.getJavaHome();
-	}
-
-	@Override
-	public SpectrumAlgorithm getSuspiciousnessCalculationAlgorithm() {
-		return suspiciousnessCalcul;
-	}
-	
-	protected void setSuspiciousnessCalculationAlgorithm(
-			SpectrumAlgorithm algorithm) {
-		this.suspiciousnessCalcul = algorithm;
-	}
-
-	@Override
-	public IPrintStream getVmRunnerPrintStream() {
-		return new SavPrintStream(System.out);
-	}
-
-	@Override
-	protected String getAssembly(String assemblyName) {
-		return TestConfiguration.getTzAssembly(assemblyName);
 	}
 }

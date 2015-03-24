@@ -57,6 +57,28 @@ public class ClassLocation {
 		}
 		return id;
 	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		return classCanonicalName.hashCode() * prime + lineNo;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		
+		//
+		ClassLocation other = (ClassLocation) obj;
+
+		return classCanonicalName.equals(other.getClassCanonicalName())
+				&& lineNo == other.getLineNo();
+	}
 
 	public String getMethodName() {
 		return SignatureUtils.extractMethodName(methodSign);

@@ -24,9 +24,17 @@ public class VMConfiguration {
 	private String launchClass;
 	private boolean debug;
 	private int port;
+	private boolean enableAssertion;
 	// for internal use only
 	private List<String> programArgs; 
-	private boolean enableAssertion;
+	
+	public VMConfiguration(VMConfiguration config) {
+		this.javaHome = config.getJavaHome();
+		this.classpaths = config.getClasspaths();
+		this.debug = config.isDebug();
+		this.port = config.getPort();
+		this.enableAssertion = config.isEnableAssertion();
+	}
 
 	public VMConfiguration() {
 		classpaths = new ArrayList<String>();
@@ -111,4 +119,5 @@ public class VMConfiguration {
 	public String getClasspathStr() {
 		return StringUtils.join(classpaths, File.pathSeparator);
 	}
+
 }

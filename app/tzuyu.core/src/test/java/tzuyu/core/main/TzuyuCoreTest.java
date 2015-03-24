@@ -8,6 +8,7 @@
 
 package tzuyu.core.main;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,8 +33,14 @@ import sav.commons.testdata.simplePrograms.SimplePrograms;
 public class TzuyuCoreTest extends AbstractTzTest {
 	
 	@Before
-	public void setup() {
-		List<String> projectClasspath = testContext.getProjectClasspath();
+	public void setup() throws UnsupportedEncodingException {
+		List<String> projectClasspath = testContext.getAppData().getAppClasspaths();
+		System.out.println(System.getProperty("java.class.path"));
+//		String path = Tracer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+//		System.out.println(path);
+//		String decodedPath = URLDecoder.decode(path, "UTF-8");
+//		System.out.println(decodedPath);
+//		System.out.println(this.getClass().getResource("tracer20101004.jar").getPath());
 		projectClasspath.add(
 				TestConfiguration.getTarget("slicer.javaslicer"));
 		projectClasspath.add(config.getJunitLib());

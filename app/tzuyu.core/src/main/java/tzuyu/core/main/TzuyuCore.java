@@ -11,6 +11,7 @@ package tzuyu.core.main;
 import java.util.List;
 
 import main.FaultLocalization;
+import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.main.context.AbstractApplicationContext;
 import faultLocalization.FaultLocalizationReport;
 
@@ -21,9 +22,11 @@ import faultLocalization.FaultLocalizationReport;
  */
 public class TzuyuCore {
 	private AbstractApplicationContext appContext;
+	private ApplicationData appData;
 	
 	public TzuyuCore(AbstractApplicationContext appContext) {
 		this.appContext = appContext;
+		this.appData = appContext.getAppData();
 	}
 
 	public FaultLocalizationReport faultLocalization(List<String> testingClassNames,
@@ -36,7 +39,7 @@ public class TzuyuCore {
 		FaultLocalization analyzer = new FaultLocalization(appContext);
 		analyzer.setUseSlicer(useSlicer);
 		return analyzer.analyse(testingClassNames, junitClassNames,
-				appContext.getSuspiciousnessCalculationAlgorithm());
+				appData.getSuspiciousCalculAlgo());
 	}
 	
 	public FaultLocalizationReport faultLocalization2(
@@ -46,6 +49,6 @@ public class TzuyuCore {
 		analyzer.setUseSlicer(useSlicer);
 		return analyzer.analyseSlicingFirst(testingClassNames, testingPackages,
 				junitClassNames,
-				appContext.getSuspiciousnessCalculationAlgorithm());
+				appData.getSuspiciousCalculAlgo());
 	}
 }

@@ -8,8 +8,6 @@
 
 package faultLocalization;
 
-import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
@@ -17,17 +15,16 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
 
-import sav.common.core.utils.BreakpointUtils;
+import sav.strategies.dto.ClassLocation;
+import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 /**
  * @author khanh
  * 
  */
 public class LineCoverageInfo {
-	private final String className;
-	private final int lineIndex;
+	private ClassLocation location;
 	private double suspiciousness;
-	private final String locId;
 
 	/**
 	 * @return the suspiciousness
@@ -40,9 +37,7 @@ public class LineCoverageInfo {
 	private ArrayList<Integer> failedTestcaseIndexesCover = new ArrayList<Integer>();
 
 	public LineCoverageInfo(String className, int lineIndex) {
-		this.className = className;
-		this.lineIndex = lineIndex;
-		locId = BreakpointUtils.getLocationId(className, lineIndex);
+		location = new ClassLocation(className, null, lineIndex);
 	}
 
 	public void addInfo(int testcaseIndex, boolean isPassed) {
@@ -61,14 +56,14 @@ public class LineCoverageInfo {
 	}
 	
 	public String toString() {
-		return className + "@" + lineIndex + ":" + suspiciousness + "(P=" + passedTestcaseIndexesCover.size()
+		return location.getId() + ":" + suspiciousness + "(P=" + passedTestcaseIndexesCover.size()
 				+ ", F=" + failedTestcaseIndexesCover.size();
 	}
 
 	public static class LineCoverageInfoComparator implements Comparator<LineCoverageInfo> {
 		public int compare(final LineCoverageInfo c1, final LineCoverageInfo c2) {
 			return new CompareToBuilder().append(c2.getSuspiciousness(), c1.getSuspiciousness())
-					.append(c1.lineIndex, c2.lineIndex).toComparison();
+					.append(c1.location.getLineNo(), c2.location.getLineNo()).toComparison();
 		}
 	}
 
@@ -87,15 +82,7 @@ public class LineCoverageInfo {
 		}
 	}
 
-	public String getClassName() {
-		return className;
-	}
-
-	public int getLineIndex() {
-		return lineIndex;
-	}
-
-	public String getLocId() {
-		return locId;
+	public ClassLocation getLocation() {
+		return location;
 	}
 }

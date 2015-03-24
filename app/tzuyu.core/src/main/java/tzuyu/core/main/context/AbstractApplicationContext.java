@@ -10,17 +10,14 @@ package tzuyu.core.main.context;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.List;
 
-import sav.common.core.Constants;
-import sav.common.core.iface.IPrintStream;
 import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.slicing.ISlicer;
 import sav.strategies.vm.VMConfiguration;
 import slicer.javaslicer.JavaSlicer;
+import tzuyu.core.inject.ApplicationData;
 import codecoverage.jacoco.agent.JaCoCoAgent;
-import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 /**
  * @author LLT 
@@ -32,8 +29,8 @@ import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm
  */
 public abstract class AbstractApplicationContext implements IApplicationContext {
 	private ISlicer slicer;
-	private VMConfiguration vmConfig;
 	protected ICodeCoverage codeCoverageTool;
+	private ApplicationData appData;
 
 	protected ICodeCoverage initCodeCoverage() {
 		return initJacocoAgent();
@@ -41,36 +38,19 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 	
 	private ICodeCoverage initJacocoAgent() {
 		JaCoCoAgent jacoco = new JaCoCoAgent();
-		jacoco.setOut(getVmRunnerPrintStream());
-		VMConfiguration config = getVmConfig();
-		config.addClasspath(getAssembly(Constants.TZUYU_JACOCO_ASSEMBLY));
+		VMConfiguration config = appData.getVmConfig();
+		config.addClasspath(appData.getTzuyuJacocoAssembly());
 		jacoco.setVmConfig(config);
 		return jacoco;
 	}
 	
-	protected abstract String getAssembly(String assemblyName);
-
 	private ISlicer initSlicer() {
 		JavaSlicer javaSlicer = new JavaSlicer();
-		javaSlicer.setVmConfig(getVmConfig());
-		javaSlicer.setTracerJarPath(getTracerJarPath());
+		javaSlicer.setVmConfig(appData.getVmConfig());
+		javaSlicer.setTracerJarPath(appData.getTracerJarPath());
 		return javaSlicer;
 	}
 	
-	public VMConfiguration getVmConfig() {
-		if (vmConfig == null) {
-			vmConfig = initVmConfig();
-		}
-		return vmConfig;
-	}
-	
-	private VMConfiguration initVmConfig() {
-		VMConfiguration config = new VMConfiguration();
-		config.setJavaHome(getJavahome());
-		config.setClasspath(getProjectClasspath());
-		return config;
-	}
-
 	@Override
 	public ISlicer getSlicer() {
 		if (slicer == null) {
@@ -104,13 +84,11 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 		return -1;
 	}
 	
-	protected abstract String getJavahome();
-
-	protected abstract String getTracerJarPath();
+	public void setAppData(ApplicationData appData) {
+		this.appData = appData;
+	}
 	
-	protected abstract List<String> getProjectClasspath();
-
-	public abstract SpectrumAlgorithm getSuspiciousnessCalculationAlgorithm();
-	
-	public abstract IPrintStream getVmRunnerPrintStream();
+	public ApplicationData getAppData() {
+		return appData;
+	}
 }

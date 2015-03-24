@@ -69,7 +69,7 @@ public class JaCoCoAgentTest extends JacocoAbstractTest {
 			@Override
 			public void addFailureTrace(List<BreakPoint> traces) {
 				for (BreakPoint bkp : traces) {
-					System.out.println(bkp.getId());
+					System.out.println(bkp);
 				}
 			}
 

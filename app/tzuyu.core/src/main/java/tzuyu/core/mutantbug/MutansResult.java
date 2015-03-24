@@ -11,16 +11,16 @@ package tzuyu.core.mutantbug;
 import java.util.List;
 import java.util.Map;
 
-import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.ClassLocation;
 
 /**
  * @author LLT
  *
  */
 public class MutansResult {
-	private Map<BreakPoint, LineMutanResult> mutanResults;
+	private Map<ClassLocation, LineMutanResult> mutanResults;
 	
-	public void add(BreakPoint bkp, List<Boolean> testResult) {
+	public void add(ClassLocation bkp, List<Boolean> testResult) {
 		LineMutanResult lineMutanResult = mutanResults.get(bkp);
 		if (lineMutanResult == null) {
 			lineMutanResult = new LineMutanResult();

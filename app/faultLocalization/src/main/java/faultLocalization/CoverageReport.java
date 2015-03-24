@@ -140,7 +140,7 @@ public class CoverageReport implements ICoverageReport{
 				continue;
 			}
 			for (LineCoverageInfo lineInfo : classCoverage.getLineCoverageInfo()) {
-				if (pointLocIds.contains(lineInfo.getLocId())) {
+				if (pointLocIds.contains(lineInfo.getLocation().getId())) {
 					linesCoverageInfo.add(lineInfo);
 				}
 			}

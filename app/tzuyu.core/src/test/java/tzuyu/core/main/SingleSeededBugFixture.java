@@ -94,7 +94,7 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 				maxSuspiciousness = info.getSuspiciousness();
 			}
 			if (StringUtils.isNotEmpty(expectedBugLine)
-					&& expectedBugLine.equals(info.getLocId())) {
+					&& expectedBugLine.equals(info.getLocation().getId())) {
 				foundLineSuspiciousness = info.getSuspiciousness();
 			}
 		}

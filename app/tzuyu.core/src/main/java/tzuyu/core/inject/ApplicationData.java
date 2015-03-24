@@ -28,6 +28,7 @@ public class ApplicationData {
 	private List<String> appClasspaths;
 	private List<String> sysClasspaths;
 	private String scrFolder;
+	private String tzuyuJacocoAssembly;
 	
 
 	public SpectrumAlgorithm getSuspiciousCalculAlgo() {
@@ -41,10 +42,11 @@ public class ApplicationData {
 	
 	public VMConfiguration getVmConfig() {
 		if (vmConfig == null) {
+			vmConfig = new VMConfiguration();
 			vmConfig.setClasspath(appClasspaths);
 			vmConfig.setJavaHome(getJavahome());
 		}
-		return vmConfig;
+		return new VMConfiguration(vmConfig);
 	}
 	
 	protected String getJavahome() {
@@ -67,7 +69,7 @@ public class ApplicationData {
 		this.tracerJarPath = tracerJarPath;
 	}
 
-	public List<String> getClasspaths() {
+	public List<String> getAppClasspaths() {
 		return appClasspaths;
 	}
 
@@ -96,5 +98,13 @@ public class ApplicationData {
 
 	public String getAppClasspathStr() {
 		return StringUtils.join(appClasspaths, File.pathSeparator);
+	}
+	
+	public String getTzuyuJacocoAssembly() {
+		return tzuyuJacocoAssembly;
+	}
+	
+	public void setTzuyuJacocoAssembly(String tzuyuJacocoAssembly) {
+		this.tzuyuJacocoAssembly = tzuyuJacocoAssembly;
 	}
 }

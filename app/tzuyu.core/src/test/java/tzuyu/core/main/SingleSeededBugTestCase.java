@@ -81,7 +81,7 @@ public class SingleSeededBugTestCase extends AbstractTzTest {
 			if (maxSuspiciousness < info.getSuspiciousness()) {
 				maxSuspiciousness = info.getSuspiciousness();
 			}
-			if (expectedBugLine.equals(info.getLocId())) {
+			if (expectedBugLine.equals(info.getLocation().getId())) {
 				foundLineSuspiciousness = info.getSuspiciousness();
 			}
 		}
