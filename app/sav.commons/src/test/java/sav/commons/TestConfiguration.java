@@ -62,7 +62,7 @@ public class TestConfiguration {
 	private TestConfiguration() {
 	}
 	
-	public String getTestScrPath(String module) {
+	public static String getTestScrPath(String module) {
 		return StringUtils.join("", APP, module, "/src/test/java");
 	}
 

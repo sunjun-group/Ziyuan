@@ -30,6 +30,12 @@ import sav.strategies.mutanbug.IMutator;
  *
  */
 public class MutatorMain implements IMutator {
+	private Mutator mutator;
+	
+	public MutatorMain(String srcFolder) {
+		mutator = new Mutator();
+		mutator.loadClassDescriptor(new File(srcFolder));
+	}
 
 	@Override
 	public <T extends ClassLocation> Map<T, List<File>> mutate(List<T> locations,
@@ -46,7 +52,6 @@ public class MutatorMain implements IMutator {
 	
 	private <T extends ClassLocation> Map<T, List<File>> mutate(String className, List<T> locations, String srcFolder,
 			File outputFolder) {
-		Mutator mutator = new Mutator();
 		File javaFile = new File(ClassUtils.getJFilePath(srcFolder, className));
 		Map<Integer, T> locMap = new HashMap<Integer, T>();
 		for (T loc : locations) {
@@ -86,10 +91,10 @@ public class MutatorMain implements IMutator {
 	public static void main(String[] args) throws IOException {
 		String srcFolder = "D:/_1_Projects/Tzuyu/workspace/trunk/app/sav.commons/src/test/java/sav/commons/testdata/";
 		List<ClassLocation> locs = new ArrayList<ClassLocation>();
-		locs.add(new ClassLocation("SamplePrograms", "Max", 10)); 
-		locs.add(new ClassLocation("SamplePrograms", "Max", 13));
-		locs.add(new ClassLocation("SamplePrograms", "Max", 31));
-		MutatorMain main = new MutatorMain();
+		locs.add(new ClassLocation("SamplePrograms", null, 10)); 
+		locs.add(new ClassLocation("SamplePrograms", null, 13));
+		locs.add(new ClassLocation("SamplePrograms", null, 31));
+		MutatorMain main = new MutatorMain(srcFolder);
 		main.mutate(locs, srcFolder);
 	}
 

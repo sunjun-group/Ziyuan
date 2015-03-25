@@ -135,17 +135,19 @@ public class SimplePrograms {
 		char SPACE = ' ';
 		
 		while (start < sentence.length) {
-			while (start < sentence.length && sentence[start] == SPACE) {
-				start++;
-			}
+			while (start < sentence.length) {
+				while (start < sentence.length && sentence[start] == SPACE) {
+					start = start + 1;
+				}
 
-			end = start;
-			while (end < sentence.length && sentence[end] != SPACE) {
-				end++;
-			}
+				end = start;
+				while (end < sentence.length && sentence[end] != SPACE) {
+					end = end + 1;
+				}
 
-			reverseWord(sentence, start, end - 1);
-			start = end;
+				reverseWord(sentence, start, end - 1);
+				start = end;
+			}
 		}
 		
 		return new String(sentence);

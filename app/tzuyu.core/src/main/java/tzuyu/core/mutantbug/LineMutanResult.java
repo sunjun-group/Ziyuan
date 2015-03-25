@@ -8,6 +8,7 @@
 
 package tzuyu.core.mutantbug;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +20,11 @@ import java.util.Set;
 public class LineMutanResult {
 	private List<Set<Integer>> passTestsInMutants;
 	private List<Set<Integer>> failTestsInMutants;
+	
+	public LineMutanResult() {
+		passTestsInMutants = new ArrayList<Set<Integer>>();
+		failTestsInMutants = new ArrayList<Set<Integer>>();
+	}
 
 	public void add(List<Boolean> testResult) {
 		Set<Integer> passTests = new HashSet<Integer>();
@@ -37,4 +43,11 @@ public class LineMutanResult {
 		failTestsInMutants.add(failTests);
 	}
 	
+	public List<Set<Integer>> getPassTestsInMutants() {
+		return passTestsInMutants;
+	}
+
+	public List<Set<Integer>> getFailTestsInMutants() {
+		return failTestsInMutants;
+	}
 }

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import sav.common.core.Logger;
 import sav.common.core.Pair;
@@ -171,5 +172,13 @@ public class CoverageReport implements ICoverageReport{
 	
 	public List<Pair<String, String>> getFailTests() {
 		return failTests;
+	}
+	
+	public Set<Integer> getPassTestIndexes(){
+		return passedTestcaseCoverageInfo.keySet();
+	}
+	
+	public Set<Integer> getFailTestIndexes(){
+		return failedTestcaseCoverageInfo.keySet();
 	}
 }

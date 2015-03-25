@@ -54,4 +54,8 @@ public class MutatorVisitor<T extends Node> extends
 	public Map<Node, List<Node>> getMutations() {
 		return mutations;
 	}
+	
+	public void reset() {
+		mutations.clear();
+	}
 }

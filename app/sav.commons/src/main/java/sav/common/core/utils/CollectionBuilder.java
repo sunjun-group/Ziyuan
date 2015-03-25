@@ -38,6 +38,10 @@ public class CollectionBuilder<E, T extends Collection<E>> {
 		return this;
 	}
 	
+	public T toCollection() {
+		return orgCol;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public <R extends Collection<?>>R getResult() {
 		return (R) orgCol;

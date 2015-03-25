@@ -8,6 +8,7 @@
 
 package tzuyu.core.mutantbug;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,10 @@ import sav.strategies.dto.ClassLocation;
 public class MutansResult {
 	private Map<ClassLocation, LineMutanResult> mutanResults;
 	
+	public MutansResult() {
+		mutanResults = new HashMap<ClassLocation, LineMutanResult>();
+	}
+	
 	public void add(ClassLocation bkp, List<Boolean> testResult) {
 		LineMutanResult lineMutanResult = mutanResults.get(bkp);
 		if (lineMutanResult == null) {
@@ -27,6 +32,10 @@ public class MutansResult {
 			mutanResults.put(bkp, lineMutanResult);
 		}
 		lineMutanResult.add(testResult);
+	}
+	
+	public LineMutanResult getMutantResult(ClassLocation location){
+		return mutanResults.get(location);
 	}
 	
 }

@@ -38,10 +38,22 @@ public class TestApplicationContext extends AbstractApplicationContext {
 		projectClasspath.add(TestConfiguration.SAV_COMMONS_TEST_TARGET);
 		appData.setClasspaths(projectClasspath);
 		appData.setTracerJarPath(getTracerJarPath());
-		appData.setJavaHome(TestConfigUtils.getJavaHome());
+		appData.setJavaHome(getJavaHome());
 		appData.setSuspiciousCalculAlgo(suspiciousnessCalcul);
 		appData.setTzuyuJacocoAssembly(TestConfiguration.getTzAssembly(Constants.TZUYU_JACOCO_ASSEMBLY));
+		appData.setAppSrc(TestConfiguration.getTestScrPath("sav.commons"));
+		appData.setAppTarget(TestConfiguration.getTestTarget("sav.commons"));
 		setAppData(appData);
+	}
+
+	private String getJavaHome() {
+		// work around in case java home not point to jdk but jre.
+		String javaHome = TestConfigUtils.getJavaHome();
+		if (javaHome.endsWith("jre")) {
+			javaHome = javaHome.substring(0,
+					javaHome.lastIndexOf(Constants.FILE_SEPARATOR + "jre"));
+		}
+		return javaHome;
 	}
 	
 	protected String getTracerJarPath() {

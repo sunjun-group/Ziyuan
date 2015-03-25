@@ -71,6 +71,12 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	}
 	
 	@Test
+	public void runReverseWord() throws Exception {
+		faultLocalization(SimplePrograms.class.getName(),
+				ReverseWordTest.class.getName());
+	}
+	
+	@Test
 	public void test2() throws Exception{
 		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> testingClasses = new ArrayList<String>();
@@ -100,8 +106,8 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		testingClasses.add(program);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add(junit);
-//		app.faultLocalization(testingClasses, junitClassNames, false);
-		app.faultLocalization2(null, Arrays.asList("sav.commons.testdata.simplePrograms"), junitClassNames, false);
+		app.faultLocalization(testingClasses, junitClassNames, false);
+//		app.faultLocalization2(testingClasses, Arrays.asList("sav.commons.testdata.simplePrograms"), junitClassNames, false);
 	}
 	
 	public void run() {

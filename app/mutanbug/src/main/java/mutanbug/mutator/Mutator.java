@@ -751,6 +751,8 @@ public class Mutator
 
     public Map<Node, List<Node>> mutateFile(File javaFile, File outputFolder, Set<Integer> mutationLines)
     {
+    	expresionMutator.reset();
+    	stmtMutator.reset();
     	if (CollectionUtils.isEmpty(mutationLines)) {
     		return new HashMap<Node, List<Node>>();
     	}

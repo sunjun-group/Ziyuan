@@ -27,8 +27,9 @@ public class ApplicationData {
 	private String tracerJarPath;
 	private List<String> appClasspaths;
 	private List<String> sysClasspaths;
-	private String scrFolder;
+	private String appSrc;
 	private String tzuyuJacocoAssembly;
+	private String appTarget;
 	
 
 	public SpectrumAlgorithm getSuspiciousCalculAlgo() {
@@ -88,12 +89,20 @@ public class ApplicationData {
 		return sysClasspaths;
 	}
 
-	public String getScrFolder() {
-		return scrFolder;
+	public String getAppSrc() {
+		return appSrc;
 	}
 
-	public void setScrFolder(String scrFolder) {
-		this.scrFolder = scrFolder;
+	public void setAppSrc(String appSrc) {
+		this.appSrc = appSrc;
+	}
+
+	public String getAppTarget() {
+		return appTarget;
+	}
+
+	public void setAppTarget(String appTarget) {
+		this.appTarget = appTarget;
 	}
 
 	public String getAppClasspathStr() {

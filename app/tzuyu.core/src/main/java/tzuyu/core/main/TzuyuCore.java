@@ -11,8 +11,10 @@ package tzuyu.core.main;
 import java.util.List;
 
 import main.FaultLocalization;
+import mutanbug.main.MutatorMain;
 import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.main.context.AbstractApplicationContext;
+import tzuyu.core.mutantbug.MutanBug;
 import faultLocalization.FaultLocalizationReport;
 
 
@@ -38,8 +40,13 @@ public class TzuyuCore {
 			List<String> junitClassNames, boolean useSlicer) throws Exception {
 		FaultLocalization analyzer = new FaultLocalization(appContext);
 		analyzer.setUseSlicer(useSlicer);
-		return analyzer.analyse(testingClassNames, junitClassNames,
+		FaultLocalizationReport report = analyzer.analyse(testingClassNames, junitClassNames,
 				appData.getSuspiciousCalculAlgo());
+		MutanBug mutanbug = new MutanBug();
+		mutanbug.setAppData(appData);
+		mutanbug.setMutator(new MutatorMain(appData.getAppSrc()));
+		mutanbug.mutateAndRunTests(report, junitClassNames);
+		return report;
 	}
 	
 	public FaultLocalizationReport faultLocalization2(
@@ -47,8 +54,13 @@ public class TzuyuCore {
 			List<String> junitClassNames, boolean useSlicer) throws Exception {
 		FaultLocalization analyzer = new FaultLocalization(appContext);
 		analyzer.setUseSlicer(useSlicer);
-		return analyzer.analyseSlicingFirst(testingClassNames, testingPackages,
+		FaultLocalizationReport report = analyzer.analyseSlicingFirst(testingClassNames, testingPackages,
 				junitClassNames,
 				appData.getSuspiciousCalculAlgo());
+		MutanBug mutanbug = new MutanBug();
+		mutanbug.setAppData(appData);
+		mutanbug.setMutator(new MutatorMain(appData.getAppSrc()));
+		mutanbug.mutateAndRunTests(report, junitClassNames);
+		return report;
 	}
 }

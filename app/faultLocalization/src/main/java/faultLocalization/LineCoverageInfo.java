@@ -10,6 +10,7 @@ package faultLocalization;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -25,16 +26,8 @@ import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm
 public class LineCoverageInfo {
 	private ClassLocation location;
 	private double suspiciousness;
-
-	/**
-	 * @return the suspiciousness
-	 */
-	public double getSuspiciousness() {
-		return suspiciousness;
-	}
-
-	private ArrayList<Integer> passedTestcaseIndexesCover = new ArrayList<Integer>();
-	private ArrayList<Integer> failedTestcaseIndexesCover = new ArrayList<Integer>();
+	private List<Integer> passedTestcaseIndexesCover = new ArrayList<Integer>();
+	private List<Integer> failedTestcaseIndexesCover = new ArrayList<Integer>();
 
 	public LineCoverageInfo(String className, int lineIndex) {
 		location = new ClassLocation(className, null, lineIndex);
@@ -84,5 +77,18 @@ public class LineCoverageInfo {
 
 	public ClassLocation getLocation() {
 		return location;
+	}
+	
+	public double getSuspiciousness() {
+		return suspiciousness;
+	}
+	
+
+	public List<Integer> getPassedTestcaseIndexesCover() {
+		return passedTestcaseIndexesCover;
+	}
+	
+	public List<Integer> getFailedTestcaseIndexesCover() {
+		return failedTestcaseIndexesCover;
 	}
 }

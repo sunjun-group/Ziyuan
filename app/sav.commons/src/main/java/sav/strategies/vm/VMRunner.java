@@ -9,7 +9,6 @@
 package sav.strategies.vm;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import sav.common.core.Constants;
 import sav.common.core.Logger;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
@@ -29,7 +27,7 @@ import sav.common.core.utils.StringUtils;
  * 
  */
 public class VMRunner {
-	private Logger<?> log = Logger.getDefaultLogger();
+	private static Logger<?> log = Logger.getDefaultLogger();
 	protected static final String cpToken = "-cp";
 	/*
 	 * from jdk 1.5, we can use new JVM option: -agentlib 
@@ -54,30 +52,22 @@ public class VMRunner {
 		
 		CollectionBuilder<String, Collection<String>> builder = CollectionBuilder
 						.init(new ArrayList<String>())
-						.add(buildJavaExecArg(config));
+						.add(VmRunnerUtils.buildJavaExecArg(config));
 		buildVmOption(builder, config);
 		buildProgramArgs(config, builder);
 		List<String> commands = (List<String>)builder.getResult();
-		if (log.isDebug()) {
-			log.debug("start cmd..");
-			log.debug(StringUtils.join(commands, " "));
-			for (String cmd : commands) {
-				log.debug(cmd);
-			}
-		}
 		return startVm(commands);
 	}
 	
 	protected void buildProgramArgs(VMConfiguration config,
 			CollectionBuilder<String, Collection<String>> builder) {
 		builder.add(cpToken)
-				.add(toClasspathStr(config.getClasspaths()))
+				.add(config.getClasspathStr())
 				.add(config.getLaunchClass());
 		for (String arg : config.getProgramArgs()) {
 			builder.add(arg);
 		}
 	}
-	
 	
 	public void startAndWaitUntilStop(VMConfiguration config)
 			throws SavException {
@@ -129,8 +119,15 @@ public class VMRunner {
 				.addIf(enableAssertionToken, config.isEnableAssertion());
 	}
 
-	protected Process startVm(List<String> commands)
+	public static Process startVm(List<String> commands)
 			throws SavException {
+		if (log.isDebug()) {
+			log.debug("start cmd..");
+			log.debug(StringUtils.join(commands, " "));
+			for (String cmd : commands) {
+				log.debug(cmd);
+			}
+		}
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
 		processBuilder.redirectErrorStream(true);
 		Process process = null;
@@ -149,13 +146,5 @@ public class VMRunner {
 				.append(StringUtils.spaceJoin((Object[]) values))
 				.toString();
 	}
-	
-	private String toClasspathStr(List<String> classpaths) {
-		return StringUtils.join(classpaths, File.pathSeparator);
-	}
 
-	private String buildJavaExecArg(VMConfiguration config) {
-		return StringUtils.join(Constants.FILE_SEPARATOR, config.getJavaHome(), "bin", "java");
-	}
-	
 }
