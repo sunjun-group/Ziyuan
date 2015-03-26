@@ -4,7 +4,7 @@ package faultLocalization;
  * @author Nguyen Phuoc Nguong Phuc (npn)
  *
  */
-public class SpectrumBasedSuspiciousnessCalculator implements SuspiciousCalculator{
+public class SpectrumBasedSuspiciousnessCalculator{
 
 	public enum SpectrumAlgorithm {
 		JACCARD, TARANTULA, OCHIAI

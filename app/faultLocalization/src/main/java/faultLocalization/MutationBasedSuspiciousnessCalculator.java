@@ -17,7 +17,7 @@ import java.util.Set;
  * @author khanh
  *
  */
-public class MutationBasedSuspiciousnessCalculator implements SuspiciousCalculator{
+public class MutationBasedSuspiciousnessCalculator{
 
 	/**
 	 * Set of passed test case indexes of the program
