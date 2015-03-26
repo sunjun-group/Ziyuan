@@ -10,8 +10,6 @@ import libsvm.core.KernelType;
 import libsvm.core.Machine;
 import libsvm.core.MachineType;
 import libsvm.core.Parameter;
-import sav.commons.TestConfiguration;
-import sav.commons.utils.TestConfigUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.vm.VMConfiguration;
@@ -61,14 +59,8 @@ public class Engine {
 
 	private VMConfiguration initVmConfig() {
 		final VMConfiguration vmConfig = new VMConfiguration();
-		vmConfig.setJavaHome(TestConfigUtils.getJavaHome());
 		vmConfig.setDebug(true);
 		vmConfig.setPort(DEFAULT_PORT);
-		TestConfiguration config = TestConfiguration.getInstance();
-		vmConfig.setLaunchClass(config.getJunitcore());
-		vmConfig.addClasspath(config.getJavaBin());
-		vmConfig.addClasspath(TestConfiguration.SAV_COMMONS_TEST_TARGET);
-		vmConfig.addClasspath(config.getJunitLib());
 		return vmConfig;
 	}
 
