@@ -32,6 +32,12 @@ public class ClassUtils {
 				+ Constants.JAVA_EXT;
 	}
 	
+	public static String getClassFilePath(String targetPath, String className) {
+		return targetPath + Constants.FILE_SEPARATOR
+				+ className.replace(".", Constants.FILE_SEPARATOR)
+				+ Constants.CLASS_EXT;
+	}
+	
 	public static String getSimpleName(String className) {
 		int idx = className.lastIndexOf(".");
 		if (idx > 0) {

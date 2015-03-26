@@ -43,7 +43,7 @@ public class Recompiler {
 					.add("-d")
 					.add(appData.getAppTarget())
 					.add(mutatedFile.getAbsolutePath());
-		VMRunner.startVm(builder.toCollection());
+		VMRunner.startAndWaitUntilStop(builder.toCollection());
 	}
 	
 	public void setAppData(ApplicationData appData) {

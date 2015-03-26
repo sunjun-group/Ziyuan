@@ -17,6 +17,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sav.commons.TestConfiguration;
+import sav.commons.testdata.SampleProgramTest;
+import sav.commons.testdata.SamplePrograms;
 import sav.commons.testdata.simplePrograms.DuplicateNumberTest;
 import sav.commons.testdata.simplePrograms.FindInRotatedSortedArrayTest;
 import sav.commons.testdata.simplePrograms.MatchStringTest;
@@ -63,6 +65,13 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		faultLocalization(SimplePrograms.class.getName(),
 				FindInRotatedSortedArrayTest.class.getName());
 	}
+	
+	@Test
+	public void runSampleProgram() throws Exception {
+		faultLocalization(SamplePrograms.class.getName(),
+				SampleProgramTest.class.getName());
+	}
+	
 	
 	@Test
 	public void runDuplicateNumber() throws Exception {

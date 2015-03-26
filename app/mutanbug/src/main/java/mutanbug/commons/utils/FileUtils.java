@@ -29,15 +29,31 @@ public class FileUtils {
 		return folder;
 	}
 
-	public static File createTempFolder(String string) {
+	public static File createTempFolder(String baseName) {
 		try {
-			File file;
-			file = File.createTempFile("mutatedSource", "");
+			File file = File.createTempFile(baseName, "");
 			file.delete();
 			file.mkdir();
 			return file;
 		} catch (IOException e) {
 			throw new SavRtException("cannot create temp dir");
 		}
+	}
+	
+    public static File copyFileToDirectory(File srcFile, File destDir, boolean preserveFileDate) throws IOException {
+        if (destDir == null) {
+            throw new NullPointerException("Destination must not be null");
+        }
+        if (destDir.exists() && destDir.isDirectory() == false) {
+            throw new IllegalArgumentException("Destination '" + destDir + "' is not a directory");
+        }
+        File targetFile = new File(destDir, srcFile.getName());
+		copyFile(srcFile, targetFile, preserveFileDate);
+		return targetFile;
+    }
+
+	public static void copyFile(File srcFile, File targetFile,
+			boolean preserveFileDate) throws IOException {
+		org.apache.commons.io.FileUtils.copyFile(srcFile, targetFile, preserveFileDate);
 	}
 }

@@ -85,6 +85,11 @@ public class MutationBasedSuspiciousnessCalculator implements SuspiciousCalculat
 		double numberFailToPass = getNumberOfFailToPass();
 		double numberPassToFail = getNumberOfPassToFail();
 		
+		//TODO: temporary return 1 when numberPassToFail = 0
+		if(numberPassToFail == 0){
+			return 1;
+		}
+		
 		int numberOfMutants = passTestsInMutants.size();
 		
 		return (numberFailToPass / (numberOfMutants * failTests.size())) *

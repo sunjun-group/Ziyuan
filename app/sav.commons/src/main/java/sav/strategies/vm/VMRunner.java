@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,11 +42,11 @@ public class VMRunner {
 	
 	public static Process startJVM(VMConfiguration config) throws SavException {
 		VMRunner vmRunner = new VMRunner();
-		return vmRunner.start(config);
+		return vmRunner.startAndWaitUntilStop(config);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public Process start(VMConfiguration config) throws SavException {
+	private List<String> buildCommandsFromConfiguration(VMConfiguration config)
+			throws SavException {
 		if (config.getPort() == -1) {
 			throw new SavException(ModuleEnum.JVM, "Cannot find free port to start jvm!");
 		}
@@ -56,7 +57,7 @@ public class VMRunner {
 		buildVmOption(builder, config);
 		buildProgramArgs(config, builder);
 		List<String> commands = (List<String>)builder.getResult();
-		return startVm(commands);
+		return commands;
 	}
 	
 	protected void buildProgramArgs(VMConfiguration config,
@@ -68,33 +69,14 @@ public class VMRunner {
 			builder.add(arg);
 		}
 	}
-	
-	public void startAndWaitUntilStop(VMConfiguration config)
+
+	public Process startAndWaitUntilStop(VMConfiguration config)
 			throws SavException {
-		Process process = start(config);
-		while (true) {
-			try {
-				process.exitValue();
-				break;
-			} catch (IllegalThreadStateException ex) {
-				try {
-					printStream(process.getInputStream());
-					printStream(process.getErrorStream());
-					// means: not yet terminated
-					Thread.currentThread();
-					Thread.sleep(100);
-				} catch (IOException e) {
-					log.logEx(e, "");
-					throw new SavException(ModuleEnum.JVM, e);
-				} catch (InterruptedException e) {
-					log.logEx(e, "");
-					throw new SavException(ModuleEnum.JVM, e);
-				}
-			}
-		}
+		List<String> commands = buildCommandsFromConfiguration(config);
+		return startAndWaitUntilStop(commands);
 	}
 	
-	private void printStream(InputStream stream) throws IOException {
+	private static void printStream(InputStream stream) throws IOException {
 		try {
 			stream.available();
 		} catch (IOException ex) {
@@ -119,7 +101,7 @@ public class VMRunner {
 				.addIf(enableAssertionToken, config.isEnableAssertion());
 	}
 
-	public static Process startVm(List<String> commands)
+	public static Process startAndWaitUntilStop(List<String> commands)
 			throws SavException {
 		if (log.isDebug()) {
 			log.debug("start cmd..");
@@ -133,18 +115,47 @@ public class VMRunner {
 		Process process = null;
 		try {
 			process = processBuilder.start();
+//			process.waitFor();
+//			int value = process.exitValue();
+//			Assert.assertEquals(0, value);
 		} catch (IOException e) {
 			log.logEx(e, "");
 			new SavException(ModuleEnum.JVM, e, "cannot start jvm process");
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
 		}
+		
+		
+		while (true) {
+			try {
+				process.exitValue();
+				break;
+			} catch (IllegalThreadStateException ex) {
+				try {
+					printStream(process.getInputStream());
+					printStream(process.getErrorStream());
+					// means: not yet terminated
+					Thread.sleep(100);
+				} catch (IOException e) {
+					log.logEx(e, "");
+					throw new SavException(ModuleEnum.JVM, e);
+				} catch (InterruptedException e) {
+					log.logEx(e, "");
+					throw new SavException(ModuleEnum.JVM, e);
+				}
+			}
+		}
+		
 		return process;
 	}
 	
-	public String newProgramOption(String opt, String...values) {
-		return new StringBuilder("-").append(opt)
-				.append(" ")
-				.append(StringUtils.spaceJoin((Object[]) values))
-				.toString();
+	public static void appendProgramArgs(List<String> args, String opt, List<String> values) {
+		args.add("-" + opt);
+		args.addAll(values);	
 	}
-
+	public static void appendProgramArgs(List<String> args, String opt, String...values) {
+		args.add("-" + opt);
+		args.addAll(Arrays.asList(values));		
+	}
 }

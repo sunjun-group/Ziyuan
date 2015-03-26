@@ -91,9 +91,9 @@ public class MutatorMain implements IMutator {
 	public static void main(String[] args) throws IOException {
 		String srcFolder = "D:/_1_Projects/Tzuyu/workspace/trunk/app/sav.commons/src/test/java/sav/commons/testdata/";
 		List<ClassLocation> locs = new ArrayList<ClassLocation>();
-		locs.add(new ClassLocation("SamplePrograms", null, 10)); 
-		locs.add(new ClassLocation("SamplePrograms", null, 13));
-		locs.add(new ClassLocation("SamplePrograms", null, 31));
+		locs.add(new ClassLocation("SamplePrograms", null, 15)); 
+//		locs.add(new ClassLocation("SamplePrograms", null, 13));
+//		locs.add(new ClassLocation("SamplePrograms", null, 31));
 		MutatorMain main = new MutatorMain(srcFolder);
 		main.mutate(locs, srcFolder);
 	}

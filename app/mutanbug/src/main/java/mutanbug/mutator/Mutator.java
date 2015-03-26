@@ -186,6 +186,7 @@ public class Mutator
 
         if (variable.type != ASTHelper.BOOLEAN_TYPE && variable.type != ASTHelper.VOID_TYPE)
         {
+        	// TODO TUNG: check the mail
             List<?> operatorList = MutationMap.getMutationOp(MutationMap.IDENTIFIER);
             if (operatorList != null && operatorList.size() > 0)
             {
