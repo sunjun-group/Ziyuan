@@ -30,10 +30,6 @@ public class Machine {
 	protected svm_model model = null;
 	private List<String> dataLabels = new ArrayList<String>();
 
-	public Machine reset() {
-		return new Machine();
-	}
-
 	public Machine setParameter(final Parameter parameter) {
 		this.parameter = new svm_parameter();
 		if (parameter.getMachineType() != null) {
@@ -91,6 +87,11 @@ public class Machine {
 		return this.dataLabels.size();
 	}
 
+	public Machine resetData() {
+		data = new ArrayList<DataPoint>();
+		return this;
+	}
+	
 	public Machine addDataPoints(final List<DataPoint> dataPoints) {
 		for (DataPoint point : dataPoints) {
 			addDataPoint(point);

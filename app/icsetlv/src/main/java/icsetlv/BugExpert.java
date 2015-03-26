@@ -143,13 +143,13 @@ public class BugExpert implements IBugExpert {
 		}
 
 		for (int i = 0; i < failValues.size(); i++) {
-			addDataPoint(machine, passValues, size, allLongsVals, i, Category.NEGATIVE);
+			addDataPoint(machine, failValues, size, allLongsVals, i, Category.NEGATIVE);
 		}
 	}
 
-	private static void addDataPoint(Machine machine, List<BreakpointValue> passValues,
+	private static void addDataPoint(Machine machine, List<BreakpointValue> values,
 			final int size, Map<String, double[]> allLongsVals, int i, Category category) {
-		BreakpointValue value = passValues.get(i);
+		BreakpointValue value = values.get(i);
 		value.retrieveValue(allLongsVals, i, size);
 
 		double[] lineVals = new double[machine.getNumberOfFeatures()];
