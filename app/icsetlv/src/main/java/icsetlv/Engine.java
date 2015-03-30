@@ -181,12 +181,10 @@ public class Engine {
 		@Override
 		public String toString() {
 			final StringBuilder str = new StringBuilder();
-			str.append(breakPoint);
-			str.append(" --> ");
-			str.append(learnedLogic);
-			str.append(" (");
-			str.append(accuracy);
-			str.append(")");
+			str.append("Breakpoint@").append(breakPoint.getClassCanonicalName()).append(":")
+					.append(breakPoint.getLineNo()).append(" >>> ");
+			str.append("Logic: ").append(learnedLogic).append(" >>> ");
+			str.append("(Accuracy: ").append(accuracy).append(")");
 			return str.toString();
 		}
 	}
