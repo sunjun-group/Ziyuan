@@ -8,6 +8,8 @@
 
 package icsetlv.common.dto;
 
+import sav.common.core.utils.CollectionUtils;
+
 
 /**
  * @author LLT
@@ -31,6 +33,15 @@ public class BreakpointValue extends ExecValue {
 	@Override
 	protected boolean needToRetrieveValue() {
 		return false;
+	}
+	
+	public Double getValue(final String variableId) {
+		for (ExecValue child : CollectionUtils.nullToEmpty(children)) {
+			if (child.getVarId().equals(variableId)) {
+				return Double.valueOf(child.getDoubleVal());
+			}
+		}
+		return null;
 	}
 
 }

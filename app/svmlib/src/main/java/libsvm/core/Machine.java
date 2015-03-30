@@ -29,6 +29,7 @@ public class Machine {
 	private List<DataPoint> data = new ArrayList<DataPoint>();
 	protected svm_model model = null;
 	private List<String> dataLabels = new ArrayList<String>();
+	private boolean isGeneratedDataLabel = false;
 
 	public Machine setParameter(final Parameter parameter) {
 		this.parameter = new svm_parameter();
@@ -64,7 +65,16 @@ public class Machine {
 	 */
 	public Machine setDataLabels(final List<String> dataLabels) {
 		this.dataLabels = dataLabels;
+		this.isGeneratedDataLabel = false;
 		return this;
+	}
+
+	public boolean isGeneratedDataLabels() {
+		return this.isGeneratedDataLabel;
+	}
+
+	public List<String> getDataLabels() {
+		return dataLabels;
 	}
 
 	/**
@@ -80,6 +90,7 @@ public class Machine {
 		for (int i = 0; i < numberOfFeatures; i++) {
 			this.dataLabels.add(DEFAULT_FEATURE_PREFIX + i);
 		}
+		this.isGeneratedDataLabel = true;
 		return this;
 	}
 
@@ -91,7 +102,7 @@ public class Machine {
 		data = new ArrayList<DataPoint>();
 		return this;
 	}
-	
+
 	public Machine addDataPoints(final List<DataPoint> dataPoints) {
 		for (DataPoint point : dataPoints) {
 			addDataPoint(point);
@@ -206,30 +217,28 @@ public class Machine {
 
 		return str.toString();
 	}
-	
+
 	protected String getLearnedLogic(final Divider divider, final DataPoint sampleDataPoint) {
 		StringBuilder str = new StringBuilder();
 		CoefficientProcessing coefficientProcessing = new CoefficientProcessing();
 		double[] thetas = coefficientProcessing.process(divider);
-		
-		for(int i = 0; i < thetas.length - 1; i++){
-			if(thetas[i] != 0){
-				if (str.length() > 0 && thetas[i] > 0) {
-					str.append(" + ");
-				}
-				
-				if(thetas[i] < 0){
-					str.append(" ");
-				}
-				
-				str.append(thetas[i]);
-				str.append("*");
-				str.append(dataLabels.get(i));
+
+		for (int i = 0; i < thetas.length - 1; i++) {
+			if (str.length() > 0 && thetas[i] >= 0) {
+				str.append(" + ");
 			}
+
+			if (thetas[i] < 0) {
+				str.append(" ");
+			}
+
+			str.append(thetas[i]);
+			str.append("*");
+			str.append(dataLabels.get(i));
 		}
 		str.append(" >= ");
 		str.append(thetas[thetas.length - 1]);
-		
+
 		return str.toString();
 	}
 
@@ -270,8 +279,9 @@ public class Machine {
 		}
 
 		public void setValues(final double... values) {
-			if(values.length != numberOfFeatures){
-				throw new InvalidParameterException("The array values must have exactly " + numberOfFeatures + " number of elements");
+			if (values.length != numberOfFeatures) {
+				throw new InvalidParameterException("The array values must have exactly "
+						+ numberOfFeatures + " number of elements");
 			}
 			for (int i = 0; i < values.length; i++) {
 				this.values[i] = values[i];
@@ -324,7 +334,7 @@ public class Machine {
 			sb.append(" : ").append(category);
 			return sb.toString();
 		}
-		
+
 		public svm_node[] getSvmNode() {
 			final int numberOfFeatures = this.getNumberOfFeatures();
 			final svm_node[] node = new svm_node[numberOfFeatures];

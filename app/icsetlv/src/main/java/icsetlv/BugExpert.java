@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import sav.common.core.utils.Assert;
 import libsvm.core.Category;
 import libsvm.core.KernelType;
 import libsvm.core.Machine;
@@ -136,26 +137,24 @@ public class BugExpert implements IBugExpert {
 
 	public static void addDataPoints(Machine machine, List<BreakpointValue> passValues,
 			List<BreakpointValue> failValues) {
-		final int size = passValues.size() + failValues.size();
-		Map<String, double[]> allLongsVals = new HashMap<String, double[]>(size);
-		for (int i = 0; i < passValues.size(); i++) {
-			addDataPoint(machine, passValues, size, allLongsVals, i, Category.POSITIVE);
+		for (BreakpointValue bValue : passValues) {
+			addDataPoint(machine, bValue, Category.POSITIVE);
 		}
 
-		for (int i = 0; i < failValues.size(); i++) {
-			addDataPoint(machine, failValues, size, allLongsVals, i, Category.NEGATIVE);
+		for (BreakpointValue bValue : failValues) {
+			addDataPoint(machine, bValue, Category.NEGATIVE);
 		}
 	}
 
-	private static void addDataPoint(Machine machine, List<BreakpointValue> values,
-			final int size, Map<String, double[]> allLongsVals, int i, Category category) {
-		BreakpointValue value = values.get(i);
-		value.retrieveValue(allLongsVals, i, size);
-
+	private static void addDataPoint(Machine machine, BreakpointValue bValue, Category category) {
 		double[] lineVals = new double[machine.getNumberOfFeatures()];
-		int j = 0;
-		for (String key : allLongsVals.keySet()) {
-			lineVals[j++] = allLongsVals.get(key)[i];
+		int i = 0;
+		// TODO NPN fix this
+		Assert.assertTrue(!machine.isGeneratedDataLabels(), "Generated data labels not supported yet!");
+		for (String variableName : machine.getDataLabels()) {
+			final Double value = bValue.getValue(variableName);
+			Assert.notNull(value, "Cannot get value for variable name " + variableName);
+			lineVals[i++] = value.doubleValue();
 		}
 
 		machine.addDataPoint(category, lineVals);
