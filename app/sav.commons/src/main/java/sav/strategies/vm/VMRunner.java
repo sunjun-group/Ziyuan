@@ -20,6 +20,7 @@ import java.util.List;
 import sav.common.core.Logger;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionBuilder;
 import sav.common.core.utils.StringUtils;
 
@@ -42,9 +43,28 @@ public class VMRunner {
 	
 	public static Process startJVM(VMConfiguration config) throws SavException {
 		VMRunner vmRunner = new VMRunner();
-		return vmRunner.startAndWaitUntilStop(config);
+		return vmRunner.start(config);
 	}
-	
+
+	private Process start(VMConfiguration config) throws SavException {
+		Assert.assertTrue(config.getPort() != -1, "Cannot find free port to start jvm!");
+
+		List<String> commands = buildCommandsFromConfiguration(config);
+		return startVm(commands);
+	}
+
+	private Process startVm(List<String> commands) throws SavException {
+		ProcessBuilder processBuilder = new ProcessBuilder(commands);
+		processBuilder.redirectErrorStream(true);
+		Process process = null;
+		try {
+			process = processBuilder.start();
+		} catch (IOException e) {
+			throw new SavException(ModuleEnum.JVM, e, "cannot start jvm process");
+		}
+		return process;
+	}
+
 	private List<String> buildCommandsFromConfiguration(VMConfiguration config)
 			throws SavException {
 		if (config.getPort() == -1) {
@@ -88,7 +108,7 @@ public class VMRunner {
 		/* Note: The input stream must be read if available to be closed, 
 		 * otherwise, the process will never end. So, keep doing this even if 
 		 * the printStream is not set */
-		while ((inputLine = in.readLine()) != null) {
+		while (in.ready() && (inputLine = in.readLine()) != null) {
 			if(log.isDebug()) {
 				log.debug(inputLine);
 			}
