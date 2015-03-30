@@ -19,12 +19,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import libsvm.core.KernelType;
 import libsvm.core.Machine;
+import libsvm.core.MachineType;
+import libsvm.core.Parameter;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import sav.common.core.SavException;
+import sav.commons.AbstractTest;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.vm.VMConfiguration;
@@ -51,12 +55,12 @@ public class IcsetlvEngineTest extends AbstractTest {
 		IcsetlvInput input = initInput();
 		List<BreakPoint> bkps = AssertionDetector.scan(input.getAssertionSourcePaths());
 		
-		BreakPoint bkp4 = new BreakPoint("testdata.slice.FindMax", "findMax", 10);
+		BreakPoint bkp4 = new BreakPoint("sav.commons.testdata.findMax.FindMax", "findMax", 10);
 		bkp4.addVars(new Variable("max"));
 		bkp4.addVars(new Variable("i"));
 		bkps.add(bkp4);	
 		
-		BreakPoint bkp3 = new BreakPoint("testdata.slice.FindMax", "findMax", 14); 
+		BreakPoint bkp3 = new BreakPoint("sav.commons.testdata.findMax.FindMax", "findMax", 14); 
 		bkp3.addVars(new Variable("max"));
 		bkps.add(bkp3);
 		
@@ -73,7 +77,14 @@ public class IcsetlvEngineTest extends AbstractTest {
 			System.out.println(machine.getModelAccuracy());
 		}
 	}
-	
+
+	protected Machine setupMachine(Machine defaultMachine, int numberOfFeatures) {
+		return defaultMachine.setNumberOfFeatures(numberOfFeatures).setParameter(
+				new Parameter().setMachineType(MachineType.C_SVC).setKernelType(KernelType.LINEAR)
+						.setEps(1.0).setUseShrinking(false).setPredictProbability(false)
+						.setC(Double.MAX_VALUE));
+	}
+
 	private IcsetlvInput initInput() {
 		IcsetlvInput input = new IcsetlvInput();
 		VMConfiguration vmConfig = initVmConfig();
@@ -99,6 +110,7 @@ public class IcsetlvEngineTest extends AbstractTest {
 	private Map<String, List<String>> getTestcasesSourcePaths() {
 		Map<String, List<String>> result = new HashMap<String, List<String>>();
 		result.put(config.SAV_COMMONS_TEST_TARGET + "/testdata/slice/FindMax.java",
+//		result.put(TestConfiguration.getTestScrPath("sav.commons") + "/sav/commons/testdata/findMax/FindMax.java",
 				//"/testdata/boundedStack/BoundedStack.java", 
 				null);
 		return result;

@@ -24,6 +24,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
 import sav.strategies.dto.BreakPoint;
 

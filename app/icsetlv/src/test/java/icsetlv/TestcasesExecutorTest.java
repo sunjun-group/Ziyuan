@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
+import sav.commons.AbstractTest;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.vm.VMConfiguration;
