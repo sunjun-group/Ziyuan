@@ -15,7 +15,7 @@ public class Calculator {
 	}
 	
 	public static boolean validateGetMax(int x, int y, int max) {
-		return max >= x && max >= y;
+		return max >= x && max >= y && (max == x || max == y);
 	}
 
 }

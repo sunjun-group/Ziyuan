@@ -44,4 +44,12 @@ public class CalculatorTestFailed {
 		int max = Calculator.getMax(x, y);
 		Assert.assertTrue(Calculator.validateGetMax(x, y, max));
 	}
+	
+	@Test
+	public void testFailed6() {
+		int x = -2;
+		int y = 1;
+		int max = Calculator.getMax(x, y);
+		Assert.assertTrue(Calculator.validateGetMax(x, y, max));
+	}
 }
