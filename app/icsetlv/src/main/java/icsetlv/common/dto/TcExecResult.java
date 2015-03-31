@@ -47,6 +47,18 @@ public class TcExecResult {
 		return result;
 	}
 
+	public BreakpointValue getSampleValue(BreakPoint bkp) {
+		List<BreakpointValue> values = getPassValues(bkp);
+		if (values == null || values.isEmpty()) {
+			values = getFailValues(bkp);
+		}
+		if (values == null || values.isEmpty()) {
+			return null;
+		} else {
+			return values.get(0);
+		}
+	}
+
 	@Override
 	public String toString() {
 		return "TcExecResult [passValues=" + passValues + ", \nfailValues="

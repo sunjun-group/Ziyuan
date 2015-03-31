@@ -1,5 +1,6 @@
 package icsetlv;
 
+import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.dto.TcExecResult;
 import icsetlv.variable.TestcasesExecutor;
 
@@ -10,6 +11,7 @@ import libsvm.core.KernelType;
 import libsvm.core.Machine;
 import libsvm.core.MachineType;
 import libsvm.core.Parameter;
+import sav.common.core.utils.Assert;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.vm.VMConfiguration;
@@ -114,7 +116,7 @@ public class Engine {
 	}
 
 	public Engine run(final int valueRetriveLevel, final Machine machine) throws Exception {
-		TestcasesExecutor testRunner = new TestcasesExecutor(vmConfig, valueRetriveLevel);
+		final TestcasesExecutor testRunner = new TestcasesExecutor(vmConfig, valueRetriveLevel);
 		final TcExecResult testResult = testRunner.execute(passedTestCases, failedTestCases,
 				breakPoints);
 
@@ -122,11 +124,24 @@ public class Engine {
 		for (BreakPoint bkp : breakPoints) {
 			// Configure data for SVM machine
 			machine.resetData();
-			final List<String> varLabels = new ArrayList<String>(bkp.getVars().size());
+			List<String> varLabels = new ArrayList<String>(bkp.getVars().size());
 			for (Variable var : bkp.getVars()) {
 				varLabels.add(var.getName());
 			}
-			machine.setDataLabels(varLabels);
+
+			if (varLabels.size() > 0) {
+				machine.setDataLabels(varLabels);
+			} else {
+				// User did not specify variable names
+				// We use all available ones
+				final BreakpointValue sample = testResult.getSampleValue(bkp);
+				Assert.assertTrue(sample != null, "No test result found.");
+				Assert.assertTrue(
+						sample.getAllLabels() != null && sample.getAllLabels().size() > 0,
+						"No variable exists at the given breakpoint.");
+				machine.setDataLabels(sample.getAllLabels());
+			}
+
 			BugExpert.addDataPoints(machine, testResult.getPassValues(bkp),
 					testResult.getFailValues(bkp));
 

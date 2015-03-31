@@ -149,12 +149,15 @@ public class BugExpert implements IBugExpert {
 	private static void addDataPoint(Machine machine, BreakpointValue bValue, Category category) {
 		double[] lineVals = new double[machine.getNumberOfFeatures()];
 		int i = 0;
-		// TODO NPN fix this
-		Assert.assertTrue(!machine.isGeneratedDataLabels(), "Generated data labels not supported yet!");
-		for (String variableName : machine.getDataLabels()) {
-			final Double value = bValue.getValue(variableName);
-			Assert.notNull(value, "Cannot get value for variable name " + variableName);
-			lineVals[i++] = value.doubleValue();
+		if (machine.isGeneratedDataLabels()) {
+			// Actually we do not use this case at the moment but I still add this for completeness
+			lineVals = bValue.getAllValues();
+		} else {
+			for (String variableName : machine.getDataLabels()) {
+				final Double value = bValue.getValue(variableName);
+				Assert.notNull(value, "Cannot get value for variable name " + variableName);
+				lineVals[i++] = value.doubleValue();
+			}
 		}
 
 		machine.addDataPoint(category, lineVals);
