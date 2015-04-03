@@ -20,20 +20,35 @@ public class EngineTest extends AbstractTest {
 	@Before
 	public void prepareEngine() {
 		final TestConfiguration config = TestConfiguration.getInstance();
+		
 		engine = new Engine().setPort(DEBUG_PORT)
 				.setJavaHome(TestConfigUtils.getJavaHome())
-				.setLaunchClass(config.getJunitcore())
+//				.setLaunchClass(config.getJunitcore())
 				.addToClassPath(config.getJavaBin())
-				.addToClassPath(config.getJunitLib())
-				.addToClassPath(TestConfiguration.getTestTarget(MODULE_NAME));
+				.addToClassPath("/Users/npn/dev/projects/Tzuyu/app/sav.commons/target/classes")
+				.addToClassPath("/Users/npn/dev/projects/Tzuyu/app/sav.commons/lib/*")
+//				.addToClassPath(config.getJunitLib())
+				.addToClassPath(TestConfiguration.getTestTarget(MODULE_NAME))
+				;
+		
 	}
 
 	@Test
 	public void doTest() throws Exception {
-		engine.addPassedTestcase("testdata.CalculatorTestPassed");
-		engine.addFailedTestcase("testdata.CalculatorTestFailed");
+		engine.addNotExecutedTestcase("testdata.CalculatorTestPassed.testPassed1");
+		engine.addNotExecutedTestcase("testdata.CalculatorTestPassed.testPassed2");
+		engine.addNotExecutedTestcase("testdata.CalculatorTestPassed.testPassed3");
+		engine.addNotExecutedTestcase("testdata.CalculatorTestPassed.testPassed4");
+		engine.addNotExecutedTestcase("testdata.CalculatorTestFailed.testFailed1");
+		engine.addNotExecutedTestcase("testdata.CalculatorTestFailed.testFailed2");
+		engine.addNotExecutedTestcase("testdata.CalculatorTestFailed.testFailed3");
+		engine.addNotExecutedTestcase("testdata.CalculatorTestFailed.testFailed4");
+		engine.addNotExecutedTestcase("testdata.CalculatorTestFailed.testFailed5");
+		engine.addNotExecutedTestcase("testdata.CalculatorTestFailed.testFailed6");
+//		engine.addPassedTestcase("testdata.CalculatorTestPassed");
+//		engine.addFailedTestcase("testdata.CalculatorTestFailed");
 
-		engine.addBreakPoint("testdata.Calculator", "getMax", 7, "x", "y", "max");
+		engine.addBreakPoint("testdata.Calculator", "getMax", 7);
 
 		engine.run();
 		final List<Result> results = engine.getResults();

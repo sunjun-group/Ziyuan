@@ -54,6 +54,13 @@ public class VMRunner {
 	}
 
 	private Process startVm(List<String> commands) throws SavException {
+		if (log.isDebug()) {
+			log.debug("start cmd..");
+			log.debug(StringUtils.join(commands, " "));
+			for (String cmd : commands) {
+				log.debug(cmd);
+			}
+		}
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
 		processBuilder.redirectErrorStream(true);
 		Process process = null;

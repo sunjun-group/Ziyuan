@@ -17,10 +17,10 @@ import icsetlv.common.dto.TcExecResult;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.common.utils.PrimitiveUtils;
 import icsetlv.common.utils.VariableUtils;
-import icsetlv.iface.ITestcasesExecutor;
 import icsetlv.vm.SimpleDebugger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +30,10 @@ import sav.common.core.Logger;
 import sav.common.core.SavException;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
+import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;
@@ -67,7 +69,7 @@ import com.sun.jdi.request.EventRequestManager;
  * @author LLT
  * 
  */
-public class TestcasesExecutor implements ITestcasesExecutor {
+public class TestcasesExecutor {
 	private Logger<?> log = Logger.getDefaultLogger();
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
 	private static final String TO_STRING_NAME= "toString"; 
@@ -83,10 +85,8 @@ public class TestcasesExecutor implements ITestcasesExecutor {
 		this.valRetrieveLevel = valRetrieveLevel;
 	}
 
-	@Override
-	public TcExecResult execute(List<String> passTestcases,
-			List<String> failTestcases, List<BreakPoint> brkps)
-			throws IcsetlvException, SavException {
+	public TcExecResult execute(List<String> passTestcases, List<String> failTestcases,
+			List<BreakPoint> brkps) throws IcsetlvException, SavException {
 		this.brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
 		Map<String, BreakPoint> locBrpMap = new HashMap<String, BreakPoint>();
 		List<BreakpointValue> passVals = executeJunitTests(locBrpMap, passTestcases);
@@ -97,7 +97,8 @@ public class TestcasesExecutor implements ITestcasesExecutor {
 	private List<BreakpointValue> executeJunitTests(
 			Map<String, BreakPoint> locBrpMap, List<String> tcs) throws IcsetlvException, SavException {
 		List<BreakpointValue> result = new ArrayList<BreakpointValue>();
-		config.setProgramArgs(tcs);
+		config.setProgramArgs(Arrays.asList("-" + JunitRunnerParameters.CLASS_METHODS + " "
+				+ StringUtils.join(tcs, " ")));
 		VirtualMachine vm = debugger.run(config);
 		if (vm == null) {
 			throw new IcsetlvException("cannot start jvm!");

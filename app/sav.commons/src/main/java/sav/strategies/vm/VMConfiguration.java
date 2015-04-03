@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sav.common.core.utils.StringUtils;
+import sav.strategies.junit.JunitRunner;
 
 /**
  * @author LLT
@@ -21,7 +22,7 @@ import sav.common.core.utils.StringUtils;
 public class VMConfiguration {
 	private String javaHome;
 	private List<String> classpaths;
-	private String launchClass;
+	private String launchClass = JunitRunner.class.getName();
 	private boolean debug;
 	private int port;
 	private boolean enableAssertion;

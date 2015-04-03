@@ -9,6 +9,7 @@
 package icsetlv.iface;
 
 import icsetlv.common.exception.IcsetlvException;
+import icsetlv.variable.TestcasesExecutor;
 import sav.strategies.slicing.ISlicer;
 
 /**
@@ -21,6 +22,6 @@ public interface IManager {
 
 	IBugExpert getBugExpert();
 
-	ITestcasesExecutor getTestcasesExecutor();
+	TestcasesExecutor getTestcasesExecutor();
 
 }

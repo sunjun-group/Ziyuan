@@ -11,7 +11,6 @@ package icsetlv;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.iface.IBugExpert;
 import icsetlv.iface.IManager;
-import icsetlv.iface.ITestcasesExecutor;
 import icsetlv.variable.TestcasesExecutor;
 
 import java.util.List;
@@ -51,7 +50,7 @@ public class IcsetlvEngine implements IManager {
 	}
 	
 	@Override
-	public ITestcasesExecutor getTestcasesExecutor() {
+	public TestcasesExecutor getTestcasesExecutor() {
 		return new TestcasesExecutor(input.getConfig(),
 				input.getVarRetrieveLevel());
 	}

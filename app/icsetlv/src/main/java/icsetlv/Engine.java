@@ -11,9 +11,12 @@ import libsvm.core.KernelType;
 import libsvm.core.Machine;
 import libsvm.core.MachineType;
 import libsvm.core.Parameter;
+import sav.common.core.Pair;
 import sav.common.core.utils.Assert;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
+import sav.strategies.junit.JunitRunner;
+import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.vm.VMConfiguration;
 
 /**
@@ -50,8 +53,10 @@ public class Engine {
 	private static final int DEFAULT_VALUE_RETRIVE_LEVEL = 4;
 
 	private VMConfiguration vmConfig = initVmConfig();
+	private Machine machine = getDefaultMachine();
 	private List<String> passedTestCases = new ArrayList<String>();
 	private List<String> failedTestCases = new ArrayList<String>();
+	private List<String> notExecutedTestcases = new ArrayList<String>();
 	private List<BreakPoint> breakPoints = new ArrayList<BreakPoint>();
 	private List<Result> results;
 
@@ -90,6 +95,11 @@ public class Engine {
 		vmConfig.addClasspath(path);
 		return this;
 	}
+	
+	public Engine addProgramArgument(String argument) {
+		vmConfig.addProgramArgs(argument);
+		return this;
+	}
 
 	public Engine addBreakPoint(final String className, final String methodName,
 			final int lineNumber, final String... variableNames) {
@@ -102,7 +112,7 @@ public class Engine {
 	}
 
 	public Engine run() throws Exception {
-		return run(DEFAULT_VALUE_RETRIVE_LEVEL, getDefaultMachine());
+		return run(DEFAULT_VALUE_RETRIVE_LEVEL, getMachine());
 	}
 
 	public Engine addPassedTestcase(final String testcase) {
@@ -115,7 +125,35 @@ public class Engine {
 		return this;
 	}
 
+	public Engine addNotExecutedTestcase(final String testcase) {
+		notExecutedTestcases.add(testcase);
+		return this;
+	}
+
+	private void evaluateNotExecutedTestcases() throws Exception {
+		if (notExecutedTestcases.isEmpty()) {
+			return;
+		}
+		final JunitRunnerParameters params = new JunitRunnerParameters();
+		params.setClassMethods(notExecutedTestcases);
+		final List<Pair<String, String>> failedTests = JunitRunner.runTestcases(params)
+				.getFailTests();
+		final List<String> failedTcs = new ArrayList<String>(failedTests.size());
+		for (Pair<String, String> test : failedTests) {
+			failedTcs.add(new StringBuilder().append(test.a).append(".").append(test.b).toString());
+		}
+		for (String testcase : notExecutedTestcases) {
+			if (failedTcs.contains(testcase)) {
+				this.failedTestCases.add(testcase);
+			} else {
+				this.passedTestCases.add(testcase);
+			}
+		}
+	}
+
 	public Engine run(final int valueRetriveLevel, final Machine machine) throws Exception {
+		evaluateNotExecutedTestcases();
+
 		final TestcasesExecutor testRunner = new TestcasesExecutor(vmConfig, valueRetriveLevel);
 		final TcExecResult testResult = testRunner.execute(passedTestCases, failedTestCases,
 				breakPoints);
@@ -160,7 +198,15 @@ public class Engine {
 		return this;
 	}
 
-	protected Machine getDefaultMachine() {
+	public void setMachine(Machine machine) {
+		this.machine = machine;
+	}
+
+	private Machine getMachine() {
+		return this.machine;
+	}
+
+	private Machine getDefaultMachine() {
 		final Machine machine = new Machine();
 		return machine.setParameter(new Parameter().setMachineType(MachineType.C_SVC)
 				.setKernelType(KernelType.LINEAR).setEps(1.0).setUseShrinking(false)
@@ -203,4 +249,5 @@ public class Engine {
 			return str.toString();
 		}
 	}
+
 }
