@@ -25,6 +25,7 @@ import sav.strategies.dto.ClassLocation;
 import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunnerParameters;
+import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
 import sav.strategies.mutanbug.IMutator;
 import sav.strategies.vm.VMConfiguration;
 import sav.strategies.vm.VMRunner;
@@ -120,15 +121,11 @@ public class MutanBug {
 		VMConfiguration config = appData.getVmConfig();
 		config.setLaunchClass(JunitRunner.class.getName());
 		config.setDebug(false);
-		
-		List<String> args = new ArrayList<String>();
-		VMRunner.appendProgramArgs(args, JunitRunnerParameters.CLASS_METHODS, params.getClassMethods());
-		VMRunner.appendProgramArgs(args, JunitRunnerParameters.DEST_FILE, params.getDestfile());
-		
+		List<String> args = new JunitRunnerProgramArgBuilder()
+				.methods(params.getClassMethods())
+				.destinationFile(params.getDestfile()).build();
 		config.setProgramArgs(args);
-		
 		runner.startAndWaitUntilStop(config);
-		
 		return JunitResult.readFrom(params.getDestfile());
 	}
 

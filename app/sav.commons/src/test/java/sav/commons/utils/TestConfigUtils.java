@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
 
+import sav.common.core.Constants;
 import sav.common.core.utils.ConfigUtils;
 
 public class TestConfigUtils extends ConfigUtils {
@@ -51,9 +52,16 @@ public class TestConfigUtils extends ConfigUtils {
 		}
 		return value;
 	}
-
+	
+	/* work around for getting jdk, not jre */
 	public static String getJavaHome() {
-		return System.getProperty("java.home");
+		// work around in case java home not point to jdk but jre.
+		String javaHome = System.getProperty("java.home");
+		if (javaHome.endsWith("jre")) {
+			javaHome = javaHome.substring(0,
+					javaHome.lastIndexOf(Constants.FILE_SEPARATOR + "jre"));
+		}
+		return javaHome;
 	}
 
 	public static String getTracerLibPath() {

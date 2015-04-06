@@ -59,6 +59,10 @@ public class AgentVmRunner extends VMRunner {
 		return programArgs;
 	}
 	
+	public void setProgramArgs(List<String> arguments) {
+		this.programArgs = arguments;
+	}
+
 	public void addProgramArg(String opt, String... values) {
 		addProgramArg(opt, Arrays.asList(values));
 	}
@@ -68,11 +72,6 @@ public class AgentVmRunner extends VMRunner {
 		for (String value : values) {
 			programArgs.add(value);
 		}
-	}
-	
-	public void setProgramArgs(String opt, String... values) {
-		programArgs = new ArrayList<String>();
-		addProgramArg(opt, values);
 	}
 
 	private List<String> getAgentParams() {

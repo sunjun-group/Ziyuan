@@ -12,6 +12,31 @@
 	<build>
 		<plugins>
 			<plugin>
+				<!-- NOTE: We don't need a groupId specification because the group is 
+					org.apache.maven.plugins ...which is assumed by default. -->
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<finalName>sav-commons</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
+					<attach>false</attach>
+					<outputDirectory>${basedir}/../../etc/app_assembly</outputDirectory>
+					<useProjectArtifact>true</useProjectArtifact>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.5</version>
@@ -45,7 +70,7 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin> 
+			</plugin>
 		</plugins>
 	</build>
 
@@ -54,7 +79,7 @@
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 		</dependency>
-		
+
 		<!-- +++++++++++++++++++++++++++++++++++++++++++ -->
 		<!-- OPTIONAL - CAN BE EXCLUDED IF NO NEED -->
 		<!-- +++++++++++++++++++++++++++++++++++++++++++ -->
@@ -63,16 +88,16 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 		</dependency>
-		
-		<!-- JVM Runner, referenced in VMListener, 
-				exclude this package if not necessary -->
+
+		<!-- JVM Runner, referenced in VMListener, exclude this package if not 
+			necessary -->
 		<dependency>
 			<groupId>com.sun</groupId>
 			<artifactId>tools</artifactId>
 		</dependency>
-		
+
 		<!-- JunitRunner, for running junit test, read and write file during running 
-				exclude this package if not necessary -->
+			exclude this package if not necessary -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -81,12 +106,13 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
-		<!-- JunitRunner, for parsing command line, exclude this package if not necessary -->
+		<!-- JunitRunner, for parsing command line, exclude this package if not 
+			necessary -->
 		<dependency>
 			<groupId>commons-cli</groupId>
 			<artifactId>commons-cli</artifactId>
 		</dependency>
-		
+
 		<!-- SCOPE TEST -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>

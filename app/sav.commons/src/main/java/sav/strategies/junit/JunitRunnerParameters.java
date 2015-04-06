@@ -31,10 +31,10 @@ import sav.common.core.utils.JunitUtils;
 public class JunitRunnerParameters {
 	private Logger<?> log = Logger.getDefaultLogger();
 	private static final Options opts;
-	public static final String CLASS_METHODS = "methods";
-	public static final String TESTING_CLASS_NAMES = "testingclass";
-	public static final String TESTING_PACKAGE_NAMES = "testingpkgs";
-	public static final String DEST_FILE = "destfile";
+	static final String CLASS_METHODS = "methods";
+	static final String TESTING_CLASS_NAMES = "testingclass";
+	static final String TESTING_PACKAGE_NAMES = "testingpkgs";
+	static final String DEST_FILE = "destfile";
 	
 	private List<String> classMethods;
 	private List<String> testingClassNames;

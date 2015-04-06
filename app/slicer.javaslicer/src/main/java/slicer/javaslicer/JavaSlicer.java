@@ -22,7 +22,7 @@ import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitRunner;
-import sav.strategies.junit.JunitRunnerParameters;
+import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
 import sav.strategies.slicing.ISlicer;
 import sav.strategies.vm.VMConfiguration;
 import de.unisb.cs.st.javaslicer.slicing.Slicer;
@@ -95,8 +95,9 @@ public class JavaSlicer implements ISlicer {
 		String tempFileName = tempFile.getAbsolutePath();
 		/* run program and create trace file */
 		vmConfig.setLaunchClass(JunitRunner.class.getName());
-		vmRunner.addProgramArg(JunitRunnerParameters.CLASS_METHODS,
-				junitClassNames);
+		List<String> arguments = new JunitRunnerProgramArgBuilder().methods(
+				junitClassNames).build();
+		vmRunner.setProgramArgs(arguments);
 		/**/
 		vmRunner.setTraceFilePath(tempFileName);
 		vmRunner.startAndWaitUntilStop(vmConfig);

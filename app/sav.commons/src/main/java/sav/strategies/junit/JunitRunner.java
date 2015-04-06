@@ -23,6 +23,7 @@ import sav.common.core.Pair;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.BreakPoint;
+import sav.strategies.vm.ProgramArgumentBuilder;
 
 /**
  * @author LLT
@@ -137,5 +138,27 @@ public class JunitRunner {
 	
 	private static Class<?> loadClass(String className) throws ClassNotFoundException {
 		return Class.forName(className);
+	}
+	
+	public static class JunitRunnerProgramArgBuilder extends ProgramArgumentBuilder {
+		public JunitRunnerProgramArgBuilder methods(List<String> classMethods){
+			addArgument(JunitRunnerParameters.CLASS_METHODS, classMethods);
+			return this;
+		}
+		
+		public JunitRunnerProgramArgBuilder method(String classMethod){
+			addArgument(JunitRunnerParameters.CLASS_METHODS, classMethod);
+			return this;
+		}
+		
+		public JunitRunnerProgramArgBuilder destinationFile(String destFile){
+			addArgument(JunitRunnerParameters.DEST_FILE, destFile);
+			return this;
+		}
+		
+		public JunitRunnerProgramArgBuilder testClassNames(List<String> testClassNames){
+			addArgument(JunitRunnerParameters.TESTING_CLASS_NAMES, testClassNames);
+			return this;
+		}
 	}
 }

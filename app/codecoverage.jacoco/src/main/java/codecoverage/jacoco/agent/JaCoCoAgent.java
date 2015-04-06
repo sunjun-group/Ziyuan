@@ -23,7 +23,7 @@ import sav.common.core.utils.JunitUtils;
 import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.codecoverage.ICoverageReport;
 import sav.strategies.junit.JunitRunner;
-import sav.strategies.junit.JunitRunnerParameters;
+import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
 import sav.strategies.vm.VMConfiguration;
 
 /**
@@ -87,11 +87,11 @@ public class JaCoCoAgent implements ICodeCoverage {
 		for (String testMethod : testMethods) {
 			/* define arguments for JunitRunner */
 			vmRunner.getProgramArgs().clear();
-			vmRunner.addProgramArg(JunitRunnerParameters.DEST_FILE, junitResultFile);
-			vmRunner.addProgramArg(JunitRunnerParameters.TESTING_CLASS_NAMES,
-					allClassNames);
-			vmRunner.addProgramArg(JunitRunnerParameters.CLASS_METHODS,
-					testMethod);
+		
+			List<String> arguments = new JunitRunnerProgramArgBuilder()
+					.method(testMethod).destinationFile(junitResultFile)
+					.testClassNames(allClassNames).build();
+			vmRunner.setProgramArgs(arguments);
 			vmRunner.startAndWaitUntilStop(vmConfig);
 		}
 		

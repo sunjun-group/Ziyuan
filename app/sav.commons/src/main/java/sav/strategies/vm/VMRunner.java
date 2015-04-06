@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -83,7 +82,7 @@ public class VMRunner {
 						.add(VmRunnerUtils.buildJavaExecArg(config));
 		buildVmOption(builder, config);
 		buildProgramArgs(config, builder);
-		List<String> commands = (List<String>)builder.getResult();
+		List<String> commands = builder.getResult();
 		return commands;
 	}
 	
@@ -142,17 +141,10 @@ public class VMRunner {
 		Process process = null;
 		try {
 			process = processBuilder.start();
-//			process.waitFor();
-//			int value = process.exitValue();
-//			Assert.assertEquals(0, value);
 		} catch (IOException e) {
 			log.logEx(e, "");
 			new SavException(ModuleEnum.JVM, e, "cannot start jvm process");
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
 		}
-		
 		
 		while (true) {
 			try {
@@ -175,14 +167,5 @@ public class VMRunner {
 		}
 		
 		return process;
-	}
-	
-	public static void appendProgramArgs(List<String> args, String opt, List<String> values) {
-		args.add("-" + opt);
-		args.addAll(values);	
-	}
-	public static void appendProgramArgs(List<String> args, String opt, String...values) {
-		args.add("-" + opt);
-		args.addAll(Arrays.asList(values));		
 	}
 }

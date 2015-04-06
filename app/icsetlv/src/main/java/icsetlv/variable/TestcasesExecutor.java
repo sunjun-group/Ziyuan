@@ -20,7 +20,6 @@ import icsetlv.common.utils.VariableUtils;
 import icsetlv.vm.SimpleDebugger;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +29,9 @@ import sav.common.core.Logger;
 import sav.common.core.SavException;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.CollectionUtils;
-import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
+import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
 import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.vm.VMConfiguration;
 
@@ -97,8 +96,8 @@ public class TestcasesExecutor {
 	private List<BreakpointValue> executeJunitTests(
 			Map<String, BreakPoint> locBrpMap, List<String> tcs) throws IcsetlvException, SavException {
 		List<BreakpointValue> result = new ArrayList<BreakpointValue>();
-		config.setProgramArgs(Arrays.asList("-" + JunitRunnerParameters.CLASS_METHODS + " "
-				+ StringUtils.join(tcs, " ")));
+		List<String> args = new JunitRunnerProgramArgBuilder().methods(tcs).build();
+		config.setProgramArgs(args);
 		VirtualMachine vm = debugger.run(config);
 		if (vm == null) {
 			throw new IcsetlvException("cannot start jvm!");
