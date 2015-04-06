@@ -23,23 +23,27 @@ public class ClassUtils {
 		return StringUtils.dotJoin(pkg, clName);
 	}
 	
+	public static String toClassCanonicalName(String classPath) {
+		return classPath.replace(Constants.FILE_SEPARATOR, Constants.DOT);
+	}
+	
 	/**
 	 * very weak method. only handle very simple case of className.
 	 */
 	public static String getJFilePath(String sourcePath, String className) {
 		return sourcePath + Constants.FILE_SEPARATOR
-				+ className.replace(".", Constants.FILE_SEPARATOR)
+				+ className.replace(Constants.DOT, Constants.FILE_SEPARATOR)
 				+ Constants.JAVA_EXT;
 	}
 	
 	public static String getClassFilePath(String targetPath, String className) {
 		return targetPath + Constants.FILE_SEPARATOR
-				+ className.replace(".", Constants.FILE_SEPARATOR)
+				+ className.replace(Constants.DOT, Constants.FILE_SEPARATOR)
 				+ Constants.CLASS_EXT;
 	}
 	
 	public static String getSimpleName(String className) {
-		int idx = className.lastIndexOf(".");
+		int idx = className.lastIndexOf(Constants.DOT);
 		if (idx > 0) {
 			return className.substring(idx + 1);
 		}
@@ -50,7 +54,7 @@ public class ClassUtils {
 	 * return pair of class name, and method name
 	 */
 	public static Pair<String, String> splitClassMethod(String name) {
-		int idx = name.lastIndexOf(".");
+		int idx = name.lastIndexOf(Constants.DOT);
 		if (idx > 0) {
 			return Pair.of(name.substring(0, idx), 
 					name.substring(idx + 1));
@@ -82,4 +86,5 @@ public class ClassUtils {
 	public static boolean isAupperB(Class<?> a, Class<?> b) {
 		return a.isAssignableFrom(b);
 	}
+	
 }

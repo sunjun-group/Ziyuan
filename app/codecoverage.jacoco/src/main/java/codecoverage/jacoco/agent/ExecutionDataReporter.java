@@ -43,6 +43,7 @@ import sav.strategies.junit.JunitResult;
 public class ExecutionDataReporter {
 	private Logger<?> log = Logger.getDefaultLogger();
 	private ICoverageReport report;
+	private static final char JACOCO_FILE_SEPARATOR = '/';
 	
 	public void setReport(ICoverageReport report) {
 		this.report = report;
@@ -83,7 +84,7 @@ public class ExecutionDataReporter {
 								if (lineInfo.getStatus() != ICounter.EMPTY) {
 									boolean isCovered = lineInfo.getStatus() != ICounter.NOT_COVERED;
 									boolean isPass = junitResult.getResult(testcaseIdx);
-									report.addInfo(testcaseIdx, cc.getName(),
+									report.addInfo(testcaseIdx, className,
 											j,
 											isPass,
 											isCovered);
@@ -104,11 +105,11 @@ public class ExecutionDataReporter {
 	}
 
 	private String getClassName(String name) {
-		return name.replace("/", ".");
+		return name.replace(JACOCO_FILE_SEPARATOR, '.');
 	}
 
 	private InputStream getTargetClass(String className) throws IOException {
-		final String resource = '/' + className.replace('.', '/') + ".class";
+		final String resource = JACOCO_FILE_SEPARATOR + className.replace('.', JACOCO_FILE_SEPARATOR) + ".class";
 		return getClass().getResourceAsStream(resource);
 	}
 	

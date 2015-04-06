@@ -18,8 +18,8 @@ import java.util.Map;
 public class ClassCoverageInSingleTestcase extends AbstractClassCoverage {
 	private Map<Integer, Boolean> lineCorverageMap = new HashMap<Integer, Boolean>();
 
-	public ClassCoverageInSingleTestcase(final String classResourcePath) {
-		super(classResourcePath);
+	public ClassCoverageInSingleTestcase(final String className) {
+		super(className);
 	}
 
 	public void addInfo(int line, boolean isCovered) {

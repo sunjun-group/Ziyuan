@@ -1,9 +1,7 @@
-package testdata;
+package sav.commons.testdata.calculator;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import sav.commons.testdata.calculator.Calculator;
 
 public class CalculatorTestPassed {
 

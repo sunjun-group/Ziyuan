@@ -13,3 +13,4 @@ runtime-EclipseApplication
 /app/tzuyuEclipsePlugin/savCommons
 /app/sav.commons/src/test/resources/test_configuration.properties
 logs
+/app/tzuyu.parent/*.classpath

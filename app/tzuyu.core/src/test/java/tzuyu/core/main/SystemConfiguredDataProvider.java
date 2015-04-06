@@ -10,7 +10,6 @@ import sav.common.core.Constants;
 import sav.common.core.utils.ConfigUtils;
 import sav.commons.TestConfiguration;
 import tzuyu.core.inject.ApplicationData;
-import codecoverage.jacoco.JavaCoCo;
 import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 /**
@@ -90,8 +89,5 @@ public class SystemConfiguredDataProvider extends TestApplicationContext {
 	public List<String> getProjectClassPath() {
 		return projectClasspath;
 	}
-	
-	public JavaCoCo getJaCoco() {
-		return (JavaCoCo)codeCoverageTool;
-	}
+
 }

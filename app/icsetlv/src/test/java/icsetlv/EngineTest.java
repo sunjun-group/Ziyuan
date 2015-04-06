@@ -25,11 +25,9 @@ public class EngineTest extends AbstractTest {
 				.setJavaHome(TestConfigUtils.getJavaHome())
 //				.setLaunchClass(config.getJunitcore())
 				.addToClassPath(config.getJavaBin())
-				.addToClassPath("/Users/npn/dev/projects/Tzuyu/app/sav.commons/target/classes")
-				.addToClassPath("/Users/npn/dev/projects/Tzuyu/app/sav.commons/lib/*")
+				.addToClassPath("E:/Code/Tzuyu/trunk/etc/app_assembly/sav-commons.jar")
 //				.addToClassPath(config.getJunitLib())
-				.addToClassPath(TestConfiguration.getTestTarget(MODULE_NAME))
-				;
+				.addToClassPath(TestConfiguration.getTestTarget(MODULE_NAME));
 		
 	}
 
@@ -48,7 +46,7 @@ public class EngineTest extends AbstractTest {
 //		engine.addPassedTestcase("testdata.CalculatorTestPassed");
 //		engine.addFailedTestcase("testdata.CalculatorTestFailed");
 
-		engine.addBreakPoint("testdata.Calculator", "getMax", 7);
+		engine.addBreakPoint("testdata.Calculator", "getMax", 6, "x", "y");
 
 		engine.run();
 		final List<Result> results = engine.getResults();

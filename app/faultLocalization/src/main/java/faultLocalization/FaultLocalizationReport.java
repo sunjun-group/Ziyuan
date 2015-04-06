@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sav.common.core.utils.CollectionUtils;
+import sav.strategies.dto.ClassLocation;
 
 public class FaultLocalizationReport {
 
@@ -42,6 +43,17 @@ public class FaultLocalizationReport {
 			
 			rank--;
 			
+		}
+		
+		return result;
+	}
+	
+	public List<ClassLocation> getFirstRanksLocation(int rank){
+		List<LineCoverageInfo> lineCoverateInfos = getFirstRanks(rank);
+		
+		List<ClassLocation> result = new ArrayList<ClassLocation>();
+		for(LineCoverageInfo lineCoverateInfo: lineCoverateInfos){
+			result.add(lineCoverateInfo.getLocation());
 		}
 		
 		return result;

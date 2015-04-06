@@ -129,6 +129,13 @@ public class Engine {
 		notExecutedTestcases.add(testcase);
 		return this;
 	}
+	
+	public Engine addNotExecutedTestcases(final List<String> testcases) {
+		for(String testcase: testcases){
+			addNotExecutedTestcase(testcase);
+		}
+		return this;
+	}
 
 	private void evaluateNotExecutedTestcases() throws Exception {
 		if (notExecutedTestcases.isEmpty()) {

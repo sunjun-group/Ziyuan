@@ -90,7 +90,7 @@ public class CoverageReport implements ICoverageReport{
 
 		for (Entry<String, ClassCoverageInAllTestcases> entry : mapClassLineToTestCasesCover
 				.entrySet()) {
-			final String tempClassName = entry.getKey().replace('/', '.');
+			final String tempClassName = entry.getKey();
 			if (testingClassNames.contains(tempClassName)) {
 				entry.getValue().updateDifference(mapPassedTest2Difference, failedTestcaseIndex);
 			}

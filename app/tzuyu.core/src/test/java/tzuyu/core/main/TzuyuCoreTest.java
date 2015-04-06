@@ -10,7 +10,6 @@ package tzuyu.core.main;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -19,6 +18,8 @@ import org.junit.Test;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.SampleProgramTest;
 import sav.commons.testdata.SamplePrograms;
+import sav.commons.testdata.calculator.CalculatorTestFailed;
+import sav.commons.testdata.calculator.CalculatorTestPassed;
 import sav.commons.testdata.simplePrograms.DuplicateNumberTest;
 import sav.commons.testdata.simplePrograms.FindInRotatedSortedArrayTest;
 import sav.commons.testdata.simplePrograms.MatchStringTest;
@@ -119,8 +120,15 @@ public class TzuyuCoreTest extends AbstractTzTest {
 //		app.faultLocalization2(testingClasses, Arrays.asList("sav.commons.testdata.simplePrograms"), junitClassNames, false);
 	}
 	
-	public void run() {
-		
+	@Test
+	public void whenSpectrumAndMachineLearningUsed() throws Exception{
+		TzuyuCore app = new TzuyuCore(testContext);
+		List<String> testingClasses = new ArrayList<String>();
+		testingClasses.add(sav.commons.testdata.calculator.Calculator.class.getName());
+		List<String> junitClassNames = new ArrayList<String>();
+		junitClassNames.add(sav.commons.testdata.calculator.CalculatorTestPassed.class.getName());
+		junitClassNames.add(sav.commons.testdata.calculator.CalculatorTestFailed.class.getName());
+		app.SpectrumAndMachineLearning(testingClasses, junitClassNames, false);
 	}
 
 }

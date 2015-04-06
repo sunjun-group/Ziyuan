@@ -62,6 +62,10 @@
 			<groupId>tzuyu-project</groupId>
 			<artifactId>mutanbug</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>icsetlv</artifactId>
+		</dependency>
 		<!-- specific for test -->
 		<dependency>
 			<groupId>tzuyu-project</groupId>
