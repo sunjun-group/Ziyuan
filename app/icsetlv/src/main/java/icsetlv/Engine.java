@@ -242,10 +242,11 @@ public class Engine {
 		@Override
 		public String toString() {
 			final StringBuilder str = new StringBuilder();
+			str.append("*******************\n");
 			str.append("Breakpoint@").append(breakPoint.getClassCanonicalName()).append(":")
-					.append(breakPoint.getLineNo()).append(" >>> ");
-			str.append("Logic: ").append(learnedLogic).append(" >>> ");
-			str.append("(Accuracy: ").append(accuracy).append(")");
+					.append(breakPoint.getLineNo()).append("\n");
+			str.append("Logic:\n").append(learnedLogic).append("\n");
+			str.append("Accuracy: ").append(accuracy).append("\n");
 			return str.toString();
 		}
 	}

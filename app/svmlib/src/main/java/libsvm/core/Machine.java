@@ -224,6 +224,10 @@ public class Machine {
 		double[] thetas = coefficientProcessing.process(divider);
 
 		for (int i = 0; i < thetas.length - 1; i++) {
+			if(Double.compare(thetas[i], 0) == 0){
+				continue;
+			}
+			
 			if (str.length() > 0 && thetas[i] >= 0) {
 				str.append(" + ");
 			}
