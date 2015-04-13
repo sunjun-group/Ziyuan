@@ -9,8 +9,6 @@
 package tzuyu.plugin.icsetlv.marker;
 
 
-import icsetlv.common.dto.BreakPoint;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,6 +27,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ui.views.markers.internal.Util;
 
+import sav.strategies.dto.BreakPoint;
 import tzuyu.plugin.commons.constants.PluginConstants;
 import tzuyu.plugin.commons.utils.IStatusUtils;
 

@@ -106,4 +106,7 @@ public class SignatureUtils {
 		return replace(typeSign, ";", "");
 	}
 
+	public static String createMethodNameSign(String methodName, String signature) {
+		return methodName + signature;
+	}
 }

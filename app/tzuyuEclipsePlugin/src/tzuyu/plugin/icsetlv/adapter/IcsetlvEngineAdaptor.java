@@ -8,12 +8,12 @@
 
 package tzuyu.plugin.icsetlv.adapter;
 
-import icsetlv.common.dto.BreakPoint;
 import icsetlv.common.exception.IcsetlvException;
 
 import java.util.List;
 
 import sav.common.core.SavException;
+import sav.strategies.dto.BreakPoint;
 import tzuyu.plugin.commons.dto.WorkObject;
 import tzuyu.plugin.commons.exception.PluginException;
 import tzuyu.plugin.icsetlv.command.AnalysisPreferences;

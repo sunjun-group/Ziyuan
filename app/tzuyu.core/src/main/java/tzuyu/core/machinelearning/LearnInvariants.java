@@ -12,8 +12,6 @@ import icsetlv.Engine;
 import icsetlv.Engine.Result;
 import java.util.List;
 import sav.common.core.utils.JunitUtils;
-import sav.commons.TestConfiguration;
-import sav.commons.utils.TestConfigUtils;
 import sav.strategies.dto.ClassLocation;
 
 /**
@@ -25,14 +23,13 @@ public class LearnInvariants {
 	private Engine engine;
 
 	public LearnInvariants() {
-		final TestConfiguration config = TestConfiguration.getInstance();
-		
-		engine = new Engine().setPort(DEBUG_PORT)
-				.setJavaHome(TestConfigUtils.getJavaHome())
-				.addToClassPath(config.getJavaBin())
-				.addToClassPath("E:/Code/Tzuyu/trunk/etc/app_assembly/sav-commons.jar")
-		.addToClassPath(TestConfiguration.getTestTarget("sav.commons"));
-		
+//		final TestConfiguration config = TestConfiguration.getInstance();
+//		
+//		engine = new Engine().setPort(DEBUG_PORT)
+//				.setJavaHome(TestConfigUtils.getJavaHome())
+//				.addToClassPath(config.getJavaBin())
+//				.addToClassPath("E:/Code/Tzuyu/trunk/etc/app_assembly/sav-commons.jar")
+//		.addToClassPath(TestConfiguration.getTestTarget("sav.commons"));
 	}
 
 	public void learn(List<ClassLocation> locations, List<String> junitClassNames) throws Exception{

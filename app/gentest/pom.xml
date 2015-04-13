@@ -11,7 +11,6 @@
 
 	<properties>
 		<reflections-version>0.9.8</reflections-version>
-		<guice-version>3.0</guice-version>
 		<commons-lang3-version>3.3.2</commons-lang3-version>
 	</properties>
 
@@ -71,7 +70,6 @@
 		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
-			<version>${guice-version}</version>
 		</dependency>
 		<!-- scope test -->
 		<dependency>

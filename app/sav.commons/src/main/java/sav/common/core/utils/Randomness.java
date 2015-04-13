@@ -12,7 +12,7 @@ import sav.common.core.iface.HasProbabilityType;
 
 /**
  * @author LLT
- * for centralization. most function adopted from Randoop
+ * for centralization
  */
 public final class Randomness {
 	private Randomness() {}

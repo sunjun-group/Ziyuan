@@ -25,7 +25,7 @@ public class EngineTest extends AbstractTest {
 				.setJavaHome(TestConfigUtils.getJavaHome())
 //				.setLaunchClass(config.getJunitcore())
 				.addToClassPath(config.getJavaBin())
-				.addToClassPath("E:/Code/Tzuyu/trunk/etc/app_assembly/sav-commons.jar")
+				.addToClassPath(TestConfiguration.TRUNK + "/etc/app_assembly/sav-commons.jar")
 //				.addToClassPath(config.getJunitLib())
 				.addToClassPath(TestConfiguration.getTestTarget(MODULE_NAME));
 		

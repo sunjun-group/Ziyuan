@@ -3,8 +3,6 @@ package testdata;
 import org.junit.Assert;
 import org.junit.Test;
 
-import sav.commons.testdata.calculator.Calculator;
-
 public class CalculatorTestPassed {
 
 	@Test

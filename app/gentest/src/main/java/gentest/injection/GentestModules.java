@@ -41,7 +41,6 @@ public class GentestModules extends AbstractModule {
 		scopes.put(TestcaseGenerationScope.class, new EnterableScope());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void configure() {
 		for (Entry<Class<? extends Annotation>, EnterableScope> scope : scopes

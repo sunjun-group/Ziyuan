@@ -8,10 +8,6 @@
 
 package tzuyu.plugin.icsetlv.adapter;
 
-import icsetlv.common.dto.BreakPoint;
-import icsetlv.common.dto.BreakPoint.Variable;
-import icsetlv.common.utils.SignatureUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +25,9 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.SignatureUtils;
+import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.BreakPoint.Variable;
 import tzuyu.plugin.commons.exception.PluginException;
 import tzuyu.plugin.commons.utils.SignatureParser;
 

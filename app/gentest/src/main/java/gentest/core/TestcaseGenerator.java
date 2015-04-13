@@ -91,16 +91,13 @@ public class TestcaseGenerator {
 				ISelectedVariable param = selectParams.get(j);
 				inVars[j] = param.getReturnVarId();
 			}
-			Logger.getDefaultLogger().debug("executing the sequence");
 			executor.start(receiverParam);
 			rmethod.setInVarIds(inVars);
 			seq.appendMethodExecStmts(rmethod, selectParams);
 			if (!executor.execute(rmethod, selectParams)) {
 				// stop append method whenever execution fail.
-				Logger.getDefaultLogger().debug("finish executing the sequence");
 				return seq;
 			}
-			Logger.getDefaultLogger().debug("finish executing the sequence");
 		}
 		return seq;
 	}

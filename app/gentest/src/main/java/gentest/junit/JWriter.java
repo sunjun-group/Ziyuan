@@ -25,7 +25,6 @@ public class JWriter {
 	private String methodPrefix;
 	
 	public CompilationUnit write(List<Sequence> methods) {
-		Logger.getDefaultLogger().debug("start writting testcases");
 		VariableNamer varNamer = new VariableNamer();
 		AstNodeConverter converter = new AstNodeConverter(varNamer);
 		CompilationUnitBuilder cu = new CompilationUnitBuilder();
