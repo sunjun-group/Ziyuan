@@ -14,7 +14,6 @@ import gentest.builder.RandomTraceGentestBuilder;
 import gentest.core.data.Sequence;
 import gentest.core.data.statement.Statement;
 import gentest.core.data.statement.Statement.RStatementKind;
-import gentest.junit.FileCompilationUnitPrinter;
 import gentest.junit.TestsPrinter;
 
 import java.util.ArrayList;
@@ -165,7 +164,6 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 				getTestPkg(targetClazz), null, "test",
 				targetClazz.getSimpleName());
 		printer.setMethodsPerClass(METHOD_PER_CLASS);
-		printer.setCuPrinter(new FileCompilationUnitPrinter());
 		Pair<List<Sequence>, List<Sequence>> testcases = builder.generate();
 		List<Sequence> allTcs = new ArrayList<Sequence>(testcases.a);
 		allTcs.addAll(testcases.b);

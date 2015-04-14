@@ -14,7 +14,7 @@ import java.util.List;
  * @author LLT
  *
  */
-public class FixTraceTester extends RandomTester {
+public class FixTraceTester extends RandomTester implements ITester {
 	
 	public FixTraceTester(int numberOfTcs) {
 		super(-1, numberOfTcs, numberOfTcs);

@@ -26,12 +26,16 @@ import sav.common.core.Logger;
  */
 public class FileCompilationUnitPrinter implements ICompilationUnitPrinter {
 	private Logger<?> logger = Logger.getDefaultLogger();
+	private String srcFolder;
 	
-	public void print(String srcFolderPath,
-			List<CompilationUnit> compilationUnits) {
+	public FileCompilationUnitPrinter(String srcFolderPath) {
+		this.srcFolder = srcFolderPath;
+	}
+	
+	public void print(List<CompilationUnit> compilationUnits) {
 		for (CompilationUnit cu : compilationUnits) {
 			/* create folder if does not exist */
-			String classFolder = getClassFolder(srcFolderPath, 
+			String classFolder = getClassFolder(srcFolder, 
 						cu.getPackage().getName().getName());
 			new File(classFolder).mkdirs();
 			/* create java file */

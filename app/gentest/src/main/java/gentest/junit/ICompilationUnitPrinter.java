@@ -18,6 +18,5 @@ import java.util.List;
  */
 public interface ICompilationUnitPrinter {
 	
-	public void print(String srcFolderPath,
-			List<CompilationUnit> compilationUnits);
+	public void print(List<CompilationUnit> compilationUnits);
 }

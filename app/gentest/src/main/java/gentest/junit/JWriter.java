@@ -11,14 +11,13 @@ import japa.parser.ast.CompilationUnit;
 
 import java.util.List;
 
-import sav.common.core.Logger;
-
 /**
  * @author LLT
  *
  */
 public class JWriter {
-	private static final String JUNIT_TEST_ANNOTATION = "org.junit.Test";
+	private static final String JUNIT_TEST_ANNOTATION = "Test";
+	private static final String JUNIT_TEST_ANNOTATION_IMPORT = "org.junit.Test";
 	private static final String JUNIT_ASSERT_CLAZZ = "org.junit.Assert";
 	private String clazzName;
 	private String packageName;
@@ -31,7 +30,7 @@ public class JWriter {
 		/* package */
 		cu.pakage(getPackageName());
 		/* import */
-		cu.imports(JUNIT_TEST_ANNOTATION);
+		cu.imports(JUNIT_TEST_ANNOTATION_IMPORT);
 		for (Sequence method : methods) {
 			cu.imports(method.getDeclaredTypes());
 		}

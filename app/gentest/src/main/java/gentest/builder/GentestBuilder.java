@@ -42,10 +42,13 @@ public abstract class GentestBuilder<T extends GentestBuilder<T>> {
 	public T forClass(Class<?> clazz) {
 		/*
 		 * clean the previous class declaration,
-		 * if previously,
-		 * the class is entered without specific method, mean we have to add all methods of the class into testing method list.
-		 * otherwise, just reset the current class
-		 * and reset flat specificMethod to
+		 * and reset flat specificMethod.
+		 * ex: 
+		 * builder.forClass(Foo.class)
+		 * 			.forClass(Bar.class)
+		 * 			.method("methodA")
+		 * => For class Foo: all methods will be added to the list.
+		 * 	For class Bar: only method methodA will be added to the list.
 		 */
 		addAllMethodsOfLastClazzIfNotSpecified();
 		specificMethod = false;
@@ -105,6 +108,11 @@ public abstract class GentestBuilder<T extends GentestBuilder<T>> {
 						methodNameOrSign));
 	}
 	
+	/**
+	 * @return a pair of list of testcases
+	 * the first list will be pass testcases,
+	 * and the second list will be fail testcases.
+	 */
 	public final Pair<List<Sequence>, List<Sequence>> generate()
 			throws SavException {
 		addAllMethodsOfLastClazzIfNotSpecified();

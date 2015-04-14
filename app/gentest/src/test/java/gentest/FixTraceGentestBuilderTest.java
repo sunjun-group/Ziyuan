@@ -10,11 +10,9 @@ package gentest;
 
 import gentest.builder.FixTraceGentestBuilder;
 import gentest.core.data.Sequence;
-import gentest.junit.FileCompilationUnitPrinter;
 import gentest.junit.TestsPrinter;
 
 import java.util.List;
-
 
 import org.junit.Test;
 
@@ -40,7 +38,6 @@ public class FixTraceGentestBuilderTest extends AbstractGTTest {
 		TestsPrinter printer = new TestsPrinter(srcPath, 
 				"testdata.gentest.pass", "testdata.gentest.fail", 
 				"test", SamplePrograms.class.getSimpleName());
-		printer.setCuPrinter(new FileCompilationUnitPrinter());
 		printer.printTests(tcs);
 	}
 	
@@ -53,7 +50,6 @@ public class FixTraceGentestBuilderTest extends AbstractGTTest {
 		TestsPrinter printer = new TestsPrinter(srcPath,
 				"testdata.gentest.simpleprogram", null, "test",
 				SimplePrograms.class.getSimpleName());
-		printer.setCuPrinter(new FileCompilationUnitPrinter());
 		printer.printTests(tcs);
 	}
 }

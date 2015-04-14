@@ -22,7 +22,7 @@ import com.google.inject.Injector;
  * @author LLT
  *
  */
-public class RandomTester {
+public class RandomTester implements ITester {
 	private GentestModules injectorModule = new GentestModules();
 	private GentestListener listener;
 	// max length of joined methods.
@@ -41,6 +41,7 @@ public class RandomTester {
 	 * generate test sequences from seed methods.
 	 * The result will be in the order passTcs, failTcs;
 	 */
+	@Override
 	public Pair<List<Sequence>, List<Sequence>> test(
 			List<MethodCall> methodcalls) throws SavException {
 		injectorModule.enter(TestcaseGenerationScope.class);

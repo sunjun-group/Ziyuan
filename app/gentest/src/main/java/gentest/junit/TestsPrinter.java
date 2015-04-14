@@ -9,7 +9,6 @@
 package gentest.junit;
 
 import gentest.core.data.Sequence;
-
 import japa.parser.ast.CompilationUnit;
 
 import java.util.ArrayList;
@@ -29,14 +28,18 @@ public class TestsPrinter implements ITestsPrinter {
 	private int methodSPerClass = INFINITIVE_METHODS_PER_CLASS;
 	private String pkg;
 	private String failPkg;
-	private String srcPath;
 	private String methodPrefix;
 	private String classPrefix;
 	private int classIdx;
 	
-	public TestsPrinter(String srcPath, String pkg, String failPkg,
-			String methodPrefix, String classPrefix) {
-		this.srcPath = srcPath;
+	public TestsPrinter(String pkg, String failPkg, String methodPrefix, String classPrefix,
+			String srcPath) {
+		this(pkg, failPkg, methodPrefix, classPrefix,
+				new FileCompilationUnitPrinter(srcPath));
+	}
+	
+	public TestsPrinter(String pkg, String failPkg,
+			String methodPrefix, String classPrefix, ICompilationUnitPrinter cuPrinter) {
 		this.pkg = pkg;
 		this.failPkg = failPkg;
 		this.methodPrefix = methodPrefix;
@@ -45,25 +48,26 @@ public class TestsPrinter implements ITestsPrinter {
 			separatePassFail = false;
 		}
 		classIdx = 1;
+		this.cuPrinter = cuPrinter;
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void printTests(Pair<List<Sequence>, List<Sequence>> testSeqss) {
+	public void printTests(Pair<List<Sequence>, List<Sequence>> testSeqs) {
 		List<CompilationUnit> units;
 		if (!separatePassFail) {
 			List<Sequence> allTests = CollectionUtils.join(
-					testSeqss.a, testSeqss.b);
-			units = creatCompilationUnits(allTests, pkg);
+					testSeqs.a, testSeqs.b);
+			units = createCompilationUnits(allTests, pkg);
 		} else {
-			units = creatCompilationUnits(testSeqss.a, pkg);
-			units.addAll(creatCompilationUnits(testSeqss.b, failPkg));
+			units = createCompilationUnits(testSeqs.a, pkg);
+			units.addAll(createCompilationUnits(testSeqs.b, failPkg));
 		}
 		/* print all compilation units */
-		cuPrinter.print(srcPath, units);
+		cuPrinter.print(units);
 	}
 	
-	public List<CompilationUnit> creatCompilationUnits(List<Sequence> seqs,
+	public List<CompilationUnit> createCompilationUnits(List<Sequence> seqs,
 			String pkgName) {
 		JWriter jwriter = new JWriter();
 		jwriter.setPackageName(pkgName);
@@ -109,13 +113,6 @@ public class TestsPrinter implements ITestsPrinter {
 
 	public void setMethodsPerClass(int methodSPerClass) {
 		this.methodSPerClass = methodSPerClass;
-	}
-
-	public ICompilationUnitPrinter getCuPrinter() {
-		if (cuPrinter == null) {
-			cuPrinter = new FileCompilationUnitPrinter();
-		}
-		return cuPrinter;
 	}
 
 	public void setCuPrinter(ICompilationUnitPrinter cuPrinter) {
