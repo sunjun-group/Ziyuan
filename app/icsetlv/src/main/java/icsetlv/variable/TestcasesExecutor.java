@@ -32,7 +32,6 @@ import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
-import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;
@@ -268,37 +267,42 @@ public class TestcasesExecutor {
 			Map<String, BreakPoint> locBrpMap) {
 		EventRequestManager erm = vm.eventRequestManager();
 		for (BreakPoint brkp : brkpsMap.get(refType.name())) {
-			List<Location> locations;
-			try {
-				locations = refType
-						.locationsOfLine(brkp.getLineNo());
-			} catch (AbsentInformationException e) {
-				log.warn((Object[])e.getStackTrace());
-				continue;
-			}
-			if (!locations.isEmpty()) {
-				Location location = locations.get(0);
-				BreakpointRequest breakpointRequest = erm
-						.createBreakpointRequest(location);
-				breakpointRequest.setEnabled(true);
-				locBrpMap.put(location.toString(), brkp);
+			// The brkp.lineNo can be a line where a breakpoint cannot be added.
+			// We try to do that in later lines then.
+			boolean added = false;
+			int lineNumber = brkp.getLineNo();
+			while (!added) {
+				List<Location> locations;
+				try {
+					locations = refType.locationsOfLine(lineNumber);
+				} catch (AbsentInformationException e) {
+					log.warn((Object[]) e.getStackTrace());
+					continue;
+				}
+				if (!locations.isEmpty()) {
+					Location location = locations.get(0);
+					BreakpointRequest breakpointRequest = erm.createBreakpointRequest(location);
+					breakpointRequest.setEnabled(true);
+					locBrpMap.put(location.toString(), brkp);
+					added = true;
+				} else {
+					lineNumber++;
+				}
 			}
 		}
 	}
 
 	private void addClassWatch(VirtualMachine vm) {
-		EventRequestManager erm = vm.eventRequestManager();
+		final EventRequestManager erm = vm.eventRequestManager();
 		for (String className : brkpsMap.keySet()) {
 			registerClassRequest(erm, className);
 		}
 	}
 
 	private void registerClassRequest(EventRequestManager erm, String className) {
-		ClassPrepareRequest classPrepareRequest;
-		classPrepareRequest = erm
-				.createClassPrepareRequest();
+		final ClassPrepareRequest classPrepareRequest = erm.createClassPrepareRequest();
 		classPrepareRequest.addClassFilter(className);
 		classPrepareRequest.setEnabled(true);
 	}
-	
+
 }
