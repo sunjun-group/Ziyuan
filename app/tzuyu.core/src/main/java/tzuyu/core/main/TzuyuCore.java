@@ -66,7 +66,7 @@ public class TzuyuCore {
 		return report;
 	}
 	
-	public FaultLocalizationReport SpectrumAndMachineLearning(List<String> testingClassNames,
+	public FaultLocalizationReport doSpectrumAndMachineLearning(List<String> testingClassNames,
 			List<String> junitClassNames, boolean useSlicer) throws Exception {
 		FaultLocalization analyzer = new FaultLocalization(appContext);
 		analyzer.setUseSlicer(useSlicer);
@@ -75,7 +75,7 @@ public class TzuyuCore {
 		
 		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(1);
 		
-		LearnInvariants learnInvariant = new LearnInvariants();
+		LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig());
 		learnInvariant.learn(suspectLocations, junitClassNames);
 		
 		return report;

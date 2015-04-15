@@ -10,34 +10,34 @@ package tzuyu.core.machinelearning;
 
 import icsetlv.Engine;
 import icsetlv.Engine.Result;
+
 import java.util.List;
+
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.ClassLocation;
+import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author khanh
- *
+ * 
  */
 public class LearnInvariants {
-	private static final int DEBUG_PORT = 8787;
 	private Engine engine;
 
-	public LearnInvariants() {
-//		final TestConfiguration config = TestConfiguration.getInstance();
-//		
-//		engine = new Engine().setPort(DEBUG_PORT)
-//				.setJavaHome(TestConfigUtils.getJavaHome())
-//				.addToClassPath(config.getJavaBin())
-//				.addToClassPath("E:/Code/Tzuyu/trunk/etc/app_assembly/sav-commons.jar")
-//		.addToClassPath(TestConfiguration.getTestTarget("sav.commons"));
+	public LearnInvariants(final VMConfiguration config) {
+		engine = new Engine().setPort(config.getPort()).setJavaHome(config.getJavaHome());
+		for (String path : config.getClasspaths()) {
+			engine.addToClassPath(path);
+		}
 	}
 
-	public void learn(List<ClassLocation> locations, List<String> junitClassNames) throws Exception{
+	public void learn(List<ClassLocation> locations, List<String> junitClassNames) throws Exception {
 		List<String> testcases = JunitUtils.extractTestMethods(junitClassNames);
 		engine.addNotExecutedTestcases(testcases);
-		
-		for(ClassLocation location: locations){
-			engine.addBreakPoint(location.getClassCanonicalName(), location.getMethodSign(), getNextLineNumber(location));
+
+		for (ClassLocation location : locations) {
+			engine.addBreakPoint(location.getClassCanonicalName(), location.getMethodSign(),
+					getNextLineNumber(location));
 		}
 
 		engine.run();

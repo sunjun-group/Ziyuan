@@ -128,7 +128,7 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add(sav.commons.testdata.calculator.CalculatorTestPassed.class.getName());
 		junitClassNames.add(sav.commons.testdata.calculator.CalculatorTestFailed.class.getName());
-		app.SpectrumAndMachineLearning(testingClasses, junitClassNames, false);
+		app.doSpectrumAndMachineLearning(testingClasses, junitClassNames, false);
 	}
 
 }
