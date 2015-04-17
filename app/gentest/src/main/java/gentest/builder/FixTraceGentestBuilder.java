@@ -32,18 +32,18 @@ import sav.common.core.SavException;
 /**
  * @author LLT
  * usage:
- * start builder with number of testcase,
+ * start builder with number of testcases,
  * .forClass to start generating testcases for a class
  * 		forClass can be called many times
- * .forMethod to add method of the class including in the test
- * 		like forClass, forMethod can be called many times to,
- * 		but note that the method will be check only in the class 
- * 		defined right before it.
+ * .forMethod to add method of the class including in the test.
+ * 		forMethod can be called many times,
+ * 		the input method name/signature must exist in the predefined class. 
  * .generate to generate sequences of testcases
- * .evaluationMethod to start defining evaluation method for return value of tested method.
+ * .evaluationMethod to start defining method in which the returned value of tested method
+ * 			will be evaluated.
  * 		.param to define parameters of the evaluation method. 
- * Then the generated sequences can be printed to file 
- * using TestsPrinter 
+ * 
+ * After generating, sequences can be printed to file using TestsPrinter 
  * 
  */
 public class FixTraceGentestBuilder extends GentestBuilder<FixTraceGentestBuilder> {
