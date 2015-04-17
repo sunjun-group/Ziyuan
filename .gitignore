@@ -14,3 +14,4 @@ runtime-EclipseApplication
 /app/sav.commons/src/test/resources/test_configuration.properties
 logs
 /app/tzuyu.parent/*.classpath
+/app/mutation/out
