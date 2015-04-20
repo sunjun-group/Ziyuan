@@ -24,7 +24,7 @@ public class Parser
     {
 //        Map<String, ClassDescriptor> clazzes = new HashMap<>();
         File[] files = projectFolder.listFiles();
-        ClassManager cm = new ClassManager();
+        ClassManager cm = new ClassManager(projectFolder.getAbsolutePath());
 
         for (File file : files)
         {

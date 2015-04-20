@@ -35,9 +35,9 @@ public class FixTraceGentestBuilderTest extends AbstractGTTest {
 			.evaluationMethod(SamplePrograms.class, "checkMax")
 			.param("m.a", "m.b", "m.c", "m.return")
 			.generate();
-		TestsPrinter printer = new TestsPrinter(srcPath, 
+		TestsPrinter printer = new TestsPrinter(
 				"testdata.gentest.pass", "testdata.gentest.fail", 
-				"test", SamplePrograms.class.getSimpleName());
+				"test", SamplePrograms.class.getSimpleName(), srcPath);
 		printer.printTests(tcs);
 	}
 	
@@ -47,9 +47,9 @@ public class FixTraceGentestBuilderTest extends AbstractGTTest {
 		FixTraceGentestBuilder builder = new FixTraceGentestBuilder(100);
 		Pair<List<Sequence>, List<Sequence>> tcs = builder.forClass(
 				SimplePrograms.class).generate();
-		TestsPrinter printer = new TestsPrinter(srcPath,
+		TestsPrinter printer = new TestsPrinter(
 				"testdata.gentest.simpleprogram", null, "test",
-				SimplePrograms.class.getSimpleName());
+				SimplePrograms.class.getSimpleName(), srcPath);
 		printer.printTests(tcs);
 	}
 }

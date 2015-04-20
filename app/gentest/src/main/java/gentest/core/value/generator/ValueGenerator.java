@@ -59,9 +59,10 @@ public abstract class ValueGenerator {
 			return new ExtObjectValueGenerator(type.resolveType(typeDef.a),
 					typeDef.b);
 		}
-		if (isReceiver) {
-			return new ObjectValueGenerator(type);
-		}
+		// even receiver, allow to append method calls after initializing
+//		if (isReceiver) {
+//			return new ObjectValueGenerator(type);
+//		}
 		return new ExtObjectValueGenerator(type, null);
 	}
 	

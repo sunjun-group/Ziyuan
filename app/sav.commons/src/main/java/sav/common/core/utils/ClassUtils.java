@@ -29,6 +29,7 @@ public class ClassUtils {
 	
 	/**
 	 * very weak method. only handle very simple case of className.
+	 * TODO LLT: handle for the case of inner class as well.
 	 */
 	public static String getJFilePath(String sourcePath, String className) {
 		return sourcePath + Constants.FILE_SEPARATOR

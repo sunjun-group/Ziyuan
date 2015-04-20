@@ -1,261 +1,175 @@
 package mutation.mutator;
 
-import japa.parser.JavaParser;
-import japa.parser.ast.CompilationUnit;
-import japa.parser.ast.body.*;
-import japa.parser.ast.expr.Expression;
-import japa.parser.ast.stmt.*;
-import japa.parser.ast.visitor.VoidVisitorAdapter;
+import japa.parser.ast.Node;
+import japa.parser.ast.expr.AssignExpr;
+import japa.parser.ast.expr.AssignExpr.Operator;
+import japa.parser.ast.expr.BinaryExpr;
+import japa.parser.ast.expr.CastExpr;
+import japa.parser.ast.expr.FieldAccessExpr;
+import japa.parser.ast.expr.MethodCallExpr;
+import japa.parser.ast.expr.NameExpr;
+import japa.parser.ast.expr.UnaryExpr;
+import japa.parser.ast.expr.VariableDeclarationExpr;
+import japa.parser.ast.stmt.BreakStmt;
+import japa.parser.ast.stmt.ContinueStmt;
+import japa.parser.ast.visitor.CloneVisitor;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import sav.common.core.utils.CollectionUtils;
+import sav.strategies.dto.ClassLocation;
 
 /**
  * Created by hoangtung on 4/3/15.
  */
-public class MutationVisitor extends VoidVisitorAdapter<Map<String, Object>>
-{
+public class MutationVisitor extends AbstractMutationVisitor {
+	private List<Integer> lineNumbers;
+	private Map<Integer, List<MutationNode>> result;
+	private MutationMap mutationMap;
+	private CloneVisitor nodeCloner;
+	
+	/**
+	 * locations must be in the same class
+	 * */
+	public void reset(List<ClassLocation> locations) {
+		lineNumbers.clear();
+		for (ClassLocation location : locations) {
+			lineNumbers.add(location.getLineNo());
+		}
+		result.clear();
+	}
 
-    public static void main(String[] args)
-    {
-        try
-        {
-            CompilationUnit cu = JavaParser.parse(new File("./src/test/mutator/ExpressionTest0.java"));
-            new MutationVisitor().visit(cu, null);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
+	public MutationVisitor(MutationMap mutationMap) {
+		lineNumbers = new ArrayList<Integer>();
+		result = new HashMap<Integer, List<MutationNode>>();
+		setMutationMap(mutationMap);
+	}
 
-//    @Override
-//    public void visit(ArrayAccessExpr node, Map<String, Object> arg)
-//    {
-//        System.out.println(node);
-//         
-//    }
-//
-//    @Override
-//    public void visit(ArrayInitializerExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(AssignExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(BinaryExpr node, Map<String, Object> arg)
-//    {
-//        System.out.println(node);
-//         
-//    }
-//    @Override
-//    public void visit(BlockStmt node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(BooleanLiteralExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(BreakStmt node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(CastExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(CharLiteralExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(ClassOrInterfaceDeclaration node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(ClassOrInterfaceType node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(ConditionalExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(ContinueStmt node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(DoubleLiteralExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(EnclosedExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
+	@Override
+	protected boolean allowToVisit(Node node) {
+		return true;
+	}
+	
+	@Override
+	public boolean mutate(BreakStmt n) {
+		getMutationNodeByLine(n.getBeginLine())
+			.add(MutationNode.of(n, new ContinueStmt(n.getId())));
+		return false;
+	}
+	
+	@Override
+	public boolean mutate(ContinueStmt n) {
+		getMutationNodeByLine(n.getBeginLine())
+			.add(MutationNode.of(n, new BreakStmt(n.getId())));
+		return false;
+	}
+	
+	private List<MutationNode> getMutationNodeByLine(int line) {
+		return CollectionUtils.getListInitIfEmpty(result, line);
+	}
+	
+	@Override
+	public boolean mutate(AssignExpr n) {
+		MutationNode muNode = new MutationNode(n);
+		getMutationNodeByLine(n.getBeginLine()).add(muNode);
+		// change the operator
+		List<Operator> muOps = mutationMap.getMutationOp(n.getOperator());
+		if (!muOps.isEmpty()) {
+			for (Operator muOp : muOps) {
+				AssignExpr newNode = (AssignExpr) nodeCloner.visit(n, null); 
+				newNode.setOperator(muOp);
+				muNode.getMutatedNodes().add(newNode);
+			}
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean mutate(BinaryExpr n) {
+		MutationNode muNode = new MutationNode(n);
+		getMutationNodeByLine(n.getBeginLine()).add(muNode);
+		// change the operator
+		List<BinaryExpr.Operator> muOps = mutationMap.getMutationOp(n.getOperator());
+		if (!muOps.isEmpty()) {
+			for (BinaryExpr.Operator muOp : muOps) {
+				BinaryExpr newNode = (BinaryExpr) nodeCloner.visit(n, null); 
+				newNode.setOperator(muOp);
+				muNode.getMutatedNodes().add(newNode);
+			}
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean mutate(CastExpr n) {
+		return super.mutate(n);
+	}
+	
+	@Override
+	public boolean mutate(FieldAccessExpr n) {
+		// TODO Auto-generated method stub
+		return super.mutate(n);
+	}
+	
+	@Override
+	public boolean mutate(MethodCallExpr n) {
+		// TODO Auto-generated method stub
+		return super.mutate(n);
+	}
+	
+	@Override
+	public boolean mutate(NameExpr n) {
+		// TODO Auto-generated method stub
+		return super.mutate(n);
+	}
+	
+	@Override
+	public boolean mutate(UnaryExpr n) {
+		// TODO Auto-generated method stub
+		return super.mutate(n);
+	}
+	
+	@Override
+	public boolean mutate(VariableDeclarationExpr n) {
+		// TODO Auto-generated method stub
+		return super.mutate(n);
+	}
+	
+	public void setMutationMap(MutationMap mutationMap) {
+		this.mutationMap = mutationMap;
+	}
+	
+	public CloneVisitor getNodeCloner() {
+		return nodeCloner;
+	}
+	
+	public Map<Integer, List<MutationNode>> getResult() {
+		return result;
+	}
+	
+	public static class MutationNode {
+		private Node orgNode;
+		private List<Node> mutatedNodes;
+		
+		public MutationNode(Node orgNode) {
+			mutatedNodes = new ArrayList<>();
+		}
+		
+		public static MutationNode of(Node orgNode, Node newNode) {
+			MutationNode node = new MutationNode(orgNode);
+			node.mutatedNodes.add(newNode);
+			return node;
+		}
 
-    @Override
-    public void visit(ExpressionStmt node, Map<String, Object> arg)
-    {
-//        super.visit(node, arg);
-        Expression exp = node.getExpression();
-        System.out.println(exp);
-    }
+		public Node getOrgNode() {
+			return orgNode;
+		}
 
-//    @Override
-//    public void visit(FieldAccessExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-    @Override
-    public void visit(FieldDeclaration node, Map<String, Object> arg)
-    {
-        System.out.println(node);
-    }
-
-    @Override
-    public void visit(ForStmt node, Map<String, Object> arg)
-    {
-        System.out.println(node);
-        node.getBody().accept(this, arg);
-    }
-
-    @Override
-    public void visit(IfStmt node, Map<String, Object> arg)
-    {
-//        CompilationUnitMutator.mutate(node, arg);
-        node.getThenStmt().accept(this, arg);
-        node.getElseStmt().accept(this, arg);
-    }
-
-//    @Override
-//    public void visit(IntegerLiteralExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(LongLiteralExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(MethodCallExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(MethodDeclaration node, Map<String, Object> arg)
-//    {
-//        super.visit(node, arg);
-//        System.out.println(node.getName());
-//    }
-//
-//    @Override
-//    public void visit(NameExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(QualifiedNameExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(ReferenceType node, Map<String, Object> arg)
-//    {
-//         
-//    }
-
-    @Override
-    public void visit(ReturnStmt node, Map<String, Object> arg)
-    {
-        System.out.println(node);
-    }
-
-//    @Override
-//    public void visit(StringLiteralExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(SuperExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(ThisExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(TypeDeclarationStmt node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(UnaryExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(VariableDeclarationExpr node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(VariableDeclarator node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-//    @Override
-//    public void visit(VariableDeclaratorId node, Map<String, Object> arg)
-//    {
-//         
-//    }
-//
-    @Override
-    public void visit(WhileStmt node, Map<String, Object> arg)
-    {
-        node.getBody().accept(this, arg);
-    }
-
+		public List<Node> getMutatedNodes() {
+			return mutatedNodes;
+		}
+	}
 }

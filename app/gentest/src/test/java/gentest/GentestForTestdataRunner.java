@@ -160,9 +160,9 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 	}
 	
 	public void printTc(GentestBuilder<?> builder, Class<?> targetClazz) throws SavException {
-		TestsPrinter printer = new TestsPrinter(srcPath,
+		TestsPrinter printer = new TestsPrinter(
 				getTestPkg(targetClazz), null, "test",
-				targetClazz.getSimpleName());
+				targetClazz.getSimpleName(), srcPath);
 		printer.setMethodsPerClass(METHOD_PER_CLASS);
 		Pair<List<Sequence>, List<Sequence>> testcases = builder.generate();
 		List<Sequence> allTcs = new ArrayList<Sequence>(testcases.a);

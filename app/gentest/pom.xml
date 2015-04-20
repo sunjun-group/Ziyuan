@@ -14,6 +14,13 @@
 		<commons-lang3-version>3.3.2</commons-lang3-version>
 	</properties>
 
+	<distributionManagement>
+		<site>
+			<id>www.sav.sutd.edu.sg</id>
+			<url>scp://www.sav.sutd.edu.sg/gentest</url>
+		</site>
+	</distributionManagement>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -25,6 +32,32 @@
 						<exclude>**/testdata/**.java</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<!-- explicitly define maven-deploy-plugin after other to force exec 
+					order -->
+				<artifactId>maven-deploy-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>deploy</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>deploy</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

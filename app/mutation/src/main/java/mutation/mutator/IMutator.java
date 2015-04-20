@@ -1,6 +1,5 @@
 package mutation.mutator;
 
-import java.io.File;
 import java.util.List;
 
 import sav.strategies.dto.ClassLocation;
@@ -13,7 +12,7 @@ public interface IMutator
     /**
      * running mutation at specific lines defined in locations.
      */
-    public MutationResult mutate(List<ClassLocation> locations, File sourceFolder);
+    public MutationResult mutate(List<ClassLocation> locations, String sourceFolder);
 
     /**
      * Insert a new line of code right after a specific line of a class,
@@ -26,5 +25,5 @@ public interface IMutator
      * Type temp = foo;
      * return temp;
      */
-    public MutationResult insertFakeLine(List<ClassLocation> locations, File sourceFolder);
+    public MutationResult insertFakeLine(List<ClassLocation> locations, String sourceFolder);
 }

@@ -7,6 +7,7 @@
 
 	<properties>
 		<javaparser-version>1.0.11</javaparser-version>
+		<junit-version>4.11</junit-version>
 	</properties>
 
 	<dependencies>
@@ -34,6 +35,13 @@
 					<artifactId>junit</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit-version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

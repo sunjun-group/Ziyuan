@@ -3,6 +3,9 @@ package mutation.mutator;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import mutation.mutator.MutationVisitor.MutationNode;
 
 import sav.strategies.dto.ClassLocation;
 
@@ -20,6 +23,12 @@ public class MutationResult {
 	public void setLocationMap(
 			Map<ClassLocation, List<LineMutationResult>> locationMap) {
 		this.locationMap = locationMap;
+	}
+	
+	public void importData(Entry<String, List<ClassLocation>> entry,
+			Map<Integer, List<MutationNode>> result) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	public static class LineMutationResult {
@@ -51,5 +60,4 @@ public class MutationResult {
 			this.mutatedFile = mutatedFile;
 		}
 	}
-
 }
