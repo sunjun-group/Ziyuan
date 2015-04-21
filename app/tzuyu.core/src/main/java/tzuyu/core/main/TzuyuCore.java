@@ -10,6 +10,8 @@ package tzuyu.core.main;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import main.FaultLocalization;
 import mutanbug.main.MutatorMain;
 import sav.strategies.dto.ClassLocation;
@@ -65,19 +67,27 @@ public class TzuyuCore {
 		mutanbug.mutateAndRunTests(report, junitClassNames);
 		return report;
 	}
-	
+
 	public FaultLocalizationReport doSpectrumAndMachineLearning(List<String> testingClassNames,
-			List<String> junitClassNames, boolean useSlicer) throws Exception {
-		FaultLocalization analyzer = new FaultLocalization(appContext);
+			List<String> testingPackages, List<String> junitClassNames, boolean useSlicer)
+			throws Exception {
+		final FaultLocalization analyzer = new FaultLocalization(appContext);
 		analyzer.setUseSlicer(useSlicer);
-		FaultLocalizationReport report = analyzer.analyse(testingClassNames, junitClassNames,
-				appData.getSuspiciousCalculAlgo());
-		
+
+		FaultLocalizationReport report;
+		if (CollectionUtils.isEmpty(testingPackages)) {
+			report = analyzer.analyse(testingClassNames, junitClassNames,
+					appData.getSuspiciousCalculAlgo());
+		} else {
+			report = analyzer.analyseSlicingFirst(testingClassNames, testingPackages,
+					junitClassNames, appData.getSuspiciousCalculAlgo());
+		}
+
 		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(1);
-		
+
 		LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig());
 		learnInvariant.learn(suspectLocations, junitClassNames);
-		
+
 		return report;
 	}
 }
