@@ -7,9 +7,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import mutation.mutator.MutationVisitor.MutationNode;
+import mutation.mutator.insertdebugline.DebugLineInsertion;
+import mutation.mutator.insertdebugline.DebugLineResult;
 import mutation.parser.ClassAnalyzer;
 import mutation.parser.JParser;
-import sav.common.core.utils.BreakpointUtils;
 import sav.strategies.dto.ClassLocation;
 
 /**
@@ -18,13 +19,12 @@ import sav.strategies.dto.ClassLocation;
 public class Mutator implements IMutator {
 	
 	@Override
-	public MutationResult mutate(List<ClassLocation> locations,
+	public MutationResult mutate(Map<String, List<ClassLocation>> classLocationMap,
 			String sourceFolder) {
-		Map<String, List<ClassLocation>> classLocationMap = BreakpointUtils
-				.initBrkpsMap(locations);
 		JParser cuParser = new JParser(sourceFolder, classLocationMap.keySet());
 		ClassAnalyzer classAnalyzer = new ClassAnalyzer(sourceFolder, cuParser);
-		MutationVisitor mutationVisitor = new MutationVisitor(new MutationMap());
+		MutationVisitor mutationVisitor = new MutationVisitor(
+				new MutationMap(), classAnalyzer);
 		MutationResult mutationResult = new MutationResult();
 		for (Entry<String, List<ClassLocation>> entry : classLocationMap.entrySet()) {
 			CompilationUnit cu = cuParser.parse(entry.getKey());
@@ -37,8 +37,21 @@ public class Mutator implements IMutator {
 	}
 
 	@Override
-	public MutationResult insertFakeLine(List<ClassLocation> locations,
-			String sourcFolder) {
-		return null;
+	public MutationResult insertDebugLine(Map<String, List<ClassLocation>> classLocationMap,
+			String sourceFolder) {
+		JParser cuParser = new JParser(sourceFolder, classLocationMap.keySet());
+		ClassAnalyzer classAnalyzer = new ClassAnalyzer(sourceFolder, cuParser);
+		DebugLineInsertion insertion = new DebugLineInsertion();
+		MutationResult mutationResult = new MutationResult();
+		for (Entry<String, List<ClassLocation>> entry : classLocationMap.entrySet()) {
+			CompilationUnit cu = cuParser.parse(entry.getKey());
+			/*
+			 * TODO: change behavior or analyzeCompilationUnit or DebugLineInsertion?
+			 */
+			insertion.reset(classAnalyzer.analyzeCompilationUnit(cu).get(0), entry.getValue());
+			List<DebugLineResult> result = insertion.insert(cu);
+			mutationResult.importData(result);
+		}
+		return mutationResult;
 	}
 }

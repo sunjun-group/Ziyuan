@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import mutation.parser.ClassAnalyzer;
+
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.ClassLocation;
 
@@ -30,6 +32,7 @@ public class MutationVisitor extends AbstractMutationVisitor {
 	private Map<Integer, List<MutationNode>> result;
 	private MutationMap mutationMap;
 	private CloneVisitor nodeCloner;
+	private ClassAnalyzer clasAnalyzer;
 	
 	/**
 	 * locations must be in the same class
@@ -42,14 +45,15 @@ public class MutationVisitor extends AbstractMutationVisitor {
 		result.clear();
 	}
 
-	public MutationVisitor(MutationMap mutationMap) {
+	public MutationVisitor(MutationMap mutationMap, ClassAnalyzer classAnalyzer) {
 		lineNumbers = new ArrayList<Integer>();
 		result = new HashMap<Integer, List<MutationNode>>();
 		setMutationMap(mutationMap);
+		setClasAnalyzer(classAnalyzer);
 	}
 
 	@Override
-	protected boolean allowToVisit(Node node) {
+	protected boolean beforeVisit(Node node) {
 		return true;
 	}
 	
@@ -142,6 +146,10 @@ public class MutationVisitor extends AbstractMutationVisitor {
 		this.mutationMap = mutationMap;
 	}
 	
+	public void setClasAnalyzer(ClassAnalyzer clasAnalyzer) {
+		this.clasAnalyzer = clasAnalyzer;
+	}
+	
 	public CloneVisitor getNodeCloner() {
 		return nodeCloner;
 	}
@@ -155,7 +163,7 @@ public class MutationVisitor extends AbstractMutationVisitor {
 		private List<Node> mutatedNodes;
 		
 		public MutationNode(Node orgNode) {
-			mutatedNodes = new ArrayList<>();
+			mutatedNodes = new ArrayList<Node>();
 		}
 		
 		public static MutationNode of(Node orgNode, Node newNode) {

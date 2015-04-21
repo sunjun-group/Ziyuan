@@ -17,7 +17,9 @@ import java.util.List;
 
 /**
  * Created by hoangtung on 3/31/15.
+ * @deprecated use {@link ClassAnalyzer} or {@link JavaParser}
  */
+@Deprecated 
 public class Parser
 {
     public static ClassManager parseProject(File projectFolder)
@@ -64,7 +66,7 @@ public class Parser
     public static List<ClassDescriptor> parseCompilationUnit(CompilationUnit cu)
     {
         List<TypeDeclaration> types = cu.getTypes();
-        List<ClassDescriptor> classDescriptors = new ArrayList<>();
+        List<ClassDescriptor> classDescriptors = new ArrayList<ClassDescriptor>();
 
         for (TypeDeclaration type : types)
         {
@@ -130,7 +132,8 @@ public class Parser
 
     public static MethodDescriptor parseMethod(MethodDeclaration medDecl)
     {
-        MethodDescriptor med = new MethodDescriptor();
+		MethodDescriptor med = new MethodDescriptor(medDecl.getBeginLine(),
+				medDecl.getEndLine());
 
         med.setName(medDecl.getName());
         med.setModifier(medDecl.getModifiers());
@@ -308,7 +311,7 @@ public class Parser
 
     public static List<VariableDescriptor> parseVarDecl(VariableDeclarationExpr varDecl)
     {
-        List<VariableDescriptor> vList = new ArrayList<>();
+        List<VariableDescriptor> vList = new ArrayList<VariableDescriptor>();
 
         Type type = ((VariableDeclarationExpr) varDecl).getType();
         List<VariableDeclarator> vars =((VariableDeclarationExpr) varDecl).getVars();
@@ -340,7 +343,7 @@ public class Parser
 
     public static List<VariableDescriptor> parseFieldDecl(FieldDeclaration fieldDecl)
     {
-        List<VariableDescriptor> vds = new ArrayList<>();
+        List<VariableDescriptor> vds = new ArrayList<VariableDescriptor>();
         List<VariableDeclarator> vids = fieldDecl.getVariables();
 
         for (VariableDeclarator vid : vids)

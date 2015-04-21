@@ -22,12 +22,12 @@ public class MutationMap {
 
 	public List<AssignExpr.Operator> getMutationOp(AssignExpr.Operator operator) {
 		// TODO Auto-generated method stub
-		return new ArrayList<>();
+		return new ArrayList<AssignExpr.Operator>();
 	}
 
 	public List<BinaryExpr.Operator> getMutationOp(BinaryExpr.Operator operator) {
 		// TODO Auto-generated method stub
-		return new ArrayList<>();
+		return new ArrayList<BinaryExpr.Operator>();
 	}
 
 }

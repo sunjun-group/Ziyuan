@@ -23,10 +23,10 @@ public class ClassDescriptor {
 	private List<VariableDescriptor> fields;
 
 	public ClassDescriptor() {
-		implementedInterfaces = new ArrayList<>();
-		innerClasses = new ArrayList<>();
-		methods = new ArrayList<>();
-		fields = new ArrayList<>();
+		implementedInterfaces = new ArrayList<String>();
+		innerClasses = new ArrayList<ClassDescriptor>();
+		methods = new ArrayList<MethodDescriptor>();
+		fields = new ArrayList<VariableDescriptor>();
 	}
 
 	public String getQuantifiedName() {
@@ -149,4 +149,13 @@ public class ClassDescriptor {
 		this.methods = methods;
 	}
 
+	public List<VariableDescriptor> getVisibleVars(int lineNum) {
+		// TODO Auto-generated method stub
+		return new ArrayList<VariableDescriptor>();
+	}
+
+	public VariableDescriptor getOneVisibleVar(int lineNum) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

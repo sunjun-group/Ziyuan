@@ -71,17 +71,17 @@ public class ClassAnalyzer {
 	public List<ClassDescriptor> analyzeJavaFile(File javaFile) {
 		try {
 			CompilationUnit cu = javaParser.parse(javaFile);
-			return parseCompilationUnit(cu);
+			return analyzeCompilationUnit(cu);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return new ArrayList<>();
+		return new ArrayList<ClassDescriptor>();
 	}
 
-	public List<ClassDescriptor> parseCompilationUnit(CompilationUnit cu) {
+	public List<ClassDescriptor> analyzeCompilationUnit(CompilationUnit cu) {
 		List<TypeDeclaration> types = cu.getTypes();
-		List<ClassDescriptor> classDescriptors = new ArrayList<>();
+		List<ClassDescriptor> classDescriptors = new ArrayList<ClassDescriptor>();
 
 		for (TypeDeclaration type : types) {
 			if (type instanceof ClassOrInterfaceDeclaration) {
@@ -136,7 +136,8 @@ public class ClassAnalyzer {
 	}
 
 	public MethodDescriptor parseMethod(MethodDeclaration medDecl) {
-		MethodDescriptor med = new MethodDescriptor();
+		MethodDescriptor med = new MethodDescriptor(medDecl.getBeginLine(),
+				medDecl.getEndLine());
 
 		med.setName(medDecl.getName());
 		med.setModifier(medDecl.getModifiers());
@@ -293,7 +294,7 @@ public class ClassAnalyzer {
 	}
 
 	public List<VariableDescriptor> parseVarDecl(VariableDeclarationExpr varDecl) {
-		List<VariableDescriptor> vList = new ArrayList<>();
+		List<VariableDescriptor> vList = new ArrayList<VariableDescriptor>();
 
 		Type type = ((VariableDeclarationExpr) varDecl).getType();
 		List<VariableDeclarator> vars = ((VariableDeclarationExpr) varDecl)
@@ -323,7 +324,7 @@ public class ClassAnalyzer {
 	}
 
 	public List<VariableDescriptor> parseFieldDecl(FieldDeclaration fieldDecl) {
-		List<VariableDescriptor> vds = new ArrayList<>();
+		List<VariableDescriptor> vds = new ArrayList<VariableDescriptor>();
 		List<VariableDeclarator> vids = fieldDecl.getVariables();
 
 		for (VariableDeclarator vid : vids) {
