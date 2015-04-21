@@ -71,9 +71,17 @@ public class TzuyuCore {
 	public FaultLocalizationReport doSpectrumAndMachineLearning(List<String> testingClassNames,
 			List<String> testingPackages, List<String> junitClassNames, boolean useSlicer)
 			throws Exception {
-		final FaultLocalizationReport report = CollectionUtils.isEmpty(testingPackages) ? 
-				faultLocalization(testingClassNames, junitClassNames, useSlicer) : 
-				faultLocalization2(testingClassNames, testingPackages, junitClassNames, useSlicer);
+		final FaultLocalization analyzer = new FaultLocalization(appContext);
+		analyzer.setUseSlicer(useSlicer);
+
+		FaultLocalizationReport report;
+		if (CollectionUtils.isEmpty(testingPackages)) {
+			report = analyzer.analyse(testingClassNames, junitClassNames,
+					appData.getSuspiciousCalculAlgo());
+		} else {
+			report = analyzer.analyseSlicingFirst(testingClassNames, testingPackages,
+					junitClassNames, appData.getSuspiciousCalculAlgo());
+		}
 
 		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(1);
 
