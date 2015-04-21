@@ -268,7 +268,7 @@ public class TestcasesExecutor {
 		EventRequestManager erm = vm.eventRequestManager();
 		for (BreakPoint brkp : brkpsMap.get(refType.name())) {
 			// The brkp.lineNo can be a line where a breakpoint cannot be added.
-			// We try to do that in later lines then.
+			// We try to do that in the next lines then.
 			boolean added = false;
 			int lineNumber = brkp.getLineNo();
 			while (!added) {

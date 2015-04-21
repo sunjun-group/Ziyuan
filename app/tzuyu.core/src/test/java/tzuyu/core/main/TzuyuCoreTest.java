@@ -18,8 +18,6 @@ import org.junit.Test;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.SampleProgramTest;
 import sav.commons.testdata.SamplePrograms;
-import sav.commons.testdata.calculator.CalculatorTestFailed;
-import sav.commons.testdata.calculator.CalculatorTestPassed;
 import sav.commons.testdata.simplePrograms.DuplicateNumberTest;
 import sav.commons.testdata.simplePrograms.FindInRotatedSortedArrayTest;
 import sav.commons.testdata.simplePrograms.MatchStringTest;
@@ -124,11 +122,11 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	public void whenSpectrumAndMachineLearningUsed() throws Exception{
 		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> testingClasses = new ArrayList<String>();
-		testingClasses.add(sav.commons.testdata.calculator.Calculator.class.getName());
+		testingClasses.add("sav.commons.testdata.calculator.Calculator");
 		List<String> junitClassNames = new ArrayList<String>();
-		junitClassNames.add(sav.commons.testdata.calculator.CalculatorTestPassed.class.getName());
-		junitClassNames.add(sav.commons.testdata.calculator.CalculatorTestFailed.class.getName());
-		app.doSpectrumAndMachineLearning(testingClasses, junitClassNames, false);
+		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTestPassed");
+		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTestFailed");
+		app.doSpectrumAndMachineLearning(testingClasses, null, junitClassNames, false);
 	}
 
 }
