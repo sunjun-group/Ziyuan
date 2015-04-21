@@ -7,7 +7,7 @@ public class VariableDescriptor {
 	private Object type;
 	private int modifier;
 	private String name;
-	// the dimension in array variable 
+	// the dimension in array variable
 	private int dimension;
 
 	public String getName() {
@@ -41,4 +41,12 @@ public class VariableDescriptor {
 	public void setType(Object type) {
 		this.type = type;
 	}
+
+	@Override
+	public String toString() {
+		return "VariableDescriptor [type=" + type + ", modifier=" + modifier
+				+ ", name=" + name + ", dimension=" + dimension + "]";
+	}
+
+
 }

@@ -13,6 +13,7 @@ import japa.parser.ast.CompilationUnit;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import sav.common.core.SavRtException;
@@ -31,6 +32,7 @@ public class JParser implements IJavaParser {
 	 * only mutated classes will be cache 
 	 */
 	public JParser(String sourceFolder, Collection<String> mutatedClasses) {
+		cacheCuMap = new HashMap<String, CompilationUnit>();
 		this.sourceFolder = sourceFolder;
 		for (String mutatedClass : mutatedClasses) {
 			cacheCuMap.put(mutatedClass, parse(mutatedClass));

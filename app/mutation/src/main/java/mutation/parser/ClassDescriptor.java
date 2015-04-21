@@ -5,8 +5,6 @@ import japa.parser.ast.expr.NameExpr;
 import java.util.ArrayList;
 import java.util.List;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 /**
  * Created by hoangtung on 3/31/15.
  */
@@ -53,11 +51,13 @@ public class ClassDescriptor {
 
 	public VariableDescriptor getVarFromName(String quantifiedName,
 			int beginLine, int endLine) {
-		throw new NotImplementedException();
+		//TODO LLT;
+		return null;
 	}
 
 	public VariableDescriptor getVarFromName(NameExpr name) {
-		throw new NotImplementedException();
+		//TODO LLT;
+		return null;
 	}
 
 	public void addImplementedInterfaces(String name) {

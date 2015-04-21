@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 /**
  * Created by hoangtung on 3/31/15.
  */
@@ -53,12 +51,14 @@ public class MethodDescriptor {
 
 	public VariableDescriptor getVarFromName(String name, int beginLine,
 			int endLine) {
-		throw new NotImplementedException();
+		//TODO LLT;
+		return null;
 		// return null;
 	}
 
 	public VariableDescriptor getVarFromName(NameExpr name) {
-		throw new NotImplementedException();
+		//TODO LLT;
+		return null;
 	}
 
 	public void addLocalVar(VariableDescriptor variableDescriptor) {

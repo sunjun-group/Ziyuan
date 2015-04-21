@@ -5,8 +5,6 @@ import japa.parser.ast.expr.NameExpr;
 import java.util.HashMap;
 import java.util.Map;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 /**
  * Created by hoangtung on 4/1/15.
  */
@@ -31,7 +29,8 @@ public class ClassManager {
 	 * get class descriptor from quantified / non-quantified class name
 	 */
 	public ClassDescriptor getClassFromName(String className) {
-		throw new NotImplementedException();
+		//TODO LLT;
+		return null;
 	}
 
 	/**
@@ -39,10 +38,12 @@ public class ClassManager {
 	 */
 	public VariableDescriptor getVarFromName(String className,
 			String quantifiedVarName, int beginLine, int endLine) {
-		throw new NotImplementedException();
+		//TODO LLT;
+		return null;
 	}
 
 	public VariableDescriptor getVarFromName(String className, NameExpr varName) {
-		throw new NotImplementedException();
+		//TODO LLT;
+		return null;
 	}
 }

@@ -599,7 +599,8 @@ public class Mutator
             /* not mutate */
             else if (stmt instanceof SwitchStmt)
             {
-                //throw new NotImplementedException();
+                ////TODO LLT;
+		return null;
             }
             /* visit children */
             else if (stmt instanceof BlockStmt)

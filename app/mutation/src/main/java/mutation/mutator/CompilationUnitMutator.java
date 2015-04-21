@@ -13,8 +13,6 @@ import japa.parser.ast.stmt.WhileStmt;
 import java.util.List;
 import java.util.Map;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 /**
  * Created by hoangtung on 4/5/15.
  */
@@ -76,7 +74,8 @@ public class CompilationUnitMutator {
 	 */
 	@Deprecated
 	public List<Statement> mutate(BlockStmt stmt, Map<String, Object> args) {
-		throw new NotImplementedException();
+		//TODO LLT;
+		return null;
 	}
 
 	/**
