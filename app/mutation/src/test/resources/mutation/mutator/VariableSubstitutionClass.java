@@ -33,4 +33,10 @@ public class VariableSubstitutionClass {
 			double z3 = z1 + c;
 		}
 	}
+	
+	public void method4(){
+		int p1 = 0;{
+			int p2 = p1;
+		}
+	}
 }

@@ -84,6 +84,14 @@ public class VariableSubstitutionTest {
 	}
 	
 	@Test
+	public void whenLocalVariableInChildScopeButSameLineMatch() {
+		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Int), 38, descriptors.get(0));
+		List<VariableDescriptor> candidates = variableSubstitution.find();
+		
+		Assert.assertFalse(containsVar(candidates, "p2"));
+	}
+	
+	@Test
 	public void whenClassFieldMatch() {
 		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Int), 15, descriptors.get(0));
 		List<VariableDescriptor> candidates = variableSubstitution.find();
