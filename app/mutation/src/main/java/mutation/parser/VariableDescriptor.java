@@ -1,10 +1,12 @@
 package mutation.parser;
 
+import japa.parser.ast.type.Type;
+
 /**
  * Created by hoangtung on 3/31/15.
  */
 public class VariableDescriptor {
-	private Object type;
+	private Type type;
 	private int modifier;
 	private String name;
 	// the dimension in array variable
@@ -34,11 +36,11 @@ public class VariableDescriptor {
 		this.dimension = dimension;
 	}
 
-	public Object getType() {
+	public Type getType() {
 		return type;
 	}
 
-	public void setType(Object type) {
+	public void setType(Type type) {
 		this.type = type;
 	}
 
