@@ -1,4 +1,4 @@
-package test.parser;
+package testdata.parser;
 
 
 import java.util.List;

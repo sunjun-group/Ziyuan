@@ -1,4 +1,4 @@
-package test.mutator;
+package testdata.mutator;
 
 /**
  * Created by hoangtung on 4/5/15.

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import mutation.mutator.MutationVisitor.MutationNode;
-import mutation.mutator.insertdebugline.DebugLineResult;
+import mutation.mutator.insertdebugline.DebugLineData;
 
 import sav.strategies.dto.ClassLocation;
 
@@ -35,7 +35,7 @@ public class MutationResult {
 	/**
 	 * @param result
 	 */
-	public void importData(List<DebugLineResult> result) {
+	public void importData(List<DebugLineData> result) {
 		// TODO Auto-generated method stub
 		
 	}

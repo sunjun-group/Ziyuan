@@ -18,7 +18,7 @@ import sav.strategies.dto.ClassLocation;
  * @author LLT
  *
  */
-public class ReplacedLineData extends DebugLineResult {
+public class ReplacedLineData extends DebugLineData {
 	private Node orgNode;
 	private List<Node> replaceNodes;
 
@@ -29,5 +29,13 @@ public class ReplacedLineData extends DebugLineResult {
 		this.replaceNodes = replaceNodes;
 	}
 	
-	
+	@Override
+	public List<Node> getReplaceNodes() {
+		return replaceNodes;
+	}
+
+	@Override
+	public Node getOrgNode() {
+		return orgNode;
+	}
 }

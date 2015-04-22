@@ -15,7 +15,7 @@ import sav.strategies.dto.ClassLocation;
  * @author LLT
  *
  */
-public class AddedLineData extends DebugLineResult {
+public class AddedLineData extends DebugLineData {
 	private Node insertStmt;
 	
 	public AddedLineData(ClassLocation loc, Node insertStmt) {
@@ -24,4 +24,8 @@ public class AddedLineData extends DebugLineResult {
 		setInsertType(InsertType.ADD);
 	}
 	
+	@Override
+	public Node getInsertNode() {
+		return insertStmt;
+	}
 }

@@ -83,6 +83,15 @@ public class CollectionUtils {
 		}
 	}
 	
+	public static <T> void addAll(Collection<T> col, T[] arr) {
+		if (isEmpty(arr)) {
+			return;
+		}
+		for (T val : arr) {
+			col.add(val);
+		}
+	}
+	
 	public static <T> boolean isNotEmpty(Collection<T> values) {
 		return ! isEmpty(values);
 	}

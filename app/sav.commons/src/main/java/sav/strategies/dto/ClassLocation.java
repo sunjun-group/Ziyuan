@@ -19,7 +19,7 @@ public class ClassLocation {
 	protected String id;
 	protected String classCanonicalName;
 	protected String methodSign; // methodName or signature
-	protected int lineNo = -1;
+	protected int lineNo = -1; // started with 1?
 
 	public ClassLocation(String className, String methodName, int lineNumber) {
 		this.classCanonicalName = className;

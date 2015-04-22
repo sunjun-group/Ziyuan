@@ -13,8 +13,8 @@ public interface IMutator
     /**
      * running mutation at specific lines defined in locations.
      */
-	public MutationResult mutate(
-			Map<String, List<ClassLocation>> classLocationMap,
+	public <T extends ClassLocation> MutationResult mutate(
+			Map<String, List<T>> classLocationMap,
 			String sourceFolder);
 
     /**
@@ -28,7 +28,7 @@ public interface IMutator
      * Type temp = foo;
      * return temp;
      */
-	public MutationResult insertDebugLine(
-			Map<String, List<ClassLocation>> classLocationMap,
+	public <T extends ClassLocation>MutationResult insertDebugLine(
+			Map<String, List<T>> classLocationMap,
 			String sourceFolder);
 }

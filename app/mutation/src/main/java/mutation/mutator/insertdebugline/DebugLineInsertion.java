@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import mutation.io.MutationFileWriter;
 import mutation.mutator.AbstractMutationVisitor;
 import mutation.parser.ClassDescriptor;
 import sav.strategies.dto.ClassLocation;
@@ -35,17 +36,20 @@ import sav.strategies.dto.ClassLocation;
  *
  */
 public class DebugLineInsertion extends AbstractMutationVisitor {
+	private String className;
 	private List<ClassLocation> locations;
 	private ClassDescriptor clazzDesc;
-	private Map<ClassLocation, DebugLineResult> returnStmts;
+	private Map<ClassLocation, DebugLineData> returnStmts;
 	private Map<ClassLocation, Integer> insertMap;
 	private int curPos;
+	private MutationFileWriter fileWriter;
 	
 	public DebugLineInsertion() {
 		
 	}
 	
-	public DebugLineInsertion(ClassDescriptor classDescriptor, List<ClassLocation> locations) {
+	public DebugLineInsertion(ClassDescriptor classDescriptor,
+			List<ClassLocation> locations) {
 		reset(classDescriptor, locations);
 	}
 	
@@ -54,30 +58,38 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 		this.locations = locations;
 	}
 	
-	public List<DebugLineResult> insert(CompilationUnit cu) {
+	public DebugLineInsertionResult insert(CompilationUnit cu) {
 		insertMap = new HashMap<ClassLocation, Integer>();
-		returnStmts = new HashMap<ClassLocation, DebugLineResult>();
+		returnStmts = new HashMap<ClassLocation, DebugLineData>();
 		curPos = 0;
 		cu.accept(this, true);
 		// collect data
-		List<DebugLineResult> result = new ArrayList<DebugLineResult>();
+		List<DebugLineData> data = new ArrayList<DebugLineData>();
 		for (Entry<ClassLocation, Integer> entry : insertMap.entrySet()) {
 			AssertStmt newStmt = new AssertStmt(new BooleanLiteralExpr(true));
 			newStmt.setBeginLine(entry.getValue() + 1);
-			result.add(new AddedLineData(entry.getKey(), newStmt));
+			data.add(new AddedLineData(entry.getKey(), newStmt));
 		}
-		result.addAll(returnStmts.values());
-		Collections.sort(result, new Comparator<DebugLineResult>() {
+		data.addAll(returnStmts.values());
+		Collections.sort(data, new Comparator<DebugLineData>() {
 
 			@Override
-			public int compare(DebugLineResult o1, DebugLineResult o2) {
+			public int compare(DebugLineData o1, DebugLineData o2) {
 				int val1 = o1.getLocation().getLineNo();
-				int val2 = o2.getLocation().getLineNo();
-				return (val1 < val2 ? -1 : (val1 == val2 ? 0
-						: 1));
+				int anotherVal = o2.getLocation().getLineNo();
+				return (val1 < anotherVal ? -1 : (val1 == anotherVal ? 0 : 1));
 			}
-			
+
 		});
+		// add more data into the result
+		DebugLineInsertionResult result = new DebugLineInsertionResult(className);
+		for (DebugLineData debugLine : data) {
+			result.mapDebugLine(debugLine.getLocation().getLineNo(),
+					debugLine.getDebugLine());
+		}
+		if (fileWriter != null) {
+			result.setMutatedFile(fileWriter.write(data, className));
+		}
 		return result;
 	}
 	
@@ -139,5 +151,9 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 	 */
 	private String generateNewVarName() {
 		return "tzzzzzzuyu";
+	}
+	
+	public void setFileWriter(MutationFileWriter fileWriter) {
+		this.fileWriter = fileWriter;
 	}
 }
