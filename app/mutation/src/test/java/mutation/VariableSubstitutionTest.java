@@ -35,7 +35,7 @@ public class VariableSubstitutionTest {
 
 	@Test
 	public void whenLocalVariableInSameScopeMatch(){
-		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Int), 15, descriptors.get(0));
+		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Int), 15, Integer.MAX_VALUE, descriptors.get(0));
 		List<VariableDescriptor> candidates = variableSubstitution.find();
 		
 		Assert.assertTrue(containsVar(candidates, "x1"));
@@ -44,7 +44,7 @@ public class VariableSubstitutionTest {
 	
 	@Test
 	public void whenlocalVariableInSameScopeNotVisible() {
-		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Int), 13, descriptors.get(0));
+		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Int), 13, Integer.MAX_VALUE, descriptors.get(0));
 		List<VariableDescriptor> candidates = variableSubstitution.find();
 		
 		Assert.assertFalse(containsVar(candidates, "x2"));
@@ -52,7 +52,7 @@ public class VariableSubstitutionTest {
 	
 	@Test
 	public void whenlocalVariableInSameScopeNotMatch() {
-		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Int), 13, descriptors.get(0));
+		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Int), 13, Integer.MAX_VALUE, descriptors.get(0));
 		List<VariableDescriptor> candidates = variableSubstitution.find();
 		
 		Assert.assertFalse(containsVar(candidates, "x0"));
@@ -60,7 +60,7 @@ public class VariableSubstitutionTest {
 
 	@Test
 	public void whenLocalVariableInParentScopeMatch() {
-		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Double), 25, descriptors.get(0));
+		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Double), 25, Integer.MAX_VALUE, descriptors.get(0));
 		List<VariableDescriptor> candidates = variableSubstitution.find();
 		
 		Assert.assertTrue(containsVar(candidates, "y2"));
@@ -68,7 +68,7 @@ public class VariableSubstitutionTest {
 
 	@Test
 	public void whenLocalVariableInParentScopeNotMatch() {
-		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Double), 25, descriptors.get(0));
+		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Double), 25, Integer.MAX_VALUE, descriptors.get(0));
 		List<VariableDescriptor> candidates = variableSubstitution.find();
 		
 		Assert.assertFalse(containsVar(candidates, "y1"));
@@ -76,7 +76,7 @@ public class VariableSubstitutionTest {
 
 	@Test
 	public void whenLocalVariableInChildScopeMatch() {
-		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Double), 22, descriptors.get(0));
+		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Double), 22, Integer.MAX_VALUE, descriptors.get(0));
 		List<VariableDescriptor> candidates = variableSubstitution.find();
 		
 		Assert.assertTrue(containsVar(candidates, "y2"));
@@ -85,7 +85,7 @@ public class VariableSubstitutionTest {
 	
 	@Test
 	public void whenLocalVariableInChildScopeButSameLineMatch() {
-		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Int), 38, descriptors.get(0));
+		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Int), 38, 21, descriptors.get(0));
 		List<VariableDescriptor> candidates = variableSubstitution.find();
 		
 		Assert.assertFalse(containsVar(candidates, "p2"));
@@ -93,7 +93,7 @@ public class VariableSubstitutionTest {
 	
 	@Test
 	public void whenClassFieldMatch() {
-		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Int), 15, descriptors.get(0));
+		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Int), 15, Integer.MAX_VALUE, descriptors.get(0));
 		List<VariableDescriptor> candidates = variableSubstitution.find();
 		
 		Assert.assertTrue(containsVar(candidates, "a"));
@@ -103,7 +103,7 @@ public class VariableSubstitutionTest {
 
 	@Test
 	public void whenClassFieldNotMatch() {
-		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Int), 15, descriptors.get(0));
+		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Int), 15, Integer.MAX_VALUE, descriptors.get(0));
 		List<VariableDescriptor> candidates = variableSubstitution.find();
 		
 		Assert.assertFalse(containsVar(candidates, "b"));
@@ -112,7 +112,7 @@ public class VariableSubstitutionTest {
 
 	@Test
 	public void whenOuterClassFieldMatch() {
-		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Double), 33, descriptors.get(0));
+		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Double), 33, Integer.MAX_VALUE, descriptors.get(0));
 		List<VariableDescriptor> candidates = variableSubstitution.find();
 		
 		Assert.assertTrue(containsVar(candidates, "z2"));
@@ -122,7 +122,7 @@ public class VariableSubstitutionTest {
 
 	@Test
 	public void whenOuterClassFieldNotMatch() {
-		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Double), 33, descriptors.get(0));
+		variableSubstitution = new VariableSubstitutionImpl(new PrimitiveType(Primitive.Double), 33, Integer.MAX_VALUE, descriptors.get(0));
 		List<VariableDescriptor> candidates = variableSubstitution.find();
 		
 		Assert.assertFalse(containsVar(candidates, "a"));

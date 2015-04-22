@@ -14,11 +14,13 @@ public class VariableSubstitutionImpl implements VariableSubstitution{
 
 	private Type type;
 	private int lineNumber;
+	private int column;
 	private ClassDescriptor descriptor;
 	
-	public VariableSubstitutionImpl(Type type, int lineNumber, ClassDescriptor descriptor) {
+	public VariableSubstitutionImpl(Type type, int lineNumber, int column, ClassDescriptor descriptor) {
 		this.type = type;
 		this.lineNumber = lineNumber;
+		this.column = column;
 		this.descriptor = descriptor;
 	}
 	
@@ -48,7 +50,7 @@ public class VariableSubstitutionImpl implements VariableSubstitution{
 				for(VariableScope scope: method.getLocalVars()){
 					if(scope.containsLine(lineNumber)){
 						for(VariableDescriptor localVarInMethod: scope.getVars().values()){
-							if(localVarInMethod.getType().equals(type)){
+							if(isVisibleAndMatchType(localVarInMethod, lineNumber, column, type)){
 								result.add(localVarInMethod);
 							}
 						}
@@ -57,5 +59,9 @@ public class VariableSubstitutionImpl implements VariableSubstitution{
 			}
 		}
 		return result;
+	}
+	
+	private boolean isVisibleAndMatchType(VariableDescriptor localVarInMethod, int lineNumber, int column, Type type){
+		return localVarInMethod.getPosition().declaredBefore(lineNumber, column) && localVarInMethod.getType().equals(type);
 	}
 }

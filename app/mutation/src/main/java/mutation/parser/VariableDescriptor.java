@@ -12,6 +12,8 @@ public class VariableDescriptor {
 	// the dimension in array variable
 	private int dimension;
 
+	private Position position;
+
 	public String getName() {
 		return name;
 	}
@@ -44,11 +46,25 @@ public class VariableDescriptor {
 		this.type = type;
 	}
 
+	public Position getPosition() {
+		return position;
+	}
+
+	public void setPosition(Position position) {
+		this.position = position;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "VariableDescriptor [type=" + type + ", modifier=" + modifier
-				+ ", name=" + name + ", dimension=" + dimension + "]";
+				+ ", name=" + name + ", dimension=" + dimension + ", position="
+				+ position + "]";
 	}
+
+
 
 
 }

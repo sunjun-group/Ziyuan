@@ -306,7 +306,9 @@ public class ClassAnalyzer {
 			vd.setModifier(varDecl.getModifiers());
 			vd.setDimension(vid.getArrayCount());
 			vd.setType(type);
+			vd.setPosition(Position.fromNode(vid));
 
+			
 			vList.add(vd);
 		}
 
@@ -319,6 +321,8 @@ public class ClassAnalyzer {
 		vp.setType(p.getType());
 		vp.setDimension(p.getId().getArrayCount());
 		vp.setName(p.getId().getName());
+		vp.setPosition(Position.fromNode(p));
+
 
 		return vp;
 	}
@@ -341,6 +345,7 @@ public class ClassAnalyzer {
 		vd.setName(vId.getName());
 		vd.setType(fieldDecl.getType());
 		vd.setDimension(vId.getArrayCount());
+		vd.setPosition(Position.fromNode(vId));
 		if (vd.getType() instanceof ReferenceType) {
 			// System.out.println(vd.type);
 			vd.setDimension(vd.getDimension()
