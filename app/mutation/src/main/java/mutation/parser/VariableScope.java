@@ -25,6 +25,10 @@ public class VariableScope {
 		this.vars = vars;
 	}
 	
+	public boolean containsLine(int lineNumber){
+		return startLine <= lineNumber && lineNumber <= endLine;
+	}
+	
 	public VariableDescriptor put(String key, VariableDescriptor value) {
 		return vars.put(key, value);
 	}

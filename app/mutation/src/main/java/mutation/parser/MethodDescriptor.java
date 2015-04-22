@@ -49,6 +49,10 @@ public class MethodDescriptor {
 		}
 	}
 
+	public boolean containsLine(int lineNumber){
+		return beginLine <= lineNumber && lineNumber <= endLine;
+	}
+	
 	public VariableDescriptor getVarFromName(String name, int beginLine,
 			int endLine) {
 		//TODO LLT;
