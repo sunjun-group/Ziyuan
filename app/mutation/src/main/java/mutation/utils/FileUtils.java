@@ -22,6 +22,10 @@ public class FileUtils {
 	
 	public static File createFolder(File parent, String child) {
 		Assert.assertTrue(parent.isDirectory(), parent + " is not a folder");
+		return createFolder(parent.getAbsolutePath(), child);
+	}
+	
+	public static File createFolder(String parent, String child) {
 		File folder = new File(parent, child);
 		if (!folder.exists()) {
 			folder.mkdirs();

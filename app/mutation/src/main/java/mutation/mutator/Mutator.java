@@ -2,11 +2,13 @@ package mutation.mutator;
 
 import japa.parser.ast.CompilationUnit;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import mutation.io.DebugLineFileWriter;
 import mutation.io.MutationFileWriter;
 import mutation.mutator.MutationVisitor.MutationNode;
 import mutation.mutator.insertdebugline.DebugLineInsertion;
@@ -22,21 +24,31 @@ import sav.strategies.dto.ClassLocation;
 public class Mutator implements IMutator {
 	
 	@Override
-	public <T extends ClassLocation> MutationResult mutate(
-			Map<String, List<T>> classLocationMap, String sourceFolder) {
-		JParser cuParser = new JParser(sourceFolder, classLocationMap.keySet());
-		ClassAnalyzer classAnalyzer = new ClassAnalyzer(sourceFolder, cuParser);
+	public <T extends ClassLocation> Map<String, MutationResult> mutate(
+			Map<String, List<T>> classLocationMap, String srcFolder) {
+		JParser cuParser = new JParser(srcFolder, classLocationMap.keySet());
+		ClassAnalyzer classAnalyzer = new ClassAnalyzer(srcFolder, cuParser);
 		MutationVisitor mutationVisitor = new MutationVisitor(
 				new MutationMap(), classAnalyzer);
-		MutationResult mutationResult = new MutationResult();
+		Map<String, MutationResult> result = new HashMap<String, MutationResult>();
+		MutationFileWriter fileWriter = new MutationFileWriter(srcFolder);
 		for (Entry<String, List<T>> entry : classLocationMap.entrySet()) {
-			CompilationUnit cu = cuParser.parse(entry.getKey());
-			cu.accept(mutationVisitor, true);
-			Map<Integer, List<MutationNode>> result = mutationVisitor.getResult();
-//			mutationResult.importData(entry, result);
+			String className = entry.getKey();
+			mutationVisitor.reset(classAnalyzer
+					.analyzeCompilationUnit(cuParser.parse(className)).get(0),
+					BreakpointUtils.extractLineNo(entry.getValue()));
+			CompilationUnit cu = cuParser.parse(className);
+			mutationVisitor.mutate(cu);
+			Map<Integer, List<MutationNode>> muRes = mutationVisitor.getResult();
+			MutationResult lineRes = new MutationResult(className);
+			for (Entry<Integer, List<MutationNode>> lineData : muRes.entrySet()) {
+				Integer line = lineData.getKey();
+				List<File> muFiles = fileWriter.write(lineData.getValue(), className, line);
+				lineRes.put(line, muFiles);
+			}
 		}
 		
-		return mutationResult;
+		return result;
 	}
 
 	@Override
@@ -45,7 +57,7 @@ public class Mutator implements IMutator {
 		JParser cuParser = new JParser(srcFolder, classLocationMap.keySet());
 		ClassAnalyzer classAnalyzer = new ClassAnalyzer(srcFolder, cuParser);
 		DebugLineInsertion insertion = new DebugLineInsertion();
-		insertion.setFileWriter(new MutationFileWriter(srcFolder));
+		insertion.setFileWriter(new DebugLineFileWriter(srcFolder));
 		Map<String, DebugLineInsertionResult> result = new HashMap<String, DebugLineInsertionResult>();
 		for (Entry<String, List<T>> entry : classLocationMap.entrySet()) {
 			CompilationUnit cu = cuParser.parse(entry.getKey());

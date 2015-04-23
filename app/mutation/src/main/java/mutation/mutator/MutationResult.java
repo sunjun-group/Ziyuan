@@ -1,64 +1,46 @@
 package mutation.mutator;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
-import mutation.mutator.MutationVisitor.MutationNode;
-import mutation.mutator.insertdebugline.DebugLineData;
-
-import sav.strategies.dto.ClassLocation;
 
 /**
  * Created by hoangtung on 4/9/15.
  */
 
 public class MutationResult {
-	private Map<ClassLocation, List<LineMutationResult>> locationMap;
-
-	public Map<ClassLocation, List<LineMutationResult>> getLocationMap() {
-		return locationMap;
-	}
-
-	public void setLocationMap(
-			Map<ClassLocation, List<LineMutationResult>> locationMap) {
-		this.locationMap = locationMap;
+	private String className;
+	private Map<Integer, List<File>> mutatedFiles;
+	
+	public MutationResult(String className) {
+		this.className = className;
+		mutatedFiles = new HashMap<Integer, List<File>>();
 	}
 	
-	public void importData(Entry<String, List<ClassLocation>> entry,
-			Map<Integer, List<MutationNode>> result) {
-		// TODO Auto-generated method stub
-		
+	public void put(Integer line, List<File> muFiles) {
+		mutatedFiles.put(line, muFiles);
 	}
 
-	public static class LineMutationResult {
-		private List<ClassLocation> mappedLocations;
-		private ClassLocation addedLine;
-		private File mutatedFile;
+	public String getClassName() {
+		return className;
+	}
 
-		public List<ClassLocation> getMappedLocations() {
-			return mappedLocations;
-		}
+	public void setClassName(String className) {
+		this.className = className;
+	}
 
-		public void setMappedLocations(List<ClassLocation> mappedLocations) {
-			this.mappedLocations = mappedLocations;
-		}
+	public Map<Integer, List<File>> getMutatedFiles() {
+		return mutatedFiles;
+	}
 
-		public ClassLocation getAddedLine() {
-			return addedLine;
-		}
+	public void setMutatedFiles(Map<Integer, List<File>> mutatedFiles) {
+		this.mutatedFiles = mutatedFiles;
+	}
 
-		public void setAddedLine(ClassLocation addedLine) {
-			this.addedLine = addedLine;
-		}
-
-		public File getMutatedFile() {
-			return mutatedFile;
-		}
-
-		public void setMutatedFile(File mutatedFile) {
-			this.mutatedFile = mutatedFile;
-		}
+	@Override
+	public String toString() {
+		return "MutationResult [className=" + className + ", mutatedFiles="
+				+ mutatedFiles + "]";
 	}
 }

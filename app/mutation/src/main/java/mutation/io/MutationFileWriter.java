@@ -15,133 +15,65 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import mutation.mutator.insertdebugline.DebugLineData;
+import mutation.mutator.MutationVisitor.MutationNode;
 import mutation.utils.FileUtils;
-import sav.common.core.SavRtException;
-import sav.common.core.utils.ClassUtils;
-import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
 
 /**
  * @author LLT
- * 
+ *
  */
-public class MutationFileWriter implements IMutationWriter {
-	private static final int JAVA_PARSER_TAB_SIZE = 8;
-	private String muSrcFolder;
-	private String scrFolder;
+public class MutationFileWriter extends AbstractMutationFileWriter {
 
 	public MutationFileWriter(String srcFolder) {
-		this.scrFolder = srcFolder;
-		muSrcFolder = FileUtils.createTempFolder("mutatedSource")
-				.getAbsolutePath();
+		super(srcFolder);
 	}
-
-	public File write(List<DebugLineData> data, String className) {
-		File javaFile = new File(ClassUtils.getJFilePath(scrFolder, className));
-		File muFile = new File(muSrcFolder, javaFile.getName());
-//
-		try {
-			List<?> lines = org.apache.commons.io.FileUtils.readLines(javaFile);
-			List<String> newContent = new ArrayList<String>();
-			int preIdx = 0;
-			for (DebugLineData debugLine : data) {
-				switch (debugLine.getInsertType()) {
-				case ADD:
-					Node insertNode = debugLine.getInsertNode();
-					copy(lines, newContent, preIdx,
-							toFileLineIdx(insertNode.getBeginLine()));
-					newContent.add(insertNode.toString());
-					preIdx = insertNode.getBeginLine();
-					break;
-				case REPLACE:
-					/* we might have some text before and after the node, just keep them all
-					 * in new separate line
-					 * */
-					Node orgNode = debugLine.getOrgNode();
-					copy(lines, newContent, preIdx, toFileLineIdx(orgNode.getBeginLine()));
-					String line = (String) lines.get(toFileLineIdx(debugLine.getLineNo()));
-					String beforeNode = subString(line, 1, orgNode.getBeginColumn());
-					addIfNotEmpty(newContent, beforeNode);
-					/* add new node */
-					for (Node newNode : debugLine.getReplaceNodes()) {
-						String[] stmt = newNode.toString().split("\n");
-						CollectionUtils.addAll(newContent, stmt);
-					}
-					/* keep content at the same line but right after the org node */
-					String afterNode = subString(
-							(String) lines.get(toFileLineIdx(orgNode.getEndLine())),
-							orgNode.getEndColumn() + 1);
-					addIfNotEmpty(newContent, afterNode);
-					preIdx = toFileLineIdx(orgNode.getEndLine()) + 1;
-					break;
+	
+	public List<File> write(List<MutationNode> data, String className, int lineNo) {
+		List<File> files = new ArrayList<File>();
+		File javaFile = getJavaSrcFile(className);
+		for (MutationNode muNode : data) {
+			for (int i = 0; i < muNode.getMutatedNodes().size(); i++) {
+				Node node = muNode.getMutatedNodes().get(i);
+				File folder = FileUtils.createFolder(muSrcFolder, 
+						String.format("%d_%d_%d", 
+							lineNo, muNode.getOrgNode().getBeginColumn(), i));
+				File file = new File(folder, javaFile.getName());
+				List<?> lines;
+				try {
+					lines = org.apache.commons.io.FileUtils.readLines(javaFile);
+					List<String> newContent = createNewContent(lines, muNode.getOrgNode(), node);
+					org.apache.commons.io.FileUtils.writeLines(file, newContent);
+					files.add(file);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				debugLine.setDebugLine(newContent.size());
-			}
-			copy(lines, newContent, preIdx, lines.size());
-			org.apache.commons.io.FileUtils.writeLines(muFile, newContent);
-		} catch (IOException e) {
-			throw new SavRtException(e);
-		}
-		return muFile;
-	}
-	
-	private int addIfNotEmpty(List<String> lines, String newLine) {
-		if (!newLine.isEmpty()) {
-			lines.add(newLine);
-			return 1;
-		}
-		return 0;
-	}
-
-	protected String subString(String line, int javaParserStartCol,
-			int javaParserEndCol) {
-		char[] chars = line.toCharArray();
-		int start = getMappedColIdx(chars, javaParserStartCol, 0, 1);
-		int end = getMappedColIdx(chars, javaParserEndCol, start, javaParserStartCol);
-		return line.substring(start, end);
-	}
-	
-	protected String subString(String line, int javaParserStartCol) {
-		char[] chars = line.toCharArray();
-		int start = getMappedColIdx(chars, javaParserStartCol, 0, 1);
-		if (start >= line.length()) {
-			return StringUtils.EMPTY;
-		}
-		return line.substring(start);
-	}
-
-	protected int getMappedColIdx(char[] chars, int javaParserCol, int startIdx, int startPos) {
-		int pos = startPos;
-		for (int i = startIdx; i < chars.length; i++) {
-			char ch = chars[i];
-			if (pos == javaParserCol) {
-				return i;
-			}
-			if (ch == '\t') {
-				pos += JAVA_PARSER_TAB_SIZE;
-			} else {
-				pos++;
 			}
 		}
-		if (pos == javaParserCol) {
-			return chars.length;
-		}
-		throw new SavRtException(
-				StringUtils.spaceJoin("cannot map column index between inputStream and javaparser, line = ",
-						String.valueOf(chars), ", column=", javaParserCol));
+		return files;
 	}
 
-	/**
-	 * copy content, exclude line at endIdx
-	 * */
-	private void copy(List<?> from, List<String> to, int startIdx, int endIdx) {
-		for (int i = startIdx; i < endIdx; i++) {
-			to.add((String) from.get(i));
+	private List<String> createNewContent(List<?> lines, Node orgNode, Node node) {
+		List<String> newContent = new ArrayList<String>(lines.size());
+		int startLine = toFileLineIdx(orgNode.getBeginLine());
+		int endLine = toFileLineIdx(orgNode.getEndLine());
+		copy(lines, newContent, 0, startLine);
+		/* replace */
+		String beforeNode = extractStrBeforeNode(lines, orgNode);
+		String afterNode = extractStrAfterNode(lines, node);
+		String[] nLines = toString(node);
+		if (nLines.length == 1) {
+			newContent.add(StringUtils.join("", beforeNode, nLines[0], afterNode));
+		} else {
+			newContent.add(StringUtils.spaceJoin(beforeNode, nLines[0]));
+			for (int i = 1; i < nLines.length; i++) {
+				newContent.add(nLines[i]);
+			}
+			newContent.add(StringUtils.spaceJoin(nLines[nLines.length - 1], afterNode));
 		}
-	}
-
-	private int toFileLineIdx(int javaLineIdx) {
-		return javaLineIdx - 1;
+		/**/
+		copy(lines, newContent, endLine + 1, lines.size());
+		return newContent;
 	}
 }

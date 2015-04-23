@@ -11,7 +11,7 @@ package mutation;
 import java.io.File;
 import java.util.List;
 
-import mutation.io.MutationFileWriter;
+import mutation.io.DebugLineFileWriter;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
@@ -45,7 +45,7 @@ public class MutationFileWriterTest {
 		Assert.assertTrue(subString.isEmpty());
 	}
 	
-	private static class WriterMock extends MutationFileWriter {
+	private static class WriterMock extends DebugLineFileWriter {
 		public WriterMock(String srcFolder) {
 			super(srcFolder);
 		}

@@ -19,7 +19,6 @@ import japa.parser.ast.Node;
 public abstract class DebugLineData {
 	private int lineNo;
 	private int debugLine;
-	private int offset;
 
 	public DebugLineData(int lineNo) {
 		this.lineNo = lineNo;
@@ -52,10 +51,6 @@ public abstract class DebugLineData {
 	public Node getOrgNode() {
 		// by default
 		throw new UnsupportedOperationException();
-	}
-
-	public int getOffset() {
-		return offset;
 	}
 
 	public static enum InsertType {

@@ -15,7 +15,7 @@ public interface IMutator
     /**
      * running mutation at specific lines defined in locations.
      */
-	public <T extends ClassLocation> MutationResult mutate(
+	public <T extends ClassLocation> Map<String, MutationResult> mutate(
 			Map<String, List<T>> classLocationMap,
 			String sourceFolder);
 

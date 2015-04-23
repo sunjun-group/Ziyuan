@@ -24,41 +24,99 @@ public class VariableSubstitutionImpl implements VariableSubstitution{
 		this.descriptor = descriptor;
 	}
 	
+	public VariableSubstitutionImpl(String varName, int lineNumber, int column, ClassDescriptor descriptor) {
+		this.type = getType(lineNumber, varName, descriptor);
+		this.lineNumber = lineNumber;
+		this.column = column;
+		this.descriptor = descriptor;
+	} 
+	
+	private Type getType(int lineNumber, String varName, ClassDescriptor descriptor){
+		
+		Type type = searchVarTypeInMethods(lineNumber, varName, descriptor.getMethods());
+		if(type != null){
+			return type;
+		}
+		
+		for(ClassDescriptor innerClass: descriptor.getInnerClasses()){
+			type = searchVarTypeInMethods(lineNumber, varName, innerClass.getMethods());
+			if(type != null){
+				return type;
+			}
+		}
+		
+		throw new RuntimeException("No Variable Found");
+		
+	}
+
+	private Type searchVarTypeInMethods(int lineNumber, String varName,
+			List<MethodDescriptor> methods) {
+		for(MethodDescriptor method: methods){
+			if(method.containsLine(lineNumber)){
+				Type type = searchVarTypeInScopes(lineNumber, varName, method.getLocalVars());
+				if(type != null){
+					return type;
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	private Type searchVarTypeInScopes(int lineNumber, String varName,
+			List<VariableScope> scopes) {
+		for(VariableScope scope: scopes){
+			if(scope.containsLine(lineNumber)){
+				for(VariableDescriptor localVarInMethod: scope.getVars().values()){
+					if(localVarInMethod.getName().equals(varName)){
+						return localVarInMethod.getType();
+					}
+				}
+			}
+		}
+		
+		return null;
+	}
 	@Override
 	public List<VariableDescriptor> find() {
 		List<VariableDescriptor> result = new ArrayList<VariableDescriptor>();
-		result.addAll(findOnSingleClassDescriptor(descriptor));
+		result.addAll(findVariables(descriptor));
 		
 		for(ClassDescriptor innerClass: descriptor.getInnerClasses()){
-			result.addAll(findOnSingleClassDescriptor(innerClass));
+			result.addAll(findVariables(innerClass));
 		}
 		return result;
 	}
 	
-	private List<VariableDescriptor> findOnSingleClassDescriptor(ClassDescriptor singleClassDescriptor) {
+	private List<VariableDescriptor> findVariables(ClassDescriptor classDescriptor) {
 		
 		List<VariableDescriptor> result = new ArrayList<VariableDescriptor>();
 		
-		for(VariableDescriptor field: singleClassDescriptor.getFields()){
+		for(VariableDescriptor field: classDescriptor.getFields()){
 			if(field.getType().equals(type)){
 				result.add(field);
 			}
 		}
 		
-		for(MethodDescriptor method: singleClassDescriptor.getMethods()){
+		for(MethodDescriptor method: classDescriptor.getMethods()){
 			if(method.containsLine(lineNumber)){
-				for(VariableScope scope: method.getLocalVars()){
-					if(scope.containsLine(lineNumber)){
-						for(VariableDescriptor localVarInMethod: scope.getVars().values()){
-							if(isVisibleAndMatchType(localVarInMethod, lineNumber, column, type)){
-								result.add(localVarInMethod);
-							}
-						}
+				findVariables(result, method.getLocalVars());
+			}
+		}
+		return result;
+	}
+
+	private void findVariables(List<VariableDescriptor> result,
+			List<VariableScope> scopes) {
+		for(VariableScope scope: scopes){
+			if(scope.containsLine(lineNumber)){
+				for(VariableDescriptor localVarInMethod: scope.getVars().values()){
+					if(isVisibleAndMatchType(localVarInMethod, lineNumber, column, type)){
+						result.add(localVarInMethod);
 					}
 				}
 			}
 		}
-		return result;
 	}
 	
 	private boolean isVisibleAndMatchType(VariableDescriptor localVarInMethod, int lineNumber, int column, Type type){

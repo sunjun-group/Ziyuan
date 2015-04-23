@@ -1,17 +1,13 @@
 package mutation.mutator;
 
+import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.Node;
 import japa.parser.ast.expr.AssignExpr;
 import japa.parser.ast.expr.AssignExpr.Operator;
 import japa.parser.ast.expr.BinaryExpr;
-import japa.parser.ast.expr.CastExpr;
-import japa.parser.ast.expr.FieldAccessExpr;
-import japa.parser.ast.expr.MethodCallExpr;
 import japa.parser.ast.expr.NameExpr;
-import japa.parser.ast.expr.UnaryExpr;
-import japa.parser.ast.expr.VariableDeclarationExpr;
-import japa.parser.ast.stmt.BreakStmt;
-import japa.parser.ast.stmt.ContinueStmt;
+import japa.parser.ast.stmt.ForStmt;
+import japa.parser.ast.stmt.WhileStmt;
 import japa.parser.ast.visitor.CloneVisitor;
 
 import java.util.ArrayList;
@@ -20,9 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 import mutation.parser.ClassAnalyzer;
-
+import mutation.parser.ClassDescriptor;
+import mutation.parser.VariableDescriptor;
 import sav.common.core.utils.CollectionUtils;
-import sav.strategies.dto.ClassLocation;
 
 /**
  * Created by hoangtung on 4/3/15.
@@ -33,15 +29,11 @@ public class MutationVisitor extends AbstractMutationVisitor {
 	private MutationMap mutationMap;
 	private CloneVisitor nodeCloner;
 	private ClassAnalyzer clasAnalyzer;
+	private ClassDescriptor classDescriptor;
 	
-	/**
-	 * locations must be in the same class
-	 * */
-	public void reset(List<ClassLocation> locations) {
-		lineNumbers.clear();
-		for (ClassLocation location : locations) {
-			lineNumbers.add(location.getLineNo());
-		}
+	public void reset(ClassDescriptor classDescriptor, List<Integer> lineNos) {
+		this.lineNumbers = lineNos;
+		this.classDescriptor = classDescriptor;
 		result.clear();
 	}
 
@@ -51,34 +43,51 @@ public class MutationVisitor extends AbstractMutationVisitor {
 		setMutationMap(mutationMap);
 		setClasAnalyzer(classAnalyzer);
 	}
+	
+	public void run(CompilationUnit cu) {
+		cu.accept(this, true);
+		
+	}
+	
+	@Override
+	protected boolean beforeMutate(Node node) {
+		return lineNumbers.contains(node.getBeginLine());
+	}
+	
+	@Override
+	public void visit(ForStmt n, Boolean arg) {
+		if (beforeVisit(n)) {
+			n.getBody().accept(this, arg);
+		}
+	}
+	
+	@Override
+	public void visit(WhileStmt n, Boolean arg) {
+		if (beforeVisit(n)) {
+			n.getBody().accept(this, arg);
+		}
+	}
 
 	@Override
 	protected boolean beforeVisit(Node node) {
-		return true;
-	}
-	
-	@Override
-	public boolean mutate(BreakStmt n) {
-		getMutationNodeByLine(n.getBeginLine())
-			.add(MutationNode.of(n, new ContinueStmt(n.getId())));
+		for (Integer lineNo : lineNumbers) {
+			if (lineNo >= node.getBeginLine() && lineNo <= node.getEndLine()) {
+				return true;
+			}
+		}
 		return false;
 	}
 	
-	@Override
-	public boolean mutate(ContinueStmt n) {
-		getMutationNodeByLine(n.getBeginLine())
-			.add(MutationNode.of(n, new BreakStmt(n.getId())));
-		return false;
-	}
-	
-	private List<MutationNode> getMutationNodeByLine(int line) {
-		return CollectionUtils.getListInitIfEmpty(result, line);
+	private MutationNode newNode(Node node) {
+		MutationNode muNode = new MutationNode(node);
+		CollectionUtils.getListInitIfEmpty(result, node.getBeginLine())
+				.add(muNode);
+		return muNode;
 	}
 	
 	@Override
 	public boolean mutate(AssignExpr n) {
-		MutationNode muNode = new MutationNode(n);
-		getMutationNodeByLine(n.getBeginLine()).add(muNode);
+		MutationNode muNode = newNode(n);
 		// change the operator
 		List<Operator> muOps = mutationMap.getMutationOp(n.getOperator());
 		if (!muOps.isEmpty()) {
@@ -93,8 +102,7 @@ public class MutationVisitor extends AbstractMutationVisitor {
 	
 	@Override
 	public boolean mutate(BinaryExpr n) {
-		MutationNode muNode = new MutationNode(n);
-		getMutationNodeByLine(n.getBeginLine()).add(muNode);
+		MutationNode muNode = newNode(n);
 		// change the operator
 		List<BinaryExpr.Operator> muOps = mutationMap.getMutationOp(n.getOperator());
 		if (!muOps.isEmpty()) {
@@ -108,38 +116,15 @@ public class MutationVisitor extends AbstractMutationVisitor {
 	}
 	
 	@Override
-	public boolean mutate(CastExpr n) {
-		return super.mutate(n);
-	}
-	
-	@Override
-	public boolean mutate(FieldAccessExpr n) {
-		// TODO Auto-generated method stub
-		return super.mutate(n);
-	}
-	
-	@Override
-	public boolean mutate(MethodCallExpr n) {
-		// TODO Auto-generated method stub
-		return super.mutate(n);
-	}
-	
-	@Override
 	public boolean mutate(NameExpr n) {
-		// TODO Auto-generated method stub
-		return super.mutate(n);
-	}
-	
-	@Override
-	public boolean mutate(UnaryExpr n) {
-		// TODO Auto-generated method stub
-		return super.mutate(n);
-	}
-	
-	@Override
-	public boolean mutate(VariableDeclarationExpr n) {
-		// TODO Auto-generated method stub
-		return super.mutate(n);
+		MutationNode muNode = newNode(n);
+		VariableSubstitution varSubstituion = new VariableSubstitutionImpl(n.getName(), n.getEndLine(), n.getEndColumn(), classDescriptor);
+		List<VariableDescriptor> candidates = varSubstituion.find();
+		for (VariableDescriptor var : candidates) {
+			NameExpr expr = new NameExpr(var.getName());
+			muNode.getMutatedNodes().add(expr);
+		}
+		return false;
 	}
 	
 	public void setMutationMap(MutationMap mutationMap) {

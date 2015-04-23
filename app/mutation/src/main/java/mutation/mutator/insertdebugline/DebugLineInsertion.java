@@ -34,7 +34,7 @@ import java.util.Map.Entry;
 
 import sav.common.core.utils.CollectionUtils;
 
-import mutation.io.MutationFileWriter;
+import mutation.io.DebugLineFileWriter;
 import mutation.mutator.AbstractMutationVisitor;
 import mutation.parser.ClassDescriptor;
 
@@ -49,7 +49,7 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 	private Map<Integer, DebugLineData> returnStmts;
 	private Map<Integer, Integer> insertMap;
 	private int curPos;
-	private MutationFileWriter fileWriter;
+	private DebugLineFileWriter fileWriter;
 	private MethodDeclaration curMethod;
 	
 	public void init(String className, ClassDescriptor classDescriptor,
@@ -171,7 +171,7 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 		return "tzzzzzzuyu";
 	}
 	
-	public void setFileWriter(MutationFileWriter fileWriter) {
+	public void setFileWriter(DebugLineFileWriter fileWriter) {
 		this.fileWriter = fileWriter;
 	}
 }
