@@ -32,13 +32,32 @@ public class BreakpointUtils {
 	 */
 	public static <T extends ClassLocation> Map<String, List<T>> initBrkpsMap(
 			List<T> brkps) {
-		HashMap<String, List<T>> brkpsMap = new HashMap<String, List<T>>();
+		Map<String, List<T>> brkpsMap = new HashMap<String, List<T>>();
 		for (T brkp : brkps) {
 			List<T> bps = CollectionUtils.getListInitIfEmpty(brkpsMap,
 					brkp.getClassCanonicalName());
 			bps.add(brkp);
 		}
 		return brkpsMap;
+	}
+	
+	public static <T extends ClassLocation> Map<String, List<Integer>> initLineNoMap(
+			List<T> brkps) {
+		Map<String, List<Integer>> map = new HashMap<String, List<Integer>>();
+		for (T brkp : brkps) {
+			List<Integer> lineNos = CollectionUtils.getListInitIfEmpty(map,
+					brkp.getClassCanonicalName());
+			lineNos.add(brkp.getLineNo());
+		}
+		return map;
+	}
+	
+	public static <T extends ClassLocation> List<Integer> extractLineNo(List<T> bkps) {
+		List<Integer> result = new ArrayList<Integer>(bkps.size());
+		for (T loc : bkps) {
+			result.add(loc.getLineNo());
+		}
+		return result;
 	}
 	
 	public static <T extends ClassLocation>String getLocationId(T bkp) {

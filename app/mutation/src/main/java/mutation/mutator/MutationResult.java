@@ -32,14 +32,6 @@ public class MutationResult {
 		
 	}
 
-	/**
-	 * @param result
-	 */
-	public void importData(List<DebugLineData> result) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public static class LineMutationResult {
 		private List<ClassLocation> mappedLocations;
 		private ClassLocation addedLine;

@@ -11,40 +11,32 @@ package mutation.mutator.insertdebugline;
 import java.util.List;
 
 import japa.parser.ast.Node;
-import sav.strategies.dto.ClassLocation;
 
 /**
  * @author LLT
  * 
  */
-public class DebugLineData {
-	private ClassLocation location;
-	private InsertType insertType;
+public abstract class DebugLineData {
+	private int lineNo;
 	private int debugLine;
 	private int offset;
 
-	public DebugLineData(ClassLocation loc) {
-		this.location = loc;
+	public DebugLineData(int lineNo) {
+		this.lineNo = lineNo;
 	}
 
-	public ClassLocation getLocation() {
-		return location;
-	}
-
-	public InsertType getInsertType() {
-		return insertType;
-	}
-
-	public void setInsertType(InsertType insertType) {
-		this.insertType = insertType;
-	}
+	public abstract InsertType getInsertType() ;
 
 	public int getDebugLine() {
 		return debugLine;
 	}
-
+	
 	public void setDebugLine(int debugLine) {
 		this.debugLine = debugLine;
+	}
+	
+	public int getLineNo() {
+		return lineNo;
 	}
 
 	public Node getInsertNode() {

@@ -3,6 +3,8 @@ package mutation.mutator;
 import java.util.List;
 import java.util.Map;
 
+import mutation.mutator.insertdebugline.DebugLineInsertionResult;
+
 import sav.strategies.dto.ClassLocation;
 
 /**
@@ -28,7 +30,7 @@ public interface IMutator
      * Type temp = foo;
      * return temp;
      */
-	public <T extends ClassLocation>MutationResult insertDebugLine(
+	public <T extends ClassLocation> Map<String, DebugLineInsertionResult> insertDebugLine(
 			Map<String, List<T>> classLocationMap,
 			String sourceFolder);
 }

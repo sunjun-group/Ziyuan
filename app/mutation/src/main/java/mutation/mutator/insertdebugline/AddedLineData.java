@@ -9,7 +9,6 @@
 package mutation.mutator.insertdebugline;
 
 import japa.parser.ast.Node;
-import sav.strategies.dto.ClassLocation;
 
 /**
  * @author LLT
@@ -18,10 +17,14 @@ import sav.strategies.dto.ClassLocation;
 public class AddedLineData extends DebugLineData {
 	private Node insertStmt;
 	
-	public AddedLineData(ClassLocation loc, Node insertStmt) {
+	public AddedLineData(int loc, Node insertStmt) {
 		super(loc);
 		this.insertStmt = insertStmt;
-		setInsertType(InsertType.ADD);
+	}
+	
+	@Override
+	public InsertType getInsertType() {
+		return InsertType.ADD;
 	}
 	
 	@Override

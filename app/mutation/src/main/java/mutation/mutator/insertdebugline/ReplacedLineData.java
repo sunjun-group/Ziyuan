@@ -12,8 +12,6 @@ import japa.parser.ast.Node;
 
 import java.util.List;
 
-import sav.strategies.dto.ClassLocation;
-
 /**
  * @author LLT
  *
@@ -22,11 +20,16 @@ public class ReplacedLineData extends DebugLineData {
 	private Node orgNode;
 	private List<Node> replaceNodes;
 
-	public ReplacedLineData(ClassLocation loc, Node orgNode,
+	public ReplacedLineData(int loc, Node orgNode,
 			List<Node> replaceNodes) {
 		super(loc);
 		this.orgNode = orgNode;
 		this.replaceNodes = replaceNodes;
+	}
+	
+	@Override
+	public InsertType getInsertType() {
+		return InsertType.REPLACE;
 	}
 	
 	@Override

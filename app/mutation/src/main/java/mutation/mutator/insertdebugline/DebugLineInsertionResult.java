@@ -54,4 +54,11 @@ public class DebugLineInsertionResult {
 		this.oldNewLocMap = oldNewLocMap;
 	}
 
+	@Override
+	public String toString() {
+		return "DebugLineInsertionResult [className=" + className
+				+ ", mutatedFile=" + mutatedFile + ", oldNewLocMap="
+				+ oldNewLocMap + "]";
+	}
+	
 }

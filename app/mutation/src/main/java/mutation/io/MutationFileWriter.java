@@ -40,25 +40,27 @@ public class MutationFileWriter implements IMutationWriter {
 	public File write(List<DebugLineData> data, String className) {
 		File javaFile = new File(ClassUtils.getJFilePath(scrFolder, className));
 		File muFile = new File(muSrcFolder, javaFile.getName());
+//
 		try {
 			List<?> lines = org.apache.commons.io.FileUtils.readLines(javaFile);
 			List<String> newContent = new ArrayList<String>();
-			int preIdx = 1;
+			int preIdx = 0;
 			for (DebugLineData debugLine : data) {
 				switch (debugLine.getInsertType()) {
 				case ADD:
 					Node insertNode = debugLine.getInsertNode();
-					copy(lines, newContent, preIdx, insertNode.getBeginLine());
+					copy(lines, newContent, preIdx,
+							toFileLineIdx(insertNode.getBeginLine()));
 					newContent.add(insertNode.toString());
+					preIdx = insertNode.getBeginLine();
 					break;
 				case REPLACE:
 					/* we might have some text before and after the node, just keep them all
 					 * in new separate line
 					 * */
-					String line = (String) lines.get(debugLine.getLocation()
-							.getLineNo());
-					Node orgNode = debugLine
-							.getOrgNode();
+					Node orgNode = debugLine.getOrgNode();
+					copy(lines, newContent, preIdx, toFileLineIdx(orgNode.getBeginLine()));
+					String line = (String) lines.get(toFileLineIdx(debugLine.getLineNo()));
 					String beforeNode = subString(line, 1, orgNode.getBeginColumn());
 					addIfNotEmpty(newContent, beforeNode);
 					/* add new node */
@@ -66,15 +68,17 @@ public class MutationFileWriter implements IMutationWriter {
 						String[] stmt = newNode.toString().split("\n");
 						CollectionUtils.addAll(newContent, stmt);
 					}
-					/* remain content at the same line but right after the org node */
+					/* keep content at the same line but right after the org node */
 					String afterNode = subString(
-							(String) lines.get(orgNode.getEndLine()),
-							orgNode.getEndColumn());
+							(String) lines.get(toFileLineIdx(orgNode.getEndLine())),
+							orgNode.getEndColumn() + 1);
 					addIfNotEmpty(newContent, afterNode);
+					preIdx = toFileLineIdx(orgNode.getEndLine()) + 1;
 					break;
 				}
 				debugLine.setDebugLine(newContent.size());
 			}
+			copy(lines, newContent, preIdx, lines.size());
 			org.apache.commons.io.FileUtils.writeLines(muFile, newContent);
 		} catch (IOException e) {
 			throw new SavRtException(e);
@@ -82,10 +86,12 @@ public class MutationFileWriter implements IMutationWriter {
 		return muFile;
 	}
 	
-	private void addIfNotEmpty(List<String> lines, String newLine) {
+	private int addIfNotEmpty(List<String> lines, String newLine) {
 		if (!newLine.isEmpty()) {
 			lines.add(newLine);
+			return 1;
 		}
+		return 0;
 	}
 
 	protected String subString(String line, int javaParserStartCol,
@@ -99,6 +105,9 @@ public class MutationFileWriter implements IMutationWriter {
 	protected String subString(String line, int javaParserStartCol) {
 		char[] chars = line.toCharArray();
 		int start = getMappedColIdx(chars, javaParserStartCol, 0, 1);
+		if (start >= line.length()) {
+			return StringUtils.EMPTY;
+		}
 		return line.substring(start);
 	}
 
@@ -115,6 +124,9 @@ public class MutationFileWriter implements IMutationWriter {
 				pos++;
 			}
 		}
+		if (pos == javaParserCol) {
+			return chars.length;
+		}
 		throw new SavRtException(
 				StringUtils.spaceJoin("cannot map column index between inputStream and javaparser, line = ",
 						String.valueOf(chars), ", column=", javaParserCol));
@@ -129,4 +141,7 @@ public class MutationFileWriter implements IMutationWriter {
 		}
 	}
 
+	private int toFileLineIdx(int javaLineIdx) {
+		return javaLineIdx - 1;
+	}
 }
