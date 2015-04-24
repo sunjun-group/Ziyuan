@@ -17,7 +17,7 @@ import sav.common.core.iface.HasProbabilityType;
 public final class Randomness {
 	private Randomness() {}
 
-	public static final long SEED = System.currentTimeMillis();
+	public static final long SEED = System.nanoTime();
 	public static int totalCallsToRandom = 0;
 	static Random random = new Random(SEED);
 	
@@ -43,6 +43,10 @@ public final class Randomness {
 	 */
 	public static int nextRandomInt(int i) {
 		return getRandom().nextInt(i);
+	}
+	
+	public static int nextRandomInt(int min, int max) {
+		return getRandom().nextInt((max - min) + 1) + min;
 	}
 	
 	public static <T> T randomMember(T[] arr) {

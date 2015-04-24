@@ -5,6 +5,8 @@ import japa.parser.ast.Node;
 import japa.parser.ast.expr.AssignExpr;
 import japa.parser.ast.expr.AssignExpr.Operator;
 import japa.parser.ast.expr.BinaryExpr;
+import japa.parser.ast.expr.BooleanLiteralExpr;
+import japa.parser.ast.expr.IntegerLiteralExpr;
 import japa.parser.ast.expr.NameExpr;
 import japa.parser.ast.stmt.ForStmt;
 import japa.parser.ast.stmt.WhileStmt;
@@ -19,11 +21,13 @@ import mutation.parser.ClassAnalyzer;
 import mutation.parser.ClassDescriptor;
 import mutation.parser.VariableDescriptor;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.Randomness;
 
 /**
  * Created by hoangtung on 4/3/15.
  */
 public class MutationVisitor extends AbstractMutationVisitor {
+	private static final int INT_CONST_ADJUST_HALF_VALUE = 5;
 	private List<Integer> lineNumbers;
 	private Map<Integer, List<MutationNode>> result;
 	private MutationMap mutationMap;
@@ -50,6 +54,16 @@ public class MutationVisitor extends AbstractMutationVisitor {
 	}
 	
 	@Override
+	protected boolean beforeVisit(Node node) {
+		for (Integer lineNo : lineNumbers) {
+			if (lineNo >= node.getBeginLine() && lineNo <= node.getEndLine()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
 	protected boolean beforeMutate(Node node) {
 		return lineNumbers.contains(node.getBeginLine());
 	}
@@ -66,16 +80,6 @@ public class MutationVisitor extends AbstractMutationVisitor {
 		if (beforeVisit(n)) {
 			n.getBody().accept(this, arg);
 		}
-	}
-
-	@Override
-	protected boolean beforeVisit(Node node) {
-		for (Integer lineNo : lineNumbers) {
-			if (lineNo >= node.getBeginLine() && lineNo <= node.getEndLine()) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	private MutationNode newNode(Node node) {
@@ -118,12 +122,38 @@ public class MutationVisitor extends AbstractMutationVisitor {
 	@Override
 	public boolean mutate(NameExpr n) {
 		MutationNode muNode = newNode(n);
-		VariableSubstitution varSubstituion = new VariableSubstitutionImpl(n.getName(), n.getEndLine(), n.getEndColumn(), classDescriptor);
+		VariableSubstitution varSubstituion = new VariableSubstitutionImpl(
+				n.getName(), n.getEndLine(), n.getEndColumn(), classDescriptor);
 		List<VariableDescriptor> candidates = varSubstituion.find();
 		for (VariableDescriptor var : candidates) {
-			NameExpr expr = new NameExpr(var.getName());
-			muNode.getMutatedNodes().add(expr);
+			if (!var.getName().equals(n.getName())) {
+				NameExpr expr = new NameExpr(var.getName());
+				muNode.getMutatedNodes().add(expr);
+			}
 		}
+		return false;
+	}
+	
+	@Override
+	public boolean mutate(BooleanLiteralExpr n) {
+		newNode(n).getMutatedNodes().add(new BooleanLiteralExpr(!n.getValue()));
+		return false;
+	}
+	
+	@Override
+	public boolean mutate(IntegerLiteralExpr n) {
+		Integer val = Integer.valueOf(n.getValue());
+		Integer newVal = val;
+		if (val == Integer.MAX_VALUE) {
+			newVal -= Randomness.nextRandomInt(INT_CONST_ADJUST_HALF_VALUE);
+		} else if (val == Integer.MIN_VALUE) {
+			newVal += Randomness.nextRandomInt(INT_CONST_ADJUST_HALF_VALUE);
+		} else {
+			newVal = Randomness.nextRandomInt(val - INT_CONST_ADJUST_HALF_VALUE, 
+					val + INT_CONST_ADJUST_HALF_VALUE);
+		}
+		newNode(n).getMutatedNodes().add(
+				new IntegerLiteralExpr(newVal.toString()));
 		return false;
 	}
 	
@@ -149,6 +179,7 @@ public class MutationVisitor extends AbstractMutationVisitor {
 		
 		public MutationNode(Node orgNode) {
 			mutatedNodes = new ArrayList<Node>();
+			this.orgNode = orgNode;
 		}
 		
 		public static MutationNode of(Node orgNode, Node newNode) {

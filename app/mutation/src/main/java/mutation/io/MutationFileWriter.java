@@ -37,7 +37,7 @@ public class MutationFileWriter extends AbstractMutationFileWriter {
 				Node node = muNode.getMutatedNodes().get(i);
 				File folder = FileUtils.createFolder(muSrcFolder, 
 						String.format("%d_%d_%d", 
-							lineNo, muNode.getOrgNode().getBeginColumn(), i));
+							lineNo, muNode.getOrgNode().getBeginColumn(), i + 1));
 				File file = new File(folder, javaFile.getName());
 				List<?> lines;
 				try {
@@ -61,7 +61,7 @@ public class MutationFileWriter extends AbstractMutationFileWriter {
 		copy(lines, newContent, 0, startLine);
 		/* replace */
 		String beforeNode = extractStrBeforeNode(lines, orgNode);
-		String afterNode = extractStrAfterNode(lines, node);
+		String afterNode = extractStrAfterNode(lines, orgNode);
 		String[] nLines = toString(node);
 		if (nLines.length == 1) {
 			newContent.add(StringUtils.join("", beforeNode, nLines[0], afterNode));

@@ -38,7 +38,7 @@ public class Mutator implements IMutator {
 					.analyzeCompilationUnit(cuParser.parse(className)).get(0),
 					BreakpointUtils.extractLineNo(entry.getValue()));
 			CompilationUnit cu = cuParser.parse(className);
-			mutationVisitor.mutate(cu);
+			cu.accept(mutationVisitor, true);
 			Map<Integer, List<MutationNode>> muRes = mutationVisitor.getResult();
 			MutationResult lineRes = new MutationResult(className);
 			for (Entry<Integer, List<MutationNode>> lineData : muRes.entrySet()) {
@@ -46,6 +46,7 @@ public class Mutator implements IMutator {
 				List<File> muFiles = fileWriter.write(lineData.getValue(), className, line);
 				lineRes.put(line, muFiles);
 			}
+			result.put(className, lineRes);
 		}
 		
 		return result;

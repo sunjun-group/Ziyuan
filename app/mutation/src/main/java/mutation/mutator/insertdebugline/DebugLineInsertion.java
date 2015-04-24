@@ -159,8 +159,10 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	private boolean isNoActionExpression(Node n) {
-		return CollectionUtils.existIn(n.getClass(), LiteralExpr.class, NameExpr.class, ThisExpr.class);
+		return CollectionUtils.existIn(n.getClass(), LiteralExpr.class,
+				NameExpr.class, ThisExpr.class);
 	}
 
 	/**
