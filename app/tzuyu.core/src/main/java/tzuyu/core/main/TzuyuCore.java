@@ -15,6 +15,7 @@ import mutation.mutator.Mutator;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import sav.common.core.Logger;
 import sav.strategies.dto.ClassLocation;
 import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.machinelearning.LearnInvariants;
@@ -28,6 +29,7 @@ import faultLocalization.FaultLocalizationReport;
  *
  */
 public class TzuyuCore {
+	private static final Logger LOGGER = Logger.getDefaultLogger();
 	private AbstractApplicationContext appContext;
 	private ApplicationData appData;
 	
@@ -86,8 +88,12 @@ public class TzuyuCore {
 
 		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(1);
 
-		LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig());
-		learnInvariant.learn(suspectLocations, junitClassNames);
+		if (CollectionUtils.isEmpty(suspectLocations)) {
+			LOGGER.warn("Did not find any place to add break point. SVM will not run.");
+		} else {
+			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig());
+			learnInvariant.learn(suspectLocations, junitClassNames);
+		}
 
 		return report;
 	}
