@@ -9,7 +9,6 @@
 package mutation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,12 +35,10 @@ public class MutatorTest {
 	
 	@Test
 	public void testMutator() {
-		Map<String, List<ClassLocation>> classLocationMap = new HashMap<String, List<ClassLocation>>();
 		String clazzName = MutationTestData.class.getName();
 		List<ClassLocation> value = new ArrayList<ClassLocation>();
 		value.add(new ClassLocation(clazzName, null, 27));
-		classLocationMap.put(clazzName, value);
-		Map<String, MutationResult> result = mutator.mutate(classLocationMap,  "./src/test/java");
+		Map<String, MutationResult> result = mutator.mutate(value,  "./src/test/java");
 		System.out.println(result);
 	}
 }

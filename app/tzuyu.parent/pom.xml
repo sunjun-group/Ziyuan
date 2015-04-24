@@ -64,8 +64,7 @@
 		<module>../faultLocalization</module>
 		<module>../svmlib</module>
 		<module>../icsetlv</module>
-		<module>../mutanbug</module>
-
+		<module>../mutation</module>
 	</modules>
 
 	<build>
@@ -77,8 +76,35 @@
 				<executions>
 					<execution>
 						<id>attach-sources</id>
+						<phase>deploy</phase>
 						<goals>
 							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- <plugin> -->
+			<!-- <artifactId>maven-javadoc-plugin</artifactId> -->
+			<!-- <executions> -->
+			<!-- <execution> -->
+			<!-- <id>attach-javadocs</id> -->
+			<!-- <phase>deploy</phase> -->
+			<!-- <goals> -->
+			<!-- <goal>jar</goal> -->
+			<!-- </goals> -->
+			<!-- </execution> -->
+			<!-- </executions> -->
+			<!-- </plugin> -->
+			<plugin>
+				<!-- explicitly define maven-deploy-plugin after other to force exec 
+					order -->
+				<artifactId>maven-deploy-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>deploy</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>deploy</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -173,15 +199,15 @@
 				<artifactId>icsetlv</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-<!-- 			<dependency> -->
-<!-- 				<groupId>tzuyu-project</groupId> -->
-<!-- 				<artifactId>extcos</artifactId> -->
-<!-- 				<version>${project.version}</version> -->
-<!-- 			</dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>tzuyu-project</groupId> -->
+			<!-- <artifactId>extcos</artifactId> -->
+			<!-- <version>${project.version}</version> -->
+			<!-- </dependency> -->
 
 			<dependency>
-				<groupId>tzuyu-project</groupId>
-				<artifactId>mutanbug</artifactId>
+				<groupId>Mutation</groupId>
+				<artifactId>Mutation</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<!-- specific for test -->

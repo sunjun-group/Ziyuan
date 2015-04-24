@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package sav.strategies.mutanbug;
+package mutanbug;
 
 import java.io.File;
 import java.util.List;

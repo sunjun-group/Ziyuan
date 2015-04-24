@@ -21,6 +21,10 @@ public class MutationResult {
 	public void put(Integer line, List<File> muFiles) {
 		mutatedFiles.put(line, muFiles);
 	}
+	
+	public List<File> getMutatedFiles(int lineNo) {
+		return mutatedFiles.get(lineNo);
+	}
 
 	public String getClassName() {
 		return className;

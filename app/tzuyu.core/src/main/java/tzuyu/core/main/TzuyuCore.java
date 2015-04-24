@@ -10,10 +10,11 @@ package tzuyu.core.main;
 
 import java.util.List;
 
+import main.FaultLocalization;
+import mutation.mutator.Mutator;
+
 import org.apache.commons.collections.CollectionUtils;
 
-import main.FaultLocalization;
-import mutanbug.main.MutatorMain;
 import sav.strategies.dto.ClassLocation;
 import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.machinelearning.LearnInvariants;
@@ -48,7 +49,7 @@ public class TzuyuCore {
 				appData.getSuspiciousCalculAlgo());
 		MutanBug mutanbug = new MutanBug();
 		mutanbug.setAppData(appData);
-		mutanbug.setMutator(new MutatorMain(appData.getAppSrc()));
+		mutanbug.setMutator(new Mutator());
 		mutanbug.mutateAndRunTests(report, junitClassNames);
 		return report;
 	}
@@ -63,7 +64,7 @@ public class TzuyuCore {
 				appData.getSuspiciousCalculAlgo());
 		MutanBug mutanbug = new MutanBug();
 		mutanbug.setAppData(appData);
-		mutanbug.setMutator(new MutatorMain(appData.getAppSrc()));
+		mutanbug.setMutator(new Mutator());
 		mutanbug.mutateAndRunTests(report, junitClassNames);
 		return report;
 	}

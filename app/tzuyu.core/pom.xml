@@ -40,7 +40,6 @@
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
-			
 		</dependency>
 
 		<dependency>
@@ -59,8 +58,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>tzuyu-project</groupId>
-			<artifactId>mutanbug</artifactId>
+			<groupId>Mutation</groupId>
+			<artifactId>Mutation</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>tzuyu-project</groupId>

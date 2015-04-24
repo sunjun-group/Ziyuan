@@ -16,7 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import mutanbug.commons.utils.FileUtils;
+import mutation.mutator.IMutator;
+import mutation.mutator.MutationResult;
+import mutation.utils.FileUtils;
 import sav.common.core.Logger;
 import sav.common.core.SavException;
 import sav.common.core.utils.ClassUtils;
@@ -24,9 +26,8 @@ import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.ClassLocation;
 import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunner;
-import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
-import sav.strategies.mutanbug.IMutator;
+import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.vm.VMConfiguration;
 import sav.strategies.vm.VMRunner;
 import tzuyu.core.inject.ApplicationData;
@@ -81,13 +82,16 @@ public class MutanBug {
 	public <T extends ClassLocation> MutansResult mutateAndRunTests(
 			List<T> bkps, List<String> junitClassNames) throws Exception {
 		MutansResult result = new MutansResult();
-		Map<T, List<File>> mutatedResult = mutator.mutate(bkps, appData.getAppSrc());
+		Map<String, MutationResult> mutatedResult = mutator.mutate(bkps,
+				appData.getAppSrc());
 		Recompiler compiler = new Recompiler(appData);
 		JunitRunnerParameters params = new JunitRunnerParameters();
 		params.setJunitClasses(junitClassNames);
 		// recompile and rerun test cases
 		for (T bkp : bkps) {
-			List<File> mutatedFiles = mutatedResult.get(bkp);
+			List<File> mutatedFiles = mutatedResult.get(
+					bkp.getClassCanonicalName()).getMutatedFiles(
+					bkp.getLineNo());
 			if (CollectionUtils.isEmpty(mutatedFiles)) {
 				continue;
 			}

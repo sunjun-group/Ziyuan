@@ -25,18 +25,19 @@ public class Mutator implements IMutator {
 	
 	@Override
 	public <T extends ClassLocation> Map<String, MutationResult> mutate(
-			Map<String, List<T>> classLocationMap, String srcFolder) {
+			List<T> locs, String srcFolder) {
+		Map<String, List<Integer>> classLocationMap = BreakpointUtils.initLineNoMap(locs);
 		JParser cuParser = new JParser(srcFolder, classLocationMap.keySet());
 		ClassAnalyzer classAnalyzer = new ClassAnalyzer(srcFolder, cuParser);
 		MutationVisitor mutationVisitor = new MutationVisitor(
 				new MutationMap(), classAnalyzer);
 		Map<String, MutationResult> result = new HashMap<String, MutationResult>();
 		MutationFileWriter fileWriter = new MutationFileWriter(srcFolder);
-		for (Entry<String, List<T>> entry : classLocationMap.entrySet()) {
+		for (Entry<String, List<Integer>> entry : classLocationMap.entrySet()) {
 			String className = entry.getKey();
-			mutationVisitor.reset(classAnalyzer
-					.analyzeCompilationUnit(cuParser.parse(className)).get(0),
-					BreakpointUtils.extractLineNo(entry.getValue()));
+			mutationVisitor
+					.reset(classAnalyzer.analyzeCompilationUnit(
+							cuParser.parse(className)).get(0), entry.getValue());
 			CompilationUnit cu = cuParser.parse(className);
 			cu.accept(mutationVisitor, true);
 			Map<Integer, List<MutationNode>> muRes = mutationVisitor.getResult();
