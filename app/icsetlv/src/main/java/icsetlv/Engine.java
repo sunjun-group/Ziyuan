@@ -7,6 +7,8 @@ import icsetlv.variable.TestcasesExecutor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import libsvm.core.KernelType;
 import libsvm.core.Machine;
 import libsvm.core.MachineType;
@@ -48,7 +50,7 @@ import sav.strategies.vm.VMConfiguration;
  * 
  */
 public class Engine {
-
+	private static final Logger LOGGER = Logger.getLogger(Engine.class);
 	private static final int DEFAULT_PORT = 80;
 	private static final int DEFAULT_VALUE_RETRIVE_LEVEL = 4;
 
@@ -167,6 +169,17 @@ public class Engine {
 
 		results = new ArrayList<Result>(breakPoints.size());
 		for (BreakPoint bkp : breakPoints) {
+			final List<BreakpointValue> passValues = testResult.getPassValues(bkp);
+			final List<BreakpointValue> failValues = testResult.getFailValues(bkp);
+			// Cannot train if there are not enough data
+			if (passValues.isEmpty() || failValues.isEmpty()) {
+				LOGGER.info("@" + bkp);
+				LOGGER.info("There is no data for the "
+						+ (passValues.isEmpty() ? "POSITIVE" : "NEGATIVE") + " category.");
+				LOGGER.info("SVM is not run.");
+				continue;
+			}
+			
 			// Configure data for SVM machine
 			machine.resetData();
 			List<String> varLabels = new ArrayList<String>(bkp.getVars().size());
@@ -187,8 +200,7 @@ public class Engine {
 				machine.setDataLabels(sample.getAllLabels());
 			}
 
-			BugExpert.addDataPoints(machine, testResult.getPassValues(bkp),
-					testResult.getFailValues(bkp));
+			BugExpert.addDataPoints(machine, passValues, failValues);
 
 			// Train
 			machine.train();
