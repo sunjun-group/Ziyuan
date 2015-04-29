@@ -9,6 +9,7 @@
 package icsetlv.common.dto;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import sav.common.core.utils.CollectionUtils;
@@ -38,35 +39,59 @@ public class BreakpointValue extends ExecValue {
 	}
 
 	public Double getValue(final String variableId) {
-		for (ExecValue child : CollectionUtils.nullToEmpty(children)) {
-			if (child.getVarId().equals(variableId)) {
-				return Double.valueOf(child.getDoubleVal());
+		return getValue(variableId, this);
+	}
+
+	private Double getValue(final String variableId, final ExecValue value) {
+		if (value.varId.equals(variableId)) {
+			return Double.valueOf(value.getDoubleVal());
+		} else {
+			for (ExecValue child : CollectionUtils.nullToEmpty(value.children)) {
+				Double val = getValue(variableId, child);
+				if (val != null) {
+					return val;
+				}
 			}
+			return null;
 		}
-		return null;
 	}
 
 	public List<String> getAllLabels() {
-		if (children == null) {
-			return null;
-		}
-		List<String> labels = new ArrayList<String>(children.size());
-		for (ExecValue child : children) {
-			labels.add(child.getVarId());
-		}
-		return labels;
+		return getChildLabels(this);
 	}
-	
+
+	private List<String> getChildLabels(final ExecValue value) {
+		if (value == null || value.children == null || value.children.isEmpty()) {
+			return Arrays.asList(value.varId);
+		} else {
+			List<String> labels = new ArrayList<String>();
+			for (ExecValue child : value.children) {
+				labels.addAll(getChildLabels(child));
+			}
+			return labels;
+		}
+	}
+
 	public double[] getAllValues() {
-		if (children == null) {
-			return null;
-		}
-		double[] values = new double[children.size()];
+		List<Double> list = getChildValues(this);
+		double[] array = new double[list.size()];
 		int i = 0;
-		for (ExecValue child : children) {
-			values[i++] = child.getDoubleVal();
+		for (Double val : list) {
+			array[i++] = val.doubleValue();
 		}
-		return values;
+		return array;
+	}
+
+	private List<Double> getChildValues(final ExecValue value) {
+		if (value == null || value.children == null || value.children.isEmpty()) {
+			return Arrays.asList(value.getDoubleVal());
+		} else {
+			List<Double> labels = new ArrayList<Double>();
+			for (ExecValue child : value.children) {
+				labels.addAll(getChildValues(child));
+			}
+			return labels;
+		}
 	}
 
 	public int getNumberOfAvailableVariables() {

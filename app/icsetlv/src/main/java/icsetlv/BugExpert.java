@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import sav.common.core.utils.Assert;
 import libsvm.core.Category;
 import libsvm.core.KernelType;
@@ -33,7 +35,7 @@ import net.sf.javaml.core.Instance;
  * 
  */
 public class BugExpert implements IBugExpert {
-
+	private static final Logger LOGGER = Logger.getLogger(BugExpert.class);
 	private static final double ACCURACY_THRESHOLD = 0.7;
 	private static final String POSITIVE = "positive";
 	private static final String NEGATIVE = "negative";
@@ -155,8 +157,10 @@ public class BugExpert implements IBugExpert {
 		} else {
 			for (String variableName : machine.getDataLabels()) {
 				final Double value = bValue.getValue(variableName);
-				Assert.notNull(value, "Cannot get value for variable name " + variableName);
-				lineVals[i++] = value.doubleValue();
+				if (value == null) {
+					LOGGER.warn("Cannot get value for variable name " + variableName);
+				}
+				lineVals[i++] = value == null ? 0.0 : value.doubleValue();
 			}
 		}
 
