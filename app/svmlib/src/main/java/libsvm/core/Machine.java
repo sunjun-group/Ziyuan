@@ -11,6 +11,7 @@ import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
 
+import org.apache.log4j.Logger;
 import org.junit.Assert;
 
 /**
@@ -22,7 +23,7 @@ import org.junit.Assert;
  * 
  */
 public class Machine {
-
+	private static final Logger LOGGER = Logger.getLogger(Machine.class);
 	private static final String DEFAULT_FEATURE_PREFIX = "x";
 
 	private svm_parameter parameter = null;
@@ -30,6 +31,7 @@ public class Machine {
 	protected svm_model model = null;
 	private List<String> dataLabels = new ArrayList<String>();
 	private boolean isGeneratedDataLabel = false;
+	private boolean isDataClean = false;
 
 	public Machine setParameter(final Parameter parameter) {
 		this.parameter = new svm_parameter();
@@ -156,20 +158,88 @@ public class Machine {
 		Assert.assertNotNull("SVM parameters is not set.", parameter);
 		Assert.assertTrue("SVM training data is empty.", !dataPoints.isEmpty());
 
+		final List<DataPoint> optimizedData = cleanUp(dataPoints);
+		// TODO NPN any assertions on optimizedData?
+
 		final svm_problem problem = new svm_problem();
-		final int length = dataPoints.size();
+		final int length = optimizedData.size();
 		problem.l = length;
 		problem.y = new double[length];
 		problem.x = new svm_node[length][];
 
 		for (int i = 0; i < length; i++) {
-			final DataPoint point = dataPoints.get(i);
+			final DataPoint point = optimizedData.get(i);
 			problem.y[i] = point.getCategory().intValue();
 			problem.x[i] = point.getSvmNode();
 		}
 
 		model = svm.svm_train(problem, parameter);
 		return this;
+	}
+
+	/**
+	 * Remove duplicated features. I.e.: to remove the features which have same
+	 * value for all data points. Such features cannot provide any useful
+	 * information.
+	 * 
+	 */
+	private List<DataPoint> cleanUp(final List<DataPoint> dataPoints) {
+		if (this.isDataClean) {
+			return dataPoints;
+		}
+		
+		// Find the redundant features list
+		final int originalSize = getNumberOfFeatures();
+		final List<Integer> indexesToRemove = new ArrayList<Integer>(originalSize);
+		for (int i = 0; i < originalSize; i++) {
+			if (isRedundantFeature(i, dataPoints)) {
+				indexesToRemove.add(i);
+			}
+		}
+
+		final int cleanedSize = originalSize - indexesToRemove.size();
+		if (originalSize != cleanedSize) {
+			// Clean up data labels, this will also correct getNumberOfFeatures
+			final List<String> cleanedDataLabel = new ArrayList<String>(cleanedSize);
+			for (int i = 0; i < originalSize; i++) {
+				if (!indexesToRemove.contains(Integer.valueOf(i))) {
+					cleanedDataLabel.add(this.dataLabels.get(i));
+				}
+			}
+			// NOTE: I don't call setDataLabels here to avoid messing with the
+			// property isGeneratedDataLabel
+			this.dataLabels = cleanedDataLabel;
+
+			// Clean up data points
+			for (DataPoint dp : dataPoints) {
+				dp.numberOfFeatures = cleanedSize;
+				final double[] cleanedValues = new double[cleanedSize];
+				int index = 0;
+				for (int i = 0; i < originalSize; i++) {
+					if (!indexesToRemove.contains(Integer.valueOf(i))) {
+						cleanedValues[index++] = dp.values[i];
+					}
+				}
+				dp.values = cleanedValues;
+			}
+
+			LOGGER.info("Reduced feature size from " + originalSize + " to " + cleanedSize);
+		}
+		
+		this.isDataClean = true;
+
+		return dataPoints;
+	}
+
+	private boolean isRedundantFeature(final int featureIndex, final List<DataPoint> dataPoints) {
+		double value = dataPoints.get(0).getValue(featureIndex);
+		for (int i = 1; i < dataPoints.size(); i++) {
+			if (dataPoints.get(i).getValue(featureIndex) != value) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -224,10 +294,10 @@ public class Machine {
 		double[] thetas = coefficientProcessing.process(divider);
 
 		for (int i = 0; i < thetas.length - 1; i++) {
-			if(Double.compare(thetas[i], 0) == 0){
+			if (Double.compare(thetas[i], 0) == 0) {
 				continue;
 			}
-			
+
 			if (str.length() > 0 && thetas[i] >= 0) {
 				str.append(" + ");
 			}
@@ -259,8 +329,8 @@ public class Machine {
 	 */
 	public class DataPoint {
 
-		private final int numberOfFeatures;
-		private final double[] values;
+		private int numberOfFeatures;
+		private double[] values;
 		private Category category;
 
 		private DataPoint(final int numberOfFeatures) {
