@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import libsvm.svm_model;
 import libsvm.core.Category;
 import libsvm.core.Divider;
 import libsvm.core.Machine;
 import libsvm.core.Model;
+
+import org.apache.log4j.Logger;
 
 /**
  * This machine tries to separate the positive points from negative points by
@@ -26,12 +26,12 @@ import libsvm.core.Model;
  */
 public class PositiveSeparationMachine extends Machine {
 	protected static final Logger LOGGER = Logger.getLogger(PositiveSeparationMachine.class);
-	
+
 	private List<svm_model> learnedModels = new ArrayList<svm_model>();
-	
+
 	private static final int MAXIMUM_ATTEMPT_COUNT = 100;
 	private static final int MAXIMUM_DIVIDER_COUNT = 2;
-	
+
 	private NegativePointSelection negativePointSelection;
 
 	public PositiveSeparationMachine(NegativePointSelection pointSelection) {
@@ -43,7 +43,9 @@ public class PositiveSeparationMachine extends Machine {
 		int attemptCount = 0;
 		double bestAccuracy = 0.0;
 		List<svm_model> bestLearnedModels = null;
-		while (Double.compare(bestAccuracy, 1.0) < 0 && attemptCount < MAXIMUM_ATTEMPT_COUNT) {
+		while (Double.compare(bestAccuracy, 1.0) < 0
+				&& (attemptCount == 0 || !this.negativePointSelection.isConsistent())
+				&& attemptCount < MAXIMUM_ATTEMPT_COUNT) {
 			attemptCount++;
 			learnedModels = new ArrayList<svm_model>();
 			attemptTraining(dataPoints);
@@ -57,11 +59,11 @@ public class PositiveSeparationMachine extends Machine {
 
 		return this;
 	}
-	
+
 	private Machine attemptTraining(final List<DataPoint> dataPoints) {
 		final List<DataPoint> positives = new ArrayList<DataPoint>(dataPoints.size());
 		final List<DataPoint> negatives = new ArrayList<DataPoint>(dataPoints.size());
-		
+
 		classifyNegativePositivePoints(dataPoints, positives, negatives);
 
 		List<DataPoint> trainingData = positives;
@@ -86,9 +88,8 @@ public class PositiveSeparationMachine extends Machine {
 	 * @param positives
 	 * @param negatives
 	 */
-	private void classifyNegativePositivePoints(
-			final List<DataPoint> dataPoints, final List<DataPoint> positives,
-			final List<DataPoint> negatives) {
+	private void classifyNegativePositivePoints(final List<DataPoint> dataPoints,
+			final List<DataPoint> positives, final List<DataPoint> negatives) {
 		for (DataPoint point : dataPoints) {
 			if (Category.POSITIVE == point.getCategory()) {
 				positives.add(point);
@@ -97,7 +98,7 @@ public class PositiveSeparationMachine extends Machine {
 			}
 		}
 	}
-	
+
 	/**
 	 * @param negatives
 	 */
@@ -106,7 +107,7 @@ public class PositiveSeparationMachine extends Machine {
 		Divider roundDivider = new Model(model, getNumberOfFeatures()).getExplicitDivider().round();
 		for (Iterator<DataPoint> it = negatives.iterator(); it.hasNext();) {
 			DataPoint dp = it.next();
-			if(roundDivider.dataPointBelongTo(dp, Category.NEGATIVE)){
+			if (roundDivider.dataPointBelongTo(dp, Category.NEGATIVE)) {
 				it.remove();
 			}
 		}
@@ -115,12 +116,13 @@ public class PositiveSeparationMachine extends Machine {
 	@Override
 	protected List<DataPoint> getWrongClassifiedDataPoints(List<DataPoint> dataPoints) {
 		List<Divider> roundDividers = new ArrayList<Divider>();
-		for(svm_model learnModel: this.learnedModels){
-			roundDividers.add(new Model(learnModel, getNumberOfFeatures()).getExplicitDivider().round());
+		for (svm_model learnModel : this.learnedModels) {
+			roundDividers.add(new Model(learnModel, getNumberOfFeatures()).getExplicitDivider()
+					.round());
 		}
-		
-		return getWrongClassifiedDataPoints(dataPoints, 
-				new MultiDividerBasedCategoryCalculator(roundDividers));
+
+		return getWrongClassifiedDataPoints(dataPoints, new MultiDividerBasedCategoryCalculator(
+				roundDividers));
 	}
 
 	@Override

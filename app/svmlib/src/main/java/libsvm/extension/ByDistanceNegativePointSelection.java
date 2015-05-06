@@ -43,6 +43,7 @@ public class ByDistanceNegativePointSelection implements NegativePointSelection{
 		int randomIndex = (int) (positives.size() * Math.random());
 		return positives.get(randomIndex);
 	}
+	
 	private double computeDistance(DataPoint negative, DataPoint randomPositive){
 		double result = 0;
 		
@@ -51,5 +52,10 @@ public class ByDistanceNegativePointSelection implements NegativePointSelection{
 		}
 		
 		return Math.sqrt(result);
+	}
+	
+	@Override
+	public boolean isConsistent() {
+		return true;
 	}
 }

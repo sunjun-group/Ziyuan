@@ -140,6 +140,13 @@ public class Machine {
 	public final Machine train() {
 		Assert.assertNotNull("SVM parameters is not set.", parameter);
 		Assert.assertTrue("SVM training data is empty.", !data.isEmpty());
+
+		this.data = cleanUp(data);
+		if (getNumberOfFeatures() <= 0) {
+			LOGGER.warn("The feature list is empty. SVM will not run.");
+			return this;
+		}
+
 		train(data);
 		return this;
 	}
@@ -158,17 +165,14 @@ public class Machine {
 		Assert.assertNotNull("SVM parameters is not set.", parameter);
 		Assert.assertTrue("SVM training data is empty.", !dataPoints.isEmpty());
 
-		final List<DataPoint> optimizedData = cleanUp(dataPoints);
-		// TODO NPN any assertions on optimizedData?
-
 		final svm_problem problem = new svm_problem();
-		final int length = optimizedData.size();
+		final int length = dataPoints.size();
 		problem.l = length;
 		problem.y = new double[length];
 		problem.x = new svm_node[length][];
 
 		for (int i = 0; i < length; i++) {
-			final DataPoint point = optimizedData.get(i);
+			final DataPoint point = dataPoints.get(i);
 			problem.y[i] = point.getCategory().intValue();
 			problem.x[i] = point.getSvmNode();
 		}
@@ -187,7 +191,7 @@ public class Machine {
 		if (this.isDataClean) {
 			return dataPoints;
 		}
-		
+
 		// Find the redundant features list
 		final int originalSize = getNumberOfFeatures();
 		final List<Integer> indexesToRemove = new ArrayList<Integer>(originalSize);
@@ -225,7 +229,7 @@ public class Machine {
 
 			LOGGER.info("Reduced feature size from " + originalSize + " to " + cleanedSize);
 		}
-		
+
 		this.isDataClean = true;
 
 		return dataPoints;

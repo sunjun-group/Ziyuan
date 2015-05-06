@@ -22,4 +22,9 @@ public class RandomNegativePointSelection implements NegativePointSelection{
 		int randomIndex = (int) (negatives.size() * Math.random());
 		return negatives.get(randomIndex);
 	}
+	
+	@Override
+	public boolean isConsistent() {
+		return false;
+	}
 }
