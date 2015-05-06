@@ -68,7 +68,7 @@ import com.sun.jdi.request.EventRequestManager;
  * 
  */
 public class TestcasesExecutor {
-	private Logger<?> log = Logger.getDefaultLogger();
+	private static final Logger<?> LOGGER = Logger.getDefaultLogger();
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
 	private static final String TO_STRING_NAME= "toString"; 
 	private SimpleDebugger debugger;
@@ -136,9 +136,9 @@ public class TestcasesExecutor {
 								locBrpMap);
 						CollectionUtils.addIfNotNull(result, bkpVal);
 					} catch (IncompatibleThreadStateException e) {
-						log.error((Object[])e.getStackTrace());
+						LOGGER.error((Object[])e.getStackTrace());
 					} catch (AbsentInformationException e) {
-						log.error((Object[])e.getStackTrace());
+						LOGGER.error((Object[])e.getStackTrace());
 					}
 				}
 			}
@@ -236,7 +236,7 @@ public class TestcasesExecutor {
 				}
 			} catch (Exception e) {
 				// ignore.
-				log.warn((Object[])e.getStackTrace());
+				LOGGER.warn((Object[])e.getStackTrace());
 			}
 		}
 		return null;
@@ -267,27 +267,22 @@ public class TestcasesExecutor {
 			Map<String, BreakPoint> locBrpMap) {
 		EventRequestManager erm = vm.eventRequestManager();
 		for (BreakPoint brkp : brkpsMap.get(refType.name())) {
-			// The brkp.lineNo can be a line where a breakpoint cannot be added.
-			// We try to do that in the next lines then.
-			boolean added = false;
-			int lineNumber = brkp.getLineNo();
-			while (!added) {
-				List<Location> locations;
-				try {
-					locations = refType.locationsOfLine(lineNumber);
-				} catch (AbsentInformationException e) {
-					log.warn((Object[]) e.getStackTrace());
-					continue;
-				}
-				if (!locations.isEmpty()) {
-					Location location = locations.get(0);
-					BreakpointRequest breakpointRequest = erm.createBreakpointRequest(location);
-					breakpointRequest.setEnabled(true);
-					locBrpMap.put(location.toString(), brkp);
-					added = true;
-				} else {
-					lineNumber++;
-				}
+			// We assume that it is always possible to add the break point
+			final int lineNumber = brkp.getLineNo();
+			List<Location> locations;
+			try {
+				locations = refType.locationsOfLine(lineNumber);
+			} catch (AbsentInformationException e) {
+				LOGGER.warn((Object[]) e.getStackTrace());
+				continue;
+			}
+			if (!locations.isEmpty()) {
+				Location location = locations.get(0);
+				BreakpointRequest breakpointRequest = erm.createBreakpointRequest(location);
+				breakpointRequest.setEnabled(true);
+				locBrpMap.put(location.toString(), brkp);
+			} else {
+				LOGGER.warn("Cannot add break point " + brkp);
 			}
 		}
 	}
