@@ -88,6 +88,11 @@ public class TzuyuCore {
 
 		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(1);
 
+		MutanBug mutanbug = new MutanBug();
+		mutanbug.setAppData(appData);
+		mutanbug.setMutator(new Mutator());
+		mutanbug.mutateForMachineLearning(suspectLocations);
+		
 		if (CollectionUtils.isEmpty(suspectLocations)) {
 			LOGGER.warn("Did not find any place to add break point. SVM will not run.");
 		} else {

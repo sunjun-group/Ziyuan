@@ -11,6 +11,7 @@ package tzuyu.core.mutantbug;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.Set;
 
 import mutation.mutator.IMutator;
 import mutation.mutator.MutationResult;
+import mutation.mutator.insertdebugline.DebugLineInsertionResult;
 import mutation.utils.FileUtils;
 import sav.common.core.Logger;
 import sav.common.core.SavException;
@@ -30,6 +32,7 @@ import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
 import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.vm.VMConfiguration;
 import sav.strategies.vm.VMRunner;
+import testdata.insertion.InsertTestData;
 import tzuyu.core.inject.ApplicationData;
 
 import com.google.inject.Inject;
@@ -133,6 +136,31 @@ public class MutanBug {
 		return JunitResult.readFrom(params.getDestfile());
 	}
 
+	public void mutateForMachineLearning(List<ClassLocation> locations){
+		Map<String, List<ClassLocation>> classLocationMap = createClassLocationMap(locations);
+		
+		Map<String, DebugLineInsertionResult> result = mutator.insertDebugLine(classLocationMap, appData.getAppSrc());
+	}
+
+	/**
+	 * @param locations
+	 * @return
+	 */
+	private Map<String, List<ClassLocation>> createClassLocationMap(
+			List<ClassLocation> locations) {
+		Map<String, List<ClassLocation>> classLocationMap = new HashMap<String, List<ClassLocation>>();
+		for(ClassLocation location: locations){
+			String className = location.getClassCanonicalName();
+			List<ClassLocation> locationsInCurrentClass = classLocationMap.get(className);
+			if(locationsInCurrentClass == null){
+				locationsInCurrentClass = new ArrayList<ClassLocation>();
+				classLocationMap.put(className, locationsInCurrentClass);
+			}
+			locationsInCurrentClass.add(location);
+		}
+		return classLocationMap;
+	}
+	
 	public void setAppData(ApplicationData appData) {
 		this.appData = appData;
 	}

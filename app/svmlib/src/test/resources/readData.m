@@ -12,7 +12,7 @@ numberOfNegatives = data(1:1,2);
 %
 firstLinePositives = 2;
 lastLinePositives = firstLinePositives + numberOfPositives - 1;
-firstLineNegatives = lastLinePositives + 1
+firstLineNegatives = lastLinePositives + 1;
 lastLineNegatives = firstLineNegatives + numberOfNegatives - 1;
 positives = data(firstLinePositives:lastLinePositives, :);
 negatives = data(firstLineNegatives:lastLineNegatives, :);
