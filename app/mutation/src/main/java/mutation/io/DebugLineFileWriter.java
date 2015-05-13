@@ -44,7 +44,7 @@ public class DebugLineFileWriter extends AbstractMutationFileWriter implements I
 					copy(lines, newContent, preIdx,
 							toFileLineIdx(insertNode.getBeginLine()));
 					newContent.add(insertNode.toString());
-					preIdx = insertNode.getBeginLine();
+					preIdx = toFileLineIdx(insertNode.getBeginLine());
 					break;
 				case REPLACE:
 					/* we might have some text before and after the node, just keep them all
