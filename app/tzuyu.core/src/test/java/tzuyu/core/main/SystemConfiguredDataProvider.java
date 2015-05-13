@@ -67,10 +67,6 @@ public class SystemConfiguredDataProvider extends TestApplicationContext {
 		getAppData().setTracerJarPath(path);
 	}
 	
-	protected String getTracerJarPath() {
-		return getAppData().getTracerJarPath();
-	}
-
 	public void setJavaHome(final String path) {
 		String javaHome = path;
 		javaHome = StringUtils.isNotBlank(javaHome ) ? javaHome : ConfigUtils.getProperty(JAVA_HOME);

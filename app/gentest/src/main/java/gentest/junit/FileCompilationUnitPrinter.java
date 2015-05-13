@@ -13,6 +13,7 @@ import japa.parser.ast.CompilationUnit;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,9 +28,11 @@ import sav.common.core.Logger;
 public class FileCompilationUnitPrinter implements ICompilationUnitPrinter {
 	private Logger<?> logger = Logger.getDefaultLogger();
 	private String srcFolder;
+	private List<File> files;
 	
 	public FileCompilationUnitPrinter(String srcFolderPath) {
 		this.srcFolder = srcFolderPath;
+		files = new ArrayList<File>();
 	}
 	
 	public void print(List<CompilationUnit> compilationUnits) {
@@ -47,6 +50,7 @@ public class FileCompilationUnitPrinter implements ICompilationUnitPrinter {
 				PrintStream stream = new PrintStream(file);
 				stream.println(cu.toString());
 				stream.close();
+				files.add(file);
 			} catch (IOException e) {
 				logger.logEx(e, "cannot create file " + filePath);
 			}
@@ -70,4 +74,8 @@ public class FileCompilationUnitPrinter implements ICompilationUnitPrinter {
 		return pkg + Constants.FILE_SEPARATOR + clazz + Constants.JAVA_EXT;
 	}
 
+	public List<File> getGeneratedFiles() {
+		return files;
+	}
+	
 }

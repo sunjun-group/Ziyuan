@@ -11,6 +11,7 @@ package gentest.junit;
 import gentest.core.data.Sequence;
 import japa.parser.ast.CompilationUnit;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,4 +119,5 @@ public class TestsPrinter implements ITestsPrinter {
 	public void setCuPrinter(ICompilationUnitPrinter cuPrinter) {
 		this.cuPrinter = cuPrinter;
 	}
+	
 }

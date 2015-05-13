@@ -10,6 +10,7 @@ package tzuyu.core.mutantbug;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import sav.common.core.SavException;
@@ -17,38 +18,38 @@ import sav.common.core.utils.CollectionBuilder;
 import sav.strategies.vm.VMConfiguration;
 import sav.strategies.vm.VMRunner;
 import sav.strategies.vm.VmRunnerUtils;
-import tzuyu.core.inject.ApplicationData;
-
-import com.google.inject.Inject;
 
 /**
  * @author LLT
- *
+ * 
  */
 public class Recompiler {
-	@Inject
-	private ApplicationData appData;
 	private VMConfiguration vmConfig;
-	
-	public Recompiler(ApplicationData appData) {
-		setAppData(appData);
+
+	public Recompiler(VMConfiguration vmConfig) {
+		setVmConfig(vmConfig);
 	}
-	
-	public void recompileJFile(File mutatedFile) throws SavException {
-		CollectionBuilder<String, List<String>> builder 
-				= new CollectionBuilder<String, List<String>>(new ArrayList<String>())
-					.add(VmRunnerUtils.buildJavaCPrefix(vmConfig))
-					.add("-classpath")
-					.add(vmConfig.getClasspathStr())
-					.add("-d")
-					.add(appData.getAppTarget())
-					.add(mutatedFile.getAbsolutePath());
+
+	public void recompileJFile(String targetFolder, File... mutatedFiles)
+			throws SavException {
+		recompileJFile(targetFolder, Arrays.asList(mutatedFiles));
+	}
+
+	public void recompileJFile(String targetFolder, List<File> mutatedFiles)
+			throws SavException {
+		CollectionBuilder<String, List<String>> builder = new CollectionBuilder<String, List<String>>(
+				new ArrayList<String>())
+				.add(VmRunnerUtils.buildJavaCPrefix(vmConfig))
+				.add("-classpath").add(vmConfig.getClasspathStr()).add("-d")
+				.add(targetFolder);
+		for (File mutatedFile : mutatedFiles) {
+			builder.add(mutatedFile.getAbsolutePath());
+		}
 		VMRunner.startAndWaitUntilStop(builder.toCollection());
 	}
-	
-	public void setAppData(ApplicationData appData) {
-		this.appData = appData;
-		this.vmConfig = appData.getVmConfig();
+
+	public void setVmConfig(VMConfiguration vmConfig) {
+		this.vmConfig = vmConfig;
 	}
-	
+
 }

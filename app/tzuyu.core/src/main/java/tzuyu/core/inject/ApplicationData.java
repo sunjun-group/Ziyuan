@@ -28,6 +28,7 @@ public class ApplicationData {
 	private List<String> appClasspaths;
 	private List<String> sysClasspaths;
 	private String appSrc;
+	private String appTestTarget;
 	private String tzuyuJacocoAssembly;
 	private String appTarget;
 	
@@ -103,6 +104,14 @@ public class ApplicationData {
 
 	public void setAppTarget(String appTarget) {
 		this.appTarget = appTarget;
+	}
+	
+	public String getAppTestTarget() {
+		return appTestTarget;
+	}
+
+	public void setAppTestTarget(String appTestTarget) {
+		this.appTestTarget = appTestTarget;
 	}
 
 	public String getAppClasspathStr() {

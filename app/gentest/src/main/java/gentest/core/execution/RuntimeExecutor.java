@@ -33,6 +33,7 @@ public class RuntimeExecutor extends VariableRuntimeExecutor implements
 		try {
 			rmethod.accept(this);
 		} catch (Throwable e) {
+			log.debug(e.getMessage());
 			successful = false;
 		}
 		return successful;

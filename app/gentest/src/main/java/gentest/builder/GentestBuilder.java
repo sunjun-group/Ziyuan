@@ -76,12 +76,12 @@ public abstract class GentestBuilder<T extends GentestBuilder<T>> {
 	}
 
 	public T method(String methodNameOrSign) {
-		specificMethod = true;
 		findAndAddTestingMethod(methodNameOrSign);
 		return (T) this;
 	}
 	
 	protected MethodCall findAndAddTestingMethod(String methodNameOrSign) {
+		specificMethod = true;
 		Method testingMethod = findTestingMethod(clazz, methodNameOrSign);
 		return addMethodCall(clazz, testingMethod);
 	}

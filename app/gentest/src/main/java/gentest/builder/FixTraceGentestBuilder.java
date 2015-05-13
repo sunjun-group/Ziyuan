@@ -28,6 +28,7 @@ import org.apache.commons.lang.StringUtils;
 
 import sav.common.core.Pair;
 import sav.common.core.SavException;
+import sav.common.core.utils.Assert;
 
 /**
  * @author LLT
@@ -65,24 +66,36 @@ public class FixTraceGentestBuilder extends GentestBuilder<FixTraceGentestBuilde
 	}
 	
 	public EvaluationMethod evaluationMethod(Class<?> clazz,
-			String methodNameOrSign) {
-		return new EvaluationMethod(clazz, methodNameOrSign);
+			String evalMethodNameOrSign) {
+		return new EvaluationMethod(clazz, evalMethodNameOrSign);
+	}
+	
+	public EvaluationMethod evaluationMethod(Class<?> clazz,
+			String evalMethodNameOrSign, String targetMethodAlias) {
+		return new EvaluationMethod(clazz, evalMethodNameOrSign, targetMethodAlias);
 	}
 
 	public class EvaluationMethod {
 		private Method method;
+		private String targetAlias; 
 		private List<Pair<String, String>> params;
 		
-		private EvaluationMethod(Class<?> clazz, String methodNameOrSign) {
-			method = findTestingMethod(clazz, methodNameOrSign);
+		private EvaluationMethod(Class<?> clazz, String evalMethodNameOrSign) {
+			method = findTestingMethod(clazz, evalMethodNameOrSign);
 			if (method.getReturnType() != boolean.class) {
 				throw new IllegalArgumentException(String.format(
 						"Evaluation method (%s) must return boolean",
-						methodNameOrSign));
+						evalMethodNameOrSign));
 			}
 			params = new ArrayList<Pair<String, String>>();
 		}
 		
+		public EvaluationMethod(Class<?> clazz, String evalMethodNameOrSign,
+				String targetMethodAlias) {
+			this(clazz, evalMethodNameOrSign);
+			this.targetAlias = targetMethodAlias;
+		}
+
 		/**
 		 * a parameter for evaluation method must have format: 
 		 * [methodAlias].[parameterName]
@@ -96,6 +109,21 @@ public class FixTraceGentestBuilder extends GentestBuilder<FixTraceGentestBuilde
 			if (params != null) {
 				for (String param : params) {
 					this.params.add(toPairParam(param));
+				}
+			}
+			evalMethods.add(this);
+			return FixTraceGentestBuilder.this;
+		}
+		
+		public FixTraceGentestBuilder paramAutofill() {
+			Assert.assertTrue(targetAlias != null,
+					"targetAlias must be specified to call paramAutofill");
+			for (MethodCall methodCall : methodCalls) {
+				if (targetAlias.equals(methodCall.getAlias())) {
+					for (String param : methodCall.getParamNames()) {
+						this.params.add(Pair.of(targetAlias, param));
+					}
+					this.params.add(Pair.of(targetAlias, RETURN_METHOD_PARAM_NAME));
 				}
 			}
 			evalMethods.add(this);
@@ -134,6 +162,7 @@ public class FixTraceGentestBuilder extends GentestBuilder<FixTraceGentestBuilde
 				/* append evaluation methods: only for pass sequences */
 				List<RqueryMethod> rqueryMethods = seq.<RqueryMethod>getStatementByType(
 						RStatementKind.QUERY_METHOD_INVOKE);
+				
 				for (EvaluationMethod evalMethod : evalMethods) {
 					REvaluationMethod rmethod = new REvaluationMethod(evalMethod.method);
 					int[]inVarIds = new int[evalMethod.params.size()];

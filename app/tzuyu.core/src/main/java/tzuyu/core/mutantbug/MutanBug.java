@@ -32,7 +32,6 @@ import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
 import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.vm.VMConfiguration;
 import sav.strategies.vm.VMRunner;
-import testdata.insertion.InsertTestData;
 import tzuyu.core.inject.ApplicationData;
 
 import com.google.inject.Inject;
@@ -87,7 +86,7 @@ public class MutanBug {
 		MutansResult result = new MutansResult();
 		Map<String, MutationResult> mutatedResult = mutator.mutate(bkps,
 				appData.getAppSrc());
-		Recompiler compiler = new Recompiler(appData);
+		Recompiler compiler = new Recompiler(appData.getVmConfig());
 		JunitRunnerParameters params = new JunitRunnerParameters();
 		params.setJunitClasses(junitClassNames);
 		// recompile and rerun test cases
@@ -105,7 +104,7 @@ public class MutanBug {
 					tempDir, true);
 			for (File mutatedFile : mutatedFiles) {
 				try{
-					compiler.recompileJFile(mutatedFile);
+					compiler.recompileJFile(appData.getAppTarget(), mutatedFile);
 					params.setDestfile(File.createTempFile("testMutant", ".temp").getAbsolutePath());
 					JunitResult jresult = runTestcases(params);
 					result.add(bkp, jresult.getTestResult());
@@ -136,10 +135,12 @@ public class MutanBug {
 		return JunitResult.readFrom(params.getDestfile());
 	}
 
-	public void mutateForMachineLearning(List<ClassLocation> locations){
+	public Map<String, DebugLineInsertionResult> mutateForMachineLearning(List<ClassLocation> locations){
 		Map<String, List<ClassLocation>> classLocationMap = createClassLocationMap(locations);
 		
 		Map<String, DebugLineInsertionResult> result = mutator.insertDebugLine(classLocationMap, appData.getAppSrc());
+		
+		return result;
 	}
 
 	/**

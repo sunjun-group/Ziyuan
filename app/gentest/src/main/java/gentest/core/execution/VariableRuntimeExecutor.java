@@ -48,9 +48,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 	
 	public boolean start(ISelectedVariable receiver) {
 		log.debug("start runtime execution");
-		if (successful == null) {
-			successful = true;
-		}
+		successful = true;
 		if (receiver != null) {
 			execute(receiver);
 		}

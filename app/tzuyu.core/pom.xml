@@ -65,6 +65,11 @@
 			<groupId>tzuyu-project</groupId>
 			<artifactId>icsetlv</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>gentest</artifactId>
+		</dependency>
 		<!-- specific for test -->
 		<dependency>
 			<groupId>tzuyu-project</groupId>

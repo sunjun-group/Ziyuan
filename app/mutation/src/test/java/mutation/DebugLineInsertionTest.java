@@ -40,7 +40,10 @@ public class DebugLineInsertionTest {
 		Map<String, List<ClassLocation>> classLocationMap = new HashMap<String, List<ClassLocation>>();
 		String clazzName = InsertTestData.class.getName();
 		List<ClassLocation> value = new ArrayList<ClassLocation>();
+		value.add(new ClassLocation(clazzName, null, 25));
+		value.add(new ClassLocation(clazzName, null, 27));
 		value.add(new ClassLocation(clazzName, null, 31));
+		value.add(new ClassLocation(clazzName, null, 32));
 		value.add(new ClassLocation(clazzName, null, 42));
 		value.add(new ClassLocation(clazzName, null, 46));
 		value.add(new ClassLocation(clazzName, null, 50));
