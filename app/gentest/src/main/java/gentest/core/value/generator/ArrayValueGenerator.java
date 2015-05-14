@@ -35,7 +35,7 @@ public class ArrayValueGenerator extends ValueGenerator {
 		int sizes[] = new int[dimension];
 		for (int i = 0; i < dimension; i++) {
 			sizes[i] = Randomness
-					.nextRandomInt(GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH);
+					.nextInt(GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH);
 		}
 		final RArrayConstructor arrayConstructor = new RArrayConstructor(sizes,
 				type.getRawType(), lastContenType.getRawType());

@@ -11,11 +11,12 @@ import japa.parser.ast.type.PrimitiveType.Primitive;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import org.apache.commons.lang.RandomStringUtils;
 
+import sav.common.core.Pair;
 import sav.common.core.SavRtException;
+import sav.common.core.utils.Randomness;
 
 import com.google.inject.Inject;
 
@@ -110,12 +111,7 @@ public class PrimitiveGeneratorFactory {
 	}
 	
 	static abstract class PrimitiveGenerator<T> {
-		protected Random random;
 		public abstract T next();
-		
-		public PrimitiveGenerator() {
-			random = new Random(System.currentTimeMillis());
-		}
 		
 		public T next(Class<?> type) {
 			return next();
@@ -126,7 +122,7 @@ public class PrimitiveGeneratorFactory {
 		
 		@Override
 		public Boolean next() {
-			return random.nextBoolean();
+			return Randomness.nextBoolean();
 		}
 	}
 	
@@ -136,7 +132,7 @@ public class PrimitiveGeneratorFactory {
 		public Byte next() {
 			// copy from the old implementation 
 			byte[] retByte = new byte[1];
-			random.nextBytes(retByte);
+			Randomness.nextBytes(retByte);
 			return retByte[0];
 		}
 		
@@ -151,35 +147,36 @@ public class PrimitiveGeneratorFactory {
 			// 'space'
 			// (code-point: 32) character to the 'tide'(code-point: 126)
 			// character.
-			return (char) (random.nextInt(95) + 32);
+			return (char) (Randomness.nextInt(95) + 32);
 		}
 	}
 	
 	private class DoubleGenerator extends PrimitiveGenerator<Double> {
 		@Override
 		public Double next() {
-			return random.nextDouble();
+			return Randomness.nextDouble();
 		}
 	}
 	
 	private class FloatGenerator extends PrimitiveGenerator<Float> {
 		@Override
 		public Float next() {
-			return random.nextFloat();
+			return Randomness.nextFloat();
 		}
 	}
 	
 	private class IntGenerator extends PrimitiveGenerator<Integer> {
 		@Override
 		public Integer next() {
-			return random.nextInt();
+			Pair<Integer, Integer> range = config.getIntRanges().randomRange();
+			return Randomness.nextInt(range.a, range.b);
 		}
 	}
 	
 	private class LongGenerator extends PrimitiveGenerator<Long> {
 		@Override
 		public Long next() {
-			return random.nextLong();
+			return Randomness.nextLong();
 		}
 	}
 	
@@ -187,7 +184,7 @@ public class PrimitiveGeneratorFactory {
 
 		@Override
 		public Short next() {
-			return (short) ((random.nextInt(Short.MAX_VALUE - Short.MIN_VALUE) + Short.MIN_VALUE));
+			return (short) ((Randomness.nextInt(Short.MAX_VALUE - Short.MIN_VALUE) + Short.MIN_VALUE));
 		}
 	}
 	
@@ -195,7 +192,7 @@ public class PrimitiveGeneratorFactory {
 
 		@Override
 		public String next() {
-			return RandomStringUtils.randomAlphabetic(random.nextInt(config
+			return RandomStringUtils.randomAlphabetic(Randomness.nextInt(config
 					.getStringMaxLength()));
 		}
 	}
@@ -205,7 +202,7 @@ public class PrimitiveGeneratorFactory {
 		@Override
 		public Enum<?> next(Class<?> type) {
 			Object[] constValues = type.getEnumConstants();
-			int index = random.nextInt(constValues.length);
+			int index = Randomness.nextInt(constValues.length);
 			return (Enum<?>) constValues[index];
 		}
 		

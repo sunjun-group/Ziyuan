@@ -8,6 +8,7 @@
 
 package gentest.injection;
 
+import gentest.core.ParamGeneratorConfig;
 import gentest.core.data.Sequence;
 import gentest.core.data.dto.DataProvider;
 import gentest.core.data.dto.IDataProvider;
@@ -55,6 +56,7 @@ public class GentestModules extends AbstractModule {
 				.toInstance(new DataProvider<Sequence>());
 				// .to((Class<? extends IDataProvider<?>>) DataProvider.class)
 				// .in(scopes.get(TestcaseGenerationScope.class));
+		bind(ParamGeneratorConfig.class).toInstance(ParamGeneratorConfig.getDefault());
 	}
 
 	public void enter(Class<? extends Annotation> scope) {

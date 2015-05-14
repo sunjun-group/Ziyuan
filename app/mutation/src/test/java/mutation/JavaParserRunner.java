@@ -11,9 +11,6 @@ package mutation;
 import japa.parser.JavaParser;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.Node;
-import japa.parser.ast.expr.BooleanLiteralExpr;
-import japa.parser.ast.stmt.AssertStmt;
-import japa.parser.ast.stmt.LabeledStmt;
 
 import java.io.File;
 
@@ -36,6 +33,16 @@ public class JavaParserRunner {
 	}
 	
 	@Test
+	public void runThis() throws Exception {
+		String jfile = "./src/test/java/mutation/JavaParserRunner.java";
+		CompilationUnit cu = JavaParser.parse(new File(
+				jfile));
+		recursive(cu);
+		assert true;
+	}
+	
+	
+	@Test
 	public void run1() throws Exception {
 		CompilationUnit cu = JavaParser.parse(new File(
 				"./src/test/java/test/parser/SecondClassCaller.java"));
@@ -44,7 +51,6 @@ public class JavaParserRunner {
 	
 	@Test
 	public void run() throws Exception {
-//		String jfile = "./src/test/java/mutation/JavaParserRunner.java";
 		String jfile = "./src/test/java/testdata/filewriter/FileWriterTestData.java";
 		CompilationUnit cu = JavaParser.parse(new File(
 				jfile));
@@ -75,6 +81,7 @@ public class JavaParserRunner {
 			TestClass clazz = new TestClass();
 			int i = 100;
 			int x = clazz.getResult();
+			assert "a" != null;
 			System.out.println(i); System.out.println(x);
 			if (i > 10) {
 				System.out.println("i > 10");

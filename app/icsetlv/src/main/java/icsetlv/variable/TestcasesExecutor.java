@@ -161,8 +161,7 @@ public class TestcasesExecutor {
 		ThreadReference thread = event.thread();
 		synchronized (thread) {
 			if (!thread.frames().isEmpty()) {
-				// LLT: get correct frame, not the first one.
-				StackFrame frame = thread.frames().get(0);
+				StackFrame frame = findFrameByLocation(thread.frames(), location);
 				Method method = frame.location().method();
 				ReferenceType refType;
 				ObjectReference objRef = null;
@@ -201,6 +200,22 @@ public class TestcasesExecutor {
 			}
 		}
 		return bkVal;
+	}
+
+
+	private StackFrame findFrameByLocation(List<StackFrame> frames, Location location) throws AbsentInformationException{
+		for(StackFrame frame: frames){
+			if(isEqual(frame.location(), location)){
+				return frame;
+			}
+		}
+		
+		throw new RuntimeException("Can not find frame");
+	}
+
+	private boolean isEqual(Location location1, Location location2) throws AbsentInformationException {
+		return location1.sourceName().equals(location2.sourceName()) &&
+				location1.lineNumber() == location2.lineNumber();
 	}
 
 	private void appendVarVal(ExecValue parent, String varId,

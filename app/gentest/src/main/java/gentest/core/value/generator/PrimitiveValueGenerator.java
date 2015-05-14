@@ -34,7 +34,6 @@ public class PrimitiveValueGenerator {
 				|| TypeUtils.isString(clazz) 
 				|| TypeUtils.isEnumType(clazz)
 				|| (isObject(clazz));
-
 	}
 
 	public boolean doAppend(GeneratedVariable variable, int level, Class<?> type)

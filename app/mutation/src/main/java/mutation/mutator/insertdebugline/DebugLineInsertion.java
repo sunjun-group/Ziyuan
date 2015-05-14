@@ -14,9 +14,11 @@ import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.VariableDeclarator;
 import japa.parser.ast.body.VariableDeclaratorId;
 import japa.parser.ast.expr.AssignExpr;
-import japa.parser.ast.expr.BooleanLiteralExpr;
+import japa.parser.ast.expr.BinaryExpr;
 import japa.parser.ast.expr.LiteralExpr;
 import japa.parser.ast.expr.NameExpr;
+import japa.parser.ast.expr.NullLiteralExpr;
+import japa.parser.ast.expr.StringLiteralExpr;
 import japa.parser.ast.expr.ThisExpr;
 import japa.parser.ast.expr.VariableDeclarationExpr;
 import japa.parser.ast.stmt.AssertStmt;
@@ -32,11 +34,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import sav.common.core.utils.CollectionUtils;
-
 import mutation.io.DebugLineFileWriter;
 import mutation.mutator.AbstractMutationVisitor;
 import mutation.parser.ClassDescriptor;
+import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
@@ -67,8 +68,7 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 		// collect data
 		List<DebugLineData> data = new ArrayList<DebugLineData>();
 		for (Entry<Integer, Integer> entry : insertMap.entrySet()) {
-			AssertStmt newStmt = new AssertStmt(new BooleanLiteralExpr(true));
-			newStmt.setBeginLine(entry.getValue() + 1);
+			AssertStmt newStmt = genDummyStmt(entry.getValue());
 			data.add(new AddedLineData(entry.getKey(), newStmt));
 		}
 		data.addAll(returnStmts.values());
@@ -91,6 +91,14 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 			result.mapDebugLine(debugLine.getLineNo(), debugLine.getDebugLine());
 		}
 		return result;
+	}
+
+	private AssertStmt genDummyStmt(int nodeBeginLine) {
+		BinaryExpr binaryExpr = new BinaryExpr(new StringLiteralExpr(""), new NullLiteralExpr(), 
+				BinaryExpr.Operator.notEquals);
+		AssertStmt newStmt = new AssertStmt(binaryExpr);
+		newStmt.setBeginLine(nodeBeginLine + 1);
+		return newStmt;
 	}
 	
 	@Override

@@ -102,11 +102,11 @@ public class TzuyuCore {
 					junitClassNames, appData.getSuspiciousCalculAlgo());
 		}
 
-		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(1);
-		suspectLocations = getNextLineToAddBreakpoint(suspectLocations);
-		
 		List<String> randomTests = generateNewTests(testingClassName, methodName, verificationMethod);
 		junitClassNames.addAll(randomTests);
+		
+		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(1);
+		suspectLocations = getNextLineToAddBreakpoint(suspectLocations);
 		
 		if (CollectionUtils.isEmpty(suspectLocations)) {
 			LOGGER.warn("Did not find any place to add break point. SVM will not run.");
@@ -118,12 +118,8 @@ public class TzuyuCore {
 		return report;
 	}
 
-	/**
-	 * @param suspectLocations
-	 * @return
-	 */
 	private List<ClassLocation> getNextLineToAddBreakpoint(
-			List<ClassLocation> suspectLocations) {
+			List<ClassLocation> suspectLocations) throws SavException {
 		MutanBug mutanbug = new MutanBug();
 		mutanbug.setAppData(appData);
 		mutanbug.setMutator(new Mutator());
@@ -168,23 +164,23 @@ public class TzuyuCore {
 		return junitClassNames;
 	}
 
-	/**
-	 * @param suspectLocations
-	 * @param mutationInfo
-	 * @return
-	 */
 	private List<ClassLocation> getNewLocationAfterMutation(
 			List<ClassLocation> suspectLocations,
 			Map<String, DebugLineInsertionResult> mutationInfo) {
-		
+		List<ClassLocation> result = new ArrayList<ClassLocation>(suspectLocations.size());
 		DebugLineInsertionResult lineInfo = mutationInfo.get(suspectLocations.get(0).getClassCanonicalName());
 		Map<Integer, Integer> lineToNextLine = lineInfo.getOldNewLocMap();
 		
 		for(ClassLocation location: suspectLocations){
-			location.setLineNo(lineToNextLine.get(location.getLineNo()));
+			Integer newLineNo = lineToNextLine.get(location.getLineNo());
+			if (newLineNo != null) {
+				result.add(new ClassLocation(location.getClassCanonicalName(), null, newLineNo));
+			} else {
+				result.add(location);
+			}
 		}
 		
-		return suspectLocations;
+		return result;
 	}
 
 	

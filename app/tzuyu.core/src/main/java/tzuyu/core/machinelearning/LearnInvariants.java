@@ -36,8 +36,7 @@ public class LearnInvariants {
 		engine.addNotExecutedTestcases(testcases);
 
 		for (ClassLocation location : locations) {
-			engine.addBreakPoint(location.getClassCanonicalName(), location.getMethodSign(),
-					getNextLineNumber(location));
+			engine.addBreakPoint(location.getClassCanonicalName(), location.getMethodSign(), location.getLineNo());
 		}
 
 		engine.run();
@@ -46,13 +45,4 @@ public class LearnInvariants {
 			System.out.println(result);
 		}
 	}
-
-	/*
-	 * TODO: Use Java Parser to get the next statement
-	 */
-	private int getNextLineNumber(ClassLocation location) {
-		//location.getLineNo() + 1: we want to learn the line after
-		return location.getLineNo() + 1;
-	}
-
 }

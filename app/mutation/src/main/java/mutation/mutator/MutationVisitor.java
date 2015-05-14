@@ -145,11 +145,11 @@ public class MutationVisitor extends AbstractMutationVisitor {
 		Integer val = Integer.valueOf(n.getValue());
 		Integer newVal = val;
 		if (val == Integer.MAX_VALUE) {
-			newVal -= Randomness.nextRandomInt(INT_CONST_ADJUST_HALF_VALUE);
+			newVal -= Randomness.nextInt(INT_CONST_ADJUST_HALF_VALUE);
 		} else if (val == Integer.MIN_VALUE) {
-			newVal += Randomness.nextRandomInt(INT_CONST_ADJUST_HALF_VALUE);
+			newVal += Randomness.nextInt(INT_CONST_ADJUST_HALF_VALUE);
 		} else {
-			newVal = Randomness.nextRandomInt(val - INT_CONST_ADJUST_HALF_VALUE, 
+			newVal = Randomness.nextInt(val - INT_CONST_ADJUST_HALF_VALUE, 
 					val + INT_CONST_ADJUST_HALF_VALUE);
 		}
 		newNode(n).getMutatedNodes().add(

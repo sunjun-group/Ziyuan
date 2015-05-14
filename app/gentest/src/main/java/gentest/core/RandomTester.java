@@ -83,7 +83,7 @@ public class RandomTester implements ITester {
 	}
 
 	protected <T>List<T> randomWalk(List<T> methodcalls) {
-		int traceLength = Randomness.nextRandomInt(queryMaxLength) + 1;
+		int traceLength = Randomness.nextInt(queryMaxLength) + 1;
 		List<T> query = new ArrayList<T>(traceLength);
 		for (int i = 0; i < traceLength; i++) {
 			T nextMethodCall = Randomness.randomMember(methodcalls);

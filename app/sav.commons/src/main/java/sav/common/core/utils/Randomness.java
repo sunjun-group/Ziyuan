@@ -30,7 +30,7 @@ public final class Randomness {
 		random = new Random(newSeed);
 	}
 
-	public static boolean nextRandomBool() {
+	public static boolean nextBoolean() {
 		return getRandom().nextBoolean();
 	}
 
@@ -38,14 +38,22 @@ public final class Randomness {
 		return getRandom().nextFloat();
 	}
 	
+	public static int nextInt() {
+		return getRandom().nextInt();
+	}
+	
+	public static Long nextLong() {
+		return getRandom().nextLong();
+	}
+	
 	/**
 	 * return random value from 0 to i - 1 
 	 */
-	public static int nextRandomInt(int i) {
+	public static int nextInt(int i) {
 		return getRandom().nextInt(i);
 	}
 	
-	public static int nextRandomInt(int min, int max) {
+	public static int nextInt(int min, int max) {
 		return getRandom().nextInt((max - min) + 1) + min;
 	}
 	
@@ -53,18 +61,18 @@ public final class Randomness {
 		if (CollectionUtils.isEmpty(arr)) {
 			return null;
 		}
-		return arr[nextRandomInt(arr.length)];
+		return arr[nextInt(arr.length)];
 	}
 
 	public static <T> T randomMember(List<T> list) {
 		if (CollectionUtils.isEmpty(list)) {
 			return null;
 		}
-		return list.get(nextRandomInt(list.size()));
+		return list.get(nextInt(list.size()));
 	}
 
 	public static <T> List<T> randomSubList(List<T> allList) {
-		return randomSubList(allList, nextRandomInt(allList.size()));
+		return randomSubList(allList, nextInt(allList.size()));
 	}
 	
 	public static <T> List<T> randomSubList(T[] allArr) {
@@ -74,7 +82,7 @@ public final class Randomness {
 	public static <T> List<T> randomSubListKeepOder(List<T> allList, int subSize) {
 		List<T> sublist = new ArrayList<T>(allList);
 		for (int i = 0; i < subSize; i++) {
-			sublist.remove(nextRandomInt(sublist.size()));
+			sublist.remove(nextInt(sublist.size()));
 		}
 		return sublist;
 	}
@@ -86,7 +94,7 @@ public final class Randomness {
 	public static <T> List<T> randomSequenceFixSize(List<T> allList, int seqSize) {
 		List<T> seq = new ArrayList<T>(seqSize);
 		for (int i = 0; i < seqSize; i++) {
-			seq.add(allList.get(nextRandomInt(allList.size())));
+			seq.add(allList.get(nextInt(allList.size())));
 		}
 		return seq;
 	}
@@ -95,7 +103,7 @@ public final class Randomness {
 		if (allList.isEmpty()) {
 			return allList;
 		}
-		return randomSequenceFixSize(allList, nextRandomInt(maxSeqSize + 1));
+		return randomSequenceFixSize(allList, nextInt(maxSeqSize + 1));
 	}
 	
 	public static <T> List<T> randomSubList(List<T> allList, int subSize) {
@@ -103,7 +111,7 @@ public final class Randomness {
 		int n = allList.size();
 		int[] swaps = new int[allList.size()];
 		for (int i = 0; i < subSize; i++) {
-			int nextIdx = nextRandomInt(n);
+			int nextIdx = nextInt(n);
 			int realIdx = swaps[nextIdx];
 			while(realIdx != 0) {
 				nextIdx = realIdx - 1;
@@ -120,7 +128,7 @@ public final class Randomness {
 		List<T> sublist = new ArrayList<T>();
 		int n = allList.size();
 		for (int i = 0; i < subSize; i++) {
-			int nextIdx = nextRandomInt(n);
+			int nextIdx = nextInt(n);
 			T ele = allList.get(nextIdx);
 			int eIdx = sublist.indexOf(ele);
 			while (eIdx >= 0) {
@@ -168,4 +176,13 @@ public final class Randomness {
 		}
 		return eles[eles.length - 1];
 	}
+
+	public static void nextBytes(byte[] bytes) {
+		getRandom().nextBytes(bytes);
+	}
+
+	public static Double nextDouble() {
+		return getRandom().nextDouble();
+	}
+
 }

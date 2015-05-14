@@ -135,10 +135,16 @@ public class MutanBug {
 		return JunitResult.readFrom(params.getDestfile());
 	}
 
-	public Map<String, DebugLineInsertionResult> mutateForMachineLearning(List<ClassLocation> locations){
+	public Map<String, DebugLineInsertionResult> mutateForMachineLearning(
+			List<ClassLocation> locations) throws SavException {
 		Map<String, List<ClassLocation>> classLocationMap = createClassLocationMap(locations);
 		
 		Map<String, DebugLineInsertionResult> result = mutator.insertDebugLine(classLocationMap, appData.getAppSrc());
+		Recompiler recompiler = new Recompiler(appData.getVmConfig());
+		for (DebugLineInsertionResult classResult : result.values()) {
+			recompiler.recompileJFile(appData.getAppTarget(),
+					classResult.getMutatedFile());
+		}
 		
 		return result;
 	}

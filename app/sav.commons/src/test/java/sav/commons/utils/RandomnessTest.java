@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package sav.common.core.utils;
+package sav.commons.utils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +14,7 @@ import java.util.List;
 import org.junit.Test;
 
 import sav.common.core.iface.HasProbabilityType;
+import sav.common.core.utils.Randomness;
 
 /**
  * @author LLT
@@ -32,7 +33,7 @@ public class RandomnessTest {
 	@Test
 	public void testRandomInt() {
 		for (int i = 0; i < 100; i++) {
-			System.out.println(Randomness.nextRandomInt(15));
+			System.out.println(Randomness.nextInt(15));
 		}
 	}
 	
