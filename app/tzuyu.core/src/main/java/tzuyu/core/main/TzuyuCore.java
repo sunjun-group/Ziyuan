@@ -48,6 +48,7 @@ public class TzuyuCore {
 	private static final Logger<?> LOGGER = Logger.getDefaultLogger();
 	private AbstractApplicationContext appContext;
 	private ApplicationData appData;
+	private int numberOfTestCases = 100;
 	
 	public TzuyuCore(AbstractApplicationContext appContext) {
 		this.appContext = appContext;
@@ -132,9 +133,8 @@ public class TzuyuCore {
 	private List<String> generateNewTests(String testingClassName, String methodName, String verificationMethod)
 			throws ClassNotFoundException, SavException {
 		Class<?> targetClass = Class.forName(testingClassName);
-		int numberOfTcs = 100;
 		
-		FixTraceGentestBuilder builder = new FixTraceGentestBuilder(numberOfTcs );
+		FixTraceGentestBuilder builder = new FixTraceGentestBuilder(numberOfTestCases );
 		
 		String methodAlias = "methodName";
 		builder.forClass(targetClass).method(methodName, methodAlias)
