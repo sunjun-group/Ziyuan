@@ -122,7 +122,7 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTestPassed");
 		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTestFailed");
-		app.doSpectrumAndMachineLearning("sav.commons.testdata.calculator.Calculator", "getMax", "validateGetMax",
+		app.doSpectrumAndMachineLearning("sav.commons.testdata.calculator.Calculator", "getSum", "validateGetSum",
 				null, junitClassNames, false);
 	}
 
