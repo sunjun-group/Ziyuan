@@ -105,7 +105,7 @@ public class TzuyuCore {
 		List<String> randomTests = generateNewTests(testingClassName, methodName, verificationMethod);
 		junitClassNames.addAll(randomTests);
 		
-		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(1);
+		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(Integer.MAX_VALUE);
 		suspectLocations = getNextLineToAddBreakpoint(suspectLocations);
 		
 		if (CollectionUtils.isEmpty(suspectLocations)) {
@@ -124,6 +124,7 @@ public class TzuyuCore {
 		mutanbug.setAppData(appData);
 		mutanbug.setMutator(new Mutator());
 		Map<String, DebugLineInsertionResult> mutationInfo = mutanbug.mutateForMachineLearning(suspectLocations);
+		System.out.println(mutationInfo);
 		suspectLocations = getNewLocationAfterMutation(suspectLocations, mutationInfo);
 		return suspectLocations;
 	}

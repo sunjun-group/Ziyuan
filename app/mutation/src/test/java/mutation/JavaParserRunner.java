@@ -11,11 +11,21 @@ package mutation;
 import japa.parser.JavaParser;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.Node;
+import japa.parser.ast.expr.Expression;
+import japa.parser.ast.expr.FieldAccessExpr;
+import japa.parser.ast.expr.MethodCallExpr;
+import japa.parser.ast.expr.NameExpr;
+import japa.parser.ast.expr.StringLiteralExpr;
+import japa.parser.ast.stmt.ExpressionStmt;
+import japa.parser.ast.stmt.Statement;
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.Test;
+
+import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
@@ -30,6 +40,21 @@ public class JavaParserRunner {
 		System.out.println(str.length());
 		System.out.println(str);
 		
+	}
+	
+	@Test
+	public void parseStmt() throws Exception {
+		MethodCallExpr methodCallExpr = new MethodCallExpr();
+		methodCallExpr.setNameExpr(new NameExpr("println"));
+		methodCallExpr.setScope(new FieldAccessExpr(new NameExpr("System"),
+				"out"));
+		List<Expression> args = CollectionUtils
+				.listOf((Expression) new StringLiteralExpr("abc"));
+		methodCallExpr.setArgs(args);
+		ExpressionStmt stmt = new ExpressionStmt(methodCallExpr);
+		System.out.println(stmt);
+//		Statement stmt = JavaParser.parseStatement("System.out.println(\"abc\");");
+//		System.out.println(stmt);
 	}
 	
 	@Test

@@ -68,7 +68,7 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 		// collect data
 		List<DebugLineData> data = new ArrayList<DebugLineData>();
 		for (Entry<Integer, Integer> entry : insertMap.entrySet()) {
-			AssertStmt newStmt = genDummyStmt(entry.getValue());
+			Statement newStmt = genDummyStmt(entry.getValue());
 			data.add(new AddedLineData(entry.getKey(), newStmt));
 		}
 		data.addAll(returnStmts.values());
@@ -87,13 +87,40 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 		if (fileWriter != null) {
 			result.setMutatedFile(fileWriter.write(data, className));
 		}
-		for (DebugLineData debugLine : data) {
-			result.mapDebugLine(debugLine.getLineNo(), debugLine.getDebugLine());
-		}
+		
+		Map<Integer, DebugLineData> mutatedLines = buildMapMutatedLineNumberToLineData(data);
+		
+		buildMapOldLineToNewLine(result, mutatedLines);
+		
 		return result;
 	}
 
-	private AssertStmt genDummyStmt(int nodeBeginLine) {
+	private Map<Integer, DebugLineData> buildMapMutatedLineNumberToLineData(
+			List<DebugLineData> data) {
+		Map<Integer, DebugLineData> mutatedLines = new HashMap<Integer, DebugLineData>();
+		for (DebugLineData debugLine : data) {
+			mutatedLines.put(debugLine.getLineNo(), debugLine);
+		}
+		return mutatedLines;
+	}
+
+	private void buildMapOldLineToNewLine(DebugLineInsertionResult result,
+			Map<Integer, DebugLineData> mutatedLines) {
+		int offset = 0;
+		Collections.sort(lines);
+		for (Integer oldLine : lines) {
+			if (mutatedLines.containsKey(oldLine)) {
+				int newLine = mutatedLines.get(oldLine).getDebugLine();
+				offset += (newLine - oldLine);
+				result.mapDebugLine(oldLine, newLine);
+			} else {
+				int newLine = oldLine + offset;
+				result.mapDebugLine(oldLine, newLine);
+			}
+		}
+	}
+	
+	private Statement genDummyStmt(int nodeBeginLine) {
 		BinaryExpr binaryExpr = new BinaryExpr(new StringLiteralExpr(""), new NullLiteralExpr(), 
 				BinaryExpr.Operator.notEquals);
 		AssertStmt newStmt = new AssertStmt(binaryExpr);

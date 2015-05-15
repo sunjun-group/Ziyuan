@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 
 import sav.common.core.Logger;
 import sav.common.core.SavException;
+import sav.common.core.SavRtException;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint;
@@ -136,8 +137,10 @@ public class TestcasesExecutor {
 								locBrpMap);
 						CollectionUtils.addIfNotNull(result, bkpVal);
 					} catch (IncompatibleThreadStateException e) {
+						LOGGER.error(e.getMessage());
 						LOGGER.error((Object[])e.getStackTrace());
 					} catch (AbsentInformationException e) {
+						LOGGER.error(e.getMessage());
 						LOGGER.error((Object[])e.getStackTrace());
 					}
 				}
@@ -202,15 +205,14 @@ public class TestcasesExecutor {
 		return bkVal;
 	}
 
-
-	private StackFrame findFrameByLocation(List<StackFrame> frames, Location location) throws AbsentInformationException{
-		for(StackFrame frame: frames){
-			if(isEqual(frame.location(), location)){
+	private StackFrame findFrameByLocation(List<StackFrame> frames,
+			Location location) throws AbsentInformationException {
+		for (StackFrame frame : frames) {
+			if (isEqual(frame.location(), location)) {
 				return frame;
 			}
 		}
-		
-		throw new RuntimeException("Can not find frame");
+		throw new SavRtException("Can not find frame");
 	}
 
 	private boolean isEqual(Location location1, Location location2) throws AbsentInformationException {

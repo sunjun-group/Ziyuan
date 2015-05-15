@@ -9,6 +9,8 @@
 package sav.strategies.vm;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import sav.strategies.junit.JunitRunner;
  * 
  */
 public class VMConfiguration {
+	public static final int INVALID_PORT = -1;
 	private String javaHome;
 	private List<String> classpaths;
 	private String launchClass = JunitRunner.class.getName();
@@ -40,7 +43,7 @@ public class VMConfiguration {
 	public VMConfiguration() {
 		classpaths = new ArrayList<String>();
 		debug = true;
-		port = 8787;
+		port = INVALID_PORT;
 		enableAssertion = true;
 	}
 	
@@ -86,8 +89,28 @@ public class VMConfiguration {
 	}
 
 	public int getPort() {
+		if (port == INVALID_PORT) {
+			port = findFreePort();
+		}
 		return port;
 	}
+	
+	public static int findFreePort() {
+		ServerSocket socket= null;
+		try {
+			socket= new ServerSocket(0);
+			return socket.getLocalPort();
+		} catch (IOException e) { 
+		} finally {
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+		return INVALID_PORT;		
+	}	
 
 	public void setPort(int port) {
 		this.port = port;

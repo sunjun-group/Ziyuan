@@ -46,8 +46,8 @@ public class VMRunner {
 	}
 
 	private Process start(VMConfiguration config) throws SavException {
-		Assert.assertTrue(config.getPort() != -1, "Cannot find free port to start jvm!");
-
+		Assert.assertTrue(config.getPort() != VMConfiguration.INVALID_PORT,
+				"Cannot find free port to start jvm!");
 		List<String> commands = buildCommandsFromConfiguration(config);
 		return startVm(commands);
 	}

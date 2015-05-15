@@ -45,6 +45,7 @@ public class Recompiler {
 		for (File mutatedFile : mutatedFiles) {
 			builder.add(mutatedFile.getAbsolutePath());
 		}
+		builder.add("-g");
 		VMRunner.startAndWaitUntilStop(builder.toCollection());
 	}
 
