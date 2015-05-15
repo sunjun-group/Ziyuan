@@ -1,5 +1,6 @@
 package mutation.mutator;
 
+import static mutation.mutator.AstNodeFactory.nameExpr;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.Node;
 import japa.parser.ast.expr.AssignExpr;
@@ -127,8 +128,7 @@ public class MutationVisitor extends AbstractMutationVisitor {
 		List<VariableDescriptor> candidates = varSubstituion.find();
 		for (VariableDescriptor var : candidates) {
 			if (!var.getName().equals(n.getName())) {
-				NameExpr expr = new NameExpr(var.getName());
-				muNode.getMutatedNodes().add(expr);
+				muNode.getMutatedNodes().add(nameExpr(var.getName()));
 			}
 		}
 		return false;

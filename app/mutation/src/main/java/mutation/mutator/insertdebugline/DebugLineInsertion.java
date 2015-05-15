@@ -8,19 +8,14 @@
 
 package mutation.mutator.insertdebugline;
 
+import static mutation.mutator.AstNodeFactory.*;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.Node;
 import japa.parser.ast.body.MethodDeclaration;
-import japa.parser.ast.body.VariableDeclarator;
-import japa.parser.ast.body.VariableDeclaratorId;
-import japa.parser.ast.expr.AssignExpr;
-import japa.parser.ast.expr.BinaryExpr;
+import japa.parser.ast.expr.Expression;
 import japa.parser.ast.expr.LiteralExpr;
 import japa.parser.ast.expr.NameExpr;
-import japa.parser.ast.expr.NullLiteralExpr;
-import japa.parser.ast.expr.StringLiteralExpr;
 import japa.parser.ast.expr.ThisExpr;
-import japa.parser.ast.expr.VariableDeclarationExpr;
 import japa.parser.ast.stmt.AssertStmt;
 import japa.parser.ast.stmt.ExpressionStmt;
 import japa.parser.ast.stmt.ReturnStmt;
@@ -121,9 +116,7 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 	}
 	
 	private Statement genDummyStmt(int nodeBeginLine) {
-		BinaryExpr binaryExpr = new BinaryExpr(new StringLiteralExpr(""), new NullLiteralExpr(), 
-				BinaryExpr.Operator.notEquals);
-		AssertStmt newStmt = new AssertStmt(binaryExpr);
+		AssertStmt newStmt = assertNotNullStmt(expression(""));
 		newStmt.setBeginLine(nodeBeginLine + 1);
 		return newStmt;
 	}
@@ -171,22 +164,15 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 
 	@Override
 	public boolean mutate(ReturnStmt n) {
-		if (isNoActionExpression(n.getExpr())){
+		if (doesReturnStmtNeedMutate(n.getExpr())){
 			return false;
 		}
 			
-		String newVarName = generateNewVarName();
-		VariableDeclarator varDec = new VariableDeclarator(
-				new VariableDeclaratorId(newVarName));
-		VariableDeclarationExpr varDecExpr = new VariableDeclarationExpr(
-				curMethod.getType(), CollectionUtils.listOf(varDec));
-		AssignExpr expr = new AssignExpr();
-		expr.setTarget(varDecExpr);
-		expr.setValue(n.getExpr());
-		expr.setOperator(AssignExpr.Operator.assign);
 		List<Node> newNodes = new ArrayList<Node>();
-		newNodes.add(new ExpressionStmt(expr));
-		newNodes.add(new ReturnStmt(new NameExpr(newVarName)));
+		String newVarName = generateNewVarName();
+		newNodes.add(declarationStmt(curMethod.getType(), newVarName, 
+				n.getExpr()));
+		newNodes.add(returnStmt(nameExpr(newVarName)));
 		Integer curLoc = getCurrentLocation();
 		returnStmts.put(curLoc, new ReplacedLineData(curLoc, 
 				n, newNodes));
@@ -195,9 +181,9 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean isNoActionExpression(Node n) {
-		return CollectionUtils.existIn(n.getClass(), LiteralExpr.class,
-				NameExpr.class, ThisExpr.class);
+	private boolean doesReturnStmtNeedMutate(Expression returnExpr) {
+		return !CollectionUtils.existIn(returnExpr.getClass(),
+				LiteralExpr.class, NameExpr.class, ThisExpr.class);
 	}
 
 	/**
