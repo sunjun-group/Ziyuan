@@ -117,12 +117,21 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	}
 	
 	@Test
-	public void whenSpectrumAndMachineLearningUsed() throws Exception{
+	public void whenSpectrumAndMachineLearningUsed1() throws Exception{
 		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTestPassed");
 		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTestFailed");
 		app.doSpectrumAndMachineLearning("sav.commons.testdata.calculator.Calculator", "getSum", "validateGetSum",
+				null, junitClassNames, false);
+	}
+	
+	@Test
+	public void whenSpectrumAndMachineLearningUsed2() throws Exception{
+		TzuyuCore app = new TzuyuCore(testContext);
+		List<String> junitClassNames = new ArrayList<String>();
+		junitClassNames.add("sav.commons.testdata.search1.SearchIndexEqualValueTest");
+		app.doSpectrumAndMachineLearning("sav.commons.testdata.search1.SearchIndexEqualValue", "search", "validate",
 				null, junitClassNames, false);
 	}
 
