@@ -8,26 +8,39 @@
 
 package mutation.mutator;
 
-import japa.parser.ast.expr.AssignExpr;
-import japa.parser.ast.expr.BinaryExpr;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import sav.common.core.Logger;
+import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.EnumUtils;
 
 /**
  * @author LLT
  * 
  */
 public class MutationMap {
-
-	public List<AssignExpr.Operator> getMutationOp(AssignExpr.Operator operator) {
-		// TODO Auto-generated method stub
-		return new ArrayList<AssignExpr.Operator>();
+	private Logger<?> log = Logger.getDefaultLogger();
+	private Map<Enum<?>, List<Enum<?>>> muOpMap;
+	
+	public MutationMap(Map<String, List<String>> config) {
+		this.muOpMap = OperatorUtils.buildMuOpMap(config);
 	}
-
-	public List<BinaryExpr.Operator> getMutationOp(BinaryExpr.Operator operator) {
-		// TODO Auto-generated method stub
-		return new ArrayList<BinaryExpr.Operator>();
+	
+	@SuppressWarnings("unchecked")
+	public <T extends Enum<?>> List<T> getMutationOp(T operator) {
+		List<T> muOps = new ArrayList<T>();
+		for (Enum<?> muOp : CollectionUtils.nullToEmpty(muOpMap.get(operator))) {
+			if (muOp.getDeclaringClass().equals(operator.getClass())) {
+				muOps.add((T) muOp);
+			} else {
+				log.warn("Mismatch between operator and mutation operator types");
+				log.warn("Operator=", EnumUtils.getFullName(operator), ", mutation operator=",
+						EnumUtils.getFullName(muOp));
+			}
+		}
+		return muOps;
 	}
 
 }

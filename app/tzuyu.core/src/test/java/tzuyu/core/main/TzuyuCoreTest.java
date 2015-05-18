@@ -135,24 +135,26 @@ public class TzuyuCoreTest extends AbstractTzTest {
 				null, junitClassNames, false);
 	}
 
-//	@Test
-//	@Ignore("For demo with external codes")
-//	public void whenSpectrumAndMachineLearningUsed2() throws Exception {
-//		final ApplicationData appData = testContext.getAppData();
-//		final List<String> appClasspaths = appData.getAppClasspaths();
-//		appClasspaths.add("/Users/npn/dev/projects/data/target/test-classes");
-//		appClasspaths.add("/Users/npn/dev/projects/data/target/classes");
-//		appClasspaths.add(TestConfiguration.getTzAssembly(Constants.TZUYU_JAVASLICER_ASSEMBLY));
-//		appData.setAppSrc("/Users/npn/dev/projects/data/src/test/java");
-//		appData.setAppTarget("/Users/npn/dev/projects/data/target/test-classes");
-//
-//		final TzuyuCore app = new TzuyuCore(testContext);
-//		List<String> testingClasses = Arrays.asList("simpleTestData.Calculator");
-//		List<String> junitClassNames = Arrays.asList("simpleTestData.CalculatorTestFailed",
-//				"simpleTestData.CalculatorTestPassed");
-//		app.doSpectrumAndMachineLearning(testingClasses, null, junitClassNames, false);
-//	}
-//
+	@Test
+	@Ignore("For testing external codes")
+	public void whenSpectrumAndMachineLearningUsed2() throws Exception {
+		final ApplicationData appData = testContext.getAppData();
+		final List<String> appClasspaths = appData.getAppClasspaths();
+		appClasspaths.add("/Users/npn/dev/projects/data/target/test-classes");
+		appClasspaths.add("/Users/npn/dev/projects/data/target/classes");
+		appClasspaths.add(TestConfiguration.getTzAssembly(Constants.TZUYU_JAVASLICER_ASSEMBLY));
+		
+		appData.setAppSrc("/Users/npn/dev/projects/data/src/main/java");
+		appData.setAppTarget("/Users/npn/dev/projects/data/target/test-classes");
+
+		final TzuyuCore app = new TzuyuCore(testContext);
+		List<String> junitClassNames = new ArrayList<String>();
+		junitClassNames.add("simpleTestData.CalculatorTestFailed");
+		junitClassNames.add("simpleTestData.CalculatorTestPassed");
+		app.doSpectrumAndMachineLearning("simpleTestData.Calculator", "getMax", "validateGetMax",
+				null, junitClassNames, false);
+	}
+
 //	@Test
 //	@Ignore("For testing with Guava codes")
 //	public void testGuava1() throws Exception {

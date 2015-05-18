@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import main.FaultLocalization;
-import mutation.mutator.Mutator;
 import mutation.mutator.insertdebugline.DebugLineInsertionResult;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -68,7 +67,7 @@ public class TzuyuCore {
 				appData.getSuspiciousCalculAlgo());
 		MutanBug mutanbug = new MutanBug();
 		mutanbug.setAppData(appData);
-		mutanbug.setMutator(new Mutator());
+		mutanbug.setMutator(appContext.getMutator());
 		mutanbug.mutateAndRunTests(report, junitClassNames);
 		return report;
 	}
@@ -83,7 +82,7 @@ public class TzuyuCore {
 				appData.getSuspiciousCalculAlgo());
 		MutanBug mutanbug = new MutanBug();
 		mutanbug.setAppData(appData);
-		mutanbug.setMutator(new Mutator());
+		mutanbug.setMutator(appContext.getMutator());
 		mutanbug.mutateAndRunTests(report, junitClassNames);
 		return report;
 	}
@@ -123,7 +122,7 @@ public class TzuyuCore {
 			List<ClassLocation> suspectLocations) throws SavException {
 		MutanBug mutanbug = new MutanBug();
 		mutanbug.setAppData(appData);
-		mutanbug.setMutator(new Mutator());
+		mutanbug.setMutator(appContext.getMutator());
 		Map<String, DebugLineInsertionResult> mutationInfo = mutanbug.mutateForMachineLearning(suspectLocations);
 		System.out.println(mutationInfo);
 		suspectLocations = getNewLocationAfterMutation(suspectLocations, mutationInfo);

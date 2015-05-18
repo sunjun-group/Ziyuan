@@ -45,6 +45,7 @@ public class MutationVisitor extends AbstractMutationVisitor {
 	public MutationVisitor(MutationMap mutationMap, ClassAnalyzer classAnalyzer) {
 		lineNumbers = new ArrayList<Integer>();
 		result = new HashMap<Integer, List<MutationNode>>();
+		nodeCloner = new CloneVisitor();
 		setMutationMap(mutationMap);
 		setClasAnalyzer(classAnalyzer);
 	}
