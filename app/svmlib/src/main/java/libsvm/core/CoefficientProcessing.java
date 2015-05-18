@@ -8,6 +8,8 @@
 
 package libsvm.core;
 
+import java.util.Arrays;
+
 
 /**
  * @author khanh
@@ -15,15 +17,24 @@ package libsvm.core;
  */
 public class CoefficientProcessing {
 
-	private static final int BOUND_MIN_COEFFICIENT = 100;
+	private static final int BOUND_MIN_COEFFICIENT = 100; //min coefficient is bounded
 	private static final double MAX_DIFFERENCE_TO_NEAREST_INTEGER = Math.pow(10, -1);
 	private static final double EPSILON = Math.pow(10, -6);
 	private static final double NUMBER_DECIMAL_TO_KEEP = 1000000000;
+	private static final int BOUND_RATE_MIN_MAX_COEFFICIENT = 10; //max coefficient / min coefficient is bounded
 	
 	public double[] process(Divider divider){
 		double[] thetas = getFullThetas(divider);
+		double[] backup = Arrays.copyOf(thetas, thetas.length);
 		
-		return integerRounding(thetas);
+		thetas = integerRounding(thetas);
+		
+		if(isValidated(thetas)){
+			return thetas;
+		}
+		else{
+			return backup;
+		}
 	}
 
 	private double[] getFullThetas(Divider divider) {
@@ -91,10 +102,28 @@ public class CoefficientProcessing {
 		}
 		
 		double[] result = new double[thetas.length];
+		double maxRate = Double.MIN_VALUE;
 		for(int i = 0; i < thetas.length; i++){
 			result[i] = thetas[i] / min;
+			
+			double absCoefficient = Math.abs(result[i]);
+			if(absCoefficient > maxRate){
+				maxRate = absCoefficient;
+			}
+			
 		}
 		
+		if(maxRate > BOUND_RATE_MIN_MAX_COEFFICIENT){
+			//if the value is too small compared with others, we reset it is as zero
+			for(int i = 0; i < thetas.length; i++){
+				double absCoefficient = Math.abs(result[i]);
+				if(Double.compare(absCoefficient, 1) == 0){
+					result[i] = 0;
+				}
+			}
+			
+			return integerRounding(result);
+		}
 		return result;
 	}
 	
@@ -139,5 +168,16 @@ public class CoefficientProcessing {
 	private boolean isApproximateInteger(double number){
 		long roundingInteger = Math.round(number);
 		return Math.abs(number - roundingInteger) < MAX_DIFFERENCE_TO_NEAREST_INTEGER;
+	}
+	
+	private boolean isValidated(double[] numbers){
+		for(int i = 0; i < numbers.length - 1; i++){
+			double number = numbers[i];
+			if(Double.compare(number, 0) != 0){
+					return true;
+			}
+		}
+		
+		return false;
 	}
 }
