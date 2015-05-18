@@ -53,8 +53,8 @@ public class MutationFileWriter extends AbstractMutationFileWriter {
 					org.apache.commons.io.FileUtils.writeLines(file, newContent);
 					files.add(file);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error("Cannot write mutation file");
+					log.error(e.getMessage());
 				}
 			}
 		}
