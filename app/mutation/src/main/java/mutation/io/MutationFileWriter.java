@@ -17,6 +17,7 @@ import java.util.List;
 
 import mutation.mutator.MutationVisitor.MutationNode;
 import mutation.utils.FileUtils;
+import sav.common.core.Logger;
 import sav.common.core.utils.StringUtils;
 
 /**
@@ -24,7 +25,7 @@ import sav.common.core.utils.StringUtils;
  *
  */
 public class MutationFileWriter extends AbstractMutationFileWriter {
-
+	private Logger<?> log = Logger.getDefaultLogger();
 	public MutationFileWriter(String srcFolder) {
 		super(srcFolder);
 	}
@@ -43,6 +44,12 @@ public class MutationFileWriter extends AbstractMutationFileWriter {
 				try {
 					lines = org.apache.commons.io.FileUtils.readLines(javaFile);
 					List<String> newContent = createNewContent(lines, muNode.getOrgNode(), node);
+					if (log.isDebug()) {
+						log.debug(file.getAbsolutePath());
+						for (String line : newContent) {
+							log.debug(line);
+						}
+					}
 					org.apache.commons.io.FileUtils.writeLines(file, newContent);
 					files.add(file);
 				} catch (IOException e) {

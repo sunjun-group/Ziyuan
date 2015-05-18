@@ -10,7 +10,11 @@ package tzuyu.core.main.context;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.HashMap;
+import java.util.List;
 
+import mutation.mutator.IMutator;
+import mutation.mutator.Mutator;
 import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.slicing.ISlicer;
@@ -30,6 +34,7 @@ import codecoverage.jacoco.agent.JaCoCoAgent;
 public abstract class AbstractApplicationContext implements IApplicationContext {
 	private ISlicer slicer;
 	protected ICodeCoverage codeCoverageTool;
+	private IMutator mutator;
 	private ApplicationData appData;
 
 	protected ICodeCoverage initCodeCoverage() {
@@ -90,5 +95,14 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 	
 	public ApplicationData getAppData() {
 		return appData;
+	}
+
+	public IMutator getMutator() {
+		if (this.mutator == null) {
+			Mutator mutator = new Mutator();
+			mutator.setOpMapConfig(new HashMap<String, List<String>>());
+			this.mutator = mutator;
+		}
+		return this.mutator;
 	}
 }

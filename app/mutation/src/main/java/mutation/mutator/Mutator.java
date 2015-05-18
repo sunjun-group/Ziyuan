@@ -3,10 +3,14 @@ package mutation.mutator;
 import japa.parser.ast.CompilationUnit;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.apache.commons.io.FileUtils;
 
 import mutation.io.DebugLineFileWriter;
 import mutation.io.MutationFileWriter;
@@ -15,6 +19,7 @@ import mutation.mutator.insertdebugline.DebugLineInsertion;
 import mutation.mutator.insertdebugline.DebugLineInsertionResult;
 import mutation.parser.ClassAnalyzer;
 import mutation.parser.JParser;
+import sav.common.core.SavRtException;
 import sav.common.core.utils.BreakpointUtils;
 import sav.strategies.dto.ClassLocation;
 
@@ -22,6 +27,9 @@ import sav.strategies.dto.ClassLocation;
  * Created by hoangtung on 4/9/15.
  */
 public class Mutator implements IMutator {
+	//TODO LLT: correct the configuration file path, temporary fix for running in eclipse
+	private static final String OPERATOR_MAP_FILE = "./src/main/resources/OperatorMap.txt";
+	private Map<String, List<String>> opMapConfig;
 	
 	@Override
 	public <T extends ClassLocation> Map<String, MutationResult> mutate(
@@ -30,7 +38,7 @@ public class Mutator implements IMutator {
 		JParser cuParser = new JParser(srcFolder, classLocationMap.keySet());
 		ClassAnalyzer classAnalyzer = new ClassAnalyzer(srcFolder, cuParser);
 		MutationVisitor mutationVisitor = new MutationVisitor(
-				new MutationMap(), classAnalyzer);
+				new MutationMap(getOpMapConfig()), classAnalyzer);
 		Map<String, MutationResult> result = new HashMap<String, MutationResult>();
 		MutationFileWriter fileWriter = new MutationFileWriter(srcFolder);
 		for (Entry<String, List<Integer>> entry : classLocationMap.entrySet()) {
@@ -74,5 +82,35 @@ public class Mutator implements IMutator {
 			result.put(entry.getKey(), insertResult);
 		}
 		return result;
+	}
+	
+	public Map<String, List<String>> getOpMapConfig() {
+		if (opMapConfig == null) {
+			// load default
+			opMapConfig = new HashMap<String, List<String>>();
+			try {
+				List<?> lines = FileUtils.readLines(new File(OPERATOR_MAP_FILE));
+				for (Object lineObj : lines) {
+					String line = (String) lineObj;
+					String[] parts = line.split(":");
+					if (parts.length != 2)
+	                {
+	                    continue;
+	                }
+
+	                String op = parts[0].trim();
+	                parts[1] = parts[1].trim();
+	                String[] muOps = parts[1].split(" ");
+	                opMapConfig.put(op, Arrays.asList(muOps));
+				}
+			} catch (IOException e) {
+				throw new SavRtException(e);
+			}
+		}
+		return opMapConfig;
+	}
+	
+	public void setOpMapConfig(Map<String, List<String>> opMapConfig) {
+		this.opMapConfig = opMapConfig;
 	}
 }
