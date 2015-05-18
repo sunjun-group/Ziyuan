@@ -125,15 +125,6 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		app.doSpectrumAndMachineLearning("sav.commons.testdata.calculator.Calculator", "getSum", "validateGetSum",
 				null, junitClassNames, false);
 	}
-	
-	@Test
-	public void whenSpectrumAndMachineLearningUsed2() throws Exception{
-		TzuyuCore app = new TzuyuCore(testContext);
-		List<String> junitClassNames = new ArrayList<String>();
-		junitClassNames.add("sav.commons.testdata.search1.SearchIndexEqualValueTest");
-		app.doSpectrumAndMachineLearning("sav.commons.testdata.search1.SearchIndexEqualValue", "search", "validate",
-				null, junitClassNames, false);
-	}
 
 	@Test
 	@Ignore("For testing external codes")
@@ -155,6 +146,15 @@ public class TzuyuCoreTest extends AbstractTzTest {
 				null, junitClassNames, false);
 	}
 
+	@Test
+	public void whenSpectrumAndMachineLearningUsed3() throws Exception{
+		TzuyuCore app = new TzuyuCore(testContext);
+		List<String> junitClassNames = new ArrayList<String>();
+		junitClassNames.add("sav.commons.testdata.search1.SearchIndexEqualValueTest");
+		app.doSpectrumAndMachineLearning("sav.commons.testdata.search1.SearchIndexEqualValue", "search", "validate",
+				null, junitClassNames, false);
+	}
+	
 //	@Test
 //	@Ignore("For testing with Guava codes")
 //	public void testGuava1() throws Exception {
