@@ -192,12 +192,7 @@ public class Engine {
 			} else {
 				// User did not specify variable names
 				// We use all available ones
-				final BreakpointValue sample = testResult.getSampleValue(bkp);
-				Assert.assertTrue(sample != null, "No test result found.");
-				Assert.assertTrue(
-						sample.getAllLabels() != null && sample.getAllLabels().size() > 0,
-						"No variable exists at the given breakpoint.");
-				machine.setDataLabels(sample.getAllLabels());
+				machine.setDataLabels(testResult.getAllVariableLabels(true, bkp));
 			}
 
 			BugExpert.addDataPoints(machine, passValues, failValues);
