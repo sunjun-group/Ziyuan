@@ -197,7 +197,8 @@ public class Engine {
 			} else {
 				// User did not specify variable names
 				// We use all available ones
-				machine.setDataLabels(testResult.getAllVariableLabels(true, bkp));
+				List<String> allVariableLabels = testResult.getAllVariableLabels(true, bkp);
+				machine.setDataLabels(allVariableLabels);
 			}
 
 			BugExpert.addDataPoints(machine, passValues, failValues);

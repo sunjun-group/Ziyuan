@@ -127,7 +127,7 @@ public class TzuyuCore {
 		return report;
 	}
 
-	private List<BreakPoint> getNextLineToAddBreakpoint(
+	private List<BreakPoint> getNextLineToAddBreakpoint( 
 			List<BreakPoint> suspectLocations) throws SavException {
 		MutanBug mutanbug = new MutanBug();
 		mutanbug.setAppData(appData);
