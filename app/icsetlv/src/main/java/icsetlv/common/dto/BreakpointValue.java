@@ -10,7 +10,10 @@ package icsetlv.common.dto;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import sav.common.core.utils.CollectionUtils;
 
@@ -56,20 +59,20 @@ public class BreakpointValue extends ExecValue {
 		}
 	}
 
-	public List<String> getAllLabels() {
+	public Set<String> getAllLabels() {
 		return getChildLabels(this);
 	}
 
-	private List<String> getChildLabels(final ExecValue value) {
+	private Set<String> getChildLabels(final ExecValue value) {
+		final Set<String> labels = new HashSet<String>();
 		if (value == null || value.children == null || value.children.isEmpty()) {
-			return Arrays.asList(value.varId);
+			labels.add(value.varId);
 		} else {
-			List<String> labels = new ArrayList<String>();
 			for (ExecValue child : value.children) {
 				labels.addAll(getChildLabels(child));
 			}
-			return labels;
 		}
+		return labels;
 	}
 
 	public double[] getAllValues() {
