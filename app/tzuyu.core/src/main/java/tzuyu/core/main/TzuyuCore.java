@@ -112,7 +112,7 @@ public class TzuyuCore {
 			LOGGER.warn("Did not find any place to add break point. SVM will not run.");
 		} else {
 			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig());
-			learnInvariant.learn(suspectLocations, junitClassNames);
+			learnInvariant.learn(suspectLocations, junitClassNames, appData.getAppSrc());
 		}
 
 		return report;

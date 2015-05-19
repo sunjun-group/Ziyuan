@@ -109,6 +109,11 @@ public class Engine {
 		for (String variableName : variableNames) {
 			breakPoint.addVars(new Variable(variableName));
 		}
+		
+		return addBreakPoint(breakPoint);
+	}
+	
+	public Engine addBreakPoint(BreakPoint breakPoint) {
 		breakPoints.add(breakPoint);
 		return this;
 	}
