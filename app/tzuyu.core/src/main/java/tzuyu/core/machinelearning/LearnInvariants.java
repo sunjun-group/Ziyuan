@@ -10,15 +10,11 @@ package tzuyu.core.machinelearning;
 
 import icsetlv.Engine;
 import icsetlv.Engine.Result;
-import icsetlv.variable.VariableNameCollector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.dto.ClassLocation;
 import sav.strategies.vm.VMConfiguration;
 
 /**
@@ -35,19 +31,9 @@ public class LearnInvariants {
 		}
 	}
 
-	public void learn(List<ClassLocation> locations, List<String> junitClassNames, String sourceFolder) throws Exception {
+	public void learn(List<BreakPoint> breakpoints, List<String> junitClassNames, String sourceFolder) throws Exception {
 		List<String> testcases = JunitUtils.extractTestMethods(junitClassNames);
 		engine.addNotExecutedTestcases(testcases);
-
-		List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
-		for (ClassLocation location : locations) {
-			BreakPoint breakpoint = new BreakPoint(location.getClassCanonicalName(), location.getMethodSign(), location.getLineNo());
-			breakpoints.add(breakpoint);
-		}
-
-		//compute variables appearing in each breakpoint
-		VariableNameCollector nameCollector = new VariableNameCollector(Arrays.asList(sourceFolder));
-		nameCollector.updateVariables(breakpoints);
 		
 		for(BreakPoint breakpoint: breakpoints){
 			engine.addBreakPoint(breakpoint);

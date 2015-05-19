@@ -8,6 +8,7 @@
 
 package tzuyu.core.main;
 
+import icsetlv.variable.VariableNameCollector;
 import japa.parser.ast.CompilationUnit;
 
 import java.io.File;
@@ -24,7 +25,9 @@ import org.apache.commons.collections.CollectionUtils;
 import sav.common.core.Logger;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
+import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
+import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.ClassLocation;
 import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.machinelearning.LearnInvariants;
@@ -106,25 +109,30 @@ public class TzuyuCore {
 		junitClassNames.addAll(randomTests);
 		
 		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(Integer.MAX_VALUE);
-		suspectLocations = getNextLineToAddBreakpoint(suspectLocations);
+		List<BreakPoint> breakpoints = BreakpointUtils.toBreakpoints(suspectLocations);
+		
+		//compute variables appearing in each breakpoint
+		VariableNameCollector nameCollector = new VariableNameCollector(Arrays.asList(appData.getAppSrc()));
+		nameCollector.updateVariables(breakpoints);
+		
+		breakpoints = getNextLineToAddBreakpoint(breakpoints);
 		
 		if (CollectionUtils.isEmpty(suspectLocations)) {
 			LOGGER.warn("Did not find any place to add break point. SVM will not run.");
 		} else {
 			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig());
-			learnInvariant.learn(suspectLocations, junitClassNames, appData.getAppSrc());
+			learnInvariant.learn(breakpoints, junitClassNames, appData.getAppSrc());
 		}
 
 		return report;
 	}
 
-	private List<ClassLocation> getNextLineToAddBreakpoint(
-			List<ClassLocation> suspectLocations) throws SavException {
+	private List<BreakPoint> getNextLineToAddBreakpoint(
+			List<BreakPoint> suspectLocations) throws SavException {
 		MutanBug mutanbug = new MutanBug();
 		mutanbug.setAppData(appData);
 		mutanbug.setMutator(appContext.getMutator());
 		Map<String, DebugLineInsertionResult> mutationInfo = mutanbug.mutateForMachineLearning(suspectLocations);
-		System.out.println(mutationInfo);
 		suspectLocations = getNewLocationAfterMutation(suspectLocations, mutationInfo);
 		return suspectLocations;
 	}
@@ -164,17 +172,20 @@ public class TzuyuCore {
 		return junitClassNames;
 	}
 
-	private List<ClassLocation> getNewLocationAfterMutation(
-			List<ClassLocation> suspectLocations,
+	private List<BreakPoint> getNewLocationAfterMutation(
+			List<BreakPoint> suspectLocations,
 			Map<String, DebugLineInsertionResult> mutationInfo) {
-		List<ClassLocation> result = new ArrayList<ClassLocation>(suspectLocations.size());
+		List<BreakPoint> result = new ArrayList<BreakPoint>(suspectLocations.size());
 		DebugLineInsertionResult lineInfo = mutationInfo.get(suspectLocations.get(0).getClassCanonicalName());
 		Map<Integer, Integer> lineToNextLine = lineInfo.getOldNewLocMap();
 		
-		for(ClassLocation location: suspectLocations){
+		for(BreakPoint location: suspectLocations){
 			Integer newLineNo = lineToNextLine.get(location.getLineNo());
 			if (newLineNo != null) {
-				result.add(new ClassLocation(location.getClassCanonicalName(), null, newLineNo));
+				BreakPoint newBkp = new BreakPoint(location.getClassCanonicalName(), newLineNo);
+				newBkp.setVars(location.getVars());
+				result.add(newBkp);
+				
 			} else {
 				result.add(location);
 			}

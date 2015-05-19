@@ -89,4 +89,16 @@ public class BreakpointUtils {
 		return new ArrayList<String>(classNames);
 	}
 	
+	public static List<BreakPoint> toBreakpoints(List<ClassLocation> locations) {
+		List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
+		for (ClassLocation location : locations) {
+			BreakPoint breakpoint = new BreakPoint(
+					location.getClassCanonicalName(), location.getMethodSign(),
+					location.getLineNo());
+			breakpoints.add(breakpoint);
+		}
+
+		return breakpoints;
+	}
+	
 }

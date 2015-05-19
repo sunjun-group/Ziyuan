@@ -135,8 +135,8 @@ public class MutanBug {
 		return JunitResult.readFrom(params.getDestfile());
 	}
 
-	public Map<String, DebugLineInsertionResult> mutateForMachineLearning(
-			List<ClassLocation> locations) throws SavException {
+	public <T extends ClassLocation> Map<String, DebugLineInsertionResult> mutateForMachineLearning(
+			List<T> locations) throws SavException {
 		Map<String, List<ClassLocation>> classLocationMap = createClassLocationMap(locations);
 		
 		Map<String, DebugLineInsertionResult> result = mutator.insertDebugLine(classLocationMap, appData.getAppSrc());
@@ -149,12 +149,8 @@ public class MutanBug {
 		return result;
 	}
 
-	/**
-	 * @param locations
-	 * @return
-	 */
-	private Map<String, List<ClassLocation>> createClassLocationMap(
-			List<ClassLocation> locations) {
+	private <T extends ClassLocation> Map<String, List<ClassLocation>> createClassLocationMap(
+			List<T> locations) {
 		Map<String, List<ClassLocation>> classLocationMap = new HashMap<String, List<ClassLocation>>();
 		for(ClassLocation location: locations){
 			String className = location.getClassCanonicalName();

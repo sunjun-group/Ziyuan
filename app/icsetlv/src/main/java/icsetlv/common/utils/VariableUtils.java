@@ -24,8 +24,8 @@ import com.sun.jdi.LocalVariable;
  *
  */
 public class VariableUtils {
-	private static boolean NOT_FILTER = false;
-	private static boolean filterBreakpointVar = NOT_FILTER;
+	private static final boolean NOT_FILTER = false;
+	private static boolean filterBreakpointVar = true;
 	/**
 	 * currently, this method will ignore the case of method access.
 	 */

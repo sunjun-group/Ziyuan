@@ -34,6 +34,7 @@ import org.apache.commons.io.FileUtils;
 
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.ObjectUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
@@ -63,7 +64,7 @@ public class VariableNameCollector {
 					int stmtStart = getStmtOffset(content, charCount, line, bkpLine);
 					Node statement = parseStmt(getExtStmt(content, stmtStart));
 					int stmtEnd = getStmtLength(statement, content, stmtStart);
-					bkp.addVars(extractVarNames(statement));
+					CollectionUtils.addIfNotNullNotExist(bkp.getVars(), extractVarNames(statement));
 					bkp.setCharStart(stmtStart);
 					bkp.setCharEnd(stmtEnd);
 					LogUtils.log("breakpoint: ", bkp);
