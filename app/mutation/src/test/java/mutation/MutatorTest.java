@@ -38,6 +38,7 @@ public class MutatorTest {
 		String clazzName = MutationTestData.class.getName();
 		List<ClassLocation> value = new ArrayList<ClassLocation>();
 		value.add(new ClassLocation(clazzName, null, 27));
+		value.add(new ClassLocation(clazzName, null, 33));
 		Map<String, MutationResult> result = mutator.mutate(value,  "./src/test/java");
 		System.out.println(result);
 	}

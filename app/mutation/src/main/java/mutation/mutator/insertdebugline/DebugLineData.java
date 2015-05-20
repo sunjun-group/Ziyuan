@@ -57,4 +57,10 @@ public abstract class DebugLineData {
 		ADD, REPLACE
 	}
 
+	@Override
+	public String toString() {
+		return "DebugLineData [lineNo=" + lineNo + ", debugLine=" + debugLine
+				+ "]";
+	}
+	
 }

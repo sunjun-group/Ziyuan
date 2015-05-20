@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package mutation.mutator;
+package mutation.mutator.mapping;
 
 import japa.parser.ast.expr.AssignExpr;
 import japa.parser.ast.expr.BinaryExpr;
@@ -24,8 +24,8 @@ import sav.common.core.Logger;
  * @author LLT
  *
  */
-public class OperatorUtils {
-	private OperatorUtils(){}
+public class MuMapUtils {
+	private MuMapUtils(){}
 	private static Logger<?> log = Logger.getDefaultLogger();
 	private static final Map<String, Enum<?>> opMap;
 	

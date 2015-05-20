@@ -14,8 +14,7 @@ package testdata.mutator;
  */
 public class MutationTestData {
 	
-	public static void main(String[] args)
-    {
+	public double run() {
         int a = 3 + 2 - 1;
         double b = 3.5;
         double c = a - b / 2 + 4;
@@ -31,10 +30,6 @@ public class MutationTestData {
             else
                 c = c + 1;
         }
-
-        {
-            double dd = 10;
-            dd = dd / 2 * 3 + 1.5;
-        }
+        return a + b + c;
     }
 }

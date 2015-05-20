@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package mutation.mutator;
+package mutation.mutator.mapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class MutationMap {
 	private Map<Enum<?>, List<Enum<?>>> muOpMap;
 	
 	public MutationMap(Map<String, List<String>> config) {
-		this.muOpMap = OperatorUtils.buildMuOpMap(config);
+		this.muOpMap = MuMapUtils.buildMuOpMap(config);
 	}
 	
 	@SuppressWarnings("unchecked")

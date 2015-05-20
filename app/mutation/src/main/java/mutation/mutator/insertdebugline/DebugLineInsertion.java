@@ -106,7 +106,7 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 		for (Integer oldLine : lines) {
 			if (mutatedLines.containsKey(oldLine)) {
 				int newLine = mutatedLines.get(oldLine).getDebugLine();
-				offset += (newLine - oldLine);
+				offset = (newLine - oldLine);
 				result.mapDebugLine(oldLine, newLine);
 			} else {
 				int newLine = oldLine + offset;
@@ -164,7 +164,7 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 
 	@Override
 	public boolean mutate(ReturnStmt n) {
-		if (doesReturnStmtNeedMutate(n.getExpr())){
+		if (!doesReturnStmtNeedMutate(n.getExpr())){
 			return false;
 		}
 			
