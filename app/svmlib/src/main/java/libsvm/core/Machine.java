@@ -273,7 +273,9 @@ public class Machine {
 	}
 
 	public double getModelAccuracy() {
-		Assert.assertNotNull("SVM model is not available yet.", model);
+		if (model == null) {
+			return 0.0;
+		}
 		return 1.0 - ((double) getWrongClassifiedDataPoints(data).size() / data.size());
 	}
 
