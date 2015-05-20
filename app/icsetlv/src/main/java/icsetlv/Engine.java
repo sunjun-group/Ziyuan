@@ -174,6 +174,7 @@ public class Engine {
 
 		results = new ArrayList<Result>(breakPoints.size());
 		for (BreakPoint bkp : breakPoints) {
+			LOGGER.info("Start to learn at " + bkp);
 			final List<BreakpointValue> passValues = testResult.getPassValues(bkp);
 			final List<BreakpointValue> failValues = testResult.getFailValues(bkp);
 			// Cannot train if there are not enough data
@@ -218,6 +219,7 @@ public class Engine {
 			result.learnedLogic = machine.getLearnedLogic();
 			result.accuracy = machine.getModelAccuracy();
 
+			LOGGER.info("Learn: " + result);
 			results.add(result);
 		}
 
