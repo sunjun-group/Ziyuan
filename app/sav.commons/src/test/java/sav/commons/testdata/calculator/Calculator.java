@@ -37,5 +37,18 @@ public class Calculator {
 		
 		return expectSum == sum;
 	}
+	
+	public static boolean loopInvariant(int a, int b){
+//		for(int i = 0; i < 10; i++){
+//			a--;
+//			b--;
+//		}
+		
+		return a >= b;
+	}
+	
+	public static boolean validateLoopInvariant(int a, int b, boolean result){
+		return a >= b;
+	}
 
 }

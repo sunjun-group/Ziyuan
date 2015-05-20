@@ -25,18 +25,8 @@ public class CoefficientProcessing {
 	
 	public double[] process(Divider divider){
 		double[] thetas = getFullThetas(divider);
-		double[] backup = Arrays.copyOf(thetas, thetas.length);
-		
-		thetas = integerRounding(thetas);
-		
-		if(isValidated(thetas)){
-			return thetas;
-		}
-		else{
-			return backup;
-		}
+		return process(thetas);
 	}
-
 	private double[] getFullThetas(Divider divider) {
 		double[] oldThetas = divider.getThetas();
 		//the last element is the theta0
@@ -48,15 +38,24 @@ public class CoefficientProcessing {
 		return thetas;
 	}
 	
-	/**
-	 * @param thetas
-	 * @return
-	 */
-	public double[] integerRounding(double[] thetas) {
+	public double[] process(double[] thetas) {
+		double[] backup = Arrays.copyOf(thetas, thetas.length);
+		
+		thetas = integerRounding(thetas);
+		
+		if(isValidated(thetas)){
+			return thetas;
+		}
+		else{
+			return backup;
+		}
+	}
+	
+	private double[] integerRounding(double[] thetas) {
 		thetas = detectZeroCoefficient(thetas);
 		thetas = truncateDecimal(thetas);
 		thetas = pivotMinCoefficient(thetas);
-		thetas = integerRound(thetas);
+ 		thetas = integerRound(thetas);
 		
 		return thetas;
 	}
@@ -94,7 +93,9 @@ public class CoefficientProcessing {
 	
 	private double[] pivotMinCoefficient(double[] thetas) {
 		double min = Double.MAX_VALUE;
-		for(int i = 0; i < thetas.length; i++){
+		
+		//only find min for coefficient of variables, not constant
+		for(int i = 0; i < thetas.length - 1; i++){
 			double absCoefficient = Math.abs(thetas[i]);
 			if(absCoefficient > 0 && absCoefficient < min){
 				min = absCoefficient;
@@ -149,14 +150,14 @@ public class CoefficientProcessing {
 			}
 			
 			if(allCoefficientsInteger){
-				//update constant accordingly, we must take the floor because the divider for positive is in the form
+				//update constant accordingly, we must take the ceiling because the divider for positive is in the form
 				//ax+by >= c, unless the difference is extremmely small, 1.99999999999999
 				double value = coefficients[coefficients.length - 1] * i;
-				if(Math.ceil(value) - value < EPSILON){
-					result[coefficients.length - 1] = Math.ceil(value);
+				if(value - Math.floor(value) < EPSILON){
+					result[coefficients.length - 1] = Math.floor(value);
 				}
 				else{
-					result[coefficients.length - 1] = Math.floor(value);
+					result[coefficients.length - 1] = Math.ceil(value);
 				}
 				return result;
 			}
