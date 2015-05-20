@@ -14,12 +14,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.Map;
 
 import sav.common.core.Constants;
 import sav.common.core.Logger;
+import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
@@ -36,42 +37,46 @@ public class FileCompilationUnitPrinter implements ICompilationUnitPrinter {
 	}
 	
 	public void print(List<CompilationUnit> compilationUnits) {
-		for (CompilationUnit cu : compilationUnits) {
-			/* create folder if does not exist */
-			String classFolder = getClassFolder(srcFolder, 
-						cu.getPackage().getName().getName());
-			new File(classFolder).mkdirs();
-			/* create java file */
-			String filePath = getFilePath(classFolder, cu.getTypes().get(0).getName());
-			try {
-				File file = new File(filePath);
-				file.createNewFile();
-				/* write content */
-				PrintStream stream = new PrintStream(file);
-				stream.println(cu.toString());
-				stream.close();
-				files.add(file);
-			} catch (IOException e) {
-				logger.logEx(e, "cannot create file " + filePath);
+		Map<String, List<CompilationUnit>> cuGroup = groupByClassFolder(compilationUnits);
+		for (String classFolder : cuGroup.keySet()) {
+			File folder = new File(classFolder);
+			if (!folder.exists()) {
+				folder.mkdirs();
+			}
+			for (CompilationUnit cu : cuGroup.get(classFolder)) {
+				/* create java file */
+				String filePath = getFilePath(classFolder, cu.getTypes().get(0).getName());
+				try {
+					File file = new File(filePath);
+					if (!file.exists()) {
+						file.createNewFile();
+					}
+					/* write content */
+					PrintStream stream = new PrintStream(file);
+					stream.println(cu.toString());
+					stream.close();
+					files.add(file);
+				} catch (IOException e) {
+					logger.logEx(e, "cannot create file " + filePath);
+				}
 			}
 		}
 	}
-
-	private String getClassFolder(String srcFolderPath, String pkg) {
-		if (!new File(srcFolderPath).exists()) {
-			throw new IllegalArgumentException(String.format(
-					"src folder %s does not exist", srcFolderPath));
+	
+	private Map<String, List<CompilationUnit>> groupByClassFolder(
+			List<CompilationUnit> compilationUnits) {
+		Map<String, List<CompilationUnit>> result = new HashMap<String, List<CompilationUnit>>();
+		for (CompilationUnit cu : compilationUnits) {
+			String pkgFolder = PrinterUtils.getClassFolder(srcFolder, 
+					cu.getPackage().getName().getName());
+			CollectionUtils.getListInitIfEmpty(result, pkgFolder)
+					.add(cu);
 		}
-		String classFolder = srcFolderPath;
-		if (pkg != null) {
-			classFolder += Constants.FILE_SEPARATOR + StringUtils.replace(pkg, 
-					".", Constants.FILE_SEPARATOR);
-		}
-		return classFolder;
+		return result;
 	}
 
 	private String getFilePath(String pkg, String clazz) {
-		return pkg + Constants.FILE_SEPARATOR + clazz + Constants.JAVA_EXT;
+		return pkg + Constants.FILE_SEPARATOR + clazz + Constants.JAVA_EXT_WITH_DOT;
 	}
 
 	public List<File> getGeneratedFiles() {

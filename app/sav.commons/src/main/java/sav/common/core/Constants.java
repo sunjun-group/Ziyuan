@@ -15,7 +15,8 @@ package sav.common.core;
 public class Constants {
 	public static final String FILE_SEPARATOR = System.getProperty("file.separator");
 	public static final String DOT = ".";
-	public static final String JAVA_EXT = ".java";
+	public static final String JAVA_EXT_WITH_DOT = ".java";
+	public static final String JAVA_EXT = "java";
 	public static final String CLASS_EXT = ".class";
 	public static final String TZUYU_JACOCO_ASSEMBLY = "tzuyu-jacoco.jar";
 	public static final String TZUYU_JAVASLICER_ASSEMBLY = "tzuyu-javaslicer.jar";

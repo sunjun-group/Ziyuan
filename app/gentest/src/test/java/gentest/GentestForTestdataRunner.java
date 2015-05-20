@@ -11,20 +11,10 @@ package gentest;
 import gentest.builder.FixTraceGentestBuilder;
 import gentest.builder.GentestBuilder;
 import gentest.builder.RandomTraceGentestBuilder;
-import gentest.core.data.Sequence;
-import gentest.core.data.statement.Statement;
-import gentest.core.data.statement.Statement.RStatementKind;
-import gentest.junit.TestsPrinter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Test;
 
-import sav.common.core.Pair;
 import sav.common.core.SavException;
-import sav.common.core.utils.CollectionUtils;
-import sav.common.core.utils.StringUtils;
 import sav.commons.testdata.BoundedStack;
 import sav.commons.testdata.autogeneration.FindMaxArray;
 import sav.commons.testdata.autogeneration.FindMaxArray2D;
@@ -48,10 +38,8 @@ import sav.commons.testdata.autogeneration.FindMaxWrapper1;
  *
  */
 public class GentestForTestdataRunner extends AbstractGTTest {
-	protected static final int NUMBER_OF_TESTCASES = 100;
-	protected static final int METHOD_PER_CLASS = 10;
 
-	@Test
+//	@Test
 	public void testBoundedStack() throws SavException {
 		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(100);
 		builder.queryMaxLength(7)
@@ -69,37 +57,37 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 		printTc(builder, FindMaxUtils.class);
 	}
 	
-	@Test
+//	@Test
 	public void testFindMaxArrayNumber() throws Exception {
 		generateTestcase(FindMaxArrayNumber.class);
 	}
 	
-	@Test
+////	@Test
 	public void testFindMaxWrapper1() throws SavException {
 		generateTestcase(FindMaxWrapper1.class);
 	}
 	
-	@Test
+//	@Test
 	public void testFindMaxCompositionArray() throws SavException {
 		generateTestcase(FindMaxCompositionArray.class); 
 	}
 	
-	@Test
+//	@Test
 	public void testFindMaxStatic() throws SavException {
 		generateTestcase(FindMaxStatic.class); 
 	}
 	
-	@Test
+//	@Test
 	public void testFindMaxString() throws SavException {
 		generateTestcase(FindMaxString.class); 
 	}
 	
-	@Test
+//	@Test
 	public void testFindMaxComplexMap() throws SavException {
 		generateTestcase(FindMaxComplexMap.class); 
 	}
 	
-	@Test
+//	@Test
 	public void testFindMaxMap() throws SavException {
 		generateTestcase(FindMaxMap.class); 
 	}
@@ -114,12 +102,12 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 		generateTestcase(FindMaxList2D.class); 
 	}
 	
-	@Test
+////	@Test
 	public void testFindMaxWrapper() throws SavException {
 		generateTestcase(FindMaxWrapper.class); 
 	}
 	
-	@Test
+//	@Test
 	public void testFindMaxSet() throws SavException {
 		generateTestcase(FindMaxSet.class);
 	}
@@ -129,22 +117,22 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 		generateTestcase(FindMaxList.class);
 	}
 	
-	@Test
+//	@Test
 	public void testFindMaxNums() throws SavException {
 		generateTestcase(FindMaxNums.class);
 	}
 	
-	@Test
+//	@Test
 	public void testFindMax() throws SavException {
 		generateTestcase(FindMaxList.class);
 	}
 	
-	@Test
+//	@Test
 	public void testFindMaxArray() throws SavException {
 		generateTestcase(FindMaxArray.class);
 	}
 	
-	@Test
+//	@Test
 	public void testFindMaxArray2D() throws SavException {
 		generateTestcase(FindMaxArray2D.class);
 	}
@@ -158,31 +146,8 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 		builder.forClass(targetClazz).method("Max");
 		return builder;
 	}
-	
-	public void printTc(GentestBuilder<?> builder, Class<?> targetClazz) throws SavException {
-		TestsPrinter printer = new TestsPrinter(
-				getTestPkg(targetClazz), null, "test",
-				targetClazz.getSimpleName(), srcPath);
-		printer.setMethodsPerClass(METHOD_PER_CLASS);
-		Pair<List<Sequence>, List<Sequence>> testcases = builder.generate();
-		List<Sequence> allTcs = new ArrayList<Sequence>(testcases.a);
-		allTcs.addAll(testcases.b);
-		for (Sequence seq : allTcs) {
-			for (Statement stmt : seq.getStmts()) {
-				if (!CollectionUtils.existIn(stmt.getKind(),
-						RStatementKind.ARRAY_ASSIGNMENT)) {
-					log.debug(stmt);
-				}
-			}
-		}
-		printer.printTests(testcases);
-	}
 
-	private String getTestFailPkg(Class<?> targetClazz) {
-		return StringUtils.dotJoin(getTestPkg(targetClazz), "fail");
-	}
-
-	private String getTestPkg(Class<?> targetClazz) {
-		return StringUtils.dotJoin("testdata.gentest", targetClazz.getSimpleName());
-	}
+//	private String getTestFailPkg(Class<?> targetClazz) {
+//		return StringUtils.dotJoin(getTestPkg(targetClazz), "fail");
+//	}
 }

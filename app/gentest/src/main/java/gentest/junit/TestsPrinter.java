@@ -11,10 +11,10 @@ package gentest.junit;
 import gentest.core.data.Sequence;
 import japa.parser.ast.CompilationUnit;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.common.core.Constants;
 import sav.common.core.Pair;
 import sav.common.core.utils.CollectionUtils;
 
@@ -35,8 +35,28 @@ public class TestsPrinter implements ITestsPrinter {
 	
 	public TestsPrinter(String pkg, String failPkg, String methodPrefix, String classPrefix,
 			String srcPath) {
-		this(pkg, failPkg, methodPrefix, classPrefix,
-				new FileCompilationUnitPrinter(srcPath));
+		this(pkg, failPkg, methodPrefix, classPrefix, srcPath,
+				PrintOption.OVERRIDE);
+	}
+	
+	public TestsPrinter(String pkg, String failPkg, String methodPrefix, String classPrefix,
+			String srcPath, PrintOption printOption) {
+		this(pkg, failPkg, methodPrefix, classPrefix, new FileCompilationUnitPrinter(srcPath));
+		if (printOption == PrintOption.APPEND) {
+			// check if there is any test class which name has the same format, reset classIdx if found
+			classIdx = getMaxIdxOfExistingClass(srcPath, pkg, classPrefix);
+			if (failPkg != null) {
+				classIdx = Math.max(classIdx, getMaxIdxOfExistingClass(srcPath, pkg, classPrefix));
+			}
+			classIdx++;
+		}
+	}
+
+	private int getMaxIdxOfExistingClass(String srcPath, String pkg,
+			String classPrefix) {
+		List<String> existedFiles = PrinterUtils.listJavaFileNames(
+				PrinterUtils.getClassFolder(srcPath, pkg), classPrefix);
+		return getMaxClassIdx(existedFiles, classPrefix);
 	}
 	
 	public TestsPrinter(String pkg, String failPkg,
@@ -105,7 +125,22 @@ public class TestsPrinter implements ITestsPrinter {
 	}
 
 	private String getClassName() {
-		return classPrefix + "Test" + (classIdx ++);
+		return classPrefix + (classIdx ++);
+	}
+	
+	private int getMaxClassIdx(List<String> existedFiles, String classPrefix) {
+		int maxIdx = 0;
+		for (String fileName : existedFiles) {
+			String suffix = fileName.substring(classPrefix.length(),
+					fileName.length() - Constants.JAVA_EXT_WITH_DOT.length());
+			try {
+				int idx = Integer.valueOf(suffix);
+				maxIdx = Math.max(maxIdx, idx);
+			} catch (NumberFormatException e) {
+				// ignore
+			}
+		}
+		return maxIdx;
 	}
 
 	public void setSeparatePassFail(boolean separatePassFail) {
@@ -119,5 +154,9 @@ public class TestsPrinter implements ITestsPrinter {
 	public void setCuPrinter(ICompilationUnitPrinter cuPrinter) {
 		this.cuPrinter = cuPrinter;
 	}
-	
+
+	public enum PrintOption {
+		OVERRIDE,
+		APPEND
+	}
 }

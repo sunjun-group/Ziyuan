@@ -38,8 +38,8 @@ public class BugSeeder {
 		props = ToolsUtils.getResourceBundle(seedResource);
 		String classFile = TEST_SCR_FOLDER + Constants.FILE_SEPARATOR
 						+ modifiedClass.getName().replace(".", Constants.FILE_SEPARATOR);
-		orgClassFilePath = classFile + ORG_TEST_CLASS_SUFIX + Constants.JAVA_EXT;
-		overrideClassFilePath = classFile + Constants.JAVA_EXT;
+		orgClassFilePath = classFile + ORG_TEST_CLASS_SUFIX + Constants.JAVA_EXT_WITH_DOT;
+		overrideClassFilePath = classFile + Constants.JAVA_EXT_WITH_DOT;
 		classSimpleName = modifiedClass.getSimpleName();
 	}
 	
