@@ -22,4 +22,15 @@ public class ArrayValue extends ExecValue {
 	public void setLength(int length) {
 		add(new PrimitiveValue(getChildId(LENGTH_CODE), String.valueOf(length)));
 	}
+	
+	@Override
+	public double getDoubleVal() {
+		String lengthId = getChildId(LENGTH_CODE);
+		for (ExecValue child : children) {
+			if (lengthId.equals(child.getVarId())) {
+				return child.getDoubleVal();
+			}
+		}
+		return super.getDoubleVal();
+	}
 }
