@@ -180,7 +180,13 @@ public class Engine {
 			if (passValues.isEmpty() || failValues.isEmpty()) {
 				LOGGER.info("@" + bkp);
 				LOGGER.info("There is no data for the "
-						+ (passValues.isEmpty() ? "POSITIVE" : "NEGATIVE") + " category.");
+						+ (passValues.isEmpty() ? "POSITIVE" : "NEGATIVE") + " category at line " + bkp.getLineNo() + ".");
+				if(passValues.isEmpty()){
+					LOGGER.info("This line is likely a bug!");
+				}
+				else{
+					LOGGER.info("This line is likely not a bug!");
+				}
 				LOGGER.info("SVM is not run.");
 				continue;
 			}

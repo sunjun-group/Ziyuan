@@ -93,7 +93,7 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	protected boolean beforeVisit(Node node) {
 		return true;
 	}
-	
+
 	protected boolean beforehandleNode(Node n) {
 		return true;
 	}
@@ -417,11 +417,13 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	public boolean handleNode(WildcardType n) {
 		return true;
 	}
-
+	
 	@Override
 	public void visit(AnnotationDeclaration n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -431,7 +433,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(AnnotationMemberDeclaration n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -441,7 +445,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ArrayAccessExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -451,7 +457,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ArrayCreationExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -461,7 +469,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ArrayInitializerExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -471,7 +481,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(AssertStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -481,7 +493,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(AssignExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -491,7 +505,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(BinaryExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -501,7 +517,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(BlockComment n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -511,7 +529,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(BlockStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -521,7 +541,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(BooleanLiteralExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -531,7 +553,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(BreakStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -541,7 +565,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(CastExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -551,7 +577,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(CatchClause n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -561,7 +589,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(CharLiteralExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -571,7 +601,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ClassExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -581,7 +613,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ClassOrInterfaceDeclaration n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -591,7 +625,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ClassOrInterfaceType n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -601,7 +637,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(CompilationUnit n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -611,7 +649,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ConditionalExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -621,7 +661,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ConstructorDeclaration n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -631,7 +673,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ContinueStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -641,7 +685,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(DoStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -651,7 +697,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(DoubleLiteralExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -661,7 +709,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(EmptyMemberDeclaration n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -671,7 +721,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(EmptyStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -681,7 +733,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(EmptyTypeDeclaration n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -691,7 +745,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(EnclosedExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -701,7 +757,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(EnumConstantDeclaration n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -711,7 +769,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(EnumDeclaration n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -721,7 +781,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ExplicitConstructorInvocationStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -731,7 +793,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ExpressionStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -741,7 +805,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(FieldAccessExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -751,7 +817,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(FieldDeclaration n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -761,7 +829,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ForeachStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -771,7 +841,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ForStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -781,7 +853,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(IfStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -791,7 +865,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ImportDeclaration n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -801,7 +877,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(InitializerDeclaration n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -811,7 +889,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(InstanceOfExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -821,7 +901,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(IntegerLiteralExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -831,7 +913,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(IntegerLiteralMinValueExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -841,7 +925,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(JavadocComment n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -851,7 +937,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(LabeledStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -861,7 +949,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(LineComment n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -871,7 +961,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(LongLiteralExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -881,7 +973,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(LongLiteralMinValueExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -891,7 +985,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(MarkerAnnotationExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -901,7 +997,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(MemberValuePair n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -911,7 +1009,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(MethodCallExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -921,7 +1021,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(MethodDeclaration n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -931,7 +1033,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(NameExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -941,7 +1045,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(NormalAnnotationExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -951,7 +1057,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(NullLiteralExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -961,7 +1069,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ObjectCreationExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -971,7 +1081,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(PackageDeclaration n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -981,7 +1093,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(Parameter n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -991,7 +1105,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(MultiTypeParameter n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1001,7 +1117,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(PrimitiveType n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1011,7 +1129,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(QualifiedNameExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1021,7 +1141,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ReferenceType n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1031,7 +1153,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ReturnStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1041,7 +1165,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(SingleMemberAnnotationExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1051,7 +1177,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(StringLiteralExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1061,7 +1189,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(SuperExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1071,7 +1201,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(SwitchEntryStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1081,7 +1213,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(SwitchStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1091,7 +1225,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(SynchronizedStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1101,7 +1237,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ThisExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1111,7 +1249,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(ThrowStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1121,7 +1261,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(TryStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1131,7 +1273,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(TypeDeclarationStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1141,7 +1285,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(TypeParameter n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1151,7 +1297,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(UnaryExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1161,7 +1309,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(VariableDeclarationExpr n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1171,7 +1321,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(VariableDeclarator n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1181,7 +1333,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(VariableDeclaratorId n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1191,7 +1345,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(VoidType n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1201,7 +1357,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(WhileStmt n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);
@@ -1211,7 +1369,9 @@ public class DefaultVoidVisitor extends VoidVisitorAdapter<Boolean> {
 	@Override
 	public void visit(WildcardType n, Boolean arg) {
 		if (beforehandleNode(n)) {
-			handleNode(n);
+			if (!handleNode(n)) {
+				return;
+			}
 		}
 		if (beforeVisit(n)) {
 			super.visit(n, arg);

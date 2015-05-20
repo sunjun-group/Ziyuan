@@ -155,6 +155,15 @@ public class TzuyuCoreTest extends AbstractTzTest {
 				null, junitClassNames, false);
 	}
 	
+	@Test
+	public void whenSpectrumAndMachineLearningUsed4() throws Exception{
+		TzuyuCore app = new TzuyuCore(testContext);
+		List<String> junitClassNames = new ArrayList<String>();
+		junitClassNames.add("sav.commons.testdata.calculator.GetSumArrayTest");
+		app.doSpectrumAndMachineLearning("sav.commons.testdata.calculator.Calculator", "getSumArray", "validateGetSumArray",
+				null, junitClassNames, false);
+	}
+	
 //	@Test
 //	@Ignore("For testing with Guava codes")
 //	public void testGuava1() throws Exception {
