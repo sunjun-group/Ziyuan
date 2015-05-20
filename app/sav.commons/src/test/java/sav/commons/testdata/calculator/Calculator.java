@@ -14,12 +14,19 @@ public class Calculator {
 		return (max == x + y);
 	}
 	
-	public static int getSumArray(int [] A){
-		if(A[0] > 0){
-			A[0]++;
+	public static int getSumArray(int [] A){	
+		if(A == null || A.length == 0){
+			return 0;
 		}
-		
-		return A[0] + A[1];
+		else if(A.length == 1){
+			return A[0];
+		}
+		else if(A.length == 2){
+			return A[0] + A[1];
+		}
+		else{
+			return Integer.MAX_VALUE;
+		}
 	}
 	
 	public static boolean validateGetSumArray(int [] A, int sum){
