@@ -1,8 +1,10 @@
 package faultLocalization;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import faultLocalization.LineCoverageInfo.LineCoverageInfoComparator;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.ClassLocation;
 
@@ -57,6 +59,10 @@ public class FaultLocalizationReport {
 		}
 		
 		return result;
+	}
+	
+	public void sort(){
+		Collections.sort(lineCoverageInfos, new LineCoverageInfoComparator());
 	}
 
 }

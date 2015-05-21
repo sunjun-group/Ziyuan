@@ -82,7 +82,10 @@ public class LineCoverageInfo {
 	public double getSuspiciousness() {
 		return suspiciousness;
 	}
-	
+
+	public void setSuspiciousness(double suspiciousness) {
+		this.suspiciousness = suspiciousness;
+	}
 
 	public List<Integer> getPassedTestcaseIndexesCover() {
 		return passedTestcaseIndexesCover;

@@ -8,6 +8,7 @@
 
 package tzuyu.core.main;
 
+import icsetlv.common.exception.IcsetlvException;
 import icsetlv.variable.VariableNameCollector;
 import japa.parser.ast.CompilationUnit;
 
@@ -68,10 +69,7 @@ public class TzuyuCore {
 		analyzer.setUseSlicer(useSlicer);
 		FaultLocalizationReport report = analyzer.analyse(testingClassNames, junitClassNames,
 				appData.getSuspiciousCalculAlgo());
-		MutanBug mutanbug = new MutanBug();
-		mutanbug.setAppData(appData);
-		mutanbug.setMutator(appContext.getMutator());
-		mutanbug.mutateAndRunTests(report, junitClassNames);
+		mutation(report, junitClassNames);
 		return report;
 	}
 	
@@ -83,16 +81,23 @@ public class TzuyuCore {
 		FaultLocalizationReport report = analyzer.analyseSlicingFirst(
 				testingClassNames, testingPackages, junitClassNames,
 				appData.getSuspiciousCalculAlgo());
-		MutanBug mutanbug = new MutanBug();
-		mutanbug.setAppData(appData);
-		mutanbug.setMutator(appContext.getMutator());
-		mutanbug.mutateAndRunTests(report, junitClassNames);
+		
+		mutation(report, junitClassNames);
 		return report;
 	}
 
-	public FaultLocalizationReport doSpectrumAndMachineLearning(String testingClassName, String methodName, String verificationMethod,
+	public void faultLocate(String testingClassName, String methodName, String verificationMethod,
 			List<String> testingPackages, List<String> junitClassNames, boolean useSlicer)
 			throws Exception {
+		FaultLocalizationReport report = jacoco(testingClassName, testingPackages, junitClassNames, useSlicer);
+		mutation(report, junitClassNames);
+		machineLearning(report, testingClassName, methodName,
+				verificationMethod, junitClassNames);
+	}
+
+	private FaultLocalizationReport jacoco(String testingClassName,
+			List<String> testingPackages, List<String> junitClassNames,
+			boolean useSlicer) throws Exception {
 		final FaultLocalization analyzer = new FaultLocalization(appContext);
 		analyzer.setUseSlicer(useSlicer);
 
@@ -104,7 +109,22 @@ public class TzuyuCore {
 			report = analyzer.analyseSlicingFirst(Arrays.asList(testingClassName), testingPackages,
 					junitClassNames, appData.getSuspiciousCalculAlgo());
 		}
+		return report;
+	}
 
+	private void mutation(FaultLocalizationReport report,
+			List<String> junitClassNames) throws Exception {
+		MutanBug mutanbug = new MutanBug();
+		mutanbug.setAppData(appData);
+		mutanbug.setMutator(appContext.getMutator());
+		mutanbug.mutateAndRunTests(report, junitClassNames);
+	}
+	
+	private void machineLearning(
+			FaultLocalizationReport report, String testingClassName,
+			String methodName, String verificationMethod,
+			List<String> junitClassNames) throws ClassNotFoundException,
+			SavException, IcsetlvException, Exception {
 		List<String> randomTests = generateNewTests(testingClassName, methodName, verificationMethod);
 		junitClassNames.addAll(randomTests);
 		
@@ -124,9 +144,8 @@ public class TzuyuCore {
 			learnInvariant.learn(breakpoints, junitClassNames, appData.getAppSrc());
 		}
 
-		return report;
 	}
-
+	
 	private List<BreakPoint> getNextLineToAddBreakpoint( 
 			List<BreakPoint> suspectLocations) throws SavException {
 		MutanBug mutanbug = new MutanBug();

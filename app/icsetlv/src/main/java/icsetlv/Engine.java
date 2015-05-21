@@ -184,6 +184,7 @@ public class Engine {
 						+ (passValues.isEmpty() ? "POSITIVE" : "NEGATIVE") + " category at line " + bkp.getLineNo() + ".");
 				if(passValues.isEmpty()){
 					LOGGER.info("This line is likely a bug!");
+					return this;
 				}
 				else{
 					LOGGER.info("This line is likely not a bug!");

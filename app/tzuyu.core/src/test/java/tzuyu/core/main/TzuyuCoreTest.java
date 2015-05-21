@@ -122,7 +122,7 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTestPassed");
 		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTestFailed");
-		app.doSpectrumAndMachineLearning("sav.commons.testdata.calculator.Calculator", "getSum", "validateGetSum",
+		app.faultLocate("sav.commons.testdata.calculator.Calculator", "getSum", "validateGetSum",
 				null, junitClassNames, false);
 	}
 
@@ -142,7 +142,7 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("simpleTestData.CalculatorTestFailed");
 		junitClassNames.add("simpleTestData.CalculatorTestPassed");
-		app.doSpectrumAndMachineLearning("simpleTestData.Calculator", "getMax", "validateGetMax",
+		app.faultLocate("simpleTestData.Calculator", "getMax", "validateGetMax",
 				null, junitClassNames, false);
 	}
 
@@ -151,7 +151,7 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.search1.SearchIndexEqualValueTest");
-		app.doSpectrumAndMachineLearning("sav.commons.testdata.search1.SearchIndexEqualValue", "search", "validate",
+		app.faultLocate("sav.commons.testdata.search1.SearchIndexEqualValue", "search", "validate",
 				null, junitClassNames, false);
 	}
 	
@@ -160,7 +160,7 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.GetSumArrayTest");
-		app.doSpectrumAndMachineLearning("sav.commons.testdata.calculator.Calculator", "getSumArray", "validateGetSumArray",
+		app.faultLocate("sav.commons.testdata.calculator.Calculator", "getSumArray", "validateGetSumArray",
 				null, junitClassNames, false);
 	}
 	
@@ -169,7 +169,7 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.LoopInvariantTest");
-		app.doSpectrumAndMachineLearning("sav.commons.testdata.calculator.Calculator", "loopInvariant", "validateLoopInvariant",
+		app.faultLocate("sav.commons.testdata.calculator.Calculator", "loopInvariant", "validateLoopInvariant",
 				null, junitClassNames, false);
 	}
 	
