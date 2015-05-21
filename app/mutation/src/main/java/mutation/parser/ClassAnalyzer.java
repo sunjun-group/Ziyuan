@@ -269,7 +269,10 @@ public class ClassAnalyzer {
 			// parseBlockStmt(md, forBody);
 			md.closeScope(statement.getEndLine());
 		} else if (statement instanceof ForeachStmt) {
-			Statement forBody = ((ForeachStmt) statement).getBody();
+			ForeachStmt foreachStmt = (ForeachStmt) statement;
+			/* add declared variable*/
+			md.addLocalVars(parseVarDecl(foreachStmt.getVariable()));
+			Statement forBody = foreachStmt.getBody();
 			parseBlockStmt(md, forBody);
 		} else if (statement instanceof SwitchStmt) {
 			List<SwitchEntryStmt> entries = ((SwitchStmt) statement)

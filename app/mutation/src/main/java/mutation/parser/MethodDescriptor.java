@@ -17,20 +17,20 @@ public class MethodDescriptor {
 	private Object returnType;
 	private List<VariableDescriptor> parameters;
 	// start, end,
-	private List<VariableScope> localVars;
+	private List<LocalVariable> localVars;
 	private int openScopeIdx;
 	private int beginLine;
 	private int endLine;
 
 	public MethodDescriptor(int beginLine, int endLine) {
 		parameters = new ArrayList<VariableDescriptor>();
-		localVars = new ArrayList<VariableScope>();
+		localVars = new ArrayList<LocalVariable>();
 		this.beginLine = beginLine;
 		this.endLine = endLine;
 	}
 
 	public void openScope(int beginLine) {
-		localVars.add(new VariableScope(beginLine, -1,
+		localVars.add(new LocalVariable(beginLine, -1,
 				new HashMap<String, VariableDescriptor>()));
 		openScopeIdx = localVars.size() - 1;
 	}
@@ -38,10 +38,10 @@ public class MethodDescriptor {
 	public void closeScope(int endLine) {
 		// stupid way of closing scope
 		localVars.get(openScopeIdx).setEndLine(endLine);
-		ListIterator<VariableScope> it = localVars.listIterator(openScopeIdx);
+		ListIterator<LocalVariable> it = localVars.listIterator(openScopeIdx);
 
 		while (it.hasPrevious()) {
-			VariableScope scope = it.previous();
+			LocalVariable scope = it.previous();
 			--openScopeIdx;
 			if (scope.getEndLine() < 0) {
 				break;
@@ -99,7 +99,7 @@ public class MethodDescriptor {
 		return parameters;
 	}
 
-	public List<VariableScope> getLocalVars() {
+	public List<LocalVariable> getLocalVars() {
 		return localVars;
 	}
 
@@ -127,7 +127,7 @@ public class MethodDescriptor {
 		this.parameters = parameters;
 	}
 
-	public void setLocalVars(List<VariableScope> localVars) {
+	public void setLocalVars(List<LocalVariable> localVars) {
 		this.localVars = localVars;
 	}
 
@@ -135,4 +135,11 @@ public class MethodDescriptor {
 		this.openScopeIdx = openScopeIdx;
 	}
 
+	@Override
+	public String toString() {
+		return "MethodDescriptor [name=" + name + ", returnType=" + returnType
+				+ ", parameters=" + parameters + ", localVars=" + localVars
+				+ "]";
+	}
+	
 }

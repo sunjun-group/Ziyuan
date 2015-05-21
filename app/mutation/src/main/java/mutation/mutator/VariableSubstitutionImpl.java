@@ -5,10 +5,12 @@ import japa.parser.ast.type.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.common.core.SavRtException;
+
 import mutation.parser.ClassDescriptor;
 import mutation.parser.MethodDescriptor;
 import mutation.parser.VariableDescriptor;
-import mutation.parser.VariableScope;
+import mutation.parser.LocalVariable;
 
 public class VariableSubstitutionImpl implements VariableSubstitution{
 
@@ -45,7 +47,7 @@ public class VariableSubstitutionImpl implements VariableSubstitution{
 			}
 		}
 		
-		throw new RuntimeException("No Variable Found");
+		throw new SavRtException("No Variable Found");
 		
 	}
 
@@ -64,8 +66,8 @@ public class VariableSubstitutionImpl implements VariableSubstitution{
 	}
 
 	private Type searchVarTypeInScopes(int lineNumber, String varName,
-			List<VariableScope> scopes) {
-		for(VariableScope scope: scopes){
+			List<LocalVariable> scopes) {
+		for(LocalVariable scope: scopes){
 			if(scope.containsLine(lineNumber)){
 				for(VariableDescriptor localVarInMethod: scope.getVars().values()){
 					if(localVarInMethod.getName().equals(varName)){
@@ -107,8 +109,8 @@ public class VariableSubstitutionImpl implements VariableSubstitution{
 	}
 
 	private void findVariables(List<VariableDescriptor> result,
-			List<VariableScope> scopes) {
-		for(VariableScope scope: scopes){
+			List<LocalVariable> scopes) {
+		for(LocalVariable scope: scopes){
 			if(scope.containsLine(lineNumber)){
 				for(VariableDescriptor localVarInMethod: scope.getVars().values()){
 					if(isVisibleAndMatchType(localVarInMethod, lineNumber, column, type)){

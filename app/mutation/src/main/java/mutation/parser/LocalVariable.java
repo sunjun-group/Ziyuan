@@ -14,12 +14,12 @@ import java.util.Map;
  * @author LLT
  * 
  */
-public class VariableScope {
+public class LocalVariable {
 	private int startLine;
 	private int endLine;
 	private Map<String, VariableDescriptor> vars;
 
-	public VariableScope(int startLine, int endLine, Map<String, VariableDescriptor> vars) {
+	public LocalVariable(int startLine, int endLine, Map<String, VariableDescriptor> vars) {
 		this.startLine = startLine;
 		this.endLine = endLine;
 		this.vars = vars;
@@ -57,4 +57,9 @@ public class VariableScope {
 		this.vars = vars;
 	}
 
+	@Override
+	public String toString() {
+		return "LocalVariable [startLine=" + startLine + ", vars=" + vars + "]";
+	}
+	
 }

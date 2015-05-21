@@ -7,6 +7,7 @@ import japa.parser.ast.expr.AssignExpr;
 import japa.parser.ast.expr.AssignExpr.Operator;
 import japa.parser.ast.expr.BinaryExpr;
 import japa.parser.ast.expr.BooleanLiteralExpr;
+import japa.parser.ast.expr.FieldAccessExpr;
 import japa.parser.ast.expr.IntegerLiteralExpr;
 import japa.parser.ast.expr.NameExpr;
 import japa.parser.ast.stmt.ForStmt;
@@ -90,6 +91,11 @@ public class MutationVisitor extends AbstractMutationVisitor {
 		CollectionUtils.getListInitIfEmpty(result, node.getBeginLine())
 				.add(muNode);
 		return muNode;
+	}
+	
+	@Override
+	public boolean mutate(FieldAccessExpr n) {
+		return false;
 	}
 	
 	@Override
