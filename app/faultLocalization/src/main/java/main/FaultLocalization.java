@@ -89,11 +89,12 @@ public class FaultLocalization {
 		codeCoverageTool.run(result, testingClasses, junitClassNames);
 		report.setCoverageReport(result);
 		if (useSlicer) {
-			report.setLineCoverageInfos(result.tarantula(new ArrayList<BreakPoint>(traces), algorithm));
+			report.setLineCoverageInfos(result.computeSuspiciousness(new ArrayList<BreakPoint>(traces), algorithm));
 		} else {
-			report.setLineCoverageInfos(result.tarantula(new ArrayList<BreakPoint>(), algorithm));
+			report.setLineCoverageInfos(result.computeSuspiciousness(new ArrayList<BreakPoint>(), algorithm));
 		}
 		
+		report.sort();
 		return report;
 	}
 
@@ -124,10 +125,13 @@ public class FaultLocalization {
 			for (BreakPoint bkp : causeTraces) {
 				CollectionUtils.addIfNotNullNotExist(traces, bkp);
 			}
-			report.setLineCoverageInfos(result.tarantula(traces, algorithm));
+			report.setLineCoverageInfos(result.computeSuspiciousness(traces, algorithm));
 		} else {
-			report.setLineCoverageInfos(result.tarantula(new ArrayList<BreakPoint>(), algorithm));
+			report.setLineCoverageInfos(result.computeSuspiciousness(new ArrayList<BreakPoint>(), algorithm));
 		}
+		
+		report.sort();
+		
 		return report;
 	}
 

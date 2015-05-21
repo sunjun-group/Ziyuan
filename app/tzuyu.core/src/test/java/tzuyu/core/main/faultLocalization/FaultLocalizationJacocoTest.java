@@ -8,8 +8,12 @@
 
 package tzuyu.core.main.faultLocalization;
 
+import java.util.ArrayList;
+
+import sav.strategies.dto.ClassLocation;
 import codecoverage.jacoco.JaCoCoAgentTest;
 import faultLocalization.CoverageReport;
+import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 /**
  * @author LLT
@@ -26,13 +30,13 @@ public class FaultLocalizationJacocoTest extends JaCoCoAgentTest {
 	@Override
 	public void testRunTestdata() throws Exception {
 		super.testRunTestdata();
-		getCoverageReport().tarantula();
+		getCoverageReport().computeSuspiciousness(new ArrayList<ClassLocation>(), SpectrumAlgorithm.TARANTULA);
 	}
 	
 	@Override
 	public void testSampleProgram() throws Exception {
 		super.testSampleProgram();
-		getCoverageReport().tarantula();
+		getCoverageReport().computeSuspiciousness(new ArrayList<ClassLocation>(), SpectrumAlgorithm.TARANTULA);
 	}
 	
 	private CoverageReport getCoverageReport() {

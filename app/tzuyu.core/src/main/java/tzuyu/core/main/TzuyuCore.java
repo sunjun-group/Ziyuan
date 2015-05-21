@@ -52,6 +52,7 @@ public class TzuyuCore {
 	private AbstractApplicationContext appContext;
 	private ApplicationData appData;
 	private int numberOfTestCases = 100;
+	private static final int RANK_TO_EXAMINE = 2;
 	
 	public TzuyuCore(AbstractApplicationContext appContext) {
 		this.appContext = appContext;
@@ -89,15 +90,17 @@ public class TzuyuCore {
 	public void faultLocate(String testingClassName, String methodName, String verificationMethod,
 			List<String> testingPackages, List<String> junitClassNames, boolean useSlicer)
 			throws Exception {
-		FaultLocalizationReport report = jacoco(testingClassName, testingPackages, junitClassNames, useSlicer);
+		FaultLocalizationReport report = computeSuspiciousness(testingClassName, testingPackages, junitClassNames, useSlicer);
 		mutation(report, junitClassNames);
 		machineLearning(report, testingClassName, methodName,
 				verificationMethod, junitClassNames);
 	}
 
-	private FaultLocalizationReport jacoco(String testingClassName,
+	private FaultLocalizationReport computeSuspiciousness(String testingClassName,
 			List<String> testingPackages, List<String> junitClassNames,
 			boolean useSlicer) throws Exception {
+		LOGGER.info("Running " + appData.getSuspiciousCalculAlgo());
+		
 		final FaultLocalization analyzer = new FaultLocalization(appContext);
 		analyzer.setUseSlicer(useSlicer);
 
@@ -109,15 +112,18 @@ public class TzuyuCore {
 			report = analyzer.analyseSlicingFirst(Arrays.asList(testingClassName), testingPackages,
 					junitClassNames, appData.getSuspiciousCalculAlgo());
 		}
+		LOGGER.info(report);
 		return report;
 	}
 
 	private void mutation(FaultLocalizationReport report,
 			List<String> junitClassNames) throws Exception {
+		LOGGER.info("Running Mutation");
 		MutanBug mutanbug = new MutanBug();
 		mutanbug.setAppData(appData);
 		mutanbug.setMutator(appContext.getMutator());
-		mutanbug.mutateAndRunTests(report, junitClassNames);
+		mutanbug.mutateAndRunTests(report, RANK_TO_EXAMINE, junitClassNames);
+		LOGGER.info(report);
 	}
 	
 	private void machineLearning(
@@ -125,10 +131,13 @@ public class TzuyuCore {
 			String methodName, String verificationMethod,
 			List<String> junitClassNames) throws ClassNotFoundException,
 			SavException, IcsetlvException, Exception {
+		
+		LOGGER.info("Running Machine Learning");
+		
 		List<String> randomTests = generateNewTests(testingClassName, methodName, verificationMethod);
 		junitClassNames.addAll(randomTests);
 		
-		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(Integer.MAX_VALUE);
+		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(RANK_TO_EXAMINE);
 		List<BreakPoint> breakpoints = BreakpointUtils.toBreakpoints(suspectLocations);
 		
 		//compute variables appearing in each breakpoint

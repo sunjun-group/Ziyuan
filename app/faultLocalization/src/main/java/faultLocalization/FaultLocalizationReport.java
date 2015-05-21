@@ -64,5 +64,11 @@ public class FaultLocalizationReport {
 	public void sort(){
 		Collections.sort(lineCoverageInfos, new LineCoverageInfoComparator());
 	}
+	
+	public void setSuspiciousnessForAll(double value){
+		for(LineCoverageInfo lineInfo: lineCoverageInfos){
+			lineInfo.setSuspiciousness(value);
+		}
+	}
 
 }

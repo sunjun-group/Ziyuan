@@ -50,7 +50,7 @@ public class LineCoverageInfo {
 	
 	public String toString() {
 		return location.getId() + ":" + suspiciousness + "(P=" + passedTestcaseIndexesCover.size()
-				+ ", F=" + failedTestcaseIndexesCover.size();
+				+ ", F=" + failedTestcaseIndexesCover.size() + ")";
 	}
 
 	public static class LineCoverageInfoComparator implements Comparator<LineCoverageInfo> {

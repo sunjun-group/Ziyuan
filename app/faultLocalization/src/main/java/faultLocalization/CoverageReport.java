@@ -9,7 +9,6 @@
 package faultLocalization;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,6 @@ import sav.common.core.utils.BreakpointUtils;
 import sav.strategies.codecoverage.ICoverageReport;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.ClassLocation;
-import faultLocalization.LineCoverageInfo.LineCoverageInfoComparator;
 import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 /**
@@ -70,10 +68,6 @@ public class CoverageReport implements ICoverageReport{
 			allTestcasesCoverageInfo.put(testcaseIndex, testcaseCoverage);
 		}
 		testcaseCoverage.addInfo(className, lineIndex, isCovered);
-	}
-
-	public List<LineCoverageInfo> tarantula() {
-		return tarantula(new ArrayList<ClassLocation>());
 	}
 
 	/**
@@ -126,11 +120,11 @@ public class CoverageReport implements ICoverageReport{
 		return failureTraces;
 	}
 
-	public <T extends ClassLocation> List<LineCoverageInfo> tarantula(final List<T> filteredPoints) {
-		return tarantula(filteredPoints, SpectrumAlgorithm.TARANTULA);
-	}
-
-	public <T extends ClassLocation> List<LineCoverageInfo> tarantula(final List<T> filteredPoints,
+	/**
+	 * Compute the suspiciousness based on spectrum information
+	 * Lines are not sorted by suspicisouness numbers
+	 */
+	public <T extends ClassLocation> List<LineCoverageInfo> computeSuspiciousness(final List<T> filteredPoints,
 			final SpectrumAlgorithm algorithm) {
 		final List<LineCoverageInfo> linesCoverageInfo = new ArrayList<LineCoverageInfo>();
 
@@ -155,13 +149,6 @@ public class CoverageReport implements ICoverageReport{
 					failedTestcaseCoverageInfo.size(), algorithm);
 		}
 
-		Collections.sort(linesCoverageInfo, new LineCoverageInfoComparator());
-
-		/* reverse the order for easier to read */
-		for (int i = linesCoverageInfo.size() - 1; i >= 0; i--) {
-			logger.info(linesCoverageInfo.get(i).toString());
-		}
-		
 		return linesCoverageInfo;
 	}
 

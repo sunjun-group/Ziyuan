@@ -51,10 +51,13 @@ public class MutanBug {
 	@Inject
 	private IMutator mutator;
 
-	public void mutateAndRunTests(FaultLocalizationReport report, List<String> junitClassNames) throws Exception {
+	public void mutateAndRunTests(FaultLocalizationReport report, int rankToMutate, List<String> junitClassNames) throws Exception {
 		List<ClassLocation> breakpoints = new ArrayList<ClassLocation>();
-		List<LineCoverageInfo> firstRanks = report.getFirstRanks(Integer.MAX_VALUE);
-		 
+		List<LineCoverageInfo> firstRanks = report.getFirstRanks(rankToMutate);
+		
+		//reset suspicisouness before mutation
+		report.setSuspiciousnessForAll(Double.MIN_VALUE);
+		
 		for(LineCoverageInfo lineCoverageInfo: firstRanks){
 			breakpoints.add(lineCoverageInfo.getLocation());
 		}
@@ -76,6 +79,7 @@ public class MutanBug {
 								passCoverTests, failCoverTests, passTestsInMutants, failTestsInMutants);
 			double suspiciousness = calculator.compute();
 			
+			//update suspiciousness
 			firstRanks.get(i).setSuspiciousness(suspiciousness);
 			
 			log.info(location.getId() + ":" + calculator.compute());
