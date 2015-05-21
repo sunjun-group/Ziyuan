@@ -102,6 +102,7 @@ public class Machine {
 
 	public Machine resetData() {
 		data = new ArrayList<DataPoint>();
+		this.isDataClean = false;
 		return this;
 	}
 
