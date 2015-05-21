@@ -162,7 +162,7 @@ public class MultiCutMachine extends Machine {
 			if (str.length() != 0) {
 				str.append(" ^ ");
 			}
-			str.append(getLearnedLogic(explicitDivider, randomData));
+			str.append(getLearnedLogic(explicitDivider));
 		}
 
 		return str.toString();

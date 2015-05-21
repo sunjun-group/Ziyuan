@@ -278,23 +278,14 @@ public class Machine {
 		}
 		return 1.0 - ((double) getWrongClassifiedDataPoints(data).size() / data.size());
 	}
-
+	
 	public String getLearnedLogic() {
-		// Print out the learned logic
-		// I.e.: the predicate about the POSITIVE points
-		// This basic machine only produces 1 divider so the logic is in the
-		// form of a1*x1 + a2*x2 + ... + an*xn >= b
-		StringBuilder str = new StringBuilder();
-
 		Model currentModel = getModel();
-		if (currentModel != null) {
-			str.append(getLearnedLogic(currentModel.getExplicitDivider(), getRandomData()));
-		}
-
-		return str.toString();
+		return getLearnedLogic(currentModel.getExplicitDivider());
 	}
 
-	protected String getLearnedLogic(final Divider divider, final DataPoint sampleDataPoint) {
+	protected String getLearnedLogic(final Divider divider) {
+		//a1*x1 + a2*x2 + ... + an*xn >= b
 		StringBuilder str = new StringBuilder();
 		CoefficientProcessing coefficientProcessing = new CoefficientProcessing();
 		double[] thetas = coefficientProcessing.process(divider.getLinearExpr());

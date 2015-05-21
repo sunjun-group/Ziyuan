@@ -187,9 +187,8 @@ public class Engine {
 				}
 				else{
 					LOGGER.info("This line is likely not a bug!");
+					continue;
 				}
-				LOGGER.info("SVM is not run.");
-				continue;
 			}
 			
 			// Configure data for SVM machine
