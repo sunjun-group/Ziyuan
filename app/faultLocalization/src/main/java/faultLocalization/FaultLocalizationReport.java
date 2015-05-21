@@ -71,4 +71,9 @@ public class FaultLocalizationReport {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return lineCoverageInfos.toString();
+	}
+
 }

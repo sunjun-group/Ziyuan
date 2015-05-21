@@ -9,9 +9,12 @@ import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
+import sav.common.core.Logger;
+
 
 
 public class RequestExecution implements Runnable{
+	private static Logger<?> log = Logger.getDefaultLogger();
 	private final JUnitCore core;
 	private Request request;
 	private Boolean isPassed;
@@ -46,8 +49,7 @@ public class RequestExecution implements Runnable{
 			Method method = targetClass.getMethod("getFailures");
 			return (List<Failure>) method.invoke(targetInstance);
 		} catch (Exception ex) {
-			// TODO LOG
-			System.out.println(ex);
+			log.error(ex);
 			return new ArrayList<Failure>();
 		}
 	}

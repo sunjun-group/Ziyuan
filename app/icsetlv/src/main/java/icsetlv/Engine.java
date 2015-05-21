@@ -179,9 +179,8 @@ public class Engine {
 			final List<BreakpointValue> failValues = testResult.getFailValues(bkp);
 			// Cannot train if there are not enough data
 			if (passValues.isEmpty() || failValues.isEmpty()) {
-				LOGGER.info("@" + bkp);
 				LOGGER.info("There is no data for the "
-						+ (passValues.isEmpty() ? "POSITIVE" : "NEGATIVE") + " category at line " + bkp.getLineNo() + ".");
+						+ (passValues.isEmpty() ? "POSITIVE" : "NEGATIVE") + " category.");
 				if(passValues.isEmpty()){
 					LOGGER.info("This line is likely a bug!");
 					return this;

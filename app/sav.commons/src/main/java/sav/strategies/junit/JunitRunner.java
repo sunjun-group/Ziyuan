@@ -45,7 +45,7 @@ public class JunitRunner {
 
 	public static JunitResult runTestcases(JunitRunnerParameters params)
 			throws ClassNotFoundException, IOException {
-		System.out.println("Run testcases: ");
+//		System.out.println("Run testcases: ");
 		List<Pair<String, String>> classMethods = JunitUtils.toPair(params
 				.getClassMethods());
 		RequestExecution requestExec = new RequestExecution();
@@ -61,7 +61,7 @@ public class JunitRunner {
 			falures.addAll(requestExec.getFailures());
 			boolean isPass = requestExec.getFailures().isEmpty();
 			result.addResult(classMethod, isPass);
-			System.out.println(classMethod + ", result: " + isPass);
+//			System.out.println(classMethod + ", result: " + isPass);
 		}
 		extractBrkpsFromTrace(falures, params, result.getFailureTraces());
 //		extractBrkpsFromTrace(falures, params.getTestingClassNames(),
@@ -76,14 +76,14 @@ public class JunitRunner {
 				.getTestingClassNames());
 		List<String> testingPkgs = CollectionUtils.nullToEmpty(params
 				.getTestingPkgs());
-		System.out.println("FailureTrace: ");
+//		System.out.println("FailureTrace: ");
 		for (Failure failure : falures) {
 			for (StackTraceElement trace : failure.getException()
 					.getStackTrace()) {
 				String className = trace.getClassName();
 				int lineNumber = trace.getLineNumber();
-				System.out.println(String
-						.format("%s@%s", className, lineNumber));
+//				System.out.println(String
+//						.format("%s@%s", className, lineNumber));
 				if (className == null) {
 					continue;
 				}
@@ -107,13 +107,13 @@ public class JunitRunner {
 
 	private static void extractBrkpsFromTrace(List<Failure> failureTrace,
 			List<String> testingClassNames, Set<BreakPoint> failureTraces) {
-		System.out.println("FailureTrace: ");
+//		System.out.println("FailureTrace: ");
 		for (Failure failure : failureTrace) {
 			for (StackTraceElement trace : failure.getException()
 					.getStackTrace()) {
 				String className = trace.getClassName();
 				int lineNumber = trace.getLineNumber();
-				System.out.println(String.format("%s@%s", className, lineNumber));
+//				System.out.println(String.format("%s@%s", className, lineNumber));
 				if (className != null
 						&& (testingClassNames == null || testingClassNames
 								.contains(className))) {

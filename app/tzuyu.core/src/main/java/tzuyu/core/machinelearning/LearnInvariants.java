@@ -41,8 +41,5 @@ public class LearnInvariants {
 		
 		engine.run();
 		final List<Result> results = engine.getResults();
-		for (Result result : results) {
-			System.out.println(result);
-		}
 	}
 }

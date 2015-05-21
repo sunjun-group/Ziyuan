@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 import sav.common.core.Constants;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.SampleProgramTest;
@@ -42,6 +43,7 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		projectClasspath.add(
 				TestConfiguration.getTarget("slicer.javaslicer"));
 		projectClasspath.add(config.getJunitLib());
+		testContext.getAppData().setSuspiciousCalculAlgo(SpectrumAlgorithm.OCHIAI);
 	}
 	
 	@Test

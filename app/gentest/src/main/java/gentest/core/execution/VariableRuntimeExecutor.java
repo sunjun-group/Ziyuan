@@ -47,7 +47,6 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 	} 
 	
 	public boolean start(ISelectedVariable receiver) {
-		log.debug("start runtime execution");
 		successful = true;
 		if (receiver != null) {
 			execute(receiver);
@@ -141,7 +140,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 	@Override
 	public boolean visit(REvaluationMethod stmt) {
 		visitRmethod(stmt);
-		Assert.assertTrue(Boolean.TRUE.equals(getExecData(stmt.getOutVarId())));
+		successful = (Boolean) getExecData(stmt.getOutVarId());
 		return successful;
 	}
 

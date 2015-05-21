@@ -73,7 +73,6 @@ public class VMListener {
 	private ListeningConnector getListeningConnector() {
 		VirtualMachineManager vmManager = Bootstrap.virtualMachineManager();
 		for (Connector connector : vmManager.listeningConnectors()) {
-			System.out.println(connector.name());
 			if ("com.sun.jdi.SocketListen".equals(connector.name())) {
 				return (ListeningConnector) connector;
 			}

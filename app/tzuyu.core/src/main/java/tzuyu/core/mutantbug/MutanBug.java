@@ -81,8 +81,6 @@ public class MutanBug {
 			
 			//update suspiciousness
 			firstRanks.get(i).setSuspiciousness(suspiciousness);
-			
-			log.info(location.getId() + ":" + calculator.compute());
 		}
 		
 		//sort after updating suspiciousness
