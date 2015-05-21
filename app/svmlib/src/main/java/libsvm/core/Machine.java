@@ -297,7 +297,7 @@ public class Machine {
 	protected String getLearnedLogic(final Divider divider, final DataPoint sampleDataPoint) {
 		StringBuilder str = new StringBuilder();
 		CoefficientProcessing coefficientProcessing = new CoefficientProcessing();
-		double[] thetas = coefficientProcessing.process(divider);
+		double[] thetas = coefficientProcessing.process(divider.getLinearExpr());
 
 		for (int i = 0; i < thetas.length - 1; i++) {
 			if (Double.compare(thetas[i], 0) == 0) {

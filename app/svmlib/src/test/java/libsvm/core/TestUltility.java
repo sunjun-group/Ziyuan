@@ -81,7 +81,7 @@ public class TestUltility {
 	
 	protected void checkLastDividerFound(double[] expectedCoefficients) {
 		Divider divider = machine.getModel().getExplicitDivider();
-		double[] coefficients = new CoefficientProcessing().process(divider);
+		double[] coefficients = new CoefficientProcessing().process(divider.getLinearExpr());
 		compareCoefficients(expectedCoefficients, coefficients);
 	}
 

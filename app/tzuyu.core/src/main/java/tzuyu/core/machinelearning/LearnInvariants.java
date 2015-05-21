@@ -31,7 +31,7 @@ public class LearnInvariants {
 		}
 	}
 
-	public void learn(List<BreakPoint> breakpoints, List<String> junitClassNames, String sourceFolder) throws Exception {
+	public List<Result> learn(List<BreakPoint> breakpoints, List<String> junitClassNames, String sourceFolder) throws Exception {
 		List<String> testcases = JunitUtils.extractTestMethods(junitClassNames);
 		engine.addNotExecutedTestcases(testcases);
 		
@@ -40,6 +40,6 @@ public class LearnInvariants {
 		}
 		
 		engine.run();
-		final List<Result> results = engine.getResults();
+		return engine.getResults();
 	}
 }

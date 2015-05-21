@@ -1,5 +1,7 @@
 package libsvm.core;
 
+import java.util.Arrays;
+
 import libsvm.core.Machine.DataPoint;
 
 /**
@@ -58,13 +60,11 @@ public class Divider {
 		if (this.isRounded) {
 			return this;
 		}
-		final double[] roundedAllThetas = new CoefficientProcessing().process(this);
-		final int lastIndex = roundedAllThetas.length - 1;
-		final double[] roundedThetas = new double[lastIndex];
-		for (int i = 0; i < lastIndex; i++) {
-			roundedThetas[i] = roundedAllThetas[i];
-		}
-		return new Divider(roundedThetas, roundedAllThetas[lastIndex], true);
+		final double[] roundedLinearExpr = new CoefficientProcessing().process(this.getLinearExpr());
+		final int lastIndex = roundedLinearExpr.length - 1;
+		final double[] roundedThetas = Arrays.copyOf(roundedLinearExpr, roundedLinearExpr.length - 1);
+		
+		return new Divider(roundedThetas, roundedLinearExpr[lastIndex], true);
 	}
 
 	/**
@@ -95,5 +95,12 @@ public class Divider {
 	
 	public CategoryCalculator getCategoryCalculator() {
 		return new DividerBasedCategoryCalculator(this);
+	}
+	
+	public double[] getLinearExpr() {
+		//the last element is the theta0
+		double[] linearExpr = Arrays.copyOf(thetas, thetas.length + 1);
+		linearExpr[linearExpr.length - 1] = theta0;
+		return linearExpr;
 	}
 }

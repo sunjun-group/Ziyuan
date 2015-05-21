@@ -22,22 +22,7 @@ public class CoefficientProcessing {
 	private static final double EPSILON = Math.pow(10, -6);
 	private static final double NUMBER_DECIMAL_TO_KEEP = 1000000000;
 	private static final int BOUND_RATE_MIN_MAX_COEFFICIENT = 10; //max coefficient / min coefficient is bounded
-	
-	public double[] process(Divider divider){
-		double[] thetas = getFullThetas(divider);
-		return process(thetas);
-	}
-	private double[] getFullThetas(Divider divider) {
-		double[] oldThetas = divider.getThetas();
-		//the last element is the theta0
-		double[] thetas = new double[oldThetas.length + 1];
-		for(int i = 0; i < thetas.length - 1; i++){
-			thetas[i] = oldThetas[i];
-		}
-		thetas[thetas.length - 1] = divider.getTheta0();
-		return thetas;
-	}
-	
+		
 	public double[] process(double[] thetas) {
 		double[] backup = Arrays.copyOf(thetas, thetas.length);
 		

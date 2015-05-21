@@ -8,6 +8,7 @@
 
 package tzuyu.core.main;
 
+import icsetlv.Engine.Result;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.variable.VariableNameCollector;
 import japa.parser.ast.CompilationUnit;
@@ -144,13 +145,17 @@ public class TzuyuCore {
 		VariableNameCollector nameCollector = new VariableNameCollector(Arrays.asList(appData.getAppSrc()));
 		nameCollector.updateVariables(breakpoints);
 		
-		breakpoints = getNextLineToAddBreakpoint(breakpoints);
+		List<BreakPoint> newBreakpoints = getNextLineToAddBreakpoint(breakpoints);
 		
 		if (CollectionUtils.isEmpty(suspectLocations)) {
 			LOGGER.warn("Did not find any place to add break point. SVM will not run.");
 		} else {
 			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig());
-			learnInvariant.learn(breakpoints, junitClassNames, appData.getAppSrc());
+			List<Result> invariants = learnInvariant.learn(newBreakpoints, junitClassNames, appData.getAppSrc());
+			for(int i = 0; i < invariants.size(); i++){
+				LOGGER.info(breakpoints.get(i));
+				LOGGER.info(invariants.get(i));
+			}
 		}
 
 	}
