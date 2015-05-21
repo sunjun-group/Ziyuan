@@ -41,16 +41,19 @@ public class DebugLineInsertionTest {
 		String clazzName = InsertTestData.class.getName();
 		List<ClassLocation> value = new ArrayList<ClassLocation>();
 		value.add(new ClassLocation(clazzName, null, 25));
+		value.add(new ClassLocation(clazzName, null, 50));
 		value.add(new ClassLocation(clazzName, null, 27));
+		value.add(new ClassLocation(clazzName, null, 46));
 		value.add(new ClassLocation(clazzName, null, 31));
 		value.add(new ClassLocation(clazzName, null, 32));
 		value.add(new ClassLocation(clazzName, null, 42));
-		value.add(new ClassLocation(clazzName, null, 46));
-		value.add(new ClassLocation(clazzName, null, 50));
 		classLocationMap.put(clazzName, value);
 		Map<String, DebugLineInsertionResult> result = mutator.insertDebugLine(
 				classLocationMap, "./src/test/java");
 		System.out.println(result);
+		/*
+		 * 25:26, 27:29, 31:34, 32:36, 42:46, 46:50, 50:56
+		 */
 	}
 	
 }

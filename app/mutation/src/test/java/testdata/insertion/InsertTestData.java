@@ -38,10 +38,6 @@ public class InsertTestData {
 		return true;
 	}
 	
-	public String concat(String a, String b) {
-		return a.concat(b);
-	}
-	
 	public InsertTestData getThis(){
 		return this;
 	}
@@ -49,4 +45,8 @@ public class InsertTestData {
 	public int getA() {
 		return a;
 	}	
+	
+	public String concat(String a, String b) {
+		return a.concat(b);
+	}
 }

@@ -47,18 +47,20 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 	private int curPos;
 	private DebugLineFileWriter fileWriter;
 	private MethodDeclaration curMethod;
+	private int curTempVarIdx = 1;
 	
 	public void init(String className, ClassDescriptor classDescriptor,
 			List<Integer> lines) {
 		this.className = className;
 		this.clazzDesc = classDescriptor;
-		this.lines = lines;
+		this.lines = lines; 
+		Collections.sort(this.lines);
 	}
 
 	public DebugLineInsertionResult insert(CompilationUnit cu) {
 		insertMap = new HashMap<Integer, Integer>();
 		returnStmts = new HashMap<Integer, DebugLineData>();
-		curPos = 0;
+		curPos = -1;
 		cu.accept(this, true);
 		// collect data
 		List<DebugLineData> data = new ArrayList<DebugLineData>();
@@ -102,7 +104,6 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 	private void buildMapOldLineToNewLine(DebugLineInsertionResult result,
 			Map<Integer, DebugLineData> mutatedLines) {
 		int offset = 0;
-		Collections.sort(lines);
 		for (Integer oldLine : lines) {
 			if (mutatedLines.containsKey(oldLine)) {
 				int newLine = mutatedLines.get(oldLine).getDebugLine();
@@ -142,19 +143,25 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 		if (!(node instanceof Statement)) {
 			return false;
 		}
-		for (int i = curPos; i < lines.size(); i ++) {
-			int loc = getCurrentLocation();
-			if (loc == node.getBeginLine()) {
-				return true;
-			}
+		
+		int nextLoc = lines.get(curPos + 1);
+		if (nextLoc == node.getBeginLine()) {
+			curPos++;
+			return true;
 		}
+//		for (int i = curPos + 1; i < lines.size(); i ++) {
+//			int loc = lines.get(i);
+//			if (loc == node.getBeginLine()) {
+//				curPos++;
+//				return true;
+//			}
+//		}
 		return false;
 	}
 	
 	@Override
 	public boolean mutate(ExpressionStmt n) {
 		insertMap.put(getCurrentLocation(), n.getEndLine());
-		curPos++;
 		return false;
 	}
 
@@ -176,7 +183,6 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 		Integer curLoc = getCurrentLocation();
 		returnStmts.put(curLoc, new ReplacedLineData(curLoc, 
 				n, newNodes));
-		curPos++;
 		return false;
 	}
 
@@ -191,7 +197,7 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 	 * it's the job of classDesc
 	 */
 	private String generateNewVarName() {
-		return "tzzzzzzuyu";
+		return "tzTemVar" + curTempVarIdx++;
 	}
 	
 	public void setFileWriter(DebugLineFileWriter fileWriter) {
