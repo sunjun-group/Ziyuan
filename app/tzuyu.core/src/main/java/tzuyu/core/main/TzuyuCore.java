@@ -16,6 +16,7 @@ import japa.parser.ast.CompilationUnit;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -92,7 +93,7 @@ public class TzuyuCore {
 			List<String> testingPackages, List<String> junitClassNames, boolean useSlicer)
 			throws Exception {
 		FaultLocalizationReport report = computeSuspiciousness(testingClassName, testingPackages, junitClassNames, useSlicer);
-		mutation(report, junitClassNames);
+//		mutation(report, junitClassNames);
 		machineLearning(report, testingClassName, methodName,
 				verificationMethod, junitClassNames);
 	}
@@ -147,29 +148,27 @@ public class TzuyuCore {
 		
 		List<BreakPoint> newBreakpoints = getNextLineToAddBreakpoint(breakpoints);
 		
+		Map<BreakPoint, BreakPoint> newLineToOldLine = buildNewToOriginalMap(
+				breakpoints, newBreakpoints);
+		
 		if (CollectionUtils.isEmpty(suspectLocations)) {
 			LOGGER.warn("Did not find any place to add break point. SVM will not run.");
 		} else {
 			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig());
 			List<Result> invariants = learnInvariant.learn(newBreakpoints, junitClassNames, appData.getAppSrc());
+			
+			LOGGER.info("Summary invariants learned:");
 			for(int i = 0; i < invariants.size(); i++){
-				LOGGER.info(breakpoints.get(i));
+				BreakPoint newBreakpoint = invariants.get(i).getBreakPoint();
+				BreakPoint originalBreakpoint = newLineToOldLine.get(newBreakpoint);
+				
+				LOGGER.info(originalBreakpoint);
 				LOGGER.info(invariants.get(i));
 			}
 		}
 
 	}
 	
-	private List<BreakPoint> getNextLineToAddBreakpoint( 
-			List<BreakPoint> suspectLocations) throws SavException {
-		MutanBug mutanbug = new MutanBug();
-		mutanbug.setAppData(appData);
-		mutanbug.setMutator(appContext.getMutator());
-		Map<String, DebugLineInsertionResult> mutationInfo = mutanbug.mutateForMachineLearning(suspectLocations);
-		suspectLocations = getNewLocationAfterMutation(suspectLocations, mutationInfo);
-		return suspectLocations;
-	}
-
 	private List<String> generateNewTests(String testingClassName, String methodName, String verificationMethod)
 			throws ClassNotFoundException, SavException {
 		Class<?> targetClass = Class.forName(testingClassName);
@@ -205,6 +204,16 @@ public class TzuyuCore {
 		return junitClassNames;
 	}
 
+	private List<BreakPoint> getNextLineToAddBreakpoint( 
+			List<BreakPoint> suspectLocations) throws SavException {
+		MutanBug mutanbug = new MutanBug();
+		mutanbug.setAppData(appData);
+		mutanbug.setMutator(appContext.getMutator());
+		Map<String, DebugLineInsertionResult> mutationInfo = mutanbug.mutateForMachineLearning(suspectLocations);
+		suspectLocations = getNewLocationAfterMutation(suspectLocations, mutationInfo);
+		return suspectLocations;
+	}
+	
 	private List<BreakPoint> getNewLocationAfterMutation(
 			List<BreakPoint> suspectLocations,
 			Map<String, DebugLineInsertionResult> mutationInfo) {
@@ -226,6 +235,14 @@ public class TzuyuCore {
 		
 		return result;
 	}
-
 	
+
+	private Map<BreakPoint, BreakPoint> buildNewToOriginalMap(
+			List<BreakPoint> breakpoints, List<BreakPoint> newBreakpoints) {
+		Map<BreakPoint, BreakPoint> newLineToOldLine = new HashMap<BreakPoint, BreakPoint>();
+		for(int i = 0; i < newBreakpoints.size(); i++){
+			newLineToOldLine.put(newBreakpoints.get(i), breakpoints.get(i));
+		}
+		return newLineToOldLine;
+	}
 }

@@ -178,19 +178,19 @@ public class Engine {
 			final List<BreakpointValue> passValues = testResult.getPassValues(bkp);
 			final List<BreakpointValue> failValues = testResult.getFailValues(bkp);
 			// Cannot train if there are not enough data
-			if (passValues.isEmpty() || failValues.isEmpty()) {
-				LOGGER.info("There is no data for the "
-						+ (passValues.isEmpty() ? "POSITIVE" : "NEGATIVE") + " category.");
-				if(passValues.isEmpty()){
-					LOGGER.info("This line is likely a bug!");
-					return this;
-				}
-				else{
-					LOGGER.info("This line is likely not a bug!");
-					continue;
-				}
+			if(passValues.isEmpty() && failValues.isEmpty()){
+				//fail to add breakpoint
+				continue;
 			}
-			
+			else if(failValues.isEmpty()){
+				LOGGER.info("This line is likely not a bug!");
+				continue;
+			}
+			else if(passValues.isEmpty()){
+				LOGGER.info("This line is likely a bug!");
+				return this;
+			}
+						
 			// Configure data for SVM machine
 			machine.resetData();
 			List<String> varLabels = new ArrayList<String>(bkp.getVars().size());

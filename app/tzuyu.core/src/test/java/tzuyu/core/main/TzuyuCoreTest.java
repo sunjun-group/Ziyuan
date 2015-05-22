@@ -118,7 +118,7 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	}
 	
 	@Test
-	public void whenSpectrumAndMachineLearningUsed1() throws Exception{
+	public void testNoLoop() throws Exception{
 		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTestPassed");
@@ -129,7 +129,7 @@ public class TzuyuCoreTest extends AbstractTzTest {
 
 	@Test
 	@Ignore("For testing external codes")
-	public void whenSpectrumAndMachineLearningUsed2() throws Exception {
+	public void testExternalNoLoop() throws Exception {
 		final ApplicationData appData = testContext.getAppData();
 		final List<String> appClasspaths = appData.getAppClasspaths();
 		appClasspaths.add("/Users/npn/dev/projects/data/target/test-classes");
@@ -148,7 +148,7 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	}
 
 	@Test
-	public void whenSpectrumAndMachineLearningUsed3() throws Exception{
+	public void testWhileLoopWith2Bugs() throws Exception{
 		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.search1.SearchIndexEqualValueTest");
@@ -157,7 +157,7 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	}
 	
 	@Test
-	public void whenSpectrumAndMachineLearningUsed4() throws Exception{
+	public void testArray() throws Exception{
 		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.GetSumArrayTest");
@@ -166,7 +166,7 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	}
 	
 	@Test
-	public void whenSpectrumAndMachineLearningUsed5() throws Exception{
+	public void testSimpleForLoop() throws Exception{
 		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.LoopInvariantTest");

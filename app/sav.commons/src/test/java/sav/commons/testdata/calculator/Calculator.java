@@ -39,10 +39,10 @@ public class Calculator {
 	}
 	
 	public static boolean loopInvariant(int a, int b){
-//		for(int i = 0; i < 10; i++){
-//			a--;
-//			b--;
-//		}
+		for(int i = 0; i < 10; i++){
+			a--;
+			b--;
+		}
 		
 		return a >= b;
 	}
