@@ -129,14 +129,16 @@ public class PositiveSeparationMachine extends Machine {
 	public String getLearnedLogic() {
 		StringBuilder str = new StringBuilder();
 
-		DataPoint randomData = getRandomData();
+		final int numberOfFeatures = getRandomData().getNumberOfFeatures();
 		for (svm_model svmModel : learnedModels) {
-			final Divider explicitDivider = new Model(svmModel, randomData.getNumberOfFeatures())
-					.getExplicitDivider();
-			if (str.length() != 0) {
-				str.append("\n");
+			if (svmModel != null) {				
+				final Divider explicitDivider = new Model(svmModel, numberOfFeatures)
+				.getExplicitDivider();
+				if (str.length() != 0) {
+					str.append("\n");
+				}
+				str.append(getLearnedLogic(explicitDivider));
 			}
-			str.append(getLearnedLogic(explicitDivider));
 		}
 
 		return str.toString();

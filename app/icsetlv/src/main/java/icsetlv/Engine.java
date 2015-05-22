@@ -7,14 +7,15 @@ import icsetlv.variable.TestcasesExecutor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import libsvm.core.KernelType;
 import libsvm.core.Machine;
 import libsvm.core.MachineType;
 import libsvm.core.Parameter;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
 import sav.common.core.Pair;
-import sav.common.core.utils.Assert;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.junit.JunitRunner;
@@ -272,8 +273,12 @@ public class Engine {
 			str.append("*******************\n");
 			str.append("Breakpoint@").append(breakPoint.getClassCanonicalName()).append(":")
 					.append(breakPoint.getLineNo()).append("\n");
-			str.append("Logic:\n").append(learnedLogic).append("\n");
-			str.append("Accuracy: ").append(accuracy).append("\n");
+			if (StringUtils.isBlank(learnedLogic)) {
+				str.append("Could not learn anything.");
+			} else {
+				str.append("Logic:\n").append(learnedLogic).append("\n");				
+				str.append("Accuracy: ").append(accuracy).append("\n");
+			}
 			return str.toString();
 		}
 	}

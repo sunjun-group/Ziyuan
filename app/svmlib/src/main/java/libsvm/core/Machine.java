@@ -103,6 +103,7 @@ public class Machine {
 	public Machine resetData() {
 		data = new ArrayList<DataPoint>();
 		this.isDataClean = false;
+		this.model = null;
 		return this;
 	}
 
@@ -282,7 +283,7 @@ public class Machine {
 	
 	public String getLearnedLogic() {
 		Model currentModel = getModel();
-		return getLearnedLogic(currentModel.getExplicitDivider());
+		return currentModel == null ? "" : getLearnedLogic(currentModel.getExplicitDivider());
 	}
 
 	protected String getLearnedLogic(final Divider divider) {

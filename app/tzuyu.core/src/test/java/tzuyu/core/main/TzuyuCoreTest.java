@@ -16,7 +16,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 import sav.common.core.Constants;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.SampleProgramTest;
@@ -30,6 +29,7 @@ import sav.commons.testdata.simplePrograms.ReverseWordTest;
 import sav.commons.testdata.simplePrograms.SearchInSortingMatrix1Test;
 import sav.commons.testdata.simplePrograms.SimplePrograms;
 import tzuyu.core.inject.ApplicationData;
+import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 /**
  * @author LLT
@@ -183,26 +183,29 @@ public class TzuyuCoreTest extends AbstractTzTest {
 				null, junitClassNames, false);
 	}
 	
-//	@Test
-//	@Ignore("For testing with Guava codes")
-//	public void testGuava1() throws Exception {
-//		//  b2c6fb17ab4fbac8cd4014fe68799166f015a2c3
-//		final ApplicationData appData = testContext.getAppData();
-//		final List<String> appClasspaths = appData.getAppClasspaths();
-//		appClasspaths.add("/Users/npn/dev/projects/guava/guava/target/classes");
-//		appClasspaths.add("/Users/npn/dev/projects/guava/guava-tests/test");
-//		appClasspaths.add("/Users/npn/dev/projects/guava/guava-tests/target/test-classes");
-//		appClasspaths.add(TestConfiguration.getTzAssembly(Constants.TZUYU_JAVASLICER_ASSEMBLY));
+
+	@Test
+	@Ignore("For testing with Guava codes")
+	public void testGuava1() throws Exception {
+		//  b2c6fb17ab4fbac8cd4014fe68799166f015a2c3
+		final ApplicationData appData = testContext.getAppData();
+		final List<String> appClasspaths = appData.getAppClasspaths();
+		appClasspaths.add("/Users/npn/dev/projects/guava/guava/target/classes");
+		appClasspaths.add("/Users/npn/dev/projects/guava/guava-tests/test");
+		appClasspaths.add("/Users/npn/dev/projects/guava/guava-tests/target/test-classes");
+		appClasspaths.add(TestConfiguration.getTzAssembly(Constants.TZUYU_JAVASLICER_ASSEMBLY));
 //		appData.setAppSrc("/Users/npn/dev/projects/guava/guava-tests/test");
+		appData.setAppSrc("/Users/npn/dev/projects/guava/guava/src");
 //		appData.setAppTarget("/Users/npn/dev/projects/guava/guava-tests/target/test-classes");
-//
-//		final TzuyuCore app = new TzuyuCore(testContext);
-//		List<String> testingClasses = Arrays.asList("com.google.common.cache.AbstractCache");
-//		List<String> junitClassNames = Arrays.asList("com.google.common.cache.AbstractCacheTest");
-//		List<String> testPackages = Arrays.asList("com.google.common.hash");
-//		app.doSpectrumAndMachineLearning(testingClasses, null, junitClassNames, false);
-//	}
-//
+		appData.setAppTarget("/Users/npn/dev/projects/guava/guava/target/classes");
+
+		final TzuyuCore app = new TzuyuCore(testContext);
+		List<String> junitClassNames = new ArrayList<String>();
+		junitClassNames.add("com.google.common.cache.AbstractCacheTest");
+		app.faultLocate("com.google.common.cache.AbstractCache", "getAllPresent", "dummyValidate",
+				null, junitClassNames, false);
+	}
+
 //	@Test
 //	@Ignore("For testing with Guava codes")
 //	public void testGuava2() throws Exception {

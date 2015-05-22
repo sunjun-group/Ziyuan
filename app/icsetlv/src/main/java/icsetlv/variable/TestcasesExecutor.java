@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import sav.common.core.Logger;
 import sav.common.core.SavException;
@@ -63,6 +65,7 @@ import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequestManager;
+import com.sun.tools.jdi.StringReferenceImpl;
 
 /**
  * @author LLT
@@ -71,7 +74,8 @@ import com.sun.jdi.request.EventRequestManager;
 public class TestcasesExecutor {
 	private static final Logger<?> LOGGER = Logger.getDefaultLogger();
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
-	private static final String TO_STRING_NAME= "toString"; 
+	private static final String TO_STRING_NAME= "toString";
+	private static final Pattern PATTERN = Pattern.compile("^\"(\\d+)+\"$");
 	private SimpleDebugger debugger;
 	private VMConfiguration config;
 	// class and its breakpoints
@@ -239,6 +243,15 @@ public class TestcasesExecutor {
 		}
 	}
 
+	private String unwrapString(final String str) {
+		final Matcher matcher = PATTERN.matcher(str);
+		if (matcher.matches()) {
+			return matcher.group(1);
+		} else {
+			return str;
+		}
+	}
+
 	private synchronized String toPrimitiveValue(ClassType type, ObjectReference value,
 			ThreadReference thread) {
 		Method method = type.concreteMethodByName(TO_STRING_NAME,
@@ -249,7 +262,11 @@ public class TestcasesExecutor {
 					Value toStringValue = value.invokeMethod(thread, method,
 							new ArrayList<Value>(),
 							ObjectReference.INVOKE_SINGLE_THREADED);
-					return toStringValue.toString();
+					if (StringReferenceImpl.class.isAssignableFrom(toStringValue.getClass())) {
+						return unwrapString(toStringValue.toString());
+					} else {
+						return toStringValue.toString();
+					}
 				}
 			} catch (Exception e) {
 				// ignore.
