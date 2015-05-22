@@ -8,7 +8,11 @@
 
 package mutation.mutator.insertdebugline;
 
-import static mutation.mutator.AstNodeFactory.*;
+import static mutation.mutator.AstNodeFactory.assertNotNullStmt;
+import static mutation.mutator.AstNodeFactory.declarationStmt;
+import static mutation.mutator.AstNodeFactory.expression;
+import static mutation.mutator.AstNodeFactory.nameExpr;
+import static mutation.mutator.AstNodeFactory.returnStmt;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.Node;
 import japa.parser.ast.body.MethodDeclaration;
@@ -25,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -44,7 +49,6 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 	private ClassDescriptor clazzDesc;
 	private Map<Integer, DebugLineData> returnStmts;
 	private Map<Integer, Integer> insertMap;
-	private int curPos;
 	private DebugLineFileWriter fileWriter;
 	private MethodDeclaration curMethod;
 	private int curTempVarIdx = 1;
@@ -60,7 +64,7 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 	public DebugLineInsertionResult insert(CompilationUnit cu) {
 		insertMap = new HashMap<Integer, Integer>();
 		returnStmts = new HashMap<Integer, DebugLineData>();
-		curPos = -1;
+		mutationLines = new ArrayList<Integer>(lines);
 		cu.accept(this, true);
 		// collect data
 		List<DebugLineData> data = new ArrayList<DebugLineData>();
@@ -121,6 +125,11 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 		newStmt.setBeginLine(nodeBeginLine + 1);
 		return newStmt;
 	}
+
+	/*
+	 * visitor part
+	 * */
+	private List<Integer> mutationLines;
 	
 	@Override
 	protected boolean beforeVisit(Node node) {
@@ -143,30 +152,23 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 		if (!(node instanceof Statement)) {
 			return false;
 		}
-		
-		int nextLoc = lines.get(curPos + 1);
-		if (nextLoc == node.getBeginLine()) {
-			curPos++;
-			return true;
+		for (Iterator<Integer> it = mutationLines.iterator(); it.hasNext(); ) {
+			if (node.getBeginLine() == it.next()) {
+				it.remove();
+				return true;
+			}
 		}
-//		for (int i = curPos + 1; i < lines.size(); i ++) {
-//			int loc = lines.get(i);
-//			if (loc == node.getBeginLine()) {
-//				curPos++;
-//				return true;
-//			}
-//		}
 		return false;
 	}
 	
 	@Override
 	public boolean mutate(ExpressionStmt n) {
-		insertMap.put(getCurrentLocation(), n.getEndLine());
+		insertMap.put(getCurrentLocation(n), n.getEndLine());
 		return false;
 	}
 
-	private Integer getCurrentLocation() {
-		return lines.get(curPos);
+	private Integer getCurrentLocation(Node n) {
+		return n.getBeginLine();
 	}
 
 	@Override
@@ -180,7 +182,7 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 		newNodes.add(declarationStmt(curMethod.getType(), newVarName, 
 				n.getExpr()));
 		newNodes.add(returnStmt(nameExpr(newVarName)));
-		Integer curLoc = getCurrentLocation();
+		Integer curLoc = getCurrentLocation(n);
 		returnStmts.put(curLoc, new ReplacedLineData(curLoc, 
 				n, newNodes));
 		return false;
