@@ -18,51 +18,34 @@ import org.junit.Test;
 public class SumTest {
 
 	@Test
-	public void whenBothZero(){
+	public void whenZero(){
 		int a = 0;
-		int b = 0;
-		int sum = new Sum(a, b).getSum();
-		int expect = a + b;
+		int x = 1;
+		int y = 2;
+		int sum = new Sum(a).getSum(x, y);
+		int expect = x+y;
 		
 		Assert.assertEquals(expect, sum);
 	}
 	
 	@Test
-	public void whenOneZero(){
-		int a = 0;
-		int b = 1;
-		int sum = new Sum(a, b).getSum();
-		int expect = a + b;
-		
-		Assert.assertEquals(expect, sum);
-	}
-	
-	@Test
-	public void whenTheOtherZero(){
+	public void whenOne(){
 		int a = 1;
-		int b = 0;
-		int sum = new Sum(a, b).getSum();
-		int expect = a + b;
+		int x = 1;
+		int y = 2;
+		int sum = new Sum(a).getSum(x, y);
+		int expect = x+y;
 		
 		Assert.assertEquals(expect, sum);
 	}
 	
 	@Test
-	public void whenBothSmall(){
-		int a = 1;
-		int b = 2;
-		int sum = new Sum(a, b).getSum();
-		int expect = a + b;
-		
-		Assert.assertEquals(expect, sum);
-	}
-	
-	@Test
-	public void whenBothBig(){
+	public void whenBig(){
 		int a = 100;
-		int b = 200;
-		int sum = new Sum(a, b).getSum();
-		int expect = a + b;
+		int x = 1;
+		int y = 2;
+		int sum = new Sum(a).getSum(x, y);
+		int expect = x+y;
 		
 		Assert.assertEquals(expect, sum);
 	}

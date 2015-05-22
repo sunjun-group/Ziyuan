@@ -14,22 +14,20 @@ package sav.commons.testdata.calculator;
  */
 public class Sum {
 	private int a;
-	private int b;
-	public Sum(int a, int b){
+	public Sum(int a){
 		this.a = a;
-		this.b = b;
 	}
 	
-	public int getSum() {
+	public int getSum(int x, int y) {
 		if(a > 3){
-			a++;
+			x++;
 		}
 		
-		return a + b;
+		return x+y;
 	}
 	
-	public static boolean validateGetSum(int a, int b, int max) {
-		return (max == a + b);
+	public static boolean validateGetSum(int x, int y, int max) {
+		return (max == x + y);
 	}
 	
 }
