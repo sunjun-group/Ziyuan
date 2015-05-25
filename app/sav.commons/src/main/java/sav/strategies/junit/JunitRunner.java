@@ -30,6 +30,7 @@ import sav.strategies.vm.ProgramArgumentBuilder;
  *
  */
 public class JunitRunner {
+	public static final String START_REQUEST_ENTRY = "toRequest";
 	
 	public static void main(String[] args) throws Exception {
 		if (CollectionUtils.isEmpty(args)) {
@@ -100,25 +101,6 @@ public class JunitRunner {
 								.getMethodName(), lineNumber));
 						break;
 					}
-				}
-			}
-		}
-	}
-
-	private static void extractBrkpsFromTrace(List<Failure> failureTrace,
-			List<String> testingClassNames, Set<BreakPoint> failureTraces) {
-//		System.out.println("FailureTrace: ");
-		for (Failure failure : failureTrace) {
-			for (StackTraceElement trace : failure.getException()
-					.getStackTrace()) {
-				String className = trace.getClassName();
-				int lineNumber = trace.getLineNumber();
-//				System.out.println(String.format("%s@%s", className, lineNumber));
-				if (className != null
-						&& (testingClassNames == null || testingClassNames
-								.contains(className))) {
-					failureTraces.add(new BreakPoint(className,
-							trace.getMethodName(), lineNumber));
 				}
 			}
 		}

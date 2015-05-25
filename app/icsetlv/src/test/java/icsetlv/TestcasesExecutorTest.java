@@ -56,10 +56,11 @@ public class TestcasesExecutorTest extends AbstractTest {
 		TestcasesExecutor varExtr = new TestcasesExecutor(vmConfig, 6);
 		TcExecResult extractedResult = varExtr
 				.execute(
-						CollectionUtils
+						CollectionUtils.join(
+								CollectionUtils
 								.listOf("testdata.slice.FindMaxCallerPassTest1"),
 						CollectionUtils
-								.listOf("testdata.slice.FindMaxCallerFailTest1"),
+								.listOf("testdata.slice.FindMaxCallerFailTest1")),
 						breakpoints);
 		print(extractedResult);
 	}

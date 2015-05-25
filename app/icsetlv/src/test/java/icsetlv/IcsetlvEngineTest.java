@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sav.common.core.SavException;
+import sav.common.core.utils.CollectionUtils;
 import sav.commons.AbstractTest;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
@@ -66,7 +67,7 @@ public class IcsetlvEngineTest extends AbstractTest {
 		
 		printBkps(bkps);
 		TestcasesExecutor extractor = new TestcasesExecutor(input.getConfig(), 4);
-		TcExecResult result = extractor.execute(input.getPassTestcases(), input.getFailTestcases(),
+		TcExecResult result = extractor.execute(CollectionUtils.join(input.getPassTestcases(), input.getFailTestcases()),
 				bkps);
 		print(result);
 		Machine machine = setupMachine(new Machine(), 2);

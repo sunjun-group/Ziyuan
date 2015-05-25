@@ -15,11 +15,8 @@ import libsvm.core.Parameter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import sav.common.core.Pair;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
-import sav.strategies.junit.JunitRunner;
-import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.vm.VMConfiguration;
 
 /**
@@ -57,9 +54,7 @@ public class Engine {
 
 	private VMConfiguration vmConfig = initVmConfig();
 	private Machine machine = getDefaultMachine();
-	private List<String> passedTestCases = new ArrayList<String>();
-	private List<String> failedTestCases = new ArrayList<String>();
-	private List<String> notExecutedTestcases = new ArrayList<String>();
+	private List<String> testcases = new ArrayList<String>();
 	private List<BreakPoint> breakPoints = new ArrayList<BreakPoint>();
 	private List<Result> results;
 
@@ -123,54 +118,21 @@ public class Engine {
 		return run(DEFAULT_VALUE_RETRIVE_LEVEL, getMachine());
 	}
 
-	public Engine addPassedTestcase(final String testcase) {
-		passedTestCases.add(testcase);
-		return this;
-	}
-
-	public Engine addFailedTestcase(final String testcase) {
-		failedTestCases.add(testcase);
-		return this;
-	}
-
-	public Engine addNotExecutedTestcase(final String testcase) {
-		notExecutedTestcases.add(testcase);
+	public Engine addTestcase(final String testcase) {
+		testcases.add(testcase);
 		return this;
 	}
 	
 	public Engine addNotExecutedTestcases(final List<String> testcases) {
 		for(String testcase: testcases){
-			addNotExecutedTestcase(testcase);
+			addTestcase(testcase);
 		}
 		return this;
 	}
 
-	private void evaluateNotExecutedTestcases() throws Exception {
-		if (notExecutedTestcases.isEmpty()) {
-			return;
-		}
-		final JunitRunnerParameters params = new JunitRunnerParameters();
-		params.setClassMethods(notExecutedTestcases);
-		final List<Pair<String, String>> failedTests = JunitRunner.runTestcases(params)
-				.getFailTests();
-		final List<String> failedTcs = new ArrayList<String>(failedTests.size());
-		for (Pair<String, String> test : failedTests) {
-			failedTcs.add(new StringBuilder().append(test.a).append(".").append(test.b).toString());
-		}
-		for (String testcase : notExecutedTestcases) {
-			if (failedTcs.contains(testcase)) {
-				this.failedTestCases.add(testcase);
-			} else {
-				this.passedTestCases.add(testcase);
-			}
-		}
-	}
-
 	public Engine run(final int valueRetriveLevel, final Machine machine) throws Exception {
-		evaluateNotExecutedTestcases();
-
 		final TestcasesExecutor testRunner = new TestcasesExecutor(vmConfig, valueRetriveLevel);
-		final TcExecResult testResult = testRunner.execute(passedTestCases, failedTestCases,
+		final TcExecResult testResult = testRunner.execute(testcases,
 				breakPoints);
 
 		results = new ArrayList<Result>(breakPoints.size());

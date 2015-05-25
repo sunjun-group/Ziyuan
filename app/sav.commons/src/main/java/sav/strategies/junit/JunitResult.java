@@ -9,7 +9,6 @@
 package sav.strategies.junit;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,9 +19,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 import sav.common.core.Pair;
+import sav.common.core.utils.JunitUtils;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.ClassLocation;
@@ -64,34 +63,39 @@ public class JunitResult {
 		return result.get(idx);
 	}
 	
+	public Map<String, Boolean> getResult(List<String> tcs) {
+		List<Pair<String, String>> keys = JunitUtils.toPair(tcs);
+		Map<String, Boolean> tcResults = new HashMap<String, Boolean>();
+		for (int i = 0; i < keys.size(); i++) {
+			tcResults.put(tcs.get(i), testResult.get(keys.get(i)));
+		}
+		return tcResults;
+	}
+	
 	public List<Boolean> getTestResult() {
 		return result;
 	}
 
 	public void save(File file) throws IOException {
-		FileOutputStream output = null;
-		try {
-			output = new FileOutputStream(file, true);
-			IOUtils.write(JUNIT_RUNNER_BLOCK, output);
-			IOUtils.write("\n", output);
-			for (Entry<Pair<String, String>, Boolean> entry : testResult.entrySet()) {
-				IOUtils.write(StringUtils.spaceJoin(entry.getKey().a,
-						entry.getKey().b, entry.getValue()), output);
-				IOUtils.write("\n", output);
-			}
-			if (!failureTraces.isEmpty()) {
-				IOUtils.write(JUNIT_RUNNER_FAILURE_TRACE, output);
-				IOUtils.write("\n", output);
-				for (ClassLocation loc : failureTraces) {
-					IOUtils.write(StringUtils.spaceJoin(
-							loc.getClassCanonicalName(), loc.getMethodName(),
-							loc.getLineNo()), output);
-					IOUtils.write("\n", output);
-				}
-			}
-		} finally {
-			IOUtils.closeQuietly(output);
+		StringBuilder sb = new StringBuilder();
+		sb.append(JUNIT_RUNNER_BLOCK)
+			.append("\n");
+		for (Entry<Pair<String, String>, Boolean> entry : testResult.entrySet()) {
+			sb.append(StringUtils.spaceJoin(entry.getKey().a,
+					entry.getKey().b, entry.getValue()))
+				.append("\n");
 		}
+		if (!failureTraces.isEmpty()) {
+			sb.append(JUNIT_RUNNER_FAILURE_TRACE)
+				.append("\n");
+			for (ClassLocation loc : failureTraces) {
+				sb.append(StringUtils.spaceJoin(
+						loc.getClassCanonicalName(), loc.getMethodName(),
+						loc.getLineNo()))
+					.append("\n");
+			}
+		}
+		FileUtils.writeStringToFile(file, sb.toString()); 
 	}
 	
 	@SuppressWarnings("unchecked")

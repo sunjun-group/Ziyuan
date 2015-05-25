@@ -45,7 +45,7 @@ public class BugAnalyzer implements IBugAnalyzer {
 		while (!allBkps.isEmpty()) {
 			List<BreakPoint> executeBkps = next(allBkps);
 			TcExecResult execResult = manager.getTestcasesExecutor().execute(
-					passTestcases, failTestcases, executeBkps);
+					CollectionUtils.join(passTestcases, failTestcases), executeBkps);
 			for (BreakPoint bkp : executeBkps) {
 				if (manager.getBugExpert().isRootCause(execResult.getPassValues(bkp),
 						execResult.getFailValues(bkp))) {

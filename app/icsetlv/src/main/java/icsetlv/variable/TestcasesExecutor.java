@@ -19,6 +19,8 @@ import icsetlv.common.utils.PrimitiveUtils;
 import icsetlv.common.utils.VariableUtils;
 import icsetlv.vm.SimpleDebugger;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,12 +30,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import sav.common.core.Logger;
+import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
+import sav.strategies.junit.JunitResult;
+import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
 import sav.strategies.vm.VMConfiguration;
 
@@ -60,11 +65,13 @@ import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.event.EventSet;
 import com.sun.jdi.event.LocatableEvent;
+import com.sun.jdi.event.MethodEntryEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequestManager;
+import com.sun.jdi.request.MethodEntryRequest;
 import com.sun.tools.jdi.StringReferenceImpl;
 
 /**
@@ -88,28 +95,40 @@ public class TestcasesExecutor {
 		this.valRetrieveLevel = valRetrieveLevel;
 	}
 
-	public TcExecResult execute(List<String> passTestcases, List<String> failTestcases,
+	public TcExecResult execute(List<String> allTests,
 			List<BreakPoint> brkps) throws IcsetlvException, SavException {
 		this.brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
 		Map<String, BreakPoint> locBrpMap = new HashMap<String, BreakPoint>();
-		List<BreakpointValue> passVals = executeJunitTests(locBrpMap, passTestcases);
-		List<BreakpointValue> failVals = executeJunitTests(locBrpMap, failTestcases);
-		return new TcExecResult(passVals, failVals);
+		Map<Boolean, List<BreakpointValue>> resultMap = executeJunitTests(locBrpMap, allTests);
+		return new TcExecResult(CollectionUtils.nullToEmpty(resultMap.get(true)), 
+				CollectionUtils.nullToEmpty(resultMap.get(false)));
 	}
 
-	private List<BreakpointValue> executeJunitTests(
+	private Map<Boolean, List<BreakpointValue>> executeJunitTests(
 			Map<String, BreakPoint> locBrpMap, List<String> tcs) throws IcsetlvException, SavException {
-		List<BreakpointValue> result = new ArrayList<BreakpointValue>();
-		List<String> args = new JunitRunnerProgramArgBuilder().methods(tcs).build();
+		String jResultFile;
+		try {
+			jResultFile = File.createTempFile("tcsExResult", ".txt").getAbsolutePath();
+		} catch (IOException e1) {
+			throw new SavException(ModuleEnum.JVM, "cannot create temp file");
+		}
+		Map<Integer, List<BreakpointValue>> bkpValsByTestIdx = new HashMap<Integer, List<BreakpointValue>>();
+		List<BreakpointValue> currentTestBkpValues = new ArrayList<BreakpointValue>();
+		List<String> args = new JunitRunnerProgramArgBuilder()
+								.methods(tcs)
+								.destinationFile(jResultFile)
+								.build();
 		config.setProgramArgs(args);
 		VirtualMachine vm = debugger.run(config);
 		if (vm == null) {
 			throw new IcsetlvException("cannot start jvm!");
 		}
 		addClassWatch(vm);
+		addToRequestEntryWatch(vm);
 		// process events
 		EventQueue eventQueue = vm.eventQueue();
 		boolean stop = false;
+		int testIdx = 0;
 		while (!stop) {
 			EventSet eventSet;
 			try {
@@ -134,12 +153,17 @@ public class TestcasesExecutor {
 					ReferenceType refType = classPrepEvent.referenceType();
 					// breakpoint
 					addBreakpointWatch(vm, refType, locBrpMap);
+				} else if (event instanceof MethodEntryEvent) {
+					MethodEntryEvent meEvent = (MethodEntryEvent) event;
+					if (meEvent.method().name().equals(JunitRunner.START_REQUEST_ENTRY)) {
+						currentTestBkpValues = CollectionUtils.getListInitIfEmpty(bkpValsByTestIdx, testIdx ++);
+					}
 				} else if (event instanceof BreakpointEvent) {
 					BreakpointEvent bkpEvent = (BreakpointEvent) event;
 					try {
 						BreakpointValue bkpVal = extractValuesAtLocation(bkpEvent.location(), bkpEvent,
 								locBrpMap);
-						CollectionUtils.addIfNotNull(result, bkpVal);
+						CollectionUtils.addIfNotNull(currentTestBkpValues, bkpVal);
 					} catch (IncompatibleThreadStateException e) {
 						LOGGER.error(e.getMessage());
 						LOGGER.error((Object[])e.getStackTrace());
@@ -152,9 +176,20 @@ public class TestcasesExecutor {
 			eventSet.resume();
 		}
 		vm.resume();
-		return result;
+		try {
+			JunitResult jResult = JunitResult.readFrom(jResultFile);
+			Map<Boolean, List<BreakpointValue>> resultMap = new HashMap<Boolean, List<BreakpointValue>>();
+			Map<String, Boolean> tcExResult = jResult.getResult(tcs);
+			for (int i = 0; i < tcs.size(); i++) {
+				CollectionUtils.getListInitIfEmpty(resultMap, tcExResult.get(tcs.get(i)))
+						.addAll(bkpValsByTestIdx.get(i));
+			}
+			return resultMap;
+		} catch (IOException e) {
+			throw new SavException(ModuleEnum.JVM, "cannot read junitResult in temp file");
+		}
 	}
-
+	
 	private BreakpointValue extractValuesAtLocation(Location location, LocatableEvent event,
 			Map<String, BreakPoint> locBrpMap)
 			throws IncompatibleThreadStateException,
@@ -320,16 +355,22 @@ public class TestcasesExecutor {
 			}
 		}
 	}
+	
+	private void addToRequestEntryWatch(VirtualMachine vm) {
+		MethodEntryRequest request = vm.eventRequestManager().createMethodEntryRequest();
+		request.addClassFilter(JunitRunner.class.getName());
+		request.setEnabled(true);
+	}
 
 	private void addClassWatch(VirtualMachine vm) {
-		final EventRequestManager erm = vm.eventRequestManager();
+		EventRequestManager erm = vm.eventRequestManager();
 		for (String className : brkpsMap.keySet()) {
 			registerClassRequest(erm, className);
 		}
 	}
 
 	private void registerClassRequest(EventRequestManager erm, String className) {
-		final ClassPrepareRequest classPrepareRequest = erm.createClassPrepareRequest();
+		ClassPrepareRequest classPrepareRequest = erm.createClassPrepareRequest();
 		classPrepareRequest.addClassFilter(className);
 		classPrepareRequest.setEnabled(true);
 	}

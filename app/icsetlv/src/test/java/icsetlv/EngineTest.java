@@ -33,16 +33,16 @@ public class EngineTest extends AbstractTest {
 
 	@Test
 	public void doTest() throws Exception {
-		engine.addNotExecutedTestcase("testdata.CalculatorTestPassed.testPassed1");
-		engine.addNotExecutedTestcase("testdata.CalculatorTestPassed.testPassed2");
-		engine.addNotExecutedTestcase("testdata.CalculatorTestPassed.testPassed3");
-		engine.addNotExecutedTestcase("testdata.CalculatorTestPassed.testPassed4");
-		engine.addNotExecutedTestcase("testdata.CalculatorTestFailed.testFailed1");
-		engine.addNotExecutedTestcase("testdata.CalculatorTestFailed.testFailed2");
-		engine.addNotExecutedTestcase("testdata.CalculatorTestFailed.testFailed3");
-		engine.addNotExecutedTestcase("testdata.CalculatorTestFailed.testFailed4");
-		engine.addNotExecutedTestcase("testdata.CalculatorTestFailed.testFailed5");
-		engine.addNotExecutedTestcase("testdata.CalculatorTestFailed.testFailed6");
+		engine.addTestcase("testdata.CalculatorTestPassed.testPassed1");
+		engine.addTestcase("testdata.CalculatorTestPassed.testPassed2");
+		engine.addTestcase("testdata.CalculatorTestPassed.testPassed3");
+		engine.addTestcase("testdata.CalculatorTestPassed.testPassed4");
+		engine.addTestcase("testdata.CalculatorTestFailed.testFailed1");
+		engine.addTestcase("testdata.CalculatorTestFailed.testFailed2");
+		engine.addTestcase("testdata.CalculatorTestFailed.testFailed3");
+		engine.addTestcase("testdata.CalculatorTestFailed.testFailed4");
+		engine.addTestcase("testdata.CalculatorTestFailed.testFailed5");
+		engine.addTestcase("testdata.CalculatorTestFailed.testFailed6");
 //		engine.addPassedTestcase("testdata.CalculatorTestPassed");
 //		engine.addFailedTestcase("testdata.CalculatorTestFailed");
 

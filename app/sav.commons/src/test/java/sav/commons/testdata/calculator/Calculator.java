@@ -4,7 +4,8 @@ public class Calculator {
 
 	public static int getSum(int x, int y) {
 		if(x > 3){
-			x = x + 1;
+			int a = (int) Math.rint(Math.random());
+			x = x + a;
 		}
 		
 		return x + y;
