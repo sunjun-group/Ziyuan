@@ -54,7 +54,8 @@ public class TzuyuCore {
 	private AbstractApplicationContext appContext;
 	private ApplicationData appData;
 	private int numberOfTestCases = 100;
-	private static final int RANK_TO_EXAMINE = 2;
+	private boolean enableGentest = true;
+	private static final int RANK_TO_EXAMINE = Integer.MAX_VALUE;
 	
 	public TzuyuCore(AbstractApplicationContext appContext) {
 		this.appContext = appContext;
@@ -135,9 +136,10 @@ public class TzuyuCore {
 			SavException, IcsetlvException, Exception {
 		
 		LOGGER.info("Running Machine Learning");
-		
-		List<String> randomTests = generateNewTests(testingClassName, methodName, verificationMethod);
-		junitClassNames.addAll(randomTests);
+		if (enableGentest) {
+			List<String> randomTests = generateNewTests(testingClassName, methodName, verificationMethod);
+			junitClassNames.addAll(randomTests);
+		}
 		
 		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(RANK_TO_EXAMINE);
 		List<BreakPoint> breakpoints = BreakpointUtils.toBreakpoints(suspectLocations);

@@ -30,6 +30,9 @@ public class JWriterTest {
 		Statement stmt1 = new RAssignment(Integer.class, 1);
 		seq.getStmts().add(stmt1);
 		methods.add(seq );
+		writer.setClazzName("JWriterTestResult");
+		writer.setPackageName("jwriter.test.result");
+		writer.setMethodPrefix("test");
 		CompilationUnit cu = writer.write(methods);
 		System.out.println(cu.toString());
 	}

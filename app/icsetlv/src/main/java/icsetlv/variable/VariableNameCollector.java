@@ -14,6 +14,7 @@ import japa.parser.JavaParser;
 import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.Node;
+import japa.parser.ast.body.VariableDeclaratorId;
 import japa.parser.ast.expr.NameExpr;
 
 import java.io.File;
@@ -111,6 +112,14 @@ public class VariableNameCollector {
 		
 		@Override
 		public boolean handleNode(NameExpr n) {
+			Variable var =VariableUtils.toBreakpointVarName(n);
+			add(n.getBeginLine(), var);
+			
+			return true;
+		}
+		
+		@Override
+		public boolean handleNode(VariableDeclaratorId n) {
 			Variable var =VariableUtils.toBreakpointVarName(n);
 			add(n.getBeginLine(), var);
 			
