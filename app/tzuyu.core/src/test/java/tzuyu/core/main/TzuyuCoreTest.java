@@ -206,7 +206,11 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	}
 
 	@Test
+	@Ignore("For testing with Oryx codes")
 	public void testOryx() throws Exception {
+//		--> 11e2e168a179ad670e528b0f45abf60bf3a5abda
+//		--> apply patch 14e8a456744bf12e829452381983f1ab9dff92ac
+//		--> revert changes on StringLongMapping.java
 		final ApplicationData appData = testContext.getAppData();
 		final List<String> appClasspaths = appData.getAppClasspaths();
 		appClasspaths.add("/Users/npn/dev/projects/oryx/als-common/target/classes");
