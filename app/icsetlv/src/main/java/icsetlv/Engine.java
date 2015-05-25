@@ -211,16 +211,19 @@ public class Engine {
 			BugExpert.addDataPoints(machine, passValues, failValues);
 
 			// Train
-			machine.train();
+			try {
+				machine.train();
+				// Store outputs
+				final Result result = new Result();
+				result.breakPoint = bkp;
+				result.learnedLogic = machine.getLearnedLogic();
+				result.accuracy = machine.getModelAccuracy();
 
-			// Store outputs
-			final Result result = new Result();
-			result.breakPoint = bkp;
-			result.learnedLogic = machine.getLearnedLogic();
-			result.accuracy = machine.getModelAccuracy();
-
-			LOGGER.info("Learn: " + result);
-			results.add(result);
+				LOGGER.info("Learn: " + result);
+				results.add(result);
+			} catch (Throwable e) {
+				
+			}
 		}
 
 		return this;

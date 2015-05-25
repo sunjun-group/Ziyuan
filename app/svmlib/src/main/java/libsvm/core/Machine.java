@@ -145,8 +145,7 @@ public class Machine {
 
 		this.data = cleanUp(data);
 		if (getNumberOfFeatures() <= 0) {
-			LOGGER.warn("The feature list is empty. SVM will not run.");
-			return this;
+			throw new RuntimeException("The feature list is empty. SVM will not run.");
 		}
 
 		train(data);
