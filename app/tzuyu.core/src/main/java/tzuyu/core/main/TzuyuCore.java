@@ -137,8 +137,15 @@ public class TzuyuCore {
 		
 		LOGGER.info("Running Machine Learning");
 		if (enableGentest) {
-			List<String> randomTests = generateNewTests(testingClassName, methodName, verificationMethod);
-			junitClassNames.addAll(randomTests);
+			while (true) {
+				try {
+					List<String> randomTests = generateNewTests(testingClassName, methodName, verificationMethod);
+					junitClassNames.addAll(randomTests);
+					break;
+				} catch (Throwable exception) {
+
+				}
+			}
 		}
 		
 		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(RANK_TO_EXAMINE);
