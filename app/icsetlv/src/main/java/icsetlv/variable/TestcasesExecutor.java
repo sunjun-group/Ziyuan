@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import sav.common.core.Logger;
 import sav.common.core.ModuleEnum;
@@ -55,6 +53,7 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.PrimitiveType;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
+import com.sun.jdi.StringReference;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
@@ -72,7 +71,6 @@ import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequestManager;
 import com.sun.jdi.request.MethodEntryRequest;
-import com.sun.tools.jdi.StringReferenceImpl;
 
 /**
  * @author LLT
@@ -82,7 +80,6 @@ public class TestcasesExecutor {
 	private static final Logger<?> LOGGER = Logger.getDefaultLogger();
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
 	private static final String TO_STRING_NAME= "toString";
-	private static final Pattern PATTERN = Pattern.compile("^\"(\\d+)+\"$");
 	private SimpleDebugger debugger;
 	private VMConfiguration config;
 	// class and its breakpoints
@@ -278,15 +275,6 @@ public class TestcasesExecutor {
 		}
 	}
 
-	private String unwrapString(final String str) {
-		final Matcher matcher = PATTERN.matcher(str);
-		if (matcher.matches()) {
-			return matcher.group(1);
-		} else {
-			return str;
-		}
-	}
-
 	private synchronized String toPrimitiveValue(ClassType type, ObjectReference value,
 			ThreadReference thread) {
 		Method method = type.concreteMethodByName(TO_STRING_NAME,
@@ -294,14 +282,14 @@ public class TestcasesExecutor {
 		if (method != null) {
 			try {
 				if (thread.isSuspended()) {
+					if (value instanceof StringReference) {
+						return ((StringReference) value).value();
+					}
 					Value toStringValue = value.invokeMethod(thread, method,
 							new ArrayList<Value>(),
 							ObjectReference.INVOKE_SINGLE_THREADED);
-					if (StringReferenceImpl.class.isAssignableFrom(toStringValue.getClass())) {
-						return unwrapString(toStringValue.toString());
-					} else {
-						return toStringValue.toString();
-					}
+					return toStringValue.toString();
+					
 				}
 			} catch (Exception e) {
 				// ignore.
