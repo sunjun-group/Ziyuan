@@ -8,13 +8,10 @@
 
 package icsetlv.common.utils;
 
-import japa.parser.ast.body.VariableDeclaratorId;
-import japa.parser.ast.expr.FieldAccessExpr;
-import japa.parser.ast.expr.NameExpr;
-import sav.common.core.utils.CollectionUtils;
-import sav.strategies.dto.BreakPoint;
-import sav.strategies.dto.BreakPoint.VarScope;
+import java.util.List;
+
 import sav.strategies.dto.BreakPoint.Variable;
+import sav.strategies.dto.BreakPoint.Variable.VarScope;
 
 import com.sun.jdi.Field;
 import com.sun.jdi.LocalVariable;
@@ -24,58 +21,34 @@ import com.sun.jdi.LocalVariable;
  *
  */
 public class VariableUtils {
-	private static final boolean NOT_FILTER = false;
 	private static boolean filterBreakpointVar = true;
-	/**
-	 * currently, this method will ignore the case of method access.
-	 */
-	public static Variable toBreakpointVarName(FieldAccessExpr n) {
-		Variable var = new Variable();
-		if (n.getField().startsWith("this.")) {
-			var.setName(n.getField().substring("this.".length()));
-			var.setScope(VarScope.THIS);
-		} else {
-			var.setName(n.getField());
-		}
-		var.setCode(n.toString());
-		return var;
-	}
-
-	public static Variable toBreakpointVarName(NameExpr n) {
-		Variable var = new Variable();
-		var.setName(n.getName());
-		return var;
-	}
-	
-	public static Variable toBreakpointVarName(VariableDeclaratorId n) {
-		return new Variable(n.getName()); 
-	}
 
 	public static Variable lookupVarInBreakpoint(LocalVariable var,
-			BreakPoint brp) {
-		for (Variable bpVar : brp.getVars()) {
-			if (CollectionUtils.existIn(bpVar.getScope(), VarScope.LOCAL, VarScope.UNKNOWN) 
-					&& var.name().equals(bpVar.getName())) {
-				return bpVar;
+			List<Variable> bkpVars) {
+		for (Variable bkpVar : bkpVars) {
+			if (bkpVar.getScope() == VarScope.UNDEFINED
+					&& var.name().equals(bkpVar.getName())) {
+				return bkpVar;
 			}
 		}
+		
+		if (!filterBreakpointVar) {
+			return new Variable(var.name());
+		}
+		
+		return null;
+	}
+
+	public static Variable lookupVarInBreakpoint(Field var, List<Variable> bkpVars) {
+		for (Variable bkpVar : bkpVars) {
+			if (var.name().equals(bkpVar.getName())){
+				return bkpVar;
+			}
+		}
+		
 		if (!filterBreakpointVar) {
 			return new Variable(var.name());
 		}
 		return null;
 	}
-
-	public static Variable lookupVarInBreakpoint(Field var, BreakPoint brp) {
-		for (Variable bpVar : brp.getVars()) {
-			if (CollectionUtils.existIn(bpVar.getScope(), VarScope.THIS,
-					VarScope.UNKNOWN) && var.name().equals(bpVar.getName())) {
-				return bpVar;
-			}
-		}
-		if (!filterBreakpointVar) {
-			return new Variable(var.name());
-		}
-		return null;
-	}
-
 }

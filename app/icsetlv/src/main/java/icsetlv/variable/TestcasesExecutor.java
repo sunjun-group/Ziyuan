@@ -210,36 +210,45 @@ public class TestcasesExecutor {
 					objRef = frame.thisObject();
 					refType = objRef.referenceType();
 				}
-				Map<String, Value> allVariables = new HashMap<String, Value>();
+				Map<Variable, Value> allVariables = new HashMap<Variable, Value>();
+				/*
+				 * 
+				 */
+				List<Variable> vars = new ArrayList<Variable>(bkp.getVars());
+				// local variables (includes method args)
+				for (LocalVariable var : frame.visibleVariables()) {
+					Variable inVar = VariableUtils.lookupVarInBreakpoint(var, vars);
+					if (inVar != null) {
+						vars.remove(inVar);
+						allVariables.put(inVar, frame.getValue(var));
+					}
+				}
+				
 				// class fields (static & non static)
 				for (Field field : refType.allFields()) {
-					Variable inVar = VariableUtils.lookupVarInBreakpoint(field,
-							bkp);
+					Variable inVar = VariableUtils.lookupVarInBreakpoint(field, vars);
 					if (inVar != null) {
+						vars.remove(inVar);
 						if (field.isStatic()) {
-							allVariables.put(inVar.getCode(), refType.getValue(field));
+							allVariables.put(inVar, refType.getValue(field));
 						} else if (objRef != null) {
-							allVariables.put(inVar.getCode(), objRef.getValue(field));
+							allVariables.put(inVar, objRef.getValue(field));
 						}
 					}
 				}
-				// local variables (includes method args)
-				for (LocalVariable var : frame.visibleVariables()) {
-					Variable inVar = VariableUtils.lookupVarInBreakpoint(var,
-							bkp);
-					if (inVar != null) {
-						allVariables.put(inVar.getCode(), frame.getValue(var));
-					}
-				}
+				
 				if (!allVariables.isEmpty()) {
-					for (Entry<String, Value> entry : allVariables.entrySet()) {
-						appendVarVal(bkVal, entry.getKey(), entry.getValue(), 1, thread);
+					for (Entry<Variable, Value> entry : allVariables.entrySet()) {
+						Variable var = entry.getKey();
+						String varId = var.getId();
+						appendVarVal(bkVal, varId, entry.getValue(), 1, thread);
 					}
 				}
 			}
 		}
 		return bkVal;
 	}
+
 
 	private StackFrame findFrameByLocation(List<StackFrame> frames,
 			Location location) throws AbsentInformationException {
@@ -364,3 +373,4 @@ public class TestcasesExecutor {
 	}
 
 }
+

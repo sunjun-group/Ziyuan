@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sav.common.core.utils.Assert;
+import sav.common.core.utils.StringUtils;
 
 /**
  * @author LLT
@@ -112,20 +113,21 @@ public class BreakPoint extends ClassLocation {
 		return true;
 	}
 
-
-
 	public static class Variable {
 		private String name;
-		private String code;
+		private String fullName;
 		private VarScope scope;
-
-		public Variable() {
-			scope = VarScope.UNKNOWN;
+		
+		public Variable(String name, String fullName) {
+			this.name = name;
+			this.fullName = fullName;
+			scope = VarScope.UNDEFINED;
 		}
 
 		public Variable(String name) {
-			this();
 			this.name = name;
+			this.fullName = name;
+			scope = VarScope.UNDEFINED;
 		}
 
 		public String getName() {
@@ -136,15 +138,16 @@ public class BreakPoint extends ClassLocation {
 			this.name = name;
 		}
 
-		public String getCode() {
-			if (code == null) {
-				return name;
-			}
-			return code;
+		public String getFullName() {
+			return fullName;
 		}
 
-		public void setCode(String code) {
-			this.code = code;
+		public void setFullName(String fullName) {
+			this.fullName = fullName;
+		}
+		
+		public String getId() {
+			return StringUtils.dotJoin(scope.getDisplayName(), fullName);
 		}
 
 		public VarScope getScope() {
@@ -157,16 +160,16 @@ public class BreakPoint extends ClassLocation {
 
 		@Override
 		public String toString() {
-			return "Variable [name=" + name + ", code=" + code + ", scope="
-					+ scope + "]";
+			return "Variable [name=" + name + ", fullName=" + fullName
+					+ ", scope=" + scope + "]";
 		}
 
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((code == null) ? 0 : code.hashCode());
-			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			result = prime * result
+					+ ((fullName == null) ? 0 : fullName.hashCode());
 			result = prime * result + ((scope == null) ? 0 : scope.hashCode());
 			return result;
 		}
@@ -180,27 +183,31 @@ public class BreakPoint extends ClassLocation {
 			if (getClass() != obj.getClass())
 				return false;
 			Variable other = (Variable) obj;
-			if (code == null) {
-				if (other.code != null)
+			if (fullName == null) {
+				if (other.fullName != null)
 					return false;
-			} else if (!code.equals(other.code))
-				return false;
-			if (name == null) {
-				if (other.name != null)
-					return false;
-			} else if (!name.equals(other.name))
+			} else if (!fullName.equals(other.fullName))
 				return false;
 			if (scope != other.scope)
 				return false;
 			return true;
 		}
-		
+
+
+
+		public static enum VarScope {
+			THIS ("this"),
+			UNDEFINED ("");
+			private String displayName;
+			
+			private VarScope(String displayName) {
+				this.displayName = displayName;
+			}
+			
+			public String getDisplayName() {
+				return displayName;
+			}
+		}
 	}
 	
-	public static enum VarScope {
-		THIS,
-		LOCAL,
-		UNKNOWN
-	}
-
 }

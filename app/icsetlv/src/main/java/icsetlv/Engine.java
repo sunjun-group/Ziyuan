@@ -158,7 +158,7 @@ public class Engine {
 			machine.resetData();
 			List<String> varLabels = new ArrayList<String>(bkp.getVars().size());
 			for (Variable var : bkp.getVars()) {
-				varLabels.add(var.getName());
+				varLabels.add(var.getId());
 			}
 
 			if (varLabels.size() > 0) {

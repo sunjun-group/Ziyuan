@@ -9,7 +9,6 @@
 package icsetlv.variable;
 
 import icsetlv.common.exception.IcsetlvException;
-import icsetlv.common.utils.VariableUtils;
 import japa.parser.JavaParser;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.Node;
@@ -151,21 +150,20 @@ public class AssertionDetector {
 		}
 
 		private void initBreakpoint(Node n) {
-			// TODO NPN double-check this
 			curBreakpoint = new BreakPoint(curClass.toString(), curMethod.getName(), n.getBeginLine());
 		}
 		
 		@Override
 		public void visit(FieldAccessExpr n, String arg) {
 			if (curBreakpoint != null) {
-				curBreakpoint.addVars(VariableUtils.toBreakpointVarName(n));
+//				curBreakpoint.addVars(VariableUtils.toBreakpointVarName(n));
 			}
 		}
 		
 		@Override
 		public void visit(NameExpr n, String arg) {
 			if (curBreakpoint != null) {
-				curBreakpoint.addVars(VariableUtils.toBreakpointVarName(n));
+//				curBreakpoint.addVars(VariableUtils.toBreakpointVarName(n));
 			}
 		}
 		

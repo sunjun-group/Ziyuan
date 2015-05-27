@@ -17,7 +17,6 @@ import japa.parser.ast.expr.MethodCallExpr;
 import japa.parser.ast.expr.NameExpr;
 import japa.parser.ast.expr.StringLiteralExpr;
 import japa.parser.ast.stmt.ExpressionStmt;
-import japa.parser.ast.stmt.Statement;
 
 import java.io.File;
 import java.util.List;
@@ -25,7 +24,10 @@ import java.util.List;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.Test;
 
+import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
+import sav.commons.TestConfiguration;
+import sav.commons.testdata.calculator.Sum;
 
 /**
  * @author LLT
@@ -66,7 +68,6 @@ public class JavaParserRunner {
 		assert true;
 	}
 	
-	
 	@Test
 	public void run1() throws Exception {
 		CompilationUnit cu = JavaParser.parse(new File(
@@ -82,7 +83,14 @@ public class JavaParserRunner {
 		
 		recursive(cu);
 		assert true;
-
+	}
+	
+	@Test
+	public void runSum() throws Exception {
+		CompilationUnit cu = JavaParser.parse(new File(
+				ClassUtils.getJFilePath(TestConfiguration.getTestScrPath("sav.commons"), 
+						Sum.class.getName())));
+		recursive(cu);
 	}
 	
 	/**

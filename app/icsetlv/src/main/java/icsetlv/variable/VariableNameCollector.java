@@ -9,28 +9,34 @@
 package icsetlv.variable;
 
 import icsetlv.common.exception.IcsetlvException;
-import icsetlv.common.utils.VariableUtils;
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.Node;
 import japa.parser.ast.body.VariableDeclaratorId;
+import japa.parser.ast.expr.Expression;
+import japa.parser.ast.expr.FieldAccessExpr;
 import japa.parser.ast.expr.NameExpr;
+import japa.parser.ast.expr.ThisExpr;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import sav.common.core.Constants;
 import sav.common.core.Logger;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
+import sav.strategies.dto.BreakPoint.Variable.VarScope;
 
 
 /**
@@ -111,19 +117,42 @@ public class VariableNameCollector {
 		}
 		
 		@Override
-		public boolean handleNode(NameExpr n) {
-			Variable var =VariableUtils.toBreakpointVarName(n);
+		public boolean handleNode(FieldAccessExpr n) {
+			List<String> nameFragments = new ArrayList<String>();
+			Expression scope = n;
+			while (scope instanceof FieldAccessExpr) {
+				FieldAccessExpr fieldAccessExpr = (FieldAccessExpr) scope;
+				nameFragments.add(fieldAccessExpr.getField());
+				scope = fieldAccessExpr.getScope();
+			}
+			VarScope varScope = VarScope.UNDEFINED;
+			if (scope instanceof ThisExpr) {
+				varScope = VarScope.THIS;
+			} else if (scope instanceof NameExpr) {
+				varScope = VarScope.UNDEFINED;
+				nameFragments.add(((NameExpr)scope).getName());
+			}
+
+			String name = CollectionUtils.getLast(nameFragments);
+			Collections.reverse(nameFragments);
+			String fullName = StringUtils.join(nameFragments, Constants.DOT);
+			Variable var = new Variable(name, fullName);
+			var.setScope(varScope);
 			add(n.getBeginLine(), var);
 			
-			return true;
+			return false;
+		}
+		
+		@Override
+		public boolean handleNode(NameExpr n) {
+			add(n.getBeginLine(), new Variable(n.getName()));
+			return false;
 		}
 		
 		@Override
 		public boolean handleNode(VariableDeclaratorId n) {
-			Variable var =VariableUtils.toBreakpointVarName(n);
-			add(n.getBeginLine(), var);
-			
-			return true;
+			add(n.getBeginLine(), new Variable(n.getName()));
+			return false;
 		}
 		
 		private void add(int lineNumber, Variable var){
@@ -133,8 +162,6 @@ public class VariableNameCollector {
 		public Map<Integer, List<Variable>> getResult() {
 			return result;
 		}
-		
-		
 		
 	}
 	
