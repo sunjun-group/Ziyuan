@@ -123,7 +123,7 @@ public class Engine {
 		return this;
 	}
 	
-	public Engine addNotExecutedTestcases(final List<String> testcases) {
+	public Engine addTestcases(final List<String> testcases) {
 		for(String testcase: testcases){
 			addTestcase(testcase);
 		}

@@ -33,7 +33,7 @@ public class LearnInvariants {
 
 	public List<Result> learn(List<BreakPoint> breakpoints, List<String> junitClassNames, String sourceFolder) throws Exception {
 		List<String> testcases = JunitUtils.extractTestMethods(junitClassNames);
-		engine.addNotExecutedTestcases(testcases);
+		engine.addTestcases(testcases);
 		
 		for(BreakPoint breakpoint: breakpoints){
 			engine.addBreakPoint(breakpoint);

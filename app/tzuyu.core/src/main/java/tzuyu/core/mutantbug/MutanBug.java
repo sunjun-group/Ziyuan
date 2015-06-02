@@ -20,7 +20,6 @@ import java.util.Set;
 import mutation.mutator.IMutator;
 import mutation.mutator.MutationResult;
 import mutation.mutator.insertdebugline.DebugLineInsertionResult;
-import mutation.utils.FileUtils;
 import sav.common.core.Logger;
 import sav.common.core.SavException;
 import sav.common.core.utils.ClassUtils;
@@ -50,7 +49,8 @@ public class MutanBug {
 	private ApplicationData appData;
 	@Inject
 	private IMutator mutator;
-
+	private FilesBackup filesBackup;
+	
 	public void mutateAndRunTests(FaultLocalizationReport report, int rankToMutate, List<String> junitClassNames) throws Exception {
 		List<ClassLocation> breakpoints = new ArrayList<ClassLocation>();
 		List<LineCoverageInfo> firstRanks = report.getFirstRanks(rankToMutate);
@@ -96,6 +96,8 @@ public class MutanBug {
 		JunitRunnerParameters params = new JunitRunnerParameters();
 		params.setJunitClasses(junitClassNames);
 		// recompile and rerun test cases
+		
+		FilesBackup fileBackup = FilesBackup.startBackup();
 		for (T bkp : bkps) {
 			List<File> mutatedFiles = mutatedResult.get(
 					bkp.getClassCanonicalName()).getMutatedFiles(
@@ -105,9 +107,8 @@ public class MutanBug {
 			}
 			File classFile = new File(ClassUtils.getClassFilePath(
 					appData.getAppTarget(), bkp.getClassCanonicalName()));
-			File tempDir = FileUtils.createTempFolder("backup");
-			File backupClassFile = FileUtils.copyFileToDirectory(classFile,
-					tempDir, true);
+			// backup
+			fileBackup.backup(classFile);
 			for (File mutatedFile : mutatedFiles) {
 				try{
 					compiler.recompileJFile(appData.getAppTarget(), mutatedFile);
@@ -119,12 +120,20 @@ public class MutanBug {
 				}
 			}
 			// restore the org class
-			FileUtils.copyFile(backupClassFile, classFile, true);
-			backupClassFile.delete();
-			tempDir.delete();
+			fileBackup.restore(classFile);
+			fileBackup.close();
 		}
 		
 		return result;
+	}
+
+	private FilesBackup startBackup() {
+		if (filesBackup == null) {
+			filesBackup = FilesBackup.startBackup(); 
+		} else if (filesBackup.isClose()) {
+			filesBackup.open();
+		}
+		return filesBackup;
 	}
 	
 	private JunitResult runTestcases(JunitRunnerParameters params)
@@ -143,16 +152,25 @@ public class MutanBug {
 
 	public <T extends ClassLocation> Map<String, DebugLineInsertionResult> mutateForMachineLearning(
 			List<T> locations) throws SavException {
+		startBackup();
 		Map<String, List<ClassLocation>> classLocationMap = createClassLocationMap(locations);
-		
 		Map<String, DebugLineInsertionResult> result = mutator.insertDebugLine(classLocationMap, appData.getAppSrc());
 		Recompiler recompiler = new Recompiler(appData.getVmConfig());
 		for (DebugLineInsertionResult classResult : result.values()) {
+			filesBackup.backup(ClassUtils.getClassFilePath(appData.getAppTarget(),
+					classResult.getClassName()));
 			recompiler.recompileJFile(appData.getAppTarget(),
 					classResult.getMutatedFile());
 		}
 		
 		return result;
+	}
+	
+	public void restoreFiles() {
+		if (filesBackup != null && !filesBackup.isClose()) {
+			filesBackup.restoreAll();
+			filesBackup.close();
+		}
 	}
 
 	private <T extends ClassLocation> Map<String, List<ClassLocation>> createClassLocationMap(

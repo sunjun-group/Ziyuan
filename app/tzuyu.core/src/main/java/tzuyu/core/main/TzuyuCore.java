@@ -154,8 +154,8 @@ public class TzuyuCore {
 		//compute variables appearing in each breakpoint
 		VariableNameCollector nameCollector = new VariableNameCollector(Arrays.asList(appData.getAppSrc()));
 		nameCollector.updateVariables(breakpoints);
-		
-		List<BreakPoint> newBreakpoints = getNextLineToAddBreakpoint(breakpoints);
+		MutanBug mutanbug = new MutanBug();
+		List<BreakPoint> newBreakpoints = getNextLineToAddBreakpoint(mutanbug, breakpoints);
 		
 		Map<BreakPoint, BreakPoint> newLineToOldLine = buildNewToOriginalMap(
 				breakpoints, newBreakpoints);
@@ -175,7 +175,7 @@ public class TzuyuCore {
 				LOGGER.info(invariants.get(i));
 			}
 		}
-
+		mutanbug.restoreFiles();
 	}
 	
 	private List<String> generateNewTests(String testingClassName, String methodName, String verificationMethod)
@@ -213,9 +213,8 @@ public class TzuyuCore {
 		return junitClassNames;
 	}
 
-	private List<BreakPoint> getNextLineToAddBreakpoint( 
+	private List<BreakPoint> getNextLineToAddBreakpoint(MutanBug mutanbug, 
 			List<BreakPoint> suspectLocations) throws SavException {
-		MutanBug mutanbug = new MutanBug();
 		mutanbug.setAppData(appData);
 		mutanbug.setMutator(appContext.getMutator());
 		Map<String, DebugLineInsertionResult> mutationInfo = mutanbug.mutateForMachineLearning(suspectLocations);
