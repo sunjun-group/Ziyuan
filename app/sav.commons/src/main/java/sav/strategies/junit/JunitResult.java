@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,7 +35,7 @@ public class JunitResult {
 	private static final String JUNIT_RUNNER_BLOCK = "JunitRunner Result";
 	private static final String JUNIT_RUNNER_FAILURE_TRACE = "FailureTraces";
 	private Set<BreakPoint> failureTraces = new HashSet<BreakPoint>();
-	private Map<Pair<String, String>, Boolean> testResult = new HashMap<Pair<String,String>, Boolean>();
+	private Map<Pair<String, String>, Boolean> testResult = new LinkedHashMap<Pair<String, String>, Boolean>();
 	private List<Boolean> result = new ArrayList<Boolean>();
 
 	public Set<BreakPoint> getFailureTraces() {

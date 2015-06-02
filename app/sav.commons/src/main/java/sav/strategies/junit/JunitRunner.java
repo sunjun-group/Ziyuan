@@ -30,7 +30,6 @@ import sav.strategies.vm.ProgramArgumentBuilder;
  *
  */
 public class JunitRunner {
-	public static final String START_REQUEST_ENTRY = "toRequest";
 	
 	public static void main(String[] args) throws Exception {
 		if (CollectionUtils.isEmpty(args)) {
@@ -46,7 +45,6 @@ public class JunitRunner {
 
 	public static JunitResult runTestcases(JunitRunnerParameters params)
 			throws ClassNotFoundException, IOException {
-//		System.out.println("Run testcases: ");
 		List<Pair<String, String>> classMethods = JunitUtils.toPair(params
 				.getClassMethods());
 		RequestExecution requestExec = new RequestExecution();
@@ -62,11 +60,8 @@ public class JunitRunner {
 			falures.addAll(requestExec.getFailures());
 			boolean isPass = requestExec.getFailures().isEmpty();
 			result.addResult(classMethod, isPass);
-//			System.out.println(classMethod + ", result: " + isPass);
 		}
 		extractBrkpsFromTrace(falures, params, result.getFailureTraces());
-//		extractBrkpsFromTrace(falures, params.getTestingClassNames(),
-//				result.getFailureTraces());
 		return result;
 	}
 	
@@ -77,14 +72,11 @@ public class JunitRunner {
 				.getTestingClassNames());
 		List<String> testingPkgs = CollectionUtils.nullToEmpty(params
 				.getTestingPkgs());
-//		System.out.println("FailureTrace: ");
 		for (Failure failure : falures) {
 			for (StackTraceElement trace : failure.getException()
 					.getStackTrace()) {
 				String className = trace.getClassName();
 				int lineNumber = trace.getLineNumber();
-//				System.out.println(String
-//						.format("%s@%s", className, lineNumber));
 				if (className == null) {
 					continue;
 				}

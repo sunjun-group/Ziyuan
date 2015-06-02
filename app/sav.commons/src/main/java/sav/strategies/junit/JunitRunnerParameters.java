@@ -156,4 +156,13 @@ public class JunitRunnerParameters {
 	public void setDestfile(String destfile) {
 		this.destfile = destfile;
 	}
+
+	@Override
+	public String toString() {
+		return "JunitRunnerParameters [log=" + log + ", classMethods="
+				+ classMethods + ", testingClassNames=" + testingClassNames
+				+ ", testingPkgs=" + testingPkgs + ", destfile=" + destfile
+				+ "]";
+	}
+	
 }

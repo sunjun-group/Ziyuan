@@ -28,6 +28,6 @@ public class VmRunnerTest extends AbstractTest {
 	public void test() throws IcsetlvException, SavException {
 		VMConfiguration config = initVmConfig();
 		config.setProgramArgs(CollectionUtils.listOf("testdata.slice.FindMaxCallerPassTest1"));
-		VMRunner.startJVM(config);
+		VMRunner.start(config);
 	}
 }

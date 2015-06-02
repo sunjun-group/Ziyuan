@@ -40,35 +40,16 @@ public class VMRunner {
 	protected static final String debugToken = "-agentlib:jdwp=transport=dt_socket,suspend=y,address=%s";
 	protected static final String enableAssertionToken = "-ea";
 	
-	public static Process startJVM(VMConfiguration config) throws SavException {
+	public static Process start(VMConfiguration config) throws SavException {
 		VMRunner vmRunner = new VMRunner();
-		return vmRunner.start(config);
+		return vmRunner.startVm(config);
 	}
 
-	private Process start(VMConfiguration config) throws SavException {
+	private Process startVm(VMConfiguration config) throws SavException {
 		Assert.assertTrue(config.getPort() != VMConfiguration.INVALID_PORT,
 				"Cannot find free port to start jvm!");
 		List<String> commands = buildCommandsFromConfiguration(config);
-		return startVm(commands);
-	}
-
-	private Process startVm(List<String> commands) throws SavException {
-		if (log.isDebug()) {
-			log.debug("start cmd..");
-			log.debug(StringUtils.join(commands, " "));
-			for (String cmd : commands) {
-				log.debug(cmd);
-			}
-		}
-		ProcessBuilder processBuilder = new ProcessBuilder(commands);
-		processBuilder.redirectErrorStream(true);
-		Process process = null;
-		try {
-			process = processBuilder.start();
-		} catch (IOException e) {
-			throw new SavException(ModuleEnum.JVM, e, "cannot start jvm process");
-		}
-		return process;
+		return startVm(commands, false);
 	}
 
 	private List<String> buildCommandsFromConfiguration(VMConfiguration config)
@@ -102,6 +83,15 @@ public class VMRunner {
 		return startAndWaitUntilStop(commands);
 	}
 	
+	public static void printStreamQuietly(Process process) {
+		try {
+			printStream(process.getInputStream());
+			printStream(process.getErrorStream());
+		} catch (IOException e) {
+			// do nothing
+		}
+	}
+	
 	private static void printStream(InputStream stream) throws IOException {
 		try {
 			stream.available();
@@ -129,6 +119,12 @@ public class VMRunner {
 
 	public static Process startAndWaitUntilStop(List<String> commands)
 			throws SavException {
+		return startVm(commands, true);
+	}
+	
+	public static Process startVm(List<String> commands,
+			boolean waitUntilStop)
+			throws SavException {
 		if (log.isDebug()) {
 			log.debug("start cmd..");
 			log.debug(StringUtils.join(commands, " "));
@@ -145,7 +141,14 @@ public class VMRunner {
 			log.logEx(e, "");
 			new SavException(ModuleEnum.JVM, e, "cannot start jvm process");
 		}
-		
+		if (waitUntilStop) {
+			waitUntilStop(process);
+		}
+		return process;
+	}
+
+	public static void waitUntilStop(Process process)
+			throws SavException {
 		while (true) {
 			try {
 				process.exitValue();
@@ -165,7 +168,5 @@ public class VMRunner {
 				}
 			}
 		}
-		
-		return process;
 	}
 }
