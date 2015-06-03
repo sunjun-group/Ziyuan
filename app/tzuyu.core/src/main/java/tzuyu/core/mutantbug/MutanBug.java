@@ -121,8 +121,8 @@ public class MutanBug {
 			}
 			// restore the org class
 			fileBackup.restore(classFile);
-			fileBackup.close();
 		}
+		fileBackup.close();
 		
 		return result;
 	}

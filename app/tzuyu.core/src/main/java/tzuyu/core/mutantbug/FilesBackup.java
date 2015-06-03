@@ -38,10 +38,10 @@ public class FilesBackup {
 	}
 
 	public void backup(File file) {
-		File tempDir = FileUtils.createTempFolder("backup");
+		ensureOpen();
 		try {
 			File backupFile = FileUtils.copyFileToDirectory(file,
-					tempDir, true);
+					backupDir, true);
 			backupMap.put(file, backupFile);
 			log.debug("backup ", file.getAbsolutePath());
 		} catch (IOException e) {
@@ -49,6 +49,12 @@ public class FilesBackup {
 		}
 	}
 	
+	private void ensureOpen() {
+		if (isClose()) {
+			throw new SavRtException("FileBackup is not open!");
+		}
+	}
+
 	public void restoreAll() {
 		for (Entry<File, File> entry : backupMap.entrySet()) {
 			restore(entry.getKey(), entry.getValue());
@@ -80,7 +86,11 @@ public class FilesBackup {
 	}
 	
 	public void close() {
-		backupDir.delete();
+		try {
+			org.apache.commons.io.FileUtils.deleteDirectory(backupDir);
+		} catch (IOException e) {
+			log.error(e);
+		}
 		backupDir = null;
 	}
 	
