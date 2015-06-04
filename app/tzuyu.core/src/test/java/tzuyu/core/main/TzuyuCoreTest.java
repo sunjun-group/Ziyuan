@@ -184,6 +184,15 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	}
 	
 	@Test
+	public void testLoopInvariant() throws Exception{
+		TzuyuCore app = new TzuyuCore(testContext);
+		List<String> junitClassNames = new ArrayList<String>();
+		junitClassNames.add("sav.commons.testdata.loopinvariant.LoopTest");
+		app.faultLocate("sav.commons.testdata.loopinvariant.Loop", "testLoop", "validateTestLoop",
+				null, junitClassNames, false);
+	}
+	
+	@Test
 	@Ignore("For testing with Guava codes")
 	public void testGuava1() throws Exception {
 		//  b2c6fb17ab4fbac8cd4014fe68799166f015a2c3
