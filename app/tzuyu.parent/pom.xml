@@ -47,6 +47,10 @@
 			<layout>p2</layout>
 			<url>http://download.eclipse.org/releases/indigo</url>
 		</repository>
+		<repository>
+			<id>tzuyu-thirdparty</id>
+			<url>http://202.94.70.100:8081/nexus/content/repositories/thirdparty</url>
+		</repository>
 	</repositories>
 
 	<modules>

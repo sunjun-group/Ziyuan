@@ -101,10 +101,10 @@
 		</dependency>
 
 		<!-- wala -->
-		<dependency>
-			<groupId>tzuyu-project</groupId>
-			<artifactId>slicer.wala</artifactId>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>tzuyu-project</groupId> -->
+<!-- 			<artifactId>slicer.wala</artifactId> -->
+<!-- 		</dependency> -->
 
 		<!-- svm part -->
 		<dependency>

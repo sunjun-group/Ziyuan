@@ -52,7 +52,7 @@ under the License.
    | Default: ~/.m2/repository
   <localRepository>/path/to/local/repo</localRepository>
   -->
-  <localRepository>F:\project\maven_repository</localRepository>
+  <localRepository>D:/_1_Projects/Tzuyu/workspace/trunk_try/mvn_repository</localRepository>
 
   <!-- interactiveMode
    | This will determine whether maven prompts you when it needs input. If set to false,
@@ -153,6 +153,18 @@ under the License.
 <!--       <username>tdq</username> -->
 <!--       <password>P@ssw0rd</password> -->
 <!--     </server>	 -->
+
+    <server>
+      <id>snapshots</id>
+      <username>tzuyu</username>
+      <password>P@ssw0rd</password>
+    </server>
+    <server>
+      <id>tzuyu-thirdparty</id>
+      <username>tzuyu</username>
+      <password>P@ssw0rd</password>
+    </server>	
+
   </servers>
 
   <!-- mirrors
