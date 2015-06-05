@@ -38,6 +38,7 @@ import sav.strategies.vm.VMConfiguration;
 
 public class AbstractTest {
 	public static final String SAV_COMMONS = "sav.commons";
+	protected static final String ICSETLV = "icsetlv";
 	protected static TestConfiguration config = TestConfiguration.getInstance();
 	
 	@BeforeClass
@@ -69,7 +70,6 @@ public class AbstractTest {
 		vmConfig.setJavaHome(TestConfigUtils.getJavaHome());
 		vmConfig.setDebug(true);
 		vmConfig.setPort(findFreePort());
-		vmConfig.setLaunchClass(JUNIT_CORE);
 		vmConfig.addClasspath(config.getJavaBin());
 		vmConfig.addClasspath(SAV_COMMONS_TEST_TARGET);
 		vmConfig.addClasspath(JUNIT_LIB);

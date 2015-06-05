@@ -16,14 +16,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import sav.common.core.Constants;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.JunitUtils;
 import sav.commons.AbstractTest;
+import sav.commons.TestConfiguration;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
+import sav.strategies.dto.BreakPoint.Variable.VarScope;
 import sav.strategies.vm.VMConfiguration;
+import testdata.testcasesexecutor.test1.TcExSum;
+import testdata.testcasesexecutor.test1.TcExSumTest;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.IncompatibleThreadStateException;
@@ -33,35 +40,32 @@ import com.sun.jdi.IncompatibleThreadStateException;
  * 
  */
 public class TestcasesExecutorTest extends AbstractTest {
+	private VMConfiguration vmConfig;
+	
+	@Before
+	public void setup() {
+		vmConfig = initVmConfig();
+		vmConfig.addClasspath(TestConfiguration.getTestTarget(ICSETLV));
+		vmConfig.addClasspath(TestConfiguration.getTzAssembly(Constants.SAV_COMMONS_ASSEMBLY));
+	}
 
 	@Test
 	public void testExecute() throws IOException, InterruptedException,
 			IncompatibleThreadStateException, AbsentInformationException,
-			IcsetlvException, SavException {
-		VMConfiguration vmConfig = initVmConfig();
-
+			IcsetlvException, SavException, ClassNotFoundException {
 		// breakpoints
 		List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
-		BreakPoint bkp1 = new BreakPoint("testdata.slice.FindMax", "findMax",
-				11);
-		bkp1.addVars(new Variable("max"));
-		bkp1.addVars(new Variable("arr"));
+		String clazz = TcExSum.class.getName();
+		BreakPoint bkp1 = new BreakPoint(clazz, null, 32);
+		bkp1.addVars(new Variable("a"));
+		bkp1.addVars(new Variable("a", "a", VarScope.THIS));
+		bkp1.addVars(new Variable("innerClass", "innerClass.b"));
+		bkp1.addVars(new Variable("innerClass", "innerClass.a"));
 		breakpoints.add(bkp1);
-		BreakPoint bkp2 = new BreakPoint("testdata.slice.FindMax", "findMax",
-				14);
-		bkp2.addVars(new Variable("max"));
-		bkp2.addVars(new Variable("arr"));
-		breakpoints.add(bkp2);
-
 		TestcasesExecutor varExtr = new TestcasesExecutor(vmConfig, 6);
-		TcExecResult extractedResult = varExtr
-				.execute(
-						CollectionUtils.join(
-								CollectionUtils
-								.listOf("testdata.slice.FindMaxCallerPassTest1"),
-						CollectionUtils
-								.listOf("testdata.slice.FindMaxCallerFailTest1")),
-						breakpoints);
-		print(extractedResult);
+		List<String> tests = JunitUtils.extractTestMethods(CollectionUtils
+				.listOf(TcExSumTest.class.getName()));
+		TcExecResult result = varExtr.execute(tests, breakpoints);
+		System.out.println(result);
 	}
 }

@@ -166,7 +166,9 @@ public class TzuyuCore {
 			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig());
 			List<Result> invariants = learnInvariant.learn(newBreakpoints, junitClassNames, appData.getAppSrc());
 			
-			LOGGER.info("Summary invariants learned:");
+			LOGGER.info("-----------------------------------------------------------------");
+			LOGGER.info("SUMMARY INVARIANTS LEARNED:");
+			LOGGER.info("-----------------------------------------------------------------");
 			for(int i = 0; i < invariants.size(); i++){
 				BreakPoint newBreakpoint = invariants.get(i).getBreakPoint();
 				BreakPoint originalBreakpoint = newLineToOldLine.get(newBreakpoint);

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sav.common.core.utils.StringUtils;
-import sav.strategies.junit.JunitRunner;
 
 /**
  * @author LLT
@@ -25,7 +24,7 @@ public class VMConfiguration {
 	public static final int INVALID_PORT = -1;
 	private String javaHome;
 	private List<String> classpaths;
-	private String launchClass = JunitRunner.class.getName();
+	private String launchClass;
 	private boolean debug;
 	private int port;
 	private boolean enableAssertion;
@@ -55,6 +54,10 @@ public class VMConfiguration {
 		return launchClass;
 	}
 
+	/**
+	 * this property is only set when we start running jvm, not suppose to be
+	 * set in advance.
+	 */
 	public VMConfiguration setLaunchClass(String launchClass) {
 		this.launchClass = launchClass;
 		return this;

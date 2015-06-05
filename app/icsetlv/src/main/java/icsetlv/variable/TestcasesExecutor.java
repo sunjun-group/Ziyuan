@@ -106,6 +106,7 @@ public class TestcasesExecutor {
 		String jResultFile = createExecutionResultFile();
 		Map<Integer, List<BreakpointValue>> bkpValsByTestIdx = new HashMap<Integer, List<BreakpointValue>>();
 		List<BreakpointValue> currentTestBkpValues = new ArrayList<BreakpointValue>();
+		config.setLaunchClass(JunitRunner.class.getName());
 		List<String> args = new JunitRunnerProgramArgBuilder().methods(tcs).destinationFile(jResultFile)
 											.build();
 		config.setProgramArgs(args);
@@ -154,7 +155,7 @@ public class TestcasesExecutor {
 				} else if (event instanceof BreakpointEvent) {
 					BreakpointEvent bkpEvent = (BreakpointEvent) event;
 					try {
-						if (bkpEvent.location().compareTo(junitLoc) == 0) {
+						if (areLocationsEqual(bkpEvent.location(), junitLoc)) {
 							currentTestBkpValues = CollectionUtils.getListInitIfEmpty(bkpValsByTestIdx, testIdx++);
 							continue;
 						}
@@ -259,20 +260,18 @@ public class TestcasesExecutor {
 		return bkVal;
 	}
 
-
 	private StackFrame findFrameByLocation(List<StackFrame> frames,
 			Location location) throws AbsentInformationException {
 		for (StackFrame frame : frames) {
-			if (isEqual(frame.location(), location)) {
+			if (areLocationsEqual(frame.location(), location)) {
 				return frame;
 			}
 		}
 		throw new SavRtException("Can not find frame");
 	}
-
-	private boolean isEqual(Location location1, Location location2) throws AbsentInformationException {
-		return location1.sourceName().equals(location2.sourceName()) &&
-				location1.lineNumber() == location2.lineNumber();
+	
+	private boolean areLocationsEqual(Location location1, Location location2) throws AbsentInformationException {
+		return location1.compareTo(location2) == 0;
 	}
 
 	private void appendVarVal(ExecValue parent, String varId,

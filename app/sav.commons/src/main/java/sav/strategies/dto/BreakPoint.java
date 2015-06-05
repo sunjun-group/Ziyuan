@@ -118,10 +118,14 @@ public class BreakPoint extends ClassLocation {
 		private String fullName;
 		private VarScope scope;
 		
-		public Variable(String name, String fullName) {
+		public Variable(String name, String fullName, VarScope scope) {
 			this.name = name;
 			this.fullName = fullName;
-			scope = VarScope.UNDEFINED;
+			this.scope = scope;
+		}
+		
+		public Variable(String name, String fullName) {
+			this(name, fullName, VarScope.UNDEFINED);
 		}
 
 		public Variable(String name) {

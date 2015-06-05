@@ -84,11 +84,6 @@ public class Engine {
 		return this;
 	}
 
-	public Engine setLaunchClass(final String launchClass) {
-		vmConfig.setLaunchClass(launchClass);
-		return this;
-	}
-
 	public Engine addToClassPath(final String path) {
 		vmConfig.addClasspath(path);
 		return this;
