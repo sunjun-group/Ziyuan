@@ -54,7 +54,7 @@ public class AssertionDetectorTest extends AbstractTest {
 	@Test
 	public void testScan() throws IcsetlvException {
 		List<BreakPoint> breakpoints = AssertionDetector.scan(assertionsClazzes);
-		printBkps(breakpoints);
+		printList(breakpoints);
 		Assert.assertEquals(breakpoints.size(), 2);
 	}
 }

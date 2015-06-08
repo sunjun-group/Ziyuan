@@ -33,7 +33,7 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 		PropertyConfigurator.configure(TestConfiguration
 				.getTestResources("sav.commons") + "/test-log4j.properties");
 	}
-
+	
 	public void projectClassPath(final String path) throws FileNotFoundException {
 		context.addProjectClassPath(path);
 	}
@@ -46,7 +46,7 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 
 	protected TzuyuCore getProgram() {
 		if (program == null) {
-			program = new TzuyuCore(context);
+			program = new TzuyuCore(context, context.getAppData());
 		}
 		return program;
 	}
@@ -151,7 +151,15 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 		return builder.toString();
 	}
 
+	public void setContext(SystemConfiguredDataProvider context) {
+		this.context = context;
+	}
+
 	public SystemConfiguredDataProvider getContext() {
 		return context;
+	}
+	
+	public FaultLocalizationReport getReport() {
+		return report;
 	}
 }

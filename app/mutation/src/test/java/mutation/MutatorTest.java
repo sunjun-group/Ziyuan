@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import mutation.mutator.MutationResult;
 import mutation.mutator.Mutator;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import sav.strategies.dto.ClassLocation;
+import sav.strategies.mutanbug.MutationResult;
 import testdata.mutator.MutationTestData;
 
 /**

@@ -9,7 +9,9 @@
 package sav.strategies;
 
 import sav.strategies.codecoverage.ICodeCoverage;
+import sav.strategies.mutanbug.IMutator;
 import sav.strategies.slicing.ISlicer;
+import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT
@@ -21,4 +23,7 @@ public interface IApplicationContext {
 
 	ICodeCoverage getCodeCoverageTool();
 
+	IMutator getMutator();
+
+	VMConfiguration getVmConfig();
 }

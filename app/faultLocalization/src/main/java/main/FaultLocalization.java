@@ -24,6 +24,7 @@ import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.slicing.ISlicer;
+import sav.strategies.vm.VMConfiguration;
 import faultLocalization.CoverageReport;
 import faultLocalization.FaultLocalizationReport;
 import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
@@ -37,10 +38,12 @@ public class FaultLocalization {
 	private ISlicer slicer;
 	private ICodeCoverage codeCoverageTool;
 	private boolean useSlicer = true; // Use slicer by default
+	private VMConfiguration config;
 
 	public FaultLocalization(IApplicationContext appContext) {
 		slicer = appContext.getSlicer();
 		codeCoverageTool = appContext.getCodeCoverageTool();
+		this.config = appContext.getVmConfig();
 	}
 
 	public FaultLocalizationReport analyse(List<String> testingClasseNames,
@@ -60,7 +63,7 @@ public class FaultLocalization {
 		JunitRunnerParameters params = new JunitRunnerParameters();
 		params.setJunitClasses(junitClassNames);
 		params.setTestingPkgs(analyzedPackages);
-		JunitResult jresult = JunitRunner.runTestcases(params);
+		JunitResult jresult = JunitRunner.runTestcases(config, params);
 		// slice
 		Set<BreakPoint> traces = jresult.getFailureTraces();
 		/* do slicing */

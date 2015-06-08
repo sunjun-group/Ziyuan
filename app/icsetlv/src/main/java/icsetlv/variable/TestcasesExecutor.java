@@ -77,7 +77,6 @@ import com.sun.jdi.request.EventRequestManager;
 public class TestcasesExecutor {
 	private static final Logger<?> LOGGER = Logger.getDefaultLogger();
 	private static final String JUNIT_RUNNER_CLASS_NAME = JunitRunner.class.getName();
-	private static final int JUNIT_RUNNER_START_A_TESTCASE_LINE_NO = 54;
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
 	private static final String TO_STRING_NAME= "toString";
 	private SimpleDebugger debugger;
@@ -147,7 +146,8 @@ public class TestcasesExecutor {
 					ReferenceType refType = classPrepEvent.referenceType();
 					if (refType.name().equals(JUNIT_RUNNER_CLASS_NAME)) {
 						// junitRunner breakpoint
-						junitLoc = addBreakpointWatch(vm, refType, JUNIT_RUNNER_START_A_TESTCASE_LINE_NO);
+						junitLoc = addBreakpointWatch(vm, refType,
+								JunitRunner.TESTCASE_PROCESS_START_LINE_NO);
 					} else {
 						// breakpoints
 						addBreakpointWatch(vm, refType, locBrpMap);

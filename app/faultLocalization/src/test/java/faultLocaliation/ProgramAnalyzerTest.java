@@ -19,7 +19,9 @@ import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.codecoverage.ICoverageReport;
 import sav.strategies.dto.BreakPoint;
+import sav.strategies.mutanbug.IMutator;
 import sav.strategies.slicing.ISlicer;
+import sav.strategies.vm.VMConfiguration;
 import faultLocalization.LineCoverageInfo;
 
 /**
@@ -59,6 +61,18 @@ public class ProgramAnalyzerTest extends AbstractTest {
 						
 					}
 				};
+			}
+
+			@Override
+			public IMutator getMutator() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public VMConfiguration getVmConfig() {
+				// TODO Auto-generated method stub
+				return null;
 			}
 		});
 		List<String> testingClasses = Arrays.asList(SamplePrograms.class.getName());

@@ -46,7 +46,7 @@ public class JaCoCoAgentTest extends JacocoAbstractTest {
 		vmConfig.addClasspath(TestConfiguration.SAV_COMMONS_TEST_TARGET);
 		vmConfig.addClasspath(TestConfiguration.getTzAssembly(TZUYU_JACOCO_ASSEMBLY));
 		vmConfig.addClasspath(TestConfiguration.getTestResources(MODULE));
-		jacoco = new JaCoCoAgent();
+		jacoco = new JaCoCoAgent(null);
 		jacoco.setVmConfig(vmConfig);
 		jacoco.setOut(new SavPrintStream(System.out));
 		report = new ICoverageReport() {

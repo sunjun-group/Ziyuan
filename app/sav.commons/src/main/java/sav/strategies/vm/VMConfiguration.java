@@ -33,7 +33,7 @@ public class VMConfiguration {
 	
 	public VMConfiguration(VMConfiguration config) {
 		this.javaHome = config.getJavaHome();
-		this.classpaths = config.getClasspaths();
+		this.classpaths = new ArrayList<String>(config.getClasspaths());
 		this.debug = config.isDebug();
 		this.port = config.getPort();
 		this.enableAssertion = config.isEnableAssertion();

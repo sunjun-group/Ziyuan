@@ -38,6 +38,7 @@ import mutation.io.DebugLineFileWriter;
 import mutation.mutator.AbstractMutationVisitor;
 import mutation.parser.ClassDescriptor;
 import sav.common.core.utils.CollectionUtils;
+import sav.strategies.mutanbug.DebugLineInsertionResult;
 
 /**
  * @author LLT

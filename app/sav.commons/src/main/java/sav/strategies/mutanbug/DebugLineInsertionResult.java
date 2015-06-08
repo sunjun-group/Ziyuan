@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package mutation.mutator.insertdebugline;
+package sav.strategies.mutanbug;
 
 import java.io.File;
 import java.util.HashMap;

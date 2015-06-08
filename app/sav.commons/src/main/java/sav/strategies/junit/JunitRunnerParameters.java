@@ -102,7 +102,7 @@ public class JunitRunnerParameters {
 			params.testingClassNames = Arrays.asList(cmd.getOptionValues(TESTING_CLASS_NAMES));
 		}
 		if (cmd.hasOption(TESTING_PACKAGE_NAMES)) {
-			params.testingClassNames = Arrays.asList(cmd.getOptionValues(TESTING_PACKAGE_NAMES));
+			params.testingPkgs = Arrays.asList(cmd.getOptionValues(TESTING_PACKAGE_NAMES));
 		}
 		if (cmd.hasOption(DEST_FILE)) {
 			params.destfile = cmd.getOptionValue(DEST_FILE);

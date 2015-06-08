@@ -44,7 +44,7 @@ public class VariableNameCollectorTest extends AbstractTest {
 		BreakPoint bkp = new BreakPoint(className, lineNo);
 		List<BreakPoint> brkps = CollectionUtils.listOf(bkp);
 		collector.updateVariables(brkps);
-		printBkps(brkps);
+		printList(brkps);
 		return bkp;
 	}
 	

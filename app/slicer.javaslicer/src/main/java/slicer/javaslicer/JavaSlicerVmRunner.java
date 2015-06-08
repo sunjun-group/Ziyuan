@@ -8,12 +8,19 @@
 
 package slicer.javaslicer;
 
+import java.io.File;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+
+import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionBuilder;
 import sav.strategies.vm.AgentVmRunner;
 import sav.strategies.vm.VMConfiguration;
+import de.unisb.cs.st.javaslicer.tracer.Tracer;
 
 /**
  * @author LLT
@@ -24,7 +31,7 @@ public class JavaSlicerVmRunner extends AgentVmRunner {
 	private String traceFilePath;
 	
 	public JavaSlicerVmRunner(String tracerJarPath) {
-		super(tracerJarPath);
+		super(getTracerJarPath());
 	}
 	
 	@Override
@@ -51,5 +58,20 @@ public class JavaSlicerVmRunner extends AgentVmRunner {
 	@Override
 	protected String getAgentOptionSeparator() {
 		return AGENT_PARAM_SEPARATOR;
+	}
+	
+	public static String getTracerJarPath() {
+		try {
+			String path = Tracer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+			path = StringUtils.strip(path, "/");
+			path = URLDecoder.decode(path, "UTF-8");
+			File tmpdir = new File(System.getProperty("java.io.tmpdir"));
+			File newFile = new File(tmpdir, "tracer.jar");
+			newFile.deleteOnExit();
+			FileUtils.copyFile(new File(path), newFile);
+			return newFile.getAbsolutePath();
+		} catch (Exception e) {
+			throw new SavRtException("cannot get path of tracer.jar", e);
+		}
 	}
 }

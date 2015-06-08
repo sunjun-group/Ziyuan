@@ -12,6 +12,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.vm.VMConfiguration;
 import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
@@ -24,6 +25,7 @@ public class ApplicationData {
 	private SpectrumAlgorithm suspiciousCalculAlgo;
 	private String javaHome;
 	private VMConfiguration vmConfig;
+	// TODO LLT: TO REMOVE
 	private String tracerJarPath;
 	private List<String> appClasspaths;
 	private List<String> sysClasspaths;
@@ -48,6 +50,10 @@ public class ApplicationData {
 			vmConfig.setClasspath(appClasspaths);
 			vmConfig.setJavaHome(getJavahome());
 		}
+		/**
+		 * we init a new one to make sure the configuration is not dirty with
+		 * some internal properties.
+		 */
 		return new VMConfiguration(vmConfig);
 	}
 	
@@ -77,6 +83,11 @@ public class ApplicationData {
 
 	public void setClasspaths(List<String> classpaths) {
 		this.appClasspaths = classpaths;
+	}
+	
+	public void addClasspath(String classpath) {
+		appClasspaths = CollectionUtils.nullToEmpty(appClasspaths);
+		appClasspaths.add(classpath);
 	}
 
 	/**

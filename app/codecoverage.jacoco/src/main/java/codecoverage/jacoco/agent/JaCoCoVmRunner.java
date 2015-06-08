@@ -27,7 +27,6 @@ public class JaCoCoVmRunner extends AgentVmRunner {
 	
 	public JaCoCoVmRunner() throws IOException {
 		super(AgentJar.extractToTempLocation().getAbsolutePath());
-		AgentJar.extractToTempLocation();
 		analyzedClassNames = new ArrayList<String>();
 	}
 	

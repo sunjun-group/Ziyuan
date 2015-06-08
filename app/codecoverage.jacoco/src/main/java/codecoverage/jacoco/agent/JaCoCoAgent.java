@@ -37,8 +37,8 @@ public class JaCoCoAgent implements ICodeCoverage {
 	private ICoverageReport report;
 	private ExecutionDataReporter reporter;
 	
-	public JaCoCoAgent() {
-		reporter = new ExecutionDataReporter();
+	public JaCoCoAgent(String targetFolder) {
+		reporter = new ExecutionDataReporter(targetFolder);
 	}
 	
 	@Override

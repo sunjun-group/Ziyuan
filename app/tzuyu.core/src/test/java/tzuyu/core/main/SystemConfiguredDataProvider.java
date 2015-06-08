@@ -24,6 +24,10 @@ public class SystemConfiguredDataProvider extends TestApplicationContext {
 	private static final String JAVA_CLASS_FILE_EXTENSION = ".class";
 	private static final String JAVA_JAR_FILE_EXTENSION = ".jar";
 	
+	public SystemConfiguredDataProvider(ApplicationData appData) {
+		setAppData(appData);
+	}
+	
 	public SystemConfiguredDataProvider() {
 		ApplicationData appData = new ApplicationData();
 		appData.setSuspiciousCalculAlgo(getSuspiciousnessCalculationAlgorithm());
@@ -39,12 +43,12 @@ public class SystemConfiguredDataProvider extends TestApplicationContext {
 		if (isClassFile(folder)) {
 			// Only 1 file is provided
 			// That file must contain both program code + test code
-			projectClasspath.add(folder.getParent());
+			getAppData().addClasspath(folder.getParent());
 		} else if (folder.isDirectory() || isJarFile(folder)) {
 			// A directory or a JAR file is provided
 			// Scan the directory for classes and mark them as either program
 			// code or test code
-			projectClasspath.add(folder.getAbsolutePath());
+			getAppData().addClasspath(folder.getAbsolutePath());
 		} else {
 			throw new UnsupportedOperationException("The path " + path
 					+ " is neither a .class/.jar file nor a directory.");
@@ -81,9 +85,4 @@ public class SystemConfiguredDataProvider extends TestApplicationContext {
 			return SpectrumAlgorithm.TARANTULA;
 		}
 	}
-
-	public List<String> getProjectClassPath() {
-		return projectClasspath;
-	}
-
 }

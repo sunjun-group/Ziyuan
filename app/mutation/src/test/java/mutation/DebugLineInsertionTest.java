@@ -17,10 +17,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sav.strategies.dto.ClassLocation;
+import sav.strategies.mutanbug.DebugLineInsertionResult;
 import testdata.insertion.InsertTestData;
 
 import mutation.mutator.Mutator;
-import mutation.mutator.insertdebugline.DebugLineInsertionResult;
 
 
 /**

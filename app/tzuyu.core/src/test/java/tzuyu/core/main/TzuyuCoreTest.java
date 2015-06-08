@@ -8,7 +8,6 @@
 
 package tzuyu.core.main;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +27,6 @@ import sav.commons.testdata.simplePrograms.Palindrome2Test;
 import sav.commons.testdata.simplePrograms.ReverseWordTest;
 import sav.commons.testdata.simplePrograms.SearchInSortingMatrix1Test;
 import sav.commons.testdata.simplePrograms.SimplePrograms;
-import tzuyu.core.inject.ApplicationData;
 import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 /**
@@ -36,14 +34,16 @@ import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm
  * 
  */
 public class TzuyuCoreTest extends AbstractTzTest {
-
+	private TzuyuCore app;
+	
 	@Before
-	public void setup() throws UnsupportedEncodingException {
+	public void setup() throws Exception {
 		List<String> projectClasspath = testContext.getAppData().getAppClasspaths();
-		projectClasspath.add(
-				TestConfiguration.getTarget("slicer.javaslicer"));
-		projectClasspath.add(config.getJunitLib());
-		testContext.getAppData().setSuspiciousCalculAlgo(SpectrumAlgorithm.OCHIAI);
+		projectClasspath.add(TestConfiguration.getTarget("slicer.javaslicer"));
+//		projectClasspath.add(config.getJunitLib());
+		projectClasspath.add(TestConfiguration.getTzAssembly(Constants.SAV_COMMONS_ASSEMBLY));
+		appData.setSuspiciousCalculAlgo(SpectrumAlgorithm.OCHIAI);
+		app = new TzuyuCore(testContext, appData);
 	}
 	
 	@Test
@@ -85,7 +85,7 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	
 	@Test
 	public void test2() throws Exception{
-		TzuyuCore app = new TzuyuCore(testContext);
+		TzuyuCore app = new TzuyuCore(testContext, appData);
 		List<String> testingClasses = new ArrayList<String>();
 		testingClasses.add(SimplePrograms.class.getName());
 		testingClasses.add(Integer.class.getName());
@@ -108,7 +108,6 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	}
 	
 	public void faultLocalization(String program, String junit) throws Exception {
-		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> testingClasses = new ArrayList<String>();
 		testingClasses.add(program);
 		List<String> junitClassNames = new ArrayList<String>();
@@ -119,7 +118,6 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	
 	@Test
 	public void testNoLoop() throws Exception{
-		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTestPassed");
 		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTestFailed");
@@ -130,7 +128,6 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	@Test
 	@Ignore("For testing external codes")
 	public void testExternalNoLoop() throws Exception {
-		final ApplicationData appData = testContext.getAppData();
 		final List<String> appClasspaths = appData.getAppClasspaths();
 		appClasspaths.add("/Users/npn/dev/projects/data/target/test-classes");
 		appClasspaths.add("/Users/npn/dev/projects/data/target/classes");
@@ -139,7 +136,6 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		appData.setAppSrc("/Users/npn/dev/projects/data/src/main/java");
 		appData.setAppTarget("/Users/npn/dev/projects/data/target/test-classes");
 
-		final TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("simpleTestData.CalculatorTestFailed");
 		junitClassNames.add("simpleTestData.CalculatorTestPassed");
@@ -149,7 +145,6 @@ public class TzuyuCoreTest extends AbstractTzTest {
 
 	@Test
 	public void testWhileLoopWith2Bugs() throws Exception{
-		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.search1.SearchIndexEqualValueTest");
 		app.faultLocate("sav.commons.testdata.search1.SearchIndexEqualValue", "search", "validate",
@@ -158,7 +153,6 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	
 	@Test
 	public void testArray() throws Exception{
-		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.GetSumArrayTest");
 		app.faultLocate("sav.commons.testdata.calculator.Calculator", "getSumArray", "validateGetSumArray",
@@ -167,7 +161,6 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	
 	@Test
 	public void testSimpleForLoop() throws Exception{
-		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.LoopInvariantTest");
 		app.faultLocate("sav.commons.testdata.calculator.Calculator", "loopInvariant", "validateLoopInvariant",
@@ -176,7 +169,6 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	
 	@Test
 	public void testClass() throws Exception{
-		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.SumTest");
 		app.faultLocate("sav.commons.testdata.calculator.Sum", "getSum", "validateGetSum",
@@ -185,7 +177,6 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	
 	@Test
 	public void testLoopInvariant() throws Exception{
-		TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.loopinvariant.LoopTest");
 		app.faultLocate("sav.commons.testdata.loopinvariant.Loop", "testLoop", "validateTestLoop",
@@ -196,7 +187,6 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	@Ignore("For testing with Guava codes")
 	public void testGuava1() throws Exception {
 		//  b2c6fb17ab4fbac8cd4014fe68799166f015a2c3
-		final ApplicationData appData = testContext.getAppData();
 		final List<String> appClasspaths = appData.getAppClasspaths();
 		appClasspaths.add("/Users/npn/dev/projects/guava/guava/target/classes");
 		appClasspaths.add("/Users/npn/dev/projects/guava/guava-tests/test");
@@ -207,7 +197,6 @@ public class TzuyuCoreTest extends AbstractTzTest {
 //		appData.setAppTarget("/Users/npn/dev/projects/guava/guava-tests/target/test-classes");
 		appData.setAppTarget("/Users/npn/dev/projects/guava/guava/target/classes");
 
-		final TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("com.google.common.cache.AbstractCacheTest");
 		app.faultLocate("com.google.common.cache.AbstractCache", "getAllPresent", "dummyValidate",
@@ -220,7 +209,6 @@ public class TzuyuCoreTest extends AbstractTzTest {
 //		--> 11e2e168a179ad670e528b0f45abf60bf3a5abda
 //		--> apply patch 14e8a456744bf12e829452381983f1ab9dff92ac
 //		--> revert changes on StringLongMapping.java
-		final ApplicationData appData = testContext.getAppData();
 		final List<String> appClasspaths = appData.getAppClasspaths();
 		appClasspaths.add("/Users/npn/dev/projects/oryx/als-common/target/classes");
 		appClasspaths.add("/Users/npn/dev/projects/oryx/als-common/src/test/java");
@@ -245,7 +233,6 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		appData.setAppSrc("/Users/npn/dev/projects/oryx/als-common/src/main/java");
 		appData.setAppTarget("/Users/npn/dev/projects/oryx/als-common/target/classes");
 
-		final TzuyuCore app = new TzuyuCore(testContext);
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("com.cloudera.oryx.als.common.StringLongMappingTest");
 		app.faultLocate("com.cloudera.oryx.als.common.StringLongMapping", "toLong", "validate",

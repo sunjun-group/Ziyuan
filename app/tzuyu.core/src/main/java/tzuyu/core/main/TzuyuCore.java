@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import main.FaultLocalization;
-import mutation.mutator.insertdebugline.DebugLineInsertionResult;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -30,11 +29,12 @@ import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
+import sav.strategies.IApplicationContext;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.ClassLocation;
+import sav.strategies.mutanbug.DebugLineInsertionResult;
 import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.machinelearning.LearnInvariants;
-import tzuyu.core.main.context.AbstractApplicationContext;
 import tzuyu.core.mutantbug.MutanBug;
 import tzuyu.core.mutantbug.Recompiler;
 import faultLocalization.FaultLocalizationReport;
@@ -51,15 +51,15 @@ import gentest.junit.TestsPrinter;
  */
 public class TzuyuCore {
 	private static final Logger<?> LOGGER = Logger.getDefaultLogger();
-	private AbstractApplicationContext appContext;
+	private IApplicationContext appContext;
 	private ApplicationData appData;
 	private int numberOfTestCases = 100;
 	private boolean enableGentest = true;
 	private static final int RANK_TO_EXAMINE = Integer.MAX_VALUE;
 	
-	public TzuyuCore(AbstractApplicationContext appContext) {
+	public TzuyuCore(IApplicationContext appContext, ApplicationData appData) {
 		this.appContext = appContext;
-		this.appData = appContext.getAppData();
+		this.appData = appData;
 	}
 
 	public FaultLocalizationReport faultLocalization(List<String> testingClassNames,
@@ -73,7 +73,7 @@ public class TzuyuCore {
 		analyzer.setUseSlicer(useSlicer);
 		FaultLocalizationReport report = analyzer.analyse(testingClassNames, junitClassNames,
 				appData.getSuspiciousCalculAlgo());
-		mutation(report, junitClassNames);
+//		mutation(report, junitClassNames);
 		return report;
 	}
 	
@@ -86,7 +86,7 @@ public class TzuyuCore {
 				testingClassNames, testingPackages, junitClassNames,
 				appData.getSuspiciousCalculAlgo());
 		
-		mutation(report, junitClassNames);
+//		mutation(report, junitClassNames);
 		return report;
 	}
 

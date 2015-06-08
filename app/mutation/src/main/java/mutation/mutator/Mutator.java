@@ -12,13 +12,15 @@ import mutation.io.DebugLineFileWriter;
 import mutation.io.MutationFileWriter;
 import mutation.mutator.MutationVisitor.MutationNode;
 import mutation.mutator.insertdebugline.DebugLineInsertion;
-import mutation.mutator.insertdebugline.DebugLineInsertionResult;
 import mutation.mutator.mapping.MuMapParser;
 import mutation.mutator.mapping.MutationMap;
 import mutation.parser.ClassAnalyzer;
 import mutation.parser.JParser;
 import sav.common.core.utils.BreakpointUtils;
 import sav.strategies.dto.ClassLocation;
+import sav.strategies.mutanbug.DebugLineInsertionResult;
+import sav.strategies.mutanbug.IMutator;
+import sav.strategies.mutanbug.MutationResult;
 
 /**
  * Created by hoangtung on 4/9/15.

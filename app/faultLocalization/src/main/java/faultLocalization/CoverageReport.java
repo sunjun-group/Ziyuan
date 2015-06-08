@@ -126,6 +126,7 @@ public class CoverageReport implements ICoverageReport{
 	 */
 	public <T extends ClassLocation> List<LineCoverageInfo> computeSuspiciousness(final List<T> filteredPoints,
 			final SpectrumAlgorithm algorithm) {
+		logger.info("SpectrumAlgorithm: " + algorithm);
 		final List<LineCoverageInfo> linesCoverageInfo = new ArrayList<LineCoverageInfo>();
 
 		final List<String> pointLocIds = BreakpointUtils.toLocationIds(filteredPoints);
@@ -148,7 +149,6 @@ public class CoverageReport implements ICoverageReport{
 			lineCoverageInfo.computeSuspiciousness(passedTestcaseCoverageInfo.size(),
 					failedTestcaseCoverageInfo.size(), algorithm);
 		}
-
 		return linesCoverageInfo;
 	}
 

@@ -20,16 +20,36 @@ import org.junit.runner.Request;
 import org.junit.runner.notification.Failure;
 
 import sav.common.core.Pair;
+import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.ProgramArgumentBuilder;
+import sav.strategies.vm.VMConfiguration;
+import sav.strategies.vm.VMRunner;
 
 /**
  * @author LLT
  *
  */
 public class JunitRunner {
+	public static final int TESTCASE_PROCESS_START_LINE_NO = 44;
+	
+	/**
+	 * KEEP TESTCASE_PROCESS_START_LINE_NO, 
+	 * IF THIS FUNCTION CHANGED.
+	 */
+	private static Request toRequest(Pair<String, String> pair)
+			throws ClassNotFoundException {
+		Class<?> junitClass = loadClass(pair.a);
+		Method[] methods = junitClass.getMethods();
+		for (Method method : methods) {
+			if (method.getName().equals(pair.b)) {
+				return Request.method(junitClass, method.getName());
+			}
+		}
+		return null;
+	}
 	
 	public static void main(String[] args) throws Exception {
 		if (CollectionUtils.isEmpty(args)) {
@@ -45,6 +65,7 @@ public class JunitRunner {
 
 	public static JunitResult runTestcases(JunitRunnerParameters params)
 			throws ClassNotFoundException, IOException {
+		System.out.println("RunTestcases:");
 		List<Pair<String, String>> classMethods = JunitUtils.toPair(params
 				.getClassMethods());
 		RequestExecution requestExec = new RequestExecution();
@@ -72,6 +93,8 @@ public class JunitRunner {
 				.getTestingClassNames());
 		List<String> testingPkgs = CollectionUtils.nullToEmpty(params
 				.getTestingPkgs());
+		System.out.println("testingClassNames = " + testingClassNames);
+		System.out.println("testingPkgs = " + testingPkgs);
 		for (Failure failure : falures) {
 			for (StackTraceElement trace : failure.getException()
 					.getStackTrace()) {
@@ -98,20 +121,29 @@ public class JunitRunner {
 		}
 	}
 	
-	private static Request toRequest(Pair<String, String> pair)
-			throws ClassNotFoundException {
-		Class<?> junitClass = loadClass(pair.a);
-		Method[] methods = junitClass.getMethods();
-		for (Method method : methods) {
-			if (method.getName().equals(pair.b)) {
-				return Request.method(junitClass, method.getName());
-			}
-		}
-		return null;
-	}
-	
 	private static Class<?> loadClass(String className) throws ClassNotFoundException {
 		return Class.forName(className);
+	}
+	
+	public static JunitResult runTestcases(VMConfiguration config,
+			JunitRunnerParameters params) throws ClassNotFoundException,
+			IOException, SavException {
+		String destFile = params.getDestfile();
+		if (destFile == null) {
+			destFile = File.createTempFile("junitResult", ".temp").getAbsolutePath();
+		}
+		VMRunner runner = new VMRunner();
+		config.setLaunchClass(JunitRunner.class.getName());
+		config.setDebug(false);
+		List<String> args = new JunitRunnerProgramArgBuilder()
+				.methods(params.getClassMethods())
+				.testClassNames(params.getTestingClassNames())
+				.testingPackages(params.getTestingPkgs())
+				.destinationFile(destFile)
+				.build();
+		config.setProgramArgs(args);
+		runner.startAndWaitUntilStop(config);
+		return JunitResult.readFrom(destFile);
 	}
 	
 	public static class JunitRunnerProgramArgBuilder extends ProgramArgumentBuilder {
@@ -132,6 +164,11 @@ public class JunitRunner {
 		
 		public JunitRunnerProgramArgBuilder testClassNames(List<String> testClassNames){
 			addArgument(JunitRunnerParameters.TESTING_CLASS_NAMES, testClassNames);
+			return this;
+		}
+		
+		public JunitRunnerProgramArgBuilder testingPackages(List<String> testingPkgs) {
+			addArgument(JunitRunnerParameters.TESTING_PACKAGE_NAMES, testingPkgs);
 			return this;
 		}
 	}

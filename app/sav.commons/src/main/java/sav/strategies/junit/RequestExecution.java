@@ -14,7 +14,7 @@ import sav.common.core.Logger;
 
 
 public class RequestExecution implements Runnable{
-	private static Logger<?> log = Logger.getDefaultLogger();
+//	private static Logger<?> log = Logger.getDefaultLogger();
 	private final JUnitCore core;
 	private Request request;
 	private Boolean isPassed;
@@ -49,7 +49,7 @@ public class RequestExecution implements Runnable{
 			Method method = targetClass.getMethod("getFailures");
 			return (List<Failure>) method.invoke(targetInstance);
 		} catch (Exception ex) {
-			log.error(ex);
+//			log.error(ex);
 			return new ArrayList<Failure>();
 		}
 	}

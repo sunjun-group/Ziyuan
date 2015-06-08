@@ -14,7 +14,9 @@ import com.google.inject.Module;
 
 import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
+import sav.strategies.mutanbug.IMutator;
 import sav.strategies.slicing.ISlicer;
+import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT
@@ -47,6 +49,22 @@ class ApplicationContext implements IApplicationContext {
 	@Override
 	public ICodeCoverage getCodeCoverageTool() {
 		return getInstance(ICodeCoverage.class);
+	}
+	/* (non-Javadoc)
+	 * @see sav.strategies.IApplicationContext#getMutator()
+	 */
+	@Override
+	public IMutator getMutator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see sav.strategies.IApplicationContext#getVmConfig()
+	 */
+	@Override
+	public VMConfiguration getVmConfig() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

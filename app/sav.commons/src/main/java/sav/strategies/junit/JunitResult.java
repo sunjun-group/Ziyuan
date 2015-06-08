@@ -9,6 +9,7 @@
 package sav.strategies.junit;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import sav.common.core.Pair;
 import sav.common.core.utils.JunitUtils;
@@ -78,25 +80,34 @@ public class JunitResult {
 	}
 
 	public void save(File file) throws IOException {
-		StringBuilder sb = new StringBuilder();
-		sb.append(JUNIT_RUNNER_BLOCK)
-			.append("\n");
-		for (Entry<Pair<String, String>, Boolean> entry : testResult.entrySet()) {
-			sb.append(StringUtils.spaceJoin(entry.getKey().a,
-					entry.getKey().b, entry.getValue()))
-				.append("\n");
-		}
-		if (!failureTraces.isEmpty()) {
-			sb.append(JUNIT_RUNNER_FAILURE_TRACE)
-				.append("\n");
-			for (ClassLocation loc : failureTraces) {
-				sb.append(StringUtils.spaceJoin(
-						loc.getClassCanonicalName(), loc.getMethodName(),
-						loc.getLineNo()))
-					.append("\n");
+		FileOutputStream output = null;
+		try {
+			/*
+			 * IMPORTANT!: this allows to append file if it already existed.
+			 * FileUtils.writeStringToFile of apache only allows to write content to file
+			 * without appending.
+			 */
+			output = new FileOutputStream(file, true);
+			IOUtils.write(JUNIT_RUNNER_BLOCK, output);
+			IOUtils.write("\n", output);
+			for (Entry<Pair<String, String>, Boolean> entry : testResult.entrySet()) {
+				IOUtils.write(StringUtils.spaceJoin(entry.getKey().a,
+						entry.getKey().b, entry.getValue()), output);
+				IOUtils.write("\n", output);
 			}
+			if (!failureTraces.isEmpty()) {
+				IOUtils.write(JUNIT_RUNNER_FAILURE_TRACE, output);
+				IOUtils.write("\n", output);
+				for (ClassLocation loc : failureTraces) {
+					IOUtils.write(StringUtils.spaceJoin(
+							loc.getClassCanonicalName(), loc.getMethodName(),
+							loc.getLineNo()), output);
+					IOUtils.write("\n", output);
+				}
+			}
+		} finally {
+			IOUtils.closeQuietly(output);
 		}
-		FileUtils.writeStringToFile(file, sb.toString()); 
 	}
 	
 	@SuppressWarnings("unchecked")

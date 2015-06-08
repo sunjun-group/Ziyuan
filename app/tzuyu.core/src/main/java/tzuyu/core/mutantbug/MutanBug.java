@@ -17,9 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import mutation.mutator.IMutator;
-import mutation.mutator.MutationResult;
-import mutation.mutator.insertdebugline.DebugLineInsertionResult;
 import sav.common.core.Logger;
 import sav.common.core.SavException;
 import sav.common.core.utils.ClassUtils;
@@ -29,6 +26,9 @@ import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
 import sav.strategies.junit.JunitRunnerParameters;
+import sav.strategies.mutanbug.DebugLineInsertionResult;
+import sav.strategies.mutanbug.IMutator;
+import sav.strategies.mutanbug.MutationResult;
 import sav.strategies.vm.VMConfiguration;
 import sav.strategies.vm.VMRunner;
 import tzuyu.core.inject.ApplicationData;
@@ -112,7 +112,6 @@ public class MutanBug {
 			for (File mutatedFile : mutatedFiles) {
 				try{
 					compiler.recompileJFile(appData.getAppTarget(), mutatedFile);
-					params.setDestfile(File.createTempFile("testMutant", ".temp").getAbsolutePath());
 					JunitResult jresult = runTestcases(params);
 					result.add(bkp, jresult.getTestResult());
 				} catch (Exception e) {
@@ -136,6 +135,9 @@ public class MutanBug {
 		return filesBackup;
 	}
 	
+	/**
+	 * TODO - LLT: clean up
+	 */
 	private JunitResult runTestcases(JunitRunnerParameters params)
 			throws ClassNotFoundException, IOException, SavException {
 		VMRunner runner = new VMRunner();

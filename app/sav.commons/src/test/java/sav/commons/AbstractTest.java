@@ -55,14 +55,10 @@ public class AbstractTest {
 		System.out.println(StringUtils.spaceJoin(objs));
 	}
 
-	public void printBkps(List<BreakPoint> breakpoints) {
-		for (BreakPoint bkp : breakpoints) {
-			printBreakpoint(bkp);
+	public <T>void printList(List<T> list) {
+		for (T ele : list) {
+			System.out.println(ele);
 		}
-	}
-
-	public void printBreakpoint(BreakPoint bkp) {
-		System.out.println(bkp);
 	}
 
 	protected VMConfiguration initVmConfig() {

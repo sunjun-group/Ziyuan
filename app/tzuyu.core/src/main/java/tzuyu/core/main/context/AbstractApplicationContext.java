@@ -13,10 +13,10 @@ import java.net.ServerSocket;
 import java.util.HashMap;
 import java.util.List;
 
-import mutation.mutator.IMutator;
 import mutation.mutator.Mutator;
 import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
+import sav.strategies.mutanbug.IMutator;
 import sav.strategies.slicing.ISlicer;
 import sav.strategies.vm.VMConfiguration;
 import slicer.javaslicer.JavaSlicer;
@@ -42,7 +42,7 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 	}
 	
 	private ICodeCoverage initJacocoAgent() {
-		JaCoCoAgent jacoco = new JaCoCoAgent();
+		JaCoCoAgent jacoco = new JaCoCoAgent(appData.getAppTarget());
 		VMConfiguration config = appData.getVmConfig();
 		config.addClasspath(appData.getTzuyuJacocoAssembly());
 		jacoco.setVmConfig(config);
@@ -104,5 +104,10 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 			this.mutator = mutator;
 		}
 		return this.mutator;
+	}
+	
+	@Override
+	public VMConfiguration getVmConfig() {
+		return getAppData().getVmConfig();
 	}
 }

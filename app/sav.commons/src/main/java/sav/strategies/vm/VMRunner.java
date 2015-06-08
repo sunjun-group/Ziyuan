@@ -151,17 +151,18 @@ public class VMRunner {
 			throws SavException {
 		while (true) {
 			try {
+				printStream(process.getInputStream());
+				printStream(process.getErrorStream());
+				// means: not yet terminated
 				process.exitValue();
 				break;
+			} catch (IOException e) {
+				log.logEx(e, "");
+				throw new SavException(ModuleEnum.JVM, e);
 			} catch (IllegalThreadStateException ex) {
+				// means: not yet terminated
 				try {
-					printStream(process.getInputStream());
-					printStream(process.getErrorStream());
-					// means: not yet terminated
 					Thread.sleep(100);
-				} catch (IOException e) {
-					log.logEx(e, "");
-					throw new SavException(ModuleEnum.JVM, e);
 				} catch (InterruptedException e) {
 					log.logEx(e, "");
 					throw new SavException(ModuleEnum.JVM, e);
