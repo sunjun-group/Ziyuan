@@ -331,7 +331,7 @@ public class TestcasesExecutor {
 	private void appendArrVarVal(ExecValue parent, String varId,
 			ArrayReference value, int level, ThreadReference thread) {
 		ArrayValue val = new ArrayValue(varId);
-		val.setLength(value.length());
+		val.setValue(value);
 		for (int i = 0; i < value.length(); i++) {
 			appendVarVal(val, val.getChildId(i), value.getValue(i), level, thread);
 		}
