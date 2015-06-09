@@ -228,12 +228,19 @@ public class Engine {
 		public String toString() {
 			final StringBuilder str = new StringBuilder();
 			str.append("*******************\n");
-			str.append("Breakpoint@").append(breakPoint.getClassCanonicalName()).append(":")
+			str.append("Breakpoint:\n");
+			final BreakPoint original = breakPoint.getOriginal();
+			if (original != null) {
+				str.append("Original: ").append(original.getClassCanonicalName()).append(":")
+						.append(original.getLineNo()).append("\n");
+				str.append("Mutated: ");
+			}
+			str.append(breakPoint.getClassCanonicalName()).append(":")
 					.append(breakPoint.getLineNo()).append("\n");
 			if (StringUtils.isBlank(learnedLogic)) {
 				str.append("Could not learn anything.");
 			} else {
-				str.append("Logic:\n").append(learnedLogic).append("\n");				
+				str.append("Logic:\n").append(learnedLogic).append("\n");
 				str.append("Accuracy: ").append(accuracy).append("\n");
 			}
 			return str.toString();

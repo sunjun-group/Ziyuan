@@ -22,6 +22,7 @@ public class BreakPoint extends ClassLocation {
 	private List<Variable> vars;
 	private int charStart;
 	private int charEnd;
+	private BreakPoint original;
 	
 	public BreakPoint(String className, String methodSign, int lineNo) {
 		super(className, methodSign, lineNo);
@@ -73,7 +74,21 @@ public class BreakPoint extends ClassLocation {
 	public void setCharEnd(int charEnd) {
 		this.charEnd = charEnd;
 	}
-	
+
+	/**
+	 * The original breakpoint which was mutated to create the current object.
+	 * This property can be null
+	 * 
+	 * @return
+	 */
+	public BreakPoint getOriginal() {
+		return original;
+	}
+
+	public void setOriginal(BreakPoint original) {
+		this.original = original;
+	}
+
 	@Override
 	public String toString() {
 		return "BreakPoint [classCanonicalName=" + classCanonicalName

@@ -27,6 +27,7 @@ import org.apache.commons.collections.CollectionUtils;
 import sav.common.core.Logger;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
 import sav.strategies.IApplicationContext;
@@ -157,8 +158,7 @@ public class TzuyuCore {
 		MutanBug mutanbug = new MutanBug();
 		List<BreakPoint> newBreakpoints = getNextLineToAddBreakpoint(mutanbug, breakpoints);
 		
-		Map<BreakPoint, BreakPoint> newLineToOldLine = buildNewToOriginalMap(
-				breakpoints, newBreakpoints);
+		buildNewToOriginalMap(breakpoints, newBreakpoints);
 		
 		if (CollectionUtils.isEmpty(suspectLocations)) {
 			LOGGER.warn("Did not find any place to add break point. SVM will not run.");
@@ -171,7 +171,7 @@ public class TzuyuCore {
 			LOGGER.info("-----------------------------------------------------------------");
 			for(int i = 0; i < invariants.size(); i++){
 				BreakPoint newBreakpoint = invariants.get(i).getBreakPoint();
-				BreakPoint originalBreakpoint = newLineToOldLine.get(newBreakpoint);
+				BreakPoint originalBreakpoint = newBreakpoint.getOriginal();
 				
 				LOGGER.info(originalBreakpoint);
 				LOGGER.info(invariants.get(i));
@@ -246,13 +246,15 @@ public class TzuyuCore {
 		return result;
 	}
 	
-
-	private Map<BreakPoint, BreakPoint> buildNewToOriginalMap(
-			List<BreakPoint> breakpoints, List<BreakPoint> newBreakpoints) {
+	private void buildNewToOriginalMap(List<BreakPoint> breakpoints, List<BreakPoint> newBreakpoints) {
+		Assert.assertTrue(breakpoints.size() == newBreakpoints.size(),
+				"The sizes of the break points list before and after mutation are not the same.");
 		Map<BreakPoint, BreakPoint> newLineToOldLine = new HashMap<BreakPoint, BreakPoint>();
-		for(int i = 0; i < newBreakpoints.size(); i++){
-			newLineToOldLine.put(newBreakpoints.get(i), breakpoints.get(i));
+		for (int i = 0; i < newBreakpoints.size(); i++) {
+			final BreakPoint originalPoint = breakpoints.get(i);
+			final BreakPoint newPoint = newBreakpoints.get(i);
+			newLineToOldLine.put(newPoint, originalPoint);
+			newPoint.setOriginal(originalPoint);
 		}
-		return newLineToOldLine;
 	}
 }
