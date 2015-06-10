@@ -53,7 +53,8 @@ public class ArrayValue extends ExecValue {
 		double sum = 0.0;
 		double min = Double.MAX_VALUE;
 		double max = Double.MIN_VALUE;
-		for (Value value : ar.getValues()) {
+		for (int i=0; i<arrayLength; i++) {
+			Value value = ar.getValue(i);
 			if (com.sun.jdi.PrimitiveValue.class.isAssignableFrom(value.getClass())) {
 				com.sun.jdi.PrimitiveValue pv = (com.sun.jdi.PrimitiveValue) value;
 				final double doubleValue = pv.doubleValue();
@@ -67,8 +68,11 @@ public class ArrayValue extends ExecValue {
 			}
 		}
 		setSum(sum);
-		if (arrayLength > 0) {
+		if (Double.compare(Double.MAX_VALUE, min) != 0) {
 			setMin(min);
+		}
+
+		if (Double.compare(Double.MIN_VALUE, max) != 0) {
 			setMax(max);
 		}
 	}
