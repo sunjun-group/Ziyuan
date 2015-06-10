@@ -23,9 +23,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
 
 import sav.common.core.Logger;
 import sav.common.core.ModuleEnum;
@@ -79,6 +84,9 @@ public class TestcasesExecutor {
 	private static final String JUNIT_RUNNER_CLASS_NAME = JunitRunner.class.getName();
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
 	private static final String TO_STRING_NAME= "toString";
+	private static final Pattern OBJECT_ACCESS_PATTERN = Pattern.compile("^\\.(.+)(.*)$");
+	private static final Pattern ARRAY_ACCESS_PATTERN = Pattern.compile("^\\[(\\d+)\\](.*)$");
+	
 	private SimpleDebugger debugger;
 	private VMConfiguration config;
 	// class and its breakpoints
@@ -225,13 +233,21 @@ public class TestcasesExecutor {
 				 * and the breakpoint variable with that name has the scope UNDEFINED, it must be
 				 * the variable in the method. 
 				 */
-				List<Variable> vars = new ArrayList<Variable>(bkp.getVars());
-				// local variables (includes method args)
-				for (LocalVariable var : frame.visibleVariables()) {
-					Variable inVar = VariableUtils.lookupVarInBreakpoint(var, vars);
-					if (inVar != null) {
-						vars.remove(inVar);
-						allVariables.put(inVar, frame.getValue(var));
+				final List<Variable> vars = new ArrayList<Variable>(bkp.getVars());
+				final List<LocalVariable> visibleVars = frame.visibleVariables();
+				for (Iterator<Variable> it = vars.iterator(); it.hasNext();) {
+					final Variable bpVar = it.next();
+					LocalVariable match = null;
+					for (LocalVariable localVar : visibleVars) {
+						if (localVar.name().equals(bpVar.getName())) {
+							match = localVar;
+							break;
+						}
+					}
+
+					if (match != null) {
+						it.remove();
+						allVariables.put(bpVar, lookup(frame, match, bpVar.getFullName()));
 					}
 				}
 				
@@ -258,6 +274,63 @@ public class TestcasesExecutor {
 			}
 		}
 		return bkVal;
+	}
+
+	private Value lookup(final StackFrame frame, final LocalVariable match, final String fullName) {
+		final Value value = frame.getValue(match);
+		if (!match.name().equals(fullName)) {
+			int objIndex = fullName.indexOf(".");
+			int arrIndex = fullName.indexOf("[");
+			int index = objIndex < arrIndex || arrIndex < 0 ? objIndex : arrIndex;
+			return lookup(value, fullName.substring(index));
+		}
+		return value;
+	}
+
+	private Value lookup(final Value value, final String property) {
+		if (StringUtils.isBlank(property)) {
+			return value;
+		}
+		Value subValue = value;
+		String subProperty = null;
+		// NOTE: must check Array before Object because ArrayReferenceImpl
+		// implements both ArrayReference and ObjectReference (by extending
+		// ObjectReferenceImpl)
+		if (ArrayReference.class.isAssignableFrom(value.getClass())) {
+			ArrayReference array = (ArrayReference) value;
+			// Can access to the array's length or values
+			if (".length".equals(property)) {
+				subValue = array.virtualMachine().mirrorOf(array.length());
+				// No sub property is available after this
+			} else {
+				final Matcher matcher = ARRAY_ACCESS_PATTERN.matcher(property);
+				if (matcher.matches()) {
+					int index = Integer.valueOf(matcher.group(1));
+					subValue = array.getValue(index);
+					// After this we can have access to another dimension of the
+					// array or access to the retrieved object's property
+					subProperty = matcher.group(2);
+				}
+			}
+		} else if (ObjectReference.class.isAssignableFrom(value.getClass())) {
+			ObjectReference object = (ObjectReference) value;
+			final Matcher matcher = OBJECT_ACCESS_PATTERN.matcher("property");
+			if (matcher.matches()) {
+				final String propertyName = matcher.group(1);
+				Field propertyField = null;
+				for (Field field : object.referenceType().allFields()) {
+					if (field.name().equals(propertyName)) {
+						propertyField = field;
+						break;
+					}
+				}
+				if (propertyField != null) {
+					subValue = object.getValue(propertyField);
+					subProperty = matcher.group(2);
+				}
+			}
+		}
+		return lookup(subValue, subProperty);
 	}
 
 	private StackFrame findFrameByLocation(List<StackFrame> frames,
