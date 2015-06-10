@@ -5,7 +5,9 @@ import icsetlv.common.dto.TcExecResult;
 import icsetlv.variable.TestcasesExecutor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import libsvm.core.KernelType;
 import libsvm.core.Machine;
@@ -148,20 +150,27 @@ public class Engine {
 				LOGGER.info("This line is likely a bug!");
 				return this;
 			}
-						
+
 			// Configure data for SVM machine
 			machine.resetData();
-			List<String> varLabels = new ArrayList<String>(bkp.getVars().size());
-			for (Variable var : bkp.getVars()) {
-				varLabels.add(var.getId());
+
+			// Use the label of all the collected variables
+			final Set<String> labelSet = new HashSet<String>();
+			for (BreakpointValue bv : passValues) {
+				labelSet.addAll(bv.getAllLabels());
 			}
+			for (BreakpointValue bv : failValues) {
+				labelSet.addAll(bv.getAllLabels());
+			}
+
+			final List<String> varLabels = new ArrayList<String>(labelSet);
 
 			if (varLabels.size() > 0) {
 				machine.setDataLabels(varLabels);
 			} else {
 				// User did not specify variable names
 				// We use all available ones
-				List<String> allVariableLabels = testResult.getAllVariableLabels(true, bkp);
+				final List<String> allVariableLabels = testResult.getAllVariableLabels(true, bkp);
 				machine.setDataLabels(allVariableLabels);
 			}
 
