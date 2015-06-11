@@ -4,6 +4,12 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import libsvm.svm;
 import libsvm.svm_model;
@@ -25,6 +31,7 @@ import org.junit.Assert;
 public class Machine {
 	private static final Logger LOGGER = Logger.getLogger(Machine.class);
 	private static final String DEFAULT_FEATURE_PREFIX = "x";
+	private static final int SVM_TIMEOUT = 10; // In seconds
 
 	private svm_parameter parameter = null;
 	private List<DataPoint> data = new ArrayList<DataPoint>();
@@ -179,8 +186,26 @@ public class Machine {
 			problem.x[i] = point.getSvmNode();
 		}
 
-		model = svm.svm_train(problem, parameter);
+		model = performTrainingTask(problem, parameter);
 		return this;
+	}
+
+	private svm_model performTrainingTask(final svm_problem prob, final svm_parameter param) {
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		final Future<svm_model> future = executor.submit(new SvmRunner(prob, param));
+
+		try {
+			return future.get(SVM_TIMEOUT, TimeUnit.SECONDS);
+		} catch (TimeoutException exception) {
+			LOGGER.info("Timed out: SVM task took to long to complete.");
+		} catch (InterruptedException e) {
+			LOGGER.info("SVM task was interrupted.");
+		} catch (ExecutionException e) {
+			LOGGER.error("Exception while trying to run SVM.", e);
+		}
+
+		executor.shutdownNow();
+		return null;
 	}
 
 	/**
