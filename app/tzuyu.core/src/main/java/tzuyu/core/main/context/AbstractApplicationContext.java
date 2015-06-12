@@ -42,7 +42,8 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 	}
 	
 	private ICodeCoverage initJacocoAgent() {
-		JaCoCoAgent jacoco = new JaCoCoAgent(appData.getAppTarget());
+		JaCoCoAgent jacoco = new JaCoCoAgent(appData.getAppTarget(),
+				appData.getAppTestTarget());
 		VMConfiguration config = appData.getVmConfig();
 		config.addClasspath(appData.getTzuyuJacocoAssembly());
 		jacoco.setVmConfig(config);

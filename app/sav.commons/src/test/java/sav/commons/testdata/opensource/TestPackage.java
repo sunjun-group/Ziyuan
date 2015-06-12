@@ -38,6 +38,7 @@ public class TestPackage {
 	
 	private static Map<String, TestPackage> allTestData;
 	private Map<TestDataColumn, Object> packageData;
+	private String projectFolder;
 	
 	static {
 		try {
@@ -69,18 +70,28 @@ public class TestPackage {
 					pkg.packageData.put(col, record.get(col));
 				}
 			}
+			pkg.projectFolder = appendPath(TEST_DATA_FOLDER,
+					pkg.getValue(TestDataColumn.PROJECT_NAME));
 			allTests.put(getPkgId(record), pkg);
 		}
 		return allTests;
 	}
 	
 	public String getValue(TestDataColumn col) {
-		return (String) packageData.get(col);
+		String value = (String) packageData.get(col);
+		if (col.relativePath) {
+			return toAbsolutePath(value);
+		}
+		return value;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<String> getValues(TestDataColumn col) {
-		return (List<String>) packageData.get(col);
+		List<String> value = (List<String>) packageData.get(col);
+		if (col.relativePath) {
+			return toAbsolutePaths(value);
+		}
+		return value;
 	}
 	
 	private static String getPkgId(CSVRecord record) {
@@ -111,14 +122,17 @@ public class TestPackage {
 		return toAbsolutePaths(getValues(TestDataColumn.CLASS_PATH));
 	}
 	
+	
 	private List<String> toAbsolutePaths(List<String> paths) {
 		List<String> abPaths = new ArrayList<String>();
-		String prjPath = appendPath(TEST_DATA_FOLDER,
-				getValue(TestDataColumn.PROJECT_NAME));
 		for (String path : paths) {
-			abPaths.add(appendPath(prjPath, path));
+			abPaths.add(toAbsolutePath(path));
 		}
 		return abPaths;
+	}
+
+	private String toAbsolutePath(String path) {
+		return appendPath(projectFolder, path);
 	}
 	
 	public List<String> getLibFolders() {
@@ -128,6 +142,9 @@ public class TestPackage {
 	public static enum TestDataColumn {
 		PROJECT_NAME (false), // String
 		BUG_NUMBER (false), // String
+		SOURCE_FOLDER(false, true),
+		TARGET_FOLDER(false, true),
+		TEST_TARGET_FOLDER(false, true),
 		CLASS_PATH (true), // List<String>
 		LIB_FOLDERS (true), 
 		TEST_CLASSES (true), // List<String>
@@ -136,9 +153,15 @@ public class TestPackage {
 		EXPECTED_BUG_LOCATION (true); // List<String>
 		
 		private boolean multi;
+		private boolean relativePath;
 		
 		private TestDataColumn(boolean multi) {
+			this(multi, false);
+		}
+		
+		private TestDataColumn(boolean multi, boolean relativePath) {
 			this.multi = multi;
+			this.relativePath = relativePath;
 		}
 		
 		public static String[] allColumns() {

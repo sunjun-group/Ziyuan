@@ -25,7 +25,7 @@ public class MessagesGenerator extends ClassAppender {
 	public static void main(String[] args) {
 		try {
 			MessagesGenerator generator = new MessagesGenerator();
-			generator.generateMessagesClass();
+			generator.appendJavaFile();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -42,9 +42,9 @@ public class MessagesGenerator extends ClassAppender {
 		return buildPropsContent(props);
 	}
 
-	protected void generateMessagesClass() throws IOException {
+	protected void appendJavaFile() throws IOException {
 		System.out.println("Start generating Messages.java from messages.properties");
-		super.generateMessagesClass();
+		super.appendJavaFile();
 		System.err.println("\nWarning: Refresh tzuyu.plugin.commons.constants.Messages.java!");
 	}
 

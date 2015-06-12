@@ -17,6 +17,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +28,6 @@ import org.apache.commons.collections.CollectionUtils;
 import sav.common.core.Logger;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
-import sav.common.core.utils.Assert;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
 import sav.strategies.IApplicationContext;
@@ -48,59 +48,35 @@ import gentest.junit.TestsPrinter;
 
 /**
  * @author LLT
- *
+ * TODO LLT: to refactor TzuyuCore or something?
+ * this class is temporary created for another faultLocate without testcase generation part,
+ * used to run {@link FaultLocatePackageTest}
+ * 
  */
-public class TzuyuCore {
+public class TzuyuCore2 {
 	private static final Logger<?> LOGGER = Logger.getDefaultLogger();
 	private IApplicationContext appContext;
 	private ApplicationData appData;
 	private int numberOfTestCases = 100;
 	private boolean enableGentest = true;
-	private static final int RANK_TO_EXAMINE = Integer.MAX_VALUE;
+	private int rankToExamine = Integer.MAX_VALUE;
 	
-	public TzuyuCore(IApplicationContext appContext, ApplicationData appData) {
+	public TzuyuCore2(IApplicationContext appContext, ApplicationData appData) {
 		this.appContext = appContext;
 		this.appData = appData;
 	}
 
-	public FaultLocalizationReport faultLocalization(List<String> testingClassNames,
-			List<String> junitClassNames) throws Exception {
-		return faultLocalization(testingClassNames, junitClassNames, true);
-	}
-	
-	public FaultLocalizationReport faultLocalization(List<String> testingClassNames,
-			List<String> junitClassNames, boolean useSlicer) throws Exception {
-		FaultLocalization analyzer = new FaultLocalization(appContext);
-		analyzer.setUseSlicer(useSlicer);
-		FaultLocalizationReport report = analyzer.analyse(testingClassNames, junitClassNames,
-				appData.getSuspiciousCalculAlgo());
-//		mutation(report, junitClassNames);
-		return report;
-	}
-	
-	public FaultLocalizationReport faultLocalization2(
-			List<String> testingClassNames, List<String> testingPackages,
-			List<String> junitClassNames, boolean useSlicer) throws Exception {
-		FaultLocalization analyzer = new FaultLocalization(appContext);
-		analyzer.setUseSlicer(useSlicer);
-		FaultLocalizationReport report = analyzer.analyseSlicingFirst(
-				testingClassNames, testingPackages, junitClassNames,
-				appData.getSuspiciousCalculAlgo());
-		
-//		mutation(report, junitClassNames);
-		return report;
-	}
-
-	public void faultLocate(String testingClassName, String methodName, String verificationMethod,
-			List<String> testingPackages, List<String> junitClassNames, boolean useSlicer)
+	public void faultLocate(List<String> testingClassNames,
+			List<String> testingPackages, List<String> junitClassNames,
+			boolean useSlicer)
 			throws Exception {
-		FaultLocalizationReport report = computeSuspiciousness(testingClassName, testingPackages, junitClassNames, useSlicer);
+		FaultLocalizationReport report = computeSuspiciousness(
+				testingClassNames, testingPackages, junitClassNames, useSlicer);
 //		mutation(report, junitClassNames);
-		machineLearning(report, testingClassName, methodName,
-				verificationMethod, junitClassNames);
+		machineLearning(report, junitClassNames);
 	}
 
-	private FaultLocalizationReport computeSuspiciousness(String testingClassName,
+	private FaultLocalizationReport computeSuspiciousness(List<String> testingClassName,
 			List<String> testingPackages, List<String> junitClassNames,
 			boolean useSlicer) throws Exception {
 		LOGGER.info("Running " + appData.getSuspiciousCalculAlgo());
@@ -110,10 +86,10 @@ public class TzuyuCore {
 
 		FaultLocalizationReport report;
 		if (CollectionUtils.isEmpty(testingPackages)) {
-			report = analyzer.analyse(Arrays.asList(testingClassName), junitClassNames,
+			report = analyzer.analyse(testingClassName, junitClassNames,
 					appData.getSuspiciousCalculAlgo());
 		} else {
-			report = analyzer.analyseSlicingFirst(Arrays.asList(testingClassName), testingPackages,
+			report = analyzer.analyseSlicingFirst(testingClassName, testingPackages,
 					junitClassNames, appData.getSuspiciousCalculAlgo());
 		}
 		LOGGER.info(report);
@@ -126,30 +102,29 @@ public class TzuyuCore {
 		MutanBug mutanbug = new MutanBug();
 		mutanbug.setAppData(appData);
 		mutanbug.setMutator(appContext.getMutator());
-		mutanbug.mutateAndRunTests(report, RANK_TO_EXAMINE, junitClassNames);
+		mutanbug.mutateAndRunTests(report, rankToExamine, junitClassNames);
 		LOGGER.info(report);
 	}
 	
 	private void machineLearning(
-			FaultLocalizationReport report, String testingClassName,
-			String methodName, String verificationMethod,
+			FaultLocalizationReport report,
 			List<String> junitClassNames) throws ClassNotFoundException,
 			SavException, IcsetlvException, Exception {
 		
 		LOGGER.info("Running Machine Learning");
-		if (enableGentest) {
-			while (true) {
-				try {
-					List<String> randomTests = generateNewTests(testingClassName, methodName, verificationMethod);
-					junitClassNames.addAll(randomTests);
-					break;
-				} catch (Throwable exception) {
-
-				}
-			}
-		}
+//		if (enableGentest && methodName != null && verificationMethod != null) {
+//			while (true) {
+//				try {
+//					List<String> randomTests = generateNewTests(testingClassName, methodName, verificationMethod);
+//					junitClassNames.addAll(randomTests);
+//					break;
+//				} catch (Throwable exception) {
+//
+//				}
+//			}
+//		}
 		
-		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(RANK_TO_EXAMINE);
+		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(rankToExamine);
 		List<BreakPoint> breakpoints = BreakpointUtils.toBreakpoints(suspectLocations);
 		
 		//compute variables appearing in each breakpoint
@@ -157,8 +132,14 @@ public class TzuyuCore {
 		nameCollector.updateVariables(breakpoints);
 		MutanBug mutanbug = new MutanBug();
 		List<BreakPoint> newBreakpoints = getNextLineToAddBreakpoint(mutanbug, breakpoints);
-		
-		buildNewToOriginalMap(breakpoints, newBreakpoints);
+		for (Iterator<BreakPoint> it = newBreakpoints.iterator(); it.hasNext();) {
+			BreakPoint bkp = it.next();
+			if (bkp.getLineNo() != 70) {
+				it.remove();
+			}
+		}
+		Map<BreakPoint, BreakPoint> newLineToOldLine = buildNewToOriginalMap(
+				breakpoints, newBreakpoints);
 		
 		if (CollectionUtils.isEmpty(suspectLocations)) {
 			LOGGER.warn("Did not find any place to add break point. SVM will not run.");
@@ -170,6 +151,10 @@ public class TzuyuCore {
 			LOGGER.info("SUMMARY INVARIANTS LEARNED:");
 			LOGGER.info("-----------------------------------------------------------------");
 			for(int i = 0; i < invariants.size(); i++){
+				BreakPoint newBreakpoint = invariants.get(i).getBreakPoint();
+				BreakPoint originalBreakpoint = newLineToOldLine.get(newBreakpoint);
+				
+				LOGGER.info(originalBreakpoint);
 				LOGGER.info(invariants.get(i));
 			}
 		}
@@ -242,19 +227,21 @@ public class TzuyuCore {
 		return result;
 	}
 	
-	private void buildNewToOriginalMap(List<BreakPoint> breakpoints, List<BreakPoint> newBreakpoints) {
-		Assert.assertTrue(breakpoints.size() == newBreakpoints.size(),
-				"The sizes of the break points list before and after mutation are not the same.");
-		Map<BreakPoint, BreakPoint> newLineToOldLine = new HashMap<BreakPoint, BreakPoint>();
-		for (int i = 0; i < newBreakpoints.size(); i++) {
-			final BreakPoint originalPoint = breakpoints.get(i);
-			final BreakPoint newPoint = newBreakpoints.get(i);
-			newLineToOldLine.put(newPoint, originalPoint);
-			newPoint.setOriginal(originalPoint);
-		}
-	}
 
-	public void setEnableGentest(boolean enable) {
-		enableGentest = enable;
+	private Map<BreakPoint, BreakPoint> buildNewToOriginalMap(
+			List<BreakPoint> breakpoints, List<BreakPoint> newBreakpoints) {
+		Map<BreakPoint, BreakPoint> newLineToOldLine = new HashMap<BreakPoint, BreakPoint>();
+		for(int i = 0; i < newBreakpoints.size(); i++){
+			newLineToOldLine.put(newBreakpoints.get(i), breakpoints.get(i));
+		}
+		return newLineToOldLine;
+	}
+	
+	public void setEnableGentest(boolean enableGentest) {
+		this.enableGentest = enableGentest;
+	}
+	
+	public void setRankToExamine(int rankToExamine) {
+		this.rankToExamine = rankToExamine;
 	}
 }

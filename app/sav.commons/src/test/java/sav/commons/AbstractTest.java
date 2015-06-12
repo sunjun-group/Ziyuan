@@ -8,7 +8,6 @@
 
 package sav.commons;
 
-import static sav.commons.TestConfiguration.JUNIT_CORE;
 import static sav.commons.TestConfiguration.JUNIT_LIB;
 import static sav.commons.TestConfiguration.SAV_COMMONS_TEST_TARGET;
 
@@ -27,7 +26,6 @@ import org.junit.BeforeClass;
 
 import sav.common.core.utils.StringUtils;
 import sav.commons.utils.TestConfigUtils;
-import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
 
 

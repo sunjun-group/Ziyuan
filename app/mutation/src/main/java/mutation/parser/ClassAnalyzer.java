@@ -37,6 +37,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.common.core.utils.CollectionUtils;
+
 /**
  * @author LLT
  * 
@@ -249,7 +251,7 @@ public class ClassAnalyzer {
 		} else if (statement instanceof ForStmt) {
 			List<Expression> forInit = ((ForStmt) statement).getInit();
 			md.openScope(statement.getBeginLine());
-			for (Expression init : forInit) {
+			for (Expression init : CollectionUtils.nullToEmpty(forInit)) {
 				if (init instanceof VariableDeclarationExpr) {
 					List<VariableDescriptor> vList = parseVarDecl((VariableDeclarationExpr) init);
 					md.addLocalVars(vList);
@@ -280,7 +282,7 @@ public class ClassAnalyzer {
 
 			for (SwitchEntryStmt e : entries) {
 				List<Statement> eBody = e.getStmts();
-				for (Statement eStmt : eBody) {
+				for (Statement eStmt : CollectionUtils.nullToEmpty(eBody)) {
 					parseBlockStmt(md, eStmt);
 				}
 			}

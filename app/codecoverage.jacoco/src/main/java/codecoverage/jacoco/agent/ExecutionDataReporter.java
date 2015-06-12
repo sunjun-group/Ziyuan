@@ -8,6 +8,7 @@
 
 package codecoverage.jacoco.agent;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +32,9 @@ import org.jacoco.core.data.SessionInfo;
 import sav.common.core.Logger;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
+import sav.common.core.SavRtException;
 import sav.common.core.utils.ClassUtils;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.strategies.codecoverage.ICoverageReport;
 import sav.strategies.dto.BreakPoint;
@@ -46,10 +49,11 @@ public class ExecutionDataReporter {
 	private ICoverageReport report;
 	private static final char JACOCO_FILE_SEPARATOR = '/';
 	/* target folder of testing project */
-	private String targetFolder;
+	private List<String> targetFolders;
 	
-	public ExecutionDataReporter(String targetFolder) {
-		this.targetFolder = targetFolder;
+	public ExecutionDataReporter(String... targetFolders) {
+		this.targetFolders = new ArrayList<String>();
+		CollectionUtils.addIfNotNullNotExist(this.targetFolders, targetFolders);
 	}
 
 	public void setReport(ICoverageReport report) {
@@ -117,14 +121,19 @@ public class ExecutionDataReporter {
 	}
 
 	private InputStream getTargetClass(String className) throws IOException {
-		if (targetFolder != null) {
-			return new FileInputStream(ClassUtils.getClassFilePath(
-					targetFolder, className));
+		if (!targetFolders.isEmpty()) {
+			for (String target : targetFolders) {
+				File file = new File(ClassUtils.getClassFilePath(target, className));
+				if (file.exists()) {
+					return new FileInputStream(file);
+				}
+			}
 		} else {
 			String resource = JACOCO_FILE_SEPARATOR
 					+ className.replace('.', JACOCO_FILE_SEPARATOR) + ".class";
 			return getClass().getResourceAsStream(resource);
 		}
+		throw new SavRtException("Cannot find .class file for class " + className);
 	}
 	
 	private Map<String, List<ExecutionData>> read(final String file)

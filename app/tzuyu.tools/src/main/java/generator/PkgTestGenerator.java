@@ -23,7 +23,7 @@ public class PkgTestGenerator extends ClassAppender {
 	public static void main(String[] args) {
 		try {
 			PkgTestGenerator generator = new PkgTestGenerator();
-			generator.generateMessagesClass();
+			generator.appendJavaFile();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -38,7 +38,7 @@ public class PkgTestGenerator extends ClassAppender {
 			String bugNo = entry.getValue().getValue(TestDataColumn.BUG_NUMBER);
 			String key = entry.getKey().replace("-", "")
 					.replace(":", "");
-			sb.append(String.format("	\n	@Test\n	public void test%s() throws Exception {\n		TestPackage testPkg = TestPackage.getPackage(\"%s\", \"%s\");\n		fixture.useSlicer(true);\n		runTest(testPkg);\n	}", 
+			sb.append(String.format("	\n	@Test\n	public void test%s() throws Exception {\n		TestPackage testPkg = TestPackage.getPackage(\"%s\", \"%s\");\n		setUseSlicer(true);\n		runTest(testPkg);\n	}", 
 					key, projName,
 					bugNo));
 //			sb.append(String.format("	\n	@Test\n	public void test%sv1() throws Exception {\n		TestPackage testPkg = TestPackage.getPackage(\"%s\", \"%s\");\n		fixture.useSlicer(false);\n		runTest1(testPkg);\n	}", 

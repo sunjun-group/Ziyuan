@@ -23,7 +23,7 @@ public abstract class ClassAppender {
 	protected static final String START_GENERATED_PART_TOKEN = "//	Generated part";
 	protected static final String END_GENERATED_PART_TOKEN = "//	End generated part";
 	
-	protected void generateMessagesClass() throws IOException {
+	protected void appendJavaFile() throws IOException {
 		System.out.println("Start generating...");
 		String generatedContent = getGeneratedContent();
 		String classPath = getClassPath();
