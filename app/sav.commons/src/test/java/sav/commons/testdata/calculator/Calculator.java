@@ -4,11 +4,20 @@ public class Calculator {
 
 	public static int getSum(int x, int y) {
 		if(x > 3){
-			int a = (int) Math.rint(Math.random());
+			int a = (int) Math.rint(Math.random()) + 1;
 			x = x + a;
 		}
 		
 		return x + y;
+	}
+	
+	public static int getSum1(int x, int y) {
+		if(x > 3){
+			int a = (int) Math.rint(Math.random());
+			return x + y + a;
+		}
+		
+		return x + y + 1;
 	}
 	
 	public static boolean validateGetSum(int x, int y, int max) {

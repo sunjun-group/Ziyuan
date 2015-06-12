@@ -9,6 +9,7 @@
 package sav.commons.testdata.loopinvariant;
 
 /**
+ * This example is from discussion with Tung
  * @author khanh
  *
  */
@@ -18,8 +19,6 @@ public class Loop {
 		if (N < 0)
 			return true;
 		
-		int a = x + y + N;
-
 		while (true) {
 			if (x <= N)
 				y++;

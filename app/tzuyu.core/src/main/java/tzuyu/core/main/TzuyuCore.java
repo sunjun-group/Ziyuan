@@ -170,10 +170,6 @@ public class TzuyuCore {
 			LOGGER.info("SUMMARY INVARIANTS LEARNED:");
 			LOGGER.info("-----------------------------------------------------------------");
 			for(int i = 0; i < invariants.size(); i++){
-				BreakPoint newBreakpoint = invariants.get(i).getBreakPoint();
-				BreakPoint originalBreakpoint = newBreakpoint.getOriginal();
-				
-				LOGGER.info(originalBreakpoint);
 				LOGGER.info(invariants.get(i));
 			}
 		}

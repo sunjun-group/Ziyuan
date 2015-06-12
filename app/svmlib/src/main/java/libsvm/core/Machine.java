@@ -31,7 +31,7 @@ import org.junit.Assert;
 public class Machine {
 	private static final Logger LOGGER = Logger.getLogger(Machine.class);
 	private static final String DEFAULT_FEATURE_PREFIX = "x";
-	private static final int SVM_TIMEOUT = 10; // In seconds
+	private static final int SVM_TIMEOUT = 2; // In seconds
 
 	private svm_parameter parameter = null;
 	private List<DataPoint> data = new ArrayList<DataPoint>();
@@ -197,7 +197,7 @@ public class Machine {
 		try {
 			return future.get(SVM_TIMEOUT, TimeUnit.SECONDS);
 		} catch (TimeoutException exception) {
-			LOGGER.info("Timed out: SVM task took to long to complete.");
+			LOGGER.info("Timed out: SVM task took too long to complete.");
 		} catch (InterruptedException e) {
 			LOGGER.info("SVM task was interrupted.");
 		} catch (ExecutionException e) {

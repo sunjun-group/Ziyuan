@@ -119,35 +119,16 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	@Test
 	public void testNoLoop() throws Exception{
 		List<String> junitClassNames = new ArrayList<String>();
-		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTestPassed");
-		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTestFailed");
+		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTest");
 		app.faultLocate("sav.commons.testdata.calculator.Calculator", "getSum", "validateGetSum",
 				null, junitClassNames, false);
 	}
 
 	@Test
-	@Ignore("For testing external codes")
-	public void testExternalNoLoop() throws Exception {
-		final List<String> appClasspaths = appData.getAppClasspaths();
-		appClasspaths.add("/Users/npn/dev/projects/data/target/test-classes");
-		appClasspaths.add("/Users/npn/dev/projects/data/target/classes");
-		appClasspaths.add(TestConfiguration.getTzAssembly(Constants.TZUYU_JAVASLICER_ASSEMBLY));
-		
-		appData.setAppSrc("/Users/npn/dev/projects/data/src/main/java");
-		appData.setAppTarget("/Users/npn/dev/projects/data/target/test-classes");
-
+	public void testNoLoop1() throws Exception{
 		List<String> junitClassNames = new ArrayList<String>();
-		junitClassNames.add("simpleTestData.CalculatorTestFailed");
-		junitClassNames.add("simpleTestData.CalculatorTestPassed");
-		app.faultLocate("simpleTestData.Calculator", "getMax", "validateGetMax",
-				null, junitClassNames, false);
-	}
-
-	@Test
-	public void testWhileLoopWith2Bugs() throws Exception{
-		List<String> junitClassNames = new ArrayList<String>();
-		junitClassNames.add("sav.commons.testdata.search1.SearchIndexEqualValueTest");
-		app.faultLocate("sav.commons.testdata.search1.SearchIndexEqualValue", "search", "validate",
+		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTest1");
+		app.faultLocate("sav.commons.testdata.calculator.Calculator", "getSum1", "validateGetSum",
 				null, junitClassNames, false);
 	}
 	
@@ -180,6 +161,32 @@ public class TzuyuCoreTest extends AbstractTzTest {
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.loopinvariant.LoopTest");
 		app.faultLocate("sav.commons.testdata.loopinvariant.Loop", "testLoop", "validateTestLoop",
+				null, junitClassNames, false);
+	}
+	
+	@Test
+	public void testWhileLoopWith2Bugs() throws Exception{
+		List<String> junitClassNames = new ArrayList<String>();
+		junitClassNames.add("sav.commons.testdata.search1.SearchIndexEqualValueTest");
+		app.faultLocate("sav.commons.testdata.search1.SearchIndexEqualValue", "search", "validate",
+				null, junitClassNames, false);
+	}
+	
+	@Test
+	@Ignore("For testing external codes")
+	public void testExternalNoLoop() throws Exception {
+		final List<String> appClasspaths = appData.getAppClasspaths();
+		appClasspaths.add("/Users/npn/dev/projects/data/target/test-classes");
+		appClasspaths.add("/Users/npn/dev/projects/data/target/classes");
+		appClasspaths.add(TestConfiguration.getTzAssembly(Constants.TZUYU_JAVASLICER_ASSEMBLY));
+		
+		appData.setAppSrc("/Users/npn/dev/projects/data/src/main/java");
+		appData.setAppTarget("/Users/npn/dev/projects/data/target/test-classes");
+
+		List<String> junitClassNames = new ArrayList<String>();
+		junitClassNames.add("simpleTestData.CalculatorTestFailed");
+		junitClassNames.add("simpleTestData.CalculatorTestPassed");
+		app.faultLocate("simpleTestData.Calculator", "getMax", "validateGetMax",
 				null, junitClassNames, false);
 	}
 	

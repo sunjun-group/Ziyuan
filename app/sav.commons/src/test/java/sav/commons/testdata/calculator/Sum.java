@@ -14,6 +14,7 @@ package sav.commons.testdata.calculator;
  */
 public class Sum {
 	private int a;
+	private int b;
 	public Sum(int a){
 		this.a = a;
 	}
