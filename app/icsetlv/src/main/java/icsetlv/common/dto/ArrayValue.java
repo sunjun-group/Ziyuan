@@ -55,7 +55,7 @@ public class ArrayValue extends ExecValue {
 		double max = Double.MIN_VALUE;
 		for (int i=0; i<arrayLength; i++) {
 			Value value = ar.getValue(i);
-			if (com.sun.jdi.PrimitiveValue.class.isAssignableFrom(value.getClass())) {
+			if (value != null && com.sun.jdi.PrimitiveValue.class.isAssignableFrom(value.getClass())) {
 				com.sun.jdi.PrimitiveValue pv = (com.sun.jdi.PrimitiveValue) value;
 				final double doubleValue = pv.doubleValue();
 				sum += doubleValue;
