@@ -314,7 +314,7 @@ public class TestcasesExecutor {
 			}
 		} else if (ObjectReference.class.isAssignableFrom(value.getClass())) {
 			ObjectReference object = (ObjectReference) value;
-			final Matcher matcher = OBJECT_ACCESS_PATTERN.matcher("property");
+			final Matcher matcher = OBJECT_ACCESS_PATTERN.matcher(property);
 			if (matcher.matches()) {
 				final String propertyName = matcher.group(1);
 				Field propertyField = null;
