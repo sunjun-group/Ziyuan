@@ -63,12 +63,13 @@ public class JavaSlicerVmRunner extends AgentVmRunner {
 	public static String getTracerJarPath() {
 		try {
 			String path = Tracer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-			path = StringUtils.strip(path, "/");
+//			path = StringUtils.strip(path, "/");
 			path = URLDecoder.decode(path, "UTF-8");
 			File tmpdir = new File(System.getProperty("java.io.tmpdir"));
 			File newFile = new File(tmpdir, "tracer.jar");
-			newFile.deleteOnExit();
-			FileUtils.copyFile(new File(path), newFile);
+			if (!newFile.exists()) {
+				FileUtils.copyFile(new File(path), newFile);
+			}
 			return newFile.getAbsolutePath();
 		} catch (Exception e) {
 			throw new SavRtException("cannot get path of tracer.jar", e);
