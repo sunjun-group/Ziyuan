@@ -225,17 +225,17 @@ public class TestcasesExecutor {
 					objRef = frame.thisObject();
 					refType = objRef.referenceType();
 				}
-				Map<Variable, Value> allVariables = new HashMap<Variable, Value>();
 				/*
 				 * LOCALVARIABLES MUST BE NAVIGATED BEFORE FIELDS, because: in
 				 * case a class field and a local variable in method have the
 				 * same name, and the breakpoint variable with that name has the
 				 * scope UNDEFINED, it must be the variable in the method.
 				 */
-				final List<Variable> vars = new ArrayList<Variable>(bkp.getVars());
+				final Map<Variable, Value> allVariables = new HashMap<Variable, Value>();
 				final List<LocalVariable> visibleVars = frame.visibleVariables();
-				for (Iterator<Variable> it = vars.iterator(); it.hasNext();) {
-					final Variable bpVar = it.next();
+				final List<Field> allFields = refType.allFields();
+				for (Variable bpVar : bkp.getVars()) {
+					// First check local variable
 					LocalVariable match = null;
 					for (LocalVariable localVar : visibleVars) {
 						if (localVar.name().equals(bpVar.getName())) {
@@ -245,11 +245,9 @@ public class TestcasesExecutor {
 					}
 
 					if (match != null) {
-						it.remove();
 						allVariables.put(bpVar, lookup(frame, match, bpVar.getFullName()));
 					} else {
-						// class fields (static & non static)
-						final List<Field> allFields = refType.allFields();
+						// Then check class fields (static & non static)
 						Field matchedField = null;
 						for (Field field : allFields) {
 							if (field.name().equals(bpVar.getName())) {
@@ -259,7 +257,6 @@ public class TestcasesExecutor {
 						}
 
 						if (matchedField != null) {
-							it.remove();
 							final Value value = matchedField.isStatic() ? refType
 									.getValue(matchedField) : objRef != null ? objRef
 									.getValue(matchedField) : null;
