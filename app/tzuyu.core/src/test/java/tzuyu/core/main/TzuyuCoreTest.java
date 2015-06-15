@@ -157,6 +157,15 @@ public class TzuyuCoreTest extends AbstractTzTest {
 	}
 	
 	@Test
+	public void testExtractVariableNameIssue() throws Exception {
+		List<String> junitClassNames = new ArrayList<String>();
+		junitClassNames.add("sav.commons.testdata.calculator.ExtractVariableNameIssueJunit");
+		app.faultLocate(
+				"sav.commons.testdata.calculator.ExtractVariableNameIssue",
+				"getSum", "validateGetSum", null, junitClassNames, false);
+	}
+	
+	@Test
 	public void testLoopInvariant() throws Exception{
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.loopinvariant.LoopTest");
