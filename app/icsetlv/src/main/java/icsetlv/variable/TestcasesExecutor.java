@@ -16,7 +16,6 @@ import icsetlv.common.dto.ReferenceValue;
 import icsetlv.common.dto.TcExecResult;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.common.utils.PrimitiveUtils;
-import icsetlv.common.utils.VariableUtils;
 import icsetlv.vm.SimpleDebugger;
 
 import java.io.File;
@@ -228,10 +227,10 @@ public class TestcasesExecutor {
 				}
 				Map<Variable, Value> allVariables = new HashMap<Variable, Value>();
 				/*
-				 * LOCALVARIABLES MUST BE NAVIGATED BEFORE FIELDS, because:
-				 * in case a class field and a local variable in method have the same name,
-				 * and the breakpoint variable with that name has the scope UNDEFINED, it must be
-				 * the variable in the method. 
+				 * LOCALVARIABLES MUST BE NAVIGATED BEFORE FIELDS, because: in
+				 * case a class field and a local variable in method have the
+				 * same name, and the breakpoint variable with that name has the
+				 * scope UNDEFINED, it must be the variable in the method.
 				 */
 				final List<Variable> vars = new ArrayList<Variable>(bkp.getVars());
 				final List<LocalVariable> visibleVars = frame.visibleVariables();
@@ -248,22 +247,34 @@ public class TestcasesExecutor {
 					if (match != null) {
 						it.remove();
 						allVariables.put(bpVar, lookup(frame, match, bpVar.getFullName()));
-					}
-				}
-				
-				// class fields (static & non static)
-				for (Field field : refType.allFields()) {
-					Variable inVar = VariableUtils.lookupVarInBreakpoint(field, vars);
-					if (inVar != null) {
-						vars.remove(inVar);
-						if (field.isStatic()) {
-							allVariables.put(inVar, refType.getValue(field));
-						} else if (objRef != null) {
-							allVariables.put(inVar, objRef.getValue(field));
+					} else {
+						// class fields (static & non static)
+						final List<Field> allFields = refType.allFields();
+						Field matchedField = null;
+						for (Field field : allFields) {
+							if (field.name().equals(bpVar.getName())) {
+								matchedField = field;
+								break;
+							}
+						}
+
+						if (matchedField != null) {
+							it.remove();
+							final Value value = matchedField.isStatic() ? refType
+									.getValue(matchedField) : objRef != null ? objRef
+									.getValue(matchedField) : null;
+							if (value != null) {
+								if (matchedField.name().equals(bpVar.getFullName())) {
+									allVariables.put(bpVar, value);
+								} else {
+									allVariables.put(bpVar,
+											lookup(value, extractSubProperty(bpVar.getFullName())));
+								}
+							}
 						}
 					}
 				}
-				
+
 				if (!allVariables.isEmpty()) {
 					for (Entry<Variable, Value> entry : allVariables.entrySet()) {
 						Variable var = entry.getKey();
@@ -279,12 +290,16 @@ public class TestcasesExecutor {
 	private Value lookup(final StackFrame frame, final LocalVariable match, final String fullName) {
 		final Value value = frame.getValue(match);
 		if (!match.name().equals(fullName)) {
-			int objIndex = fullName.indexOf(".");
-			int arrIndex = fullName.indexOf("[");
-			int index = objIndex < arrIndex || arrIndex < 0 ? objIndex : arrIndex;
-			return lookup(value, fullName.substring(index));
+			return lookup(value, extractSubProperty(fullName));
 		}
 		return value;
+	}
+	
+	private String extractSubProperty(final String fullName) {
+		int objIndex = fullName.indexOf(".");
+		int arrIndex = fullName.indexOf("[");
+		int index = objIndex < arrIndex || arrIndex < 0 ? objIndex : arrIndex;
+		return fullName.substring(index);
 	}
 
 	private Value lookup(final Value value, final String property) {
