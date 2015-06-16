@@ -9,12 +9,13 @@
 package tzuyu.core.mutantbug;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import sav.common.core.Logger;
@@ -24,13 +25,11 @@ import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.ClassLocation;
 import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunner;
-import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
 import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.mutanbug.DebugLineInsertionResult;
 import sav.strategies.mutanbug.IMutator;
 import sav.strategies.mutanbug.MutationResult;
 import sav.strategies.vm.VMConfiguration;
-import sav.strategies.vm.VMRunner;
 import tzuyu.core.inject.ApplicationData;
 
 import com.google.inject.Inject;
@@ -51,7 +50,8 @@ public class MutanBug {
 	private IMutator mutator;
 	private FilesBackup filesBackup;
 	
-	public void mutateAndRunTests(FaultLocalizationReport report, int rankToMutate, List<String> junitClassNames) throws Exception {
+	public void mutateAndRunTests(FaultLocalizationReport report,
+			int rankToMutate, List<String> junitClassNames) throws Exception {
 		List<ClassLocation> breakpoints = new ArrayList<ClassLocation>();
 		List<LineCoverageInfo> firstRanks = report.getFirstRanks(rankToMutate);
 		
@@ -69,11 +69,19 @@ public class MutanBug {
 		for(int i = 0; i < breakpoints.size(); i++){
 			Set<Integer> passCoverTests = new HashSet<Integer>(firstRanks.get(i).getPassedTestcaseIndexesCover());
 			Set<Integer> failCoverTests = new HashSet<Integer>(firstRanks.get(i).getFailedTestcaseIndexesCover());
-			
 			ClassLocation location = breakpoints.get(i);
+			
 			LineMutanResult resultForSingleLine = mutansResult.getMutantResult(location);
-			List<Set<Integer>> passTestsInMutants = resultForSingleLine.getPassTestsInMutants();
-			List<Set<Integer>> failTestsInMutants = resultForSingleLine.getFailTestsInMutants();
+			List<Set<Integer>> passTestsInMutants;
+			List<Set<Integer>> failTestsInMutants;
+			/* if the line cannot be mutated, we get the original result for it*/
+			if (resultForSingleLine == null) {
+				passTestsInMutants = CollectionUtils.listOf(passTests);
+				failTestsInMutants = CollectionUtils.listOf(failTests);
+			} else {
+				passTestsInMutants = resultForSingleLine.getPassTestsInMutants();
+				failTestsInMutants = resultForSingleLine.getFailTestsInMutants();
+			}
 			
 			MutationBasedSuspiciousnessCalculator calculator = new MutationBasedSuspiciousnessCalculator(passTests, failTests, 
 								passCoverTests, failCoverTests, passTestsInMutants, failTestsInMutants);
@@ -92,7 +100,8 @@ public class MutanBug {
 		MutansResult result = new MutansResult();
 		Map<String, MutationResult> mutatedResult = mutator.mutate(bkps,
 				appData.getAppSrc());
-		Recompiler compiler = new Recompiler(appData.getVmConfig());
+		VMConfiguration vmConfig = appData.getVmConfig();
+		Recompiler compiler = new Recompiler(vmConfig);
 		JunitRunnerParameters params = new JunitRunnerParameters();
 		params.setJunitClasses(junitClassNames);
 		// recompile and rerun test cases
@@ -112,7 +121,7 @@ public class MutanBug {
 			for (File mutatedFile : mutatedFiles) {
 				try{
 					compiler.recompileJFile(appData.getAppTarget(), mutatedFile);
-					JunitResult jresult = runTestcases(params);
+					JunitResult jresult = JunitRunner.runTestcases(vmConfig, params);
 					result.add(bkp, jresult.getTestResult());
 				} catch (Exception e) {
 					log.error(e);
@@ -135,27 +144,11 @@ public class MutanBug {
 		return filesBackup;
 	}
 	
-	/**
-	 * TODO - LLT: clean up
-	 */
-	private JunitResult runTestcases(JunitRunnerParameters params)
-			throws ClassNotFoundException, IOException, SavException {
-		VMRunner runner = new VMRunner();
-		VMConfiguration config = appData.getVmConfig();
-		config.setLaunchClass(JunitRunner.class.getName());
-		config.setDebug(false);
-		List<String> args = new JunitRunnerProgramArgBuilder()
-				.methods(params.getClassMethods())
-				.destinationFile(params.getDestfile()).build();
-		config.setProgramArgs(args);
-		runner.startAndWaitUntilStop(config);
-		return JunitResult.readFrom(params.getDestfile());
-	}
-
 	public <T extends ClassLocation> Map<String, DebugLineInsertionResult> mutateForMachineLearning(
 			List<T> locations) throws SavException {
 		startBackup();
 		Map<String, List<ClassLocation>> classLocationMap = createClassLocationMap(locations);
+		filter(classLocationMap, appData.getAppSrc());
 		Map<String, DebugLineInsertionResult> result = mutator.insertDebugLine(classLocationMap, appData.getAppSrc());
 		Recompiler recompiler = new Recompiler(appData.getVmConfig());
 		for (DebugLineInsertionResult classResult : result.values()) {
@@ -168,6 +161,19 @@ public class MutanBug {
 		return result;
 	}
 	
+	private void filter(Map<String, List<ClassLocation>> classLocationMap,
+			String appSrc) {
+		for (Iterator<Entry<String, List<ClassLocation>>> it = classLocationMap
+				.entrySet().iterator(); it.hasNext();) {
+			String className = it.next().getKey();
+			if (!mutation.utils.FileUtils.doesFileExist(ClassUtils
+					.getJFilePath(appSrc, className))) {
+				it.remove();
+			}
+		}
+		
+	}
+
 	public void restoreFiles() {
 		if (filesBackup != null && !filesBackup.isClose()) {
 			filesBackup.restoreAll();

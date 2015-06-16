@@ -37,10 +37,12 @@ public class MutationVisitor extends AbstractMutationVisitor {
 	private CloneVisitor nodeCloner;
 	private ClassAnalyzer clasAnalyzer;
 	private ClassDescriptor classDescriptor;
+	private VariableSubstitution varSubstitution;
 	
 	public void reset(ClassDescriptor classDescriptor, List<Integer> lineNos) {
 		this.lineNumbers = lineNos;
 		this.classDescriptor = classDescriptor;
+		varSubstitution = new VariableSubstitution(classDescriptor);
 		result.clear();
 	}
 
@@ -131,9 +133,9 @@ public class MutationVisitor extends AbstractMutationVisitor {
 	@Override
 	public boolean mutate(NameExpr n) {
 		MutationNode muNode = newNode(n);
-		VariableSubstitution varSubstituion = new VariableSubstitutionImpl(
-				n.getName(), n.getEndLine(), n.getEndColumn(), classDescriptor);
-		List<VariableDescriptor> candidates = varSubstituion.find();
+		List<VariableDescriptor> candidates = varSubstitution
+				.findSubstitutions(n.getName(), n.getEndLine(),
+						n.getEndColumn());
 		for (VariableDescriptor var : candidates) {
 			if (!var.getName().equals(n.getName())) {
 				muNode.getMutatedNodes().add(nameExpr(var.getName()));

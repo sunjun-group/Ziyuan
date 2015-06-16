@@ -17,7 +17,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -128,16 +127,10 @@ public class TzuyuCore2 {
 		List<BreakPoint> breakpoints = BreakpointUtils.toBreakpoints(suspectLocations);
 		
 		//compute variables appearing in each breakpoint
-		VariableNameCollector nameCollector = new VariableNameCollector(Arrays.asList(appData.getAppSrc()));
+		VariableNameCollector nameCollector = new VariableNameCollector(appData.getAppSrc());
 		nameCollector.updateVariables(breakpoints);
 		MutanBug mutanbug = new MutanBug();
 		List<BreakPoint> newBreakpoints = getNextLineToAddBreakpoint(mutanbug, breakpoints);
-		for (Iterator<BreakPoint> it = newBreakpoints.iterator(); it.hasNext();) {
-			BreakPoint bkp = it.next();
-			if (bkp.getLineNo() != 70) {
-				it.remove();
-			}
-		}
 		Map<BreakPoint, BreakPoint> newLineToOldLine = buildNewToOriginalMap(
 				breakpoints, newBreakpoints);
 		
@@ -200,6 +193,7 @@ public class TzuyuCore2 {
 			List<BreakPoint> suspectLocations) throws SavException {
 		mutanbug.setAppData(appData);
 		mutanbug.setMutator(appContext.getMutator());
+		
 		Map<String, DebugLineInsertionResult> mutationInfo = mutanbug.mutateForMachineLearning(suspectLocations);
 		suspectLocations = getNewLocationAfterMutation(suspectLocations, mutationInfo);
 		return suspectLocations;

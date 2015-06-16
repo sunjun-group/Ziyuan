@@ -47,20 +47,26 @@ public class VariableNameCollector {
 	private Logger<?> log = Logger.getDefaultLogger();
 	private List<String> srcFolders;
 	
-	public VariableNameCollector(List<String> srcFolders) {
-		this.srcFolders = srcFolders;
+	public VariableNameCollector(String... srcFolders) {
+		this.srcFolders = new ArrayList<String>();
+		CollectionUtils.addIfNotNullNotExist(this.srcFolders, srcFolders);
 	}
 	
 	public void updateVariables(List<BreakPoint> brkps) throws IcsetlvException {
 		Map<String, List<BreakPoint>> brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
 
 		for (String clzName : brkpsMap.keySet()) {
+			File sourceFile = getSourceFile(clzName);
+			if (sourceFile == null) {
+				log.debug("Class", clzName, "doesn't exist in source folder(s)", srcFolders);
+				continue;
+			}
 			List<Integer> lines = BreakpointUtils.extractLineNo(brkpsMap.get(clzName));
 			
 			VarNameVisitor visitor = new VarNameVisitor(lines);
 			CompilationUnit cu;
 			try {
-				cu = JavaParser.parse(getSourceFile(clzName));
+				cu = JavaParser.parse(sourceFile);
 				cu.accept(visitor, true);
 				Map<Integer, List<Variable>> map = visitor.getResult();
 				

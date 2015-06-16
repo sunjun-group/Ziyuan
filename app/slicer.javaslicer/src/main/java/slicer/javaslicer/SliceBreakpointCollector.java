@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 import sav.common.core.Logger;
-import sav.common.core.utils.BreakpointUtils;
 import sav.strategies.dto.BreakPoint;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.Instruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.InstructionInstance;
@@ -36,9 +35,6 @@ public class SliceBreakpointCollector implements SliceVisitor {
 			BreakPoint bkp = new BreakPoint(clazz.getName(), instruction.getMethod()
 					.getName(), instruction.getLineNumber());
 			dynamicSlice.add(bkp);
-			if (log.isDebug()) {
-				log.debug(BreakpointUtils.getLocationId(bkp));
-			}
 		}
 	}
 	

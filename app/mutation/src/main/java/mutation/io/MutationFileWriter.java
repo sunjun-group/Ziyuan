@@ -44,12 +44,6 @@ public class MutationFileWriter extends AbstractMutationFileWriter {
 				try {
 					lines = org.apache.commons.io.FileUtils.readLines(javaFile);
 					List<String> newContent = createNewContent(lines, muNode.getOrgNode(), node);
-					if (log.isDebug()) {
-						log.debug(file.getAbsolutePath());
-						for (String line : newContent) {
-							log.debug(line);
-						}
-					}
 					org.apache.commons.io.FileUtils.writeLines(file, newContent);
 					files.add(file);
 				} catch (IOException e) {

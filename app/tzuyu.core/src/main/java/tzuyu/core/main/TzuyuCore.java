@@ -153,7 +153,7 @@ public class TzuyuCore {
 		List<BreakPoint> breakpoints = BreakpointUtils.toBreakpoints(suspectLocations);
 		
 		//compute variables appearing in each breakpoint
-		VariableNameCollector nameCollector = new VariableNameCollector(Arrays.asList(appData.getAppSrc()));
+		VariableNameCollector nameCollector = new VariableNameCollector(appData.getAppSrc());
 		nameCollector.updateVariables(breakpoints);
 		MutanBug mutanbug = new MutanBug();
 		List<BreakPoint> newBreakpoints = getNextLineToAddBreakpoint(mutanbug, breakpoints);

@@ -35,8 +35,7 @@ public class VariableNameCollectorTest extends AbstractTest {
 	@Before
 	public void setup() {
 		collector = new VariableNameCollector(
-				CollectionUtils.listOf(TestConfiguration
-						.getTestScrPath("icsetlv")));
+				TestConfiguration.getTestScrPath("icsetlv"));
 	}
 	
 	private BreakPoint runSum(int lineNo) throws IcsetlvException {

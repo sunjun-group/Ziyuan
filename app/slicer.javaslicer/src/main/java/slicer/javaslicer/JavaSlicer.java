@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import sav.common.core.Logger;
@@ -74,7 +75,7 @@ public class JavaSlicer implements ISlicer {
 		
 		/* do slicing */
 		timer.newPoint("slice");
-		List<BreakPoint> result = slice(tempFileName, bkps, timer);
+		List<BreakPoint> result = slice(tempFileName, new HashSet<BreakPoint>(bkps), timer);
 		
 		timer.logResults(log);
 		return result;
@@ -151,7 +152,14 @@ public class JavaSlicer implements ISlicer {
 		slicer.addSliceVisitor(sliceCollector);
 		slicer.process(tracing, criteria, false);
 		log.debug("Read Slicing Result:");
-		return sliceCollector.getDynamicSlice();
+		List<BreakPoint> dynamicSlice = sliceCollector.getDynamicSlice();
+		if (log.isDebug()) {
+			log.debug("slicing-result:");
+			for (BreakPoint bkp : dynamicSlice) {
+				log.debug(bkp.getId());
+			}
+		}
+		return dynamicSlice;
 	}
 
 	private String buildSlicingCriterionStr(BreakPoint bkp) {

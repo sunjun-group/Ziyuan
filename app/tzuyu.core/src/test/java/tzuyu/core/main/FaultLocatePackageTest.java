@@ -47,6 +47,13 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 	}
 	
 	@Test
+	public void testjavaparser57() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("javaparser", "57");
+		setUseSlicer(true);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
 	public void testjodatime194() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("joda-time", "194");
 		setUseSlicer(false);

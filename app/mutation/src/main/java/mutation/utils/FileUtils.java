@@ -60,4 +60,9 @@ public class FileUtils {
 			boolean preserveFileDate) throws IOException {
 		org.apache.commons.io.FileUtils.copyFile(srcFile, targetFile, preserveFileDate);
 	}
+	
+	public static boolean doesFileExist (String path) {
+		File file = new File(path);
+		return file.exists();
+	}
 }
