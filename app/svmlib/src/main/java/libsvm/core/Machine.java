@@ -11,7 +11,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import libsvm.svm;
 import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;

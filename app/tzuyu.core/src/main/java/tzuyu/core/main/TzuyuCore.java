@@ -8,12 +8,15 @@
 
 package tzuyu.core.main;
 
+import icsetlv.Engine.AllNegativeResult;
+import icsetlv.Engine.AllPositiveResult;
 import icsetlv.Engine.Result;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.variable.VariableNameCollector;
 import japa.parser.ast.CompilationUnit;
 
 import java.io.File;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +33,6 @@ import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
 import sav.strategies.IApplicationContext;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.dto.ClassLocation;
 import sav.strategies.dto.MutationBreakPoint;
 import sav.strategies.mutanbug.DebugLineInsertionResult;
 import tzuyu.core.inject.ApplicationData;
@@ -38,6 +40,7 @@ import tzuyu.core.machinelearning.LearnInvariants;
 import tzuyu.core.mutantbug.MutanBug;
 import tzuyu.core.mutantbug.Recompiler;
 import faultLocalization.FaultLocalizationReport;
+import faultLocalization.LineCoverageInfo;
 import gentest.builder.FixTraceGentestBuilder;
 import gentest.core.data.Sequence;
 import gentest.junit.FileCompilationUnitPrinter;
@@ -148,8 +151,12 @@ public class TzuyuCore {
 			}
 		}
 		
-		List<ClassLocation> suspectLocations = report.getFirstRanksLocation(RANK_TO_EXAMINE);
-		List<BreakPoint> breakpoints = BreakpointUtils.toBreakpoints(suspectLocations);
+		List<LineCoverageInfo> suspectLocations = report.getFirstRanks(RANK_TO_EXAMINE);
+		
+		List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
+		for(LineCoverageInfo suspectLocation: suspectLocations){
+			breakpoints.add(BreakpointUtils.toBreakPoint(suspectLocation.getLocation()));
+		}
 		
 		//compute variables appearing in each breakpoint
 		VariableNameCollector nameCollector = new VariableNameCollector(appData.getAppSrc());
@@ -162,6 +169,19 @@ public class TzuyuCore {
 		} else {
 			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig());
 			List<Result> invariants = learnInvariant.learn(newBreakpoints, junitClassNames, appData.getAppSrc());
+			
+			List<BugLocalizationLine> bugLines = new ArrayList<BugLocalizationLine>();
+			for (int i = 0; i < invariants.size(); i++) {
+				Result invariant = invariants.get(i);
+				if (!(invariant instanceof AllPositiveResult) && invariant.getAccuracy() > 0){
+					BugLocalizationLine bugLine = new BugLocalizationLine(
+							breakpoints.get(i), suspectLocations.get(i)
+									.getSuspiciousness(), invariants.get(i));
+					bugLines.add(bugLine);
+				}
+			}
+			
+			LOGGER.info(bugLines);
 		}
 		mutanbug.restoreFiles();
 	}

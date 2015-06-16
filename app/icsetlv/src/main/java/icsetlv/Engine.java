@@ -144,12 +144,16 @@ public class Engine {
 			}
 			else if(failValues.isEmpty()){
 				LOGGER.info("This line is likely not a bug!");
-				results.add(new AllPositiveResult());
+				Result result = new AllPositiveResult();
+				setResult(result, bkp, "This line is likely not a bug!", 1);
+				results.add(result);
 				continue;
 			}
 			else if(passValues.isEmpty()){
 				LOGGER.info("This line is likely a bug!");
-				results.add(new AllNegativeResult());
+				Result result = new AllNegativeResult();
+				setResult(result, bkp, "This line is likely a bug!", 1);
+				results.add(result);
 				continue;
 			}
 
@@ -183,15 +187,19 @@ public class Engine {
 
 			// Store outputs
 			final Result result = new Result();
-			result.breakPoint = bkp;
-			result.learnedLogic = machine.getLearnedLogic();
-			result.accuracy = machine.getModelAccuracy();
+			setResult(result, bkp, machine.getLearnedLogic(), machine.getModelAccuracy());
 
 			LOGGER.info("Learn: " + result);
 			results.add(result);
 		}
 
 		return this;
+	}
+	
+	private void setResult(Result result, BreakPoint breakpoint, String learnedLogic, double accuracy){
+		result.breakPoint = breakpoint;
+		result.learnedLogic = learnedLogic;
+		result.accuracy = accuracy;
 	}
 
 	public void setMachine(Machine machine) {
@@ -234,12 +242,21 @@ public class Engine {
 		public double getAccuracy() {
 			return accuracy;
 		}
-
-
+		
 		@Override
 		public String toString() {
-			return "Result [breakPoint=" + breakPoint + ", learnedLogic="
-					+ learnedLogic + ", accuracy=" + accuracy + "]";
+			final StringBuilder str = new StringBuilder();
+			str.append("*******************\n");
+			
+			str.append(breakPoint.getClassCanonicalName()).append(":")
+					.append(breakPoint.getLineNo()).append("\n");
+			if (StringUtils.isBlank(learnedLogic)) {
+				str.append("Could not learn anything.");
+			} else {
+				str.append("Logic:\n").append(learnedLogic).append("\n");
+				str.append("Accuracy: ").append(accuracy).append("\n");
+			}
+			return str.toString();
 		}
 	}
 	
