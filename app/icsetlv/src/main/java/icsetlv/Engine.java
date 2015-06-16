@@ -144,11 +144,13 @@ public class Engine {
 			}
 			else if(failValues.isEmpty()){
 				LOGGER.info("This line is likely not a bug!");
+				results.add(new AllPositiveResult());
 				continue;
 			}
 			else if(passValues.isEmpty()){
 				LOGGER.info("This line is likely a bug!");
-				return this;
+				results.add(new AllNegativeResult());
+				continue;
 			}
 
 			// Configure data for SVM machine
@@ -233,27 +235,15 @@ public class Engine {
 			return accuracy;
 		}
 
+
 		@Override
 		public String toString() {
-			final StringBuilder str = new StringBuilder();
-			str.append("*******************\n");
-			str.append("Breakpoint:\n");
-			final BreakPoint original = breakPoint.getOriginal();
-			if (original != null) {
-				str.append("Original: ").append(original.getClassCanonicalName()).append(":")
-						.append(original.getLineNo()).append("\n");
-				str.append("Mutated: ");
-			}
-			str.append(breakPoint.getClassCanonicalName()).append(":")
-					.append(breakPoint.getLineNo()).append("\n");
-			if (StringUtils.isBlank(learnedLogic)) {
-				str.append("Could not learn anything.");
-			} else {
-				str.append("Logic:\n").append(learnedLogic).append("\n");
-				str.append("Accuracy: ").append(accuracy).append("\n");
-			}
-			return str.toString();
+			return "Result [breakPoint=" + breakPoint + ", learnedLogic="
+					+ learnedLogic + ", accuracy=" + accuracy + "]";
 		}
 	}
+	
+	public static class AllPositiveResult extends Result{}
+	public static class AllNegativeResult extends Result{}
 
 }

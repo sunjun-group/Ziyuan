@@ -45,7 +45,7 @@ public class StopTimer {
     public void logResults(Logger<?> log) {
         List<String> lines = getResults();
 		for (String line : lines) {
-			log.info(line);
+			log.debug(line);
 		}
     }
 

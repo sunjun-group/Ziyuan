@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import sav.common.core.Logger;
 import sav.common.core.utils.CollectionUtils;
 
 /**
@@ -20,23 +19,20 @@ import sav.common.core.utils.CollectionUtils;
  *
  */
 public class ProgramArgumentBuilder {
-	private Logger<?> log = Logger.getDefaultLogger();
 	private List<String> arguments = new ArrayList<String>();
 
 	public ProgramArgumentBuilder addArgument(String option, List<String> values) {
-		if (CollectionUtils.isEmpty(values)) {
-			log.warn("program argument missing, option=", option);
-		} else {
+		if (!CollectionUtils.isEmpty(values)) {
 			arguments.add("-" + option);
 			arguments.addAll(values);
 		}
 		return this;
 	}
-	
+
 	public ProgramArgumentBuilder addArgument(String option, String... values) {
 		return addArgument(option, Arrays.asList(values));
 	}
-	
+
 	public List<String> build() {
 		return arguments;
 	}

@@ -16,7 +16,6 @@ import japa.parser.ast.CompilationUnit;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,12 +26,12 @@ import org.apache.commons.collections.CollectionUtils;
 import sav.common.core.Logger;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
-import sav.common.core.utils.Assert;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
 import sav.strategies.IApplicationContext;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.ClassLocation;
+import sav.strategies.dto.MutationBreakPoint;
 import sav.strategies.mutanbug.DebugLineInsertionResult;
 import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.machinelearning.LearnInvariants;
@@ -95,7 +94,7 @@ public class TzuyuCore {
 			List<String> testingPackages, List<String> junitClassNames, boolean useSlicer)
 			throws Exception {
 		FaultLocalizationReport report = computeSuspiciousness(testingClassName, testingPackages, junitClassNames, useSlicer);
-//		mutation(report, junitClassNames);
+		mutation(report, junitClassNames);
 		machineLearning(report, testingClassName, methodName,
 				verificationMethod, junitClassNames);
 	}
@@ -158,20 +157,11 @@ public class TzuyuCore {
 		MutanBug mutanbug = new MutanBug();
 		List<BreakPoint> newBreakpoints = getNextLineToAddBreakpoint(mutanbug, breakpoints);
 		
-		buildNewToOriginalMap(breakpoints, newBreakpoints);
-		
 		if (CollectionUtils.isEmpty(suspectLocations)) {
-			LOGGER.warn("Did not find any place to add break point. SVM will not run.");
+			LOGGER.warn("No suspect line to learn. SVM will not run.");
 		} else {
 			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig());
 			List<Result> invariants = learnInvariant.learn(newBreakpoints, junitClassNames, appData.getAppSrc());
-			
-			LOGGER.info("-----------------------------------------------------------------");
-			LOGGER.info("SUMMARY INVARIANTS LEARNED:");
-			LOGGER.info("-----------------------------------------------------------------");
-			for(int i = 0; i < invariants.size(); i++){
-				LOGGER.info(invariants.get(i));
-			}
 		}
 		mutanbug.restoreFiles();
 	}
@@ -229,29 +219,11 @@ public class TzuyuCore {
 		
 		for(BreakPoint location: suspectLocations){
 			Integer newLineNo = lineToNextLine.get(location.getLineNo());
-			if (newLineNo != null) {
-				BreakPoint newBkp = new BreakPoint(location.getClassCanonicalName(), newLineNo);
-				newBkp.setVars(location.getVars());
-				result.add(newBkp);
-				
-			} else {
-				result.add(location);
-			}
+			MutationBreakPoint newBreakPoint = new MutationBreakPoint(location, newLineNo);
+			result.add(newBreakPoint);
 		}
 		
 		return result;
-	}
-	
-	private void buildNewToOriginalMap(List<BreakPoint> breakpoints, List<BreakPoint> newBreakpoints) {
-		Assert.assertTrue(breakpoints.size() == newBreakpoints.size(),
-				"The sizes of the break points list before and after mutation are not the same.");
-		Map<BreakPoint, BreakPoint> newLineToOldLine = new HashMap<BreakPoint, BreakPoint>();
-		for (int i = 0; i < newBreakpoints.size(); i++) {
-			final BreakPoint originalPoint = breakpoints.get(i);
-			final BreakPoint newPoint = newBreakpoints.get(i);
-			newLineToOldLine.put(newPoint, originalPoint);
-			newPoint.setOriginal(originalPoint);
-		}
 	}
 
 	public void setEnableGentest(boolean enable) {
