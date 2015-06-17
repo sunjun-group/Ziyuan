@@ -181,6 +181,7 @@ public class TzuyuCore {
 				}
 			}
 			
+			LOGGER.info("----------------FINISHED--------------------");
 			LOGGER.info(bugLines);
 		}
 		mutanbug.restoreFiles();

@@ -246,14 +246,12 @@ public class Engine {
 		@Override
 		public String toString() {
 			final StringBuilder str = new StringBuilder();
-			str.append("*******************\n");
-			
 			str.append(breakPoint.getClassCanonicalName()).append(":")
 					.append(breakPoint.getLineNo()).append("\n");
 			if (StringUtils.isBlank(learnedLogic)) {
 				str.append("Could not learn anything.");
 			} else {
-				str.append("Logic:\n").append(learnedLogic).append("\n");
+				str.append("Logic: ").append(learnedLogic).append("\n");
 				str.append("Accuracy: ").append(accuracy).append("\n");
 			}
 			return str.toString();
