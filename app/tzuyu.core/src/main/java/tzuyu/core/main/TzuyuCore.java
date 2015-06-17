@@ -16,7 +16,6 @@ import japa.parser.ast.CompilationUnit;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -54,9 +53,6 @@ public class TzuyuCore {
 	private static final Logger<?> LOGGER = Logger.getDefaultLogger();
 	private IApplicationContext appContext;
 	private ApplicationData appData;
-	private int numberOfTestCases = 100;
-	private boolean enableGentest = true;
-	private static final int RANK_TO_EXAMINE = Integer.MAX_VALUE;
 	
 	public TzuyuCore(IApplicationContext appContext, ApplicationData appData) {
 		this.appContext = appContext;
@@ -91,56 +87,56 @@ public class TzuyuCore {
 		return report;
 	}
 
-	public void faultLocate(String testingClassName, String methodName, String verificationMethod,
-			List<String> testingPackages, List<String> junitClassNames, boolean useSlicer)
+	public void faultLocate(FaultLocateParams params)
 			throws Exception {
-		FaultLocalizationReport report = computeSuspiciousness(testingClassName, testingPackages, junitClassNames, useSlicer);
-		mutation(report, junitClassNames);
-		machineLearning(report, testingClassName, methodName,
-				verificationMethod, junitClassNames);
+		FaultLocalizationReport report = computeSuspiciousness(params);
+		if (params.isRunMutation()) {
+			mutation(report, params.getJunitClassNames(), params.getRanktoexamine());
+		}
+		machineLearning(report, params);
 	}
 
-	private FaultLocalizationReport computeSuspiciousness(String testingClassName,
-			List<String> testingPackages, List<String> junitClassNames,
-			boolean useSlicer) throws Exception {
+	private FaultLocalizationReport computeSuspiciousness(FaultLocateParams params) throws Exception {
 		LOGGER.info("Running " + appData.getSuspiciousCalculAlgo());
 		
 		final FaultLocalization analyzer = new FaultLocalization(appContext);
-		analyzer.setUseSlicer(useSlicer);
+		analyzer.setUseSlicer(params.isUseSlicer());
 
 		FaultLocalizationReport report;
-		if (CollectionUtils.isEmpty(testingPackages)) {
-			report = analyzer.analyse(Arrays.asList(testingClassName), junitClassNames,
+		if (CollectionUtils.isEmpty(params.getTestingPkgs())) {
+			report = analyzer.analyse(params.getTestingClassNames(), params.getJunitClassNames(),
 					appData.getSuspiciousCalculAlgo());
 		} else {
-			report = analyzer.analyseSlicingFirst(Arrays.asList(testingClassName), testingPackages,
-					junitClassNames, appData.getSuspiciousCalculAlgo());
+			report = analyzer.analyseSlicingFirst(params.getTestingClassNames(), params.getTestingPkgs(),
+					params.getJunitClassNames(), appData.getSuspiciousCalculAlgo());
 		}
 		LOGGER.info(report);
 		return report;
 	}
 
 	private void mutation(FaultLocalizationReport report,
-			List<String> junitClassNames) throws Exception {
+			List<String> junitClassNames, int rankToExamine) throws Exception {
 		LOGGER.info("Running Mutation");
 		MutanBug mutanbug = new MutanBug();
 		mutanbug.setAppData(appData);
 		mutanbug.setMutator(appContext.getMutator());
-		mutanbug.mutateAndRunTests(report, RANK_TO_EXAMINE, junitClassNames);
+		mutanbug.mutateAndRunTests(report, rankToExamine, junitClassNames);
 		LOGGER.info(report);
 	}
 	
-	private void machineLearning(
-			FaultLocalizationReport report, String testingClassName,
-			String methodName, String verificationMethod,
-			List<String> junitClassNames) throws ClassNotFoundException,
+	private void machineLearning(FaultLocalizationReport report,
+			FaultLocateParams params) throws ClassNotFoundException,
 			SavException, IcsetlvException, Exception {
-		
 		LOGGER.info("Running Machine Learning");
-		if (enableGentest) {
+		List<String> junitClassNames = new ArrayList<String>(params.getJunitClassNames());
+		if (params.isGenTestEnable()) {
 			while (true) {
 				try {
-					List<String> randomTests = generateNewTests(testingClassName, methodName, verificationMethod);
+					List<String> randomTests = generateNewTests(
+							params.getTestingClassName(),
+							params.getMethodName(), 
+							params.getVerificationMethod(),
+							params.getNumberOfTestCases());
 					junitClassNames.addAll(randomTests);
 					break;
 				} catch (Throwable exception) {
@@ -149,7 +145,7 @@ public class TzuyuCore {
 			}
 		}
 		
-		List<LineCoverageInfo> suspectLocations = report.getFirstRanks(RANK_TO_EXAMINE);
+		List<LineCoverageInfo> suspectLocations = report.getFirstRanks(params.getRanktoexamine());
 		
 		List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
 		for(LineCoverageInfo suspectLocation: suspectLocations){
@@ -185,7 +181,8 @@ public class TzuyuCore {
 		mutanbug.restoreFiles();
 	}
 	
-	private List<String> generateNewTests(String testingClassName, String methodName, String verificationMethod)
+	private List<String> generateNewTests(String testingClassName,
+			String methodName, String verificationMethod, int numberOfTestCases)
 			throws ClassNotFoundException, SavException {
 		Class<?> targetClass = Class.forName(testingClassName);
 		
@@ -245,7 +242,4 @@ public class TzuyuCore {
 		return result;
 	}
 
-	public void setEnableGentest(boolean enable) {
-		enableGentest = enable;
-	}
 }

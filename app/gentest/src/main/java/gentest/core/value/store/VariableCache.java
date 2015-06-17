@@ -45,8 +45,8 @@ public class VariableCache implements IVariableStore {
 			valueList = CollectionUtils.getListInitIfEmpty(generatedVarMap, type.getRawType());
 		}
 		if (valueList.size() == GentestConstants.MAX_VALUE_FOR_A_CLASS_STORED_IN_CACHE) {
-			log.debug("VariableCache.MAX_VALUE_FOR_A_CLASS_STORED_IN_CACHE reach (class: ",
-					type.getRawType().getName(), ", type: ", type);
+//			log.debug("VariableCache.MAX_VALUE_FOR_A_CLASS_STORED_IN_CACHE reach (class: ",
+//					type.getRawType().getName(), ", type: ", type);
 			int randomPos = Randomness.nextInt(valueList.size());
 			valueList.set(randomPos, variable);
 		} else {

@@ -29,7 +29,6 @@ public class FaultLocalizationPackageTest extends AbstractTzPackageTest {
 	public void setup() {
 		super.setup();
 		tzCore = new TzuyuCore(context, appData);
-		tzCore.setEnableGentest(false);
 	}
 	
 	public void runTest(TestPackage testPkg) throws Exception {

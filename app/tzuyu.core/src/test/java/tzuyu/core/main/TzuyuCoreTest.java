@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.Before;
 
 import sav.common.core.Constants;
+import sav.common.core.utils.CollectionUtils;
 import sav.commons.TestConfiguration;
 import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
@@ -32,6 +33,21 @@ public abstract class TzuyuCoreTest extends AbstractTzTest {
 		appData.setSuspiciousCalculAlgo(SpectrumAlgorithm.OCHIAI);
 		app = new TzuyuCore(testContext, appData);
 	}
+	
+	protected FaultLocateParams initFaultLocateParams(String testingClassName, String methodName, String verificationMethod,
+			List<String> testingPackages, List<String> junitClassNames, boolean useSlicer) {
+		FaultLocateParams params = new FaultLocateParams();
+		params.setTestingClassNames(CollectionUtils.listOf(testingClassName));
+		params.setMethodName(methodName);
+		params.setVerificationMethod(verificationMethod);
+		params.setTestingPkgs(testingPackages);
+		params.setJunitClassNames(junitClassNames);
+		params.setUseSlicer(useSlicer);
+		params.setGenTest(true);
+		params.setRunMutation(true);
+		return params;
+	}
+
 	
 //	@Test
 //	public void runSearchInSortingMatrix1() throws Exception {

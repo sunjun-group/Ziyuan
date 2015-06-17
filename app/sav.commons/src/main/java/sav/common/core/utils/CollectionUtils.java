@@ -207,4 +207,11 @@ public class CollectionUtils {
 			map.put(key, value);
 		}
 	}
+	
+	public static boolean checkSize(Collection<?> col, int expectedSize) {
+		if (col == null) {
+			return false;
+		}
+		return col.size() == expectedSize;
+	}
 }

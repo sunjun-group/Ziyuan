@@ -20,7 +20,7 @@ import sav.commons.TestConfiguration;
  * @author khanh
  *
  */
-public class TzuyuCoreTestExternal extends TzuyuCoreTest{
+public class TzuyuCoreTestExternal extends TzuyuCoreTest {
 	@Test
 	@Ignore("For testing external codes")
 	public void testExternalNoLoop() throws Exception {
@@ -35,8 +35,8 @@ public class TzuyuCoreTestExternal extends TzuyuCoreTest{
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("simpleTestData.CalculatorTestFailed");
 		junitClassNames.add("simpleTestData.CalculatorTestPassed");
-		app.faultLocate("simpleTestData.Calculator", "getMax", "validateGetMax",
-				null, junitClassNames, false);
+		app.faultLocate(initFaultLocateParams("simpleTestData.Calculator", "getMax", "validateGetMax",
+				null, junitClassNames, false));
 	}
 	
 	@Test
@@ -55,8 +55,8 @@ public class TzuyuCoreTestExternal extends TzuyuCoreTest{
 
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("com.google.common.cache.AbstractCacheTest");
-		app.faultLocate("com.google.common.cache.AbstractCache", "getAllPresent", "dummyValidate",
-				null, junitClassNames, false);
+		app.faultLocate(initFaultLocateParams("com.google.common.cache.AbstractCache", "getAllPresent", "dummyValidate",
+				null, junitClassNames, false));
 	}
 
 	@Test
@@ -91,8 +91,8 @@ public class TzuyuCoreTestExternal extends TzuyuCoreTest{
 
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("com.cloudera.oryx.als.common.StringLongMappingTest");
-		app.faultLocate("com.cloudera.oryx.als.common.StringLongMapping", "toLong", "validate",
-				null, junitClassNames, false);
+		app.faultLocate(initFaultLocateParams("com.cloudera.oryx.als.common.StringLongMapping", "toLong", "validate",
+				null, junitClassNames, false));
 	}
 	
 	
