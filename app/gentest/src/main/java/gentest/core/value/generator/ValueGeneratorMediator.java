@@ -16,7 +16,6 @@ import gentest.main.GentestConstants;
 
 import java.util.List;
 
-import sav.common.core.Logger;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
@@ -51,7 +50,7 @@ public class ValueGeneratorMediator {
 
 	public GeneratedVariable append(GeneratedVariable rootVariable, int level,
 			IType type, boolean isReceiver) throws SavException {
-		Logger.getDefaultLogger().debug("generating value with type", type);
+//		Logger.getDefaultLogger().debug("generating value with type", type);
 		GeneratedVariable variable = null;
 		List<GeneratedVariable> candidatesInCache = getVariableStore()
 				.getVariableByType(type);

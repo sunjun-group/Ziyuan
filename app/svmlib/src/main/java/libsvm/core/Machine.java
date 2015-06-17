@@ -4,12 +4,7 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import libsvm.svm_model;
 import libsvm.svm_node;
@@ -18,6 +13,8 @@ import libsvm.svm_problem;
 
 import org.apache.log4j.Logger;
 import org.junit.Assert;
+
+import sav.common.core.utils.ExecutionTimer;
 
 /**
  * This class represents an SVM machine. After initialization, it is possible to
@@ -190,21 +187,10 @@ public class Machine {
 	}
 
 	private svm_model performTrainingTask(final svm_problem prob, final svm_parameter param) {
-		ExecutorService executor = Executors.newSingleThreadExecutor();
-		final Future<svm_model> future = executor.submit(new SvmRunner(prob, param));
-
-		try {
-			return future.get(SVM_TIMEOUT, TimeUnit.SECONDS);
-		} catch (TimeoutException exception) {
-			LOGGER.info("Timed out: SVM task took too long to complete.");
-		} catch (InterruptedException e) {
-			LOGGER.info("SVM task was interrupted.");
-		} catch (ExecutionException e) {
-			LOGGER.error("Exception while trying to run SVM.", e);
-		}
-
-		executor.shutdownNow();
-		return null;
+		ExecutionTimer timer = new ExecutionTimer(SVM_TIMEOUT, TimeUnit.SECONDS);
+		SvmRunner svmRunner = new SvmRunner(prob, param);
+		timer.run(svmRunner);
+		return svmRunner.getResult();
 	}
 
 	/**

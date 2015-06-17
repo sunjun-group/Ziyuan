@@ -11,6 +11,10 @@
 	<artifactId>svmlib</artifactId>
 
 	<dependencies>
+		<dependency>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>sav.commons</artifactId>
+		</dependency>
 		<!-- Coarse SVM library -->
 		<dependency>
 			<groupId>tw.edu.ntu.csie</groupId>

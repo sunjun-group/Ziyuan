@@ -12,9 +12,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import sav.common.core.Logger;
 import sav.common.core.ModuleEnum;
@@ -28,6 +32,7 @@ import sav.common.core.utils.StringUtils;
  * 
  */
 public class VMRunner {
+	private static final int NO_TIME_OUT = -1;
 	private static Logger<?> log = Logger.getDefaultLogger();
 	protected static final String cpToken = "-cp";
 	/*
@@ -39,13 +44,11 @@ public class VMRunner {
 	 */
 	protected static final String debugToken = "-agentlib:jdwp=transport=dt_socket,suspend=y,address=%s";
 	protected static final String enableAssertionToken = "-ea";
+	private Redirect redirect;
+	/* timeout in millisecond */
+	private long timeout = NO_TIME_OUT;
 	
-	public static Process start(VMConfiguration config) throws SavException {
-		VMRunner vmRunner = new VMRunner();
-		return vmRunner.startVm(config);
-	}
-
-	private Process startVm(VMConfiguration config) throws SavException {
+	public Process startVm(VMConfiguration config) throws SavException {
 		Assert.assertTrue(config.getPort() != VMConfiguration.INVALID_PORT,
 				"Cannot find free port to start jvm!");
 		List<String> commands = buildCommandsFromConfiguration(config);
@@ -83,16 +86,7 @@ public class VMRunner {
 		return startAndWaitUntilStop(commands);
 	}
 	
-	public static void printStreamQuietly(Process process) {
-		try {
-			printStream(process.getInputStream());
-			printStream(process.getErrorStream());
-		} catch (IOException e) {
-			// do nothing
-		}
-	}
-	
-	private static void printStream(InputStream stream) throws IOException {
+	private void printStream(InputStream stream) throws IOException {
 		try {
 			stream.available();
 		} catch (IOException ex) {
@@ -117,13 +111,7 @@ public class VMRunner {
 				.addIf(enableAssertionToken, config.isEnableAssertion());
 	}
 
-	public static Process startAndWaitUntilStop(List<String> commands)
-			throws SavException {
-		return startVm(commands, true);
-	}
-	
-	public static Process startVm(List<String> commands,
-			boolean waitUntilStop)
+	public Process startVm(List<String> commands, boolean waitUntilStop)
 			throws SavException {
 		if (log.isDebug()) {
 			log.debug("start cmd..");
@@ -134,40 +122,88 @@ public class VMRunner {
 		}
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
 		processBuilder.redirectErrorStream(true);
-		Process process = null;
+		if (redirect != null) {
+			processBuilder.redirectOutput(redirect);
+		}
 		try {
-			process = processBuilder.start();
+			final Process process = processBuilder.start();
+			Timer t = new Timer();
+			if (timeout != NO_TIME_OUT) {
+			    t.schedule(new TimerTask() {
+
+			        @Override
+			        public void run() {
+			            process.destroy();
+			        }
+			    }, timeout); 
+			}
+			if (waitUntilStop) {
+				waitUntilStop(process);
+				t.cancel();
+			}
+			return process;
 		} catch (IOException e) {
 			log.logEx(e, "");
-			new SavException(ModuleEnum.JVM, e, "cannot start jvm process");
+			throw new SavException(ModuleEnum.JVM, e, "cannot start jvm process");
 		}
-		if (waitUntilStop) {
-			waitUntilStop(process);
+	}
+	
+	public void waitUntilStop(Process process) throws SavException {
+		try {
+			printStream(process.getInputStream());
+			printStream(process.getErrorStream());
+			process.waitFor();
+		} catch (IOException e) {
+			log.logEx(e, "");
+			throw new SavException(ModuleEnum.JVM, e);
+		} catch (InterruptedException e) {
+			log.logEx(e, "");
+			throw new SavException(ModuleEnum.JVM, e);
 		}
-		return process;
 	}
 
-	public static void waitUntilStop(Process process)
+//	public void waitUntilStop(Process process)
+//			throws SavException {
+//		while (true) {
+//			try {
+//				printStream(process.getInputStream());
+//				printStream(process.getErrorStream());
+//				process.exitValue();
+//				break;
+//			} catch (IOException e) {
+//				log.logEx(e, "");
+//				throw new SavException(ModuleEnum.JVM, e);
+//			} catch (IllegalThreadStateException ex) {
+//				// means: not yet terminated
+//				try {
+//					Thread.sleep(100);
+//				} catch (InterruptedException e) {
+//					log.logEx(e, "");
+//					throw new SavException(ModuleEnum.JVM, e);
+//				}
+//			} 
+//		}
+//	}
+	
+	public void setRedirect(Redirect redirect) {
+		this.redirect = redirect;
+	}
+
+	public void setTimeout(int timeout, TimeUnit unit) {
+		this.timeout = unit.toMillis(timeout);
+	}
+	
+	public static Process start(VMConfiguration config) throws SavException {
+		VMRunner vmRunner = new VMRunner();
+		return vmRunner.startVm(config);
+	}
+	
+	public Process startAndWaitUntilStop(List<String> commands)
 			throws SavException {
-		while (true) {
-			try {
-				printStream(process.getInputStream());
-				printStream(process.getErrorStream());
-				// means: not yet terminated
-				process.exitValue();
-				break;
-			} catch (IOException e) {
-				log.logEx(e, "");
-				throw new SavException(ModuleEnum.JVM, e);
-			} catch (IllegalThreadStateException ex) {
-				// means: not yet terminated
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					log.logEx(e, "");
-					throw new SavException(ModuleEnum.JVM, e);
-				}
-			}
-		}
+		return startVm(commands, true);
+	}
+	
+	public static VMRunner getDefault() {
+		return new VMRunner();
 	}
 }

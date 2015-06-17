@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.runner.Request;
 import org.junit.runner.notification.Failure;
@@ -22,6 +23,7 @@ import org.junit.runner.notification.Failure;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.ExecutionTimer;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.ProgramArgumentBuilder;
@@ -33,11 +35,11 @@ import sav.strategies.vm.VMRunner;
  *
  */
 public class JunitRunner {
-	public static final int TESTCASE_PROCESS_START_LINE_NO = 44;
+	public static final int TESTCASE_PROCESS_START_LINE_NO = calculateProcessStartLine();
 	
 	/**
-	 * KEEP TESTCASE_PROCESS_START_LINE_NO, 
-	 * IF THIS FUNCTION CHANGED.
+	 * TODO LLT: make this more convenient to use.
+	 * KEEP TESTCASE_PROCESS_START_LINE_NO, IF THIS FUNCTION CHANGED.
 	 */
 	private static Request toRequest(Pair<String, String> pair)
 			throws ClassNotFoundException {
@@ -49,6 +51,10 @@ public class JunitRunner {
 			}
 		}
 		return null;
+	}
+	
+	private static int calculateProcessStartLine() {
+		return 46; //TODO LLT: FIX THIS
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -71,19 +77,35 @@ public class JunitRunner {
 		RequestExecution requestExec = new RequestExecution();
 		JunitResult result = new JunitResult();
 		List<Failure> falures = new ArrayList<Failure>();
+		ExecutionTimer executionTimer = getExecutionTimer(params.getTimeout());
 		for (Pair<String, String> classMethod : classMethods) {
 			Request request = toRequest(classMethod);
 			if (request == null) {
 				continue;
 			}
 			requestExec.setRequest(request);
-			requestExec.run();
+			executionTimer.run(requestExec);
+			
 			falures.addAll(requestExec.getFailures());
-			boolean isPass = requestExec.getFailures().isEmpty();
+			boolean isPass = requestExec.getResult();
 			result.addResult(classMethod, isPass);
 		}
 		extractBrkpsFromTrace(falures, params, result.getFailureTraces());
 		return result;
+	}
+	
+	public static ExecutionTimer getExecutionTimer(long timeout) {
+		if (timeout > 0) {
+			return new ExecutionTimer(timeout);
+		} else {
+			return new ExecutionTimer(timeout) {
+				
+				@Override
+				public void run(Runnable target) {
+					target.run();
+				}
+			};
+		}
 	}
 	
 	private static void extractBrkpsFromTrace(List<Failure> falures,
@@ -140,6 +162,7 @@ public class JunitRunner {
 				.testClassNames(params.getTestingClassNames())
 				.testingPackages(params.getTestingPkgs())
 				.destinationFile(destFile)
+				.testcaseTimeout(params.getTimeout())
 				.build();
 		config.setProgramArgs(args);
 		runner.startAndWaitUntilStop(config);
@@ -151,7 +174,7 @@ public class JunitRunner {
 			addArgument(JunitRunnerParameters.CLASS_METHODS, classMethods);
 			return this;
 		}
-		
+
 		public JunitRunnerProgramArgBuilder method(String classMethod){
 			addArgument(JunitRunnerParameters.CLASS_METHODS, classMethod);
 			return this;
@@ -169,6 +192,19 @@ public class JunitRunner {
 		
 		public JunitRunnerProgramArgBuilder testingPackages(List<String> testingPkgs) {
 			addArgument(JunitRunnerParameters.TESTING_PACKAGE_NAMES, testingPkgs);
+			return this;
+		}
+		
+		public ProgramArgumentBuilder testcaseTimeout(long timeout) {
+			if (timeout > 0) {
+				addArgument(JunitRunnerParameters.TESTCASE_TIME_OUT, String.valueOf(timeout));
+			}
+			return this;
+		}
+		
+		public JunitRunnerProgramArgBuilder testcaseTimeout(int timeout,
+				TimeUnit unit) {
+			testcaseTimeout(unit.toMillis(timeout));
 			return this;
 		}
 	}

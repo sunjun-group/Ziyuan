@@ -10,6 +10,7 @@ package sav.strategies.junit;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -35,11 +36,14 @@ public class JunitRunnerParameters {
 	static final String TESTING_CLASS_NAMES = "testingclass";
 	static final String TESTING_PACKAGE_NAMES = "testingpkgs";
 	static final String DEST_FILE = "destfile";
+	static final String TESTCASE_TIME_OUT = "tc_timeout";
 	
 	private List<String> classMethods;
 	private List<String> testingClassNames;
 	private List<String> testingPkgs;
 	private String destfile;
+	/* for each testcase, to make sure the testcase does not run forever */
+	private long timeout; 
 
 	static {
 		opts = new Options();
@@ -47,6 +51,7 @@ public class JunitRunnerParameters {
 		opts.addOption(testingClassNames());
 		opts.addOption(testingPkgs());
 		opts.addOption(destfile());
+		opts.addOption(timeout());
 	}
 
 	private static Option classMethods() {
@@ -57,6 +62,15 @@ public class JunitRunnerParameters {
 				.hasArgs()
 				.isRequired()
 				.create(CLASS_METHODS);
+	}
+
+	private static Option timeout() {
+		return OptionBuilder
+				.withArgName(TESTCASE_TIME_OUT)
+				.withDescription("Timeout for each testcase to make sure it does not run forever")
+				.hasArg()
+				.isRequired(false)
+				.create(TESTCASE_TIME_OUT);
 	}
 
 	private static Option testingPkgs() {
@@ -107,6 +121,9 @@ public class JunitRunnerParameters {
 		if (cmd.hasOption(DEST_FILE)) {
 			params.destfile = cmd.getOptionValue(DEST_FILE);
 		}
+		if (cmd.hasOption(TESTCASE_TIME_OUT)) {
+			params.timeout = Long.valueOf(cmd.getOptionValue(TESTCASE_TIME_OUT));
+		}
 		return params;
 	}
 
@@ -155,6 +172,14 @@ public class JunitRunnerParameters {
 
 	public void setDestfile(String destfile) {
 		this.destfile = destfile;
+	}
+	
+	public long getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(int timeout, TimeUnit unit) {
+		this.timeout = unit.toMillis(timeout);
 	}
 
 	@Override

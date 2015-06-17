@@ -23,6 +23,7 @@ import com.sun.jdi.connect.IllegalConnectorArgumentsException;
  */
 public class SimpleDebugger {
 	private Process process;
+	private VMRunner vmRunner;
 
 	/**
 	 * using scenario Target VM attaches to previously-running debugger.
@@ -31,7 +32,8 @@ public class SimpleDebugger {
 		VMListener listener = new VMListener();
 		listener.startListening(config);
 		try {
-			process = VMRunner.start(config);
+			vmRunner = new VMRunner();
+			process = vmRunner.startVm(config);
 			if (process != null) {
 				return listener.connect(process);
 			}
@@ -44,6 +46,6 @@ public class SimpleDebugger {
 	}
 	
 	public void waitProcessUntilStop() throws SavException {
-		VMRunner.waitUntilStop(process);
+		vmRunner.waitUntilStop(process);
 	}
 }

@@ -1,16 +1,14 @@
 package libsvm.core;
 
-import java.util.concurrent.Callable;
-
 import libsvm.svm;
 import libsvm.svm_model;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
 
-public class SvmRunner implements Callable<svm_model> {
-
+public class SvmRunner implements Runnable {
 	private final svm_problem problem;
 	private final svm_parameter parameter;
+	private svm_model result;
 
 	public SvmRunner(final svm_problem problem, final svm_parameter parameter) {
 		this.problem = problem;
@@ -18,7 +16,11 @@ public class SvmRunner implements Callable<svm_model> {
 	}
 
 	@Override
-	public svm_model call() throws Exception {
-		return svm.svm_train(problem, parameter);
+	public void run() {
+		result = svm.svm_train(problem, parameter);
+	}
+	
+	public svm_model getResult() {
+		return result;
 	}
 }

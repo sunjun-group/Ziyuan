@@ -9,7 +9,7 @@ import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
-import sav.common.core.Logger;
+import sav.common.core.utils.CollectionUtils;
 
 
 
@@ -17,7 +17,7 @@ public class RequestExecution implements Runnable{
 //	private static Logger<?> log = Logger.getDefaultLogger();
 	private final JUnitCore core;
 	private Request request;
-	private Boolean isPassed;
+	private boolean isPassed;
 	private List<Failure> failures;
 	
 	public RequestExecution() {
@@ -35,7 +35,7 @@ public class RequestExecution implements Runnable{
 	}
 	
 	public List<Failure> getFailures() {
-		return failures;
+		return CollectionUtils.nullToEmpty(failures);
 	}
 	
 	public void setRequest(Request request){

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 
 import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionBuilder;
@@ -65,8 +64,7 @@ public class JavaSlicerVmRunner extends AgentVmRunner {
 			String path = Tracer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 //			path = StringUtils.strip(path, "/");
 			path = URLDecoder.decode(path, "UTF-8");
-			File tmpdir = new File(System.getProperty("java.io.tmpdir"));
-			File newFile = new File(tmpdir, "tracer.jar");
+			File newFile = sav.common.core.utils.FileUtils.getFileInTempFolder("tracer.jar");
 			if (!newFile.exists()) {
 				FileUtils.copyFile(new File(path), newFile);
 			}

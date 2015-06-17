@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.Set;
 
 import sav.common.core.Logger;
@@ -43,6 +44,7 @@ import faultLocalization.MutationBasedSuspiciousnessCalculator;
  *
  */
 public class MutanBug {
+	private static final int JUNIT_TIMEOUT = 2; // 2s
 	private Logger<?> log = Logger.getDefaultLogger();
 	@Inject
 	private ApplicationData appData;
@@ -104,6 +106,7 @@ public class MutanBug {
 		Recompiler compiler = new Recompiler(vmConfig);
 		JunitRunnerParameters params = new JunitRunnerParameters();
 		params.setJunitClasses(junitClassNames);
+		params.setTimeout(JUNIT_TIMEOUT, TimeUnit.SECONDS);
 		// recompile and rerun test cases
 		
 		FilesBackup fileBackup = FilesBackup.startBackup();

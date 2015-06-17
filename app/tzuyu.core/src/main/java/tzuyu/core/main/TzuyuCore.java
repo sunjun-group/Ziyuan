@@ -8,7 +8,6 @@
 
 package tzuyu.core.main;
 
-import icsetlv.Engine.AllNegativeResult;
 import icsetlv.Engine.AllPositiveResult;
 import icsetlv.Engine.Result;
 import icsetlv.common.exception.IcsetlvException;
@@ -16,7 +15,6 @@ import icsetlv.variable.VariableNameCollector;
 import japa.parser.ast.CompilationUnit;
 
 import java.io.File;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
