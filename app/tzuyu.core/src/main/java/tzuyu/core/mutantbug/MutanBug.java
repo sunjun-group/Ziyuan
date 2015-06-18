@@ -10,14 +10,11 @@ package tzuyu.core.mutantbug;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import sav.common.core.Logger;
 import sav.common.core.SavException;
@@ -148,10 +145,9 @@ public class MutanBug {
 	}
 	
 	public <T extends ClassLocation> Map<String, DebugLineInsertionResult> mutateForMachineLearning(
-			List<T> locations) throws SavException {
+			Map<String, List<T>> classLocationMap)
+			throws SavException {
 		startBackup();
-		Map<String, List<ClassLocation>> classLocationMap = createClassLocationMap(locations);
-		filter(classLocationMap, appData.getAppSrc());
 		Map<String, DebugLineInsertionResult> result = mutator.insertDebugLine(classLocationMap, appData.getAppSrc());
 		Recompiler recompiler = new Recompiler(appData.getVmConfig());
 		for (DebugLineInsertionResult classResult : result.values()) {
@@ -163,40 +159,12 @@ public class MutanBug {
 		
 		return result;
 	}
-	
-	private void filter(Map<String, List<ClassLocation>> classLocationMap,
-			String appSrc) {
-		for (Iterator<Entry<String, List<ClassLocation>>> it = classLocationMap
-				.entrySet().iterator(); it.hasNext();) {
-			String className = it.next().getKey();
-			if (!mutation.utils.FileUtils.doesFileExist(ClassUtils
-					.getJFilePath(appSrc, className))) {
-				it.remove();
-			}
-		}
-		
-	}
 
 	public void restoreFiles() {
 		if (filesBackup != null && !filesBackup.isClose()) {
 			filesBackup.restoreAll();
 			filesBackup.close();
 		}
-	}
-
-	private <T extends ClassLocation> Map<String, List<ClassLocation>> createClassLocationMap(
-			List<T> locations) {
-		Map<String, List<ClassLocation>> classLocationMap = new HashMap<String, List<ClassLocation>>();
-		for(ClassLocation location: locations){
-			String className = location.getClassCanonicalName();
-			List<ClassLocation> locationsInCurrentClass = classLocationMap.get(className);
-			if(locationsInCurrentClass == null){
-				locationsInCurrentClass = new ArrayList<ClassLocation>();
-				classLocationMap.put(className, locationsInCurrentClass);
-			}
-			locationsInCurrentClass.add(location);
-		}
-		return classLocationMap;
 	}
 	
 	public void setAppData(ApplicationData appData) {

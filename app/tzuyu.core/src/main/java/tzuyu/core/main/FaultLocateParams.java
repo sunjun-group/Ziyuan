@@ -23,11 +23,11 @@ public class FaultLocateParams {
 	private String methodName;
 	private String verificationMethod;
 	private List<String> junitClassNames;
-	private boolean useSlicer;
-	private boolean genTest;
+	private boolean slicerEnable;
+	private boolean genTestEnable;
 	private int numberOfTestCases = 100;
 	private int rankToExamine = Integer.MAX_VALUE;
-	private boolean runMutation;
+	private boolean mutationEnable;
 
 	public List<String> getTestingClassNames() {
 		return testingClassNames;
@@ -69,16 +69,16 @@ public class FaultLocateParams {
 		this.junitClassNames = junitClassNames;
 	}
 
-	public boolean isUseSlicer() {
-		return useSlicer;
+	public boolean isSlicerEnable() {
+		return slicerEnable;
 	}
 
 	public void setUseSlicer(boolean useSlicer) {
-		this.useSlicer = useSlicer;
+		this.slicerEnable = useSlicer;
 	}
 
 	public boolean isGenTestEnable() {
-		return genTest && CollectionUtils.checkSize(testingClassNames, 1)
+		return genTestEnable && CollectionUtils.checkSize(testingClassNames, 1)
 				&& methodName != null && verificationMethod != null;
 	}
 
@@ -88,7 +88,7 @@ public class FaultLocateParams {
 	}
 	
 	public void setGenTest(boolean genTest) {
-		this.genTest = genTest;
+		this.genTestEnable = genTest;
 	}
 
 	public int getNumberOfTestCases() {
@@ -99,7 +99,7 @@ public class FaultLocateParams {
 		this.numberOfTestCases = numberOfTestCases;
 	}
 
-	public int getRanktoexamine() {
+	public int getRankToExamine() {
 		return rankToExamine;
 	}
 	
@@ -107,11 +107,11 @@ public class FaultLocateParams {
 		this.rankToExamine = rankToExamine;
 	}
 
-	public boolean isRunMutation() {
-		return runMutation;
+	public boolean isMutationEnable() {
+		return mutationEnable;
 	}
 
 	public void setRunMutation(boolean runMutation) {
-		this.runMutation = runMutation;
+		this.mutationEnable = runMutation;
 	}
 }

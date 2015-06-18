@@ -11,7 +11,7 @@ package sav.strategies.dto;
  * @author khanh
  *
  */
-public class MutationBreakPoint extends BreakPoint{
+public class MutationBreakPoint extends BreakPoint {
 	private int oldLineNumber;
 	
 	public MutationBreakPoint(BreakPoint oldBreakPoint, int newLineNumber){

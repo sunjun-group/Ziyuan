@@ -8,8 +8,6 @@
 
 package tzuyu.core.main;
 
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,13 +28,7 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 		params = new FaultLocateParams();
 		params.setRankToExamine(3);
 		params.setRunMutation(false);
-	}
-	
-	@Override
-	public List<String> prepare(TestPackage testPkg) throws Exception {
-		List<String> result = super.prepare(testPkg);
-		
-		return result;
+		params.setUseSlicer(true);
 	}
 	
 	public void runFaultLocate(TestPackage testPkg) throws Exception {
@@ -44,8 +36,7 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 		params.setTestingClassNames(testingClassNames);
 		params.setTestingPkgs(testingPackages);
 		params.setJunitClassNames(junitClassNames);
-		params.setUseSlicer(isUseSlicer());
-		tzCore.faultLocate(params );
+		tzCore.faultLocate(params);
 	}
 	
 	/**
@@ -55,14 +46,14 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 	@Test
 	public void testjavaparser46() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("javaparser", "46");
-		setUseSlicer(true);
+		params.setUseSlicer(true);
 		runFaultLocate(testPkg);
 	}
 	
 	@Test
 	public void testjavaparser57() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("javaparser", "57");
-		setUseSlicer(true);
+		params.setUseSlicer(true);
 		runFaultLocate(testPkg);
 	}
 	
@@ -70,7 +61,6 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 	public void testjodatime194() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("joda-time", "194");
 		params.setRankToExamine(7);
-		setUseSlicer(false);
 		runFaultLocate(testPkg);
 	}
 }

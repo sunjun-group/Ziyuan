@@ -16,8 +16,10 @@ import japa.parser.ast.CompilationUnit;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import main.FaultLocalization;
 
@@ -30,6 +32,7 @@ import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
 import sav.strategies.IApplicationContext;
 import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.ClassLocation;
 import sav.strategies.dto.MutationBreakPoint;
 import sav.strategies.mutanbug.DebugLineInsertionResult;
 import tzuyu.core.inject.ApplicationData;
@@ -90,8 +93,8 @@ public class TzuyuCore {
 	public void faultLocate(FaultLocateParams params)
 			throws Exception {
 		FaultLocalizationReport report = computeSuspiciousness(params);
-		if (params.isRunMutation()) {
-			mutation(report, params.getJunitClassNames(), params.getRanktoexamine());
+		if (params.isMutationEnable()) {
+			mutation(report, params.getJunitClassNames(), params.getRankToExamine());
 		}
 		machineLearning(report, params);
 	}
@@ -100,7 +103,7 @@ public class TzuyuCore {
 		LOGGER.info("Running " + appData.getSuspiciousCalculAlgo());
 		
 		final FaultLocalization analyzer = new FaultLocalization(appContext);
-		analyzer.setUseSlicer(params.isUseSlicer());
+		analyzer.setUseSlicer(params.isSlicerEnable());
 
 		FaultLocalizationReport report;
 		if (CollectionUtils.isEmpty(params.getTestingPkgs())) {
@@ -145,7 +148,7 @@ public class TzuyuCore {
 			}
 		}
 		
-		List<LineCoverageInfo> suspectLocations = report.getFirstRanks(params.getRanktoexamine());
+		List<LineCoverageInfo> suspectLocations = report.getFirstRanks(params.getRankToExamine());
 		
 		List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
 		for(LineCoverageInfo suspectLocation: suspectLocations){
@@ -221,24 +224,40 @@ public class TzuyuCore {
 			List<BreakPoint> suspectLocations) throws SavException {
 		mutanbug.setAppData(appData);
 		mutanbug.setMutator(appContext.getMutator());
-		Map<String, DebugLineInsertionResult> mutationInfo = mutanbug.mutateForMachineLearning(suspectLocations);
-		suspectLocations = getNewLocationAfterMutation(suspectLocations, mutationInfo);
-		return suspectLocations;
+		Map<String, List<BreakPoint>> classLocationMap = BreakpointUtils
+				.initBrkpsMap(suspectLocations);
+		filter(classLocationMap, appData.getAppSrc());
+		Map<String, DebugLineInsertionResult> mutationInfo = mutanbug
+				.mutateForMachineLearning(classLocationMap);
+		List<BreakPoint> newLocations = getNewLocationAfterMutation(classLocationMap, mutationInfo);
+		return newLocations;
 	}
 	
-	private List<BreakPoint> getNewLocationAfterMutation(
-			List<BreakPoint> suspectLocations,
-			Map<String, DebugLineInsertionResult> mutationInfo) {
-		List<BreakPoint> result = new ArrayList<BreakPoint>(suspectLocations.size());
-		DebugLineInsertionResult lineInfo = mutationInfo.get(suspectLocations.get(0).getClassCanonicalName());
-		Map<Integer, Integer> lineToNextLine = lineInfo.getOldNewLocMap();
-		
-		for(BreakPoint location: suspectLocations){
-			Integer newLineNo = lineToNextLine.get(location.getLineNo());
-			MutationBreakPoint newBreakPoint = new MutationBreakPoint(location, newLineNo);
-			result.add(newBreakPoint);
+	private <T extends ClassLocation> void filter(Map<String, List<T>> classLocationMap,
+			String appSrc) {
+		for (Iterator<Entry<String, List<T>>> it = classLocationMap
+				.entrySet().iterator(); it.hasNext();) {
+			String className = it.next().getKey();
+			if (!mutation.utils.FileUtils.doesFileExist(ClassUtils
+					.getJFilePath(appSrc, className))) {
+				it.remove();
+			}
 		}
-		
+	}
+	
+	private List<BreakPoint> getNewLocationAfterMutation(Map<String, List<BreakPoint>> classLocationMap,
+			Map<String, DebugLineInsertionResult> mutationInfo) {
+		List<BreakPoint> result = new ArrayList<BreakPoint>();
+		for (String className : classLocationMap.keySet()) {
+			DebugLineInsertionResult lineInfo = mutationInfo.get(className);
+			Map<Integer, Integer> lineToNextLine = lineInfo.getOldNewLocMap();
+			List<BreakPoint> bkpsInClass = classLocationMap.get(className);
+			for(BreakPoint location: bkpsInClass){
+				Integer newLineNo = lineToNextLine.get(location.getLineNo());
+				MutationBreakPoint newBreakPoint = new MutationBreakPoint(location, newLineNo);
+				result.add(newBreakPoint);
+			}
+		}
 		return result;
 	}
 

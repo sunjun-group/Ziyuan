@@ -33,7 +33,7 @@ import tzuyu.core.main.context.AbstractApplicationContext;
 public class AbstractTzPackageTest extends AbstractTest {
 	protected IApplicationContext context;
 	protected ApplicationData appData;
-	private boolean useSlicer = false;
+	protected boolean useSlicer = false;
 	protected List<String> testingClassNames;
 	protected List<String> testingPackages;
 	protected List<String> junitClassNames;
