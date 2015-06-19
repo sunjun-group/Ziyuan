@@ -170,16 +170,7 @@ public class Engine {
 			}
 
 			final List<String> varLabels = new ArrayList<String>(labelSet);
-
-			if (varLabels.size() > 0) {
-				machine.setDataLabels(varLabels);
-			} else {
-				// User did not specify variable names
-				// We use all available ones
-				final List<String> allVariableLabels = testResult.getAllVariableLabels(true, bkp);
-				machine.setDataLabels(allVariableLabels);
-			}
-
+			machine.setDataLabels(varLabels);
 			BugExpert.addDataPoints(machine, passValues, failValues);
 
 			// Train

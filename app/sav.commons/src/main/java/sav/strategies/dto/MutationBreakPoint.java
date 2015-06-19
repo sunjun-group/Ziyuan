@@ -31,5 +31,7 @@ public class MutationBreakPoint extends BreakPoint {
 				+ getCharEnd() + "]";
 	}
 	
-	
+	public int getOldLineNumber() {
+		return oldLineNumber;
+	}
 }

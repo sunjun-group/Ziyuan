@@ -8,6 +8,14 @@
 
 package sav.common.core.utils;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
+
 import sav.common.core.Constants;
 import sav.common.core.Pair;
 
@@ -38,9 +46,34 @@ public class ClassUtils {
 	}
 	
 	public static String getClassFilePath(String targetPath, String className) {
-		return targetPath + Constants.FILE_SEPARATOR
-				+ className.replace(Constants.DOT, Constants.FILE_SEPARATOR)
-				+ Constants.CLASS_EXT;
+		return new StringBuilder()
+						.append(targetPath)
+						.append(Constants.FILE_SEPARATOR)
+						.append(replaceDotWithFileSeparator(className))
+						.append(Constants.DOT)
+						.append(Constants.CLASS_EXT)
+						.toString();
+	}
+	
+	public static List<File> getCompiledClassFiles(String targetPath,
+			String className) {
+		int lastDotIdx = className.lastIndexOf(Constants.DOT);
+		String classSimpleName = className.substring(lastDotIdx + 1)
+									.split("$")[0];
+		String pkgName = className.substring(0, lastDotIdx);
+		String classFolder = new StringBuilder()
+								.append(targetPath)
+								.append(Constants.FILE_SEPARATOR)
+								.append(replaceDotWithFileSeparator(pkgName))
+								.toString();
+		@SuppressWarnings("unchecked")
+		Collection<File> files = FileUtils.listFiles(new File(classFolder), 
+				new WildcardFileFilter(classSimpleName + "*.class"), null);
+		return new ArrayList<File>(files);
+	}
+	
+	private static String replaceDotWithFileSeparator(String str) {
+		return str.replace(Constants.DOT, Constants.FILE_SEPARATOR);
 	}
 	
 	public static String getSimpleName(String className) {
@@ -87,5 +120,5 @@ public class ClassUtils {
 	public static boolean isAupperB(Class<?> a, Class<?> b) {
 		return a.isAssignableFrom(b);
 	}
-	
+
 }

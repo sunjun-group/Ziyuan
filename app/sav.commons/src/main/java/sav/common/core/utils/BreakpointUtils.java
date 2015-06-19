@@ -31,7 +31,7 @@ public class BreakpointUtils {
 	 * make the map of className and its breakpoint
 	 */
 	public static <T extends ClassLocation> Map<String, List<T>> initBrkpsMap(
-			List<T> brkps) {
+			Collection<T> brkps) {
 		Map<String, List<T>> brkpsMap = new HashMap<String, List<T>>();
 		for (T brkp : brkps) {
 			List<T> bps = CollectionUtils.getListInitIfEmpty(brkpsMap,

@@ -53,6 +53,7 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 	@Test
 	public void testjavaparser57() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("javaparser", "57");
+		params.setRankToExamine(2);
 		params.setUseSlicer(true);
 		runFaultLocate(testPkg);
 	}

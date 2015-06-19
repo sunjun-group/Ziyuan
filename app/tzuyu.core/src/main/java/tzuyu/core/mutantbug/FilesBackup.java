@@ -11,6 +11,7 @@ package tzuyu.core.mutantbug;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -49,6 +50,12 @@ public class FilesBackup {
 		}
 	}
 	
+	public void backup(List<File> files) {
+		for (File file : files) {
+			backup(file);
+		}
+	}
+	
 	private void ensureOpen() {
 		if (isClose()) {
 			throw new SavRtException("FileBackup is not open!");
@@ -65,6 +72,12 @@ public class FilesBackup {
 	public void restore(File file) {
 		File backupFile = backupMap.remove(file);
 		restore(file, backupFile);
+	}
+	
+	public void restore(List<File> files) {
+		for (File file : files) {
+			restore(file);
+		}
 	}
 
 	private void restore(File file, File backupFile) {

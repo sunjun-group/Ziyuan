@@ -9,9 +9,7 @@
 package icsetlv.common.dto;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import sav.strategies.dto.BreakPoint;
 
@@ -20,7 +18,6 @@ import sav.strategies.dto.BreakPoint;
  * Testcases execution result.
  */
 public class TcExecResult {
-
 	private List<BreakpointValue> passValues;
 	private List<BreakpointValue> failValues;
 
@@ -47,19 +44,6 @@ public class TcExecResult {
 			}
 		}
 		return result;
-	}
-
-	public List<String> getAllVariableLabels(final boolean onlyCommonOnes, final BreakPoint bkp) {
-		final Set<String> labels = new HashSet<String>();
-		boolean firstloop = true;
-		for (BreakpointValue value : getPassValues(bkp)) {
-			if (firstloop || !onlyCommonOnes) {
-				labels.addAll(value.getAllLabels());
-			} else {
-				labels.retainAll(value.getAllLabels());
-			}
-		}
-		return new ArrayList<String>(labels);
 	}
 
 	@Override

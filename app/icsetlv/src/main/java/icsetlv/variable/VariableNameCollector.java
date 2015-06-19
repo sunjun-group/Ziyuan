@@ -22,6 +22,7 @@ import japa.parser.ast.expr.ThisExpr;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +53,7 @@ public class VariableNameCollector {
 		CollectionUtils.addIfNotNullNotExist(this.srcFolders, srcFolders);
 	}
 	
-	public void updateVariables(List<BreakPoint> brkps) throws IcsetlvException {
+	public void updateVariables(Collection<BreakPoint> brkps) throws IcsetlvException {
 		Map<String, List<BreakPoint>> brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
 
 		for (String clzName : brkpsMap.keySet()) {

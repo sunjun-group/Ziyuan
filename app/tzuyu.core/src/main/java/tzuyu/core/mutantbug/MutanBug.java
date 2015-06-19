@@ -114,10 +114,10 @@ public class MutanBug {
 			if (CollectionUtils.isEmpty(mutatedFiles)) {
 				continue;
 			}
-			File classFile = new File(ClassUtils.getClassFilePath(
-					appData.getAppTarget(), bkp.getClassCanonicalName()));
+			List<File> classFiles = ClassUtils.getCompiledClassFiles(
+					appData.getAppTarget(), bkp.getClassCanonicalName());
 			// backup
-			fileBackup.backup(classFile);
+			fileBackup.backup(classFiles);
 			for (File mutatedFile : mutatedFiles) {
 				try{
 					compiler.recompileJFile(appData.getAppTarget(), mutatedFile);
@@ -128,7 +128,7 @@ public class MutanBug {
 				}
 			}
 			// restore the org class
-			fileBackup.restore(classFile);
+			fileBackup.restore(classFiles);
 		}
 		fileBackup.close();
 		
@@ -151,8 +151,8 @@ public class MutanBug {
 		Map<String, DebugLineInsertionResult> result = mutator.insertDebugLine(classLocationMap, appData.getAppSrc());
 		Recompiler recompiler = new Recompiler(appData.getVmConfig());
 		for (DebugLineInsertionResult classResult : result.values()) {
-			filesBackup.backup(ClassUtils.getClassFilePath(appData.getAppTarget(),
-					classResult.getClassName()));
+			List<File> classFiles = ClassUtils.getCompiledClassFiles(appData.getAppTarget(), classResult.getClassName());
+			filesBackup.backup(classFiles);
 			recompiler.recompileJFile(appData.getAppTarget(),
 					classResult.getMutatedFile());
 		}
