@@ -62,10 +62,11 @@ public class TestcasesExecutorTest extends AbstractTest {
 		bkp1.addVars(new Variable("innerClass", "innerClass.b"));
 		bkp1.addVars(new Variable("innerClass", "innerClass.a"));
 		breakpoints.add(bkp1);
-		TestcasesExecutor varExtr = new TestcasesExecutor(vmConfig, 6);
 		List<String> tests = JunitUtils.extractTestMethods(CollectionUtils
 				.listOf(TcExSumTest.class.getName()));
-		TcExecResult result = varExtr.execute(tests, breakpoints);
+		TestcasesExecutor varExtr = new TestcasesExecutor(vmConfig, tests, 6);
+		varExtr.run(breakpoints);
+		TcExecResult result = varExtr.getResult();
 		System.out.println(result);
 	}
 }

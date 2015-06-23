@@ -26,6 +26,7 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 		super.setup();
 		tzCore = new TzuyuCore(context, appData);
 		params = new FaultLocateParams();
+		params.setMachineLearningEnable(true);
 		params.setRankToExamine(3);
 		params.setRunMutation(false);
 		params.setUseSlicer(true);
@@ -43,6 +44,10 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 	 * test part
 	 */
 	
+	/**
+	 * ASTParserTokenManager: 2220
+	 * & ASTParserTokenManager: 69
+	 */
 	@Test
 	public void testjavaparser46() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("javaparser", "46");
@@ -54,6 +59,15 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 	public void testjavaparser57() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("javaparser", "57");
 		params.setRankToExamine(2);
+		params.setRunMutation(false);
+		params.setUseSlicer(true);
+		params.setMachineLearningEnable(true);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testjavaparser69() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("javaparser", "69");
 		params.setUseSlicer(true);
 		runFaultLocate(testPkg);
 	}
@@ -62,6 +76,54 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 	public void testjodatime194() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("joda-time", "194");
 		params.setRankToExamine(7);
+		runFaultLocate(testPkg);
+	}
+	
+	/**
+	 * 
+	 */
+	@Test
+	public void testDiffUtils18() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("java-diff-utils", "18");
+		params.setRankToExamine(3);
+		params.setUseSlicer(true);
+		params.setRunMutation(false);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testDiffUtils10() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("java-diff-utils", "10");
+		params.setRankToExamine(3);
+		params.setUseSlicer(true);
+		params.setRunMutation(false);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testDiffUtils12() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("java-diff-utils", "12");
+		params.setRankToExamine(3);
+		params.setUseSlicer(true);
+		params.setRunMutation(false);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testDiffUtils20() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("java-diff-utils", "20");
+		params.setRankToExamine(3);
+		params.setUseSlicer(true);
+		params.setRunMutation(false);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsMath1196() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "1196");
+		params.setRankToExamine(3);
+		params.setUseSlicer(true);
+		params.setRunMutation(false);
 		runFaultLocate(testPkg);
 	}
 }

@@ -32,6 +32,7 @@ import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
+import sav.common.core.utils.StringUtils;
 import sav.strategies.IApplicationContext;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.MutationBreakPoint;
@@ -97,7 +98,9 @@ public class TzuyuCore {
 		if (params.isMutationEnable()) {
 			mutation(report, params.getJunitClassNames(), params.getRankToExamine());
 		}
-		machineLearning(report, params);
+		if (params.isMachineLearningEnable()) {
+			machineLearning(report, params);
+		}
 	}
 
 	private FaultLocalizationReport computeSuspiciousness(FaultLocateParams params) throws Exception {
@@ -196,7 +199,7 @@ public class TzuyuCore {
 				}
 			});
 			LOGGER.info("----------------FINISHED--------------------");
-			LOGGER.info(bugLines);
+			LOGGER.info(StringUtils.join(bugLines, "\n\n"));
 			mutanbug.restoreFiles();
 		}
 	}

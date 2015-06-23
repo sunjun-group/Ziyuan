@@ -52,7 +52,7 @@ import sav.strategies.vm.VMConfiguration;
 public class Engine {
 	private static final Logger LOGGER = Logger.getLogger(Engine.class);
 	private static final int DEFAULT_PORT = 80;
-	private static final int DEFAULT_VALUE_RETRIVE_LEVEL = 4;
+	private static final int DEFAULT_VALUE_RETRIVE_LEVEL = 3;
 
 	private VMConfiguration vmConfig = initVmConfig();
 	private Machine machine = getDefaultMachine();
@@ -127,10 +127,10 @@ public class Engine {
 		return this;
 	}
 
-	public Engine run(final int valueRetriveLevel, final Machine machine) throws Exception {
-		final TestcasesExecutor testRunner = new TestcasesExecutor(vmConfig, valueRetriveLevel);
-		final TcExecResult testResult = testRunner.execute(testcases,
-				breakPoints);
+	public Engine run(final int valRetrieveLevel, final Machine machine) throws Exception {
+		TestcasesExecutor testRunner = new TestcasesExecutor(vmConfig, testcases, valRetrieveLevel);
+		testRunner.run(breakPoints);
+		final TcExecResult testResult = testRunner.getResult();
 
 		results = new ArrayList<Result>(breakPoints.size());
 		for (BreakPoint bkp : breakPoints) {

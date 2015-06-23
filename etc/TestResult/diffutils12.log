@@ -1,0 +1,1118 @@
+2015-06-23 11:10:36 [INFO ] root:33 	Running TARANTULA
+2015-06-23 11:10:36 [DEBUG] root:61 	start cmd..
+2015-06-23 11:10:36 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_EmptyListWithNonEmpty diffutills.DiffTest.testDiff_Insert diffutills.DiffTest.testDiff_Delete diffutills.DiffTest.testDiff_Change diffutills.DiffTest.testDiff_EmptyList diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta diffutills.GenerateUnifiedDiffTest.testGenerateUnified diffutills.GenerateUnifiedDiffTest.fileToLines diffutills.PatchTest.testPatch_Insert diffutills.PatchTest.testPatch_Delete diffutills.PatchTest.testPatch_Change issues.issue12.TestIssue12.testDiff_Issue12 -testingpkgs difflib diffutils issues -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult4440228991972567244.temp
+2015-06-23 11:10:36 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:10:36 [DEBUG] root:61 	-ea
+2015-06-23 11:10:36 [DEBUG] root:61 	-cp
+2015-06-23 11:10:36 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes
+2015-06-23 11:10:36 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:10:36 [DEBUG] root:61 	-methods
+2015-06-23 11:10:36 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyListWithNonEmpty
+2015-06-23 11:10:36 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Insert
+2015-06-23 11:10:36 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Delete
+2015-06-23 11:10:36 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Change
+2015-06-23 11:10:36 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyList
+2015-06-23 11:10:36 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta
+2015-06-23 11:10:36 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnified
+2015-06-23 11:10:36 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.fileToLines
+2015-06-23 11:10:36 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Insert
+2015-06-23 11:10:36 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Delete
+2015-06-23 11:10:36 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Change
+2015-06-23 11:10:36 [DEBUG] root:61 	issues.issue12.TestIssue12.testDiff_Issue12
+2015-06-23 11:10:36 [DEBUG] root:61 	-testingpkgs
+2015-06-23 11:10:36 [DEBUG] root:61 	difflib
+2015-06-23 11:10:36 [DEBUG] root:61 	diffutils
+2015-06-23 11:10:36 [DEBUG] root:61 	issues
+2015-06-23 11:10:36 [DEBUG] root:61 	-destfile
+2015-06-23 11:10:36 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult4440228991972567244.temp
+2015-06-23 11:10:37 [DEBUG] root:61 	failureTraces= issues.issue12.TestIssue12:25, difflib.DiffUtils:202
+2015-06-23 11:10:37 [INFO ] root:33 	Slicing-creating trace file...
+2015-06-23 11:10:37 [DEBUG] root:61 	start cmd..
+2015-06-23 11:10:37 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\tracer.jar=tracefile:C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer1968106301739166331.trace -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes sav.strategies.junit.JunitRunner -methods issues.issue12.TestIssue12.testDiff_Issue12
+2015-06-23 11:10:37 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:10:37 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\tracer.jar=tracefile:C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer1968106301739166331.trace
+2015-06-23 11:10:37 [DEBUG] root:61 	-cp
+2015-06-23 11:10:37 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes
+2015-06-23 11:10:37 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:10:37 [DEBUG] root:61 	-methods
+2015-06-23 11:10:37 [DEBUG] root:61 	issues.issue12.TestIssue12.testDiff_Issue12
+2015-06-23 11:10:59 [INFO ] root:33 	Slicing-slicing...
+2015-06-23 11:10:59 [DEBUG] root:61 	traceFilePath= C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer1968106301739166331.trace
+2015-06-23 11:10:59 [INFO ] root:33 	entry points= issues.issue12.TestIssue12:25, difflib.DiffUtils:202
+2015-06-23 11:11:14 [DEBUG] root:61 	Read Slicing Result:
+2015-06-23 11:11:14 [DEBUG] root:61 	slicing-result:
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.Snake:90
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.DiffUtils:55
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.Snake:82
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:205
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:204
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.DiffUtils:43
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:202
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:203
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:173
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.IOUtils:16
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:174
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.IOUtils:18
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:164
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:165
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:166
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:168
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:169
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:171
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:157
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:159
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.IOUtils:44
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.IOUtils:45
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:131
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.issue12.TestIssue12:20
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.issue12.TestIssue12:19
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:130
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.IOUtils:38
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:136
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:139
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:138
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:133
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.issue12.TestIssue12:25
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:135
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.issue12.TestIssue12:23
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:134
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:147
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:140
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:141
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:142
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.IOUtils:22
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.IOUtils:37
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.PathNode:86
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.PathNode:87
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.IOUtils:35
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.IOUtils:34
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.PathNode:85
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.DiffNode:42
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:148
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.IOUtils:32
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:149
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.IOUtils:30
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:93
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:105
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:104
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.PathNode:104
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.issue12.TestIssue12:31
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff:230
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.DiffUtils:193
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.PathNode:116
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.PathNode:117
+2015-06-23 11:11:14 [DEBUG] root:61 	Slicing - create Trace file: 22047 ms
+2015-06-23 11:11:14 [DEBUG] root:61 	Slicing - slice: 1 ms
+2015-06-23 11:11:14 [DEBUG] root:61 	Slicing - read trace file: 15548 ms
+2015-06-23 11:11:14 [DEBUG] root:61 	Slicing Overall: 37596 ms
+2015-06-23 11:11:14 [DEBUG] root:61 	causeTraces= difflib.myers.Snake:90, difflib.DiffUtils:55, difflib.myers.Snake:82, difflib.myers.MyersDiff:205, difflib.myers.MyersDiff:204, difflib.DiffUtils:43, difflib.myers.MyersDiff:202, difflib.myers.MyersDiff:203, difflib.myers.MyersDiff:173, issues.IOUtils:16, difflib.myers.MyersDiff:174, issues.IOUtils:18, difflib.myers.MyersDiff:164, difflib.myers.MyersDiff:165, difflib.myers.MyersDiff:166, difflib.myers.MyersDiff:168, difflib.myers.MyersDiff:169, difflib.myers.MyersDiff:171, difflib.myers.MyersDiff:157, difflib.myers.MyersDiff:159, issues.IOUtils:44, issues.IOUtils:45, difflib.myers.MyersDiff:131, issues.issue12.TestIssue12:20, issues.issue12.TestIssue12:19, difflib.myers.MyersDiff:130, issues.IOUtils:38, difflib.myers.MyersDiff:136, difflib.myers.MyersDiff:139, difflib.myers.MyersDiff:138, difflib.myers.MyersDiff:133, issues.issue12.TestIssue12:25, difflib.myers.MyersDiff:135, issues.issue12.TestIssue12:23, difflib.myers.MyersDiff:134, difflib.myers.MyersDiff:147, difflib.myers.MyersDiff:140, difflib.myers.MyersDiff:141, difflib.myers.MyersDiff:142, issues.IOUtils:22, issues.IOUtils:37, difflib.myers.PathNode:86, difflib.myers.PathNode:87, issues.IOUtils:35, issues.IOUtils:34, difflib.myers.PathNode:85, difflib.myers.MyersDiff:148, difflib.myers.DiffNode:42, difflib.myers.MyersDiff:149, issues.IOUtils:32, issues.IOUtils:30, difflib.myers.MyersDiff:93, difflib.myers.MyersDiff:105, difflib.myers.MyersDiff:104, issues.issue12.TestIssue12:31, difflib.myers.PathNode:104, difflib.myers.MyersDiff:230, difflib.DiffUtils:193, difflib.myers.PathNode:116, difflib.myers.PathNode:117, difflib.DiffUtils:202
+2015-06-23 11:11:14 [DEBUG] root:61 	Analyzing classes: 
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.DiffNode
+difflib.myers.Snake
+issues.IOUtils
+difflib.DiffUtils
+issues.issue12.TestIssue12
+difflib.myers.PathNode
+difflib.myers.MyersDiff
+2015-06-23 11:11:14 [DEBUG] root:61 	RUNNING JACOCO..
+2015-06-23 11:11:14 [DEBUG] root:61 	Start vmRunner..
+2015-06-23 11:11:14 [DEBUG] root:61 	destfile= C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec
+2015-06-23 11:11:14 [DEBUG] root:61 	junitResultFile= C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt
+2015-06-23 11:11:14 [DEBUG] root:61 	append=true
+2015-06-23 11:11:14 [DEBUG] root:61 	testMethods= [diffutills.DiffTest.testDiff_EmptyListWithNonEmpty, diffutills.DiffTest.testDiff_Insert, diffutills.DiffTest.testDiff_Delete, diffutills.DiffTest.testDiff_Change, diffutills.DiffTest.testDiff_EmptyList, diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta, diffutills.GenerateUnifiedDiffTest.testGenerateUnified, diffutills.GenerateUnifiedDiffTest.fileToLines, diffutills.PatchTest.testPatch_Insert, diffutills.PatchTest.testPatch_Delete, diffutills.PatchTest.testPatch_Change, issues.issue12.TestIssue12.testDiff_Issue12]
+2015-06-23 11:11:14 [DEBUG] root:61 	allClassNames= [difflib.myers.DiffNode, difflib.myers.Snake, issues.IOUtils, difflib.DiffUtils, issues.issue12.TestIssue12, difflib.myers.PathNode, difflib.myers.MyersDiff, diffutills.DiffTest, diffutills.GenerateUnifiedDiffTest, diffutills.PatchTest, issues.issue12.TestIssue12]
+2015-06-23 11:11:14 [DEBUG] root:61 	junitClassNames= [diffutills.DiffTest, diffutills.GenerateUnifiedDiffTest, diffutills.PatchTest, issues.issue12.TestIssue12]
+2015-06-23 11:11:14 [DEBUG] root:61 	testingClassNames= [difflib.myers.DiffNode, difflib.myers.Snake, issues.IOUtils, difflib.DiffUtils, issues.issue12.TestIssue12, difflib.myers.PathNode, difflib.myers.MyersDiff]
+2015-06-23 11:11:14 [DEBUG] root:61 	start cmd..
+2015-06-23 11:11:14 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_EmptyListWithNonEmpty -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:11:14 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:11:14 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:11:14 [DEBUG] root:61 	-cp
+2015-06-23 11:11:14 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:11:14 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:11:14 [DEBUG] root:61 	-methods
+2015-06-23 11:11:14 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyListWithNonEmpty
+2015-06-23 11:11:14 [DEBUG] root:61 	-destfile
+2015-06-23 11:11:14 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt
+2015-06-23 11:11:14 [DEBUG] root:61 	-testingclass
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:11:14 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:11:14 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:11:14 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:11:14 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:11:14 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:15 [DEBUG] root:61 	start cmd..
+2015-06-23 11:11:15 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_Insert -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:11:15 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:11:15 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:11:15 [DEBUG] root:61 	-cp
+2015-06-23 11:11:15 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:11:15 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:11:15 [DEBUG] root:61 	-methods
+2015-06-23 11:11:15 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Insert
+2015-06-23 11:11:15 [DEBUG] root:61 	-destfile
+2015-06-23 11:11:15 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt
+2015-06-23 11:11:15 [DEBUG] root:61 	-testingclass
+2015-06-23 11:11:15 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:11:15 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:11:15 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:11:15 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:11:15 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:15 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:11:15 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:11:15 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:11:15 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:11:15 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:11:15 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:16 [DEBUG] root:61 	start cmd..
+2015-06-23 11:11:16 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_Delete -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:11:16 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:11:16 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:11:16 [DEBUG] root:61 	-cp
+2015-06-23 11:11:16 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:11:16 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:11:16 [DEBUG] root:61 	-methods
+2015-06-23 11:11:16 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Delete
+2015-06-23 11:11:16 [DEBUG] root:61 	-destfile
+2015-06-23 11:11:16 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt
+2015-06-23 11:11:16 [DEBUG] root:61 	-testingclass
+2015-06-23 11:11:16 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:11:16 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:11:16 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:11:16 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:11:16 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:16 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:11:16 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:11:16 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:11:16 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:11:16 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:11:16 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:18 [DEBUG] root:61 	start cmd..
+2015-06-23 11:11:18 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_Change -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:11:18 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:11:18 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:11:18 [DEBUG] root:61 	-cp
+2015-06-23 11:11:18 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:11:18 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:11:18 [DEBUG] root:61 	-methods
+2015-06-23 11:11:18 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Change
+2015-06-23 11:11:18 [DEBUG] root:61 	-destfile
+2015-06-23 11:11:18 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt
+2015-06-23 11:11:18 [DEBUG] root:61 	-testingclass
+2015-06-23 11:11:18 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:11:18 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:11:18 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:11:18 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:11:18 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:18 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:11:18 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:11:18 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:11:18 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:11:18 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:11:18 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:19 [DEBUG] root:61 	start cmd..
+2015-06-23 11:11:19 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_EmptyList -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:11:19 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:11:19 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:11:19 [DEBUG] root:61 	-cp
+2015-06-23 11:11:19 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:11:19 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:11:19 [DEBUG] root:61 	-methods
+2015-06-23 11:11:19 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyList
+2015-06-23 11:11:19 [DEBUG] root:61 	-destfile
+2015-06-23 11:11:19 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt
+2015-06-23 11:11:19 [DEBUG] root:61 	-testingclass
+2015-06-23 11:11:19 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:11:19 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:11:19 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:11:19 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:11:19 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:19 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:11:19 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:11:19 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:11:19 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:11:19 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:11:19 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:19 [DEBUG] root:61 	start cmd..
+2015-06-23 11:11:19 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:11:19 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:11:19 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:11:19 [DEBUG] root:61 	-cp
+2015-06-23 11:11:19 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:11:19 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:11:19 [DEBUG] root:61 	-methods
+2015-06-23 11:11:19 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta
+2015-06-23 11:11:19 [DEBUG] root:61 	-destfile
+2015-06-23 11:11:19 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt
+2015-06-23 11:11:19 [DEBUG] root:61 	-testingclass
+2015-06-23 11:11:19 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:11:19 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:11:19 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:11:19 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:11:19 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:19 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:11:19 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:11:19 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:11:19 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:11:19 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:11:19 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:20 [DEBUG] root:61 	start cmd..
+2015-06-23 11:11:20 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.GenerateUnifiedDiffTest.testGenerateUnified -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:11:20 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:11:20 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:11:20 [DEBUG] root:61 	-cp
+2015-06-23 11:11:20 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:11:20 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:11:20 [DEBUG] root:61 	-methods
+2015-06-23 11:11:20 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnified
+2015-06-23 11:11:20 [DEBUG] root:61 	-destfile
+2015-06-23 11:11:20 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt
+2015-06-23 11:11:20 [DEBUG] root:61 	-testingclass
+2015-06-23 11:11:20 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:11:20 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:11:20 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:11:20 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:11:20 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:20 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:11:20 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:11:20 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:11:20 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:11:20 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:11:20 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:20 [DEBUG] root:61 	start cmd..
+2015-06-23 11:11:20 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.GenerateUnifiedDiffTest.fileToLines -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:11:20 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:11:20 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:11:20 [DEBUG] root:61 	-cp
+2015-06-23 11:11:20 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:11:20 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:11:20 [DEBUG] root:61 	-methods
+2015-06-23 11:11:20 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.fileToLines
+2015-06-23 11:11:20 [DEBUG] root:61 	-destfile
+2015-06-23 11:11:20 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt
+2015-06-23 11:11:20 [DEBUG] root:61 	-testingclass
+2015-06-23 11:11:20 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:11:20 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:11:20 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:11:20 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:11:20 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:20 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:11:20 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:11:20 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:11:20 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:11:20 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:11:20 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:21 [DEBUG] root:61 	start cmd..
+2015-06-23 11:11:21 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.PatchTest.testPatch_Insert -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:11:21 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:11:21 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:11:21 [DEBUG] root:61 	-cp
+2015-06-23 11:11:21 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:11:21 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:11:21 [DEBUG] root:61 	-methods
+2015-06-23 11:11:21 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Insert
+2015-06-23 11:11:21 [DEBUG] root:61 	-destfile
+2015-06-23 11:11:21 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt
+2015-06-23 11:11:21 [DEBUG] root:61 	-testingclass
+2015-06-23 11:11:21 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:11:21 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:11:21 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:11:21 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:11:21 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:21 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:11:21 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:11:21 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:11:21 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:11:21 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:11:21 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:21 [DEBUG] root:61 	start cmd..
+2015-06-23 11:11:21 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.PatchTest.testPatch_Delete -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:11:21 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:11:21 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:11:21 [DEBUG] root:61 	-cp
+2015-06-23 11:11:21 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:11:21 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:11:21 [DEBUG] root:61 	-methods
+2015-06-23 11:11:21 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Delete
+2015-06-23 11:11:21 [DEBUG] root:61 	-destfile
+2015-06-23 11:11:21 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt
+2015-06-23 11:11:21 [DEBUG] root:61 	-testingclass
+2015-06-23 11:11:21 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:11:21 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:11:21 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:11:21 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:11:21 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:21 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:11:21 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:11:21 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:11:21 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:11:21 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:11:21 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:22 [DEBUG] root:61 	start cmd..
+2015-06-23 11:11:22 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.PatchTest.testPatch_Change -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:11:22 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:11:22 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:11:22 [DEBUG] root:61 	-cp
+2015-06-23 11:11:22 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:11:22 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:11:22 [DEBUG] root:61 	-methods
+2015-06-23 11:11:22 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Change
+2015-06-23 11:11:22 [DEBUG] root:61 	-destfile
+2015-06-23 11:11:22 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt
+2015-06-23 11:11:22 [DEBUG] root:61 	-testingclass
+2015-06-23 11:11:22 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:11:22 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:11:22 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:11:22 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:11:22 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:22 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:11:22 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:11:22 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:11:22 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:11:22 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:11:22 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:23 [DEBUG] root:61 	start cmd..
+2015-06-23 11:11:23 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods issues.issue12.TestIssue12.testDiff_Issue12 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:11:23 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:11:23 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent7444581836814205239.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:11:23 [DEBUG] root:61 	-cp
+2015-06-23 11:11:23 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:11:23 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:11:23 [DEBUG] root:61 	-methods
+2015-06-23 11:11:23 [DEBUG] root:61 	issues.issue12.TestIssue12.testDiff_Issue12
+2015-06-23 11:11:23 [DEBUG] root:61 	-destfile
+2015-06-23 11:11:23 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5555868610016521549.txt
+2015-06-23 11:11:23 [DEBUG] root:61 	-testingclass
+2015-06-23 11:11:23 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:11:23 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:11:23 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:11:23 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:11:23 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:23 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:11:23 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:11:23 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:11:23 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:11:23 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:11:23 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:11:23 [DEBUG] root:61 	read exec file  C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco8211689066624186167.exec
+2015-06-23 11:11:23 [DEBUG] root:61 	Session DELL5050-PC-17483e14
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:11:23 [DEBUG] root:61 	Session DELL5050-PC-133e8e93
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:11:23 [DEBUG] root:61 	Session DELL5050-PC-2c1344bf
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:11:23 [DEBUG] root:61 	Session DELL5050-PC-12b349a2
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:11:23 [DEBUG] root:61 	Session DELL5050-PC-fd6568d8
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:11:23 [DEBUG] root:61 	Session DELL5050-PC-7fc31bb3
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:11:23 [DEBUG] root:61 	Session DELL5050-PC-4320f37e
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:11:23 [DEBUG] root:61 	Session DELL5050-PC-326c0e20
+2015-06-23 11:11:23 [DEBUG] root:61 	Session DELL5050-PC-714866f1
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:11:23 [DEBUG] root:61 	Session DELL5050-PC-dc4cc4c3
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:11:23 [DEBUG] root:61 	Session DELL5050-PC-44f1ec34
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:11:23 [DEBUG] root:61 	Session DELL5050-PC-630cd466
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=issues/issue12/TestIssue12, id=e545191505ac7988]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:11:23 [DEBUG] root:61 	ExecutionData[name=issues/IOUtils, id=25a407ff93c9166c]
+2015-06-23 11:11:24 [DEBUG] root:61 	Collect coverage data - Read execFile: 36 ms
+2015-06-23 11:11:24 [DEBUG] root:61 	Collect coverage data - Analyze data and count code coverage: 428 ms
+2015-06-23 11:11:24 [DEBUG] root:61 	Collect coverage data Overall: 464 ms
+2015-06-23 11:11:24 [INFO ] root:33 	SpectrumAlgorithm: TARANTULA
+2015-06-23 11:11:24 [INFO ] root:33 	[issues.IOUtils:16:1.0(P=0, F=1), issues.IOUtils:18:1.0(P=0, F=1), issues.IOUtils:22:1.0(P=0, F=1), issues.IOUtils:30:1.0(P=0, F=1), issues.issue12.TestIssue12:31:1.0(P=0, F=1), issues.IOUtils:32:1.0(P=0, F=1), issues.IOUtils:34:1.0(P=0, F=1), issues.IOUtils:35:1.0(P=0, F=1), issues.IOUtils:37:1.0(P=0, F=1), issues.IOUtils:38:1.0(P=0, F=1), issues.IOUtils:44:1.0(P=0, F=1), issues.IOUtils:45:1.0(P=0, F=1), difflib.myers.MyersDiff:204:0.7333333333333333(P=4, F=1), difflib.myers.Snake:90:0.6111111111111112(P=7, F=1), difflib.myers.MyersDiff:165:0.6111111111111112(P=7, F=1), difflib.myers.MyersDiff:166:0.6111111111111112(P=7, F=1), difflib.myers.MyersDiff:169:0.6111111111111112(P=7, F=1), difflib.myers.DiffNode:42:0.5238095238095238(P=10, F=1), difflib.DiffUtils:43:0.5238095238095238(P=10, F=1), difflib.DiffUtils:55:0.5238095238095238(P=10, F=1), difflib.myers.Snake:82:0.5238095238095238(P=10, F=1), difflib.myers.PathNode:85:0.5238095238095238(P=10, F=1), difflib.myers.PathNode:86:0.5238095238095238(P=10, F=1), difflib.myers.PathNode:87:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:93:0.5238095238095238(P=10, F=1), difflib.myers.PathNode:104:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:104:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:105:0.5238095238095238(P=10, F=1), difflib.myers.PathNode:116:0.5238095238095238(P=10, F=1), difflib.myers.PathNode:117:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:130:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:131:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:133:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:134:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:135:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:136:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:138:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:139:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:140:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:141:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:142:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:147:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:148:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:149:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:157:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:159:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:164:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:168:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:171:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:173:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:174:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:202:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:203:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:205:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:230:0.5238095238095238(P=10, F=1), difflib.DiffUtils:193:0.0(P=2, F=0), difflib.DiffUtils:202:0.0(P=2, F=0)]
+2015-06-23 11:11:24 [INFO ] root:33 	Running Machine Learning
+2015-06-23 11:11:24 [DEBUG] root:61 	create backup folder  C:\Users\DELL50~1\AppData\Local\Temp\backup3824667813563272865
+2015-06-23 11:11:24 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\rev25\target\classes\difflib\myers\Snake.class
+2015-06-23 11:11:24 [DEBUG] root:61 	start cmd..
+2015-06-23 11:11:24 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes -d D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource8774124275211932461\Snake.java -g
+2015-06-23 11:11:24 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac
+2015-06-23 11:11:24 [DEBUG] root:61 	-classpath
+2015-06-23 11:11:24 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes
+2015-06-23 11:11:24 [DEBUG] root:61 	-d
+2015-06-23 11:11:24 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes
+2015-06-23 11:11:24 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource8774124275211932461\Snake.java
+2015-06-23 11:11:24 [DEBUG] root:61 	-g
+2015-06-23 11:11:25 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\rev25\target\classes\difflib\myers\MyersDiff.class
+2015-06-23 11:11:25 [DEBUG] root:61 	start cmd..
+2015-06-23 11:11:25 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes -d D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource8774124275211932461\MyersDiff.java -g
+2015-06-23 11:11:25 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac
+2015-06-23 11:11:25 [DEBUG] root:61 	-classpath
+2015-06-23 11:11:25 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes
+2015-06-23 11:11:25 [DEBUG] root:61 	-d
+2015-06-23 11:11:25 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes
+2015-06-23 11:11:25 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource8774124275211932461\MyersDiff.java
+2015-06-23 11:11:25 [DEBUG] root:61 	-g
+2015-06-23 11:11:28 [DEBUG] root:61 	start cmd..
+2015-06-23 11:11:28 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -agentlib:jdwp=transport=dt_socket,suspend=y,address=50745 -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_EmptyListWithNonEmpty diffutills.DiffTest.testDiff_Insert diffutills.DiffTest.testDiff_Delete diffutills.DiffTest.testDiff_Change diffutills.DiffTest.testDiff_EmptyList diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta diffutills.GenerateUnifiedDiffTest.testGenerateUnified diffutills.GenerateUnifiedDiffTest.fileToLines diffutills.PatchTest.testPatch_Insert diffutills.PatchTest.testPatch_Delete diffutills.PatchTest.testPatch_Change issues.issue12.TestIssue12.testDiff_Issue12 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tcsExResult4296767694061714701.txt
+2015-06-23 11:11:28 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:11:28 [DEBUG] root:61 	-agentlib:jdwp=transport=dt_socket,suspend=y,address=50745
+2015-06-23 11:11:28 [DEBUG] root:61 	-ea
+2015-06-23 11:11:28 [DEBUG] root:61 	-cp
+2015-06-23 11:11:28 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes
+2015-06-23 11:11:28 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:11:28 [DEBUG] root:61 	-methods
+2015-06-23 11:11:28 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyListWithNonEmpty
+2015-06-23 11:11:28 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Insert
+2015-06-23 11:11:28 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Delete
+2015-06-23 11:11:28 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Change
+2015-06-23 11:11:28 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyList
+2015-06-23 11:11:28 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta
+2015-06-23 11:11:28 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnified
+2015-06-23 11:11:28 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.fileToLines
+2015-06-23 11:11:28 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Insert
+2015-06-23 11:11:28 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Delete
+2015-06-23 11:11:28 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Change
+2015-06-23 11:11:28 [DEBUG] root:61 	issues.issue12.TestIssue12.testDiff_Issue12
+2015-06-23 11:11:28 [DEBUG] root:61 	-destfile
+2015-06-23 11:11:28 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tcsExResult4296767694061714701.txt
+2015-06-23 11:12:07 [DEBUG] root:61 	RunTestcases:
+2015-06-23 11:12:07 [DEBUG] root:61 	testingClassNames = []
+2015-06-23 11:12:07 [DEBUG] root:61 	testingPkgs = []
+2015-06-23 11:12:07 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.myers.MyersDiff, methodName=null, lineNo=165, vars=[Variable [name=i, fullName=i, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:12:09 [INFO ] Engine:183 	Learn: difflib.myers.MyersDiff:166
+Could not learn anything.
+2015-06-23 11:12:09 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.myers.Snake, methodName=null, lineNo=90, vars=[], charStart=0, charEnd=0]
+2015-06-23 11:12:09 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 11:12:09 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 11:12:09 [INFO ] Engine:183 	Learn: difflib.myers.Snake:92
+Could not learn anything.
+2015-06-23 11:12:09 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.myers.MyersDiff, methodName=null, lineNo=166, vars=[Variable [name=j, fullName=j, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:12:11 [INFO ] Engine:183 	Learn: difflib.myers.MyersDiff:168
+Could not learn anything.
+2015-06-23 11:12:11 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.myers.MyersDiff, methodName=null, lineNo=169, vars=[Variable [name=node, fullName=node, scope=UNDEFINED], Variable [name=i, fullName=i, scope=UNDEFINED], Variable [name=j, fullName=j, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:12:11 [WARN ] BugExpert:161 	Cannot get value for variable name node.prev
+2015-06-23 11:12:13 [INFO ] Engine:183 	Learn: difflib.myers.MyersDiff:172
+Could not learn anything.
+2015-06-23 11:12:13 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.myers.MyersDiff, methodName=null, lineNo=204, vars=[Variable [name=path, fullName=path, scope=UNDEFINED], Variable [name=path, fullName=path.prev, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:12:13 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.prev
+2015-06-23 11:12:13 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.prev
+2015-06-23 11:12:13 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.i
+2015-06-23 11:12:13 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.prev
+2015-06-23 11:12:13 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev
+2015-06-23 11:12:13 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.j
+2015-06-23 11:12:13 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.prev
+2015-06-23 11:12:13 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.i
+2015-06-23 11:12:13 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.prev
+2015-06-23 11:12:13 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev
+2015-06-23 11:12:13 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.j
+2015-06-23 11:12:15 [INFO ] Engine:183 	Learn: difflib.myers.MyersDiff:208
+Could not learn anything.
+2015-06-23 11:12:15 [INFO ] root:33 	----------------FINISHED--------------------
+2015-06-23 11:12:15 [INFO ] root:33 	
+2015-06-23 11:12:15 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\rev25\target\classes\difflib\myers\Snake.class
+2015-06-23 11:12:15 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\rev25\target\classes\difflib\myers\MyersDiff.class
+2015-06-23 11:19:53 [INFO ] root:33 	Running TARANTULA
+2015-06-23 11:19:53 [DEBUG] root:61 	start cmd..
+2015-06-23 11:19:53 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_Insert diffutills.DiffTest.testDiff_Delete diffutills.DiffTest.testDiff_Change diffutills.DiffTest.testDiff_EmptyList diffutills.DiffTest.testDiff_EmptyListWithNonEmpty diffutills.GenerateUnifiedDiffTest.testGenerateUnified diffutills.GenerateUnifiedDiffTest.fileToLines diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta diffutills.PatchTest.testPatch_Insert diffutills.PatchTest.testPatch_Delete diffutills.PatchTest.testPatch_Change issues.issue12.TestIssue12.testDiff_Issue12 -testingpkgs difflib diffutils issues -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult5982303610252328471.temp
+2015-06-23 11:19:53 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:19:53 [DEBUG] root:61 	-ea
+2015-06-23 11:19:53 [DEBUG] root:61 	-cp
+2015-06-23 11:19:53 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes
+2015-06-23 11:19:53 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:19:53 [DEBUG] root:61 	-methods
+2015-06-23 11:19:53 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Insert
+2015-06-23 11:19:53 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Delete
+2015-06-23 11:19:53 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Change
+2015-06-23 11:19:53 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyList
+2015-06-23 11:19:53 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyListWithNonEmpty
+2015-06-23 11:19:53 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnified
+2015-06-23 11:19:53 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.fileToLines
+2015-06-23 11:19:53 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta
+2015-06-23 11:19:53 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Insert
+2015-06-23 11:19:53 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Delete
+2015-06-23 11:19:53 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Change
+2015-06-23 11:19:53 [DEBUG] root:61 	issues.issue12.TestIssue12.testDiff_Issue12
+2015-06-23 11:19:53 [DEBUG] root:61 	-testingpkgs
+2015-06-23 11:19:53 [DEBUG] root:61 	difflib
+2015-06-23 11:19:53 [DEBUG] root:61 	diffutils
+2015-06-23 11:19:53 [DEBUG] root:61 	issues
+2015-06-23 11:19:53 [DEBUG] root:61 	-destfile
+2015-06-23 11:19:53 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult5982303610252328471.temp
+2015-06-23 11:19:54 [DEBUG] root:61 	failureTraces= issues.issue12.TestIssue12:25, difflib.DiffUtils:202
+2015-06-23 11:19:54 [INFO ] root:33 	Slicing-creating trace file...
+2015-06-23 11:19:54 [DEBUG] root:61 	start cmd..
+2015-06-23 11:19:54 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\tracer.jar=tracefile:C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer4268303622971907844.trace -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes sav.strategies.junit.JunitRunner -methods issues.issue12.TestIssue12.testDiff_Issue12
+2015-06-23 11:19:54 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:19:54 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\tracer.jar=tracefile:C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer4268303622971907844.trace
+2015-06-23 11:19:54 [DEBUG] root:61 	-cp
+2015-06-23 11:19:54 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes
+2015-06-23 11:19:54 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:19:54 [DEBUG] root:61 	-methods
+2015-06-23 11:19:54 [DEBUG] root:61 	issues.issue12.TestIssue12.testDiff_Issue12
+2015-06-23 11:20:14 [INFO ] root:33 	Slicing-slicing...
+2015-06-23 11:20:14 [DEBUG] root:61 	traceFilePath= C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer4268303622971907844.trace
+2015-06-23 11:20:14 [INFO ] root:33 	entry points= issues.issue12.TestIssue12:25, difflib.DiffUtils:202
+2015-06-23 11:20:23 [DEBUG] root:61 	Read Slicing Result:
+2015-06-23 11:20:23 [DEBUG] root:61 	slicing-result:
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.Snake:90
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.DiffUtils:55
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.Snake:82
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:205
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:204
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.DiffUtils:43
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:202
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:203
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:173
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.IOUtils:16
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:174
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.IOUtils:18
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:164
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:165
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:166
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:168
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:169
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:171
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:157
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:159
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.IOUtils:44
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.IOUtils:45
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:131
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.issue12.TestIssue12:20
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.issue12.TestIssue12:19
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:130
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.IOUtils:38
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:136
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:139
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:138
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:133
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.issue12.TestIssue12:25
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:135
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.issue12.TestIssue12:23
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:134
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:147
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:140
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:141
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:142
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.IOUtils:22
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.IOUtils:37
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.PathNode:86
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.PathNode:87
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.IOUtils:35
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.IOUtils:34
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.PathNode:85
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.DiffNode:42
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:148
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.IOUtils:32
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:149
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.IOUtils:30
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:93
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:105
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:104
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.PathNode:104
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.issue12.TestIssue12:31
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff:230
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.DiffUtils:193
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.PathNode:116
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.PathNode:117
+2015-06-23 11:20:23 [DEBUG] root:61 	Slicing - create Trace file: 19807 ms
+2015-06-23 11:20:23 [DEBUG] root:61 	Slicing - slice: 1 ms
+2015-06-23 11:20:23 [DEBUG] root:61 	Slicing - read trace file: 8766 ms
+2015-06-23 11:20:23 [DEBUG] root:61 	Slicing Overall: 28574 ms
+2015-06-23 11:20:23 [DEBUG] root:61 	causeTraces= difflib.myers.Snake:90, difflib.DiffUtils:55, difflib.myers.Snake:82, difflib.myers.MyersDiff:205, difflib.myers.MyersDiff:204, difflib.DiffUtils:43, difflib.myers.MyersDiff:202, difflib.myers.MyersDiff:203, difflib.myers.MyersDiff:173, issues.IOUtils:16, difflib.myers.MyersDiff:174, issues.IOUtils:18, difflib.myers.MyersDiff:164, difflib.myers.MyersDiff:165, difflib.myers.MyersDiff:166, difflib.myers.MyersDiff:168, difflib.myers.MyersDiff:169, difflib.myers.MyersDiff:171, difflib.myers.MyersDiff:157, difflib.myers.MyersDiff:159, issues.IOUtils:44, issues.IOUtils:45, difflib.myers.MyersDiff:131, issues.issue12.TestIssue12:20, issues.issue12.TestIssue12:19, difflib.myers.MyersDiff:130, issues.IOUtils:38, difflib.myers.MyersDiff:136, difflib.myers.MyersDiff:139, difflib.myers.MyersDiff:138, difflib.myers.MyersDiff:133, issues.issue12.TestIssue12:25, difflib.myers.MyersDiff:135, issues.issue12.TestIssue12:23, difflib.myers.MyersDiff:134, difflib.myers.MyersDiff:147, difflib.myers.MyersDiff:140, difflib.myers.MyersDiff:141, difflib.myers.MyersDiff:142, issues.IOUtils:22, issues.IOUtils:37, difflib.myers.PathNode:86, difflib.myers.PathNode:87, issues.IOUtils:35, issues.IOUtils:34, difflib.myers.PathNode:85, difflib.myers.MyersDiff:148, difflib.myers.DiffNode:42, difflib.myers.MyersDiff:149, issues.IOUtils:32, issues.IOUtils:30, difflib.myers.MyersDiff:93, difflib.myers.MyersDiff:105, difflib.myers.MyersDiff:104, issues.issue12.TestIssue12:31, difflib.myers.PathNode:104, difflib.myers.MyersDiff:230, difflib.DiffUtils:193, difflib.myers.PathNode:116, difflib.myers.PathNode:117, difflib.DiffUtils:202
+2015-06-23 11:20:23 [DEBUG] root:61 	Analyzing classes: 
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.DiffNode
+difflib.myers.Snake
+issues.IOUtils
+difflib.DiffUtils
+issues.issue12.TestIssue12
+difflib.myers.PathNode
+difflib.myers.MyersDiff
+2015-06-23 11:20:23 [DEBUG] root:61 	RUNNING JACOCO..
+2015-06-23 11:20:23 [DEBUG] root:61 	Start vmRunner..
+2015-06-23 11:20:23 [DEBUG] root:61 	destfile= C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec
+2015-06-23 11:20:23 [DEBUG] root:61 	junitResultFile= C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt
+2015-06-23 11:20:23 [DEBUG] root:61 	append=true
+2015-06-23 11:20:23 [DEBUG] root:61 	testMethods= [diffutills.DiffTest.testDiff_Insert, diffutills.DiffTest.testDiff_Delete, diffutills.DiffTest.testDiff_Change, diffutills.DiffTest.testDiff_EmptyList, diffutills.DiffTest.testDiff_EmptyListWithNonEmpty, diffutills.GenerateUnifiedDiffTest.testGenerateUnified, diffutills.GenerateUnifiedDiffTest.fileToLines, diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta, diffutills.PatchTest.testPatch_Insert, diffutills.PatchTest.testPatch_Delete, diffutills.PatchTest.testPatch_Change, issues.issue12.TestIssue12.testDiff_Issue12]
+2015-06-23 11:20:23 [DEBUG] root:61 	allClassNames= [difflib.myers.DiffNode, difflib.myers.Snake, issues.IOUtils, difflib.DiffUtils, issues.issue12.TestIssue12, difflib.myers.PathNode, difflib.myers.MyersDiff, diffutills.DiffTest, diffutills.GenerateUnifiedDiffTest, diffutills.PatchTest, issues.issue12.TestIssue12]
+2015-06-23 11:20:23 [DEBUG] root:61 	junitClassNames= [diffutills.DiffTest, diffutills.GenerateUnifiedDiffTest, diffutills.PatchTest, issues.issue12.TestIssue12]
+2015-06-23 11:20:23 [DEBUG] root:61 	testingClassNames= [difflib.myers.DiffNode, difflib.myers.Snake, issues.IOUtils, difflib.DiffUtils, issues.issue12.TestIssue12, difflib.myers.PathNode, difflib.myers.MyersDiff]
+2015-06-23 11:20:23 [DEBUG] root:61 	start cmd..
+2015-06-23 11:20:23 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_Insert -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:20:23 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:20:23 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:20:23 [DEBUG] root:61 	-cp
+2015-06-23 11:20:23 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:20:23 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:20:23 [DEBUG] root:61 	-methods
+2015-06-23 11:20:23 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Insert
+2015-06-23 11:20:23 [DEBUG] root:61 	-destfile
+2015-06-23 11:20:23 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt
+2015-06-23 11:20:23 [DEBUG] root:61 	-testingclass
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:20:23 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:20:23 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:20:23 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:20:23 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:20:23 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:24 [DEBUG] root:61 	start cmd..
+2015-06-23 11:20:24 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_Delete -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:20:24 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:20:24 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:20:24 [DEBUG] root:61 	-cp
+2015-06-23 11:20:24 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:20:24 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:20:24 [DEBUG] root:61 	-methods
+2015-06-23 11:20:24 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Delete
+2015-06-23 11:20:24 [DEBUG] root:61 	-destfile
+2015-06-23 11:20:24 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt
+2015-06-23 11:20:24 [DEBUG] root:61 	-testingclass
+2015-06-23 11:20:24 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:20:24 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:20:24 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:20:24 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:20:24 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:24 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:20:24 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:20:24 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:20:24 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:20:24 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:20:24 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:26 [DEBUG] root:61 	start cmd..
+2015-06-23 11:20:26 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_Change -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:20:26 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:20:26 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:20:26 [DEBUG] root:61 	-cp
+2015-06-23 11:20:26 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:20:26 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:20:26 [DEBUG] root:61 	-methods
+2015-06-23 11:20:26 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Change
+2015-06-23 11:20:26 [DEBUG] root:61 	-destfile
+2015-06-23 11:20:26 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt
+2015-06-23 11:20:26 [DEBUG] root:61 	-testingclass
+2015-06-23 11:20:26 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:20:26 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:20:26 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:20:26 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:20:26 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:26 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:20:26 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:20:26 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:20:26 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:20:26 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:20:26 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:27 [DEBUG] root:61 	start cmd..
+2015-06-23 11:20:27 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_EmptyList -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:20:27 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:20:27 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:20:27 [DEBUG] root:61 	-cp
+2015-06-23 11:20:27 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:20:27 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:20:27 [DEBUG] root:61 	-methods
+2015-06-23 11:20:27 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyList
+2015-06-23 11:20:27 [DEBUG] root:61 	-destfile
+2015-06-23 11:20:27 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt
+2015-06-23 11:20:27 [DEBUG] root:61 	-testingclass
+2015-06-23 11:20:27 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:20:27 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:20:27 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:20:27 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:20:28 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:28 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:20:28 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:20:28 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:20:28 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:20:28 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:20:28 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:28 [DEBUG] root:61 	start cmd..
+2015-06-23 11:20:28 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_EmptyListWithNonEmpty -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:20:28 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:20:28 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:20:28 [DEBUG] root:61 	-cp
+2015-06-23 11:20:28 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:20:28 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:20:28 [DEBUG] root:61 	-methods
+2015-06-23 11:20:28 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyListWithNonEmpty
+2015-06-23 11:20:28 [DEBUG] root:61 	-destfile
+2015-06-23 11:20:28 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt
+2015-06-23 11:20:28 [DEBUG] root:61 	-testingclass
+2015-06-23 11:20:28 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:20:28 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:20:28 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:20:28 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:20:28 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:28 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:20:28 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:20:28 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:20:28 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:20:28 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:20:28 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:29 [DEBUG] root:61 	start cmd..
+2015-06-23 11:20:29 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.GenerateUnifiedDiffTest.testGenerateUnified -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:20:29 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:20:29 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:20:29 [DEBUG] root:61 	-cp
+2015-06-23 11:20:29 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:20:29 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:20:29 [DEBUG] root:61 	-methods
+2015-06-23 11:20:29 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnified
+2015-06-23 11:20:29 [DEBUG] root:61 	-destfile
+2015-06-23 11:20:29 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt
+2015-06-23 11:20:29 [DEBUG] root:61 	-testingclass
+2015-06-23 11:20:29 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:20:29 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:20:29 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:20:29 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:20:29 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:29 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:20:29 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:20:29 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:20:29 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:20:29 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:20:29 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:30 [DEBUG] root:61 	start cmd..
+2015-06-23 11:20:30 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.GenerateUnifiedDiffTest.fileToLines -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:20:30 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:20:30 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:20:30 [DEBUG] root:61 	-cp
+2015-06-23 11:20:30 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:20:30 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:20:30 [DEBUG] root:61 	-methods
+2015-06-23 11:20:30 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.fileToLines
+2015-06-23 11:20:30 [DEBUG] root:61 	-destfile
+2015-06-23 11:20:30 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt
+2015-06-23 11:20:30 [DEBUG] root:61 	-testingclass
+2015-06-23 11:20:30 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:20:30 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:20:30 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:20:30 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:20:30 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:30 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:20:30 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:20:30 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:20:30 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:20:30 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:20:30 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:31 [DEBUG] root:61 	start cmd..
+2015-06-23 11:20:31 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:20:31 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:20:31 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:20:31 [DEBUG] root:61 	-cp
+2015-06-23 11:20:31 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:20:31 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:20:31 [DEBUG] root:61 	-methods
+2015-06-23 11:20:31 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta
+2015-06-23 11:20:31 [DEBUG] root:61 	-destfile
+2015-06-23 11:20:31 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt
+2015-06-23 11:20:31 [DEBUG] root:61 	-testingclass
+2015-06-23 11:20:31 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:20:31 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:20:31 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:20:31 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:20:31 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:31 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:20:31 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:20:31 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:20:31 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:20:31 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:20:31 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:31 [DEBUG] root:61 	start cmd..
+2015-06-23 11:20:31 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.PatchTest.testPatch_Insert -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:20:31 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:20:31 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:20:31 [DEBUG] root:61 	-cp
+2015-06-23 11:20:31 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:20:31 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:20:31 [DEBUG] root:61 	-methods
+2015-06-23 11:20:31 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Insert
+2015-06-23 11:20:31 [DEBUG] root:61 	-destfile
+2015-06-23 11:20:31 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt
+2015-06-23 11:20:31 [DEBUG] root:61 	-testingclass
+2015-06-23 11:20:31 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:20:31 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:20:31 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:20:31 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:20:31 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:31 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:20:31 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:20:31 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:20:31 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:20:31 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:20:31 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:32 [DEBUG] root:61 	start cmd..
+2015-06-23 11:20:32 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.PatchTest.testPatch_Delete -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:20:32 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:20:32 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:20:32 [DEBUG] root:61 	-cp
+2015-06-23 11:20:32 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:20:32 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:20:32 [DEBUG] root:61 	-methods
+2015-06-23 11:20:32 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Delete
+2015-06-23 11:20:32 [DEBUG] root:61 	-destfile
+2015-06-23 11:20:32 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt
+2015-06-23 11:20:32 [DEBUG] root:61 	-testingclass
+2015-06-23 11:20:32 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:20:32 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:20:32 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:20:32 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:20:32 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:32 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:20:32 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:20:32 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:20:32 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:20:32 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:20:32 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:33 [DEBUG] root:61 	start cmd..
+2015-06-23 11:20:33 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.PatchTest.testPatch_Change -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:20:33 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:20:33 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:20:33 [DEBUG] root:61 	-cp
+2015-06-23 11:20:33 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:20:33 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:20:33 [DEBUG] root:61 	-methods
+2015-06-23 11:20:33 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Change
+2015-06-23 11:20:33 [DEBUG] root:61 	-destfile
+2015-06-23 11:20:33 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt
+2015-06-23 11:20:33 [DEBUG] root:61 	-testingclass
+2015-06-23 11:20:33 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:20:33 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:20:33 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:20:33 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:20:33 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:33 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:20:33 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:20:33 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:20:33 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:20:33 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:20:33 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:33 [DEBUG] root:61 	start cmd..
+2015-06-23 11:20:33 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods issues.issue12.TestIssue12.testDiff_Issue12 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt -testingclass difflib.myers.DiffNode difflib.myers.Snake issues.IOUtils difflib.DiffUtils issues.issue12.TestIssue12 difflib.myers.PathNode difflib.myers.MyersDiff diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue12.TestIssue12
+2015-06-23 11:20:33 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:20:33 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4403082452281860416.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec,includes=difflib.myers.DiffNode:difflib.myers.Snake:issues.IOUtils:difflib.DiffUtils:issues.issue12.TestIssue12:difflib.myers.PathNode:difflib.myers.MyersDiff
+2015-06-23 11:20:33 [DEBUG] root:61 	-cp
+2015-06-23 11:20:33 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:20:33 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:20:33 [DEBUG] root:61 	-methods
+2015-06-23 11:20:33 [DEBUG] root:61 	issues.issue12.TestIssue12.testDiff_Issue12
+2015-06-23 11:20:33 [DEBUG] root:61 	-destfile
+2015-06-23 11:20:33 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8489123697747353464.txt
+2015-06-23 11:20:33 [DEBUG] root:61 	-testingclass
+2015-06-23 11:20:33 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 11:20:33 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 11:20:33 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:20:33 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:20:33 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:33 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 11:20:33 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 11:20:33 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:20:33 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:20:33 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:20:33 [DEBUG] root:61 	issues.issue12.TestIssue12
+2015-06-23 11:20:34 [DEBUG] root:61 	read exec file  C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco5379232258301490231.exec
+2015-06-23 11:20:34 [DEBUG] root:61 	Session DELL5050-PC-b6f0d0a9
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:20:34 [DEBUG] root:61 	Session DELL5050-PC-928a5680
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:20:34 [DEBUG] root:61 	Session DELL5050-PC-1f8b887a
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:20:34 [DEBUG] root:61 	Session DELL5050-PC-521194d7
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:20:34 [DEBUG] root:61 	Session DELL5050-PC-2ba0d24f
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:20:34 [DEBUG] root:61 	Session DELL5050-PC-36f30d24
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:20:34 [DEBUG] root:61 	Session DELL5050-PC-5d966fa0
+2015-06-23 11:20:34 [DEBUG] root:61 	Session DELL5050-PC-b73f158a
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:20:34 [DEBUG] root:61 	Session DELL5050-PC-db0a1e71
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:20:34 [DEBUG] root:61 	Session DELL5050-PC-2fbc9974
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:20:34 [DEBUG] root:61 	Session DELL5050-PC-793b7f5b
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:20:34 [DEBUG] root:61 	Session DELL5050-PC-82065d5e
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=3f7909c48c089703]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=3985228d2a07cf0e]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=issues/issue12/TestIssue12, id=e545191505ac7988]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=beb8ceca3f844e6b]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=2e0a7cd709774359]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:20:34 [DEBUG] root:61 	ExecutionData[name=issues/IOUtils, id=25a407ff93c9166c]
+2015-06-23 11:20:34 [DEBUG] root:61 	Collect coverage data - Read execFile: 27 ms
+2015-06-23 11:20:34 [DEBUG] root:61 	Collect coverage data - Analyze data and count code coverage: 305 ms
+2015-06-23 11:20:34 [DEBUG] root:61 	Collect coverage data Overall: 332 ms
+2015-06-23 11:20:34 [INFO ] root:33 	SpectrumAlgorithm: TARANTULA
+2015-06-23 11:20:34 [INFO ] root:33 	[issues.IOUtils:16:1.0(P=0, F=1), issues.IOUtils:18:1.0(P=0, F=1), issues.IOUtils:22:1.0(P=0, F=1), issues.IOUtils:30:1.0(P=0, F=1), issues.issue12.TestIssue12:31:1.0(P=0, F=1), issues.IOUtils:32:1.0(P=0, F=1), issues.IOUtils:34:1.0(P=0, F=1), issues.IOUtils:35:1.0(P=0, F=1), issues.IOUtils:37:1.0(P=0, F=1), issues.IOUtils:38:1.0(P=0, F=1), issues.IOUtils:44:1.0(P=0, F=1), issues.IOUtils:45:1.0(P=0, F=1), difflib.myers.MyersDiff:204:0.7333333333333333(P=4, F=1), difflib.myers.Snake:90:0.6111111111111112(P=7, F=1), difflib.myers.MyersDiff:165:0.6111111111111112(P=7, F=1), difflib.myers.MyersDiff:166:0.6111111111111112(P=7, F=1), difflib.myers.MyersDiff:169:0.6111111111111112(P=7, F=1), difflib.myers.DiffNode:42:0.5238095238095238(P=10, F=1), difflib.DiffUtils:43:0.5238095238095238(P=10, F=1), difflib.DiffUtils:55:0.5238095238095238(P=10, F=1), difflib.myers.Snake:82:0.5238095238095238(P=10, F=1), difflib.myers.PathNode:85:0.5238095238095238(P=10, F=1), difflib.myers.PathNode:86:0.5238095238095238(P=10, F=1), difflib.myers.PathNode:87:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:93:0.5238095238095238(P=10, F=1), difflib.myers.PathNode:104:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:104:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:105:0.5238095238095238(P=10, F=1), difflib.myers.PathNode:116:0.5238095238095238(P=10, F=1), difflib.myers.PathNode:117:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:130:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:131:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:133:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:134:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:135:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:136:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:138:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:139:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:140:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:141:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:142:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:147:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:148:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:149:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:157:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:159:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:164:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:168:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:171:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:173:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:174:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:202:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:203:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:205:0.5238095238095238(P=10, F=1), difflib.myers.MyersDiff:230:0.5238095238095238(P=10, F=1), difflib.DiffUtils:193:0.0(P=2, F=0), difflib.DiffUtils:202:0.0(P=2, F=0)]
+2015-06-23 11:20:34 [INFO ] root:33 	Running Machine Learning
+2015-06-23 11:20:34 [DEBUG] root:61 	create backup folder  C:\Users\DELL50~1\AppData\Local\Temp\backup8674333785838033084
+2015-06-23 11:20:34 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\rev25\target\classes\difflib\myers\Snake.class
+2015-06-23 11:20:34 [DEBUG] root:61 	start cmd..
+2015-06-23 11:20:34 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes -d D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource8445447165820455896\Snake.java -g
+2015-06-23 11:20:34 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac
+2015-06-23 11:20:34 [DEBUG] root:61 	-classpath
+2015-06-23 11:20:34 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes
+2015-06-23 11:20:34 [DEBUG] root:61 	-d
+2015-06-23 11:20:34 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes
+2015-06-23 11:20:34 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource8445447165820455896\Snake.java
+2015-06-23 11:20:34 [DEBUG] root:61 	-g
+2015-06-23 11:20:35 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\rev25\target\classes\difflib\myers\MyersDiff.class
+2015-06-23 11:20:35 [DEBUG] root:61 	start cmd..
+2015-06-23 11:20:35 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes -d D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource8445447165820455896\MyersDiff.java -g
+2015-06-23 11:20:35 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac
+2015-06-23 11:20:35 [DEBUG] root:61 	-classpath
+2015-06-23 11:20:35 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes
+2015-06-23 11:20:35 [DEBUG] root:61 	-d
+2015-06-23 11:20:35 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes
+2015-06-23 11:20:35 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource8445447165820455896\MyersDiff.java
+2015-06-23 11:20:35 [DEBUG] root:61 	-g
+2015-06-23 11:20:36 [DEBUG] root:61 	start cmd..
+2015-06-23 11:20:36 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -agentlib:jdwp=transport=dt_socket,suspend=y,address=50818 -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_Insert diffutills.DiffTest.testDiff_Delete diffutills.DiffTest.testDiff_Change diffutills.DiffTest.testDiff_EmptyList diffutills.DiffTest.testDiff_EmptyListWithNonEmpty diffutills.GenerateUnifiedDiffTest.testGenerateUnified diffutills.GenerateUnifiedDiffTest.fileToLines diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta diffutills.PatchTest.testPatch_Insert diffutills.PatchTest.testPatch_Delete diffutills.PatchTest.testPatch_Change issues.issue12.TestIssue12.testDiff_Issue12 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tcsExResult4038422317661501434.txt
+2015-06-23 11:20:36 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:20:36 [DEBUG] root:61 	-agentlib:jdwp=transport=dt_socket,suspend=y,address=50818
+2015-06-23 11:20:36 [DEBUG] root:61 	-ea
+2015-06-23 11:20:36 [DEBUG] root:61 	-cp
+2015-06-23 11:20:36 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes
+2015-06-23 11:20:36 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:20:36 [DEBUG] root:61 	-methods
+2015-06-23 11:20:36 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Insert
+2015-06-23 11:20:36 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Delete
+2015-06-23 11:20:36 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Change
+2015-06-23 11:20:36 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyList
+2015-06-23 11:20:36 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyListWithNonEmpty
+2015-06-23 11:20:36 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnified
+2015-06-23 11:20:36 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.fileToLines
+2015-06-23 11:20:36 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta
+2015-06-23 11:20:36 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Insert
+2015-06-23 11:20:36 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Delete
+2015-06-23 11:20:36 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Change
+2015-06-23 11:20:36 [DEBUG] root:61 	issues.issue12.TestIssue12.testDiff_Issue12
+2015-06-23 11:20:36 [DEBUG] root:61 	-destfile
+2015-06-23 11:20:36 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tcsExResult4038422317661501434.txt
+2015-06-23 11:20:57 [DEBUG] root:61 	RunTestcases:
+2015-06-23 11:20:57 [DEBUG] root:61 	testingClassNames = []
+2015-06-23 11:20:57 [DEBUG] root:61 	testingPkgs = []
+2015-06-23 11:20:57 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.myers.MyersDiff, methodName=null, lineNo=165, vars=[Variable [name=i, fullName=i, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:20:59 [INFO ] Engine:183 	Learn: difflib.myers.MyersDiff:166
+Could not learn anything.
+2015-06-23 11:20:59 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.myers.Snake, methodName=null, lineNo=90, vars=[], charStart=0, charEnd=0]
+2015-06-23 11:20:59 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 11:20:59 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 11:20:59 [INFO ] Engine:183 	Learn: difflib.myers.Snake:92
+Could not learn anything.
+2015-06-23 11:20:59 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.myers.MyersDiff, methodName=null, lineNo=166, vars=[Variable [name=j, fullName=j, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:21:01 [INFO ] Engine:183 	Learn: difflib.myers.MyersDiff:168
+Could not learn anything.
+2015-06-23 11:21:01 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.myers.MyersDiff, methodName=null, lineNo=169, vars=[Variable [name=node, fullName=node, scope=UNDEFINED], Variable [name=i, fullName=i, scope=UNDEFINED], Variable [name=j, fullName=j, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:21:01 [WARN ] BugExpert:161 	Cannot get value for variable name node.prev
+2015-06-23 11:21:01 [WARN ] BugExpert:161 	Cannot get value for variable name node.prev
+2015-06-23 11:21:01 [WARN ] BugExpert:161 	Cannot get value for variable name node.prev
+2015-06-23 11:21:01 [WARN ] BugExpert:161 	Cannot get value for variable name node.prev
+2015-06-23 11:21:01 [WARN ] BugExpert:161 	Cannot get value for variable name node.prev
+2015-06-23 11:21:03 [INFO ] Engine:183 	Learn: difflib.myers.MyersDiff:172
+Could not learn anything.
+2015-06-23 11:21:03 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.myers.MyersDiff, methodName=null, lineNo=204, vars=[Variable [name=path, fullName=path, scope=UNDEFINED], Variable [name=path, fullName=path.prev, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:21:03 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.prev
+2015-06-23 11:21:03 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.i
+2015-06-23 11:21:03 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.prev
+2015-06-23 11:21:03 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev
+2015-06-23 11:21:03 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.j
+2015-06-23 11:21:03 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.prev
+2015-06-23 11:21:03 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.prev
+2015-06-23 11:21:03 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.i
+2015-06-23 11:21:03 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.prev
+2015-06-23 11:21:03 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev
+2015-06-23 11:21:03 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.j
+2015-06-23 11:21:05 [INFO ] Engine:183 	Learn: difflib.myers.MyersDiff:208
+Could not learn anything.
+2015-06-23 11:21:05 [INFO ] root:33 	----------------FINISHED--------------------
+2015-06-23 11:21:05 [INFO ] root:33 	
+2015-06-23 11:21:05 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\rev25\target\classes\difflib\myers\Snake.class
+2015-06-23 11:21:05 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\rev25\target\classes\difflib\myers\MyersDiff.class

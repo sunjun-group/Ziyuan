@@ -1,0 +1,880 @@
+2015-06-23 11:02:29 [INFO ] root:33 	Running TARANTULA
+2015-06-23 11:02:29 [DEBUG] root:61 	start cmd..
+2015-06-23 11:02:29 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_EmptyListWithNonEmpty diffutills.DiffTest.testDiff_Insert diffutills.DiffTest.testDiff_Delete diffutills.DiffTest.testDiff_Change diffutills.DiffTest.testDiff_EmptyList diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta diffutills.GenerateUnifiedDiffTest.testGenerateUnified diffutills.GenerateUnifiedDiffTest.fileToLines diffutills.PatchTest.testPatch_Insert diffutills.PatchTest.testPatch_Delete diffutills.PatchTest.testPatch_Change issues.issue10.PatcherTest.test -testingpkgs difflib diffutils issues -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult5919895073007460616.temp
+2015-06-23 11:02:29 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:02:29 [DEBUG] root:61 	-ea
+2015-06-23 11:02:29 [DEBUG] root:61 	-cp
+2015-06-23 11:02:29 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes
+2015-06-23 11:02:29 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:02:29 [DEBUG] root:61 	-methods
+2015-06-23 11:02:29 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyListWithNonEmpty
+2015-06-23 11:02:29 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Insert
+2015-06-23 11:02:29 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Delete
+2015-06-23 11:02:29 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Change
+2015-06-23 11:02:29 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyList
+2015-06-23 11:02:29 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta
+2015-06-23 11:02:29 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnified
+2015-06-23 11:02:29 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.fileToLines
+2015-06-23 11:02:29 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Insert
+2015-06-23 11:02:29 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Delete
+2015-06-23 11:02:29 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Change
+2015-06-23 11:02:29 [DEBUG] root:61 	issues.issue10.PatcherTest.test
+2015-06-23 11:02:29 [DEBUG] root:61 	-testingpkgs
+2015-06-23 11:02:29 [DEBUG] root:61 	difflib
+2015-06-23 11:02:29 [DEBUG] root:61 	diffutils
+2015-06-23 11:02:29 [DEBUG] root:61 	issues
+2015-06-23 11:02:29 [DEBUG] root:61 	-destfile
+2015-06-23 11:02:29 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult5919895073007460616.temp
+2015-06-23 11:02:30 [DEBUG] root:61 	failureTraces= difflib.Patch:40, issues.issue10.Patcher:31, issues.issue10.PatcherTest:17, difflib.ChangeDelta:41, difflib.Chunk:82, difflib.DiffUtils:67, difflib.ChangeDelta:75
+2015-06-23 11:02:30 [INFO ] root:33 	Slicing-creating trace file...
+2015-06-23 11:02:30 [DEBUG] root:61 	start cmd..
+2015-06-23 11:02:30 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\tracer.jar=tracefile:C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer235938683622247897.trace -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes sav.strategies.junit.JunitRunner -methods issues.issue10.PatcherTest.test
+2015-06-23 11:02:30 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:02:30 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\tracer.jar=tracefile:C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer235938683622247897.trace
+2015-06-23 11:02:30 [DEBUG] root:61 	-cp
+2015-06-23 11:02:30 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes
+2015-06-23 11:02:30 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:02:30 [DEBUG] root:61 	-methods
+2015-06-23 11:02:30 [DEBUG] root:61 	issues.issue10.PatcherTest.test
+2015-06-23 11:02:54 [INFO ] root:33 	Slicing-slicing...
+2015-06-23 11:02:54 [DEBUG] root:61 	traceFilePath= C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer235938683622247897.trace
+2015-06-23 11:02:54 [INFO ] root:33 	entry points= difflib.Patch:40, issues.issue10.Patcher:31, issues.issue10.PatcherTest:17, difflib.ChangeDelta:41, difflib.Chunk:82, difflib.DiffUtils:67, difflib.ChangeDelta:75
+2015-06-23 11:03:17 [DEBUG] root:61 	Read Slicing Result:
+2015-06-23 11:03:17 [DEBUG] root:61 	slicing-result:
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.ChangeDelta:31
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:158
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.ChangeDelta:41
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:157
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:160
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:159
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:172
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:168
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Delta:40
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:167
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:141
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:142
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:156
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.IOUtils:16
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:153
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.IOUtils:18
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:152
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:128
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:125
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:140
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:139
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:138
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:137
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Patch:96
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Chunk:81
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Delta:78
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:119
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.Patcher:58
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:121
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Chunk:82
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:109
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.ChangeDelta:75
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.Patcher:47
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:102
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:103
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.Patcher:48
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.Patcher:43
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:105
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.Patcher:45
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Patch:65
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:94
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.Patcher:57
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:96
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.Patcher:51
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:97
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.Patcher:50
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:98
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:88
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Chunk:49
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.Patcher:30
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.Patcher:31
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.PatcherTest:17
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Chunk:51
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.PatcherTest:16
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Chunk:50
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.Patcher:26
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:90
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:89
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.PatcherTest:23
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Patch:38
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Patch:37
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Patch:40
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Patch:39
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Patch:36
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Patch:26
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils:67
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.Patcher:19
+2015-06-23 11:03:17 [DEBUG] root:61 	Slicing - create Trace file: 23424 ms
+2015-06-23 11:03:17 [DEBUG] root:61 	Slicing - slice: 2 ms
+2015-06-23 11:03:17 [DEBUG] root:61 	Slicing - read trace file: 23529 ms
+2015-06-23 11:03:17 [DEBUG] root:61 	Slicing Overall: 46955 ms
+2015-06-23 11:03:17 [DEBUG] root:61 	causeTraces= difflib.ChangeDelta:31, difflib.DiffUtils:158, difflib.ChangeDelta:41, difflib.DiffUtils:157, difflib.DiffUtils:160, difflib.DiffUtils:159, difflib.DiffUtils:172, difflib.Delta:40, difflib.DiffUtils:168, difflib.DiffUtils:167, difflib.DiffUtils:141, difflib.DiffUtils:142, difflib.DiffUtils:156, difflib.DiffUtils:153, issues.IOUtils:16, issues.IOUtils:18, difflib.DiffUtils:152, difflib.DiffUtils:128, difflib.DiffUtils:125, difflib.DiffUtils:140, difflib.DiffUtils:139, difflib.DiffUtils:138, difflib.DiffUtils:137, difflib.Patch:96, difflib.Chunk:81, difflib.Delta:78, difflib.DiffUtils:119, issues.issue10.Patcher:58, difflib.DiffUtils:121, difflib.Chunk:82, difflib.DiffUtils:109, difflib.ChangeDelta:75, issues.issue10.Patcher:47, difflib.DiffUtils:102, difflib.DiffUtils:103, issues.issue10.Patcher:48, issues.issue10.Patcher:43, difflib.DiffUtils:105, issues.issue10.Patcher:45, difflib.Patch:65, difflib.DiffUtils:94, issues.issue10.Patcher:57, difflib.DiffUtils:96, difflib.DiffUtils:97, issues.issue10.Patcher:51, difflib.DiffUtils:98, issues.issue10.Patcher:50, difflib.DiffUtils:88, issues.issue10.Patcher:30, difflib.Chunk:49, issues.issue10.Patcher:31, difflib.Chunk:51, issues.issue10.PatcherTest:17, difflib.Chunk:50, issues.issue10.PatcherTest:16, difflib.DiffUtils:90, issues.issue10.Patcher:26, difflib.DiffUtils:89, issues.issue10.PatcherTest:23, difflib.Patch:38, difflib.Patch:37, difflib.Patch:40, difflib.Patch:39, difflib.Patch:36, difflib.Patch:26, difflib.DiffUtils:67, issues.issue10.Patcher:19
+2015-06-23 11:03:17 [DEBUG] root:61 	Analyzing classes: 
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.Patcher
+issues.issue10.PatcherTest
+issues.IOUtils
+difflib.ChangeDelta
+difflib.DiffUtils
+difflib.Patch
+difflib.Chunk
+difflib.Delta
+2015-06-23 11:03:17 [DEBUG] root:61 	RUNNING JACOCO..
+2015-06-23 11:03:17 [DEBUG] root:61 	Start vmRunner..
+2015-06-23 11:03:17 [DEBUG] root:61 	destfile= C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec
+2015-06-23 11:03:17 [DEBUG] root:61 	junitResultFile= C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt
+2015-06-23 11:03:17 [DEBUG] root:61 	append=true
+2015-06-23 11:03:17 [DEBUG] root:61 	testMethods= [diffutills.DiffTest.testDiff_EmptyListWithNonEmpty, diffutills.DiffTest.testDiff_Insert, diffutills.DiffTest.testDiff_Delete, diffutills.DiffTest.testDiff_Change, diffutills.DiffTest.testDiff_EmptyList, diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta, diffutills.GenerateUnifiedDiffTest.testGenerateUnified, diffutills.GenerateUnifiedDiffTest.fileToLines, diffutills.PatchTest.testPatch_Insert, diffutills.PatchTest.testPatch_Delete, diffutills.PatchTest.testPatch_Change, issues.issue10.PatcherTest.test]
+2015-06-23 11:03:17 [DEBUG] root:61 	allClassNames= [issues.issue10.Patcher, issues.issue10.PatcherTest, issues.IOUtils, difflib.ChangeDelta, difflib.DiffUtils, difflib.Patch, difflib.Chunk, difflib.Delta, diffutills.DiffTest, diffutills.GenerateUnifiedDiffTest, diffutills.PatchTest, issues.issue10.PatcherTest]
+2015-06-23 11:03:17 [DEBUG] root:61 	junitClassNames= [diffutills.DiffTest, diffutills.GenerateUnifiedDiffTest, diffutills.PatchTest, issues.issue10.PatcherTest]
+2015-06-23 11:03:17 [DEBUG] root:61 	testingClassNames= [issues.issue10.Patcher, issues.issue10.PatcherTest, issues.IOUtils, difflib.ChangeDelta, difflib.DiffUtils, difflib.Patch, difflib.Chunk, difflib.Delta]
+2015-06-23 11:03:17 [DEBUG] root:61 	start cmd..
+2015-06-23 11:03:17 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_EmptyListWithNonEmpty -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt -testingclass issues.issue10.Patcher issues.issue10.PatcherTest issues.IOUtils difflib.ChangeDelta difflib.DiffUtils difflib.Patch difflib.Chunk difflib.Delta diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue10.PatcherTest
+2015-06-23 11:03:17 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:03:17 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta
+2015-06-23 11:03:17 [DEBUG] root:61 	-cp
+2015-06-23 11:03:17 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:03:17 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:03:17 [DEBUG] root:61 	-methods
+2015-06-23 11:03:17 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyListWithNonEmpty
+2015-06-23 11:03:17 [DEBUG] root:61 	-destfile
+2015-06-23 11:03:17 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt
+2015-06-23 11:03:17 [DEBUG] root:61 	-testingclass
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.Patcher
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.ChangeDelta
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Patch
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Chunk
+2015-06-23 11:03:17 [DEBUG] root:61 	difflib.Delta
+2015-06-23 11:03:17 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:03:17 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:03:17 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:03:17 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:18 [DEBUG] root:61 	start cmd..
+2015-06-23 11:03:18 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_Insert -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt -testingclass issues.issue10.Patcher issues.issue10.PatcherTest issues.IOUtils difflib.ChangeDelta difflib.DiffUtils difflib.Patch difflib.Chunk difflib.Delta diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue10.PatcherTest
+2015-06-23 11:03:18 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:03:18 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta
+2015-06-23 11:03:18 [DEBUG] root:61 	-cp
+2015-06-23 11:03:18 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:03:18 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:03:18 [DEBUG] root:61 	-methods
+2015-06-23 11:03:18 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Insert
+2015-06-23 11:03:18 [DEBUG] root:61 	-destfile
+2015-06-23 11:03:18 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt
+2015-06-23 11:03:18 [DEBUG] root:61 	-testingclass
+2015-06-23 11:03:18 [DEBUG] root:61 	issues.issue10.Patcher
+2015-06-23 11:03:18 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:18 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:03:18 [DEBUG] root:61 	difflib.ChangeDelta
+2015-06-23 11:03:18 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:03:18 [DEBUG] root:61 	difflib.Patch
+2015-06-23 11:03:18 [DEBUG] root:61 	difflib.Chunk
+2015-06-23 11:03:18 [DEBUG] root:61 	difflib.Delta
+2015-06-23 11:03:18 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:03:18 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:03:18 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:03:18 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:18 [DEBUG] root:61 	start cmd..
+2015-06-23 11:03:18 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_Delete -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt -testingclass issues.issue10.Patcher issues.issue10.PatcherTest issues.IOUtils difflib.ChangeDelta difflib.DiffUtils difflib.Patch difflib.Chunk difflib.Delta diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue10.PatcherTest
+2015-06-23 11:03:18 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:03:18 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta
+2015-06-23 11:03:18 [DEBUG] root:61 	-cp
+2015-06-23 11:03:18 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:03:18 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:03:18 [DEBUG] root:61 	-methods
+2015-06-23 11:03:18 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Delete
+2015-06-23 11:03:18 [DEBUG] root:61 	-destfile
+2015-06-23 11:03:18 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt
+2015-06-23 11:03:18 [DEBUG] root:61 	-testingclass
+2015-06-23 11:03:18 [DEBUG] root:61 	issues.issue10.Patcher
+2015-06-23 11:03:18 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:18 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:03:18 [DEBUG] root:61 	difflib.ChangeDelta
+2015-06-23 11:03:18 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:03:18 [DEBUG] root:61 	difflib.Patch
+2015-06-23 11:03:18 [DEBUG] root:61 	difflib.Chunk
+2015-06-23 11:03:18 [DEBUG] root:61 	difflib.Delta
+2015-06-23 11:03:18 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:03:18 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:03:18 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:03:18 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:18 [DEBUG] root:61 	start cmd..
+2015-06-23 11:03:18 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_Change -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt -testingclass issues.issue10.Patcher issues.issue10.PatcherTest issues.IOUtils difflib.ChangeDelta difflib.DiffUtils difflib.Patch difflib.Chunk difflib.Delta diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue10.PatcherTest
+2015-06-23 11:03:18 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:03:18 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta
+2015-06-23 11:03:18 [DEBUG] root:61 	-cp
+2015-06-23 11:03:18 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:03:18 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:03:18 [DEBUG] root:61 	-methods
+2015-06-23 11:03:18 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Change
+2015-06-23 11:03:18 [DEBUG] root:61 	-destfile
+2015-06-23 11:03:18 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt
+2015-06-23 11:03:18 [DEBUG] root:61 	-testingclass
+2015-06-23 11:03:18 [DEBUG] root:61 	issues.issue10.Patcher
+2015-06-23 11:03:18 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:18 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:03:18 [DEBUG] root:61 	difflib.ChangeDelta
+2015-06-23 11:03:18 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:03:18 [DEBUG] root:61 	difflib.Patch
+2015-06-23 11:03:18 [DEBUG] root:61 	difflib.Chunk
+2015-06-23 11:03:18 [DEBUG] root:61 	difflib.Delta
+2015-06-23 11:03:18 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:03:18 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:03:18 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:03:18 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:19 [DEBUG] root:61 	start cmd..
+2015-06-23 11:03:19 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_EmptyList -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt -testingclass issues.issue10.Patcher issues.issue10.PatcherTest issues.IOUtils difflib.ChangeDelta difflib.DiffUtils difflib.Patch difflib.Chunk difflib.Delta diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue10.PatcherTest
+2015-06-23 11:03:19 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:03:19 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta
+2015-06-23 11:03:19 [DEBUG] root:61 	-cp
+2015-06-23 11:03:19 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:03:19 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:03:19 [DEBUG] root:61 	-methods
+2015-06-23 11:03:19 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyList
+2015-06-23 11:03:19 [DEBUG] root:61 	-destfile
+2015-06-23 11:03:19 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt
+2015-06-23 11:03:19 [DEBUG] root:61 	-testingclass
+2015-06-23 11:03:19 [DEBUG] root:61 	issues.issue10.Patcher
+2015-06-23 11:03:19 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:19 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:03:19 [DEBUG] root:61 	difflib.ChangeDelta
+2015-06-23 11:03:19 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:03:19 [DEBUG] root:61 	difflib.Patch
+2015-06-23 11:03:19 [DEBUG] root:61 	difflib.Chunk
+2015-06-23 11:03:19 [DEBUG] root:61 	difflib.Delta
+2015-06-23 11:03:19 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:03:19 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:03:19 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:03:19 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:19 [DEBUG] root:61 	start cmd..
+2015-06-23 11:03:19 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt -testingclass issues.issue10.Patcher issues.issue10.PatcherTest issues.IOUtils difflib.ChangeDelta difflib.DiffUtils difflib.Patch difflib.Chunk difflib.Delta diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue10.PatcherTest
+2015-06-23 11:03:19 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:03:19 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta
+2015-06-23 11:03:19 [DEBUG] root:61 	-cp
+2015-06-23 11:03:19 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:03:20 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:03:20 [DEBUG] root:61 	-methods
+2015-06-23 11:03:20 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta
+2015-06-23 11:03:20 [DEBUG] root:61 	-destfile
+2015-06-23 11:03:20 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt
+2015-06-23 11:03:20 [DEBUG] root:61 	-testingclass
+2015-06-23 11:03:20 [DEBUG] root:61 	issues.issue10.Patcher
+2015-06-23 11:03:20 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:20 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:03:20 [DEBUG] root:61 	difflib.ChangeDelta
+2015-06-23 11:03:20 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:03:20 [DEBUG] root:61 	difflib.Patch
+2015-06-23 11:03:20 [DEBUG] root:61 	difflib.Chunk
+2015-06-23 11:03:20 [DEBUG] root:61 	difflib.Delta
+2015-06-23 11:03:20 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:03:20 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:03:20 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:03:20 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:20 [DEBUG] root:61 	start cmd..
+2015-06-23 11:03:20 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.GenerateUnifiedDiffTest.testGenerateUnified -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt -testingclass issues.issue10.Patcher issues.issue10.PatcherTest issues.IOUtils difflib.ChangeDelta difflib.DiffUtils difflib.Patch difflib.Chunk difflib.Delta diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue10.PatcherTest
+2015-06-23 11:03:20 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:03:20 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta
+2015-06-23 11:03:20 [DEBUG] root:61 	-cp
+2015-06-23 11:03:20 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:03:20 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:03:20 [DEBUG] root:61 	-methods
+2015-06-23 11:03:20 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnified
+2015-06-23 11:03:20 [DEBUG] root:61 	-destfile
+2015-06-23 11:03:20 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt
+2015-06-23 11:03:20 [DEBUG] root:61 	-testingclass
+2015-06-23 11:03:20 [DEBUG] root:61 	issues.issue10.Patcher
+2015-06-23 11:03:20 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:20 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:03:20 [DEBUG] root:61 	difflib.ChangeDelta
+2015-06-23 11:03:20 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:03:20 [DEBUG] root:61 	difflib.Patch
+2015-06-23 11:03:20 [DEBUG] root:61 	difflib.Chunk
+2015-06-23 11:03:20 [DEBUG] root:61 	difflib.Delta
+2015-06-23 11:03:20 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:03:20 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:03:20 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:03:20 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:20 [DEBUG] root:61 	start cmd..
+2015-06-23 11:03:20 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.GenerateUnifiedDiffTest.fileToLines -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt -testingclass issues.issue10.Patcher issues.issue10.PatcherTest issues.IOUtils difflib.ChangeDelta difflib.DiffUtils difflib.Patch difflib.Chunk difflib.Delta diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue10.PatcherTest
+2015-06-23 11:03:20 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:03:20 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta
+2015-06-23 11:03:20 [DEBUG] root:61 	-cp
+2015-06-23 11:03:20 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:03:20 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:03:20 [DEBUG] root:61 	-methods
+2015-06-23 11:03:20 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.fileToLines
+2015-06-23 11:03:20 [DEBUG] root:61 	-destfile
+2015-06-23 11:03:20 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt
+2015-06-23 11:03:20 [DEBUG] root:61 	-testingclass
+2015-06-23 11:03:20 [DEBUG] root:61 	issues.issue10.Patcher
+2015-06-23 11:03:20 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:20 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:03:20 [DEBUG] root:61 	difflib.ChangeDelta
+2015-06-23 11:03:20 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:03:20 [DEBUG] root:61 	difflib.Patch
+2015-06-23 11:03:20 [DEBUG] root:61 	difflib.Chunk
+2015-06-23 11:03:20 [DEBUG] root:61 	difflib.Delta
+2015-06-23 11:03:20 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:03:20 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:03:20 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:03:20 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:21 [DEBUG] root:61 	start cmd..
+2015-06-23 11:03:21 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.PatchTest.testPatch_Insert -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt -testingclass issues.issue10.Patcher issues.issue10.PatcherTest issues.IOUtils difflib.ChangeDelta difflib.DiffUtils difflib.Patch difflib.Chunk difflib.Delta diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue10.PatcherTest
+2015-06-23 11:03:21 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:03:21 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta
+2015-06-23 11:03:21 [DEBUG] root:61 	-cp
+2015-06-23 11:03:21 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:03:21 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:03:21 [DEBUG] root:61 	-methods
+2015-06-23 11:03:21 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Insert
+2015-06-23 11:03:21 [DEBUG] root:61 	-destfile
+2015-06-23 11:03:21 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt
+2015-06-23 11:03:21 [DEBUG] root:61 	-testingclass
+2015-06-23 11:03:21 [DEBUG] root:61 	issues.issue10.Patcher
+2015-06-23 11:03:21 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:21 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:03:21 [DEBUG] root:61 	difflib.ChangeDelta
+2015-06-23 11:03:21 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:03:21 [DEBUG] root:61 	difflib.Patch
+2015-06-23 11:03:21 [DEBUG] root:61 	difflib.Chunk
+2015-06-23 11:03:21 [DEBUG] root:61 	difflib.Delta
+2015-06-23 11:03:21 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:03:21 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:03:21 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:03:21 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:21 [DEBUG] root:61 	start cmd..
+2015-06-23 11:03:21 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.PatchTest.testPatch_Delete -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt -testingclass issues.issue10.Patcher issues.issue10.PatcherTest issues.IOUtils difflib.ChangeDelta difflib.DiffUtils difflib.Patch difflib.Chunk difflib.Delta diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue10.PatcherTest
+2015-06-23 11:03:21 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:03:21 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta
+2015-06-23 11:03:21 [DEBUG] root:61 	-cp
+2015-06-23 11:03:21 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:03:21 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:03:21 [DEBUG] root:61 	-methods
+2015-06-23 11:03:21 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Delete
+2015-06-23 11:03:21 [DEBUG] root:61 	-destfile
+2015-06-23 11:03:21 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt
+2015-06-23 11:03:21 [DEBUG] root:61 	-testingclass
+2015-06-23 11:03:21 [DEBUG] root:61 	issues.issue10.Patcher
+2015-06-23 11:03:21 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:21 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:03:21 [DEBUG] root:61 	difflib.ChangeDelta
+2015-06-23 11:03:21 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:03:21 [DEBUG] root:61 	difflib.Patch
+2015-06-23 11:03:21 [DEBUG] root:61 	difflib.Chunk
+2015-06-23 11:03:21 [DEBUG] root:61 	difflib.Delta
+2015-06-23 11:03:21 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:03:21 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:03:21 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:03:21 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:22 [DEBUG] root:61 	start cmd..
+2015-06-23 11:03:22 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutills.PatchTest.testPatch_Change -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt -testingclass issues.issue10.Patcher issues.issue10.PatcherTest issues.IOUtils difflib.ChangeDelta difflib.DiffUtils difflib.Patch difflib.Chunk difflib.Delta diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue10.PatcherTest
+2015-06-23 11:03:22 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:03:22 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta
+2015-06-23 11:03:22 [DEBUG] root:61 	-cp
+2015-06-23 11:03:22 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:03:22 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:03:22 [DEBUG] root:61 	-methods
+2015-06-23 11:03:22 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Change
+2015-06-23 11:03:22 [DEBUG] root:61 	-destfile
+2015-06-23 11:03:22 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt
+2015-06-23 11:03:22 [DEBUG] root:61 	-testingclass
+2015-06-23 11:03:22 [DEBUG] root:61 	issues.issue10.Patcher
+2015-06-23 11:03:22 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:22 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:03:22 [DEBUG] root:61 	difflib.ChangeDelta
+2015-06-23 11:03:22 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:03:22 [DEBUG] root:61 	difflib.Patch
+2015-06-23 11:03:22 [DEBUG] root:61 	difflib.Chunk
+2015-06-23 11:03:22 [DEBUG] root:61 	difflib.Delta
+2015-06-23 11:03:22 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:03:22 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:03:22 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:03:22 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:22 [DEBUG] root:61 	start cmd..
+2015-06-23 11:03:22 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods issues.issue10.PatcherTest.test -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt -testingclass issues.issue10.Patcher issues.issue10.PatcherTest issues.IOUtils difflib.ChangeDelta difflib.DiffUtils difflib.Patch difflib.Chunk difflib.Delta diffutills.DiffTest diffutills.GenerateUnifiedDiffTest diffutills.PatchTest issues.issue10.PatcherTest
+2015-06-23 11:03:22 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:03:22 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent2372392183848322035.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec,includes=issues.issue10.Patcher:issues.issue10.PatcherTest:issues.IOUtils:difflib.ChangeDelta:difflib.DiffUtils:difflib.Patch:difflib.Chunk:difflib.Delta
+2015-06-23 11:03:22 [DEBUG] root:61 	-cp
+2015-06-23 11:03:22 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 11:03:22 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:03:22 [DEBUG] root:61 	-methods
+2015-06-23 11:03:22 [DEBUG] root:61 	issues.issue10.PatcherTest.test
+2015-06-23 11:03:22 [DEBUG] root:61 	-destfile
+2015-06-23 11:03:22 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2843648495790236598.txt
+2015-06-23 11:03:22 [DEBUG] root:61 	-testingclass
+2015-06-23 11:03:22 [DEBUG] root:61 	issues.issue10.Patcher
+2015-06-23 11:03:22 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:22 [DEBUG] root:61 	issues.IOUtils
+2015-06-23 11:03:22 [DEBUG] root:61 	difflib.ChangeDelta
+2015-06-23 11:03:22 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 11:03:22 [DEBUG] root:61 	difflib.Patch
+2015-06-23 11:03:22 [DEBUG] root:61 	difflib.Chunk
+2015-06-23 11:03:22 [DEBUG] root:61 	difflib.Delta
+2015-06-23 11:03:22 [DEBUG] root:61 	diffutills.DiffTest
+2015-06-23 11:03:22 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest
+2015-06-23 11:03:22 [DEBUG] root:61 	diffutills.PatchTest
+2015-06-23 11:03:22 [DEBUG] root:61 	issues.issue10.PatcherTest
+2015-06-23 11:03:23 [DEBUG] root:61 	read exec file  C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco504552624293200795.exec
+2015-06-23 11:03:23 [DEBUG] root:61 	Session DELL5050-PC-d6f296d0
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Chunk, id=3482a0683c5257ec]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Delta, id=499cec36f7722cd5]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Patch, id=d6ffdfccada1bbf0]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:03:23 [DEBUG] root:61 	Session DELL5050-PC-521b96fb
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Chunk, id=3482a0683c5257ec]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Delta, id=499cec36f7722cd5]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Patch, id=d6ffdfccada1bbf0]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:03:23 [DEBUG] root:61 	Session DELL5050-PC-9f7616f9
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Chunk, id=3482a0683c5257ec]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Delta, id=499cec36f7722cd5]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Patch, id=d6ffdfccada1bbf0]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:03:23 [DEBUG] root:61 	Session DELL5050-PC-af471239
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Chunk, id=3482a0683c5257ec]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Delta, id=499cec36f7722cd5]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Patch, id=d6ffdfccada1bbf0]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/ChangeDelta, id=52355a0dcff478ca]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:03:23 [DEBUG] root:61 	Session DELL5050-PC-673136eb
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Patch, id=d6ffdfccada1bbf0]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:03:23 [DEBUG] root:61 	Session DELL5050-PC-f525be2a
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Chunk, id=3482a0683c5257ec]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Delta, id=499cec36f7722cd5]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Patch, id=d6ffdfccada1bbf0]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/ChangeDelta, id=52355a0dcff478ca]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:03:23 [DEBUG] root:61 	Session DELL5050-PC-d11927bf
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Chunk, id=3482a0683c5257ec]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Delta, id=499cec36f7722cd5]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Patch, id=d6ffdfccada1bbf0]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/ChangeDelta, id=52355a0dcff478ca]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:03:23 [DEBUG] root:61 	Session DELL5050-PC-be660c4
+2015-06-23 11:03:23 [DEBUG] root:61 	Session DELL5050-PC-8437a2de
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Chunk, id=3482a0683c5257ec]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Delta, id=499cec36f7722cd5]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Patch, id=d6ffdfccada1bbf0]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:03:23 [DEBUG] root:61 	Session DELL5050-PC-ac596de3
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Chunk, id=3482a0683c5257ec]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Delta, id=499cec36f7722cd5]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Patch, id=d6ffdfccada1bbf0]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:03:23 [DEBUG] root:61 	Session DELL5050-PC-c2493f1b
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Chunk, id=3482a0683c5257ec]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Delta, id=499cec36f7722cd5]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Patch, id=d6ffdfccada1bbf0]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/ChangeDelta, id=52355a0dcff478ca]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:03:23 [DEBUG] root:61 	Session DELL5050-PC-dc57b2c4
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Chunk, id=3482a0683c5257ec]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Delta, id=499cec36f7722cd5]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/Patch, id=d6ffdfccada1bbf0]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=issues/issue10/Patcher, id=9c5f6b719057e9b1]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/ChangeDelta, id=52355a0dcff478ca]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=f18f9086b0aac1a7]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=issues/IOUtils, id=25a407ff93c9166c]
+2015-06-23 11:03:23 [DEBUG] root:61 	ExecutionData[name=issues/issue10/PatcherTest, id=75cf6490a1359bec]
+2015-06-23 11:03:23 [DEBUG] root:61 	Collect coverage data - Read execFile: 36 ms
+2015-06-23 11:03:23 [DEBUG] root:61 	Collect coverage data - Analyze data and count code coverage: 343 ms
+2015-06-23 11:03:23 [DEBUG] root:61 	Collect coverage data Overall: 379 ms
+2015-06-23 11:03:23 [INFO ] root:33 	SpectrumAlgorithm: TARANTULA
+2015-06-23 11:03:23 [INFO ] root:33 	[issues.IOUtils:16:1.0(P=0, F=1), issues.IOUtils:18:1.0(P=0, F=1), issues.issue10.Patcher:19:1.0(P=0, F=1), issues.issue10.PatcherTest:23:1.0(P=0, F=1), issues.issue10.Patcher:43:1.0(P=0, F=1), issues.issue10.Patcher:45:1.0(P=0, F=1), issues.issue10.Patcher:47:1.0(P=0, F=1), issues.issue10.Patcher:48:1.0(P=0, F=1), issues.issue10.Patcher:50:1.0(P=0, F=1), issues.issue10.Patcher:51:1.0(P=0, F=1), issues.issue10.Patcher:57:1.0(P=0, F=1), issues.issue10.Patcher:58:1.0(P=0, F=1), difflib.DiffUtils:109:0.9166666666666667(P=1, F=1), difflib.DiffUtils:119:0.9166666666666667(P=1, F=1), difflib.DiffUtils:121:0.9166666666666667(P=1, F=1), difflib.DiffUtils:88:0.8461538461538461(P=2, F=1), difflib.DiffUtils:89:0.8461538461538461(P=2, F=1), difflib.DiffUtils:90:0.8461538461538461(P=2, F=1), difflib.DiffUtils:94:0.8461538461538461(P=2, F=1), difflib.DiffUtils:96:0.8461538461538461(P=2, F=1), difflib.DiffUtils:97:0.8461538461538461(P=2, F=1), difflib.DiffUtils:98:0.8461538461538461(P=2, F=1), difflib.DiffUtils:102:0.8461538461538461(P=2, F=1), difflib.DiffUtils:103:0.8461538461538461(P=2, F=1), difflib.DiffUtils:105:0.8461538461538461(P=2, F=1), difflib.DiffUtils:125:0.8461538461538461(P=2, F=1), difflib.DiffUtils:128:0.8461538461538461(P=2, F=1), difflib.DiffUtils:137:0.8461538461538461(P=2, F=1), difflib.DiffUtils:138:0.8461538461538461(P=2, F=1), difflib.DiffUtils:139:0.8461538461538461(P=2, F=1), difflib.DiffUtils:140:0.8461538461538461(P=2, F=1), difflib.DiffUtils:141:0.8461538461538461(P=2, F=1), difflib.DiffUtils:142:0.8461538461538461(P=2, F=1), difflib.DiffUtils:152:0.8461538461538461(P=2, F=1), difflib.DiffUtils:153:0.8461538461538461(P=2, F=1), difflib.DiffUtils:156:0.8461538461538461(P=2, F=1), difflib.DiffUtils:157:0.8461538461538461(P=2, F=1), difflib.DiffUtils:158:0.8461538461538461(P=2, F=1), difflib.DiffUtils:159:0.8461538461538461(P=2, F=1), difflib.DiffUtils:160:0.8461538461538461(P=2, F=1), difflib.DiffUtils:167:0.8461538461538461(P=2, F=1), difflib.DiffUtils:168:0.8461538461538461(P=2, F=1), difflib.DiffUtils:172:0.8461538461538461(P=2, F=1), difflib.ChangeDelta:31:0.7333333333333333(P=4, F=1), difflib.Chunk:81:0.7333333333333333(P=4, F=1), difflib.Chunk:82:0.7333333333333333(P=4, F=1), difflib.Patch:36:0.6875(P=5, F=1), difflib.Patch:37:0.6875(P=5, F=1), difflib.Patch:38:0.6875(P=5, F=1), difflib.Chunk:49:0.6875(P=5, F=1), difflib.Chunk:50:0.6875(P=5, F=1), difflib.Chunk:51:0.6875(P=5, F=1), difflib.Delta:78:0.5789473684210527(P=8, F=1), difflib.Delta:40:0.5499999999999999(P=9, F=1), difflib.Patch:65:0.5499999999999999(P=9, F=1), difflib.Patch:26:0.5238095238095238(P=10, F=1), difflib.Patch:96:0.5238095238095238(P=10, F=1), difflib.Patch:39:0.0(P=5, F=0), difflib.Patch:40:0.0(P=5, F=0), difflib.ChangeDelta:41:0.0(P=3, F=0), difflib.DiffUtils:67:0.0(P=3, F=0), difflib.ChangeDelta:75:0.0(P=3, F=0)]
+2015-06-23 11:03:23 [INFO ] root:33 	Running Machine Learning
+2015-06-23 11:03:23 [DEBUG] root:61 	create backup folder  C:\Users\DELL50~1\AppData\Local\Temp\backup916996618401109623
+2015-06-23 11:03:23 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\rev25\target\classes\difflib\DiffUtils$1.class
+2015-06-23 11:03:23 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\rev25\target\classes\difflib\DiffUtils.class
+2015-06-23 11:03:23 [DEBUG] root:61 	start cmd..
+2015-06-23 11:03:23 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes -d D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource4005305869144974050\DiffUtils.java -g
+2015-06-23 11:03:23 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac
+2015-06-23 11:03:23 [DEBUG] root:61 	-classpath
+2015-06-23 11:03:23 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes
+2015-06-23 11:03:23 [DEBUG] root:61 	-d
+2015-06-23 11:03:23 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes
+2015-06-23 11:03:23 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource4005305869144974050\DiffUtils.java
+2015-06-23 11:03:23 [DEBUG] root:61 	-g
+2015-06-23 11:03:24 [DEBUG] root:61 	start cmd..
+2015-06-23 11:03:24 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -agentlib:jdwp=transport=dt_socket,suspend=y,address=50701 -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes sav.strategies.junit.JunitRunner -methods diffutills.DiffTest.testDiff_EmptyListWithNonEmpty diffutills.DiffTest.testDiff_Insert diffutills.DiffTest.testDiff_Delete diffutills.DiffTest.testDiff_Change diffutills.DiffTest.testDiff_EmptyList diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta diffutills.GenerateUnifiedDiffTest.testGenerateUnified diffutills.GenerateUnifiedDiffTest.fileToLines diffutills.PatchTest.testPatch_Insert diffutills.PatchTest.testPatch_Delete diffutills.PatchTest.testPatch_Change issues.issue10.PatcherTest.test -destfile C:\Users\DELL50~1\AppData\Local\Temp\tcsExResult551971068300745074.txt
+2015-06-23 11:03:24 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 11:03:24 [DEBUG] root:61 	-agentlib:jdwp=transport=dt_socket,suspend=y,address=50701
+2015-06-23 11:03:24 [DEBUG] root:61 	-ea
+2015-06-23 11:03:24 [DEBUG] root:61 	-cp
+2015-06-23 11:03:24 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\rev25/target/test-classes
+2015-06-23 11:03:24 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 11:03:24 [DEBUG] root:61 	-methods
+2015-06-23 11:03:24 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyListWithNonEmpty
+2015-06-23 11:03:24 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Insert
+2015-06-23 11:03:24 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Delete
+2015-06-23 11:03:24 [DEBUG] root:61 	diffutills.DiffTest.testDiff_Change
+2015-06-23 11:03:24 [DEBUG] root:61 	diffutills.DiffTest.testDiff_EmptyList
+2015-06-23 11:03:24 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnifiedWithOneDelta
+2015-06-23 11:03:24 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.testGenerateUnified
+2015-06-23 11:03:24 [DEBUG] root:61 	diffutills.GenerateUnifiedDiffTest.fileToLines
+2015-06-23 11:03:24 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Insert
+2015-06-23 11:03:24 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Delete
+2015-06-23 11:03:24 [DEBUG] root:61 	diffutills.PatchTest.testPatch_Change
+2015-06-23 11:03:24 [DEBUG] root:61 	issues.issue10.PatcherTest.test
+2015-06-23 11:03:24 [DEBUG] root:61 	-destfile
+2015-06-23 11:03:24 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tcsExResult551971068300745074.txt
+2015-06-23 11:03:25 [WARN ] root:39 	Cannot add break point MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=172, vars=[Variable [name=patch, fullName=patch, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [DEBUG] root:61 	RunTestcases:
+2015-06-23 11:03:50 [DEBUG] root:61 	Original version:
+2015-06-23 11:03:50 [DEBUG] root:61 	<?xml version="1.0" encoding="UTF-8"?>
+2015-06-23 11:03:50 [DEBUG] root:61 	<module type="JAVA_MODULE" version="4">
+2015-06-23 11:03:50 [DEBUG] root:61 	  <component name="FacetManager">
+2015-06-23 11:03:50 [DEBUG] root:61 	    <facet type="Python" name="Python">
+2015-06-23 11:03:50 [DEBUG] root:61 	      <configuration sdkName="Python 2.7 (C:/Python27/python.exe)" />
+2015-06-23 11:03:50 [DEBUG] root:61 	    </facet>
+2015-06-23 11:03:50 [DEBUG] root:61 	  </component>
+2015-06-23 11:03:50 [DEBUG] root:61 	  <component name="NewModuleRootManager" inherit-compiler-output="true">
+2015-06-23 11:03:50 [DEBUG] root:61 	    <exclude-output />
+2015-06-23 11:03:50 [DEBUG] root:61 	    <content url="file://$MODULE_DIR$">
+2015-06-23 11:03:50 [DEBUG] root:61 	      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+2015-06-23 11:03:50 [DEBUG] root:61 	      <sourceFolder url="file://$MODULE_DIR$/resources" isTestSource="false" />
+2015-06-23 11:03:50 [DEBUG] root:61 	    </content>
+2015-06-23 11:03:50 [DEBUG] root:61 	    <orderEntry type="inheritedJdk" />
+2015-06-23 11:03:50 [DEBUG] root:61 	    <orderEntry type="sourceFolder" forTests="false" />
+2015-06-23 11:03:50 [DEBUG] root:61 	    <orderEntry type="library" name="Python 2.7 (C:/Python27/python.exe) interpreter library" level="application" />
+2015-06-23 11:03:50 [DEBUG] root:61 	    <orderEntry type="module-library">
+2015-06-23 11:03:50 [DEBUG] root:61 	      <library>
+2015-06-23 11:03:50 [DEBUG] root:61 	        <CLASSES>
+2015-06-23 11:03:50 [DEBUG] root:61 	          <root url="jar://$MODULE_DIR$/lib/commons-io-1.4.jar!/" />
+2015-06-23 11:03:50 [DEBUG] root:61 	        </CLASSES>
+2015-06-23 11:03:50 [DEBUG] root:61 	        <JAVADOC />
+2015-06-23 11:03:50 [DEBUG] root:61 	        <SOURCES />
+2015-06-23 11:03:50 [DEBUG] root:61 	      </library>
+2015-06-23 11:03:50 [DEBUG] root:61 	    </orderEntry>
+2015-06-23 11:03:50 [DEBUG] root:61 	    <orderEntry type="module-library">
+2015-06-23 11:03:50 [DEBUG] root:61 	      <library>
+2015-06-23 11:03:50 [DEBUG] root:61 	        <CLASSES>
+2015-06-23 11:03:50 [DEBUG] root:61 	          <root url="jar://$MODULE_DIR$/lib/java-diff-utils-1.2.jar!/" />
+2015-06-23 11:03:50 [DEBUG] root:61 	        </CLASSES>
+2015-06-23 11:03:50 [DEBUG] root:61 	        <JAVADOC />
+2015-06-23 11:03:50 [DEBUG] root:61 	        <SOURCES />
+2015-06-23 11:03:50 [DEBUG] root:61 	      </library>
+2015-06-23 11:03:50 [DEBUG] root:61 	    </orderEntry>
+2015-06-23 11:03:50 [DEBUG] root:61 	    <orderEntry type="module-library">
+2015-06-23 11:03:50 [DEBUG] root:61 	      <library>
+2015-06-23 11:03:50 [DEBUG] root:61 	        <CLASSES>
+2015-06-23 11:03:50 [DEBUG] root:61 	          <root url="jar://$MODULE_DIR$/lib/jython.jar!/" />
+2015-06-23 11:03:50 [DEBUG] root:61 	        </CLASSES>
+2015-06-23 11:03:50 [DEBUG] root:61 	        <JAVADOC />
+2015-06-23 11:03:50 [DEBUG] root:61 	        <SOURCES />
+2015-06-23 11:03:50 [DEBUG] root:61 	      </library>
+2015-06-23 11:03:50 [DEBUG] root:61 	    </orderEntry>
+2015-06-23 11:03:50 [DEBUG] root:61 	  </component>
+2015-06-23 11:03:50 [DEBUG] root:61 	</module>
+2015-06-23 11:03:50 [DEBUG] root:61 	
+2015-06-23 11:03:50 [DEBUG] root:61 	
+2015-06-23 11:03:50 [DEBUG] root:61 	Patch: 
+2015-06-23 11:03:50 [DEBUG] root:61 	--- /bonobo/bonobo.iml
+2015-06-23 11:03:50 [DEBUG] root:61 	+++ /bonobo/bonobo.iml
+2015-06-23 11:03:50 [DEBUG] root:61 	@@ -2,7 +2,7 @@
+2015-06-23 11:03:50 [DEBUG] root:61 	 <module type="JAVA_MODULE" version="4">
+2015-06-23 11:03:50 [DEBUG] root:61 	   <component name="FacetManager">
+2015-06-23 11:03:50 [DEBUG] root:61 	     <facet type="Python" name="Python">
+2015-06-23 11:03:50 [DEBUG] root:61 	-      <configuration sdkName="Python 2.7 (C:/Python27/python.exe)" />
+2015-06-23 11:03:50 [DEBUG] root:61 	+      <configuration sdkName="Python 2.6.6 (/usr/bin/python2.6)" />
+2015-06-23 11:03:50 [DEBUG] root:61 	     </facet>
+2015-06-23 11:03:50 [DEBUG] root:61 	   </component>
+2015-06-23 11:03:50 [DEBUG] root:61 	   <component name="NewModuleRootManager" inherit-compiler-output="true">
+2015-06-23 11:03:50 [DEBUG] root:61 	@@ -11,9 +11,8 @@
+2015-06-23 11:03:50 [DEBUG] root:61 	       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+2015-06-23 11:03:50 [DEBUG] root:61 	       <sourceFolder url="file://$MODULE_DIR$/resources" isTestSource="false" />
+2015-06-23 11:03:50 [DEBUG] root:61 	     </content>
+2015-06-23 11:03:50 [DEBUG] root:61 	-    <orderEntry type="inheritedJdk" />
+2015-06-23 11:03:50 [DEBUG] root:61 	+    <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
+2015-06-23 11:03:50 [DEBUG] root:61 	     <orderEntry type="sourceFolder" forTests="false" />
+2015-06-23 11:03:50 [DEBUG] root:61 	-    <orderEntry type="library" name="Python 2.7 (C:/Python27/python.exe) interpreter library" level="application" />
+2015-06-23 11:03:50 [DEBUG] root:61 	     <orderEntry type="module-library">
+2015-06-23 11:03:50 [DEBUG] root:61 	       <library>
+2015-06-23 11:03:50 [DEBUG] root:61 	         <CLASSES>
+2015-06-23 11:03:50 [DEBUG] root:61 	@@ -41,6 +40,7 @@
+2015-06-23 11:03:50 [DEBUG] root:61 	         <SOURCES />
+2015-06-23 11:03:50 [DEBUG] root:61 	       </library>
+2015-06-23 11:03:50 [DEBUG] root:61 	     </orderEntry>
+2015-06-23 11:03:50 [DEBUG] root:61 	+    <orderEntry type="library" name="Python 2.6.6 (/usr/bin/python2.6) interpreter library" level="application" />
+2015-06-23 11:03:50 [DEBUG] root:61 	   </component>
+2015-06-23 11:03:50 [DEBUG] root:61 	 </module>
+2015-06-23 11:03:50 [DEBUG] root:61 	
+2015-06-23 11:03:50 [DEBUG] root:61 	
+2015-06-23 11:03:50 [DEBUG] root:61 	testingClassNames = []
+2015-06-23 11:03:50 [DEBUG] root:61 	testingPkgs = []
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=160, vars=[Variable [name=oldChunkLines, fullName=oldChunkLines, scope=UNDEFINED], Variable [name=rest, fullName=rest, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 6 to 3
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:177
+Logic: 0.02753195673549656*oldChunkLines.elementData.length + 0.02458210422812193*oldChunkLines.size + 0.02458210422812193*oldChunkLines.modCount >= 1.521140609636185
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=158, vars=[Variable [name=rest, fullName=rest, scope=UNDEFINED], Variable [name=raw_line, fullName=raw_line, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 4 to 0
+2015-06-23 11:03:50 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:174
+Could not learn anything.
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=159, vars=[Variable [name=tag, fullName=tag, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 11:03:50 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:175
+Could not learn anything.
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=105, vars=[Variable [name=rawChunk, fullName=rawChunk, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 5 to 3
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:110
+Logic: 1.0*rawChunk.elementData.length >= 7.0
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=167, vars=[Variable [name=patch, fullName=patch, scope=UNDEFINED], Variable [name=old_ln, fullName=old_ln, scope=UNDEFINED], Variable [name=old_n, fullName=old_n, scope=UNDEFINED], Variable [name=oldChunkLines, fullName=oldChunkLines, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 9 to 5
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:186
+Logic: 0.012379899751224898*oldChunkLines.elementData.length + 0.011784040969756108*old_n + 0.012104024170976292*oldChunkLines.size + 0.012104024170976292*oldChunkLines.modCount + 0.008651588084069127*old_ln >= 1.7150654450208656
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=168, vars=[Variable [name=new_ln, fullName=new_ln, scope=UNDEFINED], Variable [name=new_n, fullName=new_n, scope=UNDEFINED], Variable [name=newChunkLines, fullName=newChunkLines, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 7 to 5
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:187
+Logic: 0.008795754177605806*newChunkLines.modCount -0.04662860778293915*new_ln + 0.008795754177605806*newChunkLines.size + 0.010561478446595609*newChunkLines.elementData.length + 0.007539471002435337*new_n >= -0.9099267279865132
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=109, vars=[Variable [name=raw_line, fullName=raw_line, scope=UNDEFINED], Variable [name=rawChunk, fullName=rawChunk, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 5 to 3
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:114
+Logic: 0.026010218300046444*rawChunk.elementData.length + 0.011147236414305619*rawChunk.size + 0.03251277287505806*rawChunk.modCount >= 1.9893172317696237
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=98, vars=[Variable [name=inPrelude, fullName=inPrelude, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 11:03:50 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:102
+Could not learn anything.
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=102, vars=[Variable [name=m, fullName=m, scope=UNDEFINED], Variable [name=unifiedDiffChunkRe, fullName=unifiedDiffChunkRe, scope=UNDEFINED], Variable [name=line, fullName=line, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 52 to 1
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:107
+Logic: 1.0*m.to >= 1.0
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=103, vars=[Variable [name=m, fullName=m, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 24 to 1
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:108
+Logic: 1.0*m.to >= 1.0
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=90, vars=[Variable [name=patch, fullName=patch, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 2 to 0
+2015-06-23 11:03:50 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:93
+Could not learn anything.
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=156, vars=[Variable [name=raw_line, fullName=raw_line, scope=UNDEFINED], Variable [name=rawChunk, fullName=rawChunk, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 5 to 3
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:170
+Logic: 0.009593601848430387*rawChunk.elementData.length + 0.007256698834069138*rawChunk.size + 0.004796800924215193*rawChunk.modCount >= 0.9459537412343347
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=157, vars=[Variable [name=tag, fullName=tag, scope=UNDEFINED], Variable [name=raw_line, fullName=raw_line, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 4 to 0
+2015-06-23 11:03:50 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:172
+Could not learn anything.
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=94, vars=[Variable [name=line, fullName=line, scope=UNDEFINED], Variable [name=diff, fullName=diff, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 5 to 3
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:97
+Logic: 0.016028023953293807*diff.elementData.length -0.014959489023074219*diff.modCount + 0.01976789620906236*diff.size >= 1.5736848184808967
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=152, vars=[Variable [name=rawChunk, fullName=rawChunk, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 5 to 3
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:165
+Logic: 0.009593601848430387*rawChunk.elementData.length + 0.007256698834069138*rawChunk.size + 0.004796800924215193*rawChunk.modCount >= 0.9459537412343347
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=96, vars=[Variable [name=inPrelude, fullName=inPrelude, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 11:03:50 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:99
+Could not learn anything.
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=97, vars=[Variable [name=line, fullName=line, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 11:03:50 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:100
+Could not learn anything.
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=153, vars=[Variable [name=oldChunkLines, fullName=oldChunkLines, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 5 to 0
+2015-06-23 11:03:50 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:167
+Could not learn anything.
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=137, vars=[Variable [name=length, fullName=length, scope=UNDEFINED], Variable [name=line, fullName=line, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 2 to 1
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:147
+Logic: 1.0*length >= 1.0
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=138, vars=[Variable [name=length, fullName=length, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:148
+Logic: 1.0*length >= 1.0
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=89, vars=[Variable [name=rawChunk, fullName=rawChunk, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 5 to 0
+2015-06-23 11:03:50 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:91
+Could not learn anything.
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=88, vars=[Variable [name=inPrelude, fullName=inPrelude, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 11:03:50 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:89
+Could not learn anything.
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=142, vars=[Variable [name=rawChunk, fullName=rawChunk, scope=UNDEFINED], Variable [name=tag, fullName=tag, scope=UNDEFINED], Variable [name=rest, fullName=rest, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 7 to 3
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:155
+Logic: 0.009593601848430387*rawChunk.elementData.length + 0.007256698834069138*rawChunk.size + 0.004796800924215193*rawChunk.modCount >= 0.9459537412343347
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=141, vars=[Variable [name=tag, fullName=tag, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 11:03:50 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:153
+Could not learn anything.
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=140, vars=[Variable [name=rest, fullName=rest, scope=UNDEFINED], Variable [name=line, fullName=line, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 2 to 0
+2015-06-23 11:03:50 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:152
+Could not learn anything.
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=139, vars=[Variable [name=tag, fullName=tag, scope=UNDEFINED], Variable [name=line, fullName=line, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 2 to 0
+2015-06-23 11:03:50 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:150
+Could not learn anything.
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=172, vars=[Variable [name=patch, fullName=patch, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=121, vars=[Variable [name=rawChunk, fullName=rawChunk, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 5 to 2
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:128
+Logic: 0.027874564459930314*rawChunk.elementData.length + 0.0348432055749129*rawChunk.modCount >= 1.975609756097561
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=119, vars=[Variable [name=patch, fullName=patch, scope=UNDEFINED], Variable [name=old_ln, fullName=old_ln, scope=UNDEFINED], Variable [name=old_n, fullName=old_n, scope=UNDEFINED], Variable [name=oldChunkLines, fullName=oldChunkLines, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 9 to 5
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:126
+Logic: 0.00704721634954193*oldChunkLines.elementData.length + 0.005637773079633544*old_n + 0.005637773079633544*oldChunkLines.size + 0.005637773079633544*oldChunkLines.modCount + 0.028188865398167725*old_ln >= 1.5327695560253702
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=128, vars=[Variable [name=old_ln, fullName=old_ln, scope=UNDEFINED], Variable [name=Integer, fullName=Integer, scope=UNDEFINED], Variable [name=m, fullName=m, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 26 to 6
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:137
+Logic: 0.0993998511270795*m.groups.max + 0.0993998511270795*m.oldLast + 0.0993998511270795*m.last + 0.22584177380120352*m.groups.sum + 0.0993998511270795*m.to -0.04765880813623102*old_ln >= 23.7660241643682
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=125, vars=[Variable [name=old_n, fullName=old_n, scope=UNDEFINED], Variable [name=m, fullName=m, scope=UNDEFINED], Variable [name=Integer, fullName=Integer, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 11:03:50 [INFO ] Machine:242 	Reduced feature size from 26 to 6
+2015-06-23 11:03:50 [INFO ] Engine:183 	Learn: difflib.DiffUtils:133
+Logic: 0.041379310344827586*old_n + 0.008620689655172414*m.groups.max + 0.008620689655172414*m.oldLast + 0.008620689655172414*m.last + 0.008620689655172414*m.to + 0.03793103448275861*m.groups.sum >= 4.906896551724137
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [INFO ] root:33 	----------------FINISHED--------------------
+2015-06-23 11:03:50 [INFO ] root:33 	difflib.DiffUtils:109
+suspiciousness: 0.92
+Logic: 0.026010218300046444*rawChunk.elementData.length + 0.011147236414305619*rawChunk.size + 0.03251277287505806*rawChunk.modCount >= 1.9893172317696237
+Accuracy: 1.0
+
+
+difflib.DiffUtils:121
+suspiciousness: 0.92
+Logic: 0.027874564459930314*rawChunk.elementData.length + 0.0348432055749129*rawChunk.modCount >= 1.975609756097561
+Accuracy: 1.0
+
+
+difflib.DiffUtils:119
+suspiciousness: 0.92
+Logic: 0.00704721634954193*oldChunkLines.elementData.length + 0.005637773079633544*old_n + 0.005637773079633544*oldChunkLines.size + 0.005637773079633544*oldChunkLines.modCount + 0.028188865398167725*old_ln >= 1.5327695560253702
+Accuracy: 1.0
+
+
+difflib.DiffUtils:160
+suspiciousness: 0.85
+Logic: 0.02753195673549656*oldChunkLines.elementData.length + 0.02458210422812193*oldChunkLines.size + 0.02458210422812193*oldChunkLines.modCount >= 1.521140609636185
+Accuracy: 1.0
+
+
+difflib.DiffUtils:105
+suspiciousness: 0.85
+Logic: 1.0*rawChunk.elementData.length >= 7.0
+Accuracy: 1.0
+
+
+difflib.DiffUtils:167
+suspiciousness: 0.85
+Logic: 0.012379899751224898*oldChunkLines.elementData.length + 0.011784040969756108*old_n + 0.012104024170976292*oldChunkLines.size + 0.012104024170976292*oldChunkLines.modCount + 0.008651588084069127*old_ln >= 1.7150654450208656
+Accuracy: 1.0
+
+
+difflib.DiffUtils:168
+suspiciousness: 0.85
+Logic: 0.008795754177605806*newChunkLines.modCount -0.04662860778293915*new_ln + 0.008795754177605806*newChunkLines.size + 0.010561478446595609*newChunkLines.elementData.length + 0.007539471002435337*new_n >= -0.9099267279865132
+Accuracy: 1.0
+
+
+difflib.DiffUtils:102
+suspiciousness: 0.85
+Logic: 1.0*m.to >= 1.0
+Accuracy: 1.0
+
+
+difflib.DiffUtils:103
+suspiciousness: 0.85
+Logic: 1.0*m.to >= 1.0
+Accuracy: 1.0
+
+
+difflib.DiffUtils:156
+suspiciousness: 0.85
+Logic: 0.009593601848430387*rawChunk.elementData.length + 0.007256698834069138*rawChunk.size + 0.004796800924215193*rawChunk.modCount >= 0.9459537412343347
+Accuracy: 1.0
+
+
+difflib.DiffUtils:94
+suspiciousness: 0.85
+Logic: 0.016028023953293807*diff.elementData.length -0.014959489023074219*diff.modCount + 0.01976789620906236*diff.size >= 1.5736848184808967
+Accuracy: 1.0
+
+
+difflib.DiffUtils:152
+suspiciousness: 0.85
+Logic: 0.009593601848430387*rawChunk.elementData.length + 0.007256698834069138*rawChunk.size + 0.004796800924215193*rawChunk.modCount >= 0.9459537412343347
+Accuracy: 1.0
+
+
+difflib.DiffUtils:137
+suspiciousness: 0.85
+Logic: 1.0*length >= 1.0
+Accuracy: 1.0
+
+
+difflib.DiffUtils:138
+suspiciousness: 0.85
+Logic: 1.0*length >= 1.0
+Accuracy: 1.0
+
+
+difflib.DiffUtils:142
+suspiciousness: 0.85
+Logic: 0.009593601848430387*rawChunk.elementData.length + 0.007256698834069138*rawChunk.size + 0.004796800924215193*rawChunk.modCount >= 0.9459537412343347
+Accuracy: 1.0
+
+
+difflib.DiffUtils:128
+suspiciousness: 0.85
+Logic: 0.0993998511270795*m.groups.max + 0.0993998511270795*m.oldLast + 0.0993998511270795*m.last + 0.22584177380120352*m.groups.sum + 0.0993998511270795*m.to -0.04765880813623102*old_ln >= 23.7660241643682
+Accuracy: 1.0
+
+
+difflib.DiffUtils:125
+suspiciousness: 0.85
+Logic: 0.041379310344827586*old_n + 0.008620689655172414*m.groups.max + 0.008620689655172414*m.oldLast + 0.008620689655172414*m.last + 0.008620689655172414*m.to + 0.03793103448275861*m.groups.sum >= 4.906896551724137
+Accuracy: 1.0
+
+2015-06-23 11:03:50 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\rev25\target\classes\difflib\DiffUtils$1.class
+2015-06-23 11:03:50 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\rev25\target\classes\difflib\DiffUtils.class

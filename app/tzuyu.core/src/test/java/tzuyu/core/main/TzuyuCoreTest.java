@@ -45,6 +45,7 @@ public abstract class TzuyuCoreTest extends AbstractTzTest {
 		params.setUseSlicer(useSlicer);
 		params.setGenTest(true);
 		params.setRunMutation(true);
+		params.setMachineLearningEnable(true);
 		return params;
 	}
 

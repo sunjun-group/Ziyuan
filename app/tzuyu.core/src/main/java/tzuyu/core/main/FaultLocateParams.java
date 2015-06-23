@@ -28,6 +28,7 @@ public class FaultLocateParams {
 	private int numberOfTestCases = 100;
 	private int rankToExamine = Integer.MAX_VALUE;
 	private boolean mutationEnable;
+	private boolean machineLearningEnable;
 
 	public List<String> getTestingClassNames() {
 		return testingClassNames;
@@ -114,4 +115,13 @@ public class FaultLocateParams {
 	public void setRunMutation(boolean runMutation) {
 		this.mutationEnable = runMutation;
 	}
+
+	public boolean isMachineLearningEnable() {
+		return machineLearningEnable;
+	}
+
+	public void setMachineLearningEnable(boolean machineLearningEnable) {
+		this.machineLearningEnable = machineLearningEnable;
+	}
+	
 }

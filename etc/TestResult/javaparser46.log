@@ -1,0 +1,651 @@
+2015-06-23 12:08:22 [INFO ] root:33 	Running TARANTULA
+2015-06-23 12:08:23 [DEBUG] root:61 	start cmd..
+2015-06-23 12:08:23 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin sav.strategies.junit.JunitRunner -methods japa.parser.ast.test.TestDumper.testClassComments japa.parser.ast.test.TestDumper.testDumpVisitor japa.parser.ast.test.TestDumper.testJavadoc japa.parser.ast.test.TestDumper.testComments japa.parser.ast.test.TestIssue46.testCommentsIssue46 -testingpkgs japa.parser -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult6429560971128274039.temp
+2015-06-23 12:08:23 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 12:08:23 [DEBUG] root:61 	-ea
+2015-06-23 12:08:23 [DEBUG] root:61 	-cp
+2015-06-23 12:08:23 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin
+2015-06-23 12:08:23 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 12:08:23 [DEBUG] root:61 	-methods
+2015-06-23 12:08:23 [DEBUG] root:61 	japa.parser.ast.test.TestDumper.testClassComments
+2015-06-23 12:08:23 [DEBUG] root:61 	japa.parser.ast.test.TestDumper.testDumpVisitor
+2015-06-23 12:08:23 [DEBUG] root:61 	japa.parser.ast.test.TestDumper.testJavadoc
+2015-06-23 12:08:23 [DEBUG] root:61 	japa.parser.ast.test.TestDumper.testComments
+2015-06-23 12:08:23 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46.testCommentsIssue46
+2015-06-23 12:08:23 [DEBUG] root:61 	-testingpkgs
+2015-06-23 12:08:23 [DEBUG] root:61 	japa.parser
+2015-06-23 12:08:23 [DEBUG] root:61 	-destfile
+2015-06-23 12:08:23 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult6429560971128274039.temp
+2015-06-23 12:08:24 [DEBUG] root:61 	failureTraces= japa.parser.ast.test.TestIssue46:19
+2015-06-23 12:08:24 [INFO ] root:33 	Slicing-creating trace file...
+2015-06-23 12:08:24 [DEBUG] root:61 	start cmd..
+2015-06-23 12:08:24 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\tracer.jar=tracefile:C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer4558053423318301829.trace -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin sav.strategies.junit.JunitRunner -methods japa.parser.ast.test.TestIssue46.testCommentsIssue46
+2015-06-23 12:08:24 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 12:08:24 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\tracer.jar=tracefile:C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer4558053423318301829.trace
+2015-06-23 12:08:24 [DEBUG] root:61 	-cp
+2015-06-23 12:08:24 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin
+2015-06-23 12:08:24 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 12:08:24 [DEBUG] root:61 	-methods
+2015-06-23 12:08:24 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46.testCommentsIssue46
+2015-06-23 12:08:49 [INFO ] root:33 	Slicing-slicing...
+2015-06-23 12:08:49 [DEBUG] root:61 	traceFilePath= C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer4558053423318301829.trace
+2015-06-23 12:08:49 [INFO ] root:33 	entry points= japa.parser.ast.test.TestIssue46:19
+2015-06-23 12:09:01 [DEBUG] root:61 	Read Slicing Result:
+2015-06-23 12:09:01 [DEBUG] root:61 	slicing-result:
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:920
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:919
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:922
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:918
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1731
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1733
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1734
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1735
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1736
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1727
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1729
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1730
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:405
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:4998
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1752
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1742
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9800
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9806
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:604
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9805
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1745
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9804
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:401
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1764
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:4819
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:288
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:291
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:4821
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:4807
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:5001
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:4999
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:4809
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1756
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2311
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:415
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1759
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2313
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:5003
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9788
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1760
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2314
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ast.test.Helper:62
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:579
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ast.test.Helper:66
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:407
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:577
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:309
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:307
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:408
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ast.test.Helper:58
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:330
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ast.test.Helper:77
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:326
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ast.test.Helper:70
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:321
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:315
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2226
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:7593
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2220
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:340
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2232
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2231
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:335
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2227
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:7576
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:7579
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2236
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:560
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:562
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:362
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:347
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:348
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:7590
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:7573
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2198
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:476
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2196
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:222
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:7570
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9900
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2202
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2199
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9901
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2200
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2189
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:7565
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9903
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2190
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:7566
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2187
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9905
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:7564
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2188
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:230
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:223
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2192
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2214
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:510
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2212
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:7556
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:7555
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1597
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1600
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1599
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2216
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2215
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1601
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1130
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:246
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2203
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2210
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2208
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2207
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9930
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2165
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9933
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2168
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:528
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9934
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:529
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2169
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2170
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:530
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9938
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2157
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9935
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9936
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaParser:94
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:535
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9941
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaParser:81
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:269
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:424
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:421
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaParser:75
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2174
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaParser:76
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:416
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaParser:77
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2175
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:434
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:432
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9960
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2130
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2127
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2154
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2153
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:448
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2149
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9943
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:176
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6669
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6939
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9955
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6668
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9958
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9957
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6936
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:454
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6935
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:453
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2140
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6938
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:452
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9954
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6937
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1131
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1132
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1133
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1134
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1677
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:459
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1137
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9992
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1139
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1144
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2120
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:479
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:490
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:481
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9990
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:9989
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:483
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1512
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1513
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1514
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1507
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:678
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1510
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:676
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1504
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1500
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:1502
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:384
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:117
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6718
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6717
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:108
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:110
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:377
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:382
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:647
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:648
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:628
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:614
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6796
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:7326
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2055
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6797
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:611
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:67
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2054
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:69
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:64
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:606
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:604
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:7329
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:60
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:61
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:56
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:58
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:57
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:590
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:588
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:318
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:317
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:7345
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:314
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:99
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:98
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:106
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:97
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ast.CompilationUnit:108
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:303
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:98
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:572
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:95
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:92
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:568
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:290
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:570
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:2065
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:7381
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ast.CompilationUnit:82
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:204
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:520
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:521
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:200
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:524
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser$GTToken:203
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:260
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:196
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:259
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:198
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:263
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser$GTToken:198
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:2004
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6852
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6853
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:208
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:210
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6832
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6831
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:170
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:167
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:293
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:8261
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:8256
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:163
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:8255
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:160
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:500
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:8258
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:161
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:752
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:190
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:753
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:267
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:188
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:8270
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:187
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:8265
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:8276
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:181
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:8271
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:8272
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6934
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6933
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:738
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:740
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:964
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:745
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:280
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:276
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream:278
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:924
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:224
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:926
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:704
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:220
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:2007
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6890
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:230
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:2012
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:6889
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser:2013
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:683
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:688
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager:689
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46:17
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46:18
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46:19
+2015-06-23 12:09:01 [DEBUG] root:61 	Slicing - create Trace file: 25163 ms
+2015-06-23 12:09:01 [DEBUG] root:61 	Slicing - slice: 1 ms
+2015-06-23 12:09:01 [DEBUG] root:61 	Slicing - read trace file: 12283 ms
+2015-06-23 12:09:01 [DEBUG] root:61 	Slicing Overall: 37447 ms
+2015-06-23 12:09:01 [DEBUG] root:61 	causeTraces= japa.parser.ASTParserTokenManager:920, japa.parser.ASTParserTokenManager:919, japa.parser.ASTParserTokenManager:922, japa.parser.ASTParserTokenManager:918, japa.parser.ASTParserTokenManager:1731, japa.parser.ASTParserTokenManager:1733, japa.parser.ASTParserTokenManager:1734, japa.parser.ASTParserTokenManager:1735, japa.parser.ASTParserTokenManager:1736, japa.parser.ASTParserTokenManager:1727, japa.parser.ASTParserTokenManager:1729, japa.parser.ASTParserTokenManager:1730, japa.parser.ASTParserTokenManager:405, japa.parser.ASTParser:4998, japa.parser.ASTParserTokenManager:1752, japa.parser.ASTParserTokenManager:1742, japa.parser.ASTParser:9800, japa.parser.ASTParser:604, japa.parser.ASTParser:9806, japa.parser.ASTParserTokenManager:1745, japa.parser.ASTParser:9805, japa.parser.ASTParser:9804, japa.parser.ASTParserTokenManager:401, japa.parser.ASTParserTokenManager:1764, japa.parser.ASTParser:4819, japa.parser.JavaCharStream:288, japa.parser.JavaCharStream:291, japa.parser.ASTParser:4821, japa.parser.ASTParser:4807, japa.parser.ASTParser:5001, japa.parser.ASTParser:4999, japa.parser.ASTParser:4809, japa.parser.ASTParserTokenManager:1756, japa.parser.ASTParserTokenManager:2311, japa.parser.ASTParserTokenManager:415, japa.parser.ASTParserTokenManager:1759, japa.parser.ASTParserTokenManager:2313, japa.parser.ASTParser:5003, japa.parser.ASTParser:9788, japa.parser.ASTParserTokenManager:1760, japa.parser.ASTParserTokenManager:2314, japa.parser.ast.test.Helper:62, japa.parser.ASTParser:579, japa.parser.ast.test.Helper:66, japa.parser.JavaCharStream:407, japa.parser.ASTParser:577, japa.parser.ASTParserTokenManager:309, japa.parser.ASTParserTokenManager:307, japa.parser.JavaCharStream:408, japa.parser.ast.test.Helper:58, japa.parser.ASTParserTokenManager:330, japa.parser.ast.test.Helper:77, japa.parser.ASTParserTokenManager:326, japa.parser.ASTParserTokenManager:321, japa.parser.ast.test.Helper:70, japa.parser.ASTParserTokenManager:315, japa.parser.ASTParserTokenManager:2226, japa.parser.ASTParser:7593, japa.parser.ASTParserTokenManager:340, japa.parser.ASTParserTokenManager:2220, japa.parser.ASTParserTokenManager:2232, japa.parser.ASTParserTokenManager:335, japa.parser.ASTParserTokenManager:2231, japa.parser.ASTParserTokenManager:2227, japa.parser.ASTParser:7576, japa.parser.ASTParser:7579, japa.parser.ASTParser:560, japa.parser.ASTParserTokenManager:2236, japa.parser.ASTParser:562, japa.parser.JavaCharStream:362, japa.parser.ASTParserTokenManager:347, japa.parser.ASTParserTokenManager:348, japa.parser.ASTParser:7590, japa.parser.ASTParser:7573, japa.parser.ASTParserTokenManager:2198, japa.parser.ASTParser:222, japa.parser.ASTParserTokenManager:2196, japa.parser.JavaCharStream:476, japa.parser.ASTParserTokenManager:2202, japa.parser.ASTParser:9900, japa.parser.ASTParser:7570, japa.parser.ASTParser:9901, japa.parser.ASTParserTokenManager:2199, japa.parser.ASTParserTokenManager:2200, japa.parser.ASTParser:9903, japa.parser.ASTParser:7565, japa.parser.ASTParserTokenManager:2189, japa.parser.ASTParser:7566, japa.parser.ASTParserTokenManager:2190, japa.parser.ASTParser:9905, japa.parser.ASTParserTokenManager:2187, japa.parser.ASTParser:230, japa.parser.ASTParserTokenManager:2188, japa.parser.ASTParser:7564, japa.parser.ASTParser:223, japa.parser.ASTParserTokenManager:2192, japa.parser.ASTParserTokenManager:2214, japa.parser.ASTParserTokenManager:510, japa.parser.ASTParserTokenManager:2212, japa.parser.ASTParser:7556, japa.parser.ASTParser:7555, japa.parser.ASTParserTokenManager:1597, japa.parser.ASTParserTokenManager:1600, japa.parser.ASTParserTokenManager:1599, japa.parser.ASTParserTokenManager:2216, japa.parser.ASTParserTokenManager:2215, japa.parser.ASTParserTokenManager:1601, japa.parser.ASTParserTokenManager:1130, japa.parser.ASTParser:246, japa.parser.ASTParserTokenManager:2203, japa.parser.ASTParserTokenManager:2210, japa.parser.ASTParserTokenManager:2208, japa.parser.ASTParserTokenManager:2207, japa.parser.ASTParser:9930, japa.parser.ASTParserTokenManager:2165, japa.parser.ASTParser:9933, japa.parser.ASTParserTokenManager:2168, japa.parser.ASTParserTokenManager:528, japa.parser.ASTParser:9934, japa.parser.ASTParserTokenManager:529, japa.parser.ASTParserTokenManager:2169, japa.parser.ASTParserTokenManager:2170, japa.parser.ASTParserTokenManager:530, japa.parser.ASTParser:9938, japa.parser.ASTParserTokenManager:2157, japa.parser.ASTParser:9935, japa.parser.ASTParser:9936, japa.parser.JavaParser:94, japa.parser.ASTParserTokenManager:535, japa.parser.ASTParser:9941, japa.parser.JavaParser:81, japa.parser.ASTParser:269, japa.parser.JavaCharStream:424, japa.parser.JavaCharStream:421, japa.parser.JavaParser:75, japa.parser.ASTParserTokenManager:2174, japa.parser.JavaParser:76, japa.parser.JavaCharStream:416, japa.parser.JavaParser:77, japa.parser.ASTParserTokenManager:2175, japa.parser.ASTParserTokenManager:434, japa.parser.ASTParserTokenManager:432, japa.parser.ASTParser:9960, japa.parser.ASTParserTokenManager:2130, japa.parser.ASTParserTokenManager:2127, japa.parser.ASTParserTokenManager:2154, japa.parser.ASTParserTokenManager:2153, japa.parser.ASTParserTokenManager:448, japa.parser.ASTParserTokenManager:2149, japa.parser.ASTParser:9943, japa.parser.ASTParser:176, japa.parser.ASTParser:6669, japa.parser.ASTParser:6939, japa.parser.ASTParser:9955, japa.parser.ASTParser:6668, japa.parser.ASTParser:9958, japa.parser.ASTParser:9957, japa.parser.ASTParser:6936, japa.parser.ASTParserTokenManager:454, japa.parser.ASTParser:6935, japa.parser.ASTParserTokenManager:453, japa.parser.ASTParserTokenManager:2140, japa.parser.ASTParser:6938, japa.parser.ASTParserTokenManager:452, japa.parser.ASTParser:9954, japa.parser.ASTParser:6937, japa.parser.ASTParserTokenManager:1131, japa.parser.ASTParserTokenManager:1132, japa.parser.ASTParserTokenManager:1133, japa.parser.ASTParserTokenManager:1134, japa.parser.ASTParserTokenManager:1677, japa.parser.ASTParserTokenManager:459, japa.parser.ASTParserTokenManager:1137, japa.parser.ASTParser:9992, japa.parser.ASTParserTokenManager:1139, japa.parser.ASTParserTokenManager:1144, japa.parser.ASTParserTokenManager:2120, japa.parser.ASTParserTokenManager:479, japa.parser.JavaCharStream:490, japa.parser.ASTParserTokenManager:481, japa.parser.ASTParser:9990, japa.parser.ASTParser:9989, japa.parser.ASTParserTokenManager:483, japa.parser.ASTParserTokenManager:1512, japa.parser.ASTParserTokenManager:1513, japa.parser.ASTParserTokenManager:1514, japa.parser.ASTParserTokenManager:1507, japa.parser.ASTParserTokenManager:678, japa.parser.ASTParserTokenManager:1510, japa.parser.ASTParserTokenManager:676, japa.parser.ASTParserTokenManager:1504, japa.parser.ASTParserTokenManager:1500, japa.parser.ASTParserTokenManager:1502, japa.parser.ASTParser:384, japa.parser.ASTParserTokenManager:117, japa.parser.ASTParser:6718, japa.parser.ASTParser:6717, japa.parser.ASTParserTokenManager:108, japa.parser.ASTParserTokenManager:110, japa.parser.ASTParser:377, japa.parser.ASTParser:382, japa.parser.ASTParserTokenManager:647, japa.parser.ASTParserTokenManager:648, japa.parser.ASTParserTokenManager:628, japa.parser.ASTParser:7326, japa.parser.ASTParser:6796, japa.parser.ASTParserTokenManager:614, japa.parser.ASTParserTokenManager:611, japa.parser.ASTParser:6797, japa.parser.ASTParserTokenManager:2055, japa.parser.ASTParserTokenManager:67, japa.parser.ASTParserTokenManager:2054, japa.parser.ASTParserTokenManager:69, japa.parser.ASTParserTokenManager:606, japa.parser.ASTParserTokenManager:64, japa.parser.ASTParserTokenManager:604, japa.parser.ASTParser:7329, japa.parser.ASTParserTokenManager:60, japa.parser.ASTParserTokenManager:61, japa.parser.ASTParserTokenManager:56, japa.parser.ASTParserTokenManager:58, japa.parser.ASTParserTokenManager:57, japa.parser.ASTParserTokenManager:590, japa.parser.ASTParser:318, japa.parser.ASTParserTokenManager:588, japa.parser.ASTParser:317, japa.parser.ASTParser:7345, japa.parser.ASTParser:314, japa.parser.JavaCharStream:99, japa.parser.ASTParserTokenManager:106, japa.parser.JavaCharStream:98, japa.parser.JavaCharStream:97, japa.parser.ast.CompilationUnit:108, japa.parser.ASTParser:303, japa.parser.ASTParserTokenManager:572, japa.parser.ASTParserTokenManager:98, japa.parser.ASTParserTokenManager:95, japa.parser.ASTParserTokenManager:92, japa.parser.ASTParser:290, japa.parser.ASTParserTokenManager:568, japa.parser.ASTParserTokenManager:570, japa.parser.ASTParser:7381, japa.parser.ASTParserTokenManager:2065, japa.parser.ast.CompilationUnit:82, japa.parser.ASTParser:520, japa.parser.JavaCharStream:204, japa.parser.ASTParser:521, japa.parser.ASTParser:524, japa.parser.JavaCharStream:200, japa.parser.ASTParser$GTToken:203, japa.parser.JavaCharStream:196, japa.parser.ASTParserTokenManager:260, japa.parser.ASTParserTokenManager:259, japa.parser.JavaCharStream:198, japa.parser.ASTParser$GTToken:198, japa.parser.ASTParserTokenManager:263, japa.parser.ASTParser:2004, japa.parser.ASTParser:6852, japa.parser.ASTParser:6853, japa.parser.JavaCharStream:208, japa.parser.JavaCharStream:210, japa.parser.ASTParser:6832, japa.parser.ASTParser:6831, japa.parser.JavaCharStream:170, japa.parser.ASTParserTokenManager:293, japa.parser.JavaCharStream:167, japa.parser.ASTParser:8261, japa.parser.ASTParser:8256, japa.parser.ASTParser:8255, japa.parser.JavaCharStream:163, japa.parser.ASTParser:8258, japa.parser.ASTParser:500, japa.parser.JavaCharStream:160, japa.parser.JavaCharStream:161, japa.parser.JavaCharStream:190, japa.parser.ASTParserTokenManager:752, japa.parser.ASTParserTokenManager:267, japa.parser.ASTParserTokenManager:753, japa.parser.ASTParser:8270, japa.parser.JavaCharStream:188, japa.parser.JavaCharStream:187, japa.parser.ASTParser:8265, japa.parser.ASTParser:8276, japa.parser.JavaCharStream:181, japa.parser.ASTParser:8271, japa.parser.ASTParser:8272, japa.parser.ASTParser:6934, japa.parser.ASTParser:6933, japa.parser.ASTParserTokenManager:738, japa.parser.ASTParser:964, japa.parser.ASTParserTokenManager:740, japa.parser.ASTParserTokenManager:745, japa.parser.JavaCharStream:280, japa.parser.JavaCharStream:276, japa.parser.JavaCharStream:278, japa.parser.ASTParser:924, japa.parser.ASTParser:926, japa.parser.ASTParserTokenManager:224, japa.parser.ASTParserTokenManager:704, japa.parser.ASTParserTokenManager:220, japa.parser.ASTParser:2007, japa.parser.ASTParser:2012, japa.parser.ASTParserTokenManager:230, japa.parser.ASTParser:6890, japa.parser.ASTParser:6889, japa.parser.ASTParser:2013, japa.parser.ASTParserTokenManager:683, japa.parser.ASTParserTokenManager:688, japa.parser.ASTParserTokenManager:689, japa.parser.ast.test.TestIssue46:17, japa.parser.ast.test.TestIssue46:18, japa.parser.ast.test.TestIssue46:19
+2015-06-23 12:09:01 [DEBUG] root:61 	Analyzing classes: 
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser
+japa.parser.JavaCharStream
+japa.parser.ast.test.Helper
+japa.parser.ASTParserTokenManager
+japa.parser.ast.test.TestIssue46
+japa.parser.ast.CompilationUnit
+japa.parser.ASTParser$GTToken
+japa.parser.JavaParser
+2015-06-23 12:09:01 [DEBUG] root:61 	RUNNING JACOCO..
+2015-06-23 12:09:01 [DEBUG] root:61 	Start vmRunner..
+2015-06-23 12:09:01 [DEBUG] root:61 	destfile= C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco7932309002477473353.exec
+2015-06-23 12:09:01 [DEBUG] root:61 	junitResultFile= C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2270942396188798916.txt
+2015-06-23 12:09:01 [DEBUG] root:61 	append=true
+2015-06-23 12:09:01 [DEBUG] root:61 	testMethods= [japa.parser.ast.test.TestDumper.testClassComments, japa.parser.ast.test.TestDumper.testDumpVisitor, japa.parser.ast.test.TestDumper.testJavadoc, japa.parser.ast.test.TestDumper.testComments, japa.parser.ast.test.TestIssue46.testCommentsIssue46]
+2015-06-23 12:09:01 [DEBUG] root:61 	allClassNames= [japa.parser.ASTParser, japa.parser.JavaCharStream, japa.parser.ast.test.Helper, japa.parser.ASTParserTokenManager, japa.parser.ast.test.TestIssue46, japa.parser.ast.CompilationUnit, japa.parser.ASTParser$GTToken, japa.parser.JavaParser, japa.parser.ast.test.TestDumper, japa.parser.ast.test.TestIssue46]
+2015-06-23 12:09:01 [DEBUG] root:61 	junitClassNames= [japa.parser.ast.test.TestDumper, japa.parser.ast.test.TestIssue46]
+2015-06-23 12:09:01 [DEBUG] root:61 	testingClassNames= [japa.parser.ASTParser, japa.parser.JavaCharStream, japa.parser.ast.test.Helper, japa.parser.ASTParserTokenManager, japa.parser.ast.test.TestIssue46, japa.parser.ast.CompilationUnit, japa.parser.ASTParser$GTToken, japa.parser.JavaParser]
+2015-06-23 12:09:01 [DEBUG] root:61 	start cmd..
+2015-06-23 12:09:01 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4970919733957179725.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco7932309002477473353.exec,includes=japa.parser.ASTParser:japa.parser.JavaCharStream:japa.parser.ast.test.Helper:japa.parser.ASTParserTokenManager:japa.parser.ast.test.TestIssue46:japa.parser.ast.CompilationUnit:japa.parser.ASTParser$GTToken:japa.parser.JavaParser -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods japa.parser.ast.test.TestDumper.testClassComments -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2270942396188798916.txt -testingclass japa.parser.ASTParser japa.parser.JavaCharStream japa.parser.ast.test.Helper japa.parser.ASTParserTokenManager japa.parser.ast.test.TestIssue46 japa.parser.ast.CompilationUnit japa.parser.ASTParser$GTToken japa.parser.JavaParser japa.parser.ast.test.TestDumper japa.parser.ast.test.TestIssue46
+2015-06-23 12:09:01 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 12:09:01 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4970919733957179725.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco7932309002477473353.exec,includes=japa.parser.ASTParser:japa.parser.JavaCharStream:japa.parser.ast.test.Helper:japa.parser.ASTParserTokenManager:japa.parser.ast.test.TestIssue46:japa.parser.ast.CompilationUnit:japa.parser.ASTParser$GTToken:japa.parser.JavaParser
+2015-06-23 12:09:01 [DEBUG] root:61 	-cp
+2015-06-23 12:09:01 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 12:09:01 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 12:09:01 [DEBUG] root:61 	-methods
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ast.test.TestDumper.testClassComments
+2015-06-23 12:09:01 [DEBUG] root:61 	-destfile
+2015-06-23 12:09:01 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2270942396188798916.txt
+2015-06-23 12:09:01 [DEBUG] root:61 	-testingclass
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaCharStream
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ast.test.Helper
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParserTokenManager
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ast.CompilationUnit
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ASTParser$GTToken
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.JavaParser
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ast.test.TestDumper
+2015-06-23 12:09:01 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46
+2015-06-23 12:09:02 [DEBUG] root:61 	start cmd..
+2015-06-23 12:09:02 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4970919733957179725.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco7932309002477473353.exec,includes=japa.parser.ASTParser:japa.parser.JavaCharStream:japa.parser.ast.test.Helper:japa.parser.ASTParserTokenManager:japa.parser.ast.test.TestIssue46:japa.parser.ast.CompilationUnit:japa.parser.ASTParser$GTToken:japa.parser.JavaParser -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods japa.parser.ast.test.TestDumper.testDumpVisitor -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2270942396188798916.txt -testingclass japa.parser.ASTParser japa.parser.JavaCharStream japa.parser.ast.test.Helper japa.parser.ASTParserTokenManager japa.parser.ast.test.TestIssue46 japa.parser.ast.CompilationUnit japa.parser.ASTParser$GTToken japa.parser.JavaParser japa.parser.ast.test.TestDumper japa.parser.ast.test.TestIssue46
+2015-06-23 12:09:02 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 12:09:02 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4970919733957179725.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco7932309002477473353.exec,includes=japa.parser.ASTParser:japa.parser.JavaCharStream:japa.parser.ast.test.Helper:japa.parser.ASTParserTokenManager:japa.parser.ast.test.TestIssue46:japa.parser.ast.CompilationUnit:japa.parser.ASTParser$GTToken:japa.parser.JavaParser
+2015-06-23 12:09:02 [DEBUG] root:61 	-cp
+2015-06-23 12:09:02 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 12:09:02 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 12:09:02 [DEBUG] root:61 	-methods
+2015-06-23 12:09:02 [DEBUG] root:61 	japa.parser.ast.test.TestDumper.testDumpVisitor
+2015-06-23 12:09:02 [DEBUG] root:61 	-destfile
+2015-06-23 12:09:02 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2270942396188798916.txt
+2015-06-23 12:09:02 [DEBUG] root:61 	-testingclass
+2015-06-23 12:09:02 [DEBUG] root:61 	japa.parser.ASTParser
+2015-06-23 12:09:02 [DEBUG] root:61 	japa.parser.JavaCharStream
+2015-06-23 12:09:02 [DEBUG] root:61 	japa.parser.ast.test.Helper
+2015-06-23 12:09:02 [DEBUG] root:61 	japa.parser.ASTParserTokenManager
+2015-06-23 12:09:02 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46
+2015-06-23 12:09:02 [DEBUG] root:61 	japa.parser.ast.CompilationUnit
+2015-06-23 12:09:02 [DEBUG] root:61 	japa.parser.ASTParser$GTToken
+2015-06-23 12:09:02 [DEBUG] root:61 	japa.parser.JavaParser
+2015-06-23 12:09:02 [DEBUG] root:61 	japa.parser.ast.test.TestDumper
+2015-06-23 12:09:02 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46
+2015-06-23 12:09:03 [DEBUG] root:61 	start cmd..
+2015-06-23 12:09:03 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4970919733957179725.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco7932309002477473353.exec,includes=japa.parser.ASTParser:japa.parser.JavaCharStream:japa.parser.ast.test.Helper:japa.parser.ASTParserTokenManager:japa.parser.ast.test.TestIssue46:japa.parser.ast.CompilationUnit:japa.parser.ASTParser$GTToken:japa.parser.JavaParser -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods japa.parser.ast.test.TestDumper.testJavadoc -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2270942396188798916.txt -testingclass japa.parser.ASTParser japa.parser.JavaCharStream japa.parser.ast.test.Helper japa.parser.ASTParserTokenManager japa.parser.ast.test.TestIssue46 japa.parser.ast.CompilationUnit japa.parser.ASTParser$GTToken japa.parser.JavaParser japa.parser.ast.test.TestDumper japa.parser.ast.test.TestIssue46
+2015-06-23 12:09:03 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 12:09:03 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4970919733957179725.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco7932309002477473353.exec,includes=japa.parser.ASTParser:japa.parser.JavaCharStream:japa.parser.ast.test.Helper:japa.parser.ASTParserTokenManager:japa.parser.ast.test.TestIssue46:japa.parser.ast.CompilationUnit:japa.parser.ASTParser$GTToken:japa.parser.JavaParser
+2015-06-23 12:09:03 [DEBUG] root:61 	-cp
+2015-06-23 12:09:03 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 12:09:03 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 12:09:03 [DEBUG] root:61 	-methods
+2015-06-23 12:09:03 [DEBUG] root:61 	japa.parser.ast.test.TestDumper.testJavadoc
+2015-06-23 12:09:03 [DEBUG] root:61 	-destfile
+2015-06-23 12:09:03 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2270942396188798916.txt
+2015-06-23 12:09:03 [DEBUG] root:61 	-testingclass
+2015-06-23 12:09:03 [DEBUG] root:61 	japa.parser.ASTParser
+2015-06-23 12:09:03 [DEBUG] root:61 	japa.parser.JavaCharStream
+2015-06-23 12:09:03 [DEBUG] root:61 	japa.parser.ast.test.Helper
+2015-06-23 12:09:03 [DEBUG] root:61 	japa.parser.ASTParserTokenManager
+2015-06-23 12:09:03 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46
+2015-06-23 12:09:03 [DEBUG] root:61 	japa.parser.ast.CompilationUnit
+2015-06-23 12:09:03 [DEBUG] root:61 	japa.parser.ASTParser$GTToken
+2015-06-23 12:09:03 [DEBUG] root:61 	japa.parser.JavaParser
+2015-06-23 12:09:03 [DEBUG] root:61 	japa.parser.ast.test.TestDumper
+2015-06-23 12:09:03 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46
+2015-06-23 12:09:04 [DEBUG] root:61 	start cmd..
+2015-06-23 12:09:04 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4970919733957179725.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco7932309002477473353.exec,includes=japa.parser.ASTParser:japa.parser.JavaCharStream:japa.parser.ast.test.Helper:japa.parser.ASTParserTokenManager:japa.parser.ast.test.TestIssue46:japa.parser.ast.CompilationUnit:japa.parser.ASTParser$GTToken:japa.parser.JavaParser -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods japa.parser.ast.test.TestDumper.testComments -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2270942396188798916.txt -testingclass japa.parser.ASTParser japa.parser.JavaCharStream japa.parser.ast.test.Helper japa.parser.ASTParserTokenManager japa.parser.ast.test.TestIssue46 japa.parser.ast.CompilationUnit japa.parser.ASTParser$GTToken japa.parser.JavaParser japa.parser.ast.test.TestDumper japa.parser.ast.test.TestIssue46
+2015-06-23 12:09:04 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 12:09:04 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4970919733957179725.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco7932309002477473353.exec,includes=japa.parser.ASTParser:japa.parser.JavaCharStream:japa.parser.ast.test.Helper:japa.parser.ASTParserTokenManager:japa.parser.ast.test.TestIssue46:japa.parser.ast.CompilationUnit:japa.parser.ASTParser$GTToken:japa.parser.JavaParser
+2015-06-23 12:09:04 [DEBUG] root:61 	-cp
+2015-06-23 12:09:04 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 12:09:04 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 12:09:04 [DEBUG] root:61 	-methods
+2015-06-23 12:09:04 [DEBUG] root:61 	japa.parser.ast.test.TestDumper.testComments
+2015-06-23 12:09:04 [DEBUG] root:61 	-destfile
+2015-06-23 12:09:04 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2270942396188798916.txt
+2015-06-23 12:09:04 [DEBUG] root:61 	-testingclass
+2015-06-23 12:09:04 [DEBUG] root:61 	japa.parser.ASTParser
+2015-06-23 12:09:04 [DEBUG] root:61 	japa.parser.JavaCharStream
+2015-06-23 12:09:04 [DEBUG] root:61 	japa.parser.ast.test.Helper
+2015-06-23 12:09:04 [DEBUG] root:61 	japa.parser.ASTParserTokenManager
+2015-06-23 12:09:04 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46
+2015-06-23 12:09:04 [DEBUG] root:61 	japa.parser.ast.CompilationUnit
+2015-06-23 12:09:04 [DEBUG] root:61 	japa.parser.ASTParser$GTToken
+2015-06-23 12:09:04 [DEBUG] root:61 	japa.parser.JavaParser
+2015-06-23 12:09:04 [DEBUG] root:61 	japa.parser.ast.test.TestDumper
+2015-06-23 12:09:04 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46
+2015-06-23 12:09:05 [DEBUG] root:61 	start cmd..
+2015-06-23 12:09:05 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4970919733957179725.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco7932309002477473353.exec,includes=japa.parser.ASTParser:japa.parser.JavaCharStream:japa.parser.ast.test.Helper:japa.parser.ASTParserTokenManager:japa.parser.ast.test.TestIssue46:japa.parser.ast.CompilationUnit:japa.parser.ASTParser$GTToken:japa.parser.JavaParser -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods japa.parser.ast.test.TestIssue46.testCommentsIssue46 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2270942396188798916.txt -testingclass japa.parser.ASTParser japa.parser.JavaCharStream japa.parser.ast.test.Helper japa.parser.ASTParserTokenManager japa.parser.ast.test.TestIssue46 japa.parser.ast.CompilationUnit japa.parser.ASTParser$GTToken japa.parser.JavaParser japa.parser.ast.test.TestDumper japa.parser.ast.test.TestIssue46
+2015-06-23 12:09:05 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 12:09:05 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent4970919733957179725.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco7932309002477473353.exec,includes=japa.parser.ASTParser:japa.parser.JavaCharStream:japa.parser.ast.test.Helper:japa.parser.ASTParserTokenManager:japa.parser.ast.test.TestIssue46:japa.parser.ast.CompilationUnit:japa.parser.ASTParser$GTToken:japa.parser.JavaParser
+2015-06-23 12:09:05 [DEBUG] root:61 	-cp
+2015-06-23 12:09:05 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 12:09:05 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 12:09:05 [DEBUG] root:61 	-methods
+2015-06-23 12:09:05 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46.testCommentsIssue46
+2015-06-23 12:09:05 [DEBUG] root:61 	-destfile
+2015-06-23 12:09:05 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes2270942396188798916.txt
+2015-06-23 12:09:05 [DEBUG] root:61 	-testingclass
+2015-06-23 12:09:05 [DEBUG] root:61 	japa.parser.ASTParser
+2015-06-23 12:09:05 [DEBUG] root:61 	japa.parser.JavaCharStream
+2015-06-23 12:09:05 [DEBUG] root:61 	japa.parser.ast.test.Helper
+2015-06-23 12:09:05 [DEBUG] root:61 	japa.parser.ASTParserTokenManager
+2015-06-23 12:09:05 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46
+2015-06-23 12:09:05 [DEBUG] root:61 	japa.parser.ast.CompilationUnit
+2015-06-23 12:09:05 [DEBUG] root:61 	japa.parser.ASTParser$GTToken
+2015-06-23 12:09:05 [DEBUG] root:61 	japa.parser.JavaParser
+2015-06-23 12:09:05 [DEBUG] root:61 	japa.parser.ast.test.TestDumper
+2015-06-23 12:09:05 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46
+2015-06-23 12:09:06 [DEBUG] root:61 	read exec file  C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco7932309002477473353.exec
+2015-06-23 12:09:06 [DEBUG] root:61 	Session DELL5050-PC-97af73a5
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ASTParser$GTToken, id=7dfe27597682cdd0]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ASTParser, id=630d5cef6221dce8]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ASTParserTokenManager, id=05ec37ba78db37d0]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ast/CompilationUnit, id=4af54902128f0465]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/JavaCharStream, id=3c5596681c54e460]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/JavaParser, id=a56118afa81425a8]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ast/test/Helper, id=30725cc95831b53f]
+2015-06-23 12:09:06 [DEBUG] root:61 	Session DELL5050-PC-12789a15
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ASTParser$GTToken, id=7dfe27597682cdd0]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ASTParser, id=630d5cef6221dce8]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ASTParserTokenManager, id=05ec37ba78db37d0]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ast/CompilationUnit, id=4af54902128f0465]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/JavaCharStream, id=3c5596681c54e460]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/JavaParser, id=a56118afa81425a8]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ast/test/Helper, id=30725cc95831b53f]
+2015-06-23 12:09:06 [DEBUG] root:61 	Session DELL5050-PC-6472adab
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ASTParser$GTToken, id=7dfe27597682cdd0]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ASTParser, id=630d5cef6221dce8]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ASTParserTokenManager, id=05ec37ba78db37d0]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ast/CompilationUnit, id=4af54902128f0465]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/JavaCharStream, id=3c5596681c54e460]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/JavaParser, id=a56118afa81425a8]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ast/test/Helper, id=30725cc95831b53f]
+2015-06-23 12:09:06 [DEBUG] root:61 	Session DELL5050-PC-174a8c83
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ASTParser$GTToken, id=7dfe27597682cdd0]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ASTParser, id=630d5cef6221dce8]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ASTParserTokenManager, id=05ec37ba78db37d0]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ast/CompilationUnit, id=4af54902128f0465]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/JavaCharStream, id=3c5596681c54e460]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/JavaParser, id=a56118afa81425a8]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ast/test/Helper, id=30725cc95831b53f]
+2015-06-23 12:09:06 [DEBUG] root:61 	Session DELL5050-PC-10944460
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ASTParser$GTToken, id=7dfe27597682cdd0]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ASTParser, id=630d5cef6221dce8]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ASTParserTokenManager, id=05ec37ba78db37d0]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ast/test/TestIssue46, id=0811144ae880f327]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ast/CompilationUnit, id=4af54902128f0465]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/JavaCharStream, id=3c5596681c54e460]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/JavaParser, id=a56118afa81425a8]
+2015-06-23 12:09:06 [DEBUG] root:61 	ExecutionData[name=japa/parser/ast/test/Helper, id=30725cc95831b53f]
+2015-06-23 12:09:07 [DEBUG] root:61 	Collect coverage data - Read execFile: 24 ms
+2015-06-23 12:09:07 [DEBUG] root:61 	Collect coverage data - Analyze data and count code coverage: 769 ms
+2015-06-23 12:09:07 [DEBUG] root:61 	Collect coverage data Overall: 793 ms
+2015-06-23 12:09:07 [INFO ] root:33 	SpectrumAlgorithm: TARANTULA
+2015-06-23 12:09:07 [INFO ] root:33 	[japa.parser.ASTParserTokenManager:2220:1.0(P=0, F=1), japa.parser.ASTParserTokenManager:1764:0.8(P=1, F=1), japa.parser.ASTParserTokenManager:64:0.6666666666666666(P=2, F=1), japa.parser.ASTParserTokenManager:67:0.6666666666666666(P=2, F=1), japa.parser.ASTParserTokenManager:69:0.6666666666666666(P=2, F=1), japa.parser.ASTParserTokenManager:307:0.6666666666666666(P=2, F=1), japa.parser.ASTParserTokenManager:1742:0.6666666666666666(P=2, F=1), japa.parser.ASTParserTokenManager:1745:0.6666666666666666(P=2, F=1), japa.parser.ASTParserTokenManager:1752:0.6666666666666666(P=2, F=1), japa.parser.ASTParserTokenManager:1756:0.6666666666666666(P=2, F=1), japa.parser.ASTParserTokenManager:1759:0.6666666666666666(P=2, F=1), japa.parser.ASTParserTokenManager:1760:0.6666666666666666(P=2, F=1), japa.parser.ASTParserTokenManager:2187:0.6666666666666666(P=2, F=1), japa.parser.ASTParserTokenManager:2188:0.6666666666666666(P=2, F=1), japa.parser.ASTParserTokenManager:2189:0.6666666666666666(P=2, F=1), japa.parser.ASTParserTokenManager:2190:0.6666666666666666(P=2, F=1), japa.parser.ASTParserTokenManager:2192:0.6666666666666666(P=2, F=1), japa.parser.ASTParserTokenManager:57:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:58:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:60:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:61:0.5714285714285714(P=3, F=1), japa.parser.ast.test.Helper:62:0.5714285714285714(P=3, F=1), japa.parser.ast.test.Helper:66:0.5714285714285714(P=3, F=1), japa.parser.ast.test.Helper:70:0.5714285714285714(P=3, F=1), japa.parser.ast.test.Helper:77:0.5714285714285714(P=3, F=1), japa.parser.ast.CompilationUnit:108:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:315:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:348:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:405:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:432:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:453:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:2210:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:2212:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:2214:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:2215:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:2216:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:2226:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:2227:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:2231:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:2232:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:2236:0.5714285714285714(P=3, F=1), japa.parser.ASTParserTokenManager:56:0.5(P=4, F=1), japa.parser.ast.test.Helper:58:0.5(P=4, F=1), japa.parser.JavaParser:75:0.5(P=4, F=1), japa.parser.JavaParser:76:0.5(P=4, F=1), japa.parser.JavaParser:77:0.5(P=4, F=1), japa.parser.JavaParser:81:0.5(P=4, F=1), japa.parser.ast.CompilationUnit:82:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:92:0.5(P=4, F=1), japa.parser.JavaParser:94:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:95:0.5(P=4, F=1), japa.parser.JavaCharStream:97:0.5(P=4, F=1), japa.parser.JavaCharStream:98:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:98:0.5(P=4, F=1), japa.parser.JavaCharStream:99:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:106:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:108:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:110:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:117:0.5(P=4, F=1), japa.parser.JavaCharStream:160:0.5(P=4, F=1), japa.parser.JavaCharStream:161:0.5(P=4, F=1), japa.parser.JavaCharStream:163:0.5(P=4, F=1), japa.parser.JavaCharStream:167:0.5(P=4, F=1), japa.parser.JavaCharStream:170:0.5(P=4, F=1), japa.parser.ASTParser:176:0.5(P=4, F=1), japa.parser.JavaCharStream:181:0.5(P=4, F=1), japa.parser.JavaCharStream:187:0.5(P=4, F=1), japa.parser.JavaCharStream:188:0.5(P=4, F=1), japa.parser.JavaCharStream:190:0.5(P=4, F=1), japa.parser.JavaCharStream:196:0.5(P=4, F=1), japa.parser.JavaCharStream:198:0.5(P=4, F=1), japa.parser.ASTParser$GTToken:198:0.5(P=4, F=1), japa.parser.JavaCharStream:200:0.5(P=4, F=1), japa.parser.ASTParser$GTToken:203:0.5(P=4, F=1), japa.parser.JavaCharStream:204:0.5(P=4, F=1), japa.parser.JavaCharStream:208:0.5(P=4, F=1), japa.parser.JavaCharStream:210:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:220:0.5(P=4, F=1), japa.parser.ASTParser:222:0.5(P=4, F=1), japa.parser.ASTParser:223:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:224:0.5(P=4, F=1), japa.parser.ASTParser:230:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:230:0.5(P=4, F=1), japa.parser.ASTParser:246:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:259:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:260:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:263:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:267:0.5(P=4, F=1), japa.parser.ASTParser:269:0.5(P=4, F=1), japa.parser.JavaCharStream:276:0.5(P=4, F=1), japa.parser.JavaCharStream:278:0.5(P=4, F=1), japa.parser.JavaCharStream:280:0.5(P=4, F=1), japa.parser.JavaCharStream:288:0.5(P=4, F=1), japa.parser.ASTParser:290:0.5(P=4, F=1), japa.parser.JavaCharStream:291:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:293:0.5(P=4, F=1), japa.parser.ASTParser:303:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:309:0.5(P=4, F=1), japa.parser.ASTParser:314:0.5(P=4, F=1), japa.parser.ASTParser:317:0.5(P=4, F=1), japa.parser.ASTParser:318:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:321:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:326:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:330:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:335:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:340:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:347:0.5(P=4, F=1), japa.parser.JavaCharStream:362:0.5(P=4, F=1), japa.parser.ASTParser:377:0.5(P=4, F=1), japa.parser.ASTParser:382:0.5(P=4, F=1), japa.parser.ASTParser:384:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:401:0.5(P=4, F=1), japa.parser.JavaCharStream:407:0.5(P=4, F=1), japa.parser.JavaCharStream:408:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:415:0.5(P=4, F=1), japa.parser.JavaCharStream:416:0.5(P=4, F=1), japa.parser.JavaCharStream:421:0.5(P=4, F=1), japa.parser.JavaCharStream:424:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:434:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:448:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:452:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:454:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:459:0.5(P=4, F=1), japa.parser.JavaCharStream:476:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:479:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:481:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:483:0.5(P=4, F=1), japa.parser.JavaCharStream:490:0.5(P=4, F=1), japa.parser.ASTParser:500:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:510:0.5(P=4, F=1), japa.parser.ASTParser:520:0.5(P=4, F=1), japa.parser.ASTParser:521:0.5(P=4, F=1), japa.parser.ASTParser:524:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:528:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:529:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:530:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:535:0.5(P=4, F=1), japa.parser.ASTParser:560:0.5(P=4, F=1), japa.parser.ASTParser:562:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:568:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:570:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:572:0.5(P=4, F=1), japa.parser.ASTParser:577:0.5(P=4, F=1), japa.parser.ASTParser:579:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:588:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:590:0.5(P=4, F=1), japa.parser.ASTParser:604:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:604:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:606:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:611:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:614:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:628:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:647:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:648:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:676:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:678:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:683:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:688:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:689:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:704:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:738:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:740:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:745:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:752:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:753:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:918:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:919:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:920:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:922:0.5(P=4, F=1), japa.parser.ASTParser:924:0.5(P=4, F=1), japa.parser.ASTParser:926:0.5(P=4, F=1), japa.parser.ASTParser:964:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1130:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1131:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1132:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1133:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1134:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1137:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1139:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1144:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1500:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1502:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1504:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1507:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1510:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1512:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1513:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1514:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1597:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1599:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1600:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1601:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1677:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1727:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1729:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1730:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1731:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1733:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1734:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1735:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:1736:0.5(P=4, F=1), japa.parser.ASTParser:2004:0.5(P=4, F=1), japa.parser.ASTParser:2007:0.5(P=4, F=1), japa.parser.ASTParser:2012:0.5(P=4, F=1), japa.parser.ASTParser:2013:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2054:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2055:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2065:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2120:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2127:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2130:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2140:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2149:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2153:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2154:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2157:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2165:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2168:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2169:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2170:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2174:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2175:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2196:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2198:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2199:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2200:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2202:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2203:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2207:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2208:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2311:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2313:0.5(P=4, F=1), japa.parser.ASTParserTokenManager:2314:0.5(P=4, F=1), japa.parser.ASTParser:4807:0.5(P=4, F=1), japa.parser.ASTParser:4809:0.5(P=4, F=1), japa.parser.ASTParser:4819:0.5(P=4, F=1), japa.parser.ASTParser:4821:0.5(P=4, F=1), japa.parser.ASTParser:4998:0.5(P=4, F=1), japa.parser.ASTParser:4999:0.5(P=4, F=1), japa.parser.ASTParser:5001:0.5(P=4, F=1), japa.parser.ASTParser:5003:0.5(P=4, F=1), japa.parser.ASTParser:6668:0.5(P=4, F=1), japa.parser.ASTParser:6669:0.5(P=4, F=1), japa.parser.ASTParser:6717:0.5(P=4, F=1), japa.parser.ASTParser:6718:0.5(P=4, F=1), japa.parser.ASTParser:6796:0.5(P=4, F=1), japa.parser.ASTParser:6797:0.5(P=4, F=1), japa.parser.ASTParser:6831:0.5(P=4, F=1), japa.parser.ASTParser:6832:0.5(P=4, F=1), japa.parser.ASTParser:6852:0.5(P=4, F=1), japa.parser.ASTParser:6853:0.5(P=4, F=1), japa.parser.ASTParser:6889:0.5(P=4, F=1), japa.parser.ASTParser:6890:0.5(P=4, F=1), japa.parser.ASTParser:6933:0.5(P=4, F=1), japa.parser.ASTParser:6934:0.5(P=4, F=1), japa.parser.ASTParser:6935:0.5(P=4, F=1), japa.parser.ASTParser:6936:0.5(P=4, F=1), japa.parser.ASTParser:6937:0.5(P=4, F=1), japa.parser.ASTParser:6938:0.5(P=4, F=1), japa.parser.ASTParser:6939:0.5(P=4, F=1), japa.parser.ASTParser:7326:0.5(P=4, F=1), japa.parser.ASTParser:7329:0.5(P=4, F=1), japa.parser.ASTParser:7345:0.5(P=4, F=1), japa.parser.ASTParser:7381:0.5(P=4, F=1), japa.parser.ASTParser:7555:0.5(P=4, F=1), japa.parser.ASTParser:7556:0.5(P=4, F=1), japa.parser.ASTParser:7564:0.5(P=4, F=1), japa.parser.ASTParser:7565:0.5(P=4, F=1), japa.parser.ASTParser:7566:0.5(P=4, F=1), japa.parser.ASTParser:7570:0.5(P=4, F=1), japa.parser.ASTParser:7573:0.5(P=4, F=1), japa.parser.ASTParser:7576:0.5(P=4, F=1), japa.parser.ASTParser:7579:0.5(P=4, F=1), japa.parser.ASTParser:7590:0.5(P=4, F=1), japa.parser.ASTParser:7593:0.5(P=4, F=1), japa.parser.ASTParser:8255:0.5(P=4, F=1), japa.parser.ASTParser:8256:0.5(P=4, F=1), japa.parser.ASTParser:8258:0.5(P=4, F=1), japa.parser.ASTParser:8261:0.5(P=4, F=1), japa.parser.ASTParser:8265:0.5(P=4, F=1), japa.parser.ASTParser:8270:0.5(P=4, F=1), japa.parser.ASTParser:8271:0.5(P=4, F=1), japa.parser.ASTParser:8272:0.5(P=4, F=1), japa.parser.ASTParser:8276:0.5(P=4, F=1), japa.parser.ASTParser:9788:0.5(P=4, F=1), japa.parser.ASTParser:9800:0.5(P=4, F=1), japa.parser.ASTParser:9804:0.5(P=4, F=1), japa.parser.ASTParser:9805:0.5(P=4, F=1), japa.parser.ASTParser:9806:0.5(P=4, F=1), japa.parser.ASTParser:9900:0.5(P=4, F=1), japa.parser.ASTParser:9901:0.5(P=4, F=1), japa.parser.ASTParser:9903:0.5(P=4, F=1), japa.parser.ASTParser:9905:0.5(P=4, F=1), japa.parser.ASTParser:9930:0.5(P=4, F=1), japa.parser.ASTParser:9933:0.5(P=4, F=1), japa.parser.ASTParser:9934:0.5(P=4, F=1), japa.parser.ASTParser:9935:0.5(P=4, F=1), japa.parser.ASTParser:9936:0.5(P=4, F=1), japa.parser.ASTParser:9938:0.5(P=4, F=1), japa.parser.ASTParser:9941:0.5(P=4, F=1), japa.parser.ASTParser:9943:0.5(P=4, F=1), japa.parser.ASTParser:9954:0.5(P=4, F=1), japa.parser.ASTParser:9955:0.5(P=4, F=1), japa.parser.ASTParser:9957:0.5(P=4, F=1), japa.parser.ASTParser:9958:0.5(P=4, F=1), japa.parser.ASTParser:9960:0.5(P=4, F=1), japa.parser.ASTParser:9989:0.5(P=4, F=1), japa.parser.ASTParser:9990:0.5(P=4, F=1), japa.parser.ASTParser:9992:0.5(P=4, F=1)]
+2015-06-23 12:09:07 [INFO ] root:33 	Running Machine Learning
+2015-06-23 12:09:08 [DEBUG] root:61 	create backup folder  C:\Users\DELL50~1\AppData\Local\Temp\backup447616674964290677
+2015-06-23 12:09:08 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\javaparser\bin\japa\parser\ASTParserTokenManager.class
+2015-06-23 12:09:08 [DEBUG] root:61 	start cmd..
+2015-06-23 12:09:08 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin -d D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource82936389068032004\ASTParserTokenManager.java -g
+2015-06-23 12:09:08 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac
+2015-06-23 12:09:08 [DEBUG] root:61 	-classpath
+2015-06-23 12:09:08 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin
+2015-06-23 12:09:08 [DEBUG] root:61 	-d
+2015-06-23 12:09:08 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin
+2015-06-23 12:09:08 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource82936389068032004\ASTParserTokenManager.java
+2015-06-23 12:09:08 [DEBUG] root:61 	-g
+2015-06-23 12:09:09 [DEBUG] root:61 	start cmd..
+2015-06-23 12:09:09 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -agentlib:jdwp=transport=dt_socket,suspend=y,address=51140 -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin sav.strategies.junit.JunitRunner -methods japa.parser.ast.test.TestDumper.testClassComments japa.parser.ast.test.TestDumper.testDumpVisitor japa.parser.ast.test.TestDumper.testJavadoc japa.parser.ast.test.TestDumper.testComments japa.parser.ast.test.TestIssue46.testCommentsIssue46 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tcsExResult6254936212456205786.txt
+2015-06-23 12:09:09 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 12:09:09 [DEBUG] root:61 	-agentlib:jdwp=transport=dt_socket,suspend=y,address=51140
+2015-06-23 12:09:09 [DEBUG] root:61 	-ea
+2015-06-23 12:09:09 [DEBUG] root:61 	-cp
+2015-06-23 12:09:09 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\javaparser\bin
+2015-06-23 12:09:09 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 12:09:09 [DEBUG] root:61 	-methods
+2015-06-23 12:09:09 [DEBUG] root:61 	japa.parser.ast.test.TestDumper.testClassComments
+2015-06-23 12:09:09 [DEBUG] root:61 	japa.parser.ast.test.TestDumper.testDumpVisitor
+2015-06-23 12:09:09 [DEBUG] root:61 	japa.parser.ast.test.TestDumper.testJavadoc
+2015-06-23 12:09:09 [DEBUG] root:61 	japa.parser.ast.test.TestDumper.testComments
+2015-06-23 12:09:09 [DEBUG] root:61 	japa.parser.ast.test.TestIssue46.testCommentsIssue46
+2015-06-23 12:09:09 [DEBUG] root:61 	-destfile
+2015-06-23 12:09:09 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tcsExResult6254936212456205786.txt
+2015-06-23 12:09:18 [DEBUG] root:61 	RunTestcases:
+2015-06-23 12:09:18 [DEBUG] root:61 	null
+2015-06-23 12:09:18 [DEBUG] root:61 	testingClassNames = []
+2015-06-23 12:09:18 [DEBUG] root:61 	testingPkgs = []
+2015-06-23 12:09:18 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=2187, vars=[Variable [name=jjmatchedKind, fullName=jjmatchedKind, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 12:09:18 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 12:09:18 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 12:09:18 [INFO ] Engine:183 	Learn: japa.parser.ASTParserTokenManager:2197
+Could not learn anything.
+2015-06-23 12:09:18 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=1745, vars=[], charStart=0, charEnd=0]
+2015-06-23 12:09:18 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 12:09:18 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 12:09:18 [INFO ] Engine:183 	Learn: japa.parser.ASTParserTokenManager:1750
+Could not learn anything.
+2015-06-23 12:09:18 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=2189, vars=[Variable [name=curPos, fullName=curPos, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 12:09:20 [INFO ] Engine:183 	Learn: japa.parser.ASTParserTokenManager:2201
+Could not learn anything.
+2015-06-23 12:09:20 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=67, vars=[Variable [name=special, fullName=special.kind, scope=UNDEFINED], Variable [name=MULTI_LINE_COMMENT, fullName=MULTI_LINE_COMMENT, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 12:09:20 [INFO ] Engine:146 	This line is likely not a bug!
+2015-06-23 12:09:20 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=307, vars=[], charStart=0, charEnd=0]
+2015-06-23 12:09:20 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 12:09:20 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 12:09:20 [INFO ] Engine:183 	Learn: japa.parser.ASTParserTokenManager:310
+Could not learn anything.
+2015-06-23 12:09:20 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=2190, vars=[Variable [name=jjmatchedPos, fullName=jjmatchedPos, scope=UNDEFINED], Variable [name=jjmatchedKind, fullName=jjmatchedKind, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 12:09:22 [INFO ] Engine:183 	Learn: japa.parser.ASTParserTokenManager:2202
+Could not learn anything.
+2015-06-23 12:09:22 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=2188, vars=[Variable [name=jjmatchedPos, fullName=jjmatchedPos, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 12:09:22 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 12:09:22 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 12:09:22 [INFO ] Engine:183 	Learn: japa.parser.ASTParserTokenManager:2199
+Could not learn anything.
+2015-06-23 12:09:22 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=69, vars=[Variable [name=comments, fullName=comments, scope=UNDEFINED], Variable [name=comment, fullName=comment, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 12:09:22 [INFO ] Machine:242 	Reduced feature size from 8 to 6
+2015-06-23 12:09:22 [INFO ] Engine:183 	Learn: japa.parser.ASTParserTokenManager:70
+Logic:  -6.0*comment.endLine -6.0*comment.beginLine + 7.0*comment.beginColumn >= -55.0
+Accuracy: 1.0
+
+2015-06-23 12:09:22 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=64, vars=[Variable [name=special, fullName=special.kind, scope=UNDEFINED], Variable [name=SINGLE_LINE_COMMENT, fullName=SINGLE_LINE_COMMENT, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 12:09:22 [INFO ] Machine:242 	Reduced feature size from 2 to 1
+2015-06-23 12:09:24 [INFO ] Engine:183 	Learn: japa.parser.ASTParserTokenManager:64
+Could not learn anything.
+2015-06-23 12:09:24 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=2220, vars=[Variable [name=specialToken, fullName=specialToken, scope=UNDEFINED], Variable [name=specialToken, fullName=specialToken.next, scope=UNDEFINED], Variable [name=matchedToken, fullName=matchedToken, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 12:09:24 [INFO ] Engine:153 	This line is likely a bug!
+2015-06-23 12:09:24 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=1742, vars=[Variable [name=curChar, fullName=curChar, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 12:09:26 [INFO ] Engine:183 	Learn: japa.parser.ASTParserTokenManager:1745
+Could not learn anything.
+2015-06-23 12:09:26 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=1764, vars=[], charStart=0, charEnd=0]
+2015-06-23 12:09:26 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 12:09:26 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 12:09:26 [INFO ] Engine:183 	Learn: japa.parser.ASTParserTokenManager:1773
+Could not learn anything.
+2015-06-23 12:09:26 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=1759, vars=[Variable [name=active0, fullName=active0, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 12:09:26 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 12:09:26 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 12:09:26 [INFO ] Engine:183 	Learn: japa.parser.ASTParserTokenManager:1764
+Could not learn anything.
+2015-06-23 12:09:26 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=1760, vars=[], charStart=0, charEnd=0]
+2015-06-23 12:09:26 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 12:09:26 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 12:09:26 [INFO ] Engine:183 	Learn: japa.parser.ASTParserTokenManager:1767
+Could not learn anything.
+2015-06-23 12:09:26 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=1752, vars=[Variable [name=curChar, fullName=curChar, scope=UNDEFINED], Variable [name=input_stream, fullName=input_stream, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 12:09:26 [INFO ] Machine:242 	Reduced feature size from 35 to 13
+2015-06-23 12:09:26 [INFO ] Engine:183 	Learn: japa.parser.ASTParserTokenManager:1757
+Logic: 4.7853402419995635E-4*input_stream.buffer.sum -8.948400385099707E-6*input_stream.column + 9.893990111844914E-4*input_stream.bufcolumn.sum -7.904888472515988E-6*input_stream.bufline.max -1.3511384787933856E-5*input_stream.buffer.max -9.781067955743266E-6*input_stream.bufcolumn.max + 1.5995738529975143E-4*input_stream.bufpos + 8.65231339758589E-4*input_stream.maxNextCharInd + 0.0025021589893331835*input_stream.bufline.sum -6.426738595541331E-7*input_stream.nextCharBuf.min + 4.6724248606422295E-5*input_stream.line + 0.0012459987161510607*input_stream.nextCharInd -4.510430460025194E-5*input_stream.nextCharBuf.sum >= -1.334105632947658
+Accuracy: 1.0
+
+2015-06-23 12:09:26 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=2192, vars=[Variable [name=jjmatchedKind, fullName=jjmatchedKind, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 12:09:26 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 12:09:26 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 12:09:26 [INFO ] Engine:183 	Learn: japa.parser.ASTParserTokenManager:2205
+Could not learn anything.
+2015-06-23 12:09:26 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=japa.parser.ASTParserTokenManager, methodName=null, lineNo=1756, vars=[Variable [name=curChar, fullName=curChar, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 12:09:26 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 12:09:26 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 12:09:26 [INFO ] Engine:183 	Learn: japa.parser.ASTParserTokenManager:1761
+Could not learn anything.
+2015-06-23 12:09:26 [INFO ] root:33 	----------------FINISHED--------------------
+2015-06-23 12:09:26 [INFO ] root:33 	japa.parser.ASTParserTokenManager:2220
+suspiciousness: 1.00
+Logic: This line is likely a bug!
+Accuracy: 1.0
+
+
+japa.parser.ASTParserTokenManager:69
+suspiciousness: 0.67
+Logic:  -6.0*comment.endLine -6.0*comment.beginLine + 7.0*comment.beginColumn >= -55.0
+Accuracy: 1.0
+
+
+japa.parser.ASTParserTokenManager:1752
+suspiciousness: 0.67
+Logic: 4.7853402419995635E-4*input_stream.buffer.sum -8.948400385099707E-6*input_stream.column + 9.893990111844914E-4*input_stream.bufcolumn.sum -7.904888472515988E-6*input_stream.bufline.max -1.3511384787933856E-5*input_stream.buffer.max -9.781067955743266E-6*input_stream.bufcolumn.max + 1.5995738529975143E-4*input_stream.bufpos + 8.65231339758589E-4*input_stream.maxNextCharInd + 0.0025021589893331835*input_stream.bufline.sum -6.426738595541331E-7*input_stream.nextCharBuf.min + 4.6724248606422295E-5*input_stream.line + 0.0012459987161510607*input_stream.nextCharInd -4.510430460025194E-5*input_stream.nextCharBuf.sum >= -1.334105632947658
+Accuracy: 1.0
+
+2015-06-23 12:09:26 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\javaparser\bin\japa\parser\ASTParserTokenManager.class

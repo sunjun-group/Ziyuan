@@ -1,0 +1,659 @@
+2015-06-23 10:52:52 [INFO ] root:33 	Running TARANTULA
+2015-06-23 10:52:52 [DEBUG] root:61 	start cmd..
+2015-06-23 10:52:52 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes sav.strategies.junit.JunitRunner -methods diffutils.DiffRowGeneratorTest.testGenerator_IgnoreWhitespaces diffutils.DiffRowGeneratorTest.testGenerator_Default diffutils.DiffRowGeneratorTest.testGenerator_InlineDiff diffutils.issues.Issue18.testGenerateDiffRowsListOfStringListOfStringChange1 -testingpkgs difflib diffutils -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult6369414822990854994.temp
+2015-06-23 10:52:52 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 10:52:52 [DEBUG] root:61 	-ea
+2015-06-23 10:52:52 [DEBUG] root:61 	-cp
+2015-06-23 10:52:52 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes
+2015-06-23 10:52:52 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 10:52:52 [DEBUG] root:61 	-methods
+2015-06-23 10:52:52 [DEBUG] root:61 	diffutils.DiffRowGeneratorTest.testGenerator_IgnoreWhitespaces
+2015-06-23 10:52:52 [DEBUG] root:61 	diffutils.DiffRowGeneratorTest.testGenerator_Default
+2015-06-23 10:52:52 [DEBUG] root:61 	diffutils.DiffRowGeneratorTest.testGenerator_InlineDiff
+2015-06-23 10:52:52 [DEBUG] root:61 	diffutils.issues.Issue18.testGenerateDiffRowsListOfStringListOfStringChange1
+2015-06-23 10:52:52 [DEBUG] root:61 	-testingpkgs
+2015-06-23 10:52:52 [DEBUG] root:61 	difflib
+2015-06-23 10:52:52 [DEBUG] root:61 	diffutils
+2015-06-23 10:52:52 [DEBUG] root:61 	-destfile
+2015-06-23 10:52:52 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult6369414822990854994.temp
+2015-06-23 10:52:52 [DEBUG] root:61 	failureTraces= diffutils.issues.Issue18:32
+2015-06-23 10:52:52 [INFO ] root:33 	Slicing-creating trace file...
+2015-06-23 10:52:52 [DEBUG] root:61 	start cmd..
+2015-06-23 10:52:52 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\tracer.jar=tracefile:C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer7315958205552881842.trace -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes sav.strategies.junit.JunitRunner -methods diffutils.issues.Issue18.testGenerateDiffRowsListOfStringListOfStringChange1
+2015-06-23 10:52:52 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 10:52:52 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\tracer.jar=tracefile:C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer7315958205552881842.trace
+2015-06-23 10:52:52 [DEBUG] root:61 	-cp
+2015-06-23 10:52:52 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes
+2015-06-23 10:52:52 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 10:52:52 [DEBUG] root:61 	-methods
+2015-06-23 10:52:52 [DEBUG] root:61 	diffutils.issues.Issue18.testGenerateDiffRowsListOfStringListOfStringChange1
+2015-06-23 10:53:14 [INFO ] root:33 	Slicing-slicing...
+2015-06-23 10:53:14 [DEBUG] root:61 	traceFilePath= C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer7315958205552881842.trace
+2015-06-23 10:53:14 [INFO ] root:33 	entry points= diffutils.issues.Issue18:32
+2015-06-23 10:53:23 [DEBUG] root:61 	Read Slicing Result:
+2015-06-23 10:53:23 [DEBUG] root:61 	slicing-result:
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.Snake:90
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator$Builder:156
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.Snake:82
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator$Builder:148
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffUtils:51
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.ChangeDelta:34
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:285
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:80
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:288
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRow:31
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:298
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:297
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:296
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:237
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.issues.Issue18:33
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:242
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.issues.Issue18:34
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.issues.Issue18:16
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Delta:60
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.issues.Issue18:15
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:251
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRow:57
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.issues.Issue18:14
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.issues.Issue18:19
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.issues.Issue18:18
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Delta:61
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:260
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.issues.Issue18:24
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:259
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.issues.Issue18:22
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.issues.Issue18:21
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:264
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:266
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:265
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:131
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:336
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.StringUtills:71
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:343
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:132
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:342
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:339
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffUtils:107
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Delta:98
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:356
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Delta:112
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:304
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:306
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:94
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:300
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:301
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:311
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffUtils:78
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:105
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffUtils:77
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:314
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:307
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:310
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:320
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.StringUtills:63
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:319
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.StringUtills:68
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffUtils:76
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.StringUtills:67
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:43
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.StringUtills:69
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.StringUtills:60
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:324
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.StringUtills:59
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:323
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.StringUtills:61
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:212
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:198
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:196
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:427
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:169
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:200
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:201
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:191
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:161
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:195
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:192
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:193
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:184
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:186
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:175
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:174
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:176
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:179
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:178
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:165
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Chunk:100
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:166
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:167
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:168
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:169
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:170
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:157
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:158
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:160
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:161
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Chunk:104
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:162
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:163
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:218
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:214
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:273
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator$Builder:76
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Chunk:93
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Patch:76
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator$Builder:75
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:233
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:234
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:231
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator$Builder:86
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.DiffNode:50
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:230
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Patch:67
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:227
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:261
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:225
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:258
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.PathNode:86
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:226
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:259
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:377
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.PathNode:87
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:223
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:376
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:257
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:375
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:224
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.PathNode:85
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:254
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:221
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.DiffNode:42
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:249
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:251
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Chunk:50
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.PathNode:120
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:247
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:246
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:423
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:424
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:242
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:419
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:236
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:420
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff:233
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.PathNode:104
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Patch:30
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.PathNode:116
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.PathNode:117
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.PathNode:118
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.PathNode:119
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator$Builder:59
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator:189
+2015-06-23 10:53:23 [DEBUG] root:61 	Slicing - create Trace file: 21268 ms
+2015-06-23 10:53:23 [DEBUG] root:61 	Slicing - slice: 1 ms
+2015-06-23 10:53:23 [DEBUG] root:61 	Slicing - read trace file: 9156 ms
+2015-06-23 10:53:23 [DEBUG] root:61 	Slicing Overall: 30425 ms
+2015-06-23 10:53:23 [DEBUG] root:61 	causeTraces= difflib.myers.Snake:90, difflib.DiffRowGenerator$Builder:156, difflib.myers.Snake:82, difflib.DiffRowGenerator$Builder:148, difflib.DiffUtils:51, difflib.ChangeDelta:34, difflib.DiffRowGenerator:285, difflib.myers.MyersDiff:80, difflib.DiffRowGenerator:288, difflib.DiffRow:31, difflib.DiffRowGenerator:298, difflib.DiffRowGenerator:297, difflib.DiffRowGenerator:296, diffutils.issues.Issue18:32, difflib.DiffRowGenerator:237, diffutils.issues.Issue18:33, difflib.DiffRowGenerator:242, diffutils.issues.Issue18:34, diffutils.issues.Issue18:16, difflib.Delta:60, diffutils.issues.Issue18:15, difflib.DiffRowGenerator:251, difflib.DiffRow:57, diffutils.issues.Issue18:14, diffutils.issues.Issue18:19, diffutils.issues.Issue18:18, difflib.Delta:61, diffutils.issues.Issue18:24, difflib.DiffRowGenerator:260, difflib.DiffRowGenerator:259, diffutils.issues.Issue18:22, diffutils.issues.Issue18:21, difflib.DiffRowGenerator:264, difflib.DiffRowGenerator:266, difflib.DiffRowGenerator:265, difflib.myers.MyersDiff:131, difflib.DiffRowGenerator:336, difflib.DiffRowGenerator:343, difflib.StringUtills:71, difflib.DiffRowGenerator:342, difflib.myers.MyersDiff:132, difflib.DiffRowGenerator:339, difflib.DiffUtils:107, difflib.Delta:98, difflib.DiffRowGenerator:356, difflib.DiffRowGenerator:304, difflib.Delta:112, difflib.DiffRowGenerator:306, difflib.myers.MyersDiff:94, difflib.DiffRowGenerator:300, difflib.DiffRowGenerator:301, difflib.DiffRowGenerator:311, difflib.DiffUtils:78, difflib.myers.MyersDiff:105, difflib.DiffUtils:77, difflib.DiffRowGenerator:314, difflib.DiffRowGenerator:307, difflib.DiffRowGenerator:310, difflib.DiffRowGenerator:320, difflib.StringUtills:63, difflib.DiffRowGenerator:319, difflib.StringUtills:68, difflib.DiffUtils:76, difflib.StringUtills:67, difflib.DiffRowGenerator:43, difflib.StringUtills:69, difflib.StringUtills:60, difflib.DiffRowGenerator:324, difflib.StringUtills:59, difflib.DiffRowGenerator:323, difflib.StringUtills:61, difflib.myers.MyersDiff:212, difflib.myers.MyersDiff:198, difflib.myers.MyersDiff:196, difflib.DiffRowGenerator:427, difflib.DiffRowGenerator:169, difflib.myers.MyersDiff:200, difflib.myers.MyersDiff:201, difflib.myers.MyersDiff:191, difflib.DiffRowGenerator:161, difflib.myers.MyersDiff:195, difflib.myers.MyersDiff:192, difflib.myers.MyersDiff:193, difflib.myers.MyersDiff:184, difflib.myers.MyersDiff:186, difflib.myers.MyersDiff:175, difflib.myers.MyersDiff:174, difflib.myers.MyersDiff:176, difflib.myers.MyersDiff:179, difflib.myers.MyersDiff:178, difflib.myers.MyersDiff:165, difflib.Chunk:100, difflib.myers.MyersDiff:166, difflib.myers.MyersDiff:167, difflib.myers.MyersDiff:168, difflib.myers.MyersDiff:169, difflib.myers.MyersDiff:170, difflib.myers.MyersDiff:157, difflib.myers.MyersDiff:158, difflib.myers.MyersDiff:160, difflib.myers.MyersDiff:161, difflib.myers.MyersDiff:162, difflib.Chunk:104, difflib.myers.MyersDiff:163, difflib.DiffRowGenerator:218, difflib.DiffRowGenerator:214, difflib.myers.MyersDiff:273, difflib.Chunk:93, difflib.DiffRowGenerator$Builder:76, difflib.Patch:76, difflib.DiffRowGenerator$Builder:75, difflib.DiffRowGenerator:233, difflib.DiffRowGenerator:234, difflib.DiffRowGenerator:231, difflib.DiffRowGenerator$Builder:86, difflib.myers.DiffNode:50, difflib.Patch:67, difflib.DiffRowGenerator:230, difflib.DiffRowGenerator:227, difflib.myers.MyersDiff:261, difflib.myers.PathNode:86, difflib.myers.MyersDiff:258, difflib.DiffRowGenerator:225, difflib.myers.PathNode:87, difflib.DiffRowGenerator:377, difflib.myers.MyersDiff:259, difflib.DiffRowGenerator:226, difflib.DiffRowGenerator:376, difflib.DiffRowGenerator:223, difflib.myers.PathNode:85, difflib.DiffRowGenerator:224, difflib.DiffRowGenerator:375, difflib.myers.MyersDiff:257, difflib.myers.DiffNode:42, difflib.DiffRowGenerator:221, difflib.myers.MyersDiff:254, difflib.myers.MyersDiff:249, difflib.myers.MyersDiff:251, difflib.myers.PathNode:120, difflib.Chunk:50, difflib.myers.MyersDiff:247, difflib.myers.MyersDiff:246, difflib.DiffRowGenerator:423, difflib.DiffRowGenerator:424, difflib.myers.MyersDiff:242, difflib.DiffRowGenerator:419, difflib.DiffRowGenerator:420, difflib.myers.MyersDiff:236, difflib.myers.MyersDiff:233, difflib.myers.PathNode:104, difflib.myers.PathNode:116, difflib.Patch:30, difflib.myers.PathNode:117, difflib.myers.PathNode:118, difflib.myers.PathNode:119, difflib.DiffRowGenerator$Builder:59, difflib.DiffRowGenerator:189
+2015-06-23 10:53:23 [DEBUG] root:61 	Analyzing classes: 
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.DiffNode
+difflib.StringUtills
+difflib.ChangeDelta
+difflib.DiffUtils
+difflib.DiffRowGenerator
+difflib.Patch
+difflib.Chunk
+difflib.DiffRow
+difflib.myers.MyersDiff
+difflib.myers.Snake
+difflib.DiffRowGenerator$Builder
+difflib.myers.PathNode
+difflib.Delta
+diffutils.issues.Issue18
+2015-06-23 10:53:23 [DEBUG] root:61 	RUNNING JACOCO..
+2015-06-23 10:53:23 [DEBUG] root:61 	Start vmRunner..
+2015-06-23 10:53:23 [DEBUG] root:61 	destfile= C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco4041651414783523883.exec
+2015-06-23 10:53:23 [DEBUG] root:61 	junitResultFile= C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8234578319518150919.txt
+2015-06-23 10:53:23 [DEBUG] root:61 	append=true
+2015-06-23 10:53:23 [DEBUG] root:61 	testMethods= [diffutils.DiffRowGeneratorTest.testGenerator_IgnoreWhitespaces, diffutils.DiffRowGeneratorTest.testGenerator_Default, diffutils.DiffRowGeneratorTest.testGenerator_InlineDiff, diffutils.issues.Issue18.testGenerateDiffRowsListOfStringListOfStringChange1]
+2015-06-23 10:53:23 [DEBUG] root:61 	allClassNames= [difflib.myers.DiffNode, difflib.StringUtills, difflib.ChangeDelta, difflib.DiffUtils, difflib.DiffRowGenerator, difflib.Patch, difflib.Chunk, difflib.DiffRow, difflib.myers.MyersDiff, difflib.myers.Snake, difflib.DiffRowGenerator$Builder, difflib.myers.PathNode, difflib.Delta, diffutils.issues.Issue18, diffutils.DiffRowGeneratorTest, diffutils.issues.Issue18]
+2015-06-23 10:53:23 [DEBUG] root:61 	junitClassNames= [diffutils.DiffRowGeneratorTest, diffutils.issues.Issue18]
+2015-06-23 10:53:23 [DEBUG] root:61 	testingClassNames= [difflib.myers.DiffNode, difflib.StringUtills, difflib.ChangeDelta, difflib.DiffUtils, difflib.DiffRowGenerator, difflib.Patch, difflib.Chunk, difflib.DiffRow, difflib.myers.MyersDiff, difflib.myers.Snake, difflib.DiffRowGenerator$Builder, difflib.myers.PathNode, difflib.Delta, diffutils.issues.Issue18]
+2015-06-23 10:53:23 [DEBUG] root:61 	start cmd..
+2015-06-23 10:53:23 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent5088481875028447312.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco4041651414783523883.exec,includes=difflib.myers.DiffNode:difflib.StringUtills:difflib.ChangeDelta:difflib.DiffUtils:difflib.DiffRowGenerator:difflib.Patch:difflib.Chunk:difflib.DiffRow:difflib.myers.MyersDiff:difflib.myers.Snake:difflib.DiffRowGenerator$Builder:difflib.myers.PathNode:difflib.Delta:diffutils.issues.Issue18 -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutils.DiffRowGeneratorTest.testGenerator_IgnoreWhitespaces -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8234578319518150919.txt -testingclass difflib.myers.DiffNode difflib.StringUtills difflib.ChangeDelta difflib.DiffUtils difflib.DiffRowGenerator difflib.Patch difflib.Chunk difflib.DiffRow difflib.myers.MyersDiff difflib.myers.Snake difflib.DiffRowGenerator$Builder difflib.myers.PathNode difflib.Delta diffutils.issues.Issue18 diffutils.DiffRowGeneratorTest diffutils.issues.Issue18
+2015-06-23 10:53:23 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 10:53:23 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent5088481875028447312.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco4041651414783523883.exec,includes=difflib.myers.DiffNode:difflib.StringUtills:difflib.ChangeDelta:difflib.DiffUtils:difflib.DiffRowGenerator:difflib.Patch:difflib.Chunk:difflib.DiffRow:difflib.myers.MyersDiff:difflib.myers.Snake:difflib.DiffRowGenerator$Builder:difflib.myers.PathNode:difflib.Delta:diffutils.issues.Issue18
+2015-06-23 10:53:23 [DEBUG] root:61 	-cp
+2015-06-23 10:53:23 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 10:53:23 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 10:53:23 [DEBUG] root:61 	-methods
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.DiffRowGeneratorTest.testGenerator_IgnoreWhitespaces
+2015-06-23 10:53:23 [DEBUG] root:61 	-destfile
+2015-06-23 10:53:23 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8234578319518150919.txt
+2015-06-23 10:53:23 [DEBUG] root:61 	-testingclass
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.StringUtills
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.ChangeDelta
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Patch
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Chunk
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRow
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator$Builder
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Delta
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.issues.Issue18
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.DiffRowGeneratorTest
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.issues.Issue18
+2015-06-23 10:53:23 [DEBUG] root:61 	start cmd..
+2015-06-23 10:53:23 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent5088481875028447312.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco4041651414783523883.exec,includes=difflib.myers.DiffNode:difflib.StringUtills:difflib.ChangeDelta:difflib.DiffUtils:difflib.DiffRowGenerator:difflib.Patch:difflib.Chunk:difflib.DiffRow:difflib.myers.MyersDiff:difflib.myers.Snake:difflib.DiffRowGenerator$Builder:difflib.myers.PathNode:difflib.Delta:diffutils.issues.Issue18 -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutils.DiffRowGeneratorTest.testGenerator_Default -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8234578319518150919.txt -testingclass difflib.myers.DiffNode difflib.StringUtills difflib.ChangeDelta difflib.DiffUtils difflib.DiffRowGenerator difflib.Patch difflib.Chunk difflib.DiffRow difflib.myers.MyersDiff difflib.myers.Snake difflib.DiffRowGenerator$Builder difflib.myers.PathNode difflib.Delta diffutils.issues.Issue18 diffutils.DiffRowGeneratorTest diffutils.issues.Issue18
+2015-06-23 10:53:23 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 10:53:23 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent5088481875028447312.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco4041651414783523883.exec,includes=difflib.myers.DiffNode:difflib.StringUtills:difflib.ChangeDelta:difflib.DiffUtils:difflib.DiffRowGenerator:difflib.Patch:difflib.Chunk:difflib.DiffRow:difflib.myers.MyersDiff:difflib.myers.Snake:difflib.DiffRowGenerator$Builder:difflib.myers.PathNode:difflib.Delta:diffutils.issues.Issue18
+2015-06-23 10:53:23 [DEBUG] root:61 	-cp
+2015-06-23 10:53:23 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 10:53:23 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 10:53:23 [DEBUG] root:61 	-methods
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.DiffRowGeneratorTest.testGenerator_Default
+2015-06-23 10:53:23 [DEBUG] root:61 	-destfile
+2015-06-23 10:53:23 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8234578319518150919.txt
+2015-06-23 10:53:23 [DEBUG] root:61 	-testingclass
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.StringUtills
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.ChangeDelta
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Patch
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Chunk
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRow
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.DiffRowGenerator$Builder
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 10:53:23 [DEBUG] root:61 	difflib.Delta
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.issues.Issue18
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.DiffRowGeneratorTest
+2015-06-23 10:53:23 [DEBUG] root:61 	diffutils.issues.Issue18
+2015-06-23 10:53:24 [DEBUG] root:61 	start cmd..
+2015-06-23 10:53:24 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent5088481875028447312.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco4041651414783523883.exec,includes=difflib.myers.DiffNode:difflib.StringUtills:difflib.ChangeDelta:difflib.DiffUtils:difflib.DiffRowGenerator:difflib.Patch:difflib.Chunk:difflib.DiffRow:difflib.myers.MyersDiff:difflib.myers.Snake:difflib.DiffRowGenerator$Builder:difflib.myers.PathNode:difflib.Delta:diffutils.issues.Issue18 -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutils.DiffRowGeneratorTest.testGenerator_InlineDiff -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8234578319518150919.txt -testingclass difflib.myers.DiffNode difflib.StringUtills difflib.ChangeDelta difflib.DiffUtils difflib.DiffRowGenerator difflib.Patch difflib.Chunk difflib.DiffRow difflib.myers.MyersDiff difflib.myers.Snake difflib.DiffRowGenerator$Builder difflib.myers.PathNode difflib.Delta diffutils.issues.Issue18 diffutils.DiffRowGeneratorTest diffutils.issues.Issue18
+2015-06-23 10:53:24 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 10:53:24 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent5088481875028447312.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco4041651414783523883.exec,includes=difflib.myers.DiffNode:difflib.StringUtills:difflib.ChangeDelta:difflib.DiffUtils:difflib.DiffRowGenerator:difflib.Patch:difflib.Chunk:difflib.DiffRow:difflib.myers.MyersDiff:difflib.myers.Snake:difflib.DiffRowGenerator$Builder:difflib.myers.PathNode:difflib.Delta:diffutils.issues.Issue18
+2015-06-23 10:53:24 [DEBUG] root:61 	-cp
+2015-06-23 10:53:24 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 10:53:24 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 10:53:24 [DEBUG] root:61 	-methods
+2015-06-23 10:53:24 [DEBUG] root:61 	diffutils.DiffRowGeneratorTest.testGenerator_InlineDiff
+2015-06-23 10:53:24 [DEBUG] root:61 	-destfile
+2015-06-23 10:53:24 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8234578319518150919.txt
+2015-06-23 10:53:24 [DEBUG] root:61 	-testingclass
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.StringUtills
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.ChangeDelta
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.DiffRowGenerator
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.Patch
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.Chunk
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.DiffRow
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.DiffRowGenerator$Builder
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.Delta
+2015-06-23 10:53:24 [DEBUG] root:61 	diffutils.issues.Issue18
+2015-06-23 10:53:24 [DEBUG] root:61 	diffutils.DiffRowGeneratorTest
+2015-06-23 10:53:24 [DEBUG] root:61 	diffutils.issues.Issue18
+2015-06-23 10:53:24 [DEBUG] root:61 	start cmd..
+2015-06-23 10:53:24 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent5088481875028447312.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco4041651414783523883.exec,includes=difflib.myers.DiffNode:difflib.StringUtills:difflib.ChangeDelta:difflib.DiffUtils:difflib.DiffRowGenerator:difflib.Patch:difflib.Chunk:difflib.DiffRow:difflib.myers.MyersDiff:difflib.myers.Snake:difflib.DiffRowGenerator$Builder:difflib.myers.PathNode:difflib.Delta:diffutils.issues.Issue18 -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods diffutils.issues.Issue18.testGenerateDiffRowsListOfStringListOfStringChange1 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8234578319518150919.txt -testingclass difflib.myers.DiffNode difflib.StringUtills difflib.ChangeDelta difflib.DiffUtils difflib.DiffRowGenerator difflib.Patch difflib.Chunk difflib.DiffRow difflib.myers.MyersDiff difflib.myers.Snake difflib.DiffRowGenerator$Builder difflib.myers.PathNode difflib.Delta diffutils.issues.Issue18 diffutils.DiffRowGeneratorTest diffutils.issues.Issue18
+2015-06-23 10:53:24 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 10:53:24 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent5088481875028447312.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco4041651414783523883.exec,includes=difflib.myers.DiffNode:difflib.StringUtills:difflib.ChangeDelta:difflib.DiffUtils:difflib.DiffRowGenerator:difflib.Patch:difflib.Chunk:difflib.DiffRow:difflib.myers.MyersDiff:difflib.myers.Snake:difflib.DiffRowGenerator$Builder:difflib.myers.PathNode:difflib.Delta:diffutils.issues.Issue18
+2015-06-23 10:53:24 [DEBUG] root:61 	-cp
+2015-06-23 10:53:24 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-06-23 10:53:24 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 10:53:24 [DEBUG] root:61 	-methods
+2015-06-23 10:53:24 [DEBUG] root:61 	diffutils.issues.Issue18.testGenerateDiffRowsListOfStringListOfStringChange1
+2015-06-23 10:53:24 [DEBUG] root:61 	-destfile
+2015-06-23 10:53:24 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes8234578319518150919.txt
+2015-06-23 10:53:24 [DEBUG] root:61 	-testingclass
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.myers.DiffNode
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.StringUtills
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.ChangeDelta
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.DiffUtils
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.DiffRowGenerator
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.Patch
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.Chunk
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.DiffRow
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.myers.MyersDiff
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.myers.Snake
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.DiffRowGenerator$Builder
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.myers.PathNode
+2015-06-23 10:53:24 [DEBUG] root:61 	difflib.Delta
+2015-06-23 10:53:24 [DEBUG] root:61 	diffutils.issues.Issue18
+2015-06-23 10:53:24 [DEBUG] root:61 	diffutils.DiffRowGeneratorTest
+2015-06-23 10:53:24 [DEBUG] root:61 	diffutils.issues.Issue18
+2015-06-23 10:53:25 [DEBUG] root:61 	read exec file  C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco4041651414783523883.exec
+2015-06-23 10:53:25 [DEBUG] root:61 	Session DELL5050-PC-39602d59
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=53763b2fa26b4764]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/DiffRowGenerator$Builder, id=ca5cb397ad19a9e5]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=36e3415b8f1663fb]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/DiffRowGenerator, id=e280de7207df289a]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=02e8254bcff6ca92]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=e1cbe9ad0fd0b714]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/Delta, id=c3628a35cea1acfc]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/StringUtills, id=ef09c1fb2199eda9]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/Chunk, id=33c74ae69b2e5470]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=9e7ce7fc72f1039c]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/ChangeDelta, id=6d27eee668bd9ea8]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/DiffRow, id=e3a0a00cb1e18cc4]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/Patch, id=e301dc55c0e66a19]
+2015-06-23 10:53:25 [DEBUG] root:61 	Session DELL5050-PC-94562c90
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=53763b2fa26b4764]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/DiffRowGenerator$Builder, id=ca5cb397ad19a9e5]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=36e3415b8f1663fb]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/DiffRowGenerator, id=e280de7207df289a]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=02e8254bcff6ca92]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=e1cbe9ad0fd0b714]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/Delta, id=c3628a35cea1acfc]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/StringUtills, id=ef09c1fb2199eda9]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/Chunk, id=33c74ae69b2e5470]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=9e7ce7fc72f1039c]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/ChangeDelta, id=6d27eee668bd9ea8]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/DiffRow, id=e3a0a00cb1e18cc4]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/Patch, id=e301dc55c0e66a19]
+2015-06-23 10:53:25 [DEBUG] root:61 	Session DELL5050-PC-e64af374
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=53763b2fa26b4764]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/DiffRowGenerator$Builder, id=ca5cb397ad19a9e5]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=36e3415b8f1663fb]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/DiffRowGenerator, id=e280de7207df289a]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=02e8254bcff6ca92]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=e1cbe9ad0fd0b714]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/Delta, id=c3628a35cea1acfc]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/StringUtills, id=ef09c1fb2199eda9]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/Chunk, id=33c74ae69b2e5470]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=9e7ce7fc72f1039c]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/ChangeDelta, id=6d27eee668bd9ea8]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/DiffRow, id=e3a0a00cb1e18cc4]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/Patch, id=e301dc55c0e66a19]
+2015-06-23 10:53:25 [DEBUG] root:61 	Session DELL5050-PC-20deae6c
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/myers/PathNode, id=53763b2fa26b4764]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/DiffRowGenerator$Builder, id=ca5cb397ad19a9e5]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/myers/MyersDiff, id=36e3415b8f1663fb]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/DiffRowGenerator, id=e280de7207df289a]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/myers/Snake, id=02e8254bcff6ca92]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/DiffUtils, id=e1cbe9ad0fd0b714]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/Delta, id=c3628a35cea1acfc]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/StringUtills, id=ef09c1fb2199eda9]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/Chunk, id=33c74ae69b2e5470]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/myers/DiffNode, id=9e7ce7fc72f1039c]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=diffutils/issues/Issue18, id=af835b7cb38f7347]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/ChangeDelta, id=6d27eee668bd9ea8]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/DiffRow, id=e3a0a00cb1e18cc4]
+2015-06-23 10:53:25 [DEBUG] root:61 	ExecutionData[name=difflib/Patch, id=e301dc55c0e66a19]
+2015-06-23 10:53:25 [DEBUG] root:61 	Collect coverage data - Read execFile: 24 ms
+2015-06-23 10:53:25 [DEBUG] root:61 	Collect coverage data - Analyze data and count code coverage: 292 ms
+2015-06-23 10:53:25 [DEBUG] root:61 	Collect coverage data Overall: 316 ms
+2015-06-23 10:53:25 [INFO ] root:33 	SpectrumAlgorithm: TARANTULA
+2015-06-23 10:53:25 [INFO ] root:33 	[difflib.DiffRowGenerator:323:1.0(P=0, F=1), difflib.DiffRowGenerator:324:1.0(P=0, F=1), difflib.DiffUtils:51:0.75(P=1, F=1), difflib.DiffRow:57:0.75(P=1, F=1), difflib.DiffRowGenerator$Builder:75:0.75(P=1, F=1), difflib.DiffRowGenerator$Builder:76:0.75(P=1, F=1), difflib.DiffRowGenerator$Builder:86:0.75(P=1, F=1), difflib.myers.MyersDiff:94:0.75(P=1, F=1), difflib.DiffRowGenerator:260:0.75(P=1, F=1), difflib.DiffRowGenerator:296:0.75(P=1, F=1), difflib.DiffRowGenerator:297:0.75(P=1, F=1), difflib.DiffRowGenerator:298:0.75(P=1, F=1), difflib.DiffRowGenerator:300:0.75(P=1, F=1), difflib.DiffRowGenerator:301:0.75(P=1, F=1), difflib.DiffRowGenerator:304:0.75(P=1, F=1), difflib.DiffRowGenerator:306:0.75(P=1, F=1), difflib.DiffRowGenerator:307:0.75(P=1, F=1), difflib.DiffRowGenerator:310:0.75(P=1, F=1), difflib.DiffRowGenerator:311:0.75(P=1, F=1), difflib.DiffRowGenerator:314:0.75(P=1, F=1), difflib.DiffRowGenerator:319:0.75(P=1, F=1), difflib.DiffRowGenerator:320:0.75(P=1, F=1), difflib.DiffRowGenerator:336:0.75(P=1, F=1), difflib.DiffRowGenerator:339:0.75(P=1, F=1), difflib.DiffRowGenerator:342:0.75(P=1, F=1), difflib.DiffRowGenerator:343:0.75(P=1, F=1), difflib.DiffRowGenerator:356:0.75(P=1, F=1), difflib.DiffRowGenerator:375:0.75(P=1, F=1), difflib.DiffRowGenerator:376:0.75(P=1, F=1), difflib.DiffRowGenerator:377:0.75(P=1, F=1), difflib.DiffRowGenerator:419:0.75(P=1, F=1), difflib.DiffRowGenerator:420:0.75(P=1, F=1), difflib.DiffRowGenerator:423:0.75(P=1, F=1), difflib.DiffRowGenerator:424:0.75(P=1, F=1), difflib.DiffRowGenerator:427:0.75(P=1, F=1), difflib.myers.MyersDiff:259:0.6000000000000001(P=2, F=1), difflib.DiffRowGenerator:265:0.6000000000000001(P=2, F=1), difflib.DiffRowGenerator:266:0.6000000000000001(P=2, F=1), difflib.Patch:30:0.5(P=3, F=1), difflib.DiffRow:31:0.5(P=3, F=1), difflib.ChangeDelta:34:0.5(P=3, F=1), difflib.myers.DiffNode:42:0.5(P=3, F=1), difflib.DiffRowGenerator:43:0.5(P=3, F=1), difflib.myers.DiffNode:50:0.5(P=3, F=1), difflib.Chunk:50:0.5(P=3, F=1), difflib.StringUtills:59:0.5(P=3, F=1), difflib.DiffRowGenerator$Builder:59:0.5(P=3, F=1), difflib.StringUtills:60:0.5(P=3, F=1), difflib.Delta:60:0.5(P=3, F=1), difflib.StringUtills:61:0.5(P=3, F=1), difflib.Delta:61:0.5(P=3, F=1), difflib.StringUtills:63:0.5(P=3, F=1), difflib.StringUtills:67:0.5(P=3, F=1), difflib.Patch:67:0.5(P=3, F=1), difflib.StringUtills:68:0.5(P=3, F=1), difflib.StringUtills:69:0.5(P=3, F=1), difflib.StringUtills:71:0.5(P=3, F=1), difflib.DiffUtils:76:0.5(P=3, F=1), difflib.Patch:76:0.5(P=3, F=1), difflib.DiffUtils:77:0.5(P=3, F=1), difflib.DiffUtils:78:0.5(P=3, F=1), difflib.myers.MyersDiff:80:0.5(P=3, F=1), difflib.myers.Snake:82:0.5(P=3, F=1), difflib.myers.PathNode:85:0.5(P=3, F=1), difflib.myers.PathNode:86:0.5(P=3, F=1), difflib.myers.PathNode:87:0.5(P=3, F=1), difflib.myers.Snake:90:0.5(P=3, F=1), difflib.Chunk:93:0.5(P=3, F=1), difflib.Delta:98:0.5(P=3, F=1), difflib.Chunk:100:0.5(P=3, F=1), difflib.Chunk:104:0.5(P=3, F=1), difflib.myers.PathNode:104:0.5(P=3, F=1), difflib.myers.MyersDiff:105:0.5(P=3, F=1), difflib.DiffUtils:107:0.5(P=3, F=1), difflib.Delta:112:0.5(P=3, F=1), difflib.myers.PathNode:116:0.5(P=3, F=1), difflib.myers.PathNode:117:0.5(P=3, F=1), difflib.myers.PathNode:118:0.5(P=3, F=1), difflib.myers.PathNode:119:0.5(P=3, F=1), difflib.myers.PathNode:120:0.5(P=3, F=1), difflib.myers.MyersDiff:131:0.5(P=3, F=1), difflib.myers.MyersDiff:132:0.5(P=3, F=1), difflib.DiffRowGenerator$Builder:148:0.5(P=3, F=1), difflib.DiffRowGenerator$Builder:156:0.5(P=3, F=1), difflib.myers.MyersDiff:157:0.5(P=3, F=1), difflib.myers.MyersDiff:158:0.5(P=3, F=1), difflib.myers.MyersDiff:160:0.5(P=3, F=1), difflib.DiffRowGenerator:161:0.5(P=3, F=1), difflib.myers.MyersDiff:161:0.5(P=3, F=1), difflib.myers.MyersDiff:162:0.5(P=3, F=1), difflib.myers.MyersDiff:163:0.5(P=3, F=1), difflib.myers.MyersDiff:165:0.5(P=3, F=1), difflib.myers.MyersDiff:166:0.5(P=3, F=1), difflib.myers.MyersDiff:167:0.5(P=3, F=1), difflib.myers.MyersDiff:168:0.5(P=3, F=1), difflib.DiffRowGenerator:169:0.5(P=3, F=1), difflib.myers.MyersDiff:169:0.5(P=3, F=1), difflib.myers.MyersDiff:170:0.5(P=3, F=1), difflib.myers.MyersDiff:174:0.5(P=3, F=1), difflib.myers.MyersDiff:175:0.5(P=3, F=1), difflib.myers.MyersDiff:176:0.5(P=3, F=1), difflib.myers.MyersDiff:178:0.5(P=3, F=1), difflib.myers.MyersDiff:179:0.5(P=3, F=1), difflib.myers.MyersDiff:184:0.5(P=3, F=1), difflib.myers.MyersDiff:186:0.5(P=3, F=1), difflib.DiffRowGenerator:189:0.5(P=3, F=1), difflib.myers.MyersDiff:191:0.5(P=3, F=1), difflib.myers.MyersDiff:192:0.5(P=3, F=1), difflib.myers.MyersDiff:193:0.5(P=3, F=1), difflib.myers.MyersDiff:195:0.5(P=3, F=1), difflib.myers.MyersDiff:196:0.5(P=3, F=1), difflib.myers.MyersDiff:198:0.5(P=3, F=1), difflib.myers.MyersDiff:200:0.5(P=3, F=1), difflib.myers.MyersDiff:201:0.5(P=3, F=1), difflib.myers.MyersDiff:212:0.5(P=3, F=1), difflib.DiffRowGenerator:214:0.5(P=3, F=1), difflib.DiffRowGenerator:218:0.5(P=3, F=1), difflib.DiffRowGenerator:221:0.5(P=3, F=1), difflib.DiffRowGenerator:223:0.5(P=3, F=1), difflib.DiffRowGenerator:224:0.5(P=3, F=1), difflib.DiffRowGenerator:225:0.5(P=3, F=1), difflib.DiffRowGenerator:226:0.5(P=3, F=1), difflib.DiffRowGenerator:227:0.5(P=3, F=1), difflib.DiffRowGenerator:230:0.5(P=3, F=1), difflib.DiffRowGenerator:231:0.5(P=3, F=1), difflib.DiffRowGenerator:233:0.5(P=3, F=1), difflib.myers.MyersDiff:233:0.5(P=3, F=1), difflib.DiffRowGenerator:234:0.5(P=3, F=1), difflib.myers.MyersDiff:236:0.5(P=3, F=1), difflib.DiffRowGenerator:237:0.5(P=3, F=1), difflib.DiffRowGenerator:242:0.5(P=3, F=1), difflib.myers.MyersDiff:242:0.5(P=3, F=1), difflib.myers.MyersDiff:246:0.5(P=3, F=1), difflib.myers.MyersDiff:247:0.5(P=3, F=1), difflib.myers.MyersDiff:249:0.5(P=3, F=1), difflib.DiffRowGenerator:251:0.5(P=3, F=1), difflib.myers.MyersDiff:251:0.5(P=3, F=1), difflib.myers.MyersDiff:254:0.5(P=3, F=1), difflib.myers.MyersDiff:257:0.5(P=3, F=1), difflib.myers.MyersDiff:258:0.5(P=3, F=1), difflib.DiffRowGenerator:259:0.5(P=3, F=1), difflib.myers.MyersDiff:261:0.5(P=3, F=1), difflib.DiffRowGenerator:264:0.5(P=3, F=1), difflib.myers.MyersDiff:273:0.5(P=3, F=1), difflib.DiffRowGenerator:285:0.5(P=3, F=1), difflib.DiffRowGenerator:288:0.5(P=3, F=1)]
+2015-06-23 10:53:25 [INFO ] root:33 	Running Machine Learning
+2015-06-23 10:53:26 [DEBUG] root:61 	create backup folder  C:\Users\DELL50~1\AppData\Local\Temp\backup6174267948376279556
+2015-06-23 10:53:26 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\DiffUtils.class
+2015-06-23 10:53:26 [DEBUG] root:61 	start cmd..
+2015-06-23 10:53:26 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes -d D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource1854945520746690705\DiffUtils.java -g
+2015-06-23 10:53:26 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac
+2015-06-23 10:53:26 [DEBUG] root:61 	-classpath
+2015-06-23 10:53:26 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes
+2015-06-23 10:53:26 [DEBUG] root:61 	-d
+2015-06-23 10:53:26 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes
+2015-06-23 10:53:26 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource1854945520746690705\DiffUtils.java
+2015-06-23 10:53:26 [DEBUG] root:61 	-g
+2015-06-23 10:53:27 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\DiffRowGenerator$1.class
+2015-06-23 10:53:27 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\DiffRowGenerator$Builder.class
+2015-06-23 10:53:27 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\DiffRowGenerator.class
+2015-06-23 10:53:27 [DEBUG] root:61 	start cmd..
+2015-06-23 10:53:27 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes -d D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource1854945520746690705\DiffRowGenerator.java -g
+2015-06-23 10:53:27 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac
+2015-06-23 10:53:27 [DEBUG] root:61 	-classpath
+2015-06-23 10:53:27 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes
+2015-06-23 10:53:27 [DEBUG] root:61 	-d
+2015-06-23 10:53:27 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes
+2015-06-23 10:53:27 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource1854945520746690705\DiffRowGenerator.java
+2015-06-23 10:53:27 [DEBUG] root:61 	-g
+2015-06-23 10:53:28 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\DiffRow$Tag.class
+2015-06-23 10:53:28 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\DiffRow.class
+2015-06-23 10:53:28 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\DiffRowGenerator$1.class
+2015-06-23 10:53:28 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\DiffRowGenerator$Builder.class
+2015-06-23 10:53:28 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\DiffRowGenerator.class
+2015-06-23 10:53:28 [DEBUG] root:61 	start cmd..
+2015-06-23 10:53:28 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes -d D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource1854945520746690705\DiffRow.java -g
+2015-06-23 10:53:28 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac
+2015-06-23 10:53:28 [DEBUG] root:61 	-classpath
+2015-06-23 10:53:28 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes
+2015-06-23 10:53:28 [DEBUG] root:61 	-d
+2015-06-23 10:53:28 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes
+2015-06-23 10:53:28 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource1854945520746690705\DiffRow.java
+2015-06-23 10:53:28 [DEBUG] root:61 	-g
+2015-06-23 10:53:29 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\myers\MyersDiff$1.class
+2015-06-23 10:53:29 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\myers\MyersDiff.class
+2015-06-23 10:53:29 [DEBUG] root:61 	start cmd..
+2015-06-23 10:53:29 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes -d D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource1854945520746690705\MyersDiff.java -g
+2015-06-23 10:53:29 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac
+2015-06-23 10:53:29 [DEBUG] root:61 	-classpath
+2015-06-23 10:53:29 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes
+2015-06-23 10:53:29 [DEBUG] root:61 	-d
+2015-06-23 10:53:29 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes
+2015-06-23 10:53:29 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource1854945520746690705\MyersDiff.java
+2015-06-23 10:53:29 [DEBUG] root:61 	-g
+2015-06-23 10:53:30 [DEBUG] root:61 	start cmd..
+2015-06-23 10:53:30 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -agentlib:jdwp=transport=dt_socket,suspend=y,address=50609 -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes sav.strategies.junit.JunitRunner -methods diffutils.DiffRowGeneratorTest.testGenerator_IgnoreWhitespaces diffutils.DiffRowGeneratorTest.testGenerator_Default diffutils.DiffRowGeneratorTest.testGenerator_InlineDiff diffutils.issues.Issue18.testGenerateDiffRowsListOfStringListOfStringChange1 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tcsExResult9004787179834417549.txt
+2015-06-23 10:53:30 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-06-23 10:53:30 [DEBUG] root:61 	-agentlib:jdwp=transport=dt_socket,suspend=y,address=50609
+2015-06-23 10:53:30 [DEBUG] root:61 	-ea
+2015-06-23 10:53:30 [DEBUG] root:61 	-cp
+2015-06-23 10:53:30 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\java-diff-utils\trunk/target/test-classes
+2015-06-23 10:53:30 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-06-23 10:53:30 [DEBUG] root:61 	-methods
+2015-06-23 10:53:30 [DEBUG] root:61 	diffutils.DiffRowGeneratorTest.testGenerator_IgnoreWhitespaces
+2015-06-23 10:53:30 [DEBUG] root:61 	diffutils.DiffRowGeneratorTest.testGenerator_Default
+2015-06-23 10:53:30 [DEBUG] root:61 	diffutils.DiffRowGeneratorTest.testGenerator_InlineDiff
+2015-06-23 10:53:30 [DEBUG] root:61 	diffutils.issues.Issue18.testGenerateDiffRowsListOfStringListOfStringChange1
+2015-06-23 10:53:30 [DEBUG] root:61 	-destfile
+2015-06-23 10:53:30 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tcsExResult9004787179834417549.txt
+2015-06-23 10:53:30 [WARN ] root:39 	Cannot add break point MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=266, vars=[Variable [name=rev, fullName=rev, scope=UNDEFINED], Variable [name=j, fullName=j, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [WARN ] root:39 	Cannot add break point MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=376, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [WARN ] root:39 	Cannot add break point MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=377, vars=[Variable [name=line, fullName=line, scope=UNDEFINED], Variable [name=tag, fullName=tag, scope=UNDEFINED], Variable [name=cssClass, fullName=cssClass, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [WARN ] root:39 	Cannot add break point MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=375, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [WARN ] root:39 	Cannot add break point MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=336, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [WARN ] root:39 	Cannot add break point MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=420, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [WARN ] root:39 	Cannot add break point MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=343, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [WARN ] root:39 	Cannot add break point MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=419, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [WARN ] root:39 	Cannot add break point MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=342, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [WARN ] root:39 	Cannot add break point MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=424, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [WARN ] root:39 	Cannot add break point MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=339, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [WARN ] root:39 	Cannot add break point MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=423, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [WARN ] root:39 	Cannot add break point MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=427, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [WARN ] root:39 	Cannot add break point MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=320, vars=[Variable [name=inlineOrig, fullName=inlineOrig, scope=UNDEFINED], Variable [name=InlineOldTag, fullName=InlineOldTag, scope=THIS], Variable [name=InlineOldCssClass, fullName=InlineOldCssClass, scope=THIS]], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [WARN ] root:39 	Cannot add break point MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=314, vars=[Variable [name=inlineDelta, fullName=inlineDelta, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [DEBUG] root:61 	RunTestcases:
+2015-06-23 10:53:30 [DEBUG] root:61 	[EQUAL,anything ,anything ]
+2015-06-23 10:53:30 [DEBUG] root:61 	[EQUAL, , ]
+2015-06-23 10:53:30 [DEBUG] root:61 	[EQUAL,other,other]
+2015-06-23 10:53:30 [DEBUG] root:61 	[CHANGE,more lines,some more lines]
+2015-06-23 10:53:30 [DEBUG] root:61 	[CHANGE,anything ,anything]
+2015-06-23 10:53:30 [DEBUG] root:61 	[CHANGE, ,]
+2015-06-23 10:53:30 [DEBUG] root:61 	[EQUAL,other,other]
+2015-06-23 10:53:30 [DEBUG] root:61 	[CHANGE,anything<span class="editOldInline"> </span>,anything]
+2015-06-23 10:53:30 [DEBUG] root:61 	[CHANGE,<span class="editOldInline"> </span>,]
+2015-06-23 10:53:30 [DEBUG] root:61 	[EQUAL,other,other]
+2015-06-23 10:53:30 [DEBUG] root:61 	testingClassNames = []
+2015-06-23 10:53:30 [DEBUG] root:61 	testingPkgs = []
+2015-06-23 10:53:30 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=266, vars=[Variable [name=rev, fullName=rev, scope=UNDEFINED], Variable [name=j, fullName=j, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=376, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=377, vars=[Variable [name=line, fullName=line, scope=UNDEFINED], Variable [name=tag, fullName=tag, scope=UNDEFINED], Variable [name=cssClass, fullName=cssClass, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=265, vars=[Variable [name=diffRows, fullName=diffRows, scope=UNDEFINED], Variable [name=Tag, fullName=Tag.CHANGE, scope=UNDEFINED], Variable [name=orig, fullName=orig, scope=UNDEFINED], Variable [name=j, fullName=j, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:30 [INFO ] Machine:242 	Reduced feature size from 8 to 4
+2015-06-23 10:53:32 [INFO ] Engine:183 	Learn: difflib.DiffRowGenerator:268
+Could not learn anything.
+2015-06-23 10:53:32 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=375, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:32 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=323, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:32 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 10:53:32 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 10:53:32 [INFO ] Engine:183 	Learn: difflib.DiffRowGenerator:333
+Could not learn anything.
+2015-06-23 10:53:32 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=324, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:32 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 10:53:32 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 10:53:32 [INFO ] Engine:183 	Learn: difflib.DiffRowGenerator:334
+Could not learn anything.
+2015-06-23 10:53:32 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffUtils, methodName=null, lineNo=51, vars=[Variable [name=DiffUtils, fullName=DiffUtils, scope=UNDEFINED], Variable [name=original, fullName=original, scope=UNDEFINED], Variable [name=revised, fullName=revised, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:32 [INFO ] Machine:242 	Reduced feature size from 6 to 4
+2015-06-23 10:53:32 [INFO ] Engine:183 	Learn: difflib.DiffUtils:53
+Logic: 0.1153846153846154*original.size + 0.07692307692307691*revised.modCount + 0.07692307692307691*revised.size + 0.1153846153846154*original.modCount >= 2.9230769230769234
+Accuracy: 1.0
+
+2015-06-23 10:53:32 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=336, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:32 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=420, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:32 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=343, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:32 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=419, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:32 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=342, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:32 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=424, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:32 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=339, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:32 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=356, vars=[Variable [name=startTag, fullName=startTag, scope=UNDEFINED], Variable [name=tagBuilder, fullName=tagBuilder, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:32 [INFO ] Machine:242 	Reduced feature size from 12 to 2
+2015-06-23 10:53:34 [INFO ] Engine:183 	Learn: difflib.DiffRowGenerator:365
+Could not learn anything.
+2015-06-23 10:53:34 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=423, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:34 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.myers.MyersDiff, methodName=null, lineNo=259, vars=[Variable [name=path, fullName=path, scope=UNDEFINED], Variable [name=path, fullName=path.prev, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.i
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.prev
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.j
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.i
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.prev
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.j
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.i
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.prev
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.j
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.i
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.prev
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.j
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.i
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.prev
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.j
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.i
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.prev
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev
+2015-06-23 10:53:34 [WARN ] BugExpert:161 	Cannot get value for variable name path.prev.j
+2015-06-23 10:53:36 [INFO ] Engine:183 	Learn: difflib.myers.MyersDiff:261
+Could not learn anything.
+2015-06-23 10:53:36 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=427, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:36 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=300, vars=[Variable [name=revList, fullName=revList, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:36 [INFO ] Machine:242 	Reduced feature size from 3 to 0
+2015-06-23 10:53:36 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 10:53:36 [INFO ] Engine:183 	Learn: difflib.DiffRowGenerator:305
+Could not learn anything.
+2015-06-23 10:53:36 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=301, vars=[Variable [name=character, fullName=character, scope=UNDEFINED], Variable [name=rev, fullName=rev, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:36 [INFO ] Machine:242 	Reduced feature size from 3 to 2
+2015-06-23 10:53:36 [INFO ] Engine:183 	Learn: difflib.DiffRowGenerator:306
+Logic: 1.0*rev.size + 1.0*rev.modCount >= 3.0
+Accuracy: 1.0
+
+2015-06-23 10:53:36 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.myers.MyersDiff, methodName=null, lineNo=94, vars=[Variable [name=equalizer, fullName=equalizer, scope=UNDEFINED], Variable [name=DEFAULT_EQUALIZER, fullName=DEFAULT_EQUALIZER, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:36 [INFO ] Machine:242 	Reduced feature size from 2 to 0
+2015-06-23 10:53:36 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 10:53:36 [INFO ] Engine:183 	Learn: difflib.myers.MyersDiff:95
+Could not learn anything.
+2015-06-23 10:53:36 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=296, vars=[Variable [name=origList, fullName=origList, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:36 [INFO ] Machine:242 	Reduced feature size from 3 to 0
+2015-06-23 10:53:36 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 10:53:36 [INFO ] Engine:183 	Learn: difflib.DiffRowGenerator:299
+Could not learn anything.
+2015-06-23 10:53:36 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=297, vars=[Variable [name=character, fullName=character, scope=UNDEFINED], Variable [name=orig, fullName=orig, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:36 [INFO ] Machine:242 	Reduced feature size from 3 to 2
+2015-06-23 10:53:36 [INFO ] Engine:183 	Learn: difflib.DiffRowGenerator:300
+Logic: 1.0*orig.modCount + 1.0*orig.size >= 3.0
+Accuracy: 1.0
+
+2015-06-23 10:53:36 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=298, vars=[Variable [name=origList, fullName=origList, scope=UNDEFINED], Variable [name=character, fullName=character, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:36 [INFO ] Machine:242 	Reduced feature size from 4 to 2
+2015-06-23 10:53:38 [INFO ] Engine:183 	Learn: difflib.DiffRowGenerator:302
+Could not learn anything.
+2015-06-23 10:53:38 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=306, vars=[Variable [name=Collections, fullName=Collections, scope=UNDEFINED], Variable [name=inlineDeltas, fullName=inlineDeltas, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:38 [INFO ] Machine:242 	Reduced feature size from 3 to 0
+2015-06-23 10:53:38 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 10:53:38 [INFO ] Engine:183 	Learn: difflib.DiffRowGenerator:313
+Could not learn anything.
+2015-06-23 10:53:38 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=307, vars=[Variable [name=inlineDelta, fullName=inlineDelta, scope=UNDEFINED], Variable [name=inlineDeltas, fullName=inlineDeltas, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:38 [INFO ] Machine:242 	Reduced feature size from 3 to 0
+2015-06-23 10:53:38 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 10:53:38 [INFO ] Engine:183 	Learn: difflib.DiffRowGenerator:314
+Could not learn anything.
+2015-06-23 10:53:38 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=304, vars=[Variable [name=inlineDeltas, fullName=inlineDeltas, scope=UNDEFINED], Variable [name=DiffUtils, fullName=DiffUtils, scope=UNDEFINED], Variable [name=origList, fullName=origList, scope=UNDEFINED], Variable [name=revList, fullName=revList, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:38 [INFO ] Machine:242 	Reduced feature size from 9 to 4
+2015-06-23 10:53:38 [INFO ] Engine:183 	Learn: difflib.DiffRowGenerator:310
+Logic: 0.07692307692307691*revList.modCount + 0.07692307692307691*revList.size + 0.1153846153846154*origList.modCount + 0.1153846153846154*origList.size >= 2.9230769230769234
+Accuracy: 1.0
+
+2015-06-23 10:53:38 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRow, methodName=null, lineNo=57, vars=[Variable [name=oldLine, fullName=oldLine, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:38 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-06-23 10:53:38 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 10:53:38 [INFO ] Engine:183 	Learn: difflib.DiffRow:57
+Could not learn anything.
+2015-06-23 10:53:38 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=311, vars=[Variable [name=origList, fullName=origList, scope=UNDEFINED], Variable [name=inlineOrig, fullName=inlineOrig.position, scope=UNDEFINED], Variable [name=inlineOrig, fullName=inlineOrig, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:38 [INFO ] Machine:242 	Reduced feature size from 5 to 3
+2015-06-23 10:53:38 [INFO ] Engine:183 	Learn: difflib.DiffRowGenerator:321
+Logic: 0.05555555555555555*inlineOrig.position + 0.1111111111111111*origList.modCount + 0.1111111111111111*origList.size >= 2.7777777777777777
+Accuracy: 1.0
+
+2015-06-23 10:53:38 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=310, vars=[Variable [name=inlineDelta, fullName=inlineDelta, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:38 [INFO ] Machine:242 	Reduced feature size from 2 to 0
+2015-06-23 10:53:38 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 10:53:38 [INFO ] Engine:183 	Learn: difflib.DiffRowGenerator:317
+Could not learn anything.
+2015-06-23 10:53:38 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=320, vars=[Variable [name=inlineOrig, fullName=inlineOrig, scope=UNDEFINED], Variable [name=InlineOldTag, fullName=InlineOldTag, scope=THIS], Variable [name=InlineOldCssClass, fullName=InlineOldCssClass, scope=THIS]], charStart=0, charEnd=0]
+2015-06-23 10:53:38 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=260, vars=[Variable [name=delta, fullName=delta, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:38 [INFO ] Machine:242 	Reduced feature size from 2 to 0
+2015-06-23 10:53:38 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-06-23 10:53:38 [INFO ] Engine:183 	Learn: difflib.DiffRowGenerator:261
+Could not learn anything.
+2015-06-23 10:53:38 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=319, vars=[], charStart=0, charEnd=0]
+2015-06-23 10:53:38 [INFO ] Engine:137 	Start to learn at MutationBreakPoint [classCanonicalName=difflib.DiffRowGenerator, methodName=null, lineNo=314, vars=[Variable [name=inlineDelta, fullName=inlineDelta, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-06-23 10:53:38 [INFO ] root:33 	----------------FINISHED--------------------
+2015-06-23 10:53:38 [INFO ] root:33 	difflib.DiffUtils:51
+suspiciousness: 0.75
+Logic: 0.1153846153846154*original.size + 0.07692307692307691*revised.modCount + 0.07692307692307691*revised.size + 0.1153846153846154*original.modCount >= 2.9230769230769234
+Accuracy: 1.0
+
+
+difflib.DiffRowGenerator:301
+suspiciousness: 0.75
+Logic: 1.0*rev.size + 1.0*rev.modCount >= 3.0
+Accuracy: 1.0
+
+
+difflib.DiffRowGenerator:297
+suspiciousness: 0.75
+Logic: 1.0*orig.modCount + 1.0*orig.size >= 3.0
+Accuracy: 1.0
+
+
+difflib.DiffRowGenerator:304
+suspiciousness: 0.75
+Logic: 0.07692307692307691*revList.modCount + 0.07692307692307691*revList.size + 0.1153846153846154*origList.modCount + 0.1153846153846154*origList.size >= 2.9230769230769234
+Accuracy: 1.0
+
+
+difflib.DiffRowGenerator:311
+suspiciousness: 0.75
+Logic: 0.05555555555555555*inlineOrig.position + 0.1111111111111111*origList.modCount + 0.1111111111111111*origList.size >= 2.7777777777777777
+Accuracy: 1.0
+
+2015-06-23 10:53:38 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\DiffUtils.class
+2015-06-23 10:53:38 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\DiffRowGenerator.class
+2015-06-23 10:53:38 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\DiffRowGenerator$Builder.class
+2015-06-23 10:53:38 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\DiffRow$Tag.class
+2015-06-23 10:53:38 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\myers\MyersDiff$1.class
+2015-06-23 10:53:38 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\DiffRowGenerator$1.class
+2015-06-23 10:53:38 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\myers\MyersDiff.class
+2015-06-23 10:53:38 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\java-diff-utils\trunk\target\classes\difflib\DiffRow.class
