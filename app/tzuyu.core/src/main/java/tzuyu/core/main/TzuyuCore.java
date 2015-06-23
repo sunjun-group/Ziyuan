@@ -159,7 +159,7 @@ public class TzuyuCore {
 		} else {
 			filter(suspectLocations, appData.getAppSrc());
 			Map<BreakPoint, Double> mapBkpToSuspeciousness = new HashMap<BreakPoint, Double>();
-			List<BreakPoint> breakpoints = new ArrayList<>();
+			List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
 			for (LineCoverageInfo lineInfo : suspectLocations) {
 				BreakPoint bkp = BreakpointUtils.toBreakPoint(lineInfo.getLocation());
 				breakpoints.add(bkp);
@@ -174,7 +174,7 @@ public class TzuyuCore {
 			MutanBug mutanbug = new MutanBug();
 			Map<BreakPoint, BreakPoint> mapNewToOldBkp = getNextLineToAddBreakpoint(mutanbug, BreakpointUtils.initBrkpsMap(breakpoints));
 			
-			List<BreakPoint> newBreakpoints = new ArrayList<>(mapNewToOldBkp.keySet());
+			List<BreakPoint> newBreakpoints = new ArrayList<BreakPoint>(mapNewToOldBkp.keySet());
 			
 			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig());
 			List<Result> invariants = learnInvariant.learn(newBreakpoints, junitClassNames, appData.getAppSrc());
