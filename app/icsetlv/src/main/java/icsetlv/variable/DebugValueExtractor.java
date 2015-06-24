@@ -147,9 +147,9 @@ public class DebugValueExtractor {
 	
 	private Value lookup(final StackFrame frame, final LocalVariable match, final String fullName) {
 		final Value value = frame.getValue(match);
-//		if (!match.name().equals(fullName)) {
-//			return lookup(value, extractSubProperty(fullName));
-//		}
+		if (!match.name().equals(fullName)) {
+			return lookup(value, extractSubProperty(fullName));
+		}
 		return value;
 	}
 	
