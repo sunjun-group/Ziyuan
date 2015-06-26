@@ -8,6 +8,8 @@
 
 package tzuyu.core.main;
 
+import icsetlv.variable.VariableNameCollector.VarNameCollectionMode;
+
 import java.util.List;
 
 import sav.common.core.utils.Assert;
@@ -29,6 +31,8 @@ public class FaultLocateParams {
 	private int rankToExamine = Integer.MAX_VALUE;
 	private boolean mutationEnable;
 	private boolean machineLearningEnable;
+	private int valueRetrieveLevel;
+	private VarNameCollectionMode varNameCollectionMode = VarNameCollectionMode.FULL_NAME;
 
 	public List<String> getTestingClassNames() {
 		return testingClassNames;
@@ -122,6 +126,22 @@ public class FaultLocateParams {
 
 	public void setMachineLearningEnable(boolean machineLearningEnable) {
 		this.machineLearningEnable = machineLearningEnable;
+	}
+
+	public int getValueRetrieveLevel() {
+		return valueRetrieveLevel;
+	}
+
+	public void setValueRetrieveLevel(int valueRetrieveLevel) {
+		this.valueRetrieveLevel = valueRetrieveLevel;
+	}
+
+	public VarNameCollectionMode getVarNameCollectionMode() {
+		return varNameCollectionMode;
+	}
+
+	public void setVarNameCollectionMode(VarNameCollectionMode varNameCollectionMode) {
+		this.varNameCollectionMode = varNameCollectionMode;
 	}
 	
 }

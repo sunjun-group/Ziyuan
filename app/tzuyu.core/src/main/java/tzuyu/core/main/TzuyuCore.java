@@ -167,7 +167,9 @@ public class TzuyuCore {
 			}
 			
 			//compute variables appearing in each breakpoint
-			VariableNameCollector nameCollector = new VariableNameCollector(appData.getAppSrc());
+			VariableNameCollector nameCollector = new VariableNameCollector(
+															params.getVarNameCollectionMode(),
+															appData.getAppSrc());
 			nameCollector.updateVariables(breakpoints);
 			
 			
@@ -176,7 +178,7 @@ public class TzuyuCore {
 			
 			List<BreakPoint> newBreakpoints = new ArrayList<BreakPoint>(mapNewToOldBkp.keySet());
 			
-			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig());
+			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig(), params);
 			List<Result> invariants = learnInvariant.learn(newBreakpoints, junitClassNames, appData.getAppSrc());
 			
 			List<BugLocalizationLine> bugLines = new ArrayList<BugLocalizationLine>();

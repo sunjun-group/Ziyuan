@@ -38,4 +38,8 @@ public class PrimitiveValue extends ExecValue {
 	public String toString() {
 		return String.format("(%s:%s)", varId, strVal);
 	}
+	
+	public static PrimitiveValue of(String id, boolean value) {
+		return new BooleanValue(id, value);
+	}
 }

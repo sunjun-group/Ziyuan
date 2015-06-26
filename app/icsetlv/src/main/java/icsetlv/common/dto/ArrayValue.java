@@ -8,6 +8,8 @@
 
 package icsetlv.common.dto;
 
+import sav.common.core.utils.Assert;
+
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.Value;
 
@@ -15,25 +17,20 @@ import com.sun.jdi.Value;
  * @author LLT
  * 
  */
-public class ArrayValue extends ExecValue {
-	private static final String NULL_CODE = "isNull";
+public class ArrayValue extends ReferenceValue {
 	private static final String SUM_CODE = "sum";
 	private static final String MAX_CODE = "max";
 	private static final String MIN_CODE = "min";
 	private static final String LENGTH_CODE = "length";
 
 	public ArrayValue(String id) {
-		super(id);
-	}
-
-	private void setNull(boolean isNull) {
-		add(new PrimitiveValue(getChildId(NULL_CODE), isNull ? "1" : "0"));
+		super(id, false);
 	}
 
 	private void setSum(double sum) {
 		add(new PrimitiveValue(getChildId(SUM_CODE), String.valueOf(sum)));
 	}
-
+	
 	private void setMax(double max) {
 		add(new PrimitiveValue(getChildId(MAX_CODE), String.valueOf(max)));
 	}
@@ -47,7 +44,8 @@ public class ArrayValue extends ExecValue {
 	}
 
 	public void setValue(final ArrayReference ar) {
-		setNull(ar == null);
+		Assert.assertTrue(ar != null,
+				"Value of ArrayReference is null, in this case, initialize execValue using ReferenceValue.nullValue instead!");
 		final int arrayLength = ar.length();
 		setLength(arrayLength);
 		double sum = 0.0;

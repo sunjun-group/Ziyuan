@@ -13,8 +13,14 @@ package icsetlv.common.dto;
  *
  */
 public class ReferenceValue extends ExecValue {
+	protected static final String NULL_CODE = "isNull";
 
-	public ReferenceValue(String id) {
+	public ReferenceValue(String id, boolean isNull) {
 		super(id);
+		add(PrimitiveValue.of(getChildId(NULL_CODE), isNull));
+	}
+	
+	public static ReferenceValue nullValue(String id) {
+		return new ReferenceValue(id, true);
 	}
 }

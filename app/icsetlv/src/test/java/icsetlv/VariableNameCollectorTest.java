@@ -10,6 +10,7 @@ package icsetlv;
 
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.variable.VariableNameCollector;
+import icsetlv.variable.VariableNameCollector.VarNameCollectionMode;
 
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class VariableNameCollectorTest extends AbstractTest {
 	@Before
 	public void setup() {
 		collector = new VariableNameCollector(
+				VarNameCollectionMode.FULL_NAME,
 				TestConfiguration.getTestScrPath("icsetlv"));
 	}
 	

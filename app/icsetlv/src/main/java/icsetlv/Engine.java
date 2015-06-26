@@ -17,6 +17,7 @@ import libsvm.core.Parameter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import sav.common.core.Pair;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.vm.VMConfiguration;
@@ -52,8 +53,8 @@ import sav.strategies.vm.VMConfiguration;
 public class Engine {
 	private static final Logger LOGGER = Logger.getLogger(Engine.class);
 	private static final int DEFAULT_PORT = 80;
-	private static final int DEFAULT_VALUE_RETRIVE_LEVEL = 3;
 
+	private int valueRetrieveLevel = 3;
 	private VMConfiguration vmConfig = initVmConfig();
 	private Machine machine = getDefaultMachine();
 	private List<String> testcases = new ArrayList<String>();
@@ -112,7 +113,7 @@ public class Engine {
 	}
 
 	public Engine run() throws Exception {
-		return run(DEFAULT_VALUE_RETRIVE_LEVEL, getMachine());
+		return run(valueRetrieveLevel, getMachine());
 	}
 
 	public Engine addTestcase(final String testcase) {
@@ -126,7 +127,7 @@ public class Engine {
 		}
 		return this;
 	}
-
+	
 	public Engine run(final int valRetrieveLevel, final Machine machine) throws Exception {
 		TestcasesExecutor testRunner = new TestcasesExecutor(vmConfig, testcases, valRetrieveLevel);
 		testRunner.run(breakPoints);
@@ -172,19 +173,68 @@ public class Engine {
 			final List<String> varLabels = new ArrayList<String>(labelSet);
 			machine.setDataLabels(varLabels);
 			BugExpert.addDataPoints(machine, passValues, failValues);
-
+			
+			List<String> exps = new ArrayList<String>();
+			//check isNull
+			for(String varLabel: varLabels){
+				if(varLabel.endsWith("isNull")){
+					Pair<Boolean, Boolean> allTrueFalseInPass = checkAllTrueOrAllFalse(passValues, varLabel);
+					Pair<Boolean, Boolean> allTrueFalseInFail = checkAllTrueOrAllFalse(failValues, varLabel);
+					
+					if(allTrueFalseInPass.a && allTrueFalseInFail.b){
+						exps.add(varLabel);
+					}
+					if(allTrueFalseInPass.b && allTrueFalseInFail.a){
+						exps.add("!" + varLabel);
+					}		
+				}
+			}
+			
 			// Train
 			machine.train();
-
+			String svmExp = machine.getLearnedLogic();
+			
 			// Store outputs
 			final Result result = new Result();
-			setResult(result, bkp, machine.getLearnedLogic(), machine.getModelAccuracy());
-
+			if (exps.isEmpty()) {
+				setResult(result, bkp, svmExp, machine.getModelAccuracy());
+			} else {
+				if (machine.getModelAccuracy() == 1) {
+					exps.add(svmExp);
+				}
+				setResult(result, bkp, sav.common.core.utils.StringUtils.join(exps, " || "),
+							machine.getModelAccuracy());
+			}
 			LOGGER.info("Learn: " + result);
 			results.add(result);
 		}
 
 		return this;
+	}
+
+	private Pair<Boolean,Boolean> checkAllTrueOrAllFalse(final List<BreakpointValue> values,
+			String varLabel) {
+		boolean allTrue = true;
+		boolean allFalse = true;
+		boolean found = false;
+		for(BreakpointValue breakPoint: values){
+			Double varVal = breakPoint.getValue(varLabel, null);
+			if (varVal == null) {
+				continue;
+			}
+			found = true;
+			boolean val = varVal > 0;
+			allTrue &= val;
+			allFalse &= !val;
+			
+			if(!allTrue && !allFalse){
+				break;
+			}
+		}
+		if (!found) {
+			return Pair.of(false, false);
+		}
+		return new Pair<Boolean, Boolean>(allTrue, allFalse);
 	}
 	
 	private void setResult(Result result, BreakPoint breakpoint, String learnedLogic, double accuracy){
@@ -220,7 +270,7 @@ public class Engine {
 		private Result() {
 			// To disable initiation from outside of Engine class
 		}
-
+		
 		public BreakPoint getBreakPoint() {
 			// TODO NPN check if it's needed to return a copy here
 			return breakPoint;
@@ -247,6 +297,10 @@ public class Engine {
 			}
 			return str.toString();
 		}
+	}
+	
+	public void setValueRetrieveLevel(int valueRetrieveLevel) {
+		this.valueRetrieveLevel = valueRetrieveLevel;
 	}
 	
 	public static class AllPositiveResult extends Result{}

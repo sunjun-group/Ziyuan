@@ -33,6 +33,8 @@ import sav.strategies.dto.BreakPoint.Variable;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ArrayType;
+import com.sun.jdi.BooleanType;
+import com.sun.jdi.BooleanValue;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
@@ -209,14 +211,22 @@ public class DebugValueExtractor {
 	/** append execution value*/
 	private void appendVarVal(ExecValue parent, String varId,
 			Value value, int level, ThreadReference thread) {
-		if (level == valRetrieveLevel || varId.endsWith("serialVersionUID")
-				|| value == null) {
+		if (level == valRetrieveLevel || varId.endsWith("serialVersionUID")) {
+			return;
+		}
+		if (value == null) {
+			appendNullVarVal(parent, varId);
 			return;
 		}
 		level++;
 		Type type = value.type();
 		if (type instanceof PrimitiveType) {
-			parent.add(new PrimitiveValue(varId, value.toString()));
+			/* TODO LLT: add Primitive type && refactor */
+			if (type instanceof BooleanType) {
+				parent.add(PrimitiveValue.of(varId, ((BooleanValue)value).booleanValue()));
+			} else {
+				parent.add(new PrimitiveValue(varId, value.toString()));
+			}
 		} else if (type instanceof ClassType && PrimitiveUtils.isPrimitiveTypeOrString(type.name())) {
 			parent.add(new PrimitiveValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread)));
 		} else if (type instanceof ArrayType) {
@@ -249,14 +259,20 @@ public class DebugValueExtractor {
 		}
 		return null;
 	}
+	
+	private void appendNullVarVal(ExecValue parent, String varId) {
+		ReferenceValue val = ReferenceValue.nullValue(varId);
+		parent.add(val);
+	}
 
 	private void appendClassVarVal(ExecValue parent, String varId,
 			ObjectReference value, int level, ThreadReference thread) {
-		ReferenceValue val = new ReferenceValue(varId);
+		ReferenceValue val = new ReferenceValue(varId, false);
 		ClassType type = (ClassType) value.type();
+		Map<Field, Value> fieldValueMap = value.getValues(type.allFields());
 		for (Field field : type.allFields()) {
 			appendVarVal(val, val.getChildId(field.name()),
-					value.getValue(field), level, thread);
+					fieldValueMap.get(field), level, thread);
 		}
 		parent.add(val);
 	}
@@ -265,7 +281,6 @@ public class DebugValueExtractor {
 			ArrayReference value, int level, ThreadReference thread) {
 		ArrayValue val = new ArrayValue(varId);
 		val.setValue(value);
-		
 //		//add value of elements
 //		for (int i = 0; i < value.length(); i++) {
 //			appendVarVal(val, val.getChildId(i), value.getValue(i), level, thread);

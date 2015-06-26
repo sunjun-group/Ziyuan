@@ -16,6 +16,7 @@ import java.util.List;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
+import tzuyu.core.main.FaultLocateParams;
 
 /**
  * @author khanh
@@ -24,8 +25,9 @@ import sav.strategies.vm.VMConfiguration;
 public class LearnInvariants {
 	private Engine engine;
 
-	public LearnInvariants(final VMConfiguration config) {
+	public LearnInvariants(final VMConfiguration config, FaultLocateParams params) {
 		engine = new Engine().setPort(config.getPort()).setJavaHome(config.getJavaHome());
+		engine.setValueRetrieveLevel(params.getValueRetrieveLevel());
 		for (String path : config.getClasspaths()) {
 			engine.addToClassPath(path);
 		}

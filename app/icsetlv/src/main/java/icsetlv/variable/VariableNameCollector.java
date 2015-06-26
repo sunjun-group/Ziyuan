@@ -47,10 +47,12 @@ import sav.strategies.dto.BreakPoint.Variable.VarScope;
 public class VariableNameCollector {
 	private Logger<?> log = Logger.getDefaultLogger();
 	private List<String> srcFolders;
+	private VarNameCollectionMode collectionMode;
 	
-	public VariableNameCollector(String... srcFolders) {
+	public VariableNameCollector(VarNameCollectionMode collectionMode, String... srcFolders) {
 		this.srcFolders = new ArrayList<String>();
 		CollectionUtils.addIfNotNullNotExist(this.srcFolders, srcFolders);
+		this.collectionMode = collectionMode;
 	}
 	
 	public void updateVariables(Collection<BreakPoint> brkps) throws IcsetlvException {
@@ -64,7 +66,7 @@ public class VariableNameCollector {
 			}
 			List<Integer> lines = BreakpointUtils.extractLineNo(brkpsMap.get(clzName));
 			
-			VarNameVisitor visitor = new VarNameVisitor(lines);
+			VarNameVisitor visitor = new VarNameVisitor(collectionMode, lines);
 			CompilationUnit cu;
 			try {
 				cu = JavaParser.parse(sourceFile);
@@ -97,10 +99,12 @@ public class VariableNameCollector {
 	}
 
 	private static class VarNameVisitor extends DefaultVoidVisitor {
+		private VarNameCollectionMode mode;
 		private Map<Integer, List<Variable>> result;
 		private List<Integer> lines;
 		
-		public VarNameVisitor(List<Integer> lines) {
+		public VarNameVisitor(VarNameCollectionMode collectionMode, List<Integer> lines) {
+			this.mode = collectionMode;
 			this.lines = lines;
 			result = new HashMap<Integer, List<Variable>>();
 			for (Integer line : lines) {
@@ -142,7 +146,17 @@ public class VariableNameCollector {
 
 			String name = CollectionUtils.getLast(nameFragments);
 			Collections.reverse(nameFragments);
-			String fullName = StringUtils.join(nameFragments, Constants.DOT);
+			String fullName; 
+			switch (mode) {
+			case FULL_NAME:
+				fullName = StringUtils.join(nameFragments, Constants.DOT); 
+				break;
+			case HIGHEST_LEVEL_VAR:
+				fullName = name;
+				break;
+			default:
+				fullName = StringUtils.join(nameFragments, Constants.DOT);
+			}
 			Variable var = new Variable(name, fullName);
 			var.setScope(varScope);
 			add(n.getBeginLine(), var);
@@ -172,5 +186,8 @@ public class VariableNameCollector {
 		
 	}
 	
-	
+	public static enum VarNameCollectionMode {
+		FULL_NAME, /* eg: with variable a.b.c, we add a variable with id a.b.c*/
+		HIGHEST_LEVEL_VAR /* eg: with variable a.b.c, we only add a variable with id a */
+	}
 }

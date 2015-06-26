@@ -49,4 +49,20 @@ public class InsertTestData {
 	public String concat(String a, String b) {
 		return a.concat(b);
 	}
+	
+	public void specialConditionStmt() {
+		if (a == 3)
+			a = a + 7;
+		if (a == 4) { a = a + 6;
+			;
+		}
+		if (a == 5) 
+			a = a + 1; a = a + 4;
+		System.out.println(a);
+	}
+	
+	public static void main(String[] args) {
+		InsertTestData data = new InsertTestData();
+		data.specialConditionStmt();
+	}
 }

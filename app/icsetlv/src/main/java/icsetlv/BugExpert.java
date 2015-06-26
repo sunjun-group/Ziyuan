@@ -156,11 +156,8 @@ public class BugExpert implements IBugExpert {
 			lineVals = bValue.getAllValues();
 		} else {
 			for (String variableName : machine.getDataLabels()) {
-				final Double value = bValue.getValue(variableName);
-				if (value == null) {
-					LOGGER.warn("Cannot get value for variable name " + variableName);
-				}
-				lineVals[i++] = value == null ? 0.0 : value.doubleValue();
+				final Double value = bValue.getValue(variableName, 0.0);
+				lineVals[i++] = value;
 			}
 		}
 

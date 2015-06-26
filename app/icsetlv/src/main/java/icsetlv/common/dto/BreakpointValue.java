@@ -40,8 +40,12 @@ public class BreakpointValue extends ExecValue {
 		return false;
 	}
 
-	public Double getValue(final String variableId) {
-		return getValue(variableId, this);
+	public Double getValue(final String variableId, Double defaultIfNull) {
+		Double value = getValue(variableId, this);
+		if (value != null) {
+			return value;
+		}
+		return defaultIfNull;
 	}
 
 	private Double getValue(final String variableId, final ExecValue value) {

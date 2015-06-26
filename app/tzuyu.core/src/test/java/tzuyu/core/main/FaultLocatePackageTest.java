@@ -8,6 +8,8 @@
 
 package tzuyu.core.main;
 
+import icsetlv.variable.VariableNameCollector.VarNameCollectionMode;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,6 +32,8 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 		params.setRankToExamine(3);
 		params.setRunMutation(false);
 		params.setUseSlicer(true);
+		params.setValueRetrieveLevel(3);
+		params.setVarNameCollectionMode(VarNameCollectionMode.FULL_NAME);
 	}
 	
 	public void runFaultLocate(TestPackage testPkg) throws Exception {
@@ -52,6 +56,8 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 	public void testjavaparser46() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("javaparser", "46");
 		params.setUseSlicer(true);
+		params.setRankToExamine(3);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
 		runFaultLocate(testPkg);
 	}
 	
@@ -97,6 +103,7 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 		params.setRankToExamine(3);
 		params.setUseSlicer(true);
 		params.setRunMutation(false);
+		params.setValueRetrieveLevel(2);
 		runFaultLocate(testPkg);
 	}
 	
