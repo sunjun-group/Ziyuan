@@ -152,18 +152,19 @@ public class MutationVisitor extends AbstractMutationVisitor {
 	
 	@Override
 	public boolean mutate(IntegerLiteralExpr n) {
-		Integer val = Integer.valueOf(n.getValue());
-		Integer newVal = val;
-		if (val == Integer.MAX_VALUE) {
+		final String stringValue = n.getValue();
+		Integer val = stringValue.startsWith("0x") ? Integer.decode(stringValue) : Integer.valueOf(stringValue);
+		int newVal = val;
+		if (val.intValue() == Integer.MAX_VALUE) {
 			newVal -= Randomness.nextInt(INT_CONST_ADJUST_HALF_VALUE);
-		} else if (val == Integer.MIN_VALUE) {
+		} else if (val.intValue() == Integer.MIN_VALUE) {
 			newVal += Randomness.nextInt(INT_CONST_ADJUST_HALF_VALUE);
 		} else {
 			newVal = Randomness.nextInt(val - INT_CONST_ADJUST_HALF_VALUE, 
 					val + INT_CONST_ADJUST_HALF_VALUE);
 		}
 		newNode(n).getMutatedNodes().add(
-				new IntegerLiteralExpr(newVal.toString()));
+				new IntegerLiteralExpr(String.valueOf(newVal)));
 		return false;
 	}
 	
