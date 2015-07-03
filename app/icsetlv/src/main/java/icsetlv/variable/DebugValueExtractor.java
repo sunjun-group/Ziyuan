@@ -211,7 +211,7 @@ public class DebugValueExtractor {
 	/** append execution value*/
 	private void appendVarVal(ExecValue parent, String varId,
 			Value value, int level, ThreadReference thread) {
-		if (level == valRetrieveLevel || varId.endsWith("serialVersionUID")) {
+		if (level >= valRetrieveLevel || varId.endsWith("serialVersionUID")) {
 			return;
 		}
 		if (value == null) {
