@@ -8,6 +8,7 @@
 
 package icsetlv.common.dto;
 
+
 /**
  * @author LLT
  *
@@ -27,5 +28,9 @@ public class BooleanValue extends PrimitiveValue {
 		} else {
 			return 0;
 		}
+	}
+	
+	public static BooleanValue of(String id, boolean value) {
+		return new BooleanValue(id, value);
 	}
 }

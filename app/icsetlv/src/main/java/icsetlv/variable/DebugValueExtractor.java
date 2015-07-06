@@ -13,6 +13,7 @@ import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.dto.ExecValue;
 import icsetlv.common.dto.PrimitiveValue;
 import icsetlv.common.dto.ReferenceValue;
+import icsetlv.common.dto.StringValue;
 import icsetlv.common.utils.PrimitiveUtils;
 
 import java.util.ArrayList;
@@ -223,16 +224,20 @@ public class DebugValueExtractor {
 		if (type instanceof PrimitiveType) {
 			/* TODO LLT: add Primitive type && refactor */
 			if (type instanceof BooleanType) {
-				parent.add(PrimitiveValue.of(varId, ((BooleanValue)value).booleanValue()));
+				parent.add(icsetlv.common.dto.BooleanValue.of(varId, ((BooleanValue)value).booleanValue()));
 			} else {
 				parent.add(new PrimitiveValue(varId, value.toString()));
 			}
-		} else if (type instanceof ClassType && PrimitiveUtils.isPrimitiveTypeOrString(type.name())) {
-			parent.add(new PrimitiveValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread)));
 		} else if (type instanceof ArrayType) {
 			appendArrVarVal(parent, varId, (ArrayReference)value, level, thread);
 		} else if (type instanceof ClassType) {
-			appendClassVarVal(parent, varId, (ObjectReference) value, level, thread);
+			if (PrimitiveUtils.isString(type.name())) {
+				parent.add(new StringValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread)));
+			} else if (PrimitiveUtils.isPrimitiveType(type.name())) {
+				parent.add(new PrimitiveValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread)));
+			} else {
+				appendClassVarVal(parent, varId, (ObjectReference) value, level, thread);
+			}
 		}
 	}
 

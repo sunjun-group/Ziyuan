@@ -110,7 +110,7 @@ public class TzuyuCore {
 		analyzer.setUseSlicer(params.isSlicerEnable());
 
 		FaultLocalizationReport report;
-		if (CollectionUtils.isEmpty(params.getTestingPkgs())) {
+		if (!params.isSlicerEnable()) {
 			report = analyzer.analyse(params.getTestingClassNames(), params.getJunitClassNames(),
 					appData.getSuspiciousCalculAlgo());
 		} else {

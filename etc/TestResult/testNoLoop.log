@@ -1,0 +1,942 @@
+2015-07-01 13:36:22 [INFO ] root:33 	Running OCHIAI
+2015-07-01 13:36:23 [INFO ] root:33 	Start analyzing..
+2015-07-01 13:36:23 [INFO ] root:33 	testingClasses= [sav.commons.testdata.calculator.Calculator]
+2015-07-01 13:36:23 [INFO ] root:33 	junitClassNames= [sav.commons.testdata.calculator.CalculatorTest]
+2015-07-01 13:36:23 [INFO ] root:33 	algorithm= OCHIAI
+2015-07-01 13:36:23 [INFO ] root:33 	useSlicer= false
+2015-07-01 13:36:23 [DEBUG] root:61 	RUNNING JACOCO..
+2015-07-01 13:36:23 [DEBUG] root:61 	Start vmRunner..
+2015-07-01 13:36:23 [DEBUG] root:61 	destfile= C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec
+2015-07-01 13:36:23 [DEBUG] root:61 	junitResultFile= C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt
+2015-07-01 13:36:23 [DEBUG] root:61 	append=true
+2015-07-01 13:36:23 [DEBUG] root:61 	testMethods= [sav.commons.testdata.calculator.CalculatorTest.testPassed4, sav.commons.testdata.calculator.CalculatorTest.testPassed3, sav.commons.testdata.calculator.CalculatorTest.testPassed1, sav.commons.testdata.calculator.CalculatorTest.testFailed1, sav.commons.testdata.calculator.CalculatorTest.testPassed2, sav.commons.testdata.calculator.CalculatorTest.testFailed2, sav.commons.testdata.calculator.CalculatorTest.testFailed3, sav.commons.testdata.calculator.CalculatorTest.testFailed4, sav.commons.testdata.calculator.CalculatorTest.testFailed5, sav.commons.testdata.calculator.CalculatorTest.testFailed6]
+2015-07-01 13:36:23 [DEBUG] root:61 	allClassNames= [sav.commons.testdata.calculator.Calculator, sav.commons.testdata.calculator.CalculatorTest]
+2015-07-01 13:36:23 [DEBUG] root:61 	junitClassNames= [sav.commons.testdata.calculator.CalculatorTest]
+2015-07-01 13:36:23 [DEBUG] root:61 	testingClassNames= [sav.commons.testdata.calculator.Calculator]
+2015-07-01 13:36:23 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:23 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt -testingclass sav.commons.testdata.calculator.Calculator sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:23 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:23 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:23 [DEBUG] root:61 	-cp
+2015-07-01 13:36:23 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-01 13:36:23 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:23 [DEBUG] root:61 	-methods
+2015-07-01 13:36:23 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:36:23 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:23 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt
+2015-07-01 13:36:23 [DEBUG] root:61 	-testingclass
+2015-07-01 13:36:23 [DEBUG] root:61 	sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:23 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:24 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:24 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed3 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt -testingclass sav.commons.testdata.calculator.Calculator sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:24 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:24 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:24 [DEBUG] root:61 	-cp
+2015-07-01 13:36:24 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-01 13:36:24 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:24 [DEBUG] root:61 	-methods
+2015-07-01 13:36:24 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:36:24 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:24 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt
+2015-07-01 13:36:24 [DEBUG] root:61 	-testingclass
+2015-07-01 13:36:24 [DEBUG] root:61 	sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:24 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:25 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:25 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed1 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt -testingclass sav.commons.testdata.calculator.Calculator sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:25 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:25 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:25 [DEBUG] root:61 	-cp
+2015-07-01 13:36:25 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-01 13:36:25 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:25 [DEBUG] root:61 	-methods
+2015-07-01 13:36:25 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:36:25 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:25 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt
+2015-07-01 13:36:25 [DEBUG] root:61 	-testingclass
+2015-07-01 13:36:25 [DEBUG] root:61 	sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:25 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:26 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:26 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testFailed1 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt -testingclass sav.commons.testdata.calculator.Calculator sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:26 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:26 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:26 [DEBUG] root:61 	-cp
+2015-07-01 13:36:26 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-01 13:36:26 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:26 [DEBUG] root:61 	-methods
+2015-07-01 13:36:26 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:36:26 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:26 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt
+2015-07-01 13:36:26 [DEBUG] root:61 	-testingclass
+2015-07-01 13:36:26 [DEBUG] root:61 	sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:26 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:27 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:27 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed2 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt -testingclass sav.commons.testdata.calculator.Calculator sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:27 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:27 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:27 [DEBUG] root:61 	-cp
+2015-07-01 13:36:27 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-01 13:36:27 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:27 [DEBUG] root:61 	-methods
+2015-07-01 13:36:27 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:36:27 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:27 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt
+2015-07-01 13:36:27 [DEBUG] root:61 	-testingclass
+2015-07-01 13:36:27 [DEBUG] root:61 	sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:27 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:29 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:29 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testFailed2 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt -testingclass sav.commons.testdata.calculator.Calculator sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:29 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:29 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:29 [DEBUG] root:61 	-cp
+2015-07-01 13:36:29 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-01 13:36:29 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:29 [DEBUG] root:61 	-methods
+2015-07-01 13:36:29 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:36:29 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:29 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt
+2015-07-01 13:36:29 [DEBUG] root:61 	-testingclass
+2015-07-01 13:36:29 [DEBUG] root:61 	sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:29 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:30 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:30 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testFailed3 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt -testingclass sav.commons.testdata.calculator.Calculator sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:30 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:30 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:30 [DEBUG] root:61 	-cp
+2015-07-01 13:36:30 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-01 13:36:30 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:30 [DEBUG] root:61 	-methods
+2015-07-01 13:36:30 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:36:30 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:30 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt
+2015-07-01 13:36:30 [DEBUG] root:61 	-testingclass
+2015-07-01 13:36:30 [DEBUG] root:61 	sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:30 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:31 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:31 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testFailed4 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt -testingclass sav.commons.testdata.calculator.Calculator sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:31 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:31 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:31 [DEBUG] root:61 	-cp
+2015-07-01 13:36:31 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-01 13:36:31 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:31 [DEBUG] root:61 	-methods
+2015-07-01 13:36:31 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:36:31 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:31 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt
+2015-07-01 13:36:31 [DEBUG] root:61 	-testingclass
+2015-07-01 13:36:31 [DEBUG] root:61 	sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:31 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:32 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:32 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testFailed5 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt -testingclass sav.commons.testdata.calculator.Calculator sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:32 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:32 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:32 [DEBUG] root:61 	-cp
+2015-07-01 13:36:32 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-01 13:36:32 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:32 [DEBUG] root:61 	-methods
+2015-07-01 13:36:32 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:36:32 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:32 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt
+2015-07-01 13:36:32 [DEBUG] root:61 	-testingclass
+2015-07-01 13:36:32 [DEBUG] root:61 	sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:32 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:33 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:33 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt -testingclass sav.commons.testdata.calculator.Calculator sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:33 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:33 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent8378169800438499586.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec,includes=sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:33 [DEBUG] root:61 	-cp
+2015-07-01 13:36:33 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-01 13:36:33 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:33 [DEBUG] root:61 	-methods
+2015-07-01 13:36:33 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:36:33 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:33 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes743697430358479193.txt
+2015-07-01 13:36:33 [DEBUG] root:61 	-testingclass
+2015-07-01 13:36:33 [DEBUG] root:61 	sav.commons.testdata.calculator.Calculator
+2015-07-01 13:36:33 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest
+2015-07-01 13:36:34 [DEBUG] root:61 	read exec file  C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco2312500994935572080.exec
+2015-07-01 13:36:34 [DEBUG] root:61 	Session DELL5050-PC-acbca6ed
+2015-07-01 13:36:34 [DEBUG] root:61 	ExecutionData[name=sav/commons/testdata/calculator/Calculator, id=9816ca9fab0f94c3]
+2015-07-01 13:36:34 [DEBUG] root:61 	Session DELL5050-PC-a1955528
+2015-07-01 13:36:34 [DEBUG] root:61 	ExecutionData[name=sav/commons/testdata/calculator/Calculator, id=9816ca9fab0f94c3]
+2015-07-01 13:36:34 [DEBUG] root:61 	Session DELL5050-PC-25144be4
+2015-07-01 13:36:34 [DEBUG] root:61 	ExecutionData[name=sav/commons/testdata/calculator/Calculator, id=9816ca9fab0f94c3]
+2015-07-01 13:36:34 [DEBUG] root:61 	Session DELL5050-PC-5d539b08
+2015-07-01 13:36:34 [DEBUG] root:61 	ExecutionData[name=sav/commons/testdata/calculator/Calculator, id=9816ca9fab0f94c3]
+2015-07-01 13:36:34 [DEBUG] root:61 	Session DELL5050-PC-91c553ac
+2015-07-01 13:36:34 [DEBUG] root:61 	ExecutionData[name=sav/commons/testdata/calculator/Calculator, id=9816ca9fab0f94c3]
+2015-07-01 13:36:34 [DEBUG] root:61 	Session DELL5050-PC-52ab4d9c
+2015-07-01 13:36:34 [DEBUG] root:61 	ExecutionData[name=sav/commons/testdata/calculator/Calculator, id=9816ca9fab0f94c3]
+2015-07-01 13:36:34 [DEBUG] root:61 	Session DELL5050-PC-62c1d3f8
+2015-07-01 13:36:34 [DEBUG] root:61 	ExecutionData[name=sav/commons/testdata/calculator/Calculator, id=9816ca9fab0f94c3]
+2015-07-01 13:36:34 [DEBUG] root:61 	Session DELL5050-PC-828922f3
+2015-07-01 13:36:34 [DEBUG] root:61 	ExecutionData[name=sav/commons/testdata/calculator/Calculator, id=9816ca9fab0f94c3]
+2015-07-01 13:36:34 [DEBUG] root:61 	Session DELL5050-PC-5a90cf98
+2015-07-01 13:36:34 [DEBUG] root:61 	ExecutionData[name=sav/commons/testdata/calculator/Calculator, id=9816ca9fab0f94c3]
+2015-07-01 13:36:34 [DEBUG] root:61 	Session DELL5050-PC-aef54f50
+2015-07-01 13:36:34 [DEBUG] root:61 	ExecutionData[name=sav/commons/testdata/calculator/Calculator, id=9816ca9fab0f94c3]
+2015-07-01 13:36:35 [DEBUG] root:61 	Collect coverage data - Read execFile: 42 ms
+2015-07-01 13:36:35 [DEBUG] root:61 	Collect coverage data - Analyze data and count code coverage: 235 ms
+2015-07-01 13:36:35 [DEBUG] root:61 	Collect coverage data Overall: 277 ms
+2015-07-01 13:36:35 [INFO ] root:33 	SpectrumAlgorithm: OCHIAI
+2015-07-01 13:36:35 [INFO ] root:33 	[sav.commons.testdata.calculator.Calculator:7:1.0(P=0, F=4), sav.commons.testdata.calculator.Calculator:8:1.0(P=0, F=4), sav.commons.testdata.calculator.Calculator:6:0.6324555320336759(P=6, F=4), sav.commons.testdata.calculator.Calculator:11:0.6324555320336759(P=6, F=4), sav.commons.testdata.calculator.Calculator:24:0.6324555320336759(P=6, F=4)]
+2015-07-01 13:36:35 [INFO ] root:33 	Running Mutation
+2015-07-01 13:36:35 [WARN ] root:39 	Cannot specify type for variable with name Math in Calculator
+2015-07-01 13:36:35 [WARN ] root:39 	Cannot specify type for variable with name Math in Calculator
+2015-07-01 13:36:35 [DEBUG] root:61 	create backup folder  C:\Users\DELL50~1\AppData\Local\Temp\backup5739187869689708314
+2015-07-01 13:36:35 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\Calculator.class
+2015-07-01 13:36:35 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest.class
+2015-07-01 13:36:35 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest1.class
+2015-07-01 13:36:35 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:35 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\7_66_1\Calculator.java -g
+2015-07-01 13:36:35 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:36:35 [DEBUG] root:61 	-classpath
+2015-07-01 13:36:35 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:35 [DEBUG] root:61 	-d
+2015-07-01 13:36:35 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:36:35 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\7_66_1\Calculator.java
+2015-07-01 13:36:35 [DEBUG] root:61 	-g
+2015-07-01 13:36:36 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:36 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult4476114592680430539.temp -tc_timeout 2000
+2015-07-01 13:36:36 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:36 [DEBUG] root:61 	-ea
+2015-07-01 13:36:36 [DEBUG] root:61 	-cp
+2015-07-01 13:36:36 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:36 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:36 [DEBUG] root:61 	-methods
+2015-07-01 13:36:36 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:36:36 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:36:36 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:36:36 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:36:36 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:36:36 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:36:36 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:36:36 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:36:36 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:36:36 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:36:36 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:36 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult4476114592680430539.temp
+2015-07-01 13:36:36 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:36:36 [DEBUG] root:61 	2000
+2015-07-01 13:36:37 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\Calculator.class
+2015-07-01 13:36:37 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest.class
+2015-07-01 13:36:37 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest1.class
+2015-07-01 13:36:37 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\Calculator.class
+2015-07-01 13:36:37 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest.class
+2015-07-01 13:36:37 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest1.class
+2015-07-01 13:36:37 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:37 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\8_25_1\Calculator.java -g
+2015-07-01 13:36:37 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:36:37 [DEBUG] root:61 	-classpath
+2015-07-01 13:36:37 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:37 [DEBUG] root:61 	-d
+2015-07-01 13:36:37 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:36:37 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\8_25_1\Calculator.java
+2015-07-01 13:36:37 [DEBUG] root:61 	-g
+2015-07-01 13:36:38 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:38 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult3930782778196830683.temp -tc_timeout 2000
+2015-07-01 13:36:38 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:38 [DEBUG] root:61 	-ea
+2015-07-01 13:36:38 [DEBUG] root:61 	-cp
+2015-07-01 13:36:38 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:38 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:38 [DEBUG] root:61 	-methods
+2015-07-01 13:36:38 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:36:38 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:36:38 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:36:38 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:36:38 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:36:38 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:36:38 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:36:38 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:36:38 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:36:38 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:36:38 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:38 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult3930782778196830683.temp
+2015-07-01 13:36:38 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:36:38 [DEBUG] root:61 	2000
+2015-07-01 13:36:38 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:38 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\8_25_2\Calculator.java -g
+2015-07-01 13:36:38 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:36:38 [DEBUG] root:61 	-classpath
+2015-07-01 13:36:38 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:38 [DEBUG] root:61 	-d
+2015-07-01 13:36:38 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:36:38 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\8_25_2\Calculator.java
+2015-07-01 13:36:38 [DEBUG] root:61 	-g
+2015-07-01 13:36:39 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:39 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult8359396987876455725.temp -tc_timeout 2000
+2015-07-01 13:36:39 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:39 [DEBUG] root:61 	-ea
+2015-07-01 13:36:39 [DEBUG] root:61 	-cp
+2015-07-01 13:36:39 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:39 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:39 [DEBUG] root:61 	-methods
+2015-07-01 13:36:39 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:36:39 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:36:39 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:36:39 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:36:39 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:36:39 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:36:39 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:36:39 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:36:39 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:36:39 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:36:39 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:39 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult8359396987876455725.temp
+2015-07-01 13:36:39 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:36:39 [DEBUG] root:61 	2000
+2015-07-01 13:36:40 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:40 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\8_29_1\Calculator.java -g
+2015-07-01 13:36:40 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:36:40 [DEBUG] root:61 	-classpath
+2015-07-01 13:36:40 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:40 [DEBUG] root:61 	-d
+2015-07-01 13:36:40 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:36:40 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\8_29_1\Calculator.java
+2015-07-01 13:36:40 [DEBUG] root:61 	-g
+2015-07-01 13:36:42 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:42 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult6492450567237375415.temp -tc_timeout 2000
+2015-07-01 13:36:42 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:42 [DEBUG] root:61 	-ea
+2015-07-01 13:36:42 [DEBUG] root:61 	-cp
+2015-07-01 13:36:42 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:42 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:42 [DEBUG] root:61 	-methods
+2015-07-01 13:36:42 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:36:42 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:36:42 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:36:42 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:36:42 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:36:42 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:36:42 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:36:42 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:36:42 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:36:42 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:36:42 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:42 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult6492450567237375415.temp
+2015-07-01 13:36:42 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:36:42 [DEBUG] root:61 	2000
+2015-07-01 13:36:43 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:43 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\8_29_2\Calculator.java -g
+2015-07-01 13:36:43 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:36:43 [DEBUG] root:61 	-classpath
+2015-07-01 13:36:43 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:43 [DEBUG] root:61 	-d
+2015-07-01 13:36:43 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:36:43 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\8_29_2\Calculator.java
+2015-07-01 13:36:43 [DEBUG] root:61 	-g
+2015-07-01 13:36:45 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:45 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult5292417646963468090.temp -tc_timeout 2000
+2015-07-01 13:36:45 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:45 [DEBUG] root:61 	-ea
+2015-07-01 13:36:45 [DEBUG] root:61 	-cp
+2015-07-01 13:36:45 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:45 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:45 [DEBUG] root:61 	-methods
+2015-07-01 13:36:45 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:36:45 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:36:45 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:36:45 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:36:45 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:36:45 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:36:45 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:36:45 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:36:45 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:36:45 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:36:45 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:45 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult5292417646963468090.temp
+2015-07-01 13:36:45 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:36:45 [DEBUG] root:61 	2000
+2015-07-01 13:36:45 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:45 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\8_33_1\Calculator.java -g
+2015-07-01 13:36:45 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:36:45 [DEBUG] root:61 	-classpath
+2015-07-01 13:36:45 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:45 [DEBUG] root:61 	-d
+2015-07-01 13:36:45 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:36:45 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\8_33_1\Calculator.java
+2015-07-01 13:36:45 [DEBUG] root:61 	-g
+2015-07-01 13:36:47 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:47 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult2455742203600214489.temp -tc_timeout 2000
+2015-07-01 13:36:47 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:47 [DEBUG] root:61 	-ea
+2015-07-01 13:36:47 [DEBUG] root:61 	-cp
+2015-07-01 13:36:47 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:47 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:47 [DEBUG] root:61 	-methods
+2015-07-01 13:36:47 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:36:47 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:36:47 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:36:47 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:36:47 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:36:47 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:36:47 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:36:47 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:36:47 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:36:47 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:36:47 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:47 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult2455742203600214489.temp
+2015-07-01 13:36:47 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:36:47 [DEBUG] root:61 	2000
+2015-07-01 13:36:48 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:48 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\8_33_2\Calculator.java -g
+2015-07-01 13:36:48 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:36:48 [DEBUG] root:61 	-classpath
+2015-07-01 13:36:48 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:48 [DEBUG] root:61 	-d
+2015-07-01 13:36:48 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:36:48 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\8_33_2\Calculator.java
+2015-07-01 13:36:48 [DEBUG] root:61 	-g
+2015-07-01 13:36:49 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:49 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult6709131166895866994.temp -tc_timeout 2000
+2015-07-01 13:36:49 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:49 [DEBUG] root:61 	-ea
+2015-07-01 13:36:49 [DEBUG] root:61 	-cp
+2015-07-01 13:36:49 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:49 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:49 [DEBUG] root:61 	-methods
+2015-07-01 13:36:49 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:36:49 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:36:49 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:36:49 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:36:49 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:36:49 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:36:49 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:36:49 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:36:49 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:36:49 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:36:49 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:49 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult6709131166895866994.temp
+2015-07-01 13:36:49 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:36:49 [DEBUG] root:61 	2000
+2015-07-01 13:36:50 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\Calculator.class
+2015-07-01 13:36:50 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest.class
+2015-07-01 13:36:50 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest1.class
+2015-07-01 13:36:50 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\Calculator.class
+2015-07-01 13:36:50 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest.class
+2015-07-01 13:36:50 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest1.class
+2015-07-01 13:36:50 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:50 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\6_20_1\Calculator.java -g
+2015-07-01 13:36:50 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:36:50 [DEBUG] root:61 	-classpath
+2015-07-01 13:36:50 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:50 [DEBUG] root:61 	-d
+2015-07-01 13:36:50 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:36:50 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\6_20_1\Calculator.java
+2015-07-01 13:36:50 [DEBUG] root:61 	-g
+2015-07-01 13:36:52 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:52 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult5526987665115161226.temp -tc_timeout 2000
+2015-07-01 13:36:52 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:52 [DEBUG] root:61 	-ea
+2015-07-01 13:36:52 [DEBUG] root:61 	-cp
+2015-07-01 13:36:52 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:52 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:52 [DEBUG] root:61 	-methods
+2015-07-01 13:36:52 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:36:52 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:36:52 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:36:52 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:36:52 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:36:52 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:36:52 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:36:52 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:36:52 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:36:52 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:36:52 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:52 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult5526987665115161226.temp
+2015-07-01 13:36:52 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:36:52 [DEBUG] root:61 	2000
+2015-07-01 13:36:53 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:53 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\6_24_1\Calculator.java -g
+2015-07-01 13:36:53 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:36:53 [DEBUG] root:61 	-classpath
+2015-07-01 13:36:53 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:53 [DEBUG] root:61 	-d
+2015-07-01 13:36:53 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:36:53 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\6_24_1\Calculator.java
+2015-07-01 13:36:53 [DEBUG] root:61 	-g
+2015-07-01 13:36:55 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:55 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult8074070240638290499.temp -tc_timeout 2000
+2015-07-01 13:36:55 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:55 [DEBUG] root:61 	-ea
+2015-07-01 13:36:55 [DEBUG] root:61 	-cp
+2015-07-01 13:36:55 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:55 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:55 [DEBUG] root:61 	-methods
+2015-07-01 13:36:55 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:36:55 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:36:55 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:36:55 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:36:55 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:36:55 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:36:55 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:36:55 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:36:55 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:36:55 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:36:55 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:55 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult8074070240638290499.temp
+2015-07-01 13:36:55 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:36:55 [DEBUG] root:61 	2000
+2015-07-01 13:36:55 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\Calculator.class
+2015-07-01 13:36:55 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest.class
+2015-07-01 13:36:55 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest1.class
+2015-07-01 13:36:56 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\Calculator.class
+2015-07-01 13:36:56 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest.class
+2015-07-01 13:36:56 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest1.class
+2015-07-01 13:36:56 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:56 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\11_24_1\Calculator.java -g
+2015-07-01 13:36:56 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:36:56 [DEBUG] root:61 	-classpath
+2015-07-01 13:36:56 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:56 [DEBUG] root:61 	-d
+2015-07-01 13:36:56 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:36:56 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\11_24_1\Calculator.java
+2015-07-01 13:36:56 [DEBUG] root:61 	-g
+2015-07-01 13:36:57 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:57 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult3100381422218828715.temp -tc_timeout 2000
+2015-07-01 13:36:57 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:57 [DEBUG] root:61 	-ea
+2015-07-01 13:36:57 [DEBUG] root:61 	-cp
+2015-07-01 13:36:57 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:57 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:57 [DEBUG] root:61 	-methods
+2015-07-01 13:36:57 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:36:57 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:36:57 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:36:57 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:36:57 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:36:57 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:36:57 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:36:57 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:36:57 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:36:57 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:36:57 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:57 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult3100381422218828715.temp
+2015-07-01 13:36:57 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:36:57 [DEBUG] root:61 	2000
+2015-07-01 13:36:58 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:58 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\11_28_1\Calculator.java -g
+2015-07-01 13:36:58 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:36:58 [DEBUG] root:61 	-classpath
+2015-07-01 13:36:58 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:58 [DEBUG] root:61 	-d
+2015-07-01 13:36:58 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:36:58 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\11_28_1\Calculator.java
+2015-07-01 13:36:58 [DEBUG] root:61 	-g
+2015-07-01 13:36:59 [DEBUG] root:61 	start cmd..
+2015-07-01 13:36:59 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult4013986133337367102.temp -tc_timeout 2000
+2015-07-01 13:36:59 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:36:59 [DEBUG] root:61 	-ea
+2015-07-01 13:36:59 [DEBUG] root:61 	-cp
+2015-07-01 13:36:59 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:36:59 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:36:59 [DEBUG] root:61 	-methods
+2015-07-01 13:36:59 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:36:59 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:36:59 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:36:59 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:36:59 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:36:59 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:36:59 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:36:59 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:36:59 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:36:59 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:36:59 [DEBUG] root:61 	-destfile
+2015-07-01 13:36:59 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult4013986133337367102.temp
+2015-07-01 13:36:59 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:36:59 [DEBUG] root:61 	2000
+2015-07-01 13:36:59 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\Calculator.class
+2015-07-01 13:36:59 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest.class
+2015-07-01 13:36:59 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest1.class
+2015-07-01 13:37:00 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\Calculator.class
+2015-07-01 13:37:00 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest.class
+2015-07-01 13:37:00 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest1.class
+2015-07-01 13:37:00 [DEBUG] root:61 	start cmd..
+2015-07-01 13:37:00 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\24_25_1\Calculator.java -g
+2015-07-01 13:37:00 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:37:00 [DEBUG] root:61 	-classpath
+2015-07-01 13:37:00 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:37:00 [DEBUG] root:61 	-d
+2015-07-01 13:37:00 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:37:00 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\24_25_1\Calculator.java
+2015-07-01 13:37:00 [DEBUG] root:61 	-g
+2015-07-01 13:37:01 [DEBUG] root:61 	start cmd..
+2015-07-01 13:37:01 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult8621048539326508281.temp -tc_timeout 2000
+2015-07-01 13:37:01 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:37:01 [DEBUG] root:61 	-ea
+2015-07-01 13:37:01 [DEBUG] root:61 	-cp
+2015-07-01 13:37:01 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:37:01 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:37:01 [DEBUG] root:61 	-methods
+2015-07-01 13:37:01 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:37:01 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:37:01 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:37:01 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:37:01 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:37:01 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:37:01 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:37:01 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:37:01 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:37:01 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:37:01 [DEBUG] root:61 	-destfile
+2015-07-01 13:37:01 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult8621048539326508281.temp
+2015-07-01 13:37:01 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:37:01 [DEBUG] root:61 	2000
+2015-07-01 13:37:01 [DEBUG] root:61 	start cmd..
+2015-07-01 13:37:01 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\24_25_2\Calculator.java -g
+2015-07-01 13:37:01 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:37:01 [DEBUG] root:61 	-classpath
+2015-07-01 13:37:01 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:37:01 [DEBUG] root:61 	-d
+2015-07-01 13:37:01 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:37:01 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\24_25_2\Calculator.java
+2015-07-01 13:37:01 [DEBUG] root:61 	-g
+2015-07-01 13:37:02 [DEBUG] root:61 	start cmd..
+2015-07-01 13:37:02 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult9089894564104596835.temp -tc_timeout 2000
+2015-07-01 13:37:02 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:37:02 [DEBUG] root:61 	-ea
+2015-07-01 13:37:02 [DEBUG] root:61 	-cp
+2015-07-01 13:37:02 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:37:02 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:37:02 [DEBUG] root:61 	-methods
+2015-07-01 13:37:02 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:37:02 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:37:02 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:37:02 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:37:02 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:37:02 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:37:02 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:37:02 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:37:02 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:37:02 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:37:02 [DEBUG] root:61 	-destfile
+2015-07-01 13:37:02 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult9089894564104596835.temp
+2015-07-01 13:37:02 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:37:02 [DEBUG] root:61 	2000
+2015-07-01 13:37:03 [DEBUG] root:61 	start cmd..
+2015-07-01 13:37:03 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\24_32_1\Calculator.java -g
+2015-07-01 13:37:03 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:37:03 [DEBUG] root:61 	-classpath
+2015-07-01 13:37:03 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:37:03 [DEBUG] root:61 	-d
+2015-07-01 13:37:03 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:37:03 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\24_32_1\Calculator.java
+2015-07-01 13:37:03 [DEBUG] root:61 	-g
+2015-07-01 13:37:04 [DEBUG] root:61 	start cmd..
+2015-07-01 13:37:04 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult8849221124353455156.temp -tc_timeout 2000
+2015-07-01 13:37:04 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:37:04 [DEBUG] root:61 	-ea
+2015-07-01 13:37:04 [DEBUG] root:61 	-cp
+2015-07-01 13:37:04 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:37:04 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:37:04 [DEBUG] root:61 	-methods
+2015-07-01 13:37:04 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:37:04 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:37:04 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:37:04 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:37:04 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:37:04 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:37:04 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:37:04 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:37:04 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:37:04 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:37:04 [DEBUG] root:61 	-destfile
+2015-07-01 13:37:04 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult8849221124353455156.temp
+2015-07-01 13:37:04 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:37:04 [DEBUG] root:61 	2000
+2015-07-01 13:37:04 [DEBUG] root:61 	start cmd..
+2015-07-01 13:37:04 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\24_32_2\Calculator.java -g
+2015-07-01 13:37:04 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:37:04 [DEBUG] root:61 	-classpath
+2015-07-01 13:37:04 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:37:04 [DEBUG] root:61 	-d
+2015-07-01 13:37:04 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:37:04 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\24_32_2\Calculator.java
+2015-07-01 13:37:04 [DEBUG] root:61 	-g
+2015-07-01 13:37:05 [DEBUG] root:61 	start cmd..
+2015-07-01 13:37:05 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult6556798467624178911.temp -tc_timeout 2000
+2015-07-01 13:37:05 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:37:05 [DEBUG] root:61 	-ea
+2015-07-01 13:37:05 [DEBUG] root:61 	-cp
+2015-07-01 13:37:05 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:37:05 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:37:05 [DEBUG] root:61 	-methods
+2015-07-01 13:37:05 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:37:05 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:37:05 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:37:05 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:37:05 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:37:05 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:37:05 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:37:05 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:37:05 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:37:05 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:37:05 [DEBUG] root:61 	-destfile
+2015-07-01 13:37:05 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult6556798467624178911.temp
+2015-07-01 13:37:05 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:37:05 [DEBUG] root:61 	2000
+2015-07-01 13:37:05 [DEBUG] root:61 	start cmd..
+2015-07-01 13:37:05 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\24_36_1\Calculator.java -g
+2015-07-01 13:37:05 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:37:05 [DEBUG] root:61 	-classpath
+2015-07-01 13:37:05 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:37:05 [DEBUG] root:61 	-d
+2015-07-01 13:37:05 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:37:05 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\24_36_1\Calculator.java
+2015-07-01 13:37:05 [DEBUG] root:61 	-g
+2015-07-01 13:37:06 [DEBUG] root:61 	start cmd..
+2015-07-01 13:37:06 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult4262200340072635441.temp -tc_timeout 2000
+2015-07-01 13:37:06 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:37:06 [DEBUG] root:61 	-ea
+2015-07-01 13:37:06 [DEBUG] root:61 	-cp
+2015-07-01 13:37:06 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:37:06 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:37:06 [DEBUG] root:61 	-methods
+2015-07-01 13:37:06 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:37:06 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:37:06 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:37:06 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:37:06 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:37:06 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:37:06 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:37:06 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:37:06 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:37:06 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:37:06 [DEBUG] root:61 	-destfile
+2015-07-01 13:37:06 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult4262200340072635441.temp
+2015-07-01 13:37:06 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:37:06 [DEBUG] root:61 	2000
+2015-07-01 13:37:06 [DEBUG] root:61 	start cmd..
+2015-07-01 13:37:06 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\24_36_2\Calculator.java -g
+2015-07-01 13:37:06 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:37:06 [DEBUG] root:61 	-classpath
+2015-07-01 13:37:06 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:37:06 [DEBUG] root:61 	-d
+2015-07-01 13:37:06 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:37:06 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7059685557896968322\24_36_2\Calculator.java
+2015-07-01 13:37:06 [DEBUG] root:61 	-g
+2015-07-01 13:37:07 [DEBUG] root:61 	start cmd..
+2015-07-01 13:37:07 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult999655383696062090.temp -tc_timeout 2000
+2015-07-01 13:37:07 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:37:07 [DEBUG] root:61 	-ea
+2015-07-01 13:37:07 [DEBUG] root:61 	-cp
+2015-07-01 13:37:07 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:37:07 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:37:07 [DEBUG] root:61 	-methods
+2015-07-01 13:37:07 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:37:07 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:37:07 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:37:07 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:37:07 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:37:07 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:37:07 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:37:07 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:37:07 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:37:07 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:37:07 [DEBUG] root:61 	-destfile
+2015-07-01 13:37:07 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult999655383696062090.temp
+2015-07-01 13:37:07 [DEBUG] root:61 	-tc_timeout
+2015-07-01 13:37:07 [DEBUG] root:61 	2000
+2015-07-01 13:37:07 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\Calculator.class
+2015-07-01 13:37:07 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest.class
+2015-07-01 13:37:07 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest1.class
+2015-07-01 13:37:07 [INFO ] root:33 	[sav.commons.testdata.calculator.Calculator:8:0.16666666666666666(P=0, F=4), sav.commons.testdata.calculator.Calculator:6:0.0(P=6, F=4), sav.commons.testdata.calculator.Calculator:7:0.0(P=0, F=4), sav.commons.testdata.calculator.Calculator:11:0.0(P=6, F=4), sav.commons.testdata.calculator.Calculator:24:0.0(P=6, F=4)]
+2015-07-01 13:37:07 [INFO ] root:33 	Running Machine Learning
+2015-07-01 13:37:08 [DEBUG] root:61 	start cmd..
+2015-07-01 13:37:08 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\src\test\java\test\Calculator1.java -g
+2015-07-01 13:37:08 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:37:08 [DEBUG] root:61 	-classpath
+2015-07-01 13:37:08 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:37:08 [DEBUG] root:61 	-d
+2015-07-01 13:37:08 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:37:08 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\src\test\java\test\Calculator1.java
+2015-07-01 13:37:08 [DEBUG] root:61 	-g
+2015-07-01 13:37:09 [DEBUG] root:61 	create backup folder  C:\Users\DELL50~1\AppData\Local\Temp\backup6449532756432283936
+2015-07-01 13:37:09 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\Calculator.class
+2015-07-01 13:37:09 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest.class
+2015-07-01 13:37:09 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest1.class
+2015-07-01 13:37:09 [DEBUG] root:61 	start cmd..
+2015-07-01 13:37:09 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac -classpath D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource4310138395345646237\Calculator.java -g
+2015-07-01 13:37:09 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\javac
+2015-07-01 13:37:09 [DEBUG] root:61 	-classpath
+2015-07-01 13:37:09 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:37:09 [DEBUG] root:61 	-d
+2015-07-01 13:37:09 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes
+2015-07-01 13:37:09 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource4310138395345646237\Calculator.java
+2015-07-01 13:37:09 [DEBUG] root:61 	-g
+2015-07-01 13:37:09 [DEBUG] root:61 	start cmd..
+2015-07-01 13:37:09 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java -agentlib:jdwp=transport=dt_socket,suspend=y,address=50341 -ea -cp D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods sav.commons.testdata.calculator.CalculatorTest.testPassed4 sav.commons.testdata.calculator.CalculatorTest.testPassed3 sav.commons.testdata.calculator.CalculatorTest.testPassed1 sav.commons.testdata.calculator.CalculatorTest.testFailed1 sav.commons.testdata.calculator.CalculatorTest.testPassed2 sav.commons.testdata.calculator.CalculatorTest.testFailed2 sav.commons.testdata.calculator.CalculatorTest.testFailed3 sav.commons.testdata.calculator.CalculatorTest.testFailed4 sav.commons.testdata.calculator.CalculatorTest.testFailed5 sav.commons.testdata.calculator.CalculatorTest.testFailed6 test.Calculator1.test1 test.Calculator1.test2 test.Calculator1.test3 test.Calculator1.test4 test.Calculator1.test5 test.Calculator1.test6 test.Calculator1.test7 test.Calculator1.test8 test.Calculator1.test9 test.Calculator1.test10 test.Calculator1.test11 test.Calculator1.test12 test.Calculator1.test13 test.Calculator1.test14 test.Calculator1.test15 test.Calculator1.test16 test.Calculator1.test17 test.Calculator1.test18 test.Calculator1.test19 test.Calculator1.test20 test.Calculator1.test21 test.Calculator1.test22 test.Calculator1.test23 test.Calculator1.test24 test.Calculator1.test25 test.Calculator1.test26 test.Calculator1.test27 test.Calculator1.test28 test.Calculator1.test29 test.Calculator1.test30 test.Calculator1.test31 test.Calculator1.test32 test.Calculator1.test33 test.Calculator1.test34 test.Calculator1.test35 test.Calculator1.test36 test.Calculator1.test37 test.Calculator1.test38 test.Calculator1.test39 test.Calculator1.test40 test.Calculator1.test41 test.Calculator1.test42 test.Calculator1.test43 test.Calculator1.test44 test.Calculator1.test45 test.Calculator1.test46 test.Calculator1.test47 test.Calculator1.test48 test.Calculator1.test49 test.Calculator1.test50 test.Calculator1.test51 test.Calculator1.test52 test.Calculator1.test53 test.Calculator1.test54 test.Calculator1.test55 test.Calculator1.test56 test.Calculator1.test57 test.Calculator1.test58 test.Calculator1.test59 test.Calculator1.test60 test.Calculator1.test61 test.Calculator1.test62 test.Calculator1.test63 test.Calculator1.test64 test.Calculator1.test65 test.Calculator1.test66 test.Calculator1.test67 test.Calculator1.test68 test.Calculator1.test69 test.Calculator1.test70 test.Calculator1.test71 test.Calculator1.test72 test.Calculator1.test73 test.Calculator1.test74 test.Calculator1.test75 test.Calculator1.test76 test.Calculator1.test77 test.Calculator1.test78 test.Calculator1.test79 test.Calculator1.test80 test.Calculator1.test81 test.Calculator1.test82 test.Calculator1.test83 test.Calculator1.test84 test.Calculator1.test85 test.Calculator1.test86 test.Calculator1.test87 test.Calculator1.test88 test.Calculator1.test89 test.Calculator1.test90 test.Calculator1.test91 test.Calculator1.test92 test.Calculator1.test93 test.Calculator1.test94 test.Calculator1.test95 test.Calculator1.test96 test.Calculator1.test97 test.Calculator1.test98 test.Calculator1.test99 test.Calculator1.test100 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tcsExResult7077623016403685262.txt
+2015-07-01 13:37:09 [DEBUG] root:61 	D:\_1_Projects\_Tools\jdk1.7.0_51\bin\java
+2015-07-01 13:37:09 [DEBUG] root:61 	-agentlib:jdwp=transport=dt_socket,suspend=y,address=50341
+2015-07-01 13:37:09 [DEBUG] root:61 	-ea
+2015-07-01 13:37:09 [DEBUG] root:61 	-cp
+2015-07-01 13:37:09 [DEBUG] root:61 	D:\_1_Projects\Tzuyu\workspace\trunk/app/sav.commons/target/test-classes;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-01 13:37:09 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-01 13:37:09 [DEBUG] root:61 	-methods
+2015-07-01 13:37:09 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed4
+2015-07-01 13:37:09 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed3
+2015-07-01 13:37:09 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed1
+2015-07-01 13:37:09 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed1
+2015-07-01 13:37:09 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testPassed2
+2015-07-01 13:37:09 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed2
+2015-07-01 13:37:09 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed3
+2015-07-01 13:37:09 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed4
+2015-07-01 13:37:09 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed5
+2015-07-01 13:37:09 [DEBUG] root:61 	sav.commons.testdata.calculator.CalculatorTest.testFailed6
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test1
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test2
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test3
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test4
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test5
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test6
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test7
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test8
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test9
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test10
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test11
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test12
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test13
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test14
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test15
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test16
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test17
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test18
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test19
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test20
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test21
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test22
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test23
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test24
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test25
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test26
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test27
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test28
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test29
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test30
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test31
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test32
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test33
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test34
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test35
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test36
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test37
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test38
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test39
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test40
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test41
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test42
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test43
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test44
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test45
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test46
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test47
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test48
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test49
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test50
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test51
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test52
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test53
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test54
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test55
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test56
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test57
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test58
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test59
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test60
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test61
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test62
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test63
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test64
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test65
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test66
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test67
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test68
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test69
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test70
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test71
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test72
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test73
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test74
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test75
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test76
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test77
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test78
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test79
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test80
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test81
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test82
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test83
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test84
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test85
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test86
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test87
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test88
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test89
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test90
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test91
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test92
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test93
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test94
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test95
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test96
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test97
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test98
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test99
+2015-07-01 13:37:09 [DEBUG] root:61 	test.Calculator1.test100
+2015-07-01 13:37:09 [DEBUG] root:61 	-destfile
+2015-07-01 13:37:09 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tcsExResult7077623016403685262.txt
+2015-07-01 13:37:15 [DEBUG] root:61 	RunTestcases:
+2015-07-01 13:37:15 [DEBUG] root:61 	testingClassNames = []
+2015-07-01 13:37:15 [DEBUG] root:61 	testingPkgs = []
+2015-07-01 13:37:15 [INFO ] Engine:138 	Start to learn at MutationBreakPoint [classCanonicalName=sav.commons.testdata.calculator.Calculator, methodName=null, lineNo=24, vars=[Variable [name=max, fullName=max, scope=UNDEFINED], Variable [name=x, fullName=x, scope=UNDEFINED], Variable [name=y, fullName=y, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-07-01 13:37:16 [INFO ] Engine:216 	Learn: sav.commons.testdata.calculator.Calculator:30
+Logic: 3.0*y -4.0*x >= -28.0
+Accuracy: 1.0
+
+2015-07-01 13:37:16 [INFO ] Engine:138 	Start to learn at MutationBreakPoint [classCanonicalName=sav.commons.testdata.calculator.Calculator, methodName=null, lineNo=8, vars=[Variable [name=x, fullName=x, scope=UNDEFINED], Variable [name=a, fullName=a, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-07-01 13:37:16 [INFO ] Engine:152 	This line is likely a bug!
+2015-07-01 13:37:16 [INFO ] Engine:138 	Start to learn at MutationBreakPoint [classCanonicalName=sav.commons.testdata.calculator.Calculator, methodName=null, lineNo=7, vars=[Variable [name=a, fullName=a, scope=UNDEFINED], Variable [name=Math, fullName=Math, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-07-01 13:37:16 [INFO ] Engine:152 	This line is likely a bug!
+2015-07-01 13:37:16 [INFO ] Engine:138 	Start to learn at MutationBreakPoint [classCanonicalName=sav.commons.testdata.calculator.Calculator, methodName=null, lineNo=6, vars=[Variable [name=x, fullName=x, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-07-01 13:37:16 [INFO ] Engine:216 	Learn: sav.commons.testdata.calculator.Calculator:6
+Logic:  -1.0*x >= -4.0
+Accuracy: 1.0
+
+2015-07-01 13:37:16 [INFO ] Engine:138 	Start to learn at MutationBreakPoint [classCanonicalName=sav.commons.testdata.calculator.Calculator, methodName=null, lineNo=11, vars=[Variable [name=x, fullName=x, scope=UNDEFINED], Variable [name=y, fullName=y, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-07-01 13:37:16 [INFO ] Engine:216 	Learn: sav.commons.testdata.calculator.Calculator:15
+Logic:  -1.0*x >= -4.0
+Accuracy: 1.0
+
+2015-07-01 13:37:16 [INFO ] root:33 	----------------FINISHED--------------------
+2015-07-01 13:37:16 [INFO ] root:33 	sav.commons.testdata.calculator.Calculator:8
+suspiciousness: 0.17
+Logic: This line is likely a bug!
+Accuracy: 1.0
+
+
+sav.commons.testdata.calculator.Calculator:24
+suspiciousness: 0.00
+Logic: 3.0*y -4.0*x >= -28.0
+Accuracy: 1.0
+
+
+sav.commons.testdata.calculator.Calculator:7
+suspiciousness: 0.00
+Logic: This line is likely a bug!
+Accuracy: 1.0
+
+
+sav.commons.testdata.calculator.Calculator:6
+suspiciousness: 0.00
+Logic:  -1.0*x >= -4.0
+Accuracy: 1.0
+
+
+sav.commons.testdata.calculator.Calculator:11
+suspiciousness: 0.00
+Logic:  -1.0*x >= -4.0
+Accuracy: 1.0
+
+2015-07-01 13:37:16 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest.class
+2015-07-01 13:37:16 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\CalculatorTest1.class
+2015-07-01 13:37:16 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\trunk\app\sav.commons\target\test-classes\sav\commons\testdata\calculator\Calculator.class

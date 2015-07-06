@@ -38,6 +38,7 @@ public class JaCoCoAgentTest extends JacocoAbstractTest {
 	protected VMConfiguration vmConfig;
 	protected JaCoCoAgent jacoco;
 	protected ICoverageReport report;
+	private List<String> result;
 	
 	@Before
 	public void setup() {
@@ -46,9 +47,10 @@ public class JaCoCoAgentTest extends JacocoAbstractTest {
 		vmConfig.addClasspath(TestConfiguration.SAV_COMMONS_TEST_TARGET);
 		vmConfig.addClasspath(TestConfiguration.getTzAssembly(TZUYU_JACOCO_ASSEMBLY));
 		vmConfig.addClasspath(TestConfiguration.getTestResources(MODULE));
-		jacoco = new JaCoCoAgent(null);
+		jacoco = new JaCoCoAgent(new String[]{});
 		jacoco.setVmConfig(vmConfig);
 		jacoco.setOut(new SavPrintStream(System.out));
+		result = new ArrayList<String>();
 		report = new ICoverageReport() {
 
 			@Override
@@ -58,11 +60,13 @@ public class JaCoCoAgentTest extends JacocoAbstractTest {
 			@Override
 			public void addInfo(int testcaseIndex, String className,
 					int lineIndex, boolean isPassed, boolean isCovered) {
+				String str = String.format(""
+						+ "test%s, %s@%s, pass:%s, isCovered:%s",
+						testcaseIndex, className, lineIndex, isPassed,
+						isCovered);
+				result.add(str);
 				if (className.contains("AbstractTokenizer") && testcaseIndex == 1) {
-					System.out.println(String.format(""
-							+ "test%s, %s@%s, pass:%s, isCovered:%s",
-							testcaseIndex, className, lineIndex, isPassed,
-							isCovered));
+					System.out.println(str);
 				}
 			}
 

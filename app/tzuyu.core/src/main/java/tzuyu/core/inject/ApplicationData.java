@@ -78,6 +78,7 @@ public class ApplicationData {
 	}
 
 	public List<String> getAppClasspaths() {
+		appClasspaths = CollectionUtils.nullToEmpty(appClasspaths);
 		return appClasspaths;
 	}
 
@@ -86,8 +87,7 @@ public class ApplicationData {
 	}
 	
 	public void addClasspath(String classpath) {
-		appClasspaths = CollectionUtils.nullToEmpty(appClasspaths);
-		appClasspaths.add(classpath);
+		getAppClasspaths().add(classpath);
 	}
 
 	/**

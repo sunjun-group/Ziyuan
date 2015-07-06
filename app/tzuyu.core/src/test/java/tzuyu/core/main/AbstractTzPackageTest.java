@@ -44,9 +44,6 @@ public class AbstractTzPackageTest extends AbstractTest {
 		};
 		appData = new ApplicationData();
 		appData.setJavaHome("D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b");
-		appData.addClasspath(TestConfiguration.getTarget("slicer.javaslicer"));
-		appData.addClasspath(TestConfiguration.getTzAssembly(Constants.SAV_COMMONS_ASSEMBLY));
-		appData.addClasspath(appData.getJavaHome() + "/bin");
 		appData.setSuspiciousCalculAlgo(SpectrumAlgorithm.TARANTULA);
 		appData.setTzuyuJacocoAssembly(TestConfiguration.getTzAssembly(Constants.TZUYU_JACOCO_ASSEMBLY));
 		context.setAppData(appData);
@@ -66,6 +63,10 @@ public class AbstractTzPackageTest extends AbstractTest {
 		junitClassNames = testPkg.getValues(TestDataColumn.TEST_CLASSES);
 		
 		List<String> expectedBugLocations = testPkg.getValues(TestDataColumn.EXPECTED_BUG_LOCATION);
+		
+		appData.addClasspath(appData.getJavaHome() + "/bin");
+		appData.addClasspath(TestConfiguration.getTarget("slicer.javaslicer"));
+		appData.addClasspath(TestConfiguration.getTzAssembly(Constants.SAV_COMMONS_ASSEMBLY));
 		
 		updateSystemClasspath(appData.getAppClasspaths());
 		return expectedBugLocations;

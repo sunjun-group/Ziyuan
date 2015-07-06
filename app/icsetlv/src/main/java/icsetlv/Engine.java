@@ -1,11 +1,14 @@
 package icsetlv;
 
+import icsetlv.common.dto.BooleanValue;
 import icsetlv.common.dto.BreakpointValue;
+import icsetlv.common.dto.ExecValue;
 import icsetlv.common.dto.TcExecResult;
 import icsetlv.variable.TestcasesExecutor;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -142,22 +145,19 @@ public class Engine {
 			if(passValues.isEmpty() && failValues.isEmpty()){
 				//fail to add breakpoint
 				continue;
-			}
-			else if(failValues.isEmpty()){
+			} else if(failValues.isEmpty()){
 				LOGGER.info("This line is likely not a bug!");
 				Result result = new AllPositiveResult();
 				setResult(result, bkp, "This line is likely not a bug!", 1);
 				results.add(result);
 				continue;
-			}
-			else if(passValues.isEmpty()){
+			} else if(passValues.isEmpty()){
 				LOGGER.info("This line is likely a bug!");
 				Result result = new AllNegativeResult();
 				setResult(result, bkp, "This line is likely a bug!", 1);
 				results.add(result);
 				continue;
 			}
-
 			// Configure data for SVM machine
 			machine.resetData();
 
@@ -169,26 +169,42 @@ public class Engine {
 			for (BreakpointValue bv : failValues) {
 				labelSet.addAll(bv.getAllLabels());
 			}
-
-			final List<String> varLabels = new ArrayList<String>(labelSet);
-			machine.setDataLabels(varLabels);
-			BugExpert.addDataPoints(machine, passValues, failValues);
+			final List<String> varLabels = new ArrayList<String>(labelSet);			
+			
+			// TODO: TO REMOVE, just added for debugging
+//			if (bkp.getLineNo() == 298) {
+//				LOGGER.info("***********LINE 298*************");
+//				LOGGER.info("varLabels");
+//				LOGGER.info(varLabels);
+//				LOGGER.info("passValues");
+//				LOGGER.info(sav.common.core.utils.StringUtils.join(passValues, "\n"));
+//				LOGGER.info("failValues");
+//				LOGGER.info(sav.common.core.utils.StringUtils.join(failValues, "\n"));
+//				LOGGER.info("************************");
+//			}
 			
 			List<String> exps = new ArrayList<String>();
 			//check isNull
-			for(String varLabel: varLabels){
+			for (Iterator<String> it = varLabels.iterator(); it.hasNext(); ) {
+				String varLabel = it.next();
 				if(varLabel.endsWith("isNull")){
-					Pair<Boolean, Boolean> allTrueFalseInPass = checkAllTrueOrAllFalse(passValues, varLabel);
-					Pair<Boolean, Boolean> allTrueFalseInFail = checkAllTrueOrAllFalse(failValues, varLabel);
-					
-					if(allTrueFalseInPass.a && allTrueFalseInFail.b){
-						exps.add(varLabel);
-					}
-					if(allTrueFalseInPass.b && allTrueFalseInFail.a){
-						exps.add("!" + varLabel);
-					}		
+					learnBool(passValues, failValues, exps, varLabel);		
+					it.remove();
 				}
+				// TODO: LLT: to check & refactor.
+//				else {
+//					if (failValues.size() > 0) {
+//						ExecValue variableValue = failValues.get(0).findVariableById(varLabel);
+//						if (variableValue instanceof BooleanValue) {
+//							learnBool(passValues, failValues, exps, varLabel);
+//							it.remove();
+//						}
+//					}
+//				}
 			}
+			
+			machine.setDataLabels(varLabels);
+			BugExpert.addDataPoints(machine, passValues, failValues);
 			
 			// Train
 			machine.train();
@@ -210,6 +226,20 @@ public class Engine {
 		}
 
 		return this;
+	}
+
+	private void learnBool(final List<BreakpointValue> passValues,
+			final List<BreakpointValue> failValues, List<String> exps,
+			String varLabel) {
+		Pair<Boolean, Boolean> allTrueFalseInPass = checkAllTrueOrAllFalse(passValues, varLabel);
+		Pair<Boolean, Boolean> allTrueFalseInFail = checkAllTrueOrAllFalse(failValues, varLabel);
+		
+		if(allTrueFalseInPass.a && allTrueFalseInFail.b){
+			exps.add(varLabel);
+		}
+		if(allTrueFalseInPass.b && allTrueFalseInFail.a){
+			exps.add("!" + varLabel);
+		}
 	}
 
 	private Pair<Boolean,Boolean> checkAllTrueOrAllFalse(final List<BreakpointValue> values,

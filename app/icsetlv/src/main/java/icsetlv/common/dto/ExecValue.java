@@ -98,6 +98,24 @@ public abstract class ExecValue {
 		return vars;
 	}
 	
+	/**
+	 * TODO: to improve, varId of a child is always 
+	 * started with its parent's varId
+	 */
+	public ExecValue findVariableById(String varId) {
+		if (this.varId.equals(varId)) {
+			return this;
+		} else {
+			for (ExecValue child : CollectionUtils.nullToEmpty(children)) {
+				ExecValue match = child.findVariableById(varId);
+				if (match != null) {
+					return match;
+				}
+			}
+			return null;
+		}
+	}
+	
 	protected boolean needToRetrieveValue() {
 		return true;
 	}

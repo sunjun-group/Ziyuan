@@ -1,0 +1,1059 @@
+2015-07-02 16:20:49 [INFO ] root:33 	Running TARANTULA
+2015-07-02 16:20:50 [DEBUG] root:61 	start cmd..
+2015-07-02 16:20:50 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -ea -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods issues.Issue108.testIssue108 com.opencsv.CSVIteratorTest.readerExceptionCausesRunTimeException com.opencsv.CSVIteratorTest.removethrowsUnsupportedOperationException com.opencsv.CSVIteratorTest.hasNextWorks com.opencsv.CSVIteratorTest.initialReadReturnsStrings com.opencsv.CSVReaderTest.parseQuotedStringWithDefinedSeperator com.opencsv.CSVReaderTest.testSkippingLinesWithDifferentEscape com.opencsv.CSVReaderTest.testASingleQuoteAsDataElementWithEmptyField com.opencsv.CSVReaderTest.testSingleQuoteWhenDoubleQuoteIsQuoteChar com.opencsv.CSVReaderTest.testIssue2992134OutOfPlaceQuotes com.opencsv.CSVReaderTest.separatorAndEscapeMustBeDifferent com.opencsv.CSVReaderTest.separatorAndQuoteMustBeDifferent com.opencsv.CSVReaderTest.attemptToReadCloseStreamReturnsNull com.opencsv.CSVReaderTest.testParseLine com.opencsv.CSVReaderTest.testParseAll com.opencsv.CSVReaderTest.creatingIteratorForReaderWithNullDataThrowsRuntimeException com.opencsv.CSVReaderTest.testParseLineStrictQuote com.opencsv.CSVReaderTest.testOptionalConstructors com.opencsv.CSVReaderTest.testSkippingLines com.opencsv.CSVReaderTest.testNormalParsedLine com.opencsv.CSVReaderTest.testASingleQuoteAsDataElement com.opencsv.CSVReaderTest.testSpacesAtEndOfString com.opencsv.CSVReaderTest.testEscapedQuote com.opencsv.CSVReaderTest.testEscapedEscape com.opencsv.CSVReaderTest.testQuotedParsedLine com.opencsv.CSVReaderTest.quoteAndEscapeMustBeDifferent com.opencsv.CSVReaderTest.testIteratorFunctionality com.opencsv.CSVReaderTest.canCloseReader com.opencsv.CSVReaderTest.canCreateIteratorFromReader com.opencsv.OpencsvTest.testWriteRead com.opencsv.UniCodeTest.writeThenReadTwiceMixedUnicode com.opencsv.UniCodeTest.readerTest com.opencsv.UniCodeTest.writerTest com.opencsv.UniCodeTest.canParseUnicode com.opencsv.UniCodeTest.runUniCodeThroughCSVReader com.opencsv.UniCodeTest.runUniCodeThroughCSVWriter com.opencsv.UniCodeTest.runASCIIThroughCSVWriter com.opencsv.UniCodeTest.writeThenReadAscii com.opencsv.UniCodeTest.writeThenReadTwiceAscii com.opencsv.UniCodeTest.writeThenReadTwiceUnicode -testingpkgs issues com.opencsv -destfile C:\Users\DELL50~1\AppData\Local\Temp\junitResult1278817500001464248.temp
+2015-07-02 16:20:50 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:20:50 [DEBUG] root:61 	-ea
+2015-07-02 16:20:50 [DEBUG] root:61 	-cp
+2015-07-02 16:20:50 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-02 16:20:50 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:20:50 [DEBUG] root:61 	-methods
+2015-07-02 16:20:50 [DEBUG] root:61 	issues.Issue108.testIssue108
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVIteratorTest.readerExceptionCausesRunTimeException
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVIteratorTest.removethrowsUnsupportedOperationException
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVIteratorTest.hasNextWorks
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVIteratorTest.initialReadReturnsStrings
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.parseQuotedStringWithDefinedSeperator
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testSkippingLinesWithDifferentEscape
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testASingleQuoteAsDataElementWithEmptyField
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testSingleQuoteWhenDoubleQuoteIsQuoteChar
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testIssue2992134OutOfPlaceQuotes
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.separatorAndEscapeMustBeDifferent
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.separatorAndQuoteMustBeDifferent
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.attemptToReadCloseStreamReturnsNull
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testParseLine
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testParseAll
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.creatingIteratorForReaderWithNullDataThrowsRuntimeException
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testParseLineStrictQuote
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testOptionalConstructors
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testSkippingLines
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testNormalParsedLine
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testASingleQuoteAsDataElement
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testSpacesAtEndOfString
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testEscapedQuote
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testEscapedEscape
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testQuotedParsedLine
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.quoteAndEscapeMustBeDifferent
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testIteratorFunctionality
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.canCloseReader
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest.canCreateIteratorFromReader
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.OpencsvTest.testWriteRead
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.UniCodeTest.writeThenReadTwiceMixedUnicode
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.UniCodeTest.readerTest
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.UniCodeTest.writerTest
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.UniCodeTest.canParseUnicode
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.UniCodeTest.runUniCodeThroughCSVReader
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.UniCodeTest.runUniCodeThroughCSVWriter
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.UniCodeTest.runASCIIThroughCSVWriter
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.UniCodeTest.writeThenReadAscii
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.UniCodeTest.writeThenReadTwiceAscii
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv.UniCodeTest.writeThenReadTwiceUnicode
+2015-07-02 16:20:50 [DEBUG] root:61 	-testingpkgs
+2015-07-02 16:20:50 [DEBUG] root:61 	issues
+2015-07-02 16:20:50 [DEBUG] root:61 	com.opencsv
+2015-07-02 16:20:50 [DEBUG] root:61 	-destfile
+2015-07-02 16:20:50 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\junitResult1278817500001464248.temp
+2015-07-02 16:20:51 [DEBUG] root:61 	failureTraces= issues.Issue108:26
+2015-07-02 16:20:51 [INFO ] root:33 	Slicing-creating trace file...
+2015-07-02 16:20:51 [DEBUG] root:61 	start cmd..
+2015-07-02 16:20:51 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\tracer.jar=tracefile:C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer7296687171183042902.trace -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods issues.Issue108.testIssue108
+2015-07-02 16:20:51 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:20:51 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\tracer.jar=tracefile:C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer7296687171183042902.trace
+2015-07-02 16:20:51 [DEBUG] root:61 	-cp
+2015-07-02 16:20:51 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-02 16:20:51 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:20:51 [DEBUG] root:61 	-methods
+2015-07-02 16:20:51 [DEBUG] root:61 	issues.Issue108.testIssue108
+2015-07-02 16:21:24 [INFO ] root:33 	Slicing-slicing...
+2015-07-02 16:21:24 [DEBUG] root:61 	traceFilePath= C:\Users\DELL50~1\AppData\Local\Temp\javaSlicer7296687171183042902.trace
+2015-07-02 16:21:24 [INFO ] root:33 	entry points= issues.Issue108:26
+2015-07-02 16:21:31 [DEBUG] root:61 	Read Slicing Result:
+2015-07-02 16:21:31 [DEBUG] root:61 	slicing-result:
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:154
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:230
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:231
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:98
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:166
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:165
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:185
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:168
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:189
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:250
+2015-07-02 16:21:31 [DEBUG] root:61 	issues.Issue108:25
+2015-07-02 16:21:31 [DEBUG] root:61 	issues.Issue108:26
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:41
+2015-07-02 16:21:31 [DEBUG] root:61 	issues.Issue108:24
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:137
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:184
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:183
+2015-07-02 16:21:31 [DEBUG] root:61 	issues.Issue108:20
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:204
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:50
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader:152
+2015-07-02 16:21:31 [DEBUG] root:61 	Slicing - create Trace file: 32955 ms
+2015-07-02 16:21:31 [DEBUG] root:61 	Slicing - slice: 1 ms
+2015-07-02 16:21:31 [DEBUG] root:61 	Slicing - read trace file: 7556 ms
+2015-07-02 16:21:31 [DEBUG] root:61 	Slicing Overall: 40512 ms
+2015-07-02 16:21:31 [DEBUG] root:61 	causeTraces= com.opencsv.CSVReader:154, com.opencsv.CSVReader:230, com.opencsv.CSVReader:231, com.opencsv.CSVReader:98, com.opencsv.CSVReader:166, com.opencsv.CSVReader:165, com.opencsv.CSVReader:185, com.opencsv.CSVReader:168, com.opencsv.CSVReader:189, com.opencsv.CSVReader:250, issues.Issue108:25, issues.Issue108:26, com.opencsv.CSVReader:41, issues.Issue108:24, com.opencsv.CSVReader:184, com.opencsv.CSVReader:137, com.opencsv.CSVReader:183, issues.Issue108:20, com.opencsv.CSVReader:204, com.opencsv.CSVReader:152, com.opencsv.CSVReader:50
+2015-07-02 16:21:31 [DEBUG] root:61 	Analyzing classes: 
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader
+issues.Issue108
+2015-07-02 16:21:31 [DEBUG] root:61 	RUNNING JACOCO..
+2015-07-02 16:21:31 [DEBUG] root:61 	Start vmRunner..
+2015-07-02 16:21:31 [DEBUG] root:61 	destfile= C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec
+2015-07-02 16:21:31 [DEBUG] root:61 	junitResultFile= C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:31 [DEBUG] root:61 	append=true
+2015-07-02 16:21:31 [DEBUG] root:61 	testMethods= [issues.Issue108.testIssue108, com.opencsv.CSVIteratorTest.readerExceptionCausesRunTimeException, com.opencsv.CSVIteratorTest.removethrowsUnsupportedOperationException, com.opencsv.CSVIteratorTest.hasNextWorks, com.opencsv.CSVIteratorTest.initialReadReturnsStrings, com.opencsv.CSVReaderTest.parseQuotedStringWithDefinedSeperator, com.opencsv.CSVReaderTest.testSkippingLinesWithDifferentEscape, com.opencsv.CSVReaderTest.testASingleQuoteAsDataElementWithEmptyField, com.opencsv.CSVReaderTest.testSingleQuoteWhenDoubleQuoteIsQuoteChar, com.opencsv.CSVReaderTest.testIssue2992134OutOfPlaceQuotes, com.opencsv.CSVReaderTest.separatorAndEscapeMustBeDifferent, com.opencsv.CSVReaderTest.separatorAndQuoteMustBeDifferent, com.opencsv.CSVReaderTest.attemptToReadCloseStreamReturnsNull, com.opencsv.CSVReaderTest.testParseLine, com.opencsv.CSVReaderTest.testParseAll, com.opencsv.CSVReaderTest.creatingIteratorForReaderWithNullDataThrowsRuntimeException, com.opencsv.CSVReaderTest.testParseLineStrictQuote, com.opencsv.CSVReaderTest.testOptionalConstructors, com.opencsv.CSVReaderTest.testSkippingLines, com.opencsv.CSVReaderTest.testNormalParsedLine, com.opencsv.CSVReaderTest.testASingleQuoteAsDataElement, com.opencsv.CSVReaderTest.testSpacesAtEndOfString, com.opencsv.CSVReaderTest.testEscapedQuote, com.opencsv.CSVReaderTest.testEscapedEscape, com.opencsv.CSVReaderTest.testQuotedParsedLine, com.opencsv.CSVReaderTest.quoteAndEscapeMustBeDifferent, com.opencsv.CSVReaderTest.testIteratorFunctionality, com.opencsv.CSVReaderTest.canCloseReader, com.opencsv.CSVReaderTest.canCreateIteratorFromReader, com.opencsv.OpencsvTest.testWriteRead, com.opencsv.UniCodeTest.writeThenReadTwiceMixedUnicode, com.opencsv.UniCodeTest.readerTest, com.opencsv.UniCodeTest.writerTest, com.opencsv.UniCodeTest.canParseUnicode, com.opencsv.UniCodeTest.runUniCodeThroughCSVReader, com.opencsv.UniCodeTest.runUniCodeThroughCSVWriter, com.opencsv.UniCodeTest.runASCIIThroughCSVWriter, com.opencsv.UniCodeTest.writeThenReadAscii, com.opencsv.UniCodeTest.writeThenReadTwiceAscii, com.opencsv.UniCodeTest.writeThenReadTwiceUnicode]
+2015-07-02 16:21:31 [DEBUG] root:61 	allClassNames= [com.opencsv.CSVReader, issues.Issue108, issues.Issue108, com.opencsv.CSVIteratorTest, com.opencsv.CSVReaderTest, com.opencsv.OpencsvTest, com.opencsv.UniCodeTest]
+2015-07-02 16:21:31 [DEBUG] root:61 	junitClassNames= [issues.Issue108, com.opencsv.CSVIteratorTest, com.opencsv.CSVReaderTest, com.opencsv.OpencsvTest, com.opencsv.UniCodeTest]
+2015-07-02 16:21:31 [DEBUG] root:61 	testingClassNames= [com.opencsv.CSVReader, issues.Issue108]
+2015-07-02 16:21:31 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:31 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods issues.Issue108.testIssue108 -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:31 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:31 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:31 [DEBUG] root:61 	-cp
+2015-07-02 16:21:31 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:31 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:31 [DEBUG] root:61 	-methods
+2015-07-02 16:21:31 [DEBUG] root:61 	issues.Issue108.testIssue108
+2015-07-02 16:21:31 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:31 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:31 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:31 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:31 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:31 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:32 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:32 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVIteratorTest.readerExceptionCausesRunTimeException -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:32 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:32 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:32 [DEBUG] root:61 	-cp
+2015-07-02 16:21:32 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:32 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:32 [DEBUG] root:61 	-methods
+2015-07-02 16:21:32 [DEBUG] root:61 	com.opencsv.CSVIteratorTest.readerExceptionCausesRunTimeException
+2015-07-02 16:21:32 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:32 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:32 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:32 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:32 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:32 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:32 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:32 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:32 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:32 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:32 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:32 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVIteratorTest.removethrowsUnsupportedOperationException -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:32 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:32 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:32 [DEBUG] root:61 	-cp
+2015-07-02 16:21:32 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:32 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:32 [DEBUG] root:61 	-methods
+2015-07-02 16:21:32 [DEBUG] root:61 	com.opencsv.CSVIteratorTest.removethrowsUnsupportedOperationException
+2015-07-02 16:21:32 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:32 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:32 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:32 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:32 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:32 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:32 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:32 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:32 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:32 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:33 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:33 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVIteratorTest.hasNextWorks -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:33 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:33 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:33 [DEBUG] root:61 	-cp
+2015-07-02 16:21:33 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:33 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:33 [DEBUG] root:61 	-methods
+2015-07-02 16:21:33 [DEBUG] root:61 	com.opencsv.CSVIteratorTest.hasNextWorks
+2015-07-02 16:21:33 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:33 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:33 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:33 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:33 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:33 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:33 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:33 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:33 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:33 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:34 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:34 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVIteratorTest.initialReadReturnsStrings -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:34 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:34 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:34 [DEBUG] root:61 	-cp
+2015-07-02 16:21:34 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:34 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:34 [DEBUG] root:61 	-methods
+2015-07-02 16:21:34 [DEBUG] root:61 	com.opencsv.CSVIteratorTest.initialReadReturnsStrings
+2015-07-02 16:21:34 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:34 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:34 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:34 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:34 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:34 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:34 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:34 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:34 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:34 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:34 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:34 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.parseQuotedStringWithDefinedSeperator -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:34 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:34 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:34 [DEBUG] root:61 	-cp
+2015-07-02 16:21:34 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:34 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:34 [DEBUG] root:61 	-methods
+2015-07-02 16:21:34 [DEBUG] root:61 	com.opencsv.CSVReaderTest.parseQuotedStringWithDefinedSeperator
+2015-07-02 16:21:34 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:34 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:34 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:34 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:34 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:34 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:34 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:34 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:34 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:34 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:35 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:35 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.testSkippingLinesWithDifferentEscape -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:35 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:35 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:35 [DEBUG] root:61 	-cp
+2015-07-02 16:21:35 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:35 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:35 [DEBUG] root:61 	-methods
+2015-07-02 16:21:35 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testSkippingLinesWithDifferentEscape
+2015-07-02 16:21:35 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:35 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:35 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:35 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:35 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:35 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:35 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:35 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:35 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:35 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:35 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:35 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.testASingleQuoteAsDataElementWithEmptyField -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:35 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:35 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:35 [DEBUG] root:61 	-cp
+2015-07-02 16:21:35 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:35 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:35 [DEBUG] root:61 	-methods
+2015-07-02 16:21:35 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testASingleQuoteAsDataElementWithEmptyField
+2015-07-02 16:21:35 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:35 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:35 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:35 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:35 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:35 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:35 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:35 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:35 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:35 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:36 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:36 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.testSingleQuoteWhenDoubleQuoteIsQuoteChar -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:36 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:36 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:36 [DEBUG] root:61 	-cp
+2015-07-02 16:21:36 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:36 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:36 [DEBUG] root:61 	-methods
+2015-07-02 16:21:36 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testSingleQuoteWhenDoubleQuoteIsQuoteChar
+2015-07-02 16:21:36 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:36 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:36 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:36 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:36 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:36 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:36 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:36 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:36 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:36 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:36 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:36 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.testIssue2992134OutOfPlaceQuotes -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:36 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:36 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:36 [DEBUG] root:61 	-cp
+2015-07-02 16:21:36 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:36 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:36 [DEBUG] root:61 	-methods
+2015-07-02 16:21:36 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testIssue2992134OutOfPlaceQuotes
+2015-07-02 16:21:36 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:36 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:36 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:36 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:36 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:36 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:36 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:36 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:36 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:36 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:37 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:37 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.separatorAndEscapeMustBeDifferent -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:37 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:37 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:37 [DEBUG] root:61 	-cp
+2015-07-02 16:21:37 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:37 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:37 [DEBUG] root:61 	-methods
+2015-07-02 16:21:37 [DEBUG] root:61 	com.opencsv.CSVReaderTest.separatorAndEscapeMustBeDifferent
+2015-07-02 16:21:37 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:37 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:37 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:37 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:37 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:37 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:37 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:37 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:37 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:37 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:37 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:37 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.separatorAndQuoteMustBeDifferent -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:37 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:37 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:37 [DEBUG] root:61 	-cp
+2015-07-02 16:21:37 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:37 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:37 [DEBUG] root:61 	-methods
+2015-07-02 16:21:37 [DEBUG] root:61 	com.opencsv.CSVReaderTest.separatorAndQuoteMustBeDifferent
+2015-07-02 16:21:37 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:37 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:37 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:37 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:37 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:37 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:37 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:37 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:37 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:37 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:38 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:38 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.attemptToReadCloseStreamReturnsNull -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:38 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:38 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:38 [DEBUG] root:61 	-cp
+2015-07-02 16:21:38 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:38 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:38 [DEBUG] root:61 	-methods
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.CSVReaderTest.attemptToReadCloseStreamReturnsNull
+2015-07-02 16:21:38 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:38 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:38 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:38 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:38 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:38 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:38 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.testParseLine -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:38 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:38 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:38 [DEBUG] root:61 	-cp
+2015-07-02 16:21:38 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:38 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:38 [DEBUG] root:61 	-methods
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testParseLine
+2015-07-02 16:21:38 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:38 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:38 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:38 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:38 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:38 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:38 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.testParseAll -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:38 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:38 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:38 [DEBUG] root:61 	-cp
+2015-07-02 16:21:38 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:38 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:38 [DEBUG] root:61 	-methods
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testParseAll
+2015-07-02 16:21:38 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:38 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:38 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:38 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:38 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:38 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:39 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:39 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.creatingIteratorForReaderWithNullDataThrowsRuntimeException -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:39 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:39 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:39 [DEBUG] root:61 	-cp
+2015-07-02 16:21:39 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:39 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:39 [DEBUG] root:61 	-methods
+2015-07-02 16:21:39 [DEBUG] root:61 	com.opencsv.CSVReaderTest.creatingIteratorForReaderWithNullDataThrowsRuntimeException
+2015-07-02 16:21:39 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:39 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:39 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:39 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:39 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:39 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:39 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:39 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:39 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:39 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:39 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:39 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.testParseLineStrictQuote -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:39 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:39 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:39 [DEBUG] root:61 	-cp
+2015-07-02 16:21:39 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:39 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:39 [DEBUG] root:61 	-methods
+2015-07-02 16:21:39 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testParseLineStrictQuote
+2015-07-02 16:21:39 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:39 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:39 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:39 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:39 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:39 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:39 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:39 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:39 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:39 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:40 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:40 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.testOptionalConstructors -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:40 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:40 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:40 [DEBUG] root:61 	-cp
+2015-07-02 16:21:40 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:40 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:40 [DEBUG] root:61 	-methods
+2015-07-02 16:21:40 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testOptionalConstructors
+2015-07-02 16:21:40 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:40 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:40 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:40 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:40 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:40 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:40 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:40 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:40 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:40 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:40 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:40 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.testSkippingLines -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:40 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:40 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:40 [DEBUG] root:61 	-cp
+2015-07-02 16:21:40 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:40 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:40 [DEBUG] root:61 	-methods
+2015-07-02 16:21:40 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testSkippingLines
+2015-07-02 16:21:40 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:40 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:40 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:40 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:40 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:40 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:40 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:40 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:40 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:40 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:41 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:41 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.testNormalParsedLine -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:41 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:41 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:41 [DEBUG] root:61 	-cp
+2015-07-02 16:21:41 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:41 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:41 [DEBUG] root:61 	-methods
+2015-07-02 16:21:41 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testNormalParsedLine
+2015-07-02 16:21:41 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:41 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:41 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:41 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:41 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:41 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:41 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:41 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:41 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:41 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:42 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:42 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.testASingleQuoteAsDataElement -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:42 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:42 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:42 [DEBUG] root:61 	-cp
+2015-07-02 16:21:42 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:42 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:42 [DEBUG] root:61 	-methods
+2015-07-02 16:21:42 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testASingleQuoteAsDataElement
+2015-07-02 16:21:42 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:42 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:42 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:42 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:42 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:42 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:42 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:42 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:42 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:42 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:43 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:43 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.testSpacesAtEndOfString -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:43 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:43 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:43 [DEBUG] root:61 	-cp
+2015-07-02 16:21:43 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:43 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:43 [DEBUG] root:61 	-methods
+2015-07-02 16:21:43 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testSpacesAtEndOfString
+2015-07-02 16:21:43 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:43 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:43 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:43 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:43 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:43 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:43 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:43 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:43 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:43 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:44 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:44 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.testEscapedQuote -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:44 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:44 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:44 [DEBUG] root:61 	-cp
+2015-07-02 16:21:44 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:44 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:44 [DEBUG] root:61 	-methods
+2015-07-02 16:21:44 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testEscapedQuote
+2015-07-02 16:21:44 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:44 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:44 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:44 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:44 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:44 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:44 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:44 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:44 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:44 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:45 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:45 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.testEscapedEscape -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:45 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:45 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:45 [DEBUG] root:61 	-cp
+2015-07-02 16:21:45 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:45 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:45 [DEBUG] root:61 	-methods
+2015-07-02 16:21:45 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testEscapedEscape
+2015-07-02 16:21:45 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:45 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:45 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:45 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:45 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:45 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:45 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:45 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:45 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:45 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:46 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:46 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.testQuotedParsedLine -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:46 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:46 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:46 [DEBUG] root:61 	-cp
+2015-07-02 16:21:46 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:46 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:46 [DEBUG] root:61 	-methods
+2015-07-02 16:21:46 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testQuotedParsedLine
+2015-07-02 16:21:46 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:46 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:46 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:46 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:46 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:46 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:46 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:46 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:46 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:46 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:47 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:47 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.quoteAndEscapeMustBeDifferent -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:47 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:47 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:47 [DEBUG] root:61 	-cp
+2015-07-02 16:21:47 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:47 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:47 [DEBUG] root:61 	-methods
+2015-07-02 16:21:47 [DEBUG] root:61 	com.opencsv.CSVReaderTest.quoteAndEscapeMustBeDifferent
+2015-07-02 16:21:47 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:47 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:47 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:47 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:47 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:47 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:47 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:47 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:47 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:47 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:48 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:48 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.testIteratorFunctionality -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:48 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:48 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:48 [DEBUG] root:61 	-cp
+2015-07-02 16:21:48 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:48 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:48 [DEBUG] root:61 	-methods
+2015-07-02 16:21:48 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testIteratorFunctionality
+2015-07-02 16:21:48 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:48 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:48 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:48 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:48 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:48 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:48 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:48 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:48 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:48 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:49 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:49 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.canCloseReader -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:49 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:49 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:49 [DEBUG] root:61 	-cp
+2015-07-02 16:21:49 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:49 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:49 [DEBUG] root:61 	-methods
+2015-07-02 16:21:49 [DEBUG] root:61 	com.opencsv.CSVReaderTest.canCloseReader
+2015-07-02 16:21:49 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:49 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:49 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:49 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:49 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:49 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:49 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:49 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:49 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:49 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:49 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:49 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.CSVReaderTest.canCreateIteratorFromReader -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:49 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:49 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:49 [DEBUG] root:61 	-cp
+2015-07-02 16:21:49 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:49 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:49 [DEBUG] root:61 	-methods
+2015-07-02 16:21:49 [DEBUG] root:61 	com.opencsv.CSVReaderTest.canCreateIteratorFromReader
+2015-07-02 16:21:49 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:49 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:49 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:49 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:49 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:49 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:49 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:49 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:49 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:49 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:50 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:50 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.OpencsvTest.testWriteRead -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:50 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:50 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:50 [DEBUG] root:61 	-cp
+2015-07-02 16:21:50 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:50 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:50 [DEBUG] root:61 	-methods
+2015-07-02 16:21:50 [DEBUG] root:61 	com.opencsv.OpencsvTest.testWriteRead
+2015-07-02 16:21:50 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:50 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:50 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:50 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:50 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:50 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:50 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:50 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:50 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:50 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:51 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:51 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.UniCodeTest.writeThenReadTwiceMixedUnicode -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:51 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:51 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:51 [DEBUG] root:61 	-cp
+2015-07-02 16:21:51 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:51 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:51 [DEBUG] root:61 	-methods
+2015-07-02 16:21:51 [DEBUG] root:61 	com.opencsv.UniCodeTest.writeThenReadTwiceMixedUnicode
+2015-07-02 16:21:51 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:51 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:51 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:51 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:51 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:51 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:51 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:51 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:51 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:51 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:51 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:51 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.UniCodeTest.readerTest -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:51 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:51 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:51 [DEBUG] root:61 	-cp
+2015-07-02 16:21:51 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:51 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:51 [DEBUG] root:61 	-methods
+2015-07-02 16:21:51 [DEBUG] root:61 	com.opencsv.UniCodeTest.readerTest
+2015-07-02 16:21:51 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:51 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:51 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:51 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:51 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:51 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:51 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:51 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:51 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:51 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:52 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:52 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.UniCodeTest.writerTest -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:52 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:52 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:52 [DEBUG] root:61 	-cp
+2015-07-02 16:21:52 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:52 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:52 [DEBUG] root:61 	-methods
+2015-07-02 16:21:52 [DEBUG] root:61 	com.opencsv.UniCodeTest.writerTest
+2015-07-02 16:21:52 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:52 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:52 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:52 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:52 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:52 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:52 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:52 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:52 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:52 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:53 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:53 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.UniCodeTest.canParseUnicode -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:53 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:53 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:53 [DEBUG] root:61 	-cp
+2015-07-02 16:21:53 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:53 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:53 [DEBUG] root:61 	-methods
+2015-07-02 16:21:53 [DEBUG] root:61 	com.opencsv.UniCodeTest.canParseUnicode
+2015-07-02 16:21:53 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:53 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:53 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:53 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:53 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:53 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:53 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:53 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:53 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:53 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:53 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:53 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.UniCodeTest.runUniCodeThroughCSVReader -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:53 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:53 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:53 [DEBUG] root:61 	-cp
+2015-07-02 16:21:53 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:53 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:53 [DEBUG] root:61 	-methods
+2015-07-02 16:21:53 [DEBUG] root:61 	com.opencsv.UniCodeTest.runUniCodeThroughCSVReader
+2015-07-02 16:21:53 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:53 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:53 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:53 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:53 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:53 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:53 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:53 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:53 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:53 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:54 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:54 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.UniCodeTest.runUniCodeThroughCSVWriter -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:54 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:54 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:54 [DEBUG] root:61 	-cp
+2015-07-02 16:21:54 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:54 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:54 [DEBUG] root:61 	-methods
+2015-07-02 16:21:54 [DEBUG] root:61 	com.opencsv.UniCodeTest.runUniCodeThroughCSVWriter
+2015-07-02 16:21:54 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:54 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:54 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:54 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:54 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:54 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:54 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:54 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:54 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:54 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:54 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:54 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.UniCodeTest.runASCIIThroughCSVWriter -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:54 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:54 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:54 [DEBUG] root:61 	-cp
+2015-07-02 16:21:54 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:54 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:54 [DEBUG] root:61 	-methods
+2015-07-02 16:21:54 [DEBUG] root:61 	com.opencsv.UniCodeTest.runASCIIThroughCSVWriter
+2015-07-02 16:21:54 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:54 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:54 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:54 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:54 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:54 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:54 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:54 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:54 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:54 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:55 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:55 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.UniCodeTest.writeThenReadAscii -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:55 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:55 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:55 [DEBUG] root:61 	-cp
+2015-07-02 16:21:55 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:55 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:55 [DEBUG] root:61 	-methods
+2015-07-02 16:21:55 [DEBUG] root:61 	com.opencsv.UniCodeTest.writeThenReadAscii
+2015-07-02 16:21:55 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:55 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:55 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:55 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:55 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:55 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:55 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:55 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:55 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:55 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:56 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:56 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.UniCodeTest.writeThenReadTwiceAscii -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:56 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:56 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:56 [DEBUG] root:61 	-cp
+2015-07-02 16:21:56 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:56 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:56 [DEBUG] root:61 	-methods
+2015-07-02 16:21:56 [DEBUG] root:61 	com.opencsv.UniCodeTest.writeThenReadTwiceAscii
+2015-07-02 16:21:56 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:56 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:56 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:56 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:56 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:56 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:56 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:56 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:56 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:56 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:56 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:56 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108 -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar sav.strategies.junit.JunitRunner -methods com.opencsv.UniCodeTest.writeThenReadTwiceUnicode -destfile C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt -testingclass com.opencsv.CSVReader issues.Issue108 issues.Issue108 com.opencsv.CSVIteratorTest com.opencsv.CSVReaderTest com.opencsv.OpencsvTest com.opencsv.UniCodeTest
+2015-07-02 16:21:56 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:21:56 [DEBUG] root:61 	-javaagent:C:\Users\DELL50~1\AppData\Local\Temp\jacocoagent3611869380017595678.jar=append=true,destfile=C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec,includes=com.opencsv.CSVReader:issues.Issue108
+2015-07-02 16:21:56 [DEBUG] root:61 	-cp
+2015-07-02 16:21:56 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/tzuyu-jacoco.jar
+2015-07-02 16:21:56 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:21:56 [DEBUG] root:61 	-methods
+2015-07-02 16:21:56 [DEBUG] root:61 	com.opencsv.UniCodeTest.writeThenReadTwiceUnicode
+2015-07-02 16:21:56 [DEBUG] root:61 	-destfile
+2015-07-02 16:21:56 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tzJunitRes5053266383333194385.txt
+2015-07-02 16:21:56 [DEBUG] root:61 	-testingclass
+2015-07-02 16:21:56 [DEBUG] root:61 	com.opencsv.CSVReader
+2015-07-02 16:21:56 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:56 [DEBUG] root:61 	issues.Issue108
+2015-07-02 16:21:56 [DEBUG] root:61 	com.opencsv.CSVIteratorTest
+2015-07-02 16:21:56 [DEBUG] root:61 	com.opencsv.CSVReaderTest
+2015-07-02 16:21:56 [DEBUG] root:61 	com.opencsv.OpencsvTest
+2015-07-02 16:21:56 [DEBUG] root:61 	com.opencsv.UniCodeTest
+2015-07-02 16:21:57 [DEBUG] root:61 	read exec file  C:\Users\DELL50~1\AppData\Local\Temp\tzJacoco655680289076169852.exec
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-38e7f7c0
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=issues/Issue108, id=e6c98b655eb43213]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-963741d3
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-a961eee6
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-29c3f0d0
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-273a194f
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-b81914a3
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-89026556
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-a4baa6c2
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-46267cb
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-8ea9fa09
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-f8d87654
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-2281826
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-5f6fd20a
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-faf2cd7d
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-afd27735
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-ac2a1dba
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-d89554b3
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-38e8cb5e
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-2839bb58
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-60c171df
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-c5edfa22
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-2dae2bd0
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-74bb691e
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-cbf73078
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-fcaba22f
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-e347695d
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-bac78cf2
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-5ebcf741
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-7a17cf66
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-f6efde62
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-f8fb697e
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-4288c7e4
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-c13f5659
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-9f5b5d2b
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-8386b40
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-932b5a46
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-e44f6783
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-1366055c
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-d703c472
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:57 [DEBUG] root:61 	Session DELL5050-PC-cfaaba57
+2015-07-02 16:21:57 [DEBUG] root:61 	ExecutionData[name=com/opencsv/CSVReader, id=d8bcbeafff69e4bc]
+2015-07-02 16:21:58 [DEBUG] root:61 	Collect coverage data - Read execFile: 97 ms
+2015-07-02 16:21:58 [DEBUG] root:61 	Collect coverage data - Analyze data and count code coverage: 842 ms
+2015-07-02 16:21:58 [DEBUG] root:61 	Collect coverage data Overall: 939 ms
+2015-07-02 16:21:58 [INFO ] root:33 	SpectrumAlgorithm: TARANTULA
+2015-07-02 16:21:58 [INFO ] root:33 	[com.opencsv.CSVReader:231:0.9285714285714286(P=3, F=1), com.opencsv.CSVReader:183:0.9069767441860465(P=4, F=1), com.opencsv.CSVReader:184:0.9069767441860465(P=4, F=1), com.opencsv.CSVReader:185:0.9069767441860465(P=4, F=1), com.opencsv.CSVReader:189:0.9069767441860465(P=4, F=1), com.opencsv.CSVReader:250:0.609375(P=25, F=1), com.opencsv.CSVReader:204:0.6000000000000001(P=26, F=1), com.opencsv.CSVReader:230:0.6000000000000001(P=26, F=1), com.opencsv.CSVReader:41:0.5652173913043479(P=30, F=1), com.opencsv.CSVReader:50:0.5652173913043479(P=30, F=1), com.opencsv.CSVReader:98:0.5652173913043479(P=30, F=1), com.opencsv.CSVReader:137:0.5652173913043479(P=30, F=1), com.opencsv.CSVReader:152:0.5652173913043479(P=30, F=1), com.opencsv.CSVReader:154:0.5652173913043479(P=30, F=1), com.opencsv.CSVReader:165:0.5652173913043479(P=30, F=1), com.opencsv.CSVReader:166:0.5652173913043479(P=30, F=1), com.opencsv.CSVReader:168:0.5652173913043479(P=30, F=1)]
+2015-07-02 16:21:58 [INFO ] root:33 	Running Machine Learning
+2015-07-02 16:21:58 [DEBUG] root:61 	create backup folder  C:\Users\DELL50~1\AppData\Local\Temp\backup4546785786930094603
+2015-07-02 16:21:58 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\target\classes\com\opencsv\CSVReader.class
+2015-07-02 16:21:58 [DEBUG] root:61 	backup  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\target\classes\com\opencsv\CSVReaderBuilder.class
+2015-07-02 16:21:58 [DEBUG] root:61 	start cmd..
+2015-07-02 16:21:58 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac -classpath D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar -d D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7255280999351733262\CSVReader.java -g
+2015-07-02 16:21:58 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\javac
+2015-07-02 16:21:58 [DEBUG] root:61 	-classpath
+2015-07-02 16:21:58 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-02 16:21:58 [DEBUG] root:61 	-d
+2015-07-02 16:21:58 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes
+2015-07-02 16:21:58 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\mutatedSource7255280999351733262\CSVReader.java
+2015-07-02 16:21:58 [DEBUG] root:61 	-g
+2015-07-02 16:22:01 [DEBUG] root:61 	start cmd..
+2015-07-02 16:22:01 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java -agentlib:jdwp=transport=dt_socket,suspend=y,address=59521 -ea -cp D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar sav.strategies.junit.JunitRunner -methods issues.Issue108.testIssue108 com.opencsv.CSVIteratorTest.readerExceptionCausesRunTimeException com.opencsv.CSVIteratorTest.removethrowsUnsupportedOperationException com.opencsv.CSVIteratorTest.hasNextWorks com.opencsv.CSVIteratorTest.initialReadReturnsStrings com.opencsv.CSVReaderTest.parseQuotedStringWithDefinedSeperator com.opencsv.CSVReaderTest.testSkippingLinesWithDifferentEscape com.opencsv.CSVReaderTest.testASingleQuoteAsDataElementWithEmptyField com.opencsv.CSVReaderTest.testSingleQuoteWhenDoubleQuoteIsQuoteChar com.opencsv.CSVReaderTest.testIssue2992134OutOfPlaceQuotes com.opencsv.CSVReaderTest.separatorAndEscapeMustBeDifferent com.opencsv.CSVReaderTest.separatorAndQuoteMustBeDifferent com.opencsv.CSVReaderTest.attemptToReadCloseStreamReturnsNull com.opencsv.CSVReaderTest.testParseLine com.opencsv.CSVReaderTest.testParseAll com.opencsv.CSVReaderTest.creatingIteratorForReaderWithNullDataThrowsRuntimeException com.opencsv.CSVReaderTest.testParseLineStrictQuote com.opencsv.CSVReaderTest.testOptionalConstructors com.opencsv.CSVReaderTest.testSkippingLines com.opencsv.CSVReaderTest.testNormalParsedLine com.opencsv.CSVReaderTest.testASingleQuoteAsDataElement com.opencsv.CSVReaderTest.testSpacesAtEndOfString com.opencsv.CSVReaderTest.testEscapedQuote com.opencsv.CSVReaderTest.testEscapedEscape com.opencsv.CSVReaderTest.testQuotedParsedLine com.opencsv.CSVReaderTest.quoteAndEscapeMustBeDifferent com.opencsv.CSVReaderTest.testIteratorFunctionality com.opencsv.CSVReaderTest.canCloseReader com.opencsv.CSVReaderTest.canCreateIteratorFromReader com.opencsv.OpencsvTest.testWriteRead com.opencsv.UniCodeTest.writeThenReadTwiceMixedUnicode com.opencsv.UniCodeTest.readerTest com.opencsv.UniCodeTest.writerTest com.opencsv.UniCodeTest.canParseUnicode com.opencsv.UniCodeTest.runUniCodeThroughCSVReader com.opencsv.UniCodeTest.runUniCodeThroughCSVWriter com.opencsv.UniCodeTest.runASCIIThroughCSVWriter com.opencsv.UniCodeTest.writeThenReadAscii com.opencsv.UniCodeTest.writeThenReadTwiceAscii com.opencsv.UniCodeTest.writeThenReadTwiceUnicode -destfile C:\Users\DELL50~1\AppData\Local\Temp\tcsExResult1834047928946066665.txt
+2015-07-02 16:22:01 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b\bin\java
+2015-07-02 16:22:01 [DEBUG] root:61 	-agentlib:jdwp=transport=dt_socket,suspend=y,address=59521
+2015-07-02 16:22:01 [DEBUG] root:61 	-ea
+2015-07-02 16:22:01 [DEBUG] root:61 	-cp
+2015-07-02 16:22:01 [DEBUG] root:61 	D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/classes;D:/_1_Projects/Tzuyu/workspace/TEST_CASES/testdata\opencsv\release3.1/target/test-classes;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\junit-4.7.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\mockito-core-1.9.5.jar;D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\lib\objenesis-1.0.jar;D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b/bin;D:\_1_Projects\Tzuyu\workspace\trunk/app/slicer.javaslicer/target/classes;D:\_1_Projects\Tzuyu\workspace\trunk/etc/app_assembly/sav-commons.jar
+2015-07-02 16:22:01 [DEBUG] root:61 	sav.strategies.junit.JunitRunner
+2015-07-02 16:22:01 [DEBUG] root:61 	-methods
+2015-07-02 16:22:01 [DEBUG] root:61 	issues.Issue108.testIssue108
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVIteratorTest.readerExceptionCausesRunTimeException
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVIteratorTest.removethrowsUnsupportedOperationException
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVIteratorTest.hasNextWorks
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVIteratorTest.initialReadReturnsStrings
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.parseQuotedStringWithDefinedSeperator
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testSkippingLinesWithDifferentEscape
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testASingleQuoteAsDataElementWithEmptyField
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testSingleQuoteWhenDoubleQuoteIsQuoteChar
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testIssue2992134OutOfPlaceQuotes
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.separatorAndEscapeMustBeDifferent
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.separatorAndQuoteMustBeDifferent
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.attemptToReadCloseStreamReturnsNull
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testParseLine
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testParseAll
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.creatingIteratorForReaderWithNullDataThrowsRuntimeException
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testParseLineStrictQuote
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testOptionalConstructors
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testSkippingLines
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testNormalParsedLine
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testASingleQuoteAsDataElement
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testSpacesAtEndOfString
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testEscapedQuote
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testEscapedEscape
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testQuotedParsedLine
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.quoteAndEscapeMustBeDifferent
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.testIteratorFunctionality
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.canCloseReader
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.CSVReaderTest.canCreateIteratorFromReader
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.OpencsvTest.testWriteRead
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.UniCodeTest.writeThenReadTwiceMixedUnicode
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.UniCodeTest.readerTest
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.UniCodeTest.writerTest
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.UniCodeTest.canParseUnicode
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.UniCodeTest.runUniCodeThroughCSVReader
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.UniCodeTest.runUniCodeThroughCSVWriter
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.UniCodeTest.runASCIIThroughCSVWriter
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.UniCodeTest.writeThenReadAscii
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.UniCodeTest.writeThenReadTwiceAscii
+2015-07-02 16:22:01 [DEBUG] root:61 	com.opencsv.UniCodeTest.writeThenReadTwiceUnicode
+2015-07-02 16:22:01 [DEBUG] root:61 	-destfile
+2015-07-02 16:22:01 [DEBUG] root:61 	C:\Users\DELL50~1\AppData\Local\Temp\tcsExResult1834047928946066665.txt
+2015-07-02 16:24:00 [DEBUG] root:61 	RunTestcases:
+2015-07-02 16:24:00 [DEBUG] root:61 	testingClassNames = []
+2015-07-02 16:24:00 [DEBUG] root:61 	testingPkgs = []
+2015-07-02 16:24:00 [INFO ] Engine:140 	Start to learn at MutationBreakPoint [classCanonicalName=com.opencsv.CSVReader, methodName=null, lineNo=183, vars=[Variable [name=allElements, fullName=allElements, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-07-02 16:24:00 [INFO ] Machine:242 	Reduced feature size from 6 to 0
+2015-07-02 16:24:00 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-07-02 16:24:00 [INFO ] Engine:227 	Learn: com.opencsv.CSVReader:184
+Could not learn anything.
+2015-07-02 16:24:00 [INFO ] Engine:140 	Start to learn at MutationBreakPoint [classCanonicalName=com.opencsv.CSVReader, methodName=null, lineNo=185, vars=[Variable [name=nextLineAsTokens, fullName=nextLineAsTokens, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-07-02 16:24:00 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-07-02 16:24:00 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-07-02 16:24:00 [INFO ] Engine:227 	Learn: com.opencsv.CSVReader:187
+Could not learn anything.
+2015-07-02 16:24:00 [INFO ] Engine:140 	Start to learn at MutationBreakPoint [classCanonicalName=com.opencsv.CSVReader, methodName=null, lineNo=250, vars=[Variable [name=br, fullName=br, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-07-02 16:24:00 [INFO ] Machine:242 	Reduced feature size from 20 to 4
+2015-07-02 16:24:02 [INFO ] Engine:227 	Learn: com.opencsv.CSVReader:256
+Could not learn anything.
+2015-07-02 16:24:02 [INFO ] Engine:140 	Start to learn at MutationBreakPoint [classCanonicalName=com.opencsv.CSVReader, methodName=null, lineNo=184, vars=[Variable [name=hasNext, fullName=hasNext, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-07-02 16:24:02 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-07-02 16:24:02 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-07-02 16:24:02 [INFO ] Engine:227 	Learn: com.opencsv.CSVReader:185
+Could not learn anything.
+2015-07-02 16:24:02 [INFO ] Engine:140 	Start to learn at MutationBreakPoint [classCanonicalName=com.opencsv.CSVReader, methodName=null, lineNo=189, vars=[Variable [name=allElements, fullName=allElements, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-07-02 16:24:02 [INFO ] Machine:242 	Reduced feature size from 6 to 2
+2015-07-02 16:24:02 [INFO ] Engine:227 	Learn: com.opencsv.CSVReader:191
+Logic: 1.0*allElements.size + 1.0*allElements.modCount >= 2.0
+Accuracy: 1.0
+
+2015-07-02 16:24:02 [INFO ] Engine:140 	Start to learn at MutationBreakPoint [classCanonicalName=com.opencsv.CSVReader, methodName=null, lineNo=231, vars=[Variable [name=hasNext, fullName=hasNext, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-07-02 16:24:02 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-07-02 16:24:02 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-07-02 16:24:02 [INFO ] Engine:227 	Learn: com.opencsv.CSVReader:235
+Could not learn anything.
+2015-07-02 16:24:02 [INFO ] Engine:140 	Start to learn at MutationBreakPoint [classCanonicalName=com.opencsv.CSVReader, methodName=null, lineNo=230, vars=[], charStart=0, charEnd=0]
+2015-07-02 16:24:02 [INFO ] Machine:242 	Reduced feature size from 1 to 0
+2015-07-02 16:24:02 [WARN ] Machine:151 	The feature list is empty. SVM will not run.
+2015-07-02 16:24:02 [INFO ] Engine:227 	Learn: com.opencsv.CSVReader:233
+Could not learn anything.
+2015-07-02 16:24:02 [INFO ] Engine:140 	Start to learn at MutationBreakPoint [classCanonicalName=com.opencsv.CSVReader, methodName=null, lineNo=204, vars=[Variable [name=nextLine, fullName=nextLine, scope=UNDEFINED]], charStart=0, charEnd=0]
+2015-07-02 16:24:04 [INFO ] Engine:227 	Learn: com.opencsv.CSVReader:207
+Could not learn anything.
+2015-07-02 16:24:04 [INFO ] root:33 	----------------FINISHED--------------------
+2015-07-02 16:24:04 [INFO ] root:33 	com.opencsv.CSVReader:189
+suspiciousness: 0.91
+Logic: 1.0*allElements.size + 1.0*allElements.modCount >= 2.0
+Accuracy: 1.0
+
+2015-07-02 16:24:04 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\target\classes\com\opencsv\CSVReader.class
+2015-07-02 16:24:04 [DEBUG] root:61 	restore  D:\_1_Projects\Tzuyu\workspace\TEST_CASES\testdata\opencsv\release3.1\target\classes\com\opencsv\CSVReaderBuilder.class

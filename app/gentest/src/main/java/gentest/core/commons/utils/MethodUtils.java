@@ -39,15 +39,17 @@ public class MethodUtils {
 	}
 	
 	public static Method findMethod(Class<?> clazz, String methodNameOrSign) {
+		String methodName = SignatureUtils.extractMethodName(methodNameOrSign);
+		String methodSign = SignatureUtils.extractSignature(methodNameOrSign);
 		/* try to find if input is method signature */
 		for (Method method : clazz.getMethods()) {
-			if (SignatureUtils.getSignature(method).equals(methodNameOrSign)) {
+			if (SignatureUtils.getSignature(method).equals(methodSign)) {
 				return method;
 			}
 		}
 		/* try to find if input is method name */
 		for (Method method : clazz.getMethods()) {
-			if (method.getName().equals(methodNameOrSign)) {
+			if (method.getName().equals(methodName)) {
 				return method;
 			}
 		}

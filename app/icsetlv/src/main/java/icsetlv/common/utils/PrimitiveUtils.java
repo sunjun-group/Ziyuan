@@ -34,7 +34,12 @@ public class PrimitiveUtils {
 	}
 	
 	public static boolean isPrimitiveTypeOrString(String clazzName) {
-		return CollectionUtils.existIn(clazzName, PRIMITIVE_TYPES)
-				|| STRING_TYPE.equals(clazzName);
+		return isPrimitiveType(clazzName) || isString(clazzName);
 	}
+
+	public static boolean isString(String clazzName) {
+		return STRING_TYPE.equals(clazzName);
+	}
+	
+	
 }

@@ -17,7 +17,7 @@ public class ReferenceValue extends ExecValue {
 
 	public ReferenceValue(String id, boolean isNull) {
 		super(id);
-		add(PrimitiveValue.of(getChildId(NULL_CODE), isNull));
+		add(BooleanValue.of(getChildId(NULL_CODE), isNull));
 	}
 	
 	public static ReferenceValue nullValue(String id) {
