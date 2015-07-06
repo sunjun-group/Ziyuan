@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package generator;
+package tools.commons;
 
 import java.io.File;
 import java.io.IOException;

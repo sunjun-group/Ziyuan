@@ -6,17 +6,19 @@
  *  Version:  $Revision: 1 $
  */
 
-package generator;
+package tools.testdatapackage;
 
 import java.io.IOException;
 import java.util.Map.Entry;
 
 import sav.commons.testdata.opensource.TestPackage;
 import sav.commons.testdata.opensource.TestPackage.TestDataColumn;
+import tools.commons.ClassAppender;
 
 /**
  * @author LLT
- *
+ * read from testdata.csv, generate corresponding test for each defined package,
+ * generated code will be appended to the current junit test class.
  */
 public class PkgTestGenerator extends ClassAppender {
 

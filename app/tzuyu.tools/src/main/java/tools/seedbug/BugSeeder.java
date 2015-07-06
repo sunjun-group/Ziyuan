@@ -6,7 +6,8 @@
  *  Version:  $Revision: 1 $
  */
 
-package generator;
+package tools.seedbug;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -19,12 +20,14 @@ import org.apache.commons.lang.StringUtils;
 
 import sav.common.core.Constants;
 import sav.commons.utils.TestConfigUtils;
+import tools.commons.ToolsUtils;
 
 /**
  * @author LLT
  *
  */
 public class BugSeeder {
+	@SuppressWarnings("deprecation")
 	private static final String TEST_SCR_FOLDER = TestConfigUtils.getTrunkPath()
 			+ "/app/sav.commons" + "/src/test/java"; 
 	private static final String ORG_TEST_CLASS_SUFIX = "Org";

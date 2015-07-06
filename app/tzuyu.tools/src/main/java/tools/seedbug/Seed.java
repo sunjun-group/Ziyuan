@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package generator;
+package tools.seedbug;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package tool;
+package tools.reflection;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

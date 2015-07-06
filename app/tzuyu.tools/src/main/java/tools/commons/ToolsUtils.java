@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package generator;
+package tools.commons;
 
 import java.io.BufferedInputStream;
 import java.io.File;
