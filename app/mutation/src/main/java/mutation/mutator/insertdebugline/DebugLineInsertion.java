@@ -22,14 +22,18 @@ import japa.parser.ast.expr.NameExpr;
 import japa.parser.ast.expr.ThisExpr;
 import japa.parser.ast.stmt.AssertStmt;
 import japa.parser.ast.stmt.ExpressionStmt;
+import japa.parser.ast.stmt.ForStmt;
+import japa.parser.ast.stmt.ForeachStmt;
 import japa.parser.ast.stmt.ReturnStmt;
 import japa.parser.ast.stmt.Statement;
+import japa.parser.ast.stmt.WhileStmt;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -131,7 +135,10 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 	 * visitor part
 	 * */
 	private List<Integer> mutationLines;
-	
+	private LinkedList<Node> curLoopBlks = new LinkedList<Node>();
+	/**
+	 * before visit/mutate
+	 */
 	@Override
 	protected boolean beforeVisit(Node node) {
 		for (Integer lineNo : lines) {
@@ -140,12 +147,6 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 			}
 		}
 		return false;
-	}
-	
-	@Override
-	public void visit(MethodDeclaration n, Boolean arg) {
-		this.curMethod = n;
-		super.visit(n, arg);
 	}
 	
 	@Override
@@ -162,9 +163,47 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 		return false;
 	}
 	
+	/**
+	 * visit
+	 */
+	@Override
+	public void visit(MethodDeclaration n, Boolean arg) {
+		this.curMethod = n;
+		super.visit(n, arg);
+	}
+	
+	@Override
+	public void visit(ForStmt n, Boolean arg) {
+		curLoopBlks.addLast(n);
+		super.visit(n, arg);
+		curLoopBlks.removeLast();
+	}
+	
+	@Override
+	public void visit(WhileStmt n, Boolean arg) {
+		curLoopBlks.addLast(n);
+		super.visit(n, arg);
+		curLoopBlks.removeLast();
+	}
+	
+	@Override
+	public void visit(ForeachStmt n, Boolean arg) {
+		curLoopBlks.addLast(n);
+		super.visit(n, arg);
+		curLoopBlks.removeLast();
+	}
+	
+	
+	/**
+	 * mutate
+	 */
 	@Override
 	public boolean mutate(ExpressionStmt n) {
-		insertMap.put(getCurrentLocation(n), n.getEndLine());
+		int newLoc = n.getEndLine();
+		if (!curLoopBlks.isEmpty()) {
+			newLoc = curLoopBlks.getLast().getEndLine();
+		}
+		insertMap.put(getCurrentLocation(n), newLoc);
 		return false;
 	}
 

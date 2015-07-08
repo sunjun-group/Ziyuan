@@ -62,4 +62,9 @@ public class DebugLineInsertionTest {
 		DebugLineInsertionResult result = runTestInsertion(55, 56, 61);
 		
 	}
+	
+	@Test
+	public void testLineInsideLoop() {
+		DebugLineInsertionResult result = runTestInsertion(27, 28, 34, 35);
+	}
 }
