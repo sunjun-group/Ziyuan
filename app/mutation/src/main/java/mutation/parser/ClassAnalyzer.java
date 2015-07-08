@@ -263,7 +263,7 @@ public class ClassAnalyzer {
 			// cannot be a variable declaration statement
 			if (forBody instanceof BlockStmt) {
 				List<Statement> bodyStmt = ((BlockStmt) forBody).getStmts();
-				for (Statement innerStmt : bodyStmt) {
+				for (Statement innerStmt : CollectionUtils.nullToEmpty(bodyStmt)) {
 					parseBlockStmt(md, innerStmt);
 				}
 			}

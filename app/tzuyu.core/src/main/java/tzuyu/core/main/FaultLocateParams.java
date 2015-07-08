@@ -84,7 +84,7 @@ public class FaultLocateParams {
 
 	public boolean isGenTestEnable() {
 		return genTestEnable && CollectionUtils.checkSize(testingClassNames, 1)
-				&& methodName != null && verificationMethod != null;
+				&& methodName != null;
 	}
 
 	public String getTestingClassName() {

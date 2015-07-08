@@ -46,6 +46,7 @@ public abstract class TzuyuCoreTest extends AbstractTzTest {
 		params.setGenTest(true);
 		params.setRunMutation(true);
 		params.setMachineLearningEnable(true);
+		params.setValueRetrieveLevel(3);
 		return params;
 	}
 

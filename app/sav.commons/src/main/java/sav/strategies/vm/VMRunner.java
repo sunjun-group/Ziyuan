@@ -99,9 +99,9 @@ public class VMRunner {
 		 * otherwise, the process will never end. So, keep doing this even if 
 		 * the printStream is not set */
 		while (in.ready() && (inputLine = in.readLine()) != null) {
-			if(log.isDebug()) {
-				log.debug(inputLine);
-			}
+//			if(log.isDebug()) {
+//				log.debug(inputLine);
+//			}
 		}
 		in.close();
 	}
@@ -148,42 +148,42 @@ public class VMRunner {
 		}
 	}
 	
-	public void waitUntilStop(Process process) throws SavException {
-		try {
-			printStream(process.getInputStream());
-			printStream(process.getErrorStream());
-			process.waitFor();
-		} catch (IOException e) {
-			log.logEx(e, "");
-			throw new SavException(ModuleEnum.JVM, e);
-		} catch (InterruptedException e) {
-			log.logEx(e, "");
-			throw new SavException(ModuleEnum.JVM, e);
-		}
-	}
-
-//	public void waitUntilStop(Process process)
-//			throws SavException {
-//		while (true) {
-//			try {
-//				printStream(process.getInputStream());
-//				printStream(process.getErrorStream());
-//				process.exitValue();
-//				break;
-//			} catch (IOException e) {
-//				log.logEx(e, "");
-//				throw new SavException(ModuleEnum.JVM, e);
-//			} catch (IllegalThreadStateException ex) {
-//				// means: not yet terminated
-//				try {
-//					Thread.sleep(100);
-//				} catch (InterruptedException e) {
-//					log.logEx(e, "");
-//					throw new SavException(ModuleEnum.JVM, e);
-//				}
-//			} 
+//	public void waitUntilStop(Process process) throws SavException {
+//		try {
+//			printStream(process.getInputStream());
+//			printStream(process.getErrorStream());
+//			process.waitFor();
+//		} catch (IOException e) {
+//			log.logEx(e, "");
+//			throw new SavException(ModuleEnum.JVM, e);
+//		} catch (InterruptedException e) {
+//			log.logEx(e, "");
+//			throw new SavException(ModuleEnum.JVM, e);
 //		}
 //	}
+
+	public void waitUntilStop(Process process)
+			throws SavException {
+		while (true) {
+			try {
+				printStream(process.getInputStream());
+				printStream(process.getErrorStream());
+				process.exitValue();
+				break;
+			} catch (IOException e) {
+				log.logEx(e, "");
+				throw new SavException(ModuleEnum.JVM, e);
+			} catch (IllegalThreadStateException ex) {
+				// means: not yet terminated
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					log.logEx(e, "");
+					throw new SavException(ModuleEnum.JVM, e);
+				}
+			} 
+		}
+	}
 	
 	public void setRedirect(Redirect redirect) {
 		this.redirect = redirect;

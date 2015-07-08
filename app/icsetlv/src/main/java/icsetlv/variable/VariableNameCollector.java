@@ -14,8 +14,10 @@ import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.Node;
 import japa.parser.ast.body.VariableDeclaratorId;
+import japa.parser.ast.expr.ArrayAccessExpr;
 import japa.parser.ast.expr.Expression;
 import japa.parser.ast.expr.FieldAccessExpr;
+import japa.parser.ast.expr.IntegerLiteralExpr;
 import japa.parser.ast.expr.NameExpr;
 import japa.parser.ast.expr.ThisExpr;
 
@@ -162,6 +164,17 @@ public class VariableNameCollector {
 			add(n.getBeginLine(), var);
 			
 			return false;
+		}
+		
+		@Override
+		public boolean handleNode(ArrayAccessExpr n) {
+			Expression index = n.getIndex();
+			if (index instanceof IntegerLiteralExpr) {
+				add(n.getBeginLine(), new Variable(String.format("%s[%s]", n.getName(), ((IntegerLiteralExpr)index).getValue())));
+				return false;
+			} else {
+				return true;
+			}
 		}
 		
 		@Override

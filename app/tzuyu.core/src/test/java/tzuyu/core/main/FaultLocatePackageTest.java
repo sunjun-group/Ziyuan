@@ -105,7 +105,7 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 		params.setRankToExamine(6);
 		params.setValueRetrieveLevel(2);
 		params.setUseSlicer(false);
-		params.setRunMutation(true);
+		params.setRunMutation(false);
 		runFaultLocate(testPkg);
 	}
 	

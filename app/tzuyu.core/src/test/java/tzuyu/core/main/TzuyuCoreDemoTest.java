@@ -13,11 +13,24 @@ import java.util.List;
 
 import org.junit.Test;
 
+import sav.commons.testdata.paper.TestClass;
+import sav.commons.testdata.paper.Tests;
+
 /**
  * @author khanh
  *
  */
 public class TzuyuCoreDemoTest extends TzuyuCoreTest{
+	
+	@Test
+	public void testPaperExample() throws Exception {
+		List<String> junitClassNames = new ArrayList<String>();
+		junitClassNames.add(Tests.class.getName());
+		FaultLocateParams params = initFaultLocateParams(TestClass.class.getName(), "calculate", null,
+				null, junitClassNames, false);
+		params.setRunMutation(false);
+		app.faultLocate(params);
+	}
 	
 	@Test
 	public void testNoLoop() throws Exception{

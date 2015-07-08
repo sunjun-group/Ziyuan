@@ -15,7 +15,7 @@ import sav.strategies.dto.BreakPoint;
 
 /**
  * @author LLT 
- * Testcases execution result.
+ * Tests execution result.
  */
 public class TcExecResult {
 	private List<BreakpointValue> passValues;

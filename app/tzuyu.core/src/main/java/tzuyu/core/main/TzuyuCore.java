@@ -214,9 +214,11 @@ public class TzuyuCore {
 		FixTraceGentestBuilder builder = new FixTraceGentestBuilder(numberOfTestCases );
 		
 		String methodAlias = "methodName";
-		builder.forClass(targetClass).method(methodName, methodAlias)
-					.evaluationMethod(Class.forName(testingClassName), verificationMethod,
-							methodAlias).paramAutofill();
+		builder.forClass(targetClass).method(methodName, methodAlias);
+		if (verificationMethod != null) {
+			builder.evaluationMethod(Class.forName(testingClassName), verificationMethod,
+					methodAlias).paramAutofill();
+		}
 		Pair<List<Sequence>, List<Sequence>> testcases = builder.generate();
 		final FileCompilationUnitPrinter cuPrinter = new FileCompilationUnitPrinter(
 				appData.getAppSrc());
