@@ -286,10 +286,10 @@ public class DebugValueExtractor {
 			ArrayReference value, int level, ThreadReference thread) {
 		ArrayValue val = new ArrayValue(varId);
 		val.setValue(value);
-//		//add value of elements
-//		for (int i = 0; i < value.length(); i++) {
-//			appendVarVal(val, val.getChildId(i), value.getValue(i), level, thread);
-//		}
+		//add value of elements
+		for (int i = 0; i < value.length(); i++) {
+			appendVarVal(val, val.getChildId(i), value.getValue(i), level, thread);
+		}
 		parent.add(val);
 	}
 	/***/

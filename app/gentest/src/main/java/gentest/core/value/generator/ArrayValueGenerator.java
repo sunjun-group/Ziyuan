@@ -34,8 +34,7 @@ public class ArrayValueGenerator extends ValueGenerator {
 		// Generate the array
 		int sizes[] = new int[dimension];
 		for (int i = 0; i < dimension; i++) {
-			sizes[i] = Randomness
-					.nextInt(GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH);
+			sizes[i] = selectArraySize();
 		}
 		final RArrayConstructor arrayConstructor = new RArrayConstructor(sizes,
 				type.getRawType(), lastContenType.getRawType());
@@ -55,6 +54,11 @@ public class ArrayValueGenerator extends ValueGenerator {
 			location = next(location, arrayConstructor.getSizes());
 		}
 		return true;
+	}
+
+	private int selectArraySize() {
+		return Randomness
+				.nextInt(GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH);
 	}
 	
 	private IType getLastContentType() {
