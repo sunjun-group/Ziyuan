@@ -14,6 +14,8 @@ import libsvm.core.KernelType;
 import libsvm.core.Machine;
 import libsvm.core.MachineType;
 import libsvm.core.Parameter;
+import libsvm.extension.PositiveSeparationMachine;
+import libsvm.extension.RandomNegativePointSelection;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -226,7 +228,7 @@ public class Engine {
 	}
 
 	private Machine getDefaultMachine() {
-		final Machine machine = new Machine();
+		final Machine machine = new PositiveSeparationMachine(new RandomNegativePointSelection());
 		return machine.setParameter(new Parameter().setMachineType(MachineType.C_SVC)
 				.setKernelType(KernelType.LINEAR).setEps(1.0).setUseShrinking(false)
 				.setPredictProbability(false).setC(Double.MAX_VALUE));
