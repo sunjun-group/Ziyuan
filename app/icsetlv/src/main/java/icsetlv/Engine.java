@@ -1,8 +1,6 @@
 package icsetlv;
 
-import icsetlv.common.dto.BooleanValue;
 import icsetlv.common.dto.BreakpointValue;
-import icsetlv.common.dto.ExecValue;
 import icsetlv.common.dto.TcExecResult;
 import icsetlv.variable.TestcasesExecutor;
 
@@ -21,8 +19,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import sav.common.core.Pair;
+import sav.common.core.utils.FileUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
+import sav.strategies.dto.MutationBreakPoint;
 import sav.strategies.vm.VMConfiguration;
 
 /**
@@ -68,69 +68,6 @@ public class Engine {
 		return new Engine();
 	}
 
-	private VMConfiguration initVmConfig() {
-		final VMConfiguration vmConfig = new VMConfiguration();
-		vmConfig.setDebug(true);
-		vmConfig.setPort(DEFAULT_PORT);
-		return vmConfig;
-	}
-
-	public Engine setJavaHome(final String javaHome) {
-		vmConfig.setJavaHome(javaHome);
-		return this;
-	}
-
-	public Engine setPort(final int portNumber) {
-		vmConfig.setPort(portNumber);
-		return this;
-	}
-
-	public Engine setDebug(final boolean debugEnabled) {
-		vmConfig.setDebug(debugEnabled);
-		return this;
-	}
-
-	public Engine addToClassPath(final String path) {
-		vmConfig.addClasspath(path);
-		return this;
-	}
-	
-	public Engine addProgramArgument(String argument) {
-		vmConfig.addProgramArgs(argument);
-		return this;
-	}
-
-	public Engine addBreakPoint(final String className, final String methodName,
-			final int lineNumber, final String... variableNames) {
-		BreakPoint breakPoint = new BreakPoint(className, methodName, lineNumber);
-		for (String variableName : variableNames) {
-			breakPoint.addVars(new Variable(variableName));
-		}
-		
-		return addBreakPoint(breakPoint);
-	}
-	
-	public Engine addBreakPoint(BreakPoint breakPoint) {
-		breakPoints.add(breakPoint);
-		return this;
-	}
-
-	public Engine run() throws Exception {
-		return run(valueRetrieveLevel, getMachine());
-	}
-
-	public Engine addTestcase(final String testcase) {
-		testcases.add(testcase);
-		return this;
-	}
-	
-	public Engine addTestcases(final List<String> testcases) {
-		for(String testcase: testcases){
-			addTestcase(testcase);
-		}
-		return this;
-	}
-	
 	public Engine run(final int valRetrieveLevel, final Machine machine) throws Exception {
 		TestcasesExecutor testRunner = new TestcasesExecutor(vmConfig, testcases, valRetrieveLevel);
 		testRunner.run(breakPoints);
@@ -172,15 +109,22 @@ public class Engine {
 			final List<String> varLabels = new ArrayList<String>(labelSet);			
 			
 			// TODO: TO REMOVE, just added for debugging
-//			if (bkp.getLineNo() == 298) {
-//				LOGGER.info("***********LINE 298*************");
-//				LOGGER.info("varLabels");
-//				LOGGER.info(varLabels);
-//				LOGGER.info("passValues");
-//				LOGGER.info(sav.common.core.utils.StringUtils.join(passValues, "\n"));
-//				LOGGER.info("failValues");
-//				LOGGER.info(sav.common.core.utils.StringUtils.join(failValues, "\n"));
-//				LOGGER.info("************************");
+//			if (bkp.getLineNo() == 47) {
+//				int oldLineNo = bkp.getLineNo();
+//				if (bkp instanceof MutationBreakPoint) {
+//					oldLineNo = ((MutationBreakPoint) bkp).getOldLineNumber();
+//				}
+//				StringBuilder sb = new StringBuilder();
+//				sb.append("\n");
+//				sb.append(String.format("***********LINE %s (%s)*************", oldLineNo, bkp.getLineNo())); sb.append("\n");
+//				sb.append("varLabels");sb.append("\n");
+//				sb.append(varLabels);sb.append("\n");
+//				sb.append("passValues");sb.append("\n");
+//				sb.append(sav.common.core.utils.StringUtils.join(passValues, "\n"));sb.append("\n");
+//				sb.append("failValues");sb.append("\n");
+//				sb.append(sav.common.core.utils.StringUtils.join(failValues, "\n"));sb.append("\n");
+//				sb.append("************************");sb.append("\n");
+//				FileUtils.appendFile("D:/testData.txt", sb.toString());
 //			}
 			
 			List<String> exps = new ArrayList<String>();
@@ -219,7 +163,7 @@ public class Engine {
 					exps.add(svmExp);
 				}
 				setResult(result, bkp, sav.common.core.utils.StringUtils.join(exps, " || "),
-							machine.getModelAccuracy());
+							1);
 			}
 			LOGGER.info("Learn: " + result);
 			results.add(result);
@@ -287,9 +231,76 @@ public class Engine {
 				.setKernelType(KernelType.LINEAR).setEps(1.0).setUseShrinking(false)
 				.setPredictProbability(false).setC(Double.MAX_VALUE));
 	}
+	
+	private VMConfiguration initVmConfig() {
+		final VMConfiguration vmConfig = new VMConfiguration();
+		vmConfig.setDebug(true);
+		vmConfig.setPort(DEFAULT_PORT);
+		return vmConfig;
+	}
+
+	public Engine setJavaHome(final String javaHome) {
+		vmConfig.setJavaHome(javaHome);
+		return this;
+	}
+
+	public Engine setPort(final int portNumber) {
+		vmConfig.setPort(portNumber);
+		return this;
+	}
+
+	public Engine setDebug(final boolean debugEnabled) {
+		vmConfig.setDebug(debugEnabled);
+		return this;
+	}
+
+	public Engine addToClassPath(final String path) {
+		vmConfig.addClasspath(path);
+		return this;
+	}
+	
+	public Engine addProgramArgument(String argument) {
+		vmConfig.addProgramArgs(argument);
+		return this;
+	}
+
+	public Engine addBreakPoint(final String className, final String methodName,
+			final int lineNumber, final String... variableNames) {
+		BreakPoint breakPoint = new BreakPoint(className, methodName, lineNumber);
+		for (String variableName : variableNames) {
+			breakPoint.addVars(new Variable(variableName));
+		}
+		
+		return addBreakPoint(breakPoint);
+	}
+	
+	public Engine addBreakPoint(BreakPoint breakPoint) {
+		breakPoints.add(breakPoint);
+		return this;
+	}
+
+	public Engine run() throws Exception {
+		return run(valueRetrieveLevel, getMachine());
+	}
+
+	public Engine addTestcase(final String testcase) {
+		testcases.add(testcase);
+		return this;
+	}
+	
+	public Engine addTestcases(final List<String> testcases) {
+		for(String testcase: testcases){
+			addTestcase(testcase);
+		}
+		return this;
+	}
 
 	public List<Result> getResults() {
 		return this.results;
+	}
+	
+	public void setValueRetrieveLevel(int valueRetrieveLevel) {
+		this.valueRetrieveLevel = valueRetrieveLevel;
 	}
 
 	public static class Result {
@@ -327,10 +338,6 @@ public class Engine {
 			}
 			return str.toString();
 		}
-	}
-	
-	public void setValueRetrieveLevel(int valueRetrieveLevel) {
-		this.valueRetrieveLevel = valueRetrieveLevel;
 	}
 	
 	public static class AllPositiveResult extends Result{}

@@ -47,10 +47,7 @@ public class JavaSlicer implements ISlicer {
 	
 	public JavaSlicer(SliceBreakpointCollector sliceCollector) {
 		this.sliceCollector = sliceCollector;
-	}
-	
-	public void setTracerJarPath(String tracerJarPath) {
-		vmRunner = new JavaSlicerVmRunner(tracerJarPath);
+		vmRunner = new JavaSlicerVmRunner();
 	}
 	
 	public void setVmConfig(VMConfiguration vmConfig) {

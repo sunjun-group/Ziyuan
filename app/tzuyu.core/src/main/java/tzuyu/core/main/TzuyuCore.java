@@ -103,7 +103,7 @@ public class TzuyuCore {
 		}
 	}
 
-	private FaultLocalizationReport computeSuspiciousness(FaultLocateParams params) throws Exception {
+	protected FaultLocalizationReport computeSuspiciousness(FaultLocateParams params) throws Exception {
 		LOGGER.info("Running " + appData.getSuspiciousCalculAlgo());
 		
 		final FaultLocalization analyzer = new FaultLocalization(appContext);
@@ -206,7 +206,7 @@ public class TzuyuCore {
 		}
 	}
 	
-	private List<String> generateNewTests(String testingClassName,
+	protected List<String> generateNewTests(String testingClassName,
 			String methodName, String verificationMethod, int numberOfTestCases)
 			throws ClassNotFoundException, SavException {
 		Class<?> targetClass = Class.forName(testingClassName);

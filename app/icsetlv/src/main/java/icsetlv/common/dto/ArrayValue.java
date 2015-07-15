@@ -47,7 +47,7 @@ public class ArrayValue extends ReferenceValue {
 		Assert.assertTrue(ar != null,
 				"Value of ArrayReference is null, in this case, initialize execValue using ReferenceValue.nullValue instead!");
 		final int arrayLength = ar.length();
-		setLength(arrayLength);
+//		setLength(arrayLength);
 		double sum = 0.0;
 		double min = Double.MAX_VALUE;
 		double max = Double.MIN_VALUE;
@@ -65,13 +65,13 @@ public class ArrayValue extends ReferenceValue {
 				}
 			}
 		}
-		setSum(sum);
+//		setSum(sum);
 		if (Double.compare(Double.MAX_VALUE, min) != 0) {
-			setMin(min);
+//			setMin(min);
 		}
 
 		if (Double.compare(Double.MIN_VALUE, max) != 0) {
-			setMax(max);
+//			setMax(max);
 		}
 	}
 

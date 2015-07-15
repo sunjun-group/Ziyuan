@@ -29,7 +29,7 @@ public class JavaSlicerVmRunner extends AgentVmRunner {
 	private static final String AGENT_PARAM_SEPARATOR = ":";
 	private String traceFilePath;
 	
-	public JavaSlicerVmRunner(String tracerJarPath) {
+	public JavaSlicerVmRunner() {
 		super(getTracerJarPath());
 	}
 	
@@ -46,10 +46,6 @@ public class JavaSlicerVmRunner extends AgentVmRunner {
 //		builder.add("-s small pmd");
 	}
 	
-	public void setTracerJarPath(String tracerJarPath) {
-		agentJarPath = tracerJarPath;
-	}
-
 	public void setTraceFilePath(String traceFilePath) {
 		this.traceFilePath = traceFilePath;
 	}
@@ -62,7 +58,6 @@ public class JavaSlicerVmRunner extends AgentVmRunner {
 	public static String getTracerJarPath() {
 		try {
 			String path = Tracer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-//			path = StringUtils.strip(path, "/");
 			path = URLDecoder.decode(path, "UTF-8");
 			File newFile = sav.common.core.utils.FileUtils.getFileInTempFolder("tracer.jar");
 			if (!newFile.exists()) {

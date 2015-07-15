@@ -24,6 +24,22 @@ import sav.common.core.utils.SignatureUtils;
  *
  */
 public class MethodSignatureGetter {
+	
+	public static void main(String[] args) {
+//		List<List<String>> signs = getSignature(BoundedStack.class, "push", "pop", "size");
+//		for (List<String> sign : signs) {
+//			System.out.println(sign);
+//		}
+	}
+	
+	public static List<List<String>> getSignature(Class<?> clazz,
+			String... methodNames) {
+		List<List<String>> result = new ArrayList<List<String>>();
+		for (String methodName : methodNames) {
+			result.add(getSignature(clazz, methodName)); 
+		}
+		return result;
+	}
 
 	public static List<String> getSignature(Class<?> clazz, String methodName) {
 		List<String> signs = new ArrayList<String>();

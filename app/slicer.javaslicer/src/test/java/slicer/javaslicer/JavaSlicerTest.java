@@ -48,7 +48,6 @@ public class JavaSlicerTest extends AbstractTest {
 		vmConfig = initVmConfig();
 		vmConfig.addClasspath(TestConfiguration
 				.getTzAssembly(Constants.TZUYU_JAVASLICER_ASSEMBLY));
-		slicer.setTracerJarPath(TestConfigUtils.getTracerLibPath());
 		slicer.setVmConfig(vmConfig);
 	}
 	

@@ -53,7 +53,6 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 	private ISlicer initSlicer() {
 		JavaSlicer javaSlicer = new JavaSlicer();
 		javaSlicer.setVmConfig(appData.getVmConfig());
-		javaSlicer.setTracerJarPath(appData.getTracerJarPath());
 		return javaSlicer;
 	}
 	

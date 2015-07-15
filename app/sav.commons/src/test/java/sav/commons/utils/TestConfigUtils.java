@@ -64,10 +64,6 @@ public class TestConfigUtils extends ConfigUtils {
 		return javaHome;
 	}
 
-	public static String getTracerLibPath() {
-		return getTrunkPath() + "/etc/javaslicer/assembly/tracer.jar";
-	}
-
 	public static void addToSysClassLoader(File file) throws Exception {
 	    Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
 	    method.setAccessible(true);

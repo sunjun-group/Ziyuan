@@ -25,8 +25,6 @@ public class ApplicationData {
 	private SpectrumAlgorithm suspiciousCalculAlgo;
 	private String javaHome;
 	private VMConfiguration vmConfig;
-	// TODO LLT: TO REMOVE
-	private String tracerJarPath;
 	private List<String> appClasspaths;
 	private List<String> sysClasspaths;
 	private String appSrc;
@@ -67,14 +65,6 @@ public class ApplicationData {
 
 	public void setJavaHome(String javaHome) {
 		this.javaHome = javaHome;
-	}
-
-	public String getTracerJarPath() {
-		return tracerJarPath;
-	}
-
-	public void setTracerJarPath(String tracerJarPath) {
-		this.tracerJarPath = tracerJarPath;
 	}
 
 	public List<String> getAppClasspaths() {

@@ -148,42 +148,42 @@ public class VMRunner {
 		}
 	}
 	
-//	public void waitUntilStop(Process process) throws SavException {
-//		try {
-//			printStream(process.getInputStream());
-//			printStream(process.getErrorStream());
-//			process.waitFor();
-//		} catch (IOException e) {
-//			log.logEx(e, "");
-//			throw new SavException(ModuleEnum.JVM, e);
-//		} catch (InterruptedException e) {
-//			log.logEx(e, "");
-//			throw new SavException(ModuleEnum.JVM, e);
-//		}
-//	}
-
-	public void waitUntilStop(Process process)
-			throws SavException {
-		while (true) {
-			try {
-				printStream(process.getInputStream());
-				printStream(process.getErrorStream());
-				process.exitValue();
-				break;
-			} catch (IOException e) {
-				log.logEx(e, "");
-				throw new SavException(ModuleEnum.JVM, e);
-			} catch (IllegalThreadStateException ex) {
-				// means: not yet terminated
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					log.logEx(e, "");
-					throw new SavException(ModuleEnum.JVM, e);
-				}
-			} 
+	public void waitUntilStop(Process process) throws SavException {
+		try {
+			printStream(process.getInputStream());
+			printStream(process.getErrorStream());
+			process.waitFor();
+		} catch (IOException e) {
+			log.logEx(e, "");
+			throw new SavException(ModuleEnum.JVM, e);
+		} catch (InterruptedException e) {
+			log.logEx(e, "");
+			throw new SavException(ModuleEnum.JVM, e);
 		}
 	}
+
+//	public void waitUntilStop(Process process)
+//			throws SavException {
+//		while (true) {
+//			try {
+//				printStream(process.getInputStream());
+//				printStream(process.getErrorStream());
+//				process.exitValue();
+//				break;
+//			} catch (IOException e) {
+//				log.logEx(e, "");
+//				throw new SavException(ModuleEnum.JVM, e);
+//			} catch (IllegalThreadStateException ex) {
+//				// means: not yet terminated
+//				try {
+//					Thread.sleep(100);
+//				} catch (InterruptedException e) {
+//					log.logEx(e, "");
+//					throw new SavException(ModuleEnum.JVM, e);
+//				}
+//			} 
+//		}
+//	}
 	
 	public void setRedirect(Redirect redirect) {
 		this.redirect = redirect;

@@ -16,9 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
-import sav.common.core.utils.Assert;
 import libsvm.core.Category;
 import libsvm.core.KernelType;
 import libsvm.core.Machine;
@@ -29,6 +26,8 @@ import net.sf.javaml.core.Dataset;
 import net.sf.javaml.core.DefaultDataset;
 import net.sf.javaml.core.DenseInstance;
 import net.sf.javaml.core.Instance;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Jingyi

@@ -55,10 +55,6 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 		context.setJavaHome(path);
 	}
 
-	public void tracerJarPath(final String path) {
-		context.setTracerJarPath(path);
-	}
-
 	public void programClass(final String clazz) {
 		programClasses.add(clazz);
 	}

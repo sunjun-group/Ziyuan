@@ -37,7 +37,6 @@ public class SingleSeededBugFixtureTest extends AbstractTest {
 		fixture = new SingleSeededBugFixture();
 		fixture.useSlicer(true);
 		fixture.javaHome(TestConfigUtils.getJavaHome());
-		fixture.tracerJarPath(TestConfigUtils.getTracerLibPath());
 		fixture.projectClassPath(TestConfiguration.getTarget("slicer.javaslicer"));
 	}
 	

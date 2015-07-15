@@ -136,6 +136,7 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 	 * */
 	private List<Integer> mutationLines;
 	private LinkedList<Node> curLoopBlks = new LinkedList<Node>();
+	private static boolean MOVE_BKP_OUT_OF_THE_LOOP = false;
 	/**
 	 * before visit/mutate
 	 */
@@ -200,7 +201,7 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 	@Override
 	public boolean mutate(ExpressionStmt n) {
 		int newLoc = n.getEndLine();
-		if (!curLoopBlks.isEmpty()) {
+		if (MOVE_BKP_OUT_OF_THE_LOOP && !curLoopBlks.isEmpty()) {
 			newLoc = curLoopBlks.getLast().getEndLine();
 		}
 		insertMap.put(getCurrentLocation(n), newLoc);
@@ -230,7 +231,7 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 
 	@SuppressWarnings("unchecked")
 	private boolean doesReturnStmtNeedMutate(Expression returnExpr) {
-		return !CollectionUtils.existIn(returnExpr.getClass(),
+		return returnExpr != null && !CollectionUtils.existIn(returnExpr.getClass(),
 				LiteralExpr.class, NameExpr.class, ThisExpr.class);
 	}
 
