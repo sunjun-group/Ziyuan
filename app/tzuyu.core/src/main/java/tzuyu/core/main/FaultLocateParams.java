@@ -31,7 +31,7 @@ public class FaultLocateParams {
 	private int rankToExamine = Integer.MAX_VALUE;
 	private boolean mutationEnable;
 	private boolean machineLearningEnable;
-	private int valueRetrieveLevel;
+	private int valueRetrieveLevel = 3;
 	private VarNameCollectionMode varNameCollectionMode = VarNameCollectionMode.FULL_NAME;
 
 	public List<String> getTestingClassNames() {

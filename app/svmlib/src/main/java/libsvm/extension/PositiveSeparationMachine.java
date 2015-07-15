@@ -29,7 +29,7 @@ public class PositiveSeparationMachine extends Machine {
 
 	private List<svm_model> learnedModels = new ArrayList<svm_model>();
 
-	private static final int MAXIMUM_ATTEMPT_COUNT = 100;
+	private static final int MAXIMUM_ATTEMPT_COUNT = 10;
 	private static final int MAXIMUM_DIVIDER_COUNT = 2;
 
 	private NegativePointSelection negativePointSelection;
