@@ -13,12 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 import sav.common.core.utils.CollectionUtils;
+import sav.strategies.dto.IExecValue;
 
 /**
  * @author LLT
  *
  */
-public abstract class ExecValue {
+public abstract class ExecValue implements IExecValue {
 	protected String varId;
 	protected List<ExecValue> children;
 	public static final int NOT_NULL_VAL = 1;

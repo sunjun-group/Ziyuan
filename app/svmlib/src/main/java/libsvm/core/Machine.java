@@ -295,6 +295,18 @@ public class Machine {
 		Model currentModel = getModel();
 		return currentModel == null ? "" : getLearnedLogic(currentModel.getExplicitDivider());
 	}
+	
+	public <R> R getLearnedLogic(IDividerProcessor<R> processor) {
+		return processor.process(getDivider());
+	}
+	
+	private Divider getDivider() {
+		Model currentModel = getModel();
+		if (currentModel == null) {
+			return null;
+		}
+		return currentModel.getExplicitDivider();
+	}
 
 	protected String getLearnedLogic(final Divider divider) {
 		//a1*x1 + a2*x2 + ... + an*xn >= b
