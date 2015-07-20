@@ -103,6 +103,9 @@ public class PositiveSeparationMachine extends Machine {
 	 * @param negatives
 	 */
 	private void removeClassifiedNegativePoints(final List<DataPoint> negatives) {
+		if (model == null) {
+			return;
+		}
 		// Remove all negatives which are correctly separated
 		Divider roundDivider = new Model(model, getNumberOfFeatures()).getExplicitDivider().round();
 		for (Iterator<DataPoint> it = negatives.iterator(); it.hasNext();) {
@@ -130,14 +133,16 @@ public class PositiveSeparationMachine extends Machine {
 		StringBuilder str = new StringBuilder();
 
 		final int numberOfFeatures = getRandomData().getNumberOfFeatures();
-		for (svm_model svmModel : learnedModels) {
-			if (svmModel != null) {				
-				final Divider explicitDivider = new Model(svmModel, numberOfFeatures)
-				.getExplicitDivider();
-				if (str.length() != 0) {
-					str.append("\n");
+		if (numberOfFeatures > 0) {			
+			for (svm_model svmModel : learnedModels) {
+				if (svmModel != null) {				
+					final Divider explicitDivider = new Model(svmModel, numberOfFeatures)
+					.getExplicitDivider();
+					if (str.length() != 0) {
+						str.append("\n");
+					}
+					str.append(getLearnedLogic(explicitDivider));
 				}
-				str.append(getLearnedLogic(explicitDivider));
 			}
 		}
 
