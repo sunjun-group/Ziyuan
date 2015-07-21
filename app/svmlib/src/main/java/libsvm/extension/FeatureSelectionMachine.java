@@ -5,16 +5,18 @@ import java.util.List;
 
 import libsvm.core.Machine;
 
-public class FeatureSelectionMachine extends Machine {
+import org.apache.log4j.Logger;
 
+public class FeatureSelectionMachine extends Machine {
+	private static final Logger LOGGER = Logger.getLogger(FeatureSelectionMachine.class);
 	private static final int MAX_FEATURE = 3;
-	private Machine machine; // The actual machine used for learning, can be null
+	private Machine machine; // The machine used for learning, can be null
 
 	@Override
 	protected Machine train(final List<DataPoint> dataPoints) {
 		int toSelect = 0;
 
-		while (toSelect <= MAX_FEATURE) {
+		outerLoop: while (toSelect <= MAX_FEATURE) {
 			toSelect++;
 
 			// Select the features to train
@@ -50,14 +52,27 @@ public class FeatureSelectionMachine extends Machine {
 				final String learnedLogic = machine.getLearnedLogic();
 				final double accuracy = machine.getModelAccuracy();
 
-				if (Double.compare(accuracy, 1.0) == 0) {
+				if (LOGGER.isDebugEnabled()) {
+					final StringBuilder str = new StringBuilder();
+					for (String label : labels) {
+						if (str.length() > 0) {
+							str.append(", ");
+						}
+						str.append(label);
+					}
+					LOGGER.debug("Training with features: [" + str.toString() + "].");
+					LOGGER.debug("Learned logic: " + learnedLogic);
+					LOGGER.debug("Accuracy: " + accuracy);
+				}
+
+				if (Double.compare(accuracy, 1.0) >= 0) {
 					// TODO LLT Try to refine the learned logic with selective
 					// sampling
 					// If the learned logic is the same then stop
 					// (store the current machine inside this.machine)
 					// If not, the learned logic is not useful
 					this.machine = machine;
-					break;
+					break outerLoop;
 				}
 
 				// check if the current selection is the final one
