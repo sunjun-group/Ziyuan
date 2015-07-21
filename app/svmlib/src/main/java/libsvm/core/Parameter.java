@@ -25,6 +25,10 @@ public class Parameter {
 		param.weight_label = new int[0];
 		param.weight = new double[0];
 	}
+	
+	public Parameter(final svm_parameter param) {
+		this.param = param;
+	}
 
 	public Parameter setMachineType(final MachineType type) {
 		param.svm_type = type.index();

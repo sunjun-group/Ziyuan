@@ -3,6 +3,7 @@ package libsvm.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import libsvm.extension.FeatureSelectionMachine;
 import libsvm.extension.PositiveSeparationMachine;
 import libsvm.extension.RandomNegativePointSelection;
 
@@ -16,7 +17,7 @@ public class SunJunTest extends TestUltility {
 
 	@Before
 	public void setup() {
-		machine = setupMachine(new Machine(), 7);
+		machine = setupMachine(new FeatureSelectionMachine(), 7);
 		machine2 = setupMachine(new PositiveSeparationMachine(new RandomNegativePointSelection()),
 				7);
 	}

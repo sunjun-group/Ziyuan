@@ -1,0 +1,104 @@
+package libsvm.extension;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import libsvm.core.Machine;
+
+public class FeatureSelectionMachine extends Machine {
+
+	private static final int MAX_FEATURE = 3;
+	private Machine machine; // The actual machine used for learning, can be null
+
+	@Override
+	protected Machine train(final List<DataPoint> dataPoints) {
+		int toSelect = 0;
+
+		while (toSelect <= MAX_FEATURE) {
+			toSelect++;
+
+			// Select the features to train
+			final int features = getNumberOfFeatures();
+			final int[] selection = new int[toSelect];
+			for (int i = 0; i < toSelect; i++) {
+				selection[i] = i;
+			}
+			boolean selectionDone = false;
+			while (!selectionDone) {
+				// work with the current selection
+
+				// copy selected labels
+				final List<String> labels = new ArrayList<String>(toSelect);
+				for (int i = 0; i < toSelect; i++) {
+					labels.add(getDataLabels().get(selection[i]));
+				}
+				final Machine machine = createNewMachine(labels);
+
+				// copy selected features
+				for (DataPoint point : dataPoints) {
+					double[] pointValue = new double[toSelect];
+					for (int i = 0; i < toSelect; i++) {
+						pointValue[i] = point.getValue(selection[i]);
+					}
+					machine.addDataPoint(point.getCategory(), pointValue);
+				}
+
+				// train SVM
+				machine.train();
+
+				// check SVM results
+				final String learnedLogic = machine.getLearnedLogic();
+				final double accuracy = machine.getModelAccuracy();
+
+				if (Double.compare(accuracy, 1.0) == 0) {
+					// TODO LLT Try to refine the learned logic with selective
+					// sampling
+					// If the learned logic is the same then stop
+					// (store the current machine inside this.machine)
+					// If not, the learned logic is not useful
+					this.machine = machine;
+					break;
+				}
+
+				// check if the current selection is the final one
+				int i = toSelect - 1;
+				while (i >= 0 && selection[i] == features - toSelect + i) {
+					i--;
+				}
+				if (i < 0) {
+					selectionDone = true;
+					break;
+				} else {
+					// generate the next selection
+					selection[i]++;
+					for (int j = i + 1; j < toSelect; j++) {
+						selection[j] = selection[j - 1] + 1;
+					}
+				}
+			}
+		}
+
+		return this;
+	}
+
+	private Machine createNewMachine(final List<String> labels) {
+		return new Machine().setDataLabels(labels).setParameter(getParameter());
+	}
+
+	@Override
+	public String getLearnedLogic() {
+		if (this.machine == null) {
+			return "";
+		}
+		return this.machine.getLearnedLogic();
+	}
+
+	@Override
+	public double getModelAccuracy() {
+		if (this.machine == null) {
+			return 0.0;
+		}
+		return this.machine.getModelAccuracy();
+	}
+
+}

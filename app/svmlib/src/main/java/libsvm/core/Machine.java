@@ -60,6 +60,10 @@ public class Machine {
 		return this;
 	}
 
+	public Parameter getParameter() {
+		return new Parameter(this.parameter);
+	}
+
 	/**
 	 * Set the labels for the features. This will also determine the number of
 	 * features of the {@link DataPoint} to be produced by this Machine.
@@ -290,16 +294,16 @@ public class Machine {
 		}
 		return 1.0 - ((double) getWrongClassifiedDataPoints(data).size() / data.size());
 	}
-	
+
 	public String getLearnedLogic() {
 		Model currentModel = getModel();
 		return currentModel == null ? "" : getLearnedLogic(currentModel.getExplicitDivider());
 	}
-	
+
 	public <R> R getLearnedLogic(IDividerProcessor<R> processor) {
 		return processor.process(getDivider());
 	}
-	
+
 	private Divider getDivider() {
 		Model currentModel = getModel();
 		if (currentModel == null) {
@@ -309,7 +313,7 @@ public class Machine {
 	}
 
 	protected String getLearnedLogic(final Divider divider) {
-		//a1*x1 + a2*x2 + ... + an*xn >= b
+		// a1*x1 + a2*x2 + ... + an*xn >= b
 		StringBuilder str = new StringBuilder();
 		CoefficientProcessing coefficientProcessing = new CoefficientProcessing();
 		double[] thetas = coefficientProcessing.process(divider.getLinearExpr());
