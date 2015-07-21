@@ -8,18 +8,17 @@
 
 package icsetlv.variable;
 
-import icsetlv.common.exception.IcsetlvException;
-import icsetlv.vm.SimpleDebugger;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import sav.common.core.Logger;
+import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint;
+import sav.strategies.vm.SimpleDebugger;
 import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;
@@ -48,14 +47,15 @@ public abstract class BreakpointDebugger {
 	protected SimpleDebugger debugger;
 	// map of classes and their breakpoints
 	private Map<String, List<BreakPoint>> brkpsMap;
+	protected List<BreakPoint> bkps;
 
-	public BreakpointDebugger(VMConfiguration config) {
+	public void setup(VMConfiguration config) {
 		debugger = new SimpleDebugger();
 		this.config = config;
 	}
 
-	public final void run(List<BreakPoint> brkps) throws SavException,
-			IcsetlvException {
+	public final void run(List<BreakPoint> brkps) throws SavException {
+		this.bkps = brkps;
 		this.brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
 		/* before debugging */
 		beforeDebugging();
@@ -63,7 +63,7 @@ public abstract class BreakpointDebugger {
 		/* start debugger */
 		VirtualMachine vm = debugger.run(config);
 		if (vm == null) {
-			throw new IcsetlvException("cannot start jvm!");
+			throw new SavException(ModuleEnum.JVM, "cannot start jvm!");
 		}
 		/* add class watch */
 		addClassWatch(vm.eventRequestManager());

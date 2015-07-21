@@ -11,8 +11,6 @@ public interface Formula {
 
 	public List<Var> getReferencedVariables();
 
-	// public boolean evaluate(Object[] objects);
-
 	public List<Atom> getAtomics();
 
 	public void accept(ExpressionVisitor visitor);

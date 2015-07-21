@@ -38,5 +38,9 @@ public class PrimitiveValue extends ExecValue {
 	public String toString() {
 		return String.format("(%s:%s)", varId, strVal);
 	}
-	
+
+	@Override
+	public ExecVarType getType() {
+		return ExecVarType.PRIMITIVE;
+	}
 }

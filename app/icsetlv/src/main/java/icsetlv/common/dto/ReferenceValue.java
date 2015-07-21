@@ -23,4 +23,9 @@ public class ReferenceValue extends ExecValue {
 	public static ReferenceValue nullValue(String id) {
 		return new ReferenceValue(id, true);
 	}
+	
+	@Override
+	public ExecVarType getType() {
+		return ExecVarType.REFERENCE;
+	}
 }

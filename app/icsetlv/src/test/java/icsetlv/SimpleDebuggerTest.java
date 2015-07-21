@@ -9,7 +9,6 @@
 package icsetlv;
 
 import icsetlv.common.exception.IcsetlvException;
-import icsetlv.vm.SimpleDebugger;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,6 +16,7 @@ import org.junit.Test;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.commons.AbstractTest;
+import sav.strategies.vm.SimpleDebugger;
 import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.VirtualMachine;

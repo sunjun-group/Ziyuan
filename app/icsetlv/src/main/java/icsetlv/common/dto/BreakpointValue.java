@@ -107,4 +107,9 @@ public class BreakpointValue extends ExecValue {
 			return children.size();
 		}
 	}
+	
+	@Override
+	public ExecVarType getType() {
+		return null;
+	}
 }

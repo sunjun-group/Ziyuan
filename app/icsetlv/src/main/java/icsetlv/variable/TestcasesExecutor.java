@@ -8,8 +8,8 @@
 
 package icsetlv.variable;
 
+import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
-import icsetlv.common.dto.TcExecResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,17 +33,20 @@ import com.sun.jdi.event.BreakpointEvent;
 public class TestcasesExecutor extends JunitDebugger {
 	private static final Logger<?> LOGGER = Logger.getDefaultLogger();
 	
-	private TcExecResult result;
+	private List<BreakpointData> result;
 	/* for internal purpose */
 	private Map<Integer, List<BreakpointValue>> bkpValsByTestIdx;
 	private List<BreakpointValue> currentTestBkpValues;
 	private DebugValueExtractor valueExtractor;
 	
-	public TestcasesExecutor(VMConfiguration config, List<String> allTests, int valRetrieveLevel) {
-		super(config, allTests);
+	public TestcasesExecutor(int valRetrieveLevel) {
 		valueExtractor = new DebugValueExtractor(valRetrieveLevel);
 	}
-
+	
+	public void setup(VMConfiguration config, List<String> allTests) {
+		super.setup(config, allTests);
+	}
+	
 	@Override
 	protected void onStart() {
 		bkpValsByTestIdx = new HashMap<Integer, List<BreakpointValue>>();
@@ -69,10 +72,33 @@ public class TestcasesExecutor extends JunitDebugger {
 			CollectionUtils.getListInitIfEmpty(resultMap, tcExResult.get(allTests.get(i)))
 					.addAll(bkpValsByTestIdx.get(i));
 		}
-		result = new TcExecResult(CollectionUtils.nullToEmpty(resultMap.get(true)), 
+		result = buildBreakpointData(CollectionUtils.nullToEmpty(resultMap.get(true)), 
 				CollectionUtils.nullToEmpty(resultMap.get(false)));
 	}
 	
+	private List<BreakpointData> buildBreakpointData(
+			List<BreakpointValue> passValues, List<BreakpointValue> failValues) {
+		List<BreakpointData> result = new ArrayList<BreakpointData>(bkps.size());
+		for (BreakPoint bkp : bkps) {
+			BreakpointData bkpData = new BreakpointData();
+			bkpData.setBkp(bkp);
+			bkpData.setPassValues(getValuesOfBkp(bkp.getId(), passValues));
+			bkpData.setFailValues(getValuesOfBkp(bkp.getId(), failValues));
+		}
+		return result;
+	}
+	
+	private List<BreakpointValue> getValuesOfBkp(String bkpId,
+			List<BreakpointValue> allValues) {
+		List<BreakpointValue> result = new ArrayList<BreakpointValue>();
+		for (BreakpointValue val : allValues) {
+			if (val.getBkpId().equals(bkpId)) {
+				result.add(val);
+			}
+		}
+		return result;
+	}
+
 	private BreakpointValue extractValuesAtLocation(BreakPoint bkp,
 			BreakpointEvent bkpEvent) {
 		try {
@@ -108,8 +134,9 @@ public class TestcasesExecutor extends JunitDebugger {
 		}
 	}
 
-	public TcExecResult getResult() {
+	public List<BreakpointData> getResult() {
 		return result;
 	}
+	
 }
 

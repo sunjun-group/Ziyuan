@@ -8,7 +8,8 @@
 
 package icsetlv;
 
-import icsetlv.common.dto.TcExecResult;
+import icsetlv.common.dto.BkpInvariantResult;
+import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.variable.TestcasesExecutor;
 
@@ -41,12 +42,14 @@ import com.sun.jdi.IncompatibleThreadStateException;
  */
 public class TestcasesExecutorTest extends AbstractTest {
 	private VMConfiguration vmConfig;
+	private TestcasesExecutor varExtr;
 	
 	@Before
 	public void setup() {
 		vmConfig = initVmConfig();
 		vmConfig.addClasspath(TestConfiguration.getTestTarget(ICSETLV));
 		vmConfig.addClasspath(TestConfiguration.getTzAssembly(Constants.SAV_COMMONS_ASSEMBLY));
+		varExtr = new TestcasesExecutor(6);
 	}
 
 	@Test
@@ -64,9 +67,9 @@ public class TestcasesExecutorTest extends AbstractTest {
 		breakpoints.add(bkp1);
 		List<String> tests = JunitUtils.extractTestMethods(CollectionUtils
 				.listOf(TcExSumTest.class.getName()));
-		TestcasesExecutor varExtr = new TestcasesExecutor(vmConfig, tests, 6);
+		varExtr.setup(vmConfig, tests);
 		varExtr.run(breakpoints);
-		TcExecResult result = varExtr.getResult();
+		List<BreakpointData> result = varExtr.getResult();
 		System.out.println(result);
 	}
 }

@@ -15,14 +15,18 @@ import sav.common.core.formula.Formula;
 import sav.common.core.formula.LIAAtom;
 import sav.common.core.formula.LIATerm;
 import sav.common.core.formula.Operator;
-import sav.common.core.formula.StringVar;
+import sav.common.core.formula.Var;
 
 /**
  * @author LLT
  * 
  */
-public class FormulaProcessor implements IDividerProcessor<Formula> {
-	private List<String> dataLabels;
+public class FormulaProcessor<T extends Var> implements IDividerProcessor<Formula> {
+	private List<T> allVars;
+
+	public FormulaProcessor(List<T> allVars) {
+		this.allVars = allVars;
+	}
 
 	public Formula process(Divider divider) {
 		// a1*x1 + a2*x2 + ... + an*xn >= b
@@ -34,7 +38,7 @@ public class FormulaProcessor implements IDividerProcessor<Formula> {
 			if (Double.compare(thetas[i], 0) == 0) {
 				continue;
 			}
-			liaTerms.add(new LIATerm(new StringVar(dataLabels.get(i)), thetas[i]));
+			liaTerms.add(LIATerm.of(allVars.get(i), thetas[i]));
 		}
 		LIAAtom atom = new LIAAtom(liaTerms, Operator.GE, thetas[thetas.length - 1]);
 		return atom;

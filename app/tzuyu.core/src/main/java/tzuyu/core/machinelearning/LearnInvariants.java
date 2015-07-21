@@ -10,6 +10,7 @@ package tzuyu.core.machinelearning;
 
 import icsetlv.Engine;
 import icsetlv.Engine.Result;
+import icsetlv.variable.TestcasesExecutor;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class LearnInvariants {
 
 	public LearnInvariants(final VMConfiguration config, FaultLocateParams params) {
 		engine = new Engine().setPort(config.getPort()).setJavaHome(config.getJavaHome());
-		engine.setValueRetrieveLevel(params.getValueRetrieveLevel());
+		engine.setTestcaseExecutor(new TestcasesExecutor(params.getValueRetrieveLevel()));
 		for (String path : config.getClasspaths()) {
 			engine.addToClassPath(path);
 		}

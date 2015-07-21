@@ -6,20 +6,24 @@
  *  Version:  $Revision: 1 $
  */
 
-package ml.svm;
+package sav.common.core.formula;
 
-import sav.common.core.formula.LIAAtom;
 import sav.common.core.formula.utils.ExpressionVisitor;
+
 
 /**
  * @author LLT
  *
  */
-public class SelectSamplingVisitor extends ExpressionVisitor {
+public class NotEq<T> extends Eq<T> {
+
+	public NotEq(Var var, T value) {
+		super(var, value);
+		op = Operator.NE;
+	}
 
 	@Override
-	public void visit(LIAAtom liaAtom) {
-		super.visit(liaAtom);
+	public void accept(ExpressionVisitor visitor) {
+		visitor.visit(this);
 	}
-	
 }

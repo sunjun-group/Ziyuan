@@ -125,4 +125,6 @@ public abstract class ExecValue implements IExecValue {
 	public String toString() {
 		return String.format("(%s:%s)", varId, children);
 	}
+	
+	public abstract ExecVarType getType();
 }

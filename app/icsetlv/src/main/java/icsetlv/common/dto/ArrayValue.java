@@ -85,4 +85,9 @@ public class ArrayValue extends ReferenceValue {
 		}
 		return super.getDoubleVal();
 	}
+	
+	@Override
+	public ExecVarType getType() {
+		return ExecVarType.ARRAY;
+	}
 }

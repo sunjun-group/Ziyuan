@@ -1,7 +1,7 @@
 package icsetlv;
 
+import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
-import icsetlv.common.dto.TcExecResult;
 import icsetlv.variable.TestcasesExecutor;
 
 import java.util.ArrayList;
@@ -21,10 +21,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import sav.common.core.Pair;
-import sav.common.core.utils.FileUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
-import sav.strategies.dto.MutationBreakPoint;
 import sav.strategies.vm.VMConfiguration;
 
 /**
@@ -59,7 +57,7 @@ public class Engine {
 	private static final Logger LOGGER = Logger.getLogger(Engine.class);
 	private static final int DEFAULT_PORT = 80;
 
-	private int valueRetrieveLevel = 3;
+	private TestcasesExecutor testcaseExecutor;
 	private VMConfiguration vmConfig = initVmConfig();
 	private Machine machine = getDefaultMachine();
 	private List<String> testcases = new ArrayList<String>();
@@ -70,16 +68,18 @@ public class Engine {
 		return new Engine();
 	}
 
-	public Engine run(final int valRetrieveLevel, final Machine machine) throws Exception {
-		TestcasesExecutor testRunner = new TestcasesExecutor(vmConfig, testcases, valRetrieveLevel);
-		testRunner.run(breakPoints);
-		final TcExecResult testResult = testRunner.getResult();
+	public Engine run(final Machine machine) throws Exception {
+		testcaseExecutor = getTestcaseExecutor();
+		testcaseExecutor.setup(vmConfig, testcases);
+		testcaseExecutor.run(breakPoints);
+		List<BreakpointData> testResult = testcaseExecutor.getResult();
 
 		results = new ArrayList<Result>(breakPoints.size());
-		for (BreakPoint bkp : breakPoints) {
+		for (BreakpointData bkpData : testResult) {
+			BreakPoint bkp = bkpData.getBkp();
 			LOGGER.info("Start to learn at " + bkp);
-			final List<BreakpointValue> passValues = testResult.getPassValues(bkp);
-			final List<BreakpointValue> failValues = testResult.getFailValues(bkp);
+			final List<BreakpointValue> passValues = bkpData.getPassValues();
+			final List<BreakpointValue> failValues = bkpData.getFailValues();
 			// Cannot train if there are not enough data
 			if(passValues.isEmpty() && failValues.isEmpty()){
 				//fail to add breakpoint
@@ -282,7 +282,7 @@ public class Engine {
 	}
 
 	public Engine run() throws Exception {
-		return run(valueRetrieveLevel, getMachine());
+		return run(getMachine());
 	}
 
 	public Engine addTestcase(final String testcase) {
@@ -296,13 +296,20 @@ public class Engine {
 		}
 		return this;
 	}
-
+	
 	public List<Result> getResults() {
 		return this.results;
 	}
 	
-	public void setValueRetrieveLevel(int valueRetrieveLevel) {
-		this.valueRetrieveLevel = valueRetrieveLevel;
+	public void setTestcaseExecutor(TestcasesExecutor testcaseExecutor) {
+		this.testcaseExecutor = testcaseExecutor;
+	}
+	
+	public TestcasesExecutor getTestcaseExecutor() {
+		if (testcaseExecutor == null) {
+			testcaseExecutor = new TestcasesExecutor(DefaultValues.DEBUG_VALUE_RETRIEVE_LEVEL);
+		}
+		return testcaseExecutor;
 	}
 
 	public static class Result {

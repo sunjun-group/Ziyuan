@@ -33,4 +33,9 @@ public class BooleanValue extends PrimitiveValue {
 	public static BooleanValue of(String id, boolean value) {
 		return new BooleanValue(id, value);
 	}
+	
+	@Override
+	public ExecVarType getType() {
+		return ExecVarType.BOOLEAN;
+	}
 }

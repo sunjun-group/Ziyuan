@@ -40,14 +40,23 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 	private int testIdx = 0;
 	private Location junitLoc;
 	private String jResultFile;
-
-	public JunitDebugger(VMConfiguration config, List<String> allTests) {
-		super(config);
+	
+	public void setup(VMConfiguration config, List<String> allTests) {
+		super.setup(config);
 		this.allTests = allTests;
 	}
 	
 	@Override
+	@Deprecated 
+	public void setup(VMConfiguration config) {
+		throw new UnsupportedOperationException();
+	}
+
+	
+	@Override
 	protected final void beforeDebugging() throws SavException {
+		testIdx = 0;
+		junitLoc = null;
 		jResultFile = createExecutionResultFile();
 		config.setLaunchClass(JunitRunner.class.getName());
 		List<String> args = new JunitRunnerProgramArgBuilder()

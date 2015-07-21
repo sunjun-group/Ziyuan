@@ -19,7 +19,7 @@ public class LIATerm {
 		this.variable = var;
 		this.coefficient = coeff;
 	}
-
+	
 	public Var getVariable() {
 		return this.variable;
 	}
@@ -42,5 +42,9 @@ public class LIATerm {
 
 	public void accept(ExpressionVisitor visitor) {
 		visitor.visit(this);
+	}
+	
+	public static <T extends Var> LIATerm of(T var, double coeff) {
+		return new LIATerm(var, coeff);
 	}
 }

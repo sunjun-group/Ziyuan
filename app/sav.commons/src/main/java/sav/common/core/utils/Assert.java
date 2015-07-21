@@ -32,6 +32,11 @@ public class Assert {
 			throw new IllegalArgumentException(msg);
 		}
 	}
+	
+	public static void assertNotNull(Object obj, String... msgs) {
+		assertTrue(obj != null, msgs);
+	}
+
 
 	public static void fail(String msg) {
 		throw new IllegalArgumentException(msg);

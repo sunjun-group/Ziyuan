@@ -21,4 +21,8 @@ public class StringValue extends PrimitiveValue {
 		add(new PrimitiveValue(getChildId(LENGTH_CODE), String.valueOf(val.length())));
 	}
 
+	@Override
+	public ExecVarType getType() {
+		return ExecVarType.STRING;
+	}
 }
