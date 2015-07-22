@@ -11,6 +11,7 @@ public class FeatureSelectionMachine extends Machine {
 	private static final Logger LOGGER = Logger.getLogger(FeatureSelectionMachine.class);
 	private static final int MAX_FEATURE = 3;
 	private Machine machine; // The machine used for learning, can be null
+	private ISelectiveSampling ss;
 
 	@Override
 	protected Machine train(final List<DataPoint> dataPoints) {
@@ -71,6 +72,7 @@ public class FeatureSelectionMachine extends Machine {
 					// If the learned logic is the same then stop
 					// (store the current machine inside this.machine)
 					// If not, the learned logic is not useful
+//					List<DataPoint> newDatapoints = ss.selectData(machine);
 					this.machine = machine;
 					break outerLoop;
 				}

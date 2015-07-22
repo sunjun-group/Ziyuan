@@ -9,7 +9,9 @@
 package libsvm.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import sav.common.core.formula.Formula;
 import sav.common.core.formula.LIAAtom;
@@ -22,13 +24,17 @@ import sav.common.core.formula.Var;
  * 
  */
 public class FormulaProcessor<T extends Var> implements IDividerProcessor<Formula> {
-	private List<T> allVars;
+	private Map<String, T> vars;
 
 	public FormulaProcessor(List<T> allVars) {
-		this.allVars = allVars;
+		vars = new HashMap<String, T>();
+		for (T var : allVars) {
+			vars.put(var.getLabel(), var);
+		}
 	}
 
-	public Formula process(Divider divider) {
+	@Override
+	public Formula process(Divider divider, List<String> labels) {
 		// a1*x1 + a2*x2 + ... + an*xn >= b
 		CoefficientProcessing coefficientProcessing = new CoefficientProcessing();
 		double[] thetas = coefficientProcessing
@@ -38,7 +44,7 @@ public class FormulaProcessor<T extends Var> implements IDividerProcessor<Formul
 			if (Double.compare(thetas[i], 0) == 0) {
 				continue;
 			}
-			liaTerms.add(LIATerm.of(allVars.get(i), thetas[i]));
+			liaTerms.add(LIATerm.of(vars.get(labels.get(i)), thetas[i]));
 		}
 		LIAAtom atom = new LIAAtom(liaTerms, Operator.GE, thetas[thetas.length - 1]);
 		return atom;

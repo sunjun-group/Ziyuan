@@ -8,11 +8,13 @@
 
 package libsvm.core;
 
+import java.util.List;
+
 /**
  * @author LLT
  *
  */
 public interface IDividerProcessor<R> {
 	
-	public R process(Divider divider);
+	R process(Divider divider, List<String> labels);
 }

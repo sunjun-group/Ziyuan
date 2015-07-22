@@ -9,7 +9,7 @@ public interface Formula {
 	public static final Formula TRUE = True.getInstance();
 	public static final Formula FALSE = False.getInstance();
 
-	public List<Var> getReferencedVariables();
+	public <T extends Var>List<T> getReferencedVariables();
 
 	public List<Atom> getAtomics();
 

@@ -20,8 +20,9 @@ public class LIATerm {
 		this.coefficient = coeff;
 	}
 	
-	public Var getVariable() {
-		return this.variable;
+	@SuppressWarnings("unchecked")
+	public <T extends Var> T getVariable() {
+		return (T) this.variable;
 	}
 
 	public double getCoefficient() {

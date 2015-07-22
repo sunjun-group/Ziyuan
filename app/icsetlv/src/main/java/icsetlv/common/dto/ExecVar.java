@@ -60,4 +60,13 @@ public class ExecVar implements Var {
 		return true;
 	}
 	
+	@Override
+	public String getLabel() {
+		return varId;
+	}
+	
+	@Override
+	public String toString() {
+		return getLabel();
+	}
 }

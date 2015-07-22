@@ -8,6 +8,10 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../tzuyu.parent/pom.xml</relativePath>
 	</parent>
+	
+	<properties>
+		<javailp-version>1.2a</javailp-version>
+	</properties>
 
 	<build>
 		<plugins>
@@ -101,10 +105,10 @@
 		</dependency>
 
 		<!-- wala -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>tzuyu-project</groupId> -->
-<!-- 			<artifactId>slicer.wala</artifactId> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>tzuyu-project</groupId> -->
+		<!-- <artifactId>slicer.wala</artifactId> -->
+		<!-- </dependency> -->
 
 		<!-- svm part -->
 		<dependency>
@@ -117,6 +121,12 @@
 			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>net.sf.javailp</groupId>
+			<artifactId>javailp</artifactId>
+			<version>${javailp-version}</version>
+		</dependency>
+		<!-- test -->
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>

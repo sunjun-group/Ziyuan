@@ -31,4 +31,9 @@ public class StringVar implements Var {
 	public String toString() {
 		return var;
 	}
+
+	@Override
+	public String getLabel() {
+		return var;
+	}
 }

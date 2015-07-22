@@ -301,7 +301,7 @@ public class Machine {
 	}
 
 	public <R> R getLearnedLogic(IDividerProcessor<R> processor) {
-		return processor.process(getDivider());
+		return processor.process(getDivider(), dataLabels);
 	}
 
 	private Divider getDivider() {
@@ -352,13 +352,13 @@ public class Machine {
 	 * @author Nguyen Phuoc Nguong Phuc (npn)
 	 * 
 	 */
-	public class DataPoint {
+	public static class DataPoint {
 
 		private int numberOfFeatures;
 		private double[] values;
 		private Category category;
 
-		private DataPoint(final int numberOfFeatures) {
+		public DataPoint(final int numberOfFeatures) {
 			// Hide the constructor
 			// I.e.: can only be created using Machine's factory method
 			this.numberOfFeatures = numberOfFeatures;
@@ -447,4 +447,7 @@ public class Machine {
 		}
 	}
 
+	public List<DataPoint> getDataPoints() {
+		return data;
+	}
 }

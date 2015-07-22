@@ -9,8 +9,11 @@
 package icsetlv.common.dto;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
+import libsvm.core.Category;
+import libsvm.core.Machine.DataPoint;
 import sav.strategies.dto.BreakPoint;
 
 /**
@@ -46,4 +49,29 @@ public class BreakpointData {
 		this.failValues = failValues;
 	}
 
+	public List<DataPoint> toDatapoints(List<String> labels) {
+		List<DataPoint> datapoints = new ArrayList<DataPoint>();
+		for (BreakpointValue bValue : passValues) {
+			datapoints.add(toDataPoint(labels, bValue, Category.POSITIVE));
+		}
+
+		for (BreakpointValue bValue : failValues) {
+			datapoints.add(toDataPoint(labels, bValue, Category.NEGATIVE));
+		}
+		return datapoints;
+	}
+	
+	private DataPoint toDataPoint(List<String> labels, BreakpointValue bValue,
+			Category category) {
+		double[] lineVals = new double[labels.size()];
+		int i = 0;
+		for (String variableName : labels) {
+			final Double value = bValue.getValue(variableName, 0.0);
+			lineVals[i++] = value;
+		}
+		DataPoint dp = new DataPoint(labels.size());
+		dp.setCategory(category);
+		dp.setValues(lineVals);
+		return dp;
+	}
 }
