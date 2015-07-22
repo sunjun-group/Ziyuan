@@ -76,7 +76,7 @@ public class TestUltility {
 		LOGGER.log(Level.DEBUG, "SVM:" + normalModelAccuracy);
 		
 		LOGGER.info("Learned logic:");
-		LOGGER.info(machine.getLearnedLogic());
+		LOGGER.info(machine.getLearnedLogic(false));
 	}
 	
 	protected void checkLastDividerFound(double[] expectedCoefficients) {

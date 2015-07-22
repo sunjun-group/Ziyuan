@@ -12,12 +12,12 @@ import org.junit.Test;
 
 public class SunJunTest extends TestUltility {
 
-	private Machine machine;
+	private Machine machine1;
 	private Machine machine2;
 
 	@Before
 	public void setup() {
-		machine = setupMachine(new FeatureSelectionMachine(), 7);
+		machine1 = setupMachine(new FeatureSelectionMachine(), 7);
 		machine2 = setupMachine(new PositiveSeparationMachine(new RandomNegativePointSelection()),
 				7);
 	}
@@ -31,16 +31,16 @@ public class SunJunTest extends TestUltility {
 	@Test
 	public void test1() {
 		for (double[] point : positivePoints) {
-			machine.addDataPoint(Category.POSITIVE, point);
+			machine1.addDataPoint(Category.POSITIVE, point);
 		}
 		for (double[] point : negativePoints) {
-			machine.addDataPoint(Category.NEGATIVE, point);
+			machine1.addDataPoint(Category.NEGATIVE, point);
 		}
 
-		machine.train();
+		machine1.train();
 
-		System.out.println("Learned logic: " + machine.getLearnedLogic());
-		System.out.println("Accuracy: " + machine.getModelAccuracy());
+		System.out.println("Learned logic: " + machine1.getLearnedLogic(false));
+		System.out.println("Accuracy: " + machine1.getModelAccuracy());
 	}
 
 	private final double[][] SAMPLE_POINTS = new double[][] { { 1, 85, 2, 60, 3, 94, 85 },
@@ -84,19 +84,18 @@ public class SunJunTest extends TestUltility {
 	@Test
 	public void test2() {
 		for (double[] point : generatePoints()) {
-			machine.addDataPoint(point[5] <= point[6] ? Category.POSITIVE : Category.NEGATIVE,
+			machine1.addDataPoint(point[5] <= point[6] ? Category.POSITIVE : Category.NEGATIVE,
 					point);
 			machine2.addDataPoint(point[5] <= point[6] ? Category.POSITIVE : Category.NEGATIVE,
 					point);
 		}
-		machine.train();
+		machine1.train();
 		machine2.train();
 		System.out.println(">>> SVM RESULTS >>> ");
-		System.out.println("Learned logic: " + machine.getLearnedLogic());
-		System.out.println("Accuracy: " + machine.getModelAccuracy());
+		System.out.println("Learned logic: " + machine1.getLearnedLogic(false));
+		System.out.println("Accuracy: " + machine1.getModelAccuracy());
 		System.out.println(">>> ENHANCED SVM RESULTS >>> ");
-		System.out.println("Learned logic: " + machine2.getLearnedLogic());
+		System.out.println("Learned logic: " + machine2.getLearnedLogic(false));
 		System.out.println("Accuracy: " + machine2.getModelAccuracy());
 	}
-
 }

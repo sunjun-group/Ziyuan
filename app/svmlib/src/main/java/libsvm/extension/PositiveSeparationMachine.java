@@ -129,7 +129,7 @@ public class PositiveSeparationMachine extends Machine {
 	}
 
 	@Override
-	public String getLearnedLogic() {
+	public String getLearnedLogic(boolean round) {
 		StringBuilder str = new StringBuilder();
 
 		final int numberOfFeatures = getRandomData().getNumberOfFeatures();
@@ -141,7 +141,7 @@ public class PositiveSeparationMachine extends Machine {
 					if (str.length() != 0) {
 						str.append("\n");
 					}
-					str.append(getLearnedLogic(explicitDivider));
+					str.append(getLearnedLogic(explicitDivider, round));
 				}
 			}
 		}

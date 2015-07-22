@@ -154,7 +154,7 @@ public class Engine {
 			
 			// Train
 			machine.train();
-			String svmExp = machine.getLearnedLogic();
+			String svmExp = machine.getLearnedLogic(false);
 			
 			// Store outputs
 			final Result result = new Result();

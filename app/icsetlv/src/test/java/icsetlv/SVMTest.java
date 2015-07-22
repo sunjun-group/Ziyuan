@@ -25,7 +25,7 @@ public class SVMTest extends AbstractTest {
 		}
 		
 		machine.train();
-		System.out.println(machine.getLearnedLogic());
+		System.out.println(machine.getLearnedLogic(false));
 		System.out.println(machine.getModelAccuracy());
 	}
 	

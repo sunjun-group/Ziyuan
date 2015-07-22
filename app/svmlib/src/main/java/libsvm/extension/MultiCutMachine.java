@@ -152,7 +152,7 @@ public class MultiCutMachine extends Machine {
 	}
 	
 	@Override
-	public String getLearnedLogic() {
+	public String getLearnedLogic(boolean round) {
 		StringBuilder str = new StringBuilder();
 
 		final int numberOfFeatures = getRandomData().getNumberOfFeatures();
@@ -163,7 +163,7 @@ public class MultiCutMachine extends Machine {
 				if (str.length() != 0) {
 					str.append(" ^ ");
 				}
-				str.append(getLearnedLogic(explicitDivider));
+				str.append(getLearnedLogic(explicitDivider, round));
 			}
 		}
 

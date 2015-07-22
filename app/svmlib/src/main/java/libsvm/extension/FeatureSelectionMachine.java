@@ -50,7 +50,7 @@ public class FeatureSelectionMachine extends Machine {
 				machine.train();
 
 				// check SVM results
-				final String learnedLogic = machine.getLearnedLogic();
+				final String learnedLogic = machine.getLearnedLogic(false);
 				final double accuracy = machine.getModelAccuracy();
 
 				if (LOGGER.isDebugEnabled()) {
@@ -103,11 +103,11 @@ public class FeatureSelectionMachine extends Machine {
 	}
 
 	@Override
-	public String getLearnedLogic() {
+	public String getLearnedLogic(boolean round) {
 		if (this.machine == null) {
 			return "";
 		}
-		return this.machine.getLearnedLogic();
+		return this.machine.getLearnedLogic(false);
 	}
 
 	@Override

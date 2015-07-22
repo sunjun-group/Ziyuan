@@ -295,9 +295,16 @@ public class Machine {
 		return 1.0 - ((double) getWrongClassifiedDataPoints(data).size() / data.size());
 	}
 
-	public String getLearnedLogic() {
+	/**
+	 * @param round
+	 *            To indicate whether the numbers should be rounded for nicer
+	 *            representation.
+	 * @return The learned logic.
+	 */
+	public String getLearnedLogic(boolean round) {
 		Model currentModel = getModel();
-		return currentModel == null ? "" : getLearnedLogic(currentModel.getExplicitDivider());
+		return currentModel == null ? ""
+				: getLearnedLogic(currentModel.getExplicitDivider(), round);
 	}
 
 	public <R> R getLearnedLogic(IDividerProcessor<R> processor) {
@@ -312,11 +319,11 @@ public class Machine {
 		return currentModel.getExplicitDivider();
 	}
 
-	protected String getLearnedLogic(final Divider divider) {
+	protected String getLearnedLogic(final Divider divider, boolean round) {
 		// a1*x1 + a2*x2 + ... + an*xn >= b
 		StringBuilder str = new StringBuilder();
-		CoefficientProcessing coefficientProcessing = new CoefficientProcessing();
-		double[] thetas = coefficientProcessing.process(divider.getLinearExpr());
+		final double[] linearExpr = divider.getLinearExpr();
+		double[] thetas = round ? new CoefficientProcessing().process(linearExpr): linearExpr;
 
 		for (int i = 0; i < thetas.length - 1; i++) {
 			if (Double.compare(thetas[i], 0) == 0) {
