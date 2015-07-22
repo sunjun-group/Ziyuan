@@ -17,7 +17,7 @@ import sav.common.core.utils.CollectionUtils;
  * @author LLT
  *
  */
-public class VarAtom extends Atom {
+public abstract class VarAtom extends Atom {
 	protected Var var;
 	protected Operator op;
 	
@@ -29,11 +29,17 @@ public class VarAtom extends Atom {
 	public Operator getOperator() {
 		return op;
 	}
+	
+	public Var getVar() {
+		return var;
+	}
 
 	@Override
 	public List<Var> getReferencedVariables() {
 		return CollectionUtils.listOf(var);
 	}
+	
+	public abstract String getDisplayValue();
 
 	@Override
 	public void accept(ExpressionVisitor visitor) {

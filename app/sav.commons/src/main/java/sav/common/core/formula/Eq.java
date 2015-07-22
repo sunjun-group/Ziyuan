@@ -9,6 +9,7 @@
 package sav.common.core.formula;
 
 import sav.common.core.formula.utils.ExpressionVisitor;
+import sav.common.core.utils.StringUtils;
 
 
 /**
@@ -25,6 +26,11 @@ public class Eq<T> extends VarAtom {
 	
 	public T getValue() {
 		return value;
+	}
+	
+	@Override
+	public String getDisplayValue() {
+		return StringUtils.toString(value, "null");
 	}
 	
 	@Override

@@ -3,6 +3,8 @@ package sav.common.core.formula;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.common.core.formula.utils.DisplayVisitor;
+
 /**
  * The abstract atomic expression used in this boolean library. The subclasses
  * of this class can represents different atomic expressions in its related
@@ -37,5 +39,12 @@ public abstract class Atom implements Formula {
 
 	public Formula simplify() {
 		return this;
+	}
+	
+	@Override
+	public String toString() {
+		DisplayVisitor visitor = new DisplayVisitor();
+		accept(visitor);
+		return visitor.getResult();
 	}
 }

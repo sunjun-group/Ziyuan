@@ -8,6 +8,8 @@
 
 package sav.common.core.formula;
 
+import sav.common.core.formula.utils.ExpressionVisitor;
+
 /**
  * @author LLT
  * 
@@ -35,5 +37,10 @@ public class StringVar implements Var {
 	@Override
 	public String getLabel() {
 		return var;
+	}
+
+	@Override
+	public void accept(ExpressionVisitor visitor) {
+		visitor.visit(var);
 	}
 }

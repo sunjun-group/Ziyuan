@@ -9,6 +9,7 @@
 package icsetlv.common.dto;
 
 import sav.common.core.formula.Var;
+import sav.common.core.formula.utils.ExpressionVisitor;
 
 /**
  * @author LLT
@@ -68,5 +69,10 @@ public class ExecVar implements Var {
 	@Override
 	public String toString() {
 		return getLabel();
+	}
+
+	@Override
+	public void accept(ExpressionVisitor visitor) {
+		visitor.visit(this);
 	}
 }

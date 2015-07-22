@@ -83,4 +83,8 @@ public abstract class ExpressionVisitor {
 	public void visitVarAtom(VarAtom varAtom) {
 		// do nothing by default
 	}
+
+	public void visit(String var) {
+		// do nothing by default
+	}
 }

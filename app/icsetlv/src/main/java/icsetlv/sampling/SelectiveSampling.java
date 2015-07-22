@@ -38,6 +38,7 @@ import sav.strategies.vm.VMConfiguration;
  */
 public class SelectiveSampling implements ISelectiveSampling {
 	private TestcasesExecutor tcExecutor;
+	private BkpInstrument instrument;
 	private FormulaProcessor<ExecVar> dividerProcessor;
 	
 	public SelectiveSampling(List<ExecVar> allVars) {
@@ -90,8 +91,7 @@ public class SelectiveSampling implements ISelectiveSampling {
 		
 		IlpSolver solver = new IlpSolver(minMax);
 		divider.accept(solver);
-		List<Eq<?>> assignments = solver.getAssignments();
-		BkpInstrument instrument = new BkpInstrument();
+		List<Eq<?>> assignments = solver.getResult();
 		BreakPoint newBkp = instrument.instrument(assignments);
 		List<BreakpointData> bkpData = debugTestAndCollectData(CollectionUtils.listOf(newBkp));
 		return bkpData.get(0).toDatapoints(allLabels);
@@ -125,5 +125,9 @@ public class SelectiveSampling implements ISelectiveSampling {
 	
 	public void setTcExecutor(TestcasesExecutor tcExecutor) {
 		this.tcExecutor = tcExecutor;
+	}
+	
+	public void setInstrument(BkpInstrument instrument) {
+		this.instrument = instrument;
 	}
 }
