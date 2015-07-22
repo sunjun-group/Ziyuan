@@ -46,6 +46,9 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 		this.allTests = allTests;
 	}
 	
+	/**
+	 * call {@link JunitDebugger#setup(VMConfiguration, List)} instead.
+	 */
 	@Override
 	@Deprecated 
 	public void setup(VMConfiguration config) {

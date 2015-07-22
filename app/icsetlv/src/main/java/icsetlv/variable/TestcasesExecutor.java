@@ -84,6 +84,7 @@ public class TestcasesExecutor extends JunitDebugger {
 			bkpData.setBkp(bkp);
 			bkpData.setPassValues(getValuesOfBkp(bkp.getId(), passValues));
 			bkpData.setFailValues(getValuesOfBkp(bkp.getId(), failValues));
+			result.add(bkpData);
 		}
 		return result;
 	}
