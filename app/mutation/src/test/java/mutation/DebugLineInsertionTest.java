@@ -33,7 +33,8 @@ public class DebugLineInsertionTest {
 	
 	@Before
 	public void setup() {
-		mutator = new Mutator();
+		String srcFolder = "./src/test/java";
+		mutator = new Mutator(srcFolder);
 	}
 	
 	public DebugLineInsertionResult runTestInsertion(int... lines) {
@@ -44,8 +45,8 @@ public class DebugLineInsertionTest {
 			value.add(new ClassLocation(clazzName, null, line));
 		}
 		classLocationMap.put(clazzName, value);
-		Map<String, DebugLineInsertionResult> result = mutator.insertDebugLine(
-				classLocationMap, "./src/test/java");
+		Map<String, DebugLineInsertionResult> result = mutator
+				.insertDebugLine(classLocationMap);
 		System.out.println(result);
 		return result.get(clazzName);
 	}

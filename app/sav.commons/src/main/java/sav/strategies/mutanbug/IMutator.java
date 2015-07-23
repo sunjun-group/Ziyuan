@@ -13,8 +13,7 @@ public interface IMutator
     /**
      * running mutation at specific lines defined in locations.
      */
-	public <T extends ClassLocation> Map<String, MutationResult> mutate(
-			List<T> locs, String sourceFolder);
+	public <T extends ClassLocation> Map<String, MutationResult> mutate(List<T> locs);
 
     /**
      * Insert a new line of code right after a specific line of a class,
@@ -28,6 +27,5 @@ public interface IMutator
      * return temp;
      */
 	public <T extends ClassLocation> Map<String, DebugLineInsertionResult> insertDebugLine(
-			Map<String, List<T>> classLocationMap,
-			String sourceFolder);
+			Map<String, List<T>> classLocationMap);
 }

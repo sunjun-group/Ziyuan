@@ -116,7 +116,7 @@ public class AssertionDetector {
 		public boolean visit(SimpleName node) {
 			if (curBreakpoint != null) {
 				Variable var = new Variable(node.getFullyQualifiedName());
-				var.setCode(var.getName());
+				var.setName(var.getParentName());
 				curBreakpoint.addVars(var);
 			}
 			return super.visit(node);

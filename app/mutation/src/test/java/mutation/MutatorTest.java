@@ -30,7 +30,8 @@ public class MutatorTest {
 	
 	@Before
 	public void setup() {
-		mutator = new Mutator();
+		String srcFolder = "./src/test/java";
+		mutator = new Mutator(srcFolder);
 	}
 	
 	@Test
@@ -39,7 +40,7 @@ public class MutatorTest {
 		List<ClassLocation> value = new ArrayList<ClassLocation>();
 		value.add(new ClassLocation(clazzName, null, 27));
 		value.add(new ClassLocation(clazzName, null, 33));
-		Map<String, MutationResult> result = mutator.mutate(value,  "./src/test/java");
+		Map<String, MutationResult> result = mutator.mutate(value);
 		System.out.println(result);
 	}
 }

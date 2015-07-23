@@ -25,17 +25,16 @@ import java.util.Map;
 
 import main.FaultLocalization;
 
-import org.apache.commons.collections.CollectionUtils;
-
 import sav.common.core.Logger;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.IApplicationContext;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.dto.MutationBreakPoint;
+import sav.strategies.dto.DebugLine;
 import sav.strategies.mutanbug.DebugLineInsertionResult;
 import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.machinelearning.LearnInvariants;
@@ -174,21 +173,22 @@ public class TzuyuCore {
 			
 			
 			MutanBug mutanbug = new MutanBug();
-			Map<BreakPoint, BreakPoint> mapNewToOldBkp = getNextLineToAddBreakpoint(mutanbug, BreakpointUtils.initBrkpsMap(breakpoints));
+			Map<DebugLine, BreakPoint> mapNewToOldBkp = getNextLineToAddBreakpoint(mutanbug, BreakpointUtils.initBrkpsMap(breakpoints));
 			
-			List<BreakPoint> newBreakpoints = new ArrayList<BreakPoint>(mapNewToOldBkp.keySet());
+			List<DebugLine> newBreakpoints = new ArrayList<DebugLine>(mapNewToOldBkp.keySet());
 			
 			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig(), params);
-			List<Result> invariants = learnInvariant.learn(newBreakpoints, junitClassNames, appData.getAppSrc());
+			List<Result> invariants = learnInvariant.learn(CollectionUtils.<BreakPoint, DebugLine>cast(newBreakpoints), 
+										junitClassNames, appData.getAppSrc());
 			
 			List<BugLocalizationLine> bugLines = new ArrayList<BugLocalizationLine>();
 			
 			for(Result invariant: invariants){
 				if (!(invariant instanceof AllPositiveResult) && invariant.getAccuracy() > 0){
-					BreakPoint oldBreakpoint = mapNewToOldBkp.get(invariant.getBreakPoint());
-					double suspeciousness = mapBkpToSuspeciousness.get(oldBreakpoint);
-					
-					BugLocalizationLine bugLine = new BugLocalizationLine( oldBreakpoint, suspeciousness, invariant);
+					DebugLine debugLine = (DebugLine) invariant.getBreakPoint();
+					BreakPoint orgBkp = mapNewToOldBkp.get(debugLine);
+					double suspeciousness = mapBkpToSuspeciousness.get(orgBkp);
+					BugLocalizationLine bugLine = new BugLocalizationLine(debugLine, suspeciousness, invariant);
 					bugLines.add(bugLine);
 				}
 			}
@@ -244,13 +244,13 @@ public class TzuyuCore {
 		return junitClassNames;
 	}
 
-	private Map<BreakPoint, BreakPoint> getNextLineToAddBreakpoint(MutanBug mutanbug, 
+	private Map<DebugLine, BreakPoint> getNextLineToAddBreakpoint(MutanBug mutanbug, 
 			Map<String, List<BreakPoint>> classLocationMap) throws SavException {
 		mutanbug.setAppData(appData);
 		mutanbug.setMutator(appContext.getMutator());
 		Map<String, DebugLineInsertionResult> mutationInfo = mutanbug
 				.mutateForMachineLearning(classLocationMap);
-		Map<BreakPoint, BreakPoint> newLocations = getNewLocationAfterMutation(classLocationMap, mutationInfo);
+		Map<DebugLine, BreakPoint> newLocations = getNewLocationAfterMutation(classLocationMap, mutationInfo);
 		return newLocations;
 	}
 	
@@ -271,16 +271,16 @@ public class TzuyuCore {
 		}
 	}
 	
-	private Map<BreakPoint, BreakPoint> getNewLocationAfterMutation(Map<String, List<BreakPoint>> classLocationMap,
+	private Map<DebugLine, BreakPoint> getNewLocationAfterMutation(Map<String, List<BreakPoint>> classLocationMap,
 			Map<String, DebugLineInsertionResult> mutationInfo) {
-		Map<BreakPoint, BreakPoint> result = new HashMap<BreakPoint, BreakPoint>();
+		Map<DebugLine, BreakPoint> result = new HashMap<DebugLine, BreakPoint>();
 		for (String className : classLocationMap.keySet()) {
 			DebugLineInsertionResult lineInfo = mutationInfo.get(className);
 			Map<Integer, Integer> lineToNextLine = lineInfo.getOldNewLocMap();
 			List<BreakPoint> bkpsInClass = classLocationMap.get(className);
 			for(BreakPoint location: bkpsInClass){
 				Integer newLineNo = lineToNextLine.get(location.getLineNo());
-				MutationBreakPoint newBreakPoint = new MutationBreakPoint(location, newLineNo);
+				DebugLine newBreakPoint = new DebugLine(location, newLineNo);
 				result.put(newBreakPoint, location);
 			}
 		}

@@ -8,7 +8,6 @@
 
 package icsetlv;
 
-import icsetlv.common.dto.BkpInvariantResult;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.variable.TestcasesExecutor;

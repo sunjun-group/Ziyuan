@@ -97,8 +97,7 @@ public class MutanBug {
 	public <T extends ClassLocation> MutansResult mutateAndRunTests(
 			List<T> bkps, List<String> junitClassNames) throws Exception {
 		MutansResult result = new MutansResult();
-		Map<String, MutationResult> mutatedResult = mutator.mutate(bkps,
-				appData.getAppSrc());
+		Map<String, MutationResult> mutatedResult = mutator.mutate(bkps);
 		VMConfiguration vmConfig = appData.getVmConfig();
 		Recompiler compiler = new Recompiler(vmConfig);
 		JunitRunnerParameters params = new JunitRunnerParameters();
@@ -148,7 +147,7 @@ public class MutanBug {
 			Map<String, List<T>> classLocationMap)
 			throws SavException {
 		startBackup();
-		Map<String, DebugLineInsertionResult> result = mutator.insertDebugLine(classLocationMap, appData.getAppSrc());
+		Map<String, DebugLineInsertionResult> result = mutator.insertDebugLine(classLocationMap);
 		Recompiler recompiler = new Recompiler(appData.getVmConfig());
 		for (DebugLineInsertionResult classResult : result.values()) {
 			List<File> classFiles = ClassUtils.getCompiledClassFiles(appData.getAppTarget(), classResult.getClassName());

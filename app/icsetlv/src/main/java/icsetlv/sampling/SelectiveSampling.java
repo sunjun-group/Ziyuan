@@ -8,12 +8,9 @@
 
 package icsetlv.sampling;
 
-import icsetlv.DefaultValues;
-import icsetlv.InvariantLearner;
-import icsetlv.common.dto.BkpInvariantResult;
+import icsetlv.InvariantMediator;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.ExecVar;
-import icsetlv.variable.TestcasesExecutor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,17 +28,21 @@ import sav.common.core.formula.Eq;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT
  */
 public class SelectiveSampling implements ISelectiveSampling {
-	private TestcasesExecutor tcExecutor;
-	private BkpInstrument instrument;
+	private InvariantMediator mediator;
 	private FormulaProcessor<ExecVar> dividerProcessor;
+	private BreakPoint bkp;
 	
-	public SelectiveSampling(List<ExecVar> allVars) {
+	public SelectiveSampling(InvariantMediator mediator) {
+		this.mediator = mediator;
+	}
+	
+	public void setup(BreakPoint bkp, List<ExecVar> allVars) {
+		this.bkp = bkp;
 		dividerProcessor = new FormulaProcessor<ExecVar>(allVars);
 	}
 	
@@ -92,42 +93,17 @@ public class SelectiveSampling implements ISelectiveSampling {
 		IlpSolver solver = new IlpSolver(minMax);
 		divider.accept(solver);
 		List<Eq<?>> assignments = solver.getResult();
-		BreakPoint newBkp = instrument.instrument(assignments);
-		List<BreakpointData> bkpData = debugTestAndCollectData(CollectionUtils.listOf(newBkp));
+		List<BreakpointData> bkpData = mediator.instDebugAndCollectData(
+											CollectionUtils.listOf(bkp),
+												toInstrVarMap(assignments));
 		return bkpData.get(0).toDatapoints(allLabels);
 	}
 
-	public List<BkpInvariantResult> learn(VMConfiguration config, List<String> allTests,
-			List<BreakPoint> bkps) throws SavException {
-		List<BreakpointData> bkpsData = debugTestAndCollectData(config, allTests, bkps);
-		InvariantLearner learner = new InvariantLearner(new Machine());
-		return learner.learn(bkpsData);
-	}
-
-	private List<BreakpointData> debugTestAndCollectData(VMConfiguration config,
-			List<String> allTests, List<BreakPoint> bkps) throws SavException {
-		ensureTcExecutor();
-		tcExecutor.setup(config, allTests);
-		return debugTestAndCollectData(bkps);
-	}
-	
-	private List<BreakpointData> debugTestAndCollectData(List<BreakPoint> bkps)
-			throws SavException {
-		tcExecutor.run(bkps);
-		return tcExecutor.getResult();
-	}
-	
-	public void ensureTcExecutor() {
-		if (tcExecutor == null) {
-			tcExecutor = new TestcasesExecutor(DefaultValues.DEBUG_VALUE_RETRIEVE_LEVEL); 
+	private Map<String, Object> toInstrVarMap(List<Eq<?>> assignments) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		for (Eq<?> asgt : assignments) {
+			map.put(asgt.getVar().getLabel(), asgt.getValue());
 		}
-	}
-	
-	public void setTcExecutor(TestcasesExecutor tcExecutor) {
-		this.tcExecutor = tcExecutor;
-	}
-	
-	public void setInstrument(BkpInstrument instrument) {
-		this.instrument = instrument;
+		return map;
 	}
 }

@@ -113,8 +113,8 @@ public class Engine {
 			// TODO: TO REMOVE, just added for debugging
 //			if (bkp.getLineNo() == 47) {
 //				int oldLineNo = bkp.getLineNo();
-//				if (bkp instanceof MutationBreakPoint) {
-//					oldLineNo = ((MutationBreakPoint) bkp).getOldLineNumber();
+//				if (bkp instanceof DebugLine) {
+//					oldLineNo = ((DebugLine) bkp).getOldLineNumber();
 //				}
 //				StringBuilder sb = new StringBuilder();
 //				sb.append("\n");
@@ -154,7 +154,7 @@ public class Engine {
 			
 			// Train
 			machine.train();
-			String svmExp = machine.getLearnedLogic(false);
+			String svmExp = machine.getLearnedLogic(true);
 			
 			// Store outputs
 			final Result result = new Result();

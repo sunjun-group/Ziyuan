@@ -54,7 +54,6 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 	public void setup(VMConfiguration config) {
 		throw new UnsupportedOperationException();
 	}
-
 	
 	@Override
 	protected final void beforeDebugging() throws SavException {
@@ -126,6 +125,6 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 	/** abstract methods */
 	protected abstract void onStart();
 	protected abstract void onEnterTestcase(int testIdx);
-	protected abstract void onEnterBreakpoint(BreakPoint bkp, BreakpointEvent bkpEvent);
+	protected abstract void onEnterBreakpoint(BreakPoint bkp, BreakpointEvent bkpEvent) throws SavException;
 	protected abstract void onFinish(JunitResult jResult);
 }

@@ -29,10 +29,15 @@ public class Mutator implements IMutator {
 	//TODO LLT: correct the configuration file path, temporary fix for running in eclipse
 	private static final String OPERATOR_MAP_FILE = "./src/main/resources/MuMap.txt";
 	private Map<String, List<String>> opMapConfig;
+	private String srcFolder;
+	
+	public Mutator(String srcFolder) {
+		this.srcFolder = srcFolder;
+	}
 	
 	@Override
 	public <T extends ClassLocation> Map<String, MutationResult> mutate(
-			List<T> locs, String srcFolder) {
+			List<T> locs) {
 		Map<String, List<Integer>> classLocationMap = BreakpointUtils.initLineNoMap(locs);
 		JParser cuParser = new JParser(srcFolder, classLocationMap.keySet());
 		ClassAnalyzer classAnalyzer = new ClassAnalyzer(srcFolder, cuParser);
@@ -62,7 +67,7 @@ public class Mutator implements IMutator {
 
 	@Override
 	public <T extends ClassLocation> Map<String, DebugLineInsertionResult> insertDebugLine(
-			Map<String, List<T>> classLocationMap, String srcFolder) {
+			Map<String, List<T>> classLocationMap) {
 		JParser cuParser = new JParser(srcFolder, classLocationMap.keySet());
 		ClassAnalyzer classAnalyzer = new ClassAnalyzer(srcFolder, cuParser);
 		DebugLineInsertion insertion = new DebugLineInsertion();

@@ -11,6 +11,7 @@ package sav.strategies.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.common.core.Constants;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.StringUtils;
 
@@ -114,12 +115,12 @@ public class BreakPoint extends ClassLocation {
 	}
 
 	public static class Variable {
-		private String name;
+		private String parentName;
 		private String fullName;
 		private VarScope scope;
 		
 		public Variable(String name, String fullName, VarScope scope) {
-			this.name = name;
+			this.parentName = name;
 			this.fullName = fullName;
 			this.scope = scope;
 		}
@@ -129,17 +130,17 @@ public class BreakPoint extends ClassLocation {
 		}
 
 		public Variable(String name) {
-			this.name = name;
+			this.parentName = name;
 			this.fullName = name;
 			scope = VarScope.UNDEFINED;
 		}
 
-		public String getName() {
-			return name;
+		public String getParentName() {
+			return parentName;
 		}
-
+		
 		public void setName(String name) {
-			this.name = name;
+			this.parentName = name;
 		}
 
 		public String getFullName() {
@@ -148,6 +149,11 @@ public class BreakPoint extends ClassLocation {
 
 		public void setFullName(String fullName) {
 			this.fullName = fullName;
+		}
+		
+		public String getSimpleName() {
+			int l = fullName.lastIndexOf(Constants.DOT);
+			return fullName.substring(l + 1);
 		}
 		
 		public String getId() {
@@ -164,7 +170,7 @@ public class BreakPoint extends ClassLocation {
 
 		@Override
 		public String toString() {
-			return "Variable [name=" + name + ", fullName=" + fullName
+			return "Variable [name=" + parentName + ", fullName=" + fullName
 					+ ", scope=" + scope + "]";
 		}
 

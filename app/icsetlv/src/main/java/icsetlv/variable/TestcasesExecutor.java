@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import sav.common.core.Logger;
+import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
@@ -40,7 +41,11 @@ public class TestcasesExecutor extends JunitDebugger {
 	private DebugValueExtractor valueExtractor;
 	
 	public TestcasesExecutor(int valRetrieveLevel) {
-		valueExtractor = new DebugValueExtractor(valRetrieveLevel);
+		valueExtractor = initDebugValueExtractor(valRetrieveLevel);
+	}
+	
+	public TestcasesExecutor(DebugValueExtractor valueExtractor) {
+		this.valueExtractor = valueExtractor;
 	}
 	
 	public void setup(VMConfiguration config, List<String> allTests) {
@@ -59,7 +64,7 @@ public class TestcasesExecutor extends JunitDebugger {
 	}
 
 	@Override
-	protected void onEnterBreakpoint(BreakPoint bkp, BreakpointEvent bkpEvent) {
+	protected void onEnterBreakpoint(BreakPoint bkp, BreakpointEvent bkpEvent) throws SavException {
 		BreakpointValue bkpVal = extractValuesAtLocation(bkp, bkpEvent);
 		addToCurrentValueList(currentTestBkpValues, bkpVal);
 	}
@@ -101,7 +106,7 @@ public class TestcasesExecutor extends JunitDebugger {
 	}
 
 	private BreakpointValue extractValuesAtLocation(BreakPoint bkp,
-			BreakpointEvent bkpEvent) {
+			BreakpointEvent bkpEvent) throws SavException {
 		try {
 			return valueExtractor.extractValue(bkp, bkpEvent);
 		} catch (IncompatibleThreadStateException e) {
@@ -139,5 +144,24 @@ public class TestcasesExecutor extends JunitDebugger {
 		return result;
 	}
 	
+	protected DebugValueExtractor initDebugValueExtractor(int valRetrieveLevel) {
+		return new DebugValueExtractor(valRetrieveLevel);
+	}
+	
+	public void setValueExtractor(DebugValueExtractor valueExtractor, boolean useCurrentRetrieveLevel) {
+		if (this.valueExtractor != null && useCurrentRetrieveLevel) {
+			int curValRetrieveLevel = this.valueExtractor.getValRetrieveLevel();
+			valueExtractor.setValRetrieveLevel(curValRetrieveLevel);
+		}
+		setValueExtractor(valueExtractor);
+	}
+	
+	public DebugValueExtractor getValueExtractor() {
+		return valueExtractor;
+	}
+
+	public void setValueExtractor(DebugValueExtractor valueExtractor) {
+		this.valueExtractor = valueExtractor;
+	}
 }
 

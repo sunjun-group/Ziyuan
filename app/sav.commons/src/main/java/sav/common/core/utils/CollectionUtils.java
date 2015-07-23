@@ -215,4 +215,9 @@ public class CollectionUtils {
 		}
 		return col.size() == expectedSize;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static <E, F extends E>List<E> cast(List<F> from) {
+		return (List<E>) from;
+	}
 }

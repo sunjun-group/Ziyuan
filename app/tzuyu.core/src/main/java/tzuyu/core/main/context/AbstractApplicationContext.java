@@ -99,9 +99,10 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 
 	public IMutator getMutator() {
 		if (this.mutator == null) {
-			Mutator mutator = new Mutator();
+			Mutator mutator = new Mutator(getAppData().getAppSrc());
 			mutator.setOpMapConfig(new HashMap<String, List<String>>());
 			this.mutator = mutator;
+			
 		}
 		return this.mutator;
 	}

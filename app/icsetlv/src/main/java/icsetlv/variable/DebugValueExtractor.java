@@ -8,6 +8,7 @@
 
 package icsetlv.variable;
 
+import icsetlv.DefaultValues;
 import icsetlv.common.dto.ArrayValue;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.dto.ExecValue;
@@ -27,6 +28,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 
 import sav.common.core.Logger;
+import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
@@ -65,12 +67,16 @@ public class DebugValueExtractor {
 
 	private int valRetrieveLevel;
 	
+	public DebugValueExtractor() {
+		this.valRetrieveLevel = DefaultValues.DEBUG_VALUE_RETRIEVE_LEVEL;
+	}
+	
 	public DebugValueExtractor(int valRetrieveLevel) {
 		this.valRetrieveLevel = valRetrieveLevel;
 	}
 	
-	public BreakpointValue extractValue(BreakPoint bkp, BreakpointEvent event)
-			throws IncompatibleThreadStateException, AbsentInformationException {
+	public final BreakpointValue extractValue(BreakPoint bkp, BreakpointEvent event)
+			throws IncompatibleThreadStateException, AbsentInformationException, SavException {
 		if (bkp == null) {
 			return null;
 		}
@@ -95,14 +101,14 @@ public class DebugValueExtractor {
 				 * same name, and the breakpoint variable with that name has the
 				 * scope UNDEFINED, it must be the variable in the method.
 				 */
-				final Map<Variable, Value> allVariables = new HashMap<Variable, Value>();
+				final Map<Variable, JdiParam> allVariables = new HashMap<Variable, JdiParam>();
 				final List<LocalVariable> visibleVars = frame.visibleVariables();
 				final List<Field> allFields = refType.allFields();
 				for (Variable bpVar : bkp.getVars()) {
 					// First check local variable
 					LocalVariable match = null;
 					for (LocalVariable localVar : visibleVars) {
-						if (localVar.name().equals(bpVar.getName())) {
+						if (localVar.name().equals(bpVar.getParentName())) {
 							match = localVar;
 							break;
 						}
@@ -114,46 +120,51 @@ public class DebugValueExtractor {
 						// Then check class fields (static & non static)
 						Field matchedField = null;
 						for (Field field : allFields) {
-							if (field.name().equals(bpVar.getName())) {
+							if (field.name().equals(bpVar.getParentName())) {
 								matchedField = field;
 								break;
 							}
 						}
 
 						if (matchedField != null) {
-							final Value value = matchedField.isStatic() ? refType
-									.getValue(matchedField) : objRef != null ? objRef
-									.getValue(matchedField) : null;
-							if (value != null) {
-								if (matchedField.name().equals(bpVar.getFullName())) {
-									allVariables.put(bpVar, value);
-								} else {
-									allVariables.put(bpVar,
-											lookup(value, extractSubProperty(bpVar.getFullName())));
-								}
+							JdiParam param;
+							if (matchedField.isStatic()) {
+								param = new JdiParam(matchedField, refType, refType.getValue(matchedField));
+							} else {
+								param = new JdiParam(matchedField, objRef, objRef
+									.getValue(matchedField));
 							}
+							if (param.value != null && !matchedField.name().equals(bpVar.getFullName())) {
+								param.value = lookup(param.value, extractSubProperty(bpVar.getFullName()));
+							}
+							allVariables.put(bpVar, param);
 						}
 					}
 				}
 
 				if (!allVariables.isEmpty()) {
-					for (Entry<Variable, Value> entry : allVariables.entrySet()) {
-						Variable var = entry.getKey();
-						String varId = var.getId();
-						appendVarVal(bkVal, varId, entry.getValue(), 1, thread);
-					}
+					extractValue(bkVal, thread, allVariables);
 				}
 			}
 		}
 		return bkVal;
 	}
-	
-	private Value lookup(final StackFrame frame, final LocalVariable match, final String fullName) {
-		final Value value = frame.getValue(match);
-		if (!match.name().equals(fullName)) {
-			return lookup(value, extractSubProperty(fullName));
+
+	protected void extractValue(BreakpointValue bkVal, ThreadReference thread,
+			final Map<Variable, JdiParam> allVariables) throws SavException {
+		for (Entry<Variable, JdiParam> entry : allVariables.entrySet()) {
+			Variable var = entry.getKey();
+			String varId = var.getId();
+			appendVarVal(bkVal, varId, entry.getValue().value, 1, thread);
 		}
-		return value;
+	}
+	
+	private JdiParam lookup(final StackFrame frame, final LocalVariable match, final String fullName) {
+		Value value = frame.getValue(match);
+		if (!match.name().equals(fullName)) {
+			value = lookup(value, extractSubProperty(fullName));
+		}
+		return new JdiParam(match, value);
 	}
 	
 	private String extractSubProperty(final String fullName) {
@@ -293,7 +304,7 @@ public class DebugValueExtractor {
 		parent.add(val);
 	}
 	/***/
-	private StackFrame findFrameByLocation(List<StackFrame> frames,
+	protected StackFrame findFrameByLocation(List<StackFrame> frames,
 			Location location) throws AbsentInformationException {
 		for (StackFrame frame : frames) {
 			if (areLocationsEqual(frame.location(), location)) {
@@ -305,5 +316,69 @@ public class DebugValueExtractor {
 	
 	private boolean areLocationsEqual(Location location1, Location location2) throws AbsentInformationException {
 		return location1.compareTo(location2) == 0;
+	}
+	
+	public int getValRetrieveLevel() {
+		return valRetrieveLevel;
+	}
+	
+	public void setValRetrieveLevel(int valRetrieveLevel) {
+		this.valRetrieveLevel = valRetrieveLevel;
+	}
+	
+	protected static class JdiParam {
+		/* local variable */
+		private LocalVariable variable;
+		/* field */
+		private Field field;
+		/* non-static */
+		private ObjectReference obj;
+		/* static */
+		private ReferenceType objType;
+		
+		/* value */
+		private Value value;
+		
+		public JdiParam(LocalVariable variable, Value value) {
+			this.variable = variable;
+			this.value = value;
+		}
+		
+		public JdiParam(Field field, ReferenceType objType, Value value) {
+			this.field = field;
+			this.objType = objType;
+			this.value = value;
+		}
+
+		public JdiParam(Field field, ObjectReference objRef, Value value) {
+			this.field = field;
+			this.obj = objRef;
+			this.value = value;
+		}
+
+		public LocalVariable getLocalVariable() {
+			return variable;
+		}
+
+		public Field getField() {
+			return field;
+		}
+
+		public ObjectReference getObj() {
+			return obj;
+		}
+
+		public ReferenceType getObjType() {
+			return objType;
+		}
+
+		public Value getValue() {
+			return value;
+		}
+
+		public void setValue(Value value) {
+			this.value = value;
+		}
+		
 	}
 }
