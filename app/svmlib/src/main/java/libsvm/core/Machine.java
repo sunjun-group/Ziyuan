@@ -3,13 +3,17 @@ package libsvm.core;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
+import libsvm.extension.ISelectiveSampling;
 
 import org.apache.log4j.Logger;
 import org.junit.Assert;
@@ -25,6 +29,7 @@ import sav.common.core.utils.ExecutionTimer;
  * 
  */
 public class Machine {
+
 	private static final Logger LOGGER = Logger.getLogger(Machine.class);
 	private static final String DEFAULT_FEATURE_PREFIX = "x";
 	private static final int SVM_TIMEOUT = 2; // In seconds
@@ -35,6 +40,9 @@ public class Machine {
 	private List<String> dataLabels = new ArrayList<String>();
 	private boolean isGeneratedDataLabel = false;
 	private boolean isDataClean = false;
+
+	// Do not access this directly, please use the getter instead
+	private ISelectiveSampling selectiveSamplingHandler;
 
 	public Machine setParameter(final Parameter parameter) {
 		this.parameter = new svm_parameter();
@@ -105,6 +113,15 @@ public class Machine {
 
 	public int getNumberOfFeatures() {
 		return this.dataLabels.size();
+	}
+
+	private ISelectiveSampling getSelectiveSamplingHandler() {
+		// TODO return a default handler here if nothing is set
+		return this.selectiveSamplingHandler;
+	}
+
+	public void setSelectiveSamplingHandler(ISelectiveSampling selectiveSamplingHandler) {
+		this.selectiveSamplingHandler = selectiveSamplingHandler;
 	}
 
 	public Machine resetData() {
@@ -323,7 +340,7 @@ public class Machine {
 		// a1*x1 + a2*x2 + ... + an*xn >= b
 		StringBuilder str = new StringBuilder();
 		final double[] linearExpr = divider.getLinearExpr();
-		double[] thetas = round ? new CoefficientProcessing().process(linearExpr): linearExpr;
+		double[] thetas = round ? new CoefficientProcessing().process(linearExpr) : linearExpr;
 
 		for (int i = 0; i < thetas.length - 1; i++) {
 			if (Double.compare(thetas[i], 0) == 0) {
@@ -346,6 +363,62 @@ public class Machine {
 		str.append(thetas[thetas.length - 1]);
 
 		return str.toString();
+	}
+
+	/**
+	 * Try to fine-tune the learned logic using selective sampling. The process
+	 * is considered to be successful if it can maintain or improve the existing
+	 * accuracy.
+	 * 
+	 * @return <code>true</code> if the logic was fine-tuned successfully, or
+	 *         <code>false</code> otherwise.
+	 */
+	public boolean selectiveSampling() {
+		final Model currentModel = getModel();
+		if (currentModel == null) {
+			return false;
+		}
+		String adjustedLogic = getLearnedLogic(currentModel.getExplicitDivider(), false);
+		double adjustedAccuracy = getModelAccuracy();
+		String logic;
+		double accuracy;
+		// While the logic can still be adjusted to be better
+		do {
+			// Record current status
+			logic = adjustedLogic;
+			accuracy = adjustedAccuracy;
+			// Generate new points
+			List<DataPoint> dataPoints = generateNewPoints();
+			// If new data points are the same as the existing ones,
+			// it means that the model will not be improved anymore
+			// thus we stop
+			final Set<DataPoint> difference = new HashSet<DataPoint>(dataPoints);
+			difference.removeAll(this.data);
+			if (difference.isEmpty()) {
+				break;
+			}
+			if (!dataPoints.isEmpty()) {
+				// Add to model
+				this.resetData();
+				this.addDataPoints(dataPoints);
+				// Train again
+				this.train();
+			}
+			// Check the new logic
+			adjustedLogic = getLearnedLogic(false);
+			adjustedAccuracy = getModelAccuracy();
+		} while (!logic.equals(adjustedLogic) && Double.compare(adjustedAccuracy, accuracy) >= 0);
+
+		return Double.compare(adjustedAccuracy, 1.0) >= 0;
+	}
+
+	private List<DataPoint> generateNewPoints() {
+		final ISelectiveSampling handler = getSelectiveSamplingHandler();
+		if (handler != null) {
+			return handler.selectData(this);
+		}
+
+		return Collections.emptyList();
 	}
 
 	protected DataPoint getRandomData() {
