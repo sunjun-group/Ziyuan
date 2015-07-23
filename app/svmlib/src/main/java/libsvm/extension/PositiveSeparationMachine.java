@@ -120,8 +120,10 @@ public class PositiveSeparationMachine extends Machine {
 	protected List<DataPoint> getWrongClassifiedDataPoints(List<DataPoint> dataPoints) {
 		List<Divider> roundDividers = new ArrayList<Divider>();
 		for (svm_model learnModel : this.learnedModels) {
-			roundDividers.add(new Model(learnModel, getNumberOfFeatures()).getExplicitDivider()
-					.round());
+			if (learnModel != null) {
+				roundDividers.add(new Model(learnModel, getNumberOfFeatures()).getExplicitDivider()
+						.round());
+			}
 		}
 
 		return getWrongClassifiedDataPoints(dataPoints, new MultiDividerBasedCategoryCalculator(
