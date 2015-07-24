@@ -43,10 +43,11 @@ public class DisplayVisitor extends ExpressionVisitor {
 	public void visit(LIAAtom liaAtom) {
 		int size = liaAtom.getMVFOExpr().size();
 		for (int index = 0; index < size; index++) {
-			liaAtom.getMVFOExpr().get(index).accept(this);
-			if (index != size - 1) {
-				sb.append("+");
+			LIATerm liaTerm = liaAtom.getMVFOExpr().get(index);
+			if (index > 0 && liaTerm.getCoefficient() >= 0) {
+				sb.append(" + ");
 			}
+			liaTerm.accept(this);
 		}
 		sb.append(liaAtom.getOperator().getCodeWithSpace());
 		sb.append(liaAtom.getConstant());

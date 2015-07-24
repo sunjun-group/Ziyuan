@@ -8,8 +8,7 @@
 
 package tzuyu.core.main;
 
-import icsetlv.Engine.AllPositiveResult;
-import icsetlv.Engine.Result;
+import icsetlv.common.dto.BkpInvariantResult;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.variable.VariableNameCollector;
 import japa.parser.ast.CompilationUnit;
@@ -24,10 +23,10 @@ import java.util.List;
 import java.util.Map;
 
 import main.FaultLocalization;
-
 import sav.common.core.Logger;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
+import sav.common.core.formula.Formula;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
@@ -178,13 +177,13 @@ public class TzuyuCore {
 			List<DebugLine> newBreakpoints = new ArrayList<DebugLine>(mapNewToOldBkp.keySet());
 			
 			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig(), params);
-			List<Result> invariants = learnInvariant.learn(CollectionUtils.<BreakPoint, DebugLine>cast(newBreakpoints), 
+			List<BkpInvariantResult> invariants = learnInvariant.learn(CollectionUtils.<BreakPoint, DebugLine>cast(newBreakpoints), 
 										junitClassNames, appData.getAppSrc());
 			
 			List<BugLocalizationLine> bugLines = new ArrayList<BugLocalizationLine>();
 			
-			for(Result invariant: invariants){
-				if (!(invariant instanceof AllPositiveResult) && invariant.getAccuracy() > 0){
+			for(BkpInvariantResult invariant: invariants){
+				if (!Formula.TRUE.equals(invariant.getLearnedLogic())) {
 					DebugLine debugLine = (DebugLine) invariant.getBreakPoint();
 					BreakPoint orgBkp = mapNewToOldBkp.get(debugLine);
 					double suspeciousness = mapBkpToSuspeciousness.get(orgBkp);

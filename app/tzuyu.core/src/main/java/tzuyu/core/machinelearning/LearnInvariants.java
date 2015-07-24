@@ -9,7 +9,7 @@
 package tzuyu.core.machinelearning;
 
 import icsetlv.Engine;
-import icsetlv.Engine.Result;
+import icsetlv.common.dto.BkpInvariantResult;
 import icsetlv.variable.TestcasesExecutor;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class LearnInvariants {
 		}
 	}
 
-	public List<Result> learn(List<BreakPoint> breakpoints, List<String> junitClassNames, String sourceFolder) throws Exception {
+	public List<BkpInvariantResult> learn(List<BreakPoint> breakpoints, List<String> junitClassNames, String sourceFolder) throws Exception {
 		List<String> testcases = JunitUtils.extractTestMethods(junitClassNames);
 		engine.addTestcases(testcases);
 		
@@ -42,7 +42,6 @@ public class LearnInvariants {
 			engine.addBreakPoint(breakpoint);
 		}
 		
-		engine.run();
-		return engine.getResults();
+		return engine.run();
 	}
 }

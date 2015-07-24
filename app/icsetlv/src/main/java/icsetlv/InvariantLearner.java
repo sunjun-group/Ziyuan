@@ -14,6 +14,7 @@ import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.dto.ExecValue;
 import icsetlv.common.dto.ExecVar;
 import icsetlv.common.dto.ExecVarType;
+import icsetlv.sampling.SelectiveSampling;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,14 +36,17 @@ import sav.common.core.utils.CollectionUtils;
  */
 public class InvariantLearner {
 	private static final Logger LOGGER = Logger.getLogger(InvariantLearner.class);
+	private InvariantMediator mediator;
 	private Machine machine;
 	
-	public InvariantLearner(Machine machine) {
-		setLearningMachine(machine);
+	public InvariantLearner(InvariantMediator mediator) {
+		this.mediator = mediator;
+		machine = mediator.getMachine();
 	}
 
 	public List<BkpInvariantResult> learn(List<BreakpointData> bkpsData) {
 		List<BkpInvariantResult> result = new ArrayList<BkpInvariantResult>();
+		SelectiveSampling selectiveSampling = new SelectiveSampling(mediator);
 		for (BreakpointData bkpData : bkpsData) {
 			LOGGER.info("Start to learn at " + bkpData.getBkp());
 			if (bkpData.getPassValues().isEmpty() && bkpData.getFailValues().isEmpty()) {
@@ -56,7 +60,15 @@ public class InvariantLearner {
 				LOGGER.info("This line is likely a bug!");
 				formula = Formula.FALSE;
 			} else {
-				formula = learn(bkpData);
+				/* collect variable labels */
+				List<ExecVar> allVars = collectAllVars(bkpData);
+				if (bkpData.getBkp().getLineNo() == 24) {
+					selectiveSampling.setup(bkpData.getBkp(), allVars);
+					machine.setSelectiveSamplingHandler(selectiveSampling);
+				} else {
+					machine.setSelectiveSamplingHandler(null);
+				}
+				formula = learn(bkpData, allVars);
 			}
 			result.add(new BkpInvariantResult(bkpData.getBkp(), formula));
 		}
@@ -66,9 +78,7 @@ public class InvariantLearner {
 	/**
 	 * apply svm 
 	 */
-	private Formula learn(BreakpointData bkpData) {
-		/* collect variable labels */
-		List<ExecVar> allVars = collectAllVars(bkpData);
+	private Formula learn(BreakpointData bkpData, List<ExecVar> allVars) {
 
 		/* handle boolean variables first */
 		Formula formula = learnFromBoolVars(extractBoolVars(allVars), bkpData);
@@ -82,7 +92,7 @@ public class InvariantLearner {
 		machine.setDataLabels(allLables);
 		addDataPoints(bkpData.getPassValues(), bkpData.getFailValues());
 		machine.train();
-		return machine.getLearnedLogic(new FormulaProcessor<ExecVar>(allVars));
+		return machine.getLearnedLogic(new FormulaProcessor<ExecVar>(allVars), true);
 	}
 	
 	private void addDataPoints(List<BreakpointValue> passValues,
@@ -157,7 +167,4 @@ public class InvariantLearner {
 		return result;
 	}
 
-	public void setLearningMachine(Machine learningMachine) {
-		this.machine = learningMachine;
-	}
 }

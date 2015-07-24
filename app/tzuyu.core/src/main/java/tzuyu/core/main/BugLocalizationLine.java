@@ -8,9 +8,8 @@
 
 package tzuyu.core.main;
 
-import org.apache.commons.lang.StringUtils;
-
-import icsetlv.Engine.Result;
+import icsetlv.common.dto.BkpInvariantResult;
+import sav.common.core.formula.Formula;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.DebugLine;
 
@@ -22,22 +21,20 @@ public class BugLocalizationLine {
 
 	private DebugLine breakpoint;
 	private double suspiciousness;
-	private Result learningResult;
+	private BkpInvariantResult learningResult;
 	
-	public BugLocalizationLine(DebugLine breakPoint, double suspiciousness, Result learningResult){
+	public BugLocalizationLine(DebugLine breakPoint, double suspiciousness, BkpInvariantResult invariant){
 		this.breakpoint = breakPoint;
 		this.suspiciousness = suspiciousness;
-		this.learningResult = learningResult;
+		this.learningResult = invariant;
 	}
-	
+
 	public BreakPoint getBreakpoint() {
 		return breakpoint;
 	}
+
 	public double getSuspiciousness() {
 		return suspiciousness;
-	}
-	public Result getLearningResult() {
-		return learningResult;
 	}
 
 	@Override
@@ -46,11 +43,14 @@ public class BugLocalizationLine {
 		str.append(breakpoint.getClassCanonicalName()).append(":")
 				.append(breakpoint.getOrgLineNo()).append("\n");
 		str.append("suspiciousness: " + String.format("%.2f", suspiciousness) + "\n");
-		if (StringUtils.isBlank(learningResult.getLearnedLogic())) {
+		Formula learnedLogic = learningResult.getLearnedLogic();
+		if (learnedLogic == null) {
 			str.append("Could not learn anything.");
+		} else if (Formula.FALSE.equals(learnedLogic)) {
+			str.append("This line is likely a bug!");
 		} else {
-			str.append("Logic: ").append(learningResult.getLearnedLogic()).append("\n");
-			str.append("Accuracy: ").append(learningResult.getAccuracy()).append("\n");
+			str.append("Logic: ").append(learnedLogic).append("\n");
+			str.append("Accuracy: ").append(1).append("\n");
 		}
 		
 		return str.toString();

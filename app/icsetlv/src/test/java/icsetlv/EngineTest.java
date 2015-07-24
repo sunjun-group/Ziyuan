@@ -1,6 +1,6 @@
 package icsetlv;
 
-import icsetlv.Engine.Result;
+import icsetlv.common.dto.BkpInvariantResult;
 
 import java.util.List;
 
@@ -48,11 +48,8 @@ public class EngineTest extends AbstractTest {
 
 		engine.addBreakPoint("testdata.Calculator", "getMax", 6, "x", "y");
 
-		engine.run();
-		final List<Result> results = engine.getResults();
-		for (Result result : results) {
-			System.out.println(result);
-		}
+		List<BkpInvariantResult> result = engine.run();
+		printList(result);
 	}
 
 }

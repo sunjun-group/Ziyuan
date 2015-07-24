@@ -3,6 +3,7 @@ package libsvm.extension;
 import java.util.ArrayList;
 import java.util.List;
 
+import libsvm.core.IDividerProcessor;
 import libsvm.core.Machine;
 
 import org.apache.log4j.Logger;
@@ -98,11 +99,11 @@ public class FeatureSelectionMachine extends Machine {
 	}
 
 	@Override
-	public String getLearnedLogic(boolean round) {
+	public <R> R getLearnedLogic(IDividerProcessor<R> processor, boolean round) {
 		if (this.machine == null) {
-			return "";
+			return null;
 		}
-		return this.machine.getLearnedLogic(false);
+		return this.machine.getLearnedLogic(processor, false);
 	}
 
 	@Override

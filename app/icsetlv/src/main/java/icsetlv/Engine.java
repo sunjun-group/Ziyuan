@@ -1,26 +1,16 @@
 package icsetlv;
 
-import icsetlv.common.dto.BreakpointData;
-import icsetlv.common.dto.BreakpointValue;
+import icsetlv.common.dto.BkpInvariantResult;
 import icsetlv.variable.TestcasesExecutor;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import libsvm.core.KernelType;
 import libsvm.core.Machine;
 import libsvm.core.MachineType;
 import libsvm.core.Parameter;
-import libsvm.extension.PositiveSeparationMachine;
-import libsvm.extension.RandomNegativePointSelection;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
-import sav.common.core.Pair;
+import libsvm.extension.FeatureSelectionMachine;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.vm.VMConfiguration;
@@ -54,7 +44,6 @@ import sav.strategies.vm.VMConfiguration;
  * 
  */
 public class Engine {
-	private static final Logger LOGGER = Logger.getLogger(Engine.class);
 	private static final int DEFAULT_PORT = 80;
 
 	private TestcasesExecutor testcaseExecutor;
@@ -62,162 +51,17 @@ public class Engine {
 	private Machine machine = getDefaultMachine();
 	private List<String> testcases = new ArrayList<String>();
 	private List<BreakPoint> breakPoints = new ArrayList<BreakPoint>();
-	private List<Result> results;
 
 	public Engine reset() {
 		return new Engine();
 	}
 
-	public Engine run(final Machine machine) throws Exception {
-		testcaseExecutor = getTestcaseExecutor();
-		testcaseExecutor.setup(vmConfig, testcases);
-		testcaseExecutor.run(breakPoints);
-		List<BreakpointData> testResult = testcaseExecutor.getResult();
-
-		results = new ArrayList<Result>(breakPoints.size());
-		for (BreakpointData bkpData : testResult) {
-			BreakPoint bkp = bkpData.getBkp();
-			LOGGER.info("Start to learn at " + bkp);
-			final List<BreakpointValue> passValues = bkpData.getPassValues();
-			final List<BreakpointValue> failValues = bkpData.getFailValues();
-			// Cannot train if there are not enough data
-			if(passValues.isEmpty() && failValues.isEmpty()){
-				//fail to add breakpoint
-				continue;
-			} else if(failValues.isEmpty()){
-				LOGGER.info("This line is likely not a bug!");
-				Result result = new AllPositiveResult();
-				setResult(result, bkp, "This line is likely not a bug!", 1);
-				results.add(result);
-				continue;
-			} else if(passValues.isEmpty()){
-				LOGGER.info("This line is likely a bug!");
-				Result result = new AllNegativeResult();
-				setResult(result, bkp, "This line is likely a bug!", 1);
-				results.add(result);
-				continue;
-			}
-			// Configure data for SVM machine
-			machine.resetData();
-
-			// Use the label of all the collected variables
-			final Set<String> labelSet = new HashSet<String>();
-			for (BreakpointValue bv : passValues) {
-				labelSet.addAll(bv.getAllLabels());
-			}
-			for (BreakpointValue bv : failValues) {
-				labelSet.addAll(bv.getAllLabels());
-			}
-			final List<String> varLabels = new ArrayList<String>(labelSet);			
-			
-			// TODO: TO REMOVE, just added for debugging
-//			if (bkp.getLineNo() == 47) {
-//				int oldLineNo = bkp.getLineNo();
-//				if (bkp instanceof DebugLine) {
-//					oldLineNo = ((DebugLine) bkp).getOldLineNumber();
-//				}
-//				StringBuilder sb = new StringBuilder();
-//				sb.append("\n");
-//				sb.append(String.format("***********LINE %s (%s)*************", oldLineNo, bkp.getLineNo())); sb.append("\n");
-//				sb.append("varLabels");sb.append("\n");
-//				sb.append(varLabels);sb.append("\n");
-//				sb.append("passValues");sb.append("\n");
-//				sb.append(sav.common.core.utils.StringUtils.join(passValues, "\n"));sb.append("\n");
-//				sb.append("failValues");sb.append("\n");
-//				sb.append(sav.common.core.utils.StringUtils.join(failValues, "\n"));sb.append("\n");
-//				sb.append("************************");sb.append("\n");
-//				FileUtils.appendFile("D:/testData.txt", sb.toString());
-//			}
-			
-			List<String> exps = new ArrayList<String>();
-			//check isNull
-			for (Iterator<String> it = varLabels.iterator(); it.hasNext(); ) {
-				String varLabel = it.next();
-				if(varLabel.endsWith("isNull")){
-					learnBool(passValues, failValues, exps, varLabel);		
-					it.remove();
-				}
-				// TODO: LLT: to check & refactor.
-//				else {
-//					if (failValues.size() > 0) {
-//						ExecValue variableValue = failValues.get(0).findVariableById(varLabel);
-//						if (variableValue instanceof BooleanValue) {
-//							learnBool(passValues, failValues, exps, varLabel);
-//							it.remove();
-//						}
-//					}
-//				}
-			}
-			
-			machine.setDataLabels(varLabels);
-			BugExpert.addDataPoints(machine, passValues, failValues);
-			
-			// Train
-			machine.train();
-			String svmExp = machine.getLearnedLogic(true);
-			
-			// Store outputs
-			final Result result = new Result();
-			if (exps.isEmpty()) {
-				setResult(result, bkp, svmExp, machine.getModelAccuracy());
-			} else {
-				if (machine.getModelAccuracy() == 1) {
-					exps.add(svmExp);
-				}
-				setResult(result, bkp, sav.common.core.utils.StringUtils.join(exps, " || "),
-							1);
-			}
-			LOGGER.info("Learn: " + result);
-			results.add(result);
-		}
-
-		return this;
-	}
-
-	private void learnBool(final List<BreakpointValue> passValues,
-			final List<BreakpointValue> failValues, List<String> exps,
-			String varLabel) {
-		Pair<Boolean, Boolean> allTrueFalseInPass = checkAllTrueOrAllFalse(passValues, varLabel);
-		Pair<Boolean, Boolean> allTrueFalseInFail = checkAllTrueOrAllFalse(failValues, varLabel);
-		
-		if(allTrueFalseInPass.a && allTrueFalseInFail.b){
-			exps.add(varLabel);
-		}
-		if(allTrueFalseInPass.b && allTrueFalseInFail.a){
-			exps.add("!" + varLabel);
-		}
-	}
-
-	private Pair<Boolean,Boolean> checkAllTrueOrAllFalse(final List<BreakpointValue> values,
-			String varLabel) {
-		boolean allTrue = true;
-		boolean allFalse = true;
-		boolean found = false;
-		for(BreakpointValue breakPoint: values){
-			Double varVal = breakPoint.getValue(varLabel, null);
-			if (varVal == null) {
-				continue;
-			}
-			found = true;
-			boolean val = varVal > 0;
-			allTrue &= val;
-			allFalse &= !val;
-			
-			if(!allTrue && !allFalse){
-				break;
-			}
-		}
-		if (!found) {
-			return Pair.of(false, false);
-		}
-		return new Pair<Boolean, Boolean>(allTrue, allFalse);
-	}
-	
-	private void setResult(Result result, BreakPoint breakpoint, String learnedLogic, double accuracy){
-		result.breakPoint = breakpoint;
-		result.learnedLogic = learnedLogic;
-		result.accuracy = accuracy;
-	}
+	public List<BkpInvariantResult> run() throws Exception {
+		InvariantMediator learner = new InvariantMediator();
+		learner.setTcExecutor(getTestcaseExecutor());
+		learner.setMachine(getMachine());
+		return learner.learn(vmConfig, testcases, breakPoints);
+	}	
 
 	public void setMachine(Machine machine) {
 		this.machine = machine;
@@ -228,7 +72,8 @@ public class Engine {
 	}
 
 	private Machine getDefaultMachine() {
-		final Machine machine = new PositiveSeparationMachine(new RandomNegativePointSelection());
+//		final Machine machine = new PositiveSeparationMachine(new RandomNegativePointSelection());
+		Machine machine = new FeatureSelectionMachine();
 		return machine.setParameter(new Parameter().setMachineType(MachineType.C_SVC)
 				.setKernelType(KernelType.LINEAR).setEps(1.0).setUseShrinking(false)
 				.setPredictProbability(false).setC(Double.MAX_VALUE));
@@ -281,10 +126,6 @@ public class Engine {
 		return this;
 	}
 
-	public Engine run() throws Exception {
-		return run(getMachine());
-	}
-
 	public Engine addTestcase(final String testcase) {
 		testcases.add(testcase);
 		return this;
@@ -297,10 +138,6 @@ public class Engine {
 		return this;
 	}
 	
-	public List<Result> getResults() {
-		return this.results;
-	}
-	
 	public void setTestcaseExecutor(TestcasesExecutor testcaseExecutor) {
 		this.testcaseExecutor = testcaseExecutor;
 	}
@@ -311,45 +148,5 @@ public class Engine {
 		}
 		return testcaseExecutor;
 	}
-
-	public static class Result {
-		private BreakPoint breakPoint;
-		private String learnedLogic;
-		private double accuracy;
-
-		private Result() {
-			// To disable initiation from outside of Engine class
-		}
-		
-		public BreakPoint getBreakPoint() {
-			// TODO NPN check if it's needed to return a copy here
-			return breakPoint;
-		}
-
-		public String getLearnedLogic() {
-			return learnedLogic;
-		}
-
-		public double getAccuracy() {
-			return accuracy;
-		}
-		
-		@Override
-		public String toString() {
-			final StringBuilder str = new StringBuilder();
-			str.append(breakPoint.getClassCanonicalName()).append(":")
-					.append(breakPoint.getLineNo()).append("\n");
-			if (StringUtils.isBlank(learnedLogic)) {
-				str.append("Could not learn anything.");
-			} else {
-				str.append("Logic: ").append(learnedLogic).append("\n");
-				str.append("Accuracy: ").append(accuracy).append("\n");
-			}
-			return str.toString();
-		}
-	}
-	
-	public static class AllPositiveResult extends Result{}
-	public static class AllNegativeResult extends Result{}
 
 }

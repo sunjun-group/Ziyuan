@@ -27,21 +27,6 @@ public class LIAAtom extends Atom {
 		constant = right;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder termsStr = new StringBuilder();
-		int size = MVFOExpr.size();
-		for (int index = 0; index < size; index++) {
-			LIATerm term = MVFOExpr.get(index);
-			termsStr.append(term.toCodeString());
-			if (index != size - 1) {
-				termsStr.append("+");
-			}
-		}
-
-		return termsStr.toString() + " " + operator.toString() + " " + constant;
-	}
-
 	public List<Var> getReferencedVariables() {
 		List<Var> result = new ArrayList<Var>(MVFOExpr.size());
 		for (LIATerm term : MVFOExpr) {

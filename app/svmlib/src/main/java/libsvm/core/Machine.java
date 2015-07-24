@@ -18,7 +18,9 @@ import libsvm.extension.ISelectiveSampling;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 
+import sav.common.core.formula.Formula;
 import sav.common.core.utils.ExecutionTimer;
+import sav.common.core.utils.StringUtils;
 
 /**
  * This class represents an SVM machine. After initialization, it is possible to
@@ -319,50 +321,31 @@ public class Machine {
 	 * @return The learned logic.
 	 */
 	public String getLearnedLogic(boolean round) {
-		Model currentModel = getModel();
-		return currentModel == null ? ""
-				: getLearnedLogic(currentModel.getExplicitDivider(), round);
+		return getLearnedLogic(getDivider(), round);
 	}
 
-	public <R> R getLearnedLogic(IDividerProcessor<R> processor) {
-		return processor.process(getDivider(), dataLabels);
+	public <R> R getLearnedLogic(IDividerProcessor<R> processor, boolean round) {
+		return getLearnedLogic(processor, getDivider(), round);
+	}
+	
+	private <R> R getLearnedLogic(IDividerProcessor<R> processor, Divider divider, boolean round) {
+		return processor.process(divider, dataLabels, round);
 	}
 
+	protected String getLearnedLogic(final Divider divider, boolean round) {
+		Formula formula = getLearnedLogic(new StringDividerProcessor(), divider, round);
+		if (formula == null) {
+			return StringUtils.EMPTY;
+		}
+		return formula.toString();
+	}
+	
 	private Divider getDivider() {
 		Model currentModel = getModel();
 		if (currentModel == null) {
 			return null;
 		}
 		return currentModel.getExplicitDivider();
-	}
-
-	protected String getLearnedLogic(final Divider divider, boolean round) {
-		// a1*x1 + a2*x2 + ... + an*xn >= b
-		StringBuilder str = new StringBuilder();
-		final double[] linearExpr = divider.getLinearExpr();
-		double[] thetas = round ? new CoefficientProcessing().process(linearExpr) : linearExpr;
-
-		for (int i = 0; i < thetas.length - 1; i++) {
-			if (Double.compare(thetas[i], 0) == 0) {
-				continue;
-			}
-
-			if (str.length() > 0 && thetas[i] >= 0) {
-				str.append(" + ");
-			}
-
-			if (thetas[i] < 0) {
-				str.append(" ");
-			}
-
-			str.append(thetas[i]);
-			str.append("*");
-			str.append(dataLabels.get(i));
-		}
-		str.append(" >= ");
-		str.append(thetas[thetas.length - 1]);
-
-		return str.toString();
 	}
 
 	/**

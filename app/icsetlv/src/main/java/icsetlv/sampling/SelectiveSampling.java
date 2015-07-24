@@ -49,7 +49,7 @@ public class SelectiveSampling implements ISelectiveSampling {
 	@Override
 	public List<DataPoint> selectData(Machine machine) {
 		List<DataPoint> datapoints = new ArrayList<DataPoint>(machine.getDataPoints());
-		Formula divider = machine.getLearnedLogic(dividerProcessor);
+		Formula divider = machine.getLearnedLogic(dividerProcessor, true);
 		
 		try {
 			datapoints.addAll(execute(divider, machine.getDataLabels(), machine.getDataPoints()));
@@ -94,8 +94,7 @@ public class SelectiveSampling implements ISelectiveSampling {
 		divider.accept(solver);
 		List<Eq<?>> assignments = solver.getResult();
 		List<BreakpointData> bkpData = mediator.instDebugAndCollectData(
-											CollectionUtils.listOf(bkp),
-												toInstrVarMap(assignments));
+											CollectionUtils.listOf(bkp), toInstrVarMap(assignments));
 		return bkpData.get(0).toDatapoints(allLabels);
 	}
 

@@ -24,7 +24,7 @@ public class BkpInvariantResult {
 		this.learnedLogic = learnedLogic;
 	}
 
-	public BreakPoint getBkp() {
+	public BreakPoint getBreakPoint() {
 		return bkp;
 	}
 
@@ -40,4 +40,11 @@ public class BkpInvariantResult {
 		this.learnedLogic = learnedLogic;
 	}
 
+	@Override
+	public String toString() {
+		return "BkpInvariantResult [bkp=" + bkp.getId() + ", learnedLogic="
+				+ learnedLogic + "]";
+	}
+
+	
 }
