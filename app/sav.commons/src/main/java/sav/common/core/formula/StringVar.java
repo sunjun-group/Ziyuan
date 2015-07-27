@@ -41,6 +41,6 @@ public class StringVar implements Var {
 
 	@Override
 	public void accept(ExpressionVisitor visitor) {
-		visitor.visit(var);
+		visitor.visit(this);
 	}
 }

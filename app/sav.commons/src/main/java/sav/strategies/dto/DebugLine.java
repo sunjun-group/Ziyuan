@@ -30,8 +30,8 @@ public class DebugLine extends BreakPoint {
 
 	@Override
 	public String toString() {
-		return "DebugLine [orgLineNo=" + orgLineNo + ", id=" + id
-				+ ", classCanonicalName=" + classCanonicalName + ", lineNo="
+		return "DebugLine [orgLineNo=" + orgLineNo
+				+ ", className=" + classCanonicalName + ", lineNo="
 				+ lineNo + "]";
 	}
 	

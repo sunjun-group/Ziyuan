@@ -117,7 +117,7 @@ public class Machine {
 		return this.dataLabels.size();
 	}
 
-	private ISelectiveSampling getSelectiveSamplingHandler() {
+	protected ISelectiveSampling getSelectiveSamplingHandler() {
 		// TODO return a default handler here if nothing is set
 		return this.selectiveSamplingHandler;
 	}

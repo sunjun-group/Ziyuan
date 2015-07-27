@@ -12,16 +12,22 @@ public class FeatureSelectionMachine extends Machine {
 	private static final Logger LOGGER = Logger.getLogger(FeatureSelectionMachine.class);
 	private static final int MAX_FEATURE = 3;
 	private Machine machine; // The machine used for learning, can be null
+	
+	@Override
+	public Machine resetData() {
+		this.machine = null;
+		return super.resetData();
+	}
 
 	@Override
 	protected Machine train(final List<DataPoint> dataPoints) {
 		int toSelect = 0;
-
-		outerLoop: while (toSelect <= MAX_FEATURE) {
+		final int features = getNumberOfFeatures();
+		
+		outerLoop: while (toSelect <= MAX_FEATURE && toSelect < features) {
 			toSelect++;
 
 			// Select the features to train
-			final int features = getNumberOfFeatures();
 			final int[] selection = new int[toSelect];
 			for (int i = 0; i < toSelect; i++) {
 				selection[i] = i;
@@ -65,13 +71,13 @@ public class FeatureSelectionMachine extends Machine {
 					LOGGER.debug("Learned logic: " + learnedLogic);
 					LOGGER.debug("Accuracy: " + accuracy);
 				}
-
-				if (Double.compare(accuracy, 1.0) >= 0) {
+				// TODO: LLT double check
+//				if (Double.compare(accuracy, 1.0) >= 0) {
 					if (machine.selectiveSampling()) {
 						this.machine = machine;
 						break outerLoop;
 					}
-				}
+//				}
 
 				// check if the current selection is the final one
 				int i = toSelect - 1;
@@ -95,13 +101,15 @@ public class FeatureSelectionMachine extends Machine {
 	}
 
 	private Machine createNewMachine(final List<String> labels) {
-		return new Machine().setDataLabels(labels).setParameter(getParameter());
+		Machine machine = new Machine().setDataLabels(labels).setParameter(getParameter());
+		machine.setSelectiveSamplingHandler(this.getSelectiveSamplingHandler());
+		return machine;
 	}
 
 	@Override
 	public <R> R getLearnedLogic(IDividerProcessor<R> processor, boolean round) {
 		if (this.machine == null) {
-			return null;
+			return super.getLearnedLogic(processor, round);
 		}
 		return this.machine.getLearnedLogic(processor, false);
 	}

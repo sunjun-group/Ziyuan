@@ -379,6 +379,12 @@ public class DebugValueExtractor {
 		public void setValue(Value value) {
 			this.value = value;
 		}
+
+		@Override
+		public String toString() {
+			return "JdiParam [variable=" + variable + ", field=" + field
+					+ ", obj=" + obj + ", value=" + value + "]";
+		}
 		
 	}
 }

@@ -86,7 +86,7 @@ public class IlpSolver extends ExpressionVisitor {
 		Linear divider = new Linear();
 		for (LIATerm varExp : atom.getMVFOExpr()) {
 			ExecVar var = varExp.getVariable();
-			divider.add(varExp.getCoefficient(), var.getVarId());
+			divider.add(varExp.getCoefficient(), var);
 		}
 		problem.add(divider, atom.getOperator().getCode(), atom.getConstant());
 	}

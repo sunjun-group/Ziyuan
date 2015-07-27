@@ -49,7 +49,10 @@ public class SelectiveSampling implements ISelectiveSampling {
 	@Override
 	public List<DataPoint> selectData(Machine machine) {
 		List<DataPoint> datapoints = new ArrayList<DataPoint>(machine.getDataPoints());
-		Formula divider = machine.getLearnedLogic(dividerProcessor, true);
+		/* TODO: the param round = false should be the same to the value in machine.selectiveSampling()
+		 * => do something 
+		 */
+		Formula divider = machine.getLearnedLogic(dividerProcessor, false);
 		
 		try {
 			datapoints.addAll(execute(divider, machine.getDataLabels(), machine.getDataPoints()));

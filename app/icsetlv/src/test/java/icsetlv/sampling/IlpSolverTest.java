@@ -30,6 +30,18 @@ import sav.common.core.formula.Operator;
 public class IlpSolverTest {
 	
 	@Test
+	public void test1() {
+		Map<String, Pair<Double, Double>> minMax = new HashMap<String, Pair<Double,Double>>();
+		put(minMax, "a", -10.0, 50.0);
+		IlpSolver solver = new IlpSolver(minMax);
+		List<LIATerm> terms = new ArrayList<LIATerm>();
+		terms.add(term("a", -1));
+		Formula formula = new LIAAtom(terms, Operator.GE, -3);
+		formula.accept(solver);
+		System.out.println(solver.getResult());
+	}
+	
+	@Test
 	public void test() {
 		Map<String, Pair<Double, Double>> minMax = new HashMap<String, Pair<Double,Double>>();
 		put(minMax, "a", -10.0, 50.0);

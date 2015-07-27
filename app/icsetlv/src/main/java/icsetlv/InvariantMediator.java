@@ -57,7 +57,7 @@ public class InvariantMediator {
 	public List<BreakpointData> instDebugAndCollectData(
 			List<BreakPoint> bkps, Map<String, Object> instrVarMap) throws SavException {
 		ensureTcExecutor();
-		tcExecutor.setValueExtractor(new DebugValueInstExtractor(), true);
+		tcExecutor.setValueExtractor(new DebugValueInstExtractor(instrVarMap), true);
 		List<BreakpointData> result = debugTestAndCollectData(bkps);
 		tcExecutor.setValueExtractor(null);
 		return result;

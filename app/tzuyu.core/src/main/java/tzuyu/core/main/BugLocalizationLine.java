@@ -41,7 +41,9 @@ public class BugLocalizationLine {
 	public String toString() {
 		final StringBuilder str = new StringBuilder();
 		str.append(breakpoint.getClassCanonicalName()).append(":")
-				.append(breakpoint.getOrgLineNo()).append("\n");
+				.append(breakpoint.getOrgLineNo())
+				.append(" (debugLine: ")
+				.append(breakpoint.getLineNo()).append(")\n");
 		str.append("suspiciousness: " + String.format("%.2f", suspiciousness) + "\n");
 		Formula learnedLogic = learningResult.getLearnedLogic();
 		if (learnedLogic == null) {

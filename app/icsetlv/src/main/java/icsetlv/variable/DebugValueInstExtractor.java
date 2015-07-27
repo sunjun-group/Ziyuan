@@ -31,6 +31,10 @@ import com.sun.jdi.VirtualMachine;
 public class DebugValueInstExtractor extends DebugValueExtractor {
 	private Map<String, Object> instVals;
 
+	public DebugValueInstExtractor(Map<String, Object> instrVarMap) {
+		this.instVals = instrVarMap;
+	}
+
 	@Override
 	protected void extractValue(BreakpointValue bkVal, ThreadReference thread,
 			Map<Variable, JdiParam> allVariables) throws SavException {

@@ -72,7 +72,7 @@ public class InstrTestcasesExecutorTest extends AbstractTest {
 		Map<String, Object> instVals = new HashMap<String, Object>();
 		instVals.put("a", 1000);
 		varExtr.setup(vmConfig, tests);
-		varExtr.setValueExtractor(new DebugValueInstExtractor(), true);
+		varExtr.setValueExtractor(new DebugValueInstExtractor(instVals), true);
 		varExtr.run(breakpoints);
 		List<BreakpointData> result = varExtr.getResult();
 		System.out.println(result);
