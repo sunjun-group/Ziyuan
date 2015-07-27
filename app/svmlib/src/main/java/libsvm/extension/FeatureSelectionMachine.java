@@ -111,7 +111,7 @@ public class FeatureSelectionMachine extends Machine {
 		if (this.machine == null) {
 			return super.getLearnedLogic(processor, round);
 		}
-		return this.machine.getLearnedLogic(processor, false);
+		return this.machine.getLearnedLogic(processor, round);
 	}
 
 	@Override

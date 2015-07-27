@@ -157,7 +157,11 @@ public class BreakPoint extends ClassLocation {
 		}
 		
 		public String getId() {
-			return StringUtils.dotJoin(scope.getDisplayName(), fullName);
+			return genId(scope, fullName);
+		}
+		
+		public static String genId(VarScope scope, String name) {
+			return StringUtils.dotJoin(scope.getDisplayName(), name);
 		}
 
 		public VarScope getScope() {

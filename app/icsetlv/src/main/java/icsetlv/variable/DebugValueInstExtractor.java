@@ -10,6 +10,7 @@ package icsetlv.variable;
 
 import icsetlv.common.dto.BreakpointValue;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import sav.common.core.ModuleEnum;
@@ -29,6 +30,9 @@ import com.sun.jdi.VirtualMachine;
  * 
  */
 public class DebugValueInstExtractor extends DebugValueExtractor {
+	/**
+	 * instrument value map for {@link Variable#getId()}
+	 */
 	private Map<String, Object> instVals;
 
 	public DebugValueInstExtractor(Map<String, Object> instrVarMap) {
@@ -36,25 +40,71 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 	}
 
 	@Override
-	protected void extractValue(BreakpointValue bkVal, ThreadReference thread,
+	protected void collectValue(BreakpointValue bkVal, ThreadReference thread,
 			Map<Variable, JdiParam> allVariables) throws SavException {
+		modifyValues(thread, allVariables);
+		super.collectValue(bkVal, thread, allVariables);
+	}
+
+	private void modifyValues(ThreadReference thread, Map<Variable, JdiParam> allVariables) {
 		for (Variable var : allVariables.keySet()) {
-			Object newVal = instVals.get(var.getFullName());
 			JdiParam jdiParam = allVariables.get(var);
-			if (jdiParam.getLocalVariable() != null) {
-				instLocalVar(thread, jdiParam, newVal, var);
+			Map<String, JdiParam> modificationMap = getInstrMap(var, jdiParam);
+			for (String varId : modificationMap.keySet()) {
+				JdiParam param = modificationMap.get(varId);
+				Object newVal = instVals.get(varId);
+				if (param.getLocalVariable() != null) {
+					instLocalVar(thread, param, newVal , var);
+				}
+				if (param.getField() != null) {
+					if (param.getObj() != null) {
+						instObjField(thread, param, newVal, var);
+					}
+				}
 			}
 		}
-		super.extractValue(bkVal, thread, allVariables);
+	}
+	
+	private Map<String, JdiParam> getInstrMap(Variable var, JdiParam param) {
+		Map<String, JdiParam> instrMap = new HashMap<String, JdiParam>();
+		String varId = var.getId();
+		for (String key : instVals.keySet()) {
+			if (!key.startsWith(varId)) {
+				continue;
+			}
+			if (key.length() == varId.length()) {
+				instrMap.put(key, param);
+				continue;
+			}
+			// instrument variable is a property of the current param
+			// find the correct param for instrument variable
+			JdiParam subParam = recursiveMatch(param, extractSubProperty(key));
+			if (subParam != param) {
+				instrMap.put(key, subParam);
+			}
+		}
+		return instrMap;
+	}
+
+	private void instObjField(ThreadReference thread, JdiParam jdiParam,
+			Object newVal, Variable var) {
+		try {
+			if (newVal != null) {
+				Value newValue = jdiValueOf(newVal, thread);
+				jdiParam.getObj().setValue(jdiParam.getField(), newValue);
+				jdiParam.setValue(newValue);
+			}
+		} catch (Exception e) {
+			throw new SavRtException(e);
+		}
 	}
 
 	private void instLocalVar(ThreadReference thread, JdiParam jdiParam,
 			Object newVal, Variable var) {
 		LocalVariable localVariable = jdiParam.getLocalVariable();
 		if (var.getSimpleName().equals(localVariable.name())) {
-			VirtualMachine vm = thread.virtualMachine();
 			try {
-				Value newValue = jdiValueOf(newVal, vm);
+				Value newValue = jdiValueOf(newVal, thread);
 				if (newValue != null) {
 					getFrame(thread).setValue(localVariable, newValue);
 					jdiParam.setValue(newValue);
@@ -65,7 +115,8 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 		}
 	}
 
-	private Value jdiValueOf(Object newVal, VirtualMachine vm) {
+	private Value jdiValueOf(Object newVal, ThreadReference thread) {
+		VirtualMachine vm = thread.virtualMachine();
 		if (newVal instanceof Integer) {
 			return vm.mirrorOf((int) newVal);
 		}

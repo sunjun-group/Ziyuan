@@ -20,7 +20,7 @@ public class Sum {
 	}
 	
 	public int getSum(int x, int y) {
-		if(a > 3){
+		if(a >= 50){
 			x++;
 		}
 		

@@ -115,6 +115,9 @@ public class IlpSolver extends ExpressionVisitor {
 	
 	private void updateResult(Result result, List<Object> vars) {
 		assignments.clear();
+		if (result == null) {
+			return;
+		}
 		for (Object var : vars) {
 			assignments.add(new Eq<Number>((ExecVar)var, result.get(var)));
 		}

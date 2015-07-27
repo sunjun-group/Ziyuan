@@ -96,6 +96,9 @@ public class SelectiveSampling implements ISelectiveSampling {
 		IlpSolver solver = new IlpSolver(minMax);
 		divider.accept(solver);
 		List<Eq<?>> assignments = solver.getResult();
+		if (assignments.isEmpty()) {
+			return new ArrayList<DataPoint>();
+		}
 		List<BreakpointData> bkpData = mediator.instDebugAndCollectData(
 											CollectionUtils.listOf(bkp), toInstrVarMap(assignments));
 		return bkpData.get(0).toDatapoints(allLabels);

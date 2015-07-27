@@ -32,6 +32,7 @@ import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
+import sav.strategies.dto.BreakPoint.Variable.VarScope;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayReference;
@@ -107,15 +108,17 @@ public class DebugValueExtractor {
 				for (Variable bpVar : bkp.getVars()) {
 					// First check local variable
 					LocalVariable match = null;
-					for (LocalVariable localVar : visibleVars) {
-						if (localVar.name().equals(bpVar.getParentName())) {
-							match = localVar;
-							break;
+					if (bpVar.getScope() != VarScope.THIS) {
+						for (LocalVariable localVar : visibleVars) {
+							if (localVar.name().equals(bpVar.getParentName())) {
+								match = localVar;
+								break;
+							}
 						}
 					}
 
 					if (match != null) {
-						allVariables.put(bpVar, lookup(frame, match, bpVar.getFullName()));
+						allVariables.put(bpVar, recursiveMatch(frame, match, bpVar.getFullName()));
 					} else {
 						// Then check class fields (static & non static)
 						Field matchedField = null;
@@ -135,7 +138,7 @@ public class DebugValueExtractor {
 									.getValue(matchedField));
 							}
 							if (param.value != null && !matchedField.name().equals(bpVar.getFullName())) {
-								param.value = lookup(param.value, extractSubProperty(bpVar.getFullName()));
+								param = recursiveMatch(param, extractSubProperty(bpVar.getFullName()));
 							}
 							allVariables.put(bpVar, param);
 						}
@@ -143,14 +146,14 @@ public class DebugValueExtractor {
 				}
 
 				if (!allVariables.isEmpty()) {
-					extractValue(bkVal, thread, allVariables);
+					collectValue(bkVal, thread, allVariables);
 				}
 			}
 		}
 		return bkVal;
 	}
 
-	protected void extractValue(BreakpointValue bkVal, ThreadReference thread,
+	protected void collectValue(BreakpointValue bkVal, ThreadReference thread,
 			final Map<Variable, JdiParam> allVariables) throws SavException {
 		for (Entry<Variable, JdiParam> entry : allVariables.entrySet()) {
 			Variable var = entry.getKey();
@@ -159,26 +162,28 @@ public class DebugValueExtractor {
 		}
 	}
 	
-	private JdiParam lookup(final StackFrame frame, final LocalVariable match, final String fullName) {
-		Value value = frame.getValue(match);
-		if (!match.name().equals(fullName)) {
-			value = lookup(value, extractSubProperty(fullName));
-		}
-		return new JdiParam(match, value);
-	}
-	
-	private String extractSubProperty(final String fullName) {
+	protected String extractSubProperty(final String fullName) {
 		int objIndex = fullName.indexOf(".");
 		int arrIndex = fullName.indexOf("[");
 		int index = objIndex < arrIndex || arrIndex < 0 ? objIndex : arrIndex;
 		return fullName.substring(index);
 	}
-
-	private Value lookup(final Value value, final String property) {
-		if (StringUtils.isBlank(property)) {
-			return value;
+	
+	protected JdiParam recursiveMatch(final StackFrame frame, final LocalVariable match, final String fullName) {
+		Value value = frame.getValue(match);
+		JdiParam param = new JdiParam(match, value);
+		if (!match.name().equals(fullName)) {
+			return recursiveMatch(param , extractSubProperty(fullName));
 		}
-		Value subValue = value;
+		return param;
+	}
+	
+	protected JdiParam recursiveMatch(JdiParam param, final String property) {
+		if (StringUtils.isBlank(property)) {
+			return param;
+		}
+		Value value = param.value;
+		JdiParam subParam = param;
 		String subProperty = null;
 		// NOTE: must check Array before Object because ArrayReferenceImpl
 		// implements both ArrayReference and ObjectReference (by extending
@@ -187,13 +192,14 @@ public class DebugValueExtractor {
 			ArrayReference array = (ArrayReference) value;
 			// Can access to the array's length or values
 			if (".length".equals(property)) {
-				subValue = array.virtualMachine().mirrorOf(array.length());
+				subParam = new JdiParam(null, array, 
+						array.virtualMachine().mirrorOf(array.length()));
 				// No sub property is available after this
 			} else {
 				final Matcher matcher = ARRAY_ACCESS_PATTERN.matcher(property);
 				if (matcher.matches()) {
 					int index = Integer.valueOf(matcher.group(1));
-					subValue = array.getValue(index);
+					subParam = new JdiParam(null, array, array.getValue(index));
 					// After this we can have access to another dimension of the
 					// array or access to the retrieved object's property
 					subProperty = matcher.group(2);
@@ -212,14 +218,14 @@ public class DebugValueExtractor {
 					}
 				}
 				if (propertyField != null) {
-					subValue = object.getValue(propertyField);
+					subParam = new JdiParam(propertyField, object, object.getValue(propertyField));
 					subProperty = matcher.group(2);
 				}
 			}
 		}
-		return lookup(subValue, subProperty);
+		return recursiveMatch(subParam, subProperty);
 	}
-	
+
 	/** append execution value*/
 	private void appendVarVal(ExecValue parent, String varId,
 			Value value, int level, ThreadReference thread) {

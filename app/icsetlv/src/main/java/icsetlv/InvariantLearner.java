@@ -62,12 +62,17 @@ public class InvariantLearner {
 			} else {
 				/* collect variable labels */
 				List<ExecVar> allVars = collectAllVars(bkpData);
-//				if (bkpData.getBkp().getLineNo() == 26) {
-					selectiveSampling.setup(bkpData.getBkp(), allVars);
-					machine.setSelectiveSamplingHandler(selectiveSampling);
-//				} else {
-//					machine.setSelectiveSamplingHandler(null);
+				if (allVars.isEmpty()) {
+					continue;
+				}
+				
+				SelectiveSampling handler = selectiveSampling;
+				handler.setup(bkpData.getBkp(), allVars);
+//				if (bkpData.getBkp().getLineNo() != 26) {
+//					handler = null;
 //				}
+				machine.setSelectiveSamplingHandler(handler);
+					
 				formula = learn(bkpData, allVars);
 			}
 			result.add(new BkpInvariantResult(bkpData.getBkp(), formula));
@@ -79,9 +84,6 @@ public class InvariantLearner {
 	 * apply svm 
 	 */
 	private Formula learn(BreakpointData bkpData, List<ExecVar> allVars) {
-		if (allVars.isEmpty()) {
-			return null;
-		}
 		/* handle boolean variables first */
 		Formula formula = learnFromBoolVars(extractBoolVars(allVars), bkpData);
 		if (formula != null) {
