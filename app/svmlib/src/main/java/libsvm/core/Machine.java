@@ -288,7 +288,7 @@ public class Machine {
 	 *         was not completed.
 	 */
 	protected Model getModel() {
-		return model == null || data == null || data.size() <= 0 ? null : new Model(model, data
+		return model == null || model.l <= 0 || data == null || data.size() <= 0 ? null : new Model(model, data
 				.get(0).getNumberOfFeatures());
 	}
 

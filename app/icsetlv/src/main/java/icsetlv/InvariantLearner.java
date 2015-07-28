@@ -38,7 +38,7 @@ import sav.strategies.dto.BreakPoint;
  */
 public class InvariantLearner {
 	private static final Logger LOGGER = Logger.getLogger(InvariantLearner.class);
-	private static final boolean LOG_BKP_DATA = false;
+	private static boolean LOG_BKP_DATA = false;
 	private InvariantMediator mediator;
 	private Machine machine;
 	

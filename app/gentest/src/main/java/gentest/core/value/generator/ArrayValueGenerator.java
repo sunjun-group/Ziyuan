@@ -22,6 +22,8 @@ import sav.common.core.utils.Randomness;
 public class ArrayValueGenerator extends ValueGenerator {
 	private int dimension;
 	private IType lastContenType;
+	/* TODO LLT: make this configurable */
+	private static int DEFAULT_ARRAY_SIZE = 3;
 	
 	public ArrayValueGenerator(IType type) {
 		super(type);
@@ -57,6 +59,9 @@ public class ArrayValueGenerator extends ValueGenerator {
 	}
 
 	private int selectArraySize() {
+		if (DEFAULT_ARRAY_SIZE >= 0) {
+			return DEFAULT_ARRAY_SIZE;
+		}
 		return Randomness
 				.nextInt(GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH);
 	}

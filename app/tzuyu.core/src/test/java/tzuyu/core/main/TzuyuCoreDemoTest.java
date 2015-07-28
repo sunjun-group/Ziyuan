@@ -43,7 +43,7 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 		FaultLocateParams params = initFaultLocateParams(StudentEvaluate.class.getName(), "evaluate", null,
 				null, junitClassNames, false);
 		params.setRunMutation(false);
-		params.setGenTest(false);
+//		params.setGenTest(false);
 		params.setValueRetrieveLevel(4);
 		app.faultLocate(params);
 	}
