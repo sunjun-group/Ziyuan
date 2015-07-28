@@ -118,7 +118,7 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 	private Value jdiValueOf(Object newVal, ThreadReference thread) {
 		VirtualMachine vm = thread.virtualMachine();
 		if (newVal instanceof Integer) {
-			return vm.mirrorOf((int) newVal);
+			return vm.mirrorOf((Integer) newVal);
 		}
 		if (newVal instanceof Boolean) {
 			return vm.mirrorOf((Boolean) newVal);
