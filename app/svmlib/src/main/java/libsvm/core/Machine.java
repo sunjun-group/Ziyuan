@@ -390,6 +390,8 @@ public class Machine {
 			// Check the new logic
 			adjustedLogic = getLearnedLogic(false);
 			adjustedAccuracy = getModelAccuracy();
+			LOGGER.debug("adjustedLogic: " + adjustedLogic);
+			LOGGER.debug("adjustedAccuracy: " + adjustedAccuracy);
 		} while (!logic.equals(adjustedLogic) && Double.compare(adjustedAccuracy, accuracy) >= 0);
 
 		return Double.compare(adjustedAccuracy, 1.0) >= 0;

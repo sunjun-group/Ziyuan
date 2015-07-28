@@ -37,6 +37,28 @@ public class BugLocalizationLine {
 		return suspiciousness;
 	}
 
+	public int compare(BugLocalizationLine o) {
+		int suspiciousnessComp = Double.compare(this.getSuspiciousness(), o.getSuspiciousness());
+		if (this.getLearnedLogic() == null) {
+			if (o.getLearnedLogic() != null) {
+				return -1;
+			}
+		} else {
+			if (o.getLearnedLogic() == null) {
+				return 1;
+			}
+		}
+		if (suspiciousnessComp == 0) {
+			return Integer.compare(o.getBreakpoint().getLineNo(),
+							this.getBreakpoint().getLineNo());
+		}
+		return suspiciousnessComp;
+	}
+	
+	public Formula getLearnedLogic() {
+		return learningResult.getLearnedLogic();
+	}
+	
 	@Override
 	public String toString() {
 		final StringBuilder str = new StringBuilder();

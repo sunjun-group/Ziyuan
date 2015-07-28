@@ -20,8 +20,8 @@ public class CoefficientProcessing {
 	private static final int BOUND_MIN_COEFFICIENT = 100; //min coefficient is bounded
 	private static final double MAX_DIFFERENCE_TO_NEAREST_INTEGER = Math.pow(10, -1);
 	private static final double EPSILON = Math.pow(10, -6);
-	private static final double NUMBER_DECIMAL_TO_KEEP = 1000000000;
-	private static final int BOUND_RATE_MIN_MAX_COEFFICIENT = 100; //max coefficient / min coefficient is bounded
+	private static final double NUMBER_DECIMAL_TO_KEEP = 1000;
+	private static final int BOUND_RATE_MIN_MAX_COEFFICIENT = 1000; //max coefficient / min coefficient is bounded
 		
 	public double[] process(double[] thetas) {
 		double[] backup = Arrays.copyOf(thetas, thetas.length);

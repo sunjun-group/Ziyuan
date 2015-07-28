@@ -196,7 +196,7 @@ public class TzuyuCore {
 				@Override
 				public int compare(BugLocalizationLine o1,
 						BugLocalizationLine o2) {
-					return Double.compare(o2.getSuspiciousness(), o1.getSuspiciousness());
+					return o2.compare(o1);
 				}
 			});
 			LOGGER.info("----------------FINISHED--------------------");
