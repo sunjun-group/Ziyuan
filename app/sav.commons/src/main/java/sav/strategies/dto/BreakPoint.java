@@ -74,6 +74,10 @@ public class BreakPoint extends ClassLocation {
 	public void setCharEnd(int charEnd) {
 		this.charEnd = charEnd;
 	}
+	
+	public int getOrgLineNo() {
+		return getLineNo();
+	}
 
 	@Override
 	public String toString() {

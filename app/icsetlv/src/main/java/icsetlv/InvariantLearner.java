@@ -29,6 +29,8 @@ import org.apache.log4j.Logger;
 
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.FileUtils;
+import sav.strategies.dto.BreakPoint;
 
 /**
  * @author LLT
@@ -36,6 +38,7 @@ import sav.common.core.utils.CollectionUtils;
  */
 public class InvariantLearner {
 	private static final Logger LOGGER = Logger.getLogger(InvariantLearner.class);
+	private static final boolean LOG_BKP_DATA = false;
 	private InvariantMediator mediator;
 	private Machine machine;
 	
@@ -68,7 +71,7 @@ public class InvariantLearner {
 				
 				SelectiveSampling handler = selectiveSampling;
 				handler.setup(bkpData.getBkp(), allVars);
-//				if (bkpData.getBkp().getLineNo() != 26) {
+//				if (bkpData.getBkp().getLineNo() != 24) {
 //					handler = null;
 //				}
 				machine.setSelectiveSamplingHandler(handler);
@@ -84,6 +87,7 @@ public class InvariantLearner {
 	 * apply svm 
 	 */
 	private Formula learn(BreakpointData bkpData, List<ExecVar> allVars) {
+		logBkpData(bkpData, allVars);
 		/* handle boolean variables first */
 		Formula formula = learnFromBoolVars(extractBoolVars(allVars), bkpData);
 		if (formula != null) {
@@ -99,6 +103,26 @@ public class InvariantLearner {
 		return machine.getLearnedLogic(new FormulaProcessor<ExecVar>(allVars), true);
 	}
 	
+	private void logBkpData(BreakpointData bkpData, List<ExecVar> allVars) {
+		if (!LOG_BKP_DATA) {
+			return;
+		}
+		BreakPoint bkp = bkpData.getBkp();
+		int orgLineNo = bkp.getOrgLineNo();
+		StringBuilder sb = new StringBuilder();
+		sb.append("\n");
+		sb.append(String.format("***********LINE %s (debugLine: %s)*************", 
+											orgLineNo, bkp.getLineNo())); sb.append("\n");
+		sb.append("varLabels");sb.append("\n");
+		sb.append(allVars);sb.append("\n");
+		sb.append("passValues");sb.append("\n");
+		sb.append(sav.common.core.utils.StringUtils.join(bkpData.getPassValues(), "\n"));sb.append("\n");
+		sb.append("failValues");sb.append("\n");
+		sb.append(sav.common.core.utils.StringUtils.join(bkpData.getFailValues(), "\n"));sb.append("\n");
+		sb.append("************************");sb.append("\n");
+		FileUtils.appendFile("D:/testData.txt", sb.toString());
+	}
+
 	private void addDataPoints(List<BreakpointValue> passValues,
 			List<BreakpointValue> failValues) {
 		for (BreakpointValue bValue : passValues) {

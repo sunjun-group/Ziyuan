@@ -44,6 +44,7 @@ public class AgentVmRunner extends VMRunner {
 				.append(StringUtils.join(agentParams, ","));
 		}
 		builder.add(sb.toString());
+		super.buildVmOption(builder, config);
 	}
 	
 	@Override

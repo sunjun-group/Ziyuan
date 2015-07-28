@@ -138,12 +138,13 @@ public class VariableNameCollector {
 				nameFragments.add(fieldAccessExpr.getField());
 				scope = fieldAccessExpr.getScope();
 			}
+			scope.accept(this, true);
 			VarScope varScope = VarScope.UNDEFINED;
 			if (scope instanceof ThisExpr) {
 				varScope = VarScope.THIS;
-			} else if (scope instanceof NameExpr) {
+			} else {
 				varScope = VarScope.UNDEFINED;
-				nameFragments.add(((NameExpr)scope).getName());
+				nameFragments.add(scope.toString());
 			}
 
 			String name = CollectionUtils.getLast(nameFragments);

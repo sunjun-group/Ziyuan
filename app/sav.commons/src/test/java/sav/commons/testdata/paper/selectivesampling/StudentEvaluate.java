@@ -30,7 +30,8 @@ public class StudentEvaluate {
 
 	private static void standardize(Student[] students) {
 		int max = Integer.MIN_VALUE;
-		for (int i = 0; i < students.length - 1; i++) {
+		int i = 0;
+		for (; i < students.length - 1; i++) {
 			if (max < students[i].score) {
 				max = students[i].score;
 			}

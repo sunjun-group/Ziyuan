@@ -44,6 +44,7 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 				null, junitClassNames, false);
 		params.setRunMutation(false);
 		params.setGenTest(false);
+		params.setValueRetrieveLevel(4);
 		app.faultLocate(params);
 	}
 	

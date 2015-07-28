@@ -91,4 +91,9 @@ public class VariableNameCollectorTest extends AbstractTest {
 		Assert.assertEquals("innerClass.b", var.getFullName());
 	}
 	
+	@Test
+	public void testLine46() throws IcsetlvException {
+		BreakPoint bkp = runSum(45);
+		Assert.assertEquals(3, bkp.getVars().size());
+	}
 }

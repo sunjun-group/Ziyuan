@@ -8,6 +8,7 @@
 
 package testdata;
 
+
 /**
  * @author LLT
  * 
@@ -34,6 +35,16 @@ public class VarNameCollectorTestData {
 
 	public static boolean validateGetSum(int x, int y, int max) {
 		return (max == x + y);
+	}
+	
+	public static void loop(InnerClass[] var) {
+		int max = Integer.MIN_VALUE;
+		int i = 0;
+		for (; i < var.length - 1; i++) {
+			if (max < var[i].b) {
+				max = var[i].b;
+			}
+		}
 	}
 
 	class InnerClass {

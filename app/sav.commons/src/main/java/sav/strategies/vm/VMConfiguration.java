@@ -41,8 +41,8 @@ public class VMConfiguration {
 
 	public VMConfiguration() {
 		classpaths = new ArrayList<String>();
-		debug = true;
 		port = INVALID_PORT;
+		debug = false;
 		enableAssertion = true;
 	}
 	
