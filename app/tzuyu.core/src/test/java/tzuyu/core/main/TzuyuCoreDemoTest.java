@@ -13,8 +13,12 @@ import java.util.List;
 
 import org.junit.Test;
 
+import sav.commons.testdata.calculator.Sum;
+import sav.commons.testdata.calculator.SumTest;
 import sav.commons.testdata.paper.TestClass;
 import sav.commons.testdata.paper.Tests;
+import sav.commons.testdata.paper.selectivesampling.StudentEvaluate;
+import sav.commons.testdata.paper.selectivesampling.StudentEvaluateTest;
 
 /**
  * @author khanh
@@ -29,6 +33,17 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 		FaultLocateParams params = initFaultLocateParams(TestClass.class.getName(), "calculate", null,
 				null, junitClassNames, false);
 		params.setRunMutation(false);
+		app.faultLocate(params);
+	}
+	
+	@Test
+	public void testStudentEvaluate() throws Exception {
+		List<String> junitClassNames = new ArrayList<String>();
+		junitClassNames.add(StudentEvaluateTest.class.getName());
+		FaultLocateParams params = initFaultLocateParams(StudentEvaluate.class.getName(), "evaluate", null,
+				null, junitClassNames, false);
+		params.setRunMutation(false);
+		params.setGenTest(false);
 		app.faultLocate(params);
 	}
 	
@@ -67,9 +82,10 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 	@Test
 	public void testClass() throws Exception{
 		List<String> junitClassNames = new ArrayList<String>();
-		junitClassNames.add("sav.commons.testdata.calculator.SumTest");
-		app.faultLocate(initFaultLocateParams("sav.commons.testdata.calculator.Sum", "getSum", "validateGetSum",
-				null, junitClassNames, false));
+		junitClassNames.add(SumTest.class.getName());
+		FaultLocateParams params = initFaultLocateParams(Sum.class.getName(), "getSum", "validateGetSum",
+				null, junitClassNames, false);
+		app.faultLocate(params);
 	}
 	
 	@Test
