@@ -305,7 +305,7 @@ public class DebugValueExtractor {
 		val.setValue(value);
 		//add value of elements
 		for (int i = 0; i < value.length(); i++) {
-			appendVarVal(val, val.getChildId(i), value.getValue(i), level, thread);
+			appendVarVal(val, val.getElementId(i), value.getValue(i), level, thread);
 		}
 		parent.add(val);
 	}

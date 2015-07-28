@@ -26,6 +26,10 @@ public class ArrayValue extends ReferenceValue {
 	public ArrayValue(String id) {
 		super(id, false);
 	}
+	
+	public String getElementId(int i) {
+		return String.format("%s[%s]", varId, i);
+	}
 
 	private void setSum(double sum) {
 		add(new PrimitiveValue(getChildId(SUM_CODE), String.valueOf(sum)));
