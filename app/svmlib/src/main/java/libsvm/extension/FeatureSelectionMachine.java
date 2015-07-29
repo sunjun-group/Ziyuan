@@ -5,6 +5,7 @@ import java.util.List;
 
 import libsvm.core.IDividerProcessor;
 import libsvm.core.Machine;
+import libsvm.core.Model;
 
 import org.apache.log4j.Logger;
 
@@ -71,13 +72,14 @@ public class FeatureSelectionMachine extends Machine {
 					LOGGER.debug("Learned logic: " + learnedLogic);
 					LOGGER.debug("Accuracy: " + accuracy);
 				}
-				// TODO: LLT double check
-//				if (Double.compare(accuracy, 1.0) >= 0) {
+				// We only run selective sampling after we found an "interesting" logic
+				// I.e.: we will try to "tune" the logic then
+				if (Double.compare(accuracy, 1.0) >= 0) {
 					if (machine.selectiveSampling()) {
 						this.machine = machine;
 						break outerLoop;
 					}
-//				}
+				}
 
 				// check if the current selection is the final one
 				int i = toSelect - 1;
@@ -104,6 +106,11 @@ public class FeatureSelectionMachine extends Machine {
 		Machine machine = new Machine().setDataLabels(labels).setParameter(getParameter());
 		machine.setSelectiveSamplingHandler(this.getSelectiveSamplingHandler());
 		return machine;
+	}
+	
+	@Override
+	public Model getModel() {
+		return this.machine == null ? super.getModel() : this.machine.getModel();
 	}
 
 	@Override

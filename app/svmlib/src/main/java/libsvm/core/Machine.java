@@ -287,7 +287,7 @@ public class Machine {
 	 * @return The learned model or <code>null</code> if the learning process
 	 *         was not completed.
 	 */
-	protected Model getModel() {
+	public Model getModel() {
 		return model == null || model.l <= 0 || data == null || data.size() <= 0 ? null : new Model(model, data
 				.get(0).getNumberOfFeatures());
 	}
