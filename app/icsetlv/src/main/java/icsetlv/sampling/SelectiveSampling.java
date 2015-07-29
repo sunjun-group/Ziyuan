@@ -21,6 +21,7 @@ import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
 import libsvm.core.Machine.DataPoint;
 import libsvm.extension.ISelectiveSampling;
+import sav.common.core.Logger;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
@@ -33,6 +34,7 @@ import sav.strategies.dto.BreakPoint;
  * @author LLT
  */
 public class SelectiveSampling implements ISelectiveSampling {
+	private Logger<?> log = Logger.getDefaultLogger();
 	private InvariantMediator mediator;
 	private FormulaProcessor<ExecVar> dividerProcessor;
 	private BreakPoint bkp;
@@ -89,7 +91,7 @@ public class SelectiveSampling implements ISelectiveSampling {
 
 	public List<DataPoint> execute(Formula divider, List<String> allLabels, List<DataPoint> datapoints) throws SavException {
 		List<ExecVar> labels = divider.getReferencedVariables();
-		/* check boolean variables */
+		/* check boolean variables */ 
 		/* */
 		Map<String, Pair<Double, Double>> minMax = calculateValRange(allLabels, datapoints);
 		
@@ -99,9 +101,13 @@ public class SelectiveSampling implements ISelectiveSampling {
 		if (assignments.isEmpty()) {
 			return new ArrayList<DataPoint>();
 		}
+		log.debug("Instrument values: ", assignments.toString());
 		List<BreakpointData> bkpData = mediator.instDebugAndCollectData(
 											CollectionUtils.listOf(bkp), toInstrVarMap(assignments));
-		return bkpData.get(0).toDatapoints(allLabels);
+		BreakpointData breakpointData = bkpData.get(0);
+		mediator.logBkpData(breakpointData, labels, "Divider: ", divider.toString(), 
+														"\nApply: ", assignments.toString());
+		return breakpointData.toDatapoints(allLabels);
 	}
 
 	private Map<String, Object> toInstrVarMap(List<Eq<?>> assignments) {

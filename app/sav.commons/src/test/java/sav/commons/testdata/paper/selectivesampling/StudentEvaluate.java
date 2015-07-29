@@ -48,8 +48,8 @@ class Student {
 	int ID;
 	double standardScore;
 
-	public Student(int s, int id) {
-		score = s;
+	public Student(int id, int s) {
 		ID = id;
+		score = s;
 	}
 }

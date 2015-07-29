@@ -35,7 +35,8 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 	 */
 	private Map<String, Object> instVals;
 
-	public DebugValueInstExtractor(Map<String, Object> instrVarMap) {
+	public DebugValueInstExtractor(int valRetrieveLevel, Map<String, Object> instrVarMap) {
+		super(valRetrieveLevel);
 		this.instVals = instrVarMap;
 	}
 

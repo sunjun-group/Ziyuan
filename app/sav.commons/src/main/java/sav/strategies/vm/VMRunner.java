@@ -47,8 +47,10 @@ public class VMRunner {
 	private Redirect redirect;
 	/* timeout in millisecond */
 	private long timeout = NO_TIME_OUT;
+	private boolean isLog = false;
 	
 	public Process startVm(VMConfiguration config) throws SavException {
+		this.isLog = config.isVmLogEnable();
 		Assert.assertTrue(config.getPort() != VMConfiguration.INVALID_PORT,
 				"Cannot find free port to start jvm!");
 		List<String> commands = buildCommandsFromConfiguration(config);
@@ -113,7 +115,7 @@ public class VMRunner {
 
 	public Process startVm(List<String> commands, boolean waitUntilStop)
 			throws SavException {
-		if (log.isDebug()) {
+		if (isLog && log.isDebug()) {
 			log.debug("start cmd..");
 			log.debug(StringUtils.join(commands, " "));
 			for (String cmd : commands) {
@@ -205,5 +207,9 @@ public class VMRunner {
 	
 	public static VMRunner getDefault() {
 		return new VMRunner();
+	}
+	
+	public void setLog(boolean isLog) {
+		this.isLog = isLog;
 	}
 }

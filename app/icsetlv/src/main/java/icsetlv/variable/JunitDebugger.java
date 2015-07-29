@@ -40,6 +40,7 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 	private int testIdx = 0;
 	private Location junitLoc;
 	private String jResultFile;
+	private boolean jResultFileDeleteOnExit = false;
 	
 	public void setup(VMConfiguration config, List<String> allTests) {
 		super.setup(config);
@@ -112,7 +113,11 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 
 	private String createExecutionResultFile() throws SavException {
 		try {
-			return File.createTempFile("tcsExResult", ".txt").getAbsolutePath();
+			File tempFile = File.createTempFile("tcsExResult", ".txt");
+			if (jResultFileDeleteOnExit) {
+				tempFile.deleteOnExit();
+			}
+			return tempFile.getAbsolutePath();
 		} catch (IOException e1) {
 			throw new SavException(ModuleEnum.JVM, "cannot create temp file");
 		}
@@ -120,6 +125,10 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 	
 	private boolean areLocationsEqual(Location location1, Location location2) throws AbsentInformationException {
 		return location1.compareTo(location2) == 0;
+	}
+	
+	public void setjResultFileDeleteOnExit(boolean jResultFileDeleteOnExit) {
+		this.jResultFileDeleteOnExit = jResultFileDeleteOnExit;
 	}
 	
 	/** abstract methods */

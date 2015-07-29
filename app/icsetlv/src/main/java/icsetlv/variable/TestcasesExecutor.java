@@ -39,13 +39,14 @@ public class TestcasesExecutor extends JunitDebugger {
 	private Map<Integer, List<BreakpointValue>> bkpValsByTestIdx;
 	private List<BreakpointValue> currentTestBkpValues;
 	private DebugValueExtractor valueExtractor;
+	private int valRetrieveLevel;
 	
 	public TestcasesExecutor(int valRetrieveLevel) {
-		valueExtractor = initDebugValueExtractor(valRetrieveLevel);
+		this.valRetrieveLevel = valRetrieveLevel;
 	}
 	
 	public TestcasesExecutor(DebugValueExtractor valueExtractor) {
-		this.valueExtractor = valueExtractor;
+		setValueExtractor(valueExtractor);
 	}
 	
 	public void setup(VMConfiguration config, List<String> allTests) {
@@ -108,7 +109,7 @@ public class TestcasesExecutor extends JunitDebugger {
 	private BreakpointValue extractValuesAtLocation(BreakPoint bkp,
 			BreakpointEvent bkpEvent) throws SavException {
 		try {
-			return valueExtractor.extractValue(bkp, bkpEvent);
+			return getValueExtractor().extractValue(bkp, bkpEvent);
 		} catch (IncompatibleThreadStateException e) {
 			LOGGER.error(e);
 		} catch (AbsentInformationException e) {
@@ -144,24 +145,22 @@ public class TestcasesExecutor extends JunitDebugger {
 		return result;
 	}
 	
-	protected DebugValueExtractor initDebugValueExtractor(int valRetrieveLevel) {
-		return new DebugValueExtractor(valRetrieveLevel);
-	}
-	
-	public void setValueExtractor(DebugValueExtractor valueExtractor, boolean useCurrentRetrieveLevel) {
-		if (this.valueExtractor != null && useCurrentRetrieveLevel) {
-			int curValRetrieveLevel = this.valueExtractor.getValRetrieveLevel();
-			valueExtractor.setValRetrieveLevel(curValRetrieveLevel);
+	private DebugValueExtractor getValueExtractor() {
+		if (valueExtractor == null) {
+			setValueExtractor(new DebugValueExtractor(valRetrieveLevel));
 		}
-		setValueExtractor(valueExtractor);
-	}
-	
-	public DebugValueExtractor getValueExtractor() {
 		return valueExtractor;
 	}
 
 	public void setValueExtractor(DebugValueExtractor valueExtractor) {
 		this.valueExtractor = valueExtractor;
+		if (valueExtractor != null) {
+			this.valRetrieveLevel = valueExtractor.getValRetrieveLevel();
+		}
+	}
+	
+	public int getValRetrieveLevel() {
+		return valRetrieveLevel;
 	}
 }
 

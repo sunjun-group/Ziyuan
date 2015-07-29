@@ -101,7 +101,7 @@ public class InstrTestcasesExecutorTest extends AbstractTest {
 		List<String> tests = JunitUtils.extractTestMethods(CollectionUtils
 				.listOf(data.testClass.getName()));
 		varExtr.setup(vmConfig, tests);
-		varExtr.setValueExtractor(new DebugValueInstExtractor(data.instVals), true);
+		varExtr.setValueExtractor(new DebugValueInstExtractor(varExtr.getValRetrieveLevel(), data.instVals));
 		varExtr.run(data.getBkps());
 		List<BreakpointData> result = varExtr.getResult();
 		return result;

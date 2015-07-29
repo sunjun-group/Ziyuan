@@ -29,7 +29,8 @@ public class VMConfiguration {
 	private int port;
 	private boolean enableAssertion;
 	// for internal use only
-	private List<String> programArgs; 
+	private List<String> programArgs;
+	private boolean vmLog = true;
 	
 	public VMConfiguration(VMConfiguration config) {
 		this.javaHome = config.getJavaHome();
@@ -37,6 +38,7 @@ public class VMConfiguration {
 		this.debug = config.isDebug();
 		this.port = config.getPort();
 		this.enableAssertion = config.isEnableAssertion();
+		this.vmLog = config.vmLog;
 	}
 
 	public VMConfiguration() {
@@ -147,4 +149,11 @@ public class VMConfiguration {
 		return StringUtils.join(classpaths, File.pathSeparator);
 	}
 
+	public boolean isVmLogEnable() {
+		return vmLog;
+	}
+	
+	public void setEnableVmLog(boolean vmLog) {
+		this.vmLog = vmLog;
+	}
 }
