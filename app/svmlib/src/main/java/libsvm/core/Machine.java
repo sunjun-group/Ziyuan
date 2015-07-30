@@ -383,6 +383,7 @@ public class Machine {
 			final Set<DataPoint> difference = new HashSet<DataPoint>(dataPoints);
 			difference.removeAll(this.data);
 			if (difference.isEmpty()) {
+				LOGGER.debug("No more new point added in Selective Sampling.");
 				break;
 			}
 			if (!dataPoints.isEmpty()) {
@@ -492,7 +493,7 @@ public class Machine {
 			int hash = 7;
 			hash = 31 * hash + numberOfFeatures;
 			hash = 31 * hash + (category == null ? 0 : category.hashCode());
-			hash = 31 * hash + (values == null ? 0 : values.hashCode());
+			hash = 31 * hash + (values == null ? 0 : Arrays.hashCode(values));
 			return hash;
 		}
 
