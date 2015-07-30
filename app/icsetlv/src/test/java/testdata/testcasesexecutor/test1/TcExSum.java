@@ -32,7 +32,9 @@ public class TcExSum {
 		if(a + this.a + innerClass.b + innerClass.a > 50){
 			x++;
 		}
-		
+		if (innerClass.arr[1] > 50) {
+			y++;
+		}
 		return x+y;
 	}
 	
@@ -44,5 +46,10 @@ public class TcExSum {
 		InnerClass inner;
 		int a;
 		int b;
+		int[] arr;
+		public InnerClass() {
+			Random r = new Random();
+			arr = new int[]{r.nextInt(100), r.nextInt(100), r.nextInt(100)};
+		}
 	}
 }

@@ -159,6 +159,13 @@ public class TestcasesExecutor extends JunitDebugger {
 		}
 	}
 	
+	public void setValRetrieveLevel(int valRetrieveLevel) {
+		this.valRetrieveLevel = valRetrieveLevel;
+		if (valueExtractor != null) {
+			valueExtractor.setValRetrieveLevel(valRetrieveLevel);
+		}
+	}
+	
 	public int getValRetrieveLevel() {
 		return valRetrieveLevel;
 	}

@@ -54,13 +54,16 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 			for (String varId : modificationMap.keySet()) {
 				JdiParam param = modificationMap.get(varId);
 				Object newVal = instVals.get(varId);
-				if (param.getLocalVariable() != null) {
+				switch (param.getType()) {
+				case ARRAY_ELEMENT:
+					instArrElement(thread, param, newVal, var);
+					break;
+				case LOCAL_VAR:
 					instLocalVar(thread, param, newVal , var);
-				}
-				if (param.getField() != null) {
-					if (param.getObj() != null) {
-						instObjField(thread, param, newVal, var);
-					}
+					break;
+				case NON_STATIC_FIELD:
+					instObjField(thread, param, newVal, var);
+					break;
 				}
 			}
 		}
@@ -114,6 +117,18 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 				throw new SavRtException(e);
 			}
 		}
+	}
+	
+	private void instArrElement(ThreadReference thread, JdiParam jdiParam,
+			Object newVal, Variable var) {
+		try {
+			Value newValue = jdiValueOf(newVal, thread);
+			jdiParam.getArrayRef().setValue(jdiParam.getIdx(), newValue);
+			jdiParam.setValue(newValue);
+		} catch (Exception e) {
+			throw new SavRtException(e);
+		}
+		
 	}
 
 	private Value jdiValueOf(Object newVal, ThreadReference thread) {

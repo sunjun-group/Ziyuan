@@ -63,6 +63,7 @@ public class TestcasesExecutorTest extends AbstractTest {
 		bkp1.addVars(new Variable("a", "a", VarScope.THIS));
 		bkp1.addVars(new Variable("innerClass", "innerClass.b"));
 		bkp1.addVars(new Variable("innerClass", "innerClass.a"));
+		bkp1.addVars(new Variable("innerClass", "innerClass.inner.b"));
 		breakpoints.add(bkp1);
 		List<String> tests = JunitUtils.extractTestMethods(CollectionUtils
 				.listOf(TcExSumTest.class.getName()));

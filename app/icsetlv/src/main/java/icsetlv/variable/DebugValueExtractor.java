@@ -63,7 +63,7 @@ public class DebugValueExtractor {
 	private static final Logger<?> LOGGER = Logger.getDefaultLogger();
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
 	private static final String TO_STRING_NAME= "toString";
-	private static final Pattern OBJECT_ACCESS_PATTERN = Pattern.compile("^\\.(.+)(.*)$");
+	private static final Pattern OBJECT_ACCESS_PATTERN = Pattern.compile("^\\.([^.\\[]+)(\\..+)*(\\[.+)*$");
 	private static final Pattern ARRAY_ACCESS_PATTERN = Pattern.compile("^\\[(\\d+)\\](.*)$");
 
 	private int valRetrieveLevel;
@@ -132,12 +132,11 @@ public class DebugValueExtractor {
 						if (matchedField != null) {
 							JdiParam param;
 							if (matchedField.isStatic()) {
-								param = new JdiParam(matchedField, refType, refType.getValue(matchedField));
+								param = JdiParam.staticField(matchedField, refType, refType.getValue(matchedField));
 							} else {
-								param = new JdiParam(matchedField, objRef, objRef
-									.getValue(matchedField));
+								param = JdiParam.nonStaticField(matchedField, objRef, objRef.getValue(matchedField));
 							}
-							if (param.value != null && !matchedField.name().equals(bpVar.getFullName())) {
+							if (param.getValue() != null && !matchedField.name().equals(bpVar.getFullName())) {
 								param = recursiveMatch(param, extractSubProperty(bpVar.getFullName()));
 							}
 							allVariables.put(bpVar, param);
@@ -158,20 +157,26 @@ public class DebugValueExtractor {
 		for (Entry<Variable, JdiParam> entry : allVariables.entrySet()) {
 			Variable var = entry.getKey();
 			String varId = var.getId();
-			appendVarVal(bkVal, varId, entry.getValue().value, 1, thread);
+			appendVarVal(bkVal, varId, entry.getValue().getValue(), 1, thread);
 		}
 	}
 	
 	protected String extractSubProperty(final String fullName) {
-		int objIndex = fullName.indexOf(".");
+		// obj idx
+		int idx = fullName.indexOf(".");
 		int arrIndex = fullName.indexOf("[");
-		int index = objIndex < arrIndex || arrIndex < 0 ? objIndex : arrIndex;
-		return fullName.substring(index);
+		if ((idx < 0) || (arrIndex >= 0 && arrIndex < idx)) {
+			idx = arrIndex;
+		}  
+		if (idx >= 0) {
+			return fullName.substring(idx);
+		}
+		return fullName;
 	}
 	
 	protected JdiParam recursiveMatch(final StackFrame frame, final LocalVariable match, final String fullName) {
 		Value value = frame.getValue(match);
-		JdiParam param = new JdiParam(match, value);
+		JdiParam param = JdiParam.localVariable(match, value);
 		if (!match.name().equals(fullName)) {
 			return recursiveMatch(param , extractSubProperty(fullName));
 		}
@@ -182,7 +187,7 @@ public class DebugValueExtractor {
 		if (StringUtils.isBlank(property)) {
 			return param;
 		}
-		Value value = param.value;
+		Value value = param.getValue();
 		JdiParam subParam = param;
 		String subProperty = null;
 		// NOTE: must check Array before Object because ArrayReferenceImpl
@@ -192,14 +197,13 @@ public class DebugValueExtractor {
 			ArrayReference array = (ArrayReference) value;
 			// Can access to the array's length or values
 			if (".length".equals(property)) {
-				subParam = new JdiParam(null, array, 
-						array.virtualMachine().mirrorOf(array.length()));
+				subParam = JdiParam.nonStaticField(null, array, array.virtualMachine().mirrorOf(array.length()));
 				// No sub property is available after this
 			} else {
 				final Matcher matcher = ARRAY_ACCESS_PATTERN.matcher(property);
 				if (matcher.matches()) {
 					int index = Integer.valueOf(matcher.group(1));
-					subParam = new JdiParam(null, array, array.getValue(index));
+					subParam = JdiParam.arrayElement(array, index, array.getValue(index)); 
 					// After this we can have access to another dimension of the
 					// array or access to the retrieved object's property
 					subProperty = matcher.group(2);
@@ -218,8 +222,11 @@ public class DebugValueExtractor {
 					}
 				}
 				if (propertyField != null) {
-					subParam = new JdiParam(propertyField, object, object.getValue(propertyField));
+					subParam = JdiParam.nonStaticField(propertyField, object, object.getValue(propertyField));
 					subProperty = matcher.group(2);
+					if (sav.common.core.utils.StringUtils.isEmpty(subProperty)) {
+						subProperty = matcher.group(3);
+					}
 				}
 			}
 		}
@@ -332,65 +339,4 @@ public class DebugValueExtractor {
 		this.valRetrieveLevel = valRetrieveLevel;
 	}
 	
-	protected static class JdiParam {
-		/* local variable */
-		private LocalVariable variable;
-		/* field */
-		private Field field;
-		/* non-static */
-		private ObjectReference obj;
-		/* static */
-		private ReferenceType objType;
-		
-		/* value */
-		private Value value;
-		
-		public JdiParam(LocalVariable variable, Value value) {
-			this.variable = variable;
-			this.value = value;
-		}
-		
-		public JdiParam(Field field, ReferenceType objType, Value value) {
-			this.field = field;
-			this.objType = objType;
-			this.value = value;
-		}
-
-		public JdiParam(Field field, ObjectReference objRef, Value value) {
-			this.field = field;
-			this.obj = objRef;
-			this.value = value;
-		}
-
-		public LocalVariable getLocalVariable() {
-			return variable;
-		}
-
-		public Field getField() {
-			return field;
-		}
-
-		public ObjectReference getObj() {
-			return obj;
-		}
-
-		public ReferenceType getObjType() {
-			return objType;
-		}
-
-		public Value getValue() {
-			return value;
-		}
-
-		public void setValue(Value value) {
-			this.value = value;
-		}
-
-		@Override
-		public String toString() {
-			return "JdiParam [variable=" + variable + ", field=" + field
-					+ ", obj=" + obj + ", value=" + value + "]";
-		}
-		
-	}
 }

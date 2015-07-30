@@ -85,6 +85,19 @@ public class InstrTestcasesExecutorTest extends AbstractTest {
 		System.out.println(result);
 		validate(result, "a", 1000);
 	}
+	
+	@Test
+	public void instrArrEleVar() throws Exception {
+		varExtr.setValRetrieveLevel(5);
+		Data data = new Data(TcExSum.class, TcExSumTest.class);
+		// breakpoints
+		data.breakpoint(32);
+		Variable var = new Variable("innerClass", "innerClass.arr[1]");
+		data.instrVal(var , 1000);
+		List<BreakpointData> result = runTcExecutor(data);
+		System.out.println(result);
+		validate(result, "innerClass.arr[1]", 1000);
+	}
 
 	private void validate(List<BreakpointData> result, String var, double val) {
 		List<DataPoint> datapoints = result.get(0).toDatapoints(Arrays.asList(var));
