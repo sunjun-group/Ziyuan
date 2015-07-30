@@ -24,11 +24,13 @@ import java.util.Set;
 import libsvm.core.Category;
 import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
+import libsvm.extension.ISelectiveSampling;
 
 import org.apache.log4j.Logger;
 
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
+import sav.strategies.dto.BreakPoint;
 
 /**
  * @author LLT
@@ -46,7 +48,6 @@ public class InvariantLearner {
 
 	public List<BkpInvariantResult> learn(List<BreakpointData> bkpsData) {
 		List<BkpInvariantResult> result = new ArrayList<BkpInvariantResult>();
-		SelectiveSampling selectiveSampling = new SelectiveSampling(mediator);
 		for (BreakpointData bkpData : bkpsData) {
 			LOGGER.info("Start to learn at " + bkpData.getBkp());
 			if (bkpData.getPassValues().isEmpty() && bkpData.getFailValues().isEmpty()) {
@@ -65,16 +66,21 @@ public class InvariantLearner {
 				if (allVars.isEmpty()) {
 					continue;
 				}
-				
-				SelectiveSampling handler = selectiveSampling;
-				handler.setup(bkpData.getBkp(), allVars);
+
+				ISelectiveSampling handler = getSelectiveSampling(bkpData.getBkp(), allVars);
 				machine.setSelectiveSamplingHandler(handler);
-					
+
 				formula = learn(bkpData, allVars);
 			}
 			result.add(new BkpInvariantResult(bkpData.getBkp(), formula));
 		}
 		return result;
+	}
+
+	public ISelectiveSampling getSelectiveSampling(BreakPoint breakpoint, List<ExecVar> allVars) {
+		SelectiveSampling handler = new SelectiveSampling(mediator);
+		handler.setup(breakpoint, allVars);
+		return handler;
 	}
 	
 	/**

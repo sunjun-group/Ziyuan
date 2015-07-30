@@ -147,14 +147,19 @@ public class Machine {
 	}
 
 	public Machine addDataPoint(final Category category, final double... values) {
+		final DataPoint dp = createDataPoint(category, values);
+		this.addDataPoint(dp);
+		return this;
+	}
+
+	public DataPoint createDataPoint(final Category category, final double... values) {
 		final int numberOfFeatures = getNumberOfFeatures();
 		Assert.assertTrue("Must specify " + numberOfFeatures + " items as values.", values != null
 				&& values.length == numberOfFeatures);
 		final DataPoint dp = new DataPoint(numberOfFeatures);
 		dp.setCategory(category);
 		dp.setValues(values);
-		this.addDataPoint(dp);
-		return this;
+		return dp;
 	}
 
 	/**
