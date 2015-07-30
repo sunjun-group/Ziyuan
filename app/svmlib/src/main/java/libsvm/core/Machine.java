@@ -385,6 +385,8 @@ public class Machine {
 			if (difference.isEmpty()) {
 				LOGGER.debug("No more new point added in Selective Sampling.");
 				break;
+			} else {
+				LOGGER.debug(difference.size() + " more point(s) added.");
 			}
 			if (!dataPoints.isEmpty()) {
 				// Add to model
