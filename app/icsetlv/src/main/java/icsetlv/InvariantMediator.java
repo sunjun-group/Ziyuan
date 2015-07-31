@@ -80,11 +80,11 @@ public class InvariantMediator {
 			return;
 		}
 		BreakPoint bkp = bkpData.getBkp();
-		int orgLineNo = bkp.getOrgLineNo();
+		List<Integer> orgLines = bkp.getOrgLineNos();
 		StringBuilder sb = new StringBuilder();
 		sb.append("\n");
 		sb.append(String.format("***********LINE %s (debugLine: %s)*************", 
-											orgLineNo, bkp.getLineNo())); sb.append("\n");
+											orgLines, bkp.getLineNo())); sb.append("\n");
 											
 		if (CollectionUtils.isNotEmpty(msg)) {
 			sb.append(StringUtils.spaceJoin((Object[])msg)).append("\n");

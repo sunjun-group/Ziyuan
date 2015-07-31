@@ -64,8 +64,8 @@ public class BreakpointUtils {
 		return getLocationId(bkp.getClassCanonicalName(), bkp.getLineNo());
 	}
 	
-	public static String getLocationId(String classPath, int lineNo) {
-		return String.format("%s:%s", classPath.replace("/", "."), lineNo);
+	public static String getLocationId(String classNameOrPath, int lineNo) {
+		return String.format("%s:%s", classNameOrPath.replace("/", "."), lineNo);
 	}
 
 	public static <T extends ClassLocation> List<String> toLocationIds(

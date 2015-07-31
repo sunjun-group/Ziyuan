@@ -7,6 +7,12 @@
  */
 
 package sav.strategies.dto;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import sav.common.core.utils.Assert;
+import sav.common.core.utils.BreakpointUtils;
 /**
  * @author khanh
  *
@@ -16,21 +22,38 @@ package sav.strategies.dto;
  *
  */
 public class DebugLine extends BreakPoint {
-	private int orgLineNo;
+	private List<Integer> orgLines;
 	
-	public DebugLine(BreakPoint orgBreakpoint, int newLineNo){
-		super(orgBreakpoint.getClassCanonicalName(), newLineNo);
-		this.setVars(orgBreakpoint.getVars());
-		this.orgLineNo = orgBreakpoint.getLineNo();
+	public DebugLine(BreakPoint orgBkp, int newLineNo){
+		super(orgBkp.getClassCanonicalName(), newLineNo);
+		this.setVars(orgBkp.getVars());
+		this.orgLines = new ArrayList<Integer>();
+		orgLines.add(orgBkp.lineNo);
+	}
+	
+	public void put(BreakPoint orgBkp, int newLineNo) {
+		// verify breakpoint
+		Assert.assertTrue(orgBkp.classCanonicalName.equals(this.classCanonicalName), 
+				"inconsistent className.Expect ", this.classCanonicalName, "get", orgBkp.classCanonicalName);
+		orgLines.add(orgBkp.lineNo);
 	}
 
-	public int getOrgLineNo() {
-		return orgLineNo;
+	@Override
+	public List<Integer> getOrgLineNos() {
+		return orgLines;
+	}
+	
+	public List<String> getOrgBrkpIds() {
+		List<String> ids = new ArrayList<String>(orgLines.size());
+		for (Integer orgLine : orgLines) {
+			ids.add(BreakpointUtils.getLocationId(classCanonicalName, orgLine));
+		}
+		return ids;
 	}
 
 	@Override
 	public String toString() {
-		return "DebugLine [orgLineNo=" + orgLineNo
+		return "DebugLine [orgLines=" + orgLines
 				+ ", className=" + classCanonicalName + ", lineNo="
 				+ lineNo + "]";
 	}

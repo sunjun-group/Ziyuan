@@ -15,8 +15,6 @@ import japa.parser.ast.CompilationUnit;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -26,12 +24,10 @@ import main.FaultLocalization;
 import sav.common.core.Logger;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
-import sav.common.core.formula.Formula;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
-import sav.common.core.utils.StringUtils;
 import sav.strategies.IApplicationContext;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.DebugLine;
@@ -57,6 +53,7 @@ public class TzuyuCore {
 	private static final Logger<?> LOGGER = Logger.getDefaultLogger();
 	private IApplicationContext appContext;
 	private ApplicationData appData;
+	private MutanBug mutanbug;
 	
 	public TzuyuCore(IApplicationContext appContext, ApplicationData appData) {
 		this.appContext = appContext;
@@ -162,52 +159,30 @@ public class TzuyuCore {
 			LOGGER.warn("No suspect line to learn. SVM will not run.");
 		} else {
 			filter(suspectLocations, appData.getAppSrc());
-			Map<BreakPoint, Double> mapBkpToSuspeciousness = new HashMap<BreakPoint, Double>();
-			List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
-			for (LineCoverageInfo lineInfo : suspectLocations) {
-				BreakPoint bkp = BreakpointUtils.toBreakPoint(lineInfo.getLocation());
-				breakpoints.add(bkp);
-				mapBkpToSuspeciousness.put(bkp, lineInfo.getSuspiciousness());
-			}
+			LocatedLines locatedLines = new LocatedLines(suspectLocations);
 			
-			//compute variables appearing in each breakpoint
+			/* compute variables appearing in each breakpoint */
 			VariableNameCollector nameCollector = new VariableNameCollector(
 															params.getVarNameCollectionMode(),
 															appData.getAppSrc());
-			nameCollector.updateVariables(breakpoints);
-			
-			
-			MutanBug mutanbug = new MutanBug();
-			Map<DebugLine, BreakPoint> mapNewToOldBkp = getNextLineToAddBreakpoint(mutanbug, BreakpointUtils.initBrkpsMap(breakpoints));
-			
-			List<DebugLine> newBreakpoints = new ArrayList<DebugLine>(mapNewToOldBkp.keySet());
-			
+			nameCollector.updateVariables(locatedLines.getLocatedLines());
+			/*
+			 * add new debug line if needed in order to collect data of
+			 * variables at a certain line after that line is executed
+			 */
+			List<DebugLine> debugLines = getDebugLines(locatedLines.getLocatedLines());
 			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig(), params);
-			List<BkpInvariantResult> invariants = learnInvariant.learn(CollectionUtils.<BreakPoint, DebugLine>cast(newBreakpoints), 
+			List<BkpInvariantResult> invariants = learnInvariant.learn(new ArrayList<BreakPoint>(debugLines), 
 										junitClassNames, appData.getAppSrc());
 			
-			List<BugLocalizationLine> bugLines = new ArrayList<BugLocalizationLine>();
+			locatedLines.updateInvariantResult(invariants);
 			
-			for(BkpInvariantResult invariant: invariants){
-				if (!Formula.TRUE.equals(invariant.getLearnedLogic())) {
-					DebugLine debugLine = (DebugLine) invariant.getBreakPoint();
-					BreakPoint orgBkp = mapNewToOldBkp.get(debugLine);
-					double suspeciousness = mapBkpToSuspeciousness.get(orgBkp);
-					BugLocalizationLine bugLine = new BugLocalizationLine(debugLine, suspeciousness, invariant);
-					bugLines.add(bugLine);
-				}
-			}
-			Collections.sort(bugLines, new Comparator<BugLocalizationLine>() {
-
-				@Override
-				public int compare(BugLocalizationLine o1,
-						BugLocalizationLine o2) {
-					return o2.compare(o1);
-				}
-			});
 			LOGGER.info("----------------FINISHED--------------------");
-			LOGGER.info(StringUtils.join(bugLines, "\n\n"));
-			mutanbug.restoreFiles();
+			LOGGER.info(locatedLines.getDisplayResult());
+			/* clean up mutanbug */
+			if (mutanbug != null) {
+				mutanbug.restoreFiles();
+			}
 		}
 	}
 	
@@ -249,14 +224,14 @@ public class TzuyuCore {
 		return junitClassNames;
 	}
 
-	private Map<DebugLine, BreakPoint> getNextLineToAddBreakpoint(MutanBug mutanbug, 
-			Map<String, List<BreakPoint>> classLocationMap) throws SavException {
+	private List<DebugLine> getDebugLines(List<BreakPoint> locatedLines) throws SavException {
+		mutanbug = getMutanbug();
 		mutanbug.setAppData(appData);
 		mutanbug.setMutator(appContext.getMutator());
-		Map<String, DebugLineInsertionResult> mutationInfo = mutanbug
-				.mutateForMachineLearning(classLocationMap);
-		Map<DebugLine, BreakPoint> newLocations = getNewLocationAfterMutation(classLocationMap, mutationInfo);
-		return newLocations;
+		Map<String, List<BreakPoint>> brkpsMap = BreakpointUtils.initBrkpsMap(locatedLines);
+		Map<String, DebugLineInsertionResult> mutationInfo = mutanbug.mutateForMachineLearning(brkpsMap);
+		List<DebugLine> debugLines = collectDebugLines(brkpsMap, mutationInfo);
+		return debugLines;
 	}
 	
 	private void filter(List<LineCoverageInfo> lineInfos, String appSrc) {
@@ -276,20 +251,26 @@ public class TzuyuCore {
 		}
 	}
 	
-	private Map<DebugLine, BreakPoint> getNewLocationAfterMutation(Map<String, List<BreakPoint>> classLocationMap,
+	private List<DebugLine> collectDebugLines(Map<String, List<BreakPoint>> classLocationMap,
 			Map<String, DebugLineInsertionResult> mutationInfo) {
-		Map<DebugLine, BreakPoint> result = new HashMap<DebugLine, BreakPoint>();
+		List<DebugLine> debugLines = new ArrayList<DebugLine>();
 		for (String className : classLocationMap.keySet()) {
 			DebugLineInsertionResult lineInfo = mutationInfo.get(className);
 			Map<Integer, Integer> lineToNextLine = lineInfo.getOldNewLocMap();
 			List<BreakPoint> bkpsInClass = classLocationMap.get(className);
 			for(BreakPoint location: bkpsInClass){
 				Integer newLineNo = lineToNextLine.get(location.getLineNo());
-				DebugLine newBreakPoint = new DebugLine(location, newLineNo);
-				result.put(newBreakPoint, location);
+				DebugLine debugLine = new DebugLine(location, newLineNo);
+				debugLines.add(debugLine);
 			}
 		}
-		return result;
+		return debugLines;
 	}
 
+	private MutanBug getMutanbug() {
+		if (mutanbug == null) {
+			mutanbug = new MutanBug();
+		}
+		return mutanbug;
+	}
 }

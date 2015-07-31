@@ -9,6 +9,7 @@
 package sav.strategies.dto;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import sav.common.core.Constants;
@@ -75,8 +76,8 @@ public class BreakPoint extends ClassLocation {
 		this.charEnd = charEnd;
 	}
 	
-	public int getOrgLineNo() {
-		return getLineNo();
+	public List<Integer> getOrgLineNos() {
+		return Arrays.asList(lineNo);
 	}
 
 	@Override

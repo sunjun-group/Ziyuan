@@ -18,12 +18,14 @@ import sav.strategies.dto.DebugLine;
  *
  */
 public class BugLocalizationLine {
-
+	private int orgLine;
 	private DebugLine breakpoint;
 	private double suspiciousness;
 	private BkpInvariantResult learningResult;
 	
-	public BugLocalizationLine(DebugLine breakPoint, double suspiciousness, BkpInvariantResult invariant){
+	public BugLocalizationLine(int orgLine, DebugLine breakPoint,
+			double suspiciousness, BkpInvariantResult invariant) {
+		this.orgLine = orgLine;
 		this.breakpoint = breakPoint;
 		this.suspiciousness = suspiciousness;
 		this.learningResult = invariant;
@@ -48,9 +50,11 @@ public class BugLocalizationLine {
 				return 1;
 			}
 		}
-		if (suspiciousnessComp == 0) {
-			return Integer.compare(o.getBreakpoint().getLineNo(),
-							this.getBreakpoint().getLineNo());
+		if (suspiciousnessComp == 0
+				&& breakpoint.getClassCanonicalName().equals(
+						o.breakpoint.getClassCanonicalName())) {
+			return Integer.valueOf(o.orgLine).compareTo(
+					Integer.valueOf(this.orgLine));
 		}
 		return suspiciousnessComp;
 	}
@@ -63,7 +67,7 @@ public class BugLocalizationLine {
 	public String toString() {
 		final StringBuilder str = new StringBuilder();
 		str.append(breakpoint.getClassCanonicalName()).append(":")
-				.append(breakpoint.getOrgLineNo())
+				.append(orgLine)
 				.append(" (debugLine: ")
 				.append(breakpoint.getLineNo()).append(")\n");
 		str.append("suspiciousness: " + String.format("%.2f", suspiciousness) + "\n");
