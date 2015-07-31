@@ -50,8 +50,7 @@ public class ClassUtils {
 						.append(targetPath)
 						.append(Constants.FILE_SEPARATOR)
 						.append(replaceDotWithFileSeparator(className))
-						.append(Constants.DOT)
-						.append(Constants.CLASS_EXT)
+						.append(Constants.CLASS_EXT_WITH_DOT)
 						.toString();
 	}
 	
@@ -68,12 +67,18 @@ public class ClassUtils {
 								.toString();
 		@SuppressWarnings("unchecked")
 		Collection<File> files = FileUtils.listFiles(new File(classFolder), 
-				new WildcardFileFilter(classSimpleName + "*.class"), null);
+				new WildcardFileFilter(
+						new String[]{getClassFileName(classSimpleName),
+								getClassFileName(classSimpleName + "$*")}), null);
 		return new ArrayList<File>(files);
 	}
 	
 	private static String replaceDotWithFileSeparator(String str) {
 		return str.replace(Constants.DOT, Constants.FILE_SEPARATOR);
+	}
+	
+	public static String getClassFileName(String classSimpleName) {
+		return classSimpleName + Constants.CLASS_EXT_WITH_DOT;
 	}
 	
 	public static String getSimpleName(String className) {

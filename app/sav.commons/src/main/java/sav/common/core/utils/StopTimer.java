@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 import sav.common.core.Logger;
 
@@ -64,13 +65,27 @@ public class StopTimer {
 		lines.add(getExecutionTime(lastEntry, currentTimeMillis));
 		long overall = currentTimeMillis - stopTimes.firstKey().longValue();
 		lines.add(new StringBuilder(module).append(" ").append("Overall: ")
-				.append(overall).append(" ms").toString());
+				.append(getTimeString(overall)).toString());
 		return lines;
 	}
     
 	private String getExecutionTime(Entry<Long, String> entry, long endTime) {
 		long diff = endTime - entry.getKey().longValue();
 		return new StringBuilder(module).append(" - ").append(entry.getValue())
-				.append(": ").append(diff).append(" ms").toString();
+				.append(": ").append(getTimeString(diff)).toString();
+	}
+
+	private String getTimeString(long diff) {
+		TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+		long diffSec = timeUnit.toSeconds(diff);
+		long diffMin = timeUnit.toMinutes(diff);
+		StringBuilder sb = new StringBuilder();
+		sb.append(diff).append(" ms");
+		if (diffMin > 1) {
+			sb.append("(").append(diffMin).append("m").append(")");
+		} else if (diffSec > 1) {
+			sb.append("(").append(diffSec).append("s").append(")");
+		}
+		return sb.toString();
 	}
 }

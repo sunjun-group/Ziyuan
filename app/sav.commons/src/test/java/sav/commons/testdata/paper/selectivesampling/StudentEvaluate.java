@@ -27,6 +27,13 @@ public class StudentEvaluate {
 
 		assert (cathy.standardScore <= 100);
 	}
+	
+	public static void lalala (Student s1, Student s2, Student s3) {
+		Student[] list = new Student[]{s1,s2,s3};
+		standardize(list);
+		
+		assert(s3.standardScore <= 100);
+	}
 
 	private static void standardize(Student[] students) {
 		int max = Integer.MIN_VALUE;
@@ -41,15 +48,16 @@ public class StudentEvaluate {
 			stu.standardScore = Math.sqrt((100 - max) + stu.score) * 10;
 		}
 	}
-}
-
-class Student {
-	int score;
-	int ID;
-	double standardScore;
-
-	public Student(int id, int s) {
-		ID = id;
-		score = s;
+	
+	public static class Student {
+		int score;
+		int ID;
+		double standardScore;
+		
+		public Student(int id, int s) {
+			ID = id;
+			score = s;
+		}
 	}
 }
+

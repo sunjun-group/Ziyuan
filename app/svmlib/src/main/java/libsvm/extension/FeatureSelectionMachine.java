@@ -25,7 +25,7 @@ public class FeatureSelectionMachine extends Machine {
 		int toSelect = 0;
 		final int features = getNumberOfFeatures();
 		
-		outerLoop: while (toSelect <= MAX_FEATURE && toSelect < features) {
+		outerLoop: while (toSelect < MAX_FEATURE && toSelect < features) {
 			toSelect++;
 
 			// Select the features to train
@@ -68,6 +68,7 @@ public class FeatureSelectionMachine extends Machine {
 						}
 						str.append(label);
 					}
+					LOGGER.debug("");
 					LOGGER.debug("Training with features: [" + str.toString() + "].");
 					LOGGER.debug("Learned logic: " + learnedLogic);
 					LOGGER.debug("Accuracy: " + accuracy);

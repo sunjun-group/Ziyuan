@@ -53,6 +53,9 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 			Map<String, JdiParam> modificationMap = getInstrMap(var, jdiParam);
 			for (String varId : modificationMap.keySet()) {
 				JdiParam param = modificationMap.get(varId);
+				if (param == null) {
+					continue;
+				}
 				Object newVal = instVals.get(varId);
 				switch (param.getType()) {
 				case ARRAY_ELEMENT:

@@ -116,9 +116,10 @@ public class DebugValueExtractor {
 							}
 						}
 					}
-
+					
+					JdiParam param = null;
 					if (match != null) {
-						allVariables.put(bpVar, recursiveMatch(frame, match, bpVar.getFullName()));
+						param = recursiveMatch(frame, match, bpVar.getFullName());
 					} else {
 						// Then check class fields (static & non static)
 						Field matchedField = null;
@@ -130,7 +131,6 @@ public class DebugValueExtractor {
 						}
 
 						if (matchedField != null) {
-							JdiParam param;
 							if (matchedField.isStatic()) {
 								param = JdiParam.staticField(matchedField, refType, refType.getValue(matchedField));
 							} else {
@@ -139,8 +139,10 @@ public class DebugValueExtractor {
 							if (param.getValue() != null && !matchedField.name().equals(bpVar.getFullName())) {
 								param = recursiveMatch(param, extractSubProperty(bpVar.getFullName()));
 							}
-							allVariables.put(bpVar, param);
 						}
+					}
+					if (param != null) {
+						allVariables.put(bpVar, param);
 					}
 				}
 
@@ -188,7 +190,11 @@ public class DebugValueExtractor {
 			return param;
 		}
 		Value value = param.getValue();
-		JdiParam subParam = param;
+		if (value == null) {
+			// cannot get property for a null object
+			return null;
+		}
+		JdiParam subParam = null;
 		String subProperty = null;
 		// NOTE: must check Array before Object because ArrayReferenceImpl
 		// implements both ArrayReference and ObjectReference (by extending

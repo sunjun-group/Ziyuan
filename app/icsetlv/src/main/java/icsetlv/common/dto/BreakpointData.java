@@ -10,7 +10,9 @@ package icsetlv.common.dto;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import libsvm.core.Category;
 import libsvm.core.Machine.DataPoint;
@@ -50,7 +52,7 @@ public class BreakpointData {
 	}
 
 	public List<DataPoint> toDatapoints(List<String> labels) {
-		List<DataPoint> datapoints = new ArrayList<DataPoint>();
+		Set<DataPoint> datapoints = new HashSet<DataPoint>();
 		for (BreakpointValue bValue : passValues) {
 			datapoints.add(toDataPoint(labels, bValue, Category.POSITIVE));
 		}
@@ -58,7 +60,7 @@ public class BreakpointData {
 		for (BreakpointValue bValue : failValues) {
 			datapoints.add(toDataPoint(labels, bValue, Category.NEGATIVE));
 		}
-		return datapoints;
+		return new ArrayList<DataPoint>(datapoints);
 	}
 	
 	private DataPoint toDataPoint(List<String> labels, BreakpointValue bValue,

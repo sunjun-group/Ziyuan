@@ -30,6 +30,7 @@ import sav.common.core.formula.Formula;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.StopTimer;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.IApplicationContext;
 import sav.strategies.dto.BreakPoint;
@@ -92,13 +93,18 @@ public class TzuyuCore {
 
 	public void faultLocate(FaultLocateParams params)
 			throws Exception {
+		StopTimer timer = new StopTimer("FaultLocate");
+		timer.newPoint("computing suspiciousness");
 		FaultLocalizationReport report = computeSuspiciousness(params);
 		if (params.isMutationEnable()) {
+			timer.newPoint("mutation");
 			mutation(report, params.getJunitClassNames(), params.getRankToExamine());
 		}
 		if (params.isMachineLearningEnable()) {
+			timer.newPoint("machine learning");
 			machineLearning(report, params);
 		}
+		timer.logResults(LOGGER);
 	}
 
 	protected FaultLocalizationReport computeSuspiciousness(FaultLocateParams params) throws Exception {

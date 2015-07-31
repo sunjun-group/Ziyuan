@@ -19,6 +19,7 @@ import sav.commons.testdata.paper.TestClass;
 import sav.commons.testdata.paper.Tests;
 import sav.commons.testdata.paper.selectivesampling.StudentEvaluate;
 import sav.commons.testdata.paper.selectivesampling.StudentEvaluateTest;
+import sav.commons.testdata.paper.selectivesampling.StudentEvaluateTest2;
 
 /**
  * @author khanh
@@ -37,13 +38,25 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 	}
 	
 	@Test
+	public void testStudentEvaluate2() throws Exception {
+		List<String> junitClassNames = new ArrayList<String>();
+		junitClassNames.add(StudentEvaluateTest2.class.getName());
+		FaultLocateParams params = initFaultLocateParams(StudentEvaluate.class.getName(), "lalala", null,
+				null, junitClassNames, false);
+		params.setRunMutation(false);
+		params.setGenTest(false);
+		params.setValueRetrieveLevel(4);
+		app.faultLocate(params);
+	}
+	
+	@Test
 	public void testStudentEvaluate() throws Exception {
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add(StudentEvaluateTest.class.getName());
 		FaultLocateParams params = initFaultLocateParams(StudentEvaluate.class.getName(), "evaluate", null,
 				null, junitClassNames, false);
 		params.setRunMutation(false);
-//		params.setGenTest(false);
+		params.setGenTest(true);
 		params.setValueRetrieveLevel(4);
 		app.faultLocate(params);
 	}
