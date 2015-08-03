@@ -24,6 +24,10 @@ import sav.common.core.utils.BreakpointUtils;
 public class DebugLine extends BreakPoint {
 	private List<Integer> orgLines;
 	
+	protected DebugLine(String className, int lineNo){
+		super(className, lineNo);
+	}
+	
 	public DebugLine(BreakPoint orgBkp, int newLineNo){
 		super(orgBkp.getClassCanonicalName(), newLineNo);
 		this.setVars(orgBkp.getVars());
@@ -50,12 +54,26 @@ public class DebugLine extends BreakPoint {
 		}
 		return ids;
 	}
+	
+	public void addOrgLineNo(int lineNo) {
+		orgLines.add(lineNo);
+	}
 
 	@Override
 	public String toString() {
-		return "DebugLine [orgLines=" + orgLines
-				+ ", className=" + classCanonicalName + ", lineNo="
-				+ lineNo + "]";
+		return "DebugLine [orgLines=" + orgLines + ", vars=" + vars + ", id="
+				+ id + "]";
 	}
-	
+
+	public void addOrgLineNos(List<Integer> newLines) {
+		this.orgLines.addAll(newLines);
+	}
+
+	@Override
+	public DebugLine clone() {
+		DebugLine debugLine = new DebugLine(classCanonicalName, lineNo);
+		debugLine.orgLines = new ArrayList<Integer>(orgLines);
+		debugLine.vars = new ArrayList<Variable>(vars);
+		return debugLine;
+	}
 }

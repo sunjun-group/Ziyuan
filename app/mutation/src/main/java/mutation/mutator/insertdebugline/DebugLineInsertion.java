@@ -24,6 +24,7 @@ import japa.parser.ast.stmt.AssertStmt;
 import japa.parser.ast.stmt.ExpressionStmt;
 import japa.parser.ast.stmt.ForStmt;
 import japa.parser.ast.stmt.ForeachStmt;
+import japa.parser.ast.stmt.IfStmt;
 import japa.parser.ast.stmt.ReturnStmt;
 import japa.parser.ast.stmt.Statement;
 import japa.parser.ast.stmt.WhileStmt;
@@ -127,7 +128,7 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 	
 	private Statement genDummyStmt(int nodeBeginLine) {
 		AssertStmt newStmt = assertNotNullStmt(expression(""));
-		newStmt.setBeginLine(nodeBeginLine + 1);
+		newStmt.setBeginLine(nodeBeginLine);
 		return newStmt;
 	}
 
@@ -200,11 +201,27 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 	 */
 	@Override
 	public boolean mutate(ExpressionStmt n) {
-		int newLoc = n.getEndLine();
-		if (MOVE_BKP_OUT_OF_THE_LOOP && !curLoopBlks.isEmpty()) {
-			newLoc = curLoopBlks.getLast().getEndLine();
+		int newLoc = n.getEndLine() + 1;
+		if (shouldMoveBkpOutOfTheLoop()) {
+			newLoc = getBkpLocAfterCurrentLoop();
 		}
 		insertMap.put(getCurrentLocation(n), newLoc);
+		return false;
+	}
+
+	private int getBkpLocAfterCurrentLoop() {
+		return curLoopBlks.getLast().getEndLine();
+	}
+
+	private boolean shouldMoveBkpOutOfTheLoop() {
+		return MOVE_BKP_OUT_OF_THE_LOOP && !curLoopBlks.isEmpty();
+	}
+	
+	@Override
+	public boolean mutate(IfStmt n) {
+		if (shouldMoveBkpOutOfTheLoop()) {
+			insertMap.put(getCurrentLocation(n), getBkpLocAfterCurrentLoop());
+		}
 		return false;
 	}
 
@@ -235,10 +252,6 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 				LiteralExpr.class, NameExpr.class, ThisExpr.class);
 	}
 
-	/**
-	 * TODO: generate and check if the name already existed in current scope.
-	 * it's the job of classDesc
-	 */
 	private String generateNewVarName() {
 		return "tzTemVar" + curTempVarIdx++;
 	}

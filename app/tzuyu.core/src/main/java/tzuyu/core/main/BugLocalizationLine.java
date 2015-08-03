@@ -10,6 +10,7 @@ package tzuyu.core.main;
 
 import icsetlv.common.dto.BkpInvariantResult;
 import sav.common.core.formula.Formula;
+import sav.common.core.utils.ObjectUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.DebugLine;
 
@@ -53,8 +54,7 @@ public class BugLocalizationLine {
 		if (suspiciousnessComp == 0
 				&& breakpoint.getClassCanonicalName().equals(
 						o.breakpoint.getClassCanonicalName())) {
-			return Integer.valueOf(o.orgLine).compareTo(
-					Integer.valueOf(this.orgLine));
+			return ObjectUtils.compare(o.orgLine, this.orgLine);
 		}
 		return suspiciousnessComp;
 	}

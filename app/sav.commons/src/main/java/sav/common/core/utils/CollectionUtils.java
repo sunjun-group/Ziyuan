@@ -220,4 +220,23 @@ public class CollectionUtils {
 	public static <E, F extends E>List<E> cast(List<F> from) {
 		return (List<E>) from;
 	}
+
+	/**
+	 * check equal without caring about the order.
+	 */
+	public static <T> boolean isEqualList(List<T> list1, List<T> list2) {
+		if (list1 == list2) {
+			return true;
+		}
+		if (list1 == null || list2 == null || list1.size() != list2.size()) {
+			return false;
+		}
+		for (T obj1 : list1) {
+			if (!list2.contains(obj1)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 }

@@ -170,7 +170,7 @@ public class TzuyuCore {
 			// Select from suspectLocations to monitor
 			final List<LineCoverageInfo> selectedLocations = selectLinesByGrouping(suspectLocations);
 
-			/* compute variables appearing in each breakpoint */
+			/* compute variables appearing at each breakpoint */
 			VariableNameCollector nameCollector = new VariableNameCollector(
 					params.getVarNameCollectionMode(), appData.getAppSrc());
 			LocatedLines locatedLines = new LocatedLines(selectedLocations);
@@ -180,6 +180,8 @@ public class TzuyuCore {
 			 * variables at a certain line after that line is executed
 			 */
 			List<DebugLine> debugLines = getDebugLines(locatedLines.getLocatedLines());
+			DebugLinePreProcessor preProcessor = new DebugLinePreProcessor();
+			debugLines = preProcessor.preProcess(debugLines);
 			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig(), params);
 			List<BkpInvariantResult> invariants = learnInvariant.learn(new ArrayList<BreakPoint>(debugLines), 
 										junitClassNames, appData.getAppSrc());

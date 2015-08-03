@@ -10,10 +10,8 @@ package icsetlv;
 
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
-import icsetlv.common.exception.IcsetlvException;
 import icsetlv.variable.TestcasesExecutor;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +20,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sav.common.core.Constants;
-import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.commons.AbstractTest;
@@ -33,9 +30,6 @@ import sav.strategies.dto.BreakPoint.Variable.VarScope;
 import sav.strategies.vm.VMConfiguration;
 import testdata.testcasesexecutor.test1.TcExSum;
 import testdata.testcasesexecutor.test1.TcExSumTest;
-
-import com.sun.jdi.AbsentInformationException;
-import com.sun.jdi.IncompatibleThreadStateException;
 
 /**
  * @author LLT
@@ -54,9 +48,7 @@ public class TestcasesExecutorTest extends AbstractTest {
 	}
 
 	@Test
-	public void testExecute() throws IOException, InterruptedException,
-			IncompatibleThreadStateException, AbsentInformationException,
-			IcsetlvException, SavException, ClassNotFoundException {
+	public void testExecute() throws Exception {
 		// breakpoints
 		List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
 		String clazz = TcExSum.class.getName();

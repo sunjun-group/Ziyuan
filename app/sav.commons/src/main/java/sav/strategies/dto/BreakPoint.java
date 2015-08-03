@@ -21,7 +21,7 @@ import sav.common.core.utils.StringUtils;
  * 
  */
 public class BreakPoint extends ClassLocation {
-	private List<Variable> vars;
+	protected List<Variable> vars;
 	private int charStart;
 	private int charEnd;
 	
