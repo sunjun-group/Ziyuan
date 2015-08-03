@@ -13,7 +13,7 @@ public class FeatureSelectionMachine extends Machine {
 	private static final Logger LOGGER = Logger.getLogger(FeatureSelectionMachine.class);
 	private static final int MAX_FEATURE = 3;
 	private Machine machine; // The machine used for learning, can be null
-	
+
 	@Override
 	public Machine resetData() {
 		this.machine = null;
@@ -24,11 +24,12 @@ public class FeatureSelectionMachine extends Machine {
 	protected Machine train(final List<DataPoint> dataPoints) {
 		int toSelect = 0;
 		final int features = getNumberOfFeatures();
-		
+
 		outerLoop: while (toSelect < MAX_FEATURE && toSelect < features) {
 			toSelect++;
 
 			// Select the features to train
+			debug("Select " + toSelect + " feature(s) to train.");
 			final int[] selection = new int[toSelect];
 			for (int i = 0; i < toSelect; i++) {
 				selection[i] = i;
@@ -60,25 +61,26 @@ public class FeatureSelectionMachine extends Machine {
 				final String learnedLogic = machine.getLearnedLogic(false);
 				final double accuracy = machine.getModelAccuracy();
 
-				if (LOGGER.isDebugEnabled()) {
-					final StringBuilder str = new StringBuilder();
-					for (String label : labels) {
-						if (str.length() > 0) {
-							str.append(", ");
-						}
-						str.append(label);
+				final StringBuilder str = new StringBuilder();
+				for (String label : labels) {
+					if (str.length() > 0) {
+						str.append(", ");
 					}
-					LOGGER.debug("");
-					LOGGER.debug("Training with features: [" + str.toString() + "].");
-					LOGGER.debug("Learned logic: " + learnedLogic);
-					LOGGER.debug("Accuracy: " + accuracy);
+					str.append(label);
 				}
+				debug("Training with features: [" + str.toString() + "].");
+				debug("Learned logic: " + learnedLogic);
+				debug("Accuracy: " + accuracy);
 				// We only run selective sampling after we found an "interesting" logic
 				// I.e.: we will try to "tune" the logic then
 				if (Double.compare(accuracy, 1.0) >= 0) {
+					debug("Trying to improve the learned logic using Selective Sampling.");
 					if (machine.selectiveSampling()) {
+						debug("Selective Sampling finished successfully. The learning process will stop.");
 						this.machine = machine;
 						break outerLoop;
+					} else {
+						debug("Selective Sampling failed to improve the learned logic.");
 					}
 				}
 
@@ -103,12 +105,18 @@ public class FeatureSelectionMachine extends Machine {
 		return this;
 	}
 
+	private static void debug(final String debugInfo) {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(debugInfo);
+		}
+	}
+
 	private Machine createNewMachine(final List<String> labels) {
 		Machine machine = new Machine().setDataLabels(labels).setParameter(getParameter());
 		machine.setSelectiveSamplingHandler(this.getSelectiveSamplingHandler());
 		return machine;
 	}
-	
+
 	@Override
 	public Model getModel() {
 		return this.machine == null ? super.getModel() : this.machine.getModel();
