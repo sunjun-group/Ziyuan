@@ -30,6 +30,7 @@ import japa.parser.ast.stmt.Statement;
 import japa.parser.ast.stmt.WhileStmt;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -43,6 +44,7 @@ import mutation.io.DebugLineFileWriter;
 import mutation.mutator.AbstractMutationVisitor;
 import mutation.parser.ClassDescriptor;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.ObjectUtils;
 import sav.strategies.mutanbug.DebugLineInsertionResult;
 
 /**
@@ -74,18 +76,13 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 		cu.accept(this, true);
 		// collect data
 		List<DebugLineData> data = new ArrayList<DebugLineData>();
-		for (Entry<Integer, Integer> entry : insertMap.entrySet()) {
-			Statement newStmt = genDummyStmt(entry.getValue());
-			data.add(new AddedLineData(entry.getKey(), newStmt));
-		}
+		data.addAll(buildAddedLineData());
 		data.addAll(returnStmts.values());
 		Collections.sort(data, new Comparator<DebugLineData>() {
 
 			@Override
 			public int compare(DebugLineData o1, DebugLineData o2) {
-				int val1 = o1.getLineNo();
-				int anotherVal = o2.getLineNo();
-				return (val1 < anotherVal ? -1 : (val1 == anotherVal ? 0 : 1));
+				return ObjectUtils.compare(o1.getLastOrgLine(), o2.getLastOrgLine());
 			}
 
 		});
@@ -102,11 +99,31 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 		return result;
 	}
 
+	private Collection<? extends DebugLineData> buildAddedLineData() {
+		/* map between added statement begin line and generated addedLineData */
+		Map<Integer, AddedLineData> dataMap = new HashMap<Integer, AddedLineData>();
+		for (Entry<Integer, Integer> entry : insertMap.entrySet()) {
+			Integer newLoc = entry.getValue();
+			Integer orgLoc = entry.getKey();
+			AddedLineData addedLine = dataMap.get(newLoc);
+			if (addedLine == null) {
+				Statement newStmt = genDummyStmt(newLoc);
+				addedLine = new AddedLineData(orgLoc, newStmt);
+				dataMap.put(newLoc, addedLine);
+			} else {
+				addedLine.addOrgLine(orgLoc);
+			}
+		}
+		return dataMap.values();
+	}
+
 	private Map<Integer, DebugLineData> buildMapMutatedLineNumberToLineData(
 			List<DebugLineData> data) {
 		Map<Integer, DebugLineData> mutatedLines = new HashMap<Integer, DebugLineData>();
 		for (DebugLineData debugLine : data) {
-			mutatedLines.put(debugLine.getLineNo(), debugLine);
+			for (int orgLine : debugLine.getOrgLines()) {
+				mutatedLines.put(orgLine, debugLine);
+			}
 		}
 		return mutatedLines;
 	}
@@ -131,6 +148,9 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 		newStmt.setBeginLine(nodeBeginLine);
 		return newStmt;
 	}
+	
+	
+	
 
 	/*
 	 * visitor part
@@ -201,40 +221,49 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 	 */
 	@Override
 	public boolean mutate(ExpressionStmt n) {
-		int newLoc = n.getEndLine() + 1;
-		if (shouldMoveBkpOutOfTheLoop()) {
-			newLoc = getBkpLocAfterCurrentLoop();
+		if (!moveBkpOutOfTheLoop(n)) {
+			int newLoc = getInsertLoc(n);
+			insertMap.put(getCurrentLocation(n), newLoc);
 		}
-		insertMap.put(getCurrentLocation(n), newLoc);
 		return false;
 	}
 
 	private int getBkpLocAfterCurrentLoop() {
-		return curLoopBlks.getLast().getEndLine();
+		return getInsertLoc(curLoopBlks.getLast());
+	}
+	
+	private int getInsertLoc(Node node) {
+		return node.getEndLine() + 1;
 	}
 
-	private boolean shouldMoveBkpOutOfTheLoop() {
-		return MOVE_BKP_OUT_OF_THE_LOOP && !curLoopBlks.isEmpty();
+	private boolean moveBkpOutOfTheLoop(Node n) {
+		boolean shouldMoveBkpOutOfTheLoop = MOVE_BKP_OUT_OF_THE_LOOP && !curLoopBlks.isEmpty();
+		if (shouldMoveBkpOutOfTheLoop) {
+			insertMap.put(getCurrentLocation(n), getBkpLocAfterCurrentLoop());
+		}
+		return shouldMoveBkpOutOfTheLoop;
 	}
 	
 	@Override
 	public boolean mutate(IfStmt n) {
-		if (shouldMoveBkpOutOfTheLoop()) {
-			insertMap.put(getCurrentLocation(n), getBkpLocAfterCurrentLoop());
-		}
-		return false;
+		moveBkpOutOfTheLoop(n.getCondition());
+		return true;
 	}
-
+	
 	private Integer getCurrentLocation(Node n) {
 		return n.getBeginLine();
 	}
 
 	@Override
 	public boolean mutate(ReturnStmt n) {
+		if (moveBkpOutOfTheLoop(n)) {
+			return false;
+		}
+
 		if (!doesReturnStmtNeedMutate(n.getExpr())){
 			return false;
 		}
-			
+		
 		List<Node> newNodes = new ArrayList<Node>();
 		String newVarName = generateNewVarName();
 		newNodes.add(declarationStmt(curMethod.getType(), newVarName, 

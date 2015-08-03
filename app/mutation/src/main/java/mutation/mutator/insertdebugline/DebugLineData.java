@@ -8,7 +8,10 @@
 
 package mutation.mutator.insertdebugline;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import sav.common.core.utils.CollectionUtils;
 
 import japa.parser.ast.Node;
 
@@ -17,11 +20,16 @@ import japa.parser.ast.Node;
  * 
  */
 public abstract class DebugLineData {
-	private int lineNo;
+	private List<Integer> orgLines;
 	private int debugLine;
+	
+	public DebugLineData() {
+		this.orgLines = new ArrayList<Integer>();
+	}
 
 	public DebugLineData(int lineNo) {
-		this.lineNo = lineNo;
+		this();
+		orgLines.add(lineNo);
 	}
 
 	public abstract InsertType getInsertType() ;
@@ -34,8 +42,12 @@ public abstract class DebugLineData {
 		this.debugLine = debugLine;
 	}
 	
-	public int getLineNo() {
-		return lineNo;
+	public void addOrgLine(int orgLine) {
+		orgLines.add(orgLine);
+	}
+	
+	public int getLastOrgLine() {
+		return CollectionUtils.getLast(orgLines);
 	}
 
 	public Node getInsertNode() {
@@ -53,14 +65,17 @@ public abstract class DebugLineData {
 		throw new UnsupportedOperationException();
 	}
 
+	public List<Integer> getOrgLines() {
+		return orgLines;
+	}
+	
 	public static enum InsertType {
 		ADD, REPLACE
 	}
 
 	@Override
 	public String toString() {
-		return "DebugLineData [lineNo=" + lineNo + ", debugLine=" + debugLine
+		return "DebugLineData [lineNo=" + orgLines + ", debugLine=" + debugLine
 				+ "]";
 	}
-	
 }

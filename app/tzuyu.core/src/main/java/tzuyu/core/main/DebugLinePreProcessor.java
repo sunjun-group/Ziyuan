@@ -53,16 +53,16 @@ public class DebugLinePreProcessor {
 	/**
 	 * debugLines are in the same class.
 	 * 2 debug lines are considered to be duplicate if
-	 * they are continuous and have same variables. 
+	 * they point to the same line. 
 	 * 
 	 */
 	private List<DebugLine> joinDuplicatedLines(List<DebugLine> debugLines) {
 		List<DebugLine> result = new ArrayList<DebugLine>(debugLines.size());
 		int i = 0;
 		while (i < debugLines.size()) {
-			DebugLine linei = debugLines.get(i);
+			DebugLine lineI = debugLines.get(i);
 			int j = i + 1;
-			DebugLine curLine = linei;
+			DebugLine curLine = lineI;
 			while (j < debugLines.size()) {
 				DebugLine nextLine = debugLines.get(j);
 				if (isDuplicate(curLine, nextLine)) {
@@ -70,18 +70,18 @@ public class DebugLinePreProcessor {
 					 * if first duplicate found, clone the debugline in order to 
 					 * modify orgLines and variables without make the original debugline obj dirty
 					 *  */
-					if (curLine == linei) {
-						linei = linei.clone();
+					if (curLine == lineI) {
+						lineI = lineI.clone();
 					}
-					linei.setVars(getNewVarsOfDuplicateLines(linei, nextLine));
-					linei.addOrgLineNos(nextLine.getOrgLineNos());
+					lineI.setVars(getNewVarsOfDuplicateLines(lineI, nextLine));
+					lineI.addOrgLineNos(nextLine.getOrgLineNos());
 					curLine = nextLine;
 					j++;
 				} else {
 					break;
 				}
 			}
-			result.add(linei);
+			result.add(lineI);
 			i = j;
 		}
 		return result;
@@ -94,7 +94,7 @@ public class DebugLinePreProcessor {
 	}
 
 	private boolean isDuplicate(DebugLine curLine, DebugLine nextLine) {
-		return nextLine.getLineNo() - curLine.getLineNo() == 1;
+		return nextLine.getLineNo() == curLine.getLineNo();
 	}
 	
 	/**

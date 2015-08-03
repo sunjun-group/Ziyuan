@@ -66,6 +66,8 @@ public class DebugLineInsertionTest {
 	
 	@Test
 	public void testLineInsideLoop() {
-		DebugLineInsertionResult result = runTestInsertion(27, 28, 34, 35);
+		DebugLineInsertionResult result = runTestInsertion(27, 28, 29, 34, 35);
+		System.out.println(result.getOldNewLocMap().toString());
+		Assert.assertEquals("{34=39, 35=39, 27=31, 29=31, 28=31}", result.getOldNewLocMap().toString());
 	}
 }

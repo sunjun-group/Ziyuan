@@ -180,8 +180,8 @@ public class TzuyuCore {
 			 * variables at a certain line after that line is executed
 			 */
 			List<DebugLine> debugLines = getDebugLines(locatedLines.getLocatedLines());
-//			DebugLinePreProcessor preProcessor = new DebugLinePreProcessor();
-//			debugLines = preProcessor.preProcess(debugLines);
+			DebugLinePreProcessor preProcessor = new DebugLinePreProcessor();
+			debugLines = preProcessor.preProcess(debugLines);
 			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig(), params);
 			List<BkpInvariantResult> invariants = learnInvariant.learn(new ArrayList<BreakPoint>(debugLines), 
 										junitClassNames, appData.getAppSrc());
