@@ -15,12 +15,17 @@ import japa.parser.ast.CompilationUnit;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import main.FaultLocalization;
+
+import org.apache.commons.lang.builder.CompareToBuilder;
+
 import sav.common.core.Logger;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
@@ -30,6 +35,7 @@ import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.strategies.IApplicationContext;
 import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.ClassLocation;
 import sav.strategies.dto.DebugLine;
 import sav.strategies.mutanbug.DebugLineInsertionResult;
 import tzuyu.core.inject.ApplicationData;
@@ -152,19 +158,22 @@ public class TzuyuCore {
 				}
 			}
 		}
-		
-		List<LineCoverageInfo> suspectLocations = report.getFirstRanks(params.getRankToExamine());
-		
+
+		final List<LineCoverageInfo> suspectLocations = report.getFirstRanks(params
+				.getRankToExamine());
+
 		if (CollectionUtils.isEmpty(suspectLocations)) {
 			LOGGER.warn("No suspect line to learn. SVM will not run.");
 		} else {
 			filter(suspectLocations, appData.getAppSrc());
-			LocatedLines locatedLines = new LocatedLines(suspectLocations);
-			
+
+			// Select from suspectLocations to monitor
+			final List<LineCoverageInfo> selectedLocations = selectLinesByGrouping(suspectLocations);
+
 			/* compute variables appearing in each breakpoint */
 			VariableNameCollector nameCollector = new VariableNameCollector(
-															params.getVarNameCollectionMode(),
-															appData.getAppSrc());
+					params.getVarNameCollectionMode(), appData.getAppSrc());
+			LocatedLines locatedLines = new LocatedLines(selectedLocations);
 			nameCollector.updateVariables(locatedLines.getLocatedLines());
 			/*
 			 * add new debug line if needed in order to collect data of
@@ -185,7 +194,66 @@ public class TzuyuCore {
 			}
 		}
 	}
-	
+
+	private List<LineCoverageInfo> selectLinesByGrouping(
+			final List<LineCoverageInfo> suspectLocations) {
+		if (suspectLocations == null || suspectLocations.size() == 0) {
+			return new ArrayList<LineCoverageInfo>(0);
+		}
+
+		List<LineCoverageInfo> lines = new ArrayList<LineCoverageInfo>(suspectLocations.size());
+
+		// Sort the lines based on its location in a class
+		Collections.sort(suspectLocations, new Comparator<LineCoverageInfo>() {
+			@Override
+			public int compare(LineCoverageInfo l1, LineCoverageInfo l2) {
+				final ClassLocation location1 = l1.getLocation();
+				final ClassLocation location2 = l2.getLocation();
+				return new CompareToBuilder()
+						.append(location1.getClassCanonicalName(),
+								location2.getClassCanonicalName())
+						.append(location1.getLineNo(), location2.getLineNo()).toComparison();
+			}
+		});
+
+		LineCoverageInfo groupStart = null;
+		LineCoverageInfo groupEnd = null;
+		LineCoverageInfo lastLine = null;
+		final Iterator<LineCoverageInfo> iterator = suspectLocations.iterator();
+
+		while (iterator.hasNext()) {
+			final LineCoverageInfo line = iterator.next();
+			if (groupStart == null) {
+				groupStart = line;
+				groupEnd = line;
+			} else {
+				final ClassLocation lastLocation = lastLine.getLocation();
+				final ClassLocation lineLocation = line.getLocation();
+				if (lastLocation.getClassCanonicalName().equals(
+						lineLocation.getClassCanonicalName())
+						&& lineLocation.getLineNo() - lastLocation.getLineNo() == 1) {
+					groupEnd = line;
+				} else {
+					addLineGroup(lines, groupStart, groupEnd);
+					groupStart = line;
+					groupEnd = line;
+				}
+			}
+			lastLine = line;
+		}
+		addLineGroup(lines, groupStart, groupEnd);
+
+		return lines;
+	}
+
+	private void addLineGroup(List<LineCoverageInfo> lines, LineCoverageInfo startLine,
+			LineCoverageInfo endLine) {
+		lines.add(startLine);
+		if (!startLine.equals(endLine)) {
+			lines.add(endLine);
+		}
+	}
+
 	protected List<String> generateNewTests(String testingClassName,
 			String methodName, String verificationMethod, int numberOfTestCases)
 			throws ClassNotFoundException, SavException {
