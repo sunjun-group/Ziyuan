@@ -17,18 +17,25 @@ import icsetlv.common.dto.ExecVarType;
 import icsetlv.sampling.SelectiveSampling;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import libsvm.core.Category;
+import libsvm.core.CategoryCalculator;
 import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
+import libsvm.core.Machine.DataPoint;
 import libsvm.extension.ISelectiveSampling;
 
 import org.apache.log4j.Logger;
 
+import sav.common.core.SavException;
 import sav.common.core.formula.Formula;
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint;
 
@@ -36,10 +43,11 @@ import sav.strategies.dto.BreakPoint;
  * @author LLT
  *
  */
-public class InvariantLearner {
+public class InvariantLearner implements CategoryCalculator {
 	private static final Logger LOGGER = Logger.getLogger(InvariantLearner.class);
 	private InvariantMediator mediator;
 	private Machine machine;
+	private BreakPoint currentBreakpoint;
 	
 	public InvariantLearner(InvariantMediator mediator) {
 		this.mediator = mediator;
@@ -96,13 +104,50 @@ public class InvariantLearner {
 		/* find divider for all variables */
 		// Configure data for SVM machine
 		machine.resetData();
+		this.currentBreakpoint = bkpData.getBkp();
 		List<String> allLables = extractLabels(allVars);
 		machine.setDataLabels(allLables);
 		addDataPoints(bkpData.getPassValues(), bkpData.getFailValues());
+
+		machine.artificialDataSynthesis(this);
+
 		machine.train();
 		return machine.getLearnedLogic(new FormulaProcessor<ExecVar>(allVars), true);
 	}
-	
+
+	@Override
+	public Category getCategory(final DataPoint dataPoint) {
+		if (this.currentBreakpoint == null) {
+			return null;
+		}
+
+		final List<String> labels = machine.getDataLabels();
+		final int numberOfFeatures = dataPoint.getNumberOfFeatures();
+		Map<String, Object> instrVarMap = new HashMap<String, Object>(numberOfFeatures);
+		for (int i = 0; i < numberOfFeatures; i++) {
+			// TODO NPN improve this part
+			instrVarMap.put(labels.get(i), dataPoint.getValue(i));
+		}
+
+		try {
+			final List<BreakpointData> datas = mediator.instDebugAndCollectData(
+					Arrays.asList(this.currentBreakpoint), instrVarMap);
+			Assert.assertTrue(datas.size() == 1, "There should be 1 and only 1 breakpoint.");
+			final BreakpointData data = datas.get(0);
+			if (CollectionUtils.isEmpty(data.getFailValues())
+					^ CollectionUtils.isEmpty(data.getPassValues())) {
+				return CollectionUtils.isEmpty(data.getPassValues()) ? Category.NEGATIVE
+						: Category.POSITIVE;
+			} else {
+				// Cannot determine the category
+				return null;
+			}
+		} catch (Exception e) {
+			return null;
+		}
+
+	}
+
 	private void addDataPoints(List<BreakpointValue> passValues,
 			List<BreakpointValue> failValues) {
 		for (BreakpointValue bValue : passValues) {
