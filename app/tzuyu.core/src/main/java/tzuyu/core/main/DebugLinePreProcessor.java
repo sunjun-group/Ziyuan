@@ -101,7 +101,7 @@ public class DebugLinePreProcessor {
 	 * get supperset of 2 list
 	 * return null if no list is the subset of the other
 	 */
-	private <T> List<T> getSupperList(List<T> list1, List<T> list2) {
+	public static <T> List<T> getSupperList(List<T> list1, List<T> list2) {
 		List<T> biggerList = list1;
 		List<T> smallerList = list2;
 		if (list1.size() < list2.size()) {

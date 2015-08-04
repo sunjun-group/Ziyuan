@@ -12,7 +12,6 @@ import icsetlv.common.dto.BkpInvariantResult;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.ObjectUtils;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.dto.DebugLine;
 
 /**
  * @author khanh
@@ -20,11 +19,11 @@ import sav.strategies.dto.DebugLine;
  */
 public class BugLocalizationLine {
 	private int orgLine;
-	private DebugLine breakpoint;
+	private BreakPoint breakpoint;
 	private double suspiciousness;
 	private BkpInvariantResult learningResult;
 	
-	public BugLocalizationLine(int orgLine, DebugLine breakPoint,
+	public BugLocalizationLine(int orgLine, BreakPoint breakPoint,
 			double suspiciousness, BkpInvariantResult invariant) {
 		this.orgLine = orgLine;
 		this.breakpoint = breakPoint;

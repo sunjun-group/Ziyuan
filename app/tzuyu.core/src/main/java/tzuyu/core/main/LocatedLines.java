@@ -55,7 +55,7 @@ public class LocatedLines {
 		List<BugLocalizationLine> bugLines = new ArrayList<BugLocalizationLine>();
 		for(BkpInvariantResult invariant: invariants){
 			if (!Formula.TRUE.equals(invariant.getLearnedLogic())) {
-				DebugLine debugLine = (DebugLine) invariant.getBreakPoint();
+				BreakPoint debugLine =  invariant.getBreakPoint();
 				for (int orgLine : debugLine.getOrgLineNos()) {
 					double susp = suspeciousness.get(
 								BreakpointUtils.getLocationId(debugLine.getClassCanonicalName(), orgLine));

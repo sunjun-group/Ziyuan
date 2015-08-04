@@ -109,7 +109,7 @@ public class InvariantLearner implements CategoryCalculator {
 		machine.setDataLabels(allLables);
 		addDataPoints(bkpData.getPassValues(), bkpData.getFailValues());
 
-		machine.artificialDataSynthesis(this);
+//		machine.artificialDataSynthesis(this);
 
 		machine.train();
 		return machine.getLearnedLogic(new FormulaProcessor<ExecVar>(allVars), true);

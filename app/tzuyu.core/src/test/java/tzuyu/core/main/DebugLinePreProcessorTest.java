@@ -38,7 +38,7 @@ public class DebugLinePreProcessorTest extends AbstractTest {
 		TestData data = new TestData();
 		Variable var1 = new Variable("var1", "var1.field1", VarScope.THIS);
 		Variable var2 = new Variable("var2", "var2", VarScope.UNDEFINED);
-		data.addDebugLine("class1", 8, 11, var1, var2);
+		data.addDebugLine("class1", 8, 10, var1, var2);
 		Variable var21 = new Variable("var2", "var2", VarScope.UNDEFINED);
 		Variable var22 = new Variable("var1", "var1.field1", VarScope.THIS);
 		data.addDebugLine("class1", 5, 10, var21, var22);
@@ -56,7 +56,7 @@ public class DebugLinePreProcessorTest extends AbstractTest {
 		/* line 8 (11) */
 		Variable var1 = new Variable("var3", "var3.field1", VarScope.THIS);
 		Variable var2 = new Variable("var4", "var4.field2", VarScope.UNDEFINED);
-		data.addDebugLine("class1", 8, 11, var1, var2);
+		data.addDebugLine("class1", 8, 12, var1, var2);
 		/* line 11 (12) */
 		data.addDebugLine("class1", 11, 12, new Variable("var5"));
 		/* line 12 (13) */
@@ -64,11 +64,11 @@ public class DebugLinePreProcessorTest extends AbstractTest {
 		/* line 5 (10) */
 		Variable var21 = new Variable("var2", "var2", VarScope.UNDEFINED);
 		Variable var22 = new Variable("var1", "var1.field1", VarScope.THIS);
-		data.addDebugLine("class1", 5, 10, var21, var22);
+		data.addDebugLine("class1", 5, 12, var21, var22);
 		/* line 3 (9) */
 		Variable var31 = new Variable("var2", "var2", VarScope.UNDEFINED);
 		Variable var32 = new Variable("var1", "var1.field1", VarScope.THIS);
-		data.addDebugLine("class1", 3, 9, var31, var32);
+		data.addDebugLine("class1", 3, 12, var31, var32);
 		List<DebugLine> debugLines = processor.preProcess(data.debugLines);
 		printDebugLine(debugLines);
 		Assert.assertEquals(2, debugLines.size());

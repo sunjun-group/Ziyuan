@@ -13,10 +13,13 @@ import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.ExecVar;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import libsvm.core.Category;
 import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
 import libsvm.core.Machine.DataPoint;
@@ -50,18 +53,16 @@ public class SelectiveSampling implements ISelectiveSampling {
 	
 	@Override
 	public List<DataPoint> selectData(Machine machine) {
-		List<DataPoint> datapoints = new ArrayList<DataPoint>(machine.getDataPoints());
 		/* TODO: the param round = false should be the same to the value in machine.selectiveSampling()
 		 * => do something 
 		 */
 		Formula divider = machine.getLearnedLogic(dividerProcessor, false);
 		
 		try {
-			datapoints.addAll(execute(divider, machine.getDataLabels(), machine.getDataPoints()));
+			return execute(divider, machine.getDataLabels(), machine.getDataPoints());
 		} catch (SavException e) {
 			throw new SavRtException(e);
 		}
-		return datapoints;
 	}
 	
 	private Map<String, Pair<Double, Double>> calculateValRange(
@@ -90,24 +91,69 @@ public class SelectiveSampling implements ISelectiveSampling {
 	}
 
 	public List<DataPoint> execute(Formula divider, List<String> allLabels, List<DataPoint> datapoints) throws SavException {
-		List<ExecVar> labels = divider.getReferencedVariables();
+		List<DataPoint> newPoints = new ArrayList<Machine.DataPoint>();
+		if (divider == null) {
+			return newPoints;
+		}
+//		List<ExecVar> labels = divider.getReferencedVariables();
 		/* check boolean variables */ 
 		/* */
 		Map<String, Pair<Double, Double>> minMax = calculateValRange(allLabels, datapoints);
 		
-		IlpSolver solver = new IlpSolver(minMax);
+		IlpSolver solver = new IlpSolver(minMax, true);
 		divider.accept(solver);
-		List<Eq<?>> assignments = solver.getResult();
-		if (assignments.isEmpty()) {
-			return new ArrayList<DataPoint>();
+		List<List<Eq<?>>> assignments = solver.getResult();
+		log.debug("Instrument values: ");
+		for (List<Eq<?>> valSet : assignments) {
+			if (datapointExistAlready(valSet, datapoints, allLabels)) {
+				continue;
+			}
+			List<BreakpointData> bkpData = mediator.instDebugAndCollectData(
+					CollectionUtils.listOf(bkp), toInstrVarMap(valSet));
+			BreakpointData breakpointData = bkpData.get(0);
+			Collection<? extends DataPoint> points = toDataPoints(allLabels, breakpointData);
+			/*
+			 * if new data point exist in both negative and positive set ->
+			 * cannot divide, we can stop trying another point
+			 */
+			log.debug(valSet);
+			newPoints.addAll(points);
+			if (points.size() > 1) {
+				break;
+			}
+			/* only select 1 point 
+			 * TODO LLT: just for test (performance reason)
+			 * */
+//			break;
 		}
-		log.debug("Instrument values: ", assignments.toString());
-		List<BreakpointData> bkpData = mediator.instDebugAndCollectData(
-											CollectionUtils.listOf(bkp), toInstrVarMap(assignments));
-		BreakpointData breakpointData = bkpData.get(0);
-		mediator.logBkpData(breakpointData, labels, "Divider: ", divider.toString(), 
-														"\nApply: ", assignments.toString());
-		return breakpointData.toDatapoints(allLabels);
+		return newPoints;
+	}
+
+	private boolean datapointExistAlready(List<Eq<?>> valSet,
+			List<DataPoint> datapoints, List<String> allLabels) {
+		double[] newVals = new double[allLabels.size()];
+		for (Eq<?> ass : valSet) {
+			int idx = allLabels.indexOf(ass.getVar().getLabel());
+			newVals[idx] = (Integer) ass.getValue();
+		}
+		for (DataPoint dp : datapoints) {
+			if (Arrays.equals(dp.getValues(), newVals)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private Collection<? extends DataPoint> toDataPoints(List<String> allLabels, BreakpointData breakpointData) {
+		List<DataPoint> points = new ArrayList<Machine.DataPoint>();
+		if (CollectionUtils.isNotEmpty(breakpointData.getPassValues())) {
+			points.add(BreakpointData.toDataPoint(allLabels, breakpointData.getPassValues().get(0), Category.POSITIVE));
+		}
+		
+		if (CollectionUtils.isNotEmpty(breakpointData.getFailValues())) {
+			points.add(BreakpointData.toDataPoint(allLabels, breakpointData.getFailValues().get(0), Category.NEGATIVE));
+		}
+		return points;
 	}
 
 	private Map<String, Object> toInstrVarMap(List<Eq<?>> assignments) {

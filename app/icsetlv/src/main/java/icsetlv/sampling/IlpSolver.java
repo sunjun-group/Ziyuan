@@ -11,9 +11,11 @@ package icsetlv.sampling;
 import icsetlv.common.dto.ExecVar;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.sf.javailp.Linear;
 import net.sf.javailp.OptType;
@@ -23,6 +25,7 @@ import net.sf.javailp.Solver;
 import net.sf.javailp.SolverFactory;
 import net.sf.javailp.SolverFactoryLpSolve;
 import net.sf.javailp.Term;
+import sav.common.core.Logger;
 import sav.common.core.Pair;
 import sav.common.core.formula.Atom;
 import sav.common.core.formula.ConjunctionFormula;
@@ -31,6 +34,7 @@ import sav.common.core.formula.LIAAtom;
 import sav.common.core.formula.LIATerm;
 import sav.common.core.formula.utils.ExpressionVisitor;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.Randomness;
 
 
 /**
@@ -38,14 +42,24 @@ import sav.common.core.utils.CollectionUtils;
  *
  */
 public class IlpSolver extends ExpressionVisitor {
+	private Logger<?> log = Logger.getDefaultLogger();
+	/* max number of vars need to calculate if using selective sampling */
+	private static final int MAX_VAR_TO_CALCULATE = 2;
+	private static final int MAX_MORE_SELECTED_SAMPLE = 4;
 	private SolverFactory solverFactory;
 	private Map<String, Pair<Double, Double>> minMax;
-	private List<Eq<?>> assignments;
+	private List<List<Eq<?>>> resultSet;
+	private boolean useSampling;
 	
-	public IlpSolver(Map<String, Pair<Double, Double>> minMax) {
+	public IlpSolver(Map<String, Pair<Double, Double>> minMax, boolean useSampling) {
 		initSolverFactory();
 		this.minMax = minMax;
-		assignments = new ArrayList<Eq<?>>();
+		resultSet = new ArrayList<List<Eq<?>>>();
+		this.useSampling = useSampling;
+	}
+	
+	public void reset() {
+		resultSet.clear();
 	}
 	
 	@Override
@@ -61,37 +75,96 @@ public class IlpSolver extends ExpressionVisitor {
 	}
 	
 	private void solveProblem(List<LIAAtom> atoms) {
+		log.debug("----ilp solver----");
+		/* original problem */
 		Problem problem = new Problem();
-		for (LIAAtom atom : atoms) {
-			constructSubjective(atom, problem);
-		}
-		/* set objective */
-		Linear obj = getObjective(atoms);
+		constructSubjectives(atoms, problem);
 		
-		/* get result */
-		solveProblem(problem, obj);
-	}
-
-	private void solveProblem(Problem problem, Linear obj) {
-		List<Object> vars = obj.getVariables();
-		for (Object var : vars) {
-			problem.setVarType(var, Integer.class);
+			/* set objective */
+		List<ExecVar> vars = new ArrayList<ExecVar>(constructObjective(atoms, problem));
+		
+			/* get result */
+		Result result = solveProblem(problem, vars);
+		
+		/* selective sampling */
+		if (minMax != null && useSampling) {
+			int constraintsCount = problem.getConstraintsCount();
+			int maxVarToCalcul = Math.min(MAX_VAR_TO_CALCULATE, vars.size());
+			log.debug("useSampling:");
+			for (int i = 1; i <= MAX_MORE_SELECTED_SAMPLE; i++) {
+				List<ExecVar> selectedVars = selectVarsForSampling(vars, Randomness.nextInt(maxVarToCalcul) + 1);
+				List<Eq<?>> samples = selectSample(selectedVars, result);
+				if (samples.isEmpty()) {
+					continue;
+				}
+				/* construct more subjective from selected samples */
+				constructSubjective(samples, problem);
+				
+				solveProblem(problem, vars);
+				
+				/* reset */
+				problem.getConstraints().subList(constraintsCount,
+								problem.getConstraintsCount()).clear();
+			}
 		}
-		problem.setObjective(obj, OptType.MIN);
-		Result result = getSolver().solve(problem);
-		updateResult(result, vars);
-	}
-
-	private void constructSubjective(LIAAtom atom, Problem problem) {
-		Linear divider = new Linear();
-		for (LIATerm varExp : atom.getMVFOExpr()) {
-			ExecVar var = varExp.getVariable();
-			divider.add(varExp.getCoefficient(), var);
-		}
-		problem.add(divider, atom.getOperator().getCode(), atom.getConstant());
+		log.debug("----finish ilp solver----");
 	}
 	
-	private Linear getObjective(List<LIAAtom> atoms) {
+	private List<ExecVar> selectVarsForSampling(List<ExecVar> vars, int i) {
+		if (i >= vars.size()) {
+			return vars;
+		}
+		List<ExecVar> selectedVars = new ArrayList<ExecVar>(vars);
+		selectedVars.remove(i);
+		return selectedVars;
+	}
+
+	private List<Eq<?>> selectSample(Collection<ExecVar> vars, Result result) {
+		List<Eq<?>> atoms = new ArrayList<Eq<?>>();
+		for (ExecVar var : vars) {
+			Number value = null;
+			Pair<Double, Double> range = minMax.get(var.getLabel());
+			if (range != null) {
+				value = Randomness.nextInt(range.a.intValue(), range.b.intValue());
+			} else {
+				if (result == null) {
+					continue;
+				}
+				value = result.get(var);
+			}
+			Eq<Number> eq = new Eq<Number>(var, value);
+			atoms.add(eq);
+		}
+		return atoms;
+	}
+
+	private Result solveProblem(Problem problem, Collection<?> vars) {
+		Result result = getSolver().solve(problem);
+		updateResult(result, vars);
+		return result;
+	}
+
+	private void constructSubjective(List<Eq<?>> atoms, Problem problem) {
+		for (Eq<?> atom : atoms) {
+			Linear divider = new Linear();
+			divider.add(1, atom.getVar());
+			problem.add(divider, "=", (Number) atom.getValue());
+		}
+	}
+	
+	private void constructSubjectives(List<LIAAtom> atoms, Problem problem) {
+		for (LIAAtom atom : atoms) {
+			Linear divider = new Linear();
+			for (LIATerm varExp : atom.getMVFOExpr()) {
+				ExecVar var = varExp.getVariable();
+				divider.add(varExp.getCoefficient(), var);
+			}
+			problem.add(divider, atom.getOperator().getCode(),
+					atom.getConstant());
+		}
+	}
+	
+	private Set<ExecVar> constructObjective(List<LIAAtom> atoms, Problem problem) {
 		Linear obj = new Linear();
 		Map<ExecVar, Term> terms = new HashMap<ExecVar, Term>();
 		for (LIAAtom atom : atoms) {
@@ -100,7 +173,9 @@ public class IlpSolver extends ExpressionVisitor {
 		for (Term term : terms.values()) {
 			obj.add(term);
 		}
-		return obj;
+		
+		setObjective(problem, obj);
+		return terms.keySet();
 	}
 	
 	private void appendObjectiveTerms(Map<ExecVar, Term> terms, LIAAtom atom) {
@@ -108,23 +183,34 @@ public class IlpSolver extends ExpressionVisitor {
 			ExecVar var = varExp.getVariable();
 			if (!terms.containsKey(var)) {
 				terms.put(var, new Term(var, 
-										Math.signum(varExp.getCoefficient())));
+						Math.signum(varExp.getCoefficient())));
 			}
 		}
 	}
 	
-	private void updateResult(Result result, List<Object> vars) {
-		assignments.clear();
+	private List<Object> setObjective(Problem problem, Linear obj) {
+		List<Object> vars = obj.getVariables();
+		for (Object var : vars) {
+			problem.setVarType(var, Integer.class);
+		}
+		problem.setObjective(obj, OptType.MIN);
+		return vars;
+	}
+	
+	private void updateResult(Result result, Collection<?> vars) {
 		if (result == null) {
 			return;
 		}
+		List<Eq<?>> assignments = new ArrayList<Eq<?>>();
 		for (Object var : vars) {
 			assignments.add(new Eq<Number>((ExecVar)var, result.get(var)));
 		}
+		log.debug("add result: ", assignments);
+		resultSet.add(assignments);
 	}
 	
-	public List<Eq<?>> getResult() {
-		return assignments;
+	public List<List<Eq<?>>> getResult() {
+		return resultSet;
 	}
 	
 	private Solver getSolver() {

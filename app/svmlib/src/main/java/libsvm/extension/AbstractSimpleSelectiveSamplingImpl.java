@@ -34,7 +34,7 @@ public abstract class AbstractSimpleSelectiveSamplingImpl implements ISelectiveS
 	public List<DataPoint> selectData(final Machine machine) {
 		// Copy current points
 		List<DataPoint> points = new ArrayList<DataPoint>(machine.getDataPoints());
-
+		List<DataPoint> newPoints = new ArrayList<Machine.DataPoint>();
 		final int maxAttempt = points.size() * 2;
 		int attempt = 0;
 		int pointsAdded = 0;
@@ -63,7 +63,7 @@ public abstract class AbstractSimpleSelectiveSamplingImpl implements ISelectiveS
 				generatedPoint[i] = new Double(theta0 / thetas[i]).intValue();
 
 				// Add the new point to the existing points
-				if (addPoint(machine, generatedPoint, points)) {
+				if (addPoint(machine, generatedPoint, newPoints)) {
 					pointsAdded++;
 					if (pointsAdded >= minNewPoints) {
 						attempt = maxAttempt;
@@ -83,7 +83,7 @@ public abstract class AbstractSimpleSelectiveSamplingImpl implements ISelectiveS
 										anotherPoint[x] = generatedPoint[x];
 									}
 								}
-								addPoint(machine, anotherPoint, points);
+								addPoint(machine, anotherPoint, newPoints);
 							}
 						}
 					}
@@ -94,7 +94,7 @@ public abstract class AbstractSimpleSelectiveSamplingImpl implements ISelectiveS
 			}
 		}
 
-		return points;
+		return newPoints;
 	}
 
 	private boolean addPoint(Machine machine, double[] pointValues, List<DataPoint> points) {

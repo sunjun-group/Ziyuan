@@ -440,14 +440,13 @@ public class Machine {
 			// If new data points are the same as the existing ones,
 			// it means that the model will not be improved anymore
 			// thus we stop
-			final Set<DataPoint> difference = new HashSet<DataPoint>(dataPoints);
-			difference.removeAll(this.data);
-			if (difference.isEmpty()) {
+			if (dataPoints.isEmpty()) {
 				LOGGER.debug("No more new point added in Selective Sampling.");
 				break;
 			} else {
-				LOGGER.debug(difference.size() + " more point(s) added.");
+				LOGGER.debug(dataPoints.size() + " more point(s) added.");
 			}
+			dataPoints.addAll(this.data);
 			if (!dataPoints.isEmpty()) {
 				// Add to model
 				this.resetData();
@@ -525,6 +524,10 @@ public class Machine {
 				throw new InvalidParameterException("Index must be less than " + numberOfFeatures);
 			}
 			return values[index];
+		}
+		
+		public double[] getValues() {
+			return values;
 		}
 
 		@Override

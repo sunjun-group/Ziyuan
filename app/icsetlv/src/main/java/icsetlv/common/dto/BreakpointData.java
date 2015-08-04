@@ -63,7 +63,7 @@ public class BreakpointData {
 		return new ArrayList<DataPoint>(datapoints);
 	}
 	
-	private DataPoint toDataPoint(List<String> labels, BreakpointValue bValue,
+	public static DataPoint toDataPoint(List<String> labels, BreakpointValue bValue,
 			Category category) {
 		double[] lineVals = new double[labels.size()];
 		int i = 0;
