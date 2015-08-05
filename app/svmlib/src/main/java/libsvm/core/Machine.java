@@ -162,64 +162,61 @@ public class Machine {
 		return dp;
 	}
 
-	public void artificialDataSynthesis(final CategoryCalculator calculator) {
+	/**
+	 * Generate artificial data based on existing data points.
+	 * 
+	 * @param calculator
+	 *            An object used to determine the category of a given point.
+	 * @return <code>true</code> if the generated data is not conflicted,
+	 *         <code>false</code> otherwise.
+	 */
+	public boolean artificialDataSynthesis(final CategoryCalculator calculator) {
 		// Collect available values for each feature
 		final int numberOfFeatures = getNumberOfFeatures();
+		if (numberOfFeatures <= 1) {
+			// Do nothing
+			return true;
+		}
 		List<List<Double>> allValues = new ArrayList<List<Double>>(numberOfFeatures);
-		final int[] maxValue = new int[numberOfFeatures];
-		final int[] value = new int[numberOfFeatures];
 		for (int i = 0; i < numberOfFeatures; i++) {
 			Set<Double> valueSet = new HashSet<Double>(data.size());
 			for (DataPoint point : data) {
 				valueSet.add(point.getValue(i));
 			}
 			allValues.add(new ArrayList<Double>(valueSet));
-			maxValue[i] = valueSet.size() - 1;
-			value[i] = 0;
 		}
 
-		// Generate all possible combination of the values from the sets
+		// Generate some other possible combinations
 		final List<DataPoint> allPoints = new ArrayList<DataPoint>();
-		boolean stop = false;
-		while (!stop) {
-			// Use current combination
-			double[] pointValues = new double[numberOfFeatures];
+		for (DataPoint dp : data) {
 			for (int i = 0; i < numberOfFeatures; i++) {
-				pointValues[i] = allValues.get(i).get(value[i]);
-			}
+				for (Double value : allValues.get(i)) {
+					if (Double.compare(dp.getValue(i), value.doubleValue()) == 0) {
+						// This would be an existing point, so skip it
+						continue;
+					}
 
-			final DataPoint point = new DataPoint(numberOfFeatures);
-			point.setValues(pointValues);
-			point.setCategory(calculator.getCategory(point));
-			if (point.getCategory() != null) {
-				allPoints.add(point);
-			} else {
-				point.setCategory(Category.NEGATIVE);
-				allPoints.add(point);
-				// We add the point with both NEGATIVE and POSITIVE values
-				// This will make the learning failed
-				final DataPoint anotherPoint = new DataPoint(numberOfFeatures);
-				anotherPoint.setValues(pointValues);
-				anotherPoint.setCategory(Category.POSITIVE);
-				allPoints.add(anotherPoint);
-			}
+					double[] pointValues = new double[numberOfFeatures];
+					for (int j = 0; j < numberOfFeatures; j++) {
+						pointValues[j] = j == i ? value.doubleValue() : dp.getValue(j);
+					}
 
-			// Generate next combination
-			int i = 0;
-			while (value[i] >= maxValue[i] && i < numberOfFeatures) {
-				value[i] = 0;
-				i++;
-			}
-			if (i < numberOfFeatures) {
-				value[i]++;
-			} else {
-				stop = true;
+					final DataPoint point = new DataPoint(numberOfFeatures);
+					point.setValues(pointValues);
+					point.setCategory(calculator.getCategory(point));
+					if (point.getCategory() != null) {
+						allPoints.add(point);
+					} else {
+						// No need to run machine learning
+						return false;
+					}
+				}
 			}
 		}
 
 		// Add the points into the machine
-		this.resetData();
 		this.addDataPoints(allPoints);
+		return true;
 	}
 
 	/**
