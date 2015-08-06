@@ -89,9 +89,9 @@ public class InvariantLearner implements CategoryCalculator {
 		handler.setup(breakpoint, allVars);
 		return handler;
 	}
-	
+
 	/**
-	 * apply svm 
+	 * apply svm
 	 */
 	private Formula learn(BreakpointData bkpData, List<ExecVar> allVars) {
 		mediator.logBkpData(bkpData, allVars);
@@ -108,9 +108,16 @@ public class InvariantLearner implements CategoryCalculator {
 		machine.setDataLabels(allLables);
 		addDataPoints(bkpData.getPassValues(), bkpData.getFailValues());
 
-//		machine.artificialDataSynthesis(this);
+		if (machine.isPerformArtificialDataSynthesis()) {
+			if (machine.artificialDataSynthesis(this)) {
+				machine.train();
+			} else if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Skip SVM training due to conflicting generated data.");
+			}
+		} else {
+			machine.train();
+		}
 
-		machine.train();
 		return machine.getLearnedLogic(new FormulaProcessor<ExecVar>(allVars), true);
 	}
 
