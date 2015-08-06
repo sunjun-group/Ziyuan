@@ -92,7 +92,7 @@ public class IlpSolver extends ExpressionVisitor {
 			int maxVarToCalcul = Math.min(MAX_VAR_TO_CALCULATE, vars.size());
 			log.debug("useSampling:");
 			for (int i = 1; i <= MAX_MORE_SELECTED_SAMPLE; i++) {
-				List<ExecVar> selectedVars = selectVarsForSampling(vars, Randomness.nextInt(maxVarToCalcul) + 1);
+				List<ExecVar> selectedVars = selectVarsForSampling(vars, maxVarToCalcul);
 				List<Eq<?>> samples = selectSample(selectedVars, result);
 				if (samples.isEmpty()) {
 					continue;
@@ -110,13 +110,19 @@ public class IlpSolver extends ExpressionVisitor {
 		log.debug("----finish ilp solver----");
 	}
 	
-	private List<ExecVar> selectVarsForSampling(List<ExecVar> vars, int i) {
-		if (i >= vars.size()) {
+	private List<ExecVar> selectVarsForSampling(List<ExecVar> vars, int maxVarToCalcul) {
+		if (vars.size() == 1) {
 			return vars;
 		}
-		List<ExecVar> selectedVars = new ArrayList<ExecVar>(vars);
-		selectedVars.remove(i);
-		return selectedVars;
+		return Randomness.randomSubList(vars, vars.size() - 1);
+//		int varToCalcul = Randomness.nextInt(maxVarToCalcul) + 1;
+//		return Randomness.randomSubList(vars, vars.size() - i);
+//		if (i >= vars.size()) {
+//			return vars;
+//		}
+//		List<ExecVar> selectedVars = new ArrayList<ExecVar>(vars);
+//		selectedVars.remove(i);
+//		return selectedVars;
 	}
 
 	private List<Eq<?>> selectSample(Collection<ExecVar> vars, Result result) {
@@ -182,8 +188,8 @@ public class IlpSolver extends ExpressionVisitor {
 		for (LIATerm varExp : atom.getMVFOExpr()) {
 			ExecVar var = varExp.getVariable();
 			if (!terms.containsKey(var)) {
-				terms.put(var, new Term(var, 
-						Math.signum(varExp.getCoefficient())));
+				terms.put(var, new Term(var, varExp.getCoefficient()));
+//						Math.signum(varExp.getCoefficient())));
 			}
 		}
 	}

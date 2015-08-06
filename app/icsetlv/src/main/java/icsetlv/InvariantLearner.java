@@ -33,7 +33,6 @@ import libsvm.extension.ISelectiveSampling;
 
 import org.apache.log4j.Logger;
 
-import sav.common.core.SavException;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;

@@ -43,9 +43,10 @@ public class StudentEvaluate {
 				max = students[i].score;
 			}
 		}
-
 		for (Student stu : students) {
-			stu.standardScore = Math.sqrt((100 - max) + stu.score) * 10;
+			int a = (100 - max) + stu.score;
+			assert a > 0;
+			stu.standardScore = Math.sqrt(a) * 10;
 		}
 	}
 	

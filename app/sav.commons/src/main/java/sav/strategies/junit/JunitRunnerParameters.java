@@ -37,6 +37,7 @@ public class JunitRunnerParameters {
 	static final String TESTING_PACKAGE_NAMES = "testingpkgs";
 	static final String DEST_FILE = "destfile";
 	static final String TESTCASE_TIME_OUT = "tc_timeout";
+	static final String SINGLE_TEST_RESULT_DETAIL = "tc_result_detail";
 	
 	private List<String> classMethods;
 	private List<String> testingClassNames;
@@ -44,7 +45,8 @@ public class JunitRunnerParameters {
 	private String destfile;
 	/* for each testcase, to make sure the testcase does not run forever */
 	private long timeout; 
-
+	private boolean storeTestResultDetail = false;
+	
 	static {
 		opts = new Options();
 		opts.addOption(classMethods());
@@ -52,6 +54,7 @@ public class JunitRunnerParameters {
 		opts.addOption(testingPkgs());
 		opts.addOption(destfile());
 		opts.addOption(timeout());
+		opts.addOption(singleTestResultDetail());
 	}
 
 	private static Option classMethods() {
@@ -101,6 +104,14 @@ public class JunitRunnerParameters {
 				.isRequired(false)
 				.create(TESTING_CLASS_NAMES);
 	}
+	
+	private static Option singleTestResultDetail() {
+		return OptionBuilder
+				.withArgName(SINGLE_TEST_RESULT_DETAIL)
+				.withDescription("Store detail of test result (stacktrace)")
+				.isRequired(false)
+				.create(SINGLE_TEST_RESULT_DETAIL);
+	}
 
 	public static JunitRunnerParameters parse(String[] args) throws ParseException {
 		CommandLineParser parser = new GnuParser();
@@ -123,6 +134,9 @@ public class JunitRunnerParameters {
 		}
 		if (cmd.hasOption(TESTCASE_TIME_OUT)) {
 			params.timeout = Long.valueOf(cmd.getOptionValue(TESTCASE_TIME_OUT));
+		}
+		if (cmd.hasOption(SINGLE_TEST_RESULT_DETAIL)) {
+			params.storeTestResultDetail = true;
 		}
 		return params;
 	}
@@ -181,12 +195,21 @@ public class JunitRunnerParameters {
 	public void setTimeout(int timeout, TimeUnit unit) {
 		this.timeout = unit.toMillis(timeout);
 	}
+	
+	public boolean isStoreTestResultDetail() {
+		return storeTestResultDetail;
+	}
+
+	public void setStoreTestResultDetail(boolean storeTestResultDetail) {
+		this.storeTestResultDetail = storeTestResultDetail;
+	}
 
 	@Override
 	public String toString() {
-		return "JunitRunnerParameters [log=" + log + ", classMethods="
-				+ classMethods + ", testingClassNames=" + testingClassNames
-				+ ", testingPkgs=" + testingPkgs + ", destfile=" + destfile
+		return "JunitRunnerParameters [classMethods=" + classMethods
+				+ ", testingClassNames=" + testingClassNames + ", testingPkgs="
+				+ testingPkgs + ", destfile=" + destfile + ", timeout="
+				+ timeout + ", storeTestResultDetail=" + storeTestResultDetail
 				+ "]";
 	}
 	

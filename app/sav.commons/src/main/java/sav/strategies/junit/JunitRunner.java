@@ -25,6 +25,7 @@ import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.ExecutionTimer;
 import sav.common.core.utils.JunitUtils;
+import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.ProgramArgumentBuilder;
 import sav.strategies.vm.VMConfiguration;
@@ -54,7 +55,7 @@ public class JunitRunner {
 	}
 	
 	private static int calculateProcessStartLine() {
-		return 46; //TODO LLT: FIX THIS
+		return 47; //TODO LLT: FIX THIS
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -65,7 +66,7 @@ public class JunitRunner {
 		JunitResult result = runTestcases(params);
 		if (params.getDestfile() != null) {
 			File file = new File(params.getDestfile());
-			result.save(file);
+			result.save(file, params.isStoreTestResultDetail());
 		}
 	}
 
@@ -88,12 +89,22 @@ public class JunitRunner {
 			
 			falures.addAll(requestExec.getFailures());
 			boolean isPass = requestExec.getResult();
-			result.addResult(classMethod, isPass);
+			result.addResult(classMethod, isPass, getLastFailureTrace(requestExec.getFailures()));
 		}
 		extractBrkpsFromTrace(falures, params, result.getFailureTraces());
 		return result;
 	}
 	
+	private static String getLastFailureTrace(List<Failure> failures) {
+		Failure lastFailures = CollectionUtils.getLast(failures);
+		if (lastFailures == null) {
+			return StringUtils.EMPTY;
+		}
+		StackTraceElement firstStacktraceEle = CollectionUtils
+				.getFirstElement(lastFailures.getException().getStackTrace());
+		return StringUtils.toStringNullToEmpty(firstStacktraceEle);
+	}
+
 	public static ExecutionTimer getExecutionTimer(long timeout) {
 		if (timeout > 0) {
 			return new ExecutionTimer(timeout);
@@ -205,6 +216,11 @@ public class JunitRunner {
 		public JunitRunnerProgramArgBuilder testcaseTimeout(int timeout,
 				TimeUnit unit) {
 			testcaseTimeout(unit.toMillis(timeout));
+			return this;
+		}
+		
+		public JunitRunnerProgramArgBuilder storeSingleTestResultDetail() {
+			addOptionArgument(JunitRunnerParameters.SINGLE_TEST_RESULT_DETAIL);
 			return this;
 		}
 	}

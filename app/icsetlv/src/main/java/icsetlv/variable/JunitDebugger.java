@@ -63,7 +63,9 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 		jResultFile = createExecutionResultFile();
 		config.setLaunchClass(JunitRunner.class.getName());
 		List<String> args = new JunitRunnerProgramArgBuilder()
-				.methods(allTests).destinationFile(jResultFile).build();
+				.methods(allTests).destinationFile(jResultFile)
+				.storeSingleTestResultDetail()
+				.build();
 		config.setProgramArgs(args);
 		onStart();
 	}

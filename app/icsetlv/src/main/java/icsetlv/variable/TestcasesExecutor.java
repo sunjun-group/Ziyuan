@@ -40,6 +40,8 @@ public class TestcasesExecutor extends JunitDebugger {
 	private List<BreakpointValue> currentTestBkpValues;
 	private DebugValueExtractor valueExtractor;
 	private int valRetrieveLevel;
+	private ITestResultVerifier verifier = DefaultTestResultVerifier.getInstance();
+	private JunitResult jResult;
 	
 	public TestcasesExecutor(int valRetrieveLevel) {
 		this.valRetrieveLevel = valRetrieveLevel;
@@ -72,14 +74,27 @@ public class TestcasesExecutor extends JunitDebugger {
 
 	@Override
 	protected void onFinish(JunitResult jResult) {
-		Map<Boolean, List<BreakpointValue>> resultMap = new HashMap<Boolean, List<BreakpointValue>>();
-		Map<String, Boolean> tcExResult = jResult.getResult(allTests);
+		Map<TestResult, List<BreakpointValue>> resultMap = new HashMap<TestResult, List<BreakpointValue>>();
+		Map<String, TestResult> tcExResult = getTcExResult(jResult);
 		for (int i = 0; i < allTests.size(); i++) {
-			CollectionUtils.getListInitIfEmpty(resultMap, tcExResult.get(allTests.get(i)))
-					.addAll(bkpValsByTestIdx.get(i));
+			TestResult testResult = tcExResult.get(allTests.get(i));
+			if (testResult != TestResult.UNKNOWN) {
+				CollectionUtils.getListInitIfEmpty(resultMap, testResult)
+						.addAll(bkpValsByTestIdx.get(i));
+			}
 		}
-		result = buildBreakpointData(CollectionUtils.nullToEmpty(resultMap.get(true)), 
-				CollectionUtils.nullToEmpty(resultMap.get(false)));
+		result = buildBreakpointData(CollectionUtils.nullToEmpty(resultMap.get(TestResult.PASS)), 
+				CollectionUtils.nullToEmpty(resultMap.get(TestResult.FAIL)));
+		this.jResult = jResult; 
+	}
+
+	private Map<String, TestResult> getTcExResult(JunitResult jResult) {
+		Map<String, TestResult> testResults = new HashMap<String, TestcasesExecutor.TestResult>();
+		for (String test : allTests) {
+			TestResult testResult = verifier.verify(jResult, test);
+			testResults.put(test, testResult);
+		}
+		return testResults;
 	}
 	
 	private List<BreakpointData> buildBreakpointData(
@@ -145,6 +160,10 @@ public class TestcasesExecutor extends JunitDebugger {
 		return result;
 	}
 	
+	public JunitResult getjResult() {
+		return jResult;
+	}
+	
 	private DebugValueExtractor getValueExtractor() {
 		if (valueExtractor == null) {
 			setValueExtractor(new DebugValueExtractor(valRetrieveLevel));
@@ -168,6 +187,23 @@ public class TestcasesExecutor extends JunitDebugger {
 	
 	public int getValRetrieveLevel() {
 		return valRetrieveLevel;
+	}
+	
+	public void setTestResultVerifier(ITestResultVerifier verifier) {
+		this.verifier = verifier;
+	}
+	
+	public static enum TestResult {
+		PASS,
+		FAIL,
+		UNKNOWN;
+		
+		public static TestResult of(boolean isPass) {
+			if (isPass) {
+				return PASS;
+			}
+			return FAIL;
+		}
 	}
 }
 

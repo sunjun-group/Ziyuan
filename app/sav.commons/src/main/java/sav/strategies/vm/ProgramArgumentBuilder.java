@@ -32,6 +32,11 @@ public class ProgramArgumentBuilder {
 	public ProgramArgumentBuilder addArgument(String option, String... values) {
 		return addArgument(option, Arrays.asList(values));
 	}
+	
+	public ProgramArgumentBuilder addOptionArgument(String option) {
+		arguments.add("-" + option);
+		return this;
+	}
 
 	public List<String> build() {
 		return arguments;

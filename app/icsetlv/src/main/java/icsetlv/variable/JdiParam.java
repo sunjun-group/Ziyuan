@@ -72,7 +72,7 @@ public class JdiParam {
 	
 	public ArrayReference getArrayRef() {
 		Assert.assertTrue(type == JdiParamType.ARRAY_ELEMENT,
-				"Expected arrayType, but get ", obj.toString());
+				"Expected arrayType, but get ", type.name());
 		return (ArrayReference) obj;
 	}
 

@@ -13,7 +13,6 @@ import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.ExecVar;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -95,6 +94,7 @@ public class SelectiveSampling implements ISelectiveSampling {
 		if (divider == null) {
 			return newPoints;
 		}
+		
 //		List<ExecVar> labels = divider.getReferencedVariables();
 		/* check boolean variables */ 
 		/* */
@@ -105,9 +105,11 @@ public class SelectiveSampling implements ISelectiveSampling {
 		List<List<Eq<?>>> assignments = solver.getResult();
 		log.debug("Instrument values: ");
 		for (List<Eq<?>> valSet : assignments) {
-			if (datapointExistAlready(valSet, datapoints, allLabels)) {
-				continue;
-			}
+			/*
+			 * we should not check if the datapoint already existed. because
+			 * although the datapoint for this value already there, but the test
+			 * result can be different
+			 */
 			List<BreakpointData> bkpData = mediator.instDebugAndCollectData(
 					CollectionUtils.listOf(bkp), toInstrVarMap(valSet));
 			BreakpointData breakpointData = bkpData.get(0);
@@ -127,21 +129,6 @@ public class SelectiveSampling implements ISelectiveSampling {
 //			break;
 		}
 		return newPoints;
-	}
-
-	private boolean datapointExistAlready(List<Eq<?>> valSet,
-			List<DataPoint> datapoints, List<String> allLabels) {
-		double[] newVals = new double[allLabels.size()];
-		for (Eq<?> ass : valSet) {
-			int idx = allLabels.indexOf(ass.getVar().getLabel());
-			newVals[idx] = (Integer) ass.getValue();
-		}
-		for (DataPoint dp : datapoints) {
-			if (Arrays.equals(dp.getValues(), newVals)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	private Collection<? extends DataPoint> toDataPoints(List<String> allLabels, BreakpointData breakpointData) {

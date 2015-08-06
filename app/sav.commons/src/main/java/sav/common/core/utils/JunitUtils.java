@@ -93,9 +93,13 @@ public class JunitUtils {
 	public static List<Pair<String, String>> toPair(List<String> junitClassTestMethods) {
 		List<Pair<String, String>> result = new ArrayList<Pair<String,String>>(junitClassTestMethods.size());
 		for (String classMethod : junitClassTestMethods) {
-			result.add(ClassUtils.splitClassMethod(classMethod));
+			result.add(toPair(classMethod));
 		}
 		return result;
+	}
+
+	public static Pair<String, String> toPair(String junitClassTestMethod) {
+		return ClassUtils.splitClassMethod(junitClassTestMethod);
 	}
 	
 	public static List<String> toClassMethodStrs(List<Pair<String, String>> values) {

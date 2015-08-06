@@ -13,6 +13,7 @@ import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.ExecVar;
 import icsetlv.sampling.SelectiveSampling;
 import icsetlv.variable.DebugValueInstExtractor;
+import icsetlv.variable.TestResultVerifier;
 import icsetlv.variable.TestcasesExecutor;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class InvariantMediator {
 	private Machine machine;
 	private SelectiveSampling selectiveSampling;
 	private VMConfiguration vmConfig;
+	private TestResultVerifier testVerifier;
 
 	public List<BkpInvariantResult> learn(VMConfiguration config, List<String> allTests,
 			List<BreakPoint> bkps) throws SavException {
@@ -44,6 +46,8 @@ public class InvariantMediator {
 		Assert.assertNotNull(machine, "machine cannot be null!");
 		this.vmConfig = config;
 		List<BreakpointData> bkpsData = debugTestAndCollectData(config, allTests, bkps);
+		testVerifier = new TestResultVerifier(tcExecutor.getjResult());
+		tcExecutor.setTestResultVerifier(testVerifier);
 		InvariantLearner learner = new InvariantLearner(this);
 		return learner.learn(bkpsData);
 	}
