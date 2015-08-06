@@ -42,6 +42,7 @@ public class Machine {
 	private List<String> dataLabels = new ArrayList<String>();
 	private boolean isGeneratedDataLabel = false;
 	private boolean isDataClean = false;
+	private boolean performArtificialDataSynthesis = false;
 
 	// Do not access this directly, please use the getter instead
 	private ISelectiveSampling selectiveSamplingHandler;
@@ -582,5 +583,14 @@ public class Machine {
 
 	public List<DataPoint> getDataPoints() {
 		return data;
+	}
+
+	public boolean isPerformArtificialDataSynthesis() {
+		return performArtificialDataSynthesis;
+	}
+
+	public Machine setPerformArtificialDataSynthesis(boolean performArtificialDataSynthesis) {
+		this.performArtificialDataSynthesis = performArtificialDataSynthesis;
+		return this;
 	}
 }
