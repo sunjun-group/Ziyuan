@@ -134,7 +134,8 @@ public class DebugValueExtractor {
 							if (matchedField.isStatic()) {
 								param = JdiParam.staticField(matchedField, refType, refType.getValue(matchedField));
 							} else {
-								param = JdiParam.nonStaticField(matchedField, objRef, objRef.getValue(matchedField));
+								Value value = objRef == null ? null : objRef.getValue(matchedField);
+								param = JdiParam.nonStaticField(matchedField, objRef, value);
 							}
 							if (param.getValue() != null && !matchedField.name().equals(bpVar.getFullName())) {
 								param = recursiveMatch(param, extractSubProperty(bpVar.getFullName()));

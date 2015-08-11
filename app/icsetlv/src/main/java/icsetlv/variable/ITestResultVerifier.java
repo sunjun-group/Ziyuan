@@ -8,7 +8,7 @@
 
 package icsetlv.variable;
 
-import icsetlv.variable.TestcasesExecutor.TestResult;
+import icsetlv.variable.TestcasesExecutor.TestResultType;
 import sav.strategies.junit.JunitResult;
 
 /**
@@ -17,6 +17,6 @@ import sav.strategies.junit.JunitResult;
  */
 public interface ITestResultVerifier {
 
-	TestResult verify(JunitResult jResult, String test);
+	TestResultType verify(JunitResult jResult, String test);
 
 }

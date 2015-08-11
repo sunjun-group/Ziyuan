@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.ListUtils;
+
 import net.sf.javailp.Linear;
 import net.sf.javailp.OptType;
 import net.sf.javailp.Problem;
@@ -211,8 +213,20 @@ public class IlpSolver extends ExpressionVisitor {
 		for (Object var : vars) {
 			assignments.add(new Eq<Number>((ExecVar)var, result.get(var)));
 		}
-		log.debug("add result: ", assignments);
-		resultSet.add(assignments);
+		
+		if (!assignmentsAlreadyExist(assignments)) {
+			log.debug("add result: ", assignments);
+			resultSet.add(assignments);
+		}
+	}
+	
+	private boolean assignmentsAlreadyExist(Collection<Eq<?>> assignments) {
+		for (List<Eq<?>> curAss : resultSet) {
+			if (ListUtils.isEqualList(curAss, assignments)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public List<List<Eq<?>>> getResult() {

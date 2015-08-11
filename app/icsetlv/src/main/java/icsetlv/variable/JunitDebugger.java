@@ -11,6 +11,7 @@ package icsetlv.variable;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
@@ -41,6 +42,7 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 	private Location junitLoc;
 	private String jResultFile;
 	private boolean jResultFileDeleteOnExit = false;
+//	private int testcaseTimeout = -1;
 	
 	public void setup(VMConfiguration config, List<String> allTests) {
 		super.setup(config);
@@ -65,6 +67,7 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 		List<String> args = new JunitRunnerProgramArgBuilder()
 				.methods(allTests).destinationFile(jResultFile)
 				.storeSingleTestResultDetail()
+//				.testcaseTimeout(20, TimeUnit.SECONDS)
 				.build();
 		config.setProgramArgs(args);
 		onStart();

@@ -8,7 +8,7 @@
 
 package icsetlv.variable;
 
-import icsetlv.variable.TestcasesExecutor.TestResult;
+import icsetlv.variable.TestcasesExecutor.TestResultType;
 import sav.strategies.junit.JunitResult;
 
 /**
@@ -23,8 +23,8 @@ public class DefaultTestResultVerifier implements ITestResultVerifier {
 	}
 
 	@Override
-	public TestResult verify(JunitResult jResult, String test) {
-		return TestResult.of(jResult.getResult(test));
+	public TestResultType verify(JunitResult jResult, String test) {
+		return TestResultType.of(jResult.getResult(test));
 	}
 
 }

@@ -62,7 +62,7 @@ public class DebugLine extends BreakPoint {
 	@Override
 	public String toString() {
 		return "DebugLine [orgLines=" + orgLines + ", vars=" + vars + ", id="
-				+ id + "]";
+				+ getId() + "]";
 	}
 
 	public void addOrgLineNos(List<Integer> newLines) {

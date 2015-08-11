@@ -11,7 +11,7 @@ package icsetlv.variable;
 import java.util.HashSet;
 import java.util.Set;
 
-import icsetlv.variable.TestcasesExecutor.TestResult;
+import icsetlv.variable.TestcasesExecutor.TestResultType;
 import sav.common.core.Logger;
 import sav.strategies.junit.JunitResult;
 
@@ -30,22 +30,22 @@ public class TestResultVerifier extends DefaultTestResultVerifier implements ITe
 	}
 
 	@Override
-	public TestResult verify(JunitResult jResult, String test) {
+	public TestResultType verify(JunitResult jResult, String test) {
 		sav.strategies.junit.TestResult testResult = jResult.getTestResult(test);
 		if (testResult.isPass() || orgResult == null) {
-			return TestResult.of(testResult.isPass());
+			return TestResultType.of(testResult.isPass());
 		}
 		// check if the trace match with the original;
 		sav.strategies.junit.TestResult orgTestResult = orgResult.getTestResult(test);
 		if (allTraces.contains(testResult.getFailureTrace())) {
-			return TestResult.FAIL;
+			return TestResultType.FAIL;
 		}
 		if (!orgTestResult.getFailureTrace().isEmpty()) {
 			log.debug("unknown test result. orgTrace:",
 					orgTestResult.getFailureTrace(), ", currentTrace: ",
 					testResult.getFailureTrace());
 		}
-		return TestResult.UNKNOWN;
+		return TestResultType.UNKNOWN;
 	}
 
 	public void setupOrgResult(JunitResult jResult) {

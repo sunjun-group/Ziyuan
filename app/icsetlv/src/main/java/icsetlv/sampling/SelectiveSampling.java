@@ -118,7 +118,10 @@ public class SelectiveSampling implements ISelectiveSampling {
 			 * if new data point exist in both negative and positive set ->
 			 * cannot divide, we can stop trying another point
 			 */
-			log.debug(valSet);
+			if (!points.isEmpty()) {
+				log.debug(valSet);
+				log.debug(points);
+			}
 			newPoints.addAll(points);
 			if (points.size() > 1) {
 				break;

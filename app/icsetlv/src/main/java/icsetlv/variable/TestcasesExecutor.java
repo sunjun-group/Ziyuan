@@ -74,24 +74,24 @@ public class TestcasesExecutor extends JunitDebugger {
 
 	@Override
 	protected void onFinish(JunitResult jResult) {
-		Map<TestResult, List<BreakpointValue>> resultMap = new HashMap<TestResult, List<BreakpointValue>>();
-		Map<String, TestResult> tcExResult = getTcExResult(jResult);
+		Map<TestResultType, List<BreakpointValue>> resultMap = new HashMap<TestResultType, List<BreakpointValue>>();
+		Map<String, TestResultType> tcExResult = getTcExResult(jResult);
 		for (int i = 0; i < allTests.size(); i++) {
-			TestResult testResult = tcExResult.get(allTests.get(i));
-			if (testResult != TestResult.UNKNOWN) {
+			TestResultType testResult = tcExResult.get(allTests.get(i));
+			if (testResult != TestResultType.UNKNOWN) {
 				CollectionUtils.getListInitIfEmpty(resultMap, testResult)
 						.addAll(bkpValsByTestIdx.get(i));
 			}
 		}
-		result = buildBreakpointData(CollectionUtils.nullToEmpty(resultMap.get(TestResult.PASS)), 
-				CollectionUtils.nullToEmpty(resultMap.get(TestResult.FAIL)));
+		result = buildBreakpointData(CollectionUtils.nullToEmpty(resultMap.get(TestResultType.PASS)), 
+				CollectionUtils.nullToEmpty(resultMap.get(TestResultType.FAIL)));
 		this.jResult = jResult; 
 	}
 
-	private Map<String, TestResult> getTcExResult(JunitResult jResult) {
-		Map<String, TestResult> testResults = new HashMap<String, TestcasesExecutor.TestResult>();
+	private Map<String, TestResultType> getTcExResult(JunitResult jResult) {
+		Map<String, TestResultType> testResults = new HashMap<String, TestcasesExecutor.TestResultType>();
 		for (String test : allTests) {
-			TestResult testResult = verifier.verify(jResult, test);
+			TestResultType testResult = verifier.verify(jResult, test);
 			testResults.put(test, testResult);
 		}
 		return testResults;
@@ -193,12 +193,12 @@ public class TestcasesExecutor extends JunitDebugger {
 		this.verifier = verifier;
 	}
 	
-	public static enum TestResult {
+	public static enum TestResultType {
 		PASS,
 		FAIL,
 		UNKNOWN;
 		
-		public static TestResult of(boolean isPass) {
+		public static TestResultType of(boolean isPass) {
 			if (isPass) {
 				return PASS;
 			}
