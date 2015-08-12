@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.ListUtils;
-
 import net.sf.javailp.Linear;
 import net.sf.javailp.OptType;
 import net.sf.javailp.Problem;
@@ -27,6 +25,9 @@ import net.sf.javailp.Solver;
 import net.sf.javailp.SolverFactory;
 import net.sf.javailp.SolverFactoryLpSolve;
 import net.sf.javailp.Term;
+
+import org.apache.commons.collections.ListUtils;
+
 import sav.common.core.Logger;
 import sav.common.core.Pair;
 import sav.common.core.formula.Atom;
@@ -111,7 +112,7 @@ public class IlpSolver extends ExpressionVisitor {
 		}
 		log.debug("----finish ilp solver----");
 	}
-	
+
 	private List<ExecVar> selectVarsForSampling(List<ExecVar> vars, int maxVarToCalcul) {
 		if (vars.size() == 1) {
 			return vars;
@@ -146,7 +147,7 @@ public class IlpSolver extends ExpressionVisitor {
 		return atoms;
 	}
 
-	private Result solveProblem(Problem problem, Collection<?> vars) {
+	private Result solveProblem(Problem problem, Collection<ExecVar> vars) {
 		Result result = getSolver().solve(problem);
 		updateResult(result, vars);
 		return result;
@@ -205,13 +206,16 @@ public class IlpSolver extends ExpressionVisitor {
 		return vars;
 	}
 	
-	private void updateResult(Result result, Collection<?> vars) {
+	private void updateResult(Result result, Collection<ExecVar> vars) {
 		if (result == null) {
 			return;
 		}
 		List<Eq<?>> assignments = new ArrayList<Eq<?>>();
-		for (Object var : vars) {
-			assignments.add(new Eq<Number>((ExecVar)var, result.get(var)));
+		for (ExecVar var : vars) {
+			Eq<?> asg = getAssignment(var, result.get(var));
+			if (asg != null) {
+				assignments.add(asg);
+			}
 		}
 		
 		if (!assignmentsAlreadyExist(assignments)) {
@@ -220,6 +224,21 @@ public class IlpSolver extends ExpressionVisitor {
 		}
 	}
 	
+	private Eq<?> getAssignment(ExecVar var, Number number) {
+		switch (var.getType()) {
+		case PRIMITIVE:
+			return new Eq<Number>(var, number);
+		case BOOLEAN:
+			if (number.intValue() > 0) {
+				return new Eq<Boolean>(var, true);
+			} else {
+				return new Eq<Boolean>(var, false);
+			}
+		default:
+			return null;
+		}
+	}
+
 	private boolean assignmentsAlreadyExist(Collection<Eq<?>> assignments) {
 		for (List<Eq<?>> curAss : resultSet) {
 			if (ListUtils.isEqualList(curAss, assignments)) {

@@ -8,7 +8,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../tzuyu.parent/pom.xml</relativePath>
 	</parent>
-	
+
 	<properties>
 		<javailp-version>1.2a</javailp-version>
 	</properties>
@@ -104,6 +104,13 @@
 			<artifactId>junit</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2.1</version>
+		</dependency>
+
+
 		<!-- wala -->
 		<!-- <dependency> -->
 		<!-- <groupId>tzuyu-project</groupId> -->
@@ -137,5 +144,6 @@
 			<groupId>tzuyu-project</groupId>
 			<artifactId>svmlib</artifactId>
 		</dependency>
+
 	</dependencies>
 </project>

@@ -18,6 +18,7 @@ import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.strategies.dto.BreakPoint.Variable;
 
+import com.sun.jdi.ArrayReference;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.LocalVariable;
 import com.sun.jdi.StackFrame;
@@ -96,7 +97,7 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 	private void instObjField(ThreadReference thread, JdiParam jdiParam,
 			Object newVal, Variable var) {
 		try {
-			if (newVal != null) {
+			if (newVal != null && jdiParam.getField() != null) {
 				Value newValue = jdiValueOf(newVal, thread);
 				jdiParam.getObj().setValue(jdiParam.getField(), newValue);
 				jdiParam.setValue(newValue);
@@ -126,7 +127,12 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 			Object newVal, Variable var) {
 		try {
 			Value newValue = jdiValueOf(newVal, thread);
-			jdiParam.getArrayRef().setValue(jdiParam.getIdx(), newValue);
+			ArrayReference arrayRef = jdiParam.getArrayRef();
+			if (arrayRef == null || jdiParam.getIdx() < 0
+					|| jdiParam.getIdx() >= arrayRef.length()) {
+				return;
+			}
+			arrayRef.setValue(jdiParam.getIdx(), newValue);
 			jdiParam.setValue(newValue);
 		} catch (Exception e) {
 			throw new SavRtException(e);

@@ -210,7 +210,7 @@ public class DebugValueExtractor {
 				final Matcher matcher = ARRAY_ACCESS_PATTERN.matcher(property);
 				if (matcher.matches()) {
 					int index = Integer.valueOf(matcher.group(1));
-					subParam = JdiParam.arrayElement(array, index, array.getValue(index)); 
+					subParam = JdiParam.arrayElement(array, index, getArrayEleValue(array, index)); 
 					// After this we can have access to another dimension of the
 					// array or access to the retrieved object's property
 					subProperty = matcher.group(2);
@@ -238,6 +238,16 @@ public class DebugValueExtractor {
 			}
 		}
 		return recursiveMatch(subParam, subProperty);
+	}
+
+	private Value getArrayEleValue(ArrayReference array, int index) {
+		if (array == null) {
+			return null;
+		}
+		if (index >= array.length()) {
+			return null;
+		}
+		return array.getValue(index);
 	}
 
 	/** append execution value*/
@@ -319,7 +329,7 @@ public class DebugValueExtractor {
 		val.setValue(value);
 		//add value of elements
 		for (int i = 0; i < value.length(); i++) {
-			appendVarVal(val, val.getElementId(i), value.getValue(i), level, thread);
+			appendVarVal(val, val.getElementId(i), getArrayEleValue(value, i), level, thread);
 		}
 		parent.add(val);
 	}
