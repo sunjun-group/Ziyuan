@@ -1,0 +1,9 @@
+how to build liblpsolve55.dylib and liblpsolve55j.jnilib (actually failed):
+
+https://diegoresearch.wordpress.com/2008/07/10/using-lp_solve-in-java-with-mac-os-x/
+
+=========================================================
+
+copy liblpsolve55.dylib into /usr/local/lib
+copy liblpsolve55j.jnilib into /Library/Java/Extensions
+copy liblpsolve55j.jnilib into .../Tzuyu/etc/libs/javailp-native
