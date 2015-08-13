@@ -94,5 +94,10 @@
 			<artifactId>commons-csv</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>assertion</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>
