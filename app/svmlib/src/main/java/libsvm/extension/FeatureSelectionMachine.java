@@ -9,6 +9,20 @@ import libsvm.core.Model;
 
 import org.apache.log4j.Logger;
 
+/**
+ * This implementation iterates on all possible subsets of 1, 2 and 3 features
+ * got from the existing features. It then uses an instance of the default SVM
+ * Machine implementation to learn on the subset.
+ * <p>
+ * If a predicate with accuracy of 1 is learned, it tries to tune the logic
+ * using selective sampling. After the process, if a logic with the accuracy of
+ * 1 is returned, the process stops. In that case, the instance of the inner SVM
+ * machine used for training is stored inside the <code>machine</code> property.
+ * Otherwise, this property is <code>null</code>.
+ * 
+ * @author Nguyen Phuoc Nguong Phuc (npn)
+ * 
+ */
 public class FeatureSelectionMachine extends Machine {
 	private static final Logger LOGGER = Logger.getLogger(FeatureSelectionMachine.class);
 	private static final int MAX_FEATURE = 3;
@@ -71,7 +85,8 @@ public class FeatureSelectionMachine extends Machine {
 				debug("Training with features: [" + str.toString() + "].");
 				debug("Learned logic: " + learnedLogic);
 				debug("Accuracy: " + accuracy);
-				// We only run selective sampling after we found an "interesting" logic
+				// We only run selective sampling after we found an
+				// "interesting" logic
 				// I.e.: we will try to "tune" the logic then
 				if (Double.compare(accuracy, 1.0) >= 0) {
 					debug("Trying to improve the learned logic using Selective Sampling.");
