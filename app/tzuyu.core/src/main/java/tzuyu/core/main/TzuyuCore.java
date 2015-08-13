@@ -8,11 +8,6 @@
 
 package tzuyu.core.main;
 
-import icsetlv.common.dto.BkpInvariantResult;
-import icsetlv.common.exception.IcsetlvException;
-import icsetlv.variable.VariableNameCollector;
-import japa.parser.ast.CompilationUnit;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,10 +17,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import main.FaultLocalization;
-
 import org.apache.commons.lang.builder.CompareToBuilder;
 
+import faultLocalization.FaultLocalizationReport;
+import faultLocalization.LineCoverageInfo;
+import gentest.builder.FixTraceGentestBuilder;
+import gentest.core.data.Sequence;
+import gentest.junit.FileCompilationUnitPrinter;
+import gentest.junit.ICompilationUnitPrinter;
+import gentest.junit.TestsPrinter;
+import icsetlv.common.dto.BkpInvariantResult;
+import icsetlv.common.exception.IcsetlvException;
+import icsetlv.variable.VariableNameCollector;
+import japa.parser.ast.CompilationUnit;
+import main.FaultLocalization;
 import sav.common.core.Logger;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
@@ -42,13 +47,6 @@ import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.machinelearning.LearnInvariants;
 import tzuyu.core.mutantbug.MutanBug;
 import tzuyu.core.mutantbug.Recompiler;
-import faultLocalization.FaultLocalizationReport;
-import faultLocalization.LineCoverageInfo;
-import gentest.builder.FixTraceGentestBuilder;
-import gentest.core.data.Sequence;
-import gentest.junit.FileCompilationUnitPrinter;
-import gentest.junit.ICompilationUnitPrinter;
-import gentest.junit.TestsPrinter;
 
 
 /**
@@ -56,9 +54,9 @@ import gentest.junit.TestsPrinter;
  *
  */
 public class TzuyuCore {
-	private static final Logger<?> LOGGER = Logger.getDefaultLogger();
+	protected static final Logger<?> LOGGER = Logger.getDefaultLogger();
 	private IApplicationContext appContext;
-	private ApplicationData appData;
+	protected ApplicationData appData;
 	private MutanBug mutanbug;
 	
 	public TzuyuCore(IApplicationContext appContext, ApplicationData appData) {
@@ -138,7 +136,7 @@ public class TzuyuCore {
 		LOGGER.info(report);
 	}
 	
-	private void machineLearning(FaultLocalizationReport report,
+	protected void machineLearning(FaultLocalizationReport report,
 			FaultLocateParams params) throws ClassNotFoundException,
 			SavException, IcsetlvException, Exception {
 		LOGGER.info("Running Machine Learning");
@@ -168,7 +166,8 @@ public class TzuyuCore {
 			filter(suspectLocations, appData.getAppSrc());
 
 			// Select from suspectLocations to monitor
-			final List<LineCoverageInfo> selectedLocations = selectLinesByGrouping(suspectLocations);
+//			final List<LineCoverageInfo> selectedLocations = selectLinesByGrouping(suspectLocations);
+			final List<LineCoverageInfo> selectedLocations = suspectLocations;
 
 			/* compute variables appearing at each breakpoint */
 			VariableNameCollector nameCollector = new VariableNameCollector(
@@ -255,9 +254,16 @@ public class TzuyuCore {
 			lines.add(endLine);
 		}
 	}
-
+	
 	protected List<String> generateNewTests(String testingClassName,
 			String methodName, String verificationMethod, int numberOfTestCases)
+			throws ClassNotFoundException, SavException {
+		Class<?> targetClass = Class.forName(testingClassName);
+		return generateNewTests(testingClassName, methodName, verificationMethod, numberOfTestCases, targetClass.getSimpleName());
+	}
+
+	protected List<String> generateNewTests(String testingClassName,
+			String methodName, String verificationMethod, int numberOfTestCases, String classPrefix)
 			throws ClassNotFoundException, SavException {
 		Class<?> targetClass = Class.forName(testingClassName);
 		
@@ -274,7 +280,7 @@ public class TzuyuCore {
 				appData.getAppSrc());
 		final List<String> junitClassNames = new ArrayList<String>();
 		TestsPrinter printer = new TestsPrinter("test", null, "test",
-				targetClass.getSimpleName(), new ICompilationUnitPrinter() {
+				classPrefix, new ICompilationUnitPrinter() {
 					
 					@Override
 					public void print(List<CompilationUnit> compilationUnits) {
@@ -288,13 +294,14 @@ public class TzuyuCore {
 				});
 		printer.printTests(testcases);
 		List<File> generatedFiles = cuPrinter.getGeneratedFiles();
+		
 		Recompiler recompiler = new Recompiler(appData.getVmConfig());
 		recompiler.recompileJFile(appData.getAppTestTarget(), generatedFiles);
 		
 		return junitClassNames;
 	}
 
-	private List<DebugLine> getDebugLines(List<BreakPoint> locatedLines) throws SavException {
+	protected List<DebugLine> getDebugLines(List<BreakPoint> locatedLines) throws SavException {
 		mutanbug = getMutanbug();
 		mutanbug.setAppData(appData);
 		mutanbug.setMutator(appContext.getMutator());
@@ -342,5 +349,9 @@ public class TzuyuCore {
 			mutanbug = new MutanBug();
 		}
 		return mutanbug;
+	}
+	
+	public void genAssertion(AssertionGenerationParams params) throws Exception {
+		
 	}
 }

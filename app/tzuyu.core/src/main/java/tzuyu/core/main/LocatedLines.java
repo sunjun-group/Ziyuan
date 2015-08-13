@@ -37,6 +37,11 @@ public class LocatedLines {
 		setSuspeciousnessResult(suspectLocations);
 	}
 
+	public LocatedLines(List<BreakPoint> bkps, List<BkpInvariantResult> invs) {
+		orgLocatedLines = bkps;
+		invariants = invs;
+	}
+	
 	public void setSuspeciousnessResult(List<LineCoverageInfo> suspectLocations) {
 		suspeciousness = new HashMap<String, Double>();
 		orgLocatedLines = new ArrayList<BreakPoint>();
