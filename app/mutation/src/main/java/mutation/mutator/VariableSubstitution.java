@@ -20,7 +20,7 @@ public class VariableSubstitution {
 		this.descriptor = descriptor;
 	}
 	
-	private Type getType(String varName, int lineNumber, int col){
+	public Type getType(String varName, int lineNumber, int col){
 		Type type = searchFieldType(varName);
 		if (type != null) {
 			return type;
