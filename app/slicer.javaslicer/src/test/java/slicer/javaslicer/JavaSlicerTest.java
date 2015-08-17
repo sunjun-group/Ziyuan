@@ -106,14 +106,14 @@ public class JavaSlicerTest extends AbstractTest {
 	
 	@Test
 	public void testSampleProgram() throws Exception {
-		String sampleProgramsClassName = SamplePrograms.class.getName();
-		String sampleProgramTestClassName = SampleProgramTest.class.getName();
-		BreakPoint bkp1 = new BreakPoint(sampleProgramTestClassName, "test5", 53);
-		BreakPoint bkp2 = new BreakPoint(sampleProgramsClassName, "Max", 10);
+		String targetClass = SamplePrograms.class.getName();
+		String testClass = SampleProgramTest.class.getName();
+		BreakPoint bkp1 = new BreakPoint(targetClass, "Max", 25);
+		BreakPoint bkp2 = new BreakPoint(testClass, "test2", 26);
 		List<BreakPoint> breakpoints = Arrays.asList(bkp1);
-		analyzedClasses = Arrays.asList(sampleProgramsClassName);
+		analyzedClasses = Arrays.asList(targetClass);
 		testClassMethods = JunitUtils.extractTestMethods(Arrays
-				.asList(sampleProgramTestClassName));
+				.asList(testClass));
 		run(breakpoints);
 	}
 	

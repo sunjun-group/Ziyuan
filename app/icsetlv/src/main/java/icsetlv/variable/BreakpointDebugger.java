@@ -52,6 +52,7 @@ public abstract class BreakpointDebugger {
 	public void setup(VMConfiguration config) {
 		debugger = new SimpleDebugger();
 		this.config = config;
+		this.config.setDebug(true);
 	}
 
 	public final void run(List<BreakPoint> brkps) throws SavException {

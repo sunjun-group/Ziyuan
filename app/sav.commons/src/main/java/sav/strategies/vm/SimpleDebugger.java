@@ -30,7 +30,8 @@ public class SimpleDebugger {
 		listener.startListening(config);
 		try {
 			vmRunner = new VMRunner();
-			process = vmRunner.startVm(config);
+			vmRunner.startVm(config);
+			process = vmRunner.getProcess();
 			if (process != null) {
 				return listener.connect(process);
 			}

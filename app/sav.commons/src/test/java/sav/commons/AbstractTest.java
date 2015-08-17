@@ -62,7 +62,6 @@ public class AbstractTest {
 	protected VMConfiguration initVmConfig() {
 		VMConfiguration vmConfig = new VMConfiguration();
 		vmConfig.setJavaHome(TestConfigUtils.getJavaHome());
-		vmConfig.setDebug(true);
 		vmConfig.setPort(findFreePort());
 		vmConfig.addClasspath(config.getJavaBin());
 		vmConfig.addClasspath(SAV_COMMONS_TEST_TARGET);

@@ -103,6 +103,7 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 				jdiParam.setValue(newValue);
 			}
 		} catch (Exception e) {
+			// TODO: final value
 			throw new SavRtException(e);
 		}
 	}
@@ -147,6 +148,9 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 		}
 		if (newVal instanceof Boolean) {
 			return vm.mirrorOf((Boolean) newVal);
+		}
+		if (newVal instanceof Double) {
+			return vm.mirrorOf((Double) newVal);
 		}
 		return null;
 	}

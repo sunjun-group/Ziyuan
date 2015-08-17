@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionBuilder;
 import sav.strategies.vm.VMConfiguration;
@@ -30,12 +31,12 @@ public class Recompiler {
 		setVmConfig(vmConfig);
 	}
 
-	public void recompileJFile(String targetFolder, File... mutatedFiles)
+	public boolean recompileJFile(String targetFolder, File... mutatedFiles)
 			throws SavException {
-		recompileJFile(targetFolder, Arrays.asList(mutatedFiles));
+		return recompileJFile(targetFolder, Arrays.asList(mutatedFiles));
 	}
 
-	public void recompileJFile(String targetFolder, List<File> mutatedFiles)
+	public boolean recompileJFile(String targetFolder, List<File> mutatedFiles)
 			throws SavException {
 		CollectionBuilder<String, List<String>> builder = new CollectionBuilder<String, List<String>>(
 				new ArrayList<String>())
@@ -46,7 +47,13 @@ public class Recompiler {
 			builder.add(mutatedFile.getAbsolutePath());
 		}
 		builder.add("-g");
-		VMRunner.getDefault().startAndWaitUntilStop(builder.toCollection());
+		VMRunner vmRunner = VMRunner.getDefault();
+		vmRunner.setLog(vmConfig.isVmLogEnable());
+		boolean success = vmRunner.startAndWaitUntilStop(builder.toCollection());
+		if (!success) {
+			throw new SavException(ModuleEnum.JVM, "Recompilation error: " + vmRunner.getProccessError());
+		}
+		return success;
 	}
 
 	public void setVmConfig(VMConfiguration vmConfig) {

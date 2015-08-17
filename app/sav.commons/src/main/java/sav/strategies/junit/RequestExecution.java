@@ -30,7 +30,7 @@ public class RequestExecution implements Runnable{
 		this.isPassed = (result.getFailureCount() <= 0);
 	}
 	
-	public Boolean getResult(){
+	public boolean getResult(){
 		return isPassed;
 	}
 	

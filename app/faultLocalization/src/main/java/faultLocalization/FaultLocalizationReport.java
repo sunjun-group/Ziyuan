@@ -6,6 +6,7 @@ import java.util.List;
 
 import faultLocalization.LineCoverageInfo.LineCoverageInfoComparator;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.ObjectUtils;
 import sav.strategies.dto.ClassLocation;
 
 public class FaultLocalizationReport {
@@ -31,12 +32,15 @@ public class FaultLocalizationReport {
 	
 	public List<LineCoverageInfo> getFirstRanks(int rank){
 		List<LineCoverageInfo> result = new ArrayList<LineCoverageInfo>();
-		int run = 0;
 		
 		int size = lineCoverageInfos.size();
+		int run = 0;
 		while(rank > 0 && run < size){
 			//add linecoverage for current rank
 			double maxSuspiciousness = lineCoverageInfos.get(run).getSuspiciousness();
+			if (ObjectUtils.equalsWithNull(maxSuspiciousness, 0)) {
+				break;
+			}
 			int i ;
 			for(i = run; i < size && Double.compare(lineCoverageInfos.get(i).getSuspiciousness(), maxSuspiciousness) == 0; i++){
 				result.add(lineCoverageInfos.get(i));

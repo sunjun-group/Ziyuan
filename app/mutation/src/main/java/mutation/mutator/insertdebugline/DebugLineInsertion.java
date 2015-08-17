@@ -52,6 +52,7 @@ import sav.strategies.mutanbug.DebugLineInsertionResult;
  *
  */
 public class DebugLineInsertion extends AbstractMutationVisitor {
+	private static boolean MOVE_BKP_OUT_OF_THE_LOOP = false;
 	private String className;
 	private List<Integer> lines;
 	private ClassDescriptor clazzDesc;
@@ -157,7 +158,6 @@ public class DebugLineInsertion extends AbstractMutationVisitor {
 	 * */
 	private List<Integer> mutationLines;
 	private LinkedList<Node> curLoopBlks = new LinkedList<Node>();
-	private static boolean MOVE_BKP_OUT_OF_THE_LOOP = true;
 	/**
 	 * before visit/mutate
 	 */

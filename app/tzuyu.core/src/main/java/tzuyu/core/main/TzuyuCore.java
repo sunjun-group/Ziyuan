@@ -38,6 +38,7 @@ import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
+import sav.common.core.utils.StringUtils;
 import sav.strategies.IApplicationContext;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.ClassLocation;
@@ -164,10 +165,19 @@ public class TzuyuCore {
 			LOGGER.warn("No suspect line to learn. SVM will not run.");
 		} else {
 			filter(suspectLocations, appData.getAppSrc());
-
+			if (LOGGER.isDebug()) {
+				LOGGER.debug("before grouping: ");
+				LOGGER.debug(StringUtils.join(suspectLocations, "\n"));
+			}
 			// Select from suspectLocations to monitor
-//			final List<LineCoverageInfo> selectedLocations = selectLinesByGrouping(suspectLocations);
-			final List<LineCoverageInfo> selectedLocations = suspectLocations;
+			List<LineCoverageInfo> selectedLocations = suspectLocations;
+			if (params.isGroupLines()) {
+				selectedLocations = selectLinesByGrouping(suspectLocations);
+			}
+			if (LOGGER.isDebug()) {
+				LOGGER.debug("after grouping: ");
+				LOGGER.debug(StringUtils.join(selectedLocations, "\n"));
+			}
 
 			/* compute variables appearing at each breakpoint */
 			VariableNameCollector nameCollector = new VariableNameCollector(

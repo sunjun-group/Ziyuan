@@ -15,9 +15,11 @@ package icsetlv.common.dto;
  */
 public class StringValue extends PrimitiveValue {
 	private static final String LENGTH_CODE = "length";
+	private static final String IS_EMPTY = "isEmpty";
 	
 	public StringValue(String id, String val) {
 		super(id, val);
+		add(new BooleanValue(getChildId(IS_EMPTY), val.isEmpty()));
 		add(new PrimitiveValue(getChildId(LENGTH_CODE), String.valueOf(val.length())));
 	}
 

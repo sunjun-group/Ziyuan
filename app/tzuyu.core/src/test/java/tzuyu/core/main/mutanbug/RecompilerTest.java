@@ -17,6 +17,7 @@ import sav.common.core.utils.ClassUtils;
 import sav.commons.AbstractTest;
 import sav.commons.testdata.simplePrograms.SimplePrograms;
 import sav.commons.testdata.simplePrograms.SimpleProgramsOrg;
+import sav.strategies.vm.VMConfiguration;
 import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.main.TestApplicationContext;
 import tzuyu.core.mutantbug.Recompiler;
@@ -31,7 +32,9 @@ public class RecompilerTest extends AbstractTest {
 	@Test
 	public void recompileSimpleProgram() throws SavException {
 		ApplicationData appData = context.getAppData();
-		Recompiler recompier = new Recompiler(appData.getVmConfig());
+		VMConfiguration vmConfig = appData.getVmConfig();
+		vmConfig.setEnableVmLog(true);
+		Recompiler recompier = new Recompiler(vmConfig);
 		String jFilePath = ClassUtils.getJFilePath(appData.getAppSrc(),
 				SimplePrograms.class.getCanonicalName());
 		recompier.recompileJFile(appData.getAppTarget(), new File(jFilePath),

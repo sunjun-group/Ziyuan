@@ -85,7 +85,7 @@ public class JavaSlicer implements ISlicer {
 	 * 		-cp [project classpath + path of tzuyuSlicer.jar] sav.strategies.junit.JunitRunner
 	 * 		-methods [classMethods]
 	 */
-	public String createTraceFile(List<String> junitClassNames)
+	public String createTraceFile(List<String> junitClassMethods)
 			throws IOException, SavException, InterruptedException,
 			ClassNotFoundException {
 		log.info("Slicing-creating trace file...");
@@ -94,7 +94,7 @@ public class JavaSlicer implements ISlicer {
 		/* run program and create trace file */
 		vmConfig.setLaunchClass(JunitRunner.class.getName());
 		List<String> arguments = new JunitRunnerProgramArgBuilder().methods(
-				junitClassNames).build();
+				junitClassMethods).build();
 		vmRunner.setProgramArgs(arguments);
 		/**/
 		vmRunner.setTraceFilePath(tempFileName);

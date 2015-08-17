@@ -32,6 +32,7 @@ public class FaultLocateParams {
 	private boolean mutationEnable;
 	private boolean machineLearningEnable;
 	private int valueRetrieveLevel = 3;
+	private boolean groupLines = true;
 	private VarNameCollectionMode varNameCollectionMode = VarNameCollectionMode.FULL_NAME;
 
 	public List<String> getTestingClassNames() {
@@ -143,5 +144,12 @@ public class FaultLocateParams {
 	public void setVarNameCollectionMode(VarNameCollectionMode varNameCollectionMode) {
 		this.varNameCollectionMode = varNameCollectionMode;
 	}
-	
+
+	public boolean isGroupLines() {
+		return groupLines;
+	}
+
+	public void setGroupLines(boolean groupLines) {
+		this.groupLines = groupLines;
+	}
 }

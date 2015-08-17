@@ -44,8 +44,6 @@ import sav.strategies.vm.VMConfiguration;
  * 
  */
 public class Engine {
-	private static final int DEFAULT_PORT = 80;
-
 	private TestcasesExecutor testcaseExecutor;
 	private VMConfiguration vmConfig = initVmConfig();
 	private Machine machine = getDefaultMachine();
@@ -75,15 +73,12 @@ public class Engine {
 //		final Machine machine = new PositiveSeparationMachine(new RandomNegativePointSelection());
 		Machine machine = new FeatureSelectionMachine();
 		return machine.setParameter(new Parameter().setMachineType(MachineType.C_SVC)
-				.setKernelType(KernelType.LINEAR).setEps(1.0).setUseShrinking(false)
+				.setKernelType(KernelType.LINEAR).setEps(0.00001).setUseShrinking(false)
 				.setPredictProbability(false).setC(Double.MAX_VALUE));
 	}
 	
 	private VMConfiguration initVmConfig() {
-		final VMConfiguration vmConfig = new VMConfiguration();
-		vmConfig.setDebug(true);
-		vmConfig.setPort(DEFAULT_PORT);
-		return vmConfig;
+		return new VMConfiguration();
 	}
 
 	public Engine setJavaHome(final String javaHome) {

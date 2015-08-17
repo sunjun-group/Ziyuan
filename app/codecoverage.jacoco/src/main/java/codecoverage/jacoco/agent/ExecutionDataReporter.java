@@ -156,14 +156,19 @@ public class ExecutionDataReporter {
 		});
 		reader.read();
 		in.close();
-		if (log.isDebug()) {
-			for (String sessionId : dataStore.execDataMap.keySet()) {
-				log.debug("Session", sessionId);
-				for (ExecutionData data : dataStore.execDataMap.get(sessionId)) {
-					log.debug(data);
-				}
-			}
-		}
+		/*
+		 * TODO LLT: log here looks useless.
+		 * allow to configure the module to show log.
+		 *  
+		 */
+//		if (log.isDebug()) {
+//			for (String sessionId : dataStore.execDataMap.keySet()) {
+//				log.debug("Session", sessionId);
+//				for (ExecutionData data : dataStore.execDataMap.get(sessionId)) {
+//					log.debug(data);
+//				}
+//			}
+//		}
 		return dataStore.execDataMap;
 	}
 	
