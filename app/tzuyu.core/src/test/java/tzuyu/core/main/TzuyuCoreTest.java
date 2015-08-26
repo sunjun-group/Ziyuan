@@ -71,8 +71,8 @@ public abstract class TzuyuCoreTest extends AbstractTzTest {
 //	
 //	@Test
 //	public void runSampleProgram() throws Exception {
-//		faultLocalization(SamplePrograms.class.getName(),
-//				SampleProgramTest.class.getName());
+//		faultLocalization(CoverageSample.class.getName(),
+//				CoverageSampleTest.class.getName());
 //	}
 //	
 //	

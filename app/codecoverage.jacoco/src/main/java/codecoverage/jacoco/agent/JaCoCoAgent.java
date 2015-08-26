@@ -17,7 +17,6 @@ import sav.common.core.ModuleEnum;
 import sav.common.core.NullPrintStream;
 import sav.common.core.SavException;
 import sav.common.core.iface.IPrintStream;
-import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.codecoverage.ICodeCoverage;
@@ -59,8 +58,10 @@ public class JaCoCoAgent implements ICodeCoverage {
 			List<String> junitClassNames) throws SavException, IOException,
 			ClassNotFoundException {
 		log.debug("RUNNING JACOCO..");
-		Assert.assertTrue(CollectionUtils.isNotEmpty(testingClassNames),
-				"TestingClassNames is empty!!");
+		if (CollectionUtils.isEmpty(testingClassNames)) {
+			log.warn("TestingClassNames is empty!!");
+		}
+		testingClassNames = CollectionUtils.nullToEmpty(testingClassNames);
 		String destfile = File.createTempFile("tzJacoco", ".exec").getAbsolutePath();
 		String junitResultFile = File.createTempFile("tzJunitRes", ".txt")
 				.getAbsolutePath();
@@ -108,5 +109,9 @@ public class JaCoCoAgent implements ICodeCoverage {
 	
 	public void setOut(IPrintStream out) {
 		this.out = out;
+	}
+	
+	public void setReporter(ExecutionDataReporter reporter) {
+		this.reporter = reporter;
 	}
 }

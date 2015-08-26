@@ -34,6 +34,7 @@ import com.sun.jdi.request.EventRequestManager;
  *
  */
 public abstract class JunitDebugger extends BreakpointDebugger {
+	protected static final long DEFAULT_TIMEOUT = -1;
 	private static final String JUNIT_RUNNER_CLASS_NAME = JunitRunner.class.getName();
 	protected List<String> allTests;
 	
@@ -67,10 +68,14 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 		List<String> args = new JunitRunnerProgramArgBuilder()
 				.methods(allTests).destinationFile(jResultFile)
 				.storeSingleTestResultDetail()
-//				.testcaseTimeout(20, TimeUnit.SECONDS)
+				.testcaseTimeout(getTimeoutInSec(), TimeUnit.SECONDS)
 				.build();
 		config.setProgramArgs(args);
 		onStart();
+	}
+
+	protected long getTimeoutInSec() {
+		return DEFAULT_TIMEOUT;
 	}
 	
 	@Override

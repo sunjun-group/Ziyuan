@@ -20,8 +20,8 @@ import sav.commons.testdata.opensource.TestPackage;
  *
  */
 public class FaultLocatePackageTest extends AbstractTzPackageTest {
-	private TzuyuCore tzCore;
-	private FaultLocateParams params;
+	protected TzuyuCore tzCore;
+	protected FaultLocateParams params;
 	
 	@Before
 	public void setup() {
@@ -69,7 +69,16 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 	@Test
 	public void testjavaparser57() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("javaparser", "57");
-		params.setRankToExamine(3);
+		params.setRankToExamine(2);
+		params.setRunMutation(false);
+		params.setMachineLearningEnable(true);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void countLocJavaParser57() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("javaparser", "57");
+		params.setRankToExamine(2);
 		params.setRunMutation(false);
 		params.setMachineLearningEnable(true);
 		runFaultLocate(testPkg);
@@ -118,8 +127,30 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 	@Test
 	public void testjodatime227() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("joda-time", "227");
-		params.setRankToExamine(1);
+		params.setRankToExamine(3);
 		params.setValueRetrieveLevel(4);
+		params.setUseSlicer(false);
+		params.setRunMutation(false);
+		params.setMachineLearningEnable(true);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testjodatime21() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("joda-time", "21");
+		params.setRankToExamine(3);
+		params.setValueRetrieveLevel(3);
+		params.setUseSlicer(false);
+		params.setRunMutation(false);
+		params.setMachineLearningEnable(true);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testjodatime77() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("joda-time", "77");
+		params.setRankToExamine(3);
+		params.setValueRetrieveLevel(3);
 		params.setUseSlicer(false);
 		params.setRunMutation(false);
 		params.setMachineLearningEnable(true);
@@ -196,14 +227,28 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 	
 	@Test
 	public void testCommonsMath835() throws Exception {
-		TestPackage testPkg = TestPackage.getPackage("apache-commons-math-rev30", "835");
+		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "835");
 		params.setRankToExamine(3);
 		runFaultLocate(testPkg);
 	}
 	
 	@Test
 	public void testCommonsMath1127() throws Exception {
-		TestPackage testPkg = TestPackage.getPackage("apache-commons-math-rev30", "1127");
+		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "1127");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsMath1005() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "1005");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsMath1141() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "1141");
 		params.setRankToExamine(3);
 		runFaultLocate(testPkg);
 	}
@@ -229,7 +274,8 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 	@Test
 	public void testOpenCsv108() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("opencsv", "108");
-		params.setRankToExamine(4);
+		params.setRankToExamine(5);
+		params.setValueRetrieveLevel(2);
 		runFaultLocate(testPkg);
 	}
 	

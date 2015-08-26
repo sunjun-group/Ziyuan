@@ -13,12 +13,14 @@ import icsetlv.common.dto.BreakpointValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import sav.common.core.Logger;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.StopTimer;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
 import sav.strategies.vm.VMConfiguration;
@@ -42,6 +44,9 @@ public class TestcasesExecutor extends JunitDebugger {
 	private int valRetrieveLevel;
 	private ITestResultVerifier verifier = DefaultTestResultVerifier.getInstance();
 	private JunitResult jResult;
+	private long lastExecTime = DEFAULT_TIMEOUT;
+	private boolean calculTimeoutByLastExecTime;
+	private StopTimer timer;
 	
 	public TestcasesExecutor(int valRetrieveLevel) {
 		this.valRetrieveLevel = valRetrieveLevel;
@@ -55,25 +60,40 @@ public class TestcasesExecutor extends JunitDebugger {
 		super.setup(config, allTests);
 	}
 	
+	private void calculateTimeout() {
+		LinkedHashMap<String, Long> timeResults = timer.getTimeResults();
+		for (Long execTime : timeResults.values()) {
+			if (execTime > lastExecTime) {
+				lastExecTime = execTime;
+			}
+		}
+	}
+	
 	@Override
 	protected void onStart() {
 		bkpValsByTestIdx = new HashMap<Integer, List<BreakpointValue>>();
 		currentTestBkpValues = new ArrayList<BreakpointValue>();
+		timer = new StopTimer("TestcasesExecutor");
 	}
 
 	@Override
 	protected void onEnterTestcase(int testIdx) {
+//		LOGGER.debug("start test " + testIdx);
+		timer.newPoint(String.valueOf(testIdx));
 		currentTestBkpValues = CollectionUtils.getListInitIfEmpty(bkpValsByTestIdx, testIdx);
 	}
 
 	@Override
 	protected void onEnterBreakpoint(BreakPoint bkp, BreakpointEvent bkpEvent) throws SavException {
+//		LOGGER.debug("on enter bkp " + bkp.getId());
 		BreakpointValue bkpVal = extractValuesAtLocation(bkp, bkpEvent);
 		addToCurrentValueList(currentTestBkpValues, bkpVal);
 	}
 
 	@Override
 	protected void onFinish(JunitResult jResult) {
+//		LOGGER.debug("on finish");
+		calculateTimeout();
 		Map<TestResultType, List<BreakpointValue>> resultMap = new HashMap<TestResultType, List<BreakpointValue>>();
 		Map<String, TestResultType> tcExResult = getTcExResult(jResult);
 		for (int i = 0; i < allTests.size(); i++) {
@@ -90,11 +110,19 @@ public class TestcasesExecutor extends JunitDebugger {
 
 	private Map<String, TestResultType> getTcExResult(JunitResult jResult) {
 		Map<String, TestResultType> testResults = new HashMap<String, TestcasesExecutor.TestResultType>();
+		LOGGER.debug(jResult.getTestResults());
 		for (String test : allTests) {
-			TestResultType testResult = verifier.verify(jResult, test);
+			TestResultType testResult = getTestVerifier().verify(jResult, test);
 			testResults.put(test, testResult);
 		}
 		return testResults;
+	}
+
+	private ITestResultVerifier getTestVerifier() {
+		if (verifier == null) {
+			verifier = DefaultTestResultVerifier.getInstance();
+		}
+		return verifier;
 	}
 	
 	private List<BreakpointData> buildBreakpointData(
@@ -191,6 +219,18 @@ public class TestcasesExecutor extends JunitDebugger {
 	
 	public void setTestResultVerifier(ITestResultVerifier verifier) {
 		this.verifier = verifier;
+	}
+	
+	@Override
+	protected long getTimeoutInSec() {
+		if (calculTimeoutByLastExecTime) {
+			return lastExecTime; 
+		}
+		return DEFAULT_TIMEOUT;
+	}
+	
+	public void setCalculTimeoutByLastExecTime(boolean useLastExecTime) {
+		this.calculTimeoutByLastExecTime = useLastExecTime;
 	}
 	
 	public static enum TestResultType {

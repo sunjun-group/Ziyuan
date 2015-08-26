@@ -57,6 +57,10 @@ public class InvariantLearner implements CategoryCalculator {
 		List<BkpInvariantResult> result = new ArrayList<BkpInvariantResult>();
 		for (BreakpointData bkpData : bkpsData) {
 			LOGGER.info("Start to learn at " + bkpData.getBkp());
+//			if (!bkpData.getBkp().getOrgLineNos().contains(212)
+//					|| bkpData.getBkp().getOrgLineNos().contains(210)) {
+//				continue;
+//			}
 			if (bkpData.getPassValues().isEmpty() && bkpData.getFailValues().isEmpty()) {
 				continue;
 			}
@@ -96,17 +100,19 @@ public class InvariantLearner implements CategoryCalculator {
 	private Formula learn(BreakpointData bkpData, List<ExecVar> allVars) {
 		mediator.logBkpData(bkpData, allVars);
 		/* handle boolean variables first */
-		Formula formula = learnFromBoolVars(extractBoolVars(allVars), bkpData);
+		List<ExecVar> boolVars = extractBoolVars(allVars);
+		Formula formula = learnFromBoolVars(boolVars, bkpData);
 		if (formula != null) {
 			return formula;
 		}
 		/* find divider for all variables */
+		allVars.removeAll(boolVars);
 		// Configure data for SVM machine
 		machine.resetData();
 		this.currentBreakpoint = bkpData.getBkp();
 		List<String> allLables = extractLabels(allVars);
 		machine.setDataLabels(allLables);
-		addDataPoints(bkpData.getPassValues(), bkpData.getFailValues());
+		addDataPoints(allVars, bkpData.getPassValues(), bkpData.getFailValues());
 
 		if (machine.isPerformArtificialDataSynthesis()) {
 			if (machine.artificialDataSynthesis(this)) {
@@ -154,28 +160,23 @@ public class InvariantLearner implements CategoryCalculator {
 
 	}
 
-	private void addDataPoints(List<BreakpointValue> passValues,
+	private void addDataPoints(List<ExecVar> allVars, List<BreakpointValue> passValues,
 			List<BreakpointValue> failValues) {
 		for (BreakpointValue bValue : passValues) {
-			addDataPoint(bValue, Category.POSITIVE);
+			addDataPoint(allVars, bValue, Category.POSITIVE);
 		}
 
 		for (BreakpointValue bValue : failValues) {
-			addDataPoint(bValue, Category.NEGATIVE);
+			addDataPoint(allVars, bValue, Category.NEGATIVE);
 		}
 	}
 
-	private void addDataPoint(BreakpointValue bValue, Category category) {
-		double[] lineVals = new double[machine.getNumberOfFeatures()];
+	private void addDataPoint(List<ExecVar> allVars, BreakpointValue bValue, Category category) {
+		double[] lineVals = new double[allVars.size()];
 		int i = 0;
-		if (machine.isGeneratedDataLabels()) {
-			// Actually we do not use this case at the moment but I still add this for completeness
-			lineVals = bValue.getAllValues();
-		} else {
-			for (String variableName : machine.getDataLabels()) {
-				final Double value = bValue.getValue(variableName, 0.0);
-				lineVals[i++] = value;
-			}
+		for (ExecVar var : allVars) {
+			final Double value = bValue.getValue(var.getLabel(), 0.0);
+			lineVals[i++] = value;
 		}
 
 		machine.addDataPoint(category, lineVals);
@@ -205,8 +206,10 @@ public class InvariantLearner implements CategoryCalculator {
 			return;
 		}
 		for (ExecValue val : vals) {
-			String varId = val.getVarId();
-			vars.add(new ExecVar(varId, val.getType()));
+			if (val == null || CollectionUtils.isEmpty(val.getChildren())) {
+				String varId = val.getVarId();
+				vars.add(new ExecVar(varId, val.getType()));
+			}
 			collectExecVar(val.getChildren(), vars);
 		}
 	}

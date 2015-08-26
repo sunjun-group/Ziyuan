@@ -108,12 +108,23 @@ public class JavaSlicerTest extends AbstractTest {
 	public void testSampleProgram() throws Exception {
 		String targetClass = SamplePrograms.class.getName();
 		String testClass = SampleProgramTest.class.getName();
-		BreakPoint bkp1 = new BreakPoint(targetClass, "Max", 25);
-		BreakPoint bkp2 = new BreakPoint(testClass, "test2", 26);
-		List<BreakPoint> breakpoints = Arrays.asList(bkp1);
+//		BreakPoint bkp1 = new BreakPoint(targetClass, "Max", 25);
+		BreakPoint bkp2 = new BreakPoint(testClass, "test2", 25);
+		List<BreakPoint> breakpoints = Arrays.asList(bkp2);
 		analyzedClasses = Arrays.asList(targetClass);
 		testClassMethods = JunitUtils.extractTestMethods(Arrays
 				.asList(testClass));
+		run(breakpoints);
+	}
+	
+	@Test
+	public void testSampleProgramEx() throws Exception {
+		String targetClass = SamplePrograms.class.getName();
+		String testClass = SampleProgramTest.class.getName();
+		BreakPoint bkp2 = new BreakPoint(testClass, "test6", 62);
+		List<BreakPoint> breakpoints = Arrays.asList(bkp2);
+		analyzedClasses = Arrays.asList(targetClass);
+		testClassMethods = Arrays.asList(testClass + ".test6");
 		run(breakpoints);
 	}
 	
@@ -173,6 +184,6 @@ public class JavaSlicerTest extends AbstractTest {
 				"faultLocaliation.sample.SampleProgramTest", "test5", 53),
 				new BreakPoint("faultLocaliation.sample.SampleProgram", 
 						"Max", 26));
-		slicer.slice("/tmp/javaSlicer.trace", breakpoints, new StopTimer("test"));
+		slicer.slice("/tmp/javaSlicer.trace", breakpoints, new StopTimer("test"), Arrays.asList("faultLocaliation.sample.SampleProgramTest.test1"));
 	}
 }

@@ -117,6 +117,7 @@ public abstract class ExecValue implements IExecValue {
 		}
 	}
 	
+	/* only affect for the current execValue, not for its children */
 	protected boolean needToRetrieveValue() {
 		return true;
 	}

@@ -79,6 +79,25 @@ public class IlpSolver extends ExpressionVisitor {
 	
 	private void solveProblem(List<LIAAtom> atoms) {
 		log.debug("----ilp solver----");
+		boolean finished = simpleSolveProblem(atoms);
+		if (!finished) {
+			lpSolveProblem(atoms);
+		}
+		log.debug("----finish ilp solver----");
+	}
+
+	private boolean simpleSolveProblem(List<LIAAtom> atoms) {
+		if (atoms.size() == 1 && atoms.get(0).getMVFOExpr().size() == 1) {
+			LIAAtom atom = atoms.get(0);
+			LIATerm term = atom.getMVFOExpr().get(0);
+			double value = atom.getConstant() / term.getCoefficient();
+			Eq<Number> assign = new Eq<Number>(term.getVariable(), (int)value);
+			addAssignments(CollectionUtils.<Eq<?>>listOf(assign));
+		}
+		return false;
+	}
+
+	private void lpSolveProblem(List<LIAAtom> atoms) {
 		/* original problem */
 		Problem problem = new Problem();
 		constructSubjectives(atoms, problem);
@@ -110,7 +129,6 @@ public class IlpSolver extends ExpressionVisitor {
 								problem.getConstraintsCount()).clear();
 			}
 		}
-		log.debug("----finish ilp solver----");
 	}
 
 	private List<ExecVar> selectVarsForSampling(List<ExecVar> vars, int maxVarToCalcul) {
@@ -133,7 +151,7 @@ public class IlpSolver extends ExpressionVisitor {
 		for (ExecVar var : vars) {
 			Number value = null;
 			Pair<Double, Double> range = minMax.get(var.getLabel());
-			if (range != null) {
+			if (range != null && ((range.b.intValue() - range.a.intValue()) > 0)) {
 				value = Randomness.nextInt(range.a.intValue(), range.b.intValue());
 			} else {
 				if (result == null) {
@@ -217,7 +235,10 @@ public class IlpSolver extends ExpressionVisitor {
 				assignments.add(asg);
 			}
 		}
-		
+		addAssignments(assignments);
+	}
+
+	private void addAssignments(List<Eq<?>> assignments) {
 		if (!assignmentsAlreadyExist(assignments)) {
 			log.debug("add result: ", assignments);
 			resultSet.add(assignments);

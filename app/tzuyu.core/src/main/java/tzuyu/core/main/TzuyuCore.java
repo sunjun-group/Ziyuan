@@ -56,7 +56,7 @@ import tzuyu.core.mutantbug.Recompiler;
  */
 public class TzuyuCore {
 	protected static final Logger<?> LOGGER = Logger.getDefaultLogger();
-	private IApplicationContext appContext;
+	protected IApplicationContext appContext;
 	protected ApplicationData appData;
 	private MutanBug mutanbug;
 	
@@ -174,10 +174,6 @@ public class TzuyuCore {
 			if (params.isGroupLines()) {
 				selectedLocations = selectLinesByGrouping(suspectLocations);
 			}
-			if (LOGGER.isDebug()) {
-				LOGGER.debug("after grouping: ");
-				LOGGER.debug(StringUtils.join(selectedLocations, "\n"));
-			}
 
 			/* compute variables appearing at each breakpoint */
 			VariableNameCollector nameCollector = new VariableNameCollector(
@@ -191,6 +187,10 @@ public class TzuyuCore {
 			List<DebugLine> debugLines = getDebugLines(locatedLines.getLocatedLines());
 			DebugLinePreProcessor preProcessor = new DebugLinePreProcessor();
 			debugLines = preProcessor.preProcess(debugLines);
+			if (LOGGER.isDebug()) {
+				LOGGER.debug("after grouping & processing: ");
+				LOGGER.debug(StringUtils.join(debugLines, "\n"));
+			}
 			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig(), params);
 			List<BkpInvariantResult> invariants = learnInvariant.learn(new ArrayList<BreakPoint>(debugLines), 
 										junitClassNames, appData.getAppSrc());

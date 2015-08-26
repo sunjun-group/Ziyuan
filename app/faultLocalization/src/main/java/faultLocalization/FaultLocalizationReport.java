@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import faultLocalization.LineCoverageInfo.LineCoverageInfoComparator;
 import sav.common.core.utils.CollectionUtils;
-import sav.common.core.utils.ObjectUtils;
 import sav.strategies.dto.ClassLocation;
+import faultLocalization.LineCoverageInfo.LineCoverageInfoComparator;
 
 public class FaultLocalizationReport {
 
@@ -38,7 +37,13 @@ public class FaultLocalizationReport {
 		while(rank > 0 && run < size){
 			//add linecoverage for current rank
 			double maxSuspiciousness = lineCoverageInfos.get(run).getSuspiciousness();
-			if (ObjectUtils.equalsWithNull(maxSuspiciousness, 0)) {
+			/*
+			 *  if result is empty, add to the result event the suspiciousness = 0
+			 *  TODO: TO FIND A SOLUTION FOR THIS.
+			 *  THIS HAPPENDS BECAUSE JACOCO CAN IGNORE SOME LINE RIGHT BEFORE THE PLACE 
+			 *  WHERE THE EXCEPTION OCCUR INSIDE THE PROGRAM.
+			 */
+			if (maxSuspiciousness <= 0 && !result.isEmpty()) {
 				break;
 			}
 			int i ;

@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
  */
 public class FeatureSelectionMachine extends Machine {
 	private static final Logger LOGGER = Logger.getLogger(FeatureSelectionMachine.class);
-	private static final int MAX_FEATURE = 3;
+	private static final int MAX_FEATURE = 2;
 	private Machine machine; // The machine used for learning, can be null
 
 	@Override

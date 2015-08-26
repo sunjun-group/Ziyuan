@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.jacoco.agent.AgentJar;
 
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.vm.AgentVmRunner;
 
@@ -32,9 +33,9 @@ public class JaCoCoVmRunner extends AgentVmRunner {
 	
 	@Override
 	protected void appendAgentParams(ArrayList<String> params) {
-		if (analyzedClassNames != null) {
+		if (CollectionUtils.isNotEmpty(analyzedClassNames)) {
 			params.add(newAgentOption("includes", StringUtils.join(analyzedClassNames, ":")));
-		}
+		} 
 	}
 	
 	public JaCoCoVmRunner setAppend(boolean append) {

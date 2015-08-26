@@ -24,7 +24,6 @@ import sav.common.core.Logger;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
-import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionBuilder;
 import sav.common.core.utils.StringUtils;
 
@@ -48,24 +47,18 @@ public class VMRunner {
 	private Redirect redirect;
 	/* timeout in millisecond */
 	private long timeout = NO_TIME_OUT;
-	private boolean isLog = false;
+	private boolean isLog = true;
 	
 	private Process process;
 	
 	public boolean startVm(VMConfiguration config) throws SavException {
 		this.isLog = config.isVmLogEnable();
-		Assert.assertTrue(config.getPort() != VMConfiguration.INVALID_PORT,
-				"Cannot find free port to start jvm!");
 		List<String> commands = buildCommandsFromConfiguration(config);
 		return startVm(commands, false);
 	}
 
 	private List<String> buildCommandsFromConfiguration(VMConfiguration config)
 			throws SavException {
-		if (config.getPort() == -1) {
-			throw new SavException(ModuleEnum.JVM, "Cannot find free port to start jvm!");
-		}
-		
 		CollectionBuilder<String, Collection<String>> builder = CollectionBuilder
 						.init(new ArrayList<String>())
 						.add(VmRunnerUtils.buildJavaExecArg(config));

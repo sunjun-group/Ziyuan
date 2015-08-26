@@ -10,6 +10,7 @@ package sav.common.core.utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -29,7 +30,7 @@ public class StopTimer {
 	public StopTimer(String module) {
 		this.module = module;
 	}
-
+	
     public synchronized void newPoint(String name) {
         Long time = Long.valueOf(System.currentTimeMillis());
         if (stopTimes.size() == 0) {
@@ -51,28 +52,43 @@ public class StopTimer {
     }
 
 	private synchronized List<String> getResults() {
+		LinkedHashMap<String, Long> timeResults = getTimeResults();
 		List<String> lines = new ArrayList<String>();
+		long overall = 0;
+		for (Entry<String, Long> timeResult : timeResults.entrySet()) {
+			lines.add(toDisplayString(timeResult));
+			overall += timeResult.getValue();
+		}
+		// add overall
+		lines.add(new StringBuilder(module).append(" ").append("Overall: ")
+				.append(getTimeString(overall)).toString());
+		return lines;
+	}
+	
+	public synchronized LinkedHashMap<String, Long> getTimeResults() {
+		LinkedHashMap<String, Long> results = new LinkedHashMap<String, Long>();
         Iterator<Entry<Long, String>> iterator = stopTimes.entrySet().iterator();
         Entry<Long, String> firstEntry = iterator.next();
         Entry<Long, String> lastEntry = firstEntry;
         while (iterator.hasNext()) {
         	lastEntry = iterator.next();
-			lines.add(getExecutionTime(firstEntry, lastEntry.getKey().longValue()));
+        	results.put(firstEntry.getValue(), 
+        			getExecutionTime(firstEntry, lastEntry.getKey().longValue()));
             firstEntry = lastEntry;
         }
         // print the last entry
         long currentTimeMillis = System.currentTimeMillis();
-		lines.add(getExecutionTime(lastEntry, currentTimeMillis));
-		long overall = currentTimeMillis - stopTimes.firstKey().longValue();
-		lines.add(new StringBuilder(module).append(" ").append("Overall: ")
-				.append(getTimeString(overall)).toString());
-		return lines;
+		results.put(lastEntry.getValue(), getExecutionTime(lastEntry, currentTimeMillis));
+		return results;
 	}
-    
-	private String getExecutionTime(Entry<Long, String> entry, long endTime) {
-		long diff = endTime - entry.getKey().longValue();
-		return new StringBuilder(module).append(" - ").append(entry.getValue())
-				.append(": ").append(getTimeString(diff)).toString();
+	
+	private String toDisplayString(Entry<String, Long> timeResult) {
+		return new StringBuilder(module).append(" - ").append(timeResult.getKey())
+				.append(": ").append(getTimeString(timeResult.getValue())).toString();
+	}
+
+	private long getExecutionTime(Entry<Long, String> entry, long endTime) {
+		return endTime - entry.getKey().longValue();
 	}
 
 	private String getTimeString(long diff) {

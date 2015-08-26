@@ -20,11 +20,16 @@ public class StringValue extends PrimitiveValue {
 	public StringValue(String id, String val) {
 		super(id, val);
 		add(new BooleanValue(getChildId(IS_EMPTY), val.isEmpty()));
-		add(new PrimitiveValue(getChildId(LENGTH_CODE), String.valueOf(val.length())));
+//		add(new PrimitiveValue(getChildId(LENGTH_CODE), String.valueOf(val.length())));
 	}
 
 	@Override
 	public ExecVarType getType() {
 		return ExecVarType.STRING;
+	}
+	
+	@Override
+	protected boolean needToRetrieveValue() {
+		return false;
 	}
 }

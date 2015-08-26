@@ -60,11 +60,12 @@ import com.sun.jdi.event.BreakpointEvent;
  *
  */
 public class DebugValueExtractor {
-	private static final Logger<?> LOGGER = Logger.getDefaultLogger();
+	protected static final Logger<?> LOGGER = Logger.getDefaultLogger();
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
 	private static final String TO_STRING_NAME= "toString";
 	private static final Pattern OBJECT_ACCESS_PATTERN = Pattern.compile("^\\.([^.\\[]+)(\\..+)*(\\[.+)*$");
 	private static final Pattern ARRAY_ACCESS_PATTERN = Pattern.compile("^\\[(\\d+)\\](.*)$");
+	private static final int MAX_ARRAY_ELEMENT_TO_COLLECT = 5;
 
 	private int valRetrieveLevel;
 	
@@ -253,7 +254,7 @@ public class DebugValueExtractor {
 	/** append execution value*/
 	private void appendVarVal(ExecValue parent, String varId,
 			Value value, int level, ThreadReference thread) {
-		if (level >= valRetrieveLevel || varId.endsWith("serialVersionUID")) {
+		if (level > valRetrieveLevel || varId.endsWith("serialVersionUID")) {
 			return;
 		}
 		if (value == null) {
@@ -328,7 +329,7 @@ public class DebugValueExtractor {
 		ArrayValue val = new ArrayValue(varId);
 		val.setValue(value);
 		//add value of elements
-		for (int i = 0; i < value.length(); i++) {
+		for (int i = 0; i < value.length() && i < MAX_ARRAY_ELEMENT_TO_COLLECT; i++) {
 			appendVarVal(val, val.getElementId(i), getArrayEleValue(value, i), level, thread);
 		}
 		parent.add(val);

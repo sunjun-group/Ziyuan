@@ -19,8 +19,10 @@ import sav.common.core.Logger;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.utils.BreakpointUtils;
+import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
+import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
@@ -72,9 +74,11 @@ public class JavaSlicer implements ISlicer {
 		
 		/* do slicing */
 		timer.newPoint("slice");
-		List<BreakPoint> result = slice(tempFileName, new HashSet<BreakPoint>(bkps), timer);
+		List<BreakPoint> result = slice(tempFileName, new HashSet<BreakPoint>(bkps), timer, junitClassMethods);
 		
 		timer.logResults(log);
+		log.debug("slicing result: ");
+		log.debug(StringUtils.join(result, "\n"));
 		return result;
 	}
 
@@ -104,7 +108,7 @@ public class JavaSlicer implements ISlicer {
 	}
 	
 	public List<BreakPoint> slice(String traceFilePath, Collection<BreakPoint> bkps,
-			StopTimer timer)
+			StopTimer timer, List<String> junitClassMethods)
 			throws InterruptedException, SavException {
 		log.info("Slicing-slicing...");
 		if (log.isDebug()) {
@@ -123,9 +127,17 @@ public class JavaSlicer implements ISlicer {
 
 		List<SlicingCriterion> criteria = new ArrayList<SlicingCriterion>(bkps.size());
 		for (BreakPoint bkp : bkps) {
-			SlicingCriterion criterion = SlicingCriterion.parse(
-					buildSlicingCriterionStr(bkp), trace.getReadClasses());
-			criteria.add(criterion);
+			try {
+				SlicingCriterion criterion = SlicingCriterion.parse(
+						buildSlicingCriterionStr(bkp), trace.getReadClasses());
+				criteria.add(criterion);
+			} catch (IllegalArgumentException e) {
+				String classMethodStr = ClassUtils.toClassMethodStr(bkp.getClassCanonicalName(), bkp.getMethodName());
+				if (!junitClassMethods.contains(classMethodStr)) {
+					throw e;
+				} 
+				// ignore
+			}
 		}
 
 		List<ThreadId> threads = trace.getThreads();
@@ -147,7 +159,7 @@ public class JavaSlicer implements ISlicer {
 		}
 		Slicer slicer = new Slicer(trace);
 		slicer.addSliceVisitor(sliceCollector);
-		slicer.process(tracing, criteria, false);
+		slicer.process(tracing, criteria, true);
 		log.debug("Read Slicing Result:");
 		List<BreakPoint> dynamicSlice = sliceCollector.getDynamicSlice();
 		if (log.isDebug()) {

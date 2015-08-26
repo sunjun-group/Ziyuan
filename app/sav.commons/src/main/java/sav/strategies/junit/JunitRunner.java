@@ -213,7 +213,7 @@ public class JunitRunner {
 			return this;
 		}
 		
-		public JunitRunnerProgramArgBuilder testcaseTimeout(int timeout,
+		public JunitRunnerProgramArgBuilder testcaseTimeout(long timeout,
 				TimeUnit unit) {
 			testcaseTimeout(unit.toMillis(timeout));
 			return this;

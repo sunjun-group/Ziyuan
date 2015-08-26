@@ -33,7 +33,7 @@ import sav.strategies.vm.VMConfiguration;
  *
  */
 public class InvariantMediator {
-	private static boolean LOG_BKP_DATA = false;
+	private static boolean LOG_BKP_DATA = true;
 	private TestcasesExecutor tcExecutor;
 	private Machine machine;
 	private SelectiveSampling selectiveSampling;
@@ -46,12 +46,24 @@ public class InvariantMediator {
 		Assert.assertNotNull(machine, "machine cannot be null!");
 		this.vmConfig = config;
 		List<BreakpointData> bkpsData = debugTestAndCollectData(config, allTests, bkps);
+		/* prepare before learning */
+		vmConfig.setEnableVmLog(false);
+		tcExecutor.setjResultFileDeleteOnExit(true);
 		testVerifier = new TestResultVerifier(tcExecutor.getjResult());
 		tcExecutor.setTestResultVerifier(testVerifier);
+		tcExecutor.setCalculTimeoutByLastExecTime(true);
+		// learning
 		InvariantLearner learner = new InvariantLearner(this);
-		return learner.learn(bkpsData);
+		List<BkpInvariantResult> learningResult = learner.learn(bkpsData);
+		// reset tcExecutor
+		tcExecutor.setValueExtractor(null);
+		tcExecutor.setjResultFileDeleteOnExit(false);
+		vmConfig.setEnableVmLog(true);
+		tcExecutor.setTestResultVerifier(null);
+		tcExecutor.setCalculTimeoutByLastExecTime(false);
+		return learningResult;
 	}
-	
+
 	private List<BreakpointData> debugTestAndCollectData(VMConfiguration config,
 			List<String> allTests, List<BreakPoint> bkps) throws SavException {
 		ensureTcExecutor();
@@ -68,14 +80,8 @@ public class InvariantMediator {
 	public List<BreakpointData> instDebugAndCollectData(
 			List<BreakPoint> bkps, Map<String, Object> instrVarMap) throws SavException {
 		ensureTcExecutor();
-		vmConfig.setEnableVmLog(false);
-		tcExecutor.setjResultFileDeleteOnExit(true);
 		tcExecutor.setValueExtractor(new DebugValueInstExtractor(tcExecutor.getValRetrieveLevel(), instrVarMap));
 		List<BreakpointData> result = debugTestAndCollectData(bkps);
-		// reset tcExecutor
-		tcExecutor.setValueExtractor(null);
-		tcExecutor.setjResultFileDeleteOnExit(false);
-		vmConfig.setEnableVmLog(true);
 		return result;
 	}
 	

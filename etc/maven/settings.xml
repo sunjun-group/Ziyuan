@@ -52,7 +52,7 @@ under the License.
    | Default: ~/.m2/repository
   <localRepository>/path/to/local/repo</localRepository>
   -->
-  <localRepository>D:/_1_Projects/Tzuyu/workspace/trunk_try/mvn_repository</localRepository>
+  <localRepository>D:/_1_Projects/Tzuyu/maven-repository</localRepository>
 
   <!-- interactiveMode
    | This will determine whether maven prompts you when it needs input. If set to false,

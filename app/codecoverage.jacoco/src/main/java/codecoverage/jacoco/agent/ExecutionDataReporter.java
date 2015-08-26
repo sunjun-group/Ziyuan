@@ -84,6 +84,7 @@ public class ExecutionDataReporter {
 							testingClassName);
 				}
 				/* report data */
+				boolean isPass = junitResult.getResult(testcaseIdx);
 				// Let's dump some metrics and line coverage information:
 				for (final IClassCoverage cc : coverageBuilder.getClasses()) {
 					// do not display data for junit test file
@@ -95,7 +96,6 @@ public class ExecutionDataReporter {
 								ILine lineInfo = cc.getLine(j);
 								if (lineInfo.getStatus() != ICounter.EMPTY) {
 									boolean isCovered = lineInfo.getStatus() != ICounter.NOT_COVERED;
-									boolean isPass = junitResult.getResult(testcaseIdx);
 									report.addInfo(testcaseIdx, className,
 											j,
 											isPass,
@@ -104,6 +104,56 @@ public class ExecutionDataReporter {
 
 							}
 						}
+					}
+				}
+				testcaseIdx++;
+			}
+			report.addFailureTrace(new ArrayList<BreakPoint>(junitResult
+					.getFailureTraces()));
+			timer.logResults(log);
+		} catch (IOException e) {
+			throw new SavException(ModuleEnum.SLICING, e);
+		}
+	}
+	
+	/**
+	 * TODO LLT: maybe refactor? this is duplicate with the other report function. 
+	 */
+	public void report(String execFile, String junitResultFile, String targetFolder) throws SavException {
+		StopTimer timer = new StopTimer("Collect coverage data");
+		try {
+			timer.newPoint("Read execFile");
+			Map<String, List<ExecutionData>> execDataMap = read(execFile);
+			JunitResult junitResult = JunitResult.readFrom(junitResultFile);
+			timer.newPoint("Analyze data and count code coverage");
+			report.setFailTests(junitResult.getFailTests());
+			final CoverageBuilder coverageBuilder = new CoverageBuilder();
+			ExecutionDataStore dataStore = new ExecutionDataStore();
+			final Analyzer analyzer = new Analyzer(dataStore, coverageBuilder);
+			int testcaseIdx = 0;
+			for (String session : execDataMap.keySet()) {
+				dataStore.reset();
+				for (ExecutionData data : execDataMap.get(session)) {
+					dataStore.put(data);
+				}
+				analyzer.analyzeAll(new File(targetFolder));
+				/* report data */
+				boolean isPass = junitResult.getResult(testcaseIdx);
+				// Let's dump some metrics and line coverage information:
+				for (final IClassCoverage cc : coverageBuilder.getClasses()) {
+					// do not display data for junit test file
+					String coverageClassName = getClassName(cc.getName());
+					for (int j = cc.getFirstLine(); j <= cc
+							.getLastLine(); j++) {
+						ILine lineInfo = cc.getLine(j);
+						if (lineInfo.getStatus() != ICounter.EMPTY) {
+							boolean isCovered = lineInfo.getStatus() != ICounter.NOT_COVERED;
+							report.addInfo(testcaseIdx, coverageClassName,
+									j,
+									isPass,
+									isCovered);
+						}
+
 					}
 				}
 				testcaseIdx++;
