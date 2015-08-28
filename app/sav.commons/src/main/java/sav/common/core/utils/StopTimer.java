@@ -21,19 +21,24 @@ import sav.common.core.Logger;
 /**
  * A countdown timer which starts to work with the first entry and
  *  prints the results ascending with the overall time.
- *  Findbugs utilities.
  */
 public class StopTimer {
+	private static final String FINISHED_POINT = "FINISHED_POINT";
 	private String module;
 	private TreeMap<Long, String> stopTimes = new TreeMap<Long, String>();
+	private boolean stop = false;
 	
 	public StopTimer(String module) {
 		this.module = module;
 	}
 	
+	public void start() {
+		stopTimes.clear();
+	}
+	
     public synchronized void newPoint(String name) {
         Long time = Long.valueOf(System.currentTimeMillis());
-        if (stopTimes.size() == 0) {
+        if (stopTimes.isEmpty()) {
             stopTimes.put(time, name);
             return;
         }
@@ -43,6 +48,11 @@ public class StopTimer {
         }
         stopTimes.put(time, name);
     }
+    
+	public void stop() {
+		newPoint(FINISHED_POINT);
+		stop = true;
+	}
 
     public void logResults(Logger<?> log) {
         List<String> lines = getResults();
@@ -76,9 +86,12 @@ public class StopTimer {
         			getExecutionTime(firstEntry, lastEntry.getKey().longValue()));
             firstEntry = lastEntry;
         }
-        // print the last entry
-        long currentTimeMillis = System.currentTimeMillis();
-		results.put(lastEntry.getValue(), getExecutionTime(lastEntry, currentTimeMillis));
+        /* if counting stopped already, the last entry is the stop point, then no need to calculate it*/
+        if (!stop) {
+        	// print the last entry
+        	long currentTimeMillis = System.currentTimeMillis();
+        	results.put(lastEntry.getValue(), getExecutionTime(lastEntry, currentTimeMillis));
+        }
 		return results;
 	}
 	
@@ -104,4 +117,5 @@ public class StopTimer {
 		}
 		return sb.toString();
 	}
+
 }

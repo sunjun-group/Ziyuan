@@ -152,7 +152,6 @@ public abstract class BreakpointDebugger {
 	
 	protected final Location addBreakpointWatch(VirtualMachine vm,
 			ReferenceType refType, int lineNumber) {
-		// We assume that it is always possible to add the break point
 		List<Location> locations;
 		try {
 			locations = refType.locationsOfLine(lineNumber);

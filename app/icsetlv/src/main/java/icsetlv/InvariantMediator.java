@@ -13,17 +13,20 @@ import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.ExecVar;
 import icsetlv.sampling.SelectiveSampling;
 import icsetlv.variable.DebugValueInstExtractor;
+import icsetlv.variable.JunitDebugger;
 import icsetlv.variable.TestResultVerifier;
 import icsetlv.variable.TestcasesExecutor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import libsvm.core.Machine;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
+import sav.common.core.utils.StopTimer;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
@@ -51,8 +54,12 @@ public class InvariantMediator {
 		tcExecutor.setjResultFileDeleteOnExit(true);
 		testVerifier = new TestResultVerifier(tcExecutor.getjResult());
 		tcExecutor.setTestResultVerifier(testVerifier);
-		tcExecutor.setCalculTimeoutByLastExecTime(true);
-		// learning
+		/* learning */
+		/*
+		 * set time out for tcExecutor (to make sure the process will stop if we
+		 * have infinitive loop after instrument)
+		 */
+		tcExecutor.setTimeout(getMaxExecutionTime(tcExecutor.getTimer()), TimeUnit.MILLISECONDS);
 		InvariantLearner learner = new InvariantLearner(this);
 		List<BkpInvariantResult> learningResult = learner.learn(bkpsData);
 		// reset tcExecutor
@@ -60,8 +67,18 @@ public class InvariantMediator {
 		tcExecutor.setjResultFileDeleteOnExit(false);
 		vmConfig.setEnableVmLog(true);
 		tcExecutor.setTestResultVerifier(null);
-		tcExecutor.setCalculTimeoutByLastExecTime(false);
+		tcExecutor.setTimeout(JunitDebugger.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
 		return learningResult;
+	}
+
+	private long getMaxExecutionTime(StopTimer timer) {
+		long max = JunitDebugger.DEFAULT_TIMEOUT;
+		for (Long execTime : tcExecutor.getTimer().getTimeResults().values()) {
+			if (execTime > max) {
+				max = execTime;
+			}
+		}
+		return max;
 	}
 
 	private List<BreakpointData> debugTestAndCollectData(VMConfiguration config,

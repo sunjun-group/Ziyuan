@@ -25,9 +25,14 @@ public class RequestExecution implements Runnable{
 	}
 	
 	public void run() {
-		Result result = core.run(request);
-		failures = result.getFailures();
-		this.isPassed = (result.getFailureCount() <= 0);
+		try {
+			Result result = core.run(request);
+			failures = result.getFailures();
+			this.isPassed = (result.getFailureCount() <= 0);
+		} catch (Throwable e) {
+			isPassed = false;
+			failures.add(new Failure(null, e));
+		}
 	}
 	
 	public boolean getResult(){

@@ -57,6 +57,7 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 	public void testjavaparser46() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("javaparser", "46");
 		params.setRankToExamine(3);
+		params.setValueRetrieveLevel(2);
 		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
 		runFaultLocate(testPkg);
 	}
@@ -181,7 +182,7 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("java-diff-utils", "10");
 		params.setRankToExamine(3);
 		params.setValueRetrieveLevel(2);
-		params.setGroupLines(false);
+		params.setGroupLines(true);
 //		params.setRunMutation(true);
 		runFaultLocate(testPkg);
 	}

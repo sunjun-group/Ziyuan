@@ -13,9 +13,9 @@ import icsetlv.common.dto.BreakpointValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import sav.common.core.Logger;
 import sav.common.core.SavException;
@@ -44,9 +44,8 @@ public class TestcasesExecutor extends JunitDebugger {
 	private int valRetrieveLevel;
 	private ITestResultVerifier verifier = DefaultTestResultVerifier.getInstance();
 	private JunitResult jResult;
-	private long lastExecTime = DEFAULT_TIMEOUT;
-	private boolean calculTimeoutByLastExecTime;
-	private StopTimer timer;
+	private StopTimer timer = new StopTimer("TestcasesExecutor");;
+	private long timeout = DEFAULT_TIMEOUT;
 	
 	public TestcasesExecutor(int valRetrieveLevel) {
 		this.valRetrieveLevel = valRetrieveLevel;
@@ -60,20 +59,11 @@ public class TestcasesExecutor extends JunitDebugger {
 		super.setup(config, allTests);
 	}
 	
-	private void calculateTimeout() {
-		LinkedHashMap<String, Long> timeResults = timer.getTimeResults();
-		for (Long execTime : timeResults.values()) {
-			if (execTime > lastExecTime) {
-				lastExecTime = execTime;
-			}
-		}
-	}
-	
 	@Override
 	protected void onStart() {
 		bkpValsByTestIdx = new HashMap<Integer, List<BreakpointValue>>();
 		currentTestBkpValues = new ArrayList<BreakpointValue>();
-		timer = new StopTimer("TestcasesExecutor");
+		timer.start();
 	}
 
 	@Override
@@ -92,8 +82,8 @@ public class TestcasesExecutor extends JunitDebugger {
 
 	@Override
 	protected void onFinish(JunitResult jResult) {
+		timer.stop();
 //		LOGGER.debug("on finish");
-		calculateTimeout();
 		Map<TestResultType, List<BreakpointValue>> resultMap = new HashMap<TestResultType, List<BreakpointValue>>();
 		Map<String, TestResultType> tcExResult = getTcExResult(jResult);
 		for (int i = 0; i < allTests.size(); i++) {
@@ -223,14 +213,17 @@ public class TestcasesExecutor extends JunitDebugger {
 	
 	@Override
 	protected long getTimeoutInSec() {
-		if (calculTimeoutByLastExecTime) {
-			return lastExecTime; 
-		}
-		return DEFAULT_TIMEOUT;
+		return timeout;
 	}
 	
-	public void setCalculTimeoutByLastExecTime(boolean useLastExecTime) {
-		this.calculTimeoutByLastExecTime = useLastExecTime;
+	public StopTimer getTimer() {
+		return timer;
+	}
+	
+	public void setTimeout(long timeout, TimeUnit timeUnit) {
+		long timeoutInSec = timeUnit.toSeconds(timeout);
+		LOGGER.debug("Testcase execution timeout = " + timeoutInSec + "s");
+		this.timeout = timeoutInSec;
 	}
 	
 	public static enum TestResultType {
