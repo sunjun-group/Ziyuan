@@ -112,6 +112,9 @@ public class SelectiveSampling implements ISelectiveSampling {
 			 */
 			List<BreakpointData> bkpData = mediator.instDebugAndCollectData(
 					CollectionUtils.listOf(bkp), toInstrVarMap(valSet));
+			if (bkpData.isEmpty()) {
+				continue;
+			}
 			BreakpointData breakpointData = bkpData.get(0);
 			Collection<? extends DataPoint> points = toDataPoints(allLabels, breakpointData);
 			/*

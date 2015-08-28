@@ -68,14 +68,12 @@ public class TestcasesExecutor extends JunitDebugger {
 
 	@Override
 	protected void onEnterTestcase(int testIdx) {
-//		LOGGER.debug("start test " + testIdx);
 		timer.newPoint(String.valueOf(testIdx));
 		currentTestBkpValues = CollectionUtils.getListInitIfEmpty(bkpValsByTestIdx, testIdx);
 	}
 
 	@Override
 	protected void onEnterBreakpoint(BreakPoint bkp, BreakpointEvent bkpEvent) throws SavException {
-//		LOGGER.debug("on enter bkp " + bkp.getId());
 		BreakpointValue bkpVal = extractValuesAtLocation(bkp, bkpEvent);
 		addToCurrentValueList(currentTestBkpValues, bkpVal);
 	}
@@ -83,7 +81,10 @@ public class TestcasesExecutor extends JunitDebugger {
 	@Override
 	protected void onFinish(JunitResult jResult) {
 		timer.stop();
-//		LOGGER.debug("on finish");
+		if (jResult.getTestResults().isEmpty()) {
+			LOGGER.warn("TestResults is empty!");
+			LOGGER.debug(getProccessError());
+		}
 		Map<TestResultType, List<BreakpointValue>> resultMap = new HashMap<TestResultType, List<BreakpointValue>>();
 		Map<String, TestResultType> tcExResult = getTcExResult(jResult);
 		for (int i = 0; i < allTests.size(); i++) {
@@ -175,7 +176,7 @@ public class TestcasesExecutor extends JunitDebugger {
 	}
 
 	public List<BreakpointData> getResult() {
-		return result;
+		return CollectionUtils.nullToEmpty(result);
 	}
 	
 	public JunitResult getjResult() {

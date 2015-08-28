@@ -32,6 +32,9 @@ public class TestResultVerifier extends DefaultTestResultVerifier implements ITe
 	@Override
 	public TestResultType verify(JunitResult jResult, String test) {
 		sav.strategies.junit.TestResult testResult = jResult.getTestResult(test);
+		if (testResult == null) {
+			return TestResultType.UNKNOWN;
+		}
 		if (testResult.isPass() || orgResult == null) {
 			return TestResultType.of(testResult.isPass());
 		}

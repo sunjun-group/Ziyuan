@@ -168,4 +168,8 @@ public abstract class BreakpointDebugger {
 		} 
 		return null;
 	}
+	
+	public String getProccessError() {
+		return debugger.getProccessError();
+	}
 }

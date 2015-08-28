@@ -50,6 +50,7 @@ public class VMRunner {
 	private boolean isLog = true;
 	
 	private Process process;
+	private String processError;
 	
 	public boolean startVm(VMConfiguration config) throws SavException {
 		this.isLog = config.isVmLogEnable();
@@ -84,24 +85,18 @@ public class VMRunner {
 		return startAndWaitUntilStop(commands);
 	}
 	
-	private void printStream(InputStream stream) throws IOException {
-//		if (log.isDebug()) {
-			String text = getText(stream);
-			if (!StringUtils.isEmpty(text)) {
-//				log.debug(text);
-			}
-//		}
-	}
-	
 	public String getProccessError() throws SavRtException {
-		if (process != null) {
-			try {
-				return getText(process.getErrorStream());
-			} catch (IOException e) {
-				throw new SavRtException(e);
+		if (processError == null) {
+			if (process != null) {
+				try {
+					processError = getText(process.getErrorStream());
+				} catch (IOException e) {
+					throw new SavRtException(e);
+				}
 			}
+			processError = StringUtils.EMPTY;
 		}
-		return StringUtils.EMPTY;
+		return processError;
 	}
 	
 	private String getText(InputStream stream) throws IOException {
@@ -169,8 +164,8 @@ public class VMRunner {
 	
 	public boolean waitUntilStop(Process process) throws SavException {
 		try {
-			printStream(process.getInputStream());
-			printStream(process.getErrorStream());
+			getText(process.getInputStream());
+			processError = getText(process.getErrorStream());
 			process.waitFor();
 			String error = getText((process.getErrorStream()));
 			if (!StringUtils.isEmpty(error)) {

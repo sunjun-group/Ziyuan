@@ -24,6 +24,9 @@ public class DefaultTestResultVerifier implements ITestResultVerifier {
 
 	@Override
 	public TestResultType verify(JunitResult jResult, String test) {
+		if (jResult == null) {
+			return TestResultType.UNKNOWN;
+		}
 		return TestResultType.of(jResult.getResult(test));
 	}
 

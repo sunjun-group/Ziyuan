@@ -46,4 +46,8 @@ public class SimpleDebugger {
 	public void waitProcessUntilStop() throws SavException {
 		vmRunner.waitUntilStop(process);
 	}
+	
+	public String getProccessError() {
+		return vmRunner.getProccessError();
+	}
 }
