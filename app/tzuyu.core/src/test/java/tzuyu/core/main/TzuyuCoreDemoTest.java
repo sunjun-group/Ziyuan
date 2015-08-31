@@ -9,10 +9,13 @@
 package tzuyu.core.main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
 
+import sav.commons.testdata.calculator.Calculator;
+import sav.commons.testdata.calculator.CalculatorTest;
 import sav.commons.testdata.calculator.Sum;
 import sav.commons.testdata.calculator.SumTest;
 import sav.commons.testdata.paper.TestClass;
@@ -20,6 +23,7 @@ import sav.commons.testdata.paper.Tests;
 import sav.commons.testdata.paper.selectivesampling.StudentEvaluate;
 import sav.commons.testdata.paper.selectivesampling.StudentEvaluateTest;
 import sav.commons.testdata.paper.selectivesampling.StudentEvaluateTest2;
+import sav.commons.testdata.timsort.TimSortTest;
 
 /**
  * @author khanh
@@ -62,11 +66,23 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 	}
 	
 	@Test
+	public void testTimSort() throws Exception{
+		List<String> junitClassNames = new ArrayList<String>();
+		junitClassNames.add(TimSortTest.class.getName());
+		FaultLocateParams params = initFaultLocateParams(sav.commons.testdata.timsort.TimSort.class.getName(), "mergeCollapse", null,
+				null, junitClassNames, false);
+		params.setRunMutation(false);
+		params.setGenTest(false);
+		params.setValueRetrieveLevel(4);
+		app.faultLocate(params);
+	}
+	
+	@Test
 	public void testNoLoop() throws Exception{
 		List<String> junitClassNames = new ArrayList<String>();
-		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTest");
-		app.faultLocate(initFaultLocateParams("sav.commons.testdata.calculator.Calculator", "getSum", "validateGetSum",
-				null, junitClassNames, false));
+		junitClassNames.add(CalculatorTest.class.getName());
+		app.faultLocate(initFaultLocateParams(Calculator.class.getName(), "getSum", "validateGetSum",
+				Arrays.asList("sav.commons.testdata.calculator"), junitClassNames, true));
 	}
 
 	@Test

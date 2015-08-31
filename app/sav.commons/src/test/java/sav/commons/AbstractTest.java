@@ -69,6 +69,16 @@ public class AbstractTest {
 		return vmConfig;
 	}
 	
+	public static VMConfiguration initVmConfig1() {
+		VMConfiguration vmConfig = new VMConfiguration();
+		vmConfig.setJavaHome(TestConfigUtils.getJavaHome());
+		vmConfig.setPort(findFreePort());
+		vmConfig.addClasspath(config.getJavaBin());
+		vmConfig.addClasspath(SAV_COMMONS_TEST_TARGET);
+		vmConfig.addClasspath(JUNIT_LIB);
+		return vmConfig;
+	}
+	
 	public static int findFreePort() {
 		ServerSocket socket= null;
 		try {

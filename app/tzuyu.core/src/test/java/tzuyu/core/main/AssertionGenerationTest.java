@@ -10,8 +10,8 @@ import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm
 import sav.common.core.Constants;
 import sav.common.core.utils.CollectionUtils;
 import sav.commons.TestConfiguration;
-import sav.commons.assertion.TestInput;
-import sav.commons.assertion.TestInput2;
+// import sav.commons.testdata.assertion.TestInput;
+// import sav.commons.testdata.assertion.TestInput2;
 
 public class AssertionGenerationTest extends TzuyuCoreTest {
 	
@@ -27,10 +27,12 @@ public class AssertionGenerationTest extends TzuyuCoreTest {
 	@Test
 	public void test1() throws Exception {
 		AssertionGenerationParams params = initAssertionGenerationParams(
-				TestInput.class.getName(), 
+				"sav.commons.testdata.assertion.TestInput", //TestInput.class.getName(), 
 				"foo", null,
-				CollectionUtils.listOf("sav.commons.assertion"),
-				new ArrayList<String>(), false);
+				CollectionUtils.listOf("sav.commons.testdata.assertion"),
+				new ArrayList<String>(),
+				// CollectionUtils.listOf("sav.commons.testdata.assertion.TestInput1"),
+				false);
 
 		app.genAssertion(params);
 	}
@@ -38,9 +40,9 @@ public class AssertionGenerationTest extends TzuyuCoreTest {
 	@Test
 	public void test2() throws Exception {
 		AssertionGenerationParams params = initAssertionGenerationParams(
-				TestInput2.class.getName(), 
+				"sav.commons.testdata.assertion.TestInput2", 
 				"foo", null,
-				CollectionUtils.listOf("sav.commons.assertion"),
+				CollectionUtils.listOf("sav.commons.testdata.assertion"),
 				new ArrayList<String>(), false);
 
 		app.genAssertion(params);
@@ -60,7 +62,7 @@ public class AssertionGenerationTest extends TzuyuCoreTest {
 		params.setRunMutation(false);
 		params.setMachineLearningEnable(true);
 		params.setValueRetrieveLevel(3);
-		params.setNumberOfTestCases(100);
+		params.setNumberOfTestCases(10);
 		params.setRankToExamine(0);
 		
 		return params;

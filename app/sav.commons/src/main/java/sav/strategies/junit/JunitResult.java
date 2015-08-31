@@ -61,6 +61,24 @@ public class JunitResult {
 		return tests;
 	}
 	
+	public List<Pair<String, String>> getPassTests() {
+		List<Pair<String, String>> tests = new ArrayList<Pair<String,String>>();
+		for (Entry<Pair<String, String>, TestResult> entry : testResult.entrySet()) {
+			if (entry.getValue() == TestResult.PASS) {
+				tests.add(entry.getKey());
+			}
+		}
+		return tests;
+	}
+	
+	public List<Pair<String, String>> getTests() {
+		List<Pair<String, String>> tests = new ArrayList<Pair<String,String>>();
+		for (Entry<Pair<String, String>, TestResult> entry : testResult.entrySet()) {
+			tests.add(entry.getKey());
+		}
+		return tests;
+	}
+	
 	public boolean getResult(int idx) {
 		if (idx < 0 || idx >= result.size()) {
 			return false;
@@ -183,4 +201,5 @@ public class JunitResult {
 	public String toString() {
 		return "JunitResult [testResult=" + testResult + "]";
 	}
+
 }

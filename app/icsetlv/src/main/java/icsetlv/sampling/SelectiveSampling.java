@@ -149,7 +149,7 @@ public class SelectiveSampling implements ISelectiveSampling {
 		return points;
 	}
 
-	private Map<String, Object> toInstrVarMap(List<Eq<?>> assignments) {
+	public Map<String, Object> toInstrVarMap(List<Eq<?>> assignments) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		for (Eq<?> asgt : assignments) {
 			map.put(asgt.getVar().getLabel(), asgt.getValue());

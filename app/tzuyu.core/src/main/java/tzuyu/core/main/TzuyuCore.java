@@ -58,7 +58,7 @@ public class TzuyuCore {
 	protected static final Logger<?> LOGGER = Logger.getDefaultLogger();
 	protected IApplicationContext appContext;
 	protected ApplicationData appData;
-	private MutanBug mutanbug;
+	protected MutanBug mutanbug;
 	
 	public TzuyuCore(IApplicationContext appContext, ApplicationData appData) {
 		this.appContext = appContext;
