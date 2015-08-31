@@ -22,7 +22,7 @@ import de.unisb.cs.st.javaslicer.common.classRepresentation.Instruction;
  */
 public class SliceBkpByPackagesCollector extends SliceBreakpointCollector {
 	private List<String> analyzedPackages; 
-	private Set<String> acceptedClazz = new HashSet<String>();
+	private Set<String> acceptedClasses = new HashSet<String>();
 	
 	public SliceBkpByPackagesCollector(Collection<String> analyzedPackages) {
 		this.analyzedPackages = new ArrayList<String>(analyzedPackages);
@@ -31,9 +31,12 @@ public class SliceBkpByPackagesCollector extends SliceBreakpointCollector {
 	@Override
 	protected boolean isAccepted(Instruction instruction) {
 		String clazzName = instruction.getMethod().getReadClass().getName();
+		if (acceptedClasses.contains(clazzName)) {
+			return true;
+		}
 		for (String pkg : analyzedPackages) {
 			if (clazzName.startsWith(pkg)) {
-				acceptedClazz.add(clazzName);
+				acceptedClasses.add(clazzName);
 				return true;
 			}
 		}

@@ -81,7 +81,7 @@ public class InvariantMediator {
 		return max;
 	}
 
-	private List<BreakpointData> debugTestAndCollectData(VMConfiguration config,
+	public List<BreakpointData> debugTestAndCollectData(VMConfiguration config,
 			List<String> allTests, List<BreakPoint> bkps) throws SavException {
 		ensureTcExecutor();
 		tcExecutor.setup(config, allTests);

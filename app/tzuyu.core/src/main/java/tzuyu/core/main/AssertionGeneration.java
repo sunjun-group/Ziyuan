@@ -1,35 +1,29 @@
 package tzuyu.core.main;
 
+import icsetlv.InvariantMediator;
+import icsetlv.common.dto.BreakpointData;
+import icsetlv.common.dto.BreakpointValue;
+import icsetlv.sampling.IlpSolver;
+import icsetlv.sampling.SelectiveSampling;
+import japa.parser.JavaParser;
+import japa.parser.ast.CompilationUnit;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
-
-import assertion.invchecker.InvChecker;
-import assertion.visitor.AddAssertStmtVisitor;
-import assertion.visitor.GetLearningLocationsVisitor;
-import icsetlv.InvariantMediator;
-import icsetlv.common.dto.BkpInvariantResult;
-import icsetlv.common.dto.BreakpointData;
-import icsetlv.common.dto.BreakpointValue;
-import icsetlv.common.dto.ExecVar;
-import icsetlv.common.dto.ExecVarType;
-import icsetlv.sampling.IlpSolver;
-import icsetlv.sampling.SelectiveSampling;
-import japa.parser.JavaParser;
-import japa.parser.ast.CompilationUnit;
 import mutation.io.DebugLineFileWriter;
 import mutation.mutator.VariableSubstitution;
 import mutation.mutator.insertdebugline.DebugLineData;
 import mutation.parser.ClassAnalyzer;
 import mutation.parser.ClassDescriptor;
 import mutation.parser.JParser;
+
+import org.apache.commons.io.FileUtils;
+
 import sav.common.core.Constants;
 import sav.common.core.Pair;
 import sav.common.core.formula.Eq;
@@ -40,16 +34,16 @@ import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
-import sav.commons.testdata.SampleProgramTest;
-import sav.commons.testdata.SamplePrograms;
 import sav.strategies.IApplicationContext;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
 import slicer.javaslicer.JavaSlicer;
 import tzuyu.core.inject.ApplicationData;
-import tzuyu.core.machinelearning.LearnInvariants;
 import tzuyu.core.mutantbug.FilesBackup;
 import tzuyu.core.mutantbug.Recompiler;
+import assertion.invchecker.InvChecker;
+import assertion.visitor.AddAssertStmtVisitor;
+import assertion.visitor.GetLearningLocationsVisitor;
 
 public class AssertionGeneration extends TzuyuCore {
 
@@ -63,7 +57,7 @@ public class AssertionGeneration extends TzuyuCore {
 		FilesBackup backup = null;
 		
 		try {
-			String srcFolder = "/Users/HongLongPham/Workspace/Tzuyu/app/sav.commons/src/test/java";
+			String srcFolder = appData.getAppSrc();
 			String className = params.getTestingClassName();
 		
 			// the original file

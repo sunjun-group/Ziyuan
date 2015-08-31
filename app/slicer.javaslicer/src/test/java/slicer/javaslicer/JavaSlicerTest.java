@@ -25,6 +25,8 @@ import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.SampleProgramTest;
 import sav.commons.testdata.SamplePrograms;
+import sav.commons.testdata.assertion.TestInput;
+import sav.commons.testdata.assertion.TestInput1;
 import sav.commons.testdata.opensource.TestPackage;
 import sav.commons.testdata.opensource.TestPackage.TestDataColumn;
 import sav.commons.utils.TestConfigUtils;
@@ -51,7 +53,6 @@ public class JavaSlicerTest extends AbstractTest {
 		slicer.setVmConfig(vmConfig);
 	}
 	
-	@Test
 	public void testJodaTimeIssue194() throws Exception {
 		testClassMethods = Arrays.asList("org.joda.time.format.TestIssue194.test");
 		run(TestPackage.getPackage("joda-time", "194"),
@@ -59,7 +60,6 @@ public class JavaSlicerTest extends AbstractTest {
 						"test", 36));
 	}
 	
-	@Test
 	public void testJodaTimeIssue187() throws Exception {
 		testClassMethods = Arrays.asList("org.joda.time.issues.TestIssue187.test");
 		run(TestPackage.getPackage("joda-time", "187"),
@@ -67,7 +67,6 @@ public class JavaSlicerTest extends AbstractTest {
 						"print", 241));
 	}
 	
-//	@Test
 	public void testJavaParserIssue46() throws Exception {
 		slicer.setFiltering(null, Arrays.asList("japa.parser"));
 		run(Arrays.asList(new BreakPoint(
@@ -87,7 +86,6 @@ public class JavaSlicerTest extends AbstractTest {
 		run(bkps);
 	}
 	
-	@Test
 	public void testCommonsLang2() throws Exception {
 		String prjFolder = TestConfiguration.TESTCASE_BASE + "/commons-lang";
 		String projClasses = prjFolder + "/trunk/target/classes";
@@ -108,8 +106,19 @@ public class JavaSlicerTest extends AbstractTest {
 	public void testSampleProgram() throws Exception {
 		String targetClass = SamplePrograms.class.getName();
 		String testClass = SampleProgramTest.class.getName();
-//		BreakPoint bkp1 = new BreakPoint(targetClass, "Max", 25);
-		BreakPoint bkp2 = new BreakPoint(testClass, "test2", 25);
+		BreakPoint bkp2 = new BreakPoint(testClass, "test2", 26);
+		List<BreakPoint> breakpoints = Arrays.asList(bkp2);
+		analyzedClasses = Arrays.asList(targetClass);
+		testClassMethods = JunitUtils.extractTestMethods(Arrays
+				.asList(testClass));
+		run(breakpoints);
+	}
+	
+	@Test
+	public void testTestInput() throws Exception {
+		String targetClass = TestInput.class.getName();
+		String testClass = TestInput1.class.getName();
+		BreakPoint bkp2 = new BreakPoint(targetClass, "foo", 6);
 		List<BreakPoint> breakpoints = Arrays.asList(bkp2);
 		analyzedClasses = Arrays.asList(targetClass);
 		testClassMethods = JunitUtils.extractTestMethods(Arrays
@@ -128,7 +137,6 @@ public class JavaSlicerTest extends AbstractTest {
 		run(breakpoints);
 	}
 	
-	@Test
 	public void testCommonsLang() throws Exception {
 		String prjFolder = TestConfiguration.TESTCASE_BASE + "/commons-lang";
 		String projClasses = prjFolder + "/trunk/target/classes";
@@ -141,13 +149,10 @@ public class JavaSlicerTest extends AbstractTest {
 		vmConfig.addClasspath(projClasses);
 		vmConfig.addClasspath(projTestClasses);
 		vmConfig.addClasspath(libs);
-//		run(Arrays.asList(new BreakPoint(
-//				"org.apache.commons.lang3.AnnotationUtils", "toString", 210)));
 		run(Arrays.asList(new BreakPoint(
 				"org.apache.commons.lang3.AnnotationUtilsTest", "testToString", 507)));
 	}
 	
-	@Test
 	public void testOnTestdata() throws Exception {
 		String jtopasSrc = TestConfigUtils.getConfig("jtopas.src");
 		analyzedClasses = Arrays.asList(
