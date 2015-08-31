@@ -10,6 +10,7 @@ import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm
 import sav.common.core.Constants;
 import sav.common.core.utils.CollectionUtils;
 import sav.commons.TestConfiguration;
+import sav.commons.testdata.assertion.TestInput;
 // import sav.commons.testdata.assertion.TestInput;
 // import sav.commons.testdata.assertion.TestInput2;
 
@@ -22,16 +23,16 @@ public class AssertionGenerationTest extends TzuyuCoreTest {
 		projectClasspath.add(TestConfiguration.getTzAssembly(Constants.SAV_COMMONS_ASSEMBLY));
 		appData.setSuspiciousCalculAlgo(SpectrumAlgorithm.OCHIAI);
 		app = new AssertionGeneration(testContext, appData);
+		appData.setJavaHome("D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b");
 	}
 	
 	@Test
 	public void test1() throws Exception {
 		AssertionGenerationParams params = initAssertionGenerationParams(
-				"sav.commons.testdata.assertion.TestInput", //TestInput.class.getName(), 
+				TestInput.class.getName(), //TestInput.class.getName(), 
 				"foo", null,
 				CollectionUtils.listOf("sav.commons.testdata.assertion"),
 				new ArrayList<String>(),
-				// CollectionUtils.listOf("sav.commons.testdata.assertion.TestInput1"),
 				false);
 
 		app.genAssertion(params);

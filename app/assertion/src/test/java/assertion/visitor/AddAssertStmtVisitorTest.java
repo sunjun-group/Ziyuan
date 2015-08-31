@@ -18,16 +18,16 @@ import mutation.parser.ClassAnalyzer;
 import mutation.parser.ClassDescriptor;
 import mutation.parser.JParser;
 import sav.common.core.utils.ClassUtils;
+import sav.commons.TestConfiguration;
 
 public class AddAssertStmtVisitorTest {
 
 	@Test
 	public void test() throws Exception {
-		String srcFolder = "/Users/HongLongPham/Dropbox/Workspace/Java/assertion/src/test/java/assertion/visitor";
-		// String srcFolder = "C:/Users/longp_000/Dropbox/Workspace/Java/assertion/src/test/java/assertion/visitor";
-		String className = "TestInput";
+		String srcFolder = TestConfiguration.getTestScrPath("assertion"); 
+		String className = TestInput.class.getName();
 		
-		File file = new File(ClassUtils.getJFilePath(srcFolder, "TestInput"));
+		File file = new File(ClassUtils.getJFilePath(srcFolder, className));
 		
 		JParser parser = new JParser(srcFolder, new ArrayList<String>());
 		ClassAnalyzer classAnalyser = new ClassAnalyzer(srcFolder, parser);

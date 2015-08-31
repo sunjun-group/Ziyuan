@@ -43,12 +43,12 @@ public class SliceBreakpointCollector implements SliceVisitor {
 	}
 	
 	@Override
-	public void visitMatchedInstance(InstructionInstance instance) {
+	public final void visitMatchedInstance(InstructionInstance instance) {
 		add(instance.getInstruction());
 	}
 
 	@Override
-	public void visitSliceDependence(InstructionInstance from,
+	public final void visitSliceDependence(InstructionInstance from,
 			InstructionInstance to, Variable variable, int distance) {
 		add(to.getInstruction());
 	}
