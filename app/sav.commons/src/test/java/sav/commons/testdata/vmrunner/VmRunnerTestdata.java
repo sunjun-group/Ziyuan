@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package sav.commons.vmrunner;
+package sav.commons.testdata.vmrunner;
 
 import java.io.File;
 import java.io.FileOutputStream;

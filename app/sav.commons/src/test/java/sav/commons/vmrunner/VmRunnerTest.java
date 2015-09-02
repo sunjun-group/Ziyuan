@@ -20,6 +20,8 @@ import org.junit.Test;
 import sav.common.core.SavException;
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
+import sav.commons.testdata.vmrunner.VmRunnerTestdata;
+import sav.commons.testdata.vmrunner.VmRunnerTestdataLoop;
 import sav.strategies.vm.VMConfiguration;
 import sav.strategies.vm.VMRunner;
 
@@ -40,7 +42,6 @@ public class VmRunnerTest extends AbstractTest {
 		vmRunner = new VMRunner();
 	}
 	
-	@Test
 	public void teststartAndWaitUntilStop_redirect() throws Exception {
 		vmConfig.setLaunchClass(VmRunnerTestdata.class.getName());
 		File file = File.createTempFile("vmRunnerTest", "txt");

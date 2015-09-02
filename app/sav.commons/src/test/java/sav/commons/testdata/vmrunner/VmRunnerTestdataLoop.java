@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package sav.commons.vmrunner;
+package sav.commons.testdata.vmrunner;
 
 /**
  * @author LLT
