@@ -8,29 +8,32 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>0.21.0</tycho-version>
+		<!-- wrapper modules -->
+		<javaslicer-version>20101004</javaslicer-version>
+		<wala-version>1.3.4</wala-version>
+		<jacoco-version>0.7.2.201409121644</jacoco-version>
+		<svm-version>3.17</svm-version>
+
+		<!-- others -->
 		<junit-version>4.11</junit-version>
 		<commons-lang-version>2.6</commons-lang-version>
 		<spring-core-version>4.0.3.RELEASE</spring-core-version>
 		<commons-csv-version>1.0</commons-csv-version>
-		<!-- for icsetlv -->
 		<toolsjar>${java.home}/../lib/tools.jar</toolsjar>
-		<!-- <toolsjar>C:/Users/1001385/Documents/GitHub/tools/jdk1.6.0_26-64b/lib/tools.jar</toolsjar> -->
 		<toolsjar-version>${java.version}</toolsjar-version>
 		<commons-beanutils-version>1.9.1</commons-beanutils-version>
 		<javaparser-version>1.0.11</javaparser-version>
-		<wala-version>1.3.4-SNAPSHOT</wala-version>
 		<apache-commons-io-verson>1.3.2</apache-commons-io-verson>
-		<svm-version>3.17</svm-version>
-		<javaml-version>0.1.7</javaml-version>
 		<tzuyu.libs>${basedir}/../tzuyuEclipsePlugin/libs</tzuyu.libs>
-		<jacoco-version>0.7.2.201409121644</jacoco-version>
-		<javaslicer-version>20101004</javaslicer-version>
 		<fitnesse-version>20140901</fitnesse-version>
 		<commons-cli-version>1.2</commons-cli-version>
 		<log4j-version>1.2.17</log4j-version>
-		<linear-algebra-for-java-version>1.2.3</linear-algebra-for-java-version>
+		<linear-algebra-version>1.2.3</linear-algebra-version>
 		<guice-version>3.0</guice-version>
+		<reflections-version>0.9.8</reflections-version>
+		<commons-lang3-version>3.3.2</commons-lang3-version>
+		<javailp-version>1.2a</javailp-version>
+		<commons-collections-version>3.2.1</commons-collections-version>
 	</properties>
 
 
@@ -43,62 +46,67 @@
 
 	<repositories>
 		<repository>
-			<id>eclipse-indigo</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/indigo</url>
-		</repository>
-		<repository>
-			<id>tzuyu-thirdparty</id>
+			<id>thirdparty</id>
 			<url>http://202.94.70.100:8081/nexus/content/repositories/thirdparty</url>
 		</repository>
 	</repositories>
 
 	<modules>
 		<module>../sav.commons</module>
-		<!-- algorithm modules -->
-		<module>../gentest</module>
+		<!-- wrapper modules -->
 		<module>../slicer.wala</module>
 		<module>../slicer.javaslicer</module>
 		<module>../codecoverage.jacoco</module>
-		<!-- -->
-		<module>../tzuyu.core</module>
-		<!-- <module>../tzuyu.feature</module> -->
-		<!-- <module>../tzuyu.repo</module> -->
-		<module>../tzuyu</module>
-		<module>../faultLocalization</module>
 		<module>../svmlib</module>
-		<module>../icsetlv</module>
+		<!-- algorithm modules -->
+		<module>../faultLocalization</module>
 		<module>../mutation</module>
+		<module>../gentest</module>
+		<module>../icsetlv</module>
+		<module>../tzuyu.core</module>
+		<module>../tzuyu</module>
+		<module>../assertion</module>
 	</modules>
 
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>2.4</version>
+					<executions>
+						<execution>
+							<id>attach-sources</id>
+							<phase>deploy</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>attach-javadocs</id>
+							<phase>deploy</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.4</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
-			<!-- <plugin> -->
-			<!-- <artifactId>maven-javadoc-plugin</artifactId> -->
-			<!-- <executions> -->
-			<!-- <execution> -->
-			<!-- <id>attach-javadocs</id> -->
-			<!-- <phase>deploy</phase> -->
-			<!-- <goals> -->
-			<!-- <goal>jar</goal> -->
-			<!-- </goals> -->
-			<!-- </execution> -->
-			<!-- </executions> -->
-			<!-- </plugin> -->
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
 			<plugin>
 				<!-- explicitly define maven-deploy-plugin after other to force exec 
 					order -->
@@ -122,22 +130,6 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-maven-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<extensions>true</extensions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<configuration>
-					<outputDirectory>${tzuyu.libs}</outputDirectory>
-					<excludeGroupIds>tzuyu-project</excludeGroupIds>
-					<excludeClassifiers>osgi.bundle</excludeClassifiers>
-					<packaging>eclipse-plugin</packaging>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
@@ -148,15 +140,8 @@
 				<groupId>tzuyu-project</groupId>
 				<artifactId>sav.commons</artifactId>
 				<version>${project.version}</version>
-				<exclusions>
-					<!-- exclude by default -->
-					<exclusion>
-						<groupId>com.google.inject</groupId>
-						<artifactId>guice</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
-
+			
 			<dependency>
 				<groupId>tzuyu-project</groupId>
 				<artifactId>gentest</artifactId>
@@ -203,32 +188,17 @@
 				<artifactId>icsetlv</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			<!-- <dependency> -->
-			<!-- <groupId>tzuyu-project</groupId> -->
-			<!-- <artifactId>extcos</artifactId> -->
-			<!-- <version>${project.version}</version> -->
-			<!-- </dependency> -->
-
 			<dependency>
-				<groupId>Mutation</groupId>
-				<artifactId>Mutation</artifactId>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>mutation</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>assertion</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<!-- specific for test -->
-			<dependency>
-				<groupId>tzuyu-project</groupId>
-				<artifactId>sav.commons</artifactId>
-				<type>test-jar</type>
-				<scope>test</scope>
-				<version>${project.version}</version>
-				<exclusions>
-					<!-- exclude by default -->
-					<exclusion>
-						<groupId>com.google.inject</groupId>
-						<artifactId>guice</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
 			<dependency>
 				<groupId>tzuyu-project</groupId>
 				<artifactId>codecoverage.jacoco</artifactId>
@@ -236,30 +206,43 @@
 				<scope>test</scope>
 				<version>${project.version}</version>
 			</dependency>
-			<!-- for tzuyu -->
+
 			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>${junit-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-lang</groupId>
-				<artifactId>commons-lang</artifactId>
-				<version>${commons-lang-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-core</artifactId>
-				<version>${spring-core-version}</version>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>sav.commons</artifactId>
+				<version>${project.version}</version>
+				<type>test-jar</type>
+				<scope>test</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>com.sun</groupId>
+						<artifactId>tools</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>commons-cli</groupId>
+						<artifactId>commons-cli</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
-			<!-- for icsetlv -->
+			<!-- others -->
 			<dependency>
 				<groupId>com.sun</groupId>
 				<artifactId>tools</artifactId>
 				<version>${toolsjar-version}</version>
 				<scope>system</scope>
 				<systemPath>${toolsjar}</systemPath>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit-version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring-core-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -272,81 +255,30 @@
 				<version>${javaparser-version}</version>
 			</dependency>
 			<dependency>
-				<groupId>tw.edu.ntu.csie</groupId>
-				<artifactId>libsvm</artifactId>
-				<version>${svm-version}</version>
-			</dependency>
-			<!-- icsetlv - wala -->
-			<dependency>
-				<artifactId>com.ibm.wala.core</artifactId>
-				<groupId>com.ibm.wala</groupId>
-				<version>${wala-version}</version>
-			</dependency>
-			<dependency>
-				<artifactId>com.ibm.wala.shrike</artifactId>
-				<groupId>com.ibm.wala</groupId>
-				<version>${wala-version}</version>
-			</dependency>
-			<dependency>
-				<artifactId>com.ibm.wala.util</artifactId>
-				<groupId>com.ibm.wala</groupId>
-				<version>${wala-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jacoco</groupId>
-				<artifactId>org.jacoco.core</artifactId>
-				<version>${jacoco-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jacoco</groupId>
-				<artifactId>org.jacoco.agent</artifactId>
-				<version>${jacoco-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>de.unisb.cs.st</groupId>
-				<artifactId>slicer</artifactId>
-				<version>${javaslicer-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>de.unisb.cs.st</groupId>
-				<artifactId>tracer</artifactId>
-				<version>${javaslicer-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>de.unisb.cs.st</groupId>
-				<artifactId>traceReader</artifactId>
-				<version>${javaslicer-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>de.unisb.cs.st</groupId>
-				<artifactId>visualize</artifactId>
-				<version>${javaslicer-version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.jblas</groupId>
-				<artifactId>jblas</artifactId>
-				<version>${linear-algebra-for-java-version}</version>
-			</dependency>
-
-			<dependency>
 				<groupId>commons-cli</groupId>
 				<artifactId>commons-cli</artifactId>
-				<version>1.2</version>
+				<version>${commons-cli-version}</version>
 			</dependency>
-
-			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>${log4j-version}</version>
-			</dependency>
-
 			<dependency>
 				<groupId>com.google.inject</groupId>
 				<artifactId>guice</artifactId>
 				<version>${guice-version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>commons-collections</groupId>
+				<artifactId>commons-collections</artifactId>
+				<version>${commons-collections-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${commons-lang3-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.reflections</groupId>
+				<artifactId>reflections</artifactId>
+				<version>${reflections-version}</version>
+			</dependency>
 			<!-- scope test -->
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -365,8 +297,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.google.inject</groupId>
-			<artifactId>guice</artifactId>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

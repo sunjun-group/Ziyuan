@@ -9,11 +9,6 @@
 		<relativePath>../tzuyu.parent/pom.xml</relativePath>
 	</parent>
 
-	<properties>
-		<reflections-version>0.9.8</reflections-version>
-		<commons-lang3-version>3.3.2</commons-lang3-version>
-	</properties>
-
 	<distributionManagement>
 		<site>
 			<id>www.sav.sutd.edu.sg</id>
@@ -66,7 +61,10 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>${commons-lang3-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
 		</dependency>
 		<!-- detect method parameters name -->
 		<dependency>
@@ -86,41 +84,23 @@
 					<artifactId>tools</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>commons-cli</groupId>
-					<artifactId>commons-cli</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>junit</groupId>
 					<artifactId>junit</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>commons-cli</groupId>
+					<artifactId>commons-cli</artifactId>
+				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections</artifactId>
-			<version>${reflections-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
 		</dependency>
-		<!-- scope test -->
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
 			<type>test-jar</type>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>com.sun</groupId>
-					<artifactId>tools</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-cli</groupId>
-					<artifactId>commons-cli</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 	</dependencies>
-
 </project>

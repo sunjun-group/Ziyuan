@@ -1,21 +1,20 @@
 package libsvm.core;
 
 import libsvm.core.Machine.DataPoint;
-
-import org.junit.Assert;
+import sav.common.core.utils.Assert;
 
 public class DividerBasedCategoryCalculator implements CategoryCalculator {
 
 	private final Divider divider;
 	
 	public DividerBasedCategoryCalculator(final Divider divider) {
-		Assert.assertNotNull("Divider cannot be null.", divider);
+		Assert.assertNotNull(divider, "Divider cannot be null.");
 		this.divider = divider;
 	}
 	
 	@Override
 	public Category getCategory(DataPoint dataPoint) {
-		Assert.assertNotNull("Data point cannot be null.", dataPoint);
+		Assert.assertNotNull(dataPoint, "Data point cannot be null.");
 		// Calculate the category based on the existing Divider
 		return divider.getCategory(dataPoint);
 	}

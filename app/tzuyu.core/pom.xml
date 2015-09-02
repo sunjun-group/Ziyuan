@@ -36,12 +36,6 @@
 	</build>
 
 	<dependencies>
-		<!-- internal dependencies -->
-		<dependency>
-			<groupId>tzuyu-project</groupId>
-			<artifactId>sav.commons</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>codecoverage.jacoco</artifactId>
@@ -58,8 +52,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>Mutation</groupId>
-			<artifactId>Mutation</artifactId>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>mutation</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>tzuyu-project</groupId>
@@ -72,32 +66,27 @@
 		</dependency>
 		<!-- specific for test -->
 		<dependency>
-			<groupId>tzuyu-project</groupId>
-			<artifactId>sav.commons</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.fitnesse</groupId>
 			<artifactId>fitnesse</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>codecoverage.jacoco</artifactId>
 			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-csv</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>assertion</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>sav.commons</artifactId>
+			<type>test-jar</type>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

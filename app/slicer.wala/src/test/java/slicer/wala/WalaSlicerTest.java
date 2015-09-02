@@ -11,8 +11,11 @@ package slicer.wala;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Test;
+
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
+import sav.commons.testdata.BoundedStack;
 import sav.commons.utils.TestConfigUtils;
 import sav.strategies.dto.BreakPoint;
 
@@ -23,7 +26,7 @@ import sav.strategies.dto.BreakPoint;
  */
 public class WalaSlicerTest extends AbstractTest {
 	
-//	@Test
+	@Test
 	public void testSlice() throws Exception {
 		SlicerInput input = new SlicerInput();
 		input.setAppBinFolder(TestConfiguration.SAV_COMMONS_TEST_TARGET);
@@ -40,12 +43,12 @@ public class WalaSlicerTest extends AbstractTest {
 	}
 
 	private void addBreakpoints(List<BreakPoint> breakpoints) {
-		breakpoints.add(new BreakPoint("testdata.boundedStack.BoundedStack", "push(Ljava/lang/Integer;)Z", 37));
+		breakpoints.add(new BreakPoint(BoundedStack.class.getName(), "push(Ljava/lang/Integer;)Z", 34));
 	}
 
 	private List<String[]> makeEntryPoints() {
 		List<String[]> classEntryPoints = new ArrayList<String[]>();
-		classEntryPoints.add(make("Ltestdata/boundedStack/BoundedStack", "push(Ljava/lang/Integer;)Z"));
+		classEntryPoints.add(make("Lsav/commons/testdata/BoundedStack", "push(Ljava/lang/Integer;)Z"));
 		return classEntryPoints;
 	}
 	

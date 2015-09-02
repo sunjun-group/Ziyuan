@@ -1,17 +1,17 @@
 package assertion.invchecker;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import icsetlv.common.dto.ExecValue;
 import icsetlv.common.dto.ExecVar;
 import icsetlv.common.dto.ExecVarType;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import sav.common.core.formula.Eq;
 import sav.common.core.formula.Formula;
 import sav.common.core.formula.LIAAtom;
 import sav.common.core.formula.LIATerm;
 import sav.common.core.formula.Operator;
-import sav.common.core.formula.StringVar;
 
 public class TypeInvChecker {
 

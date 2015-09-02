@@ -9,10 +9,6 @@
 		<relativePath>../tzuyu.parent/pom.xml</relativePath>
 	</parent>
 
-	<properties>
-		<javailp-version>1.2a</javailp-version>
-	</properties>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -74,76 +70,32 @@
 		</plugins>
 	</build>
 
-	<repositories>
-		<repository>
-			<id>devel</id>
-			<name>devel</name>
-			<url>http://devel.summitsystemsinc.net/artifactory/repo</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
 		<dependency>
-			<groupId>com.sun</groupId>
-			<artifactId>tools</artifactId>
+			<groupId>net.sf.javailp</groupId>
+			<artifactId>javailp</artifactId>
+			<version>${javailp-version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-io</artifactId>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>svmlib</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.javaparser</groupId>
 			<artifactId>javaparser</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.2.1</version>
-		</dependency>
-
-
-		<!-- wala -->
-		<!-- <dependency> -->
-		<!-- <groupId>tzuyu-project</groupId> -->
-		<!-- <artifactId>slicer.wala</artifactId> -->
-		<!-- </dependency> -->
-
-		<!-- svm part -->
-		<dependency>
-			<groupId>net.sourceforge</groupId>
-			<artifactId>javaml</artifactId>
-			<version>${javaml-version}</version>
-		</dependency>
-		<!-- commons -->
-		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>net.sf.javailp</groupId>
-			<artifactId>javailp</artifactId>
-			<version>${javailp-version}</version>
-		</dependency>
-		<!-- test -->
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
 			<type>test-jar</type>
-			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>tzuyu-project</groupId>
-			<artifactId>svmlib</artifactId>
-		</dependency>
-
 	</dependencies>
 </project>

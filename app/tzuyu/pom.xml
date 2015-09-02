@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>tzuyu</artifactId>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -51,11 +51,9 @@
 			<artifactId>spring-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>tw.edu.ntu.csie</groupId>
-			<artifactId>libsvm</artifactId>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>svmlib</artifactId>
 		</dependency>
-		
-		<!-- sav.commons -->
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
@@ -64,7 +62,6 @@
 			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
 			<type>test-jar</type>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

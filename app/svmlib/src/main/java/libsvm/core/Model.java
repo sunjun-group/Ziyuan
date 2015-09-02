@@ -5,7 +5,8 @@ import libsvm.svm_node;
 import libsvm.svm_parameter;
 
 import org.jblas.DoubleMatrix;
-import org.junit.Assert;
+
+import sav.common.core.utils.Assert;
 
 /**
  * This class represents the result of a learning process
@@ -21,7 +22,7 @@ public class Model {
 	private final int numberOfFeatures;
 
 	public Model(final svm_model model, final int numberOfFeatures) {
-		Assert.assertNotNull("SVM model cannot be null", model);
+		Assert.assertNotNull(model, "SVM model cannot be null");
 		this.model = model;
 		this.numberOfFeatures = numberOfFeatures;
 	}
@@ -39,7 +40,7 @@ public class Model {
 	}
 
 	public double[] getWeights() {
-		Assert.assertNotNull("SVM model is not available yet.", model);
+		Assert.assertNotNull(model, "SVM model is not available yet.");
 
 		// Weights are only available for linear SVMs
 		if (model.param.svm_type != svm_parameter.C_SVC) {
@@ -103,12 +104,12 @@ public class Model {
 	 * @return The divider which can be use to categorize the learned data.
 	 */
 	public Divider getExplicitDivider() {
-		Assert.assertNotNull("SVM model is not available yet.", model);
+		Assert.assertNotNull(model, "SVM model is not available yet.");
 
 		// coef = [x][number of SVs]
 		DoubleMatrix coefficientMatrix = new DoubleMatrix(model.sv_coef);
 		// (!) NOTE: We assert that x is always equal to 1
-		Assert.assertTrue("Unexpected size of matrices.", coefficientMatrix.getRows() == 1);
+		Assert.assertTrue(coefficientMatrix.getRows() == 1, "Unexpected size of matrices.");
 
 		double[][] supportVectors = new double[model.SV.length][];
 		{
@@ -126,10 +127,10 @@ public class Model {
 		// sv = [number of SVs][number of features]
 		DoubleMatrix supportVectorMatrix = new DoubleMatrix(supportVectors);
 
-		Assert.assertTrue("Cannot multiply coefficient matrix [" + coefficientMatrix.rows + "]["
+		Assert.assertTrue(coefficientMatrix.multipliesWith(supportVectorMatrix),
+				"Cannot multiply coefficient matrix [" + coefficientMatrix.rows + "]["
 				+ coefficientMatrix.columns + "]" + " with support vector matrix ["
-				+ supportVectorMatrix.rows + "][" + supportVectorMatrix.columns + "].",
-				coefficientMatrix.multipliesWith(supportVectorMatrix));
+				+ supportVectorMatrix.rows + "][" + supportVectorMatrix.columns + "].");
 
 		// w = [x][number of features]
 		// wT = [number of features][x]

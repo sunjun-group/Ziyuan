@@ -103,17 +103,7 @@ under the License.
       <nonProxyHosts>local.net|some.host.com</nonProxyHosts>
     </proxy>
     -->
-    
-    <!-- This is the proxy configuration for ELCA -->
-<!--     <proxy> -->
-<!--       <id>elca-proxy</id> -->
-<!--       <active>true</active> -->
-<!--       <protocol>http</protocol> -->
-<!--       <host>192.168.203.2</host> -->
-<!--       <port>8080</port> -->
-<!--       <nonProxyHosts>*.elca.ch|leaffy.*|localhost</nonProxyHosts> -->
-<!--     </proxy> -->
-    
+
   </proxies>
 
   <!-- servers
@@ -142,25 +132,13 @@ under the License.
       <passphrase>optional; leave empty if not used.</passphrase>
     </server>
     -->
-    
-<!--     <server> -->
-<!--       <id>nexus-project-release</id> -->
-<!--       <username>tdq</username> -->
-<!--       <password>P@ssw0rd</password> -->
-<!--     </server> -->
-<!--     <server> -->
-<!--       <id>nexus-project-snapshot</id> -->
-<!--       <username>tdq</username> -->
-<!--       <password>P@ssw0rd</password> -->
-<!--     </server>	 -->
-
     <server>
       <id>snapshots</id>
       <username>tzuyu</username>
       <password>P@ssw0rd</password>
     </server>
     <server>
-      <id>tzuyu-thirdparty</id>
+      <id>thirdparty</id>
       <username>tzuyu</username>
       <password>P@ssw0rd</password>
     </server>	
@@ -281,8 +259,31 @@ under the License.
       </properties>
     </profile>
     -->
-  </profiles>
-
+	
+		<profile>
+			<id>tzuyuProfile</id>
+			<repositories>
+				<repository>
+					<id>thirdparty</id>
+					<name>tzuyu repo on sutd nexus server</name>
+					<url>http://202.94.70.100:8081/nexus/content/repositories/thirdparty</url>
+				</repository>
+			</repositories>
+	   </profile>
+	   <profile>
+			<id>localProfile</id>
+			<repositories>
+				<repository>
+					<id>thirdparty</id>
+					<name>tzuyu repo on local nexus server</name>
+					<url>http://localhost:8081/nexus/content/repositories/thirdparty</url>
+				</repository>
+			</repositories>
+	   </profile>
+	</profiles>
+	<activeProfiles>
+	   <activeProfile>localProfile</activeProfile>
+	</activeProfiles>
   <!-- activeProfiles
    | List of profiles that are active for all builds.
    |

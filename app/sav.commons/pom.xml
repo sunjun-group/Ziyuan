@@ -5,8 +5,8 @@
 	<parent>
 		<groupId>tzuyu-project</groupId>
 		<artifactId>tzuyu.parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../tzuyu.parent/pom.xml</relativePath>
+		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
 	<build>
@@ -62,8 +62,13 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
+			<version>${commons-lang-version}</version>
 		</dependency>
 
 		<!-- +++++++++++++++++++++++++++++++++++++++++++ -->
@@ -73,6 +78,7 @@
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
+			<version>${log4j-version}</version>
 		</dependency>
 
 		<!-- JVM Runner, referenced in VMListener, exclude this package if not 
@@ -89,17 +95,12 @@
 			<artifactId>junit</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
-		<!-- JunitRunner, for parsing command line, exclude this package if not 
-			necessary -->
-		<dependency>
-			<groupId>commons-cli</groupId>
+			<groupId>commons-cli</groupId> <!-- for parsing command line -->
 			<artifactId>commons-cli</artifactId>
 		</dependency>
 
 		<!-- SCOPE TEST -->
+		<!-- for loading testPackage from csv file -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-csv</artifactId>

@@ -16,9 +16,9 @@ import libsvm.svm_problem;
 import libsvm.extension.ISelectiveSampling;
 
 import org.apache.log4j.Logger;
-import org.junit.Assert;
 
 import sav.common.core.formula.Formula;
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.ExecutionTimer;
 import sav.common.core.utils.StringUtils;
 
@@ -155,8 +155,8 @@ public class Machine {
 
 	public DataPoint createDataPoint(final Category category, final double... values) {
 		final int numberOfFeatures = getNumberOfFeatures();
-		Assert.assertTrue("Must specify " + numberOfFeatures + " items as values.", values != null
-				&& values.length == numberOfFeatures);
+		Assert.assertTrue(values != null && values.length == numberOfFeatures,
+				"Must specify " + numberOfFeatures + " items as values.");
 		final DataPoint dp = new DataPoint(numberOfFeatures);
 		dp.setCategory(category);
 		dp.setValues(values);
@@ -229,8 +229,8 @@ public class Machine {
 	 * @return The instance of the current machine after training completed.
 	 */
 	public final Machine train() {
-		Assert.assertNotNull("SVM parameters is not set.", parameter);
-		Assert.assertTrue("SVM training data is empty.", !data.isEmpty());
+		Assert.assertNotNull(parameter, "SVM parameters is not set.");
+		Assert.assertTrue(!data.isEmpty(), "SVM training data is empty.");
 
 		this.data = cleanUp(data);
 		if (getNumberOfFeatures() <= 0) {
@@ -253,8 +253,8 @@ public class Machine {
 	 * @return The instance of the current machine after training completed.
 	 */
 	protected Machine train(final List<DataPoint> dataPoints) {
-		Assert.assertNotNull("SVM parameters is not set.", parameter);
-		Assert.assertTrue("SVM training data is empty.", !dataPoints.isEmpty());
+		Assert.assertNotNull(parameter, "SVM parameters is not set.");
+		Assert.assertTrue(!dataPoints.isEmpty(), "SVM training data is empty.");
 
 		final svm_problem problem = new svm_problem();
 		final int length = dataPoints.size();

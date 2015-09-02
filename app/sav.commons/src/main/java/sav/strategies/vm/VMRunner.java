@@ -12,7 +12,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,7 +43,7 @@ public class VMRunner {
 	 */
 	protected static final String debugToken = "-agentlib:jdwp=transport=dt_socket,suspend=y,address=%s";
 	protected static final String enableAssertionToken = "-ea";
-	private Redirect redirect;
+//	private Redirect redirect;
 	/* timeout in millisecond */
 	private long timeout = NO_TIME_OUT;
 	private boolean isLog = true;
@@ -135,9 +134,9 @@ public class VMRunner {
 			}
 		}
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
-		if (redirect != null) {
-			processBuilder.redirectOutput(redirect);
-		}
+//		if (redirect != null) {
+//			processBuilder.redirectOutput(redirect);
+//		}
 		try {
 			process = processBuilder.start();
 			Timer t = new Timer();
@@ -207,9 +206,9 @@ public class VMRunner {
 //		}
 //	}
 	
-	public void setRedirect(Redirect redirect) {
-		this.redirect = redirect;
-	}
+//	public void setRedirect(Redirect redirect) {
+//		this.redirect = redirect;
+//	}
 
 	public void setTimeout(int timeout, TimeUnit unit) {
 		this.timeout = unit.toMillis(timeout);

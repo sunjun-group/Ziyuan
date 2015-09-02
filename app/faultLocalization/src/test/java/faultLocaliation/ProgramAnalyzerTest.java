@@ -11,9 +11,12 @@ package faultLocaliation;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Test;
+
 import main.FaultLocalization;
 import sav.commons.AbstractTest;
 import sav.commons.testdata.SampleProgramTestFail;
+import sav.commons.testdata.SampleProgramTestPass;
 import sav.commons.testdata.SamplePrograms;
 import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
@@ -23,6 +26,7 @@ import sav.strategies.mutanbug.IMutator;
 import sav.strategies.slicing.ISlicer;
 import sav.strategies.vm.VMConfiguration;
 import faultLocalization.LineCoverageInfo;
+import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 /**
  * @author LLT
@@ -30,6 +34,7 @@ import faultLocalization.LineCoverageInfo;
  */
 public class ProgramAnalyzerTest extends AbstractTest {
 	
+	@Test
 	public void testAnalyse() throws Exception {
 		FaultLocalization analyzer = new FaultLocalization(new IApplicationContext() {
 			
@@ -65,21 +70,22 @@ public class ProgramAnalyzerTest extends AbstractTest {
 
 			@Override
 			public IMutator getMutator() {
-				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
 			public VMConfiguration getVmConfig() {
-				// TODO Auto-generated method stub
-				return null;
+				return initVmConfig();
 			}
 		});
 		List<String> testingClasses = Arrays.asList(SamplePrograms.class.getName());
 		List<String> junitClassNames = Arrays.asList(
-				SampleProgramTestFail.class.getName(),
+				SampleProgramTestPass.class.getName(),
 				SampleProgramTestFail.class.getName());
-		List<LineCoverageInfo> result = analyzer.analyse(testingClasses, junitClassNames).getLineCoverageInfos();
+		List<LineCoverageInfo> result = analyzer.analyseSlicingFirst(
+				testingClasses, Arrays.asList(""), junitClassNames,
+				SpectrumAlgorithm.JACCARD).getLineCoverageInfos();
+		System.out.println(result);
 	}
 	
 }

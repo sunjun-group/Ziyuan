@@ -77,8 +77,6 @@ public class JavaSlicer implements ISlicer {
 		List<BreakPoint> result = slice(tempFileName, new HashSet<BreakPoint>(bkps), timer, junitClassMethods);
 		
 		timer.logResults(log);
-		log.debug("slicing result: ");
-		log.debug(StringUtils.join(result, "\n"));
 		return result;
 	}
 

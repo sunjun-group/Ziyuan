@@ -24,7 +24,6 @@ import mutation.parser.JParser;
 
 import org.apache.commons.io.FileUtils;
 
-import sav.common.core.Constants;
 import sav.common.core.Pair;
 import sav.common.core.formula.Eq;
 import sav.common.core.formula.Formula;
@@ -32,8 +31,6 @@ import sav.common.core.formula.Var;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
-import sav.commons.AbstractTest;
-import sav.commons.TestConfiguration;
 import sav.strategies.IApplicationContext;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
@@ -99,9 +96,7 @@ public class AssertionGeneration extends TzuyuCore {
 		try {
 			JavaSlicer slicer = new JavaSlicer();
 		
-			VMConfiguration vmConfig = AbstractTest.initVmConfig1();
-			vmConfig.addClasspath(TestConfiguration
-					.getTzAssembly(Constants.TZUYU_JAVASLICER_ASSEMBLY));
+			VMConfiguration vmConfig = appData.getVmConfig();
 			slicer.setVmConfig(vmConfig);
 			
 			String targetClass = "sav.commons.testdata.assertion.TestInput"; // TestInput.class.getName();

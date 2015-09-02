@@ -1,1 +1,0 @@
-use -Djava.library.path to indicate where the native libs are

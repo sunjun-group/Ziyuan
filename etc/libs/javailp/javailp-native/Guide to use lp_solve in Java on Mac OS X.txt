@@ -1,0 +1,100 @@
+How to build and install the lp_solve Java extension on Mac OS X:
+========================================================================
+
+Download and expanded lp_solve_5.5_source.tar.gz into a
+directory named 'lp_solve_5.5'.
+
+Download and expand lp_solve_5.5_java.zip into a
+directory named 'lp_solve_5.5_java'.
+
+1) Build the lp_solve library.
+------------------------------------------
+$ cd lp_solve_5.5/lpsolve55
+$ sh ccc.osx
+
+This creates two new files in the lpsolve55 subdirectory:
+
+$ ls liblp*
+liblpsolve55.a     liblpsolve55.dylib
+
+2) Install the lp_solve library.
+------------------------------------------
+If not already in directory lpsolve55, cd to it.  Copy liblpsolve55.a
+and
+liblpsolve55.dylib to /usr/local/lib (you may need to create
+/usr/local/lib first: sudo mkdir -p /usr/local/lib):
+
+$ sudo cp liblpsolve55.a liblpsolve55.dylib /usr/local/lib
+
+3) Test the build and installation.
+------------------------------------------
+$ cd lp_solve_5.5/demo
+
+The ccc.osx script is broken.  The good news is that version 5.5 of
+lp_solve fixes the "malloc.h" incompatibility on the Mac that was in
+earlier versions.  The Unix/Linux script now works on OS X.  Be
+patient...
+it may take several seconds to build 'demo':
+
+$ sh ccc
+
+The example problems in the demo should issue no errors and have
+"Excellent numeric accuracy ||*|| = 0":
+
+$ ./demo
+
+4) Build the lp_solve JNI extension.
+------------------------------------------
+$ cd lp_solve_5.5_java/lib/mac
+
+The script "build-osx" in the mac subdirectory is a DOS text file:
+
+$ file build-osx
+build-osx: ASCII English text, with CRLF line terminators
+
+If you try execute this file, you will get "command not found"
+errors.  To
+convert it into a Unix file, remove the carriage returns:
+
+$ tr -d "\r" < build-osx > build-osx1
+
+Edit build-osx1 to set LPSOLVE_DIR to the location of directory
+lp_solve_5.5 on your computer. Change the two occurrences of '5.1' to
+'5.5' and the two occurrences of '51' to '55' in the last line of
+build-osx1.
+
+$ sh build-osx1
+
+This creates the extension library liblpsolve55j.jnilib.
+
+5) Install  the lp_solve JNI extension.
+------------------------------------------
+The file liblpsolve55j.jnilib should be copied to /Library/Java/
+Extensions
+if you want it to be available to all users.  We assume this will be a
+private installation (create the Java extensions directory if necessary;
+e.g., mkdir -p ~/Library/Java/Extensions):
+
+$ cp liblpsolve55j.jnilib ~/Library/Java/Extensions
+
+6) Test the Java extension:
+------------------------------------------
+$ cd lp_solve_5.5_java/demo
+$ java -cp ./demo.jar:../lib/lpsolve55j.jar Demo
+
+The numerical results of the Java Demo should be identical to those
+of the
+C demo.
+
+There is a Java unit test.  Out of 122 tests, I got 5 errors and 3
+failures, all of which could be explained (missing XLI applications,
+missing BFP libraries, outdated version numbers in tests, negligible
+floating point differrences):
+
+$ java -cp ./unittests.jar:../lib/lpsolve55j.jar:../lib/junit.jar
+LpSolveTest
+
+7) For more information about Java programming on Mac OS X:
+------------------------------------------
+Java Frequently Asked Questions: Common Development Questions
+<http://developer.apple.com/java/faq/development.html>

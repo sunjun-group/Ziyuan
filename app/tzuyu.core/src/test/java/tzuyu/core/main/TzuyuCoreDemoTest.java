@@ -23,7 +23,7 @@ import sav.commons.testdata.paper.Tests;
 import sav.commons.testdata.paper.selectivesampling.StudentEvaluate;
 import sav.commons.testdata.paper.selectivesampling.StudentEvaluateTest;
 import sav.commons.testdata.paper.selectivesampling.StudentEvaluateTest2;
-import sav.commons.testdata.timsort.TimSortTest;
+//import sav.commons.testdata.timsort.TimSortTest;
 
 /**
  * @author khanh
@@ -65,17 +65,17 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 		app.faultLocate(params);
 	}
 	
-	@Test
-	public void testTimSort() throws Exception{
-		List<String> junitClassNames = new ArrayList<String>();
-		junitClassNames.add(TimSortTest.class.getName());
-		FaultLocateParams params = initFaultLocateParams(sav.commons.testdata.timsort.TimSort.class.getName(), "mergeCollapse", null,
-				null, junitClassNames, false);
-		params.setRunMutation(false);
-		params.setGenTest(false);
-		params.setValueRetrieveLevel(4);
-		app.faultLocate(params);
-	}
+//	@Test
+//	public void testTimSort() throws Exception{
+//		List<String> junitClassNames = new ArrayList<String>();
+//		junitClassNames.add(TimSortTest.class.getName());
+//		FaultLocateParams params = initFaultLocateParams(sav.commons.testdata.timsort.TimSort.class.getName(), "mergeCollapse", null,
+//				null, junitClassNames, false);
+//		params.setRunMutation(false);
+//		params.setGenTest(false);
+//		params.setValueRetrieveLevel(4);
+//		app.faultLocate(params);
+//	}
 	
 	@Test
 	public void testNoLoop() throws Exception{

@@ -9,7 +9,6 @@
 package sav.commons.vmrunner;
 
 import java.io.File;
-import java.lang.ProcessBuilder.Redirect;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
@@ -46,8 +45,8 @@ public class VmRunnerTest extends AbstractTest {
 		vmConfig.setLaunchClass(VmRunnerTestdata.class.getName());
 		File file = File.createTempFile("vmRunnerTest", "txt");
 		file.deleteOnExit();
-		Redirect redirect = Redirect.to(file);
-		vmRunner.setRedirect(redirect);
+//		Redirect redirect = Redirect.to(file);
+//		vmRunner.setRedirect(redirect);
 		vmRunner.startAndWaitUntilStop(vmConfig);
 		String fileContent = FileUtils.readFileToString(file);
 		Assert.assertTrue(!StringUtils.isEmpty(fileContent));

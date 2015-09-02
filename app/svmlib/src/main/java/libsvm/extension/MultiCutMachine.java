@@ -12,8 +12,8 @@ import libsvm.core.Divider;
 import libsvm.core.Machine;
 import libsvm.core.Model;
 import libsvm.core.ModelBasedCategoryCalculator;
+import sav.common.core.utils.Assert;
 
-import org.junit.Assert;
 
 /**
  * This SVM machine will try to divide the given data points many times if
@@ -138,7 +138,7 @@ public class MultiCutMachine extends Machine {
 		}
 
 		public Category getCategory(DataPoint dataPoint) {
-			Assert.assertTrue("There is no learned data.", !learnedDatas.isEmpty());
+			Assert.assertTrue(!learnedDatas.isEmpty(), "There is no learned data.");
 			Category result = null;
 			for (LearnedData data : learnedDatas) {
 				result = new ModelBasedCategoryCalculator(data.model).getCategory(dataPoint);

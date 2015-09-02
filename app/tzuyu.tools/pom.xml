@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>tzuyu.tools</groupId>
 	<artifactId>tzuyu.tools</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-
-	<properties>
-		<sav.commons.version>0.0.1-SNAPSHOT</sav.commons.version>
-	</properties>
+	<parent>
+		<groupId>tzuyu-project</groupId>
+		<artifactId>tzuyu.parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../tzuyu.parent/pom.xml</relativePath>
+	</parent>
 
 	<build>
 		<plugins>
@@ -28,23 +28,31 @@
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
-			<version>${sav.commons.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
-			<version>${sav.commons.version}</version>
 			<type>test-jar</type>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
-			<version>0.9.9-RC2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.javaparser</groupId>
 			<artifactId>javaparser</artifactId>
-			<version>1.0.11</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.javailp</groupId>
+			<artifactId>javailp</artifactId>
+			<version>${javailp-version}</version>
 		</dependency>
 	</dependencies>
 </project>

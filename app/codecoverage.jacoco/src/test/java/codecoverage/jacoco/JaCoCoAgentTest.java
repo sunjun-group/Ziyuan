@@ -23,7 +23,6 @@ import org.junit.Test;
 
 import sav.common.core.Pair;
 import sav.common.core.SavPrintStream;
-import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.SampleProgramTest;

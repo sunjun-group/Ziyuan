@@ -3,8 +3,8 @@ package libsvm.core;
 import libsvm.svm;
 import libsvm.svm_model;
 import libsvm.core.Machine.DataPoint;
+import sav.common.core.utils.Assert;
 
-import org.junit.Assert;
 
 public class ModelBasedCategoryCalculator implements CategoryCalculator {
 	private final svm_model rawModel;
@@ -15,8 +15,8 @@ public class ModelBasedCategoryCalculator implements CategoryCalculator {
 
 	@Override
 	public Category getCategory(DataPoint dataPoint) {
-		Assert.assertNotNull("Data point cannot be null.", dataPoint);
-		Assert.assertNotNull("SVM model is not ready yet.", rawModel);
+		Assert.assertNotNull(dataPoint, "Data point cannot be null.");
+		Assert.assertNotNull(rawModel, "SVM model is not ready yet.");
 		final double predictValue = svm.svm_predict(rawModel, dataPoint.getSvmNode());
 		return Category.fromDouble(predictValue);
 	}
