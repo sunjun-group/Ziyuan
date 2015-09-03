@@ -9,7 +9,8 @@ import org.junit.Test;
 
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
-import sav.commons.utils.TestConfigUtils;
+import testdata.CalculatorTestFailed;
+import testdata.CalculatorTestPassed;
 
 public class EngineTest extends AbstractTest {
 
@@ -22,30 +23,17 @@ public class EngineTest extends AbstractTest {
 		final TestConfiguration config = TestConfiguration.getInstance();
 		
 		engine = new Engine().setPort(DEBUG_PORT)
-				.setJavaHome(TestConfigUtils.getJavaHome())
-//				.setLaunchClass(config.getJunitcore())
+				.setJavaHome(TestConfiguration.JAVA_HOME)
 				.addToClassPath(config.getJavaBin())
-				.addToClassPath(TestConfiguration.TRUNK + "/etc/app_assembly/sav-commons.jar")
-//				.addToClassPath(config.getJunitLib())
+				.addToClassPath(TestConfiguration.getTzAssembly("sav-commons"))
 				.addToClassPath(TestConfiguration.getTestTarget(MODULE_NAME));
 		
 	}
 
 	@Test
 	public void doTest() throws Exception {
-		engine.addTestcase("testdata.CalculatorTestPassed.testPassed1");
-		engine.addTestcase("testdata.CalculatorTestPassed.testPassed2");
-		engine.addTestcase("testdata.CalculatorTestPassed.testPassed3");
-		engine.addTestcase("testdata.CalculatorTestPassed.testPassed4");
-		engine.addTestcase("testdata.CalculatorTestFailed.testFailed1");
-		engine.addTestcase("testdata.CalculatorTestFailed.testFailed2");
-		engine.addTestcase("testdata.CalculatorTestFailed.testFailed3");
-		engine.addTestcase("testdata.CalculatorTestFailed.testFailed4");
-		engine.addTestcase("testdata.CalculatorTestFailed.testFailed5");
-		engine.addTestcase("testdata.CalculatorTestFailed.testFailed6");
-//		engine.addPassedTestcase("testdata.CalculatorTestPassed");
-//		engine.addFailedTestcase("testdata.CalculatorTestFailed");
-
+		engine.addTestcases(CalculatorTestPassed.class.getName());
+		engine.addTestcases(CalculatorTestFailed.class.getName());
 		engine.addBreakPoint("testdata.Calculator", "getMax", 6, "x", "y");
 
 		List<BkpInvariantResult> result = engine.run();

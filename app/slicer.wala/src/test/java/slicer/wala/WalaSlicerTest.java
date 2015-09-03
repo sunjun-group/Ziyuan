@@ -16,7 +16,6 @@ import org.junit.Test;
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.BoundedStack;
-import sav.commons.utils.TestConfigUtils;
 import sav.strategies.dto.BreakPoint;
 
 
@@ -30,7 +29,7 @@ public class WalaSlicerTest extends AbstractTest {
 	public void testSlice() throws Exception {
 		SlicerInput input = new SlicerInput();
 		input.setAppBinFolder(TestConfiguration.SAV_COMMONS_TEST_TARGET);
-		input.setJre(TestConfigUtils.getJavaHome());
+		input.setJre(TestConfiguration.getJavaHome());
 		// entry points
 		List<String[]> classEntryPoints = makeEntryPoints();
 		input.setClassEntryPoints(classEntryPoints);
@@ -59,7 +58,7 @@ public class WalaSlicerTest extends AbstractTest {
 	protected SlicerInput initSlicerInput() {
 		SlicerInput input = new SlicerInput();
 		input.setAppBinFolder(TestConfiguration.SAV_COMMONS_TEST_TARGET);
-		input.setJre(TestConfigUtils.getJavaHome());
+		input.setJre(TestConfiguration.getJavaHome());
 		return input;
 	}
 }

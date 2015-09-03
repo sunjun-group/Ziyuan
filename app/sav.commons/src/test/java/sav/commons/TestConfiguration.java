@@ -8,90 +8,88 @@
 
 package sav.commons;
 
-
+import static sav.common.core.utils.ResourceUtils.appendPath;
 import sav.common.core.Constants;
-import sav.common.core.utils.StringUtils;
-import sav.commons.utils.TestConfigUtils;
+import sav.common.core.utils.ConfigUtils;
 
 /**
  * @author LLT
  * 
  */
 public class TestConfiguration {
-	public static final String PROPERTY_TESTCASE_BASE = "testcase.base";
-	
+	private static final String PRJ_APP = "app";
+	private static final String PRJ_ETC = "etc";
 	private static TestConfiguration config = new TestConfiguration();
-	public static final String JUNIT_CORE = "org.junit.runner.JUnitCore";
 	public static final String TRUNK;
 	public static final String APP;
 	public static final String ETC;
-	public static String JUNIT_LIB;
 	public static String SAV_COMMONS_TEST_TARGET;
 	public String javaSlicerPath;
 	// do not remove this one, this is not the current java home of the
 	// application
 	public static String JAVA_HOME;
 	public static String ASSEMBLY;
-	public static String TESTCASE_BASE;
 	public static String TESTDATA_CSV;
+	public static String TESTDATA_PROPERTIES;
 	
 	static {
 		TRUNK = getTrunk();
-		ETC = TRUNK + "/etc/";
-		APP = TRUNK + "/app/";
-		JUNIT_LIB = TRUNK + "/app/icsetlv/src/test/lib/*";
+		ETC = appendPath(TRUNK, PRJ_ETC);
+		APP = appendPath(TRUNK, PRJ_APP);
 		SAV_COMMONS_TEST_TARGET = getTestTarget("sav.commons");
-		JAVA_HOME = TestConfigUtils.getJavaHome();
-		TESTCASE_BASE = TestConfigUtils.getConfig(PROPERTY_TESTCASE_BASE);
-		TESTDATA_CSV  = ETC + "testdata.csv";
+		JAVA_HOME = getJavaHome();
+		TESTDATA_CSV  = appendPath(ETC, "testdata.csv");
+		TESTDATA_PROPERTIES = appendPath(ETC, "testdata.properties");
 	}
 
 	private static String getTrunk() {
 		String userdir = System.getProperty("user.dir");
-		int indexOfapp = userdir.indexOf(Constants.FILE_SEPARATOR + "app");
+		int indexOfapp = userdir.indexOf(Constants.FILE_SEPARATOR + PRJ_APP);
 		if (indexOfapp < 0) {
-			return TestConfigUtils.getConfig("trunk");
+			return ConfigUtils.getProperty("trunk");
 		}
 		return userdir.substring(0, indexOfapp);
 	}
 
 	public static String getTzAssembly(String assemblyName) {
-		return StringUtils.join("", ETC, "app_assembly/", assemblyName); 
+		return appendPath(ETC, "app_assembly", assemblyName);
 	}
 
 	private TestConfiguration() {
 	}
 	
 	public static String getTestScrPath(String module) {
-		return StringUtils.join("", APP, module, "/src/test/java");
+		return appendPath(APP, module, "src/test/java");
 	}
 
 	public static String getTestTarget(String module) {
-		return StringUtils.join("", APP, module, "/target/test-classes");
+		return appendPath(APP, module, "target/test-classes");
 	}
 
 	public static String getTarget(String module) {
-		return StringUtils.join("", APP, module, "/target/classes");
+		return appendPath(APP, module, "target/classes");
 	}
 	
 	public static String getTestResources(String module) {
-		return StringUtils.join("", APP, module, "/src/test/resources");
+		return appendPath(APP, module, "src/test/resources");
 	}
 
 	public static TestConfiguration getInstance() {
 		return config;
 	}
 
-	public String getJunitcore() {
-		return JUNIT_CORE;
-	}
-
 	public String getJavaBin() {
 		return JAVA_HOME + "/bin";
 	}
 
-	public String getJunitLib() {
-		return JUNIT_LIB;
+	/* work around for getting jdk, not jre */
+	public static String getJavaHome() {
+		// work around in case java home not point to jdk but jre.
+		String javaHome = System.getProperty("java.home");
+		if (javaHome.endsWith("jre")) {
+			javaHome = javaHome.substring(0,
+					javaHome.lastIndexOf(Constants.FILE_SEPARATOR + "jre"));
+		}
+		return javaHome;
 	}
-	
 }

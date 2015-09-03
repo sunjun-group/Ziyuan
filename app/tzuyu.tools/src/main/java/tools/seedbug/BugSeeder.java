@@ -19,7 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
 import sav.common.core.Constants;
-import sav.commons.utils.TestConfigUtils;
+import sav.commons.TestConfiguration;
 import tools.commons.ToolsUtils;
 
 /**
@@ -27,9 +27,7 @@ import tools.commons.ToolsUtils;
  *
  */
 public class BugSeeder {
-	@SuppressWarnings("deprecation")
-	private static final String TEST_SCR_FOLDER = TestConfigUtils.getTrunkPath()
-			+ "/app/sav.commons" + "/src/test/java"; 
+	private static final String TEST_SCR_FOLDER = TestConfiguration.getTestScrPath("sav.commons");
 	private static final String ORG_TEST_CLASS_SUFIX = "Org";
 	private SeedParser seedParser = new SeedParser();
 	private ResourceBundle props;

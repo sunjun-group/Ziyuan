@@ -137,6 +137,8 @@
 						<excludes>
 							<exclude>**/testdata/**/*.java</exclude>
 							<exclude>**/test/**/*.java</exclude>
+							<exclude>**/*Testdata.java</exclude>
+							<exclude>**/*PackageTest.java</exclude>
 						</excludes>
 					</configuration>
 				</plugin>
@@ -366,12 +368,4 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
 </project>

@@ -8,12 +8,12 @@
 
 package sav.commons;
 
-import static sav.commons.TestConfiguration.JUNIT_LIB;
 import static sav.commons.TestConfiguration.SAV_COMMONS_TEST_TARGET;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.ServerSocket;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,7 +25,6 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 
 import sav.common.core.utils.StringUtils;
-import sav.commons.utils.TestConfigUtils;
 import sav.strategies.vm.VMConfiguration;
 
 
@@ -61,40 +60,11 @@ public class AbstractTest {
 
 	protected VMConfiguration initVmConfig() {
 		VMConfiguration vmConfig = new VMConfiguration();
-		vmConfig.setJavaHome(TestConfigUtils.getJavaHome());
-		vmConfig.setPort(findFreePort());
+		vmConfig.setJavaHome(TestConfiguration.getJavaHome());
 		vmConfig.addClasspath(config.getJavaBin());
 		vmConfig.addClasspath(SAV_COMMONS_TEST_TARGET);
-		vmConfig.addClasspath(JUNIT_LIB);
 		return vmConfig;
 	}
-	
-	public static VMConfiguration initVmConfig1() {
-		VMConfiguration vmConfig = new VMConfiguration();
-		vmConfig.setJavaHome(TestConfigUtils.getJavaHome());
-		vmConfig.setPort(findFreePort());
-		vmConfig.addClasspath(config.getJavaBin());
-		vmConfig.addClasspath(SAV_COMMONS_TEST_TARGET);
-		vmConfig.addClasspath(JUNIT_LIB);
-		return vmConfig;
-	}
-	
-	public static int findFreePort() {
-		ServerSocket socket= null;
-		try {
-			socket= new ServerSocket(0);
-			return socket.getLocalPort();
-		} catch (IOException e) { 
-		} finally {
-			if (socket != null) {
-				try {
-					socket.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-		return -1;		
-	}	
 	
 	protected List<String> getLibJars(String... libFolders) throws Exception {
 		List<String> jars = new ArrayList<String>();
@@ -112,8 +82,13 @@ public class AbstractTest {
 	protected void updateSystemClasspath(List<String> classpaths)
 			throws Exception {
 		for (String path : classpaths) {
-			TestConfigUtils.addToSysClassLoader(new File(path));
+			addToSysClassLoader(new File(path));
 		}
-		
+	}
+	
+	public static void addToSysClassLoader(File file) throws Exception {
+	    Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
+	    method.setAccessible(true);
+	    method.invoke(ClassLoader.getSystemClassLoader(), new Object[]{file.toURI().toURL()});
 	}
 }

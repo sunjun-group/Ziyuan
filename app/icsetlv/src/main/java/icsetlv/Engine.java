@@ -4,6 +4,7 @@ import icsetlv.common.dto.BkpInvariantResult;
 import icsetlv.variable.TestcasesExecutor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import libsvm.core.KernelType;
@@ -11,6 +12,7 @@ import libsvm.core.Machine;
 import libsvm.core.MachineType;
 import libsvm.core.Parameter;
 import libsvm.extension.FeatureSelectionMachine;
+import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.vm.VMConfiguration;
@@ -130,6 +132,11 @@ public class Engine {
 		for(String testcase: testcases){
 			addTestcase(testcase);
 		}
+		return this;
+	}
+	
+	public Engine addTestcases(String testClass) throws ClassNotFoundException {
+		addTestcases(JunitUtils.extractTestMethods(Arrays.asList(testClass)));
 		return this;
 	}
 	

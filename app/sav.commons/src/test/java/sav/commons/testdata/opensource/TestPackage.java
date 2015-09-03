@@ -9,9 +9,9 @@
 package sav.commons.testdata.opensource;
 
 import static sav.common.core.utils.ResourceUtils.appendPath;
-import static sav.commons.testdata.TestDataConstants.TEST_DATA_FOLDER;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -35,6 +36,8 @@ import sav.commons.TestConfiguration;
 public class TestPackage {
 	private static final String ITEM_SEPARATOR = ";";
 	private static final int TESTDATA_START_RECORD = 4;
+	private static Properties testDataConfig;
+	private static String workspace;
 	
 	private static Map<String, TestPackage> allTestData;
 	private Map<TestDataColumn, Object> packageData;
@@ -42,6 +45,10 @@ public class TestPackage {
 	
 	static {
 		try {
+			testDataConfig = new Properties();
+			testDataConfig.load(new FileInputStream(
+					TestConfiguration.TESTDATA_PROPERTIES));
+			workspace = testDataConfig.getProperty("testdata.workspace");
 			allTestData = loadTestData();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -70,7 +77,7 @@ public class TestPackage {
 					pkg.packageData.put(col, record.get(col));
 				}
 			}
-			pkg.projectFolder = appendPath(TEST_DATA_FOLDER,
+			pkg.projectFolder = appendPath(workspace,
 					pkg.getValue(TestDataColumn.PROJECT_NAME));
 			allTests.put(getPkgId(record), pkg);
 		}

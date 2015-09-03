@@ -59,5 +59,10 @@
 			<artifactId>sav.commons</artifactId>
 			<type>test-jar</type>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

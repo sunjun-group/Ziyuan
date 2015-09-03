@@ -14,7 +14,6 @@ import java.util.List;
 
 import sav.common.core.Constants;
 import sav.commons.TestConfiguration;
-import sav.commons.utils.TestConfigUtils;
 import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.main.context.AbstractApplicationContext;
 import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
@@ -32,7 +31,7 @@ public class TestApplicationContext extends AbstractApplicationContext {
 		List<String> projectClasspath = new ArrayList<String>();
 		projectClasspath.add(TestConfiguration.SAV_COMMONS_TEST_TARGET);
 		appData.setClasspaths(projectClasspath);
-		appData.setJavaHome(TestConfigUtils.getJavaHome());
+		appData.setJavaHome(TestConfiguration.getJavaHome());
 		appData.setSuspiciousCalculAlgo(suspiciousnessCalcul);
 		appData.setTzuyuJacocoAssembly(TestConfiguration.getTzAssembly(Constants.TZUYU_JACOCO_ASSEMBLY));
 		appData.setAppSrc(TestConfiguration.getTestScrPath("sav.commons"));

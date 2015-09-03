@@ -20,8 +20,8 @@ import org.junit.Test;
 import sav.common.core.SavException;
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
-import sav.commons.testdata.vmrunner.VmRunnerTestdata;
-import sav.commons.testdata.vmrunner.VmRunnerTestdataLoop;
+import sav.commons.vmrunner.testdata.VmRunnerTestdata;
+import sav.commons.vmrunner.testdata.VmRunnerTestdataLoop;
 import sav.strategies.vm.VMConfiguration;
 import sav.strategies.vm.VMRunner;
 

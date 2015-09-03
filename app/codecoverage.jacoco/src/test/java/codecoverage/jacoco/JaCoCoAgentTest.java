@@ -10,7 +10,6 @@ package codecoverage.jacoco;
 
 import static sav.common.core.Constants.TZUYU_JACOCO_ASSEMBLY;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,7 +26,6 @@ import sav.common.core.utils.StringUtils;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.SampleProgramTest;
 import sav.commons.testdata.SamplePrograms;
-import sav.commons.utils.TestConfigUtils;
 import sav.strategies.codecoverage.ICoverageReport;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
@@ -92,31 +90,6 @@ public class JaCoCoAgentTest extends JacocoAbstractTest {
 		};
 	}
 
-	@Test
-	public void testRunTestdata() throws Exception {
-		String classesFolder = TestConfigUtils.getConfig("jtopas.src");
-		List<String> testingClassNames = Arrays.asList(
-				"de.susebox.java.io.ExtIOException",
-				"de.susebox.java.lang.ExtIndexOutOfBoundsException",
-				"de.susebox.java.util.InputStreamTokenizer",
-				"de.susebox.jtopas.PluginTokenizer",
-				"de.susebox.java.util.AbstractTokenizer");
-		List<String> junitClassNames = Arrays.asList(
-				"de.susebox.java.util.TestTokenizerProperties",
-				"de.susebox.java.util.TestTokenProperties",
-				"de.susebox.java.util.TestInputStreamTokenizer",
-				"de.susebox.java.util.TestDifficultSituations",
-				"de.susebox.jtopas.TestPluginTokenizer",
-				"de.susebox.jtopas.TestTokenizerSpeed",
-				"de.susebox.jtopas.TestJavaTokenizing");
-		String jtopasTest = TestConfigUtils.getConfig("jtopas.test");
-		TestConfigUtils.addToSysClassLoader(new File(classesFolder));
-		TestConfigUtils.addToSysClassLoader(new File(jtopasTest));
-		vmConfig.addClasspath(classesFolder);
-		vmConfig.addClasspath(jtopasTest);
-		run(testingClassNames, junitClassNames, classesFolder);
-	}
-	
 	@Test
 	public void testSampleProgram() throws Exception {
 		List<String> testingClassNames = Arrays.asList(SamplePrograms.class.getName(),

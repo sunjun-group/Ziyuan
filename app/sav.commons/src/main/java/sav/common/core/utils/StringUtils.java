@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import sav.common.core.Constants;
+
 /**
  * @author LLT
  * 
@@ -45,6 +47,10 @@ public class StringUtils {
 
 	public static String join(String separator, Object... params) {
 		return join(Arrays.asList(params), separator);
+	}
+	
+	public static String newLineJoin(List<?> params) {
+		return join(params, Constants.NEW_LINE);
 	}
 	
 	public static String spaceJoin(Object...params) {
@@ -87,10 +93,6 @@ public class StringUtils {
 		return Character.isUpperCase(text.charAt(0));
 	}
 
-	public static String newLineJoin(List<String> value) {
-		return org.apache.commons.lang.StringUtils.join(value, "\n");
-	}
-	
 	public static String enumToString(String enumClzz, Object enumVal) {
 		return dotJoin(enumClzz, ((Enum<?>) enumVal).name());
 	}

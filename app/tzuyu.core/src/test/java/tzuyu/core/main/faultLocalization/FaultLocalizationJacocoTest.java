@@ -28,12 +28,6 @@ public class FaultLocalizationJacocoTest extends JaCoCoAgentTest {
 	}
 	
 	@Override
-	public void testRunTestdata() throws Exception {
-		super.testRunTestdata();
-		getCoverageReport().computeSuspiciousness(new ArrayList<ClassLocation>(), SpectrumAlgorithm.TARANTULA);
-	}
-	
-	@Override
 	public void testSampleProgram() throws Exception {
 		super.testSampleProgram();
 		getCoverageReport().computeSuspiciousness(new ArrayList<ClassLocation>(), SpectrumAlgorithm.TARANTULA);
