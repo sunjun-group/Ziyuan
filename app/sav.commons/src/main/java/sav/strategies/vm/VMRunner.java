@@ -168,9 +168,7 @@ public class VMRunner {
 			process.waitFor();
 			String error = getText((process.getErrorStream()));
 			if (!StringUtils.isEmpty(error)) {
-				if (log.isDebug()) {
-					log.debug(error);
-				}
+				log.debug(error);
 				return false;
 			}
 			return true;

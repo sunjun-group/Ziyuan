@@ -36,7 +36,14 @@ public class JavaSlicerVmRunner extends AgentVmRunner {
 	@Override
 	protected void appendAgentParams(ArrayList<String> params) {
 		params.add(newAgentOption("tracefile", traceFilePath));
-		
+	}
+	
+	@Override
+	protected void buildVmOption(CollectionBuilder<String, ?> builder,
+			VMConfiguration config) {
+		/* disable jdk verifier, no checking version */
+		builder.add("-noverify");
+		super.buildVmOption(builder, config);
 	}
 	
 	@Override
