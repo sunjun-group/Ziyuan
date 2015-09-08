@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,7 +26,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.StringUtils;
 import sav.commons.TestConfiguration;
 
@@ -35,6 +36,7 @@ import sav.commons.TestConfiguration;
  */
 public class TestPackage {
 	private static final String ITEM_SEPARATOR = ";";
+	private static final String IGNORE_CELL_STR = "#";
 	private static final int TESTDATA_START_RECORD = 4;
 	private static Properties testDataConfig;
 	private static String workspace;
@@ -69,12 +71,16 @@ public class TestPackage {
 			TestPackage pkg = new TestPackage();
 			CSVRecord record = records.get(i);
 			for (TestDataColumn col : TestDataColumn.values()) {
+				String cellStr = record.get(col);
+				if (cellStr.startsWith(IGNORE_CELL_STR)) {
+					cellStr = StringUtils.EMPTY;
+				}
 				if (col.multi) {
-					pkg.packageData.put(col, CollectionUtils
-							.toArrayList(org.apache.commons.lang.StringUtils
-									.split(record.get(col), ITEM_SEPARATOR)));
+					pkg.packageData.put(col, Arrays
+							.asList(org.apache.commons.lang.StringUtils.split(
+									cellStr, ITEM_SEPARATOR)));
 				} else {
-					pkg.packageData.put(col, record.get(col));
+					pkg.packageData.put(col, cellStr);
 				}
 			}
 			pkg.projectFolder = appendPath(workspace,
@@ -85,6 +91,7 @@ public class TestPackage {
 	}
 	
 	public String getValue(TestDataColumn col) {
+		Assert.assertTrue(!col.multi);
 		String value = (String) packageData.get(col);
 		if (col.relativePath) {
 			return toAbsolutePath(value);
@@ -94,6 +101,7 @@ public class TestPackage {
 	
 	@SuppressWarnings("unchecked")
 	public List<String> getValues(TestDataColumn col) {
+		Assert.assertTrue(col.multi);
 		List<String> value = (List<String>) packageData.get(col);
 		if (col.relativePath) {
 			return toAbsolutePaths(value);

@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import sav.common.core.Logger;
 import sav.strategies.dto.BreakPoint;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.Instruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.InstructionInstance;
@@ -26,7 +25,6 @@ import de.unisb.cs.st.javaslicer.variables.Variable;
  *
  */
 public class SliceBreakpointCollector implements SliceVisitor {
-	private Logger<?> log = Logger.getDefaultLogger();
 	private Set<BreakPoint> dynamicSlice = new HashSet<BreakPoint>();
 
 	private void add(Instruction instruction) {

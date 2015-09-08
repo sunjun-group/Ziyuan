@@ -18,10 +18,10 @@ import de.unisb.cs.st.javaslicer.common.classRepresentation.Instruction;
  * @author LLT
  * 
  */
-public class SliceBkpByClassesCollector extends SliceBreakpointCollector {
-	private Set<String> analyzedClasses;
+public class ClassFilterSliceCollector extends SliceBreakpointCollector {
+	protected Set<String> analyzedClasses;
 
-	public SliceBkpByClassesCollector(Collection<String> analyzedClasses) {
+	public ClassFilterSliceCollector(Collection<String> analyzedClasses) {
 		this.analyzedClasses = new HashSet<String>(analyzedClasses);
 	}
 	

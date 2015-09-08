@@ -22,7 +22,6 @@ import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
-import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
@@ -44,14 +43,9 @@ public class JavaSlicer implements ISlicer {
 	private SliceBreakpointCollector sliceCollector;
 	
 	public JavaSlicer() {
-		this(new SliceBreakpointCollector());
-	}
-	
-	public JavaSlicer(SliceBreakpointCollector sliceCollector) {
-		this.sliceCollector = sliceCollector;
 		vmRunner = new JavaSlicerVmRunner();
 	}
-	
+
 	public void setVmConfig(VMConfiguration vmConfig) {
 		this.vmConfig = vmConfig;
 	}
@@ -63,6 +57,7 @@ public class JavaSlicer implements ISlicer {
 	public List<BreakPoint> slice(List<BreakPoint> bkps,
 			List<String> junitClassMethods) throws SavException, IOException,
 			InterruptedException, ClassNotFoundException {
+		ensureData();
 		if (CollectionUtils.isEmpty(bkps)) {
 			log.warn("List of breakpoints to slice is empty");
 			return new ArrayList<BreakPoint>();
@@ -78,6 +73,12 @@ public class JavaSlicer implements ISlicer {
 		
 		timer.logResults(log);
 		return result;
+	}
+
+	private void ensureData() {
+		if (sliceCollector == null) {
+			sliceCollector = new SliceBreakpointCollector();
+		}
 	}
 
 	/**
@@ -109,9 +110,7 @@ public class JavaSlicer implements ISlicer {
 			StopTimer timer, List<String> junitClassMethods)
 			throws InterruptedException, SavException {
 		log.info("Slicing-slicing...");
-		if (log.isDebug()) {
-			log.debug("traceFilePath=", traceFilePath);
-		}
+		log.debug("traceFilePath=", traceFilePath);
 		log.info("entry points=", BreakpointUtils.getPrintStr(bkps));
 		File traceFile = new File(traceFilePath);
 		TraceResult trace;
@@ -181,10 +180,10 @@ public class JavaSlicer implements ISlicer {
 	@Override
 	public void setFiltering(List<String> analyzedClasses,
 			List<String> analyzedPackages) {
-		if (!CollectionUtils.isEmpty(analyzedClasses)) {
-			sliceCollector = new SliceBkpByClassesCollector(analyzedClasses);
-		} else if (!CollectionUtils.isEmpty(analyzedPackages)) {
-			sliceCollector = new SliceBkpByPackagesCollector(analyzedPackages);
+		if (CollectionUtils.isNotEmpty(analyzedPackages)) {
+			sliceCollector = new ClassPkgFilterSliceCollector(analyzedClasses, analyzedPackages); 
+		} else {
+			sliceCollector = new ClassFilterSliceCollector(analyzedClasses);
 		}
 	}
 }

@@ -8,7 +8,6 @@
 
 package slicer.javaslicer;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -20,23 +19,24 @@ import de.unisb.cs.st.javaslicer.common.classRepresentation.Instruction;
  * @author LLT
  *
  */
-public class SliceBkpByPackagesCollector extends SliceBreakpointCollector {
-	private List<String> analyzedPackages; 
-	private Set<String> acceptedClasses = new HashSet<String>();
+public class ClassPkgFilterSliceCollector extends ClassFilterSliceCollector {
+	private Set<String> analyzedPackages; 
 	
-	public SliceBkpByPackagesCollector(Collection<String> analyzedPackages) {
-		this.analyzedPackages = new ArrayList<String>(analyzedPackages);
+	public ClassPkgFilterSliceCollector(Collection<String> analyzedClasses,
+			List<String> analyzedPackages) {
+		super(analyzedClasses);
+		this.analyzedPackages = new HashSet<String>(analyzedPackages);
 	}
 
 	@Override
 	protected boolean isAccepted(Instruction instruction) {
 		String clazzName = instruction.getMethod().getReadClass().getName();
-		if (acceptedClasses.contains(clazzName)) {
+		if (analyzedClasses.contains(clazzName)) {
 			return true;
 		}
 		for (String pkg : analyzedPackages) {
 			if (clazzName.startsWith(pkg)) {
-				acceptedClasses.add(clazzName);
+				analyzedClasses.add(clazzName);
 				return true;
 			}
 		}
