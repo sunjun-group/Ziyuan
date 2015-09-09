@@ -31,7 +31,6 @@ public class SystemConfiguredDataProvider extends TestApplicationContext {
 	public SystemConfiguredDataProvider() {
 		ApplicationData appData = new ApplicationData();
 		appData.setSuspiciousCalculAlgo(getSuspiciousnessCalculationAlgorithm());
-		appData.setTzuyuJacocoAssembly(TestConfiguration.getTzAssembly(Constants.TZUYU_JACOCO_ASSEMBLY));
 		setAppData(appData);
 	}
 	

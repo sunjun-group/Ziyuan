@@ -57,10 +57,6 @@ public class InvariantLearner implements CategoryCalculator {
 		List<BkpInvariantResult> result = new ArrayList<BkpInvariantResult>();
 		for (BreakpointData bkpData : bkpsData) {
 			LOGGER.info("Start to learn at " + bkpData.getBkp());
-//			if (!bkpData.getBkp().getOrgLineNos().contains(212)
-//					|| bkpData.getBkp().getOrgLineNos().contains(210)) {
-//				continue;
-//			}
 			if (bkpData.getPassValues().isEmpty() && bkpData.getFailValues().isEmpty()) {
 				continue;
 			}

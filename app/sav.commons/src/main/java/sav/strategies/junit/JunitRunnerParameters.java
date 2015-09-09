@@ -20,7 +20,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import sav.common.core.Logger;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.JunitUtils;
 
@@ -30,7 +29,6 @@ import sav.common.core.utils.JunitUtils;
  */
 @SuppressWarnings("static-access")
 public class JunitRunnerParameters {
-	private Logger<?> log = Logger.getDefaultLogger();
 	private static final Options opts;
 	static final String CLASS_METHODS = "methods";
 	static final String TESTING_CLASS_NAMES = "testingclass";
@@ -169,7 +167,6 @@ public class JunitRunnerParameters {
 		try {
 			this.classMethods = JunitUtils.extractTestMethods(junitClassNames);
 		} catch (ClassNotFoundException e) {
-			log.debug(e);
 			throw new SavRtException(
 					"cannot extract test methods from junit classes: ",
 					e.getMessage());

@@ -8,8 +8,6 @@
 
 package codecoverage.jacoco;
 
-import static sav.common.core.Constants.TZUYU_JACOCO_ASSEMBLY;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,14 +19,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sav.common.core.Pair;
-import sav.common.core.SavPrintStream;
 import sav.common.core.utils.StringUtils;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.SampleProgramTest;
 import sav.commons.testdata.SamplePrograms;
 import sav.strategies.codecoverage.ICoverageReport;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.vm.VMConfiguration;
 import codecoverage.jacoco.agent.JaCoCoAgent;
 import codecoverage.jacoco.testdata.CoverageSample;
 import codecoverage.jacoco.testdata.CoverageSampleTest;
@@ -39,25 +36,48 @@ import codecoverage.jacoco.testdata.CoverageSampleTest;
  *
  */
 public class JaCoCoAgentTest extends JacocoAbstractTest {
-	protected VMConfiguration vmConfig;
-	protected JaCoCoAgent jacoco;
 	protected ICoverageReport report;
 	private List<String> result;
 	private Set<String> coveredLines;
 	
 	@Before
 	public void setup() {
-		vmConfig = initVmConfig();
-		vmConfig.setClasspath(new ArrayList<String>());
-		vmConfig.addClasspath(TestConfiguration.SAV_COMMONS_TEST_TARGET);
-		vmConfig.addClasspath(TestConfiguration.getTzAssembly(TZUYU_JACOCO_ASSEMBLY));
-		vmConfig.addClasspath(TestConfiguration.getTestResources(MODULE));
-		jacoco = new JaCoCoAgent(new String[]{});
-		jacoco.setVmConfig(vmConfig);
-		jacoco.setOut(new SavPrintStream(System.out));
 		result = new ArrayList<String>();
 		coveredLines = new HashSet<String>();
-		report = new ICoverageReport() {
+		report = initCoverageReport();
+	}
+	
+	public void run(List<String> testingClassNames,
+			List<String> junitClassNames, String classesFolder)
+			throws Exception {
+		AppJavaClassPath appClasspath = initAppClasspath();
+		appClasspath.addClasspath(classesFolder);
+		JaCoCoAgent jacoco = new JaCoCoAgent(appClasspath);
+		jacoco.run(report, testingClassNames, junitClassNames);
+	}
+
+	@Test
+	public void testSampleProgram() throws Exception {
+		List<String> testingClassNames = Arrays.asList(SamplePrograms.class.getName(),
+				String.class.getName());
+		List<String> junitClassNames = Arrays.asList(SampleProgramTest.class.getName());
+		run(testingClassNames, junitClassNames, TestConfiguration.SAV_COMMONS_TEST_TARGET);
+		Collections.sort(new ArrayList<String>(coveredLines));
+		System.out.println(StringUtils.join(coveredLines, "\n"));
+	}
+	
+	@Test
+	public void coverLineButFailTest() throws Exception {
+		List<String> testingClassNames = Arrays.asList(CoverageSample.class.getName(),
+				String.class.getName());
+		List<String> junitClassNames = Arrays.asList(CoverageSampleTest.class.getName());
+		run(testingClassNames, junitClassNames, TestConfiguration.getTestTarget("codecoverage.jacoco"));
+		Collections.sort(new ArrayList<String>(coveredLines));
+		System.out.println(StringUtils.join(coveredLines, "\n"));
+	}
+
+	private ICoverageReport initCoverageReport() {
+		return new ICoverageReport() {
 
 			@Override
 			public void setTestingClassNames(List<String> testingClassNames) {
@@ -88,32 +108,5 @@ public class JaCoCoAgentTest extends JacocoAbstractTest {
 				
 			}
 		};
-	}
-
-	@Test
-	public void testSampleProgram() throws Exception {
-		List<String> testingClassNames = Arrays.asList(SamplePrograms.class.getName(),
-				String.class.getName());
-		List<String> junitClassNames = Arrays.asList(SampleProgramTest.class.getName());
-		run(testingClassNames, junitClassNames, TestConfiguration.SAV_COMMONS_TEST_TARGET);
-		Collections.sort(new ArrayList<String>(coveredLines));
-		System.out.println(StringUtils.join(coveredLines, "\n"));
-	}
-	
-	@Test
-	public void coverLineButFailTest() throws Exception {
-		List<String> testingClassNames = Arrays.asList(CoverageSample.class.getName(),
-				String.class.getName());
-		List<String> junitClassNames = Arrays.asList(CoverageSampleTest.class.getName());
-		run(testingClassNames, junitClassNames, TestConfiguration.getTestTarget("codecoverage.jacoco"));
-		Collections.sort(new ArrayList<String>(coveredLines));
-		System.out.println(StringUtils.join(coveredLines, "\n"));
-	}
-
-	public void run(List<String> testingClassNames,
-			List<String> junitClassNames, String classesFolder)
-			throws Exception {
-		vmConfig.addClasspath(classesFolder);
-		jacoco.run(report, testingClassNames, junitClassNames);
 	}
 }

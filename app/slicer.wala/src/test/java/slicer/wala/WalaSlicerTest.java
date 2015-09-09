@@ -37,7 +37,7 @@ public class WalaSlicerTest extends AbstractTest {
 		List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
 		addBreakpoints(breakpoints);
 		WalaSlicer slicer = new WalaSlicer(input);
-		List<BreakPoint> slicingResult = slicer.slice(breakpoints, new ArrayList<String>());
+		List<BreakPoint> slicingResult = slicer.slice(null, breakpoints, new ArrayList<String>());
 		printList(slicingResult);
 	}
 

@@ -22,9 +22,11 @@ import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
+import sav.strategies.junit.SavJunitRunner;
 import sav.strategies.slicing.ISlicer;
 import sav.strategies.vm.VMConfiguration;
 import de.unisb.cs.st.javaslicer.slicing.Slicer;
@@ -46,18 +48,13 @@ public class JavaSlicer implements ISlicer {
 		vmRunner = new JavaSlicerVmRunner();
 	}
 
-	public void setVmConfig(VMConfiguration vmConfig) {
-		this.vmConfig = vmConfig;
-	}
-	
 	/**
-	 * @param vmConfig:
 	 * requires: javaHome, classpaths
 	 */
-	public List<BreakPoint> slice(List<BreakPoint> bkps,
+	public List<BreakPoint> slice(AppJavaClassPath appClassPath, List<BreakPoint> bkps,
 			List<String> junitClassMethods) throws SavException, IOException,
 			InterruptedException, ClassNotFoundException {
-		ensureData();
+		prepareData(appClassPath);
 		if (CollectionUtils.isEmpty(bkps)) {
 			log.warn("List of breakpoints to slice is empty");
 			return new ArrayList<BreakPoint>();
@@ -75,10 +72,11 @@ public class JavaSlicer implements ISlicer {
 		return result;
 	}
 
-	private void ensureData() {
+	private void prepareData(AppJavaClassPath appClasspath) {
 		if (sliceCollector == null) {
 			sliceCollector = new SliceBreakpointCollector();
 		}
+		vmConfig = SavJunitRunner.createVmConfig(appClasspath);
 	}
 
 	/**
@@ -88,7 +86,7 @@ public class JavaSlicer implements ISlicer {
 	 * 		-cp [project classpath + path of tzuyuSlicer.jar] sav.strategies.junit.JunitRunner
 	 * 		-methods [classMethods]
 	 */
-	public String createTraceFile(List<String> junitClassMethods)
+	protected String createTraceFile(List<String> junitClassMethods)
 			throws IOException, SavException, InterruptedException,
 			ClassNotFoundException {
 		log.info("Slicing-creating trace file...");

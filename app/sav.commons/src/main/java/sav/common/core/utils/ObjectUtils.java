@@ -69,4 +69,11 @@ public class ObjectUtils {
 		}
 		return value;
 	}
+	
+	public static boolean toBoolean(String val, boolean defaultIfEmpty) {
+		if (StringUtils.isEmpty(val)) {
+			return defaultIfEmpty;
+		}
+		return Boolean.valueOf(val);
+	}
 }

@@ -43,16 +43,14 @@ import com.sun.jdi.request.EventRequestManager;
  */
 public abstract class BreakpointDebugger {
 	protected static final Logger<?> LOGGER = Logger.getDefaultLogger();
-	protected VMConfiguration config;
-	protected SimpleDebugger debugger;
+	private VMConfiguration config;
+	protected SimpleDebugger debugger = new SimpleDebugger();
 	// map of classes and their breakpoints
 	private Map<String, List<BreakPoint>> brkpsMap;
 	protected List<BreakPoint> bkps;
 
 	public void setup(VMConfiguration config) {
-		debugger = new SimpleDebugger();
 		this.config = config;
-		this.config.setDebug(true);
 	}
 
 	public final void run(List<BreakPoint> brkps) throws SavException {
@@ -60,6 +58,7 @@ public abstract class BreakpointDebugger {
 		this.brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
 		/* before debugging */
 		beforeDebugging();
+		this.config.setDebug(true);
 		
 		/* start debugger */
 		VirtualMachine vm = debugger.run(config);
@@ -171,5 +170,9 @@ public abstract class BreakpointDebugger {
 	
 	public String getProccessError() {
 		return debugger.getProccessError();
+	}
+	
+	protected VMConfiguration getVmConfig() {
+		return config;
 	}
 }

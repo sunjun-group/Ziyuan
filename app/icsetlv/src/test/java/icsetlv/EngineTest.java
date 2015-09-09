@@ -9,25 +9,18 @@ import org.junit.Test;
 
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
+import sav.strategies.dto.AppJavaClassPath;
 import testdata.CalculatorTestFailed;
 import testdata.CalculatorTestPassed;
 
 public class EngineTest extends AbstractTest {
-
-	private static final String MODULE_NAME = "icsetlv";
-	private static final int DEBUG_PORT = 8787;
 	private Engine engine;
 
 	@Before
 	public void prepareEngine() {
-		final TestConfiguration config = TestConfiguration.getInstance();
-		
-		engine = new Engine().setPort(DEBUG_PORT)
-				.setJavaHome(TestConfiguration.JAVA_HOME)
-				.addToClassPath(config.getJavaBin())
-				.addToClassPath(TestConfiguration.getTzAssembly("sav-commons"))
-				.addToClassPath(TestConfiguration.getTestTarget(MODULE_NAME));
-		
+		AppJavaClassPath app = initAppClasspath();
+		app.addClasspath(TestConfiguration.getTestTarget(ICSETLV));
+		engine = new Engine(app);
 	}
 
 	@Test

@@ -24,6 +24,7 @@
 		<maven-deploy-plugin-version>2.8.2</maven-deploy-plugin-version>
 		<maven-assembly-plugin-version>2.5.5</maven-assembly-plugin-version>
 		<maven-surefire-plugin-version>2.18.1</maven-surefire-plugin-version>
+		<maven-shade-plugin-version>2.4.1</maven-shade-plugin-version>
 
 		<!-- others -->
 		<junit-version>4.11</junit-version>
@@ -129,6 +130,22 @@
 						</execution>
 					</executions>
 				</plugin>
+				<!-- create shaded jar -->
+				<plugin>
+					<artifactId>maven-shade-plugin</artifactId>
+					<version>${maven-shade-plugin-version}</version>
+					<configuration>
+						<!-- put your configurations here -->
+					</configuration>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<goals>
+								<goal>shade</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 				<!-- configure for running test -->
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
@@ -216,7 +233,7 @@
 				<artifactId>sav.commons</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
+			
 			<dependency>
 				<groupId>tzuyu-project</groupId>
 				<artifactId>gentest</artifactId>

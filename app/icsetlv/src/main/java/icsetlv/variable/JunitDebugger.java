@@ -15,10 +15,12 @@ import java.util.concurrent.TimeUnit;
 
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
+import sav.strategies.junit.SavJunitRunner;
 import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;
@@ -43,10 +45,10 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 	private Location junitLoc;
 	private String jResultFile;
 	private boolean jResultFileDeleteOnExit = false;
-//	private int testcaseTimeout = -1;
 	
-	public void setup(VMConfiguration config, List<String> allTests) {
-		super.setup(config);
+	public void setup(AppJavaClassPath appClassPath, List<String> allTests) {
+		VMConfiguration vmConfig = SavJunitRunner.createVmConfig(appClassPath);
+		super.setup(vmConfig);
 		this.allTests = allTests;
 	}
 	
@@ -64,13 +66,14 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 		testIdx = 0;
 		junitLoc = null;
 		jResultFile = createExecutionResultFile();
-		config.setLaunchClass(JunitRunner.class.getName());
+		getVmConfig().setLaunchClass(JUNIT_RUNNER_CLASS_NAME);
 		List<String> args = new JunitRunnerProgramArgBuilder()
 				.methods(allTests).destinationFile(jResultFile)
 				.storeSingleTestResultDetail()
 				.testcaseTimeout(getTimeoutInSec(), TimeUnit.SECONDS)
 				.build();
-		config.setProgramArgs(args);
+		getVmConfig().setProgramArgs(args);
+		getVmConfig().resetPort();
 		onStart();
 	}
 

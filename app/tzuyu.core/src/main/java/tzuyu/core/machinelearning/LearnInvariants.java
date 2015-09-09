@@ -15,8 +15,8 @@ import icsetlv.variable.TestcasesExecutor;
 import java.util.List;
 
 import sav.common.core.utils.JunitUtils;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.vm.VMConfiguration;
 import tzuyu.core.main.FaultLocateParams;
 
 /**
@@ -26,12 +26,9 @@ import tzuyu.core.main.FaultLocateParams;
 public class LearnInvariants {
 	private Engine engine;
 
-	public LearnInvariants(final VMConfiguration config, FaultLocateParams params) {
-		engine = new Engine().setPort(config.getPort()).setJavaHome(config.getJavaHome());
+	public LearnInvariants(AppJavaClassPath app, FaultLocateParams params) {
+		engine = new Engine(app);
 		engine.setTestcaseExecutor(new TestcasesExecutor(params.getValueRetrieveLevel()));
-		for (String path : config.getClasspaths()) {
-			engine.addToClassPath(path);
-		}
 	}
 
 	public List<BkpInvariantResult> learn(List<BreakPoint> breakpoints, List<String> junitClassNames, String sourceFolder) throws Exception {

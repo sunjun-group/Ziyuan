@@ -44,6 +44,7 @@ import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.ClassLocation;
 import sav.strategies.dto.DebugLine;
 import sav.strategies.mutanbug.DebugLineInsertionResult;
+import sav.strategies.vm.VMConfiguration;
 import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.machinelearning.LearnInvariants;
 import tzuyu.core.mutantbug.MutanBug;
@@ -191,7 +192,7 @@ public class TzuyuCore {
 				LOGGER.debug("after grouping & processing: ");
 				LOGGER.debug(StringUtils.join(debugLines, "\n"));
 			}
-			LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig(), params);
+			LearnInvariants learnInvariant = new LearnInvariants(appData.getAppClassPath(), params);
 			List<BkpInvariantResult> invariants = learnInvariant.learn(new ArrayList<BreakPoint>(debugLines), 
 										junitClassNames, appData.getAppSrc());
 			
@@ -305,7 +306,7 @@ public class TzuyuCore {
 		printer.printTests(testcases);
 		List<File> generatedFiles = cuPrinter.getGeneratedFiles();
 		
-		Recompiler recompiler = new Recompiler(appData.getVmConfig());
+		Recompiler recompiler = new Recompiler(appData.initVmConfig());
 		recompiler.recompileJFile(appData.getAppTestTarget(), generatedFiles);
 		
 		return junitClassNames;

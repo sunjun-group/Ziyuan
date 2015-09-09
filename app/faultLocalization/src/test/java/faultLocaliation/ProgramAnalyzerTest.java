@@ -8,12 +8,14 @@
 
 package faultLocaliation;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import main.FaultLocalization;
+
 import org.junit.Test;
 
-import main.FaultLocalization;
 import sav.commons.AbstractTest;
 import sav.commons.testdata.SampleProgramTestFail;
 import sav.commons.testdata.SampleProgramTestPass;
@@ -21,10 +23,10 @@ import sav.commons.testdata.SamplePrograms;
 import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.codecoverage.ICoverageReport;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.mutanbug.IMutator;
 import sav.strategies.slicing.ISlicer;
-import sav.strategies.vm.VMConfiguration;
 import faultLocalization.LineCoverageInfo;
 import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
@@ -43,9 +45,11 @@ public class ProgramAnalyzerTest extends AbstractTest {
 				return new ISlicer() {
 					
 					@Override
-					public List<BreakPoint> slice(List<BreakPoint> breakpoints,
+					public List<BreakPoint> slice(
+							AppJavaClassPath appClassPath,
+							List<BreakPoint> entryPoints,
 							List<String> junitClassNames) throws Exception {
-						return breakpoints;
+						return entryPoints;
 					}
 					
 					@Override
@@ -74,8 +78,8 @@ public class ProgramAnalyzerTest extends AbstractTest {
 			}
 
 			@Override
-			public VMConfiguration getVmConfig() {
-				return initVmConfig();
+			public AppJavaClassPath getAppClassPath() {
+				return initAppClasspath();
 			}
 		});
 		List<String> testingClasses = Arrays.asList(SamplePrograms.class.getName());
@@ -83,7 +87,7 @@ public class ProgramAnalyzerTest extends AbstractTest {
 				SampleProgramTestPass.class.getName(),
 				SampleProgramTestFail.class.getName());
 		List<LineCoverageInfo> result = analyzer.analyseSlicingFirst(
-				testingClasses, Arrays.asList(""), junitClassNames,
+				testingClasses, new ArrayList<String>(), junitClassNames,
 				SpectrumAlgorithm.JACCARD).getLineCoverageInfos();
 		System.out.println(result);
 	}

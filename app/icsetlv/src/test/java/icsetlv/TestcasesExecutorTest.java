@@ -19,15 +19,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import sav.common.core.Constants;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.dto.BreakPoint.Variable.VarScope;
-import sav.strategies.vm.VMConfiguration;
 import testdata.testcasesexecutor.test1.TcExSum;
 import testdata.testcasesexecutor.test1.TcExSumTest;
 
@@ -36,14 +35,13 @@ import testdata.testcasesexecutor.test1.TcExSumTest;
  * 
  */
 public class TestcasesExecutorTest extends AbstractTest {
-	private VMConfiguration vmConfig;
 	private TestcasesExecutor varExtr;
+	private AppJavaClassPath appClasspath;
 	
 	@Before
 	public void setup() {
-		vmConfig = initVmConfig();
-		vmConfig.addClasspath(TestConfiguration.getTestTarget(ICSETLV));
-		vmConfig.addClasspath(TestConfiguration.getTzAssembly(Constants.SAV_COMMONS_ASSEMBLY));
+		appClasspath = initAppClasspath();
+		appClasspath.addClasspath(TestConfiguration.getTestTarget(ICSETLV));
 		varExtr = new TestcasesExecutor(6);
 	}
 
@@ -61,7 +59,7 @@ public class TestcasesExecutorTest extends AbstractTest {
 		breakpoints.add(bkp1);
 		List<String> tests = JunitUtils.extractTestMethods(CollectionUtils
 				.listOf(TcExSumTest.class.getName()));
-		varExtr.setup(vmConfig, tests);
+		varExtr.setup(appClasspath, tests);
 		varExtr.run(breakpoints);
 		List<BreakpointData> result = varExtr.getResult();
 		System.out.println(result);
@@ -77,7 +75,7 @@ public class TestcasesExecutorTest extends AbstractTest {
 		breakpoints.add(bkp1);
 		List<String> tests = JunitUtils.extractTestMethods(CollectionUtils
 				.listOf(TcExSumTest.class.getName()));
-		varExtr.setup(vmConfig, tests);
+		varExtr.setup(appClasspath, tests);
 		varExtr.run(breakpoints);
 		List<BreakpointData> result = varExtr.getResult();
 		System.out.println(result);
@@ -93,7 +91,7 @@ public class TestcasesExecutorTest extends AbstractTest {
 		breakpoints.add(bkp1);
 		List<String> tests = JunitUtils.extractTestMethods(CollectionUtils
 				.listOf(TcExSumTest.class.getName()));
-		varExtr.setup(vmConfig, tests);
+		varExtr.setup(appClasspath, tests);
 		varExtr.run(breakpoints);
 		List<BreakpointData> result = varExtr.getResult();
 		Assert.assertEquals(1, result.size());

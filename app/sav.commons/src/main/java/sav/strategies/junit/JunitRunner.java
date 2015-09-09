@@ -26,6 +26,7 @@ import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.ExecutionTimer;
 import sav.common.core.utils.JunitUtils;
 import sav.common.core.utils.StringUtils;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.ProgramArgumentBuilder;
 import sav.strategies.vm.VMConfiguration;
@@ -55,7 +56,7 @@ public class JunitRunner {
 	}
 	
 	private static int calculateProcessStartLine() {
-		return 47; //TODO LLT: FIX THIS
+		return 48; //TODO LLT: FIX THIS
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -156,6 +157,12 @@ public class JunitRunner {
 	
 	private static Class<?> loadClass(String className) throws ClassNotFoundException {
 		return Class.forName(className);
+	}
+	
+	public static JunitResult runTestcases(AppJavaClassPath appClasspath,
+			JunitRunnerParameters params) throws ClassNotFoundException, IOException, SavException {
+		VMConfiguration config = SavJunitRunner.createVmConfig(appClasspath);
+		return runTestcases(config, params);
 	}
 	
 	public static JunitResult runTestcases(VMConfiguration config,

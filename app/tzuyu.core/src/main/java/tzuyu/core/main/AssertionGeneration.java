@@ -33,7 +33,6 @@ import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.IApplicationContext;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.vm.VMConfiguration;
 import slicer.javaslicer.JavaSlicer;
 import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.mutantbug.FilesBackup;
@@ -71,7 +70,7 @@ public class AssertionGeneration extends TzuyuCore {
 			FileUtils.copyFile(newFile, origFile, false);
 						
 			// recompile the new file
-			Recompiler recompiler = new Recompiler(appData.getVmConfig());
+			Recompiler recompiler = new Recompiler(appData.initVmConfig());
 			recompiler.recompileJFile(appData.getAppTarget(), newFile);
 			
 			// add locations used to learn new assertion
@@ -96,9 +95,6 @@ public class AssertionGeneration extends TzuyuCore {
 		try {
 			JavaSlicer slicer = new JavaSlicer();
 		
-			VMConfiguration vmConfig = appData.getVmConfig();
-			slicer.setVmConfig(vmConfig);
-			
 			String targetClass = "sav.commons.testdata.assertion.TestInput"; // TestInput.class.getName();
 			String testClass = "sav.commons.testdata.assertion.TestInput1"; // TestInput1.class.getName();
 			BreakPoint bkp1 = new BreakPoint(targetClass, "foo", 6);
@@ -108,7 +104,8 @@ public class AssertionGeneration extends TzuyuCore {
 					.asList(testClass));
 			
 			slicer.setFiltering(analyzedClasses, null);
-			List<BreakPoint> result = slicer.slice(breakpoints, testClassMethods);
+			List<BreakPoint> result = slicer.slice(appData.getAppClassPath(),
+					breakpoints, testClassMethods);
 			if (result.isEmpty()) {
 				System.out.println("EMPTY RESULT!!!");
 			}
@@ -156,9 +153,8 @@ public class AssertionGeneration extends TzuyuCore {
 		//		junitClassNames, appData.getAppSrc());
 		
 		// collect data at break points
-		VMConfiguration config = appData.getVmConfig();
-		InvariantMediator im = new InvariantMediator();
-		List<BreakpointData> bkpsData = im.debugTestAndCollectData(config, tests, locations);
+		InvariantMediator im = new InvariantMediator(appData.getAppClassPath());
+		List<BreakpointData> bkpsData = im.debugTestAndCollectData(tests, locations);
 
 		InvChecker ic = new InvChecker();
 		IlpSolver solver = new IlpSolver(new HashMap<String, Pair<Double, Double>>(), false);

@@ -32,7 +32,7 @@ public class RecompilerTest extends AbstractTest {
 	@Test
 	public void recompileSimpleProgram() throws SavException {
 		ApplicationData appData = context.getAppData();
-		VMConfiguration vmConfig = appData.getVmConfig();
+		VMConfiguration vmConfig = initVmConfig();
 		vmConfig.setEnableVmLog(true);
 		Recompiler recompier = new Recompiler(vmConfig);
 		String jFilePath = ClassUtils.getJFilePath(appData.getAppSrc(),

@@ -25,6 +25,7 @@ import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Predicate;
 import sav.common.core.utils.StringUtils;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.slicing.ISlicer;
 
@@ -80,7 +81,7 @@ public class WalaSlicer implements ISlicer {
 	}
 
 	@Override
-	public List<BreakPoint> slice(List<BreakPoint> breakpoints,
+	public List<BreakPoint> slice(AppJavaClassPath appClassPath, List<BreakPoint> breakpoints,
 			List<String> junitClassNames) throws Exception {
 		Iterable<Entrypoint> entrypoints = makeEntrypoints(
 				scope.getApplicationLoader(), cha, breakpoints);

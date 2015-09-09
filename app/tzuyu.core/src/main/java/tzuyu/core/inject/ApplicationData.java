@@ -8,12 +8,10 @@
 
 package tzuyu.core.inject;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import sav.common.core.utils.CollectionUtils;
-import sav.common.core.utils.StringUtils;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.vm.VMConfiguration;
 import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
@@ -23,15 +21,13 @@ import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm
  */
 public class ApplicationData {
 	private SpectrumAlgorithm suspiciousCalculAlgo;
-	private String javaHome;
-	private VMConfiguration vmConfig;
-	private List<String> appClasspaths;
 	private List<String> sysClasspaths;
-	private String appSrc;
-	private String appTestTarget;
 	private String tzuyuJacocoAssembly;
-	private String appTarget;
+	private AppJavaClassPath appClassPath;
 	
+	public ApplicationData() {
+		appClassPath = new AppJavaClassPath();
+	}
 
 	public SpectrumAlgorithm getSuspiciousCalculAlgo() {
 		return suspiciousCalculAlgo;
@@ -42,44 +38,34 @@ public class ApplicationData {
 		this.suspiciousCalculAlgo = suspiciousCalculAlgo;
 	}
 	
-	public VMConfiguration getVmConfig() {
-		if (vmConfig == null) {
-			vmConfig = new VMConfiguration();
-			vmConfig.setClasspath(appClasspaths);
-			vmConfig.setJavaHome(getJavahome());
-		}
-		/**
-		 * we init a new one to make sure the configuration is not dirty with
-		 * some internal properties.
-		 */
-		return new VMConfiguration(vmConfig);
+	public VMConfiguration initVmConfig() {
+		return new VMConfiguration(appClassPath);
 	}
 	
-	protected String getJavahome() {
-		return javaHome;
-	}
-
 	public String getJavaHome() {
-		return javaHome;
+		return appClassPath.getJavaHome();
 	}
 
 	public void setJavaHome(String javaHome) {
-		this.javaHome = javaHome;
+		appClassPath.setJavaHome(javaHome);
 	}
 
 	public List<String> getAppClasspaths() {
-		appClasspaths = CollectionUtils.nullToEmpty(appClasspaths);
-		return appClasspaths;
+		return appClassPath.getClasspaths();
 	}
 
 	public void setClasspaths(List<String> classpaths) {
-		this.appClasspaths = classpaths;
+		appClassPath.addClasspaths(classpaths);
 	}
 	
 	public void addClasspath(String classpath) {
-		getAppClasspaths().add(classpath);
+		appClassPath.addClasspath(classpath);
 	}
 
+	public void addClasspaths(List<String> classPaths) {
+		appClassPath.addClasspaths(classPaths);
+	}
+	
 	/**
 	 * return the classpath at runtime
 	 */
@@ -92,31 +78,35 @@ public class ApplicationData {
 	}
 
 	public String getAppSrc() {
-		return appSrc;
+		return appClassPath.getSrc();
 	}
 
 	public void setAppSrc(String appSrc) {
-		this.appSrc = appSrc;
+		appClassPath.setSrc(appSrc);
 	}
 
 	public String getAppTarget() {
-		return appTarget;
+		return appClassPath.getTarget();
 	}
 
 	public void setAppTarget(String appTarget) {
-		this.appTarget = appTarget;
+		appClassPath.setTarget(appTarget);
 	}
 	
 	public String getAppTestTarget() {
-		return appTestTarget;
+		return appClassPath.getTestTarget();
 	}
 
 	public void setAppTestTarget(String appTestTarget) {
-		this.appTestTarget = appTestTarget;
+		appClassPath.setTestTarget(appTestTarget);
 	}
 
 	public String getAppClasspathStr() {
-		return StringUtils.join(appClasspaths, File.pathSeparator);
+		return appClassPath.getClasspathStr();
+	}
+	
+	public AppJavaClassPath getAppClassPath() {
+		return appClassPath;
 	}
 	
 	public String getTzuyuJacocoAssembly() {
@@ -126,4 +116,5 @@ public class ApplicationData {
 	public void setTzuyuJacocoAssembly(String tzuyuJacocoAssembly) {
 		this.tzuyuJacocoAssembly = tzuyuJacocoAssembly;
 	}
+
 }

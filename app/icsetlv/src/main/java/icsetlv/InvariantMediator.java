@@ -28,8 +28,8 @@ import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
 import sav.common.core.utils.StopTimer;
 import sav.common.core.utils.StringUtils;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT
@@ -40,17 +40,19 @@ public class InvariantMediator {
 	private TestcasesExecutor tcExecutor;
 	private Machine machine;
 	private SelectiveSampling selectiveSampling;
-	private VMConfiguration vmConfig;
+	private AppJavaClassPath appClassPath;
 	private TestResultVerifier testVerifier;
+	
+	public InvariantMediator(AppJavaClassPath appClassPath) {
+		this.appClassPath = appClassPath;
+	}
 
-	public List<BkpInvariantResult> learn(VMConfiguration config, List<String> allTests,
+	public List<BkpInvariantResult> learn(List<String> allTests,
 			List<BreakPoint> bkps) throws SavException {
 		Assert.assertNotNull(tcExecutor, "TestcasesExecutor cannot be null!");
 		Assert.assertNotNull(machine, "machine cannot be null!");
-		this.vmConfig = config;
-		List<BreakpointData> bkpsData = debugTestAndCollectData(config, allTests, bkps);
+		List<BreakpointData> bkpsData = debugTestAndCollectData(allTests, bkps);
 		/* prepare before learning */
-		vmConfig.setEnableVmLog(false);
 		tcExecutor.setjResultFileDeleteOnExit(true);
 		testVerifier = new TestResultVerifier(tcExecutor.getjResult());
 		tcExecutor.setTestResultVerifier(testVerifier);
@@ -65,7 +67,6 @@ public class InvariantMediator {
 		// reset tcExecutor
 		tcExecutor.setValueExtractor(null);
 		tcExecutor.setjResultFileDeleteOnExit(false);
-		vmConfig.setEnableVmLog(true);
 		tcExecutor.setTestResultVerifier(null);
 		tcExecutor.setTimeout(JunitDebugger.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
 		return learningResult;
@@ -81,11 +82,10 @@ public class InvariantMediator {
 		return max;
 	}
 
-	public List<BreakpointData> debugTestAndCollectData(VMConfiguration config,
-			List<String> allTests, List<BreakPoint> bkps) throws SavException {
+	public List<BreakpointData> debugTestAndCollectData(List<String> allTests,
+			List<BreakPoint> bkps) throws SavException {
 		ensureTcExecutor();
-		this.vmConfig = config; // temp add vmConfig
-		tcExecutor.setup(config, allTests);
+		tcExecutor.setup(appClassPath, allTests);
 		return debugTestAndCollectData(bkps);
 	}
 	

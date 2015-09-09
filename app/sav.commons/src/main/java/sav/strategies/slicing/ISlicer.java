@@ -11,6 +11,7 @@ package sav.strategies.slicing;
 
 import java.util.List;
 
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 
 
@@ -20,7 +21,8 @@ import sav.strategies.dto.BreakPoint;
  */
 public interface ISlicer {
 
-	List<BreakPoint> slice(List<BreakPoint> breakpoints, List<String> junitClassNames)
+	List<BreakPoint> slice(AppJavaClassPath appClassPath,
+			List<BreakPoint> entryPoints, List<String> junitClassNames)
 			throws Exception;
 	
 	void setFiltering(List<String> analyzedClasses, List<String> analyzedPackages);

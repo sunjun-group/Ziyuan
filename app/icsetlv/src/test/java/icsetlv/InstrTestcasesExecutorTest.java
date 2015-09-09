@@ -23,15 +23,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import sav.common.core.Constants;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.dto.BreakPoint.Variable.VarScope;
-import sav.strategies.vm.VMConfiguration;
 import testdata.testcasesexecutor.test1.TcExSum;
 import testdata.testcasesexecutor.test1.TcExSumTest;
 
@@ -40,14 +39,13 @@ import testdata.testcasesexecutor.test1.TcExSumTest;
  *
  */
 public class InstrTestcasesExecutorTest extends AbstractTest {
-	private VMConfiguration vmConfig;
+	private AppJavaClassPath appClasspath;
 	private TestcasesExecutor varExtr;
 	
 	@Before
 	public void setup() {
-		vmConfig = initVmConfig();
-		vmConfig.addClasspath(TestConfiguration.getTestTarget(ICSETLV));
-		vmConfig.addClasspath(TestConfiguration.getTzAssembly(Constants.SAV_COMMONS_ASSEMBLY));
+		appClasspath = initAppClasspath();
+		appClasspath.addClasspath(TestConfiguration.getTestTarget(ICSETLV));
 		varExtr = new TestcasesExecutor(3);
 	}
 	
@@ -113,7 +111,7 @@ public class InstrTestcasesExecutorTest extends AbstractTest {
 			throws Exception {
 		List<String> tests = JunitUtils.extractTestMethods(CollectionUtils
 				.listOf(data.testClass.getName()));
-		varExtr.setup(vmConfig, tests);
+		varExtr.setup(appClasspath, tests);
 		varExtr.setValueExtractor(new DebugValueInstExtractor(varExtr.getValRetrieveLevel(), data.instVals));
 		varExtr.run(data.getBkps());
 		List<BreakpointData> result = varExtr.getResult();

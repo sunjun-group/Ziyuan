@@ -8,15 +8,15 @@
 
 package tzuyu.core.inject;
 
+import sav.strategies.IApplicationContext;
+import sav.strategies.codecoverage.ICodeCoverage;
+import sav.strategies.dto.AppJavaClassPath;
+import sav.strategies.mutanbug.IMutator;
+import sav.strategies.slicing.ISlicer;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-
-import sav.strategies.IApplicationContext;
-import sav.strategies.codecoverage.ICodeCoverage;
-import sav.strategies.mutanbug.IMutator;
-import sav.strategies.slicing.ISlicer;
-import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT
@@ -59,10 +59,10 @@ class ApplicationContext implements IApplicationContext {
 		return null;
 	}
 	/* (non-Javadoc)
-	 * @see sav.strategies.IApplicationContext#getVmConfig()
+	 * @see sav.strategies.IApplicationContext#getAppClassPath()
 	 */
 	@Override
-	public VMConfiguration getVmConfig() {
+	public AppJavaClassPath getAppClassPath() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -33,7 +33,6 @@ public class TestApplicationContext extends AbstractApplicationContext {
 		appData.setClasspaths(projectClasspath);
 		appData.setJavaHome(TestConfiguration.getJavaHome());
 		appData.setSuspiciousCalculAlgo(suspiciousnessCalcul);
-		appData.setTzuyuJacocoAssembly(TestConfiguration.getTzAssembly(Constants.TZUYU_JACOCO_ASSEMBLY));
 		appData.setAppSrc(TestConfiguration.getTestScrPath("sav.commons"));
 		appData.setAppTarget(TestConfiguration.getTestTarget("sav.commons"));
 		appData.setAppTestTarget(appData.getAppTarget());

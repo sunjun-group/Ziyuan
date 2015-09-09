@@ -28,7 +28,6 @@ public class TestConfiguration {
 	// do not remove this one, this is not the current java home of the
 	// application
 	public static String JAVA_HOME;
-	public static String ASSEMBLY;
 	public static String TESTDATA_CSV;
 	public static String TESTDATA_PROPERTIES;
 	
@@ -49,10 +48,6 @@ public class TestConfiguration {
 			return ConfigUtils.getProperty("trunk");
 		}
 		return userdir.substring(0, indexOfapp);
-	}
-
-	public static String getTzAssembly(String assemblyName) {
-		return appendPath(ETC, "app_assembly", assemblyName);
 	}
 
 	private TestConfiguration() {

@@ -25,6 +25,8 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 
 import sav.common.core.utils.StringUtils;
+import sav.commons.testdata.opensource.TestPackage;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.vm.VMConfiguration;
 
 
@@ -57,13 +59,16 @@ public class AbstractTest {
 			System.out.println(ele);
 		}
 	}
+	
+	protected AppJavaClassPath initAppClasspath() {
+		AppJavaClassPath appClasspath = new AppJavaClassPath();
+		appClasspath.setJavaHome(TestConfiguration.getJavaHome());
+		appClasspath.addClasspath(SAV_COMMONS_TEST_TARGET);
+		return appClasspath;
+	}
 
 	protected VMConfiguration initVmConfig() {
-		VMConfiguration vmConfig = new VMConfiguration();
-		vmConfig.setJavaHome(TestConfiguration.getJavaHome());
-		vmConfig.addClasspath(config.getJavaBin());
-		vmConfig.addClasspath(SAV_COMMONS_TEST_TARGET);
-		return vmConfig;
+		return new VMConfiguration(initAppClasspath());
 	}
 	
 	protected List<String> getLibJars(String... libFolders) throws Exception {
@@ -90,5 +95,13 @@ public class AbstractTest {
 	    Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
 	    method.setAccessible(true);
 	    method.invoke(ClassLoader.getSystemClassLoader(), new Object[]{file.toURI().toURL()});
+	}
+	
+	public AppJavaClassPath initAppClasspath(TestPackage pkg) {
+		AppJavaClassPath appClasspath = new AppJavaClassPath();
+		appClasspath.setJavaHome(TestConfiguration.JAVA_HOME);
+		appClasspath.addClasspaths(pkg.getClassPaths());
+		appClasspath.addClasspaths(pkg.getLibFolders());
+		return appClasspath;
 	}
 }

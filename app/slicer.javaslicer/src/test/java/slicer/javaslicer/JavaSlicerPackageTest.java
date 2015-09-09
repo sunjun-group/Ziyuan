@@ -29,18 +29,17 @@ public class JavaSlicerPackageTest extends AbstractJavaSlicerTest {
 	
 	public void run(TestPackage pkg, List<BreakPoint> bkps) throws Exception {
 		updateSystemClasspath(pkg.getClassPaths());
-		vmConfig.addClasspaths(pkg.getClassPaths());
-		vmConfig.addClasspaths(pkg.getLibFolders());
+		appClasspath = initAppClasspath(pkg);
 		slicer.setFiltering(pkg.getValues(TestDataColumn.ANALYZING_CLASSES),
 				pkg.getValues(TestDataColumn.ANALYZING_PACKAGES));
-		run(bkps);
+		slicer.slice(appClasspath, bkps, testClassMethods);
 	}
 	
 	@Test
 	public void testJodaTimeIssue194() throws Exception {
-		testClassMethods = Arrays.asList("org.joda.time.format.TestIssue194.test");
+		testClassMethods = Arrays.asList("org.joda.time.issues.TestIssue194.test");
 		run(TestPackage.getPackage("joda-time", "194"),
-				new BreakPoint("org.joda.time.format.TestIssue194", 
+				new BreakPoint("org.joda.time.issues.TestIssue194", 
 						"test", 36));
 	}
 	

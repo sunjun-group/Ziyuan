@@ -23,7 +23,6 @@ import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
-import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.IncompatibleThreadStateException;
@@ -53,10 +52,6 @@ public class TestcasesExecutor extends JunitDebugger {
 	
 	public TestcasesExecutor(DebugValueExtractor valueExtractor) {
 		setValueExtractor(valueExtractor);
-	}
-	
-	public void setup(VMConfiguration config, List<String> allTests) {
-		super.setup(config, allTests);
 	}
 	
 	@Override

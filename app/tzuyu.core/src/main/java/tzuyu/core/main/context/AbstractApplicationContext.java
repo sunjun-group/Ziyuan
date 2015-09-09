@@ -16,9 +16,9 @@ import java.util.List;
 import mutation.mutator.Mutator;
 import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.mutanbug.IMutator;
 import sav.strategies.slicing.ISlicer;
-import sav.strategies.vm.VMConfiguration;
 import slicer.javaslicer.JavaSlicer;
 import tzuyu.core.inject.ApplicationData;
 import codecoverage.jacoco.agent.JaCoCoAgent;
@@ -42,17 +42,12 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 	}
 	
 	private ICodeCoverage initJacocoAgent() {
-		JaCoCoAgent jacoco = new JaCoCoAgent(appData.getAppTarget(),
-				appData.getAppTestTarget());
-		VMConfiguration config = appData.getVmConfig();
-		config.addClasspath(appData.getTzuyuJacocoAssembly());
-		jacoco.setVmConfig(config);
+		JaCoCoAgent jacoco = new JaCoCoAgent(getAppClassPath());
 		return jacoco;
 	}
 	
 	private ISlicer initSlicer() {
 		JavaSlicer javaSlicer = new JavaSlicer();
-		javaSlicer.setVmConfig(appData.getVmConfig());
 		return javaSlicer;
 	}
 	
@@ -108,7 +103,7 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 	}
 	
 	@Override
-	public VMConfiguration getVmConfig() {
-		return getAppData().getVmConfig();
+	public AppJavaClassPath getAppClassPath() {
+		return appData.getAppClassPath();
 	}
 }

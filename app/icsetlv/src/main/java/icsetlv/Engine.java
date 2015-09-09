@@ -13,9 +13,9 @@ import libsvm.core.MachineType;
 import libsvm.core.Parameter;
 import libsvm.extension.FeatureSelectionMachine;
 import sav.common.core.utils.JunitUtils;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
-import sav.strategies.vm.VMConfiguration;
 
 /**
  * Wrapper class used to centralize the configuration and executing of test
@@ -47,20 +47,24 @@ import sav.strategies.vm.VMConfiguration;
  */
 public class Engine {
 	private TestcasesExecutor testcaseExecutor;
-	private VMConfiguration vmConfig = initVmConfig();
+	private AppJavaClassPath appClasspath;
 	private Machine machine = getDefaultMachine();
 	private List<String> testcases = new ArrayList<String>();
 	private List<BreakPoint> breakPoints = new ArrayList<BreakPoint>();
 
-	public Engine reset() {
-		return new Engine();
+	public Engine(AppJavaClassPath app) {
+		this.appClasspath = app;
+	}
+
+	public Engine reset(AppJavaClassPath app) {
+		return new Engine(app);
 	}
 
 	public List<BkpInvariantResult> run() throws Exception {
-		InvariantMediator learner = new InvariantMediator();
+		InvariantMediator learner = new InvariantMediator(appClasspath);
 		learner.setTcExecutor(getTestcaseExecutor());
 		learner.setMachine(getMachine());
-		return learner.learn(vmConfig, testcases, breakPoints);
+		return learner.learn(testcases, breakPoints);
 	}	
 
 	public void setMachine(Machine machine) {
@@ -79,35 +83,6 @@ public class Engine {
 				.setPredictProbability(false).setC(Double.MAX_VALUE));
 	}
 	
-	private VMConfiguration initVmConfig() {
-		return new VMConfiguration();
-	}
-
-	public Engine setJavaHome(final String javaHome) {
-		vmConfig.setJavaHome(javaHome);
-		return this;
-	}
-
-	public Engine setPort(final int portNumber) {
-		vmConfig.setPort(portNumber);
-		return this;
-	}
-
-	public Engine setDebug(final boolean debugEnabled) {
-		vmConfig.setDebug(debugEnabled);
-		return this;
-	}
-
-	public Engine addToClassPath(final String path) {
-		vmConfig.addClasspath(path);
-		return this;
-	}
-	
-	public Engine addProgramArgument(String argument) {
-		vmConfig.addProgramArgs(argument);
-		return this;
-	}
-
 	public Engine addBreakPoint(final String className, final String methodName,
 			final int lineNumber, final String... variableNames) {
 		BreakPoint breakPoint = new BreakPoint(className, methodName, lineNumber);

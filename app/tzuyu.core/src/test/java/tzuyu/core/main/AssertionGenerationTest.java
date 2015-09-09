@@ -18,9 +18,7 @@ public class AssertionGenerationTest extends TzuyuCoreTest {
 	
 	@Before
 	public void setup() throws Exception {
-		List<String> projectClasspath = testContext.getAppData().getAppClasspaths();
-		projectClasspath.add(TestConfiguration.getTarget("slicer.javaslicer"));
-		projectClasspath.add(TestConfiguration.getTzAssembly(Constants.SAV_COMMONS_ASSEMBLY));
+		testContext.getAppData().addClasspath(TestConfiguration.getTarget("slicer.javaslicer"));
 		appData.setSuspiciousCalculAlgo(SpectrumAlgorithm.OCHIAI);
 		app = new AssertionGeneration(testContext, appData);
 		appData.setJavaHome("D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b");

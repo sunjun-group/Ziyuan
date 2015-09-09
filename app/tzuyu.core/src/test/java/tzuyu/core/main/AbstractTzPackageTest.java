@@ -15,9 +15,6 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 
-import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
-
-import sav.common.core.Constants;
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.opensource.TestPackage;
@@ -25,6 +22,7 @@ import sav.commons.testdata.opensource.TestPackage.TestDataColumn;
 import sav.strategies.IApplicationContext;
 import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.main.context.AbstractApplicationContext;
+import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 /**
  * @author LLT
@@ -43,9 +41,8 @@ public class AbstractTzPackageTest extends AbstractTest {
 		AbstractApplicationContext context = new AbstractApplicationContext() {
 		};
 		appData = new ApplicationData();
-		appData.setJavaHome("D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b");
+		appData.setJavaHome(TestConfiguration.JAVA_HOME);
 		appData.setSuspiciousCalculAlgo(SpectrumAlgorithm.TARANTULA);
-		appData.setTzuyuJacocoAssembly(TestConfiguration.getTzAssembly(Constants.TZUYU_JACOCO_ASSEMBLY));
 		context.setAppData(appData);
 		this.context = context;
 	}
@@ -54,7 +51,7 @@ public class AbstractTzPackageTest extends AbstractTest {
 		appData.setAppSrc(testPkg.getValue(TestDataColumn.SOURCE_FOLDER));
 		appData.setAppTarget(testPkg.getValue(TestDataColumn.TARGET_FOLDER));
 		appData.setAppTestTarget(testPkg.getValue(TestDataColumn.TEST_TARGET_FOLDER));
-		appData.getAppClasspaths().addAll(testPkg.getClassPaths());
+		appData.addClasspaths(testPkg.getClassPaths());
 		for (String libs : testPkg.getLibFolders()) {
 			addLibs(libs);
 		}
@@ -64,9 +61,6 @@ public class AbstractTzPackageTest extends AbstractTest {
 		
 		List<String> expectedBugLocations = testPkg.getValues(TestDataColumn.EXPECTED_BUG_LOCATION);
 		
-		appData.addClasspath(appData.getJavaHome() + "/bin");
-		appData.addClasspath(TestConfiguration.getTarget("slicer.javaslicer"));
-		appData.addClasspath(TestConfiguration.getTzAssembly(Constants.SAV_COMMONS_ASSEMBLY));
 		
 		updateSystemClasspath(appData.getAppClasspaths());
 		return expectedBugLocations;

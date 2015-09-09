@@ -26,9 +26,7 @@ public abstract class TzuyuCoreTest extends AbstractTzTest {
 	
 	@Before
 	public void setup() throws Exception {
-		List<String> projectClasspath = testContext.getAppData().getAppClasspaths();
-		projectClasspath.add(TestConfiguration.getTarget("slicer.javaslicer"));
-		projectClasspath.add(TestConfiguration.getTzAssembly(Constants.SAV_COMMONS_ASSEMBLY));
+		testContext.getAppData().addClasspath(TestConfiguration.getTarget("slicer.javaslicer"));
 		appData.setSuspiciousCalculAlgo(SpectrumAlgorithm.OCHIAI);
 		app = new TzuyuCore(testContext, appData);
 	}

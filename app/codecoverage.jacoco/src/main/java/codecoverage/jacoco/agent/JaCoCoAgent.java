@@ -14,15 +14,15 @@ import java.util.List;
 
 import sav.common.core.Logger;
 import sav.common.core.ModuleEnum;
-import sav.common.core.NullPrintStream;
 import sav.common.core.SavException;
-import sav.common.core.iface.IPrintStream;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.codecoverage.ICoverageReport;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
+import sav.strategies.junit.SavJunitRunner;
 import sav.strategies.vm.VMConfiguration;
 
 /**
@@ -31,13 +31,15 @@ import sav.strategies.vm.VMConfiguration;
  */
 public class JaCoCoAgent implements ICodeCoverage {
 	private Logger<?> log = Logger.getDefaultLogger();
-	private VMConfiguration vmConfig;
-	private IPrintStream out = NullPrintStream.instance();
 	private ICoverageReport report;
 	private ExecutionDataReporter reporter;
+	private AppJavaClassPath appClasspath;
 	
-	public JaCoCoAgent(String... targetFolders) {
-		reporter = new ExecutionDataReporter(targetFolders);
+	public JaCoCoAgent(AppJavaClassPath appClasspath) {
+		reporter = new ExecutionDataReporter(new String[] {
+				appClasspath.getTarget(), appClasspath.getTestTarget() });
+		this.appClasspath = appClasspath;
+		report = null;
 	}
 	
 	@Override
@@ -51,9 +53,6 @@ public class JaCoCoAgent implements ICodeCoverage {
 		}
 	}
 
-	/**
-	 * TODO: multithread!?!
-	 */
 	private void run(List<String> testingClassNames,
 			List<String> junitClassNames) throws SavException, IOException,
 			ClassNotFoundException {
@@ -69,6 +68,7 @@ public class JaCoCoAgent implements ICodeCoverage {
 					.setDestfile(destfile)
 					.setAppend(true);
 		vmRunner.setAnalyzedClassNames(testingClassNames);
+		VMConfiguration vmConfig = SavJunitRunner.createVmConfig(appClasspath);
 		vmConfig.setLaunchClass(JunitRunner.class.getName());
 		reporter.setReport(report);
 		List<String> testMethods = JunitUtils.extractTestMethods(junitClassNames);
@@ -98,17 +98,9 @@ public class JaCoCoAgent implements ICodeCoverage {
 		
 		reporter.report(destfile, junitResultFile, testingClassNames);
 	}
-
-	public void setVmConfig(VMConfiguration vmConfig) {
-		this.vmConfig = vmConfig;
-	}
 	
 	public ExecutionDataReporter getReporter() {
 		return reporter;
-	}
-	
-	public void setOut(IPrintStream out) {
-		this.out = out;
 	}
 	
 	public void setReporter(ExecutionDataReporter reporter) {

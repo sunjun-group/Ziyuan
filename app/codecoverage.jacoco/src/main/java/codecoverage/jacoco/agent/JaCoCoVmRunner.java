@@ -25,7 +25,6 @@ import sav.strategies.vm.AgentVmRunner;
 public class JaCoCoVmRunner extends AgentVmRunner {
 	private List<String> analyzedClassNames;
 	
-	
 	public JaCoCoVmRunner() throws IOException {
 		super(AgentJar.extractToTempLocation().getAbsolutePath());
 		analyzedClassNames = new ArrayList<String>();

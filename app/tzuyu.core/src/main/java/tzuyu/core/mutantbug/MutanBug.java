@@ -24,6 +24,7 @@ import sav.strategies.dto.ClassLocation;
 import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunnerParameters;
+import sav.strategies.junit.SavJunitRunner;
 import sav.strategies.mutanbug.DebugLineInsertionResult;
 import sav.strategies.mutanbug.IMutator;
 import sav.strategies.mutanbug.MutationResult;
@@ -98,8 +99,7 @@ public class MutanBug {
 			List<T> bkps, List<String> junitClassNames) throws Exception {
 		MutansResult result = new MutansResult();
 		Map<String, MutationResult> mutatedResult = mutator.mutate(bkps);
-		VMConfiguration vmConfig = appData.getVmConfig();
-		Recompiler compiler = new Recompiler(vmConfig);
+		Recompiler compiler = new Recompiler(appData.initVmConfig());
 		JunitRunnerParameters params = new JunitRunnerParameters();
 		params.setJunitClasses(junitClassNames);
 		params.setTimeout(JUNIT_TIMEOUT, TimeUnit.SECONDS);
@@ -117,6 +117,7 @@ public class MutanBug {
 					appData.getAppTarget(), bkp.getClassCanonicalName());
 			// backup
 			fileBackup.backup(classFiles);
+			VMConfiguration vmConfig = SavJunitRunner.createVmConfig(appData.getAppClassPath());
 			for (File mutatedFile : mutatedFiles) {
 				try{
 					compiler.recompileJFile(appData.getAppTarget(), mutatedFile);
@@ -148,7 +149,7 @@ public class MutanBug {
 			throws SavException {
 		startBackup();
 		Map<String, DebugLineInsertionResult> result = mutator.insertDebugLine(classLocationMap);
-		Recompiler recompiler = new Recompiler(appData.getVmConfig());
+		Recompiler recompiler = new Recompiler(appData.initVmConfig());
 		for (DebugLineInsertionResult classResult : result.values()) {
 			List<File> classFiles = ClassUtils.getCompiledClassFiles(appData.getAppTarget(), classResult.getClassName());
 			filesBackup.backup(classFiles);

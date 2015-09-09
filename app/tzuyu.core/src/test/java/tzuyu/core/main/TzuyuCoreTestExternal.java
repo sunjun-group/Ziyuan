@@ -6,16 +6,6 @@ import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import sav.common.core.Constants;
-import sav.commons.TestConfiguration;
-/*
- * Copyright (C) 2013 by SUTD (Singapore)
- * All rights reserved.
- *
- * 	Author: SUTD
- *  Version:  $Revision: 1 $
- */
-
 /**
  * @author khanh
  *
@@ -27,7 +17,6 @@ public class TzuyuCoreTestExternal extends TzuyuCoreTest {
 		final List<String> appClasspaths = appData.getAppClasspaths();
 		appClasspaths.add("/Users/npn/dev/projects/data/target/test-classes");
 		appClasspaths.add("/Users/npn/dev/projects/data/target/classes");
-		appClasspaths.add(TestConfiguration.getTzAssembly(Constants.TZUYU_JAVASLICER_ASSEMBLY));
 		
 		appData.setAppSrc("/Users/npn/dev/projects/data/src/main/java");
 		appData.setAppTarget("/Users/npn/dev/projects/data/target/test-classes");
@@ -47,7 +36,6 @@ public class TzuyuCoreTestExternal extends TzuyuCoreTest {
 		appClasspaths.add("/Users/npn/dev/projects/guava/guava/target/classes");
 		appClasspaths.add("/Users/npn/dev/projects/guava/guava-tests/test");
 		appClasspaths.add("/Users/npn/dev/projects/guava/guava-tests/target/test-classes");
-		appClasspaths.add(TestConfiguration.getTzAssembly(Constants.TZUYU_JAVASLICER_ASSEMBLY));
 //		appData.setAppSrc("/Users/npn/dev/projects/guava/guava-tests/test");
 		appData.setAppSrc("/Users/npn/dev/projects/guava/guava/src");
 //		appData.setAppTarget("/Users/npn/dev/projects/guava/guava-tests/target/test-classes");
@@ -70,7 +58,6 @@ public class TzuyuCoreTestExternal extends TzuyuCoreTest {
 		appClasspaths.add("/Users/npn/dev/projects/oryx/als-common/src/test/java");
 		appClasspaths.add("/Users/npn/dev/projects/oryx/common/target/test-classes");
 		appClasspaths.add("/Users/npn/dev/projects/oryx/als-common/target/test-classes");
-		appClasspaths.add(TestConfiguration.getTzAssembly(Constants.TZUYU_JAVASLICER_ASSEMBLY));
 		appClasspaths.add("/Users/npn/dev/projects/oryx/als-common/target/test-classes");
 		appClasspaths.add("/Users/npn/dev/projects/oryx/als-common/target/dependencyLibs/commons-math3-3.2.jar");
 		appClasspaths.add("/Users/npn/dev/projects/oryx/als-common/target/dependencyLibs/oryx-common-0.4.0-SNAPSHOT-tests.jar");

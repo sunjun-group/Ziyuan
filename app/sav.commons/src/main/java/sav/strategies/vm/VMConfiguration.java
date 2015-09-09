@@ -14,20 +14,24 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.common.core.SavJunitAppClasspathUtils;
+import sav.common.core.utils.ObjectUtils;
 import sav.common.core.utils.StringUtils;
+import sav.strategies.dto.AppJavaClassPath;
 
 /**
  * @author LLT
  * 
  */
 public class VMConfiguration {
+	public static final boolean DEFAULT_EA = true;
 	public static final int INVALID_PORT = -1;
 	private String javaHome;
 	private List<String> classpaths;
 	private String launchClass;
-	private boolean debug;
-	private int port;
-	private boolean enableAssertion;
+	private boolean debug = false;
+	private int port = INVALID_PORT;
+	private boolean enableAssertion = true;
 	// for internal use only
 	private List<String> programArgs;
 	private boolean vmLog = true;
@@ -43,9 +47,13 @@ public class VMConfiguration {
 
 	public VMConfiguration() {
 		classpaths = new ArrayList<String>();
-		port = INVALID_PORT;
-		debug = false;
-		enableAssertion = true;
+	}
+	
+	public VMConfiguration(AppJavaClassPath appClasspath) {
+		javaHome = appClasspath.getJavaHome();
+		classpaths = appClasspath.getClasspaths();
+		enableAssertion = ObjectUtils.toBoolean(appClasspath
+				.getVariable(SavJunitAppClasspathUtils.ENABLE_ASSERTION), true);
 	}
 	
 	public List<String> getClasspaths() {
@@ -117,10 +125,6 @@ public class VMConfiguration {
 		return INVALID_PORT;		
 	}	
 
-	public void setPort(int port) {
-		this.port = port;
-	}
-
 	public List<String> getProgramArgs() {
 		if (programArgs == null) {
 			programArgs = new ArrayList<String>();
@@ -155,5 +159,9 @@ public class VMConfiguration {
 	
 	public void setEnableVmLog(boolean vmLog) {
 		this.vmLog = vmLog;
+	}
+
+	public void resetPort() {
+		port = INVALID_PORT;
 	}
 }

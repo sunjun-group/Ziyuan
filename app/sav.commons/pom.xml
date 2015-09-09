@@ -9,6 +9,10 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
+	<properties>
+		<sav.junit.runner.pkg.name>sav.ext</sav.junit.runner.pkg.name>
+	</properties>
+
 	<build>
 		<plugins>
 			<!-- create jar-with-dependecies -->
@@ -16,6 +20,38 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<finalName>sav-commons</finalName>
+				</configuration>
+			</plugin>
+			<!-- create shaded jar -->
+			<plugin>
+				<artifactId>maven-shade-plugin</artifactId>
+				<configuration>
+					<shadedArtifactAttached>true</shadedArtifactAttached>
+					<shadedClassifierName>junit.runner</shadedClassifierName>
+					<finalName>sav.junit.runner.jar</finalName>
+					<minimizeJar>true</minimizeJar>
+					<outputFile>${basedir}/src/main/resources/sav.junit.runner.jar</outputFile>
+					<dependencyReducedPomLocation>${basedir}/junit-runner-dependency-reduced-pom.xml</dependencyReducedPomLocation>
+					<filters>
+						<filter>
+							<artifact>*:*</artifact>
+							<excludes>
+								<exclude>*.jar</exclude>
+							</excludes>
+						</filter>
+					</filters>
+					<artifactSet>
+						<excludes>
+							<exclude>com.sun:tools</exclude>
+							<exclude>log4j:log4j</exclude>
+						</excludes>
+					</artifactSet>
+					<relocations>
+						<relocation>
+							<pattern>org.apache</pattern>
+							<shadedPattern>${sav.junit.runner.pkg.name}.org.apache</shadedPattern>
+						</relocation>
+					</relocations>
 				</configuration>
 			</plugin>
 			<!-- create test jar -->
