@@ -15,10 +15,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.runner.JUnitCore;
 
 import sav.common.core.SavJunitAppClasspathUtils;
 import sav.common.core.SavRtException;
 import sav.strategies.dto.AppJavaClassPath;
+import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
 
 /**
@@ -27,6 +29,13 @@ import sav.strategies.vm.VMConfiguration;
  */
 public class SavJunitRunner {
 	private static final String RESOURCE = "/sav.junit.runner.jar";
+	public static final BreakPoint ENTER_TC_BKP;
+	public static final String JUNIT_RUNNER_CLASS_NAME = JunitRunner.class.getName();
+	
+	static {
+		/* at junit 4.0 */
+		ENTER_TC_BKP = new BreakPoint(JUnitCore.class.getName(), 138);
+	}
 
 	public static File extractToTemp() throws SavRtException {
 		File jar;

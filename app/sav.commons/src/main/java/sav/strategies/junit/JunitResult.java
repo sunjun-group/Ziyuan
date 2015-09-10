@@ -115,7 +115,7 @@ public class JunitResult {
 		FileOutputStream output = null;
 		try {
 			/*
-			 * IMPORTANT!: this allows to append file if it already existed.
+			 * NOTE!: this allows to append file if it already existed.
 			 * FileUtils.writeStringToFile of apache only allows to write content to file
 			 * without appending.
 			 */

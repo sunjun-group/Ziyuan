@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 import sav.common.core.Logger;
 import sav.common.core.SavException;
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.strategies.dto.BreakPoint;
@@ -85,8 +86,10 @@ public class TestcasesExecutor extends JunitDebugger {
 		for (int i = 0; i < allTests.size(); i++) {
 			TestResultType testResult = tcExResult.get(allTests.get(i));
 			if (testResult != TestResultType.UNKNOWN) {
+				List<BreakpointValue> bkpValueOfTcI = bkpValsByTestIdx.get(i);
+				Assert.assertNotNull(bkpValueOfTcI, "Missing breakpoint value for test " + i);
 				CollectionUtils.getListInitIfEmpty(resultMap, testResult)
-						.addAll(bkpValsByTestIdx.get(i));
+						.addAll(bkpValueOfTcI);
 			}
 		}
 		result = buildBreakpointData(CollectionUtils.nullToEmpty(resultMap.get(TestResultType.PASS)), 

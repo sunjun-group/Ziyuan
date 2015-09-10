@@ -63,7 +63,6 @@ public class VMListener {
 	private void specifyArguments(Map<?, ?> map, int portNumber, int timeout) {
 		Connector.IntegerArgument port= (Connector.IntegerArgument) map.get("port");
 		port.setValue(portNumber);
-		
 		Connector.IntegerArgument timeoutArg= (Connector.IntegerArgument) map.get("timeout"); 
 		if (timeoutArg != null) {
 			timeoutArg.setValue(timeout);

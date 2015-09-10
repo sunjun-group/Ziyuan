@@ -37,12 +37,7 @@ import sav.strategies.vm.VMRunner;
  *
  */
 public class JunitRunner {
-	public static final int TESTCASE_PROCESS_START_LINE_NO = calculateProcessStartLine();
-	
-	/**
-	 * TODO LLT: make this more convenient to use.
-	 * KEEP TESTCASE_PROCESS_START_LINE_NO, IF THIS FUNCTION CHANGED.
-	 */
+
 	private static Request toRequest(Pair<String, String> pair)
 			throws ClassNotFoundException {
 		Class<?> junitClass = loadClass(pair.a);
@@ -53,10 +48,6 @@ public class JunitRunner {
 			}
 		}
 		return null;
-	}
-	
-	private static int calculateProcessStartLine() {
-		return 48; //TODO LLT: FIX THIS
 	}
 	
 	public static void main(String[] args) throws Exception {

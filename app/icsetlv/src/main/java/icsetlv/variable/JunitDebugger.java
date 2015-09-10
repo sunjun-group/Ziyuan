@@ -8,6 +8,9 @@
 
 package icsetlv.variable;
 
+import static sav.strategies.junit.SavJunitRunner.ENTER_TC_BKP;
+import static sav.strategies.junit.SavJunitRunner.JUNIT_RUNNER_CLASS_NAME;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -18,7 +21,6 @@ import sav.common.core.SavException;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
-import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
 import sav.strategies.junit.SavJunitRunner;
 import sav.strategies.vm.VMConfiguration;
@@ -37,7 +39,6 @@ import com.sun.jdi.request.EventRequestManager;
  */
 public abstract class JunitDebugger extends BreakpointDebugger {
 	public static final long DEFAULT_TIMEOUT = -1;
-	private static final String JUNIT_RUNNER_CLASS_NAME = JunitRunner.class.getName();
 	protected List<String> allTests;
 	
 	/* for internal purpose */
@@ -86,22 +87,22 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 		/* class watch request for breakpoint */
 		super.addClassWatch(erm);
 		/* class watch request for junitRunner start point */
-		addClassWatch(erm, JUNIT_RUNNER_CLASS_NAME);
+		addClassWatch(erm, ENTER_TC_BKP.getClassCanonicalName());
 	}
 	
 	@Override
-	protected final void onHandleClassPrepareEvent(VirtualMachine vm,
+	protected final void handleClassPrepareEvent(VirtualMachine vm,
 			ClassPrepareEvent event) {
 		/* add junitRunner breakpoint */
 		ReferenceType refType = event.referenceType();
-		if (refType.name().equals(JUNIT_RUNNER_CLASS_NAME)) {
+		if (refType.name().equals(ENTER_TC_BKP.getClassCanonicalName())) {
 			junitLoc = addBreakpointWatch(vm, refType,
-					JunitRunner.TESTCASE_PROCESS_START_LINE_NO);
+					ENTER_TC_BKP.getLineNo());
 		} 
 	}
 	
 	@Override
-	protected final void onHandleBreakpointEvent(BreakPoint bkp, VirtualMachine vm,
+	protected final void handleBreakpointEvent(BreakPoint bkp, VirtualMachine vm,
 			BreakpointEvent bkpEvent) throws SavException {
 		try {
 			if (areLocationsEqual(bkpEvent.location(), junitLoc)) {

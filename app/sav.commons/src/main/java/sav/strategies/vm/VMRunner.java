@@ -43,7 +43,6 @@ public class VMRunner {
 	 */
 	protected static final String debugToken = "-agentlib:jdwp=transport=dt_socket,suspend=y,address=%s";
 	protected static final String enableAssertionToken = "-ea";
-//	private Redirect redirect;
 	/* timeout in millisecond */
 	private long timeout = NO_TIME_OUT;
 	private boolean isLog = true;
@@ -134,9 +133,6 @@ public class VMRunner {
 			}
 		}
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
-//		if (redirect != null) {
-//			processBuilder.redirectOutput(redirect);
-//		}
 		try {
 			process = processBuilder.start();
 			Timer t = new Timer();
@@ -181,14 +177,19 @@ public class VMRunner {
 		}
 	}
 
-//	public void waitUntilStop(Process process)
+//	public boolean waitUntilStop(Process process)
 //			throws SavException {
 //		while (true) {
 //			try {
-//				printStream(process.getInputStream());
-//				printStream(process.getErrorStream());
+//				getText(process.getInputStream());
+//				processError = getText(process.getErrorStream());
 //				process.exitValue();
-//				break;
+//				processError = getText((process.getErrorStream()));
+//				if (!StringUtils.isEmpty(processError)) {
+//					log.debug(processError);
+//					return false;
+//				}
+//				return true;
 //			} catch (IOException e) {
 //				log.logEx(e, "");
 //				throw new SavException(ModuleEnum.JVM, e);
@@ -203,11 +204,7 @@ public class VMRunner {
 //			} 
 //		}
 //	}
-	
-//	public void setRedirect(Redirect redirect) {
-//		this.redirect = redirect;
-//	}
-
+//	
 	public void setTimeout(int timeout, TimeUnit unit) {
 		this.timeout = unit.toMillis(timeout);
 	}

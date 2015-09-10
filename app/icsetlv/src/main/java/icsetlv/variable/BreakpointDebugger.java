@@ -82,8 +82,6 @@ public abstract class BreakpointDebugger {
 			}
 			if (eventSet == null) {
 				break;
-				// TODO LLT: try to get event from queue again until time
-				// out is reached.
 			}
 			for (Event event : eventSet) {
 				if (event instanceof VMDeathEvent
@@ -93,7 +91,7 @@ public abstract class BreakpointDebugger {
 				} else if (event instanceof ClassPrepareEvent) {
 					// add breakpoint watch on loaded class
 					ClassPrepareEvent classPrepEvent = (ClassPrepareEvent) event;
-					onHandleClassPrepareEvent(vm, classPrepEvent);
+					handleClassPrepareEvent(vm, classPrepEvent);
 					/* add breakpoint request */
 					ReferenceType refType = classPrepEvent.referenceType();
 					// breakpoints
@@ -103,7 +101,7 @@ public abstract class BreakpointDebugger {
 					BreakpointEvent bkpEvent = (BreakpointEvent) event;
 					BreakPoint bkp = locBrpMap.get(bkpEvent.location()
 							.toString());
-					onHandleBreakpointEvent(bkp, vm, bkpEvent);
+					handleBreakpointEvent(bkp, vm, bkpEvent);
 				}
 			}
 			eventSet.resume();
@@ -117,8 +115,8 @@ public abstract class BreakpointDebugger {
 
 	/** abstract methods */
 	protected abstract void beforeDebugging() throws SavException;
-	protected abstract void onHandleClassPrepareEvent(VirtualMachine vm, ClassPrepareEvent event);
-	protected abstract void onHandleBreakpointEvent(BreakPoint bkp, VirtualMachine vm, BreakpointEvent bkpEvent) throws SavException;
+	protected abstract void handleClassPrepareEvent(VirtualMachine vm, ClassPrepareEvent event);
+	protected abstract void handleBreakpointEvent(BreakPoint bkp, VirtualMachine vm, BreakpointEvent bkpEvent) throws SavException;
 	protected abstract void afterDebugging() throws SavException ;
 
 

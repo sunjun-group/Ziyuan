@@ -11,10 +11,7 @@ import org.junit.runner.notification.Failure;
 
 import sav.common.core.utils.CollectionUtils;
 
-
-
-public class RequestExecution implements Runnable{
-//	private static Logger<?> log = Logger.getDefaultLogger();
+public class RequestExecution implements Runnable {
 	private final JUnitCore core;
 	private Request request;
 	private boolean isPassed;
@@ -54,7 +51,6 @@ public class RequestExecution implements Runnable{
 			Method method = targetClass.getMethod("getFailures");
 			return (List<Failure>) method.invoke(targetInstance);
 		} catch (Exception ex) {
-//			log.error(ex);
 			return new ArrayList<Failure>();
 		}
 	}
