@@ -8,11 +8,14 @@
 
 package icsetlv.variable;
 
+import icsetlv.variable.TestcasesExecutor.TestResultType;
+
 import java.util.HashSet;
 import java.util.Set;
 
-import icsetlv.variable.TestcasesExecutor.TestResultType;
-import sav.common.core.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.strategies.junit.JunitResult;
 
 
@@ -21,7 +24,7 @@ import sav.strategies.junit.JunitResult;
  *
  */
 public class TestResultVerifier extends DefaultTestResultVerifier implements ITestResultVerifier {
-	private Logger<?> log = Logger.getDefaultLogger();
+	protected static Logger log = LoggerFactory.getLogger(TestResultVerifier.class);
 	private JunitResult orgResult;
 	private Set<String> allTraces;
 	

@@ -9,11 +9,14 @@ import mutation.parser.ClassDescriptor;
 import mutation.parser.LocalVariable;
 import mutation.parser.MethodDescriptor;
 import mutation.parser.VariableDescriptor;
-import sav.common.core.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.utils.Assert;
 
 public class VariableSubstitution {
-	private Logger<?> log = Logger.getDefaultLogger();
+	private static Logger log = LoggerFactory.getLogger(VariableSubstitution.class);
 	private ClassDescriptor descriptor;
 	
 	public VariableSubstitution(ClassDescriptor descriptor) {

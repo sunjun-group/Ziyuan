@@ -17,7 +17,10 @@ import java.util.List;
 
 import mutation.mutator.MutationVisitor.MutationNode;
 import mutation.utils.FileUtils;
-import sav.common.core.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.utils.StringUtils;
 
 /**
@@ -25,7 +28,7 @@ import sav.common.core.utils.StringUtils;
  *
  */
 public class MutationFileWriter extends AbstractMutationFileWriter {
-	private Logger<?> log = Logger.getDefaultLogger();
+	private static Logger log = LoggerFactory.getLogger(MutationFileWriter.class);
 	public MutationFileWriter(String srcFolder) {
 		super(srcFolder);
 	}

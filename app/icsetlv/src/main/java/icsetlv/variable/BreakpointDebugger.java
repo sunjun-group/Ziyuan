@@ -12,7 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import sav.common.core.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.utils.BreakpointUtils;
@@ -42,7 +44,7 @@ import com.sun.jdi.request.EventRequestManager;
  * in order to collect data.
  */
 public abstract class BreakpointDebugger {
-	protected static final Logger<?> LOGGER = Logger.getDefaultLogger();
+	protected static Logger log = LoggerFactory.getLogger(BreakpointDebugger.class);
 	private VMConfiguration config;
 	protected SimpleDebugger debugger = new SimpleDebugger();
 	// map of classes and their breakpoints
@@ -142,7 +144,7 @@ public abstract class BreakpointDebugger {
 			if (location != null) {
 				locBrpMap.put(location.toString(), brkp);
 			} else {
-				LOGGER.warn("Cannot add break point " + brkp);
+				log.warn("Cannot add break point " + brkp);
 			}
 		}
 	}
@@ -153,7 +155,7 @@ public abstract class BreakpointDebugger {
 		try {
 			locations = refType.locationsOfLine(lineNumber);
 		} catch (AbsentInformationException e) {
-			LOGGER.warn((Object[]) e.getStackTrace());
+			log.warn(e.getMessage());
 			return null;
 		}
 		if (!locations.isEmpty()) {

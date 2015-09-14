@@ -15,10 +15,12 @@ import java.lang.reflect.WildcardType;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import sav.common.core.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.gentest.ISubTypesScanner;
 
@@ -28,7 +30,7 @@ import sav.strategies.gentest.ISubTypesScanner;
  *
  */
 public class VarTypeResolver extends TypeVisitor {
-	private Logger<?> log = Logger.getDefaultLogger();
+	private static Logger log = LoggerFactory.getLogger(VarTypeResolver.class);
 	private Map<TypeVariable<?>, Type> rTypeMap; // value can be either Class, TypeVariable or ParameterizedType
 	private Set<Type> visitedTypes;
 	

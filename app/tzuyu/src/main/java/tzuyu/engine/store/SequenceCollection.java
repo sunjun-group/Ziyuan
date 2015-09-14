@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import tzuyu.engine.TzConfiguration;
-import tzuyu.engine.Tzuyu;
 import tzuyu.engine.model.Sequence;
 import tzuyu.engine.model.Statement;
 import tzuyu.engine.model.TzuYuAction;
@@ -24,7 +26,7 @@ import tzuyu.engine.utils.SimpleList;
 import tzuyu.engine.utils.SubTypeSet;
 
 public class SequenceCollection {
-
+	private static Logger log = LoggerFactory.getLogger(SequenceCollection.class);
 	// We make it a list to make it easier to pick out an element at random.
 	private Map<Class<?>, ArrayListSimpleList<Sequence>> activeSequences = new LinkedHashMap<Class<?>, ArrayListSimpleList<Sequence>>();
 
@@ -64,7 +66,7 @@ public class SequenceCollection {
 	 * Removes all sequences from this collection.
 	 */
 	public void clear() {
-		Tzuyu.getLog().debug("Clearing sequence collection.");
+		log.debug("Clearing sequence collection.");
 		this.activeSequences = new LinkedHashMap<Class<?>, ArrayListSimpleList<Sequence>>();
 		this.typesWithSequencesMap = new SubTypeSet(false);
 		numActivesequences = 0;

@@ -8,7 +8,8 @@
 
 package sav.common.core.utils;
 
-import sav.common.core.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -16,8 +17,8 @@ import sav.common.core.Logger;
  * If the exception because of Assertion error, means it needs to be fixed.
  */
 public class Assert {
-	private static Logger<?> log = Logger.getDefaultLogger();
-
+	private static Logger log = LoggerFactory.getLogger(Assert.class);
+	
 	public static <T> void notNull(T value, String... msgs) {
 		assertTrue(value != null, msgs);
 	}
@@ -28,7 +29,7 @@ public class Assert {
 			if (msgs != null) {
 				msg = StringUtils.spaceJoin((Object[]) msgs);
 			}
-			log.error((Object[])msgs);
+			log.error(msg);
 			throw new IllegalArgumentException(msg);
 		}
 	}

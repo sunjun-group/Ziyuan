@@ -17,7 +17,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import sav.common.core.Logger;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
@@ -28,7 +27,6 @@ import sav.common.core.utils.CollectionUtils;
  */
 @SuppressWarnings("unchecked")
 public abstract class GentestBuilder<T extends GentestBuilder<T>> {
-	protected Logger<?> logger = Logger.getDefaultLogger();
 	protected int numberOfTcs;
 	protected Class<?> clazz;
 	private boolean specificMethod = false;

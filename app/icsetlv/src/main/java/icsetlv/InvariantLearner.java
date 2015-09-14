@@ -31,7 +31,8 @@ import libsvm.core.Machine;
 import libsvm.core.Machine.DataPoint;
 import libsvm.extension.ISelectiveSampling;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.Assert;
@@ -43,7 +44,7 @@ import sav.strategies.dto.BreakPoint;
  *
  */
 public class InvariantLearner implements CategoryCalculator {
-	private static final Logger LOGGER = Logger.getLogger(InvariantLearner.class);
+	protected static Logger log = LoggerFactory.getLogger(InvariantLearner.class);
 	private InvariantMediator mediator;
 	private Machine machine;
 	private BreakPoint currentBreakpoint;
@@ -56,16 +57,16 @@ public class InvariantLearner implements CategoryCalculator {
 	public List<BkpInvariantResult> learn(List<BreakpointData> bkpsData) {
 		List<BkpInvariantResult> result = new ArrayList<BkpInvariantResult>();
 		for (BreakpointData bkpData : bkpsData) {
-			LOGGER.info("Start to learn at " + bkpData.getBkp());
+			log.info("Start to learn at " + bkpData.getBkp());
 			if (bkpData.getPassValues().isEmpty() && bkpData.getFailValues().isEmpty()) {
 				continue;
 			}
 			Formula formula = null;
 			if (bkpData.getFailValues().isEmpty()) {
-				LOGGER.info("This line is likely not a bug!");
+				log.info("This line is likely not a bug!");
 				formula = Formula.TRUE;
 			} else if (bkpData.getPassValues().isEmpty()) {
-				LOGGER.info("This line is likely a bug!");
+				log.info("This line is likely a bug!");
 				formula = Formula.FALSE;
 			} else {
 				/* collect variable labels */
@@ -113,8 +114,8 @@ public class InvariantLearner implements CategoryCalculator {
 		if (machine.isPerformArtificialDataSynthesis()) {
 			if (machine.artificialDataSynthesis(this)) {
 				machine.train();
-			} else if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Skip SVM training due to conflicting generated data.");
+			} else if (log.isDebugEnabled()) {
+				log.debug("Skip SVM training due to conflicting generated data.");
 			}
 		} else {
 			machine.train();

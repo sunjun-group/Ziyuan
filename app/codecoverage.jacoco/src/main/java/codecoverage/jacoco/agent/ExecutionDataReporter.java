@@ -28,8 +28,9 @@ import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.IExecutionDataVisitor;
 import org.jacoco.core.data.ISessionInfoVisitor;
 import org.jacoco.core.data.SessionInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import sav.common.core.Logger;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
@@ -45,7 +46,7 @@ import sav.strategies.junit.JunitResult;
  *
  */
 public class ExecutionDataReporter {
-	private Logger<?> log = Logger.getDefaultLogger();
+	private Logger log = LoggerFactory.getLogger(ExecutionDataReporter.class);
 	private ICoverageReport report;
 	private static final char JACOCO_FILE_SEPARATOR = '/';
 	/* target folder of testing project */
@@ -188,7 +189,7 @@ public class ExecutionDataReporter {
 	
 	private Map<String, List<ExecutionData>> read(final String file)
 			throws IOException {
-		if (log.isDebug()) {
+		if (log.isDebugEnabled()) {
 			log.debug("read exec file ", file);
 		}
 		final ExecutionDataIntStore dataStore = new ExecutionDataIntStore();

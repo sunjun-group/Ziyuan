@@ -128,11 +128,11 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 
 	public Trace candidateQuery(DFA dfa) throws LStarException,
 			InterruptedException, TzException {
-		logger.info("------------Candidate Query Iteration " + candidateCount++
+		log.info("------------Candidate Query Iteration " + candidateCount++
 				+ "------------------");
 		dfa.print(outStream);
-		logger.info("dfa state size: " + dfa.getStateSize());
-		logger.info("alphabet size: " + (dfa.sigma.getFullSize() - 1));
+		log.info("dfa state size: " + dfa.getStateSize());
+		log.info("alphabet size: " + (dfa.sigma.getFullSize() - 1));
 		List<QueryTrace> traces = new ArrayList<QueryTrace>();
 
 		// Step 1: Find all the generated test cases and execute them in order
@@ -147,8 +147,8 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 
 		List<Trace> acceptingTraces = pair.acceptingTraces;
 		List<Trace> refusingTraces = pair.refusingTraces;
-		logger.info("positive traces size:" + acceptingTraces.size());
-		logger.info("negative traces size:" + refusingTraces.size());
+		log.info("positive traces size:" + acceptingTraces.size());
+		log.info("negative traces size:" + refusingTraces.size());
 
 		for (Trace trace : acceptingTraces) {
 			Query query = new Query(trace);
@@ -176,7 +176,7 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 			// If we can't find the counterpart data for the specified query,
 			// we just return the inconsistent trace's query string as a
 			// counterexample to L* and let L* do the control refinement
-			logger.info("return counterexample.");
+			log.info("return counterexample.");
 			return evid.counterexample;
 		} else if (evid.divider == null) {
 			// There is inconsistency, while TzuYu cannot find a divider,
@@ -187,7 +187,7 @@ public class TeacherImpl implements Teacher<TzuYuAlphabet> {
 		}
 
 		TzuYuAlphabet newSigma = sigma.refine(evid.divider, evid.action);
-		logger.info("alphabet refined");
+		log.info("alphabet refined");
 		if (newSigma.equals(sigma)) {
 			// We find an alphabet which was found before, is this possible?
 			return Trace.epsilon;

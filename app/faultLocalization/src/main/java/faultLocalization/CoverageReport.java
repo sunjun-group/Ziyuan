@@ -15,7 +15,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import sav.common.core.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.Pair;
 import sav.common.core.utils.BreakpointUtils;
 import sav.strategies.codecoverage.ICoverageReport;
@@ -28,7 +30,7 @@ import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm
  * 
  */
 public class CoverageReport implements ICoverageReport{
-	private Logger<?> logger = Logger.getDefaultLogger();
+	private static Logger log = LoggerFactory.getLogger(CoverageReport.class);
 	private Map<String, ClassCoverageInAllTestcases> mapClassLineToTestCasesCover = new HashMap<String, ClassCoverageInAllTestcases>();
 	private Map<Integer, TestcaseCoverageInfo> passedTestcaseCoverageInfo = new HashMap<Integer, TestcaseCoverageInfo>();
 	private Map<Integer, TestcaseCoverageInfo> failedTestcaseCoverageInfo = new HashMap<Integer, TestcaseCoverageInfo>();
@@ -102,7 +104,7 @@ public class CoverageReport implements ICoverageReport{
 			}
 		}
 
-		logger.debug("nearest " + nearestPassedIndex);
+		log.debug("nearest " + nearestPassedIndex);
 		return nearestPassedIndex;
 	}
 
@@ -126,7 +128,7 @@ public class CoverageReport implements ICoverageReport{
 	 */
 	public <T extends ClassLocation> List<LineCoverageInfo> computeSuspiciousness(final List<T> filteredPoints,
 			final SpectrumAlgorithm algorithm) {
-		logger.info("SpectrumAlgorithm: " + algorithm);
+		log.info("SpectrumAlgorithm: " + algorithm);
 		final List<LineCoverageInfo> linesCoverageInfo = new ArrayList<LineCoverageInfo>();
 
 		final List<String> pointLocIds = BreakpointUtils.toLocationIds(filteredPoints);

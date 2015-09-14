@@ -3,9 +3,11 @@ package tzuyu.engine.main;
 import java.util.ArrayList;
 import java.util.List;
 
-import sav.common.core.CommandLineLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ArgParser {
+	protected static Logger log = LoggerFactory.getLogger(ArgParser.class);
 	private String[] args;
 	private int cursor;
 
@@ -86,8 +88,7 @@ public class ArgParser {
 	}
 
 	private void error(String str) {
-		CommandLineLogger.instance()
-				.info("option \"" + str + "\" cannot be recognized");
+		log.info("option \"" + str + "\" cannot be recognized");
 		System.exit(1);
 	}
 }

@@ -6,11 +6,12 @@ import libsvm.core.Machine.DataPoint;
 import libsvm.extension.AbstractSimpleSelectiveSamplingImpl;
 import libsvm.extension.FeatureSelectionMachine;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FeatureSelectionMachineTest extends TestUltility {
-	private static final Logger LOGGER = Logger.getLogger(FeatureSelectionMachineTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(FeatureSelectionMachineTest.class);
 	private static final int NUMBER_OF_FEATURES = 10;
 	private static final Random RAND = new Random();
 

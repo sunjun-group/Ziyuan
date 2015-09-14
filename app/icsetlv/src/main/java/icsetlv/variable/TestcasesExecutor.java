@@ -17,11 +17,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import sav.common.core.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
+import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
 
@@ -34,8 +37,7 @@ import com.sun.jdi.event.BreakpointEvent;
  * 
  */
 public class TestcasesExecutor extends JunitDebugger {
-	private static final Logger<?> LOGGER = Logger.getDefaultLogger();
-	
+	private static Logger log = LoggerFactory.getLogger(TestcasesExecutor.class);	
 	private List<BreakpointData> result;
 	/* for internal purpose */
 	private Map<Integer, List<BreakpointValue>> bkpValsByTestIdx;
@@ -78,8 +80,8 @@ public class TestcasesExecutor extends JunitDebugger {
 	protected void onFinish(JunitResult jResult) {
 		timer.stop();
 		if (jResult.getTestResults().isEmpty()) {
-			LOGGER.warn("TestResults is empty!");
-			LOGGER.debug(getProccessError());
+			log.warn("TestResults is empty!");
+			log.debug(getProccessError());
 		}
 		Map<TestResultType, List<BreakpointValue>> resultMap = new HashMap<TestResultType, List<BreakpointValue>>();
 		Map<String, TestResultType> tcExResult = getTcExResult(jResult);
@@ -99,7 +101,7 @@ public class TestcasesExecutor extends JunitDebugger {
 
 	private Map<String, TestResultType> getTcExResult(JunitResult jResult) {
 		Map<String, TestResultType> testResults = new HashMap<String, TestcasesExecutor.TestResultType>();
-		LOGGER.debug(jResult.getTestResults());
+		log.debug(StringUtils.toStringNullToEmpty(jResult.getTestResults()));
 		for (String test : allTests) {
 			TestResultType testResult = getTestVerifier().verify(jResult, test);
 			testResults.put(test, testResult);
@@ -143,9 +145,9 @@ public class TestcasesExecutor extends JunitDebugger {
 		try {
 			return getValueExtractor().extractValue(bkp, bkpEvent);
 		} catch (IncompatibleThreadStateException e) {
-			LOGGER.error(e);
+			log.error(e.getMessage());
 		} catch (AbsentInformationException e) {
-			LOGGER.error(e);
+			log.error(e.getMessage());
 		}
 		return null;
 	}
@@ -221,7 +223,7 @@ public class TestcasesExecutor extends JunitDebugger {
 	
 	public void setTimeout(long timeout, TimeUnit timeUnit) {
 		long timeoutInSec = timeUnit.toSeconds(timeout);
-		LOGGER.debug("Testcase execution timeout = " + timeoutInSec + "s");
+		log.debug("Testcase execution timeout = " + timeoutInSec + "s");
 		this.timeout = timeoutInSec;
 	}
 	

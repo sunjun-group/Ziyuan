@@ -18,8 +18,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.Constants;
-import sav.common.core.Logger;
 import sav.common.core.utils.CollectionUtils;
 
 /**
@@ -27,7 +29,7 @@ import sav.common.core.utils.CollectionUtils;
  *
  */
 public class FileCompilationUnitPrinter implements ICompilationUnitPrinter {
-	private Logger<?> logger = Logger.getDefaultLogger();
+	private static Logger log = LoggerFactory.getLogger(FileCompilationUnitPrinter.class);
 	private String srcFolder;
 	private List<File> files;
 	
@@ -57,7 +59,8 @@ public class FileCompilationUnitPrinter implements ICompilationUnitPrinter {
 					stream.close();
 					files.add(file);
 				} catch (IOException e) {
-					logger.logEx(e, "cannot create file " + filePath);
+					log.error(e.getMessage());
+					log.error("cannot create file " + filePath);
 				}
 			}
 		}

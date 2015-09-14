@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import sav.common.core.Logger;
 import sav.common.core.SavException;
 
 import com.google.inject.Inject;

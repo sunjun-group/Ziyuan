@@ -8,6 +8,11 @@
 
 package tzuyu.core.main;
 
+import icsetlv.common.dto.BkpInvariantResult;
+import icsetlv.common.exception.IcsetlvException;
+import icsetlv.variable.VariableNameCollector;
+import japa.parser.ast.CompilationUnit;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,21 +22,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.builder.CompareToBuilder;
-
-import faultLocalization.FaultLocalizationReport;
-import faultLocalization.LineCoverageInfo;
-import gentest.builder.FixTraceGentestBuilder;
-import gentest.core.data.Sequence;
-import gentest.junit.FileCompilationUnitPrinter;
-import gentest.junit.ICompilationUnitPrinter;
-import gentest.junit.TestsPrinter;
-import icsetlv.common.dto.BkpInvariantResult;
-import icsetlv.common.exception.IcsetlvException;
-import icsetlv.variable.VariableNameCollector;
-import japa.parser.ast.CompilationUnit;
 import main.FaultLocalization;
-import sav.common.core.Logger;
+
+import org.apache.commons.lang.builder.CompareToBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.BreakpointUtils;
@@ -44,11 +40,17 @@ import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.ClassLocation;
 import sav.strategies.dto.DebugLine;
 import sav.strategies.mutanbug.DebugLineInsertionResult;
-import sav.strategies.vm.VMConfiguration;
 import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.machinelearning.LearnInvariants;
 import tzuyu.core.mutantbug.MutanBug;
 import tzuyu.core.mutantbug.Recompiler;
+import faultLocalization.FaultLocalizationReport;
+import faultLocalization.LineCoverageInfo;
+import gentest.builder.FixTraceGentestBuilder;
+import gentest.core.data.Sequence;
+import gentest.junit.FileCompilationUnitPrinter;
+import gentest.junit.ICompilationUnitPrinter;
+import gentest.junit.TestsPrinter;
 
 
 /**
@@ -56,7 +58,7 @@ import tzuyu.core.mutantbug.Recompiler;
  *
  */
 public class TzuyuCore {
-	protected static final Logger<?> LOGGER = Logger.getDefaultLogger();
+	protected static Logger log = LoggerFactory.getLogger(FaultLocalization.class);
 	protected IApplicationContext appContext;
 	protected ApplicationData appData;
 	protected MutanBug mutanbug;
@@ -107,11 +109,11 @@ public class TzuyuCore {
 			timer.newPoint("machine learning");
 			machineLearning(report, params);
 		}
-		timer.logResults(LOGGER);
+		timer.logResults(log);
 	}
 
 	protected FaultLocalizationReport computeSuspiciousness(FaultLocateParams params) throws Exception {
-		LOGGER.info("Running " + appData.getSuspiciousCalculAlgo());
+		log.info("Running " + appData.getSuspiciousCalculAlgo());
 		
 		final FaultLocalization analyzer = new FaultLocalization(appContext);
 		analyzer.setUseSlicer(params.isSlicerEnable());
@@ -124,24 +126,24 @@ public class TzuyuCore {
 			report = analyzer.analyseSlicingFirst(params.getTestingClassNames(), params.getTestingPkgs(),
 					params.getJunitClassNames(), appData.getSuspiciousCalculAlgo());
 		}
-		LOGGER.info(report);
+		log.info(StringUtils.toStringNullToEmpty(report));
 		return report;
 	}
 
 	private void mutation(FaultLocalizationReport report,
 			List<String> junitClassNames, int rankToExamine) throws Exception {
-		LOGGER.info("Running Mutation");
+		log.info("Running Mutation");
 		MutanBug mutanbug = new MutanBug();
 		mutanbug.setAppData(appData);
 		mutanbug.setMutator(appContext.getMutator());
 		mutanbug.mutateAndRunTests(report, rankToExamine, junitClassNames);
-		LOGGER.info(report);
+		log.info(StringUtils.toStringNullToEmpty(report));
 	}
 	
 	protected void machineLearning(FaultLocalizationReport report,
 			FaultLocateParams params) throws ClassNotFoundException,
 			SavException, IcsetlvException, Exception {
-		LOGGER.info("Running Machine Learning");
+		log.info("Running Machine Learning");
 		List<String> junitClassNames = new ArrayList<String>(params.getJunitClassNames());
 		if (params.isGenTestEnable()) {
 			while (true) {
@@ -163,12 +165,12 @@ public class TzuyuCore {
 				.getRankToExamine());
 
 		if (CollectionUtils.isEmpty(suspectLocations)) {
-			LOGGER.warn("No suspect line to learn. SVM will not run.");
+			log.warn("No suspect line to learn. SVM will not run.");
 		} else {
 			filter(suspectLocations, appData.getAppSrc());
-			if (LOGGER.isDebug()) {
-				LOGGER.debug("before grouping: ");
-				LOGGER.debug(StringUtils.join(suspectLocations, "\n"));
+			if (log.isDebugEnabled()) {
+				log.debug("before grouping: ");
+				log.debug(StringUtils.join(suspectLocations, "\n"));
 			}
 			// Select from suspectLocations to monitor
 			List<LineCoverageInfo> selectedLocations = suspectLocations;
@@ -188,9 +190,9 @@ public class TzuyuCore {
 			List<DebugLine> debugLines = getDebugLines(locatedLines.getLocatedLines());
 			DebugLinePreProcessor preProcessor = new DebugLinePreProcessor();
 			debugLines = preProcessor.preProcess(debugLines);
-			if (LOGGER.isDebug()) {
-				LOGGER.debug("after grouping & processing: ");
-				LOGGER.debug(StringUtils.join(debugLines, "\n"));
+			if (log.isDebugEnabled()) {
+				log.debug("after grouping & processing: ");
+				log.debug(StringUtils.join(debugLines, "\n"));
 			}
 			LearnInvariants learnInvariant = new LearnInvariants(appData.getAppClassPath(), params);
 			List<BkpInvariantResult> invariants = learnInvariant.learn(new ArrayList<BreakPoint>(debugLines), 
@@ -198,8 +200,8 @@ public class TzuyuCore {
 			
 			locatedLines.updateInvariantResult(invariants);
 			
-			LOGGER.info("----------------FINISHED--------------------");
-			LOGGER.info(locatedLines.getDisplayResult());
+			log.info("----------------FINISHED--------------------");
+			log.info(locatedLines.getDisplayResult());
 			/* clean up mutanbug */
 			if (mutanbug != null) {
 				mutanbug.restoreFiles();

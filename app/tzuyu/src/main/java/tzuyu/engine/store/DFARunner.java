@@ -4,7 +4,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import tzuyu.engine.Tzuyu;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import tzuyu.engine.model.Prestate;
 import tzuyu.engine.model.QueryResult;
 import tzuyu.engine.model.QueryTrace;
@@ -22,7 +24,7 @@ import tzuyu.engine.model.exception.TzRuntimeException;
  * 
  */
 public class DFARunner {
-
+	private static Logger log = LoggerFactory.getLogger(DFARunner.class);
 	private DFA currentDFA;
 
 	private Map<Transition, QueryResult> transitionStates;
@@ -93,7 +95,7 @@ public class DFARunner {
 
 			// This should not happen
 			if (!matchingTransitionFound) {
-				Tzuyu.getLog().error("No matching transition!!", "\ntrace: ",
+				log.error("No matching transition!!", "\ntrace: ",
 						trace, "\nsigma: " + currentDFA.getSigma());
 				throw new TzRuntimeException("no matching transtion");
 			}

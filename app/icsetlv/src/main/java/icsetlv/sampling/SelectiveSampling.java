@@ -23,20 +23,24 @@ import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
 import libsvm.core.Machine.DataPoint;
 import libsvm.extension.ISelectiveSampling;
-import sav.common.core.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.common.core.formula.Eq;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.BreakPoint;
 
 /**
  * @author LLT
  */
 public class SelectiveSampling implements ISelectiveSampling {
-	private Logger<?> log = Logger.getDefaultLogger();
+	private static Logger log = LoggerFactory.getLogger(SelectiveSampling.class);
 	private InvariantMediator mediator;
 	private FormulaProcessor<ExecVar> dividerProcessor;
 	private BreakPoint bkp;
@@ -122,8 +126,8 @@ public class SelectiveSampling implements ISelectiveSampling {
 			 * cannot divide, we can stop trying another point
 			 */
 			if (!points.isEmpty()) {
-				log.debug(valSet);
-				log.debug(points);
+				log.debug(StringUtils.toStringNullToEmpty(valSet));
+				log.debug(StringUtils.toStringNullToEmpty(points));
 			}
 			newPoints.addAll(points);
 			if (points.size() > 1) {

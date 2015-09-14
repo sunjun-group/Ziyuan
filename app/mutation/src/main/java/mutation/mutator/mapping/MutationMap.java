@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import sav.common.core.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.EnumUtils;
 
@@ -21,7 +23,7 @@ import sav.common.core.utils.EnumUtils;
  * 
  */
 public class MutationMap {
-	private Logger<?> log = Logger.getDefaultLogger();
+	private static Logger log = LoggerFactory.getLogger(MutationMap.class);
 	private Map<Enum<?>, List<Enum<?>>> muOpMap;
 	
 	public MutationMap(Map<String, List<String>> config) {

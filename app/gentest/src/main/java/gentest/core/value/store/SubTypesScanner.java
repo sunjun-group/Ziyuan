@@ -21,8 +21,9 @@ import java.util.Set;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import sav.common.core.Logger;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
@@ -39,7 +40,7 @@ import com.google.common.cache.LoadingCache;
  */
 @TestcaseGenerationScope
 public class SubTypesScanner implements ISubTypesScanner {
-	private Logger<?> log = Logger.getDefaultLogger();
+	private static Logger log = LoggerFactory.getLogger(SubTypesScanner.class);
 	private LoadingCache<Class<?>, Set<Class<?>>> subTypesCache;
 	private LoadingCache<Class<?>[], Set<Class<?>>> subTypesBoundsCache;
 	
@@ -83,7 +84,7 @@ public class SubTypesScanner implements ISubTypesScanner {
 						.asList(ClasspathHelper.forClass(key))));
 		Set<?> subTypes = reflections.getSubTypesOf(key);
 		log.debug("Subtypes of ", key.getSimpleName());
-		log.debug(subTypes);
+		log.debug(subTypes.toString());
 		return filterAndSelect(subTypes, key, filters);
 	}
 
@@ -191,7 +192,7 @@ public class SubTypesScanner implements ISubTypesScanner {
 			return (Class<?>) Randomness.randomMember(subTypes.toArray());
 		} catch (Exception e) {
 			log.debug("key =", key);
-			log.error((Object[]) e.getStackTrace());
+			log.error(e.getMessage());
 			throw new SavRtException(ModuleEnum.TESTCASE_GENERATION,
 					"error when executing cache to get subtypes");
 		}

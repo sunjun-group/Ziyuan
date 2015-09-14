@@ -8,7 +8,6 @@
 
 package tzuyu.engine.iface;
 
-import sav.common.core.Logger;
 import sav.common.core.iface.IPrintStream;
 import sav.strategies.gentest.ISubTypesScanner;
 import tester.ITCGStrategy;
@@ -34,8 +33,6 @@ public interface ITzManager<A extends Alphabet<?>> {
 	ISubTypesScanner getRefAnalyzer();
 
 	IPrintStream getOutStream();
-	
-	Logger<?> getLogger();
 
 	void checkProgress() throws InterruptedException;
 }

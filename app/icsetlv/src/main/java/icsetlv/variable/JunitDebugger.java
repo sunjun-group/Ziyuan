@@ -111,7 +111,7 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 				onEnterBreakpoint(bkp, bkpEvent);
 			}
 		} catch (AbsentInformationException e) {
-			LOGGER.error(e);
+			log.error(e.getMessage());
 		}
 	}
 

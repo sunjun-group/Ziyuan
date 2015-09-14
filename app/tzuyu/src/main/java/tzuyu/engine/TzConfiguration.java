@@ -8,11 +8,28 @@
 
 package tzuyu.engine;
 
-import static tzuyu.engine.TzConstants.*;
+import static tzuyu.engine.TzConstants.ARRAY_MAX_LENGTH;
+import static tzuyu.engine.TzConstants.CLASS_MAX_DEPTH;
+import static tzuyu.engine.TzConstants.DEBUG_CHECKS;
+import static tzuyu.engine.TzConstants.FORBIT_NULL;
+import static tzuyu.engine.TzConstants.INHERIT_METHOD;
+import static tzuyu.engine.TzConstants.LONG_FORMAT;
+import static tzuyu.engine.TzConstants.MAX_LINES_PER_GEN_TEST_CLASS;
+import static tzuyu.engine.TzConstants.MAX_METHODS_PER_GEN_TEST_CLASS;
+import static tzuyu.engine.TzConstants.NUMBER_OF_TESTCASES;
+import static tzuyu.engine.TzConstants.OBJECT_TO_INTEGER;
+import static tzuyu.engine.TzConstants.PRETTY_PRINT;
+import static tzuyu.engine.TzConstants.PRINT_FAIL_TESTS;
+import static tzuyu.engine.TzConstants.PRINT_PASS_TESTS;
+import static tzuyu.engine.TzConstants.STRING_MAX_LENGTH;
+import static tzuyu.engine.TzConstants.TESTS_PER_QUERY;
+import static tzuyu.engine.TzConstants.TRACE_MAX_LENGTH;
 
 import java.io.File;
 
-import sav.common.core.CommandLineLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.utils.StringUtils;
 import tzuyu.engine.utils.Globals;
 import tzuyu.engine.utils.PrimitiveGenerator.PrimitiveGeneratorConfig;
@@ -21,6 +38,7 @@ import tzuyu.engine.utils.PrimitiveGenerator.PrimitiveGeneratorConfig;
  * @author LLT
  */
 public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
+	private static Logger log = LoggerFactory.getLogger(TzConfiguration.class);
 	/**
 	 * The maximum number of elements in an array when cloning an object. The
 	 * array field in a target object may be too long to clone (results in out
@@ -150,7 +168,7 @@ public class TzConfiguration implements Cloneable, PrimitiveGeneratorConfig {
 		if (!output.equals("")) {
 			outputDir = new File(output);
 			if (!outputDir.exists() || !outputDir.isDirectory()) {
-				CommandLineLogger.instance().error(
+				log.error(
 						"Invalid output directory, use the default");
 				outputDir = null;
 			}

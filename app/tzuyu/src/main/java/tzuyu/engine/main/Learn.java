@@ -4,19 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import sav.common.core.CommandLineLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import tzuyu.engine.TzClass;
 import tzuyu.engine.TzConfiguration;
 import tzuyu.engine.TzMethod;
-import tzuyu.engine.Tzuyu;
 import tzuyu.engine.main.Command.CommandType;
 import tzuyu.engine.model.ClassInfo;
-import tzuyu.engine.model.exception.ReportException;
-import tzuyu.engine.model.exception.TzException;
 import analyzer.ClassAnalyzer;
 
 public class Learn implements CommandHandler {
-
+	private static Logger log = LoggerFactory.getLogger(Help.class);
 	public boolean handle(Command command) {
 		TzClass project = processCommand(command);
 		CommandLineReportHandler reporter = new CommandLineReportHandler(project.getConfiguration());
@@ -59,14 +58,14 @@ public class Learn implements CommandHandler {
 		try {
 			String className = project.getClassName();
 			if (className.equals("")) {
-				CommandLineLogger.instance().error(
+				log.error(
 						"Target class is not specified, system aborts");
 				System.exit(1);
 			}
 
 			targetClass = Class.forName(className);
 		} catch (ClassNotFoundException e) {
-			CommandLineLogger.instance().error(
+			log.error(
 					"Invalid target class is specified, system aborts");
 			System.exit(1);
 		}

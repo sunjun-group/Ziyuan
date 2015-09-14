@@ -16,7 +16,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import sav.common.core.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.SavException;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
@@ -43,7 +45,7 @@ import faultLocalization.MutationBasedSuspiciousnessCalculator;
  */
 public class MutanBug {
 	private static final int JUNIT_TIMEOUT = 2; // 2s
-	private Logger<?> log = Logger.getDefaultLogger();
+	private static Logger log = LoggerFactory.getLogger(MutanBug.class);
 	@Inject
 	private ApplicationData appData;
 	@Inject
@@ -124,7 +126,7 @@ public class MutanBug {
 					JunitResult jresult = JunitRunner.runTestcases(vmConfig, params);
 					result.add(bkp, jresult.getTestResult());
 				} catch (Exception e) {
-					log.error(e);
+					log.error(e.getMessage());
 				}
 			}
 			// restore the org class

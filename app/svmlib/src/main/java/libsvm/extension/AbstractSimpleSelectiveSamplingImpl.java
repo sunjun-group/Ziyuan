@@ -9,10 +9,11 @@ import libsvm.core.Divider;
 import libsvm.core.Machine;
 import libsvm.core.Machine.DataPoint;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSimpleSelectiveSamplingImpl implements ISelectiveSampling {
-	private static final Logger LOGGER = Logger
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(AbstractSimpleSelectiveSamplingImpl.class);
 	private static final Random RANDOM = new Random();
 

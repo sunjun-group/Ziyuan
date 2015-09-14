@@ -3,11 +3,12 @@ package libsvm.core;
 import libsvm.extension.AbstractSimpleSelectiveSamplingImpl;
 import libsvm.extension.FeatureSelectionMachine;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SunJunPaperTest extends TestUltility {
-	private static final Logger LOGGER = Logger.getLogger(SunJunPaperTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SunJunPaperTest.class);
 
 	@Test
 	public void test3() {

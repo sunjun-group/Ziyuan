@@ -22,7 +22,9 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-import sav.common.core.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.utils.Assert;
 
 /**
@@ -30,7 +32,7 @@ import sav.common.core.utils.Assert;
  *
  */
 public class VariableRuntimeExecutor implements StatementVisitor {
-	protected Logger<?> log = Logger.getDefaultLogger();
+	protected static Logger log = LoggerFactory.getLogger(VariableRuntimeExecutor.class);
 	protected RuntimeData data;
 	protected Boolean successful;
 	
@@ -69,7 +71,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		try {
 			stmt.accept(this);
 		} catch(Throwable ex) {
-			log.debug(ex);
+			log.debug(ex.getMessage());
 			successful = false;
 		}
 		return successful;

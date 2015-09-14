@@ -11,15 +11,12 @@ package testdata.insertion;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 /**
  * @author LLT
  * 
  */
 public class InsertTestData {
-	private Logger log;
-
+	
 	private int a;
 	public boolean isPalindrome1(int x) {
 		List<Integer> digits = new ArrayList<Integer>();

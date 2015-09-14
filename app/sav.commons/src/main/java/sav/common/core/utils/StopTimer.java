@@ -16,8 +16,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
-import sav.common.core.Logger;
-
 /**
  * A countdown timer which starts to work with the first entry and
  *  prints the results ascending with the overall time.
@@ -54,13 +52,6 @@ public class StopTimer {
 		newPoint(FINISHED_POINT);
 		stop = true;
 	}
-
-    public void logResults(Logger<?> log) {
-        List<String> lines = getResults();
-		for (String line : lines) {
-			log.debug(line);
-		}
-    }
 
 	private synchronized List<String> getResults() {
 		LinkedHashMap<String, Long> timeResults = getTimeResults();
@@ -117,6 +108,16 @@ public class StopTimer {
 			sb.append("(").append(diffSec).append("s").append(")");
 		}
 		return sb.toString();
+	}
+
+	public void logResults(org.slf4j.Logger log) {
+		if (!log.isDebugEnabled()) {
+			return;
+		}
+		List<String> lines = getResults();
+		for (String line : lines) {
+			log.debug(line);
+		}
 	}
 
 }

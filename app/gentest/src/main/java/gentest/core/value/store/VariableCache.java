@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import sav.common.core.Logger;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
 
@@ -30,7 +29,6 @@ import sav.common.core.utils.Randomness;
  */
 @TestcaseGenerationScope
 public class VariableCache implements IVariableStore {
-	private Logger<?> log = Logger.getDefaultLogger();
 	private Map<Type, List<GeneratedVariable>> generatedVarMap;
 
 	public VariableCache() {
@@ -45,8 +43,6 @@ public class VariableCache implements IVariableStore {
 			valueList = CollectionUtils.getListInitIfEmpty(generatedVarMap, type.getRawType());
 		}
 		if (valueList.size() == GentestConstants.MAX_VALUE_FOR_A_CLASS_STORED_IN_CACHE) {
-//			log.debug("VariableCache.MAX_VALUE_FOR_A_CLASS_STORED_IN_CACHE reach (class: ",
-//					type.getRawType().getName(), ", type: ", type);
 			int randomPos = Randomness.nextInt(valueList.size());
 			valueList.set(randomPos, variable);
 		} else {

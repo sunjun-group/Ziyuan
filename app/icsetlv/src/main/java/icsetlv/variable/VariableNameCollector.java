@@ -30,8 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.Constants;
-import sav.common.core.Logger;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
@@ -47,7 +49,7 @@ import sav.strategies.dto.BreakPoint.Variable.VarScope;
  *
  */
 public class VariableNameCollector {
-	private Logger<?> log = Logger.getDefaultLogger();
+	protected static Logger log = LoggerFactory.getLogger(VariableNameCollector.class);
 	private List<String> srcFolders;
 	private VarNameCollectionMode collectionMode;
 	

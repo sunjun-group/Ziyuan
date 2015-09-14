@@ -26,8 +26,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import sav.common.core.Logger;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.strategies.dto.BreakPoint;
@@ -60,7 +61,7 @@ import com.sun.jdi.event.BreakpointEvent;
  *
  */
 public class DebugValueExtractor {
-	protected static final Logger<?> LOGGER = Logger.getDefaultLogger();
+	protected static Logger log = LoggerFactory.getLogger(DebugValueExtractor.class);
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
 	private static final String TO_STRING_NAME= "toString";
 	private static final Pattern OBJECT_ACCESS_PATTERN = Pattern.compile("^\\.([^.\\[]+)(\\..+)*(\\[.+)*$");
@@ -301,7 +302,7 @@ public class DebugValueExtractor {
 				}
 			} catch (Exception e) {
 				// ignore.
-				LOGGER.warn((Object[])e.getStackTrace());
+				log.warn(e.getMessage());
 			}
 		}
 		return null;

@@ -10,7 +10,8 @@ import libsvm.core.Divider;
 import libsvm.core.Machine;
 import libsvm.core.Model;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This machine tries to separate the positive points from negative points by
@@ -25,7 +26,7 @@ import org.apache.log4j.Logger;
  * 
  */
 public class PositiveSeparationMachine extends Machine {
-	protected static final Logger LOGGER = Logger.getLogger(PositiveSeparationMachine.class);
+	protected static final Logger LOGGER = LoggerFactory.getLogger(PositiveSeparationMachine.class);
 
 	private List<svm_model> learnedModels = new ArrayList<svm_model>();
 

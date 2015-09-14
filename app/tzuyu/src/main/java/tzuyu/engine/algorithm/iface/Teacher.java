@@ -3,7 +3,8 @@ package tzuyu.engine.algorithm.iface;
 import lstar.LStarException;
 import lstar.QueryException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import tzuyu.engine.iface.HasReport;
 import tzuyu.engine.model.Trace;
@@ -19,7 +20,7 @@ import tzuyu.engine.model.exception.TzException;
  * 
  */
 public interface Teacher<A extends Alphabet<?>> extends HasReport<A> {
-	static final Logger logger = Logger.getRootLogger();
+	public static Logger log = LoggerFactory.getLogger(Teacher.class);
 	/**
 	 * If the @param str is accepted by the unknown DFA then return true; If the
 	 * 

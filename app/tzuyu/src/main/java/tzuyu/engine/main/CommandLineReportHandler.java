@@ -10,8 +10,6 @@ package tzuyu.engine.main;
 
 import java.io.FileWriter;
 
-import sav.common.core.Logger;
-import sav.common.core.CommandLineLogger;
 import sav.common.core.SavPrintStream;
 import sav.common.core.iface.IPrintStream;
 import tzuyu.engine.TzClass;
@@ -25,7 +23,6 @@ import tzuyu.engine.model.dfa.DFA;
  * 
  */
 public class CommandLineReportHandler extends TzReportHandler {
-	
 	public CommandLineReportHandler(TzConfiguration config) {
 		super(config);
 	}
@@ -57,10 +54,5 @@ public class CommandLineReportHandler extends TzReportHandler {
 	@Override
 	public void comit() {
 		
-	}
-
-	@Override
-	public Logger<?> getLogger() {
-		return CommandLineLogger.instance();
 	}
 }

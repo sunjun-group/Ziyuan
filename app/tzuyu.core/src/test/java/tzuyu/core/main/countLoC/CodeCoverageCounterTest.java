@@ -15,8 +15,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import sav.common.core.Logger;
 import sav.common.core.utils.StringUtils;
 import sav.commons.testdata.opensource.TestPackage;
 import sav.commons.testdata.opensource.TestPackage.TestDataColumn;
@@ -28,6 +29,7 @@ import tzuyu.core.main.FaultLocateParams;
  *
  */
 public class CodeCoverageCounterTest extends AbstractTzPackageTest {
+	private static Logger log = LoggerFactory.getLogger(CodeCoverageCounterTest.class);
 	private CodeCoverageCounter counter;
 	protected FaultLocateParams params;
 	
@@ -125,7 +127,7 @@ public class CodeCoverageCounterTest extends AbstractTzPackageTest {
 	public void testListAllClasses() {
 		TestPackage testPkg = TestPackage.getPackage("javaparser", "46");
 		List<String> allClasses = listAllClasses(testPkg.getValue(TestDataColumn.SOURCE_FOLDER));
-		Logger.getDefaultLogger().debug(StringUtils.join(allClasses, "\n"));
+		log.debug(StringUtils.join(allClasses, "\n"));
 	}
 	
 	private List<String> listAllClasses(String... srcFolders) {

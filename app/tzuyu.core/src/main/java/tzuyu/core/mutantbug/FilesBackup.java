@@ -15,17 +15,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import sav.common.core.Logger;
-import sav.common.core.SavRtException;
-
 import mutation.utils.FileUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import sav.common.core.SavRtException;
 
 /**
  * @author LLT
  *
  */
 public class FilesBackup {
-	private Logger<?> log = Logger.getDefaultLogger();
+	private static Logger log = LoggerFactory.getLogger(FilesBackup.class);
 	private File backupDir;
 	/* map to store files and backup files*/
 	private Map<File, File> backupMap;
@@ -102,7 +104,7 @@ public class FilesBackup {
 		try {
 			org.apache.commons.io.FileUtils.deleteDirectory(backupDir);
 		} catch (IOException e) {
-			log.error(e);
+			log.error(e.getMessage());
 		}
 		backupDir = null;
 	}

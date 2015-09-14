@@ -19,8 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import sav.common.core.Logger;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
@@ -35,7 +36,7 @@ import sav.commons.TestConfiguration;
 public class AbstractGTTest extends AbstractTest {
 	protected static final int NUMBER_OF_TESTCASES = 100;
 	protected static final int METHOD_PER_CLASS = 10;
-	protected Logger<?> log = Logger.getDefaultLogger();
+	private static Logger log = LoggerFactory.getLogger(AbstractGTTest.class);
 	protected TestConfiguration config = TestConfiguration.getInstance();
 	protected String srcPath;
 
@@ -57,7 +58,7 @@ public class AbstractGTTest extends AbstractTest {
 			for (Statement stmt : seq.getStmts()) {
 				if (!CollectionUtils.existIn(stmt.getKind(),
 						RStatementKind.ARRAY_ASSIGNMENT)) {
-					log.debug(stmt);
+					log.debug(stmt.toString());
 				}
 			}
 		}

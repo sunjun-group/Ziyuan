@@ -15,7 +15,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import sav.common.core.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.utils.BreakpointUtils;
@@ -39,7 +41,7 @@ import de.unisb.cs.st.javaslicer.traceResult.TraceResult;
  * 
  */
 public class JavaSlicer implements ISlicer {
-	private Logger<?> log = Logger.getDefaultLogger();
+	private Logger log = LoggerFactory.getLogger(JavaSlicer.class);
 	private JavaSlicerVmRunner vmRunner;
 	private VMConfiguration vmConfig;
 	private SliceBreakpointCollector sliceCollector;
@@ -159,7 +161,7 @@ public class JavaSlicer implements ISlicer {
 		slicer.process(tracing, criteria, true);
 		log.debug("Read Slicing Result:");
 		List<BreakPoint> dynamicSlice = sliceCollector.getDynamicSlice();
-		if (log.isDebug()) {
+		if (log.isDebugEnabled()) {
 			log.debug("slicing-result:");
 			for (BreakPoint bkp : dynamicSlice) {
 				log.debug(bkp.getId());

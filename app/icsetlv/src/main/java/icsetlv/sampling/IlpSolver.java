@@ -27,8 +27,9 @@ import net.sf.javailp.SolverFactoryLpSolve;
 import net.sf.javailp.Term;
 
 import org.apache.commons.collections.ListUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import sav.common.core.Logger;
 import sav.common.core.Pair;
 import sav.common.core.formula.Atom;
 import sav.common.core.formula.ConjunctionFormula;
@@ -45,7 +46,7 @@ import sav.common.core.utils.Randomness;
  *
  */
 public class IlpSolver extends ExpressionVisitor {
-	private Logger<?> log = Logger.getDefaultLogger();
+	private static Logger log = LoggerFactory.getLogger(IlpSolver.class);
 	/* max number of vars need to calculate if using selective sampling */
 	private static final int MAX_VAR_TO_CALCULATE = 2;
 	private static final int MAX_MORE_SELECTED_SAMPLE = 4;

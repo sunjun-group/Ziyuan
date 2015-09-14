@@ -19,7 +19,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-import sav.common.core.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
@@ -32,7 +34,7 @@ import sav.common.core.utils.StringUtils;
  */
 public class VMRunner {
 	private static final int NO_TIME_OUT = -1;
-	private static Logger<?> log = Logger.getDefaultLogger();
+	private static Logger log = LoggerFactory.getLogger(VMRunner.class);
 	protected static final String cpToken = "-cp";
 	/*
 	 * from jdk 1.5, we can use new JVM option: -agentlib 
@@ -125,7 +127,7 @@ public class VMRunner {
 
 	public boolean startVm(List<String> commands, boolean waitUntilStop)
 			throws SavException {
-		if (isLog && log.isDebug()) {
+		if (isLog && log.isDebugEnabled()) {
 			log.debug("start cmd..");
 			log.debug(StringUtils.join(commands, " "));
 			for (String cmd : commands) {
@@ -152,7 +154,7 @@ public class VMRunner {
 			}
 			return true;
 		} catch (IOException e) {
-			log.logEx(e, "");
+			log.error(e.getMessage());
 			throw new SavException(ModuleEnum.JVM, e, "cannot start jvm process");
 		}
 	}
@@ -169,10 +171,10 @@ public class VMRunner {
 			}
 			return true;
 		} catch (IOException e) {
-			log.logEx(e, "");
+			log.error(e.getMessage());
 			throw new SavException(ModuleEnum.JVM, e);
 		} catch (InterruptedException e) {
-			log.logEx(e, "");
+			log.error(e.getMessage());
 			throw new SavException(ModuleEnum.JVM, e);
 		}
 	}

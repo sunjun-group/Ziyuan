@@ -12,7 +12,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import sav.common.core.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
@@ -30,7 +32,7 @@ import sav.strategies.vm.VMConfiguration;
  *
  */
 public class JaCoCoAgent implements ICodeCoverage {
-	private Logger<?> log = Logger.getDefaultLogger();
+	private Logger log = LoggerFactory.getLogger(JaCoCoAgent.class);
 	private ICoverageReport report;
 	private ExecutionDataReporter reporter;
 	private AppJavaClassPath appClasspath;
@@ -75,15 +77,15 @@ public class JaCoCoAgent implements ICodeCoverage {
 		@SuppressWarnings("unchecked")
 		List<String> allClassNames = CollectionUtils.join(testingClassNames,
 				junitClassNames);
-		if (log.isDebug()) {
-			log.debug("Start vmRunner..")
-				.debug("destfile=", destfile)
-				.debug("junitResultFile=", junitResultFile)
-				.debug("append=true")
-				.debug("testMethods=", testMethods)
-				.debug("allClassNames=", allClassNames)
-				.debug("junitClassNames=", junitClassNames)
-				.debug("testingClassNames=", testingClassNames);
+		if (log.isDebugEnabled()) {
+			log.debug("Start vmRunner..");
+			log.debug("destfile=", destfile);
+			log.debug("junitResultFile=", junitResultFile);
+			log.debug("append=true");
+			log.debug("testMethods=", testMethods);
+			log.debug("allClassNames=", allClassNames);
+			log.debug("junitClassNames=", junitClassNames);
+			log.debug("testingClassNames=", testingClassNames);
 		}
 		for (String testMethod : testMethods) {
 			/* define arguments for JunitRunner */

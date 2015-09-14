@@ -103,7 +103,7 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 			}
 		} catch (Exception e) {
 			// ignore the instrument value
-			LOGGER.warn("cannot modify variable value: " + e.getMessage());
+			log.warn("cannot modify variable value: " + e.getMessage());
 		}
 	}
 
@@ -119,7 +119,7 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 				}
 			} catch (Exception e) {
 				// ignore the instrument value
-				LOGGER.warn("cannot modify variable value: " + e.getMessage());
+				log.warn("cannot modify variable value: " + e.getMessage());
 			}
 		}
 	}
@@ -137,7 +137,7 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 			jdiParam.setValue(newValue);
 		} catch (Exception e) {
 			// ignore the instrument value
-			LOGGER.warn("cannot modify variable value: " + e.getMessage());
+			log.warn("cannot modify variable value: " + e.getMessage());
 		}
 		
 	}

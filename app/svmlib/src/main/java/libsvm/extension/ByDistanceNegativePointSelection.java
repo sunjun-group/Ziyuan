@@ -9,8 +9,11 @@
 package libsvm.extension;
 
 import java.util.List;
-import org.apache.log4j.Logger;
+
 import libsvm.core.Machine.DataPoint;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Select a negative point on the border
@@ -19,7 +22,7 @@ import libsvm.core.Machine.DataPoint;
  *
  */
 public class ByDistanceNegativePointSelection implements NegativePointSelection{
-	protected static final Logger LOGGER = Logger.getLogger(ByDistanceNegativePointSelection.class);
+	protected static final Logger LOGGER = LoggerFactory.getLogger(ByDistanceNegativePointSelection.class);
 	
 	public DataPoint select(List<DataPoint> negatives, List<DataPoint> positives){
 		DataPoint randomPositive = getRandomPositive(positives);

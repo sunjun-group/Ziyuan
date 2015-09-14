@@ -18,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import sav.common.core.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author LLT
@@ -26,7 +27,7 @@ import sav.common.core.Logger;
  */
 public class MuMapUtils {
 	private MuMapUtils(){}
-	private static Logger<?> log = Logger.getDefaultLogger();
+	private static Logger log = LoggerFactory.getLogger(MuMapUtils.class);
 	private static final Map<String, Enum<?>> opMap;
 	
 	static {

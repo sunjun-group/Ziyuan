@@ -79,11 +79,6 @@ public class PluginLogger extends Logger<PluginLogger> {
 		logEx(ex, type == null ? "" : msg.getMessage(type));
 	}
 
-	@Override
-	public boolean isDebug() {
-		return debug;
-	}
-
 	public void debugGetImplForType(Class<?> clazz, String subType) {
 		if (debug) {
 			debug("Randomness. selected for interface: ", clazz.getName(), 

@@ -18,11 +18,12 @@ import lstar.IReportHandler.OutputType;
 import lstar.LStar;
 import lstar.LStarException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 
 import refiner.TzuYuRefiner;
-import sav.common.core.Logger;
 import sav.common.core.iface.IPrintStream;
 import sav.strategies.gentest.ISubTypesScanner;
 import tester.ITCGStrategy;
@@ -46,7 +47,7 @@ import tzuyu.engine.utils.Pair;
  * Driver of the Tzuyu engine.
  */
 public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
-
+	private static Logger log = LoggerFactory.getLogger(Tzuyu.class);
 	/* learner */
 	private Learner<TzuYuAlphabet> learner;
 	/* teacher */
@@ -61,7 +62,6 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 	private TzClass project;
 	private TzReportHandler reporter;
 	private IPrintStream tzOut;
-	private static Logger<?> logger;
 	private static ParameterNameDiscoverer paramNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
 	
 	public void setReporter(final TzReportHandler reporter) {
@@ -83,7 +83,6 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 			System.setErr(reporter.getSystemOutStream());
 		}
 		tzOut = reporter.getOutStream(OutputType.TZ_OUTPUT);
-		logger = reporter.getLogger();
 	}
 	
 	@Override
@@ -120,7 +119,7 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 		try {
 			learner.startLearning(alphabet);
 		} catch (LStarException e) {
-			getLogger().logEx(e, "Error when running Lstar module");
+			log.error("Error when running Lstar module" + e.getMessage());
 			throw new TzException(e);
 		} catch (InterruptedException e) {
 			tzOut.writeln("").writeln("The progress has been cancelled!");
@@ -176,19 +175,6 @@ public class Tzuyu implements TzuyuEngine, ITzManager<TzuYuAlphabet> {
 		return tzOut;
 	}
 	
-	@Override
-	public Logger<?> getLogger() {
-		return logger;
-	}
-	
-	public static Logger<?> getLog() {
-		return logger;
-	}
-	
-	public static void setLogger(Logger<?> logger) {
-		Tzuyu.logger = logger;
-	}
-
 	@Override
 	public void checkProgress() throws InterruptedException {
 		if (reporter.isInterrupted()) {

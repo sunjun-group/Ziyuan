@@ -15,7 +15,8 @@ import libsvm.svm_parameter;
 import libsvm.svm_problem;
 import libsvm.extension.ISelectiveSampling;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.Assert;
@@ -32,7 +33,7 @@ import sav.common.core.utils.StringUtils;
  */
 public class Machine {
 
-	private static final Logger LOGGER = Logger.getLogger(Machine.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Machine.class);
 	private static final String DEFAULT_FEATURE_PREFIX = "x";
 	private static final int SVM_TIMEOUT = 2; // In seconds
 

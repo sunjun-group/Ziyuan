@@ -34,7 +34,7 @@ public class CodeCoverageCounter extends TzuyuCore {
 	}
 
 	public int count(FaultLocateParams params) throws Exception {
-		LOGGER.info("Running " + appData.getSuspiciousCalculAlgo());
+		log.info("Running " + appData.getSuspiciousCalculAlgo());
 		CoverageCountReport reporter = new CoverageCountReport();
 		JaCoCoAgent codeCoverageTool = (JaCoCoAgent) appContext.getCodeCoverageTool();
 		codeCoverageTool.setReporter(getReporter()); 
@@ -61,9 +61,9 @@ public class CodeCoverageCounter extends TzuyuCore {
 
 	private void logBkps(List<BreakPoint> bkps) {
 		for (BreakPoint bkp : bkps) {
-			LOGGER.debug(bkp.getId());
+			log.debug(bkp.getId());
 		}
-		LOGGER.debug("total lines = " + bkps.size());
+		log.debug("total lines = " + bkps.size());
 	}
 
 	private static class CoverageCountReport implements ICoverageReport {

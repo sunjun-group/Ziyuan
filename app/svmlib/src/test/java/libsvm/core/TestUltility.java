@@ -10,10 +10,11 @@ package libsvm.core;
 
 import java.io.InputStream;
 import java.util.Scanner;
+import java.util.logging.Level;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author khanh
@@ -21,7 +22,7 @@ import org.junit.Assert;
  */
 public class TestUltility {
 
-	protected static final Logger LOGGER = Logger.getLogger(MachineSimpleTests.class);
+	protected static final Logger LOGGER = LoggerFactory.getLogger(MachineSimpleTests.class);
 
 	protected Machine machine;
 	
@@ -73,7 +74,7 @@ public class TestUltility {
 	}
 	
 	private void log(final double normalModelAccuracy) {
-		LOGGER.log(Level.DEBUG, "SVM:" + normalModelAccuracy);
+		LOGGER.debug("SVM:" + normalModelAccuracy);
 		
 		LOGGER.info("Learned logic:");
 		LOGGER.info(machine.getLearnedLogic(false));

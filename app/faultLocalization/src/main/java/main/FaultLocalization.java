@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import sav.common.core.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
@@ -34,7 +36,7 @@ import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm
  * 
  */
 public class FaultLocalization {
-	private Logger<?> log = Logger.getDefaultLogger();
+	private static Logger log = LoggerFactory.getLogger(FaultLocalization.class);
 	private ISlicer slicer;
 	private ICodeCoverage codeCoverageTool;
 	private boolean useSlicer = true; // Use slicer by default
@@ -74,7 +76,7 @@ public class FaultLocalization {
 		// slice
 		Set<BreakPoint> traces = jresult.getFailureTraces();
 		/* do slicing */
-		if (log.isDebug()) {
+		if (log.isDebugEnabled()) {
 			log.debug("failureTraces=", BreakpointUtils.getPrintStr(traces));
 		}
 		slicer.setFiltering(analyzedClasses, analyzedPackages);
@@ -82,7 +84,7 @@ public class FaultLocalization {
 				new ArrayList<BreakPoint>(jresult.getFailureTraces()),
 				JunitUtils.toClassMethodStrs(jresult.getFailTests()));
 		traces.addAll(causeTraces);
-		if (log.isDebug()) {
+		if (log.isDebugEnabled()) {
 			log.debug("causeTraces=", BreakpointUtils.getPrintStr(traces));
 		}
 		// coverage
@@ -92,7 +94,7 @@ public class FaultLocalization {
 		if (testingClasses.isEmpty()) {
 			return report;
 		}
-		if (log.isDebug()) {
+		if (log.isDebugEnabled()) {
 			log.debug("Analyzing classes: ");
 			log.debug(StringUtils.join(testingClasses, "\n"));
 		}
@@ -111,11 +113,11 @@ public class FaultLocalization {
 	public FaultLocalizationReport analyse(List<String> testingClasses,
 			List<String> junitClassNames, SpectrumAlgorithm algorithm)
 			throws Exception {
-		log.info("Start analyzing..")
-			.info("testingClasses=", testingClasses)
-			.info("junitClassNames=", junitClassNames)
-			.info("algorithm=", algorithm)
-			.info("useSlicer=", useSlicer);
+		log.info("Start analyzing..");
+		log.info("testingClasses=", testingClasses);
+		log.info("junitClassNames=", junitClassNames);
+		log.info("algorithm=", algorithm);
+		log.info("useSlicer=", useSlicer);
 		FaultLocalizationReport report = new FaultLocalizationReport();
 		CoverageReport result = new CoverageReport();
 		codeCoverageTool.run(result, testingClasses, junitClassNames);
@@ -123,13 +125,13 @@ public class FaultLocalization {
 		if (useSlicer) {
 			/* do slicing */
 			List<BreakPoint> traces = result.getFailureTraces();
-			if (log.isDebug()) {
+			if (log.isDebugEnabled()) {
 				log.debug("failureTraces=", BreakpointUtils.getPrintStr(traces));
 			}
 			slicer.setFiltering(testingClasses, null);
 			List<BreakPoint> causeTraces = slicer.slice(appClasspath, result.getFailureTraces(),
 					JunitUtils.toClassMethodStrs(result.getFailTests()));
-			if (log.isDebug()) {
+			if (log.isDebugEnabled()) {
 				log.debug("causeTraces=", BreakpointUtils.getPrintStr(causeTraces));
 			}
 			for (BreakPoint bkp : causeTraces) {

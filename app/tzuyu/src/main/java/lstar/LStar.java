@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Set;
 
 import lstar.LStarException.Type;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import tzuyu.engine.algorithm.iface.Learner;
 import tzuyu.engine.algorithm.iface.Teacher;
 import tzuyu.engine.iface.ITzManager;
@@ -23,7 +27,7 @@ import tzuyu.engine.model.exception.TzException;
  * 
  */
 public class LStar<A extends Alphabet<?>> implements Learner<A> {
-
+	private static Logger log = LoggerFactory.getLogger(LStar.class);
 	// The teacher for the L* algorithm
 	private Teacher<A> teacher;
 
@@ -68,7 +72,7 @@ public class LStar<A extends Alphabet<?>> implements Learner<A> {
 				learn();
 			} catch (LStarException e) {
 				if (e.getType() == Type.RestartLearning) {
-					manager.getLogger().info("Tzuyu - Restart Learning");
+					log.info("Tzuyu - Restart Learning");
 					restart = true;
 					this.sigma = (A) e.getNewSigma();
 				} else {

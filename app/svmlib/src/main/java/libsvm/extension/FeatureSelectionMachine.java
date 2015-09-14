@@ -7,7 +7,8 @@ import libsvm.core.IDividerProcessor;
 import libsvm.core.Machine;
 import libsvm.core.Model;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This implementation iterates on all possible subsets of 1, 2 and 3 features
@@ -24,7 +25,7 @@ import org.apache.log4j.Logger;
  * 
  */
 public class FeatureSelectionMachine extends Machine {
-	private static final Logger LOGGER = Logger.getLogger(FeatureSelectionMachine.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(FeatureSelectionMachine.class);
 	private static final int MAX_FEATURE = 2;
 	private Machine machine; // The machine used for learning, can be null
 
