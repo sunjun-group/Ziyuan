@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import sav.commons.TestConfiguration;
 import sav.commons.testdata.opensource.TestPackage;
 import sav.commons.testdata.opensource.TestPackage.TestDataColumn;
 import sav.strategies.dto.BreakPoint;
@@ -22,6 +23,12 @@ import sav.strategies.dto.BreakPoint;
  *
  */
 public class JavaSlicerPackageTest extends AbstractJavaSlicerTest {
+	
+	@Override
+	public void setup() throws Exception {
+		TestPackage.loadTestData(TestConfiguration.getEtcResources("testdata-javaslicer.csv"));
+		super.setup();
+	}
 
 	public void run(TestPackage pkg, BreakPoint bkp) throws Exception {
 		run(pkg, Arrays.asList(bkp));

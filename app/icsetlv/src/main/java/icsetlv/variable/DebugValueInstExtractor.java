@@ -15,7 +15,6 @@ import java.util.Map;
 
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
-import sav.common.core.SavRtException;
 import sav.strategies.dto.BreakPoint.Variable;
 
 import com.sun.jdi.ArrayReference;

@@ -37,8 +37,8 @@ public class TestConfiguration {
 		APP = appendPath(TRUNK, PRJ_APP);
 		SAV_COMMONS_TEST_TARGET = getTestTarget("sav.commons");
 		JAVA_HOME = getJavaHome();
-		TESTDATA_CSV  = appendPath(ETC, "testdata.csv");
-		TESTDATA_PROPERTIES = appendPath(ETC, "testdata.properties");
+		TESTDATA_CSV  = getEtcResources("testdata.csv");
+		TESTDATA_PROPERTIES = getEtcResources("testdata.properties");
 	}
 
 	private static String getTrunk() {
@@ -71,6 +71,10 @@ public class TestConfiguration {
 
 	public static TestConfiguration getInstance() {
 		return config;
+	}
+	
+	public static String getEtcResources(String fileName) {
+		return appendPath(ETC, fileName);
 	}
 
 	public String getJavaBin() {

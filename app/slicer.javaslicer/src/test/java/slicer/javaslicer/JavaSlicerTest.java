@@ -52,14 +52,4 @@ public class JavaSlicerTest extends AbstractJavaSlicerTest {
 		run(breakpoints);
 	}
 	
-	@Test
-	public void testSampleProgramEx() throws Exception {
-		String targetClass = SamplePrograms.class.getName();
-		String testClass = SampleProgramTest.class.getName();
-		BreakPoint bkp2 = new BreakPoint(testClass, "test6", 62);
-		List<BreakPoint> breakpoints = Arrays.asList(bkp2);
-		analyzedClasses = Arrays.asList(targetClass);
-		testClassMethods = Arrays.asList(testClass + ".test6");
-		run(breakpoints);
-	}
 }

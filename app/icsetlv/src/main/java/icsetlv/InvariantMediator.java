@@ -36,7 +36,7 @@ import sav.strategies.dto.BreakPoint;
  *
  */
 public class InvariantMediator {
-	private static boolean LOG_BKP_DATA = true;
+	private static boolean LOG_BKP_DATA = false;
 	private TestcasesExecutor tcExecutor;
 	private Machine machine;
 	private SelectiveSampling selectiveSampling;

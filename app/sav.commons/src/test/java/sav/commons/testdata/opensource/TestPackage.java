@@ -51,7 +51,8 @@ public class TestPackage {
 			testDataConfig.load(new FileInputStream(
 					TestConfiguration.TESTDATA_PROPERTIES));
 			workspace = testDataConfig.getProperty("testdata.workspace");
-			allTestData = loadTestData();
+			allTestData = new LinkedHashMap<String, TestPackage>();
+			loadTestData();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -62,9 +63,13 @@ public class TestPackage {
 	}
 	
 	public static Map<String, TestPackage> loadTestData() throws IOException {
+		return loadTestData(TestConfiguration.TESTDATA_CSV);
+	}
+	
+	public static Map<String, TestPackage> loadTestData(String testDataFile) throws IOException {
 		CSVFormat format = CSVFormat.EXCEL.withHeader(TestDataColumn.allColumns());
 		CSVParser parser = CSVParser.parse(new File(
-				TestConfiguration.TESTDATA_CSV), Charset.forName("UTF-8"), format);
+				testDataFile), Charset.forName("UTF-8"), format);
 		List<CSVRecord> records = parser.getRecords();
 		Map<String, TestPackage> allTests = new LinkedHashMap<String, TestPackage>();
 		for (int i = TESTDATA_START_RECORD; i < records.size(); i++) {
@@ -87,6 +92,7 @@ public class TestPackage {
 					pkg.getValue(TestDataColumn.PROJECT_NAME));
 			allTests.put(getPkgId(record), pkg);
 		}
+		allTestData.putAll(allTests);
 		return allTests;
 	}
 	

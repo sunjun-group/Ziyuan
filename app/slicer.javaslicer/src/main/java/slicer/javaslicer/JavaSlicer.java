@@ -43,9 +43,20 @@ public class JavaSlicer implements ISlicer {
 	private JavaSlicerVmRunner vmRunner;
 	private VMConfiguration vmConfig;
 	private SliceBreakpointCollector sliceCollector;
+	private StopTimer timer;
 	
 	public JavaSlicer() {
 		vmRunner = new JavaSlicerVmRunner();
+		timer = new StopTimer("Slicing");
+	}
+	
+	private void init(AppJavaClassPath appClasspath) {
+		if (sliceCollector == null) {
+			sliceCollector = new SliceBreakpointCollector();
+		}
+		sliceCollector.reset();
+		timer.start();
+		vmConfig = SavJunitRunner.createVmConfig(appClasspath);
 	}
 
 	/**
@@ -54,29 +65,20 @@ public class JavaSlicer implements ISlicer {
 	public List<BreakPoint> slice(AppJavaClassPath appClassPath, List<BreakPoint> bkps,
 			List<String> junitClassMethods) throws SavException, IOException,
 			InterruptedException, ClassNotFoundException {
-		prepareData(appClassPath);
+		init(appClassPath);
 		if (CollectionUtils.isEmpty(bkps)) {
 			log.warn("List of breakpoints to slice is empty");
 			return new ArrayList<BreakPoint>();
 		}
-		StopTimer timer = new StopTimer("Slicing");
-		
 		timer.newPoint("create Trace file");
-		String tempFileName = createTraceFile(junitClassMethods);
+		String traceFilePath = createTraceFile(junitClassMethods);
 		
 		/* do slicing */
 		timer.newPoint("slice");
-		List<BreakPoint> result = slice(tempFileName, new HashSet<BreakPoint>(bkps), timer, junitClassMethods);
-		
+		List<BreakPoint> result = sliceFromTraceFile(traceFilePath,
+				new HashSet<BreakPoint>(bkps), junitClassMethods);
 		timer.logResults(log);
 		return result;
-	}
-
-	private void prepareData(AppJavaClassPath appClasspath) {
-		if (sliceCollector == null) {
-			sliceCollector = new SliceBreakpointCollector();
-		}
-		vmConfig = SavJunitRunner.createVmConfig(appClasspath);
 	}
 
 	/**
@@ -104,8 +106,8 @@ public class JavaSlicer implements ISlicer {
 		return tempFileName;
 	}
 	
-	public List<BreakPoint> slice(String traceFilePath, Collection<BreakPoint> bkps,
-			StopTimer timer, List<String> junitClassMethods)
+	protected List<BreakPoint> sliceFromTraceFile(String traceFilePath, Collection<BreakPoint> bkps,
+			List<String> junitClassMethods)
 			throws InterruptedException, SavException {
 		log.info("Slicing-slicing...");
 		log.debug("traceFilePath=", traceFilePath);

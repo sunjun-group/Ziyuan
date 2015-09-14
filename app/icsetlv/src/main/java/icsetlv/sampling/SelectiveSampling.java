@@ -129,10 +129,6 @@ public class SelectiveSampling implements ISelectiveSampling {
 			if (points.size() > 1) {
 				break;
 			}
-			/* only select 1 point 
-			 * TODO LLT: just for test (performance reason)
-			 * */
-//			break;
 		}
 		return newPoints;
 	}

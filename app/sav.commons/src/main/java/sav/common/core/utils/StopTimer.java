@@ -34,6 +34,7 @@ public class StopTimer {
 	
 	public void start() {
 		stopTimes.clear();
+		stop = false;
 	}
 	
     public synchronized void newPoint(String name) {

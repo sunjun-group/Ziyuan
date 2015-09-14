@@ -61,7 +61,6 @@ public class AbstractTzPackageTest extends AbstractTest {
 		
 		List<String> expectedBugLocations = testPkg.getValues(TestDataColumn.EXPECTED_BUG_LOCATION);
 		
-		
 		updateSystemClasspath(appData.getAppClasspaths());
 		return expectedBugLocations;
 	}

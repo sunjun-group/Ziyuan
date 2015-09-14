@@ -29,7 +29,7 @@ public class AbstractJavaSlicerTest extends AbstractTest {
 	protected AppJavaClassPath appClasspath;
 	
 	@Before
-	public void setup() {
+	public void setup() throws Exception {
 		slicer = new JavaSlicer();
 		appClasspath = initAppClasspath();
 	}

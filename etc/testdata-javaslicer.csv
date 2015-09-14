@@ -1,0 +1,6 @@
+Note,"Check all parsed colums in TestDataColumn enum , see TestPackage for csv parsing",,,,,,,,,,
+,All testdata projects must be stored in testdata folder which path is defined in test-configuration.properties ,,,,,,,,,,
+,and the projectname is exactly the project folder name under testdata folder,,,,,,,,,,
+PROJECT_NAME,BUG_NUMBER,SOURCE_FOLDER,TARGET_FOLDER,TEST_TARGET_FOLDER,CLASS_PATH,LIB_FOLDERS,TEST_CLASSES,ANALYZING_CLASSES,ANALYZING_PACKAGES,EXPECTED_BUG_LOCATION,NOTE
+commons-lang,s1,,trunk/target/classes,trunk/target/test-classes,trunk/target/classes;trunk/target/test-classes,bin/libs,,org.apache.commons.lang3.SamplePrograms,,,
+commons-lang,s2,,trunk/target/classes,trunk/target/test-classes,trunk/target/classes;trunk/target/test-classes,bin/libs,,org.apache.commons.lang3.AnnotationUtils,,,

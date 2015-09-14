@@ -12,7 +12,6 @@ import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.mutanbug.IMutator;
 import sav.strategies.slicing.ISlicer;
-import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT

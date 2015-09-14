@@ -75,7 +75,7 @@ public abstract class BreakpointDebugger {
 		while (!stop) {
 			EventSet eventSet;
 			try {
-				eventSet = eventQueue.remove(1000);
+				eventSet = eventQueue.remove(1500);
 			} catch (InterruptedException e) {
 				// do nothing, just return.
 				break;

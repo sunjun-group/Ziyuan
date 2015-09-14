@@ -50,7 +50,6 @@ public class JavaSlicerVmRunner extends AgentVmRunner {
 	protected void buildProgramArgs(VMConfiguration config,
 			CollectionBuilder<String, Collection<String>> builder) {
 		super.buildProgramArgs(config, builder);
-//		builder.add("-s small pmd");
 	}
 	
 	public void setTraceFilePath(String traceFilePath) {
