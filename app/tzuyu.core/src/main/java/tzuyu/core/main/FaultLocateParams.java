@@ -8,7 +8,7 @@
 
 package tzuyu.core.main;
 
-import icsetlv.variable.VariableNameCollector.VarNameCollectionMode;
+import icsetlv.variable.VarNameVisitor.VarNameCollectionMode;
 
 import java.util.List;
 
