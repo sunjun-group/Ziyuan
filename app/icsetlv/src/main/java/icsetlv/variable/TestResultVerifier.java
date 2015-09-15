@@ -47,9 +47,8 @@ public class TestResultVerifier extends DefaultTestResultVerifier implements ITe
 			return TestResultType.FAIL;
 		}
 		if (!orgTestResult.getFailureTrace().isEmpty()) {
-			log.debug("unknown test result. orgTrace:",
-					orgTestResult.getFailureTrace(), ", currentTrace: ",
-					testResult.getFailureTrace());
+			log.debug("unknown test result. orgTrace: {}, currentTrace: {}",
+					orgTestResult.getFailureTrace(), testResult.getFailureTrace());
 		}
 		return TestResultType.UNKNOWN;
 	}

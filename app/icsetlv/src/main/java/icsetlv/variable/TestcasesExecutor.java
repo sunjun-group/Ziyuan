@@ -85,7 +85,7 @@ public class TestcasesExecutor extends JunitDebugger {
 		}
 		Map<TestResultType, List<BreakpointValue>> resultMap = new HashMap<TestResultType, List<BreakpointValue>>();
 		Map<String, TestResultType> tcExResult = getTcExResult(jResult);
-		for (int i = 0; i < allTests.size(); i++) {
+		for (int i = 0; i < bkpValsByTestIdx.size(); i++) {
 			TestResultType testResult = tcExResult.get(allTests.get(i));
 			if (testResult != TestResultType.UNKNOWN) {
 				List<BreakpointValue> bkpValueOfTcI = bkpValsByTestIdx.get(i);

@@ -73,16 +73,19 @@ public abstract class BreakpointDebugger {
 		/* process debug events */
 		EventQueue eventQueue = vm.eventQueue();
 		boolean stop = false;
+		boolean eventTimeout = false;
 		Map<String, BreakPoint> locBrpMap = new HashMap<String, BreakPoint>();
-		while (!stop) {
+		while (!stop && !eventTimeout) {
 			EventSet eventSet;
 			try {
-				eventSet = eventQueue.remove(1500);
+				eventSet = eventQueue.remove(3000);
 			} catch (InterruptedException e) {
 				// do nothing, just return.
 				break;
 			}
 			if (eventSet == null) {
+				log.warn("Time out! Cannot get event set!");
+				eventTimeout = true;
 				break;
 			}
 			for (Event event : eventSet) {
@@ -108,9 +111,11 @@ public abstract class BreakpointDebugger {
 			}
 			eventSet.resume();
 		}
-		vm.resume();
-		/* wait until the process completes */
-		debugger.waitProcessUntilStop();
+		if (!eventTimeout) {
+			vm.resume();
+			/* wait until the process completes */
+			debugger.waitProcessUntilStop();
+		}
 		/* end of debug */
 		afterDebugging();
 	}
