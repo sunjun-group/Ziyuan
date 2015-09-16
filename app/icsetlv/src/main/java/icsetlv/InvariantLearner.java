@@ -11,9 +11,6 @@ package icsetlv;
 import icsetlv.common.dto.BkpInvariantResult;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
-import icsetlv.common.dto.ExecValue;
-import icsetlv.common.dto.ExecVar;
-import icsetlv.common.dto.ExecVarType;
 import icsetlv.sampling.SelectiveSampling;
 
 import java.util.ArrayList;
@@ -38,6 +35,9 @@ import sav.common.core.formula.Formula;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.execute.value.ExecValue;
+import sav.strategies.dto.execute.value.ExecVar;
+import sav.strategies.dto.execute.value.ExecVarType;
 
 /**
  * @author LLT

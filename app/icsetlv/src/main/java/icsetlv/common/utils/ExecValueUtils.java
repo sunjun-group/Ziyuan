@@ -8,7 +8,7 @@
 
 package icsetlv.common.utils;
 
-import icsetlv.common.dto.ExecValue;
+import sav.strategies.dto.execute.value.ExecValue;
 
 /**
  * @author LLT

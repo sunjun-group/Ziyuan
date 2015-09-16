@@ -3,17 +3,19 @@ package assertion.template.checker;
 import java.util.ArrayList;
 import java.util.List;
 
-import assertion.template.Template;
 import icsetlv.InvariantMediator;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
-import icsetlv.common.dto.ExecValue;
-import icsetlv.common.dto.ExecVar;
-import icsetlv.common.dto.PrimitiveValue;
 import icsetlv.sampling.SelectiveSampling;
+import invariant.templates.Template;
+import invariant.templates.checker.PrimitiveTemplateChecker;
+import invariant.templates.checker.TypeTemplateChecker;
 import sav.common.core.Pair;
 import sav.common.core.formula.Eq;
 import sav.common.core.utils.CollectionUtils;
+import sav.strategies.dto.execute.value.ExecValue;
+import sav.strategies.dto.execute.value.ExecVar;
+import sav.strategies.dto.execute.value.PrimitiveValue;
 
 public class TemplateChecker {
 

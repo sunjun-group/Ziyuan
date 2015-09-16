@@ -10,7 +10,6 @@ package icsetlv;
 
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
-import icsetlv.common.dto.ExecVar;
 
 import java.util.List;
 
@@ -18,6 +17,7 @@ import sav.common.core.Pair;
 import sav.common.core.formula.Eq;
 import sav.common.core.formula.Formula;
 import sav.common.core.formula.utils.FormulaUtils;
+import sav.strategies.dto.execute.value.ExecVar;
 
 /**
  * @author LLT

@@ -83,6 +83,7 @@
 		<module>../tzuyu.core</module>
 		<module>../tzuyu</module>
 		<module>../assertion</module>
+		<module>../invariant.templates</module>
 	</modules>
 	<build>
 		<pluginManagement>
@@ -290,6 +291,11 @@
 			<dependency>
 				<groupId>tzuyu-project</groupId>
 				<artifactId>assertion</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>invariant.templates</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<!-- specific for test -->

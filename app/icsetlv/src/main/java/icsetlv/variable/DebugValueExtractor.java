@@ -9,12 +9,7 @@
 package icsetlv.variable;
 
 import icsetlv.DefaultValues;
-import icsetlv.common.dto.ArrayValue;
 import icsetlv.common.dto.BreakpointValue;
-import icsetlv.common.dto.ExecValue;
-import icsetlv.common.dto.PrimitiveValue;
-import icsetlv.common.dto.ReferenceValue;
-import icsetlv.common.dto.StringValue;
 import icsetlv.common.utils.PrimitiveUtils;
 
 import java.util.ArrayList;
@@ -34,6 +29,11 @@ import sav.common.core.SavRtException;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.dto.BreakPoint.Variable.VarScope;
+import sav.strategies.dto.execute.value.ArrayValue;
+import sav.strategies.dto.execute.value.ExecValue;
+import sav.strategies.dto.execute.value.PrimitiveValue;
+import sav.strategies.dto.execute.value.ReferenceValue;
+import sav.strategies.dto.execute.value.StringValue;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayReference;
@@ -267,7 +267,7 @@ public class DebugValueExtractor {
 		if (type instanceof PrimitiveType) {
 			/* TODO LLT: add Primitive type && refactor */
 			if (type instanceof BooleanType) {
-				parent.add(icsetlv.common.dto.BooleanValue.of(varId, ((BooleanValue)value).booleanValue()));
+				parent.add(sav.strategies.dto.execute.value.BooleanValue.of(varId, ((BooleanValue)value).booleanValue()));
 			} else {
 				parent.add(new PrimitiveValue(varId, value.toString()));
 			}

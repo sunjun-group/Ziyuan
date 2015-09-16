@@ -80,9 +80,8 @@ public class Engine {
 //		final Machine machine = new PositiveSeparationMachine(new RandomNegativePointSelection());
 //		Machine machine = new FeatureSelectionMachine();
 		Machine machine = new Machine();
-		return machine.setParameter(new Parameter().setMachineType(MachineType.C_SVC)
-				.setKernelType(KernelType.LINEAR).setEps(0.00001).setUseShrinking(false)
-				.setPredictProbability(false).setC(Double.MAX_VALUE));
+		machine.setDefaultParams();
+		return machine;
 	}
 	
 	public Engine addBreakPoint(final String className, final String methodName,

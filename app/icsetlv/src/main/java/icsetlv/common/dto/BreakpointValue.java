@@ -15,7 +15,8 @@ import java.util.List;
 import java.util.Set;
 
 import sav.common.core.utils.CollectionUtils;
-import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.execute.value.ExecValue;
+import sav.strategies.dto.execute.value.ExecVarType;
 
 /**
  * @author LLT
@@ -50,10 +51,10 @@ public class BreakpointValue extends ExecValue {
 	}
 
 	private Double getValue(final String variableId, final ExecValue value) {
-		if (value.varId.equals(variableId)) {
+		if (value.getVarId().equals(variableId)) {
 			return Double.valueOf(value.getDoubleVal());
 		} else {
-			for (ExecValue child : CollectionUtils.nullToEmpty(value.children)) {
+			for (ExecValue child : CollectionUtils.nullToEmpty(value.getChildren())) {
 				Double val = getValue(variableId, child);
 				if (val != null) {
 					return val;
@@ -69,10 +70,10 @@ public class BreakpointValue extends ExecValue {
 
 	private Set<String> getChildLabels(final ExecValue value) {
 		final Set<String> labels = new HashSet<String>();
-		if (value == null || value.children == null || value.children.isEmpty()) {
-			labels.add(value.varId);
+		if (value == null || value.getChildren() == null || value.getChildren().isEmpty()) {
+			labels.add(value.getVarId());
 		} else {
-			for (ExecValue child : value.children) {
+			for (ExecValue child : value.getChildren()) {
 				labels.addAll(getChildLabels(child));
 			}
 		}
@@ -90,11 +91,11 @@ public class BreakpointValue extends ExecValue {
 	}
 
 	private List<Double> getChildValues(final ExecValue value) {
-		if (value == null || value.children == null || value.children.isEmpty()) {
+		if (value == null || value.getChildren() == null || value.getChildren().isEmpty()) {
 			return Arrays.asList(value.getDoubleVal());
 		} else {
 			List<Double> labels = new ArrayList<Double>();
-			for (ExecValue child : value.children) {
+			for (ExecValue child : value.getChildren()) {
 				labels.addAll(getChildValues(child));
 			}
 			return labels;

@@ -8,8 +8,6 @@
 
 package icsetlv.sampling;
 
-import icsetlv.common.dto.ExecVar;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,6 +37,7 @@ import sav.common.core.formula.LIATerm;
 import sav.common.core.formula.utils.ExpressionVisitor;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
+import sav.strategies.dto.execute.value.ExecVar;
 
 
 /**

@@ -10,7 +10,6 @@ package icsetlv;
 
 import icsetlv.common.dto.BkpInvariantResult;
 import icsetlv.common.dto.BreakpointData;
-import icsetlv.common.dto.ExecVar;
 import icsetlv.sampling.SelectiveSampling;
 import icsetlv.variable.DebugValueInstExtractor;
 import icsetlv.variable.JunitDebugger;
@@ -30,6 +29,7 @@ import sav.common.core.utils.StopTimer;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.execute.value.ExecVar;
 
 /**
  * @author LLT

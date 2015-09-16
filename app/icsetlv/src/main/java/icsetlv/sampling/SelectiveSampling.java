@@ -10,7 +10,6 @@ package icsetlv.sampling;
 
 import icsetlv.InvariantMediator;
 import icsetlv.common.dto.BreakpointData;
-import icsetlv.common.dto.ExecVar;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,6 +34,7 @@ import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.execute.value.ExecVar;
 
 /**
  * @author LLT

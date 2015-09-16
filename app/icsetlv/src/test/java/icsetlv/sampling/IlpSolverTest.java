@@ -8,9 +8,6 @@
 
 package icsetlv.sampling;
 
-import icsetlv.common.dto.ExecVar;
-import icsetlv.common.dto.ExecVarType;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +21,8 @@ import sav.common.core.formula.LIAAtom;
 import sav.common.core.formula.LIATerm;
 import sav.common.core.formula.Operator;
 import sav.commons.AbstractTest;
+import sav.strategies.dto.execute.value.ExecVar;
+import sav.strategies.dto.execute.value.ExecVarType;
 
 /**
  * @author LLT
