@@ -1,5 +1,9 @@
 package assertion.invchecker;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import assertion.template.Template;
 import icsetlv.common.dto.ExecValue;
 import icsetlv.common.dto.ExecVar;
 import icsetlv.common.dto.ExecVarType;
@@ -83,6 +87,10 @@ public class TypeInvChecker {
 	
 	public List<Formula> check(List<List<ExecValue>> passExecValues, List<List<ExecValue>> failExecValues) {
 		return new ArrayList<Formula>();
+	}
+	
+	public List<Template> checkTemplate(List<List<ExecValue>> passExecValues, List<List<ExecValue>> failExecValues) {
+		return new ArrayList<Template>();
 	}
 	
 }

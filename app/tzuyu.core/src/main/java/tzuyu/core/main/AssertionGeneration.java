@@ -3,6 +3,9 @@ package tzuyu.core.main;
 import icsetlv.InvariantMediator;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
+import icsetlv.common.dto.ExecValue;
+import icsetlv.common.dto.ExecVar;
+import icsetlv.common.dto.PrimitiveValue;
 import icsetlv.sampling.IlpSolver;
 import icsetlv.sampling.SelectiveSampling;
 import japa.parser.JavaParser;
@@ -33,11 +36,14 @@ import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.IApplicationContext;
 import sav.strategies.dto.BreakPoint;
+import sav.strategies.vm.VMConfiguration;
 import slicer.javaslicer.JavaSlicer;
 import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.mutantbug.FilesBackup;
 import tzuyu.core.mutantbug.Recompiler;
 import assertion.invchecker.InvChecker;
+import assertion.template.Template;
+import assertion.template.checker.TemplateChecker;
 import assertion.visitor.AddAssertStmtVisitor;
 import assertion.visitor.GetLearningLocationsVisitor;
 
@@ -74,12 +80,11 @@ public class AssertionGeneration extends TzuyuCore {
 			recompiler.recompileJFile(appData.getAppTarget(), newFile);
 			
 			// add locations used to learn new assertion
-			// getTestCases(params);
-			testJavaSlicer();
 			List<BreakPoint> locations = addLearningLocations(srcFolder, className);
 			
 			// learn assertions for new locations
-			machineLearningForAssertion(locations, params);
+			// machineLearningForAssertion(locations, params);
+			templateLearning(locations, params);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -90,34 +95,8 @@ public class AssertionGeneration extends TzuyuCore {
 		}
 		
 	}
-
-	public void testJavaSlicer() {
-		try {
-			JavaSlicer slicer = new JavaSlicer();
-		
-			String targetClass = "sav.commons.testdata.assertion.TestInput"; // TestInput.class.getName();
-			String testClass = "sav.commons.testdata.assertion.TestInput1"; // TestInput1.class.getName();
-			BreakPoint bkp1 = new BreakPoint(targetClass, "foo", 6);
-			List<BreakPoint> breakpoints = Arrays.asList(bkp1);
-			List<String> analyzedClasses = Arrays.asList(targetClass);
-			List<String> testClassMethods = JunitUtils.extractTestMethods(Arrays
-					.asList(testClass));
-			
-			slicer.setFiltering(analyzedClasses, null);
-			List<BreakPoint> result = slicer.slice(appData.getAppClassPath(),
-					breakpoints, testClassMethods);
-			if (result.isEmpty()) {
-				System.out.println("EMPTY RESULT!!!");
-			}
-			for (BreakPoint bkp : result) {
-				System.out.println(bkp);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 	 
-	public List<String> getTestCases(AssertionGenerationParams params) {
+	public List<String> getRandomTestCases(AssertionGenerationParams params) {
 		List<String> junitClassNames = new ArrayList<String>(params.getJunitClassNames());
 		
 		while (true) {
@@ -142,11 +121,86 @@ public class AssertionGeneration extends TzuyuCore {
 		return tests;
 	}
 	
+	public void templateLearning(List<BreakPoint> locations, AssertionGenerationParams params)
+			throws Exception
+	{
+		// get random test cases
+		List<String> tests = getRandomTestCases(params);
+		
+		// collect data at break points
+		InvariantMediator im = new InvariantMediator(appData.getAppClassPath());
+		List<BreakpointData> bkpsData = im.debugTestAndCollectData(tests, locations);
+		
+		// check data with templates
+		TemplateChecker tc = new TemplateChecker(im);
+		List<Pair<BreakpointData, List<Template>>> bkpsTemplates = tc.checkTemplates(bkpsData);
+		// SelectiveSampling ss = new SelectiveSampling(im);
+		
+		/*
+		List<Pair<BreakpointData, List<Template>>> finalBkpsTemplates = new ArrayList<Pair<BreakpointData, List<Template>>>();
+		
+		// learn template invs for each breakponit data
+		for (int i = 0; i < bkpsData.size(); i++) {
+			Pair<BreakpointData, List<Template>> bkpTemplates = tc.checkTemplates(bkpsData.get(i));
+			List<Template> templates = bkpTemplates.b;
+			
+			System.out.println(templates);
+			
+			if (templates.size() == 0) {
+				finalBkpsTemplates.add(bkpTemplates);
+				continue;
+			} else {
+				List<Template> newTemplates = new ArrayList<Template>();
+				
+				for (Template template : templates) {
+					List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
+					assignments.add(template.solve());
+					assignments = mutate(assignments);
+					
+					for (List<Eq<?>> valSet : assignments) {
+						List<BreakpointData> newBkpsData = im.instDebugAndCollectData(
+								CollectionUtils.listOf(bkpsData.get(i).getBkp()), ss.toInstrVarMap(valSet));
+						BreakpointData newBkpData = newBkpsData.get(0);
+						
+						List<ExecValue> newExecValues = new ArrayList<ExecValue>();
+						for (Eq<?> e : valSet) {
+							// the name of variable is not important here, only need the value
+							ExecVar eVar = (ExecVar) e.getVar();
+							String eVal = e.getValue().toString();
+							ExecValue ev = new PrimitiveValue(eVar.getVarId(), eVal);
+							newExecValues.add(ev);
+						}
+						
+						// new pass value, add valSet into list of pass values of template
+						if (newBkpData.getPassValues().size() != 0) {
+							template.addPassValues(newExecValues);
+						}
+						
+						// new fail value, add valSet into list of fail values of template
+						if (newBkpData.getFailValues().size() != 0) {
+							template.addFailValues(newExecValues);
+						}
+					}
+					
+					// check template again
+					if (template.check()) newTemplates.add(template);
+				}
+				
+				System.out.println(newTemplates);
+				Pair<BreakpointData, List<Template>> newBkpTemplates =
+						new Pair<BreakpointData, List<Template>>(bkpTemplates.a, newTemplates);
+				
+				finalBkpsTemplates.add(newBkpTemplates);
+			}
+		}
+		*/
+	}
+	
 	public void machineLearningForAssertion(List<BreakPoint> locations, AssertionGenerationParams params) 
 			throws Exception
 	{
 		// get random test cases
-		List<String> tests = getTestCases(params);
+		List<String> tests = getRandomTestCases(params);
 		
 		// LearnInvariants learnInvariant = new LearnInvariants(appData.getVmConfig(), params);
 		// List<BkpInvariantResult> invariants = learnInvariant.learn(locations, 
@@ -285,14 +339,18 @@ public class AssertionGeneration extends TzuyuCore {
 							Var v = e.getVar();
 							Object value = e.getValue();
 							
-							if (value instanceof Integer) {
+							/*if (value instanceof Number) {
+								Number nValue = (Number)value;
+								nValue = k == 0 ? nValue.doubleValue() + 1.0 : nValue.doubleValue() - 1.0;
+								newAssignment.add(new Eq<Number>(v, nValue));
+							} else*/ if (value instanceof Integer) {
 								Integer iValue = (Integer)value;
 								iValue = k == 0 ? iValue + 1 : iValue - 1;
-								newAssignment.add(new Eq<Integer>(v, iValue));
+								newAssignment.add(new Eq<Number>(v, iValue));
 							} else if (value instanceof Double) {
 								Double dValue = (Double)value;
-								dValue += k == 0 ? dValue + 1.0 : dValue - 1.0;
-								newAssignment.add(new Eq<Double>(v, dValue));
+								dValue = k == 0 ? dValue + 1.0 : dValue - 1.0;
+								newAssignment.add(new Eq<Number>(v, dValue));
 							} else {
 								newAssignment.add(e);
 							} 

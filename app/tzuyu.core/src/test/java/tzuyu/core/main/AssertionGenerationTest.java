@@ -10,9 +10,10 @@ import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm
 import sav.common.core.Constants;
 import sav.common.core.utils.CollectionUtils;
 import sav.commons.TestConfiguration;
-import sav.commons.testdata.assertion.TestInput;
+import sav.commons.testdata.assertion.PrimitiveAssertionTest;
 // import sav.commons.testdata.assertion.TestInput;
 // import sav.commons.testdata.assertion.TestInput2;
+import sav.commons.testdata.assertion.StackAssertionTest;
 
 public class AssertionGenerationTest extends TzuyuCoreTest {
 	
@@ -21,13 +22,13 @@ public class AssertionGenerationTest extends TzuyuCoreTest {
 		testContext.getAppData().addClasspath(TestConfiguration.getTarget("slicer.javaslicer"));
 		appData.setSuspiciousCalculAlgo(SpectrumAlgorithm.OCHIAI);
 		app = new AssertionGeneration(testContext, appData);
-		appData.setJavaHome("D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b");
+		// appData.setJavaHome("D:/_1_Projects/Tzuyu/tools/jdk1.6.0_26-64b");
 	}
 	
 	@Test
 	public void test1() throws Exception {
 		AssertionGenerationParams params = initAssertionGenerationParams(
-				TestInput.class.getName(), //TestInput.class.getName(), 
+				PrimitiveAssertionTest.class.getName(),
 				"foo", null,
 				CollectionUtils.listOf("sav.commons.testdata.assertion"),
 				new ArrayList<String>(),
@@ -39,7 +40,7 @@ public class AssertionGenerationTest extends TzuyuCoreTest {
 	@Test
 	public void test2() throws Exception {
 		AssertionGenerationParams params = initAssertionGenerationParams(
-				"sav.commons.testdata.assertion.TestInput2", 
+				StackAssertionTest.class.getName(), 
 				"foo", null,
 				CollectionUtils.listOf("sav.commons.testdata.assertion"),
 				new ArrayList<String>(), false);
@@ -61,7 +62,7 @@ public class AssertionGenerationTest extends TzuyuCoreTest {
 		params.setRunMutation(false);
 		params.setMachineLearningEnable(true);
 		params.setValueRetrieveLevel(3);
-		params.setNumberOfTestCases(10);
+		params.setNumberOfTestCases(100);
 		params.setRankToExamine(0);
 		
 		return params;

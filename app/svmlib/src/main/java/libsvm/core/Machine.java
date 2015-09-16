@@ -392,7 +392,7 @@ public class Machine {
 		return getLearnedLogic(processor, getDivider(), round);
 	}
 	
-	private <R> R getLearnedLogic(IDividerProcessor<R> processor, Divider divider, boolean round) {
+	public <R> R getLearnedLogic(IDividerProcessor<R> processor, Divider divider, boolean round) {
 		return processor.process(divider, dataLabels, round);
 	}
 
@@ -404,7 +404,7 @@ public class Machine {
 		return formula.toString();
 	}
 	
-	private Divider getDivider() {
+	public Divider getDivider() {
 		Model currentModel = getModel();
 		if (currentModel == null) {
 			return null;

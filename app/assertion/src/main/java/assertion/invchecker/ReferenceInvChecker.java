@@ -96,6 +96,8 @@ public class ReferenceInvChecker extends TypeInvChecker {
 			flattenExecValues(flattenPassExecValuesList, passExecValuesList);
 			flattenExecValues(flattenFailExecValuesList, failExecValuesList);
 			
+			System.out.println("FLATTEN VALUES: " + flattenPassExecValuesList);
+			
 			// check each group of children values
 			for (int i = 0; i < flattenPassExecValuesList.get(0).size(); i++) {
 				List<ExecValue> passExecValues = new ArrayList<ExecValue>();

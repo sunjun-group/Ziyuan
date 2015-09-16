@@ -17,8 +17,6 @@ import org.junit.Test;
 import sav.common.core.utils.JunitUtils;
 import sav.commons.testdata.SampleProgramTest;
 import sav.commons.testdata.SamplePrograms;
-import sav.commons.testdata.assertion.TestInput;
-import sav.commons.testdata.assertion.TestInput1;
 import sav.strategies.dto.BreakPoint;
 
 
@@ -33,18 +31,6 @@ public class JavaSlicerTest extends AbstractJavaSlicerTest {
 		String targetClass = SamplePrograms.class.getName();
 		String testClass = SampleProgramTest.class.getName();
 		BreakPoint bkp2 = new BreakPoint(testClass, "test2", 26);
-		List<BreakPoint> breakpoints = Arrays.asList(bkp2);
-		analyzedClasses = Arrays.asList(targetClass);
-		testClassMethods = JunitUtils.extractTestMethods(Arrays
-				.asList(testClass));
-		run(breakpoints);
-	}
-	
-	@Test
-	public void testTestInput() throws Exception {
-		String targetClass = TestInput.class.getName();
-		String testClass = TestInput1.class.getName();
-		BreakPoint bkp2 = new BreakPoint(targetClass, "foo", 6);
 		List<BreakPoint> breakpoints = Arrays.asList(bkp2);
 		analyzedClasses = Arrays.asList(targetClass);
 		testClassMethods = JunitUtils.extractTestMethods(Arrays

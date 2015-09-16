@@ -8,11 +8,10 @@
 
 package tzuyu.core.main;
 
-import icsetlv.variable.VariableNameCollector.VarNameCollectionMode;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import icsetlv.variable.VarNameVisitor.VarNameCollectionMode;
 import sav.commons.testdata.opensource.TestPackage;
 
 /**

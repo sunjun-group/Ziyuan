@@ -7,7 +7,6 @@ public class Calculator {
 			int a = (int) Math.rint(Math.random()) + 1;
 			x = x + a;
 		}
-		
 		return x + y;
 	}
 	

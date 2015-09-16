@@ -1,12 +1,11 @@
 package icsetlv;
 
-import icsetlv.common.dto.BkpInvariantResult;
-import icsetlv.variable.TestcasesExecutor;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import icsetlv.common.dto.BkpInvariantResult;
+import icsetlv.variable.TestcasesExecutor;
 import libsvm.core.KernelType;
 import libsvm.core.Machine;
 import libsvm.core.MachineType;
@@ -14,6 +13,8 @@ import libsvm.core.Parameter;
 import libsvm.extension.FeatureSelectionMachine;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.AppJavaClassPath;
+import libsvm.extension.PositiveSeparationMachine;
+import libsvm.extension.RandomNegativePointSelection;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 
@@ -75,9 +76,10 @@ public class Engine {
 		return this.machine;
 	}
 
-	private Machine getDefaultMachine() {
+	public static Machine getDefaultMachine() {
 //		final Machine machine = new PositiveSeparationMachine(new RandomNegativePointSelection());
-		Machine machine = new FeatureSelectionMachine();
+//		Machine machine = new FeatureSelectionMachine();
+		Machine machine = new Machine();
 		return machine.setParameter(new Parameter().setMachineType(MachineType.C_SVC)
 				.setKernelType(KernelType.LINEAR).setEps(0.00001).setUseShrinking(false)
 				.setPredictProbability(false).setC(Double.MAX_VALUE));

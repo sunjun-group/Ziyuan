@@ -1,18 +1,118 @@
-package assertion.invchecker;
+package assertion.template.checker;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import assertion.template.Template;
+import icsetlv.InvariantMediator;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.dto.ExecValue;
+import icsetlv.common.dto.ExecVar;
+import icsetlv.common.dto.PrimitiveValue;
+import icsetlv.sampling.SelectiveSampling;
 import sav.common.core.Pair;
-import sav.common.core.formula.Formula;
+import sav.common.core.formula.Eq;
+import sav.common.core.utils.CollectionUtils;
 
-public class InvChecker {
+public class TemplateChecker {
 
-	public void flattenValues(List<ExecValue> props, ExecValue ev) {
+	private InvariantMediator im;
+	
+	public TemplateChecker() {
+		
+	}
+	
+	public TemplateChecker(InvariantMediator im) {
+		this.im = im;
+	}
+	
+	public List<Pair<BreakpointData, List<Template>>> checkTemplates(List<BreakpointData> bkpsData) {
+		List<Pair<BreakpointData, List<Template>>> bkpsTemplates = new ArrayList<Pair<BreakpointData, List<Template>>>();
+		
+		for (BreakpointData bkpData : bkpsData) {
+			bkpsTemplates.add(checkTemplates(bkpData));
+		}
+		
+		return bkpsTemplates;
+	}
+	
+	public Pair<BreakpointData, List<Template>> checkTemplates(BreakpointData bkpData) {
+		List<List<ExecValue>> passExecValuesList = new ArrayList<List<ExecValue>>();
+		List<List<ExecValue>> failExecValuesList = new ArrayList<List<ExecValue>>();
+			
+		// get pass values
+		for (BreakpointValue bv : bkpData.getPassValues()) {
+			passExecValuesList.add(bv.getChildren());
+		}
+			
+		// get fail values
+		for (BreakpointValue bv : bkpData.getFailValues()) {
+			failExecValuesList.add(bv.getChildren());
+		}
+			
+		List<Template> initTemplates = checkTemplateWithExecValues(passExecValuesList, failExecValuesList);
+		List<Template> finalTemplates = new ArrayList<Template>();
+		
+		for (Template template : initTemplates) {
+			boolean isSatified = true;
+			
+			// check again with sampling values
+			for (int i = 0; i < 10; i++) {
+			// for (;;) {
+				System.out.println("Template: " + template);
+				
+				List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
+				assignments.addAll(template.sampling());
+				
+				SelectiveSampling ss = new SelectiveSampling(im);
+				
+				for (List<Eq<?>> valSet : assignments) {
+					List<BreakpointData> newBkpsData = null;
+					
+					try {
+						newBkpsData = im.instDebugAndCollectData(
+								CollectionUtils.listOf(bkpData.getBkp()), ss.toInstrVarMap(valSet));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+							
+					BreakpointData newBkpData = newBkpsData.get(0);
+					
+					List<ExecValue> newExecValues = new ArrayList<ExecValue>();
+					for (Eq<?> e : valSet) {
+						// the name of variable is not important here, only need the value
+						ExecVar eVar = (ExecVar) e.getVar();
+						String eVal = e.getValue().toString();
+						ExecValue ev = new PrimitiveValue(eVar.getVarId(), eVal);
+						newExecValues.add(ev);
+					}
+					
+					// new pass value, add valSet into list of pass values of template
+					if (newBkpData.getPassValues().size() != 0) {
+						template.addPassValues(newExecValues);
+					}
+					
+					// new fail value, add valSet into list of fail values of template
+					if (newBkpData.getFailValues().size() != 0) {
+						template.addFailValues(newExecValues);
+					}
+				}
+				
+				// check template again
+				isSatified = template.check();
+				if (!isSatified) break;
+				else if (!template.isChanged()) break;
+			}
+			
+			if (isSatified) finalTemplates.add(template);
+		}
+		
+		System.out.println("Final templates: " + finalTemplates);
+		return new Pair<BreakpointData, List<Template>>(bkpData, finalTemplates);
+	}
+	
+	private void flattenValues(List<ExecValue> props, ExecValue ev) {
 		for (ExecValue child : ev.getChildren()) {
 			if (child.getChildren() != null) {
 				flattenValues(props, child);
@@ -22,8 +122,7 @@ public class InvChecker {
 		}
 	}
 	
-	
-	public void classifyExecValues(List<List<ExecValue>> referenceExecValuesList,
+	private void classifyExecValues(List<List<ExecValue>> referenceExecValuesList,
 			List<List<ExecValue>> booleanExecValuesList,
 			List<List<ExecValue>> stringExecValuesList,
 			List<List<ExecValue>> primitiveExecValuesList,
@@ -67,9 +166,8 @@ public class InvChecker {
 		}
 	}
 	
-	public List<Formula> checkWithExecValues(List<List<ExecValue>> origPassExecValuesList,
+	private List<Template> checkTemplateWithExecValues(List<List<ExecValue>> origPassExecValuesList,
 			List<List<ExecValue>> origFailExecValuesList) {
-		// List<List<ExecValue>> passExecValuesList = origPassExecValuesList;
 		List<List<ExecValue>> passExecValuesList = new ArrayList<List<ExecValue>>();
 		for (List<ExecValue> evl : origPassExecValuesList) {
 			List<ExecValue> newEvl = new ArrayList<ExecValue>();
@@ -90,7 +188,6 @@ public class InvChecker {
 			passExecValuesList.add(newEvl);
 		}
 		
-		// List<List<ExecValue>> failExecValuesList = origFailExecValuesList;
 		List<List<ExecValue>> failExecValuesList = new ArrayList<List<ExecValue>>();
 		for (List<ExecValue> evl : origFailExecValuesList) {
 			List<ExecValue> newEvl = new ArrayList<ExecValue>();
@@ -111,28 +208,22 @@ public class InvChecker {
 			failExecValuesList.add(newEvl);
 		}
 		
-		System.out.println("Pass values:");
-		System.out.println(passExecValuesList + "\n");
-		
-		System.out.println("Fail values;");
-		System.out.println(failExecValuesList + "\n");
-		
 		// classify exec values according to variables' types
 		List<List<ExecValue>> passReferenceExecValuesList = new ArrayList<List<ExecValue>>();
 		List<List<ExecValue>> failReferenceExecValuesList = new ArrayList<List<ExecValue>>();
 
 		List<List<ExecValue>> passBooleanExecValuesList = new ArrayList<List<ExecValue>>();
 		List<List<ExecValue>> failBooleanExecValuesList = new ArrayList<List<ExecValue>>();
-		
+				
 		List<List<ExecValue>> passStringExecValuesList = new ArrayList<List<ExecValue>>();
 		List<List<ExecValue>> failStringExecValuesList = new ArrayList<List<ExecValue>>();
-		
+				
 		List<List<ExecValue>> passPrimitiveExecValuesList = new ArrayList<List<ExecValue>>();
 		List<List<ExecValue>> failPrimitiveExecValuesList = new ArrayList<List<ExecValue>>();
 
 		List<List<ExecValue>> passArrayExecValuesList = new ArrayList<List<ExecValue>>();
 		List<List<ExecValue>> failArrayExecValuesList = new ArrayList<List<ExecValue>>();
-		
+				
 		classifyExecValues(passReferenceExecValuesList, passBooleanExecValuesList, passStringExecValuesList,
 				passPrimitiveExecValuesList, passArrayExecValuesList, passExecValuesList);
 		classifyExecValues(failReferenceExecValuesList, failBooleanExecValuesList, failStringExecValuesList,
@@ -153,65 +244,16 @@ public class InvChecker {
 		System.out.println("pass array: " + passArrayExecValuesList);
 		System.out.println("fail array: " + failArrayExecValuesList);
 		
-		// check pass and fail values with template inv
-		TypeInvChecker checker = null;
-
-		checker = new ReferenceInvChecker();
-		List<Formula> referenceInvs = checker.check(passReferenceExecValuesList, failReferenceExecValuesList);
+		List<Template> templates = new ArrayList<Template>();
 		
-		checker = new BooleanInvChecker();
-		List<Formula> booleanInvs = checker.check(passBooleanExecValuesList, failBooleanExecValuesList);
+		TypeTemplateChecker tc = null;
 		
-		checker = new PrimitiveInvChecker();
-		List<Formula> primitiveInvs = checker.check(passPrimitiveExecValuesList, failPrimitiveExecValuesList);
-				
-		List<Formula> invs = new ArrayList<Formula>();
-		// invs.addAll(referenceInvs);
-		// invs.addAll(booleanInvs);
-		invs.addAll(primitiveInvs);
+		tc = new PrimitiveTemplateChecker();
+		List<Template> primitiveTemplates = tc.checkTemplates(passPrimitiveExecValuesList, failPrimitiveExecValuesList);
 		
-		// System.out.println(invs);
+		templates.addAll(primitiveTemplates);
 		
-		return invs;
-	}
-	
-	public Pair<BreakpointData, List<Formula>> check(BreakpointData bkpData) {
-		List<List<ExecValue>> passExecValuesList = new ArrayList<List<ExecValue>>();
-		List<List<ExecValue>> failExecValuesList = new ArrayList<List<ExecValue>>();
-			
-		// get pass values
-		for (BreakpointValue bv : bkpData.getPassValues()) {
-			passExecValuesList.add(bv.getChildren());
-		}
-			
-		// get fail values
-		for (BreakpointValue bv : bkpData.getFailValues()) {
-			failExecValuesList.add(bv.getChildren());
-		}
-			
-		List<Formula> newInvs = checkWithExecValues(passExecValuesList, failExecValuesList);
-		
-		return new Pair<BreakpointData, List<Formula>>(bkpData, newInvs);
-	}
-	
-	public List<Pair<BreakpointData, List<Formula>>> check(List<BreakpointData> bkpsData) {
-		
-		List<Pair<BreakpointData, List<Formula>>> bkpsInvs = new ArrayList<Pair<BreakpointData, List<Formula>>>();
-		
-		// proceed each break points
-		for (int i = 0; i < bkpsData.size(); i++) {
-			BreakpointData bkpData = bkpsData.get(i);
-				
-			bkpsInvs.add(check(bkpData));
-		}
-		
-		return bkpsInvs;
-	}
-
-
-	public Pair<BreakpointData, List<Template>> checkTemplate(BreakpointData breakpointData) {
-		// TODO Auto-generated method stub
-		return null;
+		return templates;
 	}
 	
 }
