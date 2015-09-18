@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.Before;
 
 import sav.common.core.Constants;
+import sav.common.core.SavJunitAppClasspathUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.commons.TestConfiguration;
 import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
@@ -26,7 +27,8 @@ public abstract class TzuyuCoreTest extends AbstractTzTest {
 	
 	@Before
 	public void setup() throws Exception {
-		testContext.getAppData().addClasspath(TestConfiguration.getTarget("slicer.javaslicer"));
+		String jarPath = SavJunitAppClasspathUtils.updateSavJunitJarPath(appData.getAppClassPath());
+		testContext.getAppData().addClasspath(jarPath);
 		appData.setSuspiciousCalculAlgo(SpectrumAlgorithm.OCHIAI);
 		app = new TzuyuCore(testContext, appData);
 	}

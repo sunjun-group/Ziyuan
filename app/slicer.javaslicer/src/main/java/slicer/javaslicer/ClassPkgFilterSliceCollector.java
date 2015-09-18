@@ -20,7 +20,7 @@ import de.unisb.cs.st.javaslicer.common.classRepresentation.Instruction;
  *
  */
 public class ClassPkgFilterSliceCollector extends ClassFilterSliceCollector {
-	private Set<String> analyzedPackages; 
+	protected Set<String> analyzedPackages; 
 	
 	public ClassPkgFilterSliceCollector(Collection<String> analyzedClasses,
 			List<String> analyzedPackages) {

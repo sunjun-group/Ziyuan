@@ -25,9 +25,9 @@ import de.unisb.cs.st.javaslicer.variables.Variable;
  *
  */
 public class SliceBreakpointCollector implements SliceVisitor {
-	private Set<BreakPoint> dynamicSlice = new HashSet<BreakPoint>();
+	protected Set<BreakPoint> dynamicSlice = new HashSet<BreakPoint>();
 
-	private void add(Instruction instruction) {
+	protected void add(Instruction instruction) {
 		if (isAccepted(instruction)) {
 			ReadClass clazz = instruction.getMethod().getReadClass();
 			BreakPoint bkp = new BreakPoint(clazz.getName(), instruction.getMethod()

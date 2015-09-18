@@ -43,6 +43,22 @@ public class BreakPoint extends ClassLocation {
 		}
 	}
 	
+	public void addVarsNoDuplicate(List<Variable> newVars) {
+		for (Variable newVar : newVars){
+			String s1 = newVar.toString();
+			
+			boolean isAdded = false;
+			for (Variable oldVar : vars) {
+				String s2 = oldVar.toString();
+				if (s1.equals(s2)) {
+					isAdded = true;
+				}
+			}
+			
+			if (!isAdded) vars.add(newVar);
+		}
+	}
+	
 	public List<Variable> getVars() {
 		return vars;
 	}
