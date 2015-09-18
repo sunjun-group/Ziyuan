@@ -103,7 +103,9 @@ public class JavaSlicer implements ISlicer {
 		vmRunner.setProgramArgs(arguments);
 		/**/
 		vmRunner.setTraceFilePath(tempFileName);
-		vmRunner.startAndWaitUntilStop(vmConfig);
+		if (!vmRunner.startAndWaitUntilStop(vmConfig)) {
+			throw new SavException(ModuleEnum.SLICING, vmRunner.getProccessError());
+		}
 
 		return tempFileName;
 	}

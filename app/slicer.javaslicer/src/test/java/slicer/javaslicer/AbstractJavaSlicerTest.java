@@ -15,6 +15,7 @@ import org.junit.Before;
 
 import sav.common.core.SavException;
 import sav.commons.AbstractTest;
+import sav.commons.TestConfiguration;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 
@@ -40,6 +41,13 @@ public class AbstractJavaSlicerTest extends AbstractTest {
 		List<BreakPoint> result = slicer.slice(initAppClasspath(), breakpoints,
 				testClassMethods);
 		printSlicingResult(result);
+	}
+	
+	@Override
+	protected AppJavaClassPath initAppClasspath() {
+		AppJavaClassPath appCp = super.initAppClasspath();
+		appCp.addClasspath(TestConfiguration.getTestTarget("slicer.javaslicer"));
+		return appCp;
 	}
 
 	private void printSlicingResult(List<BreakPoint> result) {

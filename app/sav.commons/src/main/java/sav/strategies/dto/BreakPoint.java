@@ -14,6 +14,7 @@ import java.util.List;
 
 import sav.common.core.Constants;
 import sav.common.core.utils.Assert;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
 
 /**
@@ -43,19 +44,9 @@ public class BreakPoint extends ClassLocation {
 		}
 	}
 	
-	public void addVarsNoDuplicate(List<Variable> newVars) {
-		for (Variable newVar : newVars){
-			String s1 = newVar.toString();
-			
-			boolean isAdded = false;
-			for (Variable oldVar : vars) {
-				String s2 = oldVar.toString();
-				if (s1.equals(s2)) {
-					isAdded = true;
-				}
-			}
-			
-			if (!isAdded) vars.add(newVar);
+	public void addVars(List<Variable> newVars) {
+		for (Variable newVar : newVars) {
+			CollectionUtils.addIfNotNullNotExist(vars, newVar);
 		}
 	}
 	

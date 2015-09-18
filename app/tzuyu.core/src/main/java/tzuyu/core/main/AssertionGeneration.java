@@ -165,7 +165,7 @@ public class AssertionGeneration extends TzuyuCore {
 						filterLocations.add(bp);
 					} else if (location.getLineNo() < slicedLoc.getLineNo()) {
 						BreakPoint bp = filterLocations.get(filterLocations.size() - 1);
-						bp.addVarsNoDuplicate(slicedLoc.getVars());
+						bp.addVars(slicedLoc.getVars());
 					}
 				}
 			}
@@ -174,7 +174,7 @@ public class AssertionGeneration extends TzuyuCore {
 		BreakPoint lastLocation = locations.get(locations.size() - 1);
 		BreakPoint bp = new BreakPoint(lastLocation.getClassCanonicalName(), lastLocation.getMethodName(), lastLocation.getLineNo());
 		for (BreakPoint filterLocation : filterLocations) {
-			bp.addVarsNoDuplicate(filterLocation.getVars());
+			bp.addVars(filterLocation.getVars());
 		}
 		
 		filterLocations.add(bp);
