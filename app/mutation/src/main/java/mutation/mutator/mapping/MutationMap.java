@@ -33,7 +33,7 @@ public class MutationMap {
 	@SuppressWarnings("unchecked")
 	public <T extends Enum<?>> List<T> getMutationOp(T operator) {
 		List<T> muOps = new ArrayList<T>();
-		for (Enum<?> muOp : CollectionUtils.nullToEmpty(muOpMap.get(operator))) {
+		for (Enum<?> muOp : CollectionUtils.initIfEmpty(muOpMap.get(operator))) {
 			if (muOp.getDeclaringClass().equals(operator.getClass())) {
 				muOps.add((T) muOp);
 			} else {

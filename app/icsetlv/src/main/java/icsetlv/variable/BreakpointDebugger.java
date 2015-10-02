@@ -144,7 +144,7 @@ public abstract class BreakpointDebugger {
 	
 	private void addBreakpointWatch(VirtualMachine vm, ReferenceType refType,
 			Map<String, BreakPoint> locBrpMap) {
-		for (BreakPoint brkp : CollectionUtils.nullToEmpty(brkpsMap.get(refType.name()))) {
+		for (BreakPoint brkp : CollectionUtils.initIfEmpty(brkpsMap.get(refType.name()))) {
 			Location location = addBreakpointWatch(vm, refType, brkp.getLineNo());
 			if (location != null) {
 				locBrpMap.put(location.toString(), brkp);

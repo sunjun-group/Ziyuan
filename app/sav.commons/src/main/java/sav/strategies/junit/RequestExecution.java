@@ -37,7 +37,7 @@ public class RequestExecution implements Runnable {
 	}
 	
 	public List<Failure> getFailures() {
-		return CollectionUtils.nullToEmpty(failures);
+		return CollectionUtils.initIfEmpty(failures);
 	}
 	
 	public void setRequest(Request request){

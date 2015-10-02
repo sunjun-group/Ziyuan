@@ -62,7 +62,7 @@ public class JaCoCoAgent implements ICodeCoverage {
 		if (CollectionUtils.isEmpty(testingClassNames)) {
 			log.warn("TestingClassNames is empty!!");
 		}
-		testingClassNames = CollectionUtils.nullToEmpty(testingClassNames);
+		testingClassNames = CollectionUtils.initIfEmpty(testingClassNames);
 		String destfile = File.createTempFile("tzJacoco", ".exec").getAbsolutePath();
 		String junitResultFile = File.createTempFile("tzJunitRes", ".txt")
 				.getAbsolutePath();

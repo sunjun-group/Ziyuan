@@ -152,7 +152,7 @@ public class CollectionUtils {
 		}
 	}
 
-	public static <T> List<T> nullToEmpty(List<T> val) {
+	public static <T> List<T> initIfEmpty(List<T> val) {
 		if (val == null) {
 			return new ArrayList<T>();
 		}
@@ -193,7 +193,7 @@ public class CollectionUtils {
 	}
 	
 	public static <T>List<T> copy(List<T> list) {
-		return new ArrayList<T>(nullToEmpty(list));
+		return new ArrayList<T>(initIfEmpty(list));
 	}
 	
 	public static <T> T getLast(List<T> list) {
@@ -252,6 +252,10 @@ public class CollectionUtils {
 			}
 		}
 		return true;
+	}
+
+	public static int getSize(List<?> list) {
+		return list == null ? 0 : list.size();
 	}
 	
 }

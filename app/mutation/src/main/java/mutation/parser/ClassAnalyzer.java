@@ -251,7 +251,7 @@ public class ClassAnalyzer {
 		} else if (statement instanceof ForStmt) {
 			List<Expression> forInit = ((ForStmt) statement).getInit();
 			md.openScope(statement.getBeginLine());
-			for (Expression init : CollectionUtils.nullToEmpty(forInit)) {
+			for (Expression init : CollectionUtils.initIfEmpty(forInit)) {
 				if (init instanceof VariableDeclarationExpr) {
 					List<VariableDescriptor> vList = parseVarDecl((VariableDeclarationExpr) init);
 					md.addLocalVars(vList);
@@ -263,7 +263,7 @@ public class ClassAnalyzer {
 			// cannot be a variable declaration statement
 			if (forBody instanceof BlockStmt) {
 				List<Statement> bodyStmt = ((BlockStmt) forBody).getStmts();
-				for (Statement innerStmt : CollectionUtils.nullToEmpty(bodyStmt)) {
+				for (Statement innerStmt : CollectionUtils.initIfEmpty(bodyStmt)) {
 					parseBlockStmt(md, innerStmt);
 				}
 			}
@@ -282,7 +282,7 @@ public class ClassAnalyzer {
 
 			for (SwitchEntryStmt e : entries) {
 				List<Statement> eBody = e.getStmts();
-				for (Statement eStmt : CollectionUtils.nullToEmpty(eBody)) {
+				for (Statement eStmt : CollectionUtils.initIfEmpty(eBody)) {
 					parseBlockStmt(md, eStmt);
 				}
 			}

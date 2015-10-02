@@ -9,11 +9,15 @@
 package slicer.javaslicer;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.junit.Before;
 
 import sav.common.core.SavException;
+import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.ObjectUtils;
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
 import sav.strategies.dto.AppJavaClassPath;
@@ -54,6 +58,13 @@ public class AbstractJavaSlicerTest extends AbstractTest {
 		if (result.isEmpty()) {
 			System.out.println("EMPTY RESULT!!");
 		}
+		Collections.sort(result, new Comparator<BreakPoint>() {
+
+			@Override
+			public int compare(BreakPoint o1, BreakPoint o2) {
+				return ObjectUtils.compare(o1.getLineNo(), o2.getLineNo());
+			}
+		});
 		for (BreakPoint bkp : result) {
 			System.out.println(bkp);
 		}

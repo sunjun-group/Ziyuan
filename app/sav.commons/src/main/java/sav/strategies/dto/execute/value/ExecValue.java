@@ -83,7 +83,7 @@ public abstract class ExecValue implements IExecValue {
 		if (needToRetrieveValue()) {
 			values.add(getDoubleVal());
 		}
-		for (ExecValue child : CollectionUtils.nullToEmpty(children)) {
+		for (ExecValue child : CollectionUtils.initIfEmpty(children)) {
 			child.appendVal(values);
 		}
 		return values;
@@ -93,7 +93,7 @@ public abstract class ExecValue implements IExecValue {
 		if (needToRetrieveValue()) {
 			vars.add(varId);
 		}
-		for (ExecValue child : CollectionUtils.nullToEmpty(children)) {
+		for (ExecValue child : CollectionUtils.initIfEmpty(children)) {
 			child.appendVarId(vars);
 		}
 		return vars;
@@ -107,7 +107,7 @@ public abstract class ExecValue implements IExecValue {
 		if (this.varId.equals(varId)) {
 			return this;
 		} else {
-			for (ExecValue child : CollectionUtils.nullToEmpty(children)) {
+			for (ExecValue child : CollectionUtils.initIfEmpty(children)) {
 				ExecValue match = child.findVariableById(varId);
 				if (match != null) {
 					return match;

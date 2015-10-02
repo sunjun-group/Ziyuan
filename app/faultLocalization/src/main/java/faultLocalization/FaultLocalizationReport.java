@@ -22,7 +22,7 @@ public class FaultLocalizationReport {
 	}
 
 	public List<LineCoverageInfo> getLineCoverageInfos() {
-		return CollectionUtils.nullToEmpty(lineCoverageInfos);
+		return CollectionUtils.initIfEmpty(lineCoverageInfos);
 	}
 
 	public void setLineCoverageInfos(List<LineCoverageInfo> lineCoverageInfos) {

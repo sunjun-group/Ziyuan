@@ -54,7 +54,7 @@ public class BreakpointValue extends ExecValue {
 		if (value.getVarId().equals(variableId)) {
 			return Double.valueOf(value.getDoubleVal());
 		} else {
-			for (ExecValue child : CollectionUtils.nullToEmpty(value.getChildren())) {
+			for (ExecValue child : CollectionUtils.initIfEmpty(value.getChildren())) {
 				Double val = getValue(variableId, child);
 				if (val != null) {
 					return val;

@@ -114,9 +114,9 @@ public class JunitRunner {
 	private static void extractBrkpsFromTrace(List<Failure> falures,
 			JunitRunnerParameters params, Set<BreakPoint> bkps) {
 		Set<String> acceptedClasses = new HashSet<String>();
-		List<String> testingClassNames = CollectionUtils.nullToEmpty(params
+		List<String> testingClassNames = CollectionUtils.initIfEmpty(params
 				.getTestingClassNames());
-		List<String> testingPkgs = CollectionUtils.nullToEmpty(params
+		List<String> testingPkgs = CollectionUtils.initIfEmpty(params
 				.getTestingPkgs());
 		System.out.println("testingClassNames = " + testingClassNames);
 		System.out.println("testingPkgs = " + testingPkgs);
