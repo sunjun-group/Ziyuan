@@ -14,8 +14,7 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 
-import sav.common.core.SavJunitAppClasspathUtils;
-import sav.common.core.utils.ObjectUtils;
+import sav.common.core.SystemVariables;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
 
@@ -52,8 +51,8 @@ public class VMConfiguration {
 	public VMConfiguration(AppJavaClassPath appClasspath) {
 		javaHome = appClasspath.getJavaHome();
 		classpaths = appClasspath.getClasspaths();
-		enableAssertion = ObjectUtils.toBoolean(appClasspath
-				.getVariable(SavJunitAppClasspathUtils.ENABLE_ASSERTION), true);
+		enableAssertion = appClasspath.getPreferences()
+					.getBoolean(SystemVariables.ENABLE_ASSERTION);
 	}
 	
 	public List<String> getClasspaths() {

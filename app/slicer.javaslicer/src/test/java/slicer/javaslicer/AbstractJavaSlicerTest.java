@@ -42,7 +42,7 @@ public class AbstractJavaSlicerTest extends AbstractTest {
 	protected void run(List<BreakPoint> breakpoints) throws SavException,
 			IOException, InterruptedException, ClassNotFoundException {
 		slicer.setFiltering(analyzedClasses, null);
-		List<BreakPoint> result = slicer.slice(initAppClasspath(), breakpoints,
+		List<BreakPoint> result = slicer.slice(appClasspath, breakpoints,
 				testClassMethods);
 		printSlicingResult(result);
 	}

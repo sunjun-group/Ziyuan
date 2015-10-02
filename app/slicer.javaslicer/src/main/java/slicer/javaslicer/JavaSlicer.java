@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
+import sav.common.core.SystemVariables;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
@@ -31,6 +32,7 @@ import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
 import sav.strategies.junit.SavJunitRunner;
 import sav.strategies.slicing.ISlicer;
 import sav.strategies.vm.VMConfiguration;
+import slicer.javaslicer.variable.tree.InstructionContext;
 import de.unisb.cs.st.javaslicer.slicing.Slicer;
 import de.unisb.cs.st.javaslicer.slicing.SlicingCriterion;
 import de.unisb.cs.st.javaslicer.traceResult.ThreadId;
@@ -52,11 +54,15 @@ public class JavaSlicer implements ISlicer {
 		timer = new StopTimer("Slicing");
 	}
 	
-	private void init(AppJavaClassPath appClasspath) {
+	protected void init(AppJavaClassPath appClasspath) {
 		if (sliceCollector == null) {
 			sliceCollector = new SliceBreakpointCollector();
 		}
 		sliceCollector.reset();
+		if (appClasspath.getPreferences().getBoolean(
+				SystemVariables.SLICE_COLLECT_VAR)) {
+			sliceCollector.setVariableCollectorContext(new InstructionContext());
+		}
 		timer.start();
 		vmConfig = SavJunitRunner.createVmConfig(appClasspath);
 	}

@@ -17,7 +17,7 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.junit.runner.JUnitCore;
 
-import sav.common.core.SavJunitAppClasspathUtils;
+import sav.common.core.SystemVariablesUtils;
 import sav.common.core.SavRtException;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
@@ -56,7 +56,7 @@ public class SavJunitRunner {
 
 	public static VMConfiguration createVmConfig(AppJavaClassPath appClasspath) {
 		VMConfiguration vmConfig = new VMConfiguration(appClasspath);
-		String savJunitJar = SavJunitAppClasspathUtils.updateSavJunitJarPath(appClasspath);
+		String savJunitJar = SystemVariablesUtils.updateSavJunitJarPath(appClasspath);
 		vmConfig.addClasspath(savJunitJar);
 		return vmConfig;
 	}

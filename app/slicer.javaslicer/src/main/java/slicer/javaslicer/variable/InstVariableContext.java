@@ -87,7 +87,7 @@ public class InstVariableContext {
 	}
 	
 	public List<Variable> getVariables() {
-		return variables;
+		return new ArrayList<Variable>(variables);
 	}
 	
 	/*

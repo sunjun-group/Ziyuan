@@ -10,7 +10,6 @@ package sav.strategies.dto;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,13 +26,11 @@ public class AppJavaClassPath {
 	private String src;
 	private String target;
 	private String testTarget;
-	/* user-defined variables, such as external jar need to be included for a certain executing,
-	 * like additional classpath to start JunitRunner */
-	private HashMap<String, String> variables = new HashMap<String, String>();
+	private SystemPreferences preferences;
 
 	public AppJavaClassPath() {
 		classpaths = new HashSet<String>();
-		variables = new HashMap<String, String>();
+		preferences = new SystemPreferences();
 	}
 
 	public String getJavaHome() {
@@ -84,11 +81,7 @@ public class AppJavaClassPath {
 		return StringUtils.join(classpaths, File.pathSeparator);		
 	}
 	
-	public String getVariable(String variable) {
-		return variables.get(variable); 
-	}
-	
-	public String setVariable(String variable, String value) {
-		return variables.put(variable, value); 
+	public SystemPreferences getPreferences() {
+		return preferences;
 	}
 }
