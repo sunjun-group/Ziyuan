@@ -6,8 +6,9 @@
  *  Version:  $Revision: 1 $
  */
 
-package slicer.javaslicer.variable.tree;
+package slicer.javaslicer.instruction.variable.tree;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.Set;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint;
 import slicer.javaslicer.IVariableCollectorContext;
-import slicer.javaslicer.variable.InstVariableContext;
+import slicer.javaslicer.instruction.variable.InstVariableContext;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.Instruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.InstructionInstance;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.InstructionType;
@@ -53,16 +54,7 @@ public class InstructionContext implements IVariableCollectorContext, ITreeConte
 	}
 	
 	/**
-	 * init list CollectedVariables (WrittenFields, LocalVariables, ArrayVariables, ReadFields)
-	 * 
-	 * if first time enter breakpoint
-	 * add all variables to CollectedVariables
-	 * 
-	 * if not the first time
-	 * find the current variable associated to from.instruction
-	 * if not found -> add new variables
-	 * if found -> update current variables
-	 * submit -> ... collect bkpVariables.	
+	 * build dependency instruction tree.
 	 */
 	public void addLink(InstructionInstance from, InstructionInstance to,
 			Variable variable) {
@@ -110,18 +102,37 @@ public class InstructionContext implements IVariableCollectorContext, ITreeConte
 	public List<BreakPoint.Variable> getVariables() {
 		instVarContext.startContext();
 		for (InstructionNode root : varTreeRoots) {
-			InstructionNode node = root;
-			while (node != null) {
-				instVarContext.accessInstruction(node.getInstruction(), node.getAdditionalInfo());
-				node = node.getNextInterestNode();
-			}
+			traverseTree(root);
 		}
 		List<BreakPoint.Variable> bkpVars = instVarContext.getVariables();
 		instVarContext.endContext();
 		return bkpVars;
 	}
 	
+	private void traverseTree(InstructionNode node) {
+		instVarContext.accessInstruction(node.getInstruction(), node.getAdditionalInfo());
+		List<InstructionNode> children = node.getTraverseNodes();
+		for (InstructionNode child : children) {
+			traverseTree(child);
+		}
+	}
+	
+	/* for debug */
+	protected static List<Instruction> getInstructions(Instruction instruction, int line) {
+		List<Instruction> result = new ArrayList<Instruction>();
+		for (Instruction instr : instruction.getMethod().getInstructions()) {
+			if (instr.getLineNumber() == line) {
+				result.add(instr);
+			}
+		}
+		return result;
+	}
+	
 	public void setInstVarContext(InstVariableContext instVarContext) {
 		this.instVarContext = instVarContext;
+	}
+	
+	public String getLocId() {
+		return locId;
 	}
 }

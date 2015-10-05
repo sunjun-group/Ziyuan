@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package slicer.javaslicer.variable;
+package slicer.javaslicer.instruction.variable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +49,13 @@ public class InstVariableContext {
 		state = null;
 	}
 	
+	public void discardIfNotFinish() {
+		while (state != null && state.getStateId() != StateId.NORMAL) {
+			statePool.release(state);
+			state = state.getParentState();
+		}
+	}
+	
 	public void accessInstruction(Instruction instruction,
 			InstructionInstanceInfo instrInfo) {
 	switch (instruction.getType()) {
@@ -63,6 +70,10 @@ public class InstVariableContext {
 			break;
 		case IINC:
 			state.accessInstruction((IIncInstruction)instruction);
+			break;
+		case NEWARRAY:
+			/* discard current state */
+			discardIfNotFinish();
 		default:
 			break;
 		}
@@ -138,4 +149,5 @@ public class InstVariableContext {
 		FIELD_ACCESS,
 		ARRAY_ACCESS
 	}
+
 }

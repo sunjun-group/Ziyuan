@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package slicer.javaslicer.variable.tree;
+package slicer.javaslicer.instruction.variable.tree;
 
 /**
  * @author LLT

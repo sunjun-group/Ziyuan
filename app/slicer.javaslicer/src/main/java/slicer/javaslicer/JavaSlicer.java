@@ -32,7 +32,7 @@ import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
 import sav.strategies.junit.SavJunitRunner;
 import sav.strategies.slicing.ISlicer;
 import sav.strategies.vm.VMConfiguration;
-import slicer.javaslicer.variable.tree.InstructionContext;
+import slicer.javaslicer.instruction.variable.tree.InstructionContext;
 import de.unisb.cs.st.javaslicer.slicing.Slicer;
 import de.unisb.cs.st.javaslicer.slicing.SlicingCriterion;
 import de.unisb.cs.st.javaslicer.traceResult.ThreadId;
@@ -62,6 +62,9 @@ public class JavaSlicer implements ISlicer {
 		if (appClasspath.getPreferences().getBoolean(
 				SystemVariables.SLICE_COLLECT_VAR)) {
 			sliceCollector.setVariableCollectorContext(new InstructionContext());
+		}
+		if (appClasspath.getPreferences().getBoolean(SystemVariables.SLICE_BKP_VAR_INHERIT)) {
+			sliceCollector.setBkpCustomizer(new VarInheritForwardCustomizer());
 		}
 		timer.start();
 		vmConfig = SavJunitRunner.createVmConfig(appClasspath);

@@ -94,8 +94,7 @@ public class VarNameVisitor extends DefaultVoidVisitor {
 		default:
 			fullName = StringUtils.join(nameFragments, Constants.DOT);
 		}
-		Variable var = new Variable(name, fullName);
-		var.setScope(varScope);
+		Variable var = new Variable(name, fullName, varScope);
 		add(n.getBeginLine(), var);
 		
 		return false;

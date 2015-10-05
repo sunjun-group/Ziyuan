@@ -6,9 +6,9 @@
  *  Version:  $Revision: 1 $
  */
 
-package slicer.javaslicer.variable;
+package slicer.javaslicer.instruction.variable;
 
-import slicer.javaslicer.variable.InstVariableContext.StateId;
+import slicer.javaslicer.instruction.variable.InstVariableContext.StateId;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.LocalVariable;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.instructions.ArrayInstruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.instructions.FieldInstruction;
@@ -34,17 +34,16 @@ public class FieldAccessState extends NormalState {
 	public void accessInstruction(VarInstruction instruction) {
 		LocalVariable scope = getLocalVarName(instruction);
 		if ("this".endsWith(scope.getName())) {
-			getParentState().addNewVariable(fieldName, true);
+			addNewVariable(fieldName, true);
 		} else {
-			getParentState().addNewVariable(
-					getFullName(scope.getName(), fieldName), false);
+			addNewVariable(getFullName(scope.getName(), fieldName), false);
 		}
-		context.setState(getParentState());
 	}
 	
 	@Override
 	public void addNewVariable(String name, boolean isThisObjRef) {
-		super.addNewVariable(getFullName(name, fieldName), isThisObjRef);
+		context.setState(getParentState());
+		getParentState().addNewVariable(getFullName(name, fieldName), isThisObjRef);
 	}
 
 	@Override

@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package slicer.javaslicer.variable;
+package slicer.javaslicer.instruction.variable;
 
 import sav.common.core.utils.BreakpointUtils;
 import sav.strategies.dto.BreakPoint;

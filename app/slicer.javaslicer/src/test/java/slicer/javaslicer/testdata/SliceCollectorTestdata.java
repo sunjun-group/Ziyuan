@@ -28,7 +28,8 @@ public class SliceCollectorTestdata {
 		innerClass = new InnerClass(); System.out.println("n"); innerClass.b = this.a = a;
 		innerClass.inner = new InnerClass();
 		innerClass.inner.b = innerClass.b;
-		
+		int n = 3;
+		innerClass.b = n;
 	}
 
 	public int getSum(int x, int y) {

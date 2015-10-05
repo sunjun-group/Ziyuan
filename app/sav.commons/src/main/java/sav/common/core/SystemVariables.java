@@ -15,7 +15,8 @@ package sav.common.core;
 public enum SystemVariables {
 	SAV_JUNIT_JAR("sav.junit.runner.jar"), 
 	ENABLE_ASSERTION("assertion.enable", "true"),
-	SLICE_COLLECT_VAR("slicing.collect.var", "false");
+	SLICE_COLLECT_VAR("slicing.collect.var", "false"),
+	SLICE_BKP_VAR_INHERIT("slicing.collected.vars.inherit", "false");
 
 	private String name;
 	private String defValue;

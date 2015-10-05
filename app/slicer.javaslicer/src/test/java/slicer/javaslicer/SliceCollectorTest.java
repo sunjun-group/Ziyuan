@@ -31,17 +31,17 @@ public class SliceCollectorTest extends AbstractJavaSlicerTest {
 	@Override
 	public void setup() throws Exception {
 		slicer = new JavaSlicer() {
-			@Override
-			public List<BreakPoint> slice(AppJavaClassPath appClassPath,
-					List<BreakPoint> bkps, List<String> junitClassMethods)
-					throws SavException, IOException, InterruptedException,
-					ClassNotFoundException {
-				init(appClassPath);
-				String traceFilePath = "C:/Users/DELL50~1/AppData/Local/Temp/javaSlicer446553082999454376.trace";
-				List<BreakPoint> result = sliceFromTraceFile(traceFilePath ,
-						new HashSet<BreakPoint>(bkps), junitClassMethods);
-				return result;
-			}
+//			@Override
+//			public List<BreakPoint> slice(AppJavaClassPath appClassPath,
+//					List<BreakPoint> bkps, List<String> junitClassMethods)
+//					throws SavException, IOException, InterruptedException,
+//					ClassNotFoundException {
+//				init(appClassPath);
+//				String traceFilePath = "C:/Users/DELL50~1/AppData/Local/Temp/javaSlicer446553082999454376.trace";
+//				List<BreakPoint> result = sliceFromTraceFile(traceFilePath ,
+//						new HashSet<BreakPoint>(bkps), junitClassMethods);
+//				return result;
+//			}
 		};
 		appClasspath = initAppClasspath();
 		appClasspath.getPreferences().putBoolean(SystemVariables.SLICE_COLLECT_VAR, true);
@@ -51,9 +51,9 @@ public class SliceCollectorTest extends AbstractJavaSlicerTest {
 	public void testSampleProgram() throws Exception {
 		String targetClass = SliceCollectorTestdata.class.getName();
 		String testClass = SliceCollectorTestdata.class.getName();
-//		BreakPoint bkp2 = new BreakPoint(testClass, "testSum", 58);
-		BreakPoint bkp2 = new BreakPoint(testClass, "getSum", 44);
-		List<BreakPoint> breakpoints = Arrays.asList(bkp2);
+//		BreakPoint bkp = new BreakPoint(testClass, "testSum", 58);
+		BreakPoint bkp = new BreakPoint(testClass, "getSum", 45);
+		List<BreakPoint> breakpoints = Arrays.asList(bkp);
 		analyzedClasses = Arrays.asList(targetClass);
 		testClassMethods = JunitUtils.extractTestMethods(Arrays
 				.asList(testClass));

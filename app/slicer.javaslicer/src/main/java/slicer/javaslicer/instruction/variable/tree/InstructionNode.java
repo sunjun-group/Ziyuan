@@ -6,12 +6,12 @@
  *  Version:  $Revision: 1 $
  */
 
-package slicer.javaslicer.variable.tree;
+package slicer.javaslicer.instruction.variable.tree;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import sav.common.core.Pair;
 import sav.common.core.utils.CollectionUtils;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.Instruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.InstructionInstance;
@@ -24,8 +24,8 @@ import de.unisb.cs.st.javaslicer.variables.Variable;
  *
  */
 public class InstructionNode {
-	private int firstPopStackIdx;
-	private List<Pair<InstructionNode, Integer>> input;
+	private int firstPopStackIdx = Integer.MAX_VALUE;
+	private Map<Integer, InstructionNode> input;
 	private List<InstructionNode> output;
 	private InstructionInstance instrInst;
 	private InstructionHandler instrHandler;
@@ -54,9 +54,9 @@ public class InstructionNode {
 	 */
 	public void addInput(InstructionNode in, int stackIdx) {
 		if (input == null) {
-			input = new ArrayList<Pair<InstructionNode,Integer>>();
+			input = new HashMap<Integer, InstructionNode>();
 		}
-		input.add(Pair.of(in, stackIdx));
+		input.put(stackIdx, in);
 		firstPopStackIdx = Math.min(firstPopStackIdx, stackIdx);
 	}
 	
@@ -64,34 +64,30 @@ public class InstructionNode {
 		CollectionUtils.initIfEmpty(output).add(out);
 	}
 	
-	/* 
-	 * the first idx of stack after executing the instrInst will be calculated by:
-	 * firstIdx = firstPopStackIdx - 1 + output.size (= number of value push into stack)
-	 */
-	public int getFirstStackIdx() {
-		return firstPopStackIdx - 1 + CollectionUtils.getSize(output);
+	public int getFirstPopStackIdx() {
+		return firstPopStackIdx;
 	}
 
 	public int getInputSize() {
-		return CollectionUtils.getSize(input);
+		return input == null ? 0 : input.size();
 	}
 	
-	public List<Pair<InstructionNode, Integer>> getInput() {
+	public Map<Integer, InstructionNode> getInput() {
 		return input;
 	}
-
+	
 	@Override
 	public String toString() {
-		return "InstructionNode [firstPopStackIdx=" + firstPopStackIdx
-				+ ", input=" + input + ", instrInst=" + instrInst + "]";
-	}
-
-	public InstructionNode getNextInterestNode() {
-		return instrHandler.getNextVarInterestNode(this);
+		return "InstructionNode " + instrInst;
 	}
 
 	public InstructionNode getOutput(Integer stackIdx) {
-		return instrHandler.executeAndGetOutput(this, stackIdx - getFirstStackIdx());
+		return instrHandler.getOutput(this, stackIdx - firstPopStackIdx);
 	}
+
+	public List<InstructionNode> getTraverseNodes() {
+		return instrHandler.getTraverseNodes(this);
+	}
+
 
 }

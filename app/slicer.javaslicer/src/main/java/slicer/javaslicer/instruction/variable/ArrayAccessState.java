@@ -6,9 +6,9 @@
  *  Version:  $Revision: 1 $
  */
 
-package slicer.javaslicer.variable;
+package slicer.javaslicer.instruction.variable;
 
-import slicer.javaslicer.variable.InstVariableContext.StateId;
+import slicer.javaslicer.instruction.variable.InstVariableContext.StateId;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.instructions.ArrayInstruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.instructions.FieldInstruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.instructions.VarInstruction;
@@ -37,7 +37,8 @@ public class ArrayAccessState extends NormalState {
 	@Override
 	public void addNewVariable(String name, boolean isThisObjRef) {
 		String arrVarName = String.format("%s[%s]", name, arrIdx);
-		getParentState().addNewVariable(arrVarName, false);
+		context.setState(getParentState());
+		getParentState().addNewVariable(arrVarName, isThisObjRef);
 	}
 
 	@Override
@@ -53,6 +54,11 @@ public class ArrayAccessState extends NormalState {
 	@Override
 	public StateId getStateId() {
 		return StateId.ARRAY_ACCESS;
+	}
+	
+	@Override
+	public void release() {
+		arrIdx = -1;
 	}
 
 }

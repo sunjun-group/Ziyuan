@@ -6,10 +6,10 @@
  *  Version:  $Revision: 1 $
  */
 
-package slicer.javaslicer.variable;
+package slicer.javaslicer.instruction.variable;
 
 import sav.common.core.utils.Assert;
-import slicer.javaslicer.variable.InstVariableContext.StateId;
+import slicer.javaslicer.instruction.variable.InstVariableContext.StateId;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.LocalVariable;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.instructions.ArrayInstruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.instructions.ArrayInstruction.ArrayInstrInstanceInfo;

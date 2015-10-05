@@ -22,7 +22,7 @@ import sav.common.core.utils.StringUtils;
  * 
  */
 public class BreakPoint extends ClassLocation {
-	protected List<Variable> vars;
+	protected List<Variable> vars; // to keep order
 	private int charStart;
 	private int charEnd;
 	
@@ -127,9 +127,10 @@ public class BreakPoint extends ClassLocation {
 	}
 
 	public static class Variable {
-		private String parentName;
-		private String fullName;
-		private VarScope scope;
+		private final String parentName;
+		private final String fullName;
+		private final VarScope scope;
+		private String id;
 		
 		public Variable(String name, String fullName, VarScope scope) {
 			this.parentName = name;
@@ -151,25 +152,20 @@ public class BreakPoint extends ClassLocation {
 			return parentName;
 		}
 		
-		public void setName(String name) {
-			this.parentName = name;
-		}
-
 		public String getFullName() {
 			return fullName;
 		}
 
-		public void setFullName(String fullName) {
-			this.fullName = fullName;
-		}
-		
 		public String getSimpleName() {
 			int l = fullName.lastIndexOf(Constants.DOT);
 			return fullName.substring(l + 1);
 		}
 		
 		public String getId() {
-			return genId(scope, fullName);
+			if (id == null) {
+				id = genId(scope, fullName);
+			}
+			return id;
 		}
 		
 		public static String genId(VarScope scope, String name) {
@@ -178,10 +174,6 @@ public class BreakPoint extends ClassLocation {
 
 		public VarScope getScope() {
 			return scope;
-		}
-
-		public void setScope(VarScope scope) {
-			this.scope = scope;
 		}
 
 		@Override
