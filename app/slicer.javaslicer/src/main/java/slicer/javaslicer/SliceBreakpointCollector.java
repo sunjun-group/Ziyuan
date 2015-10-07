@@ -12,9 +12,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import sav.strategies.common.IBreakpointCustomizer;
 import sav.strategies.dto.BreakPoint;
 import slicer.javaslicer.instruction.variable.InstructionUtils;
-import slicer.javaslicer.instruction.variable.NullVariableContext;
+import slicer.javaslicer.instruction.variable.DefaultVariableCollector;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.Instruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.InstructionInstance;
 import de.unisb.cs.st.javaslicer.slicing.SliceVisitor;
@@ -27,12 +28,14 @@ import de.unisb.cs.st.javaslicer.variables.Variable;
 public class SliceBreakpointCollector implements SliceVisitor {
 	private HashMap<String, BreakPoint> bkpMap = new HashMap<String, BreakPoint>();
 	private BreakPoint curBkp;
-	private IVariableCollectorContext instContext = NullVariableContext.getInstance();
+	private IVariableCollectorContext instContext = DefaultVariableCollector.getInstance();
 	private IBreakpointCustomizer bkpCustomizer = null;
 	private boolean finish = false;
 	
 	public void reset() {
 		bkpMap.clear();
+		finish();
+		finish = false;
 	}
 	
 	private void add(InstructionInstance from, InstructionInstance to, Variable variable) {
@@ -85,13 +88,15 @@ public class SliceBreakpointCollector implements SliceVisitor {
 	}
 
 	public List<BreakPoint> getDynamicSlice() {
-		if (!finish) {
-			onFinish();
-		}
+		finish();
 		return new ArrayList<BreakPoint>(bkpMap.values());
 	}
 	
-	private void onFinish() {
+	private void finish() {
+		if (finish) {
+			return;
+		}
+		/* finish */
 		submitVariables(instContext, curBkp);
 		if (bkpCustomizer != null) {
 			bkpCustomizer.customize(bkpMap);

@@ -18,6 +18,7 @@ import org.junit.Test;
 import sav.common.core.SavException;
 import sav.common.core.SystemVariables;
 import sav.common.core.utils.JunitUtils;
+import sav.strategies.common.VarInheritCustomizer.InheritType;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import slicer.javaslicer.testdata.SliceCollectorTestdata;
@@ -37,7 +38,7 @@ public class SliceCollectorTest extends AbstractJavaSlicerTest {
 //					throws SavException, IOException, InterruptedException,
 //					ClassNotFoundException {
 //				init(appClassPath);
-//				String traceFilePath = "C:/Users/DELL50~1/AppData/Local/Temp/javaSlicer446553082999454376.trace";
+//				String traceFilePath = "C:/Users/DELL50~1/AppData/Local/Temp/javaSlicer2228226225342205556.trace";
 //				List<BreakPoint> result = sliceFromTraceFile(traceFilePath ,
 //						new HashSet<BreakPoint>(bkps), junitClassMethods);
 //				return result;
@@ -45,6 +46,7 @@ public class SliceCollectorTest extends AbstractJavaSlicerTest {
 		};
 		appClasspath = initAppClasspath();
 		appClasspath.getPreferences().putBoolean(SystemVariables.SLICE_COLLECT_VAR, true);
+		appClasspath.getPreferences().put(SystemVariables.SLICE_BKP_VAR_INHERIT, InheritType.FORWARD.name());
 	}
 	
 	@Test

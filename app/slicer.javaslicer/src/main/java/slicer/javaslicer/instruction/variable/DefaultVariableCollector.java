@@ -19,8 +19,8 @@ import slicer.javaslicer.IVariableCollectorContext;
  * @author LLT
  *
  */
-public class NullVariableContext implements IVariableCollectorContext {
-	private static final NullVariableContext instance = new NullVariableContext();
+public class DefaultVariableCollector implements IVariableCollectorContext {
+	private static final DefaultVariableCollector instance = new DefaultVariableCollector();
 	
 	public static IVariableCollectorContext getInstance() {
 		return instance;

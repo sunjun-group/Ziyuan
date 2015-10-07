@@ -25,6 +25,8 @@ import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
+import sav.strategies.common.VarInheritCustomizer;
+import sav.strategies.common.VarInheritCustomizer.InheritType;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitRunner;
@@ -63,8 +65,11 @@ public class JavaSlicer implements ISlicer {
 				SystemVariables.SLICE_COLLECT_VAR)) {
 			sliceCollector.setVariableCollectorContext(new InstructionContext());
 		}
-		if (appClasspath.getPreferences().getBoolean(SystemVariables.SLICE_BKP_VAR_INHERIT)) {
-			sliceCollector.setBkpCustomizer(new VarInheritForwardCustomizer());
+		VarInheritCustomizer.InheritType varInheritType = InheritType
+										.valueOf(appClasspath.getPreferences().get(
+												SystemVariables.SLICE_BKP_VAR_INHERIT));
+		if (varInheritType != null) {
+			sliceCollector.setBkpCustomizer(new VarInheritCustomizer(varInheritType));
 		}
 		timer.start();
 		vmConfig = SavJunitRunner.createVmConfig(appClasspath);

@@ -99,7 +99,6 @@ public class SelectiveSampling implements ISelectiveSampling {
 			return newPoints;
 		}
 		
-//		List<ExecVar> labels = divider.getReferencedVariables();
 		/* check boolean variables */ 
 		/* */
 		Map<String, Pair<Double, Double>> minMax = calculateValRange(allLabels, datapoints);

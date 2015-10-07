@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package slicer.javaslicer;
+package sav.strategies.common;
 
 import java.util.HashMap;
 
