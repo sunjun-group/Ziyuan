@@ -66,8 +66,8 @@ public class JavaSlicer implements ISlicer {
 			sliceCollector.setVariableCollectorContext(new InstructionContext());
 		}
 		VarInheritCustomizer.InheritType varInheritType = InheritType
-										.valueOf(appClasspath.getPreferences().get(
-												SystemVariables.SLICE_BKP_VAR_INHERIT));
+					.valueOf(appClasspath.getPreferences().get(
+							SystemVariables.SLICE_BKP_VAR_INHERIT));
 		if (varInheritType != null) {
 			sliceCollector.setBkpCustomizer(new VarInheritCustomizer(varInheritType));
 		}
