@@ -26,6 +26,9 @@ public class TwoPrimIlpTemplate extends TwoFeaturesTemplate {
 	
 	public TwoPrimIlpTemplate(List<List<ExecValue>> passExecValuesList, List<List<ExecValue>> failExecValuesList) {
 		super(passExecValuesList, failExecValuesList);
+		System.out.println("Two ilp template");
+		System.out.println(passExecValuesList);
+		System.out.println(failExecValuesList);
 	}
 	
 	@Override

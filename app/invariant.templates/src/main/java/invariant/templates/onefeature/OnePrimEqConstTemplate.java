@@ -10,12 +10,41 @@ import sav.strategies.dto.execute.value.ExecVar;
 
 public class OnePrimEqConstTemplate extends OneFeatureTemplate {
 
-	private double d = 0.0;
+	private double d;
+	
+	private boolean isInit;
 	
 	public OnePrimEqConstTemplate(List<List<ExecValue>> passExecValuesList, List<List<ExecValue>> failExecValuesList) {
 		super(passExecValuesList, failExecValuesList);
 	}
 
+	@Override
+	public boolean checkPassValue(List<ExecValue> evl) {
+		// list of pass and fail exec value only has one feature
+		// all pass values must be the same
+		double v = evl.get(0).getDoubleVal();
+		if (!isInit) {
+			d = v;
+			isInit = true;
+			return true;
+		} else {
+			return v == d;
+		}
+	}
+	
+	@Override
+	public boolean checkFailValue(List<ExecValue> evl) {
+		// list of pass and fail exec value only has one feature
+		// all fail value must be different with the pass value
+		double v = evl.get(0).getDoubleVal();
+		if (!isInit) {
+			return false; // should be init already
+		} else {
+			return v != d;
+		}
+	}
+	
+	/*
 	@Override
 	public boolean check() {
 		// list of pass and fail exec value only has one feature
@@ -40,6 +69,7 @@ public class OnePrimEqConstTemplate extends OneFeatureTemplate {
 		
 		return true;
 	}
+	*/
 	
 	@Override
 	public List<List<Eq<?>>> sampling() {

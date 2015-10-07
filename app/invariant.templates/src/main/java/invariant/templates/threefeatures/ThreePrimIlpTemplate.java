@@ -27,6 +27,9 @@ public class ThreePrimIlpTemplate extends ThreeFeaturesTemplate {
 	
 	public ThreePrimIlpTemplate(List<List<ExecValue>> passExecValuesList, List<List<ExecValue>> failExecValuesList) {
 		super(passExecValuesList, failExecValuesList);
+		System.out.println("Three ilp template");
+		System.out.println(passExecValuesList);
+		System.out.println(failExecValuesList);
 	}
 	
 	@Override

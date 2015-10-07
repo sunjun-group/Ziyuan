@@ -15,23 +15,21 @@ public class TwoPrimTanTemplate extends TwoFeaturesTemplate {
 	}
 	
 	@Override
-	public boolean check() {
+	public boolean checkPassValue(List<ExecValue> evl) {
 		// list of pass and fail exec value only has two features
-		// first feature must be equals to square of second feature
-		for (List<ExecValue> evl : passExecValuesList) {
-			double v1 = evl.get(0).getDoubleVal();
-			double v2 = evl.get(1).getDoubleVal();
-			if (v1 != Math.tan(v2)) return false;
-		}
-				
-		// first feature must not be equals to abs of second feature
-		for (List<ExecValue> evl : failExecValuesList) {
-			double v1 = evl.get(0).getDoubleVal();
-			double v2 = evl.get(1).getDoubleVal();
-			if (v1 == Math.tan(v2)) return false;
-		}
-				
-		return true;
+		// first feature must be equals to tan of second feature
+		double v1 = evl.get(0).getDoubleVal();
+		double v2 = evl.get(1).getDoubleVal();
+		return v1 == Math.tan(v2);
+	}
+	
+	@Override
+	public boolean checkFailValue(List<ExecValue> evl) {
+		// list of pass and fail exec value only has two features
+		// first feature must not be equals to tan of second feature
+		double v1 = evl.get(0).getDoubleVal();
+		double v2 = evl.get(1).getDoubleVal();
+		return v1 != Math.tan(v2);
 	}
 	
 	@Override

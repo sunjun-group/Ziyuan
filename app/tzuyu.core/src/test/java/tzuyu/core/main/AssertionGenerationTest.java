@@ -10,6 +10,8 @@ import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm
 import sav.common.core.SystemVariablesUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.commons.TestConfiguration;
+import sav.commons.testdata.assertion.ArrayAssertionTest;
+import sav.commons.testdata.assertion.CompositeAssertionTest;
 import sav.commons.testdata.assertion.PrimitiveAssertionTest;
 // import sav.commons.testdata.assertion.TestInput;
 // import sav.commons.testdata.assertion.TestInput2;
@@ -41,6 +43,28 @@ public class AssertionGenerationTest extends TzuyuCoreTest {
 	public void test2() throws Exception {
 		AssertionGenerationParams params = initAssertionGenerationParams(
 				StackAssertionTest.class.getName(), 
+				"foo", null,
+				CollectionUtils.listOf("sav.commons.testdata.assertion"),
+				new ArrayList<String>(), false);
+
+		app.genAssertion(params);
+	}
+	
+	@Test
+	public void test3() throws Exception {
+		AssertionGenerationParams params = initAssertionGenerationParams(
+				ArrayAssertionTest.class.getName(), 
+				"foo", null,
+				CollectionUtils.listOf("sav.commons.testdata.assertion"),
+				new ArrayList<String>(), false);
+
+		app.genAssertion(params);
+	}
+	
+	@Test
+	public void test4() throws Exception {
+		AssertionGenerationParams params = initAssertionGenerationParams(
+				CompositeAssertionTest.class.getName(), 
 				"foo", null,
 				CollectionUtils.listOf("sav.commons.testdata.assertion"),
 				new ArrayList<String>(), false);

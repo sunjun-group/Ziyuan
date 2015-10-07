@@ -11,23 +11,21 @@ public class TwoPrimNeTemplate extends TwoFeaturesTemplate {
 	}
 	
 	@Override
-	public boolean check() {
+	public boolean checkPassValue(List<ExecValue> evl) {
 		// list of pass and fail exec value only has two features
 		// two features in pass values must be different
-		for (List<ExecValue> evl : passExecValuesList) {
-			if (evl.get(0).getDoubleVal() == evl.get(1).getDoubleVal()) {
-				return false;
-			}
-		}
-		
+		double v1 = evl.get(0).getDoubleVal();
+		double v2 = evl.get(1).getDoubleVal();
+		return v1 != v2;
+	}
+	
+	@Override
+	public boolean checkFailValue(List<ExecValue> evl) {
+		// list of pass and fail exec value only has two features
 		// two features in pass values must be equals
-		for (List<ExecValue> evl : failExecValuesList) {
-			if (evl.get(0).getDoubleVal() != evl.get(1).getDoubleVal()) {
-				return false;
-			}
-		}
-		
-		return true;
+		double v1 = evl.get(0).getDoubleVal();
+		double v2 = evl.get(1).getDoubleVal();
+		return v1 == v2;
 	}
 
 }

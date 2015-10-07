@@ -3,19 +3,17 @@ package tzuyu.core.main;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
-import assertion.template.checker.TemplateChecker;
+import assertion.template.checker.BreakpointTemplateChecker;
 import assertion.visitor.AddAssertStmtVisitor;
 import assertion.visitor.GetLearningLocationsVisitor;
 import icsetlv.InvariantMediator;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.variable.VarNameVisitor.VarNameCollectionMode;
 import icsetlv.variable.VariableNameCollector;
-import invariant.templates.Template;
 import japa.parser.JavaParser;
 import japa.parser.ast.CompilationUnit;
 import mutation.io.DebugLineFileWriter;
@@ -24,12 +22,10 @@ import mutation.mutator.insertdebugline.DebugLineData;
 import mutation.parser.ClassAnalyzer;
 import mutation.parser.ClassDescriptor;
 import mutation.parser.JParser;
-import sav.common.core.Pair;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.IApplicationContext;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunnerParameters;
@@ -146,10 +142,8 @@ public class AssertionGeneration extends TzuyuCore {
 		List<BreakpointData> bkpsData = im.debugTestAndCollectData(tests, filterLocations);
 		
 		// check data with templates
-		TemplateChecker tc = new TemplateChecker(im);
-		List<Pair<BreakpointData, List<Template>>> bkpsTemplates = tc.checkTemplates(bkpsData);
-		
-		System.out.println(bkpsTemplates);
+		BreakpointTemplateChecker tc = new BreakpointTemplateChecker(im);
+		tc.checkTemplates(bkpsData);
 	}
 
 	public List<BreakPoint> filterLocations(List<BreakPoint> locations, List<BreakPoint> slicedLocs) {
@@ -171,6 +165,7 @@ public class AssertionGeneration extends TzuyuCore {
 			}
 		}
 		
+		/*
 		BreakPoint lastLocation = locations.get(locations.size() - 1);
 		BreakPoint bp = new BreakPoint(lastLocation.getClassCanonicalName(), lastLocation.getMethodName(), lastLocation.getLineNo());
 		for (BreakPoint filterLocation : filterLocations) {
@@ -178,6 +173,7 @@ public class AssertionGeneration extends TzuyuCore {
 		}
 		
 		filterLocations.add(bp);
+		*/
 		
 		return filterLocations;
 	}

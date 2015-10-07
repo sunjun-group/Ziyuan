@@ -25,31 +25,23 @@ public class ThreePrimGcdTemplate extends ThreeFeaturesTemplate {
 	}
 	
 	@Override
-	public boolean check() {
-		// list of pass and fail exec value only has two features
-		// first feature must be equals to mod between second and third feature
-		for (List<ExecValue> evl : passExecValuesList) {
-			int i1 = (int) evl.get(0).getDoubleVal();
-			int i2 = (int) evl.get(1).getDoubleVal();
-			int i3 = (int) evl.get(2).getDoubleVal();
-			
-			if (i2 <= 0 || i3 <= 0 || i1 != gcd(i2, i3)) {
-				return false;
-			}
-		}
-						
-		// first feature must not be equals to mod between second and third feature
-		for (List<ExecValue> evl : failExecValuesList) {
-			int i1 = (int) evl.get(0).getDoubleVal();
-			int i2 = (int) evl.get(1).getDoubleVal();
-			int i3 = (int) evl.get(2).getDoubleVal();
-					
-			if (i2 > 0 && i3 > 0 && i1 == gcd(i2, i3)) {
-				return false;
-			}
-		}
-						
-		return true;
+	public boolean checkPassValue(List<ExecValue> evl) {
+		// list of pass and fail exec value only has three features
+		// first feature must be equals to gcd between second and third feature
+		int v1 = (int) evl.get(0).getDoubleVal();
+		int v2 = (int) evl.get(1).getDoubleVal();
+		int v3 = (int) evl.get(2).getDoubleVal();
+		return v2 > 0 && v3 > 0 && v1 == gcd(v2, v3);
+	}
+	
+	@Override
+	public boolean checkFailValue(List<ExecValue> evl) {
+		// list of pass and fail exec value only has three features
+		// first feature must not be equals to gcd between second and third feature
+		int v1 = (int) evl.get(0).getDoubleVal();
+		int v2 = (int) evl.get(1).getDoubleVal();
+		int v3 = (int) evl.get(2).getDoubleVal();
+		return v2 <= 0 || v3 <= 0 || v1 != gcd(v2, v3);
 	}
 
 	@Override

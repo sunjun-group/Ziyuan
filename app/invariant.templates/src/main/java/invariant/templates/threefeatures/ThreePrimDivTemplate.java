@@ -15,31 +15,23 @@ public class ThreePrimDivTemplate extends ThreeFeaturesTemplate {
 	}
 	
 	@Override
-	public boolean check() {
-		// list of pass and fail exec value only has two features
-		// first feature must be equals to mod between second and third feature
-		for (List<ExecValue> evl : passExecValuesList) {
-			double d1 = evl.get(0).getDoubleVal();
-			double d2 = evl.get(1).getDoubleVal();
-			double d3 = evl.get(2).getDoubleVal();
-			
-			if (d1 != (d2 / d3)) {
-				return false;
-			}
-		}
-						
-		// first feature must not be equals to mod between second and third feature
-		for (List<ExecValue> evl : failExecValuesList) {
-			double d1 = evl.get(0).getDoubleVal();
-			double d2 = evl.get(1).getDoubleVal();
-			double d3 = evl.get(2).getDoubleVal();
-			
-			if (d1 == (d2 / d3)) {
-				return false;
-			}
-		}
-						
-		return true;
+	public boolean checkPassValue(List<ExecValue> evl) {
+		// list of pass and fail exec value only has three features
+		// first feature must be equals to division between second and third feature
+		double v1 = evl.get(0).getDoubleVal();
+		double v2 = evl.get(1).getDoubleVal();
+		double v3 = evl.get(2).getDoubleVal();
+		return v1 == v2 / v3;
+	}
+	
+	@Override
+	public boolean checkFailValue(List<ExecValue> evl) {
+		// list of pass and fail exec value only has three features
+		// first feature must not be equals to division between second and third feature
+		double v1 = evl.get(0).getDoubleVal();
+		double v2 = evl.get(1).getDoubleVal();
+		double v3 = evl.get(2).getDoubleVal();
+		return v1 != v2 / v3;
 	}
 	
 	@Override

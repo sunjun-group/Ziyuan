@@ -21,6 +21,20 @@ public class TwoPrimEqConstTemplate extends TwoFeaturesTemplate {
 	}
 	
 	@Override
+	public boolean checkPassValue(List<ExecValue> evl) {
+		double v1 = evl.get(0).getDoubleVal();
+		double v2 = evl.get(1).getDoubleVal();
+		return a * v1 + b * v2 + c == 0;
+	}
+	
+	@Override
+	public boolean checkFailValue(List<ExecValue> evl) {
+		double v1 = evl.get(0).getDoubleVal();
+		double v2 = evl.get(1).getDoubleVal();
+		return a * v1 + b * v2 + c != 0;
+	}
+	
+	@Override
 	public boolean check() {
 		if (passExecValuesList.size() <= 2) return false;
 		
@@ -36,19 +50,7 @@ public class TwoPrimEqConstTemplate extends TwoFeaturesTemplate {
 		a = y12; b = -x12;
 		c = -(a * x1 + b * y1);
 		
-		for (List<ExecValue> evl : passExecValuesList) {
-			if (a * evl.get(0).getDoubleVal() + b * evl.get(1).getDoubleVal() + c != 0) {
-				return false;
-			}
-		}
-		
-		for (List<ExecValue> evl : failExecValuesList) {
-			if (a * evl.get(0).getDoubleVal() + b * evl.get(1).getDoubleVal() + c == 0) {
-				return false;
-			}
-		}
-		
-		return true;
+		return checkAllPassValues(passExecValuesList) && checkAllFailValues(failExecValuesList);
 	}
 	
 	@Override

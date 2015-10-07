@@ -23,6 +23,9 @@ public class OnePrimIlpTemplate extends OneFeatureTemplate {
 	
 	public OnePrimIlpTemplate(List<List<ExecValue>> passExecValuesList, List<List<ExecValue>> failExecValuesList) {
 		super(passExecValuesList, failExecValuesList);
+		System.out.println("One ilp template");
+		System.out.println(passExecValuesList);
+		System.out.println(failExecValuesList);
 	}
 	
 	@Override
@@ -61,6 +64,7 @@ public class OnePrimIlpTemplate extends OneFeatureTemplate {
 		m = m.train();
 
 		if (m.getModel() == null) {
+			System.out.println("No model");
 			return false;
 		} else {
 			Formula formula = m.getLearnedLogic(new StringDividerProcessor(), m.getDivider(), true);
