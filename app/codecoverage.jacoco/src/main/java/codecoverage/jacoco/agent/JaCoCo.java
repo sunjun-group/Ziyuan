@@ -31,13 +31,13 @@ import sav.strategies.vm.VMConfiguration;
  * @author LLT
  *
  */
-public class JaCoCoAgent implements ICodeCoverage {
-	private Logger log = LoggerFactory.getLogger(JaCoCoAgent.class);
+public class JaCoCo implements ICodeCoverage {
+	private Logger log = LoggerFactory.getLogger(JaCoCo.class);
 	private ICoverageReport report;
 	private ExecutionDataReporter reporter;
 	private AppJavaClassPath appClasspath;
 	
-	public JaCoCoAgent(AppJavaClassPath appClasspath) {
+	public JaCoCo(AppJavaClassPath appClasspath) {
 		reporter = new ExecutionDataReporter(new String[] {
 				appClasspath.getTarget(), appClasspath.getTestTarget() });
 		this.appClasspath = appClasspath;

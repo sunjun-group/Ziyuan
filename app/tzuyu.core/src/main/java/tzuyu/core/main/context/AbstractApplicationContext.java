@@ -21,7 +21,7 @@ import sav.strategies.mutanbug.IMutator;
 import sav.strategies.slicing.ISlicer;
 import slicer.javaslicer.JavaSlicer;
 import tzuyu.core.inject.ApplicationData;
-import codecoverage.jacoco.agent.JaCoCoAgent;
+import codecoverage.jacoco.agent.JaCoCo;
 
 /**
  * @author LLT 
@@ -42,7 +42,7 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 	}
 	
 	private ICodeCoverage initJacocoAgent() {
-		JaCoCoAgent jacoco = new JaCoCoAgent(getAppClassPath());
+		JaCoCo jacoco = new JaCoCo(getAppClassPath());
 		return jacoco;
 	}
 	

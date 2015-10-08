@@ -65,8 +65,8 @@ public class InstructionContext implements IVariableCollectorContext, ITreeConte
 			toInstrNode = new InstructionNode(to, getInstructionHandler(to));
 		}
 		/* check if from already exist, if not -> add a new root */
-		InstructionNode fromInstNode = instrMap.get(from.getInstruction());
-		if (fromInstNode != null) {
+		InstructionNode fromInstNode;
+		if (from != null && (fromInstNode = instrMap.get(from.getInstruction())) != null) {
 			if (fromInstNode.addLink(toInstrNode, variable) && !toInstExistInMap) {
 				instrMap.put(toInstrNode.getInstruction(), toInstrNode);
 			}

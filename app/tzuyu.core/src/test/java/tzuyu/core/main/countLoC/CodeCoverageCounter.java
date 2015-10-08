@@ -20,7 +20,7 @@ import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.main.FaultLocateParams;
 import tzuyu.core.main.TzuyuCore;
 import codecoverage.jacoco.agent.ExecutionDataReporter;
-import codecoverage.jacoco.agent.JaCoCoAgent;
+import codecoverage.jacoco.agent.JaCoCo;
 
 /**
  * @author LLT
@@ -36,7 +36,7 @@ public class CodeCoverageCounter extends TzuyuCore {
 	public int count(FaultLocateParams params) throws Exception {
 		log.info("Running " + appData.getSuspiciousCalculAlgo());
 		CoverageCountReport reporter = new CoverageCountReport();
-		JaCoCoAgent codeCoverageTool = (JaCoCoAgent) appContext.getCodeCoverageTool();
+		JaCoCo codeCoverageTool = (JaCoCo) appContext.getCodeCoverageTool();
 		codeCoverageTool.setReporter(getReporter()); 
 	
 		codeCoverageTool.run(reporter, params.getTestingClassNames(),

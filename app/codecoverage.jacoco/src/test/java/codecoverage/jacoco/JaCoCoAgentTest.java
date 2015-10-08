@@ -26,7 +26,7 @@ import sav.commons.testdata.SamplePrograms;
 import sav.strategies.codecoverage.ICoverageReport;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import codecoverage.jacoco.agent.JaCoCoAgent;
+import codecoverage.jacoco.agent.JaCoCo;
 import codecoverage.jacoco.testdata.CoverageSample;
 import codecoverage.jacoco.testdata.CoverageSampleTest;
 
@@ -52,7 +52,7 @@ public class JaCoCoAgentTest extends JacocoAbstractTest {
 			throws Exception {
 		AppJavaClassPath appClasspath = initAppClasspath();
 		appClasspath.addClasspath(classesFolder);
-		JaCoCoAgent jacoco = new JaCoCoAgent(appClasspath);
+		JaCoCo jacoco = new JaCoCo(appClasspath);
 		jacoco.run(report, testingClassNames, junitClassNames);
 	}
 

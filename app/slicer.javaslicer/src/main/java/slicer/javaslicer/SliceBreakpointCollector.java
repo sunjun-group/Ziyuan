@@ -72,13 +72,7 @@ public class SliceBreakpointCollector implements SliceVisitor {
 	
 	@Override
 	public final void visitMatchedInstance(InstructionInstance instance) {
-		Instruction instruction = instance.getInstruction();
-		if (isAccepted(instruction)) {
-			String locId = InstructionUtils.getLocationId(instruction);
-			if (bkpMap.get(locId) == null) {
-				bkpMap.put(locId, InstructionUtils.getBreakpoint(instruction));
-			}
-		}
+		add(null, instance, null);
 	}
 
 	@Override

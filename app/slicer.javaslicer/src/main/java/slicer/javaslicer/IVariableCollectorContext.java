@@ -23,8 +23,9 @@ public interface IVariableCollectorContext {
 
 	void endContext();
 
-	void addLink(InstructionInstance instrIntance, InstructionInstance to,
+	void addLink(InstructionInstance from, InstructionInstance to,
 			de.unisb.cs.st.javaslicer.variables.Variable variable);
 
 	List<Variable> getVariables();
+
 }
