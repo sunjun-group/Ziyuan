@@ -46,7 +46,7 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 
 	protected TzuyuCore getProgram() {
 		if (program == null) {
-			program = new TzuyuCore(context, context.getAppData());
+			program = new TzuyuCore(context);
 		}
 		return program;
 	}
@@ -71,15 +71,8 @@ public class SingleSeededBugFixture extends TimedActionFixture {
 		this.useSlicer = useSlicer;
 	}
 
-	public final boolean analyze() throws Exception {
-		report = getProgram().faultLocalization(programClasses, programTestClasses, useSlicer);
-		checkAnalyzedResults();
-		return true;
-	}
-	
-	public final boolean analyze2(List<String> testingPackages) throws Exception {
-		report = getProgram().faultLocalization2(programClasses,
-				testingPackages, programTestClasses, useSlicer);
+	public final boolean analyze(List<String> testingPackages) throws Exception {
+		report = getProgram().faultLocalization(programClasses, testingPackages, programTestClasses);
 		checkAnalyzedResults();
 		return true;
 	}

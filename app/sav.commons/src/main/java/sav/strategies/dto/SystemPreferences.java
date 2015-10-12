@@ -58,4 +58,8 @@ public class SystemPreferences {
 	public void putBoolean(SystemVariables var, boolean value) {
 		put(var, String.valueOf(value));
 	}
+	
+	public void putEnum(SystemVariables var, Enum<?> value) {
+		put(var.getName(), value.name());
+	}
 }

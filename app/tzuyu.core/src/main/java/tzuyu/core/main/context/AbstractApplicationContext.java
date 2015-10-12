@@ -20,7 +20,6 @@ import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.mutanbug.IMutator;
 import sav.strategies.slicing.ISlicer;
 import slicer.javaslicer.JavaSlicer;
-import tzuyu.core.inject.ApplicationData;
 import codecoverage.jacoco.agent.JaCoCo;
 
 /**
@@ -35,14 +34,14 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 	private ISlicer slicer;
 	protected ICodeCoverage codeCoverageTool;
 	private IMutator mutator;
-	private ApplicationData appData;
+	private AppJavaClassPath appClassPath;
 
 	protected ICodeCoverage initCodeCoverage() {
 		return initJacocoAgent();
 	}
 	
 	private ICodeCoverage initJacocoAgent() {
-		JaCoCo jacoco = new JaCoCo(getAppClassPath());
+		JaCoCo jacoco = new JaCoCo(getAppData());
 		return jacoco;
 	}
 	
@@ -83,27 +82,22 @@ public abstract class AbstractApplicationContext implements IApplicationContext 
 		}
 		return -1;
 	}
-	
-	public void setAppData(ApplicationData appData) {
-		this.appData = appData;
-	}
-	
-	public ApplicationData getAppData() {
-		return appData;
-	}
 
 	public IMutator getMutator() {
 		if (this.mutator == null) {
-			Mutator mutator = new Mutator(getAppData().getAppSrc());
+			Mutator mutator = new Mutator(getAppData().getSrc());
 			mutator.setOpMapConfig(new HashMap<String, List<String>>());
 			this.mutator = mutator;
 			
 		}
 		return this.mutator;
 	}
-	
-	@Override
-	public AppJavaClassPath getAppClassPath() {
-		return appData.getAppClassPath();
+
+	public AppJavaClassPath getAppData() {
+		return appClassPath;
+	}
+
+	public void setAppData(AppJavaClassPath appClassPath) {
+		this.appClassPath = appClassPath;
 	}
 }

@@ -30,17 +30,19 @@ import org.slf4j.LoggerFactory;
 
 import sav.common.core.Pair;
 import sav.common.core.SavException;
+import sav.common.core.SystemVariables;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.IApplicationContext;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.ClassLocation;
 import sav.strategies.dto.DebugLine;
 import sav.strategies.mutanbug.DebugLineInsertionResult;
-import tzuyu.core.inject.ApplicationData;
+import sav.strategies.vm.VMConfiguration;
 import tzuyu.core.machinelearning.LearnInvariants;
 import tzuyu.core.mutantbug.MutanBug;
 import tzuyu.core.mutantbug.Recompiler;
@@ -60,44 +62,34 @@ import gentest.junit.TestsPrinter;
 public class TzuyuCore {
 	protected static Logger log = LoggerFactory.getLogger(FaultLocalization.class);
 	protected IApplicationContext appContext;
-	protected ApplicationData appData;
 	protected MutanBug mutanbug;
 	
-	public TzuyuCore(IApplicationContext appContext, ApplicationData appData) {
+	public TzuyuCore(IApplicationContext appContext) {
 		this.appContext = appContext;
-		this.appData = appData;
 	}
 
-	public FaultLocalizationReport faultLocalization(List<String> testingClassNames,
-			List<String> junitClassNames) throws Exception {
-		return faultLocalization(testingClassNames, junitClassNames, true);
-	}
-	
-	public FaultLocalizationReport faultLocalization(List<String> testingClassNames,
-			List<String> junitClassNames, boolean useSlicer) throws Exception {
-		FaultLocalization analyzer = new FaultLocalization(appContext);
-		analyzer.setUseSlicer(useSlicer);
-		FaultLocalizationReport report = analyzer.analyse(testingClassNames, junitClassNames,
-				appData.getSuspiciousCalculAlgo());
-//		mutation(report, junitClassNames);
-		return report;
-	}
-	
-	public FaultLocalizationReport faultLocalization2(
+	public FaultLocalizationReport faultLocalization(
 			List<String> testingClassNames, List<String> testingPackages,
-			List<String> junitClassNames, boolean useSlicer) throws Exception {
+			List<String> junitClassNames) throws Exception {
 		FaultLocalization analyzer = new FaultLocalization(appContext);
-		analyzer.setUseSlicer(useSlicer);
-		FaultLocalizationReport report = analyzer.analyseSlicingFirst(
-				testingClassNames, testingPackages, junitClassNames,
-				appData.getSuspiciousCalculAlgo());
-		
-//		mutation(report, junitClassNames);
+		FaultLocalizationReport report = analyzer.analyse(
+				testingClassNames, testingPackages, junitClassNames);
+		// mutation(report, junitClassNames);
+		return report;
+	}
+	
+	protected FaultLocalizationReport computeSuspiciousness(FaultLocateParams params) throws Exception {
+		log.info("Compute suspiciousness: ");
+		appContext.getAppData().getPreferences()
+						.putBoolean(SystemVariables.FAULT_LOCATE_USE_SLICE,
+						params.isSlicerEnable() && !params.getTestingPkgs().isEmpty());
+		FaultLocalizationReport report = faultLocalization(params.getTestingClassNames(), params.getTestingPkgs(),
+				params.getJunitClassNames());
+		log.info(StringUtils.toStringNullToEmpty(report));
 		return report;
 	}
 
-	public void faultLocate(FaultLocateParams params)
-			throws Exception {
+	public void ziyuan(FaultLocateParams params) throws Exception {
 		StopTimer timer = new StopTimer("FaultLocate");
 		timer.newPoint("computing suspiciousness");
 		FaultLocalizationReport report = computeSuspiciousness(params);
@@ -112,29 +104,11 @@ public class TzuyuCore {
 		timer.logResults(log);
 	}
 
-	protected FaultLocalizationReport computeSuspiciousness(FaultLocateParams params) throws Exception {
-		log.info("Running " + appData.getSuspiciousCalculAlgo());
-		
-		final FaultLocalization analyzer = new FaultLocalization(appContext);
-		analyzer.setUseSlicer(params.isSlicerEnable());
-
-		FaultLocalizationReport report;
-		if (!params.isSlicerEnable() || params.getTestingPkgs().isEmpty()) {
-			report = analyzer.analyse(params.getTestingClassNames(), params.getJunitClassNames(),
-					appData.getSuspiciousCalculAlgo());
-		} else {
-			report = analyzer.analyseSlicingFirst(params.getTestingClassNames(), params.getTestingPkgs(),
-					params.getJunitClassNames(), appData.getSuspiciousCalculAlgo());
-		}
-		log.info(StringUtils.toStringNullToEmpty(report));
-		return report;
-	}
-
 	private void mutation(FaultLocalizationReport report,
 			List<String> junitClassNames, int rankToExamine) throws Exception {
 		log.info("Running Mutation");
 		MutanBug mutanbug = new MutanBug();
-		mutanbug.setAppData(appData);
+		mutanbug.setAppData(appContext.getAppData());
 		mutanbug.setMutator(appContext.getMutator());
 		mutanbug.mutateAndRunTests(report, rankToExamine, junitClassNames);
 		log.info(StringUtils.toStringNullToEmpty(report));
@@ -167,7 +141,8 @@ public class TzuyuCore {
 		if (CollectionUtils.isEmpty(suspectLocations)) {
 			log.warn("No suspect line to learn. SVM will not run.");
 		} else {
-			filter(suspectLocations, appData.getAppSrc());
+			AppJavaClassPath appClasspath = appContext.getAppData();
+			filter(suspectLocations, appClasspath .getSrc());
 			if (log.isDebugEnabled()) {
 				log.debug("before grouping: ");
 				log.debug(StringUtils.join(suspectLocations, "\n"));
@@ -180,7 +155,7 @@ public class TzuyuCore {
 
 			/* compute variables appearing at each breakpoint */
 			VariableNameCollector nameCollector = new VariableNameCollector(
-					params.getVarNameCollectionMode(), appData.getAppSrc());
+					params.getVarNameCollectionMode(), appClasspath.getSrc());
 			LocatedLines locatedLines = new LocatedLines(selectedLocations);
 			nameCollector.updateVariables(locatedLines.getLocatedLines());
 			/*
@@ -194,9 +169,9 @@ public class TzuyuCore {
 				log.debug("after grouping & processing: ");
 				log.debug(StringUtils.join(debugLines, "\n"));
 			}
-			LearnInvariants learnInvariant = new LearnInvariants(appData.getAppClassPath(), params);
+			LearnInvariants learnInvariant = new LearnInvariants(appClasspath, params);
 			List<BkpInvariantResult> invariants = learnInvariant.learn(new ArrayList<BreakPoint>(debugLines), 
-										junitClassNames, appData.getAppSrc());
+										junitClassNames, appClasspath.getSrc());
 			
 			locatedLines.updateInvariantResult(invariants);
 			
@@ -278,6 +253,7 @@ public class TzuyuCore {
 	protected List<String> generateNewTests(String testingClassName,
 			String methodName, String verificationMethod, int numberOfTestCases, String classPrefix)
 			throws ClassNotFoundException, SavException {
+		AppJavaClassPath appClasspath = appContext.getAppData();
 		Class<?> targetClass = Class.forName(testingClassName);
 		
 		FixTraceGentestBuilder builder = new FixTraceGentestBuilder(numberOfTestCases );
@@ -290,7 +266,7 @@ public class TzuyuCore {
 		}
 		Pair<List<Sequence>, List<Sequence>> testcases = builder.generate();
 		final FileCompilationUnitPrinter cuPrinter = new FileCompilationUnitPrinter(
-				appData.getAppSrc());
+				appClasspath.getSrc());
 		final List<String> junitClassNames = new ArrayList<String>();
 		TestsPrinter printer = new TestsPrinter("test", null, "test",
 				classPrefix, new ICompilationUnitPrinter() {
@@ -308,15 +284,15 @@ public class TzuyuCore {
 		printer.printTests(testcases);
 		List<File> generatedFiles = cuPrinter.getGeneratedFiles();
 		
-		Recompiler recompiler = new Recompiler(appData.initVmConfig());
-		recompiler.recompileJFile(appData.getAppTestTarget(), generatedFiles);
+		Recompiler recompiler = new Recompiler(new VMConfiguration(appClasspath));
+		recompiler.recompileJFile(appClasspath.getTestTarget(), generatedFiles);
 		
 		return junitClassNames;
 	}
 
 	protected List<DebugLine> getDebugLines(List<BreakPoint> locatedLines) throws SavException {
 		mutanbug = getMutanbug();
-		mutanbug.setAppData(appData);
+		mutanbug.setAppData(appContext.getAppData());
 		mutanbug.setMutator(appContext.getMutator());
 		Map<String, List<BreakPoint>> brkpsMap = BreakpointUtils.initBrkpsMap(locatedLines);
 		Map<String, DebugLineInsertionResult> mutationInfo = mutanbug.mutateForMachineLearning(brkpsMap);

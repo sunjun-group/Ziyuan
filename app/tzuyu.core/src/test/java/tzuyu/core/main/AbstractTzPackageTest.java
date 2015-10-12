@@ -20,9 +20,8 @@ import sav.commons.TestConfiguration;
 import sav.commons.testdata.opensource.TestPackage;
 import sav.commons.testdata.opensource.TestPackage.TestDataColumn;
 import sav.strategies.IApplicationContext;
-import tzuyu.core.inject.ApplicationData;
+import sav.strategies.dto.AppJavaClassPath;
 import tzuyu.core.main.context.AbstractApplicationContext;
-import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 /**
  * @author LLT
@@ -30,7 +29,7 @@ import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm
  */
 public class AbstractTzPackageTest extends AbstractTest {
 	protected IApplicationContext context;
-	protected ApplicationData appData;
+	protected AppJavaClassPath appData;
 	protected boolean useSlicer = false;
 	protected List<String> testingClassNames;
 	protected List<String> testingPackages;
@@ -40,17 +39,16 @@ public class AbstractTzPackageTest extends AbstractTest {
 	public void setup() {
 		AbstractApplicationContext context = new AbstractApplicationContext() {
 		};
-		appData = new ApplicationData();
+		appData = new AppJavaClassPath();
 		appData.setJavaHome(TestConfiguration.JAVA_HOME);
-		appData.setSuspiciousCalculAlgo(SpectrumAlgorithm.TARANTULA);
 		context.setAppData(appData);
 		this.context = context;
 	}
 	
 	public List<String> prepare(TestPackage testPkg) throws Exception {
-		appData.setAppSrc(testPkg.getValue(TestDataColumn.SOURCE_FOLDER));
-		appData.setAppTarget(testPkg.getValue(TestDataColumn.TARGET_FOLDER));
-		appData.setAppTestTarget(testPkg.getValue(TestDataColumn.TEST_TARGET_FOLDER));
+		appData.setSrc(testPkg.getValue(TestDataColumn.SOURCE_FOLDER));
+		appData.setTarget(testPkg.getValue(TestDataColumn.TARGET_FOLDER));
+		appData.setTestTarget(testPkg.getValue(TestDataColumn.TEST_TARGET_FOLDER));
 		appData.addClasspaths(testPkg.getClassPaths());
 		for (String libs : testPkg.getLibFolders()) {
 			addLibs(libs);
@@ -61,7 +59,7 @@ public class AbstractTzPackageTest extends AbstractTest {
 		
 		List<String> expectedBugLocations = testPkg.getValues(TestDataColumn.EXPECTED_BUG_LOCATION);
 		
-		updateSystemClasspath(appData.getAppClasspaths());
+		updateSystemClasspath(appData.getClasspaths());
 		return expectedBugLocations;
 	}
 	

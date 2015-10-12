@@ -18,14 +18,14 @@ import sav.commons.testdata.opensource.TestPackage;
  * @author LLT
  *
  */
-public class FaultLocatePackageTest extends AbstractTzPackageTest {
+public class ZiyuanPackageTest extends AbstractTzPackageTest {
 	protected TzuyuCore tzCore;
 	protected FaultLocateParams params;
 	
 	@Before
 	public void setup() {
 		super.setup();
-		tzCore = new TzuyuCore(context, appData);
+		tzCore = new TzuyuCore(context);
 		params = new FaultLocateParams();
 		params.setMachineLearningEnable(true);
 		params.setRankToExamine(3);
@@ -40,7 +40,7 @@ public class FaultLocatePackageTest extends AbstractTzPackageTest {
 		params.setTestingClassNames(testingClassNames);
 		params.setTestingPkgs(testingPackages);
 		params.setJunitClassNames(junitClassNames);
-		tzCore.faultLocate(params);
+		tzCore.ziyuan(params);
 	}
 	
 	/**

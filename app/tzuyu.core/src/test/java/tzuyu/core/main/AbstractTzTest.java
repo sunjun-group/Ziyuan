@@ -10,20 +10,26 @@ package tzuyu.core.main;
 
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
-import tzuyu.core.inject.ApplicationData;
+import sav.strategies.dto.AppJavaClassPath;
+import sav.strategies.dto.SystemPreferences;
 
 /**
  * @author LLT
  * 
  */
-public class AbstractTzTest extends AbstractTest {
+public abstract class AbstractTzTest extends AbstractTest {
 	protected TestConfiguration config;
 	protected TestApplicationContext testContext;
-	protected ApplicationData appData;
+	protected AppJavaClassPath appData;
 	
 	public AbstractTzTest() {
 		config = TestConfiguration.getInstance();
 		testContext = new TestApplicationContext();
 		this.appData = testContext.getAppData();
+		loadPreferences(appData.getPreferences());
+	}
+
+	protected void loadPreferences(SystemPreferences preferences) {
+		// do nothing by default
 	}
 }

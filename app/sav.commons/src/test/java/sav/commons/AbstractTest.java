@@ -27,6 +27,7 @@ import org.junit.BeforeClass;
 import sav.common.core.utils.StringUtils;
 import sav.commons.testdata.opensource.TestPackage;
 import sav.strategies.dto.AppJavaClassPath;
+import sav.strategies.dto.SystemPreferences;
 import sav.strategies.vm.VMConfiguration;
 
 
@@ -103,5 +104,13 @@ public class AbstractTest {
 		appClasspath.addClasspaths(pkg.getClassPaths());
 		appClasspath.addClasspaths(pkg.getLibFolders());
 		return appClasspath;
+	}
+	
+	protected final void loadPreferences(SystemPreferences preferences, String configStr) {
+		String[] configs = configStr.split("\n");
+		for (String config : configs) {
+			String[] keyValue = config.split("=");
+			preferences.put(keyValue[0].trim(), keyValue[1].trim());
+		}
 	}
 }

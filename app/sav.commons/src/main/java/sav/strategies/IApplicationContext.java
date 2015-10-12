@@ -25,5 +25,5 @@ public interface IApplicationContext {
 
 	IMutator getMutator();
 
-	AppJavaClassPath getAppClassPath();
+	AppJavaClassPath getAppData();
 }

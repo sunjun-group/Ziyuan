@@ -6,25 +6,20 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 import sav.common.core.SystemVariablesUtils;
 import sav.common.core.utils.CollectionUtils;
-import sav.commons.TestConfiguration;
 import sav.commons.testdata.assertion.ArrayAssertionTest;
 import sav.commons.testdata.assertion.CompositeAssertionTest;
 import sav.commons.testdata.assertion.PrimitiveAssertionTest;
-// import sav.commons.testdata.assertion.TestInput;
-// import sav.commons.testdata.assertion.TestInput2;
 import sav.commons.testdata.assertion.StackAssertionTest;
 
 public class AssertionGenerationTest extends TzuyuCoreTest {
 	
 	@Before
 	public void setup() throws Exception {
-		String jarPath = SystemVariablesUtils.updateSavJunitJarPath(appData.getAppClassPath());
+		String jarPath = SystemVariablesUtils.updateSavJunitJarPath(appData);
 		testContext.getAppData().addClasspath(jarPath);
-		appData.setSuspiciousCalculAlgo(SpectrumAlgorithm.OCHIAI);
-		app = new AssertionGeneration(testContext, appData);
+		app = new AssertionGeneration(testContext);
 	}
 	
 	@Test

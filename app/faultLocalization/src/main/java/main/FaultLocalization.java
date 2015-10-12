@@ -8,13 +8,17 @@
 
 package main;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sav.common.core.SavException;
+import sav.common.core.SystemVariables;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
@@ -23,6 +27,7 @@ import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICodeCoverage;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.SystemPreferences;
 import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunnerParameters;
@@ -39,28 +44,59 @@ public class FaultLocalization {
 	private static Logger log = LoggerFactory.getLogger(FaultLocalization.class);
 	private ISlicer slicer;
 	private ICodeCoverage codeCoverageTool;
-	private boolean useSlicer = true; // Use slicer by default
 	private AppJavaClassPath appClasspath;
+	private boolean useSlicer;
+	private SpectrumAlgorithm spectrumAlgorithm;
 
 	public FaultLocalization(IApplicationContext appContext) {
 		slicer = appContext.getSlicer();
 		codeCoverageTool = appContext.getCodeCoverageTool();
-		this.appClasspath = appContext.getAppClassPath();
+		this.appClasspath = appContext.getAppData();
+		setup(appClasspath.getPreferences());
 	}
 
-	public FaultLocalizationReport analyse(List<String> testingClasseNames,
-			List<String> junitClassNames) throws Exception {
-		return analyse(testingClasseNames, junitClassNames,
-				SpectrumAlgorithm.TARANTULA);
+	private void setup(SystemPreferences preferences) {
+		useSlicer = preferences
+				.getBoolean(SystemVariables.FAULT_LOCATE_USE_SLICE);
+		spectrumAlgorithm = SpectrumAlgorithm.valueOf(
+				preferences.get(SystemVariables.FAULT_LOCATE_SPECTRUM_ALGORITHM));
 	}
 	
-	public FaultLocalizationReport analyseSlicingFirst(
+	public FaultLocalizationReport analyse(
 			List<String> analyzedClasses, List<String> analyzedPackages,
-			List<String> junitClassNames,
-			SpectrumAlgorithm algorithm) throws Exception {
+			List<String> junitClassNames) throws Exception {
+		setup(appClasspath.getPreferences());
+		List<BreakPoint> filterPoints = Collections.emptyList();
+		List<String> testingClasses = analyzedClasses;
+		if (useSlicer) {
+			Set<BreakPoint> traces = getSlicingTraces(analyzedClasses,
+					analyzedPackages, junitClassNames);
+			filterPoints = new ArrayList<BreakPoint>(traces);
+			testingClasses = BreakpointUtils.extractClasses(traces);
+		}
+		// coverage
+		FaultLocalizationReport report = new FaultLocalizationReport();
+		CoverageReport result = new CoverageReport();
+		if (testingClasses.isEmpty()) {
+			return report;
+		}
+		if (log.isDebugEnabled()) {
+			log.debug("Analyzing classes: ");
+			log.debug(StringUtils.join(testingClasses, "\n"));
+		}
+		codeCoverageTool.run(result, testingClasses, junitClassNames);
+		report.setCoverageReport(result);
+		report.setLineCoverageInfos(result.computeSuspiciousness(filterPoints, spectrumAlgorithm));
+		
+		report.sort();
+		return report;
+	}
+
+	private Set<BreakPoint> getSlicingTraces(List<String> analyzedClasses,
+			List<String> analyzedPackages, List<String> junitClassNames)
+			throws ClassNotFoundException, IOException, SavException, Exception {
 		/*
-		 * do slicing first, but we must run testcases first, and only slice the
-		 * fail testcases
+		 * Run test cases first, and only slice the fail test cases
 		 */
 		JunitRunnerParameters params = new JunitRunnerParameters();
 		params.setJunitClasses(junitClassNames);
@@ -73,7 +109,6 @@ public class FaultLocalization {
 			params.setTestingClassNames(analyzedClasses);
 		}
 		JunitResult jresult = JunitRunner.runTestcases(appClasspath, params);
-		// slice
 		Set<BreakPoint> traces = jresult.getFailureTraces();
 		/* do slicing */
 		if (log.isDebugEnabled()) {
@@ -87,68 +122,7 @@ public class FaultLocalization {
 		if (log.isDebugEnabled()) {
 			log.debug("causeTraces=", BreakpointUtils.getPrintStr(traces));
 		}
-		// coverage
-		FaultLocalizationReport report = new FaultLocalizationReport();
-		CoverageReport result = new CoverageReport();
-		List<String> testingClasses = BreakpointUtils.extractClasses(traces);
-		if (testingClasses.isEmpty()) {
-			return report;
-		}
-		if (log.isDebugEnabled()) {
-			log.debug("Analyzing classes: ");
-			log.debug(StringUtils.join(testingClasses, "\n"));
-		}
-		codeCoverageTool.run(result, testingClasses, junitClassNames);
-		report.setCoverageReport(result);
-		if (useSlicer) {
-			report.setLineCoverageInfos(result.computeSuspiciousness(new ArrayList<BreakPoint>(traces), algorithm));
-		} else {
-			report.setLineCoverageInfos(result.computeSuspiciousness(new ArrayList<BreakPoint>(), algorithm));
-		}
-		
-		report.sort();
-		return report;
-	}
-
-	public FaultLocalizationReport analyse(List<String> testingClasses,
-			List<String> junitClassNames, SpectrumAlgorithm algorithm)
-			throws Exception {
-		log.info("Start analyzing..");
-		log.info("testingClasses=", testingClasses);
-		log.info("junitClassNames=", junitClassNames);
-		log.info("algorithm=", algorithm);
-		log.info("useSlicer=", useSlicer);
-		FaultLocalizationReport report = new FaultLocalizationReport();
-		CoverageReport result = new CoverageReport();
-		codeCoverageTool.run(result, testingClasses, junitClassNames);
-		report.setCoverageReport(result);
-		if (useSlicer) {
-			/* do slicing */
-			List<BreakPoint> traces = result.getFailureTraces();
-			if (log.isDebugEnabled()) {
-				log.debug("failureTraces=", BreakpointUtils.getPrintStr(traces));
-			}
-			slicer.setFiltering(testingClasses, null);
-			List<BreakPoint> causeTraces = slicer.slice(appClasspath, result.getFailureTraces(),
-					JunitUtils.toClassMethodStrs(result.getFailTests()));
-			if (log.isDebugEnabled()) {
-				log.debug("causeTraces=", BreakpointUtils.getPrintStr(causeTraces));
-			}
-			for (BreakPoint bkp : causeTraces) {
-				CollectionUtils.addIfNotNullNotExist(traces, bkp);
-			}
-			report.setLineCoverageInfos(result.computeSuspiciousness(traces, algorithm));
-		} else {
-			report.setLineCoverageInfos(result.computeSuspiciousness(new ArrayList<BreakPoint>(), algorithm));
-		}
-		
-		report.sort();
-		
-		return report;
-	}
-
-	public void setUseSlicer(boolean useSlicer) {
-		this.useSlicer = useSlicer;
+		return traces;
 	}
 
 }

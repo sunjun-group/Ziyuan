@@ -12,11 +12,12 @@ import java.util.List;
 
 import org.junit.Before;
 
-import sav.common.core.Constants;
+import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
+
+import sav.common.core.SystemVariables;
 import sav.common.core.SystemVariablesUtils;
 import sav.common.core.utils.CollectionUtils;
-import sav.commons.TestConfiguration;
-import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
+import sav.strategies.dto.SystemPreferences;
 
 /**
  * @author LLT
@@ -27,10 +28,15 @@ public abstract class TzuyuCoreTest extends AbstractTzTest {
 	
 	@Before
 	public void setup() throws Exception {
-		String jarPath = SystemVariablesUtils.updateSavJunitJarPath(appData.getAppClassPath());
+		String jarPath = SystemVariablesUtils.updateSavJunitJarPath(appData);
 		testContext.getAppData().addClasspath(jarPath);
-		appData.setSuspiciousCalculAlgo(SpectrumAlgorithm.OCHIAI);
-		app = new TzuyuCore(testContext, appData);
+		app = new TzuyuCore(testContext);
+	}
+	
+	@Override
+	protected void loadPreferences(SystemPreferences preferences) {
+		preferences.putEnum(SystemVariables.FAULT_LOCATE_SPECTRUM_ALGORITHM, 
+				SpectrumAlgorithm.OCHIAI);
 	}
 	
 	protected FaultLocateParams initFaultLocateParams(String testingClassName, String methodName, String verificationMethod,

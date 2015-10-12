@@ -6,10 +6,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import sav.common.core.Constants;
 import sav.common.core.utils.ConfigUtils;
-import sav.commons.TestConfiguration;
-import tzuyu.core.inject.ApplicationData;
+import sav.strategies.dto.AppJavaClassPath;
 import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 /**
@@ -24,13 +22,12 @@ public class SystemConfiguredDataProvider extends TestApplicationContext {
 	private static final String JAVA_CLASS_FILE_EXTENSION = ".class";
 	private static final String JAVA_JAR_FILE_EXTENSION = ".jar";
 	
-	public SystemConfiguredDataProvider(ApplicationData appData) {
+	public SystemConfiguredDataProvider(AppJavaClassPath appData) {
 		setAppData(appData);
 	}
 	
 	public SystemConfiguredDataProvider() {
-		ApplicationData appData = new ApplicationData();
-		appData.setSuspiciousCalculAlgo(getSuspiciousnessCalculationAlgorithm());
+		AppJavaClassPath appData = new AppJavaClassPath();
 		setAppData(appData);
 	}
 	
@@ -63,7 +60,7 @@ public class SystemConfiguredDataProvider extends TestApplicationContext {
 	}
 
 	public List<String> getProjectClasspath() {
-		return getAppData().getAppClasspaths();
+		return getAppData().getClasspaths();
 	}
 
 	public void setJavaHome(final String path) {

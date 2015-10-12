@@ -38,7 +38,7 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 		FaultLocateParams params = initFaultLocateParams(TestClass.class.getName(), "calculate", null,
 				null, junitClassNames, false);
 		params.setRunMutation(false);
-		app.faultLocate(params);
+		app.ziyuan(params);
 	}
 	
 	@Test
@@ -50,7 +50,7 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 		params.setRunMutation(false);
 		params.setGenTest(false);
 		params.setValueRetrieveLevel(4);
-		app.faultLocate(params);
+		app.ziyuan(params);
 	}
 	
 	@Test
@@ -62,7 +62,7 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 		params.setRunMutation(false);
 		params.setGenTest(true);
 		params.setValueRetrieveLevel(4);
-		app.faultLocate(params);
+		app.ziyuan(params);
 	}
 	
 //	@Test
@@ -81,7 +81,7 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 	public void testNoLoop() throws Exception{
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add(CalculatorTest.class.getName());
-		app.faultLocate(initFaultLocateParams(Calculator.class.getName(), "getSum", "validateGetSum",
+		app.ziyuan(initFaultLocateParams(Calculator.class.getName(), "getSum", "validateGetSum",
 				Arrays.asList("sav.commons.testdata.calculator"), junitClassNames, true));
 	}
 
@@ -89,7 +89,7 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 	public void testNoLoop1() throws Exception{
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.CalculatorTest1");
-		app.faultLocate(initFaultLocateParams("sav.commons.testdata.calculator.Calculator", "getSum1", "validateGetSum",
+		app.ziyuan(initFaultLocateParams("sav.commons.testdata.calculator.Calculator", "getSum1", "validateGetSum",
 				null, junitClassNames, false));
 	}
 	
@@ -97,7 +97,7 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 	public void testArray() throws Exception{
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.GetSumArrayTest");
-		app.faultLocate(initFaultLocateParams("sav.commons.testdata.calculator.Calculator", "getSumArray", "validateGetSumArray",
+		app.ziyuan(initFaultLocateParams("sav.commons.testdata.calculator.Calculator", "getSumArray", "validateGetSumArray",
 				null, junitClassNames, false));
 	}
 	
@@ -105,7 +105,7 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 	public void testSimpleForLoop() throws Exception{
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.LoopInvariantTest");
-		app.faultLocate(initFaultLocateParams("sav.commons.testdata.calculator.Calculator", "loopInvariant", "validateLoopInvariant",
+		app.ziyuan(initFaultLocateParams("sav.commons.testdata.calculator.Calculator", "loopInvariant", "validateLoopInvariant",
 				null, junitClassNames, false));
 	}
 	
@@ -115,14 +115,14 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 		junitClassNames.add(SumTest.class.getName());
 		FaultLocateParams params = initFaultLocateParams(Sum.class.getName(), "getSum", "validateGetSum",
 				null, junitClassNames, false);
-		app.faultLocate(params);
+		app.ziyuan(params);
 	}
 	
 	@Test
 	public void testExtractVariableNameIssue() throws Exception {
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.ExtractVariableNameIssueJunit");
-		app.faultLocate(initFaultLocateParams(
+		app.ziyuan(initFaultLocateParams(
 				"sav.commons.testdata.calculator.ExtractVariableNameIssue",
 				"getSum", "validateGetSum", null, junitClassNames, false));
 	}
@@ -131,7 +131,7 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 	public void testPropertyAsObject() throws Exception{
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.calculator.ClassATest");
-		app.faultLocate(initFaultLocateParams("sav.commons.testdata.calculator.ClassA", "getSum", "validateGetSum",
+		app.ziyuan(initFaultLocateParams("sav.commons.testdata.calculator.ClassA", "getSum", "validateGetSum",
 				null, junitClassNames, false));
 	}
 	
@@ -139,7 +139,7 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 	public void testLoopInvariant() throws Exception{
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.loopinvariant.LoopTest");
-		app.faultLocate(initFaultLocateParams("sav.commons.testdata.loopinvariant.Loop", "testLoop", "validateTestLoop",
+		app.ziyuan(initFaultLocateParams("sav.commons.testdata.loopinvariant.Loop", "testLoop", "validateTestLoop",
 				null, junitClassNames, false));
 	}
 	
@@ -147,7 +147,7 @@ public class TzuyuCoreDemoTest extends TzuyuCoreTest{
 	public void testWhileLoopWith2Bugs() throws Exception{
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("sav.commons.testdata.search1.SearchIndexEqualValueTest");
-		app.faultLocate(initFaultLocateParams("sav.commons.testdata.search1.SearchIndexEqualValue", "search", "validate",
+		app.ziyuan(initFaultLocateParams("sav.commons.testdata.search1.SearchIndexEqualValue", "search", "validate",
 				null, junitClassNames, false));
 	}
 }

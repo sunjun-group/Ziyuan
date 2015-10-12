@@ -13,12 +13,14 @@ package sav.common.core;
  * 
  */
 public enum SystemVariables {
-	SAV_JUNIT_JAR("sav.junit.runner.jar"), 
-	ENABLE_ASSERTION("assertion.enable", "true"),
+	SYS_SAV_JUNIT_JAR("sav.junit.runner.jar"), 
+	APP_ENABLE_ASSERTION("assertion.enable", "true"),
 	SLICE_COLLECT_VAR("slicing.collect.var", "false"),
 	//SLICE_BKP_VAR_INHERIT: values([empty], BACKWARD, FORWARD);
-	SLICE_BKP_VAR_INHERIT("slicing.collected.vars.inherit", "");
-
+	SLICE_BKP_VAR_INHERIT("slicing.collected.vars.inherit", ""),
+	FAULT_LOCATE_USE_SLICE("fault.localization.use.slice", "true"),
+	FAULT_LOCATE_SPECTRUM_ALGORITHM("fault.localization.spectrum.algorithm", "TARANTULA")
+	;
 	private String name;
 	private String defValue;
 

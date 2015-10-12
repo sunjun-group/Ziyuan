@@ -62,7 +62,7 @@ public class TestPackage {
 		packageData = new HashMap<TestPackage.TestDataColumn, Object>();
 	}
 	
-	public static Map<String, TestPackage> loadTestData() throws IOException {
+	private static Map<String, TestPackage> loadTestData() throws IOException {
 		return loadTestData(TestConfiguration.TESTDATA_CSV);
 	}
 	

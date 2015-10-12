@@ -12,14 +12,12 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import main.FaultLocalization;
 
 import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import faultLocalization.LineCoverageInfo;
@@ -74,7 +72,9 @@ public class SingleSeededBugTestCase extends AbstractTzTest {
 //	@Test
 	public void run() throws Exception {
 		// TODO NPN correct CLASSPATH here?
-		final List<LineCoverageInfo> infos = analyzer.analyse(programClasses, programTestClasses).getLineCoverageInfos();
+		final List<LineCoverageInfo> infos = analyzer.analyse(programClasses,
+				Collections.<String> emptyList(), programTestClasses)
+				.getLineCoverageInfos();
 		double maxSuspiciousness = -1.0;
 		double foundLineSuspiciousness = -1.0;
 		for (LineCoverageInfo info : infos) {

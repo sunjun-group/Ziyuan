@@ -12,11 +12,9 @@ package tzuyu.core.main;
 import java.util.ArrayList;
 import java.util.List;
 
-import sav.common.core.Constants;
 import sav.commons.TestConfiguration;
-import tzuyu.core.inject.ApplicationData;
+import sav.strategies.dto.AppJavaClassPath;
 import tzuyu.core.main.context.AbstractApplicationContext;
-import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm;
 
 
 /**
@@ -24,18 +22,16 @@ import faultLocalization.SpectrumBasedSuspiciousnessCalculator.SpectrumAlgorithm
  *
  */
 public class TestApplicationContext extends AbstractApplicationContext {
-	private SpectrumAlgorithm suspiciousnessCalcul;
 
 	public TestApplicationContext() {
-		ApplicationData appData = new ApplicationData();
+		AppJavaClassPath appClasspath = new AppJavaClassPath();
 		List<String> projectClasspath = new ArrayList<String>();
 		projectClasspath.add(TestConfiguration.SAV_COMMONS_TEST_TARGET);
-		appData.setClasspaths(projectClasspath);
-		appData.setJavaHome(TestConfiguration.getJavaHome());
-		appData.setSuspiciousCalculAlgo(suspiciousnessCalcul);
-		appData.setAppSrc(TestConfiguration.getTestScrPath("sav.commons"));
-		appData.setAppTarget(TestConfiguration.getTestTarget("sav.commons"));
-		appData.setAppTestTarget(appData.getAppTarget());
-		setAppData(appData);
+		appClasspath.addClasspaths(projectClasspath);
+		appClasspath.setJavaHome(TestConfiguration.getJavaHome());
+		appClasspath.setSrc(TestConfiguration.getTestScrPath("sav.commons"));
+		appClasspath.setTarget(TestConfiguration.getTestTarget("sav.commons"));
+		appClasspath.setTestTarget(appClasspath.getTarget());
+		setAppData(appClasspath);
 	}
 }

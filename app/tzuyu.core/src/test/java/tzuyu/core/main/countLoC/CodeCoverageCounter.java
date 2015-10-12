@@ -15,8 +15,8 @@ import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.strategies.IApplicationContext;
 import sav.strategies.codecoverage.ICoverageReport;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import tzuyu.core.inject.ApplicationData;
 import tzuyu.core.main.FaultLocateParams;
 import tzuyu.core.main.TzuyuCore;
 import codecoverage.jacoco.agent.ExecutionDataReporter;
@@ -29,12 +29,11 @@ import codecoverage.jacoco.agent.JaCoCo;
 public class CodeCoverageCounter extends TzuyuCore {
 
 	public CodeCoverageCounter(IApplicationContext appContext,
-			ApplicationData appData) {
-		super(appContext, appData);
+			AppJavaClassPath appData) {
+		super(appContext);
 	}
 
 	public int count(FaultLocateParams params) throws Exception {
-		log.info("Running " + appData.getSuspiciousCalculAlgo());
 		CoverageCountReport reporter = new CoverageCountReport();
 		JaCoCo codeCoverageTool = (JaCoCo) appContext.getCodeCoverageTool();
 		codeCoverageTool.setReporter(getReporter()); 
@@ -46,12 +45,13 @@ public class CodeCoverageCounter extends TzuyuCore {
 	}
 	
 	private ExecutionDataReporter getReporter() {
-		return new ExecutionDataReporter(appData.getAppTarget()) {
+		final AppJavaClassPath appClasspath = appContext.getAppData();
+		return new ExecutionDataReporter(appClasspath.getTarget()) {
 			@Override
 			public void report(String execFile, String junitResultFile,
 					List<String> testingClassNames) throws SavException {
 				if (testingClassNames.isEmpty()) {
-					super.report(execFile, junitResultFile, appData.getAppTarget());
+					super.report(execFile, junitResultFile, appClasspath.getTarget());
 				} else {
 					super.report(execFile, junitResultFile, testingClassNames);
 				}

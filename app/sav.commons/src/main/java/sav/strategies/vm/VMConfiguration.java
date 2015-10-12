@@ -52,7 +52,7 @@ public class VMConfiguration {
 		javaHome = appClasspath.getJavaHome();
 		classpaths = appClasspath.getClasspaths();
 		enableAssertion = appClasspath.getPreferences()
-					.getBoolean(SystemVariables.ENABLE_ASSERTION);
+					.getBoolean(SystemVariables.APP_ENABLE_ASSERTION);
 	}
 	
 	public List<String> getClasspaths() {

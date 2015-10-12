@@ -28,19 +28,13 @@ public class FaultLocalizationPackageTest extends AbstractTzPackageTest {
 	@Before
 	public void setup() {
 		super.setup();
-		tzCore = new TzuyuCore(context, appData);
+		tzCore = new TzuyuCore(context);
 	}
 	
 	public void runTest(TestPackage testPkg) throws Exception {
 		prepare(testPkg);
 		FaultLocalizationReport report;
-		if (isUseSlicer()) {
-			report = tzCore.faultLocalization2(testingClassNames,
-					testingPackages, junitClassNames, true);
-		} else {
-			report = tzCore.faultLocalization(testingClassNames,
-					junitClassNames, false);
-		}
+		report = tzCore.faultLocalization(testingClassNames, testingPackages, junitClassNames);
 		List<LineCoverageInfo> lineCoverageInfos = report.getLineCoverageInfos();
 		Collections.reverse(lineCoverageInfos);
 		printList(lineCoverageInfos);

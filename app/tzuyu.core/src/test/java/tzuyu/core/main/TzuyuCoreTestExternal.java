@@ -14,17 +14,17 @@ public class TzuyuCoreTestExternal extends TzuyuCoreTest {
 	@Test
 	@Ignore("For testing external codes")
 	public void testExternalNoLoop() throws Exception {
-		final List<String> appClasspaths = appData.getAppClasspaths();
+		final List<String> appClasspaths = appData.getClasspaths();
 		appClasspaths.add("/Users/npn/dev/projects/data/target/test-classes");
 		appClasspaths.add("/Users/npn/dev/projects/data/target/classes");
 		
-		appData.setAppSrc("/Users/npn/dev/projects/data/src/main/java");
-		appData.setAppTarget("/Users/npn/dev/projects/data/target/test-classes");
+		appData.setSrc("/Users/npn/dev/projects/data/src/main/java");
+		appData.setTarget("/Users/npn/dev/projects/data/target/test-classes");
 
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("simpleTestData.CalculatorTestFailed");
 		junitClassNames.add("simpleTestData.CalculatorTestPassed");
-		app.faultLocate(initFaultLocateParams("simpleTestData.Calculator", "getMax", "validateGetMax",
+		app.ziyuan(initFaultLocateParams("simpleTestData.Calculator", "getMax", "validateGetMax",
 				null, junitClassNames, false));
 	}
 	
@@ -32,18 +32,18 @@ public class TzuyuCoreTestExternal extends TzuyuCoreTest {
 	@Ignore("For testing with Guava codes")
 	public void testGuava1() throws Exception {
 		//  b2c6fb17ab4fbac8cd4014fe68799166f015a2c3
-		final List<String> appClasspaths = appData.getAppClasspaths();
+		final List<String> appClasspaths = appData.getClasspaths();
 		appClasspaths.add("/Users/npn/dev/projects/guava/guava/target/classes");
 		appClasspaths.add("/Users/npn/dev/projects/guava/guava-tests/test");
 		appClasspaths.add("/Users/npn/dev/projects/guava/guava-tests/target/test-classes");
-//		appData.setAppSrc("/Users/npn/dev/projects/guava/guava-tests/test");
-		appData.setAppSrc("/Users/npn/dev/projects/guava/guava/src");
-//		appData.setAppTarget("/Users/npn/dev/projects/guava/guava-tests/target/test-classes");
-		appData.setAppTarget("/Users/npn/dev/projects/guava/guava/target/classes");
+//		appClasspath.setAppSrc("/Users/npn/dev/projects/guava/guava-tests/test");
+		appData.setSrc("/Users/npn/dev/projects/guava/guava/src");
+//		appClasspath.setAppTarget("/Users/npn/dev/projects/guava/guava-tests/target/test-classes");
+		appData.setTarget("/Users/npn/dev/projects/guava/guava/target/classes");
 
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("com.google.common.cache.AbstractCacheTest");
-		app.faultLocate(initFaultLocateParams("com.google.common.cache.AbstractCache", "getAllPresent", "dummyValidate",
+		app.ziyuan(initFaultLocateParams("com.google.common.cache.AbstractCache", "getAllPresent", "dummyValidate",
 				null, junitClassNames, false));
 	}
 
@@ -53,7 +53,7 @@ public class TzuyuCoreTestExternal extends TzuyuCoreTest {
 //		--> 11e2e168a179ad670e528b0f45abf60bf3a5abda
 //		--> apply patch 14e8a456744bf12e829452381983f1ab9dff92ac
 //		--> revert changes on StringLongMapping.java
-		final List<String> appClasspaths = appData.getAppClasspaths();
+		final List<String> appClasspaths = appData.getClasspaths();
 		appClasspaths.add("/Users/npn/dev/projects/oryx/als-common/target/classes");
 		appClasspaths.add("/Users/npn/dev/projects/oryx/als-common/src/test/java");
 		appClasspaths.add("/Users/npn/dev/projects/oryx/common/target/test-classes");
@@ -73,12 +73,12 @@ public class TzuyuCoreTestExternal extends TzuyuCoreTest {
 		appClasspaths.add("/Users/npn/dev/projects/oryx/als-common/target/dependencyLibs/pmml-schema-1.0.22.jar");
 		appClasspaths.add("/Users/npn/dev/projects/oryx/als-common/target/dependencyLibs/slf4j-api-1.7.6.jar");
 		appClasspaths.add("/Users/npn/dev/projects/oryx/als-common/target/dependencyLibs/slf4j-jdk14-1.7.6.jar");
-		appData.setAppSrc("/Users/npn/dev/projects/oryx/als-common/src/main/java");
-		appData.setAppTarget("/Users/npn/dev/projects/oryx/als-common/target/classes");
+		appData.setSrc("/Users/npn/dev/projects/oryx/als-common/src/main/java");
+		appData.setTarget("/Users/npn/dev/projects/oryx/als-common/target/classes");
 
 		List<String> junitClassNames = new ArrayList<String>();
 		junitClassNames.add("com.cloudera.oryx.als.common.StringLongMappingTest");
-		app.faultLocate(initFaultLocateParams("com.cloudera.oryx.als.common.StringLongMapping", "toLong", "validate",
+		app.ziyuan(initFaultLocateParams("com.cloudera.oryx.als.common.StringLongMapping", "toLong", "validate",
 				null, junitClassNames, false));
 	}
 	
@@ -87,14 +87,14 @@ public class TzuyuCoreTestExternal extends TzuyuCoreTest {
 //	@Ignore("For testing with Guava codes")
 //	public void testGuava2() throws Exception {
 //		//  6b3dd12bb8960885afedb1807660d923fe3bfce8
-//		final ApplicationData appData = testContext.getAppData();
-//		final List<String> appClasspaths = appData.getAppClasspaths();
+//		final ApplicationData appClasspath = testContext.getAppData();
+//		final List<String> appClasspaths = appClasspath.getAppClasspaths();
 //		appClasspaths.add("/Users/npn/dev/projects/guava/guava/target/classes");
 //		appClasspaths.add("/Users/npn/dev/projects/guava/guava-tests/test");
 //		appClasspaths.add("/Users/npn/dev/projects/guava/guava-tests/target/test-classes");
 //		appClasspaths.add(TestConfiguration.getTzAssembly(Constants.TZUYU_JAVASLICER_ASSEMBLY));
-//		appData.setAppSrc("/Users/npn/dev/projects/guava/guava-tests/test");
-//		appData.setAppTarget("/Users/npn/dev/projects/guava/guava-tests/target/test-classes");
+//		appClasspath.setAppSrc("/Users/npn/dev/projects/guava/guava-tests/test");
+//		appClasspath.setAppTarget("/Users/npn/dev/projects/guava/guava-tests/target/test-classes");
 //
 //		final TzuyuCore app = new TzuyuCore(testContext);
 //		List<String> testingClasses = Arrays.asList("com.google.common.hash.HashCode");
@@ -107,14 +107,14 @@ public class TzuyuCoreTestExternal extends TzuyuCoreTest {
 //	@Ignore("For testing with Guava codes")
 //	public void testGuava3() throws Exception {
 //		//  dc931f9621ab1865e67fbf026590b6371e4a19f3
-//		final ApplicationData appData = testContext.getAppData();
-//		final List<String> appClasspaths = appData.getAppClasspaths();
+//		final ApplicationData appClasspath = testContext.getAppData();
+//		final List<String> appClasspaths = appClasspath.getAppClasspaths();
 //		appClasspaths.add("/Users/npn/dev/projects/guava/guava/target/classes");
 //		appClasspaths.add("/Users/npn/dev/projects/guava/guava-tests/test");
 //		appClasspaths.add("/Users/npn/dev/projects/guava/guava-tests/target/test-classes");
 //		appClasspaths.add(TestConfiguration.getTzAssembly(Constants.TZUYU_JAVASLICER_ASSEMBLY));
-//		appData.setAppSrc("/Users/npn/dev/projects/guava/guava-tests/test");
-//		appData.setAppTarget("/Users/npn/dev/projects/guava/guava-tests/target/test-classes");
+//		appClasspath.setAppSrc("/Users/npn/dev/projects/guava/guava-tests/test");
+//		appClasspath.setAppTarget("/Users/npn/dev/projects/guava/guava-tests/target/test-classes");
 //
 //		final TzuyuCore app = new TzuyuCore(testContext);
 //		List<String> testingClasses = Arrays.asList("com.google.common.collect.ImmutableTable");

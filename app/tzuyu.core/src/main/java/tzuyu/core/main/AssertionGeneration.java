@@ -1,43 +1,46 @@
 package tzuyu.core.main;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.io.FileUtils;
-
-import assertion.template.checker.BreakpointTemplateChecker;
-import assertion.visitor.AddAssertStmtVisitor;
-import assertion.visitor.GetLearningLocationsVisitor;
 import icsetlv.InvariantMediator;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.variable.VarNameVisitor.VarNameCollectionMode;
 import icsetlv.variable.VariableNameCollector;
 import japa.parser.JavaParser;
 import japa.parser.ast.CompilationUnit;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import mutation.io.DebugLineFileWriter;
 import mutation.mutator.VariableSubstitution;
 import mutation.mutator.insertdebugline.DebugLineData;
 import mutation.parser.ClassAnalyzer;
 import mutation.parser.ClassDescriptor;
 import mutation.parser.JParser;
+
+import org.apache.commons.io.FileUtils;
+
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.IApplicationContext;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.slicing.ISlicer;
-import tzuyu.core.inject.ApplicationData;
+import sav.strategies.vm.VMConfiguration;
 import tzuyu.core.mutantbug.FilesBackup;
 import tzuyu.core.mutantbug.Recompiler;
+import assertion.template.checker.BreakpointTemplateChecker;
+import assertion.visitor.AddAssertStmtVisitor;
+import assertion.visitor.GetLearningLocationsVisitor;
 
 public class AssertionGeneration extends TzuyuCore {
 
-	public AssertionGeneration(IApplicationContext appContext, ApplicationData appData) {
-		super(appContext, appData);
+	public AssertionGeneration(IApplicationContext appContext) {
+		super(appContext);
 	}
 		
 	@Override
@@ -45,8 +48,9 @@ public class AssertionGeneration extends TzuyuCore {
 		
 		FilesBackup backup = null;
 		
+		AppJavaClassPath appClasspath = appContext.getAppData();
+		String srcFolder = appClasspath.getSrc();
 		try {
-			String srcFolder = appData.getAppSrc();
 			String className = params.getTestingClassName();
 		
 			// the original file
@@ -63,8 +67,8 @@ public class AssertionGeneration extends TzuyuCore {
 			FileUtils.copyFile(newFile, origFile, false);
 						
 			// recompile the new file
-			Recompiler recompiler = new Recompiler(appData.initVmConfig());
-			recompiler.recompileJFile(appData.getAppTarget(), newFile);
+			Recompiler recompiler = new Recompiler(new VMConfiguration(appClasspath));
+			recompiler.recompileJFile(appClasspath.getTarget(), newFile);
 			
 			// add locations used to learn new assertion
 			List<BreakPoint> locations = addLearningLocations(params);
@@ -106,6 +110,8 @@ public class AssertionGeneration extends TzuyuCore {
 	public void templateLearning(List<BreakPoint> locations, AssertionGenerationParams params)
 			throws Exception
 	{
+		AppJavaClassPath appClasspath = appContext.getAppData();
+
 		// get random test cases
 		List<String> junitClassNames = getRandomTestCases(params);
 		
@@ -114,18 +120,18 @@ public class AssertionGeneration extends TzuyuCore {
 		junitParams.setTestingPkgs(params.getTestingPkgs());
 		junitParams.setTestingClassNames(params.getTestingClassNames());
 		
-		JunitResult jresult = JunitRunner.runTestcases(appContext.getAppClassPath(), junitParams);
+		JunitResult jresult = JunitRunner.runTestcases(appContext.getAppData(), junitParams);
 		
 		// slice
 		ISlicer slicer = appContext.getSlicer();
 		slicer.setFiltering(params.getTestingClassNames(), params.getTestingPkgs());
 		
-		List<BreakPoint> slicedLocs = slicer.slice(appContext.getAppClassPath(),
+		List<BreakPoint> slicedLocs = slicer.slice(appContext.getAppData(),
 				new ArrayList<BreakPoint>(jresult.getFailureTraces()),
 				JunitUtils.toClassMethodStrs(jresult.getFailTests()));
 		System.out.println("Slicing result: " + slicedLocs);
 		
-		VariableNameCollector vnc = new VariableNameCollector(VarNameCollectionMode.FULL_NAME, appData.getAppSrc());
+		VariableNameCollector vnc = new VariableNameCollector(VarNameCollectionMode.FULL_NAME, appClasspath.getSrc());
 		vnc.updateVariables(slicedLocs);
 		
 		System.out.println("Updated slicing result: " + slicedLocs);
@@ -134,7 +140,7 @@ public class AssertionGeneration extends TzuyuCore {
 		System.out.println("Filter locations: " + filterLocations);
 		
 		// collect data at break points
-		InvariantMediator im = new InvariantMediator(appData.getAppClassPath());
+		InvariantMediator im = new InvariantMediator(appClasspath);
 		List<String> tests = new ArrayList<String>();
 		for (int i = 1; i <= params.getNumberOfTestCases(); i++) {
 			tests.add(junitClassNames.get(0) + "." + "test" + i);
@@ -179,7 +185,7 @@ public class AssertionGeneration extends TzuyuCore {
 	}
 	
 	public List<BreakPoint> addLearningLocations(AssertionGenerationParams params) throws Exception {
-		String srcFolder = appData.getAppSrc();
+		String srcFolder = appContext.getAppData().getSrc();
 		String className = params.getTestingClassName();
 		String methodName = params.getMethodName();
 		
