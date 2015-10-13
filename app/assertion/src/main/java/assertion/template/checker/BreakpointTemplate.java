@@ -36,7 +36,9 @@ public class BreakpointTemplate {
 	
 	@Override
 	public String toString() {
-		return bkp + Arrays.toString(singleTemplates.toArray()) +
+//		return bkp + Arrays.toString(singleTemplates.toArray()) +
+//				Arrays.toString(compositeTemplates.toArray());
+		return Arrays.toString(singleTemplates.toArray()) +
 				Arrays.toString(compositeTemplates.toArray());
 	}
 	

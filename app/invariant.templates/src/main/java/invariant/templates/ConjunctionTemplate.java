@@ -13,6 +13,8 @@ public class ConjunctionTemplate extends CompositeTemplate {
 	
 	@Override
 	public boolean check() {
+		System.out.println("Check conjunction");
+		
 		List<Integer> notSatisfiedIndex = new ArrayList<Integer>();
 		SingleTemplate t1 = templates.get(0);
 		SingleTemplate t2 = templates.get(1);
@@ -20,7 +22,7 @@ public class ConjunctionTemplate extends CompositeTemplate {
 		List<List<ExecValue>> failExecValuesList1 = t1.getFailExecValuesList();
 		
 		for (int k = 0; k < failExecValuesList1.size(); k++) {
-			if (t1.checkFailValue(failExecValuesList1.get(k))) {
+			if (!t1.checkFailValue(failExecValuesList1.get(k))) {
 				notSatisfiedIndex.add(k);
 			}
 		}
@@ -28,7 +30,7 @@ public class ConjunctionTemplate extends CompositeTemplate {
 		List<List<ExecValue>> failExecValuesList2 = t2.getFailExecValuesList();
 		
 		for (int k : notSatisfiedIndex) {
-			if (t2.checkFailValue(failExecValuesList2.get(k))) {
+			if (!t2.checkFailValue(failExecValuesList2.get(k))) {
 				return false;
 			}
 		}
