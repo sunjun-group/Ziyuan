@@ -7,13 +7,12 @@ SET UP FOR JAVAILP
 	For Mac:
 		copy liblpsolve55.dylib into /usr/local/lib
 		copy liblpsolve55j.jnilib into /Library/Java/Extensions
-		copy liblpsolve55j.jnilib into .../Tzuyu/etc/libs/javailp-native
 		------------------------------------------------------------------------------------------------
 		[These files are built following the guide in Read Guide to use lp_solve in Java on Mac OS X.txt]
 		
 2. Indicate native library path
 	- Using program parameter:
-		add -Djava.library.path=[.../Tzuyu/etc/libs/javailp-native] into VM Arguments under Run Configuration.
+		add -Djava.library.path=[.../[Ziyuan project folder]/etc/libs/javailp-native] into VM Arguments under Run Configuration.
 	- Or set Native library location if running in eclipse
 		+ go to [project] properties/ Java Build Path / Libraries
 		+ uncollapse Maven Dependencies, select Native Library location, hit Edit button on the right and enter location path. 
