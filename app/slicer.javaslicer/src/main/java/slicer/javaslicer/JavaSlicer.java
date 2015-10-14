@@ -64,12 +64,12 @@ public class JavaSlicer implements ISlicer {
 		if (appClasspath.getPreferences().getBoolean(
 				SystemVariables.SLICE_COLLECT_VAR)) {
 			sliceCollector.setVariableCollectorContext(new InstructionContext());
-			VarInheritCustomizer.InheritType varInheritType = InheritType
-					.of(appClasspath.getPreferences().get(
-							SystemVariables.SLICE_BKP_VAR_INHERIT));
-			if (varInheritType != null) {
-				sliceCollector.setBkpCustomizer(new VarInheritCustomizer(varInheritType));
-			}
+		}
+		VarInheritCustomizer.InheritType varInheritType = InheritType
+										.of(appClasspath.getPreferences().get(
+												SystemVariables.SLICE_BKP_VAR_INHERIT));
+		if (varInheritType != null) {
+			sliceCollector.setBkpCustomizer(new VarInheritCustomizer(varInheritType));
 		}
 		timer.start();
 		vmConfig = SavJunitRunner.createVmConfig(appClasspath);

@@ -17,26 +17,42 @@ public class TemplateChecker {
 	
 	private List<CompositeTemplate> compositeTemplates;
 	
+	private SingleTemplateChecker stc;
+	
+	private CompositeTemplateChecker ctc;
+	
 	public TemplateChecker(List<List<ExecValue>> origPassExecValuesList,
 			List<List<ExecValue>> origFailExecValuesList) {
 		this.origPassExecValuesList = origPassExecValuesList;
 		this.origFailExecValuesList = origFailExecValuesList;
-		
-		singleTemplates = new ArrayList<SingleTemplate>();
-		compositeTemplates = new ArrayList<CompositeTemplate>();
+
 	}
 	
-	public void checkTemplates() {
-		SingleTemplateChecker stc = new SingleTemplateChecker(
+	public void addExecValuesList(List<List<ExecValue>> newPassExecValuesList,
+			List<List<ExecValue>> newFailExecValuesList) {
+		origPassExecValuesList.addAll(newPassExecValuesList);
+		origFailExecValuesList.addAll(newFailExecValuesList);
+	}
+	
+	public void checkSingleTemplates() {
+		singleTemplates = new ArrayList<SingleTemplate>();
+		
+		stc = new SingleTemplateChecker(
 				origPassExecValuesList,
 				origFailExecValuesList);
 		stc.checkSingleTemplates();
-		singleTemplates.addAll(stc.getSingleTemplates());
 		
-		CompositeTemplateChecker ctc = new CompositeTemplateChecker(
+		singleTemplates.addAll(stc.getSingleTemplates());
+	}
+	
+	public void checkCompositeTemplates() {
+		compositeTemplates = new ArrayList<CompositeTemplate>();
+		
+		ctc = new CompositeTemplateChecker(
 				stc.getSatifiedPassTemplates(),
 				stc.getSatifiedFailTemplates());
 		ctc.checkCompositeTemplates();
+		
 		compositeTemplates.addAll(ctc.getCompositeTemplates());
 	}
 	
