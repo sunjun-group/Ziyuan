@@ -17,7 +17,7 @@ PROJECT INITIAL SETUP
 4.	Make sure Ziyuan java dependencies will be available in local repository:
 	- For the setting in maven pom.xml of tzuyu.parent, some special dependency are deployed onto
 	http://202.94.70.100:8081/nexus/content/repositories/thirdparty, and will be downloaded automatically during build process.
-	- Make sure that the nexus server is available. 
+	- Make sure that the nexus server is available (try to open this url in your browser: http://202.94.70.100:8081/nexus/). 
 	If yes, you can jump to the step 6. 
 	If no, you have to install it to the local repository manually, go to step 5.
 5. 	Install jars:
