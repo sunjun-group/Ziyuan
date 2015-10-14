@@ -102,7 +102,7 @@ public class JavaParserRunner {
 					format("%s from %s, %s",
 					child.getClass().getName(),
 					child.getBeginLine(), child.getBeginColumn()));
-			System.out.println(child); System.out.println(child);
+			System.out.println(child);
 			recursive(child);
 		}
 	}

@@ -41,7 +41,8 @@ PROJECT INITIAL SETUP
 	- All necessary settings (.classpath, .project) are ready for eclipse. 
 		+ Click on File/Import...
 		+ Select General/Existing Projects into workspace 
-		+ Browse to Ziyuan project folder, select necessary modules, then click "finish".
+		+ Browse to Ziyuan project folder, select necessary modules (sav.commons, codecoverage.jacoco, 
+			faultLocalization, gentest, icsetlv, mutation, slicer.javaslicer, svmlib, tzuyu.core, tzuyu.parent), then click "finish".
 7.	Run the application:
 	- run tzuyu.core.main.TzuyuCoreDemoTest.testClass()
 	- if everything is setup properly, we should get learning result in the console view.

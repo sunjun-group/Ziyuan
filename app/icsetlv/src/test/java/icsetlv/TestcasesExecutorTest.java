@@ -13,7 +13,6 @@ import icsetlv.common.dto.BreakpointValue;
 import icsetlv.variable.TestcasesExecutor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -24,13 +23,10 @@ import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
-import sav.commons.testdata.calculator.Sum;
-import sav.commons.testdata.calculator.SumTest;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.dto.BreakPoint.Variable.VarScope;
-import test.Sum1;
 import testdata.testcasesexecutor.test1.TcExSum;
 import testdata.testcasesexecutor.test1.TcExSumTest;
 
@@ -103,17 +99,5 @@ public class TestcasesExecutorTest extends AbstractTest {
 		List<BreakpointValue> bkpVal = new ArrayList<BreakpointValue>(bkpData.getPassValues());
 		bkpVal.addAll(bkpData.getFailValues());
 		Assert.assertTrue(CollectionUtils.isEmpty(bkpVal.get(0).getChildren()));
-	}
-	
-	@Test
-	public void debugWithManyTestcases() throws Exception {
-		List<String> tests = JunitUtils.extractTestMethods(Arrays.asList(
-				SumTest.class.getName(), Sum1.class.getName()));
-		tcExecutor.setup(appClasspath, tests);
-		List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
-		String clazz = Sum.class.getName();
-		breakpoints.add(new BreakPoint(clazz, 23, new Variable("a")));
-		breakpoints.add(new BreakPoint(clazz, 24, new Variable("a")));
-		tcExecutor.run(breakpoints);
 	}
 }
