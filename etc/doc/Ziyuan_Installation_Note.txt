@@ -1,0 +1,50 @@
+PROJECT INITIAL SETUP
+
+--------------------------------------------------------------------------------
+1.	Check out source code from Github: https://github.com/sunjun-group/Ziyuan.
+	- Project folder includes 2 main sub folders, /app (store code), and /etc (store project settings, libs, ..etc).
+2.	Update Maven settings:
+	- goto /etc/maven, copy settings.xml --> local-settings.xml
+	- open local-settings.xml: 
+		+ modify <localRepository>D:/_1_Projects/Tzuyu/maven-repository</localRepository>, 
+				set it to your local maven repository folder [upon your choice].
+		+ uncomment 
+				<!-- 			<properties> -->
+				<!-- 				<toolsjar>[../jdk1.6.../lib/tools.jar</toolsjar> -->
+				<!-- 				<toolsjar-version>1.6...</toolsjar-version> -->
+				<!-- 			</properties> -->
+			set the absolute path of toolsjar to its folder in your local machine.	
+4.	Make sure Ziyuan java dependencies will be available in local repository:
+	- For the setting in maven pom.xml of tzuyu.parent, some special dependency are deployed onto
+	http://202.94.70.100:8081/nexus/content/repositories/thirdparty, and will be downloaded automatically during build process.
+	- Make sure that the nexus server is available. 
+	If yes, you can jump to the step 6. 
+	If no, you have to install it to the local repository manually, go to step 5.
+5. 	Install jars:
+	- Download maven (binary package) at https://maven.apache.org/download.cgi
+	- Unzip maven to folder [mvn folder]
+	- copy and override /etc/maven/local-settings.xml --> [mvn folder]/conf/settings.xml
+	- Go to /etc
+	For Window:
+		+ copy win-setenv-example.bat --> setenv.bat
+		+ modify setenv.bat, set absolute path to the folders on your local machine.
+		+ run win-mvn-install-libs.bat 
+	For Linux:
+		+ copy linux-runall-example.sh --> linux-runall.sh
+		+ modify linux-runall.sh, set absolute path to the folders on your local machine.
+		+ run linux-runall.sh
+6.	Import to Eclipse:
+	- Make sure that m2e plugin (maven to eclipse plugin) is installed.
+	- Update maven settings:
+		+ Go to Window/Preferences/Maven/User Settings
+		+ Browse User Settings to /etc/maven/local-settings.xml -> apply, ok
+	- All necessary settings (.classpath, .project) are ready for eclipse. 
+		+ Click on File/Import...
+		+ Select General/Existing Projects into workspace 
+		+ Browse to Ziyuan project folder, select necessary modules, then click "finish".
+7.	Run the application:
+	- run tzuyu.core.main.TzuyuCoreDemoTest.testClass()
+	- if everything is setup properly, we should get learning result in the console view.
+
+	
+

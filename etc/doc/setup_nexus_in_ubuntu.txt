@@ -1,0 +1,49 @@
+1. register for an amazon aws account.
+	launch an ubuntu machine
+	follow the instruction to connect to the machine via putty.
+2. download nexus
+	Open terminal and type
+
+	wget "http://www.sonatype.org/downloads/nexus-latest-bundle.tar.gz" 
+		to download the file to the current directory.
+	or:
+	wget  -O /tmp/nexus-bundle.tar.gz "http://www.sonatype.org/downloads/nexus-latest-bundle.tar.gz"
+	will download the file to /tmp
+2. install nexus using ssh
+	read instruction in this: http://bneijt.nl/blog/post/nexus-on-ubuntu-12.10-installation/
+	As the title says, a step by step installation of Sonatype Nexus on Ubuntu 12.10.
+		Add a user for nexus
+
+		sudo adduser --home /opt/nexus --disabled-login --disabled-password nexus
+		Change into that user, move to the home directory and unpack your Nexus download:
+
+		sudo su - nexus
+		cd
+		tar -xzf /tmp/nexus-2.3.1-01-bundle.tar.gz
+		Then, back to our normal user again, using exit.
+
+		Now we set up the init script:
+
+		sudo ln -s /opt/nexus/nexus-2.3.1-01/bin/nexus /etc/init.d/nexus
+		In the init script, make sure the following variable are changed to the right values:
+
+		NEXUS_HOME="/opt/nexus/nexus-2.3.1-01"
+		RUN_AS_USER=nexus
+		Now at this point you should be able to start nexus if you want to use your default Java. 
+		Because commercial products like this often do not support OpenJDK, I decided to use a binary installation of Java at /opt/java/jdk1.7.0_09/.
+
+		sudo vim /opt/nexus/nexus-2.3.1-01/bin/jsw/conf/wrapper.conf and set
+
+		wrapper.java.command=/opt/java/jdk1.7.0_09/bin/java
+		Then if you start the service with 
+				sudo service nexus
+					you should be able to see visit http://yourserver.example.com:8081/nexus/ and see Nexus.
+
+		The last step to complete the installation, is to make sure Nexus starts when the server starts: sudo update-rc.d nexus defaults
+		
+		http://ec2-54-169-219-12.ap-southeast-1.compute.amazonaws.com:8081/nexus
+		login with account: admin/admin123
+		
+		It might be error if we cannot access to that url, try to check if java is already installed
+			sudo java -version
+		follow this post: http://www.howtogeek.com/191427/how-to-find-out-if-java-is-installed-in-ubuntu-and-how-to-install-it/	
