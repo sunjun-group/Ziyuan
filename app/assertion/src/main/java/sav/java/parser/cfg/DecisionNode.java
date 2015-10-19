@@ -25,4 +25,8 @@ public class DecisionNode extends AbstractCfgNode {
 		return Type.DECISIONS;
 	}
 
+	@Override
+	public String toString() {
+		return getAstNode().toString() + "?";
+	}
 }

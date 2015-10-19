@@ -31,4 +31,9 @@ public class CfgFalseEdge extends CfgBranchEdge {
 		edge.setProperties(getProperties());
 		return edge;
 	}
+	
+	@Override
+	public String getLabel() {
+		return "FALSE";
+	}
 }

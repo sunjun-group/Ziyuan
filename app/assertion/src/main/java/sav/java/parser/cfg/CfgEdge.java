@@ -24,6 +24,7 @@ public class CfgEdge extends Edge<CfgNode>{
 		return Type.BLANK;
 	}
 
+	@Override
 	public CfgEdge clone(CfgNode newDest) {
 		CfgEdge newEdge = new CfgEdge(getSource(), newDest);
 		newEdge.setProperties(getProperties());
@@ -35,5 +36,9 @@ public class CfgEdge extends Edge<CfgNode>{
 		TRUE,
 		FALSE,
 		BRANCH
+	}
+	
+	public String getLabel() {
+		return "";
 	}
 }

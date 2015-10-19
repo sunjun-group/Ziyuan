@@ -20,4 +20,8 @@ public class CfgExitNode implements CfgNode {
 		return Type.EXIT;
 	}
 
+	@Override
+	public String toString() {
+		return "exit";
+	}
 }

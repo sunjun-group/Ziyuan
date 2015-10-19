@@ -26,4 +26,15 @@ public class Edge<V> extends PropertiesContainer {
 	public V getDest() {
 		return dest;
 	}
+	
+	public Edge<V> clone(V newDest) {
+		Edge<V> newEdge = new Edge<V>(getSource(), newDest);
+		newEdge.setProperties(getProperties());
+		return newEdge;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s  ---->  %s", source.toString(), dest);
+	}
 }

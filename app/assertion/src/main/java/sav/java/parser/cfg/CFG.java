@@ -1,6 +1,8 @@
 package sav.java.parser.cfg;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,33 +17,65 @@ public class CFG extends Graph<CfgNode, CfgEdge>{
 	public CFG(CfgEntryNode entry, CfgExitNode exit) {
 		this.entry = entry;
 		this.exit = exit;
-		addVertex(entry);
-		addVertex(exit);
 	}
 	
-	public void append(CFG that) {
-		addVerties(that.getVertices());
-		if (!that.isEmpty()) {
+	/**
+	 * join another cfg into this.
+	 * this exit will be merged with that entry.out.
+	 * and that exit will become this exit.
+	 * */
+	public void append(CFG other) {
+		/* append vertices */
+		addCFG(other);
+		if (!other.isEmpty()) {
 			for (CfgEdge thisExitIn : getInEdges(this.exit)) {
-				for (CfgEdge thatEntryOut : that.getOutEdges(that.entry)) {
-					addEdge(thisExitIn.clone(thatEntryOut.getDest()));
+				for (CfgEdge otherEntryOut : other.getOutEdges(other.entry)) {
+					addEdge(thisExitIn.clone(otherEntryOut.getDest()));
 				}
 			}
 			removeEdgesTo(getExit());
-			for (CfgEdge thatExistIn : that.getInEdges(that.exit)) {
-				addEdge(thatExistIn.clone(exit));
+			for (CfgEdge otherExistIn : other.getInEdges(other.exit)) {
+				addEdge(otherExistIn.clone(exit));
+			}
+		}
+	}
+
+	/**
+	 * add all vertices and their edges from other,
+	 * excludes entry end exit.
+	 * */
+	public void addCFG(CFG other) {
+		addVerties(other.getVertices());
+		addEdges(other);
+	}
+	
+	public void addEdges(CFG other) {
+		for (CfgNode vertex : other.getVertices()) {
+			for (CfgEdge edge : other.getOutEdges(vertex)) {
+				if (!(edge.getSource().equals(other.getEntry()) || edge.getDest()
+						.equals(other.getExit()))) {
+					addEdge(edge);
+				}
 			}
 		}
 	}
 	
-	public void append(CfgNode node) {
-		for (CfgEdge exitIn : getInEdges(exit)) {
-			moveEdgeTo(exitIn, node);
+	public void appendLast(CfgNode node, boolean attachExit) {
+		addVertex(node);
+		for (Iterator<CfgEdge> it = getInEdges(exit).iterator(); it.hasNext();) {
+			CfgEdge exitIn = it.next();
+			List<CfgEdge> edges = getInNeighbourhood().get(node);
+			if (edges == null) {
+				edges = new ArrayList<CfgEdge>();
+				getInNeighbourhood().put(node, edges);
+			}
+			edges.add(exitIn);
+			exitIn.setDest(node);
+			it.remove();
 		}
-	}
-	
-	public void moveEdgeTo(CfgEdge edge, CfgNode newTarget) {
-		
+		if (attachExit) {
+			addEdge(node, getExit());
+		}
 	}
 	
 	public void addEdge(CfgNode source, CfgNode dest) {
@@ -61,7 +95,7 @@ public class CFG extends Graph<CfgNode, CfgEdge>{
 	}
 
 	public boolean isEmpty() {
-		return size() == 2;
+		return size() == 0;
 	}
 
 	public CfgEntryNode getEntry() {

@@ -41,4 +41,5 @@ public class CfgBranchEdge extends CfgEdge {
 	public Type getType() {
 		return Type.BRANCH;
 	}
+
 }

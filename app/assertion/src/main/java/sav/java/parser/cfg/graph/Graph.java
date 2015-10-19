@@ -3,6 +3,7 @@ package sav.java.parser.cfg.graph;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,39 @@ public class Graph<V, E extends Edge<V>> extends PropertiesContainer {
 				.add(edge);
 	}
 	
+	public void removeEdge(E edge) {
+		outNeighbourhood.get(edge.getSource()).remove(edge);
+		inNeighbourhood.get(edge.getDest()).remove(edge);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void remove(V vertex) {
+		/* isolate node, and create path from its predecessors to its successors */
+		for (E inEdge : getInEdges(vertex)) {
+			for (E outEdge : getOutEdges(vertex)) {
+				addEdge((E) inEdge.clone(outEdge.getDest()));
+			}
+		}
+		/* remove node, and all its edges */
+		Iterator<E> it;
+		for (it = getInEdges(vertex).iterator(); it.hasNext();) {
+			E edge = it.next();
+			getOutEdges(edge.getSource()).remove(edge);
+			it.remove();
+		}
+		for (it = getOutEdges(vertex).iterator(); it.hasNext();) {
+			E edge = it.next();
+			getInEdges(edge.getDest()).remove(edge);
+			it.remove();
+		}
+	}
+	
+	public void remove(V... vertices) {
+		for (V vertex : vertices) {
+			remove(vertex);
+		}
+	}
+	
 	public void removeEdgesTo(V vertex) {
 		for (E edge : CollectionUtils.nullToEmpty(inNeighbourhood.get(vertex))) {
 			getOutEdges(edge.getSource()).remove(edge);
@@ -50,6 +84,19 @@ public class Graph<V, E extends Edge<V>> extends PropertiesContainer {
 		inNeighbourhood.remove(vertex);
 	}
 	
+	public void removeEdgesFrom(V vertex) {
+		for (E edge : CollectionUtils.nullToEmpty(outNeighbourhood.get(vertex))) {
+			getInEdges(edge.getDest()).remove(edge);
+		}
+		outNeighbourhood.remove(vertex);
+	}
+	
+	/**
+	 * edge: source --> dest
+	 * remove:   edge from [--> dest]
+	 * add: edge to [--> newDest]
+	 * modify edge 
+	 */
 	public void moveEdgeTo(E edge, V newDest) {
 		V oldDest = edge.getDest();
 		inNeighbourhood.get(oldDest).remove(edge);

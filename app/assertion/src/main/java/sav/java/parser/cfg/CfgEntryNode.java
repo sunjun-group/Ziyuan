@@ -20,4 +20,8 @@ public class CfgEntryNode implements CfgNode {
 		return Type.ENTRY;
 	}
 
+	@Override
+	public String toString() {
+		return "entry";
+	}
 }
