@@ -39,4 +39,12 @@ public class PropertiesContainer {
 		this.properties = properties;
 	}
 	
+	public <T> T getProperty(Enum<?> key) {
+		return getProperty(EnumUtils.getName(key));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T getProperty(String key) {
+		return properties == null ? null : (T)properties.get(key);
+	}
 }

@@ -38,9 +38,23 @@ public class Graph<V, E extends Edge<V>> extends PropertiesContainer {
 	}
 	
 	public void addEdge(E edge) {
-		CollectionUtils.getListInitIfEmpty(outNeighbourhood, edge.getSource())
+		addOutgoingEdge(edge);
+		addInCommingEdge(edge);
+	}
+
+	protected boolean addInCommingEdge(E edge) {
+		if (edge.getDest() == null) {
+			return false;
+		}
+		return CollectionUtils.getListInitIfEmpty(inNeighbourhood, edge.getDest())
 				.add(edge);
-		CollectionUtils.getListInitIfEmpty(inNeighbourhood, edge.getDest())
+	}
+
+	protected boolean addOutgoingEdge(E edge) {
+		if (edge.getSource() == null) {
+			return false;
+		}
+		return CollectionUtils.getListInitIfEmpty(outNeighbourhood, edge.getSource())
 				.add(edge);
 	}
 	

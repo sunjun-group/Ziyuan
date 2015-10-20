@@ -8,6 +8,8 @@
 
 package sav.java.parser.cfg;
 
+import japa.parser.ast.Node;
+
 /**
  * @author LLT
  *
@@ -15,6 +17,8 @@ package sav.java.parser.cfg;
 public interface CfgNode {
 	
 	public Type getType();
+	
+	public Node getAstNode();
 	
 	public static enum Type {
 		ENTRY,

@@ -1,12 +1,23 @@
 package sav.java.parser.cfg;
 
+import japa.parser.ast.Node;
+import japa.parser.ast.stmt.BreakStmt;
+import japa.parser.ast.stmt.ContinueStmt;
+import japa.parser.ast.stmt.DoStmt;
+import japa.parser.ast.stmt.ForStmt;
+import japa.parser.ast.stmt.ForeachStmt;
+import japa.parser.ast.stmt.SwitchStmt;
+import japa.parser.ast.stmt.WhileStmt;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.StringUtils;
 import sav.java.parser.cfg.graph.Graph;
 
 public class CFG extends Graph<CfgNode, CfgEdge>{
@@ -47,13 +58,20 @@ public class CFG extends Graph<CfgNode, CfgEdge>{
 	public void addCFG(CFG other) {
 		addVerties(other.getVertices());
 		addEdges(other);
+		if (other.uncompletedEdges != null) {
+			uncompletedEdges = getUncompletedEdges();
+			for (EdgeUnCompletedType key : other.uncompletedEdges.keySet()) {
+				CollectionUtils.getListInitIfEmpty(
+						getUncompletedEdges(), key).addAll(other.uncompletedEdges.get(key));
+			}
+		}
 	}
 	
 	public void addEdges(CFG other) {
 		for (CfgNode vertex : other.getVertices()) {
 			for (CfgEdge edge : other.getOutEdges(vertex)) {
-				if (!(edge.getSource().equals(other.getEntry()) || edge.getDest()
-						.equals(other.getExit()))) {
+				if (!(other.getEntry().equals(edge.getSource()) || 
+						other.getExit().equals(edge.getDest()))) {
 					addEdge(edge);
 				}
 			}
@@ -61,7 +79,7 @@ public class CFG extends Graph<CfgNode, CfgEdge>{
 	}
 	
 	public void appendLast(CfgNode node, boolean attachExit) {
-		addVertex(node);
+		addNode(node);
 		for (Iterator<CfgEdge> it = getInEdges(exit).iterator(); it.hasNext();) {
 			CfgEdge exitIn = it.next();
 			List<CfgEdge> edges = getInNeighbourhood().get(node);
@@ -83,11 +101,11 @@ public class CFG extends Graph<CfgNode, CfgEdge>{
 	}
 	
 	public void addUncompletedEdge(EdgeUnCompletedType type, CfgEdge edge) {
-		CollectionUtils.getListInitIfEmpty(getUncompletedEdges(), type).add(
-				edge);
+		CollectionUtils.getListInitIfEmpty(getUncompletedEdges(), type).add(edge);
+		addOutgoingEdge(edge);
 	}
 	
-	public Map<EdgeUnCompletedType, List<CfgEdge>> getUncompletedEdges() {
+	private Map<EdgeUnCompletedType, List<CfgEdge>> getUncompletedEdges() {
 		if (uncompletedEdges == null) {
 			uncompletedEdges = new HashMap<EdgeUnCompletedType, List<CfgEdge>>();
 		}
@@ -113,10 +131,69 @@ public class CFG extends Graph<CfgNode, CfgEdge>{
 	public void setExit(CfgExitNode exit) {
 		this.exit = exit;
 	}
+	
+	public List<CfgEdge> getUnCompleteEdge(EdgeUnCompletedType type) {
+		if (uncompletedEdges == null) {
+			return Collections.emptyList();
+		}
+		return CollectionUtils.nullToEmpty(uncompletedEdges.get(type));
+	}
+	
+	public void solveBreak(String label) {
+		if (!this.presentsLoop()) {
+			return;
+		}
+		List<CfgEdge> breakEdges = getUnCompleteEdge(EdgeUnCompletedType.BREAK);
+		for (Iterator<CfgEdge> it = breakEdges.iterator(); it.hasNext(); ) {
+			CfgEdge edge = it.next();
+			BreakStmt stmt = (BreakStmt) edge.getSource().getAstNode();
+			if (StringUtils.equals(label, stmt.getId())) {
+				// solve Break stmt
+				edge.setDest(exit);
+				addInCommingEdge(edge);
+				it.remove();
+			}
+		}
+	}
+
+	public void solveContinue(String label) {
+		if (! this.presentsLoop()) {
+			return;
+		}
+		List<CfgEdge> continueEdges = getUnCompleteEdge(EdgeUnCompletedType.CONTINUE);
+		if (continueEdges.isEmpty()) {
+			return;
+		}
+		CfgNode decisionNode = getProperty(CfgProperty.LOOP_DECISION_NODE);
+		for (Iterator<CfgEdge> it = continueEdges.iterator(); it.hasNext(); ) {
+			CfgEdge edge = it.next();
+			ContinueStmt stmt = (ContinueStmt) edge.getSource().getAstNode();
+			if (StringUtils.equals(label, stmt.getId())) {
+				// solve continue stmt
+				edge.setDest(decisionNode);
+				addInCommingEdge(edge);
+				it.remove();
+			}
+		}
+	}
+	
+	public void addNode(CfgNode node) {
+		super.addVertex(node);
+	}
+	
+	private boolean presentsLoop() {
+		Node astNode = getProperty(CfgProperty.AST_NODE);
+		return astNode instanceof ForStmt ||
+				astNode instanceof WhileStmt ||
+				astNode instanceof ForeachStmt ||
+				astNode instanceof DoStmt ||
+				astNode instanceof SwitchStmt;
+	}
 
 	public static enum EdgeUnCompletedType {
 		BREAK,
 		CONTINUE,
 		EXCEPTION
 	}
+
 }

@@ -23,7 +23,6 @@ import japa.parser.ast.stmt.ForeachStmt;
 import japa.parser.ast.stmt.IfStmt;
 import japa.parser.ast.stmt.LabeledStmt;
 import japa.parser.ast.stmt.ReturnStmt;
-import japa.parser.ast.stmt.SwitchEntryStmt;
 import japa.parser.ast.stmt.SwitchStmt;
 import japa.parser.ast.stmt.SynchronizedStmt;
 import japa.parser.ast.stmt.ThrowStmt;
@@ -64,8 +63,6 @@ public abstract class CfgConverter extends VoidVisitorAdapter<Object> {
 	protected abstract CFG convert(LabeledStmt n);
 
 	protected abstract CFG convert(ReturnStmt n);
-
-	protected abstract CFG convert(SwitchEntryStmt n);
 
 	protected abstract CFG convert(SynchronizedStmt n);
 
@@ -145,11 +142,6 @@ public abstract class CfgConverter extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(ReturnStmt n, Object arg) {
-		result = convert(n);
-	}
-
-	@Override
-	public void visit(SwitchEntryStmt n, Object arg) {
 		result = convert(n);
 	}
 

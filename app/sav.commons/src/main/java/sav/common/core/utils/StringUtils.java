@@ -97,6 +97,10 @@ public class StringUtils {
 		return dotJoin(enumClzz, ((Enum<?>) enumVal).name());
 	}
 
+	public static boolean equals(String str1, String str2) {
+		return str1 == null ? str2 == null : str1.equals(str2);
+	}
+
 	/**
 	 * @param packageName
 	 *            the package name as specified in the package declaration (i.e.

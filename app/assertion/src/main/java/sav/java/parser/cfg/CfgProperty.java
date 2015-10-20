@@ -14,7 +14,7 @@ package sav.java.parser.cfg;
  */
 public enum CfgProperty {
 	PARAMETER,
-	AST_NODE
-	;
+	AST_NODE,
+	LOOP_DECISION_NODE;
 	
 }

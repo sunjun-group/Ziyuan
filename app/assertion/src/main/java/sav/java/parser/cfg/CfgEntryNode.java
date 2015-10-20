@@ -8,6 +8,8 @@
 
 package sav.java.parser.cfg;
 
+import japa.parser.ast.Node;
+
 
 /**
  * @author LLT
@@ -23,5 +25,10 @@ public class CfgEntryNode implements CfgNode {
 	@Override
 	public String toString() {
 		return "entry";
+	}
+
+	@Override
+	public Node getAstNode() {
+		return null;
 	}
 }
