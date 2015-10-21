@@ -24,4 +24,9 @@ public abstract class AbstractCfgNode implements CfgNode {
 	public Node getAstNode() {
 		return astNode;
 	}
+	
+	@Override
+	public String toString() {
+		return AstUtils.toString(getAstNode());
+	}
 }

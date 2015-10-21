@@ -11,8 +11,9 @@ package sav.java.parser.cfg;
 import japa.parser.ast.Node;
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.expr.BinaryExpr;
-import japa.parser.ast.expr.Expression;
 import japa.parser.ast.expr.BinaryExpr.Operator;
+import japa.parser.ast.expr.Expression;
+import japa.parser.ast.expr.ObjectCreationExpr;
 import japa.parser.ast.expr.StringLiteralExpr;
 import japa.parser.ast.stmt.AssertStmt;
 import japa.parser.ast.stmt.BlockStmt;
@@ -36,6 +37,7 @@ import japa.parser.ast.stmt.ThrowStmt;
 import japa.parser.ast.stmt.TryStmt;
 import japa.parser.ast.stmt.TypeDeclarationStmt;
 import japa.parser.ast.stmt.WhileStmt;
+import japa.parser.ast.type.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -164,8 +166,9 @@ public class CfgFactory extends CfgConverter {
 
 	@Override
 	protected CFG convert(ForeachStmt n) {
-		// TODO Auto-generated method stub
-		return null;
+		/* translate to a forStmt */
+		ForStmt forStmt = ForeachConverter.toForStmt(n);
+		return convert(forStmt);
 	}
 
 	@Override
@@ -302,19 +305,30 @@ public class CfgFactory extends CfgConverter {
 		cfg.addEdge(lastNode, cfg.getExit());
 		CFG body = createCFG(n.getTryBlock());
 		cfg.append(body);
+		CFG finallyBlk = null;
 		if (n.getFinallyBlock() != null) {
-			CFG finallyBlk = createCFG(n.getFinallyBlock());
+			finallyBlk = createCFG(n.getFinallyBlock());
 			cfg.append(finallyBlk);
 		}
 		for (CatchClause catchClause : CollectionUtils.nullToEmpty(n.getCatchs())) {
 			CFG catchBlk = createCFG(catchClause.getCatchBlock());
-			/* solve exception */
-			for (CfgEdge exceptionEdge : cfg.getUnCompleteEdge(EdgeUnCompletedType.EXCEPTION)) {
-				
+			cfg.addCFG(catchBlk);
+			List<String> catchedTypes = new ArrayList<String>();
+			for (Type type : catchClause.getExcept().getTypes()) {
+				catchedTypes.add(type.toString());
 			}
-			
+			cfg.solveError(catchedTypes, catchBlk);
+			if (finallyBlk == null) {
+				/* link to the cfg exit */
+				for (CfgEdge edge : catchBlk.getInEdges(catchBlk.getExit())) {
+					cfg.addEdge(edge.clone(cfg.getExit()));
+				}
+			} else {
+				/* link to finally block */
+				catchBlk.merge(finallyBlk);
+			}
 		}
-		return null;
+		return cfg;
 	}
 
 	@Override
@@ -360,7 +374,7 @@ public class CfgFactory extends CfgConverter {
 				expr = new StringLiteralExpr("default");
 			} else {
 				expr = new BinaryExpr(n.getSelector(), entry.getLabel(), Operator.equals);
-				copyNodeProperties(entry.getLabel(), expr);
+				AstUtils.copyNodeProperties(entry.getLabel(), expr);
 			}
 			decisions.add(new DecisionNode(expr));
 			entrybodies.add(convert(entry.getStmts(), entry));
@@ -381,19 +395,13 @@ public class CfgFactory extends CfgConverter {
 		return cfg;
 	}
 	
-	private void copyNodeProperties(Node from, Node to) {
-		to.setBeginColumn(from.getBeginColumn());
-		to.setEndColumn(from.getEndColumn());
-		to.setBeginLine(from.getBeginLine());
-		to.setEndLine(from.getEndLine());
-	}
-
 	@Override
 	protected CFG convert(ThrowStmt n) {
 		CFG cfg = newInstance(n);
 		CfgNode newNode = new ProcessNode(n);
+		cfg.addNode(newNode);
 		cfg.addEdge(cfg.getEntry(), newNode);		
-		CfgEdge edge = new CfgEdge(newNode, null);
+		CfgErrorEdge edge = new CfgErrorEdge(newNode, getErrorType(n));
 		cfg.addUncompletedEdge(EdgeUnCompletedType.EXCEPTION, edge);
 		return cfg;
 	}
@@ -412,4 +420,12 @@ public class CfgFactory extends CfgConverter {
 		return new CfgEntryNode();
 	}
 
+	private String getErrorType(ThrowStmt n) {
+		Expression expr = n.getExpr();
+		if (expr instanceof ObjectCreationExpr) {
+			ObjectCreationExpr oce = (ObjectCreationExpr) expr;
+			return oce.getType().toString();
+		}
+		return expr.toString();
+	}
 }

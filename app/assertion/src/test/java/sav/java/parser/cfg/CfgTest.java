@@ -8,11 +8,11 @@
 
 package sav.java.parser.cfg;
 
-import org.junit.Test;
-
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
 import japa.parser.ast.Node;
+
+import org.junit.Test;
 
 /**
  * @author LLT
@@ -95,6 +95,44 @@ public class CfgTest {
 				"	default:" +
 				"		executeDefault();" +
 				"		break;" +
+				"}";
+		cfgFromStmt(str);	
+	}
+	
+	@Test
+	public void tryCatchToCfg() throws ParseException {
+		String str = 
+				"try (Resource r1 = new Resource();" +
+				"		Resource r2 = createR2()) {" +
+				"	boolean fail = executeFunc1();" +
+				"	if (fail) {" +
+				"		throw new ExecutionError(a);" +
+				"	}" +
+				"} catch (ResourceLoaddingError e2) {" +
+				"	log.logError(e2);" +
+				"} catch (ExecutionError e1) {" +
+				"	log.logError(e1);" +
+				"} finally {" +
+				"	releaseResource();" +
+				"}";
+		cfgFromStmt(str);	
+	}
+	
+	@Test
+	public void foreachToCfg() throws ParseException {
+		String str = 
+				"try {" +
+					"for (Var a : arr) {" +
+					"	Type type = a.getType();" +
+					"	if (type == null) {" +
+					"		throw new IllegalArgumentException();" +
+					"	}" +
+					"	System.out.println(type);" +
+				"	}" +
+				"} catch (IllegalArgumentException e) {" +
+				"		/* ignore */" +
+				"} finally {" +
+				"	System.out.println(\"finish\");" +
 				"}";
 		cfgFromStmt(str);	
 	}

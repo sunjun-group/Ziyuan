@@ -25,8 +25,4 @@ public class ProcessNode extends AbstractCfgNode {
 		return Type.PROCESS;
 	}
 
-	@Override
-	public String toString() {
-		return getAstNode().toString();
-	}
 }

@@ -152,8 +152,7 @@ public abstract class CfgConverter extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(TryStmt n, Object arg) {
-
-		super.visit(n, arg);
+		result = convert(n);
 	}
 
 	@Override

@@ -39,14 +39,18 @@ public class CFG extends Graph<CfgNode, CfgEdge>{
 		/* append vertices */
 		addCFG(other);
 		if (!other.isEmpty()) {
-			for (CfgEdge thisExitIn : getInEdges(this.exit)) {
-				for (CfgEdge otherEntryOut : other.getOutEdges(other.entry)) {
-					addEdge(thisExitIn.clone(otherEntryOut.getDest()));
-				}
-			}
+			merge(other);
 			removeEdgesTo(getExit());
 			for (CfgEdge otherExistIn : other.getInEdges(other.exit)) {
 				addEdge(otherExistIn.clone(exit));
+			}
+		}
+	}
+
+	public void merge(CFG other) {
+		for (CfgEdge thisExitIn : getInEdges(this.exit)) {
+			for (CfgEdge otherEntryOut : other.getOutEdges(other.entry)) {
+				addEdge(thisExitIn.clone(otherEntryOut.getDest()));
 			}
 		}
 	}
@@ -172,6 +176,20 @@ public class CFG extends Graph<CfgNode, CfgEdge>{
 				// solve continue stmt
 				edge.setDest(decisionNode);
 				addInCommingEdge(edge);
+				it.remove();
+			}
+		}
+	}
+	
+	public void solveError(List<String> type, CFG catchBlk) {
+		for (Iterator<CfgEdge> it = getUnCompleteEdge(EdgeUnCompletedType.EXCEPTION).iterator(); it.hasNext();) {
+			CfgErrorEdge errorEdge = (CfgErrorEdge) it.next(); 
+			if (type.contains(errorEdge.getErrorType())) {
+				/* solve exception */
+				for (CfgEdge catchEntryOut : catchBlk.getOutEdges(catchBlk.getEntry())) {
+					addEdge(errorEdge.clone(catchEntryOut.getDest()));
+				}
+				removeEdge(errorEdge);
 				it.remove();
 			}
 		}
