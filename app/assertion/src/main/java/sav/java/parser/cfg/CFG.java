@@ -12,6 +12,7 @@ import japa.parser.ast.stmt.WhileStmt;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -41,15 +42,15 @@ public class CFG extends Graph<CfgNode, CfgEdge>{
 		if (!other.isEmpty()) {
 			merge(other);
 			removeEdgesTo(getExit());
-			for (CfgEdge otherExistIn : other.getInEdges(other.exit)) {
+			for (CfgEdge otherExistIn : other.getExitInEdges()) {
 				addEdge(otherExistIn.clone(exit));
 			}
 		}
 	}
 
 	public void merge(CFG other) {
-		for (CfgEdge thisExitIn : getInEdges(this.exit)) {
-			for (CfgEdge otherEntryOut : other.getOutEdges(other.entry)) {
+		for (CfgEdge thisExitIn : getExitInEdges()) {
+			for (CfgEdge otherEntryOut : other.getEntryOutEdges()) {
 				addEdge(thisExitIn.clone(otherEntryOut.getDest()));
 			}
 		}
@@ -84,7 +85,7 @@ public class CFG extends Graph<CfgNode, CfgEdge>{
 	
 	public void appendLast(CfgNode node, boolean attachExit) {
 		addNode(node);
-		for (Iterator<CfgEdge> it = getInEdges(exit).iterator(); it.hasNext();) {
+		for (Iterator<CfgEdge> it = getExitInEdges().iterator(); it.hasNext();) {
 			CfgEdge exitIn = it.next();
 			List<CfgEdge> edges = getInNeighbourhood().get(node);
 			if (edges == null) {
@@ -186,7 +187,7 @@ public class CFG extends Graph<CfgNode, CfgEdge>{
 			CfgErrorEdge errorEdge = (CfgErrorEdge) it.next(); 
 			if (type.contains(errorEdge.getErrorType())) {
 				/* solve exception */
-				for (CfgEdge catchEntryOut : catchBlk.getOutEdges(catchBlk.getEntry())) {
+				for (CfgEdge catchEntryOut : catchBlk.getEntryOutEdges()) {
 					addEdge(errorEdge.clone(catchEntryOut.getDest()));
 				}
 				removeEdge(errorEdge);
@@ -195,6 +196,16 @@ public class CFG extends Graph<CfgNode, CfgEdge>{
 		}
 	}
 	
+	public void solveReturn() {
+		for (Iterator<CfgEdge> it = getUnCompleteEdge(
+				EdgeUnCompletedType.RETURN).iterator(); it.hasNext();) {
+			CfgEdge edge = it.next();
+			edge.setDest(getExit());
+			addInCommingEdge(edge);
+			it.remove();
+		}
+	}
+
 	public void addNode(CfgNode node) {
 		super.addVertex(node);
 	}
@@ -207,11 +218,37 @@ public class CFG extends Graph<CfgNode, CfgEdge>{
 				astNode instanceof DoStmt ||
 				astNode instanceof SwitchStmt;
 	}
+	
+	public List<CfgEdge> getExitInEdges() {
+		return getInEdges(getExit());
+	}
+	
+	public List<CfgEdge> getEntryOutEdges() {
+		return getOutEdges(getEntry());
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		appendStr(entry, sb, new HashSet<CfgNode>());
+		return sb.toString();
+	}
+	
+	private void appendStr(CfgNode node, StringBuilder sb, HashSet<CfgNode> visitedNodes) {
+		if (visitedNodes.contains(node)) {
+			return;
+		}
+		visitedNodes.add(node);
+		for (CfgEdge edge : getOutEdges(node)) {
+			sb.append(edge).append("\n");
+			appendStr(edge.getDest(), sb, visitedNodes);
+		}
+	}
 
 	public static enum EdgeUnCompletedType {
 		BREAK,
 		CONTINUE,
-		EXCEPTION
+		EXCEPTION,
+		RETURN
 	}
-
 }

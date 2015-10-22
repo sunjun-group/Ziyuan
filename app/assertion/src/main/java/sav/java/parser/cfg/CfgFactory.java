@@ -14,7 +14,6 @@ import japa.parser.ast.expr.BinaryExpr;
 import japa.parser.ast.expr.BinaryExpr.Operator;
 import japa.parser.ast.expr.Expression;
 import japa.parser.ast.expr.ObjectCreationExpr;
-import japa.parser.ast.expr.StringLiteralExpr;
 import japa.parser.ast.stmt.AssertStmt;
 import japa.parser.ast.stmt.BlockStmt;
 import japa.parser.ast.stmt.BreakStmt;
@@ -40,7 +39,10 @@ import japa.parser.ast.stmt.WhileStmt;
 import japa.parser.ast.type.Type;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import sav.common.core.utils.CollectionUtils;
 import sav.java.parser.cfg.CFG.EdgeUnCompletedType;
@@ -50,8 +52,9 @@ import sav.java.parser.cfg.CFG.EdgeUnCompletedType;
  *
  */
 public class CfgFactory extends CfgConverter {
+	private static final CfgFactory INSTANCE = new CfgFactory();
 	
-	public CFG createCFG(Node node) {
+	public CFG toCFG(Node node) {
 		if (node != null) {
 			node.accept(this, null);
 			return getCFG();
@@ -62,8 +65,10 @@ public class CfgFactory extends CfgConverter {
 	protected CFG convert(MethodDeclaration method) {
 		CFG cfg = newInstance(method);
 		cfg.addProperty(CfgProperty.PARAMETER, method.getParameters());
-		CFG body = createCFG(method.getBody());
+		cfg.addEdge(cfg.getEntry(), cfg.getExit());
+		CFG body = toCFG(method.getBody());
 		cfg.append(body);
+		cfg.solveReturn();
 		return cfg;
 	}
 	
@@ -102,7 +107,7 @@ public class CfgFactory extends CfgConverter {
 		CFG cfg = newInstance(n);
 		cfg.addEdge(cfg.getEntry(), cfg.getExit());
 		for (Statement stmt : CollectionUtils.nullToEmpty(stmts)) {
-			cfg.append(createCFG(stmt));
+			cfg.append(toCFG(stmt));
 		}
 		return cfg;
 	}
@@ -127,10 +132,10 @@ public class CfgFactory extends CfgConverter {
 	@Override
 	protected CFG convert(DoStmt n) {
 		CFG cfg = newInstance(n);
-		CFG body = createCFG(n.getBody());
+		CFG body = toCFG(n.getBody());
 		
 		/* add edge from entry to body first nodes */
-		for (CfgEdge bodyEntryOut : body.getOutEdges(body.getEntry())) {
+		for (CfgEdge bodyEntryOut : body.getEntryOutEdges()) {
 			cfg.addEdge(cfg.getEntry(), bodyEntryOut.getDest());
 		}
 		
@@ -182,7 +187,7 @@ public class CfgFactory extends CfgConverter {
 		cfg.addEdge(lastInit, decision);
 		
 		/* execution body */
-		CFG body = createCFG(n.getBody());
+		CFG body = toCFG(n.getBody());
 		// add update statement
 		CfgNode bodySuccessor = addProcessNodes(cfg, n.getUpdate(), decision, false);
 		attachExecutionBlock(cfg, decision, body, bodySuccessor, true);
@@ -231,24 +236,40 @@ public class CfgFactory extends CfgConverter {
 	
 	private void attachExecutionBlock(CFG cfg, DecisionNode decision,
 			CFG thenBlk, CfgNode thenSuccessor, boolean passCond) {
+		attachExecutionBlock(cfg, decision, thenBlk,
+				CollectionUtils.listOf(thenSuccessor, 1), passCond);
+	}
+	
+	private void attachExecutionBlock(CFG cfg, DecisionNode decision,
+			CFG thenBlk, List<CfgNode> thenSuccessors, boolean passCond) {
 		if (thenBlk == null || thenBlk.isEmpty()) {
-			attachExecutionBlock(cfg, decision, thenSuccessor, passCond);
+			attachExecutionBlock(cfg, decision, thenSuccessors, passCond);
 			return;
 		}
 		cfg.addCFG(thenBlk);
-		for (CfgEdge bodyEntryOut : thenBlk.getOutEdges(thenBlk.getEntry())) {
+		for (CfgEdge bodyEntryOut : thenBlk.getEntryOutEdges()) {
 			CfgBranchEdge branch = newBranchEdge(decision, bodyEntryOut.getDest(), passCond);
 			cfg.addEdge(branch);
 		}
-		for (CfgEdge bodyExitIn : thenBlk.getInEdges(thenBlk.getExit())) {
-			cfg.addEdge(bodyExitIn.clone(thenSuccessor));
+		for (CfgEdge bodyExitIn : thenBlk.getExitInEdges()) {
+			for (CfgNode thenSuccessor : thenSuccessors) {
+				cfg.addEdge(bodyExitIn.clone(thenSuccessor));
+			}
 		}
 	}
 	
 	private void attachExecutionBlock(CFG cfg, DecisionNode decision,
 			CfgNode thenSuccessor, boolean passCond) {
-		CfgBranchEdge branch = newBranchEdge(decision, thenSuccessor, passCond);
+		CfgBranchEdge branch = newBranchEdge(decision, thenSuccessor,
+				passCond);
 		cfg.addEdge(branch);
+	}
+
+	private void attachExecutionBlock(CFG cfg, DecisionNode decision,
+			List<CfgNode> thenSuccessors, boolean passCond) {
+		for (CfgNode thenSuccessor : thenSuccessors) {
+			attachExecutionBlock(cfg, decision, thenSuccessor, passCond);
+		}
 	}
 
 	private CfgBranchEdge newBranchEdge(DecisionNode decision, CfgNode dest,
@@ -267,8 +288,8 @@ public class CfgFactory extends CfgConverter {
 		DecisionNode decision = new DecisionNode(n.getCondition());
 		cfg.addNode(decision);
 		cfg.addEdge(cfg.getEntry(), decision);
-		CFG ifThen = createCFG(n.getThenStmt());
-		CFG elseThen = createCFG(n.getElseStmt());
+		CFG ifThen = toCFG(n.getThenStmt());
+		CFG elseThen = toCFG(n.getElseStmt());
 		attachExecutionBlock(cfg, decision, ifThen, cfg.getExit(), true);
 		attachExecutionBlock(cfg, decision, elseThen, cfg.getExit(), false);
 		return cfg;
@@ -276,7 +297,7 @@ public class CfgFactory extends CfgConverter {
 	
 	@Override
 	protected CFG convert(LabeledStmt n) {
-		CFG cfg = createCFG(n.getStmt());
+		CFG cfg = toCFG(n.getStmt());
 		cfg.solveBreak(n.getLabel());
 		cfg.solveContinue(n.getLabel());
 		return cfg;
@@ -284,12 +305,18 @@ public class CfgFactory extends CfgConverter {
 
 	@Override
 	protected CFG convert(ReturnStmt n) {
-		return convertProcessStmt(n);
+		CFG cfg = newInstance(n);
+		ProcessNode newNode = new ProcessNode(n);
+		cfg.addNode(newNode);
+		cfg.addEdge(cfg.getEntry(), newNode);
+		CfgEdge edge = new CfgEdge(newNode, null);
+		cfg.addUncompletedEdge(EdgeUnCompletedType.RETURN, edge);
+		return cfg;
 	}
 
 	@Override
 	protected CFG convert(SynchronizedStmt n) {
-		return createCFG(n.getBlock());
+		return toCFG(n.getBlock());
 	}
 
 	@Override
@@ -303,15 +330,15 @@ public class CfgFactory extends CfgConverter {
 			lastNode = newNode;
 		}
 		cfg.addEdge(lastNode, cfg.getExit());
-		CFG body = createCFG(n.getTryBlock());
+		CFG body = toCFG(n.getTryBlock());
 		cfg.append(body);
 		CFG finallyBlk = null;
 		if (n.getFinallyBlock() != null) {
-			finallyBlk = createCFG(n.getFinallyBlock());
+			finallyBlk = toCFG(n.getFinallyBlock());
 			cfg.append(finallyBlk);
 		}
 		for (CatchClause catchClause : CollectionUtils.nullToEmpty(n.getCatchs())) {
-			CFG catchBlk = createCFG(catchClause.getCatchBlock());
+			CFG catchBlk = toCFG(catchClause.getCatchBlock());
 			cfg.addCFG(catchBlk);
 			List<String> catchedTypes = new ArrayList<String>();
 			for (Type type : catchClause.getExcept().getTypes()) {
@@ -320,15 +347,23 @@ public class CfgFactory extends CfgConverter {
 			cfg.solveError(catchedTypes, catchBlk);
 			if (finallyBlk == null) {
 				/* link to the cfg exit */
-				for (CfgEdge edge : catchBlk.getInEdges(catchBlk.getExit())) {
+				for (CfgEdge edge : catchBlk.getExitInEdges()) {
 					cfg.addEdge(edge.clone(cfg.getExit()));
 				}
 			} else {
 				/* link to finally block */
-				catchBlk.merge(finallyBlk);
+				linkSubCfgsInParent(cfg, catchBlk, finallyBlk);
 			}
 		}
 		return cfg;
+	}
+
+	private void linkSubCfgsInParent(CFG parentCfg, CFG prevCfg, CFG nextCfg) {
+		for (CfgEdge thisExitIn : prevCfg.getExitInEdges()) {
+			for (CfgEdge otherEntryOut : nextCfg.getEntryOutEdges()) {
+				parentCfg.addEdge(thisExitIn.clone(otherEntryOut.getDest()));
+			}
+		}
 	}
 
 	@Override
@@ -339,7 +374,7 @@ public class CfgFactory extends CfgConverter {
 	@Override
 	protected CFG convert(WhileStmt n) {
 		CFG cfg = newInstance(n);
-		CFG body = createCFG(n.getBody());
+		CFG body = toCFG(n.getBody());
 		DecisionNode decision = new DecisionNode(n.getCondition());
 		cfg.addNode(decision);
 		cfg.addEdge(cfg.getEntry(), decision);
@@ -366,30 +401,56 @@ public class CfgFactory extends CfgConverter {
 			cfg.addEdge(switchNode, cfg.getExit());
 			return cfg;
 		}
+		/*
+		 * extract all switch entries.
+		 */
 		List<DecisionNode> decisions = new ArrayList<DecisionNode>();
-		List<CFG> entrybodies = new ArrayList<CFG>();
+		Map<DecisionNode, CFG> entrybodies = new HashMap<DecisionNode, CFG>();
+		List<CfgNode> defaultEntryOut = new ArrayList<CfgNode>();
+		CFG lastEntrybody = null;
 		for (SwitchEntryStmt entry : n.getEntries()) {
-			Expression expr;
+			CFG entrybody = convert(entry.getStmts(), entry);
+			/* default */
 			if (entry.getLabel() == null) {
-				expr = new StringLiteralExpr("default");
+				if (!entrybody.isEmpty()) {
+					for (CfgEdge edge : entrybody.getEntryOutEdges()) {
+						defaultEntryOut.add(edge.getDest());
+					}
+					cfg.addCFG(entrybody);
+				}
 			} else {
+				Expression expr;
 				expr = new BinaryExpr(n.getSelector(), entry.getLabel(), Operator.equals);
 				AstUtils.copyNodeProperties(entry.getLabel(), expr);
+				DecisionNode decision = new DecisionNode(expr);
+				decisions.add(decision);
+				entrybodies.put(decision, entrybody);
 			}
-			decisions.add(new DecisionNode(expr));
-			entrybodies.add(convert(entry.getStmts(), entry));
+			if (lastEntrybody != null) {
+				linkSubCfgsInParent(cfg, lastEntrybody, entrybody);
+			}
+			lastEntrybody = entrybody;
 		}
-		
+		/* if there is no default switch entry, set it to exit */
+		if (defaultEntryOut.isEmpty()) {
+			defaultEntryOut.add(cfg.getExit());
+		}
+		/*
+		 * step 1: detect which case the variable is in
+		 * step 2: execute all statement for the case.
+		 */
 		cfg.addEdge(switchNode, decisions.get(0));
 		for (int i = 0; i < decisions.size(); i++) {
 			DecisionNode decision = decisions.get(i);
 			cfg.addNode(decision);
-			CfgNode entrySuccessor = cfg.getExit();
+			CFG entrybody = entrybodies.get(decision);
+			List<CfgNode> falseSuccessors = defaultEntryOut;
 			if (i < decisions.size() - 1) {
-				entrySuccessor = decisions.get(i + 1);
-			}
-			attachExecutionBlock(cfg, decision, entrybodies.get(i), entrySuccessor, true);
-			attachExecutionBlock(cfg, decision, entrySuccessor, false);
+				DecisionNode nextDecision = decisions.get(i + 1);
+				falseSuccessors = CollectionUtils.<CfgNode>listOf(nextDecision, 1);
+			} 
+			attachExecutionBlock(cfg, decision, entrybody, Collections.<CfgNode>emptyList(), true);
+			attachExecutionBlock(cfg, decision, falseSuccessors, false);
 		}
 		cfg.solveBreak(null);
 		return cfg;
@@ -427,5 +488,13 @@ public class CfgFactory extends CfgConverter {
 			return oce.getType().toString();
 		}
 		return expr.toString();
+	}
+	
+	public static CFG createCFG(Node node) {
+		return getInstance().toCFG(node);
+	}
+	
+	public static CfgFactory getInstance() {
+		return INSTANCE;
 	}
 }

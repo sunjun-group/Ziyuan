@@ -38,7 +38,4 @@ public class CfgEdge extends Edge<CfgNode>{
 		BRANCH
 	}
 	
-	public String getLabel() {
-		return "";
-	}
 }

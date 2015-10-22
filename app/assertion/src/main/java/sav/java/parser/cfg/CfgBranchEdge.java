@@ -42,4 +42,10 @@ public class CfgBranchEdge extends CfgEdge {
 		return Type.BRANCH;
 	}
 
+	@Override
+	public String toString() {
+		String label = getLabel();
+		label = label.isEmpty() ? label : String.format("   [%s]", label);
+		return String.format("%s  %s---->  %s", getSource().toString(), label, getDest());
+	}
 }

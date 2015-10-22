@@ -10,7 +10,11 @@ package sav.java.parser.cfg;
 
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
+import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.Node;
+import japa.parser.ast.body.BodyDeclaration;
+import japa.parser.ast.body.MethodDeclaration;
+import japa.parser.ast.body.TypeDeclaration;
 
 import org.junit.Test;
 
@@ -100,6 +104,40 @@ public class CfgTest {
 	}
 	
 	@Test
+	public void switchToCfg_defaultInTheMiddle() throws ParseException {
+		String str = 
+				"switch(x) {" +
+				"	case 1:" +
+				"		executeFunc1();" +
+				"		break;" +
+				"	default:" +
+				"		executeDefault();" +
+				"	case 2:" +
+				"		executeFunc2();" +
+				"		break;" +
+				"}";
+		cfgFromStmt(str);	
+	}
+	
+	@Test
+	public void runSwitch() {
+		for (int i = 1; i < 5; i++) {
+			switch (i) {
+			case 1:
+				System.out.println(1);
+				break;
+			case 3:
+				System.out.println(3);
+				break;
+			default:
+				System.out.println("default");
+			case 4:
+				System.out.println(4);
+			}
+		}
+	}
+	
+	@Test
 	public void tryCatchToCfg() throws ParseException {
 		String str = 
 				"try (Resource r1 = new Resource();" +
@@ -131,6 +169,7 @@ public class CfgTest {
 				"	}" +
 				"} catch (IllegalArgumentException e) {" +
 				"		/* ignore */" +
+				"		log.log(e);" +
 				"} finally {" +
 				"	System.out.println(\"finish\");" +
 				"}";
@@ -138,16 +177,35 @@ public class CfgTest {
 	}
 	
 	@Test
+	public void methodToCfg() throws ParseException {
+		CompilationUnit cu = JavaParser.parse(getClass()
+				.getResourceAsStream("/CfgTestData.txt"));
+		for (TypeDeclaration type : cu.getTypes()) {
+			for (BodyDeclaration body : type.getMembers()) {
+				if (body instanceof MethodDeclaration) {
+					MethodDeclaration method = (MethodDeclaration) body;
+					System.out.println("---------------------------------------------");
+					System.out.println(method.getName() + method.getParameters());
+					System.out.println("---------------------------------------------");
+					CFG cfg = CfgFactory.createCFG(method);
+					System.out.println(cfg.toString());
+				}
+			}
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	@Test
 	public void testTemplate() throws ParseException {
 		String str = "";
-		cfgFromStmt(str);	
+//		cfgFromStmt(str);	
 	}
 
 	private void cfgFromStmt(String str) throws ParseException {
 		CfgFactory factory = new CfgFactory();
 		Node node = JavaParser.parseStatement(str);
-		CFG cfg = factory.createCFG(node);
-		CfgPrinter.print(cfg);
+		CFG cfg = factory.toCFG(node);
+		System.out.println(cfg.toString());
 	}
 	
 	

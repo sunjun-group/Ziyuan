@@ -62,6 +62,7 @@ public class ForeachConverter {
 		forStmt.setBody(fakeBodyStmt);
 		
 		/* mark node as fake */
+		markNodeAsFake(forStmt, n);
 		markNodesAsFake(fakeIteratorInit, n.getIterable());
 		markNodeAsFake(fakeCompare, varDecl);
 		markNodeAsFake(fakeBodyStmt, n.getBody());
