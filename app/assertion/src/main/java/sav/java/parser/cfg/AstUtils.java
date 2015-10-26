@@ -12,6 +12,8 @@ import japa.parser.ast.Node;
 
 import java.util.List;
 
+import sav.common.core.utils.Assert;
+
 /**
  * @author LLT
  *
@@ -33,7 +35,7 @@ public class AstUtils {
 	public static void markNodeAsFake(Node node, Node refNode) {
 		node.setBeginLine(FAKE_NODE_POS);
 		node.setBeginColumn(FAKE_NODE_POS);
-		node.setParentNode(refNode);
+		node.setData(refNode);
 	}
 	
 	public static <T extends Node> void markNodesAsFake(List<T> nodes, Node refNode) {
@@ -43,7 +45,8 @@ public class AstUtils {
 	}
 	
 	public static Node getReferenceOfFakeNode(Node node) {
-		return node.getParentNode();
+		Assert.assertNotNull(node.getData());
+		return (Node) node.getData();
 	}
 
 	public static String toString(Node node) {

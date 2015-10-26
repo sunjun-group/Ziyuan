@@ -25,6 +25,12 @@ public class CollectionUtils {
 	
 	private CollectionUtils() {
 	}
+	
+	public static <T> List<T> listOf(T value, int size) {
+		List<T> list = new ArrayList<T>(size);
+		list.add(value);
+		return list;
+	}
 
 	public static <T> List<T> listOf(T value) {
 		List<T> list = new ArrayList<T>();

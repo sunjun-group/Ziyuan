@@ -1,5 +1,6 @@
 package sav.java.parser.cfg.graph;
 
+import sav.common.core.utils.StringUtils;
 import sav.java.parser.cfg.PropertiesContainer;
 
 public class Edge<V> extends PropertiesContainer {
@@ -36,5 +37,9 @@ public class Edge<V> extends PropertiesContainer {
 	@Override
 	public String toString() {
 		return String.format("%s  ---->  %s", source.toString(), dest);
+	}
+	
+	public String getLabel() {
+		return StringUtils.EMPTY;
 	}
 }
