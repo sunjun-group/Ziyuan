@@ -10,7 +10,7 @@ Documentation
 
 Licensing
 ---------
-  
+Ziyuan is free and open source for acedemic research.    
   
 Requirements
 ------------
