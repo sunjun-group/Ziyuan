@@ -3,9 +3,9 @@
  */
 package gentest.core;
 
+import gentest.core.data.IDataProvider;
 import gentest.core.data.LocalVariable;
 import gentest.core.data.Sequence;
-import gentest.core.data.dto.IDataProvider;
 import gentest.core.data.type.IType;
 import gentest.core.data.variable.ISelectedVariable;
 import gentest.core.data.variable.ReferenceVariable;

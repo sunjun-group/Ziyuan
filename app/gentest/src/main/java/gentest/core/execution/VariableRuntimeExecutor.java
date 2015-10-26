@@ -44,12 +44,19 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		data = new RuntimeData(firstVarId);
 	}
 	
+	public void reset() {
+		reset(0);
+	} 
+	
+	
 	public void reset(int firstVarId) {
+		data.reset();
 		data.setFirstVarId(firstVarId);
+		successful = true;
 	} 
 	
 	public boolean start(ISelectedVariable receiver) {
-		successful = true;
+		reset();
 		if (receiver != null) {
 			execute(receiver);
 		}
@@ -72,9 +79,13 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 			stmt.accept(this);
 		} catch(Throwable ex) {
 			log.debug(ex.getMessage());
-			successful = false;
+			onFail();
 		}
 		return successful;
+	}
+
+	private void onFail() {
+		successful = false;
 	}
 	
 	protected void addExecData(int varId, Object value) {
@@ -109,7 +120,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 			addExecData(stmt.getOutVarId(), newInstance);
 		} catch (Throwable e) {
 			log.debug(e.getMessage());
-			successful = false;
+			onFail();
 		}
 		return successful;
 	}
@@ -134,7 +145,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 			}
 		} catch (Throwable e) {
 			log.debug(e.getMessage());
-			successful = false;
+			onFail();
 		}
 		return successful;
 	}

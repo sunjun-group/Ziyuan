@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package gentest.core.data.dto;
+package gentest.core.data;
 
 /**
  * @author LLT

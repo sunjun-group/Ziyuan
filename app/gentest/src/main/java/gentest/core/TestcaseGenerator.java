@@ -4,10 +4,10 @@
 package gentest.core;
 
 
+import gentest.core.data.IDataProvider;
 import gentest.core.data.LocalVariable;
 import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
-import gentest.core.data.dto.IDataProvider;
 import gentest.core.data.statement.RqueryMethod;
 import gentest.core.data.type.IType;
 import gentest.core.data.type.ITypeCreator;
@@ -45,7 +45,6 @@ public class TestcaseGenerator {
 	 * check if method receiver already exits and initialize if necessary,
 	 * then prepare inputs for the method,
 	 * and append the current sequence.
-	 *  
 	 */
 	public Sequence generateSequence(List<MethodCall> methods)
 			throws SavException {
@@ -53,9 +52,10 @@ public class TestcaseGenerator {
 		sequenceProvider.setData(seq);
 		/* append sequence for each method */
 		RqueryMethod rmethod = null;
-		ISelectedVariable receiverParam = null;
 		Map<Class<?>, IType> receiverTypes = new HashMap<Class<?>, IType>();
+		executor.reset();
 		for (int i = 0; i < methods.size(); i++) {
+			ISelectedVariable receiverParam = null;
 			MethodCall method = methods.get(i);
 			IType receiverType = null;
 			/* prepare method receiver if method is not static */
@@ -75,7 +75,7 @@ public class TestcaseGenerator {
 							.selectReceiver(receiverType, seq.getStmtsSize(),
 									seq.getVarsSize());
 					seq.appendReceiver(receiverParam, method.getReceiverType());
-				}
+				} 
 				rmethod = new RqueryMethod(method, seq.getReceiver(
 						method.getReceiverType()).getVarId());
 			} else {
@@ -90,7 +90,9 @@ public class TestcaseGenerator {
 				ISelectedVariable param = selectParams.get(j);
 				inVars[j] = param.getReturnVarId();
 			}
-			executor.start(receiverParam);
+			if (receiverParam != null) {
+				executor.execute(receiverParam);
+			}
 			rmethod.setInVarIds(inVars);
 			seq.appendMethodExecStmts(rmethod, selectParams);
 			if (!executor.execute(rmethod, selectParams)) {

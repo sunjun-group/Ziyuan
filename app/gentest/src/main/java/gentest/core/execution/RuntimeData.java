@@ -24,6 +24,7 @@ public class RuntimeData {
 	
 	public RuntimeData(int firstVarId) {
 		variableValuesList = new ArrayList<Object>();
+		this.firstVarId = firstVarId;
 	}
 
 	public void reset() {

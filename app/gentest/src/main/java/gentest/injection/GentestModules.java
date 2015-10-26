@@ -9,13 +9,11 @@
 package gentest.injection;
 
 import gentest.core.ParamGeneratorConfig;
+import gentest.core.data.DataProvider;
+import gentest.core.data.IDataProvider;
 import gentest.core.data.Sequence;
-import gentest.core.data.dto.DataProvider;
-import gentest.core.data.dto.IDataProvider;
-import gentest.core.data.type.IType;
 import gentest.core.data.type.ITypeCreator;
 import gentest.core.data.type.VarTypeCreator;
-import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.value.store.SubTypesScanner;
 import gentest.core.value.store.TypeMethodCallsCache;
 import gentest.core.value.store.VariableCache;
@@ -23,9 +21,7 @@ import gentest.core.value.store.iface.ITypeMethodCallStore;
 import gentest.core.value.store.iface.IVariableStore;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -52,19 +48,7 @@ public class GentestModules extends AbstractModule {
 				.entrySet()) {
 			bindScope(scope.getKey(), scope.getValue());
 		}
-//		bind(IVariableStore.class).to(VariableCache.class);
-		bind(IVariableStore.class).toInstance(new IVariableStore() {
-			
-			@Override
-			public void put(IType type, GeneratedVariable variable) {
-				// do nothing
-			}
-			
-			@Override
-			public List<GeneratedVariable> getVariableByType(IType type) {
-				return new ArrayList<GeneratedVariable>();
-			}
-		});
+		bind(IVariableStore.class).to(VariableCache.class);
 		bind(ISubTypesScanner.class).to(SubTypesScanner.class);
 		bind(ITypeMethodCallStore.class).to(TypeMethodCallsCache.class);
 		bind(ITypeCreator.class).to(VarTypeCreator.class);

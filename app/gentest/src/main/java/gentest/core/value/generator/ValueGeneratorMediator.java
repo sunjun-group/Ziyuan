@@ -50,7 +50,6 @@ public class ValueGeneratorMediator {
 
 	public GeneratedVariable append(GeneratedVariable rootVariable, int level,
 			IType type, boolean isReceiver) throws SavException {
-//		Logger.getDefaultLogger().debug("generating value with type", type);
 		GeneratedVariable variable = null;
 		List<GeneratedVariable> candidatesInCache = getVariableStore()
 				.getVariableByType(type);
