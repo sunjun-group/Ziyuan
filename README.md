@@ -2,7 +2,7 @@ Ziyuan
 =====
 Introduction
 ------------
-
+Ziyuan (namely after Confucius's smartest student) is designed to be a self-contained package for analyzing Java programs.
 
 Documentation
 -------------
