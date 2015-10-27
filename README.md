@@ -21,19 +21,22 @@ Quick start
 Requirement:
 - maven (apache-maven-3.0.4)
 - jdk1.6
-- eclipse (indigo or later) which is already installed these plugins:
-maven, tycho (in maven market), git (optional)
+- eclipse which is already installed these plugins: m2e(maven plugin), git (optional)
 
 Configuration:
-- Modify the path in .\etc\setenv.bat according to your project structure.
-- Customize local maven repository in [maven-folder]\conf\settings.xml (optional)
-<localRepository>[your maven-repository-path]</localRepository>
+- Update Maven settings: the example for maven settings is in /etc/maven/settings.xml,
+un comment the setting for tools.jar, and modify the path to [jdk folder]/lib/tools.jar in your local machine.
+        <!-- 			<properties> -->
+				<!-- 				<toolsjar>[../jdk1.6.../lib/tools.jar</toolsjar> -->
+				<!-- 				<toolsjar-version>1.6...</toolsjar-version> -->
+				<!-- 			</properties> -->
 
-Setup:
-- run file .\etc\setup.bat to build project.
-- the project now is ready to import into eclipse.
-- modify classpath accordingly.
+- Import to Eclipse:
+	- Make sure that m2e plugin (maven to eclipse plugin) is installed.
+	- Update maven settings as above.
+	- All necessary settings (.classpath, .project) are ready for eclipse. 
 
+Check Ziyuan_Installation_Note.txt in /etc/doc for more detail about the installation.
 
 Contacts
 --------
