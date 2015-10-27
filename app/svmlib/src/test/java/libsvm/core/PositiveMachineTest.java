@@ -10,6 +10,8 @@ package libsvm.core;
 
 import java.io.InputStream;
 import libsvm.extension.ByDistanceNegativePointSelection;
+import libsvm.extension.MultiAttemptMachine;
+import libsvm.extension.MultiCutMachine;
 import libsvm.extension.NegativePointSelection;
 import libsvm.extension.PositiveSeparationMachine;
 
@@ -22,6 +24,15 @@ import org.junit.Test;
 public class PositiveMachineTest extends TestUltility{
 
 	private NegativePointSelection negativeSelection = new ByDistanceNegativePointSelection();
+	
+	@Test
+	public void whenThereAreMyTwoFeatures() {
+		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("MyTwoFeatures.txt");
+		runTest(new PositiveSeparationMachine(negativeSelection), 2, inputStream);
+		// runTest(new MultiAttemptMachine(), 2, inputStream);
+		
+		checkAccuracy(1);
+	}
 	
 	@Test
 	public void whenRequireTwoDividers() {

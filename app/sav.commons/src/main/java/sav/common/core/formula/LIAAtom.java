@@ -72,6 +72,7 @@ public class LIAAtom extends Atom {
 	}
 	
 	public double getConstant() {
+		if (constant == 0.0) return 0.0;
 		return constant;
 	}
 

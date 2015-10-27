@@ -60,9 +60,9 @@ public abstract class ValueGenerator {
 					typeDef.b);
 		}
 		// even receiver, allow to append method calls after initializing
-		if (isReceiver) {
-			return new ObjectValueGenerator(type);
-		}
+//		if (isReceiver) {
+//			return new ObjectValueGenerator(type);
+//		}
 		return new ExtObjectValueGenerator(type, null);
 	}
 	

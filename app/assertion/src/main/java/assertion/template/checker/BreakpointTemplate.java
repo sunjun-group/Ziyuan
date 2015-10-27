@@ -3,20 +3,19 @@ package assertion.template.checker;
 import java.util.Arrays;
 import java.util.List;
 
-import invariant.templates.CompositeTemplate;
-import invariant.templates.SingleTemplate;
+import invariant.templates.Template;
 import sav.strategies.dto.BreakPoint;
 
 public class BreakpointTemplate {
 
 	private BreakPoint bkp;
 	
-	private List<SingleTemplate> singleTemplates;
+	private List<Template> singleTemplates;
 	
-	private List<CompositeTemplate> compositeTemplates;
+	private List<Template> compositeTemplates;
 	
-	public BreakpointTemplate(BreakPoint bkp, List<SingleTemplate> singleTemplates,
-			List<CompositeTemplate> compositeTemplates) {
+	public BreakpointTemplate(BreakPoint bkp, List<Template> singleTemplates,
+			List<Template> compositeTemplates) {
 		this.bkp = bkp;
 		this.singleTemplates = singleTemplates;
 		this.compositeTemplates = compositeTemplates;
@@ -26,11 +25,11 @@ public class BreakpointTemplate {
 		return bkp;
 	}
 	
-	public List<SingleTemplate> getSingleTemplates() {
+	public List<Template> getSingleTemplates() {
 		return singleTemplates;
 	}
 	
-	public List<CompositeTemplate> getCompositeTemplates() {
+	public List<Template> getCompositeTemplates() {
 		return compositeTemplates;
 	}
 	

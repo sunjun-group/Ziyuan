@@ -6,6 +6,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import libsvm.svm;
+import libsvm.svm_print_interface;
 import sav.common.core.SystemVariablesUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.commons.testdata.assertion.ArrayAssertionTest;
@@ -20,6 +22,14 @@ public class AssertionGenerationTest extends TzuyuCoreTest {
 		String jarPath = SystemVariablesUtils.updateSavJunitJarPath(appData);
 		testContext.getAppData().addClasspath(jarPath);
 		app = new AssertionGeneration(testContext);
+		svm.svm_set_print_string_function(new svm_print_interface() {
+			
+			@Override
+			public void print(String s) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 	}
 	
 	@Test

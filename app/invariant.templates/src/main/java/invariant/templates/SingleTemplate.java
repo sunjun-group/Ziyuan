@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import libsvm.core.Machine;
+import libsvm.extension.ByDistanceNegativePointSelection;
+import libsvm.extension.NegativePointSelection;
+import libsvm.extension.PositiveSeparationMachine;
 import sav.common.core.formula.Eq;
 import sav.strategies.dto.execute.value.ExecValue;
 
@@ -13,9 +16,9 @@ public class SingleTemplate extends Template {
 	
 	protected List<List<ExecValue>> failExecValuesList;
 	
-	protected boolean isSatisfiedAllPassValues = false;
+	protected boolean isSatisfiedAllPassValues;
 	
-	protected boolean isSatisfiedAllFailValues = false;
+	protected boolean isSatisfiedAllFailValues;
 	
 	public SingleTemplate(List<List<ExecValue>> passExecValuesList, List<List<ExecValue>> failExecValuesList) {
 		this.passExecValuesList = passExecValuesList;
@@ -80,17 +83,20 @@ public class SingleTemplate extends Template {
 	public boolean check() {
 		return check(passExecValuesList, failExecValuesList);
 	}
-	
-	public boolean isChanged() {
-		return false;
-	}
 
 	public List<List<Eq<?>>> sampling() {
 		return new ArrayList<List<Eq<?>>>();
 	}
 	
-	protected Machine getLearningMachine() {
+	public Machine getSimpleMachine() {
 		Machine machine = new Machine();
+		machine.setDefaultParams();
+		return machine;
+	}
+	
+	public Machine getMultiCutMachine() {
+		NegativePointSelection negative = new ByDistanceNegativePointSelection();
+		PositiveSeparationMachine machine = new PositiveSeparationMachine(negative);
 		machine.setDefaultParams();
 		return machine;
 	}

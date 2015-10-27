@@ -6,6 +6,13 @@ import org.junit.Test;
 public class MachineSimpleTests extends TestUltility{
 
 	@Test
+	public void whenThereAreMyTwoFeatures() {
+		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("MyTwoFeatures.txt");
+		runTest(new Machine(), 2, inputStream);
+		// checkLastDividerFound(new double[]{-2, -3, -15});
+	}
+	
+	@Test
 	public void whenThereAreTwoFeatures() {
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("TwoFeatures.txt");
 		runTest(new Machine(), 2, inputStream);

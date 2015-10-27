@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  * @author khanh
  *
  */
-public class ByDistanceNegativePointSelection implements NegativePointSelection{
+public class ByDistanceNegativePointSelection implements NegativePointSelection {
 	protected static final Logger LOGGER = LoggerFactory.getLogger(ByDistanceNegativePointSelection.class);
 	
 	public DataPoint select(List<DataPoint> negatives, List<DataPoint> positives){
@@ -38,7 +38,7 @@ public class ByDistanceNegativePointSelection implements NegativePointSelection{
 			}
 		}
 		
-		LOGGER.info("Negative selection: " + result);
+		// LOGGER.info("Negative selection: " + result);
 		return result;
 	}
 	

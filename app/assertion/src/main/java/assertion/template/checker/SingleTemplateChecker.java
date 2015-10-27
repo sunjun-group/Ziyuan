@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import invariant.templates.SingleTemplate;
+import invariant.templates.Template;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVarType;
 
@@ -14,31 +14,31 @@ public class SingleTemplateChecker {
 	
 	private List<List<ExecValue>> origFailExecValuesList;
 	
-	private List<SingleTemplate> singleTemplates;
+	private List<Template> singleTemplates;
 
-	private List<SingleTemplate> satifiedPassTemplates;
+	private List<Template> satifiedPassTemplates;
 	
-	private List<SingleTemplate> satifiedFailTemplates;
+	private List<Template> satifiedFailTemplates;
 
 	public SingleTemplateChecker(List<List<ExecValue>> origPassExecValuesList,
 			List<List<ExecValue>> origFailExecValuesList) {
 		this.origPassExecValuesList = origPassExecValuesList;
 		this.origFailExecValuesList = origFailExecValuesList;
 		
-		singleTemplates = new ArrayList<SingleTemplate>();
-		satifiedPassTemplates = new ArrayList<SingleTemplate>();
-		satifiedFailTemplates = new ArrayList<SingleTemplate>();
+		singleTemplates = new ArrayList<Template>();
+		satifiedPassTemplates = new ArrayList<Template>();
+		satifiedFailTemplates = new ArrayList<Template>();
 	}
 	
-	public List<SingleTemplate> getSingleTemplates() {
+	public List<Template> getSingleTemplates() {
 		return singleTemplates;
 	}
 	
-	public List<SingleTemplate> getSatifiedPassTemplates() {
+	public List<Template> getSatifiedPassTemplates() {
 		return satifiedPassTemplates;
 	}
 	
-	public List<SingleTemplate> getSatifiedFailTemplates() {
+	public List<Template> getSatifiedFailTemplates() {
 		return satifiedFailTemplates;
 	}
 	

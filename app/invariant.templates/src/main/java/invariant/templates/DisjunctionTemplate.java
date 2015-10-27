@@ -14,8 +14,8 @@ public class DisjunctionTemplate extends CompositeTemplate {
 	@Override
 	public boolean check() {
 		List<Integer> notSatisfiedIndex = new ArrayList<Integer>();
-		SingleTemplate t1 = templates.get(0);
-		SingleTemplate t2 = templates.get(1);
+		SingleTemplate t1 = (SingleTemplate) templates.get(0);
+		SingleTemplate t2 = (SingleTemplate) templates.get(1);
 		
 		List<List<ExecValue>> passExecValuesList1 = t1.getPassExecValuesList();
 		

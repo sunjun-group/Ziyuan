@@ -73,6 +73,7 @@ public class MultiCutMachine extends Machine {
 			learnedDatas.add(learnedData);
 
 			wrongCategories = learnedData.wrongSides.size();
+			
 			if (wrongCategories == 1) {
 				final Category wrongCategory = getWrongCategory(learnedData);
 				Assert.assertNotNull(wrongCategory);
@@ -138,7 +139,7 @@ public class MultiCutMachine extends Machine {
 		}
 
 		public Category getCategory(DataPoint dataPoint) {
-			Assert.assertTrue(!learnedDatas.isEmpty(), "There is no learned data.");
+			// Assert.assertTrue(!learnedDatas.isEmpty(), "There is no learned data.");
 			Category result = null;
 			for (LearnedData data : learnedDatas) {
 				result = new ModelBasedCategoryCalculator(data.model).getCategory(dataPoint);

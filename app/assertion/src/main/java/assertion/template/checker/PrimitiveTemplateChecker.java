@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import invariant.templates.SingleTemplate;
-import invariant.templates.onefeature.OnePrimEqConstTemplate;
-import invariant.templates.onefeature.OnePrimNeConstTemplate;
+import invariant.templates.onefeature.OnePrimEqTemplate;
+import invariant.templates.onefeature.OnePrimIlpTemplate;
+import invariant.templates.threefeatures.ThreePrimEqTemplate;
 import invariant.templates.threefeatures.ThreePrimIlpTemplate;
+import invariant.templates.twofeatures.TwoPrimEqTemplate;
 import invariant.templates.twofeatures.TwoPrimIlpTemplate;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.execute.value.ExecValue;
@@ -17,10 +19,9 @@ public class PrimitiveTemplateChecker extends TypeTemplateChecker {
 	public void checkTemplates(List<List<ExecValue>> passExecValuesList, List<List<ExecValue>> failExecValuesList) {
 		if (!passExecValuesList.isEmpty() && !failExecValuesList.isEmpty()) {
 			checkOneFeatureTemplates(passExecValuesList, failExecValuesList);
-			// checkTwoFeaturesTemplates(passExecValuesList, failExecValuesList);
-			// checkThreeFeaturesTemplates(passExecValuesList, failExecValuesList);
+			checkTwoFeaturesTemplates(passExecValuesList, failExecValuesList);
+			checkThreeFeaturesTemplates(passExecValuesList, failExecValuesList);
 		}
-
 	}
 
 	private void checkOneFeatureTemplates(List<List<ExecValue>> passExecValuesList,
@@ -40,21 +41,11 @@ public class PrimitiveTemplateChecker extends TypeTemplateChecker {
 				failEvl.add(CollectionUtils.listOf(evl.get(i)));
 			}
 
-			t = new OnePrimEqConstTemplate(passEvl, failEvl);
+			t = new OnePrimEqTemplate(passEvl, failEvl);
 			check(t);
-
-			t = new OnePrimNeConstTemplate(passEvl, failEvl);
+			
+			t = new OnePrimIlpTemplate(passEvl, failEvl);
 			check(t);
-
-			// t = new OnePrimRangeTemplate(passEvl, failEvl);
-			// if (t.check()) templates.add(t);
-
-			// t = new OnePrimIlpTemplate(passEvl, failEvl);
-			// if (t.check()) templates.add(t);
-			// if (t.isSatisfiedAllPassValues())
-			// satifiedAllPassValuesTemplates.add(t);
-			// if (t.isSatisfiedAllFailValues())
-			// satifiedAllFailValuesTemplates.add(t);
 		}
 	}
 
@@ -63,8 +54,7 @@ public class PrimitiveTemplateChecker extends TypeTemplateChecker {
 		SingleTemplate t = null;
 
 		int n = passExecValuesList.get(0).size();
-		if (n < 2)
-			return;
+		if (n < 2) return;
 
 		// check template with commutativity
 		for (int i = 0; i < n - 1; i++) {
@@ -80,14 +70,16 @@ public class PrimitiveTemplateChecker extends TypeTemplateChecker {
 					failEvl.add(CollectionUtils.listOf(evl.get(i), evl.get(j)));
 				}
 
+				t = new TwoPrimEqTemplate(passEvl, failEvl);
+				check(t);
+				
 				t = new TwoPrimIlpTemplate(passEvl, failEvl);
-				if (t.check())
-					singleTemplates.add(t);
+				check(t);
 			}
 		}
 
 		// check template with commutativity
-		for (int i = 0; i < n; i++) {
+		/* for (int i = 0; i < n; i++) {
 			for (int j = 0; j < n; j++) {
 				if (i != j) {
 					List<List<ExecValue>> passEvl = new ArrayList<List<ExecValue>>();
@@ -105,7 +97,7 @@ public class PrimitiveTemplateChecker extends TypeTemplateChecker {
 					// if (t.check()) templates.add(t);
 				}
 			}
-		}
+		} */
 	}
 
 	private void checkThreeFeaturesTemplates(List<List<ExecValue>> passExecValuesList,
@@ -113,8 +105,7 @@ public class PrimitiveTemplateChecker extends TypeTemplateChecker {
 		SingleTemplate t = null;
 
 		int n = passExecValuesList.get(0).size();
-		if (n < 3)
-			return;
+		if (n < 3) return;
 
 		// check template with commutativity
 		for (int i = 0; i < n - 2; i++) {
@@ -131,18 +122,17 @@ public class PrimitiveTemplateChecker extends TypeTemplateChecker {
 						failEvl.add(CollectionUtils.listOf(evl.get(i), evl.get(j), evl.get(k)));
 					}
 
-					// t = new ThreePrimEqConstTemplate(passEvl, failEvl);
-					// if (t.check()) templates.add(t);
-
+					t = new ThreePrimEqTemplate(passEvl, failEvl);
+					check(t);
+					
 					t = new ThreePrimIlpTemplate(passEvl, failEvl);
-					if (t.check())
-						singleTemplates.add(t);
+					check(t);
 				}
 			}
 		}
 
 		// check template without commutativity
-		for (int i = 0; i < n; i++) {
+		/* for (int i = 0; i < n; i++) {
 			for (int j = 0; j < n; j++) {
 				for (int k = j + 1; k < n; k++) {
 					if (i != j && i != k) {
@@ -162,7 +152,7 @@ public class PrimitiveTemplateChecker extends TypeTemplateChecker {
 					}
 				}
 			}
-		}
+		} */
 	}
 
 }

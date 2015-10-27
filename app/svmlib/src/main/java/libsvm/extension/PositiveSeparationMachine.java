@@ -75,7 +75,7 @@ public class PositiveSeparationMachine extends Machine {
 			trainingData.add(negativePointSelection.select(negatives, positives));
 			super.train(trainingData);
 
-			learnedModels.add(model);
+			if (model != null) learnedModels.add(model);
 
 			trainingData.remove(trainingData.size() - 1);
 			removeClassifiedNegativePoints(negatives);
@@ -115,6 +115,10 @@ public class PositiveSeparationMachine extends Machine {
 				it.remove();
 			}
 		}
+	}
+	
+	public List<svm_model> getLearnedModels() {
+		return learnedModels;
 	}
 
 	@Override

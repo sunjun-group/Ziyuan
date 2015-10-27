@@ -472,7 +472,7 @@ public class Machine {
 		return Collections.emptyList();
 	}
 
-	protected DataPoint getRandomData() {
+	public DataPoint getRandomData() {
 		return data.get(0);
 	}
 
