@@ -16,3 +16,5 @@ logs
 /app/tzuyu.parent/*.classpath
 /app/mutation/out
 mutanbug
+app/.recommenders
+tzuyu.log
