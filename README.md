@@ -65,8 +65,6 @@ Set up
 		+ Browse to Ziyuan project folder, unselect modules:[tzuyuEclipsePlugin-test, tzuyuEclipsePlugin, tzuyu.repo, tzuyu.feature, svm.parent], 
 				then click "finish".
 		+ Wait until the building proccess finishes (this may take a while).		
-		+ Check if launches for project is imported into your run configuration.
-			Click on run/Run Configuration/, expand Maven build, click on sav build 
 6.	Run the application:
 	- run tzuyu.core.main.TzuyuCoreDemoTest.testClass()
 	- if everything is setup properly, we should get learning result in the console view.
