@@ -26,17 +26,17 @@ Set up
 		+ modify this line and set it to your local maven repository folder [upon your choice].<br/>
 		&lt;localRepository&gt;D:/_1_Projects/Tzuyu/maven-repository&lt;/localRepository&gt; <br/> 
 					
-4.	Make sure Ziyuan java dependencies will be available in local repository:
+3.	Make sure Ziyuan java dependencies will be available in local repository:
 	- For the setting in maven pom.xml of tzuyu.parent, some special dependency are deployed onto nexus server which url is declared in
 	settings.xml (or your local-settings.xml), and will be downloaded automatically during build process.	
 	- Check if the nexus server is available or not:
 		Open the url defined in your local-settings.xml to your web browser, if it renders the nexus page then the server is available.
-	- If server is available, you can jump to step 6. 
+	- If server is available, you can jump to step 5. 
 	- If not available, 
 		+ open local-settings.xml, comment this line:  
 			&lt;activeProfile&gt;nexus-sever&lt;/activeProfile&gt;
-		+ Go to step 5.
-5. 	Install jars:	
+		+ Go to step 4.
+4. 	Install jars:	
 	- Download maven (binary package) at https://maven.apache.org/download.cgi
 	- Unzip maven to folder [mvn folder]
 	- copy and override /etc/maven/local-settings.xml --> [mvn folder]/conf/settings.xml
@@ -49,7 +49,7 @@ Set up
 		+ copy linux-runall-example.sh --> linux-runall.sh
 		+ modify linux-runall.sh, set absolute path to the folders on your local machine.
 		+ run linux-runall.sh
-6.	Set up Eclipse, and import project:
+5.	Set up Eclipse, and import project:
 	- Open Eclipse.
 	- Make sure that m2e plugin (maven to eclipse plugin) is installed.
 		+ Go to Help/About Eclipse/Installation Details. If it was installed, you must see "m2e-Maven Integration For Eclipse" on the list.
@@ -67,7 +67,7 @@ Set up
 		+ Wait until the building proccess finishes (this may take a while).		
 		+ Check if launches for project is imported into your run configuration.
 			Click on run/Run Configuration/, expand Maven build, click on sav build 
-7.	Run the application:
+6.	Run the application:
 	- run tzuyu.core.main.TzuyuCoreDemoTest.testClass()
 	- if everything is setup properly, we should get learning result in the console view.
 
