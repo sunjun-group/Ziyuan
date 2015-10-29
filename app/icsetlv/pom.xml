@@ -24,13 +24,6 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<!-- create jar-with-dependecies -->
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<finalName>icsetlv</finalName>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 

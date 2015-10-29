@@ -3,58 +3,63 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
 	<localRepository>D:/_1_Projects/Tzuyu/maven-repository</localRepository>
+	
+	<!-- for nexus server, using for the deploy -->
+	<!-- 
+		Sutd Nexus Server: http://202.94.70.100:8081/nexus
+		SunJun's Amazone Nexus Server: http://52.89.202.3:8081/nexus
+		Localhost Nexus Server (if have): http://localhost:8081/nexus
+	-->
 	<profiles>
 		<profile>
-			<id>tzuyuProfile</id>
+			<id>nexus-sever</id>
 			<repositories>
 				<repository>
 					<id>snapshots</id>
 					<name>tzuyu repo on sutd nexus server</name>
-					<url>http://202.94.70.100:8081/nexus/content/repositories/snapshots</url>
+					<url>http://52.89.202.3:8081/nexus/content/repositories/snapshots</url>
+					<releases><enabled>false</enabled></releases>
 				</repository>
 				<repository>
 					<id>thirdparty</id>
 					<name>tzuyu repo on sutd nexus server</name>
-					<url>http://202.94.70.100:8081/nexus/content/repositories/thirdparty</url>
-				</repository>
-			</repositories>
-		</profile>
-		<!-- example for local nexus server, using for testing the deploy,.. etc -->
-		<profile>
-			<id>localRepositoryServer</id>
-			<repositories>
-				<repository>
-					<id>snapshots</id>
-					<name>tzuyu repo on sutd nexus server</name>
-					<url>http://localhost:8081/nexus/content/repositories/snapshots</url>
-				</repository>
-				<repository>
-					<id>thirdparty</id>
-					<name>tzuyu repo on local nexus server</name>
-					<url>http://localhost:8081/nexus/content/repositories/thirdparty</url>
-				</repository>
-				<repository>
-					<id>remote-repository</id>
-					<name>tzuyu repo on local nexus server</name>
-					<url>http://localhost:8081/nexus/content/repositories/thirdparty</url>
+					<url>http://52.89.202.3:8081/nexus/content/repositories/thirdparty</url>
+					<snapshots><enabled>false</enabled></snapshots>
 				</repository>
 			</repositories>
 			<properties>
-				<repo-url-snapshots>http://localhost:8081/nexus/content/repositories/snapshots</repo-url-snapshots>
+				<repo-url-snapshots>http://52.89.202.3:8081/nexus/content/repositories/snapshots</repo-url-snapshots>							
 			</properties>
 		</profile>
+		
 		<profile>
-			<id>localConfig</id>
+			<id>ziyuan-config</id>
 			<!-- to override properties defined in tzuyu.parent pom.xml -->
-<!-- 			<properties> -->
-<!-- 				<toolsjar>[../jdk1.6.../lib/tools.jar</toolsjar> -->
-<!-- 				<toolsjar-version>1.6...</toolsjar-version> -->
-<!-- 			</properties> -->
+ 			<properties>
+ 				<toolsjar>${basedir}/../../etc/libs/jdk/jdk1.6.0_26-64b/lib/tools.jar</toolsjar>
+ 				<toolsjar-version>1.6.0_26-64b</toolsjar-version>
+ 			</properties> 
+		</profile>
+		
+		<profile>
+			<id>maven-central</id>
+			<repositories>
+				<repository>
+					<id>central</id>
+					<url>http://repo.maven.apache.org/maven2/</url>		
+					<snapshots><enabled>false</enabled></snapshots>
+				</repository>
+			</repositories>
 		</profile>
 	</profiles>
+	
+	<!-- In ActiveProfiles, keep the order of active profile, since this will 
+		affect the order of repository when mvn looking up dependency. 
+		Keep profile maven-central at last for highest priority to load dependency.	
+	-->
 	<activeProfiles>
-		<activeProfile>tzuyuProfile</activeProfile>
-		<activeProfile>localConfig</activeProfile>
-<!-- 		<activeProfile>localRepositoryServer</activeProfile> -->
+		<activeProfile>nexus-sever</activeProfile>
+		<activeProfile>ziyuan-config</activeProfile>
+		<activeProfile>maven-central</activeProfile>
 	</activeProfiles>
 </settings>

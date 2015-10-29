@@ -50,9 +50,8 @@
 		<reflections-version>0.9.8</reflections-version>
 
 		<!-- repository -->
-		<repo-url-snapshots>http://202.94.70.100:8081/nexus/content/repositories/snapshots</repo-url-snapshots>
+		<repo-url-snapshots>http://52.89.202.3:8081/nexus/content/repositories/snapshots</repo-url-snapshots>
 	</properties>
-
 
 	<distributionManagement>
 		<repository>
@@ -60,13 +59,6 @@
 			<url>${repo-url-snapshots}</url>
 		</repository>
 	</distributionManagement>
-
-	<repositories>
-		<repository>
-			<id>thirdparty</id>
-			<url>http://202.94.70.100:8081/nexus/content/repositories/thirdparty</url>
-		</repository>
-	</repositories>
 
 	<modules>
 		<module>../sav.commons</module>
@@ -218,9 +210,10 @@
 			<plugin>
 				<artifactId>maven-source-plugin</artifactId>
 			</plugin>
-			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-			</plugin>
+			<!-- to build java doc, enable if neccessary -->
+<!-- 			<plugin> -->
+<!-- 				<artifactId>maven-javadoc-plugin</artifactId> -->
+<!-- 			</plugin> -->
 			<!-- explicitly define maven-deploy-plugin after other to force exec order -->
 			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
