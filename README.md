@@ -23,17 +23,18 @@ Set up
 2.	Update Maven settings:
 	- goto /etc/maven, copy settings.xml --> local-settings.xml
 	- open local-settings.xml: 
-		+ modify <localRepository>D:/_1_Projects/Tzuyu/maven-repository</localRepository>, 
-				set it to your local maven repository folder [upon your choice].		
+		+ modify this line and set it to your local maven repository folder [upon your choice].<br/>
+		&lt;localRepository&gt;D:/_1_Projects/Tzuyu/maven-repository&lt;/localRepository&gt; <br/> 
+					
 4.	Make sure Ziyuan java dependencies will be available in local repository:
 	- For the setting in maven pom.xml of tzuyu.parent, some special dependency are deployed onto nexus server which url is declared in
 	settings.xml (or your local-settings.xml), and will be downloaded automatically during build process.	
 	- Check if the nexus server is available or not:
 		Open the url defined in your local-settings.xml to your web browser, if it renders the nexus page then the server is available.
-	If server is available, you can jump to step 6. 
-	If not available, 
+	- If server is available, you can jump to step 6. 
+	- If not available, 
 		+ open local-settings.xml, comment this line:  
-			<activeProfile>nexus-sever</activeProfile>
+			&lt;activeProfile&gt;nexus-sever&lt;/activeProfile&gt;
 		+ Go to step 5.
 5. 	Install jars:	
 	- Download maven (binary package) at https://maven.apache.org/download.cgi
@@ -53,8 +54,8 @@ Set up
 	- Make sure that m2e plugin (maven to eclipse plugin) is installed.
 		+ Go to Help/About Eclipse/Installation Details. If it was installed, you must see "m2e-Maven Integration For Eclipse" on the list.
 		+ To install m2e plugin:
-				Go to Help/Install New Software, parse "http://download.eclipse.org/technology/m2e/releases" to text field "Work with".
-				In displayed table, select "Maven Integration For Eclipse", click "Next" --> ... --> "Finish"
+				<br/>Go to Help/Install New Software, parse "http://download.eclipse.org/technology/m2e/releases" to text field "Work with".
+				<br/>In displayed table, select "Maven Integration For Eclipse", click "Next" --> ... --> "Finish"
 	- Update maven settings:
 		+ Go to Window/Preferences/Maven/User Settings
 		+ Browse User Settings to /etc/maven/local-settings.xml -> apply, ok
