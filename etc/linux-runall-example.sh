@@ -1,6 +1,6 @@
 #!/bin/bash
 BASE_PATH="/home/lylytran/projects/Tzuyu"
-
+# TRUNK is the folder where you check out the code, this must be the parent folder of "app" and "etc"
 export TRUNK="$BASE_PATH/workspace/trunk"
 export M2_HOME=$BASE_PATH/tools/apache-maven-3.2.2
 export M2_BIN=$M2_HOME/bin
@@ -19,3 +19,4 @@ echo REPO_THIRD_PARTY_URL=$REPO_THIRD_PARTY_URL
 
 sh ./linux-mvn-install-libs.sh
 #sh ./linux-mvn-deploy-libs.sh
+#sh ./linux-mvn-deploy-Ziyuan.sh

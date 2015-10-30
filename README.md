@@ -62,7 +62,7 @@ Set up
 	- All necessary settings (.classpath, .project) are ready for eclipse. 
 		+ Click on File/Import...
 		+ Select General/Existing Projects into workspace 
-		+ Browse to Ziyuan project folder, unselect modules:[tzuyuEclipsePlugin-test, tzuyuEclipsePlugin, tzuyu.repo, tzuyu.feature, svm.parent], 
+		+ Browse to Ziyuan project folder, unselect modules:[tzuyuEclipsePlugin-test, tzuyuEclipsePlugin, tzuyu.repo, tzuyu.feature], 
 				then click "finish".
 		+ Wait until the building proccess finishes (this may take a while).		
 6.	Run the application:
