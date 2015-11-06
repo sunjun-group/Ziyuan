@@ -73,6 +73,7 @@ public class TestcasesExecutor extends JunitDebugger {
 	@Override
 	protected void onEnterBreakpoint(BreakPoint bkp, BreakpointEvent bkpEvent) throws SavException {
 		BreakpointValue bkpVal = extractValuesAtLocation(bkp, bkpEvent);
+		//replace existing one with the new one
 		addToCurrentValueList(currentTestBkpValues, bkpVal);
 	}
 

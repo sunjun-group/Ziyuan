@@ -109,28 +109,14 @@ public class DebugValueExtractor {
 				final List<Field> allFields = refType.allFields();
 				for (Variable bpVar : bkp.getVars()) {
 					// First check local variable
-					LocalVariable match = null;
-					if (bpVar.getScope() != VarScope.THIS) {
-						for (LocalVariable localVar : visibleVars) {
-							if (localVar.name().equals(bpVar.getParentName())) {
-								match = localVar;
-								break;
-							}
-						}
-					}
+					LocalVariable matchedLocalVariable = findMatchedLocalVariable(bpVar, visibleVars);
 					
 					JdiParam param = null;
-					if (match != null) {
-						param = recursiveMatch(frame, match, bpVar.getFullName());
+					if (matchedLocalVariable != null) {
+						param = recursiveMatch(frame, matchedLocalVariable, bpVar.getFullName());
 					} else {
 						// Then check class fields (static & non static)
-						Field matchedField = null;
-						for (Field field : allFields) {
-							if (field.name().equals(bpVar.getParentName())) {
-								matchedField = field;
-								break;
-							}
-						}
+						Field matchedField = findMatchedField(bpVar, allFields);
 
 						if (matchedField != null) {
 							if (matchedField.isStatic()) {
@@ -155,6 +141,32 @@ public class DebugValueExtractor {
 			}
 		}
 		return bkVal;
+	}
+	
+	private LocalVariable findMatchedLocalVariable(Variable bpVar, List<LocalVariable> visibleVars){
+		LocalVariable match = null;
+		if (bpVar.getScope() != VarScope.THIS) {
+			for (LocalVariable localVar : visibleVars) {
+				if (localVar.name().equals(bpVar.getParentName())) {
+					match = localVar;
+					break;
+				}
+			}
+		}
+		
+		return match;
+	}
+	
+	private Field findMatchedField(Variable bpVar, List<Field> allFields){
+		Field matchedField = null;
+		for (Field field : allFields) {
+			if (field.name().equals(bpVar.getParentName())) {
+				matchedField = field;
+				break;
+			}
+		}
+		
+		return matchedField;
 	}
 
 	protected void collectValue(BreakpointValue bkVal, ThreadReference thread,

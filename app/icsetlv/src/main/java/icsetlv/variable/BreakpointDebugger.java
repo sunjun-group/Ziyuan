@@ -106,7 +106,10 @@ public abstract class BreakpointDebugger {
 					BreakpointEvent bkpEvent = (BreakpointEvent) event;
 					BreakPoint bkp = locBrpMap.get(bkpEvent.location()
 							.toString());
-					handleBreakpointEvent(bkp, vm, bkpEvent);
+					
+					if(bkp != null){
+						handleBreakpointEvent(bkp, vm, bkpEvent);						
+					}
 				}
 			}
 			eventSet.resume();
