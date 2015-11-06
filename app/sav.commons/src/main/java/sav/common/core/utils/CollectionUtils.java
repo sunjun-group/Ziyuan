@@ -106,6 +106,15 @@ public class CollectionUtils {
 		}
 	}
 	
+	public static <T> void addIfNotNullNotExist(Collection<T> col, Collection<T> arr) {
+		if (isEmpty(arr)) {
+			return;
+		}
+		for (T val : arr) {
+			addIfNotNullNotExist(col, val);
+		}
+	}
+	
 	public static <T> void addAll(Collection<T> col, T[] arr) {
 		if (isEmpty(arr)) {
 			return;
