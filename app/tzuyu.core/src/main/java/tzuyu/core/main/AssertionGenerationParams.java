@@ -1,5 +1,17 @@
 package tzuyu.core.main;
 
-public class AssertionGenerationParams extends FaultLocateParams {
+import java.util.List;
 
+public class AssertionGenerationParams extends FaultLocateParams {
+	
+	public List<String> listOfMethods;
+	
+	public void setListOfMethods(List<String> methodNames) {
+		this.listOfMethods = methodNames;
+	}
+
+	public List<String> getListOfMethods() {
+		return listOfMethods;
+	}
+	
 }
