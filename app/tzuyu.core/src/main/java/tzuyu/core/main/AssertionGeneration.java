@@ -210,16 +210,22 @@ public class AssertionGeneration extends TzuyuCore {
 				
 				System.out.println("Sliced locations: " + slicedLocs);
 				
-				for (BreakPoint bkp1 : slicedLocs) {
-					if (bkp1.getLineNo() == lineNo) {
-						for (BreakPoint bkp2 : slicedLocs) {
-							if (bkp2.getLineNo() >= lineNo) {
-								CollectionUtils.addIfNotNullNotExist(affectedLocs, bkp2);
-							}
-						}
-						break;
+				for (BreakPoint bkp : slicedLocs) {
+					if (bkp.getMethodName().equals(params.getMethodName()) && bkp.getLineNo() >= lineNo) {
+						CollectionUtils.addIfNotNullNotExist(affectedLocs, bkp);
 					}
 				}
+				
+//				for (BreakPoint bkp1 : slicedLocs) {
+//					if (bkp1.getLineNo() == lineNo) {
+//						for (BreakPoint bkp2 : slicedLocs) {
+//							if (bkp2.getLineNo() >= lineNo) {
+//								CollectionUtils.addIfNotNullNotExist(affectedLocs, bkp2);
+//							}
+//						}
+//						break;
+//					}
+//				}
 			}
 		}	
 	}
