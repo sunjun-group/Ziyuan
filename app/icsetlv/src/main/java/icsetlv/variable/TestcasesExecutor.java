@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import model.Trace;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +51,8 @@ public class TestcasesExecutor extends JunitDebugger {
 	private StopTimer timer = new StopTimer("TestcasesExecutor");;
 	private long timeout = DEFAULT_TIMEOUT;
 	
+	private Trace trace = new Trace();
+	
 	public TestcasesExecutor(int valRetrieveLevel) {
 		this.valRetrieveLevel = valRetrieveLevel;
 	}
@@ -75,6 +79,11 @@ public class TestcasesExecutor extends JunitDebugger {
 		BreakpointValue bkpVal = extractValuesAtLocation(bkp, bkpEvent);
 		//replace existing one with the new one
 		addToCurrentValueList(currentTestBkpValues, bkpVal);
+		collectTrace(bkpVal);
+	}
+
+	private void collectTrace(BreakpointValue bkpVal) {
+		
 	}
 
 	@Override

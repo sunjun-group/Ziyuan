@@ -128,6 +128,8 @@ public class DebugValueExtractor {
 							if (param.getValue() != null && !matchedField.name().equals(bpVar.getFullName())) {
 								param = recursiveMatch(param, extractSubProperty(bpVar.getFullName()));
 							}
+							
+							System.currentTimeMillis();
 						}
 					}
 					if (param != null) {
@@ -176,6 +178,8 @@ public class DebugValueExtractor {
 			String varId = var.getId();
 			appendVarVal(bkVal, varId, entry.getValue().getValue(), 1, thread);
 		}
+		
+		System.currentTimeMillis();
 	}
 	
 	protected String extractSubProperty(final String fullName) {
@@ -286,11 +290,22 @@ public class DebugValueExtractor {
 		} else if (type instanceof ArrayType) {
 			appendArrVarVal(parent, varId, (ArrayReference)value, level, thread);
 		} else if (type instanceof ClassType) {
+			/**
+			 * if the class name is "String"
+			 */
 			if (PrimitiveUtils.isString(type.name())) {
 				parent.add(new StringValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread)));
-			} else if (PrimitiveUtils.isPrimitiveType(type.name())) {
+			} 
+			/**
+			 * if the class name is "Integer", "Float", ...
+			 */
+			else if (PrimitiveUtils.isPrimitiveType(type.name())) {
 				parent.add(new PrimitiveValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread)));
-			} else {
+			} 
+			/**
+			 * if the class is an arbitrary complicated class
+			 */
+			else {
 				appendClassVarVal(parent, varId, (ObjectReference) value, level, thread);
 			}
 		}
