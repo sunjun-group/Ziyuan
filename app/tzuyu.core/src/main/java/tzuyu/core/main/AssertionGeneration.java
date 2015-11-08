@@ -5,11 +5,13 @@ import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.exception.IcsetlvException;
 import icsetlv.variable.VarNameVisitor.VarNameCollectionMode;
 import icsetlv.variable.VariableNameCollector;
+import invariant.templates.Template;
 import japa.parser.JavaParser;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.body.BodyDeclaration;
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.TypeDeclaration;
+import japa.parser.ast.stmt.AssertStmt;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,6 +23,7 @@ import java.util.List;
 
 import mutation.io.DebugLineFileWriter;
 import mutation.mutator.VariableSubstitution;
+import mutation.mutator.insertdebugline.AddedLineData;
 import mutation.mutator.insertdebugline.DebugLineData;
 import mutation.parser.ClassAnalyzer;
 import mutation.parser.ClassDescriptor;
@@ -50,6 +53,7 @@ import sav.strategies.slicing.ISlicer;
 import sav.strategies.vm.VMConfiguration;
 import tzuyu.core.mutantbug.FilesBackup;
 import tzuyu.core.mutantbug.Recompiler;
+import assertion.template.checker.BreakpointTemplate;
 import assertion.template.checker.BreakpointTemplateChecker;
 import assertion.visitor.AddAssertStmtVisitor;
 import assertion.visitor.CollectAssertLocsVisitor;
@@ -77,24 +81,31 @@ public class AssertionGeneration extends TzuyuCore {
 			
 			// create new file with assertions
 			File newFile = addAssertionToFile(srcFolder, className);
-	
+			
 			// back up the original file
 			backup = FilesBackup.startBackup();
 			backup.backup(origFile);
 			
-			// overwrite the original file with the new file
-			FileUtils.copyFile(newFile, origFile, false);
-						
-			// recompile the new file
-			Recompiler recompiler = new Recompiler(new VMConfiguration(appClasspath));
-			recompiler.recompileJFile(appClasspath.getTarget(), newFile);
+			// recompile new file
+			recompile(origFile, newFile);
 			
-			// add locations used to learn new assertion
+			// locations used to learn new assertion
 			List<BreakPoint> learnLocs = collectLearningLocations(params);
 			
 			// learn assertions for new locations
 			for (int i = learnLocs.size() - 1; i >= 0; i--) {
-				templateLearning(learnLocs.get(i), params);
+				List<BreakpointTemplate> bkpsTemplates = new ArrayList<BreakpointTemplate>();
+				templateLearning(learnLocs.get(i), bkpsTemplates, params);
+				
+				List<DebugLineData> lines = new ArrayList<DebugLineData>();
+				convertToAssertStmt(bkpsTemplates.get(0), lines);
+				
+				// write the new file
+				DebugLineFileWriter writer = new DebugLineFileWriter(srcFolder);
+				newFile = writer.write(lines, className);
+						
+				// recompile new file
+				recompile(origFile, newFile);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -107,7 +118,37 @@ public class AssertionGeneration extends TzuyuCore {
 		
 	}
 	
-	public void templateLearning(BreakPoint learnLoc, AssertionGenerationParams params)
+	public void convertToAssertStmt(BreakpointTemplate bkpTemplate, List<DebugLineData> lines) {
+		for (Template t : bkpTemplate.getTemplates()) {
+			AssertStmt a = t.convertToAssertStmt();
+			if (a != null) {
+				int lineNo = bkpTemplate.getBreakPoint().getLineNo();
+				a.setBeginLine(lineNo);
+				
+				AddedLineData d = new AddedLineData(lineNo, a);
+				lines.add(d);
+			}
+		}
+	}
+	
+	public void recompile(File origFile, File newFile) throws Exception {
+		// display the new file
+		String content = FileUtils.readFileToString(newFile);
+		System.out.println(content);
+		
+		AppJavaClassPath appClasspath = appContext.getAppData();
+		
+		// overwrite the original file with the new file
+		FileUtils.copyFile(newFile, origFile, false);
+					
+		// recompile the new file
+		Recompiler recompiler = new Recompiler(new VMConfiguration(appClasspath));
+		recompiler.recompileJFile(appClasspath.getTarget(), newFile);
+	}
+	
+	public void templateLearning(BreakPoint learnLoc,
+			List<BreakpointTemplate> bkpsTemplates,
+			AssertionGenerationParams params)
 			throws Exception {
 		System.out.println("Learning locations: " + learnLoc);
 		
@@ -151,7 +192,7 @@ public class AssertionGeneration extends TzuyuCore {
 				
 		// check data with templates
 		BreakpointTemplateChecker tc = new BreakpointTemplateChecker(im);
-		tc.checkTemplates(bkpsData);
+		bkpsTemplates.addAll(tc.checkTemplates(bkpsData));
 	}
 	
 	public List<String> getRandomTestCases(AssertionGenerationParams params) {
@@ -207,8 +248,6 @@ public class AssertionGeneration extends TzuyuCore {
 				List<BreakPoint> slicedLocs = slicer.slice(appContext.getAppData(),
 					CollectionUtils.listOf(assertLoc),
 					JunitUtils.toClassMethodStrs(jresult.getTests()));
-				
-				System.out.println("Sliced locations: " + slicedLocs);
 				
 				for (BreakPoint bkp : slicedLocs) {
 					if (bkp.getMethodName().equals(params.getMethodName()) && bkp.getLineNo() >= lineNo) {
@@ -412,10 +451,6 @@ public class AssertionGeneration extends TzuyuCore {
 		// write the new file
 		DebugLineFileWriter writer = new DebugLineFileWriter(srcFolder);
 		File newFile = writer.write(arg, className);
-		
-		// display the new file
-		String content = FileUtils.readFileToString(newFile);
-		System.out.println(content);
 		
 		// return the new file
 		return newFile;
