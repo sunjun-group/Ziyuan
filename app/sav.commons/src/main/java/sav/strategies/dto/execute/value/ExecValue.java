@@ -22,6 +22,7 @@ import sav.strategies.dto.IExecValue;
 public abstract class ExecValue implements IExecValue {
 	protected String varId;
 	protected List<ExecValue> children;
+	
 	public static final int NOT_NULL_VAL = 1;
 	
 	protected ExecValue(String id) {

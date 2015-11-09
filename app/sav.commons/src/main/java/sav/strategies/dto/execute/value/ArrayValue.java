@@ -22,9 +22,21 @@ public class ArrayValue extends ReferenceValue {
 	private static final String MAX_CODE = "max";
 	private static final String MIN_CODE = "min";
 	private static final String LENGTH_CODE = "length";
+	
+	private String componentType;
 
 	public ArrayValue(String id) {
 		super(id, false);
+	}
+	
+	public String toString(){
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("array(");
+		buffer.append(componentType + "): ");
+		buffer.append(getReferenceID());
+		String print = buffer.toString();
+		
+		return print;
 	}
 	
 	public String getElementId(int i) {
@@ -93,5 +105,13 @@ public class ArrayValue extends ReferenceValue {
 	@Override
 	public ExecVarType getType() {
 		return ExecVarType.ARRAY;
+	}
+
+	public String getComponentType() {
+		return componentType;
+	}
+
+	public void setComponentType(String componentType) {
+		this.componentType = componentType;
 	}
 }

@@ -1,4 +1,4 @@
-package model;
+package icsetlv.trial.model;
 
 public class TraceNode {
 	private String className;

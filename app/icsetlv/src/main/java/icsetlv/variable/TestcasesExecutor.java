@@ -10,14 +10,14 @@ package icsetlv.variable;
 
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
+import icsetlv.trial.model.Trace;
+import icsetlv.trial.variable.DebugValueExtractor2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import model.Trace;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,7 +153,11 @@ public class TestcasesExecutor extends JunitDebugger {
 	private BreakpointValue extractValuesAtLocation(BreakPoint bkp,
 			BreakpointEvent bkpEvent) throws SavException {
 		try {
-			return getValueExtractor().extractValue(bkp, bkpEvent);
+			//return getValueExtractor().extractValue(bkp, bkpEvent);
+			DebugValueExtractor2 extractor = new DebugValueExtractor2();
+			BreakpointValue bpValue = extractor.extractValue(bkp, bkpEvent);
+			return bpValue;
+			
 		} catch (IncompatibleThreadStateException e) {
 			log.error(e.getMessage());
 		} catch (AbsentInformationException e) {
