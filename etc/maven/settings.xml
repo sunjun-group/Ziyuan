@@ -6,7 +6,11 @@
 	
 	<!-- for nexus server, using for the deploy -->
 	<!-- 
-		Sutd Nexus Server: http://202.94.70.100:8081/nexus
+		README!!!!!!!!!!!!!!:
+		
+		Major server is SUTD Nexus Server, the server on amazon is the backup one
+		in case the server in SUTD is down.
+		SUTD Nexus Server: http://202.94.70.100:8081/nexus
 		SunJun's Amazone Nexus Server: http://52.89.202.3:8081/nexus
 		Localhost Nexus Server (if have): http://localhost:8081/nexus
 	-->
@@ -17,18 +21,18 @@
 				<repository>
 					<id>snapshots</id>
 					<name>tzuyu repo on sutd nexus server</name>
-					<url>http://52.89.202.3:8081/nexus/content/repositories/snapshots</url>
+					<url>http://202.94.70.100:8081/nexus/content/repositories/snapshots</url>
 					<releases><enabled>false</enabled></releases>
 				</repository>
 				<repository>
 					<id>thirdparty</id>
 					<name>tzuyu repo on sutd nexus server</name>
-					<url>http://52.89.202.3:8081/nexus/content/repositories/thirdparty</url>
+					<url>http://202.94.70.100:8081/nexus/content/repositories/thirdparty</url>
 					<snapshots><enabled>false</enabled></snapshots>
 				</repository>
 			</repositories>
 			<properties>
-				<repo-url-snapshots>http://52.89.202.3:8081/nexus/content/repositories/snapshots</repo-url-snapshots>							
+				<repo-url-snapshots>http://202.94.70.100:8081/nexus/content/repositories/snapshots</repo-url-snapshots>							
 			</properties>
 		</profile>
 		

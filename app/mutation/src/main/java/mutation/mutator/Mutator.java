@@ -26,7 +26,7 @@ import sav.strategies.mutanbug.MutationResult;
  * Created by hoangtung on 4/9/15.
  */
 public class Mutator implements IMutator {
-	//TODO LLT: correct the configuration file path, temporary fix for running in eclipse
+	//TODO use resource bundle?
 	private static final String OPERATOR_MAP_FILE = "./src/main/resources/MuMap.txt";
 	private Map<String, List<String>> opMapConfig;
 	private String srcFolder;
