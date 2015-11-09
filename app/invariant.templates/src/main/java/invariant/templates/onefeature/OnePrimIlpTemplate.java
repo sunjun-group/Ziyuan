@@ -3,6 +3,12 @@ package invariant.templates.onefeature;
 import java.util.ArrayList;
 import java.util.List;
 
+import japa.parser.ast.expr.BinaryExpr;
+import japa.parser.ast.expr.DoubleLiteralExpr;
+import japa.parser.ast.expr.Expression;
+import japa.parser.ast.expr.IntegerLiteralExpr;
+import japa.parser.ast.expr.NameExpr;
+import japa.parser.ast.stmt.AssertStmt;
 import libsvm.core.Category;
 import libsvm.core.Machine;
 import libsvm.core.StringDividerProcessor;
@@ -118,6 +124,27 @@ public class OnePrimIlpTemplate extends OneFeatureTemplate {
 		samples.add(sample3);
 		
 		return samples;
+	}
+	
+	@Override
+	public AssertStmt convertToAssertStmt() {
+		Expression rhs = getRhs();
+		Expression lhs = getLhs();
+		
+		Expression e = new BinaryExpr(lhs, rhs, BinaryExpr.Operator.greaterEquals);
+		return new AssertStmt(e);
+	}
+	
+	private Expression getLhs() {
+		Expression e1 = new DoubleLiteralExpr(String.valueOf(a));
+		Expression e2 = new NameExpr(passExecValuesList.get(0).get(0).getVarId());
+		
+		Expression e = new BinaryExpr(e1, e2, BinaryExpr.Operator.times);
+		return e;
+	}
+	
+	private Expression getRhs() {
+		return new DoubleLiteralExpr(String.valueOf(b));
 	}
 	
 	@Override

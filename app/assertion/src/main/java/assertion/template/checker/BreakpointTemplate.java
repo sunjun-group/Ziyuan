@@ -1,5 +1,6 @@
 package assertion.template.checker;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,6 +32,15 @@ public class BreakpointTemplate {
 	
 	public List<Template> getCompositeTemplates() {
 		return compositeTemplates;
+	}
+	
+	public List<Template> getTemplates() {
+		List<Template> templates = new ArrayList<Template>();
+		
+		templates.addAll(singleTemplates);
+		templates.addAll(compositeTemplates);
+		
+		return templates;
 	}
 	
 	@Override

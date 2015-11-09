@@ -26,10 +26,12 @@ public class BreakpointTemplateChecker {
 		bkpsTemplates = new ArrayList<BreakpointTemplate>();
 	}
 	
-	public void checkTemplates(List<BreakpointData> bkpsData) {
+	public List<BreakpointTemplate> checkTemplates(List<BreakpointData> bkpsData) {
 		for (BreakpointData bkpData : bkpsData) {
 			checkTemplates(bkpData);
 		}
+		
+		return bkpsTemplates;
 	}
 	
 	public void checkTemplates(BreakpointData bkpData) {

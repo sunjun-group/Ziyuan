@@ -1,6 +1,7 @@
 package sav.java.parser.cfg;
 
 import japa.parser.ast.Node;
+import japa.parser.ast.stmt.AssertStmt;
 import japa.parser.ast.stmt.BreakStmt;
 import japa.parser.ast.stmt.ContinueStmt;
 import japa.parser.ast.stmt.DoStmt;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
+import sav.java.parser.cfg.CfgNode.Type;
 import sav.java.parser.cfg.graph.Graph;
 
 public class CFG extends Graph<CfgNode, CfgEdge>{
@@ -244,6 +246,24 @@ public class CFG extends Graph<CfgNode, CfgEdge>{
 			appendStr(edge.getDest(), sb, visitedNodes);
 		}
 	}
+	
+	public void getDecisionNode(CfgNode node, List<CfgNode> nodeList, HashSet<CfgNode> visitedNodes) {
+		if (node == null || visitedNodes.contains(node)) {
+			return;
+		}
+		visitedNodes.add(node);
+		
+		if (node.getType() == Type.DECISIONS && !nodeList.contains(node) &&
+				!(node.getAstNode() instanceof AssertStmt)) {
+			nodeList.add(node);
+		}
+		
+		for (CfgEdge edge : getOutEdges(node)) {
+			getDecisionNode(edge.getDest(), nodeList, visitedNodes);
+		}
+	}
+	
+	
 
 	public static enum EdgeUnCompletedType {
 		BREAK,
