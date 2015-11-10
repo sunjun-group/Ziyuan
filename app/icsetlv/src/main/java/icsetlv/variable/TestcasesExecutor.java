@@ -11,6 +11,7 @@ package icsetlv.variable;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.trial.model.Trace;
+import icsetlv.trial.model.TraceNode;
 import icsetlv.trial.variable.DebugValueExtractor2;
 
 import java.util.ArrayList;
@@ -79,11 +80,12 @@ public class TestcasesExecutor extends JunitDebugger {
 		BreakpointValue bkpVal = extractValuesAtLocation(bkp, bkpEvent);
 		//replace existing one with the new one
 		addToCurrentValueList(currentTestBkpValues, bkpVal);
-		collectTrace(bkpVal);
+		collectTrace(bkp, bkpVal);
 	}
 
-	private void collectTrace(BreakpointValue bkpVal) {
-		
+	private void collectTrace(BreakPoint bkp, BreakpointValue bkpVal) {
+		TraceNode node = new TraceNode(bkp, bkpVal);
+		trace.addTraceNode(node);
 	}
 
 	@Override
@@ -241,6 +243,10 @@ public class TestcasesExecutor extends JunitDebugger {
 		this.timeout = timeoutInSec;
 	}
 	
+	public Trace getTrace() {
+		return trace;
+	}
+
 	public static enum TestResultType {
 		PASS,
 		FAIL,

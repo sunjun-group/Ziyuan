@@ -1,6 +1,7 @@
 package icsetlv;
 
 import icsetlv.common.dto.BreakpointData;
+import icsetlv.trial.model.Trace;
 import icsetlv.variable.TestcasesExecutor;
 
 import java.util.ArrayList;
@@ -52,5 +53,8 @@ public class TestcaseTest extends AbstractTest{
 		tcExecutor.run(breakpoints);
 		List<BreakpointData> result = tcExecutor.getResult();
 		System.out.println(result);
+		
+		Trace trace = tcExecutor.getTrace();
+		System.currentTimeMillis();
 	}
 }

@@ -1,34 +1,32 @@
 package icsetlv.trial.model;
 
+import icsetlv.common.dto.BreakpointValue;
+import sav.strategies.dto.BreakPoint;
+
 public class TraceNode {
-	private String className;
-	private int lineNum;
-	
-	private ProgramState state;
+	private BreakPoint breakPoint;
+	private BreakpointValue programState;
 
-	public String getClassName() {
-		return className;
+	public TraceNode(BreakPoint breakPoint, BreakpointValue programState) {
+		super();
+		this.breakPoint = breakPoint;
+		this.programState = programState;
 	}
 
-	public void setClassName(String className) {
-		this.className = className;
+	public BreakPoint getBreakPoint() {
+		return breakPoint;
 	}
 
-	public int getLineNum() {
-		return lineNum;
+	public void setBreakPoint(BreakPoint breakPoint) {
+		this.breakPoint = breakPoint;
 	}
 
-	public void setLineNum(int lineNum) {
-		this.lineNum = lineNum;
+	public BreakpointValue getProgramState() {
+		return programState;
 	}
 
-	public ProgramState getState() {
-		return state;
+	public void setProgramState(BreakpointValue programState) {
+		this.programState = programState;
 	}
 
-	public void setState(ProgramState state) {
-		this.state = state;
-	}
-	
-	
 }

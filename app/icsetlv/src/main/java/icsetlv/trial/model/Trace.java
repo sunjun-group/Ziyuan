@@ -1,5 +1,7 @@
 package icsetlv.trial.model;
 
+import icsetlv.common.dto.BreakpointValue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,5 +21,8 @@ public class Trace {
 		this.exectionList = exectionList;
 	}
 	
+	public void addTraceNode(TraceNode node){
+		this.exectionList.add(node);
+	}
 	
 }
