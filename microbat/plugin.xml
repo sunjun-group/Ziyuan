@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="microbat.category"
+            name="MicroBat">
+      </category>
+      <view
+            category="microbat.category"
+            class="microbat.views.DebugFeedbackView"
+            icon="icons/feedback.png"
+            id="microbat.view.debugFeedback"
+            name="Debug Feedback"
+            restorable="true">
+      </view>
+      <view
+            category="microbat.category"
+            class="microbat.views.TraceView"
+            icon="icons/trace.png"
+            id="microbat.view.trace"
+            name="Trace"
+            restorable="true">
+      </view>
+      <view
+            category="microbat.category"
+            class="microbat.views.NavigationHistoryView"
+            icon="icons/navigation_history.png"
+            id="microbat.view.navigationHistory"
+            name="Navigation History"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="microbat.perspectives.MicroBatPerspective"
+            icon="icons/releng_gears.gif"
+            id="microbat.perspectives.MicroBatPerspective"
+            name="MicroBat">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="microbat.handler.StartDebugHandler"
+            id="microbat.command.startDebug"
+            name="Start Debugging">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               label="MicroBat">
+            <command
+                  commandId="microbat.command.startDebug"
+                  icon="icons/start_debug.png"
+                  label="Start Debug"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="microbat.toolbar.startDebug">
+            <command
+                  commandId="microbat.command.startDebug"
+                  icon="icons/start_debug.png"
+                  label="Start Debug"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+
+</plugin>
