@@ -2,7 +2,7 @@
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
-	<localRepository>D:/_1_Projects/Tzuyu/maven-repository</localRepository>
+	<localRepository>E:/.m2/repository</localRepository>
 	<profiles>
 		<profile>
 			<id>tzuyuProfile</id>
@@ -46,10 +46,10 @@
 		<profile>
 			<id>localConfig</id>
 			<!-- to override properties defined in tzuyu.parent pom.xml -->
-<!-- 			<properties> -->
-<!-- 				<toolsjar>[../jdk1.6.../lib/tools.jar</toolsjar> -->
-<!-- 				<toolsjar-version>1.6...</toolsjar-version> -->
-<!-- 			</properties> -->
+			<properties>
+				<toolsjar>C:/Program Files/Java/jdk1.8.0_60/lib/tools.jar</toolsjar>
+				<toolsjar-version>1.8</toolsjar-version>
+			</properties>
 		</profile>
 	</profiles>
 	<activeProfiles>

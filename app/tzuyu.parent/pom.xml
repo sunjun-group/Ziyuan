@@ -62,10 +62,10 @@
 	</distributionManagement>
 
 	<repositories>
-		<repository>
-			<id>thirdparty</id>
-			<url>http://202.94.70.100:8081/nexus/content/repositories/thirdparty</url>
-		</repository>
+<!-- 		<repository> -->
+<!-- 			<id>thirdparty</id> -->
+<!-- 			<url>http://202.94.70.100:8081/nexus/content/repositories/thirdparty</url> -->
+<!-- 		</repository> -->
 	</repositories>
 
 	<modules>
