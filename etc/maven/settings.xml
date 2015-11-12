@@ -47,8 +47,8 @@
 			<id>localConfig</id>
 			<!-- to override properties defined in tzuyu.parent pom.xml -->
 			<properties>
-				<toolsjar>C:/Program Files/Java/jdk1.8.0_60/lib/tools.jar</toolsjar>
-				<toolsjar-version>1.8</toolsjar-version>
+				<toolsjar>C:/Program Files/Java/jdk1.7.0_79/lib/tools.jar</toolsjar>
+				<toolsjar-version>1.7</toolsjar-version>
 			</properties>
 		</profile>
 	</profiles>
