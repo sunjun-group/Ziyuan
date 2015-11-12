@@ -44,8 +44,8 @@
 		<slf4j-log4j-binding>slf4j-log4j12</slf4j-log4j-binding>
 		<slf4j-version>1.7.12</slf4j-version>
 		<spring-core-version>4.0.3.RELEASE</spring-core-version>
-		<toolsjar>${java.home}/../lib/tools.jar</toolsjar>
-		<toolsjar-version>${java.version}</toolsjar-version>
+		<toolsjar>C:/Program Files/Java/jdk1.7.0_79/lib/tools.jar</toolsjar>
+		<toolsjar-version>1.7</toolsjar-version>
 		<tzuyu.libs>${basedir}/../tzuyuEclipsePlugin/libs</tzuyu.libs>
 		<reflections-version>0.9.8</reflections-version>
 
