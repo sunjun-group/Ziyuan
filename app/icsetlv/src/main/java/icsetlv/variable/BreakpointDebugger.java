@@ -36,7 +36,6 @@ import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
-import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
 
 /**
@@ -44,6 +43,7 @@ import com.sun.jdi.request.EventRequestManager;
  * This class allows to start a program in debug mode, and add breakpoints
  * in order to collect data.
  */
+@SuppressWarnings("restriction")
 public abstract class BreakpointDebugger {
 	protected static Logger log = LoggerFactory.getLogger(BreakpointDebugger.class);
 	private VMConfiguration config;
@@ -56,7 +56,6 @@ public abstract class BreakpointDebugger {
 		this.config = config;
 	}
 
-	@SuppressWarnings("restriction")
 	public final void run(List<BreakPoint> brkps) throws SavException {
 		this.bkps = brkps;
 		this.brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
@@ -78,6 +77,7 @@ public abstract class BreakpointDebugger {
 
 		/* process debug events */
 		EventQueue eventQueue = vm.eventQueue();
+		
 		boolean stop = false;
 		boolean eventTimeout = false;
 		Map<String, BreakPoint> locBrpMap = new HashMap<String, BreakPoint>();
@@ -98,7 +98,6 @@ public abstract class BreakpointDebugger {
 				if (event instanceof VMDeathEvent
 						|| event instanceof VMDisconnectEvent) {
 					stop = true;
-					eventTimeout = true;
 					break;
 				} else if (event instanceof ClassPrepareEvent) {
 					// add breakpoint watch on loaded class
@@ -121,11 +120,11 @@ public abstract class BreakpointDebugger {
 			}
 			eventSet.resume();
 		}
-		if (!eventTimeout) {
-			vm.resume();
-			/* wait until the process completes */
-			debugger.waitProcessUntilStop();
-		}
+//		if (!eventTimeout) {
+//			vm.resume();
+//			/* wait until the process completes */
+//			debugger.waitProcessUntilStop();
+//		}
 		/* end of debug */
 		afterDebugging();
 	}
