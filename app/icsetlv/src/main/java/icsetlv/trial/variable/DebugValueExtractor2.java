@@ -407,7 +407,8 @@ public class DebugValueExtractor2 {
 	}
 	
 	private boolean areLocationsEqual(Location location1, Location location2) throws AbsentInformationException {
-		return location1.compareTo(location2) == 0;
+		//return location1.compareTo(location2) == 0;
+		return location1.equals(location2);
 	}
 	
 //	public int getValRetrieveLevel() {

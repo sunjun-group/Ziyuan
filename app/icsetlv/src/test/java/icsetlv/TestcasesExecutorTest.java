@@ -58,7 +58,7 @@ public class TestcasesExecutorTest extends AbstractTest {
 		bkp1.addVars(new Variable("innerClass", "innerClass.inner.b"));
 		breakpoints.add(bkp1);
 		List<String> junitClassNames = CollectionUtils.listOf(TcExSumTest.class.getName());
-		List<String> tests = JunitUtils.extractTestMethods(junitClassNames);
+		List<String> tests = JunitUtils.extractTestMethods(junitClassNames, null);
 		tcExecutor.setup(appClasspath, tests);
 		tcExecutor.run(breakpoints);
 		List<BreakpointData> result = tcExecutor.getResult();
@@ -74,7 +74,7 @@ public class TestcasesExecutorTest extends AbstractTest {
 		bkp1.addVars(new Variable("innerClass", "innerClass.inner.inner.b"));
 		breakpoints.add(bkp1);
 		List<String> tests = JunitUtils.extractTestMethods(CollectionUtils
-				.listOf(TcExSumTest.class.getName()));
+				.listOf(TcExSumTest.class.getName()), null);
 		tcExecutor.setup(appClasspath, tests);
 		tcExecutor.run(breakpoints);
 		List<BreakpointData> result = tcExecutor.getResult();
@@ -90,7 +90,7 @@ public class TestcasesExecutorTest extends AbstractTest {
 		bkp1.addVars(new Variable("innerClass", "innerClass.aaa"));
 		breakpoints.add(bkp1);
 		List<String> tests = JunitUtils.extractTestMethods(CollectionUtils
-				.listOf(TcExSumTest.class.getName()));
+				.listOf(TcExSumTest.class.getName()), null);
 		tcExecutor.setup(appClasspath, tests);
 		tcExecutor.run(breakpoints);
 		List<BreakpointData> result = tcExecutor.getResult();

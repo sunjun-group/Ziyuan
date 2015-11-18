@@ -112,7 +112,7 @@ public class Engine {
 	}
 	
 	public Engine addTestcases(String testClass) throws ClassNotFoundException {
-		addTestcases(JunitUtils.extractTestMethods(Arrays.asList(testClass)));
+		addTestcases(JunitUtils.extractTestMethods(Arrays.asList(testClass), null));
 		return this;
 	}
 	

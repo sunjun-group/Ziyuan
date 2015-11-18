@@ -58,7 +58,7 @@ public class SliceCollectorTest extends AbstractJavaSlicerTest {
 		List<BreakPoint> breakpoints = Arrays.asList(bkp);
 		analyzedClasses = Arrays.asList(targetClass);
 		testClassMethods = JunitUtils.extractTestMethods(Arrays
-				.asList(testClass));
+				.asList(testClass), null);
 		run(breakpoints);
 	}
 }

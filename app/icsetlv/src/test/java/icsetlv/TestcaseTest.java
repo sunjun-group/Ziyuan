@@ -29,7 +29,8 @@ public class TestcaseTest extends AbstractTest{
 	@Before
 	public void setup() {
 		appClasspath = initAppClasspath();
-		appClasspath.addClasspath(TestConfiguration.getTestTarget(ICSETLV));
+		String testTargetClasspath = TestConfiguration.getTestTarget(ICSETLV);
+		appClasspath.addClasspath(testTargetClasspath);
 		tcExecutor = new TestcasesExecutor(6);
 	}
 	
@@ -48,7 +49,7 @@ public class TestcaseTest extends AbstractTest{
 		bkp1.addVars(new Variable("output"));
 		breakpoints.add(bkp1);
 		List<String> junitClassNames = CollectionUtils.listOf(HTMLParserTest.class.getName());
-		List<String> tests = JunitUtils.extractTestMethods(junitClassNames);
+		List<String> tests = JunitUtils.extractTestMethods(junitClassNames, null);
 		tcExecutor.setup(appClasspath, tests);
 		tcExecutor.run(breakpoints);
 		List<BreakpointData> result = tcExecutor.getResult();

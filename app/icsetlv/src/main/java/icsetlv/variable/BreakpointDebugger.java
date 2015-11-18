@@ -36,6 +36,7 @@ import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
+import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
 
 /**
@@ -55,6 +56,7 @@ public abstract class BreakpointDebugger {
 		this.config = config;
 	}
 
+	@SuppressWarnings("restriction")
 	public final void run(List<BreakPoint> brkps) throws SavException {
 		this.bkps = brkps;
 		this.brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
@@ -67,8 +69,12 @@ public abstract class BreakpointDebugger {
 		if (vm == null) {
 			throw new SavException(ModuleEnum.JVM, "cannot start jvm!");
 		}
+		
+		//System.out.println("This VM's classloader:" + vm.getClass().getClassLoader().getClass());
+		
 		/* add class watch */
-		addClassWatch(vm.eventRequestManager());
+		EventRequestManager erm = vm.eventRequestManager(); 
+		addClassWatch(erm);
 
 		/* process debug events */
 		EventQueue eventQueue = vm.eventQueue();
@@ -92,6 +98,7 @@ public abstract class BreakpointDebugger {
 				if (event instanceof VMDeathEvent
 						|| event instanceof VMDisconnectEvent) {
 					stop = true;
+					eventTimeout = true;
 					break;
 				} else if (event instanceof ClassPrepareEvent) {
 					// add breakpoint watch on loaded class
@@ -110,7 +117,7 @@ public abstract class BreakpointDebugger {
 					if(bkp != null){
 						handleBreakpointEvent(bkp, vm, bkpEvent);						
 					}
-				}
+				} 
 			}
 			eventSet.resume();
 		}

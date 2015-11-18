@@ -8,8 +8,10 @@
 
 package sav.common.core.utils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -29,24 +31,31 @@ public class JunitUtils {
 	private static final String JUNIT_TEST_METHOD_PREFIX = "test";
 	private static final String JUNIT_TEST_SUITE_PREFIX = "suite";
 	
-	public static List<String> extractTestMethods(List<String> junitClassNames)
+	public static List<String> extractTestMethods(List<String> junitClassNames, URLClassLoader classLoader)
 			throws ClassNotFoundException {
 		List<String> result = new ArrayList<String>();
 		for (String className : junitClassNames) {
-			extractTestMethods(result, className);
+			extractTestMethods(result, className, classLoader);
 		}
 		return result;
 	}
 
-	private static void extractTestMethods(List<String> result, String className)
+	private static void extractTestMethods(List<String> result, String className, URLClassLoader classLoader)
 			throws ClassNotFoundException {
-		Class<?> junitClass = Class.forName(className);
+		Class<?> junitClass; 
+		if(classLoader == null){
+			junitClass = Class.forName(className);
+		}
+		else{
+			junitClass = Class.forName(className, false, classLoader);
+		}
 		Method[] methods = junitClass.getDeclaredMethods();
 		for (Method method : methods) {
-			if (isTestMethod(junitClass, method)) {
+			//TODO linyun: the condition should not be removed, I commented it just for debugging
+			//if (isTestMethod(junitClass, method)) {
 				result.add(ClassUtils.toClassMethodStr(className,
 						method.getName()));
-			}
+			//}
 		}
 		/* TODO: to remove. just for test the specific testcases in SIR */
 		if (result.isEmpty()) {
@@ -70,12 +79,12 @@ public class JunitUtils {
 				findTestcasesInSuite((TestSuite) test, classMethods);
 			} else if (test instanceof TestCase) {
 				TestCase tc = (TestCase) test;
-				extractTestMethods(classMethods, tc.getClass().getName());
+				extractTestMethods(classMethods, tc.getClass().getName(), null);
 			}
 		}
 	}
 
-	public static boolean isTestMethod(Class<?> junitClass, Method method) {
+	public static boolean isTestMethod(Class<?> junitClass, Method method) {		
 		Test test = method.getAnnotation(Test.class);
 		if (test != null) {
 			return true;

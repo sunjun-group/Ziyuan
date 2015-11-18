@@ -30,7 +30,7 @@ public class JunitRunnerTest extends AbstractTest {
 		JunitRunnerParameters params = new JunitRunnerParameters();
 		params.setTimeout(3, TimeUnit.SECONDS);
 		params.setClassMethods(JunitUtils.extractTestMethods(Arrays
-				.asList(JunitRunnerTestdata.class.getName())));
+				.asList(JunitRunnerTestdata.class.getName()), null));
 		JunitResult result = JunitRunner.runTestcases(params);
 		System.out.println(result);
 	}

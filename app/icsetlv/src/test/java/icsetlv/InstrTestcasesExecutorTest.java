@@ -110,7 +110,7 @@ public class InstrTestcasesExecutorTest extends AbstractTest {
 	private List<BreakpointData> runTcExecutor(Data data)
 			throws Exception {
 		List<String> tests = JunitUtils.extractTestMethods(CollectionUtils
-				.listOf(data.testClass.getName()));
+				.listOf(data.testClass.getName()), null);
 		varExtr.setup(appClasspath, tests);
 		varExtr.setValueExtractor(new DebugValueInstExtractor(varExtr.getValRetrieveLevel(), data.instVals));
 		varExtr.run(data.getBkps());

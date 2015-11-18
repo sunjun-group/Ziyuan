@@ -34,7 +34,7 @@ public class JavaSlicerTest extends AbstractJavaSlicerTest {
 		List<BreakPoint> breakpoints = Arrays.asList(bkp2);
 		analyzedClasses = Arrays.asList(targetClass);
 		testClassMethods = JunitUtils.extractTestMethods(Arrays
-				.asList(testClass));
+				.asList(testClass), null);
 		run(breakpoints);
 	}
 	

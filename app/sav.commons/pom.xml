@@ -84,10 +84,10 @@
 
 		<!-- JVM Runner, referenced in VMListener, exclude this package if not 
 			necessary -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.sun</groupId>
 			<artifactId>tools</artifactId>
-		</dependency>
+		</dependency> -->
 
 		<!-- JunitRunner, for running junit test, read and write file during running 
 			exclude this package if not necessary -->

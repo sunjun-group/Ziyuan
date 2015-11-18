@@ -165,7 +165,7 @@ public class JunitRunnerParameters {
 	 */
 	public void setJunitClasses(List<String> junitClassNames) {
 		try {
-			this.classMethods = JunitUtils.extractTestMethods(junitClassNames);
+			this.classMethods = JunitUtils.extractTestMethods(junitClassNames, null);
 		} catch (ClassNotFoundException e) {
 			throw new SavRtException(
 					"cannot extract test methods from junit classes: ",
