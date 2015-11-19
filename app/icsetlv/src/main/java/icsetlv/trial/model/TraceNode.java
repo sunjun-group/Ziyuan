@@ -8,7 +8,15 @@ public class TraceNode {
 	private BreakPoint breakPoint;
 	private BreakPointValue programState;
 	
+	/**
+	 * the order of this node in the whole trace
+	 */
 	private int order;
+	
+	/**
+	 * indicate whether this node has been marked correct/incorrect by user
+	 */
+	private Boolean markedCorrrect;
 
 	public TraceNode(BreakPoint breakPoint, BreakPointValue programState, int order) {
 		super();
@@ -39,6 +47,14 @@ public class TraceNode {
 
 	public void setOrder(int order) {
 		this.order = order;
+	}
+
+	public Boolean getMarkedCorrrect() {
+		return markedCorrrect;
+	}
+
+	public void setMarkedCorrrect(Boolean markedCorrrect) {
+		this.markedCorrrect = markedCorrrect;
 	}
 
 	
