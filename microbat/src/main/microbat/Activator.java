@@ -1,5 +1,7 @@
 package microbat;
 
+import icsetlv.trial.model.Trace;
+
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -46,5 +48,20 @@ public class Activator extends AbstractUIPlugin {
 	public static Activator getDefault() {
 		return plugin;
 	}
+	
+	/**
+	 * After an execution, its trace should be kept in this field.  
+	 */
+	private Trace currentTrace = new Trace();
 
+	public Trace getCurrentTrace() {
+		return currentTrace;
+	}
+
+	public void setCurrentTrace(Trace currentTrace) {
+		this.currentTrace = currentTrace;
+	}
+
+	
+	
 }

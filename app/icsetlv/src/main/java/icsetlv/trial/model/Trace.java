@@ -25,4 +25,8 @@ public class Trace {
 		this.exectionList.add(node);
 	}
 	
+	public int size(){
+		return this.exectionList.size();
+	}
+	
 }

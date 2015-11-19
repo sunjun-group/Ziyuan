@@ -84,7 +84,8 @@ public class TestcasesExecutor extends JunitDebugger {
 	}
 
 	private void collectTrace(BreakPoint bkp, BreakPointValue bkpVal) {
-		TraceNode node = new TraceNode(bkp, bkpVal);
+		int order = trace.size() + 1;
+		TraceNode node = new TraceNode(bkp, bkpVal, order);
 		trace.addTraceNode(node);
 	}
 
