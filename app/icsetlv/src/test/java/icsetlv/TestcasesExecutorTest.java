@@ -9,7 +9,7 @@
 package icsetlv;
 
 import icsetlv.common.dto.BreakpointData;
-import icsetlv.common.dto.BreakpointValue;
+import icsetlv.common.dto.BreakPointValue;
 import icsetlv.variable.TestcasesExecutor;
 
 import java.util.ArrayList;
@@ -96,7 +96,7 @@ public class TestcasesExecutorTest extends AbstractTest {
 		List<BreakpointData> result = tcExecutor.getResult();
 		Assert.assertEquals(1, result.size());
 		BreakpointData bkpData = result.get(0);
-		List<BreakpointValue> bkpVal = new ArrayList<BreakpointValue>(bkpData.getPassValues());
+		List<BreakPointValue> bkpVal = new ArrayList<BreakPointValue>(bkpData.getPassValues());
 		bkpVal.addAll(bkpData.getFailValues());
 		Assert.assertTrue(CollectionUtils.isEmpty(bkpVal.get(0).getChildren()));
 	}

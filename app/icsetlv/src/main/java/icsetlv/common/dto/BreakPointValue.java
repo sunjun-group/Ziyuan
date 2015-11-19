@@ -22,9 +22,9 @@ import sav.strategies.dto.execute.value.ExecVarType;
  * @author LLT
  * 
  */
-public class BreakpointValue extends ExecValue {
+public class BreakPointValue extends ExecValue {
 
-	public BreakpointValue(String id) {
+	public BreakPointValue(String id) {
 		super(id);
 	}
 

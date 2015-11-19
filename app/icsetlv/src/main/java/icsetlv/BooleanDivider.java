@@ -9,7 +9,7 @@
 package icsetlv;
 
 import icsetlv.common.dto.BreakpointData;
-import icsetlv.common.dto.BreakpointValue;
+import icsetlv.common.dto.BreakPointValue;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class BooleanDivider {
 	}
 	
 	private Formula divide(ExecVar var,
-			List<BreakpointValue> passValues, List<BreakpointValue> failValues) {
+			List<BreakPointValue> passValues, List<BreakPointValue> failValues) {
 		Pair<Boolean, Boolean> allTrueFalseInPass = checkAllTrueOrAllFalse(passValues, var.getVarId());
 		Pair<Boolean, Boolean> allTrueFalseInFail = checkAllTrueOrAllFalse(failValues, var.getVarId());
 		if(allTrueFalseInPass.a && allTrueFalseInFail.b){
@@ -48,12 +48,12 @@ public class BooleanDivider {
 		return null;
 	}
 
-	private Pair<Boolean,Boolean> checkAllTrueOrAllFalse(final List<BreakpointValue> values,
+	private Pair<Boolean,Boolean> checkAllTrueOrAllFalse(final List<BreakPointValue> values,
 			String varLabel) {
 		boolean allTrue = true;
 		boolean allFalse = true;
 		boolean found = false;
-		for(BreakpointValue breakPoint: values){
+		for(BreakPointValue breakPoint: values){
 			Double varVal = breakPoint.getValue(varLabel, null);
 			if (varVal == null) {
 				continue;

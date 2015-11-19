@@ -1,13 +1,13 @@
 package icsetlv.trial.model;
 
-import icsetlv.common.dto.BreakpointValue;
+import icsetlv.common.dto.BreakPointValue;
 import sav.strategies.dto.BreakPoint;
 
 public class TraceNode {
 	private BreakPoint breakPoint;
-	private BreakpointValue programState;
+	private BreakPointValue programState;
 
-	public TraceNode(BreakPoint breakPoint, BreakpointValue programState) {
+	public TraceNode(BreakPoint breakPoint, BreakPointValue programState) {
 		super();
 		this.breakPoint = breakPoint;
 		this.programState = programState;
@@ -21,11 +21,11 @@ public class TraceNode {
 		this.breakPoint = breakPoint;
 	}
 
-	public BreakpointValue getProgramState() {
+	public BreakPointValue getProgramState() {
 		return programState;
 	}
 
-	public void setProgramState(BreakpointValue programState) {
+	public void setProgramState(BreakPointValue programState) {
 		this.programState = programState;
 	}
 

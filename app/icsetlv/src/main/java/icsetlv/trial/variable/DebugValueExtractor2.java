@@ -1,7 +1,7 @@
 package icsetlv.trial.variable;
 
 import icsetlv.DefaultValues;
-import icsetlv.common.dto.BreakpointValue;
+import icsetlv.common.dto.BreakPointValue;
 import icsetlv.common.utils.PrimitiveUtils;
 import icsetlv.trial.heuristic.HeuristicIgnoringFieldRule;
 import icsetlv.variable.DebugValueExtractor;
@@ -75,13 +75,13 @@ public class DebugValueExtractor2 {
 //		this.valRetrieveLevel = valRetrieveLevel;
 //	}
 	
-	public final BreakpointValue extractValue(BreakPoint bkp, BreakpointEvent event)
+	public final BreakPointValue extractValue(BreakPoint bkp, BreakpointEvent event)
 			throws IncompatibleThreadStateException, AbsentInformationException, SavException {
 		if (bkp == null) {
 			return null;
 		}
 		
-		BreakpointValue bkVal = new BreakpointValue(bkp.getId());
+		BreakPointValue bkVal = new BreakPointValue(bkp.getId());
 		ThreadReference thread = event.thread();
 		synchronized (thread) {
 			if (!thread.frames().isEmpty()) {
@@ -168,7 +168,7 @@ public class DebugValueExtractor2 {
 		return matchedField;
 	}
 
-	protected void collectValue(BreakpointValue bkVal, ThreadReference thread,
+	protected void collectValue(BreakPointValue bkVal, ThreadReference thread,
 			final Map<Variable, JdiParam> allVariables) throws SavException {
 		for (Entry<Variable, JdiParam> entry : allVariables.entrySet()) {
 			Variable var = entry.getKey();

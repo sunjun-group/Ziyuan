@@ -1,6 +1,6 @@
 package icsetlv.trial.model;
 
-import icsetlv.common.dto.BreakpointValue;
+import icsetlv.common.dto.BreakPointValue;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -10,7 +10,7 @@ package icsetlv;
 
 import icsetlv.common.dto.BkpInvariantResult;
 import icsetlv.common.dto.BreakpointData;
-import icsetlv.common.dto.BreakpointValue;
+import icsetlv.common.dto.BreakPointValue;
 import icsetlv.sampling.SelectiveSampling;
 
 import java.util.ArrayList;
@@ -157,18 +157,18 @@ public class InvariantLearner implements CategoryCalculator {
 
 	}
 
-	private void addDataPoints(List<ExecVar> allVars, List<BreakpointValue> passValues,
-			List<BreakpointValue> failValues) {
-		for (BreakpointValue bValue : passValues) {
+	private void addDataPoints(List<ExecVar> allVars, List<BreakPointValue> passValues,
+			List<BreakPointValue> failValues) {
+		for (BreakPointValue bValue : passValues) {
 			addDataPoint(allVars, bValue, Category.POSITIVE);
 		}
 
-		for (BreakpointValue bValue : failValues) {
+		for (BreakPointValue bValue : failValues) {
 			addDataPoint(allVars, bValue, Category.NEGATIVE);
 		}
 	}
 
-	private void addDataPoint(List<ExecVar> allVars, BreakpointValue bValue, Category category) {
+	private void addDataPoint(List<ExecVar> allVars, BreakPointValue bValue, Category category) {
 		double[] lineVals = new double[allVars.size()];
 		int i = 0;
 		for (ExecVar var : allVars) {

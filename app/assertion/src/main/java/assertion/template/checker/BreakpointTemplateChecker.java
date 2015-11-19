@@ -5,7 +5,7 @@ import java.util.List;
 
 import icsetlv.InvariantMediator;
 import icsetlv.common.dto.BreakpointData;
-import icsetlv.common.dto.BreakpointValue;
+import icsetlv.common.dto.BreakPointValue;
 import icsetlv.sampling.SelectiveSampling;
 import invariant.templates.SingleTemplate;
 import sav.common.core.formula.Eq;
@@ -37,12 +37,12 @@ public class BreakpointTemplateChecker {
 		List<List<ExecValue>> failExecValuesList = new ArrayList<List<ExecValue>>();
 			
 		// get pass values
-		for (BreakpointValue bv : bkpData.getPassValues()) {
+		for (BreakPointValue bv : bkpData.getPassValues()) {
 			passExecValuesList.add(bv.getChildren());
 		}
 			
 		// get fail values
-		for (BreakpointValue bv : bkpData.getFailValues()) {
+		for (BreakPointValue bv : bkpData.getFailValues()) {
 			failExecValuesList.add(bv.getChildren());
 		}
 		
@@ -94,12 +94,12 @@ public class BreakpointTemplateChecker {
 					List<List<ExecValue>> newFailExecValuesList = new ArrayList<List<ExecValue>>();
 						
 					// get pass values
-					for (BreakpointValue bv : newBkpData.getPassValues()) {
+					for (BreakPointValue bv : newBkpData.getPassValues()) {
 						newPassExecValuesList.add(bv.getChildren());
 					}
 						
 					// get fail values
-					for (BreakpointValue bv : newBkpData.getFailValues()) {
+					for (BreakPointValue bv : newBkpData.getFailValues()) {
 						newFailExecValuesList.add(bv.getChildren());
 					}
 					

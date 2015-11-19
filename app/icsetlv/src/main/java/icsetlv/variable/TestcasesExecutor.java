@@ -9,7 +9,7 @@
 package icsetlv.variable;
 
 import icsetlv.common.dto.BreakpointData;
-import icsetlv.common.dto.BreakpointValue;
+import icsetlv.common.dto.BreakPointValue;
 import icsetlv.trial.model.Trace;
 import icsetlv.trial.model.TraceNode;
 import icsetlv.trial.variable.DebugValueExtractor2;
@@ -43,8 +43,8 @@ public class TestcasesExecutor extends JunitDebugger {
 	private static Logger log = LoggerFactory.getLogger(TestcasesExecutor.class);	
 	private List<BreakpointData> result;
 	/* for internal purpose */
-	private Map<Integer, List<BreakpointValue>> bkpValsByTestIdx;
-	private List<BreakpointValue> currentTestBkpValues;
+	private Map<Integer, List<BreakPointValue>> bkpValsByTestIdx;
+	private List<BreakPointValue> currentTestBkpValues;
 	private DebugValueExtractor valueExtractor;
 	private int valRetrieveLevel;
 	private ITestResultVerifier verifier = DefaultTestResultVerifier.getInstance();
@@ -64,8 +64,8 @@ public class TestcasesExecutor extends JunitDebugger {
 	
 	@Override
 	protected void onStart() {
-		bkpValsByTestIdx = new HashMap<Integer, List<BreakpointValue>>();
-		currentTestBkpValues = new ArrayList<BreakpointValue>();
+		bkpValsByTestIdx = new HashMap<Integer, List<BreakPointValue>>();
+		currentTestBkpValues = new ArrayList<BreakPointValue>();
 		timer.start();
 	}
 
@@ -77,13 +77,13 @@ public class TestcasesExecutor extends JunitDebugger {
 
 	@Override
 	protected void onEnterBreakpoint(BreakPoint bkp, BreakpointEvent bkpEvent) throws SavException {
-		BreakpointValue bkpVal = extractValuesAtLocation(bkp, bkpEvent);
+		BreakPointValue bkpVal = extractValuesAtLocation(bkp, bkpEvent);
 		//replace existing one with the new one
 		addToCurrentValueList(currentTestBkpValues, bkpVal);
 		collectTrace(bkp, bkpVal);
 	}
 
-	private void collectTrace(BreakPoint bkp, BreakpointValue bkpVal) {
+	private void collectTrace(BreakPoint bkp, BreakPointValue bkpVal) {
 		TraceNode node = new TraceNode(bkp, bkpVal);
 		trace.addTraceNode(node);
 	}
@@ -95,12 +95,12 @@ public class TestcasesExecutor extends JunitDebugger {
 			log.warn("TestResults is empty!");
 			log.debug(getProccessError());
 		}
-		Map<TestResultType, List<BreakpointValue>> resultMap = new HashMap<TestResultType, List<BreakpointValue>>();
+		Map<TestResultType, List<BreakPointValue>> resultMap = new HashMap<TestResultType, List<BreakPointValue>>();
 		Map<String, TestResultType> tcExResult = getTcExResult(jResult);
 		for (int i = 0; i < bkpValsByTestIdx.size(); i++) {
 			TestResultType testResult = tcExResult.get(allTests.get(i));
 			if (testResult != TestResultType.UNKNOWN) {
-				List<BreakpointValue> bkpValueOfTcI = bkpValsByTestIdx.get(i);
+				List<BreakPointValue> bkpValueOfTcI = bkpValsByTestIdx.get(i);
 				Assert.assertNotNull(bkpValueOfTcI, "Missing breakpoint value for test " + i);
 				CollectionUtils.getListInitIfEmpty(resultMap, testResult)
 						.addAll(bkpValueOfTcI);
@@ -129,7 +129,7 @@ public class TestcasesExecutor extends JunitDebugger {
 	}
 	
 	private List<BreakpointData> buildBreakpointData(
-			List<BreakpointValue> passValues, List<BreakpointValue> failValues) {
+			List<BreakPointValue> passValues, List<BreakPointValue> failValues) {
 		List<BreakpointData> result = new ArrayList<BreakpointData>(bkps.size());
 		for (BreakPoint bkp : bkps) {
 			BreakpointData bkpData = new BreakpointData();
@@ -141,10 +141,10 @@ public class TestcasesExecutor extends JunitDebugger {
 		return result;
 	}
 	
-	private List<BreakpointValue> getValuesOfBkp(String bkpId,
-			List<BreakpointValue> allValues) {
-		List<BreakpointValue> result = new ArrayList<BreakpointValue>();
-		for (BreakpointValue val : allValues) {
+	private List<BreakPointValue> getValuesOfBkp(String bkpId,
+			List<BreakPointValue> allValues) {
+		List<BreakPointValue> result = new ArrayList<BreakPointValue>();
+		for (BreakPointValue val : allValues) {
 			if (val.getBkpId().equals(bkpId)) {
 				result.add(val);
 			}
@@ -152,12 +152,12 @@ public class TestcasesExecutor extends JunitDebugger {
 		return result;
 	}
 
-	private BreakpointValue extractValuesAtLocation(BreakPoint bkp,
+	private BreakPointValue extractValuesAtLocation(BreakPoint bkp,
 			BreakpointEvent bkpEvent) throws SavException {
 		try {
 			//return getValueExtractor().extractValue(bkp, bkpEvent);
 			DebugValueExtractor2 extractor = new DebugValueExtractor2();
-			BreakpointValue bpValue = extractor.extractValue(bkp, bkpEvent);
+			BreakPointValue bpValue = extractor.extractValue(bkp, bkpEvent);
 			return bpValue;
 			
 		} catch (IncompatibleThreadStateException e) {
@@ -173,13 +173,13 @@ public class TestcasesExecutor extends JunitDebugger {
 	 * we only keep the value of the last one, so replace the current value (if exists) with the new value.
 	 */
 	private void addToCurrentValueList(
-			List<BreakpointValue> currentTestBkpValues, BreakpointValue bkpVal) {
+			List<BreakPointValue> currentTestBkpValues, BreakPointValue bkpVal) {
 		if (bkpVal == null) {
 			return;
 		}
 		int i = 0;
 		for (; i < currentTestBkpValues.size(); i++) {
-			BreakpointValue curVal = currentTestBkpValues.get(i);
+			BreakPointValue curVal = currentTestBkpValues.get(i);
 			if (curVal.getBkpId().equals(bkpVal.getBkpId())) {
 				break;
 			}

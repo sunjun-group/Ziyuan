@@ -8,7 +8,7 @@
 
 package icsetlv.variable;
 
-import icsetlv.common.dto.BreakpointValue;
+import icsetlv.common.dto.BreakPointValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +41,7 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 	}
 
 	@Override
-	protected void collectValue(BreakpointValue bkVal, ThreadReference thread,
+	protected void collectValue(BreakPointValue bkVal, ThreadReference thread,
 			Map<Variable, JdiParam> allVariables) throws SavException {
 		modifyValues(thread, allVariables);
 		super.collectValue(bkVal, thread, allVariables);

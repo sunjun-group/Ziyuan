@@ -24,8 +24,8 @@ import sav.strategies.dto.BreakPoint;
  */
 public class BreakpointData {
 	private BreakPoint bkp;
-	private List<BreakpointValue> passValues;
-	private List<BreakpointValue> failValues;
+	private List<BreakPointValue> passValues;
+	private List<BreakPointValue> failValues;
 
 	public BreakPoint getBkp() {
 		return bkp;
@@ -35,35 +35,35 @@ public class BreakpointData {
 		this.bkp = bkp;
 	}
 
-	public List<BreakpointValue> getPassValues() {
+	public List<BreakPointValue> getPassValues() {
 		return passValues;
 	}
 
-	public void setPassValues(List<BreakpointValue> passValues) {
+	public void setPassValues(List<BreakPointValue> passValues) {
 		this.passValues = passValues;
 	}
 
-	public List<BreakpointValue> getFailValues() {
+	public List<BreakPointValue> getFailValues() {
 		return failValues;
 	}
 
-	public void setFailValues(List<BreakpointValue> failValues) {
+	public void setFailValues(List<BreakPointValue> failValues) {
 		this.failValues = failValues;
 	}
 
 	public List<DataPoint> toDatapoints(List<String> labels) {
 		Set<DataPoint> datapoints = new HashSet<DataPoint>();
-		for (BreakpointValue bValue : passValues) {
+		for (BreakPointValue bValue : passValues) {
 			datapoints.add(toDataPoint(labels, bValue, Category.POSITIVE));
 		}
 
-		for (BreakpointValue bValue : failValues) {
+		for (BreakPointValue bValue : failValues) {
 			datapoints.add(toDataPoint(labels, bValue, Category.NEGATIVE));
 		}
 		return new ArrayList<DataPoint>(datapoints);
 	}
 	
-	public static DataPoint toDataPoint(List<String> labels, BreakpointValue bValue,
+	public static DataPoint toDataPoint(List<String> labels, BreakPointValue bValue,
 			Category category) {
 		double[] lineVals = new double[labels.size()];
 		int i = 0;
