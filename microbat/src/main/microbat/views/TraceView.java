@@ -92,7 +92,7 @@ public class TraceView extends ViewPart {
 
 		public Image getImage(Object element) {
 			if(element instanceof TraceNode){
-				Image image = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_LCL_LINKTO_HELP);
+				Image image = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_ELCL_SYNCED);
 				return image;				
 			}
 			
