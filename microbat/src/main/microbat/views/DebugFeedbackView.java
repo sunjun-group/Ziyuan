@@ -59,6 +59,7 @@ public class DebugFeedbackView extends ViewPart {
 		
 		yesButton.setSelection(false);
 		noButton.setSelection(false);
+		isCorrect = null;
 	}
 	
 	private void createVariableViewContent(Tree tree, BreakPointValue value){
