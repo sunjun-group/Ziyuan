@@ -16,7 +16,7 @@ public class BooleanValue extends PrimitiveValue {
 	private boolean value;
 
 	public BooleanValue(String id, boolean value) {
-		super(id, String.valueOf(value));
+		super(id, String.valueOf(value), "boolean");
 		this.value = value;
 	}
 

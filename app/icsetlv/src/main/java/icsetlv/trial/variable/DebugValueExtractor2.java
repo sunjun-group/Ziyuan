@@ -1,6 +1,5 @@
 package icsetlv.trial.variable;
 
-import icsetlv.DefaultValues;
 import icsetlv.common.dto.BreakPointValue;
 import icsetlv.common.utils.PrimitiveUtils;
 import icsetlv.trial.heuristic.HeuristicIgnoringFieldRule;
@@ -50,14 +49,14 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 import com.sun.jdi.event.BreakpointEvent;
-
+@SuppressWarnings("restriction")
 public class DebugValueExtractor2 {
 	protected static Logger log = LoggerFactory.getLogger(DebugValueExtractor.class);
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
 	private static final String TO_STRING_NAME= "toString";
 	private static final Pattern OBJECT_ACCESS_PATTERN = Pattern.compile("^\\.([^.\\[]+)(\\..+)*(\\[.+)*$");
 	private static final Pattern ARRAY_ACCESS_PATTERN = Pattern.compile("^\\[(\\d+)\\](.*)$");
-	private static final int MAX_ARRAY_ELEMENT_TO_COLLECT = 5;
+	//private static final int MAX_ARRAY_ELEMENT_TO_COLLECT = 5;
 
 	/**
 	 * In order to handle the graph structure of objects, this map is used to remember which object has been analyzed
@@ -174,7 +173,7 @@ public class DebugValueExtractor2 {
 			Variable var = entry.getKey();
 			String varId = var.getId();
 			Value value = entry.getValue().getValue();
-			appendVarVal(bkVal, varId, value, 1, thread);
+			appendVarVal(bkVal, varId, false, value, 1, thread);
 		}
 		
 		System.currentTimeMillis();
@@ -266,8 +265,12 @@ public class DebugValueExtractor2 {
 		return array.getValue(index);
 	}
 
-	/** append execution value*/
-	private void appendVarVal(ExecValue parent, String varId,
+	/** 
+	 * 
+	 * append execution value
+	 * 
+	 */
+	private void appendVarVal(ExecValue parent, String varId, boolean isElementOfArray,
 			Value value, int level, ThreadReference thread) {
 //		if (level > valRetrieveLevel || varId.endsWith("serialVersionUID")) {
 //			return;
@@ -281,30 +284,40 @@ public class DebugValueExtractor2 {
 		if (type instanceof PrimitiveType) {
 			/* TODO LLT: add Primitive type && refactor */
 			if (type instanceof BooleanType) {
-				parent.add(sav.strategies.dto.execute.value.BooleanValue.of(varId, ((BooleanValue)value).booleanValue()));
+				sav.strategies.dto.execute.value.BooleanValue ele = 
+						sav.strategies.dto.execute.value.BooleanValue.of(varId, ((BooleanValue)value).booleanValue());
+				ele.setElementOfArray(isElementOfArray);
+				parent.add(ele);
 			} else {
-				parent.add(new PrimitiveValue(varId, value.toString()));
+				PrimitiveValue ele = new PrimitiveValue(varId, value.toString(), type.toString());
+				ele.setElementOfArray(isElementOfArray);
+				parent.add(ele);
 			}
 		} else if (type instanceof ArrayType) { 
-			appendArrVarVal(parent, varId, (ArrayReference)value, level, thread);
+			appendArrVarVal(parent, varId, isElementOfArray, (ArrayReference)value, level, thread);
 		} else if (type instanceof ClassType) {
 			/**
 			 * if the class name is "String"
 			 */
 			if (PrimitiveUtils.isString(type.name())) {
-				parent.add(new StringValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread)));
+				StringValue ele = new StringValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread));
+				ele.setElementOfArray(isElementOfArray);
+				parent.add(ele);
 			} 
 			/**
 			 * if the class name is "Integer", "Float", ...
 			 */
 			else if (PrimitiveUtils.isPrimitiveType(type.name())) {
-				parent.add(new PrimitiveValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread)));
+				PrimitiveValue ele = new PrimitiveValue(varId, toPrimitiveValue((ClassType) type, 
+						(ObjectReference)value, thread), type.toString());
+				ele.setElementOfArray(isElementOfArray);
+				parent.add(ele);
 			} 
 			/**
 			 * if the class is an arbitrary complicated class
 			 */
 			else {
-				appendClassVarVal(parent, varId, (ObjectReference) value, level, thread);
+				appendClassVarVal(parent, varId, isElementOfArray, (ObjectReference) value, level, thread);
 			}
 		}
 	}
@@ -347,7 +360,7 @@ public class DebugValueExtractor2 {
 	 * @param level
 	 * @param thread
 	 */
-	private void appendClassVarVal(ExecValue parent, String varId,
+	private void appendClassVarVal(ExecValue parent, String varId, boolean isElementOfArray,
 			ObjectReference objRef, int level, ThreadReference thread) {
 		
 		ClassType type = (ClassType) objRef.type();
@@ -369,7 +382,7 @@ public class DebugValueExtractor2 {
 					String childVarID = val.getChildId(field.name());
 					Value childVarValue = fieldValueMap.get(field);
 					
-					appendVarVal(val, childVarID, childVarValue, level, thread);					
+					appendVarVal(val, childVarID, false, childVarValue, level, thread);					
 				}
 				
 			}
@@ -378,22 +391,24 @@ public class DebugValueExtractor2 {
 		parent.add(val);
 	}
 
-	private void appendArrVarVal(ExecValue parent, String varId,
+	private void appendArrVarVal(ExecValue parent, String varId, boolean isElementOfArray,
 			ArrayReference value, int level, ThreadReference thread) {
 		
-		ArrayValue val = new ArrayValue(varId);
-		val.setValue(value);
+		ArrayValue arrayVal = new ArrayValue(varId);
+		arrayVal.setValue(value);
 		String componentType = ((ArrayType)value.type()).componentTypeName();
-		val.setComponentType(componentType);
-		val.setReferenceID(value.uniqueID());
+		arrayVal.setComponentType(componentType);
+		arrayVal.setReferenceID(value.uniqueID());
+		arrayVal.setElementOfArray(isElementOfArray);
 		
 		//add value of elements
 		for (int i = 0; i < value.length() /*&& i < MAX_ARRAY_ELEMENT_TO_COLLECT*/; i++) {
-			String varID = val.getElementId(i);
-			Value varValue = getArrayEleValue(value, i);
-			appendVarVal(val, varID, varValue, level, thread);
+			String varID = arrayVal.getElementId(i);
+			Value elementValue = getArrayEleValue(value, i);
+			appendVarVal(arrayVal, varID, true, elementValue, level, thread);
 		}
-		parent.add(val);
+		
+		parent.add(arrayVal);
 	}
 	/***/
 	protected StackFrame findFrameByLocation(List<StackFrame> frames,

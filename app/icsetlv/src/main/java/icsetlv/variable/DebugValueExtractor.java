@@ -60,6 +60,7 @@ import com.sun.jdi.event.BreakpointEvent;
  * @author LLT
  *
  */
+@SuppressWarnings("restriction")
 public class DebugValueExtractor {
 	protected static Logger log = LoggerFactory.getLogger(DebugValueExtractor.class);
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
@@ -285,7 +286,7 @@ public class DebugValueExtractor {
 			if (type instanceof BooleanType) {
 				parent.add(sav.strategies.dto.execute.value.BooleanValue.of(varId, ((BooleanValue)value).booleanValue()));
 			} else {
-				parent.add(new PrimitiveValue(varId, value.toString()));
+				parent.add(new PrimitiveValue(varId, value.toString(), type.toString()));
 			}
 		} else if (type instanceof ArrayType) {
 			appendArrVarVal(parent, varId, (ArrayReference)value, level, thread);
@@ -300,7 +301,7 @@ public class DebugValueExtractor {
 			 * if the class name is "Integer", "Float", ...
 			 */
 			else if (PrimitiveUtils.isPrimitiveType(type.name())) {
-				parent.add(new PrimitiveValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread)));
+				parent.add(new PrimitiveValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread), type.toString()));
 			} 
 			/**
 			 * if the class is an arbitrary complicated class

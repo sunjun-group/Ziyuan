@@ -9,13 +9,18 @@ import microbat.Activator;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
@@ -36,6 +41,31 @@ public class TraceView extends ViewPart {
 		
 		Trace trace = Activator.getDefault().getCurrentTrace();
 		listViewer.setInput(trace);
+		
+		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			public void selectionChanged(SelectionChangedEvent event) {
+				try {
+					ISelection iSel = event.getSelection();
+					if(iSel instanceof StructuredSelection){
+						StructuredSelection sel = (StructuredSelection)iSel;
+						Object obj = sel.getFirstElement();
+						
+						if(obj instanceof TraceNode){
+							TraceNode node = (TraceNode)obj;
+							DebugFeedbackView view = (DebugFeedbackView)PlatformUI.getWorkbench().
+									getActiveWorkbenchWindow().getActivePage().showView(MicroBatViews.DEBUG_FEEDBACK);
+							view.refresh(node);
+							
+						}
+					}
+					
+				} catch (PartInitException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		});
 	}
 	
 	public void updateData(){

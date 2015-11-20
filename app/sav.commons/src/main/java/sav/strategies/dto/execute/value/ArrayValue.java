@@ -43,21 +43,21 @@ public class ArrayValue extends ReferenceValue {
 		return String.format("%s[%s]", varId, i);
 	}
 
-	private void setSum(double sum) {
-		add(new PrimitiveValue(getChildId(SUM_CODE), String.valueOf(sum)));
-	}
-	
-	private void setMax(double max) {
-		add(new PrimitiveValue(getChildId(MAX_CODE), String.valueOf(max)));
-	}
-
-	private void setMin(double min) {
-		add(new PrimitiveValue(getChildId(MIN_CODE), String.valueOf(min)));
-	}
-
-	private void setLength(int length) {
-		add(new PrimitiveValue(getChildId(LENGTH_CODE), String.valueOf(length)));
-	}
+//	private void setSum(double sum) {
+//		add(new PrimitiveValue(getChildId(SUM_CODE), String.valueOf(sum), "double"));
+//	}
+//	
+//	private void setMax(double max) {
+//		add(new PrimitiveValue(getChildId(MAX_CODE), String.valueOf(max), "double"));
+//	}
+//
+//	private void setMin(double min) {
+//		add(new PrimitiveValue(getChildId(MIN_CODE), String.valueOf(min), "double"));
+//	}
+//
+//	private void setLength(int length) {
+//		add(new PrimitiveValue(getChildId(LENGTH_CODE), String.valueOf(length), "int"));
+//	}
 
 	public void setValue(final ArrayReference ar) {
 		Assert.assertTrue(ar != null,

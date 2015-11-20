@@ -11,13 +11,15 @@ package sav.strategies.dto.execute.value;
 import com.sun.jdi.ClassType;
 
 /**
- * @author LLT
+ * @author LLT, modified by Yun Lin
  *
  */
+@SuppressWarnings("restriction")
 public class ReferenceValue extends ExecValue {
 	protected static final String NULL_CODE = "isNull";
 	
-	private ClassType type; 
+	private ClassType classType; 
+	
 	private long referenceID = -1;
 
 	public ReferenceValue(String id, boolean isNull) {
@@ -29,13 +31,21 @@ public class ReferenceValue extends ExecValue {
 		super(id);
 		add(BooleanValue.of(getChildId(NULL_CODE), isNull));
 		setReferenceID(referenceID);
-		setType(type);
+		setClassType(type);
+	}
+	
+	public void setClassType(ClassType type) {
+		this.classType = type;
+	}
+	
+	public ClassType getClassType(){
+		return classType;
 	}
 	
 	public String toString(){
 		StringBuffer buffer = new StringBuffer();
-		if(type != null){
-			buffer.append(type.name() + ": ");			
+		if(classType != null){
+			buffer.append(classType.name() + ": ");			
 		}
 		else{
 			buffer.append("unknown type: ");
@@ -58,13 +68,10 @@ public class ReferenceValue extends ExecValue {
 	public void setReferenceID(long referenceID) {
 		this.referenceID = referenceID;
 	}
-	
-	public void setType(ClassType type) {
-		this.type = type;
-	}
 
 	@Override
 	public ExecVarType getType() {
 		return ExecVarType.REFERENCE;
 	}
+	
 }

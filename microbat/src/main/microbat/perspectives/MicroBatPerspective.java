@@ -43,7 +43,7 @@ public class MicroBatPerspective implements IPerspectiveFactory {
 				factory.createFolder(
 						"topRight",
 						IPageLayout.RIGHT,
-						0.75f,
+						0.60f,
 						factory.getEditorArea());
 		topRight.addView(MicroBatViews.DEBUG_FEEDBACK); 
 		

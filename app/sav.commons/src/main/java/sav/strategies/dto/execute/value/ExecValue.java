@@ -16,12 +16,15 @@ import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.IExecValue;
 
 /**
- * @author LLT
+ * @author LLT, modified by Yun Lin
  *
  */
 public abstract class ExecValue implements IExecValue {
 	protected String varId;
 	protected List<ExecValue> children;
+	
+	protected boolean isElementOfArray = false;
+	
 	
 	public static final int NOT_NULL_VAL = 1;
 	
@@ -128,5 +131,13 @@ public abstract class ExecValue implements IExecValue {
 		return String.format("(%s:%s)", varId, children);
 	}
 	
+	public boolean isElementOfArray() {
+		return isElementOfArray;
+	}
+
+	public void setElementOfArray(boolean isElementOfArray) {
+		this.isElementOfArray = isElementOfArray;
+	}
+
 	public abstract ExecVarType getType();
 }
