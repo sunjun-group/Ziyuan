@@ -78,5 +78,25 @@
          </toolbar>
       </menuContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            annotationImageProvider="microbat.views.StepImageProvider"
+            annotationType="microbat.specification.step"
+            colorPreferenceKey="inspected_step_color"
+            colorPreferenceValue="127,255,212"
+            contributesToHeader="true"
+            highlightPreferenceKey="inspected_step_highlight"
+            highlightPreferenceValue="true"
+            includeOnPreferencePage="true"
+            label="StepAnnotation"
+            overviewRulerPreferenceKey="inspected_step_overview"
+            overviewRulerPreferenceValue="true"
+            textPreferenceKey="inspected_step_text"
+            textPreferenceValue="true"
+            verticalRulerPreferenceKey="inspected_step_vertical"
+            verticalRulerPreferenceValue="false">
+      </specification>
+   </extension>
 
 </plugin>
