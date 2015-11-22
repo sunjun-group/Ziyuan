@@ -75,6 +75,8 @@ public class TraceView extends ViewPart {
 							view.refresh(node);
 							
 							markJavaEditor(node);
+							
+							listViewer.getTable().setFocus();
 						}
 					}
 					
@@ -138,7 +140,7 @@ public class TraceView extends ViewPart {
 
 	@Override
 	public void setFocus() {
-
+		
 	}
 	
 	class TraceContentProvider implements IStructuredContentProvider{
