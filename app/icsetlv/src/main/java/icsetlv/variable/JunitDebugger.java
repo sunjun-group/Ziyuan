@@ -37,6 +37,7 @@ import com.sun.jdi.request.EventRequestManager;
  * @author LLT
  *
  */
+@SuppressWarnings("restriction")
 public abstract class JunitDebugger extends BreakpointDebugger {
 	public static final long DEFAULT_TIMEOUT = -1;
 	protected List<String> allTests;

@@ -14,7 +14,6 @@ import java.util.Map;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 
-import com.sun.jdi.Bootstrap;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.VirtualMachineManager;
 import com.sun.jdi.connect.Connector;
@@ -26,6 +25,7 @@ import com.sun.jdi.connect.ListeningConnector;
  * @author LLT
  *
  */
+@SuppressWarnings("restriction")
 public class VMListener {
 	private static final int TIMEOUT = 5000;
 	private ListeningConnector connector;

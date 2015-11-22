@@ -18,6 +18,7 @@ import com.sun.jdi.connect.IllegalConnectorArgumentsException;
  * @author LLT
  *
  */
+@SuppressWarnings("restriction")
 public class SimpleDebugger {
 	private Process process;
 	private VMRunner vmRunner;
