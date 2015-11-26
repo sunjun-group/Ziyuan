@@ -130,9 +130,9 @@ public class VMRunner {
 		if (isLog && log.isDebugEnabled()) {
 			log.debug("start cmd..");
 			log.debug(StringUtils.join(commands, " "));
-			for (String cmd : commands) {
-				log.debug(cmd);
-			}
+//			for (String cmd : commands) {
+//				log.debug(cmd);
+//			}
 		}
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
 		try {
@@ -161,9 +161,13 @@ public class VMRunner {
 	
 	public boolean waitUntilStop(Process process) throws SavException {
 		try {
-			getText(process.getInputStream());
+			String str = getText(process.getInputStream());
 			processError = getText(process.getErrorStream());
+			
+			
 			process.waitFor();
+			
+			
 			String error = getText((process.getErrorStream()));
 			if (!StringUtils.isEmpty(error)) {
 				log.debug(error);

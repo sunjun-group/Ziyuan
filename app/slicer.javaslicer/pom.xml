@@ -44,6 +44,7 @@
 			<artifactId>visualize</artifactId>
 			<version>${javaslicer-version}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
