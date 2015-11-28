@@ -37,6 +37,7 @@ import sav.strategies.vm.VMConfiguration;
 import slicer.javaslicer.instruction.variable.tree.InstructionContext;
 import de.unisb.cs.st.javaslicer.slicing.Slicer;
 import de.unisb.cs.st.javaslicer.slicing.SlicingCriterion;
+import de.unisb.cs.st.javaslicer.slicing.StaticSlicingCriterion;
 import de.unisb.cs.st.javaslicer.traceResult.ThreadId;
 import de.unisb.cs.st.javaslicer.traceResult.TraceResult;
 
@@ -143,7 +144,7 @@ public class JavaSlicer implements ISlicer {
 		List<SlicingCriterion> criteria = new ArrayList<SlicingCriterion>(bkps.size());
 		for (BreakPoint bkp : bkps) {
 			try {
-				SlicingCriterion criterion = SlicingCriterion.parse(
+				StaticSlicingCriterion criterion = StaticSlicingCriterion.parse(
 						buildSlicingCriterionStr(bkp), trace.getReadClasses());
 				criteria.add(criterion);
 			} catch (IllegalArgumentException e) {

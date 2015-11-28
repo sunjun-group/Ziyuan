@@ -76,11 +76,11 @@
 		<!-- OPTIONAL - CAN BE EXCLUDED IF NO NEED -->
 		<!-- +++++++++++++++++++++++++++++++++++++++++++ -->
 		<!-- Logger, for logging -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j-version}</version>
-		</dependency>
+		</dependency> -->
 
 		<!-- JVM Runner, referenced in VMListener, exclude this package if not 
 			necessary -->
@@ -112,6 +112,12 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>${slf4j-log4j-binding}</artifactId>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 </project>
