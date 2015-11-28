@@ -33,10 +33,12 @@ public class FieldAccessState extends NormalState {
 	@Override
 	public void accessInstruction(VarInstruction instruction) {
 		LocalVariable scope = getLocalVarName(instruction);
-		if ("this".endsWith(scope.getName())) {
-			addNewVariable(fieldName, true);
-		} else {
-			addNewVariable(getFullName(scope.getName(), fieldName), false);
+		if(scope != null){
+			if ("this".endsWith(scope.getName())) {
+				addNewVariable(fieldName, true);
+			} else {
+				addNewVariable(getFullName(scope.getName(), fieldName), false);
+			}			
 		}
 	}
 	

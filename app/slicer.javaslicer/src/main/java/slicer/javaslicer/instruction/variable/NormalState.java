@@ -29,10 +29,12 @@ public class NormalState extends AbstractVariableState {
 	
 	public void accessInstruction(VarInstruction instruction) {
 		LocalVariable localVariable = getLocalVarName(instruction);
-		boolean thisOjbRef = isThisOjbRef(localVariable);
-		Assert.assertTrue(!thisOjbRef);
-		if (!thisOjbRef) {
-			addNewVariable(localVariable.getName(), false);
+		if(localVariable != null){
+			boolean thisOjbRef = isThisOjbRef(localVariable);
+			Assert.assertTrue(!thisOjbRef);
+			if (!thisOjbRef) {
+				addNewVariable(localVariable.getName(), false);
+			}
 		}
 	}
 	
@@ -64,7 +66,9 @@ public class NormalState extends AbstractVariableState {
 	@Override
 	public void accessInstruction(IIncInstruction instruction) {
 		LocalVariable localVar = getLocalVarName(instruction, instruction.getLocalVarIndex());
-		context.addVariable(localVar.getName(), false);
+		if(localVar != null){
+			context.addVariable(localVar.getName(), false);			
+		}
 	}
 	
 	@Override

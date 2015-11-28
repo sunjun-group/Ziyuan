@@ -55,7 +55,17 @@ public abstract class AbstractVariableState implements InstructionVariableState 
 	}
 
 	protected LocalVariable getLocalVarName(Instruction instruction, int varIdx) {
-		LocalVariable localVariable = instruction.getMethod().getLocalVariables()[varIdx];
+		LocalVariable[] variableList = instruction.getMethod().getLocalVariables();
+		LocalVariable localVariable = null;
+		if(varIdx >= variableList.length){
+			System.err.println("the instruction "  + instruction.toString() + "(" + 
+					InstructionUtils.getLocationId(instruction) + ")" + " has only " + 
+					variableList.length + " variables, but the varIdx has a value of " + varIdx);
+		}
+		else{
+			localVariable = variableList[varIdx];			
+		}
+		
 		return localVariable;
 	}
 	

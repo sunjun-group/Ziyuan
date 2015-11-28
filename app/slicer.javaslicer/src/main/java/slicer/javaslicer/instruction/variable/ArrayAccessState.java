@@ -9,6 +9,7 @@
 package slicer.javaslicer.instruction.variable;
 
 import slicer.javaslicer.instruction.variable.InstVariableContext.StateId;
+import de.unisb.cs.st.javaslicer.common.classRepresentation.LocalVariable;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.instructions.ArrayInstruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.instructions.FieldInstruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.instructions.VarInstruction;
@@ -31,7 +32,10 @@ public class ArrayAccessState extends NormalState {
 
 	@Override
 	public void accessInstruction(VarInstruction instruction) {
-		addNewVariable(getLocalVarName(instruction).getName(), false);
+		LocalVariable variable = getLocalVarName(instruction);
+		if(variable != null){
+			addNewVariable(variable.getName(), false);			
+		}
 	}
 	
 	@Override
