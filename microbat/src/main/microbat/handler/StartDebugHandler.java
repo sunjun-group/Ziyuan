@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,8 +33,6 @@ import sav.commons.TestConfiguration;
 import sav.strategies.common.VarInheritCustomizer.InheritType;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.dto.BreakPoint.Variable;
-import sav.strategies.dto.BreakPoint.Variable.VarScope;
 import slicer.javaslicer.JavaSlicer;
 
 ;
@@ -59,11 +56,12 @@ public class StartDebugHandler extends AbstractHandler {
 
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace()
 				.getRoot();
-		IProject myWebProject = myWorkspaceRoot
+		IProject iProject = myWorkspaceRoot
 				.getProject(Settings.projectName);
-		String projectPath = myWebProject.getLocationURI().getPath();
-
+		
+		String projectPath = iProject.getLocationURI().getPath();
 		projectPath = projectPath.substring(1, projectPath.length());
+		
 		appClasspath
 				.addClasspath("F://workspace//runtime-debugging//Test//bin");
 		tcExecutor = new TestcasesExecutor(6);
@@ -74,7 +72,12 @@ public class StartDebugHandler extends AbstractHandler {
 		slicer.setFiltering(classScope, null);
 		List<BreakPoint> result = null;
 		try {
-			result = slicer.slice(appClasspath, startPoint, testMethods);
+			result = slicer.sliceDebug(appClasspath, startPoint, testMethods);
+			
+//			List<String> paths = getSourceLocation();
+//			VariableNameCollector vnc = new VariableNameCollector(VarNameCollectionMode.FULL_NAME, paths);
+//			vnc.updateVariables(result);
+			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SavException e) {
@@ -83,7 +86,9 @@ public class StartDebugHandler extends AbstractHandler {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
+		} /*catch (IcsetlvException e) {
+			e.printStackTrace();
+		}*/
 		
 		
 		return result;
@@ -140,4 +145,30 @@ public class StartDebugHandler extends AbstractHandler {
 				getActivePage().showView(MicroBatViews.TRACE);
 		traceView.updateData();
 	}
+	
+//	@SuppressWarnings("restriction")
+//	private List<String> getSourceLocation(){
+//		IProject iProject = JavaUtil.getSpecificJavaProjectInWorkspace();
+//		IJavaProject javaProject = JavaCore.create(iProject);
+//		
+//		List<String> paths = new ArrayList<String>();
+//		try {
+//			for(IPackageFragmentRoot root: javaProject.getAllPackageFragmentRoots()){
+//				if(!(root instanceof JarPackageFragmentRoot)){
+//					String path = root.getResource().getLocationURI().getPath();
+//					path = path.substring(1, path.length());
+//					//path = path.substring(0, path.length()-Settings.projectName.length()-1);
+//					path = path.replace("/", "\\");
+//					
+//					if(!paths.contains(path)){
+//						paths.add(path);
+//					}					
+//				}
+//			}
+//		} catch (JavaModelException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		return paths;
+//	}
 }

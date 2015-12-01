@@ -48,13 +48,19 @@ public class VariableNameCollector {
 		this.collectionMode = collectionMode;
 	}
 	
+	public VariableNameCollector(VarNameCollectionMode collectionMode, List<String> srcFolders) {
+		this.srcFolders = new ArrayList<String>();
+		this.srcFolders = srcFolders;
+		this.collectionMode = collectionMode;
+	}
+	
 	public void updateVariables(Collection<BreakPoint> brkps) throws IcsetlvException {
 		Map<String, List<BreakPoint>> brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
 
 		for (String clzName : brkpsMap.keySet()) {
 			File sourceFile = getSourceFile(clzName);
 			if (sourceFile == null) {
-				log.debug("Class", clzName, "doesn't exist in source folder(s)", srcFolders);
+				log.debug("Classs", clzName, "doesn't exist in source folder(s)", srcFolders);
 				continue;
 			}
 			List<Integer> lines = BreakpointUtils.extractLineNo(brkpsMap.get(clzName));

@@ -26,4 +26,5 @@ Bundle-ClassPath: lib/commons-cli-1.2.jar,
  lib/slf4j-api-1.7.12.jar,
  lib/slf4j-log4j12-1.7.12.jar,
  lib/tools.jar,
- .
+ .,
+ lib/javaparser-1.0.11.jar

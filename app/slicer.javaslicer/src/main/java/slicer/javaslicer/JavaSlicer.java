@@ -52,6 +52,12 @@ public class JavaSlicer implements ISlicer {
 	private SliceBreakpointCollector sliceCollector;
 	private StopTimer timer;
 	
+	private static String existingTraceFile;
+	
+	public String getExistingTraceFile() {
+		return existingTraceFile;
+	}
+
 	public JavaSlicer() {
 		vmRunner = new JavaSlicerVmRunner();
 		timer = new StopTimer("Slicing");
@@ -93,6 +99,27 @@ public class JavaSlicer implements ISlicer {
 		/* do slicing */
 		timer.newPoint("slice");
 		List<BreakPoint> result = sliceFromTraceFile(traceFilePath,
+				new HashSet<BreakPoint>(bkps), junitClassMethods);
+		timer.logResults(log);
+		return result;
+	}
+	
+	public List<BreakPoint> sliceDebug(AppJavaClassPath appClassPath, List<BreakPoint> bkps,
+			List<String> junitClassMethods) throws SavException, IOException,
+			InterruptedException, ClassNotFoundException {
+		init(appClassPath);
+		if (CollectionUtils.isEmpty(bkps)) {
+			log.warn("List of breakpoints to slice is empty");
+			return new ArrayList<BreakPoint>();
+		}
+		timer.newPoint("create Trace file");
+		if(existingTraceFile == null){
+			existingTraceFile = createTraceFile(junitClassMethods);			
+		}
+		
+		/* do slicing */
+		timer.newPoint("slice");
+		List<BreakPoint> result = sliceFromTraceFile(existingTraceFile,
 				new HashSet<BreakPoint>(bkps), junitClassMethods);
 		timer.logResults(log);
 		return result;
