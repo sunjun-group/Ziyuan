@@ -115,7 +115,7 @@ public class TraceView extends ViewPart {
 						sourceEditor.selectAndReveal(region.getOffset(), 0);
 					}
 					
-					ReferenceAnnotation annotation = new ReferenceAnnotation(false, "dfdd");
+					ReferenceAnnotation annotation = new ReferenceAnnotation(false, "Please check the status of this line");
 					Position position = new Position(region.getOffset(), region.getLength());
 					
 					annotationModel.addAnnotation(annotation, position);
