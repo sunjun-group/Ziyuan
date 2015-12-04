@@ -254,7 +254,13 @@ public class DebugFeedbackView extends ViewPart {
 			if(element instanceof ReferenceValue){
 				ReferenceValue value = (ReferenceValue)element;
 				switch(columnIndex){
-				case 0: return value.getClassType().name();
+				case 0: 
+					if(value.getClassType() != null){
+						return value.getClassType().name();						
+					}
+					else{
+						return "array";
+					}
 				case 1: return value.getVarId();
 				case 2: return "";
 				}
