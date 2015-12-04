@@ -33,6 +33,8 @@ import sav.strategies.junit.JunitResult;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.Location;
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.event.BreakpointEvent;
 
 /**
@@ -76,8 +78,8 @@ public class TestcasesExecutor extends JunitDebugger {
 	}
 
 	@Override
-	protected void onEnterBreakpoint(BreakPoint bkp, BreakpointEvent bkpEvent) throws SavException {
-		BreakPointValue bkpVal = extractValuesAtLocation(bkp, bkpEvent);
+	protected void onEnterBreakpoint(BreakPoint bkp, ThreadReference thread, Location loc) throws SavException {
+		BreakPointValue bkpVal = extractValuesAtLocation(bkp, thread, loc);
 		//replace existing one with the new one
 		addToCurrentValueList(currentTestBkpValues, bkpVal);
 		collectTrace(bkp, bkpVal);
@@ -154,11 +156,11 @@ public class TestcasesExecutor extends JunitDebugger {
 	}
 
 	private BreakPointValue extractValuesAtLocation(BreakPoint bkp,
-			BreakpointEvent bkpEvent) throws SavException {
+			/*BreakpointEvent bkpEvent*/ThreadReference thread, Location loc) throws SavException {
 		try {
 			//return getValueExtractor().extractValue(bkp, bkpEvent);
 			DebugValueExtractor2 extractor = new DebugValueExtractor2();
-			BreakPointValue bpValue = extractor.extractValue(bkp, bkpEvent);
+			BreakPointValue bpValue = extractor.extractValue(bkp, thread, loc);
 			return bpValue;
 			
 		} catch (IncompatibleThreadStateException e) {

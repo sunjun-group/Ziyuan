@@ -26,17 +26,22 @@ import sav.strategies.vm.VMConfiguration;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.BreakpointEvent;
 import com.sun.jdi.event.ClassPrepareEvent;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.event.EventSet;
+import com.sun.jdi.event.StepEvent;
+import com.sun.jdi.event.ThreadStartEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
+import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
+import com.sun.jdi.request.StepRequest;
 
 /**
  * @author LLT
@@ -108,15 +113,33 @@ public abstract class BreakpointDebugger {
 					// breakpoints
 					addBreakpointWatch(vm, refType, locBrpMap);
 					
-				} else if (event instanceof BreakpointEvent) {
-					BreakpointEvent bkpEvent = (BreakpointEvent) event;
-					BreakPoint bkp = locBrpMap.get(bkpEvent.location()
-							.toString());
+					/**
+					 * add step event
+					 */
+					EventRequestManager mgr = vm.eventRequestManager();
+					StepRequest sr = mgr.createStepRequest(((ClassPrepareEvent) event).thread(),
+							StepRequest.STEP_LINE, StepRequest.STEP_INTO);
+					sr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+					sr.addClassFilter(refType);
+					sr.enable();
 					
+				} else if (event instanceof BreakpointEvent) {
+//					BreakpointEvent bkpEvent = (BreakpointEvent) event;
+//					BreakPoint bkp = locBrpMap.get(bkpEvent.location()
+//							.toString());
+//					
+//					if(bkp != null){
+//						handleBreakpointEvent(bkp, vm, bkpEvent.thread(), bkpEvent.location());
+//					}
+				} else if(event instanceof StepEvent){
+					Location loc = ((StepEvent) event).location();
+					BreakPoint bkp = locBrpMap.get(loc.toString());
 					if(bkp != null){
-						handleBreakpointEvent(bkp, vm, bkpEvent);						
+						handleBreakpointEvent(bkp, vm, ((StepEvent) event).thread(), loc);
 					}
-				} 
+					
+					System.currentTimeMillis();
+				}
 			}
 			eventSet.resume();
 		}
@@ -128,11 +151,12 @@ public abstract class BreakpointDebugger {
 		/* end of debug */
 		afterDebugging();
 	}
-
+	
 	/** abstract methods */
 	protected abstract void beforeDebugging() throws SavException;
 	protected abstract void handleClassPrepareEvent(VirtualMachine vm, ClassPrepareEvent event);
-	protected abstract void handleBreakpointEvent(BreakPoint bkp, VirtualMachine vm, BreakpointEvent bkpEvent) throws SavException;
+	protected abstract void handleBreakpointEvent(BreakPoint bkp, VirtualMachine vm, 
+			ThreadReference thread, Location loc) throws SavException;
 	protected abstract void afterDebugging() throws SavException ;
 
 
@@ -153,7 +177,8 @@ public abstract class BreakpointDebugger {
 	
 	private void addBreakpointWatch(VirtualMachine vm, ReferenceType refType,
 			Map<String, BreakPoint> locBrpMap) {
-		for (BreakPoint brkp : CollectionUtils.initIfEmpty(brkpsMap.get(refType.name()))) {
+		List<BreakPoint> brkpList = CollectionUtils.initIfEmpty(brkpsMap.get(refType.name()));
+		for (BreakPoint brkp : brkpList) {
 			Location location = addBreakpointWatch(vm, refType, brkp.getLineNo());
 			if (location != null) {
 				locBrpMap.put(location.toString(), brkp);

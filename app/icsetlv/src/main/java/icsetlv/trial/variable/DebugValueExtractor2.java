@@ -74,17 +74,18 @@ public class DebugValueExtractor2 {
 //		this.valRetrieveLevel = valRetrieveLevel;
 //	}
 	
-	public final BreakPointValue extractValue(BreakPoint bkp, BreakpointEvent event)
+	public final BreakPointValue extractValue(BreakPoint bkp, ThreadReference thread, Location loc)
 			throws IncompatibleThreadStateException, AbsentInformationException, SavException {
 		if (bkp == null) {
 			return null;
 		}
 		
 		BreakPointValue bkVal = new BreakPointValue(bkp.getId());
-		ThreadReference thread = event.thread();
+		//ThreadReference thread = event.thread();
 		synchronized (thread) {
 			if (!thread.frames().isEmpty()) {
-				StackFrame frame = findFrameByLocation(thread.frames(), event.location());
+				//StackFrame frame = findFrameByLocation(thread.frames(), event.location());
+				StackFrame frame = findFrameByLocation(thread.frames(), loc);
 				Method method = frame.location().method();
 				ReferenceType refType;
 				ObjectReference objRef = null;

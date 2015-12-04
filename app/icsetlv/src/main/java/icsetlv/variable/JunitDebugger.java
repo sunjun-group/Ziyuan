@@ -28,6 +28,7 @@ import sav.strategies.vm.VMConfiguration;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.BreakpointEvent;
 import com.sun.jdi.event.ClassPrepareEvent;
@@ -104,12 +105,12 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 	
 	@Override
 	protected final void handleBreakpointEvent(BreakPoint bkp, VirtualMachine vm,
-			BreakpointEvent bkpEvent) throws SavException {
+			/*BreakpointEvent bkpEvent*/ThreadReference thread, Location loc) throws SavException {
 		try {
-			if (areLocationsEqual(bkpEvent.location(), junitLoc)) {
+			if (areLocationsEqual(loc, junitLoc)) {
 				onEnterTestcase(testIdx++);
 			} else {
-				onEnterBreakpoint(bkp, bkpEvent);
+				onEnterBreakpoint(bkp, thread, loc);
 			}
 		} catch (AbsentInformationException e) {
 			log.error(e.getMessage());
@@ -150,6 +151,6 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 	/** abstract methods */
 	protected abstract void onStart();
 	protected abstract void onEnterTestcase(int testIdx);
-	protected abstract void onEnterBreakpoint(BreakPoint bkp, BreakpointEvent bkpEvent) throws SavException;
+	protected abstract void onEnterBreakpoint(BreakPoint bkp, ThreadReference thread, Location loc) throws SavException;
 	protected abstract void onFinish(JunitResult jResult);
 }
