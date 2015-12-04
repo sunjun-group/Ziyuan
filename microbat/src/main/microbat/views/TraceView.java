@@ -111,6 +111,9 @@ public class TraceView extends ViewPart {
 					IDocument document = provider.getDocument(javaFile);
 					IRegion region = document.getLineInformation(breakPoint.getLineNo()-1);
 					
+					if (region != null) {
+						sourceEditor.selectAndReveal(region.getOffset(), 0);
+					}
 					
 					ReferenceAnnotation annotation = new ReferenceAnnotation(false, "dfdd");
 					Position position = new Position(region.getOffset(), region.getLength());
