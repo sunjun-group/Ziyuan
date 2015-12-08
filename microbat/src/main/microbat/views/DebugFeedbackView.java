@@ -56,9 +56,10 @@ public class DebugFeedbackView extends ViewPart {
 	
 	public void refresh(TraceNode node){
 		BreakPointValue thisState = node.getProgramState();
+		BreakPointValue afterState = node.getAfterState();
 		
 		createVariableViewContent(inputTree, thisState, node.getBreakPoint().getReadVariables());
-		createVariableViewContent(outputTree, thisState, node.getBreakPoint().getWrittenVariables());
+		createVariableViewContent(outputTree, afterState, node.getBreakPoint().getWrittenVariables());
 		createVariableViewContent(stateTree, thisState, null);
 		
 		yesButton.setSelection(false);

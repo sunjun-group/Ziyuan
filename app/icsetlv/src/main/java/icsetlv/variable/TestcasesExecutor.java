@@ -84,6 +84,16 @@ public class TestcasesExecutor extends JunitDebugger {
 		addToCurrentValueList(currentTestBkpValues, bkpVal);
 		collectTrace(bkp, bkpVal);
 	}
+	
+	@Override
+	protected void onCollectValueOfPreviousStep(BreakPoint currentPosition, ThreadReference thread, Location loc) throws SavException {
+		BreakPointValue bkpVal = extractValuesAtLocation(currentPosition, thread, loc);
+		
+		int len = trace.getExectionList().size();
+		TraceNode node = trace.getExectionList().get(len-1);
+		
+		node.addAfterExectionValue(bkpVal);
+	}
 
 	private void collectTrace(BreakPoint bkp, BreakPointValue bkpVal) {
 		int order = trace.size() + 1;

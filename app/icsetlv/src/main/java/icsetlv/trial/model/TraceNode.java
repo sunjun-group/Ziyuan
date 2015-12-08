@@ -7,6 +7,7 @@ public class TraceNode {
 	
 	private BreakPoint breakPoint;
 	private BreakPointValue programState;
+	private BreakPointValue afterState;
 	
 	/**
 	 * the order of this node in the whole trace
@@ -55,6 +56,18 @@ public class TraceNode {
 
 	public void setMarkedCorrrect(Boolean markedCorrrect) {
 		this.markedCorrrect = markedCorrrect;
+	}
+
+	public void addAfterExectionValue(BreakPointValue bkpVal) {
+		this.afterState = bkpVal;
+	}
+
+	public BreakPointValue getAfterState() {
+		return afterState;
+	}
+
+	public void setAfterState(BreakPointValue afterState) {
+		this.afterState = afterState;
 	}
 
 	

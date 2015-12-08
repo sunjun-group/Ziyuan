@@ -8,6 +8,9 @@
 
 package icsetlv.variable;
 
+import icsetlv.common.dto.BreakPointValue;
+import icsetlv.trial.model.TraceNode;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +89,9 @@ public abstract class BreakpointDebugger {
 		boolean stop = false;
 		boolean eventTimeout = false;
 		Map<String, BreakPoint> locBrpMap = new HashMap<String, BreakPoint>();
+		
+		BreakPoint lastSteppingPoint = null;
+		
 		while (!stop && !eventTimeout) {
 			EventSet eventSet;
 			try {
@@ -133,10 +139,24 @@ public abstract class BreakpointDebugger {
 //					}
 				} else if(event instanceof StepEvent){
 					Location loc = ((StepEvent) event).location();
+					
+					
+					
+					/**
+					 * collect the variable values after executing previous step
+					 */
+					if(lastSteppingPoint != null){
+						BreakPoint currnetPoint = new BreakPoint(lastSteppingPoint.getClassCanonicalName(), lastSteppingPoint.getLineNo());
+						onCollectValueOfPreviousStep(currnetPoint, ((StepEvent) event).thread(), loc);
+						lastSteppingPoint = null;
+					}
+					
 					BreakPoint bkp = locBrpMap.get(loc.toString());
 					if(bkp != null){
 						handleBreakpointEvent(bkp, vm, ((StepEvent) event).thread(), loc);
+						lastSteppingPoint = bkp;
 					}
+					
 					
 					System.currentTimeMillis();
 				}
@@ -159,6 +179,8 @@ public abstract class BreakpointDebugger {
 			ThreadReference thread, Location loc) throws SavException;
 	protected abstract void afterDebugging() throws SavException ;
 
+	protected abstract void onCollectValueOfPreviousStep(BreakPoint currentPosition, 
+			ThreadReference thread, Location loc) throws SavException;
 
 	/** add watch requests **/
 	protected void addClassWatch(EventRequestManager erm) {
