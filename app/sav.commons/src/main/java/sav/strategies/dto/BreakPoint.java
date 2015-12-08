@@ -29,6 +29,8 @@ public class BreakPoint extends ClassLocation {
 	private List<Variable> readVariables = new ArrayList<>();
 	private List<Variable> writtenVariables = new ArrayList<>();
 	
+	private List<Variable> allVisibleVariables = new ArrayList<>();
+	
 	public BreakPoint(String className, String methodSign, int lineNo) {
 		super(className, methodSign, lineNo);
 		vars = new ArrayList<Variable>();
@@ -53,6 +55,14 @@ public class BreakPoint extends ClassLocation {
 		}
 	}
 	
+	public List<Variable> getAllVisibleVariables() {
+		return allVisibleVariables;
+	}
+
+	public void setAllVisibleVariables(List<Variable> allVisibleVariables) {
+		this.allVisibleVariables = allVisibleVariables;
+	}
+
 	public List<Variable> getReadVariables() {
 		return readVariables;
 	}

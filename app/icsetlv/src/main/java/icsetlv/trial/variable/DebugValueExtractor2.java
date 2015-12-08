@@ -104,7 +104,12 @@ public class DebugValueExtractor2 {
 				final Map<Variable, JdiParam> allVariables = new HashMap<Variable, JdiParam>();
 				final List<LocalVariable> visibleVars = frame.visibleVariables();
 				final List<Field> allFields = refType.allFields();
-				for (Variable bpVar : bkp.getVars()) {
+				
+				List<Variable> collectedMoreVariable = collectMoreVariable(bkp, visibleVars, allFields);
+				bkp.setAllVisibleVariables(collectedMoreVariable);
+				
+				//for (Variable bpVar : bkp.getVars()) {
+				for (Variable bpVar : bkp.getAllVisibleVariables()) {
 					// First check local variable
 					LocalVariable matchedLocalVariable = findMatchedLocalVariable(bpVar, visibleVars);
 					
@@ -142,6 +147,25 @@ public class DebugValueExtractor2 {
 		return bkVal;
 	}
 	
+	private List<Variable> collectMoreVariable(BreakPoint bkp, List<LocalVariable> visibleVars, List<Field> allFields) {
+		List<Variable> varList = new ArrayList<>();
+		for(LocalVariable lv: visibleVars){
+			Variable var = new Variable(lv.name(), lv.name(), VarScope.UNDEFINED);
+			varList.add(var);
+		}
+		for(Field field: allFields){
+			if(field.isStatic()){
+				Variable var = new Variable(field.name(), field.name(), VarScope.STATIC);				
+				varList.add(var);
+			}
+			else{
+				Variable var = new Variable(field.name(), field.name(), VarScope.THIS);
+				varList.add(var);
+			}
+		}
+		return varList;
+	}
+
 	private LocalVariable findMatchedLocalVariable(Variable bpVar, List<LocalVariable> visibleVars){
 		LocalVariable match = null;
 		if (bpVar.getScope() != VarScope.THIS) {
