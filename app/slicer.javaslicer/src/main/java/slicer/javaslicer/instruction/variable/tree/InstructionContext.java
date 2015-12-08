@@ -25,10 +25,13 @@ import de.unisb.cs.st.javaslicer.common.classRepresentation.InstructionType;
 import de.unisb.cs.st.javaslicer.variables.Variable;
 
 /**
- * @author LLT
+ * @author LLT, commented by Yun Lin.
  *
  */
 public class InstructionContext implements IVariableCollectorContext, ITreeContext {
+	/**
+	 * the context is for a certain location
+	 */
 	private String locId;
 	private Map<Instruction, InstructionNode> instrMap;
 	private Set<InstructionNode> varTreeRoots;
@@ -54,7 +57,8 @@ public class InstructionContext implements IVariableCollectorContext, ITreeConte
 	}
 	
 	/**
-	 * build dependency instruction tree.
+	 * 1) build dependency instruction tree.
+	 * 2) add the root nodes if from is null or fromNode is null.
 	 */
 	public void addLink(InstructionInstance from, InstructionInstance to,
 			Variable variable) {
@@ -64,15 +68,38 @@ public class InstructionContext implements IVariableCollectorContext, ITreeConte
 			toInstExistInMap = false;
 			toInstrNode = new InstructionNode(to, getInstructionHandler(to));
 		}
-		/* check if from already exist, if not -> add a new root */
-		InstructionNode fromInstNode;
-		if (from != null && (fromInstNode = instrMap.get(from.getInstruction())) != null) {
-			if (fromInstNode.addLink(toInstrNode, variable) && !toInstExistInMap) {
-				instrMap.put(toInstrNode.getInstruction(), toInstrNode);
-			}
-		} else {
+		/* check whether from already exist, if not -> add a new root */
+		/**
+		 * Yun Lin: 
+		 * I think this implies that a from-node usually will have been visited before a to-node.
+		 * If a from-node does not exist, it means the from-node may not be an interesting instruction
+		 * for us.
+		 */
+		if(from == null || instrMap.get(from.getInstruction()) == null){
 			addRoot(toInstrNode);
 		}
+		else{
+			InstructionNode fromInstNode = instrMap.get(from.getInstruction());
+			/**
+			 * when the variable is not an instance of @{code StackEntry), fromInstNode and toInstrNode will
+			 * not be linked. I just re-write Lyly's code to make it more understandable. However, I now (2015/12/08)
+			 * still do not quite understand why to use @{code StackEntry) to check link @{code from} to @{code to}.
+			 */
+			boolean isLinked = fromInstNode.addLink(toInstrNode, variable);
+			if(isLinked && !toInstExistInMap){
+				instrMap.put(toInstrNode.getInstruction(), toInstrNode);
+			}
+		}
+		
+//		InstructionNode fromInstNode;
+//		if (from != null && 
+//				(fromInstNode = instrMap.get(from.getInstruction())) != null) {
+//			if (fromInstNode.addLink(toInstrNode, variable) && !toInstExistInMap) {
+//				instrMap.put(toInstrNode.getInstruction(), toInstrNode);
+//			}
+//		} else {
+//			addRoot(toInstrNode);
+//		}
 	}
 
 	@Override

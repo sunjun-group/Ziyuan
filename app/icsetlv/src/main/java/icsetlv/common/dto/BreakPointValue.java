@@ -31,6 +31,10 @@ public class BreakPointValue extends ExecValue {
 	public String getBkpId() {
 		return getVarId();
 	}
+	
+	public void setChildren(List<ExecValue> children){
+		this.children = children;
+	}
 
 	@Override
 	public String getChildId(String childCode) {

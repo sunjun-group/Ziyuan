@@ -14,15 +14,22 @@ import java.util.List;
 
 import sav.strategies.common.IBreakpointCustomizer;
 import sav.strategies.dto.BreakPoint;
-import slicer.javaslicer.instruction.variable.InstructionUtils;
+import sav.strategies.dto.BreakPoint.Variable.VarScope;
 import slicer.javaslicer.instruction.variable.DefaultVariableCollector;
+import slicer.javaslicer.instruction.variable.InstructionUtils;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.Instruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.InstructionInstance;
 import de.unisb.cs.st.javaslicer.slicing.SliceVisitor;
+import de.unisb.cs.st.javaslicer.variables.ArrayElement;
+import de.unisb.cs.st.javaslicer.variables.LocalVariable;
+import de.unisb.cs.st.javaslicer.variables.ObjectField;
+import de.unisb.cs.st.javaslicer.variables.StackEntry;
+import de.unisb.cs.st.javaslicer.variables.StaticField;
 import de.unisb.cs.st.javaslicer.variables.Variable;
 
 /**
  * @author LLT
+ * @author Yun Lin (modified)
  *
  */
 public class SliceBreakpointCollector implements SliceVisitor {
@@ -30,7 +37,7 @@ public class SliceBreakpointCollector implements SliceVisitor {
 	private BreakPoint curBkp;
 	private IVariableCollectorContext instContext = DefaultVariableCollector.getInstance();
 	private IBreakpointCustomizer bkpCustomizer = null;
-	private boolean finish = false;
+	private boolean finish = false;	
 	
 	public void reset() {
 		bkpMap.clear();
@@ -39,9 +46,13 @@ public class SliceBreakpointCollector implements SliceVisitor {
 	}
 	
 	private void add(InstructionInstance from, InstructionInstance to, Variable variable) {
+		
 		Instruction toInstr = to.getInstruction();
+		
 		if (isAccepted(toInstr)) {
 			String locId = InstructionUtils.getLocationId(toInstr);
+			buildRWRelations(from, to, variable);
+			
 			BreakPoint bkp = null;
 			if (curBkp != null && curBkp.getId().equals(locId)) {
 				bkp = curBkp;
@@ -58,10 +69,76 @@ public class SliceBreakpointCollector implements SliceVisitor {
 			curBkp = bkp;
 		}
 	}
+	
+	/**
+	 * note that given a node @{code from} which data-depends on a node @{code to}, @{code from} should
+	 * read the variable while @{code to} should write the variable.
+	 */
+	private void buildRWRelations(InstructionInstance from, InstructionInstance to, Variable variable) {
+		if(variable == null){
+			return;
+		}
+		
+		/**
+		 * construct break points corresponding to @{code from} and @{code to}
+		 */
+		String fromLoc = InstructionUtils.getLocationId(from);
+		String toLoc = InstructionUtils.getLocationId(to);
+
+		BreakPoint fromBP = bkpMap.get(fromLoc);
+		if(fromBP == null){
+			fromBP = InstructionUtils.getBreakpoint(from.getInstruction());
+			bkpMap.put(fromLoc, fromBP);
+		}
+		BreakPoint toBP = bkpMap.get(toLoc);
+		if(toBP == null){
+			toBP = InstructionUtils.getBreakpoint(to.getInstruction());
+			bkpMap.put(toLoc, toBP);
+		}
+		
+		sav.strategies.dto.BreakPoint.Variable var = convertVar(variable);
+		if(var == null){
+			//System.err.println("some cases unhandled in convertVar() method");
+		}
+		else{
+			fromBP.addReadVariable(var);
+			toBP.addWrittenVariable(var);			
+		}
+		
+	}
+
+	private sav.strategies.dto.BreakPoint.Variable convertVar(Variable variable) {
+		sav.strategies.dto.BreakPoint.Variable var = null;
+		if(variable instanceof LocalVariable){
+			LocalVariable lv = (LocalVariable)variable;
+			String fullName = lv.getVarName();
+			var = new sav.strategies.dto.BreakPoint.Variable(fullName, fullName, VarScope.UNDEFINED);
+		}
+		else if(variable instanceof ObjectField){
+			ObjectField field = (ObjectField)variable;
+			String fieldName = field.getFieldName();
+			var = new sav.strategies.dto.BreakPoint.Variable(fieldName, fieldName, VarScope.THIS);
+		}
+		else if(variable instanceof StaticField){
+			StaticField sv = (StaticField)variable;
+			String fieldName = sv.getFieldName();
+			var = new sav.strategies.dto.BreakPoint.Variable(fieldName, fieldName, VarScope.STATIC);
+		}
+		else if(variable instanceof StackEntry){
+			//do nothing
+		}
+		else if(variable instanceof ArrayElement){
+			//do nothing
+			System.currentTimeMillis();
+		}
+		
+		return var;
+	}
 
 	private void submitVariables(IVariableCollectorContext instContext, BreakPoint curBkp) {
 		if (curBkp != null && !instContext.getVariables().isEmpty()) {
-			curBkp.addVars(instContext.getVariables());
+			List<sav.strategies.dto.BreakPoint.Variable> variables = instContext.getVariables(); 
+			curBkp.addVars(variables);
 			instContext.endContext();
 		}
 	}
@@ -78,6 +155,7 @@ public class SliceBreakpointCollector implements SliceVisitor {
 	@Override
 	public final void visitSliceDependence(InstructionInstance from,
 			InstructionInstance to, de.unisb.cs.st.javaslicer.variables.Variable variable, int distance) {
+		
 		add(from, to, variable);
 	}
 

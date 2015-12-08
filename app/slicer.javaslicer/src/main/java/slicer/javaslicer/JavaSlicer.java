@@ -113,10 +113,10 @@ public class JavaSlicer implements ISlicer {
 			return new ArrayList<BreakPoint>();
 		}
 		timer.newPoint("create Trace file");
-//		if(existingTraceFile == null){
-//			existingTraceFile = createTraceFile(junitClassMethods);			
-//		}
-		existingTraceFile = createTraceFile(junitClassMethods);	
+		if(existingTraceFile == null){
+			existingTraceFile = createTraceFile(junitClassMethods);			
+		}
+//		existingTraceFile = createTraceFile(junitClassMethods);	
 		
 		/* do slicing */
 		timer.newPoint("slice");
@@ -192,9 +192,9 @@ public class JavaSlicer implements ISlicer {
 		ThreadId tracing = null;
 		for (ThreadId t : threads) {
 			if ("main".equals(t.getThreadName())
-					&& (tracing == null || t.getJavaThreadId() < tracing
-							.getJavaThreadId()))
-				tracing = t;
+					&& (tracing == null || t.getJavaThreadId() < tracing.getJavaThreadId())){
+				tracing = t;				
+			}
 		}
 
 		if (tracing == null) {

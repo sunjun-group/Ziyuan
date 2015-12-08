@@ -3,6 +3,9 @@ package microbat.views;
 import icsetlv.common.dto.BreakPointValue;
 import icsetlv.trial.model.TraceNode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -26,6 +29,8 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.dto.execute.value.ArrayValue;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.PrimitiveValue;
@@ -51,22 +56,52 @@ public class DebugFeedbackView extends ViewPart {
 	}
 	
 	public void refresh(TraceNode node){
-		BreakPointValue state = node.getProgramState();
+		BreakPointValue thisState = node.getProgramState();
 		
-		createVariableViewContent(inputTree, state);
-		createVariableViewContent(outputTree, state);
-		createVariableViewContent(stateTree, state);
+		createVariableViewContent(inputTree, thisState, node.getBreakPoint().getReadVariables());
+		createVariableViewContent(outputTree, thisState, node.getBreakPoint().getWrittenVariables());
+		createVariableViewContent(stateTree, thisState, null);
 		
 		yesButton.setSelection(false);
 		noButton.setSelection(false);
 		isCorrect = null;
 	}
 	
-	private void createVariableViewContent(Tree tree, BreakPointValue value){
+	
+	private List<ExecValue> filterVariable(BreakPointValue value, List<Variable> criteria){
+		ArrayList<ExecValue> list = new ArrayList<>();
+		for(ExecValue ev: value.getChildren()){
+			if(variableListContain(criteria, ev.getVarId())){
+				list.add(ev);
+			}
+		}
+		return list;
+	}
+	
+	private boolean variableListContain(List<Variable> variables,
+			String varId) {
+		for(Variable var: variables){
+			if(var.getId().equals(varId)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void createVariableViewContent(Tree tree, BreakPointValue value, List<Variable> criteria){
 		TreeViewer viewer = new TreeViewer(tree);
 		viewer.setContentProvider(new VariableContentProvider());
 		viewer.setLabelProvider(new VariableLabelProvider());
-		viewer.setInput(value);
+		
+		if(criteria == null){
+			viewer.setInput(value);			
+		}
+		else{
+			List<ExecValue> elements = filterVariable(value, criteria);
+			BreakPointValue newValue = new BreakPointValue(value.getBkpId());
+			newValue.setChildren(elements);
+			viewer.setInput(newValue);
+		}
 	}
 	
 	@Override
@@ -194,7 +229,6 @@ public class DebugFeedbackView extends ViewPart {
 	}
 	
 	class VariableContentProvider implements ITreeContentProvider{
-
 		public void dispose() {
 		}
 

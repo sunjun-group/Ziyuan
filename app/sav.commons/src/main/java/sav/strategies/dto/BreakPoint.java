@@ -26,6 +26,9 @@ public class BreakPoint extends ClassLocation {
 	private int charStart;
 	private int charEnd;
 	
+	private List<Variable> readVariables = new ArrayList<>();
+	private List<Variable> writtenVariables = new ArrayList<>();
+	
 	public BreakPoint(String className, String methodSign, int lineNo) {
 		super(className, methodSign, lineNo);
 		vars = new ArrayList<Variable>();
@@ -38,6 +41,34 @@ public class BreakPoint extends ClassLocation {
 		}
 	}
 	
+	public void addReadVariable(Variable var){
+		if(!this.readVariables.contains(var)){
+			this.readVariables.add(var);			
+		}
+	}
+	
+	public void addWrittenVariable(Variable var){
+		if(!this.writtenVariables.contains(var)){
+			this.writtenVariables.add(var);
+		}
+	}
+	
+	public List<Variable> getReadVariables() {
+		return readVariables;
+	}
+
+	public void setReadVariables(List<Variable> readVariables) {
+		this.readVariables = readVariables;
+	}
+
+	public List<Variable> getWrittenVariables() {
+		return writtenVariables;
+	}
+
+	public void setWrittenVariables(List<Variable> writtenVariables) {
+		this.writtenVariables = writtenVariables;
+	}
+
 	public void addVars(Variable... newVars) {
 		for (Variable newVar : newVars) {
 			vars.add(newVar);
@@ -215,7 +246,9 @@ public class BreakPoint extends ClassLocation {
 
 		public static enum VarScope {
 			THIS ("this"),
-			UNDEFINED ("");
+			UNDEFINED (""),
+			STATIC ("static");
+			
 			private String displayName;
 			
 			private VarScope(String displayName) {
