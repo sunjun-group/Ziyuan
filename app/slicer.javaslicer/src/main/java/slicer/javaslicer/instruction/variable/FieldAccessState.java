@@ -34,7 +34,7 @@ public class FieldAccessState extends NormalState {
 	public void accessInstruction(VarInstruction instruction) {
 		LocalVariable scope = getLocalVarName(instruction);
 		if(scope != null){
-			if ("this".endsWith(scope.getName())) {
+			if ("this".equals(scope.getName())) {
 				addNewVariable(fieldName, true);
 			} else {
 				addNewVariable(getFullName(scope.getName(), fieldName), false);
@@ -44,8 +44,12 @@ public class FieldAccessState extends NormalState {
 	
 	@Override
 	public void addNewVariable(String name, boolean isThisObjRef) {
-		context.setState(getParentState());
-		getParentState().addNewVariable(getFullName(name, fieldName), isThisObjRef);
+		InstructionVariableState parentState = getParentState();
+		context.setState(parentState);
+		
+		String fullName = getFullName(name, fieldName);
+//		String fullName = getFullName(name, null);
+		parentState.addNewVariable(fullName, isThisObjRef);
 	}
 
 	@Override

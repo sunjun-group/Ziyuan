@@ -50,7 +50,12 @@ public class SliceBreakpointCollector implements SliceVisitor {
 		Instruction toInstr = to.getInstruction();
 		
 		if (isAccepted(toInstr)) {
+			
 			String locId = InstructionUtils.getLocationId(toInstr);
+			if(locId.contains("12")){
+				System.currentTimeMillis();
+			}
+			
 			buildRWRelations(from, to, variable);
 			
 			BreakPoint bkp = null;
@@ -62,9 +67,15 @@ public class SliceBreakpointCollector implements SliceVisitor {
 					bkp = InstructionUtils.getBreakpoint(toInstr);
 					bkpMap.put(locId, bkp);
 				}
+				
 				submitVariables(instContext, curBkp);
 				instContext.startContext(bkp.getId());
 			}
+			
+			if(bkp != null && bkp.getLineNo() == 12){
+				System.currentTimeMillis();
+			}
+			
 			instContext.addLink(from, to, variable);
 			curBkp = bkp;
 		}
@@ -128,7 +139,10 @@ public class SliceBreakpointCollector implements SliceVisitor {
 			//do nothing
 		}
 		else if(variable instanceof ArrayElement){
-			//do nothing
+			ArrayElement ae = (ArrayElement)variable;
+			int arrayIndex = ae.getArrayIndex();
+			long arrayId = ae.getArrayId();
+			
 			System.currentTimeMillis();
 		}
 		
@@ -136,10 +150,12 @@ public class SliceBreakpointCollector implements SliceVisitor {
 	}
 
 	private void submitVariables(IVariableCollectorContext instContext, BreakPoint curBkp) {
-		if (curBkp != null && !instContext.getVariables().isEmpty()) {
+		if (curBkp != null) {
 			List<sav.strategies.dto.BreakPoint.Variable> variables = instContext.getVariables(); 
-			curBkp.addVars(variables);
-			instContext.endContext();
+			if(!variables.isEmpty()){
+				curBkp.addVars(variables);
+				instContext.endContext();
+			}
 		}
 	}
 

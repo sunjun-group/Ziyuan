@@ -58,7 +58,8 @@ public abstract class InstructionHandler {
 	protected final InstructionNode getInput(InstructionNode node, int inputIdx) {
 		int stackIdx = inputIdx + node.getFirstPopStackIdx();
 		InstructionNode input = node.getInput().get(stackIdx);
-		return input.getOutput(stackIdx);
+		InstructionNode n = input.getOutput(stackIdx); 
+		return n;
 	}
 
 	public void setTreeContext(ITreeContext treeContext) {

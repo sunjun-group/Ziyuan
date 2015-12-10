@@ -21,6 +21,7 @@ import slicer.javaslicer.IVariableCollectorContext;
 import slicer.javaslicer.instruction.variable.InstVariableContext;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.Instruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.InstructionInstance;
+import de.unisb.cs.st.javaslicer.common.classRepresentation.InstructionInstanceInfo;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.InstructionType;
 import de.unisb.cs.st.javaslicer.variables.Variable;
 
@@ -115,6 +116,9 @@ public class InstructionContext implements IVariableCollectorContext, ITreeConte
 
 	private InstructionHandler getInstructionHandler(InstructionInstance to) {
 		InstructionType type = to.getInstruction().getType();
+		/**
+		 * the instructions of the same type share a common handler.
+		 */
 		InstructionHandler handler = instrHandlers.get(type);
 		if (handler == null) {
 			handler = InstructionHandler.createHandler(type);
@@ -136,7 +140,14 @@ public class InstructionContext implements IVariableCollectorContext, ITreeConte
 	}
 	
 	private void traverseTree(InstructionNode node) {
-		instVarContext.accessInstruction(node.getInstruction(), node.getAdditionalInfo());
+		Instruction instruction = node.getInstruction();
+		InstructionInstanceInfo info = node.getAdditionalInfo();
+		
+		if(info != null){
+			System.currentTimeMillis();
+		}
+		
+		instVarContext.accessInstruction(instruction, info);
 		List<InstructionNode> children = node.getTraverseNodes();
 		for (InstructionNode child : children) {
 			traverseTree(child);

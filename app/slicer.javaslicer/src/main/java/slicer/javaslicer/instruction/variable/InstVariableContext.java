@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.PooledConnection;
+
 import sav.common.core.SavRtException;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.dto.BreakPoint.Variable.VarScope;
@@ -31,12 +33,12 @@ import de.unisb.cs.st.javaslicer.common.classRepresentation.instructions.VarInst
 public class InstVariableContext {
 	private List<Variable> variables;
 	private InstructionVariableState state;
-	private StatePool statePool;
+//	private StatePool statePool;
 	
 	public InstVariableContext() {
 		variables = new ArrayList<Variable>();
 		state = new NormalState(this);
-		statePool = new StatePool();
+//		statePool = new StatePool();
 	}
 	
 	public void startContext() {
@@ -45,13 +47,13 @@ public class InstVariableContext {
 	
 	public void endContext() {
 		variables.clear();
-		statePool.release(state);
+//		statePool.release(state);
 		state = null;
 	}
 	
 	public void discardIfNotFinish() {
 		while (state != null && state.getStateId() != StateId.NORMAL) {
-			statePool.release(state);
+//			statePool.release(state);
 			state = state.getParentState();
 		}
 	}
@@ -80,13 +82,14 @@ public class InstVariableContext {
 	}
 
 	public void setState(InstructionVariableState state) {
-		statePool.release(this.state);
+//		statePool.release(this.state);
 		this.state = state;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public <T extends InstructionVariableState>T createState(StateId id, InstructionVariableState parentState) {
-		T newState = (T) statePool.create(id);
+		T newState = (T) newState(id);
+//		T newState = (T) statePool.create(id);
 		newState.setParentState(parentState);
 		return newState;
 	}
@@ -101,11 +104,27 @@ public class InstVariableContext {
 		return new ArrayList<Variable>(variables);
 	}
 	
+	public InstructionVariableState newState(StateId id) {
+		switch (id) {
+		case NORMAL:
+			return new NormalState(InstVariableContext.this);
+		case ARRAY_ACCESS:
+			return new ArrayAccessState(InstVariableContext.this);
+		case FIELD_ACCESS:
+			return new FieldAccessState(InstVariableContext.this);
+		}
+		throw new SavRtException("Cannot identify InstVariableContext.StateId " + id);
+	}
+	
 	/*
 	 * a very simple version of object pool, just to cache states, so that we won't
 	 * have to initialize so many state objects
 	 */
 	private class StatePool {
+		/**
+		 * Different types of state has different state Id, and this {@code states} contains a state 
+		 * type and its corresponding states.
+		 */
 		private Map<StateId, List<InstructionVariableState>> states;
 		
 		public StatePool() {
