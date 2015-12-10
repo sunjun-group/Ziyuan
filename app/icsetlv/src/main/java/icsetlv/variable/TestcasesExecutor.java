@@ -257,6 +257,13 @@ public class TestcasesExecutor extends JunitDebugger {
 	}
 	
 	public Trace getTrace() {
+		int len = this.trace.size();
+		TraceNode lastNode = this.trace.getExectionList().get(len-1);
+		if(lastNode.getAfterState() == null){
+			BreakPointValue previousState = lastNode.getProgramState();
+			lastNode.setAfterState(previousState);
+		}
+		
 		return trace;
 	}
 

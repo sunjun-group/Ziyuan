@@ -8,9 +8,6 @@
 
 package icsetlv.variable;
 
-import icsetlv.common.dto.BreakPointValue;
-import icsetlv.trial.model.TraceNode;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +34,6 @@ import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.event.EventSet;
 import com.sun.jdi.event.StepEvent;
-import com.sun.jdi.event.ThreadStartEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.request.BreakpointRequest;
