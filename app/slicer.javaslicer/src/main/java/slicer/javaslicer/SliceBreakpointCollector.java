@@ -136,7 +136,9 @@ public class SliceBreakpointCollector implements SliceVisitor {
 			var = new sav.strategies.dto.BreakPoint.Variable(fieldName, fieldName, VarScope.STATIC);
 		}
 		else if(variable instanceof StackEntry){
-			//do nothing
+			/**
+			 * do nothing
+			 */
 		}
 		else if(variable instanceof ArrayElement){
 			ArrayElement ae = (ArrayElement)variable;
@@ -151,6 +153,11 @@ public class SliceBreakpointCollector implements SliceVisitor {
 
 	private void submitVariables(IVariableCollectorContext instContext, BreakPoint curBkp) {
 		if (curBkp != null) {
+			
+			if(curBkp.getLineNo() == 12){
+				System.currentTimeMillis();
+			}
+			
 			List<sav.strategies.dto.BreakPoint.Variable> variables = instContext.getVariables(); 
 			if(!variables.isEmpty()){
 				curBkp.addVars(variables);
