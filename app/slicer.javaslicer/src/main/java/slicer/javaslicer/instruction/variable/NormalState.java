@@ -30,9 +30,16 @@ public class NormalState extends AbstractVariableState {
 	public void accessInstruction(VarInstruction instruction) {
 		LocalVariable localVariable = getLocalVarName(instruction);
 		if(localVariable != null){
-			boolean thisOjbRef = isThisOjbRef(localVariable);
-			Assert.assertTrue(!thisOjbRef);
-			if (!thisOjbRef) {
+			boolean thisObjRef = isThisOjbRef(localVariable);
+			
+			if(thisObjRef){
+				System.currentTimeMillis();
+				System.err.println("line " + instruction.getLineNumber() + 
+						": visit a this-variable from a VarInstruction");
+			}
+			
+//			Assert.assertTrue(!thisObjRef);
+			if (!thisObjRef) {
 				addNewVariable(localVariable.getName(), false);
 			}
 		}
