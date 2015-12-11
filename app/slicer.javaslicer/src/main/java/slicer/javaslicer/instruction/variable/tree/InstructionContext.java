@@ -27,6 +27,18 @@ import de.unisb.cs.st.javaslicer.variables.Variable;
 
 /**
  * @author LLT, commented by Yun Lin.
+ * <br>
+ * This class maintains the context for a certain breakpoint. The context of a breakpoint includes
+ * root instructions and their input instructions. We may consider the input instructions of a certain
+ * instruction, I, as some instructions pointing to I through data flow (actually, it is more than just
+ * data flow). 
+ * <br>
+ * <br>
+ * The aim of maintaining such a context lies in that we need to analyze the context (i.e., input) when 
+ * interpreting instruction variables into source code variable. For example, we may get an instruction
+ * as IASTORE[1000, 1] which means that there is an array access with array ID of 1000 and array index of 1.
+ * As we need to map this array to a certain variable in source code, we may need to check its input such
+ * as GETFIELD a, PUSH 1, etc., so that we may know the fact.  
  *
  */
 public class InstructionContext implements IVariableCollectorContext, ITreeContext {
