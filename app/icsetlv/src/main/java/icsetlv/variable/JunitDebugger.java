@@ -121,7 +121,13 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 	protected final void afterDebugging() throws SavException {
 		try {
 			JunitResult jResult = JunitResult.readFrom(jResultFile);
-			onFinish(jResult);
+			if(jResult.getTestResult().size() == 0){
+				System.err.println("Cannot generate test result from an execution.");
+			}
+			else{
+				onFinish(jResult);				
+			}
+			
 		} catch (IOException e) {
 			throw new SavException(ModuleEnum.JVM, "cannot read junitResult in temp file");
 		}
