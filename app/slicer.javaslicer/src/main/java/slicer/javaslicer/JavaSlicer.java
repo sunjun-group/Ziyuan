@@ -115,10 +115,10 @@ public class JavaSlicer implements ISlicer {
 		timer.newPoint("create Trace file");
 		
 		//TODO change
-//		if(existingTraceFile == null){
-//			existingTraceFile = createTraceFile(junitClassMethods);			
-//		}
-		existingTraceFile = createTraceFile(junitClassMethods);	
+		if(existingTraceFile == null){
+			existingTraceFile = createTraceFile(junitClassMethods);			
+		}
+//		existingTraceFile = createTraceFile(junitClassMethods);	
 		
 		/* do slicing */
 		timer.newPoint("slice");

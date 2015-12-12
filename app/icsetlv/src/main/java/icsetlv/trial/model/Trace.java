@@ -42,8 +42,28 @@ public class Trace {
 	public void setObservingIndex(int observingIndex) {
 		this.observingIndex = observingIndex;
 	}
+	
+	public int searchBackwardTraceNode(String expression){
+		int resultIndex = -1;
+		
+		for(int i=observingIndex-1; i>=0; i--){
+			TraceNode node = exectionList.get(i);
+			BreakPoint breakPoint = node.getBreakPoint();
+			String className = breakPoint.getClassCanonicalName();
+			int lineNumber = breakPoint.getLineNo();
+			
+			String exp = combineTraceNodeExpression(className, lineNumber);
+			if(exp.equals(expression)){
+				resultIndex = i;
+				break;
+			}
+		}
+		
+		this.observingIndex = resultIndex;
+		return resultIndex;
+	}
 
-	public int searchTraceNode(String expression){
+	public int searchForwardTraceNode(String expression){
 		int resultIndex = -1;
 		
 		for(int i=observingIndex+1; i<exectionList.size(); i++){

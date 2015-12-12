@@ -44,6 +44,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
@@ -115,10 +116,18 @@ public class TraceView extends ViewPart {
 			previousSearchExpression = searchContent;
 		}
 		
-		int selectionIndex = trace.searchTraceNode(searchContent);
+		//TODO
+		int selectionIndex = trace.searchForwardTraceNode(searchContent);
+//		int selectionIndex = trace.searchBackwardTraceNode(searchContent);
 		if(selectionIndex != -1){
 			this.jumpFromSearch = true;
 			listViewer.setSelection(new StructuredSelection(listViewer.getElementAt(selectionIndex)),true);							
+		}
+		else{
+			MessageBox box = new MessageBox(PlatformUI.getWorkbench()
+					.getDisplay().getActiveShell());
+			box.setMessage("Please tell me whether this step is correct or not!");
+			box.open();
 		}
 		
 	}
@@ -166,6 +175,7 @@ public class TraceView extends ViewPart {
 							}
 							
 							Activator.getDefault().getCurrentTrace().setObservingIndex(node.getOrder()-1);
+							System.currentTimeMillis();
 						}
 					}
 					
