@@ -19,6 +19,7 @@ import slicer.javaslicer.instruction.variable.DefaultVariableCollector;
 import slicer.javaslicer.instruction.variable.InstructionUtils;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.Instruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.InstructionInstance;
+import de.unisb.cs.st.javaslicer.common.classRepresentation.InstructionType;
 import de.unisb.cs.st.javaslicer.slicing.SliceVisitor;
 import de.unisb.cs.st.javaslicer.variables.ArrayElement;
 import de.unisb.cs.st.javaslicer.variables.LocalVariable;
@@ -52,11 +53,13 @@ public class SliceBreakpointCollector implements SliceVisitor {
 		if (isAccepted(toInstr)) {
 			
 			String locId = InstructionUtils.getLocationId(toInstr);
-			if(locId.contains("12")){
+			if(locId.contains("15")){
 				System.currentTimeMillis();
 			}
 			
-			buildRWRelations(from, to, variable);
+			if(to.getInstruction().getType() != InstructionType.METHODINVOCATION){
+				buildRWRelations(from, to, variable);				
+			}
 			
 			BreakPoint bkp = null;
 			if (curBkp != null && curBkp.getId().equals(locId)) {
@@ -108,7 +111,7 @@ public class SliceBreakpointCollector implements SliceVisitor {
 		}
 		
 		sav.strategies.dto.BreakPoint.Variable var = convertVar(variable);
-		if(var == null){
+		if(var == null || var.getFullName().equals("this")){
 			//System.err.println("some cases unhandled in convertVar() method");
 		}
 		else{
