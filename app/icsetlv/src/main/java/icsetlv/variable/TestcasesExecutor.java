@@ -8,8 +8,8 @@
 
 package icsetlv.variable;
 
-import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakPointValue;
+import icsetlv.common.dto.BreakpointData;
 import icsetlv.trial.model.Trace;
 import icsetlv.trial.model.TraceNode;
 import icsetlv.trial.variable.DebugValueExtractor2;
@@ -35,12 +35,12 @@ import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.Location;
 import com.sun.jdi.ThreadReference;
-import com.sun.jdi.event.BreakpointEvent;
 
 /**
  * @author LLT
  * 
  */
+@SuppressWarnings("restriction")
 public class TestcasesExecutor extends JunitDebugger {
 	private static Logger log = LoggerFactory.getLogger(TestcasesExecutor.class);	
 	private List<BreakpointData> result;
@@ -84,6 +84,7 @@ public class TestcasesExecutor extends JunitDebugger {
 		addToCurrentValueList(currentTestBkpValues, bkpVal);
 		collectTrace(bkp, bkpVal);
 	}
+	
 	
 	@Override
 	protected void onCollectValueOfPreviousStep(BreakPoint currentPosition, ThreadReference thread, Location loc) throws SavException {

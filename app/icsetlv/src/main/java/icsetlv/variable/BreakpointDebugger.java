@@ -8,7 +8,6 @@
 
 package icsetlv.variable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,6 @@ import com.sun.jdi.event.EventSet;
 import com.sun.jdi.event.MethodEntryEvent;
 import com.sun.jdi.event.MethodExitEvent;
 import com.sun.jdi.event.StepEvent;
-import com.sun.jdi.event.ThreadStartEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.event.VMStartEvent;
@@ -56,6 +54,10 @@ import com.sun.jdi.request.StepRequest;
  */
 @SuppressWarnings("restriction")
 public abstract class BreakpointDebugger {
+	
+	private String[] excludes =
+		{ "java.*", "javax.*", "sun.*", "com.sun.*"};
+	
 	protected static Logger log = LoggerFactory.getLogger(BreakpointDebugger.class);
 	private VMConfiguration config;
 	protected SimpleDebugger debugger = new SimpleDebugger();
@@ -63,8 +65,6 @@ public abstract class BreakpointDebugger {
 	private Map<String, List<BreakPoint>> brkpsMap;
 	protected List<BreakPoint> bkps;
 	
-	private List<ReferenceType> scopeTypes = new ArrayList<>();
-
 	public void setup(VMConfiguration config) {
 		this.config = config;
 	}
@@ -120,13 +120,17 @@ public abstract class BreakpointDebugger {
 					StepRequest sr = erm.createStepRequest(((VMStartEvent) event).thread(), 
 							StepRequest.STEP_LINE, StepRequest.STEP_INTO);
 					sr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-					String[] excludes =
-						{ "java.*", "javax.*", "sun.*", "com.sun.*"};
+					
 					for(String ex: excludes){
 						sr.addClassExclusionFilter(ex);
 					}
 //					sr.addClassFilter(refType);
 					sr.enable();
+					
+					/**
+					 * add method enter and exit event
+					 */
+					addMethodWatch(erm);
 				}
 				if (event instanceof VMDeathEvent
 						|| event instanceof VMDisconnectEvent) {
@@ -140,10 +144,6 @@ public abstract class BreakpointDebugger {
 					ReferenceType refType = classPrepEvent.referenceType();
 					// breakpoints
 					addBreakpointWatch(vm, refType, locBrpMap);
-					List<BreakPoint> relevantPoints = brkpsMap.get(refType.name());
-					if(relevantPoints != null && !relevantPoints.isEmpty()){
-						addMethodWatch(erm, refType);						
-					}
 					
 					
 				} else if (event instanceof BreakpointEvent) {
@@ -159,7 +159,8 @@ public abstract class BreakpointDebugger {
 					 * collect the variable values after executing previous step
 					 */
 					if(lastSteppingPoint != null){
-						BreakPoint currnetPoint = new BreakPoint(lastSteppingPoint.getClassCanonicalName(), lastSteppingPoint.getLineNo());
+						BreakPoint currnetPoint = new BreakPoint(lastSteppingPoint.getClassCanonicalName(), 
+								lastSteppingPoint.getLineNo());
 						onCollectValueOfPreviousStep(currnetPoint, ((StepEvent) event).thread(), loc);
 						lastSteppingPoint = null;
 					}
@@ -188,14 +189,18 @@ public abstract class BreakpointDebugger {
 		afterDebugging();
 	}
 	
-	private void addMethodWatch(EventRequestManager erm, ReferenceType type) {
+	private void addMethodWatch(EventRequestManager erm) {
 		MethodEntryRequest menr = erm.createMethodEntryRequest();
-		menr.addClassFilter(type);
+		for(String classPattern: excludes){
+			menr.addClassExclusionFilter(classPattern);
+		}
 		menr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 		menr.enable();
 		
 		MethodExitRequest mexr = erm.createMethodExitRequest();
-		mexr.addClassFilter(type);
+		for(String classPattern: excludes){
+			mexr.addClassExclusionFilter(classPattern);
+		}
 		mexr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 		mexr.enable();
 	}
