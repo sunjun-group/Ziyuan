@@ -8,6 +8,7 @@
 
 package icsetlv.variable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,13 +34,19 @@ import com.sun.jdi.event.ClassPrepareEvent;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.event.EventSet;
+import com.sun.jdi.event.MethodEntryEvent;
+import com.sun.jdi.event.MethodExitEvent;
 import com.sun.jdi.event.StepEvent;
+import com.sun.jdi.event.ThreadStartEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
+import com.sun.jdi.event.VMStartEvent;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
+import com.sun.jdi.request.MethodEntryRequest;
+import com.sun.jdi.request.MethodExitRequest;
 import com.sun.jdi.request.StepRequest;
 
 /**
@@ -55,6 +62,8 @@ public abstract class BreakpointDebugger {
 	// map of classes and their breakpoints
 	private Map<String, List<BreakPoint>> brkpsMap;
 	protected List<BreakPoint> bkps;
+	
+	private List<ReferenceType> scopeTypes = new ArrayList<>();
 
 	public void setup(VMConfiguration config) {
 		this.config = config;
@@ -78,6 +87,7 @@ public abstract class BreakpointDebugger {
 		/* add class watch */
 		EventRequestManager erm = vm.eventRequestManager(); 
 		addClassWatch(erm);
+		
 
 		/* process debug events */
 		EventQueue eventQueue = vm.eventQueue();
@@ -102,6 +112,22 @@ public abstract class BreakpointDebugger {
 				break;
 			}
 			for (Event event : eventSet) {
+				if(event instanceof VMStartEvent){
+					System.out.println("start threading");
+					/**
+					 * add step event
+					 */
+					StepRequest sr = erm.createStepRequest(((VMStartEvent) event).thread(), 
+							StepRequest.STEP_LINE, StepRequest.STEP_INTO);
+					sr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+					String[] excludes =
+						{ "java.*", "javax.*", "sun.*", "com.sun.*"};
+					for(String ex: excludes){
+						sr.addClassExclusionFilter(ex);
+					}
+//					sr.addClassFilter(refType);
+					sr.enable();
+				}
 				if (event instanceof VMDeathEvent
 						|| event instanceof VMDisconnectEvent) {
 					stop = true;
@@ -114,30 +140,21 @@ public abstract class BreakpointDebugger {
 					ReferenceType refType = classPrepEvent.referenceType();
 					// breakpoints
 					addBreakpointWatch(vm, refType, locBrpMap);
+					List<BreakPoint> relevantPoints = brkpsMap.get(refType.name());
+					if(relevantPoints != null && !relevantPoints.isEmpty()){
+						addMethodWatch(erm, refType);						
+					}
 					
-					/**
-					 * add step event
-					 */
-					EventRequestManager mgr = vm.eventRequestManager();
-					StepRequest sr = mgr.createStepRequest(((ClassPrepareEvent) event).thread(),
-							StepRequest.STEP_LINE, StepRequest.STEP_INTO);
-					sr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-					sr.addClassFilter(refType);
-					sr.enable();
 					
 				} else if (event instanceof BreakpointEvent) {
 //					BreakpointEvent bkpEvent = (BreakpointEvent) event;
-//					BreakPoint bkp = locBrpMap.get(bkpEvent.location()
-//							.toString());
+//					BreakPoint bkp = locBrpMap.get(bkpEvent.location().toString());
 //					
 //					if(bkp != null){
 //						handleBreakpointEvent(bkp, vm, bkpEvent.thread(), bkpEvent.location());
-//					}
+//					}			
 				} else if(event instanceof StepEvent){
 					Location loc = ((StepEvent) event).location();
-					
-					
-					
 					/**
 					 * collect the variable values after executing previous step
 					 */
@@ -152,9 +169,12 @@ public abstract class BreakpointDebugger {
 						handleBreakpointEvent(bkp, vm, ((StepEvent) event).thread(), loc);
 						lastSteppingPoint = bkp;
 					}
-					
-					
-					System.currentTimeMillis();
+				} else if(event instanceof MethodEntryEvent){
+					MethodEntryEvent mee = (MethodEntryEvent)event;
+					//System.out.println("enter: " + mee.method().toString());
+				} else if (event instanceof MethodExitEvent){
+					MethodExitEvent mee = (MethodExitEvent)event;
+					//System.out.println("leave: " + mee.method().toString());
 				}
 			}
 			eventSet.resume();
@@ -168,6 +188,18 @@ public abstract class BreakpointDebugger {
 		afterDebugging();
 	}
 	
+	private void addMethodWatch(EventRequestManager erm, ReferenceType type) {
+		MethodEntryRequest menr = erm.createMethodEntryRequest();
+		menr.addClassFilter(type);
+		menr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+		menr.enable();
+		
+		MethodExitRequest mexr = erm.createMethodExitRequest();
+		mexr.addClassFilter(type);
+		mexr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+		mexr.enable();
+	}
+
 	/** abstract methods */
 	protected abstract void beforeDebugging() throws SavException;
 	protected abstract void handleClassPrepareEvent(VirtualMachine vm, ClassPrepareEvent event);

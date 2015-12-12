@@ -113,6 +113,8 @@ public class JavaSlicer implements ISlicer {
 			return new ArrayList<BreakPoint>();
 		}
 		timer.newPoint("create Trace file");
+		
+		//TODO change
 		if(existingTraceFile == null){
 			existingTraceFile = createTraceFile(junitClassMethods);			
 		}

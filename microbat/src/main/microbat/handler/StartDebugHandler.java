@@ -147,7 +147,7 @@ public class StartDebugHandler extends AbstractHandler {
 			BreakPoint ap = new BreakPoint("com.test.MainTest", "test", 17);
 			List<BreakPoint> assertionPoints = Arrays.asList(ap);
 			
-			List<String> classScope = Arrays.asList("com.Main");
+			List<String> classScope = Arrays.asList("com.Main", "com.Tag");
 			List<BreakPoint> breakpoints = dynamicSlicing(assertionPoints, classScope, tests);
 //			List<BreakPoint> breakpoints = testSlicing();
 			
