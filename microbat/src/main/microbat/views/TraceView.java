@@ -8,6 +8,7 @@ import java.util.List;
 
 import microbat.Activator;
 import microbat.util.JavaUtil;
+import microbat.util.MicroBatUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -31,8 +32,19 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -46,13 +58,78 @@ import sav.strategies.dto.BreakPoint;
 public class TraceView extends ViewPart {
 	
 	private TableViewer listViewer;
+	private Text searchText;
+	private Button searchButton;
+	
+	private String previousSearchExpression = "";
 
 	public TraceView() {
+	}
+	
+	private void createSearchBox(Composite parent){
+		searchText = new Text(parent, SWT.BORDER);
+		FontData searchTextFont = searchText.getFont().getFontData()[0];
+		searchTextFont.setHeight(10);
+		searchText.setFont(new Font(Display.getCurrent(), searchTextFont));
+		searchText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		addSearchTextListener(searchText);
+		
+		searchButton = new Button(parent, SWT.PUSH);
+		GridData buttonData = new GridData(SWT.FILL, SWT.FILL, false, false);
+		//buttonData.widthHint = 50;
+		searchButton.setLayoutData(buttonData);
+		searchButton.setText("Go");
+		addSearchButtonListener(searchButton);
+	}
+	
+	protected void addSearchTextListener(final Text searchText) {
+		searchText.addKeyListener(new KeyAdapter(){
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.keyCode == 27 || e.character == SWT.CR){
+					String searchContent = searchText.getText();
+					jumpToNode(searchContent);
+				}
+			}
+		});
+		
+	}
+	
+	protected void addSearchButtonListener(final Button serachButton) {
+		searchButton.addMouseListener(new MouseAdapter(){
+			@Override
+			public void mouseDown(MouseEvent e) {
+				String searchContent = searchText.getText();
+				jumpToNode(searchContent);
+			}
+		});
+		
+	}
+	
+	private void jumpToNode(String searchContent){
+		Trace trace = Activator.getDefault().getCurrentTrace();
+		
+		if(!previousSearchExpression.equals(searchContent)){
+			trace.resetObservingIndex();
+			previousSearchExpression = searchContent;
+		}
+		
+		int selectionIndex = trace.searchTraceNode(searchContent);
+		if(selectionIndex != -1){
+			listViewer.setSelection(new StructuredSelection(listViewer.getElementAt(selectionIndex)),true);							
+		}
 	}
 
 	@Override
 	public void createPartControl(Composite parent) {
-		listViewer = new TableViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		parent.setLayout(layout);
+		
+		createSearchBox(parent);
+		
+		listViewer = new TableViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+		listViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		listViewer.setContentProvider(new TraceContentProvider());
 		listViewer.setLabelProvider(new TraceLabelProvider());
 		
@@ -70,13 +147,17 @@ public class TraceView extends ViewPart {
 						
 						if(obj instanceof TraceNode){
 							TraceNode node = (TraceNode)obj;
+							
 							DebugFeedbackView view = (DebugFeedbackView)PlatformUI.getWorkbench().
 									getActiveWorkbenchWindow().getActivePage().showView(MicroBatViews.DEBUG_FEEDBACK);
 							view.refresh(node);
-							
+
 							markJavaEditor(node);
 							
 							listViewer.getTable().setFocus();
+							searchText.setFocus();
+							
+							Activator.getDefault().getCurrentTrace().setObservingIndex(node.getOrder()-1);
 						}
 					}
 					
@@ -209,7 +290,7 @@ public class TraceView extends ViewPart {
 				
 				//TODO it is better to parse method name as well.
 //				String message = className + "." + methodName + "(...): line " + lineNumber;
-				String message = order + ". " + className + " line:" + lineNumber;
+				String message = order + ". " + MicroBatUtil.combineTraceNodeExpression(className, lineNumber);
 				return message;
 				
 			}
