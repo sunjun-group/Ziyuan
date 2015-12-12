@@ -62,6 +62,7 @@ public class TraceView extends ViewPart {
 	private Button searchButton;
 	
 	private String previousSearchExpression = "";
+	private boolean jumpFromSearch = false;
 
 	public TraceView() {
 	}
@@ -116,8 +117,10 @@ public class TraceView extends ViewPart {
 		
 		int selectionIndex = trace.searchTraceNode(searchContent);
 		if(selectionIndex != -1){
+			this.jumpFromSearch = true;
 			listViewer.setSelection(new StructuredSelection(listViewer.getElementAt(selectionIndex)),true);							
 		}
+		
 	}
 
 	@Override
@@ -154,8 +157,13 @@ public class TraceView extends ViewPart {
 
 							markJavaEditor(node);
 							
-							listViewer.getTable().setFocus();
-							searchText.setFocus();
+							if(jumpFromSearch){
+								searchText.setFocus();
+								jumpFromSearch = false;
+							}
+							else{
+								listViewer.getTable().setFocus();								
+							}
 							
 							Activator.getDefault().getCurrentTrace().setObservingIndex(node.getOrder()-1);
 						}
