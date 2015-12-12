@@ -59,7 +59,9 @@ public class Trace {
 			}
 		}
 		
-		this.observingIndex = resultIndex;
+		if(resultIndex != -1){
+			this.observingIndex = resultIndex;
+		}
 		return resultIndex;
 	}
 
@@ -79,7 +81,9 @@ public class Trace {
 			}
 		}
 		
-		this.observingIndex = resultIndex;
+		if(resultIndex != -1){
+			this.observingIndex = resultIndex;			
+		}
 		return resultIndex;
 	}
 	
