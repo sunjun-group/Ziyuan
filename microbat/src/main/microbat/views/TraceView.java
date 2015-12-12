@@ -89,8 +89,11 @@ public class TraceView extends ViewPart {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if(e.keyCode == 27 || e.character == SWT.CR){
+					
+					boolean forward = (e.stateMask & SWT.SHIFT) == 0;
+					
 					String searchContent = searchText.getText();
-					jumpToNode(searchContent);
+					jumpToNode(searchContent, forward);
 				}
 			}
 		});
@@ -102,13 +105,13 @@ public class TraceView extends ViewPart {
 			@Override
 			public void mouseDown(MouseEvent e) {
 				String searchContent = searchText.getText();
-				jumpToNode(searchContent);
+				jumpToNode(searchContent, true);
 			}
 		});
 		
 	}
 	
-	private void jumpToNode(String searchContent){
+	private void jumpToNode(String searchContent, boolean forward){
 		Trace trace = Activator.getDefault().getCurrentTrace();
 		
 		if(!previousSearchExpression.equals(searchContent)){
@@ -117,7 +120,13 @@ public class TraceView extends ViewPart {
 		}
 		
 		//TODO
-		int selectionIndex = trace.searchForwardTraceNode(searchContent);
+		int selectionIndex = -1; 
+		if(forward){
+			selectionIndex = trace.searchForwardTraceNode(searchContent);			
+		}
+		else{
+			selectionIndex = trace.searchBackwardTraceNode(searchContent);
+		}
 //		int selectionIndex = trace.searchBackwardTraceNode(searchContent);
 		if(selectionIndex != -1){
 			this.jumpFromSearch = true;
