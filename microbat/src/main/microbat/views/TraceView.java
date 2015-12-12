@@ -135,7 +135,7 @@ public class TraceView extends ViewPart {
 		else{
 			MessageBox box = new MessageBox(PlatformUI.getWorkbench()
 					.getDisplay().getActiveShell());
-			box.setMessage("Please tell me whether this step is correct or not!");
+			box.setMessage("No more such node in trace!");
 			box.open();
 		}
 		
