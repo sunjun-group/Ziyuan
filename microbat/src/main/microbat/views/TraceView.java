@@ -3,6 +3,7 @@ package microbat.views;
 import icsetlv.trial.model.Trace;
 import icsetlv.trial.model.TraceNode;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -119,7 +120,6 @@ public class TraceView extends ViewPart {
 			previousSearchExpression = searchContent;
 		}
 		
-		//TODO
 		int selectionIndex = -1; 
 		if(forward){
 			selectionIndex = trace.searchForwardTraceNode(searchContent);			
@@ -130,7 +130,18 @@ public class TraceView extends ViewPart {
 //		int selectionIndex = trace.searchBackwardTraceNode(searchContent);
 		if(selectionIndex != -1){
 			this.jumpFromSearch = true;
-			//listViewer.setSelection(new StructuredSelection(listViewer.getElementAt(selectionIndex)),true);							
+			TraceNode node = trace.getExectionList().get(selectionIndex);
+			
+			List<TraceNode> path = new ArrayList<>();
+			while(node != null){
+				path.add(node);
+				node = node.getInvocationParent();
+			}
+			TraceNode[] list = path.toArray(new TraceNode[0]);
+			listViewer.setExpandedElements(list);
+			
+			node = trace.getExectionList().get(selectionIndex);
+			listViewer.setSelection(new StructuredSelection(node), true);							
 		}
 		else{
 			MessageBox box = new MessageBox(PlatformUI.getWorkbench()
@@ -176,8 +187,20 @@ public class TraceView extends ViewPart {
 							markJavaEditor(node);
 							
 							if(jumpFromSearch){
-								searchText.setFocus();
 								jumpFromSearch = false;
+
+								Display.getDefault().asyncExec(new Runnable() {
+									@Override
+									public void run() {
+										try {
+											Thread.sleep(1000);
+										} catch (InterruptedException e) {
+											e.printStackTrace();
+										}
+										searchText.setFocus();
+									}
+								});
+								
 							}
 							else{
 								listViewer.getTree().setFocus();								
@@ -296,7 +319,6 @@ public class TraceView extends ViewPart {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			//TODO
 			return getChildren(inputElement);
 		}
 
