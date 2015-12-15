@@ -12,7 +12,6 @@ import icsetlv.common.dto.BkpInvariantResult;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.sampling.SelectiveSampling;
 import icsetlv.variable.DebugValueInstExtractor;
-import icsetlv.variable.JunitDebugger;
 import icsetlv.variable.TestResultVerifier;
 import icsetlv.variable.TestcasesExecutor;
 
@@ -68,12 +67,12 @@ public class InvariantMediator {
 		tcExecutor.setValueExtractor(null);
 		tcExecutor.setjResultFileDeleteOnExit(false);
 		tcExecutor.setTestResultVerifier(null);
-		tcExecutor.setTimeout(JunitDebugger.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+		tcExecutor.setTimeout(TestcasesExecutor.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
 		return learningResult;
 	}
 
 	private long getMaxExecutionTime(StopTimer timer) {
-		long max = JunitDebugger.DEFAULT_TIMEOUT;
+		long max = TestcasesExecutor.DEFAULT_TIMEOUT;
 		for (Long execTime : tcExecutor.getTimer().getTimeResults().values()) {
 			if (execTime > max) {
 				max = execTime;

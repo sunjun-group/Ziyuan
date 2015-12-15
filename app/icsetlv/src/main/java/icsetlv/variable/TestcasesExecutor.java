@@ -8,12 +8,16 @@
 
 package icsetlv.variable;
 
+import static sav.strategies.junit.SavJunitRunner.ENTER_TC_BKP;
+import static sav.strategies.junit.SavJunitRunner.JUNIT_RUNNER_CLASS_NAME;
 import icsetlv.common.dto.BreakPointValue;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.trial.model.Trace;
 import icsetlv.trial.model.TraceNode;
 import icsetlv.trial.variable.DebugValueExtractor2;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,28 +27,84 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
+import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.common.core.utils.StringUtils;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
+import sav.strategies.junit.SavJunitRunner;
+import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
+import sav.strategies.vm.SimpleDebugger;
+import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.Location;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
+import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.event.BreakpointEvent;
+import com.sun.jdi.event.ClassPrepareEvent;
+import com.sun.jdi.event.Event;
+import com.sun.jdi.event.EventQueue;
+import com.sun.jdi.event.EventSet;
+import com.sun.jdi.event.MethodEntryEvent;
+import com.sun.jdi.event.MethodExitEvent;
+import com.sun.jdi.event.StepEvent;
+import com.sun.jdi.event.VMDeathEvent;
+import com.sun.jdi.event.VMDisconnectEvent;
+import com.sun.jdi.event.VMStartEvent;
+import com.sun.jdi.request.BreakpointRequest;
+import com.sun.jdi.request.ClassPrepareRequest;
+import com.sun.jdi.request.EventRequest;
+import com.sun.jdi.request.EventRequestManager;
+import com.sun.jdi.request.MethodEntryRequest;
+import com.sun.jdi.request.MethodExitRequest;
+import com.sun.jdi.request.StepRequest;
 
 /**
- * @author LLT
+ * @author Yun Lin 
+ * 
+ * This class origins from three classes written by LLT, i.e., BreakpointDebugger, 
+ * JunitDebugger, and TestcaseExecutor.
  * 
  */
 @SuppressWarnings("restriction")
-public class TestcasesExecutor extends JunitDebugger {
+public class TestcasesExecutor{
 	private static Logger log = LoggerFactory.getLogger(TestcasesExecutor.class);	
+	
+	/**
+	 * fundamental fields for debugging
+	 */
+	/** the class patterns indicating the classes into which I will step to get the runtime values*/
+	private String[] excludes = { "java.*", "javax.*", "sun.*", "com.sun.*"};
+	private VMConfiguration config;
+	private SimpleDebugger debugger = new SimpleDebugger();
+	/** maps from a given class name to its contained breakpoints */
+	private Map<String, List<BreakPoint>> brkpsMap;
+	private List<BreakPoint> bkps;
+	
+	/**
+	 * fields for junit
+	 */
+	public static final long DEFAULT_TIMEOUT = -1;
+	private List<String> allTests;
+	/** for internal purpose */
+	private int testIdx = 0;
+	private Location junitLoc;
+	private String jResultFile;
+	private boolean jResultFileDeleteOnExit = false;
+	
+	/**
+	 * fields for test cases
+	 */
 	private List<BreakpointData> result;
-	/* for internal purpose */
+	/** for internal purpose */
 	private Map<Integer, List<BreakPointValue>> bkpValsByTestIdx;
 	private List<BreakPointValue> currentTestBkpValues;
 	private DebugValueExtractor valueExtractor;
@@ -54,6 +114,9 @@ public class TestcasesExecutor extends JunitDebugger {
 	private StopTimer timer = new StopTimer("TestcasesExecutor");;
 	private long timeout = DEFAULT_TIMEOUT;
 	
+	/**
+	 * for recording execution trace
+	 */
 	private Trace trace = new Trace();
 	
 	public TestcasesExecutor(int valRetrieveLevel) {
@@ -64,30 +127,307 @@ public class TestcasesExecutor extends JunitDebugger {
 		setValueExtractor(valueExtractor);
 	}
 	
-	@Override
-	protected void onStart() {
+	public void setup(VMConfiguration config) {
+		this.config = config;
+	}
+	
+	public void setup(AppJavaClassPath appClassPath, List<String> allTests) {
+		VMConfiguration vmConfig = SavJunitRunner.createVmConfig(appClassPath);
+		setup(vmConfig);
+		this.allTests = allTests;
+	}
+	
+	public final void run(List<BreakPoint> brkps) throws SavException {
+		this.bkps = brkps;
+		this.brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
+		/* before debugging */
+		beforeDebugging();
+		this.config.setDebug(true);
+		
+		/* start debugger */
+		VirtualMachine vm = debugger.run(config);
+		if (vm == null) {
+			throw new SavException(ModuleEnum.JVM, "cannot start jvm!");
+		}
+		
+		//System.out.println("This VM's classloader:" + vm.getClass().getClassLoader().getClass());
+		
+		/* add class watch */
+		EventRequestManager erm = vm.eventRequestManager(); 
+		addClassWatch(erm);
+		
+
+		/* process debug events */
+		EventQueue eventQueue = vm.eventQueue();
+		
+		boolean stop = false;
+		boolean eventTimeout = false;
+		Map<String, BreakPoint> locBrpMap = new HashMap<String, BreakPoint>();
+		
+		BreakPoint lastSteppingPoint = null;
+		
+		while (!stop && !eventTimeout) {
+			EventSet eventSet;
+			try {
+				eventSet = eventQueue.remove(3000);
+			} catch (InterruptedException e) {
+				// do nothing, just return.
+				break;
+			}
+			if (eventSet == null) {
+				log.warn("Time out! Cannot get event set!");
+				eventTimeout = true;
+				break;
+			}
+			for (Event event : eventSet) {
+				if(event instanceof VMStartEvent){
+					System.out.println("start threading");
+					/**
+					 * add step event
+					 */
+					StepRequest sr = erm.createStepRequest(((VMStartEvent) event).thread(), 
+							StepRequest.STEP_LINE, StepRequest.STEP_INTO);
+					sr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+					
+					for(String ex: excludes){
+						sr.addClassExclusionFilter(ex);
+					}
+//					sr.addClassFilter(refType);
+					sr.enable();
+					
+					/**
+					 * add method enter and exit event
+					 */
+					addMethodWatch(erm);
+				}
+				if (event instanceof VMDeathEvent
+						|| event instanceof VMDisconnectEvent) {
+					stop = true;
+					break;
+				} else if (event instanceof ClassPrepareEvent) {
+					// add breakpoint watch on loaded class
+					ClassPrepareEvent classPrepEvent = (ClassPrepareEvent) event;
+					handleClassPrepareEvent(vm, classPrepEvent);
+					/* add breakpoint request */
+					ReferenceType refType = classPrepEvent.referenceType();
+					// breakpoints
+					addBreakpointWatch(vm, refType, locBrpMap);
+					
+				} else if (event instanceof BreakpointEvent) {
+//					BreakpointEvent bkpEvent = (BreakpointEvent) event;
+//					BreakPoint bkp = locBrpMap.get(bkpEvent.location().toString());
+//					
+//					if(bkp != null){
+//						handleBreakpointEvent(bkp, vm, bkpEvent.thread(), bkpEvent.location());
+//					}			
+				} else if(event instanceof StepEvent){
+					Location loc = ((StepEvent) event).location();
+					/**
+					 * collect the variable values after executing previous step
+					 */
+					if(lastSteppingPoint != null){
+						BreakPoint currnetPoint = new BreakPoint(lastSteppingPoint.getClassCanonicalName(), 
+								lastSteppingPoint.getLineNo());
+						onCollectValueOfPreviousStep(currnetPoint, ((StepEvent) event).thread(), loc);
+						lastSteppingPoint = null;
+					}
+					
+					BreakPoint bkp = locBrpMap.get(loc.toString());
+					if(bkp != null){
+						handleBreakpointEvent(bkp, vm, ((StepEvent) event).thread(), loc);
+						lastSteppingPoint = bkp;
+					}
+				} else if(event instanceof MethodEntryEvent){
+					MethodEntryEvent mee = (MethodEntryEvent)event;
+					//System.out.println("enter: " + mee.method().toString());
+				} else if (event instanceof MethodExitEvent){
+					MethodExitEvent mee = (MethodExitEvent)event;
+					//System.out.println("leave: " + mee.method().toString());
+				}
+			}
+			eventSet.resume();
+		}
+//		if (!eventTimeout) {
+//			vm.resume();
+//			/* wait until the process completes */
+//			debugger.waitProcessUntilStop();
+//		}
+		/* end of debug */
+		afterDebugging();
+	}
+	
+	private void addMethodWatch(EventRequestManager erm) {
+		MethodEntryRequest menr = erm.createMethodEntryRequest();
+		for(String classPattern: excludes){
+			menr.addClassExclusionFilter(classPattern);
+		}
+		menr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+		menr.enable();
+		
+		MethodExitRequest mexr = erm.createMethodExitRequest();
+		for(String classPattern: excludes){
+			mexr.addClassExclusionFilter(classPattern);
+		}
+		mexr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+		mexr.enable();
+	}
+	
+	
+//	private void addClassWatch(EventRequestManager erm) {
+//		/* add class watch for breakpoints */
+//		for (String className : brkpsMap.keySet()) {
+//			addClassWatch(erm, className);
+//		}
+//	}
+	
+	/** add watch requests **/
+	private final void addClassWatch(EventRequestManager erm) {
+		/* class watch request for breakpoint */
+		for (String className : brkpsMap.keySet()) {
+			addClassWatch(erm, className);
+		}
+		/* class watch request for junitRunner start point */
+		addClassWatch(erm, ENTER_TC_BKP.getClassCanonicalName());
+	}
+	
+	private final void addClassWatch(EventRequestManager erm, String className) {
+		ClassPrepareRequest classPrepareRequest = erm
+				.createClassPrepareRequest();
+		classPrepareRequest.addClassFilter(className);
+		classPrepareRequest.setEnabled(true);
+	}
+	
+	private void addBreakpointWatch(VirtualMachine vm, ReferenceType refType,
+			Map<String, BreakPoint> locBrpMap) {
+		List<BreakPoint> brkpList = CollectionUtils.initIfEmpty(brkpsMap.get(refType.name()));
+		for (BreakPoint brkp : brkpList) {
+			Location location = addBreakpointWatch(vm, refType, brkp.getLineNo());
+			if (location != null) {
+				locBrpMap.put(location.toString(), brkp);
+			} else {
+				log.warn("Cannot add break point " + brkp);
+			}
+		}
+	}
+	
+	private final Location addBreakpointWatch(VirtualMachine vm,
+			ReferenceType refType, int lineNumber) {
+		List<Location> locations;
+		try {
+			locations = refType.locationsOfLine(lineNumber);
+		} catch (AbsentInformationException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
+		if (!locations.isEmpty()) {
+			Location location = locations.get(0);
+			BreakpointRequest breakpointRequest = vm.eventRequestManager()
+					.createBreakpointRequest(location);
+			breakpointRequest.setEnabled(true);
+			return location;
+		} 
+		return null;
+	}
+	
+	private final void beforeDebugging() throws SavException {
+		testIdx = 0;
+		junitLoc = null;
+		jResultFile = createExecutionResultFile();
+		getVmConfig().setLaunchClass(JUNIT_RUNNER_CLASS_NAME);
+		List<String> args = new JunitRunnerProgramArgBuilder()
+				.methods(allTests).destinationFile(jResultFile)
+				.storeSingleTestResultDetail()
+				.testcaseTimeout(getTimeoutInSec(), TimeUnit.SECONDS)
+				.build();
+		getVmConfig().setProgramArgs(args);
+		getVmConfig().resetPort();
+		onStart();
+	}
+
+	private long getTimeoutInSec() {
+		return timeout;
+	}
+	
+	private final void handleClassPrepareEvent(VirtualMachine vm,
+			ClassPrepareEvent event) {
+		/* add junitRunner breakpoint */
+		ReferenceType refType = event.referenceType();
+		if (refType.name().equals(ENTER_TC_BKP.getClassCanonicalName())) {
+			junitLoc = addBreakpointWatch(vm, refType,
+					ENTER_TC_BKP.getLineNo());
+		} 
+	}
+	
+	private final void handleBreakpointEvent(BreakPoint bkp, VirtualMachine vm,
+			/*BreakpointEvent bkpEvent*/ThreadReference thread, Location loc) throws SavException {
+		try {
+			if (areLocationsEqual(loc, junitLoc)) {
+				onEnterTestcase(testIdx++);
+			} else {
+				onEnterBreakpoint(bkp, thread, loc);
+			}
+		} catch (AbsentInformationException e) {
+			log.error(e.getMessage());
+		}
+	}
+	
+//	protected void handleMethodEntry
+
+	private final void afterDebugging() throws SavException {
+		try {
+			JunitResult jResult = JunitResult.readFrom(jResultFile);
+			if(jResult.getTestResult().size() == 0){
+				System.err.println("Cannot generate test result from an execution.");
+			}
+			else{
+				onFinish(jResult);				
+			}
+			
+		} catch (IOException e) {
+			throw new SavException(ModuleEnum.JVM, "cannot read junitResult in temp file");
+		}
+	}
+
+	private String createExecutionResultFile() throws SavException {
+		try {
+			File tempFile = File.createTempFile("tcsExResult", ".txt");
+			if (jResultFileDeleteOnExit) {
+				tempFile.deleteOnExit();
+			}
+			return tempFile.getAbsolutePath();
+		} catch (IOException e1) {
+			throw new SavException(ModuleEnum.JVM, "cannot create temp file");
+		}
+	}
+	
+	private boolean areLocationsEqual(Location location1, Location location2) throws AbsentInformationException {
+		//return location1.compareTo(location2) == 0;
+		return location1.equals(location2);
+	}
+	
+	
+	
+	
+	private void onStart() {
 		bkpValsByTestIdx = new HashMap<Integer, List<BreakPointValue>>();
 		currentTestBkpValues = new ArrayList<BreakPointValue>();
 		timer.start();
 	}
 
-	@Override
-	protected void onEnterTestcase(int testIdx) {
+	private void onEnterTestcase(int testIdx) {
 		timer.newPoint(String.valueOf(testIdx));
 		currentTestBkpValues = CollectionUtils.getListInitIfEmpty(bkpValsByTestIdx, testIdx);
 	}
 
-	@Override
-	protected void onEnterBreakpoint(BreakPoint bkp, ThreadReference thread, Location loc) throws SavException {
+	private void onEnterBreakpoint(BreakPoint bkp, ThreadReference thread, Location loc) throws SavException {
 		BreakPointValue bkpVal = extractValuesAtLocation(bkp, thread, loc);
 		//replace existing one with the new one
 		addToCurrentValueList(currentTestBkpValues, bkpVal);
 		collectTrace(bkp, bkpVal);
 	}
 	
-	
-	@Override
-	protected void onCollectValueOfPreviousStep(BreakPoint currentPosition, ThreadReference thread, Location loc) throws SavException {
+	private void onCollectValueOfPreviousStep(BreakPoint currentPosition, 
+			ThreadReference thread, Location loc) throws SavException {
 		BreakPointValue bkpVal = extractValuesAtLocation(currentPosition, thread, loc);
 		
 		int len = trace.getExectionList().size();
@@ -102,8 +442,7 @@ public class TestcasesExecutor extends JunitDebugger {
 		trace.addTraceNode(node);
 	}
 
-	@Override
-	protected void onFinish(JunitResult jResult) {
+	private void onFinish(JunitResult jResult) {
 		timer.stop();
 		if (jResult.getTestResults().isEmpty()) {
 			log.warn("TestResults is empty!");
@@ -204,6 +543,10 @@ public class TestcasesExecutor extends JunitDebugger {
 			currentTestBkpValues.add(bkpVal);
 		}
 	}
+	
+	public void setjResultFileDeleteOnExit(boolean jResultFileDeleteOnExit) {
+		this.jResultFileDeleteOnExit = jResultFileDeleteOnExit;
+	}
 
 	public List<BreakpointData> getResult() {
 		return CollectionUtils.initIfEmpty(result);
@@ -213,7 +556,7 @@ public class TestcasesExecutor extends JunitDebugger {
 		return jResult;
 	}
 	
-	private DebugValueExtractor getValueExtractor() {
+	public DebugValueExtractor getValueExtractor() {
 		if (valueExtractor == null) {
 			setValueExtractor(new DebugValueExtractor(valRetrieveLevel));
 		}
@@ -242,11 +585,6 @@ public class TestcasesExecutor extends JunitDebugger {
 		this.verifier = verifier;
 	}
 	
-	@Override
-	protected long getTimeoutInSec() {
-		return timeout;
-	}
-	
 	public StopTimer getTimer() {
 		return timer;
 	}
@@ -267,6 +605,15 @@ public class TestcasesExecutor extends JunitDebugger {
 		
 		return trace;
 	}
+	
+	public String getProccessError() {
+		return debugger.getProccessError();
+	}
+	
+	public VMConfiguration getVmConfig() {
+		return config;
+	}
+	
 
 	public static enum TestResultType {
 		PASS,
