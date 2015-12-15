@@ -26,10 +26,10 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -58,7 +58,7 @@ import sav.strategies.dto.BreakPoint;
 
 public class TraceView extends ViewPart {
 	
-	private TableViewer listViewer;
+	private TreeViewer listViewer;
 	private Text searchText;
 	private Button searchButton;
 	
@@ -130,7 +130,7 @@ public class TraceView extends ViewPart {
 //		int selectionIndex = trace.searchBackwardTraceNode(searchContent);
 		if(selectionIndex != -1){
 			this.jumpFromSearch = true;
-			listViewer.setSelection(new StructuredSelection(listViewer.getElementAt(selectionIndex)),true);							
+			//listViewer.setSelection(new StructuredSelection(listViewer.getElementAt(selectionIndex)),true);							
 		}
 		else{
 			MessageBox box = new MessageBox(PlatformUI.getWorkbench()
@@ -149,8 +149,8 @@ public class TraceView extends ViewPart {
 		
 		createSearchBox(parent);
 		
-		listViewer = new TableViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-		listViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		listViewer = new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+		listViewer.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		listViewer.setContentProvider(new TraceContentProvider());
 		listViewer.setLabelProvider(new TraceLabelProvider());
 		
@@ -180,7 +180,7 @@ public class TraceView extends ViewPart {
 								jumpFromSearch = false;
 							}
 							else{
-								listViewer.getTable().setFocus();								
+								listViewer.getTree().setFocus();								
 							}
 							
 							Activator.getDefault().getCurrentTrace().setObservingIndex(node.getOrder()-1);
@@ -254,7 +254,7 @@ public class TraceView extends ViewPart {
 		
 	}
 	
-	class TraceContentProvider implements IStructuredContentProvider{
+	class TraceContentProvider implements ITreeContentProvider{
 
 		public void dispose() {
 			
@@ -264,15 +264,40 @@ public class TraceView extends ViewPart {
 			
 		}
 
-		public Object[] getElements(Object inputElement) {
-			if(inputElement instanceof Trace){
-				Trace trace = (Trace)inputElement;
-				List<TraceNode> nodeList = trace.getExectionList();
-				
+		@Override
+		public Object[] getChildren(Object parentElement) {
+			if(parentElement instanceof Trace){
+				Trace trace = (Trace)parentElement;
+				//List<TraceNode> nodeList = trace.getExectionList();
+				List<TraceNode> nodeList = trace.getTopLevelNodes();
 				return nodeList.toArray(new TraceNode[0]);
 			}
-			
+			else if(parentElement instanceof TraceNode){
+				TraceNode parentNode = (TraceNode)parentElement;
+				List<TraceNode> nodeList = parentNode.getInvocationChildren();
+				return nodeList.toArray(new TraceNode[0]);
+			}
 			return null;
+		}
+
+		@Override
+		public Object getParent(Object element) {
+			return null;
+		}
+
+		@Override
+		public boolean hasChildren(Object element) {
+			if(element instanceof TraceNode){
+				TraceNode node = (TraceNode)element;
+				return !node.getInvocationChildren().isEmpty();
+			}
+			return false;
+		}
+
+		@Override
+		public Object[] getElements(Object inputElement) {
+			//TODO
+			return getChildren(inputElement);
 		}
 
 	}

@@ -31,6 +31,17 @@ public class Trace {
 		return this.exectionList.size();
 	}
 	
+	public List<TraceNode> getTopLevelNodes(){
+		List<TraceNode> topList = new ArrayList<>();
+		for(TraceNode node: this.exectionList){
+			if(node.getInvocationParent() == null){
+				topList.add(node);
+			}
+		}
+		
+		return topList;
+	}
+	
 	public TraceNode getLastestNode(){
 		int len = size() - 1;
 		if(len > 0){
