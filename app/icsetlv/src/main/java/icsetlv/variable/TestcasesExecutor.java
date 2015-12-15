@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -45,6 +46,7 @@ import sav.strategies.vm.VMConfiguration;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.Location;
+import com.sun.jdi.Method;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VirtualMachine;
@@ -82,7 +84,7 @@ public class TestcasesExecutor{
 	 * fundamental fields for debugging
 	 */
 	/** the class patterns indicating the classes into which I will step to get the runtime values*/
-	private String[] excludes = { "java.*", "javax.*", "sun.*", "com.sun.*"};
+	private String[] excludes = { "java.*", "javax.*", "sun.*", "com.sun.*", "org.junit.*"};
 	private VMConfiguration config;
 	private SimpleDebugger debugger = new SimpleDebugger();
 	/** maps from a given class name to its contained breakpoints */
@@ -137,34 +139,71 @@ public class TestcasesExecutor{
 		this.allTests = allTests;
 	}
 	
+	/** 
+	 * record the method entrance and exit so that I can build a tree-structure for trace node
+	 */
+	private Stack<TraceNode> methodNodeStack = new Stack<>();
+	private Stack<Method> methodStack = new Stack<>();
+	private TraceNode lastestPopedOutMethodNode = null;
+	
+	/**
+	 * Executing the program, each time of the execution, we catch a JVM event (e.g., step event, class 
+	 * preparing event, method entry event, etc.). Generally, we collect the runtime program states in
+	 * some interesting step event, and record these steps and their corresponding program states in a 
+	 * trance. 
+	 * 
+	 * <br><br>
+	 * Note that the trace node can form a tree-structure in terms of method invocation relations.
+	 * 
+	 * <br><br>
+	 * See the field <code>trace</code> in this class.
+	 * @param brkps
+	 * @throws SavException
+	 */
 	public final void run(List<BreakPoint> brkps) throws SavException {
 		this.bkps = brkps;
 		this.brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
-		/* before debugging */
-		beforeDebugging();
 		this.config.setDebug(true);
 		
-		/* start debugger */
+		/* before debugging */
+		beforeDebugging();
+		
+		/** start debugger */
 		VirtualMachine vm = debugger.run(config);
 		if (vm == null) {
 			throw new SavException(ModuleEnum.JVM, "cannot start jvm!");
 		}
 		
-		//System.out.println("This VM's classloader:" + vm.getClass().getClassLoader().getClass());
-		
-		/* add class watch */
+		/** add class watch */
 		EventRequestManager erm = vm.eventRequestManager(); 
 		addClassWatch(erm);
-		
 
-		/* process debug events */
+		/** process debug events */
 		EventQueue eventQueue = vm.eventQueue();
 		
 		boolean stop = false;
 		boolean eventTimeout = false;
 		Map<String, BreakPoint> locBrpMap = new HashMap<String, BreakPoint>();
 		
+		/** 
+		 * This variable aims to record the last executed stepping point. If this variable is not null, then the 
+		 * next time we listen a step event, the values collected then are considered the aftermath of latest
+		 * recorded trace node.
+		 */
 		BreakPoint lastSteppingPoint = null;
+		
+		/**
+		 * Yun Lin: <br>
+		 * This variable <code>isLastStepEventRecordNode</code> is used to check whether a step performs a method 
+		 * invocation. Based on the *observation*, a method entry event happens directly after a step event if this 
+		 * step invokes a method. Therefore, if a step event contains the statements we need, meanwhile, the next 
+		 * received event is a method entry event, then, I will consider the corresponding step invokes a method.
+		 * 
+		 * In the implementation, the variable <code>isLastStepEventRecordNode</code> is to indicate a method entry
+		 * that an interesting step event just happened right before. Thus, the last recorded trace node should be 
+		 * method invocation.
+		 */
+		boolean isLastStepEventRecordNode = false;
 		
 		while (!stop && !eventTimeout) {
 			EventSet eventSet;
@@ -179,6 +218,7 @@ public class TestcasesExecutor{
 				eventTimeout = true;
 				break;
 			}
+			
 			for (Event event : eventSet) {
 				if(event instanceof VMStartEvent){
 					System.out.println("start threading");
@@ -188,16 +228,10 @@ public class TestcasesExecutor{
 					StepRequest sr = erm.createStepRequest(((VMStartEvent) event).thread(), 
 							StepRequest.STEP_LINE, StepRequest.STEP_INTO);
 					sr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-					
 					for(String ex: excludes){
 						sr.addClassExclusionFilter(ex);
 					}
-//					sr.addClassFilter(refType);
 					sr.enable();
-					
-					/**
-					 * add method enter and exit event
-					 */
 					addMethodWatch(erm);
 				}
 				if (event instanceof VMDeathEvent
@@ -205,21 +239,13 @@ public class TestcasesExecutor{
 					stop = true;
 					break;
 				} else if (event instanceof ClassPrepareEvent) {
-					// add breakpoint watch on loaded class
+					/** add breakpoint watch on loaded class */
 					ClassPrepareEvent classPrepEvent = (ClassPrepareEvent) event;
 					handleClassPrepareEvent(vm, classPrepEvent);
-					/* add breakpoint request */
+					/** add breakpoint request */
 					ReferenceType refType = classPrepEvent.referenceType();
-					// breakpoints
 					addBreakpointWatch(vm, refType, locBrpMap);
-					
 				} else if (event instanceof BreakpointEvent) {
-//					BreakpointEvent bkpEvent = (BreakpointEvent) event;
-//					BreakPoint bkp = locBrpMap.get(bkpEvent.location().toString());
-//					
-//					if(bkp != null){
-//						handleBreakpointEvent(bkp, vm, bkpEvent.thread(), bkpEvent.location());
-//					}			
 				} else if(event instanceof StepEvent){
 					Location loc = ((StepEvent) event).location();
 					/**
@@ -234,15 +260,44 @@ public class TestcasesExecutor{
 					
 					BreakPoint bkp = locBrpMap.get(loc.toString());
 					if(bkp != null){
-						handleBreakpointEvent(bkp, vm, ((StepEvent) event).thread(), loc);
+						TraceNode node = handleBreakpointEvent(bkp, vm, ((StepEvent) event).thread(), loc);
+						/**
+						 * set step over previous/next node
+						 */
+						if(node != null && lastestPopedOutMethodNode != null){
+							lastestPopedOutMethodNode.setStepOverNext(node);
+							node.setStepOverPrevious(lastestPopedOutMethodNode);
+							lastestPopedOutMethodNode = null;
+						}
 						lastSteppingPoint = bkp;
+						isLastStepEventRecordNode = true;
+					}
+					else{
+						isLastStepEventRecordNode = false;
 					}
 				} else if(event instanceof MethodEntryEvent){
-					MethodEntryEvent mee = (MethodEntryEvent)event;
-					//System.out.println("enter: " + mee.method().toString());
+					if(isLastStepEventRecordNode){
+						MethodEntryEvent mee = (MethodEntryEvent)event;
+						Method method = mee.method();
+//						System.out.println("enter:" + method.toString());
+						
+						TraceNode lastestNode = this.trace.getLastestNode();
+						this.methodNodeStack.push(lastestNode);
+						this.methodStack.push(method);
+					}
 				} else if (event instanceof MethodExitEvent){
 					MethodExitEvent mee = (MethodExitEvent)event;
-					//System.out.println("leave: " + mee.method().toString());
+					Method method = mee.method();
+					if(!this.methodStack.isEmpty()){
+						Method mInStack = this.methodStack.peek();
+						if(method.equals(mInStack)){
+//							System.out.println("exit:" + mee.method().toString());
+							
+							TraceNode node = this.methodNodeStack.pop();
+							this.lastestPopedOutMethodNode = node;
+							this.methodStack.pop();					
+						}						
+					}
 				}
 			}
 			eventSet.resume();
@@ -256,6 +311,9 @@ public class TestcasesExecutor{
 		afterDebugging();
 	}
 	
+	/**
+	 * add method enter and exit event
+	 */
 	private void addMethodWatch(EventRequestManager erm) {
 		MethodEntryRequest menr = erm.createMethodEntryRequest();
 		for(String classPattern: excludes){
@@ -329,6 +387,10 @@ public class TestcasesExecutor{
 		return null;
 	}
 	
+	/**
+	 * add junit relevant classes into VM configuration
+	 * @throws SavException
+	 */
 	private final void beforeDebugging() throws SavException {
 		testIdx = 0;
 		junitLoc = null;
@@ -358,17 +420,20 @@ public class TestcasesExecutor{
 		} 
 	}
 	
-	private final void handleBreakpointEvent(BreakPoint bkp, VirtualMachine vm,
-			/*BreakpointEvent bkpEvent*/ThreadReference thread, Location loc) throws SavException {
+	private TraceNode handleBreakpointEvent(BreakPoint bkp, VirtualMachine vm,
+			ThreadReference thread, Location loc) throws SavException {
+		TraceNode node = null;
 		try {
 			if (areLocationsEqual(loc, junitLoc)) {
 				onEnterTestcase(testIdx++);
 			} else {
-				onEnterBreakpoint(bkp, thread, loc);
+				node = onEnterBreakpoint(bkp, thread, loc);
 			}
 		} catch (AbsentInformationException e) {
 			log.error(e.getMessage());
 		}
+		
+		return node;
 	}
 	
 //	protected void handleMethodEntry
@@ -419,11 +484,20 @@ public class TestcasesExecutor{
 		currentTestBkpValues = CollectionUtils.getListInitIfEmpty(bkpValsByTestIdx, testIdx);
 	}
 
-	private void onEnterBreakpoint(BreakPoint bkp, ThreadReference thread, Location loc) throws SavException {
+	private TraceNode onEnterBreakpoint(BreakPoint bkp, ThreadReference thread, Location loc) throws SavException {
 		BreakPointValue bkpVal = extractValuesAtLocation(bkp, thread, loc);
 		//replace existing one with the new one
 		addToCurrentValueList(currentTestBkpValues, bkpVal);
-		collectTrace(bkp, bkpVal);
+		
+		TraceNode node = collectTrace(bkp, bkpVal);
+		
+		if(!this.methodNodeStack.isEmpty()){
+			TraceNode parentInvocationNode = this.methodNodeStack.peek();
+			parentInvocationNode.addInvocationChild(node);
+			node.setInvocationParent(parentInvocationNode);
+		}
+		
+		return node;
 	}
 	
 	private void onCollectValueOfPreviousStep(BreakPoint currentPosition, 
@@ -436,10 +510,23 @@ public class TestcasesExecutor{
 		node.addAfterExectionValue(bkpVal);
 	}
 
-	private void collectTrace(BreakPoint bkp, BreakPointValue bkpVal) {
+	private TraceNode collectTrace(BreakPoint bkp, BreakPointValue bkpVal) {
 		int order = trace.size() + 1;
 		TraceNode node = new TraceNode(bkp, bkpVal, order);
+		
+		TraceNode stepInPrevious = null;
+		if(order >= 2){
+			stepInPrevious = trace.getExectionList().get(order-2);
+		}
+		
+		node.setStepInPrevious(stepInPrevious);
+		if(stepInPrevious != null){
+			stepInPrevious.setStepInNext(node);			
+		}
+		
 		trace.addTraceNode(node);
+		
+		return node;
 	}
 
 	private void onFinish(JunitResult jResult) {

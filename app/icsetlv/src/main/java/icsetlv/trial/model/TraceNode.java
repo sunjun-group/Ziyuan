@@ -1,6 +1,10 @@
 package icsetlv.trial.model;
 
 import icsetlv.common.dto.BreakPointValue;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import sav.strategies.dto.BreakPoint;
 
 public class TraceNode {
@@ -18,12 +22,46 @@ public class TraceNode {
 	 * indicate whether this node has been marked correct/incorrect by user
 	 */
 	private Boolean markedCorrrect;
+	
+	
+	private TraceNode stepInNext;
+	private TraceNode stepInPrevious;
+	
+	private TraceNode stepOverNext;
+	private TraceNode stepOverPrevious;
+	
+	private List<TraceNode> invocationChildren = new ArrayList<>();
+	private TraceNode invocationParent;
 
 	public TraceNode(BreakPoint breakPoint, BreakPointValue programState, int order) {
 		super();
 		this.breakPoint = breakPoint;
 		this.programState = programState;
 		this.order = order;
+	}
+	
+	public String toString(){
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(getClassName());
+		buffer.append(": line ");
+		buffer.append(getLineNumber());
+		
+		String methodName = this.breakPoint.getMethodName();
+		if(methodName != null){
+			buffer.append(" in ");
+			buffer.append(methodName);
+			buffer.append("(...)");
+		}
+	
+		return buffer.toString();
+	}
+	
+	public String getClassName(){
+		return this.breakPoint.getClassCanonicalName();
+	}
+	
+	public int getLineNumber(){
+		return this.breakPoint.getLineNo();
 	}
 
 	public BreakPoint getBreakPoint() {
@@ -70,6 +108,57 @@ public class TraceNode {
 		this.afterState = afterState;
 	}
 
+	public TraceNode getStepInNext() {
+		return stepInNext;
+	}
+
+	public void setStepInNext(TraceNode stepInNext) {
+		this.stepInNext = stepInNext;
+	}
+
+	public TraceNode getStepInPrevious() {
+		return stepInPrevious;
+	}
+
+	public void setStepInPrevious(TraceNode stepInPrevious) {
+		this.stepInPrevious = stepInPrevious;
+	}
+
+	public TraceNode getStepOverNext() {
+		return stepOverNext;
+	}
+
+	public void setStepOverNext(TraceNode stepOverNext) {
+		this.stepOverNext = stepOverNext;
+	}
+
+	public TraceNode getStepOverPrevious() {
+		return stepOverPrevious;
+	}
+
+	public void setStepOverPrevious(TraceNode stepOverPrevious) {
+		this.stepOverPrevious = stepOverPrevious;
+	}
+
+	public List<TraceNode> getInvocationChildren() {
+		return invocationChildren;
+	}
+
+	public void setInvocationChildren(List<TraceNode> invocationChildren) {
+		this.invocationChildren = invocationChildren;
+	}
+
+	public void addInvocationChild(TraceNode node){
+		this.invocationChildren.add(node);
+	}
+
+	public TraceNode getInvocationParent() {
+		return invocationParent;
+	}
+
+	public void setInvocationParent(TraceNode invocationParent) {
+		this.invocationParent = invocationParent;
+	}
 	
 	
 }
