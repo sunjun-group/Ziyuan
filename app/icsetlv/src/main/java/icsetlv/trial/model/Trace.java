@@ -43,9 +43,9 @@ public class Trace {
 	}
 	
 	public TraceNode getLastestNode(){
-		int len = size() - 1;
+		int len = size();
 		if(len > 0){
-			return this.exectionList.get(len);
+			return this.exectionList.get(len-1);
 		}
 		else{
 			return null;
