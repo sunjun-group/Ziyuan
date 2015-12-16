@@ -6,10 +6,18 @@ import icsetlv.trial.model.TraceNode;
 import java.util.ArrayList;
 import java.util.List;
 
+import microbat.model.InterestedVariable;
+import microbat.util.Settings;
+
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -29,6 +37,7 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.dto.execute.value.ArrayValue;
 import sav.strategies.dto.execute.value.ExecValue;
@@ -38,15 +47,26 @@ import sav.strategies.dto.execute.value.ReferenceValue;
 
 public class DebugFeedbackView extends ViewPart {
 
+	private TraceNode node;
 	private Boolean isCorrect;
 	
 	public static final String INPUT = "input";
 	public static final String OUTPUT = "output";
 	public static final String STATE = "state";
 	
-	private Tree inputTree;
-	private Tree outputTree;
-	private Tree stateTree;
+	/**
+	 * Here, the 0th element indicates input; 1st element indicates output; and 2nd element 
+	 * indicates state.
+	 */
+	private CheckboxTreeViewer[] treeViewerList = new CheckboxTreeViewer[3];
+	
+//	private Tree inputTree;
+//	private Tree outputTree;
+//	private Tree stateTree;
+//	
+//	private CheckboxTreeViewer inputTreeViewer;
+//	private CheckboxTreeViewer outputTreeViewer;
+//	private CheckboxTreeViewer stateTreeViewer;
 	
 	private Button yesButton;
 	private Button noButton;
@@ -55,16 +75,19 @@ public class DebugFeedbackView extends ViewPart {
 	}
 	
 	public void refresh(TraceNode node){
+		this.node = node;
+		
 		BreakPointValue thisState = node.getProgramState();
 		BreakPointValue afterState = node.getAfterState();
 		
-		createVariableViewContent(inputTree, thisState, node.getBreakPoint().getReadVariables());
-		createVariableViewContent(outputTree, afterState, node.getBreakPoint().getWrittenVariables());
-		createVariableViewContent(stateTree, thisState, null);
+		createVariableViewContent(this.treeViewerList[0], thisState, node.getBreakPoint().getReadVariables());
+		createVariableViewContent(this.treeViewerList[1], afterState, node.getBreakPoint().getWrittenVariables());
+		createVariableViewContent(this.treeViewerList[2], thisState, null);
 		
 		yesButton.setSelection(false);
 		noButton.setSelection(false);
 		isCorrect = null;
+		
 	}
 	
 	
@@ -88,8 +111,8 @@ public class DebugFeedbackView extends ViewPart {
 		return false;
 	}
 
-	private void createVariableViewContent(Tree tree, BreakPointValue value, List<Variable> criteria){
-		TreeViewer viewer = new TreeViewer(tree);
+	private void createVariableViewContent(CheckboxTreeViewer viewer, BreakPointValue value, List<Variable> criteria){
+//		TreeViewer viewer = new TreeViewer(tree);
 		viewer.setContentProvider(new VariableContentProvider());
 		viewer.setLabelProvider(new VariableLabelProvider());
 		
@@ -102,8 +125,61 @@ public class DebugFeedbackView extends ViewPart {
 			newValue.setChildren(elements);
 			viewer.setInput(newValue);
 		}
+		
+		viewer.setCheckStateProvider(new VariableCheckStateProvider());
+		viewer.refresh(true);
+		
+		addListener(viewer);
 	}
 	
+	private void addListener(final CheckboxTreeViewer viewer) {
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				
+			}
+		});
+		
+		
+		viewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				Object obj = event.getElement();
+				if(obj instanceof ExecValue){
+					ExecValue value = (ExecValue)obj;
+					boolean isChecked = viewer.getChecked(value);
+					
+					BreakPoint point = node.getBreakPoint();
+					InterestedVariable iVar = new InterestedVariable(point.getClassCanonicalName(), 
+							point.getLineNo(), value.getVarId());
+					if(isChecked){
+						if(!Settings.interestedVariables.contains(iVar)){
+							Settings.interestedVariables.add(iVar);							
+						}
+					}
+					else{
+						Settings.interestedVariables.remove(iVar);
+					}
+					
+					for(CheckboxTreeViewer cbv: treeViewerList){
+						if(cbv != null){
+							BreakPointValue parent = (BreakPointValue) cbv.getInput();
+							ExecValue targetObj = parent.findVariableById(value.getVarId());
+							
+							if(targetObj != null){
+								cbv.setCheckStateProvider(new VariableCheckStateProvider());
+								cbv.refresh();						
+							}
+						}
+						
+					}
+				}
+				
+			}
+		});
+	}
+
 	@Override
 	public void createPartControl(Composite parent) {
 		GridLayout parentLayout = new GridLayout(1, true);
@@ -129,14 +205,14 @@ public class DebugFeedbackView extends ViewPart {
 		varGroup.setText(groupName);
 		varGroup.setLayout(new FillLayout());
 
-		Tree tree = new Tree(varGroup, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);		
+		Tree tree = new Tree(varGroup, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.CHECK);		
 		tree.setHeaderVisible(true);
 		tree.setLinesVisible(true);
 
 		TreeColumn typeColumn = new TreeColumn(tree, SWT.LEFT);
 		typeColumn.setAlignment(SWT.LEFT);
 		typeColumn.setText("Variable Type");
-		typeColumn.setWidth(100);
+		typeColumn.setWidth(150);
 		
 		TreeColumn nameColumn = new TreeColumn(tree, SWT.LEFT);
 		nameColumn.setAlignment(SWT.LEFT);
@@ -149,13 +225,13 @@ public class DebugFeedbackView extends ViewPart {
 		valueColumn.setWidth(300);
 
 		if(type.equals(INPUT)){
-			this.inputTree = tree;
+			this.treeViewerList[0] = new CheckboxTreeViewer(tree);
 		}
 		else if(type.equals(OUTPUT)){
-			this.outputTree = tree;
+			this.treeViewerList[1] = new CheckboxTreeViewer(tree);
 		}
 		else if(type.equals(STATE)){
-			this.stateTree = tree;
+			this.treeViewerList[2] = new CheckboxTreeViewer(tree);
 		}
 	}
 
@@ -316,6 +392,34 @@ public class DebugFeedbackView extends ViewPart {
 				}
 			}
 			return null;
+		}
+		
+	}
+	
+	class VariableCheckStateProvider implements ICheckStateProvider{
+
+		@Override
+		public boolean isChecked(Object element) {
+			if(element instanceof ExecValue){
+				ExecValue value = (ExecValue)element;
+				String varId = value.getVarId();
+				
+				if(node != null){
+					BreakPoint point = node.getBreakPoint();
+					InterestedVariable iVar = new InterestedVariable(point.getClassCanonicalName(), 
+							point.getLineNo(), varId);
+					
+					if(Settings.interestedVariables.contains(iVar)){
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public boolean isGrayed(Object element) {
+			return false;
 		}
 		
 	}
