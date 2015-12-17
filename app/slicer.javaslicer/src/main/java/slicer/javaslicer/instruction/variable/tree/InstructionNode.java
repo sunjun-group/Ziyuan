@@ -20,12 +20,21 @@ import de.unisb.cs.st.javaslicer.variables.Variable;
 
 
 /**
- * @author LLT
+ * @author LLT, commented by Yun Lin.
  *
  */
 public class InstructionNode {
+	/**
+	 * Based on the observation, <code>firstPopStackIdx</code> is the smallest stack index of all the input instruction.
+	 */
 	private int firstPopStackIdx = Integer.MAX_VALUE;
+	/**
+	 * the dominant instructions of this instruction. Each input is identified by its stack index.
+	 */
 	private Map<Integer, InstructionNode> input;
+	/**
+	 * Based on my observation, output is itself.
+	 */
 	private List<InstructionNode> output;
 	private InstructionInstance instrInst;
 	private InstructionHandler instrHandler;
@@ -85,6 +94,12 @@ public class InstructionNode {
 		return instrHandler.getOutput(this, stackIdx - firstPopStackIdx);
 	}
 
+	/**
+	 * Based my observation, this method just retrieve all its input instructions<br>
+	 * 
+	 * @param node
+	 * @return
+	 */
 	public List<InstructionNode> getTraverseNodes() {
 		return instrHandler.getTraverseNodes(this);
 	}

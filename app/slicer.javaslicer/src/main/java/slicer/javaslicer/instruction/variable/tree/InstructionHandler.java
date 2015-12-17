@@ -37,6 +37,19 @@ public abstract class InstructionHandler {
 		return new SimpleInstrHandler();
 	}
 	
+	/**
+	 * My guess, stuck entries are temporary variables used for performing certain source code statement.
+	 * They cannot correspond to some defined variables in Local Variable Table.
+	 * 
+	 * Therefore, the link between an input instruction and an output instruction means that these two instructions
+	 * are associated to perform a single statement in source code, and the output instruction consumes the outcome
+	 * of the input instruction.
+	 * 
+	 * @param from
+	 * @param to
+	 * @param variable
+	 * @return
+	 */
 	public boolean addLink(InstructionNode from,
 			InstructionNode to, Variable variable) {
 		boolean linked = false;
@@ -66,6 +79,13 @@ public abstract class InstructionHandler {
 		this.treeContext = treeContext;
 	}
 	
+	/**
+	 * Based my observation, this method just retrieve all the input instructions of the given
+	 * node <code>node</code><br>
+	 * 
+	 * @param node
+	 * @return
+	 */
 	public final List<InstructionNode> getTraverseNodes(InstructionNode node) {
 		if (node.getInputSize() == 0) {
 			return Collections.emptyList();

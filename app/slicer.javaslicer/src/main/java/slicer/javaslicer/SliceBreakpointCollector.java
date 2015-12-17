@@ -53,13 +53,13 @@ public class SliceBreakpointCollector implements SliceVisitor {
 		if (isAccepted(toInstr)) {
 			
 			String locId = InstructionUtils.getLocationId(toInstr);
-			if(locId.contains("15")){
+			if(locId.contains("36")){
 				System.currentTimeMillis();
 			}
 			
-			if(to.getInstruction().getType() != InstructionType.METHODINVOCATION){
+//			if(to.getInstruction().getType() != InstructionType.METHODINVOCATION){
 				buildRWRelations(from, to, variable);				
-			}
+//			}
 			
 			BreakPoint bkp = null;
 			if (curBkp != null && curBkp.getId().equals(locId)) {
@@ -69,6 +69,10 @@ public class SliceBreakpointCollector implements SliceVisitor {
 				if (bkp == null) {
 					bkp = InstructionUtils.getBreakpoint(toInstr);
 					bkpMap.put(locId, bkp);
+				}
+				
+				if(curBkp != null && curBkp.getLineNo() == 36){
+					System.currentTimeMillis();
 				}
 				
 				submitVariables(instContext, curBkp);
@@ -183,7 +187,7 @@ public class SliceBreakpointCollector implements SliceVisitor {
 	@Override
 	public final void visitSliceDependence(InstructionInstance from,
 			InstructionInstance to, de.unisb.cs.st.javaslicer.variables.Variable variable, int distance) {
-		
+
 		add(from, to, variable);
 	}
 

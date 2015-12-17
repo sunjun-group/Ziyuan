@@ -47,6 +47,7 @@ public class InstructionContext implements IVariableCollectorContext, ITreeConte
 	 */
 	private String locId;
 	private Map<Instruction, InstructionNode> instrMap;
+
 	private Set<InstructionNode> varTreeRoots;
 	private Map<InstructionType, InstructionHandler> instrHandlers;
 	private InstVariableContext instVarContext;
@@ -144,6 +145,10 @@ public class InstructionContext implements IVariableCollectorContext, ITreeConte
 	public List<BreakPoint.Variable> getVariables() {
 		instVarContext.startContext();
 		for (InstructionNode root : varTreeRoots) {
+			if(root.getInput() != null){
+				System.currentTimeMillis();
+			}
+			
 			traverseTree(root);
 		}
 		List<BreakPoint.Variable> bkpVars = instVarContext.getVariables();
@@ -160,9 +165,9 @@ public class InstructionContext implements IVariableCollectorContext, ITreeConte
 		}
 		
 		instVarContext.accessInstruction(instruction, info);
-		List<InstructionNode> children = node.getTraverseNodes();
-		for (InstructionNode child : children) {
-			traverseTree(child);
+		List<InstructionNode> inputNodes = node.getTraverseNodes();
+		for (InstructionNode input : inputNodes) {
+			traverseTree(input);
 		}
 	}
 	

@@ -149,24 +149,24 @@ public class StartDebugHandler extends AbstractHandler {
 			
 			List<String> classScope = Arrays.asList("com.Main", "com.Tag");
 			List<BreakPoint> breakpoints = dynamicSlicing(assertionPoints, classScope, tests);
+			
+			System.currentTimeMillis();
+			
 //			List<BreakPoint> breakpoints = testSlicing();
 			
 			tcExecutor.setup(appClasspath, tests);
 			tcExecutor.run(breakpoints);
-			//List<BreakpointData> result = tcExecutor.getResult();
-			//System.out.println(result);
 			
 			Trace trace = tcExecutor.getTrace();
 			Activator.getDefault().setCurrentTrace(trace);
 			
 			updateViews();
 			
-			//System.currentTimeMillis();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		} catch (SavException e) {
+		} /*catch (SavException e) {
 			e.printStackTrace();
-		} catch (Exception e) {
+		} */catch (Exception e) {
 			e.printStackTrace();
 		}
 		

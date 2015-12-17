@@ -282,6 +282,7 @@ public class TestcasesExecutor{
 //						System.out.println("enter:" + method.toString());
 						
 						TraceNode lastestNode = this.trace.getLastestNode();
+						
 						this.methodNodeStack.push(lastestNode);
 						this.methodStack.push(method);
 					}

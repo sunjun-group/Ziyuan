@@ -17,7 +17,7 @@ import sav.common.core.SystemVariables;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.common.VarInheritCustomizer.InheritType;
 import sav.strategies.dto.BreakPoint;
-import slicer.javaslicer.testdata.SliceCollectorTestdata2;
+import slicer.javaslicer.testdata.SliceCollectorTestdata;
 
 /**
  * @author LLT
@@ -47,25 +47,25 @@ public class SliceCollectorTest extends AbstractJavaSlicerTest {
 	
 	@Test
 	public void testSampleProgram() throws Exception {
-//		String targetClass = SliceCollectorTestdata.class.getName();
-//		String testClass = SliceCollectorTestdata.class.getName();
-////		BreakPoint bkp = new BreakPoint(testClass, "testSum", 58);
-//		BreakPoint bkp = new BreakPoint(testClass, "getSum", 45);
-//		List<BreakPoint> breakpoints = Arrays.asList(bkp);
-//		analyzedClasses = Arrays.asList(targetClass);
-//		testClassMethods = JunitUtils.extractTestMethods(Arrays
-//				.asList(testClass), null);
-//		run(breakpoints);
-		
-		String targetClass = SliceCollectorTestdata2.class.getName();
-		String testClass = SliceCollectorTestdata2.class.getName();
+		String targetClass = SliceCollectorTestdata.class.getName();
+		String testClass = SliceCollectorTestdata.class.getName();
 //		BreakPoint bkp = new BreakPoint(testClass, "testSum", 58);
-		BreakPoint bkp = new BreakPoint(testClass, "removeTag", 26);
+		BreakPoint bkp = new BreakPoint(testClass, "getSum", 45);
 		List<BreakPoint> breakpoints = Arrays.asList(bkp);
 		analyzedClasses = Arrays.asList(targetClass);
 		testClassMethods = JunitUtils.extractTestMethods(Arrays
 				.asList(testClass), null);
 		run(breakpoints);
+		
+//		String targetClass = SliceCollectorTestdata2.class.getName();
+//		String testClass = SliceCollectorTestdata2.class.getName();
+////		BreakPoint bkp = new BreakPoint(testClass, "testSum", 58);
+//		BreakPoint bkp = new BreakPoint(testClass, "removeTag", 26);
+//		List<BreakPoint> breakpoints = Arrays.asList(bkp);
+//		analyzedClasses = Arrays.asList(targetClass);
+//		testClassMethods = JunitUtils.extractTestMethods(Arrays
+//				.asList(testClass), null);
+//		run(breakpoints);
 		
 	}
 }
