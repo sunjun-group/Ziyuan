@@ -11,7 +11,8 @@ public class TraceNode {
 	
 	private BreakPoint breakPoint;
 	private BreakPointValue programState;
-	private BreakPointValue afterState;
+	private BreakPointValue afterStepInState;
+	private BreakPointValue afterStepOverState;
 	
 	/**
 	 * the order of this node in the whole trace
@@ -96,17 +97,19 @@ public class TraceNode {
 		this.markedCorrrect = markedCorrrect;
 	}
 
-	public void addAfterExectionValue(BreakPointValue bkpVal) {
-		this.afterState = bkpVal;
-	}
-
 	public BreakPointValue getAfterState() {
-		return afterState;
+		if(this.afterStepOverState != null){
+			return this.afterStepOverState;
+		}
+		else{
+			return afterStepInState;			
+		}
+		
 	}
-
-	public void setAfterState(BreakPointValue afterState) {
-		this.afterState = afterState;
-	}
+//
+//	public void setAfterState(BreakPointValue afterState) {
+//		this.afterStepInState = afterState;
+//	}
 
 	public TraceNode getStepInNext() {
 		return stepInNext;
@@ -158,6 +161,22 @@ public class TraceNode {
 
 	public void setInvocationParent(TraceNode invocationParent) {
 		this.invocationParent = invocationParent;
+	}
+
+	public BreakPointValue getAfterStepInState() {
+		return afterStepInState;
+	}
+
+	public void setAfterStepInState(BreakPointValue afterStepInState) {
+		this.afterStepInState = afterStepInState;
+	}
+
+	public BreakPointValue getAfterStepOverState() {
+		return afterStepOverState;
+	}
+
+	public void setAfterStepOverState(BreakPointValue afterStepOverState) {
+		this.afterStepOverState = afterStepOverState;
 	}
 	
 	

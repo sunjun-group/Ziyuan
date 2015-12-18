@@ -266,7 +266,10 @@ public class TestcasesExecutor{
 						 */
 						if(node != null && lastestPopedOutMethodNode != null){
 							lastestPopedOutMethodNode.setStepOverNext(node);
+							lastestPopedOutMethodNode.setAfterStepOverState(node.getProgramState());
+							
 							node.setStepOverPrevious(lastestPopedOutMethodNode);
+							
 							lastestPopedOutMethodNode = null;
 						}
 						lastSteppingPoint = bkp;
@@ -503,12 +506,17 @@ public class TestcasesExecutor{
 	
 	private void onCollectValueOfPreviousStep(BreakPoint currentPosition, 
 			ThreadReference thread, Location loc) throws SavException {
+		
+		if(currentPosition.getLineNo() == 36){
+			System.currentTimeMillis();
+		}
+		
 		BreakPointValue bkpVal = extractValuesAtLocation(currentPosition, thread, loc);
 		
 		int len = trace.getExectionList().size();
 		TraceNode node = trace.getExectionList().get(len-1);
 		
-		node.addAfterExectionValue(bkpVal);
+		node.setAfterStepInState(bkpVal);
 	}
 
 	private TraceNode collectTrace(BreakPoint bkp, BreakPointValue bkpVal) {
@@ -688,7 +696,7 @@ public class TestcasesExecutor{
 		TraceNode lastNode = this.trace.getExectionList().get(len-1);
 		if(lastNode.getAfterState() == null){
 			BreakPointValue previousState = lastNode.getProgramState();
-			lastNode.setAfterState(previousState);
+			lastNode.setAfterStepInState(previousState);
 		}
 		
 		return trace;

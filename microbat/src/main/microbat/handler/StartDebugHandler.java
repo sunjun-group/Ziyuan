@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,8 +38,6 @@ import sav.commons.TestConfiguration;
 import sav.strategies.common.VarInheritCustomizer.InheritType;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.dto.BreakPoint.Variable;
-import sav.strategies.dto.BreakPoint.Variable.VarScope;
 import slicer.javaslicer.JavaSlicer;
 
 ;
@@ -75,32 +72,7 @@ public class StartDebugHandler extends AbstractHandler {
 		tcExecutor = new TestcasesExecutor(6);
 	}
 	
-	private List<BreakPoint> testSlicing(){
-		List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
-		String clazz = "com.Main";
-		
-		BreakPoint bkp3 = new BreakPoint(clazz, null, 12);
-		bkp3.addVars(new Variable("c"));
-		bkp3.addVars(new Variable("tag", "tag", VarScope.THIS));
-		bkp3.addVars(new Variable("output"));
-		bkp3.addVars(new Variable("i"));
-		
-//		BreakPoint bkp2 = new BreakPoint(clazz, null, 14);
-//		bkp2.addVars(new Variable("c"));
-//		bkp2.addVars(new Variable("tag", "tag", VarScope.THIS));
-//		bkp2.addVars(new Variable("output"));
-//		
-//		BreakPoint bkp1 = new BreakPoint(clazz, null, 17);
-//		bkp1.addVars(new Variable("c"));
-//		bkp1.addVars(new Variable("tag", "tag", VarScope.THIS));
-//		bkp1.addVars(new Variable("output"));
-		
-		breakpoints.add(bkp3);
-//		breakpoints.add(bkp2);
-//		breakpoints.add(bkp1);
-		
-		return breakpoints;
-	}
+
 	
 	private List<BreakPoint> dynamicSlicing(List<BreakPoint> startPoint, List<String> classScope, List<String> testMethods){
 		JavaSlicer slicer = new JavaSlicer();
@@ -161,7 +133,6 @@ public class StartDebugHandler extends AbstractHandler {
 //					List<BreakPoint> breakpoints = testSlicing();
 					List<BreakPoint> breakpoints = dynamicSlicing(assertionPoints, classScope, tests);
 					monitor.worked(60);
-					
 					
 					tcExecutor.setup(appClasspath, tests);
 					try {
@@ -234,5 +205,32 @@ public class StartDebugHandler extends AbstractHandler {
 //		}
 //		
 //		return paths;
+//	}
+	
+//	private List<BreakPoint> testSlicing(){
+//		List<BreakPoint> breakpoints = new ArrayList<BreakPoint>();
+//		String clazz = "com.Main";
+//	
+//		BreakPoint bkp3 = new BreakPoint(clazz, null, 12);
+//		bkp3.addVars(new Variable("c"));
+//		bkp3.addVars(new Variable("tag", "tag", VarScope.THIS));
+//		bkp3.addVars(new Variable("output"));
+//		bkp3.addVars(new Variable("i"));
+//	
+//		BreakPoint bkp2 = new BreakPoint(clazz, null, 14);
+//		bkp2.addVars(new Variable("c"));
+//		bkp2.addVars(new Variable("tag", "tag", VarScope.THIS));
+//		bkp2.addVars(new Variable("output"));
+//	
+//		BreakPoint bkp1 = new BreakPoint(clazz, null, 17);
+//		bkp1.addVars(new Variable("c"));
+//		bkp1.addVars(new Variable("tag", "tag", VarScope.THIS));
+//		bkp1.addVars(new Variable("output"));
+//	
+//		breakpoints.add(bkp3);
+//		breakpoints.add(bkp2);
+//		breakpoints.add(bkp1);
+//	
+//		return breakpoints;
 //	}
 }

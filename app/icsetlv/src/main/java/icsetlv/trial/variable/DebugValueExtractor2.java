@@ -48,7 +48,6 @@ import com.sun.jdi.StringReference;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
-import com.sun.jdi.event.BreakpointEvent;
 @SuppressWarnings("restriction")
 public class DebugValueExtractor2 {
 	protected static Logger log = LoggerFactory.getLogger(DebugValueExtractor.class);

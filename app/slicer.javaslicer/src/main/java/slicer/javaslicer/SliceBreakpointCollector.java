@@ -57,9 +57,7 @@ public class SliceBreakpointCollector implements SliceVisitor {
 				System.currentTimeMillis();
 			}
 			
-//			if(to.getInstruction().getType() != InstructionType.METHODINVOCATION){
-				buildRWRelations(from, to, variable);				
-//			}
+			buildRWRelations(from, to, variable);				
 			
 			BreakPoint bkp = null;
 			if (curBkp != null && curBkp.getId().equals(locId)) {
