@@ -24,6 +24,11 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
 import sav.common.core.SavException;
@@ -130,7 +135,7 @@ public class StartDebugHandler extends AbstractHandler {
 		setup();
 		
 		List<String> junitClassNames = CollectionUtils.listOf("com.test.MainTest");
-		List<String> tests;
+		final List<String> tests;
 		try {
 			
 			File f0 = new File("F://workspace//runtime-debugging//Test//bin");
@@ -145,22 +150,48 @@ public class StartDebugHandler extends AbstractHandler {
 			tests = JunitUtils.extractTestMethods(junitClassNames, urlcl);
 			
 			BreakPoint ap = new BreakPoint("com.test.MainTest", "test", 17);
-			List<BreakPoint> assertionPoints = Arrays.asList(ap);
+			final List<BreakPoint> assertionPoints = Arrays.asList(ap);
 			
-			List<String> classScope = Arrays.asList("com.Main", "com.Tag");
-			List<BreakPoint> breakpoints = dynamicSlicing(assertionPoints, classScope, tests);
+			final List<String> classScope = Arrays.asList("com.Main", "com.Tag");
 			
-			System.currentTimeMillis();
-			
-//			List<BreakPoint> breakpoints = testSlicing();
-			
-			tcExecutor.setup(appClasspath, tests);
-			tcExecutor.run(breakpoints);
-			
-			Trace trace = tcExecutor.getTrace();
-			Activator.getDefault().setCurrentTrace(trace);
-			
-			updateViews();
+			Job job = new Job("Preparing for Debugging ...") {
+				
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+//					List<BreakPoint> breakpoints = testSlicing();
+					List<BreakPoint> breakpoints = dynamicSlicing(assertionPoints, classScope, tests);
+					monitor.worked(60);
+					
+					
+					tcExecutor.setup(appClasspath, tests);
+					try {
+						tcExecutor.run(breakpoints);
+					} catch (SavException e) {
+						e.printStackTrace();
+					}
+					
+					monitor.worked(40);
+					Trace trace = tcExecutor.getTrace();
+					Activator.getDefault().setCurrentTrace(trace);
+					
+					Display.getDefault().asyncExec(new Runnable(){
+						
+						@Override
+						public void run() {
+							try {
+								updateViews();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+						
+					});
+					
+					
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule();
 			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
