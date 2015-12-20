@@ -312,10 +312,12 @@ public class DebugValueExtractor2 {
 						sav.strategies.dto.execute.value.BooleanValue.of(varId, ((BooleanValue)value).booleanValue());
 				ele.setElementOfArray(isElementOfArray);
 				parent.add(ele);
+				ele.setParent(parent);
 			} else {
 				PrimitiveValue ele = new PrimitiveValue(varId, value.toString(), type.toString());
 				ele.setElementOfArray(isElementOfArray);
 				parent.add(ele);
+				ele.setParent(parent);
 			}
 		} else if (type instanceof ArrayType) { 
 			appendArrVarVal(parent, varId, isElementOfArray, (ArrayReference)value, level, thread);
@@ -327,6 +329,7 @@ public class DebugValueExtractor2 {
 				StringValue ele = new StringValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread));
 				ele.setElementOfArray(isElementOfArray);
 				parent.add(ele);
+				ele.setParent(parent);
 			} 
 			/**
 			 * if the class name is "Integer", "Float", ...
@@ -336,6 +339,7 @@ public class DebugValueExtractor2 {
 						(ObjectReference)value, thread), type.toString());
 				ele.setElementOfArray(isElementOfArray);
 				parent.add(ele);
+				ele.setParent(parent);
 			} 
 			/**
 			 * if the class is an arbitrary complicated class
@@ -373,6 +377,7 @@ public class DebugValueExtractor2 {
 	private void appendNullVarVal(ExecValue parent, String varId) {
 		ReferenceValue val = ReferenceValue.nullValue(varId);
 		parent.add(val);
+		val.setParent(parent);
 	}
 
 	/**
@@ -413,6 +418,7 @@ public class DebugValueExtractor2 {
 		}
 		
 		parent.add(val);
+		val.setParent(parent);
 	}
 
 	private void appendArrVarVal(ExecValue parent, String varId, boolean isElementOfArray,
@@ -433,6 +439,7 @@ public class DebugValueExtractor2 {
 		}
 		
 		parent.add(arrayVal);
+		arrayVal.setParent(parent);
 	}
 	/***/
 	protected StackFrame findFrameByLocation(List<StackFrame> frames,

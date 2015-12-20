@@ -17,6 +17,7 @@ import java.util.Set;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVarType;
+import sav.strategies.dto.execute.value.GraphNode;
 
 /**
  * @author LLT
@@ -117,5 +118,15 @@ public class BreakPointValue extends ExecValue {
 	@Override
 	public ExecVarType getType() {
 		return null;
+	}
+
+	@Override
+	public boolean match(GraphNode node) {
+		return true;
+	}
+	
+	@Override
+	public boolean isTheSameWith(GraphNode nodeAfter) {
+		return true;
 	}
 }

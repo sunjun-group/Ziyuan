@@ -13,15 +13,20 @@ import java.util.List;
 import java.util.Map;
 
 import sav.common.core.utils.CollectionUtils;
-import sav.strategies.dto.IExecValue;
 
 /**
  * @author LLT, modified by Yun Lin
  *
  */
-public abstract class ExecValue implements IExecValue {
+public abstract class ExecValue implements GraphNode{
+	
+	private boolean isVisited = false;
+	protected ExecValue parent;
+	/**
+	 * indicate a variable name
+	 */
 	protected String varId;
-	protected List<ExecValue> children;
+	protected List<ExecValue> children = new ArrayList<>();
 	
 	protected boolean isElementOfArray = false;
 	
@@ -32,6 +37,7 @@ public abstract class ExecValue implements IExecValue {
 		this.varId = id;
 	}
 	
+	@Override
 	public List<ExecValue> getChildren() {
 		return children;
 	}
@@ -137,6 +143,38 @@ public abstract class ExecValue implements IExecValue {
 
 	public void setElementOfArray(boolean isElementOfArray) {
 		this.isElementOfArray = isElementOfArray;
+	}
+	
+	
+	@Override
+	public boolean isVisited() {
+		return isVisited;
+	}
+
+	@Override
+	public void setVisited(boolean isVisited) {
+		this.isVisited = isVisited;
+	}
+	
+	@Override
+	public ExecValue getParent() {
+		return parent;
+	}
+
+	public void setParent(ExecValue parent) {
+		this.parent = parent;
+	}
+	
+	@Override
+	public boolean match(GraphNode node) {
+		if(node instanceof GraphNode){
+			ExecValue thatValue = (ExecValue)node;
+			if(thatValue.getVarId().equals(this.getVarId()) && 
+					thatValue.getType().equals(this.getType())){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public abstract ExecVarType getType();

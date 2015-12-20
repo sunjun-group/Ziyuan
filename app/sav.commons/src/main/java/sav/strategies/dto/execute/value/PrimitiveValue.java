@@ -15,7 +15,9 @@ package sav.strategies.dto.execute.value;
  *
  */
 public class PrimitiveValue extends ExecValue {
-	
+	/**
+	 * indicate the value in form of String
+	 */
 	private String strVal;
 	
 	private String primitiveType;
@@ -56,4 +58,25 @@ public class PrimitiveValue extends ExecValue {
 	public void setPrimitiveType(String type){
 		this.primitiveType = type;
 	}
+
+	@Override
+	public boolean isTheSameWith(GraphNode nodeAfter) {
+		if(nodeAfter instanceof PrimitiveValue){
+			PrimitiveValue pv = (PrimitiveValue)nodeAfter;
+			return this.getStrVal().equals(pv.getStrVal());
+		}
+		return false;
+	}
+
+//	@Override
+//	public boolean match(GraphNode node) {
+//		if(node instanceof PrimitiveValue){
+//			PrimitiveValue thatValue = (PrimitiveValue)node;
+//			if(thatValue.getPrimitiveType().equals(this.getPrimitiveType()) &&
+//					thatValue.getStrVal().equals(this.getStrVal())){
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 }

@@ -24,12 +24,17 @@ public class ReferenceValue extends ExecValue {
 
 	public ReferenceValue(String id, boolean isNull) {
 		super(id);
-		add(BooleanValue.of(getChildId(NULL_CODE), isNull));
+		BooleanValue child = BooleanValue.of(getChildId(NULL_CODE), isNull);
+		add(child);
+		child.setParent(this);
 	}
 	
 	public ReferenceValue(String id, boolean isNull, long referenceID, ClassType type) {
 		super(id);
-		add(BooleanValue.of(getChildId(NULL_CODE), isNull));
+		BooleanValue child = BooleanValue.of(getChildId(NULL_CODE), isNull);
+		add(child);
+		child.setParent(this);
+		
 		setReferenceID(referenceID);
 		setClassType(type);
 	}
@@ -74,4 +79,8 @@ public class ReferenceValue extends ExecValue {
 		return ExecVarType.REFERENCE;
 	}
 	
+	@Override
+	public boolean isTheSameWith(GraphNode nodeAfter) {
+		return true;
+	}
 }

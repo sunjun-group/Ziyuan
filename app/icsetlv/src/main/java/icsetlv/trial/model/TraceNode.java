@@ -5,6 +5,8 @@ import icsetlv.common.dto.BreakPointValue;
 import java.util.ArrayList;
 import java.util.List;
 
+import microbat.graphdiff.GraphDiff;
+import microbat.graphdiff.HierarchyGraphDiffer;
 import sav.strategies.dto.BreakPoint;
 
 public class TraceNode {
@@ -13,6 +15,8 @@ public class TraceNode {
 	private BreakPointValue programState;
 	private BreakPointValue afterStepInState;
 	private BreakPointValue afterStepOverState;
+	
+	private List<GraphDiff> consequences;
 	
 	/**
 	 * the order of this node in the whole trace
@@ -177,6 +181,24 @@ public class TraceNode {
 
 	public void setAfterStepOverState(BreakPointValue afterStepOverState) {
 		this.afterStepOverState = afterStepOverState;
+	}
+
+	public List<GraphDiff> getConsequences() {
+		return consequences;
+	}
+
+	public void setConsequences(List<GraphDiff> consequences) {
+		this.consequences = consequences;
+	}
+
+	public void conductStateDiff() {
+		BreakPointValue nodeBefore = getProgramState();
+		BreakPointValue nodeAfter = getAfterState();
+		
+		HierarchyGraphDiffer differ = new HierarchyGraphDiffer();
+		differ.diff(nodeBefore, nodeAfter);
+		List<GraphDiff> diffs = differ.getDiffs();
+		this.consequences = diffs;
 	}
 	
 	

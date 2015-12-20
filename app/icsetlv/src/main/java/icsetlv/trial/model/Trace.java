@@ -7,7 +7,7 @@ import sav.strategies.dto.BreakPoint;
 
 /**
  * This class stands for a trace for an execution
- * @author "linyun"
+ * @author Yun Lin
  *
  */
 public class Trace {
@@ -111,5 +111,13 @@ public class Trace {
 	private String combineTraceNodeExpression(String className, int lineNumber){
 		String exp = className + " line:" + lineNumber;
 		return exp;
+	}
+
+	public void conductStateDiff() {
+		for(int i=0; i<this.exectionList.size(); i++){
+			TraceNode node = this.exectionList.get(i);
+			node.conductStateDiff();
+		}
+		
 	}
 }

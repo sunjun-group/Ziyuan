@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Commons
 Bundle-SymbolicName: sav.commons
 Bundle-Version: 1.0.0.qualifier
-Export-Package: org.slf4j,
+Export-Package: microbat.graphdiff,
+ org.slf4j,
  sav.common.core,
  sav.common.core.formula,
  sav.common.core.formula.utils,
