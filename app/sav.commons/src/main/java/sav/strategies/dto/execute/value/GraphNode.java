@@ -13,8 +13,8 @@ public interface GraphNode {
 	 */
 	public boolean match(GraphNode node);
 	
-	public boolean isVisited();
-	public void setVisited(boolean isVisited);
+//	public boolean isVisited();
+//	public void setVisited(boolean isVisited);
 	
 	public boolean isTheSameWith(GraphNode nodeAfter);
 }

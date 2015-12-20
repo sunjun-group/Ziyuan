@@ -248,6 +248,8 @@ public class TestcasesExecutor{
 				} else if (event instanceof BreakpointEvent) {
 				} else if(event instanceof StepEvent){
 					Location loc = ((StepEvent) event).location();
+					
+					
 					/**
 					 * collect the variable values after executing previous step
 					 */
@@ -271,6 +273,7 @@ public class TestcasesExecutor{
 							node.setStepOverPrevious(lastestPopedOutMethodNode);
 							
 							lastestPopedOutMethodNode = null;
+							
 						}
 						lastSteppingPoint = bkp;
 						isLastStepEventRecordNode = true;

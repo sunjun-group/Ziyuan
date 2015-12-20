@@ -7,17 +7,16 @@ import sav.strategies.dto.execute.value.GraphNode;
 
 public class HierarchyGraphDiffer {
 	
+	private List<GraphNode> visitedPool = new ArrayList<>();
+	
 	class MatchingGraphPair{
 		private GraphNode nodeBefore;
 		private GraphNode nodeAfter;
-		
-//		private boolean isDiff;
 		
 		public MatchingGraphPair(GraphNode nodeBefore, GraphNode nodeAfter) {
 			super();
 			this.nodeBefore = nodeBefore;
 			this.nodeAfter = nodeAfter;
-//			this.isDiff = isDiff;
 		}
 		public GraphNode getNodeBefore() {
 			return nodeBefore;
@@ -31,12 +30,7 @@ public class HierarchyGraphDiffer {
 		public void setNodeAfter(GraphNode nodeAfter) {
 			this.nodeAfter = nodeAfter;
 		}
-//		public boolean isDiff() {
-//			return isDiff;
-//		}
-//		public void setDiff(boolean isDiff) {
-//			this.isDiff = isDiff;
-//		}
+
 		
 	}
 	
@@ -45,10 +39,6 @@ public class HierarchyGraphDiffer {
 	public void diff(GraphNode rootBefore, GraphNode rootAfter){
 		List<? extends GraphNode> childrenBefore = rootBefore.getChildren();
 		List<? extends GraphNode> childrenAfter = rootAfter.getChildren();
-		
-		if(rootBefore == null && rootAfter == null){
-			return;
-		}
 		
 		List<MatchingGraphPair> pairs = matchList(childrenBefore, childrenAfter);
 		
@@ -76,22 +66,22 @@ public class HierarchyGraphDiffer {
 		List<MatchingGraphPair> pairs = new ArrayList<>();
 		
 		for(GraphNode childBefore: childrenBefore){
-			if(!childBefore.isVisited()){
+			if(!isVisited(childBefore)){
 				/**
 				 * find a matchable node in <code>childrenAfter</code>
 				 */
 				GraphNode node = null;
 				for(GraphNode childAfter: childrenAfter){
-					if(!childAfter.isVisited() && childBefore.match(childAfter)){
+					if(!isVisited(childAfter) && childBefore.match(childAfter)){
 						node = childAfter;
 						break;
 					}
 				}
 				System.currentTimeMillis();
 				
-				childBefore.setVisited(true);
+				setVisited(childBefore);
 				if(node != null){
-					node.setVisited(true);
+					setVisited(node);
 				}
 				MatchingGraphPair pair = new MatchingGraphPair(childBefore, node);
 				pairs.add(pair);
@@ -100,14 +90,22 @@ public class HierarchyGraphDiffer {
 		
 		
 		for(GraphNode childAfter: childrenAfter){
-			if(!childAfter.isVisited()){
-				childAfter.setVisited(true);
+			if(!isVisited(childAfter)){
+				setVisited(childAfter);
 				MatchingGraphPair pair = new MatchingGraphPair(null, childAfter);
 				pairs.add(pair);
 			}
 		}
 		
 		return pairs;
+	}
+	
+	private boolean isVisited(GraphNode node){
+		return this.visitedPool.contains(node);
+	}
+	
+	private void setVisited(GraphNode node){
+		this.visitedPool.add(node);
 	}
 	
 	public List<GraphDiff> getDiffs(){

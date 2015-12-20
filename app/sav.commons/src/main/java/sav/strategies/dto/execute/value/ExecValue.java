@@ -20,7 +20,6 @@ import sav.common.core.utils.CollectionUtils;
  */
 public abstract class ExecValue implements GraphNode{
 	
-	private boolean isVisited = false;
 	protected ExecValue parent;
 	/**
 	 * indicate a variable name
@@ -143,17 +142,6 @@ public abstract class ExecValue implements GraphNode{
 
 	public void setElementOfArray(boolean isElementOfArray) {
 		this.isElementOfArray = isElementOfArray;
-	}
-	
-	
-	@Override
-	public boolean isVisited() {
-		return isVisited;
-	}
-
-	@Override
-	public void setVisited(boolean isVisited) {
-		this.isVisited = isVisited;
 	}
 	
 	@Override

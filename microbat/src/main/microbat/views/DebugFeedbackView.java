@@ -6,7 +6,7 @@ import icsetlv.trial.model.TraceNode;
 import java.util.ArrayList;
 import java.util.List;
 
-import microbat.graphdiff.HierarchyGraphDiffer;
+import microbat.graphdiff.GraphDiff;
 import microbat.model.InterestedVariable;
 import microbat.util.Settings;
 
@@ -81,8 +81,10 @@ public class DebugFeedbackView extends ViewPart {
 		BreakPointValue thisState = node.getProgramState();
 		BreakPointValue afterState = node.getAfterState();
 		
-		HierarchyGraphDiffer differ = new HierarchyGraphDiffer();
-		differ.diff(thisState, afterState);
+		List<GraphDiff> cons = node.getConsequences();
+		
+//		HierarchyGraphDiffer differ = new HierarchyGraphDiffer();
+//		differ.diff(thisState, afterState);
 		
 		createVariableViewContent(this.treeViewerList[0], thisState, node.getBreakPoint().getReadVariables());
 		createVariableViewContent(this.treeViewerList[1], afterState, node.getBreakPoint().getWrittenVariables());

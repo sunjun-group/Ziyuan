@@ -21,6 +21,23 @@ public class GraphDiff {
 		this.nodeAfter = nodeAfter;
 		
 	}
+	
+	public String toString(){
+		StringBuffer buffer = new StringBuffer();
+		String diffType = getDiffType();
+		buffer.append(diffType + ": ");
+		if(this.nodeBefore != null){
+			buffer.append(this.nodeBefore.toString());
+		}
+		if(diffType.equals(GraphDiff.UPDATE)){
+			buffer.append(" -> ");
+		}
+		if(this.nodeAfter != null){
+			buffer.append(this.nodeAfter.toString());
+		}
+		
+		return buffer.toString();
+	}
 
 	public String getDiffType(){
 		if(this.nodeBefore == null && this.nodeAfter != null){

@@ -195,6 +195,10 @@ public class TraceNode {
 		BreakPointValue nodeBefore = getProgramState();
 		BreakPointValue nodeAfter = getAfterState();
 		
+		if(getOrder() == 35){
+			System.currentTimeMillis();
+		}
+		
 		HierarchyGraphDiffer differ = new HierarchyGraphDiffer();
 		differ.diff(nodeBefore, nodeAfter);
 		List<GraphDiff> diffs = differ.getDiffs();
