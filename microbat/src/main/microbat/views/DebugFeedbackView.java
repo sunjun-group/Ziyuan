@@ -42,6 +42,7 @@ import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.dto.execute.value.ArrayValue;
 import sav.strategies.dto.execute.value.ExecValue;
+import sav.strategies.dto.execute.value.GraphNode;
 import sav.strategies.dto.execute.value.PrimitiveValue;
 import sav.strategies.dto.execute.value.ReferenceValue;
 
@@ -51,15 +52,15 @@ public class DebugFeedbackView extends ViewPart {
 	private TraceNode node;
 	private Boolean isCorrect;
 	
-	public static final String INPUT = "input";
-	public static final String OUTPUT = "output";
-	public static final String STATE = "state";
+//	public static final String INPUT = "input";
+//	public static final String OUTPUT = "output";
+//	public static final String STATE = "state";
 	
 	/**
 	 * Here, the 0th element indicates input; 1st element indicates output; and 2nd element 
 	 * indicates state.
 	 */
-	private CheckboxTreeViewer[] treeViewerList = new CheckboxTreeViewer[3];
+//	private CheckboxTreeViewer[] treeViewerList = new CheckboxTreeViewer[3];
 	
 //	private Tree inputTree;
 //	private Tree outputTree;
@@ -67,7 +68,8 @@ public class DebugFeedbackView extends ViewPart {
 //	
 //	private CheckboxTreeViewer inputTreeViewer;
 //	private CheckboxTreeViewer outputTreeViewer;
-//	private CheckboxTreeViewer stateTreeViewer;
+	private CheckboxTreeViewer stateTreeViewer;
+	private CheckboxTreeViewer consequenceTreeViewer;
 	
 	private Button yesButton;
 	private Button noButton;
@@ -79,16 +81,15 @@ public class DebugFeedbackView extends ViewPart {
 		this.node = node;
 		
 		BreakPointValue thisState = node.getProgramState();
-		BreakPointValue afterState = node.getAfterState();
+//		BreakPointValue afterState = node.getAfterState();
 		
 		List<GraphDiff> cons = node.getConsequences();
 		
 //		HierarchyGraphDiffer differ = new HierarchyGraphDiffer();
 //		differ.diff(thisState, afterState);
 		
-		createVariableViewContent(this.treeViewerList[0], thisState, node.getBreakPoint().getReadVariables());
-		createVariableViewContent(this.treeViewerList[1], afterState, node.getBreakPoint().getWrittenVariables());
-		createVariableViewContent(this.treeViewerList[2], thisState, null);
+		createConsequenceContent(this.consequenceTreeViewer, cons);
+		createStateContent(this.stateTreeViewer, thisState);
 		
 		yesButton.setSelection(false);
 		noButton.setSelection(false);
@@ -97,40 +98,21 @@ public class DebugFeedbackView extends ViewPart {
 	}
 	
 	
-	private List<ExecValue> filterVariable(BreakPointValue value, List<Variable> criteria){
-		ArrayList<ExecValue> list = new ArrayList<>();
-		for(ExecValue ev: value.getChildren()){
-			if(variableListContain(criteria, ev.getVarId())){
-				list.add(ev);
-			}
-		}
-		return list;
-	}
-	
-	private boolean variableListContain(List<Variable> variables,
-			String varId) {
-		for(Variable var: variables){
-			if(var.getId().equals(varId)){
-				return true;
-			}
-		}
-		return false;
+	private void createConsequenceContent(CheckboxTreeViewer viewer, List<GraphDiff> cons) {
+		viewer.setContentProvider(new ConsequenceContentProvider());
+		viewer.setLabelProvider(new ConsequenceLabelProvider());
+		viewer.setInput(cons);	
+		
+		viewer.setCheckStateProvider(new VariableCheckStateProvider());
+		viewer.refresh(true);
+		
+		addListener(viewer);
 	}
 
-	private void createVariableViewContent(CheckboxTreeViewer viewer, BreakPointValue value, List<Variable> criteria){
-//		TreeViewer viewer = new TreeViewer(tree);
+	private void createStateContent(CheckboxTreeViewer viewer, BreakPointValue value){
 		viewer.setContentProvider(new VariableContentProvider());
 		viewer.setLabelProvider(new VariableLabelProvider());
-		
-		if(criteria == null){
-			viewer.setInput(value);			
-		}
-		else{
-			List<ExecValue> elements = filterVariable(value, criteria);
-			BreakPointValue newValue = new BreakPointValue(value.getBkpId());
-			newValue.setChildren(elements);
-			viewer.setInput(newValue);
-		}
+		viewer.setInput(value);	
 		
 		viewer.setCheckStateProvider(new VariableCheckStateProvider());
 		viewer.refresh(true);
@@ -149,6 +131,7 @@ public class DebugFeedbackView extends ViewPart {
 		
 		
 		viewer.addCheckStateListener(new ICheckStateListener() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Object obj = event.getElement();
@@ -168,19 +151,26 @@ public class DebugFeedbackView extends ViewPart {
 						Settings.interestedVariables.remove(iVar);
 					}
 					
-					for(CheckboxTreeViewer cbv: treeViewerList){
-						if(cbv != null){
-							BreakPointValue parent = (BreakPointValue) cbv.getInput();
-							ExecValue targetObj = parent.findVariableById(value.getVarId());
-							
-							if(targetObj != null){
-								cbv.setCheckStateProvider(new VariableCheckStateProvider());
-								cbv.refresh();						
-							}
-						}
+					if(stateTreeViewer != null){
+						BreakPointValue parent = (BreakPointValue) stateTreeViewer.getInput();
+						ExecValue targetObj = parent.findVariableById(value.getVarId());
 						
+						if(targetObj != null){
+							stateTreeViewer.setCheckStateProvider(new VariableCheckStateProvider());
+							stateTreeViewer.refresh();						
+						}
 					}
 				}
+				else if(obj instanceof GraphDiff){
+					GraphDiff diff = (GraphDiff)obj;
+					
+					
+					
+					if(consequenceTreeViewer != null){
+						List<GraphDiff> conseq = (List<GraphDiff>) consequenceTreeViewer.getInput();
+					}
+				}
+				
 				
 			}
 		});
@@ -199,14 +189,15 @@ public class DebugFeedbackView extends ViewPart {
 		SashForm variableForm = new SashForm(parent, SWT.VERTICAL);
 		variableForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		createVarGroup(variableForm, "Read Variables: ", INPUT);
-		createVarGroup(variableForm, "Consequences: ", OUTPUT);
-		createVarGroup(variableForm, "State Variable: ", STATE);
+//		createVarGroup(variableForm, "Read Variables: ", INPUT);
+//		createVarGroup(variableForm, "Consequences: ", OUTPUT);
+		createConsequenceGroup(variableForm, "Consequences: ");
+		createVarGroup(variableForm, "States: ");
 
-		variableForm.setWeights(new int[] { 3, 3, 4 });
+		variableForm.setWeights(new int[] { 4, 6});
 	}
 
-	private void createVarGroup(SashForm variableForm, String groupName, String type) {
+	private void createVarGroup(SashForm variableForm, String groupName) {
 		Group varGroup = new Group(variableForm, SWT.NONE);
 		varGroup.setText(groupName);
 		varGroup.setLayout(new FillLayout());
@@ -218,27 +209,60 @@ public class DebugFeedbackView extends ViewPart {
 		TreeColumn typeColumn = new TreeColumn(tree, SWT.LEFT);
 		typeColumn.setAlignment(SWT.LEFT);
 		typeColumn.setText("Variable Type");
-		typeColumn.setWidth(150);
+		typeColumn.setWidth(100);
 		
 		TreeColumn nameColumn = new TreeColumn(tree, SWT.LEFT);
 		nameColumn.setAlignment(SWT.LEFT);
 		nameColumn.setText("Variable Name");
-		nameColumn.setWidth(150);
+		nameColumn.setWidth(100);
 		
 		TreeColumn valueColumn = new TreeColumn(tree, SWT.LEFT);
 		valueColumn.setAlignment(SWT.LEFT);
 		valueColumn.setText("Variable Value");
 		valueColumn.setWidth(300);
 
-		if(type.equals(INPUT)){
-			this.treeViewerList[0] = new CheckboxTreeViewer(tree);
-		}
-		else if(type.equals(OUTPUT)){
-			this.treeViewerList[1] = new CheckboxTreeViewer(tree);
-		}
-		else if(type.equals(STATE)){
-			this.treeViewerList[2] = new CheckboxTreeViewer(tree);
-		}
+		this.stateTreeViewer = new CheckboxTreeViewer(tree);
+//		if(type.equals(INPUT)){
+//			this.treeViewerList[0] = new CheckboxTreeViewer(tree);
+//		}
+//		else if(type.equals(OUTPUT)){
+//			this.treeViewerList[1] = new CheckboxTreeViewer(tree);
+//		}
+//		else if(type.equals(STATE)){
+//			this.treeViewerList[2] = new CheckboxTreeViewer(tree);
+//		}
+	}
+	
+	private void createConsequenceGroup(SashForm variableForm, String groupName) {
+		Group varGroup = new Group(variableForm, SWT.NONE);
+		varGroup.setText(groupName);
+		varGroup.setLayout(new FillLayout());
+
+		Tree tree = new Tree(varGroup, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.CHECK);		
+		tree.setHeaderVisible(true);
+		tree.setLinesVisible(true);
+
+		TreeColumn typeColumn = new TreeColumn(tree, SWT.LEFT);
+		typeColumn.setAlignment(SWT.LEFT);
+		typeColumn.setText("Variable Type");
+		typeColumn.setWidth(100);
+		
+		TreeColumn nameColumn = new TreeColumn(tree, SWT.LEFT);
+		nameColumn.setAlignment(SWT.LEFT);
+		nameColumn.setText("Variable Name");
+		nameColumn.setWidth(100);
+		
+		TreeColumn newValueColumn = new TreeColumn(tree, SWT.LEFT);
+		newValueColumn.setAlignment(SWT.LEFT);
+		newValueColumn.setText("New Value");
+		newValueColumn.setWidth(130);
+		
+		TreeColumn oldValueColumn = new TreeColumn(tree, SWT.LEFT);
+		oldValueColumn.setAlignment(SWT.LEFT);
+		oldValueColumn.setText("Old Value");
+		oldValueColumn.setWidth(130);
+		
+		this.consequenceTreeViewer = new CheckboxTreeViewer(tree);
 	}
 
 	private void createSubmitGroup(Composite parent) {
@@ -308,6 +332,157 @@ public class DebugFeedbackView extends ViewPart {
 	@Override
 	public void setFocus() {
 
+	}
+	
+	class ConsequenceContentProvider implements ITreeContentProvider{
+
+		@Override
+		public void dispose() {
+			
+		}
+
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Object[] getElements(Object inputElement) {
+			if(inputElement instanceof List){
+				List<GraphDiff> diffs = (List<GraphDiff>) inputElement;
+				Object[] elements = diffs.toArray(new GraphDiff[0]);
+				
+				return elements;
+			}
+			
+			return null;
+		}
+
+		@Override
+		public Object[] getChildren(Object parentElement) {
+			return null;
+		}
+
+		@Override
+		public Object getParent(Object element) {
+			return null;
+		}
+
+		@Override
+		public boolean hasChildren(Object element) {
+			return false;
+		}
+		
+	}
+	
+	class ConsequenceLabelProvider implements ITableLabelProvider{
+		public void addListener(ILabelProviderListener listener) {
+		}
+
+		public void dispose() {
+		}
+
+		public boolean isLabelProperty(Object element, String property) {
+			return false;
+		}
+
+		public void removeListener(ILabelProviderListener listener) {
+		}
+
+		public Image getColumnImage(Object element, int columnIndex) {
+			return null;
+		}
+		
+		@SuppressWarnings("restriction")
+		public String getColumnText(Object ele, int columnIndex) {
+			
+			if(ele instanceof GraphDiff){
+				GraphDiff diff = (GraphDiff)ele;
+				
+				ExecValue before = (ExecValue)diff.getNodeBefore();
+				ExecValue after = (ExecValue)diff.getNodeAfter();
+				
+				ExecValue element = (before != null) ? before : after;
+				if(element == null){
+					System.err.println("both before and empty of a diff are empty");
+					return null;
+				}
+				else{
+					if(element instanceof ReferenceValue){
+						ReferenceValue value = (ReferenceValue)element;
+						switch(columnIndex){
+						case 0: 
+							if(value.getClassType() != null){
+								return value.getClassType().name();						
+							}
+							else{
+								return "array";
+							}
+						case 1: return value.getVarId();
+						case 2: 
+							if(after != null){
+								return String.valueOf(((ReferenceValue)after).getReferenceID());
+							}
+							else{
+								return "NULL";
+							}
+						case 3: 
+							if(before != null){
+								return String.valueOf(((ReferenceValue)before).getReferenceID());
+							}
+							else{
+								return "NULL";
+							}
+						}
+					}
+					else if(element instanceof ArrayValue){
+						ArrayValue value = (ArrayValue)element;
+						switch(columnIndex){
+						case 0: return "array[" + value.getComponentType() + "]";
+						case 1: return value.getVarId();
+						case 2: 
+							if(after != null){
+								return String.valueOf(((ArrayValue)after).getReferenceID());
+							}
+							else{
+								return "NULL";
+							}
+						case 3: 
+							if(before != null){
+								return String.valueOf(((ArrayValue)before).getReferenceID());
+							}
+							else{
+								return "NULL";
+							}
+						}
+					}
+					else if(element instanceof PrimitiveValue){
+						PrimitiveValue value = (PrimitiveValue)element;
+						switch(columnIndex){
+						case 0: return value.getPrimitiveType();
+						case 1: return value.getVarId();
+						case 2: 
+							if(after != null){
+								return ((PrimitiveValue)after).getStrVal();
+							}
+							else{
+								return "NULL";
+							}
+						case 3: 
+							if(before != null){
+								return ((PrimitiveValue)before).getStrVal();
+							}
+							else{
+								return "NULL";
+							}
+						}
+					}
+				}
+			}
+			
+			return null;
+		}
 	}
 	
 	class VariableContentProvider implements ITreeContentProvider{
@@ -429,4 +604,24 @@ public class DebugFeedbackView extends ViewPart {
 		}
 		
 	}
+	
+//	private List<ExecValue> filterVariable(BreakPointValue value, List<Variable> criteria){
+//	ArrayList<ExecValue> list = new ArrayList<>();
+//	for(ExecValue ev: value.getChildren()){
+//		if(variableListContain(criteria, ev.getVarId())){
+//			list.add(ev);
+//		}
+//	}
+//	return list;
+//}
+
+//private boolean variableListContain(List<Variable> variables,
+//		String varId) {
+//	for(Variable var: variables){
+//		if(var.getId().equals(varId)){
+//			return true;
+//		}
+//	}
+//	return false;
+//}
 }

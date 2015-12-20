@@ -54,4 +54,22 @@ public class GraphDiff {
 			return null;
 		}
 	}
+
+	public GraphNode getNodeBefore() {
+		return nodeBefore;
+	}
+
+	public void setNodeBefore(GraphNode nodeBefore) {
+		this.nodeBefore = nodeBefore;
+	}
+
+	public GraphNode getNodeAfter() {
+		return nodeAfter;
+	}
+
+	public void setNodeAfter(GraphNode nodeAfter) {
+		this.nodeAfter = nodeAfter;
+	}
+	
+	
 }
