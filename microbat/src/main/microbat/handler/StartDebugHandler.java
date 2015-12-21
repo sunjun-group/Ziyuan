@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import microbat.Activator;
+import microbat.codeanalysis.LocalVariableScope;
+import microbat.codeanalysis.VariableScopeParser;
 import microbat.util.Settings;
 import microbat.views.MicroBatViews;
 import microbat.views.TraceView;
@@ -126,6 +128,8 @@ public class StartDebugHandler extends AbstractHandler {
 			
 			final List<String> classScope = Arrays.asList("com.Main", "com.Tag");
 			
+			parseLocalVariables(classScope);
+			
 			Job job = new Job("Preparing for Debugging ...") {
 				
 				@Override
@@ -174,6 +178,18 @@ public class StartDebugHandler extends AbstractHandler {
 		}
 		
 		return null;
+	}
+
+	/**
+	 * This method is used to build the scope of local variables.
+	 * @param classScope
+	 */
+	private void parseLocalVariables(final List<String> classScope) {
+		VariableScopeParser vsParser = new VariableScopeParser();
+		vsParser.parseLocalVariableScopes(classScope);
+		List<LocalVariableScope> lvsList = vsParser.getVariableScopeList();
+//		System.out.println(lvsList);
+		Settings.localVariableScopes.setVariableScopes(lvsList);
 	}
 	
 	private void updateViews() throws Exception{
