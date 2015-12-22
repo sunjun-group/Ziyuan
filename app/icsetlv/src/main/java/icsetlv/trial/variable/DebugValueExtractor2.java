@@ -410,6 +410,7 @@ public class DebugValueExtractor2 {
 		ReferenceValue val = this.objectPool.get(refID);
 		if(val == null){
 			val = new ReferenceValue(varId, false, refID, type, isRoot, isField, isStatic);	
+			val.setElementOfArray(isElementOfArray);
 			this.objectPool.put(refID, val);
 			
 			Map<Field, Value> fieldValueMap = objRef.getValues(type.allFields());
@@ -424,6 +425,15 @@ public class DebugValueExtractor2 {
 				}
 				
 			}
+		}
+		/**
+		 * handle the case of alias variable
+		 */
+		else if(!val.getVarId().equals(varId)){
+			ReferenceValue cachedValue = val;
+			val = new ReferenceValue(varId, false, refID, type, isRoot, isField, isStatic);	
+			val.setElementOfArray(isElementOfArray);
+			val.setChildren(cachedValue.getChildren());
 		}
 		
 		parent.add(val);

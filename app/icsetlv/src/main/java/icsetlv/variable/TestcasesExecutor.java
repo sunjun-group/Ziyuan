@@ -262,6 +262,10 @@ public class TestcasesExecutor{
 					
 					BreakPoint bkp = locBrpMap.get(loc.toString());
 					if(bkp != null){
+						if(loc.lineNumber() == 16){
+							System.currentTimeMillis();
+						}
+						
 						TraceNode node = handleBreakpointEvent(bkp, vm, ((StepEvent) event).thread(), loc);
 						/**
 						 * set step over previous/next node

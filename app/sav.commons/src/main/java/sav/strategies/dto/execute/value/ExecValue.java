@@ -230,6 +230,10 @@ public abstract class ExecValue implements GraphNode{
 	public void setStatic(boolean isStatic) {
 		this.isStatic = isStatic;
 	}
+	
+	public void setChildren(List<ExecValue> children) {
+		this.children = children;
+	}
 
 	public abstract ExecVarType getType();
 }
