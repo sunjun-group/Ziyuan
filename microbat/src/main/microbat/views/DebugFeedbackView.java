@@ -40,7 +40,6 @@ import org.eclipse.ui.part.ViewPart;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.execute.value.ArrayValue;
 import sav.strategies.dto.execute.value.ExecValue;
-import sav.strategies.dto.execute.value.GraphNode;
 import sav.strategies.dto.execute.value.PrimitiveValue;
 import sav.strategies.dto.execute.value.ReferenceValue;
 
@@ -414,17 +413,17 @@ public class DebugFeedbackView extends ViewPart {
 							else{
 								return "array";
 							}
-						case 1: return value.getVarId();
+						case 1: return value.getVarName();
 						case 2: 
 							if(after != null){
-								return String.valueOf(((ReferenceValue)after).getReferenceID());
+								return "id = " + String.valueOf(((ReferenceValue)after).getReferenceID());
 							}
 							else{
 								return "NULL";
 							}
 						case 3: 
 							if(before != null){
-								return String.valueOf(((ReferenceValue)before).getReferenceID());
+								return "id = " + String.valueOf(((ReferenceValue)before).getReferenceID());
 							}
 							else{
 								return "NULL";
@@ -435,17 +434,17 @@ public class DebugFeedbackView extends ViewPart {
 						ArrayValue value = (ArrayValue)element;
 						switch(columnIndex){
 						case 0: return "array[" + value.getComponentType() + "]";
-						case 1: return value.getVarId();
+						case 1: return value.getVarName();
 						case 2: 
 							if(after != null){
-								return String.valueOf(((ArrayValue)after).getReferenceID());
+								return "id = " + String.valueOf(((ArrayValue)after).getReferenceID());
 							}
 							else{
 								return "NULL";
 							}
 						case 3: 
 							if(before != null){
-								return String.valueOf(((ArrayValue)before).getReferenceID());
+								return "id = " + String.valueOf(((ArrayValue)before).getReferenceID());
 							}
 							else{
 								return "NULL";
@@ -456,7 +455,7 @@ public class DebugFeedbackView extends ViewPart {
 						PrimitiveValue value = (PrimitiveValue)element;
 						switch(columnIndex){
 						case 0: return value.getPrimitiveType();
-						case 1: return value.getVarId();
+						case 1: return value.getVarName();
 						case 2: 
 							if(after != null){
 								return ((PrimitiveValue)after).getStrVal();
@@ -547,7 +546,7 @@ public class DebugFeedbackView extends ViewPart {
 					else{
 						return "array";
 					}
-				case 1: return value.getVarId();
+				case 1: return value.getVarName();
 				case 2: return "";
 				}
 			}
@@ -555,7 +554,7 @@ public class DebugFeedbackView extends ViewPart {
 				ArrayValue value = (ArrayValue)element;
 				switch(columnIndex){
 				case 0: return "array[" + value.getComponentType() + "]";
-				case 1: return value.getVarId();
+				case 1: return value.getVarName();
 				case 2: return "";
 				}
 			}
@@ -563,7 +562,7 @@ public class DebugFeedbackView extends ViewPart {
 				PrimitiveValue value = (PrimitiveValue)element;
 				switch(columnIndex){
 				case 0: return value.getPrimitiveType();
-				case 1: return value.getVarId();
+				case 1: return value.getVarName();
 				case 2: return value.getStrVal();
 				}
 			}

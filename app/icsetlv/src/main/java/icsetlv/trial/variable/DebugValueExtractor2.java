@@ -393,12 +393,12 @@ public class DebugValueExtractor2 {
 	 * add a given variable to its parent
 	 * 
 	 * @param parent
-	 * @param varId
+	 * @param varName
 	 * @param objRef
 	 * @param level
 	 * @param thread
 	 */
-	private void appendClassVarVal(ExecValue parent, String varId, boolean isElementOfArray,
+	private void appendClassVarVal(ExecValue parent, String varName, boolean isElementOfArray,
 			ObjectReference objRef, int level, ThreadReference thread, boolean isRoot, boolean isField, boolean isStatic) {
 		
 		ClassType type = (ClassType) objRef.type();
@@ -409,7 +409,7 @@ public class DebugValueExtractor2 {
 		 */
 		ReferenceValue val = this.objectPool.get(refID);
 		if(val == null){
-			val = new ReferenceValue(varId, false, refID, type, isRoot, isField, isStatic);	
+			val = new ReferenceValue(varName, false, refID, type, isRoot, isField, isStatic);	
 			val.setElementOfArray(isElementOfArray);
 			this.objectPool.put(refID, val);
 			
@@ -418,10 +418,11 @@ public class DebugValueExtractor2 {
 				
 				boolean isIgnore = HeuristicIgnoringFieldRule.isForIgnore(type.name(), field.name());
 				if(!isIgnore){
-					String childVarID = val.getChildId(field.name());
+//					String childVarID = val.getChildId(field.name());
+					String childVarName = field.name();
 					Value childVarValue = fieldValueMap.get(field);
 					
-					appendVarVal(val, childVarID, false, childVarValue, level, thread, false, true, field.isStatic());				
+					appendVarVal(val, childVarName, false, childVarValue, level, thread, false, true, field.isStatic());				
 				}
 				
 			}
@@ -429,9 +430,9 @@ public class DebugValueExtractor2 {
 		/**
 		 * handle the case of alias variable
 		 */
-		else if(!val.getVarId().equals(varId)){
+		else if(!val.getVarName().equals(varName)){
 			ReferenceValue cachedValue = val;
-			val = new ReferenceValue(varId, false, refID, type, isRoot, isField, isStatic);	
+			val = new ReferenceValue(varName, false, refID, type, isRoot, isField, isStatic);	
 			val.setElementOfArray(isElementOfArray);
 			val.setChildren(cachedValue.getChildren());
 		}

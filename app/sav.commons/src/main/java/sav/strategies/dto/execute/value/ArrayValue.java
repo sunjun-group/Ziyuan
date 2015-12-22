@@ -26,8 +26,8 @@ public class ArrayValue extends ReferenceValue {
 	
 	private String componentType;
 
-	public ArrayValue(String id, boolean isRoot, boolean isField, boolean isStatic) {
-		super(id, false, isRoot, isField, isStatic);
+	public ArrayValue(String name, boolean isRoot, boolean isField, boolean isStatic) {
+		super(name, false, isRoot, isField, isStatic);
 	}
 	
 	public String toString(){
@@ -41,7 +41,8 @@ public class ArrayValue extends ReferenceValue {
 	}
 	
 	public String getElementId(int i) {
-		return String.format("%s[%s]", varId, i);
+//		return String.format("%s[%s]", varName, i);
+		return String.format("[%s]", i);
 	}
 
 //	private void setSum(double sum) {

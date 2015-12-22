@@ -31,14 +31,14 @@ public class InterestedVariable {
 				+ ((visitingClassName == null) ? 0 : visitingClassName.hashCode());
 		result = prime * result + lineNumber;
 		result = prime * result
-				+ ((variable.getVarId() == null) ? 0 : variable.getVarId().hashCode());
+				+ ((variable.getVarName() == null) ? 0 : variable.getVarName().hashCode());
 		return result;
 	}
 
 	@Override
 	public String toString() {
 		return "InterestedVariable [className=" + visitingClassName + ", lineNumber="
-				+ lineNumber + ", variable=" + variable.getVarId() + "]";
+				+ lineNumber + ", variable=" + variable.getVarName() + "]";
 	}
 
 	@Override

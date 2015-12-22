@@ -16,8 +16,8 @@ public class StringValue extends PrimitiveValue {
 //	private static final String LENGTH_CODE = "length";
 //	private static final String IS_EMPTY = "isEmpty";
 	
-	public StringValue(String id, String val, boolean isRoot, boolean isField, boolean isStatic) {
-		super(id, val, "String", isRoot, isField, isStatic);
+	public StringValue(String name, String val, boolean isRoot, boolean isField, boolean isStatic) {
+		super(name, val, "String", isRoot, isField, isStatic);
 //		BooleanValue child = new BooleanValue(getChildId(IS_EMPTY), val.isEmpty(), false);
 //		add(child);
 //		child.addParent(this);

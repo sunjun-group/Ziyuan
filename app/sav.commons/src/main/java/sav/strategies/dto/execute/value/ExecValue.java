@@ -21,10 +21,8 @@ import sav.common.core.utils.CollectionUtils;
 public abstract class ExecValue implements GraphNode{
 	
 	protected List<ExecValue> parents = new ArrayList<>();
-	/**
-	 * indicate a variable name
-	 */
-	protected String varId;
+	
+	protected String varName;
 	protected List<ExecValue> children = new ArrayList<>();
 	
 	protected boolean isElementOfArray = false;
@@ -38,19 +36,45 @@ public abstract class ExecValue implements GraphNode{
 	
 	public static final int NOT_NULL_VAL = 1;
 	
-	protected ExecValue(String id, boolean isRoot, boolean isField, boolean isStatic) {
-		this.varId = id;
+	protected ExecValue(String name, boolean isRoot, boolean isField, boolean isStatic) {
+		this.varName = name;
 		this.isRoot = isRoot;
 		this.isField = isField;
 		this.isStatic = isStatic;
 	}
+	
+//	public String getVariableName(){
+//		String name = varId.substring(varId.lastIndexOf("."), varId.length());
+//		return name;
+//	}
 	
 	@Override
 	public List<ExecValue> getChildren() {
 		return children;
 	}
 	
+	public String getVarName(){
+		return varName;
+	}
+	
 	public String getVarId() {
+		String varId = varName;
+		ExecValue parentValue = this;
+		while(!parentValue.isRoot()){
+			parentValue = parentValue.getParents().get(0);
+			varId = parentValue.getVarName() + "." + varId;
+		}
+		
+		if(parentValue.isField){
+			if(!parentValue.isStatic){
+				varId = "this." + varId;					
+			}
+			else{
+				//TODO deal with static variable
+				varId = "SOMECLASS." + varId;
+			}
+		}
+		
 		return varId;
 	}
 	
@@ -66,7 +90,7 @@ public abstract class ExecValue implements GraphNode{
 	}
 	
 	public String getChildId(String childCode) {
-		return String.format("%s.%s", varId, childCode);
+		return String.format("%s.%s", varName, childCode);
 	}
 	
 	public String getChildId(int i) {
@@ -83,11 +107,11 @@ public abstract class ExecValue implements GraphNode{
 	public void retrieveValue(Map<String, double[]> allLongsVals, int i,
 			int size) {
 		if (needToRetrieveValue()) {
-			if (!allLongsVals.containsKey(varId)) {
-				allLongsVals.put(varId, new double[size]);
+			if (!allLongsVals.containsKey(varName)) {
+				allLongsVals.put(varName, new double[size]);
 			}
 			
-			double[] valuesOfVarId = allLongsVals.get(varId);
+			double[] valuesOfVarId = allLongsVals.get(varName);
 			valuesOfVarId[i] = getDoubleVal();
 		}
 		if (children != null) {
@@ -109,7 +133,7 @@ public abstract class ExecValue implements GraphNode{
 	
 	public List<String> appendVarId(List<String> vars) {
 		if (needToRetrieveValue()) {
-			vars.add(varId);
+			vars.add(varName);
 		}
 		for (ExecValue child : CollectionUtils.initIfEmpty(children)) {
 			child.appendVarId(vars);
@@ -122,7 +146,7 @@ public abstract class ExecValue implements GraphNode{
 	 * started with its parent's varId
 	 */
 	public ExecValue findVariableById(String varId) {
-		if (this.varId.equals(varId)) {
+		if (this.varName.equals(varId)) {
 			return this;
 		} else {
 			for (ExecValue child : CollectionUtils.initIfEmpty(children)) {
@@ -142,7 +166,7 @@ public abstract class ExecValue implements GraphNode{
 
 	@Override
 	public String toString() {
-		return String.format("(%s:%s)", varId, children);
+		return String.format("(%s:%s)", varName, children);
 	}
 	
 	public boolean isElementOfArray() {
@@ -172,7 +196,7 @@ public abstract class ExecValue implements GraphNode{
 	public boolean match(GraphNode node) {
 		if(node instanceof GraphNode){
 			ExecValue thatValue = (ExecValue)node;
-			if(thatValue.getVarId().equals(this.getVarId()) && 
+			if(thatValue.getVarName().equals(this.getVarName()) && 
 					thatValue.getType().equals(this.getType())){
 				return true;
 			}
@@ -193,18 +217,9 @@ public abstract class ExecValue implements GraphNode{
 			return this;
 		}
 		else{
-			ExecValue parentValue = this.getParents().get(0);
-			while(parentValue != null){
-				if(parentValue.isRoot()){
-					break;
-				}
-				
-				if(parentValue.getParents().size() > 0){
-					parentValue = parentValue.getParents().get(0);
-				}
-				else{
-					parentValue = null;
-				}
+			ExecValue parentValue = this;
+			while(!parentValue.isRoot()){
+				parentValue = parentValue.getParents().get(0);
 			}
 			
 			return parentValue;

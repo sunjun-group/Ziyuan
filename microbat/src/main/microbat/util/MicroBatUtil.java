@@ -28,9 +28,9 @@ public class MicroBatUtil {
 			}
 		}
 		/**
-		 * check whether the two variables has same path to a same root variable.
+		 * Otherwise, we compare two variables based on their parents.
 		 */
-		else if(var1.getVarId().equals(var2.getVarId())){
+		else if(var1.getVarName().equals(var2.getVarName())){
 			ExecValue rootVar1 = v1.getVariable().getFirstRootParent();
 			ExecValue rootVar2 = v2.getVariable().getFirstRootParent();
 			
@@ -42,7 +42,7 @@ public class MicroBatUtil {
 				return isEqualVisitingClass;
 			}
 			else if(rootVar1.isLocalVariable() && rootVar2.isLocalVariable()){
-				boolean isEqualName = rootVar1.getVarId().equals(rootVar2.getVarId());
+				boolean isEqualName = rootVar1.getVarName().equals(rootVar2.getVarName());
 				
 				if(isEqualVisitingClass && isEqualName){
 					boolean isEqualRange = isEqualRange(rootVar1, v1, rootVar2, v2);

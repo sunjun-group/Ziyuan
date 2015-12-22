@@ -15,8 +15,8 @@ package sav.strategies.dto.execute.value;
 public class BooleanValue extends PrimitiveValue {
 	private boolean value;
 
-	public BooleanValue(String id, boolean value, boolean isRoot, boolean isField, boolean isStatic) {
-		super(id, String.valueOf(value), "boolean", isRoot, isField, isStatic);
+	public BooleanValue(String name, boolean value, boolean isRoot, boolean isField, boolean isStatic) {
+		super(name, String.valueOf(value), "boolean", isRoot, isField, isStatic);
 		this.value = value;
 	}
 

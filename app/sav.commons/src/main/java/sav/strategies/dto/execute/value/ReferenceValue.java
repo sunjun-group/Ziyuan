@@ -19,12 +19,15 @@ public class ReferenceValue extends ExecValue {
 	protected static final String NULL_CODE = "isNull";
 	
 	private ClassType classType; 
-	
+	/**
+	 * The virtual memory address
+	 */
 	private long referenceID = -1;
 
-	public ReferenceValue(String id, boolean isNull, boolean isRoot, boolean isField, boolean isStatic) {
-		super(id, isRoot, isField, isStatic);
-		BooleanValue child = BooleanValue.of(getChildId(NULL_CODE), isNull, false, true, false);
+	public ReferenceValue(String name, boolean isNull, boolean isRoot, boolean isField, boolean isStatic) {
+		super(name, isRoot, isField, isStatic);
+//		BooleanValue child = BooleanValue.of(getChildId(NULL_CODE), isNull, false, true, false);
+		BooleanValue child = BooleanValue.of(NULL_CODE, isNull, false, true, false);
 		add(child);
 		child.addParent(this);
 	}
@@ -32,7 +35,8 @@ public class ReferenceValue extends ExecValue {
 	public ReferenceValue(String id, boolean isNull, long referenceID, ClassType type, 
 			boolean isRoot, boolean isField, boolean isStatic) {
 		super(id, isRoot, isField, isStatic);
-		BooleanValue child = BooleanValue.of(getChildId(NULL_CODE), isNull, false, true, false);
+//		BooleanValue child = BooleanValue.of(getChildId(NULL_CODE), isNull, false, true, false);
+		BooleanValue child = BooleanValue.of(NULL_CODE, isNull, false, true, false);
 		add(child);
 		child.addParent(this);
 		

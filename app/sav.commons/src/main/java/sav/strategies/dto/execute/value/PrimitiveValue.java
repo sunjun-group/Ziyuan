@@ -22,8 +22,8 @@ public class PrimitiveValue extends ExecValue {
 	
 	private String primitiveType;
 
-	public PrimitiveValue(String id, String strVal, String type, boolean isRoot, boolean isField, boolean isStatic) {
-		super(id, isRoot, isField, isStatic);
+	public PrimitiveValue(String name, String strVal, String type, boolean isRoot, boolean isField, boolean isStatic) {
+		super(name, isRoot, isField, isStatic);
 		this.strVal = strVal;
 		this.primitiveType = type;
 	}
@@ -43,7 +43,7 @@ public class PrimitiveValue extends ExecValue {
 	
 	@Override
 	public String toString() {
-		return String.format("(%s:%s)", varId, strVal);
+		return String.format("(%s:%s)", varName, strVal);
 	}
 
 	@Override

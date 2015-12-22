@@ -77,7 +77,7 @@ public class HierarchyGraphDiffer {
 						break;
 					}
 				}
-				System.currentTimeMillis();
+				//System.currentTimeMillis();
 				
 				setVisited(childBefore);
 				if(node != null){
