@@ -22,16 +22,17 @@ public class ReferenceValue extends ExecValue {
 	
 	private long referenceID = -1;
 
-	public ReferenceValue(String id, boolean isNull) {
-		super(id);
-		BooleanValue child = BooleanValue.of(getChildId(NULL_CODE), isNull);
+	public ReferenceValue(String id, boolean isNull, boolean isRoot, boolean isField, boolean isStatic) {
+		super(id, isRoot, isField, isStatic);
+		BooleanValue child = BooleanValue.of(getChildId(NULL_CODE), isNull, false, true, false);
 		add(child);
 		child.addParent(this);
 	}
 	
-	public ReferenceValue(String id, boolean isNull, long referenceID, ClassType type) {
-		super(id);
-		BooleanValue child = BooleanValue.of(getChildId(NULL_CODE), isNull);
+	public ReferenceValue(String id, boolean isNull, long referenceID, ClassType type, 
+			boolean isRoot, boolean isField, boolean isStatic) {
+		super(id, isRoot, isField, isStatic);
+		BooleanValue child = BooleanValue.of(getChildId(NULL_CODE), isNull, false, true, false);
 		add(child);
 		child.addParent(this);
 		
@@ -62,8 +63,8 @@ public class ReferenceValue extends ExecValue {
 		return print;
 	}
 	
-	public static ReferenceValue nullValue(String id) {
-		return new ReferenceValue(id, true);
+	public static ReferenceValue nullValue(String id, boolean isField, boolean isStatic) {
+		return new ReferenceValue(id, true, false, isField, isStatic);
 	}
 	
 	public long getReferenceID() {

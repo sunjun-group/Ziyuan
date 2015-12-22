@@ -31,13 +31,18 @@ public abstract class ExecValue implements GraphNode{
 	/**
 	 * indicate whether this variable is a top-level variable in certain step.
 	 */
-	private boolean isRoot = false;
+	protected boolean isRoot = false;
+	protected boolean isField;
+	protected boolean isStatic;
 	
 	
 	public static final int NOT_NULL_VAL = 1;
 	
-	protected ExecValue(String id) {
+	protected ExecValue(String id, boolean isRoot, boolean isField, boolean isStatic) {
 		this.varId = id;
+		this.isRoot = isRoot;
+		this.isField = isField;
+		this.isStatic = isStatic;
 	}
 	
 	@Override
@@ -181,6 +186,49 @@ public abstract class ExecValue implements GraphNode{
 
 	public void setRoot(boolean isRoot) {
 		this.isRoot = isRoot;
+	}
+	
+	public ExecValue getFirstRootParent(){
+		if(this.isRoot()){
+			return this;
+		}
+		else{
+			ExecValue parentValue = this.getParents().get(0);
+			while(parentValue != null){
+				if(parentValue.isRoot()){
+					break;
+				}
+				
+				if(parentValue.getParents().size() > 0){
+					parentValue = parentValue.getParents().get(0);
+				}
+				else{
+					parentValue = null;
+				}
+			}
+			
+			return parentValue;
+		}
+	}
+	
+	public boolean isField() {
+		return isField;
+	}
+
+	public void setField(boolean isField) {
+		this.isField = isField;
+	}
+	
+	public boolean isLocalVariable(){
+		return !isField;
+	}
+
+	public boolean isStatic() {
+		return isStatic;
+	}
+
+	public void setStatic(boolean isStatic) {
+		this.isStatic = isStatic;
 	}
 
 	public abstract ExecVarType getType();

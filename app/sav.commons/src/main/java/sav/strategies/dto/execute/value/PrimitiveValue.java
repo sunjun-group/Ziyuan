@@ -22,8 +22,8 @@ public class PrimitiveValue extends ExecValue {
 	
 	private String primitiveType;
 
-	public PrimitiveValue(String id, String strVal, String type) {
-		super(id);
+	public PrimitiveValue(String id, String strVal, String type, boolean isRoot, boolean isField, boolean isStatic) {
+		super(id, isRoot, isField, isStatic);
 		this.strVal = strVal;
 		this.primitiveType = type;
 	}

@@ -4,7 +4,7 @@ import icsetlv.common.dto.BreakPointValue;
 import icsetlv.common.utils.PrimitiveUtils;
 import icsetlv.trial.heuristic.HeuristicIgnoringFieldRule;
 import icsetlv.variable.DebugValueExtractor;
-import icsetlv.variable.JdiParam;
+import icsetlv.variable.JDIParam;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,7 +100,7 @@ public class DebugValueExtractor2 {
 				 * same name, and the breakpoint variable with that name has the
 				 * scope UNDEFINED, it must be the variable in the method.
 				 */
-				final Map<Variable, JdiParam> allVariables = new HashMap<Variable, JdiParam>();
+				final Map<Variable, JDIParam> allVariables = new HashMap<Variable, JDIParam>();
 				final List<LocalVariable> visibleVars = frame.visibleVariables();
 				final List<Field> allFields = refType.allFields();
 				
@@ -112,19 +112,20 @@ public class DebugValueExtractor2 {
 					// First check local variable
 					LocalVariable matchedLocalVariable = findMatchedLocalVariable(bpVar, visibleVars);
 					
-					JdiParam param = null;
+					JDIParam param = null;
 					if (matchedLocalVariable != null) {
 						param = recursiveMatch(frame, matchedLocalVariable, bpVar.getFullName());
-					} else {
+					} 
+					else {
 						// Then check class fields (static & non static)
 						Field matchedField = findMatchedField(bpVar, allFields);
 
 						if (matchedField != null) {
 							if (matchedField.isStatic()) {
-								param = JdiParam.staticField(matchedField, refType, refType.getValue(matchedField));
+								param = JDIParam.staticField(matchedField, refType, refType.getValue(matchedField));
 							} else {
 								Value value = objRef == null ? null : objRef.getValue(matchedField);
-								param = JdiParam.nonStaticField(matchedField, objRef, value);
+								param = JDIParam.nonStaticField(matchedField, objRef, value);
 							}
 							if (param.getValue() != null && !matchedField.name().equals(bpVar.getFullName())) {
 								param = recursiveMatch(param, extractSubProperty(bpVar.getFullName()));
@@ -192,12 +193,16 @@ public class DebugValueExtractor2 {
 	}
 
 	protected void collectValue(BreakPointValue bkVal, ThreadReference thread,
-			final Map<Variable, JdiParam> allVariables) throws SavException {
-		for (Entry<Variable, JdiParam> entry : allVariables.entrySet()) {
+			final Map<Variable, JDIParam> allVariables) throws SavException {
+		for (Entry<Variable, JDIParam> entry : allVariables.entrySet()) {
 			Variable var = entry.getKey();
 			String varId = var.getId();
-			Value value = entry.getValue().getValue();
-			appendVarVal(bkVal, varId, false, value, 1, thread);
+			JDIParam param = entry.getValue();
+			Value value = param.getValue();
+			boolean isField = (param.getField() != null);
+			boolean isStatic = param.getType().equals(JDIParam.JDIParamType.STATIC_FIELD);
+			
+			appendVarVal(bkVal, varId, false, value, 1, thread, true, isField, isStatic);
 		}
 		
 		System.currentTimeMillis();
@@ -216,16 +221,16 @@ public class DebugValueExtractor2 {
 		return fullName;
 	}
 	
-	protected JdiParam recursiveMatch(final StackFrame frame, final LocalVariable match, final String fullName) {
+	protected JDIParam recursiveMatch(final StackFrame frame, final LocalVariable match, final String fullName) {
 		Value value = frame.getValue(match);
-		JdiParam param = JdiParam.localVariable(match, value);
+		JDIParam param = JDIParam.localVariable(match, value);
 		if (!match.name().equals(fullName)) {
 			return recursiveMatch(param , extractSubProperty(fullName));
 		}
 		return param;
 	}
 	
-	protected JdiParam recursiveMatch(JdiParam param, final String property) {
+	protected JDIParam recursiveMatch(JDIParam param, final String property) {
 		if (StringUtils.isBlank(property)) {
 			return param;
 		}
@@ -234,7 +239,7 @@ public class DebugValueExtractor2 {
 			// cannot get property for a null object
 			return null;
 		}
-		JdiParam subParam = null;
+		JDIParam subParam = null;
 		String subProperty = null;
 		// NOTE: must check Array before Object because ArrayReferenceImpl
 		// implements both ArrayReference and ObjectReference (by extending
@@ -243,13 +248,13 @@ public class DebugValueExtractor2 {
 			ArrayReference array = (ArrayReference) value;
 			// Can access to the array's length or values
 			if (".length".equals(property)) {
-				subParam = JdiParam.nonStaticField(null, array, array.virtualMachine().mirrorOf(array.length()));
+				subParam = JDIParam.nonStaticField(null, array, array.virtualMachine().mirrorOf(array.length()));
 				// No sub property is available after this
 			} else {
 				final Matcher matcher = ARRAY_ACCESS_PATTERN.matcher(property);
 				if (matcher.matches()) {
 					int index = Integer.valueOf(matcher.group(1));
-					subParam = JdiParam.arrayElement(array, index, getArrayEleValue(array, index)); 
+					subParam = JDIParam.arrayElement(array, index, getArrayEleValue(array, index)); 
 					// After this we can have access to another dimension of the
 					// array or access to the retrieved object's property
 					subProperty = matcher.group(2);
@@ -268,7 +273,7 @@ public class DebugValueExtractor2 {
 					}
 				}
 				if (propertyField != null) {
-					subParam = JdiParam.nonStaticField(propertyField, object, object.getValue(propertyField));
+					subParam = JDIParam.nonStaticField(propertyField, object, object.getValue(propertyField));
 					subProperty = matcher.group(2);
 					if (sav.common.core.utils.StringUtils.isEmpty(subProperty)) {
 						subProperty = matcher.group(3);
@@ -295,12 +300,12 @@ public class DebugValueExtractor2 {
 	 * 
 	 */
 	private void appendVarVal(ExecValue parent, String varId, boolean isElementOfArray,
-			Value value, int level, ThreadReference thread) {
+			Value value, int level, ThreadReference thread, boolean isRoot, boolean isField, boolean isStatic) {
 //		if (level > valRetrieveLevel || varId.endsWith("serialVersionUID")) {
 //			return;
 //		}
 		if (value == null) {
-			appendNullVarVal(parent, varId);
+			appendNullVarVal(parent, varId, isField, isStatic);
 			return;
 		}
 		level++;
@@ -309,24 +314,27 @@ public class DebugValueExtractor2 {
 			/* TODO LLT: add Primitive type && refactor */
 			if (type instanceof BooleanType) {
 				sav.strategies.dto.execute.value.BooleanValue ele = 
-						sav.strategies.dto.execute.value.BooleanValue.of(varId, ((BooleanValue)value).booleanValue());
+						sav.strategies.dto.execute.value.BooleanValue.of(varId, 
+								((BooleanValue)value).booleanValue(), isRoot, isField, isStatic);
 				ele.setElementOfArray(isElementOfArray);
 				parent.add(ele);
 				ele.addParent(parent);
 			} else {
-				PrimitiveValue ele = new PrimitiveValue(varId, value.toString(), type.toString());
+				PrimitiveValue ele = new PrimitiveValue(varId, value.toString(), type.toString(), 
+						isRoot, isField, isStatic);
 				ele.setElementOfArray(isElementOfArray);
 				parent.add(ele);
 				ele.addParent(parent);
 			}
 		} else if (type instanceof ArrayType) { 
-			appendArrVarVal(parent, varId, isElementOfArray, (ArrayReference)value, level, thread);
+			appendArrVarVal(parent, varId, isElementOfArray, (ArrayReference)value, level, thread, isRoot, isField, isStatic);
 		} else if (type instanceof ClassType) {
 			/**
 			 * if the class name is "String"
 			 */
 			if (PrimitiveUtils.isString(type.name())) {
-				StringValue ele = new StringValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread));
+				StringValue ele = new StringValue(varId, toPrimitiveValue((ClassType) type, 
+						(ObjectReference)value, thread), isRoot, isField, isStatic);
 				ele.setElementOfArray(isElementOfArray);
 				parent.add(ele);
 				ele.addParent(parent);
@@ -336,7 +344,7 @@ public class DebugValueExtractor2 {
 			 */
 			else if (PrimitiveUtils.isPrimitiveType(type.name())) {
 				PrimitiveValue ele = new PrimitiveValue(varId, toPrimitiveValue((ClassType) type, 
-						(ObjectReference)value, thread), type.toString());
+						(ObjectReference)value, thread), type.toString(), isRoot, isField, isStatic);
 				ele.setElementOfArray(isElementOfArray);
 				parent.add(ele);
 				ele.addParent(parent);
@@ -345,7 +353,8 @@ public class DebugValueExtractor2 {
 			 * if the class is an arbitrary complicated class
 			 */
 			else {
-				appendClassVarVal(parent, varId, isElementOfArray, (ObjectReference) value, level, thread);
+				appendClassVarVal(parent, varId, isElementOfArray, (ObjectReference) value, level,
+						thread, isRoot, isField, isStatic);
 			}
 		}
 	}
@@ -374,8 +383,8 @@ public class DebugValueExtractor2 {
 		return null;
 	}
 	
-	private void appendNullVarVal(ExecValue parent, String varId) {
-		ReferenceValue val = ReferenceValue.nullValue(varId);
+	private void appendNullVarVal(ExecValue parent, String varId, boolean isField, boolean isStatic) {
+		ReferenceValue val = ReferenceValue.nullValue(varId, isField, isStatic);
 		parent.add(val);
 		val.addParent(parent);
 	}
@@ -390,7 +399,7 @@ public class DebugValueExtractor2 {
 	 * @param thread
 	 */
 	private void appendClassVarVal(ExecValue parent, String varId, boolean isElementOfArray,
-			ObjectReference objRef, int level, ThreadReference thread) {
+			ObjectReference objRef, int level, ThreadReference thread, boolean isRoot, boolean isField, boolean isStatic) {
 		
 		ClassType type = (ClassType) objRef.type();
 		long refID = objRef.uniqueID();
@@ -400,7 +409,7 @@ public class DebugValueExtractor2 {
 		 */
 		ReferenceValue val = this.objectPool.get(refID);
 		if(val == null){
-			val = new ReferenceValue(varId, false, refID, type);	
+			val = new ReferenceValue(varId, false, refID, type, isRoot, isField, isStatic);	
 			this.objectPool.put(refID, val);
 			
 			Map<Field, Value> fieldValueMap = objRef.getValues(type.allFields());
@@ -411,7 +420,7 @@ public class DebugValueExtractor2 {
 					String childVarID = val.getChildId(field.name());
 					Value childVarValue = fieldValueMap.get(field);
 					
-					appendVarVal(val, childVarID, false, childVarValue, level, thread);					
+					appendVarVal(val, childVarID, false, childVarValue, level, thread, false, true, field.isStatic());				
 				}
 				
 			}
@@ -422,9 +431,9 @@ public class DebugValueExtractor2 {
 	}
 
 	private void appendArrVarVal(ExecValue parent, String varId, boolean isElementOfArray,
-			ArrayReference value, int level, ThreadReference thread) {
+			ArrayReference value, int level, ThreadReference thread, boolean isRoot, boolean isField, boolean isStatic) {
 		
-		ArrayValue arrayVal = new ArrayValue(varId);
+		ArrayValue arrayVal = new ArrayValue(varId, isRoot, isField, isStatic);
 		arrayVal.setValue(value);
 		String componentType = ((ArrayType)value.type()).componentTypeName();
 		arrayVal.setComponentType(componentType);
@@ -435,7 +444,7 @@ public class DebugValueExtractor2 {
 		for (int i = 0; i < value.length() /*&& i < MAX_ARRAY_ELEMENT_TO_COLLECT*/; i++) {
 			String varID = arrayVal.getElementId(i);
 			Value elementValue = getArrayEleValue(value, i);
-			appendVarVal(arrayVal, varID, true, elementValue, level, thread);
+			appendVarVal(arrayVal, varID, true, elementValue, level, thread, false, true, false);
 		}
 		
 		parent.add(arrayVal);

@@ -14,13 +14,13 @@ package sav.strategies.dto.execute.value;
  */
 public class StringValue extends PrimitiveValue {
 //	private static final String LENGTH_CODE = "length";
-	private static final String IS_EMPTY = "isEmpty";
+//	private static final String IS_EMPTY = "isEmpty";
 	
-	public StringValue(String id, String val) {
-		super(id, val, "String");
-		BooleanValue child = new BooleanValue(getChildId(IS_EMPTY), val.isEmpty());
-		add(child);
-		child.addParent(this);
+	public StringValue(String id, String val, boolean isRoot, boolean isField, boolean isStatic) {
+		super(id, val, "String", isRoot, isField, isStatic);
+//		BooleanValue child = new BooleanValue(getChildId(IS_EMPTY), val.isEmpty(), false);
+//		add(child);
+//		child.addParent(this);
 //		add(new PrimitiveValue(getChildId(LENGTH_CODE), String.valueOf(val.length())));
 	}
 

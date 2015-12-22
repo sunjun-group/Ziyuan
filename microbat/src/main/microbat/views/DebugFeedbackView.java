@@ -3,7 +3,6 @@ package microbat.views;
 import icsetlv.common.dto.BreakPointValue;
 import icsetlv.trial.model.TraceNode;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import microbat.graphdiff.GraphDiff;
@@ -39,7 +38,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.dto.execute.value.ArrayValue;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.GraphNode;
@@ -131,47 +129,44 @@ public class DebugFeedbackView extends ViewPart {
 		
 		
 		viewer.addCheckStateListener(new ICheckStateListener() {
-			@SuppressWarnings("unchecked")
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Object obj = event.getElement();
+				ExecValue value = null;
+				boolean isChecked = false;
 				if(obj instanceof ExecValue){
-					ExecValue value = (ExecValue)obj;
-					boolean isChecked = viewer.getChecked(value);
-					
-					BreakPoint point = node.getBreakPoint();
-					InterestedVariable iVar = new InterestedVariable(point.getClassCanonicalName(), 
-							point.getLineNo(), value.getVarId());
-					if(isChecked){
-						if(!Settings.interestedVariables.contains(iVar)){
-							Settings.interestedVariables.add(iVar);							
-						}
-					}
-					else{
-						Settings.interestedVariables.remove(iVar);
-					}
-					
-					if(stateTreeViewer != null){
-						BreakPointValue parent = (BreakPointValue) stateTreeViewer.getInput();
-						ExecValue targetObj = parent.findVariableById(value.getVarId());
-						
-						if(targetObj != null){
-							stateTreeViewer.setCheckStateProvider(new VariableCheckStateProvider());
-							stateTreeViewer.refresh();						
-						}
-					}
+					value = (ExecValue)obj;
+					isChecked = viewer.getChecked(value);
 				}
 				else if(obj instanceof GraphDiff){
 					GraphDiff diff = (GraphDiff)obj;
-					
-					
-					
-					if(consequenceTreeViewer != null){
-						List<GraphDiff> conseq = (List<GraphDiff>) consequenceTreeViewer.getInput();
-					}
+					value = (ExecValue)diff.getChangedNode();
+					isChecked = viewer.getChecked(diff);
 				}
 				
+				BreakPoint point = node.getBreakPoint();
 				
+				InterestedVariable iVar = new InterestedVariable(point.getClassCanonicalName(), 
+						point.getLineNo(), value);
+				
+				if(isChecked){
+					if(!Settings.interestedVariables.contains(iVar)){
+						Settings.interestedVariables.add(iVar);							
+					}
+				}
+				else{
+					Settings.interestedVariables.remove(iVar);
+				}
+				
+				if(stateTreeViewer != null){
+					stateTreeViewer.setCheckStateProvider(new VariableCheckStateProvider());
+					stateTreeViewer.refresh();	
+				}
+				
+				if(consequenceTreeViewer != null){
+					consequenceTreeViewer.setCheckStateProvider(new VariableCheckStateProvider());
+					consequenceTreeViewer.refresh();	
+				}
 			}
 		});
 	}
@@ -581,18 +576,26 @@ public class DebugFeedbackView extends ViewPart {
 
 		@Override
 		public boolean isChecked(Object element) {
+			
+			ExecValue value = null;
 			if(element instanceof ExecValue){
-				ExecValue value = (ExecValue)element;
-				String varId = value.getVarId();
+				value = (ExecValue)element;
+			}
+			else if(element instanceof GraphDiff){
+				value = (ExecValue) ((GraphDiff)element).getChangedNode();
+			}
+			
+			if(node != null){
+				BreakPoint point = node.getBreakPoint();
+				InterestedVariable iVar = new InterestedVariable(point.getClassCanonicalName(), 
+						point.getLineNo(), value);
 				
-				if(node != null){
-					BreakPoint point = node.getBreakPoint();
-					InterestedVariable iVar = new InterestedVariable(point.getClassCanonicalName(), 
-							point.getLineNo(), varId);
-					
-					if(Settings.interestedVariables.contains(iVar)){
-						return true;
-					}
+				if(iVar.toString().contains("this.tag.flag")){
+					System.currentTimeMillis();
+				}
+				
+				if(Settings.interestedVariables.contains(iVar)){
+					return true;
 				}
 			}
 			return false;

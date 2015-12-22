@@ -22,6 +22,15 @@ public class GraphDiff {
 		
 	}
 	
+	public GraphNode getChangedNode(){
+		GraphNode node = getNodeAfter();
+		if(node == null){
+			node = getNodeBefore();
+		}
+		
+		return node;
+	}
+	
 	public String toString(){
 		StringBuffer buffer = new StringBuffer();
 		String diffType = getDiffType();

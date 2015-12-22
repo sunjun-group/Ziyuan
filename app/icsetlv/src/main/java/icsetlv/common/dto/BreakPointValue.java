@@ -26,7 +26,7 @@ import sav.strategies.dto.execute.value.GraphNode;
 public class BreakPointValue extends ExecValue {
 
 	public BreakPointValue(String id) {
-		super(id);
+		super(id, true, false, false);
 	}
 
 	public String getBkpId() {

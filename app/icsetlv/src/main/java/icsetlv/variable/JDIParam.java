@@ -19,10 +19,13 @@ import com.sun.jdi.Value;
 
 /**
  * @author LLT
+ * 
+ * A wrapper class containing JDI information.
  *
  */
-public class JdiParam {
-	private JdiParamType type;
+@SuppressWarnings("restriction")
+public class JDIParam {
+	private JDIParamType type;
 	/* local variable */
 	private LocalVariable variable;
 	/* field */
@@ -36,7 +39,7 @@ public class JdiParam {
 	/* value */
 	private Value value;
 	
-	private JdiParam() {}
+	private JDIParam() {}
 	
 	public LocalVariable getLocalVariable() {
 		return variable;
@@ -62,7 +65,7 @@ public class JdiParam {
 		this.value = value;
 	}
 	
-	public JdiParamType getType() {
+	public JDIParamType getType() {
 		return type;
 	}
 	
@@ -71,7 +74,7 @@ public class JdiParam {
 	}
 	
 	public ArrayReference getArrayRef() {
-		Assert.assertTrue(type == JdiParamType.ARRAY_ELEMENT,
+		Assert.assertTrue(type == JDIParamType.ARRAY_ELEMENT,
 				"Expected arrayType, but get ", type.name());
 		return (ArrayReference) obj;
 	}
@@ -83,42 +86,42 @@ public class JdiParam {
 				+ idx + ", value=" + value + "]";
 	}
 
-	public static JdiParam localVariable(LocalVariable variable, Value value) {
-		JdiParam param = new JdiParam();
-		param.type = JdiParamType.LOCAL_VAR;
+	public static JDIParam localVariable(LocalVariable variable, Value value) {
+		JDIParam param = new JDIParam();
+		param.type = JDIParamType.LOCAL_VAR;
 		param.variable = variable;
 		param.value = value;
 		return param;
 	}
 	
-	public static JdiParam staticField(Field field, ReferenceType objType, Value value) {
-		JdiParam param = new JdiParam();
-		param.type = JdiParamType.STATIC_FIELD;
+	public static JDIParam staticField(Field field, ReferenceType objType, Value value) {
+		JDIParam param = new JDIParam();
+		param.type = JDIParamType.STATIC_FIELD;
 		param.field = field;
 		param.objType = objType;
 		param.value = value;
 		return param;
 	}
 
-	public static JdiParam nonStaticField(Field field, ObjectReference objRef, Value value) {
-		JdiParam param = new JdiParam();
-		param.type = JdiParamType.NON_STATIC_FIELD;
+	public static JDIParam nonStaticField(Field field, ObjectReference objRef, Value value) {
+		JDIParam param = new JDIParam();
+		param.type = JDIParamType.NON_STATIC_FIELD;
 		param.field = field;
 		param.obj = objRef;
 		param.value = value;
 		return param;
 	}
 	
-	public static JdiParam arrayElement(ArrayReference array, int idx, Value value) {
-		JdiParam param = new JdiParam();
-		param.type = JdiParamType.ARRAY_ELEMENT;
+	public static JDIParam arrayElement(ArrayReference array, int idx, Value value) {
+		JDIParam param = new JDIParam();
+		param.type = JDIParamType.ARRAY_ELEMENT;
 		param.obj = array;
 		param.value = value;
 		param.idx = idx;
 		return param;
 	}
 
-	public enum JdiParamType {
+	public enum JDIParamType {
 		NON_STATIC_FIELD,
 		ARRAY_ELEMENT,
 		STATIC_FIELD,

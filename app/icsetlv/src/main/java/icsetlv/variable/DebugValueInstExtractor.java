@@ -42,17 +42,17 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 
 	@Override
 	protected void collectValue(BreakPointValue bkVal, ThreadReference thread,
-			Map<Variable, JdiParam> allVariables) throws SavException {
+			Map<Variable, JDIParam> allVariables) throws SavException {
 		modifyValues(thread, allVariables);
 		super.collectValue(bkVal, thread, allVariables);
 	}
 
-	private void modifyValues(ThreadReference thread, Map<Variable, JdiParam> allVariables) {
+	private void modifyValues(ThreadReference thread, Map<Variable, JDIParam> allVariables) {
 		for (Variable var : allVariables.keySet()) {
-			JdiParam jdiParam = allVariables.get(var);
-			Map<String, JdiParam> modificationMap = getInstrMap(var, jdiParam);
+			JDIParam jdiParam = allVariables.get(var);
+			Map<String, JDIParam> modificationMap = getInstrMap(var, jdiParam);
 			for (String varId : modificationMap.keySet()) {
-				JdiParam param = modificationMap.get(varId);
+				JDIParam param = modificationMap.get(varId);
 				if (param == null) {
 					continue;
 				}
@@ -72,8 +72,8 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 		}
 	}
 	
-	private Map<String, JdiParam> getInstrMap(Variable var, JdiParam param) {
-		Map<String, JdiParam> instrMap = new HashMap<String, JdiParam>();
+	private Map<String, JDIParam> getInstrMap(Variable var, JDIParam param) {
+		Map<String, JDIParam> instrMap = new HashMap<String, JDIParam>();
 		String varId = var.getId();
 		for (String key : instVals.keySet()) {
 			if (!key.startsWith(varId)) {
@@ -85,7 +85,7 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 			}
 			// instrument variable is a property of the current param
 			// find the correct param for instrument variable
-			JdiParam subParam = recursiveMatch(param, extractSubProperty(key));
+			JDIParam subParam = recursiveMatch(param, extractSubProperty(key));
 			if (subParam != param) {
 				instrMap.put(key, subParam);
 			}
@@ -93,7 +93,7 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 		return instrMap;
 	}
 
-	private void instObjField(ThreadReference thread, JdiParam jdiParam,
+	private void instObjField(ThreadReference thread, JDIParam jdiParam,
 			Object newVal, Variable var) {
 		try {
 			if (newVal != null && jdiParam.getField() != null) {
@@ -107,7 +107,7 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 		}
 	}
 
-	private void instLocalVar(ThreadReference thread, JdiParam jdiParam,
+	private void instLocalVar(ThreadReference thread, JDIParam jdiParam,
 			Object newVal, Variable var) {
 		LocalVariable localVariable = jdiParam.getLocalVariable();
 		if (var.getSimpleName().equals(localVariable.name())) {
@@ -124,7 +124,7 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 		}
 	}
 	
-	private void instArrElement(ThreadReference thread, JdiParam jdiParam,
+	private void instArrElement(ThreadReference thread, JDIParam jdiParam,
 			Object newVal, Variable var) {
 		try {
 			Value newValue = jdiValueOf(newVal, thread);

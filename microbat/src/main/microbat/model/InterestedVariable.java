@@ -1,20 +1,25 @@
 package microbat.model;
 
+import microbat.util.MicroBatUtil;
+import sav.strategies.dto.execute.value.ExecValue;
+
 public class InterestedVariable {
-	private String className;
+	/**
+	 * The location means that the root of this variable is reachable (and defined) at 
+	 * <code>lineNumber</code> of <code>className</code>
+	 */
+	private String visitingClassName;
 	private int lineNumber;
 	
-	/**
-	 * this field corresponds to ExecValue.varId
-	 */
-	private String variableID;
+	
+	private ExecValue variable;
 	
 	public InterestedVariable(String className, int lineNumber,
-			String variableID) {
+			ExecValue variable) {
 		super();
-		this.className = className;
+		this.visitingClassName = className;
 		this.lineNumber = lineNumber;
-		this.variableID = variableID;
+		this.variable = variable;
 	}
 	
 	
@@ -23,49 +28,38 @@ public class InterestedVariable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((className == null) ? 0 : className.hashCode());
+				+ ((visitingClassName == null) ? 0 : visitingClassName.hashCode());
 		result = prime * result + lineNumber;
 		result = prime * result
-				+ ((variableID == null) ? 0 : variableID.hashCode());
+				+ ((variable.getVarId() == null) ? 0 : variable.getVarId().hashCode());
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return "InterestedVariable [className=" + className + ", lineNumber="
-				+ lineNumber + ", variableID=" + variableID + "]";
+		return "InterestedVariable [className=" + visitingClassName + ", lineNumber="
+				+ lineNumber + ", variable=" + variable.getVarId() + "]";
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		InterestedVariable other = (InterestedVariable) obj;
-		if (className == null) {
-			if (other.className != null)
-				return false;
-		} else if (!className.equals(other.className))
-			return false;
-		if (lineNumber != other.lineNumber)
-			return false;
-		if (variableID == null) {
-			if (other.variableID != null)
-				return false;
-		} else if (!variableID.equals(other.variableID))
-			return false;
-		return true;
+		if(obj instanceof InterestedVariable){
+			InterestedVariable that = (InterestedVariable)obj;
+			boolean isTheSame = MicroBatUtil.isTheSameVariable(this, that);
+			
+			return isTheSame;
+		}
+		
+		return false;
 	}
 
-	public String getClassName() {
-		return className;
+
+	public String getVisitingClassName() {
+		return visitingClassName;
 	}
 
-	public void setClassName(String className) {
-		this.className = className;
+	public void setVisitingClassName(String className) {
+		this.visitingClassName = className;
 	}
 
 	public int getLineNumber() {
@@ -76,12 +70,12 @@ public class InterestedVariable {
 		this.lineNumber = lineNumber;
 	}
 
-	public String getVariableID() {
-		return variableID;
+	public ExecValue getVariable() {
+		return variable;
 	}
 
-	public void setVariableID(String variableID) {
-		this.variableID = variableID;
+	public void setVariable(ExecValue variable) {
+		this.variable = variable;
 	}
 	
 	

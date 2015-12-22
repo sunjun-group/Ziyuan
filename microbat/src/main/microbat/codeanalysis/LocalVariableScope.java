@@ -31,6 +31,20 @@ public class LocalVariableScope {
 		
 		return buffer.toString();
 	}
+	
+	public int getStartLine(){
+		CompilationUnit cu = getCompilationUnit();
+		int startPosition = this.scope.getStartPosition();
+		int startLine = cu.getLineNumber(startPosition);
+		return startLine;
+	}
+	
+	public int getEndLine(){
+		CompilationUnit cu = getCompilationUnit();
+		int startPosition = this.scope.getStartPosition();
+		int endLine = cu.getLineNumber(startPosition + this.scope.getLength());
+		return endLine;
+	}
 
 	public String getVariableName() {
 		return variableName;

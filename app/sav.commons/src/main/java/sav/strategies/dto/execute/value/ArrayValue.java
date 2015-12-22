@@ -17,16 +17,17 @@ import com.sun.jdi.Value;
  * @author LLT
  * 
  */
+@SuppressWarnings("restriction")
 public class ArrayValue extends ReferenceValue {
-	private static final String SUM_CODE = "sum";
-	private static final String MAX_CODE = "max";
-	private static final String MIN_CODE = "min";
+//	private static final String SUM_CODE = "sum";
+//	private static final String MAX_CODE = "max";
+//	private static final String MIN_CODE = "min";
 	private static final String LENGTH_CODE = "length";
 	
 	private String componentType;
 
-	public ArrayValue(String id) {
-		super(id, false);
+	public ArrayValue(String id, boolean isRoot, boolean isField, boolean isStatic) {
+		super(id, false, isRoot, isField, isStatic);
 	}
 	
 	public String toString(){
