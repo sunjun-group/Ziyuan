@@ -20,7 +20,7 @@ public class StringValue extends PrimitiveValue {
 		super(id, val, "String");
 		BooleanValue child = new BooleanValue(getChildId(IS_EMPTY), val.isEmpty());
 		add(child);
-		child.setParent(this);
+		child.addParent(this);
 //		add(new PrimitiveValue(getChildId(LENGTH_CODE), String.valueOf(val.length())));
 	}
 

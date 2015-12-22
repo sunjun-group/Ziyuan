@@ -20,7 +20,7 @@ import sav.common.core.utils.CollectionUtils;
  */
 public abstract class ExecValue implements GraphNode{
 	
-	protected ExecValue parent;
+	protected List<ExecValue> parents = new ArrayList<>();
 	/**
 	 * indicate a variable name
 	 */
@@ -28,6 +28,10 @@ public abstract class ExecValue implements GraphNode{
 	protected List<ExecValue> children = new ArrayList<>();
 	
 	protected boolean isElementOfArray = false;
+	/**
+	 * indicate whether this variable is a top-level variable in certain step.
+	 */
+	private boolean isRoot = false;
 	
 	
 	public static final int NOT_NULL_VAL = 1;
@@ -145,12 +149,18 @@ public abstract class ExecValue implements GraphNode{
 	}
 	
 	@Override
-	public ExecValue getParent() {
-		return parent;
+	public List<ExecValue> getParents() {
+		return parents;
 	}
 
-	public void setParent(ExecValue parent) {
-		this.parent = parent;
+	public void setParents(List<ExecValue> parents) {
+		this.parents = parents;
+	}
+	
+	public void addParent(ExecValue parent) {
+		if(!this.parents.contains(parent)){
+			this.parents.add(parent);
+		}
 	}
 	
 	@Override
@@ -163,6 +173,14 @@ public abstract class ExecValue implements GraphNode{
 			}
 		}
 		return false;
+	}
+	
+	public boolean isRoot() {
+		return isRoot;
+	}
+
+	public void setRoot(boolean isRoot) {
+		this.isRoot = isRoot;
 	}
 
 	public abstract ExecVarType getType();

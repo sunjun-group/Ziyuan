@@ -26,14 +26,14 @@ public class ReferenceValue extends ExecValue {
 		super(id);
 		BooleanValue child = BooleanValue.of(getChildId(NULL_CODE), isNull);
 		add(child);
-		child.setParent(this);
+		child.addParent(this);
 	}
 	
 	public ReferenceValue(String id, boolean isNull, long referenceID, ClassType type) {
 		super(id);
 		BooleanValue child = BooleanValue.of(getChildId(NULL_CODE), isNull);
 		add(child);
-		child.setParent(this);
+		child.addParent(this);
 		
 		setReferenceID(referenceID);
 		setClassType(type);

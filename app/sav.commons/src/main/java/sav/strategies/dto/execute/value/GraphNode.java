@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface GraphNode {
 	public List<? extends GraphNode> getChildren();
-	public GraphNode getParent();
+	public List<? extends GraphNode> getParents();
 	
 	/**
 	 * This method compares the labels of two nodes. It will not further compare their children.
@@ -15,6 +15,11 @@ public interface GraphNode {
 	
 //	public boolean isVisited();
 //	public void setVisited(boolean isVisited);
+	/**
+	 * compare the content of two graph nodes
+	 * @param node
+	 * @return
+	 */
+	public boolean isTheSameWith(GraphNode node);
 	
-	public boolean isTheSameWith(GraphNode nodeAfter);
 }

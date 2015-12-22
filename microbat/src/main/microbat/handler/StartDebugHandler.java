@@ -69,8 +69,7 @@ public class StartDebugHandler extends AbstractHandler {
 		String projectPath = iProject.getLocationURI().getPath();
 		projectPath = projectPath.substring(1, projectPath.length());
 		
-		appClasspath
-				.addClasspath("F://workspace//runtime-debugging//Test//bin");
+		appClasspath.addClasspath("F://workspace//runtime-debugging//Test//bin");
 		tcExecutor = new TestcasesExecutor(6);
 	}
 	
@@ -81,8 +80,7 @@ public class StartDebugHandler extends AbstractHandler {
 		slicer.setFiltering(classScope, null);
 		List<BreakPoint> result = null;
 		try {
-			result = 
-				slicer.sliceDebug(appClasspath, startPoint, testMethods);
+			result = slicer.sliceDebug(appClasspath, startPoint, testMethods);
 			
 			System.currentTimeMillis();
 //			List<String> paths = getSourceLocation();
