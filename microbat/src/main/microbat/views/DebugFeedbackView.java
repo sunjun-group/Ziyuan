@@ -104,7 +104,8 @@ public class DebugFeedbackView extends ViewPart {
 		this.consequenceTreeViewer.setLabelProvider(new ConsequenceLabelProvider());
 		this.consequenceTreeViewer.setInput(cons);	
 		
-//		this.consequenceTreeViewer.setCheckStateProvider(new VariableCheckStateProvider());
+		setChecks(this.consequenceTreeViewer, this.node.getBreakPoint());
+		
 		this.consequenceTreeViewer.refresh(true);
 	}
 
@@ -113,7 +114,8 @@ public class DebugFeedbackView extends ViewPart {
 		this.stateTreeViewer.setLabelProvider(new VariableLabelProvider());
 		this.stateTreeViewer.setInput(value);	
 		
-//		this.stateTreeViewer.setCheckStateProvider(new VariableCheckStateProvider());
+		setChecks(this.stateTreeViewer, this.node.getBreakPoint());
+
 		this.stateTreeViewer.refresh(true);
 		
 	}
