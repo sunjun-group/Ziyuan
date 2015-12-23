@@ -33,4 +33,12 @@ public class StringValue extends PrimitiveValue {
 	protected boolean needToRetrieveValue() {
 		return false;
 	}
+	
+	
+	@Override
+	public PrimitiveValue clone(){
+		StringValue clonedValue = new StringValue(getVarName(), getStrVal(), 
+				isRoot, isField, isStatic);
+		return clonedValue;
+	}
 }

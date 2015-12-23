@@ -78,7 +78,7 @@ public abstract class ExecValue implements GraphNode{
 		return varId;
 	}
 	
-	public void add(ExecValue child) {
+	public void addChild(ExecValue child) {
 		if (children == null) {
 			children = new ArrayList<ExecValue>();
 		}
@@ -251,4 +251,5 @@ public abstract class ExecValue implements GraphNode{
 	}
 
 	public abstract ExecVarType getType();
+	public abstract ExecValue clone();
 }

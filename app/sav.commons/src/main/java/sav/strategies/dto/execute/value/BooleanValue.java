@@ -37,4 +37,15 @@ public class BooleanValue extends PrimitiveValue {
 	public ExecVarType getType() {
 		return ExecVarType.BOOLEAN;
 	}
+	
+	@Override
+	public PrimitiveValue clone(){
+		BooleanValue clonedValue = new BooleanValue(getVarName(), value, 
+				isRoot, isField, isStatic);
+		return clonedValue;
+	}
+	
+	public boolean getBoolValue(){
+		return this.value;
+	}
 }

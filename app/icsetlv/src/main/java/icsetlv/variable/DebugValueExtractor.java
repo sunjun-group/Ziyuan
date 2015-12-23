@@ -284,9 +284,9 @@ public class DebugValueExtractor {
 		if (type instanceof PrimitiveType) {
 			/* TODO LLT: add Primitive type && refactor */
 			if (type instanceof BooleanType) {
-				parent.add(sav.strategies.dto.execute.value.BooleanValue.of(varId, ((BooleanValue)value).booleanValue(), false, false, false));
+				parent.addChild(sav.strategies.dto.execute.value.BooleanValue.of(varId, ((BooleanValue)value).booleanValue(), false, false, false));
 			} else {
-				parent.add(new PrimitiveValue(varId, value.toString(), type.toString(), false, false, false));
+				parent.addChild(new PrimitiveValue(varId, value.toString(), type.toString(), false, false, false));
 			}
 		} else if (type instanceof ArrayType) {
 			appendArrVarVal(parent, varId, (ArrayReference)value, level, thread);
@@ -295,13 +295,13 @@ public class DebugValueExtractor {
 			 * if the class name is "String"
 			 */
 			if (PrimitiveUtils.isString(type.name())) {
-				parent.add(new StringValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread), false, false, false));
+				parent.addChild(new StringValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread), false, false, false));
 			} 
 			/**
 			 * if the class name is "Integer", "Float", ...
 			 */
 			else if (PrimitiveUtils.isPrimitiveType(type.name())) {
-				parent.add(new PrimitiveValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread), type.toString(), false, false, false));
+				parent.addChild(new PrimitiveValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread), type.toString(), false, false, false));
 			} 
 			/**
 			 * if the class is an arbitrary complicated class
@@ -338,7 +338,7 @@ public class DebugValueExtractor {
 	
 	private void appendNullVarVal(ExecValue parent, String varId) {
 		ReferenceValue val = ReferenceValue.nullValue(varId, false, false);
-		parent.add(val);
+		parent.addChild(val);
 	}
 
 	private void appendClassVarVal(ExecValue parent, String varId,
@@ -350,7 +350,7 @@ public class DebugValueExtractor {
 			appendVarVal(val, val.getChildId(field.name()),
 					fieldValueMap.get(field), level, thread);
 		}
-		parent.add(val);
+		parent.addChild(val);
 	}
 
 	private void appendArrVarVal(ExecValue parent, String varId,
@@ -361,7 +361,7 @@ public class DebugValueExtractor {
 		for (int i = 0; i < value.length() && i < MAX_ARRAY_ELEMENT_TO_COLLECT; i++) {
 			appendVarVal(val, val.getElementId(i), getArrayEleValue(value, i), level, thread);
 		}
-		parent.add(val);
+		parent.addChild(val);
 	}
 	/***/
 	protected StackFrame findFrameByLocation(List<StackFrame> frames,

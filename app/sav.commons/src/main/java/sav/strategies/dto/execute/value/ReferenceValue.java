@@ -8,6 +8,9 @@
 
 package sav.strategies.dto.execute.value;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.sun.jdi.ClassType;
 
 /**
@@ -28,7 +31,7 @@ public class ReferenceValue extends ExecValue {
 		super(name, isRoot, isField, isStatic);
 //		BooleanValue child = BooleanValue.of(getChildId(NULL_CODE), isNull, false, true, false);
 		BooleanValue child = BooleanValue.of(NULL_CODE, isNull, false, true, false);
-		add(child);
+		addChild(child);
 		child.addParent(this);
 	}
 	
@@ -37,7 +40,7 @@ public class ReferenceValue extends ExecValue {
 		super(id, isRoot, isField, isStatic);
 //		BooleanValue child = BooleanValue.of(getChildId(NULL_CODE), isNull, false, true, false);
 		BooleanValue child = BooleanValue.of(NULL_CODE, isNull, false, true, false);
-		add(child);
+		addChild(child);
 		child.addParent(this);
 		
 		setReferenceID(referenceID);
@@ -78,6 +81,12 @@ public class ReferenceValue extends ExecValue {
 	public void setReferenceID(long referenceID) {
 		this.referenceID = referenceID;
 	}
+	
+	public String getConciseTypeName(){
+		String qualifiedName = classType.name();
+		String conciseName = qualifiedName.substring(qualifiedName.lastIndexOf(".")+1, qualifiedName.length());
+		return conciseName;
+	}
 
 	@Override
 	public ExecVarType getType() {
@@ -87,5 +96,36 @@ public class ReferenceValue extends ExecValue {
 	@Override
 	public boolean isTheSameWith(GraphNode nodeAfter) {
 		return true;
+	}
+	
+	@Override
+	public ReferenceValue clone(){
+		
+//		ReferenceValue(String id, boolean isNull, long referenceID, ClassType type, 
+//				boolean isRoot, boolean isField, boolean isStatic)
+		
+		BooleanValue isNullChild = (BooleanValue) getChildren().get(0);
+		boolean isNull = isNullChild.getBoolValue();
+		
+		ReferenceValue clonedValue = new ReferenceValue(getVarName(), isNull, this.getReferenceID(), this.getClassType(),
+				isRoot, isField, isStatic);
+		List<ExecValue> clonedChildren = cloneChildren(clonedValue.getChildren());
+		for(ExecValue clonedChild: clonedChildren){
+			clonedValue.addChild(clonedChild);
+			clonedChild.addParent(clonedValue);
+		}
+		
+		
+		return clonedValue;
+	}
+	
+	private List<ExecValue> cloneChildren(List<ExecValue> children){
+		List<ExecValue> clonedList = new ArrayList<>();
+		for(ExecValue child: children){
+			ExecValue clonedChild = child.clone();
+			clonedList.add(clonedChild);
+		}
+		
+		return clonedList;
 	}
 }

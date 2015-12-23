@@ -67,6 +67,13 @@ public class PrimitiveValue extends ExecValue {
 		}
 		return false;
 	}
+	
+	@Override
+	public PrimitiveValue clone(){
+		PrimitiveValue clonedValue = new PrimitiveValue(getVarName(), strVal, 
+				getPrimitiveType(), isRoot, isField, isStatic);
+		return clonedValue;
+	}
 
 //	@Override
 //	public boolean match(GraphNode node) {

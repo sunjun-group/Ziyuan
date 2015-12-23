@@ -317,13 +317,13 @@ public class DebugValueExtractor2 {
 						sav.strategies.dto.execute.value.BooleanValue.of(varId, 
 								((BooleanValue)value).booleanValue(), isRoot, isField, isStatic);
 				ele.setElementOfArray(isElementOfArray);
-				parent.add(ele);
+				parent.addChild(ele);
 				ele.addParent(parent);
 			} else {
 				PrimitiveValue ele = new PrimitiveValue(varId, value.toString(), type.toString(), 
 						isRoot, isField, isStatic);
 				ele.setElementOfArray(isElementOfArray);
-				parent.add(ele);
+				parent.addChild(ele);
 				ele.addParent(parent);
 			}
 		} else if (type instanceof ArrayType) { 
@@ -336,7 +336,7 @@ public class DebugValueExtractor2 {
 				StringValue ele = new StringValue(varId, toPrimitiveValue((ClassType) type, 
 						(ObjectReference)value, thread), isRoot, isField, isStatic);
 				ele.setElementOfArray(isElementOfArray);
-				parent.add(ele);
+				parent.addChild(ele);
 				ele.addParent(parent);
 			} 
 			/**
@@ -346,7 +346,7 @@ public class DebugValueExtractor2 {
 				PrimitiveValue ele = new PrimitiveValue(varId, toPrimitiveValue((ClassType) type, 
 						(ObjectReference)value, thread), type.toString(), isRoot, isField, isStatic);
 				ele.setElementOfArray(isElementOfArray);
-				parent.add(ele);
+				parent.addChild(ele);
 				ele.addParent(parent);
 			} 
 			/**
@@ -385,7 +385,7 @@ public class DebugValueExtractor2 {
 	
 	private void appendNullVarVal(ExecValue parent, String varId, boolean isField, boolean isStatic) {
 		ReferenceValue val = ReferenceValue.nullValue(varId, isField, isStatic);
-		parent.add(val);
+		parent.addChild(val);
 		val.addParent(parent);
 	}
 
@@ -440,7 +440,7 @@ public class DebugValueExtractor2 {
 			}
 		}
 		
-		parent.add(val);
+		parent.addChild(val);
 		val.addParent(parent);
 	}
 
@@ -461,7 +461,7 @@ public class DebugValueExtractor2 {
 			appendVarVal(arrayVal, varID, true, elementValue, level, thread, false, true, false);
 		}
 		
-		parent.add(arrayVal);
+		parent.addChild(arrayVal);
 		arrayVal.addParent(parent);
 	}
 	/***/
