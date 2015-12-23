@@ -435,6 +435,9 @@ public class DebugValueExtractor2 {
 			val = new ReferenceValue(varName, false, refID, type, isRoot, isField, isStatic);	
 			val.setElementOfArray(isElementOfArray);
 			val.setChildren(cachedValue.getChildren());
+			for(ExecValue child: cachedValue.getChildren()){
+				child.addParent(val);
+			}
 		}
 		
 		parent.add(val);

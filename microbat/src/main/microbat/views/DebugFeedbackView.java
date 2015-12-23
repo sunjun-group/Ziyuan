@@ -14,10 +14,10 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.ITreeViewerListener;
+import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
@@ -68,6 +69,9 @@ public class DebugFeedbackView extends ViewPart {
 	private CheckboxTreeViewer stateTreeViewer;
 	private CheckboxTreeViewer consequenceTreeViewer;
 	
+	private ICheckStateListener stateListener;
+	private ITreeViewerListener treeListener;
+	
 	private Button yesButton;
 	private Button noButton;
 	
@@ -85,8 +89,8 @@ public class DebugFeedbackView extends ViewPart {
 //		HierarchyGraphDiffer differ = new HierarchyGraphDiffer();
 //		differ.diff(thisState, afterState);
 		
-		createConsequenceContent(this.consequenceTreeViewer, cons);
-		createStateContent(this.stateTreeViewer, thisState);
+		createConsequenceContent(cons);
+		createStateContent(thisState);
 		
 		yesButton.setSelection(false);
 		noButton.setSelection(false);
@@ -95,22 +99,22 @@ public class DebugFeedbackView extends ViewPart {
 	}
 	
 	
-	private void createConsequenceContent(CheckboxTreeViewer viewer, List<GraphDiff> cons) {
-		viewer.setContentProvider(new ConsequenceContentProvider());
-		viewer.setLabelProvider(new ConsequenceLabelProvider());
-		viewer.setInput(cons);	
+	private void createConsequenceContent(List<GraphDiff> cons) {
+		this.consequenceTreeViewer.setContentProvider(new ConsequenceContentProvider());
+		this.consequenceTreeViewer.setLabelProvider(new ConsequenceLabelProvider());
+		this.consequenceTreeViewer.setInput(cons);	
 		
-		viewer.setCheckStateProvider(new VariableCheckStateProvider());
-		viewer.refresh(true);
+//		this.consequenceTreeViewer.setCheckStateProvider(new VariableCheckStateProvider());
+		this.consequenceTreeViewer.refresh(true);
 	}
 
-	private void createStateContent(CheckboxTreeViewer viewer, BreakPointValue value){
-		viewer.setContentProvider(new VariableContentProvider());
-		viewer.setLabelProvider(new VariableLabelProvider());
-		viewer.setInput(value);	
+	private void createStateContent(BreakPointValue value){
+		this.stateTreeViewer.setContentProvider(new VariableContentProvider());
+		this.stateTreeViewer.setLabelProvider(new VariableLabelProvider());
+		this.stateTreeViewer.setInput(value);	
 		
-		viewer.setCheckStateProvider(new VariableCheckStateProvider());
-		viewer.refresh(true);
+//		this.stateTreeViewer.setCheckStateProvider(new VariableCheckStateProvider());
+		this.stateTreeViewer.refresh(true);
 		
 	}
 
@@ -134,7 +138,50 @@ public class DebugFeedbackView extends ViewPart {
 
 		variableForm.setWeights(new int[] { 4, 6});
 		
-		ICheckStateListener stateListener = new ICheckStateListener() {
+		addListener();
+	}
+	
+	private void setChecks(CheckboxTreeViewer treeViewer, BreakPoint point){
+		Tree tree = treeViewer.getTree();
+		for(TreeItem item: tree.getItems()){
+			setChecks(item, point);
+		}
+	}
+	
+	private void setChecks(TreeItem item, BreakPoint point){
+		Object element = item.getData();
+		
+		if(element == null){
+			return;
+		}
+		
+		ExecValue ev = null;
+		if(element instanceof ExecValue){
+			ev = (ExecValue)element;
+		}
+		else if(element instanceof GraphDiff){
+			ev = (ExecValue) ((GraphDiff)element).getChangedNode();
+		}
+		
+		InterestedVariable iv = new InterestedVariable(point.getClassCanonicalName(), 
+				point.getLineNo(), ev);
+//		if(iVar.equals(iv)){
+//			item.setChecked(addOrDel);
+//		}			
+		if(Settings.interestedVariables.contains(iv)){
+			item.setChecked(true);
+		}
+		else{
+			item.setChecked(false);
+		}
+
+		for(TreeItem childItem: item.getItems()){
+			setChecks(childItem, point);
+		}
+	}
+
+	private void addListener() {
+		stateListener = new ICheckStateListener() {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Object obj = event.getElement();
@@ -149,10 +196,8 @@ public class DebugFeedbackView extends ViewPart {
 				}
 				
 				BreakPoint point = node.getBreakPoint();
-				
 				InterestedVariable iVar = new InterestedVariable(point.getClassCanonicalName(), 
 						point.getLineNo(), value);
-				
 				
 				if(!Settings.interestedVariables.contains(iVar)){
 					Settings.interestedVariables.add(iVar);							
@@ -161,12 +206,37 @@ public class DebugFeedbackView extends ViewPart {
 					Settings.interestedVariables.remove(iVar);
 				}
 				
-				stateTreeViewer.setCheckStateProvider(new VariableCheckStateProvider());
+				setChecks(consequenceTreeViewer, point);
+				setChecks(stateTreeViewer, point);
+				
 				stateTreeViewer.refresh();	
-				consequenceTreeViewer.setCheckStateProvider(new VariableCheckStateProvider());
 				consequenceTreeViewer.refresh();	
 			}
+			
+			
 		};
+		
+		treeListener = new ITreeViewerListener() {
+			
+			@Override
+			public void treeExpanded(TreeExpansionEvent event) {
+				BreakPoint point = node.getBreakPoint();
+				setChecks(consequenceTreeViewer, point);
+				setChecks(stateTreeViewer, point);
+				
+				stateTreeViewer.refresh();	
+				consequenceTreeViewer.refresh();
+			}
+			
+			@Override
+			public void treeCollapsed(TreeExpansionEvent event) {
+				
+			}
+		};
+		
+		this.consequenceTreeViewer.addTreeListener(treeListener);
+		this.stateTreeViewer.addTreeListener(treeListener);
+		
 		this.consequenceTreeViewer.addCheckStateListener(stateListener);
 		this.stateTreeViewer.addCheckStateListener(stateListener);
 	}
@@ -568,6 +638,7 @@ public class DebugFeedbackView extends ViewPart {
 						point.getLineNo(), value);
 				
 				if(iVar.getVariable().getVarName().contains("flag")){
+					System.out.println(iVar.getVariable().getParents().get(0).getVarName());
 					System.currentTimeMillis();
 				}
 				
