@@ -431,7 +431,7 @@ public class DebugValueExtractor2 {
 		 * handle the case of alias variable
 		 */
 		else if(!val.getVarName().equals(varName)){
-			ReferenceValue cachedValue = val;
+			ReferenceValue cachedValue = val/*.clone()*/;
 			val = new ReferenceValue(varName, false, refID, type, isRoot, isField, isStatic);	
 			val.setElementOfArray(isElementOfArray);
 			val.setChildren(cachedValue.getChildren());

@@ -102,8 +102,6 @@ public class DebugFeedbackView extends ViewPart {
 		
 		viewer.setCheckStateProvider(new VariableCheckStateProvider());
 		viewer.refresh(true);
-		
-		addListener(viewer);
 	}
 
 	private void createStateContent(CheckboxTreeViewer viewer, BreakPointValue value){
@@ -114,60 +112,6 @@ public class DebugFeedbackView extends ViewPart {
 		viewer.setCheckStateProvider(new VariableCheckStateProvider());
 		viewer.refresh(true);
 		
-		addListener(viewer);
-	}
-	
-	private void addListener(final CheckboxTreeViewer viewer) {
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				
-			}
-		});
-		
-		
-		viewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				Object obj = event.getElement();
-				ExecValue value = null;
-				boolean isChecked = false;
-				if(obj instanceof ExecValue){
-					value = (ExecValue)obj;
-					isChecked = viewer.getChecked(value);
-				}
-				else if(obj instanceof GraphDiff){
-					GraphDiff diff = (GraphDiff)obj;
-					value = (ExecValue)diff.getChangedNode();
-					isChecked = viewer.getChecked(diff);
-				}
-				
-				BreakPoint point = node.getBreakPoint();
-				
-				InterestedVariable iVar = new InterestedVariable(point.getClassCanonicalName(), 
-						point.getLineNo(), value);
-				
-				if(isChecked){
-					if(!Settings.interestedVariables.contains(iVar)){
-						Settings.interestedVariables.add(iVar);							
-					}
-				}
-				else{
-					Settings.interestedVariables.remove(iVar);
-				}
-				
-				if(stateTreeViewer != null){
-					stateTreeViewer.setCheckStateProvider(new VariableCheckStateProvider());
-					stateTreeViewer.refresh();	
-				}
-				
-				if(consequenceTreeViewer != null){
-					consequenceTreeViewer.setCheckStateProvider(new VariableCheckStateProvider());
-					consequenceTreeViewer.refresh();	
-				}
-			}
-		});
 	}
 
 	@Override
@@ -189,6 +133,42 @@ public class DebugFeedbackView extends ViewPart {
 		createVarGroup(variableForm, "States: ");
 
 		variableForm.setWeights(new int[] { 4, 6});
+		
+		ICheckStateListener stateListener = new ICheckStateListener() {
+			@Override
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				Object obj = event.getElement();
+				ExecValue value = null;
+				
+				if(obj instanceof ExecValue){
+					value = (ExecValue)obj;
+				}
+				else if(obj instanceof GraphDiff){
+					GraphDiff diff = (GraphDiff)obj;
+					value = (ExecValue)diff.getChangedNode();
+				}
+				
+				BreakPoint point = node.getBreakPoint();
+				
+				InterestedVariable iVar = new InterestedVariable(point.getClassCanonicalName(), 
+						point.getLineNo(), value);
+				
+				
+				if(!Settings.interestedVariables.contains(iVar)){
+					Settings.interestedVariables.add(iVar);							
+				}
+				else{
+					Settings.interestedVariables.remove(iVar);
+				}
+				
+				stateTreeViewer.setCheckStateProvider(new VariableCheckStateProvider());
+				stateTreeViewer.refresh();	
+				consequenceTreeViewer.setCheckStateProvider(new VariableCheckStateProvider());
+				consequenceTreeViewer.refresh();	
+			}
+		};
+		this.consequenceTreeViewer.addCheckStateListener(stateListener);
+		this.stateTreeViewer.addCheckStateListener(stateListener);
 	}
 
 	private void createVarGroup(SashForm variableForm, String groupName) {
@@ -388,7 +368,6 @@ public class DebugFeedbackView extends ViewPart {
 			return null;
 		}
 		
-		@SuppressWarnings("restriction")
 		public String getColumnText(Object ele, int columnIndex) {
 			
 			if(ele instanceof GraphDiff){
@@ -408,12 +387,12 @@ public class DebugFeedbackView extends ViewPart {
 						switch(columnIndex){
 						case 0: 
 							if(value.getClassType() != null){
-								return value.getClassType().name();						
+								return value.getConciseTypeName();						
 							}
 							else{
 								return "array";
 							}
-						case 1: return value.getVarName();
+						case 1: return value.getVarId();
 						case 2: 
 							if(after != null){
 								return "id = " + String.valueOf(((ReferenceValue)after).getReferenceID());
@@ -515,7 +494,6 @@ public class DebugFeedbackView extends ViewPart {
 		
 	}
 
-	@SuppressWarnings("restriction")
 	class VariableLabelProvider implements ITableLabelProvider{
 
 		public void addListener(ILabelProviderListener listener) {
@@ -541,7 +519,7 @@ public class DebugFeedbackView extends ViewPart {
 				switch(columnIndex){
 				case 0: 
 					if(value.getClassType() != null){
-						return value.getClassType().name();						
+						return value.getConciseTypeName();						
 					}
 					else{
 						return "array";
@@ -589,7 +567,7 @@ public class DebugFeedbackView extends ViewPart {
 				InterestedVariable iVar = new InterestedVariable(point.getClassCanonicalName(), 
 						point.getLineNo(), value);
 				
-				if(iVar.toString().contains("this.tag.flag")){
+				if(iVar.getVariable().getVarName().contains("flag")){
 					System.currentTimeMillis();
 				}
 				

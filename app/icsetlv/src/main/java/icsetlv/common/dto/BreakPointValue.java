@@ -129,4 +129,9 @@ public class BreakPointValue extends ExecValue {
 	public boolean isTheSameWith(GraphNode nodeAfter) {
 		return true;
 	}
+	
+	@Override 
+	public BreakPointValue clone(){
+		return this;
+	}
 }

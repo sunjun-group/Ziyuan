@@ -47,6 +47,10 @@ public class InterestedVariable {
 			InterestedVariable that = (InterestedVariable)obj;
 			boolean isTheSame = MicroBatUtil.isTheSameVariable(this, that);
 			
+//			if(this.variable.getVarName().equals("flag") && that.getVariable().getVarName().equals("flag")){
+//				System.currentTimeMillis();
+//			}
+			
 			return isTheSame;
 		}
 		
