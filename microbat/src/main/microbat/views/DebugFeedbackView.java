@@ -145,6 +145,7 @@ public class DebugFeedbackView extends ViewPart {
 	
 	private void setChecks(CheckboxTreeViewer treeViewer, BreakPoint point){
 		Tree tree = treeViewer.getTree();
+		
 		for(TreeItem item: tree.getItems()){
 			setChecks(item, point);
 		}
@@ -167,9 +168,7 @@ public class DebugFeedbackView extends ViewPart {
 		
 		InterestedVariable iv = new InterestedVariable(point.getClassCanonicalName(), 
 				point.getLineNo(), ev);
-//		if(iVar.equals(iv)){
-//			item.setChecked(addOrDel);
-//		}			
+		
 		if(Settings.interestedVariables.contains(iv)){
 			item.setChecked(true);
 		}

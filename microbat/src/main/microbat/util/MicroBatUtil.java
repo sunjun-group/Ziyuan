@@ -28,26 +28,25 @@ public class MicroBatUtil {
 			}
 		}
 		/**
-		 * Otherwise, we compare two variables based on their parents.
+		 * Otherwise, it means var1 and var2 should be primitive variable, and they are either
+		 * local variable or field.
 		 */
-		else if(var1.getVarName().equals(var2.getVarName())){
-			ExecValue rootVar1 = v1.getVariable().getFirstRootParent();
-			ExecValue rootVar2 = v2.getVariable().getFirstRootParent();
-			
-			String visitingClassName1 = v1.getVisitingClassName();
-			String visitingClassName2 = v2.getVisitingClassName();
-			boolean isEqualVisitingClass = visitingClassName1.equals(visitingClassName2);
-			
-			if(rootVar1.isField() && rootVar2.isField()){
-				return isEqualVisitingClass;
-			}
-			else if(rootVar1.isLocalVariable() && rootVar2.isLocalVariable()){
-				boolean isEqualName = rootVar1.getVarName().equals(rootVar2.getVarName());
+		else if(!(var1 instanceof ReferenceValue) && !(var2 instanceof ReferenceValue)){
+			if(var1.getVarName().equals(var2.getVarName())){
 				
-				if(isEqualVisitingClass && isEqualName){
-					boolean isEqualRange = isEqualRange(rootVar1, v1, rootVar2, v2);
+				if(var1.isLocalVariable() && var2.isLocalVariable()){
+					boolean isEqualRange = isEqualRange(var1, v1, var2, v2);
 					return isEqualRange;
 				}
+				else if(var1.isField() && var2.isField()){
+					ReferenceValue parent1 = (ReferenceValue)var1.getParents().get(0);
+					ReferenceValue parent2 = (ReferenceValue)var2.getParents().get(0);
+					
+					if(parent1.getReferenceID() == parent2.getReferenceID()){
+						return true;
+					}
+				}
+				
 			}
 		}
 		
@@ -55,8 +54,8 @@ public class MicroBatUtil {
 	}
 
 
-	private static boolean isEqualRange(ExecValue rootVar1, InterestedVariable v1, ExecValue rootVar2, InterestedVariable v2) {
-		String varID = rootVar1.getVarId();
+	private static boolean isEqualRange(ExecValue var1, InterestedVariable v1, ExecValue var2, InterestedVariable v2) {
+		String varID = var1.getVarId();
 		for(LocalVariableScope lvs: Settings.localVariableScopes.getVariableScopes()){
 			if(varID.equals(lvs.getVariableName())){
 				boolean isRootVar1InScope = lvs.getStartLine() <= v1.getLineNumber() && lvs.getEndLine() >= v1.getLineNumber();

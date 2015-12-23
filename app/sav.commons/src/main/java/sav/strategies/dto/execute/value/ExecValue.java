@@ -212,19 +212,20 @@ public abstract class ExecValue implements GraphNode{
 		this.isRoot = isRoot;
 	}
 	
-	public ExecValue getFirstRootParent(){
-		if(this.isRoot()){
-			return this;
-		}
-		else{
-			ExecValue parentValue = this;
-			while(!parentValue.isRoot()){
-				parentValue = parentValue.getParents().get(0);
-			}
-			
-			return parentValue;
-		}
-	}
+//	public ExecValue getFirstRootParent(){
+//		if(this.isRoot()){
+//			return this;
+//		}
+//		else{
+//			ExecValue parentValue = this;
+//			while(!parentValue.isRoot()){
+//				parentValue = parentValue.getParents().get(0);
+//				System.out.println("loop");
+//			}
+//			
+//			return parentValue;
+//		}
+//	}
 	
 	public boolean isField() {
 		return isField;
