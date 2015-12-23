@@ -453,38 +453,11 @@ public class DebugFeedbackView extends ViewPart {
 					return null;
 				}
 				else{
-					if(element instanceof ReferenceValue){
-						ReferenceValue value = (ReferenceValue)element;
-						switch(columnIndex){
-						case 0: 
-							if(value.getClassType() != null){
-								return value.getConciseTypeName();						
-							}
-							else{
-								return "array";
-							}
-						case 1: return value.getVarId();
-						case 2: 
-							if(after != null){
-								return "id = " + String.valueOf(((ReferenceValue)after).getReferenceID());
-							}
-							else{
-								return "NULL";
-							}
-						case 3: 
-							if(before != null){
-								return "id = " + String.valueOf(((ReferenceValue)before).getReferenceID());
-							}
-							else{
-								return "NULL";
-							}
-						}
-					}
-					else if(element instanceof ArrayValue){
+					if(element instanceof ArrayValue){
 						ArrayValue value = (ArrayValue)element;
 						switch(columnIndex){
 						case 0: return "array[" + value.getComponentType() + "]";
-						case 1: return value.getVarName();
+						case 1: return value.getVarId();
 						case 2: 
 							if(after != null){
 								return "id = " + String.valueOf(((ArrayValue)after).getReferenceID());
@@ -501,11 +474,39 @@ public class DebugFeedbackView extends ViewPart {
 							}
 						}
 					}
+					else if(element instanceof ReferenceValue){
+						ReferenceValue value = (ReferenceValue)element;
+						switch(columnIndex){
+						case 0: 
+							if(value.getClassType() != null){
+								return value.getConciseTypeName();						
+							}
+							else{
+								return "array";
+							}
+						case 1: 
+							return value.getVarId();
+						case 2: 
+							if(after != null){
+								return "id = " + String.valueOf(((ReferenceValue)after).getReferenceID());
+							}
+							else{
+								return "NULL";
+							}
+						case 3: 
+							if(before != null){
+								return "id = " + String.valueOf(((ReferenceValue)before).getReferenceID());
+							}
+							else{
+								return "NULL";
+							}
+						}
+					}
 					else if(element instanceof PrimitiveValue){
 						PrimitiveValue value = (PrimitiveValue)element;
 						switch(columnIndex){
 						case 0: return value.getPrimitiveType();
-						case 1: return value.getVarName();
+						case 1: return value.getVarId();
 						case 2: 
 							if(after != null){
 								return ((PrimitiveValue)after).getStrVal();
@@ -595,7 +596,12 @@ public class DebugFeedbackView extends ViewPart {
 					else{
 						return "array";
 					}
-				case 1: return value.getVarName();
+				case 1: 
+					String name = value.getVarName();
+					if(value.isRoot() && value.isField()){
+						name = "this." + name;
+					}
+					return name;
 				case 2: return "";
 				}
 			}
@@ -603,7 +609,12 @@ public class DebugFeedbackView extends ViewPart {
 				ArrayValue value = (ArrayValue)element;
 				switch(columnIndex){
 				case 0: return "array[" + value.getComponentType() + "]";
-				case 1: return value.getVarName();
+				case 1: 
+					String name = value.getVarName();
+					if(value.isRoot() && value.isField()){
+						name = "this." + name;
+					}
+					return name;
 				case 2: return "";
 				}
 			}
@@ -611,7 +622,12 @@ public class DebugFeedbackView extends ViewPart {
 				PrimitiveValue value = (PrimitiveValue)element;
 				switch(columnIndex){
 				case 0: return value.getPrimitiveType();
-				case 1: return value.getVarName();
+				case 1: 
+					String name = value.getVarName();
+					if(value.isRoot() && value.isField()){
+						name = "this." + name;
+					}
+					return name;
 				case 2: return value.getStrVal();
 				}
 			}

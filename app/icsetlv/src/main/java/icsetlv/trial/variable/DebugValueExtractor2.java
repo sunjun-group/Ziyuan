@@ -196,7 +196,12 @@ public class DebugValueExtractor2 {
 			final Map<Variable, JDIParam> allVariables) throws SavException {
 		for (Entry<Variable, JDIParam> entry : allVariables.entrySet()) {
 			Variable var = entry.getKey();
+			
 			String varId = var.getId();
+			if(var.getScope().equals(VarScope.THIS)){
+				varId = varId.substring(varId.indexOf("this.")+5, varId.length());						
+			}
+			 
 			JDIParam param = entry.getValue();
 			Value value = param.getValue();
 			boolean isField = (param.getField() != null);

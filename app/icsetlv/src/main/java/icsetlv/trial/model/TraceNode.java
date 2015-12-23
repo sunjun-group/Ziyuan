@@ -195,7 +195,7 @@ public class TraceNode {
 		BreakPointValue nodeBefore = getProgramState();
 		BreakPointValue nodeAfter = getAfterState();
 		
-//		if(getOrder() == 14){
+//		if(getOrder() == 6){
 //			System.currentTimeMillis();
 //		}
 		
