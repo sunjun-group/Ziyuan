@@ -602,7 +602,7 @@ public class DebugFeedbackView extends ViewPart {
 						name = "this." + name;
 					}
 					
-					System.out.println(value.getVarId());
+//					System.out.println(value.getVarId());
 					
 					return name;
 				case 2: return "";
