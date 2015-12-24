@@ -58,12 +58,26 @@ public abstract class ExecValue implements GraphNode{
 	}
 	
 	public String getVarId() {
+		
 		String varId = varName;
 		ExecValue parentValue = this;
-		while(!parentValue.isRoot()){
-			parentValue = parentValue.getParents().get(0);
-			varId = parentValue.getVarName() + "." + varId;
+//		while(!parentValue.isRoot()){
+//			parentValue = parentValue.getParents().get(0);
+//			varId = parentValue.getVarName() + "." + varId;
+//		}
+		
+		ArrayList<ArrayList<ExecValue>> paths = new ArrayList<>();
+		ArrayList<ExecValue> initialPath = new ArrayList<>();
+		findValidatePathsToRoot(parentValue, initialPath, paths);
+		
+		ArrayList<ExecValue> shortestPath = findShortestPath(paths);
+		
+		for(int i=1; i<shortestPath.size(); i++){
+			ExecValue node = shortestPath.get(i);
+			varId = node.getVarName() + "." + varId;
 		}
+		
+		parentValue = shortestPath.get(shortestPath.size()-1);
 		
 		if(parentValue.isField){
 			if(!parentValue.isStatic){
@@ -78,6 +92,56 @@ public abstract class ExecValue implements GraphNode{
 		return varId;
 	}
 	
+	private ArrayList<ExecValue> findShortestPath(ArrayList<ArrayList<ExecValue>> paths){
+		int length = -1;
+		ArrayList<ExecValue> shortestPath = null;
+		
+		for(ArrayList<ExecValue> path: paths){
+			if(length == -1){
+				shortestPath = path;
+				length = path.size();
+			}
+			else{
+				if(length < path.size()){
+					shortestPath = path;
+					length = path.size();
+				}
+			}
+		}
+		
+		return shortestPath;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void findValidatePathsToRoot(ExecValue node, ArrayList<ExecValue> path, 
+			ArrayList<ArrayList<ExecValue>> paths) {
+		path.add(node);
+		
+		if(node.isRoot()){
+			paths.add(path);
+		}
+		else if(!isCyclic(path)){
+			for(ExecValue parent: node.getParents()){
+				ArrayList<ExecValue> clonedPath = (ArrayList<ExecValue>) path.clone();
+				findValidatePathsToRoot(parent, clonedPath, paths);
+			}
+		}
+	}
+	
+	private boolean isCyclic(ArrayList<ExecValue> path){
+		for(int i=0; i<path.size(); i++){
+			ExecValue node1 = path.get(i);
+			for(int j=i+1; j<path.size(); j++){
+				ExecValue node2 = path.get(j);
+				if(node1 == node2){
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+
 	public void addChild(ExecValue child) {
 		if (children == null) {
 			children = new ArrayList<ExecValue>();

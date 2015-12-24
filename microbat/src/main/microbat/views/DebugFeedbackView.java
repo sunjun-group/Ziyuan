@@ -601,6 +601,9 @@ public class DebugFeedbackView extends ViewPart {
 					if(value.isRoot() && value.isField()){
 						name = "this." + name;
 					}
+					
+					System.out.println(value.getVarId());
+					
 					return name;
 				case 2: return "";
 				}
