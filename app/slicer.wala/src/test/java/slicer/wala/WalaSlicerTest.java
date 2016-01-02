@@ -16,6 +16,7 @@ import org.junit.Test;
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
 import sav.commons.testdata.BoundedStack;
+import sav.commons.testdata.Main;
 import sav.strategies.dto.BreakPoint;
 
 
@@ -43,11 +44,13 @@ public class WalaSlicerTest extends AbstractTest {
 
 	private void addBreakpoints(List<BreakPoint> breakpoints) {
 		breakpoints.add(new BreakPoint(BoundedStack.class.getName(), "push(Ljava/lang/Integer;)Z", 34));
+//		breakpoints.add(new BreakPoint(Main.class.getName(), "main(Ljava/lang/Integer;)Z", 10));
 	}
 
 	private List<String[]> makeEntryPoints() {
 		List<String[]> classEntryPoints = new ArrayList<String[]>();
 		classEntryPoints.add(make("Lsav/commons/testdata/BoundedStack", "push(Ljava/lang/Integer;)Z"));
+//		classEntryPoints.add(make("Lsav/commons/testdata/Main", "main(Ljava/lang/Integer;)Z"));
 		return classEntryPoints;
 	}
 	

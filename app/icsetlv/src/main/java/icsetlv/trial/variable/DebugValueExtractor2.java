@@ -3,6 +3,11 @@ package icsetlv.trial.variable;
 import icsetlv.common.dto.BreakPointValue;
 import icsetlv.common.utils.PrimitiveUtils;
 import icsetlv.trial.heuristic.HeuristicIgnoringFieldRule;
+import icsetlv.trial.jpda.bdi.ExecutionManager;
+import icsetlv.trial.jpda.bdi.NoSessionException;
+import icsetlv.trial.jpda.bdi.VMNotInterruptedException;
+import icsetlv.trial.jpda.expr.ExpressionParser;
+import icsetlv.trial.jpda.expr.ParseException;
 import icsetlv.variable.DebugValueExtractor;
 import icsetlv.variable.JDIParam;
 
@@ -34,9 +39,12 @@ import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.BooleanType;
 import com.sun.jdi.BooleanValue;
+import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.InvocationException;
 import com.sun.jdi.LocalVariable;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
@@ -73,6 +81,43 @@ public class DebugValueExtractor2 {
 //		this.valRetrieveLevel = valRetrieveLevel;
 //	}
 	
+	private Value retriveExpression(final StackFrame frame, String expression){
+		ExpressionParser.GetFrame frameGetter = new ExpressionParser.GetFrame() {
+            @Override
+            public StackFrame get()
+                throws IncompatibleThreadStateException
+            {
+            	return frame;
+                
+            }
+        };
+        
+        Value val = null;
+        
+        try {
+			val = ExpressionParser.evaluate(expression, frame.virtualMachine(), frameGetter);
+			System.currentTimeMillis();
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidTypeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotLoadedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IncompatibleThreadStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        return val;
+	}
+	
 	public final BreakPointValue extractValue(BreakPoint bkp, ThreadReference thread, Location loc)
 			throws IncompatibleThreadStateException, AbsentInformationException, SavException {
 		if (bkp == null) {
@@ -84,7 +129,7 @@ public class DebugValueExtractor2 {
 		synchronized (thread) {
 			if (!thread.frames().isEmpty()) {
 				//StackFrame frame = findFrameByLocation(thread.frames(), event.location());
-				StackFrame frame = findFrameByLocation(thread.frames(), loc);
+				final StackFrame frame = findFrameByLocation(thread.frames(), loc);
 				Method method = frame.location().method();
 				ReferenceType refType;
 				ObjectReference objRef = null;
@@ -106,6 +151,10 @@ public class DebugValueExtractor2 {
 				
 				List<Variable> collectedMoreVariable = collectMoreVariable(bkp, visibleVars, allFields);
 				bkp.setAllVisibleVariables(collectedMoreVariable);
+				
+				//TODO
+				//Value value = retriveExpression(frame, "1+1");
+				
 				
 				//for (Variable bpVar : bkp.getVars()) {
 				for (Variable bpVar : bkp.getAllVisibleVariables()) {
