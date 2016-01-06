@@ -1,4 +1,4 @@
-package microbat.codeanalysis;
+package microbat.codeanalysis.ast;
 
 import java.util.ArrayList;
 import java.util.List;

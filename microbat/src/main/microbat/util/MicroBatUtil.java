@@ -1,6 +1,6 @@
 package microbat.util;
 
-import microbat.codeanalysis.LocalVariableScope;
+import microbat.codeanalysis.ast.LocalVariableScope;
 import microbat.model.InterestedVariable;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ReferenceValue;

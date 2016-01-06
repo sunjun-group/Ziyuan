@@ -3,7 +3,7 @@ package microbat.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import microbat.codeanalysis.LocalVariableScopes;
+import microbat.codeanalysis.ast.LocalVariableScopes;
 import microbat.model.InterestedVariable;
 
 public class Settings {

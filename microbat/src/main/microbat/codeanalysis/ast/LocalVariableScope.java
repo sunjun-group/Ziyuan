@@ -1,4 +1,4 @@
-package microbat.codeanalysis;
+package microbat.codeanalysis.ast;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
