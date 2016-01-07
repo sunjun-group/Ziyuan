@@ -162,6 +162,7 @@ public class TestcasesExecutor{
 	 */
 	public final void run(List<BreakPoint> brkps) throws SavException {
 		this.bkps = brkps;
+		
 		this.brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
 		this.config.setDebug(true);
 		

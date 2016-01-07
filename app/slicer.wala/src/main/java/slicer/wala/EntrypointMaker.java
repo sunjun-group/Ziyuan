@@ -78,16 +78,13 @@ public abstract class EntrypointMaker<T> {
 					}
 
 					public Entrypoint next() {
-						T entry = classEntryPoints
-								.get(index);
-						TypeReference T = TypeReference
-								.findOrCreate(loaderRef,
-										TypeName.string2TypeName(getClassRef(entry)));
-						Atom method = Atom
-								.findOrCreateAsciiAtom(getMethodName(entry));
-						MethodReference mainRef = MethodReference
-								.findOrCreate(T, method, getMethodDescriptor(entry));
+						T entry = classEntryPoints.get(index);
+						TypeReference T = TypeReference.findOrCreate(loaderRef, TypeName.string2TypeName(getClassRef(entry)));
+						Atom method = Atom.findOrCreateAsciiAtom(getMethodName(entry));
+						MethodReference mainRef = MethodReference.findOrCreate(T, method, getMethodDescriptor(entry));
+						
 						index++;
+						
 						return new DefaultEntrypoint(mainRef, cha);
 					}
 				};

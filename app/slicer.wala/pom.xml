@@ -11,7 +11,8 @@
 
 	<dependencies>
 		<!-- wala -->
-		<dependency>
+		
+		<!-- <dependency>
 			<groupId>com.ibm.wala</groupId>
 			<artifactId>com.ibm.wala.core</artifactId>
 			<version>${wala-version}</version>
@@ -26,7 +27,9 @@
 			<groupId>com.ibm.wala</groupId>
 			<artifactId>com.ibm.wala.util</artifactId>
 			<version>${wala-version}</version>
-		</dependency>
+		</dependency>  -->
+		
+		
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>

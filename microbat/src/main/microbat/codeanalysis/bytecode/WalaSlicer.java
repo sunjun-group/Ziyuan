@@ -1,12 +1,4 @@
-/*
- * Copyright (C) 2013 by SUTD (Singapore)
- * All rights reserved.
- *
- * 	Author: SUTD
- *  Version:  $Revision: 1 $
- */
-
-package slicer.wala;
+package microbat.codeanalysis.bytecode;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,10 +17,10 @@ import sav.common.core.utils.Assert;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Predicate;
+import sav.common.core.utils.SignatureUtils;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.slicing.ISlicer;
 
 import com.ibm.wala.classLoader.BinaryDirectoryTreeModule;
 import com.ibm.wala.classLoader.IMethod;
@@ -39,13 +31,12 @@ import com.ibm.wala.ipa.callgraph.AnalysisScope;
 import com.ibm.wala.ipa.callgraph.CGNode;
 import com.ibm.wala.ipa.callgraph.CallGraph;
 import com.ibm.wala.ipa.callgraph.CallGraphBuilder;
-import com.ibm.wala.ipa.callgraph.CallGraphBuilderCancelException;
 import com.ibm.wala.ipa.callgraph.Entrypoint;
+import com.ibm.wala.ipa.callgraph.impl.DefaultEntrypoint;
 import com.ibm.wala.ipa.callgraph.impl.Util;
 import com.ibm.wala.ipa.callgraph.propagation.InstanceKey;
 import com.ibm.wala.ipa.callgraph.propagation.PointerAnalysis;
 import com.ibm.wala.ipa.cha.ClassHierarchy;
-import com.ibm.wala.ipa.cha.ClassHierarchyException;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.ipa.slicer.NormalStatement;
 import com.ibm.wala.ipa.slicer.Slicer;
@@ -61,35 +52,35 @@ import com.ibm.wala.ssa.SSACFG;
 import com.ibm.wala.ssa.SSACFG.BasicBlock;
 import com.ibm.wala.ssa.SSAInstruction;
 import com.ibm.wala.types.ClassLoaderReference;
+import com.ibm.wala.types.Descriptor;
+import com.ibm.wala.types.MethodReference;
 import com.ibm.wala.types.TypeName;
+import com.ibm.wala.types.TypeReference;
+import com.ibm.wala.types.generics.MethodTypeSignature;
+import com.ibm.wala.types.generics.TypeSignature;
 import com.ibm.wala.util.config.FileOfClasses;
 import com.ibm.wala.util.strings.Atom;
 
-/**
- * @author LLT
- * 
- */
-public class WalaSlicer implements ISlicer {
+public class WalaSlicer{
 	private static final String JAVA_REGRESSION_EXCLUSIONS = "/Java60RegressionExclusions.txt";
-	private SlicerInput input;
-	private AnalysisScope scope;
-	private IClassHierarchy cha;
 	
-	public WalaSlicer(SlicerInput input) throws SavException {
-		this.input = input;
-		this.scope = makeJ2SEAnalysisScope();
-		this.cha = makeClassHierarchy(scope);
+	public WalaSlicer(){
+		
 	}
 
-	@Override
 	public List<BreakPoint> slice(AppJavaClassPath appClassPath, List<BreakPoint> breakpoints,
 			List<String> junitClassNames) throws Exception {
-		Iterable<Entrypoint> entrypoints = makeEntrypoints(scope.getApplicationLoader(), cha, breakpoints);
+		
+		AnalysisScope scope = makeJ2SEAnalysisScope(appClassPath);
+		IClassHierarchy cha = ClassHierarchy.make(scope);
+		
+		Iterable<Entrypoint> entrypoints = makeEntrypoints(scope.getApplicationLoader(), cha, breakpoints.get(0));
 		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
 //		CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope);
 //		CallGraphBuilder builder = Util.makeNCFABuilder(3, options, new AnalysisCache(), cha, scope);
 		CallGraphBuilder builder = Util.makeVanillaNCFABuilder(3, options, new AnalysisCache(), cha, scope);
-		CallGraph cg = makeCallGraph(options, builder);
+		
+		CallGraph cg = builder.makeCallGraph(options, null);
 		List<Statement> stmt = findSeedStmts(cg, breakpoints);
 		
 		PointerAnalysis<InstanceKey> pa = builder.getPointerAnalysis();
@@ -98,16 +89,10 @@ public class WalaSlicer implements ISlicer {
 //				DataDependenceOptions.NO_BASE_PTRS,
 //				ControlDependenceOptions.NONE);
 		
-//		SDG sdg = new SDG(cg, builder.getPointerAnalysis(),
-//				DataDependenceOptions.FULL,
-//				ControlDependenceOptions.NO_EXCEPTIONAL_EDGES);
-		
-		// Collection<Statement> computeBackwardSlice = new CISlicer(cg,
-		// builder.getPointerAnalysis(), DataDependenceOptions.NO_HEAP,
-		// ControlDependenceOptions.NONE).computeBackwardThinSlice(stmt);
+//		Collection<Statement> computeBackwardSlice = new CISlicer(cg, builder.getPointerAnalysis(), DataDependenceOptions.NO_HEAP,
+//				ControlDependenceOptions.NONE).computeBackwardThinSlice(stmt);
 		try {
 			Collection<Statement> computeBackwardSlice;
-//			computeBackwardSlice = Slicer.computeBackwardSlice(sdg, stmt);
 			computeBackwardSlice = Slicer.computeBackwardSlice(stmt.get(0), cg, pa, DataDependenceOptions.NO_BASE_PTRS,
 					ControlDependenceOptions.NO_EXCEPTIONAL_EDGES);
 			
@@ -126,12 +111,8 @@ public class WalaSlicer implements ISlicer {
 					});
 			return toBreakpoints(computeBackwardSlice);
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} /*catch (CancelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+		} 
 		return null;
 	}
 	
@@ -169,7 +150,7 @@ public class WalaSlicer implements ISlicer {
 				}
 			}
 		} catch (InvalidClassFileException e) {
-			throw new SavException(Constants.MODULE, e);
+			e.printStackTrace();
 		}
 		return result;
 	}
@@ -212,7 +193,7 @@ public class WalaSlicer implements ISlicer {
 							stmts.add(new NormalStatement(n, j));
 						}
 					} catch (InvalidClassFileException e) {
-						// TODO LLT logging
+						e.printStackTrace();
 					}
 				}
 			}
@@ -234,44 +215,31 @@ public class WalaSlicer implements ISlicer {
 		return null;
 	}
 
-	private ClassHierarchy makeClassHierarchy(AnalysisScope scope)
-			throws SavException {
-		try {
-			return ClassHierarchy.make(scope);
-		} catch (ClassHierarchyException e) {
-			throw new SavException(Constants.MODULE, e);
-		}
-	}
 
-	private CallGraph makeCallGraph(AnalysisOptions options,
-			CallGraphBuilder builder) throws SavException {
-		try {
-			return builder.makeCallGraph(options, null);
-		} catch (IllegalArgumentException e) {
-			throw new SavException(Constants.MODULE, e);
-		} catch (CallGraphBuilderCancelException e) {
-			throw new SavException(Constants.MODULE, e);
-		}
-	}
-
-	public AnalysisScope makeJ2SEAnalysisScope() throws SavException {
+	public AnalysisScope makeJ2SEAnalysisScope(AppJavaClassPath appClassPath) throws SavException {
 		AnalysisScope scope = AnalysisScope.createJavaAnalysisScope();
 		try {
-			// add j2se jars
+			/**
+			 * add j2se jars
+			 */
 			ClassLoaderReference primordialLoader = scope.getPrimordialLoader();
-			for (String lib : WalaProperties.getJarsInDirectory(input.getJavaHome())) {
-				scope.addToScope(primordialLoader, new JarFile(lib));
+			String[] libs = WalaProperties.getJarsInDirectory(appClassPath.getJavaHome());
+			for (String lib : libs) {
+				if(lib.contains("rt.jar")){
+					scope.addToScope(primordialLoader, new JarFile(lib));					
+				}
 			}
-			// add app jars
-			if (input.getAppBinFolder() != null) {
-				scope.addToScope(
-						scope.getApplicationLoader(),
-						new BinaryDirectoryTreeModule(new File(input
-								.getAppBinFolder())));
+			/**
+			 * add jars in class path
+			 */
+			for(String classPath: appClassPath.getClasspaths()){
+				BinaryDirectoryTreeModule module = new BinaryDirectoryTreeModule(new File(classPath));
+				scope.addToScope(scope.getApplicationLoader(), module);
 			}
+			
 			scope.setExclusions(getJavaExclusions());
 		} catch (IOException e) {
-			throw new SavException(Constants.MODULE, e, "Slicer _ cannot create jarFile");
+			e.printStackTrace();
 		}
 		return scope;
 	}
@@ -282,25 +250,72 @@ public class WalaSlicer implements ISlicer {
 		return new FileOfClasses(url.openStream()); 
 	}
 
-	/**
-	 * ********************************************************************************/
-	public Iterable<Entrypoint> makeEntrypoints(
-			final ClassLoaderReference loaderRef, final IClassHierarchy cha,
-			final List<BreakPoint> breakpoints) throws SavException {
-		EntrypointMaker<?> entrypointMaker;
-		if (input.getClassEntryPoints() == null) {
-			entrypointMaker = new BkpEntrypointMaker(loaderRef, cha, breakpoints);
-		} else {
-			entrypointMaker = new DefaultEntrypointMaker(loaderRef, cha,
-					input.getClassEntryPoints());
-		}
-		return entrypointMaker.makeEntrypoints();
-	}
+	
+	private Iterable<Entrypoint> makeEntrypoints(final ClassLoaderReference loaderRef, final IClassHierarchy cha,
+			final BreakPoint breakpoint){
 
-	@Override
-	public void setFiltering(List<String> analyzedClasses,
-			List<String> analyzedPackages) {
-		// TODO Auto-generated method stub
+		return new Iterable<Entrypoint>() {
+			public Iterator<Entrypoint> iterator() {
+				return new Iterator<Entrypoint>() {
+					private int index = 0;
+
+					public void remove() {
+						Assert.fail("unsupported!!");
+					}
+
+					public boolean hasNext() {
+						return index == 0;
+					}
+
+					public Entrypoint next() {
+						
+						String classSignature = trimSignature(SignatureUtils.getSignature(breakpoint.getClassCanonicalName()));
+						TypeReference typeRef = TypeReference.findOrCreate(loaderRef, TypeName.string2TypeName(classSignature));
+						
+						String methodName = SignatureUtils.extractMethodName(breakpoint.getMethodSign());
+						Atom method = Atom.findOrCreateAsciiAtom(methodName);
+						
+						Descriptor desc = createDescriptor(breakpoint.getMethodSign());
+						MethodReference mainRef = MethodReference.findOrCreate(typeRef, method, desc);
+						
+						index++;
+						
+						return new DefaultEntrypoint(mainRef, cha);
+					}
+					
+					private Descriptor createDescriptor(String methodSign) {
+						MethodTypeSignature methodTypeSign = MethodTypeSignature.make(methodSign);
+						TypeName[] types;
+						TypeSignature[] arguments = methodTypeSign.getArguments();
+						if (CollectionUtils.isEmpty(arguments)) {
+							types = new TypeName[0];
+						} else {
+							types = new TypeName[arguments.length];
+							for (int i = 0; i < arguments.length; i++) {
+								types[i] = toTypeName(arguments[i].toString());
+							}
+						}
+						TypeName returnType;
+						if (methodSign.substring(methodSign.lastIndexOf(")") + 1, methodSign.length()).equals("V")) {
+							returnType = TypeReference.VoidName; 
+						} else {
+							returnType = toTypeName(methodTypeSign.getReturnType().toString());
+						}
+						return Descriptor.findOrCreate(types, returnType);
+					}
+					
+					private TypeName toTypeName(String sign) {
+						return TypeName.findOrCreate(trimSignature(sign));
+					}
+					
+					public String trimSignature(String typeSign) {
+						String newSig = typeSign.replace(";", "");
+						return newSig;
+//						return StringUtils.replace(typeSign, ";", "");
+					}
+				};
+			}
+		};
 	}
 
 }

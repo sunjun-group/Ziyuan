@@ -1,11 +1,9 @@
 package microbat.handler;
 
-import static sav.commons.TestConfiguration.SAV_COMMONS_TEST_TARGET;
 import icsetlv.trial.model.Trace;
 import icsetlv.variable.TestcasesExecutor;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -13,8 +11,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import microbat.Activator;
-import microbat.codeanalysis.LocalVariableScope;
-import microbat.codeanalysis.VariableScopeParser;
+import microbat.codeanalysis.ast.LocalVariableScope;
+import microbat.codeanalysis.ast.VariableScopeParser;
+import microbat.codeanalysis.bytecode.WalaSlicer;
 import microbat.util.Settings;
 import microbat.views.MicroBatViews;
 import microbat.views.TraceView;
@@ -40,9 +39,6 @@ import sav.commons.TestConfiguration;
 import sav.strategies.common.VarInheritCustomizer.InheritType;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import slicer.javaslicer.JavaSlicer;
-
-;
 
 public class StartDebugHandler extends AbstractHandler {
 
@@ -52,7 +48,7 @@ public class StartDebugHandler extends AbstractHandler {
 	protected AppJavaClassPath initAppClasspath() {
 		AppJavaClassPath appClasspath = new AppJavaClassPath();
 		appClasspath.setJavaHome(TestConfiguration.getJavaHome());
-		appClasspath.addClasspath(SAV_COMMONS_TEST_TARGET);
+//		appClasspath.addClasspath(SAV_COMMONS_TEST_TARGET);
 		return appClasspath;
 	}
 
@@ -61,10 +57,8 @@ public class StartDebugHandler extends AbstractHandler {
 		appClasspath.getPreferences().putBoolean(SystemVariables.SLICE_COLLECT_VAR, true);
 		appClasspath.getPreferences().put(SystemVariables.SLICE_BKP_VAR_INHERIT, InheritType.FORWARD.name());
 
-		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace()
-				.getRoot();
-		IProject iProject = myWorkspaceRoot
-				.getProject(Settings.projectName);
+		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		IProject iProject = myWorkspaceRoot.getProject(Settings.projectName);
 		
 		String projectPath = iProject.getLocationURI().getPath();
 		projectPath = projectPath.substring(1, projectPath.length());
@@ -75,29 +69,53 @@ public class StartDebugHandler extends AbstractHandler {
 	
 
 	
-	private List<BreakPoint> dynamicSlicing(List<BreakPoint> startPoint, List<String> classScope, List<String> testMethods){
-		JavaSlicer slicer = new JavaSlicer();
-		slicer.setFiltering(classScope, null);
+	private List<BreakPoint> dynamicSlicing(List<BreakPoint> startPoints, List<String> classScope, List<String> testMethods){
+//		JavaSlicer slicer = new JavaSlicer();
+//		slicer.setFiltering(classScope, null);
 		List<BreakPoint> result = null;
+		
+//		SlicerInput input = new SlicerInput();
+//		input.setAppBinFolder("F://workspace//runtime-debugging//Test//bin");
+//		input.setJre(appClasspath.getJavaHome());
+//		
+//		List<String[]> classEntryPoints = new ArrayList<String[]>();
+//		classEntryPoints.add(new String[]{"Lcom/test/MainTest", "test()V"});
+//		input.setClassEntryPoints(classEntryPoints);
+		
+		
+		WalaSlicer slicer;
 		try {
-			result = slicer.sliceDebug(appClasspath, startPoint, testMethods);
+			slicer = new WalaSlicer();
+			result = slicer.slice(appClasspath, startPoints, testMethods);
 			
 			System.currentTimeMillis();
-//			List<String> paths = getSourceLocation();
-//			VariableNameCollector vnc = new VariableNameCollector(VarNameCollectionMode.FULL_NAME, paths);
-//			vnc.updateVariables(result);
-			
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (SavException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} /*catch (IcsetlvException e) {
-			e.printStackTrace();
-		}*/
+		}
+		
+
+//		try {
+//			result = slicer.sliceDebug(appClasspath, startPoints, testMethods);
+//			
+//			System.currentTimeMillis();
+//			
+////			List<String> paths = getSourceLocation();
+////			VariableNameCollector vnc = new VariableNameCollector(VarNameCollectionMode.FULL_NAME, paths);
+////			vnc.updateVariables(result);
+//			
+//		} catch (ClassNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (SavException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		} /*catch (IcsetlvException e) {
+//			e.printStackTrace();
+//		}*/
 		
 		
 		return result;
@@ -134,6 +152,11 @@ public class StartDebugHandler extends AbstractHandler {
 				protected IStatus run(IProgressMonitor monitor) {
 //					List<BreakPoint> breakpoints = testSlicing();
 					List<BreakPoint> breakpoints = dynamicSlicing(assertionPoints, classScope, tests);
+					if(breakpoints.isEmpty()){
+						System.err.println("Cannot find any slice");
+						return Status.OK_STATUS;
+					}
+					
 					monitor.worked(60);
 					
 					tcExecutor.setup(appClasspath, tests);

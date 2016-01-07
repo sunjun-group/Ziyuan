@@ -152,7 +152,7 @@ public class DebugValueExtractor2 {
 				List<Variable> collectedMoreVariable = collectMoreVariable(bkp, visibleVars, allFields);
 				bkp.setAllVisibleVariables(collectedMoreVariable);
 				
-				//TODO
+				//TODO extract the value of expression
 				//Value value = retriveExpression(frame, "1+1");
 				
 				
