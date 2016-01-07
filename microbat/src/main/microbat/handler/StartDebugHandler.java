@@ -139,7 +139,7 @@ public class StartDebugHandler extends AbstractHandler {
 			
 			tests = JunitUtils.extractTestMethods(junitClassNames, urlcl);
 			
-			BreakPoint ap = new BreakPoint("com.test.MainTest", "test", 17);
+			BreakPoint ap = new BreakPoint("com.test.MainTest", "test()V", 17);
 			final List<BreakPoint> assertionPoints = Arrays.asList(ap);
 			
 			final List<String> classScope = Arrays.asList("com.Main", "com.Tag");
@@ -152,7 +152,7 @@ public class StartDebugHandler extends AbstractHandler {
 				protected IStatus run(IProgressMonitor monitor) {
 //					List<BreakPoint> breakpoints = testSlicing();
 					List<BreakPoint> breakpoints = dynamicSlicing(assertionPoints, classScope, tests);
-					if(breakpoints.isEmpty()){
+					if(breakpoints == null){
 						System.err.println("Cannot find any slice");
 						return Status.OK_STATUS;
 					}

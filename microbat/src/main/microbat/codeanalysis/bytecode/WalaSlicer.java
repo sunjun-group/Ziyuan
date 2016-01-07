@@ -78,7 +78,7 @@ public class WalaSlicer{
 		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
 //		CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope);
 //		CallGraphBuilder builder = Util.makeNCFABuilder(3, options, new AnalysisCache(), cha, scope);
-		CallGraphBuilder builder = Util.makeVanillaNCFABuilder(3, options, new AnalysisCache(), cha, scope);
+		CallGraphBuilder builder = Util.makeVanillaNCFABuilder(1, options, new AnalysisCache(), cha, scope);
 		
 		CallGraph cg = builder.makeCallGraph(options, null);
 		List<Statement> stmt = findSeedStmts(cg, breakpoints);
