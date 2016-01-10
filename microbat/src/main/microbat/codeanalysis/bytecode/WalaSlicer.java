@@ -25,6 +25,7 @@ import sav.strategies.dto.BreakPoint;
 import com.ibm.wala.classLoader.BinaryDirectoryTreeModule;
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.classLoader.ShrikeBTMethod;
+import com.ibm.wala.classLoader.ShrikeCTMethod;
 import com.ibm.wala.ipa.callgraph.AnalysisCache;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions;
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
@@ -46,11 +47,19 @@ import com.ibm.wala.ipa.slicer.Statement;
 import com.ibm.wala.ipa.slicer.Statement.Kind;
 import com.ibm.wala.ipa.slicer.StatementWithInstructionIndex;
 import com.ibm.wala.properties.WalaProperties;
+import com.ibm.wala.shrikeBT.ArrayLoadInstruction;
+import com.ibm.wala.shrikeBT.ArrayStoreInstruction;
+import com.ibm.wala.shrikeBT.GetInstruction;
+import com.ibm.wala.shrikeBT.IInstruction;
+import com.ibm.wala.shrikeBT.LoadInstruction;
+import com.ibm.wala.shrikeBT.PutInstruction;
+import com.ibm.wala.shrikeBT.StoreInstruction;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.SSACFG;
 import com.ibm.wala.ssa.SSACFG.BasicBlock;
 import com.ibm.wala.ssa.SSAInstruction;
+import com.ibm.wala.ssa.SymbolTable;
 import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.types.Descriptor;
 import com.ibm.wala.types.MethodReference;
@@ -61,12 +70,15 @@ import com.ibm.wala.types.generics.TypeSignature;
 import com.ibm.wala.util.config.FileOfClasses;
 import com.ibm.wala.util.strings.Atom;
 
+/**
+ * 
+ * @author "linyun"
+ *
+ */
 public class WalaSlicer{
 	private static final String JAVA_REGRESSION_EXCLUSIONS = "/Java60RegressionExclusions.txt";
 	
-	public WalaSlicer(){
-		
-	}
+	public WalaSlicer(){}
 
 	public List<BreakPoint> slice(AppJavaClassPath appClassPath, List<BreakPoint> breakpoints,
 			List<String> junitClassNames) throws Exception {
@@ -76,14 +88,17 @@ public class WalaSlicer{
 		
 		Iterable<Entrypoint> entrypoints = makeEntrypoints(scope.getApplicationLoader(), cha, breakpoints.get(0));
 		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
+		
 //		CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope);
 //		CallGraphBuilder builder = Util.makeNCFABuilder(3, options, new AnalysisCache(), cha, scope);
 		CallGraphBuilder builder = Util.makeVanillaNCFABuilder(1, options, new AnalysisCache(), cha, scope);
 		
-		CallGraph cg = builder.makeCallGraph(options, null);
-		List<Statement> stmt = findSeedStmts(cg, breakpoints);
+		CallGraph callGraph = builder.makeCallGraph(options, null);
+		List<Statement> stmtList = findSeedStmts(callGraph, breakpoints);
 		
-		PointerAnalysis<InstanceKey> pa = builder.getPointerAnalysis();
+		checkVariables(stmtList.get(0));
+		
+		PointerAnalysis<InstanceKey> pointerAnalysis = builder.getPointerAnalysis();
 
 //		SDG sdg = new SDG(cg, builder.getPointerAnalysis(),
 //				DataDependenceOptions.NO_BASE_PTRS,
@@ -93,8 +108,8 @@ public class WalaSlicer{
 //				ControlDependenceOptions.NONE).computeBackwardThinSlice(stmt);
 		try {
 			Collection<Statement> computeBackwardSlice;
-			computeBackwardSlice = Slicer.computeBackwardSlice(stmt.get(0), cg, pa, DataDependenceOptions.NO_BASE_PTRS,
-					ControlDependenceOptions.NO_EXCEPTIONAL_EDGES);
+			computeBackwardSlice = Slicer.computeBackwardSlice(stmtList.get(0), callGraph, pointerAnalysis, 
+					DataDependenceOptions.NO_BASE_PTRS, ControlDependenceOptions.NO_EXCEPTIONAL_EDGES);
 			
 //			ThinSlicer ts = new ThinSlicer(cg,pa);
 //			computeBackwardSlice = ts.computeBackwardThinSlice (stmt.get(0));
@@ -116,6 +131,110 @@ public class WalaSlicer{
 		return null;
 	}
 	
+	private void checkVariables(Statement s){
+		
+		CGNode node = s.getNode();
+		IMethod method = node.getMethod();
+		ShrikeCTMethod bcMethod = (ShrikeCTMethod)method;
+		IR ir = node.getIR();
+		
+		try {
+			//TODO
+			IInstruction[] instructions0 = bcMethod.getInstructions();
+			
+			for(int i=0; i<instructions0.length; i++){
+				IInstruction ins = instructions0[i];
+				String varName = null;
+				String action = "unknown";
+				
+				int pc = bcMethod.getBytecodeIndex(i);
+				int lineNumber = bcMethod.getLineNumber(pc);
+				
+				if(ins instanceof GetInstruction){
+					GetInstruction gIns = (GetInstruction)ins;
+					varName = gIns.getFieldName();
+					action = "read";
+				}
+				else if(ins instanceof PutInstruction){
+					PutInstruction pIns = (PutInstruction)ins;
+					varName = pIns.getFieldName();
+					action = "write";
+				}
+				else if(ins instanceof LoadInstruction){
+					LoadInstruction lIns = (LoadInstruction)ins;
+					int varIndex = lIns.getVarIndex();
+					varName = bcMethod.getLocalVariableName(pc, varIndex);
+					action = "read";
+				}
+				else if(ins instanceof StoreInstruction){
+					StoreInstruction sIns = (StoreInstruction)ins;
+					int varIndex = sIns.getVarIndex();
+					/**
+					 * I do not know why, but for wala library, the retrieved pc cannot
+					 * be used to find the variable name directly. I have to try some other
+					 * bcIndex to find a variable name.
+					 */
+					for(int j=pc; j<pc+10; j++){
+						varName = bcMethod.getLocalVariableName(j, varIndex);
+						if(varName != null){
+							break;
+						}					
+					}
+					
+					if(varName == null){
+						System.err.println("Cannot achieve variable name in line " + lineNumber);
+					}
+					
+					action = "write";
+				}
+				else if(ins instanceof ArrayLoadInstruction){
+					//TODO how to handle array cases?
+					System.currentTimeMillis();
+				}
+				else if(ins instanceof ArrayStoreInstruction){
+					//TODO
+				}
+				System.out.println(bcMethod.getSignature() + " line " + lineNumber + ": " + ins);
+				System.out.println(action + ":" + varName);
+				System.out.println("==============");
+			}
+			
+			
+			System.currentTimeMillis();
+		} catch (InvalidClassFileException e1) {
+			e1.printStackTrace();
+		}
+		
+		if(s instanceof StatementWithInstructionIndex){
+			StatementWithInstructionIndex indexedStat = (StatementWithInstructionIndex)s;
+			
+			SSAInstruction instruction = indexedStat.getInstruction();
+			int def = instruction.getDef();
+			
+			if(instruction.getNumberOfUses() != 0){
+				int use = instruction.getUse(0);
+				String[] names = ir.getLocalNames(indexedStat.getInstructionIndex(), use);
+				
+				
+				if(names != null){
+					System.out.println(names[0]);
+					
+				}
+			}
+			
+			String[] names = ir.getLocalNames(indexedStat.getInstructionIndex(), indexedStat.getInstruction().getDef());
+			
+			if(names != null){
+				System.currentTimeMillis();
+			}
+			
+			if(names == null && instruction.getNumberOfDefs() != 0){
+				//System.out.println("names:" + names);				
+				names = node.getIR().getLocalNames(instruction.iindex, def);
+			}
+		}
+	}
+	
 	public List<BreakPoint> toBreakpoints(Collection<Statement> slice)
 			throws SavException {
 		List<BreakPoint> result = new ArrayList<BreakPoint>();
@@ -123,23 +242,26 @@ public class WalaSlicer{
 		Map<String, Set<Integer>> bkpMap = new HashMap<String, Set<Integer>>();
 		try {
 			for (Statement s : slice) {
+				
+//				checkVariables(s);
+				
 				if (s instanceof StatementWithInstructionIndex
 						&& CollectionUtils.existIn(s.getKind(), Kind.NORMAL,
 								Kind.NORMAL_RET_CALLEE, Kind.NORMAL_RET_CALLER)) {
 					StatementWithInstructionIndex stwI = (StatementWithInstructionIndex) s;
+					
 					int instructionIndex = stwI.getInstructionIndex();
 					ShrikeBTMethod method = (ShrikeBTMethod) s.getNode().getMethod();
 					if (!method.isClinit()) {
 
 						int bcIndex = method.getBytecodeIndex(instructionIndex);
-						int src_line_number = method.getLineNumber(bcIndex);
+						int sourceLineNumber = method.getLineNumber(bcIndex);
 
 						// create new breakpoint
 						Set<Integer> lineNos = CollectionUtils.getSetInitIfEmpty(bkpMap, 
-								StringUtils.spaceJoin(getClassCanonicalName(method), 
-										method.getSignature()));
-						lineNos.add(src_line_number);
-						System.out.println("line: " + src_line_number);
+								StringUtils.spaceJoin(getClassCanonicalName(method), method.getSignature()));
+						lineNos.add(sourceLineNumber);
+						System.out.println("line: " + sourceLineNumber);
 					}
 				}
 			}
@@ -178,6 +300,7 @@ public class WalaSlicer{
 		SSACFG cfg = ir.getControlFlowGraph();
 		ShrikeBTMethod btMethod = (ShrikeBTMethod)n.getMethod();
 		SSAInstruction[] instructions = ir.getInstructions();
+		
 		List<Statement> stmts = new ArrayList<Statement>();
 		for (int i = 0; i <= cfg.getMaxNumber(); i++) {
 			BasicBlock bb = cfg.getNode(i);
