@@ -155,7 +155,7 @@ public class DebugValueExtractor {
 					
 					JDIParam param = null;
 					if (matchedLocalVariable != null) {
-						param = recursiveMatch(frame, matchedLocalVariable, bpVar.getVariableName());
+						param = recursiveMatch(frame, matchedLocalVariable, bpVar.getName());
 					} 
 					else {
 						// Then check class fields (static & non static)
@@ -168,8 +168,8 @@ public class DebugValueExtractor {
 								Value value = objRef == null ? null : objRef.getValue(matchedField);
 								param = JDIParam.nonStaticField(matchedField, objRef, value);
 							}
-							if (param.getValue() != null && !matchedField.name().equals(bpVar.getVariableName())) {
-								param = recursiveMatch(param, extractSubProperty(bpVar.getVariableName()));
+							if (param.getValue() != null && !matchedField.name().equals(bpVar.getName())) {
+								param = recursiveMatch(param, extractSubProperty(bpVar.getName()));
 							}
 							
 							System.currentTimeMillis();
@@ -207,7 +207,7 @@ public class DebugValueExtractor {
 		LocalVariable match = null;
 		if (bpVar instanceof LocalVar) {
 			for (LocalVariable localVar : visibleVars) {
-				if (localVar.name().equals(bpVar.getVariableName())) {
+				if (localVar.name().equals(bpVar.getName())) {
 					match = localVar;
 					break;
 				}
@@ -220,7 +220,7 @@ public class DebugValueExtractor {
 	private Field findMatchedField(Variable bpVar, List<Field> allFields){
 		Field matchedField = null;
 		for (Field field : allFields) {
-			if (field.name().equals(bpVar.getVariableName())) {
+			if (field.name().equals(bpVar.getName())) {
 				matchedField = field;
 				break;
 			}
@@ -244,7 +244,7 @@ public class DebugValueExtractor {
 			boolean isField = (param.getField() != null);
 			boolean isStatic = param.getType().equals(JDIParam.JDIParamType.STATIC_FIELD);
 			
-			appendVarVal(bkVal, var.getVariableName(), false, value, 1, thread, true, isField, isStatic);
+			appendVarVal(bkVal, var.getName(), false, value, 1, thread, true, isField, isStatic);
 		}
 		
 		System.currentTimeMillis();

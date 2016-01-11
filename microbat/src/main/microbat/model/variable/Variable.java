@@ -9,11 +9,11 @@ public abstract class Variable {
 		this.type = type;
 	}
 	
-	public String getVariableName() {
+	public String getName() {
 		return variableName;
 	}
 
-	public void setVariableName(String variableName) {
+	public void setName(String variableName) {
 		this.variableName = variableName;
 	}
 
