@@ -1,6 +1,6 @@
 package microbat.model;
 
-import microbat.model.variable.ExecValue;
+import microbat.model.value.ExecValue;
 import microbat.util.MicroBatUtil;
 
 public class InterestedVariable {

@@ -14,9 +14,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import microbat.model.variable.ExecValue;
-import microbat.model.variable.ExecVarType;
-import microbat.model.variable.GraphNode;
+import microbat.model.value.ExecValue;
+import microbat.model.value.ExecVarType;
+import microbat.model.value.GraphNode;
 import sav.common.core.utils.CollectionUtils;
 
 /**

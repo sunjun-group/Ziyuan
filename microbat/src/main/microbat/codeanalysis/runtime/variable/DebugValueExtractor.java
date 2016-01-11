@@ -13,14 +13,15 @@ import microbat.codeanalysis.runtime.herustic.HeuristicIgnoringFieldRule;
 import microbat.codeanalysis.runtime.jpda.expr.ExpressionParser;
 import microbat.codeanalysis.runtime.jpda.expr.ParseException;
 import microbat.model.BreakPoint;
-import microbat.model.BreakPoint.Var;
-import microbat.model.BreakPoint.Var.VarScope;
 import microbat.model.BreakPointValue;
-import microbat.model.variable.ArrayValue;
-import microbat.model.variable.ExecValue;
-import microbat.model.variable.PrimitiveValue;
-import microbat.model.variable.ReferenceValue;
-import microbat.model.variable.StringValue;
+import microbat.model.value.ArrayValue;
+import microbat.model.value.ExecValue;
+import microbat.model.value.PrimitiveValue;
+import microbat.model.value.ReferenceValue;
+import microbat.model.value.StringValue;
+import microbat.model.variable.FieldVar;
+import microbat.model.variable.LocalVar;
+import microbat.model.variable.Variable;
 import microbat.util.PrimitiveUtils;
 
 import org.apache.commons.lang.StringUtils;
@@ -136,11 +137,11 @@ public class DebugValueExtractor {
 				 * same name, and the breakpoint variable with that name has the
 				 * scope UNDEFINED, it must be the variable in the method.
 				 */
-				final Map<Var, JDIParam> allVariables = new HashMap<Var, JDIParam>();
+				final Map<Variable, JDIParam> allVariables = new HashMap<Variable, JDIParam>();
 				final List<LocalVariable> visibleVars = frame.visibleVariables();
 				final List<Field> allFields = refType.allFields();
 				
-				List<Var> collectedMoreVariable = collectMoreVariable(bkp, visibleVars, allFields);
+				List<Variable> collectedMoreVariable = collectMoreVariable(bkp, visibleVars, allFields);
 				bkp.setAllVisibleVariables(collectedMoreVariable);
 				
 				//TODO extract the value of expression
@@ -148,13 +149,13 @@ public class DebugValueExtractor {
 				
 				
 				//for (Variable bpVar : bkp.getVars()) {
-				for (Var bpVar : bkp.getAllVisibleVariables()) {
+				for (Variable bpVar : bkp.getAllVisibleVariables()) {
 					// First check local variable
 					LocalVariable matchedLocalVariable = findMatchedLocalVariable(bpVar, visibleVars);
 					
 					JDIParam param = null;
 					if (matchedLocalVariable != null) {
-						param = recursiveMatch(frame, matchedLocalVariable, bpVar.getFullName());
+						param = recursiveMatch(frame, matchedLocalVariable, bpVar.getVariableName());
 					} 
 					else {
 						// Then check class fields (static & non static)
@@ -167,8 +168,8 @@ public class DebugValueExtractor {
 								Value value = objRef == null ? null : objRef.getValue(matchedField);
 								param = JDIParam.nonStaticField(matchedField, objRef, value);
 							}
-							if (param.getValue() != null && !matchedField.name().equals(bpVar.getFullName())) {
-								param = recursiveMatch(param, extractSubProperty(bpVar.getFullName()));
+							if (param.getValue() != null && !matchedField.name().equals(bpVar.getVariableName())) {
+								param = recursiveMatch(param, extractSubProperty(bpVar.getVariableName()));
 							}
 							
 							System.currentTimeMillis();
@@ -187,30 +188,26 @@ public class DebugValueExtractor {
 		return bkVal;
 	}
 	
-	private List<Var> collectMoreVariable(BreakPoint bkp, List<LocalVariable> visibleVars, List<Field> allFields) {
-		List<Var> varList = new ArrayList<>();
+	private List<Variable> collectMoreVariable(BreakPoint bkp, List<LocalVariable> visibleVars, List<Field> allFields) {
+		List<Variable> varList = new ArrayList<>();
 		for(LocalVariable lv: visibleVars){
-			Var var = new Var(lv.name(), lv.name(), VarScope.UNDEFINED);
+//			Var var = new Var(lv.name(), lv.name(), VarScope.UNDEFINED);
+			LocalVar var = new LocalVar(lv.name(), lv.typeName());
 			varList.add(var);
 		}
 		for(Field field: allFields){
-			if(field.isStatic()){
-				Var var = new Var(field.name(), field.name(), VarScope.STATIC);				
-				varList.add(var);
-			}
-			else{
-				Var var = new Var(field.name(), field.name(), VarScope.THIS);
-				varList.add(var);
-			}
+			FieldVar var = new FieldVar(field.isStatic(), field.name(), field.typeName());
+			var.setDeclaringType(field.declaringType().name());
+			varList.add(var);
 		}
 		return varList;
 	}
 
-	private LocalVariable findMatchedLocalVariable(Var bpVar, List<LocalVariable> visibleVars){
+	private LocalVariable findMatchedLocalVariable(Variable bpVar, List<LocalVariable> visibleVars){
 		LocalVariable match = null;
-		if (bpVar.getScope() != VarScope.THIS) {
+		if (bpVar instanceof LocalVar) {
 			for (LocalVariable localVar : visibleVars) {
-				if (localVar.name().equals(bpVar.getParentName())) {
+				if (localVar.name().equals(bpVar.getVariableName())) {
 					match = localVar;
 					break;
 				}
@@ -220,10 +217,10 @@ public class DebugValueExtractor {
 		return match;
 	}
 	
-	private Field findMatchedField(Var bpVar, List<Field> allFields){
+	private Field findMatchedField(Variable bpVar, List<Field> allFields){
 		Field matchedField = null;
 		for (Field field : allFields) {
-			if (field.name().equals(bpVar.getParentName())) {
+			if (field.name().equals(bpVar.getVariableName())) {
 				matchedField = field;
 				break;
 			}
@@ -233,21 +230,21 @@ public class DebugValueExtractor {
 	}
 
 	protected void collectValue(BreakPointValue bkVal, ThreadReference thread,
-			final Map<Var, JDIParam> allVariables){
-		for (Entry<Var, JDIParam> entry : allVariables.entrySet()) {
-			Var var = entry.getKey();
+			final Map<Variable, JDIParam> allVariables){
+		for (Entry<Variable, JDIParam> entry : allVariables.entrySet()) {
+			Variable var = entry.getKey();
 			
-			String varId = var.getId();
-			if(var.getScope().equals(VarScope.THIS)){
-				varId = varId.substring(varId.indexOf("this.")+5, varId.length());						
-			}
+//			String varId = var.getId();
+//			if(var.getScope().equals(VarScope.THIS)){
+//				varId = varId.substring(varId.indexOf("this.")+5, varId.length());						
+//			}
 			 
 			JDIParam param = entry.getValue();
 			Value value = param.getValue();
 			boolean isField = (param.getField() != null);
 			boolean isStatic = param.getType().equals(JDIParam.JDIParamType.STATIC_FIELD);
 			
-			appendVarVal(bkVal, varId, false, value, 1, thread, true, isField, isStatic);
+			appendVarVal(bkVal, var.getVariableName(), false, value, 1, thread, true, isField, isStatic);
 		}
 		
 		System.currentTimeMillis();
@@ -358,8 +355,8 @@ public class DebugValueExtractor {
 		if (type instanceof PrimitiveType) {
 			/* TODO LLT: add Primitive type && refactor */
 			if (type instanceof BooleanType) {
-				microbat.model.variable.BooleanValue ele = 
-						microbat.model.variable.BooleanValue.of(varId, 
+				microbat.model.value.BooleanValue ele = 
+						microbat.model.value.BooleanValue.of(varId, 
 								((BooleanValue)value).booleanValue(), isRoot, isField, isStatic);
 				ele.setElementOfArray(isElementOfArray);
 				parent.addChild(ele);

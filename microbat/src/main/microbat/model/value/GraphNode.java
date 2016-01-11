@@ -1,4 +1,4 @@
-package microbat.model.variable;
+package microbat.model.value;
 
 import java.util.List;
 

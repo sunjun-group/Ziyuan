@@ -3,7 +3,7 @@ package microbat.algorithm.graphdiff;
 import java.util.ArrayList;
 import java.util.List;
 
-import microbat.model.variable.GraphNode;
+import microbat.model.value.GraphNode;
 
 public class HierarchyGraphDiffer {
 	

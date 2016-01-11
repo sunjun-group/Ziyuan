@@ -7,10 +7,10 @@ import microbat.codeanalysis.runtime.model.TraceNode;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
 import microbat.model.InterestedVariable;
-import microbat.model.variable.ArrayValue;
-import microbat.model.variable.ExecValue;
-import microbat.model.variable.PrimitiveValue;
-import microbat.model.variable.ReferenceValue;
+import microbat.model.value.ArrayValue;
+import microbat.model.value.ExecValue;
+import microbat.model.value.PrimitiveValue;
+import microbat.model.value.ReferenceValue;
 import microbat.util.Settings;
 
 import org.eclipse.jface.viewers.CheckStateChangedEvent;

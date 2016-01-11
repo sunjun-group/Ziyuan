@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package microbat.model.variable;
+package microbat.model.value;
 
 
 

@@ -2,8 +2,8 @@ package microbat.util;
 
 import microbat.codeanalysis.ast.LocalVariableScope;
 import microbat.model.InterestedVariable;
-import microbat.model.variable.ExecValue;
-import microbat.model.variable.ReferenceValue;
+import microbat.model.value.ExecValue;
+import microbat.model.value.ReferenceValue;
 
 public class MicroBatUtil {
 	public static String combineTraceNodeExpression(String className, int lineNumber){
