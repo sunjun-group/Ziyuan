@@ -1,6 +1,6 @@
 package microbat;
 
-import icsetlv.trial.model.Trace;
+import microbat.codeanalysis.runtime.model.Trace;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;

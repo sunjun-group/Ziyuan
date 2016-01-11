@@ -1,11 +1,10 @@
 package microbat.views;
 
-import icsetlv.common.dto.BreakPointValue;
-import icsetlv.trial.model.TraceNode;
-
 import java.util.List;
 
+import microbat.codeanalysis.runtime.model.TraceNode;
 import microbat.graphdiff.GraphDiff;
+import microbat.model.BreakPointValue;
 import microbat.model.InterestedVariable;
 import microbat.util.Settings;
 

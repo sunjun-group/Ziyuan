@@ -15,10 +15,10 @@
 			<artifactId>sav.commons</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>icsetlv</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+		</dependency> -->
 	</dependencies>
 </project>

@@ -59,7 +59,6 @@ import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.SSACFG;
 import com.ibm.wala.ssa.SSACFG.BasicBlock;
 import com.ibm.wala.ssa.SSAInstruction;
-import com.ibm.wala.ssa.SymbolTable;
 import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.types.Descriptor;
 import com.ibm.wala.types.MethodReference;
@@ -189,6 +188,8 @@ public class WalaSlicer{
 				}
 				else if(ins instanceof ArrayLoadInstruction){
 					//TODO how to handle array cases?
+					ArrayLoadInstruction alIns = (ArrayLoadInstruction)ins;
+					
 					System.currentTimeMillis();
 				}
 				else if(ins instanceof ArrayStoreInstruction){

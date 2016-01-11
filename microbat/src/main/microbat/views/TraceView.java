@@ -1,13 +1,12 @@
 package microbat.views;
 
-import icsetlv.trial.model.Trace;
-import icsetlv.trial.model.TraceNode;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import microbat.Activator;
+import microbat.codeanalysis.runtime.model.Trace;
+import microbat.codeanalysis.runtime.model.TraceNode;
 import microbat.util.JavaUtil;
 import microbat.util.MicroBatUtil;
 

@@ -1,8 +1,5 @@
 package microbat.handler;
 
-import icsetlv.trial.model.Trace;
-import icsetlv.variable.TestcasesExecutor;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,6 +11,8 @@ import microbat.Activator;
 import microbat.codeanalysis.ast.LocalVariableScope;
 import microbat.codeanalysis.ast.VariableScopeParser;
 import microbat.codeanalysis.bytecode.WalaSlicer;
+import microbat.codeanalysis.runtime.TestcasesExecutor;
+import microbat.codeanalysis.runtime.model.Trace;
 import microbat.util.Settings;
 import microbat.views.MicroBatViews;
 import microbat.views.TraceView;
