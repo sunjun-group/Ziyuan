@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.jar.JarFile;
 
 import microbat.model.BreakPoint;
+import microbat.model.variable.FieldVar;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.ClassUtils;
@@ -268,18 +269,24 @@ public class WalaSlicer{
 		if(ins instanceof GetInstruction){
 			GetInstruction gIns = (GetInstruction)ins;
 			varName = gIns.getFieldName();
+			String type = gIns.getFieldType();
+			FieldVar var = new FieldVar(gIns.isStatic(), varName, type);
+			point.addReadVariable(var);
 			action = READ;
 		}
 		else if(ins instanceof PutInstruction){
 			PutInstruction pIns = (PutInstruction)ins;
 			varName = pIns.getFieldName();
+			String type = pIns.getFieldType();
+			FieldVar var = new FieldVar(pIns.isStatic(), varName, type);
+			point.addWrittenVariable(var);
 			action = WRITE;
 		}
 		else if(ins instanceof LoadInstruction){
 			LoadInstruction lIns = (LoadInstruction)ins;
 			int varIndex = lIns.getVarIndex();
 			varName = method.getLocalVariableName(pc, varIndex);
-			
+			//TODO is it possible to find the variable type? combining AST?
 			
 			action = READ;
 		}
