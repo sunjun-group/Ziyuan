@@ -1,7 +1,7 @@
 package microbat.model;
 
+import microbat.model.variable.ExecValue;
 import microbat.util.MicroBatUtil;
-import sav.strategies.dto.execute.value.ExecValue;
 
 public class InterestedVariable {
 	/**

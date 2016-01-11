@@ -12,23 +12,18 @@ import java.util.regex.Pattern;
 import microbat.codeanalysis.runtime.herustic.HeuristicIgnoringFieldRule;
 import microbat.codeanalysis.runtime.jpda.expr.ExpressionParser;
 import microbat.codeanalysis.runtime.jpda.expr.ParseException;
+import microbat.model.BreakPoint;
+import microbat.model.BreakPoint.Var;
+import microbat.model.BreakPoint.Var.VarScope;
 import microbat.model.BreakPointValue;
+import microbat.model.variable.ArrayValue;
+import microbat.model.variable.ExecValue;
+import microbat.model.variable.PrimitiveValue;
+import microbat.model.variable.ReferenceValue;
+import microbat.model.variable.StringValue;
 import microbat.util.PrimitiveUtils;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import sav.common.core.SavException;
-import sav.common.core.SavRtException;
-import sav.strategies.dto.BreakPoint;
-import sav.strategies.dto.BreakPoint.Variable;
-import sav.strategies.dto.BreakPoint.Variable.VarScope;
-import sav.strategies.dto.execute.value.ArrayValue;
-import sav.strategies.dto.execute.value.ExecValue;
-import sav.strategies.dto.execute.value.PrimitiveValue;
-import sav.strategies.dto.execute.value.ReferenceValue;
-import sav.strategies.dto.execute.value.StringValue;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayReference;
@@ -54,7 +49,7 @@ import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 @SuppressWarnings("restriction")
 public class DebugValueExtractor {
-	protected static Logger log = LoggerFactory.getLogger(DebugValueExtractor.class);
+//	protected static Logger log = LoggerFactory.getLogger(DebugValueExtractor.class);
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
 	private static final String TO_STRING_NAME= "toString";
 	private static final Pattern OBJECT_ACCESS_PATTERN = Pattern.compile("^\\.([^.\\[]+)(\\..+)*(\\[.+)*$");
@@ -115,7 +110,7 @@ public class DebugValueExtractor {
 	}
 	
 	public final BreakPointValue extractValue(BreakPoint bkp, ThreadReference thread, Location loc)
-			throws IncompatibleThreadStateException, AbsentInformationException, SavException {
+			throws IncompatibleThreadStateException, AbsentInformationException {
 		if (bkp == null) {
 			return null;
 		}
@@ -141,11 +136,11 @@ public class DebugValueExtractor {
 				 * same name, and the breakpoint variable with that name has the
 				 * scope UNDEFINED, it must be the variable in the method.
 				 */
-				final Map<Variable, JDIParam> allVariables = new HashMap<Variable, JDIParam>();
+				final Map<Var, JDIParam> allVariables = new HashMap<Var, JDIParam>();
 				final List<LocalVariable> visibleVars = frame.visibleVariables();
 				final List<Field> allFields = refType.allFields();
 				
-				List<Variable> collectedMoreVariable = collectMoreVariable(bkp, visibleVars, allFields);
+				List<Var> collectedMoreVariable = collectMoreVariable(bkp, visibleVars, allFields);
 				bkp.setAllVisibleVariables(collectedMoreVariable);
 				
 				//TODO extract the value of expression
@@ -153,7 +148,7 @@ public class DebugValueExtractor {
 				
 				
 				//for (Variable bpVar : bkp.getVars()) {
-				for (Variable bpVar : bkp.getAllVisibleVariables()) {
+				for (Var bpVar : bkp.getAllVisibleVariables()) {
 					// First check local variable
 					LocalVariable matchedLocalVariable = findMatchedLocalVariable(bpVar, visibleVars);
 					
@@ -192,26 +187,26 @@ public class DebugValueExtractor {
 		return bkVal;
 	}
 	
-	private List<Variable> collectMoreVariable(BreakPoint bkp, List<LocalVariable> visibleVars, List<Field> allFields) {
-		List<Variable> varList = new ArrayList<>();
+	private List<Var> collectMoreVariable(BreakPoint bkp, List<LocalVariable> visibleVars, List<Field> allFields) {
+		List<Var> varList = new ArrayList<>();
 		for(LocalVariable lv: visibleVars){
-			Variable var = new Variable(lv.name(), lv.name(), VarScope.UNDEFINED);
+			Var var = new Var(lv.name(), lv.name(), VarScope.UNDEFINED);
 			varList.add(var);
 		}
 		for(Field field: allFields){
 			if(field.isStatic()){
-				Variable var = new Variable(field.name(), field.name(), VarScope.STATIC);				
+				Var var = new Var(field.name(), field.name(), VarScope.STATIC);				
 				varList.add(var);
 			}
 			else{
-				Variable var = new Variable(field.name(), field.name(), VarScope.THIS);
+				Var var = new Var(field.name(), field.name(), VarScope.THIS);
 				varList.add(var);
 			}
 		}
 		return varList;
 	}
 
-	private LocalVariable findMatchedLocalVariable(Variable bpVar, List<LocalVariable> visibleVars){
+	private LocalVariable findMatchedLocalVariable(Var bpVar, List<LocalVariable> visibleVars){
 		LocalVariable match = null;
 		if (bpVar.getScope() != VarScope.THIS) {
 			for (LocalVariable localVar : visibleVars) {
@@ -225,7 +220,7 @@ public class DebugValueExtractor {
 		return match;
 	}
 	
-	private Field findMatchedField(Variable bpVar, List<Field> allFields){
+	private Field findMatchedField(Var bpVar, List<Field> allFields){
 		Field matchedField = null;
 		for (Field field : allFields) {
 			if (field.name().equals(bpVar.getParentName())) {
@@ -238,9 +233,9 @@ public class DebugValueExtractor {
 	}
 
 	protected void collectValue(BreakPointValue bkVal, ThreadReference thread,
-			final Map<Variable, JDIParam> allVariables) throws SavException {
-		for (Entry<Variable, JDIParam> entry : allVariables.entrySet()) {
-			Variable var = entry.getKey();
+			final Map<Var, JDIParam> allVariables){
+		for (Entry<Var, JDIParam> entry : allVariables.entrySet()) {
+			Var var = entry.getKey();
 			
 			String varId = var.getId();
 			if(var.getScope().equals(VarScope.THIS)){
@@ -363,8 +358,8 @@ public class DebugValueExtractor {
 		if (type instanceof PrimitiveType) {
 			/* TODO LLT: add Primitive type && refactor */
 			if (type instanceof BooleanType) {
-				sav.strategies.dto.execute.value.BooleanValue ele = 
-						sav.strategies.dto.execute.value.BooleanValue.of(varId, 
+				microbat.model.variable.BooleanValue ele = 
+						microbat.model.variable.BooleanValue.of(varId, 
 								((BooleanValue)value).booleanValue(), isRoot, isField, isStatic);
 				ele.setElementOfArray(isElementOfArray);
 				parent.addChild(ele);
@@ -427,7 +422,7 @@ public class DebugValueExtractor {
 				}
 			} catch (Exception e) {
 				// ignore.
-				log.warn(e.getMessage());
+//				log.warn(e.getMessage());
 			}
 		}
 		return null;
@@ -522,7 +517,9 @@ public class DebugValueExtractor {
 				return frame;
 			}
 		}
-		throw new SavRtException("Can not find frame");
+		
+		throw new AbsentInformationException("Can not find frame");
+//		throw new Exception("Can not find frame");
 	}
 	
 	private boolean areLocationsEqual(Location location1, Location location2) throws AbsentInformationException {

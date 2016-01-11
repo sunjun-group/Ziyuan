@@ -7,6 +7,7 @@ import java.util.List;
 import microbat.Activator;
 import microbat.codeanalysis.runtime.model.Trace;
 import microbat.codeanalysis.runtime.model.TraceNode;
+import microbat.model.BreakPoint;
 import microbat.util.JavaUtil;
 import microbat.util.MicroBatUtil;
 
@@ -53,8 +54,6 @@ import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import sav.strategies.dto.BreakPoint;
 
 public class TraceView extends ViewPart {
 	

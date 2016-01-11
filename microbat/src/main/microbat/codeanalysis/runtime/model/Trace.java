@@ -3,7 +3,7 @@ package microbat.codeanalysis.runtime.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import sav.strategies.dto.BreakPoint;
+import microbat.model.BreakPoint;
 
 /**
  * This class stands for a trace for an execution

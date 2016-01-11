@@ -9,18 +9,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.jar.JarFile;
 
+import microbat.model.BreakPoint;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Predicate;
 import sav.common.core.utils.SignatureUtils;
-import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
-import sav.strategies.dto.BreakPoint;
 
 import com.ibm.wala.classLoader.BinaryDirectoryTreeModule;
 import com.ibm.wala.classLoader.IMethod;
@@ -95,8 +93,6 @@ public class WalaSlicer{
 		CallGraph callGraph = builder.makeCallGraph(options, null);
 		List<Statement> stmtList = findSeedStmts(callGraph, breakpoints);
 		
-		checkVariables(stmtList.get(0));
-		
 		PointerAnalysis<InstanceKey> pointerAnalysis = builder.getPointerAnalysis();
 
 //		SDG sdg = new SDG(cg, builder.getPointerAnalysis(),
@@ -135,7 +131,6 @@ public class WalaSlicer{
 		CGNode node = s.getNode();
 		IMethod method = node.getMethod();
 		ShrikeCTMethod bcMethod = (ShrikeCTMethod)method;
-		IR ir = node.getIR();
 		
 		try {
 			//TODO
@@ -188,9 +183,9 @@ public class WalaSlicer{
 				}
 				else if(ins instanceof ArrayLoadInstruction){
 					//TODO how to handle array cases?
-					ArrayLoadInstruction alIns = (ArrayLoadInstruction)ins;
-					
-					System.currentTimeMillis();
+//					ArrayLoadInstruction alIns = (ArrayLoadInstruction)ins;
+//					
+//					System.currentTimeMillis();
 				}
 				else if(ins instanceof ArrayStoreInstruction){
 					//TODO
@@ -205,77 +200,126 @@ public class WalaSlicer{
 		} catch (InvalidClassFileException e1) {
 			e1.printStackTrace();
 		}
-		
-		if(s instanceof StatementWithInstructionIndex){
-			StatementWithInstructionIndex indexedStat = (StatementWithInstructionIndex)s;
-			
-			SSAInstruction instruction = indexedStat.getInstruction();
-			int def = instruction.getDef();
-			
-			if(instruction.getNumberOfUses() != 0){
-				int use = instruction.getUse(0);
-				String[] names = ir.getLocalNames(indexedStat.getInstructionIndex(), use);
-				
-				
-				if(names != null){
-					System.out.println(names[0]);
-					
-				}
-			}
-			
-			String[] names = ir.getLocalNames(indexedStat.getInstructionIndex(), indexedStat.getInstruction().getDef());
-			
-			if(names != null){
-				System.currentTimeMillis();
-			}
-			
-			if(names == null && instruction.getNumberOfDefs() != 0){
-				//System.out.println("names:" + names);				
-				names = node.getIR().getLocalNames(instruction.iindex, def);
-			}
-		}
 	}
 	
-	public List<BreakPoint> toBreakpoints(Collection<Statement> slice)
-			throws SavException {
-		List<BreakPoint> result = new ArrayList<BreakPoint>();
+	private int getStatementLineNumber(ShrikeCTMethod method, 
+			StatementWithInstructionIndex stmt) throws InvalidClassFileException{
+		int instructionIndex = stmt.getInstructionIndex();
+		int byteCodeIndex = method.getBytecodeIndex(instructionIndex);
+		int lineNumber = method.getLineNumber(byteCodeIndex);
 		
-		Map<String, Set<Integer>> bkpMap = new HashMap<String, Set<Integer>>();
-		try {
-			for (Statement s : slice) {
+		return lineNumber;
+	}
+	
+	public List<BreakPoint> toBreakpoints(Collection<Statement> slice) throws SavException, InvalidClassFileException {
+		Map<String, BreakPoint> bkpSet = new HashMap<String, BreakPoint>();
+		
+		for (Statement s : slice) {
+			if (s instanceof StatementWithInstructionIndex
+					&& CollectionUtils.existIn(s.getKind(), Kind.NORMAL,
+							Kind.NORMAL_RET_CALLEE, Kind.NORMAL_RET_CALLER)) {
+				StatementWithInstructionIndex stwI = (StatementWithInstructionIndex) s;
+				ShrikeCTMethod method = (ShrikeCTMethod) s.getNode().getMethod();
+
+				int stmtLinNumber = getStatementLineNumber(method, stwI);
 				
-//				checkVariables(s);
+				IInstruction[] allInsts = method.getInstructions();
 				
-				if (s instanceof StatementWithInstructionIndex
-						&& CollectionUtils.existIn(s.getKind(), Kind.NORMAL,
-								Kind.NORMAL_RET_CALLEE, Kind.NORMAL_RET_CALLER)) {
-					StatementWithInstructionIndex stwI = (StatementWithInstructionIndex) s;
+				for(int index=0; index<allInsts.length; index++){
+					int bcIndex = method.getBytecodeIndex(index);						
+					int insLinNumber = method.getLineNumber(bcIndex);
 					
-					int instructionIndex = stwI.getInstructionIndex();
-					ShrikeBTMethod method = (ShrikeBTMethod) s.getNode().getMethod();
-					if (!method.isClinit()) {
-
-						int bcIndex = method.getBytecodeIndex(instructionIndex);
-						int sourceLineNumber = method.getLineNumber(bcIndex);
-
-						// create new breakpoint
-						Set<Integer> lineNos = CollectionUtils.getSetInitIfEmpty(bkpMap, 
-								StringUtils.spaceJoin(getClassCanonicalName(method), method.getSignature()));
-						lineNos.add(sourceLineNumber);
-						System.out.println("line: " + sourceLineNumber);
+					if(insLinNumber == stmtLinNumber){
+						
+						String className = getClassCanonicalName(method);
+						String methodSig = method.getSignature();
+						String key = className + "." + methodSig + "(line " + stmtLinNumber + ")";
+						
+						BreakPoint point = bkpSet.get(key);
+						if(point == null){
+							point = new BreakPoint(className, methodSig, stmtLinNumber);
+							bkpSet.put(key, point);
+						}
+						
+						appendReadWritenVariable(point, method, allInsts[index], index);
+						
 					}
 				}
 			}
-			for (String key : bkpMap.keySet()) {
-				String[] clzzMethod = key.split(StringUtils.SPACE);
-				for (Integer lineNo : bkpMap.get(key)) {
-					result.add(new BreakPoint(clzzMethod[0], clzzMethod[1], lineNo));
-				}
-			}
-		} catch (InvalidClassFileException e) {
-			e.printStackTrace();
 		}
+
+		ArrayList<BreakPoint> result = new ArrayList<>(bkpSet.values());
+		
 		return result;
+	}
+
+
+	private void appendReadWritenVariable(BreakPoint point, ShrikeCTMethod method, IInstruction ins, 
+			int insIndex) throws InvalidClassFileException {
+		final String READ = "read";
+		final String WRITE = "write";
+		
+		String varName = null;
+		String action = "unknown";
+		
+		int pc = method.getBytecodeIndex(insIndex);
+		int lineNumber = method.getLineNumber(pc);
+		
+		if(ins instanceof GetInstruction){
+			GetInstruction gIns = (GetInstruction)ins;
+			varName = gIns.getFieldName();
+			action = READ;
+		}
+		else if(ins instanceof PutInstruction){
+			PutInstruction pIns = (PutInstruction)ins;
+			varName = pIns.getFieldName();
+			action = WRITE;
+		}
+		else if(ins instanceof LoadInstruction){
+			LoadInstruction lIns = (LoadInstruction)ins;
+			int varIndex = lIns.getVarIndex();
+			varName = method.getLocalVariableName(pc, varIndex);
+			
+			
+			action = READ;
+		}
+		else if(ins instanceof StoreInstruction){
+			StoreInstruction sIns = (StoreInstruction)ins;
+			int varIndex = sIns.getVarIndex();
+			/**
+			 * I do not know why, but for wala library, the retrieved pc cannot
+			 * be used to find the variable name directly. I have to try some other
+			 * bcIndex to find a variable name.
+			 */
+			for(int j=pc; j<pc+10; j++){
+				varName = method.getLocalVariableName(j, varIndex);
+				if(varName != null){
+					break;
+				}					
+			}
+			
+			if(varName == null){
+				System.err.println("Cannot achieve variable name in line " + lineNumber);
+			}
+			
+			action = WRITE;
+		}
+		else if(ins instanceof ArrayLoadInstruction){
+			//TODO do we need to handle array cases?
+		}
+		else if(ins instanceof ArrayStoreInstruction){
+			//TODO
+		}
+		
+		System.out.println(method.getSignature() + " line " + lineNumber + ": " + ins);
+		System.out.println(action + ":" + varName);
+		System.out.println("==============");
+		
+		
+		if(action.equals(READ)){
+			
+		}
+		
 	}
 
 	private String getClassCanonicalName(IMethod method) {

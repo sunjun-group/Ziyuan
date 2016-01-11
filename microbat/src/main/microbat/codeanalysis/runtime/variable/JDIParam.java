@@ -8,8 +8,6 @@
 
 package microbat.codeanalysis.runtime.variable;
 
-import sav.common.core.utils.Assert;
-
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.Field;
 import com.sun.jdi.LocalVariable;
@@ -74,8 +72,13 @@ public class JDIParam {
 	}
 	
 	public ArrayReference getArrayRef() {
-		Assert.assertTrue(type == JDIParamType.ARRAY_ELEMENT,
-				"Expected arrayType, but get ", type.name());
+//		Assert.assertTrue(type == JDIParamType.ARRAY_ELEMENT,
+//				"Expected arrayType, but get ", type.name());
+		
+		if(type != JDIParamType.ARRAY_ELEMENT){
+			System.err.println("Expected arrayType, but get " + type.name());
+		}
+		
 		return (ArrayReference) obj;
 	}
 

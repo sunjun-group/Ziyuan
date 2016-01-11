@@ -14,10 +14,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import microbat.model.variable.ExecValue;
+import microbat.model.variable.ExecVarType;
+import microbat.model.variable.GraphNode;
 import sav.common.core.utils.CollectionUtils;
-import sav.strategies.dto.execute.value.ExecValue;
-import sav.strategies.dto.execute.value.ExecVarType;
-import sav.strategies.dto.execute.value.GraphNode;
 
 /**
  * @author LLT

@@ -13,6 +13,7 @@ import microbat.codeanalysis.ast.VariableScopeParser;
 import microbat.codeanalysis.bytecode.WalaSlicer;
 import microbat.codeanalysis.runtime.TestcasesExecutor;
 import microbat.codeanalysis.runtime.model.Trace;
+import microbat.model.BreakPoint;
 import microbat.util.Settings;
 import microbat.views.MicroBatViews;
 import microbat.views.TraceView;
@@ -37,7 +38,6 @@ import sav.common.core.utils.JunitUtils;
 import sav.commons.TestConfiguration;
 import sav.strategies.common.VarInheritCustomizer.InheritType;
 import sav.strategies.dto.AppJavaClassPath;
-import sav.strategies.dto.BreakPoint;
 
 public class StartDebugHandler extends AbstractHandler {
 

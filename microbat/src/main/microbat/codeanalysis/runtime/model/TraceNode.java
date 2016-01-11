@@ -3,10 +3,10 @@ package microbat.codeanalysis.runtime.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import microbat.graphdiff.GraphDiff;
-import microbat.graphdiff.HierarchyGraphDiffer;
+import microbat.algorithm.graphdiff.GraphDiff;
+import microbat.algorithm.graphdiff.HierarchyGraphDiffer;
+import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
-import sav.strategies.dto.BreakPoint;
 
 public class TraceNode {
 	

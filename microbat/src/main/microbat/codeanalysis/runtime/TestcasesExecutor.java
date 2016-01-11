@@ -23,7 +23,9 @@ import java.util.concurrent.TimeUnit;
 import microbat.codeanalysis.runtime.model.Trace;
 import microbat.codeanalysis.runtime.model.TraceNode;
 import microbat.codeanalysis.runtime.variable.DebugValueExtractor;
+import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
+import microbat.util.BreakpointUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +33,10 @@ import org.slf4j.LoggerFactory;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
-import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
-import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
 import sav.strategies.junit.SavJunitRunner;
@@ -89,7 +89,7 @@ public class TestcasesExecutor{
 	private SimpleDebugger debugger = new SimpleDebugger();
 	/** maps from a given class name to its contained breakpoints */
 	private Map<String, List<BreakPoint>> brkpsMap;
-	private List<BreakPoint> bkps;
+	
 	
 	/**
 	 * fields for junit
@@ -106,10 +106,11 @@ public class TestcasesExecutor{
 	 * fields for test cases
 	 */
 //	private List<BreakpointData> result;
+//	private DebugValueExtractor valueExtractor;
+	
 	/** for internal purpose */
 	private Map<Integer, List<BreakPointValue>> bkpValsByTestIdx;
 	private List<BreakPointValue> currentTestBkpValues;
-	private DebugValueExtractor valueExtractor;
 	private int valRetrieveLevel;
 	//private ITestResultVerifier verifier = DefaultTestResultVerifier.getInstance();
 	private JunitResult jResult;
@@ -124,10 +125,6 @@ public class TestcasesExecutor{
 	public TestcasesExecutor(int valRetrieveLevel) {
 		this.valRetrieveLevel = valRetrieveLevel;
 	}
-	
-//	public TestcasesExecutor(DebugValueExtractor valueExtractor) {
-//		setValueExtractor(valueExtractor);
-//	}
 	
 	public void setup(VMConfiguration config) {
 		this.config = config;
@@ -160,9 +157,7 @@ public class TestcasesExecutor{
 	 * @param brkps
 	 * @throws SavException
 	 */
-	public final void run(List<BreakPoint> brkps) throws SavException {
-		this.bkps = brkps;
-		
+	public final void run(List<BreakPoint> brkps) throws SavException{
 		this.brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
 		this.config.setDebug(true);
 		
@@ -215,7 +210,7 @@ public class TestcasesExecutor{
 				break;
 			}
 			if (eventSet == null) {
-				log.warn("Time out! Cannot get event set!");
+				System.out.println("Time out! Cannot get event set!");
 				eventTimeout = true;
 				break;
 			}
@@ -375,7 +370,8 @@ public class TestcasesExecutor{
 			if (location != null) {
 				locBrpMap.put(location.toString(), brkp);
 			} else {
-				log.warn("Cannot add break point " + brkp);
+				//log.warn("Cannot add break point " + brkp);
+				System.out.println("Cannot add break point " + brkp);
 			}
 		}
 	}
@@ -386,7 +382,8 @@ public class TestcasesExecutor{
 		try {
 			locations = refType.locationsOfLine(lineNumber);
 		} catch (AbsentInformationException e) {
-			log.warn(e.getMessage());
+//			log.warn(e.getMessage());
+			e.printStackTrace();
 			return null;
 		}
 		if (!locations.isEmpty()) {
@@ -442,7 +439,8 @@ public class TestcasesExecutor{
 				node = onEnterBreakpoint(bkp, thread, loc);
 			}
 		} catch (AbsentInformationException e) {
-			log.error(e.getMessage());
+			//log.error(e.getMessage());
+			e.printStackTrace();
 		}
 		
 		return node;

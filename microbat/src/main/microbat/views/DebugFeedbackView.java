@@ -2,10 +2,15 @@ package microbat.views;
 
 import java.util.List;
 
+import microbat.algorithm.graphdiff.GraphDiff;
 import microbat.codeanalysis.runtime.model.TraceNode;
-import microbat.graphdiff.GraphDiff;
+import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
 import microbat.model.InterestedVariable;
+import microbat.model.variable.ArrayValue;
+import microbat.model.variable.ExecValue;
+import microbat.model.variable.PrimitiveValue;
+import microbat.model.variable.ReferenceValue;
 import microbat.util.Settings;
 
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -36,12 +41,6 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
-
-import sav.strategies.dto.BreakPoint;
-import sav.strategies.dto.execute.value.ArrayValue;
-import sav.strategies.dto.execute.value.ExecValue;
-import sav.strategies.dto.execute.value.PrimitiveValue;
-import sav.strategies.dto.execute.value.ReferenceValue;
 
 
 public class DebugFeedbackView extends ViewPart {
