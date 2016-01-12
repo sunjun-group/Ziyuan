@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import microbat.model.variable.Variable;
-import sav.common.core.formula.Var;
 import sav.common.core.utils.CollectionUtils;
 
 /**

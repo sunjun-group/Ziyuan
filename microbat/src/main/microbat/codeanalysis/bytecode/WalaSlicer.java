@@ -2,6 +2,9 @@ package microbat.codeanalysis.bytecode;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +16,7 @@ import java.util.jar.JarFile;
 
 import microbat.model.BreakPoint;
 import microbat.model.variable.FieldVar;
+import microbat.model.variable.LocalVar;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.ClassUtils;
@@ -21,10 +25,13 @@ import sav.common.core.utils.Predicate;
 import sav.common.core.utils.SignatureUtils;
 import sav.strategies.dto.AppJavaClassPath;
 
+import com.ibm.wala.analysis.typeInference.TypeAbstraction;
+import com.ibm.wala.analysis.typeInference.TypeInference;
 import com.ibm.wala.classLoader.BinaryDirectoryTreeModule;
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.classLoader.ShrikeBTMethod;
 import com.ibm.wala.classLoader.ShrikeCTMethod;
+import com.ibm.wala.classLoader.ShrikeClass;
 import com.ibm.wala.ipa.callgraph.AnalysisCache;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions;
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
@@ -53,6 +60,7 @@ import com.ibm.wala.shrikeBT.IInstruction;
 import com.ibm.wala.shrikeBT.LoadInstruction;
 import com.ibm.wala.shrikeBT.PutInstruction;
 import com.ibm.wala.shrikeBT.StoreInstruction;
+import com.ibm.wala.shrikeCT.ConstantPoolParser;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.SSACFG;
@@ -166,7 +174,7 @@ public class WalaSlicer{
 							bkpSet.put(key, point);
 						}
 						
-						appendReadWritenVariable(point, method, allInsts[index], index);
+						appendReadWritenVariable(point, method, allInsts[index], index, s.getNode().getIR());
 						
 					}
 				}
@@ -178,9 +186,53 @@ public class WalaSlicer{
 		return result;
 	}
 
-
+	private LocalVar generateLocalVar(ShrikeCTMethod method, int pc, int varIndex){
+		Method getBCInfoMethod;
+		try {
+			getBCInfoMethod = ShrikeBTMethod.class.getDeclaredMethod("getBCInfo", null);
+			getBCInfoMethod.setAccessible(true);
+			Object byteInfo = getBCInfoMethod.invoke(method, null);
+			
+			Class byteCodeInfoClass = Class.forName("com.ibm.wala.classLoader.ShrikeBTMethod$BytecodeInfo");
+			Field localVariableMapField = byteCodeInfoClass.getDeclaredField("localVariableMap");
+			localVariableMapField.setAccessible(true);
+			Object mapObject = localVariableMapField.get(byteInfo);
+			int[][] map = (int[][])mapObject;
+			
+			int[] localPairs = map[pc];
+			int nameIndex = localPairs[2*varIndex];
+			int typeIndex = localPairs[2*varIndex+1];
+			
+			ConstantPoolParser parser = ((ShrikeClass)method.getDeclaringClass()).getReader().getCP();
+			String varName = parser.getCPUtf8(nameIndex);
+			String typeName = parser.getCPUtf8(typeIndex);
+			
+			
+			LocalVar var = new LocalVar(varName, typeName);
+			return var;
+			
+		} catch (NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (InvalidClassFileException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return null;
+	}
+	
 	private void appendReadWritenVariable(BreakPoint point, ShrikeCTMethod method, IInstruction ins, 
-			int insIndex) throws InvalidClassFileException {
+			int insIndex, IR ir) throws InvalidClassFileException {
 		final String READ = "read";
 		final String WRITE = "write";
 		
@@ -209,8 +261,10 @@ public class WalaSlicer{
 		else if(ins instanceof LoadInstruction){
 			LoadInstruction lIns = (LoadInstruction)ins;
 			int varIndex = lIns.getVarIndex();
-			varName = method.getLocalVariableName(pc, varIndex);
-			//TODO is it possible to find the variable type? combining AST?
+//			varName = method.getLocalVariableName(pc, varIndex);
+			
+			LocalVar var = generateLocalVar(method, pc, varIndex);
+			point.addReadVariable(var);
 			
 			action = READ;
 		}
@@ -225,12 +279,21 @@ public class WalaSlicer{
 			for(int j=pc; j<pc+10; j++){
 				varName = method.getLocalVariableName(j, varIndex);
 				if(varName != null){
+					pc = j;
 					break;
 				}					
 			}
 			
 			if(varName == null){
 				System.err.println("Cannot achieve variable name in line " + lineNumber);
+			}
+			else{
+//				TypeInference typeInf = TypeInference.make(ir, false);
+//				TypeAbstraction type = typeInf.getType(varIndex);
+//				String className = type.getType().getName().toString();
+				
+				LocalVar var = generateLocalVar(method, pc, varIndex);
+				point.addWrittenVariable(var);
 			}
 			
 			action = WRITE;
