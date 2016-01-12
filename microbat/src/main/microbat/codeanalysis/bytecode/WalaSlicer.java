@@ -25,8 +25,6 @@ import sav.common.core.utils.Predicate;
 import sav.common.core.utils.SignatureUtils;
 import sav.strategies.dto.AppJavaClassPath;
 
-import com.ibm.wala.analysis.typeInference.TypeAbstraction;
-import com.ibm.wala.analysis.typeInference.TypeInference;
 import com.ibm.wala.classLoader.BinaryDirectoryTreeModule;
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.classLoader.ShrikeBTMethod;
@@ -186,12 +184,14 @@ public class WalaSlicer{
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
 	private LocalVar generateLocalVar(ShrikeCTMethod method, int pc, int varIndex){
 		Method getBCInfoMethod;
 		try {
-			getBCInfoMethod = ShrikeBTMethod.class.getDeclaredMethod("getBCInfo", null);
+			getBCInfoMethod = ShrikeBTMethod.class.getDeclaredMethod("getBCInfo", new Class[]{});
 			getBCInfoMethod.setAccessible(true);
-			Object byteInfo = getBCInfoMethod.invoke(method, null);
+			
+			Object byteInfo = getBCInfoMethod.invoke(method, new Object[]{});
 			
 			Class byteCodeInfoClass = Class.forName("com.ibm.wala.classLoader.ShrikeBTMethod$BytecodeInfo");
 			Field localVariableMapField = byteCodeInfoClass.getDeclaredField("localVariableMap");
