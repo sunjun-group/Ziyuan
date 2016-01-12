@@ -206,6 +206,7 @@ public class WalaSlicer{
 			ConstantPoolParser parser = ((ShrikeClass)method.getDeclaringClass()).getReader().getCP();
 			String varName = parser.getCPUtf8(nameIndex);
 			String typeName = parser.getCPUtf8(typeIndex);
+			typeName = SignatureUtils.signatureToName(typeName);
 			
 			
 			LocalVar var = new LocalVar(varName, typeName);
@@ -233,11 +234,11 @@ public class WalaSlicer{
 	
 	private void appendReadWritenVariable(BreakPoint point, ShrikeCTMethod method, IInstruction ins, 
 			int insIndex, IR ir) throws InvalidClassFileException {
-		final String READ = "read";
-		final String WRITE = "write";
+//		final String READ = "read";
+//		final String WRITE = "write";
 		
 		String varName = null;
-		String action = "unknown";
+//		String action = "unknown";
 		
 		int pc = method.getBytecodeIndex(insIndex);
 		int lineNumber = method.getLineNumber(pc);
@@ -246,17 +247,19 @@ public class WalaSlicer{
 			GetInstruction gIns = (GetInstruction)ins;
 			varName = gIns.getFieldName();
 			String type = gIns.getFieldType();
+			type = SignatureUtils.signatureToName(type);
 			FieldVar var = new FieldVar(gIns.isStatic(), varName, type);
 			point.addReadVariable(var);
-			action = READ;
+//			action = READ;
 		}
 		else if(ins instanceof PutInstruction){
 			PutInstruction pIns = (PutInstruction)ins;
 			varName = pIns.getFieldName();
 			String type = pIns.getFieldType();
+			type = SignatureUtils.signatureToName(type);
 			FieldVar var = new FieldVar(pIns.isStatic(), varName, type);
 			point.addWrittenVariable(var);
-			action = WRITE;
+//			action = WRITE;
 		}
 		else if(ins instanceof LoadInstruction){
 			LoadInstruction lIns = (LoadInstruction)ins;
@@ -266,7 +269,7 @@ public class WalaSlicer{
 			LocalVar var = generateLocalVar(method, pc, varIndex);
 			point.addReadVariable(var);
 			
-			action = READ;
+//			action = READ;
 		}
 		else if(ins instanceof StoreInstruction){
 			StoreInstruction sIns = (StoreInstruction)ins;
@@ -296,7 +299,7 @@ public class WalaSlicer{
 				point.addWrittenVariable(var);
 			}
 			
-			action = WRITE;
+//			action = WRITE;
 		}
 		else if(ins instanceof ArrayLoadInstruction){
 			//TODO do we need to handle array cases?
@@ -305,15 +308,9 @@ public class WalaSlicer{
 			//TODO
 		}
 		
-		System.out.println(method.getSignature() + " line " + lineNumber + ": " + ins);
-		System.out.println(action + ":" + varName);
-		System.out.println("==============");
-		
-		
-		if(action.equals(READ)){
-			
-		}
-		
+//		System.out.println(method.getSignature() + " line " + lineNumber + ": " + ins);
+//		System.out.println(action + ":" + varName);
+//		System.out.println("==============");
 	}
 
 	private String getClassCanonicalName(IMethod method) {

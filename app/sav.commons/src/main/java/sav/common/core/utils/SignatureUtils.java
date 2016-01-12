@@ -32,6 +32,48 @@ public class SignatureUtils {
 		sb.append(getSignature(meth.getReturnType()));
 		return sb.toString();
 	}
+	
+	public static String signatureToName(String signature){
+		signature = trimSignature(signature);
+		
+		String arrayString = "";
+		int startArray = signature.indexOf("[");
+		int endArray = signature.lastIndexOf("[");
+		
+		if(startArray != -1){
+			for(int i=0; i<endArray-startArray+1; i++){
+				arrayString += "[]";
+			}
+			signature = signature.substring(endArray+1, signature.length());
+		}
+		
+		
+		if (signature.equals("I")) {
+			return "int" + arrayString;
+		} else if (signature.equals("B")) {
+			return "byte" + arrayString;
+		} else if (signature.equals("J")) {
+			return "long" + arrayString;
+		} else if (signature.equals("F")) {
+			return "float" + arrayString;
+		} else if (signature.equals("D")) {
+			return "double" + arrayString;
+		} else if (signature.equals("S")) {
+			return "short" + arrayString;
+		} else if (signature.equals("C")) {
+			return "char" + arrayString;
+		} else if (signature.equals("Z")) {
+			return "boolean" + arrayString;
+		} else if (signature.equals("V")) {
+			return "void";
+		}
+		
+		signature = signature.substring(1, signature.length());
+		signature = signature.replace("/", ".");
+		signature += arrayString;
+		
+		return signature;
+	}
 
 	/**
 	 * Compute the JVM signature for the class.
