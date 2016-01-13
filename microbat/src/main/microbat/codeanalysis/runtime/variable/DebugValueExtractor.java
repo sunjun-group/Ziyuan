@@ -131,7 +131,7 @@ public class DebugValueExtractor {
 					objRef = frame.thisObject();
 					refType = objRef.referenceType();
 				}
-				/*
+				/**
 				 * LOCALVARIABLES MUST BE NAVIGATED BEFORE FIELDS, because: in
 				 * case a class field and a local variable in method have the
 				 * same name, and the breakpoint variable with that name has the
@@ -141,8 +141,8 @@ public class DebugValueExtractor {
 				final List<LocalVariable> visibleVars = frame.visibleVariables();
 				final List<Field> allFields = refType.allFields();
 				
-				List<Variable> collectedMoreVariable = collectMoreVariable(bkp, visibleVars, allFields);
-				bkp.setAllVisibleVariables(collectedMoreVariable);
+				List<Variable> allVisibleVariables = collectAllVariable(bkp, visibleVars, allFields);
+				bkp.setAllVisibleVariables(allVisibleVariables);
 				
 				//TODO extract the value of expression
 				//Value value = retriveExpression(frame, "1+1");
@@ -168,6 +168,7 @@ public class DebugValueExtractor {
 								Value value = objRef == null ? null : objRef.getValue(matchedField);
 								param = JDIParam.nonStaticField(matchedField, objRef, value);
 							}
+							
 							if (param.getValue() != null && !matchedField.name().equals(bpVar.getName())) {
 								param = recursiveMatch(param, extractSubProperty(bpVar.getName()));
 							}
@@ -181,14 +182,14 @@ public class DebugValueExtractor {
 				}
 
 				if (!allVariables.isEmpty()) {
-					collectValue(bkVal, thread, allVariables);
+					collectValue(bkVal, objRef, thread, allVariables);
 				}
 			}
 		}
 		return bkVal;
 	}
 	
-	private List<Variable> collectMoreVariable(BreakPoint bkp, List<LocalVariable> visibleVars, List<Field> allFields) {
+	private List<Variable> collectAllVariable(BreakPoint bkp, List<LocalVariable> visibleVars, List<Field> allFields) {
 		List<Variable> varList = new ArrayList<>();
 		for(LocalVariable lv: visibleVars){
 //			Var var = new Var(lv.name(), lv.name(), VarScope.UNDEFINED);
@@ -229,8 +230,11 @@ public class DebugValueExtractor {
 		return matchedField;
 	}
 
-	protected void collectValue(BreakPointValue bkVal, ThreadReference thread,
+	protected void collectValue(BreakPointValue bkVal, ObjectReference objRef, ThreadReference thread,
 			final Map<Variable, JDIParam> allVariables){
+		
+		appendClassVarVal(bkVal, "this", false, objRef, 1, thread, true, true, false);
+		
 		for (Entry<Variable, JDIParam> entry : allVariables.entrySet()) {
 			Variable var = entry.getKey();
 			
@@ -244,7 +248,10 @@ public class DebugValueExtractor {
 			boolean isField = (param.getField() != null);
 			boolean isStatic = param.getType().equals(JDIParam.JDIParamType.STATIC_FIELD);
 			
-			appendVarVal(bkVal, var.getName(), false, value, 1, thread, true, isField, isStatic);
+			if(!isField){
+				appendVarVal(bkVal, var.getName(), false, value, 1, thread, true, isField, isStatic);				
+			}
+			
 		}
 		
 		System.currentTimeMillis();
@@ -283,9 +290,12 @@ public class DebugValueExtractor {
 		}
 		JDIParam subParam = null;
 		String subProperty = null;
-		// NOTE: must check Array before Object because ArrayReferenceImpl
-		// implements both ArrayReference and ObjectReference (by extending
-		// ObjectReferenceImpl)
+		/** 
+		 * 	NOTE: must check Array before Object because ArrayReferenceImpl
+		 *	implements both ArrayReference and ObjectReference (by extending
+		 *	ObjectReferenceImpl)
+		 * 
+		 */
 		if (ArrayReference.class.isAssignableFrom(value.getClass())) {
 			ArrayReference array = (ArrayReference) value;
 			// Can access to the array's length or values
@@ -403,8 +413,7 @@ public class DebugValueExtractor {
 
 	private synchronized String toPrimitiveValue(ClassType type, ObjectReference value,
 			ThreadReference thread) {
-		Method method = type.concreteMethodByName(TO_STRING_NAME,
-				TO_STRING_SIGN);
+		Method method = type.concreteMethodByName(TO_STRING_NAME, TO_STRING_SIGN);
 		if (method != null) {
 			try {
 				if (thread.isSuspended()) {

@@ -596,9 +596,9 @@ public class DebugFeedbackView extends ViewPart {
 					}
 				case 1: 
 					String name = value.getVarName();
-					if(value.isRoot() && value.isField()){
-						name = "this." + name;
-					}
+//					if(value.isRoot() && value.isField()){
+//						name = "this." + name;
+//					}
 					
 //					System.out.println(value.getVarId());
 					

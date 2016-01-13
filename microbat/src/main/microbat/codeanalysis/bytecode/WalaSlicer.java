@@ -243,6 +243,10 @@ public class WalaSlicer{
 		int pc = method.getBytecodeIndex(insIndex);
 		int lineNumber = method.getLineNumber(pc);
 		
+		if(lineNumber == 33){
+			System.currentTimeMillis();
+		}
+		
 		if(ins instanceof GetInstruction){
 			GetInstruction gIns = (GetInstruction)ins;
 			varName = gIns.getFieldName();
@@ -303,8 +307,15 @@ public class WalaSlicer{
 		}
 		else if(ins instanceof ArrayLoadInstruction){
 			//TODO do we need to handle array cases?
+			ArrayLoadInstruction alIns = (ArrayLoadInstruction)ins;
+			String name = alIns.getType();
+			System.currentTimeMillis();
+			
 		}
 		else if(ins instanceof ArrayStoreInstruction){
+			ArrayStoreInstruction asIns = (ArrayStoreInstruction)ins;
+			String name = asIns.getType();
+			System.currentTimeMillis();
 			//TODO
 		}
 		

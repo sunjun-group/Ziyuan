@@ -69,6 +69,7 @@ public class ExpressionParser implements ExpressionParserConstants {
 		StackFrame get() throws IncompatibleThreadStateException;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static Value evaluate(String expr, VirtualMachine vm,
 			GetFrame frameGetter) throws ParseException, InvocationException,
 			InvalidTypeException, ClassNotLoadedException,
