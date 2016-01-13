@@ -34,9 +34,44 @@
 
 package microbat.codeanalysis.runtime.jpda.expr;
 
-import com.sun.jdi.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
 
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ArrayReference;
+import com.sun.jdi.ArrayType;
+import com.sun.jdi.BooleanType;
+import com.sun.jdi.BooleanValue;
+import com.sun.jdi.ByteValue;
+import com.sun.jdi.CharValue;
+import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.ClassType;
+import com.sun.jdi.DoubleValue;
+import com.sun.jdi.Field;
+import com.sun.jdi.FloatValue;
+import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.IntegerValue;
+import com.sun.jdi.InterfaceType;
+import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.InvocationException;
+import com.sun.jdi.LocalVariable;
+import com.sun.jdi.LongValue;
+import com.sun.jdi.Method;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.PrimitiveType;
+import com.sun.jdi.PrimitiveValue;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ShortValue;
+import com.sun.jdi.StackFrame;
+import com.sun.jdi.StringReference;
+import com.sun.jdi.ThreadReference;
+import com.sun.jdi.Type;
+import com.sun.jdi.Value;
+import com.sun.jdi.VirtualMachine;
+
+@SuppressWarnings("restriction")
 abstract class LValue {
 
     // The JDI Value object for this LValue.  Once we have this Value,
@@ -89,7 +124,14 @@ abstract class LValue {
     LValue memberLValue(ExpressionParser.GetFrame frameGetter,
                         String fieldName) throws ParseException {
         try {
-            return memberLValue(fieldName, frameGetter.get().thread());
+        	LValue memValue = memberLValue(fieldName, frameGetter.get().thread());
+        	
+        	Value mem = memValue.jdiValue;
+        	if(!(mem instanceof ObjectReference)){
+        		ExpressionParser.parentValue = this.jdiValue;
+        	}
+        	
+        	return memValue;
         } catch (IncompatibleThreadStateException exc) {
             throw new ParseException("Thread not suspended");
         }
@@ -102,7 +144,13 @@ abstract class LValue {
             "length".equals(fieldName)){
             return new LValueArrayLength((ArrayReference)val);
         }
-        return new LValueInstanceMember(val, fieldName, thread);
+        LValueInstanceMember memValue = new LValueInstanceMember(val, fieldName, thread);
+        Value mem = memValue.jdiValue;
+    	if(!(mem instanceof ObjectReference)){
+    		ExpressionParser.parentValue = this.jdiValue;
+    	}
+        
+        return memValue;
     }
 
     // Return the Value for this LValue that would be used to concatenate
@@ -162,7 +210,15 @@ abstract class LValue {
         } else {
             throw new ParseException("Array index must be a integer type");
         }
-        return new LValueArrayElement(interiorGetValue(), index);
+        
+        
+        LValueArrayElement arrayElementValue = new LValueArrayElement(interiorGetValue(), index);
+        Value mem = arrayElementValue.jdiValue;
+    	if(!(mem instanceof ObjectReference)){
+    		ExpressionParser.parentValue = this.jdiValue;
+    	}
+        
+        return arrayElementValue;
     }
 
    @Override
@@ -177,7 +233,8 @@ abstract class LValue {
     static final int STATIC = 0;
     static final int INSTANCE = 1;
 
-    static Field fieldByName(ReferenceType refType, String name, int kind) {
+    
+	static Field fieldByName(ReferenceType refType, String name, int kind) {
         /*
          * TO DO: Note that this currently fails to find superclass
          * or implemented interface fields. This is due to a temporary

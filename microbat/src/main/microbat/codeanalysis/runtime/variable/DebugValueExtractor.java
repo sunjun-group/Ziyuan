@@ -63,17 +63,25 @@ public class DebugValueExtractor {
 	 */
 	private Map<Long, ReferenceValue> objectPool = new HashMap<>();
 	
-	//private int valRetrieveLevel;
-	
 	public DebugValueExtractor() {
-		//this.valRetrieveLevel = DefaultValues.DEBUG_VALUE_RETRIEVE_LEVEL;
 	}
 	
-//	public DebugValueExtractor2(int valRetrieveLevel) {
-//		this.valRetrieveLevel = valRetrieveLevel;
-//	}
 	
-	private Value retriveExpression(final StackFrame frame, String expression){
+	class ExpressionValue{
+		Value value;
+		/**
+		 * used to decide the memory address, this value must be an ObjectReference.
+		 */
+		Value parentValue;
+		
+		public ExpressionValue(Value value, Value parentValue){
+			this.value = value;
+			this.parentValue = parentValue;
+		}
+		
+	}
+	
+	private ExpressionValue retriveExpression(final StackFrame frame, String expression){
 		ExpressionParser.GetFrame frameGetter = new ExpressionParser.GetFrame() {
             @Override
             public StackFrame get()
@@ -84,30 +92,29 @@ public class DebugValueExtractor {
             }
         };
         
-        Value val = null;
+        ExpressionValue eValue = null;
         
         try {
-			val = ExpressionParser.evaluate(expression, frame.virtualMachine(), frameGetter);
+        	ExpressionParser.parentValue = null;
+        	Value val = ExpressionParser.evaluate(expression, frame.virtualMachine(), frameGetter);
+			
+			eValue = new ExpressionValue(val, ExpressionParser.parentValue);
+			
 			System.currentTimeMillis();
 			
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvalidTypeException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotLoadedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IncompatibleThreadStateException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         
-        return val;
+        return eValue;
 	}
 	
 	public final BreakPointValue extractValue(BreakPoint bkp, ThreadReference thread, Location loc)
@@ -145,8 +152,10 @@ public class DebugValueExtractor {
 				bkp.setAllVisibleVariables(allVisibleVariables);
 				
 				//TODO extract the value of expression
-				//Value value = retriveExpression(frame, "1+1");
-				
+				ExpressionValue value0 = retriveExpression(frame, "tmp[i]");
+				if(value0 != null){
+					System.currentTimeMillis();
+				}	
 				
 				//for (Variable bpVar : bkp.getVars()) {
 				for (Variable bpVar : bkp.getAllVisibleVariables()) {

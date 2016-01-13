@@ -43,6 +43,8 @@ import java.util.ArrayList;
 @SuppressWarnings("restriction")
 public class ExpressionParser implements ExpressionParserConstants {
 
+	public static Value parentValue = null;
+	
 	Stack<LValue> stack = new Stack<LValue>();
 	VirtualMachine vm = null;
 	GetFrame frameGetter = null;
