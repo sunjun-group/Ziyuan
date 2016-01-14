@@ -22,7 +22,7 @@ public class VariableScopeParser {
 	public void parseLocalVariableScopes(List<String> interestingClasses){
 		System.currentTimeMillis();
 		for(String qualifiedName: interestingClasses){
-			ICompilationUnit iunit = JavaUtil.findCompilationUnitInProject(qualifiedName);
+			ICompilationUnit iunit = JavaUtil.findICompilationUnitInProject(qualifiedName);
 			if(iunit == null){
 				System.err.println("The class " + qualifiedName + 
 						" does not have its ICompilationUnit in workspace");

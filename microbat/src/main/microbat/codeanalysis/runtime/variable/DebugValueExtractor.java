@@ -103,7 +103,7 @@ public class DebugValueExtractor {
 			System.currentTimeMillis();
 			
 		} catch (ParseException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (InvocationException e) {
 			e.printStackTrace();
 		} catch (InvalidTypeException e) {
@@ -151,12 +151,6 @@ public class DebugValueExtractor {
 				List<Variable> allVisibleVariables = collectAllVariable(bkp, visibleVars, allFields);
 				bkp.setAllVisibleVariables(allVisibleVariables);
 				
-				//TODO extract the value of expression
-				ExpressionValue value0 = retriveExpression(frame, "tmp[i]");
-				if(value0 != null){
-					System.currentTimeMillis();
-				}	
-				
 				//for (Variable bpVar : bkp.getVars()) {
 				for (Variable bpVar : bkp.getAllVisibleVariables()) {
 					// First check local variable
@@ -192,6 +186,17 @@ public class DebugValueExtractor {
 
 				if (!allVariables.isEmpty()) {
 					collectValue(bkVal, objRef, thread, allVariables);
+					
+					//TODO extract the value of expression
+					try{
+						ExpressionValue value0 = retriveExpression(frame, "tmp[i]");
+						if(value0 != null){
+							System.currentTimeMillis();
+						}							
+					}
+					catch(Exception e){
+						System.currentTimeMillis();
+					}
 				}
 			}
 		}

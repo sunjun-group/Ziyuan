@@ -15,8 +15,22 @@ import java.util.Map;
 import java.util.jar.JarFile;
 
 import microbat.model.BreakPoint;
+import microbat.model.variable.ArrayElementVar;
 import microbat.model.variable.FieldVar;
 import microbat.model.variable.LocalVar;
+import microbat.util.JavaUtil;
+
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.ArrayAccess;
+import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.SimpleName;
+
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.ClassUtils;
@@ -79,10 +93,10 @@ import com.ibm.wala.util.strings.Atom;
  * @author "linyun"
  *
  */
-public class WalaSlicer{
+public class MicrobatSlicer{
 	private static final String JAVA_REGRESSION_EXCLUSIONS = "/Java60RegressionExclusions.txt";
 	
-	public WalaSlicer(){}
+	public MicrobatSlicer(){}
 
 	public List<BreakPoint> slice(AppJavaClassPath appClassPath, List<BreakPoint> breakpoints,
 			List<String> junitClassNames) throws Exception {
@@ -181,6 +195,7 @@ public class WalaSlicer{
 
 		ArrayList<BreakPoint> result = new ArrayList<>(bkpSet.values());
 		
+		
 		return result;
 	}
 
@@ -234,46 +249,65 @@ public class WalaSlicer{
 	
 	private void appendReadWritenVariable(BreakPoint point, ShrikeCTMethod method, IInstruction ins, 
 			int insIndex, IR ir) throws InvalidClassFileException {
-//		final String READ = "read";
-//		final String WRITE = "write";
 		
-		String varName = null;
-//		String action = "unknown";
+//		String varName = null;
 		
 		int pc = method.getBytecodeIndex(insIndex);
 		int lineNumber = method.getLineNumber(pc);
-		
-		if(lineNumber == 33){
-			System.currentTimeMillis();
-		}
+		CompilationUnit cu = JavaUtil.findCompilationUnitInProject(point.getClassCanonicalName());
 		
 		if(ins instanceof GetInstruction){
 			GetInstruction gIns = (GetInstruction)ins;
-			varName = gIns.getFieldName();
+			String varName = gIns.getFieldName();
+			
+//			if(lineNumber == 27 && varName.equals("flag")){
+//				System.currentTimeMillis();
+//			}
+			
+			WrittenFieldRetriever wfRetriever = new WrittenFieldRetriever(cu, lineNumber, varName);
+			cu.accept(wfRetriever);
+			String fullFieldName = wfRetriever.fullFieldName;
+			
+			if(fullFieldName == null){
+				System.err.println("cannot find specific " + varName + " in line " + 
+						lineNumber + " of " + point.getClassCanonicalName());
+			}
+			
 			String type = gIns.getFieldType();
 			type = SignatureUtils.signatureToName(type);
-			FieldVar var = new FieldVar(gIns.isStatic(), varName, type);
+			FieldVar var = new FieldVar(gIns.isStatic(), fullFieldName, type);
 			point.addReadVariable(var);
-//			action = READ;
 		}
 		else if(ins instanceof PutInstruction){
 			PutInstruction pIns = (PutInstruction)ins;
-			varName = pIns.getFieldName();
+			String varName = pIns.getFieldName();
+			
+			System.currentTimeMillis();
+			
+			ReadFieldRetriever rfRetriever = new ReadFieldRetriever(cu, lineNumber, varName);
+			cu.accept(rfRetriever);
+			String fullFieldName = rfRetriever.fullFieldName;
+			
+			System.currentTimeMillis();
+			
+			if(fullFieldName == null){
+				System.err.println("cannot find specific " + varName + " in line " + 
+						lineNumber + " of " + point.getClassCanonicalName());
+			}
+			
+			
 			String type = pIns.getFieldType();
 			type = SignatureUtils.signatureToName(type);
-			FieldVar var = new FieldVar(pIns.isStatic(), varName, type);
+			FieldVar var = new FieldVar(pIns.isStatic(), fullFieldName, type);
 			point.addWrittenVariable(var);
-//			action = WRITE;
 		}
 		else if(ins instanceof LoadInstruction){
 			LoadInstruction lIns = (LoadInstruction)ins;
 			int varIndex = lIns.getVarIndex();
-//			varName = method.getLocalVariableName(pc, varIndex);
 			
 			LocalVar var = generateLocalVar(method, pc, varIndex);
 			point.addReadVariable(var);
 			
-//			action = READ;
 		}
 		else if(ins instanceof StoreInstruction){
 			StoreInstruction sIns = (StoreInstruction)ins;
@@ -283,6 +317,7 @@ public class WalaSlicer{
 			 * be used to find the variable name directly. I have to try some other
 			 * bcIndex to find a variable name.
 			 */
+			String varName = null;
 			for(int j=pc; j<pc+10; j++){
 				varName = method.getLocalVariableName(j, varIndex);
 				if(varName != null){
@@ -303,25 +338,206 @@ public class WalaSlicer{
 				point.addWrittenVariable(var);
 			}
 			
-//			action = WRITE;
 		}
 		else if(ins instanceof ArrayLoadInstruction){
-			//TODO do we need to handle array cases?
 			ArrayLoadInstruction alIns = (ArrayLoadInstruction)ins;
-			String name = alIns.getType();
-			System.currentTimeMillis();
+			String typeSig = alIns.getType();
+			String typeName = SignatureUtils.signatureToName(typeSig);
+			
+			ReadArrayElementRetriever raeRetriever = new ReadArrayElementRetriever(cu, lineNumber, typeName);
+			cu.accept(raeRetriever);
+			String readArrayElement = raeRetriever.arrayElementName;
+			
+			if(readArrayElement == null){
+				System.err.println("cannot find specific read array element in line " + 
+						lineNumber + " of " + point.getClassCanonicalName());
+			}
+			else{
+				ArrayElementVar var = new ArrayElementVar(readArrayElement, "unknown");
+				point.addReadVariable(var);
+			}
 			
 		}
 		else if(ins instanceof ArrayStoreInstruction){
 			ArrayStoreInstruction asIns = (ArrayStoreInstruction)ins;
-			String name = asIns.getType();
-			System.currentTimeMillis();
-			//TODO
+			String typeSig = asIns.getType();
+			String typeName = SignatureUtils.signatureToName(typeSig);
+
+			WrittenArrayElementRetriever waeRetriever = new WrittenArrayElementRetriever(cu, lineNumber, typeName);
+			cu.accept(waeRetriever);
+			String writtenArrayElement = waeRetriever.arrayElementName;
+			
+			if(writtenArrayElement == null){
+				System.err.println("cannot find specific written array element in line " + 
+						lineNumber + " of " + point.getClassCanonicalName());
+			}
+			else{
+				ArrayElementVar var = new ArrayElementVar(writtenArrayElement, "unknown");
+				point.addWrittenVariable(var);
+			}
 		}
 		
-//		System.out.println(method.getSignature() + " line " + lineNumber + ": " + ins);
-//		System.out.println(action + ":" + varName);
-//		System.out.println("==============");
+	}
+	
+	class ASTNodeRetriever extends ASTVisitor{
+		CompilationUnit cu;
+		int lineNumber;
+		String varName;
+		
+		public ASTNodeRetriever(CompilationUnit cu, int lineNumber, String varName){
+			this.cu = cu;
+			this.lineNumber = lineNumber;
+			this.varName = varName;
+		}
+	}
+	
+	/**
+	 * TODO 
+	 * A rigorous implementation. I just find the first array access in a given source code line which has
+	 * the specific type. A more precise implementation is left in the future.
+	 * @author "linyun"
+	 *
+	 */
+	class ReadArrayElementRetriever extends ASTNodeRetriever{
+		String typeName;
+		String arrayElementName;
+		
+		public ReadArrayElementRetriever(CompilationUnit cu, int lineNumber, String typeName){
+			super(cu, lineNumber, "");
+			this.typeName = typeName;
+		}
+		
+		public boolean visit(ArrayAccess access){
+			int linNum = cu.getLineNumber(access.getStartPosition());
+			if(linNum == lineNumber){
+				Expression arrayExp = access.getArray();
+				if(arrayExp instanceof Name){
+					Name name = (Name)arrayExp;
+					ITypeBinding typeBinding = name.resolveTypeBinding();
+					if(typeBinding.isArray()){
+						String arrayType = typeBinding.getElementType().getName();
+						if(arrayType.equals(typeName)){
+							arrayElementName = access.toString();
+							return false;
+						}
+					}
+				}
+			}
+			return true;
+		}
+		
+	}
+	
+	/**
+	 * TODO 
+	 * it is possible that two array element is written in the same line. In this implementation, I do
+	 * not handle such case. An improvement is required in the future. 
+	 * @author "linyun"
+	 *
+	 */
+	class WrittenArrayElementRetriever extends ASTNodeRetriever{
+		String typeName;
+		String arrayElementName;
+		
+		public WrittenArrayElementRetriever(CompilationUnit cu, int lineNumber, String typeName){
+			super(cu, lineNumber, "");
+			this.typeName = typeName;
+		}
+		
+		public boolean visit(Assignment assignment){
+			int linNum = cu.getLineNumber(assignment.getStartPosition());
+			if(linNum == lineNumber){
+				Expression expr = assignment.getLeftHandSide();
+				
+				if(expr instanceof ArrayAccess){
+					ArrayAccess access = (ArrayAccess)expr;
+					Expression arrayExp = access.getArray();
+					if(arrayExp instanceof Name){
+						Name name = (Name)arrayExp;
+						ITypeBinding typeBinding = name.resolveTypeBinding();
+						if(typeBinding.isArray()){
+							String arrayType = typeBinding.getElementType().getName();
+							if(arrayType.equals(typeName)){
+								arrayElementName = access.toString();
+								return false;
+							}
+						}
+					}
+				}
+				
+			}
+			return true;
+		}
+		
+	}
+
+	class ReadFieldRetriever extends ASTNodeRetriever{
+		String fullFieldName;
+		
+		public ReadFieldRetriever(CompilationUnit cu, int lineNumber, String varName){
+			super(cu, lineNumber, varName);
+		}
+		
+		public boolean visit(Assignment assignment){
+			int linNum = cu.getLineNumber(assignment.getStartPosition());
+			if(linNum == lineNumber){
+				Expression expr = assignment.getLeftHandSide();
+				
+				if(expr instanceof QualifiedName){
+					QualifiedName qName = (QualifiedName)expr;
+					fullFieldName = qName.getFullyQualifiedName();
+				}
+				else if(expr instanceof SimpleName){
+					SimpleName sName = (SimpleName)expr;
+					fullFieldName = sName.getFullyQualifiedName();
+				}
+				
+				return false;
+			}
+			return true;
+		}
+		
+		public boolean visit(FieldDeclaration fd){
+			int linNum = cu.getLineNumber(fd.getStartPosition());
+			if(linNum == lineNumber){
+				fullFieldName = varName;
+				return false;
+			}
+			return true;
+		}
+	}
+	
+	class WrittenFieldRetriever extends ASTNodeRetriever{
+		String fullFieldName;
+		
+		public WrittenFieldRetriever(CompilationUnit cu, int lineNumber, String varName){
+			super(cu, lineNumber, varName);
+		}
+		
+		public boolean visit(QualifiedName name){
+			int linNum = cu.getLineNumber(name.getStartPosition());
+			if(linNum == lineNumber){
+				String qualifedName = name.getFullyQualifiedName();
+				String namePart = name.getName().getIdentifier();
+				
+				if(namePart.equals(varName)){
+					fullFieldName = qualifedName;
+					return false;
+				}
+			}
+			return true;
+		}
+		
+		public boolean visit(SimpleName name){
+			int linNum = cu.getLineNumber(name.getStartPosition());
+			if(linNum == lineNumber){
+				String namePart = name.getIdentifier();
+				if(namePart.equals(varName)){
+					fullFieldName = namePart;
+				}
+			}
+			return false;
+		}
 	}
 
 	private String getClassCanonicalName(IMethod method) {

@@ -10,7 +10,7 @@ import java.util.List;
 import microbat.Activator;
 import microbat.codeanalysis.ast.LocalVariableScope;
 import microbat.codeanalysis.ast.VariableScopeParser;
-import microbat.codeanalysis.bytecode.WalaSlicer;
+import microbat.codeanalysis.bytecode.MicrobatSlicer;
 import microbat.codeanalysis.runtime.TestcasesExecutor;
 import microbat.codeanalysis.runtime.model.Trace;
 import microbat.model.BreakPoint;
@@ -82,9 +82,9 @@ public class StartDebugHandler extends AbstractHandler {
 //		input.setClassEntryPoints(classEntryPoints);
 		
 		
-		WalaSlicer slicer;
+		MicrobatSlicer slicer;
 		try {
-			slicer = new WalaSlicer();
+			slicer = new MicrobatSlicer();
 			result = slicer.slice(appClasspath, startPoints, testMethods);
 			
 			System.currentTimeMillis();

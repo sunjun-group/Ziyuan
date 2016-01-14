@@ -16,7 +16,14 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 public class JavaUtil {
-	public static ICompilationUnit findCompilationUnitInProject(String qualifiedName){
+	public static CompilationUnit findCompilationUnitInProject(String qualifiedName){
+		ICompilationUnit icu = findICompilationUnitInProject(qualifiedName);
+		CompilationUnit cu = convertICompilationUnitToASTNode(icu);
+		
+		return cu;
+	}
+	
+	public static ICompilationUnit findICompilationUnitInProject(String qualifiedName){
 		IJavaProject project = JavaCore.create(getSpecificJavaProjectInWorkspace());
 		try {
 			IType type = project.findType(qualifiedName);

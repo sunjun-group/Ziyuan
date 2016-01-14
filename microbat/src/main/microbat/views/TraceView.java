@@ -219,7 +219,7 @@ public class TraceView extends ViewPart {
 			private void markJavaEditor(TraceNode node) {
 				BreakPoint breakPoint = node.getBreakPoint();
 				String qualifiedName = breakPoint.getClassCanonicalName();
-				ICompilationUnit javaUnit = JavaUtil.findCompilationUnitInProject(qualifiedName);
+				ICompilationUnit javaUnit = JavaUtil.findICompilationUnitInProject(qualifiedName);
 				
 				try {
 					ITextEditor sourceEditor = (ITextEditor) JavaUI.openInEditor(javaUnit);
