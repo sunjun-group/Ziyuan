@@ -44,5 +44,9 @@ public class LocalVar extends Variable{
 		return true;
 	}
 	
-	
+	@Override
+	public String getSimpleName() {
+		String sName = variableName;
+		return sName;
+	}
 }

@@ -25,4 +25,5 @@ public abstract class Variable {
 		this.type = type;
 	}
 	
+	public abstract String getSimpleName();
 }

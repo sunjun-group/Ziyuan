@@ -43,6 +43,13 @@ public class ArrayElementVar extends Variable {
 		return "ArrayElementVar [type=" + type + ", variableName="
 				+ variableName + "]";
 	}
+
+	@Override
+	public String getSimpleName() {
+		String sName = variableName.substring(variableName.indexOf("["), variableName.length());
+		return sName;
+	}
+	
 	
 	
 }
