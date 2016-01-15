@@ -4,6 +4,13 @@ public abstract class Variable {
 	protected String type;
 	protected String variableName;
 	
+	/**
+	 * The id of an object (non-primitive type) is its object id. 
+	 * For primitive type:
+	 * if it is a field, its id is: its parent's object id + field name;
+	 * if it is an array element, its id is: its parent's object id + index;
+	 * if it is a local variable, its id is: its scope (i.e., class[startLine, endLine]) + variable name.
+	 */
 	protected String varID;
 
 	public Variable(String name, String type){

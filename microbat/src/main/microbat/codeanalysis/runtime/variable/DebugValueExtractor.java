@@ -10,8 +10,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import microbat.codeanalysis.runtime.herustic.HeuristicIgnoringFieldRule;
-import microbat.codeanalysis.runtime.jpda.expr.ExpressionParser;
-import microbat.codeanalysis.runtime.jpda.expr.ParseException;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
 import microbat.model.value.ArrayValue;
@@ -31,12 +29,9 @@ import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.BooleanType;
 import com.sun.jdi.BooleanValue;
-import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
-import com.sun.jdi.InvalidTypeException;
-import com.sun.jdi.InvocationException;
 import com.sun.jdi.LocalVariable;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
@@ -64,57 +59,6 @@ public class DebugValueExtractor {
 	private Map<Long, ReferenceValue> objectPool = new HashMap<>();
 	
 	public DebugValueExtractor() {
-	}
-	
-	
-	class ExpressionValue{
-		Value value;
-		/**
-		 * used to decide the memory address, this value must be an ObjectReference.
-		 */
-		Value parentValue;
-		
-		public ExpressionValue(Value value, Value parentValue){
-			this.value = value;
-			this.parentValue = parentValue;
-		}
-		
-	}
-	
-	private ExpressionValue retriveExpression(final StackFrame frame, String expression){
-		ExpressionParser.GetFrame frameGetter = new ExpressionParser.GetFrame() {
-            @Override
-            public StackFrame get()
-                throws IncompatibleThreadStateException
-            {
-            	return frame;
-                
-            }
-        };
-        
-        ExpressionValue eValue = null;
-        
-        try {
-        	ExpressionParser.parentValue = null;
-        	Value val = ExpressionParser.evaluate(expression, frame.virtualMachine(), frameGetter);
-			
-			eValue = new ExpressionValue(val, ExpressionParser.parentValue);
-			
-			System.currentTimeMillis();
-			
-		} catch (ParseException e) {
-			//e.printStackTrace();
-		} catch (InvocationException e) {
-			e.printStackTrace();
-		} catch (InvalidTypeException e) {
-			e.printStackTrace();
-		} catch (ClassNotLoadedException e) {
-			e.printStackTrace();
-		} catch (IncompatibleThreadStateException e) {
-			e.printStackTrace();
-		}
-        
-        return eValue;
 	}
 	
 	public final BreakPointValue extractValue(BreakPoint bkp, ThreadReference thread, Location loc)
@@ -148,7 +92,7 @@ public class DebugValueExtractor {
 				final List<LocalVariable> visibleVars = frame.visibleVariables();
 				final List<Field> allFields = refType.allFields();
 				
-				List<Variable> allVisibleVariables = collectAllVariable(bkp, visibleVars, allFields);
+				List<Variable> allVisibleVariables = collectAllVariable(visibleVars, allFields);
 				bkp.setAllVisibleVariables(allVisibleVariables);
 				
 				//for (Variable bpVar : bkp.getVars()) {
@@ -186,24 +130,13 @@ public class DebugValueExtractor {
 
 				if (!allVariables.isEmpty()) {
 					collectValue(bkVal, objRef, thread, allVariables);
-					
-					//TODO extract the value of expression
-					try{
-						ExpressionValue value0 = retriveExpression(frame, "tmp[i]");
-						if(value0 != null){
-							System.currentTimeMillis();
-						}							
-					}
-					catch(Exception e){
-						System.currentTimeMillis();
-					}
 				}
 			}
 		}
 		return bkVal;
 	}
 	
-	private List<Variable> collectAllVariable(BreakPoint bkp, List<LocalVariable> visibleVars, List<Field> allFields) {
+	private List<Variable> collectAllVariable(List<LocalVariable> visibleVars, List<Field> allFields) {
 		List<Variable> varList = new ArrayList<>();
 		for(LocalVariable lv: visibleVars){
 //			Var var = new Var(lv.name(), lv.name(), VarScope.UNDEFINED);
@@ -539,20 +472,11 @@ public class DebugValueExtractor {
 		}
 		
 		throw new AbsentInformationException("Can not find frame");
-//		throw new Exception("Can not find frame");
 	}
 	
 	private boolean areLocationsEqual(Location location1, Location location2) throws AbsentInformationException {
 		//return location1.compareTo(location2) == 0;
 		return location1.equals(location2);
 	}
-	
-//	public int getValRetrieveLevel() {
-//		return valRetrieveLevel;
-//	}
-//	
-//	public void setValRetrieveLevel(int valRetrieveLevel) {
-//		this.valRetrieveLevel = valRetrieveLevel;
-//	}
 	
 }

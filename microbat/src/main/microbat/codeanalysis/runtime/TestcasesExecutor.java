@@ -20,11 +20,18 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
+import microbat.codeanalysis.ast.LocalVariableScope;
+import microbat.codeanalysis.ast.VariableScopeParser;
+import microbat.codeanalysis.runtime.jpda.expr.ExpressionParser;
+import microbat.codeanalysis.runtime.jpda.expr.ParseException;
 import microbat.codeanalysis.runtime.variable.DebugValueExtractor;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
+import microbat.model.trace.StepVariableRelationEntry;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
+import microbat.model.variable.LocalVar;
+import microbat.model.variable.Variable;
 import microbat.util.BreakpointUtils;
 
 import org.slf4j.Logger;
@@ -44,11 +51,17 @@ import sav.strategies.vm.SimpleDebugger;
 import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.InvocationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
+import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadReference;
+import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.BreakpointEvent;
 import com.sun.jdi.event.ClassPrepareEvent;
@@ -121,7 +134,7 @@ public class TestcasesExecutor{
 	 * for recording execution trace
 	 */
 	private Trace trace = new Trace();
-	//private RWVariableTable varTable = new Var
+	
 	
 	
 	public TestcasesExecutor(int valRetrieveLevel) {
@@ -486,9 +499,6 @@ public class TestcasesExecutor{
 		return location1.equals(location2);
 	}
 	
-	
-	
-	
 	private void onStart() {
 		bkpValsByTestIdx = new HashMap<Integer, List<BreakPointValue>>();
 		currentTestBkpValues = new ArrayList<BreakPointValue>();
@@ -500,12 +510,16 @@ public class TestcasesExecutor{
 		currentTestBkpValues = CollectionUtils.getListInitIfEmpty(bkpValsByTestIdx, testIdx);
 	}
 
+	
+	
 	private TraceNode onEnterBreakpoint(BreakPoint bkp, ThreadReference thread, Location loc) throws SavException {
 		BreakPointValue bkpVal = extractValuesAtLocation(bkp, thread, loc);
 		//replace existing one with the new one
 		addToCurrentValueList(currentTestBkpValues, bkpVal);
 		
 		TraceNode node = collectTrace(bkp, bkpVal);
+
+		updateStepVariableRelationTable(thread, loc, node, this.trace.getStepVariableTable(), READ);
 		
 		if(!this.methodNodeStack.isEmpty()){
 			TraceNode parentInvocationNode = this.methodNodeStack.peek();
@@ -516,6 +530,162 @@ public class TestcasesExecutor{
 		return node;
 	}
 	
+	private String generateVarID(StackFrame frame, Variable var, TraceNode node){
+		String varName = var.getName();
+		try{
+			ExpressionValue expValue = retriveExpression(frame, varName);
+			if(expValue != null){
+				Value value = expValue.value;
+				
+				if(value instanceof ObjectReference){
+					ObjectReference objRef = (ObjectReference)value;
+					String varID = String.valueOf(objRef.uniqueID());
+					
+					var.setVarID(varID);
+				}
+				else{
+					String varID;
+					if(var instanceof LocalVar){
+						VariableScopeParser parser = new VariableScopeParser();
+						LocalVariableScope scope = parser.parseScope(node.getBreakPoint(), (LocalVar)var);
+						varID = node.getBreakPoint().getClassCanonicalName() + "[" + scope.getStartLine() + "," 
+								+ scope.getEndLine() + "] " + var.getName();
+					}
+					else{
+						Value parentValue = expValue.parentValue;
+						ObjectReference objRef = (ObjectReference)parentValue;
+						varID = String.valueOf(objRef.uniqueID()) + var.getSimpleName();
+						
+					}
+					var.setVarID(varID);
+				}
+				
+				return var.getVarID();
+			}							
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public static String READ = "read";
+	public static String WRITTEN = "written";
+	
+	private void updateStepVariableRelationTable(ThreadReference thread, Location location, TraceNode node, 
+			Map<String, StepVariableRelationEntry> stepVariableTable, String action) {
+		StackFrame frame = null;
+		try {
+			for (StackFrame f : thread.frames()) {
+				if (f.location().equals(location)) {
+					frame = f;
+				}
+			}
+		} catch (IncompatibleThreadStateException e) {
+			e.printStackTrace();
+		}
+		
+		if(frame == null){
+			System.err.println("get a null frame from thread!");
+			return;
+		}
+		
+		synchronized (frame) {
+			if(action.equals(READ)){
+				processReadVariable(node, stepVariableTable, frame);							
+			}
+			else if(action.equals(WRITTEN)){
+				processWrittenVariable(node, stepVariableTable, frame);
+			}
+		}
+		//processWrittenVariable(node, stepVariableTable, frame);
+	}
+
+	private void processReadVariable(TraceNode node,
+			Map<String, StepVariableRelationEntry> stepVariableTable,
+			StackFrame frame) {
+		List<Variable> readVariables = node.getBreakPoint().getReadVariables();
+		for(Variable readVar: readVariables){
+			String varID = generateVarID(frame, readVar, node);
+			System.currentTimeMillis();
+			if(varID == null){
+				System.err.println("there is an error when generating the id for " + readVar + 
+						" in line " + node.getBreakPoint().getLineNo() + " of " + node.getBreakPoint().getClassCanonicalName());
+				varID = generateVarID(frame, readVar, node);
+			}
+			else{
+				StepVariableRelationEntry entry = stepVariableTable.get(varID);
+				if(entry == null){
+					entry = new StepVariableRelationEntry(varID, readVar);	
+					stepVariableTable.put(varID, entry);
+				}
+				
+				entry.addConsumer(node);
+			}
+		}
+	}
+	
+	private void processWrittenVariable(TraceNode node,
+			Map<String, StepVariableRelationEntry> stepVariableTable,
+			StackFrame frame) {
+		List<Variable> writtenVariables = node.getBreakPoint().getWrittenVariables();
+		for(Variable writtenVar: writtenVariables){
+			String varID = generateVarID(frame, writtenVar, node);
+			if(varID == null){
+				System.err.println("there is an error when generating the id for " + writtenVar + 
+						" in line " + node.getBreakPoint().getLineNo() + " of " + node.getBreakPoint().getClassCanonicalName());
+				varID = generateVarID(frame, writtenVar, node);
+			}
+			else{
+				StepVariableRelationEntry entry = stepVariableTable.get(varID);
+				if(entry == null){
+					entry = new StepVariableRelationEntry(varID, writtenVar);	
+					stepVariableTable.put(varID, entry);
+				}
+				
+				entry.addProducer(node);
+			}
+		}
+	}
+	
+	
+	private ExpressionValue retriveExpression(final StackFrame frame, String expression){
+		ExpressionParser.GetFrame frameGetter = new ExpressionParser.GetFrame() {
+            @Override
+            public StackFrame get()
+                throws IncompatibleThreadStateException
+            {
+            	return frame;
+                
+            }
+        };
+        
+        ExpressionValue eValue = null;
+        
+        try {
+        	ExpressionParser.parentValue = null;
+        	Value val = ExpressionParser.evaluate(expression, frame.virtualMachine(), frameGetter);
+			
+			eValue = new ExpressionValue(val, ExpressionParser.parentValue);
+			
+			System.currentTimeMillis();
+			
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		} catch (InvocationException e) {
+			e.printStackTrace();
+		} catch (InvalidTypeException e) {
+			e.printStackTrace();
+		} catch (ClassNotLoadedException e) {
+			e.printStackTrace();
+		} catch (IncompatibleThreadStateException e) {
+			e.printStackTrace();
+		}
+        
+        return eValue;
+	}
+
 	private void onCollectValueOfPreviousStep(BreakPoint currentPosition, 
 			ThreadReference thread, Location loc) throws SavException {
 		
@@ -527,6 +697,8 @@ public class TestcasesExecutor{
 		
 		int len = trace.getExectionList().size();
 		TraceNode node = trace.getExectionList().get(len-1);
+		
+		updateStepVariableRelationTable(thread, loc, node, this.trace.getStepVariableTable(), WRITTEN);
 		
 		node.setAfterStepInState(bkpVal);
 	}
@@ -613,8 +785,8 @@ public class TestcasesExecutor{
 		return result;
 	}
 
-	private BreakPointValue extractValuesAtLocation(BreakPoint bkp,
-			/*BreakpointEvent bkpEvent*/ThreadReference thread, Location loc) throws SavException {
+	private BreakPointValue extractValuesAtLocation(BreakPoint bkp, ThreadReference thread, 
+			Location loc) throws SavException {
 		try {
 			//return getValueExtractor().extractValue(bkp, bkpEvent);
 			DebugValueExtractor extractor = new DebugValueExtractor();
@@ -722,6 +894,19 @@ public class TestcasesExecutor{
 		return config;
 	}
 	
+	class ExpressionValue{
+		Value value;
+		/**
+		 * used to decide the memory address, this value must be an ObjectReference.
+		 */
+		Value parentValue;
+		
+		public ExpressionValue(Value value, Value parentValue){
+			this.value = value;
+			this.parentValue = parentValue;
+		}
+		
+	}
 
 	public static enum TestResultType {
 		PASS,

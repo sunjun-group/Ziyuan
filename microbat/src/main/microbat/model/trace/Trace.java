@@ -1,7 +1,9 @@
 package microbat.model.trace;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import microbat.model.BreakPoint;
 
@@ -14,6 +16,10 @@ public class Trace {
 	private int observingIndex = -1;
 	
 	private List<TraceNode> exectionList = new ArrayList<>();
+	/**
+	 * tracking which steps read/write what variables, and what variables are read/written by which steps.
+	 */
+	private Map<String, StepVariableRelationEntry> stepVariableTable = new HashMap<>();
 
 	public List<TraceNode> getExectionList() {
 		return exectionList;
@@ -120,4 +126,15 @@ public class Trace {
 		}
 		
 	}
+
+	public void constructDomianceRelation() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Map<String, StepVariableRelationEntry> getStepVariableTable() {
+		return stepVariableTable;
+	}
+	
+	
 }

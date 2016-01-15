@@ -167,7 +167,9 @@ public class StartDebugHandler extends AbstractHandler {
 					
 					monitor.worked(40);
 					Trace trace = tcExecutor.getTrace();
-					trace.conductStateDiff();
+					trace.constructDomianceRelation();
+					//trace.conductStateDiff();
+					
 					Activator.getDefault().setCurrentTrace(trace);
 					
 					Display.getDefault().asyncExec(new Runnable(){

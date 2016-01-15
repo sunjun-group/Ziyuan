@@ -65,7 +65,12 @@ public class FieldVar extends Variable{
 	
 	@Override
 	public String getSimpleName() {
-		String sName = variableName.substring(variableName.lastIndexOf("."), variableName.length());
-		return sName;
+		if(!variableName.contains(".")){
+			return variableName;
+		}
+		else{
+			String sName = variableName.substring(variableName.lastIndexOf("."), variableName.length());
+			return sName;			
+		}
 	}
 }
