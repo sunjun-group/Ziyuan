@@ -1,12 +1,15 @@
-package microbat.codeanalysis.runtime.model;
+package microbat.model.trace;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import microbat.algorithm.graphdiff.GraphDiff;
 import microbat.algorithm.graphdiff.HierarchyGraphDiffer;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
+import microbat.model.variable.Variable;
 
 public class TraceNode {
 	
@@ -16,6 +19,9 @@ public class TraceNode {
 	private BreakPointValue afterStepOverState;
 	
 	private List<GraphDiff> consequences;
+	
+	private Map<TraceNode, List<Variable>> dominator = new HashMap<>();
+	private Map<TraceNode, List<Variable>> dominatee = new HashMap<>();
 	
 	/**
 	 * the order of this node in the whole trace
@@ -44,6 +50,28 @@ public class TraceNode {
 		this.order = order;
 	}
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + order;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TraceNode other = (TraceNode) obj;
+		if (order != other.order)
+			return false;
+		return true;
+	}
+
 	public String toString(){
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(getClassName());
@@ -203,6 +231,40 @@ public class TraceNode {
 		List<GraphDiff> diffs = differ.getDiffs();
 		this.consequences = diffs;
 	}
+
+	public Map<TraceNode, List<Variable>> getDominator() {
+		return dominator;
+	}
+
+	public void setDominator(Map<TraceNode, List<Variable>> dominator) {
+		this.dominator = dominator;
+	}
+
+	public Map<TraceNode, List<Variable>> getDominatee() {
+		return dominatee;
+	}
+
+	public void setDominatee(Map<TraceNode, List<Variable>> dominatee) {
+		this.dominatee = dominatee;
+	}
 	
+	public void addDominator(TraceNode node, List<Variable> variables){
+		List<Variable> vars = this.dominator.get(node);
+		if(vars == null){
+			this.dominator.put(node, variables);
+		}
+		else{
+			vars.addAll(variables);
+		}
+	}
 	
+	public void addDominatee(TraceNode node, List<Variable> variables){
+		List<Variable> vars = this.dominatee.get(node);
+		if(vars == null){
+			this.dominatee.put(node, variables);
+		}
+		else{
+			vars.addAll(variables);
+		}
+	}
 }

@@ -1,4 +1,4 @@
-package microbat.codeanalysis.runtime.model;
+package microbat.model.trace;
 
 import java.util.ArrayList;
 import java.util.List;

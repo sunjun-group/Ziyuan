@@ -5,9 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import microbat.Activator;
-import microbat.codeanalysis.runtime.model.Trace;
-import microbat.codeanalysis.runtime.model.TraceNode;
 import microbat.model.BreakPoint;
+import microbat.model.trace.Trace;
+import microbat.model.trace.TraceNode;
 import microbat.util.JavaUtil;
 import microbat.util.MicroBatUtil;
 

@@ -3,6 +3,8 @@ package microbat.model.variable;
 public abstract class Variable {
 	protected String type;
 	protected String variableName;
+	
+	protected String varID;
 
 	public Variable(String name, String type){
 		this.variableName = name;
@@ -25,5 +27,13 @@ public abstract class Variable {
 		this.type = type;
 	}
 	
+	public String getVarID() {
+		return varID;
+	}
+
+	public void setVarID(String varID) {
+		this.varID = varID;
+	}
+
 	public abstract String getSimpleName();
 }

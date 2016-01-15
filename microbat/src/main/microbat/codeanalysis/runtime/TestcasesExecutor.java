@@ -20,11 +20,11 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
-import microbat.codeanalysis.runtime.model.Trace;
-import microbat.codeanalysis.runtime.model.TraceNode;
 import microbat.codeanalysis.runtime.variable.DebugValueExtractor;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
+import microbat.model.trace.Trace;
+import microbat.model.trace.TraceNode;
 import microbat.util.BreakpointUtils;
 
 import org.slf4j.Logger;
@@ -121,6 +121,8 @@ public class TestcasesExecutor{
 	 * for recording execution trace
 	 */
 	private Trace trace = new Trace();
+	//private RWVariableTable varTable = new Var
+	
 	
 	public TestcasesExecutor(int valRetrieveLevel) {
 		this.valRetrieveLevel = valRetrieveLevel;
@@ -248,6 +250,10 @@ public class TestcasesExecutor{
 					
 					/**
 					 * collect the variable values after executing previous step
+					 * 
+					 * TODO it is possible to optimize the program space this step. I just need 
+					 * the consequence of last step, thus, I may just check those written variables 
+					 * and their values.
 					 */
 					if(lastSteppingPoint != null){
 						BreakPoint currnetPoint = new BreakPoint(lastSteppingPoint.getClassCanonicalName(), 
@@ -597,8 +603,7 @@ public class TestcasesExecutor{
 //		return result;
 //	}
 	
-	private List<BreakPointValue> getValuesOfBkp(String bkpId,
-			List<BreakPointValue> allValues) {
+	private List<BreakPointValue> getValuesOfBkp(String bkpId, List<BreakPointValue> allValues) {
 		List<BreakPointValue> result = new ArrayList<BreakPointValue>();
 		for (BreakPointValue val : allValues) {
 			if (val.getBkpId().equals(bkpId)) {

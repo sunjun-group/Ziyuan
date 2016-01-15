@@ -3,10 +3,10 @@ package microbat.views;
 import java.util.List;
 
 import microbat.algorithm.graphdiff.GraphDiff;
-import microbat.codeanalysis.runtime.model.TraceNode;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
 import microbat.model.InterestedVariable;
+import microbat.model.trace.TraceNode;
 import microbat.model.value.ArrayValue;
 import microbat.model.value.ExecValue;
 import microbat.model.value.PrimitiveValue;
