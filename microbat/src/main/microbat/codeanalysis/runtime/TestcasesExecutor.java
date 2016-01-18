@@ -729,7 +729,7 @@ public class TestcasesExecutor{
 			if(varID == null){
 				System.err.println("there is an error when generating the id for " + readVar + 
 						" in line " + node.getBreakPoint().getLineNo() + " of " + node.getBreakPoint().getClassCanonicalName());
-				varID = generateVarID(frame, readVar, node);
+				//varID = generateVarID(frame, readVar, node);
 			}
 			else{
 				StepVariableRelationEntry entry = stepVariableTable.get(varID);

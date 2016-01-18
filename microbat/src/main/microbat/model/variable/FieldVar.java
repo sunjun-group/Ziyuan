@@ -69,7 +69,7 @@ public class FieldVar extends Variable{
 			return variableName;
 		}
 		else{
-			String sName = variableName.substring(variableName.lastIndexOf("."), variableName.length());
+			String sName = variableName.substring(variableName.lastIndexOf(".")+1, variableName.length());
 			return sName;			
 		}
 	}

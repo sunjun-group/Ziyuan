@@ -18,6 +18,10 @@ public class StepVariableRelationEntry {
 	public StepVariableRelationEntry(String varID) {
 		super();
 		this.varID = varID;
+		
+//		if(varID.contains(".flag")){
+//			System.currentTimeMillis();
+//		}
 	}
 
 	@Override

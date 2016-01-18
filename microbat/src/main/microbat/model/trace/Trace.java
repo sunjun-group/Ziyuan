@@ -136,6 +136,10 @@ public class Trace {
 			List<TraceNode> producers = entry.getProducers();
 			List<TraceNode> consumers = entry.getConsumers();
 			
+			if(varID.contains("flag")){
+				System.currentTimeMillis();
+			}
+			
 			if(producers.isEmpty()){
 				System.err.println("there is no producer for variable " + entry.getAliasVariables());
 			}
@@ -152,6 +156,9 @@ public class Trace {
 					postWritingNode = producers.get(i+1);					
 				}
 				
+				if(readingCursor >= consumers.size()){
+					break;
+				}
 				TraceNode readingNode = consumers.get(readingCursor);
 				int readingOrder = readingNode.getOrder();
 				
@@ -168,6 +175,9 @@ public class Trace {
 							readingNode.addDominator(prevWritingNode, varIDs);
 							
 							readingCursor++;
+							if(readingCursor >= consumers.size()){
+								break;
+							}
 							
 							readingNode = consumers.get(readingCursor);
 							readingOrder = readingNode.getOrder();
@@ -186,6 +196,9 @@ public class Trace {
 						readingNode.addDominator(prevWritingNode, varIDs);
 						
 						readingCursor++;
+						if(readingCursor >= consumers.size()){
+							break;
+						}
 						
 						readingNode = consumers.get(readingCursor);
 						readingOrder = readingNode.getOrder();
