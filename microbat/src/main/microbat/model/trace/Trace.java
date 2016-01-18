@@ -132,6 +132,11 @@ public class Trace {
 
 	public void constructDomianceRelation() {
 		for(String varID: this.stepVariableTable.keySet()){
+			
+			if(varID.equals("vir_22")){
+				System.currentTimeMillis();
+			}
+			
 			StepVariableRelationEntry entry = this.stepVariableTable.get(varID);
 			List<TraceNode> producers = entry.getProducers();
 			List<TraceNode> consumers = entry.getConsumers();

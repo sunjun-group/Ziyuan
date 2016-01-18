@@ -323,19 +323,27 @@ public class TestcasesExecutor{
 						 * when the last interesting stepping statement is a return statement, create a virtual
 						 * variable.
 						 */
-						TraceNode lastestNode = this.trace.getLastestNode();
-						if(lastestNode.getBreakPoint().isReturnStatement()){
-							String name = VirtualVar.VIRTUAL_PREFIX + lastestNode.getOrder();
-							VirtualVar var = new VirtualVar(name, VirtualVar.VIRTUAL_TYPE);
-							var.setVarID(name);
+						if(this.trace.size() > 1){
+							TraceNode lastestNode = this.trace.getExectionList().get(this.trace.size()-2);
 							
-							Map<String, StepVariableRelationEntry> map = this.trace.getStepVariableTable();
-							StepVariableRelationEntry entry = new StepVariableRelationEntry(var.getVarID());
-							entry.addAliasVariable(var);
-							entry.addProducer(lastestNode);
-							entry.addConsumer(node);
+							if(loc.lineNumber() == 35){
+								System.currentTimeMillis();
+							}
 							
-							map.put(var.getVarID(), entry);
+							if(lastestNode.getBreakPoint().isReturnStatement()){
+								String name = VirtualVar.VIRTUAL_PREFIX + lastestNode.getOrder();
+								VirtualVar var = new VirtualVar(name, VirtualVar.VIRTUAL_TYPE);
+								var.setVarID(name);
+								
+								Map<String, StepVariableRelationEntry> map = this.trace.getStepVariableTable();
+								StepVariableRelationEntry entry = new StepVariableRelationEntry(var.getVarID());
+								entry.addAliasVariable(var);
+								entry.addProducer(lastestNode);
+								entry.addConsumer(node);
+								
+								map.put(var.getVarID(), entry);
+							}
+							
 						}
 					}
 					else{

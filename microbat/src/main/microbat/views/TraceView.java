@@ -178,6 +178,9 @@ public class TraceView extends ViewPart {
 						if(obj instanceof TraceNode){
 							TraceNode node = (TraceNode)obj;
 							
+							System.out.println(node.getDominator());
+							System.out.println(node.getDominatee());
+							
 							DebugFeedbackView view = (DebugFeedbackView)PlatformUI.getWorkbench().
 									getActiveWorkbenchWindow().getActivePage().showView(MicroBatViews.DEBUG_FEEDBACK);
 							view.refresh(node);
