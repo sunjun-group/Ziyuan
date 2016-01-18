@@ -10,6 +10,7 @@ public abstract class Variable {
 	 * if it is a field, its id is: its parent's object id + field name;
 	 * if it is an array element, its id is: its parent's object id + index;
 	 * if it is a local variable, its id is: its scope (i.e., class[startLine, endLine]) + variable name.
+	 * if it is a virtual variable, its id is: "virtual var" + the order of the relevant return-trace-node. 
 	 */
 	protected String varID;
 

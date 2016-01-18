@@ -71,6 +71,7 @@ import com.ibm.wala.shrikeBT.GetInstruction;
 import com.ibm.wala.shrikeBT.IInstruction;
 import com.ibm.wala.shrikeBT.LoadInstruction;
 import com.ibm.wala.shrikeBT.PutInstruction;
+import com.ibm.wala.shrikeBT.ReturnInstruction;
 import com.ibm.wala.shrikeBT.StoreInstruction;
 import com.ibm.wala.shrikeCT.ConstantPoolParser;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
@@ -379,6 +380,10 @@ public class MicrobatSlicer{
 				point.addWrittenVariable(var);
 			}
 		}
+		else if(ins instanceof ReturnInstruction){
+//			ReturnInstruction rIns = (ReturnInstruction)ins;
+			point.setReturnStatement(true);
+		}
 		
 	}
 	
@@ -433,7 +438,7 @@ public class MicrobatSlicer{
 	
 	/**
 	 * TODO 
-	 * it is possible that two array element is written in the same line. In this implementation, I do
+	 * it is possible that two array elements are written in the same line. In this implementation, I do
 	 * not handle such case. An improvement is required in the future. 
 	 * @author "linyun"
 	 *

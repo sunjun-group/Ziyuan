@@ -32,6 +32,7 @@ import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.model.variable.LocalVar;
 import microbat.model.variable.Variable;
+import microbat.model.variable.VirtualVar;
 import microbat.util.BreakpointUtils;
 import microbat.util.Settings;
 
@@ -99,7 +100,7 @@ public class TestcasesExecutor{
 	/**
 	 * fundamental fields for debugging
 	 */
-	/** the class patterns indicating the classes into which I will step to get the runtime values*/
+	/** the class patterns indicating the classes into which I will not step to get the runtime values*/
 	private String[] excludes = { "java.*", "javax.*", "sun.*", "com.sun.*", "org.junit.*"};
 	private VMConfiguration config;
 	private SimpleDebugger debugger = new SimpleDebugger();
@@ -219,6 +220,8 @@ public class TestcasesExecutor{
 		 */
 		boolean isLastStepEventRecordNode = false;
 		
+		TraceNode lastestReturnStatementNode = null;
+		
 		while (!stop && !eventTimeout) {
 			EventSet eventSet;
 			try {
@@ -266,6 +269,7 @@ public class TestcasesExecutor{
 					if(loc.lineNumber() == 5){
 						System.currentTimeMillis();
 					}
+					
 					/**
 					 * collect the variable values after executing previous step
 					 * 
@@ -310,16 +314,29 @@ public class TestcasesExecutor{
 							node.setStepOverPrevious(lastestPopedOutMethodNode);
 							
 							lastestPopedOutMethodNode = null;
-							
-//							/**
-//							 * update the written variable after finishing a method invocation.
-//							 */
-//							updateStepVariableRelationTable(((StepEvent) event).thread(), loc, node, 
-//									this.trace.getStepVariableTable(), WRITTEN);	
-							
 						}
 						lastSteppingInPoint = bkp;
 						isLastStepEventRecordNode = true;
+						
+						
+						/**
+						 * when the last interesting stepping statement is a return statement, create a virtual
+						 * variable.
+						 */
+						TraceNode lastestNode = this.trace.getLastestNode();
+						if(lastestNode.getBreakPoint().isReturnStatement()){
+							String name = VirtualVar.VIRTUAL_PREFIX + lastestNode.getOrder();
+							VirtualVar var = new VirtualVar(name, VirtualVar.VIRTUAL_TYPE);
+							var.setVarID(name);
+							
+							Map<String, StepVariableRelationEntry> map = this.trace.getStepVariableTable();
+							StepVariableRelationEntry entry = new StepVariableRelationEntry(var.getVarID());
+							entry.addAliasVariable(var);
+							entry.addProducer(lastestNode);
+							entry.addConsumer(node);
+							
+							map.put(var.getVarID(), entry);
+						}
 					}
 					else{
 						isLastStepEventRecordNode = false;
@@ -350,6 +367,8 @@ public class TestcasesExecutor{
 							this.methodStack.pop();					
 						}						
 					}
+					
+					
 				}
 			}
 			eventSet.resume();

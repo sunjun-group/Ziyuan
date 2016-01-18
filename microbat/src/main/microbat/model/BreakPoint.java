@@ -29,6 +29,8 @@ public class BreakPoint extends ClassLocation {
 	
 	private List<Variable> allVisibleVariables = new ArrayList<>();
 	
+	private boolean isReturnStatement;
+	
 	public BreakPoint(String className, String methodSign, int lineNo) {
 		super(className, methodSign, lineNo);
 		vars = new ArrayList<Variable>();
@@ -166,6 +168,14 @@ public class BreakPoint extends ClassLocation {
 		if (lineNo != other.lineNo)
 			return false;
 		return true;
+	}
+
+	public boolean isReturnStatement() {
+		return isReturnStatement;
+	}
+
+	public void setReturnStatement(boolean isReturnStatement) {
+		this.isReturnStatement = isReturnStatement;
 	}
 	
 	
