@@ -13,7 +13,7 @@ public class StepVariableRelationEntry {
 	 * Note that a consumer's producer will be its nearest producer on certain variable.
 	 */
 	private List<TraceNode> producers = new ArrayList<>();
-	private List<TraceNode> consumer = new ArrayList<>();
+	private List<TraceNode> consumers = new ArrayList<>();
 	
 	public StepVariableRelationEntry(String varID) {
 		super();
@@ -75,17 +75,17 @@ public class StepVariableRelationEntry {
 		this.producers = producers;
 	}
 
-	public List<TraceNode> getConsumer() {
-		return consumer;
+	public List<TraceNode> getConsumers() {
+		return consumers;
 	}
 
-	public void setConsumer(List<TraceNode> consumer) {
-		this.consumer = consumer;
+	public void setConsumers(List<TraceNode> consumer) {
+		this.consumers = consumer;
 	}
 
 	public void addConsumer(TraceNode node) {
-		if(!consumer.contains(node)){
-			consumer.add(node);
+		if(!consumers.contains(node)){
+			consumers.add(node);
 		}
 	}
 	
