@@ -136,10 +136,6 @@ public class Trace {
 			List<TraceNode> producers = entry.getProducers();
 			List<TraceNode> consumers = entry.getConsumers();
 			
-			if(varID.contains("flag")){
-				System.currentTimeMillis();
-			}
-			
 			if(producers.isEmpty()){
 				System.err.println("there is no producer for variable " + entry.getAliasVariables());
 			}
