@@ -1,6 +1,7 @@
 package microbat.model.trace;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -130,7 +131,68 @@ public class Trace {
 	}
 
 	public void constructDomianceRelation() {
-		// TODO Auto-generated method stub
+		for(String varID: this.stepVariableTable.keySet()){
+			StepVariableRelationEntry entry = this.stepVariableTable.get(varID);
+			List<TraceNode> producers = entry.getProducers();
+			List<TraceNode> consumers = entry.getConsumers();
+			
+			if(producers.isEmpty()){
+				System.err.println("there is no producer for variable " + entry.getAliasVariables());
+			}
+			
+			Collections.sort(producers, new TraceNodeComparator());
+			Collections.sort(consumers, new TraceNodeComparator());
+			
+			int readingCursor = 0;
+			
+			for(int i=0; i<producers.size(); i++){
+				TraceNode prevWritingNode = producers.get(i);
+				TraceNode postWritingNode = null; 
+				if(i+1 < producers.size()){
+					postWritingNode = producers.get(i+1);					
+				}
+				
+				TraceNode readingNode = consumers.get(readingCursor);
+				int readingOrder = readingNode.getOrder();
+				
+				if(postWritingNode != null){
+					int preOrder = prevWritingNode.getOrder();
+					int postOrder = postWritingNode.getOrder();
+					
+					if(readingCursor<consumers.size()){
+						while(preOrder<=readingOrder && readingOrder<postOrder){
+							List<String> varIDs = new ArrayList<>();
+							varIDs.add(varID);
+							
+							prevWritingNode.addDominatee(readingNode, varIDs);
+							readingNode.addDominator(prevWritingNode, varIDs);
+							
+							readingCursor++;
+							
+							readingNode = consumers.get(readingCursor);
+							readingOrder = readingNode.getOrder();
+						}
+					}
+					else{
+						break;
+					}
+				}
+				else{
+					while(readingCursor<consumers.size()){
+						List<String> varIDs = new ArrayList<>();
+						varIDs.add(varID);
+						
+						prevWritingNode.addDominatee(readingNode, varIDs);
+						readingNode.addDominator(prevWritingNode, varIDs);
+						
+						readingCursor++;
+						
+						readingNode = consumers.get(readingCursor);
+						readingOrder = readingNode.getOrder();
+					}
+				}
+			}
+		}
 		
 	}
 

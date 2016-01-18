@@ -11,7 +11,7 @@ import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
 import microbat.model.variable.Variable;
 
-public class TraceNode {
+public class TraceNode{
 	
 	private BreakPoint breakPoint;
 	private BreakPointValue programState;
@@ -20,8 +20,8 @@ public class TraceNode {
 	
 	private List<GraphDiff> consequences;
 	
-	private Map<TraceNode, List<Variable>> dominator = new HashMap<>();
-	private Map<TraceNode, List<Variable>> dominatee = new HashMap<>();
+	private Map<TraceNode, List<String>> dominator = new HashMap<>();
+	private Map<TraceNode, List<String>> dominatee = new HashMap<>();
 	
 	/**
 	 * the order of this node in the whole trace
@@ -232,39 +232,39 @@ public class TraceNode {
 		this.consequences = diffs;
 	}
 
-	public Map<TraceNode, List<Variable>> getDominator() {
+	public Map<TraceNode, List<String>> getDominator() {
 		return dominator;
 	}
 
-	public void setDominator(Map<TraceNode, List<Variable>> dominator) {
+	public void setDominator(Map<TraceNode, List<String>> dominator) {
 		this.dominator = dominator;
 	}
 
-	public Map<TraceNode, List<Variable>> getDominatee() {
+	public Map<TraceNode, List<String>> getDominatee() {
 		return dominatee;
 	}
 
-	public void setDominatee(Map<TraceNode, List<Variable>> dominatee) {
+	public void setDominatee(Map<TraceNode, List<String>> dominatee) {
 		this.dominatee = dominatee;
 	}
 	
-	public void addDominator(TraceNode node, List<Variable> variables){
-		List<Variable> vars = this.dominator.get(node);
-		if(vars == null){
+	public void addDominator(TraceNode node, List<String> variables){
+		List<String> varIDs = this.dominator.get(node);
+		if(varIDs == null){
 			this.dominator.put(node, variables);
 		}
 		else{
-			vars.addAll(variables);
+			varIDs.addAll(variables);
 		}
 	}
 	
-	public void addDominatee(TraceNode node, List<Variable> variables){
-		List<Variable> vars = this.dominatee.get(node);
-		if(vars == null){
+	public void addDominatee(TraceNode node, List<String> variables){
+		List<String> varIDs = this.dominatee.get(node);
+		if(varIDs == null){
 			this.dominatee.put(node, variables);
 		}
 		else{
-			vars.addAll(variables);
+			varIDs.addAll(variables);
 		}
 	}
 }
