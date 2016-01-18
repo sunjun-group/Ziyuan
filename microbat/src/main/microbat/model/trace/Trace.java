@@ -18,6 +18,8 @@ public class Trace {
 	private List<TraceNode> exectionList = new ArrayList<>();
 	/**
 	 * tracking which steps read/write what variables, and what variables are read/written by which steps.
+	 * key is the variable ID, and value is the entry containing all the steps reading/writing the corresponding
+	 * variable.
 	 */
 	private Map<String, StepVariableRelationEntry> stepVariableTable = new HashMap<>();
 

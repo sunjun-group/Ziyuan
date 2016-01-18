@@ -33,6 +33,7 @@ import microbat.model.trace.TraceNode;
 import microbat.model.variable.LocalVar;
 import microbat.model.variable.Variable;
 import microbat.util.BreakpointUtils;
+import microbat.util.Settings;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,7 @@ import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.SignatureUtils;
 import sav.common.core.utils.StopTimer;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
@@ -55,6 +57,7 @@ import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
+import com.sun.jdi.LocalVariable;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
@@ -162,7 +165,7 @@ public class TestcasesExecutor{
 	 * Executing the program, each time of the execution, we catch a JVM event (e.g., step event, class 
 	 * preparing event, method entry event, etc.). Generally, we collect the runtime program states in
 	 * some interesting step event, and record these steps and their corresponding program states in a 
-	 * trance. 
+	 * trace. 
 	 * 
 	 * <br><br>
 	 * Note that the trace node can form a tree-structure in terms of method invocation relations.
@@ -176,7 +179,7 @@ public class TestcasesExecutor{
 		this.brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
 		this.config.setDebug(true);
 		
-		/* before debugging */
+		/** before debugging */
 		beforeDebugging();
 		
 		/** start debugger */
@@ -201,7 +204,7 @@ public class TestcasesExecutor{
 		 * next time we listen a step event, the values collected then are considered the aftermath of latest
 		 * recorded trace node.
 		 */
-		BreakPoint lastSteppingPoint = null;
+		BreakPoint lastSteppingInPoint = null;
 		
 		/**
 		 * Yun Lin: <br>
@@ -260,7 +263,9 @@ public class TestcasesExecutor{
 				} else if(event instanceof StepEvent){
 					Location loc = ((StepEvent) event).location();
 					
-					
+					if(loc.lineNumber() == 5){
+						System.currentTimeMillis();
+					}
 					/**
 					 * collect the variable values after executing previous step
 					 * 
@@ -268,14 +273,26 @@ public class TestcasesExecutor{
 					 * the consequence of last step, thus, I may just check those written variables 
 					 * and their values.
 					 */
-					if(lastSteppingPoint != null){
-						BreakPoint currnetPoint = new BreakPoint(lastSteppingPoint.getClassCanonicalName(), 
-								lastSteppingPoint.getLineNo());
-						onCollectValueOfPreviousStep(currnetPoint, ((StepEvent) event).thread(), loc);
-						lastSteppingPoint = null;
+					if(lastSteppingInPoint != null){
+						
+						/**
+						 * If context change, it means that last stepping point should be a method invocation. Thus,
+						 * its consequence state should be collected when the method invocation is step over (instead
+						 * of stepping into this method).
+						 */
+						boolean isContextChange = checkContext(lastSteppingInPoint, loc);
+						BreakPoint currnetPoint = new BreakPoint(lastSteppingInPoint.getClassCanonicalName(), 
+								lastSteppingInPoint.getLineNo());
+						
+						onCollectValueOfPreviousStep(currnetPoint, ((StepEvent) event).thread(), loc, isContextChange);	
+						
+						lastSteppingInPoint = null;
 					}
 					
 					BreakPoint bkp = locBrpMap.get(loc.toString());
+					/**
+					 * This step is an interesting step (sliced statement) in our debugging process
+					 */
 					if(bkp != null){
 						if(loc.lineNumber() == 16){
 							System.currentTimeMillis();
@@ -283,7 +300,8 @@ public class TestcasesExecutor{
 						
 						TraceNode node = handleBreakpointEvent(bkp, vm, ((StepEvent) event).thread(), loc);
 						/**
-						 * set step over previous/next node
+						 * set step over previous/next node when this step just come back from a method invocation (
+						 * i.e., lastestPopedOutMethodNode != null).
 						 */
 						if(node != null && lastestPopedOutMethodNode != null){
 							lastestPopedOutMethodNode.setStepOverNext(node);
@@ -293,8 +311,14 @@ public class TestcasesExecutor{
 							
 							lastestPopedOutMethodNode = null;
 							
+//							/**
+//							 * update the written variable after finishing a method invocation.
+//							 */
+//							updateStepVariableRelationTable(((StepEvent) event).thread(), loc, node, 
+//									this.trace.getStepVariableTable(), WRITTEN);	
+							
 						}
-						lastSteppingPoint = bkp;
+						lastSteppingInPoint = bkp;
 						isLastStepEventRecordNode = true;
 					}
 					else{
@@ -307,6 +331,8 @@ public class TestcasesExecutor{
 //						System.out.println("enter:" + method.toString());
 						
 						TraceNode lastestNode = this.trace.getLastestNode();
+						
+						updateStepVariableRelationTableByMethodInvocation(event, mee, method, lastestNode);
 						
 						this.methodNodeStack.push(lastestNode);
 						this.methodStack.push(method);
@@ -336,7 +362,73 @@ public class TestcasesExecutor{
 		/* end of debug */
 		afterDebugging();
 	}
+
+	/**
+	 * build the written relations between method invocation
+	 */
+	private void updateStepVariableRelationTableByMethodInvocation(Event event,
+			MethodEntryEvent mee, Method method, TraceNode lastestNode) {
+		try {
+			for(LocalVariable lVar: method.arguments()){
+				LocalVar localVar = new LocalVar(lVar.name(), lVar.typeName());
+				
+				StackFrame frame = findFrame(((MethodEntryEvent) event).thread(), mee.location());
+				Value value = frame.getValue(lVar);
+				
+				if(value instanceof ObjectReference){
+					ObjectReference objRef = (ObjectReference)value;
+					String varID = String.valueOf(objRef.uniqueID());
+					
+					localVar.setVarID(varID);
+				}
+				else{
+					VariableScopeParser parser = new VariableScopeParser();
+					String typeSig = method.declaringType().signature();
+					String typeName = SignatureUtils.signatureToName(typeSig);
+					LocalVariableScope scope = parser.parseMethodScope(typeName, 
+							mee.location().lineNumber(), localVar.getName());
+					String varID;
+					if(scope != null){
+						varID = typeName + "[" + scope.getStartLine() + "," 
+								+ scope.getEndLine() + "] " + localVar.getName();				
+						localVar.setVarID(varID);
+					}
+					else{
+						System.err.println("cannot find the method when parsing parameter scope");
+					}
+				}
+				
+				StepVariableRelationEntry entry = this.trace.getStepVariableTable().get(localVar.getVarID());
+				if(entry == null){
+					entry = new StepVariableRelationEntry(localVar.getVarID());
+				}
+				entry.addAliasVariable(localVar);
+				entry.addProducer(lastestNode);
+			}
+		} catch (AbsentInformationException e) {
+			e.printStackTrace();
+		}
+	}
 	
+	private boolean checkContext(BreakPoint lastSteppingPoint, Location loc) {
+		String methodSign1 = lastSteppingPoint.getMethodSign();
+		methodSign1 = methodSign1.substring(methodSign1.lastIndexOf(".")+1, methodSign1.length());
+		
+		String methodSign2 = loc.method().signature();
+		methodSign2 = loc.method().name() + methodSign2;
+		
+		String class1 = loc.declaringType().signature();
+		class1 = SignatureUtils.signatureToName(class1);
+		String class2 = lastSteppingPoint.getClassCanonicalName();
+		
+		if(methodSign1.equals(methodSign2) && class1.equals(class2)){
+			return false;
+		}
+		else{
+			return true;			
+		}
+	}
+
 	/**
 	 * add method enter and exit event
 	 */
@@ -544,20 +636,38 @@ public class TestcasesExecutor{
 					var.setVarID(varID);
 				}
 				else{
-					String varID;
 					if(var instanceof LocalVar){
-						VariableScopeParser parser = new VariableScopeParser();
-						LocalVariableScope scope = parser.parseScope(node.getBreakPoint(), (LocalVar)var);
-						varID = node.getBreakPoint().getClassCanonicalName() + "[" + scope.getStartLine() + "," 
-								+ scope.getEndLine() + "] " + var.getName();
+						//VariableScopeParser parser = new VariableScopeParser();
+						//TODO a bug, should include the definition of this variable
+						//LocalVariableScope scope = parser.parseScope(node.getBreakPoint(), (LocalVar)var);
+						
+						LocalVariableScope scope = Settings.localVariableScopes.findScope(var.getName(), 
+								node.getBreakPoint().getLineNo(), node.getBreakPoint().getClassCanonicalName());
+						String varID;
+						if(scope != null){
+							varID = node.getBreakPoint().getClassCanonicalName() + "[" + scope.getStartLine() + "," 
+									+ scope.getEndLine() + "] " + var.getName();				
+						}
+						/**
+						 * it means that an implicit "this" variable is visited.
+						 * 
+						 */
+						else if(var.getName().equals("this")){
+							varID = String.valueOf(frame.thisObject().uniqueID());
+						}
+						else{
+							System.err.println("the local variable " + var.getName() + " cannot find its scope to generate its id");
+							return null;
+						}
+						var.setVarID(varID);
 					}
 					else{
 						Value parentValue = expValue.parentValue;
 						ObjectReference objRef = (ObjectReference)parentValue;
-						varID = String.valueOf(objRef.uniqueID()) + var.getSimpleName();
-						
+						String varID = String.valueOf(objRef.uniqueID()) + var.getSimpleName();
+						var.setVarID(varID);
 					}
-					var.setVarID(varID);
+					
 				}
 				
 				return var.getVarID();
@@ -573,19 +683,26 @@ public class TestcasesExecutor{
 	public static String READ = "read";
 	public static String WRITTEN = "written";
 	
-	private void updateStepVariableRelationTable(ThreadReference thread, Location location, TraceNode node, 
-			Map<String, StepVariableRelationEntry> stepVariableTable, String action) {
+	private StackFrame findFrame(ThreadReference thread, Location location){
 		StackFrame frame = null;
 		try {
 			for (StackFrame f : thread.frames()) {
 				if (f.location().equals(location)) {
 					frame = f;
+					break;
 				}
 			}
 		} catch (IncompatibleThreadStateException e) {
 			e.printStackTrace();
 		}
 		
+		return frame;
+	}
+	
+	private void updateStepVariableRelationTable(ThreadReference thread, Location location, TraceNode node, 
+			Map<String, StepVariableRelationEntry> stepVariableTable, String action) {
+		
+		StackFrame frame = findFrame(thread, location);
 		if(frame == null){
 			System.err.println("get a null frame from thread!");
 			return;
@@ -617,9 +734,10 @@ public class TestcasesExecutor{
 			else{
 				StepVariableRelationEntry entry = stepVariableTable.get(varID);
 				if(entry == null){
-					entry = new StepVariableRelationEntry(varID, readVar);	
+					entry = new StepVariableRelationEntry(varID);	
 					stepVariableTable.put(varID, entry);
 				}
+				entry.addAliasVariable(readVar);
 				
 				entry.addConsumer(node);
 			}
@@ -640,9 +758,10 @@ public class TestcasesExecutor{
 			else{
 				StepVariableRelationEntry entry = stepVariableTable.get(varID);
 				if(entry == null){
-					entry = new StepVariableRelationEntry(varID, writtenVar);	
+					entry = new StepVariableRelationEntry(varID);	
 					stepVariableTable.put(varID, entry);
 				}
+				entry.addAliasVariable(writtenVar);
 				
 				entry.addProducer(node);
 			}
@@ -687,7 +806,7 @@ public class TestcasesExecutor{
 	}
 
 	private void onCollectValueOfPreviousStep(BreakPoint currentPosition, 
-			ThreadReference thread, Location loc) throws SavException {
+			ThreadReference thread, Location loc, boolean isContextChange) throws SavException {
 		
 		if(currentPosition.getLineNo() == 36){
 			System.currentTimeMillis();
@@ -698,9 +817,11 @@ public class TestcasesExecutor{
 		int len = trace.getExectionList().size();
 		TraceNode node = trace.getExectionList().get(len-1);
 		
-		updateStepVariableRelationTable(thread, loc, node, this.trace.getStepVariableTable(), WRITTEN);
-		
 		node.setAfterStepInState(bkpVal);
+		
+		if(!isContextChange){
+			updateStepVariableRelationTable(thread, loc, node, this.trace.getStepVariableTable(), WRITTEN);			
+		}
 	}
 
 	private TraceNode collectTrace(BreakPoint bkp, BreakPointValue bkpVal) {

@@ -223,6 +223,9 @@ public class MicrobatSlicer{
 			String typeName = parser.getCPUtf8(typeIndex);
 			typeName = SignatureUtils.signatureToName(typeName);
 			
+			if(varName.equals("this")){
+				System.currentTimeMillis();
+			}
 			
 			LocalVar var = new LocalVar(varName, typeName);
 			return var;

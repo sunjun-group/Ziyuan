@@ -25,11 +25,6 @@ public class ArrayElementVar extends Variable {
 		if (getClass() != obj.getClass())
 			return false;
 		ArrayElementVar other = (ArrayElementVar) obj;
-		if (type == null) {
-			if (other.type != null)
-				return false;
-		} else if (!type.equals(other.type))
-			return false;
 		if (variableName == null) {
 			if (other.variableName != null)
 				return false;
