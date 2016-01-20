@@ -133,7 +133,7 @@ public class Trace {
 	public void constructDomianceRelation() {
 		for(String varID: this.stepVariableTable.keySet()){
 			
-			if(varID.equals("vir_22")){
+			if(varID.equals("101")){
 				System.currentTimeMillis();
 			}
 			
@@ -168,7 +168,7 @@ public class Trace {
 					int postOrder = postWritingNode.getOrder();
 					
 					if(readingCursor<consumers.size()){
-						while(preOrder<=readingOrder && readingOrder<postOrder){
+						while(preOrder<readingOrder && readingOrder<=postOrder){
 							List<String> varIDs = new ArrayList<>();
 							varIDs.add(varID);
 							
