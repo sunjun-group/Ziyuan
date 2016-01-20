@@ -41,7 +41,7 @@ public class ArrayElementVar extends Variable {
 
 	@Override
 	public String getSimpleName() {
-		String sName = variableName.substring(variableName.indexOf("[")+1, variableName.length());
+		String sName = variableName.substring(variableName.indexOf("[")+1, variableName.length()-1);
 		return sName;
 	}
 	

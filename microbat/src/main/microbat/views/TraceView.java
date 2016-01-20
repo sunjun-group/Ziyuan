@@ -174,7 +174,7 @@ public class TraceView extends ViewPart {
 				System.out.println("Dominator: ");
 				for(TraceNode dominator: node.getDominator().keySet()){
 					List<String> varIDs = node.getDominator().get(dominator);
-					System.out.println("order " + dominator.getOrder() + ": " + dominator);
+					System.out.println(dominator);
 					System.out.println("by: ");
 					
 					for(String varID: varIDs){
@@ -190,7 +190,7 @@ public class TraceView extends ViewPart {
 				System.out.println("Dominatee: " + node.getDominatee());
 				for(TraceNode dominatee: node.getDominatee().keySet()){
 					List<String> varIDs = node.getDominatee().get(dominatee);
-					System.out.println("order " + dominatee.getOrder() + ": " + dominatee);
+					System.out.println(dominatee);
 					System.out.println("by: ");
 					
 					for(String varID: varIDs){

@@ -683,7 +683,7 @@ public class TestcasesExecutor{
 					else{
 						Value parentValue = expValue.parentValue;
 						ObjectReference objRef = (ObjectReference)parentValue;
-						String varID = String.valueOf(objRef.uniqueID()) + var.getSimpleName();
+						String varID = String.valueOf(objRef.uniqueID()) + "." + var.getSimpleName();
 						var.setVarID(varID);
 					}
 					
