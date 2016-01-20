@@ -133,9 +133,9 @@ public class Trace {
 	public void constructDomianceRelation() {
 		for(String varID: this.stepVariableTable.keySet()){
 			
-//			if(varID.equals("95")){
-//				System.currentTimeMillis();
-//			}
+			if(varID.equals("com.Main[12,18] i")){
+				System.currentTimeMillis();
+			}
 			
 			StepVariableRelationEntry entry = this.stepVariableTable.get(varID);
 			List<TraceNode> producers = entry.getProducers();
@@ -166,10 +166,6 @@ public class Trace {
 				while(readingOrder <= prevWritingNode.getOrder()){
 					System.out.println("WARNING in Trace.constructDominanceRelation(): the consumer's order appears "
 							+ "to be smaller than producer's order for variable " + entry.getVarID() + ": " + entry.getAliasVariables());
-					
-					if(!varID.contains("[")){
-						System.currentTimeMillis();
-					}
 					
 					readingCursor++;
 					readingNode = consumers.get(readingCursor);

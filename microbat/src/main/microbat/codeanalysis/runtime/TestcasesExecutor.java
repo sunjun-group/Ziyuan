@@ -754,6 +754,7 @@ public class TestcasesExecutor{
 	private void processReadVariable(TraceNode node,
 			Map<String, StepVariableRelationEntry> stepVariableTable,
 			StackFrame frame) {
+		
 		List<Variable> readVariables = node.getBreakPoint().getReadVariables();
 		for(Variable readVar: readVariables){
 			String varID = generateVarID(frame, readVar, node);
