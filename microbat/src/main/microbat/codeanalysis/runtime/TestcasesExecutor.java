@@ -30,6 +30,8 @@ import microbat.model.BreakPointValue;
 import microbat.model.trace.StepVariableRelationEntry;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
+import microbat.model.variable.ArrayElementVar;
+import microbat.model.variable.FieldVar;
 import microbat.model.variable.LocalVar;
 import microbat.model.variable.Variable;
 import microbat.model.variable.VirtualVar;
@@ -683,8 +685,19 @@ public class TestcasesExecutor{
 					else{
 						Value parentValue = expValue.parentValue;
 						ObjectReference objRef = (ObjectReference)parentValue;
-						String varID = String.valueOf(objRef.uniqueID()) + "." + var.getSimpleName();
-						var.setVarID(varID);
+						
+						if(var instanceof FieldVar){
+							String varID = String.valueOf(objRef.uniqueID()) + "." + var.getSimpleName();
+							var.setVarID(varID);							
+						}
+						else if(var instanceof ArrayElementVar){
+							String index = var.getSimpleName();
+							ExpressionValue indexValue = retriveExpression(frame, index);
+							String indexValueString = indexValue.value.toString();
+							String varID = String.valueOf(objRef.uniqueID()) + "[" + indexValueString + "]";
+							
+							var.setVarID(varID);
+						}
 					}
 					
 				}
