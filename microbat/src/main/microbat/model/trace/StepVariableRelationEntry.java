@@ -94,6 +94,11 @@ public class StepVariableRelationEntry {
 	}
 	
 	public void addProducer(TraceNode node) {
+		
+		if(node.getOrder() == 4){
+			System.currentTimeMillis();
+		}
+		
 		if(!producers.contains(node)){
 			producers.add(node);
 		}

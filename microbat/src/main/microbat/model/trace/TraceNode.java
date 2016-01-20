@@ -9,7 +9,6 @@ import microbat.algorithm.graphdiff.GraphDiff;
 import microbat.algorithm.graphdiff.HierarchyGraphDiffer;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
-import microbat.model.variable.Variable;
 
 public class TraceNode{
 	
@@ -74,6 +73,11 @@ public class TraceNode{
 
 	public String toString(){
 		StringBuffer buffer = new StringBuffer();
+		
+		buffer.append("order ");
+		buffer.append(getOrder());
+		buffer.append("~");
+		
 		buffer.append(getClassName());
 		buffer.append(": line ");
 		buffer.append(getLineNumber());

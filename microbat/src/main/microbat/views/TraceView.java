@@ -6,6 +6,7 @@ import java.util.List;
 
 import microbat.Activator;
 import microbat.model.BreakPoint;
+import microbat.model.trace.StepVariableRelationEntry;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.util.JavaUtil;
@@ -168,6 +169,42 @@ public class TraceView extends ViewPart {
 		
 		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			
+			public void showDebuggingInfo(TraceNode node){
+				Trace t = Activator.getDefault().getCurrentTrace();
+				System.out.println("Dominator: ");
+				for(TraceNode dominator: node.getDominator().keySet()){
+					List<String> varIDs = node.getDominator().get(dominator);
+					System.out.println("order " + dominator.getOrder() + ": " + dominator);
+					System.out.println("by: ");
+					
+					for(String varID: varIDs){
+						StepVariableRelationEntry entry = t.getStepVariableTable().get(varID);
+						System.out.println(varID + ":" + entry.getAliasVariables());
+					}
+					
+					System.out.println("~~~~~~~~~~~~~~~~~~~~~");
+				}
+				
+				System.out.println("=========================");
+				
+				System.out.println("Dominatee: " + node.getDominatee());
+				for(TraceNode dominatee: node.getDominatee().keySet()){
+					List<String> varIDs = node.getDominatee().get(dominatee);
+					System.out.println("order " + dominatee.getOrder() + ": " + dominatee);
+					System.out.println("by: ");
+					
+					for(String varID: varIDs){
+						StepVariableRelationEntry entry = t.getStepVariableTable().get(varID);
+						System.out.println(varID + ":" + entry.getAliasVariables());
+					}
+					
+					System.out.println("~~~~~~~~~~~~~~~~~~~~~");
+				}
+				
+				System.out.println();
+				System.out.println();
+			}
+			
 			public void selectionChanged(SelectionChangedEvent event) {
 				try {
 					ISelection iSel = event.getSelection();
@@ -178,8 +215,7 @@ public class TraceView extends ViewPart {
 						if(obj instanceof TraceNode){
 							TraceNode node = (TraceNode)obj;
 							
-							System.out.println(node.getDominator());
-							System.out.println(node.getDominatee());
+							showDebuggingInfo(node);
 							
 							DebugFeedbackView view = (DebugFeedbackView)PlatformUI.getWorkbench().
 									getActiveWorkbenchWindow().getActivePage().showView(MicroBatViews.DEBUG_FEEDBACK);

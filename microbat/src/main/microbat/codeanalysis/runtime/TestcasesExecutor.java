@@ -326,10 +326,6 @@ public class TestcasesExecutor{
 						if(this.trace.size() > 1){
 							TraceNode lastestNode = this.trace.getExectionList().get(this.trace.size()-2);
 							
-							if(loc.lineNumber() == 35){
-								System.currentTimeMillis();
-							}
-							
 							if(lastestNode.getBreakPoint().isReturnStatement()){
 								String name = VirtualVar.VIRTUAL_PREFIX + lastestNode.getOrder();
 								VirtualVar var = new VirtualVar(name, VirtualVar.VIRTUAL_TYPE);
@@ -397,18 +393,13 @@ public class TestcasesExecutor{
 			MethodEntryEvent mee, Method method, TraceNode lastestNode) {
 		try {
 			for(LocalVariable lVar: method.arguments()){
-				LocalVar localVar = new LocalVar(lVar.name(), lVar.typeName());
-				
 				StackFrame frame = findFrame(((MethodEntryEvent) event).thread(), mee.location());
 				Value value = frame.getValue(lVar);
 				
-				if(value instanceof ObjectReference){
-					ObjectReference objRef = (ObjectReference)value;
-					String varID = String.valueOf(objRef.uniqueID());
+				if(!(value instanceof ObjectReference)){
 					
-					localVar.setVarID(varID);
-				}
-				else{
+					LocalVar localVar = new LocalVar(lVar.name(), lVar.typeName());
+					
 					VariableScopeParser parser = new VariableScopeParser();
 					String typeSig = method.declaringType().signature();
 					String typeName = SignatureUtils.signatureToName(typeSig);
@@ -423,14 +414,15 @@ public class TestcasesExecutor{
 					else{
 						System.err.println("cannot find the method when parsing parameter scope");
 					}
+					
+					StepVariableRelationEntry entry = this.trace.getStepVariableTable().get(localVar.getVarID());
+					if(entry == null){
+						entry = new StepVariableRelationEntry(localVar.getVarID());
+					}
+					entry.addAliasVariable(localVar);
+					entry.addProducer(lastestNode);
 				}
 				
-				StepVariableRelationEntry entry = this.trace.getStepVariableTable().get(localVar.getVarID());
-				if(entry == null){
-					entry = new StepVariableRelationEntry(localVar.getVarID());
-				}
-				entry.addAliasVariable(localVar);
-				entry.addProducer(lastestNode);
 			}
 		} catch (AbsentInformationException e) {
 			e.printStackTrace();
@@ -789,6 +781,11 @@ public class TestcasesExecutor{
 					stepVariableTable.put(varID, entry);
 				}
 				entry.addAliasVariable(writtenVar);
+				
+				if(node.getOrder() == 4){
+					System.currentTimeMillis();
+				}
+				
 				
 				entry.addProducer(node);
 			}
