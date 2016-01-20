@@ -222,8 +222,6 @@ public class TestcasesExecutor{
 		 */
 		boolean isLastStepEventRecordNode = false;
 		
-		TraceNode lastestReturnStatementNode = null;
-		
 		while (!stop && !eventTimeout) {
 			EventSet eventSet;
 			try {
@@ -321,28 +319,7 @@ public class TestcasesExecutor{
 						isLastStepEventRecordNode = true;
 						
 						
-						/**
-						 * when the last interesting stepping statement is a return statement, create a virtual
-						 * variable.
-						 */
-						if(this.trace.size() > 1){
-							TraceNode lastestNode = this.trace.getExectionList().get(this.trace.size()-2);
-							
-							if(lastestNode.getBreakPoint().isReturnStatement()){
-								String name = VirtualVar.VIRTUAL_PREFIX + lastestNode.getOrder();
-								VirtualVar var = new VirtualVar(name, VirtualVar.VIRTUAL_TYPE);
-								var.setVarID(name);
-								
-								Map<String, StepVariableRelationEntry> map = this.trace.getStepVariableTable();
-								StepVariableRelationEntry entry = new StepVariableRelationEntry(var.getVarID());
-								entry.addAliasVariable(var);
-								entry.addProducer(lastestNode);
-								entry.addConsumer(node);
-								
-								map.put(var.getVarID(), entry);
-							}
-							
-						}
+						createVirtualVariableForReturnStatement(node);
 					}
 					else{
 						isLastStepEventRecordNode = false;
@@ -386,6 +363,31 @@ public class TestcasesExecutor{
 //		}
 		/* end of debug */
 		afterDebugging();
+	}
+
+	/**
+	 * when the last interesting stepping statement is a return statement, create a virtual
+	 * variable.
+	 */
+	private void createVirtualVariableForReturnStatement(TraceNode node) {
+		if(this.trace.size() > 1){
+			TraceNode lastestNode = this.trace.getExectionList().get(this.trace.size()-2);
+			
+			if(lastestNode.getBreakPoint().isReturnStatement()){
+				String name = VirtualVar.VIRTUAL_PREFIX + lastestNode.getOrder();
+				VirtualVar var = new VirtualVar(name, VirtualVar.VIRTUAL_TYPE);
+				var.setVarID(name);
+				
+				Map<String, StepVariableRelationEntry> map = this.trace.getStepVariableTable();
+				StepVariableRelationEntry entry = new StepVariableRelationEntry(var.getVarID());
+				entry.addAliasVariable(var);
+				entry.addProducer(lastestNode);
+				entry.addConsumer(node);
+				
+				map.put(var.getVarID(), entry);
+			}
+			
+		}
 	}
 
 	/**
