@@ -80,13 +80,14 @@ public class StartDebugHandler extends AbstractHandler {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					BreakPoint ap = new BreakPoint(classQulifiedName, methodSign, lineNumber);
-					
 					List<BreakPoint> startPoints = Arrays.asList(ap);
 					
 					MicrobatSlicer slicer = new MicrobatSlicer();
 					List<BreakPoint> breakpoints = null;
 					try {
+						System.out.println("start slicing...");
 						breakpoints = slicer.slice(appClasspath, startPoints);
+						System.out.println("finish slicing!");
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}

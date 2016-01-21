@@ -107,18 +107,19 @@ public class MicrobatSlicer{
 		Iterable<Entrypoint> entrypoints = makeEntrypoints(scope.getApplicationLoader(), cha, breakpoints.get(0));
 		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
 		
-//		CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope);
+		CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope);
 //		CallGraphBuilder builder = Util.makeNCFABuilder(3, options, new AnalysisCache(), cha, scope);
-		CallGraphBuilder builder = Util.makeVanillaNCFABuilder(1, options, new AnalysisCache(), cha, scope);
+//		CallGraphBuilder builder = Util.makeVanillaNCFABuilder(1, options, new AnalysisCache(), cha, scope);
+		System.out.println("builder is set.");
 		
 		CallGraph callGraph = builder.makeCallGraph(options, null);
+		System.out.println("Call graph is built!");
+		
 		List<Statement> stmtList = findSeedStmts(callGraph, breakpoints);
 		
 		PointerAnalysis<InstanceKey> pointerAnalysis = builder.getPointerAnalysis();
 
-//		SDG sdg = new SDG(cg, builder.getPointerAnalysis(),
-//				DataDependenceOptions.NO_BASE_PTRS,
-//				ControlDependenceOptions.NONE);
+//		SDG sdg = new SDG(cg, builder.getPointerAnalysis(), DataDependenceOptions.NO_BASE_PTRS, ControlDependenceOptions.NONE);
 		
 //		Collection<Statement> computeBackwardSlice = new CISlicer(cg, builder.getPointerAnalysis(), DataDependenceOptions.NO_HEAP,
 //				ControlDependenceOptions.NONE).computeBackwardThinSlice(stmt);
@@ -126,6 +127,8 @@ public class MicrobatSlicer{
 			Collection<Statement> computeBackwardSlice;
 			computeBackwardSlice = Slicer.computeBackwardSlice(stmtList.get(0), callGraph, pointerAnalysis, 
 					DataDependenceOptions.NO_BASE_PTRS, ControlDependenceOptions.NO_EXCEPTIONAL_EDGES);
+			System.out.println("program is sliced!");
+			
 			
 //			ThinSlicer ts = new ThinSlicer(cg,pa);
 //			computeBackwardSlice = ts.computeBackwardThinSlice (stmt.get(0));
@@ -144,6 +147,7 @@ public class MicrobatSlicer{
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} 
+		
 		return null;
 	}
 	
