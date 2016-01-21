@@ -8,14 +8,12 @@
 
 package microbat.model.value;
 
-import com.sun.jdi.ArrayReference;
-import com.sun.jdi.Value;
 
 /**
  * @author LLT
  * 
  */
-@SuppressWarnings("restriction")
+//@SuppressWarnings("restriction")
 public class ArrayValue extends ReferenceValue {
 //	private static final String SUM_CODE = "sum";
 //	private static final String MAX_CODE = "max";
@@ -59,41 +57,41 @@ public class ArrayValue extends ReferenceValue {
 //		add(new PrimitiveValue(getChildId(LENGTH_CODE), String.valueOf(length), "int"));
 //	}
 
-	public void setValue(final ArrayReference ar) {
-		
-		if(ar == null){
-			System.err.println("Value of ArrayReference is null, in this case, "
-					+ "initialize execValue using ReferenceValue.nullValue instead!");
-		}
-		
-		final int arrayLength = ar.length();
-//		setLength(arrayLength);
-		double sum = 0.0;
-		double min = Double.MAX_VALUE;
-		double max = Double.MIN_VALUE;
-		for (int i=0; i<arrayLength; i++) {
-			Value value = ar.getValue(i);
-			if (value != null && com.sun.jdi.PrimitiveValue.class.isAssignableFrom(value.getClass())) {
-				com.sun.jdi.PrimitiveValue pv = (com.sun.jdi.PrimitiveValue) value;
-				final double doubleValue = pv.doubleValue();
-				sum += doubleValue;
-				if (min > doubleValue) {
-					min = doubleValue;
-				}
-				if (max < doubleValue) {
-					max = doubleValue;
-				}
-			}
-		}
-//		setSum(sum);
-		if (Double.compare(Double.MAX_VALUE, min) != 0) {
-//			setMin(min);
-		}
-
-		if (Double.compare(Double.MIN_VALUE, max) != 0) {
-//			setMax(max);
-		}
-	}
+//	public void setValue(final ArrayReference ar) {
+//		
+//		if(ar == null){
+//			System.err.println("Value of ArrayReference is null, in this case, "
+//					+ "initialize execValue using ReferenceValue.nullValue instead!");
+//		}
+//		
+//		final int arrayLength = ar.length();
+////		setLength(arrayLength);
+//		double sum = 0.0;
+//		double min = Double.MAX_VALUE;
+//		double max = Double.MIN_VALUE;
+//		for (int i=0; i<arrayLength; i++) {
+//			Value value = ar.getValue(i);
+//			if (value != null && com.sun.jdi.PrimitiveValue.class.isAssignableFrom(value.getClass())) {
+//				com.sun.jdi.PrimitiveValue pv = (com.sun.jdi.PrimitiveValue) value;
+//				final double doubleValue = pv.doubleValue();
+//				sum += doubleValue;
+//				if (min > doubleValue) {
+//					min = doubleValue;
+//				}
+//				if (max < doubleValue) {
+//					max = doubleValue;
+//				}
+//			}
+//		}
+////		setSum(sum);
+//		if (Double.compare(Double.MAX_VALUE, min) != 0) {
+////			setMin(min);
+//		}
+//
+//		if (Double.compare(Double.MIN_VALUE, max) != 0) {
+////			setMax(max);
+//		}
+//	}
 
 	@Override
 	public double getDoubleVal() {

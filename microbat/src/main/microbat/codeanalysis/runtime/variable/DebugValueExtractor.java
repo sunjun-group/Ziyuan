@@ -446,7 +446,7 @@ public class DebugValueExtractor {
 			ArrayReference value, int level, ThreadReference thread, boolean isRoot, boolean isField, boolean isStatic) {
 		
 		ArrayValue arrayVal = new ArrayValue(varId, isRoot, isField, isStatic);
-		arrayVal.setValue(value);
+//		arrayVal.setValue(value);
 		String componentType = ((ArrayType)value.type()).componentTypeName();
 		arrayVal.setComponentType(componentType);
 		arrayVal.setReferenceID(value.uniqueID());
