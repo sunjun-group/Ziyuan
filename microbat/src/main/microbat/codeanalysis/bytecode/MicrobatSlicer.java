@@ -99,8 +99,7 @@ public class MicrobatSlicer{
 	
 	public MicrobatSlicer(){}
 
-	public List<BreakPoint> slice(AppJavaClassPath appClassPath, List<BreakPoint> breakpoints,
-			List<String> junitClassNames) throws Exception {
+	public List<BreakPoint> slice(AppJavaClassPath appClassPath, List<BreakPoint> breakpoints) throws Exception {
 		
 		AnalysisScope scope = makeJ2SEAnalysisScope(appClassPath);
 		IClassHierarchy cha = ClassHierarchy.make(scope);

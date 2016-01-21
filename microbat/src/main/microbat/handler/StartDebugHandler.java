@@ -32,11 +32,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
 import sav.common.core.SavException;
-import sav.common.core.SystemVariables;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.commons.TestConfiguration;
-import sav.strategies.common.VarInheritCustomizer.InheritType;
 import sav.strategies.dto.AppJavaClassPath;
 
 public class StartDebugHandler extends AbstractHandler {
@@ -53,8 +51,8 @@ public class StartDebugHandler extends AbstractHandler {
 
 	public void setup() {
 		appClasspath = initAppClasspath();
-		appClasspath.getPreferences().putBoolean(SystemVariables.SLICE_COLLECT_VAR, true);
-		appClasspath.getPreferences().put(SystemVariables.SLICE_BKP_VAR_INHERIT, InheritType.FORWARD.name());
+//		appClasspath.getPreferences().putBoolean(SystemVariables.SLICE_COLLECT_VAR, true);
+//		appClasspath.getPreferences().put(SystemVariables.SLICE_BKP_VAR_INHERIT, InheritType.FORWARD.name());
 
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject iProject = myWorkspaceRoot.getProject(Settings.projectName);
@@ -62,30 +60,20 @@ public class StartDebugHandler extends AbstractHandler {
 		String projectPath = iProject.getLocationURI().getPath();
 		projectPath = projectPath.substring(1, projectPath.length());
 		
+		//TODO parse it by configuration
 		appClasspath.addClasspath("F://workspace//runtime-debugging//Test//bin");
-		tcExecutor = new TestcasesExecutor(6);
+		tcExecutor = new TestcasesExecutor();
 	}
 	
 
 	
-	private List<BreakPoint> dynamicSlicing(List<BreakPoint> startPoints, List<String> classScope, List<String> testMethods){
-//		JavaSlicer slicer = new JavaSlicer();
-//		slicer.setFiltering(classScope, null);
+	private List<BreakPoint> dynamicSlicing(List<BreakPoint> startPoints, List<String> classScope){
 		List<BreakPoint> result = null;
-		
-//		SlicerInput input = new SlicerInput();
-//		input.setAppBinFolder("F://workspace//runtime-debugging//Test//bin");
-//		input.setJre(appClasspath.getJavaHome());
-//		
-//		List<String[]> classEntryPoints = new ArrayList<String[]>();
-//		classEntryPoints.add(new String[]{"Lcom/test/MainTest", "test()V"});
-//		input.setClassEntryPoints(classEntryPoints);
-		
 		
 		MicrobatSlicer slicer;
 		try {
 			slicer = new MicrobatSlicer();
-			result = slicer.slice(appClasspath, startPoints, testMethods);
+			result = slicer.slice(appClasspath, startPoints);
 			
 			System.currentTimeMillis();
 		} catch (SavException e) {
@@ -93,7 +81,6 @@ public class StartDebugHandler extends AbstractHandler {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 
 //		try {
 //			result = slicer.sliceDebug(appClasspath, startPoints, testMethods);
@@ -126,7 +113,6 @@ public class StartDebugHandler extends AbstractHandler {
 		List<String> junitClassNames = CollectionUtils.listOf("com.test.MainTest");
 		final List<String> tests;
 		try {
-			
 			File f0 = new File("F://workspace//runtime-debugging//Test//bin");
 			URL[] cp = new URL[1];
 			try {
@@ -135,22 +121,20 @@ public class StartDebugHandler extends AbstractHandler {
 				e.printStackTrace();
 			}
 			URLClassLoader urlcl  = URLClassLoader.newInstance(cp);
-			
 			tests = JunitUtils.extractTestMethods(junitClassNames, urlcl);
+			
 			
 			BreakPoint ap = new BreakPoint("com.test.MainTest", "test()V", 17);
 			final List<BreakPoint> assertionPoints = Arrays.asList(ap);
-			
 			final List<String> classScope = Arrays.asList("com.Main", "com.Tag");
-			
 			parseLocalVariables(classScope);
+			
 			
 			Job job = new Job("Preparing for Debugging ...") {
 				
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-//					List<BreakPoint> breakpoints = testSlicing();
-					List<BreakPoint> breakpoints = dynamicSlicing(assertionPoints, classScope, tests);
+					List<BreakPoint> breakpoints = dynamicSlicing(assertionPoints, classScope);
 					if(breakpoints == null){
 						System.err.println("Cannot find any slice");
 						return Status.OK_STATUS;

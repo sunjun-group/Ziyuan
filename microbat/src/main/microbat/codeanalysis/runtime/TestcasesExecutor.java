@@ -11,9 +11,6 @@ package microbat.codeanalysis.runtime;
 import static sav.strategies.junit.SavJunitRunner.ENTER_TC_BKP;
 import static sav.strategies.junit.SavJunitRunner.JUNIT_RUNNER_CLASS_NAME;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,13 +40,9 @@ import org.slf4j.LoggerFactory;
 
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
-import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.SignatureUtils;
-import sav.common.core.utils.StopTimer;
-import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
-import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
 import sav.strategies.junit.SavJunitRunner;
 import sav.strategies.vm.SimpleDebugger;
@@ -80,7 +73,6 @@ import com.sun.jdi.event.StepEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.event.VMStartEvent;
-import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
@@ -97,6 +89,8 @@ import com.sun.jdi.request.StepRequest;
  */
 @SuppressWarnings("restriction")
 public class TestcasesExecutor{
+	public static final long DEFAULT_TIMEOUT = -1;
+	
 	private static Logger log = LoggerFactory.getLogger(TestcasesExecutor.class);	
 	
 	/**
@@ -113,27 +107,7 @@ public class TestcasesExecutor{
 	/**
 	 * fields for junit
 	 */
-	public static final long DEFAULT_TIMEOUT = -1;
 	private List<String> allTests;
-	/** for internal purpose */
-	private int testIdx = 0;
-	private Location junitLoc;
-	private String jResultFile;
-	private boolean jResultFileDeleteOnExit = false;
-	
-	/**
-	 * fields for test cases
-	 */
-//	private List<BreakpointData> result;
-//	private DebugValueExtractor valueExtractor;
-	
-	/** for internal purpose */
-	private Map<Integer, List<BreakPointValue>> bkpValsByTestIdx;
-	private List<BreakPointValue> currentTestBkpValues;
-	private int valRetrieveLevel;
-	//private ITestResultVerifier verifier = DefaultTestResultVerifier.getInstance();
-	private JunitResult jResult;
-	private StopTimer timer = new StopTimer("TestcasesExecutor");;
 	private long timeout = DEFAULT_TIMEOUT;
 	
 	/**
@@ -141,10 +115,7 @@ public class TestcasesExecutor{
 	 */
 	private Trace trace = new Trace();
 	
-	
-	
-	public TestcasesExecutor(int valRetrieveLevel) {
-		this.valRetrieveLevel = valRetrieveLevel;
+	public TestcasesExecutor() {
 	}
 	
 	public void setup(VMConfiguration config) {
@@ -183,7 +154,7 @@ public class TestcasesExecutor{
 		this.config.setDebug(true);
 		
 		/** before debugging */
-		beforeDebugging();
+		setDebuggingConfiguration();
 		
 		/** start debugger */
 		VirtualMachine vm = debugger.run(config);
@@ -258,7 +229,6 @@ public class TestcasesExecutor{
 				} else if (event instanceof ClassPrepareEvent) {
 					/** add breakpoint watch on loaded class */
 					ClassPrepareEvent classPrepEvent = (ClassPrepareEvent) event;
-					handleClassPrepareEvent(vm, classPrepEvent);
 					/** add breakpoint request */
 					ReferenceType refType = classPrepEvent.referenceType();
 					addBreakpointWatch(vm, refType, locBrpMap);
@@ -302,7 +272,7 @@ public class TestcasesExecutor{
 							System.currentTimeMillis();
 						}
 						
-						TraceNode node = handleBreakpointEvent(bkp, vm, ((StepEvent) event).thread(), loc);
+						TraceNode node = handleBreakpoint(bkp, ((StepEvent) event).thread(), loc);
 						/**
 						 * set step over previous/next node when this step just come back from a method invocation (
 						 * i.e., lastestPopedOutMethodNode != null).
@@ -356,13 +326,12 @@ public class TestcasesExecutor{
 			}
 			eventSet.resume();
 		}
+		
 //		if (!eventTimeout) {
 //			vm.resume();
 //			/* wait until the process completes */
 //			debugger.waitProcessUntilStop();
 //		}
-		/* end of debug */
-		afterDebugging();
 	}
 
 	/**
@@ -471,14 +440,6 @@ public class TestcasesExecutor{
 		mexr.enable();
 	}
 	
-	
-//	private void addClassWatch(EventRequestManager erm) {
-//		/* add class watch for breakpoints */
-//		for (String className : brkpsMap.keySet()) {
-//			addClassWatch(erm, className);
-//		}
-//	}
-	
 	/** add watch requests **/
 	private final void addClassWatch(EventRequestManager erm) {
 		/* class watch request for breakpoint */
@@ -500,17 +461,17 @@ public class TestcasesExecutor{
 			Map<String, BreakPoint> locBrpMap) {
 		List<BreakPoint> brkpList = CollectionUtils.initIfEmpty(brkpsMap.get(refType.name()));
 		for (BreakPoint brkp : brkpList) {
-			Location location = addBreakpointWatch(vm, refType, brkp.getLineNo());
+			Location location = checkBreakpoint(vm, refType, brkp.getLineNo());
 			if (location != null) {
 				locBrpMap.put(location.toString(), brkp);
 			} else {
 				//log.warn("Cannot add break point " + brkp);
-				System.out.println("Cannot add break point " + brkp);
+				System.err.println("Cannot add break point " + brkp);
 			}
 		}
 	}
 	
-	private final Location addBreakpointWatch(VirtualMachine vm,
+	private final Location checkBreakpoint(VirtualMachine vm,
 			ReferenceType refType, int lineNumber) {
 		List<Location> locations;
 		try {
@@ -522,115 +483,35 @@ public class TestcasesExecutor{
 		}
 		if (!locations.isEmpty()) {
 			Location location = locations.get(0);
-			BreakpointRequest breakpointRequest = vm.eventRequestManager()
-					.createBreakpointRequest(location);
-			breakpointRequest.setEnabled(true);
+//			BreakpointRequest breakpointRequest = vm.eventRequestManager()
+//					.createBreakpointRequest(location);
+//			breakpointRequest.setEnabled(true);
 			return location;
 		} 
 		return null;
 	}
 	
 	/**
-	 * add junit relevant classes into VM configuration
+	 * add junit relevant classes into VM configuration, i.e., launch the program with JUnit Launcher.
 	 * @throws SavException
 	 */
-	private final void beforeDebugging() throws SavException {
-		testIdx = 0;
-		junitLoc = null;
-		jResultFile = createExecutionResultFile();
+	private final void setDebuggingConfiguration() throws SavException {
 		getVmConfig().setLaunchClass(JUNIT_RUNNER_CLASS_NAME);
-		List<String> args = new JunitRunnerProgramArgBuilder()
-				.methods(allTests).destinationFile(jResultFile)
-				.storeSingleTestResultDetail()
+		JunitRunnerProgramArgBuilder builder = new JunitRunnerProgramArgBuilder();
+		List<String> args = 
+				builder.methods(allTests)
 				.testcaseTimeout(getTimeoutInSec(), TimeUnit.SECONDS)
 				.build();
 		getVmConfig().setProgramArgs(args);
 		getVmConfig().resetPort();
-		onStart();
 	}
 
 	private long getTimeoutInSec() {
 		return timeout;
 	}
-	
-	private final void handleClassPrepareEvent(VirtualMachine vm,
-			ClassPrepareEvent event) {
-		/* add junitRunner breakpoint */
-		ReferenceType refType = event.referenceType();
-		if (refType.name().equals(ENTER_TC_BKP.getClassCanonicalName())) {
-			junitLoc = addBreakpointWatch(vm, refType,
-					ENTER_TC_BKP.getLineNo());
-		} 
-	}
-	
-	private TraceNode handleBreakpointEvent(BreakPoint bkp, VirtualMachine vm,
-			ThreadReference thread, Location loc) throws SavException {
-		TraceNode node = null;
-		try {
-			if (areLocationsEqual(loc, junitLoc)) {
-				onEnterTestcase(testIdx++);
-			} else {
-				node = onEnterBreakpoint(bkp, thread, loc);
-			}
-		} catch (AbsentInformationException e) {
-			//log.error(e.getMessage());
-			e.printStackTrace();
-		}
-		
-		return node;
-	}
-	
-//	protected void handleMethodEntry
 
-	private final void afterDebugging() throws SavException {
-		try {
-			JunitResult jResult = JunitResult.readFrom(jResultFile);
-			if(jResult.getTestResult().size() == 0){
-				System.err.println("Cannot generate test result from an execution.");
-			}
-			else{
-				onFinish(jResult);				
-			}
-			
-		} catch (IOException e) {
-			throw new SavException(ModuleEnum.JVM, "cannot read junitResult in temp file");
-		}
-	}
-
-	private String createExecutionResultFile() throws SavException {
-		try {
-			File tempFile = File.createTempFile("tcsExResult", ".txt");
-			if (jResultFileDeleteOnExit) {
-				tempFile.deleteOnExit();
-			}
-			return tempFile.getAbsolutePath();
-		} catch (IOException e1) {
-			throw new SavException(ModuleEnum.JVM, "cannot create temp file");
-		}
-	}
-	
-	private boolean areLocationsEqual(Location location1, Location location2) throws AbsentInformationException {
-		//return location1.compareTo(location2) == 0;
-		return location1.equals(location2);
-	}
-	
-	private void onStart() {
-		bkpValsByTestIdx = new HashMap<Integer, List<BreakPointValue>>();
-		currentTestBkpValues = new ArrayList<BreakPointValue>();
-		timer.start();
-	}
-
-	private void onEnterTestcase(int testIdx) {
-		timer.newPoint(String.valueOf(testIdx));
-		currentTestBkpValues = CollectionUtils.getListInitIfEmpty(bkpValsByTestIdx, testIdx);
-	}
-
-	
-	
-	private TraceNode onEnterBreakpoint(BreakPoint bkp, ThreadReference thread, Location loc) throws SavException {
+	private TraceNode handleBreakpoint(BreakPoint bkp, ThreadReference thread, Location loc) throws SavException {
 		BreakPointValue bkpVal = extractValuesAtLocation(bkp, thread, loc);
-		//replace existing one with the new one
-		addToCurrentValueList(currentTestBkpValues, bkpVal);
 		
 		TraceNode node = collectTrace(bkp, bkpVal);
 
@@ -660,10 +541,6 @@ public class TestcasesExecutor{
 				}
 				else{
 					if(var instanceof LocalVar){
-						//VariableScopeParser parser = new VariableScopeParser();
-						//TODO a bug, should include the definition of this variable
-						//LocalVariableScope scope = parser.parseScope(node.getBreakPoint(), (LocalVar)var);
-						
 						LocalVariableScope scope = Settings.localVariableScopes.findScope(var.getName(), 
 								node.getBreakPoint().getLineNo(), node.getBreakPoint().getClassCanonicalName());
 						String varID;
@@ -750,7 +627,6 @@ public class TestcasesExecutor{
 				processWrittenVariable(node, stepVariableTable, frame);
 			}
 		}
-		//processWrittenVariable(node, stepVariableTable, frame);
 	}
 
 	private void processReadVariable(TraceNode node,
@@ -883,69 +759,6 @@ public class TestcasesExecutor{
 		return node;
 	}
 
-	private void onFinish(JunitResult jResult) {
-		timer.stop();
-		if (jResult.getTestResults().isEmpty()) {
-			log.warn("TestResults is empty!");
-			log.debug(getProccessError());
-		}
-		Map<TestResultType, List<BreakPointValue>> resultMap = new HashMap<TestResultType, List<BreakPointValue>>();
-		Map<String, TestResultType> tcExResult = getTcExResult(jResult);
-		for (int i = 0; i < bkpValsByTestIdx.size(); i++) {
-			TestResultType testResult = tcExResult.get(allTests.get(i));
-			if (testResult != TestResultType.UNKNOWN) {
-				List<BreakPointValue> bkpValueOfTcI = bkpValsByTestIdx.get(i);
-				Assert.assertNotNull(bkpValueOfTcI, "Missing breakpoint value for test " + i);
-				CollectionUtils.getListInitIfEmpty(resultMap, testResult)
-						.addAll(bkpValueOfTcI);
-			}
-		}
-//		result = buildBreakpointData(CollectionUtils.initIfEmpty(resultMap.get(TestResultType.PASS)), 
-//				CollectionUtils.initIfEmpty(resultMap.get(TestResultType.FAIL)));
-		this.jResult = jResult; 
-	}
-
-	private Map<String, TestResultType> getTcExResult(JunitResult jResult) {
-		Map<String, TestResultType> testResults = new HashMap<String, TestcasesExecutor.TestResultType>();
-		log.debug(StringUtils.toStringNullToEmpty(jResult.getTestResults()));
-		for (String test : allTests) {
-			//TODO test verfier is uncommented, I may need to check this later.
-//			TestResultType testResult = getTestVerifier().verify(jResult, test);
-//			testResults.put(test, testResult);
-		}
-		return testResults;
-	}
-
-//	private ITestResultVerifier getTestVerifier() {
-//		if (verifier == null) {
-//			verifier = DefaultTestResultVerifier.getInstance();
-//		}
-//		return verifier;
-//	}
-	
-//	private List<BreakpointData> buildBreakpointData(
-//			List<BreakPointValue> passValues, List<BreakPointValue> failValues) {
-//		List<BreakpointData> result = new ArrayList<BreakpointData>(bkps.size());
-//		for (BreakPoint bkp : bkps) {
-//			BreakpointData bkpData = new BreakpointData();
-//			bkpData.setBkp(bkp);
-//			bkpData.setPassValues(getValuesOfBkp(bkp.getId(), passValues));
-//			bkpData.setFailValues(getValuesOfBkp(bkp.getId(), failValues));
-//			result.add(bkpData);
-//		}
-//		return result;
-//	}
-	
-	private List<BreakPointValue> getValuesOfBkp(String bkpId, List<BreakPointValue> allValues) {
-		List<BreakPointValue> result = new ArrayList<BreakPointValue>();
-		for (BreakPointValue val : allValues) {
-			if (val.getBkpId().equals(bkpId)) {
-				result.add(val);
-			}
-		}
-		return result;
-	}
-
 	private BreakPointValue extractValuesAtLocation(BreakPoint bkp, ThreadReference thread, 
 			Location loc) throws SavException {
 		try {
@@ -960,80 +773,6 @@ public class TestcasesExecutor{
 			log.error(e.getMessage());
 		}
 		return null;
-	}
-	
-	/**
-	 * add breakpoint value to the current list, 
-	 * we only keep the value of the last one, so replace the current value (if exists) with the new value.
-	 */
-	private void addToCurrentValueList(
-			List<BreakPointValue> currentTestBkpValues, BreakPointValue bkpVal) {
-		if (bkpVal == null) {
-			return;
-		}
-		int i = 0;
-		for (; i < currentTestBkpValues.size(); i++) {
-			BreakPointValue curVal = currentTestBkpValues.get(i);
-			if (curVal.getBkpId().equals(bkpVal.getBkpId())) {
-				break;
-			}
-		}
-		if (i < currentTestBkpValues.size()) {
-			currentTestBkpValues.set(i, bkpVal);
-		} else {
-			currentTestBkpValues.add(bkpVal);
-		}
-	}
-	
-	public void setjResultFileDeleteOnExit(boolean jResultFileDeleteOnExit) {
-		this.jResultFileDeleteOnExit = jResultFileDeleteOnExit;
-	}
-
-//	public List<BreakpointData> getResult() {
-//		return CollectionUtils.initIfEmpty(result);
-//	}
-	
-	public JunitResult getjResult() {
-		return jResult;
-	}
-	
-//	public DebugValueExtractor getValueExtractor() {
-//		if (valueExtractor == null) {
-//			setValueExtractor(new DebugValueExtractor(valRetrieveLevel));
-//		}
-//		return valueExtractor;
-//	}
-//
-//	public void setValueExtractor(DebugValueExtractor valueExtractor) {
-//		this.valueExtractor = valueExtractor;
-//		if (valueExtractor != null) {
-//			this.valRetrieveLevel = valueExtractor.getValRetrieveLevel();
-//		}
-//	}
-	
-	public void setValRetrieveLevel(int valRetrieveLevel) {
-		this.valRetrieveLevel = valRetrieveLevel;
-//		if (valueExtractor != null) {
-//			valueExtractor.setValRetrieveLevel(valRetrieveLevel);
-//		}
-	}
-	
-	public int getValRetrieveLevel() {
-		return valRetrieveLevel;
-	}
-	
-//	public void setTestResultVerifier(ITestResultVerifier verifier) {
-//		this.verifier = verifier;
-//	}
-	
-	public StopTimer getTimer() {
-		return timer;
-	}
-	
-	public void setTimeout(long timeout, TimeUnit timeUnit) {
-		long timeoutInSec = timeUnit.toSeconds(timeout);
-		log.debug("Testcase execution timeout = " + timeoutInSec + "s");
-		this.timeout = timeoutInSec;
 	}
 	
 	public Trace getTrace() {
@@ -1067,19 +806,6 @@ public class TestcasesExecutor{
 			this.parentValue = parentValue;
 		}
 		
-	}
-
-	public static enum TestResultType {
-		PASS,
-		FAIL,
-		UNKNOWN;
-		
-		public static TestResultType of(boolean isPass) {
-			if (isPass) {
-				return PASS;
-			}
-			return FAIL;
-		}
 	}
 }
 
