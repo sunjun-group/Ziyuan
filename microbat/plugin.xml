@@ -98,5 +98,13 @@
             verticalRulerPreferenceValue="false">
       </specification>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="microbat.preference.MicrobatPreference"
+            id="microbat.preference"
+            name="Microbat Debugging">
+      </page>
+   </extension>
 
 </plugin>

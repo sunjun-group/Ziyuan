@@ -8,6 +8,9 @@ import microbat.model.InterestedVariable;
 
 public class Settings {
 	public static String projectName = "Test";
+	public static String buggyClassName;
+	public static String buggyLineNumber;
+	
 	
 	public static List<InterestedVariable> interestedVariables = new ArrayList<>();
 	/**
@@ -15,4 +18,6 @@ public class Settings {
 	 * local variable.
 	 */
 	public static LocalVariableScopes localVariableScopes = new LocalVariableScopes();
+
+
 }
