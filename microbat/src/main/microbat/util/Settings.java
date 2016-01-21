@@ -3,14 +3,28 @@ package microbat.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import microbat.Activator;
 import microbat.codeanalysis.ast.LocalVariableScopes;
 import microbat.model.InterestedVariable;
+import microbat.preference.MicrobatPreference;
 
 public class Settings {
-	public static String projectName = "Test";
+	public static String projectName;
 	public static String buggyClassName;
 	public static String buggyLineNumber;
 	
+	static{
+		if(Activator.getDefault() != null){
+			try{
+				projectName = Activator.getDefault().getPreferenceStore().getString(MicrobatPreference.TARGET_PORJECT);
+				buggyClassName = Activator.getDefault().getPreferenceStore().getString(MicrobatPreference.CLASS_NAME);
+				buggyLineNumber = Activator.getDefault().getPreferenceStore().getString(MicrobatPreference.LINE_NUMBER);
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
 	
 	public static List<InterestedVariable> interestedVariables = new ArrayList<>();
 	/**

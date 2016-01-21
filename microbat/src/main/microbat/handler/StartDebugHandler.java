@@ -1,9 +1,7 @@
 package microbat.handler;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,6 +12,7 @@ import microbat.codeanalysis.bytecode.MicrobatSlicer;
 import microbat.codeanalysis.runtime.TestcasesExecutor;
 import microbat.model.BreakPoint;
 import microbat.model.trace.Trace;
+import microbat.util.JavaUtil;
 import microbat.util.Settings;
 import microbat.views.MicroBatViews;
 import microbat.views.TraceView;
@@ -28,12 +27,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IMethodBinding;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
 import sav.common.core.SavException;
-import sav.common.core.utils.CollectionUtils;
-import sav.common.core.utils.JunitUtils;
 import sav.commons.TestConfiguration;
 import sav.strategies.dto.AppJavaClassPath;
 
@@ -45,96 +47,58 @@ public class StartDebugHandler extends AbstractHandler {
 	protected AppJavaClassPath initAppClasspath() {
 		AppJavaClassPath appClasspath = new AppJavaClassPath();
 		appClasspath.setJavaHome(TestConfiguration.getJavaHome());
-//		appClasspath.addClasspath(SAV_COMMONS_TEST_TARGET);
 		return appClasspath;
 	}
 
-	public void setup() {
+	public void setup(String classPath) {
 		appClasspath = initAppClasspath();
-//		appClasspath.getPreferences().putBoolean(SystemVariables.SLICE_COLLECT_VAR, true);
-//		appClasspath.getPreferences().put(SystemVariables.SLICE_BKP_VAR_INHERIT, InheritType.FORWARD.name());
-
-		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		IProject iProject = myWorkspaceRoot.getProject(Settings.projectName);
-		
-		String projectPath = iProject.getLocationURI().getPath();
-		projectPath = projectPath.substring(1, projectPath.length());
-		
-		//TODO parse it by configuration
-		appClasspath.addClasspath("F://workspace//runtime-debugging//Test//bin");
+		appClasspath.addClasspath(classPath);
 		tcExecutor = new TestcasesExecutor();
 	}
 	
-
-	
-	private List<BreakPoint> dynamicSlicing(List<BreakPoint> startPoints, List<String> classScope){
-		List<BreakPoint> result = null;
-		
-		MicrobatSlicer slicer;
-		try {
-			slicer = new MicrobatSlicer();
-			result = slicer.slice(appClasspath, startPoints);
-			
-			System.currentTimeMillis();
-		} catch (SavException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-//		try {
-//			result = slicer.sliceDebug(appClasspath, startPoints, testMethods);
-//			
-//			System.currentTimeMillis();
-//			
-////			List<String> paths = getSourceLocation();
-////			VariableNameCollector vnc = new VariableNameCollector(VarNameCollectionMode.FULL_NAME, paths);
-////			vnc.updateVariables(result);
-//			
-//		} catch (ClassNotFoundException e) {
-//			e.printStackTrace();
-//		} catch (SavException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		} /*catch (IcsetlvException e) {
-//			e.printStackTrace();
-//		}*/
-		
-		
-		return result;
-	}
-
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		setup();
 		
-		List<String> junitClassNames = CollectionUtils.listOf("com.test.MainTest");
-		final List<String> tests;
+		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		IProject iProject = myWorkspaceRoot.getProject(Settings.projectName);
+		String projectPath = iProject.getLocationURI().getPath();
+		projectPath = projectPath.substring(1, projectPath.length());
+		projectPath = projectPath.replace("/", File.separator);
+		
+		String binPath = projectPath + File.separator + "bin"; 
+		setup(binPath);
+		
+		final String classQulifiedName = Settings.buggyClassName;
+		final int lineNumber = Integer.valueOf(Settings.buggyLineNumber);
+		final String methodSign = convertSignature(classQulifiedName, lineNumber);
+		
+		System.currentTimeMillis();
+		
 		try {
-			File f0 = new File("F://workspace//runtime-debugging//Test//bin");
-			URL[] cp = new URL[1];
-			try {
-				cp[0] = f0.toURI().toURL();
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
-			URLClassLoader urlcl  = URLClassLoader.newInstance(cp);
-			tests = JunitUtils.extractTestMethods(junitClassNames, urlcl);
-			
-			
-			BreakPoint ap = new BreakPoint("com.test.MainTest", "test()V", 17);
-			final List<BreakPoint> assertionPoints = Arrays.asList(ap);
-			final List<String> classScope = Arrays.asList("com.Main", "com.Tag");
-			parseLocalVariables(classScope);
-			
 			
 			Job job = new Job("Preparing for Debugging ...") {
 				
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					List<BreakPoint> breakpoints = dynamicSlicing(assertionPoints, classScope);
+					BreakPoint ap = new BreakPoint(classQulifiedName, methodSign, lineNumber);
+					
+					List<BreakPoint> startPoints = Arrays.asList(ap);
+					
+					MicrobatSlicer slicer = new MicrobatSlicer();
+					List<BreakPoint> breakpoints = null;
+					try {
+						breakpoints = slicer.slice(appClasspath, startPoints);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+					
+					/**
+					 * find the variable scope for:
+					 * 1) Identifying the same local variable in different trace nodes.
+					 * 2) Generating variable ID for local variable.
+					 */
+					List<String> classScope = parseScope(breakpoints);
+					parseLocalVariables(classScope);
+					
 					if(breakpoints == null){
 						System.err.println("Cannot find any slice");
 						return Status.OK_STATUS;
@@ -142,6 +106,8 @@ public class StartDebugHandler extends AbstractHandler {
 					
 					monitor.worked(60);
 					
+					String methodName = methodSign.substring(0, methodSign.indexOf("("));
+					List<String> tests = Arrays.asList(classQulifiedName + "." + methodName);
 					tcExecutor.setup(appClasspath, tests);
 					try {
 						tcExecutor.run(breakpoints);
@@ -172,18 +138,88 @@ public class StartDebugHandler extends AbstractHandler {
 					
 					return Status.OK_STATUS;
 				}
+
+				private List<String> parseScope(List<BreakPoint> breakpoints) {
+					List<String> classes = new ArrayList<>();
+					for(BreakPoint bp: breakpoints){
+						if(!classes.contains(bp.getClassCanonicalName())){
+							classes.add(bp.getClassCanonicalName());
+						}
+					}
+					return classes;
+				}
 			};
 			job.schedule();
 			
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} /*catch (SavException e) {
-			e.printStackTrace();
-		} */catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		return null;
+	}
+
+	class MethodFinder extends ASTVisitor{
+		CompilationUnit cu;
+		MethodDeclaration methodDeclaration;
+		int lineNumber;
+		
+		public MethodFinder(CompilationUnit cu, int lineNumber) {
+			super();
+			this.cu = cu;
+			this.lineNumber = lineNumber;
+		}
+
+		public boolean visit(MethodDeclaration md){
+			int startLine = cu.getLineNumber(md.getStartPosition());
+			int endLine = cu.getLineNumber(md.getStartPosition()+md.getLength());
+			
+			if(startLine <= lineNumber && lineNumber <= endLine){
+				methodDeclaration = md;
+			}
+			
+			return false;
+		}
+	}
+	
+	private String convertSignature(String classQulifiedName, int lineNumber) {
+		CompilationUnit cu = JavaUtil.findCompilationUnitInProject(classQulifiedName);
+		
+		MethodFinder finder = new MethodFinder(cu, lineNumber);
+		cu.accept(finder);
+		
+		MethodDeclaration methodDeclaration = finder.methodDeclaration;
+		IMethodBinding mBinding = methodDeclaration.resolveBinding();
+		
+		String returnType = mBinding.getReturnType().getKey();
+		
+		String methodName = mBinding.getName();
+		
+		List<String> paramTypes = new ArrayList<>();
+		for(ITypeBinding tBinding: mBinding.getParameterTypes()){
+			String paramType = tBinding.getKey();
+			paramTypes.add(paramType);
+		}
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(methodName);
+		buffer.append("(");
+		for(String pType: paramTypes){
+			buffer.append(pType);
+			buffer.append(";");
+		}
+		
+		buffer.append(")");
+		buffer.append(returnType);
+//		
+//		String sign = buffer.toString();
+//		if(sign.contains(";")){
+//			sign = sign.substring(0, sign.lastIndexOf(";")-1);			
+//		}
+//		sign = sign + ")" + returnType;
+		
+		String sign = buffer.toString();
+		
+		return sign;
 	}
 
 	/**

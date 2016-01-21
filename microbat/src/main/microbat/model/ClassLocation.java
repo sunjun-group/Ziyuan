@@ -12,13 +12,13 @@ import microbat.util.BreakpointUtils;
 import sav.common.core.utils.SignatureUtils;
 
 /**
- * @author LLT
+ * @author Yun Lin, modified from LLT
  * 
  */
 public class ClassLocation {
 	protected String id;
 	protected String classCanonicalName;
-	protected String methodSign; // methodName or signature
+	protected String methodSign;
 	protected int lineNo = -1; // started with 1?
 
 	public ClassLocation(String className, String methodName, int lineNumber) {
