@@ -71,9 +71,9 @@ public class VMRunner {
 	
 	protected void buildProgramArgs(VMConfiguration config,
 			CollectionBuilder<String, Collection<String>> builder) {
-		builder.add(cpToken)
-				.add(config.getClasspathStr())
-				.add(config.getLaunchClass());
+		builder.add(cpToken);
+		builder.add(config.getClasspathStr());
+		builder.add(config.getLaunchClass());
 		for (String arg : config.getProgramArgs()) {
 			builder.add(arg);
 		}
@@ -127,13 +127,11 @@ public class VMRunner {
 
 	public boolean startVm(List<String> commands, boolean waitUntilStop)
 			throws SavException {
-		if (isLog && log.isDebugEnabled()) {
-			log.debug("start cmd..");
-			log.debug(StringUtils.join(commands, " "));
-//			for (String cmd : commands) {
-//				log.debug(cmd);
-//			}
-		}
+		System.out.println("start cmd..");
+		System.out.println(StringUtils.join(commands, " "));
+//		for (String cmd : commands) {
+//			System.out.println(cmd);
+//		}
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
 		try {
 			process = processBuilder.start();

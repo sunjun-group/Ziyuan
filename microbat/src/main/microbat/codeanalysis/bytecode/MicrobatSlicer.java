@@ -107,9 +107,10 @@ public class MicrobatSlicer{
 		Iterable<Entrypoint> entrypoints = makeEntrypoints(scope.getApplicationLoader(), cha, breakpoints.get(0));
 		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
 		
-		CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope);
+//		CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope);
 //		CallGraphBuilder builder = Util.makeNCFABuilder(3, options, new AnalysisCache(), cha, scope);
-//		CallGraphBuilder builder = Util.makeVanillaNCFABuilder(1, options, new AnalysisCache(), cha, scope);
+		CallGraphBuilder builder = Util.makeVanillaNCFABuilder(1, options, new AnalysisCache(), cha, scope);
+		
 		System.out.println("builder is set.");
 		
 		CallGraph callGraph = builder.makeCallGraph(options, null);
@@ -143,7 +144,13 @@ public class MicrobatSlicer{
 									.equals(ClassLoaderReference.Application);
 						}
 					});
-			return toBreakpoints(computeBackwardSlice);
+			List<BreakPoint> bps = toBreakpoints(computeBackwardSlice);
+			
+			for(BreakPoint bp: bps){
+				System.out.println(bp);
+			}
+			
+			return bps;
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} 

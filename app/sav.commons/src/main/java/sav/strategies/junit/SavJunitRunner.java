@@ -58,6 +58,8 @@ public class SavJunitRunner {
 		VMConfiguration vmConfig = new VMConfiguration(appClasspath);
 		String savJunitJar = SystemVariablesUtils.updateSavJunitJarPath(appClasspath);
 		vmConfig.addClasspath(savJunitJar);
+		
+		System.currentTimeMillis();
 		return vmConfig;
 	}
 }

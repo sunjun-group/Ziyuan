@@ -157,7 +157,8 @@ public class TestcasesExecutor{
 		setDebuggingConfiguration();
 		
 		/** start debugger */
-		VirtualMachine vm = debugger.run(config);
+		VirtualMachine vm = new VMStarter().start();
+//		VirtualMachine vm = debugger.run(config);
 		if (vm == null) {
 			throw new SavException(ModuleEnum.JVM, "cannot start jvm!");
 		}
@@ -326,12 +327,6 @@ public class TestcasesExecutor{
 			}
 			eventSet.resume();
 		}
-		
-//		if (!eventTimeout) {
-//			vm.resume();
-//			/* wait until the process completes */
-//			debugger.waitProcessUntilStop();
-//		}
 	}
 
 	/**

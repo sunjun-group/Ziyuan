@@ -180,7 +180,9 @@ public class DebugValueExtractor {
 	protected void collectValue(BreakPointValue bkVal, ObjectReference objRef, ThreadReference thread,
 			final Map<Variable, JDIParam> allVariables){
 		
-		appendClassVarVal(bkVal, "this", false, objRef, 1, thread, true, true, false);
+		if(objRef != null){
+			appendClassVarVal(bkVal, "this", false, objRef, 1, thread, true, true, false);			
+		}
 		
 		for (Entry<Variable, JDIParam> entry : allVariables.entrySet()) {
 			Variable var = entry.getKey();
