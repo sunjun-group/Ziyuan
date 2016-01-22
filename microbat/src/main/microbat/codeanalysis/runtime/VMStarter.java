@@ -21,7 +21,7 @@ public class VMStarter {
 		LaunchingConnector connector = getCommandLineConnector();
 		
 		Map<String, Connector.Argument> arguments =
-		           connectorArguments(connector, "com.Main");
+		           connectorArguments(connector, "tester.MemoMain");
         try {
         	vm = connector.launch(arguments);
         	return vm;
@@ -67,7 +67,7 @@ public class VMStarter {
         if (optionArg == null) {
             throw new Error("Bad launching connector");
         }
-        optionArg.setValue("-cp \"F:\\workspace\\runtime-debugging\\Test\\bin\"");
+        optionArg.setValue("-cp \"F:\\workspace\\runtime-debugging\\Memo\\bin\"");
         
         return arguments;
     }

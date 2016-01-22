@@ -127,7 +127,7 @@ public class MicrobatSlicer{
 		try {
 			Collection<Statement> computeBackwardSlice;
 			computeBackwardSlice = Slicer.computeBackwardSlice(stmtList.get(0), callGraph, pointerAnalysis, 
-					DataDependenceOptions.NO_BASE_PTRS, ControlDependenceOptions.NO_EXCEPTIONAL_EDGES);
+					DataDependenceOptions.NO_BASE_PTRS, ControlDependenceOptions.NONE);
 			System.out.println("program is sliced!");
 			
 			
