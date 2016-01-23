@@ -42,7 +42,7 @@ import sav.strategies.dto.AppJavaClassPath;
 public class StartDebugHandler extends AbstractHandler {
 
 	private TestcasesExecutor tcExecutor;
-	private AppJavaClassPath appClasspath;
+	private AppJavaClassPath appClassPath;
 
 	protected AppJavaClassPath initAppClasspath() {
 		AppJavaClassPath appClasspath = new AppJavaClassPath();
@@ -51,8 +51,8 @@ public class StartDebugHandler extends AbstractHandler {
 	}
 
 	public void setup(String classPath) {
-		appClasspath = initAppClasspath();
-		appClasspath.addClasspath(classPath);
+		appClassPath = initAppClasspath();
+		appClassPath.addClasspath(classPath);
 		tcExecutor = new TestcasesExecutor();
 	}
 	
@@ -86,7 +86,8 @@ public class StartDebugHandler extends AbstractHandler {
 					List<BreakPoint> breakpoints = null;
 					try {
 						System.out.println("start slicing...");
-						breakpoints = slicer.slice(appClasspath, startPoints);
+//						breakpoints = slicer.slice(appClasspath, startPoints);
+						breakpoints = slicer.parsingBreakPoints(appClassPath);
 						System.out.println("finish slicing!");
 					} catch (Exception e1) {
 						e1.printStackTrace();
@@ -107,9 +108,10 @@ public class StartDebugHandler extends AbstractHandler {
 					
 					monitor.worked(60);
 					
-					String methodName = methodSign.substring(0, methodSign.indexOf("("));
-					List<String> tests = Arrays.asList(classQulifiedName + "." + methodName);
-					tcExecutor.setup(appClasspath, tests);
+//					String methodName = methodSign.substring(0, methodSign.indexOf("("));
+//					List<String> tests = Arrays.asList(classQulifiedName + "." + methodName);
+//					tcExecutor.setup(appClasspath, tests);
+					tcExecutor.setup(appClassPath);
 					try {
 						tcExecutor.run(breakpoints);
 					} catch (SavException e) {

@@ -98,13 +98,35 @@ public class MicrobatSlicer{
 	private static final String JAVA_REGRESSION_EXCLUSIONS = "/Java60RegressionExclusions.txt";
 	
 	public MicrobatSlicer(){}
+	
+	public List<BreakPoint> parsingBreakPoints(AppJavaClassPath appClassPath) throws Exception {
+		AnalysisScope scope = makeJ2SEAnalysisScope(appClassPath);
+		IClassHierarchy cha = ClassHierarchy.make(scope);
+		
+		Iterable<Entrypoint> entrypoints = Util.makeMainEntrypoints(scope, cha);
+		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
+		
+//		CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope);
+//		CallGraphBuilder builder = Util.makeNCFABuilder(3, options, new AnalysisCache(), cha, scope);
+		CallGraphBuilder builder = Util.makeVanillaNCFABuilder(1, options, new AnalysisCache(), cha, scope);
+		
+		System.out.println("builder is set.");
+		
+		CallGraph callGraph = builder.makeCallGraph(options, null);
+		System.out.println("Call graph is built!");
+		
+		List<BreakPoint> breakPoints = anlyzeBreakPointsWithDataDependencies(callGraph);
+		
+		return breakPoints;
+	}
 
 	public List<BreakPoint> slice(AppJavaClassPath appClassPath, List<BreakPoint> breakpoints) throws Exception {
 		
 		AnalysisScope scope = makeJ2SEAnalysisScope(appClassPath);
 		IClassHierarchy cha = ClassHierarchy.make(scope);
 		
-		Iterable<Entrypoint> entrypoints = makeEntrypoints(scope.getApplicationLoader(), cha, breakpoints.get(0));
+//		Iterable<Entrypoint> entrypoints = makeEntrypoints(scope.getApplicationLoader(), cha, breakpoints.get(0));
+		Iterable<Entrypoint> entrypoints = Util.makeMainEntrypoints(scope, cha);
 		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
 		
 //		CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope);
@@ -127,7 +149,7 @@ public class MicrobatSlicer{
 		try {
 			Collection<Statement> computeBackwardSlice;
 			computeBackwardSlice = Slicer.computeBackwardSlice(stmtList.get(0), callGraph, pointerAnalysis, 
-					DataDependenceOptions.NO_BASE_PTRS, ControlDependenceOptions.NONE);
+					DataDependenceOptions.NO_BASE_PTRS, ControlDependenceOptions.NO_EXCEPTIONAL_EDGES);
 			System.out.println("program is sliced!");
 			
 			
@@ -562,6 +584,78 @@ public class MicrobatSlicer{
 		TypeName clazz = method.getDeclaringClass().getName();
 		return ClassUtils.getCanonicalName(clazz.getPackage().toString()
 				.replace("/", "."), clazz.getClassName().toString());
+	}
+	
+	private List<BreakPoint> anlyzeBreakPointsWithDataDependencies(CallGraph graph){
+		Map<String, BreakPoint> bkpSet = new HashMap<String, BreakPoint>();
+		
+		Iterator<CGNode> iterator = graph.iterator();
+		while(iterator.hasNext()){
+			CGNode node = iterator.next();
+			IMethod method = node.getMethod();
+			
+			if(method.getDeclaringClass().getClassLoader().getReference().equals(ClassLoaderReference.Application)){
+				if(method instanceof ShrikeBTMethod){
+					parseBreakPoints(bkpSet, node);				
+				}
+			}
+			
+		}
+		
+		ArrayList<BreakPoint> result = new ArrayList<>(bkpSet.values());
+		
+		return result;
+	}
+
+	private void parseBreakPoints(Map<String, BreakPoint> bkpSet, CGNode node) {
+		IR ir = node.getIR();
+		SSACFG cfg = ir.getControlFlowGraph();
+		SSAInstruction[] instructions = ir.getInstructions();
+		
+		for (int i = 0; i <= cfg.getMaxNumber(); i++) {
+			BasicBlock bb = cfg.getNode(i);
+			int start = bb.getFirstInstructionIndex();
+			int end = bb.getLastInstructionIndex();
+			for (int j = start; j <= end; j++) {
+				if (instructions[j] != null) {
+					try {
+						NormalStatement stmt = new NormalStatement(node, j);
+						StatementWithInstructionIndex stwI = (StatementWithInstructionIndex) stmt;
+						
+						ShrikeCTMethod method = (ShrikeCTMethod) stmt.getNode().getMethod();
+
+						int stmtLinNumber = getStatementLineNumber(method, stwI);
+						
+						IInstruction[] allInsts = method.getInstructions();
+						
+						for(int index=0; index<allInsts.length; index++){
+							int bcIndex = method.getBytecodeIndex(index);						
+							int insLinNumber = method.getLineNumber(bcIndex);
+							
+							if(insLinNumber == stmtLinNumber){
+								
+								String className = getClassCanonicalName(method);
+								String methodSig = method.getSignature();
+								String key = className + "." + methodSig + "(line " + stmtLinNumber + ")";
+								
+								BreakPoint point = bkpSet.get(key);
+								if(point == null){
+									point = new BreakPoint(className, methodSig, stmtLinNumber);
+									bkpSet.put(key, point);
+								}
+								
+								appendReadWritenVariable(point, method, allInsts[index], index, stmt.getNode().getIR());
+								
+							}
+						}
+						
+						
+					} catch (InvalidClassFileException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 	}
 
 	private List<Statement> findSeedStmts(CallGraph cg, List<BreakPoint> breakpoints) {

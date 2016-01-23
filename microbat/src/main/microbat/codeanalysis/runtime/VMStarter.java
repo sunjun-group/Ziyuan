@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import sav.strategies.vm.BootstrapPlugin;
+import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.Connector;
@@ -16,12 +17,17 @@ import com.sun.jdi.connect.VMStartException;
 @SuppressWarnings("restriction")
 public class VMStarter {
 	
+	private VMConfiguration configuration;
+	
+	public VMStarter(VMConfiguration configuration){
+		this.configuration = configuration;
+	}
+	
 	public VirtualMachine start(){
 		VirtualMachine vm = null;
 		LaunchingConnector connector = getCommandLineConnector();
 		
-		Map<String, Connector.Argument> arguments =
-		           connectorArguments(connector, "tester.MemoMain");
+		Map<String, Connector.Argument> arguments = connectorArguments(connector, configuration);
         try {
         	vm = connector.launch(arguments);
         	return vm;
@@ -50,14 +56,13 @@ public class VMStarter {
 	/**
      * Return the launching connector's arguments.
      */
-    private Map<String, Connector.Argument> connectorArguments(LaunchingConnector connector, String mainArgs) {
+    private Map<String, Connector.Argument> connectorArguments(LaunchingConnector connector, VMConfiguration configuration) {
         Map<String, Connector.Argument> arguments = connector.defaultArguments();
-        Connector.Argument mainArg =
-                           (Connector.Argument)arguments.get("main");
+        Connector.Argument mainArg = (Connector.Argument)arguments.get("main");
         if (mainArg == null) {
             throw new Error("Bad launching connector");
         }
-        mainArg.setValue(mainArgs);
+        mainArg.setValue(configuration.getLaunchClass());
 
         // We need a VM that supports watchpoints
         Connector.Argument optionArg =
@@ -67,7 +72,17 @@ public class VMStarter {
         if (optionArg == null) {
             throw new Error("Bad launching connector");
         }
-        optionArg.setValue("-cp \"F:\\workspace\\runtime-debugging\\Memo\\bin\"");
+        String classPathString = "";
+        for(String classPath: configuration.getClasspaths()){
+        	classPathString += classPath + ";";
+        }
+        
+        if(classPathString.length() != 0){
+        	classPathString = "-cp " + classPathString;
+        }
+        optionArg.setValue(classPathString);
+        
+//      optionArg.setValue("-cp \"F:\\workspace\\runtime-debugging\\Memo\\bin\"");
         
         return arguments;
     }

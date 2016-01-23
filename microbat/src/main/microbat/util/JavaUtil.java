@@ -17,10 +17,17 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 
 public class JavaUtil {
 	public static CompilationUnit findCompilationUnitInProject(String qualifiedName){
-		ICompilationUnit icu = findICompilationUnitInProject(qualifiedName);
-		CompilationUnit cu = convertICompilationUnitToASTNode(icu);
 		
-		return cu;
+		try{
+			ICompilationUnit icu = findICompilationUnitInProject(qualifiedName);
+			CompilationUnit cu = convertICompilationUnitToASTNode(icu);	
+			return cu;
+		}
+		catch(IllegalStateException e){
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	public static ICompilationUnit findICompilationUnitInProject(String qualifiedName){

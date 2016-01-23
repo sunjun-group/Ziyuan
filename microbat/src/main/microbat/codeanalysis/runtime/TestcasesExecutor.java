@@ -9,13 +9,11 @@
 package microbat.codeanalysis.runtime;
 
 import static sav.strategies.junit.SavJunitRunner.ENTER_TC_BKP;
-import static sav.strategies.junit.SavJunitRunner.JUNIT_RUNNER_CLASS_NAME;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.concurrent.TimeUnit;
 
 import microbat.codeanalysis.ast.LocalVariableScope;
 import microbat.codeanalysis.ast.VariableScopeParser;
@@ -43,8 +41,6 @@ import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.SignatureUtils;
 import sav.strategies.dto.AppJavaClassPath;
-import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
-import sav.strategies.junit.SavJunitRunner;
 import sav.strategies.vm.SimpleDebugger;
 import sav.strategies.vm.VMConfiguration;
 
@@ -107,8 +103,8 @@ public class TestcasesExecutor{
 	/**
 	 * fields for junit
 	 */
-	private List<String> allTests;
-	private long timeout = DEFAULT_TIMEOUT;
+//	private List<String> allTests;
+//	private long timeout = DEFAULT_TIMEOUT;
 	
 	/**
 	 * for recording execution trace
@@ -122,11 +118,17 @@ public class TestcasesExecutor{
 		this.config = config;
 	}
 	
-	public void setup(AppJavaClassPath appClassPath, List<String> allTests) {
-		VMConfiguration vmConfig = SavJunitRunner.createVmConfig(appClassPath);
-		setup(vmConfig);
-		this.allTests = allTests;
+	public void setup(AppJavaClassPath appClassPath){
+		VMConfiguration vmConfig = new VMConfiguration(appClassPath);
+		this.config = vmConfig;
+		this.config.setLaunchClass(Settings.lanuchClass);
 	}
+	
+//	public void setup(AppJavaClassPath appClassPath, List<String> allTests) {
+//		VMConfiguration vmConfig = SavJunitRunner.createVmConfig(appClassPath);
+//		setup(vmConfig);
+//		this.allTests = allTests;
+//	}
 	
 	/** 
 	 * record the method entrance and exit so that I can build a tree-structure for trace node
@@ -154,10 +156,10 @@ public class TestcasesExecutor{
 		this.config.setDebug(true);
 		
 		/** before debugging */
-		setDebuggingConfiguration();
+//		setDebuggingConfiguration();
 		
 		/** start debugger */
-		VirtualMachine vm = new VMStarter().start();
+		VirtualMachine vm = new VMStarter(this.config).start();
 //		VirtualMachine vm = debugger.run(config);
 		if (vm == null) {
 			throw new SavException(ModuleEnum.JVM, "cannot start jvm!");
@@ -490,20 +492,21 @@ public class TestcasesExecutor{
 	 * add junit relevant classes into VM configuration, i.e., launch the program with JUnit Launcher.
 	 * @throws SavException
 	 */
-	private final void setDebuggingConfiguration() throws SavException {
-		getVmConfig().setLaunchClass(JUNIT_RUNNER_CLASS_NAME);
-		JunitRunnerProgramArgBuilder builder = new JunitRunnerProgramArgBuilder();
-		List<String> args = 
-				builder.methods(allTests)
-				.testcaseTimeout(getTimeoutInSec(), TimeUnit.SECONDS)
-				.build();
-		getVmConfig().setProgramArgs(args);
-		getVmConfig().resetPort();
-	}
+//	private final void setDebuggingConfiguration() throws SavException {
+		
+//		getVmConfig().setLaunchClass(JUNIT_RUNNER_CLASS_NAME);
+//		JunitRunnerProgramArgBuilder builder = new JunitRunnerProgramArgBuilder();
+//		List<String> args = 
+//				builder.methods(allTests)
+//				.testcaseTimeout(getTimeoutInSec(), TimeUnit.SECONDS)
+//				.build();
+//		getVmConfig().setProgramArgs(args);
+//		getVmConfig().resetPort();
+//	}
 
-	private long getTimeoutInSec() {
-		return timeout;
-	}
+//	private long getTimeoutInSec() {
+//		return timeout;
+//	}
 
 	private TraceNode handleBreakpoint(BreakPoint bkp, ThreadReference thread, Location loc) throws SavException {
 		BreakPointValue bkpVal = extractValuesAtLocation(bkp, thread, loc);
