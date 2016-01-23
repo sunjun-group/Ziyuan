@@ -42,18 +42,22 @@ public class MicrobatPreference extends PreferencePage implements
 		this.defaultTargetProject = Activator.getDefault().getPreferenceStore().getString(TARGET_PORJECT);
 		this.defaultClassName = Activator.getDefault().getPreferenceStore().getString(CLASS_NAME);
 		this.defaultLineNumber = Activator.getDefault().getPreferenceStore().getString(LINE_NUMBER);
+		this.defaultLanuchClass = Activator.getDefault().getPreferenceStore().getString(LANUCH_CLASS);
 	}
 	
 	public static final String TARGET_PORJECT = "targetProjectName";
 	public static final String CLASS_NAME = "className";
 	public static final String LINE_NUMBER = "lineNumber";
+	public static final String LANUCH_CLASS = "lanuchClass";
 
 	
 	private Combo projectCombo;
+	private Text lanuchClassText;
 	private Text classNameText;
 	private Text lineNumberText;
 	
 	private String defaultTargetProject = "";
+	private String defaultLanuchClass = "";
 	private String defaultClassName = "";
 	private String defaultLineNumber = "";
 	
@@ -92,6 +96,14 @@ public class MicrobatPreference extends PreferencePage implements
 		
 		seedStatementGroup.setLayout(layout);
 		
+		Label lanuchClassLabel = new Label(seedStatementGroup, SWT.NONE);
+		lanuchClassLabel.setText("Lanuch Class: ");
+		lanuchClassText = new Text(seedStatementGroup, SWT.BORDER);
+		lanuchClassText.setText(this.defaultLanuchClass);
+		GridData lanuchClassTextData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		lanuchClassTextData.horizontalSpan = 2;
+		lanuchClassText.setLayoutData(lanuchClassTextData);
+		
 		Label classNameLabel = new Label(seedStatementGroup, SWT.NONE);
 		classNameLabel.setText("Class Name: ");
 		classNameText = new Text(seedStatementGroup, SWT.BORDER);
@@ -110,12 +122,14 @@ public class MicrobatPreference extends PreferencePage implements
 	}
 	
 	public boolean performOk(){
-		IEclipsePreferences preferences = ConfigurationScope.INSTANCE.getNode("Clonepedia");
+		IEclipsePreferences preferences = ConfigurationScope.INSTANCE.getNode("microbat.preference");
 		preferences.put(TARGET_PORJECT, this.projectCombo.getText());
+		preferences.put(LANUCH_CLASS, this.lanuchClassText.getText());
 		preferences.put(CLASS_NAME, this.classNameText.getText());
 		preferences.put(LINE_NUMBER, this.lineNumberText.getText());
 		
 		Activator.getDefault().getPreferenceStore().putValue(TARGET_PORJECT, this.projectCombo.getText());
+		Activator.getDefault().getPreferenceStore().putValue(LANUCH_CLASS, this.lanuchClassText.getText());
 		Activator.getDefault().getPreferenceStore().putValue(CLASS_NAME, this.classNameText.getText());
 		Activator.getDefault().getPreferenceStore().putValue(LINE_NUMBER, this.lineNumberText.getText());
 		
@@ -127,6 +141,7 @@ public class MicrobatPreference extends PreferencePage implements
 	
 	private void confirmChanges(){
 		Settings.projectName = this.projectCombo.getText();
+		Settings.lanuchClass = this.lanuchClassText.getText();
 		Settings.buggyClassName = this.classNameText.getText();
 		Settings.buggyLineNumber = this.lineNumberText.getText();
 	}
