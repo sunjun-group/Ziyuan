@@ -510,8 +510,8 @@ abstract class LValue {
     private static class LValueInstanceMember extends LValue {
         final ObjectReference obj;
         final ThreadReference thread;
-        final Field matchingField;
-        final List<Method> overloads;
+        Field matchingField;
+        List<Method> overloads;
         Method matchingMethod = null;
         List<Value> methodArguments = null;
 
@@ -529,10 +529,12 @@ abstract class LValue {
              * Can't tell yet whether this LValue will be accessed as a
              * field or method, so we keep track of all the possibilities
              */
-            matchingField = LValue.fieldByName(refType, memberName,
-                                               LValue.INSTANCE);
-            overloads = LValue.methodsByName(refType, memberName,
-                                              LValue.INSTANCE);
+            matchingField = LValue.fieldByName(refType, memberName, LValue.INSTANCE);
+            if(matchingField == null){
+            	matchingField = LValue.fieldByName(refType, memberName, LValue.STATIC);
+            }
+            
+            overloads = LValue.methodsByName(refType, memberName, LValue.INSTANCE);
             if ((matchingField == null) && overloads.size() == 0) {
                 throw new ParseException("No instance field or method with the name "
                                + memberName + " in " + refType.name());
