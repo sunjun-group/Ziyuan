@@ -301,11 +301,16 @@ public class TestcasesExecutor{
 					if(isLastStepEventRecordNode){
 						MethodEntryEvent mee = (MethodEntryEvent)event;
 						Method method = mee.method();
+						TraceNode lastestNode = this.trace.getLastestNode();
 //						System.out.println("enter:" + method.toString());
 						
-						TraceNode lastestNode = this.trace.getLastestNode();
-						
-						updateStepVariableRelationTableByMethodInvocation(event, mee, method, lastestNode);
+						try {
+							if(!method.arguments().isEmpty()){
+								updateStepVariableRelationTableByMethodInvocation(event, mee, lastestNode);							
+							}
+						} catch (AbsentInformationException e) {
+							e.printStackTrace();
+						}
 						
 						this.methodNodeStack.push(lastestNode);
 						this.methodStack.push(method);
@@ -360,10 +365,16 @@ public class TestcasesExecutor{
 	 * build the written relations between method invocation
 	 */
 	private void updateStepVariableRelationTableByMethodInvocation(Event event,
-			MethodEntryEvent mee, Method method, TraceNode lastestNode) {
+			MethodEntryEvent mee, TraceNode lastestNode) {
 		try {
+			Method method = mee.method();
 			for(LocalVariable lVar: method.arguments()){
 				StackFrame frame = findFrame(((MethodEntryEvent) event).thread(), mee.location());
+				
+				if(frame == null){
+					return;
+				}
+				
 				Value value = frame.getValue(lVar);
 				
 				if(!(value instanceof ObjectReference)){
@@ -526,6 +537,11 @@ public class TestcasesExecutor{
 	
 	private String generateVarID(StackFrame frame, Variable var, TraceNode node){
 		String varName = var.getName();
+		
+		if(varName.contains("System.out")){
+			System.currentTimeMillis();
+		}
+		
 		try{
 			ExpressionValue expValue = retriveExpression(frame, varName);
 			if(expValue != null){
@@ -636,7 +652,7 @@ public class TestcasesExecutor{
 			String varID = generateVarID(frame, readVar, node);
 			System.currentTimeMillis();
 			if(varID == null){
-				System.err.println("there is an error when generating the id for " + readVar + 
+				System.err.println("When processing read variable, there is an error when generating the id for " + readVar + 
 						" in line " + node.getBreakPoint().getLineNo() + " of " + node.getBreakPoint().getClassCanonicalName());
 				//varID = generateVarID(frame, readVar, node);
 			}
@@ -660,7 +676,7 @@ public class TestcasesExecutor{
 		for(Variable writtenVar: writtenVariables){
 			String varID = generateVarID(frame, writtenVar, node);
 			if(varID == null){
-				System.err.println("there is an error when generating the id for " + writtenVar + 
+				System.err.println("When processing written variable, there is an error when generating the id for " + writtenVar + 
 						" in line " + node.getBreakPoint().getLineNo() + " of " + node.getBreakPoint().getClassCanonicalName());
 				varID = generateVarID(frame, writtenVar, node);
 			}
