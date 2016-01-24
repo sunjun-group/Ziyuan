@@ -86,7 +86,7 @@ public class StartDebugHandler extends AbstractHandler {
 					List<BreakPoint> breakpoints = null;
 					try {
 						System.out.println("start slicing...");
-//						breakpoints = slicer.slice(appClasspath, startPoints);
+//						breakpoints = slicer.slice(appClassPath, startPoints);
 						breakpoints = slicer.parsingBreakPoints(appClassPath);
 						System.out.println("finish slicing!");
 					} catch (Exception e1) {
@@ -208,7 +208,7 @@ public class StartDebugHandler extends AbstractHandler {
 		buffer.append("(");
 		for(String pType: paramTypes){
 			buffer.append(pType);
-			buffer.append(";");
+			//buffer.append(";");
 		}
 		
 		buffer.append(")");
