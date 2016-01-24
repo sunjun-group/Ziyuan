@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Name;
@@ -69,6 +70,7 @@ import com.ibm.wala.shrikeBT.ArrayLoadInstruction;
 import com.ibm.wala.shrikeBT.ArrayStoreInstruction;
 import com.ibm.wala.shrikeBT.GetInstruction;
 import com.ibm.wala.shrikeBT.IInstruction;
+import com.ibm.wala.shrikeBT.Instruction;
 import com.ibm.wala.shrikeBT.LoadInstruction;
 import com.ibm.wala.shrikeBT.PutInstruction;
 import com.ibm.wala.shrikeBT.ReturnInstruction;
@@ -149,7 +151,7 @@ public class MicrobatSlicer{
 		try {
 			Collection<Statement> computeBackwardSlice;
 			computeBackwardSlice = Slicer.computeBackwardSlice(stmtList.get(0), callGraph, pointerAnalysis, 
-					DataDependenceOptions.NO_BASE_PTRS, ControlDependenceOptions.NO_EXCEPTIONAL_EDGES);
+					DataDependenceOptions.FULL, ControlDependenceOptions.NO_EXCEPTIONAL_EDGES);
 			System.out.println("program is sliced!");
 			
 			
@@ -248,6 +250,11 @@ public class MicrobatSlicer{
 			int[][] map = (int[][])mapObject;
 			
 			int[] localPairs = map[pc];
+			
+			if(localPairs==null || 2*varIndex >= localPairs.length){
+				return null;
+			}
+			
 			int nameIndex = localPairs[2*varIndex];
 			int typeIndex = localPairs[2*varIndex+1];
 			
@@ -288,31 +295,46 @@ public class MicrobatSlicer{
 		
 //		String varName = null;
 		
+		
 		int pc = method.getBytecodeIndex(insIndex);
 		int lineNumber = method.getLineNumber(pc);
 		CompilationUnit cu = JavaUtil.findCompilationUnitInProject(point.getClassCanonicalName());
+		
+		if(lineNumber == 59 && point.getClassCanonicalName().contains("$1")){
+			
+			System.currentTimeMillis();
+		}
 		
 		if(ins instanceof GetInstruction){
 			GetInstruction gIns = (GetInstruction)ins;
 			String varName = gIns.getFieldName();
 			
-//			if(lineNumber == 27 && varName.equals("flag")){
-//				System.currentTimeMillis();
-//			}
-			
-			WrittenFieldRetriever wfRetriever = new WrittenFieldRetriever(cu, lineNumber, varName);
-			cu.accept(wfRetriever);
-			String fullFieldName = wfRetriever.fullFieldName;
-			
-			if(fullFieldName == null){
-				System.err.println("cannot find specific " + varName + " in line " + 
-						lineNumber + " of " + point.getClassCanonicalName());
+			/**
+			 * In this case, the field is actually a local variable declared outside of an inner class. 
+			 */
+			if(varName.contains("$")){
+				varName = varName.substring(varName.lastIndexOf("$")+1, varName.length());
+				String type = gIns.getFieldType();
+				type = SignatureUtils.signatureToName(type);
+				LocalVar var = new LocalVar(varName, type);
+				point.addReadVariable(var);
 			}
-			
-			String type = gIns.getFieldType();
-			type = SignatureUtils.signatureToName(type);
-			FieldVar var = new FieldVar(gIns.isStatic(), fullFieldName, type);
-			point.addReadVariable(var);
+			else{
+				ReadFieldRetriever rfRetriever = new ReadFieldRetriever(cu, lineNumber, varName);
+				cu.accept(rfRetriever);
+				String fullFieldName = rfRetriever.fullFieldName;
+				
+				if(fullFieldName == null){
+					System.err.println("When parsing written field name " + varName + ", I cannot find specific " + varName + " in line " + 
+							lineNumber + " of " + point.getClassCanonicalName());
+				}
+				else{
+					String type = gIns.getFieldType();
+					type = SignatureUtils.signatureToName(type);
+					FieldVar var = new FieldVar(gIns.isStatic(), fullFieldName, type);
+					point.addReadVariable(var);				
+				}
+			}
 		}
 		else if(ins instanceof PutInstruction){
 			PutInstruction pIns = (PutInstruction)ins;
@@ -320,29 +342,37 @@ public class MicrobatSlicer{
 			
 			System.currentTimeMillis();
 			
-			ReadFieldRetriever rfRetriever = new ReadFieldRetriever(cu, lineNumber, varName);
-			cu.accept(rfRetriever);
-			String fullFieldName = rfRetriever.fullFieldName;
+			WrittenFieldRetriever wfRetriever = new WrittenFieldRetriever(cu, lineNumber, varName);
+			cu.accept(wfRetriever);
+			String fullFieldName = wfRetriever.fullFieldName;
 			
 			System.currentTimeMillis();
 			
 			if(fullFieldName == null){
-				System.err.println("cannot find specific " + varName + " in line " + 
+				System.err.println("When parsing read field name " + varName + ", I cannot find specific " + varName + " in line " + 
 						lineNumber + " of " + point.getClassCanonicalName());
 			}
+			else{
+				String type = pIns.getFieldType();
+				type = SignatureUtils.signatureToName(type);
+				FieldVar var = new FieldVar(pIns.isStatic(), fullFieldName, type);
+				point.addWrittenVariable(var);
+				
+			}
 			
-			
-			String type = pIns.getFieldType();
-			type = SignatureUtils.signatureToName(type);
-			FieldVar var = new FieldVar(pIns.isStatic(), fullFieldName, type);
-			point.addWrittenVariable(var);
 		}
 		else if(ins instanceof LoadInstruction){
 			LoadInstruction lIns = (LoadInstruction)ins;
 			int varIndex = lIns.getVarIndex();
 			
 			LocalVar var = generateLocalVar(method, pc, varIndex);
-			point.addReadVariable(var);
+			if(var != null){
+				point.addReadVariable(var);				
+			}
+			else{
+//				method.getLocalVariableName(pc, varIndex);
+				System.currentTimeMillis();
+			}
 			
 		}
 		else if(ins instanceof StoreInstruction){
@@ -363,7 +393,7 @@ public class MicrobatSlicer{
 			}
 			
 			if(varName == null){
-				System.err.println("Cannot achieve variable name in line " + lineNumber);
+				System.err.println("When parsing written variable name, I cannot achieve variable name in line " + lineNumber + " of " + method.getDeclaringClass());
 			}
 			else{
 //				TypeInference typeInf = TypeInference.make(ir, false);
@@ -385,7 +415,7 @@ public class MicrobatSlicer{
 			String readArrayElement = raeRetriever.arrayElementName;
 			
 			if(readArrayElement == null){
-				System.err.println("cannot find specific read array element in line " + 
+				System.err.println("When parsing read array element, I cannot find specific read array element in line " + 
 						lineNumber + " of " + point.getClassCanonicalName());
 			}
 			else{
@@ -404,7 +434,7 @@ public class MicrobatSlicer{
 			String writtenArrayElement = waeRetriever.arrayElementName;
 			
 			if(writtenArrayElement == null){
-				System.err.println("cannot find specific written array element in line " + 
+				System.err.println("When parsing written array element, I cannot find specific written array element in line " + 
 						lineNumber + " of " + point.getClassCanonicalName());
 			}
 			else{
@@ -511,10 +541,10 @@ public class MicrobatSlicer{
 		
 	}
 
-	class ReadFieldRetriever extends ASTNodeRetriever{
+	class WrittenFieldRetriever extends ASTNodeRetriever{
 		String fullFieldName;
 		
-		public ReadFieldRetriever(CompilationUnit cu, int lineNumber, String varName){
+		public WrittenFieldRetriever(CompilationUnit cu, int lineNumber, String varName){
 			super(cu, lineNumber, varName);
 		}
 		
@@ -530,6 +560,10 @@ public class MicrobatSlicer{
 				else if(expr instanceof SimpleName){
 					SimpleName sName = (SimpleName)expr;
 					fullFieldName = sName.getFullyQualifiedName();
+				}
+				else if(expr instanceof FieldAccess){
+					FieldAccess access = (FieldAccess)expr;
+					fullFieldName = access.toString();
 				}
 				
 				return false;
@@ -547,10 +581,10 @@ public class MicrobatSlicer{
 		}
 	}
 	
-	class WrittenFieldRetriever extends ASTNodeRetriever{
+	class ReadFieldRetriever extends ASTNodeRetriever{
 		String fullFieldName;
 		
-		public WrittenFieldRetriever(CompilationUnit cu, int lineNumber, String varName){
+		public ReadFieldRetriever(CompilationUnit cu, int lineNumber, String varName){
 			super(cu, lineNumber, varName);
 		}
 		
@@ -578,6 +612,11 @@ public class MicrobatSlicer{
 			}
 			return false;
 		}
+		
+		public boolean visit(FieldAccess access){
+			fullFieldName = access.toString();
+			return false;
+		}
 	}
 
 	private String getClassCanonicalName(IMethod method) {
@@ -596,6 +635,11 @@ public class MicrobatSlicer{
 			
 			if(method.getDeclaringClass().getClassLoader().getReference().equals(ClassLoaderReference.Application)){
 				if(method instanceof ShrikeBTMethod){
+					
+					if(method.getName().toString().equals("run")){
+						System.currentTimeMillis();
+					}
+					
 					parseBreakPoints(bkpSet, node);				
 				}
 			}
@@ -628,8 +672,10 @@ public class MicrobatSlicer{
 						
 						IInstruction[] allInsts = method.getInstructions();
 						
-						for(int index=0; index<allInsts.length; index++){
-							int bcIndex = method.getBytecodeIndex(index);						
+						for(int k=0; k<allInsts.length; k++){
+							IInstruction inst = allInsts[k];
+							
+							int bcIndex = method.getBytecodeIndex(k);						
 							int insLinNumber = method.getLineNumber(bcIndex);
 							
 							if(insLinNumber == stmtLinNumber){
@@ -644,7 +690,7 @@ public class MicrobatSlicer{
 									bkpSet.put(key, point);
 								}
 								
-								appendReadWritenVariable(point, method, allInsts[index], index, stmt.getNode().getIR());
+								appendReadWritenVariable(point, method, allInsts[k], k, stmt.getNode().getIR());
 								
 							}
 						}
