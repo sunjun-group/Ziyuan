@@ -133,7 +133,7 @@ public class Trace {
 	public void constructDomianceRelation() {
 		for(String varID: this.stepVariableTable.keySet()){
 			
-			if(varID.equals("com.Main[12,18] i")){
+			if(varID.equals("17")){
 				System.currentTimeMillis();
 			}
 			
@@ -149,6 +149,7 @@ public class Trace {
 			Collections.sort(consumers, new TraceNodeComparator());
 			
 			int readingCursor = 0;
+			System.currentTimeMillis();
 			
 			for(int i=0; i<producers.size(); i++){
 				TraceNode prevWritingNode = producers.get(i);
@@ -168,6 +169,9 @@ public class Trace {
 							+ "to be smaller than producer's order for variable " + entry.getVarID() + ": " + entry.getAliasVariables());
 					
 					readingCursor++;
+					if(readingCursor >= consumers.size()){
+						break;
+					}
 					readingNode = consumers.get(readingCursor);
 					readingOrder = readingNode.getOrder();
 				}
