@@ -17,16 +17,30 @@ public class LocalVariableScopes {
 	}
 	
 	public LocalVariableScope findScope(String variableName, int appearedLineNum, String fullQualifiedTypeName){
+		LocalVariableScope candScope = null;
+		
+		if(appearedLineNum == 60){
+			System.currentTimeMillis();
+		}
+		
 		for(LocalVariableScope scope: variableScopes){
 			TypeDeclaration td = (TypeDeclaration) scope.getCompilationUnit().types().get(0);
 			String typeName = td.resolveBinding().getQualifiedName();
 			
 			if(typeName.equals(fullQualifiedTypeName) && scope.getVariableName().equals(variableName) &&
 					appearedLineNum >= scope.getStartLine() && appearedLineNum <= scope.getEndLine()){
-				return scope;
+				
+				if(candScope == null){
+					candScope = scope;					
+				}
+				else{
+					if(candScope.getStartLine()<=scope.getStartLine() && candScope.getEndLine()>=scope.getEndLine()){
+						candScope = scope;
+					}
+				}
 			}
 		}
 		
-		return null;
+		return candScope;
 	}
 }

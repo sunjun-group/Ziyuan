@@ -3,6 +3,7 @@ package microbat.codeanalysis.ast;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 public class LocalVariableScope {
@@ -30,6 +31,23 @@ public class LocalVariableScope {
 		buffer.append(" from line " + startLine + " to line " + endLine);
 		
 		return buffer.toString();
+	}
+	
+	public boolean equals(Object obj){
+		if(obj == null){
+			return false;
+		}
+		
+		if(obj instanceof LocalVariableScope){
+			LocalVariableScope thatScope = (LocalVariableScope)obj;
+			if(thatScope.getVariableName().equals(this.getVariableName()) && 
+					thatScope.getFullNameOfContainingClass().equals(this.getFullNameOfContainingClass()) &&
+					thatScope.getStartLine()==this.getStartLine() &&
+					thatScope.getEndLine()==this.getEndLine()){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public int getStartLine(){
@@ -60,6 +78,15 @@ public class LocalVariableScope {
 	
 	public CompilationUnit getCompilationUnit(){
 		return (CompilationUnit)scope.getRoot();
+	}
+	
+	public String getFullNameOfContainingClass(){
+		CompilationUnit cu = getCompilationUnit();
+		PackageDeclaration pack = cu.getPackage();
+		TypeDeclaration type = (TypeDeclaration) cu.types().get(0);
+		
+		String fullName = pack.getName().getFullyQualifiedName() + type.getName().getIdentifier();
+		return fullName;
 	}
 	
 	public String getContainingClass(){

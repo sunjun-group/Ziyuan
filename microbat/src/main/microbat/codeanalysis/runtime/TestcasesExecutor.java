@@ -48,6 +48,7 @@ import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
@@ -540,12 +541,16 @@ public class TestcasesExecutor{
 	private String generateVarID(StackFrame frame, Variable var, TraceNode node){
 		String varName = var.getName();
 		
-		if(varName.contains("System.out")){
+		if(varName.equals("val$a")){
 			System.currentTimeMillis();
 		}
 		
 		try{
 			ExpressionValue expValue = retriveExpression(frame, varName, node.getBreakPoint());
+			
+			//TODO
+//			Field f = frame.thisObject().referenceType().allFields().get(0);
+//			frame.thisObject().getValue(f);
 			if(expValue != null){
 				Value value = expValue.value;
 				
@@ -558,7 +563,7 @@ public class TestcasesExecutor{
 				else{
 					if(var instanceof LocalVar){
 						LocalVariableScope scope = Settings.localVariableScopes.findScope(var.getName(), 
-								node.getBreakPoint().getLineNo(), node.getBreakPoint().getClassCanonicalName());
+								node.getBreakPoint().getLineNo(), node.getBreakPoint().getDeclaringCompilationUnitName());
 						String varID;
 						if(scope != null){
 							varID = node.getBreakPoint().getClassCanonicalName() + "[" + scope.getStartLine() + "," 

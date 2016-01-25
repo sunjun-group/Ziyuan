@@ -178,110 +178,15 @@ public class BreakPoint extends ClassLocation {
 		this.isReturnStatement = isReturnStatement;
 	}
 	
+	public String getDeclaringCompilationUnitName(){
+		String className = super.getClassCanonicalName();
+		if(className.contains("$")){
+			className = className.substring(0, className.indexOf("$"));
+		}
+		return className;
+	}
 	
-//	@Deprecated
-//	public static class Var {
-//		private final String parentName;
-//		private final String fullName;
-//		private final VarScope scope;
-//		private String id;
-//		
-//		public Var(String name, String fullName, VarScope scope) {
-//			this.parentName = name;
-//			this.fullName = fullName;
-//			this.scope = scope;
-//		}
-//		
-//		public Var(String name, String fullName) {
-//			this(name, fullName, VarScope.UNDEFINED);
-//		}
-//
-//		public Var(String name) {
-//			this.parentName = name;
-//			this.fullName = name;
-//			scope = VarScope.UNDEFINED;
-//		}
-//
-//		public String getParentName() {
-//			return parentName;
-//		}
-//		
-//		public String getFullName() {
-//			return fullName;
-//		}
-//
-//		public String getSimpleName() {
-//			int l = fullName.lastIndexOf(Constants.DOT);
-//			return fullName.substring(l + 1);
-//		}
-//		
-//		public String getId() {
-//			if (id == null) {
-//				id = genId(scope, fullName);
-//			}
-//			return id;
-//		}
-//		
-//		public static String genId(VarScope scope, String name) {
-//			return scope.getDisplayName() + Constants.DOT + name;
-//		}
-//
-//		public VarScope getScope() {
-//			return scope;
-//		}
-//
-//		@Override
-//		public String toString() {
-//			return "Variable [name=" + parentName + ", fullName=" + fullName
-//					+ ", scope=" + scope + "]";
-//		}
-//
-//		@Override
-//		public int hashCode() {
-//			final int prime = 31;
-//			int result = 1;
-//			result = prime * result
-//					+ ((fullName == null) ? 0 : fullName.hashCode());
-//			result = prime * result + ((scope == null) ? 0 : scope.hashCode());
-//			return result;
-//		}
-//
-//		@Override
-//		public boolean equals(Object obj) {
-//			if (this == obj)
-//				return true;
-//			if (obj == null)
-//				return false;
-//			if (getClass() != obj.getClass())
-//				return false;
-//			Var other = (Var) obj;
-//			if (fullName == null) {
-//				if (other.fullName != null)
-//					return false;
-//			} else if (!fullName.equals(other.fullName))
-//				return false;
-//			if (scope != other.scope)
-//				return false;
-//			return true;
-//		}
-//
-//
-//
-//		public static enum VarScope {
-//			THIS ("this"),
-//			UNDEFINED (""),
-//			STATIC ("static");
-//			
-//			private String displayName;
-//			
-//			private VarScope(String displayName) {
-//				this.displayName = displayName;
-//			}
-//			
-//			public String getDisplayName() {
-//				return displayName;
-//			}
-//		}
-//	}
-	
+	public String getClassCanonicalName(){
+		return super.getClassCanonicalName();
+	}
 }

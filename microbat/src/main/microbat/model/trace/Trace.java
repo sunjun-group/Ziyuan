@@ -79,7 +79,7 @@ public class Trace {
 		for(int i=observingIndex-1; i>=0; i--){
 			TraceNode node = exectionList.get(i);
 			BreakPoint breakPoint = node.getBreakPoint();
-			String className = breakPoint.getClassCanonicalName();
+			String className = breakPoint.getDeclaringCompilationUnitName();
 			int lineNumber = breakPoint.getLineNo();
 			
 			String exp = combineTraceNodeExpression(className, lineNumber);
@@ -101,7 +101,7 @@ public class Trace {
 		for(int i=observingIndex+1; i<exectionList.size(); i++){
 			TraceNode node = exectionList.get(i);
 			BreakPoint breakPoint = node.getBreakPoint();
-			String className = breakPoint.getClassCanonicalName();
+			String className = breakPoint.getDeclaringCompilationUnitName();
 			int lineNumber = breakPoint.getLineNo();
 			
 			String exp = combineTraceNodeExpression(className, lineNumber);

@@ -298,58 +298,58 @@ public class MicrobatSlicer{
 		
 		int pc = method.getBytecodeIndex(insIndex);
 		int lineNumber = method.getLineNumber(pc);
+		
 		CompilationUnit cu = JavaUtil.findCompilationUnitInProject(point.getClassCanonicalName());
 		
 		if(lineNumber == 59 && point.getClassCanonicalName().contains("$1")){
-			
 			System.currentTimeMillis();
 		}
 		
 		if(ins instanceof GetInstruction){
 			GetInstruction gIns = (GetInstruction)ins;
 			String varName = gIns.getFieldName();
-			
+			String fullFieldName;
 			/**
 			 * In this case, the field is actually a local variable declared outside of an inner class. 
 			 */
 			if(varName.contains("$")){
-				varName = varName.substring(varName.lastIndexOf("$")+1, varName.length());
-				String type = gIns.getFieldType();
-				type = SignatureUtils.signatureToName(type);
-				LocalVar var = new LocalVar(varName, type);
-				point.addReadVariable(var);
+				fullFieldName = varName;
 			}
 			else{
 				ReadFieldRetriever rfRetriever = new ReadFieldRetriever(cu, lineNumber, varName);
 				cu.accept(rfRetriever);
-				String fullFieldName = rfRetriever.fullFieldName;
-				
-				if(fullFieldName == null){
-					System.err.println("When parsing written field name " + varName + ", I cannot find specific " + varName + " in line " + 
-							lineNumber + " of " + point.getClassCanonicalName());
-				}
-				else{
-					String type = gIns.getFieldType();
-					type = SignatureUtils.signatureToName(type);
-					FieldVar var = new FieldVar(gIns.isStatic(), fullFieldName, type);
-					point.addReadVariable(var);				
-				}
+				fullFieldName = rfRetriever.fullFieldName;				
+			}
+			
+			if(fullFieldName == null){
+				System.err.println("When parsing written field name " + varName + ", I cannot find specific " + varName + " in line " + 
+						lineNumber + " of " + point.getClassCanonicalName());
+			}
+			else{
+				String type = gIns.getFieldType();
+				type = SignatureUtils.signatureToName(type);
+				FieldVar var = new FieldVar(gIns.isStatic(), fullFieldName, type);
+				point.addReadVariable(var);				
 			}
 		}
 		else if(ins instanceof PutInstruction){
 			PutInstruction pIns = (PutInstruction)ins;
 			String varName = pIns.getFieldName();
-			
-			System.currentTimeMillis();
-			
-			WrittenFieldRetriever wfRetriever = new WrittenFieldRetriever(cu, lineNumber, varName);
-			cu.accept(wfRetriever);
-			String fullFieldName = wfRetriever.fullFieldName;
-			
-			System.currentTimeMillis();
+			String fullFieldName;
+			/**
+			 * In this case, the field is actually a local variable declared outside of an inner class. 
+			 */
+			if(varName.contains("$")){
+				fullFieldName = varName;
+			}
+			else{
+				WrittenFieldRetriever wfRetriever = new WrittenFieldRetriever(cu, lineNumber, varName);
+				cu.accept(wfRetriever);
+				fullFieldName = wfRetriever.fullFieldName;				
+			}
 			
 			if(fullFieldName == null){
-				System.err.println("When parsing read field name " + varName + ", I cannot find specific " + varName + " in line " + 
+				System.err.println("When parsing written field name " + varName + ", I cannot find specific " + varName + " in line " + 
 						lineNumber + " of " + point.getClassCanonicalName());
 			}
 			else{
@@ -366,7 +366,11 @@ public class MicrobatSlicer{
 			int varIndex = lIns.getVarIndex();
 			
 			LocalVar var = generateLocalVar(method, pc, varIndex);
+			
 			if(var != null){
+				if(var.getName().equals("a")){
+					System.currentTimeMillis();
+				}
 				point.addReadVariable(var);				
 			}
 			else{
@@ -621,8 +625,13 @@ public class MicrobatSlicer{
 
 	private String getClassCanonicalName(IMethod method) {
 		TypeName clazz = method.getDeclaringClass().getName();
-		return ClassUtils.getCanonicalName(clazz.getPackage().toString()
+		String className = ClassUtils.getCanonicalName(clazz.getPackage().toString()
 				.replace("/", "."), clazz.getClassName().toString());
+		
+//		if(className.contains("$")){
+//			className = className.substring(0, className.indexOf("$"));			
+//		}
+		return className;
 	}
 	
 	private List<BreakPoint> anlyzeBreakPointsWithDataDependencies(CallGraph graph){
@@ -673,8 +682,6 @@ public class MicrobatSlicer{
 						IInstruction[] allInsts = method.getInstructions();
 						
 						for(int k=0; k<allInsts.length; k++){
-							IInstruction inst = allInsts[k];
-							
 							int bcIndex = method.getBytecodeIndex(k);						
 							int insLinNumber = method.getLineNumber(bcIndex);
 							

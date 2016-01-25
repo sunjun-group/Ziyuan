@@ -48,9 +48,11 @@ public class VariableScopeParser {
 				ASTNode scope = findLeastContainingBlock(name);
 				if(scope != null){
 					LocalVariableScope lvs = new LocalVariableScope(name.getIdentifier(), scope);
-					variableScopeList.add(lvs);
+					if(!variableScopeList.contains(lvs)){
+						variableScopeList.add(lvs);						
+					}
 				}
-				return false;
+				return true;
 			}
 			
 			public boolean visit(SingleVariableDeclaration svd){
@@ -58,7 +60,9 @@ public class VariableScopeParser {
 				ASTNode scope = findLeastContainingBlock(name);
 				if(scope != null){
 					LocalVariableScope lvs = new LocalVariableScope(name.getIdentifier(), scope);
-					variableScopeList.add(lvs);					
+					if(!variableScopeList.contains(lvs)){
+						variableScopeList.add(lvs);						
+					}			
 				}
 				
 				return false;

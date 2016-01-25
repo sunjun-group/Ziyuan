@@ -164,7 +164,7 @@ public class DebugFeedbackView extends ViewPart {
 			ev = (ExecValue) ((GraphDiff)element).getChangedNode();
 		}
 		
-		InterestedVariable iv = new InterestedVariable(point.getClassCanonicalName(), 
+		InterestedVariable iv = new InterestedVariable(point.getDeclaringCompilationUnitName(), 
 				point.getLineNo(), ev);
 		
 		if(Settings.interestedVariables.contains(iv)){
@@ -195,7 +195,7 @@ public class DebugFeedbackView extends ViewPart {
 				}
 				
 				BreakPoint point = node.getBreakPoint();
-				InterestedVariable iVar = new InterestedVariable(point.getClassCanonicalName(), 
+				InterestedVariable iVar = new InterestedVariable(point.getDeclaringCompilationUnitName(), 
 						point.getLineNo(), value);
 				
 				if(!Settings.interestedVariables.contains(iVar)){
@@ -652,7 +652,7 @@ public class DebugFeedbackView extends ViewPart {
 			
 			if(node != null){
 				BreakPoint point = node.getBreakPoint();
-				InterestedVariable iVar = new InterestedVariable(point.getClassCanonicalName(), 
+				InterestedVariable iVar = new InterestedVariable(point.getDeclaringCompilationUnitName(), 
 						point.getLineNo(), value);
 				
 				if(iVar.getVariable().getVarName().contains("flag")){
