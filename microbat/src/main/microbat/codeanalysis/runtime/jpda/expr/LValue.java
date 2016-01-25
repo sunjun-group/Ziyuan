@@ -39,6 +39,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import microbat.util.JavaUtil;
+
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.IPackageBinding;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.SimpleName;
+
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ArrayType;
@@ -943,19 +952,25 @@ abstract class LValue {
                 }
                 // check for class name
                 while (izer.hasMoreTokens()) {
-                    List<ReferenceType> classes = vm.classesByName(first);
-                    if (classes.size() > 0) {
-                        if (classes.size() > 1) {
-                            throw new ParseException("More than one class named: " +
-                                                     first);
-                        } else {
-                            ReferenceType refType = classes.get(0);
-                            LValue lval = new LValueStaticMember(refType,
-                                                            izer.nextToken(), thread);
-                            return nFields(lval, izer, thread);
-                        }
-                    }
-                    first = first + '.' + izer.nextToken();
+                	String qualifiedType = findQualifedType(first, name, izer);
+                	
+                	if(qualifiedType != null){
+                		List<ReferenceType> classes = vm.classesByName(qualifiedType);
+                		if (classes.size() > 0) {
+                			if (classes.size() > 1) {
+                				throw new ParseException("More than one class named: " +
+                						first);
+                			} else {
+                				ReferenceType refType = classes.get(0);
+                				LValue lval = new LValueStaticMember(refType,
+                						izer.nextToken(), thread);
+                				return nFields(lval, izer, thread);
+                			}
+                		}
+                	}
+                	
+                	
+            		//first = first + '.' + izer.nextToken();
                 }
             } catch (IncompatibleThreadStateException exc) {
                 throw new ParseException("Thread not suspended");
@@ -963,8 +978,47 @@ abstract class LValue {
         }
         throw new ParseException("Name unknown: " + name);
     }
+    
+    static String findQualifedType(String first, String originalName, StringTokenizer izer){
+    	CompilationUnit cu = ExpressionParser.declaringClass;
+    	NameFinder finder = new NameFinder(cu, first);
+    	cu.accept(finder);
+    	
+    	String qualifiedType = null;
+    	if(finder.type.equals(NameFinder.TYPE)){
+    		qualifiedType = finder.qualifiedTypeName;	
+    	}
+    	else if(finder.type.equals(NameFinder.PACKAGE)){
+    		QualifiedTypeNameFinder qFinder = new QualifiedTypeNameFinder(cu, originalName);
+    		cu.accept(qFinder);
+    		qualifiedType = qFinder.qualifiedTypeName;
+    		
+    		System.currentTimeMillis();
+    		
+    		if(qualifiedType != null){
+    			String pack = first + ".";
+    			while(true){
+    				String e = izer.nextToken();
+    				pack += e;
+    				
+    				if(pack.equals(qualifiedType)){
+    					break;
+    				}
+    				else{
+    					pack += ".";
+    				}
+    				
+    				if(!izer.hasMoreTokens()){
+    					break;
+    				}
+    			}
+    		}
+    	}
+    	
+    	return qualifiedType;
+    }
 
-    static String stringValue(LValue lval, ExpressionParser.GetFrame frameGetter
+	static String stringValue(LValue lval, ExpressionParser.GetFrame frameGetter
                               ) throws ParseException {
         Value val = lval.getMassagedValue(frameGetter);
         if (val == null) {

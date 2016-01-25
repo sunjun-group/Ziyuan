@@ -31,8 +31,10 @@ import microbat.model.variable.LocalVar;
 import microbat.model.variable.Variable;
 import microbat.model.variable.VirtualVar;
 import microbat.util.BreakpointUtils;
+import microbat.util.JavaUtil;
 import microbat.util.Settings;
 
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -543,7 +545,7 @@ public class TestcasesExecutor{
 		}
 		
 		try{
-			ExpressionValue expValue = retriveExpression(frame, varName);
+			ExpressionValue expValue = retriveExpression(frame, varName, node.getBreakPoint());
 			if(expValue != null){
 				Value value = expValue.value;
 				
@@ -585,7 +587,7 @@ public class TestcasesExecutor{
 						}
 						else if(var instanceof ArrayElementVar){
 							String index = var.getSimpleName();
-							ExpressionValue indexValue = retriveExpression(frame, index);
+							ExpressionValue indexValue = retriveExpression(frame, index, node.getBreakPoint());
 							String indexValueString = indexValue.value.toString();
 							String varID = String.valueOf(objRef.uniqueID()) + "[" + indexValueString + "]";
 							
@@ -699,7 +701,7 @@ public class TestcasesExecutor{
 	}
 	
 	
-	private ExpressionValue retriveExpression(final StackFrame frame, String expression){
+	private ExpressionValue retriveExpression(final StackFrame frame, String expression, BreakPoint point){
 		ExpressionParser.GetFrame frameGetter = new ExpressionParser.GetFrame() {
             @Override
             public StackFrame get()
@@ -713,7 +715,10 @@ public class TestcasesExecutor{
         ExpressionValue eValue = null;
         
         try {
-        	ExpressionParser.parentValue = null;
+        	ExpressionParser.clear();
+        	
+        	CompilationUnit cu = JavaUtil.findCompilationUnitInProject(point.getClassCanonicalName());
+        	ExpressionParser.setParameters(cu, point.getLineNo());
         	Value val = ExpressionParser.evaluate(expression, frame.virtualMachine(), frameGetter);
 			
 			eValue = new ExpressionValue(val, ExpressionParser.parentValue);
