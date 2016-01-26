@@ -688,53 +688,39 @@ public class MicrobatSlicer{
 	}
 
 	private void parseBreakPoints(Map<String, BreakPoint> bkpSet, CGNode node) {
-		IR ir = node.getIR();
-		SSACFG cfg = ir.getControlFlowGraph();
-		SSAInstruction[] instructions = ir.getInstructions();
-		
-		for (int i = 0; i <= cfg.getMaxNumber(); i++) {
-			BasicBlock bb = cfg.getNode(i);
-			int start = bb.getFirstInstructionIndex();
-			int end = bb.getLastInstructionIndex();
-			for (int j = start; j <= end; j++) {
-				if (instructions[j] != null) {
-					try {
-						NormalStatement stmt = new NormalStatement(node, j);
-						StatementWithInstructionIndex stwI = (StatementWithInstructionIndex) stmt;
-						
-						ShrikeCTMethod method = (ShrikeCTMethod) stmt.getNode().getMethod();
+		ShrikeCTMethod method = (ShrikeCTMethod) node.getMethod();
+		try {
+			IInstruction[] allInsts = method.getInstructions();
+			
+			for(int k=0; k<allInsts.length; k++){
+				
+				NormalStatement stmt = new NormalStatement(node, k);
+				StatementWithInstructionIndex stwI = (StatementWithInstructionIndex) stmt;
 
-						int stmtLinNumber = getStatementLineNumber(method, stwI);
-						
-						IInstruction[] allInsts = method.getInstructions();
-						
-						for(int k=0; k<allInsts.length; k++){
-							int bcIndex = method.getBytecodeIndex(k);						
-							int insLinNumber = method.getLineNumber(bcIndex);
-							
-							if(insLinNumber == stmtLinNumber){
-								
-								String className = getClassCanonicalName(method);
-								String methodSig = method.getSignature();
-								String key = className + "." + methodSig + "(line " + stmtLinNumber + ")";
-								
-								BreakPoint point = bkpSet.get(key);
-								if(point == null){
-									point = new BreakPoint(className, methodSig, stmtLinNumber);
-									bkpSet.put(key, point);
-								}
-								
-								appendReadWritenVariable(point, method, allInsts[k], k, stmt.getNode().getIR());
-								
-							}
-						}
-						
-						
-					} catch (InvalidClassFileException e) {
-						e.printStackTrace();
+				int stmtLinNumber = getStatementLineNumber(method, stwI);
+				
+				int bcIndex = method.getBytecodeIndex(k);						
+				int insLinNumber = method.getLineNumber(bcIndex);
+				
+				if(insLinNumber == stmtLinNumber){
+					
+					String className = getClassCanonicalName(method);
+					String methodSig = method.getSignature();
+					String key = className + "." + methodSig + "(line " + stmtLinNumber + ")";
+					
+					BreakPoint point = bkpSet.get(key);
+					if(point == null){
+						point = new BreakPoint(className, methodSig, stmtLinNumber);
+						bkpSet.put(key, point);
 					}
+					
+					appendReadWritenVariable(point, method, allInsts[k], k, stmt.getNode().getIR());
 				}
 			}
+			
+			
+		} catch (InvalidClassFileException e) {
+			e.printStackTrace();
 		}
 	}
 
