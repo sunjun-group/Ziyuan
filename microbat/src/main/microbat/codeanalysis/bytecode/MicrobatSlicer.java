@@ -98,8 +98,11 @@ import com.ibm.wala.util.strings.Atom;
  */
 public class MicrobatSlicer{
 	private static final String JAVA_REGRESSION_EXCLUSIONS = "/Java60RegressionExclusions.txt";
+	private List<BreakPoint> executingStatements = new ArrayList<>();
 	
-	public MicrobatSlicer(){}
+	public MicrobatSlicer(List<BreakPoint> executingStatements){
+		this.executingStatements = executingStatements;
+	}
 	
 	public List<BreakPoint> parsingBreakPoints(AppJavaClassPath appClassPath) throws Exception {
 		AnalysisScope scope = makeJ2SEAnalysisScope(appClassPath);
@@ -645,11 +648,16 @@ public class MicrobatSlicer{
 			if(method.getDeclaringClass().getClassLoader().getReference().equals(ClassLoaderReference.Application)){
 				if(method instanceof ShrikeBTMethod){
 					
-					if(method.getName().toString().equals("run")){
-						System.currentTimeMillis();
+					String classSignature = method.getDeclaringClass().getReference().getName().toString();
+					
+					if(classSignature.contains("$")){
+						classSignature = classSignature.substring(0, classSignature.indexOf("$"));
 					}
 					
-					parseBreakPoints(bkpSet, node);				
+					String className = SignatureUtils.signatureToName(classSignature);
+					if(isClassNameContainedInExecution(className)){
+						parseBreakPoints(bkpSet, node);				
+					}
 				}
 			}
 			
@@ -658,6 +666,25 @@ public class MicrobatSlicer{
 		ArrayList<BreakPoint> result = new ArrayList<>(bkpSet.values());
 		
 		return result;
+	}
+	
+	private boolean isClassNameContainedInExecution(String className){
+		for(BreakPoint bp: this.executingStatements){
+			if(bp.getClassCanonicalName().equals(className)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean isThePositionContainedInExecution(String className, int lineNum){
+		for(BreakPoint bp: this.executingStatements){
+			if(bp.getClassCanonicalName().equals(className) &&
+					bp.getLineNo() == lineNum){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void parseBreakPoints(Map<String, BreakPoint> bkpSet, CGNode node) {

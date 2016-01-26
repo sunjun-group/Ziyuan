@@ -31,6 +31,11 @@ public class BreakPoint extends ClassLocation {
 	
 	private boolean isReturnStatement;
 	
+	public BreakPoint(String className, int linNum){
+		super(className, null, linNum);
+		vars = new ArrayList<Variable>();
+	}
+	
 	public BreakPoint(String className, String methodSign, int lineNo) {
 		super(className, methodSign, lineNo);
 		vars = new ArrayList<Variable>();

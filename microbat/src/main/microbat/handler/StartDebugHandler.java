@@ -9,6 +9,7 @@ import microbat.Activator;
 import microbat.codeanalysis.ast.LocalVariableScope;
 import microbat.codeanalysis.ast.VariableScopeParser;
 import microbat.codeanalysis.bytecode.MicrobatSlicer;
+import microbat.codeanalysis.runtime.ExecutionStatementCollector;
 import microbat.codeanalysis.runtime.TestcasesExecutor;
 import microbat.model.BreakPoint;
 import microbat.model.trace.Trace;
@@ -82,7 +83,10 @@ public class StartDebugHandler extends AbstractHandler {
 					BreakPoint ap = new BreakPoint(classQulifiedName, methodSign, lineNumber);
 					List<BreakPoint> startPoints = Arrays.asList(ap);
 					
-					MicrobatSlicer slicer = new MicrobatSlicer();
+					ExecutionStatementCollector collector = new ExecutionStatementCollector();
+					List<BreakPoint> executingStatements = collector.collectBreakPoints(appClassPath);
+					
+					MicrobatSlicer slicer = new MicrobatSlicer(executingStatements);
 					List<BreakPoint> breakpoints = null;
 					try {
 						System.out.println("start slicing...");
