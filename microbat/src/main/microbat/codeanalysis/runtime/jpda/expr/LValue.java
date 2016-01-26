@@ -956,6 +956,7 @@ abstract class LValue {
                 	
                 	if(qualifiedType != null){
                 		List<ReferenceType> classes = vm.classesByName(qualifiedType);
+                		
                 		if (classes.size() > 0) {
                 			if (classes.size() > 1) {
                 				throw new ParseException("More than one class named: " +
@@ -966,6 +967,10 @@ abstract class LValue {
                 						izer.nextToken(), thread);
                 				return nFields(lval, izer, thread);
                 			}
+                		}
+                		else{
+                			System.err.println("When parsing expression " + name + ", I cannot analyze the qualifedType " + qualifiedType);
+                			break;
                 		}
                 	}
                 	

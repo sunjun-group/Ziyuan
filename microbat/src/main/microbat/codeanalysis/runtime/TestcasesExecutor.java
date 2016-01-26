@@ -66,6 +66,7 @@ import com.sun.jdi.event.ClassPrepareEvent;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.event.EventSet;
+import com.sun.jdi.event.ExceptionEvent;
 import com.sun.jdi.event.MethodEntryEvent;
 import com.sun.jdi.event.MethodExitEvent;
 import com.sun.jdi.event.StepEvent;
@@ -75,6 +76,7 @@ import com.sun.jdi.event.VMStartEvent;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
+import com.sun.jdi.request.ExceptionRequest;
 import com.sun.jdi.request.MethodEntryRequest;
 import com.sun.jdi.request.MethodExitRequest;
 import com.sun.jdi.request.StepRequest;
@@ -219,14 +221,9 @@ public class TestcasesExecutor{
 					/**
 					 * add step event
 					 */
-					StepRequest sr = erm.createStepRequest(((VMStartEvent) event).thread(), 
-							StepRequest.STEP_LINE, StepRequest.STEP_INTO);
-					sr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-					for(String ex: excludes){
-						sr.addClassExclusionFilter(ex);
-					}
-					sr.enable();
+					addStepWatch(erm, event);
 					addMethodWatch(erm);
+					addExceptionWatch(erm);					
 				}
 				if (event instanceof VMDeathEvent
 						|| event instanceof VMDisconnectEvent) {
@@ -237,7 +234,8 @@ public class TestcasesExecutor{
 					ClassPrepareEvent classPrepEvent = (ClassPrepareEvent) event;
 					/** add breakpoint request */
 					ReferenceType refType = classPrepEvent.referenceType();
-					addBreakpointWatch(vm, refType, locBrpMap);
+					
+					setBreakpoint(vm, refType, locBrpMap);
 				} else if (event instanceof BreakpointEvent) {
 				} else if(event instanceof StepEvent){
 					Location loc = ((StepEvent) event).location();
@@ -331,12 +329,39 @@ public class TestcasesExecutor{
 							this.methodStack.pop();					
 						}						
 					}
+				} else if(event instanceof ExceptionEvent){
+					ExceptionEvent ee = (ExceptionEvent)event;
+					ee.location();
 					
 					
+					System.currentTimeMillis();
 				}
 			}
 			eventSet.resume();
 		}
+	}
+
+	private void addExceptionWatch(EventRequestManager erm) {
+		
+		ExceptionRequest request = erm.createExceptionRequest(null, true, true);
+		request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+		for(String ex: excludes){
+			request.addClassExclusionFilter(ex);
+		}
+		
+		request.enable();
+		
+		
+	}
+
+	private void addStepWatch(EventRequestManager erm, Event event) {
+		StepRequest sr = erm.createStepRequest(((VMStartEvent) event).thread(), 
+				StepRequest.STEP_LINE, StepRequest.STEP_INTO);
+		sr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+		for(String ex: excludes){
+			sr.addClassExclusionFilter(ex);
+		}
+		sr.enable();
 	}
 
 	/**
@@ -468,7 +493,7 @@ public class TestcasesExecutor{
 		classPrepareRequest.setEnabled(true);
 	}
 	
-	private void addBreakpointWatch(VirtualMachine vm, ReferenceType refType,
+	private void setBreakpoint(VirtualMachine vm, ReferenceType refType,
 			Map<String, BreakPoint> locBrpMap) {
 		List<BreakPoint> brkpList = CollectionUtils.initIfEmpty(brkpsMap.get(refType.name()));
 		for (BreakPoint brkp : brkpList) {
