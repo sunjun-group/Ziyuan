@@ -1,13 +1,17 @@
 package microbat.codeanalysis.runtime;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.jdi.internal.VirtualMachineManagerImpl;
 
 import sav.strategies.vm.BootstrapPlugin;
 import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.VirtualMachineManager;
 import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import com.sun.jdi.connect.LaunchingConnector;
@@ -25,11 +29,15 @@ public class VMStarter {
 	
 	public VirtualMachine start(){
 		VirtualMachine vm = null;
-		LaunchingConnector connector = getCommandLineConnector();
 		
+		VirtualMachineManager manager = BootstrapPlugin.virtualMachineManager();
+		
+//		LaunchingConnector connector = getCommandLineConnector();
+		SocketLanchingConnector0 connector = new SocketLanchingConnector0((VirtualMachineManagerImpl)manager);
 		Map<String, Connector.Argument> arguments = connectorArguments(connector, configuration);
         try {
-        	vm = connector.launch(arguments);
+        	File workDir = new File(configuration.getWorkingDirectory());
+        	vm = connector.launch(arguments, workDir);
         	return vm;
         } catch (IOException exc) {
             throw new Error("Unable to launch target VM: " + exc);
@@ -43,7 +51,7 @@ public class VMStarter {
         
 	}
 	
-	private LaunchingConnector getCommandLineConnector() {
+	protected LaunchingConnector getCommandLineConnector() {
 		List<Connector> conns = BootstrapPlugin.virtualMachineManager().allConnectors();
 		for (Connector conn : conns) {
 			if (conn.name().equals("com.sun.jdi.CommandLineLaunch")){

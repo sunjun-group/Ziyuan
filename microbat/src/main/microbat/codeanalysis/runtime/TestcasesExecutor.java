@@ -126,6 +126,7 @@ public class TestcasesExecutor{
 		VMConfiguration vmConfig = new VMConfiguration(appClassPath);
 		this.config = vmConfig;
 		this.config.setLaunchClass(Settings.lanuchClass);
+		this.config.setWorkingDirectory(appClassPath.getWorkingDirectory());
 	}
 	
 	
@@ -204,7 +205,7 @@ public class TestcasesExecutor{
 			}
 			
 			if(trace.getLastestNode() != null){
-				if(trace.getLastestNode().getOrder() == 25){
+				if(trace.getLastestNode().getOrder() == 21){
 					System.currentTimeMillis();
 				}
 			}

@@ -34,6 +34,7 @@ public class ExecutionStatementCollector {
 		
 		VMConfiguration vmConfig = new VMConfiguration(appClassPath);
 		vmConfig.setLaunchClass(Settings.lanuchClass);
+		vmConfig.setWorkingDirectory(appClassPath.getWorkingDirectory());
 		
 		VirtualMachine vm = new VMStarter(vmConfig).start();
 		
@@ -69,6 +70,7 @@ public class ExecutionStatementCollector {
 						int lineNumber = location.lineNumber();
 						
 						BreakPoint breakPoint = new BreakPoint(path, lineNumber);
+						System.out.println(breakPoint);
 						if(!pointList.contains(breakPoint)){
 							pointList.add(breakPoint);							
 						}

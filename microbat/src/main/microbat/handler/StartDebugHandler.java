@@ -60,9 +60,9 @@ public class StartDebugHandler extends AbstractHandler {
 		
 		String binPath = projectPath + File.separator + "bin"; 
 		AppJavaClassPath appClassPath = initAppClasspath();
-		appClassPath.addClasspath(binPath);
 		
-		appClassPath.addClasspath(projectPath);
+		appClassPath.addClasspath(binPath);
+		appClassPath.setWorkingDirectory(projectPath);
 		
 		return appClassPath;
 		

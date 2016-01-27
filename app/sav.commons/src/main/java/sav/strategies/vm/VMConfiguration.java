@@ -28,6 +28,7 @@ public class VMConfiguration {
 	private String javaHome;
 	private List<String> classpaths;
 	private String launchClass;
+	private String workingDirectory;
 	private boolean debug = false;
 	private int port = INVALID_PORT;
 	private boolean enableAssertion = true;
@@ -162,5 +163,13 @@ public class VMConfiguration {
 
 	public void resetPort() {
 		port = INVALID_PORT;
+	}
+
+	public String getWorkingDirectory() {
+		return workingDirectory;
+	}
+
+	public void setWorkingDirectory(String workingDirectory) {
+		this.workingDirectory = workingDirectory;
 	}
 }

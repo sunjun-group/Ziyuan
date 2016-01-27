@@ -22,6 +22,7 @@ import sav.common.core.utils.StringUtils;
  */
 public class AppJavaClassPath {
 	private String javaHome;
+	private String workingDirectory;
 	private Set<String> classpaths;
 	private String src;
 	private String target;
@@ -83,5 +84,13 @@ public class AppJavaClassPath {
 	
 	public SystemPreferences getPreferences() {
 		return preferences;
+	}
+
+	public String getWorkingDirectory() {
+		return workingDirectory;
+	}
+
+	public void setWorkingDirectory(String workingDirectory) {
+		this.workingDirectory = workingDirectory;
 	}
 }
