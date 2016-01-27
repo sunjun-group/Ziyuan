@@ -41,7 +41,9 @@ public class TraceNode{
 	
 	private List<TraceNode> invocationChildren = new ArrayList<>();
 	private TraceNode invocationParent;
-
+	
+	private boolean isException;
+	
 	public TraceNode(BreakPoint breakPoint, BreakPointValue programState, int order) {
 		super();
 		this.breakPoint = breakPoint;
@@ -270,5 +272,13 @@ public class TraceNode{
 		else{
 			varIDs.addAll(variables);
 		}
+	}
+
+	public boolean isException() {
+		return isException;
+	}
+
+	public void setException(boolean isException) {
+		this.isException = isException;
 	}
 }

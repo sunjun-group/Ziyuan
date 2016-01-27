@@ -233,6 +233,17 @@ public class Trace {
 	public Map<String, StepVariableRelationEntry> getStepVariableTable() {
 		return stepVariableTable;
 	}
+
+	public TraceNode findLastestExceptionNode() {
+		for(int i=0; i<exectionList.size(); i++){
+			TraceNode lastestNode = exectionList.get(exectionList.size()-1-i);
+			if(lastestNode.isException()){
+				return lastestNode;
+			}
+		}
+		
+		return null;
+	}
 	
 	
 }

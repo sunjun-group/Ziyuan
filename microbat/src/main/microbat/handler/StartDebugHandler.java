@@ -42,23 +42,16 @@ import sav.strategies.dto.AppJavaClassPath;
 
 public class StartDebugHandler extends AbstractHandler {
 
-	private TestcasesExecutor tcExecutor;
-	private AppJavaClassPath appClassPath;
+//	private TestcasesExecutor tcExecutor;
+//	private AppJavaClassPath appClassPath;
 
 	protected AppJavaClassPath initAppClasspath() {
 		AppJavaClassPath appClasspath = new AppJavaClassPath();
 		appClasspath.setJavaHome(TestConfiguration.getJavaHome());
 		return appClasspath;
 	}
-
-	public void setup(String classPath) {
-		appClassPath = initAppClasspath();
-		appClassPath.addClasspath(classPath);
-		tcExecutor = new TestcasesExecutor();
-	}
 	
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
+	private AppJavaClassPath constructClassPaths(){
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject iProject = myWorkspaceRoot.getProject(Settings.projectName);
 		String projectPath = iProject.getLocationURI().getPath();
@@ -66,7 +59,19 @@ public class StartDebugHandler extends AbstractHandler {
 		projectPath = projectPath.replace("/", File.separator);
 		
 		String binPath = projectPath + File.separator + "bin"; 
-		setup(binPath);
+		AppJavaClassPath appClassPath = initAppClasspath();
+		appClassPath.addClasspath(binPath);
+		
+		appClassPath.addClasspath(projectPath);
+		
+		return appClassPath;
+		
+	}
+	
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		final AppJavaClassPath appClassPath = constructClassPaths();
+		
+		final TestcasesExecutor tcExecutor = new TestcasesExecutor();
 		
 		final String classQulifiedName = Settings.buggyClassName;
 		final int lineNumber = Integer.valueOf(Settings.buggyLineNumber);
