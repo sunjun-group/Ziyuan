@@ -15,6 +15,7 @@ import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.event.EventSet;
+import com.sun.jdi.event.ExceptionEvent;
 import com.sun.jdi.event.StepEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
@@ -22,6 +23,7 @@ import com.sun.jdi.event.VMStartEvent;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
+import com.sun.jdi.request.ExceptionRequest;
 import com.sun.jdi.request.StepRequest;
 
 @SuppressWarnings("restriction")
@@ -47,13 +49,14 @@ public class ExecutionStatementCollector {
 		
 		while(connected){
 			try {
-				EventSet eventSet = queue.remove(1000);
+				EventSet eventSet = queue.remove();
 				for(Event event: eventSet){
 					if(event instanceof VMStartEvent){
 						System.out.println("start collecting execution");
 						
 						ThreadReference thread = ((VMStartEvent) event).thread();
 						addStepWatch(erm, thread);
+						addExceptionWatch(erm);
 					}
 					else if(event instanceof VMDeathEvent
 						|| event instanceof VMDisconnectEvent){
@@ -74,6 +77,9 @@ public class ExecutionStatementCollector {
 						if(!pointList.contains(breakPoint)){
 							pointList.add(breakPoint);							
 						}
+					}
+					else if(event instanceof ExceptionEvent){
+						System.currentTimeMillis();
 					}
 				}
 				
@@ -103,5 +109,15 @@ public class ExecutionStatementCollector {
 		ClassPrepareRequest classPrepareRequest = erm.createClassPrepareRequest();
 //		classPrepareRequest.addClassFilter("com.Main");
 		classPrepareRequest.setEnabled(true);
+	}
+	
+	private void addExceptionWatch(EventRequestManager erm) {
+		
+		ExceptionRequest request = erm.createExceptionRequest(null, true, true);
+		request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+		for(String ex: excludes){
+			request.addClassExclusionFilter(ex);
+		}
+		request.enable();
 	}
 }

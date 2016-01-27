@@ -225,6 +225,7 @@ public class TestcasesExecutor{
 					parseBreakpoints(vm, (ClassPrepareEvent)event, locBrpMap);
 				} else if(event instanceof StepEvent){
 					Location currentLocation = ((StepEvent) event).location();
+					System.out.println(currentLocation);
 					/**
 					 * collect the variable values after executing previous step
 					 * 
