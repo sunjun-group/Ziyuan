@@ -95,7 +95,6 @@ public class DebugValueExtractor {
 				List<Variable> allVisibleVariables = collectAllVariable(visibleVars, allFields);
 				bkp.setAllVisibleVariables(allVisibleVariables);
 				
-				//for (Variable bpVar : bkp.getVars()) {
 				for (Variable bpVar : bkp.getAllVisibleVariables()) {
 					// First check local variable
 					LocalVariable matchedLocalVariable = findMatchedLocalVariable(bpVar, visibleVars);
@@ -197,8 +196,13 @@ public class DebugValueExtractor {
 			boolean isField = (param.getField() != null);
 			boolean isStatic = param.getType().equals(JDIParam.JDIParamType.STATIC_FIELD);
 			
+			if(var.getName().contains("br")){
+				System.currentTimeMillis();
+			}
+			
 			if(!isField){
 				appendVarVal(bkVal, var.getName(), false, value, 1, thread, true, isField, isStatic);				
+				System.currentTimeMillis();
 			}
 			
 		}
@@ -310,6 +314,8 @@ public class DebugValueExtractor {
 			return;
 		}
 		level++;
+//		System.out.println(level);
+		
 		Type type = value.type();
 		if (type instanceof PrimitiveType) {
 			/* TODO LLT: add Primitive type && refactor */
@@ -413,16 +419,21 @@ public class DebugValueExtractor {
 			val.setElementOfArray(isElementOfArray);
 			this.objectPool.put(refID, val);
 			
-			Map<Field, Value> fieldValueMap = objRef.getValues(type.allFields());
-			for (Field field : type.allFields()) {
-				
-				boolean isIgnore = HeuristicIgnoringFieldRule.isForIgnore(type.name(), field.name());
-				if(!isIgnore){
-//					String childVarID = val.getChildId(field.name());
-					String childVarName = field.name();
-					Value childVarValue = fieldValueMap.get(field);
+			boolean needParseFields = HeuristicIgnoringFieldRule.isNeedParsingFields(type);
+			
+			if(needParseFields){
+				Map<Field, Value> fieldValueMap = objRef.getValues(type.allFields());
+				for (Field field : type.allFields()) {
 					
-					appendVarVal(val, childVarName, false, childVarValue, level, thread, false, true, field.isStatic());				
+					boolean isIgnore = HeuristicIgnoringFieldRule.isForIgnore(type.name(), field.name());
+					if(!isIgnore){
+//					String childVarID = val.getChildId(field.name());
+						String childVarName = field.name();
+						Value childVarValue = fieldValueMap.get(field);
+						
+						appendVarVal(val, childVarName, false, childVarValue, level, thread, false, true, field.isStatic());				
+					}
+					
 				}
 				
 			}
