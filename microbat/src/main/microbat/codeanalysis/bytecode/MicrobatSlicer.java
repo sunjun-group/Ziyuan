@@ -152,16 +152,19 @@ public class MicrobatSlicer{
 //		Collection<Statement> computeBackwardSlice = new CISlicer(cg, builder.getPointerAnalysis(), DataDependenceOptions.NO_HEAP,
 //				ControlDependenceOptions.NONE).computeBackwardThinSlice(stmt);
 		try {
-			Collection<Statement> computeBackwardSlice;
-			computeBackwardSlice = Slicer.computeBackwardSlice(stmtList.get(0), callGraph, pointerAnalysis, 
-					DataDependenceOptions.FULL, ControlDependenceOptions.NO_EXCEPTIONAL_EDGES);
+			Collection<Statement> allSlice = new ArrayList<>();
+			for(Statement s: stmtList){
+				Collection<Statement> computeBackwardSlice = Slicer.computeBackwardSlice(s, callGraph, pointerAnalysis, 
+						DataDependenceOptions.NO_BASE_PTRS, ControlDependenceOptions.NO_EXCEPTIONAL_EDGES);		
+				allSlice.addAll(computeBackwardSlice);
+			}
 			System.out.println("program is sliced!");
 			
 			
 //			ThinSlicer ts = new ThinSlicer(cg,pa);
 //			computeBackwardSlice = ts.computeBackwardThinSlice (stmt.get(0));
 			
-			CollectionUtils.filter(computeBackwardSlice,
+			CollectionUtils.filter(allSlice,
 					new Predicate<Statement>() {
 
 						public boolean apply(Statement val) {
@@ -171,7 +174,7 @@ public class MicrobatSlicer{
 									.equals(ClassLoaderReference.Application);
 						}
 					});
-			List<BreakPoint> bps = toBreakpoints(computeBackwardSlice);
+			List<BreakPoint> bps = toBreakpoints(allSlice);
 			
 			for(BreakPoint bp: bps){
 				System.out.println(bp);

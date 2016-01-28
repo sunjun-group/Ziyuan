@@ -49,41 +49,50 @@ public class ExecutionStatementCollector {
 		
 		while(connected){
 			try {
-				EventSet eventSet = queue.remove();
-				for(Event event: eventSet){
-					if(event instanceof VMStartEvent){
-						System.out.println("start collecting execution");
-						
-						ThreadReference thread = ((VMStartEvent) event).thread();
-						addStepWatch(erm, thread);
-						addExceptionWatch(erm);
-					}
-					else if(event instanceof VMDeathEvent
-						|| event instanceof VMDisconnectEvent){
-						connected = false;
-					}
-					else if(event instanceof StepEvent){
-						StepEvent sEvent = (StepEvent)event;
-						Location location = sEvent.location();
-						
-						String path = location.sourcePath();
-						path = path.substring(0, path.indexOf(".java"));
-						path = path.replace("\\", ".");
-						
-						int lineNumber = location.lineNumber();
-						
-						BreakPoint breakPoint = new BreakPoint(path, lineNumber);
-						System.out.println(breakPoint);
-						if(!pointList.contains(breakPoint)){
-							pointList.add(breakPoint);							
+				EventSet eventSet = queue.remove(1000);
+				if(eventSet != null){
+					for(Event event: eventSet){
+						if(event instanceof VMStartEvent){
+							System.out.println("start collecting execution");
+							
+							ThreadReference thread = ((VMStartEvent) event).thread();
+							addStepWatch(erm, thread);
+							addExceptionWatch(erm);
+						}
+						else if(event instanceof VMDeathEvent
+							|| event instanceof VMDisconnectEvent){
+							connected = false;
+						}
+						else if(event instanceof StepEvent){
+							StepEvent sEvent = (StepEvent)event;
+							Location location = sEvent.location();
+							
+							String path = location.sourcePath();
+							path = path.substring(0, path.indexOf(".java"));
+							path = path.replace("\\", ".");
+							
+							int lineNumber = location.lineNumber();
+							
+							BreakPoint breakPoint = new BreakPoint(path, lineNumber);
+							System.out.println(breakPoint);
+							if(!pointList.contains(breakPoint)){
+								pointList.add(breakPoint);							
+							}
+						}
+						else if(event instanceof ExceptionEvent){
+							System.currentTimeMillis();
 						}
 					}
-					else if(event instanceof ExceptionEvent){
-						System.currentTimeMillis();
-					}
+					
+					eventSet.resume();
+				}
+				else{
+					vm.exit(0);
+					vm.dispose();
+					connected = false;
 				}
 				
-				eventSet.resume();
+				
 			} catch (InterruptedException e) {
 				connected = false;
 				e.printStackTrace();
