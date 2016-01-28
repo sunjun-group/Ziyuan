@@ -21,6 +21,8 @@ import com.sun.jdi.ClassType;
 public class ReferenceValue extends ExecValue {
 	protected static final String NULL_CODE = "isNull";
 	
+	private String messageValue;
+	
 	private ClassType classType; 
 	/**
 	 * The virtual memory address
@@ -127,5 +129,13 @@ public class ReferenceValue extends ExecValue {
 		}
 		
 		return clonedList;
+	}
+
+	public String getMessageValue() {
+		return messageValue;
+	}
+
+	public void setMessageValue(String messageValue) {
+		this.messageValue = messageValue;
 	}
 }

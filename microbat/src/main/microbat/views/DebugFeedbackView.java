@@ -603,7 +603,7 @@ public class DebugFeedbackView extends ViewPart {
 //					System.out.println(value.getVarId());
 					
 					return name;
-				case 2: return "";
+				case 2: return value.getMessageValue();
 				}
 			}
 			else if(element instanceof ArrayValue){
@@ -616,7 +616,7 @@ public class DebugFeedbackView extends ViewPart {
 						name = "this." + name;
 					}
 					return name;
-				case 2: return "";
+				case 2: return value.getMessageValue();
 				}
 			}
 			else if(element instanceof PrimitiveValue){

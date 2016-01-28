@@ -10,6 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import microbat.codeanalysis.runtime.herustic.HeuristicIgnoringFieldRule;
+import microbat.codeanalysis.runtime.jpda.expr.ExpressionParser;
+import microbat.codeanalysis.runtime.jpda.expr.ParseException;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
 import microbat.model.value.ArrayValue;
@@ -29,9 +31,12 @@ import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.BooleanType;
 import com.sun.jdi.BooleanValue;
+import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.InvocationException;
 import com.sun.jdi.LocalVariable;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
@@ -58,10 +63,19 @@ public class DebugValueExtractor {
 	 */
 	private Map<Long, ReferenceValue> objectPool = new HashMap<>();
 	
-	public DebugValueExtractor() {
-	}
 	
-	public final BreakPointValue extractValue(BreakPoint bkp, ThreadReference thread, Location loc)
+	private BreakPoint bkp;
+	private ThreadReference thread;
+	private Location loc;
+	
+	public DebugValueExtractor(BreakPoint bkp, ThreadReference thread,
+			Location loc) {
+		this.bkp = bkp;
+		this.thread = thread;
+		this.loc = loc;
+	}
+
+	public final BreakPointValue extractValue()
 			throws IncompatibleThreadStateException, AbsentInformationException {
 		if (bkp == null) {
 			return null;
@@ -394,6 +408,37 @@ public class DebugValueExtractor {
 		parent.addChild(val);
 		val.addParent(parent);
 	}
+	
+	private Value retriveExpression(final StackFrame frame, String expression){
+		ExpressionParser.GetFrame frameGetter = new ExpressionParser.GetFrame() {
+            @Override
+            public StackFrame get()
+                throws IncompatibleThreadStateException
+            {
+            	return frame;
+                
+            }
+        };
+        
+        try {
+        	ExpressionParser.evaluate(expression, frame.virtualMachine(), frameGetter);
+        	Value val = ExpressionParser.getMassagedValue();
+			return val;
+			
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		} catch (InvocationException e) {
+			e.printStackTrace();
+		} catch (InvalidTypeException e) {
+			e.printStackTrace();
+		} catch (ClassNotLoadedException e) {
+			e.printStackTrace();
+		} catch (IncompatibleThreadStateException e) {
+			e.printStackTrace();
+		}
+        
+        return null;
+	}
 
 	/**
 	 * add a given variable to its parent
@@ -416,6 +461,9 @@ public class DebugValueExtractor {
 		ReferenceValue val = this.objectPool.get(refID);
 		if(val == null){
 			val = new ReferenceValue(varName, false, refID, type, isRoot, isField, isStatic);	
+			
+			setMessageValue(thread, val);
+			
 			val.setElementOfArray(isElementOfArray);
 			this.objectPool.put(refID, val);
 			
@@ -455,6 +503,25 @@ public class DebugValueExtractor {
 		val.addParent(parent);
 	}
 
+	private void setMessageValue(ThreadReference thread, ReferenceValue val) {
+		StackFrame frame;
+		try {
+			frame = findFrameByLocation(thread.frames(), loc);
+			Value value = retriveExpression(frame, val.getVarName());
+			if(value != null){
+				String message = value.toString();
+				val.setMessageValue(message);					
+			}
+			else{
+				System.currentTimeMillis();
+			}
+		} catch (AbsentInformationException e) {
+			e.printStackTrace();
+		} catch (IncompatibleThreadStateException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void appendArrVarVal(ExecValue parent, String varId, boolean isElementOfArray,
 			ArrayReference value, int level, ThreadReference thread, boolean isRoot, boolean isField, boolean isStatic) {
 		
@@ -464,6 +531,8 @@ public class DebugValueExtractor {
 		arrayVal.setComponentType(componentType);
 		arrayVal.setReferenceID(value.uniqueID());
 		arrayVal.setElementOfArray(isElementOfArray);
+		
+		setMessageValue(thread, arrayVal);
 		
 		//add value of elements
 		for (int i = 0; i < value.length() /*&& i < MAX_ARRAY_ELEMENT_TO_COLLECT*/; i++) {

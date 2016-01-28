@@ -887,8 +887,8 @@ public class TestcasesExecutor{
 			Location loc) throws SavException {
 		try {
 			//return getValueExtractor().extractValue(bkp, bkpEvent);
-			DebugValueExtractor extractor = new DebugValueExtractor();
-			BreakPointValue bpValue = extractor.extractValue(bkp, thread, loc);
+			DebugValueExtractor extractor = new DebugValueExtractor(bkp, thread, loc);
+			BreakPointValue bpValue = extractor.extractValue();
 			return bpValue;
 			
 		} catch (IncompatibleThreadStateException e) {
