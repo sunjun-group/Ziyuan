@@ -49,7 +49,7 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 @SuppressWarnings("restriction")
-public class DebugValueExtractor {
+public class VariableValueExtractor {
 //	protected static Logger log = LoggerFactory.getLogger(DebugValueExtractor.class);
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
 	private static final String TO_STRING_NAME= "toString";
@@ -68,7 +68,7 @@ public class DebugValueExtractor {
 	private ThreadReference thread;
 	private Location loc;
 	
-	public DebugValueExtractor(BreakPoint bkp, ThreadReference thread,
+	public VariableValueExtractor(BreakPoint bkp, ThreadReference thread,
 			Location loc) {
 		this.bkp = bkp;
 		this.thread = thread;

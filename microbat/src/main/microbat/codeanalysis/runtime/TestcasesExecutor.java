@@ -19,7 +19,7 @@ import microbat.codeanalysis.ast.LocalVariableScope;
 import microbat.codeanalysis.ast.VariableScopeParser;
 import microbat.codeanalysis.runtime.jpda.expr.ExpressionParser;
 import microbat.codeanalysis.runtime.jpda.expr.ParseException;
-import microbat.codeanalysis.runtime.variable.DebugValueExtractor;
+import microbat.codeanalysis.runtime.variable.VariableValueExtractor;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
 import microbat.model.trace.StepVariableRelationEntry;
@@ -887,7 +887,7 @@ public class TestcasesExecutor{
 			Location loc) throws SavException {
 		try {
 			//return getValueExtractor().extractValue(bkp, bkpEvent);
-			DebugValueExtractor extractor = new DebugValueExtractor(bkp, thread, loc);
+			VariableValueExtractor extractor = new VariableValueExtractor(bkp, thread, loc);
 			BreakPointValue bpValue = extractor.extractValue();
 			return bpValue;
 			
