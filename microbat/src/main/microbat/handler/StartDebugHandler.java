@@ -10,7 +10,7 @@ import microbat.codeanalysis.ast.LocalVariableScope;
 import microbat.codeanalysis.ast.VariableScopeParser;
 import microbat.codeanalysis.bytecode.MicrobatSlicer;
 import microbat.codeanalysis.runtime.ExecutionStatementCollector;
-import microbat.codeanalysis.runtime.TestcasesExecutor;
+import microbat.codeanalysis.runtime.ProgramExecutor;
 import microbat.model.BreakPoint;
 import microbat.model.trace.Trace;
 import microbat.util.JavaUtil;
@@ -71,7 +71,7 @@ public class StartDebugHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final AppJavaClassPath appClassPath = constructClassPaths();
 		
-		final TestcasesExecutor tcExecutor = new TestcasesExecutor();
+		final ProgramExecutor tcExecutor = new ProgramExecutor();
 		
 		final String classQulifiedName = Settings.buggyClassName;
 		final int lineNumber = Integer.valueOf(Settings.buggyLineNumber);

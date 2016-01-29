@@ -88,10 +88,10 @@ import com.sun.jdi.request.StepRequest;
  * 
  */
 @SuppressWarnings("restriction")
-public class TestcasesExecutor{
+public class ProgramExecutor{
 	public static final long DEFAULT_TIMEOUT = -1;
 	
-	private static Logger log = LoggerFactory.getLogger(TestcasesExecutor.class);	
+	private static Logger log = LoggerFactory.getLogger(ProgramExecutor.class);	
 	
 	/**
 	 * fundamental fields for debugging
@@ -115,7 +115,7 @@ public class TestcasesExecutor{
 	 */
 	private Trace trace = new Trace();
 	
-	public TestcasesExecutor() {
+	public ProgramExecutor() {
 	}
 	
 	public void setup(VMConfiguration config) {
