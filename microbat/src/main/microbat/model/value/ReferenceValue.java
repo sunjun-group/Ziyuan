@@ -91,8 +91,8 @@ public class ReferenceValue extends VarValue {
 	}
 
 	@Override
-	public ExecVarType getType() {
-		return ExecVarType.REFERENCE;
+	public VarValueType getType() {
+		return VarValueType.REFERENCE;
 	}
 	
 	@Override

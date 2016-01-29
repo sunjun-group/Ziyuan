@@ -336,7 +336,6 @@ public class VariableValueExtractor {
 		Type type = value.type();
 		
 		if (type instanceof PrimitiveType) {
-			/* TODO LLT: add Primitive type && refactor */
 			if (type instanceof BooleanType) {
 				microbat.model.value.BooleanValue ele = 
 						new microbat.model.value.BooleanValue(((BooleanValue)value).booleanValue(), isRoot, variable);

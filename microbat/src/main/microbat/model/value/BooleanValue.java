@@ -24,22 +24,22 @@ public class BooleanValue extends PrimitiveValue {
 		this.variable.setType("boolean");
 	}
 
-	@Override
-	public double getDoubleVal() {
-		if (value) {
-			return 1;
-		} else {
-			return 0;
-		}
-	}
+//	@Override
+//	public double getDoubleVal() {
+//		if (value) {
+//			return 1;
+//		} else {
+//			return 0;
+//		}
+//	}
 	
 //	public static BooleanValue of(String name, boolean value, boolean isRoot, boolean isField, boolean isStatic) {
 //		return new BooleanValue(name, value, isRoot, isField, isStatic);
 //	}
 	
 	@Override
-	public ExecVarType getType() {
-		return ExecVarType.BOOLEAN;
+	public VarValueType getType() {
+		return VarValueType.BOOLEAN;
 	}
 	
 //	@Override

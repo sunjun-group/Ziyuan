@@ -8,6 +8,7 @@
 
 package microbat.model.value;
 
+import microbat.model.BreakPointValue;
 import microbat.model.variable.Variable;
 
 
@@ -34,14 +35,16 @@ public class PrimitiveValue extends VarValue {
 		return strVal;
 	}
 	
-	@Override
-	public double getDoubleVal() {
-		try {
-			return Double.parseDouble(strVal);
-		} catch (NumberFormatException e) {
-			return super.getDoubleVal();
-		}
-	}
+	
+	
+//	@Override
+//	public double getDoubleVal() {
+//		try {
+//			return Double.parseDouble(strVal);
+//		} catch (NumberFormatException e) {
+//			return super.getDoubleVal();
+//		}
+//	}
 	
 	@Override
 	public String toString() {
@@ -49,8 +52,8 @@ public class PrimitiveValue extends VarValue {
 	}
 
 	@Override
-	public ExecVarType getType() {
-		return ExecVarType.PRIMITIVE;
+	public VarValueType getType() {
+		return VarValueType.PRIMITIVE;
 	}
 	
 	public String getPrimitiveType(){
@@ -59,6 +62,16 @@ public class PrimitiveValue extends VarValue {
 	
 	public void setPrimitiveType(String type){
 		this.variable.setType(type);
+	}
+	
+	public void setPrimitiveID(VarValue parent){
+		if(parent instanceof BreakPointValue){
+			
+		}
+		else{
+			String varID = parent.getVarID() + "." + getVarName();
+			setVarID(varID);
+		}
 	}
 
 	@Override
@@ -69,6 +82,8 @@ public class PrimitiveValue extends VarValue {
 		}
 		return false;
 	}
+	
+	
 	
 //	@Override
 //	public PrimitiveValue clone(){

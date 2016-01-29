@@ -11,7 +11,7 @@ package microbat.model;
 import java.util.List;
 
 import microbat.model.value.VarValue;
-import microbat.model.value.ExecVarType;
+import microbat.model.value.VarValueType;
 import microbat.model.value.GraphNode;
 
 /**
@@ -118,7 +118,7 @@ public class BreakPointValue extends VarValue {
 	}
 	
 	@Override
-	public ExecVarType getType() {
+	public VarValueType getType() {
 		return null;
 	}
 

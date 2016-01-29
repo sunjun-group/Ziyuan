@@ -28,8 +28,8 @@ public class StringValue extends PrimitiveValue {
 	}
 
 	@Override
-	public ExecVarType getType() {
-		return ExecVarType.STRING;
+	public VarValueType getType() {
+		return VarValueType.STRING;
 	}
 	
 	@Override

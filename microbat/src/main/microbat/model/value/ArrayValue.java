@@ -107,8 +107,8 @@ public class ArrayValue extends ReferenceValue {
 //	}
 //	
 	@Override
-	public ExecVarType getType() {
-		return ExecVarType.ARRAY;
+	public VarValueType getType() {
+		return VarValueType.ARRAY;
 	}
 
 	public String getComponentType() {

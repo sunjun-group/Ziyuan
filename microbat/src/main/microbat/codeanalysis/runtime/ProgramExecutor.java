@@ -505,8 +505,10 @@ public class ProgramExecutor{
 							mee.location().lineNumber(), localVar.getName());
 					String varID;
 					if(scope != null){
-						varID = typeName + "[" + scope.getStartLine() + "," 
-								+ scope.getEndLine() + "] " + localVar.getName();				
+						varID = Variable.concanateLocalVarID(typeName, localVar.getName(), 
+								scope.getStartLine(), scope.getEndLine());
+//						varID = typeName + "[" + scope.getStartLine() + "," 
+//								+ scope.getEndLine() + "] " + localVar.getName();				
 						localVar.setVarID(varID);
 					}
 					else{
@@ -671,8 +673,10 @@ public class ProgramExecutor{
 								node.getBreakPoint().getLineNo(), node.getBreakPoint().getDeclaringCompilationUnitName());
 						String varID;
 						if(scope != null){
-							varID = node.getBreakPoint().getClassCanonicalName() + "[" + scope.getStartLine() + "," 
-									+ scope.getEndLine() + "] " + var.getName();				
+							varID = Variable.concanateLocalVarID(node.getBreakPoint().getClassCanonicalName(), 
+									var.getName(), scope.getStartLine(), scope.getEndLine());
+//							varID = node.getBreakPoint().getClassCanonicalName() + "[" + scope.getStartLine() + "," 
+//									+ scope.getEndLine() + "] " + var.getName();				
 						}
 						/**
 						 * it means that an implicit "this" variable is visited.
@@ -692,14 +696,17 @@ public class ProgramExecutor{
 						ObjectReference objRef = (ObjectReference)parentValue;
 						
 						if(var instanceof FieldVar){
-							String varID = String.valueOf(objRef.uniqueID()) + "." + var.getSimpleName();
+							//String varID = String.valueOf(objRef.uniqueID()) + "." + var.getSimpleName();
+							String varID = Variable.concanateFieldVarID(String.valueOf(objRef.uniqueID()), var.getSimpleName());
 							var.setVarID(varID);							
 						}
 						else if(var instanceof ArrayElementVar){
 							String index = var.getSimpleName();
 							ExpressionValue indexValue = retriveExpression(frame, index, node.getBreakPoint());
 							String indexValueString = indexValue.value.toString();
-							String varID = String.valueOf(objRef.uniqueID()) + "[" + indexValueString + "]";
+							String varID = Variable.concanateArrayElementVarID(String.valueOf(objRef.uniqueID()), 
+									indexValueString);
+//							String varID = String.valueOf(objRef.uniqueID()) + "[" + indexValueString + "]";
 							
 							var.setVarID(varID);
 						}

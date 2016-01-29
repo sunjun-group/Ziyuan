@@ -12,7 +12,7 @@ package microbat.model.value;
  * @author LLT
  *
  */
-public enum ExecVarType {
+public enum VarValueType {
 	REFERENCE,
 	BOOLEAN,
 	STRING,

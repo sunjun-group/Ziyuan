@@ -164,9 +164,9 @@ public abstract class VarValue implements GraphNode{
 		children.add(child);
 	}
 	
-	public double getDoubleVal() {
-		return NOT_NULL_VAL;
-	}
+//	public double getDoubleVal() {
+//		return NOT_NULL_VAL;
+//	}
 	
 //	public String getChildId(String childCode) {
 //		return String.format("%s.%s", varName, childCode);
@@ -327,6 +327,6 @@ public abstract class VarValue implements GraphNode{
 		this.children = children;
 	}
 
-	public abstract ExecVarType getType();
+	public abstract VarValueType getType();
 //	public abstract VarValue clone();
 }
