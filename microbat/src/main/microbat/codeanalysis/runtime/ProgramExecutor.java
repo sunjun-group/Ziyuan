@@ -496,7 +496,8 @@ public class ProgramExecutor{
 				
 				if(!(value instanceof ObjectReference)){
 					
-					LocalVar localVar = new LocalVar(lVar.name(), lVar.typeName());
+					LocalVar localVar = new LocalVar(lVar.name(), lVar.typeName(), lastestNode.getDeclaringCompilationUnitName(), 
+							lastestNode.getLineNumber());
 					
 					VariableScopeParser parser = new VariableScopeParser();
 					String typeSig = method.declaringType().signature();

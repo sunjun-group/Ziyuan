@@ -1,17 +1,17 @@
 package microbat.model.variable;
 
 public class LocalVar extends Variable{
+//	private String variableName;
+//	private String type;
+	private int lineNumber;
+	private String locationClass;
 	
-	public LocalVar(String name, String type){
+	public LocalVar(String name, String type, String locationClass, int lineNumber){
 		super(name, type);
+		this.lineNumber = lineNumber;
+		this.locationClass = locationClass;
 	}
-
-	@Override
-	public String toString() {
-		return "LocalVariable [type=" + type + ", variableName=" + variableName
-				+ "]";
-	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -42,6 +42,30 @@ public class LocalVar extends Variable{
 		} else if (!variableName.equals(other.variableName))
 			return false;
 		return true;
+	}
+
+
+
+	@Override
+	public String toString() {
+		return "LocalVariable [type=" + type + ", variableName=" + variableName
+				+ "]";
+	}
+
+	public int getLineNumber() {
+		return lineNumber;
+	}
+
+	public void setLineNumber(int lineNumber) {
+		this.lineNumber = lineNumber;
+	}
+
+	public String getLocationClass() {
+		return locationClass;
+	}
+
+	public void setLocationClass(String locationClass) {
+		this.locationClass = locationClass;
 	}
 	
 	@Override

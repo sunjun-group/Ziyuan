@@ -241,7 +241,7 @@ public class MicrobatSlicer{
 	}
 
 	@SuppressWarnings("rawtypes")
-	private LocalVar generateLocalVar(ShrikeCTMethod method, int pc, int varIndex){
+	private LocalVar generateLocalVar(ShrikeCTMethod method, int pc, int varIndex, String locationClass, int lineNumber){
 		Method getBCInfoMethod;
 		try {
 			getBCInfoMethod = ShrikeBTMethod.class.getDeclaredMethod("getBCInfo", new Class[]{});
@@ -273,7 +273,7 @@ public class MicrobatSlicer{
 				System.currentTimeMillis();
 			}
 			
-			LocalVar var = new LocalVar(varName, typeName);
+			LocalVar var = new LocalVar(varName, typeName,locationClass, lineNumber);
 			return var;
 			
 		} catch (NoSuchMethodException | SecurityException e) {
@@ -371,7 +371,8 @@ public class MicrobatSlicer{
 			LoadInstruction lIns = (LoadInstruction)ins;
 			int varIndex = lIns.getVarIndex();
 			
-			LocalVar var = generateLocalVar(method, pc, varIndex);
+			LocalVar var = generateLocalVar(method, pc, varIndex, 
+					point.getDeclaringCompilationUnitName(), point.getLineNo());
 			
 			if(var != null){
 				if(var.getName().equals("a")){
@@ -410,7 +411,8 @@ public class MicrobatSlicer{
 //				TypeAbstraction type = typeInf.getType(varIndex);
 //				String className = type.getType().getName().toString();
 				
-				LocalVar var = generateLocalVar(method, pc, varIndex);
+				LocalVar var = generateLocalVar(method, pc, varIndex, 
+						point.getDeclaringCompilationUnitName(), point.getLineNo());
 				point.addWrittenVariable(var);
 			}
 			

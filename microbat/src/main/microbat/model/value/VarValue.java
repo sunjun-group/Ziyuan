@@ -36,7 +36,7 @@ public abstract class VarValue implements GraphNode{
 	
 	protected List<VarValue> children = new ArrayList<>();
 	
-	protected boolean isElementOfArray = false;
+//	protected boolean isElementOfArray = false;
 	/**
 	 * indicate whether this variable is a top-level variable in certain step.
 	 */

@@ -8,13 +8,15 @@
 
 package microbat.model.value;
 
-import microbat.model.BreakPointValue;
+import microbat.codeanalysis.ast.LocalVariableScope;
+import microbat.model.variable.LocalVar;
 import microbat.model.variable.Variable;
+import microbat.util.Settings;
 
 
 
 /**
- * @author LLT, modified by Yun Lin
+ * @author Yun Lin
  *
  */
 public class PrimitiveValue extends VarValue {
@@ -65,12 +67,24 @@ public class PrimitiveValue extends VarValue {
 	}
 	
 	public void setPrimitiveID(VarValue parent){
-		if(parent instanceof BreakPointValue){
-			
-		}
-		else{
-			String varID = parent.getVarID() + "." + getVarName();
+		if(isField()){
+			String varID = Variable.concanateFieldVarID(parent.getVarID(), getVarName());
 			setVarID(varID);
+		}
+		else if(isElementOfArray()){
+			String varID = Variable.concanateArrayElementVarID(parent.getVarID(), getVarName());
+			setVarID(varID);
+		}
+		else if(isLocalVariable()){
+			LocalVar localVar = (LocalVar)this.variable;
+			LocalVariableScope scope = Settings.localVariableScopes.findScope(getVarName(), 
+					localVar.getLineNumber(), localVar.getLocationClass());
+			
+			if(scope != null){
+				String varID = Variable.concanateLocalVarID(localVar.getLocationClass(), localVar.getName(), 
+						scope.getStartLine(), scope.getEndLine());
+				setVarID(varID);				
+			}
 		}
 	}
 

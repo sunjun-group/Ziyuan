@@ -98,6 +98,10 @@ public class TraceNode{
 		return this.breakPoint.getClassCanonicalName();
 	}
 	
+	public String getDeclaringCompilationUnitName(){
+		return this.breakPoint.getDeclaringCompilationUnitName();
+	}
+	
 	public int getLineNumber(){
 		return this.breakPoint.getLineNo();
 	}

@@ -157,7 +157,8 @@ public class VariableValueExtractor {
 		List<Variable> varList = new ArrayList<>();
 		for(LocalVariable lv: visibleVars){
 //			Var var = new Var(lv.name(), lv.name(), VarScope.UNDEFINED);
-			LocalVar var = new LocalVar(lv.name(), lv.typeName());
+			LocalVar var = new LocalVar(lv.name(), lv.typeName(), 
+					bkp.getDeclaringCompilationUnitName(), bkp.getLineNo());
 			varList.add(var);
 		}
 		for(Field field: allFields){
@@ -195,10 +196,11 @@ public class VariableValueExtractor {
 	}
 
 	protected void collectValue(BreakPointValue bkVal, ObjectReference objRef, ThreadReference thread,
-			final Map<Variable, JDIParam> allVariables){
+			Map<Variable, JDIParam> allVariables){
 		
 		if(objRef != null){
-			LocalVar variable = new LocalVar("this", objRef.type().toString());
+			LocalVar variable = new LocalVar("this", objRef.type().toString(), 
+					bkp.getDeclaringCompilationUnitName(), bkp.getLineNo());
 			appendClassVarVal(bkVal, variable, objRef, 1, thread, true);			
 		}
 		
@@ -219,7 +221,8 @@ public class VariableValueExtractor {
 			}
 			
 			if(!isField){
-				LocalVar variable = new LocalVar(var.getName(), value.type().toString());
+				LocalVar variable = new LocalVar(var.getName(), value.type().toString(), 
+						bkp.getDeclaringCompilationUnitName(), bkp.getLineNo());
 				appendVarVal(bkVal, variable, value, 1, thread, true);				
 				System.currentTimeMillis();
 			}
@@ -341,10 +344,12 @@ public class VariableValueExtractor {
 						new microbat.model.value.BooleanValue(((BooleanValue)value).booleanValue(), isRoot, variable);
 				parent.addChild(ele);
 				ele.addParent(parent);
+				ele.setPrimitiveID(parent);
 			} else {
 				PrimitiveValue ele = new PrimitiveValue(value.toString(), isRoot, variable);
 				parent.addChild(ele);
 				ele.addParent(parent);
+				ele.setPrimitiveID(parent);
 			}
 		} else if (type instanceof ArrayType) { 
 			appendArrVarVal(parent, variable, (ArrayReference)value, level, thread, isRoot);
@@ -532,7 +537,7 @@ public class VariableValueExtractor {
 		
 		//add value of elements
 		for (int i = 0; i < value.length() /*&& i < MAX_ARRAY_ELEMENT_TO_COLLECT*/; i++) {
-			String varName = arrayVal.getElementId(i);
+			String varName = String.valueOf(i);
 			Value elementValue = getArrayEleValue(value, i);
 			ArrayElementVar var = new ArrayElementVar(varName, elementValue.type().toString());
 			

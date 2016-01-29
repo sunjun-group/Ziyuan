@@ -30,6 +30,7 @@ public class ReferenceValue extends VarValue {
 		
 		FieldVar field = new FieldVar(false, "isNull", "boolean");
 		BooleanValue child = new BooleanValue(isNull, false, field);
+		child.setVarID("isNull");
 		
 		addChild(child);
 		child.addParent(this);
@@ -41,6 +42,7 @@ public class ReferenceValue extends VarValue {
 		
 		FieldVar field = new FieldVar(false, "isNull", "boolean");
 		BooleanValue child = new BooleanValue(isNull, false, field);
+		child.setVarID("isNull");
 		
 		addChild(child);
 		child.addParent(this);

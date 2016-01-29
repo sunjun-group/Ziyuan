@@ -20,7 +20,7 @@ public class StringValue extends PrimitiveValue {
 	
 	public StringValue(String val, boolean isRoot, Variable var) {
 		super(val, isRoot, var);
-		var.setType("java.lang.String");
+//		var.setType("java.lang.String");
 //		BooleanValue child = new BooleanValue(getChildId(IS_EMPTY), val.isEmpty(), false);
 //		add(child);
 //		child.addParent(this);
