@@ -8,7 +8,7 @@ import microbat.model.BreakPointValue;
 import microbat.model.InterestedVariable;
 import microbat.model.trace.TraceNode;
 import microbat.model.value.ArrayValue;
-import microbat.model.value.ExecValue;
+import microbat.model.value.VarValue;
 import microbat.model.value.PrimitiveValue;
 import microbat.model.value.ReferenceValue;
 import microbat.util.Settings;
@@ -156,12 +156,12 @@ public class DebugFeedbackView extends ViewPart {
 			return;
 		}
 		
-		ExecValue ev = null;
-		if(element instanceof ExecValue){
-			ev = (ExecValue)element;
+		VarValue ev = null;
+		if(element instanceof VarValue){
+			ev = (VarValue)element;
 		}
 		else if(element instanceof GraphDiff){
-			ev = (ExecValue) ((GraphDiff)element).getChangedNode();
+			ev = (VarValue) ((GraphDiff)element).getChangedNode();
 		}
 		
 		InterestedVariable iv = new InterestedVariable(point.getDeclaringCompilationUnitName(), 
@@ -184,14 +184,14 @@ public class DebugFeedbackView extends ViewPart {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Object obj = event.getElement();
-				ExecValue value = null;
+				VarValue value = null;
 				
-				if(obj instanceof ExecValue){
-					value = (ExecValue)obj;
+				if(obj instanceof VarValue){
+					value = (VarValue)obj;
 				}
 				else if(obj instanceof GraphDiff){
 					GraphDiff diff = (GraphDiff)obj;
-					value = (ExecValue)diff.getChangedNode();
+					value = (VarValue)diff.getChangedNode();
 				}
 				
 				BreakPoint point = node.getBreakPoint();
@@ -442,10 +442,10 @@ public class DebugFeedbackView extends ViewPart {
 			if(ele instanceof GraphDiff){
 				GraphDiff diff = (GraphDiff)ele;
 				
-				ExecValue before = (ExecValue)diff.getNodeBefore();
-				ExecValue after = (ExecValue)diff.getNodeAfter();
+				VarValue before = (VarValue)diff.getNodeBefore();
+				VarValue after = (VarValue)diff.getNodeAfter();
 				
-				ExecValue element = (before != null) ? before : after;
+				VarValue element = (before != null) ? before : after;
 				if(element == null){
 					System.err.println("both before and empty of a diff are empty");
 					return null;
@@ -455,7 +455,7 @@ public class DebugFeedbackView extends ViewPart {
 						ArrayValue value = (ArrayValue)element;
 						switch(columnIndex){
 						case 0: return "array[" + value.getComponentType() + "]";
-						case 1: return value.getVarId();
+						case 1: return value.getVariablePath();
 						case 2: 
 							if(after != null){
 								return "id = " + String.valueOf(((ArrayValue)after).getReferenceID());
@@ -483,7 +483,7 @@ public class DebugFeedbackView extends ViewPart {
 								return "array";
 							}
 						case 1: 
-							return value.getVarId();
+							return value.getVariablePath();
 						case 2: 
 							if(after != null){
 								return "id = " + String.valueOf(((ReferenceValue)after).getReferenceID());
@@ -504,7 +504,7 @@ public class DebugFeedbackView extends ViewPart {
 						PrimitiveValue value = (PrimitiveValue)element;
 						switch(columnIndex){
 						case 0: return value.getPrimitiveType();
-						case 1: return value.getVarId();
+						case 1: return value.getVariablePath();
 						case 2: 
 							if(after != null){
 								return ((PrimitiveValue)after).getStrVal();
@@ -538,11 +538,11 @@ public class DebugFeedbackView extends ViewPart {
 		public Object[] getElements(Object inputElement) {
 			if(inputElement instanceof BreakPointValue){
 				BreakPointValue value = (BreakPointValue)inputElement;
-				return value.getChildren().toArray(new ExecValue[0]);
+				return value.getChildren().toArray(new VarValue[0]);
 			}
 			else if(inputElement instanceof ReferenceValue){
 				ReferenceValue value = (ReferenceValue)inputElement;
-				return value.getChildren().toArray(new ExecValue[0]);
+				return value.getChildren().toArray(new VarValue[0]);
 			}
 			return null;
 		}
@@ -642,12 +642,12 @@ public class DebugFeedbackView extends ViewPart {
 		@Override
 		public boolean isChecked(Object element) {
 			
-			ExecValue value = null;
-			if(element instanceof ExecValue){
-				value = (ExecValue)element;
+			VarValue value = null;
+			if(element instanceof VarValue){
+				value = (VarValue)element;
 			}
 			else if(element instanceof GraphDiff){
-				value = (ExecValue) ((GraphDiff)element).getChangedNode();
+				value = (VarValue) ((GraphDiff)element).getChangedNode();
 			}
 			
 			if(node != null){

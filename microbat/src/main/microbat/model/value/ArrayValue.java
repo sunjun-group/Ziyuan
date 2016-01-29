@@ -8,6 +8,8 @@
 
 package microbat.model.value;
 
+import microbat.model.variable.Variable;
+
 
 /**
  * @author LLT
@@ -18,12 +20,12 @@ public class ArrayValue extends ReferenceValue {
 //	private static final String SUM_CODE = "sum";
 //	private static final String MAX_CODE = "max";
 //	private static final String MIN_CODE = "min";
-	private static final String LENGTH_CODE = "length";
+//	private static final String LENGTH_CODE = "length";
 	
 	private String componentType;
 
-	public ArrayValue(String name, boolean isRoot, boolean isField, boolean isStatic) {
-		super(name, false, isRoot, isField, isStatic);
+	public ArrayValue(boolean isNull, boolean isRoot, Variable var) {
+		super(isNull, isRoot, var);
 	}
 	
 	public String toString(){
@@ -93,17 +95,17 @@ public class ArrayValue extends ReferenceValue {
 //		}
 //	}
 
-	@Override
-	public double getDoubleVal() {
-		String lengthId = getChildId(LENGTH_CODE);
-		for (ExecValue child : children) {
-			if (lengthId.equals(child.getVarId())) {
-				return child.getDoubleVal();
-			}
-		}
-		return super.getDoubleVal();
-	}
-	
+//	@Override
+//	public double getDoubleVal() {
+//		String lengthId = getChildId(LENGTH_CODE);
+//		for (VarValue child : children) {
+//			if (lengthId.equals(child.getVarId())) {
+//				return child.getDoubleVal();
+//			}
+//		}
+//		return super.getDoubleVal();
+//	}
+//	
 	@Override
 	public ExecVarType getType() {
 		return ExecVarType.ARRAY;

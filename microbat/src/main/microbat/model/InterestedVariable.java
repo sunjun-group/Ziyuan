@@ -1,6 +1,6 @@
 package microbat.model;
 
-import microbat.model.value.ExecValue;
+import microbat.model.value.VarValue;
 import microbat.util.MicroBatUtil;
 
 public class InterestedVariable {
@@ -12,10 +12,10 @@ public class InterestedVariable {
 	private int lineNumber;
 	
 	
-	private ExecValue variable;
+	private VarValue variable;
 	
 	public InterestedVariable(String className, int lineNumber,
-			ExecValue variable) {
+			VarValue variable) {
 		super();
 		this.visitingClassName = className;
 		this.lineNumber = lineNumber;
@@ -74,11 +74,11 @@ public class InterestedVariable {
 		this.lineNumber = lineNumber;
 	}
 
-	public ExecValue getVariable() {
+	public VarValue getVariable() {
 		return variable;
 	}
 
-	public void setVariable(ExecValue variable) {
+	public void setVariable(VarValue variable) {
 		this.variable = variable;
 	}
 	

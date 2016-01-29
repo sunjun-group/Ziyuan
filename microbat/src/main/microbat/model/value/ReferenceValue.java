@@ -8,8 +8,8 @@
 
 package microbat.model.value;
 
-import java.util.ArrayList;
-import java.util.List;
+import microbat.model.variable.FieldVar;
+import microbat.model.variable.Variable;
 
 import com.sun.jdi.ClassType;
 
@@ -18,74 +18,74 @@ import com.sun.jdi.ClassType;
  *
  */
 @SuppressWarnings("restriction")
-public class ReferenceValue extends ExecValue {
+public class ReferenceValue extends VarValue {
 	protected static final String NULL_CODE = "isNull";
 	
 	private String messageValue;
 	
-	private ClassType classType; 
-	/**
-	 * The virtual memory address
-	 */
-	private long referenceID = -1;
-
-	public ReferenceValue(String name, boolean isNull, boolean isRoot, boolean isField, boolean isStatic) {
-		super(name, isRoot, isField, isStatic);
-//		BooleanValue child = BooleanValue.of(getChildId(NULL_CODE), isNull, false, true, false);
-		BooleanValue child = BooleanValue.of(NULL_CODE, isNull, false, true, false);
+//	private ClassType classType; 
+	
+	public ReferenceValue(boolean isNull, boolean isRoot, Variable variable) {
+		super(isRoot, variable);
+		
+		FieldVar field = new FieldVar(false, "isNull", "boolean");
+		BooleanValue child = new BooleanValue(isNull, false, field);
+		
 		addChild(child);
 		child.addParent(this);
 	}
 	
-	public ReferenceValue(String id, boolean isNull, long referenceID, ClassType type, 
-			boolean isRoot, boolean isField, boolean isStatic) {
-		super(id, isRoot, isField, isStatic);
-//		BooleanValue child = BooleanValue.of(getChildId(NULL_CODE), isNull, false, true, false);
-		BooleanValue child = BooleanValue.of(NULL_CODE, isNull, false, true, false);
+	public ReferenceValue(boolean isNull, long referenceID, boolean isRoot, Variable variable) {
+		super(isRoot, variable);
+		this.variable.setVarID(String.valueOf(referenceID));
+		
+		FieldVar field = new FieldVar(false, "isNull", "boolean");
+		BooleanValue child = new BooleanValue(isNull, false, field);
+		
 		addChild(child);
 		child.addParent(this);
 		
-		setReferenceID(referenceID);
-		setClassType(type);
+//		setReferenceID(referenceID);
+//		setClassType(type);
 	}
 	
-	public void setClassType(ClassType type) {
-		this.classType = type;
-	}
+//	public void setClassType(ClassType type) {
+//		this.classType = type;
+//	}
 	
-	public ClassType getClassType(){
-		return classType;
+	public String getClassType(){
+		return this.variable.getType();
 	}
 	
 	public String toString(){
 		StringBuffer buffer = new StringBuffer();
-		if(classType != null){
-			buffer.append(classType.name() + ": ");			
+		if(getClassType() != null){
+			buffer.append(getClassType() + ": ");			
 		}
 		else{
 			buffer.append("unknown type: ");
 		}
 		
-		buffer.append(referenceID);
+		buffer.append(getReferenceID());
 		String print = buffer.toString();
 		
 		return print;
 	}
 	
-	public static ReferenceValue nullValue(String id, boolean isField, boolean isStatic) {
-		return new ReferenceValue(id, true, false, isField, isStatic);
+	public static ReferenceValue nullValue(Variable var) {
+		return new ReferenceValue(true, false, var);
 	}
 	
-	public long getReferenceID() {
-		return referenceID;
+	public String getReferenceID() {
+		return getVarID();
 	}
 
 	public void setReferenceID(long referenceID) {
-		this.referenceID = referenceID;
+		this.variable.setVarID(String.valueOf(referenceID));
 	}
 	
 	public String getConciseTypeName(){
-		String qualifiedName = classType.name();
+		String qualifiedName = getClassType();
 		String conciseName = qualifiedName.substring(qualifiedName.lastIndexOf(".")+1, qualifiedName.length());
 		return conciseName;
 	}
@@ -100,36 +100,36 @@ public class ReferenceValue extends ExecValue {
 		return true;
 	}
 	
-	@Override
-	public ReferenceValue clone(){
-		
-//		ReferenceValue(String id, boolean isNull, long referenceID, ClassType type, 
-//				boolean isRoot, boolean isField, boolean isStatic)
-		
-		BooleanValue isNullChild = (BooleanValue) getChildren().get(0);
-		boolean isNull = isNullChild.getBoolValue();
-		
-		ReferenceValue clonedValue = new ReferenceValue(getVarName(), isNull, this.getReferenceID(), this.getClassType(),
-				isRoot, isField, isStatic);
-		List<ExecValue> clonedChildren = cloneChildren(clonedValue.getChildren());
-		for(ExecValue clonedChild: clonedChildren){
-			clonedValue.addChild(clonedChild);
-			clonedChild.addParent(clonedValue);
-		}
-		
-		
-		return clonedValue;
-	}
+//	@Override
+//	public ReferenceValue clone(){
+//		
+////		ReferenceValue(String id, boolean isNull, long referenceID, ClassType type, 
+////				boolean isRoot, boolean isField, boolean isStatic)
+//		
+//		BooleanValue isNullChild = (BooleanValue) getChildren().get(0);
+//		boolean isNull = isNullChild.getBoolValue();
+//		
+//		ReferenceValue clonedValue = new ReferenceValue(getVarName(), isNull, this.getReferenceID(), this.getClassType(),
+//				isRoot, isField, isStatic);
+//		List<VarValue> clonedChildren = cloneChildren(clonedValue.getChildren());
+//		for(VarValue clonedChild: clonedChildren){
+//			clonedValue.addChild(clonedChild);
+//			clonedChild.addParent(clonedValue);
+//		}
+//		
+//		
+//		return clonedValue;
+//	}
 	
-	private List<ExecValue> cloneChildren(List<ExecValue> children){
-		List<ExecValue> clonedList = new ArrayList<>();
-		for(ExecValue child: children){
-			ExecValue clonedChild = child.clone();
-			clonedList.add(clonedChild);
-		}
-		
-		return clonedList;
-	}
+//	private List<VarValue> cloneChildren(List<VarValue> children){
+//		List<VarValue> clonedList = new ArrayList<>();
+//		for(VarValue child: children){
+//			VarValue clonedChild = child.clone();
+//			clonedList.add(clonedChild);
+//		}
+//		
+//		return clonedList;
+//	}
 
 	public String getMessageValue() {
 		return messageValue;

@@ -8,6 +8,8 @@
 
 package microbat.model.value;
 
+import microbat.model.variable.Variable;
+
 /**
  * @author LLT
  *
@@ -15,9 +17,11 @@ package microbat.model.value;
 public class BooleanValue extends PrimitiveValue {
 	private boolean value;
 
-	public BooleanValue(String name, boolean value, boolean isRoot, boolean isField, boolean isStatic) {
-		super(name, String.valueOf(value), "boolean", isRoot, isField, isStatic);
+	public BooleanValue(boolean value, boolean isRoot, Variable variable) {
+		super(String.valueOf(value), isRoot, variable);
 		this.value = value;
+		
+		this.variable.setType("boolean");
 	}
 
 	@Override
@@ -29,21 +33,21 @@ public class BooleanValue extends PrimitiveValue {
 		}
 	}
 	
-	public static BooleanValue of(String id, boolean value, boolean isRoot, boolean isField, boolean isStatic) {
-		return new BooleanValue(id, value, isRoot, isField, isStatic);
-	}
+//	public static BooleanValue of(String name, boolean value, boolean isRoot, boolean isField, boolean isStatic) {
+//		return new BooleanValue(name, value, isRoot, isField, isStatic);
+//	}
 	
 	@Override
 	public ExecVarType getType() {
 		return ExecVarType.BOOLEAN;
 	}
 	
-	@Override
-	public PrimitiveValue clone(){
-		BooleanValue clonedValue = new BooleanValue(getVarName(), value, 
-				isRoot, isField, isStatic);
-		return clonedValue;
-	}
+//	@Override
+//	public PrimitiveValue clone(){
+//		BooleanValue clonedValue = new BooleanValue(getVarName(), value, 
+//				isRoot, isField, isStatic);
+//		return clonedValue;
+//	}
 	
 	public boolean getBoolValue(){
 		return this.value;

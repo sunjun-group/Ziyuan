@@ -8,24 +8,26 @@
 
 package microbat.model.value;
 
+import microbat.model.variable.Variable;
+
 
 
 /**
  * @author LLT, modified by Yun Lin
  *
  */
-public class PrimitiveValue extends ExecValue {
+public class PrimitiveValue extends VarValue {
 	/**
 	 * indicate the value in form of String
 	 */
 	private String strVal;
 	
-	private String primitiveType;
+//	private String primitiveType;
 
-	public PrimitiveValue(String name, String strVal, String type, boolean isRoot, boolean isField, boolean isStatic) {
-		super(name, isRoot, isField, isStatic);
+	public PrimitiveValue(String strVal, boolean isRoot, Variable variable) {
+		super(isRoot, variable);
 		this.strVal = strVal;
-		this.primitiveType = type;
+//		this.primitiveType = type;
 	}
 
 	public String getStrVal() {
@@ -43,7 +45,7 @@ public class PrimitiveValue extends ExecValue {
 	
 	@Override
 	public String toString() {
-		return String.format("(%s:%s)", varName, strVal);
+		return String.format("(%s:%s)", getVarName(), strVal);
 	}
 
 	@Override
@@ -52,11 +54,11 @@ public class PrimitiveValue extends ExecValue {
 	}
 	
 	public String getPrimitiveType(){
-		return this.primitiveType;
+		return this.variable.getType();
 	}
 	
 	public void setPrimitiveType(String type){
-		this.primitiveType = type;
+		this.variable.setType(type);
 	}
 
 	@Override
@@ -68,12 +70,12 @@ public class PrimitiveValue extends ExecValue {
 		return false;
 	}
 	
-	@Override
-	public PrimitiveValue clone(){
-		PrimitiveValue clonedValue = new PrimitiveValue(getVarName(), strVal, 
-				getPrimitiveType(), isRoot, isField, isStatic);
-		return clonedValue;
-	}
+//	@Override
+//	public PrimitiveValue clone(){
+//		PrimitiveValue clonedValue = new PrimitiveValue(getVarName(), strVal, 
+//				getPrimitiveType(), isRoot, isField, isStatic);
+//		return clonedValue;
+//	}
 
 //	@Override
 //	public boolean match(GraphNode node) {

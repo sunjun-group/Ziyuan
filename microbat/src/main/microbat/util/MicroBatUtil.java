@@ -2,7 +2,7 @@ package microbat.util;
 
 import microbat.codeanalysis.ast.LocalVariableScope;
 import microbat.model.InterestedVariable;
-import microbat.model.value.ExecValue;
+import microbat.model.value.VarValue;
 import microbat.model.value.ReferenceValue;
 
 public class MicroBatUtil {
@@ -17,8 +17,8 @@ public class MicroBatUtil {
 	 * @return
 	 */
 	public static boolean isTheSameVariable(InterestedVariable v1, InterestedVariable v2) {
-		ExecValue var1 = v1.getVariable();
-		ExecValue var2 = v2.getVariable();
+		VarValue var1 = v1.getVariable();
+		VarValue var2 = v2.getVariable();
 		
 		if(var1 instanceof ReferenceValue && var2 instanceof ReferenceValue){
 			ReferenceValue rv1 = (ReferenceValue)var1;
@@ -54,8 +54,8 @@ public class MicroBatUtil {
 	}
 
 
-	private static boolean isEqualRange(ExecValue var1, InterestedVariable v1, ExecValue var2, InterestedVariable v2) {
-		String varID = var1.getVarId();
+	private static boolean isEqualRange(VarValue var1, InterestedVariable v1, VarValue var2, InterestedVariable v2) {
+		String varID = var1.getVariablePath();
 		for(LocalVariableScope lvs: Settings.localVariableScopes.getVariableScopes()){
 			if(varID.equals(lvs.getVariableName())){
 				boolean isRootVar1InScope = lvs.getStartLine() <= v1.getLineNumber() && lvs.getEndLine() >= v1.getLineNumber();

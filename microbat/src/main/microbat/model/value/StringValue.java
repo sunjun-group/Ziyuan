@@ -8,6 +8,8 @@
 
 package microbat.model.value;
 
+import microbat.model.variable.Variable;
+
 /**
  * @author LLT
  *
@@ -16,8 +18,9 @@ public class StringValue extends PrimitiveValue {
 //	private static final String LENGTH_CODE = "length";
 //	private static final String IS_EMPTY = "isEmpty";
 	
-	public StringValue(String name, String val, boolean isRoot, boolean isField, boolean isStatic) {
-		super(name, val, "String", isRoot, isField, isStatic);
+	public StringValue(String val, boolean isRoot, Variable var) {
+		super(val, isRoot, var);
+		var.setType("java.lang.String");
 //		BooleanValue child = new BooleanValue(getChildId(IS_EMPTY), val.isEmpty(), false);
 //		add(child);
 //		child.addParent(this);
@@ -35,10 +38,10 @@ public class StringValue extends PrimitiveValue {
 	}
 	
 	
-	@Override
-	public PrimitiveValue clone(){
-		StringValue clonedValue = new StringValue(getVarName(), getStrVal(), 
-				isRoot, isField, isStatic);
-		return clonedValue;
-	}
+//	@Override
+//	public PrimitiveValue clone(){
+//		StringValue clonedValue = new StringValue(getVarName(), getStrVal(), 
+//				isRoot, isField, isStatic);
+//		return clonedValue;
+//	}
 }
