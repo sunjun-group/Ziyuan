@@ -3,14 +3,12 @@ package microbat.views;
 import java.util.List;
 
 import microbat.algorithm.graphdiff.GraphDiff;
-import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
-import microbat.model.InterestedVariable;
 import microbat.model.trace.TraceNode;
 import microbat.model.value.ArrayValue;
-import microbat.model.value.VarValue;
 import microbat.model.value.PrimitiveValue;
 import microbat.model.value.ReferenceValue;
+import microbat.model.value.VarValue;
 import microbat.util.Settings;
 
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -102,7 +100,7 @@ public class DebugFeedbackView extends ViewPart {
 		this.consequenceTreeViewer.setLabelProvider(new ConsequenceLabelProvider());
 		this.consequenceTreeViewer.setInput(cons);	
 		
-		setChecks(this.consequenceTreeViewer, this.node.getBreakPoint());
+		setChecks(this.consequenceTreeViewer);
 		
 		this.consequenceTreeViewer.refresh(true);
 	}
@@ -112,7 +110,7 @@ public class DebugFeedbackView extends ViewPart {
 		this.stateTreeViewer.setLabelProvider(new VariableLabelProvider());
 		this.stateTreeViewer.setInput(value);	
 		
-		setChecks(this.stateTreeViewer, this.node.getBreakPoint());
+		setChecks(this.stateTreeViewer);
 
 		this.stateTreeViewer.refresh(true);
 		
@@ -141,17 +139,15 @@ public class DebugFeedbackView extends ViewPart {
 		addListener();
 	}
 	
-	private void setChecks(CheckboxTreeViewer treeViewer, BreakPoint point){
+	private void setChecks(CheckboxTreeViewer treeViewer){
 		Tree tree = treeViewer.getTree();
-		
 		for(TreeItem item: tree.getItems()){
-			setChecks(item, point);
+			setChecks(item);
 		}
 	}
 	
-	private void setChecks(TreeItem item, BreakPoint point){
+	private void setChecks(TreeItem item){
 		Object element = item.getData();
-		
 		if(element == null){
 			return;
 		}
@@ -164,10 +160,10 @@ public class DebugFeedbackView extends ViewPart {
 			ev = (VarValue) ((GraphDiff)element).getChangedNode();
 		}
 		
-		InterestedVariable iv = new InterestedVariable(point.getDeclaringCompilationUnitName(), 
-				point.getLineNo(), ev);
+//		InterestedVariable iv = new InterestedVariable(point.getDeclaringCompilationUnitName(), 
+//				point.getLineNo(), ev);
 		
-		if(Settings.interestedVariables.contains(iv)){
+		if(Settings.interestedVariables.contains(ev.getVarID())){
 			item.setChecked(true);
 		}
 		else{
@@ -175,7 +171,7 @@ public class DebugFeedbackView extends ViewPart {
 		}
 
 		for(TreeItem childItem: item.getItems()){
-			setChecks(childItem, point);
+			setChecks(childItem);
 		}
 	}
 
@@ -193,20 +189,21 @@ public class DebugFeedbackView extends ViewPart {
 					GraphDiff diff = (GraphDiff)obj;
 					value = (VarValue)diff.getChangedNode();
 				}
+				String varID = value.getVarID();
 				
-				BreakPoint point = node.getBreakPoint();
-				InterestedVariable iVar = new InterestedVariable(point.getDeclaringCompilationUnitName(), 
-						point.getLineNo(), value);
+//				BreakPoint point = node.getBreakPoint();
+//				InterestedVariable iVar = new InterestedVariable(point.getDeclaringCompilationUnitName(), 
+//						point.getLineNo(), value);
 				
-				if(!Settings.interestedVariables.contains(iVar)){
-					Settings.interestedVariables.add(iVar);							
+				if(!Settings.interestedVariables.contains(varID)){
+					Settings.interestedVariables.add(varID);							
 				}
 				else{
-					Settings.interestedVariables.remove(iVar);
+					Settings.interestedVariables.remove(varID);
 				}
 				
-				setChecks(consequenceTreeViewer, point);
-				setChecks(stateTreeViewer, point);
+				setChecks(consequenceTreeViewer);
+				setChecks(stateTreeViewer);
 				
 				stateTreeViewer.refresh();	
 				consequenceTreeViewer.refresh();	
@@ -219,9 +216,8 @@ public class DebugFeedbackView extends ViewPart {
 			
 			@Override
 			public void treeExpanded(TreeExpansionEvent event) {
-				BreakPoint point = node.getBreakPoint();
-				setChecks(consequenceTreeViewer, point);
-				setChecks(stateTreeViewer, point);
+				setChecks(consequenceTreeViewer);
+				setChecks(stateTreeViewer);
 				
 				stateTreeViewer.refresh();	
 				consequenceTreeViewer.refresh();
@@ -651,16 +647,11 @@ public class DebugFeedbackView extends ViewPart {
 			}
 			
 			if(node != null){
-				BreakPoint point = node.getBreakPoint();
-				InterestedVariable iVar = new InterestedVariable(point.getDeclaringCompilationUnitName(), 
-						point.getLineNo(), value);
-				
-				if(iVar.getVariable().getVarName().contains("flag")){
-					System.out.println(iVar.getVariable().getParents().get(0).getVarName());
-					System.currentTimeMillis();
-				}
-				
-				if(Settings.interestedVariables.contains(iVar)){
+//				BreakPoint point = node.getBreakPoint();
+//				InterestedVariable iVar = new InterestedVariable(point.getDeclaringCompilationUnitName(), 
+//						point.getLineNo(), value);
+				String varID = value.getVarID();
+				if(Settings.interestedVariables.contains(varID)){
 					return true;
 				}
 			}

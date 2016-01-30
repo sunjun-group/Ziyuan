@@ -1,11 +1,8 @@
 package microbat.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import microbat.Activator;
 import microbat.codeanalysis.ast.LocalVariableScopes;
-import microbat.model.InterestedVariable;
+import microbat.model.UserInterestedVariables;
 import microbat.preference.MicrobatPreference;
 
 public class Settings {
@@ -31,7 +28,9 @@ public class Settings {
 		}
 	}
 	
-	public static List<InterestedVariable> interestedVariables = new ArrayList<>();
+	//public static List<InterestedVariable> interestedVariables = new ArrayList<>();
+	
+	public static UserInterestedVariables interestedVariables = new UserInterestedVariables();
 	/**
 	 * This variable is to trace whether the variables in different lines are the same
 	 * local variable.
