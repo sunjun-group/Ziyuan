@@ -472,6 +472,10 @@ public class DebugFeedbackView extends ViewPart {
 
 		@Override
 		public boolean hasChildren(Object element) {
+			if(element instanceof ReferenceValue){
+				List<VarValue> children = ((ReferenceValue)element).getChildren();
+				return children != null && !children.isEmpty();
+			}
 			return false;
 		}
 		
@@ -657,7 +661,8 @@ public class DebugFeedbackView extends ViewPart {
 
 		public boolean hasChildren(Object element) {
 			if(element instanceof ReferenceValue){
-				return true;
+				List<VarValue> children = ((ReferenceValue)element).getChildren();
+				return children != null && !children.isEmpty();
 			}
 			return false;
 		}
