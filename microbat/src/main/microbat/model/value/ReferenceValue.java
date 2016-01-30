@@ -11,13 +11,11 @@ package microbat.model.value;
 import microbat.model.variable.FieldVar;
 import microbat.model.variable.Variable;
 
-import com.sun.jdi.ClassType;
-
 /**
  * @author LLT, modified by Yun Lin
  *
  */
-@SuppressWarnings("restriction")
+
 public class ReferenceValue extends VarValue {
 	protected static final String NULL_CODE = "isNull";
 	

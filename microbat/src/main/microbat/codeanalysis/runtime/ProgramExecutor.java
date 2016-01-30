@@ -25,6 +25,9 @@ import microbat.model.BreakPointValue;
 import microbat.model.trace.StepVariableRelationEntry;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
+import microbat.model.value.PrimitiveValue;
+import microbat.model.value.ReferenceValue;
+import microbat.model.value.VarValue;
 import microbat.model.variable.ArrayElementVar;
 import microbat.model.variable.FieldVar;
 import microbat.model.variable.LocalVar;
@@ -647,7 +650,8 @@ public class ProgramExecutor{
 //		return node;
 //	}
 	
-	private String generateVarID(StackFrame frame, Variable var, TraceNode node){
+	private VarValue generateVarValue(StackFrame frame, Variable var, TraceNode node){
+		VarValue varValue = null;
 		String varName = var.getName();
 		
 		if(varName.equals("val$a")){
@@ -667,6 +671,8 @@ public class ProgramExecutor{
 					String varID = String.valueOf(objRef.uniqueID());
 					
 					var.setVarID(varID);
+					
+					varValue = new ReferenceValue(false, false, var);
 				}
 				else{
 					if(var instanceof LocalVar){
@@ -713,9 +719,10 @@ public class ProgramExecutor{
 						}
 					}
 					
+					varValue = new PrimitiveValue(expValue.toString(), false, var);
 				}
 				
-				return var.getVarID();
+				return varValue;
 			}							
 		}
 		catch(Exception e){
@@ -769,7 +776,10 @@ public class ProgramExecutor{
 		
 		List<Variable> readVariables = node.getBreakPoint().getReadVariables();
 		for(Variable readVar: readVariables){
-			String varID = generateVarID(frame, readVar, node);
+			VarValue varValue = generateVarValue(frame, readVar, node);
+			node.addReadVariable(varValue);
+			
+			String varID = varValue.getVarID();
 			System.currentTimeMillis();
 			if(varID == null){
 				System.err.println("When processing read variable, there is an error when generating the id for " + readVar + 
@@ -794,11 +804,14 @@ public class ProgramExecutor{
 			StackFrame frame) {
 		List<Variable> writtenVariables = node.getBreakPoint().getWrittenVariables();
 		for(Variable writtenVar: writtenVariables){
-			String varID = generateVarID(frame, writtenVar, node);
+			VarValue varValue = generateVarValue(frame, writtenVar, node);
+			node.addWrittenVariable(varValue);
+			
+			String varID = varValue.getVarID();
 			if(varID == null){
 				System.err.println("When processing written variable, there is an error when generating the id for " + writtenVar + 
 						" in line " + node.getBreakPoint().getLineNo() + " of " + node.getBreakPoint().getClassCanonicalName());
-				varID = generateVarID(frame, writtenVar, node);
+//				varID = generateVarID(frame, writtenVar, node);
 			}
 			else{
 				StepVariableRelationEntry entry = stepVariableTable.get(varID);

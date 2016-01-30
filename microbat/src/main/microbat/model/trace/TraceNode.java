@@ -9,6 +9,7 @@ import microbat.algorithm.graphdiff.GraphDiff;
 import microbat.algorithm.graphdiff.HierarchyGraphDiffer;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
+import microbat.model.value.VarValue;
 
 public class TraceNode{
 	
@@ -18,6 +19,9 @@ public class TraceNode{
 	private BreakPointValue afterStepOverState;
 	
 	private List<GraphDiff> consequences;
+	
+	private List<VarValue> readVariables = new ArrayList<>();
+	private List<VarValue> writtenVariables = new ArrayList<>();
 	
 	private Map<TraceNode, List<String>> dominator = new HashMap<>();
 	private Map<TraceNode, List<String>> dominatee = new HashMap<>();
@@ -284,5 +288,29 @@ public class TraceNode{
 
 	public void setException(boolean isException) {
 		this.isException = isException;
+	}
+
+	public List<VarValue> getReadVariables() {
+		return readVariables;
+	}
+
+	public void setReadVariables(List<VarValue> readVariables) {
+		this.readVariables = readVariables;
+	}
+	
+	public void addReadVariable(VarValue var){
+		this.readVariables.add(var);
+	}
+
+	public List<VarValue> getWrittenVariables() {
+		return writtenVariables;
+	}
+
+	public void setWrittenVariables(List<VarValue> writtenVariables) {
+		this.writtenVariables = writtenVariables;
+	}
+	
+	public void addWrittenVariable(VarValue var){
+		this.writtenVariables.add(var);
 	}
 }
