@@ -37,7 +37,9 @@ public class PrimitiveValue extends VarValue {
 		return strVal;
 	}
 	
-	
+	public void setStrVal(String strVal){
+		this.strVal = strVal;
+	}
 	
 //	@Override
 //	public double getDoubleVal() {

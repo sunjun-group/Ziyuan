@@ -48,6 +48,8 @@ public class BreakPointValue extends VarValue {
 	protected boolean needToRetrieveValue() {
 		return false;
 	}
+	
+	
 
 //	public Double getValue(final String variableId, Double defaultIfNull) {
 //		Double value = getValue(variableId, this);

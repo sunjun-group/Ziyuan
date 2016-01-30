@@ -654,7 +654,7 @@ public class ProgramExecutor{
 		VarValue varValue = null;
 		String varName = var.getName();
 		
-		if(varName.equals("val$a")){
+		if(varName.equals("this.flag")){ 
 			System.currentTimeMillis();
 		}
 		
@@ -673,6 +673,9 @@ public class ProgramExecutor{
 					var.setVarID(varID);
 					
 					varValue = new ReferenceValue(false, false, var);
+					((ReferenceValue)varValue).setMessageValue(value.toString());
+					
+					varValue.setChildren(null);
 				}
 				else{
 					if(var instanceof LocalVar){
@@ -719,7 +722,8 @@ public class ProgramExecutor{
 						}
 					}
 					
-					varValue = new PrimitiveValue(expValue.toString(), false, var);
+					varValue = new PrimitiveValue(value.toString(), false, var);
+//					((PrimitiveValue)varValue).setStrVal(expValue.messageValue.toString());
 				}
 				
 				return varValue;
@@ -777,16 +781,17 @@ public class ProgramExecutor{
 		List<Variable> readVariables = node.getBreakPoint().getReadVariables();
 		for(Variable readVar: readVariables){
 			VarValue varValue = generateVarValue(frame, readVar, node);
-			node.addReadVariable(varValue);
 			
-			String varID = varValue.getVarID();
 			System.currentTimeMillis();
-			if(varID == null){
+			if(varValue == null){
 				System.err.println("When processing read variable, there is an error when generating the id for " + readVar + 
 						" in line " + node.getBreakPoint().getLineNo() + " of " + node.getBreakPoint().getClassCanonicalName());
 				//varID = generateVarID(frame, readVar, node);
 			}
 			else{
+				node.addReadVariable(varValue);
+				String varID = varValue.getVarID();
+				
 				StepVariableRelationEntry entry = stepVariableTable.get(varID);
 				if(entry == null){
 					entry = new StepVariableRelationEntry(varID);	
@@ -805,15 +810,16 @@ public class ProgramExecutor{
 		List<Variable> writtenVariables = node.getBreakPoint().getWrittenVariables();
 		for(Variable writtenVar: writtenVariables){
 			VarValue varValue = generateVarValue(frame, writtenVar, node);
-			node.addWrittenVariable(varValue);
 			
-			String varID = varValue.getVarID();
-			if(varID == null){
+			if(varValue == null){
 				System.err.println("When processing written variable, there is an error when generating the id for " + writtenVar + 
 						" in line " + node.getBreakPoint().getLineNo() + " of " + node.getBreakPoint().getClassCanonicalName());
 //				varID = generateVarID(frame, writtenVar, node);
 			}
 			else{
+				node.addWrittenVariable(varValue);
+				String varID = varValue.getVarID();
+				
 				StepVariableRelationEntry entry = stepVariableTable.get(varID);
 				if(entry == null){
 					entry = new StepVariableRelationEntry(varID);	
@@ -851,8 +857,9 @@ public class ProgramExecutor{
         	CompilationUnit cu = JavaUtil.findCompilationUnitInProject(point.getClassCanonicalName());
         	ExpressionParser.setParameters(cu, point.getLineNo());
         	Value val = ExpressionParser.evaluate(expression, frame.virtualMachine(), frameGetter);
-			
-			eValue = new ExpressionValue(val, ExpressionParser.parentValue);
+//			Value messageValue = ExpressionParser.getMassagedValue();
+        	
+			eValue = new ExpressionValue(val, ExpressionParser.parentValue, null);
 			
 			System.currentTimeMillis();
 			
@@ -945,10 +952,13 @@ public class ProgramExecutor{
 		 * used to decide the memory address, this value must be an ObjectReference.
 		 */
 		Value parentValue;
+//		Value messageValue;
 		
-		public ExpressionValue(Value value, Value parentValue){
+		public ExpressionValue(Value value, Value parentValue, Value messageValue){
 			this.value = value;
 			this.parentValue = parentValue;
+			
+//			this.messageValue = messageValue;
 		}
 		
 	}

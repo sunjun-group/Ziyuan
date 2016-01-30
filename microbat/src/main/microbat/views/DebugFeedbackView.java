@@ -1,5 +1,6 @@
 package microbat.views;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import microbat.algorithm.graphdiff.GraphDiff;
@@ -63,6 +64,9 @@ public class DebugFeedbackView extends ViewPart {
 //	private CheckboxTreeViewer inputTreeViewer;
 //	private CheckboxTreeViewer outputTreeViewer;
 	private CheckboxTreeViewer stateTreeViewer;
+	private CheckboxTreeViewer writtenVariableTreeViewer;
+	private CheckboxTreeViewer readVariableTreeViewer;
+	
 	private CheckboxTreeViewer consequenceTreeViewer;
 	
 	private ICheckStateListener stateListener;
@@ -85,8 +89,10 @@ public class DebugFeedbackView extends ViewPart {
 //		HierarchyGraphDiffer differ = new HierarchyGraphDiffer();
 //		differ.diff(thisState, afterState);
 		
-		createConsequenceContent(cons);
+//		createConsequenceContent(cons);
 		createStateContent(thisState);
+		createWrittenVariableContent(node.getWrittenVariables());
+		createReadVariableContect(node.getReadVariables());
 		
 		yesButton.setSelection(false);
 		noButton.setSelection(false);
@@ -95,6 +101,27 @@ public class DebugFeedbackView extends ViewPart {
 	}
 	
 	
+	private void createWrittenVariableContent(List<VarValue> writtenVariables) {
+		this.writtenVariableTreeViewer.setContentProvider(new RWVariableContentProvider());
+		this.writtenVariableTreeViewer.setLabelProvider(new VariableLabelProvider());
+		this.writtenVariableTreeViewer.setInput(writtenVariables);	
+		
+		setChecks(this.writtenVariableTreeViewer);
+
+		this.writtenVariableTreeViewer.refresh(true);
+		
+	}
+
+	private void createReadVariableContect(List<VarValue> readVariables) {
+		this.readVariableTreeViewer.setContentProvider(new RWVariableContentProvider());
+		this.readVariableTreeViewer.setLabelProvider(new VariableLabelProvider());
+		this.readVariableTreeViewer.setInput(readVariables);	
+		
+		setChecks(this.readVariableTreeViewer);
+
+		this.readVariableTreeViewer.refresh(true);
+	}
+
 	private void createConsequenceContent(List<GraphDiff> cons) {
 		this.consequenceTreeViewer.setContentProvider(new ConsequenceContentProvider());
 		this.consequenceTreeViewer.setLabelProvider(new ConsequenceLabelProvider());
@@ -113,7 +140,6 @@ public class DebugFeedbackView extends ViewPart {
 		setChecks(this.stateTreeViewer);
 
 		this.stateTreeViewer.refresh(true);
-		
 	}
 
 	@Override
@@ -131,10 +157,12 @@ public class DebugFeedbackView extends ViewPart {
 
 //		createVarGroup(variableForm, "Read Variables: ", INPUT);
 //		createVarGroup(variableForm, "Consequences: ", OUTPUT);
-		createConsequenceGroup(variableForm, "Consequences: ");
-		createVarGroup(variableForm, "States: ");
+//		createConsequenceGroup(variableForm, "Consequences: ");
+		this.writtenVariableTreeViewer = createVarGroup(variableForm, "Written Variables: ");
+		this.readVariableTreeViewer = createVarGroup(variableForm, "Read Variables: ");
+		this.stateTreeViewer = createVarGroup(variableForm, "States: ");
 
-		variableForm.setWeights(new int[] { 4, 6});
+		variableForm.setWeights(new int[] { 3, 3, 4});
 		
 		addListener();
 	}
@@ -202,11 +230,16 @@ public class DebugFeedbackView extends ViewPart {
 					Settings.interestedVariables.remove(varID);
 				}
 				
-				setChecks(consequenceTreeViewer);
+//				setChecks(consequenceTreeViewer);
+				setChecks(readVariableTreeViewer);
+				setChecks(writtenVariableTreeViewer);
 				setChecks(stateTreeViewer);
 				
+				readVariableTreeViewer.refresh();
+				writtenVariableTreeViewer.refresh();
 				stateTreeViewer.refresh();	
-				consequenceTreeViewer.refresh();	
+				
+//				consequenceTreeViewer.refresh();	
 			}
 			
 			
@@ -216,11 +249,19 @@ public class DebugFeedbackView extends ViewPart {
 			
 			@Override
 			public void treeExpanded(TreeExpansionEvent event) {
-				setChecks(consequenceTreeViewer);
+//				setChecks(consequenceTreeViewer);
+//				setChecks(stateTreeViewer);
+//				
+//				stateTreeViewer.refresh();	
+//				consequenceTreeViewer.refresh();
+				
+				setChecks(readVariableTreeViewer);
+				setChecks(writtenVariableTreeViewer);
 				setChecks(stateTreeViewer);
 				
+				readVariableTreeViewer.refresh();
+				writtenVariableTreeViewer.refresh();
 				stateTreeViewer.refresh();	
-				consequenceTreeViewer.refresh();
 			}
 			
 			@Override
@@ -229,14 +270,22 @@ public class DebugFeedbackView extends ViewPart {
 			}
 		};
 		
-		this.consequenceTreeViewer.addTreeListener(treeListener);
+		this.readVariableTreeViewer.addTreeListener(treeListener);
+		this.writtenVariableTreeViewer.addTreeListener(treeListener);
 		this.stateTreeViewer.addTreeListener(treeListener);
 		
-		this.consequenceTreeViewer.addCheckStateListener(stateListener);
+		this.readVariableTreeViewer.addCheckStateListener(stateListener);
+		this.writtenVariableTreeViewer.addCheckStateListener(stateListener);
 		this.stateTreeViewer.addCheckStateListener(stateListener);
+		
+//		this.consequenceTreeViewer.addTreeListener(treeListener);
+//		this.stateTreeViewer.addTreeListener(treeListener);
+//		
+//		this.consequenceTreeViewer.addCheckStateListener(stateListener);
+//		this.stateTreeViewer.addCheckStateListener(stateListener);
 	}
 
-	private void createVarGroup(SashForm variableForm, String groupName) {
+	private CheckboxTreeViewer createVarGroup(SashForm variableForm, String groupName) {
 		Group varGroup = new Group(variableForm, SWT.NONE);
 		varGroup.setText(groupName);
 		varGroup.setLayout(new FillLayout());
@@ -260,7 +309,8 @@ public class DebugFeedbackView extends ViewPart {
 		valueColumn.setText("Variable Value");
 		valueColumn.setWidth(300);
 
-		this.stateTreeViewer = new CheckboxTreeViewer(tree);
+		return new CheckboxTreeViewer(tree);
+//		this.stateTreeViewer = new CheckboxTreeViewer(tree);
 //		if(type.equals(INPUT)){
 //			this.treeViewerList[0] = new CheckboxTreeViewer(tree);
 //		}
@@ -371,6 +421,60 @@ public class DebugFeedbackView extends ViewPart {
 	@Override
 	public void setFocus() {
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	class RWVariableContentProvider implements ITreeContentProvider{
+
+		@Override
+		public void dispose() {
+			
+		}
+
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			
+		}
+
+		@Override
+		public Object[] getElements(Object inputElement) {
+			if(inputElement instanceof ArrayList){
+				ArrayList<VarValue> elements = (ArrayList<VarValue>)inputElement;
+				return elements.toArray(new VarValue[0]);
+			}
+			
+			return null;
+		}
+
+		@Override
+		public Object[] getChildren(Object parentElement) {
+			if(parentElement instanceof ReferenceValue){
+				ReferenceValue parent = (ReferenceValue)parentElement;
+				if(parent.getChildren() == null){
+					VarValue vv = node.getProgramState().findVarValue(parent.getVarID());
+					if(vv != null){
+						parent.setChildren(vv.getChildren());
+						return vv.getChildren().toArray(new VarValue[0]);
+					}
+				}
+				else{
+					return parent.getChildren().toArray(new VarValue[0]);
+				}
+			}
+			
+			return null;
+		}
+
+		@Override
+		public Object getParent(Object element) {
+			return null;
+		}
+
+		@Override
+		public boolean hasChildren(Object element) {
+			return false;
+		}
+		
 	}
 	
 	class ConsequenceContentProvider implements ITreeContentProvider{

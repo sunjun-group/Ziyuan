@@ -61,6 +61,33 @@ public abstract class VarValue implements GraphNode{
 //		return name;
 //	}
 	
+	public VarValue findVarValue(String varID){
+		ArrayList<String> visitedIDs = new ArrayList<>();
+		VarValue value = findVarValue(varID, visitedIDs);
+		return value;
+	}
+	
+	protected VarValue findVarValue(String varID, ArrayList<String> visitedIDs){
+		if(getChildren() != null){
+			for(VarValue value: getChildren()){
+				if(visitedIDs.contains(value.getVarID())){
+					continue;
+				}
+				else if(value.getVarID().equals(varID)){
+					return value;
+				}
+				else{
+					VarValue targetValue = value.findVarValue(varID, visitedIDs);
+					if(targetValue != null){
+						return targetValue;
+					}
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 	@Override
 	public List<VarValue> getChildren() {
 		return children;
