@@ -74,6 +74,7 @@ public class DebugFeedbackView extends ViewPart {
 	
 	private Button yesButton;
 	private Button noButton;
+	private Button unclearButton;
 	
 	public DebugFeedbackView() {
 	}
@@ -96,6 +97,7 @@ public class DebugFeedbackView extends ViewPart {
 		
 		yesButton.setSelection(false);
 		noButton.setSelection(false);
+		unclearButton.setSelection(false);
 		isCorrect = null;
 		
 	}
@@ -231,12 +233,12 @@ public class DebugFeedbackView extends ViewPart {
 				}
 				
 //				setChecks(consequenceTreeViewer);
-				setChecks(readVariableTreeViewer);
 				setChecks(writtenVariableTreeViewer);
+				setChecks(readVariableTreeViewer);
 				setChecks(stateTreeViewer);
 				
-				readVariableTreeViewer.refresh();
 				writtenVariableTreeViewer.refresh();
+				readVariableTreeViewer.refresh();
 				stateTreeViewer.refresh();	
 				
 //				consequenceTreeViewer.refresh();	
@@ -274,8 +276,8 @@ public class DebugFeedbackView extends ViewPart {
 		this.writtenVariableTreeViewer.addTreeListener(treeListener);
 		this.stateTreeViewer.addTreeListener(treeListener);
 		
-		this.readVariableTreeViewer.addCheckStateListener(stateListener);
 		this.writtenVariableTreeViewer.addCheckStateListener(stateListener);
+		this.readVariableTreeViewer.addCheckStateListener(stateListener);
 		this.stateTreeViewer.addCheckStateListener(stateListener);
 		
 //		this.consequenceTreeViewer.addTreeListener(treeListener);
@@ -359,7 +361,7 @@ public class DebugFeedbackView extends ViewPart {
 		feedbackGroup.setText("Is this step correct?");
 		feedbackGroup
 				.setLayoutData(new GridData(SWT.FILL, SWT.UP, true, false));
-		feedbackGroup.setLayout(new GridLayout(2, true));
+		feedbackGroup.setLayout(new GridLayout(4, true));
 
 		yesButton = new Button(feedbackGroup, SWT.RADIO);
 		yesButton.setText(" Yes");
@@ -390,9 +392,24 @@ public class DebugFeedbackView extends ViewPart {
 			public void mouseDoubleClick(MouseEvent e) {
 			}
 		});
+		
+		unclearButton = new Button(feedbackGroup, SWT.RADIO);
+		unclearButton.setText(" Unclear");
+		unclearButton.setLayoutData(new GridData(SWT.LEFT, SWT.UP, true, false));
+		unclearButton.addMouseListener(new MouseListener() {
+			public void mouseUp(MouseEvent e) {
+			}
 
-		Label holder = new Label(feedbackGroup, SWT.NONE);
-		holder.setText("");
+			public void mouseDown(MouseEvent e) {
+				
+			}
+
+			public void mouseDoubleClick(MouseEvent e) {
+			}
+		});
+
+//		Label holder = new Label(feedbackGroup, SWT.NONE);
+//		holder.setText("");
 
 		Button submitButton = new Button(feedbackGroup, SWT.NONE);
 		submitButton.setText("submit");
