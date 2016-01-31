@@ -679,7 +679,9 @@ public class ProgramExecutor{
 					var.setVarID(varID);
 					
 					if(value.type().toString().equals("java.lang.String")){
-						varValue = new StringValue(value.toString(), false, var);
+						String strValue = value.toString();
+						strValue = strValue.substring(1, strValue.length()-1);
+						varValue = new StringValue(strValue, false, var);
 					}
 					else{
 						varValue = new ReferenceValue(false, false, var);
