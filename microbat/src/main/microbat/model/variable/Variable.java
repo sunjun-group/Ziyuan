@@ -77,4 +77,5 @@ public abstract class Variable {
 	
 
 	public abstract String getSimpleName();
+	public abstract Variable clone();
 }

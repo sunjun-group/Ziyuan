@@ -44,6 +44,13 @@ public class ArrayElementVar extends Variable {
 		String sName = variableName.substring(variableName.indexOf("[")+1, variableName.length()-1);
 		return sName;
 	}
+
+	@Override
+	public Variable clone() {
+		ArrayElementVar var = new ArrayElementVar(variableName, type);
+		var.setVarID(varID);
+		return var;
+	}
 	
 	
 	

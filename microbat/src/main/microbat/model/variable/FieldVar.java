@@ -73,4 +73,11 @@ public class FieldVar extends Variable{
 			return sName;			
 		}
 	}
+
+	@Override
+	public Variable clone() {
+		FieldVar var = new FieldVar(isStatic, variableName, declaringType);
+		var.setVarID(varID);
+		return var;
+	}
 }

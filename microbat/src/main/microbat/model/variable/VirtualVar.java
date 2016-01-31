@@ -21,4 +21,11 @@ public class VirtualVar extends Variable {
 		return this.variableName;
 	}
 
+	@Override
+	public Variable clone() {
+		VirtualVar var = new VirtualVar(variableName, type);
+		var.setVarID(varID);
+		return var;
+	}
+
 }

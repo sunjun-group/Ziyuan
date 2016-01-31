@@ -73,4 +73,11 @@ public class LocalVar extends Variable{
 		String sName = variableName;
 		return sName;
 	}
+
+	@Override
+	public Variable clone() {
+		LocalVar var = new LocalVar(variableName, type, locationClass, lineNumber);
+		var.setVarID(varID);
+		return var;
+	}
 }

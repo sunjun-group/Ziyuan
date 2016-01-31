@@ -27,6 +27,7 @@ import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.model.value.PrimitiveValue;
 import microbat.model.value.ReferenceValue;
+import microbat.model.value.StringValue;
 import microbat.model.value.VarValue;
 import microbat.model.variable.ArrayElementVar;
 import microbat.model.variable.FieldVar;
@@ -650,13 +651,14 @@ public class ProgramExecutor{
 //		return node;
 //	}
 	
-	private VarValue generateVarValue(StackFrame frame, Variable var, TraceNode node){
+	private VarValue generateVarValue(StackFrame frame, Variable var0, TraceNode node){
 		VarValue varValue = null;
+		/**
+		 * Note that the read/written variables in breakpoint should be different
+		 * when set them into different trace node. 
+		 */
+		Variable var = var0.clone();
 		String varName = var.getName();
-		
-		if(varName.equals("this.flag")){ 
-			System.currentTimeMillis();
-		}
 		
 		try{
 			ExpressionValue expValue = retriveExpression(frame, varName, node.getBreakPoint());
@@ -670,12 +672,20 @@ public class ProgramExecutor{
 					ObjectReference objRef = (ObjectReference)value;
 					String varID = String.valueOf(objRef.uniqueID());
 					
+					if(varName.equals("output") && frame.location().lineNumber()==31){ 
+						System.currentTimeMillis();
+					}
+					
 					var.setVarID(varID);
 					
-					varValue = new ReferenceValue(false, false, var);
-					((ReferenceValue)varValue).setMessageValue(value.toString());
-					
-					varValue.setChildren(null);
+					if(value.type().toString().equals("java.lang.String")){
+						varValue = new StringValue(value.toString(), false, var);
+					}
+					else{
+						varValue = new ReferenceValue(false, false, var);
+						((ReferenceValue)varValue).setMessageValue(value.toString());						
+						varValue.setChildren(null);
+					}
 				}
 				else{
 					if(var instanceof LocalVar){
