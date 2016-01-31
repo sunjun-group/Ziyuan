@@ -473,8 +473,19 @@ public class DebugFeedbackView extends ViewPart {
 		@Override
 		public boolean hasChildren(Object element) {
 			if(element instanceof ReferenceValue){
+				ReferenceValue parent = (ReferenceValue)element;
+				
 				List<VarValue> children = ((ReferenceValue)element).getChildren();
-				return children != null && !children.isEmpty();
+				if(children == null){
+					VarValue vv = node.getProgramState().findVarValue(parent.getVarID());
+					if(vv != null){
+						parent.setChildren(vv.getChildren());
+						return !parent.getChildren().isEmpty();
+					}
+				}
+				else{
+					return true;
+				}
 			}
 			return false;
 		}
@@ -734,7 +745,7 @@ public class DebugFeedbackView extends ViewPart {
 						name = "this." + name;
 					}
 					return name;
-				case 2: return value.getStrVal();
+				case 2: return value.getStrVal() + " (id=" + value.getVarID() + ")";
 				}
 			}
 			return null;
