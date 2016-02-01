@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import microbat.model.BreakPoint;
+import microbat.model.UserInterestedVariables;
+import microbat.model.value.VarValue;
 
 /**
  * This class stands for a trace for an execution
@@ -239,6 +241,32 @@ public class Trace {
 			TraceNode lastestNode = exectionList.get(exectionList.size()-1-i);
 			if(lastestNode.isException()){
 				return lastestNode;
+			}
+		}
+		
+		return null;
+	}
+
+	/**
+	 * @param varID
+	 * @param startNodeOrder
+	 * @return
+	 */
+	public TraceNode findBackwardSupiciousNode(
+			UserInterestedVariables interestedVariables, int startNodeOrder) {
+		if(startNodeOrder < 1){
+			return null;
+		}
+		
+		for(int i=startNodeOrder-1; i>=1; i--){
+			/**	order start from 1 */
+			TraceNode node = this.exectionList.get(i-1);
+			for(String varID: interestedVariables.getVarIDs()){
+				for(VarValue varValue: node.getWrittenVariables()){
+					if(varValue.getVarID().equals(varID)){
+						return node;
+					}
+				}
 			}
 		}
 		

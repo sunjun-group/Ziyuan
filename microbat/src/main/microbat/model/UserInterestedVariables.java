@@ -17,4 +17,8 @@ public class UserInterestedVariables {
 	public void remove(String varID) {
 		this.varIDs.remove(varID);
 	}
+	
+	public List<String> getVarIDs(){
+		return this.varIDs;
+	}
 }

@@ -3,8 +3,10 @@ package microbat.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import microbat.Activator;
 import microbat.algorithm.graphdiff.GraphDiff;
 import microbat.model.BreakPointValue;
+import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.model.value.ArrayValue;
 import microbat.model.value.PrimitiveValue;
@@ -33,7 +35,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -44,8 +45,13 @@ import org.eclipse.ui.part.ViewPart;
 
 public class DebugFeedbackView extends ViewPart {
 
-	private TraceNode node;
-	private Boolean isCorrect;
+	public static final String CORRECT = "correct";
+	public static final String INCORRECT = "incorrect";
+	public static final String UNCLEAR = "unclear";
+	
+	private TraceNode currentNode;
+	
+	private String feedbackType;
 	
 //	public static final String INPUT = "input";
 //	public static final String OUTPUT = "output";
@@ -80,7 +86,7 @@ public class DebugFeedbackView extends ViewPart {
 	}
 	
 	public void refresh(TraceNode node){
-		this.node = node;
+		this.currentNode = node;
 		
 		BreakPointValue thisState = node.getProgramState();
 //		BreakPointValue afterState = node.getAfterState();
@@ -98,7 +104,7 @@ public class DebugFeedbackView extends ViewPart {
 		yesButton.setSelection(false);
 		noButton.setSelection(false);
 		unclearButton.setSelection(false);
-		isCorrect = null;
+		feedbackType = null;
 		
 	}
 	
@@ -358,7 +364,7 @@ public class DebugFeedbackView extends ViewPart {
 
 	private void createSubmitGroup(Composite parent) {
 		Group feedbackGroup = new Group(parent, SWT.NONE);
-		feedbackGroup.setText("Is this step correct?");
+		feedbackGroup.setText("Are all variables in this step correct?");
 		feedbackGroup
 				.setLayoutData(new GridData(SWT.FILL, SWT.UP, true, false));
 		feedbackGroup.setLayout(new GridLayout(4, true));
@@ -371,7 +377,7 @@ public class DebugFeedbackView extends ViewPart {
 			}
 
 			public void mouseDown(MouseEvent e) {
-				isCorrect = true;
+				feedbackType = DebugFeedbackView.CORRECT;
 			}
 
 			public void mouseDoubleClick(MouseEvent e) {
@@ -386,7 +392,7 @@ public class DebugFeedbackView extends ViewPart {
 			}
 
 			public void mouseDown(MouseEvent e) {
-				isCorrect = false;
+				feedbackType = DebugFeedbackView.INCORRECT;
 			}
 
 			public void mouseDoubleClick(MouseEvent e) {
@@ -401,7 +407,7 @@ public class DebugFeedbackView extends ViewPart {
 			}
 
 			public void mouseDown(MouseEvent e) {
-				
+				feedbackType = DebugFeedbackView.UNCLEAR;
 			}
 
 			public void mouseDoubleClick(MouseEvent e) {
@@ -412,26 +418,42 @@ public class DebugFeedbackView extends ViewPart {
 //		holder.setText("");
 
 		Button submitButton = new Button(feedbackGroup, SWT.NONE);
-		submitButton.setText("submit");
+		submitButton.setText("Find bug!");
 		submitButton
 				.setLayoutData(new GridData(SWT.RIGHT, SWT.UP, true, false));
 		submitButton.addMouseListener(new MouseListener() {
-			public void mouseUp(MouseEvent e) {
-			}
+			public void mouseUp(MouseEvent e) {}
+			public void mouseDoubleClick(MouseEvent e) {}
 
 			public void mouseDown(MouseEvent e) {
-				if (isCorrect == null) {
+				if (feedbackType == null) {
 					MessageBox box = new MessageBox(PlatformUI.getWorkbench()
 							.getDisplay().getActiveShell());
 					box.setMessage("Please tell me whether this step is correct or not!");
 					box.open();
 				} else {
 					// TODO start recommendation
+					Trace trace = Activator.getDefault().getCurrentTrace();
+					TraceNode suspiciousNode = null;
+					if(feedbackType.equals(DebugFeedbackView.INCORRECT)){
+						suspiciousNode = trace.findBackwardSupiciousNode(
+								Settings.interestedVariables, currentNode.getOrder());
+					}
+					else if(feedbackType.equals(DebugFeedbackView.CORRECT)){
+						//TODO
+						//suspiciousNode = trace.findForwardSuspiciousNode();
+					}
+					else if(feedbackType.equals(DebugFeedbackView.UNCLEAR)){
+						//TODO
+						//suspiciousNode = trace.findMoreClearNode();
+					}
+					
+					if(suspiciousNode != null){
+						//jumpToNode(suspiciousNode);			
+					}
 				}
 			}
 
-			public void mouseDoubleClick(MouseEvent e) {
-			}
 		});
 	}
 
@@ -468,7 +490,7 @@ public class DebugFeedbackView extends ViewPart {
 			if(parentElement instanceof ReferenceValue){
 				ReferenceValue parent = (ReferenceValue)parentElement;
 				if(parent.getChildren() == null){
-					VarValue vv = node.getProgramState().findVarValue(parent.getVarID());
+					VarValue vv = currentNode.getProgramState().findVarValue(parent.getVarID());
 					if(vv != null){
 						parent.setChildren(vv.getChildren());
 						return vv.getChildren().toArray(new VarValue[0]);
@@ -494,7 +516,7 @@ public class DebugFeedbackView extends ViewPart {
 				
 				List<VarValue> children = ((ReferenceValue)element).getChildren();
 				if(children == null){
-					VarValue vv = node.getProgramState().findVarValue(parent.getVarID());
+					VarValue vv = currentNode.getProgramState().findVarValue(parent.getVarID());
 					if(vv != null){
 						parent.setChildren(vv.getChildren());
 						return !parent.getChildren().isEmpty();
@@ -783,7 +805,7 @@ public class DebugFeedbackView extends ViewPart {
 				value = (VarValue) ((GraphDiff)element).getChangedNode();
 			}
 			
-			if(node != null){
+			if(currentNode != null){
 //				BreakPoint point = node.getBreakPoint();
 //				InterestedVariable iVar = new InterestedVariable(point.getDeclaringCompilationUnitName(), 
 //						point.getLineNo(), value);

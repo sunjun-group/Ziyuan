@@ -13,6 +13,8 @@ import microbat.model.value.VarValue;
 
 public class TraceNode{
 	
+	private double suspicousScore;
+	
 	private BreakPoint breakPoint;
 	private BreakPointValue programState;
 	private BreakPointValue afterStepInState;
@@ -312,5 +314,13 @@ public class TraceNode{
 	
 	public void addWrittenVariable(VarValue var){
 		this.writtenVariables.add(var);
+	}
+
+	public double getSuspicousScore() {
+		return suspicousScore;
+	}
+
+	public void setSuspicousScore(double suspicousScore) {
+		this.suspicousScore = suspicousScore;
 	}
 }
