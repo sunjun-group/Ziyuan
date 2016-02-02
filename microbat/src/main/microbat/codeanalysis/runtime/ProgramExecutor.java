@@ -29,6 +29,7 @@ import microbat.model.value.PrimitiveValue;
 import microbat.model.value.ReferenceValue;
 import microbat.model.value.StringValue;
 import microbat.model.value.VarValue;
+import microbat.model.value.VirtualValue;
 import microbat.model.variable.ArrayElementVar;
 import microbat.model.variable.FieldVar;
 import microbat.model.variable.LocalVar;
@@ -336,7 +337,7 @@ public class ProgramExecutor{
 						
 						try {
 							if(!method.arguments().isEmpty()){
-								parseReadWrittenVirtualVariableForMethodInvocation(event, mee, lastestNode);							
+								parseWrittenParameterVariableForMethodInvocation(event, mee, lastestNode);							
 							}
 						} catch (AbsentInformationException e) {
 							e.printStackTrace();
@@ -479,13 +480,17 @@ public class ProgramExecutor{
 		entry.addProducer(lastestNode);
 		entry.addConsumer(node);
 		
+		VarValue varValue = new VirtualValue(false, var);
+		lastestNode.addWrittenVariable(varValue);
+		node.addReadVariable(varValue);
+		
 		map.put(var.getVarID(), entry);
 	}
 
 	/**
 	 * build the written relations between method invocation
 	 */
-	private void parseReadWrittenVirtualVariableForMethodInvocation(Event event,
+	private void parseWrittenParameterVariableForMethodInvocation(Event event,
 			MethodEntryEvent mee, TraceNode lastestNode) {
 		try {
 			Method method = mee.method();
@@ -512,6 +517,8 @@ public class ProgramExecutor{
 					if(scope != null){
 						varID = Variable.concanateLocalVarID(typeName, localVar.getName(), 
 								scope.getStartLine(), scope.getEndLine());
+						String definingNodeOrder = findDefiningNodeOrder(WRITTEN, lastestNode, varID);
+						varID = varID + ":" + definingNodeOrder;
 //						varID = typeName + "[" + scope.getStartLine() + "," 
 //								+ scope.getEndLine() + "] " + localVar.getName();				
 						localVar.setVarID(varID);
@@ -520,12 +527,20 @@ public class ProgramExecutor{
 						System.err.println("cannot find the method when parsing parameter scope");
 					}
 					
+					if(localVar.getVarID().contains("158")){
+						System.currentTimeMillis();
+					}
+					
 					StepVariableRelationEntry entry = this.trace.getStepVariableTable().get(localVar.getVarID());
 					if(entry == null){
 						entry = new StepVariableRelationEntry(localVar.getVarID());
+						this.trace.getStepVariableTable().put(localVar.getVarID(), entry);
 					}
 					entry.addAliasVariable(localVar);
 					entry.addProducer(lastestNode);
+					
+					VarValue varValue = new PrimitiveValue(value.toString(), false, localVar);
+					lastestNode.addWrittenVariable(varValue);
 				}
 				
 			}
@@ -651,7 +666,7 @@ public class ProgramExecutor{
 //		return node;
 //	}
 	
-	private VarValue generateVarValue(StackFrame frame, Variable var0, TraceNode node){
+	private VarValue generateVarValue(StackFrame frame, Variable var0, TraceNode node, String accessType){
 		VarValue varValue = null;
 		/**
 		 * Note that the read/written variables in breakpoint should be different
@@ -685,7 +700,7 @@ public class ProgramExecutor{
 					}
 					else{
 						varValue = new ReferenceValue(false, false, var);
-						((ReferenceValue)varValue).setMessageValue(value.toString());						
+						((ReferenceValue)varValue).setStringValue(value.toString());						
 						varValue.setChildren(null);
 					}
 				}
@@ -697,6 +712,8 @@ public class ProgramExecutor{
 						if(scope != null){
 							varID = Variable.concanateLocalVarID(node.getBreakPoint().getClassCanonicalName(), 
 									var.getName(), scope.getStartLine(), scope.getEndLine());
+							String definingNodeOrder = findDefiningNodeOrder(accessType, node, varID);
+							varID = varID + ":" + definingNodeOrder;
 //							varID = node.getBreakPoint().getClassCanonicalName() + "[" + scope.getStartLine() + "," 
 //									+ scope.getEndLine() + "] " + var.getName();				
 						}
@@ -720,6 +737,8 @@ public class ProgramExecutor{
 						if(var instanceof FieldVar){
 							//String varID = String.valueOf(objRef.uniqueID()) + "." + var.getSimpleName();
 							String varID = Variable.concanateFieldVarID(String.valueOf(objRef.uniqueID()), var.getSimpleName());
+							String definingNodeOrder = findDefiningNodeOrder(accessType, node, varID);
+							varID = varID + ":" + definingNodeOrder;
 							var.setVarID(varID);							
 						}
 						else if(var instanceof ArrayElementVar){
@@ -728,6 +747,8 @@ public class ProgramExecutor{
 							String indexValueString = indexValue.value.toString();
 							String varID = Variable.concanateArrayElementVarID(String.valueOf(objRef.uniqueID()), 
 									indexValueString);
+							String definingNodeOrder = findDefiningNodeOrder(accessType, node, varID);
+							varID = varID + ":" + definingNodeOrder;
 //							String varID = String.valueOf(objRef.uniqueID()) + "[" + indexValueString + "]";
 							
 							var.setVarID(varID);
@@ -748,6 +769,21 @@ public class ProgramExecutor{
 		return null;
 	}
 	
+	private String findDefiningNodeOrder(String accessType, TraceNode currentNode, String varID) {
+		String definingOrder = "0";
+		if(accessType.equals(WRITTEN)){
+			definingOrder = String.valueOf(currentNode.getOrder());
+		}
+		else if(accessType.equals(READ)){
+			TraceNode node = this.trace.findLastestNodeDefiningPrimitiveVariable(varID);
+			if(node != null){
+				definingOrder = String.valueOf(node.getOrder());				
+			}
+		}
+	
+		return definingOrder;
+	}
+
 	public static String READ = "read";
 	public static String WRITTEN = "written";
 	
@@ -792,9 +828,13 @@ public class ProgramExecutor{
 		
 		List<Variable> readVariables = node.getBreakPoint().getReadVariables();
 		for(Variable readVar: readVariables){
-			VarValue varValue = generateVarValue(frame, readVar, node);
+			if(node.getOrder() == 18){
+				System.currentTimeMillis();
+			}
 			
-			System.currentTimeMillis();
+			VarValue varValue = generateVarValue(frame, readVar, node, READ);
+			
+//			System.currentTimeMillis();
 			if(varValue == null){
 				System.err.println("When processing read variable, there is an error when generating the id for " + readVar + 
 						" in line " + node.getBreakPoint().getLineNo() + " of " + node.getBreakPoint().getClassCanonicalName());
@@ -821,7 +861,7 @@ public class ProgramExecutor{
 			StackFrame frame) {
 		List<Variable> writtenVariables = node.getBreakPoint().getWrittenVariables();
 		for(Variable writtenVar: writtenVariables){
-			VarValue varValue = generateVarValue(frame, writtenVar, node);
+			VarValue varValue = generateVarValue(frame, writtenVar, node, WRITTEN);
 			
 			if(varValue == null){
 				System.err.println("When processing written variable, there is an error when generating the id for " + writtenVar + 

@@ -12,6 +12,7 @@ import microbat.model.value.ArrayValue;
 import microbat.model.value.PrimitiveValue;
 import microbat.model.value.ReferenceValue;
 import microbat.model.value.VarValue;
+import microbat.model.value.VirtualValue;
 import microbat.util.Settings;
 
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -661,14 +662,14 @@ public class DebugFeedbackView extends ViewPart {
 						case 1: return value.getVariablePath();
 						case 2: 
 							if(after != null){
-								return ((PrimitiveValue)after).getStrVal();
+								return ((PrimitiveValue)after).getStringValue();
 							}
 							else{
 								return "NULL";
 							}
 						case 3: 
 							if(before != null){
-								return ((PrimitiveValue)before).getStrVal();
+								return ((PrimitiveValue)before).getStringValue();
 							}
 							else{
 								return "NULL";
@@ -739,54 +740,60 @@ public class DebugFeedbackView extends ViewPart {
 		}
 		
 		public String getColumnText(Object element, int columnIndex) {
-			if(element instanceof ReferenceValue){
-				ReferenceValue value = (ReferenceValue)element;
+			if(element instanceof VarValue){
+				VarValue varValue = (VarValue)element;
 				switch(columnIndex){
 				case 0: 
-					if(value.getClassType() != null){
-						return value.getConciseTypeName();						
-					}
-					else{
-						return "array";
-					}
+					return varValue.getType();
 				case 1: 
-					String name = value.getVarName();
+					String name = varValue.getVarName();
+					return name;
+				case 2: return varValue.getStringValue();
+				}
+			}
+			
+//			if(element instanceof ReferenceValue){
+//				ReferenceValue value = (ReferenceValue)element;
+//				switch(columnIndex){
+//				case 0: 
+//					if(value.getClassType() != null){
+//						return value.getConciseTypeName();						
+//					}
+//				case 1: 
+//					String name = value.getVarName();
+//					return name;
+//				case 2: return value.getMessageValue();
+//				}
+//			}
+//			else if(element instanceof ArrayValue){
+//				ArrayValue value = (ArrayValue)element;
+//				switch(columnIndex){
+//				case 0: return "array[" + value.getComponentType() + "]";
+//				case 1: 
+//					String name = value.getVarName();
 //					if(value.isRoot() && value.isField()){
 //						name = "this." + name;
 //					}
-					
-//					System.out.println(value.getVarId());
-					
-					return name;
-				case 2: return value.getMessageValue();
-				}
-			}
-			else if(element instanceof ArrayValue){
-				ArrayValue value = (ArrayValue)element;
-				switch(columnIndex){
-				case 0: return "array[" + value.getComponentType() + "]";
-				case 1: 
-					String name = value.getVarName();
-					if(value.isRoot() && value.isField()){
-						name = "this." + name;
-					}
-					return name;
-				case 2: return value.getMessageValue();
-				}
-			}
-			else if(element instanceof PrimitiveValue){
-				PrimitiveValue value = (PrimitiveValue)element;
-				switch(columnIndex){
-				case 0: return value.getPrimitiveType();
-				case 1: 
-					String name = value.getVarName();
-					if(value.isRoot() && value.isField()){
-						name = "this." + name;
-					}
-					return name;
-				case 2: return value.getStrVal() + " (id=" + value.getVarID() + ")";
-				}
-			}
+//					return name;
+//				case 2: return value.getMessageValue();
+//				}
+//			}
+//			else if(element instanceof PrimitiveValue){
+//				PrimitiveValue value = (PrimitiveValue)element;
+//				switch(columnIndex){
+//				case 0: return value.getPrimitiveType();
+//				case 1: 
+//					String name = value.getVarName();
+//					if(value.isRoot() && value.isField()){
+//						name = "this." + name;
+//					}
+//					return name;
+//				case 2: return value.getStrVal() + " (id=" + value.getVarID() + ")";
+//				}
+//			}
+//			else if(element instanceof VirtualValue){
+//				
+//			}
 			return null;
 		}
 		

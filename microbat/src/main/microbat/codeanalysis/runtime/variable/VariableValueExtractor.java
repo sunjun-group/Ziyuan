@@ -512,7 +512,7 @@ public class VariableValueExtractor {
 			Value value = retriveExpression(frame, val.getVarName());
 			if(value != null){
 				String message = value.toString();
-				val.setMessageValue(message);					
+				val.setStringValue(message);					
 			}
 			else{
 				System.currentTimeMillis();
