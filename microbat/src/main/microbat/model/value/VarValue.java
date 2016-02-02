@@ -22,6 +22,8 @@ import microbat.model.variable.Variable;
  */
 public abstract class VarValue implements GraphNode{
 	
+	protected String stringValue;
+	
 	protected List<VarValue> parents = new ArrayList<>();
 	
 //	/**
@@ -191,6 +193,10 @@ public abstract class VarValue implements GraphNode{
 		children.add(child);
 	}
 	
+	public String getType() {
+		return variable.getType();
+	}
+	
 //	public double getDoubleVal() {
 //		return NOT_NULL_VAL;
 //	}
@@ -353,7 +359,15 @@ public abstract class VarValue implements GraphNode{
 	public void setChildren(List<VarValue> children) {
 		this.children = children;
 	}
+	
+	public String getStringValue() {
+		return stringValue;
+	}
 
-	public abstract VarValueType getType();
+	public void setStringValue(String stringValue) {
+		this.stringValue = stringValue;
+	}
+
+	
 //	public abstract VarValue clone();
 }

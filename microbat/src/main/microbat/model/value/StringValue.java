@@ -26,11 +26,6 @@ public class StringValue extends PrimitiveValue {
 //		child.addParent(this);
 //		add(new PrimitiveValue(getChildId(LENGTH_CODE), String.valueOf(val.length())));
 	}
-
-	@Override
-	public VarValueType getType() {
-		return VarValueType.STRING;
-	}
 	
 	@Override
 	protected boolean needToRetrieveValue() {

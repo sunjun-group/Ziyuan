@@ -105,11 +105,6 @@ public class ArrayValue extends ReferenceValue {
 //		}
 //		return super.getDoubleVal();
 //	}
-//	
-	@Override
-	public VarValueType getType() {
-		return VarValueType.ARRAY;
-	}
 
 	public String getComponentType() {
 		return componentType;

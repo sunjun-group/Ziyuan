@@ -23,23 +23,23 @@ public class PrimitiveValue extends VarValue {
 	/**
 	 * indicate the value in form of String
 	 */
-	private String strVal;
+	//private String strVal;
 	
 //	private String primitiveType;
 
 	public PrimitiveValue(String strVal, boolean isRoot, Variable variable) {
 		super(isRoot, variable);
-		this.strVal = strVal;
+		this.stringValue = strVal;
 //		this.primitiveType = type;
 	}
 
-	public String getStrVal() {
-		return strVal;
-	}
-	
-	public void setStrVal(String strVal){
-		this.strVal = strVal;
-	}
+//	public String getStrVal() {
+//		return strVal;
+//	}
+//	
+//	public void setStrVal(String strVal){
+//		this.strVal = strVal;
+//	}
 	
 //	@Override
 //	public double getDoubleVal() {
@@ -52,13 +52,9 @@ public class PrimitiveValue extends VarValue {
 	
 	@Override
 	public String toString() {
-		return String.format("(%s:%s)", getVarName(), strVal);
+		return String.format("(%s:%s)", getVarName(), this.stringValue);
 	}
 
-	@Override
-	public VarValueType getType() {
-		return VarValueType.PRIMITIVE;
-	}
 	
 	public String getPrimitiveType(){
 		return this.variable.getType();
@@ -94,7 +90,7 @@ public class PrimitiveValue extends VarValue {
 	public boolean isTheSameWith(GraphNode nodeAfter) {
 		if(nodeAfter instanceof PrimitiveValue){
 			PrimitiveValue pv = (PrimitiveValue)nodeAfter;
-			return this.getStrVal().equals(pv.getStrVal());
+			return this.getStringValue().equals(pv.getStringValue());
 		}
 		return false;
 	}

@@ -19,8 +19,6 @@ import microbat.model.variable.Variable;
 public class ReferenceValue extends VarValue {
 	protected static final String NULL_CODE = "isNull";
 	
-	private String messageValue;
-	
 //	private ClassType classType; 
 	
 	public ReferenceValue(boolean isNull, boolean isRoot, Variable variable) {
@@ -91,11 +89,6 @@ public class ReferenceValue extends VarValue {
 	}
 
 	@Override
-	public VarValueType getType() {
-		return VarValueType.REFERENCE;
-	}
-	
-	@Override
 	public boolean isTheSameWith(GraphNode nodeAfter) {
 		return true;
 	}
@@ -131,11 +124,11 @@ public class ReferenceValue extends VarValue {
 //		return clonedList;
 //	}
 
-	public String getMessageValue() {
-		return messageValue;
-	}
-
-	public void setMessageValue(String messageValue) {
-		this.messageValue = messageValue;
-	}
+//	public String getMessageValue() {
+//		return messageValue;
+//	}
+//
+//	public void setMessageValue(String messageValue) {
+//		this.messageValue = messageValue;
+//	}
 }
