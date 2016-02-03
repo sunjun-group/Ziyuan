@@ -305,7 +305,7 @@ public class Trace {
 	public String findTrueIDFromStateVariable(String varID, int order) {
 		if(Variable.isPrimitiveVariable(varID)){
 			for(int i=order; i>=1; i--){
-				TraceNode node = this.exectionList.get(i);
+				TraceNode node = this.exectionList.get(i-1);
 				String trueID = findTrueID(node.getReadVariables(), varID); 
 				
 				if(trueID != null){
