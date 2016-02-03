@@ -210,7 +210,7 @@ public class ProgramExecutor{
 			}
 			
 			if(trace.getLastestNode() != null){
-				if(trace.getLastestNode().getOrder() == 21){
+				if(trace.getLastestNode().getOrder() == 1){
 					System.currentTimeMillis();
 				}
 			}
@@ -230,7 +230,7 @@ public class ProgramExecutor{
 					parseBreakpoints(vm, (ClassPrepareEvent)event, locBrpMap);
 				} else if(event instanceof StepEvent){
 					Location currentLocation = ((StepEvent) event).location();
-					if(currentLocation.lineNumber() == 88){
+					if(currentLocation.lineNumber() == 11){
 						System.currentTimeMillis();
 						
 					}
@@ -687,8 +687,11 @@ public class ProgramExecutor{
 					ObjectReference objRef = (ObjectReference)value;
 					String varID = String.valueOf(objRef.uniqueID());
 					
-					if(varName.equals("output") && frame.location().lineNumber()==31){ 
-						System.currentTimeMillis();
+					if(var instanceof FieldVar){
+						FieldVar f = (FieldVar)var;
+						if(f.isStatic()){
+							System.currentTimeMillis();							
+						}
 					}
 					
 					var.setVarID(varID);

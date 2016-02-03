@@ -9,6 +9,7 @@ import java.util.Map;
 import microbat.model.BreakPoint;
 import microbat.model.UserInterestedVariables;
 import microbat.model.value.VarValue;
+import microbat.model.variable.Variable;
 
 /**
  * This class stands for a trace for an execution
@@ -288,6 +289,55 @@ public class Trace {
 		
 		return null;
 	}
+
+	/**
+	 * Note that, if a variable is a primitive type, I cannot retrieve its head address, therefore, I use the static approach
+	 * to uniquely identify a variable, i.e., variable ID. Please refer to {@link microbat.model.variable.Variable#varID} for details.
+	 * <br>
+	 * <br>
+	 * However, in order to save the parsing efficiency, the ID of variables of primitive types does not have the suffix of ":order".
+	 * That's why I need to do the mapping from state variables to read/written variables.
+	 * 
+	 * @param varID
+	 * @param order
+	 * @return
+	 */
+	public String findTrueIDFromStateVariable(String varID, int order) {
+		if(Variable.isPrimitiveVariable(varID)){
+			for(int i=order; i>=1; i--){
+				TraceNode node = this.exectionList.get(i);
+				String trueID = findTrueID(node.getReadVariables(), varID); 
+				
+				if(trueID != null){
+					return trueID;
+				}
+				else{
+					if(i != order){
+						trueID = findTrueID(node.getReadVariables(), varID);
+						if(trueID != null){
+							return trueID;
+						}
+					}					
+				}
+			}
+			return null;
+		}
+		else{
+			return varID;
+		}
+	}
 	
-	
+	private String findTrueID(List<VarValue> readOrWriteVars, String varID){
+		for(VarValue var: readOrWriteVars){
+			String ID = var.getVarID();
+			if(Variable.isPrimitiveVariable(ID)){
+				String concanateID = ID.substring(0, ID.indexOf(":"));
+				if(concanateID.equals(varID)){
+					return ID;
+				}
+			}
+		}
+		
+		return null;
+	}
 }

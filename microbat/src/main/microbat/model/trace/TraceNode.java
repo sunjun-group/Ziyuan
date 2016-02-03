@@ -29,7 +29,7 @@ public class TraceNode{
 	private Map<TraceNode, List<String>> dominatee = new HashMap<>();
 	
 	/**
-	 * the order of this node in the whole trace
+	 * the order of this node in the whole trace, starting from 1.
 	 */
 	private int order;
 	

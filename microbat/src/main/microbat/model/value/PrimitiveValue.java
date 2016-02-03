@@ -90,9 +90,14 @@ public class PrimitiveValue extends VarValue {
 	public boolean isTheSameWith(GraphNode nodeAfter) {
 		if(nodeAfter instanceof PrimitiveValue){
 			PrimitiveValue pv = (PrimitiveValue)nodeAfter;
-			return this.getStringValue().equals(pv.getStringValue());
+			return this.getManifestationValue().equals(pv.getManifestationValue());
 		}
 		return false;
+	}
+	
+	@Override
+	public String getManifestationValue() {
+		return stringValue + "(id=" + variable.getVarID() + ")";
 	}
 	
 	

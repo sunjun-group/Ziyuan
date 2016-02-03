@@ -78,7 +78,12 @@ public abstract class Variable {
 		return className + "[" + startLine + "," + endLine + "] " + varName;	
 	}
 	
-	
+	public static boolean isPrimitiveVariable(String varID){
+		if(varID.contains("[") || varID.contains(".")){
+			return true;
+		}
+		return false;
+	}
 
 	public abstract String getSimpleName();
 	public abstract Variable clone();

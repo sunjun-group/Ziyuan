@@ -12,7 +12,7 @@ import microbat.model.value.ArrayValue;
 import microbat.model.value.PrimitiveValue;
 import microbat.model.value.ReferenceValue;
 import microbat.model.value.VarValue;
-import microbat.model.value.VirtualValue;
+import microbat.model.variable.Variable;
 import microbat.util.Settings;
 
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -77,6 +77,7 @@ public class DebugFeedbackView extends ViewPart {
 	private CheckboxTreeViewer consequenceTreeViewer;
 	
 	private ICheckStateListener stateListener;
+	private ICheckStateListener RWVarListener;
 	private ITreeViewerListener treeListener;
 	
 	private Button yesButton;
@@ -115,7 +116,7 @@ public class DebugFeedbackView extends ViewPart {
 		this.writtenVariableTreeViewer.setLabelProvider(new VariableLabelProvider());
 		this.writtenVariableTreeViewer.setInput(writtenVariables);	
 		
-		setChecks(this.writtenVariableTreeViewer);
+		setChecks(this.writtenVariableTreeViewer, RW);
 
 		this.writtenVariableTreeViewer.refresh(true);
 		
@@ -126,7 +127,7 @@ public class DebugFeedbackView extends ViewPart {
 		this.readVariableTreeViewer.setLabelProvider(new VariableLabelProvider());
 		this.readVariableTreeViewer.setInput(readVariables);	
 		
-		setChecks(this.readVariableTreeViewer);
+		setChecks(this.readVariableTreeViewer, RW);
 
 		this.readVariableTreeViewer.refresh(true);
 	}
@@ -136,7 +137,7 @@ public class DebugFeedbackView extends ViewPart {
 		this.consequenceTreeViewer.setLabelProvider(new ConsequenceLabelProvider());
 		this.consequenceTreeViewer.setInput(cons);	
 		
-		setChecks(this.consequenceTreeViewer);
+		setChecks(this.consequenceTreeViewer, STATE);
 		
 		this.consequenceTreeViewer.refresh(true);
 	}
@@ -146,7 +147,7 @@ public class DebugFeedbackView extends ViewPart {
 		this.stateTreeViewer.setLabelProvider(new VariableLabelProvider());
 		this.stateTreeViewer.setInput(value);	
 		
-		setChecks(this.stateTreeViewer);
+		setChecks(this.stateTreeViewer, STATE);
 
 		this.stateTreeViewer.refresh(true);
 	}
@@ -176,14 +177,17 @@ public class DebugFeedbackView extends ViewPart {
 		addListener();
 	}
 	
-	private void setChecks(CheckboxTreeViewer treeViewer){
+	public static final String RW = "rw";
+	public static final String STATE = "state";
+	
+	private void setChecks(CheckboxTreeViewer treeViewer, String type){
 		Tree tree = treeViewer.getTree();
 		for(TreeItem item: tree.getItems()){
-			setChecks(item);
+			setChecks(item, type);
 		}
 	}
 	
-	private void setChecks(TreeItem item){
+	private void setChecks(TreeItem item, String type){
 		Object element = item.getData();
 		if(element == null){
 			return;
@@ -200,7 +204,14 @@ public class DebugFeedbackView extends ViewPart {
 //		InterestedVariable iv = new InterestedVariable(point.getDeclaringCompilationUnitName(), 
 //				point.getLineNo(), ev);
 		
-		if(Settings.interestedVariables.contains(ev.getVarID())){
+		String varID = ev.getVarID();
+		
+		if(Variable.isPrimitiveVariable(varID) && type.equals(STATE)){
+			Trace trace = Activator.getDefault().getCurrentTrace();
+			varID = trace.findTrueIDFromStateVariable(varID, currentNode.getOrder());
+		}
+		
+		if(Settings.interestedVariables.contains(varID)){
 			item.setChecked(true);
 		}
 		else{
@@ -208,29 +219,52 @@ public class DebugFeedbackView extends ViewPart {
 		}
 
 		for(TreeItem childItem: item.getItems()){
-			setChecks(childItem);
+			setChecks(childItem, type);
 		}
 	}
-
-	private void addListener() {
-		stateListener = new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				Object obj = event.getElement();
-				VarValue value = null;
-				
-				if(obj instanceof VarValue){
-					value = (VarValue)obj;
-				}
-				else if(obj instanceof GraphDiff){
-					GraphDiff diff = (GraphDiff)obj;
-					value = (VarValue)diff.getChangedNode();
-				}
+	
+	
+	class StateListener implements ICheckStateListener{
+		@Override
+		public void checkStateChanged(CheckStateChangedEvent event) {
+			Object obj = event.getElement();
+			VarValue value = null;
+			
+			if(obj instanceof VarValue){
+				value = (VarValue)obj;
 				String varID = value.getVarID();
 				
-//				BreakPoint point = node.getBreakPoint();
-//				InterestedVariable iVar = new InterestedVariable(point.getDeclaringCompilationUnitName(), 
-//						point.getLineNo(), value);
+				Trace trace = Activator.getDefault().getCurrentTrace();
+				String trueVarID = trace.findTrueIDFromStateVariable(varID, currentNode.getOrder());
+				
+				if(!Settings.interestedVariables.contains(trueVarID)){
+					Settings.interestedVariables.add(trueVarID);							
+				}
+				else{
+					Settings.interestedVariables.remove(trueVarID);
+				}
+				
+				setChecks(writtenVariableTreeViewer, RW);
+				setChecks(readVariableTreeViewer, RW);
+				setChecks(stateTreeViewer, STATE);
+				
+				writtenVariableTreeViewer.refresh();
+				readVariableTreeViewer.refresh();
+				stateTreeViewer.refresh();	
+			}
+			
+		}
+	}
+	
+	class RWVarListener implements ICheckStateListener{
+		@Override
+		public void checkStateChanged(CheckStateChangedEvent event) {
+			Object obj = event.getElement();
+			VarValue value = null;
+			
+			if(obj instanceof VarValue){
+				value = (VarValue)obj;
+				String varID = value.getVarID();
 				
 				if(!Settings.interestedVariables.contains(varID)){
 					Settings.interestedVariables.add(varID);							
@@ -239,20 +273,53 @@ public class DebugFeedbackView extends ViewPart {
 					Settings.interestedVariables.remove(varID);
 				}
 				
-//				setChecks(consequenceTreeViewer);
-				setChecks(writtenVariableTreeViewer);
-				setChecks(readVariableTreeViewer);
-				setChecks(stateTreeViewer);
+				setChecks(writtenVariableTreeViewer, RW);
+				setChecks(readVariableTreeViewer, RW);
+				setChecks(stateTreeViewer, STATE);
 				
 				writtenVariableTreeViewer.refresh();
 				readVariableTreeViewer.refresh();
 				stateTreeViewer.refresh();	
-				
-//				consequenceTreeViewer.refresh();	
 			}
 			
-			
-		};
+		}
+	}
+
+	private void addListener() {
+//		stateListener = new ICheckStateListener() {
+//			@Override
+//			public void checkStateChanged(CheckStateChangedEvent event) {
+//				Object obj = event.getElement();
+//				VarValue value = null;
+//				
+//				if(obj instanceof VarValue){
+//					value = (VarValue)obj;
+//				}
+//				else if(obj instanceof GraphDiff){
+//					GraphDiff diff = (GraphDiff)obj;
+//					value = (VarValue)diff.getChangedNode();
+//				}
+//				String varID = value.getVarID();
+//				
+//				if(!Settings.interestedVariables.contains(varID)){
+//					Settings.interestedVariables.add(varID);							
+//				}
+//				else{
+//					Settings.interestedVariables.remove(varID);
+//				}
+//				
+////				setChecks(consequenceTreeViewer);
+//				setChecks(writtenVariableTreeViewer);
+//				setChecks(readVariableTreeViewer);
+//				setChecks(stateTreeViewer);
+//				
+//				writtenVariableTreeViewer.refresh();
+//				readVariableTreeViewer.refresh();
+//				stateTreeViewer.refresh();	
+//				
+////				consequenceTreeViewer.refresh();	
+//			}
+//		};
 		
 		treeListener = new ITreeViewerListener() {
 			
@@ -264,9 +331,9 @@ public class DebugFeedbackView extends ViewPart {
 //				stateTreeViewer.refresh();	
 //				consequenceTreeViewer.refresh();
 				
-				setChecks(readVariableTreeViewer);
-				setChecks(writtenVariableTreeViewer);
-				setChecks(stateTreeViewer);
+				setChecks(readVariableTreeViewer, RW);
+				setChecks(writtenVariableTreeViewer, RW);
+				setChecks(stateTreeViewer, STATE);
 				
 				readVariableTreeViewer.refresh();
 				writtenVariableTreeViewer.refresh();
@@ -279,12 +346,15 @@ public class DebugFeedbackView extends ViewPart {
 			}
 		};
 		
+		stateListener = new StateListener();
+		RWVarListener = new RWVarListener();
+		
 		this.readVariableTreeViewer.addTreeListener(treeListener);
 		this.writtenVariableTreeViewer.addTreeListener(treeListener);
 		this.stateTreeViewer.addTreeListener(treeListener);
 		
-		this.writtenVariableTreeViewer.addCheckStateListener(stateListener);
-		this.readVariableTreeViewer.addCheckStateListener(stateListener);
+		this.writtenVariableTreeViewer.addCheckStateListener(RWVarListener);
+		this.readVariableTreeViewer.addCheckStateListener(RWVarListener);
 		this.stateTreeViewer.addCheckStateListener(stateListener);
 		
 //		this.consequenceTreeViewer.addTreeListener(treeListener);
@@ -662,14 +732,14 @@ public class DebugFeedbackView extends ViewPart {
 						case 1: return value.getVariablePath();
 						case 2: 
 							if(after != null){
-								return ((PrimitiveValue)after).getStringValue();
+								return ((PrimitiveValue)after).getManifestationValue();
 							}
 							else{
 								return "NULL";
 							}
 						case 3: 
 							if(before != null){
-								return ((PrimitiveValue)before).getStringValue();
+								return ((PrimitiveValue)before).getManifestationValue();
 							}
 							else{
 								return "NULL";
@@ -748,7 +818,7 @@ public class DebugFeedbackView extends ViewPart {
 				case 1: 
 					String name = varValue.getVarName();
 					return name;
-				case 2: return varValue.getStringValue();
+				case 2: return varValue.getManifestationValue();
 				}
 			}
 			

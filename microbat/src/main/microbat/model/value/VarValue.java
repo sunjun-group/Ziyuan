@@ -360,7 +360,11 @@ public abstract class VarValue implements GraphNode{
 		this.children = children;
 	}
 	
-	public String getStringValue() {
+	public String getManifestationValue() {
+		return stringValue;
+	}
+	
+	public String getStringValue(){
 		return stringValue;
 	}
 
