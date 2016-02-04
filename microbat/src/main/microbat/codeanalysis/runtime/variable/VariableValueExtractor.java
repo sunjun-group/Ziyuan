@@ -480,9 +480,10 @@ public class VariableValueExtractor {
 					if(!isIgnore){
 //						String childVarID = val.getChildId(field.name());
 						Value childVarValue = fieldValueMap.get(field);
-						FieldVar var = new FieldVar(field.isStatic(), field.name(), childVarValue.type().toString());
-						
-						appendVarVal(val, var, childVarValue, level, thread, false);				
+						if(childVarValue != null){
+							FieldVar var = new FieldVar(field.isStatic(), field.name(), childVarValue.type().toString());
+							appendVarVal(val, var, childVarValue, level, thread, false);											
+						}
 					}
 					
 				}

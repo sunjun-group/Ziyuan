@@ -877,11 +877,6 @@ public class ProgramExecutor{
 				}
 				entry.addAliasVariable(writtenVar);
 				
-				if(node.getOrder() == 4){
-					System.currentTimeMillis();
-				}
-				
-				
 				entry.addProducer(node);
 			}
 		}
