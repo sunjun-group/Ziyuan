@@ -240,7 +240,7 @@ public class DebugFeedbackView extends ViewPart {
 				String trueVarID = trace.findTrueIDFromStateVariable(varID, currentNode.getOrder());
 				
 				if(!Settings.interestedVariables.contains(trueVarID)){
-					Settings.interestedVariables.add(trueVarID);							
+					Settings.interestedVariables.add(trueVarID, trace.getCheckTime());							
 				}
 				else{
 					Settings.interestedVariables.remove(trueVarID);
@@ -268,8 +268,9 @@ public class DebugFeedbackView extends ViewPart {
 				value = (VarValue)obj;
 				String varID = value.getVarID();
 				
+				Trace trace = Activator.getDefault().getCurrentTrace();
 				if(!Settings.interestedVariables.contains(varID)){
-					Settings.interestedVariables.add(varID);							
+					Settings.interestedVariables.add(varID, trace.getCheckTime());							
 				}
 				else{
 					Settings.interestedVariables.remove(varID);

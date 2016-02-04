@@ -21,9 +21,11 @@ public class Trace {
 	private int observingIndex = -1;
 	
 	/**
-	 * This variable indicate the time of user ask for recommendation.
+	 * This variable indicate the time of user ask for recommendation, in addition, the check time is also used
+	 * to specify the time of a variable marked as "incorrect". Note that, newer variables has more importance
+	 * in the trace.
 	 */
-	private int checkTime = 0;
+	private int checkTime = 1;
 	
 	private List<TraceNode> exectionList = new ArrayList<>();
 	/**
@@ -404,14 +406,17 @@ public class Trace {
 	public void distributeSuspiciousness(UserInterestedVariables interestedVariables) {
 		clearAllSuspiciousness();
 		
-		for(String varID: interestedVariables.getVarIDs()){
-			double suspicousness = 1;
+		String varID = interestedVariables.getNewestVarID();
+		if(varID != null){
+			//for(String varID: interestedVariables.getVarIDs()){
+			double suspicousness = interestedVariables.getVarScore(varID);
 			StepVariableRelationEntry entry = this.stepVariableTable.get(varID);
 			
 			if(!entry.getProducers().isEmpty()){
 				TraceNode producer = entry.getProducers().get(0);
 				distributeSuspiciousness(producer, suspicousness, 1);
 			}
+			//}
 		}
 	}
 	
