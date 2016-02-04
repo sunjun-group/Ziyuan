@@ -367,6 +367,10 @@ public class Trace {
 		TraceNode node = this.exectionList.get(order-1);
 		assert node.getVarsCorrectness()==TraceNode.VARS_INCORRECT && node.getStepCorrectness()==TraceNode.STEP_CORRECT;
 
+		if(node.getDominator().keySet().isEmpty()){
+			return false;
+		}
+		
 		boolean isConflict = true;
 		for(VarValue var: node.getReadVariables()){
 			String varID = var.getVarID();

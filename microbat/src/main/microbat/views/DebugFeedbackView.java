@@ -54,7 +54,7 @@ public class DebugFeedbackView extends ViewPart {
 	private TraceNode currentNode;
 	private TraceNode lastestNode;
 	
-	private String feedbackType;
+	private String feedbackType = INCORRECT;
 	
 //	public static final String INPUT = "input";
 //	public static final String OUTPUT = "output";
@@ -106,9 +106,9 @@ public class DebugFeedbackView extends ViewPart {
 		createReadVariableContect(node.getReadVariables());
 		
 		yesButton.setSelection(false);
-		noButton.setSelection(false);
+		noButton.setSelection(true);
 		unclearButton.setSelection(false);
-		feedbackType = null;
+		feedbackType = INCORRECT;
 		
 	}
 	
@@ -486,7 +486,7 @@ public class DebugFeedbackView extends ViewPart {
 			public void mouseDoubleClick(MouseEvent e) {
 			}
 		});
-
+		
 //		Label holder = new Label(feedbackGroup, SWT.NONE);
 //		holder.setText("");
 
@@ -524,15 +524,12 @@ public class DebugFeedbackView extends ViewPart {
 						
 						if(conflictConcerningNode != null){
 							
-							long t1 = System.currentTimeMillis();
 							boolean isConflict = trace.checkDomiatorConflicts(conflictConcerningNode.getOrder());;
-							long t2 = System.currentTimeMillis();
-							System.out.println("time for checkDomiatorConflicts: " + (t2-t1));
 							
 							if(!isConflict){
-								t1 = System.currentTimeMillis();
+								long t1 = System.currentTimeMillis();
 								trace.distributeSuspiciousness(Settings.interestedVariables);
-								t2 = System.currentTimeMillis();
+								long t2 = System.currentTimeMillis();
 								System.out.println("time for distributeSuspiciousness: " + (t2-t1));
 								
 								suspiciousNode = trace.findMostSupiciousNode();
@@ -557,6 +554,7 @@ public class DebugFeedbackView extends ViewPart {
 					
 					if(suspiciousNode != null){
 						jumpToNode(trace, suspiciousNode);	
+						lastestNode = suspiciousNode;
 					}
 				}
 			}
