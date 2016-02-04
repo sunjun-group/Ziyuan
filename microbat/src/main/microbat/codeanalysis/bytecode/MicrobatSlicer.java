@@ -18,6 +18,7 @@ import microbat.model.BreakPoint;
 import microbat.model.variable.ArrayElementVar;
 import microbat.model.variable.FieldVar;
 import microbat.model.variable.LocalVar;
+import microbat.model.variable.Variable;
 import microbat.util.JavaUtil;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -335,6 +336,7 @@ public class MicrobatSlicer{
 				String type = gIns.getFieldType();
 				type = SignatureUtils.signatureToName(type);
 				FieldVar var = new FieldVar(gIns.isStatic(), fullFieldName, type);
+				
 				point.addReadVariable(var);				
 			}
 		}
@@ -431,7 +433,7 @@ public class MicrobatSlicer{
 						lineNumber + " of " + point.getClassCanonicalName());
 			}
 			else{
-				ArrayElementVar var = new ArrayElementVar(readArrayElement, "unknown");
+				ArrayElementVar var = new ArrayElementVar(readArrayElement, Variable.UNKNOWN_TYPE);
 				point.addReadVariable(var);
 			}
 			
@@ -450,7 +452,7 @@ public class MicrobatSlicer{
 						lineNumber + " of " + point.getClassCanonicalName());
 			}
 			else{
-				ArrayElementVar var = new ArrayElementVar(writtenArrayElement, "unknown");
+				ArrayElementVar var = new ArrayElementVar(writtenArrayElement, Variable.UNKNOWN_TYPE);
 				point.addWrittenVariable(var);
 			}
 		}

@@ -1,6 +1,9 @@
 package microbat.model.variable;
 
 public abstract class Variable {
+	
+	public static final String UNKNOWN_TYPE = "unknown type";
+	
 	protected String type;
 	protected String variableName;
 	
