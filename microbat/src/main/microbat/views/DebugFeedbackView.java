@@ -631,7 +631,10 @@ public class DebugFeedbackView extends ViewPart {
 				
 				List<VarValue> children = ((ReferenceValue)element).getChildren();
 				if(children == null){
-					VarValue vv = currentNode.getProgramState().findVarValue(parent.getVarID());
+					String varID = parent.getVarID();
+					varID = varID.substring(0, varID.indexOf(":"));
+					
+					VarValue vv = currentNode.getProgramState().findVarValue(varID);
 					if(vv != null){
 						parent.setChildren(vv.getChildren());
 						return !parent.getChildren().isEmpty();
