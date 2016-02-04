@@ -10,6 +10,7 @@ import microbat.model.BreakPoint;
 import microbat.model.UserInterestedVariables;
 import microbat.model.value.VarValue;
 import microbat.model.value.VirtualValue;
+import microbat.util.Settings;
 
 /**
  * This class stands for a trace for an execution
@@ -409,12 +410,12 @@ public class Trace {
 			
 			if(!entry.getProducers().isEmpty()){
 				TraceNode producer = entry.getProducers().get(0);
-				distributeSuspiciousness(producer, suspicousness);
+				distributeSuspiciousness(producer, suspicousness, 1);
 			}
 		}
 	}
 	
-	private void distributeSuspiciousness(TraceNode producer, double suspiciousness){
+	private void distributeSuspiciousness(TraceNode producer, double suspiciousness, int layer){
 		if(producer.getStepCorrectness() != TraceNode.STEP_CORRECT){
 			double producerScore = suspiciousness/2;
 			producer.addSuspicousScore(producerScore);
@@ -422,17 +423,23 @@ public class Trace {
 			suspiciousness = suspiciousness - producerScore;
 		}
 		
-		List<TraceNode> nonCorrectDominators = producer.getNonCorrectDominators();
-		if(!nonCorrectDominators.isEmpty()){
-			int n = nonCorrectDominators.size();
-			double subScore = suspiciousness/n;
-			for(TraceNode dominator: nonCorrectDominators){
-				distributeSuspiciousness(dominator, subScore);
-			}					
+		if(layer < Settings.distribtionLayer){
+			List<TraceNode> nonCorrectDominators = producer.getNonCorrectDominators();
+			if(!nonCorrectDominators.isEmpty()){
+				int n = nonCorrectDominators.size();
+				double subScore = suspiciousness/n;
+				for(TraceNode dominator: nonCorrectDominators){
+					distributeSuspiciousness(dominator, subScore, layer+1);
+				}					
+			}
+			else{
+				producer.addSuspicousScore(suspiciousness);
+			}
 		}
 		else{
 			producer.addSuspicousScore(suspiciousness);
 		}
+		
 	}
 
 	public TraceNode findMostSupiciousNode() {

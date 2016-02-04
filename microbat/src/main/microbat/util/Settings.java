@@ -7,12 +7,12 @@ import microbat.preference.MicrobatPreference;
 
 public class Settings {
 	public static String projectName;
-	
 	public static String lanuchClass;
 	
 	public static String buggyClassName;
 	public static String buggyLineNumber;
 	
+	public static int distribtionLayer = 3;
 	
 	static{
 		if(Activator.getDefault() != null){
