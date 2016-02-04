@@ -10,7 +10,6 @@ import microbat.model.BreakPoint;
 import microbat.model.UserInterestedVariables;
 import microbat.model.value.VarValue;
 import microbat.model.value.VirtualValue;
-import microbat.model.variable.Variable;
 
 /**
  * This class stands for a trace for an execution
@@ -364,9 +363,9 @@ public class Trace {
 	 * @param order
 	 * @return
 	 */
-	public boolean checkForwardConflicts(int order) {
+	public boolean checkDomiatorConflicts(int order) {
 		TraceNode node = this.exectionList.get(order-1);
-		assert node.getIsVarsCorrect()==false && node.getIsStepCorrect()==true;
+		assert node.getVarsCorrectness()==TraceNode.VARS_INCORRECT && node.getStepCorrectness()==TraceNode.STEP_CORRECT;
 
 		boolean isConflict = true;
 		for(VarValue var: node.getReadVariables()){
@@ -374,11 +373,12 @@ public class Trace {
 			StepVariableRelationEntry entry = this.stepVariableTable.get(varID);
 			
 			for(TraceNode producer: entry.getProducers()){
-				if(producer.getIsStepCorrect() == null || producer.getIsVarsCorrect() == null){
+				if(producer.getStepCorrectness()==TraceNode.STEP_UNKNOWN || producer.getVarsCorrectness()==TraceNode.VARS_UNKNOWN){
 					return false;
 				}
 				else{
-					isConflict = isConflict && producer.getIsStepCorrect() && producer.getIsVarsCorrect();
+					isConflict = isConflict && producer.getStepCorrectness()==TraceNode.STEP_CORRECT 
+							&& producer.getVarsCorrectness()==TraceNode.VARS_CORRECT;
 				}
 				
 				if(!isConflict){
@@ -400,8 +400,68 @@ public class Trace {
 		clearAllSuspiciousness();
 		
 		for(String varID: interestedVariables.getVarIDs()){
+			double suspicousness = 1;
 			StepVariableRelationEntry entry = this.stepVariableTable.get(varID);
-			//TODO
+			
+			if(!entry.getProducers().isEmpty()){
+				TraceNode producer = entry.getProducers().get(0);
+				distributeSuspiciousness(producer, suspicousness);
+			}
 		}
+	}
+	
+	private void distributeSuspiciousness(TraceNode producer, double suspiciousness){
+		if(producer.getStepCorrectness() != TraceNode.STEP_CORRECT){
+			double producerScore = suspiciousness/2;
+			producer.addSuspicousScore(producerScore);
+			
+			suspiciousness = suspiciousness - producerScore;
+		}
+		
+		List<TraceNode> nonCorrectDominators = producer.getNonCorrectDominators();
+		if(!nonCorrectDominators.isEmpty()){
+			int n = nonCorrectDominators.size();
+			double subScore = suspiciousness/n;
+			for(TraceNode dominator: nonCorrectDominators){
+				distributeSuspiciousness(dominator, subScore);
+			}					
+		}
+		else{
+			producer.addSuspicousScore(suspiciousness);
+		}
+	}
+
+	public TraceNode findMostSupiciousNode() {
+		TraceNode suspiciousNode = null;
+		for(TraceNode node: this.exectionList){
+			if(suspiciousNode == null){
+				suspiciousNode = node;
+			}
+			else{
+				if(node.getSuspicousScore() > suspiciousNode.getSuspicousScore()){
+					suspiciousNode = node;
+				}
+			}
+		}
+		
+		return suspiciousNode;
+	}
+
+	public TraceNode findOldestConflictNode(int order) {
+		TraceNode oldestNode = null;
+		
+		TraceNode node = this.exectionList.get(order-1);
+		for(TraceNode dominator: node.getDominator().keySet()){
+			if(oldestNode == null){
+				oldestNode = dominator;
+			}
+			else{
+				if(oldestNode.getCheckTime() > dominator.getCheckTime()){
+					oldestNode = dominator;
+				}
+			}
+		}
+		
+		return oldestNode;
 	}
 }

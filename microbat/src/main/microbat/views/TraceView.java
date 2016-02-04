@@ -129,18 +129,7 @@ public class TraceView extends ViewPart {
 //		int selectionIndex = trace.searchBackwardTraceNode(searchContent);
 		if(selectionIndex != -1){
 			this.jumpFromSearch = true;
-			TraceNode node = trace.getExectionList().get(selectionIndex);
-			
-			List<TraceNode> path = new ArrayList<>();
-			while(node != null){
-				path.add(node);
-				node = node.getInvocationParent();
-			}
-			TraceNode[] list = path.toArray(new TraceNode[0]);
-			listViewer.setExpandedElements(list);
-			
-			node = trace.getExectionList().get(selectionIndex);
-			listViewer.setSelection(new StructuredSelection(node), true);							
+			jumpToNode(trace, selectionIndex+1);
 		}
 		else{
 			MessageBox box = new MessageBox(PlatformUI.getWorkbench()
@@ -149,6 +138,21 @@ public class TraceView extends ViewPart {
 			box.open();
 		}
 		
+	}
+	
+	public void jumpToNode(Trace trace, int order){
+		TraceNode node = trace.getExectionList().get(order-1);
+		
+		List<TraceNode> path = new ArrayList<>();
+		while(node != null){
+			path.add(node);
+			node = node.getInvocationParent();
+		}
+		TraceNode[] list = path.toArray(new TraceNode[0]);
+		listViewer.setExpandedElements(list);
+		
+		node = trace.getExectionList().get(order-1);
+		listViewer.setSelection(new StructuredSelection(node), true);	
 	}
 
 	@Override

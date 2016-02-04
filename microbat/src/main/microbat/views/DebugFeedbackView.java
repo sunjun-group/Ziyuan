@@ -12,9 +12,9 @@ import microbat.model.value.ArrayValue;
 import microbat.model.value.PrimitiveValue;
 import microbat.model.value.ReferenceValue;
 import microbat.model.value.VarValue;
-import microbat.model.variable.Variable;
 import microbat.util.Settings;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
@@ -51,6 +52,7 @@ public class DebugFeedbackView extends ViewPart {
 	public static final String UNCLEAR = "unclear";
 	
 	private TraceNode currentNode;
+	private TraceNode lastestNode;
 	
 	private String feedbackType;
 	
@@ -493,6 +495,7 @@ public class DebugFeedbackView extends ViewPart {
 		submitButton
 				.setLayoutData(new GridData(SWT.RIGHT, SWT.UP, true, false));
 		submitButton.addMouseListener(new MouseListener() {
+			
 			public void mouseUp(MouseEvent e) {}
 			public void mouseDoubleClick(MouseEvent e) {}
 
@@ -503,37 +506,49 @@ public class DebugFeedbackView extends ViewPart {
 					box.setMessage("Please tell me whether this step is correct or not!");
 					box.open();
 				} else {
-					// TODO start recommendation
 					Trace trace = Activator.getDefault().getCurrentTrace();
 					TraceNode suspiciousNode = null;
-					if(feedbackType.equals(DebugFeedbackView.INCORRECT)){
-						currentNode.setIsStepCorrect(true);
-						currentNode.setIsVarsCorrect(false);
+					
+					if(!feedbackType.equals(DebugFeedbackView.UNCLEAR)){
+						currentNode.setStepCorrectness(TraceNode.STEP_CORRECT);
+						
+						TraceNode conflictConcerningNode = null;
+						if(feedbackType.equals(DebugFeedbackView.INCORRECT)){
+							currentNode.setVarsCorrectness(TraceNode.VARS_INCORRECT);
+							conflictConcerningNode = currentNode;
+						}
+						else if(feedbackType.equals(DebugFeedbackView.CORRECT)){
+							currentNode.setVarsCorrectness(TraceNode.VARS_CORRECT);
+							conflictConcerningNode = lastestNode;
+						}
+						
+						if(conflictConcerningNode != null){
+							
+							long t1 = System.currentTimeMillis();
+							boolean isConflict = trace.checkDomiatorConflicts(conflictConcerningNode.getOrder());;
+							long t2 = System.currentTimeMillis();
+							System.out.println("time for checkDomiatorConflicts: " + (t2-t1));
+							
+							if(!isConflict){
+								t1 = System.currentTimeMillis();
+								trace.distributeSuspiciousness(Settings.interestedVariables);
+								t2 = System.currentTimeMillis();
+								System.out.println("time for distributeSuspiciousness: " + (t2-t1));
+								
+								suspiciousNode = trace.findMostSupiciousNode();
+							}
+							else{
+								boolean userConfirm = MessageDialog.openConfirm(PlatformUI.getWorkbench().getDisplay().getActiveShell(), 
+										"Feedback Conflict", "The choice is conflict with your previous feedback, are your sure with your this choice?");
+								if(userConfirm){
+									suspiciousNode = trace.findOldestConflictNode(conflictConcerningNode.getOrder());
+								}
+							}
+						}
 						
 						int checkTime = trace.getCheckTime()+1;
 						currentNode.setCheckTime(checkTime);
 						trace.setCheckTime(checkTime);
-						
-						boolean isConflict = trace.checkForwardConflicts(currentNode.getOrder());
-						if(!isConflict){
-							trace.distributeSuspiciousness(Settings.interestedVariables);
-//							suspiciousNode = trace.findBackwardSupiciousNode(accessibleVars, currentNode.getOrder());
-//							jumpTo(suspiciousNode);
-						}
-						else{
-							//TODO
-							boolean userConfirm = true;
-							if(userConfirm){
-//								suspiciousNode = trace.findOldestConflictNode(currentNode.getOrder());
-//								jumpTo(suspiciousNode);
-							}
-						}
-					}
-					else if(feedbackType.equals(DebugFeedbackView.CORRECT)){
-						//TODO
-						currentNode.setIsStepCorrect(true);
-						currentNode.setIsVarsCorrect(false);
-						//suspiciousNode = trace.findForwardSuspiciousNode();
 					}
 					else if(feedbackType.equals(DebugFeedbackView.UNCLEAR)){
 						//TODO
@@ -541,8 +556,18 @@ public class DebugFeedbackView extends ViewPart {
 					}
 					
 					if(suspiciousNode != null){
-						//jumpToNode(suspiciousNode);			
+						jumpToNode(trace, suspiciousNode);	
 					}
+				}
+			}
+			private void jumpToNode(Trace trace, TraceNode suspiciousNode) {
+				TraceView view;
+				try {
+					view = (TraceView)PlatformUI.getWorkbench().
+							getActiveWorkbenchWindow().getActivePage().showView(MicroBatViews.TRACE);
+					view.jumpToNode(trace, suspiciousNode.getOrder());
+				} catch (PartInitException e1) {
+					e1.printStackTrace();
 				}
 			}
 

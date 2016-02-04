@@ -85,6 +85,8 @@ public class StartDebugHandler extends AbstractHandler {
 				
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
+					Settings.interestedVariables.getVarIDs().clear();
+					
 					BreakPoint ap = new BreakPoint(classQulifiedName, methodSign, lineNumber);
 					List<BreakPoint> startPoints = Arrays.asList(ap);
 					

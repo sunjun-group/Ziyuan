@@ -13,10 +13,18 @@ import microbat.model.value.VarValue;
 
 public class TraceNode{
 	
+	public final static int STEP_CORRECT = 0;
+	public final static int STEP_INCORRECT = 1;
+	public final static int STEP_UNKNOWN = 2;
+	
+	public final static int VARS_CORRECT = 3;
+	public final static int VARS_INCORRECT = 4;
+	public final static int VARS_UNKNOWN = 5;
+	
 	private double suspicousScore;
 	private int checkTime = -1;
-	private Boolean isStepCorrect = null;
-	private Boolean isVarsCorrect = null;
+	private int stepCorrectness = STEP_UNKNOWN;
+	private int varsCorrectness = VARS_UNKNOWN;
 	
 	private BreakPoint breakPoint;
 	private BreakPointValue programState;
@@ -28,8 +36,8 @@ public class TraceNode{
 	private List<VarValue> readVariables = new ArrayList<>();
 	private List<VarValue> writtenVariables = new ArrayList<>();
 	
-	private Map<TraceNode, List<String>> dominator = new HashMap<>();
-	private Map<TraceNode, List<String>> dominatee = new HashMap<>();
+	private Map<TraceNode, List<String>> dominators = new HashMap<>();
+	private Map<TraceNode, List<String>> dominatees = new HashMap<>();
 	
 	/**
 	 * the order of this node in the whole trace, starting from 1.
@@ -252,25 +260,25 @@ public class TraceNode{
 	}
 
 	public Map<TraceNode, List<String>> getDominator() {
-		return dominator;
+		return dominators;
 	}
 
 	public void setDominator(Map<TraceNode, List<String>> dominator) {
-		this.dominator = dominator;
+		this.dominators = dominator;
 	}
 
 	public Map<TraceNode, List<String>> getDominatee() {
-		return dominatee;
+		return dominatees;
 	}
 
 	public void setDominatee(Map<TraceNode, List<String>> dominatee) {
-		this.dominatee = dominatee;
+		this.dominatees = dominatee;
 	}
 	
 	public void addDominator(TraceNode node, List<String> variables){
-		List<String> varIDs = this.dominator.get(node);
+		List<String> varIDs = this.dominators.get(node);
 		if(varIDs == null){
-			this.dominator.put(node, variables);
+			this.dominators.put(node, variables);
 		}
 		else{
 			varIDs.addAll(variables);
@@ -278,9 +286,9 @@ public class TraceNode{
 	}
 	
 	public void addDominatee(TraceNode node, List<String> variables){
-		List<String> varIDs = this.dominatee.get(node);
+		List<String> varIDs = this.dominatees.get(node);
 		if(varIDs == null){
-			this.dominatee.put(node, variables);
+			this.dominatees.put(node, variables);
 		}
 		else{
 			varIDs.addAll(variables);
@@ -335,20 +343,34 @@ public class TraceNode{
 		this.checkTime = markTime;
 	}
 
-	public Boolean getIsStepCorrect() {
-		return isStepCorrect;
+	public int getStepCorrectness() {
+		return stepCorrectness;
 	}
 
-	public void setIsStepCorrect(Boolean isStepCorrect) {
-		this.isStepCorrect = isStepCorrect;
+	public void setStepCorrectness(int stepCorrectness) {
+		this.stepCorrectness = stepCorrectness;
 	}
 
-	public Boolean getIsVarsCorrect() {
-		return isVarsCorrect;
+	public int getVarsCorrectness() {
+		return varsCorrectness;
 	}
 
-	public void setIsVarsCorrect(Boolean isVarsCorrect) {
-		this.isVarsCorrect = isVarsCorrect;
+	public void setVarsCorrectness(int varsCorrectness) {
+		this.varsCorrectness = varsCorrectness;
+	}
+
+	public List<TraceNode> getNonCorrectDominators() {
+		List<TraceNode> nonCorrectDominators = new ArrayList<>();
+		for(TraceNode dominator: dominators.keySet()){
+			if(dominator.getStepCorrectness() != TraceNode.STEP_CORRECT){
+				nonCorrectDominators.add(dominator);
+			}
+		}
+		return nonCorrectDominators;
+	}
+
+	public void addSuspicousScore(double score) {
+		this.suspicousScore += score;
 	}
 	
 }
