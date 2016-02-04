@@ -76,8 +76,9 @@ public class FieldVar extends Variable{
 
 	@Override
 	public Variable clone() {
-		FieldVar var = new FieldVar(isStatic, variableName, declaringType);
+		FieldVar var = new FieldVar(isStatic, variableName, type);
 		var.setVarID(varID);
+		var.setDeclaringType(declaringType);
 		return var;
 	}
 }
