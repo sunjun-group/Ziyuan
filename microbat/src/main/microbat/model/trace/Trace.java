@@ -9,6 +9,7 @@ import java.util.Map;
 import microbat.model.BreakPoint;
 import microbat.model.UserInterestedVariables;
 import microbat.model.value.VarValue;
+import microbat.model.value.VirtualValue;
 import microbat.model.variable.Variable;
 
 /**
@@ -18,6 +19,11 @@ import microbat.model.variable.Variable;
  */
 public class Trace {
 	private int observingIndex = -1;
+	
+	/**
+	 * This variable indicate the time of user ask for recommendation.
+	 */
+	private int checkTime = 0;
 	
 	private List<TraceNode> exectionList = new ArrayList<>();
 	/**
@@ -142,6 +148,10 @@ public class Trace {
 			
 			if(producers.isEmpty()){
 				System.err.println("there is no producer for variable " + entry.getAliasVariables());
+			}
+			
+			if(producers.size() > 1){
+				System.err.println("there are more than one producer for variable " + entry.getAliasVariables());
 			}
 			
 			Collections.sort(producers, new TraceNodeComparator());
@@ -291,7 +301,7 @@ public class Trace {
 	}
 
 	/**
-	 * Note that, if a variable is a primitive type, I cannot retrieve its head address, therefore, I use the static approach
+	 * Note that, if a variable is a primitive type, I cannot retrieve its heap address, therefore, I use the static approach
 	 * to uniquely identify a variable, i.e., variable ID. Please refer to {@link microbat.model.variable.Variable#varID} for details.
 	 * <br>
 	 * <br>
@@ -303,41 +313,95 @@ public class Trace {
 	 * @return
 	 */
 	public String findTrueIDFromStateVariable(String varID, int order) {
-		if(Variable.isPrimitiveVariable(varID)){
-			for(int i=order; i>=1; i--){
-				TraceNode node = this.exectionList.get(i-1);
-				String trueID = findTrueID(node.getReadVariables(), varID); 
-				
-				if(trueID != null){
-					return trueID;
-				}
-				else{
-					if(i != order){
-						trueID = findTrueID(node.getReadVariables(), varID);
-						if(trueID != null){
-							return trueID;
-						}
-					}					
-				}
+		for(int i=order; i>=1; i--){
+			TraceNode node = this.exectionList.get(i-1);
+			String trueID = findTrueID(node.getReadVariables(), varID); 
+			
+			if(trueID != null){
+				return trueID;
 			}
-			return null;
+			else{
+				if(i != order){
+					trueID = findTrueID(node.getReadVariables(), varID);
+					if(trueID != null){
+						return trueID;
+					}
+				}					
+			}
 		}
-		else{
-			return varID;
-		}
+		return null;
 	}
 	
 	private String findTrueID(List<VarValue> readOrWriteVars, String varID){
 		for(VarValue var: readOrWriteVars){
-			String ID = var.getVarID();
-			if(Variable.isPrimitiveVariable(ID)){
+			if(!(var instanceof VirtualValue)){
+				String ID = var.getVarID();
 				String concanateID = ID.substring(0, ID.indexOf(":"));
 				if(concanateID.equals(varID)){
 					return ID;
-				}
+				}				
 			}
 		}
 		
 		return null;
+	}
+
+	public int getCheckTime() {
+		return checkTime;
+	}
+
+	public void setCheckTime(int checkTime) {
+		this.checkTime = checkTime;
+	}
+
+	/**
+	 * Given the order of a trace node. If all the variables of this node (step) is correct, and this step is correct as well. 
+	 * Thus, the following thing cannot happen: <br><br>
+	 * All the dominator trace nodes of the input variable of this node is both step-correct and variable-correct.
+	 * <br><br>
+	 * If the above case happen, then a conflict happen.
+	 * 
+	 * @param order
+	 * @return
+	 */
+	public boolean checkForwardConflicts(int order) {
+		TraceNode node = this.exectionList.get(order-1);
+		assert node.getIsVarsCorrect()==false && node.getIsStepCorrect()==true;
+
+		boolean isConflict = true;
+		for(VarValue var: node.getReadVariables()){
+			String varID = var.getVarID();
+			StepVariableRelationEntry entry = this.stepVariableTable.get(varID);
+			
+			for(TraceNode producer: entry.getProducers()){
+				if(producer.getIsStepCorrect() == null || producer.getIsVarsCorrect() == null){
+					return false;
+				}
+				else{
+					isConflict = isConflict && producer.getIsStepCorrect() && producer.getIsVarsCorrect();
+				}
+				
+				if(!isConflict){
+					return false;
+				}
+			}
+		}
+		
+		return isConflict;
+	}
+	
+	public void clearAllSuspiciousness(){
+		for(TraceNode node: this.exectionList){
+			node.setSuspicousScore(0);
+		}
+	}
+
+	public void distributeSuspiciousness(UserInterestedVariables interestedVariables) {
+		clearAllSuspiciousness();
+		
+		for(String varID: interestedVariables.getVarIDs()){
+			StepVariableRelationEntry entry = this.stepVariableTable.get(varID);
+			//TODO
+		}
 	}
 }

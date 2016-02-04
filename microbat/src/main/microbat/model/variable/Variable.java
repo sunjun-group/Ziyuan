@@ -5,7 +5,9 @@ public abstract class Variable {
 	protected String variableName;
 	
 	/**
-	 * The id of an object (non-primitive type) is its object id. 
+	 * The id of an object (non-primitive type) is its object id + the order of trace node defining it, 
+	 * e.g., 100:33 . 
+	 * <br><br>
 	 * For primitive type:
 	 * if it is a field, its id is: its parent's object id + field name + the order of trace node defining it, 
 	 * e.g., 100.a:33 ;
@@ -15,9 +17,7 @@ public abstract class Variable {
 	 * of trace node defining it,
 	 * e.g., com.Main[12, 21] a:33 ;
 	 * if it is a virtual variable, its id is: "virtual var" + the order of the relevant return-trace-node. 
-	 * 
-	 * <br>
-	 * <br>
+	 * <br><br>
 	 * Note that if the user want to concanate a variable ID, such as local variable ID, field ID, etc. He
 	 * or she should use the following three static method: <br>
 	 * 
@@ -78,12 +78,12 @@ public abstract class Variable {
 		return className + "[" + startLine + "," + endLine + "] " + varName;	
 	}
 	
-	public static boolean isPrimitiveVariable(String varID){
-		if(varID.contains("[") || varID.contains(".")){
-			return true;
-		}
-		return false;
-	}
+//	public static boolean isPrimitiveVariable(String varID){
+//		if(varID.contains("[") || varID.contains(".")){
+//			return true;
+//		}
+//		return false;
+//	}
 
 	public abstract String getSimpleName();
 	public abstract Variable clone();

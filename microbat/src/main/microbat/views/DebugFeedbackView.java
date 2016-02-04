@@ -206,7 +206,7 @@ public class DebugFeedbackView extends ViewPart {
 		
 		String varID = ev.getVarID();
 		
-		if(Variable.isPrimitiveVariable(varID) && type.equals(STATE)){
+		if(type.equals(STATE)){
 			Trace trace = Activator.getDefault().getCurrentTrace();
 			varID = trace.findTrueIDFromStateVariable(varID, currentNode.getOrder());
 		}
@@ -507,11 +507,32 @@ public class DebugFeedbackView extends ViewPart {
 					Trace trace = Activator.getDefault().getCurrentTrace();
 					TraceNode suspiciousNode = null;
 					if(feedbackType.equals(DebugFeedbackView.INCORRECT)){
-						suspiciousNode = trace.findBackwardSupiciousNode(
-								Settings.interestedVariables, currentNode.getOrder());
+						currentNode.setIsStepCorrect(true);
+						currentNode.setIsVarsCorrect(false);
+						
+						int checkTime = trace.getCheckTime()+1;
+						currentNode.setCheckTime(checkTime);
+						trace.setCheckTime(checkTime);
+						
+						boolean isConflict = trace.checkForwardConflicts(currentNode.getOrder());
+						if(!isConflict){
+							trace.distributeSuspiciousness(Settings.interestedVariables);
+//							suspiciousNode = trace.findBackwardSupiciousNode(accessibleVars, currentNode.getOrder());
+//							jumpTo(suspiciousNode);
+						}
+						else{
+							//TODO
+							boolean userConfirm = true;
+							if(userConfirm){
+//								suspiciousNode = trace.findOldestConflictNode(currentNode.getOrder());
+//								jumpTo(suspiciousNode);
+							}
+						}
 					}
 					else if(feedbackType.equals(DebugFeedbackView.CORRECT)){
 						//TODO
+						currentNode.setIsStepCorrect(true);
+						currentNode.setIsVarsCorrect(false);
 						//suspiciousNode = trace.findForwardSuspiciousNode();
 					}
 					else if(feedbackType.equals(DebugFeedbackView.UNCLEAR)){

@@ -14,6 +14,9 @@ import microbat.model.value.VarValue;
 public class TraceNode{
 	
 	private double suspicousScore;
+	private int checkTime = -1;
+	private Boolean isStepCorrect = null;
+	private Boolean isVarsCorrect = null;
 	
 	private BreakPoint breakPoint;
 	private BreakPointValue programState;
@@ -323,4 +326,29 @@ public class TraceNode{
 	public void setSuspicousScore(double suspicousScore) {
 		this.suspicousScore = suspicousScore;
 	}
+
+	public int getCheckTime() {
+		return checkTime;
+	}
+
+	public void setCheckTime(int markTime) {
+		this.checkTime = markTime;
+	}
+
+	public Boolean getIsStepCorrect() {
+		return isStepCorrect;
+	}
+
+	public void setIsStepCorrect(Boolean isStepCorrect) {
+		this.isStepCorrect = isStepCorrect;
+	}
+
+	public Boolean getIsVarsCorrect() {
+		return isVarsCorrect;
+	}
+
+	public void setIsVarsCorrect(Boolean isVarsCorrect) {
+		this.isVarsCorrect = isVarsCorrect;
+	}
+	
 }

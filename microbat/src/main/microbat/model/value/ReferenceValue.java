@@ -64,7 +64,7 @@ public class ReferenceValue extends VarValue {
 			buffer.append("unknown type: ");
 		}
 		
-		buffer.append(getReferenceID());
+		buffer.append(getVarID());
 		String print = buffer.toString();
 		
 		return print;
@@ -91,6 +91,14 @@ public class ReferenceValue extends VarValue {
 	@Override
 	public boolean isTheSameWith(GraphNode nodeAfter) {
 		return true;
+	}
+	
+	@Override
+	public String getManifestationValue() {
+//		String manifestation = stringValue;
+//		manifestation = manifestation.substring(0, manifestation.indexOf("("));
+//		manifestation = manifestation + "(id=" + variable.getVarID() + ")";
+		return stringValue;
 	}
 	
 //	@Override

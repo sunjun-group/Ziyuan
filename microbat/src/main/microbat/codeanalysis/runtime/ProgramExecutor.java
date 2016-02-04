@@ -687,13 +687,8 @@ public class ProgramExecutor{
 					ObjectReference objRef = (ObjectReference)value;
 					String varID = String.valueOf(objRef.uniqueID());
 					
-					if(var instanceof FieldVar){
-						FieldVar f = (FieldVar)var;
-						if(f.isStatic()){
-							System.currentTimeMillis();							
-						}
-					}
-					
+					String definingNodeOrder = findDefiningNodeOrder(accessType, node, varID);
+					varID = varID + ":" + definingNodeOrder;
 					var.setVarID(varID);
 					
 					if(value.type().toString().equals("java.lang.String")){

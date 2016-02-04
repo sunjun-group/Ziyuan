@@ -97,7 +97,7 @@ public class PrimitiveValue extends VarValue {
 	
 	@Override
 	public String getManifestationValue() {
-		return stringValue + "(id=" + variable.getVarID() + ")";
+		return stringValue + " (id=" + variable.getVarID() + ")";
 	}
 	
 	
