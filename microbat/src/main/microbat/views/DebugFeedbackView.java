@@ -5,6 +5,7 @@ import java.util.List;
 
 import microbat.Activator;
 import microbat.algorithm.graphdiff.GraphDiff;
+import microbat.model.AttributionVar;
 import microbat.model.BreakPointValue;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
@@ -493,12 +494,37 @@ public class DebugFeedbackView extends ViewPart {
 
 		Button submitButton = new Button(feedbackGroup, SWT.NONE);
 		submitButton.setText("Find bug!");
-		submitButton
-				.setLayoutData(new GridData(SWT.RIGHT, SWT.UP, true, false));
+		submitButton.setLayoutData(new GridData(SWT.RIGHT, SWT.UP, true, false));
 		submitButton.addMouseListener(new MouseListener() {
 			
 			public void mouseUp(MouseEvent e) {}
 			public void mouseDoubleClick(MouseEvent e) {}
+			
+			private List<AttributionVar> constructAttributionRelation(){
+				List<AttributionVar> readVars = new ArrayList<>();
+				for(VarValue writtenVarValue: currentNode.getWrittenVariables()){
+					String writtenVarID = writtenVarValue.getVarID();
+					if(Settings.interestedVariables.contains(writtenVarID)){
+						for(VarValue readVarValue: currentNode.getReadVariables()){
+							String readVarID = readVarValue.getVarID();
+							if(Settings.interestedVariables.contains(readVarID)){
+								
+								AttributionVar writtenVar = Settings.interestedVariables.findOrCreateVar(writtenVarID);
+								AttributionVar readVar = Settings.interestedVariables.findOrCreateVar(readVarID);
+								
+								readVar.addChild(writtenVar);
+								writtenVar.addParent(readVar);
+								
+								readVars.add(readVar);
+							}
+						}						
+					}
+				}
+				
+				Settings.interestedVariables.updateAttributionTrees();
+				
+				return readVars;
+			}
 
 			public void mouseDown(MouseEvent e) {
 				if (feedbackType == null) {
@@ -511,9 +537,10 @@ public class DebugFeedbackView extends ViewPart {
 					TraceNode suspiciousNode = null;
 					
 					if(!feedbackType.equals(DebugFeedbackView.UNCLEAR)){
-						currentNode.setStepCorrectness(TraceNode.STEP_CORRECT);
 						
+						currentNode.setStepCorrectness(TraceNode.STEP_CORRECT);
 						TraceNode conflictConcerningNode = null;
+						
 						if(feedbackType.equals(DebugFeedbackView.INCORRECT)){
 							currentNode.setVarsCorrectness(TraceNode.VARS_INCORRECT);
 							conflictConcerningNode = currentNode;
@@ -528,16 +555,20 @@ public class DebugFeedbackView extends ViewPart {
 							boolean isConflict = trace.checkDomiatorConflicts(conflictConcerningNode.getOrder());;
 							
 							if(!isConflict){
+								List<AttributionVar> readVars = constructAttributionRelation();
+								AttributionVar focusVar = Settings.interestedVariables.findFocusVar(readVars);
+								
 								long t1 = System.currentTimeMillis();
 								trace.distributeSuspiciousness(Settings.interestedVariables);
 								long t2 = System.currentTimeMillis();
-								System.out.println("time for distributeSuspiciousness: " + (t2-t1));
+								//System.out.println("time for distributeSuspiciousness: " + (t2-t1));
 								
-								suspiciousNode = trace.findMostSupiciousNode();
+								suspiciousNode = trace.findMostSupiciousNode(focusVar); 
 							}
 							else{
 								boolean userConfirm = MessageDialog.openConfirm(PlatformUI.getWorkbench().getDisplay().getActiveShell(), 
-										"Feedback Conflict", "The choice is conflict with your previous feedback, are your sure with your this choice?");
+										"Feedback Conflict", "The choice is conflict with your previous feedback, "
+												+ "are your sure with your this choice?");
 								if(userConfirm){
 									suspiciousNode = trace.findOldestConflictNode(conflictConcerningNode.getOrder());
 								}
@@ -559,6 +590,7 @@ public class DebugFeedbackView extends ViewPart {
 					}
 				}
 			}
+			
 			private void jumpToNode(Trace trace, TraceNode suspiciousNode) {
 				TraceView view;
 				try {

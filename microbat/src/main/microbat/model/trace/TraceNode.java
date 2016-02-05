@@ -7,6 +7,7 @@ import java.util.Map;
 
 import microbat.algorithm.graphdiff.GraphDiff;
 import microbat.algorithm.graphdiff.HierarchyGraphDiffer;
+import microbat.model.AttributionVar;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
 import microbat.model.value.VarValue;
@@ -21,7 +22,9 @@ public class TraceNode{
 	public final static int VARS_INCORRECT = 4;
 	public final static int VARS_UNKNOWN = 5;
 	
-	private double suspicousScore;
+	private Map<AttributionVar, Double> suspicousScoreMap = new HashMap<>();
+	
+	
 	private int checkTime = -1;
 	private int stepCorrectness = STEP_UNKNOWN;
 	private int varsCorrectness = VARS_UNKNOWN;
@@ -327,12 +330,22 @@ public class TraceNode{
 		this.writtenVariables.add(var);
 	}
 
-	public double getSuspicousScore() {
-		return suspicousScore;
+	public Double getSuspicousScore(AttributionVar var) {
+		return this.suspicousScoreMap.get(var);
 	}
 
-	public void setSuspicousScore(double suspicousScore) {
-		this.suspicousScore = suspicousScore;
+	public void setSuspicousScore(AttributionVar var, double suspicousScore) {
+		this.suspicousScoreMap.put(var, suspicousScore);
+	}
+	
+	public void addSuspicousScore(AttributionVar var, double score) {
+		Double ss = getSuspicousScore(var);
+		if(ss == null){
+			setSuspicousScore(var, score);
+		}
+		else{
+			setSuspicousScore(var, ss+score);
+		}
 	}
 
 	public int getCheckTime() {
@@ -369,8 +382,14 @@ public class TraceNode{
 		return nonCorrectDominators;
 	}
 
-	public void addSuspicousScore(double score) {
-		this.suspicousScore += score;
+	public Map<AttributionVar, Double> getSuspicousScoreMap() {
+		return suspicousScoreMap;
 	}
+
+	public void setSuspicousScoreMap(Map<AttributionVar, Double> suspicousScoreMap) {
+		this.suspicousScoreMap = suspicousScoreMap;
+	}
+
+	
 	
 }

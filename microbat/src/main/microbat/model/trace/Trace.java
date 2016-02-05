@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import microbat.model.AttributionVar;
 import microbat.model.BreakPoint;
 import microbat.model.UserInterestedVariables;
 import microbat.model.value.VarValue;
@@ -258,33 +259,6 @@ public class Trace {
 		return null;
 	}
 
-	/**
-	 * TODO unfinished
-	 * @param varID
-	 * @param startNodeOrder
-	 * @return
-	 */
-	public TraceNode findBackwardSupiciousNode(
-			UserInterestedVariables interestedVariables, int startNodeOrder) {
-		if(startNodeOrder < 1){
-			return null;
-		}
-		
-		for(int i=startNodeOrder-1; i>=1; i--){
-			/**	order start from 1 */
-			TraceNode node = this.exectionList.get(i-1);
-			for(String varID: interestedVariables.getVarIDs()){
-				for(VarValue varValue: node.getWrittenVariables()){
-					if(varValue.getVarID().equals(varID)){
-						return node;
-					}
-				}
-			}
-		}
-		
-		return null;
-	}
-
 	public TraceNode findLastestNodeDefiningPrimitiveVariable(String varID) {
 		for(int i=exectionList.size()-2; i>=0; i--){
 			TraceNode node = exectionList.get(i);
@@ -399,31 +373,31 @@ public class Trace {
 	
 	public void clearAllSuspiciousness(){
 		for(TraceNode node: this.exectionList){
-			node.setSuspicousScore(0);
+			node.getSuspicousScoreMap().clear();
 		}
 	}
 
 	public void distributeSuspiciousness(UserInterestedVariables interestedVariables) {
 		clearAllSuspiciousness();
 		
-		String varID = interestedVariables.getNewestVarID();
-		if(varID != null){
-			//for(String varID: interestedVariables.getVarIDs()){
-			double suspicousness = interestedVariables.getVarScore(varID);
+		for(AttributionVar var: interestedVariables.getRoots()){
+			String varID = var.getVarID();
+			double suspicousness = 1;
 			StepVariableRelationEntry entry = this.stepVariableTable.get(varID);
 			
 			if(!entry.getProducers().isEmpty()){
 				TraceNode producer = entry.getProducers().get(0);
-				distributeSuspiciousness(producer, suspicousness, 1);
+				int layer = 1;
+				distributeSuspiciousness(var, producer, suspicousness, layer);
 			}
-			//}
 		}
+		
 	}
 	
-	private void distributeSuspiciousness(TraceNode producer, double suspiciousness, int layer){
+	private void distributeSuspiciousness(AttributionVar var, TraceNode producer, double suspiciousness, int layer){
 		if(producer.getStepCorrectness() != TraceNode.STEP_CORRECT){
-			double producerScore = suspiciousness/2;
-			producer.addSuspicousScore(producerScore);
+			double producerScore = suspiciousness * Settings.remainingRate;
+			producer.addSuspicousScore(var, producerScore);
 			
 			suspiciousness = suspiciousness - producerScore;
 		}
@@ -434,27 +408,31 @@ public class Trace {
 				int n = nonCorrectDominators.size();
 				double subScore = suspiciousness/n;
 				for(TraceNode dominator: nonCorrectDominators){
-					distributeSuspiciousness(dominator, subScore, layer+1);
+					distributeSuspiciousness(var, dominator, subScore, layer+1);
 				}					
 			}
 			else{
-				producer.addSuspicousScore(suspiciousness);
+				producer.addSuspicousScore(var, suspiciousness);
 			}
 		}
 		else{
-			producer.addSuspicousScore(suspiciousness);
+			producer.addSuspicousScore(var, suspiciousness);
 		}
 		
 	}
 
-	public TraceNode findMostSupiciousNode() {
+	public TraceNode findMostSupiciousNode(AttributionVar var) {
 		TraceNode suspiciousNode = null;
 		for(TraceNode node: this.exectionList){
 			if(suspiciousNode == null){
 				suspiciousNode = node;
 			}
 			else{
-				if(node.getSuspicousScore() > suspiciousNode.getSuspicousScore()){
+				Double score1 = node.getSuspicousScore(var);
+				score1 = (score1 == null) ? 0 : score1;
+				Double score2 = suspiciousNode.getSuspicousScore(var);
+				score2 = (score2 == null) ? 0 : score2;
+				if(score1 > score2){
 					suspiciousNode = node;
 				}
 			}

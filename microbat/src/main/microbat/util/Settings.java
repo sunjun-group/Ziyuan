@@ -14,6 +14,11 @@ public class Settings {
 	
 	public static int distribtionLayer = 3;
 	
+	/**
+	 * The portion remains in a trace node when propagating suspiciousness. 
+	 */
+	public static double remainingRate = 0.5;
+	
 	static{
 		if(Activator.getDefault() != null){
 			try{
