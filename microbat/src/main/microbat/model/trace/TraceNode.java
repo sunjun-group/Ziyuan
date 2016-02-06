@@ -18,16 +18,16 @@ public class TraceNode{
 	public final static int STEP_INCORRECT = 1;
 	public final static int STEP_UNKNOWN = 2;
 	
-	public final static int VARS_CORRECT = 3;
-	public final static int VARS_INCORRECT = 4;
-	public final static int VARS_UNKNOWN = 5;
+	public final static int READVARS_CORRECT = 3;
+	public final static int READVARS_INCORRECT = 4;
+	public final static int READVARS_UNKNOWN = 5;
 	
 	private Map<AttributionVar, Double> suspicousScoreMap = new HashMap<>();
 	
 	
 	private int checkTime = -1;
 	private int stepCorrectness = STEP_UNKNOWN;
-	private int varsCorrectness = VARS_UNKNOWN;
+	private int varsCorrectness = READVARS_UNKNOWN;
 	
 	private BreakPoint breakPoint;
 	private BreakPointValue programState;

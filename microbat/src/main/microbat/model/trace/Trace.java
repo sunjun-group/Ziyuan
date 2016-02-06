@@ -329,47 +329,6 @@ public class Trace {
 	public void setCheckTime(int checkTime) {
 		this.checkTime = checkTime;
 	}
-
-	/**
-	 * Given the order of a trace node. If all the variables of this node (step) is correct, and this step is correct as well. 
-	 * Thus, the following thing cannot happen: <br><br>
-	 * All the dominator trace nodes of the input variable of this node is both step-correct and variable-correct.
-	 * <br><br>
-	 * If the above case happen, then a conflict happen.
-	 * 
-	 * @param order
-	 * @return
-	 */
-	public boolean checkDomiatorConflicts(int order) {
-		TraceNode node = this.exectionList.get(order-1);
-		assert node.getVarsCorrectness()==TraceNode.VARS_INCORRECT && node.getStepCorrectness()==TraceNode.STEP_CORRECT;
-
-		if(node.getDominator().keySet().isEmpty()){
-			return false;
-		}
-		
-		boolean isConflict = true;
-		for(VarValue var: node.getReadVariables()){
-			String varID = var.getVarID();
-			StepVariableRelationEntry entry = this.stepVariableTable.get(varID);
-			
-			for(TraceNode producer: entry.getProducers()){
-				if(producer.getStepCorrectness()==TraceNode.STEP_UNKNOWN || producer.getVarsCorrectness()==TraceNode.VARS_UNKNOWN){
-					return false;
-				}
-				else{
-					isConflict = isConflict && producer.getStepCorrectness()==TraceNode.STEP_CORRECT 
-							&& producer.getVarsCorrectness()==TraceNode.VARS_CORRECT;
-				}
-				
-				if(!isConflict){
-					return false;
-				}
-			}
-		}
-		
-		return isConflict;
-	}
 	
 	public void clearAllSuspiciousness(){
 		for(TraceNode node: this.exectionList){

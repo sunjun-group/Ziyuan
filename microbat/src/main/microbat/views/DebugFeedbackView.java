@@ -7,12 +7,14 @@ import microbat.Activator;
 import microbat.algorithm.graphdiff.GraphDiff;
 import microbat.model.AttributionVar;
 import microbat.model.BreakPointValue;
+import microbat.model.UserInterestedVariables;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.model.value.ArrayValue;
 import microbat.model.value.PrimitiveValue;
 import microbat.model.value.ReferenceValue;
 import microbat.model.value.VarValue;
+import microbat.recommendation.ConflictRuleChecker;
 import microbat.util.Settings;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -525,6 +527,17 @@ public class DebugFeedbackView extends ViewPart {
 				
 				return readVars;
 			}
+			
+			private int getReadVarCorrectness(TraceNode currentNode, UserInterestedVariables interestedVariables){
+				for(VarValue var: currentNode.getReadVariables()){
+					String readVarID = var.getVarID();
+					if(interestedVariables.contains(readVarID)){
+						return TraceNode.READVARS_INCORRECT;
+					}
+				}
+				
+				return TraceNode.READVARS_CORRECT;
+			}
 
 			public void mouseDown(MouseEvent e) {
 				if (feedbackType == null) {
@@ -537,41 +550,31 @@ public class DebugFeedbackView extends ViewPart {
 					TraceNode suspiciousNode = null;
 					
 					if(!feedbackType.equals(DebugFeedbackView.UNCLEAR)){
-						
 						currentNode.setStepCorrectness(TraceNode.STEP_CORRECT);
-						TraceNode conflictConcerningNode = null;
+						int readVarCorrectness = getReadVarCorrectness(currentNode, Settings.interestedVariables);
+						currentNode.setVarsCorrectness(readVarCorrectness);
 						
-						if(feedbackType.equals(DebugFeedbackView.INCORRECT)){
-							currentNode.setVarsCorrectness(TraceNode.VARS_INCORRECT);
-							conflictConcerningNode = currentNode;
-						}
-						else if(feedbackType.equals(DebugFeedbackView.CORRECT)){
-							currentNode.setVarsCorrectness(TraceNode.VARS_CORRECT);
-							conflictConcerningNode = lastestNode;
-						}
+						ConflictRuleChecker conflictRuleChecker = new ConflictRuleChecker();
+						TraceNode conflictNode = conflictRuleChecker.checkConflicts(trace, currentNode.getOrder());
+//						boolean isConflict = trace.checkDomiatorConflicts();;
 						
-						if(conflictConcerningNode != null){
+						if(conflictNode == null){
+							List<AttributionVar> readVars = constructAttributionRelation();
+							AttributionVar focusVar = Settings.interestedVariables.findFocusVar(readVars);
 							
-							boolean isConflict = trace.checkDomiatorConflicts(conflictConcerningNode.getOrder());;
+							long t1 = System.currentTimeMillis();
+							trace.distributeSuspiciousness(Settings.interestedVariables);
+							long t2 = System.currentTimeMillis();
+							System.out.println("time for distributeSuspiciousness: " + (t2-t1));
 							
-							if(!isConflict){
-								List<AttributionVar> readVars = constructAttributionRelation();
-								AttributionVar focusVar = Settings.interestedVariables.findFocusVar(readVars);
-								
-								long t1 = System.currentTimeMillis();
-								trace.distributeSuspiciousness(Settings.interestedVariables);
-								long t2 = System.currentTimeMillis();
-								//System.out.println("time for distributeSuspiciousness: " + (t2-t1));
-								
-								suspiciousNode = trace.findMostSupiciousNode(focusVar); 
-							}
-							else{
-								boolean userConfirm = MessageDialog.openConfirm(PlatformUI.getWorkbench().getDisplay().getActiveShell(), 
-										"Feedback Conflict", "The choice is conflict with your previous feedback, "
-												+ "are your sure with your this choice?");
-								if(userConfirm){
-									suspiciousNode = trace.findOldestConflictNode(conflictConcerningNode.getOrder());
-								}
+							suspiciousNode = trace.findMostSupiciousNode(focusVar); 
+						}
+						else{
+							boolean userConfirm = MessageDialog.openConfirm(PlatformUI.getWorkbench().getDisplay().getActiveShell(), 
+									"Feedback Conflict", "The choice is conflict with your previous feedback, "
+											+ "are your sure with your this choice?");
+							if(userConfirm){
+								suspiciousNode = conflictNode;
 							}
 						}
 						
