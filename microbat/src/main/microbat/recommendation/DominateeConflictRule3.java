@@ -25,31 +25,34 @@ public class DominateeConflictRule3 extends ConflictRule {
 	@Override
 	public TraceNode checkConflicts(Trace trace, int order) {
 		TraceNode node = trace.getExectionList().get(order-1);
-		assert node.getVarsCorrectness()==TraceNode.READVARS_INCORRECT;
-
-		if(node.getDominatee().keySet().isEmpty()){
-			return null;
-		}
-		
-		List<TraceNode> consumerList = new ArrayList<>();
-		for(VarValue var: node.getReadVariables()){
-			String varID = var.getVarID();
-			StepVariableRelationEntry entry = trace.getStepVariableTable().get(varID);
+		if(node.getReadVarsCorrectness()==TraceNode.READVARS_INCORRECT){
+			if(node.getDominatee().keySet().isEmpty()){
+				return null;
+			}
 			
-			for(TraceNode consumer: entry.getConsumers()){
-				if(consumer.getVarsCorrectness()==TraceNode.READVARS_CORRECT){
-					consumerList.add(consumer);
+			List<TraceNode> consumerList = new ArrayList<>();
+			for(VarValue var: node.getReadVariables()){
+				String varID = var.getVarID();
+				StepVariableRelationEntry entry = trace.getStepVariableTable().get(varID);
+				
+				for(TraceNode consumer: entry.getConsumers()){
+					if(consumer.getReadVarsCorrectness()==TraceNode.READVARS_CORRECT){
+						consumerList.add(consumer);
+					}
 				}
 			}
+			
+			if(!consumerList.isEmpty()){
+				TraceNode jumpNode = findOldestConflictNode(consumerList);
+				return jumpNode;
+			}
+			else{
+				return null;
+			}
+			
 		}
-		
-		if(!consumerList.isEmpty()){
-			TraceNode jumpNode = findOldestConflictNode(consumerList);
-			return jumpNode;
-		}
-		else{
-			return null;
-		}
+
+		return null;
 	}
 
 }

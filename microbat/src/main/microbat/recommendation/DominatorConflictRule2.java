@@ -27,32 +27,35 @@ public class DominatorConflictRule2 extends ConflictRule {
 	@Override
 	public TraceNode checkConflicts(Trace trace, int order) {
 		TraceNode node = trace.getExectionList().get(order-1);
-		assert node.getVarsCorrectness()==TraceNode.READVARS_CORRECT;
-
-		if(node.getDominator().keySet().isEmpty()){
-			return null;
-		}
-		
-		List<TraceNode> producerList = new ArrayList<>();
-		for(VarValue var: node.getReadVariables()){
-			String varID = var.getVarID();
-			StepVariableRelationEntry entry = trace.getStepVariableTable().get(varID);
+		if(node.getReadVarsCorrectness()==TraceNode.READVARS_CORRECT){
+			if(node.getDominator().keySet().isEmpty()){
+				return null;
+			}
 			
-			if(!entry.getProducers().isEmpty()){
-				TraceNode producer = entry.getProducers().get(0);
-				if(producer.getVarsCorrectness()==TraceNode.READVARS_INCORRECT){
-					producerList.add(producer);
+			List<TraceNode> producerList = new ArrayList<>();
+			for(VarValue var: node.getReadVariables()){
+				String varID = var.getVarID();
+				StepVariableRelationEntry entry = trace.getStepVariableTable().get(varID);
+				
+				if(!entry.getProducers().isEmpty()){
+					TraceNode producer = entry.getProducers().get(0);
+					if(producer.getReadVarsCorrectness()==TraceNode.READVARS_INCORRECT){
+						producerList.add(producer);
+					}
 				}
 			}
+			
+			if(!producerList.isEmpty()){
+				TraceNode jumpNode = findOldestConflictNode(producerList);
+				return jumpNode;
+			}
+			else{
+				return null;
+			}
+			
 		}
-		
-		if(!producerList.isEmpty()){
-			TraceNode jumpNode = findOldestConflictNode(producerList);
-			return jumpNode;
-		}
-		else{
-			return null;
-		}
+
+		return null;
 	}
 
 }

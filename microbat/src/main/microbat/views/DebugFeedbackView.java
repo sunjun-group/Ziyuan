@@ -538,49 +538,84 @@ public class DebugFeedbackView extends ViewPart {
 				
 				return TraceNode.READVARS_CORRECT;
 			}
+			
+			private boolean getWittenVarCorrectness(TraceNode currentNode, UserInterestedVariables interestedVariables){
+				for(VarValue var: currentNode.getWrittenVariables()){
+					String writtenVarID = var.getVarID();
+					if(interestedVariables.contains(writtenVarID)){
+						return true;
+					}
+				}
+				
+				return false;
+			}
+			
+			private void openChooseFeedbackDialog(){
+				MessageBox box = new MessageBox(PlatformUI.getWorkbench()
+						.getDisplay().getActiveShell());
+				box.setMessage("Please tell me whether this step is correct or not!");
+				box.open();
+			}
+			
+			private void openRecheckVarDialog(){
+				MessageBox box = new MessageBox(PlatformUI.getWorkbench()
+						.getDisplay().getActiveShell());
+				box.setMessage("Correct read variable with incorrect written variable, You have found the bug!");
+				box.open();
+			}
 
 			public void mouseDown(MouseEvent e) {
 				if (feedbackType == null) {
-					MessageBox box = new MessageBox(PlatformUI.getWorkbench()
-							.getDisplay().getActiveShell());
-					box.setMessage("Please tell me whether this step is correct or not!");
-					box.open();
-				} else {
+					openChooseFeedbackDialog();
+				} 
+				else {
 					Trace trace = Activator.getDefault().getCurrentTrace();
 					TraceNode suspiciousNode = null;
 					
 					if(!feedbackType.equals(DebugFeedbackView.UNCLEAR)){
-						currentNode.setStepCorrectness(TraceNode.STEP_CORRECT);
 						int readVarCorrectness = getReadVarCorrectness(currentNode, Settings.interestedVariables);
 						currentNode.setVarsCorrectness(readVarCorrectness);
 						
-						ConflictRuleChecker conflictRuleChecker = new ConflictRuleChecker();
-						TraceNode conflictNode = conflictRuleChecker.checkConflicts(trace, currentNode.getOrder());
-//						boolean isConflict = trace.checkDomiatorConflicts();;
-						
-						if(conflictNode == null){
-							List<AttributionVar> readVars = constructAttributionRelation();
-							AttributionVar focusVar = Settings.interestedVariables.findFocusVar(readVars);
-							
-							long t1 = System.currentTimeMillis();
-							trace.distributeSuspiciousness(Settings.interestedVariables);
-							long t2 = System.currentTimeMillis();
-							System.out.println("time for distributeSuspiciousness: " + (t2-t1));
-							
-							suspiciousNode = trace.findMostSupiciousNode(focusVar); 
+						boolean writtenVarIncorrect = getWittenVarCorrectness(currentNode, Settings.interestedVariables);
+						if(writtenVarIncorrect && currentNode.getReadVarsCorrectness()==TraceNode.READVARS_CORRECT){
+							openRecheckVarDialog();
 						}
 						else{
-							boolean userConfirm = MessageDialog.openConfirm(PlatformUI.getWorkbench().getDisplay().getActiveShell(), 
-									"Feedback Conflict", "The choice is conflict with your previous feedback, "
-											+ "are your sure with your this choice?");
-							if(userConfirm){
-								suspiciousNode = conflictNode;
+							currentNode.setStepCorrectness(TraceNode.STEP_CORRECT);
+							
+							ConflictRuleChecker conflictRuleChecker = new ConflictRuleChecker();
+							TraceNode conflictNode = conflictRuleChecker.checkConflicts(trace, currentNode.getOrder());
+//							boolean isConflict = trace.checkDomiatorConflicts();
+							
+							if(conflictNode == null){
+								List<AttributionVar> readVars = constructAttributionRelation();
+								AttributionVar focusVar = Settings.interestedVariables.findFocusVar(readVars);
+								
+								if(focusVar != null){
+									long t1 = System.currentTimeMillis();
+									trace.distributeSuspiciousness(Settings.interestedVariables);
+									long t2 = System.currentTimeMillis();
+									System.out.println("time for distributeSuspiciousness: " + (t2-t1));
+									
+									suspiciousNode = trace.findMostSupiciousNode(focusVar); 									
+								}
 							}
+							else{
+								boolean userConfirm = MessageDialog.openConfirm(PlatformUI.getWorkbench().getDisplay().getActiveShell(), 
+										"Feedback Conflict", "The choice is conflict with your previous feedback, "
+												+ "are your sure with your this choice?");
+								if(userConfirm){
+									suspiciousNode = conflictNode;
+								}
+							}
+							
+							int checkTime = trace.getCheckTime()+1;
+							currentNode.setCheckTime(checkTime);
+							trace.setCheckTime(checkTime);
+							
 						}
 						
-						int checkTime = trace.getCheckTime()+1;
-						currentNode.setCheckTime(checkTime);
-						trace.setCheckTime(checkTime);
+						
 					}
 					else if(feedbackType.equals(DebugFeedbackView.UNCLEAR)){
 						//TODO

@@ -117,7 +117,12 @@ public class UserInterestedVariables {
 
 	public AttributionVar findFocusVar(List<AttributionVar> readVars) {
 		if(readVars.isEmpty()){
-			return roots.get(0);
+			if(!roots.isEmpty()){
+				return roots.get(0);				
+			}
+			else{
+				return null;
+			}
 		}
 		else{
 			AttributionVar readVar = readVars.get(0);

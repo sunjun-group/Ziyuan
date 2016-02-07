@@ -17,7 +17,7 @@ public abstract class ConflictRule {
 				oldNode = node;
 			}
 			else{
-				if(oldNode.getCheckTime() < node.getCheckTime()){
+				if(oldNode.getCheckTime() > node.getCheckTime()){
 					oldNode = node;
 				}
 			}

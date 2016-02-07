@@ -364,7 +364,7 @@ public class TraceNode{
 		this.stepCorrectness = stepCorrectness;
 	}
 
-	public int getVarsCorrectness() {
+	public int getReadVarsCorrectness() {
 		return varsCorrectness;
 	}
 
