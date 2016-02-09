@@ -3,6 +3,7 @@ package microbat.util;
 import microbat.Activator;
 import microbat.codeanalysis.ast.LocalVariableScopes;
 import microbat.model.UserInterestedVariables;
+import microbat.model.trace.PotentialCorrectPatternList;
 import microbat.preference.MicrobatPreference;
 
 public class Settings {
@@ -33,8 +34,10 @@ public class Settings {
 		}
 	}
 	
-	//public static List<InterestedVariable> interestedVariables = new ArrayList<>();
-	
+	public static PotentialCorrectPatternList potentialCorrectPatterns = new PotentialCorrectPatternList();
+	/**
+	 * the variables checked by user as wrong.
+	 */
 	public static UserInterestedVariables interestedVariables = new UserInterestedVariables();
 	/**
 	 * This variable is to trace whether the variables in different lines are the same

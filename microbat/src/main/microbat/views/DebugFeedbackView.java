@@ -8,13 +8,15 @@ import microbat.algorithm.graphdiff.GraphDiff;
 import microbat.model.AttributionVar;
 import microbat.model.BreakPointValue;
 import microbat.model.UserInterestedVariables;
+import microbat.model.trace.PathInstance;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.model.value.ArrayValue;
 import microbat.model.value.PrimitiveValue;
 import microbat.model.value.ReferenceValue;
 import microbat.model.value.VarValue;
-import microbat.recommendation.ConflictRuleChecker;
+import microbat.recommendation.SuspiciousNodeRecommender;
+import microbat.recommendation.conflicts.ConflictRuleChecker;
 import microbat.util.Settings;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -502,32 +504,6 @@ public class DebugFeedbackView extends ViewPart {
 			public void mouseUp(MouseEvent e) {}
 			public void mouseDoubleClick(MouseEvent e) {}
 			
-			private List<AttributionVar> constructAttributionRelation(){
-				List<AttributionVar> readVars = new ArrayList<>();
-				for(VarValue writtenVarValue: currentNode.getWrittenVariables()){
-					String writtenVarID = writtenVarValue.getVarID();
-					if(Settings.interestedVariables.contains(writtenVarID)){
-						for(VarValue readVarValue: currentNode.getReadVariables()){
-							String readVarID = readVarValue.getVarID();
-							if(Settings.interestedVariables.contains(readVarID)){
-								
-								AttributionVar writtenVar = Settings.interestedVariables.findOrCreateVar(writtenVarID);
-								AttributionVar readVar = Settings.interestedVariables.findOrCreateVar(readVarID);
-								
-								readVar.addChild(writtenVar);
-								writtenVar.addParent(readVar);
-								
-								readVars.add(readVar);
-							}
-						}						
-					}
-				}
-				
-				Settings.interestedVariables.updateAttributionTrees();
-				
-				return readVars;
-			}
-			
 			private int getReadVarCorrectness(TraceNode currentNode, UserInterestedVariables interestedVariables){
 				for(VarValue var: currentNode.getReadVariables()){
 					String readVarID = var.getVarID();
@@ -588,17 +564,8 @@ public class DebugFeedbackView extends ViewPart {
 //							boolean isConflict = trace.checkDomiatorConflicts();
 							
 							if(conflictNode == null){
-								List<AttributionVar> readVars = constructAttributionRelation();
-								AttributionVar focusVar = Settings.interestedVariables.findFocusVar(readVars);
-								
-								if(focusVar != null){
-									long t1 = System.currentTimeMillis();
-									trace.distributeSuspiciousness(Settings.interestedVariables);
-									long t2 = System.currentTimeMillis();
-									System.out.println("time for distributeSuspiciousness: " + (t2-t1));
-									
-									suspiciousNode = trace.findMostSupiciousNode(focusVar); 									
-								}
+								SuspiciousNodeRecommender recommender = new SuspiciousNodeRecommender();
+								suspiciousNode = recommender.findSuspiciousNode(trace, currentNode, lastestNode);
 							}
 							else{
 								boolean userConfirm = MessageDialog.openConfirm(PlatformUI.getWorkbench().getDisplay().getActiveShell(), 
