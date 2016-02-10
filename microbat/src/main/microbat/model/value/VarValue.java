@@ -372,6 +372,14 @@ public abstract class VarValue implements GraphNode{
 		this.stringValue = stringValue;
 	}
 
+	public Variable getVariable() {
+		return variable;
+	}
+
+	public void setVariable(Variable variable) {
+		this.variable = variable;
+	}
+
 	
 //	public abstract VarValue clone();
 }

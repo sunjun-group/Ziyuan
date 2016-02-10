@@ -157,8 +157,8 @@ public class Trace {
 				System.err.println("there are more than one producer for variable " + entry.getAliasVariables());
 			}
 			
-			Collections.sort(producers, new TraceNodeComparator());
-			Collections.sort(consumers, new TraceNodeComparator());
+			Collections.sort(producers, new TraceNodeOrderComparator());
+			Collections.sort(consumers, new TraceNodeOrderComparator());
 			
 			
 			int readingCursor = 0;

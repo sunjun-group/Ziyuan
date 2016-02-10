@@ -1,6 +1,8 @@
 package microbat.recommendation;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import microbat.model.AttributionVar;
@@ -8,54 +10,138 @@ import microbat.model.trace.PathInstance;
 import microbat.model.trace.PotentialCorrectPattern;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
+import microbat.model.trace.TraceNodeOrderComparator;
 import microbat.model.value.VarValue;
 import microbat.model.variable.Variable;
 import microbat.util.Settings;
 
 public class SuspiciousNodeRecommender {
 	
-	public TraceNode recommendSuspiciousNode(Trace trace, TraceNode currentNode, TraceNode lastestNode){
-		if(lastestNode != null){
-			PathInstance path = new PathInstance(currentNode, lastestNode);
+	class LoopRange{
+		/**
+		 * all the skipped trace node by loop inference.
+		 */
+		List<TraceNode> skipPoints = new ArrayList<>();
+		TraceNode startNode;
+		TraceNode endNode;
+		
+		TraceNode binaryLandmark;
+
+		public void update() {
+			Collections.sort(skipPoints, new TraceNodeOrderComparator());
+			Iterator<TraceNode> iter = skipPoints.iterator();
+			while(iter.hasNext()){
+				TraceNode skipNode = iter.next();
+				if(skipNode.getOrder() < startNode.getOrder()
+						|| skipNode.getOrder() > endNode.getOrder()){
+					iter.remove();
+				}
+			}
+		}
+
+		public TraceNode binarySearch() {
+			Collections.sort(skipPoints, new TraceNodeOrderComparator());
+			int index = skipPoints.size()/2;
+			return skipPoints.get(index);
+		}
+	}
+	
+	private boolean isFormSkipping = false;
+	private boolean isOverSkipping = false;
+
+	private TraceNode lastNode;
+	private LoopRange range = new LoopRange();
+	
+	public TraceNode recommendSuspiciousNode(Trace trace, TraceNode currentNode){
+		if(lastNode != null){
+			PathInstance path = new PathInstance(currentNode, lastNode);
 			if(path.isPotentialCorrect()){
 				Settings.potentialCorrectPatterns.addPathForPattern(path);			
 			}
 		}
 		
-		System.currentTimeMillis();
 		
-		//TODO
-		boolean isFromSkipping = false;
-		boolean isOverSkipping = false;
-		if(isFromSkipping){
-			if(isOverSkipping){
-				
+		/**
+		 * after we find the over-skipping, we perform binary search to identify where the bug lies. 
+		 */
+		if(this.range.binaryLandmark != null && currentNode.getOrder() == this.range.binaryLandmark.getOrder()){
+			if(currentNode.isAllReadWrittenVarCorrect()){
+				this.range.startNode = currentNode;
 			}
-		}
-		else{
-			TraceNode suspiciousNode = findNodeBySuspiciousnessDistribution(trace, currentNode);
+			else{
+				this.range.endNode = currentNode;
+			}
 			
-			PathInstance path = new PathInstance(suspiciousNode, currentNode);
-			while(Settings.potentialCorrectPatterns.containsPattern(path)){
-				
-				Settings.potentialCorrectPatterns.addPathForPattern(path);
-				PotentialCorrectPattern pattern = Settings.potentialCorrectPatterns.getPattern(path);
-				
-				
-				TraceNode oldSusiciousNode = suspiciousNode;
-				suspiciousNode = findNextSuspiciousNodeByPattern(pattern, oldSusiciousNode);
-				
-				if(suspiciousNode == null){
-					suspiciousNode = oldSusiciousNode;
-					break;
-				}
-				else{
-					path = new PathInstance(suspiciousNode, oldSusiciousNode);					
-				}
-			}
+			this.range.update();
+			TraceNode suspiciousNode = this.range.binarySearch();
+			
+			this.lastNode = currentNode;
 			
 			return suspiciousNode;
 		}
+		
+		/**
+		 * we find the over-skipping phenomenon, thus, the bug lies in the loop.
+		 */
+		if(isFormSkipping){
+			isOverSkipping = currentNode.isAllReadWrittenVarCorrect();
+			if(isOverSkipping){
+				this.range.startNode = currentNode;
+				TraceNode suspiciousNode = this.range.binarySearch();
+				isFormSkipping = false;
+				
+				this.lastNode = currentNode;
+				
+				return suspiciousNode;
+			}
+		}
+		
+		/**
+		 * jump or skip based on <code>currentNode</code>
+		 */
+		if(!isOverSkipping){
+			TraceNode oldSusiciousNode = currentNode;
+			
+			System.currentTimeMillis();
+			
+			TraceNode suspiciousNode = findNodeBySuspiciousnessDistribution(trace, currentNode);
+			PathInstance path = new PathInstance(suspiciousNode, currentNode);
+			
+			isFormSkipping = Settings.potentialCorrectPatterns.containsPattern(path)? true : false;
+			if(isFormSkipping){
+				this.range.endNode = path.getEndNode();
+				this.range.skipPoints.clear();
+				this.range.skipPoints.add(suspiciousNode);
+				
+				while(Settings.potentialCorrectPatterns.containsPattern(path)){
+					
+					Settings.potentialCorrectPatterns.addPathForPattern(path);
+					PotentialCorrectPattern pattern = Settings.potentialCorrectPatterns.getPattern(path);
+					
+					
+					oldSusiciousNode = suspiciousNode;
+					suspiciousNode = findNextSuspiciousNodeByPattern(pattern, oldSusiciousNode);
+					
+					if(suspiciousNode == null){
+//						suspiciousNode = oldSusiciousNode;
+						suspiciousNode = findNextSuspiciousNodeByPattern(pattern, oldSusiciousNode);
+						break;
+					}
+					else{
+						this.range.skipPoints.add(suspiciousNode);
+						path = new PathInstance(suspiciousNode, oldSusiciousNode);					
+					}
+				}
+				
+				this.lastNode = currentNode;
+				return oldSusiciousNode;
+			}
+			else{
+				this.lastNode = currentNode;
+				return suspiciousNode;				
+			}
+		}
+		
 		
 		return null;
 	}
@@ -76,15 +162,19 @@ public class SuspiciousNodeRecommender {
 			TraceNode oldSusiciousNode){
 		PathInstance labelPath = pattern.getLabelInstance();
 		
-		String causingVarID = findCausingVarOfLabelPath(labelPath);
-		String simpleCausingVarID = Variable.truncateSimpleID(causingVarID);
+		Variable causingVariable = findCausingVarOfLabelPath(labelPath);
 		
 		for(TraceNode dominator: oldSusiciousNode.getDominator().keySet()){
 			for(VarValue writtenVar: dominator.getWrittenVariables()){
-				String writtenVarID = writtenVar.getVarID();
-				String simpleID = Variable.truncateSimpleID(writtenVarID);
+				Variable writtenVariable = writtenVar.getVariable();
 				
-				if(simpleCausingVarID.equals(simpleID)){
+				String causingVarID = causingVariable.getVarID();
+				String causingSimpleVarID = Variable.truncateSimpleID(causingVarID);
+				String writtenVarID = writtenVariable.getVarID();
+				String writtenSimpleVarID = Variable.truncateSimpleID(writtenVarID);
+				
+				if(causingSimpleVarID.equals(writtenSimpleVarID) || 
+						causingVariable.getName().equals(writtenVariable.getName())){
 					return dominator;
 				}
 			}
@@ -97,23 +187,26 @@ public class SuspiciousNodeRecommender {
 	/**
 	 * Find the variable which causes the jump of label path of the pattern.
 	 */
-	private String findCausingVarOfLabelPath(PathInstance labelPath){
-		String varID = null;
+	private Variable findCausingVarOfLabelPath(PathInstance labelPath){
+		Variable causingVariable = null;
 		TraceNode producer = labelPath.getStartNode();
 		for(VarValue readVar: labelPath.getEndNode().getReadVariables()){
 			for(VarValue writtenVar: producer.getWrittenVariables()){
 				if(writtenVar.getVarID().equals(readVar.getVarID())){
-					varID = readVar.getVarID();
+					causingVariable = readVar.getVariable();
 					break;
 				}
 			}
 		}
 		
-		return varID;
+		return causingVariable;
 	}
 
 	private TraceNode findNodeBySuspiciousnessDistribution(Trace trace, TraceNode currentNode){
 		List<AttributionVar> readVars = constructAttributionRelation(currentNode);
+		
+		//System.currentTimeMillis();
+		
 		AttributionVar focusVar = Settings.interestedVariables.findFocusVar(readVars);
 		
 		TraceNode suspiciousNode = null;
@@ -130,11 +223,6 @@ public class SuspiciousNodeRecommender {
 		return suspiciousNode;
 	}
 	
-	private TraceNode checkPattern(TraceNode suspiciousNode, TraceNode lastestNode) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	private List<AttributionVar> constructAttributionRelation(TraceNode currentNode){
 		List<AttributionVar> readVars = new ArrayList<>();
 		for(VarValue writtenVarValue: currentNode.getWrittenVariables()){
@@ -149,12 +237,18 @@ public class SuspiciousNodeRecommender {
 						
 						readVar.addChild(writtenVar);
 						writtenVar.addParent(readVar);
-						
-						readVars.add(readVar);
 					}
 				}						
 			}
 		}
+		
+		for(VarValue readVarValue: currentNode.getReadVariables()){
+			String readVarID = readVarValue.getVarID();
+			if(Settings.interestedVariables.contains(readVarID)){
+				AttributionVar readVar = Settings.interestedVariables.findOrCreateVar(readVarID);
+				readVars.add(readVar);
+			}
+		}						
 		
 		Settings.interestedVariables.updateAttributionTrees();
 		

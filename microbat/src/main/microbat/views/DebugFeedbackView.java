@@ -57,7 +57,9 @@ public class DebugFeedbackView extends ViewPart {
 	public static final String UNCLEAR = "unclear";
 	
 	private TraceNode currentNode;
-	private TraceNode lastestNode;
+//	private TraceNode lastestNode;
+	
+	private SuspiciousNodeRecommender recommender = new SuspiciousNodeRecommender();
 	
 	private String feedbackType = INCORRECT;
 	
@@ -96,7 +98,7 @@ public class DebugFeedbackView extends ViewPart {
 	
 	public void clear(){
 		this.currentNode = null;
-		this.lastestNode = null;
+		this.recommender = new SuspiciousNodeRecommender();
 	}
 	
 	public void refresh(TraceNode node){
@@ -549,8 +551,7 @@ public class DebugFeedbackView extends ViewPart {
 							TraceNode conflictNode = conflictRuleChecker.checkConflicts(trace, currentNode.getOrder());
 							
 							if(conflictNode == null){
-								SuspiciousNodeRecommender recommender = new SuspiciousNodeRecommender();
-								suspiciousNode = recommender.recommendSuspiciousNode(trace, currentNode, lastestNode);
+								suspiciousNode = recommender.recommendSuspiciousNode(trace, currentNode);
 							}
 							else{
 								boolean userConfirm = MessageDialog.openConfirm(PlatformUI.getWorkbench().getDisplay().getActiveShell(), 
@@ -575,7 +576,7 @@ public class DebugFeedbackView extends ViewPart {
 					}
 					
 					if(suspiciousNode != null){
-						lastestNode = currentNode;
+//						lastestNode = currentNode;
 						jumpToNode(trace, suspiciousNode);	
 					}
 				}
