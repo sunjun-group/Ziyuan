@@ -43,4 +43,9 @@ public class LocalVariableScopes {
 		
 		return candScope;
 	}
+
+	public void clear() {
+		this.variableScopes.clear();
+		
+	}
 }
