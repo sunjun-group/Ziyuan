@@ -82,8 +82,13 @@ public abstract class Variable {
 	}
 	
 	public static String truncateSimpleID(String completeVarID){
-		String simpleID = completeVarID.substring(0, completeVarID.indexOf(":"));
-		return simpleID;
+		if(completeVarID.contains(":")){
+			String simpleID = completeVarID.substring(0, completeVarID.indexOf(":"));
+			return simpleID;			
+		}
+		else{
+			return completeVarID;
+		}
 	}
 	
 //	public static boolean isPrimitiveVariable(String varID){
