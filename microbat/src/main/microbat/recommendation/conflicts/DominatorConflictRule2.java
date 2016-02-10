@@ -27,7 +27,7 @@ public class DominatorConflictRule2 extends ConflictRule {
 	@Override
 	public TraceNode checkConflicts(Trace trace, int order) {
 		TraceNode node = trace.getExectionList().get(order-1);
-		if(node.getReadVarsCorrectness()==TraceNode.READVARS_CORRECT){
+		if(node.getReadVarsCorrectness()==TraceNode.READ_VARS_CORRECT){
 			if(node.getDominator().keySet().isEmpty()){
 				return null;
 			}
@@ -39,7 +39,7 @@ public class DominatorConflictRule2 extends ConflictRule {
 				
 				if(!entry.getProducers().isEmpty()){
 					TraceNode producer = entry.getProducers().get(0);
-					if(producer.getReadVarsCorrectness()==TraceNode.READVARS_INCORRECT){
+					if(producer.getReadVarsCorrectness()==TraceNode.READ_VARS_INCORRECT){
 						producerList.add(producer);
 					}
 				}

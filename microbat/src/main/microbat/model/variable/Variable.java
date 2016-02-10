@@ -81,6 +81,11 @@ public abstract class Variable {
 		return className + "[" + startLine + "," + endLine + "] " + varName;	
 	}
 	
+	public static String truncateSimpleID(String completeVarID){
+		String simpleID = completeVarID.substring(0, completeVarID.indexOf(":"));
+		return simpleID;
+	}
+	
 //	public static boolean isPrimitiveVariable(String varID){
 //		if(varID.contains("[") || varID.contains(".")){
 //			return true;

@@ -94,13 +94,18 @@ public class DebugFeedbackView extends ViewPart {
 	public DebugFeedbackView() {
 	}
 	
+	public void clear(){
+		this.currentNode = null;
+		this.lastestNode = null;
+	}
+	
 	public void refresh(TraceNode node){
 		this.currentNode = node;
 		
 		BreakPointValue thisState = node.getProgramState();
 //		BreakPointValue afterState = node.getAfterState();
 		
-		List<GraphDiff> cons = node.getConsequences();
+//		List<GraphDiff> cons = node.getConsequences();
 		
 //		HierarchyGraphDiffer differ = new HierarchyGraphDiffer();
 //		differ.diff(thisState, afterState);
@@ -504,28 +509,6 @@ public class DebugFeedbackView extends ViewPart {
 			public void mouseUp(MouseEvent e) {}
 			public void mouseDoubleClick(MouseEvent e) {}
 			
-			private int getReadVarCorrectness(TraceNode currentNode, UserInterestedVariables interestedVariables){
-				for(VarValue var: currentNode.getReadVariables()){
-					String readVarID = var.getVarID();
-					if(interestedVariables.contains(readVarID)){
-						return TraceNode.READVARS_INCORRECT;
-					}
-				}
-				
-				return TraceNode.READVARS_CORRECT;
-			}
-			
-			private boolean getWittenVarCorrectness(TraceNode currentNode, UserInterestedVariables interestedVariables){
-				for(VarValue var: currentNode.getWrittenVariables()){
-					String writtenVarID = var.getVarID();
-					if(interestedVariables.contains(writtenVarID)){
-						return true;
-					}
-				}
-				
-				return false;
-			}
-			
 			private void openChooseFeedbackDialog(){
 				MessageBox box = new MessageBox(PlatformUI.getWorkbench()
 						.getDisplay().getActiveShell());
@@ -549,11 +532,14 @@ public class DebugFeedbackView extends ViewPart {
 					TraceNode suspiciousNode = null;
 					
 					if(!feedbackType.equals(DebugFeedbackView.UNCLEAR)){
-						int readVarCorrectness = getReadVarCorrectness(currentNode, Settings.interestedVariables);
-						currentNode.setVarsCorrectness(readVarCorrectness);
+						int readVarCorrectness = currentNode.getReadVarCorrectness(Settings.interestedVariables);
+						int writtenVarCorrectness = currentNode.getWittenVarCorrectness(Settings.interestedVariables);
+
+						currentNode.setReadVarsCorrectness(readVarCorrectness);
+						currentNode.setWrittenVarsCorrectness(writtenVarCorrectness);
 						
-						boolean writtenVarIncorrect = getWittenVarCorrectness(currentNode, Settings.interestedVariables);
-						if(writtenVarIncorrect && currentNode.getReadVarsCorrectness()==TraceNode.READVARS_CORRECT){
+						if(currentNode.getWrittenVarsCorrectness()==TraceNode.WRITTEN_VARS_INCORRECT 
+								&& currentNode.getReadVarsCorrectness()==TraceNode.READ_VARS_CORRECT){
 							openRecheckVarDialog();
 						}
 						else{
@@ -561,11 +547,10 @@ public class DebugFeedbackView extends ViewPart {
 							
 							ConflictRuleChecker conflictRuleChecker = new ConflictRuleChecker();
 							TraceNode conflictNode = conflictRuleChecker.checkConflicts(trace, currentNode.getOrder());
-//							boolean isConflict = trace.checkDomiatorConflicts();
 							
 							if(conflictNode == null){
 								SuspiciousNodeRecommender recommender = new SuspiciousNodeRecommender();
-								suspiciousNode = recommender.findSuspiciousNode(trace, currentNode, lastestNode);
+								suspiciousNode = recommender.recommendSuspiciousNode(trace, currentNode, lastestNode);
 							}
 							else{
 								boolean userConfirm = MessageDialog.openConfirm(PlatformUI.getWorkbench().getDisplay().getActiveShell(), 
@@ -590,8 +575,8 @@ public class DebugFeedbackView extends ViewPart {
 					}
 					
 					if(suspiciousNode != null){
+						lastestNode = currentNode;
 						jumpToNode(trace, suspiciousNode);	
-						lastestNode = suspiciousNode;
 					}
 				}
 			}

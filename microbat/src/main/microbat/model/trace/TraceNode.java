@@ -10,7 +10,9 @@ import microbat.algorithm.graphdiff.HierarchyGraphDiffer;
 import microbat.model.AttributionVar;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
+import microbat.model.UserInterestedVariables;
 import microbat.model.value.VarValue;
+import microbat.util.Settings;
 
 public class TraceNode{
 	
@@ -18,16 +20,21 @@ public class TraceNode{
 	public final static int STEP_INCORRECT = 1;
 	public final static int STEP_UNKNOWN = 2;
 	
-	public final static int READVARS_CORRECT = 3;
-	public final static int READVARS_INCORRECT = 4;
-	public final static int READVARS_UNKNOWN = 5;
+	public final static int READ_VARS_CORRECT = 3;
+	public final static int READ_VARS_INCORRECT = 4;
+	public final static int READ_VARS_UNKNOWN = 5;
+	
+	public final static int WRITTEN_VARS_CORRECT = 6;
+	public final static int WRITTEN_VARS_INCORRECT = 7;
+	public final static int WRITTEN_VARS_UNKNOWN = 8;
 	
 	private Map<AttributionVar, Double> suspicousScoreMap = new HashMap<>();
 	
 	
 	private int checkTime = -1;
 	private int stepCorrectness = STEP_UNKNOWN;
-	private int varsCorrectness = READVARS_UNKNOWN;
+	private int readVarsCorrectness = READ_VARS_UNKNOWN;
+	private int writtenVarsCorrectness = WRITTEN_VARS_UNKNOWN;
 	
 	private BreakPoint breakPoint;
 	private BreakPointValue programState;
@@ -69,6 +76,42 @@ public class TraceNode{
 		this.breakPoint = breakPoint;
 		this.programState = programState;
 		this.order = order;
+	}
+	
+	public boolean isAllReadWrittenVarCorrect(){
+		boolean writtenCorrect = getWittenVarCorrectness(Settings.interestedVariables) == TraceNode.WRITTEN_VARS_CORRECT;
+		boolean readCorrect = getReadVarCorrectness(Settings.interestedVariables) == TraceNode.READ_VARS_CORRECT;
+		
+		return writtenCorrect && readCorrect;
+	}
+	
+	public boolean isNoneReadWrittenVarCorrect(){
+		boolean writtenCorrect = getWittenVarCorrectness(Settings.interestedVariables) == TraceNode.WRITTEN_VARS_CORRECT;
+		boolean readCorrect = getReadVarCorrectness(Settings.interestedVariables) == TraceNode.READ_VARS_CORRECT;
+		
+		return !writtenCorrect && !readCorrect;
+	}
+	
+	public int getReadVarCorrectness(UserInterestedVariables interestedVariables){
+		for(VarValue var: getReadVariables()){
+			String readVarID = var.getVarID();
+			if(interestedVariables.contains(readVarID)){
+				return TraceNode.READ_VARS_INCORRECT;
+			}
+		}
+		
+		return TraceNode.READ_VARS_CORRECT;
+	}
+	
+	public int getWittenVarCorrectness(UserInterestedVariables interestedVariables){
+		for(VarValue var: getWrittenVariables()){
+			String writtenVarID = var.getVarID();
+			if(interestedVariables.contains(writtenVarID)){
+				return TraceNode.WRITTEN_VARS_INCORRECT;
+			}
+		}
+		
+		return TraceNode.WRITTEN_VARS_CORRECT;
 	}
 	
 	@Override
@@ -365,11 +408,11 @@ public class TraceNode{
 	}
 
 	public int getReadVarsCorrectness() {
-		return varsCorrectness;
+		return readVarsCorrectness;
 	}
 
-	public void setVarsCorrectness(int varsCorrectness) {
-		this.varsCorrectness = varsCorrectness;
+	public void setReadVarsCorrectness(int varsCorrectness) {
+		this.readVarsCorrectness = varsCorrectness;
 	}
 
 	public List<TraceNode> getNonCorrectDominators() {
@@ -388,6 +431,14 @@ public class TraceNode{
 
 	public void setSuspicousScoreMap(Map<AttributionVar, Double> suspicousScoreMap) {
 		this.suspicousScoreMap = suspicousScoreMap;
+	}
+
+	public int getWrittenVarsCorrectness() {
+		return writtenVarsCorrectness;
+	}
+
+	public void setWrittenVarsCorrectness(int writtenVarsCorrectness) {
+		this.writtenVarsCorrectness = writtenVarsCorrectness;
 	}
 
 	

@@ -25,7 +25,7 @@ public class DominateeConflictRule3 extends ConflictRule {
 	@Override
 	public TraceNode checkConflicts(Trace trace, int order) {
 		TraceNode node = trace.getExectionList().get(order-1);
-		if(node.getReadVarsCorrectness()==TraceNode.READVARS_INCORRECT){
+		if(node.getReadVarsCorrectness()==TraceNode.READ_VARS_INCORRECT){
 			if(node.getDominatee().keySet().isEmpty()){
 				return null;
 			}
@@ -36,7 +36,7 @@ public class DominateeConflictRule3 extends ConflictRule {
 				StepVariableRelationEntry entry = trace.getStepVariableTable().get(varID);
 				
 				for(TraceNode consumer: entry.getConsumers()){
-					if(consumer.getReadVarsCorrectness()==TraceNode.READVARS_CORRECT){
+					if(consumer.getReadVarsCorrectness()==TraceNode.READ_VARS_CORRECT){
 						consumerList.add(consumer);
 					}
 				}
