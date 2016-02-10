@@ -88,13 +88,19 @@ public class StartDebugHandler extends AbstractHandler {
 				private void clearOldData(){
 					Settings.interestedVariables.clear();
 					
-					try {
-						DebugFeedbackView view = (DebugFeedbackView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().
-								getActivePage().showView(MicroBatViews.DEBUG_FEEDBACK);
-						view.clear();
-					} catch (PartInitException e) {
-						e.printStackTrace();
-					}
+					Display.getDefault().asyncExec(new Runnable(){
+						@Override
+						public void run() {
+							try {
+								DebugFeedbackView view = (DebugFeedbackView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().
+										getActivePage().showView(MicroBatViews.DEBUG_FEEDBACK);
+								view.clear();
+							} catch (PartInitException e) {
+								e.printStackTrace();
+							}
+						}
+						
+					});
 				}
 				
 				@Override
