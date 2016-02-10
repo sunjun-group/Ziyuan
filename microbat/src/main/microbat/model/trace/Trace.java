@@ -145,6 +145,10 @@ public class Trace {
 	public void constructDomianceRelation() {
 		for(String varID: this.stepVariableTable.keySet()){
 			
+			if(varID.contains("213") || varID.contains("219")){
+				System.currentTimeMillis();
+			}
+			
 			StepVariableRelationEntry entry = this.stepVariableTable.get(varID);
 			List<TraceNode> producers = entry.getProducers();
 			List<TraceNode> consumers = entry.getConsumers();
@@ -258,9 +262,9 @@ public class Trace {
 		
 		return null;
 	}
-
-	public TraceNode findLastestNodeDefiningPrimitiveVariable(String varID) {
-		for(int i=exectionList.size()-2; i>=0; i--){
+	
+	public TraceNode findLastestNodeDefiningPrimitiveVariable(String varID, int limitOrder){
+		for(int i=limitOrder-2; i>=0; i--){
 			TraceNode node = exectionList.get(i);
 			for(VarValue var: node.getWrittenVariables()){
 				String writtenVarID = var.getVarID();
@@ -274,6 +278,26 @@ public class Trace {
 		}
 		
 		return null;
+	}
+
+	public TraceNode findLastestNodeDefiningPrimitiveVariable(String varID) {
+		TraceNode node = findLastestNodeDefiningPrimitiveVariable(varID, exectionList.size());
+		return node;
+		
+//		for(int i=exectionList.size()-2; i>=0; i--){
+//			TraceNode node = exectionList.get(i);
+//			for(VarValue var: node.getWrittenVariables()){
+//				String writtenVarID = var.getVarID();
+//				if(writtenVarID.contains(":")){
+//					String simpleVarID = writtenVarID.substring(0, writtenVarID.indexOf(":"));
+//					if(simpleVarID.equals(varID)){
+//						return node;
+//					}
+//				}
+//			}
+//		}
+//		
+//		return null;
 	}
 
 	/**

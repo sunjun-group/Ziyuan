@@ -210,7 +210,7 @@ public class ProgramExecutor{
 			}
 			
 			if(trace.getLastestNode() != null){
-				if(trace.getLastestNode().getOrder() == 1){
+				if(trace.getLastestNode().getOrder() == 218){
 					System.currentTimeMillis();
 				}
 			}
@@ -297,9 +297,6 @@ public class ProgramExecutor{
 							node.setInvocationParent(parentInvocationNode);
 						}
 						
-						parseReadWrittenVariableInThisStep(((StepEvent) event).thread(), currentLocation, node, 
-								this.trace.getStepVariableTable(), READ);
-						
 						/**
 						 * set step over previous/next node when this step just come back from a method invocation (
 						 * i.e., lastestPopedOutMethodNode != null).
@@ -312,6 +309,9 @@ public class ProgramExecutor{
 							
 							methodNodeJustPopedOut = null;
 						}
+						
+						parseReadWrittenVariableInThisStep(((StepEvent) event).thread(), currentLocation, node, 
+								this.trace.getStepVariableTable(), READ);
 						
 						/**
 						 * create virtual variable for return statement
@@ -773,7 +773,16 @@ public class ProgramExecutor{
 			definingOrder = String.valueOf(currentNode.getOrder());
 		}
 		else if(accessType.equals(READ)){
-			TraceNode node = this.trace.findLastestNodeDefiningPrimitiveVariable(varID);
+			TraceNode node = null;
+			TraceNode stepOverPreviousNode = currentNode.getStepOverPrevious();
+			if(stepOverPreviousNode != null){
+				if(stepOverPreviousNode.getLineNumber() == currentNode.getLineNumber()){
+					node = this.trace.findLastestNodeDefiningPrimitiveVariable(varID, stepOverPreviousNode.getOrder());
+				}
+			}
+			else{
+				node = this.trace.findLastestNodeDefiningPrimitiveVariable(varID);
+			}
 			if(node != null){
 				definingOrder = String.valueOf(node.getOrder());				
 			}
@@ -832,7 +841,7 @@ public class ProgramExecutor{
 			
 			VarValue varValue = generateVarValue(frame, readVar, node, READ);
 			
-//			System.currentTimeMillis();
+			System.currentTimeMillis();
 			if(varValue == null){
 				System.err.println("When processing read variable, there is an error when generating the id for " + readVar + 
 						" in line " + node.getBreakPoint().getLineNo() + " of " + node.getBreakPoint().getClassCanonicalName());
@@ -848,6 +857,10 @@ public class ProgramExecutor{
 					stepVariableTable.put(varID, entry);
 				}
 				entry.addAliasVariable(readVar);
+				
+//				if(varID.contains("213") && node.getOrder() == 221){
+//					System.currentTimeMillis();
+//				}
 				
 				entry.addConsumer(node);
 			}

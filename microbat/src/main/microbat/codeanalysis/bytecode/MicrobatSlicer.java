@@ -308,7 +308,7 @@ public class MicrobatSlicer{
 		
 		CompilationUnit cu = JavaUtil.findCompilationUnitInProject(point.getClassCanonicalName());
 		
-		if(lineNumber == 59 && point.getClassCanonicalName().contains("$1")){
+		if(lineNumber == 43){
 			System.currentTimeMillis();
 		}
 		
@@ -710,6 +710,10 @@ public class MicrobatSlicer{
 				int insLinNumber = method.getLineNumber(bcIndex);
 				
 				if(insLinNumber == stmtLinNumber){
+					
+					if(insLinNumber == 43){
+						System.currentTimeMillis();
+					}
 					
 					String className = getClassCanonicalName(method);
 					String methodSig = method.getSignature();
