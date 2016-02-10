@@ -15,6 +15,7 @@ import microbat.model.BreakPoint;
 import microbat.model.trace.Trace;
 import microbat.util.JavaUtil;
 import microbat.util.Settings;
+import microbat.views.DebugFeedbackView;
 import microbat.views.MicroBatViews;
 import microbat.views.TraceView;
 
@@ -34,6 +35,7 @@ import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import sav.common.core.SavException;
@@ -83,9 +85,21 @@ public class StartDebugHandler extends AbstractHandler {
 			
 			Job job = new Job("Preparing for Debugging ...") {
 				
+				private void clearOldData(){
+					Settings.interestedVariables.clear();
+					
+					try {
+						DebugFeedbackView view = (DebugFeedbackView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().
+								getActivePage().showView(MicroBatViews.DEBUG_FEEDBACK);
+						view.clear();
+					} catch (PartInitException e) {
+						e.printStackTrace();
+					}
+				}
+				
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					Settings.interestedVariables.clear();
+					clearOldData();
 					
 					BreakPoint ap = new BreakPoint(classQulifiedName, methodSign, lineNumber);
 					List<BreakPoint> startPoints = Arrays.asList(ap);
@@ -140,11 +154,7 @@ public class StartDebugHandler extends AbstractHandler {
 						
 						@Override
 						public void run() {
-							try {
-								updateViews();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
+							updateViews();
 						}
 						
 					});
@@ -248,10 +258,15 @@ public class StartDebugHandler extends AbstractHandler {
 		Settings.localVariableScopes.setVariableScopes(lvsList);
 	}
 	
-	private void updateViews() throws Exception{
-		TraceView traceView = (TraceView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().
-				getActivePage().showView(MicroBatViews.TRACE);
-		traceView.updateData();
+	private void updateViews(){
+		try {
+			TraceView traceView = (TraceView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().
+					getActivePage().showView(MicroBatViews.TRACE);
+			traceView.updateData();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 //	@SuppressWarnings("restriction")
