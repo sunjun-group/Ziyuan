@@ -87,6 +87,8 @@ public class StartDebugHandler extends AbstractHandler {
 				
 				private void clearOldData(){
 					Settings.interestedVariables.clear();
+					Settings.localVariableScopes.clear();
+					Settings.potentialCorrectPatterns.clear();
 					
 					Display.getDefault().asyncExec(new Runnable(){
 						@Override
