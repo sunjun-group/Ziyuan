@@ -31,7 +31,7 @@ public class DominateeConflictRule3 extends ConflictRule {
 			}
 			
 			List<TraceNode> consumerList = new ArrayList<>();
-			for(VarValue var: node.getReadVariables()){
+			for(VarValue var: node.getWrittenVariables()){
 				String varID = var.getVarID();
 				StepVariableRelationEntry entry = trace.getStepVariableTable().get(varID);
 				
