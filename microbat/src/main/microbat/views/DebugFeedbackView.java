@@ -589,7 +589,6 @@ public class DebugFeedbackView extends ViewPart {
 					}
 					
 					if(suspiciousNode != null){
-//						lastestNode = currentNode;
 						jumpToNode(trace, suspiciousNode);	
 					}
 				}

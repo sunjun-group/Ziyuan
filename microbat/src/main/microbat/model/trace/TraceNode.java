@@ -78,6 +78,18 @@ public class TraceNode{
 		this.order = order;
 	}
 	
+	public List<VarValue> findMarkedReadVariable(){
+		List<VarValue> markedReadVars = new ArrayList<>();
+		for(VarValue readVarValue: getReadVariables()){
+			String readVarID = readVarValue.getVarID();
+			if(Settings.interestedVariables.contains(readVarID)){
+				markedReadVars.add(readVarValue);
+			}
+		}		
+		
+		return markedReadVars;
+	}
+	
 	public boolean isAllReadWrittenVarCorrect(){
 		boolean writtenCorrect = getWittenVarCorrectness(Settings.interestedVariables) == TraceNode.WRITTEN_VARS_CORRECT;
 		boolean readCorrect = getReadVarCorrectness(Settings.interestedVariables) == TraceNode.READ_VARS_CORRECT;

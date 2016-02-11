@@ -219,7 +219,7 @@ public class TraceView extends ViewPart {
 						if(obj instanceof TraceNode){
 							TraceNode node = (TraceNode)obj;
 							
-							showDebuggingInfo(node);
+							//showDebuggingInfo(node);
 							
 							DebugFeedbackView view = (DebugFeedbackView)PlatformUI.getWorkbench().
 									getActiveWorkbenchWindow().getActivePage().showView(MicroBatViews.DEBUG_FEEDBACK);
