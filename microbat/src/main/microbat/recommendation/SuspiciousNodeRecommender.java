@@ -60,7 +60,6 @@ public class SuspiciousNodeRecommender {
 			}
 		}
 		
-		
 		/**
 		 * after we find the over-skipping, we perform binary search to identify where the bug lies. 
 		 */
@@ -74,6 +73,7 @@ public class SuspiciousNodeRecommender {
 			
 			this.range.update();
 			TraceNode suspiciousNode = this.range.binarySearch();
+			this.range.binaryLandmark = suspiciousNode;
 			
 			this.lastNode = currentNode;
 			
@@ -88,7 +88,7 @@ public class SuspiciousNodeRecommender {
 			if(isOverSkipping){
 				this.range.startNode = currentNode;
 				TraceNode suspiciousNode = this.range.binarySearch();
-				isFormSkipping = false;
+				this.range.binaryLandmark = suspiciousNode;
 				
 				this.lastNode = currentNode;
 				
