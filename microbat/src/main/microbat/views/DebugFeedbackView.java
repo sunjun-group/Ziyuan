@@ -5,10 +5,7 @@ import java.util.List;
 
 import microbat.Activator;
 import microbat.algorithm.graphdiff.GraphDiff;
-import microbat.model.AttributionVar;
 import microbat.model.BreakPointValue;
-import microbat.model.UserInterestedVariables;
-import microbat.model.trace.PathInstance;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.model.value.ArrayValue;
@@ -19,6 +16,9 @@ import microbat.recommendation.SuspiciousNodeRecommender;
 import microbat.recommendation.conflicts.ConflictRuleChecker;
 import microbat.util.Settings;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -518,11 +518,20 @@ public class DebugFeedbackView extends ViewPart {
 				box.open();
 			}
 			
-			private void openRecheckVarDialog(){
+			private void openFindBugDialog(){
 				MessageBox box = new MessageBox(PlatformUI.getWorkbench()
 						.getDisplay().getActiveShell());
 				box.setMessage("Correct read variable with incorrect written variable, You have found the bug!");
 				box.open();
+			}
+			
+			private void openReconfirmDialog(){
+				Status status = new Status(IStatus.ERROR, "My Plug-in ID", 0,
+			            "Conflict Choice", null);
+				ErrorDialog.openError(PlatformUI.getWorkbench()
+						.getDisplay().getActiveShell(), "Conflict Choice", "It seems that this step is correct and it takes "
+								+ "some incorrect read variables while produces correct output (written variable), "
+								+ "are you really sure?", status);
 			}
 
 			public void mouseDown(MouseEvent e) {
@@ -542,7 +551,11 @@ public class DebugFeedbackView extends ViewPart {
 						
 						if(currentNode.getWrittenVarsCorrectness()==TraceNode.WRITTEN_VARS_INCORRECT 
 								&& currentNode.getReadVarsCorrectness()==TraceNode.READ_VARS_CORRECT){
-							openRecheckVarDialog();
+							openFindBugDialog();
+						}
+						else if(currentNode.getWrittenVarsCorrectness()==TraceNode.WRITTEN_VARS_CORRECT 
+								&& currentNode.getReadVarsCorrectness()==TraceNode.READ_VARS_INCORRECT){
+							openReconfirmDialog();
 						}
 						else{
 							currentNode.setStepCorrectness(TraceNode.STEP_CORRECT);
