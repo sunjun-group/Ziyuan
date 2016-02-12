@@ -120,7 +120,7 @@ public class DebugFeedbackView extends ViewPart {
 		
 		yesButton.setSelection(false);
 		noButton.setSelection(true);
-		unclearButton.setSelection(false);
+//		unclearButton.setSelection(false);
 		feedbackType = INCORRECT;
 		
 	}
@@ -296,6 +296,10 @@ public class DebugFeedbackView extends ViewPart {
 				writtenVariableTreeViewer.refresh();
 				readVariableTreeViewer.refresh();
 				stateTreeViewer.refresh();	
+				
+				setCurrentNodeCheck(trace);
+				boolean enabled = isValidToInferBugType();
+				bugTypeInferenceButton.setEnabled(enabled);
 			}
 			
 		}
@@ -507,13 +511,39 @@ public class DebugFeedbackView extends ViewPart {
 
 		Button submitButton = new Button(feedbackGroup, SWT.NONE);
 		submitButton.setText("Find bug!");
-		submitButton.setLayoutData(new GridData(SWT.LEFT, SWT.UP, true, false));
+		submitButton.setLayoutData(new GridData(SWT.RIGHT, SWT.UP, true, false));
 		submitButton.addMouseListener(new FeedbackSubmitListener());
 		
 		bugTypeInferenceButton = new Button(feedbackGroup, SWT.NONE);
-		bugTypeInferenceButton.setText("Infer bug type!");
-		bugTypeInferenceButton.setLayoutData(new GridData(SWT.LEFT, SWT.UP, true, false));
+		bugTypeInferenceButton.setText("Infer type!");
+		bugTypeInferenceButton.setLayoutData(new GridData(SWT.RIGHT, SWT.UP, true, false));
 		bugTypeInferenceButton.addMouseListener(new InferBugTypeListener());
+		bugTypeInferenceButton.setEnabled(isValidToInferBugType());
+	}
+	
+	private void setCurrentNodeCheck(Trace trace) {
+		int checkTime = trace.getCheckTime()+1;
+		currentNode.setCheckTime(checkTime);
+		trace.setCheckTime(checkTime);
+	}
+	
+	private boolean isValidToInferBugType(){
+		if(currentNode != null){
+			boolean flag1 = currentNode.getReadVarCorrectness(Settings.interestedVariables)==TraceNode.READ_VARS_CORRECT &&
+					currentNode.getWittenVarCorrectness(Settings.interestedVariables)==TraceNode.WRITTEN_VARS_INCORRECT;
+			boolean flag2 = recommender.getState()==SuspiciousNodeRecommender.BINARY_SEARCH;
+		
+			boolean flag3 = false;
+			TraceNode landMarkNode = recommender.getRange().getBinaryLandMark();
+			if(landMarkNode != null){
+				flag3 = currentNode.getOrder() == landMarkNode.getOrder();
+			}
+			
+			return flag1 && flag2 && flag3;
+		}
+		else{
+			return false;
+		}
 	}
 	
 	class FeedbackSubmitListener implements MouseListener{
@@ -550,10 +580,7 @@ public class DebugFeedbackView extends ViewPart {
 			else {
 				Trace trace = Activator.getDefault().getCurrentTrace();
 				
-				int checkTime = trace.getCheckTime()+1;
-				currentNode.setCheckTime(checkTime);
-				trace.setCheckTime(checkTime);
-				
+				setCurrentNodeCheck(trace);
 				
 				TraceNode suspiciousNode = null;
 				

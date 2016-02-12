@@ -17,7 +17,7 @@ import microbat.util.Settings;
 
 public class SuspiciousNodeRecommender {
 	
-	class LoopRange{
+	public class LoopRange{
 		/**
 		 * all the skipped trace node by loop inference.
 		 */
@@ -25,7 +25,7 @@ public class SuspiciousNodeRecommender {
 		TraceNode startNode;
 		TraceNode endNode;
 		
-//		TraceNode binaryLandmark;
+		TraceNode binaryLandmark;
 
 		public void update() {
 			Collections.sort(skipPoints, new TraceNodeOrderComparator());
@@ -60,6 +60,10 @@ public class SuspiciousNodeRecommender {
 			}
 			
 			return null;
+		}
+		
+		public TraceNode getBinaryLandMark(){
+			return binaryLandmark;
 		}
 	}
 	
@@ -111,6 +115,7 @@ public class SuspiciousNodeRecommender {
 			
 			suspiciousNode = this.range.binarySearch();
 			
+			this.range.binaryLandmark = suspiciousNode;
 			this.lastNode = currentNode;
 		}
 		else{
@@ -178,6 +183,7 @@ public class SuspiciousNodeRecommender {
 			this.range.startNode = currentNode;
 			suspiciousNode = this.range.binarySearch();
 			
+			this.range.binaryLandmark = suspiciousNode;
 			this.lastNode = currentNode;
 		}
 		else{
@@ -344,4 +350,11 @@ public class SuspiciousNodeRecommender {
 		return readVars;
 	}
 	
+	public int getState(){
+		return state;
+	}
+	
+	public LoopRange getRange(){
+		return this.range;
+	}
 }
