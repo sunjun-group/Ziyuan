@@ -9,7 +9,7 @@ package microbat.model.variable;
  */
 public class VirtualVar extends Variable {
 	
-	public static final String VIRTUAL_TYPE = "returned variable";
+	public static final String VIRTUAL_TYPE = "RV";
 	public static final String VIRTUAL_PREFIX = "vir_";
 
 	public VirtualVar(String name, String type) {

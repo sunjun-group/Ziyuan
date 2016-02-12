@@ -12,6 +12,8 @@ import microbat.model.value.ArrayValue;
 import microbat.model.value.PrimitiveValue;
 import microbat.model.value.ReferenceValue;
 import microbat.model.value.VarValue;
+import microbat.recommendation.Bug;
+import microbat.recommendation.BugInferer;
 import microbat.recommendation.SuspiciousNodeRecommender;
 import microbat.recommendation.conflicts.ConflictRuleChecker;
 import microbat.util.Settings;
@@ -121,8 +123,10 @@ public class DebugFeedbackView extends ViewPart {
 		yesButton.setSelection(false);
 		noButton.setSelection(true);
 //		unclearButton.setSelection(false);
-		feedbackType = INCORRECT;
+		boolean enabled = isValidToInferBugType();
+		bugTypeInferenceButton.setEnabled(enabled);
 		
+		feedbackType = INCORRECT;
 	}
 	
 	
@@ -531,15 +535,19 @@ public class DebugFeedbackView extends ViewPart {
 		if(currentNode != null){
 			boolean flag1 = currentNode.getReadVarCorrectness(Settings.interestedVariables)==TraceNode.READ_VARS_CORRECT &&
 					currentNode.getWittenVarCorrectness(Settings.interestedVariables)==TraceNode.WRITTEN_VARS_INCORRECT;
-			boolean flag2 = recommender.getState()==SuspiciousNodeRecommender.BINARY_SEARCH;
-		
-			boolean flag3 = false;
-			TraceNode landMarkNode = recommender.getRange().getBinaryLandMark();
-			if(landMarkNode != null){
-				flag3 = currentNode.getOrder() == landMarkNode.getOrder();
-			}
+//			boolean flag2 = recommender.getState()==SuspiciousNodeRecommender.BINARY_SEARCH;
+//		
+//			boolean flag3 = false;
+//			TraceNode landMarkNode = recommender.getRange().getBinaryLandMark();
+//			if(landMarkNode != null){
+//				flag3 = currentNode.getOrder() == landMarkNode.getOrder();
+//			}
+//			
+//			boolean flag4 = recommender.getState()==SuspiciousNodeRecommender.SKIP;
 			
-			return flag1 && flag2 && flag3;
+//			return (flag1 && flag2 && flag3) || (flag1 && flag4);
+			
+			return flag1;
 		}
 		else{
 			return false;
@@ -655,8 +663,13 @@ public class DebugFeedbackView extends ViewPart {
 
 		@Override
 		public void mouseDown(MouseEvent e) {
-			// TODO Auto-generated method stub
+			BugInferer inferer = new BugInferer();
+			Bug bug = inferer.infer(currentNode, recommender);
 			
+			MessageBox box = new MessageBox(PlatformUI.getWorkbench()
+					.getDisplay().getActiveShell());
+			box.setMessage(bug.getMessage());
+			box.open();
 		}
 
 		

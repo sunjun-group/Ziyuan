@@ -7,6 +7,60 @@ public class MicroBatUtil {
 		return exp;
 	}
 	
+	/**
+	 * For string1: a b c d
+	 *     string2: a f c d
+	 * The result is a c d
+	 * @param nodeList1
+	 * @param nodeList2
+	 * @param comparator
+	 * @return
+	 */
+	public static Object[] generateCommonNodeList(Object[] nodeList1,
+			Object[] nodeList2) {
+		int[][] commonLengthTable = buildLeveshteinTable(nodeList1, nodeList2);
+
+		int commonLength = commonLengthTable[nodeList1.length][nodeList2.length];
+		Object[] commonList = new Object[commonLength];
+
+		for (int k = commonLength - 1, i = nodeList1.length, j = nodeList2.length; (i > 0 && j > 0);) {
+			if (nodeList1[i - 1].equals(nodeList2[j - 1])) {
+				commonList[k] = nodeList1[i - 1];
+				k--;
+				i--;
+				j--;
+			} else {
+				if (commonLengthTable[i - 1][j] >= commonLengthTable[i][j - 1])
+					i--;
+				else
+					j--;
+			}
+		}
+
+		return commonList;
+	}
+	
+	public static int[][] buildLeveshteinTable(Object[] nodeList1, Object[] nodeList2){
+		int[][] commonLengthTable = new int[nodeList1.length + 1][nodeList2.length + 1];
+		for (int i = 0; i < nodeList1.length + 1; i++)
+			commonLengthTable[i][0] = 0;
+		for (int j = 0; j < nodeList2.length + 1; j++)
+			commonLengthTable[0][j] = 0;
+
+		for (int i = 1; i < nodeList1.length + 1; i++)
+			for (int j = 1; j < nodeList2.length + 1; j++) {
+				if (nodeList1[i - 1].equals(nodeList2[j - 1]))
+					commonLengthTable[i][j] = commonLengthTable[i - 1][j - 1] + 1;
+				else {
+					commonLengthTable[i][j] = (commonLengthTable[i - 1][j] >= commonLengthTable[i][j - 1]) ? commonLengthTable[i - 1][j]
+							: commonLengthTable[i][j - 1];
+				}
+
+			}
+		
+		return commonLengthTable;
+	}
+	
 //	/**
 //	 * @param variable1
 //	 * @param variable2

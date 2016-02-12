@@ -1,14 +1,17 @@
 package microbat.model.trace;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import microbat.model.value.VarValue;
+import microbat.model.variable.Variable;
 import microbat.util.Settings;
 
 public class PathInstance {
 	private TraceNode startNode;
 	private TraceNode endNode;
-	private List<SourceLine> lineTrace;
+	private ArrayList<SourceLine> lineTrace;
+	
+	public PathInstance(){}
 	
 	public PathInstance(TraceNode node1, TraceNode node2) {
 		
@@ -47,10 +50,10 @@ public class PathInstance {
 		return buffer.toString();
 	}
 	
-	private List<SourceLine> generateSourceLineTrace(){
+	private ArrayList<SourceLine> generateSourceLineTrace(){
 		TraceNode node = startNode;
-		List<SourceLine> lineTrace = new ArrayList<>();
-		while(node.getOrder() < endNode.getOrder()){
+		ArrayList<SourceLine> lineTrace = new ArrayList<>();
+		while(node.getOrder() <= endNode.getOrder()){
 			SourceLine sourceLine = new SourceLine(node.getClassName(), node.getLineNumber());
 			lineTrace.add(sourceLine);
 			
@@ -73,11 +76,11 @@ public class PathInstance {
 		this.endNode = endNode;
 	}
 	
-	public List<SourceLine> getLineTrace() {
+	public ArrayList<SourceLine> getLineTrace() {
 		return lineTrace;
 	}
 
-	public void setLineTrace(List<SourceLine> lineTrace) {
+	public void setLineTrace(ArrayList<SourceLine> lineTrace) {
 		this.lineTrace = lineTrace;
 	}
 
@@ -108,7 +111,34 @@ public class PathInstance {
 			this.lineNumber = lineNumber;
 		}
 		
+		@Override
+		public boolean equals(Object obj){
+			if(obj != null){
+				if(obj instanceof SourceLine){
+					SourceLine line = (SourceLine)obj;
+					return line.getLineNumber()==lineNumber && line.getClassName().equals(className);
+				}
+			}
+			
+			return false;
+		}
 	}
 
-	
+	/**
+	 * Find the variable which causes the jump of label path of the pattern.
+	 */
+	public Variable findCausingVar(){
+		Variable causingVariable = null;
+		TraceNode producer = getStartNode();
+		for(VarValue readVar: getEndNode().getReadVariables()){
+			for(VarValue writtenVar: producer.getWrittenVariables()){
+				if(writtenVar.getVarID().equals(readVar.getVarID())){
+					causingVariable = readVar.getVariable();
+					break;
+				}
+			}
+		}
+		
+		return causingVariable;
+	}
 }

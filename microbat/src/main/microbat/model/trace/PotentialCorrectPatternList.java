@@ -1,7 +1,11 @@
 package microbat.model.trace;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import microbat.model.trace.PathInstance.SourceLine;
 
 public class PotentialCorrectPatternList {
 	
@@ -37,6 +41,40 @@ public class PotentialCorrectPatternList {
 
 	public void clear() {
 		this.patterns.clear();
+	}
+
+	public List<PathInstance> findSimilarIterationPath(PathInstance path) {
+		List<PathInstance> list = new ArrayList<>();
+		for(PotentialCorrectPattern pattern: this.patterns.values()){
+			PathInstance labelPath = pattern.getLabelInstance();
+			SourceLine patternStartLine = path.new SourceLine(labelPath.getStartNode().getClassName(), labelPath.getStartNode().getLineNumber());
+			SourceLine patternEndLine = path.new SourceLine(labelPath.getEndNode().getClassName(), labelPath.getEndNode().getLineNumber());
+			
+			SourceLine pathStartLine = path.new SourceLine(path.getStartNode().getClassName(), path.getStartNode().getLineNumber());
+			SourceLine pathEndLine = path.new SourceLine(path.getEndNode().getClassName(), path.getEndNode().getLineNumber());
+			
+			if(patternStartLine.equals(pathStartLine) &&
+					patternEndLine.equals(pathEndLine)){
+				list.add(labelPath);
+			}
+		}
+		
+		return list;
+	}
+
+	public List<PotentialCorrectPattern> findPatternsWithEndNode(SourceLine line) {
+		List<PotentialCorrectPattern> patterns = new ArrayList<>();
+		for(PotentialCorrectPattern pattern: this.patterns.values()){
+			PathInstance labelPath = pattern.getLabelInstance();
+			TraceNode node = labelPath.getEndNode();
+			SourceLine endLine = new PathInstance().new SourceLine(node.getClassName(), node.getLineNumber());
+			
+			if(line.equals(endLine)){
+				patterns.add(pattern);
+			}
+		}
+		
+		return patterns;
 	}
 
 	

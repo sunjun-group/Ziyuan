@@ -127,7 +127,7 @@ public class SuspiciousNodeRecommender {
 				PotentialCorrectPattern pattern = Settings.potentialCorrectPatterns.getPattern(fakePath);
 				if(pattern != null){
 					PathInstance labelPath = pattern.getLabelInstance();
-					Variable causingVariable = findCausingVarOfLabelPath(labelPath);
+					Variable causingVariable = labelPath.findCausingVar();
 					
 					if(isCompatible(causingVariable, currentNode)){
 						state = BINARY_SEARCH;
@@ -248,11 +248,11 @@ public class SuspiciousNodeRecommender {
 	 * @param oldSusiciousNode
 	 * @return
 	 */
-	private TraceNode findNextSuspiciousNodeByPattern(PotentialCorrectPattern pattern, 
+	public TraceNode findNextSuspiciousNodeByPattern(PotentialCorrectPattern pattern, 
 			TraceNode oldSusiciousNode){
 		PathInstance labelPath = pattern.getLabelInstance();
 		
-		Variable causingVariable = findCausingVarOfLabelPath(labelPath);
+		Variable causingVariable = labelPath.findCausingVar();
 		
 		for(TraceNode dominator: oldSusiciousNode.getDominator().keySet()){
 			for(VarValue writtenVar: dominator.getWrittenVariables()){
@@ -279,23 +279,7 @@ public class SuspiciousNodeRecommender {
 		return isEquivalentVariable;
 	}
 	
-	/**
-	 * Find the variable which causes the jump of label path of the pattern.
-	 */
-	private Variable findCausingVarOfLabelPath(PathInstance labelPath){
-		Variable causingVariable = null;
-		TraceNode producer = labelPath.getStartNode();
-		for(VarValue readVar: labelPath.getEndNode().getReadVariables()){
-			for(VarValue writtenVar: producer.getWrittenVariables()){
-				if(writtenVar.getVarID().equals(readVar.getVarID())){
-					causingVariable = readVar.getVariable();
-					break;
-				}
-			}
-		}
-		
-		return causingVariable;
-	}
+	
 
 	private TraceNode findNodeBySuspiciousnessDistribution(Trace trace, TraceNode currentNode){
 		List<AttributionVar> readVars = constructAttributionRelation(currentNode);
