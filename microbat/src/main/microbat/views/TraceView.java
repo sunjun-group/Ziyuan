@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -153,6 +154,8 @@ public class TraceView extends ViewPart {
 		
 		node = trace.getExectionList().get(order-1);
 		listViewer.setSelection(new StructuredSelection(node), true);	
+		
+		listViewer.refresh();
 	}
 
 	@Override
@@ -385,8 +388,18 @@ public class TraceView extends ViewPart {
 
 		public Image getImage(Object element) {
 			if(element instanceof TraceNode){
-				Image image = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_ELCL_SYNCED);
-				return image;				
+				TraceNode node = (TraceNode)element;
+				
+				if(node.hasChecked()){
+					ImageDescriptor image = Activator.getDefault().getImageRegistry().getDescriptor(ImageUI.CHECK_MARK);
+					return image.createImage();					
+				}
+				else{
+					ImageDescriptor image = Activator.getDefault().getImageRegistry().getDescriptor(ImageUI.QUESTION_MARK);
+					return image.createImage();
+				}
+//				Image image = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_ELCL_SYNCED);
+//				return image;				
 			}
 			
 			return null;

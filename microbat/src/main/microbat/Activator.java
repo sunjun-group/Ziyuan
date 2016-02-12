@@ -1,7 +1,13 @@
 package microbat;
 
-import microbat.model.trace.Trace;
+import java.net.MalformedURLException;
+import java.net.URL;
 
+import microbat.model.trace.Trace;
+import microbat.views.ImageUI;
+
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -29,6 +35,28 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
+		ImageRegistry imgReg = getImageRegistry();
+		imgReg.put(ImageUI.CHECK_MARK, getImageDescriptor(ImageUI.CHECK_MARK));
+		imgReg.put(ImageUI.QUESTION_MARK, getImageDescriptor(ImageUI.QUESTION_MARK));
+	}
+	
+	/**
+	 * Returns an image descriptor for the image file at the given
+	 * plug-in relative path
+	 *
+	 * @param path the path
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(String path) {
+		try {
+//			URL installURL = getDefault().getDescriptor().getInstallURL();
+			URL installURL = plugin.getBundle().getEntry("/");
+			URL url = new URL(installURL, path);
+			return ImageDescriptor.createFromURL(url);
+		} catch (MalformedURLException e) {
+			return ImageDescriptor.getMissingImageDescriptor();
+		}
 	}
 
 	/*

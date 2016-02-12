@@ -638,6 +638,7 @@ public class DebugFeedbackView extends ViewPart {
 				
 				if(suspiciousNode != null){
 					jumpToNode(trace, suspiciousNode);	
+					
 				}
 			}
 		}
