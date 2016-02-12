@@ -540,25 +540,31 @@ public class DebugFeedbackView extends ViewPart {
 				} 
 				else {
 					Trace trace = Activator.getDefault().getCurrentTrace();
+					
+					int checkTime = trace.getCheckTime()+1;
+					currentNode.setCheckTime(checkTime);
+					trace.setCheckTime(checkTime);
+					
+					
 					TraceNode suspiciousNode = null;
 					
 					if(!feedbackType.equals(DebugFeedbackView.UNCLEAR)){
 						int readVarCorrectness = currentNode.getReadVarCorrectness(Settings.interestedVariables);
 						int writtenVarCorrectness = currentNode.getWittenVarCorrectness(Settings.interestedVariables);
 
-						currentNode.setReadVarsCorrectness(readVarCorrectness);
-						currentNode.setWrittenVarsCorrectness(writtenVarCorrectness);
+//						currentNode.setReadVarsCorrectness(readVarCorrectness);
+//						currentNode.setWrittenVarsCorrectness(writtenVarCorrectness);
 						
-						if(currentNode.getWrittenVarsCorrectness()==TraceNode.WRITTEN_VARS_INCORRECT 
-								&& currentNode.getReadVarsCorrectness()==TraceNode.READ_VARS_CORRECT){
+						if(writtenVarCorrectness==TraceNode.WRITTEN_VARS_INCORRECT 
+								&& readVarCorrectness==TraceNode.READ_VARS_CORRECT){
 							openFindBugDialog();
 						}
-						else if(currentNode.getWrittenVarsCorrectness()==TraceNode.WRITTEN_VARS_CORRECT 
-								&& currentNode.getReadVarsCorrectness()==TraceNode.READ_VARS_INCORRECT){
+						else if(writtenVarCorrectness==TraceNode.WRITTEN_VARS_CORRECT 
+								&& readVarCorrectness==TraceNode.READ_VARS_INCORRECT){
 							openReconfirmDialog();
 						}
 						else{
-							currentNode.setStepCorrectness(TraceNode.STEP_CORRECT);
+//							currentNode.setStepCorrectness(TraceNode.STEP_CORRECT);
 							
 							ConflictRuleChecker conflictRuleChecker = new ConflictRuleChecker();
 							TraceNode conflictNode = conflictRuleChecker.checkConflicts(trace, currentNode.getOrder());
@@ -575,9 +581,7 @@ public class DebugFeedbackView extends ViewPart {
 								}
 							}
 							
-							int checkTime = trace.getCheckTime()+1;
-							currentNode.setCheckTime(checkTime);
-							trace.setCheckTime(checkTime);
+							
 							
 						}
 						

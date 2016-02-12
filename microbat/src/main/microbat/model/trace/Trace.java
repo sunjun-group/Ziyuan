@@ -378,7 +378,7 @@ public class Trace {
 	}
 	
 	private void distributeSuspiciousness(AttributionVar var, TraceNode producer, double suspiciousness, int layer){
-		if(producer.getStepCorrectness() != TraceNode.STEP_CORRECT){
+		if(!producer.hasChecked()){
 			double producerScore = suspiciousness * Settings.remainingRate;
 			producer.addSuspicousScore(var, producerScore);
 			
@@ -386,7 +386,7 @@ public class Trace {
 		}
 		
 		if(layer < Settings.distribtionLayer){
-			List<TraceNode> nonCorrectDominators = producer.getNonCorrectDominators();
+			List<TraceNode> nonCorrectDominators = producer.getUncheckedDominators();
 			if(!nonCorrectDominators.isEmpty()){
 				int n = nonCorrectDominators.size();
 				double subScore = suspiciousness/n;

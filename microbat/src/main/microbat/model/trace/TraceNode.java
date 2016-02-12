@@ -32,9 +32,9 @@ public class TraceNode{
 	
 	
 	private int checkTime = -1;
-	private int stepCorrectness = STEP_UNKNOWN;
-	private int readVarsCorrectness = READ_VARS_UNKNOWN;
-	private int writtenVarsCorrectness = WRITTEN_VARS_UNKNOWN;
+//	private int stepCorrectness = STEP_UNKNOWN;
+//	private int readVarsCorrectness = READ_VARS_UNKNOWN;
+//	private int writtenVarsCorrectness = WRITTEN_VARS_UNKNOWN;
 	
 	private BreakPoint breakPoint;
 	private BreakPointValue programState;
@@ -105,25 +105,35 @@ public class TraceNode{
 	}
 	
 	public int getReadVarCorrectness(UserInterestedVariables interestedVariables){
-		for(VarValue var: getReadVariables()){
-			String readVarID = var.getVarID();
-			if(interestedVariables.contains(readVarID)){
-				return TraceNode.READ_VARS_INCORRECT;
+		if(hasChecked()){
+			for(VarValue var: getReadVariables()){
+				String readVarID = var.getVarID();
+				if(interestedVariables.contains(readVarID)){
+					return TraceNode.READ_VARS_INCORRECT;
+				}
 			}
+			
+			return TraceNode.READ_VARS_CORRECT;
 		}
-		
-		return TraceNode.READ_VARS_CORRECT;
+		else{
+			return TraceNode.READ_VARS_UNKNOWN;
+		}
 	}
 	
 	public int getWittenVarCorrectness(UserInterestedVariables interestedVariables){
-		for(VarValue var: getWrittenVariables()){
-			String writtenVarID = var.getVarID();
-			if(interestedVariables.contains(writtenVarID)){
-				return TraceNode.WRITTEN_VARS_INCORRECT;
+		if(hasChecked()){
+			for(VarValue var: getWrittenVariables()){
+				String writtenVarID = var.getVarID();
+				if(interestedVariables.contains(writtenVarID)){
+					return TraceNode.WRITTEN_VARS_INCORRECT;
+				}
 			}
+			
+			return TraceNode.WRITTEN_VARS_CORRECT;
 		}
-		
-		return TraceNode.WRITTEN_VARS_CORRECT;
+		else{
+			return TraceNode.WRITTEN_VARS_UNKNOWN;
+		}
 	}
 	
 	@Override
@@ -403,6 +413,10 @@ public class TraceNode{
 		}
 	}
 
+	public boolean hasChecked(){
+		return checkTime != -1;
+	}
+	
 	public int getCheckTime() {
 		return checkTime;
 	}
@@ -411,26 +425,18 @@ public class TraceNode{
 		this.checkTime = markTime;
 	}
 
-	public int getStepCorrectness() {
-		return stepCorrectness;
-	}
+//	public int getStepCorrectness() {
+//		return stepCorrectness;
+//	}
+//
+//	public void setStepCorrectness(int stepCorrectness) {
+//		this.stepCorrectness = stepCorrectness;
+//	}
 
-	public void setStepCorrectness(int stepCorrectness) {
-		this.stepCorrectness = stepCorrectness;
-	}
-
-	public int getReadVarsCorrectness() {
-		return readVarsCorrectness;
-	}
-
-	public void setReadVarsCorrectness(int varsCorrectness) {
-		this.readVarsCorrectness = varsCorrectness;
-	}
-
-	public List<TraceNode> getNonCorrectDominators() {
+	public List<TraceNode> getUncheckedDominators() {
 		List<TraceNode> nonCorrectDominators = new ArrayList<>();
 		for(TraceNode dominator: dominators.keySet()){
-			if(dominator.getStepCorrectness() != TraceNode.STEP_CORRECT){
+			if(!dominator.hasChecked()){
 				nonCorrectDominators.add(dominator);
 			}
 		}
@@ -445,13 +451,13 @@ public class TraceNode{
 		this.suspicousScoreMap = suspicousScoreMap;
 	}
 
-	public int getWrittenVarsCorrectness() {
-		return writtenVarsCorrectness;
-	}
-
-	public void setWrittenVarsCorrectness(int writtenVarsCorrectness) {
-		this.writtenVarsCorrectness = writtenVarsCorrectness;
-	}
+//	public int getWrittenVarsCorrectness() {
+//		return writtenVarsCorrectness;
+//	}
+//
+//	public void setWrittenVarsCorrectness(int writtenVarsCorrectness) {
+//		this.writtenVarsCorrectness = writtenVarsCorrectness;
+//	}
 
 	
 	
