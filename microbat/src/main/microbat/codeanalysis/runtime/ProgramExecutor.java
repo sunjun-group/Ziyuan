@@ -481,6 +481,9 @@ public class ProgramExecutor{
 		entry.addConsumer(node);
 		
 		VarValue varValue = new VirtualValue(false, var);
+		String stringValue = "(return from " + lastestNode.getBreakPoint().getMethodName() + "(...))";
+		varValue.setStringValue(stringValue);
+		
 		lastestNode.addWrittenVariable(varValue);
 		node.addReadVariable(varValue);
 		
