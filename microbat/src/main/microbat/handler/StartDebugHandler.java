@@ -101,13 +101,13 @@ public class StartDebugHandler extends AbstractHandler {
 					
 					try{
 						monitor.beginTask("Construct Trace Model", 10);
-						
+						/** 0. clear some static common variables **/
 						clearOldData();
 						
 						BreakPoint ap = new BreakPoint(classQulifiedName, methodSign, lineNumber);
 						List<BreakPoint> startPoints = Arrays.asList(ap);
 						
-						//1. collect trace
+						/** 1. collect trace **/
 						monitor.setTaskName("collect trace");
 						
 						ExecutionStatementCollector collector = new ExecutionStatementCollector();
@@ -115,7 +115,7 @@ public class StartDebugHandler extends AbstractHandler {
 						
 						monitor.worked(1);
 						
-						//2. parse 
+						/** 2. parse read/written variables**/
 						monitor.setTaskName("parse read/written variables");
 						
 						MicrobatSlicer slicer = new MicrobatSlicer(executingStatements);
@@ -132,7 +132,7 @@ public class StartDebugHandler extends AbstractHandler {
 						monitor.worked(2);
 						
 						/**
-						 * find the variable scope for:
+						 * 3. find the variable scope for:
 						 * 1) Identifying the same local variable in different trace nodes.
 						 * 2) Generating variable ID for local variable.
 						 */
@@ -152,6 +152,7 @@ public class StartDebugHandler extends AbstractHandler {
 //						List<String> tests = Arrays.asList(classQulifiedName + "." + methodName);
 //						tcExecutor.setup(appClasspath, tests);
 						
+						/** 4. extract runtime variables*/
 						monitor.setTaskName("extract runtime value for variables");
 						
 						tcExecutor.setup(appClassPath);
@@ -163,6 +164,7 @@ public class StartDebugHandler extends AbstractHandler {
 						
 						monitor.worked(5);
 						
+						/** 5. construct dominance relation*/
 						monitor.setTaskName("construct dominance relation");
 						
 						Trace trace = tcExecutor.getTrace();
@@ -176,9 +178,6 @@ public class StartDebugHandler extends AbstractHandler {
 					finally{
 						monitor.done();
 					}
-					
-					
-					
 					
 					Display.getDefault().asyncExec(new Runnable(){
 						
