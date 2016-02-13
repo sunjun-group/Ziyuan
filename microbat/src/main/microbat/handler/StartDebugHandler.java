@@ -43,15 +43,6 @@ import sav.commons.TestConfiguration;
 import sav.strategies.dto.AppJavaClassPath;
 
 public class StartDebugHandler extends AbstractHandler {
-
-//	private TestcasesExecutor tcExecutor;
-//	private AppJavaClassPath appClassPath;
-
-	protected AppJavaClassPath initAppClasspath() {
-		AppJavaClassPath appClasspath = new AppJavaClassPath();
-		appClasspath.setJavaHome(TestConfiguration.getJavaHome());
-		return appClasspath;
-	}
 	
 	private AppJavaClassPath constructClassPaths(){
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
@@ -61,7 +52,9 @@ public class StartDebugHandler extends AbstractHandler {
 		projectPath = projectPath.replace("/", File.separator);
 		
 		String binPath = projectPath + File.separator + "bin"; 
-		AppJavaClassPath appClassPath = initAppClasspath();
+		
+		AppJavaClassPath appClassPath = new AppJavaClassPath();
+		appClassPath.setJavaHome(TestConfiguration.getJavaHome());
 		
 		appClassPath.addClasspath(binPath);
 		appClassPath.setWorkingDirectory(projectPath);
@@ -70,93 +63,122 @@ public class StartDebugHandler extends AbstractHandler {
 		
 	}
 	
+	private void clearOldData(){
+		Settings.interestedVariables.clear();
+		Settings.localVariableScopes.clear();
+		Settings.potentialCorrectPatterns.clear();
+		
+		Display.getDefault().asyncExec(new Runnable(){
+			@Override
+			public void run() {
+				try {
+					DebugFeedbackView view = (DebugFeedbackView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().
+							getActivePage().showView(MicroBatViews.DEBUG_FEEDBACK);
+					view.clear();
+				} catch (PartInitException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		});
+	}
+	
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final AppJavaClassPath appClassPath = constructClassPaths();
-		
 		final ProgramExecutor tcExecutor = new ProgramExecutor();
 		
 		final String classQulifiedName = Settings.buggyClassName;
 		final int lineNumber = Integer.valueOf(Settings.buggyLineNumber);
 		final String methodSign = convertSignature(classQulifiedName, lineNumber);
 		
-		System.currentTimeMillis();
 		
 		try {
 			
 			Job job = new Job("Preparing for Debugging ...") {
 				
-				private void clearOldData(){
-					Settings.interestedVariables.clear();
-					Settings.localVariableScopes.clear();
-					Settings.potentialCorrectPatterns.clear();
-					
-					Display.getDefault().asyncExec(new Runnable(){
-						@Override
-						public void run() {
-							try {
-								DebugFeedbackView view = (DebugFeedbackView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().
-										getActivePage().showView(MicroBatViews.DEBUG_FEEDBACK);
-								view.clear();
-							} catch (PartInitException e) {
-								e.printStackTrace();
-							}
-						}
-						
-					});
-				}
-				
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					clearOldData();
 					
-					BreakPoint ap = new BreakPoint(classQulifiedName, methodSign, lineNumber);
-					List<BreakPoint> startPoints = Arrays.asList(ap);
-					
-					ExecutionStatementCollector collector = new ExecutionStatementCollector();
-					List<BreakPoint> executingStatements = collector.collectBreakPoints(appClassPath);
-					
-					MicrobatSlicer slicer = new MicrobatSlicer(executingStatements);
-					List<BreakPoint> breakpoints = null;
-					try {
-						System.out.println("start slicing...");
-//						breakpoints = slicer.slice(appClassPath, startPoints);
-						breakpoints = slicer.parsingBreakPoints(appClassPath);
-						System.out.println("finish slicing!");
-					} catch (Exception e1) {
-						e1.printStackTrace();
+					try{
+						monitor.beginTask("Construct Trace Model", 10);
+						
+						clearOldData();
+						
+						BreakPoint ap = new BreakPoint(classQulifiedName, methodSign, lineNumber);
+						List<BreakPoint> startPoints = Arrays.asList(ap);
+						
+						//1. collect trace
+						monitor.setTaskName("collect trace");
+						
+						ExecutionStatementCollector collector = new ExecutionStatementCollector();
+						List<BreakPoint> executingStatements = collector.collectBreakPoints(appClassPath);
+						
+						monitor.worked(1);
+						
+						//2. parse 
+						monitor.setTaskName("parse read/written variables");
+						
+						MicrobatSlicer slicer = new MicrobatSlicer(executingStatements);
+						List<BreakPoint> breakpoints = null;
+						try {
+							System.out.println("start analyzing byte code ...");
+//							breakpoints = slicer.slice(appClassPath, startPoints);
+							breakpoints = slicer.parsingBreakPoints(appClassPath);
+							System.out.println("finish analyzing byte code ...!");
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
+						
+						monitor.worked(2);
+						
+						/**
+						 * find the variable scope for:
+						 * 1) Identifying the same local variable in different trace nodes.
+						 * 2) Generating variable ID for local variable.
+						 */
+						monitor.setTaskName("parse variable scopes");
+						
+						List<String> classScope = parseScope(breakpoints);
+						parseLocalVariables(classScope);
+						
+						if(breakpoints == null){
+							System.err.println("Cannot find any slice");
+							return Status.OK_STATUS;
+						}
+						
+						monitor.worked(1);
+						
+//						String methodName = methodSign.substring(0, methodSign.indexOf("("));
+//						List<String> tests = Arrays.asList(classQulifiedName + "." + methodName);
+//						tcExecutor.setup(appClasspath, tests);
+						
+						monitor.setTaskName("extract runtime value for variables");
+						
+						tcExecutor.setup(appClassPath);
+						try {
+							tcExecutor.run(breakpoints);
+						} catch (SavException e) {
+							e.printStackTrace();
+						}
+						
+						monitor.worked(5);
+						
+						monitor.setTaskName("construct dominance relation");
+						
+						Trace trace = tcExecutor.getTrace();
+						trace.constructDomianceRelation();
+						//trace.conductStateDiff();
+						
+						monitor.worked(1);
+						
+						Activator.getDefault().setCurrentTrace(trace);
+					}
+					finally{
+						monitor.done();
 					}
 					
-					/**
-					 * find the variable scope for:
-					 * 1) Identifying the same local variable in different trace nodes.
-					 * 2) Generating variable ID for local variable.
-					 */
-					List<String> classScope = parseScope(breakpoints);
-					parseLocalVariables(classScope);
 					
-					if(breakpoints == null){
-						System.err.println("Cannot find any slice");
-						return Status.OK_STATUS;
-					}
 					
-					monitor.worked(60);
-					
-//					String methodName = methodSign.substring(0, methodSign.indexOf("("));
-//					List<String> tests = Arrays.asList(classQulifiedName + "." + methodName);
-//					tcExecutor.setup(appClasspath, tests);
-					tcExecutor.setup(appClassPath);
-					try {
-						tcExecutor.run(breakpoints);
-					} catch (SavException e) {
-						e.printStackTrace();
-					}
-					
-					monitor.worked(40);
-					Trace trace = tcExecutor.getTrace();
-					trace.constructDomianceRelation();
-					//trace.conductStateDiff();
-					
-					Activator.getDefault().setCurrentTrace(trace);
 					
 					Display.getDefault().asyncExec(new Runnable(){
 						
