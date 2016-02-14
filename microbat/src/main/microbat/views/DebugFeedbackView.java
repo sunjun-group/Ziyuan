@@ -596,9 +596,6 @@ public class DebugFeedbackView extends ViewPart {
 					int readVarCorrectness = currentNode.getReadVarCorrectness(Settings.interestedVariables);
 					int writtenVarCorrectness = currentNode.getWittenVarCorrectness(Settings.interestedVariables);
 
-//					currentNode.setReadVarsCorrectness(readVarCorrectness);
-//					currentNode.setWrittenVarsCorrectness(writtenVarCorrectness);
-					
 					if(writtenVarCorrectness==TraceNode.WRITTEN_VARS_INCORRECT 
 							&& readVarCorrectness==TraceNode.READ_VARS_CORRECT){
 						openFindBugDialog();
@@ -608,8 +605,6 @@ public class DebugFeedbackView extends ViewPart {
 						openReconfirmDialog();
 					}
 					else{
-//						currentNode.setStepCorrectness(TraceNode.STEP_CORRECT);
-						
 						ConflictRuleChecker conflictRuleChecker = new ConflictRuleChecker();
 						TraceNode conflictNode = conflictRuleChecker.checkConflicts(trace, currentNode.getOrder());
 						

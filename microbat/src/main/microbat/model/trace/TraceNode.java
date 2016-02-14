@@ -451,13 +451,24 @@ public class TraceNode{
 		this.suspicousScoreMap = suspicousScoreMap;
 	}
 
-//	public int getWrittenVarsCorrectness() {
-//		return writtenVarsCorrectness;
-//	}
-//
-//	public void setWrittenVarsCorrectness(int writtenVarsCorrectness) {
-//		this.writtenVarsCorrectness = writtenVarsCorrectness;
-//	}
+	public List<TraceNode> findAllDominators() {
+		List<TraceNode> dominators = new ArrayList<>();
+		
+		findDominators(this, dominators);
+		
+		return dominators;
+	}
+
+	private void findDominators(TraceNode node, List<TraceNode> dominators) {
+		for(TraceNode dominator: this.dominators.keySet()){
+			if(!dominators.contains(dominator)){
+				dominators.add(dominator);				
+			}
+		}
+		
+	}
+
+
 
 	
 	
