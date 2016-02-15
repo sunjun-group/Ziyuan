@@ -2,55 +2,59 @@ package microbat.evaluation;
 
 import java.util.List;
 
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.PlatformUI;
-
 import microbat.Activator;
 import microbat.model.Fault;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.model.value.VarValue;
-import microbat.model.variable.Variable;
 import microbat.recommendation.SuspiciousNodeRecommender;
 import microbat.recommendation.conflicts.ConflictRuleChecker;
 import microbat.util.Settings;
-import microbat.views.DebugFeedbackView;
 
 public class Simulator {
 	
 	private SuspiciousNodeRecommender recommender = new SuspiciousNodeRecommender();
 	private SimulatedUser user = new SimulatedUser();
 	
-	public void startSimulation(){
+	public void startSimulation() throws GenerateRootCauseException{
 		
-		Trace trace = new TraceModelConstructor().constructTraceModel();
+		//Trace trace = new TraceModelConstructor().constructTraceModel();
+		Settings.interestedVariables.clear();
+		Settings.localVariableScopes.clear();
+		Settings.potentialCorrectPatterns.clear();
+		recommender = new SuspiciousNodeRecommender();
+		Trace trace = Activator.getDefault().getCurrentTrace();
+		for(TraceNode node: trace.getExectionList()){
+			node.setCheckTime(-1);
+		}
+		
+		
 		
 		Fault shownFault = generateShownFault(trace);
 		
 		TraceNode shownFaultNode = shownFault.getBuggyNode();
-		
 		List<TraceNode> dominators = shownFaultNode.findAllDominators();
 		
 		Fault rootCause = generateRootCause(dominators);
 		
 		TraceNode suspiciousNode = shownFaultNode;
-		Feedback feedback = user.feedback(suspiciousNode, rootCause, dominators);
+		user.feedback(suspiciousNode, rootCause, trace.getCheckTime());
 		
 		boolean isBugFound = rootCause.getBuggyNode().getOrder()==suspiciousNode.getOrder();
 		while(!isBugFound){
 			
-			suspiciousNode = findSuspicioiusNode(suspiciousNode, feedback, trace);
+			suspiciousNode = findSuspicioiusNode(suspiciousNode, trace);
 			
 			isBugFound = rootCause.getBuggyNode().getOrder()==suspiciousNode.getOrder();
 			
 			if(!isBugFound){
-				feedback = user.feedback(suspiciousNode, rootCause, dominators);				
+				user.feedback(suspiciousNode, rootCause, trace.getCheckTime());				
 			}
 			
 		}
 	}
 
-	private TraceNode findSuspicioiusNode(TraceNode currentNode, Feedback feedback, Trace trace) {
+	private TraceNode findSuspicioiusNode(TraceNode currentNode, Trace trace) {
 		setCurrentNodeCheck(trace, currentNode);
 		
 		TraceNode suspiciousNode = null;
@@ -79,8 +83,11 @@ public class Simulator {
 		int count = 0;
 		
 		while(true){
-			int index = (int) (dominators.size()*Math.random());
-			TraceNode node = dominators.get(index);
+//			int index = (int) (dominators.size()*Math.random());
+//			TraceNode node = dominators.get(index);
+			
+			Trace trace = Activator.getDefault().getCurrentTrace();
+			TraceNode node = trace.getExectionList().get(152);
 			
 			if(!node.getWrittenVariables().isEmpty()){
 				VarValue var = node.getWrittenVariables().get(0);

@@ -231,6 +231,8 @@ public class SuspiciousNodeRecommender {
 		TraceNode suspiciousNode = findNodeBySuspiciousnessDistribution(trace, currentNode);
 		PathInstance path = new PathInstance(suspiciousNode, currentNode);
 		
+		System.currentTimeMillis();
+		
 		boolean isPathInPattern = Settings.potentialCorrectPatterns.containsPattern(path)? true : false;
 		if(isPathInPattern){
 			state = SKIP;

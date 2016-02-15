@@ -454,15 +454,18 @@ public class TraceNode{
 	public List<TraceNode> findAllDominators() {
 		List<TraceNode> dominators = new ArrayList<>();
 		
+		System.currentTimeMillis();
 		findDominators(this, dominators);
 		
 		return dominators;
 	}
 
 	private void findDominators(TraceNode node, List<TraceNode> dominators) {
-		for(TraceNode dominator: this.dominators.keySet()){
+		for(TraceNode dominator: node.getDominator().keySet()){
 			if(!dominators.contains(dominator)){
-				dominators.add(dominator);				
+				dominators.add(dominator);		
+			
+				findDominators(dominator, dominators);
 			}
 		}
 		

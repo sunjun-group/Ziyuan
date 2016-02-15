@@ -48,6 +48,11 @@
             id="microbat.command.startDebug"
             name="Start Debugging">
       </command>
+      <command
+            defaultHandler="microbat.evaluation.handler.EvaluationHandler"
+            id="microbat.evaluateCommand"
+            name="Run Evaluation">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -73,6 +78,19 @@
                   commandId="microbat.command.startDebug"
                   icon="icons/start_debug.png"
                   label="Start Debug"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="microbat.toolbar.evaluation">
+            <command
+                  commandId="microbat.evaluateCommand"
+                  icon="icons/evaluation.png"
+                  label="Run Evaluation"
                   style="push">
             </command>
          </toolbar>
