@@ -28,8 +28,6 @@ public class Simulator {
 			node.setCheckTime(-1);
 		}
 		
-		
-		
 		Fault shownFault = generateShownFault(trace);
 		
 		TraceNode shownFaultNode = shownFault.getBuggyNode();

@@ -1,5 +1,6 @@
 package microbat.evaluation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,21 +40,47 @@ public class SimulatedUser {
 		
 		Map<TraceNode, List<String>> dominatorMap = suspiciousNode.getDominator();
 		
+		List<String> workingIDs = new ArrayList<>();
 		for(TraceNode dominator: dominatorMap.keySet()){
+			
+			
 			if(dominator.equals(rootCause.getBuggyNode())){
 				List<String> varIDs = dominatorMap.get(dominator);
-				return varIDs.get(0);
+				workingIDs.add(varIDs.get(0));
 			}
 			else{
 				String varID = findReachingReadVariablesFromSuspiciousNodeToRootCause(dominator, rootCause);
 				if(varID != null){
 					List<String> varIDs = dominatorMap.get(dominator);
-					return varIDs.get(0);
+					workingIDs.add(varIDs.get(0));
 				}
 			}
 		}
 		
-		return null;
+		String varID = getFittestVar(workingIDs);
+		
+		return varID;
+	}
+
+	private String getFittestVar(List<String> workingIDs) {
+		if(workingIDs.isEmpty()){
+			return null;			
+		}
+		else if(workingIDs.size() == 1){
+			return workingIDs.get(0);
+		}
+		else{
+			String varID = workingIDs.get(0);
+			
+			for(String workingID: workingIDs){
+				if(!workingID.contains("vir")){
+					varID = workingID;
+					return varID;
+				}
+			}
+			
+			return varID;
+		}
 	}
 
 	
