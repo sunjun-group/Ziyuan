@@ -301,7 +301,7 @@ public class DebugFeedbackView extends ViewPart {
 				readVariableTreeViewer.refresh();
 				stateTreeViewer.refresh();	
 				
-				setCurrentNodeCheck(trace);
+				setCurrentNodeCheck(trace, currentNode);
 				boolean enabled = isValidToInferBugType();
 				bugTypeInferenceButton.setEnabled(enabled);
 			}
@@ -525,7 +525,7 @@ public class DebugFeedbackView extends ViewPart {
 		bugTypeInferenceButton.setEnabled(isValidToInferBugType());
 	}
 	
-	private void setCurrentNodeCheck(Trace trace) {
+	private void setCurrentNodeCheck(Trace trace, TraceNode currentNode) {
 		int checkTime = trace.getCheckTime()+1;
 		currentNode.setCheckTime(checkTime);
 		trace.setCheckTime(checkTime);
@@ -588,7 +588,7 @@ public class DebugFeedbackView extends ViewPart {
 			else {
 				Trace trace = Activator.getDefault().getCurrentTrace();
 				
-				setCurrentNodeCheck(trace);
+				setCurrentNodeCheck(trace, currentNode);
 				
 				TraceNode suspiciousNode = null;
 				

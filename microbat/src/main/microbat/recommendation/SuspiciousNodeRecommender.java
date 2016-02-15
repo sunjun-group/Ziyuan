@@ -2,7 +2,6 @@ package microbat.recommendation;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import microbat.model.AttributionVar;
@@ -27,21 +26,29 @@ public class SuspiciousNodeRecommender {
 		
 		TraceNode binaryLandmark;
 
-		public void update() {
-			Collections.sort(skipPoints, new TraceNodeOrderComparator());
-			Iterator<TraceNode> iter = skipPoints.iterator();
-			while(iter.hasNext()){
-				TraceNode skipNode = iter.next();
-				if(skipNode.getOrder() < startNode.getOrder()
-						|| skipNode.getOrder() > endNode.getOrder()){
-					iter.remove();
-				}
-			}
-		}
+//		public void update() {
+//			Collections.sort(skipPoints, new TraceNodeOrderComparator());
+//			Iterator<TraceNode> iter = skipPoints.iterator();
+//			while(iter.hasNext()){
+//				TraceNode skipNode = iter.next();
+//				if(skipNode.getOrder() < startNode.getOrder()
+//						|| skipNode.getOrder() > endNode.getOrder()){
+//					iter.remove();
+//				}
+//			}
+//		}
 
 		public TraceNode binarySearch() {
 			Collections.sort(skipPoints, new TraceNodeOrderComparator());
-			int index = skipPoints.size()/2;
+			
+			int startIndex = skipPoints.indexOf(startNode);
+			int endIndex = skipPoints.indexOf(endNode);
+			if(endIndex == -1){
+				endIndex = skipPoints.size()-1;
+			}
+			
+			int index = (startIndex+endIndex)/2;
+			
 			return skipPoints.get(index);
 		}
 
@@ -65,6 +72,19 @@ public class SuspiciousNodeRecommender {
 		public TraceNode getBinaryLandMark(){
 			return binaryLandmark;
 		}
+
+		public void clearSkipPoints() {
+			binaryLandmark = null;
+			skipPoints.clear();
+		}
+
+		TraceNode backupStartNode;
+		TraceNode backupEndNode;
+		
+		public void backupStartAndEndNode() {
+			backupStartNode = startNode;
+			backupEndNode = endNode;
+		}
 	}
 	
 	public static int JUMP = 0;
@@ -77,6 +97,9 @@ public class SuspiciousNodeRecommender {
 //	private boolean isOverSkipping = false;
 
 	private TraceNode lastNode;
+	
+	private TraceNode lastRecommendNode;
+	
 	private LoopRange range = new LoopRange();
 	
 	public TraceNode recommendSuspiciousNode(Trace trace, TraceNode currentNode){
@@ -86,6 +109,10 @@ public class SuspiciousNodeRecommender {
 			if(path.isPotentialCorrect()){
 				Settings.potentialCorrectPatterns.addPathForPattern(path);			
 			}
+		}
+		
+		if(!currentNode.equals(lastRecommendNode)){
+			state = JUMP;
 		}
 		
 		TraceNode suspiciousNode = null;
@@ -99,6 +126,7 @@ public class SuspiciousNodeRecommender {
 			suspiciousNode = handleBinarySearchBehavior(trace, currentNode);
 		}
 		
+		lastRecommendNode = suspiciousNode;
 		
 		return suspiciousNode;
 	}
@@ -111,7 +139,7 @@ public class SuspiciousNodeRecommender {
 			state = BINARY_SEARCH;
 			
 			this.range.startNode = currentNode;
-			this.range.update();
+//			this.range.update();
 			
 			suspiciousNode = this.range.binarySearch();
 			
@@ -138,7 +166,7 @@ public class SuspiciousNodeRecommender {
 							this.range.endNode = currentNode;
 						}
 						
-						this.range.update();
+//						this.range.update();
 						suspiciousNode = this.range.binarySearch();
 						
 						this.lastNode = currentNode;
@@ -181,6 +209,8 @@ public class SuspiciousNodeRecommender {
 			state = BINARY_SEARCH;
 			
 			this.range.startNode = currentNode;
+			this.range.backupStartAndEndNode();
+			
 			suspiciousNode = this.range.binarySearch();
 			
 			this.range.binaryLandmark = suspiciousNode;
@@ -188,6 +218,9 @@ public class SuspiciousNodeRecommender {
 		}
 		else{
 			state = JUMP;
+			
+			this.range.clearSkipPoints();
+			
 			suspiciousNode = handleJumpBehavior(trace, currentNode);
 		}
 		return suspiciousNode;
@@ -204,23 +237,22 @@ public class SuspiciousNodeRecommender {
 			
 			this.range.endNode = path.getEndNode();
 			this.range.skipPoints.clear();
-			this.range.skipPoints.add(suspiciousNode);
+			//this.range.skipPoints.add(suspiciousNode);
 			
 			while(Settings.potentialCorrectPatterns.containsPattern(path)){
 				
 				Settings.potentialCorrectPatterns.addPathForPattern(path);
+				this.range.skipPoints.add(suspiciousNode);
+				
 				PotentialCorrectPattern pattern = Settings.potentialCorrectPatterns.getPattern(path);
-				
-				
 				oldSusiciousNode = suspiciousNode;
+				
 				suspiciousNode = findNextSuspiciousNodeByPattern(pattern, oldSusiciousNode);
 				
 				if(suspiciousNode == null){
-					suspiciousNode = findNextSuspiciousNodeByPattern(pattern, oldSusiciousNode);
 					break;
 				}
 				else{
-					this.range.skipPoints.add(suspiciousNode);
 					path = new PathInstance(suspiciousNode, oldSusiciousNode);					
 				}
 			}
