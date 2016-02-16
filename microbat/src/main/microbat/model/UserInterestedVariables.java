@@ -18,14 +18,21 @@ public class UserInterestedVariables {
 		return this.varIDs.keySet().contains(varID);
 	}
 	
-	public void add(String varID, int checkTime){
+	public AttributionVar add(String varID, int checkTime){
 		this.varIDs.put(varID, checkTime);
 		
 		AttributionVar var = new AttributionVar(varID, checkTime);
-		List<AttributionVar> vars = findAllValidateAttributionVar();
-		if(!vars.contains(var)){
+		Map<String, AttributionVar> vars = findAllValidateAttributionVar();
+		if(!vars.containsKey(var.getVarID())){
 			roots.add(var);
+			return var;
 		}
+		else{
+			AttributionVar recordVar = vars.get(var.getVarID());
+			recordVar.setCheckTime(checkTime);
+			return recordVar;
+		}
+		
 	}
 
 	public void remove(String varID) {
@@ -64,9 +71,11 @@ public class UserInterestedVariables {
 	}
 
 	public AttributionVar findOrCreateVar(String varID, int checkTime) {
+		
 		for(AttributionVar rootVar: this.roots){
 			AttributionVar var = rootVar.findChild(varID);
 			if(var != null){
+				var.setCheckTime(checkTime);
 				return var;
 			}
 		}
@@ -78,10 +87,10 @@ public class UserInterestedVariables {
 	}
 
 	public void updateAttributionTrees() {
-		List<AttributionVar> vars = findAllValidateAttributionVar();
+		Map<String, AttributionVar> vars = findAllValidateAttributionVar();
 		
 		List<AttributionVar> roots = new ArrayList<>();
-		for(AttributionVar var: vars){
+		for(AttributionVar var: vars.values()){
 			if(var.getParents().isEmpty()){
 				roots.add(var);
 			}
@@ -89,27 +98,28 @@ public class UserInterestedVariables {
 		this.roots = roots;
 	}
 	
-	private List<AttributionVar> findAllValidateAttributionVar(){
-		List<AttributionVar> vars = new ArrayList<>();
+	private Map<String, AttributionVar> findAllValidateAttributionVar(){
+		Map<String, AttributionVar> vars = new HashMap<>();
 		for(AttributionVar var: roots){
 			collectVars(vars, var);
 		}
 		return vars;
 	}
 
-	private void collectVars(List<AttributionVar> vars, AttributionVar var) {
+	private void collectVars(Map<String, AttributionVar> vars, AttributionVar var) {
 		if(!this.varIDs.containsKey(var.getVarID())){
 			for(AttributionVar parent: var.getParents()){
 				parent.getChildren().remove(var);
-//				var.getParents().remove(parent);
 			}
+			var.getParents().clear();
+			
 			for(AttributionVar child: var.getChildren()){
 				child.getParents().remove(var);
-//				var.getChildren().remove(child);
 			}
+			var.getChildren().clear();
 		}
 		else{
-			vars.add(var);
+			vars.put(var.getVarID(), var);
 		}
 		
 		for(AttributionVar child: var.getChildren()){

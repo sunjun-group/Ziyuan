@@ -443,6 +443,24 @@ public class TraceNode{
 		return nonCorrectDominators;
 	}
 
+	public boolean isReadVariablesContains(String varID){
+		for(VarValue readVar: this.getReadVariables()){
+			if(readVar.getVarID().equals(varID)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isWrittenVariablesContains(String varID){
+		for(VarValue writtenVar: this.getWrittenVariables()){
+			if(writtenVar.getVarID().equals(varID)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public Map<AttributionVar, Double> getSuspicousScoreMap() {
 		return suspicousScoreMap;
 	}

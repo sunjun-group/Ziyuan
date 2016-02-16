@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import microbat.model.AttributionVar;
 import microbat.model.Fault;
 import microbat.model.trace.TraceNode;
 import microbat.util.Settings;
@@ -19,7 +20,8 @@ public class SimulatedUser {
 			String readVarID = findReachingReadVariablesFromSuspiciousNodeToRootCause(suspiciousNode, rootCause);
 			
 			if(readVarID != null){
-				Settings.interestedVariables.add(readVarID, checkTime);		
+				AttributionVar var = Settings.interestedVariables.add(readVarID, checkTime);
+				var.setReadTraceNode(suspiciousNode);
 				
 				if(!suspiciousNode.getWrittenVariables().isEmpty()){
 					String writtenVarID = suspiciousNode.getWrittenVariables().get(0).getVarID();

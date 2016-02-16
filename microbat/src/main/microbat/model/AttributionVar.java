@@ -3,6 +3,8 @@ package microbat.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import microbat.model.trace.TraceNode;
+
 /**
  * This class represents the attribution relation among variables. If a variable is considered wrong, it is possible
  * caused by other wrong variable. If it is the case, we say that the incorrectness of the variable is attributed to
@@ -17,6 +19,11 @@ public class AttributionVar {
 	private int checkTime;
 	
 	/**
+	 * record the latest trace node reading this variable in the process of user's debugging.
+	 */
+	private TraceNode latesetReadTraceNode;
+	
+	/**
 	 * parent variable means the variable used to define this variable.
 	 */
 	private List<AttributionVar> parents = new ArrayList<>();
@@ -29,6 +36,7 @@ public class AttributionVar {
 		super();
 		this.varID = varID;
 		this.checkTime = checkTime;
+		
 	}
 	
 	@Override
@@ -119,5 +127,15 @@ public class AttributionVar {
 
 	public void setCheckTime(int checkTime) {
 		this.checkTime = checkTime;
+	}
+
+	public TraceNode getReadTraceNode() {
+		return latesetReadTraceNode;
+	}
+
+	public void setReadTraceNode(TraceNode readTraceNode) {
+		if(readTraceNode.isReadVariablesContains(varID)){
+			this.latesetReadTraceNode = readTraceNode;			
+		}
 	}
 }	

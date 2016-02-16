@@ -228,10 +228,20 @@ public class SuspiciousNodeRecommender {
 
 	private TraceNode handleJumpBehavior(Trace trace, TraceNode currentNode) {
 		TraceNode oldSusiciousNode = currentNode;
-		TraceNode suspiciousNode = findNodeBySuspiciousnessDistribution(trace, currentNode);
-		PathInstance path = new PathInstance(suspiciousNode, currentNode);
 		
-		System.currentTimeMillis();
+		List<AttributionVar> readVars = constructAttributionRelation(currentNode, trace.getCheckTime());
+		AttributionVar focusVar = Settings.interestedVariables.findFocusVar(readVars);
+				
+		TraceNode suspiciousNode = null;
+		if(focusVar != null){
+//			long t1 = System.currentTimeMillis();
+			trace.distributeSuspiciousness(Settings.interestedVariables);
+//			long t2 = System.currentTimeMillis();
+//			System.out.println("time for distributeSuspiciousness: " + (t2-t1));
+			suspiciousNode = trace.findMostSupiciousNode(focusVar); 
+		}
+		TraceNode readTraceNode = focusVar.getReadTraceNode();
+		PathInstance path = new PathInstance(suspiciousNode, readTraceNode);
 		
 		boolean isPathInPattern = Settings.potentialCorrectPatterns.containsPattern(path)? true : false;
 		if(isPathInPattern){
@@ -313,29 +323,7 @@ public class SuspiciousNodeRecommender {
 		return isEquivalentVariable;
 	}
 	
-	
 
-	private TraceNode findNodeBySuspiciousnessDistribution(Trace trace, TraceNode currentNode){
-		List<AttributionVar> readVars = constructAttributionRelation(currentNode, trace.getCheckTime());
-		
-		//System.currentTimeMillis();
-		
-		AttributionVar focusVar = Settings.interestedVariables.findFocusVar(readVars);
-		
-		TraceNode suspiciousNode = null;
-		
-		if(focusVar != null){
-//			long t1 = System.currentTimeMillis();
-			trace.distributeSuspiciousness(Settings.interestedVariables);
-//			long t2 = System.currentTimeMillis();
-//			System.out.println("time for distributeSuspiciousness: " + (t2-t1));
-			
-			suspiciousNode = trace.findMostSupiciousNode(focusVar); 
-		}
-		
-		return suspiciousNode;
-	}
-	
 	private List<AttributionVar> constructAttributionRelation(TraceNode currentNode, int checkTime){
 		List<AttributionVar> readVars = new ArrayList<>();
 		for(VarValue writtenVarValue: currentNode.getWrittenVariables()){
@@ -347,6 +335,7 @@ public class SuspiciousNodeRecommender {
 						
 						AttributionVar writtenVar = Settings.interestedVariables.findOrCreateVar(writtenVarID, checkTime);
 						AttributionVar readVar = Settings.interestedVariables.findOrCreateVar(readVarID, checkTime);
+						readVar.setReadTraceNode(currentNode);
 						
 						readVar.addChild(writtenVar);
 						writtenVar.addParent(readVar);
@@ -361,6 +350,7 @@ public class SuspiciousNodeRecommender {
 			String readVarID = readVarValue.getVarID();
 			if(Settings.interestedVariables.contains(readVarID)){
 				AttributionVar readVar = Settings.interestedVariables.findOrCreateVar(readVarID, checkTime);
+				readVar.setReadTraceNode(currentNode);
 				readVars.add(readVar);
 			}
 		}		
