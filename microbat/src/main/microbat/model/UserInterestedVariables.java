@@ -117,6 +117,13 @@ public class UserInterestedVariables {
 		}
 	}
 
+	/**
+	 * When deciding the focus variable, I adopt the following policy: <br><br>
+	 *	(1) If the user has select some read variables as wrong variables, the focus variable will be an arbitrary one;<br><br>
+	 *	(2) If not, the focus variable will be the newest root attribution variables.<br><br>
+	 * @param readVars
+	 * @return
+	 */
 	public AttributionVar findFocusVar(List<AttributionVar> readVars) {
 		if(readVars.isEmpty()){
 			if(!roots.isEmpty()){
