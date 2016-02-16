@@ -14,6 +14,7 @@ import java.util.List;
  */
 public class AttributionVar {
 	private String varID;
+	private int checkTime;
 	
 	/**
 	 * parent variable means the variable used to define this variable.
@@ -24,9 +25,10 @@ public class AttributionVar {
 	 */
 	private List<AttributionVar> children = new ArrayList<>();
 	
-	public AttributionVar(String varID) {
+	public AttributionVar(String varID, int checkTime) {
 		super();
 		this.varID = varID;
+		this.checkTime = checkTime;
 	}
 	
 	@Override
@@ -109,5 +111,13 @@ public class AttributionVar {
 		if(!this.parents.contains(parent)){
 			this.parents.add(parent);
 		}
+	}
+
+	public int getCheckTime() {
+		return checkTime;
+	}
+
+	public void setCheckTime(int checkTime) {
+		this.checkTime = checkTime;
 	}
 }	

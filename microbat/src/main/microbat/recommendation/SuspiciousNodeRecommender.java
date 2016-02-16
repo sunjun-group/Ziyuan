@@ -316,7 +316,7 @@ public class SuspiciousNodeRecommender {
 	
 
 	private TraceNode findNodeBySuspiciousnessDistribution(Trace trace, TraceNode currentNode){
-		List<AttributionVar> readVars = constructAttributionRelation(currentNode);
+		List<AttributionVar> readVars = constructAttributionRelation(currentNode, trace.getCheckTime());
 		
 		//System.currentTimeMillis();
 		
@@ -336,7 +336,7 @@ public class SuspiciousNodeRecommender {
 		return suspiciousNode;
 	}
 	
-	private List<AttributionVar> constructAttributionRelation(TraceNode currentNode){
+	private List<AttributionVar> constructAttributionRelation(TraceNode currentNode, int checkTime){
 		List<AttributionVar> readVars = new ArrayList<>();
 		for(VarValue writtenVarValue: currentNode.getWrittenVariables()){
 			String writtenVarID = writtenVarValue.getVarID();
@@ -345,8 +345,8 @@ public class SuspiciousNodeRecommender {
 					String readVarID = readVarValue.getVarID();
 					if(Settings.interestedVariables.contains(readVarID)){
 						
-						AttributionVar writtenVar = Settings.interestedVariables.findOrCreateVar(writtenVarID);
-						AttributionVar readVar = Settings.interestedVariables.findOrCreateVar(readVarID);
+						AttributionVar writtenVar = Settings.interestedVariables.findOrCreateVar(writtenVarID, checkTime);
+						AttributionVar readVar = Settings.interestedVariables.findOrCreateVar(readVarID, checkTime);
 						
 						readVar.addChild(writtenVar);
 						writtenVar.addParent(readVar);
@@ -360,7 +360,7 @@ public class SuspiciousNodeRecommender {
 		for(VarValue readVarValue: currentNode.getReadVariables()){
 			String readVarID = readVarValue.getVarID();
 			if(Settings.interestedVariables.contains(readVarID)){
-				AttributionVar readVar = Settings.interestedVariables.findOrCreateVar(readVarID);
+				AttributionVar readVar = Settings.interestedVariables.findOrCreateVar(readVarID, checkTime);
 				readVars.add(readVar);
 			}
 		}		

@@ -1,6 +1,8 @@
 package microbat.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,16 +12,16 @@ public class UserInterestedVariables {
 	
 	private List<AttributionVar> roots = new ArrayList<>();
 	
-	private Map<String, Double> varIDs = new HashMap<>();
+	private Map<String, Integer> varIDs = new HashMap<>();
 	
 	public boolean contains(String varID){
 		return this.varIDs.keySet().contains(varID);
 	}
 	
-	public void add(String varID, double checkTime){
+	public void add(String varID, int checkTime){
 		this.varIDs.put(varID, checkTime);
 		
-		AttributionVar var = new AttributionVar(varID);
+		AttributionVar var = new AttributionVar(varID, checkTime);
 		List<AttributionVar> vars = findAllValidateAttributionVar();
 		if(!vars.contains(var)){
 			roots.add(var);
@@ -61,7 +63,7 @@ public class UserInterestedVariables {
 		this.roots = roots;
 	}
 
-	public AttributionVar findOrCreateVar(String varID) {
+	public AttributionVar findOrCreateVar(String varID, int checkTime) {
 		for(AttributionVar rootVar: this.roots){
 			AttributionVar var = rootVar.findChild(varID);
 			if(var != null){
@@ -69,7 +71,7 @@ public class UserInterestedVariables {
 			}
 		}
 		
-		AttributionVar var = new AttributionVar(varID);
+		AttributionVar var = new AttributionVar(varID, checkTime);
 		roots.add(var);
 		
 		return var;
@@ -126,6 +128,15 @@ public class UserInterestedVariables {
 		}
 		else{
 			AttributionVar readVar = readVars.get(0);
+			
+			Collections.sort(roots, new Comparator<AttributionVar>(){
+
+				@Override
+				public int compare(AttributionVar o1, AttributionVar o2) {
+					return o2.getCheckTime()-o1.getCheckTime();
+				}
+				
+			});
 			
 			AttributionVar var = null;
 			for(AttributionVar root: roots){
