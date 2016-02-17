@@ -50,6 +50,8 @@ public class Simulator {
 			}
 			
 		}
+		
+		System.out.println("Bug found!");
 	}
 
 	private TraceNode findSuspicioiusNode(TraceNode currentNode, Trace trace) {
