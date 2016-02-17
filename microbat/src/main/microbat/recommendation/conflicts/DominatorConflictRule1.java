@@ -28,7 +28,7 @@ public class DominatorConflictRule1 extends ConflictRule {
 	public TraceNode checkConflicts(Trace trace, int order) {
 		TraceNode node = trace.getExectionList().get(order-1);
 		if(node.getReadVarCorrectness(Settings.interestedVariables)==TraceNode.READ_VARS_INCORRECT){
-			if(node.getDominator().keySet().isEmpty()){
+			if(node.getDataDominator().keySet().isEmpty()){
 				return null;
 			}
 			

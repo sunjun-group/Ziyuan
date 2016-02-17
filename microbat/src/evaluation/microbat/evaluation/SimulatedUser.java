@@ -40,7 +40,7 @@ public class SimulatedUser {
 	private String findReachingReadVariablesFromSuspiciousNodeToRootCause(
 			TraceNode suspiciousNode, Fault rootCause) {
 		
-		Map<TraceNode, List<String>> dominatorMap = suspiciousNode.getDominator();
+		Map<TraceNode, List<String>> dominatorMap = suspiciousNode.getDataDominator();
 		
 		List<String> workingIDs = new ArrayList<>();
 		for(TraceNode dominator: dominatorMap.keySet()){

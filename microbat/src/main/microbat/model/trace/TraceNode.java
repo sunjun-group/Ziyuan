@@ -10,6 +10,7 @@ import microbat.algorithm.graphdiff.HierarchyGraphDiffer;
 import microbat.model.AttributionVar;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
+import microbat.model.Scope;
 import microbat.model.UserInterestedVariables;
 import microbat.model.value.VarValue;
 import microbat.util.Settings;
@@ -46,8 +47,10 @@ public class TraceNode{
 	private List<VarValue> readVariables = new ArrayList<>();
 	private List<VarValue> writtenVariables = new ArrayList<>();
 	
-	private Map<TraceNode, List<String>> dominators = new HashMap<>();
-	private Map<TraceNode, List<String>> dominatees = new HashMap<>();
+	private Map<TraceNode, List<String>> dataDominators = new HashMap<>();
+	private Map<TraceNode, List<String>> dataDominatees = new HashMap<>();
+	private TraceNode controlDominator;
+	private List<TraceNode> controlDominatees = new ArrayList<>();
 	
 	/**
 	 * the order of this node in the whole trace, starting from 1.
@@ -327,36 +330,36 @@ public class TraceNode{
 		this.consequences = diffs;
 	}
 
-	public Map<TraceNode, List<String>> getDominator() {
-		return dominators;
+	public Map<TraceNode, List<String>> getDataDominator() {
+		return dataDominators;
 	}
 
-	public void setDominator(Map<TraceNode, List<String>> dominator) {
-		this.dominators = dominator;
+	public void setDataDominator(Map<TraceNode, List<String>> dominator) {
+		this.dataDominators = dominator;
 	}
 
-	public Map<TraceNode, List<String>> getDominatee() {
-		return dominatees;
+	public Map<TraceNode, List<String>> getDataDominatee() {
+		return dataDominatees;
 	}
 
-	public void setDominatee(Map<TraceNode, List<String>> dominatee) {
-		this.dominatees = dominatee;
+	public void setDataDominatee(Map<TraceNode, List<String>> dominatee) {
+		this.dataDominatees = dominatee;
 	}
 	
-	public void addDominator(TraceNode node, List<String> variables){
-		List<String> varIDs = this.dominators.get(node);
+	public void addDataDominator(TraceNode node, List<String> variables){
+		List<String> varIDs = this.dataDominators.get(node);
 		if(varIDs == null){
-			this.dominators.put(node, variables);
+			this.dataDominators.put(node, variables);
 		}
 		else{
 			varIDs.addAll(variables);
 		}
 	}
 	
-	public void addDominatee(TraceNode node, List<String> variables){
-		List<String> varIDs = this.dominatees.get(node);
+	public void addDataDominatee(TraceNode node, List<String> variables){
+		List<String> varIDs = this.dataDominatees.get(node);
 		if(varIDs == null){
-			this.dominatees.put(node, variables);
+			this.dataDominatees.put(node, variables);
 		}
 		else{
 			varIDs.addAll(variables);
@@ -435,7 +438,7 @@ public class TraceNode{
 
 	public List<TraceNode> getUncheckedDominators() {
 		List<TraceNode> nonCorrectDominators = new ArrayList<>();
-		for(TraceNode dominator: dominators.keySet()){
+		for(TraceNode dominator: dataDominators.keySet()){
 			if(!dominator.hasChecked()){
 				nonCorrectDominators.add(dominator);
 			}
@@ -479,7 +482,7 @@ public class TraceNode{
 	}
 
 	private void findDominators(TraceNode node, List<TraceNode> dominators) {
-		for(TraceNode dominator: node.getDominator().keySet()){
+		for(TraceNode dominator: node.getDataDominator().keySet()){
 			if(!dominators.contains(dominator)){
 				dominators.add(dominator);		
 			
@@ -489,8 +492,33 @@ public class TraceNode{
 		
 	}
 
+	public TraceNode getControlDominator() {
+		return controlDominator;
+	}
 
+	public void setControlDominator(TraceNode controlDominator) {
+		this.controlDominator = controlDominator;
+	}
 
+	public List<TraceNode> getControlDominatees() {
+		return controlDominatees;
+	}
+
+	public void setControlDominatees(List<TraceNode> controlDominatees) {
+		this.controlDominatees = controlDominatees;
+	}
 	
+	public void addControlDominatee(TraceNode dominatee){
+		if(!this.controlDominatees.contains(dominatee)){
+			this.controlDominatees.add(dominatee);
+		}
+	}
+
+	public boolean isConditionalBranch(){
+		return this.breakPoint.isConditional();
+	}
 	
+	public Scope getConditionScope(){
+		return this.breakPoint.getConditionScope();
+	}
 }

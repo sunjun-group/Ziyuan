@@ -1,5 +1,7 @@
 package microbat.codeanalysis.ast;
 
+import microbat.model.Scope;
+
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.DoStatement;
@@ -11,11 +13,6 @@ import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
 public class ConditionalScopeParser {
-	class Scope{
-		CompilationUnit cu;
-		int startLine;
-		int endLine;
-	}
 	
 	class ScopeVisitor extends ASTVisitor{
 		CompilationUnit cu;
@@ -83,9 +80,10 @@ public class ConditionalScopeParser {
 		}
 		
 		private void setScope(Statement statement){
-			scope.cu = cu;
-			scope.startLine = cu.getLineNumber(statement.getStartPosition());
-			scope.endLine = cu.getLineNumber(statement.getStartPosition()+statement.getLength());
+			scope = new Scope();
+			scope.setCompilationUnit(cu);
+			scope.setStartLine(cu.getLineNumber(statement.getStartPosition())); 
+			scope.setEndLine(cu.getLineNumber(statement.getStartPosition()+statement.getLength())); 
 		}
 	}
 	

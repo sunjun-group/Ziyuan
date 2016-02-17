@@ -31,6 +31,7 @@ public class BreakPoint extends ClassLocation {
 	
 	private boolean isReturnStatement;
 	private boolean isConditioanl;
+	private Scope conditionScope;
 	
 	public BreakPoint(String className, int linNum){
 		super(className, null, linNum);
@@ -202,5 +203,13 @@ public class BreakPoint extends ClassLocation {
 	
 	public boolean isConditional(){
 		return this.isConditioanl;
+	}
+
+	public Scope getConditionScope() {
+		return conditionScope;
+	}
+
+	public void setConditionScope(Scope conditionScope) {
+		this.conditionScope = conditionScope;
 	}
 }

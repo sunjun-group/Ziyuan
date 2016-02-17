@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.JarFile;
 
+import microbat.codeanalysis.ast.ConditionalScopeParser;
 import microbat.model.BreakPoint;
+import microbat.model.Scope;
 import microbat.model.variable.ArrayElementVar;
 import microbat.model.variable.FieldVar;
 import microbat.model.variable.LocalVar;
@@ -73,7 +75,6 @@ import com.ibm.wala.shrikeBT.ConditionalBranchInstruction;
 import com.ibm.wala.shrikeBT.GetInstruction;
 import com.ibm.wala.shrikeBT.IInstruction;
 import com.ibm.wala.shrikeBT.InstanceofInstruction;
-import com.ibm.wala.shrikeBT.Instruction;
 import com.ibm.wala.shrikeBT.LoadInstruction;
 import com.ibm.wala.shrikeBT.PutInstruction;
 import com.ibm.wala.shrikeBT.ReturnInstruction;
@@ -464,11 +465,19 @@ public class MicrobatSlicer{
 		}
 		else if(ins instanceof ConditionalBranchInstruction){
 //			ConditionalBranchInstruction cbIns = (ConditionalBranchInstruction)ins;
-			point.setConditional(true);
+			setConditionalScope(cu, lineNumber, point);
+			//TODO
 		}
 		else if(ins instanceof InstanceofInstruction){
-			point.setConditional(true);
+			setConditionalScope(cu, lineNumber, point);
 		}
+	}
+	
+	private void setConditionalScope(CompilationUnit cu, int lineNumber, BreakPoint point){
+		point.setConditional(true);
+		ConditionalScopeParser parser = new ConditionalScopeParser();
+		Scope conditionScope = parser.parseScope(cu, lineNumber);
+		point.setConditionScope(conditionScope);
 	}
 	
 	class ASTNodeRetriever extends ASTVisitor{

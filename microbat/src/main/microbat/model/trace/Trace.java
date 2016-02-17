@@ -8,6 +8,7 @@ import java.util.Map;
 
 import microbat.model.AttributionVar;
 import microbat.model.BreakPoint;
+import microbat.model.Scope;
 import microbat.model.UserInterestedVariables;
 import microbat.model.value.VarValue;
 import microbat.model.value.VirtualValue;
@@ -142,12 +143,52 @@ public class Trace {
 		
 	}
 
-	public void constructDomianceRelation() {
-		for(String varID: this.stepVariableTable.keySet()){
+	public void constructDomianceRelation(){
+		constructDataDomianceRelation();
+		constructControlDomianceRelation();
+	}
+	
+	private void constructControlDomianceRelation() {
+		if(this.exectionList.size()>1){
+			for(int i=this.exectionList.size()-1; i>=1; i--){
+				TraceNode dominatee = this.exectionList.get(i);
+				TraceNode dominator = findControlDominator(dominatee.getOrder());
+				
+				if(dominator != null){
+					dominatee.setControlDominator(dominator);
+					dominator.addControlDominatee(dominatee);
+				}
+			}			
+		}
+		
+	}
+
+	private TraceNode findControlDominator(int startOrder) {
+		
+		if(startOrder == 28){
+			System.currentTimeMillis();
+		}
+		
+		TraceNode dominatee = this.exectionList.get(startOrder-1);
+		for(int i=startOrder-1-1; i>=0; i--){
+			TraceNode node = this.exectionList.get(i);
 			
-			if(varID.contains("213") || varID.contains("219")){
-				System.currentTimeMillis();
+			if(node.isConditionalBranch()){
+				Scope conditionScope = node.getConditionScope();
+				if(conditionScope.containsNodeScope(dominatee)){
+					return node;
+				}
 			}
+			
+			if(node.equals(dominatee.getInvocationParent())){
+				dominatee = dominatee.getInvocationParent();
+			}
+		}
+		return null;
+	}
+
+	private void constructDataDomianceRelation() {
+		for(String varID: this.stepVariableTable.keySet()){
 			
 			StepVariableRelationEntry entry = this.stepVariableTable.get(varID);
 			List<TraceNode> producers = entry.getProducers();
@@ -210,8 +251,8 @@ public class Trace {
 							List<String> varIDs = new ArrayList<>();
 							varIDs.add(varID);
 							
-							prevWritingNode.addDominatee(readingNode, varIDs);
-							readingNode.addDominator(prevWritingNode, varIDs);
+							prevWritingNode.addDataDominatee(readingNode, varIDs);
+							readingNode.addDataDominator(prevWritingNode, varIDs);
 							
 							readingCursor++;
 							if(readingCursor >= consumers.size()){
@@ -231,8 +272,8 @@ public class Trace {
 						List<String> varIDs = new ArrayList<>();
 						varIDs.add(varID);
 						
-						prevWritingNode.addDominatee(readingNode, varIDs);
-						readingNode.addDominator(prevWritingNode, varIDs);
+						prevWritingNode.addDataDominatee(readingNode, varIDs);
+						readingNode.addDataDominator(prevWritingNode, varIDs);
 						
 						readingCursor++;
 						if(readingCursor >= consumers.size()){
@@ -428,7 +469,7 @@ public class Trace {
 		TraceNode oldestNode = null;
 		
 		TraceNode node = this.exectionList.get(order-1);
-		for(TraceNode dominator: node.getDominator().keySet()){
+		for(TraceNode dominator: node.getDataDominator().keySet()){
 			if(oldestNode == null){
 				oldestNode = dominator;
 			}

@@ -298,7 +298,7 @@ public class SuspiciousNodeRecommender {
 		
 		Variable causingVariable = labelPath.findCausingVar();
 		
-		for(TraceNode dominator: oldSusiciousNode.getDominator().keySet()){
+		for(TraceNode dominator: oldSusiciousNode.getDataDominator().keySet()){
 			for(VarValue writtenVar: dominator.getWrittenVariables()){
 				Variable writtenVariable = writtenVar.getVariable();
 				

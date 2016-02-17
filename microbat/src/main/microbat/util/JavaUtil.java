@@ -13,9 +13,19 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 public class JavaUtil {
+	
+	public static String getFullNameOfCompilationUnit(CompilationUnit cu){
+		String packageName = cu.getPackage().getName().toString();
+		AbstractTypeDeclaration typeDeclaration = (AbstractTypeDeclaration) cu.types().get(0);
+		String typeName = typeDeclaration.getName().getIdentifier();
+		
+		return packageName + "." + typeName; 
+	}
+	
 	public static CompilationUnit findCompilationUnitInProject(String qualifiedName){
 		
 		try{

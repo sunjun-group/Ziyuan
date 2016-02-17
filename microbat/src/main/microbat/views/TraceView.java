@@ -49,7 +49,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
@@ -178,9 +177,9 @@ public class TraceView extends ViewPart {
 			
 			public void showDebuggingInfo(TraceNode node){
 				Trace t = Activator.getDefault().getCurrentTrace();
-				System.out.println("Dominator: ");
-				for(TraceNode dominator: node.getDominator().keySet()){
-					List<String> varIDs = node.getDominator().get(dominator);
+				System.out.println("Data Dominator: ");
+				for(TraceNode dominator: node.getDataDominator().keySet()){
+					List<String> varIDs = node.getDataDominator().get(dominator);
 					System.out.println(dominator);
 					System.out.println("by: ");
 					
@@ -194,9 +193,9 @@ public class TraceView extends ViewPart {
 				
 				System.out.println("=========================");
 				
-				System.out.println("Dominatee: " + node.getDominatee());
-				for(TraceNode dominatee: node.getDominatee().keySet()){
-					List<String> varIDs = node.getDominatee().get(dominatee);
+				System.out.println("Data Dominatee: " + node.getDataDominatee());
+				for(TraceNode dominatee: node.getDataDominatee().keySet()){
+					List<String> varIDs = node.getDataDominatee().get(dominatee);
 					System.out.println(dominatee);
 					System.out.println("by: ");
 					
@@ -205,6 +204,16 @@ public class TraceView extends ViewPart {
 						System.out.println(varID + ":" + entry.getAliasVariables());
 					}
 					
+					System.out.println("~~~~~~~~~~~~~~~~~~~~~");
+				}
+				
+				System.out.println("Control Dominator: ");
+				System.out.println(node.getControlDominator());
+				System.out.println("~~~~~~~~~~~~~~~~~~~~~");
+				
+				System.out.println("Control Dominatee: ");
+				for(TraceNode dominatee: node.getControlDominatees()){
+					System.out.println(dominatee);
 					System.out.println("~~~~~~~~~~~~~~~~~~~~~");
 				}
 				
@@ -222,7 +231,7 @@ public class TraceView extends ViewPart {
 						if(obj instanceof TraceNode){
 							TraceNode node = (TraceNode)obj;
 							
-							//showDebuggingInfo(node);
+							showDebuggingInfo(node);
 							
 							DebugFeedbackView view = (DebugFeedbackView)PlatformUI.getWorkbench().
 									getActiveWorkbenchWindow().getActivePage().showView(MicroBatViews.DEBUG_FEEDBACK);

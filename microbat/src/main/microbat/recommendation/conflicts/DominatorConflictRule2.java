@@ -29,7 +29,7 @@ public class DominatorConflictRule2 extends ConflictRule {
 	public TraceNode checkConflicts(Trace trace, int order) {
 		TraceNode node = trace.getExectionList().get(order-1);
 		if(node.getReadVarCorrectness(Settings.interestedVariables)==TraceNode.READ_VARS_CORRECT){
-			if(node.getDominator().keySet().isEmpty()){
+			if(node.getDataDominator().keySet().isEmpty()){
 				return null;
 			}
 			
