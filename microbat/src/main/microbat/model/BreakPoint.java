@@ -30,6 +30,7 @@ public class BreakPoint extends ClassLocation {
 	private List<Variable> allVisibleVariables = new ArrayList<>();
 	
 	private boolean isReturnStatement;
+	private boolean isConditioanl;
 	
 	public BreakPoint(String className, int linNum){
 		super(className, null, linNum);
@@ -193,5 +194,13 @@ public class BreakPoint extends ClassLocation {
 	
 	public String getClassCanonicalName(){
 		return super.getClassCanonicalName();
+	}
+
+	public void setConditional(boolean isConditional) {
+		this.isConditioanl = isConditional;
+	}
+	
+	public boolean isConditional(){
+		return this.isConditioanl;
 	}
 }

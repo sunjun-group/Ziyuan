@@ -69,8 +69,10 @@ import com.ibm.wala.ipa.slicer.StatementWithInstructionIndex;
 import com.ibm.wala.properties.WalaProperties;
 import com.ibm.wala.shrikeBT.ArrayLoadInstruction;
 import com.ibm.wala.shrikeBT.ArrayStoreInstruction;
+import com.ibm.wala.shrikeBT.ConditionalBranchInstruction;
 import com.ibm.wala.shrikeBT.GetInstruction;
 import com.ibm.wala.shrikeBT.IInstruction;
+import com.ibm.wala.shrikeBT.InstanceofInstruction;
 import com.ibm.wala.shrikeBT.Instruction;
 import com.ibm.wala.shrikeBT.LoadInstruction;
 import com.ibm.wala.shrikeBT.PutInstruction;
@@ -460,7 +462,13 @@ public class MicrobatSlicer{
 //			ReturnInstruction rIns = (ReturnInstruction)ins;
 			point.setReturnStatement(true);
 		}
-		
+		else if(ins instanceof ConditionalBranchInstruction){
+//			ConditionalBranchInstruction cbIns = (ConditionalBranchInstruction)ins;
+			point.setConditional(true);
+		}
+		else if(ins instanceof InstanceofInstruction){
+			point.setConditional(true);
+		}
 	}
 	
 	class ASTNodeRetriever extends ASTVisitor{
@@ -706,27 +714,17 @@ public class MicrobatSlicer{
 
 				int stmtLinNumber = getStatementLineNumber(method, stwI);
 				
-				int bcIndex = method.getBytecodeIndex(k);						
-				int insLinNumber = method.getLineNumber(bcIndex);
+				String className = getClassCanonicalName(method);
+				String methodSig = method.getSignature();
+				String key = className + "." + methodSig + "(line " + stmtLinNumber + ")";
 				
-				if(insLinNumber == stmtLinNumber){
-					
-					if(insLinNumber == 43){
-						System.currentTimeMillis();
-					}
-					
-					String className = getClassCanonicalName(method);
-					String methodSig = method.getSignature();
-					String key = className + "." + methodSig + "(line " + stmtLinNumber + ")";
-					
-					BreakPoint point = bkpSet.get(key);
-					if(point == null){
-						point = new BreakPoint(className, methodSig, stmtLinNumber);
-						bkpSet.put(key, point);
-					}
-					
-					appendReadWritenVariable(point, method, allInsts[k], k, stmt.getNode().getIR());
+				BreakPoint point = bkpSet.get(key);
+				if(point == null){
+					point = new BreakPoint(className, methodSig, stmtLinNumber);
+					bkpSet.put(key, point);
 				}
+				
+				appendReadWritenVariable(point, method, allInsts[k], k, stmt.getNode().getIR());
 			}
 			
 			
