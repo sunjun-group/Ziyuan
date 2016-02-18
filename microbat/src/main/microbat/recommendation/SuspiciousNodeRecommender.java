@@ -173,7 +173,12 @@ public class SuspiciousNodeRecommender {
 			LoopSequence loopSequence = trace.findLoopRangeOf(currentNode);
 			for(TraceNode dominator: dominators){
 				if(dominator.getInvocationLevel() < currentNode.getInvocationLevel()){
-					return dominator;
+					if(currentNode.getInvocationParent() != null){
+						if(dominator.getOrder() <= currentNode.getInvocationParent().getOrder()){
+							return dominator;							
+						}
+					}
+					
 				}
 				
 				if(loopSequence != null){
