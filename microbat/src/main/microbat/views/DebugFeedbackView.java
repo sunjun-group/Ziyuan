@@ -122,7 +122,7 @@ public class DebugFeedbackView extends ViewPart {
 		
 		yesButton.setSelection(false);
 		noButton.setSelection(true);
-//		unclearButton.setSelection(false);
+		unclearButton.setSelection(false);
 		boolean enabled = isValidToInferBugType();
 		bugTypeInferenceButton.setEnabled(enabled);
 		
@@ -219,9 +219,6 @@ public class DebugFeedbackView extends ViewPart {
 		else if(element instanceof GraphDiff){
 			ev = (VarValue) ((GraphDiff)element).getChangedNode();
 		}
-		
-//		InterestedVariable iv = new InterestedVariable(point.getDeclaringCompilationUnitName(), 
-//				point.getLineNo(), ev);
 		
 		String varID = ev.getVarID();
 		
@@ -462,7 +459,7 @@ public class DebugFeedbackView extends ViewPart {
 		feedbackGroup.setText("Are all variables in this step correct?");
 		feedbackGroup
 				.setLayoutData(new GridData(SWT.FILL, SWT.UP, true, false));
-		feedbackGroup.setLayout(new GridLayout(4, true));
+		feedbackGroup.setLayout(new GridLayout(5, true));
 
 		yesButton = new Button(feedbackGroup, SWT.RADIO);
 		yesButton.setText(" Yes");
@@ -495,20 +492,20 @@ public class DebugFeedbackView extends ViewPart {
 		});
 		
 		//TODO handle the case when user report that it is unclear.
-//		unclearButton = new Button(feedbackGroup, SWT.RADIO);
-//		unclearButton.setText(" Unclear");
-//		unclearButton.setLayoutData(new GridData(SWT.LEFT, SWT.UP, true, false));
-//		unclearButton.addMouseListener(new MouseListener() {
-//			public void mouseUp(MouseEvent e) {
-//			}
-//
-//			public void mouseDown(MouseEvent e) {
-//				feedbackType = DebugFeedbackView.UNCLEAR;
-//			}
-//
-//			public void mouseDoubleClick(MouseEvent e) {
-//			}
-//		});
+		unclearButton = new Button(feedbackGroup, SWT.RADIO);
+		unclearButton.setText(" Unclear");
+		unclearButton.setLayoutData(new GridData(SWT.LEFT, SWT.UP, true, false));
+		unclearButton.addMouseListener(new MouseListener() {
+			public void mouseUp(MouseEvent e) {
+			}
+
+			public void mouseDown(MouseEvent e) {
+				feedbackType = DebugFeedbackView.UNCLEAR;
+			}
+
+			public void mouseDoubleClick(MouseEvent e) {
+			}
+		});
 		
 //		Label holder = new Label(feedbackGroup, SWT.NONE);
 //		holder.setText("");
@@ -588,11 +585,10 @@ public class DebugFeedbackView extends ViewPart {
 			else {
 				Trace trace = Activator.getDefault().getCurrentTrace();
 				
-				setCurrentNodeCheck(trace, currentNode);
-				
 				TraceNode suspiciousNode = null;
 				
 				if(!feedbackType.equals(DebugFeedbackView.UNCLEAR)){
+					setCurrentNodeCheck(trace, currentNode);
 					int readVarCorrectness = currentNode.getReadVarCorrectness(Settings.interestedVariables);
 					int writtenVarCorrectness = currentNode.getWittenVarCorrectness(Settings.interestedVariables);
 
@@ -619,12 +615,7 @@ public class DebugFeedbackView extends ViewPart {
 								suspiciousNode = conflictNode;
 							}
 						}
-						
-						
-						
 					}
-					
-					
 				}
 				else if(feedbackType.equals(DebugFeedbackView.UNCLEAR)){
 					//TODO
