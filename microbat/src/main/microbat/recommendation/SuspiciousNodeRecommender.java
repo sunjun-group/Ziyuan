@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
 import microbat.model.AttributionVar;
 import microbat.model.trace.LoopSequence;
@@ -87,34 +86,36 @@ public class SuspiciousNodeRecommender {
 	
 	private LoopRange range = new LoopRange();
 	
-	private Stack<TraceNode> visitedUnclearNodeStack = new Stack<>();
+	private List<TraceNode> visitedUnclearNodeList = new ArrayList<>();
 	
 	public TraceNode recommendNode(Trace trace, TraceNode currentNode, String feedback){
 		if(feedback.equals(UserFeedback.UNCLEAR)){
 			state = DebugState.UNCLEAR;
-			visitedUnclearNodeStack.push(currentNode);
+			visitedUnclearNodeList.add(currentNode);
+			Collections.sort(visitedUnclearNodeList, new TraceNodeOrderComparator());
 			TraceNode node = findMoreClearNode(trace, currentNode);
 			return node;
 		}
 		else if((state==DebugState.UNCLEAR || state==DebugState.PARTIAL_CLEAR) && feedback.equals(UserFeedback.CORRECT)){
 			state = DebugState.PARTIAL_CLEAR;
 			
-			TraceNode peekVisitedNode = visitedUnclearNodeStack.peek();
-			while(currentNode.getOrder() >= peekVisitedNode.getOrder()){
-				visitedUnclearNodeStack.pop();
-				if(!visitedUnclearNodeStack.isEmpty()){
-					peekVisitedNode = visitedUnclearNodeStack.peek();
-				}
-				else{
-					break;
+			Iterator<TraceNode> iter = visitedUnclearNodeList.iterator();
+			while(iter.hasNext()){
+				TraceNode visitedUnclearNode = iter.next();
+				if(currentNode.getOrder() >= visitedUnclearNode.getOrder()){
+					iter.remove();
 				}
 			}
+			TraceNode earliestVisitedNode = null;
+			if(!visitedUnclearNodeList.isEmpty()){
+				earliestVisitedNode = visitedUnclearNodeList.get(0);
+			}
 			
-			TraceNode node = findMoreDetailedNodeInBetween(trace, currentNode, peekVisitedNode);
+			TraceNode node = findMoreDetailedNodeInBetween(trace, currentNode, earliestVisitedNode);
 			return node;
 		}
 		else if((state==DebugState.UNCLEAR || state==DebugState.PARTIAL_CLEAR) && feedback.equals(UserFeedback.INCORRECT)){
-			visitedUnclearNodeStack.clear();
+			visitedUnclearNodeList.clear();
 			TraceNode node = handleJumpBehavior(trace, currentNode);
 			return node;
 		}
@@ -124,8 +125,8 @@ public class SuspiciousNodeRecommender {
 		}
 	}
 	
-	private TraceNode findMoreDetailedNodeInBetween(Trace trace, TraceNode currentNode, TraceNode peekVisitedUnclearNode) {
-		if(currentNode.getOrder() > peekVisitedUnclearNode.getOrder()){
+	private TraceNode findMoreDetailedNodeInBetween(Trace trace, TraceNode currentNode, TraceNode earliestVisitedUnclearNode) {
+		if(earliestVisitedUnclearNode == null){
 			TraceNode node = handleJumpBehavior(trace, currentNode);
 			return node;
 		}
@@ -136,23 +137,24 @@ public class SuspiciousNodeRecommender {
 				List<TraceNode> dominators = earliestNodeWithWrongVar.findAllDominators();
 				Collections.sort(dominators, new TraceNodeOrderComparator());
 				
-				boolean isLarge = false;
-				TraceNode moreDetailedNodeInBetween = null;
-				for(TraceNode dominator: dominators){
-					isLarge = dominator.getOrder() > currentNode.getOrder() && 
-							dominator.getOrder() < peekVisitedUnclearNode.getOrder();
-					if(isLarge){
-						moreDetailedNodeInBetween = dominator;
-						break;
+				Iterator<TraceNode> iter = dominators.iterator();
+				while(iter.hasNext()){
+					TraceNode dominator = iter.next();
+					boolean shouldRemove = dominator.getOrder() < currentNode.getOrder() || 
+							dominator.getOrder() > earliestVisitedUnclearNode.getOrder();
+					if(shouldRemove){
+						iter.remove();
 					}
 				}
 				
-				if(moreDetailedNodeInBetween != null){
+				if(!dominators.isEmpty()){
+					int index = dominators.size()/2;
+					TraceNode moreDetailedNodeInBetween = dominators.get(index);
 					return moreDetailedNodeInBetween;
 				}
 				else{
 					System.err.println("In findMoreDetailedNodeInBetween(), cannot find a dominator between current node " + 
-							currentNode.getOrder() + ", and unclear node " + peekVisitedUnclearNode.getOrder());
+							currentNode.getOrder() + ", and unclear node " + earliestVisitedUnclearNode.getOrder());
 				}
 			}
 			else{
