@@ -27,7 +27,7 @@ public class ConditionalScopeParser {
 		public boolean visit(DoStatement statement){
 			int line = cu.getLineNumber(statement.getExpression().getStartPosition());
 			if(line == conditionLineNumber){
-				setScope(statement);
+				setScope(statement, true);
 				return false;
 			}
 			
@@ -37,7 +37,7 @@ public class ConditionalScopeParser {
 		public boolean visit(EnhancedForStatement statement){
 			int line = cu.getLineNumber(statement.getStartPosition());
 			if(line == conditionLineNumber){
-				setScope(statement);
+				setScope(statement, true);
 				return false;
 			}
 			return true;
@@ -46,7 +46,7 @@ public class ConditionalScopeParser {
 		public boolean visit(ForStatement statement){
 			int line = cu.getLineNumber(statement.getExpression().getStartPosition());
 			if(line == conditionLineNumber){
-				setScope(statement);
+				setScope(statement, true);
 				return false;
 			}
 			return true;
@@ -55,7 +55,7 @@ public class ConditionalScopeParser {
 		public boolean visit(IfStatement statement){
 			int line = cu.getLineNumber(statement.getExpression().getStartPosition());
 			if(line == conditionLineNumber){
-				setScope(statement);
+				setScope(statement, false);
 				return false;
 			}
 			return true;
@@ -64,7 +64,7 @@ public class ConditionalScopeParser {
 		public boolean visit(SwitchStatement statement){
 			int line = cu.getLineNumber(statement.getExpression().getStartPosition());
 			if(line == conditionLineNumber){
-				setScope(statement);
+				setScope(statement, false);
 				return false;
 			}
 			return true;
@@ -73,17 +73,18 @@ public class ConditionalScopeParser {
 		public boolean visit(WhileStatement statement){
 			int line = cu.getLineNumber(statement.getExpression().getStartPosition());
 			if(line == conditionLineNumber){
-				setScope(statement);
+				setScope(statement, true);
 				return false;
 			}
 			return true;
 		}
 		
-		private void setScope(Statement statement){
+		private void setScope(Statement statement, boolean isLoop){
 			scope = new Scope();
 			scope.setCompilationUnit(cu);
 			scope.setStartLine(cu.getLineNumber(statement.getStartPosition())); 
 			scope.setEndLine(cu.getLineNumber(statement.getStartPosition()+statement.getLength())); 
+			scope.setLoopScope(isLoop);
 		}
 	}
 	

@@ -473,23 +473,30 @@ public class TraceNode{
 	}
 
 	public List<TraceNode> findAllDominators() {
-		List<TraceNode> dominators = new ArrayList<>();
+//		List<TraceNode> dominators = new ArrayList<>();
 		
-		System.currentTimeMillis();
+		Map<Integer, TraceNode> dominators = new HashMap<>();
+		
 		findDominators(this, dominators);
 		
-		return dominators;
+		return new ArrayList<>(dominators.values());
 	}
 
-	private void findDominators(TraceNode node, List<TraceNode> dominators) {
+	private void findDominators(TraceNode node, Map<Integer, TraceNode> dominators) {
 		for(TraceNode dominator: node.getDataDominator().keySet()){
-			if(!dominators.contains(dominator)){
-				dominators.add(dominator);		
-			
-				findDominators(dominator, dominators);
+			if(!dominators.containsKey(dominator.getOrder())){
+				dominators.put(dominator.getOrder(), dominator);		
+				findDominators(dominator, dominators);				
 			}
 		}
 		
+		TraceNode controlDominator = node.getControlDominator();
+		if(controlDominator != null){
+			if(!dominators.containsKey(controlDominator.getOrder())){
+				dominators.put(controlDominator.getOrder(), controlDominator);
+				findDominators(controlDominator, dominators);				
+			}
+		}
 	}
 
 	public TraceNode getControlDominator() {
@@ -520,5 +527,44 @@ public class TraceNode{
 	
 	public Scope getConditionScope(){
 		return this.breakPoint.getConditionScope();
+	}
+
+	public int getInvocationLevel() {
+		int level = 0;
+		TraceNode parent = getInvocationParent();
+		while(parent != null){
+			parent = parent.getInvocationParent();
+			level++;
+		}
+		
+		return level;
+	}
+
+	public boolean isLoopCondition() {
+		if(isConditionalBranch()){
+			Scope scope = getConditionScope();
+			if(scope != null){
+				return scope.isLoopScope();
+			}
+		}
+		return false;
+	}
+
+	public List<TraceNode> findAllControlDominatees() {
+		List<TraceNode> controlDominatees = new ArrayList<>();
+		findAllControlDominatees(this, controlDominatees);
+		return controlDominatees;
+	}
+
+	private void findAllControlDominatees(TraceNode node, List<TraceNode> controlDominatees) {
+		for(TraceNode dominatee: node.getControlDominatees()){
+			controlDominatees.add(dominatee);
+			findAllControlDominatees(dominatee, controlDominatees);
+		}
+	}
+
+	public boolean hasSameLocation(TraceNode controlLoopDominator) {
+		return getClassName().equals(controlLoopDominator.getClassName()) && 
+				getLineNumber()==controlLoopDominator.getLineNumber();
 	}
 }

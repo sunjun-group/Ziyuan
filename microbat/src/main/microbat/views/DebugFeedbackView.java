@@ -15,6 +15,7 @@ import microbat.model.value.VarValue;
 import microbat.recommendation.Bug;
 import microbat.recommendation.BugInferer;
 import microbat.recommendation.SuspiciousNodeRecommender;
+import microbat.recommendation.UserFeedback;
 import microbat.recommendation.conflicts.ConflictRuleChecker;
 import microbat.util.Settings;
 
@@ -54,16 +55,14 @@ import org.eclipse.ui.part.ViewPart;
 
 public class DebugFeedbackView extends ViewPart {
 
-	public static final String CORRECT = "correct";
-	public static final String INCORRECT = "incorrect";
-	public static final String UNCLEAR = "unclear";
+	
 	
 	private TraceNode currentNode;
 //	private TraceNode lastestNode;
 	
 	private SuspiciousNodeRecommender recommender = new SuspiciousNodeRecommender();
 	
-	private String feedbackType = INCORRECT;
+	private String feedbackType = UserFeedback.INCORRECT;
 	
 //	public static final String INPUT = "input";
 //	public static final String OUTPUT = "output";
@@ -126,7 +125,7 @@ public class DebugFeedbackView extends ViewPart {
 		boolean enabled = isValidToInferBugType();
 		bugTypeInferenceButton.setEnabled(enabled);
 		
-		feedbackType = INCORRECT;
+		feedbackType = UserFeedback.INCORRECT;
 	}
 	
 	
@@ -298,7 +297,7 @@ public class DebugFeedbackView extends ViewPart {
 				readVariableTreeViewer.refresh();
 				stateTreeViewer.refresh();	
 				
-				setCurrentNodeCheck(trace, currentNode);
+				setCurrentNodeChecked(trace, currentNode);
 				boolean enabled = isValidToInferBugType();
 				bugTypeInferenceButton.setEnabled(enabled);
 			}
@@ -469,7 +468,7 @@ public class DebugFeedbackView extends ViewPart {
 			}
 
 			public void mouseDown(MouseEvent e) {
-				feedbackType = DebugFeedbackView.CORRECT;
+				feedbackType = UserFeedback.CORRECT;
 			}
 
 			public void mouseDoubleClick(MouseEvent e) {
@@ -484,14 +483,13 @@ public class DebugFeedbackView extends ViewPart {
 			}
 
 			public void mouseDown(MouseEvent e) {
-				feedbackType = DebugFeedbackView.INCORRECT;
+				feedbackType = UserFeedback.INCORRECT;
 			}
 
 			public void mouseDoubleClick(MouseEvent e) {
 			}
 		});
 		
-		//TODO handle the case when user report that it is unclear.
 		unclearButton = new Button(feedbackGroup, SWT.RADIO);
 		unclearButton.setText(" Unclear");
 		unclearButton.setLayoutData(new GridData(SWT.LEFT, SWT.UP, true, false));
@@ -500,7 +498,7 @@ public class DebugFeedbackView extends ViewPart {
 			}
 
 			public void mouseDown(MouseEvent e) {
-				feedbackType = DebugFeedbackView.UNCLEAR;
+				feedbackType = UserFeedback.UNCLEAR;
 			}
 
 			public void mouseDoubleClick(MouseEvent e) {
@@ -522,7 +520,7 @@ public class DebugFeedbackView extends ViewPart {
 		bugTypeInferenceButton.setEnabled(isValidToInferBugType());
 	}
 	
-	private void setCurrentNodeCheck(Trace trace, TraceNode currentNode) {
+	private void setCurrentNodeChecked(Trace trace, TraceNode currentNode) {
 		int checkTime = trace.getCheckTime()+1;
 		currentNode.setCheckTime(checkTime);
 		trace.setCheckTime(checkTime);
@@ -562,20 +560,47 @@ public class DebugFeedbackView extends ViewPart {
 			box.open();
 		}
 		
-		private void openFindBugDialog(){
+		private void openBugFoundDialog(){
 			MessageBox box = new MessageBox(PlatformUI.getWorkbench()
 					.getDisplay().getActiveShell());
 			box.setMessage("Correct read variable with incorrect written variable, You have found the bug!");
 			box.open();
 		}
 		
-		private void openReconfirmDialog(){
+		private void openReconfirmDialog(String message){
 			Status status = new Status(IStatus.ERROR, "My Plug-in ID", 0,
 		            "Conflict Choice", null);
 			ErrorDialog.openError(PlatformUI.getWorkbench()
-					.getDisplay().getActiveShell(), "Conflict Choice", "It seems that this step is correct and it takes "
-							+ "some incorrect read variables while produces correct output (written variable), "
-							+ "are you really sure?", status);
+					.getDisplay().getActiveShell(), "Conflict Choice", message, status);
+		}
+		
+		private boolean isValidForRecommendation(){
+			int readVarCorrectness = currentNode.getReadVarCorrectness(Settings.interestedVariables);
+			int writtenVarCorrectness = currentNode.getWittenVarCorrectness(Settings.interestedVariables);
+			
+			if(writtenVarCorrectness==TraceNode.WRITTEN_VARS_INCORRECT 
+					&& readVarCorrectness==TraceNode.READ_VARS_CORRECT){
+				openBugFoundDialog();
+				return false;
+			}
+			else if(writtenVarCorrectness==TraceNode.WRITTEN_VARS_CORRECT 
+					&& readVarCorrectness==TraceNode.READ_VARS_INCORRECT){
+				String message = "It seems that this step is correct and it takes "
+						+ "some incorrect read variables while produces correct output (written variable), "
+						+ "are you really sure?";
+				openReconfirmDialog(message);
+				return false;
+			}
+			else if(writtenVarCorrectness==TraceNode.WRITTEN_VARS_INCORRECT
+					&& readVarCorrectness==TraceNode.READ_VARS_INCORRECT
+					&& feedbackType.equals(UserFeedback.CORRECT)){
+				String message = "Some variables are marked incorrect, but your feedback is marked correct, "
+						+ "are you really sure?";
+				openReconfirmDialog(message);
+				return false;
+			}
+			
+			return true;
 		}
 
 		public void mouseDown(MouseEvent e) {
@@ -587,39 +612,27 @@ public class DebugFeedbackView extends ViewPart {
 				
 				TraceNode suspiciousNode = null;
 				
-				if(!feedbackType.equals(DebugFeedbackView.UNCLEAR)){
-					setCurrentNodeCheck(trace, currentNode);
-					int readVarCorrectness = currentNode.getReadVarCorrectness(Settings.interestedVariables);
-					int writtenVarCorrectness = currentNode.getWittenVarCorrectness(Settings.interestedVariables);
-
-					if(writtenVarCorrectness==TraceNode.WRITTEN_VARS_INCORRECT 
-							&& readVarCorrectness==TraceNode.READ_VARS_CORRECT){
-						openFindBugDialog();
-					}
-					else if(writtenVarCorrectness==TraceNode.WRITTEN_VARS_CORRECT 
-							&& readVarCorrectness==TraceNode.READ_VARS_INCORRECT){
-						openReconfirmDialog();
-					}
-					else{
-						ConflictRuleChecker conflictRuleChecker = new ConflictRuleChecker();
-						TraceNode conflictNode = conflictRuleChecker.checkConflicts(trace, currentNode.getOrder());
-						
-						if(conflictNode == null){
-							suspiciousNode = recommender.recommendSuspiciousNode(trace, currentNode);
-						}
-						else{
-							boolean userConfirm = MessageDialog.openConfirm(PlatformUI.getWorkbench().getDisplay().getActiveShell(), 
-									"Feedback Conflict", "The choice is conflict with your previous feedback, "
-											+ "are your sure with your this choice?");
-							if(userConfirm){
-								suspiciousNode = conflictNode;
-							}
-						}
-					}
+				if(!feedbackType.equals(UserFeedback.UNCLEAR)){
+					setCurrentNodeChecked(trace, currentNode);					
 				}
-				else if(feedbackType.equals(DebugFeedbackView.UNCLEAR)){
-					//TODO
-					//suspiciousNode = trace.findMoreClearNode();
+				
+				boolean isValidForRecommendation = isValidForRecommendation();
+				if(isValidForRecommendation){
+//					ConflictRuleChecker conflictRuleChecker = new ConflictRuleChecker();
+//					TraceNode conflictNode = conflictRuleChecker.checkConflicts(trace, currentNode.getOrder());
+//					
+//					if(conflictNode == null){
+//						suspiciousNode = recommender.recommendSuspiciousNode(trace, currentNode);
+//					}
+//					else{
+//						boolean userConfirm = MessageDialog.openConfirm(PlatformUI.getWorkbench().getDisplay().getActiveShell(), 
+//								"Feedback Conflict", "The choice is conflict with your previous feedback, "
+//										+ "are your sure with your this choice?");
+//						if(userConfirm){
+//							suspiciousNode = conflictNode;
+//						}
+//					}
+					suspiciousNode = recommender.recommendNode(trace, currentNode, feedbackType);
 				}
 				
 				if(suspiciousNode != null){

@@ -2,14 +2,18 @@ package microbat.recommendation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 
 import microbat.model.AttributionVar;
+import microbat.model.trace.LoopSequence;
 import microbat.model.trace.PathInstance;
 import microbat.model.trace.PotentialCorrectPattern;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.model.trace.TraceNodeOrderComparator;
+import microbat.model.trace.TraceNodeReverseOrderComparator;
 import microbat.model.value.VarValue;
 import microbat.model.variable.Variable;
 import microbat.util.Settings;
@@ -25,18 +29,6 @@ public class SuspiciousNodeRecommender {
 		TraceNode endNode;
 		
 		TraceNode binaryLandmark;
-
-//		public void update() {
-//			Collections.sort(skipPoints, new TraceNodeOrderComparator());
-//			Iterator<TraceNode> iter = skipPoints.iterator();
-//			while(iter.hasNext()){
-//				TraceNode skipNode = iter.next();
-//				if(skipNode.getOrder() < startNode.getOrder()
-//						|| skipNode.getOrder() > endNode.getOrder()){
-//					iter.remove();
-//				}
-//			}
-//		}
 
 		public TraceNode binarySearch() {
 			Collections.sort(skipPoints, new TraceNodeOrderComparator());
@@ -87,22 +79,122 @@ public class SuspiciousNodeRecommender {
 		}
 	}
 	
-	public static int JUMP = 0;
-	public static int SKIP = 1;
-	public static int BINARY_SEARCH = 2;
+	private int state = DebugState.JUMP;
 	
-	private int state = JUMP;
-	
-//	private boolean isFormSkipping = false;
-//	private boolean isOverSkipping = false;
-
 	private TraceNode lastNode;
 	
 	private TraceNode lastRecommendNode;
 	
 	private LoopRange range = new LoopRange();
 	
-	public TraceNode recommendSuspiciousNode(Trace trace, TraceNode currentNode){
+	private Stack<TraceNode> visitedUnclearNodeStack = new Stack<>();
+	
+	public TraceNode recommendNode(Trace trace, TraceNode currentNode, String feedback){
+		if(feedback.equals(UserFeedback.UNCLEAR)){
+			state = DebugState.UNCLEAR;
+			visitedUnclearNodeStack.push(currentNode);
+			TraceNode node = findMoreClearNode(trace, currentNode);
+			return node;
+		}
+		else if((state==DebugState.UNCLEAR || state==DebugState.PARTIAL_CLEAR) && feedback.equals(UserFeedback.CORRECT)){
+			state = DebugState.PARTIAL_CLEAR;
+			
+			TraceNode peekVisitedNode = visitedUnclearNodeStack.peek();
+			while(currentNode.getOrder() >= peekVisitedNode.getOrder()){
+				visitedUnclearNodeStack.pop();
+				if(!visitedUnclearNodeStack.isEmpty()){
+					peekVisitedNode = visitedUnclearNodeStack.peek();
+				}
+				else{
+					break;
+				}
+			}
+			
+			TraceNode node = findMoreDetailedNodeInBetween(trace, currentNode, peekVisitedNode);
+			return node;
+		}
+		else if((state==DebugState.UNCLEAR || state==DebugState.PARTIAL_CLEAR) && feedback.equals(UserFeedback.INCORRECT)){
+			visitedUnclearNodeStack.clear();
+			TraceNode node = handleJumpBehavior(trace, currentNode);
+			return node;
+		}
+		else{
+			TraceNode node = recommendSuspiciousNode(trace, currentNode);
+			return node;
+		}
+	}
+	
+	private TraceNode findMoreDetailedNodeInBetween(Trace trace, TraceNode currentNode, TraceNode peekVisitedUnclearNode) {
+		if(currentNode.getOrder() > peekVisitedUnclearNode.getOrder()){
+			TraceNode node = handleJumpBehavior(trace, currentNode);
+			return node;
+		}
+		else{
+			TraceNode earliestNodeWithWrongVar = trace.getEarliestNodeWithWrongVar();
+			
+			if(earliestNodeWithWrongVar != null){
+				List<TraceNode> dominators = earliestNodeWithWrongVar.findAllDominators();
+				Collections.sort(dominators, new TraceNodeOrderComparator());
+				
+				boolean isLarge = false;
+				TraceNode moreDetailedNodeInBetween = null;
+				for(TraceNode dominator: dominators){
+					isLarge = dominator.getOrder() > currentNode.getOrder() && 
+							dominator.getOrder() < peekVisitedUnclearNode.getOrder();
+					if(isLarge){
+						moreDetailedNodeInBetween = dominator;
+						break;
+					}
+				}
+				
+				if(moreDetailedNodeInBetween != null){
+					return moreDetailedNodeInBetween;
+				}
+				else{
+					System.err.println("In findMoreDetailedNodeInBetween(), cannot find a dominator between current node " + 
+							currentNode.getOrder() + ", and unclear node " + peekVisitedUnclearNode.getOrder());
+				}
+			}
+			else{
+				System.err.println("Cannot find earliestNodeWithWrongVar in findMoreDetailedNodeInBetween()");
+			}
+			
+			return null;
+		}
+	}
+
+	private TraceNode findMoreClearNode(Trace trace, TraceNode currentNode) {
+		TraceNode earliestNodeWithWrongVar = trace.getEarliestNodeWithWrongVar();
+		
+		if(earliestNodeWithWrongVar != null){
+			List<TraceNode> dominators = earliestNodeWithWrongVar.findAllDominators();
+			Collections.sort(dominators, new TraceNodeReverseOrderComparator());
+			
+			LoopSequence loopSequence = trace.findLoopRangeOf(currentNode);
+			for(TraceNode dominator: dominators){
+				if(dominator.getInvocationLevel() < currentNode.getInvocationLevel()){
+					return dominator;
+				}
+				
+				if(loopSequence != null){
+					if(loopSequence.containsRangeOf(dominator)){
+						continue;
+					}
+					else{
+						return dominator;
+					}
+				}
+			}
+			
+			if(!dominators.isEmpty()){
+				return dominators.get(0);
+			}
+		}
+		
+		return null;
+	}
+
+	private TraceNode recommendSuspiciousNode(Trace trace, TraceNode currentNode){
 		
 		if(lastNode != null){
 			PathInstance path = new PathInstance(currentNode, lastNode);
@@ -111,18 +203,18 @@ public class SuspiciousNodeRecommender {
 			}
 		}
 		
-		if(!currentNode.equals(lastRecommendNode)){
-			state = JUMP;
+		if(lastRecommendNode!= null && !currentNode.equals(lastRecommendNode)){
+			state = DebugState.JUMP;
 		}
 		
 		TraceNode suspiciousNode = null;
-		if(state == JUMP){
+		if(state == DebugState.JUMP){
 			suspiciousNode = handleJumpBehavior(trace, currentNode);
 		}
-		else if(state == SKIP){
+		else if(state == DebugState.SKIP){
 			suspiciousNode = handleSkipBehavior(trace, currentNode);
 		}
-		else if(state == BINARY_SEARCH){
+		else if(state == DebugState.BINARY_SEARCH){
 			suspiciousNode = handleBinarySearchBehavior(trace, currentNode);
 		}
 		
@@ -136,7 +228,7 @@ public class SuspiciousNodeRecommender {
 		
 		boolean isOverSkipping = currentNode.isAllReadWrittenVarCorrect();
 		if(isOverSkipping){
-			state = BINARY_SEARCH;
+			state = DebugState.BINARY_SEARCH;
 			
 			this.range.startNode = currentNode;
 //			this.range.update();
@@ -158,7 +250,7 @@ public class SuspiciousNodeRecommender {
 					Variable causingVariable = labelPath.findCausingVar();
 					
 					if(isCompatible(causingVariable, currentNode)){
-						state = BINARY_SEARCH;
+						state = DebugState.BINARY_SEARCH;
 						if(currentNode.isAllReadWrittenVarCorrect()){
 							this.range.startNode = currentNode;
 						}
@@ -172,7 +264,7 @@ public class SuspiciousNodeRecommender {
 						this.lastNode = currentNode;
 					}
 					else{
-						state = JUMP;
+						state = DebugState.JUMP;
 						suspiciousNode = handleJumpBehavior(trace, currentNode);
 					}
 				}
@@ -206,7 +298,7 @@ public class SuspiciousNodeRecommender {
 		TraceNode suspiciousNode;
 		boolean isOverSkipping = currentNode.isAllReadWrittenVarCorrect();
 		if(isOverSkipping){
-			state = BINARY_SEARCH;
+			state = DebugState.BINARY_SEARCH;
 			
 			this.range.startNode = currentNode;
 			this.range.backupStartAndEndNode();
@@ -217,7 +309,7 @@ public class SuspiciousNodeRecommender {
 			this.lastNode = currentNode;
 		}
 		else{
-			state = JUMP;
+			state = DebugState.JUMP;
 			
 			this.range.clearSkipPoints();
 			
@@ -245,7 +337,7 @@ public class SuspiciousNodeRecommender {
 		
 		boolean isPathInPattern = Settings.potentialCorrectPatterns.containsPattern(path)? true : false;
 		if(isPathInPattern){
-			state = SKIP;
+			state = DebugState.SKIP;
 			
 			this.range.endNode = path.getEndNode();
 			this.range.skipPoints.clear();
@@ -273,7 +365,7 @@ public class SuspiciousNodeRecommender {
 			return oldSusiciousNode;
 		}
 		else{
-			state = JUMP;
+			state = DebugState.JUMP;
 			
 			this.lastNode = currentNode;
 			return suspiciousNode;				

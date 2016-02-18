@@ -482,4 +482,80 @@ public class Trace {
 		
 		return oldestNode;
 	}
+
+	public LoopSequence findLoopRangeOf(TraceNode currentNode) {
+		
+		TraceNode controlDominator = currentNode.getControlDominator();
+		while(!controlDominator.isLoopCondition()){
+			controlDominator = controlDominator.getControlDominator();
+			if(controlDominator == null){
+				break;
+			}
+		}
+		
+		if(controlDominator != null){
+			List<TraceNode> allControlDominatees = controlDominator.findAllControlDominatees();
+			Collections.sort(allControlDominatees, new TraceNodeOrderComparator());
+			
+			List<TraceNode> range = extendLoopRange(allControlDominatees, controlDominator);
+			Collections.sort(range, new TraceNodeOrderComparator());
+			
+			LoopSequence loopSequence = new LoopSequence(range.get(0).getOrder(), 
+					range.get(range.size()-1).getOrder());
+			
+			return loopSequence;
+		}
+		
+		return null;
+	}
+
+	private List<TraceNode> extendLoopRange(List<TraceNode> allControlDominatees, TraceNode controlLoopDominator) {
+
+		List<TraceNode> range = new ArrayList<>();
+		for(int i=controlLoopDominator.getOrder()-2; i>=0; i--){
+			TraceNode node = this.exectionList.get(i);
+			boolean isInSameLoop = isInSameLoop(node, controlLoopDominator);
+			if(isInSameLoop){
+				range.add(node);
+			}
+			else{
+				break;
+			}
+		}
+		
+		TraceNode lastLoopNode = allControlDominatees.get(allControlDominatees.size()-1);
+		for(int i=lastLoopNode.getOrder()-1+1; i<exectionList.size(); i++){
+			TraceNode node = this.exectionList.get(i);
+			boolean isInSameLoop = isInSameLoop(node, controlLoopDominator);
+			if(isInSameLoop){
+				range.add(node);
+			}
+			else{
+				break;
+			}
+		}
+		
+		range.addAll(allControlDominatees);
+		return range;
+	}
+
+	private boolean isInSameLoop(TraceNode node, TraceNode controlLoopDominator) {
+		
+		TraceNode testNode = node;
+		while(testNode != null && !testNode.hasSameLocation(controlLoopDominator)){
+			testNode = testNode.getControlDominator();
+		}
+		
+		return testNode != null;
+	}
+
+	public TraceNode getEarliestNodeWithWrongVar() {
+		for(TraceNode node: this.exectionList){
+			if(node.getWittenVarCorrectness(Settings.interestedVariables)==TraceNode.WRITTEN_VARS_INCORRECT
+					|| node.getReadVarCorrectness(Settings.interestedVariables)==TraceNode.READ_VARS_INCORRECT){
+				return node;
+			}
+		}
+		return null;
+	}
 }

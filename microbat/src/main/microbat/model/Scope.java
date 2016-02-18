@@ -9,37 +9,53 @@ public class Scope {
 	private CompilationUnit cu;
 	private int startLine;
 	private int endLine;
-	public CompilationUnit getCu() {
+
+	private boolean isLoopScope;
+
+	public CompilationUnit getCompilationUnit() {
 		return cu;
 	}
+
 	public void setCompilationUnit(CompilationUnit cu) {
 		this.cu = cu;
 	}
+
 	public int getStartLine() {
 		return startLine;
 	}
+
 	public void setStartLine(int startLine) {
 		this.startLine = startLine;
 	}
+
 	public int getEndLine() {
 		return endLine;
 	}
+
 	public void setEndLine(int endLine) {
 		this.endLine = endLine;
 	}
+
 	public boolean containsNodeScope(TraceNode node) {
 		String nodeClassName = node.getClassName();
 		String scopeClassName = JavaUtil.getFullNameOfCompilationUnit(cu);
-		
-		if(nodeClassName.equals(scopeClassName)){
+
+		if (nodeClassName.equals(scopeClassName)) {
 			int line = node.getLineNumber();
-			if(line >= startLine && line <= endLine){
+			if (line >= startLine && line <= endLine) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
-	
+
+	public boolean isLoopScope() {
+		return isLoopScope;
+	}
+
+	public void setLoopScope(boolean isLoopScope) {
+		this.isLoopScope = isLoopScope;
+	}
+
 }
