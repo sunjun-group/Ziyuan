@@ -112,7 +112,12 @@ public class SuspiciousNodeRecommender {
 			}
 			
 			TraceNode node = findMoreDetailedNodeInBetween(trace, currentNode, earliestVisitedNode);
-			return node;
+			if(node.equals(currentNode)){
+				return earliestVisitedNode;
+			}
+			else{
+				return node;
+			}
 		}
 		else if((state==DebugState.UNCLEAR || state==DebugState.PARTIAL_CLEAR) && feedback.equals(UserFeedback.INCORRECT)){
 			visitedUnclearNodeList.clear();
