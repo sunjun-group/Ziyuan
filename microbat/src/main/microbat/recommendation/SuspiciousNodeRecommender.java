@@ -80,16 +80,23 @@ public class SuspiciousNodeRecommender {
 	
 	private int state = DebugState.JUMP;
 	
+	/**
+	 * Fields for clear state.
+	 */
+	private int latestClearState = -1;
 	private TraceNode lastNode;
-	
 	private TraceNode lastRecommendNode;
-	
 	private LoopRange range = new LoopRange();
 	
 	private List<TraceNode> visitedUnclearNodeList = new ArrayList<>();
 	
 	public TraceNode recommendNode(Trace trace, TraceNode currentNode, String feedback){
 		if(feedback.equals(UserFeedback.UNCLEAR)){
+			
+			if(state==DebugState.JUMP || state==DebugState.SKIP || state==DebugState.BINARY_SEARCH){
+				latestClearState = state;
+			}
+			
 			state = DebugState.UNCLEAR;
 			visitedUnclearNodeList.add(currentNode);
 			Collections.sort(visitedUnclearNodeList, new TraceNodeOrderComparator());
@@ -111,17 +118,25 @@ public class SuspiciousNodeRecommender {
 				earliestVisitedNode = visitedUnclearNodeList.get(0);
 			}
 			
-			TraceNode node = findMoreDetailedNodeInBetween(trace, currentNode, earliestVisitedNode);
-			if(node.equals(currentNode)){
-				return earliestVisitedNode;
+			if(earliestVisitedNode == null){
+				state = latestClearState;
+				TraceNode node = recommendSuspiciousNode(trace, currentNode);
+				return node;
 			}
 			else{
-				return node;
+				TraceNode node = findMoreDetailedNodeInBetween(trace, currentNode, earliestVisitedNode);
+				if(node.equals(currentNode)){
+					return earliestVisitedNode;
+				}
+				else{
+					return node;
+				}
 			}
 		}
 		else if((state==DebugState.UNCLEAR || state==DebugState.PARTIAL_CLEAR) && feedback.equals(UserFeedback.INCORRECT)){
 			visitedUnclearNodeList.clear();
-			TraceNode node = handleJumpBehavior(trace, currentNode);
+			state = latestClearState;
+			TraceNode node = recommendSuspiciousNode(trace, currentNode);
 			return node;
 		}
 		else{
@@ -131,43 +146,37 @@ public class SuspiciousNodeRecommender {
 	}
 	
 	private TraceNode findMoreDetailedNodeInBetween(Trace trace, TraceNode currentNode, TraceNode earliestVisitedUnclearNode) {
-		if(earliestVisitedUnclearNode == null){
-			TraceNode node = handleJumpBehavior(trace, currentNode);
-			return node;
-		}
-		else{
-			TraceNode earliestNodeWithWrongVar = trace.getEarliestNodeWithWrongVar();
+		TraceNode earliestNodeWithWrongVar = trace.getEarliestNodeWithWrongVar();
+		
+		if(earliestNodeWithWrongVar != null){
+			List<TraceNode> dominators = earliestNodeWithWrongVar.findAllDominators();
+			Collections.sort(dominators, new TraceNodeOrderComparator());
 			
-			if(earliestNodeWithWrongVar != null){
-				List<TraceNode> dominators = earliestNodeWithWrongVar.findAllDominators();
-				Collections.sort(dominators, new TraceNodeOrderComparator());
-				
-				Iterator<TraceNode> iter = dominators.iterator();
-				while(iter.hasNext()){
-					TraceNode dominator = iter.next();
-					boolean shouldRemove = dominator.getOrder() < currentNode.getOrder() || 
-							dominator.getOrder() > earliestVisitedUnclearNode.getOrder();
-					if(shouldRemove){
-						iter.remove();
-					}
+			Iterator<TraceNode> iter = dominators.iterator();
+			while(iter.hasNext()){
+				TraceNode dominator = iter.next();
+				boolean shouldRemove = dominator.getOrder() < currentNode.getOrder() || 
+						dominator.getOrder() > earliestVisitedUnclearNode.getOrder();
+				if(shouldRemove){
+					iter.remove();
 				}
-				
-				if(!dominators.isEmpty()){
-					int index = dominators.size()/2;
-					TraceNode moreDetailedNodeInBetween = dominators.get(index);
-					return moreDetailedNodeInBetween;
-				}
-				else{
-					System.err.println("In findMoreDetailedNodeInBetween(), cannot find a dominator between current node " + 
-							currentNode.getOrder() + ", and unclear node " + earliestVisitedUnclearNode.getOrder());
-				}
+			}
+			
+			if(!dominators.isEmpty()){
+				int index = dominators.size()/2;
+				TraceNode moreDetailedNodeInBetween = dominators.get(index);
+				return moreDetailedNodeInBetween;
 			}
 			else{
-				System.err.println("Cannot find earliestNodeWithWrongVar in findMoreDetailedNodeInBetween()");
+				System.err.println("In findMoreDetailedNodeInBetween(), cannot find a dominator between current node " + 
+						currentNode.getOrder() + ", and unclear node " + earliestVisitedUnclearNode.getOrder());
 			}
-			
-			return null;
 		}
+		else{
+			System.err.println("Cannot find earliestNodeWithWrongVar in findMoreDetailedNodeInBetween()");
+		}
+		
+		return null;
 	}
 
 	private TraceNode findMoreAbstractDominator(LoopSequence loopSequence, List<TraceNode> dominators, TraceNode currentNode){
