@@ -437,13 +437,19 @@ public class TraceNode{
 //	}
 
 	public List<TraceNode> getUncheckedDominators() {
-		List<TraceNode> nonCorrectDominators = new ArrayList<>();
+		List<TraceNode> uncheckedDominators = new ArrayList<>();
 		for(TraceNode dominator: dataDominators.keySet()){
 			if(!dominator.hasChecked()){
-				nonCorrectDominators.add(dominator);
+				uncheckedDominators.add(dominator);
 			}
 		}
-		return nonCorrectDominators;
+		
+		TraceNode controlDominator = getControlDominator();
+		if(controlDominator != null && !controlDominator.hasChecked()){
+			uncheckedDominators.add(controlDominator);
+		}
+		
+		return uncheckedDominators;
 	}
 
 	public boolean isReadVariablesContains(String varID){
