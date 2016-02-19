@@ -17,7 +17,7 @@ import microbat.model.value.VarValue;
 import microbat.model.variable.Variable;
 import microbat.util.Settings;
 
-public class SuspiciousNodeRecommender {
+public class StepRecommender {
 	
 	public class LoopRange{
 		/**

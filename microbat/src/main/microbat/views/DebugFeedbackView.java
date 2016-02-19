@@ -14,7 +14,7 @@ import microbat.model.value.ReferenceValue;
 import microbat.model.value.VarValue;
 import microbat.recommendation.Bug;
 import microbat.recommendation.BugInferer;
-import microbat.recommendation.SuspiciousNodeRecommender;
+import microbat.recommendation.StepRecommender;
 import microbat.recommendation.UserFeedback;
 import microbat.recommendation.conflicts.ConflictRuleChecker;
 import microbat.util.Settings;
@@ -61,7 +61,7 @@ public class DebugFeedbackView extends ViewPart {
 	private TraceNode currentNode;
 //	private TraceNode lastestNode;
 	
-	private SuspiciousNodeRecommender recommender = new SuspiciousNodeRecommender();
+	private StepRecommender recommender = new StepRecommender();
 	
 	private String feedbackType = UserFeedback.INCORRECT;
 	
@@ -102,7 +102,7 @@ public class DebugFeedbackView extends ViewPart {
 	
 	public void clear(){
 		this.currentNode = null;
-		this.recommender = new SuspiciousNodeRecommender();
+		this.recommender = new StepRecommender();
 	}
 	
 	public void refresh(TraceNode node){

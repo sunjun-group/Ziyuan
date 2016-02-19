@@ -18,7 +18,7 @@ import microbat.util.Settings;
  *
  */
 public class BugInferer {
-	public Bug infer(TraceNode currentNode, SuspiciousNodeRecommender recommender){
+	public Bug infer(TraceNode currentNode, StepRecommender recommender){
 		Bug bug;
 		
 		TraceNode startNode = recommender.getRange().findCorrespondingStartNode(currentNode);
@@ -96,7 +96,7 @@ public class BugInferer {
 	}
 
 	private TraceNode findIterationHead(TraceNode currentNode, PotentialCorrectPatternList potentialCorrectPatterns,
-			SuspiciousNodeRecommender recommender) {
+			StepRecommender recommender) {
 		SourceLine line = new PathInstance().new SourceLine(currentNode.getClassName(), currentNode.getLineNumber());
 		List<PotentialCorrectPattern> patterns = potentialCorrectPatterns.findPatternsWithEndNode(line);
 		for(PotentialCorrectPattern pattern: patterns){
