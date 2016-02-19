@@ -166,6 +166,19 @@ public class UserInterestedVariables {
 		
 		return null;
 	}
+	
+	public UserInterestedVariables clone(){
+		Map<String, Integer> clonedVarIDs = new HashMap<>();
+		for(String key: varIDs.keySet()){
+			clonedVarIDs.put(key, varIDs.get(key));
+		}
+		
+		UserInterestedVariables variables = new UserInterestedVariables();
+		variables.varIDs = clonedVarIDs;
+		variables.updateAttributionTrees();
+		
+		return variables;
+	}
 
 	public void clear() {
 		this.varIDs.clear();

@@ -67,6 +67,7 @@ public class StartDebugHandler extends AbstractHandler {
 		Settings.interestedVariables.clear();
 		Settings.localVariableScopes.clear();
 		Settings.potentialCorrectPatterns.clear();
+		Settings.checkingStateStack.clear();
 		
 		Display.getDefault().asyncExec(new Runnable(){
 			@Override

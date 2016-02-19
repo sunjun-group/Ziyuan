@@ -23,7 +23,7 @@ public class StepRecommender {
 		/**
 		 * all the skipped trace node by loop inference.
 		 */
-		List<TraceNode> skipPoints = new ArrayList<>();
+		ArrayList<TraceNode> skipPoints = new ArrayList<>();
 		TraceNode startNode;
 		TraceNode endNode;
 		
@@ -41,6 +41,17 @@ public class StepRecommender {
 			int index = (startIndex+endIndex)/2;
 			
 			return skipPoints.get(index);
+		}
+		
+		@SuppressWarnings("unchecked")
+		public LoopRange clone(){
+			LoopRange loopRange = new LoopRange();
+			loopRange.startNode = this.startNode;
+			loopRange.endNode = this.endNode;
+			loopRange.binaryLandmark = this.binaryLandmark;
+			loopRange.skipPoints = (ArrayList<TraceNode>) this.skipPoints.clone();
+			
+			return loopRange;
 		}
 
 		public TraceNode findCorrespondingStartNode(TraceNode endNode2) {
@@ -499,6 +510,19 @@ public class StepRecommender {
 		}		
 		
 		return readVars;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public StepRecommender clone(){
+		StepRecommender recommender = new StepRecommender();
+		recommender.lastNode = this.lastNode;
+		recommender.lastRecommendNode = this.lastRecommendNode;
+		recommender.latestClearState = this.latestClearState;
+		recommender.range = this.range.clone();
+		ArrayList<TraceNode> list = (ArrayList<TraceNode>)this.visitedUnclearNodeList;
+		recommender.visitedUnclearNodeList = (ArrayList<TraceNode>) list.clone();
+		
+		return recommender;
 	}
 	
 	public int getState(){

@@ -60,7 +60,7 @@ public class TraceNode{
 	/**
 	 * indicate whether this node has been marked correct/incorrect by user
 	 */
-	private Boolean markedCorrrect;
+//	private Boolean markedCorrrect;
 	
 	
 	private TraceNode stepInNext;
@@ -211,13 +211,13 @@ public class TraceNode{
 		this.order = order;
 	}
 
-	public Boolean getMarkedCorrrect() {
-		return markedCorrrect;
-	}
-
-	public void setMarkedCorrrect(Boolean markedCorrrect) {
-		this.markedCorrrect = markedCorrrect;
-	}
+//	public Boolean getMarkedCorrrect() {
+//		return markedCorrrect;
+//	}
+//
+//	public void setMarkedCorrrect(Boolean markedCorrrect) {
+//		this.markedCorrrect = markedCorrrect;
+//	}
 
 	public BreakPointValue getAfterState() {
 		if(this.afterStepOverState != null){

@@ -16,6 +16,18 @@ public class PotentialCorrectPattern {
 	 */
 	private PathInstance labelInstance;
 
+	
+	@SuppressWarnings("unchecked")
+	public PotentialCorrectPattern clone(){
+		PotentialCorrectPattern clonedPattern = new PotentialCorrectPattern();
+		clonedPattern.labelInstance = labelInstance;
+		
+		ArrayList<PathInstance> list = (ArrayList<PathInstance>)instanceList;
+		clonedPattern.instanceList = (List<PathInstance>) list.clone();
+		
+		return clonedPattern;
+	}
+	
 	public List<PathInstance> getInstanceList() {
 		return instanceList;
 	}

@@ -77,5 +77,16 @@ public class PotentialCorrectPatternList {
 		return patterns;
 	}
 
-	
+	public PotentialCorrectPatternList clone(){
+		PotentialCorrectPatternList clonedPatterns = new PotentialCorrectPatternList();
+		
+		for(String key: patterns.keySet()){
+			PotentialCorrectPattern pattern = patterns.get(key);
+			PotentialCorrectPattern clonedPattern = pattern.clone();
+			
+			clonedPatterns.getPatterns().put(key, clonedPattern);
+		}
+		
+		return clonedPatterns;
+	}
 }

@@ -459,6 +459,10 @@ public class Trace {
 				if(score1 > score2){
 					suspiciousNode = node;
 				}
+				
+//				if(node.getOrder()==203 || node.getOrder()==194){
+//					System.out.println(node.getOrder() + "(" + var.getVarID() + "):" + node.getSuspicousScore(var));
+//				}
 			}
 		}
 		

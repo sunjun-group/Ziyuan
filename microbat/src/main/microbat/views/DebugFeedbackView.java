@@ -5,6 +5,7 @@ import java.util.List;
 
 import microbat.Activator;
 import microbat.algorithm.graphdiff.GraphDiff;
+import microbat.handler.CheckingState;
 import microbat.model.BreakPointValue;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
@@ -53,8 +54,6 @@ import org.eclipse.ui.part.ViewPart;
 
 public class DebugFeedbackView extends ViewPart {
 
-	
-	
 	private TraceNode currentNode;
 //	private TraceNode lastestNode;
 	
@@ -100,6 +99,10 @@ public class DebugFeedbackView extends ViewPart {
 	public void clear(){
 		this.currentNode = null;
 		this.recommender = new StepRecommender();
+	}
+	
+	public void setRecommender(StepRecommender recommender){
+		this.recommender = recommender;
 	}
 	
 	public void refresh(TraceNode node){
@@ -297,7 +300,7 @@ public class DebugFeedbackView extends ViewPart {
 				readVariableTreeViewer.refresh();
 				stateTreeViewer.refresh();	
 				
-				setCurrentNodeChecked(trace, currentNode);
+				//setCurrentNodeChecked(trace, currentNode);
 				boolean enabled = isValidToInferBugType();
 				bugTypeInferenceButton.setEnabled(enabled);
 			}
@@ -631,11 +634,12 @@ public class DebugFeedbackView extends ViewPart {
 			else {
 				Trace trace = Activator.getDefault().getCurrentTrace();
 				
-				TraceNode suspiciousNode = null;
+				CheckingState state = new CheckingState();
+				state.recordCheckingState(currentNode, recommender, trace, 
+						Settings.interestedVariables, Settings.potentialCorrectPatterns);
+				Settings.checkingStateStack.push(state);
 				
-				if(!feedbackType.equals(UserFeedback.UNCLEAR)){
-					setCurrentNodeChecked(trace, currentNode);					
-				}
+				TraceNode suspiciousNode = null;
 				
 				boolean isValidForRecommendation = isValidForRecommendation();
 				if(isValidForRecommendation){
@@ -653,13 +657,17 @@ public class DebugFeedbackView extends ViewPart {
 //							suspiciousNode = conflictNode;
 //						}
 //					}
+					if(!feedbackType.equals(UserFeedback.UNCLEAR)){
+						setCurrentNodeChecked(trace, currentNode);					
+					}
+					
 					suspiciousNode = recommender.recommendNode(trace, currentNode, feedbackType);
 				}
 				
 				if(suspiciousNode != null){
 					jumpToNode(trace, suspiciousNode);	
-					
 				}
+				
 			}
 		}
 		
