@@ -36,7 +36,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="microbat.perspectives.MicroBatPerspective"
-            icon="icons/releng_gears.gif"
+            icon="icons/microbat.png"
             id="microbat.perspectives.MicroBatPerspective"
             name="MicroBat">
       </perspective>
@@ -63,7 +63,7 @@
                label="MicroBat">
             <command
                   commandId="microbat.command.startDebug"
-                  icon="icons/start_debug.png"
+                  icon="icons/microbat.png"
                   label="Start Debug"
                   style="push">
             </command>
@@ -76,7 +76,7 @@
                id="microbat.toolbar.startDebug">
             <command
                   commandId="microbat.command.startDebug"
-                  icon="icons/start_debug.png"
+                  icon="icons/microbat.png"
                   label="Start Debug"
                   style="push">
             </command>
