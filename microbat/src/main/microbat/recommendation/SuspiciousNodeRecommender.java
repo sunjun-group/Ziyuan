@@ -170,6 +170,33 @@ public class SuspiciousNodeRecommender {
 		}
 	}
 
+	private TraceNode findMoreAbstractDominator(LoopSequence loopSequence, List<TraceNode> dominators, TraceNode currentNode){
+		TraceNode moreAbstractDominator = null;
+		for(TraceNode dominator: dominators){
+			if(dominator.getInvocationLevel() < currentNode.getInvocationLevel()){
+				if(currentNode.getInvocationParent() != null){
+					if(dominator.getOrder() <= currentNode.getInvocationParent().getOrder()){
+						moreAbstractDominator = dominator;		
+						break;
+					}
+				}
+				
+			}
+			
+			if(loopSequence != null){
+				if(loopSequence.containsRangeOf(dominator)){
+					continue;
+				}
+				else{
+					moreAbstractDominator = dominator;
+					break;
+				}
+			}
+		}
+		
+		return moreAbstractDominator;
+	}
+	
 	private TraceNode findMoreClearNode(Trace trace, TraceNode currentNode) {
 		TraceNode earliestNodeWithWrongVar = trace.getEarliestNodeWithWrongVar();
 		
@@ -178,27 +205,25 @@ public class SuspiciousNodeRecommender {
 			Collections.sort(dominators, new TraceNodeReverseOrderComparator());
 			
 			LoopSequence loopSequence = trace.findLoopRangeOf(currentNode);
-			for(TraceNode dominator: dominators){
-				if(dominator.getInvocationLevel() < currentNode.getInvocationLevel()){
-					if(currentNode.getInvocationParent() != null){
-						if(dominator.getOrder() <= currentNode.getInvocationParent().getOrder()){
-							return dominator;							
+			TraceNode moreAbstractDominator = findMoreAbstractDominator(loopSequence, dominators, currentNode);
+			
+			if(moreAbstractDominator != null){
+				if(moreAbstractDominator.hasChecked()){
+					int index = dominators.indexOf(moreAbstractDominator);
+					for(int i=index; i>=0; i--){
+						TraceNode dominator = dominators.get(i);
+						if(!dominator.equals(moreAbstractDominator)){
+							if(!dominator.hasChecked()){
+								return dominator;
+							}
 						}
 					}
-					
 				}
-				
-				if(loopSequence != null){
-					if(loopSequence.containsRangeOf(dominator)){
-						continue;
-					}
-					else{
-						return dominator;
-					}
+				else{
+					return moreAbstractDominator;
 				}
 			}
-			
-			if(!dominators.isEmpty()){
+			else if(!dominators.isEmpty()){
 				return dominators.get(0);
 			}
 		}
