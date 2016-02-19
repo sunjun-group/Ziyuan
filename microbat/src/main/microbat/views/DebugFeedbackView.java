@@ -44,6 +44,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -93,6 +94,7 @@ public class DebugFeedbackView extends ViewPart {
 	private Button yesButton;
 	private Button noButton;
 	private Button unclearButton;
+	private Button wrongPathButton;
 	private Button bugTypeInferenceButton;
 	
 	public DebugFeedbackView() {
@@ -456,10 +458,12 @@ public class DebugFeedbackView extends ViewPart {
 	private void createSubmitGroup(Composite parent) {
 		Group feedbackGroup = new Group(parent, SWT.NONE);
 		feedbackGroup.setText("Are all variables in this step correct?");
-		feedbackGroup
-				.setLayoutData(new GridData(SWT.FILL, SWT.UP, true, false));
-		feedbackGroup.setLayout(new GridLayout(5, true));
-
+		feedbackGroup.setLayoutData(new GridData(SWT.FILL, SWT.UP, true, false));
+		GridLayout gl = new GridLayout(6, true);
+		gl.makeColumnsEqualWidth = false;
+		gl.marginWidth = 1;
+		feedbackGroup.setLayout(gl);
+		
 		yesButton = new Button(feedbackGroup, SWT.RADIO);
 		yesButton.setText(" Yes");
 		yesButton.setLayoutData(new GridData(SWT.LEFT, SWT.UP, true, false));
@@ -490,6 +494,21 @@ public class DebugFeedbackView extends ViewPart {
 			}
 		});
 		
+		wrongPathButton = new Button(feedbackGroup, SWT.CHECK);
+		wrongPathButton.setText("(Wrong Path)");
+		wrongPathButton.setLayoutData(new GridData(SWT.LEFT, SWT.UP, true, false));
+		wrongPathButton.addMouseListener(new MouseListener() {
+			public void mouseUp(MouseEvent e) {
+			}
+
+			public void mouseDown(MouseEvent e) {
+				feedbackType = UserFeedback.WRONG_PATH;
+			}
+
+			public void mouseDoubleClick(MouseEvent e) {
+			}
+		});
+		
 		unclearButton = new Button(feedbackGroup, SWT.RADIO);
 		unclearButton.setText(" Unclear");
 		unclearButton.setLayoutData(new GridData(SWT.LEFT, SWT.UP, true, false));
@@ -504,6 +523,8 @@ public class DebugFeedbackView extends ViewPart {
 			public void mouseDoubleClick(MouseEvent e) {
 			}
 		});
+		
+		
 		
 //		Label holder = new Label(feedbackGroup, SWT.NONE);
 //		holder.setText("");
@@ -577,13 +598,15 @@ public class DebugFeedbackView extends ViewPart {
 		private boolean isValidForRecommendation(){
 			int readVarCorrectness = currentNode.getReadVarCorrectness(Settings.interestedVariables);
 			int writtenVarCorrectness = currentNode.getWittenVarCorrectness(Settings.interestedVariables);
+			boolean existWrittenVariable = !currentNode.getWrittenVariables().isEmpty();
+			boolean existReadVariable = !currentNode.getReadVariables().isEmpty();
 			
-			if(writtenVarCorrectness==TraceNode.WRITTEN_VARS_INCORRECT 
+			if(existWrittenVariable && existReadVariable && writtenVarCorrectness==TraceNode.WRITTEN_VARS_INCORRECT
 					&& readVarCorrectness==TraceNode.READ_VARS_CORRECT){
 				openBugFoundDialog();
 				return false;
 			}
-			else if(writtenVarCorrectness==TraceNode.WRITTEN_VARS_CORRECT 
+			else if(existWrittenVariable && existReadVariable && writtenVarCorrectness==TraceNode.WRITTEN_VARS_CORRECT 
 					&& readVarCorrectness==TraceNode.READ_VARS_INCORRECT){
 				String message = "It seems that this step is correct and it takes "
 						+ "some incorrect read variables while produces correct output (written variable), "
@@ -591,7 +614,7 @@ public class DebugFeedbackView extends ViewPart {
 				openReconfirmDialog(message);
 				return false;
 			}
-			else if(writtenVarCorrectness==TraceNode.WRITTEN_VARS_INCORRECT
+			else if(existWrittenVariable && existReadVariable && writtenVarCorrectness==TraceNode.WRITTEN_VARS_INCORRECT
 					&& readVarCorrectness==TraceNode.READ_VARS_INCORRECT
 					&& feedbackType.equals(UserFeedback.CORRECT)){
 				String message = "Some variables are marked incorrect, but your feedback is marked correct, "

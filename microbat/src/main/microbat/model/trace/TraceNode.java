@@ -100,13 +100,6 @@ public class TraceNode{
 		return writtenCorrect && readCorrect;
 	}
 	
-	public boolean isNoneReadWrittenVarCorrect(){
-		boolean writtenCorrect = getWittenVarCorrectness(Settings.interestedVariables) == TraceNode.WRITTEN_VARS_CORRECT;
-		boolean readCorrect = getReadVarCorrectness(Settings.interestedVariables) == TraceNode.READ_VARS_CORRECT;
-		
-		return !writtenCorrect && !readCorrect;
-	}
-	
 	public int getReadVarCorrectness(UserInterestedVariables interestedVariables){
 		if(hasChecked()){
 			for(VarValue var: getReadVariables()){
