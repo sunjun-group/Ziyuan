@@ -53,6 +53,11 @@
             id="microbat.evaluateCommand"
             name="Run Evaluation">
       </command>
+      <command
+            defaultHandler="microbat.handler.UndoHandler"
+            id="microbat.undoCommand"
+            name="Undo">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -71,6 +76,19 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               label="Microbat">
+            <command
+                  commandId="microbat.undoCommand"
+                  icon="icons/undo.png"
+                  label="Undo Your Debug Operation"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
             locationURI="toolbar:org.eclipse.ui.main.toolbar">
          <toolbar
                id="microbat.toolbar.startDebug">
@@ -79,6 +97,20 @@
                   icon="icons/microbat.png"
                   label="Start Debug"
                   style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="microbat.toolbar.undo">
+            <command
+                  commandId="microbat.undoCommand"
+                  icon="icons/undo.png"
+                  label="Undo Your Debug Operation"
+                  style="push"
+                  tooltip="undo your previous debugging operation">
             </command>
          </toolbar>
       </menuContribution>
