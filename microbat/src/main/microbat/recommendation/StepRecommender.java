@@ -103,6 +103,11 @@ public class StepRecommender {
 			TraceNode node = findMoreClearNode(trace, currentNode);
 			return node;
 		}
+		else if(feedback.equals(UserFeedback.WRONG_PATH)){
+			state = DebugState.JUMP;
+			TraceNode node = currentNode.getControlDominator();
+			return node;
+		}
 		else if((state==DebugState.UNCLEAR || state==DebugState.PARTIAL_CLEAR) && feedback.equals(UserFeedback.CORRECT)){
 			state = DebugState.PARTIAL_CLEAR;
 			

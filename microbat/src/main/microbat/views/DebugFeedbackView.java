@@ -16,13 +16,11 @@ import microbat.recommendation.Bug;
 import microbat.recommendation.BugInferer;
 import microbat.recommendation.StepRecommender;
 import microbat.recommendation.UserFeedback;
-import microbat.recommendation.conflicts.ConflictRuleChecker;
 import microbat.util.Settings;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -44,7 +42,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -124,6 +121,7 @@ public class DebugFeedbackView extends ViewPart {
 		yesButton.setSelection(false);
 		noButton.setSelection(true);
 		unclearButton.setSelection(false);
+		wrongPathButton.setSelection(false);
 		boolean enabled = isValidToInferBugType();
 		bugTypeInferenceButton.setEnabled(enabled);
 		
