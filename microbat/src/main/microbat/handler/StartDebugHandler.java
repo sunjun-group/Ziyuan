@@ -1,6 +1,5 @@
 package microbat.handler;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +13,7 @@ import microbat.codeanalysis.runtime.ProgramExecutor;
 import microbat.model.BreakPoint;
 import microbat.model.trace.Trace;
 import microbat.util.JavaUtil;
+import microbat.util.MicroBatUtil;
 import microbat.util.Settings;
 import microbat.views.DebugFeedbackView;
 import microbat.views.MicroBatViews;
@@ -22,9 +22,6 @@ import microbat.views.TraceView;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -39,29 +36,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import sav.common.core.SavException;
-import sav.commons.TestConfiguration;
 import sav.strategies.dto.AppJavaClassPath;
 
 public class StartDebugHandler extends AbstractHandler {
-	
-	private AppJavaClassPath constructClassPaths(){
-		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		IProject iProject = myWorkspaceRoot.getProject(Settings.projectName);
-		String projectPath = iProject.getLocationURI().getPath();
-		projectPath = projectPath.substring(1, projectPath.length());
-		projectPath = projectPath.replace("/", File.separator);
-		
-		String binPath = projectPath + File.separator + "bin"; 
-		
-		AppJavaClassPath appClassPath = new AppJavaClassPath();
-		appClassPath.setJavaHome(TestConfiguration.getJavaHome());
-		
-		appClassPath.addClasspath(binPath);
-		appClassPath.setWorkingDirectory(projectPath);
-		
-		return appClassPath;
-		
-	}
 	
 	private void clearOldData(){
 		Settings.interestedVariables.clear();
@@ -85,7 +62,8 @@ public class StartDebugHandler extends AbstractHandler {
 	}
 	
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final AppJavaClassPath appClassPath = constructClassPaths();
+		String outputFolder = "bin";
+		final AppJavaClassPath appClassPath = MicroBatUtil.constructClassPaths(outputFolder);
 		final ProgramExecutor tcExecutor = new ProgramExecutor();
 		
 		final String classQulifiedName = Settings.buggyClassName;
@@ -156,7 +134,7 @@ public class StartDebugHandler extends AbstractHandler {
 						/** 4. extract runtime variables*/
 						monitor.setTaskName("extract runtime value for variables");
 						
-						tcExecutor.setup(appClassPath);
+						tcExecutor.setConfig(appClassPath);
 						try {
 							long t1 = System.currentTimeMillis();
 							tcExecutor.run(breakpoints);

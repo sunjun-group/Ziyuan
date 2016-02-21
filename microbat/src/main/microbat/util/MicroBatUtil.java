@@ -1,7 +1,47 @@
 package microbat.util;
 
+import java.io.File;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+
+import sav.commons.TestConfiguration;
+import sav.strategies.dto.AppJavaClassPath;
+
 
 public class MicroBatUtil {
+	
+	public static String getProjectPath(){
+		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		IProject iProject = myWorkspaceRoot.getProject(Settings.projectName);
+		String projectPath = iProject.getLocationURI().getPath();
+		projectPath = projectPath.substring(1, projectPath.length());
+		projectPath = projectPath.replace("/", File.separator);
+		
+		return projectPath;
+	}
+	
+	public static AppJavaClassPath constructClassPaths(String outputFolder){
+		String projectPath = getProjectPath();
+		String binPath = projectPath + File.separator + outputFolder; 
+		
+		AppJavaClassPath appClassPath = new AppJavaClassPath();
+		appClassPath.setJavaHome(TestConfiguration.getJavaHome());
+		
+		appClassPath.addClasspath(binPath);
+		appClassPath.setWorkingDirectory(projectPath);
+		appClassPath.setLaunchClass(Settings.lanuchClass);
+		
+		return appClassPath;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T asT(Object obj) {
+		return (T) obj;
+	}
+	
 	public static String combineTraceNodeExpression(String className, int lineNumber){
 		String exp = className + " line:" + lineNumber;
 		return exp;

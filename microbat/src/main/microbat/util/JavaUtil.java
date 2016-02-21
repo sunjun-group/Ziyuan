@@ -8,6 +8,8 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -46,6 +48,25 @@ public class JavaUtil {
 			IType type = project.findType(qualifiedName);
 			if(type != null){
 				return type.getCompilationUnit();
+			}
+			
+		} catch (JavaModelException e1) {
+			e1.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public static IPackageFragment findIPackageInProject(String packageName){
+		IJavaProject project = JavaCore.create(getSpecificJavaProjectInWorkspace());
+		try {
+			for(IPackageFragmentRoot packageFragmentRoot: project.getPackageFragmentRoots()){
+				IPackageFragment packageFrag = packageFragmentRoot.getPackageFragment(packageName);
+				
+				String fragName = packageFrag.getElementName();
+				if(packageFrag.exists() && fragName.equals(packageName)){
+					return packageFrag;
+				}
 			}
 			
 		} catch (JavaModelException e1) {

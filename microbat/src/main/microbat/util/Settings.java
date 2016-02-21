@@ -10,6 +10,8 @@ import microbat.model.trace.PotentialCorrectPatternList;
 import microbat.preference.MicrobatPreference;
 
 public class Settings {
+	
+	
 	public static String projectName;
 	public static String lanuchClass;
 	

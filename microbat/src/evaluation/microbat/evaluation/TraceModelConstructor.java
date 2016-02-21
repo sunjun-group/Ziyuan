@@ -62,7 +62,7 @@ public class TraceModelConstructor {
 		parseLocalVariables(classScope);
 		
 		/** 4. extract runtime variables*/
-		tcExecutor.setup(appClassPath);
+		tcExecutor.setConfig(appClassPath);
 		try {
 			tcExecutor.run(breakpoints);
 		} catch (SavException e) {

@@ -50,7 +50,6 @@ import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.SignatureUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.vm.SimpleDebugger;
-import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassNotLoadedException;
@@ -103,7 +102,8 @@ public class ProgramExecutor{
 	 */
 	/** the class patterns indicating the classes into which I will not step to get the runtime values*/
 	private String[] excludes = { "java.*", "javax.*", "sun.*", "com.sun.*", "org.junit.*"};
-	private VMConfiguration config;
+//	private VMConfiguration config;
+	private AppJavaClassPath config;
 	private SimpleDebugger debugger = new SimpleDebugger();
 	/** maps from a given class name to its contained breakpoints */
 	private Map<String, List<BreakPoint>> brkpsMap;
@@ -123,18 +123,16 @@ public class ProgramExecutor{
 	public ProgramExecutor() {
 	}
 	
-	public void setup(VMConfiguration config) {
-		this.config = config;
-	}
-	
-	public void setup(AppJavaClassPath appClassPath){
-		VMConfiguration vmConfig = new VMConfiguration(appClassPath);
-		this.config = vmConfig;
-		this.config.setLaunchClass(Settings.lanuchClass);
-		this.config.setWorkingDirectory(appClassPath.getWorkingDirectory());
-	}
-	
-	
+//	public void setup(VMConfiguration config) {
+//		this.config = config;
+//	}
+//	
+//	public void setup(AppJavaClassPath appClassPath){
+//		VMConfiguration vmConfig = new VMConfiguration(appClassPath);
+//		this.config = vmConfig;
+//		this.config.setLaunchClass(Settings.lanuchClass);
+//		this.config.setWorkingDirectory(appClassPath.getWorkingDirectory());
+//	}
 	
 	/**
 	 * Executing the program, each time of the execution, we catch a JVM event (e.g., step event, class 
@@ -1003,10 +1001,20 @@ public class ProgramExecutor{
 		return debugger.getProccessError();
 	}
 	
-	public VMConfiguration getVmConfig() {
+	
+	
+//	public VMConfiguration getVmConfig() {
+//		return config;
+//	}
+	
+	public AppJavaClassPath getConfig() {
 		return config;
 	}
-	
+
+	public void setConfig(AppJavaClassPath config) {
+		this.config = config;
+	}
+
 	class ExpressionValue{
 		Value value;
 		/**

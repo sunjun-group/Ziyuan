@@ -7,33 +7,36 @@ import microbat.model.Fault;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.model.value.VarValue;
-import microbat.recommendation.SuspiciousNodeRecommender;
+import microbat.recommendation.StepRecommender;
 import microbat.recommendation.conflicts.ConflictRuleChecker;
 import microbat.util.Settings;
 
 public class Simulator {
 	
-	private SuspiciousNodeRecommender recommender = new SuspiciousNodeRecommender();
+	private StepRecommender recommender = new StepRecommender();
 	private SimulatedUser user = new SimulatedUser();
 	
 	public void startSimulation() throws GenerateRootCauseException{
 		
-		//Trace trace = new TraceModelConstructor().constructTraceModel();
-		Settings.interestedVariables.clear();
-		Settings.localVariableScopes.clear();
-		Settings.potentialCorrectPatterns.clear();
-		recommender = new SuspiciousNodeRecommender();
-		Trace trace = Activator.getDefault().getCurrentTrace();
-		for(TraceNode node: trace.getExectionList()){
-			node.setCheckTime(-1);
-		}
+		Trace trace = new TraceModelConstructor().constructTraceModel();
+		
+		
+		
+//		Settings.interestedVariables.clear();
+//		Settings.localVariableScopes.clear();
+//		Settings.potentialCorrectPatterns.clear();
+//		recommender = new StepRecommender();
+//		Trace trace = Activator.getDefault().getCurrentTrace();
+//		for(TraceNode node: trace.getExectionList()){
+//			node.setCheckTime(-1);
+//		}
 		
 		Fault shownFault = generateShownFault(trace);
 		
 		TraceNode shownFaultNode = shownFault.getBuggyNode();
 		List<TraceNode> dominators = shownFaultNode.findAllDominators();
 		
-		Fault rootCause = generateRootCause(dominators);
+		Fault rootCause = generateRootCause(dominators, trace);
 		
 		TraceNode suspiciousNode = shownFaultNode;
 		user.feedback(suspiciousNode, rootCause, trace.getCheckTime());
@@ -63,7 +66,7 @@ public class Simulator {
 		TraceNode conflictNode = conflictRuleChecker.checkConflicts(trace, currentNode.getOrder());
 		
 		if(conflictNode == null){
-			suspiciousNode = recommender.recommendSuspiciousNode(trace, currentNode);
+			//suspiciousNode = recommender.recommendSuspiciousNode(trace, currentNode);
 		}
 		else{
 			suspiciousNode = conflictNode;
@@ -78,7 +81,7 @@ public class Simulator {
 		trace.setCheckTime(checkTime);
 	}
 
-	private Fault generateRootCause(List<TraceNode> dominators) throws GenerateRootCauseException{
+	private Fault generateRootCause(List<TraceNode> dominators, Trace trace) throws GenerateRootCauseException{
 		
 		int count = 0;
 		
@@ -86,7 +89,7 @@ public class Simulator {
 //			int index = (int) (dominators.size()*Math.random());
 //			TraceNode node = dominators.get(index);
 			
-			Trace trace = Activator.getDefault().getCurrentTrace();
+//			Trace trace = Activator.getDefault().getCurrentTrace();
 			TraceNode node = trace.getExectionList().get(152);
 			
 			if(!node.getWrittenVariables().isEmpty()){

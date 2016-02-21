@@ -2,6 +2,7 @@ package microbat.evaluation.handler;
 
 import microbat.evaluation.GenerateRootCauseException;
 import microbat.evaluation.Simulator;
+import microbat.evaluation.junit.TestCaseParser;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -20,12 +21,14 @@ public class EvaluationHandler extends AbstractHandler {
 			
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				Simulator simulator = new Simulator();
-				try {
-					simulator.startSimulation();
-				} catch (GenerateRootCauseException e) {
-					e.printStackTrace();
-				}
+				
+				TestCaseParser parser = new TestCaseParser();
+				parser.runEvaluation();
+				
+				//archievedSimulation();
+				
+				
+				
 				
 				return Status.OK_STATUS;
 			}
@@ -36,4 +39,13 @@ public class EvaluationHandler extends AbstractHandler {
 		return null;
 	}
 
+	
+	private void archievedSimulation(){
+		Simulator simulator = new Simulator();
+		try {
+			simulator.startSimulation();
+		} catch (GenerateRootCauseException e) {
+			e.printStackTrace();
+		}
+	}
 }

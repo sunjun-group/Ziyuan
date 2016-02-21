@@ -7,8 +7,8 @@ import java.util.Map;
 
 import org.eclipse.jdi.internal.VirtualMachineManagerImpl;
 
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.vm.BootstrapPlugin;
-import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.VirtualMachineManager;
@@ -21,10 +21,10 @@ import com.sun.jdi.connect.VMStartException;
 @SuppressWarnings("restriction")
 public class VMStarter {
 	
-	private VMConfiguration configuration;
+	private AppJavaClassPath configuration;
 	
-	public VMStarter(VMConfiguration configuration){
-		this.configuration = configuration;
+	public VMStarter(AppJavaClassPath classPath){
+		this.configuration = classPath;
 	}
 	
 	public VirtualMachine start(){
@@ -64,13 +64,22 @@ public class VMStarter {
 	/**
      * Return the launching connector's arguments.
      */
-    private Map<String, Connector.Argument> connectorArguments(LaunchingConnector connector, VMConfiguration configuration) {
+    private Map<String, Connector.Argument> connectorArguments(LaunchingConnector connector, AppJavaClassPath configuration) {
         Map<String, Connector.Argument> arguments = connector.defaultArguments();
         Connector.Argument mainArg = (Connector.Argument)arguments.get("main");
         if (mainArg == null) {
             throw new Error("Bad launching connector");
         }
-        mainArg.setValue(configuration.getLaunchClass());
+        
+        String mainValue;
+        if(configuration.getOptionalTestClass() != null && configuration.getOptionalTestMethod() != null){
+        	mainValue = configuration.getLaunchClass() + " " + configuration.getOptionalTestClass() 
+        			+ " " + configuration.getOptionalTestMethod();
+        }
+        else{
+        	mainValue = configuration.getLaunchClass();
+        }
+        mainArg.setValue(mainValue);
 
         // We need a VM that supports watchpoints
         Connector.Argument optionArg =

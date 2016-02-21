@@ -27,6 +27,13 @@ public class AppJavaClassPath {
 	private String src;
 	private String target;
 	private String testTarget;
+	
+	private String launchClass;
+	
+	private String optionalTestClass;
+	private String optionalTestMethod;
+	
+	
 	private SystemPreferences preferences;
 
 	public AppJavaClassPath() {
@@ -92,5 +99,29 @@ public class AppJavaClassPath {
 
 	public void setWorkingDirectory(String workingDirectory) {
 		this.workingDirectory = workingDirectory;
+	}
+
+	public String getOptionalTestClass() {
+		return optionalTestClass;
+	}
+
+	public void setOptionalTestClass(String optionalTestClass) {
+		this.optionalTestClass = optionalTestClass;
+	}
+
+	public String getOptionalTestMethod() {
+		return optionalTestMethod;
+	}
+
+	public void setOptionalTestMethod(String optionalTestMethod) {
+		this.optionalTestMethod = optionalTestMethod;
+	}
+
+	public String getLaunchClass() {
+		return this.launchClass;
+	}
+
+	public void setLaunchClass(String launchClass) {
+		this.launchClass = launchClass;
 	}
 }
