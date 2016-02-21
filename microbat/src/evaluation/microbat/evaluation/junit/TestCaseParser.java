@@ -1,27 +1,19 @@
 package microbat.evaluation.junit;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.List;
 
+import microbat.codeanalysis.bytecode.MicrobatSlicer;
+import microbat.evaluation.util.EvaluationUtil;
+import microbat.model.BreakPoint;
 import microbat.util.JavaUtil;
 import microbat.util.MicroBatUtil;
-import microbat.util.Settings;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.ChildListPropertyDescriptor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.ITypeBinding;
-import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import sav.strategies.dto.AppJavaClassPath;
 
@@ -45,7 +37,7 @@ public class TestCaseParser {
 			for(ICompilationUnit icu: packFrag.getCompilationUnits()){
 				CompilationUnit cu = JavaUtil.convertICompilationUnitToASTNode(icu);
 				
-				List<MethodDeclaration> testingMethods = findTestingMethod(cu); 
+				List<MethodDeclaration> testingMethods = EvaluationUtil.findTestingMethod(cu); 
 				
 				if(!testingMethods.isEmpty()){
 					String className = JavaUtil.getFullNameOfCompilationUnit(cu);
@@ -60,14 +52,27 @@ public class TestCaseParser {
 //						boolean isSuccessful = MicroBatTestRunner.isTestSuccessful(className, methodName, classLoader);
 						
 						TestCaseRunner checker = new TestCaseRunner();
-						checker.collectBreakPoints(appClassPath);
+						List<BreakPoint> executingStatements = checker.collectBreakPoints(appClassPath);
 						
 						if(checker.isPassingTest()){
-							System.out.println("a passing test case");
+							MicrobatSlicer slicer = new MicrobatSlicer(executingStatements);
+							List<BreakPoint> breakpoints = null;
+							try {
+								System.out.println("start analyzing byte code ...");
+								breakpoints = slicer.parsingBreakPoints(appClassPath);
+								System.out.println("finish analyzing byte code ...!");
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
+							
+							
 						}
 						else{
 							System.out.println("a failed test case");
 						}
+						
+						
+						
 					}
 					
 				}
@@ -91,6 +96,8 @@ public class TestCaseParser {
 		classPath.addClasspath(hamcrestCorePath);
 		classPath.addClasspath(testRunnerPath);
 		
+		classPath.addClasspath(junitDir);
+		
 		classPath.setOptionalTestClass(className);
 		classPath.setOptionalTestMethod(methodName);
 		
@@ -113,92 +120,5 @@ public class TestCaseParser {
 //		}
 //		URLClassLoader urlcl  = URLClassLoader.newInstance(cpList.toArray(new URL[0]));
 //		return urlcl;
-	}
-
-	private List<MethodDeclaration> findTestingMethod(CompilationUnit cu) {
-		boolean isSubclassOfTestCase = isSubclassOfTestCase(cu);
-		
-		TestingMethodChecker checker = new TestingMethodChecker(isSubclassOfTestCase);
-		cu.accept(checker);
-		
-		List<MethodDeclaration> testingMethods = checker.getTestingMethods();
-		
-		return testingMethods;
-	}
-
-	private boolean isSubclassOfTestCase(CompilationUnit cu) {
-		TypeDeclaration typeDel = (TypeDeclaration) cu.types().get(0);
-		ITypeBinding binding = typeDel.resolveBinding();
-		
-		boolean isSubclassOfTestCase = false;
-		String parentName = "";
-		while(true){
-			if(binding == null){
-				break;
-			}
-			
-			ITypeBinding superBinding = binding.getSuperclass();
-			if(superBinding == null){
-				break;
-			}
-			
-			parentName = superBinding.getQualifiedName();
-			if(parentName.equals("junit.framework.TestCase")){
-				isSubclassOfTestCase = true;
-				break;
-			}
-			
-			binding = superBinding;
-		}
-		
-		return isSubclassOfTestCase;
-	}
-	
-	class TestingMethodChecker extends ASTVisitor{
-		private boolean isSubclassOfTestCase;
-		private ArrayList<MethodDeclaration> testingMethods = new ArrayList<>();
-		
-		public TestingMethodChecker(boolean isSubclassOfTestCase) {
-			super();
-			this.isSubclassOfTestCase = isSubclassOfTestCase;
-		}
-
-
-		public boolean visit(MethodDeclaration md){
-			
-			if(isSubclassOfTestCase){
-				String methodName = md.getName().getIdentifier();
-				if(methodName.startsWith("test")){
-					testingMethods.add(md);
-					return false;
-				}
-			}
-			else{
-				ChildListPropertyDescriptor descriptor = md.getModifiersProperty();
-				Object obj = md.getStructuralProperty(descriptor);
-				List<ASTNode> methodModifiers = MicroBatUtil.asT(obj);
-				
-				for(ASTNode node: methodModifiers){
-					if(node instanceof MarkerAnnotation){
-						MarkerAnnotation annotation = (MarkerAnnotation)node;
-						String name = annotation.getTypeName().getFullyQualifiedName();
-						if(name != null && name.equals("Test")){
-							testingMethods.add(md);
-							return false;
-						}
-					}
-				}
-			}
-			
-			
-			return false;
-		}
-
-
-		public ArrayList<MethodDeclaration> getTestingMethods() {
-			return testingMethods;
-		}
-		
-		
 	}
 }

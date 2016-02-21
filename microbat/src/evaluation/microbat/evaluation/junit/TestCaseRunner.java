@@ -3,8 +3,15 @@ package microbat.evaluation.junit;
 import java.util.ArrayList;
 import java.util.List;
 
+import microbat.codeanalysis.runtime.ExecutionStatementCollector;
 import microbat.codeanalysis.runtime.VMStarter;
+import microbat.evaluation.util.EvaluationUtil;
 import microbat.model.BreakPoint;
+import microbat.util.JavaUtil;
+
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+
 import sav.strategies.dto.AppJavaClassPath;
 
 import com.sun.jdi.AbsentInformationException;
@@ -26,19 +33,13 @@ import com.sun.jdi.event.StepEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.event.VMStartEvent;
-import com.sun.jdi.request.ClassPrepareRequest;
-import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
-import com.sun.jdi.request.ExceptionRequest;
-import com.sun.jdi.request.StepRequest;
 
 @SuppressWarnings("restriction")
-public class TestCaseRunner {
+public class TestCaseRunner extends ExecutionStatementCollector{
 	
 	private static final int FINISH_LINE_NO = 37;
 
-	private String[] stepWatchExcludes = { "java.*", "javax.*", "sun.*", "com.sun.*", "org.junit.*"};
-	
 	private boolean isPassingTest = false;
 	
 	public List<BreakPoint> collectBreakPoints(AppJavaClassPath appClassPath){
@@ -46,10 +47,6 @@ public class TestCaseRunner {
 		appendStepWatchExcludes(appClassPath);
 		
 		List<BreakPoint> pointList = new ArrayList<>();
-		
-//		VMConfiguration vmConfig = new VMConfiguration(appClassPath);
-//		vmConfig.setLaunchClass(Settings.lanuchClass);
-//		vmConfig.setWorkingDirectory(appClassPath.getWorkingDirectory());
 		
 		VirtualMachine vm = new VMStarter(appClassPath).start();
 		
@@ -154,7 +151,16 @@ public class TestCaseRunner {
 	}
 
 	private boolean isInTestRunner(BreakPoint breakPoint) {
-		return breakPoint.getDeclaringCompilationUnitName().equals(TestCaseParser.TEST_RUNNER);
+		String className = breakPoint.getDeclaringCompilationUnitName();
+		if(className.equals(TestCaseParser.TEST_RUNNER)){
+			return true;
+		}
+		else{
+			CompilationUnit cu = JavaUtil.findCompilationUnitInProject(className);
+			List<MethodDeclaration> mdList = EvaluationUtil.findTestingMethod(cu);
+			
+			return !mdList.isEmpty();
+		}
 	}
 
 	private void appendStepWatchExcludes(AppJavaClassPath appClassPath) {
@@ -167,35 +173,7 @@ public class TestCaseRunner {
 			exList.add(appClassPath.getOptionalTestClass());			
 		}
 		
-//		exList.add(TestCaseParser.TEST_RUNNER);
-		
 		this.stepWatchExcludes = exList.toArray(new String[0]);
-	}
-
-	private void addStepWatch(EventRequestManager erm, ThreadReference threadReference) {
-		StepRequest sr = erm.createStepRequest(threadReference,  StepRequest.STEP_LINE, StepRequest.STEP_INTO);
-		sr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-		for(String ex: stepWatchExcludes){
-			sr.addClassExclusionFilter(ex);
-		}
-		sr.enable();
-	}
-	
-	/** add watch requests **/
-	private final void addClassWatch(EventRequestManager erm) {
-		ClassPrepareRequest classPrepareRequest = erm.createClassPrepareRequest();
-//		classPrepareRequest.addClassFilter("com.Main");
-		classPrepareRequest.setEnabled(true);
-	}
-	
-	private void addExceptionWatch(EventRequestManager erm) {
-		
-		ExceptionRequest request = erm.createExceptionRequest(null, true, true);
-		request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-		for(String ex: stepWatchExcludes){
-			request.addClassExclusionFilter(ex);
-		}
-		request.enable();
 	}
 
 	public boolean isPassingTest() {
