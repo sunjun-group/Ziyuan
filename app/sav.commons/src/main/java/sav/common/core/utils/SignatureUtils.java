@@ -8,8 +8,9 @@
 
 package sav.common.core.utils;
 
-import java.lang.reflect.Method;
 import static org.apache.commons.lang.StringUtils.replace;
+
+import java.lang.reflect.Method;
 
 /**
  * @author LLT

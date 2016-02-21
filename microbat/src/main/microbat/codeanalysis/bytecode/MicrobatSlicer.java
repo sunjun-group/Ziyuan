@@ -21,6 +21,7 @@ import microbat.model.variable.ArrayElementVar;
 import microbat.model.variable.FieldVar;
 import microbat.model.variable.LocalVar;
 import microbat.model.variable.Variable;
+import microbat.util.JTestUtil;
 import microbat.util.JavaUtil;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -31,9 +32,12 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.Type;
 
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
@@ -112,7 +116,9 @@ public class MicrobatSlicer{
 		AnalysisScope scope = makeJ2SEAnalysisScope(appClassPath);
 		IClassHierarchy cha = ClassHierarchy.make(scope);
 		
-		Iterable<Entrypoint> entrypoints = Util.makeMainEntrypoints(scope, cha);
+//		Iterable<Entrypoint> entrypoints = Util.makeMainEntrypoints(scope, cha);
+		BreakPoint launchPoint = parseLanuchPoint(appClassPath);
+		Iterable<Entrypoint> entrypoints = makeEntrypoints(scope.getApplicationLoader(), cha, launchPoint);
 		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
 		
 //		CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope);
@@ -128,6 +134,75 @@ public class MicrobatSlicer{
 		
 		return breakPoints;
 	}
+
+	private BreakPoint parseLanuchPoint(AppJavaClassPath appClassPath) {
+		
+		
+		if(appClassPath.getOptionalTestClass() != null){
+			String testClassName = appClassPath.getOptionalTestClass();
+			CompilationUnit cu = JavaUtil.findCompilationUnitInProject(testClassName);
+			
+			List<MethodDeclaration> mdList = JTestUtil.findTestingMethod(cu);
+			for(MethodDeclaration md: mdList){
+				String methodName = md.getName().getFullyQualifiedName();
+				if(methodName.equals(appClassPath.getOptionalTestMethod())){
+					String methodSignature = JavaUtil.generateMethodSignature(md);
+					BreakPoint point = new BreakPoint(testClassName, methodSignature, -1);
+					return point;
+				}
+			}
+		}
+		else{
+			String launchClass = appClassPath.getLaunchClass();
+			CompilationUnit cu = JavaUtil.findCompilationUnitInProject(launchClass);
+			
+			MainMethodFinder finder = new MainMethodFinder();
+			cu.accept(finder);
+			MethodDeclaration mainMethod = finder.md;
+			
+			if(mainMethod != null){
+				String methodSignature = JavaUtil.generateMethodSignature(mainMethod);
+				BreakPoint point = new BreakPoint(launchClass, methodSignature, -1);
+				return point;
+			}
+		}
+		
+		return null;
+	}
+	
+	class MainMethodFinder extends ASTVisitor{
+		private MethodDeclaration md;
+		
+		@SuppressWarnings("rawtypes")
+		public boolean visit(MethodDeclaration md){
+			String methodName = md.getName().getFullyQualifiedName();
+			if(methodName.equals("main")){
+				List list = md.modifiers();
+				if(list != null && list.toString().equals("[public, static]")){
+					String returnedType = md.getReturnType2().toString();
+					if(returnedType.equals("void")){
+						Object obj = md.parameters().get(0);
+						SingleVariableDeclaration svd = (SingleVariableDeclaration)obj;
+						Type type = svd.getType();
+						
+						if(type.toString().equals("String[]")){
+							this.md = md;
+						}
+					}
+				}
+			}
+			return false;
+		}
+
+		public MethodDeclaration getMd() {
+			return md;
+		}
+
+		public void setMd(MethodDeclaration md) {
+			this.md = md;
+		}
+	}
+	
 
 	public List<BreakPoint> slice(AppJavaClassPath appClassPath, List<BreakPoint> breakpoints) throws Exception {
 		
@@ -466,7 +541,6 @@ public class MicrobatSlicer{
 		else if(ins instanceof ConditionalBranchInstruction){
 //			ConditionalBranchInstruction cbIns = (ConditionalBranchInstruction)ins;
 			setConditionalScope(cu, lineNumber, point);
-			//TODO
 		}
 		else if(ins instanceof InstanceofInstruction){
 			setConditionalScope(cu, lineNumber, point);
@@ -815,8 +889,11 @@ public class MicrobatSlicer{
 			 * add jars in class path
 			 */
 			for(String classPath: appClassPath.getClasspaths()){
-				BinaryDirectoryTreeModule module = new BinaryDirectoryTreeModule(new File(classPath));
-				scope.addToScope(scope.getApplicationLoader(), module);
+				if(!classPath.endsWith("jar")){
+					BinaryDirectoryTreeModule module = new BinaryDirectoryTreeModule(new File(classPath));
+					scope.addToScope(scope.getApplicationLoader(), module);					
+				}
+				
 			}
 			
 			scope.setExclusions(getJavaExclusions());

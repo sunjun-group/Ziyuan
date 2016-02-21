@@ -224,38 +224,9 @@ public class StartDebugHandler extends AbstractHandler {
 		cu.accept(finder);
 		
 		MethodDeclaration methodDeclaration = finder.methodDeclaration;
-		IMethodBinding mBinding = methodDeclaration.resolveBinding();
+		String methodSig = JavaUtil.generateMethodSignature(methodDeclaration);
 		
-		String returnType = mBinding.getReturnType().getKey();
-		
-		String methodName = mBinding.getName();
-		
-		List<String> paramTypes = new ArrayList<>();
-		for(ITypeBinding tBinding: mBinding.getParameterTypes()){
-			String paramType = tBinding.getKey();
-			paramTypes.add(paramType);
-		}
-		
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(methodName);
-		buffer.append("(");
-		for(String pType: paramTypes){
-			buffer.append(pType);
-			//buffer.append(";");
-		}
-		
-		buffer.append(")");
-		buffer.append(returnType);
-//		
-//		String sign = buffer.toString();
-//		if(sign.contains(";")){
-//			sign = sign.substring(0, sign.lastIndexOf(";")-1);			
-//		}
-//		sign = sign + ")" + returnType;
-		
-		String sign = buffer.toString();
-		
-		return sign;
+		return methodSig;
 	}
 
 	/**

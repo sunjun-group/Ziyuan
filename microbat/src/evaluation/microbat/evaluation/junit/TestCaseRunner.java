@@ -5,8 +5,8 @@ import java.util.List;
 
 import microbat.codeanalysis.runtime.ExecutionStatementCollector;
 import microbat.codeanalysis.runtime.VMStarter;
-import microbat.evaluation.util.EvaluationUtil;
 import microbat.model.BreakPoint;
+import microbat.util.JTestUtil;
 import microbat.util.JavaUtil;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -157,7 +157,7 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 		}
 		else{
 			CompilationUnit cu = JavaUtil.findCompilationUnitInProject(className);
-			List<MethodDeclaration> mdList = EvaluationUtil.findTestingMethod(cu);
+			List<MethodDeclaration> mdList = JTestUtil.findTestingMethod(cu);
 			
 			return !mdList.isEmpty();
 		}

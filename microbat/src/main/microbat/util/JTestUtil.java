@@ -1,4 +1,4 @@
-package microbat.evaluation.util;
+package microbat.util;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
-public class EvaluationUtil {
+public class JTestUtil {
 	public static List<MethodDeclaration> findTestingMethod(CompilationUnit cu) {
 		boolean isSubclassOfTestCase = isSubclassOfTestCase(cu);
 		

@@ -27,7 +27,7 @@ import com.sun.jdi.request.StepRequest;
 @SuppressWarnings("restriction")
 public class ExecutionStatementCollector {
 	
-	private String[] excludes = { "java.*", "javax.*", "sun.*", "com.sun.*", "org.junit.*"};
+	protected String[] stepWatchExcludes = { "java.*", "javax.*", "sun.*", "com.sun.*", "org.junit.*"};
 	
 	public List<BreakPoint> collectBreakPoints(AppJavaClassPath appClassPath){
 		List<BreakPoint> pointList = new ArrayList<>();
@@ -102,27 +102,27 @@ public class ExecutionStatementCollector {
 		return pointList;
 	}
 	
-	private void addStepWatch(EventRequestManager erm, ThreadReference threadReference) {
+	protected void addStepWatch(EventRequestManager erm, ThreadReference threadReference) {
 		StepRequest sr = erm.createStepRequest(threadReference,  StepRequest.STEP_LINE, StepRequest.STEP_INTO);
 		sr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-		for(String ex: excludes){
+		for(String ex: stepWatchExcludes){
 			sr.addClassExclusionFilter(ex);
 		}
 		sr.enable();
 	}
 	
 	/** add watch requests **/
-	private final void addClassWatch(EventRequestManager erm) {
+	protected void addClassWatch(EventRequestManager erm) {
 		ClassPrepareRequest classPrepareRequest = erm.createClassPrepareRequest();
 //		classPrepareRequest.addClassFilter("com.Main");
 		classPrepareRequest.setEnabled(true);
 	}
 	
-	private void addExceptionWatch(EventRequestManager erm) {
+	protected void addExceptionWatch(EventRequestManager erm) {
 		
 		ExceptionRequest request = erm.createExceptionRequest(null, true, true);
 		request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-		for(String ex: excludes){
+		for(String ex: stepWatchExcludes){
 			request.addClassExclusionFilter(ex);
 		}
 		request.enable();

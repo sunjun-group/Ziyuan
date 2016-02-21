@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.List;
 
 import microbat.codeanalysis.bytecode.MicrobatSlicer;
-import microbat.evaluation.util.EvaluationUtil;
 import microbat.model.BreakPoint;
+import microbat.util.JTestUtil;
 import microbat.util.JavaUtil;
 import microbat.util.MicroBatUtil;
 
@@ -37,7 +37,7 @@ public class TestCaseParser {
 			for(ICompilationUnit icu: packFrag.getCompilationUnits()){
 				CompilationUnit cu = JavaUtil.convertICompilationUnitToASTNode(icu);
 				
-				List<MethodDeclaration> testingMethods = EvaluationUtil.findTestingMethod(cu); 
+				List<MethodDeclaration> testingMethods = JTestUtil.findTestingMethod(cu); 
 				
 				if(!testingMethods.isEmpty()){
 					String className = JavaUtil.getFullNameOfCompilationUnit(cu);

@@ -1,5 +1,7 @@
 package microbat.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
@@ -17,8 +19,46 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IMethodBinding;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 public class JavaUtil {
+	
+	public static String generateMethodSignature(MethodDeclaration md){
+		IMethodBinding mBinding = md.resolveBinding();
+		
+		String returnType = mBinding.getReturnType().getKey();
+		
+		String methodName = mBinding.getName();
+		
+		List<String> paramTypes = new ArrayList<>();
+		for(ITypeBinding tBinding: mBinding.getParameterTypes()){
+			String paramType = tBinding.getKey();
+			paramTypes.add(paramType);
+		}
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(methodName);
+		buffer.append("(");
+		for(String pType: paramTypes){
+			buffer.append(pType);
+			//buffer.append(";");
+		}
+		
+		buffer.append(")");
+		buffer.append(returnType);
+//		
+//		String sign = buffer.toString();
+//		if(sign.contains(";")){
+//			sign = sign.substring(0, sign.lastIndexOf(";")-1);			
+//		}
+//		sign = sign + ")" + returnType;
+		
+		String sign = buffer.toString();
+		
+		return sign;
+	}
 	
 	public static String getFullNameOfCompilationUnit(CompilationUnit cu){
 		String packageName = cu.getPackage().getName().toString();
