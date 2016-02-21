@@ -62,7 +62,7 @@
 	</build>
 
 	<dependencies>
-		<dependency>
+		<!-- <dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
@@ -70,7 +70,7 @@
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>${commons-lang-version}</version>
-		</dependency>
+		</dependency> -->
 
 		<!-- +++++++++++++++++++++++++++++++++++++++++++ -->
 		<!-- OPTIONAL - CAN BE EXCLUDED IF NO NEED -->
@@ -91,19 +91,19 @@
 
 		<!-- JunitRunner, for running junit test, read and write file during running 
 			exclude this package if not necessary -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>commons-cli</groupId> <!-- for parsing command line -->
+			<groupId>commons-cli</groupId> for parsing command line
 			<artifactId>commons-cli</artifactId>
-		</dependency>
+		</dependency> -->
 
 		<!-- SCOPE TEST -->
 		<!-- for loading testPackage from csv file -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-csv</artifactId>
 			<scope>test</scope>
@@ -118,6 +118,6 @@
 					<artifactId>slf4j-api</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency> -->
 	</dependencies>
 </project>
