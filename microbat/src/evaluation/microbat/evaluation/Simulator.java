@@ -18,9 +18,7 @@ public class Simulator {
 	
 	public void startSimulation() throws GenerateRootCauseException{
 		
-		Trace trace = new TraceModelConstructor().constructTraceModel();
-		
-		
+		Trace trace = new TraceModelConstructor().constructTraceModel(null, null);
 		
 //		Settings.interestedVariables.clear();
 //		Settings.localVariableScopes.clear();

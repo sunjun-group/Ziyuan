@@ -1,13 +1,20 @@
 package microbat.evaluation.junit;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
+import microbat.codeanalysis.ast.LocalVariableScope;
+import microbat.codeanalysis.ast.VariableScopeParser;
 import microbat.codeanalysis.bytecode.MicrobatSlicer;
+import microbat.codeanalysis.runtime.ProgramExecutor;
+import microbat.evaluation.TraceModelConstructor;
 import microbat.model.BreakPoint;
+import microbat.model.trace.Trace;
 import microbat.util.JTestUtil;
 import microbat.util.JavaUtil;
 import microbat.util.MicroBatUtil;
+import microbat.util.Settings;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -15,6 +22,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
+import sav.common.core.SavException;
 import sav.strategies.dto.AppJavaClassPath;
 
 public class TestCaseParser {
@@ -29,10 +37,7 @@ public class TestCaseParser {
 	
 	public void runEvaluation(){
 		
-		setUp();
-		
 		IPackageFragment packFrag = JavaUtil.findIPackageInProject(testPackage);
-		
 		try {
 			for(ICompilationUnit icu: packFrag.getCompilationUnits()){
 				CompilationUnit cu = JavaUtil.convertICompilationUnitToASTNode(icu);
@@ -47,32 +52,17 @@ public class TestCaseParser {
 						
 						AppJavaClassPath appClassPath = createProjectClassPath(className, methodName);
 						
-						
-//						URLClassLoader classLoader = loadProjectClassPath();
-//						boolean isSuccessful = MicroBatTestRunner.isTestSuccessful(className, methodName, classLoader);
-						
 						TestCaseRunner checker = new TestCaseRunner();
 						List<BreakPoint> executingStatements = checker.collectBreakPoints(appClassPath);
 						
 						if(checker.isPassingTest()){
-							MicrobatSlicer slicer = new MicrobatSlicer(executingStatements);
-							List<BreakPoint> breakpoints = null;
-							try {
-								System.out.println("start analyzing byte code ...");
-								breakpoints = slicer.parsingBreakPoints(appClassPath);
-								System.out.println("finish analyzing byte code ...!");
-							} catch (Exception e1) {
-								e1.printStackTrace();
-							}
+							Trace correctTrace = new TraceModelConstructor().constructTraceModel(appClassPath, executingStatements);
 							
-							
+							//mutate
 						}
 						else{
 							System.out.println("a failed test case");
 						}
-						
-						
-						
 					}
 					
 				}

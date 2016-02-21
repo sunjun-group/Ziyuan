@@ -29,18 +29,14 @@ public class TraceModelConstructor {
 		//TODO
 	}
 	
-	public Trace constructTraceModel(){
+	public Trace constructTraceModel(AppJavaClassPath appClassPath, List<BreakPoint> executingStatements){
 		setup();
 		
-		AppJavaClassPath appClassPath = constructClassPaths();
 		ProgramExecutor tcExecutor = new ProgramExecutor();
 		
-		/** 0. clear some static common variables **/
+		/** 1. clear some static common variables **/
 		clearOldData();
 		
-		/** 1. collect trace **/
-		ExecutionStatementCollector collector = new ExecutionStatementCollector();
-		List<BreakPoint> executingStatements = collector.collectBreakPoints(appClassPath);
 		
 		/** 2. parse read/written variables**/
 		MicrobatSlicer slicer = new MicrobatSlicer(executingStatements);
@@ -72,8 +68,6 @@ public class TraceModelConstructor {
 		/** 5. construct dominance relation*/
 		Trace trace = tcExecutor.getTrace();
 		trace.constructDomianceRelation();
-		
-		Activator.getDefault().setCurrentTrace(trace);
 		
 		return trace;
 	}
