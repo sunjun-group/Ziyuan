@@ -125,8 +125,7 @@ public class DebugFeedbackView extends ViewPart {
 		noButton.setSelection(true);
 		unclearButton.setSelection(false);
 		wrongPathButton.setSelection(false);
-		boolean enabled = isValidToInferBugType();
-		bugTypeInferenceButton.setEnabled(enabled);
+		bugTypeInferenceButton.setEnabled(isValidToInferBugType());
 		
 		feedbackType = UserFeedback.INCORRECT;
 	}
@@ -296,13 +295,13 @@ public class DebugFeedbackView extends ViewPart {
 				setChecks(readVariableTreeViewer, RW);
 				setChecks(stateTreeViewer, STATE);
 				
+				bugTypeInferenceButton.setEnabled(isValidToInferBugType());
+				
 				writtenVariableTreeViewer.refresh();
 				readVariableTreeViewer.refresh();
 				stateTreeViewer.refresh();	
 				
 				//setCurrentNodeChecked(trace, currentNode);
-				boolean enabled = isValidToInferBugType();
-				bugTypeInferenceButton.setEnabled(enabled);
 			}
 			
 		}
@@ -361,6 +360,8 @@ public class DebugFeedbackView extends ViewPart {
 				readVariableTreeViewer.refresh();
 				writtenVariableTreeViewer.refresh();
 				stateTreeViewer.refresh();	
+				
+				bugTypeInferenceButton.setEnabled(isValidToInferBugType());
 			}
 			
 			@Override
