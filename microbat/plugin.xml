@@ -72,13 +72,6 @@
                   label="Start Debug"
                   style="push">
             </command>
-         </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="menu:org.eclipse.ui.main.menu">
-         <menu
-               label="Microbat">
             <command
                   commandId="microbat.undoCommand"
                   icon="icons/undo.png"
