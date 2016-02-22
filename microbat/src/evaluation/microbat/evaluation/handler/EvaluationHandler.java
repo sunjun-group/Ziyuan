@@ -3,6 +3,7 @@ package microbat.evaluation.handler;
 import microbat.evaluation.GenerateRootCauseException;
 import microbat.evaluation.Simulator;
 import microbat.evaluation.junit.TestCaseParser;
+import mutation.mutator.Mutator;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -21,6 +22,8 @@ public class EvaluationHandler extends AbstractHandler {
 			
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
+				
+				Mutator mutator = new Mutator("");
 				
 				TestCaseParser parser = new TestCaseParser();
 				parser.runEvaluation();

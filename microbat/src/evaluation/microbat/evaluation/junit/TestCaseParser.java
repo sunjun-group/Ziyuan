@@ -2,28 +2,29 @@ package microbat.evaluation.junit;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import microbat.codeanalysis.ast.LocalVariableScope;
-import microbat.codeanalysis.ast.VariableScopeParser;
-import microbat.codeanalysis.bytecode.MicrobatSlicer;
-import microbat.codeanalysis.runtime.ProgramExecutor;
 import microbat.evaluation.TraceModelConstructor;
+import microbat.evaluation.mutation.MutationPointChecker;
 import microbat.model.BreakPoint;
 import microbat.model.trace.Trace;
 import microbat.util.JTestUtil;
 import microbat.util.JavaUtil;
 import microbat.util.MicroBatUtil;
-import microbat.util.Settings;
+import mutation.mutator.Mutator;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
-import sav.common.core.SavException;
 import sav.strategies.dto.AppJavaClassPath;
+import sav.strategies.dto.ClassLocation;
+import sav.strategies.mutanbug.MutationResult;
 
 public class TestCaseParser {
 	
@@ -55,10 +56,17 @@ public class TestCaseParser {
 						TestCaseRunner checker = new TestCaseRunner();
 						List<BreakPoint> executingStatements = checker.collectBreakPoints(appClassPath);
 						
+						//mutate
+						List<ClassLocation> locationList = findMutationLocation(executingStatements);
+						Mutator mutator = new Mutator("");
+						
+						Map<String, MutationResult> result = mutator.mutate(locationList);
+						
 						if(checker.isPassingTest()){
 							Trace correctTrace = new TraceModelConstructor().constructTraceModel(appClassPath, executingStatements);
 							
-							//mutate
+							System.currentTimeMillis();
+							
 						}
 						else{
 							System.out.println("a failed test case");
@@ -72,6 +80,42 @@ public class TestCaseParser {
 		}
 	}
 	
+	private List<ClassLocation> findMutationLocation(List<BreakPoint> executingStatements) {
+		List<ClassLocation> locations = new ArrayList<>();
+		
+		Map<String, List<BreakPoint>> lineMap = new HashMap<>();
+		for(BreakPoint point: executingStatements){
+			String className = point.getDeclaringCompilationUnitName();
+			
+			List<BreakPoint> points = lineMap.get(className);
+			if(points == null){
+				points = new ArrayList<>();
+			}
+			
+			lineMap.put(className, points);
+			points.add(point);
+		}
+		
+		for(String className: lineMap.keySet()){
+			CompilationUnit cu = JavaUtil.findCompilationUnitInProject(className);
+			List<Integer> lines = new ArrayList<>();
+			for(BreakPoint point: lineMap.get(className)){
+				lines.add(point.getLineNo());
+			}
+			
+			MutationPointChecker checker = new MutationPointChecker(cu, lines);
+			cu.accept(checker);
+			
+			List<ClassLocation> mutationLocations = checker.getMutationPoints();
+			locations.addAll(mutationLocations);
+		}
+		
+		
+		return locations;
+	}
+	
+	
+
 	private AppJavaClassPath createProjectClassPath(String className, String methodName){
 		AppJavaClassPath classPath = MicroBatUtil.constructClassPaths("bin");
 		

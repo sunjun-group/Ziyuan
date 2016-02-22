@@ -38,13 +38,15 @@ public class MutatorTest {
 	public void testMutator() {
 		String clazzName = MutationTestData.class.getName();
 		List<ClassLocation> value = new ArrayList<ClassLocation>();
-		value.add(new ClassLocation(clazzName, null, 27));
-		value.add(new ClassLocation(clazzName, null, 33));
+		value.add(new ClassLocation(clazzName, null, 31));
+//		value.add(new ClassLocation(clazzName, null, 27));
+//		value.add(new ClassLocation(clazzName, null, 33));
+//		value.add(new ClassLocation(clazzName, null, 35));
 		Map<String, MutationResult> result = mutator.mutate(value);
 		System.out.println(result);
 	}
 	
-	public static void main(String[] args){
-		System.currentTimeMillis();
-	}
+//	public static void main(String[] args){
+//		System.currentTimeMillis();
+//	}
 }
