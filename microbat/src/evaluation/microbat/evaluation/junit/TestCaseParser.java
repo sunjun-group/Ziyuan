@@ -1,25 +1,30 @@
 package microbat.evaluation.junit;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import microbat.evaluation.TraceModelConstructor;
 import microbat.evaluation.mutation.MutationPointChecker;
 import microbat.model.BreakPoint;
-import microbat.model.trace.Trace;
 import microbat.util.JTestUtil;
 import microbat.util.JavaUtil;
 import microbat.util.MicroBatUtil;
 import mutation.mutator.Mutator;
 
+import org.apache.commons.io.FileUtils;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import sav.strategies.dto.AppJavaClassPath;
@@ -32,8 +37,29 @@ public class TestCaseParser {
 	
 	private String testPackage = "com.test";
 	
-	private void setUp(){
-		//TODO
+	public void setUp(){
+		String str = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\mutatedSource8245811234241496344\\47_25_1\\Main.java";
+		File file = new File(str);
+		
+		try {
+			String content = FileUtils.readFileToString(file);
+			
+			ICompilationUnit unit = JavaUtil.findICompilationUnitInProject("com.Main");
+			unit.getBuffer().setContents(content);
+			unit.save(new NullProgressMonitor(), true);
+			
+			IProject project = JavaUtil.getSpecificJavaProjectInWorkspace();
+			try {
+				project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new NullProgressMonitor());
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+			
+			System.currentTimeMillis();
+			
+		} catch (IOException | JavaModelException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void runEvaluation(){
@@ -51,21 +77,50 @@ public class TestCaseParser {
 					for(MethodDeclaration testingMethod: testingMethods){
 						String methodName = testingMethod.getName().getIdentifier();
 						
-						AppJavaClassPath appClassPath = createProjectClassPath(className, methodName);
+						AppJavaClassPath testcase = createProjectClassPath(className, methodName);
 						
 						TestCaseRunner checker = new TestCaseRunner();
-						List<BreakPoint> executingStatements = checker.collectBreakPoints(appClassPath);
-						
-						//mutate
-						List<ClassLocation> locationList = findMutationLocation(executingStatements);
-						Mutator mutator = new Mutator("");
-						
-						Map<String, MutationResult> result = mutator.mutate(locationList);
+						List<BreakPoint> executingStatements = checker.collectBreakPoints(testcase);
 						
 						if(checker.isPassingTest()){
-							Trace correctTrace = new TraceModelConstructor().constructTraceModel(appClassPath, executingStatements);
+							//Trace correctTrace = new TraceModelConstructor().constructTraceModel(appClassPath, executingStatements);
 							
-							System.currentTimeMillis();
+							List<ClassLocation> locationList = findMutationLocation(executingStatements);
+							
+							if(!locationList.isEmpty()){
+								ClassLocation cl = locationList.get(0);
+								String cName = cl.getClassCanonicalName();
+								ICompilationUnit unit = JavaUtil.findICompilationUnitInProject(cName);
+								URI uri = unit.getResource().getLocationURI();
+								String sourceFolderPath = uri.toString();
+								cName = cName.replace(".", "/") + ".java";
+								
+								sourceFolderPath = sourceFolderPath.substring(0, sourceFolderPath.indexOf(cName));
+								sourceFolderPath = sourceFolderPath.substring(5, sourceFolderPath.length());
+								Mutator mutator = new Mutator(sourceFolderPath);
+								Map<String, MutationResult> mutations = mutator.mutate(locationList);
+								
+								
+								for(String key: mutations.keySet()){
+									MutationResult result = mutations.get(key);
+									for(Integer line: result.getMutatedFiles().keySet()){
+										List<File> mutatedFileList = result.getMutatedFiles(line);		
+										
+										if(!mutatedFileList.isEmpty()){
+											try {
+												mutateCode(key, mutatedFileList, testcase);
+											} catch (MalformedURLException e) {
+												e.printStackTrace();
+											} catch (IOException e) {
+												e.printStackTrace();
+											}
+										}
+									}
+									
+									System.currentTimeMillis();
+								}
+								
+							}
 							
 						}
 						else{
@@ -79,7 +134,57 @@ public class TestCaseParser {
 			e.printStackTrace();
 		}
 	}
+
+	private void mutateCode(String key, List<File> mutatedFileList, AppJavaClassPath testcase)
+			throws MalformedURLException, JavaModelException, IOException {
+		ICompilationUnit iunit = JavaUtil.findICompilationUnitInProject(key);
+		String path = iunit.getResource().getLocationURI().toURL().getFile();
+		
+		String originalCodeText = iunit.getSource();
+		CompilationUnit cunit = JavaUtil.convertICompilationUnitToASTNode(iunit);
+		
+		for(File file: mutatedFileList){
+			
+			String mutatedCodeText = FileUtils.readFileToString(file);
+			
+//			File toBeMutatedFile = new File(path);
+//			FileUtils.writeStringToFile(toBeMutatedFile, mutatedCodeText);
+			
+			iunit.getBuffer().setContents(mutatedCodeText);
+			iunit.save(new NullProgressMonitor(), true);
+			
+			autoCompile();
+			
+			TestCaseRunner checker = new TestCaseRunner();
+			List<BreakPoint> executingStatements = checker.collectBreakPoints(testcase);
+			
+			boolean isKill = !checker.isPassingTest();
+			System.out.println(isKill);
+			
+			System.currentTimeMillis();
+//			Document document = new Document(mutatedCodeText);
+//			ASTRewrite rewriter = ASTRewrite.create(cunit.getAST()); // ? check if the parameter object type is correct
+//			
+//			rewriter.rewriteAST().apply(document);
+//			String source = document.get();									
+			
+		}
+		
+		iunit.getBuffer().setContents(originalCodeText);
+		iunit.save(new NullProgressMonitor(), true);
+		autoCompile();
+	}
 	
+	private void autoCompile() {
+		IProject project = JavaUtil.getSpecificJavaProjectInWorkspace();
+		try {
+			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new NullProgressMonitor());
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
 	private List<ClassLocation> findMutationLocation(List<BreakPoint> executingStatements) {
 		List<ClassLocation> locations = new ArrayList<>();
 		

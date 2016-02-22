@@ -23,9 +23,10 @@ public class EvaluationHandler extends AbstractHandler {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				
-				Mutator mutator = new Mutator("");
 				
 				TestCaseParser parser = new TestCaseParser();
+//				parser.setUp();
+				
 				parser.runEvaluation();
 				
 				//archievedSimulation();

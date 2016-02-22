@@ -3,6 +3,8 @@ package mutation.mutator;
 import japa.parser.ast.CompilationUnit;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,10 @@ import mutation.mutator.mapping.MuMapParser;
 import mutation.mutator.mapping.MutationMap;
 import mutation.parser.ClassAnalyzer;
 import mutation.parser.JParser;
+
+import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
+
 import sav.common.core.utils.BreakpointUtils;
 import sav.strategies.dto.ClassLocation;
 import sav.strategies.mutanbug.DebugLineInsertionResult;
@@ -27,7 +33,7 @@ import sav.strategies.mutanbug.MutationResult;
  */
 public class Mutator implements IMutator {
 	//TODO LLT: correct the configuration file path, temporary fix for running in eclipse
-	private static final String OPERATOR_MAP_FILE = "./src/main/resources/MuMap.txt";
+	private static final String OPERATOR_MAP_FILE = "\\src\\main\\resources\\MuMap.txt";
 	private Map<String, List<String>> opMapConfig;
 	private String srcFolder;
 	
@@ -91,7 +97,17 @@ public class Mutator implements IMutator {
 	public Map<String, List<String>> getOpMapConfig() {
 		if (opMapConfig == null) {
 			// load default
-			opMapConfig = MuMapParser.parse(OPERATOR_MAP_FILE);
+			Bundle bundle = Platform.getBundle("mutation");
+			URL url = bundle.getEntry(OPERATOR_MAP_FILE);
+			try {
+				URL fileURL = org.eclipse.core.runtime.FileLocator.toFileURL(url);
+				String file = fileURL.getFile();
+				
+				opMapConfig = MuMapParser.parse(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
 		}
 		return opMapConfig;
 	}
