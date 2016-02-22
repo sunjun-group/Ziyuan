@@ -16,7 +16,7 @@ public class MicroBatUtil {
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject iProject = myWorkspaceRoot.getProject(Settings.projectName);
 		String projectPath = iProject.getLocationURI().getPath();
-		projectPath = projectPath.substring(1, projectPath.length());
+//		projectPath = projectPath.substring(1, projectPath.length());
 		projectPath = projectPath.replace("/", File.separator);
 		
 		return projectPath;

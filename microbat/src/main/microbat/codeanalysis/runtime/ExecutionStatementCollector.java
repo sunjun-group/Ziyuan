@@ -1,5 +1,6 @@
 package microbat.codeanalysis.runtime;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class ExecutionStatementCollector {
 							
 							String path = location.sourcePath();
 							path = path.substring(0, path.indexOf(".java"));
-							path = path.replace("\\", ".");
+							path = path.replace(File.separator, ".");
 							
 							int lineNumber = location.lineNumber();
 							

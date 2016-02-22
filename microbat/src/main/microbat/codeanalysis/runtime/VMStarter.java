@@ -95,6 +95,7 @@ public class VMStarter {
         }
         
         if(classPathString.length() != 0){
+        	classPathString = classPathString.substring(0, classPathString.length()-1);
         	classPathString = "-cp " + classPathString;
         }
         optionArg.setValue(classPathString);
