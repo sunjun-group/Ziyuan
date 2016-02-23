@@ -1,14 +1,17 @@
 package microbat.evaluation.junit;
 
 import java.net.URLClassLoader;
+import java.util.List;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 
 public class MicroBatTestRunner {
 	
 	private boolean successful = false;
+	private String failureMessage = "no fail";
 	
 	public MicroBatTestRunner(){
 		
@@ -30,6 +33,13 @@ public class MicroBatTestRunner {
 			request = Request.method(Class.forName(className), methodName);
 			Result result = new JUnitCore().run(request);
 			setSuccessful(result.wasSuccessful());
+			
+			List<Failure> failures = result.getFailures();
+			for(Failure failure: failures){
+				Throwable exception = failure.getException();
+				this.failureMessage = exception.getMessage();
+			}
+			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -64,5 +74,13 @@ public class MicroBatTestRunner {
 
 	public void setSuccessful(boolean successful) {
 		this.successful = successful;
+	}
+
+	public String getFailureMessage() {
+		return failureMessage;
+	}
+
+	public void setFailureMessage(String failureMessage) {
+		this.failureMessage = failureMessage;
 	}
 }

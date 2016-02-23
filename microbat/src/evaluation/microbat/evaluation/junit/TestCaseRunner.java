@@ -38,9 +38,10 @@ import com.sun.jdi.request.EventRequestManager;
 @SuppressWarnings("restriction")
 public class TestCaseRunner extends ExecutionStatementCollector{
 	
-	private static final int FINISH_LINE_NO = 37;
+	private static final int FINISH_LINE_NO_IN_TEST_RUNNER = 47;
 
 	private boolean isPassingTest = false;
+	private boolean hasCompilationError = false;
 	
 	public List<BreakPoint> collectBreakPoints(AppJavaClassPath appClassPath){
 		
@@ -139,13 +140,25 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 						this.isPassingTest = booleanValue.booleanValue();
 					}
 				}
+				
+				if(field.name().equals("failureMessage")){
+					Value value = currentFrame.thisObject().getValue(field);
+					if(value != null){
+						String message = value.toString();
+						if(message.contains("Unresolved compilation problem:")){
+							this.setHasCompilationError(true);
+						}
+								
+					}
+					
+				}
 			}
 		}
 	}
 
 	private boolean isAboutToFinishTestRunner(BreakPoint breakPoint) {
 		if(isInTestRunner(breakPoint)){
-			return breakPoint.getLineNo() == FINISH_LINE_NO;
+			return breakPoint.getLineNo() == FINISH_LINE_NO_IN_TEST_RUNNER;
 		}
 		return false;
 	}
@@ -182,5 +195,13 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 
 	public void setPassingTest(boolean isPassingTest) {
 		this.isPassingTest = isPassingTest;
+	}
+
+	public boolean hasCompilationError() {
+		return hasCompilationError;
+	}
+
+	public void setHasCompilationError(boolean hasCompilationError) {
+		this.hasCompilationError = hasCompilationError;
 	}
 }
