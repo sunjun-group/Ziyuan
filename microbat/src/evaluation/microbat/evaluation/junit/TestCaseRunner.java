@@ -152,7 +152,7 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 
 	private boolean isInTestRunner(BreakPoint breakPoint) {
 		String className = breakPoint.getDeclaringCompilationUnitName();
-		if(className.equals(TestCaseParser.TEST_RUNNER)){
+		if(className.equals(TestCaseAnalyzer.TEST_RUNNER)){
 			return true;
 		}
 		else{

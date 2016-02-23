@@ -1,8 +1,8 @@
 package microbat.evaluation.handler;
 
 import microbat.evaluation.GenerateRootCauseException;
-import microbat.evaluation.Simulator;
-import microbat.evaluation.junit.TestCaseParser;
+import microbat.evaluation.SimulatedMicroBat;
+import microbat.evaluation.junit.TestCaseAnalyzer;
 import mutation.mutator.Mutator;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.core.JavaModelException;
 
 public class EvaluationHandler extends AbstractHandler {
 
@@ -24,15 +25,16 @@ public class EvaluationHandler extends AbstractHandler {
 			protected IStatus run(IProgressMonitor monitor) {
 				
 				
-				TestCaseParser parser = new TestCaseParser();
+				TestCaseAnalyzer parser = new TestCaseAnalyzer();
 //				parser.setUp();
 				
-				parser.runEvaluation();
+				try {
+					parser.runEvaluation();
+				} catch (JavaModelException e) {
+					e.printStackTrace();
+				}
 				
 				//archievedSimulation();
-				
-				
-				
 				
 				return Status.OK_STATUS;
 			}
@@ -45,7 +47,7 @@ public class EvaluationHandler extends AbstractHandler {
 
 	
 	private void archievedSimulation(){
-		Simulator simulator = new Simulator();
+		SimulatedMicroBat simulator = new SimulatedMicroBat();
 		try {
 			simulator.startSimulation();
 		} catch (GenerateRootCauseException e) {

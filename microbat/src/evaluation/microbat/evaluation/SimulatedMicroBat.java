@@ -2,19 +2,25 @@ package microbat.evaluation;
 
 import java.util.List;
 
-import microbat.Activator;
+import microbat.evaluation.model.PairList;
+import microbat.evaluation.util.DiffUtil;
 import microbat.model.Fault;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.model.value.VarValue;
 import microbat.recommendation.StepRecommender;
 import microbat.recommendation.conflicts.ConflictRuleChecker;
-import microbat.util.Settings;
 
-public class Simulator {
+public class SimulatedMicroBat {
 	
 	private StepRecommender recommender = new StepRecommender();
 	private SimulatedUser user = new SimulatedUser();
+	
+	public void detectMutatedBug(Trace mutatedTrace, Trace correctTrace) {
+		PairList pairList = DiffUtil.generateMatchedTraceNodeList(mutatedTrace, correctTrace);
+		
+		
+	}
 	
 	public void startSimulation() throws GenerateRootCauseException{
 		
@@ -123,6 +129,8 @@ public class Simulator {
 		
 		return null;
 	}
+
+	
 
 	
 }

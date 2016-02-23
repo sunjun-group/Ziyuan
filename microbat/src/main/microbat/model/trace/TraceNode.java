@@ -562,8 +562,8 @@ public class TraceNode{
 		}
 	}
 
-	public boolean hasSameLocation(TraceNode controlLoopDominator) {
-		return getClassName().equals(controlLoopDominator.getClassName()) && 
-				getLineNumber()==controlLoopDominator.getLineNumber();
+	public boolean hasSameLocation(TraceNode node) {
+		return getClassName().equals(node.getClassName()) && 
+				getLineNumber()==node.getLineNumber();
 	}
 }
