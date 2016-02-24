@@ -471,12 +471,12 @@ public class TraceNode{
 		this.suspicousScoreMap = suspicousScoreMap;
 	}
 
-	public List<TraceNode> findAllDominators() {
+	public Map<Integer, TraceNode> findAllDominators() {
 		Map<Integer, TraceNode> dominators = new HashMap<>();
 		
 		findDominators(this, dominators);
 		
-		return new ArrayList<>(dominators.values());
+		return dominators;
 	}
 
 	private void findDominators(TraceNode node, Map<Integer, TraceNode> dominators) {
@@ -496,12 +496,12 @@ public class TraceNode{
 		}
 	}
 	
-	public List<TraceNode> findAllDominatees() {
+	public Map<Integer, TraceNode> findAllDominatees() {
 		Map<Integer, TraceNode> dominatees = new HashMap<>();
 		
 		findDominatees(this, dominatees);
 		
-		return new ArrayList<>(dominatees.values());
+		return dominatees;
 	}
 
 	private void findDominatees(TraceNode node, Map<Integer, TraceNode> dominatees) {

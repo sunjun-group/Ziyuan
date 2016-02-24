@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import microbat.model.AttributionVar;
 import microbat.model.trace.LoopSequence;
@@ -165,7 +166,8 @@ public class StepRecommender {
 		TraceNode earliestNodeWithWrongVar = trace.getEarliestNodeWithWrongVar();
 		
 		if(earliestNodeWithWrongVar != null){
-			List<TraceNode> dominators = earliestNodeWithWrongVar.findAllDominators();
+			Map<Integer, TraceNode> dominatorMap = earliestNodeWithWrongVar.findAllDominators();
+			List<TraceNode> dominators = new ArrayList<>(dominatorMap.values());
 			Collections.sort(dominators, new TraceNodeOrderComparator());
 			
 			Iterator<TraceNode> iter = dominators.iterator();
@@ -226,7 +228,8 @@ public class StepRecommender {
 		TraceNode earliestNodeWithWrongVar = trace.getEarliestNodeWithWrongVar();
 		
 		if(earliestNodeWithWrongVar != null){
-			List<TraceNode> dominators = earliestNodeWithWrongVar.findAllDominators();
+			Map<Integer, TraceNode> dominatorMap = earliestNodeWithWrongVar.findAllDominators();
+			List<TraceNode> dominators = new ArrayList<>(dominatorMap.values());
 			Collections.sort(dominators, new TraceNodeReverseOrderComparator());
 			
 			LoopSequence loopSequence = trace.findLoopRangeOf(currentNode);
