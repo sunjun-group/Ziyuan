@@ -190,6 +190,10 @@ public class Trace {
 	private void constructDataDomianceRelation() {
 		for(String varID: this.stepVariableTable.keySet()){
 			
+			if(varID.equals("8.flag:32")){
+				System.currentTimeMillis();
+			}
+			
 			StepVariableRelationEntry entry = this.stepVariableTable.get(varID);
 			List<TraceNode> producers = entry.getProducers();
 			List<TraceNode> consumers = entry.getConsumers();
@@ -201,90 +205,103 @@ public class Trace {
 			if(producers.size() > 1){
 				System.err.println("there are more than one producer for variable " + entry.getAliasVariables());
 			}
-			
-			Collections.sort(producers, new TraceNodeOrderComparator());
-			Collections.sort(consumers, new TraceNodeOrderComparator());
-			
-			
-			int readingCursor = 0;
-			System.currentTimeMillis();
-			
-			for(int i=0; i<producers.size(); i++){
-				TraceNode prevWritingNode = producers.get(i);
-				TraceNode postWritingNode = null; 
-				if(i+1 < producers.size()){
-					postWritingNode = producers.get(i+1);					
+
+			if(!producers.isEmpty()){
+				TraceNode producer = producers.get(0);
+				List<String> varList = new ArrayList<>();
+				varList.add(varID);
+				for(TraceNode consumer: consumers){
+					producer.addDataDominatee(consumer, varList);
+					consumer.addDataDominator(producer, varList);
 				}
 				
-				if(readingCursor >= consumers.size()){
-					break;
-				}
-				TraceNode readingNode = consumers.get(readingCursor);
-				int readingOrder = readingNode.getOrder();
-				
-				while(readingOrder <= prevWritingNode.getOrder()){
-					System.out.println("WARNING in Trace.constructDominanceRelation(): the consumer's order appears "
-							+ "to be smaller than producer's order for variable " + entry.getVarID() + ": " + entry.getAliasVariables());
-					
-					readingCursor++;
-					if(readingCursor >= consumers.size()){
-						break;
-					}
-					readingNode = consumers.get(readingCursor);
-					readingOrder = readingNode.getOrder();
-				}
-				
-				
-				if(postWritingNode != null){
-					int preOrder = prevWritingNode.getOrder();
-					int postOrder = postWritingNode.getOrder();
-					
-					if(preOrder == 158){
-						System.currentTimeMillis();
-					}
-					
-					if(readingCursor<consumers.size()){
-						
-						
-						while(preOrder<readingOrder && readingOrder<=postOrder){
-							
-							List<String> varIDs = new ArrayList<>();
-							varIDs.add(varID);
-							
-							prevWritingNode.addDataDominatee(readingNode, varIDs);
-							readingNode.addDataDominator(prevWritingNode, varIDs);
-							
-							readingCursor++;
-							if(readingCursor >= consumers.size()){
-								break;
-							}
-							
-							readingNode = consumers.get(readingCursor);
-							readingOrder = readingNode.getOrder();
-						}
-					}
-					else{
-						break;
-					}
-				}
-				else{
-					while(readingCursor<consumers.size()){
-						List<String> varIDs = new ArrayList<>();
-						varIDs.add(varID);
-						
-						prevWritingNode.addDataDominatee(readingNode, varIDs);
-						readingNode.addDataDominator(prevWritingNode, varIDs);
-						
-						readingCursor++;
-						if(readingCursor >= consumers.size()){
-							break;
-						}
-						
-						readingNode = consumers.get(readingCursor);
-						readingOrder = readingNode.getOrder();
-					}
-				}
 			}
+			
+			
+			
+//			Collections.sort(producers, new TraceNodeOrderComparator());
+//			Collections.sort(consumers, new TraceNodeOrderComparator());
+//			
+//			
+//			int readingCursor = 0;
+//			System.currentTimeMillis();
+//			
+//			for(int i=0; i<producers.size(); i++){
+//				TraceNode prevWritingNode = producers.get(i);
+//				TraceNode postWritingNode = null; 
+//				if(i+1 < producers.size()){
+//					postWritingNode = producers.get(i+1);					
+//				}
+//				
+//				if(readingCursor >= consumers.size()){
+//					break;
+//				}
+//				TraceNode readingNode = consumers.get(readingCursor);
+//				int readingOrder = readingNode.getOrder();
+//				
+//				while(readingOrder <= prevWritingNode.getOrder()){
+//					System.out.println("WARNING in Trace.constructDominanceRelation(): the consumer's order appears "
+//							+ "to be smaller than producer's order for variable " + entry.getVarID() + ": " + entry.getAliasVariables());
+//					
+//					readingCursor++;
+//					if(readingCursor >= consumers.size()){
+//						break;
+//					}
+//					readingNode = consumers.get(readingCursor);
+//					readingOrder = readingNode.getOrder();
+//				}
+//				
+//				
+//				if(postWritingNode != null){
+//					int preOrder = prevWritingNode.getOrder();
+//					int postOrder = postWritingNode.getOrder();
+//					
+//					if(preOrder == 158){
+//						System.currentTimeMillis();
+//					}
+//					
+//					if(readingCursor<consumers.size()){
+//						
+//						
+//						while(preOrder<readingOrder && readingOrder<=postOrder){
+//							
+//							List<String> varIDs = new ArrayList<>();
+//							varIDs.add(varID);
+//							
+//							prevWritingNode.addDataDominatee(readingNode, varIDs);
+//							readingNode.addDataDominator(prevWritingNode, varIDs);
+//							
+//							readingCursor++;
+//							if(readingCursor >= consumers.size()){
+//								break;
+//							}
+//							
+//							readingNode = consumers.get(readingCursor);
+//							readingOrder = readingNode.getOrder();
+//						}
+//					}
+//					else{
+//						break;
+//					}
+//				}
+//				else{
+//					while(readingCursor<consumers.size()){
+//						List<String> varIDs = new ArrayList<>();
+//						varIDs.add(varID);
+//						
+//						prevWritingNode.addDataDominatee(readingNode, varIDs);
+//						readingNode.addDataDominator(prevWritingNode, varIDs);
+//						
+//						readingCursor++;
+//						if(readingCursor >= consumers.size()){
+//							break;
+//						}
+//						
+//						readingNode = consumers.get(readingCursor);
+//						readingOrder = readingNode.getOrder();
+//					}
+//				}
+//			}
 		}
 		
 	}
