@@ -62,6 +62,7 @@ import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
+import com.sun.jdi.StringReference;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
@@ -486,6 +487,9 @@ public class ProgramExecutor{
 			}
 			returnedType = type;
 			returnedStringValue = returnedValue.toString();
+			if(returnedValue instanceof StringReference){
+				returnedStringValue = returnedStringValue.substring(1, returnedStringValue.length()-1);
+			}
 		}
 		
 		
