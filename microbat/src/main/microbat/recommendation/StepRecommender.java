@@ -90,6 +90,17 @@ public class StepRecommender {
 		}
 	}
 	
+	public class InspectingRange{
+		TraceNode startNode;
+		TraceNode endNode;
+
+		public InspectingRange(TraceNode startNode, TraceNode endNode) {
+			super();
+			this.startNode = startNode;
+			this.endNode = endNode;
+		}
+	}
+	
 	private int state = DebugState.JUMP;
 	
 	/**
@@ -98,14 +109,15 @@ public class StepRecommender {
 	private int latestClearState = -1;
 	private TraceNode lastNode;
 	private TraceNode lastRecommendNode;
-	private LoopRange range = new LoopRange();
+	private LoopRange loopRange = new LoopRange();
+	private InspectingRange inspectingRange;
 	
 	private List<TraceNode> visitedUnclearNodeList = new ArrayList<>();
 	
 	public TraceNode recommendNode(Trace trace, TraceNode currentNode, String feedback){
 		if(feedback.equals(UserFeedback.UNCLEAR)){
 			
-			if(state==DebugState.JUMP || state==DebugState.SKIP || state==DebugState.BINARY_SEARCH){
+			if(state==DebugState.JUMP || state==DebugState.SKIP || state==DebugState.BINARY_SEARCH || state==DebugState.DETAIL_INSPECT){
 				latestClearState = state;
 			}
 			
@@ -282,6 +294,9 @@ public class StepRecommender {
 		else if(state == DebugState.BINARY_SEARCH){
 			suspiciousNode = handleBinarySearchBehavior(trace, currentNode);
 		}
+		else if(state == DebugState.DETAIL_INSPECT){
+			suspiciousNode = handleDetailInspecting(trace, currentNode);
+		}
 		
 		lastRecommendNode = suspiciousNode;
 		
@@ -295,17 +310,17 @@ public class StepRecommender {
 		if(isOverSkipping){
 			state = DebugState.BINARY_SEARCH;
 			
-			this.range.startNode = currentNode;
+			this.loopRange.startNode = currentNode;
 //			this.range.update();
 			
-			suspiciousNode = this.range.binarySearch();
+			suspiciousNode = this.loopRange.binarySearch();
 			
-			this.range.binaryLandmark = suspiciousNode;
+			this.loopRange.binaryLandmark = suspiciousNode;
 			this.lastNode = currentNode;
 		}
 		else{
 			TraceNode endNode = currentNode;
-			TraceNode startNode = this.range.findCorrespondingStartNode(endNode);
+			TraceNode startNode = this.loopRange.findCorrespondingStartNode(endNode);
 			if(startNode != null){
 				PathInstance fakePath = new PathInstance(startNode, endNode);
 				
@@ -317,14 +332,14 @@ public class StepRecommender {
 					if(isCompatible(causingVariable, currentNode)){
 						state = DebugState.BINARY_SEARCH;
 						if(currentNode.isAllReadWrittenVarCorrect()){
-							this.range.startNode = currentNode;
+							this.loopRange.startNode = currentNode;
 						}
 						else{
-							this.range.endNode = currentNode;
+							this.loopRange.endNode = currentNode;
 						}
 						
 //						this.range.update();
-						suspiciousNode = this.range.binarySearch();
+						suspiciousNode = this.loopRange.binarySearch();
 						
 						this.lastNode = currentNode;
 					}
@@ -365,18 +380,18 @@ public class StepRecommender {
 		if(isOverSkipping){
 			state = DebugState.BINARY_SEARCH;
 			
-			this.range.startNode = currentNode;
-			this.range.backupStartAndEndNode();
+			this.loopRange.startNode = currentNode;
+			this.loopRange.backupStartAndEndNode();
 			
-			suspiciousNode = this.range.binarySearch();
+			suspiciousNode = this.loopRange.binarySearch();
 			
-			this.range.binaryLandmark = suspiciousNode;
+			this.loopRange.binaryLandmark = suspiciousNode;
 			this.lastNode = currentNode;
 		}
 		else{
 			state = DebugState.JUMP;
 			
-			this.range.clearSkipPoints();
+			this.loopRange.clearSkipPoints();
 			
 			suspiciousNode = handleJumpBehavior(trace, currentNode);
 		}
@@ -389,54 +404,84 @@ public class StepRecommender {
 		List<AttributionVar> readVars = constructAttributionRelation(currentNode, trace.getCheckTime());
 		AttributionVar focusVar = Settings.interestedVariables.findFocusVar(readVars);
 				
-		TraceNode suspiciousNode = null;
 		if(focusVar != null){
 //			long t1 = System.currentTimeMillis();
 			trace.distributeSuspiciousness(Settings.interestedVariables);
 //			long t2 = System.currentTimeMillis();
 //			System.out.println("time for distributeSuspiciousness: " + (t2-t1));
-			suspiciousNode = trace.findMostSupiciousNode(focusVar); 
-		}
-		TraceNode readTraceNode = focusVar.getReadTraceNode();
-		PathInstance path = new PathInstance(suspiciousNode, readTraceNode);
-		
-		boolean isPathInPattern = Settings.potentialCorrectPatterns.containsPattern(path)? true : false;
-		if(isPathInPattern){
-			state = DebugState.SKIP;
+			TraceNode suspiciousNode = trace.findMostSupiciousNode(focusVar);
 			
-			this.range.endNode = path.getEndNode();
-			this.range.skipPoints.clear();
-			//this.range.skipPoints.add(suspiciousNode);
-			
-			while(Settings.potentialCorrectPatterns.containsPattern(path)){
+			/**
+			 * it means the suspiciousness of focusVar cannot be distributed to other trace node any more. 
+			 */
+			if(suspiciousNode.isWrittenVariablesContains(focusVar.getVarID()) && suspiciousNode.equals(this.lastNode)){
+				//TODO it could be done in a more intelligent way.
+				this.inspectingRange = new InspectingRange(currentNode, suspiciousNode);
+				TraceNode recommendedNode = handleDetailInspecting(trace, currentNode);
+				return recommendedNode;
+			}
+			else{
+				TraceNode readTraceNode = focusVar.getReadTraceNode();
+				PathInstance path = new PathInstance(suspiciousNode, readTraceNode);
 				
-				Settings.potentialCorrectPatterns.addPathForPattern(path);
-				this.range.skipPoints.add(suspiciousNode);
-				
-				PotentialCorrectPattern pattern = Settings.potentialCorrectPatterns.getPattern(path);
-				oldSusiciousNode = suspiciousNode;
-				
-				suspiciousNode = findNextSuspiciousNodeByPattern(pattern, oldSusiciousNode);
-				
-				if(suspiciousNode == null){
-					break;
+				boolean isPathInPattern = Settings.potentialCorrectPatterns.containsPattern(path)? true : false;
+				if(isPathInPattern){
+					state = DebugState.SKIP;
+					
+					this.loopRange.endNode = path.getEndNode();
+					this.loopRange.skipPoints.clear();
+					//this.range.skipPoints.add(suspiciousNode);
+					
+					while(Settings.potentialCorrectPatterns.containsPattern(path)){
+						
+						Settings.potentialCorrectPatterns.addPathForPattern(path);
+						this.loopRange.skipPoints.add(suspiciousNode);
+						
+						PotentialCorrectPattern pattern = Settings.potentialCorrectPatterns.getPattern(path);
+						oldSusiciousNode = suspiciousNode;
+						
+						suspiciousNode = findNextSuspiciousNodeByPattern(pattern, oldSusiciousNode);
+						
+						if(suspiciousNode == null){
+							break;
+						}
+						else{
+							path = new PathInstance(suspiciousNode, oldSusiciousNode);					
+						}
+					}
+					
+					this.lastNode = currentNode;
+					return oldSusiciousNode;
 				}
 				else{
-					path = new PathInstance(suspiciousNode, oldSusiciousNode);					
+					state = DebugState.JUMP;
+					
+					this.lastNode = currentNode;
+					return suspiciousNode;				
 				}
 			}
-			
-			this.lastNode = currentNode;
-			return oldSusiciousNode;
 		}
-		else{
-			state = DebugState.JUMP;
-			
-			this.lastNode = currentNode;
-			return suspiciousNode;				
-		}
+		
+		System.err.println("fucosVar is null");
+		return currentNode;
+		
 	}
 	
+	private TraceNode handleDetailInspecting(Trace trace, TraceNode currentNode) {
+		this.state = DebugState.DETAIL_INSPECT;
+		
+		TraceNode nextNode;
+		if(currentNode.getOrder() > this.inspectingRange.endNode.getOrder()){
+			nextNode = this.inspectingRange.startNode;
+		}
+		else{
+			nextNode = trace.getExectionList().get(currentNode.getOrder());
+			
+		}
+		
+		return nextNode;
+	}
+
 	/**
 	 * Find the variable causing the jump of label path of the <code>pattern</code>, noted as <code>var</code>, 
 	 * then try finding the dominator of the <code>oldSusiciousNode</code> by following the same dominance chain 
@@ -521,7 +566,7 @@ public class StepRecommender {
 		recommender.lastNode = this.lastNode;
 		recommender.lastRecommendNode = this.lastRecommendNode;
 		recommender.latestClearState = this.latestClearState;
-		recommender.range = this.range.clone();
+		recommender.loopRange = this.loopRange.clone();
 		ArrayList<TraceNode> list = (ArrayList<TraceNode>)this.visitedUnclearNodeList;
 		recommender.visitedUnclearNodeList = (ArrayList<TraceNode>) list.clone();
 		
@@ -532,7 +577,7 @@ public class StepRecommender {
 		return state;
 	}
 	
-	public LoopRange getRange(){
-		return this.range;
+	public LoopRange getLoopRange(){
+		return this.loopRange;
 	}
 }

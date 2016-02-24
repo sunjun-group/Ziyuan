@@ -21,7 +21,7 @@ public class BugInferer {
 	public Bug infer(TraceNode currentNode, StepRecommender recommender){
 		Bug bug;
 		
-		TraceNode startNode = recommender.getRange().findCorrespondingStartNode(currentNode);
+		TraceNode startNode = recommender.getLoopRange().findCorrespondingStartNode(currentNode);
 		//Branch bug
 		if(startNode == null){
 			startNode = findIterationHead(currentNode, Settings.potentialCorrectPatterns, recommender);
