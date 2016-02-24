@@ -99,6 +99,11 @@ public class StepRecommender {
 			this.startNode = startNode;
 			this.endNode = endNode;
 		}
+		
+		public InspectingRange clone(){
+			InspectingRange inspectingRange = new InspectingRange(startNode, endNode);
+			return inspectingRange;
+		}
 	}
 	
 	private int state = DebugState.JUMP;
@@ -567,6 +572,9 @@ public class StepRecommender {
 		recommender.lastRecommendNode = this.lastRecommendNode;
 		recommender.latestClearState = this.latestClearState;
 		recommender.loopRange = this.loopRange.clone();
+		if(this.inspectingRange != null){
+			recommender.inspectingRange = this.inspectingRange.clone();			
+		}
 		ArrayList<TraceNode> list = (ArrayList<TraceNode>)this.visitedUnclearNodeList;
 		recommender.visitedUnclearNodeList = (ArrayList<TraceNode>) list.clone();
 		
