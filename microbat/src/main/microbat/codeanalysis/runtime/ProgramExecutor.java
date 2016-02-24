@@ -477,7 +477,7 @@ public class ProgramExecutor{
 		String returnedStringValue;
 		if(returnedValue == null){
 			returnedType = VirtualVar.VIRTUAL_TYPE;
-			returnedStringValue = null;
+			returnedStringValue = "null";
 		}
 		else{
 			String type = returnedValue.type().toString();

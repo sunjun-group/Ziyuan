@@ -14,10 +14,10 @@ public class TraceNodeSimilarityComparator {
 	public double compute(TraceNode traceNode1, TraceNode traceNode2) {
 		
 		if(traceNode1.hasSameLocation(traceNode2)){
-			int commonReadVarWithSameValue = findCommonReadVarWithSameValue(traceNode1.getReadVariables(), 
-					traceNode2.getReadVariables());
-			int commonWrittenVarWithSameValue = findCommonReadVarWithSameValue(traceNode1.getWrittenVariables(), 
-					traceNode2.getWrittenVariables());
+			int commonReadVarWithSameValue = findCommonVarWithSameValue(traceNode1.getReadVariables(), traceNode1, 
+					traceNode2.getReadVariables(), traceNode2);
+			int commonWrittenVarWithSameValue = findCommonVarWithSameValue(traceNode1.getWrittenVariables(), traceNode1,
+					traceNode2.getWrittenVariables(), traceNode2);
 			
 			int totalVars = traceNode1.getReadVariables().size() + traceNode1.getWrittenVariables().size() +
 					traceNode2.getWrittenVariables().size() + traceNode2.getReadVariables().size();
@@ -35,11 +35,11 @@ public class TraceNodeSimilarityComparator {
 		return 0;
 	}
 
-	private int findCommonReadVarWithSameValue(List<VarValue> variables1, List<VarValue> variables2) {
+	private int findCommonVarWithSameValue(List<VarValue> variables1, TraceNode node1, List<VarValue> variables2, TraceNode node2) {
 		int common = 0;
 		for(VarValue var1: variables1){
 			for(VarValue var2: variables2){
-				if(isOrdinaryCommon(var1, var2)){
+				if(isCommon(var1, node1, var2, node2)){
 					common++;
 					break;
 				}
@@ -83,24 +83,14 @@ public class TraceNodeSimilarityComparator {
 	private boolean isCommon(VarValue var1, TraceNode node1, VarValue var2, TraceNode node2) {
 		
 		if(var1 instanceof VirtualValue && var2 instanceof VirtualValue){
-			if(node1.getBreakPoint().isReturnStatement() && node2.getBreakPoint().isReturnStatement()){
-				boolean hasSameReadVars = hasSameReadVars(node1, node2);
-				return hasSameReadVars;
-			}
-			else if(!node1.getBreakPoint().isReturnStatement() && !node2.getBreakPoint().isReturnStatement()){
-				TraceNode node11 = findDominatorReturn(node1, var1);
-				TraceNode node22 = findDominatorReturn(node2, var2);
-				
-				boolean hasSameReadVars = hasSameReadVars(node11, node22);
-				return hasSameReadVars;
-			}
+			return var1.getStringValue().equals(var2.getStringValue());
 		}
 		else{
 			boolean flag = isOrdinaryCommon(var1, var2);
 			return flag;
 		}
 		
-		return false;
+//		return false;
 	}
 
 	private TraceNode findDominatorReturn(TraceNode node, VarValue var) {

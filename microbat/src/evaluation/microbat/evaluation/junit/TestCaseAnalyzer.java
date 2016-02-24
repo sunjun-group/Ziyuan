@@ -108,6 +108,8 @@ public class TestCaseAnalyzer {
 		TestCaseRunner checker = new TestCaseRunner();
 		List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
 		
+		Trace correctTrace = null;
+		
 		if(checker.isPassingTest()){
 			List<ClassLocation> locationList = findMutationLocation(executingStatements);
 			if(!locationList.isEmpty()){
@@ -115,6 +117,11 @@ public class TestCaseAnalyzer {
 				for(String mutatedClass: mutations.keySet()){
 					MutationResult result = mutations.get(mutatedClass);
 					for(Integer line: result.getMutatedFiles().keySet()){
+						
+						if(line != 42){
+							continue;
+						}
+						
 						List<File> mutatedFileList = result.getMutatedFiles(line);		
 						
 						if(!mutatedFileList.isEmpty()){
@@ -122,19 +129,22 @@ public class TestCaseAnalyzer {
 								List<Trace> killingMutatantTraces = mutateCode(mutatedClass, mutatedFileList, testcaseConfig);
 								
 								if(!killingMutatantTraces.isEmpty()){
-									Trace correctTrace = new TraceModelConstructor().
-											constructTraceModel(testcaseConfig, executingStatements);
+									if(null == correctTrace){
+										correctTrace = new TraceModelConstructor().
+												constructTraceModel(testcaseConfig, executingStatements);
+									}
+									
 									for(Trace mutantTrace: killingMutatantTraces){
 										SimulatedMicroBat microbat = new SimulatedMicroBat();
 										ClassLocation mutatedLocation = new ClassLocation(mutatedClass, null, line);
 										microbat.detectMutatedBug(mutantTrace, correctTrace, mutatedLocation);
 									}
 									
-									return true;
+//									return true;
 								}
 								else{
 									System.out.println("No suitable mutants for test case " + testcaseName);
-									return false;
+//									return false;
 								}
 							} catch (MalformedURLException e) {
 								e.printStackTrace();
