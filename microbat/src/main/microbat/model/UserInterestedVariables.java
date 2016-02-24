@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -103,24 +104,29 @@ public class UserInterestedVariables {
 		for(AttributionVar var: roots){
 			collectVars(vars, var);
 		}
+		
+		Iterator<String> iter = vars.keySet().iterator();
+		while(iter.hasNext()){
+			String varID = iter.next();
+			
+			if(varIDs.get(varID) == null){
+				AttributionVar aVar = vars.get(varID);
+				for(AttributionVar parent: aVar.getParents()){
+					parent.getChildren().remove(aVar);
+				}
+				for(AttributionVar child: aVar.getChildren()){
+					child.getParents().remove(aVar);
+				}
+				
+				iter.remove();
+			}
+		}
+		
 		return vars;
 	}
 
 	private void collectVars(Map<String, AttributionVar> vars, AttributionVar var) {
-		if(!this.varIDs.containsKey(var.getVarID())){
-			for(AttributionVar parent: var.getParents()){
-				parent.getChildren().remove(var);
-			}
-			var.getParents().clear();
-			
-			for(AttributionVar child: var.getChildren()){
-				child.getParents().remove(var);
-			}
-			var.getChildren().clear();
-		}
-		else{
-			vars.put(var.getVarID(), var);
-		}
+		vars.put(var.getVarID(), var);
 		
 		for(AttributionVar child: var.getChildren()){
 			collectVars(vars, child);
