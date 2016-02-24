@@ -47,8 +47,10 @@ public class Mutator implements IMutator {
 		Map<String, List<Integer>> classLocationMap = BreakpointUtils.initLineNoMap(locs);
 		JParser cuParser = new JParser(srcFolder, classLocationMap.keySet());
 		ClassAnalyzer classAnalyzer = new ClassAnalyzer(srcFolder, cuParser);
-		MutationVisitor mutationVisitor = new MutationVisitor(
-				new MutationMap(getOpMapConfig()), classAnalyzer);
+		
+		Map<String, List<String>> opMapConfig = getOpMapConfig();
+		MutationVisitor mutationVisitor = new MutationVisitor(new MutationMap(opMapConfig), classAnalyzer);
+		
 		Map<String, MutationResult> result = new HashMap<String, MutationResult>();
 		MutationFileWriter fileWriter = new MutationFileWriter(srcFolder);
 		for (Entry<String, List<Integer>> entry : classLocationMap.entrySet()) {

@@ -20,7 +20,7 @@ public class MutationTestData {
         double c = a - b / 2 + 4;
         int d = 10;
         int t = 100;
-        String str = "abc";
+        
         while (a < 3)
         {
             a = (int)(b - 2 + a / 3);

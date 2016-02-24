@@ -19,6 +19,7 @@ import org.junit.Test;
 
 import sav.strategies.dto.ClassLocation;
 import sav.strategies.mutanbug.MutationResult;
+import testdata.mutator.Main;
 import testdata.mutator.MutationTestData;
 
 /**
@@ -37,8 +38,9 @@ public class MutatorTest {
 	@Test
 	public void testMutator() {
 		String clazzName = MutationTestData.class.getName();
+		clazzName = Main.class.getName();
 		List<ClassLocation> value = new ArrayList<ClassLocation>();
-		value.add(new ClassLocation(clazzName, null, 31));
+		value.add(new ClassLocation(clazzName, null, 34));
 //		value.add(new ClassLocation(clazzName, null, 27));
 //		value.add(new ClassLocation(clazzName, null, 33));
 //		value.add(new ClassLocation(clazzName, null, 35));
