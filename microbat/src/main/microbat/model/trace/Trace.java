@@ -444,7 +444,7 @@ public class Trace {
 		}
 		
 		if(layer < Settings.distribtionLayer){
-			List<TraceNode> nonCorrectDominators = producer.getUncheckedDominators();
+			List<TraceNode> nonCorrectDominators = producer.getUncheckedDataDominators();
 			if(!nonCorrectDominators.isEmpty()){
 				int n = nonCorrectDominators.size();
 				double subScore = suspiciousness/n;

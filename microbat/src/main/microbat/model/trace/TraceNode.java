@@ -429,7 +429,7 @@ public class TraceNode{
 //		this.stepCorrectness = stepCorrectness;
 //	}
 
-	public List<TraceNode> getUncheckedDominators() {
+	public List<TraceNode> getUncheckedDataDominators() {
 		List<TraceNode> uncheckedDominators = new ArrayList<>();
 		for(TraceNode dominator: dataDominators.keySet()){
 			if(!dominator.hasChecked()){
@@ -437,10 +437,10 @@ public class TraceNode{
 			}
 		}
 		
-		TraceNode controlDominator = getControlDominator();
-		if(controlDominator != null && !controlDominator.hasChecked()){
-			uncheckedDominators.add(controlDominator);
-		}
+//		TraceNode controlDominator = getControlDominator();
+//		if(controlDominator != null && !controlDominator.hasChecked()){
+//			uncheckedDominators.add(controlDominator);
+//		}
 		
 		return uncheckedDominators;
 	}
