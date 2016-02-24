@@ -98,16 +98,20 @@ public class Mutator implements IMutator {
 		if (opMapConfig == null) {
 			// load default
 			Bundle bundle = Platform.getBundle("mutation");
-			URL url = bundle.getEntry(OPERATOR_MAP_FILE);
-			try {
-				URL fileURL = org.eclipse.core.runtime.FileLocator.toFileURL(url);
-				String file = fileURL.getFile();
-				
-				opMapConfig = MuMapParser.parse(file);
-			} catch (IOException e) {
-				e.printStackTrace();
+			if(bundle != null){
+				URL url = bundle.getEntry(OPERATOR_MAP_FILE);
+				try {
+					URL fileURL = org.eclipse.core.runtime.FileLocator.toFileURL(url);
+					String file = fileURL.getFile();
+					
+					opMapConfig = MuMapParser.parse(file);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-			
+			else{
+				opMapConfig = MuMapParser.parse("./src/main/resources/MuMap.txt");
+			}
 		}
 		return opMapConfig;
 	}
