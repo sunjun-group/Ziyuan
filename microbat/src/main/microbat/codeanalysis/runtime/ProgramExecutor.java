@@ -190,6 +190,7 @@ public class ProgramExecutor{
 		
 		/** this variable is used to build step-over relation between trace nodes. */
 		TraceNode methodNodeJustPopedOut = null;
+		Value lastestReturnedValue = null;
 		
 		/** this variable is used to handle exception case. */
 		Location caughtLocationForJustException = null;
@@ -299,6 +300,7 @@ public class ProgramExecutor{
 						 * set step over previous/next node when this step just come back from a method invocation (
 						 * i.e., lastestPopedOutMethodNode != null).
 						 */
+						Value returnedValue = null;
 						if(node != null && methodNodeJustPopedOut != null){
 							methodNodeJustPopedOut.setStepOverNext(node);
 							methodNodeJustPopedOut.setAfterStepOverState(node.getProgramState());
@@ -306,6 +308,7 @@ public class ProgramExecutor{
 							node.setStepOverPrevious(methodNodeJustPopedOut);
 							
 							methodNodeJustPopedOut = null;
+							returnedValue = lastestReturnedValue;
 						}
 						
 						parseReadWrittenVariableInThisStep(((StepEvent) event).thread(), currentLocation, node, 
@@ -317,7 +320,7 @@ public class ProgramExecutor{
 						if(this.trace.size() > 1){
 							TraceNode lastestNode = this.trace.getExectionList().get(this.trace.size()-2);
 							if(lastestNode.getBreakPoint().isReturnStatement()){
-								createVirutalVariableForReturnStatement(node, lastestNode);
+								createVirutalVariableForReturnStatement(node, lastestNode, returnedValue);
 							}
 						}
 						
@@ -352,7 +355,8 @@ public class ProgramExecutor{
 						if(method.equals(mInStack)){
 							TraceNode node = methodNodeStack.pop();
 							methodNodeJustPopedOut = node;
-							methodStack.pop();					
+							methodStack.pop();
+							lastestReturnedValue = mee.returnValue();
 						}						
 					}
 				} else if(event instanceof ExceptionEvent){
@@ -467,9 +471,26 @@ public class ProgramExecutor{
 	 * variable.
 	 */
 	private void createVirutalVariableForReturnStatement(TraceNode node,
-			TraceNode lastestNode) {
+			TraceNode lastestNode, Value returnedValue) {
+		
+		String returnedType;
+		String returnedStringValue;
+		if(returnedValue == null){
+			returnedType = VirtualVar.VIRTUAL_TYPE;
+			returnedStringValue = null;
+		}
+		else{
+			String type = returnedValue.type().toString();
+			if(type.contains(".")){
+				type = type.substring(type.lastIndexOf(".")+1, type.length());
+			}
+			returnedType = type;
+			returnedStringValue = returnedValue.toString();
+		}
+		
+		
 		String name = VirtualVar.VIRTUAL_PREFIX + lastestNode.getOrder();
-		VirtualVar var = new VirtualVar(name, VirtualVar.VIRTUAL_TYPE);
+		VirtualVar var = new VirtualVar(name, returnedType);
 		var.setVarID(name);
 		
 		Map<String, StepVariableRelationEntry> map = this.trace.getStepVariableTable();
@@ -479,8 +500,8 @@ public class ProgramExecutor{
 		entry.addConsumer(node);
 		
 		VarValue varValue = new VirtualValue(false, var);
-		String stringValue = "(return from " + lastestNode.getBreakPoint().getMethodName() + "(...))";
-		varValue.setStringValue(stringValue);
+//		String stringValue = "(return from " + lastestNode.getBreakPoint().getMethodName() + "(...))";
+		varValue.setStringValue(returnedStringValue);
 		
 		lastestNode.addWrittenVariable(varValue);
 		node.addReadVariable(varValue);

@@ -197,6 +197,10 @@ public abstract class VarValue implements GraphNode{
 		return variable.getType();
 	}
 	
+//	public void setType(String type){
+//		variable.setType(type);
+//	}
+	
 //	public double getDoubleVal() {
 //		return NOT_NULL_VAL;
 //	}
