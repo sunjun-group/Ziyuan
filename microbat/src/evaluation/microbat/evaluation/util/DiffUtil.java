@@ -36,12 +36,17 @@ public class DiffUtil {
 		double[][] scoreTable = buildScoreTable(mutatedTraceArray, correctTraceArray, sc);
 
 		for (int i = mutatedTraceArray.length, j = correctTraceArray.length; (i > 0 && j > 0);) {
-			if (mutatedTraceArray[i - 1].equals(correctTraceArray[j - 1])) {
+			if (mutatedTraceArray[i - 1].hasSameLocation(correctTraceArray[j - 1])) {
+				
+				if(mutatedTraceArray[i - 1].getOrder() == 15 && correctTraceArray[j-1].getOrder()==15){
+					System.currentTimeMillis();
+				}
+				
 				double sim = sc.compute(mutatedTraceArray[i - 1], correctTraceArray[j - 1]);
 				double increase = scoreTable[i][j]-scoreTable[i-1][j-1];
 				
-				if(Math.abs(sim - increase) < 0.01){
-					TraceNodePair pair = new TraceNodePair(mutatedTraceArray[j - 1], correctTraceArray[i - 1]);
+				if(Math.abs(sim - increase) < 0.01 && sim != 0){
+					TraceNodePair pair = new TraceNodePair(mutatedTraceArray[i - 1], correctTraceArray[j - 1]);
 					pairList.add(pair);
 					
 					pair.setExactSame(sim > 0.99);

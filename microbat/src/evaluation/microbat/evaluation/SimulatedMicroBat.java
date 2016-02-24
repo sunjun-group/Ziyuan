@@ -1,8 +1,11 @@
 package microbat.evaluation;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import microbat.evaluation.accuracy.Accuracy;
 import microbat.evaluation.model.PairList;
+import microbat.evaluation.model.TraceNodePair;
 import microbat.evaluation.util.DiffUtil;
 import microbat.model.Fault;
 import microbat.model.trace.Trace;
@@ -10,18 +13,96 @@ import microbat.model.trace.TraceNode;
 import microbat.model.value.VarValue;
 import microbat.recommendation.StepRecommender;
 import microbat.recommendation.conflicts.ConflictRuleChecker;
+import sav.strategies.dto.ClassLocation;
 
 public class SimulatedMicroBat {
+	
 	
 	private StepRecommender recommender = new StepRecommender();
 	private SimulatedUser user = new SimulatedUser();
 	
-	public void detectMutatedBug(Trace mutatedTrace, Trace correctTrace) {
+	public void detectMutatedBug(Trace mutatedTrace, Trace correctTrace, ClassLocation mutatedLocation) {
 		PairList pairList = DiffUtil.generateMatchedTraceNodeList(mutatedTrace, correctTrace);
 		
+		TraceNode rootCause = findRootCause(mutatedLocation.getClassCanonicalName(), 
+				mutatedLocation.getLineNo(), mutatedTrace, pairList);
 		
+		List<TraceNode> influencedNodes = rootCause.findAllDominatees();
+		influencedNodes.add(rootCause);
+		
+		Accuracy accuracy = computeAccuracy(influencedNodes, pairList, mutatedTrace);
+		
+		System.currentTimeMillis();
 	}
 	
+	private Accuracy computeAccuracy(List<TraceNode> influencedNodes, PairList pairList, Trace mutatedTrace) {
+		double influencedSize = influencedNodes.size();
+		
+		
+		List<TraceNode> actualWrongNodes = new ArrayList<>();
+		for(TraceNode mutatedTraceNode: mutatedTrace.getExectionList()){
+			TraceNodePair foundPair = pairList.findByMutatedNode(mutatedTraceNode);
+			if(foundPair != null){
+				if(!foundPair.isExactSame()){
+					actualWrongNodes.add(foundPair.getMutatedNode());
+				}
+			}
+			else{
+				actualWrongNodes.add(mutatedTraceNode);
+			}
+		}
+		
+		List<TraceNode> commonNodes = findCommonNodes(influencedNodes, actualWrongNodes);
+		
+		double precision = (double)commonNodes.size()/influencedSize;
+		double recall = (double)commonNodes.size()/actualWrongNodes.size();
+		
+		Accuracy accuracy = new Accuracy(precision, recall);
+		
+		return accuracy;
+	}
+
+	private List<TraceNode> findCommonNodes(List<TraceNode> dominatees,
+			List<TraceNode> actualWrongNodes) {
+		List<TraceNode> commonNodes = new ArrayList<>();
+		
+		List<TraceNode> falsePositive = new ArrayList<>();
+		List<TraceNode> falseNegative = new ArrayList<>();
+		
+		for(TraceNode domiantee: dominatees){
+			if(actualWrongNodes.contains(domiantee)){
+				commonNodes.add(domiantee);
+			}
+			else{
+				falsePositive.add(domiantee);
+			}
+		}
+		
+		for(TraceNode acturalWrongNode: actualWrongNodes){
+			if(!commonNodes.contains(acturalWrongNode)){
+				falseNegative.add(acturalWrongNode);
+			}
+		}
+		
+		return commonNodes;
+	}
+
+	private TraceNode findRootCause(String className, int lineNo, Trace mutatedTrace, PairList pairList) {
+		for(TraceNode node: mutatedTrace.getExectionList()){
+			if(node.getClassName().equals(className) && node.getLineNumber()==lineNo){
+				TraceNodePair pair = pairList.findByMutatedNode(node);
+				
+				if(pair == null){
+					System.currentTimeMillis();
+				}
+				
+				return pair.getMutatedNode();
+			}
+		}
+		
+		return null;
+	}
+
 	public void startSimulation() throws GenerateRootCauseException{
 		
 		Trace trace = new TraceModelConstructor().constructTraceModel(null, null);

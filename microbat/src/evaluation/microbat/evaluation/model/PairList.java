@@ -2,6 +2,8 @@ package microbat.evaluation.model;
 
 import java.util.List;
 
+import microbat.model.trace.TraceNode;
+
 public class PairList {
 	private List<TraceNodePair> pairList;
 
@@ -20,5 +22,14 @@ public class PairList {
 	
 	public void add(TraceNodePair pair){
 		this.pairList.add(pair);
+	}
+
+	public TraceNodePair findByMutatedNode(TraceNode node) {
+		for(TraceNodePair pair: pairList){
+			if(pair.getMutatedNode().equals(node)){
+				return pair;
+			}
+		}
+		return null;
 	}
 }

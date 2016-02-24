@@ -37,6 +37,12 @@ public class TraceNodePair {
 	public boolean isExactSame(){
 		return this.isExactlySame;
 	}
+
+	@Override
+	public String toString() {
+		return "TraceNodePair [originalNode=" + originalNode + ", mutatedNode="
+				+ mutatedNode + ", isExactlySame=" + isExactlySame + "]";
+	}
 	
 	
 }

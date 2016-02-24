@@ -112,21 +112,22 @@ public class TestCaseAnalyzer {
 			List<ClassLocation> locationList = findMutationLocation(executingStatements);
 			if(!locationList.isEmpty()){
 				Map<String, MutationResult> mutations = generateMutationFiles(locationList);
-				for(String key: mutations.keySet()){
-					MutationResult result = mutations.get(key);
+				for(String mutatedClass: mutations.keySet()){
+					MutationResult result = mutations.get(mutatedClass);
 					for(Integer line: result.getMutatedFiles().keySet()){
 						List<File> mutatedFileList = result.getMutatedFiles(line);		
 						
 						if(!mutatedFileList.isEmpty()){
 							try {
-								List<Trace> killingMutatantTraces = mutateCode(key, mutatedFileList, testcaseConfig);
+								List<Trace> killingMutatantTraces = mutateCode(mutatedClass, mutatedFileList, testcaseConfig);
 								
 								if(!killingMutatantTraces.isEmpty()){
 									Trace correctTrace = new TraceModelConstructor().
 											constructTraceModel(testcaseConfig, executingStatements);
 									for(Trace mutantTrace: killingMutatantTraces){
 										SimulatedMicroBat microbat = new SimulatedMicroBat();
-										microbat.detectMutatedBug(mutantTrace, correctTrace);
+										ClassLocation mutatedLocation = new ClassLocation(mutatedClass, null, line);
+										microbat.detectMutatedBug(mutantTrace, correctTrace, mutatedLocation);
 									}
 									
 									return true;
@@ -172,7 +173,7 @@ public class TestCaseAnalyzer {
 			TestCaseRunner checker = new TestCaseRunner();
 			List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
 			
-			boolean isKill = !checker.isPassingTest();
+			boolean isKill = !checker.isPassingTest() && !checker.hasCompilationError();
 			if(isKill){
 				TraceModelConstructor constructor = new TraceModelConstructor();
 				Trace killingMutantTrace = constructor.constructTraceModel(testcaseConfig, executingStatements);
@@ -203,32 +204,38 @@ public class TestCaseAnalyzer {
 	private List<ClassLocation> findMutationLocation(List<BreakPoint> executingStatements) {
 		List<ClassLocation> locations = new ArrayList<>();
 		
-		Map<String, List<BreakPoint>> lineMap = new HashMap<>();
 		for(BreakPoint point: executingStatements){
-			String className = point.getDeclaringCompilationUnitName();
-			
-			List<BreakPoint> points = lineMap.get(className);
-			if(points == null){
-				points = new ArrayList<>();
-			}
-			
-			lineMap.put(className, points);
-			points.add(point);
+			ClassLocation location = new ClassLocation(point.getDeclaringCompilationUnitName(), 
+					null, point.getLineNo());
+			locations.add(location);
 		}
 		
-		for(String className: lineMap.keySet()){
-			CompilationUnit cu = JavaUtil.findCompilationUnitInProject(className);
-			List<Integer> lines = new ArrayList<>();
-			for(BreakPoint point: lineMap.get(className)){
-				lines.add(point.getLineNo());
-			}
-			
-			MutationPointChecker checker = new MutationPointChecker(cu, lines);
-			cu.accept(checker);
-			
-			List<ClassLocation> mutationLocations = checker.getMutationPoints();
-			locations.addAll(mutationLocations);
-		}
+//		Map<String, List<BreakPoint>> lineMap = new HashMap<>();
+//		for(BreakPoint point: executingStatements){
+//			String className = point.getDeclaringCompilationUnitName();
+//			
+//			List<BreakPoint> points = lineMap.get(className);
+//			if(points == null){
+//				points = new ArrayList<>();
+//			}
+//			
+//			lineMap.put(className, points);
+//			points.add(point);
+//		}
+//		
+//		for(String className: lineMap.keySet()){
+//			CompilationUnit cu = JavaUtil.findCompilationUnitInProject(className);
+//			List<Integer> lines = new ArrayList<>();
+//			for(BreakPoint point: lineMap.get(className)){
+//				lines.add(point.getLineNo());
+//			}
+//			
+//			MutationPointChecker checker = new MutationPointChecker(cu, lines);
+//			cu.accept(checker);
+//			
+//			List<ClassLocation> mutationLocations = checker.getMutationPoints();
+//			locations.addAll(mutationLocations);
+//		}
 		
 		
 		return locations;

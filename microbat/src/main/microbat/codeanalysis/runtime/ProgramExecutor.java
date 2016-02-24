@@ -972,18 +972,19 @@ public class ProgramExecutor{
 
 	private BreakPointValue extractValuesAtLocation(BreakPoint bkp, ThreadReference thread, 
 			Location loc) throws SavException {
-		try {
-			//return getValueExtractor().extractValue(bkp, bkpEvent);
-			VariableValueExtractor extractor = new VariableValueExtractor(bkp, thread, loc);
-			BreakPointValue bpValue = extractor.extractValue();
-			return bpValue;
-			
-		} catch (IncompatibleThreadStateException e) {
-			log.error(e.getMessage());
-		} catch (AbsentInformationException e) {
-			log.error(e.getMessage());
-		}
-		return null;
+//		try {
+//			//return getValueExtractor().extractValue(bkp, bkpEvent);
+//			VariableValueExtractor extractor = new VariableValueExtractor(bkp, thread, loc);
+//			BreakPointValue bpValue = extractor.extractValue();
+//			return bpValue;
+//			
+//		} catch (IncompatibleThreadStateException e) {
+//			log.error(e.getMessage());
+//		} catch (AbsentInformationException e) {
+//			log.error(e.getMessage());
+//		}
+//		return null;
+		return new BreakPointValue("");
 	}
 	
 	public Trace getTrace() {

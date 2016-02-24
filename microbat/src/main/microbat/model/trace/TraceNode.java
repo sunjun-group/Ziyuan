@@ -472,8 +472,6 @@ public class TraceNode{
 	}
 
 	public List<TraceNode> findAllDominators() {
-//		List<TraceNode> dominators = new ArrayList<>();
-		
 		Map<Integer, TraceNode> dominators = new HashMap<>();
 		
 		findDominators(this, dominators);
@@ -497,6 +495,39 @@ public class TraceNode{
 			}
 		}
 	}
+	
+	public List<TraceNode> findAllDominatees() {
+		Map<Integer, TraceNode> dominatees = new HashMap<>();
+		
+		findDominatees(this, dominatees);
+		
+		return new ArrayList<>(dominatees.values());
+	}
+
+	private void findDominatees(TraceNode node, Map<Integer, TraceNode> dominatees) {
+		for(TraceNode dominatee: node.getDataDominatee().keySet()){
+			if(!dominatees.containsKey(dominatee.getOrder())){
+				if(dominatee.getOrder() == 1){
+					System.currentTimeMillis();
+				}
+				
+				dominatees.put(dominatee.getOrder(), dominatee);		
+				findDominatees(dominatee, dominatees);				
+			}
+		}
+		
+		for(TraceNode controlDominatee: node.getControlDominatees()){
+			if(!dominatees.containsKey(controlDominatee.getOrder())){
+				if(controlDominatee.getOrder() == 1){
+					System.currentTimeMillis();
+				}
+				
+				dominatees.put(controlDominatee.getOrder(), controlDominatee);
+				findDominatees(controlDominatee, dominatees);				
+			}
+		}
+	}
+	
 
 	public TraceNode getControlDominator() {
 		return controlDominator;

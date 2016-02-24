@@ -22,8 +22,13 @@ public class TraceNodeSimilarityComparator {
 			int totalVars = traceNode1.getReadVariables().size() + traceNode1.getWrittenVariables().size() +
 					traceNode2.getWrittenVariables().size() + traceNode2.getReadVariables().size();
 			
-			double score = (2*(double)commonReadVarWithSameValue+2*commonWrittenVarWithSameValue)/totalVars;
-			
+			double score; 
+			if(totalVars == 0){
+				score = 1;
+			}
+			else{
+				score = (2*(double)commonReadVarWithSameValue+2*commonWrittenVarWithSameValue)/totalVars;
+			}
 			return score;
 		}
 		
