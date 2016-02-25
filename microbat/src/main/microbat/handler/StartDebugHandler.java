@@ -25,11 +25,10 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.IMethodBinding;
-import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
@@ -77,90 +76,97 @@ public class StartDebugHandler extends AbstractHandler {
 				
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
+					/** 0. clear some static common variables **/
+					clearOldData();
+					BreakPoint ap = new BreakPoint(classQulifiedName, methodSign, lineNumber);
+					List<BreakPoint> startPoints = Arrays.asList(ap);
 					
+					int stepNum = -1;
+					List<BreakPoint> executingStatements = new ArrayList<>();
 					try{
-						monitor.beginTask("Construct Trace Model", 10);
-						/** 0. clear some static common variables **/
-						clearOldData();
-						
-						BreakPoint ap = new BreakPoint(classQulifiedName, methodSign, lineNumber);
-						List<BreakPoint> startPoints = Arrays.asList(ap);
-						
-						/** 1. collect trace **/
-						monitor.setTaskName("collect trace");
+						monitor.beginTask("approximating efforts", 1);
 						
 						ExecutionStatementCollector collector = new ExecutionStatementCollector();
-						List<BreakPoint> executingStatements = collector.collectBreakPoints(appClassPath);
+						executingStatements = collector.collectBreakPoints(appClassPath);
+						stepNum = collector.getStepNum();
 						
 						monitor.worked(1);
-						
-						/** 2. parse read/written variables**/
-						monitor.setTaskName("parse read/written variables");
-						
-						MicrobatSlicer slicer = new MicrobatSlicer(executingStatements);
-						List<BreakPoint> breakpoints = null;
-						try {
-							System.out.println("start analyzing byte code ...");
-//							breakpoints = slicer.slice(appClassPath, startPoints);
-							breakpoints = slicer.parsingBreakPoints(appClassPath);
-							System.out.println("finish analyzing byte code ...!");
-						} catch (Exception e1) {
-							e1.printStackTrace();
-						}
-						
-						monitor.worked(2);
-						
-						/**
-						 * 3. find the variable scope for:
-						 * 1) Identifying the same local variable in different trace nodes.
-						 * 2) Generating variable ID for local variable.
-						 */
-						monitor.setTaskName("parse variable scopes");
-						
-						List<String> classScope = parseScope(breakpoints);
-						parseLocalVariables(classScope);
-						
-						if(breakpoints == null){
-							System.err.println("Cannot find any slice");
-							return Status.OK_STATUS;
-						}
-						
-						monitor.worked(1);
-						
-//						String methodName = methodSign.substring(0, methodSign.indexOf("("));
-//						List<String> tests = Arrays.asList(classQulifiedName + "." + methodName);
-//						tcExecutor.setup(appClasspath, tests);
-						
-						/** 4. extract runtime variables*/
-						monitor.setTaskName("extract runtime value for variables");
-						
-						tcExecutor.setConfig(appClassPath);
-						try {
-							long t1 = System.currentTimeMillis();
-							tcExecutor.run(breakpoints);
-							long t2 = System.currentTimeMillis();
-							System.out.println("time spent on collecting variables: " + (t2-t1));
-							
-						} catch (SavException e) {
-							e.printStackTrace();
-						}
-						
-						monitor.worked(5);
-						
-						/** 5. construct dominance relation*/
-						monitor.setTaskName("construct dominance relation");
-						
-						Trace trace = tcExecutor.getTrace();
-						trace.constructDomianceRelation();
-						//trace.conductStateDiff();
-						
-						monitor.worked(1);
-						
-						Activator.getDefault().setCurrentTrace(trace);
 					}
 					finally{
 						monitor.done();
 					}
+					
+					if(stepNum != -1){
+						try{
+							monitor.beginTask("Construct Trace Model", stepNum);
+							
+							/** 1. parse read/written variables**/
+							monitor.setTaskName("parse read/written variables");
+							
+							MicrobatSlicer slicer = new MicrobatSlicer(executingStatements);
+							List<BreakPoint> breakpoints = null;
+							try {
+								System.out.println("start analyzing byte code ...");
+//								breakpoints = slicer.slice(appClassPath, startPoints);
+								breakpoints = slicer.parsingBreakPoints(appClassPath);
+								System.out.println("finish analyzing byte code ...!");
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
+							
+							monitor.worked(2);
+							
+							/**
+							 * 2. find the variable scope for:
+							 * 1) Identifying the same local variable in different trace nodes.
+							 * 2) Generating variable ID for local variable.
+							 */
+							monitor.setTaskName("parse variable scopes");
+							
+							List<String> classScope = parseScope(breakpoints);
+							parseLocalVariables(classScope);
+							
+							if(breakpoints == null){
+								System.err.println("Cannot find any slice");
+								return Status.OK_STATUS;
+							}
+							
+							monitor.worked(1);
+							
+//							String methodName = methodSign.substring(0, methodSign.indexOf("("));
+//							List<String> tests = Arrays.asList(classQulifiedName + "." + methodName);
+//							tcExecutor.setup(appClasspath, tests);
+							
+							/** 3. extract runtime variables*/
+							monitor.setTaskName("extract runtime value for variables");
+							
+							tcExecutor.setConfig(appClassPath);
+							try {
+								long t1 = System.currentTimeMillis();
+								tcExecutor.run(breakpoints, monitor);
+								long t2 = System.currentTimeMillis();
+								System.out.println("time spent on collecting variables: " + (t2-t1));
+								
+							} catch (SavException e) {
+								e.printStackTrace();
+							} 
+							
+							/** 4. construct dominance relation*/
+							monitor.setTaskName("construct dominance relation");
+							
+							Trace trace = tcExecutor.getTrace();
+							trace.constructDomianceRelation();
+							//trace.conductStateDiff();
+							
+							monitor.worked(1);
+							
+							Activator.getDefault().setCurrentTrace(trace);
+						}
+						finally{
+							monitor.done();
+						}
+					}
+					
 					
 					Display.getDefault().asyncExec(new Runnable(){
 						

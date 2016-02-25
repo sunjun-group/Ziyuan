@@ -19,7 +19,6 @@ import microbat.codeanalysis.ast.LocalVariableScope;
 import microbat.codeanalysis.ast.VariableScopeParser;
 import microbat.codeanalysis.runtime.jpda.expr.ExpressionParser;
 import microbat.codeanalysis.runtime.jpda.expr.ParseException;
-import microbat.codeanalysis.runtime.variable.VariableValueExtractor;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
 import microbat.model.trace.StepVariableRelationEntry;
@@ -39,6 +38,7 @@ import microbat.util.BreakpointUtils;
 import microbat.util.JavaUtil;
 import microbat.util.Settings;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -149,7 +149,9 @@ public class ProgramExecutor{
 	 * @param brkps
 	 * @throws SavException
 	 */
-	public final void run(List<BreakPoint> brkps) throws SavException{
+	public final void run(List<BreakPoint> brkps, IProgressMonitor monitor) throws SavException{
+		
+		
 		this.brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
 		
 		/** start debugger */
@@ -196,6 +198,7 @@ public class ProgramExecutor{
 		/** this variable is used to handle exception case. */
 		Location caughtLocationForJustException = null;
 		
+		cancel:
 		while (!stop && !eventTimeout) {
 			EventSet eventSet;
 			try {
@@ -330,6 +333,11 @@ public class ProgramExecutor{
 					}
 					else{
 						isLastStepEventRecordNode = false;
+					}
+					
+					monitor.worked(1);
+					if(monitor.isCanceled()){
+						break cancel;
 					}
 				} else if(event instanceof MethodEntryEvent){
 					if(isLastStepEventRecordNode){

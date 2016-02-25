@@ -29,6 +29,7 @@ import com.sun.jdi.request.StepRequest;
 public class ExecutionStatementCollector {
 	
 	protected String[] stepWatchExcludes = { "java.*", "javax.*", "sun.*", "com.sun.*", "org.junit.*"};
+	protected int steps = 0;
 	
 	public List<BreakPoint> collectBreakPoints(AppJavaClassPath appClassPath){
 		List<BreakPoint> pointList = new ArrayList<>();
@@ -45,6 +46,8 @@ public class ExecutionStatementCollector {
 		EventQueue queue = vm.eventQueue();
 		
 		boolean connected = true;
+		
+		
 		
 		while(connected){
 			try {
@@ -74,6 +77,8 @@ public class ExecutionStatementCollector {
 							
 							BreakPoint breakPoint = new BreakPoint(path, lineNumber);
 							System.out.println(breakPoint);
+							setSteps(getStepNum() + 1);
+							
 							if(!pointList.contains(breakPoint)){
 								pointList.add(breakPoint);							
 							}
@@ -127,5 +132,13 @@ public class ExecutionStatementCollector {
 			request.addClassExclusionFilter(ex);
 		}
 		request.enable();
+	}
+
+	public int getStepNum() {
+		return steps;
+	}
+
+	public void setSteps(int steps) {
+		this.steps = steps;
 	}
 }
