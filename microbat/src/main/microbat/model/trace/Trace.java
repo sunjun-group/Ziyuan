@@ -376,7 +376,7 @@ public class Trace {
 	public String findTrueIDFromStateVariable(String varID, int order) {
 		for(int i=order; i>=1; i--){
 			TraceNode node = this.exectionList.get(i-1);
-			String trueID = findTrueID(node.getReadVariables(), varID); 
+			String trueID = findTrueID(node.getWrittenVariables(), varID); 
 			
 			if(trueID != null){
 				return trueID;
