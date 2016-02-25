@@ -407,7 +407,7 @@ public class StepRecommender {
 		TraceNode oldSusiciousNode = currentNode;
 		
 		List<AttributionVar> readVars = constructAttributionRelation(currentNode, trace.getCheckTime());
-		AttributionVar focusVar = Settings.interestedVariables.findFocusVar(readVars);
+		AttributionVar focusVar = Settings.interestedVariables.findFocusVar(trace, currentNode, readVars);
 				
 		if(focusVar != null){
 //			long t1 = System.currentTimeMillis();

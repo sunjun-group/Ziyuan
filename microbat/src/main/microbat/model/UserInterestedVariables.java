@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import microbat.model.trace.StepVariableRelationEntry;
+import microbat.model.trace.Trace;
+import microbat.model.trace.TraceNode;
+
 public class UserInterestedVariables {
 	
 	private List<AttributionVar> roots = new ArrayList<>();
@@ -152,10 +156,12 @@ public class UserInterestedVariables {
 	 * @param readVars
 	 * @return
 	 */
-	public AttributionVar findFocusVar(List<AttributionVar> readVars) {
+	public AttributionVar findFocusVar(Trace trace, TraceNode currentNode, List<AttributionVar> readVars) {
 		if(readVars.isEmpty()){
 			if(!roots.isEmpty()){
-				return roots.get(0);				
+				AttributionVar bestRoot = findBestRoot(trace, currentNode);
+				
+				return bestRoot;				
 			}
 			else{
 				return null;
@@ -183,6 +189,33 @@ public class UserInterestedVariables {
 		}
 		
 		return null;
+	}
+
+	private AttributionVar findBestRoot(Trace trace, TraceNode currentNode) {
+		AttributionVar bestRoot = null;
+		int distance = -1;
+		for(AttributionVar root: roots){
+			if(bestRoot == null){
+				bestRoot = root;
+				distance = calculateDistanceWithCurrentNode(trace, currentNode, bestRoot);
+			}
+			else{
+				int newDistance = calculateDistanceWithCurrentNode(trace, currentNode, root);
+				if(newDistance < distance){
+					bestRoot = root;
+				}
+			}
+		}
+		
+		return bestRoot;
+	}
+
+	private int calculateDistanceWithCurrentNode(Trace trace, TraceNode currentNode, AttributionVar bestRoot) {
+		String varID = bestRoot.getVarID();
+		StepVariableRelationEntry entry = trace.getStepVariableTable().get(varID);
+		TraceNode producer = entry.getProducers().get(0);
+		
+		return Math.abs(producer.getOrder()-currentNode.getOrder());
 	}
 	
 	public UserInterestedVariables clone(){
