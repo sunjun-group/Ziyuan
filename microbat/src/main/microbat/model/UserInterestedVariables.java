@@ -187,15 +187,72 @@ public class UserInterestedVariables {
 	
 	public UserInterestedVariables clone(){
 		Map<String, Integer> clonedVarIDs = new HashMap<>();
+		
 		for(String key: varIDs.keySet()){
 			clonedVarIDs.put(key, varIDs.get(key));
 		}
 		
 		UserInterestedVariables variables = new UserInterestedVariables();
 		variables.varIDs = clonedVarIDs;
-		variables.updateAttributionTrees();
+		
+		List<AttributionVar> clonedRoots = this.cloneAllAttributionVar();
+		variables.cloneAttributionTrees(clonedRoots, this.roots);
+		
+		List<AttributionVar> clonedRootTree = new ArrayList<>();
+		for(AttributionVar possibleRoot: clonedRoots){
+			if(possibleRoot.getParents().isEmpty()){
+				clonedRootTree.add(possibleRoot);
+			}
+		}
+		variables.roots = clonedRootTree;
 		
 		return variables;
+	}
+	
+	public List<AttributionVar> cloneAllAttributionVar(){
+		List<AttributionVar> list = new ArrayList<>();
+		for(AttributionVar var: this.roots){
+			traverse(var, list);
+		}
+		return list;
+	}
+
+	private void traverse(AttributionVar var0, List<AttributionVar> list) {
+		AttributionVar var = new AttributionVar(var0.getVarID(), var0.getCheckTime());
+		list.add(var);
+		for(AttributionVar child: var0.getChildren()){
+			traverse(child, list);
+		}
+	}
+
+	private void cloneAttributionTrees(List<AttributionVar> clonedRoots, List<AttributionVar> roots) {
+		for(AttributionVar root: roots){
+			traverseClone(root, clonedRoots);
+		}
+		
+	}
+
+	private void traverseClone(AttributionVar root, List<AttributionVar> clonedRoots) {
+		AttributionVar clonedParent = findCorrespondVar(clonedRoots, root);
+		for(AttributionVar child: root.getChildren()){
+			AttributionVar clonedChild = findCorrespondVar(clonedRoots, child);
+			
+			clonedParent.addChild(clonedChild);
+			clonedChild.addParent(clonedParent);
+			
+			traverseClone(child, clonedRoots);
+		}
+		
+	}
+
+	private AttributionVar findCorrespondVar(List<AttributionVar> clonedRoots,
+			AttributionVar inputVar) {
+		for(AttributionVar var: clonedRoots){
+			if(var.getVarID().equals(inputVar.getVarID())){
+				return var;
+			}
+		}
+		return null;
 	}
 
 	public void clear() {
