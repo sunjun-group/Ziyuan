@@ -118,7 +118,7 @@ public class TestCaseAnalyzer {
 					MutationResult result = mutations.get(mutatedClass);
 					for(Integer line: result.getMutatedFiles().keySet()){
 						
-						if(line != 42){
+						if(line != 44){
 							continue;
 						}
 						

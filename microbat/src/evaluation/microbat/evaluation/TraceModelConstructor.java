@@ -7,6 +7,8 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 import sav.common.core.SavException;
 import sav.commons.TestConfiguration;
@@ -60,7 +62,7 @@ public class TraceModelConstructor {
 		/** 4. extract runtime variables*/
 		tcExecutor.setConfig(appClassPath);
 		try {
-			tcExecutor.run(breakpoints);
+			tcExecutor.run(breakpoints, new SubProgressMonitor(new NullProgressMonitor(), 0));
 		} catch (SavException e) {
 			e.printStackTrace();
 		}

@@ -28,10 +28,10 @@ public class SimulatedMicroBat {
 	public void detectMutatedBug(Trace mutatedTrace, Trace correctTrace, ClassLocation mutatedLocation) {
 		PairList pairList = DiffUtil.generateMatchedTraceNodeList(mutatedTrace, correctTrace);
 		
-//		TraceNode rootCause = findRootCause(mutatedLocation.getClassCanonicalName(), 
-//				mutatedLocation.getLineNo(), mutatedTrace, pairList);
+		TraceNode rootCause = findRootCause(mutatedLocation.getClassCanonicalName(), 
+				mutatedLocation.getLineNo(), mutatedTrace, pairList);
 //		
-//		List<TraceNode> dominatees = rootCause.findAllDominatees();
+		Object dom = rootCause.findAllDominatees();
 //		dominatees.add(rootCause);
 		
 		List<TraceNode> dominatees = findAllDominatees(mutatedTrace, mutatedLocation);
@@ -40,14 +40,14 @@ public class SimulatedMicroBat {
 		Accuracy accuracy = computeAccuracy(dominatees, allWrongNodes);
 		
 		if(accuracy.getRecall() < 0.95){
-			System.currentTimeMillis();
+			System.out.println(mutatedLocation.getClassCanonicalName() + ":" + mutatedLocation.getLineNo() + " has problem");
 			TraceNodeSimilarityComparator sc = new TraceNodeSimilarityComparator();
 			TraceNode node = falseNegative.get(0);
-			TraceNodePair pair = pairList.findByMutatedNode(node);
+//			TraceNodePair pair = pairList.findByMutatedNode(node);
+//			
+//			double d = sc.compute(pair.getMutatedNode(), pair.getOriginalNode());
 			
-			double d = sc.compute(pair.getMutatedNode(), pair.getOriginalNode());
-			
-			System.currentTimeMillis();
+//			System.currentTimeMillis();
 		}
 		
 		System.out.println(accuracy);
