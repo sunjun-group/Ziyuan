@@ -175,9 +175,12 @@ public class Trace {
 			
 			if(node.isConditionalBranch()){
 				Scope conditionScope = node.getConditionScope();
-				if(conditionScope.containsNodeScope(dominatee)){
-					return node;
+				if(conditionScope != null){
+					if(conditionScope.containsNodeScope(dominatee)){
+						return node;
+					}
 				}
+				
 			}
 			
 			if(node.equals(dominatee.getInvocationParent())){

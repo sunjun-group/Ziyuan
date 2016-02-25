@@ -90,6 +90,7 @@ public class StartDebugHandler extends AbstractHandler {
 						executingStatements = collector.collectBreakPoints(appClassPath);
 						stepNum = collector.getStepNum();
 						
+						System.out.println("There are " + stepNum + "steps for this run.");
 						monitor.worked(1);
 					}
 					finally{
