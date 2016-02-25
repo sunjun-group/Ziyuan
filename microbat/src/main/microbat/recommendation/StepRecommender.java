@@ -311,7 +311,7 @@ public class StepRecommender {
 	private TraceNode handleBinarySearchBehavior(Trace trace, TraceNode currentNode) {
 		TraceNode suspiciousNode = null;
 		
-		boolean isOverSkipping = currentNode.isAllReadWrittenVarCorrect();
+		boolean isOverSkipping = currentNode.isAllReadWrittenVarCorrect(false);
 		if(isOverSkipping){
 			state = DebugState.BINARY_SEARCH;
 			
@@ -336,7 +336,7 @@ public class StepRecommender {
 					
 					if(isCompatible(causingVariable, currentNode)){
 						state = DebugState.BINARY_SEARCH;
-						if(currentNode.isAllReadWrittenVarCorrect()){
+						if(currentNode.isAllReadWrittenVarCorrect(false)){
 							this.loopRange.startNode = currentNode;
 						}
 						else{
@@ -381,7 +381,7 @@ public class StepRecommender {
 
 	private TraceNode handleSkipBehavior(Trace trace, TraceNode currentNode) {
 		TraceNode suspiciousNode;
-		boolean isOverSkipping = currentNode.isAllReadWrittenVarCorrect();
+		boolean isOverSkipping = currentNode.isAllReadWrittenVarCorrect(false);
 		if(isOverSkipping){
 			state = DebugState.BINARY_SEARCH;
 			

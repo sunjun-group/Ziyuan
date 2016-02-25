@@ -93,38 +93,41 @@ public class TraceNode{
 		return markedReadVars;
 	}
 	
-	public boolean isAllReadWrittenVarCorrect(){
-		boolean writtenCorrect = getWittenVarCorrectness(Settings.interestedVariables) == TraceNode.WRITTEN_VARS_CORRECT;
-		boolean readCorrect = getReadVarCorrectness(Settings.interestedVariables) == TraceNode.READ_VARS_CORRECT;
+	public boolean isAllReadWrittenVarCorrect(boolean isUICheck){
+		boolean writtenCorrect = getWittenVarCorrectness(Settings.interestedVariables, isUICheck) == TraceNode.WRITTEN_VARS_CORRECT;
+		boolean readCorrect = getReadVarCorrectness(Settings.interestedVariables, isUICheck) == TraceNode.READ_VARS_CORRECT;
 		
 		return writtenCorrect && readCorrect;
 	}
 	
-	public int getReadVarCorrectness(UserInterestedVariables interestedVariables){
-		if(hasChecked()){
-			for(VarValue var: getReadVariables()){
-				String readVarID = var.getVarID();
-				if(interestedVariables.contains(readVarID)){
-					return TraceNode.READ_VARS_INCORRECT;
-				}
+	public int getReadVarCorrectness(UserInterestedVariables interestedVariables, boolean isUICheck){
+		
+		for(VarValue var: getReadVariables()){
+			String readVarID = var.getVarID();
+			if(interestedVariables.contains(readVarID)){
+				return TraceNode.READ_VARS_INCORRECT;
 			}
-			
-			return TraceNode.READ_VARS_CORRECT;
+		}
+		
+		if(hasChecked() || isUICheck){
+			return TraceNode.READ_VARS_CORRECT;			
 		}
 		else{
 			return TraceNode.READ_VARS_UNKNOWN;
 		}
+		
 	}
 	
-	public int getWittenVarCorrectness(UserInterestedVariables interestedVariables){
-		if(hasChecked()){
-			for(VarValue var: getWrittenVariables()){
-				String writtenVarID = var.getVarID();
-				if(interestedVariables.contains(writtenVarID)){
-					return TraceNode.WRITTEN_VARS_INCORRECT;
-				}
+	public int getWittenVarCorrectness(UserInterestedVariables interestedVariables, boolean isUICheck){
+		
+		for(VarValue var: getWrittenVariables()){
+			String writtenVarID = var.getVarID();
+			if(interestedVariables.contains(writtenVarID)){
+				return TraceNode.WRITTEN_VARS_INCORRECT;
 			}
-			
+		}
+		
+		if(hasChecked()|| isUICheck){
 			return TraceNode.WRITTEN_VARS_CORRECT;
 		}
 		else{

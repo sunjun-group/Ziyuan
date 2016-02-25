@@ -429,6 +429,10 @@ public class Trace {
 			double suspicousness = 1;
 			StepVariableRelationEntry entry = this.stepVariableTable.get(varID);
 			
+			if(entry == null){
+				System.err.println("Cannot find " + varID + " in step variable table");
+			}
+			
 			if(!entry.getProducers().isEmpty()){
 				TraceNode producer = entry.getProducers().get(0);
 				int layer = 1;
@@ -575,8 +579,8 @@ public class Trace {
 
 	public TraceNode getEarliestNodeWithWrongVar() {
 		for(TraceNode node: this.exectionList){
-			if(node.getWittenVarCorrectness(Settings.interestedVariables)==TraceNode.WRITTEN_VARS_INCORRECT
-					|| node.getReadVarCorrectness(Settings.interestedVariables)==TraceNode.READ_VARS_INCORRECT){
+			if(node.getWittenVarCorrectness(Settings.interestedVariables, false)==TraceNode.WRITTEN_VARS_INCORRECT
+					|| node.getReadVarCorrectness(Settings.interestedVariables, false)==TraceNode.READ_VARS_INCORRECT){
 				return node;
 			}
 		}

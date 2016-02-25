@@ -28,12 +28,12 @@ public class PathInstance {
 	}
 	
 	public boolean isPotentialCorrect() {
-		if(startNode.getReadVarCorrectness(Settings.interestedVariables)==TraceNode.READ_VARS_CORRECT && 
-				endNode.getReadVarCorrectness(Settings.interestedVariables)==TraceNode.READ_VARS_CORRECT){
+		if(startNode.getReadVarCorrectness(Settings.interestedVariables, false)==TraceNode.READ_VARS_CORRECT && 
+				endNode.getReadVarCorrectness(Settings.interestedVariables, false)==TraceNode.READ_VARS_CORRECT){
 			return true;
 		}
-		else if(startNode.getReadVarCorrectness(Settings.interestedVariables)!=TraceNode.READ_VARS_CORRECT && 
-				endNode.getReadVarCorrectness(Settings.interestedVariables)!=TraceNode.READ_VARS_CORRECT){
+		else if(startNode.getReadVarCorrectness(Settings.interestedVariables, false)!=TraceNode.READ_VARS_CORRECT && 
+				endNode.getReadVarCorrectness(Settings.interestedVariables, false)!=TraceNode.READ_VARS_CORRECT){
 			return true;
 		}
 		
@@ -58,6 +58,9 @@ public class PathInstance {
 			lineTrace.add(sourceLine);
 			
 			node = node.getStepInNext();
+			if(node == null){
+				break;
+			}
 		}
 		
 		return lineTrace;
