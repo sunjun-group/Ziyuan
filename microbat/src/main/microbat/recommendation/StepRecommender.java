@@ -427,9 +427,14 @@ public class StepRecommender {
 			}
 			else{
 				TraceNode readTraceNode = focusVar.getReadTraceNode();
-				PathInstance path = new PathInstance(suspiciousNode, readTraceNode);
 				
-				boolean isPathInPattern = Settings.potentialCorrectPatterns.containsPattern(path)? true : false;
+				boolean isPathInPattern = false;
+				PathInstance path = null;
+				if(readTraceNode != null){
+					path = new PathInstance(suspiciousNode, readTraceNode);
+					isPathInPattern = Settings.potentialCorrectPatterns.containsPattern(path)? true : false;					
+				}
+				
 				if(isPathInPattern){
 					state = DebugState.SKIP;
 					
