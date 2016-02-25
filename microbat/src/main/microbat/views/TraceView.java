@@ -11,6 +11,7 @@ import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.util.JavaUtil;
 import microbat.util.MicroBatUtil;
+import microbat.util.Settings;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -400,12 +401,14 @@ public class TraceView extends ViewPart {
 				TraceNode node = (TraceNode)element;
 				
 				if(node.hasChecked()){
-					ImageDescriptor image = Activator.getDefault().getImageRegistry().getDescriptor(ImageUI.CHECK_MARK);
-					return image.createImage();					
+//					ImageDescriptor image = Activator.getDefault().getImageRegistry().getDescriptor(ImageUI.CHECK_MARK);
+//					return image.createImage();
+					return Settings.imageUI.getCheckMarkImage();
 				}
 				else{
-					ImageDescriptor image = Activator.getDefault().getImageRegistry().getDescriptor(ImageUI.QUESTION_MARK);
-					return image.createImage();
+//					ImageDescriptor image = Activator.getDefault().getImageRegistry().getDescriptor(ImageUI.QUESTION_MARK);
+//					return image.createImage();
+					return Settings.imageUI.getQuestionMarkImage();
 				}
 //				Image image = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_ELCL_SYNCED);
 //				return image;				
