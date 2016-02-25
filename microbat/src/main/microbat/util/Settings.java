@@ -8,6 +8,7 @@ import microbat.handler.CheckingState;
 import microbat.model.UserInterestedVariables;
 import microbat.model.trace.PotentialCorrectPatternList;
 import microbat.preference.MicrobatPreference;
+import microbat.views.ImageUI;
 
 public class Settings {
 	
@@ -18,7 +19,10 @@ public class Settings {
 	public static String buggyClassName;
 	public static String buggyLineNumber;
 	
+	public static boolean isRecordSnapshot;
+	
 	public static int distribtionLayer = 3;
+	public static ImageUI imageUI = new ImageUI();
 	
 	/**
 	 * The portion remains in a trace node when propagating suspiciousness. 
@@ -32,6 +36,8 @@ public class Settings {
 				lanuchClass = Activator.getDefault().getPreferenceStore().getString(MicrobatPreference.LANUCH_CLASS);
 				buggyClassName = Activator.getDefault().getPreferenceStore().getString(MicrobatPreference.CLASS_NAME);
 				buggyLineNumber = Activator.getDefault().getPreferenceStore().getString(MicrobatPreference.LINE_NUMBER);
+				String isRecord = Activator.getDefault().getPreferenceStore().getString(MicrobatPreference.RECORD_SNAPSHORT);
+				isRecordSnapshot = isRecord.equals("true");
 			}
 			catch(Exception e){
 				e.printStackTrace();
@@ -56,4 +62,5 @@ public class Settings {
 	 * This stack allow user to undo his checking operations.
 	 */
 	public static Stack<CheckingState> checkingStateStack = new Stack<>();
+	
 }

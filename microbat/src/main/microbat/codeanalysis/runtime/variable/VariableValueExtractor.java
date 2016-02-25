@@ -26,6 +26,7 @@ import microbat.model.variable.Variable;
 import microbat.util.PrimitiveUtils;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jdi.TimeoutException;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayReference;
@@ -440,6 +441,9 @@ public class VariableValueExtractor {
 			e.printStackTrace();
 		} catch (IncompatibleThreadStateException e) {
 			e.printStackTrace();
+		} catch (Exception e){
+			System.out.println("Cannot parse " + expression);
+			e.printStackTrace();
 		}
         
         return null;
@@ -521,6 +525,9 @@ public class VariableValueExtractor {
 		} catch (AbsentInformationException e) {
 			e.printStackTrace();
 		} catch (IncompatibleThreadStateException e) {
+			e.printStackTrace();
+		} catch (TimeoutException e){
+			System.out.println("Cannot parse " + val.getVarName());
 			e.printStackTrace();
 		}
 	}

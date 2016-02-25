@@ -20,6 +20,11 @@ public class UserInterestedVariables {
 	}
 	
 	public AttributionVar add(String varID, int checkTime){
+		
+		if(varID.equals("10[1]")){
+			System.currentTimeMillis();
+		}
+		
 		this.varIDs.put(varID, checkTime);
 		
 		AttributionVar var = new AttributionVar(varID, checkTime);
@@ -103,6 +108,13 @@ public class UserInterestedVariables {
 		Map<String, AttributionVar> vars = new HashMap<>();
 		for(AttributionVar var: roots){
 			collectVars(vars, var);
+		}
+		
+		for(String varID: varIDs.keySet()){
+			if(!vars.containsKey(varID)){
+				AttributionVar aVar = new AttributionVar(varID, varIDs.get(varID));
+				vars.put(varID, aVar);
+			}
 		}
 		
 		Iterator<String> iter = vars.keySet().iterator();

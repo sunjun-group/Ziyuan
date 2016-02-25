@@ -19,6 +19,7 @@ import microbat.codeanalysis.ast.LocalVariableScope;
 import microbat.codeanalysis.ast.VariableScopeParser;
 import microbat.codeanalysis.runtime.jpda.expr.ExpressionParser;
 import microbat.codeanalysis.runtime.jpda.expr.ParseException;
+import microbat.codeanalysis.runtime.variable.VariableValueExtractor;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
 import microbat.model.trace.StepVariableRelationEntry;
@@ -1005,19 +1006,24 @@ public class ProgramExecutor{
 
 	private BreakPointValue extractValuesAtLocation(BreakPoint bkp, ThreadReference thread, 
 			Location loc) throws SavException {
-//		try {
-//			//return getValueExtractor().extractValue(bkp, bkpEvent);
-//			VariableValueExtractor extractor = new VariableValueExtractor(bkp, thread, loc);
-//			BreakPointValue bpValue = extractor.extractValue();
-//			return bpValue;
-//			
-//		} catch (IncompatibleThreadStateException e) {
-//			log.error(e.getMessage());
-//		} catch (AbsentInformationException e) {
-//			log.error(e.getMessage());
-//		}
-//		return null;
-		return new BreakPointValue("");
+		if(Settings.isRecordSnapshot){
+			try {
+				//return getValueExtractor().extractValue(bkp, bkpEvent);
+				VariableValueExtractor extractor = new VariableValueExtractor(bkp, thread, loc);
+				BreakPointValue bpValue = extractor.extractValue();
+				return bpValue;
+				
+			} catch (IncompatibleThreadStateException e) {
+				log.error(e.getMessage());
+			} catch (AbsentInformationException e) {
+				log.error(e.getMessage());
+			}
+			return null;
+			
+		}
+		else{
+			return new BreakPointValue("");			
+		}
 	}
 	
 	public Trace getTrace() {
