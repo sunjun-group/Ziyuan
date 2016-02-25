@@ -551,8 +551,8 @@ public class DebugFeedbackView extends ViewPart {
 	
 	private boolean isValidToInferBugType(){
 		if(currentNode != null){
-			boolean flag1 = currentNode.getReadVarCorrectness(Settings.interestedVariables)==TraceNode.READ_VARS_CORRECT &&
-					currentNode.getWittenVarCorrectness(Settings.interestedVariables)==TraceNode.WRITTEN_VARS_INCORRECT;
+			boolean flag1 = currentNode.getReadVarCorrectness(Settings.interestedVariables, true)==TraceNode.READ_VARS_CORRECT &&
+					currentNode.getWittenVarCorrectness(Settings.interestedVariables, true)==TraceNode.WRITTEN_VARS_INCORRECT;
 //			boolean flag2 = recommender.getState()==SuspiciousNodeRecommender.BINARY_SEARCH;
 //		
 //			boolean flag3 = false;
@@ -598,8 +598,8 @@ public class DebugFeedbackView extends ViewPart {
 		}
 		
 		private boolean isValidForRecommendation(){
-			int readVarCorrectness = currentNode.getReadVarCorrectness(Settings.interestedVariables);
-			int writtenVarCorrectness = currentNode.getWittenVarCorrectness(Settings.interestedVariables);
+			int readVarCorrectness = currentNode.getReadVarCorrectness(Settings.interestedVariables, true);
+			int writtenVarCorrectness = currentNode.getWittenVarCorrectness(Settings.interestedVariables, true);
 			boolean existWrittenVariable = !currentNode.getWrittenVariables().isEmpty();
 			boolean existReadVariable = !currentNode.getReadVariables().isEmpty();
 			
@@ -619,7 +619,7 @@ public class DebugFeedbackView extends ViewPart {
 			else if(existWrittenVariable && existReadVariable && writtenVarCorrectness==TraceNode.WRITTEN_VARS_INCORRECT
 					&& readVarCorrectness==TraceNode.READ_VARS_INCORRECT
 					&& feedbackType.equals(UserFeedback.CORRECT)){
-				String message = "Some variables are marked incorrect, but your feedback is marked correct, "
+				String message = "Some variables are marked incorrect, but your feedback is marked correct (\"Yes\" choice), "
 						+ "are you really sure?";
 				openReconfirmDialog(message);
 				return false;
@@ -635,15 +635,15 @@ public class DebugFeedbackView extends ViewPart {
 			else {
 				Trace trace = Activator.getDefault().getCurrentTrace();
 				
-				CheckingState state = new CheckingState();
-				state.recordCheckingState(currentNode, recommender, trace, 
-						Settings.interestedVariables, Settings.potentialCorrectPatterns);
-				Settings.checkingStateStack.push(state);
-				
 				TraceNode suspiciousNode = null;
 				
 				boolean isValidForRecommendation = isValidForRecommendation();
 				if(isValidForRecommendation){
+					CheckingState state = new CheckingState();
+					state.recordCheckingState(currentNode, recommender, trace, 
+							Settings.interestedVariables, Settings.potentialCorrectPatterns);
+					Settings.checkingStateStack.push(state);
+					
 //					ConflictRuleChecker conflictRuleChecker = new ConflictRuleChecker();
 //					TraceNode conflictNode = conflictRuleChecker.checkConflicts(trace, currentNode.getOrder());
 //					
