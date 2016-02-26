@@ -614,6 +614,7 @@ public class StepRecommender {
 	@SuppressWarnings("unchecked")
 	public StepRecommender clone(){
 		StepRecommender recommender = new StepRecommender();
+		recommender.state = this.state;
 		recommender.lastNode = this.lastNode;
 		recommender.lastRecommendNode = this.lastRecommendNode;
 		recommender.latestClearState = this.latestClearState;
