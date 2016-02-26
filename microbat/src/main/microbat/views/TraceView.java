@@ -401,17 +401,16 @@ public class TraceView extends ViewPart {
 				TraceNode node = (TraceNode)element;
 				
 				if(node.hasChecked()){
-//					ImageDescriptor image = Activator.getDefault().getImageRegistry().getDescriptor(ImageUI.CHECK_MARK);
-//					return image.createImage();
-					return Settings.imageUI.getCheckMarkImage();
+					if(node.isAllReadWrittenVarCorrect(true)){
+						return Settings.imageUI.getImage(ImageUI.CHECK_MARK);						
+					}
+					else{
+						return Settings.imageUI.getImage(ImageUI.BUGGY_MARK);	
+					}
 				}
 				else{
-//					ImageDescriptor image = Activator.getDefault().getImageRegistry().getDescriptor(ImageUI.QUESTION_MARK);
-//					return image.createImage();
-					return Settings.imageUI.getQuestionMarkImage();
+					return Settings.imageUI.getImage(ImageUI.QUESTION_MARK);
 				}
-//				Image image = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_ELCL_SYNCED);
-//				return image;				
 			}
 			
 			return null;
