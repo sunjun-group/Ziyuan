@@ -88,6 +88,15 @@ public class StepRecommender {
 			backupStartNode = startNode;
 			backupEndNode = endNode;
 		}
+
+		public boolean checkedSkipPointsContains(TraceNode suspiciousNode) {
+			for(TraceNode skipPoint: skipPoints){
+				if(skipPoint.hasChecked() && skipPoint.equals(suspiciousNode)){
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 	
 	public class InspectingRange{
@@ -442,7 +451,8 @@ public class StepRecommender {
 					this.loopRange.skipPoints.clear();
 					//this.range.skipPoints.add(suspiciousNode);
 					
-					while(Settings.potentialCorrectPatterns.containsPattern(path)){
+					while(Settings.potentialCorrectPatterns.containsPattern(path) 
+							&& !shouldStopOnCheckedNode(suspiciousNode, path)){
 						
 						Settings.potentialCorrectPatterns.addPathForPattern(path);
 						this.loopRange.skipPoints.add(suspiciousNode);
@@ -477,6 +487,30 @@ public class StepRecommender {
 		
 	}
 	
+	private boolean shouldStopOnCheckedNode(TraceNode suspiciousNode, PathInstance path) {
+		if(!suspiciousNode.hasChecked()){
+			return false;
+		}
+		else{
+			if(suspiciousNode.isAllReadWrittenVarCorrect(false)){
+				return true;
+			}
+			else{
+				PotentialCorrectPattern pattern = Settings.potentialCorrectPatterns.getPattern(path);
+				if(pattern != null){
+					PathInstance labelPath = pattern.getLabelInstance();
+					Variable causingVariable = labelPath.findCausingVar();
+					
+					if(isCompatible(causingVariable, suspiciousNode)){
+						return false;
+					}
+				}
+			}
+		}
+		
+		return true;
+	}
+
 	private TraceNode handleDetailInspecting(Trace trace, TraceNode currentNode, String userFeedBack) {
 		
 		if(userFeedBack.equals(UserFeedback.CORRECT)){
