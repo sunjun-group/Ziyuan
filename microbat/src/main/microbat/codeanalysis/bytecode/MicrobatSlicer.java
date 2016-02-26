@@ -455,10 +455,9 @@ public class MicrobatSlicer{
 					point.getDeclaringCompilationUnitName(), point.getLineNo());
 			
 			if(var != null){
-				if(var.getName().equals("a")){
-					System.currentTimeMillis();
+				if(!var.getName().equals("this")){
+					point.addReadVariable(var);				
 				}
-				point.addReadVariable(var);				
 			}
 			else{
 //				method.getLocalVariableName(pc, varIndex);
