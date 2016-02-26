@@ -1,6 +1,7 @@
 package microbat.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,8 +23,11 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 public class JavaUtil {
+	
+	private static HashMap<String, CompilationUnit> compilationUnitMap = new HashMap<>();
 	
 	public static String generateMethodSignature(MethodDeclaration md){
 		IMethodBinding mBinding = md.resolveBinding();
@@ -69,17 +73,21 @@ public class JavaUtil {
 	}
 	
 	public static CompilationUnit findCompilationUnitInProject(String qualifiedName){
+		CompilationUnit cu = compilationUnitMap.get(qualifiedName);
 		
-		try{
-			ICompilationUnit icu = findICompilationUnitInProject(qualifiedName);
-			CompilationUnit cu = convertICompilationUnitToASTNode(icu);	
-			return cu;
-		}
-		catch(IllegalStateException e){
-			e.printStackTrace();
+		if(null == cu){
+			try{
+				ICompilationUnit icu = findICompilationUnitInProject(qualifiedName);
+				cu = convertICompilationUnitToASTNode(icu);	
+				return cu;
+			}
+			catch(IllegalStateException e){
+				e.printStackTrace();
+			} 
 		}
 		
-		return null;
+		
+		return cu;
 	}
 	
 	public static ICompilationUnit findICompilationUnitInProject(String qualifiedName){
@@ -143,5 +151,13 @@ public class JavaUtil {
 		}
 		
 		return null;
+	}
+
+	public static boolean isTheLocationHeadOfClass(String sourceName, int lineNumber) {
+		CompilationUnit cu = findCompilationUnitInProject(sourceName);
+		AbstractTypeDeclaration type = (AbstractTypeDeclaration) cu.types().get(0);
+		int headLine = cu.getLineNumber(type.getName().getStartPosition());
+		
+		return headLine==lineNumber;
 	}
 }
