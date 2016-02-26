@@ -102,13 +102,21 @@ public class StepRecommender {
 	public class InspectingRange{
 		TraceNode startNode;
 		TraceNode endNode;
-
-		public InspectingRange(TraceNode startNode, TraceNode endNode) {
-			super();
+		
+		private InspectingRange(TraceNode startNode, TraceNode endNode){
 			this.startNode = startNode;
 			this.endNode = endNode;
 		}
 		
+		public InspectingRange(Map<TraceNode, List<String>> dataDominator,
+				TraceNode suspiciousNode) {
+			ArrayList<TraceNode> dominators = new ArrayList<TraceNode>(dataDominator.keySet());
+			Collections.sort(dominators, new TraceNodeOrderComparator());
+			
+			startNode = dominators.get(0);
+			endNode = suspiciousNode;
+		}
+
 		public InspectingRange clone(){
 			InspectingRange inspectingRange = new InspectingRange(startNode, endNode);
 			return inspectingRange;
@@ -428,15 +436,16 @@ public class StepRecommender {
 			/**
 			 * it means the suspiciousness of focusVar cannot be distributed to other trace node any more. 
 			 */
-			if(suspiciousNode.isWrittenVariablesContains(focusVar.getVarID()) && suspiciousNode.equals(this.lastNode)){
+			TraceNode producer = trace.getProducer(focusVar.getVarID());
+//			if(suspiciousNode.isWrittenVariablesContains(focusVar.getVarID()) && suspiciousNode.equals(this.lastNode)){
+			if(suspiciousNode.getOrder()>currentNode.getOrder() && producer!=null && producer.equals(suspiciousNode)){
 				//TODO it could be done in a more intelligent way.
-				this.inspectingRange = new InspectingRange(currentNode, suspiciousNode);
+				this.inspectingRange = new InspectingRange(suspiciousNode.getDataDominator(), suspiciousNode);
 				TraceNode recommendedNode = handleDetailInspecting(trace, currentNode, userFeedBack);
 				return recommendedNode;
 			}
 			else{
 				TraceNode readTraceNode = focusVar.getReadTraceNode();
-				
 				boolean isPathInPattern = false;
 				PathInstance path = null;
 				if(readTraceNode != null){
