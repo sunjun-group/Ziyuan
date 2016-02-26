@@ -46,12 +46,12 @@ public class EvaluationHandler extends AbstractHandler {
 	}
 
 	
-	private void archievedSimulation(){
-		SimulatedMicroBat simulator = new SimulatedMicroBat();
-		try {
-			simulator.startSimulation();
-		} catch (GenerateRootCauseException e) {
-			e.printStackTrace();
-		}
-	}
+//	private void archievedSimulation(){
+//		SimulatedMicroBat simulator = new SimulatedMicroBat();
+//		try {
+//			simulator.startSimulation();
+//		} catch (GenerateRootCauseException e) {
+//			e.printStackTrace();
+//		}
+//	}
 }

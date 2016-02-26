@@ -35,7 +35,7 @@ public class PrimitiveUtils {
 	}
 	
 	public static boolean isPrimitiveTypeOrString(String clazzName) {
-		return isPrimitiveType(clazzName) || isString(clazzName);
+		return isPrimitiveType(clazzName) || isString(clazzName) || clazzName.equals("String");
 	}
 
 	public static boolean isString(String clazzName) {

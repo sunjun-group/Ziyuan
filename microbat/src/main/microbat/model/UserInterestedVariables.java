@@ -203,6 +203,7 @@ public class UserInterestedVariables {
 				int newDistance = calculateDistanceWithCurrentNode(trace, currentNode, root);
 				if(newDistance < distance){
 					bestRoot = root;
+					distance = newDistance;
 				}
 			}
 		}

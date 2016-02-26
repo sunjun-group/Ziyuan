@@ -154,7 +154,7 @@ public class StepRecommender {
 			
 			if(earliestVisitedNode == null){
 				state = latestClearState;
-				TraceNode node = recommendSuspiciousNode(trace, currentNode);
+				TraceNode node = recommendSuspiciousNode(trace, currentNode, feedback);
 				return node;
 			}
 			else{
@@ -170,11 +170,11 @@ public class StepRecommender {
 		else if((state==DebugState.UNCLEAR || state==DebugState.PARTIAL_CLEAR) && feedback.equals(UserFeedback.INCORRECT)){
 			visitedUnclearNodeList.clear();
 			state = latestClearState;
-			TraceNode node = recommendSuspiciousNode(trace, currentNode);
+			TraceNode node = recommendSuspiciousNode(trace, currentNode, feedback);
 			return node;
 		}
 		else{
-			TraceNode node = recommendSuspiciousNode(trace, currentNode);
+			TraceNode node = recommendSuspiciousNode(trace, currentNode, feedback);
 			return node;
 		}
 	}
@@ -276,7 +276,7 @@ public class StepRecommender {
 		return null;
 	}
 
-	private TraceNode recommendSuspiciousNode(Trace trace, TraceNode currentNode){
+	private TraceNode recommendSuspiciousNode(Trace trace, TraceNode currentNode, String userFeedBack){
 		
 		if(lastNode != null){
 			PathInstance path = new PathInstance(currentNode, lastNode);
@@ -291,16 +291,16 @@ public class StepRecommender {
 		
 		TraceNode suspiciousNode = null;
 		if(state == DebugState.JUMP){
-			suspiciousNode = handleJumpBehavior(trace, currentNode);
+			suspiciousNode = handleJumpBehavior(trace, currentNode, userFeedBack);
 		}
 		else if(state == DebugState.SKIP){
-			suspiciousNode = handleSkipBehavior(trace, currentNode);
+			suspiciousNode = handleSkipBehavior(trace, currentNode, userFeedBack);
 		}
 		else if(state == DebugState.BINARY_SEARCH){
-			suspiciousNode = handleBinarySearchBehavior(trace, currentNode);
+			suspiciousNode = handleBinarySearchBehavior(trace, currentNode, userFeedBack);
 		}
 		else if(state == DebugState.DETAIL_INSPECT){
-			suspiciousNode = handleDetailInspecting(trace, currentNode);
+			suspiciousNode = handleDetailInspecting(trace, currentNode, userFeedBack);
 		}
 		
 		lastRecommendNode = suspiciousNode;
@@ -308,7 +308,7 @@ public class StepRecommender {
 		return suspiciousNode;
 	}
 
-	private TraceNode handleBinarySearchBehavior(Trace trace, TraceNode currentNode) {
+	private TraceNode handleBinarySearchBehavior(Trace trace, TraceNode currentNode, String userFeedback) {
 		TraceNode suspiciousNode = null;
 		
 		boolean isOverSkipping = currentNode.isAllReadWrittenVarCorrect(false);
@@ -350,7 +350,7 @@ public class StepRecommender {
 					}
 					else{
 						state = DebugState.JUMP;
-						suspiciousNode = handleJumpBehavior(trace, currentNode);
+						suspiciousNode = handleJumpBehavior(trace, currentNode, userFeedback);
 					}
 				}
 				else{
@@ -379,7 +379,7 @@ public class StepRecommender {
 		return false;
 	}
 
-	private TraceNode handleSkipBehavior(Trace trace, TraceNode currentNode) {
+	private TraceNode handleSkipBehavior(Trace trace, TraceNode currentNode, String userFeedback) {
 		TraceNode suspiciousNode;
 		boolean isOverSkipping = currentNode.isAllReadWrittenVarCorrect(false);
 		if(isOverSkipping){
@@ -398,12 +398,12 @@ public class StepRecommender {
 			
 			this.loopRange.clearSkipPoints();
 			
-			suspiciousNode = handleJumpBehavior(trace, currentNode);
+			suspiciousNode = handleJumpBehavior(trace, currentNode, userFeedback);
 		}
 		return suspiciousNode;
 	}
 
-	private TraceNode handleJumpBehavior(Trace trace, TraceNode currentNode) {
+	private TraceNode handleJumpBehavior(Trace trace, TraceNode currentNode, String userFeedBack) {
 		TraceNode oldSusiciousNode = currentNode;
 		
 		List<AttributionVar> readVars = constructAttributionRelation(currentNode, trace.getCheckTime());
@@ -422,7 +422,7 @@ public class StepRecommender {
 			if(suspiciousNode.isWrittenVariablesContains(focusVar.getVarID()) && suspiciousNode.equals(this.lastNode)){
 				//TODO it could be done in a more intelligent way.
 				this.inspectingRange = new InspectingRange(currentNode, suspiciousNode);
-				TraceNode recommendedNode = handleDetailInspecting(trace, currentNode);
+				TraceNode recommendedNode = handleDetailInspecting(trace, currentNode, userFeedBack);
 				return recommendedNode;
 			}
 			else{
@@ -477,19 +477,26 @@ public class StepRecommender {
 		
 	}
 	
-	private TraceNode handleDetailInspecting(Trace trace, TraceNode currentNode) {
-		this.state = DebugState.DETAIL_INSPECT;
+	private TraceNode handleDetailInspecting(Trace trace, TraceNode currentNode, String userFeedBack) {
 		
-		TraceNode nextNode;
-		if(currentNode.getOrder() > this.inspectingRange.endNode.getOrder()){
-			nextNode = this.inspectingRange.startNode;
+		if(userFeedBack.equals(UserFeedback.CORRECT)){
+			this.state = DebugState.DETAIL_INSPECT;
+			
+			TraceNode nextNode;
+			if(currentNode.getOrder() > this.inspectingRange.endNode.getOrder()){
+				nextNode = this.inspectingRange.startNode;
+			}
+			else{
+				nextNode = trace.getExectionList().get(currentNode.getOrder());
+				
+			}
+			
+			return nextNode;
 		}
 		else{
-			nextNode = trace.getExectionList().get(currentNode.getOrder());
-			
+			TraceNode node = handleJumpBehavior(trace, currentNode, userFeedBack);
+			return node;
 		}
-		
-		return nextNode;
 	}
 
 	/**
