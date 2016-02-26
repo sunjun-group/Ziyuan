@@ -563,7 +563,15 @@ abstract class LValue {
                 }
                 return jdiValue = obj.getValue(matchingField);
             } else {
-                return jdiValue = obj.invokeMethod(thread, matchingMethod, methodArguments, 0);
+            	Value returnValue = null;
+            	try{
+            		returnValue = obj.invokeMethod(thread, matchingMethod, methodArguments, 0);
+            	}
+            	catch(Exception e){
+            		e.printStackTrace();
+            	}
+                jdiValue = returnValue;
+                return jdiValue;
             }
         }
 

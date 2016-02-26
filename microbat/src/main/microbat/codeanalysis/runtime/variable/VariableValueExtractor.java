@@ -15,14 +15,15 @@ import microbat.codeanalysis.runtime.jpda.expr.ParseException;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
 import microbat.model.value.ArrayValue;
-import microbat.model.value.VarValue;
 import microbat.model.value.PrimitiveValue;
 import microbat.model.value.ReferenceValue;
 import microbat.model.value.StringValue;
+import microbat.model.value.VarValue;
 import microbat.model.variable.ArrayElementVar;
 import microbat.model.variable.FieldVar;
 import microbat.model.variable.LocalVar;
 import microbat.model.variable.Variable;
+import microbat.util.JavaUtil;
 import microbat.util.PrimitiveUtils;
 
 import org.apache.commons.lang.StringUtils;
@@ -216,10 +217,6 @@ public class VariableValueExtractor {
 			JDIParam param = entry.getValue();
 			Value value = param.getValue();
 			boolean isField = (param.getField() != null);
-			
-			if(var.getName().contains("br")){
-				System.currentTimeMillis();
-			}
 			
 			if(!isField){
 				LocalVar variable = new LocalVar(var.getName(), value.type().toString(), 
@@ -427,9 +424,19 @@ public class VariableValueExtractor {
         };
         
         try {
-        	ExpressionParser.evaluate(expression, frame.virtualMachine(), frameGetter);
-        	Value val = ExpressionParser.getMassagedValue();
-			return val;
+//        	Location location = frame.location();
+//        	if(location.lineNumber() == 6){
+//        		System.currentTimeMillis();        		
+//        	}
+//        	boolean head = JavaUtil.isTheLocationHeadOfClass(location.declaringType().name(), location.lineNumber());
+//        	
+//        	if(!head){
+//        	}
+        	
+        	Value val = ExpressionParser.evaluate(expression, frame.virtualMachine(), frameGetter);
+//        		String str = value.toString();
+        	//Value val = ExpressionParser.getMassagedValue();
+        	return val;        		
 			
 		} catch (ParseException e) {
 			//e.printStackTrace();

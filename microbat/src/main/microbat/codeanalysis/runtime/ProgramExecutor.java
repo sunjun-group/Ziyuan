@@ -1014,9 +1014,9 @@ public class ProgramExecutor{
 				return bpValue;
 				
 			} catch (IncompatibleThreadStateException e) {
-				log.error(e.getMessage());
+				e.printStackTrace();
 			} catch (AbsentInformationException e) {
-				log.error(e.getMessage());
+				e.printStackTrace();
 			}
 			return null;
 			
