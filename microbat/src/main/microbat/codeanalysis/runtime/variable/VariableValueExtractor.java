@@ -219,7 +219,7 @@ public class VariableValueExtractor {
 			boolean isField = (param.getField() != null);
 			
 			if(!isField){
-				LocalVar variable = new LocalVar(var.getName(), value.type().toString(), 
+				LocalVar variable = new LocalVar(var.getName(), var.getType(), 
 						bkp.getDeclaringCompilationUnitName(), bkp.getLineNo());
 				appendVarVal(bkVal, variable, value, 1, thread, true);				
 				System.currentTimeMillis();

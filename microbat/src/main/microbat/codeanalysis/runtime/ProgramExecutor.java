@@ -788,7 +788,8 @@ public class ProgramExecutor{
 						}
 					}
 					
-					varValue = new PrimitiveValue(value.toString(), false, var);
+					String content = (value == null) ? null : value.toString();
+					varValue = new PrimitiveValue(content, false, var);
 //					((PrimitiveValue)varValue).setStrVal(expValue.messageValue.toString());
 				}
 				
