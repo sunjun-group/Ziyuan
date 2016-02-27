@@ -42,6 +42,8 @@ public class SimulatedMicroBat {
 		Collections.sort(wrongNodeList, new TraceNodeReverseOrderComparator());
 		TraceNode observedFaultNode = wrongNodeList.get(0);
 		
+		System.currentTimeMillis();
+		
 		Trial trial = startSimulation(observedFaultNode, rootCause, mutatedTrace, allWrongNodeMap, pairList);
 		return trial;
 		
@@ -195,7 +197,7 @@ public class SimulatedMicroBat {
 
 	private TraceNode findRootCause(String className, int lineNo, Trace mutatedTrace, PairList pairList) {
 		for(TraceNode node: mutatedTrace.getExectionList()){
-			if(node.getClassName().equals(className) && node.getLineNumber()==lineNo){
+			if(node.getDeclaringCompilationUnitName().equals(className) && node.getLineNumber()==lineNo){
 				TraceNodePair pair = pairList.findByMutatedNode(node);
 				
 				if(pair == null){
@@ -205,6 +207,8 @@ public class SimulatedMicroBat {
 				return pair.getMutatedNode();
 			}
 		}
+		
+		System.currentTimeMillis();
 		
 		return null;
 	}
