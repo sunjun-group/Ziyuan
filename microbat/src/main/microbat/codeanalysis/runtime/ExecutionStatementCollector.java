@@ -47,8 +47,6 @@ public class ExecutionStatementCollector {
 		
 		boolean connected = true;
 		
-		
-		
 		while(connected){
 			try {
 				EventSet eventSet = queue.remove(1000);

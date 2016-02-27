@@ -5,6 +5,11 @@ import java.io.File;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 
 import sav.commons.TestConfiguration;
 import sav.strategies.dto.AppJavaClassPath;
@@ -15,6 +20,9 @@ public class MicroBatUtil {
 	public static String getProjectPath(){
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject iProject = myWorkspaceRoot.getProject(Settings.projectName);
+		
+		
+		
 		String projectPath = iProject.getLocationURI().getPath();
 //		projectPath = projectPath.substring(1, projectPath.length());
 		projectPath = projectPath.replace("/", File.separator);
@@ -22,8 +30,36 @@ public class MicroBatUtil {
 		return projectPath;
 	}
 	
-	public static AppJavaClassPath constructClassPaths(String outputFolder){
+	public static AppJavaClassPath constructClassPaths(){
 		String projectPath = getProjectPath();
+		
+		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		IProject iProject = myWorkspaceRoot.getProject(Settings.projectName);
+		IJavaProject javaProject = JavaCore.create(iProject);
+		
+		String outputFolder = "";
+		try {
+			for(String seg: javaProject.getOutputLocation().segments()){
+				if(!seg.equals(Settings.projectName)){
+					outputFolder += seg + File.separator;
+				}
+			}
+		} catch (JavaModelException e) {
+			e.printStackTrace();
+		}
+		if(outputFolder.length() == 0){
+			outputFolder = "bin";
+		}
+		
+		
+//		for(IClasspathEntry classpathEntry: javaProject.readRawClasspath()){
+//			IPath path = classpathEntry.getPath();
+//			
+//			String pathString = path.toPortableString();
+//			
+//			System.currentTimeMillis();
+//		}
+		
 		String binPath = projectPath + File.separator + outputFolder; 
 		
 		AppJavaClassPath appClassPath = new AppJavaClassPath();

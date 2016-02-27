@@ -61,8 +61,7 @@ public class StartDebugHandler extends AbstractHandler {
 	}
 	
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		String outputFolder = "bin";
-		final AppJavaClassPath appClassPath = MicroBatUtil.constructClassPaths(outputFolder);
+		final AppJavaClassPath appClassPath = MicroBatUtil.constructClassPaths();
 		final ProgramExecutor tcExecutor = new ProgramExecutor();
 		
 		final String classQulifiedName = Settings.buggyClassName;
