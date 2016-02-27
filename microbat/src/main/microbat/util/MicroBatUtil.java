@@ -5,7 +5,6 @@ import java.io.File;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -21,8 +20,6 @@ public class MicroBatUtil {
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject iProject = myWorkspaceRoot.getProject(Settings.projectName);
 		
-		
-		
 		String projectPath = iProject.getLocationURI().getPath();
 //		projectPath = projectPath.substring(1, projectPath.length());
 		projectPath = projectPath.replace("/", File.separator);
@@ -31,12 +28,41 @@ public class MicroBatUtil {
 	}
 	
 	public static AppJavaClassPath constructClassPaths(){
-		String projectPath = getProjectPath();
+		AppJavaClassPath appClassPath = new AppJavaClassPath();
 		
+		String projectPath = getProjectPath();
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject iProject = myWorkspaceRoot.getProject(Settings.projectName);
 		IJavaProject javaProject = JavaCore.create(iProject);
 		
+		/**
+		 * setting depended jars into classpath
+		 */
+		String workspacePath = projectPath.substring(0, projectPath.indexOf(File.separator+Settings.projectName)); 
+		for(IClasspathEntry classpathEntry: javaProject.readRawClasspath()){
+			if(classpathEntry.getEntryKind()==IClasspathEntry.CPE_LIBRARY){
+				String path = classpathEntry.getPath().toOSString();
+				path = workspacePath + path;
+				appClassPath.addClasspath(path);
+			}
+		}
+		
+		/**
+		 * setting junit lib into classpath
+		 */
+		String userDir = System.getProperty("user.dir");
+		String junitDir = userDir + File.separator + "dropins" + File.separator + "junit_lib";
+		String junitPath = junitDir + File.separator + "junit.jar";
+		String hamcrestCorePath = junitDir + File.separator + "org.hamcrest.core.jar";
+		String testRunnerPath = junitDir  + File.separator + "testrunner.jar";
+		
+		appClassPath.addClasspath(junitPath);
+		appClassPath.addClasspath(hamcrestCorePath);
+		appClassPath.addClasspath(testRunnerPath);
+		
+		/**
+		 * setting output folder
+		 */
 		String outputFolder = "";
 		try {
 			for(String seg: javaProject.getOutputLocation().segments()){
@@ -52,20 +78,10 @@ public class MicroBatUtil {
 		}
 		
 		
-//		for(IClasspathEntry classpathEntry: javaProject.readRawClasspath()){
-//			IPath path = classpathEntry.getPath();
-//			
-//			String pathString = path.toPortableString();
-//			
-//			System.currentTimeMillis();
-//		}
+		String outputPath = projectPath + File.separator + outputFolder; 
 		
-		String binPath = projectPath + File.separator + outputFolder; 
-		
-		AppJavaClassPath appClassPath = new AppJavaClassPath();
 		appClassPath.setJavaHome(TestConfiguration.getJavaHome());
-		
-		appClassPath.addClasspath(binPath);
+		appClassPath.addClasspath(outputPath);
 		appClassPath.setWorkingDirectory(projectPath);
 		appClassPath.setLaunchClass(Settings.lanuchClass);
 		
