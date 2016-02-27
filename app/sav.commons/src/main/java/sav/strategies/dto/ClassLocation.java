@@ -80,11 +80,14 @@ public class ClassLocation {
 				&& lineNo == other.getLineNo();
 	}
 
+	
+	
 	@Override
 	public String toString() {
-		return this.id;
+		return "ClassLocation [classCanonicalName=" + classCanonicalName
+				+ ", lineNo=" + lineNo + "]";
 	}
-	
+
 	public String getMethodName() {
 		return SignatureUtils.extractMethodName(methodSign);
 	}

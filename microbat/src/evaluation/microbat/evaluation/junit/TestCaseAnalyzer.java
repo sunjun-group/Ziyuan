@@ -39,8 +39,6 @@ public class TestCaseAnalyzer {
 	
 	public static final String TEST_RUNNER = "microbat.evaluation.junit.MicroBatTestRunner";
 	
-//	private String testPackage = "com.test";
-	private String testPackage = "org.apache.common.math";
 	private List<Trial> trials = new ArrayList<>();
 	
 	public void test(){
@@ -120,6 +118,10 @@ public class TestCaseAnalyzer {
 			}
 		}
 	}
+	
+//	private void locateCertainTestCase(String className, String methodName){
+//		
+//	}
 
 	private boolean runEvaluationForSingleMethod(String className, String methodName) throws JavaModelException {
 		AppJavaClassPath testcaseConfig = createProjectClassPath(className, methodName);
@@ -130,9 +132,16 @@ public class TestCaseAnalyzer {
 		
 		Trace correctTrace = null;
 		
+		if(!testcaseName.equals("org.apache.commons.math.analysis.ComposableFunctionTest#testZero")){
+			return true;
+		}
+		
 		if(checker.isPassingTest()){
+			System.out.println(testcaseName + " is a passed test case");
+			
 			List<ClassLocation> locationList = findMutationLocation(executingStatements);
 			if(!locationList.isEmpty()){
+				System.out.println("mutating the tested methods of " + testcaseName);
 				Map<String, MutationResult> mutations = generateMutationFiles(locationList);
 				for(String mutatedClass: mutations.keySet()){
 					MutationResult result = mutations.get(mutatedClass);
@@ -175,6 +184,9 @@ public class TestCaseAnalyzer {
 						}
 					}
 				}
+			}
+			else{
+				System.out.println("but " + testcaseName + " cannot be mutated");
 			}
 		}
 		else{
@@ -238,36 +250,15 @@ public class TestCaseAnalyzer {
 		for(BreakPoint point: executingStatements){
 			ClassLocation location = new ClassLocation(point.getDeclaringCompilationUnitName(), 
 					null, point.getLineNo());
-			locations.add(location);
+			try {
+				if(!JTestUtil.isLocationInTestPackage(location)){
+					locations.add(location);				
+				}
+			} catch (JavaModelException e) {
+				e.printStackTrace();
+			}
+			
 		}
-		
-//		Map<String, List<BreakPoint>> lineMap = new HashMap<>();
-//		for(BreakPoint point: executingStatements){
-//			String className = point.getDeclaringCompilationUnitName();
-//			
-//			List<BreakPoint> points = lineMap.get(className);
-//			if(points == null){
-//				points = new ArrayList<>();
-//			}
-//			
-//			lineMap.put(className, points);
-//			points.add(point);
-//		}
-//		
-//		for(String className: lineMap.keySet()){
-//			CompilationUnit cu = JavaUtil.findCompilationUnitInProject(className);
-//			List<Integer> lines = new ArrayList<>();
-//			for(BreakPoint point: lineMap.get(className)){
-//				lines.add(point.getLineNo());
-//			}
-//			
-//			MutationPointChecker checker = new MutationPointChecker(cu, lines);
-//			cu.accept(checker);
-//			
-//			List<ClassLocation> mutationLocations = checker.getMutationPoints();
-//			locations.addAll(mutationLocations);
-//		}
-		
 		
 		return locations;
 	}
@@ -275,7 +266,7 @@ public class TestCaseAnalyzer {
 	
 
 	private AppJavaClassPath createProjectClassPath(String className, String methodName){
-		AppJavaClassPath classPath = MicroBatUtil.constructClassPaths("bin");
+		AppJavaClassPath classPath = MicroBatUtil.constructClassPaths();
 		
 		String userDir = System.getProperty("user.dir");
 		String junitDir = userDir + File.separator + "dropins" + File.separator + "junit_lib";
