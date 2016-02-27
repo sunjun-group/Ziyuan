@@ -888,11 +888,13 @@ public class MicrobatSlicer{
 			 * add jars in class path
 			 */
 			for(String classPath: appClassPath.getClasspaths()){
-				if(!classPath.endsWith("jar")){
+				if(!classPath.endsWith(".jar")){
 					BinaryDirectoryTreeModule module = new BinaryDirectoryTreeModule(new File(classPath));
 					scope.addToScope(scope.getApplicationLoader(), module);					
 				}
-				
+				else{
+					scope.addToScope(scope.getApplicationLoader(), new JarFile(classPath));	
+				}
 			}
 			
 			scope.setExclusions(getJavaExclusions());

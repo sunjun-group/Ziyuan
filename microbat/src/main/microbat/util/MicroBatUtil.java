@@ -54,11 +54,8 @@ public class MicroBatUtil {
 		String junitDir = userDir + File.separator + "dropins" + File.separator + "junit_lib";
 		String junitPath = junitDir + File.separator + "junit.jar";
 		String hamcrestCorePath = junitDir + File.separator + "org.hamcrest.core.jar";
-		String testRunnerPath = junitDir  + File.separator + "testrunner.jar";
-		
 		appClassPath.addClasspath(junitPath);
 		appClassPath.addClasspath(hamcrestCorePath);
-		appClassPath.addClasspath(testRunnerPath);
 		
 		/**
 		 * setting output folder
