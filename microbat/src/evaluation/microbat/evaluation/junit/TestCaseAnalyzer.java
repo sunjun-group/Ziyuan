@@ -5,13 +5,12 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import microbat.evaluation.SimulatedMicroBat;
 import microbat.evaluation.TraceModelConstructor;
-import microbat.evaluation.mutation.MutationPointChecker;
+import microbat.evaluation.model.Trial;
 import microbat.model.BreakPoint;
 import microbat.model.trace.Trace;
 import microbat.util.JTestUtil;
@@ -25,7 +24,9 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -38,7 +39,9 @@ public class TestCaseAnalyzer {
 	
 	public static final String TEST_RUNNER = "microbat.evaluation.junit.MicroBatTestRunner";
 	
-	private String testPackage = "com.test";
+//	private String testPackage = "com.test";
+	private String testPackage = "org.apache.common.math";
+	private List<Trial> trials = new ArrayList<>();
 	
 	public void test(){
 		String str = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\mutatedSource8245811234241496344\\47_25_1\\Main.java";
@@ -82,21 +85,38 @@ public class TestCaseAnalyzer {
 	}
 	
 	public void runEvaluation() throws JavaModelException{
-		IPackageFragment packFrag = JavaUtil.findIPackageInProject(testPackage);
-		for(ICompilationUnit icu: packFrag.getCompilationUnits()){
-			CompilationUnit cu = JavaUtil.convertICompilationUnitToASTNode(icu);
-			
-			List<MethodDeclaration> testingMethods = JTestUtil.findTestingMethod(cu); 
-			if(!testingMethods.isEmpty()){
-				String className = JavaUtil.getFullNameOfCompilationUnit(cu);
+		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+		
+		for(IJavaElement element: testRoot.getChildren()){
+			if(element instanceof IPackageFragment){
+				runEvaluation((IPackageFragment)element);				
+			}
+		}
+		
+		
+	}
+
+	private void runEvaluation(IPackageFragment pack) throws JavaModelException {
+		for(IJavaElement javaElement: pack.getChildren()){
+			if(javaElement instanceof IPackageFragment){
+				runEvaluation((IPackageFragment)javaElement);
+			}
+			else if(javaElement instanceof ICompilationUnit){
+				ICompilationUnit icu = (ICompilationUnit)javaElement;
+				CompilationUnit cu = JavaUtil.convertICompilationUnitToASTNode(icu);
 				
-				for(MethodDeclaration testingMethod: testingMethods){
-					String methodName = testingMethod.getName().getIdentifier();
+				List<MethodDeclaration> testingMethods = JTestUtil.findTestingMethod(cu); 
+				if(!testingMethods.isEmpty()){
+					String className = JavaUtil.getFullNameOfCompilationUnit(cu);
 					
-					boolean isLegitimate = runEvaluationForSingleMethod(className, methodName);
+					for(MethodDeclaration testingMethod: testingMethods){
+						String methodName = testingMethod.getName().getIdentifier();
+						
+						runEvaluationForSingleMethod(className, methodName);
+						
+					}
 					
 				}
-				
 			}
 		}
 	}
@@ -118,9 +138,9 @@ public class TestCaseAnalyzer {
 					MutationResult result = mutations.get(mutatedClass);
 					for(Integer line: result.getMutatedFiles().keySet()){
 						
-						if(line != 44){
-							continue;
-						}
+//						if(line != 40){
+//							continue;
+//						}
 						
 						List<File> mutatedFileList = result.getMutatedFiles(line);		
 						
@@ -137,7 +157,8 @@ public class TestCaseAnalyzer {
 									for(Trace mutantTrace: killingMutatantTraces){
 										SimulatedMicroBat microbat = new SimulatedMicroBat();
 										ClassLocation mutatedLocation = new ClassLocation(mutatedClass, null, line);
-										microbat.detectMutatedBug(mutantTrace, correctTrace, mutatedLocation);
+										Trial trial = microbat.detectMutatedBug(mutantTrace, correctTrace, mutatedLocation);
+										trials.add(trial);
 									}
 									
 //									return true;

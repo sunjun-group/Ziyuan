@@ -28,7 +28,7 @@ import com.sun.jdi.request.StepRequest;
 @SuppressWarnings("restriction")
 public class ExecutionStatementCollector {
 	
-	protected String[] stepWatchExcludes = { "java.*", "javax.*", "sun.*", "com.sun.*", "org.junit.*"};
+	protected String[] stepWatchExcludes = { "java.*", "javax.*", "sun.*", "com.sun.*", "org.junit.*", "junit.*", "junit.framework.*"};
 	protected int steps = 0;
 	
 	public List<BreakPoint> collectBreakPoints(AppJavaClassPath appClassPath){

@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
 
 public class JavaUtil {
 	
@@ -105,15 +106,20 @@ public class JavaUtil {
 		return null;
 	}
 	
-	public static IPackageFragment findIPackageInProject(String packageName){
+	public static IPackageFragmentRoot findTestPackageRootInProject(){
 		IJavaProject project = JavaCore.create(getSpecificJavaProjectInWorkspace());
 		try {
 			for(IPackageFragmentRoot packageFragmentRoot: project.getPackageFragmentRoots()){
-				IPackageFragment packageFrag = packageFragmentRoot.getPackageFragment(packageName);
-				
-				String fragName = packageFrag.getElementName();
-				if(packageFrag.exists() && fragName.equals(packageName)){
-					return packageFrag;
+				if(!(packageFragmentRoot instanceof JarPackageFragmentRoot) && packageFragmentRoot.toString().contains("test")){
+					
+					return packageFragmentRoot;
+//					IPackageFragment packageFrag = packageFragmentRoot.getPackageFragment(packageName);
+//					
+//					String fragName = packageFrag.getElementName();
+//					if(packageFrag.exists() && fragName.equals(packageName)){
+//						return packageFrag;
+//					}
+					
 				}
 			}
 			

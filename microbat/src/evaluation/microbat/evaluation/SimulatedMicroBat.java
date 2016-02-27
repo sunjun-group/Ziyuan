@@ -9,15 +9,13 @@ import java.util.Map;
 import microbat.evaluation.accuracy.Accuracy;
 import microbat.evaluation.model.PairList;
 import microbat.evaluation.model.TraceNodePair;
+import microbat.evaluation.model.Trial;
 import microbat.evaluation.util.DiffUtil;
-import microbat.model.Fault;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.model.trace.TraceNodeReverseOrderComparator;
-import microbat.model.value.VarValue;
 import microbat.recommendation.StepRecommender;
 import microbat.recommendation.UserFeedback;
-import microbat.recommendation.conflicts.ConflictRuleChecker;
 import microbat.util.Settings;
 import sav.strategies.dto.ClassLocation;
 
@@ -28,7 +26,7 @@ public class SimulatedMicroBat {
 	private SimulatedUser user = new SimulatedUser();
 	private StepRecommender recommender;
 	
-	public void detectMutatedBug(Trace mutatedTrace, Trace correctTrace, ClassLocation mutatedLocation) {
+	public Trial detectMutatedBug(Trace mutatedTrace, Trace correctTrace, ClassLocation mutatedLocation) {
 		PairList pairList = DiffUtil.generateMatchedTraceNodeList(mutatedTrace, correctTrace);
 		
 		TraceNode rootCause = findRootCause(mutatedLocation.getClassCanonicalName(), 
@@ -44,7 +42,8 @@ public class SimulatedMicroBat {
 		Collections.sort(wrongNodeList, new TraceNodeReverseOrderComparator());
 		TraceNode observedFaultNode = wrongNodeList.get(0);
 		
-		startSimulation(observedFaultNode, rootCause, mutatedTrace, allWrongNodeMap, pairList);
+		Trial trial = startSimulation(observedFaultNode, rootCause, mutatedTrace, allWrongNodeMap, pairList);
+		return trial;
 		
 //		Accuracy accuracy = computeAccuracy(dominatees, allWrongNodes);
 //		
@@ -62,7 +61,7 @@ public class SimulatedMicroBat {
 //		System.out.println(accuracy);
 	}
 	
-	private void startSimulation(TraceNode observedFaultNode, TraceNode rootCause, Trace mutatedTrace, 
+	private Trial startSimulation(TraceNode observedFaultNode, TraceNode rootCause, Trace mutatedTrace, 
 			Map<Integer, TraceNode> allWrongNodeMap, PairList pairList) {
 		Settings.interestedVariables.clear();
 		Settings.localVariableScopes.clear();
@@ -99,11 +98,23 @@ public class SimulatedMicroBat {
 			}
 		}
 		
+		List<String> jumpStringSteps = new ArrayList<>();
 		System.out.println("bug found: " + !isFail);
 		for(TraceNode node: jumpingSteps){
-			System.out.println(node);			
+			String str = node.toString();
+			System.out.println(str);		
+			jumpStringSteps.add(str);
 		}
+		System.out.println("Root Cause:" + rootCause);
 		System.currentTimeMillis();
+		
+		Trial trial = new Trial();
+		trial.setBugFound(isBugFound);
+		trial.setMutatedLineNumber(rootCause.getLineNumber());
+		trial.setJumpSteps(jumpStringSteps);
+		trial.setTotalSteps(mutatedTrace.size());
+		
+		return trial;
 	}
 
 	

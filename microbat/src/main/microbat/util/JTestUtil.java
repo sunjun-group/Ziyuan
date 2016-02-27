@@ -4,6 +4,7 @@ import java.util.List;
 
 import microbat.evaluation.junit.TestingMethodChecker;
 
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -22,7 +23,7 @@ public class JTestUtil {
 	}
 
 	public static boolean isSubclassOfTestCase(CompilationUnit cu) {
-		TypeDeclaration typeDel = (TypeDeclaration) cu.types().get(0);
+		AbstractTypeDeclaration typeDel = (AbstractTypeDeclaration) cu.types().get(0);
 		ITypeBinding binding = typeDel.resolveBinding();
 		
 		boolean isSubclassOfTestCase = false;
