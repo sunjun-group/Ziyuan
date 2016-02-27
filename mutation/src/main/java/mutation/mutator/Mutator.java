@@ -17,6 +17,7 @@ import mutation.mutator.insertdebugline.DebugLineInsertion;
 import mutation.mutator.mapping.MuMapParser;
 import mutation.mutator.mapping.MutationMap;
 import mutation.parser.ClassAnalyzer;
+import mutation.parser.ClassDescriptor;
 import mutation.parser.JParser;
 
 import org.eclipse.core.runtime.Platform;
@@ -55,19 +56,23 @@ public class Mutator implements IMutator {
 		MutationFileWriter fileWriter = new MutationFileWriter(srcFolder);
 		for (Entry<String, List<Integer>> entry : classLocationMap.entrySet()) {
 			String className = entry.getKey();
-			mutationVisitor
-					.reset(classAnalyzer.analyzeCompilationUnit(
-							cuParser.parse(className)).get(0), entry.getValue());
+			
 			CompilationUnit cu = cuParser.parse(className);
-			cu.accept(mutationVisitor, true);
-			Map<Integer, List<MutationNode>> muRes = mutationVisitor.getResult();
-			MutationResult lineRes = new MutationResult(className);
-			for (Entry<Integer, List<MutationNode>> lineData : muRes.entrySet()) {
-				Integer line = lineData.getKey();
-				List<File> muFiles = fileWriter.write(lineData.getValue(), className, line);
-				lineRes.put(line, muFiles);
+			List<ClassDescriptor> descList = classAnalyzer.analyzeCompilationUnit(cu);
+			if(!descList.isEmpty()){
+				mutationVisitor.reset(descList.get(0), entry.getValue());
+				
+				cu.accept(mutationVisitor, true);
+				Map<Integer, List<MutationNode>> muRes = mutationVisitor.getResult();
+				MutationResult lineRes = new MutationResult(className);
+				for (Entry<Integer, List<MutationNode>> lineData : muRes.entrySet()) {
+					Integer line = lineData.getKey();
+					List<File> muFiles = fileWriter.write(lineData.getValue(), className, line);
+					lineRes.put(line, muFiles);
+				}
+				result.put(className, lineRes);
 			}
-			result.put(className, lineRes);
+			
 		}
 		
 		return result;
