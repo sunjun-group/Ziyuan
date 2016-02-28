@@ -74,9 +74,9 @@ public class JavaUtil {
 	}
 	
 	public static CompilationUnit findCompilationUnitInProject(String qualifiedName){
-		CompilationUnit cu = compilationUnitMap.get(qualifiedName);
-		
-		if(null == cu){
+		//CompilationUnit cu = compilationUnitMap.get(qualifiedName);
+		CompilationUnit cu = null;
+		//if(null == cu){
 			try{
 				ICompilationUnit icu = findICompilationUnitInProject(qualifiedName);
 				cu = convertICompilationUnitToASTNode(icu);	
@@ -85,7 +85,7 @@ public class JavaUtil {
 			catch(IllegalStateException e){
 				e.printStackTrace();
 			} 
-		}
+		//}
 		
 		
 		return cu;
