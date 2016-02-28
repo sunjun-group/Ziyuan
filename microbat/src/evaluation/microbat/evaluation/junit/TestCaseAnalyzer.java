@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import microbat.evaluation.SimulatedMicroBat;
+import microbat.evaluation.SimulationFailException;
 import microbat.evaluation.TraceModelConstructor;
 import microbat.evaluation.model.Trial;
 import microbat.model.BreakPoint;
@@ -132,9 +133,9 @@ public class TestCaseAnalyzer {
 		
 		Trace correctTrace = null;
 		
-		if(!testcaseName.equals("org.apache.commons.math.analysis.ComposableFunctionTest#testZero")){
-			return true;
-		}
+//		if(!testcaseName.equals("org.apache.commons.math.analysis.ComposableFunctionTest#testZero")){
+//			return true;
+//		}
 		
 		if(checker.isPassingTest()){
 			System.out.println(testcaseName + " is a passed test case");
@@ -166,8 +167,16 @@ public class TestCaseAnalyzer {
 									for(Trace mutantTrace: killingMutatantTraces){
 										SimulatedMicroBat microbat = new SimulatedMicroBat();
 										ClassLocation mutatedLocation = new ClassLocation(mutatedClass, null, line);
-										Trial trial = microbat.detectMutatedBug(mutantTrace, correctTrace, mutatedLocation);
-										trials.add(trial);
+										Trial trial;
+										try {
+											trial = microbat.detectMutatedBug(mutantTrace, correctTrace, mutatedLocation, testcaseName);
+											if(trial != null){
+												trials.add(trial);												
+											}
+										} catch (Exception e) {
+											e.printStackTrace();
+											System.err.println("Mutated Files: " + result.getMutatedFiles(line));
+										}
 									}
 									
 //									return true;
