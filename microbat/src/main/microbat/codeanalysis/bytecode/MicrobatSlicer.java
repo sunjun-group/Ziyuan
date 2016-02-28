@@ -49,6 +49,7 @@ import sav.strategies.dto.AppJavaClassPath;
 
 import com.ibm.wala.classLoader.BinaryDirectoryTreeModule;
 import com.ibm.wala.classLoader.IMethod;
+import com.ibm.wala.classLoader.IMethod.SourcePosition;
 import com.ibm.wala.classLoader.ShrikeBTMethod;
 import com.ibm.wala.classLoader.ShrikeCTMethod;
 import com.ibm.wala.classLoader.ShrikeClass;
@@ -136,8 +137,6 @@ public class MicrobatSlicer{
 	}
 
 	private BreakPoint parseLanuchPoint(AppJavaClassPath appClassPath) {
-		
-		
 		if(appClassPath.getOptionalTestClass() != null){
 			String testClassName = appClassPath.getOptionalTestClass();
 			CompilationUnit cu = JavaUtil.findCompilationUnitInProject(testClassName);
@@ -752,7 +751,8 @@ public class MicrobatSlicer{
 					}
 					
 					String className = SignatureUtils.signatureToName(classSignature);
-					if(isClassNameContainedInExecution(className)){
+					
+					if(isClassContainedInExecution(className) && isMethodContainedInExection(method)){
 						parseBreakPoints(bkpSet, node);				
 					}
 				}
@@ -765,7 +765,78 @@ public class MicrobatSlicer{
 		return result;
 	}
 	
-	private boolean isClassNameContainedInExecution(String className){
+	private boolean isMethodContainedInExection(IMethod method) {
+		String className = getClassCanonicalName(method);
+		if(className.contains("$")){
+			className = className.substring(0, className.indexOf("$"));			
+		}
+		
+		CompilationUnit cu = JavaUtil.findCompilationUnitInProject(className);
+		if(cu == null){
+			return false;
+		}
+		
+		try {
+			SourcePosition position = method.getSourcePosition(0);
+//			SourcePosition position = method.getParameterSourcePosition(method.getNumberOfParameters());
+			int line = position.getFirstLine();
+			
+			ExecutionMethodFinder finder = new ExecutionMethodFinder(line, cu);
+			cu.accept(finder);
+			
+			return finder.isExecuted;
+			
+		} catch (InvalidClassFileException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return false;
+	}
+
+	class ExecutionMethodFinder extends ASTVisitor{
+		
+		boolean isExecuted = false;
+		
+		int lineNumber;
+		CompilationUnit cu;
+		
+		public ExecutionMethodFinder(int lineNumber, CompilationUnit cu) {
+			super();
+			this.lineNumber = lineNumber;
+			this.cu = cu;
+		}
+
+		public boolean visit(MethodDeclaration md){
+			int startLine = cu.getLineNumber(md.getStartPosition());
+			int endLine = cu.getLineNumber(md.getStartPosition()+md.getLength());
+			
+			if(startLine<=lineNumber && lineNumber<=endLine){
+				isExecuted = isAnyOfExectedStatementIn(startLine, endLine);
+				if(isExecuted){
+					return false;
+				}
+			}
+			
+			return true;
+		}
+
+		private boolean isAnyOfExectedStatementIn(int startLine, int endLine) {
+			String thisCompilationUnitName = JavaUtil.getFullNameOfCompilationUnit(cu);
+			for(BreakPoint point: executingStatements){
+				if(point.getDeclaringCompilationUnitName().equals(thisCompilationUnitName)){
+					int breakPointLineNo = point.getLineNo();
+					if(startLine<=breakPointLineNo && breakPointLineNo<=endLine){
+						return true;
+					}
+				}
+			}
+			
+			return false;
+		}
+	}
+	
+	private boolean isClassContainedInExecution(String className){
 		for(BreakPoint bp: this.executingStatements){
 			if(bp.getClassCanonicalName().equals(className)){
 				return true;
