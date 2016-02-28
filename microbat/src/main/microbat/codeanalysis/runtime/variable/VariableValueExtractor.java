@@ -23,7 +23,6 @@ import microbat.model.variable.ArrayElementVar;
 import microbat.model.variable.FieldVar;
 import microbat.model.variable.LocalVar;
 import microbat.model.variable.Variable;
-import microbat.util.JavaUtil;
 import microbat.util.PrimitiveUtils;
 
 import org.apache.commons.lang.StringUtils;
@@ -221,6 +220,7 @@ public class VariableValueExtractor {
 			if(!isField){
 				LocalVar variable = new LocalVar(var.getName(), var.getType(), 
 						bkp.getDeclaringCompilationUnitName(), bkp.getLineNo());
+				
 				appendVarVal(bkVal, variable, value, 1, thread, true);				
 				System.currentTimeMillis();
 			}
@@ -486,11 +486,19 @@ public class VariableValueExtractor {
 			if(needParseFields){
 				Map<Field, Value> fieldValueMap = objRef.getValues(type.allFields());
 				for (Field field : type.allFields()) {
+					Value childVarValue = fieldValueMap.get(field);
+					if(type.isEnum()){
+						String childTypeName = childVarValue.type().name();
+						if(childTypeName.equals(type.name())){
+							continue;
+						}
+					}
 					
-					boolean isIgnore = HeuristicIgnoringFieldRule.isForIgnore(type.name(), field.name());
+					
+					boolean isIgnore = HeuristicIgnoringFieldRule.isForIgnore(type, field.name());
 					if(!isIgnore){
 //						String childVarID = val.getChildId(field.name());
-						Value childVarValue = fieldValueMap.get(field);
+						
 						if(childVarValue != null){
 							FieldVar var = new FieldVar(field.isStatic(), field.name(), childVarValue.type().toString());
 							appendVarVal(val, var, childVarValue, level, thread, false);											

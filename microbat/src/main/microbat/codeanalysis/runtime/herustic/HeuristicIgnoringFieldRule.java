@@ -7,9 +7,12 @@ import java.util.Map;
 
 import com.sun.jdi.ClassType;
 import com.sun.jdi.InterfaceType;
+import com.sun.jdi.Type;
 
 @SuppressWarnings("restriction")
 public class HeuristicIgnoringFieldRule {
+	
+	public static final String ENUM = "enum";
 	
 	/**
 	 * this map store <className, list<fieldName>>, specifying which fields will be
@@ -29,8 +32,13 @@ public class HeuristicIgnoringFieldRule {
 		fieldList1.add("DEFAULTCAPACITY_EMPTY_ELEMENTDATA");
 		fieldList1.add("MAX_ARRAY_SIZE");
 		fieldList1.add("modCount");
+		fieldList1.add("ENUM$VALUES");
 		
-		ignoringMap.put(c1, fieldList1);
+		String c2 = ENUM;
+		ArrayList<String> fieldList2 = new ArrayList<>();
+		fieldList2.add("ordinal");
+		fieldList2.add("ENUM$VALUES");
+		ignoringMap.put(c2, fieldList2);
 		
 		String[] excArray = new String[]{"java.", "javax.", "sun.", "com.sun.", "org.junit."};
 		for(String exc: excArray){
@@ -38,12 +46,21 @@ public class HeuristicIgnoringFieldRule {
 		}
 	}
 	
-	public static boolean isForIgnore(String className, String fieldName){
+	public static boolean isForIgnore(ClassType type, String fieldName){
+		String className;
+		if(type.isEnum()){
+			className = ENUM;
+		}
+		else{
+			className = type.name();
+		}
+		
 		ArrayList<String> fields = ignoringMap.get(className);
 		if(fields != null){
 			return fields.contains(fieldName);			
 		}
 		
+		System.currentTimeMillis();
 		return false;
 	}
 

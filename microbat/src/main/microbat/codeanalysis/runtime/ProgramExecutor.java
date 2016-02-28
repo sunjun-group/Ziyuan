@@ -271,6 +271,10 @@ public class ProgramExecutor{
 						//TraceNode node = handleBreakpoint(bkp, ((StepEvent) event).thread(), currentLocation);
 						BreakPointValue bkpVal = extractValuesAtLocation(bkp, ((StepEvent) event).thread(), currentLocation);
 						TraceNode node = recordTrace(bkp, bkpVal);
+//						System.out.println("Parsed node " + node);
+//						if(node.getOrder() == 21){
+//							System.currentTimeMillis();
+//						}
 						
 						if(caughtLocationForJustException != null){
 							if(!methodNodeStack.isEmpty()){
