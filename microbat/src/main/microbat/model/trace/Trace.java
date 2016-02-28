@@ -202,7 +202,7 @@ public class Trace {
 			List<TraceNode> consumers = entry.getConsumers();
 			
 			if(producers.isEmpty()){
-				System.err.println("there is no producer for variable " + entry.getAliasVariables());
+				//System.err.println("there is no producer for variable " + entry.getAliasVariables());
 			}
 			
 			if(producers.size() > 1){

@@ -525,8 +525,8 @@ public class MicrobatSlicer{
 			String writtenArrayElement = waeRetriever.arrayElementName;
 			
 			if(writtenArrayElement == null){
-				System.err.println("When parsing written array element, I cannot find specific written array element in line " + 
-						lineNumber + " of " + point.getClassCanonicalName());
+//				System.err.println("When parsing written array element, I cannot find specific written array element in line " + 
+//						lineNumber + " of " + point.getClassCanonicalName());
 			}
 			else{
 				ArrayElementVar var = new ArrayElementVar(writtenArrayElement, Variable.UNKNOWN_TYPE);
