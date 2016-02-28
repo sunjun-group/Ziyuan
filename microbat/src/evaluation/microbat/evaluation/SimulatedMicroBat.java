@@ -26,7 +26,8 @@ public class SimulatedMicroBat {
 	private SimulatedUser user = new SimulatedUser();
 	private StepRecommender recommender;
 	
-	public Trial detectMutatedBug(Trace mutatedTrace, Trace correctTrace, ClassLocation mutatedLocation) {
+	public Trial detectMutatedBug(Trace mutatedTrace, Trace correctTrace, ClassLocation mutatedLocation, 
+			String testCaseName) throws SimulationFailException {
 		PairList pairList = DiffUtil.generateMatchedTraceNodeList(mutatedTrace, correctTrace);
 		
 		TraceNode rootCause = findRootCause(mutatedLocation.getClassCanonicalName(), 
@@ -38,14 +39,21 @@ public class SimulatedMicroBat {
 //		List<TraceNode> dominatees = findAllDominatees(mutatedTrace, mutatedLocation);
 		Map<Integer, TraceNode> allWrongNodeMap = findAllWrongNodes(pairList, mutatedTrace);
 		
-		List<TraceNode> wrongNodeList = new ArrayList<>(allWrongNodeMap.values());
-		Collections.sort(wrongNodeList, new TraceNodeReverseOrderComparator());
-		TraceNode observedFaultNode = wrongNodeList.get(0);
+		if(!allWrongNodeMap.isEmpty()){
+			List<TraceNode> wrongNodeList = new ArrayList<>(allWrongNodeMap.values());
+			Collections.sort(wrongNodeList, new TraceNodeReverseOrderComparator());
+			TraceNode observedFaultNode = wrongNodeList.get(0);
+			
+//			System.currentTimeMillis();
+			
+			Trial trial = startSimulation(observedFaultNode, rootCause, mutatedTrace, allWrongNodeMap, pairList, testCaseName);
+			return trial;
+			
+		}
+		else{
+			return null;
+		}
 		
-		System.currentTimeMillis();
-		
-		Trial trial = startSimulation(observedFaultNode, rootCause, mutatedTrace, allWrongNodeMap, pairList);
-		return trial;
 		
 //		Accuracy accuracy = computeAccuracy(dominatees, allWrongNodes);
 //		
@@ -64,7 +72,7 @@ public class SimulatedMicroBat {
 	}
 	
 	private Trial startSimulation(TraceNode observedFaultNode, TraceNode rootCause, Trace mutatedTrace, 
-			Map<Integer, TraceNode> allWrongNodeMap, PairList pairList) {
+			Map<Integer, TraceNode> allWrongNodeMap, PairList pairList, String testCaseName) throws SimulationFailException {
 		Settings.interestedVariables.clear();
 		Settings.localVariableScopes.clear();
 		Settings.potentialCorrectPatterns.clear();
@@ -72,51 +80,60 @@ public class SimulatedMicroBat {
 		
 		List<TraceNode> jumpingSteps = new ArrayList<>();
 		
-		TraceNode suspiciousNode = observedFaultNode;
-		jumpingSteps.add(suspiciousNode);
-		
-		String feedbackType = user.feedback(suspiciousNode, pairList, mutatedTrace.getCheckTime());
-		int checkTime = 1;
-		
-		boolean isFail = false;
-		boolean isBugFound = rootCause.getLineNumber()==suspiciousNode.getLineNumber();
-		while(!isBugFound){
-			suspiciousNode = findSuspicioiusNode(suspiciousNode, mutatedTrace, feedbackType);
+		try{
+			TraceNode suspiciousNode = observedFaultNode;
 			jumpingSteps.add(suspiciousNode);
-			isBugFound = rootCause.getLineNumber()==suspiciousNode.getLineNumber();
 			
-			if(!isBugFound){
-				if(suspiciousNode.getOrder()==143){
-					System.currentTimeMillis();
-				}
+			String feedbackType = user.feedback(suspiciousNode, pairList, mutatedTrace.getCheckTime());
+			int checkTime = 1;
+			
+			boolean isFail = false;
+			boolean isBugFound = rootCause.getLineNumber()==suspiciousNode.getLineNumber();
+			while(!isBugFound){
+				suspiciousNode = findSuspicioiusNode(suspiciousNode, mutatedTrace, feedbackType);
+				jumpingSteps.add(suspiciousNode);
+				isBugFound = rootCause.getLineNumber()==suspiciousNode.getLineNumber();
 				
-				feedbackType = user.feedback(suspiciousNode, pairList, mutatedTrace.getCheckTime());
-				checkTime++;
-				
-				if(checkTime > mutatedTrace.size()){
-					isFail = true;
-					break;
+				if(!isBugFound){
+					if(suspiciousNode.getOrder()==143){
+						System.currentTimeMillis();
+					}
+					
+					feedbackType = user.feedback(suspiciousNode, pairList, mutatedTrace.getCheckTime());
+					checkTime++;
+					
+					if(checkTime > mutatedTrace.size()){
+						isFail = true;
+						break;
+					}
 				}
 			}
+			
+			List<String> jumpStringSteps = new ArrayList<>();
+			System.out.println("bug found: " + !isFail);
+			for(TraceNode node: jumpingSteps){
+				String str = node.toString();
+				System.out.println(str);		
+				jumpStringSteps.add(str);
+			}
+			System.out.println("Root Cause:" + rootCause);
+			System.currentTimeMillis();
+			
+			Trial trial = new Trial();
+			trial.setTestCaseName(testCaseName);
+			trial.setBugFound(isBugFound);
+			trial.setMutatedLineNumber(rootCause.getLineNumber());
+			trial.setJumpSteps(jumpStringSteps);
+			trial.setTotalSteps(mutatedTrace.size());
+			
+			return trial;
 		}
-		
-		List<String> jumpStringSteps = new ArrayList<>();
-		System.out.println("bug found: " + !isFail);
-		for(TraceNode node: jumpingSteps){
-			String str = node.toString();
-			System.out.println(str);		
-			jumpStringSteps.add(str);
+		catch(Exception e){
+			e.printStackTrace();
+			String msg = "The program stuck in " + testCaseName +", the mutated line is " + rootCause.getLineNumber();
+			SimulationFailException ex = new SimulationFailException(msg);
+			throw ex;
 		}
-		System.out.println("Root Cause:" + rootCause);
-		System.currentTimeMillis();
-		
-		Trial trial = new Trial();
-		trial.setBugFound(isBugFound);
-		trial.setMutatedLineNumber(rootCause.getLineNumber());
-		trial.setJumpSteps(jumpStringSteps);
-		trial.setTotalSteps(mutatedTrace.size());
-		
-		return trial;
 	}
 
 	
@@ -153,7 +170,6 @@ public class SimulatedMicroBat {
 				actualWrongNodes.put(mutatedTraceNode.getOrder(), mutatedTraceNode);
 			}
 		}
-		
 		return actualWrongNodes;
 	}
 	
