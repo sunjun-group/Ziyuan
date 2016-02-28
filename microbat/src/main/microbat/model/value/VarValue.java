@@ -70,6 +70,7 @@ public abstract class VarValue implements GraphNode{
 	}
 	
 	protected VarValue findVarValue(String varID, ArrayList<String> visitedIDs){
+		
 		if(getChildren() != null){
 			for(VarValue value: getChildren()){
 				if(visitedIDs.contains(value.getVarID())){
@@ -79,7 +80,10 @@ public abstract class VarValue implements GraphNode{
 					return value;
 				}
 				else{
+					
+					visitedIDs.add(value.getVarID());
 					VarValue targetValue = value.findVarValue(varID, visitedIDs);
+					
 					if(targetValue != null){
 						return targetValue;
 					}
