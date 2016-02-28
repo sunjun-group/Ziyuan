@@ -423,6 +423,10 @@ public class TraceView extends ViewPart {
 //				BreakPointValue programState = node.getProgramState();
 				
 				String className = breakPoint.getClassCanonicalName();
+				if(className.contains(".")){
+					className = className.substring(className.lastIndexOf(".")+1, className.length());
+				}
+				
 //				String methodName = breakPoint.getMethodName();
 				int lineNumber = breakPoint.getLineNo();
 				int order = node.getOrder();
