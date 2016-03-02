@@ -15,5 +15,9 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+    	<dependency>
+    		<groupId>tzuyu-project</groupId>
+    		<artifactId>assertion</artifactId>
+    	</dependency>
   	</dependencies>
 </project>
