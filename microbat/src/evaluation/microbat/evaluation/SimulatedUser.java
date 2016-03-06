@@ -21,7 +21,7 @@ public class SimulatedUser {
 			feedback = UserFeedback.WRONG_PATH;
 		}
 		else{
-			
+//			System.currentTimeMillis();
 			List<String> wrongVarIDs = pair.findWrongVarIDs();
 			
 			if(!wrongVarIDs.isEmpty()){

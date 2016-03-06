@@ -3,11 +3,14 @@ package microbat.codeanalysis.ast;
 import microbat.model.Scope;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.BreakStatement;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ContinueStatement;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
@@ -85,6 +88,30 @@ public class ConditionalScopeParser {
 			scope.setStartLine(cu.getLineNumber(statement.getStartPosition())); 
 			scope.setEndLine(cu.getLineNumber(statement.getStartPosition()+statement.getLength())); 
 			scope.setLoopScope(isLoop);
+			
+			JumpStatementFinder jumpStatementFinder = new JumpStatementFinder();
+			statement.accept(jumpStatementFinder);
+			scope.setHasJumpStatement(jumpStatementFinder.hasJumpStatement);
+			
+		}
+	}
+	
+	class JumpStatementFinder extends ASTVisitor{
+		boolean hasJumpStatement = false;
+		
+		public boolean visit(BreakStatement statement){
+			hasJumpStatement = true;
+			return false;
+		}
+		
+		public boolean visit(ContinueStatement statement){
+			hasJumpStatement = true;
+			return false;
+		}
+		
+		public boolean visit(ReturnStatement statement){
+			hasJumpStatement = true;
+			return false;
 		}
 	}
 	

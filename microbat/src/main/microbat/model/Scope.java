@@ -9,6 +9,7 @@ public class Scope {
 	private CompilationUnit cu;
 	private int startLine;
 	private int endLine;
+	private boolean hasJumpStatement;
 
 	private boolean isLoopScope;
 
@@ -56,6 +57,14 @@ public class Scope {
 
 	public void setLoopScope(boolean isLoopScope) {
 		this.isLoopScope = isLoopScope;
+	}
+
+	public void setHasJumpStatement(boolean hasJumpStatement) {
+		this.hasJumpStatement = hasJumpStatement;
+	}
+	
+	public boolean hasJumpStatement(){
+		return this.hasJumpStatement;
 	}
 
 }

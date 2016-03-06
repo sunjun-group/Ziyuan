@@ -209,7 +209,9 @@ public class TraceView extends ViewPart {
 				}
 				
 				System.out.println("Control Dominator: ");
-				System.out.println(node.getControlDominator());
+				for(TraceNode controlDominator: node.getControlDominators()){
+					System.out.println(controlDominator);					
+				}
 				System.out.println("~~~~~~~~~~~~~~~~~~~~~");
 				
 				System.out.println("Control Dominatee: ");

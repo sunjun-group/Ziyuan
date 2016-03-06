@@ -12,6 +12,7 @@ import microbat.model.Scope;
 import microbat.model.UserInterestedVariables;
 import microbat.model.value.VarValue;
 import microbat.model.value.VirtualValue;
+import microbat.recommendation.UserFeedback;
 import microbat.util.Settings;
 
 /**
@@ -152,32 +153,34 @@ public class Trace {
 		if(this.exectionList.size()>1){
 			for(int i=this.exectionList.size()-1; i>=1; i--){
 				TraceNode dominatee = this.exectionList.get(i);
-				TraceNode dominator = findControlDominator(dominatee.getOrder());
+				List<TraceNode> controlDominators = findControlDominators(dominatee.getOrder());
 				
-				if(dominator != null){
-					dominatee.setControlDominator(dominator);
-					dominator.addControlDominatee(dominatee);
+				for(TraceNode controlDominator: controlDominators){
+					dominatee.addControlDominator(controlDominator);
+					controlDominator.addControlDominatee(dominatee);
 				}
 			}			
 		}
 		
 	}
 
-	private TraceNode findControlDominator(int startOrder) {
+	private List<TraceNode> findControlDominators(int startOrder) {
 		
-		if(startOrder == 28){
-			System.currentTimeMillis();
-		}
-		
+		List<TraceNode> controlDominators = new ArrayList<>();
+
 		TraceNode dominatee = this.exectionList.get(startOrder-1);
 		for(int i=startOrder-1-1; i>=0; i--){
 			TraceNode node = this.exectionList.get(i);
 			
-			if(node.isConditionalBranch()){
+			if(node.isConditional()){
 				Scope conditionScope = node.getConditionScope();
 				if(conditionScope != null){
 					if(conditionScope.containsNodeScope(dominatee)){
-						return node;
+						controlDominators.add(node);
+						return controlDominators;
+					}
+					else if(conditionScope.hasJumpStatement()){
+						controlDominators.add(node);
 					}
 				}
 				
@@ -187,7 +190,8 @@ public class Trace {
 				dominatee = dominatee.getInvocationParent();
 			}
 		}
-		return null;
+		
+		return controlDominators;
 	}
 
 	private void constructDataDomianceRelation() {
@@ -421,6 +425,32 @@ public class Trace {
 		}
 	}
 
+	public TraceNode findControlSuspiciousDominator(TraceNode buggyNode, String feedback) {
+		
+		
+		List<TraceNode> dominators;
+		if(feedback.equals(UserFeedback.WRONG_PATH)){
+			dominators = buggyNode.getControlDominators();
+		}
+		else{
+			dominators = new ArrayList<>(buggyNode.getDataDominator().keySet());
+		}
+		
+		if(dominators.isEmpty()){
+			return buggyNode;
+		}
+		else{
+			for(TraceNode controlDominator: dominators){
+				if(!controlDominator.hasChecked()){
+					return controlDominator;
+				}
+			}
+		}
+		
+		return buggyNode;
+	}
+	
+	
 	public void distributeSuspiciousness(UserInterestedVariables interestedVariables) {
 		clearAllSuspiciousness();
 		
@@ -513,13 +543,7 @@ public class Trace {
 
 	public LoopSequence findLoopRangeOf(TraceNode currentNode) {
 		
-		TraceNode controlDominator = currentNode.getControlDominator();
-		while(!controlDominator.isLoopCondition()){
-			controlDominator = controlDominator.getControlDominator();
-			if(controlDominator == null){
-				break;
-			}
-		}
+		TraceNode controlDominator = currentNode.findContainingLoopControlDominator();
 		
 		if(controlDominator != null){
 			List<TraceNode> allControlDominatees = controlDominator.findAllControlDominatees();
@@ -571,7 +595,7 @@ public class Trace {
 		
 		TraceNode testNode = node;
 		while(testNode != null && !testNode.hasSameLocation(controlLoopDominator)){
-			testNode = testNode.getControlDominator();
+			testNode = testNode.findContainingLoopControlDominator();
 		}
 		
 		return testNode != null;
@@ -595,4 +619,6 @@ public class Trace {
 		
 		return null;
 	}
+
+	
 }

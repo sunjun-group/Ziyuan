@@ -14,6 +14,7 @@ import microbat.evaluation.util.DiffUtil;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.model.trace.TraceNodeReverseOrderComparator;
+import microbat.model.value.VarValue;
 import microbat.recommendation.StepRecommender;
 import microbat.recommendation.UserFeedback;
 import microbat.util.Settings;
@@ -85,7 +86,12 @@ public class SimulatedMicroBat {
 			jumpingSteps.add(suspiciousNode);
 			
 			String feedbackType = user.feedback(suspiciousNode, pairList, mutatedTrace.getCheckTime());
-			int checkTime = 1;
+			if(!feedbackType.equals(UserFeedback.UNCLEAR)){
+				setCurrentNodeChecked(mutatedTrace, suspiciousNode);		
+				updateVariableCheckTime(mutatedTrace, suspiciousNode);
+			}
+			
+			int feedbackTimes = 1;
 			
 			boolean isFail = false;
 			boolean isBugFound = rootCause.getLineNumber()==suspiciousNode.getLineNumber();
@@ -95,14 +101,19 @@ public class SimulatedMicroBat {
 				isBugFound = rootCause.getLineNumber()==suspiciousNode.getLineNumber();
 				
 				if(!isBugFound){
-					if(suspiciousNode.getOrder()==143){
+					if(suspiciousNode.getOrder()==26){
 						System.currentTimeMillis();
 					}
 					
 					feedbackType = user.feedback(suspiciousNode, pairList, mutatedTrace.getCheckTime());
-					checkTime++;
+					if(!feedbackType.equals(UserFeedback.UNCLEAR)){
+						setCurrentNodeChecked(mutatedTrace, suspiciousNode);		
+						updateVariableCheckTime(mutatedTrace, suspiciousNode);
+					}
 					
-					if(checkTime > mutatedTrace.size()){
+					feedbackTimes++;
+					
+					if(feedbackTimes > mutatedTrace.size()){
 						isFail = true;
 						break;
 					}
@@ -133,6 +144,28 @@ public class SimulatedMicroBat {
 			String msg = "The program stuck in " + testCaseName +", the mutated line is " + rootCause.getLineNumber();
 			SimulationFailException ex = new SimulationFailException(msg);
 			throw ex;
+		}
+	}
+	
+	private void setCurrentNodeChecked(Trace trace, TraceNode currentNode) {
+		int checkTime = trace.getCheckTime()+1;
+		currentNode.setCheckTime(checkTime);
+		trace.setCheckTime(checkTime);
+	}
+	
+	private void updateVariableCheckTime(Trace trace, TraceNode currentNode) {
+		for(VarValue var: currentNode.getReadVariables()){
+			String varID = var.getVarID();
+			if(Settings.interestedVariables.contains(varID)){
+				Settings.interestedVariables.add(varID, trace.getCheckTime());
+			}
+		}
+		
+		for(VarValue var: currentNode.getWrittenVariables()){
+			String varID = var.getVarID();
+			if(Settings.interestedVariables.contains(varID)){
+				Settings.interestedVariables.add(varID, trace.getCheckTime());
+			}
 		}
 	}
 

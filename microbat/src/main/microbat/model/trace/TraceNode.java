@@ -49,7 +49,7 @@ public class TraceNode{
 	
 	private Map<TraceNode, List<String>> dataDominators = new HashMap<>();
 	private Map<TraceNode, List<String>> dataDominatees = new HashMap<>();
-	private TraceNode controlDominator;
+	private List<TraceNode> controlDominators = new ArrayList<>();
 	private List<TraceNode> controlDominatees = new ArrayList<>();
 	
 	/**
@@ -490,13 +490,14 @@ public class TraceNode{
 			}
 		}
 		
-		TraceNode controlDominator = node.getControlDominator();
-		if(controlDominator != null){
+		
+		for(TraceNode controlDominator: node.getControlDominators()){
 			if(!dominators.containsKey(controlDominator.getOrder())){
 				dominators.put(controlDominator.getOrder(), controlDominator);
 				findDominators(controlDominator, dominators);				
 			}
 		}
+		
 	}
 	
 	public Map<Integer, TraceNode> findAllDominatees() {
@@ -532,12 +533,18 @@ public class TraceNode{
 	}
 	
 
-	public TraceNode getControlDominator() {
-		return controlDominator;
+	public List<TraceNode> getControlDominators() {
+		return controlDominators;
 	}
 
-	public void setControlDominator(TraceNode controlDominator) {
-		this.controlDominator = controlDominator;
+	public void setControlDominators(List<TraceNode> controlDominators) {
+		this.controlDominators = controlDominators;
+	}
+	
+	public void addControlDominator(TraceNode dominator){
+		if(!this.controlDominators.contains(dominator)){
+			this.controlDominators.add(dominator);
+		}
 	}
 
 	public List<TraceNode> getControlDominatees() {
@@ -554,7 +561,7 @@ public class TraceNode{
 		}
 	}
 
-	public boolean isConditionalBranch(){
+	public boolean isConditional(){
 		return this.breakPoint.isConditional();
 	}
 	
@@ -574,7 +581,7 @@ public class TraceNode{
 	}
 
 	public boolean isLoopCondition() {
-		if(isConditionalBranch()){
+		if(isConditional()){
 			Scope scope = getConditionScope();
 			if(scope != null){
 				return scope.isLoopScope();
@@ -599,5 +606,16 @@ public class TraceNode{
 	public boolean hasSameLocation(TraceNode node) {
 		return getClassName().equals(node.getClassName()) && 
 				getLineNumber()==node.getLineNumber();
+	}
+
+	public TraceNode findContainingLoopControlDominator() {
+		for(TraceNode controlDominator: this.controlDominators){
+			if(controlDominator.isLoopCondition()){
+				if(controlDominator.getConditionScope().containsNodeScope(this)){
+					return controlDominator;
+				}
+			}
+		}
+		return null;
 	}
 }
