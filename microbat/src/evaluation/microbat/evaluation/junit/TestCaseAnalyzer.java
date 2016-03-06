@@ -92,7 +92,18 @@ public class TestCaseAnalyzer {
 			}
 		}
 		
+//		runSingeTestCase();
+	}
+	
+	private void runSingeTestCase(){
+		String className = "org.apache.commons.math.analysis.interpolation.LoessInterpolatorTest";
+		String methodName = "testOnTwoPoints";
 		
+		try {
+			runEvaluationForSingleMethod(className, methodName);
+		} catch (JavaModelException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void runEvaluation(IPackageFragment pack) throws JavaModelException {
@@ -171,7 +182,10 @@ public class TestCaseAnalyzer {
 										try {
 											trial = microbat.detectMutatedBug(mutantTrace, correctTrace, mutatedLocation, testcaseName);
 											if(trial != null){
-												trials.add(trial);												
+												trials.add(trial);	
+												if(!trial.isBugFound()){
+													System.err.println("Cannot find bug in Mutated Files: " + result.getMutatedFiles(line));
+												}
 											}
 										} catch (Exception e) {
 											e.printStackTrace();
@@ -199,7 +213,7 @@ public class TestCaseAnalyzer {
 			}
 		}
 		else{
-			System.out.println(testcaseName + "is a failed test case");
+			System.out.println(testcaseName + " is a failed test case");
 			return false;
 		}
 		
