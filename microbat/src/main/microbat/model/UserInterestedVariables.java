@@ -25,10 +25,6 @@ public class UserInterestedVariables {
 	
 	public AttributionVar add(String varID, int checkTime){
 		
-		if(varID.equals("10[1]")){
-			System.currentTimeMillis();
-		}
-		
 		this.varIDs.put(varID, checkTime);
 		
 		AttributionVar var = new AttributionVar(varID, checkTime);
