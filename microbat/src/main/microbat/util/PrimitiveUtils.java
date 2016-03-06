@@ -27,6 +27,14 @@ public class PrimitiveUtils {
 		Long.class.getName(),
 		Short.class.getName(),
 		Byte.class.getName(),
+		"int",
+		"boolean",
+		"float",
+		"char",
+		"doulbe",
+		"long",
+		"short",
+		"byte"
 	};
 	private static String STRING_TYPE = String.class.getName();
 	
