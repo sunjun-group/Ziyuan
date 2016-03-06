@@ -624,6 +624,12 @@ public class DebugFeedbackView extends ViewPart {
 				openReconfirmDialog(message);
 				return false;
 			}
+			else if(recommender != null && recommender.getLatestCause().isCausedByWrongPath() && feedbackType.equals(UserFeedback.CORRECT)){
+				String message = "The lastest node has wrong path, but you now tell me that no variable "
+						+ "in this conditional statement is wrong, are you really sure?";
+				openReconfirmDialog(message);
+				return false;
+			}
 			
 			return true;
 		}
@@ -658,8 +664,10 @@ public class DebugFeedbackView extends ViewPart {
 //							suspiciousNode = conflictNode;
 //						}
 //					}
+					
 					if(!feedbackType.equals(UserFeedback.UNCLEAR)){
-						setCurrentNodeChecked(trace, currentNode);					
+						setCurrentNodeChecked(trace, currentNode);		
+						updateVariableCheckTime(trace, currentNode);
 					}
 					
 					suspiciousNode = recommender.recommendNode(trace, currentNode, feedbackType);
@@ -671,6 +679,23 @@ public class DebugFeedbackView extends ViewPart {
 				
 			}
 		}
+		
+		private void updateVariableCheckTime(Trace trace, TraceNode currentNode) {
+			for(VarValue var: currentNode.getReadVariables()){
+				String varID = var.getVarID();
+				if(Settings.interestedVariables.contains(varID)){
+					Settings.interestedVariables.add(varID, trace.getCheckTime());
+				}
+			}
+			
+			for(VarValue var: currentNode.getWrittenVariables()){
+				String varID = var.getVarID();
+				if(Settings.interestedVariables.contains(varID)){
+					Settings.interestedVariables.add(varID, trace.getCheckTime());
+				}
+			}
+		}
+		
 		
 		private void jumpToNode(Trace trace, TraceNode suspiciousNode) {
 			TraceView view;
