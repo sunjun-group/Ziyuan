@@ -13,6 +13,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SwitchStatement;
+import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
 public class ConditionalScopeParser {
@@ -110,6 +111,11 @@ public class ConditionalScopeParser {
 		}
 		
 		public boolean visit(ReturnStatement statement){
+			hasJumpStatement = true;
+			return false;
+		}
+		
+		public boolean visit(ThrowStatement statement){
 			hasJumpStatement = true;
 			return false;
 		}
