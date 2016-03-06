@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import microbat.model.AttributionVar;
+import microbat.model.Cause;
 import microbat.model.trace.LoopSequence;
 import microbat.model.trace.PathInstance;
 import microbat.model.trace.PotentialCorrectPattern;
@@ -108,14 +109,14 @@ public class StepRecommender {
 			this.endNode = endNode;
 		}
 		
-		public InspectingRange(Map<TraceNode, List<String>> dataDominator,
-				TraceNode suspiciousNode) {
-			ArrayList<TraceNode> dominators = new ArrayList<TraceNode>(dataDominator.keySet());
-			Collections.sort(dominators, new TraceNodeOrderComparator());
-			
-			startNode = dominators.get(0);
-			endNode = suspiciousNode;
-		}
+//		public InspectingRange(Map<TraceNode, List<String>> dataDominator,
+//				TraceNode suspiciousNode) {
+//			ArrayList<TraceNode> dominators = new ArrayList<TraceNode>(dataDominator.keySet());
+//			Collections.sort(dominators, new TraceNodeOrderComparator());
+//			
+//			startNode = dominators.get(0);
+//			endNode = suspiciousNode;
+//		}
 
 		public InspectingRange clone(){
 			InspectingRange inspectingRange = new InspectingRange(startNode, endNode);
@@ -130,7 +131,8 @@ public class StepRecommender {
 	 */
 	private int latestClearState = -1;
 	private TraceNode lastNode;
-	private TraceNode lastRecommendNode;
+//	private TraceNode lastRecommendNode;
+	private Cause latestCause = new Cause();
 	private LoopRange loopRange = new LoopRange();
 	private InspectingRange inspectingRange;
 	
@@ -147,11 +149,6 @@ public class StepRecommender {
 			visitedUnclearNodeList.add(currentNode);
 			Collections.sort(visitedUnclearNodeList, new TraceNodeOrderComparator());
 			TraceNode node = findMoreClearNode(trace, currentNode);
-			return node;
-		}
-		else if(feedback.equals(UserFeedback.WRONG_PATH)){
-			state = DebugState.JUMP;
-			TraceNode node = currentNode.getControlDominator();
 			return node;
 		}
 		else if((state==DebugState.UNCLEAR || state==DebugState.PARTIAL_CLEAR) && feedback.equals(UserFeedback.CORRECT)){
@@ -258,6 +255,12 @@ public class StepRecommender {
 		return moreAbstractDominator;
 	}
 	
+	/**
+	 * More clear node means the data or control dominator in method invocation or loop head for current node.
+	 * @param trace
+	 * @param currentNode
+	 * @return
+	 */
 	private TraceNode findMoreClearNode(Trace trace, TraceNode currentNode) {
 		TraceNode earliestNodeWithWrongVar = trace.getEarliestNodeWithWrongVar();
 		
@@ -302,6 +305,7 @@ public class StepRecommender {
 			}
 		}
 		
+		TraceNode lastRecommendNode = getLatestCause().getRecommendedNode();
 		if(lastRecommendNode!= null && !currentNode.equals(lastRecommendNode)){
 			state = DebugState.JUMP;
 		}
@@ -320,7 +324,7 @@ public class StepRecommender {
 			suspiciousNode = handleDetailInspecting(trace, currentNode, userFeedBack);
 		}
 		
-		lastRecommendNode = suspiciousNode;
+		getLatestCause().setRecommendedNode(suspiciousNode);
 		
 		return suspiciousNode;
 	}
@@ -351,7 +355,13 @@ public class StepRecommender {
 					PathInstance labelPath = pattern.getLabelInstance();
 					Variable causingVariable = labelPath.findCausingVar();
 					
-					if(isCompatible(causingVariable, currentNode)){
+					Variable compatiableVariable = findCompatibleReadVariable(causingVariable, currentNode);
+					if(compatiableVariable != null){
+						
+						this.latestCause.setBuggyNode(currentNode);
+						this.latestCause.setWrongPath(false);
+						this.latestCause.setWrongVariableID(compatiableVariable.getVarID());
+						
 						state = DebugState.BINARY_SEARCH;
 						if(currentNode.isAllReadWrittenVarCorrect(false)){
 							this.loopRange.startNode = currentNode;
@@ -384,16 +394,16 @@ public class StepRecommender {
 		return suspiciousNode;
 	}
 
-	private boolean isCompatible(Variable causingVariable, TraceNode currentNode) {
+	private Variable findCompatibleReadVariable(Variable causingVariable, TraceNode currentNode) {
 		List<VarValue> markedReadVars = currentNode.findMarkedReadVariable();
 		for(VarValue readVar: markedReadVars){
 			Variable readVariable = readVar.getVariable();
 			if(isEquivalentVariable(causingVariable, readVariable)){
-				return true;
+				return readVariable;
 			}
 		}
 		
-		return false;
+		return null;
 	}
 
 	private TraceNode handleSkipBehavior(Trace trace, TraceNode currentNode, String userFeedback) {
@@ -419,81 +429,197 @@ public class StepRecommender {
 		}
 		return suspiciousNode;
 	}
-
-	private TraceNode handleJumpBehavior(Trace trace, TraceNode currentNode, String userFeedBack) {
-		TraceNode oldSusiciousNode = currentNode;
+	
+	private TraceNode handleWrongPath(Trace trace, TraceNode currentNode, String feedback){
+		TraceNode suspiciousNode = trace.findControlSuspiciousDominator(currentNode, feedback);
 		
-		List<AttributionVar> readVars = constructAttributionRelation(currentNode, trace.getCheckTime());
-		AttributionVar focusVar = Settings.interestedVariables.findFocusVar(trace, currentNode, readVars);
-				
-		if(focusVar != null){
-//			long t1 = System.currentTimeMillis();
-			trace.distributeSuspiciousness(Settings.interestedVariables);
-//			long t2 = System.currentTimeMillis();
-//			System.out.println("time for distributeSuspiciousness: " + (t2-t1));
-			TraceNode suspiciousNode = trace.findMostSupiciousNode(focusVar);
+		this.latestCause.setBuggyNode(currentNode);
+		this.latestCause.setWrongPath(true);
+		this.latestCause.setWrongVariableID(null);
+		
+		return suspiciousNode;
+	}
+	
+	private TraceNode handleWrongValue(Trace trace, TraceNode currentNode, String userFeedBack){
+		
+		List<VarValue> wrongReadVars = currentNode.findMarkedReadVariable();
+		VarValue wrongVar = (wrongReadVars.isEmpty())? null : wrongReadVars.get(0);
+		String wrongVarID = null;
+		
+		if(wrongVar != null){
+			getLatestCause().setWrongVariableID(wrongVar.getVarID());
+			wrongVarID = wrongVar.getVarID();
+		}
+		/**
+		 * otherwise, there is two cases: 
+		 */
+		else{
+			wrongVarID = Settings.interestedVariables.getNewestVarID();
+		}
+		
+		TraceNode suspiciousNode = trace.getProducer(wrongVarID);
+		
+		if(suspiciousNode == null){
+			return currentNode;
+		}
+		
+		if(userFeedBack.equals(UserFeedback.INCORRECT)){
+			this.latestCause.setBuggyNode(currentNode);
+			this.latestCause.setWrongVariableID(wrongVarID);
+			this.latestCause.setWrongPath(false);			
+		}
+		
+		/**
+		 * In this case, user provide an "incorrect" feedback for current node, while the wrong 
+		 * variable in latest buggy node is caused by the definition of suspicious node. If this 
+		 * suspicious node has been checked and the read variables are correct, then the bug
+		 * happens between the suspicious node and buggy node. Therefore, we enter the INSPECT_DETAIL
+		 * state. 
+		 */
+		if(userFeedBack.equals(UserFeedback.CORRECT) && 
+				suspiciousNode.hasChecked() && suspiciousNode.findMarkedReadVariable().isEmpty()){
+			//TODO it could be done in a more intelligent way.
+			this.inspectingRange = new InspectingRange(suspiciousNode, getLatestCause().getBuggyNode());
+			TraceNode recommendedNode = handleDetailInspecting(trace, currentNode, userFeedBack);
+			return recommendedNode;
+		}
+		else{
 			
-			/**
-			 * it means the suspiciousness of focusVar cannot be distributed to other trace node any more. 
-			 */
-			TraceNode producer = trace.getProducer(focusVar.getVarID());
-//			if(suspiciousNode.isWrittenVariablesContains(focusVar.getVarID()) && suspiciousNode.equals(this.lastNode)){
-			if(suspiciousNode.getOrder()>currentNode.getOrder() && producer!=null && producer.equals(suspiciousNode)){
-				//TODO it could be done in a more intelligent way.
-				this.inspectingRange = new InspectingRange(suspiciousNode.getDataDominator(), suspiciousNode);
-				TraceNode recommendedNode = handleDetailInspecting(trace, currentNode, userFeedBack);
-				return recommendedNode;
+			boolean isPathInPattern = false;
+			PathInstance path = null;
+			if(getLatestCause().getBuggyNode() != null){
+				path = new PathInstance(suspiciousNode, getLatestCause().getBuggyNode());
+				isPathInPattern = Settings.potentialCorrectPatterns.containsPattern(path)? true : false;					
+			}
+			
+			if(isPathInPattern && !shouldStopOnCheckedNode(currentNode, path)){
+				state = DebugState.SKIP;
+				
+				this.loopRange.endNode = path.getEndNode();
+				this.loopRange.skipPoints.clear();
+				//this.range.skipPoints.add(suspiciousNode);
+				
+				TraceNode oldSusiciousNode = suspiciousNode;
+				while(Settings.potentialCorrectPatterns.containsPattern(path) 
+						&& !shouldStopOnCheckedNode(suspiciousNode, path)){
+					
+					Settings.potentialCorrectPatterns.addPathForPattern(path);
+					this.loopRange.skipPoints.add(suspiciousNode);
+					
+					PotentialCorrectPattern pattern = Settings.potentialCorrectPatterns.getPattern(path);
+					oldSusiciousNode = suspiciousNode;
+					
+					suspiciousNode = findNextSuspiciousNodeByPattern(pattern, oldSusiciousNode);
+					
+					if(suspiciousNode == null){
+						break;
+					}
+					else{
+						path = new PathInstance(suspiciousNode, oldSusiciousNode);					
+					}
+				}
+				
+				this.lastNode = currentNode;
+				return oldSusiciousNode;
 			}
 			else{
-				TraceNode readTraceNode = focusVar.getReadTraceNode();
-				boolean isPathInPattern = false;
-				PathInstance path = null;
-				if(readTraceNode != null){
-					path = new PathInstance(suspiciousNode, readTraceNode);
-					isPathInPattern = Settings.potentialCorrectPatterns.containsPattern(path)? true : false;					
-				}
+				state = DebugState.JUMP;
 				
-				if(isPathInPattern){
-					state = DebugState.SKIP;
-					
-					this.loopRange.endNode = path.getEndNode();
-					this.loopRange.skipPoints.clear();
-					//this.range.skipPoints.add(suspiciousNode);
-					
-					while(Settings.potentialCorrectPatterns.containsPattern(path) 
-							&& !shouldStopOnCheckedNode(suspiciousNode, path)){
-						
-						Settings.potentialCorrectPatterns.addPathForPattern(path);
-						this.loopRange.skipPoints.add(suspiciousNode);
-						
-						PotentialCorrectPattern pattern = Settings.potentialCorrectPatterns.getPattern(path);
-						oldSusiciousNode = suspiciousNode;
-						
-						suspiciousNode = findNextSuspiciousNodeByPattern(pattern, oldSusiciousNode);
-						
-						if(suspiciousNode == null){
-							break;
-						}
-						else{
-							path = new PathInstance(suspiciousNode, oldSusiciousNode);					
-						}
-					}
-					
-					this.lastNode = currentNode;
-					return oldSusiciousNode;
-				}
-				else{
-					state = DebugState.JUMP;
-					
-					this.lastNode = currentNode;
-					return suspiciousNode;				
-				}
+				this.lastNode = currentNode;
+				
+				return suspiciousNode;				
 			}
 		}
 		
-		System.err.println("fucosVar is null");
-		return currentNode;
+	}
+
+	
+//	private TraceNode handleWrongValue(Trace trace, TraceNode currentNode, String userFeedBack){
+//		TraceNode oldSusiciousNode = currentNode;
+//		
+//		List<AttributionVar> readVars = constructAttributionRelation(currentNode, trace.getCheckTime());
+//		AttributionVar focusVar = Settings.interestedVariables.findFocusVar(trace, currentNode, readVars);
+//				
+//		if(focusVar != null){
+////			long t1 = System.currentTimeMillis();
+//			trace.distributeSuspiciousness(Settings.interestedVariables);
+////			long t2 = System.currentTimeMillis();
+////			System.out.println("time for distributeSuspiciousness: " + (t2-t1));
+//			TraceNode suspiciousNode = trace.findMostSupiciousNode(focusVar);
+//			
+//			/**
+//			 * it means the suspiciousness of focusVar cannot be distributed to other trace node any more. 
+//			 */
+//			TraceNode producer = trace.getProducer(focusVar.getVarID());
+////			if(suspiciousNode.isWrittenVariablesContains(focusVar.getVarID()) && suspiciousNode.equals(this.lastNode)){
+//			if(suspiciousNode.getOrder()>currentNode.getOrder() && producer!=null && producer.equals(suspiciousNode)){
+//				//TODO it could be done in a more intelligent way.
+//				this.inspectingRange = new InspectingRange(suspiciousNode.getDataDominator(), suspiciousNode);
+//				TraceNode recommendedNode = handleDetailInspecting(trace, currentNode, userFeedBack);
+//				return recommendedNode;
+//			}
+//			else{
+//				TraceNode readTraceNode = focusVar.getReadTraceNode();
+//				boolean isPathInPattern = false;
+//				PathInstance path = null;
+//				if(readTraceNode != null){
+//					path = new PathInstance(suspiciousNode, readTraceNode);
+//					isPathInPattern = Settings.potentialCorrectPatterns.containsPattern(path)? true : false;					
+//				}
+//				
+//				if(isPathInPattern){
+//					state = DebugState.SKIP;
+//					
+//					this.loopRange.endNode = path.getEndNode();
+//					this.loopRange.skipPoints.clear();
+//					//this.range.skipPoints.add(suspiciousNode);
+//					
+//					while(Settings.potentialCorrectPatterns.containsPattern(path) 
+//							&& !shouldStopOnCheckedNode(suspiciousNode, path)){
+//						
+//						Settings.potentialCorrectPatterns.addPathForPattern(path);
+//						this.loopRange.skipPoints.add(suspiciousNode);
+//						
+//						PotentialCorrectPattern pattern = Settings.potentialCorrectPatterns.getPattern(path);
+//						oldSusiciousNode = suspiciousNode;
+//						
+//						suspiciousNode = findNextSuspiciousNodeByPattern(pattern, oldSusiciousNode);
+//						
+//						if(suspiciousNode == null){
+//							break;
+//						}
+//						else{
+//							path = new PathInstance(suspiciousNode, oldSusiciousNode);					
+//						}
+//					}
+//					
+//					this.lastNode = currentNode;
+//					return oldSusiciousNode;
+//				}
+//				else{
+//					state = DebugState.JUMP;
+//					
+//					this.lastNode = currentNode;
+//					return suspiciousNode;				
+//				}
+//			}
+//		}
+//		
+//		System.err.println("fucosVar is null");
+//		return currentNode;
+//	}
+	
+	private TraceNode handleJumpBehavior(Trace trace, TraceNode currentNode, String userFeedBack) {
 		
+		TraceNode node;
+		if(userFeedBack.equals(UserFeedback.WRONG_PATH)){
+			node = handleWrongPath(trace, currentNode, userFeedBack);
+		}
+		else{
+			node = handleWrongValue(trace, currentNode, userFeedBack);
+		}
+		
+		return node;
 	}
 	
 	private boolean shouldStopOnCheckedNode(TraceNode suspiciousNode, PathInstance path) {
@@ -510,7 +636,8 @@ public class StepRecommender {
 					PathInstance labelPath = pattern.getLabelInstance();
 					Variable causingVariable = labelPath.findCausingVar();
 					
-					if(isCompatible(causingVariable, suspiciousNode)){
+					Variable compatibaleVariable = findCompatibleReadVariable(causingVariable, suspiciousNode);
+					if(compatibaleVariable != null){
 						return false;
 					}
 				}
@@ -574,6 +701,13 @@ public class StepRecommender {
 		return null;
 	}
 	
+	/**
+	 * For now, the virtual variable is never considered as equivalent (or, compatible). It means that the path between method invocation
+	 * is not jumped, which facilitates the abstraction intention. That is, the jump occurs only in the same abstraction level.
+	 * @param var1
+	 * @param var2
+	 * @return
+	 */
 	private boolean isEquivalentVariable(Variable var1, Variable var2){
 		String varID1 = var1.getVarID();
 		String simpleVarID1 = Variable.truncateSimpleID(varID1);
@@ -625,7 +759,8 @@ public class StepRecommender {
 		StepRecommender recommender = new StepRecommender();
 		recommender.state = this.state;
 		recommender.lastNode = this.lastNode;
-		recommender.lastRecommendNode = this.lastRecommendNode;
+		//recommender.lastRecommendNode = this.lastRecommendNode;
+		recommender.setLatestCause(this.getLatestCause().clone());
 		recommender.latestClearState = this.latestClearState;
 		recommender.loopRange = this.loopRange.clone();
 		if(this.inspectingRange != null){
@@ -643,5 +778,13 @@ public class StepRecommender {
 	
 	public LoopRange getLoopRange(){
 		return this.loopRange;
+	}
+
+	public Cause getLatestCause() {
+		return latestCause;
+	}
+
+	public void setLatestCause(Cause latestCause) {
+		this.latestCause = latestCause;
 	}
 }
