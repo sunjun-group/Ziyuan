@@ -305,7 +305,7 @@ public class MicrobatSlicer{
 							bkpSet.put(key, point);
 						}
 						
-						appendReadWritenVariable(point, method, allInsts[index], index, s.getNode().getIR());
+						appendReadWritenVariable(point, method, allInsts, index, s.getNode().getIR());
 						
 					}
 				}
@@ -374,11 +374,12 @@ public class MicrobatSlicer{
 		return null;
 	}
 	
-	private void appendReadWritenVariable(BreakPoint point, ShrikeCTMethod method, IInstruction ins, 
+	private void appendReadWritenVariable(BreakPoint point, ShrikeCTMethod method, IInstruction[] insList, 
 			int insIndex, IR ir) throws InvalidClassFileException {
 		
 //		String varName = null;
 		
+		IInstruction ins = insList[insIndex];
 		
 		int pc = method.getBytecodeIndex(insIndex);
 		int lineNumber = method.getLineNumber(pc);
@@ -538,6 +539,7 @@ public class MicrobatSlicer{
 		}
 		else if(ins instanceof ConditionalBranchInstruction){
 //			ConditionalBranchInstruction cbIns = (ConditionalBranchInstruction)ins;
+			
 			setConditionalScope(cu, lineNumber, point);
 		}
 		else if(ins instanceof InstanceofInstruction){
@@ -752,7 +754,8 @@ public class MicrobatSlicer{
 					
 					String className = SignatureUtils.signatureToName(classSignature);
 					
-					if(isClassContainedInExecution(className) && isMethodContainedInExection(method)){
+					if(isClassContainedInExecution(className) && 
+							isMethodContainedInExection(method)){
 						parseBreakPoints(bkpSet, node);				
 					}
 				}
@@ -857,6 +860,7 @@ public class MicrobatSlicer{
 
 	private void parseBreakPoints(Map<String, BreakPoint> bkpSet, CGNode node) {
 		ShrikeCTMethod method = (ShrikeCTMethod) node.getMethod();
+		
 		try {
 			IInstruction[] allInsts = method.getInstructions();
 			
@@ -877,7 +881,7 @@ public class MicrobatSlicer{
 					bkpSet.put(key, point);
 				}
 				
-				appendReadWritenVariable(point, method, allInsts[k], k, stmt.getNode().getIR());
+				appendReadWritenVariable(point, method, allInsts, k, stmt.getNode().getIR());
 			}
 			
 			
