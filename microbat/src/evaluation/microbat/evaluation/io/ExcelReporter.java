@@ -48,18 +48,22 @@ public class ExcelReporter {
         		Row row = sheet.createRow(bookSize);
         		
         		row.createCell(0).setCellValue(trial.getTestCaseName());
-        		row.createCell(0).setCellValue(trial.isBugFound());
-        		row.createCell(0).setCellValue(trial.getTotalSteps());
-        		row.createCell(0).setCellValue(trial.getJumpSteps().size());
-        		row.createCell(0).setCellValue(trial.getMutatedFile());
-        		row.createCell(0).setCellValue(trial.getMutatedLineNumber());
-        		row.createCell(0).setCellValue(trial.getJumpSteps().toString());
+        		row.createCell(1).setCellValue(trial.isBugFound());
+        		row.createCell(2).setCellValue(trial.getTotalSteps());
+        		row.createCell(3).setCellValue(trial.getJumpSteps().size());
+        		row.createCell(4).setCellValue(trial.getMutatedFile());
+        		row.createCell(5).setCellValue(trial.getMutatedLineNumber());
+        		row.createCell(6).setCellValue(trial.getJumpSteps().toString());
         		
         		bookSize++;
         	}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+        
+        for(int i=0; i<7; i++){
+        	sheet.autoSizeColumn(i);
+        }
         
         writeToExcel(fileName);
 	}
