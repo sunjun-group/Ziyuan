@@ -45,6 +45,7 @@ public class MicroBatTestRunner {
 		}
 		
 		System.currentTimeMillis();
+		System.out.println("is successful? " + successful);
 	}
 	
 	public static boolean isTestSuccessful(String className, String methodName, URLClassLoader classLoader){
