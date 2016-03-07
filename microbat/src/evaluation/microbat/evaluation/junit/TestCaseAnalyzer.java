@@ -11,6 +11,7 @@ import java.util.Map;
 import microbat.evaluation.SimulatedMicroBat;
 import microbat.evaluation.TraceModelConstructor;
 import microbat.evaluation.io.ExcelReporter;
+import microbat.evaluation.io.IgnoredTestCaseFiles;
 import microbat.evaluation.model.Trial;
 import microbat.model.BreakPoint;
 import microbat.model.trace.Trace;
@@ -42,6 +43,7 @@ public class TestCaseAnalyzer {
 	public static final String TEST_RUNNER = "microbat.evaluation.junit.MicroBatTestRunner";
 	
 	private List<Trial> trials = new ArrayList<>();
+	private IgnoredTestCaseFiles ignoredTestCaseFiles = new IgnoredTestCaseFiles();
 	
 	public void test(){
 		String str = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\mutatedSource8245811234241496344\\47_25_1\\Main.java";
@@ -152,6 +154,10 @@ public class TestCaseAnalyzer {
 		AppJavaClassPath testcaseConfig = createProjectClassPath(className, methodName);
 		String testcaseName = className + "#" + methodName;
 		
+		if(this.ignoredTestCaseFiles.contains(testcaseName)){
+			return false;
+		}
+		
 		TestCaseRunner checker = new TestCaseRunner();
 		List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
 		
@@ -225,10 +231,12 @@ public class TestCaseAnalyzer {
 			}
 			else{
 				System.out.println("but " + testcaseName + " cannot be mutated");
+				this.ignoredTestCaseFiles.addTestCase(testcaseName);
 			}
 		}
 		else{
 			System.out.println(testcaseName + " is a failed test case");
+			this.ignoredTestCaseFiles.addTestCase(testcaseName);
 			return false;
 		}
 		
