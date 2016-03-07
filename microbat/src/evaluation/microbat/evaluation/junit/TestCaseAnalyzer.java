@@ -9,14 +9,15 @@ import java.util.List;
 import java.util.Map;
 
 import microbat.evaluation.SimulatedMicroBat;
-import microbat.evaluation.SimulationFailException;
 import microbat.evaluation.TraceModelConstructor;
 import microbat.evaluation.model.Trial;
+import microbat.evaluation.output.ExcelReporter;
 import microbat.model.BreakPoint;
 import microbat.model.trace.Trace;
 import microbat.util.JTestUtil;
 import microbat.util.JavaUtil;
 import microbat.util.MicroBatUtil;
+import microbat.util.Settings;
 import mutation.mutator.Mutator;
 
 import org.apache.commons.io.FileUtils;
@@ -107,6 +108,11 @@ public class TestCaseAnalyzer {
 	}
 
 	private void runEvaluation(IPackageFragment pack) throws JavaModelException {
+		
+		int num = 0;
+		ExcelReporter reporter = new ExcelReporter();
+		reporter.start();
+		
 		for(IJavaElement javaElement: pack.getChildren()){
 			if(javaElement instanceof IPackageFragment){
 				runEvaluation((IPackageFragment)javaElement);
@@ -121,9 +127,16 @@ public class TestCaseAnalyzer {
 					
 					for(MethodDeclaration testingMethod: testingMethods){
 						String methodName = testingMethod.getName().getIdentifier();
-						
 						runEvaluationForSingleMethod(className, methodName);
 						
+						
+						if(trials.size() > 30000){
+							reporter.export(trials, Settings.projectName+num);
+							
+							trials.clear();
+							reporter = new ExcelReporter();
+							num++;
+						}
 					}
 					
 				}
@@ -167,7 +180,7 @@ public class TestCaseAnalyzer {
 						
 						if(!mutatedFileList.isEmpty()){
 							try {
-								List<Trace> killingMutatantTraces = mutateCode(mutatedClass, mutatedFileList, testcaseConfig);
+								List<TraceFilePair> killingMutatantTraces = mutateCode(mutatedClass, mutatedFileList, testcaseConfig);
 								
 								if(!killingMutatantTraces.isEmpty()){
 									if(null == correctTrace){
@@ -175,21 +188,23 @@ public class TestCaseAnalyzer {
 												constructTraceModel(testcaseConfig, executingStatements);
 									}
 									
-									for(Trace mutantTrace: killingMutatantTraces){
+									for(TraceFilePair pair: killingMutatantTraces){
+										Trace mutantTrace = pair.mutatedTrace;
 										SimulatedMicroBat microbat = new SimulatedMicroBat();
 										ClassLocation mutatedLocation = new ClassLocation(mutatedClass, null, line);
 										Trial trial;
 										try {
-											trial = microbat.detectMutatedBug(mutantTrace, correctTrace, mutatedLocation, testcaseName);
+											trial = microbat.detectMutatedBug(mutantTrace, correctTrace, mutatedLocation, 
+													testcaseName, pair.mutatedFile);
 											if(trial != null){
 												trials.add(trial);	
 												if(!trial.isBugFound()){
-													System.err.println("Cannot find bug in Mutated Files: " + result.getMutatedFiles(line));
+													System.err.println("Cannot find bug in Mutated File: " + pair.mutatedFile);
 												}
 											}
 										} catch (Exception e) {
 											e.printStackTrace();
-											System.err.println("Mutated Files: " + result.getMutatedFiles(line));
+											System.err.println("Mutated File: " + pair.mutatedFile);
 										}
 									}
 									
@@ -219,13 +234,41 @@ public class TestCaseAnalyzer {
 		
 		return false;
 	}
+	
+	class TraceFilePair{
+		Trace mutatedTrace;
+		String mutatedFile;
+		
+		public TraceFilePair(Trace mutatedTrace, String mutatedFile) {
+			super();
+			this.mutatedTrace = mutatedTrace;
+			this.mutatedFile = mutatedFile;
+		}
+		
+		public Trace getMutatedTrace() {
+			return mutatedTrace;
+		}
+		
+		public void setMutatedTrace(Trace mutatedTrace) {
+			this.mutatedTrace = mutatedTrace;
+		}
+		
+		public String getMutatedFile() {
+			return mutatedFile;
+		}
+		
+		public void setMutatedFile(String mutatedFile) {
+			this.mutatedFile = mutatedFile;
+		}
+		
+	}
 
-	private List<Trace> mutateCode(String key, List<File> mutatedFileList, AppJavaClassPath testcaseConfig)
+	private List<TraceFilePair> mutateCode(String key, List<File> mutatedFileList, AppJavaClassPath testcaseConfig)
 			throws MalformedURLException, JavaModelException, IOException {
 		ICompilationUnit iunit = JavaUtil.findICompilationUnitInProject(key);
 		String originalCodeText = iunit.getSource();
 		
-		List<Trace> killingMutantTraces = new ArrayList<>();
+		List<TraceFilePair> killingMutantTraces = new ArrayList<>();
 		
 		for(File file: mutatedFileList){
 			
@@ -243,10 +286,11 @@ public class TestCaseAnalyzer {
 			if(isKill){
 				TraceModelConstructor constructor = new TraceModelConstructor();
 				Trace killingMutantTrace = constructor.constructTraceModel(testcaseConfig, executingStatements);
-				killingMutantTraces.add(killingMutantTrace);
+				
+				TraceFilePair tfPair = new TraceFilePair(killingMutantTrace, file.toString());
+				
+				killingMutantTraces.add(tfPair);
 			}
-			
-			System.currentTimeMillis();
 			
 		}
 		

@@ -28,7 +28,7 @@ public class SimulatedMicroBat {
 	private StepRecommender recommender;
 	
 	public Trial detectMutatedBug(Trace mutatedTrace, Trace correctTrace, ClassLocation mutatedLocation, 
-			String testCaseName) throws SimulationFailException {
+			String testCaseName, String mutatedFile) throws SimulationFailException {
 		PairList pairList = DiffUtil.generateMatchedTraceNodeList(mutatedTrace, correctTrace);
 		
 		TraceNode rootCause = findRootCause(mutatedLocation.getClassCanonicalName(), 
@@ -47,7 +47,8 @@ public class SimulatedMicroBat {
 			
 //			System.currentTimeMillis();
 			
-			Trial trial = startSimulation(observedFaultNode, rootCause, mutatedTrace, allWrongNodeMap, pairList, testCaseName);
+			Trial trial = startSimulation(observedFaultNode, rootCause, mutatedTrace, allWrongNodeMap, pairList, 
+					testCaseName, mutatedFile);
 			return trial;
 			
 		}
@@ -73,7 +74,8 @@ public class SimulatedMicroBat {
 	}
 	
 	private Trial startSimulation(TraceNode observedFaultNode, TraceNode rootCause, Trace mutatedTrace, 
-			Map<Integer, TraceNode> allWrongNodeMap, PairList pairList, String testCaseName) throws SimulationFailException {
+			Map<Integer, TraceNode> allWrongNodeMap, PairList pairList, String testCaseName, String mutatedFile) 
+					throws SimulationFailException {
 		Settings.interestedVariables.clear();
 		Settings.localVariableScopes.clear();
 		Settings.potentialCorrectPatterns.clear();
@@ -136,6 +138,7 @@ public class SimulatedMicroBat {
 			trial.setMutatedLineNumber(rootCause.getLineNumber());
 			trial.setJumpSteps(jumpStringSteps);
 			trial.setTotalSteps(mutatedTrace.size());
+			trial.setMutatedFile(mutatedFile);
 			
 			return trial;
 		}

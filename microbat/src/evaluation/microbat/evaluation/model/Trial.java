@@ -4,10 +4,11 @@ import java.util.List;
 
 public class Trial {
 	private String testCaseName;
-	private int mutatedLineNumber;
 	private boolean isBugFound;
-	private List<String> jumpSteps;
 	private int totalSteps;
+	private String mutatedFile;
+	private int mutatedLineNumber;
+	private List<String> jumpSteps;
 
 	public Trial(){
 		
@@ -69,6 +70,14 @@ public class Trial {
 				+ mutatedLineNumber + ", isBugFound=" + isBugFound
 				+ ", jumpSteps=" + jumpSteps + ", totalSteps=" + totalSteps
 				+ "]";
+	}
+
+	public String getMutatedFile() {
+		return mutatedFile;
+	}
+
+	public void setMutatedFile(String mutatedFile) {
+		this.mutatedFile = mutatedFile;
 	}
 
 	
