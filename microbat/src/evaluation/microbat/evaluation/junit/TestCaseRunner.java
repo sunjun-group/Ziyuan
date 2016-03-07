@@ -60,7 +60,7 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 		
 		while(connected){
 			try {
-				EventSet eventSet = queue.remove(1000);
+				EventSet eventSet = queue.remove(100000);
 				if(eventSet != null){
 					for(Event event: eventSet){
 						if(event instanceof VMStartEvent){
@@ -76,21 +76,29 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 							StepEvent sEvent = (StepEvent)event;
 							Location location = sEvent.location();
 							
-							String path = location.sourcePath();
-							path = path.substring(0, path.indexOf(".java"));
-							path = path.replace("\\", ".");
-							
-							int lineNumber = location.lineNumber();
-							
-							BreakPoint breakPoint = new BreakPoint(path, lineNumber);
-							
-							if(isAboutToFinishTestRunner(breakPoint)){
-								checkTestCaseSucessfulness(((StepEvent) event).thread(), location);
+							if(location.sourceName().equals("MicroBatTestRunner.java")){
+								
+								if(location.lineNumber()==34){
+									System.currentTimeMillis();
+								}
+								
+								String path = location.sourcePath();
+								path = path.substring(0, path.indexOf(".java"));
+								path = path.replace("\\", ".");
+								
+								int lineNumber = location.lineNumber();
+								
+								BreakPoint breakPoint = new BreakPoint(path, lineNumber);
+								
+								if(isAboutToFinishTestRunner(breakPoint)){
+									checkTestCaseSucessfulness(((StepEvent) event).thread(), location);
+								}
+								
+								if(!isInTestRunner(breakPoint) && !pointList.contains(breakPoint)){
+									pointList.add(breakPoint);							
+								}
 							}
 							
-							if(!isInTestRunner(breakPoint) && !pointList.contains(breakPoint)){
-								pointList.add(breakPoint);							
-							}
 						}
 						else if(event instanceof ExceptionEvent){
 							System.currentTimeMillis();
@@ -100,9 +108,9 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 					eventSet.resume();
 				}
 				else{
+					connected = false;
 					vm.exit(0);
 					vm.dispose();
-					connected = false;
 				}
 				
 				

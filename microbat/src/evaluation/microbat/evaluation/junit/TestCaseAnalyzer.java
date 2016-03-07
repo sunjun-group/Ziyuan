@@ -87,20 +87,20 @@ public class TestCaseAnalyzer {
 	}
 	
 	public void runEvaluation() throws JavaModelException{
-		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+//		
+//		for(IJavaElement element: testRoot.getChildren()){
+//			if(element instanceof IPackageFragment){
+//				runEvaluation((IPackageFragment)element);				
+//			}
+//		}
 		
-		for(IJavaElement element: testRoot.getChildren()){
-			if(element instanceof IPackageFragment){
-				runEvaluation((IPackageFragment)element);				
-			}
-		}
-		
-//		runSingeTestCase();
+		runSingeTestCase();
 	}
 	
 	private void runSingeTestCase(){
-		String className = "org.apache.commons.math.analysis.interpolation.LoessInterpolatorTest";
-		String methodName = "testOnTwoPoints";
+		String className = "org.apache.commons.math.analysis.BinaryFunctionTest";
+		String methodName = "testFix2nd";
 		
 		try {
 			runEvaluationForSingleMethod(className, methodName);
@@ -164,10 +164,6 @@ public class TestCaseAnalyzer {
 		List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
 		
 		Trace correctTrace = null;
-		
-//		if(!testcaseName.equals("org.apache.commons.math.analysis.ComposableFunctionTest#testZero")){
-//			return true;
-//		}
 		
 		if(checker.isPassingTest()){
 			System.out.println(testcaseName + " is a passed test case");
