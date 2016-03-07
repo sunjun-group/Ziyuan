@@ -10,8 +10,8 @@ import java.util.Map;
 
 import microbat.evaluation.SimulatedMicroBat;
 import microbat.evaluation.TraceModelConstructor;
+import microbat.evaluation.io.ExcelReporter;
 import microbat.evaluation.model.Trial;
-import microbat.evaluation.output.ExcelReporter;
 import microbat.model.BreakPoint;
 import microbat.model.trace.Trace;
 import microbat.util.JTestUtil;

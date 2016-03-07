@@ -1,4 +1,4 @@
-package microbat.evaluation.output;
+package microbat.evaluation.io;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
