@@ -87,15 +87,15 @@ public class TestCaseAnalyzer {
 	}
 	
 	public void runEvaluation() throws JavaModelException{
-//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
-//		
-//		for(IJavaElement element: testRoot.getChildren()){
-//			if(element instanceof IPackageFragment){
-//				runEvaluation((IPackageFragment)element);				
-//			}
-//		}
+		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
 		
-		runSingeTestCase();
+		for(IJavaElement element: testRoot.getChildren()){
+			if(element instanceof IPackageFragment){
+				runEvaluation((IPackageFragment)element);				
+			}
+		}
+		
+//		runSingeTestCase();
 	}
 	
 	private void runSingeTestCase(){
