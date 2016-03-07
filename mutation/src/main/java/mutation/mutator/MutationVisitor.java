@@ -135,29 +135,37 @@ public class MutationVisitor extends AbstractMutationVisitor {
 	@Override
 	public boolean mutate(NameExpr n) {
 		
-		Node parent = n.getParentNode();
-		if(parent instanceof AssignExpr){
-			AssignExpr assignExpr = (AssignExpr)parent;
-			Expression target = assignExpr.getTarget();
-			
-			if(target != n){
-				MutationNode muNode = newNode(n);
-				List<VariableDescriptor> candidates = varSubstitution
-						.findSubstitutions(n.getName(), n.getEndLine(),
-								n.getEndColumn());
-				for (VariableDescriptor var : candidates) {
-					if (!var.getName().equals(n.getName())) {
-						muNode.getMutatedNodes().add(nameExpr(var.getName()));
-					}
-				}
+//		Node parent = n.getParentNode();
+//		if(parent instanceof AssignExpr){
+//			AssignExpr assignExpr = (AssignExpr)parent;
+//			Expression target = assignExpr.getTarget();
+//			
+//			if(target != n){
+//				MutationNode muNode = newNode(n);
+//				List<VariableDescriptor> candidates = varSubstitution
+//						.findSubstitutions(n.getName(), n.getEndLine(),
+//								n.getEndColumn());
+//				for (VariableDescriptor var : candidates) {
+//					if (!var.getName().equals(n.getName())) {
+//						muNode.getMutatedNodes().add(nameExpr(var.getName()));
+//					}
+//				}
+//			}
+//			else{
+//				System.out.println("stoping mutating the variable of a right-hand-side assignment");
+//			}
+//			
+//		}
+		
+		MutationNode muNode = newNode(n);
+		List<VariableDescriptor> candidates = varSubstitution
+				.findSubstitutions(n.getName(), n.getEndLine(),
+						n.getEndColumn());
+		for (VariableDescriptor var : candidates) {
+			if (!var.getName().equals(n.getName())) {
+				muNode.getMutatedNodes().add(nameExpr(var.getName()));
 			}
-			else{
-				System.out.println("stoping mutating the variable of a right-hand-side assignment");
-			}
-			
 		}
-		
-		
 		return false;
 	}
 	
