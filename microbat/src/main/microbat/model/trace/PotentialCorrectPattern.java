@@ -44,7 +44,7 @@ public class PotentialCorrectPattern {
 				checkLabelInstance(path);
 				this.labelInstance = path;
 			} catch (LabelPathIncompatibleException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		else{
