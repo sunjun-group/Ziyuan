@@ -144,6 +144,8 @@ public class TestCaseAnalyzer {
 				}
 			}
 		}
+		
+		reporter.export(trials, Settings.projectName+num);
 	}
 	
 //	private void locateCertainTestCase(String className, String methodName){
