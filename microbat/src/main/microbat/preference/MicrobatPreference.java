@@ -45,12 +45,14 @@ public class MicrobatPreference extends PreferencePage implements
 		this.defaultLineNumber = Activator.getDefault().getPreferenceStore().getString(LINE_NUMBER);
 		this.defaultLanuchClass = Activator.getDefault().getPreferenceStore().getString(LANUCH_CLASS);
 		this.defaultRecordSnapshot = Activator.getDefault().getPreferenceStore().getString(RECORD_SNAPSHORT);
+		this.defaultStepLimit = Activator.getDefault().getPreferenceStore().getString(STEP_LIMIT);
 	}
 	
 	public static final String TARGET_PORJECT = "targetProjectName";
 	public static final String CLASS_NAME = "className";
 	public static final String LINE_NUMBER = "lineNumber";
 	public static final String LANUCH_CLASS = "lanuchClass";
+	public static final String STEP_LIMIT = "stepLimit";
 	public static final String RECORD_SNAPSHORT = "recordSnapshot";
 
 	
@@ -58,12 +60,14 @@ public class MicrobatPreference extends PreferencePage implements
 	private Text lanuchClassText;
 	private Text classNameText;
 	private Text lineNumberText;
+	private Text stepLimitText;
 	private Button recordSnapshotButton;
 	
 	private String defaultTargetProject = "";
 	private String defaultLanuchClass = "";
 	private String defaultClassName = "";
 	private String defaultLineNumber = "";
+	private String defaultStepLimit = "5000";
 	private String defaultRecordSnapshot = "true";
 	
 	@Override
@@ -84,9 +88,40 @@ public class MicrobatPreference extends PreferencePage implements
 		comboData.horizontalSpan = 2;
 		projectCombo.setLayoutData(comboData);
 		
+		createSettingGroup(composite);
 		createSeedStatementGroup(composite);
 		
 		return composite;
+	}
+	
+	private void createSettingGroup(Composite parent){
+		Group settingGroup = new Group(parent, SWT.NONE);
+		settingGroup.setText("Settings");
+		GridData seedStatementGroupData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		seedStatementGroupData.horizontalSpan = 3;
+		settingGroup.setLayoutData(seedStatementGroupData);
+		
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		
+		settingGroup.setLayout(layout);
+		
+		
+		Label stepLimitLabel = new Label(settingGroup, SWT.NONE);
+		stepLimitLabel.setText("Step Limit: ");
+		stepLimitText = new Text(settingGroup, SWT.BORDER);
+		stepLimitText.setText(this.defaultStepLimit);
+		GridData stepLimitTextData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		stepLimitTextData.horizontalSpan = 2;
+		stepLimitText.setLayoutData(stepLimitTextData);
+		
+		recordSnapshotButton = new Button(settingGroup, SWT.CHECK);
+		recordSnapshotButton.setText("Record Snapshot");
+		GridData recordButtonData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		recordButtonData.horizontalSpan = 3;
+		recordSnapshotButton.setLayoutData(recordButtonData);
+		boolean selected = this.defaultRecordSnapshot.equals("true");
+		recordSnapshotButton.setSelection(selected);
 	}
 	
 	private void createSeedStatementGroup(Composite parent){
@@ -125,13 +160,6 @@ public class MicrobatPreference extends PreferencePage implements
 		lineNumTextData.horizontalSpan = 2;
 		lineNumberText.setLayoutData(lineNumTextData);
 		
-		recordSnapshotButton = new Button(seedStatementGroup, SWT.CHECK);
-		recordSnapshotButton.setText("Record Snapshot");
-		GridData recordButtonData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		recordButtonData.horizontalSpan = 3;
-		recordSnapshotButton.setLayoutData(recordButtonData);
-		boolean selected = this.defaultRecordSnapshot.equals("true");
-		recordSnapshotButton.setSelection(selected);
 	}
 	
 	public boolean performOk(){
@@ -141,12 +169,14 @@ public class MicrobatPreference extends PreferencePage implements
 		preferences.put(CLASS_NAME, this.classNameText.getText());
 		preferences.put(LINE_NUMBER, this.lineNumberText.getText());
 		preferences.put(RECORD_SNAPSHORT, String.valueOf(this.recordSnapshotButton.getSelection()));
+		preferences.put(STEP_LIMIT, this.stepLimitText.getText());
 		
 		Activator.getDefault().getPreferenceStore().putValue(TARGET_PORJECT, this.projectCombo.getText());
 		Activator.getDefault().getPreferenceStore().putValue(LANUCH_CLASS, this.lanuchClassText.getText());
 		Activator.getDefault().getPreferenceStore().putValue(CLASS_NAME, this.classNameText.getText());
 		Activator.getDefault().getPreferenceStore().putValue(LINE_NUMBER, this.lineNumberText.getText());
 		Activator.getDefault().getPreferenceStore().putValue(RECORD_SNAPSHORT, String.valueOf(this.recordSnapshotButton.getSelection()));
+		Activator.getDefault().getPreferenceStore().putValue(STEP_LIMIT, this.stepLimitText.getText());
 		
 		confirmChanges();
 		
@@ -160,6 +190,7 @@ public class MicrobatPreference extends PreferencePage implements
 		Settings.buggyClassName = this.classNameText.getText();
 		Settings.buggyLineNumber = this.lineNumberText.getText();
 		Settings.isRecordSnapshot = this.recordSnapshotButton.getSelection();
+		Settings.stepLimit = Integer.valueOf(this.stepLimitText.getText());
 	}
 	
 	private String[] getProjectsInWorkspace(){

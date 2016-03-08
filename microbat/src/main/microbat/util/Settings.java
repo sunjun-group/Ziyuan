@@ -20,6 +20,7 @@ public class Settings {
 	public static String buggyLineNumber;
 	
 	public static boolean isRecordSnapshot;
+	public static int stepLimit;
 	
 	public static int distribtionLayer = 3;
 	public static ImageUI imageUI = new ImageUI();
@@ -38,6 +39,11 @@ public class Settings {
 				buggyLineNumber = Activator.getDefault().getPreferenceStore().getString(MicrobatPreference.LINE_NUMBER);
 				String isRecord = Activator.getDefault().getPreferenceStore().getString(MicrobatPreference.RECORD_SNAPSHORT);
 				isRecordSnapshot = isRecord.equals("true");
+				String limitNumString = Activator.getDefault().getPreferenceStore().getString(MicrobatPreference.STEP_LIMIT);
+				stepLimit = Integer.valueOf(limitNumString);
+				if(stepLimit == 0){
+					stepLimit = 5000;
+				}
 			}
 			catch(Exception e){
 				e.printStackTrace();
@@ -62,5 +68,6 @@ public class Settings {
 	 * This stack allow user to undo his checking operations.
 	 */
 	public static Stack<CheckingState> checkingStateStack = new Stack<>();
+	
 	
 }
