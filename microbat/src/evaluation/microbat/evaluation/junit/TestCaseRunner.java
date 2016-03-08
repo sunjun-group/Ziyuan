@@ -1,6 +1,7 @@
 package microbat.evaluation.junit;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import microbat.codeanalysis.runtime.ExecutionStatementCollector;
@@ -25,6 +26,8 @@ import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.event.BreakpointEvent;
+import com.sun.jdi.event.ClassPrepareEvent;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.event.EventSet;
@@ -33,6 +36,8 @@ import com.sun.jdi.event.StepEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.event.VMStartEvent;
+import com.sun.jdi.request.BreakpointRequest;
+import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
 
 @SuppressWarnings("restriction")
@@ -40,8 +45,74 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 	
 	private static final int FINISH_LINE_NO_IN_TEST_RUNNER = 47;
 
+	private static final int EVALUATION_LIMIT = 50000;
+
 	private boolean isPassingTest = false;
 	private boolean hasCompilationError = false;
+	private boolean isOverLong = false;
+	
+	public void checkValidity(AppJavaClassPath appClassPath){
+		VirtualMachine vm = new VMStarter(appClassPath).start();
+		
+		EventRequestManager erm = vm.eventRequestManager(); 
+		addClassWatch(erm);
+		
+		EventQueue queue = vm.eventQueue();
+		boolean connected = true;
+		
+		while(connected){
+			try {
+				EventSet eventSet = queue.remove(10000);
+				if(eventSet != null){
+					for(Event event: eventSet){
+						if(event instanceof VMStartEvent){
+							ThreadReference thread = ((VMStartEvent) event).thread();
+							addStepWatch(erm, thread);
+							addExceptionWatch(erm);
+						}
+						else if(event instanceof VMDeathEvent
+							|| event instanceof VMDisconnectEvent){
+							connected = false;
+						}
+						else if(event instanceof ClassPrepareEvent){
+							ClassPrepareEvent cEvent = (ClassPrepareEvent)event;
+							ReferenceType refType = cEvent.referenceType();
+							String className = refType.toString();
+							if(className.equals("microbat.evaluation.junit.MicroBatTestRunner")){
+								List<Location> locations = refType.locationsOfLine(FINISH_LINE_NO_IN_TEST_RUNNER);
+								if(!locations.isEmpty()){
+									Location loc = locations.get(0);
+									addBreakPointWatch(erm, ((ClassPrepareEvent) event).thread(), loc);
+								}
+							}
+						}
+						else if(event instanceof BreakpointEvent){
+							BreakpointEvent bEvent = (BreakpointEvent)event;
+							Location location = bEvent.location();
+							
+							checkTestCaseSucessfulness(((BreakpointEvent) event).thread(), location);
+						}
+						else if(event instanceof ExceptionEvent){
+							System.currentTimeMillis();
+						}
+					}
+					
+					eventSet.resume();
+				}
+				else{
+					connected = false;
+					vm.exit(0);
+					vm.dispose();
+				}
+				
+			} catch (InterruptedException e) {
+				connected = false;
+				e.printStackTrace();
+			} catch (AbsentInformationException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	
 	public List<BreakPoint> collectBreakPoints(AppJavaClassPath appClassPath){
 		
@@ -58,9 +129,11 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 		
 		boolean connected = true;
 		
+		int steps = 0;
+		
 		while(connected){
 			try {
-				EventSet eventSet = queue.remove(100000);
+				EventSet eventSet = queue.remove(10000);
 				if(eventSet != null){
 					for(Event event: eventSet){
 						if(event instanceof VMStartEvent){
@@ -76,27 +149,30 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 							StepEvent sEvent = (StepEvent)event;
 							Location location = sEvent.location();
 							
-							if(location.sourceName().equals("MicroBatTestRunner.java")){
-								
-								if(location.lineNumber()==34){
-									System.currentTimeMillis();
-								}
-								
-								String path = location.sourcePath();
-								path = path.substring(0, path.indexOf(".java"));
-								path = path.replace("\\", ".");
-								
-								int lineNumber = location.lineNumber();
-								
-								BreakPoint breakPoint = new BreakPoint(path, lineNumber);
-								
-								if(isAboutToFinishTestRunner(breakPoint)){
-									checkTestCaseSucessfulness(((StepEvent) event).thread(), location);
-								}
-								
-								if(!isInTestRunner(breakPoint) && !pointList.contains(breakPoint)){
-									pointList.add(breakPoint);							
-								}
+							if(location.lineNumber()==34){
+								System.currentTimeMillis();
+							}
+							
+							String path = location.sourcePath();
+							path = path.substring(0, path.indexOf(".java"));
+							path = path.replace("\\", ".");
+							
+							int lineNumber = location.lineNumber();
+							
+							BreakPoint breakPoint = new BreakPoint(path, lineNumber);
+							
+							if(isAboutToFinishTestRunner(breakPoint)){
+								checkTestCaseSucessfulness(((StepEvent) event).thread(), location);
+							}
+							
+							if(!isInTestRunner(breakPoint) && !pointList.contains(breakPoint)){
+								pointList.add(breakPoint);							
+							}
+							
+							steps++;
+							if(steps > EVALUATION_LIMIT){
+								connected = false;
+								this.setOverLong(true);
 							}
 							
 						}
@@ -122,7 +198,18 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 			}
 		}
 		
+		if(vm != null){
+			vm.exit(0);
+			vm.dispose();
+		}
+		
 		return pointList;
+	}
+	
+	protected void addBreakPointWatch(EventRequestManager erm, ThreadReference threadReference, Location loc) {
+		BreakpointRequest request = erm.createBreakpointRequest(loc);
+		request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+		request.enable();
 	}
 	
 	private void checkTestCaseSucessfulness(ThreadReference thread, Location location) {
@@ -171,15 +258,24 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 		return false;
 	}
 
+	private HashMap<BreakPoint, Boolean> pointInTestRunnerMap = new HashMap<>(); 
+	
 	private boolean isInTestRunner(BreakPoint breakPoint) {
+		if(pointInTestRunnerMap.containsKey(breakPoint)){
+			return pointInTestRunnerMap.get(breakPoint);
+		}
+		
+		
 		String className = breakPoint.getDeclaringCompilationUnitName();
 		if(className.equals(TestCaseAnalyzer.TEST_RUNNER)){
+			pointInTestRunnerMap.put(breakPoint, true);
 			return true;
 		}
 		else{
 			CompilationUnit cu = JavaUtil.findCompilationUnitInProject(className);
 			List<MethodDeclaration> mdList = JTestUtil.findTestingMethod(cu);
 			
+			pointInTestRunnerMap.put(breakPoint, !mdList.isEmpty());
 			return !mdList.isEmpty();
 		}
 	}
@@ -211,5 +307,13 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 
 	public void setHasCompilationError(boolean hasCompilationError) {
 		this.hasCompilationError = hasCompilationError;
+	}
+
+	public boolean isOverLong() {
+		return isOverLong;
+	}
+
+	public void setOverLong(boolean isOverLong) {
+		this.isOverLong = isOverLong;
 	}
 }

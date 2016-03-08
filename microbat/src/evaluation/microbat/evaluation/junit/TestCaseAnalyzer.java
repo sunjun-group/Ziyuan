@@ -161,13 +161,14 @@ public class TestCaseAnalyzer {
 		}
 		
 		TestCaseRunner checker = new TestCaseRunner();
-		List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
+		checker.checkValidity(testcaseConfig);
 		
 		Trace correctTrace = null;
 		
 		if(checker.isPassingTest()){
 			System.out.println(testcaseName + " is a passed test case");
 			
+			List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
 			List<ClassLocation> locationList = findMutationLocation(executingStatements);
 			if(!locationList.isEmpty()){
 				System.out.println("mutating the tested methods of " + testcaseName);
@@ -286,11 +287,13 @@ public class TestCaseAnalyzer {
 			autoCompile();
 			
 			TestCaseRunner checker = new TestCaseRunner();
-			List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
+			checker.checkValidity(testcaseConfig);
 			
 			boolean isKill = !checker.isPassingTest() && !checker.hasCompilationError();
 			if(isKill){
 				TraceModelConstructor constructor = new TraceModelConstructor();
+				
+				List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
 				Trace killingMutantTrace = constructor.constructTraceModel(testcaseConfig, executingStatements);
 				
 				TraceFilePair tfPair = new TraceFilePair(killingMutantTrace, file.toString());
