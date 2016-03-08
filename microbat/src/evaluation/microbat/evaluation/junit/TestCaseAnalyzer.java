@@ -173,11 +173,12 @@ public class TestCaseAnalyzer {
 			if(!locationList.isEmpty()){
 				System.out.println("mutating the tested methods of " + testcaseName);
 				Map<String, MutationResult> mutations = generateMutationFiles(locationList);
+				System.out.println("mutation done for " + testcaseName);
 				for(String mutatedClass: mutations.keySet()){
 					MutationResult result = mutations.get(mutatedClass);
 					for(Integer line: result.getMutatedFiles().keySet()){
 						
-//						if(line != 40){
+//						if(line != 16){
 //							continue;
 //						}
 						
@@ -185,7 +186,8 @@ public class TestCaseAnalyzer {
 						
 						if(!mutatedFileList.isEmpty()){
 							try {
-								List<TraceFilePair> killingMutatantTraces = mutateCode(mutatedClass, mutatedFileList, testcaseConfig);
+								List<TraceFilePair> killingMutatantTraces = 
+										mutateCode(mutatedClass, mutatedFileList, testcaseConfig, line);
 								
 								if(!killingMutatantTraces.isEmpty()){
 									if(null == correctTrace){
@@ -216,7 +218,7 @@ public class TestCaseAnalyzer {
 //									return true;
 								}
 								else{
-									System.out.println("No suitable mutants for test case " + testcaseName);
+									System.out.println("No suitable mutants for test case " + testcaseName + "in line " + line);
 //									return false;
 								}
 							} catch (MalformedURLException e) {
@@ -270,7 +272,7 @@ public class TestCaseAnalyzer {
 		
 	}
 
-	private List<TraceFilePair> mutateCode(String key, List<File> mutatedFileList, AppJavaClassPath testcaseConfig)
+	private List<TraceFilePair> mutateCode(String key, List<File> mutatedFileList, AppJavaClassPath testcaseConfig, int mutatedLine)
 			throws MalformedURLException, JavaModelException, IOException {
 		ICompilationUnit iunit = JavaUtil.findICompilationUnitInProject(key);
 		String originalCodeText = iunit.getSource();
@@ -278,7 +280,7 @@ public class TestCaseAnalyzer {
 		List<TraceFilePair> killingMutantTraces = new ArrayList<>();
 		
 		for(File file: mutatedFileList){
-			
+			System.out.println("generating trace for mutated class " + iunit.getElementName() + " (line: " + mutatedLine + ")");
 			String mutatedCodeText = FileUtils.readFileToString(file);
 			
 			iunit.getBuffer().setContents(mutatedCodeText);

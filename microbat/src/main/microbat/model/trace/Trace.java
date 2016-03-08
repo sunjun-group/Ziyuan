@@ -613,6 +613,11 @@ public class Trace {
 
 	public TraceNode getProducer(String varID) {
 		StepVariableRelationEntry entry = this.stepVariableTable.get(varID);
+		
+		if(entry == null){
+			System.currentTimeMillis();
+		}
+		
 		if(!entry.getProducers().isEmpty()){
 			return entry.getProducers().get(0);
 		}

@@ -119,6 +119,9 @@ public class ExecutionStatementCollector {
 	protected void addClassWatch(EventRequestManager erm) {
 		ClassPrepareRequest classPrepareRequest = erm.createClassPrepareRequest();
 //		classPrepareRequest.addClassFilter("com.Main");
+		for(String ex: stepWatchExcludes){
+			classPrepareRequest.addClassExclusionFilter(ex);
+		}
 		classPrepareRequest.setEnabled(true);
 	}
 	
