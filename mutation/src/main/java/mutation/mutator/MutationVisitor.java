@@ -157,15 +157,15 @@ public class MutationVisitor extends AbstractMutationVisitor {
 //			
 //		}
 		
-		MutationNode muNode = newNode(n);
-		List<VariableDescriptor> candidates = varSubstitution
-				.findSubstitutions(n.getName(), n.getEndLine(),
-						n.getEndColumn());
-		for (VariableDescriptor var : candidates) {
-			if (!var.getName().equals(n.getName())) {
-				muNode.getMutatedNodes().add(nameExpr(var.getName()));
-			}
-		}
+//		MutationNode muNode = newNode(n);
+//		List<VariableDescriptor> candidates = varSubstitution
+//				.findSubstitutions(n.getName(), n.getEndLine(),
+//						n.getEndColumn());
+//		for (VariableDescriptor var : candidates) {
+//			if (!var.getName().equals(n.getName())) {
+//				muNode.getMutatedNodes().add(nameExpr(var.getName()));
+//			}
+//		}
 		return false;
 	}
 	
