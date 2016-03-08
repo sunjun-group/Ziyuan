@@ -280,7 +280,7 @@ public class TestCaseAnalyzer {
 		List<TraceFilePair> killingMutantTraces = new ArrayList<>();
 		
 		for(File file: mutatedFileList){
-			System.out.println("generating trace for mutated class " + iunit.getElementName() + " (line: " + mutatedLine + ")");
+			System.out.print("checking mutated class " + iunit.getElementName() + " (line: " + mutatedLine + ")");
 			String mutatedCodeText = FileUtils.readFileToString(file);
 			
 			iunit.getBuffer().setContents(mutatedCodeText);
@@ -292,7 +292,9 @@ public class TestCaseAnalyzer {
 			checker.checkValidity(testcaseConfig);
 			
 			boolean isKill = !checker.isPassingTest() && !checker.hasCompilationError();
+			System.out.println(": " + (isKill?"killed":"not killed"));
 			if(isKill){
+				System.out.println("generating trace for mutated class " + iunit.getElementName() + " (line: " + mutatedLine + ")");
 				TraceModelConstructor constructor = new TraceModelConstructor();
 				
 				List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);

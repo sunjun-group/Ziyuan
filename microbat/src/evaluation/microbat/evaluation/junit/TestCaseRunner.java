@@ -66,9 +66,9 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 				if(eventSet != null){
 					for(Event event: eventSet){
 						if(event instanceof VMStartEvent){
-							ThreadReference thread = ((VMStartEvent) event).thread();
-							addStepWatch(erm, thread);
-							addExceptionWatch(erm);
+//							ThreadReference thread = ((VMStartEvent) event).thread();
+//							addStepWatch(erm, thread);
+//							addExceptionWatch(erm);
 						}
 						else if(event instanceof VMDeathEvent
 							|| event instanceof VMDisconnectEvent){
