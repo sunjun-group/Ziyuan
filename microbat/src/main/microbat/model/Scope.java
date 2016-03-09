@@ -38,7 +38,7 @@ public class Scope {
 	}
 
 	public boolean containsNodeScope(TraceNode node) {
-		String nodeClassName = node.getClassName();
+		String nodeClassName = node.getClassCanonicalName();
 		String scopeClassName = JavaUtil.getFullNameOfCompilationUnit(cu);
 
 		if (nodeClassName.equals(scopeClassName)) {

@@ -164,7 +164,7 @@ public class TraceNode{
 		buffer.append(getOrder());
 		buffer.append("~");
 		
-		buffer.append(getClassName());
+		buffer.append(getClassCanonicalName());
 		buffer.append(": line ");
 		buffer.append(getLineNumber());
 		
@@ -178,7 +178,7 @@ public class TraceNode{
 		return buffer.toString();
 	}
 	
-	public String getClassName(){
+	public String getClassCanonicalName(){
 		return this.breakPoint.getClassCanonicalName();
 	}
 	
@@ -604,7 +604,7 @@ public class TraceNode{
 	}
 
 	public boolean hasSameLocation(TraceNode node) {
-		return getClassName().equals(node.getClassName()) && 
+		return getClassCanonicalName().equals(node.getClassCanonicalName()) && 
 				getLineNumber()==node.getLineNumber();
 	}
 

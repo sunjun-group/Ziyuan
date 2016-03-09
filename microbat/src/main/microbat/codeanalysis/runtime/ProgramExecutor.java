@@ -229,11 +229,10 @@ public class ProgramExecutor extends Executor{
 					stop = true;
 					break;
 				} else if (event instanceof ClassPrepareEvent) {
-//					addStepWatch(erm, event);
 					parseBreakpoints(vm, (ClassPrepareEvent)event, locBrpMap);
 				} else if(event instanceof StepEvent){
 					Location currentLocation = ((StepEvent) event).location();
-					if(currentLocation.lineNumber() == 11){
+					if(currentLocation.lineNumber() == 3751){
 						System.currentTimeMillis();
 					}
 					
@@ -373,10 +372,12 @@ public class ProgramExecutor extends Executor{
 							methodStack.push(method);
 						}
 					}
+					/**
+					 * if not, just shut down the method event listening for saving time.
+					 */
 					else{
 						menr.setEnabled(false);
 						mexr.setEnabled(false);
-//						stepRequest.enable();
 					}
 					
 				} else if (event instanceof MethodExitEvent){
@@ -402,7 +403,6 @@ public class ProgramExecutor extends Executor{
 					else{
 						menr.setEnabled(false);
 						mexr.setEnabled(false);
-//						stepRequest.enable();
 					}
 					
 				} else if(event instanceof ExceptionEvent){

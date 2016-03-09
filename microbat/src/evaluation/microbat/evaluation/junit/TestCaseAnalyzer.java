@@ -101,9 +101,9 @@ public class TestCaseAnalyzer {
 		String className = "org.apache.commons.math.analysis.ComposableFunctionTest";
 		String methodName = "testRint";
 		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-				+ "mutatedSource1440265988047501917\\3707_13_1\\FastMath.java";
+				+ "mutatedSource1440265988047501917\\3751_20_1\\FastMath.java";
 		String mutatedClass = "org.apache.commons.math.util.FastMath";
-		int mutatedLine = 3707;
+		int mutatedLine = 3751;
 		
 		try {
 			runEvaluationForSingleTrial(className, methodName, mutationFile, mutatedClass, mutatedLine);

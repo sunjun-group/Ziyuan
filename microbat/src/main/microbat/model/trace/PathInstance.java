@@ -54,7 +54,7 @@ public class PathInstance {
 		TraceNode node = startNode;
 		ArrayList<SourceLine> lineTrace = new ArrayList<>();
 		while(node.getOrder() <= endNode.getOrder()){
-			SourceLine sourceLine = new SourceLine(node.getClassName(), node.getLineNumber());
+			SourceLine sourceLine = new SourceLine(node.getClassCanonicalName(), node.getLineNumber());
 			lineTrace.add(sourceLine);
 			
 			node = node.getStepInNext();

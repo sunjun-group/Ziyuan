@@ -177,7 +177,7 @@ public class SimulatedMicroBat {
 		Map<Integer, TraceNode> allDominatees = new HashMap<>();
 		
 		for(TraceNode mutatedNode: mutationTrace.getExectionList()){
-			if(mutatedNode.getClassName().equals(mutatedLocation.getClassCanonicalName()) 
+			if(mutatedNode.getClassCanonicalName().equals(mutatedLocation.getClassCanonicalName()) 
 					&& mutatedNode.getLineNumber() == mutatedLocation.getLineNo()){
 				
 				if(allDominatees.get(mutatedNode.getOrder()) == null){

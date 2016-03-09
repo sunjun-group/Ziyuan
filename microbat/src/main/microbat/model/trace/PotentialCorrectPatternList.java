@@ -47,11 +47,11 @@ public class PotentialCorrectPatternList {
 		List<PathInstance> list = new ArrayList<>();
 		for(PotentialCorrectPattern pattern: this.patterns.values()){
 			PathInstance labelPath = pattern.getLabelInstance();
-			SourceLine patternStartLine = path.new SourceLine(labelPath.getStartNode().getClassName(), labelPath.getStartNode().getLineNumber());
-			SourceLine patternEndLine = path.new SourceLine(labelPath.getEndNode().getClassName(), labelPath.getEndNode().getLineNumber());
+			SourceLine patternStartLine = path.new SourceLine(labelPath.getStartNode().getClassCanonicalName(), labelPath.getStartNode().getLineNumber());
+			SourceLine patternEndLine = path.new SourceLine(labelPath.getEndNode().getClassCanonicalName(), labelPath.getEndNode().getLineNumber());
 			
-			SourceLine pathStartLine = path.new SourceLine(path.getStartNode().getClassName(), path.getStartNode().getLineNumber());
-			SourceLine pathEndLine = path.new SourceLine(path.getEndNode().getClassName(), path.getEndNode().getLineNumber());
+			SourceLine pathStartLine = path.new SourceLine(path.getStartNode().getClassCanonicalName(), path.getStartNode().getLineNumber());
+			SourceLine pathEndLine = path.new SourceLine(path.getEndNode().getClassCanonicalName(), path.getEndNode().getLineNumber());
 			
 			if(patternStartLine.equals(pathStartLine) &&
 					patternEndLine.equals(pathEndLine)){
@@ -67,7 +67,7 @@ public class PotentialCorrectPatternList {
 		for(PotentialCorrectPattern pattern: this.patterns.values()){
 			PathInstance labelPath = pattern.getLabelInstance();
 			TraceNode node = labelPath.getEndNode();
-			SourceLine endLine = new PathInstance().new SourceLine(node.getClassName(), node.getLineNumber());
+			SourceLine endLine = new PathInstance().new SourceLine(node.getClassCanonicalName(), node.getLineNumber());
 			
 			if(line.equals(endLine)){
 				patterns.add(pattern);

@@ -85,7 +85,7 @@ public class BugInferer {
 		List<TraceNode> diffList = new ArrayList<>();
 		TraceNode startNode = path.getStartNode();
 		while(startNode.getOrder() <= path.getEndNode().getOrder()){
-			SourceLine line = path.new SourceLine(startNode.getClassName(), startNode.getLineNumber());
+			SourceLine line = path.new SourceLine(startNode.getClassCanonicalName(), startNode.getLineNumber());
 			if(clonedLines.contains(line)){
 				diffList.add(startNode);
 			}
@@ -97,7 +97,7 @@ public class BugInferer {
 
 	private TraceNode findIterationHead(TraceNode currentNode, PotentialCorrectPatternList potentialCorrectPatterns,
 			StepRecommender recommender) {
-		SourceLine line = new PathInstance().new SourceLine(currentNode.getClassName(), currentNode.getLineNumber());
+		SourceLine line = new PathInstance().new SourceLine(currentNode.getClassCanonicalName(), currentNode.getLineNumber());
 		List<PotentialCorrectPattern> patterns = potentialCorrectPatterns.findPatternsWithEndNode(line);
 		for(PotentialCorrectPattern pattern: patterns){
 			TraceNode startNode = recommender.findNextSuspiciousNodeByPattern(pattern, currentNode);
