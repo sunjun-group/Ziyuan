@@ -19,5 +19,9 @@
     		<groupId>tzuyu-project</groupId>
     		<artifactId>assertion</artifactId>
     	</dependency>
+    	<dependency>
+    		<groupId>tzuyu-project</groupId>
+    		<artifactId>icsetlv</artifactId>
+    	</dependency>
   	</dependencies>
 </project>
