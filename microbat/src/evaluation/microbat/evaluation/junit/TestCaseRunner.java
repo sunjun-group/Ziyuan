@@ -9,6 +9,7 @@ import microbat.codeanalysis.runtime.VMStarter;
 import microbat.model.BreakPoint;
 import microbat.util.JTestUtil;
 import microbat.util.JavaUtil;
+import microbat.util.Settings;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -44,8 +45,6 @@ import com.sun.jdi.request.EventRequestManager;
 public class TestCaseRunner extends ExecutionStatementCollector{
 	
 	private static final int FINISH_LINE_NO_IN_TEST_RUNNER = 47;
-
-	private static final int EVALUATION_LIMIT = 50000;
 
 	private boolean isPassingTest = false;
 	private boolean hasCompilationError = false;
@@ -170,7 +169,7 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 							}
 							
 							steps++;
-							if(steps > EVALUATION_LIMIT){
+							if(steps >= Settings.stepLimit){
 								connected = false;
 								this.setOverLong(true);
 							}

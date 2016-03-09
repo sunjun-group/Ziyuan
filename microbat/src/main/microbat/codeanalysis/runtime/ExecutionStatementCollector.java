@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import microbat.model.BreakPoint;
+import microbat.util.Settings;
 import sav.strategies.dto.AppJavaClassPath;
 
 import com.sun.jdi.AbsentInformationException;
@@ -26,17 +27,13 @@ import com.sun.jdi.request.ExceptionRequest;
 import com.sun.jdi.request.StepRequest;
 
 @SuppressWarnings("restriction")
-public class ExecutionStatementCollector {
+public class ExecutionStatementCollector extends Executor{
 	
 	protected String[] stepWatchExcludes = { "java.*", "javax.*", "sun.*", "com.sun.*", "org.junit.*", "junit.*", "junit.framework.*"};
 	protected int steps = 0;
 	
 	public List<BreakPoint> collectBreakPoints(AppJavaClassPath appClassPath){
 		List<BreakPoint> pointList = new ArrayList<>();
-		
-//		VMConfiguration vmConfig = new VMConfiguration(appClassPath);
-//		vmConfig.setLaunchClass(Settings.lanuchClass);
-//		vmConfig.setWorkingDirectory(appClassPath.getWorkingDirectory());
 		
 		VirtualMachine vm = new VMStarter(appClassPath).start();
 		
@@ -49,7 +46,7 @@ public class ExecutionStatementCollector {
 		
 		while(connected){
 			try {
-				EventSet eventSet = queue.remove(1000);
+				EventSet eventSet = queue.remove(10000);
 				if(eventSet != null){
 					for(Event event: eventSet){
 						if(event instanceof VMStartEvent){
@@ -80,6 +77,11 @@ public class ExecutionStatementCollector {
 							if(!pointList.contains(breakPoint)){
 								pointList.add(breakPoint);							
 							}
+							
+							steps++;
+							if(steps >= Settings.stepLimit){
+								connected = false;
+							}
 						}
 						else if(event instanceof ExceptionEvent){
 							System.currentTimeMillis();
@@ -101,6 +103,11 @@ public class ExecutionStatementCollector {
 			} catch (AbsentInformationException e) {
 				e.printStackTrace();
 			}
+		}
+		
+		if(vm != null){
+			vm.exit(0);
+			vm.dispose();
 		}
 		
 		return pointList;

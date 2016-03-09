@@ -94,7 +94,7 @@ import com.sun.jdi.request.StepRequest;
  * 
  */
 @SuppressWarnings("restriction")
-public class ProgramExecutor{
+public class ProgramExecutor extends Executor{
 	public static final long DEFAULT_TIMEOUT = -1;
 	
 	private static Logger log = LoggerFactory.getLogger(ProgramExecutor.class);	
@@ -236,8 +236,8 @@ public class ProgramExecutor{
 					Location currentLocation = ((StepEvent) event).location();
 					if(currentLocation.lineNumber() == 11){
 						System.currentTimeMillis();
-						
 					}
+					
 					/**
 					 * collect the variable values after executing previous step
 					 * 
@@ -341,7 +341,8 @@ public class ProgramExecutor{
 					}
 					
 					monitor.worked(1);
-					if(monitor.isCanceled()){
+					if(monitor.isCanceled() || this.trace.getExectionList().size()>=Settings.stepLimit){
+						stop = true;
 						break cancel;
 					}
 				} else if(event instanceof MethodEntryEvent){
