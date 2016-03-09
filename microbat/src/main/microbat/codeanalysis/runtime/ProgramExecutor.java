@@ -43,8 +43,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
@@ -97,7 +95,7 @@ import com.sun.jdi.request.StepRequest;
 public class ProgramExecutor extends Executor{
 	public static final long DEFAULT_TIMEOUT = -1;
 	
-	private static Logger log = LoggerFactory.getLogger(ProgramExecutor.class);	
+//	private static Logger log = LoggerFactory.getLogger(ProgramExecutor.class);	
 	
 	/**
 	 * fundamental fields for debugging
