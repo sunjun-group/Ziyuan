@@ -87,26 +87,75 @@ public class TestCaseAnalyzer {
 	}
 	
 	public void runEvaluation() throws JavaModelException{
-		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+//		
+//		for(IJavaElement element: testRoot.getChildren()){
+//			if(element instanceof IPackageFragment){
+//				runEvaluation((IPackageFragment)element);				
+//			}
+//		}
 		
-		for(IJavaElement element: testRoot.getChildren()){
-			if(element instanceof IPackageFragment){
-				runEvaluation((IPackageFragment)element);				
-			}
-		}
-		
-//		runSingeTestCase();
+		runSingeTestCase();
 	}
 	
 	private void runSingeTestCase(){
-		String className = "org.apache.commons.math.analysis.BinaryFunctionTest";
-		String methodName = "testFix2nd";
+		String className = "org.apache.commons.math.analysis.ComposableFunctionTest";
+		String methodName = "testRint";
+		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
+				+ "mutatedSource1440265988047501917\\3707_13_1\\FastMath.java";
+		String mutatedClass = "org.apache.commons.math.util.FastMath";
+		int mutatedLine = 3707;
 		
 		try {
-			runEvaluationForSingleMethod(className, methodName);
+			runEvaluationForSingleTrial(className, methodName, mutationFile, mutatedClass, mutatedLine);
 		} catch (JavaModelException e) {
 			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+	}
+
+	private void runEvaluationForSingleTrial(String testClassName,
+			String testMethodName, String mutationFile, String mutatedClassName, int mutatedLine) 
+					throws JavaModelException, MalformedURLException, IOException {
+		String testcaseName = testClassName + "#" + testMethodName;
+		AppJavaClassPath testcaseConfig = createProjectClassPath(testClassName, testMethodName);
+		
+		List<File> mutatedFileList = new ArrayList<>();
+		File mutatedFile = new File(mutationFile);
+		mutatedFileList.add(mutatedFile);
+		
+		List<TraceFilePair> killingMutatantTraces = 
+				mutateCode(mutatedClassName, mutatedFileList, testcaseConfig, mutatedLine);
+		
+		TestCaseRunner checker = new TestCaseRunner();
+		List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
+		Trace correctTrace = new TraceModelConstructor().
+				constructTraceModel(testcaseConfig, executingStatements);
+		
+		TraceFilePair pair = killingMutatantTraces.get(0);
+		
+		Trace mutantTrace = pair.mutatedTrace;
+		SimulatedMicroBat microbat = new SimulatedMicroBat();
+		ClassLocation mutatedLocation = new ClassLocation(mutatedClassName, null, mutatedLine);
+		Trial trial;
+		try {
+			trial = microbat.detectMutatedBug(mutantTrace, correctTrace, mutatedLocation, 
+					testcaseName, pair.mutatedFile);
+			if(trial != null){
+				
+				
+				if(!trial.isBugFound()){
+					System.err.println("Cannot find bug in Mutated File: " + pair.mutatedFile);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("Mutated File: " + pair.mutatedFile);
+		}
+		
 	}
 
 	private void runEvaluation(IPackageFragment pack) throws JavaModelException {
@@ -152,7 +201,8 @@ public class TestCaseAnalyzer {
 //		
 //	}
 
-	private boolean runEvaluationForSingleMethod(String className, String methodName) throws JavaModelException {
+	private boolean runEvaluationForSingleMethod(String className, String methodName) 
+			throws JavaModelException {
 		AppJavaClassPath testcaseConfig = createProjectClassPath(className, methodName);
 		String testcaseName = className + "#" + methodName;
 		
@@ -169,7 +219,9 @@ public class TestCaseAnalyzer {
 			System.out.println(testcaseName + " is a passed test case");
 			
 			List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
+			System.out.println("identifying the possible mutated location for " + testcaseName);
 			List<ClassLocation> locationList = findMutationLocation(executingStatements);
+			
 			if(!locationList.isEmpty()){
 				System.out.println("mutating the tested methods of " + testcaseName);
 				Map<String, MutationResult> mutations = generateMutationFiles(locationList);
@@ -178,9 +230,9 @@ public class TestCaseAnalyzer {
 					MutationResult result = mutations.get(mutatedClass);
 					for(Integer line: result.getMutatedFiles().keySet()){
 						
-//						if(line != 16){
-//							continue;
-//						}
+						if(line != 3707){
+							continue;
+						}
 						
 						List<File> mutatedFileList = result.getMutatedFiles(line);		
 						
@@ -298,7 +350,11 @@ public class TestCaseAnalyzer {
 				TraceModelConstructor constructor = new TraceModelConstructor();
 				
 				List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
+				
+				long t1 = System.currentTimeMillis();
 				Trace killingMutantTrace = constructor.constructTraceModel(testcaseConfig, executingStatements);
+				long t2 = System.currentTimeMillis();
+				System.out.println("Trace length: " + killingMutantTrace.size() + ", which takes " + (t2-t1)/1000 + "s to analyze.");
 				
 				TraceFilePair tfPair = new TraceFilePair(killingMutantTrace, file.toString());
 				
