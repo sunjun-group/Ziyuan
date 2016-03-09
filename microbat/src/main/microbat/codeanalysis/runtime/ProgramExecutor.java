@@ -188,7 +188,8 @@ public class ProgramExecutor extends Executor{
 		
 		/** record the method entrance and exit so that I can build a tree-structure for trace node. */
 		Stack<TraceNode> methodNodeStack = new Stack<>();
-		Stack<Method> methodStack = new Stack<>();
+//		Stack<Method> methodStack = new Stack<>();
+		Stack<String> methodSignatureStack = new Stack<>();
 		
 		/** this variable is used to build step-over relation between trace nodes. */
 		TraceNode methodNodeJustPopedOut = null;
@@ -284,7 +285,8 @@ public class ProgramExecutor extends Executor{
 									if(!methodNodeStack.isEmpty()){
 										invocationNode = methodNodeStack.pop();		
 										methodNodeJustPopedOut = invocationNode;
-										methodStack.pop();
+//										methodStack.pop();
+										methodSignatureStack.pop();
 										
 										isInvocationEnvironmentContainingLocation = isInvocationEnvironmentContainingLocation(invocationNode, caughtLocationForJustException);
 									}
@@ -369,7 +371,10 @@ public class ProgramExecutor extends Executor{
 							}
 							
 							methodNodeStack.push(lastestNode);
-							methodStack.push(method);
+							//methodStack.push(method);
+							
+							String methodSignature = createSignature(method);
+							methodSignatureStack.push(methodSignature);
 						}
 					}
 					/**
@@ -390,15 +395,26 @@ public class ProgramExecutor extends Executor{
 					
 					if(isLocationInRunningStatement){
 						
-						if(!methodStack.isEmpty()){
-							Method mInStack = methodStack.peek();
-							if(method.equals(mInStack)){
+						if(!methodSignatureStack.isEmpty()){
+							String peekSig = methodSignatureStack.peek();
+							String thisSig = createSignature(method);
+							if(peekSig.equals(thisSig)){
 								TraceNode node = methodNodeStack.pop();
 								methodNodeJustPopedOut = node;
-								methodStack.pop();
+								methodSignatureStack.pop();
 								lastestReturnedValue = mee.returnValue();
 							}						
 						}
+						
+//						if(!methodStack.isEmpty()){
+//							Method mInStack = methodStack.peek();
+//							if(method.equals(mInStack)){
+//								TraceNode node = methodNodeStack.pop();
+//								methodNodeJustPopedOut = node;
+//								methodStack.pop();
+//								lastestReturnedValue = mee.returnValue();
+//							}						
+//						}
 					}
 					else{
 						menr.setEnabled(false);
@@ -421,6 +437,16 @@ public class ProgramExecutor extends Executor{
 			
 			eventSet.resume();
 		}
+	}
+
+	private String createSignature(Method method) {
+		String className = method.declaringType().name();
+		String methodName = method.name();
+		String signature = method.signature();
+		
+		String sig = className + "#" + methodName + signature;
+		
+		return sig;
 	}
 
 	private boolean isLocationInRunningStatement(Location location, Map<String, BreakPoint> locationMap) {
