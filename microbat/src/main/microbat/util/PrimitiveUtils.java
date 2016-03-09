@@ -31,7 +31,7 @@ public class PrimitiveUtils {
 		"boolean",
 		"float",
 		"char",
-		"doulbe",
+		"double",
 		"long",
 		"short",
 		"byte"

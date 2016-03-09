@@ -130,7 +130,7 @@ public class SimulatedMicroBat {
 				jumpStringSteps.add(str);
 			}
 			System.out.println("Root Cause:" + rootCause);
-			System.currentTimeMillis();
+//			System.currentTimeMillis();
 			
 			Trial trial = new Trial();
 			trial.setTestCaseName(testCaseName);
