@@ -129,9 +129,11 @@ public class MicrobatSlicer{
 		System.out.println("builder is set.");
 		
 		CallGraph callGraph = builder.makeCallGraph(options, null);
-		System.out.println("Call graph is built!");
+		System.out.println("call graph is built!");
 		
+		System.out.println("start analyzing read/written variables...");
 		List<BreakPoint> breakPoints = anlyzeBreakPointsWithDataDependencies(callGraph);
+		System.out.println("finish analyzing read/written variables...");
 		
 		return breakPoints;
 	}
