@@ -42,10 +42,10 @@ public class TraceModelConstructor {
 		
 		/** 2. parse read/written variables**/
 		MicrobatSlicer slicer = new MicrobatSlicer(executingStatements);
-		List<BreakPoint> breakpoints = null;
+		List<BreakPoint> runningStatements = null;
 		try {
 			System.out.println("start analyzing byte code ...");
-			breakpoints = slicer.parsingBreakPoints(appClassPath);
+			runningStatements = slicer.parsingBreakPoints(appClassPath);
 			System.out.println("finish analyzing byte code ...!");
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -56,13 +56,13 @@ public class TraceModelConstructor {
 		 * 1) Identifying the same local variable in different trace nodes.
 		 * 2) Generating variable ID for local variable.
 		 */
-		List<String> classScope = parseScope(breakpoints);
+		List<String> classScope = parseScope(runningStatements);
 		parseLocalVariables(classScope);
 		
 		/** 4. extract runtime variables*/
 		tcExecutor.setConfig(appClassPath);
 		try {
-			tcExecutor.run(breakpoints, new SubProgressMonitor(new NullProgressMonitor(), 0));
+			tcExecutor.run(runningStatements, new SubProgressMonitor(new NullProgressMonitor(), 0));
 		} catch (SavException e) {
 			e.printStackTrace();
 		}

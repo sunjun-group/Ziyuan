@@ -145,13 +145,13 @@ public class ProgramExecutor extends Executor{
 	 * 
 	 * <br><br>
 	 * See the field <code>trace</code> in this class.
-	 * @param brkps
+	 * @param runningStatements
 	 * @throws SavException
 	 */
-	public final void run(List<BreakPoint> brkps, IProgressMonitor monitor) throws SavException{
+	public void run(List<BreakPoint> runningStatements, IProgressMonitor monitor) throws SavException{
 		
 		
-		this.brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
+		this.brkpsMap = BreakpointUtils.initBrkpsMap(runningStatements);
 		
 		/** start debugger */
 		VirtualMachine vm = new VMStarter(this.config).start();
@@ -201,7 +201,7 @@ public class ProgramExecutor extends Executor{
 		while (!stop && !eventTimeout) {
 			EventSet eventSet;
 			try {
-				eventSet = eventQueue.remove(3000);
+				eventSet = eventQueue.remove(10000);
 			} catch (InterruptedException e) {
 				break;
 			}
@@ -229,12 +229,15 @@ public class ProgramExecutor extends Executor{
 					stop = true;
 					break;
 				} else if (event instanceof ClassPrepareEvent) {
+//					addStepWatch(erm, event);
 					parseBreakpoints(vm, (ClassPrepareEvent)event, locBrpMap);
 				} else if(event instanceof StepEvent){
 					Location currentLocation = ((StepEvent) event).location();
 					if(currentLocation.lineNumber() == 11){
 						System.currentTimeMillis();
 					}
+					
+//					System.out.println("step event: " + currentLocation);
 					
 					/**
 					 * collect the variable values after executing previous step
@@ -338,40 +341,70 @@ public class ProgramExecutor extends Executor{
 						isLastStepEventRecordNode = false;
 					}
 					
+					menr.setEnabled(true);
+					mexr.setEnabled(true);
+					
 					monitor.worked(1);
 					if(monitor.isCanceled() || this.trace.getExectionList().size()>=Settings.stepLimit){
 						stop = true;
 						break cancel;
 					}
 				} else if(event instanceof MethodEntryEvent){
-					if(isLastStepEventRecordNode){
-						MethodEntryEvent mee = (MethodEntryEvent)event;
-						Method method = mee.method();
-						TraceNode lastestNode = this.trace.getLastestNode();
+					MethodEntryEvent mee = (MethodEntryEvent)event;
+					Method method = mee.method();
+					//System.out.println(method + ":" + ((MethodEntryEvent) event).location());
+					
+					Location location = ((MethodEntryEvent) event).location();
+					boolean isLocationInRunningStatement = isLocationInRunningStatement(location, locBrpMap);
+					if(isLocationInRunningStatement){
 						
-						try {
-							if(!method.arguments().isEmpty()){
-								parseWrittenParameterVariableForMethodInvocation(event, mee, lastestNode);							
+						if(isLastStepEventRecordNode){
+							TraceNode lastestNode = this.trace.getLastestNode();
+							
+							try {
+								if(!method.arguments().isEmpty()){
+									parseWrittenParameterVariableForMethodInvocation(event, mee, lastestNode);							
+								}
+							} catch (AbsentInformationException e) {
+								e.printStackTrace();
 							}
-						} catch (AbsentInformationException e) {
-							e.printStackTrace();
+							
+							methodNodeStack.push(lastestNode);
+							methodStack.push(method);
 						}
-						
-						methodNodeStack.push(lastestNode);
-						methodStack.push(method);
 					}
+					else{
+						menr.setEnabled(false);
+						mexr.setEnabled(false);
+//						stepRequest.enable();
+					}
+					
 				} else if (event instanceof MethodExitEvent){
 					MethodExitEvent mee = (MethodExitEvent)event;
 					Method method = mee.method();
-					if(!methodStack.isEmpty()){
-						Method mInStack = methodStack.peek();
-						if(method.equals(mInStack)){
-							TraceNode node = methodNodeStack.pop();
-							methodNodeJustPopedOut = node;
-							methodStack.pop();
-							lastestReturnedValue = mee.returnValue();
-						}						
+					//System.out.println(method + ":" + ((MethodExitEvent) event).location());
+					
+					Location location = ((MethodExitEvent) event).location();
+					boolean isLocationInRunningStatement = isLocationInRunningStatement(location, locBrpMap);
+					
+					if(isLocationInRunningStatement){
+						
+						if(!methodStack.isEmpty()){
+							Method mInStack = methodStack.peek();
+							if(method.equals(mInStack)){
+								TraceNode node = methodNodeStack.pop();
+								methodNodeJustPopedOut = node;
+								methodStack.pop();
+								lastestReturnedValue = mee.returnValue();
+							}						
+						}
 					}
+					else{
+						menr.setEnabled(false);
+						mexr.setEnabled(false);
+//						stepRequest.enable();
+					}
+					
 				} else if(event instanceof ExceptionEvent){
 					ExceptionEvent ee = (ExceptionEvent)event;
 					Location catchLocation = ee.catchLocation();
@@ -388,6 +421,11 @@ public class ProgramExecutor extends Executor{
 			
 			eventSet.resume();
 		}
+	}
+
+	private boolean isLocationInRunningStatement(Location location, Map<String, BreakPoint> locationMap) {
+		String key = location.toString();
+		return locationMap.containsKey(key);
 	}
 
 	class MethodFinder extends ASTVisitor{
@@ -470,13 +508,14 @@ public class ProgramExecutor extends Executor{
 	}
 
 	private void addStepWatch(EventRequestManager erm, Event event) {
-		StepRequest sr = erm.createStepRequest(((VMStartEvent) event).thread(), 
+		
+		StepRequest stepRequest = erm.createStepRequest(((VMStartEvent) event).thread(),  
 				StepRequest.STEP_LINE, StepRequest.STEP_INTO);
-		sr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+		stepRequest.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 		for(String ex: excludes){
-			sr.addClassExclusionFilter(ex);
+			stepRequest.addClassExclusionFilter(ex);
 		}
-		sr.enable();
+		stepRequest.enable();
 	}
 
 	/**
@@ -606,18 +645,21 @@ public class ProgramExecutor extends Executor{
 		}
 	}
 
+	private MethodEntryRequest menr;
+	private MethodExitRequest mexr;
+	
 	/**
 	 * add method enter and exit event
 	 */
 	private void addMethodWatch(EventRequestManager erm) {
-		MethodEntryRequest menr = erm.createMethodEntryRequest();
+		menr = erm.createMethodEntryRequest();
 		for(String classPattern: excludes){
 			menr.addClassExclusionFilter(classPattern);
 		}
 		menr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 		menr.enable();
 		
-		MethodExitRequest mexr = erm.createMethodExitRequest();
+		mexr = erm.createMethodExitRequest();
 		for(String classPattern: excludes){
 			mexr.addClassExclusionFilter(classPattern);
 		}
@@ -1045,12 +1087,6 @@ public class ProgramExecutor extends Executor{
 		return debugger.getProccessError();
 	}
 	
-	
-	
-//	public VMConfiguration getVmConfig() {
-//		return config;
-//	}
-	
 	public AppJavaClassPath getConfig() {
 		return config;
 	}
@@ -1065,13 +1101,11 @@ public class ProgramExecutor extends Executor{
 		 * used to decide the memory address, this value must be an ObjectReference.
 		 */
 		Value parentValue;
-//		Value messageValue;
 		
 		public ExpressionValue(Value value, Value parentValue, Value messageValue){
 			this.value = value;
 			this.parentValue = parentValue;
 			
-//			this.messageValue = messageValue;
 		}
 		
 	}
