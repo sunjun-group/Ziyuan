@@ -398,7 +398,7 @@ public class ProgramExecutor extends Executor{
 						if(!methodSignatureStack.isEmpty()){
 							String peekSig = methodSignatureStack.peek();
 							String thisSig = createSignature(method);
-							if(peekSig.equals(thisSig)){
+							if(JavaUtil.isCompatibleMethodSignature(peekSig,thisSig)){
 								TraceNode node = methodNodeStack.pop();
 								methodNodeJustPopedOut = node;
 								methodSignatureStack.pop();

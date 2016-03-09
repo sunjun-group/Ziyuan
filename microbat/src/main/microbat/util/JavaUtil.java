@@ -25,11 +25,17 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
+import org.eclipse.jdt.internal.corext.refactoring.typeconstraints.types.TypeTuple;
 
 public class JavaUtil {
 	
 	private static HashMap<String, CompilationUnit> compilationUnitMap = new HashMap<>();
 	
+	/**
+	 * generate signature such as methodName(java.lang.String)L
+	 * @param md
+	 * @return
+	 */
 	public static String generateMethodSignature(MethodDeclaration md){
 		IMethodBinding mBinding = md.resolveBinding();
 		
@@ -165,5 +171,35 @@ public class JavaUtil {
 		int headLine = cu.getLineNumber(type.getName().getStartPosition());
 		
 		return headLine==lineNumber;
+	}
+
+	public static boolean isCompatibleMethodSignature(String thisSig, String thatSig) {
+		if(thatSig.equals(thisSig)){
+			return true;
+		}
+		
+		String thisClassName = thisSig.substring(0, thisSig.indexOf("#"));
+		String thisMethodSig = thisSig.substring(thisSig.indexOf("#")+1, thisSig.length());
+		
+		String thatClassName = thatSig.substring(0, thatSig.indexOf("#"));
+		String thatMethodSig = thatSig.substring(thatSig.indexOf("#")+1, thatSig.length());
+		
+		if(thisMethodSig.equals(thatMethodSig)){
+			CompilationUnit thisCU = JavaUtil.findCompilationUnitInProject(thisClassName);
+			CompilationUnit thatCU = JavaUtil.findCompilationUnitInProject(thatClassName);
+			
+			AbstractTypeDeclaration thisType = (AbstractTypeDeclaration) thisCU.types().get(0);
+			AbstractTypeDeclaration thatType = (AbstractTypeDeclaration) thatCU.types().get(0);
+			
+			ITypeBinding thisTypeBinding = thisType.resolveBinding();
+			ITypeBinding thatTypeBinding = thatType.resolveBinding();
+			
+			boolean isCom1 = thisTypeBinding.isSubTypeCompatible(thatTypeBinding);
+			boolean isCom2 = thatTypeBinding.isSubTypeCompatible(thisTypeBinding);
+			
+			return isCom1 || isCom2;
+		}
+		
+		return false;
 	}
 }
