@@ -25,9 +25,15 @@ public class CfgExitNode implements CfgNode {
 	}
 
 	@Override
+	public String toString() {
+		return "exit";
+	}
+
+	@Override
 	public Node getAstNode() {
 		return null;
 	}
+	
 
 	@Override
 	public int getBeginLine() {
@@ -37,11 +43,4 @@ public class CfgExitNode implements CfgNode {
 	public void setStartLine(int startLine) {
 		this.beginLine = startLine;
 	}
-	
-	@Override
-	public String toString() {
-		return "exit";
-	}
-
-
 }
