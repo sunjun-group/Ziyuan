@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -86,15 +87,15 @@ public class TestCaseAnalyzer {
 	}
 	
 	public void runEvaluation() throws JavaModelException{
-//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
-//		
-//		for(IJavaElement element: testRoot.getChildren()){
-//			if(element instanceof IPackageFragment){
-//				runEvaluation((IPackageFragment)element);				
-//			}
-//		}
+		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
 		
-		runSingeTestCase();
+		for(IJavaElement element: testRoot.getChildren()){
+			if(element instanceof IPackageFragment){
+				runEvaluation((IPackageFragment)element);				
+			}
+		}
+		
+//		runSingeTestCase();
 	}
 	
 	private void runSingeTestCase(){
@@ -228,11 +229,6 @@ public class TestCaseAnalyzer {
 				for(String mutatedClass: mutations.keySet()){
 					MutationResult result = mutations.get(mutatedClass);
 					for(Integer line: result.getMutatedFiles().keySet()){
-						
-						if(line != 3707){
-							continue;
-						}
-						
 						List<File> mutatedFileList = result.getMutatedFiles(line);		
 						
 						if(!mutatedFileList.isEmpty()){
