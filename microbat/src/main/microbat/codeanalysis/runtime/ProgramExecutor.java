@@ -303,51 +303,10 @@ public class ProgramExecutor extends Executor{
 							caughtLocationForJustException = null;
 						}
 						
-						/**
-						 * The following code is used for side-effect of optimization, compensating the missing method
-						 * invocation because of disabling some method entry/exit event in some cases. 
-						 */
-						if(isContextChange){
-							TraceNode prevNode = node.getStepInPrevious();
-							if(prevNode != null){
-								MethodDeclaration invokedMethod = 
-										JavaUtil.checkInvocationParentRelation(prevNode, node);
-								if(invokedMethod != null){
-									IMethodBinding invokedMethodBinding = invokedMethod.resolveBinding();
-									String invokedMethodSig = JavaUtil.convertFullSignature(invokedMethodBinding);
-									
-									StackFrame frame = findFrame(((StepEvent) event).thread(), ((StepEvent) event).location());
-									String declaringType = invokedMethodBinding.getDeclaringClass().getBinaryName();
-									int methodLine = ((StepEvent) event).location().lineNumber();
-									List<Param> paramList = findParamList(invokedMethod);
-									
-									if(!methodSignatureStack.isEmpty()){
-										String peekMethodSig = methodSignatureStack.peek();
-										if(!peekMethodSig.equals(invokedMethodSig)){
-											System.out.println("compensating side effect of optimization for " + prevNode);
-											
-											if(invokedMethodBinding.getParameterTypes().length !=0){
-												parseWrittenParameterVariableForMethodInvocation(frame, declaringType, methodLine, 
-														paramList, node);
-											}
-											
-											methodSignatureStack.push(invokedMethodSig);
-											methodNodeStack.push(prevNode);
-										}
-									}
-									else{
-										System.out.println("compensating side effect of optimization for " + prevNode);
-										if(invokedMethodBinding.getParameterTypes().length !=0){
-											parseWrittenParameterVariableForMethodInvocation(frame, declaringType, methodLine, 
-													paramList, node);
-										}
-										
-										methodSignatureStack.push(invokedMethodSig);
-										methodNodeStack.push(prevNode);
-									}
-								}
-							}
-						}
+						
+						handleCompensationForMethodEntryExistOptimization(
+								methodNodeStack, methodSignatureStack, event,
+								isContextChange, node);
 						
 						/**
 						 * Build parent-child relation between trace nodes.
@@ -494,6 +453,57 @@ public class ProgramExecutor extends Executor{
 			}
 			
 			eventSet.resume();
+		}
+	}
+
+	/**
+	 * The following code is used for side-effect of optimization, compensating the missing method
+	 * invocation because of disabling some method entry/exit event in some cases. 
+	 */
+	private void handleCompensationForMethodEntryExistOptimization(
+			Stack<TraceNode> methodNodeStack,
+			Stack<String> methodSignatureStack, Event event,
+			boolean isContextChange, TraceNode node) {
+		if(isContextChange){
+			TraceNode prevNode = node.getStepInPrevious();
+			if(prevNode != null){
+				MethodDeclaration invokedMethod = 
+						JavaUtil.checkInvocationParentRelation(prevNode, node);
+				if(invokedMethod != null){
+					IMethodBinding invokedMethodBinding = invokedMethod.resolveBinding();
+					String invokedMethodSig = JavaUtil.convertFullSignature(invokedMethodBinding);
+					
+					StackFrame frame = findFrame(((StepEvent) event).thread(), ((StepEvent) event).location());
+					String declaringType = invokedMethodBinding.getDeclaringClass().getBinaryName();
+					int methodLine = ((StepEvent) event).location().lineNumber();
+					List<Param> paramList = findParamList(invokedMethod);
+					
+					if(!methodSignatureStack.isEmpty()){
+						String peekMethodSig = methodSignatureStack.peek();
+						if(!peekMethodSig.equals(invokedMethodSig)){
+							System.out.println("compensating side effect of optimization for " + prevNode);
+							
+							if(invokedMethodBinding.getParameterTypes().length !=0){
+								parseWrittenParameterVariableForMethodInvocation(frame, declaringType, methodLine, 
+										paramList, node);
+							}
+							
+							methodSignatureStack.push(invokedMethodSig);
+							methodNodeStack.push(prevNode);
+						}
+					}
+					else{
+						System.out.println("compensating side effect of optimization for " + prevNode);
+						if(invokedMethodBinding.getParameterTypes().length !=0){
+							parseWrittenParameterVariableForMethodInvocation(frame, declaringType, methodLine, 
+									paramList, node);
+						}
+						
+						methodSignatureStack.push(invokedMethodSig);
+						methodNodeStack.push(prevNode);
+					}
+				}
+			}
 		}
 	}
 
