@@ -46,7 +46,7 @@ public class ExecutionStatementCollector extends Executor{
 		
 		while(connected){
 			try {
-				EventSet eventSet = queue.remove(1000);
+				EventSet eventSet = queue.remove(10000);
 				if(eventSet != null){
 					for(Event event: eventSet){
 						if(event instanceof VMStartEvent){
