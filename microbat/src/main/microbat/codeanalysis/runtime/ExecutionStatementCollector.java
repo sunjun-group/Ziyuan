@@ -46,7 +46,7 @@ public class ExecutionStatementCollector extends Executor{
 		
 		while(connected){
 			try {
-				EventSet eventSet = queue.remove(10000);
+				EventSet eventSet = queue.remove(1000);
 				if(eventSet != null){
 					for(Event event: eventSet){
 						if(event instanceof VMStartEvent){
@@ -72,8 +72,7 @@ public class ExecutionStatementCollector extends Executor{
 							
 							BreakPoint breakPoint = new BreakPoint(path, lineNumber);
 							System.out.println(breakPoint);
-							setSteps(getStepNum() + 1);
-							
+
 							if(!pointList.contains(breakPoint)){
 								pointList.add(breakPoint);							
 							}
