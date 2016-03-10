@@ -10,6 +10,7 @@ package microbat.codeanalysis.runtime;
 
 import static sav.strategies.junit.SavJunitRunner.ENTER_TC_BKP;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import microbat.model.value.VirtualValue;
 import microbat.model.variable.ArrayElementVar;
 import microbat.model.variable.FieldVar;
 import microbat.model.variable.LocalVar;
+import microbat.model.variable.Param;
 import microbat.model.variable.Variable;
 import microbat.model.variable.VirtualVar;
 import microbat.util.BreakpointUtils;
@@ -42,7 +44,9 @@ import microbat.util.Settings;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
@@ -246,6 +250,7 @@ public class ProgramExecutor extends Executor{
 					 * the consequence of last step, thus, I may just check those written variables 
 					 * and their values.
 					 */
+					boolean isContextChange = false;
 					if(lastSteppingInPoint != null){
 						collectValueOfPreviousStep(lastSteppingInPoint, ((StepEvent) event).thread(), currentLocation);	
 						
@@ -255,7 +260,7 @@ public class ProgramExecutor extends Executor{
 						 * If the context changes, the value of some variables may not be retrieved. Thus, the variable ID cannot be 
 						 * generated. Note that the ID of a variable need parsing its heap ID which can only be accessed by runtime.
 						 */
-						boolean isContextChange = checkContext(lastSteppingInPoint, currentLocation);
+						isContextChange = checkContext(lastSteppingInPoint, currentLocation);
 						if(!isContextChange){
 							parseReadWrittenVariableInThisStep(((StepEvent) event).thread(), currentLocation, 
 									this.trace.getLastestNode(), this.trace.getStepVariableTable(), WRITTEN);			
@@ -296,6 +301,52 @@ public class ProgramExecutor extends Executor{
 								}
 							}
 							caughtLocationForJustException = null;
+						}
+						
+						/**
+						 * The following code is used for side-effect of optimization, compensating the missing method
+						 * invocation because of disabling some method entry/exit event in some cases. 
+						 */
+						if(isContextChange){
+							TraceNode prevNode = node.getStepInPrevious();
+							if(prevNode != null){
+								MethodDeclaration invokedMethod = 
+										JavaUtil.checkInvocationParentRelation(prevNode, node);
+								if(invokedMethod != null){
+									IMethodBinding invokedMethodBinding = invokedMethod.resolveBinding();
+									String invokedMethodSig = JavaUtil.convertFullSignature(invokedMethodBinding);
+									
+									StackFrame frame = findFrame(((StepEvent) event).thread(), ((StepEvent) event).location());
+									String declaringType = invokedMethodBinding.getDeclaringClass().getBinaryName();
+									int methodLine = ((StepEvent) event).location().lineNumber();
+									List<Param> paramList = findParamList(invokedMethod);
+									
+									if(!methodSignatureStack.isEmpty()){
+										String peekMethodSig = methodSignatureStack.peek();
+										if(!peekMethodSig.equals(invokedMethodSig)){
+											System.out.println("compensating side effect of optimization for " + prevNode);
+											
+											if(invokedMethodBinding.getParameterTypes().length !=0){
+												parseWrittenParameterVariableForMethodInvocation(frame, declaringType, methodLine, 
+														paramList, node);
+											}
+											
+											methodSignatureStack.push(invokedMethodSig);
+											methodNodeStack.push(prevNode);
+										}
+									}
+									else{
+										System.out.println("compensating side effect of optimization for " + prevNode);
+										if(invokedMethodBinding.getParameterTypes().length !=0){
+											parseWrittenParameterVariableForMethodInvocation(frame, declaringType, methodLine, 
+													paramList, node);
+										}
+										
+										methodSignatureStack.push(invokedMethodSig);
+										methodNodeStack.push(prevNode);
+									}
+								}
+							}
 						}
 						
 						/**
@@ -364,15 +415,22 @@ public class ProgramExecutor extends Executor{
 							
 							try {
 								if(!method.arguments().isEmpty()){
-									parseWrittenParameterVariableForMethodInvocation(event, mee, lastestNode);							
+									StackFrame frame = findFrame(((MethodEntryEvent) event).thread(), mee.location());
+									String typeSig = method.declaringType().signature();
+									String declaringType = SignatureUtils.signatureToName(typeSig);
+									
+									int methodLocationLine = method.location().lineNumber();
+									List<Param> paramList = parseParamList(method);
+									
+									
+									parseWrittenParameterVariableForMethodInvocation(frame, declaringType, methodLocationLine,
+											paramList, lastestNode);							
 								}
 							} catch (AbsentInformationException e) {
 								e.printStackTrace();
 							}
 							
 							methodNodeStack.push(lastestNode);
-							//methodStack.push(method);
-							
 							String methodSignature = createSignature(method);
 							methodSignatureStack.push(methodSignature);
 						}
@@ -439,12 +497,43 @@ public class ProgramExecutor extends Executor{
 		}
 	}
 
+	private List<Param> findParamList(MethodDeclaration invokedMethod) {
+		List<Param> paramList = new ArrayList<>();
+		for(Object obj: invokedMethod.parameters()){
+			if(obj instanceof SingleVariableDeclaration){
+				SingleVariableDeclaration svd = (SingleVariableDeclaration)obj;
+				String paramName = svd.getName().getIdentifier();
+				String paramType = svd.getType().toString();
+				
+				Param param = new Param(paramType, paramName);
+				paramList.add(param);
+			}
+		}
+		
+		return paramList;
+	}
+
+	private List<Param> parseParamList(Method method) {
+		List<Param> paramList = new ArrayList<>();
+		
+		try {
+			for(LocalVariable variable: method.arguments()){
+				Param param = new Param(variable.typeName(), variable.name());
+				paramList.add(param);
+			}
+		} catch (AbsentInformationException e) {
+			e.printStackTrace();
+		}
+		
+		return paramList;
+	}
+
 	private String createSignature(Method method) {
 		String className = method.declaringType().name();
 		String methodName = method.name();
-		String signature = method.signature();
+		String methodSig = method.signature();
 		
-		String sig = className + "#" + methodName + signature;
+		String sig = JavaUtil.createSignature(className, methodName, methodSig);
 		
 		return sig;
 	}
@@ -593,62 +682,60 @@ public class ProgramExecutor extends Executor{
 	/**
 	 * build the written relations between method invocation
 	 */
-	private void parseWrittenParameterVariableForMethodInvocation(Event event,
-			MethodEntryEvent mee, TraceNode lastestNode) {
-		try {
-			Method method = mee.method();
-			for(LocalVariable lVar: method.arguments()){
-				StackFrame frame = findFrame(((MethodEntryEvent) event).thread(), mee.location());
-				
-				if(frame == null){
-					return;
-				}
-				
-				Value value = frame.getValue(lVar);
-				
-				if(!(value instanceof ObjectReference)){
-					
-					LocalVar localVar = new LocalVar(lVar.name(), lVar.typeName(), lastestNode.getDeclaringCompilationUnitName(), 
-							lastestNode.getLineNumber());
-					
-					VariableScopeParser parser = new VariableScopeParser();
-					String typeSig = method.declaringType().signature();
-					String typeName = SignatureUtils.signatureToName(typeSig);
-					LocalVariableScope scope = parser.parseMethodScope(typeName, 
-							mee.location().lineNumber(), localVar.getName());
-					String varID;
-					if(scope != null){
-						varID = Variable.concanateLocalVarID(typeName, localVar.getName(), 
-								scope.getStartLine(), scope.getEndLine());
-						String definingNodeOrder = findDefiningNodeOrder(WRITTEN, lastestNode, varID);
-						varID = varID + ":" + definingNodeOrder;
-//						varID = typeName + "[" + scope.getStartLine() + "," 
-//								+ scope.getEndLine() + "] " + localVar.getName();				
-						localVar.setVarID(varID);
-					}
-					else{
-						System.err.println("cannot find the method when parsing parameter scope");
-					}
-					
-					if(localVar.getVarID().contains("158")){
-						System.currentTimeMillis();
-					}
-					
-					StepVariableRelationEntry entry = this.trace.getStepVariableTable().get(localVar.getVarID());
-					if(entry == null){
-						entry = new StepVariableRelationEntry(localVar.getVarID());
-						this.trace.getStepVariableTable().put(localVar.getVarID(), entry);
-					}
-					entry.addAliasVariable(localVar);
-					entry.addProducer(lastestNode);
-					
-					VarValue varValue = new PrimitiveValue(value.toString(), false, localVar);
-					lastestNode.addWrittenVariable(varValue);
-				}
-				
+//	private void parseWrittenParameterVariableForMethodInvocation(Event event,
+//			MethodEntryEvent mee, TraceNode lastestNode) {
+	private void parseWrittenParameterVariableForMethodInvocation(StackFrame frame, 
+			String methodDeclaringType, int methodLocationLine,
+			List<Param> paramList, TraceNode lastestNode) {
+
+		for(Param param: paramList){
+//			StackFrame frame = findFrame(((MethodEntryEvent) event).thread(), mee.location());
+			
+			if(frame == null){
+				return;
 			}
-		} catch (AbsentInformationException e) {
-			e.printStackTrace();
+			
+			Value value = JavaUtil.retriveExpression(frame, param.getName());
+			
+			if(!(value instanceof ObjectReference)){
+				
+				LocalVar localVar = new LocalVar(param.getName(), param.getType(), lastestNode.getDeclaringCompilationUnitName(), 
+						lastestNode.getLineNumber());
+				
+				VariableScopeParser parser = new VariableScopeParser();
+//				String typeName = SignatureUtils.signatureToName(typeSig);
+				LocalVariableScope scope = parser.parseMethodScope(methodDeclaringType, 
+						methodLocationLine, localVar.getName());
+				String varID;
+				if(scope != null){
+					varID = Variable.concanateLocalVarID(methodDeclaringType, localVar.getName(), 
+							scope.getStartLine(), scope.getEndLine());
+					String definingNodeOrder = findDefiningNodeOrder(WRITTEN, lastestNode, varID);
+					varID = varID + ":" + definingNodeOrder;
+//					varID = typeName + "[" + scope.getStartLine() + "," 
+//							+ scope.getEndLine() + "] " + localVar.getName();				
+					localVar.setVarID(varID);
+				}
+				else{
+					System.err.println("cannot find the method when parsing parameter scope");
+				}
+				
+				if(localVar.getVarID().contains("158")){
+					System.currentTimeMillis();
+				}
+				
+				StepVariableRelationEntry entry = this.trace.getStepVariableTable().get(localVar.getVarID());
+				if(entry == null){
+					entry = new StepVariableRelationEntry(localVar.getVarID());
+					this.trace.getStepVariableTable().put(localVar.getVarID(), entry);
+				}
+				entry.addAliasVariable(localVar);
+				entry.addProducer(lastestNode);
+				
+				VarValue varValue = new PrimitiveValue(value.toString(), false, localVar);
+				lastestNode.addWrittenVariable(varValue);
+			}
+			
 		}
 	}
 	

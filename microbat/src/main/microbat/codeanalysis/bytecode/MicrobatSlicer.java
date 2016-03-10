@@ -31,6 +31,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Name;
@@ -147,7 +148,8 @@ public class MicrobatSlicer{
 			for(MethodDeclaration md: mdList){
 				String methodName = md.getName().getFullyQualifiedName();
 				if(methodName.equals(appClassPath.getOptionalTestMethod())){
-					String methodSignature = JavaUtil.generateMethodSignature(md);
+					IMethodBinding mBinding = md.resolveBinding();
+					String methodSignature = JavaUtil.generateMethodSignature(mBinding);
 					BreakPoint point = new BreakPoint(testClassName, methodSignature, -1);
 					return point;
 				}
@@ -162,7 +164,8 @@ public class MicrobatSlicer{
 			MethodDeclaration mainMethod = finder.md;
 			
 			if(mainMethod != null){
-				String methodSignature = JavaUtil.generateMethodSignature(mainMethod);
+				IMethodBinding mBinding = mainMethod.resolveBinding();
+				String methodSignature = JavaUtil.generateMethodSignature(mBinding);
 				BreakPoint point = new BreakPoint(launchClass, methodSignature, -1);
 				return point;
 			}

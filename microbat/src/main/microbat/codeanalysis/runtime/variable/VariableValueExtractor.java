@@ -10,8 +10,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import microbat.codeanalysis.runtime.herustic.HeuristicIgnoringFieldRule;
-import microbat.codeanalysis.runtime.jpda.expr.ExpressionParser;
-import microbat.codeanalysis.runtime.jpda.expr.ParseException;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
 import microbat.model.value.ArrayValue;
@@ -23,6 +21,7 @@ import microbat.model.variable.ArrayElementVar;
 import microbat.model.variable.FieldVar;
 import microbat.model.variable.LocalVar;
 import microbat.model.variable.Variable;
+import microbat.util.JavaUtil;
 import microbat.util.PrimitiveUtils;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,12 +32,9 @@ import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.BooleanType;
 import com.sun.jdi.BooleanValue;
-import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
-import com.sun.jdi.InvalidTypeException;
-import com.sun.jdi.InvocationException;
 import com.sun.jdi.LocalVariable;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
@@ -412,49 +408,7 @@ public class VariableValueExtractor {
 		val.addParent(parent);
 	}
 	
-	private Value retriveExpression(final StackFrame frame, String expression){
-		ExpressionParser.GetFrame frameGetter = new ExpressionParser.GetFrame() {
-            @Override
-            public StackFrame get()
-                throws IncompatibleThreadStateException
-            {
-            	return frame;
-                
-            }
-        };
-        
-        try {
-//        	Location location = frame.location();
-//        	if(location.lineNumber() == 6){
-//        		System.currentTimeMillis();        		
-//        	}
-//        	boolean head = JavaUtil.isTheLocationHeadOfClass(location.declaringType().name(), location.lineNumber());
-//        	
-//        	if(!head){
-//        	}
-        	
-        	Value val = ExpressionParser.evaluate(expression, frame.virtualMachine(), frameGetter);
-//        		String str = value.toString();
-        	//Value val = ExpressionParser.getMassagedValue();
-        	return val;        		
-			
-		} catch (ParseException e) {
-			//e.printStackTrace();
-		} catch (InvocationException e) {
-			e.printStackTrace();
-		} catch (InvalidTypeException e) {
-			e.printStackTrace();
-		} catch (ClassNotLoadedException e) {
-			e.printStackTrace();
-		} catch (IncompatibleThreadStateException e) {
-			e.printStackTrace();
-		} catch (Exception e){
-			System.out.println("Cannot parse " + expression);
-			e.printStackTrace();
-		}
-        
-        return null;
-	}
+	
 
 	/**
 	 * add a given variable to its parent
@@ -529,7 +483,7 @@ public class VariableValueExtractor {
 		StackFrame frame;
 		try {
 			frame = findFrameByLocation(thread.frames(), loc);
-			Value value = retriveExpression(frame, val.getVarName());
+			Value value = JavaUtil.retriveExpression(frame, val.getVarName());
 			if(value != null){
 				String message = value.toString();
 				val.setStringValue(message);					

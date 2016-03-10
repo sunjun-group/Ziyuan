@@ -135,6 +135,10 @@ public class VariableScopeParser {
 	public LocalVariableScope parseMethodScope(String typeName, final int lineNumber, final String variableName) {
 		final CompilationUnit cu = JavaUtil.findCompilationUnitInProject(typeName);
 		
+		if(cu == null){
+			System.currentTimeMillis();
+		}
+		
 		cu.accept(new ASTVisitor(){
 			public boolean visit(MethodDeclaration md){
 				

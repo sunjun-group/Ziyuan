@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
@@ -230,7 +231,8 @@ public class StartDebugHandler extends AbstractHandler {
 		cu.accept(finder);
 		
 		MethodDeclaration methodDeclaration = finder.methodDeclaration;
-		String methodSig = JavaUtil.generateMethodSignature(methodDeclaration);
+		IMethodBinding mBinding = methodDeclaration.resolveBinding();
+		String methodSig = JavaUtil.generateMethodSignature(mBinding);
 		
 		return methodSig;
 	}

@@ -5,13 +5,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import microbat.codeanalysis.ast.MethodDeclarationFinder;
+import microbat.codeanalysis.ast.MethodInvocationFinder;
+import microbat.codeanalysis.runtime.jpda.expr.ExpressionParser;
+import microbat.codeanalysis.runtime.jpda.expr.ParseException;
+import microbat.model.trace.TraceNode;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
@@ -23,21 +28,63 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
-import org.eclipse.jdt.internal.corext.refactoring.typeconstraints.types.TypeTuple;
 
+import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.InvocationException;
+import com.sun.jdi.StackFrame;
+import com.sun.jdi.Value;
+
+@SuppressWarnings("restriction")
 public class JavaUtil {
 	
 	private static HashMap<String, CompilationUnit> compilationUnitMap = new HashMap<>();
+	
+	
+	public static Value retriveExpression(final StackFrame frame, String expression){
+		ExpressionParser.GetFrame frameGetter = new ExpressionParser.GetFrame() {
+            @Override
+            public StackFrame get()
+                throws IncompatibleThreadStateException
+            {
+            	return frame;
+                
+            }
+        };
+        
+        try {
+        	
+        	Value val = ExpressionParser.evaluate(expression, frame.virtualMachine(), frameGetter);
+        	return val;        		
+			
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		} catch (InvocationException e) {
+			e.printStackTrace();
+		} catch (InvalidTypeException e) {
+			e.printStackTrace();
+		} catch (ClassNotLoadedException e) {
+			e.printStackTrace();
+		} catch (IncompatibleThreadStateException e) {
+			e.printStackTrace();
+		} catch (Exception e){
+			System.out.println("Cannot parse " + expression);
+			e.printStackTrace();
+		}
+        
+        return null;
+	}
 	
 	/**
 	 * generate signature such as methodName(java.lang.String)L
 	 * @param md
 	 * @return
 	 */
-	public static String generateMethodSignature(MethodDeclaration md){
-		IMethodBinding mBinding = md.resolveBinding();
+	public static String generateMethodSignature(IMethodBinding mBinding){
+//		IMethodBinding mBinding = md.resolveBinding();
 		
 		String returnType = mBinding.getReturnType().getKey();
 		
@@ -188,18 +235,123 @@ public class JavaUtil {
 			CompilationUnit thisCU = JavaUtil.findCompilationUnitInProject(thisClassName);
 			CompilationUnit thatCU = JavaUtil.findCompilationUnitInProject(thatClassName);
 			
+			if(thisCU==null || thatCU==null){
+				return false;
+			}
+			
 			AbstractTypeDeclaration thisType = (AbstractTypeDeclaration) thisCU.types().get(0);
 			AbstractTypeDeclaration thatType = (AbstractTypeDeclaration) thatCU.types().get(0);
 			
 			ITypeBinding thisTypeBinding = thisType.resolveBinding();
 			ITypeBinding thatTypeBinding = thatType.resolveBinding();
 			
-			boolean isCom1 = thisTypeBinding.isSubTypeCompatible(thatTypeBinding);
-			boolean isCom2 = thatTypeBinding.isSubTypeCompatible(thisTypeBinding);
+			boolean isSame = thisTypeBinding.getQualifiedName().equals(thatTypeBinding.getQualifiedName());
 			
-			return isCom1 || isCom2;
+			if(isSame){
+				return true;
+			}
+			else{
+				boolean isCom1 = thisTypeBinding.isSubTypeCompatible(thatTypeBinding);
+				boolean isCom2 = thatTypeBinding.isSubTypeCompatible(thisTypeBinding);
+				
+				return isCom1 || isCom2;				
+			}
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * If the prevNode is the invocation parent of postNode, this method return the method binding of the
+	 * corresponding method.
+	 *  
+	 * @param prevNode
+	 * @param postNode
+	 * @return
+	 */
+	public static MethodDeclaration checkInvocationParentRelation(TraceNode prevNode, TraceNode postNode){
+		List<IMethodBinding> methodInvocationBindings = findMethodInvocations(prevNode);
+		if(!methodInvocationBindings.isEmpty()){
+			MethodDeclaration md = findMethodDeclaration(postNode);
+			IMethodBinding methodDeclarationBinding = md.resolveBinding();
+			
+			if(canFindCompatibleSig(methodInvocationBindings, methodDeclarationBinding)){
+				//return methodDeclarationBinding;
+				return md;
+			}
+		}
+		
+//		System.currentTimeMillis();
+		return null;
+	}
+
+	private static List<IMethodBinding> findMethodInvocations(TraceNode prevNode) {
+		CompilationUnit cu = JavaUtil.findCompilationUnitInProject(prevNode.getClassCanonicalName());
+		
+		MethodInvocationFinder finder = new MethodInvocationFinder(cu, prevNode.getLineNumber());
+		cu.accept(finder);
+		
+		List<IMethodBinding> methodInvocations = new ArrayList<>();
+		
+		List<MethodInvocation> invocations = finder.getInvocations();
+		for(MethodInvocation invocation: invocations){
+			IMethodBinding mBinding = invocation.resolveMethodBinding();
+			
+			methodInvocations.add(mBinding);
+			
+		}
+		
+		return methodInvocations;
+	}
+
+	private static MethodDeclaration findMethodDeclaration(TraceNode postNode) {
+		CompilationUnit cu = JavaUtil.findCompilationUnitInProject(postNode.getClassCanonicalName());
+		
+		MethodDeclarationFinder finder = new MethodDeclarationFinder(cu, postNode.getLineNumber());
+		cu.accept(finder);
+		
+		MethodDeclaration md = finder.getMethod();
+		
+		
+		return md;
+	}
+	
+	public static String convertFullSignature(IMethodBinding binding){
+		
+		String className = binding.getDeclaringClass().getBinaryName();
+		String methodSig = generateMethodSignature(binding);
+		
+		return className + "#" + methodSig;
+	}
+
+	private static boolean canFindCompatibleSig(
+			List<IMethodBinding> methodInvocationBindings, IMethodBinding methodDeclarationBinding) {
+		
+		List<String> methodInvocationSigs = new ArrayList<>();
+		for(IMethodBinding binding: methodInvocationBindings){
+			String sig = convertFullSignature(binding);
+			methodInvocationSigs.add(sig);
+		}
+		String methodDeclarationSig = convertFullSignature(methodDeclarationBinding);
+		
+		if(methodInvocationSigs.contains(methodDeclarationSig)){
+			return true;
+		}
+		else{
+			for(String methodInvocationSig: methodInvocationSigs){
+				if(isCompatibleMethodSignature(methodInvocationSig, methodDeclarationSig)){
+					return true;
+				}
+			}
+		}
+		
+		System.currentTimeMillis();
+		
+		return false;
+	}
+	
+	public static String createSignature(String className, String methodName, String methodSig) {
+		String sig = className + "#" + methodName + methodSig;
+		return sig;
 	}
 }
