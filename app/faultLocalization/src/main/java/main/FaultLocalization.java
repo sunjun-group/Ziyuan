@@ -69,8 +69,11 @@ public class FaultLocalization {
 		List<BreakPoint> filterPoints = Collections.emptyList();
 		List<String> testingClasses = analyzedClasses;
 		if (useSlicer) {
+			long startTime = System.currentTimeMillis();
 			Set<BreakPoint> traces = getSlicingTraces(analyzedClasses,
 					analyzedPackages, junitClassNames);
+			long endTime = System.currentTimeMillis();
+			System.out.println(endTime - startTime);
 			filterPoints = new ArrayList<BreakPoint>(traces);
 			testingClasses = BreakpointUtils.extractClasses(traces);
 		}
@@ -103,13 +106,15 @@ public class FaultLocalization {
 		if(CollectionUtils.isEmpty(analyzedPackages)) {
 			List<String> testingClasses = new ArrayList<String>(analyzedClasses);
 			testingClasses.addAll(junitClassNames);
-			params.setTestingClassNames(testingClasses );
+			params.setTestingClassNames(testingClasses);
 		} else {
 			params.setTestingPkgs(analyzedPackages);
 			params.setTestingClassNames(analyzedClasses);
 		}
 		JunitResult jresult = JunitRunner.runTestcases(appClasspath, params);
+		log.info(jresult.toString());
 		Set<BreakPoint> traces = jresult.getFailureTraces();
+		
 		/* do slicing */
 		if (log.isDebugEnabled()) {
 			log.debug("failureTraces=", BreakpointUtils.getPrintStr(traces));

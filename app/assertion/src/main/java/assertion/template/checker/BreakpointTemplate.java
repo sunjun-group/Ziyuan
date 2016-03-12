@@ -45,10 +45,10 @@ public class BreakpointTemplate {
 	
 	@Override
 	public String toString() {
-//		return bkp + Arrays.toString(singleTemplates.toArray()) +
-//				Arrays.toString(compositeTemplates.toArray());
-		return Arrays.toString(singleTemplates.toArray()) +
-				Arrays.toString(compositeTemplates.toArray());
+		StringBuilder sb = new StringBuilder();
+		sb.append("\nSingle templates: " + Arrays.toString(singleTemplates.toArray()));
+		sb.append("\nComposite templates: " + Arrays.toString(compositeTemplates.toArray()));
+		return sb.toString();
 	}
 	
 }

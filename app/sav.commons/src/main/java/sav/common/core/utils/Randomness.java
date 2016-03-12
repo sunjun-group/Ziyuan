@@ -21,6 +21,9 @@ public final class Randomness {
 	public static int totalCallsToRandom = 0;
 	static Random random = new Random(SEED);
 	
+	static int callToDouble = 0;
+	static int callToFloat = 0;
+	
 	private static Random getRandom() {
 		totalCallsToRandom++;
 		return random;
@@ -35,7 +38,24 @@ public final class Randomness {
 	}
 
 	public static float nextFloat() {
-		return getRandom().nextFloat();
+		if (callToFloat == 0) {
+			callToFloat++;
+			return 0.0f;
+		} else if (callToFloat == 1) {
+			callToFloat++;
+			return 0.01f;
+		} else if (callToFloat == 2) {
+			callToFloat++;
+			return -0.01f;
+		}
+		
+//		float rangeMin = -100;
+//		float rangeMax = 100;
+		float rangeMin = -15000000000f;
+		float rangeMax = 15000000000f;
+		float f = (rangeMin + (rangeMax - rangeMin) * getRandom().nextFloat());
+		return f;
+//		return getRandom().nextFloat();
 	}
 	
 	public static int nextInt() {
@@ -54,7 +74,10 @@ public final class Randomness {
 	}
 	
 	public static int nextInt(int min, int max) {
-		return getRandom().nextInt((max - min) + 1) + min;
+		if (max - min + 1 > 0)
+			return getRandom().nextInt((max - min) + 1) + min;
+		else
+			return getRandom().nextInt(max - min) + min;
 	}
 	
 	public static <T> T randomMember(T[] arr) {
@@ -182,7 +205,28 @@ public final class Randomness {
 	}
 
 	public static Double nextDouble() {
-		return getRandom().nextDouble();
+//		double rangeMin = -100;
+//		double rangeMax = 100;
+		if (callToDouble == 0) {
+			callToDouble++;
+			return 0.0;
+		} else if (callToDouble == 1) {
+			callToDouble++;
+			return 0.01;
+		} else if (callToDouble == 2) {
+			callToDouble++;
+			return -0.01;
+		}
+		
+//		double rangeMin = -100;
+//		double rangeMax = 100;
+		
+		double rangeMin = -2000;
+		double rangeMax = 2000;
+		
+		double d = (rangeMin + (rangeMax - rangeMin) * getRandom().nextDouble());
+		return d;
+		// return getRandom().nextDouble();
 	}
 
 }

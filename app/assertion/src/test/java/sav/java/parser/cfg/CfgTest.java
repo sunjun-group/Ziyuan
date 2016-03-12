@@ -16,6 +16,10 @@ import japa.parser.ast.body.BodyDeclaration;
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.TypeDeclaration;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 import org.junit.Test;
 
 /**
@@ -179,7 +183,7 @@ public class CfgTest {
 	@Test
 	public void methodToCfg() throws ParseException {
 		CompilationUnit cu = JavaParser.parse(getClass()
-				.getResourceAsStream("/CfgTestData.txt"));
+				.getResourceAsStream("/MiniTest.txt"));
 		for (TypeDeclaration type : cu.getTypes()) {
 			for (BodyDeclaration body : type.getMembers()) {
 				if (body instanceof MethodDeclaration) {
@@ -188,6 +192,19 @@ public class CfgTest {
 					System.out.println(method.getName() + method.getParameters());
 					System.out.println("---------------------------------------------");
 					CFG cfg = CfgFactory.createCFG(method);
+					
+					CfgEntryNode entry = cfg.getEntry();
+					
+					List<CfgNode> decisionNodes = new ArrayList<CfgNode>();
+					cfg.getDecisionNode(entry, decisionNodes, new HashSet<CfgNode>());
+					System.out.println("decision nodes = " + decisionNodes);
+					
+					for (CfgNode node : decisionNodes) {
+						for (CfgEdge edge : cfg.getOutEdges(node)) {
+							System.out.println("line = " + edge.getDest().getAstNode().getBeginLine());
+						}
+					}
+					
 					System.out.println(cfg.toString());
 				}
 			}

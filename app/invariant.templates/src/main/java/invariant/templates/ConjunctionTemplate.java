@@ -3,9 +3,9 @@ package invariant.templates;
 import java.util.ArrayList;
 import java.util.List;
 
-import invariant.templates.onefeature.OnePrimIlpTemplate;
-import invariant.templates.threefeatures.ThreePrimIlpTemplate;
-import invariant.templates.twofeatures.TwoPrimIlpTemplate;
+import invariant.templates.onefeature.OneNumIlpTemplate;
+import invariant.templates.threefeatures.ThreeNumIlpTemplate;
+import invariant.templates.twofeatures.TwoNumIlpTemplate;
 import sav.strategies.dto.execute.value.ExecValue;
 
 public class ConjunctionTemplate extends CompositeTemplate {
@@ -30,9 +30,9 @@ public class ConjunctionTemplate extends CompositeTemplate {
 		
 		List<List<ExecValue>> failExecValuesList2 = t2.getFailExecValuesList();
 		
-		if (t2 instanceof OnePrimIlpTemplate ||
-				t2 instanceof TwoPrimIlpTemplate ||
-				t2 instanceof ThreePrimIlpTemplate) {
+		if (t2 instanceof OneNumIlpTemplate ||
+				t2 instanceof TwoNumIlpTemplate ||
+				t2 instanceof ThreeNumIlpTemplate) {
 			List<List<ExecValue>> newFailExecValuesList2 = new ArrayList<List<ExecValue>>();
 			for (int i = 0; i < failExecValuesList2.size(); i++) {
 				if (notSatisfiedIndex.contains(i)) {

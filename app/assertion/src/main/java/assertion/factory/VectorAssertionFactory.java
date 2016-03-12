@@ -8,9 +8,15 @@ import japa.parser.ast.expr.BinaryExpr;
 import japa.parser.ast.expr.Expression;
 import japa.parser.ast.expr.MethodCallExpr;
 import japa.parser.ast.stmt.AssertStmt;
+import mutation.mutator.VariableSubstitution;
+import sav.common.core.utils.CollectionUtils;
 
 public class VectorAssertionFactory extends ListAssertionFactory {
 
+	public VectorAssertionFactory(VariableSubstitution subst) {
+		super(subst);
+	}
+	
 	// containsAll, firstElement, lastElement, setSize
 	// elementAt, removeElementAt, insertElementAt, setElementAt,
 	// indexOf, lastIndexOf, toArray 
@@ -24,7 +30,7 @@ public class VectorAssertionFactory extends ListAssertionFactory {
 			Expression coll = n.getArgs().get(0);
 			
 			// coll != null
-			al.add(Utility.createNeqNullAssertion(coll));
+			CollectionUtils.addIfNotNull(al, Utility.createNeqNullAssertion(coll));
 		}
 		
 		else if (methodName.equals("firstElement") || methodName.equals("lastElement"))
@@ -32,7 +38,7 @@ public class VectorAssertionFactory extends ListAssertionFactory {
 			Expression size = new MethodCallExpr(n.getScope(), "size");
 			
 			// size > 0
-			al.add(Utility.createGtZeroAssertion(size));
+			CollectionUtils.addIfNotNull(al, Utility.createGtZeroAssertion(size));
 		}
 		
 		else if (methodName.equals("setSize"))
@@ -40,7 +46,7 @@ public class VectorAssertionFactory extends ListAssertionFactory {
 			Expression size = n.getArgs().get(0);
 			
 			// size >= 0
-			al.add(Utility.createGteZeroAssertion(size));
+			CollectionUtils.addIfNotNull(al, Utility.createGteZeroAssertion(size));
 		}
 		
 		else if (methodName.equals("elementAt") || methodName.equals("removeElementAt"))
@@ -49,9 +55,9 @@ public class VectorAssertionFactory extends ListAssertionFactory {
 			Expression size = new MethodCallExpr(n.getScope(), "size");
 			
 			// index >= 0
-			al.add(Utility.createGteZeroAssertion(index));
+			CollectionUtils.addIfNotNull(al, Utility.createGteZeroAssertion(index));
 			// index < size
-			al.add(Utility.createAssertion(index, size, BinaryExpr.Operator.less));
+			CollectionUtils.addIfNotNull(al, Utility.createAssertion(index, size, BinaryExpr.Operator.less));
 		}
 		
 		else if (methodName.equals("insertElementAt"))
@@ -60,9 +66,9 @@ public class VectorAssertionFactory extends ListAssertionFactory {
 			Expression size = new MethodCallExpr(n.getScope(), "size");
 			
 			// index >= 0
-			al.add(Utility.createGteZeroAssertion(index));
+			CollectionUtils.addIfNotNull(al, Utility.createGteZeroAssertion(index));
 			// index <= size
-			al.add(Utility.createAssertion(index, size, BinaryExpr.Operator.lessEquals));
+			CollectionUtils.addIfNotNull(al, Utility.createAssertion(index, size, BinaryExpr.Operator.lessEquals));
 		}
 		
 		else if (methodName.equals("setElementAt"))
@@ -71,9 +77,9 @@ public class VectorAssertionFactory extends ListAssertionFactory {
 			Expression size = new MethodCallExpr(n.getScope(), "size");
 			
 			// index >= 0
-			al.add(Utility.createGteZeroAssertion(index));
+			CollectionUtils.addIfNotNull(al, Utility.createGteZeroAssertion(index));
 			// index < size
-			al.add(Utility.createAssertion(index, size, BinaryExpr.Operator.less));
+			CollectionUtils.addIfNotNull(al, Utility.createAssertion(index, size, BinaryExpr.Operator.less));
 		}
 		
 		else if (methodName.equals("indexOf") && n.getArgs().size() == 2)
@@ -81,7 +87,7 @@ public class VectorAssertionFactory extends ListAssertionFactory {
 			Expression index = n.getArgs().get(1);
 			
 			// index >= 0
-			al.add(Utility.createGteZeroAssertion(index));
+			CollectionUtils.addIfNotNull(al, Utility.createGteZeroAssertion(index));
 		}
 		
 		else if (methodName.equals("lastIndexOf") && n.getArgs().size() == 2)
@@ -90,7 +96,7 @@ public class VectorAssertionFactory extends ListAssertionFactory {
 			Expression size = new MethodCallExpr(n.getScope(), "size");
 			
 			// index < size
-			al.add(Utility.createAssertion(index, size, BinaryExpr.Operator.less));
+			CollectionUtils.addIfNotNull(al, Utility.createAssertion(index, size, BinaryExpr.Operator.less));
 		}
 		
 		else if (methodName.equals("toArray") && n.getArgs().size() == 1)
@@ -98,7 +104,7 @@ public class VectorAssertionFactory extends ListAssertionFactory {
 			Expression arr = n.getArgs().get(0);
 			
 			// arr != null
-			al.add(Utility.createNeqNullAssertion(arr));
+			CollectionUtils.addIfNotNull(al, Utility.createNeqNullAssertion(arr));
 		}
 		
 		else

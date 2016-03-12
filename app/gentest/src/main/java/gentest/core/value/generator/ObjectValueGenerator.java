@@ -56,7 +56,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 			}
 			// validate the generated variable by executing it
 			rtExecutor.reset(variable.getFirstVarId());
-			rtExecutor.start(null);
+			// rtExecutor.start(null);
 			if (rtExecutor.execute(variable)) {
 				break;
 			} else {

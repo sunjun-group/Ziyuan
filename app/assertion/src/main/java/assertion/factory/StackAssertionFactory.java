@@ -7,9 +7,15 @@ import assertion.utility.Utility;
 import japa.parser.ast.expr.Expression;
 import japa.parser.ast.expr.MethodCallExpr;
 import japa.parser.ast.stmt.AssertStmt;
+import mutation.mutator.VariableSubstitution;
+import sav.common.core.utils.CollectionUtils;
 
 public class StackAssertionFactory extends VectorAssertionFactory {
 
+	public StackAssertionFactory(VariableSubstitution subst) {
+		super(subst);
+	}
+	
 	// peek, pop
 	public List<AssertStmt> createAssertion(MethodCallExpr n) {
 		List<AssertStmt> al = new ArrayList<AssertStmt>();
@@ -21,7 +27,7 @@ public class StackAssertionFactory extends VectorAssertionFactory {
 			Expression size = new MethodCallExpr(n.getScope(), "size");
 			
 			// size > 0
-			al.add(Utility.createGtZeroAssertion(size));
+			CollectionUtils.addIfNotNull(al, Utility.createGtZeroAssertion(size));
 		}
 		
 		else

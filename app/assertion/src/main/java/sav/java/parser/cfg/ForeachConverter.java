@@ -10,6 +10,13 @@ package sav.java.parser.cfg;
 
 import static sav.java.parser.cfg.AstUtils.markNodeAsFake;
 import static sav.java.parser.cfg.AstUtils.markNodesAsFake;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
 import japa.parser.ast.Node;
@@ -20,14 +27,10 @@ import japa.parser.ast.stmt.ExpressionStmt;
 import japa.parser.ast.stmt.ForStmt;
 import japa.parser.ast.stmt.ForeachStmt;
 import japa.parser.ast.stmt.Statement;
+import japa.parser.ast.type.PrimitiveType;
+import japa.parser.ast.type.Type;
+import japa.parser.ast.type.PrimitiveType.Primitive;
 import japa.parser.ast.visitor.CloneVisitor;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
 
@@ -86,8 +89,34 @@ public class ForeachConverter {
 
 	private static List<Expression> newIteratorInitExpr(ForeachStmt n,
 			VariableDeclarationExpr varDecl) {
+		Type t = varDecl.getType();
+		String st = "";
+		
+		if (t instanceof PrimitiveType) {
+			PrimitiveType pt = (PrimitiveType) t;
+			if (pt.getType() == Primitive.Boolean) {
+				st = "Boolean";
+			} else if (pt.getType() == Primitive.Byte) {
+				st = "Byte";
+			} else if (pt.getType() == Primitive.Char) {
+				st = "Character";
+			} else if (pt.getType() == Primitive.Double) {
+				st = "Double";
+			} else if (pt.getType() == Primitive.Float) {
+				st = "Float";
+			} else if (pt.getType() == Primitive.Int) {
+				st = "Integer";
+			} else if (pt.getType() == Primitive.Long) {
+				st = "Long";
+			} else if (pt.getType() == Primitive.Short) {
+				st = "Short";
+			}
+		} else {
+			st = t.toString();
+		}
+		
 		String initExpr = String.format("Iterator<%s> tempIt = %s.iterator()",
-				varDecl.getType(), n.getIterable());
+				st, n.getIterable());
 		List<Expression> fakeInit = CollectionUtils.listOf(newExpression(initExpr,
 				varDecl));
 		return fakeInit;

@@ -19,7 +19,7 @@ public enum SystemVariables {
 	//SLICE_BKP_VAR_INHERIT: values([empty], BACKWARD, FORWARD);
 	SLICE_BKP_VAR_INHERIT("slicing.collected.vars.inherit", ""),
 	FAULT_LOCATE_USE_SLICE("fault.localization.use.slice", "true"),
-	FAULT_LOCATE_SPECTRUM_ALGORITHM("fault.localization.spectrum.algorithm", "TARANTULA")
+	FAULT_LOCATE_SPECTRUM_ALGORITHM("fault.localization.spectrum.algorithm", "OCHIAI")
 	;
 	private String name;
 	private String defValue;

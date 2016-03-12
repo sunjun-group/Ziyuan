@@ -7,8 +7,8 @@ import sav.strategies.dto.execute.value.ExecValue;
 
 public class OneFeatureTemplate extends SingleTemplate {
 
-	public OneFeatureTemplate(List<List<ExecValue>> passExecValuesList, List<List<ExecValue>> failExecValuesList) {
-		super(passExecValuesList, failExecValuesList);
+	public OneFeatureTemplate(List<List<ExecValue>> passValues, List<List<ExecValue>> failValues) {
+		super(passValues, failValues);
 	}
 	
 }

@@ -6,6 +6,19 @@ import org.junit.Test;
 public class MachineSimpleTests extends TestUltility{
 
 	@Test
+	public void whenThereAreMyOneFeatures() {
+		long startTime = System.currentTimeMillis();
+		
+		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("MyTwoFeatures.txt");
+		runTest(new Machine(), 2, inputStream);
+		// checkLastDividerFound(new double[]{-2, -3, -15});
+		
+		long endTime = System.currentTimeMillis();
+		
+		System.out.println(endTime - startTime);
+	}
+	
+	@Test
 	public void whenThereAreMyTwoFeatures() {
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("MyTwoFeatures.txt");
 		runTest(new Machine(), 2, inputStream);

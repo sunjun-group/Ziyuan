@@ -8,10 +8,10 @@
 
 package sav.strategies.dto.execute.value;
 
-import sav.common.core.utils.Assert;
-
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.Value;
+
+import sav.common.core.utils.Assert;
 
 /**
  * @author LLT
@@ -32,26 +32,30 @@ public class ArrayValue extends ReferenceValue {
 	}
 
 	private void setSum(double sum) {
-		add(new PrimitiveValue(getChildId(SUM_CODE), String.valueOf(sum)));
+		// add(new PrimitiveValue(getChildId(SUM_CODE), String.valueOf(sum)));
+		add(new DoubleValue(getChildId(SUM_CODE), sum));
 	}
 	
 	private void setMax(double max) {
-		add(new PrimitiveValue(getChildId(MAX_CODE), String.valueOf(max)));
+		// add(new PrimitiveValue(getChildId(MAX_CODE), String.valueOf(max)));
+		add(new DoubleValue(getChildId(MAX_CODE), max));
 	}
 
 	private void setMin(double min) {
-		add(new PrimitiveValue(getChildId(MIN_CODE), String.valueOf(min)));
+		// add(new PrimitiveValue(getChildId(MIN_CODE), String.valueOf(min)));
+		add(new DoubleValue(getChildId(MIN_CODE), min));
 	}
 
 	private void setLength(int length) {
-		add(new PrimitiveValue(getChildId(LENGTH_CODE), String.valueOf(length)));
+		// add(new PrimitiveValue(getChildId(LENGTH_CODE), String.valueOf(length)));
+		add(new IntegerValue(getChildId(LENGTH_CODE), length));
 	}
 
 	public void setValue(final ArrayReference ar) {
 		Assert.assertTrue(ar != null,
 				"Value of ArrayReference is null, in this case, initialize execValue using ReferenceValue.nullValue instead!");
 		final int arrayLength = ar.length();
-//		setLength(arrayLength);
+		setLength(arrayLength);
 		double sum = 0.0;
 		double min = Double.MAX_VALUE;
 		double max = Double.MIN_VALUE;

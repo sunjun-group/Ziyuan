@@ -15,6 +15,13 @@ package sav.strategies.dto.execute.value;
 public enum ExecVarType {
 	REFERENCE,
 	BOOLEAN,
+	INTEGER,
+	BYTE,
+	CHAR,
+	DOUBLE,
+	FLOAT,
+	LONG,
+	SHORT,
 	STRING,
 	PRIMITIVE,
 	ARRAY

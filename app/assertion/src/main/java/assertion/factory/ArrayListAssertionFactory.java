@@ -8,8 +8,14 @@ import japa.parser.ast.expr.BinaryExpr;
 import japa.parser.ast.expr.Expression;
 import japa.parser.ast.expr.MethodCallExpr;
 import japa.parser.ast.stmt.AssertStmt;
+import mutation.mutator.VariableSubstitution;
+import sav.common.core.utils.CollectionUtils;
 
 public class ArrayListAssertionFactory extends ListAssertionFactory {
+	
+	public ArrayListAssertionFactory(VariableSubstitution subst) {
+		super(subst);
+	}
 	
 	// removeRange
 	public List<AssertStmt> createAssertion(MethodCallExpr n) {
@@ -24,13 +30,13 @@ public class ArrayListAssertionFactory extends ListAssertionFactory {
 			Expression size = new MethodCallExpr(n.getScope(), "size");
 			
 			// from >= 0
-			al.add(Utility.createGteZeroAssertion(fromIndex));
+			CollectionUtils.addIfNotNull(al, Utility.createGteZeroAssertion(fromIndex));
 			// from < size
-			al.add(Utility.createAssertion(fromIndex, size, BinaryExpr.Operator.less));
+			CollectionUtils.addIfNotNull(al, Utility.createAssertion(fromIndex, size, BinaryExpr.Operator.less));
 			// to <= size
-			al.add(Utility.createAssertion(toIndex, size, BinaryExpr.Operator.lessEquals));
+			CollectionUtils.addIfNotNull(al, Utility.createAssertion(toIndex, size, BinaryExpr.Operator.lessEquals));
 			// from <= to
-			al.add(Utility.createAssertion(fromIndex, toIndex, BinaryExpr.Operator.lessEquals));
+			CollectionUtils.addIfNotNull(al, Utility.createAssertion(fromIndex, toIndex, BinaryExpr.Operator.lessEquals));
 		}
 		
 		else

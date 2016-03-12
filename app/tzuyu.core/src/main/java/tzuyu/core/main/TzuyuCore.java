@@ -60,7 +60,7 @@ import gentest.junit.TestsPrinter;
  *
  */
 public class TzuyuCore {
-	protected static Logger log = LoggerFactory.getLogger(FaultLocalization.class);
+	protected static Logger log = LoggerFactory.getLogger(TzuyuCore.class);
 	protected IApplicationContext appContext;
 	protected MutanBug mutanbug;
 	
@@ -142,7 +142,7 @@ public class TzuyuCore {
 			log.warn("No suspect line to learn. SVM will not run.");
 		} else {
 			AppJavaClassPath appClasspath = appContext.getAppData();
-			filter(suspectLocations, appClasspath .getSrc());
+			filter(suspectLocations, appClasspath.getSrc());
 			if (log.isDebugEnabled()) {
 				log.debug("before grouping: ");
 				log.debug(StringUtils.join(suspectLocations, "\n"));
@@ -169,6 +169,7 @@ public class TzuyuCore {
 				log.debug("after grouping & processing: ");
 				log.debug(StringUtils.join(debugLines, "\n"));
 			}
+			
 			LearnInvariants learnInvariant = new LearnInvariants(appClasspath, params);
 			List<BkpInvariantResult> invariants = learnInvariant.learn(new ArrayList<BreakPoint>(debugLines), 
 										junitClassNames, appClasspath.getSrc());
@@ -339,8 +340,5 @@ public class TzuyuCore {
 		}
 		return mutanbug;
 	}
-	
-	public void genAssertion(AssertionGenerationParams params) throws Exception {
-		
-	}
+
 }

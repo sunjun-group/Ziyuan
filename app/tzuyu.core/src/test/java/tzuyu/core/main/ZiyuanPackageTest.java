@@ -55,8 +55,6 @@ public class ZiyuanPackageTest extends AbstractTzPackageTest {
 	@Test
 	public void testjavaparser46() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("javaparser", "46");
-		params.setRankToExamine(3);
-		params.setValueRetrieveLevel(2);
 		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
 		runFaultLocate(testPkg);
 	}
@@ -70,10 +68,9 @@ public class ZiyuanPackageTest extends AbstractTzPackageTest {
 	public void testjavaparser57() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("javaparser", "57");
 		params.setRankToExamine(2);
-		params.setRunMutation(false);
-		params.setMachineLearningEnable(true);
 		runFaultLocate(testPkg);
 	}
+	
 	
 	@Test
 	public void countLocJavaParser57() throws Exception {
@@ -83,6 +80,7 @@ public class ZiyuanPackageTest extends AbstractTzPackageTest {
 		params.setMachineLearningEnable(true);
 		runFaultLocate(testPkg);
 	}
+	
 	
 	@Test
 	public void testjavaparser69() throws Exception {
@@ -127,33 +125,22 @@ public class ZiyuanPackageTest extends AbstractTzPackageTest {
 	@Test
 	public void testjodatime227() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("joda-time", "227");
-		params.setRankToExamine(3);
 		params.setValueRetrieveLevel(4);
 		params.setUseSlicer(false);
-		params.setRunMutation(false);
-		params.setMachineLearningEnable(true);
 		runFaultLocate(testPkg);
 	}
 	
 	@Test
 	public void testjodatime21() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("joda-time", "21");
-		params.setRankToExamine(3);
-		params.setValueRetrieveLevel(3);
 		params.setUseSlicer(false);
-		params.setRunMutation(false);
-		params.setMachineLearningEnable(true);
 		runFaultLocate(testPkg);
 	}
 	
 	@Test
 	public void testjodatime77() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("joda-time", "77");
-		params.setRankToExamine(3);
-		params.setValueRetrieveLevel(3);
 		params.setUseSlicer(false);
-		params.setRunMutation(false);
-		params.setMachineLearningEnable(true);
 		runFaultLocate(testPkg);
 	}
 	
@@ -179,9 +166,8 @@ public class ZiyuanPackageTest extends AbstractTzPackageTest {
 	@Test
 	public void testDiffUtils10() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("java-diff-utils", "10");
-		params.setRankToExamine(3);
 		params.setValueRetrieveLevel(2);
-		params.setGroupLines(true);
+//		params.setGroupLines(true);
 //		params.setRunMutation(true);
 		runFaultLocate(testPkg);
 	}
@@ -221,14 +207,12 @@ public class ZiyuanPackageTest extends AbstractTzPackageTest {
 	@Test
 	public void testCommonsMath1196() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "1196");
-		params.setRankToExamine(3);
 		runFaultLocate(testPkg);
 	}
 	
 	@Test
 	public void testCommonsMath835() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "835");
-		params.setRankToExamine(3);
 		runFaultLocate(testPkg);
 	}
 	
@@ -242,13 +226,159 @@ public class ZiyuanPackageTest extends AbstractTzPackageTest {
 	@Test
 	public void testCommonsMath1005() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "1005");
-		params.setRankToExamine(3);
 		runFaultLocate(testPkg);
 	}
 	
 	@Test
 	public void testCommonsMath1141() throws Exception {
 		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "1141");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsMath1230() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "1230");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsMath1231() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "1231");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsMath1232() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "1232");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsMath1232b() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "1232b");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsMath1233() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "1233");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsMath1234() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "1234");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsMath1234b() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "1234b");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsPrimitives100() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-primitives", "100");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsPrimitives100b() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-primitives", "100b");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsPrimitives101() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-primitives", "101");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsPrimitives102() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-primitives", "102");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsCollections100() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-collections", "100");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsCollections100b() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-collections", "100b");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsCollections101() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-collections", "101");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsCollections101b() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-collections", "101b");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testCommonsCollections102() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-collections", "102");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testTimeAndMoney100() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("time-money", "100");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testTimeAndMoney101() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("time-money", "101");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testTimeAndMoney101b() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("time-money", "101b");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testTimeAndMoney102() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("time-money", "102");
+		params.setRankToExamine(3);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testTimeAndMoney103() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("time-money", "103");
 		params.setRankToExamine(3);
 		runFaultLocate(testPkg);
 	}

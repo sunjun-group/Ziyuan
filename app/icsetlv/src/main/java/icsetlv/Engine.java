@@ -78,8 +78,8 @@ public class Engine {
 
 	public static Machine getDefaultMachine() {
 //		final Machine machine = new PositiveSeparationMachine(new RandomNegativePointSelection());
-//		Machine machine = new FeatureSelectionMachine();
-		Machine machine = new Machine();
+		Machine machine = new FeatureSelectionMachine();
+//		Machine machine = new Machine();
 		machine.setDefaultParams();
 		return machine;
 	}

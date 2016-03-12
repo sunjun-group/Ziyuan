@@ -3,14 +3,17 @@ package assertion.template.checker;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import invariant.templates.CompositeTemplate;
 import invariant.templates.ConjunctionTemplate;
 import invariant.templates.DisjunctionTemplate;
 import invariant.templates.SingleTemplate;
 import invariant.templates.Template;
-import invariant.templates.onefeature.OnePrimIlpTemplate;
-import invariant.templates.threefeatures.ThreePrimIlpTemplate;
-import invariant.templates.twofeatures.TwoPrimIlpTemplate;
+import invariant.templates.onefeature.OneNumIlpTemplate;
+import invariant.templates.threefeatures.ThreeNumIlpTemplate;
+import invariant.templates.twofeatures.TwoNumIlpTemplate;
 import libsvm.svm_model;
 import libsvm.core.Category;
 import libsvm.core.Divider;
@@ -24,16 +27,20 @@ import sav.strategies.dto.execute.value.ExecValue;
 
 public class CompositeTemplateChecker {
 
-	private List<Template> satifiedPassTemplates;
+	private List<Template> satisfiedPassTemplates;
 	
-	private List<Template> satifiedFailTemplates;
+	private List<Template> satisfiedFailTemplates;
 
 	private List<Template> compositeTemplates;
 	
+	private static Logger log = LoggerFactory.getLogger(CompositeTemplateChecker.class);
+	
+// 	private boolean needCombine;
+	
 	public CompositeTemplateChecker(List<Template> satifiedPassTemplates,
 			List<Template> satifiedFailTemplates) {
-		this.satifiedPassTemplates = satifiedPassTemplates;
-		this.satifiedFailTemplates = satifiedFailTemplates;
+		this.satisfiedPassTemplates = satifiedPassTemplates;
+		this.satisfiedFailTemplates = satifiedFailTemplates;
 		compositeTemplates = new ArrayList<Template>();
 	}
 	
@@ -43,23 +50,36 @@ public class CompositeTemplateChecker {
 	
 	public void checkCompositeTemplates() {
 		checkConjunction();
-		// checkDisjunction();
+		checkDisjunction();
 	}
 	
+//	public void setCombine(boolean b) {
+//		needCombine = b;
+//	}
+	
 	private void checkConjunction() {
-		int size = satifiedPassTemplates.size();
+		int size = satisfiedPassTemplates.size();
 		
-		for (int i = 0; i < size - 1; i++) {
-			for (int j = i + 1; j < size; j++) {
-				Template t1 = satifiedPassTemplates.get(i);
-				Template t2 = satifiedPassTemplates.get(j);
-				
-				if (!(t1 instanceof OnePrimIlpTemplate) &&
-						!(t1 instanceof TwoPrimIlpTemplate) &&
-						!(t1 instanceof ThreePrimIlpTemplate)) {
-					CompositeTemplate ct = new ConjunctionTemplate();
-					ct.addTemplates(t1, t2);
-					if (ct.check()) compositeTemplates.add(ct);
+//		if (size >= 2 && needCombine) { 
+		if (size >= 2) {	
+			for (int i = 0; i < size; i++) {
+				for (int j = 0; j < size; j++) {
+					 if (i != j) {
+						Template t1 = satisfiedPassTemplates.get(i);
+						Template t2 = satisfiedPassTemplates.get(j);
+						
+						if (!(t1 instanceof OneNumIlpTemplate) &&
+								!(t1 instanceof TwoNumIlpTemplate) &&
+								!(t1 instanceof ThreeNumIlpTemplate)) {
+							CompositeTemplate ct = new ConjunctionTemplate();
+							ct.addTemplates(t1, t2);
+							try {
+								if (ct.check()) compositeTemplates.add(ct);
+							} catch (IndexOutOfBoundsException e) {
+								log.info("The number of data is not the same\n");
+							}
+						}
+					 }
 				}
 			}
 		}
@@ -67,14 +87,42 @@ public class CompositeTemplateChecker {
 		checkIlpConjunction();
 	}
 	
+	private void checkDisjunction() {
+		int size = satisfiedFailTemplates.size();
+		
+//		if (size >= 2 && needCombine) {
+		if (size >= 2) {
+			for (int i = 0; i < size; i++) {
+				for (int j = 0; j < size; j++) {
+					if (i != j) {
+						Template t1 = satisfiedFailTemplates.get(i);
+						Template t2 = satisfiedFailTemplates.get(j);
+						
+						if (!(t1 instanceof OneNumIlpTemplate) &&
+								!(t1 instanceof TwoNumIlpTemplate) &&
+								!(t1 instanceof ThreeNumIlpTemplate)) {
+							CompositeTemplate ct = new DisjunctionTemplate();
+							ct.addTemplates(t1, t2);
+							try {
+								if (ct.check()) compositeTemplates.add(ct);
+							} catch (IndexOutOfBoundsException e) {
+								log.info("The number of data is not the same\n");
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	private void checkIlpConjunction() {
-		int size = satifiedPassTemplates.size();
+		int size = satisfiedPassTemplates.size();
 		
 		for (int i = 0; i < size; i++) {
-			SingleTemplate t = (SingleTemplate) satifiedPassTemplates.get(i);
-			if (t instanceof OnePrimIlpTemplate ||
-					t instanceof TwoPrimIlpTemplate ||
-					t instanceof ThreePrimIlpTemplate) {
+			SingleTemplate t = (SingleTemplate) satisfiedPassTemplates.get(i);
+			if (t instanceof OneNumIlpTemplate ||
+					t instanceof TwoNumIlpTemplate ||
+					t instanceof ThreeNumIlpTemplate) {
 				Machine m = t.getMultiCutMachine();
 			
 				List<List<ExecValue>> passExecValuesList = t.getPassExecValuesList();
@@ -148,7 +196,7 @@ public class CompositeTemplateChecker {
 		addValues(newPassExecValuesList, t.getPassExecValuesList(), id1);
 		addValues(newFailExecValuesList, t.getFailExecValuesList(), id1);
 
-		OnePrimIlpTemplate st = new OnePrimIlpTemplate(newPassExecValuesList, newFailExecValuesList);
+		OneNumIlpTemplate st = new OneNumIlpTemplate(newPassExecValuesList, newFailExecValuesList);
 		
 		st.setA(lia.getMVFOExpr().get(0).getCoefficient());
 		st.setB(lia.getConstant());
@@ -166,7 +214,7 @@ public class CompositeTemplateChecker {
 		addValues(newPassExecValuesList, t.getPassExecValuesList(), id1, id2);
 		addValues(newFailExecValuesList, t.getFailExecValuesList(), id1, id2);
 		
-		TwoPrimIlpTemplate st = new TwoPrimIlpTemplate(newPassExecValuesList, newFailExecValuesList);
+		TwoNumIlpTemplate st = new TwoNumIlpTemplate(newPassExecValuesList, newFailExecValuesList);
 		
 		st.setA(lia.getMVFOExpr().get(0).getCoefficient());
 		st.setB(lia.getMVFOExpr().get(1).getCoefficient());
@@ -186,7 +234,7 @@ public class CompositeTemplateChecker {
 		addValues(newPassExecValuesList, t.getPassExecValuesList(), id1, id2, id3);
 		addValues(newFailExecValuesList, t.getFailExecValuesList(), id1, id2, id3);
 		
-		ThreePrimIlpTemplate st = new ThreePrimIlpTemplate(newPassExecValuesList, newFailExecValuesList);
+		ThreeNumIlpTemplate st = new ThreeNumIlpTemplate(newPassExecValuesList, newFailExecValuesList);
 		
 		st.setA(lia.getMVFOExpr().get(0).getCoefficient());
 		st.setB(lia.getMVFOExpr().get(1).getCoefficient());

@@ -5,8 +5,9 @@ import java.util.*;
 public class TestInput {
 	
 	public int foo(int a, int b) {
-		int r = a + b;
-		return 1 / r; 
+		Scanner sc = new Scanner("");
+		sc.useRadix(10);
+		return 1;
 	}
 	
 	public static void main(String[] args) {

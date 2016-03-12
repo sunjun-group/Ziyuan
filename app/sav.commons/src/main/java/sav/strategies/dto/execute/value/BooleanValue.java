@@ -29,6 +29,10 @@ public class BooleanValue extends PrimitiveValue {
 		}
 	}
 	
+	public boolean getBooleanVal() {
+		return value;
+	}
+	
 	public static BooleanValue of(String id, boolean value) {
 		return new BooleanValue(id, value);
 	}
@@ -37,4 +41,5 @@ public class BooleanValue extends PrimitiveValue {
 	public ExecVarType getType() {
 		return ExecVarType.BOOLEAN;
 	}
+	
 }
