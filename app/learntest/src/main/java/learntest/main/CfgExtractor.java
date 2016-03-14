@@ -1,4 +1,4 @@
-package learntest;
+package learntest.main;
 
 import java.io.File;
 
