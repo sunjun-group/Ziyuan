@@ -217,7 +217,7 @@ public class ProgramExecutor extends Executor{
 			}
 			
 			if(trace.getLastestNode() != null){
-				if(trace.getLastestNode().getOrder() == 218){
+				if(trace.getLastestNode().getOrder() == 0){
 					System.currentTimeMillis();
 				}
 			}
@@ -485,7 +485,7 @@ public class ProgramExecutor extends Executor{
 							
 							if(invokedMethodBinding.getParameterTypes().length !=0){
 								parseWrittenParameterVariableForMethodInvocation(frame, declaringType, methodLine, 
-										paramList, node);
+										paramList, prevNode);
 							}
 							
 							methodSignatureStack.push(invokedMethodSig);
