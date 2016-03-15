@@ -18,7 +18,6 @@ import icsetlv.variable.DebugValueExtractor;
 import icsetlv.variable.JunitDebugger;
 import learntest.data.BreakPointDataBuilder;
 import learntest.data.BreakpointData;
-import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
@@ -89,7 +88,11 @@ public class MyTestcasesExecutor extends JunitDebugger {
 		List<BreakpointData> result = new ArrayList<BreakpointData>();
 		for (BreakPoint bkp : bkps) {
 			BreakpointData bkpData = bkpDataMap.get(bkp.getId());
-			bkpData.setBkp(bkp);
+			if (bkpData != null) {
+				bkpData.setBkp(bkp);
+			} else {
+				bkpData = new BreakpointData(bkp);
+			}			
 			result.add(bkpData);
 		}
 		return result;

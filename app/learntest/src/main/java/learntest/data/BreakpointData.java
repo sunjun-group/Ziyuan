@@ -16,6 +16,24 @@ public class BreakpointData {
 	private List<BreakpointValue> trueValues;
 	private List<BreakpointValue> falseValues;
 	
+	public BreakpointData(BreakPoint bkp){
+		this();
+		this.bkp = bkp;
+	}
+	
+	public BreakpointData(){
+		trueValues = new ArrayList<BreakpointValue>();
+		falseValues = new ArrayList<BreakpointValue>();
+	}
+	
+	public void addTrueValue(BreakpointValue bkpValue) {
+		trueValues.add(bkpValue);
+	}
+	
+	public void addFalseValue(BreakpointValue bkpValue) {
+		falseValues.add(bkpValue);
+	}
+	
 	public BreakPoint getBkp() {
 		return bkp;
 	}
@@ -70,6 +88,6 @@ public class BreakpointData {
 	public String toString() {
 		return "BreakpointData (" + bkp + "), \ntrueValues=" + trueValues
 				+ ", \nfalseValues=" + falseValues + "]";
-	}	
+	}
 	
 }
