@@ -38,14 +38,12 @@ public class MyTestcasesExecutor extends JunitDebugger {
 	private StopTimer timer = new StopTimer("TestcasesExecutor");
 	private long timeout = DEFAULT_TIMEOUT;
 	
-	public MyTestcasesExecutor(int valRetrieveLevel, BreakPointDataBuilder builder) {
+	public MyTestcasesExecutor(int valRetrieveLevel) {
 		this.valRetrieveLevel = valRetrieveLevel;
-		this.builder = builder;
 	}
 	
-	public MyTestcasesExecutor(DebugValueExtractor valueExtractor, BreakPointDataBuilder builder) {
+	public MyTestcasesExecutor(DebugValueExtractor valueExtractor) {
 		setValueExtractor(valueExtractor);
-		this.builder = builder;
 	}
 	
 	@Override
@@ -156,6 +154,10 @@ public class MyTestcasesExecutor extends JunitDebugger {
 		if (valueExtractor != null) {
 			valueExtractor.setValRetrieveLevel(valRetrieveLevel);
 		}
+	}
+	
+	public void setBuilder(BreakPointDataBuilder builder) {
+		this.builder = builder;
 	}
 	
 	public BreakPointDataBuilder getBuilder() {
