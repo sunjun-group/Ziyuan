@@ -87,11 +87,9 @@ public class MyTestcasesExecutor extends JunitDebugger {
 		for (BreakPoint bkp : bkps) {
 			BreakpointData bkpData = bkpDataMap.get(bkp.getId());
 			if (bkpData != null) {
-				bkpData.setBkp(bkp);
-			} else {
-				bkpData = new BreakpointData(bkp);
-			}			
-			result.add(bkpData);
+				bkpData.setBkp(bkp);			
+				result.add(bkpData);
+			}
 		}
 		return result;
 	}

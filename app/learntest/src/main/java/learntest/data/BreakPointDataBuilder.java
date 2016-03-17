@@ -24,10 +24,14 @@ public class BreakPointDataBuilder {
 					bkpData = new BreakpointData();
 					bkpDataMap.put(bkpValue.getBkpId(), bkpData);
 				}
-				BreakpointValue selection = testResult.get(i + 1);
-				if (selection.getBkpId().equals(trueBkpId)) {
-					bkpData.addTrueValue(bkpValue);
-				}else {
+				if (i < size - 1) {
+					BreakpointValue selection = testResult.get(i + 1);
+					if (selection.getBkpId().equals(trueBkpId)) {
+						bkpData.addTrueValue(bkpValue);
+					}else {
+						bkpData.addFalseValue(bkpValue);
+					}
+				} else {
 					bkpData.addFalseValue(bkpValue);
 				}
 			}

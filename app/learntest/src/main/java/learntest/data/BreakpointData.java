@@ -87,7 +87,7 @@ public class BreakpointData {
 	@Override
 	public String toString() {
 		return "BreakpointData (" + bkp + "), \ntrueValues=" + trueValues
-				+ ", \nfalseValues=" + falseValues + "]";
+				+ ", \nfalseValues=" + falseValues + "]\n";
 	}
 	
 }
