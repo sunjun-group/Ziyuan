@@ -26,9 +26,14 @@ public class CfgDecisionNode implements CfgNode {
 		return astNode.getBeginLine();
 	}
 
+//	@Override
+//	public String toString() {
+//		return getBeginLine() + "\t" + AstUtils.toString(getAstNode()) + "? : " + getTrueBeginLine();
+//	}
+	
 	@Override
 	public String toString() {
-		return getBeginLine() + "\t" + AstUtils.toString(getAstNode()) + "? : " + getTrueBeginLine();
+		return  AstUtils.toString(getAstNode()) + "? ";
 	}
 
 	public int getTrueBeginLine() {
