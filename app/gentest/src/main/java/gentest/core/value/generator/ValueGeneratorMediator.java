@@ -55,6 +55,7 @@ public class ValueGeneratorMediator {
 				.getVariableByType(type);
 		boolean selectFromCache = Randomness
 				.weighedCoinFlip(calculateProbToGetValFromCache(candidatesInCache.size()));
+		selectFromCache = false;
 		if (selectFromCache) {
 			/* trying to lookup in cache */
 			variable = Randomness.randomMember(candidatesInCache);

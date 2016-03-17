@@ -78,6 +78,8 @@ public class TestUltility {
 		
 		LOGGER.info("Learned logic:");
 		LOGGER.info(machine.getLearnedLogic(false));
+		
+		System.out.println("\n\n" + machine.getLearnedLogic(true));
 	}
 	
 	protected void checkLastDividerFound(double[] expectedCoefficients) {

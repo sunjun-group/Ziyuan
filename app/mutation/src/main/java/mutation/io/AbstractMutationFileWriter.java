@@ -69,6 +69,7 @@ public class AbstractMutationFileWriter {
 	}
 
 	protected int getMappedColIdx(char[] chars, int javaParserCol, int startIdx, int startPos) {
+//		System.out.println(chars);
 		int pos = startPos;
 		for (int i = startIdx; i < chars.length; i++) {
 			char ch = chars[i];
@@ -84,9 +85,10 @@ public class AbstractMutationFileWriter {
 		if (pos == javaParserCol) {
 			return chars.length;
 		}
-		throw new SavRtException(
-				StringUtils.spaceJoin("cannot map column index between inputStream and javaparser, line = ",
-						String.valueOf(chars), ", column=", javaParserCol));
+		return chars.length;
+//		throw new SavRtException(
+//				StringUtils.spaceJoin("cannot map column index between inputStream and javaparser, line = ",
+//						String.valueOf(chars), ", column=", javaParserCol));
 	}
 	
 	/**

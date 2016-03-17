@@ -11,9 +11,15 @@ import japa.parser.ast.expr.MethodCallExpr;
 import japa.parser.ast.stmt.AssertStmt;
 import japa.parser.ast.type.PrimitiveType;
 import japa.parser.ast.type.Type;
+import mutation.mutator.VariableSubstitution;
+import sav.common.core.utils.CollectionUtils;
 
 public class ListAssertionFactory extends ObjectAssertionFactory {
 
+	public ListAssertionFactory(VariableSubstitution subst) {
+		super(subst);
+	}
+	
 	// get, set, listIterator, subList
 	// add, addAll
 	public List<AssertStmt> createAssertion(MethodCallExpr n) {
@@ -28,9 +34,9 @@ public class ListAssertionFactory extends ObjectAssertionFactory {
 			Expression size = new MethodCallExpr(n.getScope(), "size");
 			
 			// index >= 0
-			al.add(Utility.createGteZeroAssertion(index));
+			CollectionUtils.addIfNotNull(al, Utility.createGteZeroAssertion(index));
 			// index < size()
-			al.add(Utility.createAssertion(index, size, BinaryExpr.Operator.less));
+			CollectionUtils.addIfNotNull(al, Utility.createAssertion(index, size, BinaryExpr.Operator.less));
 		}
 		
 		else if (methodName.equals("listIterator"))
@@ -39,9 +45,9 @@ public class ListAssertionFactory extends ObjectAssertionFactory {
 			Expression size = new MethodCallExpr(n.getScope(), "size");
 			
 			// index >= 0
-			al.add(Utility.createGteZeroAssertion(index));
+			CollectionUtils.addIfNotNull(al, Utility.createGteZeroAssertion(index));
 			// index <= size()
-			al.add(Utility.createAssertion(index, size, BinaryExpr.Operator.lessEquals));
+			CollectionUtils.addIfNotNull(al, Utility.createAssertion(index, size, BinaryExpr.Operator.lessEquals));
 		}
 		
 		else if (methodName.equals("subList"))
@@ -51,11 +57,11 @@ public class ListAssertionFactory extends ObjectAssertionFactory {
 			Expression size = new MethodCallExpr(n.getScope(), "size");
 			
 			// from >= 0
-			al.add(Utility.createGteZeroAssertion(fromIndex));
+			CollectionUtils.addIfNotNull(al, Utility.createGteZeroAssertion(fromIndex));
 			// to <= size
-			al.add(Utility.createAssertion(toIndex, size, BinaryExpr.Operator.lessEquals));
+			CollectionUtils.addIfNotNull(al, Utility.createAssertion(toIndex, size, BinaryExpr.Operator.lessEquals));
 			// from <= to
-			al.add(Utility.createAssertion(fromIndex, toIndex, BinaryExpr.Operator.lessEquals));
+			CollectionUtils.addIfNotNull(al, Utility.createAssertion(fromIndex, toIndex, BinaryExpr.Operator.lessEquals));
 		}
 		
 		else if (methodName.equals("add") && n.getArgs().size() == 2)
@@ -64,9 +70,9 @@ public class ListAssertionFactory extends ObjectAssertionFactory {
 			Expression size = new MethodCallExpr(n.getScope(), "size");
 			
 			// index >= 0
-			al.add(Utility.createGteZeroAssertion(index));
+			CollectionUtils.addIfNotNull(al, Utility.createGteZeroAssertion(index));
 			// index <= size()
-			al.add(Utility.createAssertion(index, size, BinaryExpr.Operator.lessEquals));
+			CollectionUtils.addIfNotNull(al, Utility.createAssertion(index, size, BinaryExpr.Operator.lessEquals));
 		}
 		
 		else if (methodName.equals("addAll") && n.getArgs().size() == 1)
@@ -74,7 +80,7 @@ public class ListAssertionFactory extends ObjectAssertionFactory {
 			Expression coll = n.getArgs().get(0);
 			
 			// coll != null
-			al.add(Utility.createNeqNullAssertion(coll));
+			CollectionUtils.addIfNotNull(al, Utility.createNeqNullAssertion(coll));
 		}
 		
 		else if (methodName.equals("addAll") && n.getArgs().size() == 2)
@@ -84,11 +90,11 @@ public class ListAssertionFactory extends ObjectAssertionFactory {
 			Expression size = new MethodCallExpr(n.getScope(), "size");
 			
 			// index >= 0
-			al.add(Utility.createGteZeroAssertion(index));
+			CollectionUtils.addIfNotNull(al, Utility.createGteZeroAssertion(index));
 			// index <= size()
-			al.add(Utility.createAssertion(index, size, BinaryExpr.Operator.lessEquals));
+			CollectionUtils.addIfNotNull(al, Utility.createAssertion(index, size, BinaryExpr.Operator.lessEquals));
 			// coll != null
-			al.add(Utility.createNeqNullAssertion(coll));
+			CollectionUtils.addIfNotNull(al, Utility.createNeqNullAssertion(coll));
 		}
 		
 		else

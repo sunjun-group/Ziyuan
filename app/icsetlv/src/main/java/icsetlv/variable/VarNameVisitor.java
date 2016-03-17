@@ -118,6 +118,12 @@ public class VarNameVisitor extends DefaultVoidVisitor {
 	}
 	
 	@Override
+	public boolean handleNode(ThisExpr n) {
+		add(n.getBeginLine(), new Variable("this"));
+		return false;
+	}
+	
+	@Override
 	public boolean handleNode(VariableDeclaratorId n) {
 		add(n.getBeginLine(), new Variable(n.getName()));
 		return false;

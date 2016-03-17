@@ -59,11 +59,20 @@ public class ArrayValueGenerator extends ValueGenerator {
 	}
 
 	private int selectArraySize() {
+		int size = Randomness
+				.nextInt(GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH);
+		if (size < 0) {
+			return DEFAULT_ARRAY_SIZE;
+		} else {
+			return size;
+		}
+		/*
 		if (DEFAULT_ARRAY_SIZE >= 0) {
 			return DEFAULT_ARRAY_SIZE;
 		}
 		return Randomness
 				.nextInt(GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH);
+		*/
 	}
 	
 	private IType getLastContentType() {

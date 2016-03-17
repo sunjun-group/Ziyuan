@@ -134,6 +134,7 @@ public class VMRunner {
 				log.debug(cmd);
 			}
 		}
+		
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
 		try {
 			process = processBuilder.start();

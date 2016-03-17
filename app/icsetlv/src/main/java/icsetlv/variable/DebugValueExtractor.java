@@ -8,10 +8,6 @@
 
 package icsetlv.variable;
 
-import icsetlv.DefaultValues;
-import icsetlv.common.dto.BreakpointValue;
-import icsetlv.common.utils.PrimitiveUtils;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +20,44 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ArrayReference;
+import com.sun.jdi.ArrayType;
+import com.sun.jdi.BooleanType;
+import com.sun.jdi.BooleanValue;
+import com.sun.jdi.ByteType;
+import com.sun.jdi.ByteValue;
+import com.sun.jdi.CharType;
+import com.sun.jdi.CharValue;
+import com.sun.jdi.ClassType;
+import com.sun.jdi.DoubleType;
+import com.sun.jdi.DoubleValue;
+import com.sun.jdi.Field;
+import com.sun.jdi.FloatType;
+import com.sun.jdi.FloatValue;
+import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.IntegerType;
+import com.sun.jdi.IntegerValue;
+import com.sun.jdi.LocalVariable;
+import com.sun.jdi.Location;
+import com.sun.jdi.LongType;
+import com.sun.jdi.LongValue;
+import com.sun.jdi.Method;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.PrimitiveType;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ShortType;
+import com.sun.jdi.ShortValue;
+import com.sun.jdi.StackFrame;
+import com.sun.jdi.StringReference;
+import com.sun.jdi.ThreadReference;
+import com.sun.jdi.Type;
+import com.sun.jdi.Value;
+import com.sun.jdi.event.BreakpointEvent;
+
+import icsetlv.DefaultValues;
+import icsetlv.common.dto.BreakpointValue;
+import icsetlv.common.utils.PrimitiveUtils;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.strategies.dto.BreakPoint;
@@ -34,27 +68,6 @@ import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.PrimitiveValue;
 import sav.strategies.dto.execute.value.ReferenceValue;
 import sav.strategies.dto.execute.value.StringValue;
-
-import com.sun.jdi.AbsentInformationException;
-import com.sun.jdi.ArrayReference;
-import com.sun.jdi.ArrayType;
-import com.sun.jdi.BooleanType;
-import com.sun.jdi.BooleanValue;
-import com.sun.jdi.ClassType;
-import com.sun.jdi.Field;
-import com.sun.jdi.IncompatibleThreadStateException;
-import com.sun.jdi.LocalVariable;
-import com.sun.jdi.Location;
-import com.sun.jdi.Method;
-import com.sun.jdi.ObjectReference;
-import com.sun.jdi.PrimitiveType;
-import com.sun.jdi.ReferenceType;
-import com.sun.jdi.StackFrame;
-import com.sun.jdi.StringReference;
-import com.sun.jdi.ThreadReference;
-import com.sun.jdi.Type;
-import com.sun.jdi.Value;
-import com.sun.jdi.event.BreakpointEvent;
 
 /**
  * @author LLT
@@ -122,30 +135,72 @@ public class DebugValueExtractor {
 					JdiParam param = null;
 					if (match != null) {
 						param = recursiveMatch(frame, match, bpVar.getFullName());
-					} else {
-						// Then check class fields (static & non static)
-						Field matchedField = null;
-						for (Field field : allFields) {
-							if (field.name().equals(bpVar.getParentName())) {
-								matchedField = field;
-								break;
+					}
+					// to get variables such as Class.FIELD
+					// in case full name == simple name, it is local variable
+					else if (!bpVar.getSimpleName().equals(bpVar.getFullName()) &&
+							bpVar.getSimpleName().charAt(0) >= 'A' && bpVar.getSimpleName().charAt(0) <= 'Z') {
+						ClassLoader loader = bkp.getClass().getClassLoader();
+						String className = bkp.getClassCanonicalName();
+						String packageName = className.substring(0, className.lastIndexOf('.')); 
+						try {
+							Class<?> cl = loader.loadClass(packageName + "." + bpVar.getParentName());
+							Class<?> fl = cl.getField(bpVar.getSimpleName()).getType();
+							
+							if (fl.equals(int.class) || fl.equals(Integer.class)) {
+								int value = cl.getField(bpVar.getSimpleName()).getInt(null);
+								bkVal.add(sav.strategies.dto.execute.value.IntegerValue.of(bpVar.getFullName(), value));
 							}
-						}
-
-						if (matchedField != null) {
-							if (matchedField.isStatic()) {
-								param = JdiParam.staticField(matchedField, refType, refType.getValue(matchedField));
-							} else {
-								Value value = objRef == null ? null : objRef.getValue(matchedField);
-								param = JdiParam.nonStaticField(matchedField, objRef, value);
-							}
-							if (param.getValue() != null && !matchedField.name().equals(bpVar.getFullName())) {
-								param = recursiveMatch(param, extractSubProperty(bpVar.getFullName()));
-							}
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							// log.info(e.getMessage());
 						}
 					}
+					
+					// because it seems we need field information even that field is not accessed explicitly
+					// try to get all field, will be modified later (Long)
+//					else {
+//						// Then check class fields (static & non static)
+//						Field matchedField = null;
+//						for (Field field : allFields) {
+//							if (field.name().equals(bpVar.getParentName())) {
+//								matchedField = field;
+//								break;
+//							}
+//						}
+//
+//						if (matchedField != null) {
+//							if (matchedField.isStatic()) {
+//								param = JdiParam.staticField(matchedField, refType, refType.getValue(matchedField));
+//							} else {
+//								Value value = objRef == null ? null : objRef.getValue(matchedField);
+//								param = JdiParam.nonStaticField(matchedField, objRef, value);
+//							}
+//							if (param.getValue() != null && !matchedField.name().equals(bpVar.getFullName())) {
+//								param = recursiveMatch(param, extractSubProperty(bpVar.getFullName()));
+//							}
+//						}
+//					}
+					
 					if (param != null) {
 						allVariables.put(bpVar, param);
+					}
+				}
+				
+				// this code is added to get all fields of this object
+				for (Field field : allFields) {
+					boolean isConstant = (field.isStatic() && field.isFinal()) || field.isEnumConstant();
+					if (!isConstant) {
+						if (field.isStatic()) {
+							Variable bpVar = new Variable(field.name(), field.name(), VarScope.THIS);
+							JdiParam param = JdiParam.staticField(field, refType, refType.getValue(field));
+							allVariables.put(bpVar, param);
+						} else {
+							Variable bpVar = new Variable(field.name(), field.name(), VarScope.THIS);
+							Value value = objRef == null ? null : objRef.getValue(field);
+							JdiParam param = JdiParam.nonStaticField(field, objRef, value);
+							allVariables.put(bpVar, param);
+						}
 					}
 				}
 
@@ -268,15 +323,58 @@ public class DebugValueExtractor {
 			/* TODO LLT: add Primitive type && refactor */
 			if (type instanceof BooleanType) {
 				parent.add(sav.strategies.dto.execute.value.BooleanValue.of(varId, ((BooleanValue)value).booleanValue()));
+			} else if (type instanceof ByteType) {
+				parent.add(sav.strategies.dto.execute.value.ByteValue.of(varId, ((ByteValue)value).byteValue()));
+			} else if (type instanceof CharType) {
+				parent.add(sav.strategies.dto.execute.value.CharValue.of(varId, ((CharValue)value).charValue()));
+			} else if (type instanceof DoubleType) {
+				parent.add(sav.strategies.dto.execute.value.DoubleValue.of(varId, ((DoubleValue)value).doubleValue()));
+			} else if (type instanceof FloatType) {
+				parent.add(sav.strategies.dto.execute.value.FloatValue.of(varId, ((FloatValue)value).floatValue()));
+			} else if (type instanceof IntegerType) {
+				parent.add(sav.strategies.dto.execute.value.IntegerValue.of(varId, ((IntegerValue)value).intValue()));
+			} else if (type instanceof LongType) {
+				parent.add(sav.strategies.dto.execute.value.LongValue.of(varId, ((LongValue)value).longValue()));
+			} else if (type instanceof ShortType) {
+				parent.add(sav.strategies.dto.execute.value.ShortValue.of(varId, ((ShortValue)value).shortValue()));
 			} else {
 				parent.add(new PrimitiveValue(varId, value.toString()));
 			}
 		} else if (type instanceof ArrayType) {
 			appendArrVarVal(parent, varId, (ArrayReference)value, level, thread);
 		} else if (type instanceof ClassType) {
-			if (PrimitiveUtils.isString(type.name())) {
-				parent.add(new StringValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread)));
-			} else if (PrimitiveUtils.isPrimitiveType(type.name())) {
+			String typeName = type.name();
+			
+			if (PrimitiveUtils.isString(typeName)) {
+				appendStringVarVal(parent, varId, (ObjectReference) value, level, thread);
+				// parent.add(new StringValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread)));
+			} else if (PrimitiveUtils.isBoolean(typeName)) {
+				parent.add(new sav.strategies.dto.execute.value.BooleanValue(
+						varId, Boolean.parseBoolean(toPrimitiveValue((ClassType) type, (ObjectReference)value, thread))));
+			} else if (PrimitiveUtils.isByte(typeName)) {
+				parent.add(new sav.strategies.dto.execute.value.ByteValue(
+						varId, Byte.parseByte(toPrimitiveValue((ClassType) type, (ObjectReference)value, thread))));
+			} else if (PrimitiveUtils.isChar(typeName)) {
+				parent.add(new sav.strategies.dto.execute.value.CharValue(
+						varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread).charAt(0)));
+			} else if (PrimitiveUtils.isDouble(typeName)) {
+				parent.add(new sav.strategies.dto.execute.value.DoubleValue(
+						varId, Double.parseDouble(toPrimitiveValue((ClassType) type, (ObjectReference)value, thread))));
+			} else if (PrimitiveUtils.isFloat(typeName)) {
+				parent.add(new sav.strategies.dto.execute.value.FloatValue(
+						varId, Float.parseFloat(toPrimitiveValue((ClassType) type, (ObjectReference)value, thread))));
+			} else if (PrimitiveUtils.isInteger(typeName)) {
+				String s = toPrimitiveValue((ClassType) type, (ObjectReference)value, thread);
+				if (s.contains("\"")) s = s.substring(1, s.length() - 1);
+				parent.add(new sav.strategies.dto.execute.value.IntegerValue(
+						varId, Integer.parseInt(s)));
+			} else if (PrimitiveUtils.isLong(typeName)) {
+				parent.add(new sav.strategies.dto.execute.value.LongValue(
+						varId, Long.parseLong(toPrimitiveValue((ClassType) type, (ObjectReference)value, thread))));
+			} else if (PrimitiveUtils.isShort(typeName)) {
+				parent.add(new sav.strategies.dto.execute.value.ShortValue(
+						varId, Short.parseShort(toPrimitiveValue((ClassType) type, (ObjectReference)value, thread))));
+			} else if (PrimitiveUtils.isPrimitiveType(typeName)) {
 				parent.add(new PrimitiveValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread)));
 			} else {
 				appendClassVarVal(parent, varId, (ObjectReference) value, level, thread);
@@ -298,7 +396,6 @@ public class DebugValueExtractor {
 							new ArrayList<Value>(),
 							ObjectReference.INVOKE_SINGLE_THREADED);
 					return toStringValue.toString();
-					
 				}
 			} catch (Exception e) {
 				// ignore.
@@ -319,10 +416,34 @@ public class DebugValueExtractor {
 		ClassType type = (ClassType) value.type();
 		Map<Field, Value> fieldValueMap = value.getValues(type.allFields());
 		for (Field field : type.allFields()) {
-			appendVarVal(val, val.getChildId(field.name()),
-					fieldValueMap.get(field), level, thread);
+			boolean isConstant = (field.isStatic() && field.isFinal()) || field.isEnumConstant();
+			if (!isConstant && !field.name().equals("hash")) {
+				appendVarVal(val, val.getChildId(field.name()),
+						fieldValueMap.get(field), level, thread);
+			}
 		}
 		parent.add(val);
+	}
+	
+	private void appendStringVarVal(ExecValue parent, String varId,
+			ObjectReference value, int level, ThreadReference thread) {
+		ReferenceValue val = new ReferenceValue(varId, false);
+		ClassType type = (ClassType) value.type();
+		Map<Field, Value> fieldValueMap = value.getValues(type.allFields());
+		for (Field field : type.allFields()) {
+			boolean isConstant = (field.isStatic() && field.isFinal()) || field.isEnumConstant();
+			if (!isConstant && !field.name().equals("hash")) {
+				appendVarVal(val, val.getChildId(field.name()),
+						fieldValueMap.get(field), level, thread);
+			}
+		}
+		parent.add(val);
+		
+//		ReferenceValue val1 = new ReferenceValue(varId, false);
+//		ReferenceValue val2 = new ReferenceValue(varId + ".value", false);
+//		val2.add(new StringValue(varId + ".value", toPrimitiveValue((ClassType) value.type(), (ObjectReference)value, thread)));
+//		parent.add(val1);
+//		parent.add(val2);
 	}
 
 	private void appendArrVarVal(ExecValue parent, String varId,
@@ -330,9 +451,9 @@ public class DebugValueExtractor {
 		ArrayValue val = new ArrayValue(varId);
 		val.setValue(value);
 		//add value of elements
-		for (int i = 0; i < value.length() && i < MAX_ARRAY_ELEMENT_TO_COLLECT; i++) {
-			appendVarVal(val, val.getElementId(i), getArrayEleValue(value, i), level, thread);
-		}
+//		for (int i = 0; i < value.length() && i < MAX_ARRAY_ELEMENT_TO_COLLECT; i++) {
+//			appendVarVal(val, val.getElementId(i), getArrayEleValue(value, i), level, thread);
+//		}
 		parent.add(val);
 	}
 	/***/

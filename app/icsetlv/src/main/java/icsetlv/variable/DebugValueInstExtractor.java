@@ -8,14 +8,8 @@
 
 package icsetlv.variable;
 
-import icsetlv.common.dto.BreakpointValue;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import sav.common.core.ModuleEnum;
-import sav.common.core.SavException;
-import sav.strategies.dto.BreakPoint.Variable;
 
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.IncompatibleThreadStateException;
@@ -24,6 +18,11 @@ import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
+
+import icsetlv.common.dto.BreakpointValue;
+import sav.common.core.ModuleEnum;
+import sav.common.core.SavException;
+import sav.strategies.dto.BreakPoint.Variable;
 
 /**
  * @author LLT
@@ -146,6 +145,12 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 		VirtualMachine vm = thread.virtualMachine();
 		if (newVal instanceof Integer) {
 			return vm.mirrorOf((Integer) newVal);
+		}
+		if (newVal instanceof Long) {
+			return vm.mirrorOf((Long) newVal);
+		}
+		if (newVal instanceof Float) {
+			return vm.mirrorOf((Float) newVal);
 		}
 		if (newVal instanceof Boolean) {
 			return vm.mirrorOf((Boolean) newVal);

@@ -7,8 +7,14 @@ import assertion.utility.Utility;
 import japa.parser.ast.expr.Expression;
 import japa.parser.ast.expr.MethodCallExpr;
 import japa.parser.ast.stmt.AssertStmt;
+import mutation.mutator.VariableSubstitution;
+import sav.common.core.utils.CollectionUtils;
 
 public class LinkedListAssertionFactory extends ListAssertionFactory {
+	
+	public LinkedListAssertionFactory(VariableSubstitution subst) {
+		super(subst);
+	}
 	
 	// getFirst, getLast, pop, removeFirst, removeLast
 	public List<AssertStmt> createAssertion(MethodCallExpr n) {
@@ -22,7 +28,7 @@ public class LinkedListAssertionFactory extends ListAssertionFactory {
 			Expression size = new MethodCallExpr(n.getScope(), "size");
 			
 			// size > 0
-			al.add(Utility.createGtZeroAssertion(size));
+			CollectionUtils.addIfNotNull(al, Utility.createGtZeroAssertion(size));
 		}
 		
 		else

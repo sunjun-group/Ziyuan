@@ -39,7 +39,7 @@ import sav.commons.testdata.autogeneration.FindMaxWrapper1;
  */
 public class GentestForTestdataRunner extends AbstractGTTest {
 
-//	@Test
+	@Test
 	public void testBoundedStack() throws SavException {
 		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(100);
 		builder.queryMaxLength(7)
@@ -57,37 +57,37 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 		printTc(builder, FindMaxUtils.class);
 	}
 	
-//	@Test
+	@Test
 	public void testFindMaxArrayNumber() throws Exception {
 		generateTestcase(FindMaxArrayNumber.class);
 	}
 	
-////	@Test
+	@Test
 	public void testFindMaxWrapper1() throws SavException {
 		generateTestcase(FindMaxWrapper1.class);
 	}
 	
-//	@Test
+	@Test
 	public void testFindMaxCompositionArray() throws SavException {
 		generateTestcase(FindMaxCompositionArray.class); 
 	}
 	
-//	@Test
+	@Test
 	public void testFindMaxStatic() throws SavException {
 		generateTestcase(FindMaxStatic.class); 
 	}
 	
-//	@Test
+	@Test
 	public void testFindMaxString() throws SavException {
 		generateTestcase(FindMaxString.class); 
 	}
 	
-//	@Test
+	@Test
 	public void testFindMaxComplexMap() throws SavException {
 		generateTestcase(FindMaxComplexMap.class); 
 	}
 	
-//	@Test
+	@Test
 	public void testFindMaxMap() throws SavException {
 		generateTestcase(FindMaxMap.class); 
 	}
@@ -102,12 +102,12 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 		generateTestcase(FindMaxList2D.class); 
 	}
 	
-////	@Test
+	@Test
 	public void testFindMaxWrapper() throws SavException {
 		generateTestcase(FindMaxWrapper.class); 
 	}
 	
-//	@Test
+	@Test
 	public void testFindMaxSet() throws SavException {
 		generateTestcase(FindMaxSet.class);
 	}
@@ -117,22 +117,22 @@ public class GentestForTestdataRunner extends AbstractGTTest {
 		generateTestcase(FindMaxList.class);
 	}
 	
-//	@Test
+	@Test
 	public void testFindMaxNums() throws SavException {
 		generateTestcase(FindMaxNums.class);
 	}
 	
-//	@Test
+	@Test
 	public void testFindMax() throws SavException {
 		generateTestcase(FindMaxList.class);
 	}
 	
-//	@Test
+	@Test
 	public void testFindMaxArray() throws SavException {
 		generateTestcase(FindMaxArray.class);
 	}
 	
-//	@Test
+	@Test
 	public void testFindMaxArray2D() throws SavException {
 		generateTestcase(FindMaxArray2D.class);
 	}

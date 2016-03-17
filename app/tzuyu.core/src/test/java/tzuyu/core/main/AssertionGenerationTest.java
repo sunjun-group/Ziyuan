@@ -12,17 +12,20 @@ import sav.common.core.SystemVariablesUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.commons.testdata.assertion.ArrayAssertionTest;
 import sav.commons.testdata.assertion.CompositeAssertionTest;
+import sav.commons.testdata.assertion.NeqAssertionTest;
 import sav.commons.testdata.assertion.MultipleAssertionsTest;
 import sav.commons.testdata.assertion.MultipleMethodsTest;
-import sav.commons.testdata.assertion.PrimitiveAssertionTest;
+import sav.commons.testdata.assertion.PrimitiveAssertion;
 import sav.commons.testdata.assertion.StackAssertionTest;
 
-public class AssertionGenerationTest extends TzuyuCoreTest {
+public class AssertionGenerationTest extends AbstractTzTest {
 
+	AssertionGeneration app;
+	
 	@Before
 	public void setup() throws Exception {
 		String jarPath = SystemVariablesUtils.updateSavJunitJarPath(appData);
-		testContext.getAppData().addClasspath(jarPath);
+		appData.addClasspath(jarPath);
 		app = new AssertionGeneration(testContext);
 		svm.svm_set_print_string_function(new svm_print_interface() {
 
@@ -33,29 +36,50 @@ public class AssertionGenerationTest extends TzuyuCoreTest {
 			}
 		});
 	}
-
+	
 	@Test
 	public void test1() throws Exception {
-		AssertionGenerationParams params = initAssertionGenerationParams(PrimitiveAssertionTest.class.getName(), "foo",
-				null, CollectionUtils.listOf("sav.commons.testdata.assertion"), new ArrayList<String>(), false);
+		long startTime = System.currentTimeMillis();
+		
+		List<String> junitClassNames = new ArrayList<String>();
+		// junitClassNames.add("sav.commons.testdata.assertion.PrimitiveAssertionTest");
+		
+		AssertionGenerationParams params = initAssertionGenerationParams(PrimitiveAssertion.class.getName(), "foo",
+				null, CollectionUtils.listOf("sav.commons.testdata.assertion"), junitClassNames, false);
 
 		app.genAssertion(params);
+		
+		long endTime = System.currentTimeMillis();
+	
+		System.out.println(endTime - startTime);
 	}
 
 	@Test
 	public void test2() throws Exception {
+		long startTime = System.currentTimeMillis();
+		
 		AssertionGenerationParams params = initAssertionGenerationParams(StackAssertionTest.class.getName(), "foo",
 				null, CollectionUtils.listOf("sav.commons.testdata.assertion"), new ArrayList<String>(), false);
 
 		app.genAssertion(params);
+		
+		long endTime = System.currentTimeMillis();
+		
+		System.out.println(endTime - startTime);
 	}
 
 	@Test
 	public void test3() throws Exception {
+		long startTime = System.currentTimeMillis();
+		
 		AssertionGenerationParams params = initAssertionGenerationParams(ArrayAssertionTest.class.getName(), "foo",
 				null, CollectionUtils.listOf("sav.commons.testdata.assertion"), new ArrayList<String>(), false);
 
 		app.genAssertion(params);
+		
+		long endTime = System.currentTimeMillis();
+		
+		System.out.println(endTime - startTime);
 	}
 
 	@Test
@@ -87,6 +111,14 @@ public class AssertionGenerationTest extends TzuyuCoreTest {
 		app.genAssertion(params);
 	}
 
+	@Test
+	public void test7() throws Exception {
+		AssertionGenerationParams params = initAssertionGenerationParams(NeqAssertionTest.class.getName(), "foo",
+				null, CollectionUtils.listOf("sav.commons.testdata.assertion"), new ArrayList<String>(), false);
+
+		app.genAssertion(params);
+	}
+	
 	private AssertionGenerationParams initAssertionGenerationParams(String testingClassName, String methodName,
 			String verificationMethod, List<String> testingPackages, List<String> junitClassNames, boolean useSlicer) {
 		AssertionGenerationParams params = new AssertionGenerationParams();
@@ -101,7 +133,7 @@ public class AssertionGenerationTest extends TzuyuCoreTest {
 		params.setRunMutation(false);
 		params.setMachineLearningEnable(true);
 		params.setValueRetrieveLevel(3);
-		params.setNumberOfTestCases(50);
+		params.setNumberOfTestCases(10);
 		params.setRankToExamine(0);
 
 		return params;

@@ -91,7 +91,7 @@ public class IlpSolver extends ExpressionVisitor {
 			LIAAtom atom = atoms.get(0);
 			LIATerm term = atom.getMVFOExpr().get(0);
 			double value = atom.getConstant() / term.getCoefficient();
-			Eq<Number> assign = new Eq<Number>(term.getVariable(), (int)value);
+			Eq<Number> assign = new Eq<Number>(term.getVariable(), (int) value);
 			addAssignments(CollectionUtils.<Eq<?>>listOf(assign));
 		}
 		return false;

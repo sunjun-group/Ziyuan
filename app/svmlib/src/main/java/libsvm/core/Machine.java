@@ -235,7 +235,7 @@ public class Machine {
 
 		this.data = cleanUp(data);
 		if (getNumberOfFeatures() <= 0) {
-			LOGGER.warn("The feature list is empty. SVM will not run.");
+//			LOGGER.warn("The feature list is empty. SVM will not run.");
 			return this;
 		}
 
@@ -265,8 +265,10 @@ public class Machine {
 
 		for (int i = 0; i < length; i++) {
 			final DataPoint point = dataPoints.get(i);
-			problem.y[i] = point.getCategory().intValue();
-			problem.x[i] = point.getSvmNode();
+			if (point != null) {
+				problem.y[i] = point.getCategory().intValue();
+				problem.x[i] = point.getSvmNode();
+			}
 		}
 
 		model = performTrainingTask(problem, parameter);
@@ -326,7 +328,7 @@ public class Machine {
 				dp.values = cleanedValues;
 			}
 
-			LOGGER.info("Reduced feature size from " + originalSize + " to " + cleanedSize);
+//			LOGGER.info("Reduced feature size from " + originalSize + " to " + cleanedSize);
 		}
 
 		this.isDataClean = true;

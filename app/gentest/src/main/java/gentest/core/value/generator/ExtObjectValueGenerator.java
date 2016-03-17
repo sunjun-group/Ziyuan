@@ -87,7 +87,7 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 			throws SavException {
 		VariableRuntimeExecutor executor = getExecutor();
 		executor.reset(variable.getFirstVarId());
-		executor.start(null);
+		// executor.start(null);
 		executor.execute(variable);
 		// generate value for method call
 		for (Method method : methodcalls) {
@@ -100,7 +100,7 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 				// undo
 				variable.removeLastFragment();
 				executor.reset(variable.getFirstVarId());
-				executor.start(null);
+				// executor.start(null);
 				executor.execute(variable);
 			}
 		}

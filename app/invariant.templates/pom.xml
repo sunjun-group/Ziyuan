@@ -20,5 +20,9 @@
 			<groupId>tzuyu-project</groupId>
 			<artifactId>svmlib</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>mutation</artifactId>
+		</dependency>
 	</dependencies>
 </project>

@@ -1,0 +1,13 @@
+package sav.java.parser.cfg;
+
+public class MiniTest {
+
+	public int foo1(int i) {
+		for (i = 0; i < 10; i++) {
+			i++;
+		}
+		
+		return i;
+	}
+	
+}

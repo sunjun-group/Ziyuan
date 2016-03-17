@@ -36,7 +36,7 @@ public class PrimitiveValue extends ExecValue {
 	
 	@Override
 	public String toString() {
-		return String.format("(%s:%s)", varId, strVal);
+		return String.format("(%s:%s:%s)", varId, getType(), strVal);
 	}
 
 	@Override

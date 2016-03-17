@@ -56,7 +56,7 @@ public class JavaSlicer implements ISlicer {
 		timer = new StopTimer("Slicing");
 	}
 	
-	protected void init(AppJavaClassPath appClasspath) {
+	public void init(AppJavaClassPath appClasspath) {
 		if (sliceCollector == null) {
 			sliceCollector = new SliceBreakpointCollector();
 		}
@@ -104,11 +104,12 @@ public class JavaSlicer implements ISlicer {
 	 * 		-cp [project classpath + path of tzuyuSlicer.jar] sav.strategies.junit.JunitRunner
 	 * 		-methods [classMethods]
 	 */
-	protected String createTraceFile(List<String> junitClassMethods)
+	public String createTraceFile(List<String> junitClassMethods)
 			throws IOException, SavException, InterruptedException,
 			ClassNotFoundException {
-		log.info("Slicing-creating trace file...");
+		log.debug("Slicing-creating trace file...");
 		File tempFile = File.createTempFile(getTraceFileName(), ".trace");
+//		log.info(tempFile.toString());
 		String tempFileName = tempFile.getAbsolutePath();
 		/* run program and create trace file */
 		vmConfig.setLaunchClass(JunitRunner.class.getName());
@@ -124,12 +125,77 @@ public class JavaSlicer implements ISlicer {
 		return tempFileName;
 	}
 	
-	protected List<BreakPoint> sliceFromTraceFile(String traceFilePath, Collection<BreakPoint> bkps,
+	public TraceResult readTraceFile(String traceFilePath) {
+		log.debug("Slicing-slicing...");
+		log.debug("traceFilePath=", traceFilePath);
+		File traceFile = new File(traceFilePath);
+		TraceResult trace;
+		try {
+			timer.newPoint("read trace file");
+			trace = TraceResult.readFrom(traceFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		return trace;
+	}
+	
+	public List<BreakPoint> sliceFromTraceResult(TraceResult trace, Collection<BreakPoint> bkps,
 			List<String> junitClassMethods)
 			throws InterruptedException, SavException {
-		log.info("Slicing-slicing...");
+		List<SlicingCriterion> criteria = new ArrayList<SlicingCriterion>(bkps.size());
+		for (BreakPoint bkp : bkps) {
+			try {
+				SlicingCriterion criterion = SlicingCriterion.parse(
+						buildSlicingCriterionStr(bkp), trace.getReadClasses());
+				criteria.add(criterion);
+			} catch (IllegalArgumentException e) {
+				String classMethodStr = ClassUtils.toClassMethodStr(bkp.getClassCanonicalName(), bkp.getMethodName());
+				if (!junitClassMethods.contains(classMethodStr)) {
+					throw e;
+				} 
+				// ignore
+			}
+		}
+
+		List<ThreadId> threads = trace.getThreads();
+		if (threads.size() == 0) {
+			throw new SavException(ModuleEnum.SLICING, "trace.threads.size=0");
+		}
+
+		ThreadId tracing = null;
+		for (ThreadId t : threads) {
+			if ("main".equals(t.getThreadName())
+					&& (tracing == null || t.getJavaThreadId() < tracing
+							.getJavaThreadId()))
+				tracing = t;
+		}
+
+		if (tracing == null) {
+			log.error("Couldn't find the main thread.");
+			return new ArrayList<BreakPoint>();
+		}
+		Slicer slicer = new Slicer(trace);
+		slicer.addSliceVisitor(sliceCollector);
+		slicer.process(tracing, criteria, true);
+		log.debug("Read Slicing Result:");
+		List<BreakPoint> dynamicSlice = sliceCollector.getDynamicSlice();
+		if (log.isDebugEnabled()) {
+			log.debug("slicing-result:");
+			for (BreakPoint bkp : dynamicSlice) {
+				log.debug(bkp.getId());
+			}
+		}
+		return dynamicSlice;
+	}
+	
+	public List<BreakPoint> sliceFromTraceFile(String traceFilePath, Collection<BreakPoint> bkps,
+			List<String> junitClassMethods)
+			throws InterruptedException, SavException {
+		log.debug("Slicing-slicing...");
 		log.debug("traceFilePath=", traceFilePath);
-		log.info("entry points=", BreakpointUtils.getPrintStr(bkps));
+		log.debug("entry points=", BreakpointUtils.getPrintStr(bkps));
 		File traceFile = new File(traceFilePath);
 		TraceResult trace;
 		try {
