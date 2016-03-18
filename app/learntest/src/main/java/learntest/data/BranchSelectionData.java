@@ -8,20 +8,16 @@ import java.util.Set;
 import icsetlv.common.dto.BreakpointValue;
 import libsvm.core.Category;
 import libsvm.core.Machine.DataPoint;
-import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.ClassLocation;
 
-public class BreakpointData {
+public class BranchSelectionData {
 
-	private BreakPoint bkp;
+	private ClassLocation location;
 	private List<BreakpointValue> trueValues;
 	private List<BreakpointValue> falseValues;
 	
-	public BreakpointData(BreakPoint bkp){
-		this();
-		this.bkp = bkp;
-	}
-	
-	public BreakpointData(){
+	public BranchSelectionData(ClassLocation location){
+		this.location = location;
 		trueValues = new ArrayList<BreakpointValue>();
 		falseValues = new ArrayList<BreakpointValue>();
 	}
@@ -32,14 +28,14 @@ public class BreakpointData {
 	
 	public void addFalseValue(BreakpointValue bkpValue) {
 		falseValues.add(bkpValue);
+	}	
+
+	public ClassLocation getLocation() {
+		return location;
 	}
-	
-	public BreakPoint getBkp() {
-		return bkp;
-	}
-	
-	public void setBkp(BreakPoint bkp) {
-		this.bkp = bkp;
+
+	public void setLocation(ClassLocation location) {
+		this.location = location;
 	}
 	
 	public List<BreakpointValue> getTrueValues() {
@@ -86,7 +82,7 @@ public class BreakpointData {
 	
 	@Override
 	public String toString() {
-		return "BreakpointData (" + bkp + "), \ntrueValues=" + trueValues
+		return "BranchSelectionData (" + location + "), \ntrueValues=" + trueValues
 				+ ", \nfalseValues=" + falseValues + "]\n";
 	}
 	
