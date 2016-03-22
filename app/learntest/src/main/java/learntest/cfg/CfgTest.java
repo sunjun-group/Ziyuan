@@ -43,27 +43,27 @@ public class CfgTest {
 //		cfgFromStmt(code);
 //	}
 
-	@Test
-	public void whileToCfg() throws ParseException {
-		String code =
-				"while(i < 10){ "+
-				  "if(a > 0){ "+
-				   "while(j > 6){ "+
-				     "if(b < 2){ "+
-				      "while(k < 9){ "+
-				        "if(c == 0){ "+
-				          "break;"+
-				            "}" +
-				            "}"+
-				            "}"+
-				            "else if(b < 3){"+
-				            "break;"+
-				            "} else if(b < 4){continue;}else if(b < 5){}else{}"
-				            + "}"
-				            +"}"
-				            +"}";
-		cfgFromStmt(code);
-	}
+//	@Test
+//	public void whileToCfg() throws ParseException {
+//		String code =
+//				"while(i < 10){ "+
+//				  "if(a > 0){ "+
+//				   "while(j > 6){ "+
+//				     "if(b < 2){ "+
+//				      "while(k < 9){ "+
+//				        "if(c == 0){ "+
+//				          "break;"+
+//				            "}" +
+//				            "}"+
+//				            "}"+
+//				            "else if(b < 3){"+
+//				            "break;"+
+//				            "} else if(b < 4){continue;}else if(b < 5){}else{}"
+//				            + "}"
+//				            +"}"
+//				            +"}";
+//		cfgFromStmt(code);
+//	}
 
 
 
@@ -85,10 +85,66 @@ public class CfgTest {
 //	@Test
 //	public void whileToCfg() throws ParseException {
 //		String code =
-//				"while(i < 10){if (j < 20){break;} else if(j < 30){while(k < 3){}}else if(j < 40){}else{}}";
+//				"while(i < 10){x = x + 1 ;if (j < 20){break;} else if(j < 30){while(k < 3){}}else if(j < 40){}else{}}";
 //		cfgFromStmt(code);
 //	}
 	
+	
+//	@Test
+//	public void whileToCfg() throws ParseException {
+//		String code =
+//				"for(int i = 0 ; i < 10 ; i ++){if(j < 10){continue;} else if(j < 20){break;}}";
+//		cfgFromStmt(code);
+//	}
+	
+//	@Test
+//	public void foreachToCfg() throws ParseException {
+//		String str = 
+//					"for(int i = 0 ; i < 10 ; i ++){for (Var a : arr) {" +
+//					"	Type type = a.getType();" +
+//					"	if (type == null) {break;" +
+//					"	}" +
+//					"	System.out.println(type);" +		
+//				"}}";
+//		cfgFromStmt(str);	
+//	}
+	
+	@Test
+	public void labledToCfg() throws ParseException {
+		String str = 
+				" do{" +
+				"		while (i < 10 ) {" +
+				"			a.add(i);" +
+				"			if (a.size() == 1) {" +
+				"				continue;" +
+				"			}" +
+				"			if (a.size() == 2) {" +
+				"				continue;" +
+				"			}" +
+				"			if (a.size() == 3) {" +
+				"				executeWithASize3();" +
+				"			}" +
+				"			if (a.size() == 4) {" +
+				"				break;" +
+				"			}" +
+				"			if (a.size() == 5) {" +
+				"				break;" +
+				"			}" +
+				"		}" +
+				"} while(x > 0);";
+		cfgFromStmt(str);	
+	}
+	
+//	@Test
+//	public void labledToCfg() throws ParseException {
+//		String str = 
+//				"do {" +
+//			
+//				"			if (a.size() == 5) {}" +
+//
+//				"} while (x > 0);";
+//		cfgFromStmt(str);	
+//	}
 	
 	private void cfgFromStmt(String str) throws ParseException {
 		CfgCreator creator = new CfgCreator();
@@ -99,9 +155,9 @@ public class CfgTest {
 //		System.out.println(cfg.getInEdges(cfg.getVertices().get(i)));
 //		}
     	System.out.println(cfg.toString());
-//    	System.out.println(cfg.getVertices());
-//     	System.out.println(cfg.getExitInEdges());
-//    	System.out.println(cfg.getEntryOutEdges());
+    	System.out.println(cfg.getVertices());
+    	System.out.println(cfg.getExitInEdges());
+    	System.out.println(cfg.getEntryOutEdges());
 
 	}
 	
