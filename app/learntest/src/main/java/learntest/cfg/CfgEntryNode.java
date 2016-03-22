@@ -30,4 +30,10 @@ public class CfgEntryNode implements CfgNode {
 		return "entry";
 	}
 
+	@Override
+	public String getStmtType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

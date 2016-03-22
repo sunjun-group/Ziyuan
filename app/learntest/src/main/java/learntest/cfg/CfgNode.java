@@ -9,6 +9,8 @@ public interface CfgNode {
 	public Node getAstNode();
 	
 	public int getBeginLine();
+	
+	public String getStmtType();
 
 	public static enum Type {
 		ENTRY,

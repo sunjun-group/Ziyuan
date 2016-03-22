@@ -43,4 +43,10 @@ public class CfgExitNode implements CfgNode {
 	public void setStartLine(int startLine) {
 		this.beginLine = startLine;
 	}
+
+	@Override
+	public String getStmtType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
