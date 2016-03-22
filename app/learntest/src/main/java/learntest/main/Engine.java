@@ -19,7 +19,7 @@ import learntest.cfg.CFG;
 import learntest.cfg.CfgCreator;
 import learntest.cfg.CfgDecisionNode;
 import learntest.data.BranchSelectionDataBuilder;
-import learntest.testcase.TestcasesExecutorWithoutLoopTimes;
+import learntest.testcase.TestcasesExecutorwithoutLoopTimes;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.JunitUtils;
@@ -36,7 +36,7 @@ public class Engine {
 	private String className;
 	private String methodName;
 	private List<String> testcases = new ArrayList<String>();
-	private TestcasesExecutorWithoutLoopTimes tcExecutor;
+	private TestcasesExecutorwithoutLoopTimes tcExecutor;
 	private List<Variable> variables;
 	private CFG cfg;
 	private List<BreakPoint> breakPoints;
@@ -61,7 +61,7 @@ public class Engine {
 		this.testcases.addAll(testcases);
 	}
 
-	public void setTcExecutor(TestcasesExecutorWithoutLoopTimes tcExecutor) {
+	public void setTcExecutor(TestcasesExecutorwithoutLoopTimes tcExecutor) {
 		this.tcExecutor = tcExecutor;
 	}
 	
@@ -94,6 +94,7 @@ public class Engine {
 	public void run() throws ParseException, IOException, SavException {
 		//create cfg, bkps and builder
 		//createCFG();
+		//addEntryBreakpoint(bkp);
 		//createBkpsandBuilder();
 
 		//TODO generate test cases randomly
@@ -102,6 +103,7 @@ public class Engine {
 		ensureTcExecutor();
 		tcExecutor.setup(appClassPath, testcases);
 		tcExecutor.run(breakPoints);
+		tcExecutor.getResult();
 	}
 
 	public void createCFG() throws ParseException, IOException {
@@ -138,13 +140,18 @@ public class Engine {
 			bkps.add(trueBkp);
 			decisionList.add(new Pair<ClassLocation, BreakPoint>(decisionLocation, trueBkp));
 		}
-		breakPoints = new ArrayList<BreakPoint>(bkps);
+		if (breakPoints == null) {
+			breakPoints = new ArrayList<BreakPoint>();
+		}
+		for (BreakPoint bkp : bkps) {
+			breakPoints.add(bkp);
+		}
 		builder = new BranchSelectionDataBuilder(decisionList);
 	}
 
 	public void ensureTcExecutor() {
 		if (tcExecutor == null) {
-			tcExecutor = new TestcasesExecutorWithoutLoopTimes(DefaultValues.DEBUG_VALUE_RETRIEVE_LEVEL);
+			tcExecutor = new TestcasesExecutorwithoutLoopTimes(DefaultValues.DEBUG_VALUE_RETRIEVE_LEVEL);
 		}
 		tcExecutor.setBuilder(builder);
 	}	

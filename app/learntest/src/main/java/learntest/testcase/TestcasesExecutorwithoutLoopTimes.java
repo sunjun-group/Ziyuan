@@ -26,9 +26,9 @@ import sav.common.core.utils.StopTimer;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
 
-public class TestcasesExecutorWithoutLoopTimes extends JunitDebugger {
+public class TestcasesExecutorwithoutLoopTimes extends JunitDebugger {
 
-	private static Logger log = LoggerFactory.getLogger(TestcasesExecutorWithoutLoopTimes.class);	
+	private static Logger log = LoggerFactory.getLogger(TestcasesExecutorwithoutLoopTimes.class);	
 	private List<BranchSelectionData> result;
 	/* for internal purpose */
 	private Map<Integer, BreakpointValue> inputValuesByTestIdx;
@@ -38,14 +38,14 @@ public class TestcasesExecutorWithoutLoopTimes extends JunitDebugger {
 	private DebugValueExtractor valueExtractor;
 	private int valRetrieveLevel;
 	private BranchSelectionDataBuilder builder;
-	private StopTimer timer = new StopTimer("TestcasesExecutorWithoutLoopTimes");
+	private StopTimer timer = new StopTimer("TestcasesExecutorwithoutLoopTimes");
 	private long timeout = DEFAULT_TIMEOUT;
 	
-	public TestcasesExecutorWithoutLoopTimes(int valRetrieveLevel) {
+	public TestcasesExecutorwithoutLoopTimes(int valRetrieveLevel) {
 		this.valRetrieveLevel = valRetrieveLevel;
 	}
 	
-	public TestcasesExecutorWithoutLoopTimes(DebugValueExtractor valueExtractor) {
+	public TestcasesExecutorwithoutLoopTimes(DebugValueExtractor valueExtractor) {
 		setValueExtractor(valueExtractor);
 	}
 	
