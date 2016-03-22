@@ -23,5 +23,10 @@
     		<groupId>tzuyu-project</groupId>
     		<artifactId>icsetlv</artifactId>
     	</dependency>
+    	<dependency>
+    		<groupId>tzuyu-project</groupId>
+    		<artifactId>sav.commons</artifactId>
+    		<type>test-jar</type>
+    	</dependency>
   	</dependencies>
 </project>

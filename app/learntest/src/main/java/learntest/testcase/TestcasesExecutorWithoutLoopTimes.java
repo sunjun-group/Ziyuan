@@ -1,9 +1,10 @@
 package learntest.testcase;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -16,8 +17,8 @@ import com.sun.jdi.event.BreakpointEvent;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.variable.DebugValueExtractor;
 import icsetlv.variable.JunitDebugger;
-import learntest.data.BreakPointDataBuilder;
-import learntest.data.BreakpointData;
+import learntest.data.BranchSelectionData;
+import learntest.data.BranchSelectionDataBuilder;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
@@ -25,44 +26,54 @@ import sav.common.core.utils.StopTimer;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
 
-public class MyTestcasesExecutor extends JunitDebugger {
+public class TestcasesExecutorWithoutLoopTimes extends JunitDebugger {
 
-	private static Logger log = LoggerFactory.getLogger(MyTestcasesExecutor.class);	
-	private List<BreakpointData> result;
+	private static Logger log = LoggerFactory.getLogger(TestcasesExecutorWithoutLoopTimes.class);	
+	private List<BranchSelectionData> result;
 	/* for internal purpose */
-	private Map<Integer, List<BreakpointValue>> bkpValsByTestIdx;
-	private List<BreakpointValue> currentTestBkpValues;
+	private Map<Integer, BreakpointValue> inputValuesByTestIdx;
+	private Map<Integer, Set<BreakPoint>> exePathsByTestIdx;
+	private int currentTestIdx;
+	private Set<BreakPoint> currentTestExePath;
 	private DebugValueExtractor valueExtractor;
 	private int valRetrieveLevel;
-	private BreakPointDataBuilder builder;
-	private StopTimer timer = new StopTimer("TestcasesExecutor");
+	private BranchSelectionDataBuilder builder;
+	private StopTimer timer = new StopTimer("TestcasesExecutorWithoutLoopTimes");
 	private long timeout = DEFAULT_TIMEOUT;
 	
-	public MyTestcasesExecutor(int valRetrieveLevel) {
+	public TestcasesExecutorWithoutLoopTimes(int valRetrieveLevel) {
 		this.valRetrieveLevel = valRetrieveLevel;
 	}
 	
-	public MyTestcasesExecutor(DebugValueExtractor valueExtractor) {
+	public TestcasesExecutorWithoutLoopTimes(DebugValueExtractor valueExtractor) {
 		setValueExtractor(valueExtractor);
 	}
 	
 	@Override
 	protected void onStart() {
-		bkpValsByTestIdx = new HashMap<Integer, List<BreakpointValue>>();
-		currentTestBkpValues = new ArrayList<BreakpointValue>();
+		inputValuesByTestIdx = new HashMap<Integer, BreakpointValue>();
+		exePathsByTestIdx = new HashMap<Integer, Set<BreakPoint>>();	
 		timer.start();
 	}
 
 	@Override
 	protected void onEnterTestcase(int testIdx) {
 		timer.newPoint(String.valueOf(testIdx));
-		currentTestBkpValues = CollectionUtils.getListInitIfEmpty(bkpValsByTestIdx, testIdx);
+		currentTestIdx = testIdx;
+		currentTestExePath = exePathsByTestIdx.get(testIdx);
+		if (currentTestExePath == null) {
+			currentTestExePath = new HashSet<BreakPoint>();
+			exePathsByTestIdx.put(testIdx, currentTestExePath);
+		}
 	}
 
 	@Override
 	protected void onEnterBreakpoint(BreakPoint bkp, BreakpointEvent bkpEvent) throws SavException {
-		BreakpointValue bkpVal = extractValuesAtLocation(bkp, bkpEvent);
-		addToCurrentValueList(currentTestBkpValues, bkpVal);
+		if (!bkp.getVars().isEmpty()) {
+			BreakpointValue bkpValue = extractValuesAtLocation(bkp, bkpEvent);
+			inputValuesByTestIdx.put(currentTestIdx, bkpValue);
+		}
+		currentTestExePath.add(bkp);
 	}
 
 	@Override
@@ -72,28 +83,16 @@ public class MyTestcasesExecutor extends JunitDebugger {
 			log.warn("TestResults is empty!");
 			log.debug(getProccessError());
 		}
-		Map<String, BreakpointData> bkpDataMap = new HashMap<String, BreakpointData>();
-		int size = bkpValsByTestIdx.size();
+		int size = inputValuesByTestIdx.size();
 		for (int i = 0; i < size; i++) {
-			List<BreakpointValue> bkpValueOfTcI = bkpValsByTestIdx.get(i);
-			Assert.assertNotNull(bkpValueOfTcI, "Missing breakpoint value for test " + i);
-			getBuilder().build(bkpDataMap, bkpValueOfTcI);
+			BreakpointValue inputValueOfTcI = inputValuesByTestIdx.get(i);
+			Assert.assertNotNull(inputValueOfTcI, "Missing input value for test " + i);
+			Set<BreakPoint> exePathOfTcI = exePathsByTestIdx.get(i);
+			Assert.assertNotNull(exePathOfTcI, "Missing execution path for test " + i);
+			getBuilder().build(exePathOfTcI, inputValueOfTcI);
 		}
-		result = buildBreakpointData(bkpDataMap);
-	}
-	
-	private List<BreakpointData> buildBreakpointData(Map<String, BreakpointData> bkpDataMap) {
-		List<BreakpointData> result = new ArrayList<BreakpointData>();
-		for (BreakPoint bkp : bkps) {
-			BreakpointData bkpData = bkpDataMap.get(bkp.getId());
-			if (bkpData != null) {
-				bkpData.setBkp(bkp);
-			} else {
-				bkpData = new BreakpointData(bkp);
-			}			
-			result.add(bkpData);
-		}
-		return result;
+		result = getBuilder().getResult();
+		System.out.println(result);
 	}
 
 	private BreakpointValue extractValuesAtLocation(BreakPoint bkp,
@@ -108,26 +107,7 @@ public class MyTestcasesExecutor extends JunitDebugger {
 		return null;
 	}
 	
-	private void addToCurrentValueList(
-			List<BreakpointValue> currentTestBkpValues, BreakpointValue bkpVal) {
-		if (bkpVal == null) {
-			return;
-		}
-		int i = 0;
-		for (; i < currentTestBkpValues.size(); i++) {
-			BreakpointValue curVal = currentTestBkpValues.get(i);
-			if (curVal.getBkpId().equals(bkpVal.getBkpId())) {
-				break;
-			}
-		}
-		if (i < currentTestBkpValues.size()) {
-			currentTestBkpValues.set(i, bkpVal);
-		} else {
-			currentTestBkpValues.add(bkpVal);
-		}
-	}
-	
-	public List<BreakpointData> getResult() {
+	public List<BranchSelectionData> getResult() {
 		return CollectionUtils.initIfEmpty(result);
 	}
 	
@@ -156,11 +136,11 @@ public class MyTestcasesExecutor extends JunitDebugger {
 		}
 	}
 	
-	public void setBuilder(BreakPointDataBuilder builder) {
+	public void setBuilder(BranchSelectionDataBuilder builder) {
 		this.builder = builder;
 	}
 	
-	public BreakPointDataBuilder getBuilder() {
+	public BranchSelectionDataBuilder getBuilder() {
 		return builder;
 	}
 	
