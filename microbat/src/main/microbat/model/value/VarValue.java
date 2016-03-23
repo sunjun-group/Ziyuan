@@ -11,10 +11,12 @@ package microbat.model.value;
 import java.util.ArrayList;
 import java.util.List;
 
+import microbat.codeanalysis.ast.LocalVariableScope;
 import microbat.model.variable.ArrayElementVar;
 import microbat.model.variable.FieldVar;
 import microbat.model.variable.LocalVar;
 import microbat.model.variable.Variable;
+import microbat.util.Settings;
 
 /**
  * @author Yun Lin
@@ -62,6 +64,28 @@ public abstract class VarValue implements GraphNode{
 //		String name = varId.substring(varId.lastIndexOf("."), varId.length());
 //		return name;
 //	}
+	
+	public void setPrimitiveID(VarValue parent){
+		if(isField()){
+			String varID = Variable.concanateFieldVarID(parent.getVarID(), getVarName());
+			setVarID(varID);
+		}
+		else if(isElementOfArray()){
+			String varID = Variable.concanateArrayElementVarID(parent.getVarID(), getVarName());
+			setVarID(varID);
+		}
+		else if(isLocalVariable()){
+			LocalVar localVar = (LocalVar)this.variable;
+			LocalVariableScope scope = Settings.localVariableScopes.findScope(getVarName(), 
+					localVar.getLineNumber(), localVar.getLocationClass());
+			
+			if(scope != null){
+				String varID = Variable.concanateLocalVarID(localVar.getLocationClass(), localVar.getName(), 
+						scope.getStartLine(), scope.getEndLine());
+				setVarID(varID);				
+			}
+		}
+	}
 	
 	public VarValue findVarValue(String varID){
 		ArrayList<String> visitedIDs = new ArrayList<>();

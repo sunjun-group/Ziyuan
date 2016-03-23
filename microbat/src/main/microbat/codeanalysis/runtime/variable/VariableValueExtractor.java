@@ -325,7 +325,12 @@ public class VariableValueExtractor {
 		level++;
 		
 		if (value == null) {
-			appendNullVarVal(parent, variable);
+			ReferenceValue val = new ReferenceValue(true, false, variable);
+			parent.addChild(val);
+			val.addParent(parent);
+			
+			val.setPrimitiveID(parent);
+			
 			return;
 		}
 //		System.out.println(level);
@@ -402,11 +407,11 @@ public class VariableValueExtractor {
 		return null;
 	}
 	
-	private void appendNullVarVal(VarValue parent, Variable variable) {
-		ReferenceValue val = new ReferenceValue(true, false, variable);
-		parent.addChild(val);
-		val.addParent(parent);
-	}
+//	private void appendNullVarVal(VarValue parent, Variable variable) {
+//		ReferenceValue val = new ReferenceValue(true, false, variable);
+//		parent.addChild(val);
+//		val.addParent(parent);
+//	}
 	
 	
 

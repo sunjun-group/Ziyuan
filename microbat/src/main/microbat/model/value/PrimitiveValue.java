@@ -8,10 +8,7 @@
 
 package microbat.model.value;
 
-import microbat.codeanalysis.ast.LocalVariableScope;
-import microbat.model.variable.LocalVar;
 import microbat.model.variable.Variable;
-import microbat.util.Settings;
 
 
 
@@ -62,28 +59,6 @@ public class PrimitiveValue extends VarValue {
 	
 	public void setPrimitiveType(String type){
 		this.variable.setType(type);
-	}
-	
-	public void setPrimitiveID(VarValue parent){
-		if(isField()){
-			String varID = Variable.concanateFieldVarID(parent.getVarID(), getVarName());
-			setVarID(varID);
-		}
-		else if(isElementOfArray()){
-			String varID = Variable.concanateArrayElementVarID(parent.getVarID(), getVarName());
-			setVarID(varID);
-		}
-		else if(isLocalVariable()){
-			LocalVar localVar = (LocalVar)this.variable;
-			LocalVariableScope scope = Settings.localVariableScopes.findScope(getVarName(), 
-					localVar.getLineNumber(), localVar.getLocationClass());
-			
-			if(scope != null){
-				String varID = Variable.concanateLocalVarID(localVar.getLocationClass(), localVar.getName(), 
-						scope.getStartLine(), scope.getEndLine());
-				setVarID(varID);				
-			}
-		}
 	}
 
 	@Override

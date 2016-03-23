@@ -29,6 +29,11 @@ public class BreakPointValue extends VarValue {
 	public String getName(){
 		return name;
 	}
+	
+	@Override
+	public String toString() {
+		return name;
+	}
 
 //	public String getBkpId() {
 //		return getVariablePath();
