@@ -39,6 +39,7 @@ import microbat.model.variable.Variable;
 import microbat.model.variable.VirtualVar;
 import microbat.util.BreakpointUtils;
 import microbat.util.JavaUtil;
+import microbat.util.PrimitiveUtils;
 import microbat.util.Settings;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -692,14 +693,11 @@ public class ProgramExecutor extends Executor{
 	/**
 	 * build the written relations between method invocation
 	 */
-//	private void parseWrittenParameterVariableForMethodInvocation(Event event,
-//			MethodEntryEvent mee, TraceNode lastestNode) {
 	private void parseWrittenParameterVariableForMethodInvocation(StackFrame frame, 
 			String methodDeclaringType, int methodLocationLine,
 			List<Param> paramList, TraceNode lastestNode) {
 
 		for(Param param: paramList){
-//			StackFrame frame = findFrame(((MethodEntryEvent) event).thread(), mee.location());
 			
 			if(frame == null){
 				return;
@@ -707,13 +705,12 @@ public class ProgramExecutor extends Executor{
 			
 			Value value = JavaUtil.retriveExpression(frame, param.getName());
 			
-			if(!(value instanceof ObjectReference)){
+			if(!(value instanceof ObjectReference) || value==null){
 				
 				LocalVar localVar = new LocalVar(param.getName(), param.getType(), lastestNode.getDeclaringCompilationUnitName(), 
 						lastestNode.getLineNumber());
 				
 				VariableScopeParser parser = new VariableScopeParser();
-//				String typeName = SignatureUtils.signatureToName(typeSig);
 				LocalVariableScope scope = parser.parseMethodScope(methodDeclaringType, 
 						methodLocationLine, localVar.getName());
 				String varID;
@@ -722,8 +719,6 @@ public class ProgramExecutor extends Executor{
 							scope.getStartLine(), scope.getEndLine());
 					String definingNodeOrder = findDefiningNodeOrder(WRITTEN, lastestNode, varID);
 					varID = varID + ":" + definingNodeOrder;
-//					varID = typeName + "[" + scope.getStartLine() + "," 
-//							+ scope.getEndLine() + "] " + localVar.getName();				
 					localVar.setVarID(varID);
 				}
 				else{
@@ -742,7 +737,14 @@ public class ProgramExecutor extends Executor{
 				entry.addAliasVariable(localVar);
 				entry.addProducer(lastestNode);
 				
-				VarValue varValue = new PrimitiveValue(value.toString(), false, localVar);
+				VarValue varValue;
+				if(PrimitiveUtils.isPrimitiveType(param.getType())){
+					varValue = new PrimitiveValue(value.toString(), false, localVar);
+				}
+				else{
+					varValue = new ReferenceValue(true, false, localVar);
+				}
+				
 				lastestNode.addWrittenVariable(varValue);
 			}
 			
@@ -885,6 +887,10 @@ public class ProgramExecutor extends Executor{
 //			frame.thisObject().getValue(f);
 			if(expValue != null){
 				Value value = expValue.value;
+				
+				if(value == null){
+					System.currentTimeMillis();
+				}
 				
 				if(value instanceof ObjectReference){
 					ObjectReference objRef = (ObjectReference)value;
@@ -1119,7 +1125,6 @@ public class ProgramExecutor extends Executor{
         	CompilationUnit cu = JavaUtil.findCompilationUnitInProject(point.getClassCanonicalName());
         	ExpressionParser.setParameters(cu, point.getLineNo());
         	Value val = ExpressionParser.evaluate(expression, frame.virtualMachine(), frameGetter);
-//			Value messageValue = ExpressionParser.getMassagedValue();
         	
 			eValue = new ExpressionValue(val, ExpressionParser.parentValue, null);
 			
