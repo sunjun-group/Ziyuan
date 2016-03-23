@@ -43,6 +43,7 @@ import microbat.util.PrimitiveUtils;
 import microbat.util.Settings;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdi.internal.VoidValueImpl;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IMethodBinding;
@@ -651,6 +652,10 @@ public class ProgramExecutor extends Executor{
 	private void createVirutalVariableForReturnStatement(TraceNode node,
 			TraceNode lastestNode, Value returnedValue) {
 		
+		if(returnedValue instanceof VoidValueImpl){
+			return;
+		}
+		
 		String returnedType;
 		String returnedStringValue;
 		if(returnedValue == null){
@@ -659,16 +664,17 @@ public class ProgramExecutor extends Executor{
 		}
 		else{
 			String type = returnedValue.type().toString();
+			
 			if(type.contains(".")){
 				type = type.substring(type.lastIndexOf(".")+1, type.length());
 			}
+			
 			returnedType = type;
 			returnedStringValue = returnedValue.toString();
 			if(returnedValue instanceof StringReference){
 				returnedStringValue = returnedStringValue.substring(1, returnedStringValue.length()-1);
 			}
 		}
-		
 		
 		String name = VirtualVar.VIRTUAL_PREFIX + lastestNode.getOrder();
 		VirtualVar var = new VirtualVar(name, returnedType);
