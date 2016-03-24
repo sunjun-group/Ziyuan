@@ -132,6 +132,11 @@ public class TestCaseAnalyzer {
 		Trace killingMutatantTrace = 
 				mutateCode(mutatedClassName, mutatedFile, testcaseConfig, mutatedLine, testcaseName);
 		
+		if(killingMutatantTrace == null){
+			System.out.println("mutated trace is over long");
+			return;
+		}
+		
 		TestCaseRunner checker = new TestCaseRunner();
 		
 		List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
