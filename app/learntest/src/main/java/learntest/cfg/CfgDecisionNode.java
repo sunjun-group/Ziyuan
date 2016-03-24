@@ -39,7 +39,14 @@ public class CfgDecisionNode implements CfgNode {
 	
 	@Override
 	public String toString() {
+		if(!getStmtType().equals("switch default")){
+			//System.out.println(getStmtType());
 		return  AstUtils.toString(getAstNode()) + "? ";
+		}
+		else{
+			//System.out.println(getStmtType());
+			return  "default";
+		}
 	}
 
 	public int getTrueBeginLine() {

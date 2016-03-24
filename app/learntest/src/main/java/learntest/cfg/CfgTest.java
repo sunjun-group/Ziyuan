@@ -109,31 +109,31 @@ public class CfgTest {
 //		cfgFromStmt(str);	
 //	}
 	
-	@Test
-	public void labledToCfg() throws ParseException {
-		String str = 
-				" do{" +
-				"		while (i < 10 ) {" +
-				"			a.add(i);" +
-				"			if (a.size() == 1) {" +
-				"				continue;" +
-				"			}" +
-				"			if (a.size() == 2) {" +
-				"				continue;" +
-				"			}" +
-				"			if (a.size() == 3) {" +
-				"				executeWithASize3();" +
-				"			}" +
-				"			if (a.size() == 4) {" +
-				"				break;" +
-				"			}" +
-				"			if (a.size() == 5) {" +
-				"				break;" +
-				"			}" +
-				"		}" +
-				"} while(x > 0);";
-		cfgFromStmt(str);	
-	}
+//	@Test
+//	public void labledToCfg() throws ParseException {
+//		String str = 
+//				" do{" +
+//				"		while (i < 10 ) {" +
+//				"			a.add(i);" +
+//				"			if (a.size() == 1) {" +
+//				"				continue;" +
+//				"			}" +
+//				"			if (a.size() == 2) {" +
+//				"				continue;" +
+//				"			}" +
+//				"			if (a.size() == 3) {" +
+//				"				executeWithASize3();" +
+//				"			}" +
+//				"			if (a.size() == 4) {" +
+//				"				break;" +
+//				"			}" +
+//				"			if (a.size() == 5) {" +
+//				"				break;" +
+//				"			}" +
+//				"		}" +
+//				"} while(x > 0);";
+//		cfgFromStmt(str);	
+//	}
 	
 //	@Test
 //	public void labledToCfg() throws ParseException {
@@ -146,6 +146,32 @@ public class CfgTest {
 //		cfgFromStmt(str);	
 //	}
 	
+	@Test
+	public void switchToCfg() throws ParseException {
+		String str = 
+				"switch(x) {" +
+				"	case 1:" +
+				"		while(j > 10){if(i > 0){}else if (i > 1){break;}}executeFunc1();if(j > 2 ){}" +
+				"		break;" +
+				"	case 2:" +
+				"		executeFunc2();break;" +
+				"	default:" +
+				"		executeDefault();while(k < 0){if(l == 0){break;}}" +
+				"		break;" +
+				"}";
+		cfgFromStmt(str);
+	}
+	
+//	@Test
+//	public void labledToCfg() throws ParseException {
+//		String str = 
+//				"do {" +
+//			
+//				"			if (a.size() == 5) {} if(i > 10 ){}" +
+//
+//				"} while (x > 0);";
+//		cfgFromStmt(str);	
+//	}
 	private void cfgFromStmt(String str) throws ParseException {
 		CfgCreator creator = new CfgCreator();
 		Node node = JavaParser.parseStatement(str);
@@ -155,9 +181,9 @@ public class CfgTest {
 //		System.out.println(cfg.getInEdges(cfg.getVertices().get(i)));
 //		}
     	System.out.println(cfg.toString());
-    	System.out.println(cfg.getVertices());
-    	System.out.println(cfg.getExitInEdges());
-    	System.out.println(cfg.getEntryOutEdges());
+//    	System.out.println(cfg.getVertices());
+//    	System.out.println(cfg.getExitInEdges());
+//   	System.out.println(cfg.getEntryOutEdges());
 
 	}
 	
