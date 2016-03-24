@@ -44,10 +44,17 @@ public class TestCaseAnalyzer {
 	
 	private List<Trial> trials = new ArrayList<>();
 //	private List<Trial> overLongTrials = new ArrayList<>();
-	private IgnoredTestCaseFiles ignoredTestCaseFiles = new IgnoredTestCaseFiles();
-	private ParsedTrials parsedTrials = new ParsedTrials();
+	private IgnoredTestCaseFiles ignoredTestCaseFiles;
+	private ParsedTrials parsedTrials;
 	
 	private List<String> errorMsgs = new ArrayList<>();
+	private int trialFileNum = 0;
+	
+	public TestCaseAnalyzer(){
+		ignoredTestCaseFiles = new IgnoredTestCaseFiles();
+		parsedTrials = new ParsedTrials();
+		trialFileNum = parsedTrials.getStartFileOrder();
+	}
 	
 	public void test(){
 		String str = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\mutatedSource8245811234241496344\\47_25_1\\Main.java";
@@ -163,7 +170,6 @@ public class TestCaseAnalyzer {
 
 	private void runEvaluation(IPackageFragment pack) throws JavaModelException {
 		
-		int num = 0;
 		ExcelReporter reporter = new ExcelReporter();
 		reporter.start();
 		
@@ -184,13 +190,13 @@ public class TestCaseAnalyzer {
 						runEvaluationForSingleMethod(className, methodName);
 						
 						
-						if(trials.size() > 5){
-							reporter.export(trials, Settings.projectName+num);
+						if(trials.size() > 100){
+							reporter.export(trials, Settings.projectName+trialFileNum);
 							
 							trials.clear();
 							reporter = new ExcelReporter();
 							reporter.start();
-							num++;
+							trialFileNum++;
 						}
 					}
 					
@@ -198,8 +204,8 @@ public class TestCaseAnalyzer {
 			}
 		}
 		
-		reporter.export(trials, Settings.projectName+num);
-		num++;
+		reporter.export(trials, Settings.projectName+trialFileNum);
+		trialFileNum++;
 	}
 	
 //	private void locateCertainTestCase(String className, String methodName){

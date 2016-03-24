@@ -11,7 +11,6 @@ import java.util.Set;
 import microbat.evaluation.model.Trial;
 import microbat.util.Settings;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -20,9 +19,11 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelReader {
-	public Set<Trial> readXLSX() throws IOException {
-		Set<Trial> set = new HashSet<>();
-
+	
+	private Set<Trial> set = new HashSet<>();
+	
+	public int readXLSX() throws IOException {
+		
 		String projectName = Settings.projectName;
 		int num = 0;
 
@@ -76,7 +77,7 @@ public class ExcelReader {
 						}
 					}
 					
-					set.add(trial);
+					getSet().add(trial);
 				}
 				
 			}
@@ -86,6 +87,14 @@ public class ExcelReader {
 			file = new File(fileName);
 		}
 
+		return num;
+	}
+
+	public Set<Trial> getSet() {
 		return set;
+	}
+
+	public void setSet(Set<Trial> set) {
+		this.set = set;
 	}
 }
