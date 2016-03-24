@@ -98,13 +98,19 @@ public class TestCaseAnalyzer {
 	}
 	
 	public void runEvaluation() throws JavaModelException{
+		
+		ExcelReporter reporter = new ExcelReporter();
+		reporter.start();
+		
 		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
 		
 		for(IJavaElement element: testRoot.getChildren()){
 			if(element instanceof IPackageFragment){
-				runEvaluation((IPackageFragment)element);				
+				runEvaluation((IPackageFragment)element, reporter);				
 			}
 		}
+		
+		reporter.export(trials, Settings.projectName+trialFileNum);
 		
 //		runSingeTestCase();
 	}
@@ -168,14 +174,11 @@ public class TestCaseAnalyzer {
 		
 	}
 
-	private void runEvaluation(IPackageFragment pack) throws JavaModelException {
-		
-		ExcelReporter reporter = new ExcelReporter();
-		reporter.start();
+	private void runEvaluation(IPackageFragment pack, ExcelReporter reporter) throws JavaModelException {
 		
 		for(IJavaElement javaElement: pack.getChildren()){
 			if(javaElement instanceof IPackageFragment){
-				runEvaluation((IPackageFragment)javaElement);
+				runEvaluation((IPackageFragment)javaElement, reporter);
 			}
 			else if(javaElement instanceof ICompilationUnit){
 				ICompilationUnit icu = (ICompilationUnit)javaElement;
@@ -187,32 +190,23 @@ public class TestCaseAnalyzer {
 					
 					for(MethodDeclaration testingMethod: testingMethods){
 						String methodName = testingMethod.getName().getIdentifier();
-						runEvaluationForSingleMethod(className, methodName);
+						runEvaluationForSingleMethod(className, methodName, reporter);
 						
 						
-						if(trials.size() > 100){
-							reporter.export(trials, Settings.projectName+trialFileNum);
-							
-							trials.clear();
-							reporter = new ExcelReporter();
-							reporter.start();
-							trialFileNum++;
-						}
+						
 					}
 					
 				}
 			}
 		}
 		
-		reporter.export(trials, Settings.projectName+trialFileNum);
-		trialFileNum++;
 	}
 	
 //	private void locateCertainTestCase(String className, String methodName){
 //		
 //	}
 
-	private boolean runEvaluationForSingleMethod(String className, String methodName) 
+	private boolean runEvaluationForSingleMethod(String className, String methodName, ExcelReporter reporter) 
 			throws JavaModelException {
 		AppJavaClassPath testcaseConfig = createProjectClassPath(className, methodName);
 		String testCaseName = className + "#" + methodName;
@@ -249,12 +243,6 @@ public class TestCaseAnalyzer {
 							tmpTrial.setMutatedFile(mutationFile.toString());
 							tmpTrial.setMutatedLineNumber(line);
 							
-							if(testCaseName.equals("org.apache.commons.math.MathConfigurationExceptionTest#testConstructor") &&
-									mutationFile.toString().contains("176_13_1\\MathException.java") &&
-									line == 176){
-								System.currentTimeMillis();
-							}
-							
 							if(parsedTrials.contains(tmpTrial)){
 								continue;
 							}
@@ -282,6 +270,15 @@ public class TestCaseAnalyzer {
 														" fail to find bug\n" + "Mutated File: " + mutationFile;
 												System.err.println(errorMsg);
 												errorMsgs.add(errorMsg);
+											}
+											
+											if(trials.size() > 100){
+												reporter.export(trials, Settings.projectName+trialFileNum);
+												
+												trials.clear();
+												reporter = new ExcelReporter();
+												reporter.start();
+												trialFileNum++;
 											}
 										}
 									} catch (Exception e) {
