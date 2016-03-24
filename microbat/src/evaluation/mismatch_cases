@@ -1,0 +1,15 @@
+The matching algorithm in the evaluation can hardly to be 100% accurate. Therefore, we
+may need to evaluate the evaluation with two research questions:
+1) how accurate does the matching algorithm?
+2) when the miss-match happen?
+3) what is the effect of miss-match on debugging evaluation?
+
+======================================================================================
+		String className = "org.apache.commons.math.analysis.ComposableFunctionTest";
+		String methodName = "testSignum";
+		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
+				+ "mutatedSource3984330978923495794\\640_17_1\\FastMath.java";
+		String mutatedClass = "org.apache.commons.math.util.FastMath";
+		int mutatedLine = 640;
+======================================================================================
+
