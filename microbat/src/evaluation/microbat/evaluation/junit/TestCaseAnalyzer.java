@@ -91,24 +91,24 @@ public class TestCaseAnalyzer {
 	}
 	
 	public void runEvaluation() throws JavaModelException{
-		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+//		
+//		for(IJavaElement element: testRoot.getChildren()){
+//			if(element instanceof IPackageFragment){
+//				runEvaluation((IPackageFragment)element);				
+//			}
+//		}
 		
-		for(IJavaElement element: testRoot.getChildren()){
-			if(element instanceof IPackageFragment){
-				runEvaluation((IPackageFragment)element);				
-			}
-		}
-		
-//		runSingeTestCase();
+		runSingeTestCase();
 	}
 	
 	private void runSingeTestCase(){
 		String className = "org.apache.commons.math.analysis.ComposableFunctionTest";
-		String methodName = "testSignum";
+		String methodName = "testComposition";
 		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-				+ "mutatedSource3984330978923495794\\640_17_1\\FastMath.java";
+				+ "mutatedSource5053531797357951674\\3261_22_3\\FastMath.java";
 		String mutatedClass = "org.apache.commons.math.util.FastMath";
-		int mutatedLine = 640;
+		int mutatedLine = 3261;
 		
 		try {
 			runEvaluationForSingleTrial(className, methodName, mutationFile, mutatedClass, mutatedLine);
@@ -133,6 +133,7 @@ public class TestCaseAnalyzer {
 				mutateCode(mutatedClassName, mutatedFile, testcaseConfig, mutatedLine, testcaseName);
 		
 		TestCaseRunner checker = new TestCaseRunner();
+		
 		List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
 		Trace correctTrace = new TraceModelConstructor().
 				constructTraceModel(testcaseConfig, executingStatements);
@@ -178,7 +179,7 @@ public class TestCaseAnalyzer {
 						runEvaluationForSingleMethod(className, methodName);
 						
 						
-						if(trials.size() > 5000){
+						if(trials.size() > 50){
 							reporter.export(trials, Settings.projectName+num);
 							
 							trials.clear();
@@ -355,17 +356,17 @@ public class TestCaseAnalyzer {
 		boolean isKill = !checker.isPassingTest() && !checker.hasCompilationError();
 		System.out.println(": " + (isKill?"killed":"not killed"));
 		
-		if(checker.isOverLong()){
-			Trial trial = new Trial(testCaseName, mutatedLine, mutationFile.toString(), false, null, 0, Trial.OVER_LONG);
-			trials.add(trial);
-			return null;
-		}
-		
 		if(isKill){
 			System.out.println("generating trace for mutated class " + iunit.getElementName() + " (line: " + mutatedLine + ")");
 			TraceModelConstructor constructor = new TraceModelConstructor();
 			
 			List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
+			
+			if(checker.isOverLong()){
+				Trial trial = new Trial(testCaseName, mutatedLine, mutationFile.toString(), false, null, 0, Trial.OVER_LONG);
+				trials.add(trial);
+				return null;
+			}
 			
 			long t1 = System.currentTimeMillis();
 			killingMutantTrace = constructor.constructTraceModel(testcaseConfig, executingStatements);
