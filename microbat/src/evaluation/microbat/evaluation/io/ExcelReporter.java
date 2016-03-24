@@ -32,9 +32,10 @@ public class ExcelReporter {
         		"is bug found",
         		"total steps",
         		"jump steps",
-        		"mutaed file",
+        		"mutated file",
         		"mutated line number",
-        		"jump steps"};
+        		"jump steps",
+        		"result"};
         for(int i = 0; i < titles.length; i++){
         	row.createCell(i).setCellValue(titles[i]); 
         }
@@ -50,10 +51,19 @@ public class ExcelReporter {
         		row.createCell(0).setCellValue(trial.getTestCaseName());
         		row.createCell(1).setCellValue(trial.isBugFound());
         		row.createCell(2).setCellValue(trial.getTotalSteps());
-        		row.createCell(3).setCellValue(trial.getJumpSteps().size());
+        		
+        		if(trial.getJumpSteps() != null){
+        			row.createCell(3).setCellValue(trial.getJumpSteps().size());        			
+        		}
+        		
         		row.createCell(4).setCellValue(trial.getMutatedFile());
         		row.createCell(5).setCellValue(trial.getMutatedLineNumber());
-        		row.createCell(6).setCellValue(trial.getJumpSteps().toString());
+        		
+        		if(trial.getJumpSteps() != null){
+        			row.createCell(6).setCellValue(trial.getJumpSteps().toString());      			
+        		}
+        		
+        		row.createCell(7).setCellValue(trial.getResult());
         		
         		bookSize++;
         	}
@@ -61,7 +71,7 @@ public class ExcelReporter {
 			e.printStackTrace();
 		}
         
-        for(int i=0; i<7; i++){
+        for(int i=0; i<8; i++){
         	sheet.autoSizeColumn(i);
         }
         

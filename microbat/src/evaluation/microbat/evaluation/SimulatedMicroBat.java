@@ -139,6 +139,7 @@ public class SimulatedMicroBat {
 			trial.setJumpSteps(jumpStringSteps);
 			trial.setTotalSteps(mutatedTrace.size());
 			trial.setMutatedFile(mutatedFile);
+			trial.setResult(isBugFound? Trial.SUCESS : Trial.FAIL);
 			
 			return trial;
 		}

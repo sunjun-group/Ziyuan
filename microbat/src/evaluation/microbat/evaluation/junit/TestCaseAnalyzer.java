@@ -43,8 +43,9 @@ public class TestCaseAnalyzer {
 	public static final String TEST_RUNNER = "microbat.evaluation.junit.MicroBatTestRunner";
 	
 	private List<Trial> trials = new ArrayList<>();
-	private List<Trial> overLongTrials = new ArrayList<>();
+//	private List<Trial> overLongTrials = new ArrayList<>();
 	private IgnoredTestCaseFiles ignoredTestCaseFiles = new IgnoredTestCaseFiles();
+	private ParsedTrials parsedTrials = new ParsedTrials();
 	
 	private List<String> errorMsgs = new ArrayList<>();
 	
@@ -90,15 +91,15 @@ public class TestCaseAnalyzer {
 	}
 	
 	public void runEvaluation() throws JavaModelException{
-//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
-//		
-//		for(IJavaElement element: testRoot.getChildren()){
-//			if(element instanceof IPackageFragment){
-//				runEvaluation((IPackageFragment)element);				
-//			}
-//		}
+		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
 		
-		runSingeTestCase();
+		for(IJavaElement element: testRoot.getChildren()){
+			if(element instanceof IPackageFragment){
+				runEvaluation((IPackageFragment)element);				
+			}
+		}
+		
+//		runSingeTestCase();
 	}
 	
 	private void runSingeTestCase(){
@@ -126,35 +127,30 @@ public class TestCaseAnalyzer {
 		String testcaseName = testClassName + "#" + testMethodName;
 		AppJavaClassPath testcaseConfig = createProjectClassPath(testClassName, testMethodName);
 		
-		List<File> mutatedFileList = new ArrayList<>();
 		File mutatedFile = new File(mutationFile);
-		mutatedFileList.add(mutatedFile);
 		
-		List<TraceFilePair> killingMutatantTraces = 
-				mutateCode(mutatedClassName, mutatedFileList, testcaseConfig, mutatedLine, testcaseName);
+		Trace killingMutatantTrace = 
+				mutateCode(mutatedClassName, mutatedFile, testcaseConfig, mutatedLine, testcaseName);
 		
 		TestCaseRunner checker = new TestCaseRunner();
 		List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
 		Trace correctTrace = new TraceModelConstructor().
 				constructTraceModel(testcaseConfig, executingStatements);
 		
-		TraceFilePair pair = killingMutatantTraces.get(0);
-		
-		Trace mutantTrace = pair.mutatedTrace;
 		SimulatedMicroBat microbat = new SimulatedMicroBat();
 		ClassLocation mutatedLocation = new ClassLocation(mutatedClassName, null, mutatedLine);
 		Trial trial;
 		try {
-			trial = microbat.detectMutatedBug(mutantTrace, correctTrace, mutatedLocation, 
-					testcaseName, pair.mutatedFile);
+			trial = microbat.detectMutatedBug(killingMutatantTrace, correctTrace, mutatedLocation, 
+					testcaseName, mutatedFile.toString());
 			if(trial != null){
 				if(!trial.isBugFound()){
-					System.err.println("Cannot find bug in Mutated File: " + pair.mutatedFile);
+					System.err.println("Cannot find bug in Mutated File: " + mutatedFile);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.err.println("Mutated File: " + pair.mutatedFile);
+			System.err.println("Mutated File: " + mutatedFile);
 		}
 		
 	}
@@ -182,7 +178,7 @@ public class TestCaseAnalyzer {
 						runEvaluationForSingleMethod(className, methodName);
 						
 						
-						if(trials.size() > 100){
+						if(trials.size() > 5000){
 							reporter.export(trials, Settings.projectName+num);
 							
 							trials.clear();
@@ -205,9 +201,9 @@ public class TestCaseAnalyzer {
 	private boolean runEvaluationForSingleMethod(String className, String methodName) 
 			throws JavaModelException {
 		AppJavaClassPath testcaseConfig = createProjectClassPath(className, methodName);
-		String testcaseName = className + "#" + methodName;
+		String testCaseName = className + "#" + methodName;
 		
-		if(this.ignoredTestCaseFiles.contains(testcaseName)){
+		if(this.ignoredTestCaseFiles.contains(testCaseName)){
 			return false;
 		}
 		
@@ -217,66 +213,72 @@ public class TestCaseAnalyzer {
 		Trace correctTrace = null;
 		
 		if(checker.isPassingTest()){
-			System.out.println(testcaseName + " is a passed test case");
+			System.out.println(testCaseName + " is a passed test case");
 			
 			List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
-			System.out.println("identifying the possible mutated location for " + testcaseName);
+			System.out.println("identifying the possible mutated location for " + testCaseName);
 			List<ClassLocation> locationList = findMutationLocation(executingStatements);
 			
 			if(!locationList.isEmpty()){
-				System.out.println("mutating the tested methods of " + testcaseName);
+				System.out.println("mutating the tested methods of " + testCaseName);
 				Map<String, MutationResult> mutations = generateMutationFiles(locationList);
-				System.out.println("mutation done for " + testcaseName);
+				System.out.println("mutation done for " + testCaseName);
 				for(String mutatedClass: mutations.keySet()){
 					MutationResult result = mutations.get(mutatedClass);
 					for(Integer line: result.getMutatedFiles().keySet()){
-						List<File> mutatedFileList = result.getMutatedFiles(line);		
+						List<File> mutatedFileList = result.getMutatedFiles(line);	
 						
-						if(!mutatedFileList.isEmpty()){
+						for(File mutationFile: mutatedFileList){
+							
+							Trial tmpTrial = new Trial();
+							tmpTrial.setTestCaseName(testCaseName);
+							tmpTrial.setMutatedFile(mutationFile.toString());
+							tmpTrial.setMutatedLineNumber(line);
+							if(parsedTrials.contains(tmpTrial)){
+								continue;
+							}
+							
 							try {
-								List<TraceFilePair> killingMutatantTraces = 
-										mutateCode(mutatedClass, mutatedFileList, testcaseConfig, line, testcaseName);
+								Trace killingMutatantTrace = 
+										mutateCode(mutatedClass, mutationFile, testcaseConfig, line, testCaseName);
 								
-								if(!killingMutatantTraces.isEmpty()){
+								if(killingMutatantTrace != null){
 									if(null == correctTrace){
 										correctTrace = new TraceModelConstructor().
 												constructTraceModel(testcaseConfig, executingStatements);
 									}
 									
-									for(TraceFilePair pair: killingMutatantTraces){
-										Trace mutantTrace = pair.mutatedTrace;
-										SimulatedMicroBat microbat = new SimulatedMicroBat();
-										ClassLocation mutatedLocation = new ClassLocation(mutatedClass, null, line);
-										Trial trial;
-										try {
-											trial = microbat.detectMutatedBug(mutantTrace, correctTrace, mutatedLocation, 
-													testcaseName, pair.mutatedFile);
-											if(trial != null){
-												trials.add(trial);	
-												if(!trial.isBugFound()){
-													String errorMsg = "Test case: " + testcaseName + 
-															" fail to find bug\n" + "Mutated File: " + pair.mutatedFile;
-													System.err.println(errorMsg);
-													errorMsgs.add(errorMsg);
-												}
+									SimulatedMicroBat microbat = new SimulatedMicroBat();
+									ClassLocation mutatedLocation = new ClassLocation(mutatedClass, null, line);
+									Trial trial;
+									try {
+										trial = microbat.detectMutatedBug(killingMutatantTrace, correctTrace, mutatedLocation, 
+												testCaseName, mutationFile.toString());
+										if(trial != null){
+											trials.add(trial);	
+											if(!trial.isBugFound()){
+												String errorMsg = "Test case: " + testCaseName + 
+														" fail to find bug\n" + "Mutated File: " + mutationFile;
+												System.err.println(errorMsg);
+												errorMsgs.add(errorMsg);
 											}
-										} catch (Exception e) {
-											e.printStackTrace();
-											String errorMsg = "Test case: " + testcaseName + 
-													" has exception\n" + "Mutated File: " + pair.mutatedFile;
-											System.err.println(errorMsg);
-											errorMsgs.add(errorMsg);
 										}
-										
-										if(errorMsgs.size() > 3){
-											System.currentTimeMillis();
-										}
+									} catch (Exception e) {
+										e.printStackTrace();
+										String errorMsg = "Test case: " + testCaseName + 
+												" has exception\n" + "Mutated File: " + mutationFile;
+										System.err.println(errorMsg);
+										errorMsgs.add(errorMsg);
+									}
+									
+									if(errorMsgs.size() > 3){
+										System.currentTimeMillis();
 									}
 									
 //									return true;
 								}
 								else{
-									System.out.println("No suitable mutants for test case " + testcaseName + "in line " + line);
+									System.out.println("No suitable mutants for test case " + testCaseName + "in line " + line);
 //									return false;
 								}
 							} catch (MalformedURLException e) {
@@ -289,13 +291,13 @@ public class TestCaseAnalyzer {
 				}
 			}
 			else{
-				System.out.println("but " + testcaseName + " cannot be mutated");
-				this.ignoredTestCaseFiles.addTestCase(testcaseName);
+				System.out.println("but " + testCaseName + " cannot be mutated");
+				this.ignoredTestCaseFiles.addTestCase(testCaseName);
 			}
 		}
 		else{
-			System.out.println(testcaseName + " is a failed test case");
-			this.ignoredTestCaseFiles.addTestCase(testcaseName);
+			System.out.println(testCaseName + " is a failed test case");
+			this.ignoredTestCaseFiles.addTestCase(testCaseName);
 			return false;
 		}
 		
@@ -330,58 +332,58 @@ public class TestCaseAnalyzer {
 		
 	}
 
-	private List<TraceFilePair> mutateCode(String className, List<File> mutatedFileList, AppJavaClassPath testcaseConfig, 
+	private Trace mutateCode(String mutatedClass, File mutationFile, AppJavaClassPath testcaseConfig, 
 			int mutatedLine, String testCaseName)
 			throws MalformedURLException, JavaModelException, IOException {
-		ICompilationUnit iunit = JavaUtil.findICompilationUnitInProject(className);
+		
+		Trace killingMutantTrace = null;
+		
+		ICompilationUnit iunit = JavaUtil.findICompilationUnitInProject(mutatedClass);
 		String originalCodeText = iunit.getSource();
 		
-		List<TraceFilePair> killingMutantTraces = new ArrayList<>();
+		System.out.print("checking mutated class " + iunit.getElementName() + " (line: " + mutatedLine + ")");
+		String mutatedCodeText = FileUtils.readFileToString(mutationFile);
 		
-		for(File file: mutatedFileList){
-			System.out.print("checking mutated class " + iunit.getElementName() + " (line: " + mutatedLine + ")");
-			String mutatedCodeText = FileUtils.readFileToString(file);
+		iunit.getBuffer().setContents(mutatedCodeText);
+		iunit.save(new NullProgressMonitor(), true);
+		
+		autoCompile();
+		
+		TestCaseRunner checker = new TestCaseRunner();
+		checker.checkValidity(testcaseConfig);
+		
+		boolean isKill = !checker.isPassingTest() && !checker.hasCompilationError();
+		System.out.println(": " + (isKill?"killed":"not killed"));
+		
+		if(checker.isOverLong()){
+			Trial trial = new Trial(testCaseName, mutatedLine, mutationFile.toString(), false, null, 0, Trial.OVER_LONG);
+			trials.add(trial);
+			return null;
+		}
+		
+		if(isKill){
+			System.out.println("generating trace for mutated class " + iunit.getElementName() + " (line: " + mutatedLine + ")");
+			TraceModelConstructor constructor = new TraceModelConstructor();
 			
-			iunit.getBuffer().setContents(mutatedCodeText);
-			iunit.save(new NullProgressMonitor(), true);
+			List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
 			
-			autoCompile();
+			long t1 = System.currentTimeMillis();
+			killingMutantTrace = constructor.constructTraceModel(testcaseConfig, executingStatements);
+			long t2 = System.currentTimeMillis();
+			System.out.println("Trace length: " + killingMutantTrace.size() + ", which takes " + (t2-t1)/1000 + "s to analyze.");
 			
-			TestCaseRunner checker = new TestCaseRunner();
-			checker.checkValidity(testcaseConfig);
-			
-			boolean isKill = !checker.isPassingTest() && !checker.hasCompilationError();
-			System.out.println(": " + (isKill?"killed":"not killed"));
-			
-			if(checker.isOverLong()){
-				Trial trial = new Trial(testCaseName, mutatedLine, file.toString(), false, null, 0);
-				overLongTrials.add(trial);
-				continue;
-			}
-			
-			if(isKill){
-				System.out.println("generating trace for mutated class " + iunit.getElementName() + " (line: " + mutatedLine + ")");
-				TraceModelConstructor constructor = new TraceModelConstructor();
-				
-				List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
-				
-				long t1 = System.currentTimeMillis();
-				Trace killingMutantTrace = constructor.constructTraceModel(testcaseConfig, executingStatements);
-				long t2 = System.currentTimeMillis();
-				System.out.println("Trace length: " + killingMutantTrace.size() + ", which takes " + (t2-t1)/1000 + "s to analyze.");
-				
-				TraceFilePair tfPair = new TraceFilePair(killingMutantTrace, file.toString());
-				
-				killingMutantTraces.add(tfPair);
-			}
-			
+			//TraceFilePair tfPair = new TraceFilePair(killingMutantTrace, mutationFile.toString());
+		}
+		else{
+			Trial trial = new Trial(testCaseName, mutatedLine, mutationFile.toString(), false, null, 0, Trial.NOT_KILL);
+			trials.add(trial);
 		}
 		
 		iunit.getBuffer().setContents(originalCodeText);
 		iunit.save(new NullProgressMonitor(), true);
 		autoCompile();
 		
-		return killingMutantTraces;
+		return killingMutantTrace;
 	}
 	
 	private void autoCompile() {
