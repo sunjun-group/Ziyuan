@@ -1,9 +1,6 @@
 package microbat.evaluation.handler;
 
-import microbat.evaluation.GenerateRootCauseException;
-import microbat.evaluation.SimulatedMicroBat;
 import microbat.evaluation.junit.TestCaseAnalyzer;
-import mutation.mutator.Mutator;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;

@@ -38,7 +38,11 @@ public class DiffUtil {
 		for (int i = mutatedTraceArray.length, j = correctTraceArray.length; (i > 0 && j > 0);) {
 			if (mutatedTraceArray[i - 1].hasSameLocation(correctTraceArray[j - 1])) {
 				
-				if(mutatedTraceArray[i - 1].getOrder() == 145 && correctTraceArray[j-1].getOrder()==146){
+				if(mutatedTraceArray[i - 1].getOrder() == 3 && correctTraceArray[j-1].getOrder()==3){
+					System.currentTimeMillis();
+				}
+				
+				if(mutatedTraceArray[i - 1].getOrder() == 3 && correctTraceArray[j-1].getOrder()==6){
 					System.currentTimeMillis();
 				}
 				
@@ -100,6 +104,11 @@ public class DiffUtil {
 		for (int i = 1; i < nodeList1.length + 1; i++){
 			for (int j = 1; j < nodeList2.length + 1; j++) {
 				if (nodeList1[i - 1].hasSameLocation(nodeList2[j - 1])){
+					//TODO
+					if(nodeList1[i - 1].getOrder() == 3 && nodeList2[j-1].getOrder()==3){
+						System.currentTimeMillis();
+					}
+					
 					double value = similarityTable[i - 1][j - 1] + comparator.compute(nodeList1[i - 1], nodeList2[j - 1]);
 					similarityTable[i][j] = getLargestValue(value, similarityTable[i-1][j], similarityTable[i][j-1]);
 				}

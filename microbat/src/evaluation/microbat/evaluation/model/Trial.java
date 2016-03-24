@@ -14,10 +14,11 @@ public class Trial {
 		
 	}
 	
-	public Trial(String testCaseName, int mutatedLineNumber,
+	public Trial(String testCaseName, int mutatedLineNumber, String mutatedFile,
 			boolean isBugFound, List<String> jumpSteps, int totalSteps) {
 		super();
 		this.testCaseName = testCaseName;
+		this.mutatedFile = mutatedFile;
 		this.mutatedLineNumber = mutatedLineNumber;
 		this.isBugFound = isBugFound;
 		this.jumpSteps = jumpSteps;

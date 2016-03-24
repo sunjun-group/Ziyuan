@@ -43,7 +43,10 @@ public class TestCaseAnalyzer {
 	public static final String TEST_RUNNER = "microbat.evaluation.junit.MicroBatTestRunner";
 	
 	private List<Trial> trials = new ArrayList<>();
+	private List<Trial> overLongTrials = new ArrayList<>();
 	private IgnoredTestCaseFiles ignoredTestCaseFiles = new IgnoredTestCaseFiles();
+	
+	private List<String> errorMsgs = new ArrayList<>();
 	
 	public void test(){
 		String str = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\mutatedSource8245811234241496344\\47_25_1\\Main.java";
@@ -87,24 +90,24 @@ public class TestCaseAnalyzer {
 	}
 	
 	public void runEvaluation() throws JavaModelException{
-		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+//		
+//		for(IJavaElement element: testRoot.getChildren()){
+//			if(element instanceof IPackageFragment){
+//				runEvaluation((IPackageFragment)element);				
+//			}
+//		}
 		
-		for(IJavaElement element: testRoot.getChildren()){
-			if(element instanceof IPackageFragment){
-				runEvaluation((IPackageFragment)element);				
-			}
-		}
-		
-//		runSingeTestCase();
+		runSingeTestCase();
 	}
 	
 	private void runSingeTestCase(){
 		String className = "org.apache.commons.math.analysis.ComposableFunctionTest";
-		String methodName = "testRint";
+		String methodName = "testSignum";
 		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-				+ "mutatedSource1440265988047501917\\3751_20_1\\FastMath.java";
+				+ "mutatedSource3984330978923495794\\640_17_1\\FastMath.java";
 		String mutatedClass = "org.apache.commons.math.util.FastMath";
-		int mutatedLine = 3751;
+		int mutatedLine = 640;
 		
 		try {
 			runEvaluationForSingleTrial(className, methodName, mutationFile, mutatedClass, mutatedLine);
@@ -128,7 +131,7 @@ public class TestCaseAnalyzer {
 		mutatedFileList.add(mutatedFile);
 		
 		List<TraceFilePair> killingMutatantTraces = 
-				mutateCode(mutatedClassName, mutatedFileList, testcaseConfig, mutatedLine);
+				mutateCode(mutatedClassName, mutatedFileList, testcaseConfig, mutatedLine, testcaseName);
 		
 		TestCaseRunner checker = new TestCaseRunner();
 		List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
@@ -145,8 +148,6 @@ public class TestCaseAnalyzer {
 			trial = microbat.detectMutatedBug(mutantTrace, correctTrace, mutatedLocation, 
 					testcaseName, pair.mutatedFile);
 			if(trial != null){
-				
-				
 				if(!trial.isBugFound()){
 					System.err.println("Cannot find bug in Mutated File: " + pair.mutatedFile);
 				}
@@ -181,7 +182,7 @@ public class TestCaseAnalyzer {
 						runEvaluationForSingleMethod(className, methodName);
 						
 						
-						if(trials.size() > 30000){
+						if(trials.size() > 100){
 							reporter.export(trials, Settings.projectName+num);
 							
 							trials.clear();
@@ -234,7 +235,7 @@ public class TestCaseAnalyzer {
 						if(!mutatedFileList.isEmpty()){
 							try {
 								List<TraceFilePair> killingMutatantTraces = 
-										mutateCode(mutatedClass, mutatedFileList, testcaseConfig, line);
+										mutateCode(mutatedClass, mutatedFileList, testcaseConfig, line, testcaseName);
 								
 								if(!killingMutatantTraces.isEmpty()){
 									if(null == correctTrace){
@@ -253,12 +254,22 @@ public class TestCaseAnalyzer {
 											if(trial != null){
 												trials.add(trial);	
 												if(!trial.isBugFound()){
-													System.err.println("Cannot find bug in Mutated File: " + pair.mutatedFile);
+													String errorMsg = "Test case: " + testcaseName + 
+															" fail to find bug\n" + "Mutated File: " + pair.mutatedFile;
+													System.err.println(errorMsg);
+													errorMsgs.add(errorMsg);
 												}
 											}
 										} catch (Exception e) {
 											e.printStackTrace();
-											System.err.println("Mutated File: " + pair.mutatedFile);
+											String errorMsg = "Test case: " + testcaseName + 
+													" has exception\n" + "Mutated File: " + pair.mutatedFile;
+											System.err.println(errorMsg);
+											errorMsgs.add(errorMsg);
+										}
+										
+										if(errorMsgs.size() > 3){
+											System.currentTimeMillis();
 										}
 									}
 									
@@ -319,9 +330,10 @@ public class TestCaseAnalyzer {
 		
 	}
 
-	private List<TraceFilePair> mutateCode(String key, List<File> mutatedFileList, AppJavaClassPath testcaseConfig, int mutatedLine)
+	private List<TraceFilePair> mutateCode(String className, List<File> mutatedFileList, AppJavaClassPath testcaseConfig, 
+			int mutatedLine, String testCaseName)
 			throws MalformedURLException, JavaModelException, IOException {
-		ICompilationUnit iunit = JavaUtil.findICompilationUnitInProject(key);
+		ICompilationUnit iunit = JavaUtil.findICompilationUnitInProject(className);
 		String originalCodeText = iunit.getSource();
 		
 		List<TraceFilePair> killingMutantTraces = new ArrayList<>();
@@ -340,6 +352,13 @@ public class TestCaseAnalyzer {
 			
 			boolean isKill = !checker.isPassingTest() && !checker.hasCompilationError();
 			System.out.println(": " + (isKill?"killed":"not killed"));
+			
+			if(checker.isOverLong()){
+				Trial trial = new Trial(testCaseName, mutatedLine, file.toString(), false, null, 0);
+				overLongTrials.add(trial);
+				continue;
+			}
+			
 			if(isKill){
 				System.out.println("generating trace for mutated class " + iunit.getElementName() + " (line: " + mutatedLine + ")");
 				TraceModelConstructor constructor = new TraceModelConstructor();
