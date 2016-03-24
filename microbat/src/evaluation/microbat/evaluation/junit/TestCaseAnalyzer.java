@@ -91,15 +91,15 @@ public class TestCaseAnalyzer {
 	}
 	
 	public void runEvaluation() throws JavaModelException{
-//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
-//		
-//		for(IJavaElement element: testRoot.getChildren()){
-//			if(element instanceof IPackageFragment){
-//				runEvaluation((IPackageFragment)element);				
-//			}
-//		}
+		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
 		
-		runSingeTestCase();
+		for(IJavaElement element: testRoot.getChildren()){
+			if(element instanceof IPackageFragment){
+				runEvaluation((IPackageFragment)element);				
+			}
+		}
+		
+//		runSingeTestCase();
 	}
 	
 	private void runSingeTestCase(){
@@ -184,11 +184,12 @@ public class TestCaseAnalyzer {
 						runEvaluationForSingleMethod(className, methodName);
 						
 						
-						if(trials.size() > 50){
+						if(trials.size() > 5){
 							reporter.export(trials, Settings.projectName+num);
 							
 							trials.clear();
 							reporter = new ExcelReporter();
+							reporter.start();
 							num++;
 						}
 					}
@@ -198,6 +199,7 @@ public class TestCaseAnalyzer {
 		}
 		
 		reporter.export(trials, Settings.projectName+num);
+		num++;
 	}
 	
 //	private void locateCertainTestCase(String className, String methodName){
@@ -240,6 +242,13 @@ public class TestCaseAnalyzer {
 							tmpTrial.setTestCaseName(testCaseName);
 							tmpTrial.setMutatedFile(mutationFile.toString());
 							tmpTrial.setMutatedLineNumber(line);
+							
+							if(testCaseName.equals("org.apache.commons.math.MathConfigurationExceptionTest#testConstructor") &&
+									mutationFile.toString().contains("176_13_1\\MathException.java") &&
+									line == 176){
+								System.currentTimeMillis();
+							}
+							
 							if(parsedTrials.contains(tmpTrial)){
 								continue;
 							}
@@ -277,7 +286,7 @@ public class TestCaseAnalyzer {
 										errorMsgs.add(errorMsg);
 									}
 									
-									if(errorMsgs.size() > 3){
+									if(errorMsgs.size() > 5){
 										System.currentTimeMillis();
 									}
 									
@@ -287,11 +296,11 @@ public class TestCaseAnalyzer {
 									System.out.println("No suitable mutants for test case " + testCaseName + "in line " + line);
 //									return false;
 								}
-							} catch (MalformedURLException e) {
+							} catch (Exception e) {
 								e.printStackTrace();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
+								System.err.println("Test Case:");
+								System.err.println(tmpTrial);
+							} 
 						}
 					}
 				}
@@ -339,8 +348,8 @@ public class TestCaseAnalyzer {
 	}
 
 	private Trace mutateCode(String mutatedClass, File mutationFile, AppJavaClassPath testcaseConfig, 
-			int mutatedLine, String testCaseName)
-			throws MalformedURLException, JavaModelException, IOException {
+			int mutatedLine, String testCaseName) 
+			throws MalformedURLException, JavaModelException, IOException, NullPointerException {
 		
 		Trace killingMutantTrace = null;
 		

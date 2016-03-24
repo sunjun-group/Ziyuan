@@ -11,6 +11,7 @@ package mutation.io;
 import japa.parser.ast.Node;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import sav.common.core.SavRtException;
@@ -29,8 +30,25 @@ public class AbstractMutationFileWriter {
 	
 	public AbstractMutationFileWriter(String srcFolder) {
 		this.scrFolder = srcFolder;
-		muSrcFolder = FileUtils.createTempFolder("mutatedSource")
-				.getAbsolutePath();
+		try {
+			String projName = srcFolder.substring(0, srcFolder.indexOf("/src"));
+			projName = projName.substring(projName.lastIndexOf("/")+1, projName.length());
+			
+			File file = File.createTempFile(projName, "");
+			String path = file.toString();
+			path = path.substring(0, path.indexOf(projName)+projName.length());
+			file = new File(path);
+			file.delete();
+			file.mkdir();
+			
+			muSrcFolder = file.getAbsolutePath();
+		} catch (IOException e) {
+			throw new SavRtException("cannot create temp dir");
+		}
+		
+		
+//		muSrcFolder = FileUtils.createTempFolder("mutatedSource")
+//				.getAbsolutePath();
 	}
 	
 	protected File getJavaSrcFile(String className) {

@@ -12,10 +12,12 @@ import microbat.evaluation.model.Trial;
 import microbat.util.Settings;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelReader {
 	public Set<Trial> readXLSX() throws IOException {
@@ -24,69 +26,63 @@ public class ExcelReader {
 		String projectName = Settings.projectName;
 		int num = 0;
 
-		String fileName = projectName + num;
+		String fileName = projectName + num + ".xlsx";
+		
 		File file = new File(fileName);
 		while (file.exists()) {
 			InputStream excelFileToRead = new FileInputStream(file);
 			
 			@SuppressWarnings("resource")
-			HSSFWorkbook wb = new HSSFWorkbook(excelFileToRead);
+			XSSFWorkbook wb = new XSSFWorkbook(excelFileToRead);
 
-			HSSFSheet sheet = wb.getSheetAt(0);
-			HSSFRow row;
-			HSSFCell cell;
-
-			int rowNum = 0;
+			XSSFSheet sheet = wb.getSheetAt(0);
+			XSSFRow row;
+			XSSFCell cell;
 
 			Iterator<Row> rows = sheet.rowIterator();
 
 			while (rows.hasNext()) {
-				row = (HSSFRow) rows.next();
+				row = (XSSFRow) rows.next();
 
-				if (rowNum > 0) {
+				if (row.getRowNum() > 0) {
 					Trial trial = new Trial();
-					for (int i = 0; i < row.getPhysicalNumberOfCells(); i++) {
-						cell = row.getCell(0);
-						if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
-							String content = cell.getStringCellValue();
-							switch (i) {
-							case 0:
-								trial.setTestCaseName(content);
-								break;
-							case 1:
-								boolean isBugFound = Boolean.valueOf(content);
-								trial.setBugFound(isBugFound);
-								break;
-							case 4:
-								trial.setMutatedFile(content);
-								break;
-							case 5:
-								int linNum = Integer.valueOf(content);
-								trial.setMutatedLineNumber(linNum);
-								break;
-							case 7:
-								trial.setResult(content);
-								break;
-							}
+					
+					Iterator<Cell> cells = row.cellIterator();
+					while (cells.hasNext()) {
+						cell = (XSSFCell) cells.next();
+						int i = cell.getColumnIndex();
+						
+						switch (i) {
+						case 0:
+							String testcaseName = cell.getStringCellValue();
+							trial.setTestCaseName(testcaseName);
+							break;
+						case 1:
+							boolean isBugFound = cell.getBooleanCellValue();
+							trial.setBugFound(isBugFound);
+							break;
+						case 4:
+							String mutatedFile = cell.getStringCellValue();
+							trial.setMutatedFile(mutatedFile);
+							break;
+						case 5:
+							int linNum = (int) cell.getNumericCellValue();
+							trial.setMutatedLineNumber(linNum);
+							break;
+						case 7:
+							String result = cell.getStringCellValue();
+							trial.setResult(result);
+							break;
 						}
 					}
-
-//					Iterator<Cell> cells = row.cellIterator();
-//					while (cells.hasNext()) {
-//						cell = (HSSFCell) cells.next();
-//
-//						if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
-//							String testCaseName = cell.getStringCellValue();
-//						}
-//
-//					}
-
-					rowNum++;
+					
+					set.add(trial);
 				}
+				
 			}
 
 			num++;
-			fileName = projectName + num;
+			fileName = projectName + num + ".xlsx";
 			file = new File(fileName);
 		}
 
