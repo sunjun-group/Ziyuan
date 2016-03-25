@@ -243,6 +243,9 @@ public class CfgCreator extends CfgConverter {
 		List<CfgDecisionNode> decisions = new ArrayList<CfgDecisionNode>();
 		List<List<Statement>> statementsList = new ArrayList<List<Statement>>();
 		SwitchEntryStmt defaultEntry = null;
+		List<Integer> array = new ArrayList<Integer>();
+		List<List<CfgDecisionNode>> destList = new ArrayList<List<CfgDecisionNode>>();
+		List<List<Boolean>> branchFlagList = new ArrayList<List<Boolean>>();
 		for (SwitchEntryStmt entry : n.getEntries()) {
 			Expression expr;
 			if (entry.getLabel() != null) {
@@ -273,6 +276,7 @@ public class CfgCreator extends CfgConverter {
 		for (int i = 0; i < decisions.size(); i++) {
 			CfgDecisionNode decision = decisions.get(i);
 			CFG tempCfg = null;
+			if(statementsList.get(i) != null){
 			for (int j = 0; j < statementsList.get(i).size(); j++) {
 				CFG trueEdgeCfg = toCFG(statementsList.get(i).get(j));
 				if (tempCfg == null) {
@@ -281,7 +285,10 @@ public class CfgCreator extends CfgConverter {
 					tempCfg.append(trueEdgeCfg);
 				}
 			}
-
+			}
+			else{
+				tempCfg = new CFG(createCfgEntryNode(),createCfgExitNode());
+			}
 			if ((i + 1) > (decisions.size() - 1)) {
 				if(defaultEntry == null){
 				attachExecutionBlock(cfg, decision, tempCfg, cfg.getExit(),
@@ -316,12 +323,55 @@ public class CfgCreator extends CfgConverter {
 					hasBreakStmt = false;
 					attachExecutionBlock(cfg, decision, tempCfg, cfg.getExit(),
 							true);
-				} else {
+				} else {				
+
+					List<CfgEdge> inExitList= new ArrayList<CfgEdge> (tempCfg.getInEdges(tempCfg.getExit()));
+					List<CfgDecisionNode> destNodeList = new ArrayList<CfgDecisionNode>();
+					List<Boolean> branchFlag = new ArrayList<Boolean>();
+//                    System.out.println(inExitList);
+					for(CfgEdge edge : inExitList){
+						if(edge.getSource() != tempCfg.getEntry()){
+						destNodeList.add((CfgDecisionNode) edge.getSource());
+						}
+						if(edge.getClass().getSimpleName().equals("CfgFalseEdge")){
+							branchFlag.add(false);
+						}
+						else{
+							branchFlag.add(true);
+						}
+					}
+					
+				 destList.add(destNodeList);
+				 branchFlagList.add(branchFlag);
 					attachExecutionBlock(cfg, decision, tempCfg,
 							decisions.get(i + 1), true);
+					List<CfgEdge> inExitList2= new ArrayList<CfgEdge> (cfg.getInEdges(decisions.get(i + 1)));
+					array.add(i + 1);
+					for(CfgEdge edge : inExitList2){
+						if(destNodeList.contains(edge.getSource())){
+							cfg.removeEdge(edge);
+						}
+					}
+
 				}
 			}
-
+		}
+		
+		for(int index = 0; index < array.size() ; index ++){
+			List<CfgEdge> outDecisionList2= new ArrayList<CfgEdge> (cfg.getOutEdges(decisions.get(array.get(index))));
+			for(CfgEdge edge : outDecisionList2){
+				if(edge.getClass().getSimpleName().equals("CfgTrueEdge")){
+					CfgDecisionNode destNode = (CfgDecisionNode) edge.getDest();
+					for(int j = 0; j < destList.get(index).size() ; j ++){
+//						 System.out.println(edge);
+//						System.out.println(destList.get(index).get(j));
+//						System.out.println(branchFlagList.get(index).get(j));
+//						System.out.println(destNode);
+						cfg.addEdge(newBranchEdge(destList.get(index).get(j), destNode, branchFlagList.get(index).get(j)));
+					}
+					break;
+				}
+			}
 		}
 		return cfg;
 	}
@@ -540,44 +590,37 @@ public class CfgCreator extends CfgConverter {
 
 	@Override
 	protected CFG convert(MethodDeclaration n) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected CFG convert(AssertStmt n) {
-		// TODO Auto-generated method stub
-		return null;
+		return convertProcessStmt(n);
 	}
 
 	@Override
 	protected CFG convert(LabeledStmt n) {
-		// TODO Auto-generated method stub
-		return null;
+		return convertProcessStmt(n);
 	}
 
 	@Override
 	protected CFG convert(SynchronizedStmt n) {
-		// TODO Auto-generated method stub
-		return null;
+		return convertProcessStmt(n);
 	}
 
 	@Override
 	protected CFG convert(TryStmt n) {
-		// TODO Auto-generated method stub
-		return null;
+		return convertProcessStmt(n);
 	}
 
 	@Override
 	protected CFG convert(ExplicitConstructorInvocationStmt n) {
-		// TODO Auto-generated method stub
-		return null;
+		return convertProcessStmt(n);
 	}
 
 	@Override
 	protected CFG convert(ThrowStmt n) {
-		// TODO Auto-generated method stub
-		return null;
+		return convertProcessStmt(n);
 	}
 
 }

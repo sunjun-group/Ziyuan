@@ -152,12 +152,12 @@ public class CfgTest {
 				"switch(x) {" +
 				"	case 1:" +
 				"		while(j > 10){if(i > 0){}else if (i > 1){break;}}executeFunc1();if(j > 2 ){}" +
-				"		break;" +
 				"	case 2:" +
-				"		executeFunc2();break;" +
+				"		executeFunc2();if(y == 0){} break;" +
+				"   case 3:"+
 				"	default:" +
 				"		executeDefault();while(k < 0){if(l == 0){break;}}" +
-				"		break;" +
+				"		" +
 				"}";
 		cfgFromStmt(str);
 	}
