@@ -1,13 +1,11 @@
 package mutation.mutator;
 
-import static mutation.mutator.AstNodeFactory.nameExpr;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.Node;
 import japa.parser.ast.expr.AssignExpr;
 import japa.parser.ast.expr.AssignExpr.Operator;
 import japa.parser.ast.expr.BinaryExpr;
 import japa.parser.ast.expr.BooleanLiteralExpr;
-import japa.parser.ast.expr.Expression;
 import japa.parser.ast.expr.FieldAccessExpr;
 import japa.parser.ast.expr.IntegerLiteralExpr;
 import japa.parser.ast.expr.NameExpr;
@@ -23,7 +21,6 @@ import java.util.Map;
 import mutation.mutator.mapping.MutationMap;
 import mutation.parser.ClassAnalyzer;
 import mutation.parser.ClassDescriptor;
-import mutation.parser.VariableDescriptor;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
 

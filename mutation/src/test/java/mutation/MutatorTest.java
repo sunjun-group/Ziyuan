@@ -39,8 +39,9 @@ public class MutatorTest {
 	public void testMutator() {
 		String clazzName = MutationTestData.class.getName();
 		clazzName = Main.class.getName();
+//		clazzName = FastMath.class.getName();
 		List<ClassLocation> value = new ArrayList<ClassLocation>();
-		value.add(new ClassLocation(clazzName, null, 34));
+		value.add(new ClassLocation(clazzName, null, 2606));
 //		value.add(new ClassLocation(clazzName, null, 27));
 //		value.add(new ClassLocation(clazzName, null, 33));
 //		value.add(new ClassLocation(clazzName, null, 35));
