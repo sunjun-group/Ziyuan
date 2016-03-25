@@ -603,6 +603,10 @@ public class DebugFeedbackView extends ViewPart {
 			boolean existWrittenVariable = !currentNode.getWrittenVariables().isEmpty();
 			boolean existReadVariable = !currentNode.getReadVariables().isEmpty();
 			
+			if(feedbackType.equals(UserFeedback.WRONG_PATH)){
+				return true;
+			}
+			
 			if(existWrittenVariable && existReadVariable && writtenVarCorrectness==TraceNode.WRITTEN_VARS_INCORRECT
 					&& readVarCorrectness==TraceNode.READ_VARS_CORRECT){
 				openBugFoundDialog();
