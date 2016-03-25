@@ -13,7 +13,10 @@ public class TraceNodeSimilarityComparator {
 
 	public double compute(TraceNode traceNode1, TraceNode traceNode2) {
 		
-		if(traceNode1.getOrder() == 41 && traceNode2.getOrder() == 38){
+		if(traceNode1.getOrder() == 103 && traceNode2.getOrder() == 95){
+			System.currentTimeMillis();
+		}
+		if(traceNode1.getOrder() == 103 && traceNode2.getOrder() == 194){
 			System.currentTimeMillis();
 		}
 		

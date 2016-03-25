@@ -99,29 +99,29 @@ public class TestCaseAnalyzer {
 	
 	public void runEvaluation() throws JavaModelException{
 		
-		ExcelReporter reporter = new ExcelReporter();
-		reporter.start();
+//		ExcelReporter reporter = new ExcelReporter();
+//		reporter.start();
+//		
+//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+//		
+//		for(IJavaElement element: testRoot.getChildren()){
+//			if(element instanceof IPackageFragment){
+//				runEvaluation((IPackageFragment)element, reporter);				
+//			}
+//		}
+//		
+//		reporter.export(trials, Settings.projectName+trialFileNum);
 		
-		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
-		
-		for(IJavaElement element: testRoot.getChildren()){
-			if(element instanceof IPackageFragment){
-				runEvaluation((IPackageFragment)element, reporter);				
-			}
-		}
-		
-		reporter.export(trials, Settings.projectName+trialFileNum);
-		
-//		runSingeTestCase();
+		runSingeTestCase();
 	}
 	
 	private void runSingeTestCase(){
-		String className = "org.apache.commons.math.analysis.ComposableFunctionTest";
-		String methodName = "testComposition";
+		String className = "org.apache.commons.math.analysis.BinaryFunctionTest";
+		String methodName = "testAtan2";
 		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-				+ "mutatedSource5053531797357951674\\3261_22_3\\FastMath.java";
+				+ "apache-common-math-2.2\\3054_38_3\\FastMath.java";
 		String mutatedClass = "org.apache.commons.math.util.FastMath";
-		int mutatedLine = 3261;
+		int mutatedLine = 3054;
 		
 		try {
 			runEvaluationForSingleTrial(className, methodName, mutationFile, mutatedClass, mutatedLine);
@@ -191,9 +191,6 @@ public class TestCaseAnalyzer {
 					for(MethodDeclaration testingMethod: testingMethods){
 						String methodName = testingMethod.getName().getIdentifier();
 						runEvaluationForSingleMethod(className, methodName, reporter);
-						
-						
-						
 					}
 					
 				}
@@ -202,10 +199,6 @@ public class TestCaseAnalyzer {
 		
 	}
 	
-//	private void locateCertainTestCase(String className, String methodName){
-//		
-//	}
-
 	private boolean runEvaluationForSingleMethod(String className, String methodName, ExcelReporter reporter) 
 			throws JavaModelException {
 		AppJavaClassPath testcaseConfig = createProjectClassPath(className, methodName);
@@ -292,12 +285,9 @@ public class TestCaseAnalyzer {
 									if(errorMsgs.size() > 5){
 										System.currentTimeMillis();
 									}
-									
-//									return true;
 								}
 								else{
 									System.out.println("No suitable mutants for test case " + testCaseName + "in line " + line);
-//									return false;
 								}
 							} catch (Exception e) {
 								e.printStackTrace();

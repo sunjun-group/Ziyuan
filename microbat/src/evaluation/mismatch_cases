@@ -13,3 +13,21 @@ may need to evaluate the evaluation with two research questions:
 		int mutatedLine = 640;
 ======================================================================================
 
+Test case: org.apache.commons.math.analysis.BinaryFunctionTest#testAtan2 fail to find bug
+Mutated File: C:\Users\YUNLIN~1\AppData\Local\Temp\apache-common-math-2.2\3054_38_1\FastMath.java, 
+
+Test case: org.apache.commons.math.analysis.BinaryFunctionTest#testAtan2 fail to find bug
+Mutated File: C:\Users\YUNLIN~1\AppData\Local\Temp\apache-common-math-2.2\3054_38_3\FastMath.java, 
+
+Test case: org.apache.commons.math.analysis.BinaryFunctionTest#testAtan2 fail to find bug
+Mutated File: C:\Users\YUNLIN~1\AppData\Local\Temp\apache-common-math-2.2\3054_38_4\FastMath.java, 
+
+Test case: org.apache.commons.math.analysis.BinaryFunctionTest#testAtan2 fail to find bug
+Mutated File: C:\Users\YUNLIN~1\AppData\Local\Temp\apache-common-math-2.2\3054_42_1\FastMath.java, 
+
+Test case: org.apache.commons.math.analysis.BinaryFunctionTest#testAtan2 fail to find bug
+Mutated File: C:\Users\YUNLIN~1\AppData\Local\Temp\apache-common-math-2.2\3041_27_1\FastMath.java, 
+
+Test case: org.apache.commons.math.analysis.BinaryFunctionTest#testAtan2 fail to find bug
+Mutated File: C:\Users\YUNLIN~1\AppData\Local\Temp\apache-common-math-2.2\3043_30_3\FastMath.java
+

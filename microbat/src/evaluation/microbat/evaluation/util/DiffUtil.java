@@ -38,7 +38,7 @@ public class DiffUtil {
 		for (int i = mutatedTraceArray.length, j = correctTraceArray.length; (i > 0 && j > 0);) {
 			if (mutatedTraceArray[i - 1].hasSameLocation(correctTraceArray[j - 1])) {
 				
-				if(mutatedTraceArray[i - 1].getOrder() == 3 && correctTraceArray[j-1].getOrder()==3){
+				if(mutatedTraceArray[i - 1].getOrder() == 41 && correctTraceArray[j-1].getOrder()==38){
 					System.currentTimeMillis();
 				}
 				
@@ -105,7 +105,10 @@ public class DiffUtil {
 			for (int j = 1; j < nodeList2.length + 1; j++) {
 				if (nodeList1[i - 1].hasSameLocation(nodeList2[j - 1])){
 					//TODO
-					if(nodeList1[i - 1].getOrder() == 3 && nodeList2[j-1].getOrder()==3){
+					if(nodeList1[i - 1].getOrder() == 103 && nodeList2[j-1].getOrder()== 95){
+						System.currentTimeMillis();
+					}
+					if(nodeList1[i - 1].getOrder() == 103 && nodeList2[j-1].getOrder()==194){
 						System.currentTimeMillis();
 					}
 					

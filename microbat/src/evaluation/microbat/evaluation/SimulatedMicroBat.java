@@ -34,6 +34,7 @@ public class SimulatedMicroBat {
 		TraceNode rootCause = findRootCause(mutatedLocation.getClassCanonicalName(), 
 				mutatedLocation.getLineNo(), mutatedTrace, pairList);
 		
+//		System.currentTimeMillis();
 //		Object dom = rootCause.findAllDominatees();
 //		dominatees.add(rootCause);
 		
@@ -44,8 +45,6 @@ public class SimulatedMicroBat {
 			List<TraceNode> wrongNodeList = new ArrayList<>(allWrongNodeMap.values());
 			Collections.sort(wrongNodeList, new TraceNodeReverseOrderComparator());
 			TraceNode observedFaultNode = wrongNodeList.get(0);
-			
-//			System.currentTimeMillis();
 			
 			Trial trial = startSimulation(observedFaultNode, rootCause, mutatedTrace, allWrongNodeMap, pairList, 
 					testCaseName, mutatedFile);
