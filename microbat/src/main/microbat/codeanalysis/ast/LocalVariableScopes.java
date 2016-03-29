@@ -3,7 +3,7 @@ package microbat.codeanalysis.ast;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 
 public class LocalVariableScopes {
 	private List<LocalVariableScope> variableScopes = new ArrayList<>();
@@ -24,7 +24,7 @@ public class LocalVariableScopes {
 		}
 		
 		for(LocalVariableScope scope: variableScopes){
-			TypeDeclaration td = (TypeDeclaration) scope.getCompilationUnit().types().get(0);
+			AbstractTypeDeclaration td = (AbstractTypeDeclaration) scope.getCompilationUnit().types().get(0);
 			String typeName = td.resolveBinding().getQualifiedName();
 			
 			if(typeName.equals(fullQualifiedTypeName) && scope.getVariableName().equals(variableName) &&

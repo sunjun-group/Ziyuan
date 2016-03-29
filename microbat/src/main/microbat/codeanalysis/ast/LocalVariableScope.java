@@ -1,6 +1,7 @@
 package microbat.codeanalysis.ast;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
@@ -83,9 +84,9 @@ public class LocalVariableScope {
 	public String getFullNameOfContainingClass(){
 		CompilationUnit cu = getCompilationUnit();
 		PackageDeclaration pack = cu.getPackage();
-		TypeDeclaration type = (TypeDeclaration) cu.types().get(0);
+		AbstractTypeDeclaration type = (AbstractTypeDeclaration) cu.types().get(0);
 		
-		String fullName = pack.getName().getFullyQualifiedName() + type.getName().getIdentifier();
+		String fullName = pack.getName().getFullyQualifiedName() + "." + type.getName().getIdentifier();
 		return fullName;
 	}
 	
