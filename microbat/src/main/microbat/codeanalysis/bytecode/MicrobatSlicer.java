@@ -480,7 +480,14 @@ public class MicrobatSlicer{
 			 */
 			String varName = null;
 			for(int j=pc; j<pc+10; j++){
-				varName = method.getLocalVariableName(j, varIndex);
+				try{
+					varName = method.getLocalVariableName(j, varIndex);					
+				}
+				catch(ArrayIndexOutOfBoundsException e){
+					//e.printStackTrace();
+					System.currentTimeMillis();
+				}
+				
 				if(varName != null){
 					pc = j;
 					break;
