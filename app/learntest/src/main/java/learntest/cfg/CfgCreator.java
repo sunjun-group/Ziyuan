@@ -48,10 +48,13 @@ public class CfgCreator extends CfgConverter {
 
 	private static final CfgCreator INSTANCE = new CfgCreator();
 	private List<CfgDecisionNode> temporaryDecisionNodeList = new ArrayList<CfgDecisionNode>();
+	private List<CfgEdge> temporaryReturnEdgeList = new ArrayList<CfgEdge>();
 	private boolean hasBreakStmt = false;
 	private boolean hasContinueStmt = false;
+	private boolean hasReturnStmt = false;
 	private CfgDecisionNode breakStmtToParentStmt;
 	private CfgDecisionNode continueStmtToParentStmt;
+//	private CfgDecisionNode returnStmtToParentStmt;
 	private Map<String, Integer> decisionNodeMap = new HashMap<String, Integer>();
 	private Map<String, CfgEdge> cfgEdgeMap = new HashMap<String, CfgEdge>();
 	private int decisionNodeIndex = 0;
@@ -60,11 +63,13 @@ public class CfgCreator extends CfgConverter {
 	// ArrayList<CfgDecisionNode>();
 	private List<Boolean> temporaryBreakTrueOrFalseList = new ArrayList<Boolean>();
 
+	
 	public CFG toCFG(Node node) {
 		if (node != null) {
 			node.accept(this, null);
 			return getCFG();
 		}
+		
 		return newInstance(node);
 	}
 
@@ -99,6 +104,7 @@ public class CfgCreator extends CfgConverter {
 		decisionNodeMap.put(n.toString(), decisionNodeIndex++);
 		cfg.addEdge(cfg.getEntry(), decision);
 
+		
 		CFG ifThen = toCFG(n.getThenStmt());
 		if (hasBreakStmt) {
 			hasBreakStmt = false;
@@ -114,7 +120,14 @@ public class CfgCreator extends CfgConverter {
 			hasContinueStmt = false;
 			attachExecutionBlock(cfg, decision, ifThen,
 					continueStmtToParentStmt, true);
-		} else {
+		} 
+          else if(hasReturnStmt){
+        	  hasReturnStmt = false;
+        	  attachExecutionBlock(cfg, decision, ifThen,
+        			  decision, true);
+        	  temporaryReturnEdgeList.add(cfgEdgeMap.get(decision.toString() + decision.toString() + true));
+			
+		}else {
 			attachExecutionBlock(cfg, decision, ifThen, cfg.getExit(), true);
 		}
 
@@ -134,10 +147,16 @@ public class CfgCreator extends CfgConverter {
 			hasContinueStmt = false;
 			attachExecutionBlock(cfg, decision, elseThen,
 					continueStmtToParentStmt, false);
-		} else {
+		} else if(hasReturnStmt){
+			 hasReturnStmt = false;
+       	  attachExecutionBlock(cfg, decision, elseThen,
+       			decision, false);
+       	 temporaryReturnEdgeList.add(cfgEdgeMap.get(decision.toString() + decision.toString() + false));
+		}
+		else {
 			attachExecutionBlock(cfg, decision, elseThen, cfg.getExit(), false);
 		}
-
+		
 		return cfg;
 	}
 
@@ -290,21 +309,45 @@ public class CfgCreator extends CfgConverter {
 				tempCfg = new CFG(createCfgEntryNode(),createCfgExitNode());
 			}
 			if ((i + 1) > (decisions.size() - 1)) {
-				if(defaultEntry == null){
-				attachExecutionBlock(cfg, decision, tempCfg, cfg.getExit(),
-						true);
-				attachExecutionBlock(cfg, decision, null, cfg.getExit(),
-						false);
-				}
-				else{
-					if(tempCfg == null){
-						cfg.addEdge(decision, cfg.getExit());
+				if(defaultEntry == null ){
+					if(hasReturnStmt){
+						dealWithReturnStmt( cfg, tempCfg,  decision);
+
+						attachExecutionBlock(cfg, decision, null, cfg.getExit(),
+								false);
 					}
 					else{
+						attachExecutionBlock(cfg, decision, tempCfg, cfg.getExit(),
+								true);
+						attachExecutionBlock(cfg, decision, null, cfg.getExit(),
+								false);
+					}
+					
+				}
+				else{
+					if(tempCfg.getVertices().isEmpty()){
+						if(hasReturnStmt){
+							hasReturnStmt = false;
+							attachExecutionBlock(cfg, decision, decision,true);
+							temporaryReturnEdgeList.add(cfgEdgeMap.get(decision.toString() + decision.toString() + true));
+						}
+						else{
+							cfg.addEdge(decision, cfg.getExit());
+						}
+					}
+					else{
+						if(hasReturnStmt){
+							dealWithReturnStmt( cfg, tempCfg,  decision);
+
+							attachExecutionBlock(cfg, decision, null, cfg.getExit(),
+									false);
+						}
+						else{
 					attachExecutionBlock(cfg, decision, tempCfg, cfg.getExit(),
 							true);
 					attachExecutionBlock(cfg, decision, null, cfg.getExit(),
 							false);
+						}
 					CfgDecisionNode destNode = null;
 					List<CfgEdge> list= new ArrayList<CfgEdge> (cfg.getOutEdges(decision));
 					for(CfgEdge edge : list){
@@ -313,22 +356,29 @@ public class CfgCreator extends CfgConverter {
 						}
 						cfg.removeEdge(edge);
 					}
-					cfg.addEdge(decision, destNode);
+					if(destNode != null){
+						cfg.addEdge(decision, destNode);
 					}
-
+					else{
+						cfg.addEdge(decision, cfg.getExit());
+					}
 				}
+
+			}
 			} else {
 				cfg.addEdge(newBranchEdge(decision, decisions.get(i + 1), false));
 				if (hasBreakStmt) {
 					hasBreakStmt = false;
 					attachExecutionBlock(cfg, decision, tempCfg, cfg.getExit(),
 							true);
-				} else {				
+				} else if(hasReturnStmt){
+					dealWithReturnStmt( cfg, tempCfg,  decision);
+				}
+				else {				
 
 					List<CfgEdge> inExitList= new ArrayList<CfgEdge> (tempCfg.getInEdges(tempCfg.getExit()));
 					List<CfgDecisionNode> destNodeList = new ArrayList<CfgDecisionNode>();
 					List<Boolean> branchFlag = new ArrayList<Boolean>();
-//                    System.out.println(inExitList);
 					for(CfgEdge edge : inExitList){
 						if(edge.getSource() != tempCfg.getEntry()){
 						destNodeList.add((CfgDecisionNode) edge.getSource());
@@ -363,10 +413,6 @@ public class CfgCreator extends CfgConverter {
 				if(edge.getClass().getSimpleName().equals("CfgTrueEdge")){
 					CfgDecisionNode destNode = (CfgDecisionNode) edge.getDest();
 					for(int j = 0; j < destList.get(index).size() ; j ++){
-//						 System.out.println(edge);
-//						System.out.println(destList.get(index).get(j));
-//						System.out.println(branchFlagList.get(index).get(j));
-//						System.out.println(destNode);
 						cfg.addEdge(newBranchEdge(destList.get(index).get(j), destNode, branchFlagList.get(index).get(j)));
 					}
 					break;
@@ -406,6 +452,56 @@ public class CfgCreator extends CfgConverter {
 	}
 
 	/****
+	 * deal with returnStmt
+	 */
+	protected void dealWithReturnStmt(CFG cfg, CFG tempCfg, CfgDecisionNode decision){
+		hasReturnStmt = false;
+		if(!tempCfg.getVertices().isEmpty()){
+		List<CfgEdge> returnEdgeList = new ArrayList<CfgEdge>( tempCfg.getExitInEdges());
+		for(CfgEdge edge : returnEdgeList){
+			tempCfg.removeEdge(edge);
+			if(edge.getType().toString().equals("TRUE")){
+			 attachExecutionBlock(tempCfg,(CfgDecisionNode)edge.getSource(), (CfgDecisionNode)edge.getSource(), true);
+			temporaryReturnEdgeList.add(cfgEdgeMap.get(edge.getSource().toString() + edge.getSource().toString() + true));
+			}
+			else{
+				attachExecutionBlock(tempCfg,(CfgDecisionNode)edge.getSource(), (CfgDecisionNode)edge.getSource(), false);
+				temporaryReturnEdgeList.add(cfgEdgeMap.get(edge.getSource().toString() + edge.getSource().toString() + false));
+			}
+									
+		}
+		attachExecutionBlock(cfg, decision, tempCfg, cfg.getExit(),true);
+		}
+		else{
+			attachExecutionBlock(cfg,decision,null, decision, true);
+			temporaryReturnEdgeList.add(cfgEdgeMap.get(decision.toString() + decision.toString() + true));
+		}	
+	}
+	
+	protected CFG dealWithReturnStmt(CFG cfg){
+	if(temporaryReturnEdgeList.size() != 0){
+		for(CfgEdge edge : temporaryReturnEdgeList){
+			cfg.removeEdge(edge);
+			if(!edge.getSource().toString().equals("default")){
+			if(edge.getType().toString().equals("TRUE")){
+				cfg.addEdge(newBranchEdge((CfgDecisionNode)edge.getSource(), cfg.getExit(), true));
+				//System.out.println(edge);
+			}
+			else{
+				cfg.addEdge(newBranchEdge((CfgDecisionNode)edge.getSource(), cfg.getExit(), false));
+				//System.out.println(edge);
+			}
+			}
+			else{
+				cfg.addEdge(edge.getSource(), cfg.getExit());
+			}
+		}
+		temporaryReturnEdgeList.removeAll(temporaryReturnEdgeList);
+	}
+	
+	return cfg;
+	}
+	/****
 	 * deal with statements that do not contain decision condition
 	 */
 	@Override
@@ -415,11 +511,13 @@ public class CfgCreator extends CfgConverter {
 
 	@Override
 	protected CFG convert(ReturnStmt n) {
+		hasReturnStmt = true;
 		return convertProcessStmt(n);
 	}
 
 	@Override
 	protected CFG convert(BreakStmt n) {
+//		System.out.println(n.getParentNode().getParentNode().getParentNode().getParentNode().getParentNode().getParentNode());
 		hasBreakStmt = true;
 		Node node = null;
 		int count = 0;
@@ -460,9 +558,7 @@ public class CfgCreator extends CfgConverter {
 
 				} else if ((node.getClass().getTypeName().toString())
 						.equals("japa.parser.ast.stmt.SwitchStmt")) {
-					if (flag) {
 						break;
-					}
 				}
 
 			}

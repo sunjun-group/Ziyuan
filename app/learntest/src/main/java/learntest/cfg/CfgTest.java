@@ -52,7 +52,7 @@ public class CfgTest {
 //				     "if(b < 2){ "+
 //				      "while(k < 9){ "+
 //				        "if(c == 0){ "+
-//				          "break;"+
+//				          "return;"+
 //				            "}" +
 //				            "}"+
 //				            "}"+
@@ -149,16 +149,15 @@ public class CfgTest {
 	@Test
 	public void switchToCfg() throws ParseException {
 		String str = 
-				"switch(x) {" +
+				"while(t == 0){switch(x) {" +
 				"	case 1:" +
-				"		while(j > 10){if(i > 0){}else if (i > 1){break;}}executeFunc1();if(j > 2 ){}" +
+				"		while(j > 10){if(i > 0){}else if (i > 1){break;}}executeFunc1();if(j > 2 ){} return;" +
 				"	case 2:" +
-				"		executeFunc2();if(y == 0){} break;" +
-				"   case 3:"+
-				"	default:" +
-				"		executeDefault();while(k < 0){if(l == 0){break;}}" +
-				"		" +
-				"}";
+				"		executeFunc2();if(y == 0){} return;" +
+				"   case 3: "+
+				"	default: return;" +
+//				"		executeDefault();while(k < 0){if(l == 0){return;}} " +
+				"}}";
 		cfgFromStmt(str);
 	}
 	
@@ -172,11 +171,21 @@ public class CfgTest {
 //				"} while (x > 0);";
 //		cfgFromStmt(str);	
 //	}
+	
+//	@Test
+//	public void labledToCfg() throws ParseException {
+//		String str = 
+//				"if (a.size() == 5) {return;} else if(i > 10 ){}" ;
+//		cfgFromStmt(str);	
+//	}
+	
+	
 	private void cfgFromStmt(String str) throws ParseException {
 		CfgCreator creator = new CfgCreator();
 		Node node = JavaParser.parseStatement(str);
 //	    System.out.println(node);
-		CFG cfg = creator.toCFG(node);
+//		CFG cfg = creator.toCFG(node);
+		CFG cfg = creator.dealWithReturnStmt(creator.toCFG(node));
 //		for(int i = 0 ;i <5 ; i ++){
 //		System.out.println(cfg.getInEdges(cfg.getVertices().get(i)));
 //		}
