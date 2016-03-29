@@ -34,7 +34,7 @@ public class SimulatedMicroBat {
 		TraceNode rootCause = findRootCause(mutatedLocation.getClassCanonicalName(), 
 				mutatedLocation.getLineNo(), mutatedTrace, pairList);
 		
-//		System.currentTimeMillis();
+		System.currentTimeMillis();
 //		Object dom = rootCause.findAllDominatees();
 //		dominatees.add(rootCause);
 		

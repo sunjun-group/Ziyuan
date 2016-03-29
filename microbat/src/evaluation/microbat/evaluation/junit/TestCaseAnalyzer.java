@@ -99,29 +99,33 @@ public class TestCaseAnalyzer {
 	
 	public void runEvaluation() throws JavaModelException{
 		
-//		ExcelReporter reporter = new ExcelReporter();
-//		reporter.start();
-//		
-//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
-//		
-//		for(IJavaElement element: testRoot.getChildren()){
-//			if(element instanceof IPackageFragment){
-//				runEvaluation((IPackageFragment)element, reporter);				
-//			}
-//		}
-//		
-//		reporter.export(trials, Settings.projectName+trialFileNum);
+		ExcelReporter reporter = new ExcelReporter();
+		reporter.start();
 		
-		runSingeTestCase();
+		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+		
+		for(IJavaElement element: testRoot.getChildren()){
+			if(element instanceof IPackageFragment){
+				runEvaluation((IPackageFragment)element, reporter);				
+			}
+		}
+		
+		reporter.export(trials, Settings.projectName+trialFileNum);
+		
+//		runSingeTestCase();
+		
+//		String className = "org.apache.commons.math.analysis.interpolation.DividedDifferenceInterpolatorTest";
+//		String methodName = "testSinFunction";
+//		runEvaluationForSingleMethod(className, methodName, null);
 	}
 	
 	private void runSingeTestCase(){
-		String className = "org.apache.commons.math.analysis.BinaryFunctionTest";
-		String methodName = "testAtan2";
+		String className = "org.apache.commons.math.analysis.interpolation.DividedDifferenceInterpolatorTest";
+		String methodName = "testSinFunction";
 		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-				+ "apache-common-math-2.2\\3054_38_3\\FastMath.java";
+				+ "apache-common-math-2.2\\2037_22_2\\FastMath.java";
 		String mutatedClass = "org.apache.commons.math.util.FastMath";
-		int mutatedLine = 3054;
+		int mutatedLine = 2037;
 		
 		try {
 			runEvaluationForSingleTrial(className, methodName, mutationFile, mutatedClass, mutatedLine);
@@ -282,7 +286,7 @@ public class TestCaseAnalyzer {
 										errorMsgs.add(errorMsg);
 									}
 									
-									if(errorMsgs.size() > 5){
+									if(errorMsgs.size() > 100){
 										System.currentTimeMillis();
 									}
 								}
@@ -361,7 +365,7 @@ public class TestCaseAnalyzer {
 		checker.checkValidity(testcaseConfig);
 		
 		boolean isKill = !checker.isPassingTest() && !checker.hasCompilationError();
-		System.out.println(": " + (isKill?"killed":"not killed"));
+		System.out.println(": " + (isKill? "killed" : "not killed"));
 		
 		if(isKill){
 			System.out.println("generating trace for mutated class " + iunit.getElementName() + " (line: " + mutatedLine + ")");
@@ -390,6 +394,12 @@ public class TestCaseAnalyzer {
 		iunit.getBuffer().setContents(originalCodeText);
 		iunit.save(new NullProgressMonitor(), true);
 		autoCompile();
+		
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		
 		return killingMutantTrace;
 	}
