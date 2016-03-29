@@ -20,15 +20,19 @@ public class PotentialCorrectPatternList {
 	}
 
 	public void addPathForPattern(PathInstance path){
-		String pathKey = path.getPathKey();
 		
-		PotentialCorrectPattern pattern = patterns.get(pathKey);
-		if(pattern == null){
-			pattern = new PotentialCorrectPattern();
-			patterns.put(pathKey, pattern);
+		if(PotentialCorrectPattern.checkValidLabelInstance(path)){
+			String pathKey = path.getPathKey();
+			
+			PotentialCorrectPattern pattern = patterns.get(pathKey);
+			if(pattern == null){
+				pattern = new PotentialCorrectPattern();
+				patterns.put(pathKey, pattern);
+			}
+			
+			pattern.addPathInstance(path);
 		}
 		
-		pattern.addPathInstance(path);
 	}
 
 	public boolean containsPattern(PathInstance path) {

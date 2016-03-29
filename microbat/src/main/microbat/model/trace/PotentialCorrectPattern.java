@@ -36,16 +36,14 @@ public class PotentialCorrectPattern {
 		this.instanceList = instanceList;
 	}
 	
+	/**
+	 * Predicate: the path should be a valid path (see {@link #checkValidLabelInstance(PathInstance)} method)
+	 * @param path
+	 */
 	public void addPathInstance(PathInstance path){
 		if(this.instanceList.isEmpty()){
 			this.instanceList.add(path);
-			
-			try {
-				checkLabelInstance(path);
-				this.labelInstance = path;
-			} catch (LabelPathIncompatibleException e) {
-				//e.printStackTrace();
-			}
+			this.labelInstance = path;
 		}
 		else{
 			if(!this.instanceList.contains(path)){
@@ -54,7 +52,13 @@ public class PotentialCorrectPattern {
 		}
 	}
 	
-	private void checkLabelInstance(PathInstance labelPath) throws LabelPathIncompatibleException{
+	/**
+	 * A valid label path require that the start node data-dominate the end node.
+	 * 
+	 * @param labelPath
+	 * @return
+	 */
+	public static boolean checkValidLabelInstance(PathInstance labelPath){
 		TraceNode startNode = labelPath.getStartNode();
 		TraceNode endNode = labelPath.getEndNode();
 		
@@ -70,11 +74,7 @@ public class PotentialCorrectPattern {
 			}
 		}
 		
-		if(!isValid){
-			String message = "For the label with start node " + startNode + " and end node " + endNode + 
-					", there is no variable supporting their dominance relation!" ;
-			throw new LabelPathIncompatibleException(message);
-		}
+		return isValid;
 		
 	}
 
