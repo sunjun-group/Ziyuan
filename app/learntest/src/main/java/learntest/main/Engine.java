@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import icsetlv.DefaultValues;
+import icsetlv.variable.JunitDebugger;
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
@@ -18,8 +19,8 @@ import japa.parser.ast.body.TypeDeclaration;
 import learntest.cfg.CFG;
 import learntest.cfg.CfgCreator;
 import learntest.cfg.CfgDecisionNode;
-import learntest.data.BranchSelectionDataBuilder;
 import learntest.testcase.TestcasesExecutorwithoutLoopTimes;
+import learntest.testcase.data.BreakpointDataBuilder;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.JunitUtils;
@@ -36,11 +37,11 @@ public class Engine {
 	private String className;
 	private String methodName;
 	private List<String> testcases = new ArrayList<String>();
-	private TestcasesExecutorwithoutLoopTimes tcExecutor;
+	private JunitDebugger tcExecutor;
 	private List<Variable> variables;
 	private CFG cfg;
 	private List<BreakPoint> breakPoints;
-	private BranchSelectionDataBuilder builder;
+	private BreakpointDataBuilder builder;
 
 	public Engine(AppJavaClassPath appClassPath){
 		this.appClassPath = appClassPath;
@@ -61,7 +62,7 @@ public class Engine {
 		this.testcases.addAll(testcases);
 	}
 
-	public void setTcExecutor(TestcasesExecutorwithoutLoopTimes tcExecutor) {
+	public void setTcExecutor(JunitDebugger tcExecutor) {
 		this.tcExecutor = tcExecutor;
 	}
 	
@@ -88,7 +89,7 @@ public class Engine {
 		for (BreakPoint bkp : bkps) {
 			breakPoints.add(bkp);
 		}
-		builder = new BranchSelectionDataBuilder(decisionList);
+		//builder = new BreakpointDataBuilder(decisionList);
 	}
 	
 	public void run() throws ParseException, IOException, SavException {
@@ -103,7 +104,7 @@ public class Engine {
 		ensureTcExecutor();
 		tcExecutor.setup(appClassPath, testcases);
 		tcExecutor.run(breakPoints);
-		tcExecutor.getResult();
+		//tcExecutor.getResult();
 	}
 
 	public void createCFG() throws ParseException, IOException {
@@ -146,14 +147,14 @@ public class Engine {
 		for (BreakPoint bkp : bkps) {
 			breakPoints.add(bkp);
 		}
-		builder = new BranchSelectionDataBuilder(decisionList);
+		//builder = new BreakpointDataBuilder(decisionList);
 	}
 
 	public void ensureTcExecutor() {
 		if (tcExecutor == null) {
 			tcExecutor = new TestcasesExecutorwithoutLoopTimes(DefaultValues.DEBUG_VALUE_RETRIEVE_LEVEL);
 		}
-		tcExecutor.setBuilder(builder);
+		//tcExecutor.setBuilder(builder);
 	}	
 
 }
