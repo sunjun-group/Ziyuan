@@ -31,6 +31,21 @@ import japa.parser.ast.type.VoidType;
 import mutation.mutator.VariableSubstitution;
 
 public class Utility {
+	
+	public static Expression createBinExpr(Expression lhs, Expression rhs, BinaryExpr.Operator op) {
+		BinaryExpr e = new BinaryExpr(lhs, rhs, op);
+		return e;
+	}
+	
+	public static Expression createBinExpr(BinaryExpr.Operator op, Expression... exprs) {
+		Expression e = exprs[0];
+		
+		for (int i = 1; i < exprs.length; i++) {
+			e = createBinExpr(e, exprs[i], op);
+		}
+		
+		return e;
+	}
 
 	public static AssertStmt createAssertion(Expression lhs, Expression rhs, BinaryExpr.Operator op) {
 		if (lhs instanceof LiteralExpr && rhs instanceof LiteralExpr) return null;
