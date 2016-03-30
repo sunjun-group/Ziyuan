@@ -50,6 +50,7 @@ public class CfgCreator extends CfgConverter {
 	private List<CfgDecisionNode> temporaryDecisionNodeList = new ArrayList<CfgDecisionNode>();
 	private List<CfgEdge> temporaryReturnEdgeList = new ArrayList<CfgEdge>();
 	private boolean hasBreakStmt = false;
+	private boolean hasBreakNotToExitStmt = false;;
 	private boolean hasContinueStmt = false;
 	private boolean hasReturnStmt = false;
 	private CfgDecisionNode breakStmtToParentStmt;
@@ -59,9 +60,11 @@ public class CfgCreator extends CfgConverter {
 	private Map<String, CfgEdge> cfgEdgeMap = new HashMap<String, CfgEdge>();
 	private int decisionNodeIndex = 0;
 	private List<CfgDecisionNode> temporaryBreakNodeList = new ArrayList<CfgDecisionNode>();
+	private List<CfgDecisionNode> temporaryBreakNodeNotToExitList = new ArrayList<CfgDecisionNode>();
 	// private List<CfgDecisionNode> temporaryContinueNodeList = new
 	// ArrayList<CfgDecisionNode>();
 	private List<Boolean> temporaryBreakTrueOrFalseList = new ArrayList<Boolean>();
+	private List<Boolean> temporaryBreakTrueOrFalseNotToExitList = new ArrayList<Boolean>();
 
 	
 	public CFG toCFG(Node node) {
@@ -108,14 +111,23 @@ public class CfgCreator extends CfgConverter {
 		CFG ifThen = toCFG(n.getThenStmt());
 		if (hasBreakStmt) {
 			hasBreakStmt = false;
-			if (breakStmtToParentStmt != null) {
-				attachExecutionBlock(cfg, decision, ifThen,
-						breakStmtToParentStmt, true);
-			} else {
-				attachExecutionBlock(cfg, decision, ifThen, decision, true);
-				temporaryBreakNodeList.add(decision);
-				temporaryBreakTrueOrFalseList.add(true);
-			}
+				if (breakStmtToParentStmt != null) {
+					attachExecutionBlock(cfg, decision, ifThen,
+							breakStmtToParentStmt, true);
+				} else {
+					attachExecutionBlock(cfg, decision, ifThen, decision, true);
+					if(hasBreakNotToExitStmt){
+						hasBreakNotToExitStmt = false;
+						temporaryBreakNodeNotToExitList.add(decision);
+						temporaryBreakTrueOrFalseNotToExitList.add(true);
+					}
+					else{
+					temporaryBreakNodeList.add(decision);
+					temporaryBreakTrueOrFalseList.add(true);
+					}
+				}
+			
+
 		} else if (hasContinueStmt) {
 			hasContinueStmt = false;
 			attachExecutionBlock(cfg, decision, ifThen,
@@ -139,9 +151,18 @@ public class CfgCreator extends CfgConverter {
 						breakStmtToParentStmt, false);
 			} else {
 				attachExecutionBlock(cfg, decision, elseThen, decision, false);
+				if(hasBreakNotToExitStmt){
+					hasBreakNotToExitStmt = false;
+					temporaryBreakNodeNotToExitList.add(decision);
+					temporaryBreakTrueOrFalseNotToExitList.add(false);
+				}
+				else{
 				temporaryBreakNodeList.add(decision);
 				temporaryBreakTrueOrFalseList.add(false);
+				}
 			}
+			
+			
 
 		} else if (hasContinueStmt) {
 			hasContinueStmt = false;
@@ -427,9 +448,34 @@ public class CfgCreator extends CfgConverter {
 	 */
 
 	protected void dealWithBreakStmt(Object n, CFG cfg) {
-		if (temporaryBreakNodeList.size() != 0
-				&& ((Node) n).contains(temporaryBreakNodeList.get(0)
+	//deal with break that not lead to exit
+		if (temporaryBreakNodeNotToExitList.size() != 0
+				&& ((Node) n).contains(temporaryBreakNodeNotToExitList.get(0)
 						.getAstNode().getParentNode())) {
+			for (int i = 0; i < temporaryBreakNodeNotToExitList.size(); i++) {
+				cfg.removeEdge(cfgEdgeMap.get(temporaryBreakNodeNotToExitList.get(i)
+						.toString()
+						+ temporaryBreakNodeNotToExitList.get(i).toString()
+						+ temporaryBreakTrueOrFalseNotToExitList.get(i)));
+				cfgEdgeMap.remove(temporaryBreakNodeNotToExitList.get(i).toString()
+						+ temporaryBreakNodeNotToExitList.get(i).toString()
+						+ temporaryBreakTrueOrFalseNotToExitList.get(i));
+				CfgBranchEdge branch = newBranchEdge(
+						temporaryBreakNodeNotToExitList.get(i), cfg.getExit(),
+						temporaryBreakTrueOrFalseNotToExitList.get(i));
+				cfg.addEdge(branch);
+				cfgEdgeMap.put(temporaryBreakNodeNotToExitList.get(i).toString()
+						+ cfg.getExit().toString()
+						+ temporaryBreakTrueOrFalseNotToExitList.get(i), branch);
+			}
+		}
+		temporaryBreakNodeNotToExitList.removeAll(temporaryBreakNodeNotToExitList);
+		temporaryBreakTrueOrFalseNotToExitList.removeAll(temporaryBreakTrueOrFalseNotToExitList);
+	}
+	
+	
+	protected CFG dealWithBreakStmt(CFG cfg) {
+		if (temporaryBreakNodeList.size() != 0) {
 			for (int i = 0; i < temporaryBreakNodeList.size(); i++) {
 				cfg.removeEdge(cfgEdgeMap.get(temporaryBreakNodeList.get(i)
 						.toString()
@@ -449,6 +495,8 @@ public class CfgCreator extends CfgConverter {
 		}
 		temporaryBreakNodeList.removeAll(temporaryBreakNodeList);
 		temporaryBreakTrueOrFalseList.removeAll(temporaryBreakTrueOrFalseList);
+		
+		return cfg;
 	}
 
 	/****
@@ -558,11 +606,16 @@ public class CfgCreator extends CfgConverter {
 
 				} else if ((node.getClass().getTypeName().toString())
 						.equals("japa.parser.ast.stmt.SwitchStmt")) {
+							hasBreakNotToExitStmt = true;
 						break;
-				}
-
+						}
 			}
+
+				
+
+			
 		}
+		//System.out.println(breakStmtToParentStmt);
 		return convertProcessStmt(n);
 	}
 

@@ -84,8 +84,9 @@ public class CfgTest {
 
 //	@Test
 //	public void whileToCfg() throws ParseException {
-//		String code =
-//				"while(i < 10){x = x + 1 ;if (j < 20){break;} else if(j < 30){while(k < 3){}}else if(j < 40){}else{}}";
+//		//String code =
+//		//		"while(i < 10){if (j < 20){break;} else if(j < 30){while(k < 3){}}else if(j < 40){}else{}}";
+//		String code = "while(i < 10){if( i < 9){break;}else{while(j < 20){if(k == 0){break;}}}}";
 //		cfgFromStmt(code);
 //	}
 	
@@ -151,12 +152,12 @@ public class CfgTest {
 		String str = 
 				"while(t == 0){switch(x) {" +
 				"	case 1:" +
-				"		while(j > 10){if(i > 0){}else if (i > 1){break;}}executeFunc1();if(j > 2 ){} return;" +
+				"		while(j > 10){if(i > 0){}else if (i > 1){break;}}executeFunc1();if(j > 2 ){} break;" +
 				"	case 2:" +
 				"		executeFunc2();if(y == 0){} return;" +
 				"   case 3: "+
 				"	default: return;" +
-//				"		executeDefault();while(k < 0){if(l == 0){return;}} " +
+				"		executeDefault();while(k < 0){if(l == 0){return;}} " +
 				"}}";
 		cfgFromStmt(str);
 	}
@@ -185,7 +186,7 @@ public class CfgTest {
 		Node node = JavaParser.parseStatement(str);
 //	    System.out.println(node);
 //		CFG cfg = creator.toCFG(node);
-		CFG cfg = creator.dealWithReturnStmt(creator.toCFG(node));
+		CFG cfg = creator.dealWithBreakStmt(creator.dealWithReturnStmt(creator.toCFG(node)));
 //		for(int i = 0 ;i <5 ; i ++){
 //		System.out.println(cfg.getInEdges(cfg.getVertices().get(i)));
 //		}
