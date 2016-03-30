@@ -17,8 +17,8 @@ import com.sun.jdi.event.BreakpointEvent;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.variable.DebugValueExtractor;
 import icsetlv.variable.JunitDebugger;
-import learntest.data.BranchSelectionData;
-import learntest.data.BranchSelectionDataBuilder;
+import learntest.testcase.data.BranchSelectionData;
+import learntest.testcase.data.BreakpointDataBuilder;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
@@ -37,7 +37,7 @@ public class TestcasesExecutorwithoutLoopTimes extends JunitDebugger {
 	private Set<BreakPoint> currentTestExePath;
 	private DebugValueExtractor valueExtractor;
 	private int valRetrieveLevel;
-	private BranchSelectionDataBuilder builder;
+	private BreakpointDataBuilder builder;
 	private StopTimer timer = new StopTimer("TestcasesExecutorwithoutLoopTimes");
 	private long timeout = DEFAULT_TIMEOUT;
 	
@@ -69,7 +69,7 @@ public class TestcasesExecutorwithoutLoopTimes extends JunitDebugger {
 
 	@Override
 	protected void onEnterBreakpoint(BreakPoint bkp, BreakpointEvent bkpEvent) throws SavException {
-		if (!bkp.getVars().isEmpty()) {
+		if (!bkp.getVars().isEmpty() && inputValuesByTestIdx.get(currentTestIdx) == null) {
 			BreakpointValue bkpValue = extractValuesAtLocation(bkp, bkpEvent);
 			inputValuesByTestIdx.put(currentTestIdx, bkpValue);
 		}
@@ -89,9 +89,9 @@ public class TestcasesExecutorwithoutLoopTimes extends JunitDebugger {
 			Assert.assertNotNull(inputValueOfTcI, "Missing input value for test " + i);
 			Set<BreakPoint> exePathOfTcI = exePathsByTestIdx.get(i);
 			Assert.assertNotNull(exePathOfTcI, "Missing execution path for test " + i);
-			getBuilder().build(exePathOfTcI, inputValueOfTcI);
+			//getBuilder().build(exePathOfTcI, inputValueOfTcI);
 		}
-		result = getBuilder().getResult();
+		//result = getBuilder().getResult();
 		System.out.println(result);
 	}
 
@@ -136,11 +136,11 @@ public class TestcasesExecutorwithoutLoopTimes extends JunitDebugger {
 		}
 	}
 	
-	public void setBuilder(BranchSelectionDataBuilder builder) {
+	public void setBuilder(BreakpointDataBuilder builder) {
 		this.builder = builder;
 	}
 	
-	public BranchSelectionDataBuilder getBuilder() {
+	public BreakpointDataBuilder getBuilder() {
 		return builder;
 	}
 	

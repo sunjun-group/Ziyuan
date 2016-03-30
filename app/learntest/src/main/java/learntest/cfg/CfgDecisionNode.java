@@ -7,6 +7,7 @@ public class CfgDecisionNode implements CfgNode {
 	private Node astNode;
 	private int trueBeginLine;
 	private String stmtType;
+	private boolean loop;
 	
 	public CfgDecisionNode(Node astNode) {
 		this.astNode = astNode;
@@ -15,6 +16,7 @@ public class CfgDecisionNode implements CfgNode {
 	public CfgDecisionNode(Node astNode, String stmtType) {
 		this.astNode = astNode;
 		this.stmtType = stmtType;
+		//TODO please determine whether this node is a loop node
 	}
 	
 	@Override
@@ -58,10 +60,12 @@ public class CfgDecisionNode implements CfgNode {
 	}
 	
 	
-	public String getStmtType(){
-		
-		return stmtType;
-		
+	public String getStmtType(){		
+		return stmtType;		
+	}
+
+	public boolean isLoop() {
+		return loop;
 	}
 	
 }

@@ -1,5 +1,6 @@
 package learntest.testcase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +16,9 @@ import com.sun.jdi.event.BreakpointEvent;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.variable.DebugValueExtractor;
 import icsetlv.variable.JunitDebugger;
-import learntest.data.BranchSelectionData;
+import learntest.testcase.data.BranchSelectionData;
 import sav.common.core.SavException;
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.StopTimer;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
@@ -27,9 +29,9 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	//private List<BranchSelectionData> result;
 	/* for internal purpose */
 	private Map<Integer, BreakpointValue> inputValuesByTestIdx;
-	private Map<Integer, Map<BreakPoint, Integer>> exePathsByTestIdx;
+	private Map<Integer, List<BreakPoint>> exePathsByTestIdx;
 	private int currentTestIdx;
-	private Map<BreakPoint, Integer> currentTestExePath;
+	private List<BreakPoint> currentTestExePath;
 	private DebugValueExtractor valueExtractor;
 	private int valRetrieveLevel;
 	//private BranchSelectionDataBuilder builder;
@@ -47,7 +49,7 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	@Override
 	protected void onStart() {
 		inputValuesByTestIdx = new HashMap<Integer, BreakpointValue>();
-		exePathsByTestIdx = new HashMap<Integer, Map<BreakPoint,Integer>>();	
+		exePathsByTestIdx = new HashMap<Integer, List<BreakPoint>>();
 		timer.start();
 	}
 
@@ -57,23 +59,18 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		currentTestIdx = testIdx;
 		currentTestExePath = exePathsByTestIdx.get(testIdx);
 		if (currentTestExePath == null) {
-			currentTestExePath = new HashMap<BreakPoint, Integer>();
+			currentTestExePath = new ArrayList<BreakPoint>();
 			exePathsByTestIdx.put(testIdx, currentTestExePath);
 		}
 	}
 
 	@Override
 	protected void onEnterBreakpoint(BreakPoint bkp, BreakpointEvent bkpEvent) throws SavException {
-		if (!bkp.getVars().isEmpty()) {
+		if (!bkp.getVars().isEmpty() && inputValuesByTestIdx.get(currentTestIdx) == null) {
 			BreakpointValue bkpValue = extractValuesAtLocation(bkp, bkpEvent);
 			inputValuesByTestIdx.put(currentTestIdx, bkpValue);
 		}
-		Integer previous = currentTestExePath.get(bkp);
-		if (previous == null) {
-			currentTestExePath.put(bkp, 1);
-		} else {
-			currentTestExePath.put(bkp, previous + 1);
-		}
+		currentTestExePath.add(bkp);
 	}
 
 	@Override
@@ -85,11 +82,16 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		}
 		int size = inputValuesByTestIdx.size();
 		for (int i = 0; i < size; i++) {
-			/*BreakpointValue inputValueOfTcI = inputValuesByTestIdx.get(i);
+			BreakpointValue inputValueOfTcI = inputValuesByTestIdx.get(i);
 			Assert.assertNotNull(inputValueOfTcI, "Missing input value for test " + i);
-			Set<BreakPoint> exePathOfTcI = exePathsByTestIdx.get(i);
+			List<BreakPoint> exePathOfTcI = exePathsByTestIdx.get(i);
 			Assert.assertNotNull(exePathOfTcI, "Missing execution path for test " + i);
-			getBuilder().build(exePathOfTcI, inputValueOfTcI);*/
+			System.out.println("Tc" + i + ":");
+			System.out.println("input:" + inputValueOfTcI);
+			for (BreakPoint bkp : exePathOfTcI) {
+				System.out.println("\t" + bkp);
+			}
+			//getBuilder().build(exePathOfTcI, inputValueOfTcI);
 		}
 		/*result = getBuilder().getResult();
 		System.out.println(result);*/

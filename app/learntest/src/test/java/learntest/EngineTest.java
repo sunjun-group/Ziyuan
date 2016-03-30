@@ -6,7 +6,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import icsetlv.DefaultValues;
 import learntest.main.Engine;
+import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import sav.common.core.Pair;
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
@@ -24,6 +26,7 @@ public class EngineTest extends AbstractTest {
 		AppJavaClassPath app = initAppClasspath();
 		app.addClasspath(TestConfiguration.getTestTarget("learntest"));
 		engine = new Engine(app);
+		engine.setTcExecutor(new TestcasesExecutorwithLoopTimes(DefaultValues.DEBUG_VALUE_RETRIEVE_LEVEL));
 	}
 	
 	/*@Test
@@ -48,10 +51,8 @@ public class EngineTest extends AbstractTest {
 		List<Pair<Integer, Integer>> decisions = new ArrayList<Pair<Integer,Integer>>();
 		decisions.add(new Pair<Integer, Integer>(6, 7));
 		decisions.add(new Pair<Integer, Integer>(7, 8));
-		decisions.add(new Pair<Integer, Integer>(11, 12));
-		decisions.add(new Pair<Integer, Integer>(14, 15));
-		decisions.add(new Pair<Integer, Integer>(15, 16));
-		decisions.add(new Pair<Integer, Integer>(16, 17));
+		decisions.add(new Pair<Integer, Integer>(9, 10));
+		decisions.add(new Pair<Integer, Integer>(10, 11));
 		engine.setStructure(decisions);
 		engine.run();
 	}

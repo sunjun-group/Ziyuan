@@ -1,32 +1,11 @@
 package learntest.cfg;
 
 
-import japa.parser.ast.Node;
-import japa.parser.ast.stmt.AssertStmt;
-import japa.parser.ast.stmt.BreakStmt;
-import japa.parser.ast.stmt.ContinueStmt;
-import japa.parser.ast.stmt.DoStmt;
-import japa.parser.ast.stmt.ForStmt;
-import japa.parser.ast.stmt.ForeachStmt;
-import japa.parser.ast.stmt.SwitchStmt;
-import japa.parser.ast.stmt.WhileStmt;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-
-
-
+import japa.parser.ast.stmt.AssertStmt;
 import learntest.cfg.CfgNode.Type;
-import learntest.cfg.CfgEdge;
-import learntest.cfg.CfgEntryNode;
-import learntest.cfg.CfgExitNode;
-import learntest.cfg.CfgNode;
 import learntest.cfg.graph.Graph;
 
 public class CFG extends Graph<CfgNode, CfgEdge> {
@@ -42,6 +21,11 @@ public class CFG extends Graph<CfgNode, CfgEdge> {
 	
 	public boolean isEmpty() {
 		return size() == 0;
+	}
+	
+	public boolean isLoop(int lineNo) {
+		//TODO please fill in this method to determine whether the node at line lineNo is a loop node
+		return false;
 	}
 
 	public CfgEntryNode getEntry() {
