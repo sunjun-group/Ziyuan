@@ -69,7 +69,7 @@ public class TestcasesExecutorwithoutLoopTimes extends JunitDebugger {
 
 	@Override
 	protected void onEnterBreakpoint(BreakPoint bkp, BreakpointEvent bkpEvent) throws SavException {
-		if (!bkp.getVars().isEmpty()) {
+		if (!bkp.getVars().isEmpty() && inputValuesByTestIdx.get(currentTestIdx) == null) {
 			BreakpointValue bkpValue = extractValuesAtLocation(bkp, bkpEvent);
 			inputValuesByTestIdx.put(currentTestIdx, bkpValue);
 		}
@@ -89,7 +89,7 @@ public class TestcasesExecutorwithoutLoopTimes extends JunitDebugger {
 			Assert.assertNotNull(inputValueOfTcI, "Missing input value for test " + i);
 			Set<BreakPoint> exePathOfTcI = exePathsByTestIdx.get(i);
 			Assert.assertNotNull(exePathOfTcI, "Missing execution path for test " + i);
-			getBuilder().build(exePathOfTcI, inputValueOfTcI);
+			//getBuilder().build(exePathOfTcI, inputValueOfTcI);
 		}
 		//result = getBuilder().getResult();
 		System.out.println(result);
