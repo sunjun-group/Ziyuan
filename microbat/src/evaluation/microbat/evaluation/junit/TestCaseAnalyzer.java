@@ -228,8 +228,8 @@ public class TestCaseAnalyzer {
 				System.out.println("mutating the tested methods of " + testCaseName);
 				Map<String, MutationResult> mutations = generateMutationFiles(locationList);
 				System.out.println("mutation done for " + testCaseName);
-				for(String mutatedClass: mutations.keySet()){
-					MutationResult result = mutations.get(mutatedClass);
+				for(String tobeMutatedClass: mutations.keySet()){
+					MutationResult result = mutations.get(tobeMutatedClass);
 					for(Integer line: result.getMutatedFiles().keySet()){
 						List<File> mutatedFileList = result.getMutatedFiles(line);	
 						
@@ -246,7 +246,7 @@ public class TestCaseAnalyzer {
 							
 							try {
 								Trace killingMutatantTrace = 
-										mutateCode(mutatedClass, mutationFile, testcaseConfig, line, testCaseName);
+										mutateCode(tobeMutatedClass, mutationFile, testcaseConfig, line, testCaseName);
 								
 								if(killingMutatantTrace != null){
 									if(null == correctTrace){
@@ -255,7 +255,7 @@ public class TestCaseAnalyzer {
 									}
 									
 									SimulatedMicroBat microbat = new SimulatedMicroBat();
-									ClassLocation mutatedLocation = new ClassLocation(mutatedClass, null, line);
+									ClassLocation mutatedLocation = new ClassLocation(tobeMutatedClass, null, line);
 									Trial trial;
 									try {
 										trial = microbat.detectMutatedBug(killingMutatantTrace, correctTrace, mutatedLocation, 
@@ -344,13 +344,13 @@ public class TestCaseAnalyzer {
 		
 	}
 
-	private Trace mutateCode(String mutatedClass, File mutationFile, AppJavaClassPath testcaseConfig, 
+	private Trace mutateCode(String toBeMutatedClass, File mutationFile, AppJavaClassPath testcaseConfig, 
 			int mutatedLine, String testCaseName) 
 			throws MalformedURLException, JavaModelException, IOException, NullPointerException {
 		
 		Trace killingMutantTrace = null;
 		
-		ICompilationUnit iunit = JavaUtil.findICompilationUnitInProject(mutatedClass);
+		ICompilationUnit iunit = JavaUtil.findICompilationUnitInProject(toBeMutatedClass);
 		String originalCodeText = iunit.getSource();
 		
 		System.out.print("checking mutated class " + iunit.getElementName() + " (line: " + mutatedLine + ")");
@@ -376,13 +376,15 @@ public class TestCaseAnalyzer {
 			if(checker.isOverLong()){
 				Trial trial = new Trial(testCaseName, mutatedLine, mutationFile.toString(), false, null, 0, Trial.OVER_LONG);
 				trials.add(trial);
-				return null;
+				killingMutantTrace = null;
+			}
+			else{
+				long t1 = System.currentTimeMillis();
+				killingMutantTrace = constructor.constructTraceModel(testcaseConfig, executingStatements);
+				long t2 = System.currentTimeMillis();
+				System.out.println("Trace length: " + killingMutantTrace.size() + ", which takes " + (t2-t1)/1000 + "s to analyze.");				
 			}
 			
-			long t1 = System.currentTimeMillis();
-			killingMutantTrace = constructor.constructTraceModel(testcaseConfig, executingStatements);
-			long t2 = System.currentTimeMillis();
-			System.out.println("Trace length: " + killingMutantTrace.size() + ", which takes " + (t2-t1)/1000 + "s to analyze.");
 			
 			//TraceFilePair tfPair = new TraceFilePair(killingMutantTrace, mutationFile.toString());
 		}
