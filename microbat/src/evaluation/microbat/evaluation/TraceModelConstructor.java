@@ -4,6 +4,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import microbat.codeanalysis.ast.LocalVariableScope;
+import microbat.codeanalysis.ast.VariableScopeParser;
+import microbat.codeanalysis.bytecode.MicrobatSlicer;
+import microbat.codeanalysis.runtime.ProgramExecutor;
+import microbat.model.BreakPoint;
+import microbat.model.trace.Trace;
+import microbat.util.Settings;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -13,15 +21,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import sav.common.core.SavException;
 import sav.commons.TestConfiguration;
 import sav.strategies.dto.AppJavaClassPath;
-import microbat.Activator;
-import microbat.codeanalysis.ast.LocalVariableScope;
-import microbat.codeanalysis.ast.VariableScopeParser;
-import microbat.codeanalysis.bytecode.MicrobatSlicer;
-import microbat.codeanalysis.runtime.ExecutionStatementCollector;
-import microbat.codeanalysis.runtime.ProgramExecutor;
-import microbat.model.BreakPoint;
-import microbat.model.trace.Trace;
-import microbat.util.Settings;
 
 public class TraceModelConstructor {
 	/**
