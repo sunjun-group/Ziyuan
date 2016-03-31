@@ -3,12 +3,13 @@ package learntest.main;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import icsetlv.DefaultValues;
-import icsetlv.variable.JunitDebugger;
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
@@ -16,10 +17,13 @@ import japa.parser.ast.body.BodyDeclaration;
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.Parameter;
 import japa.parser.ast.body.TypeDeclaration;
+import learntest.breakpoint.data.BreakpointBuilder;
+import learntest.breakpoint.data.DecisionLocation;
+import learntest.breakpoint.data.LoopTimesBkpBuilder;
+import learntest.breakpoint.data.TrueBkpBuilder;
 import learntest.cfg.CFG;
 import learntest.cfg.CfgCreator;
-import learntest.cfg.CfgDecisionNode;
-import learntest.testcase.TestcasesExecutorwithoutLoopTimes;
+import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointDataBuilder;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
@@ -27,7 +31,6 @@ import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
-import sav.strategies.dto.ClassLocation;
 
 public class Engine {
 	
@@ -37,11 +40,12 @@ public class Engine {
 	private String className;
 	private String methodName;
 	private List<String> testcases = new ArrayList<String>();
-	private JunitDebugger tcExecutor;
+	private TestcasesExecutorwithLoopTimes tcExecutor;
 	private List<Variable> variables;
 	private CFG cfg;
 	private List<BreakPoint> breakPoints;
-	private BreakpointDataBuilder builder;
+	private BreakpointBuilder bkpBuilder;
+	private BreakpointDataBuilder dtBuilder;
 
 	public Engine(AppJavaClassPath appClassPath){
 		this.appClassPath = appClassPath;
@@ -62,7 +66,7 @@ public class Engine {
 		this.testcases.addAll(testcases);
 	}
 
-	public void setTcExecutor(JunitDebugger tcExecutor) {
+	public void setTcExecutor(TestcasesExecutorwithLoopTimes tcExecutor) {
 		this.tcExecutor = tcExecutor;
 	}
 	
@@ -70,18 +74,24 @@ public class Engine {
 		if (breakPoints == null) {
 			breakPoints = new ArrayList<BreakPoint>();
 		}
+		breakPoints.remove(bkp);
 		bkp.addVars(variables);
 		breakPoints.add(bkp);
 	}
 	
 	public void setStructure(List<Pair<Integer, Integer>> decisions) {
 		Set<BreakPoint> bkps = new HashSet<BreakPoint>();
-		List<Pair<ClassLocation, BreakPoint>> decisionList = new ArrayList<Pair<ClassLocation,BreakPoint>>();
+		Map<BreakPoint, List<DecisionLocation>> decisionMap = new HashMap<BreakPoint, List<DecisionLocation>>();
 		for (Pair<Integer, Integer> decision : decisions) {
-			ClassLocation decisionLocation = new ClassLocation(className, methodName, decision.first());
+			DecisionLocation location = new DecisionLocation(className, methodName, decision.first(), true);
 			BreakPoint trueBkp = new BreakPoint(className, methodName, decision.second());
 			bkps.add(trueBkp);
-			decisionList.add(new Pair<ClassLocation, BreakPoint>(decisionLocation, trueBkp));
+			List<DecisionLocation> locations = decisionMap.get(trueBkp);
+			if (locations == null) {
+				locations = new ArrayList<DecisionLocation>();
+				decisionMap.put(trueBkp, locations);
+			}
+			locations.add(location);
 		}
 		if (breakPoints == null) {
 			breakPoints = new ArrayList<BreakPoint>();
@@ -89,22 +99,26 @@ public class Engine {
 		for (BreakPoint bkp : bkps) {
 			breakPoints.add(bkp);
 		}
-		//builder = new BreakpointDataBuilder(decisionList);
+		dtBuilder = new BreakpointDataBuilder(decisionMap);
 	}
 	
-	public void run() throws ParseException, IOException, SavException {
-		//create cfg, bkps and builder
+	public void run(boolean loopMode) throws ParseException, IOException, SavException {
 		//createCFG();
-		//addEntryBreakpoint(bkp);
-		//createBkpsandBuilder();
+		/*if (loopMode) {
+			bkpBuilder = new LoopTimesBkpBuilder(className, methodName, variables, cfg);
+		} else {
+			bkpBuilder = new TrueBkpBuilder(className, methodName, variables, cfg);
+		}
+		Map<BreakPoint, List<DecisionLocation>> decisionMap = bkpBuilder.buildBreakpoints();
+		dtBuilder = new BreakpointDataBuilder(decisionMap);
+		breakPoints = bkpBuilder.getBreakPoints();*/		
 
-		//TODO generate test cases randomly
-		
+		//TODO generate test cases randomly		
 		
 		ensureTcExecutor();
 		tcExecutor.setup(appClassPath, testcases);
 		tcExecutor.run(breakPoints);
-		//tcExecutor.getResult();
+		System.out.println(tcExecutor.getResult());
 	}
 
 	public void createCFG() throws ParseException, IOException {
@@ -130,31 +144,11 @@ public class Engine {
 		}
 	}
 
-	private void createBkpsandBuilder() {
-		//TODO get cfg nodes
-		List<CfgDecisionNode> decisions = null;
-		Set<BreakPoint> bkps = new HashSet<BreakPoint>();
-		List<Pair<ClassLocation, BreakPoint>> decisionList = new ArrayList<Pair<ClassLocation,BreakPoint>>();
-		for (CfgDecisionNode decision : decisions) {
-			ClassLocation decisionLocation = new ClassLocation(className, methodName, decision.getBeginLine());
-			BreakPoint trueBkp = new BreakPoint(className, methodName, decision.getTrueBeginLine());
-			bkps.add(trueBkp);
-			decisionList.add(new Pair<ClassLocation, BreakPoint>(decisionLocation, trueBkp));
-		}
-		if (breakPoints == null) {
-			breakPoints = new ArrayList<BreakPoint>();
-		}
-		for (BreakPoint bkp : bkps) {
-			breakPoints.add(bkp);
-		}
-		//builder = new BreakpointDataBuilder(decisionList);
-	}
-
 	public void ensureTcExecutor() {
 		if (tcExecutor == null) {
-			tcExecutor = new TestcasesExecutorwithoutLoopTimes(DefaultValues.DEBUG_VALUE_RETRIEVE_LEVEL);
+			tcExecutor = new TestcasesExecutorwithLoopTimes(DefaultValues.DEBUG_VALUE_RETRIEVE_LEVEL);
 		}
-		//tcExecutor.setBuilder(builder);
+		tcExecutor.setBuilder(dtBuilder);
 	}	
 
 }

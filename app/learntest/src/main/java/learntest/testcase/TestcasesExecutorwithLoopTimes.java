@@ -16,9 +16,11 @@ import com.sun.jdi.event.BreakpointEvent;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.variable.DebugValueExtractor;
 import icsetlv.variable.JunitDebugger;
-import learntest.testcase.data.BranchSelectionData;
+import learntest.testcase.data.BreakpointData;
+import learntest.testcase.data.BreakpointDataBuilder;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
@@ -26,7 +28,7 @@ import sav.strategies.junit.JunitResult;
 public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 
 	private static Logger log = LoggerFactory.getLogger(TestcasesExecutorwithLoopTimes.class);	
-	//private List<BranchSelectionData> result;
+	private List<BreakpointData> result;
 	/* for internal purpose */
 	private Map<Integer, BreakpointValue> inputValuesByTestIdx;
 	private Map<Integer, List<BreakPoint>> exePathsByTestIdx;
@@ -34,7 +36,7 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	private List<BreakPoint> currentTestExePath;
 	private DebugValueExtractor valueExtractor;
 	private int valRetrieveLevel;
-	//private BranchSelectionDataBuilder builder;
+	private BreakpointDataBuilder builder;
 	private StopTimer timer = new StopTimer("TestcasesExecutorwithLoopTimes");
 	private long timeout = DEFAULT_TIMEOUT;
 	
@@ -89,12 +91,12 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 			System.out.println("Tc" + i + ":");
 			System.out.println("input:" + inputValueOfTcI);
 			for (BreakPoint bkp : exePathOfTcI) {
-				System.out.println("\t" + bkp);
+				System.out.println("\t" + bkp.getId());
 			}
-			//getBuilder().build(exePathOfTcI, inputValueOfTcI);
+			System.out.println("================");
+			getBuilder().build(exePathOfTcI, inputValueOfTcI);
 		}
-		/*result = getBuilder().getResult();
-		System.out.println(result);*/
+		result = getBuilder().getResult();
 	}
 
 	private BreakpointValue extractValuesAtLocation(BreakPoint bkp,
@@ -109,9 +111,8 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		return null;
 	}
 	
-	public List<BranchSelectionData> getResult() {
-		//return CollectionUtils.initIfEmpty(result);
-		return null;
+	public List<BreakpointData> getResult() {
+		return CollectionUtils.initIfEmpty(result);
 	}
 	
 	private DebugValueExtractor getValueExtractor() {
@@ -139,13 +140,13 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		}
 	}
 	
-	/*public void setBuilder(BranchSelectionDataBuilder builder) {
+	public void setBuilder(BreakpointDataBuilder builder) {
 		this.builder = builder;
 	}
 	
-	public BranchSelectionDataBuilder getBuilder() {
+	public BreakpointDataBuilder getBuilder() {
 		return builder;
-	}*/
+	}
 	
 	@Override
 	protected long getTimeoutInSec() {

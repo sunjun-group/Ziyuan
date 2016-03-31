@@ -14,8 +14,6 @@ import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import testdata.CalculatorTestFailed;
-import testdata.CalculatorTestPassed;
 import testdata.MutipleSelectionTest;
 
 public class EngineTest extends AbstractTest {
@@ -47,14 +45,13 @@ public class EngineTest extends AbstractTest {
 		engine.setTarget("/testdata/MutipleSelection.txt", "MutipleSelection", "testdata.MutipleSelection","test");
 		engine.addTestcases(MutipleSelectionTest.class.getName());
 		engine.createCFG();
-		engine.addEntryBreakpoint(new BreakPoint("testdata.MutipleSelection", "test", 6));
 		List<Pair<Integer, Integer>> decisions = new ArrayList<Pair<Integer,Integer>>();
-		decisions.add(new Pair<Integer, Integer>(6, 7));
+		decisions.add(new Pair<Integer, Integer>(6, 6));
 		decisions.add(new Pair<Integer, Integer>(7, 8));
-		decisions.add(new Pair<Integer, Integer>(9, 10));
 		decisions.add(new Pair<Integer, Integer>(10, 11));
 		engine.setStructure(decisions);
-		engine.run();
+		engine.addEntryBreakpoint(new BreakPoint("testdata.MutipleSelection", "test", 6));
+		engine.run(true);
 	}
 
 }
