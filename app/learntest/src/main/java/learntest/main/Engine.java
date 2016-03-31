@@ -24,6 +24,7 @@ import learntest.breakpoint.data.TrueBkpBuilder;
 import learntest.cfg.CFG;
 import learntest.cfg.CfgCreator;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
+import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
@@ -118,7 +119,8 @@ public class Engine {
 		ensureTcExecutor();
 		tcExecutor.setup(appClassPath, testcases);
 		tcExecutor.run(breakPoints);
-		System.out.println(tcExecutor.getResult());
+		List<BreakpointData> result = tcExecutor.getResult();
+		tcExecutor.setjResultFileDeleteOnExit(true);
 	}
 
 	public void createCFG() throws ParseException, IOException {

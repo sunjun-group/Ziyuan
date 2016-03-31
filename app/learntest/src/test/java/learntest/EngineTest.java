@@ -46,9 +46,8 @@ public class EngineTest extends AbstractTest {
 		engine.addTestcases(MutipleSelectionTest.class.getName());
 		engine.createCFG();
 		List<Pair<Integer, Integer>> decisions = new ArrayList<Pair<Integer,Integer>>();
-		decisions.add(new Pair<Integer, Integer>(6, 6));
 		decisions.add(new Pair<Integer, Integer>(7, 8));
-		decisions.add(new Pair<Integer, Integer>(10, 11));
+		decisions.add(new Pair<Integer, Integer>(9, 10));
 		engine.setStructure(decisions);
 		engine.addEntryBreakpoint(new BreakPoint("testdata.MutipleSelection", "test", 6));
 		engine.run(true);
