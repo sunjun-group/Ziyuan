@@ -128,7 +128,7 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 		
 		boolean connected = true;
 		
-		int steps = 0;
+		steps = 0;
 		
 		while(connected){
 			try {
