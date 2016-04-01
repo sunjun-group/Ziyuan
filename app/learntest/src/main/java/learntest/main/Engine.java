@@ -121,6 +121,7 @@ public class Engine {
 		tcExecutor.run(breakPoints);
 		List<BreakpointData> result = tcExecutor.getResult();
 		tcExecutor.setjResultFileDeleteOnExit(true);
+		new DecisionLearner().learn(result);
 	}
 
 	public void createCFG() throws ParseException, IOException {
