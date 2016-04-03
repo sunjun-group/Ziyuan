@@ -78,6 +78,12 @@
                   label="Undo Your Debug Operation"
                   style="push">
             </command>
+            <command
+                  commandId="microbat.evaluateCommand"
+                  icon="icons/evaluation.png"
+                  label="Run Evaluation"
+                  style="push">
+            </command>
          </menu>
       </menuContribution>
       <menuContribution
@@ -104,19 +110,6 @@
                   label="Undo Your Debug Operation"
                   style="push"
                   tooltip="undo your previous debugging operation">
-            </command>
-         </toolbar>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:org.eclipse.ui.main.toolbar">
-         <toolbar
-               id="microbat.toolbar.evaluation">
-            <command
-                  commandId="microbat.evaluateCommand"
-                  icon="icons/evaluation.png"
-                  label="Run Evaluation"
-                  style="push">
             </command>
          </toolbar>
       </menuContribution>
