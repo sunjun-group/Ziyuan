@@ -107,7 +107,7 @@ public class ProgramExecutor extends Executor{
 	 * fundamental fields for debugging
 	 */
 	/** the class patterns indicating the classes into which I will not step to get the runtime values*/
-	private String[] excludes = { "java.*", "javax.*", "sun.*", "com.sun.*", "org.junit.*"};
+//	private String[] excludes = { "java.*", "javax.*", "sun.*", "com.sun.*", "org.junit.*"};
 //	private VMConfiguration config;
 	private AppJavaClassPath config;
 	private SimpleDebugger debugger = new SimpleDebugger();
@@ -627,7 +627,7 @@ public class ProgramExecutor extends Executor{
 		
 		ExceptionRequest request = erm.createExceptionRequest(null, true, true);
 		request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-		for(String ex: excludes){
+		for(String ex: stepWatchExcludes){
 			request.addClassExclusionFilter(ex);
 		}
 //		request.addClassFilter("java.io.FileNotFoundException");
@@ -639,7 +639,7 @@ public class ProgramExecutor extends Executor{
 		StepRequest stepRequest = erm.createStepRequest(((VMStartEvent) event).thread(),  
 				StepRequest.STEP_LINE, StepRequest.STEP_INTO);
 		stepRequest.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-		for(String ex: excludes){
+		for(String ex: stepWatchExcludes){
 			stepRequest.addClassExclusionFilter(ex);
 		}
 		stepRequest.enable();
@@ -784,14 +784,14 @@ public class ProgramExecutor extends Executor{
 	 */
 	private void addMethodWatch(EventRequestManager erm) {
 		menr = erm.createMethodEntryRequest();
-		for(String classPattern: excludes){
+		for(String classPattern: stepWatchExcludes){
 			menr.addClassExclusionFilter(classPattern);
 		}
 		menr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 		menr.enable();
 		
 		mexr = erm.createMethodExitRequest();
-		for(String classPattern: excludes){
+		for(String classPattern: stepWatchExcludes){
 			mexr.addClassExclusionFilter(classPattern);
 		}
 		mexr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);

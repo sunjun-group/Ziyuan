@@ -105,11 +105,11 @@ public class StartDebugHandler extends AbstractHandler {
 							monitor.setTaskName("parse read/written variables");
 							
 							MicrobatSlicer slicer = new MicrobatSlicer(executingStatements);
-							List<BreakPoint> breakpoints = null;
+							List<BreakPoint> runningStatements = null;
 							try {
 								System.out.println("start analyzing byte code ...");
 //								breakpoints = slicer.slice(appClassPath, startPoints);
-								breakpoints = slicer.parsingBreakPoints(appClassPath);
+								runningStatements = slicer.parsingBreakPoints(appClassPath);
 								System.out.println("finish analyzing byte code ...!");
 							} catch (Exception e1) {
 								e1.printStackTrace();
@@ -124,10 +124,10 @@ public class StartDebugHandler extends AbstractHandler {
 							 */
 							monitor.setTaskName("parse variable scopes");
 							
-							List<String> classScope = parseScope(breakpoints);
+							List<String> classScope = parseScope(runningStatements);
 							parseLocalVariables(classScope);
 							
-							if(breakpoints == null){
+							if(runningStatements == null){
 								System.err.println("Cannot find any slice");
 								return Status.OK_STATUS;
 							}
@@ -144,7 +144,7 @@ public class StartDebugHandler extends AbstractHandler {
 							tcExecutor.setConfig(appClassPath);
 							try {
 								long t1 = System.currentTimeMillis();
-								tcExecutor.run(breakpoints, monitor);
+								tcExecutor.run(runningStatements, monitor);
 								long t2 = System.currentTimeMillis();
 								System.out.println("time spent on collecting variables: " + (t2-t1));
 								

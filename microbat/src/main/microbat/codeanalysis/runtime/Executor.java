@@ -6,5 +6,5 @@ package microbat.codeanalysis.runtime;
  *
  */
 public abstract class Executor {
-
+	protected String[] stepWatchExcludes = { "java.*", "javax.*", "sun.*", "com.sun.*", "org.junit.*", "junit.*", "junit.framework.*"};
 }
