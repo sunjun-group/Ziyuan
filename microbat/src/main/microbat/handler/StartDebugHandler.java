@@ -7,7 +7,7 @@ import java.util.List;
 import microbat.Activator;
 import microbat.codeanalysis.ast.LocalVariableScope;
 import microbat.codeanalysis.ast.VariableScopeParser;
-import microbat.codeanalysis.bytecode.MicrobatSlicer;
+import microbat.codeanalysis.bytecode.MicrobatByteCodeAnalyzer;
 import microbat.codeanalysis.runtime.ExecutionStatementCollector;
 import microbat.codeanalysis.runtime.ProgramExecutor;
 import microbat.model.BreakPoint;
@@ -104,7 +104,7 @@ public class StartDebugHandler extends AbstractHandler {
 							/** 1. parse read/written variables**/
 							monitor.setTaskName("parse read/written variables");
 							
-							MicrobatSlicer slicer = new MicrobatSlicer(executingStatements);
+							MicrobatByteCodeAnalyzer slicer = new MicrobatByteCodeAnalyzer(executingStatements);
 							List<BreakPoint> runningStatements = null;
 							try {
 								System.out.println("start analyzing byte code ...");

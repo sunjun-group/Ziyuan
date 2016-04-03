@@ -99,20 +99,20 @@ public class TestCaseAnalyzer {
 	
 	public void runEvaluation() throws JavaModelException{
 		
-		ExcelReporter reporter = new ExcelReporter();
-		reporter.start();
+//		ExcelReporter reporter = new ExcelReporter();
+//		reporter.start();
+//		
+//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+//		
+//		for(IJavaElement element: testRoot.getChildren()){
+//			if(element instanceof IPackageFragment){
+//				runEvaluation((IPackageFragment)element, reporter);				
+//			}
+//		}
+//		
+//		reporter.export(trials, Settings.projectName+trialFileNum);
 		
-		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
-		
-		for(IJavaElement element: testRoot.getChildren()){
-			if(element instanceof IPackageFragment){
-				runEvaluation((IPackageFragment)element, reporter);				
-			}
-		}
-		
-		reporter.export(trials, Settings.projectName+trialFileNum);
-		
-//		runSingeTestCase();
+		runSingeTestCase();
 		
 //		String className = "org.apache.commons.math.analysis.interpolation.DividedDifferenceInterpolatorTest";
 //		String methodName = "testSinFunction";
@@ -120,12 +120,12 @@ public class TestCaseAnalyzer {
 	}
 	
 	private void runSingeTestCase(){
-		String className = "org.apache.commons.math.analysis.interpolation.DividedDifferenceInterpolatorTest";
-		String methodName = "testSinFunction";
+		String className = "org.apache.commons.math.MaxIterationsExceededExceptionTest";
+		String methodName = "testComplexConstructor";
 		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-				+ "apache-common-math-2.2\\2037_22_2\\FastMath.java";
-		String mutatedClass = "org.apache.commons.math.util.FastMath";
-		int mutatedLine = 2037;
+				+ "apache-common-math-2.2\\86_25_1\\MathException.java";
+		String mutatedClass = "org.apache.commons.math.MathException";
+		int mutatedLine = 86;
 		
 		try {
 			runEvaluationForSingleTrial(className, methodName, mutationFile, mutatedClass, mutatedLine);

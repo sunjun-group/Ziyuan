@@ -106,11 +106,11 @@ import com.ibm.wala.util.strings.Atom;
  * @author "linyun"
  *
  */
-public class MicrobatSlicer{
+public class MicrobatByteCodeAnalyzer{
 	private static final String JAVA_REGRESSION_EXCLUSIONS = "/Java60RegressionExclusions.txt";
 	private List<BreakPoint> executingStatements = new ArrayList<>();
 	
-	public MicrobatSlicer(List<BreakPoint> executingStatements){
+	public MicrobatByteCodeAnalyzer(List<BreakPoint> executingStatements){
 		this.executingStatements = executingStatements;
 	}
 	

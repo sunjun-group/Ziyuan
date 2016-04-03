@@ -6,7 +6,7 @@ import java.util.List;
 
 import microbat.codeanalysis.ast.LocalVariableScope;
 import microbat.codeanalysis.ast.VariableScopeParser;
-import microbat.codeanalysis.bytecode.MicrobatSlicer;
+import microbat.codeanalysis.bytecode.MicrobatByteCodeAnalyzer;
 import microbat.codeanalysis.runtime.ProgramExecutor;
 import microbat.model.BreakPoint;
 import microbat.model.trace.Trace;
@@ -40,7 +40,7 @@ public class TraceModelConstructor {
 		
 		
 		/** 2. parse read/written variables**/
-		MicrobatSlicer slicer = new MicrobatSlicer(executingStatements);
+		MicrobatByteCodeAnalyzer slicer = new MicrobatByteCodeAnalyzer(executingStatements);
 		List<BreakPoint> runningStatements = null;
 		try {
 			System.out.println("start analyzing byte code ...");
