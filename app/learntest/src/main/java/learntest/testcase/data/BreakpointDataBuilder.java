@@ -10,6 +10,7 @@ import java.util.Set;
 
 import icsetlv.common.dto.BreakpointValue;
 import learntest.breakpoint.data.DecisionLocation;
+import sav.common.core.utils.Assert;
 import sav.strategies.dto.BreakPoint;
 
 public class BreakpointDataBuilder {
@@ -30,9 +31,13 @@ public class BreakpointDataBuilder {
 			List<DecisionLocation> locations = entry.getValue();
 			for (DecisionLocation location : locations) {
 				if (location.isLoop()) {
+					Assert.assertTrue(loopMap.get(breakPoint) == null, 
+							"Two loops depend on line " + breakPoint.getLineNo());
 					loopMap.put(breakPoint, location);
 					bkpDataMap.put(location, new LoopTimesData(location));
 				} else {
+					Assert.assertTrue(branchMap.get(breakPoint) == null, 
+							"Two branches depend on line " + breakPoint.getLineNo());
 					branchMap.put(breakPoint, location);
 					bkpDataMap.put(location, new BranchSelectionData(location));
 				}

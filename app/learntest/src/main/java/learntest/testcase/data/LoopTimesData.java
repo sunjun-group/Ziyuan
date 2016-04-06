@@ -50,8 +50,8 @@ public class LoopTimesData extends BreakpointData {
 	
 	@Override
 	public String toString() {
-		return "LoopTimesData (" + location + "), \ntrueValues=" + trueValues
-				+ ", \nfalseValues=" + falseValues + ", \n\toneTimeValues="
+		return "LoopTimesData (" + location + "), \nfalseValues=" + falseValues
+				+ ", \ntrueValues=" + trueValues + ", \n\toneTimeValues="
 				+ oneTimeValues + ", \n\tmoreTimesValues=" + moreTimesValues + "]\n";
 	}
 
