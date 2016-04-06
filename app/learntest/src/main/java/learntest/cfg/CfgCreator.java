@@ -101,7 +101,7 @@ public class CfgCreator extends CfgConverter {
 	@Override
 	protected CFG convert(IfStmt n) {
 		CFG cfg = newInstance(n);
-		CfgDecisionNode decision = new CfgDecisionNode(n.getCondition(), "if");
+		CfgDecisionNode decision = new CfgDecisionNode(n.getCondition(), "if" , false);
 		cfg.addNode(decision);
 		temporaryDecisionNodeList.add(decision);
 		decisionNodeMap.put(n.toString(), decisionNodeIndex++);
@@ -185,7 +185,7 @@ public class CfgCreator extends CfgConverter {
 	protected CFG convert(WhileStmt n) {
 		CFG cfg = newInstance(n);
 		CfgDecisionNode decision = new CfgDecisionNode(n.getCondition(),
-				"while");
+				"while",true);
 		temporaryDecisionNodeList.add(decision);
 		decisionNodeMap.put(n.toString(), decisionNodeIndex++);
 		cfg.addNode(decision);
@@ -202,7 +202,7 @@ public class CfgCreator extends CfgConverter {
 	@Override
 	protected CFG convert(ForStmt n) {
 		CFG cfg = newInstance(n);
-		CfgDecisionNode decision = new CfgDecisionNode(n.getCompare(), "for");
+		CfgDecisionNode decision = new CfgDecisionNode(n.getCompare(), "for" ,true);
 		temporaryDecisionNodeList.add(decision);
 		decisionNodeMap.put(n.toString(), decisionNodeIndex++);
 		cfg.addNode(decision);
@@ -228,7 +228,7 @@ public class CfgCreator extends CfgConverter {
 		/* similar to deal with forStmt */
 		CFG cfg = newInstance(n);
 		CfgDecisionNode decision = new CfgDecisionNode(forStmt.getCompare(),
-				"foreach");
+				"foreach",true);
 		temporaryDecisionNodeList.add(decision);
 		decisionNodeMap.put(forStmt.toString(), decisionNodeIndex++);
 		cfg.addNode(decision);
@@ -252,7 +252,7 @@ public class CfgCreator extends CfgConverter {
 	protected CFG convert(DoStmt n) {
 		CFG cfg = newInstance(n);
 		CfgDecisionNode decision = new CfgDecisionNode(n.getCondition(),
-				"do while");
+				"do while",true);
 		cfg.addNode(decision);
 		temporaryDecisionNodeList.add(decision);
 		decisionNodeMap.put(n.toString(), decisionNodeIndex++);
@@ -292,7 +292,7 @@ public class CfgCreator extends CfgConverter {
 				expr = new BinaryExpr(n.getSelector(), entry.getLabel(),
 						Operator.equals);
 				CfgDecisionNode decision = new CfgDecisionNode(expr,
-						"switch if");
+						"switch if" , false);
 				decisions.add(decision);
 				statementsList.add(entry.getStmts());
 				cfg.addNode(decision);
@@ -305,7 +305,7 @@ public class CfgCreator extends CfgConverter {
 
 		if (defaultEntry != null) {
 			decisions
-					.add(new CfgDecisionNode(n.getSelector(), "switch default"));
+					.add(new CfgDecisionNode(n.getSelector(), "switch default",false));
 			statementsList.add(defaultEntry.getStmts());
 			cfg.addNode(decisions.get(decisions.size() - 1));
 			temporaryDecisionNodeList.add(decisions.get(decisions.size() - 1));
@@ -738,10 +738,16 @@ public class CfgCreator extends CfgConverter {
 	}
 
 	@Override
-	protected CFG convert(MethodDeclaration n) {
-		return null;
+	protected CFG convert(MethodDeclaration method) {
+		CFG cfg = newInstance(method);
+		cfg.addProperty(CfgProperty.PARAMETER, method.getParameters());
+		cfg.addEdge(cfg.getEntry(), cfg.getExit());
+		CFG body = toCFG(method.getBody());
+		cfg.append(body);
+		return cfg;
 	}
 
+	
 	@Override
 	protected CFG convert(AssertStmt n) {
 		return convertProcessStmt(n);

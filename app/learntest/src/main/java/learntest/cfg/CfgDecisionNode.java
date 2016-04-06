@@ -13,12 +13,20 @@ public class CfgDecisionNode implements CfgNode {
 		this.astNode = astNode;
 	}
 
-	public CfgDecisionNode(Node astNode, String stmtType) {
+	public CfgDecisionNode(Node astNode, String stmtType , boolean loop) {
 		this.astNode = astNode;
 		this.stmtType = stmtType;
+		this.loop = loop;
 		//TODO please determine whether this node is a loop node
 	}
 	
+	public void setLoop(boolean loop) {
+		this.loop = loop;
+	}
+
+	public boolean getLoop() {
+		return loop;
+	}
 	@Override
 	public Type getType() {
 		return Type.DECISIONS;
