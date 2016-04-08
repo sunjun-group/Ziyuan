@@ -109,8 +109,15 @@ public class TraceNodeSimilarityComparator {
 			if(isSameName){
 				commonness += 0.5;
 				if(!(var1 instanceof ReferenceValue) && !(var2 instanceof ReferenceValue)){
-					if(var1.getStringValue().equals(var2.getStringValue())){
+					String str1 = var1.getStringValue();
+					String str2 = var2.getStringValue();
+					if(str1 == null && str2 == null){
 						commonness += 0.5;
+					}
+					else if(str1 != null && str2 != null){
+						if(str1.equals(str2)){
+							commonness += 0.5;
+						}						
 					}
 				}
 				else if((var1 instanceof ReferenceValue) && (var2 instanceof ReferenceValue)){

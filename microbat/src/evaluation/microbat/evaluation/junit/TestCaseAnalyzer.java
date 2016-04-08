@@ -123,12 +123,12 @@ public class TestCaseAnalyzer {
 	}
 	
 	private void runSingeTestCase(){
-		String className = "org.apache.commons.math.MaxIterationsExceededExceptionTest";
-		String methodName = "testComplexConstructor";
+		String className = "org.apache.commons.math.FunctionEvaluationExceptionTest";
+		String methodName = "testConstructor";
 		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-				+ "apache-common-math-2.2\\86_25_1\\MathException.java";
+				+ "apache-common-math-2.2\\176_13_1\\MathException.java";
 		String mutatedClass = "org.apache.commons.math.MathException";
-		int mutatedLine = 86;
+		int mutatedLine = 176;
 		
 		try {
 			runEvaluationForSingleTrial(className, methodName, mutationFile, mutatedClass, mutatedLine);
