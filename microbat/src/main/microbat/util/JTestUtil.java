@@ -1,6 +1,7 @@
 package microbat.util;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import microbat.evaluation.junit.TestingMethodChecker;
@@ -108,5 +109,24 @@ public class JTestUtil {
 			}
 		}
 		return null;
+	}
+	
+	private static HashSet<String> testClass = new HashSet<>(); 
+	
+	public static boolean isInTestCase(String className) {
+		if(testClass.contains(className)){
+			return true;
+		}
+		else{
+			CompilationUnit cu = JavaUtil.findCompilationUnitInProject(className);
+			List<MethodDeclaration> mdList = JTestUtil.findTestingMethod(cu);
+			
+			if(!mdList.isEmpty()){
+				testClass.add(className);
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

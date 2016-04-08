@@ -1,5 +1,6 @@
 package microbat.evaluation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import microbat.evaluation.model.PairList;
@@ -16,13 +17,23 @@ public class SimulatedUser {
 		String feedback;
 		
 		TraceNodePair pair = pairList.findByMutatedNode(suspiciousNode);
-		boolean isWrongPath = pair==null;
+		boolean isWrongPath = (pair==null);
 		if(isWrongPath){
 			feedback = UserFeedback.WRONG_PATH;
 		}
 		else{
 //			System.currentTimeMillis();
-			List<String> wrongVarIDs = pair.findWrongVarIDs();
+//			List<String> wrongVarIDs = pair.findWrongVarIDs();
+			List<String> wrongVarIDs = new ArrayList<>();
+			String wrongReadVarID = pair.findSingleWrongReadVarID();
+			String wrongWrittenVarID = pair.findSingleWrongWrittenVarID();
+			
+			if(wrongReadVarID != null){
+				wrongVarIDs.add(wrongReadVarID);
+			}
+			if(wrongWrittenVarID != null){
+				wrongVarIDs.add(wrongWrittenVarID);
+			}
 			
 			if(!wrongVarIDs.isEmpty()){
 				for(String wrongVarID: wrongVarIDs){

@@ -12,6 +12,12 @@ public class VirtualValue extends VarValue {
 	
 	@Override
 	public boolean isTheSameWith(GraphNode node) {
+		if(node instanceof VirtualValue){
+			VirtualValue thatValue = (VirtualValue)node;
+			
+			return this.getStringValue().equals(thatValue.getStringValue());
+		}
+		
 		return false;
 	}
 

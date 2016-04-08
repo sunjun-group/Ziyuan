@@ -425,7 +425,7 @@ public class TestCaseAnalyzer {
 		for(BreakPoint point: executingStatements){
 			
 			String className = point.getDeclaringCompilationUnitName();
-			if(!isInTestCase(className)){
+			if(!JTestUtil.isInTestCase(className)){
 				ClassLocation location = new ClassLocation(className, 
 						null, point.getLineNo());
 				locations.add(location);
@@ -444,25 +444,6 @@ public class TestCaseAnalyzer {
 		return locations;
 	}
 	
-	private HashSet<String> testClass = new HashSet<>(); 
-	
-	private boolean isInTestCase(String className) {
-		if(testClass.contains(className)){
-			return true;
-		}
-		else{
-			CompilationUnit cu = JavaUtil.findCompilationUnitInProject(className);
-			List<MethodDeclaration> mdList = JTestUtil.findTestingMethod(cu);
-			
-			if(!mdList.isEmpty()){
-				testClass.add(className);
-				return true;
-			}
-		}
-		
-		return false;
-	}
-
 	private AppJavaClassPath createProjectClassPath(String className, String methodName){
 		AppJavaClassPath classPath = MicroBatUtil.constructClassPaths();
 		

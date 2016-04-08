@@ -1,9 +1,8 @@
 package microbat.evaluation.util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import microbat.algorithm.graphdiff.HierarchyGraphDiffer;
 import microbat.model.trace.TraceNode;
 import microbat.model.value.ReferenceValue;
 import microbat.model.value.VarValue;
@@ -21,10 +20,10 @@ public class TraceNodeSimilarityComparator {
 		}
 		
 		if(traceNode1.hasSameLocation(traceNode2)){
-			double commonReadVarWithSameValue = findCommonVarWithSameValue(traceNode1.getReadVariables(), 
-					traceNode2.getReadVariables());
-			double commonWrittenVarWithSameValue = findCommonVarWithSameValue(traceNode1.getWrittenVariables(),
-					traceNode2.getWrittenVariables());
+			double commonReadVarWithSameValue = findCommonVarWithSameValue(traceNode1.getReadVariables(), traceNode1,
+					traceNode2.getReadVariables(), traceNode2);
+			double commonWrittenVarWithSameValue = findCommonVarWithSameValue(traceNode1.getWrittenVariables(), traceNode1,
+					traceNode2.getWrittenVariables(), traceNode2);
 			
 			int totalVars = traceNode1.getReadVariables().size() + traceNode1.getWrittenVariables().size() +
 					traceNode2.getWrittenVariables().size() + traceNode2.getReadVariables().size();
@@ -46,11 +45,12 @@ public class TraceNodeSimilarityComparator {
 		return 0;
 	}
 
-	private double findCommonVarWithSameValue(List<VarValue> variables1, List<VarValue> variables2) {
+	private double findCommonVarWithSameValue(List<VarValue> variables1, TraceNode node1, 
+			List<VarValue> variables2, TraceNode node2) {
 		double common = 0;
 		for(VarValue var1: variables1){
 			for(VarValue var2: variables2){
-				double commonness = findCommonness(var1, var2);
+				double commonness = findCommonness(var1, node1, var2, node2);
 				if(commonness > 0){
 					common += commonness;
 					break;
@@ -96,7 +96,7 @@ public class TraceNodeSimilarityComparator {
 //		return clonedVar1s.isEmpty() && clonedVar2s.isEmpty();
 //	}
 
-	private double findCommonness(VarValue var1, VarValue var2) {
+	private double findCommonness(VarValue var1, TraceNode node1, VarValue var2, TraceNode node2) {
 		double commonness = 0;
 		
 		if(var1 instanceof VirtualValue && var2 instanceof VirtualValue){
@@ -105,8 +105,8 @@ public class TraceNodeSimilarityComparator {
 			}
 		}
 		else{
-			boolean flag1 = var1.getVarName().equals(var2.getVarName());
-			if(flag1){
+			boolean isSameName = var1.getVarName().equals(var2.getVarName());
+			if(isSameName){
 				commonness += 0.5;
 				if(!(var1 instanceof ReferenceValue) && !(var2 instanceof ReferenceValue)){
 					if(var1.getStringValue().equals(var2.getStringValue())){
@@ -114,7 +114,26 @@ public class TraceNodeSimilarityComparator {
 					}
 				}
 				else if((var1 instanceof ReferenceValue) && (var2 instanceof ReferenceValue)){
-					commonness += 0.5;
+					
+					System.currentTimeMillis();
+					
+					ReferenceValue refVar1 = (ReferenceValue)var1;
+					setChildren(refVar1, node1);
+					ReferenceValue refVar2 = (ReferenceValue)var2;
+					setChildren(refVar2, node2);
+					
+					if(refVar1.getChildren() != null && refVar2.getChildren() != null){
+						System.currentTimeMillis();
+						
+						HierarchyGraphDiffer differ = new HierarchyGraphDiffer();
+						differ.diff(var1, var2);
+						if(differ.getDiffs().isEmpty()){
+							commonness += 0.5;						
+						}							
+					}
+					else if(refVar1.getChildren() == null && refVar2.getChildren() == null){
+						commonness += 0.5;	
+					}
 				}
 			}
 		}
@@ -122,4 +141,18 @@ public class TraceNodeSimilarityComparator {
 		return commonness;
 	}
 
+	private void setChildren(ReferenceValue refVar, TraceNode node){
+		if(refVar.getChildren()==null){
+			if(node.getProgramState() != null){
+				
+				String varID = refVar.getVarID();
+				varID = varID.substring(0, varID.indexOf(":"));
+				
+				VarValue vv = node.getProgramState().findVarValue(varID);
+				if(vv != null){
+					refVar.setChildren(vv.getChildren());
+				}				
+			}
+		}
+	}
 }

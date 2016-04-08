@@ -22,4 +22,5 @@ public interface GraphNode {
 	 */
 	public boolean isTheSameWith(GraphNode node);
 	
+	public String getStringValue();
 }

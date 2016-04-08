@@ -17,6 +17,8 @@ import microbat.model.trace.TraceNodeReverseOrderComparator;
 import microbat.model.value.VarValue;
 import microbat.recommendation.StepRecommender;
 import microbat.recommendation.UserFeedback;
+import microbat.util.JTestUtil;
+import microbat.util.JavaUtil;
 import microbat.util.Settings;
 import sav.strategies.dto.ClassLocation;
 
@@ -44,7 +46,9 @@ public class SimulatedMicroBat {
 		if(!allWrongNodeMap.isEmpty()){
 			List<TraceNode> wrongNodeList = new ArrayList<>(allWrongNodeMap.values());
 			Collections.sort(wrongNodeList, new TraceNodeReverseOrderComparator());
-			TraceNode observedFaultNode = wrongNodeList.get(0);
+//			TraceNode observedFaultNode = wrongNodeList.get(0);
+			
+			TraceNode observedFaultNode = findObservedFault(wrongNodeList);
 			
 			Trial trial = startSimulation(observedFaultNode, rootCause, mutatedTrace, allWrongNodeMap, pairList, 
 					testCaseName, mutatedFile);
@@ -70,6 +74,19 @@ public class SimulatedMicroBat {
 //		}
 //		
 //		System.out.println(accuracy);
+	}
+	
+	private TraceNode findObservedFault(List<TraceNode> wrongNodeList){
+		TraceNode observedFaultNode = null;
+		
+		for(TraceNode node: wrongNodeList){
+			if(!JTestUtil.isInTestCase(node.getDeclaringCompilationUnitName())){
+				observedFaultNode = node;
+				
+			}
+		}
+		
+		return observedFaultNode;
 	}
 	
 	private Trial startSimulation(TraceNode observedFaultNode, TraceNode rootCause, Trace mutatedTrace, 
