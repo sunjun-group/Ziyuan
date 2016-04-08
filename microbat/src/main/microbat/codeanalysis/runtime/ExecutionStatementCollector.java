@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import microbat.evaluation.junit.TestCaseAnalyzer;
 import microbat.model.BreakPoint;
 import microbat.util.Settings;
 import sav.strategies.dto.AppJavaClassPath;
@@ -29,9 +30,10 @@ import com.sun.jdi.request.StepRequest;
 @SuppressWarnings("restriction")
 public class ExecutionStatementCollector extends Executor{
 	
-	protected int steps = 0;
+	
 	
 	public List<BreakPoint> collectBreakPoints(AppJavaClassPath appClassPath){
+		steps = 0;
 		List<BreakPoint> pointList = new ArrayList<>();
 		
 		VirtualMachine vm = new VMStarter(appClassPath).start();
@@ -45,7 +47,7 @@ public class ExecutionStatementCollector extends Executor{
 		
 		while(connected){
 			try {
-				EventSet eventSet = queue.remove(10000);
+				EventSet eventSet = queue.remove(TIME_OUT);
 				if(eventSet != null){
 					for(Event event: eventSet){
 						if(event instanceof VMStartEvent){
@@ -70,9 +72,9 @@ public class ExecutionStatementCollector extends Executor{
 							int lineNumber = location.lineNumber();
 							
 							BreakPoint breakPoint = new BreakPoint(path, lineNumber);
-							System.out.println(breakPoint);
+//							System.out.println(breakPoint);
 
-							if(!pointList.contains(breakPoint)){
+							if(!isInTestRunner(breakPoint) && !pointList.contains(breakPoint)){
 								pointList.add(breakPoint);							
 							}
 							
@@ -109,6 +111,14 @@ public class ExecutionStatementCollector extends Executor{
 		}
 		
 		return pointList;
+	}
+	
+	protected boolean isInTestRunner(BreakPoint breakPoint){
+		String className = breakPoint.getDeclaringCompilationUnitName();
+		if(className.equals(TestCaseAnalyzer.TEST_RUNNER)){
+			return true;
+		}
+		return false;
 	}
 	
 	protected void addStepWatch(EventRequestManager erm, ThreadReference threadReference) {

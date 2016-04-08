@@ -113,10 +113,17 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 		}
 	}
 	
-	public List<BreakPoint> collectBreakPoints(AppJavaClassPath appClassPath){
-		
+	/**
+	 * @deprecated
+	 * 
+	 * This method will remove the steps in test case.
+	 * 
+	 * @param appClassPath
+	 * @return
+	 */
+	public List<BreakPoint> collectBreakPoints0(AppJavaClassPath appClassPath){
 		appendStepWatchExcludes(appClassPath);
-		
+		steps = 0;
 		List<BreakPoint> pointList = new ArrayList<>();
 		
 		VirtualMachine vm = new VMStarter(appClassPath).start();
@@ -128,11 +135,9 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 		
 		boolean connected = true;
 		
-		steps = 0;
-		
 		while(connected){
 			try {
-				EventSet eventSet = queue.remove(10000);
+				EventSet eventSet = queue.remove(TIME_OUT);
 				if(eventSet != null){
 					for(Event event: eventSet){
 						if(event instanceof VMStartEvent){
@@ -148,10 +153,6 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 							StepEvent sEvent = (StepEvent)event;
 							Location location = sEvent.location();
 							
-							if(location.lineNumber()==34){
-								System.currentTimeMillis();
-							}
-							
 							String path = location.sourcePath();
 							path = path.substring(0, path.indexOf(".java"));
 							path = path.replace("\\", ".");
@@ -164,7 +165,7 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 								checkTestCaseSucessfulness(((StepEvent) event).thread(), location);
 							}
 							
-							if(!isInTestRunner(breakPoint) && !pointList.contains(breakPoint)){
+							if(!isInTestRunnerOrTestCase(breakPoint) && !pointList.contains(breakPoint)){
 								pointList.add(breakPoint);							
 							}
 							
@@ -251,15 +252,15 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 	}
 
 	private boolean isAboutToFinishTestRunner(BreakPoint breakPoint) {
-		if(isInTestRunner(breakPoint)){
+		if(isInTestRunnerOrTestCase(breakPoint)){
 			return breakPoint.getLineNo() == FINISH_LINE_NO_IN_TEST_RUNNER;
 		}
 		return false;
 	}
 
-	private HashMap<BreakPoint, Boolean> pointInTestRunnerMap = new HashMap<>(); 
+	protected HashMap<BreakPoint, Boolean> pointInTestRunnerMap = new HashMap<>(); 
 	
-	private boolean isInTestRunner(BreakPoint breakPoint) {
+	protected boolean isInTestRunnerOrTestCase(BreakPoint breakPoint) {
 		if(pointInTestRunnerMap.containsKey(breakPoint)){
 			return pointInTestRunnerMap.get(breakPoint);
 		}
