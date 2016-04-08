@@ -447,7 +447,7 @@ public class VariableValueExtractor {
 				for (Field field : type.allFields()) {
 					Value childVarValue = fieldValueMap.get(field);
 					if(type.isEnum()){
-						String childTypeName = childVarValue.type().name();
+						String childTypeName = field.typeName();
 						if(childTypeName.equals(type.name())){
 							continue;
 						}
