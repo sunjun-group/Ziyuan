@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +56,8 @@ public class TestCaseAnalyzer {
 		parsedTrials = new ParsedTrials();
 		trialFileNum = parsedTrials.getStartFileOrder();
 	}
+	
+	
 	
 	public void test(){
 		String str = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\mutatedSource8245811234241496344\\47_25_1\\Main.java";
@@ -420,22 +423,45 @@ public class TestCaseAnalyzer {
 		List<ClassLocation> locations = new ArrayList<>();
 		
 		for(BreakPoint point: executingStatements){
-			ClassLocation location = new ClassLocation(point.getDeclaringCompilationUnitName(), 
-					null, point.getLineNo());
-			try {
-				if(!JTestUtil.isLocationInTestPackage(location)){
-					locations.add(location);				
-				}
-			} catch (JavaModelException e) {
-				e.printStackTrace();
+			
+			String className = point.getDeclaringCompilationUnitName();
+			if(!isInTestCase(className)){
+				ClassLocation location = new ClassLocation(className, 
+						null, point.getLineNo());
+				locations.add(location);
+//				try {
+//					if(!JTestUtil.isLocationInTestPackage(location)){
+//						locations.add(location);		
+//					}
+//				} catch (JavaModelException e) {
+//					e.printStackTrace();
+//				}
 			}
+			
 			
 		}
 		
 		return locations;
 	}
 	
+	private HashSet<String> testClass = new HashSet<>(); 
 	
+	private boolean isInTestCase(String className) {
+		if(testClass.contains(className)){
+			return true;
+		}
+		else{
+			CompilationUnit cu = JavaUtil.findCompilationUnitInProject(className);
+			List<MethodDeclaration> mdList = JTestUtil.findTestingMethod(cu);
+			
+			if(!mdList.isEmpty()){
+				testClass.add(className);
+				return true;
+			}
+		}
+		
+		return false;
+	}
 
 	private AppJavaClassPath createProjectClassPath(String className, String methodName){
 		AppJavaClassPath classPath = MicroBatUtil.constructClassPaths();
