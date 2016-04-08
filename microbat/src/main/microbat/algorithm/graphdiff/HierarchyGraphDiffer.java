@@ -95,23 +95,35 @@ public class HierarchyGraphDiffer {
 		}
 	}
 
+	/**
+	 * find a matchable node in <code>childrenAfter</code>
+	 */
+	private GraphNode findTheBestMatch(GraphNode childBefore, List<? extends GraphNode> childrenAfter){
+		GraphNode node = null;
+		for(GraphNode childAfter: childrenAfter){
+			if(!isVisited(childAfter) && childBefore.match(childAfter)){
+				
+				if(node == null){
+					node = childAfter;					
+				}
+				else if(childBefore.getStringValue().equals(childAfter.getStringValue())){
+					node = childAfter;
+				}
+			}
+		}
+		
+		return node;
+	}
+	
 	private List<MatchingGraphPair> matchList(List<? extends GraphNode> childrenBefore,
 			List<? extends GraphNode> childrenAfter) {
 		List<MatchingGraphPair> pairs = new ArrayList<>();
 		
 		for(GraphNode childBefore: childrenBefore){
 			if(!isVisited(childBefore)){
-				/**
-				 * find a matchable node in <code>childrenAfter</code>
-				 */
-				GraphNode node = null;
-				for(GraphNode childAfter: childrenAfter){
-					if(!isVisited(childAfter) && childBefore.match(childAfter)){
-						node = childAfter;
-						break;
-					}
-				}
-				//System.currentTimeMillis();
+				
+				GraphNode node = findTheBestMatch(childBefore, childrenAfter);
+				System.currentTimeMillis();
 				
 				setVisited(childBefore);
 				if(node != null){
