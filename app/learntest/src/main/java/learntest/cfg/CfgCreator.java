@@ -103,7 +103,9 @@ public class CfgCreator extends CfgConverter {
 		temporaryDecisionNodeList.add(decision);
 		decisionNodeMap.put(n.toString(), decisionNodeIndex++);
 		cfg.addEdge(cfg.getEntry(), decision);
-
+		
+		setTrueBeginLine( n ,   decision);
+		
 		CFG ifThen = toCFG(n.getThenStmt());
 		if (hasBreakStmt) {
 			hasBreakStmt = false;
@@ -179,8 +181,8 @@ public class CfgCreator extends CfgConverter {
 		decisionNodeMap.put(n.toString(), decisionNodeIndex++);
 		cfg.addNode(decision);
 		cfg.addEdge(cfg.getEntry(), decision);
+		setTrueBeginLine( n ,   decision);
 		dealParentLoopLine(n,  decision);
-		
 		CFG body = toCFG(n.getBody());
 		attachExecutionBlock(cfg, decision, body, decision, true);
 		attachExecutionBlock(cfg, decision, cfg.getExit(), false);
@@ -199,6 +201,7 @@ public class CfgCreator extends CfgConverter {
 		decisionNodeMap.put(n.toString(), decisionNodeIndex++);
 		cfg.addNode(decision);
 		cfg.addEdge(cfg.getEntry(), decision);
+		setTrueBeginLine( n ,   decision);
 		dealParentLoopLine(n,  decision);
 		/* execution body */
 		CFG body = toCFG(n.getBody());
@@ -225,6 +228,7 @@ public class CfgCreator extends CfgConverter {
 		decisionNodeMap.put(forStmt.toString(), decisionNodeIndex++);
 		cfg.addNode(decision);
 		cfg.addEdge(cfg.getEntry(), decision);
+		setTrueBeginLine( n ,   decision);
 		dealParentLoopLine(n,  decision);
 		/* execution body */
 		CFG body = toCFG(n.getBody());
@@ -247,8 +251,9 @@ public class CfgCreator extends CfgConverter {
 		cfg.addNode(decision);
 		temporaryDecisionNodeList.add(decision);
 		decisionNodeMap.put(n.toString(), decisionNodeIndex++);
+		setTrueBeginLine( n ,   decision);
 		dealParentLoopLine(n,  decision);
-		
+
 		CFG body = toCFG(n.getBody());
 
 		/* add edge from entry to body first nodes */
@@ -289,6 +294,7 @@ public class CfgCreator extends CfgConverter {
 				cfg.addNode(decision);
 				temporaryDecisionNodeList.add(decision);
 				decisionNodeMap.put(n.toString(), decisionNodeIndex++);
+				setTrueBeginLine( entry ,  decision);
 			} else {
 				defaultEntry = entry;
 			}
@@ -301,6 +307,7 @@ public class CfgCreator extends CfgConverter {
 			cfg.addNode(decisions.get(decisions.size() - 1));
 			temporaryDecisionNodeList.add(decisions.get(decisions.size() - 1));
 			decisionNodeMap.put(n.toString(), decisionNodeIndex++);
+			setTrueBeginLine( defaultEntry ,  decisions.get(decisions.size() - 1));
 		}
 
 		cfg.addEdge(cfg.getEntry(), decisions.get(0));
@@ -794,10 +801,67 @@ public class CfgCreator extends CfgConverter {
 								.equals("japa.parser.ast.stmt.DoStmt")) {
 					decision.setParentBeginLine(temporaryDecisionNodeList
 								.get( decisionNodeMap.get(node.toString())).getBeginLine());
-					System.out.println(decision.getBeginLine() + " " + decision.getParentBeginLine());
+				//	System.out.println(decision.getBeginLine() + " " + decision.getParentBeginLine());
 					break;
 				}
 			}
+		}
+	}
+	
+	protected void setTrueBeginLine(Statement n ,  CfgDecisionNode decision){
+		if(n instanceof japa.parser.ast.stmt.WhileStmt){
+			if(!((WhileStmt) n).getBody().getChildrenNodes().isEmpty()){
+			decision.setTrueBeginLine( ((WhileStmt) n).getBody().getChildrenNodes().get(0).getBeginLine());
+			}
+			else{
+				decision.setTrueBeginLine( ((WhileStmt) n).getBody().getBeginLine());
+			}
+//			System.out.println(decision.getTrueBeginLine());
+		}
+		else if(n instanceof japa.parser.ast.stmt.ForStmt){
+			if(!((ForStmt) n).getBody().getChildrenNodes().isEmpty()){
+			decision.setTrueBeginLine( ((ForStmt) n).getBody().getChildrenNodes().get(0).getBeginLine());
+			}
+			else{
+				decision.setTrueBeginLine( ((ForStmt) n).getBody().getBeginLine());
+			}
+//			System.out.println(decision.getTrueBeginLine());
+		}
+		else if(n instanceof japa.parser.ast.stmt.ForeachStmt){
+			if(!((ForeachStmt) n).getBody().getChildrenNodes().isEmpty()){
+			decision.setTrueBeginLine( ((ForeachStmt) n).getBody().getChildrenNodes().get(0).getBeginLine());
+			}
+			else{
+				decision.setTrueBeginLine( ((ForeachStmt) n).getBody().getBeginLine());
+			}
+//			System.out.println(decision.getTrueBeginLine());
+		}
+		else if(n instanceof japa.parser.ast.stmt.DoStmt){
+			if(!((DoStmt) n).getBody().getChildrenNodes().isEmpty()){
+			decision.setTrueBeginLine( ((DoStmt) n).getBody().getChildrenNodes().get(0).getBeginLine());
+			}
+			else{
+				decision.setTrueBeginLine( ((DoStmt) n).getBody().getBeginLine());
+			}
+//			System.out.println(decision.getTrueBeginLine());
+		}
+		else if(n instanceof japa.parser.ast.stmt.IfStmt){
+			if(!((IfStmt) n).getThenStmt().getChildrenNodes().isEmpty()){
+				decision.setTrueBeginLine( ((IfStmt) n).getThenStmt().getChildrenNodes().get(0).getBeginLine());
+				}
+				else{
+					decision.setTrueBeginLine( ((IfStmt) n).getThenStmt().getBeginLine());
+				}
+//				System.out.println(decision.getTrueBeginLine());
+		}
+		else if(n instanceof japa.parser.ast.stmt.SwitchEntryStmt){
+			if(!n.getChildrenNodes().isEmpty()){
+				decision.setTrueBeginLine( n.getChildrenNodes().get(0).getBeginLine());
+			}
+			else{
+				decision.setTrueBeginLine( n.getBeginLine());
+			}
+//			System.out.println(decision.getTrueBeginLine());
 		}
 	}
 
