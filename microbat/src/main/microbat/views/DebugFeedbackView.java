@@ -44,6 +44,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Tree;
@@ -378,9 +379,16 @@ public class DebugFeedbackView extends ViewPart {
 				setChecks(writtenVariableTreeViewer, RW);
 				setChecks(stateTreeViewer, STATE);
 				
-				readVariableTreeViewer.refresh();
-				writtenVariableTreeViewer.refresh();
-				stateTreeViewer.refresh();	
+				Display.getDefault().asyncExec(new Runnable() {
+					
+					@Override
+					public void run() {
+						readVariableTreeViewer.refresh();
+						writtenVariableTreeViewer.refresh();
+						stateTreeViewer.refresh();	
+					}
+				});
+				
 				
 				bugTypeInferenceButton.setEnabled(isValidToInferBugType());
 			}
