@@ -6,6 +6,7 @@ public class CfgDecisionNode implements CfgNode {
 	
 	private Node astNode;
 	private int trueBeginLine;
+	private int parentBeginLine = -1;
 	private String stmtType;
 	private boolean loop;
 	
@@ -41,6 +42,15 @@ public class CfgDecisionNode implements CfgNode {
 	public int getBeginLine() {
 		return astNode.getBeginLine();
 	}
+	
+	public int getParentBeginLine() {
+		return parentBeginLine;
+	}
+
+	public void setParentBeginLine(int parentBeginLine) {
+		this.parentBeginLine = parentBeginLine;
+	}
+
 
 //	@Override
 //	public String toString() {
