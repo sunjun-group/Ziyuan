@@ -8,6 +8,7 @@ import java.util.Map;
 
 import microbat.evaluation.accuracy.Accuracy;
 import microbat.evaluation.model.PairList;
+import microbat.evaluation.model.StepOperationTuple;
 import microbat.evaluation.model.TraceNodePair;
 import microbat.evaluation.model.Trial;
 import microbat.evaluation.util.DiffUtil;
@@ -18,11 +19,12 @@ import microbat.model.value.VarValue;
 import microbat.recommendation.StepRecommender;
 import microbat.recommendation.UserFeedback;
 import microbat.util.JTestUtil;
-import microbat.util.JavaUtil;
 import microbat.util.Settings;
 import sav.strategies.dto.ClassLocation;
 
 public class SimulatedMicroBat {
+	
+	
 	List<TraceNode> falsePositive = new ArrayList<>();
 	List<TraceNode> falseNegative = new ArrayList<>();
 	
@@ -31,6 +33,9 @@ public class SimulatedMicroBat {
 	
 	public Trial detectMutatedBug(Trace mutatedTrace, Trace correctTrace, ClassLocation mutatedLocation, 
 			String testCaseName, String mutatedFile) throws SimulationFailException {
+		
+		boolean enableClear = false;
+		
 		PairList pairList = DiffUtil.generateMatchedTraceNodeList(mutatedTrace, correctTrace);
 		
 		TraceNode rootCause = findRootCause(mutatedLocation.getClassCanonicalName(), 
@@ -51,7 +56,7 @@ public class SimulatedMicroBat {
 			TraceNode observedFaultNode = findObservedFault(wrongNodeList);
 			
 			Trial trial = startSimulation(observedFaultNode, rootCause, mutatedTrace, allWrongNodeMap, pairList, 
-					testCaseName, mutatedFile);
+					testCaseName, mutatedFile, enableClear);
 			return trial;
 			
 		}
@@ -82,7 +87,7 @@ public class SimulatedMicroBat {
 		for(TraceNode node: wrongNodeList){
 			if(!JTestUtil.isInTestCase(node.getDeclaringCompilationUnitName())){
 				observedFaultNode = node;
-				
+				break;
 			}
 		}
 		
@@ -90,20 +95,22 @@ public class SimulatedMicroBat {
 	}
 	
 	private Trial startSimulation(TraceNode observedFaultNode, TraceNode rootCause, Trace mutatedTrace, 
-			Map<Integer, TraceNode> allWrongNodeMap, PairList pairList, String testCaseName, String mutatedFile) 
+			Map<Integer, TraceNode> allWrongNodeMap, PairList pairList, String testCaseName, String mutatedFile, boolean enableClear) 
 					throws SimulationFailException {
 		Settings.interestedVariables.clear();
 		Settings.localVariableScopes.clear();
 		Settings.potentialCorrectPatterns.clear();
 		recommender = new StepRecommender();
 		
-		List<TraceNode> jumpingSteps = new ArrayList<>();
+		List<StepOperationTuple> jumpingSteps = new ArrayList<>();
 		
 		try{
+			TraceNode lastNode = observedFaultNode;
 			TraceNode suspiciousNode = observedFaultNode;
-			jumpingSteps.add(suspiciousNode);
+			String feedbackType = user.feedback(suspiciousNode, pairList, mutatedTrace.getCheckTime(), true, enableClear);
 			
-			String feedbackType = user.feedback(suspiciousNode, pairList, mutatedTrace.getCheckTime());
+			jumpingSteps.add(new StepOperationTuple(suspiciousNode, feedbackType));
+			
 			if(!feedbackType.equals(UserFeedback.UNCLEAR)){
 				setCurrentNodeChecked(mutatedTrace, suspiciousNode);		
 				updateVariableCheckTime(mutatedTrace, suspiciousNode);
@@ -111,19 +118,15 @@ public class SimulatedMicroBat {
 			
 			int feedbackTimes = 1;
 			
-			boolean isFail = false;
 			boolean isBugFound = rootCause.getLineNumber()==suspiciousNode.getLineNumber();
 			while(!isBugFound){
 				suspiciousNode = findSuspicioiusNode(suspiciousNode, mutatedTrace, feedbackType);
-				jumpingSteps.add(suspiciousNode);
 				isBugFound = rootCause.getLineNumber()==suspiciousNode.getLineNumber();
 				
 				if(!isBugFound){
-					if(suspiciousNode.getOrder()==26){
-						System.currentTimeMillis();
-					}
+					feedbackType = user.feedback(suspiciousNode, pairList, mutatedTrace.getCheckTime(), false, enableClear);
+					jumpingSteps.add(new StepOperationTuple(suspiciousNode, feedbackType));
 					
-					feedbackType = user.feedback(suspiciousNode, pairList, mutatedTrace.getCheckTime());
 					if(!feedbackType.equals(UserFeedback.UNCLEAR)){
 						setCurrentNodeChecked(mutatedTrace, suspiciousNode);		
 						updateVariableCheckTime(mutatedTrace, suspiciousNode);
@@ -132,30 +135,22 @@ public class SimulatedMicroBat {
 					feedbackTimes++;
 					
 					if(feedbackTimes > mutatedTrace.size()){
-						isFail = true;
 						break;
 					}
 				}
+				else{
+					jumpingSteps.add(new StepOperationTuple(suspiciousNode, "Bug Found"));
+				}
+				
+				if(suspiciousNode.getOrder() == lastNode.getOrder()){
+					break;
+				}
+				
+				lastNode = suspiciousNode;
 			}
 			
-			List<String> jumpStringSteps = new ArrayList<>();
-			System.out.println("bug found: " + !isFail);
-			for(TraceNode node: jumpingSteps){
-				String str = node.toString();
-				System.out.println(str);		
-				jumpStringSteps.add(str);
-			}
-			System.out.println("Root Cause:" + rootCause);
-//			System.currentTimeMillis();
-			
-			Trial trial = new Trial();
-			trial.setTestCaseName(testCaseName);
-			trial.setBugFound(isBugFound);
-			trial.setMutatedLineNumber(rootCause.getLineNumber());
-			trial.setJumpSteps(jumpStringSteps);
-			trial.setTotalSteps(mutatedTrace.size());
-			trial.setMutatedFile(mutatedFile);
-			trial.setResult(isBugFound? Trial.SUCESS : Trial.FAIL);
+			Trial trial = constructTrial(rootCause, mutatedTrace, testCaseName,
+					mutatedFile, isBugFound, jumpingSteps);
 			
 			return trial;
 		}
@@ -165,6 +160,29 @@ public class SimulatedMicroBat {
 			SimulationFailException ex = new SimulationFailException(msg);
 			throw ex;
 		}
+	}
+
+	private Trial constructTrial(TraceNode rootCause, Trace mutatedTrace,
+			String testCaseName, String mutatedFile, boolean isBugFound, List<StepOperationTuple> jumpingSteps) {
+		
+		List<String> jumpStringSteps = new ArrayList<>();
+		System.out.println("bug found: " + isBugFound);
+		for(StepOperationTuple tuple: jumpingSteps){
+			String str = tuple.getNode().toString() + ": " + tuple.getUserFeedback() + "\n";
+			System.out.print(str);		
+			jumpStringSteps.add(str);
+		}
+		System.out.println("Root Cause:" + rootCause);
+		
+		Trial trial = new Trial();
+		trial.setTestCaseName(testCaseName);
+		trial.setBugFound(isBugFound);
+		trial.setMutatedLineNumber(rootCause.getLineNumber());
+		trial.setJumpSteps(jumpStringSteps);
+		trial.setTotalSteps(mutatedTrace.size());
+		trial.setMutatedFile(mutatedFile);
+		trial.setResult(isBugFound? Trial.SUCESS : Trial.FAIL);
+		return trial;
 	}
 	
 	private void setCurrentNodeChecked(Trace trace, TraceNode currentNode) {

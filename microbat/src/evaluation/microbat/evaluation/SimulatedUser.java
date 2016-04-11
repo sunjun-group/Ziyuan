@@ -1,6 +1,7 @@
 package microbat.evaluation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import microbat.evaluation.model.PairList;
@@ -12,44 +13,53 @@ import microbat.util.Settings;
 
 public class SimulatedUser {
 
-	public String feedback(TraceNode suspiciousNode, PairList pairList, int checkTime) {
+	private HashMap<TraceNode, Integer> labeledUnclearNodeVisitedTimes = new HashMap<>();
+	
+	public String feedback(TraceNode suspiciousNode, PairList pairList, int checkTime, boolean isFirstTime, boolean enableUnclear) {
 		
 		String feedback;
 		
-		TraceNodePair pair = pairList.findByMutatedNode(suspiciousNode);
-		boolean isWrongPath = (pair==null);
-		if(isWrongPath){
-			feedback = UserFeedback.WRONG_PATH;
+		boolean isClear = isClear(suspiciousNode, labeledUnclearNodeVisitedTimes, isFirstTime, enableUnclear);
+		if(!isClear){
+			feedback = UserFeedback.UNCLEAR;
 		}
 		else{
-//			System.currentTimeMillis();
-//			List<String> wrongVarIDs = pair.findWrongVarIDs();
-			List<String> wrongVarIDs = new ArrayList<>();
-			String wrongReadVarID = pair.findSingleWrongReadVarID();
-			String wrongWrittenVarID = pair.findSingleWrongWrittenVarID();
-			
-			if(wrongReadVarID != null){
-				wrongVarIDs.add(wrongReadVarID);
-			}
-			if(wrongWrittenVarID != null){
-				wrongVarIDs.add(wrongWrittenVarID);
-			}
-			
-			if(!wrongVarIDs.isEmpty()){
-				for(String wrongVarID: wrongVarIDs){
-					Settings.interestedVariables.add(wrongVarID, checkTime);
-				}			
-				feedback = UserFeedback.INCORRECT;
+			TraceNodePair pair = pairList.findByMutatedNode(suspiciousNode);
+			boolean isWrongPath = (pair==null);
+			if(isWrongPath){
+				feedback = UserFeedback.WRONG_PATH;
 			}
 			else{
-				for(VarValue writtenVar: suspiciousNode.getWrittenVariables()){
-					Settings.interestedVariables.remove(writtenVar.getVarID());
+//			System.currentTimeMillis();
+//			List<String> wrongVarIDs = pair.findWrongVarIDs();
+				List<String> wrongVarIDs = new ArrayList<>();
+				String wrongReadVarID = pair.findSingleWrongReadVarID();
+				String wrongWrittenVarID = pair.findSingleWrongWrittenVarID();
+				
+				if(wrongReadVarID != null){
+					wrongVarIDs.add(wrongReadVarID);
 				}
-				for(VarValue readVar: suspiciousNode.getReadVariables()){
-					Settings.interestedVariables.remove(readVar.getVarID());
+				if(wrongWrittenVarID != null){
+					wrongVarIDs.add(wrongWrittenVarID);
 				}
 				
-				feedback = UserFeedback.CORRECT;
+				if(!wrongVarIDs.isEmpty()){
+					for(String wrongVarID: wrongVarIDs){
+						Settings.interestedVariables.add(wrongVarID, checkTime);
+					}			
+					feedback = UserFeedback.INCORRECT;
+				}
+				else{
+					for(VarValue writtenVar: suspiciousNode.getWrittenVariables()){
+						Settings.interestedVariables.remove(writtenVar.getVarID());
+					}
+					for(VarValue readVar: suspiciousNode.getReadVariables()){
+						Settings.interestedVariables.remove(readVar.getVarID());
+					}
+					
+					feedback = UserFeedback.CORRECT;
+					
+				}
 				
 			}
 			
@@ -57,6 +67,43 @@ public class SimulatedUser {
 		
 		return feedback;
 		
+	}
+
+	
+	
+	private boolean isClear(TraceNode suspiciousNode, HashMap<TraceNode, Integer> labeledUnclearNodeVisitedTimes, 
+			boolean isFirstTime, boolean enableUnclear) {
+		
+		if(!enableUnclear){
+			return true;
+		}
+		
+		Integer times = labeledUnclearNodeVisitedTimes.get(suspiciousNode);
+		if(times == null){
+			times = 1;
+		}
+		else{
+			times++;
+		}
+		labeledUnclearNodeVisitedTimes.put(suspiciousNode, times);
+		
+		
+		if(isFirstTime){
+			return true;
+		}
+		
+		int layerNum = suspiciousNode.getInvocationLevel();
+		
+		double unclearPossibility = (1-1/(Math.pow(Math.E, layerNum-1)))/times;
+		
+		double dice = Math.random();
+		
+		if(dice<unclearPossibility){
+			return false;
+		}
+		else{
+			return true;			
+		}
 	}
 
 //	private String findReachingReadVariablesFromSuspiciousNodeToRootCause(

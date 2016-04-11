@@ -123,12 +123,16 @@ public class TestCaseAnalyzer {
 	}
 	
 	private void runSingeTestCase(){
-		String className = "org.apache.commons.math.FunctionEvaluationExceptionTest";
-		String methodName = "testConstructor";
+		String className = "com.test.MainTest";
+		String methodName = "testMain";
 		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-				+ "apache-common-math-2.2\\176_13_1\\MathException.java";
-		String mutatedClass = "org.apache.commons.math.MathException";
-		int mutatedLine = 176;
+				+ "mutation\\49_36_1\\Main.java";
+//		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
+//				+ "apache-common-math-2.2\\810_22_3\\FastMath.java";
+		String mutatedClass = "com.Main";
+//		String mutatedClass = "org.apache.commons.math.MathException";
+		
+		int mutatedLine = 49;
 		
 		try {
 			runEvaluationForSingleTrial(className, methodName, mutationFile, mutatedClass, mutatedLine);
