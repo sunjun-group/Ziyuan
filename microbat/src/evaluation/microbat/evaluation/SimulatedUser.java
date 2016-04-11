@@ -86,7 +86,7 @@ public class SimulatedUser {
 //				List<String> wrongVarIDs = pair.findWrongVarIDs();
 				
 				if(suspiciousNode.getLineNumber() == 51){
-					System.currentTimeMillis();
+//					System.currentTimeMillis();
 				}
 				
 				List<String> wrongVarIDs = new ArrayList<>();

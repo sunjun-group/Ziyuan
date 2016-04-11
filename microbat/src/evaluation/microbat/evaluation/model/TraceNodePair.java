@@ -87,7 +87,7 @@ public class TraceNodePair {
 		
 		for(VarValue mutatedWrittenVar: mutatedNode.getWrittenVariables()){
 			List<VarValue> mutatedVarList = findCorrespondingVarWithDifferentValue(mutatedWrittenVar, 
-					originalNode.getReadVariables(), mutatedNode.getReadVariables(), trace);
+					originalNode.getWrittenVariables(), mutatedNode.getWrittenVariables(), trace);
 			if(!mutatedVarList.isEmpty()){
 				for(VarValue value: mutatedVarList){
 					wrongVarIDs.add(value.getVarID());
