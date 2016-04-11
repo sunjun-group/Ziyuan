@@ -13,6 +13,8 @@ import microbat.model.value.ArrayValue;
 import microbat.model.value.PrimitiveValue;
 import microbat.model.value.ReferenceValue;
 import microbat.model.value.VarValue;
+import microbat.model.variable.Variable;
+import microbat.model.variable.VirtualVar;
 import microbat.recommendation.Bug;
 import microbat.recommendation.BugInferer;
 import microbat.recommendation.StepRecommender;
@@ -83,8 +85,8 @@ public class DebugFeedbackView extends ViewPart {
 	
 	private CheckboxTreeViewer consequenceTreeViewer;
 	
-	private ICheckStateListener stateListener;
-	private ICheckStateListener RWVarListener;
+//	private ICheckStateListener stateListener;
+//	private ICheckStateListener RWVarListener;
 	private ITreeViewerListener treeListener;
 	
 	private Button yesButton;
@@ -222,11 +224,18 @@ public class DebugFeedbackView extends ViewPart {
 		}
 		
 		String varID = ev.getVarID();
-		
-		if(type.equals(STATE)){
+		if(!varID.contains(":") && !varID.contains(VirtualVar.VIRTUAL_PREFIX)){
 			Trace trace = Activator.getDefault().getCurrentTrace();
-			varID = trace.findTrueIDFromStateVariable(varID, currentNode.getOrder());
+			String order = trace.findDefiningNodeOrder(Variable.READ, currentNode, varID);
+			varID = varID + ":" + order;
 		}
+		
+//		if(type.equals(STATE)){
+//			Trace trace = Activator.getDefault().getCurrentTrace();
+//			varID = trace.findTrueIDFromStateVariable(varID, currentNode.getOrder());
+//		}
+		
+		System.currentTimeMillis();
 		
 		if(Settings.interestedVariables.contains(varID)){
 			item.setChecked(true);
@@ -241,49 +250,61 @@ public class DebugFeedbackView extends ViewPart {
 	}
 	
 	
-	class StateListener implements ICheckStateListener{
-		@Override
-		public void checkStateChanged(CheckStateChangedEvent event) {
-			Object obj = event.getElement();
-			VarValue value = null;
-			
-			if(obj instanceof VarValue){
-				value = (VarValue)obj;
-				String varID = value.getVarID();
-				
-				Trace trace = Activator.getDefault().getCurrentTrace();
-				String trueVarID = trace.findTrueIDFromStateVariable(varID, currentNode.getOrder());
-				
-				if(!Settings.interestedVariables.contains(trueVarID)){
-					Settings.interestedVariables.add(trueVarID, trace.getCheckTime());							
-				}
-				else{
-					Settings.interestedVariables.remove(trueVarID);
-				}
-				
-				setChecks(writtenVariableTreeViewer, RW);
-				setChecks(readVariableTreeViewer, RW);
-				setChecks(stateTreeViewer, STATE);
-				
-				writtenVariableTreeViewer.refresh();
-				readVariableTreeViewer.refresh();
-				stateTreeViewer.refresh();	
-			}
-			
-		}
-	}
+//	class StateListener implements ICheckStateListener{
+//		@Override
+//		public void checkStateChanged(CheckStateChangedEvent event) {
+//			Object obj = event.getElement();
+//			VarValue value = null;
+//			
+//			if(obj instanceof VarValue){
+//				value = (VarValue)obj;
+//				String varID = value.getVarID();
+//				
+//				Trace trace = Activator.getDefault().getCurrentTrace();
+//				String trueVarID = trace.findTrueIDFromStateVariable(varID, currentNode.getOrder());
+//				
+//				if(!Settings.interestedVariables.contains(trueVarID)){
+//					Settings.interestedVariables.add(trueVarID, trace.getCheckTime());							
+//				}
+//				else{
+//					Settings.interestedVariables.remove(trueVarID);
+//				}
+//				
+//				setChecks(writtenVariableTreeViewer, RW);
+//				setChecks(readVariableTreeViewer, RW);
+//				setChecks(stateTreeViewer, STATE);
+//				
+//				writtenVariableTreeViewer.refresh();
+//				readVariableTreeViewer.refresh();
+//				stateTreeViewer.refresh();	
+//			}
+//			
+//		}
+//	}
 	
 	class RWVarListener implements ICheckStateListener{
+		private String RWType;
+		
+		public RWVarListener(String RWType){
+			this.RWType = RWType;
+		}
+		
 		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			Object obj = event.getElement();
 			VarValue value = null;
 			
 			if(obj instanceof VarValue){
+				Trace trace = Activator.getDefault().getCurrentTrace();
+				
 				value = (VarValue)obj;
 				String varID = value.getVarID();
 				
-				Trace trace = Activator.getDefault().getCurrentTrace();
+				if(!varID.contains(":") && !varID.contains(VirtualVar.VIRTUAL_PREFIX)){
+					String order = trace.findDefiningNodeOrder(RWType, currentNode, varID);
+					varID = varID + ":" + order;
+				}
+				
 				if(!Settings.interestedVariables.contains(varID)){
 					Settings.interestedVariables.add(varID, trace.getCheckTime());							
 				}
@@ -370,16 +391,15 @@ public class DebugFeedbackView extends ViewPart {
 			}
 		};
 		
-		stateListener = new StateListener();
-		RWVarListener = new RWVarListener();
+//		stateListener = new StateListener();
 		
 		this.readVariableTreeViewer.addTreeListener(treeListener);
 		this.writtenVariableTreeViewer.addTreeListener(treeListener);
 		this.stateTreeViewer.addTreeListener(treeListener);
 		
-		this.writtenVariableTreeViewer.addCheckStateListener(RWVarListener);
-		this.readVariableTreeViewer.addCheckStateListener(RWVarListener);
-		this.stateTreeViewer.addCheckStateListener(stateListener);
+		this.writtenVariableTreeViewer.addCheckStateListener(new RWVarListener(Variable.WRITTEN));
+		this.readVariableTreeViewer.addCheckStateListener(new RWVarListener(Variable.READ));
+		this.stateTreeViewer.addCheckStateListener(new RWVarListener(Variable.READ));
 		
 //		this.consequenceTreeViewer.addTreeListener(treeListener);
 //		this.stateTreeViewer.addTreeListener(treeListener);
@@ -603,7 +623,7 @@ public class DebugFeedbackView extends ViewPart {
 			boolean existWrittenVariable = !currentNode.getWrittenVariables().isEmpty();
 			boolean existReadVariable = !currentNode.getReadVariables().isEmpty();
 			
-			if(feedbackType.equals(UserFeedback.WRONG_PATH)){
+			if(feedbackType.equals(UserFeedback.WRONG_PATH) || feedbackType.equals(UserFeedback.UNCLEAR)){
 				return true;
 			}
 			

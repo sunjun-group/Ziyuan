@@ -608,6 +608,10 @@ public class TraceNode{
 				getLineNumber()==node.getLineNumber();
 	}
 
+	/**
+	 * The direct control diminator which is a loop condition.
+	 * @return
+	 */
 	public TraceNode findContainingLoopControlDominator() {
 		for(TraceNode controlDominator: this.controlDominators){
 			if(controlDominator.isLoopCondition()){

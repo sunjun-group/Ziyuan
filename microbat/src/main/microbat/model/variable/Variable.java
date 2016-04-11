@@ -4,6 +4,9 @@ public abstract class Variable {
 	
 	public static final String UNKNOWN_TYPE = "unknown type";
 	
+	public static String READ = "read";
+	public static String WRITTEN = "written";
+	
 	protected String type;
 	protected String variableName;
 	

@@ -265,7 +265,7 @@ public class ProgramExecutor extends Executor{
 						isContextChange = checkContext(lastSteppingInPoint, currentLocation);
 						if(!isContextChange){
 							parseReadWrittenVariableInThisStep(((StepEvent) event).thread(), currentLocation, 
-									this.trace.getLastestNode(), this.trace.getStepVariableTable(), WRITTEN);			
+									this.trace.getLastestNode(), this.trace.getStepVariableTable(), Variable.WRITTEN);			
 						}
 						
 						lastSteppingInPoint = null;
@@ -335,7 +335,7 @@ public class ProgramExecutor extends Executor{
 						}
 						
 						parseReadWrittenVariableInThisStep(((StepEvent) event).thread(), currentLocation, node, 
-								this.trace.getStepVariableTable(), READ);
+								this.trace.getStepVariableTable(), Variable.READ);
 						
 						/**
 						 * create virtual variable for return statement
@@ -723,7 +723,7 @@ public class ProgramExecutor extends Executor{
 				if(scope != null){
 					varID = Variable.concanateLocalVarID(methodDeclaringType, localVar.getName(), 
 							scope.getStartLine(), scope.getEndLine());
-					String definingNodeOrder = findDefiningNodeOrder(WRITTEN, lastestNode, varID);
+					String definingNodeOrder = this.trace.findDefiningNodeOrder(Variable.WRITTEN, lastestNode, varID);
 					varID = varID + ":" + definingNodeOrder;
 					localVar.setVarID(varID);
 				}
@@ -902,7 +902,7 @@ public class ProgramExecutor extends Executor{
 					ObjectReference objRef = (ObjectReference)value;
 					String varID = String.valueOf(objRef.uniqueID());
 					
-					String definingNodeOrder = findDefiningNodeOrder(accessType, node, varID);
+					String definingNodeOrder = this.trace.findDefiningNodeOrder(accessType, node, varID);
 					varID = varID + ":" + definingNodeOrder;
 					var.setVarID(varID);
 					
@@ -925,7 +925,7 @@ public class ProgramExecutor extends Executor{
 						if(scope != null){
 							varID = Variable.concanateLocalVarID(node.getBreakPoint().getClassCanonicalName(), 
 									var.getName(), scope.getStartLine(), scope.getEndLine());
-							String definingNodeOrder = findDefiningNodeOrder(accessType, node, varID);
+							String definingNodeOrder = this.trace.findDefiningNodeOrder(accessType, node, varID);
 							varID = varID + ":" + definingNodeOrder;
 //							varID = node.getBreakPoint().getClassCanonicalName() + "[" + scope.getStartLine() + "," 
 //									+ scope.getEndLine() + "] " + var.getName();				
@@ -950,7 +950,7 @@ public class ProgramExecutor extends Executor{
 						if(var instanceof FieldVar){
 							//String varID = String.valueOf(objRef.uniqueID()) + "." + var.getSimpleName();
 							String varID = Variable.concanateFieldVarID(String.valueOf(objRef.uniqueID()), var.getSimpleName());
-							String definingNodeOrder = findDefiningNodeOrder(accessType, node, varID);
+							String definingNodeOrder = this.trace.findDefiningNodeOrder(accessType, node, varID);
 							varID = varID + ":" + definingNodeOrder;
 							var.setVarID(varID);							
 						}
@@ -960,7 +960,7 @@ public class ProgramExecutor extends Executor{
 							String indexValueString = indexValue.value.toString();
 							String varID = Variable.concanateArrayElementVarID(String.valueOf(objRef.uniqueID()), 
 									indexValueString);
-							String definingNodeOrder = findDefiningNodeOrder(accessType, node, varID);
+							String definingNodeOrder = this.trace.findDefiningNodeOrder(accessType, node, varID);
 							varID = varID + ":" + definingNodeOrder;
 //							String varID = String.valueOf(objRef.uniqueID()) + "[" + indexValueString + "]";
 							
@@ -983,32 +983,7 @@ public class ProgramExecutor extends Executor{
 		return null;
 	}
 	
-	private String findDefiningNodeOrder(String accessType, TraceNode currentNode, String varID) {
-		String definingOrder = "0";
-		if(accessType.equals(WRITTEN)){
-			definingOrder = String.valueOf(currentNode.getOrder());
-		}
-		else if(accessType.equals(READ)){
-			TraceNode node = null;
-			TraceNode stepOverPreviousNode = currentNode.getStepOverPrevious();
-			if(stepOverPreviousNode != null){
-				if(stepOverPreviousNode.getLineNumber() == currentNode.getLineNumber()){
-					node = this.trace.findLastestNodeDefiningPrimitiveVariable(varID, stepOverPreviousNode.getOrder());
-				}
-			}
-			else{
-				node = this.trace.findLastestNodeDefiningPrimitiveVariable(varID);
-			}
-			if(node != null){
-				definingOrder = String.valueOf(node.getOrder());				
-			}
-		}
 	
-		return definingOrder;
-	}
-
-	public static String READ = "read";
-	public static String WRITTEN = "written";
 	
 	private StackFrame findFrame(ThreadReference thread, Location location){
 		StackFrame frame = null;
@@ -1036,10 +1011,10 @@ public class ProgramExecutor extends Executor{
 		}
 		
 		synchronized (frame) {
-			if(action.equals(READ)){
+			if(action.equals(Variable.READ)){
 				processReadVariable(node, stepVariableTable, frame);							
 			}
-			else if(action.equals(WRITTEN)){
+			else if(action.equals(Variable.WRITTEN)){
 				processWrittenVariable(node, stepVariableTable, frame);
 			}
 		}
@@ -1055,7 +1030,7 @@ public class ProgramExecutor extends Executor{
 				System.currentTimeMillis();
 			}
 			
-			VarValue varValue = generateVarValue(frame, readVar, node, READ);
+			VarValue varValue = generateVarValue(frame, readVar, node, Variable.READ);
 			
 			System.currentTimeMillis();
 			if(varValue == null){
@@ -1088,7 +1063,7 @@ public class ProgramExecutor extends Executor{
 			StackFrame frame) {
 		List<Variable> writtenVariables = node.getBreakPoint().getWrittenVariables();
 		for(Variable writtenVar: writtenVariables){
-			VarValue varValue = generateVarValue(frame, writtenVar, node, WRITTEN);
+			VarValue varValue = generateVarValue(frame, writtenVar, node, Variable.WRITTEN);
 			
 			if(varValue == null){
 				System.err.println("When processing written variable, there is an error when generating the id for " + writtenVar + 

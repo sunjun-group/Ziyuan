@@ -12,6 +12,7 @@ import microbat.model.Scope;
 import microbat.model.UserInterestedVariables;
 import microbat.model.value.VarValue;
 import microbat.model.value.VirtualValue;
+import microbat.model.variable.Variable;
 import microbat.recommendation.UserFeedback;
 import microbat.util.Settings;
 
@@ -328,6 +329,30 @@ public class Trace {
 		return null;
 	}
 	
+	public String findDefiningNodeOrder(String accessType, TraceNode currentNode, String varID) {
+		String definingOrder = "0";
+		if(accessType.equals(Variable.WRITTEN)){
+			definingOrder = String.valueOf(currentNode.getOrder());
+		}
+		else if(accessType.equals(Variable.READ)){
+			TraceNode node = null;
+			TraceNode stepOverPreviousNode = currentNode.getStepOverPrevious();
+			if(stepOverPreviousNode != null){
+				if(stepOverPreviousNode.getLineNumber() == currentNode.getLineNumber()){
+					node = findLastestNodeDefiningPrimitiveVariable(varID, stepOverPreviousNode.getOrder());
+				}
+			}
+			else{
+				node = findLastestNodeDefiningPrimitiveVariable(varID, currentNode.getOrder());
+			}
+			if(node != null){
+				definingOrder = String.valueOf(node.getOrder());				
+			}
+		}
+	
+		return definingOrder;
+	}
+
 	public TraceNode findLastestNodeDefiningPrimitiveVariable(String varID, int limitOrder){
 		for(int i=limitOrder-2; i>=0; i--){
 			TraceNode node = exectionList.get(i);
@@ -561,6 +586,12 @@ public class Trace {
 		return null;
 	}
 
+	/**
+	 * extend from one single iteration to all the iterations of the loop.
+	 * @param allControlDominatees
+	 * @param controlLoopDominator
+	 * @return
+	 */
 	private List<TraceNode> extendLoopRange(List<TraceNode> allControlDominatees, TraceNode controlLoopDominator) {
 
 		List<TraceNode> range = new ArrayList<>();

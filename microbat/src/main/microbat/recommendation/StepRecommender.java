@@ -157,7 +157,7 @@ public class StepRecommender {
 			Iterator<TraceNode> iter = visitedUnclearNodeList.iterator();
 			while(iter.hasNext()){
 				TraceNode visitedUnclearNode = iter.next();
-				if(currentNode.getOrder() >= visitedUnclearNode.getOrder()){
+				if(visitedUnclearNode.getOrder() <= currentNode.getOrder()){
 					iter.remove();
 				}
 			}
@@ -228,6 +228,13 @@ public class StepRecommender {
 		return null;
 	}
 
+	/**
+	 * A dominator is an abstract dominator if it is either a method invocation or a loop head.
+	 * @param loopSequence
+	 * @param dominators, *sorted in a reverse order*
+	 * @param currentNode
+	 * @return
+	 */
 	private TraceNode findMoreAbstractDominator(LoopSequence loopSequence, List<TraceNode> dominators, TraceNode currentNode){
 		TraceNode moreAbstractDominator = null;
 		for(TraceNode dominator: dominators){
@@ -273,6 +280,9 @@ public class StepRecommender {
 			TraceNode moreAbstractDominator = findMoreAbstractDominator(loopSequence, dominators, currentNode);
 			
 			if(moreAbstractDominator != null){
+				/**
+				 * try to find a dominator which has not been checked, if not, I just return the abstract dominator 
+				 */
 				if(moreAbstractDominator.hasChecked()){
 					int index = dominators.indexOf(moreAbstractDominator);
 					for(int i=index; i>=0; i--){
@@ -283,6 +293,8 @@ public class StepRecommender {
 							}
 						}
 					}
+					
+					return moreAbstractDominator;
 				}
 				else{
 					return moreAbstractDominator;
@@ -292,6 +304,8 @@ public class StepRecommender {
 				return dominators.get(0);
 			}
 		}
+		
+		System.currentTimeMillis();
 		
 		return null;
 	}
