@@ -5,13 +5,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import microbat.evaluation.accuracy.Accuracy;
 import microbat.evaluation.model.PairList;
+import microbat.evaluation.model.StateWrapper;
 import microbat.evaluation.model.StepOperationTuple;
 import microbat.evaluation.model.TraceNodePair;
 import microbat.evaluation.model.Trial;
 import microbat.evaluation.util.DiffUtil;
+import microbat.handler.CheckingState;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.model.trace.TraceNodeReverseOrderComparator;
@@ -102,12 +105,16 @@ public class SimulatedMicroBat {
 		Settings.potentialCorrectPatterns.clear();
 		recommender = new StepRecommender();
 		
-		List<StepOperationTuple> jumpingSteps = new ArrayList<>();
+		Stack<StateWrapper> confusingStack = new Stack<>();
+		ArrayList<StepOperationTuple> jumpingSteps = new ArrayList<>();
 		
 		try{
 			TraceNode lastNode = observedFaultNode;
 			TraceNode suspiciousNode = observedFaultNode;
-			String feedbackType = user.feedback(suspiciousNode, pairList, mutatedTrace.getCheckTime(), true, enableClear);
+			
+			String feedbackType = operateFeedback(observedFaultNode,
+					mutatedTrace, pairList, enableClear, confusingStack,
+					jumpingSteps, true);
 			
 			jumpingSteps.add(new StepOperationTuple(suspiciousNode, feedbackType));
 			
@@ -121,29 +128,64 @@ public class SimulatedMicroBat {
 			boolean isBugFound = rootCause.getLineNumber()==suspiciousNode.getLineNumber();
 			while(!isBugFound){
 				suspiciousNode = findSuspicioiusNode(suspiciousNode, mutatedTrace, feedbackType);
-				isBugFound = rootCause.getLineNumber()==suspiciousNode.getLineNumber();
 				
-				if(!isBugFound){
-					feedbackType = user.feedback(suspiciousNode, pairList, mutatedTrace.getCheckTime(), false, enableClear);
-					jumpingSteps.add(new StepOperationTuple(suspiciousNode, feedbackType));
-					
-					if(!feedbackType.equals(UserFeedback.UNCLEAR)){
-						setCurrentNodeChecked(mutatedTrace, suspiciousNode);		
-						updateVariableCheckTime(mutatedTrace, suspiciousNode);
+				/** It means that the bug cannot be found now */
+				if(suspiciousNode.getOrder() == lastNode.getOrder()){
+					if(!confusingStack.isEmpty()){
+						/** recover */
+						StateWrapper stateWrapper = confusingStack.pop();
+						
+						jumpingSteps = stateWrapper.getJumpingSteps();
+
+						CheckingState state = stateWrapper.getState();
+						int checkTime = state.getTraceCheckTime();
+						
+						mutatedTrace.setCheckTime(state.getTraceCheckTime());
+						suspiciousNode = mutatedTrace.getExectionList().get(state.getCurrentNodeOrder()-1);
+						suspiciousNode.setSuspicousScoreMap(state.getCurrentNodeSuspicousScoreMap());
+						suspiciousNode.setCheckTime(state.getCurrentNodeCheckTime());
+						
+						Settings.interestedVariables = state.getInterestedVariables();
+						Settings.potentialCorrectPatterns = state.getPotentialCorrectPatterns();
+						recommender = state.getRecommender();
+						
+						List<String> wrongVarIDs = stateWrapper.getChoosingVarID();
+						for(String wrongVarID: wrongVarIDs){
+							Settings.interestedVariables.add(wrongVarID, checkTime);
+						}
+						feedbackType = UserFeedback.INCORRECT;
+						
+						System.currentTimeMillis();
 					}
-					
-					feedbackTimes++;
-					
-					if(feedbackTimes > mutatedTrace.size()){
-						break;
+					else{
+						break;						
 					}
 				}
 				else{
-					jumpingSteps.add(new StepOperationTuple(suspiciousNode, "Bug Found"));
-				}
-				
-				if(suspiciousNode.getOrder() == lastNode.getOrder()){
-					break;
+					isBugFound = rootCause.getLineNumber()==suspiciousNode.getLineNumber();
+					
+					if(!isBugFound){
+						feedbackType = operateFeedback(suspiciousNode,
+								mutatedTrace, pairList, enableClear, confusingStack,
+								jumpingSteps, false);
+						
+						jumpingSteps.add(new StepOperationTuple(suspiciousNode, feedbackType));
+						
+						if(!feedbackType.equals(UserFeedback.UNCLEAR)){
+							setCurrentNodeChecked(mutatedTrace, suspiciousNode);		
+							updateVariableCheckTime(mutatedTrace, suspiciousNode);
+						}
+						
+						feedbackTimes++;
+						
+						if(feedbackTimes > mutatedTrace.size()){
+							break;
+						}
+					}
+					else{
+						jumpingSteps.add(new StepOperationTuple(suspiciousNode, "Bug Found"));
+					}
+					
 				}
 				
 				lastNode = suspiciousNode;
@@ -156,10 +198,49 @@ public class SimulatedMicroBat {
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			for(StepOperationTuple t: jumpingSteps){
+				System.err.println(t);				
+			}
+			System.out.println();
 			String msg = "The program stuck in " + testCaseName +", the mutated line is " + rootCause.getLineNumber();
 			SimulationFailException ex = new SimulationFailException(msg);
 			throw ex;
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	/**
+	 * Apart from feedback, this method also back up the state for future re-trial.
+	 * 
+	 * @param observedFaultNode
+	 * @param mutatedTrace
+	 * @param pairList
+	 * @param enableClear
+	 * @param confusingStack
+	 * @param jumpingSteps
+	 * @param suspiciousNode
+	 * @param isFirstTime
+	 * @return
+	 */
+	private String operateFeedback(TraceNode suspiciousNode,
+			Trace mutatedTrace, PairList pairList, boolean enableClear,
+			Stack<StateWrapper> confusingStack,
+			ArrayList<StepOperationTuple> jumpingSteps,
+			boolean isFirstTime) {
+		
+		CheckingState state = new CheckingState();
+		state.recordCheckingState(suspiciousNode, recommender, mutatedTrace, 
+				Settings.interestedVariables, Settings.potentialCorrectPatterns);
+		
+		String feedbackType = user.feedback(suspiciousNode, mutatedTrace, pairList, mutatedTrace.getCheckTime(), isFirstTime, enableClear);
+		
+		for(List<String> wrongVarIDs: user.getOtherOptions()){
+			ArrayList<StepOperationTuple> clonedJumpingSteps = (ArrayList<StepOperationTuple>) jumpingSteps.clone();
+			StateWrapper stateWrapper = new StateWrapper(state, wrongVarIDs, clonedJumpingSteps);
+			confusingStack.push(stateWrapper);
+		}
+		
+		return feedbackType;
 	}
 
 	private Trial constructTrial(TraceNode rootCause, Trace mutatedTrace,

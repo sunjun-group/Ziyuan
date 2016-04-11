@@ -6,6 +6,7 @@ import java.util.List;
 
 import microbat.evaluation.model.PairList;
 import microbat.evaluation.model.TraceNodePair;
+import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.model.value.VarValue;
 import microbat.recommendation.UserFeedback;
@@ -15,7 +16,58 @@ public class SimulatedUser {
 
 	private HashMap<TraceNode, Integer> labeledUnclearNodeVisitedTimes = new HashMap<>();
 	
-	public String feedback(TraceNode suspiciousNode, PairList pairList, int checkTime, boolean isFirstTime, boolean enableUnclear) {
+	private List<List<String>> otherOptions = new ArrayList<>();
+	
+	private List<List<String>> checkWrongVariableIDOptions(TraceNodePair pair, Trace mutatedTrace){
+		List<List<String>> options = new ArrayList<>();
+		
+		List<String> wrongReadVarIDs = pair.findSingleWrongReadVarID(mutatedTrace);
+		List<String> wrongWrittenVarIDs = pair.findSingleWrongWrittenVarID(mutatedTrace);
+		
+		if(wrongReadVarIDs.size() < 2 && wrongWrittenVarIDs.size() < 2){
+			List<String> wrongVarIDs = new ArrayList<>();
+			wrongVarIDs.addAll(wrongReadVarIDs);
+			wrongVarIDs.addAll(wrongWrittenVarIDs);
+			
+			options.add(wrongVarIDs);
+		}
+		else{
+			List<String> varIDsWithLargeSize; 
+			List<String> varIDsWithSmallSize;
+			if(wrongReadVarIDs.size() == 2){
+				varIDsWithLargeSize = wrongReadVarIDs;
+				varIDsWithSmallSize = wrongWrittenVarIDs;
+			}
+			else{
+				varIDsWithLargeSize = wrongWrittenVarIDs;
+				varIDsWithSmallSize = wrongReadVarIDs;
+			}
+			
+			for(String wrongVarLarge: varIDsWithLargeSize){
+				if(varIDsWithSmallSize.size() > 0){
+					for(String wrongVarSmall: varIDsWithSmallSize){
+						List<String> wrongVarIDs = new ArrayList<>();
+						wrongVarIDs.add(wrongVarLarge);
+						wrongVarIDs.add(wrongVarSmall);
+						
+						options.add(wrongVarIDs);
+					}
+				}
+				else{
+					List<String> wrongVarIDs = new ArrayList<>();
+					wrongVarIDs.add(wrongVarLarge);
+					
+					options.add(wrongVarIDs);
+				}
+			}
+		}
+		
+		return options;
+	}
+	
+	public String feedback(TraceNode suspiciousNode, Trace mutatedTrace, PairList pairList, int checkTime, boolean isFirstTime, boolean enableUnclear) {
+		
+		otherOptions.clear();
 		
 		String feedback;
 		
@@ -30,17 +82,19 @@ public class SimulatedUser {
 				feedback = UserFeedback.WRONG_PATH;
 			}
 			else{
-//			System.currentTimeMillis();
-//			List<String> wrongVarIDs = pair.findWrongVarIDs();
-				List<String> wrongVarIDs = new ArrayList<>();
-				String wrongReadVarID = pair.findSingleWrongReadVarID();
-				String wrongWrittenVarID = pair.findSingleWrongWrittenVarID();
+//				System.currentTimeMillis();
+//				List<String> wrongVarIDs = pair.findWrongVarIDs();
 				
-				if(wrongReadVarID != null){
-					wrongVarIDs.add(wrongReadVarID);
+				if(suspiciousNode.getLineNumber() == 51){
+					System.currentTimeMillis();
 				}
-				if(wrongWrittenVarID != null){
-					wrongVarIDs.add(wrongWrittenVarID);
+				
+				List<String> wrongVarIDs = new ArrayList<>();
+				List<List<String>> options = checkWrongVariableIDOptions(pair, mutatedTrace);
+				wrongVarIDs = options.get(0);
+				
+				for(int i=1; i<options.size(); i++){
+					otherOptions.add(options.get(i));
 				}
 				
 				if(!wrongVarIDs.isEmpty()){
@@ -104,6 +158,14 @@ public class SimulatedUser {
 		else{
 			return true;			
 		}
+	}
+
+	public List<List<String>> getOtherOptions() {
+		return otherOptions;
+	}
+
+	public void setOtherOptions(List<List<String>> otherOptions) {
+		this.otherOptions = otherOptions;
 	}
 
 //	private String findReachingReadVariablesFromSuspiciousNodeToRootCause(

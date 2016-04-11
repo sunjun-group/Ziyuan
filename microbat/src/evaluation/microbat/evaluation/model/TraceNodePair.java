@@ -3,12 +3,16 @@ package microbat.evaluation.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import microbat.algorithm.graphdiff.GraphDiff;
 import microbat.algorithm.graphdiff.HierarchyGraphDiffer;
+import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.model.value.PrimitiveValue;
 import microbat.model.value.ReferenceValue;
 import microbat.model.value.VarValue;
 import microbat.model.value.VirtualValue;
+import microbat.model.variable.Variable;
+import microbat.model.variable.VirtualVar;
 import microbat.util.PrimitiveUtils;
 
 public class TraceNodePair {
@@ -53,96 +57,91 @@ public class TraceNodePair {
 				+ mutatedNode + ", isExactlySame=" + isExactlySame + "]";
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	public List<String> findWrongVarIDs() {
+	
+//	public List<String> findWrongVarIDs() {
+//		List<String> wrongVarIDs = new ArrayList<>();
+//		
+//		for(VarValue mutatedReadVar: mutatedNode.getReadVariables()){
+//			VarValue originalReadVar = findCorrespondingVarWithDifferentValue(mutatedReadVar, 
+//					originalNode.getReadVariables(), mutatedNode.getReadVariables());
+//			if(originalReadVar != null){
+//				wrongVarIDs.add(mutatedReadVar.getVarID());				
+//			}
+//		}
+//		
+//		for(VarValue mutatedWrittenVar: mutatedNode.getWrittenVariables()){
+//			VarValue originalWrittenVar = findCorrespondingVarWithDifferentValue(mutatedWrittenVar, 
+//					originalNode.getWrittenVariables(), mutatedNode.getWrittenVariables());
+//			if(originalWrittenVar != null){
+//				wrongVarIDs.add(mutatedWrittenVar.getVarID());				
+//			}
+//		}
+//		
+//		System.currentTimeMillis();
+//		
+//		return wrongVarIDs;
+//	}
+	
+	public List<String> findSingleWrongWrittenVarID(Trace trace){
 		List<String> wrongVarIDs = new ArrayList<>();
 		
-		for(VarValue mutatedReadVar: mutatedNode.getReadVariables()){
-			VarValue originalReadVar = findCorrespondingVarWithDifferentValue(mutatedReadVar, 
-					originalNode.getReadVariables(), mutatedNode.getReadVariables());
-			if(originalReadVar != null){
-				wrongVarIDs.add(mutatedReadVar.getVarID());				
-			}
-		}
-		
 		for(VarValue mutatedWrittenVar: mutatedNode.getWrittenVariables()){
-			VarValue originalWrittenVar = findCorrespondingVarWithDifferentValue(mutatedWrittenVar, 
-					originalNode.getWrittenVariables(), mutatedNode.getWrittenVariables());
-			if(originalWrittenVar != null){
-				wrongVarIDs.add(mutatedWrittenVar.getVarID());				
+			List<VarValue> mutatedVarList = findCorrespondingVarWithDifferentValue(mutatedWrittenVar, 
+					originalNode.getReadVariables(), mutatedNode.getReadVariables(), trace);
+			if(!mutatedVarList.isEmpty()){
+				for(VarValue value: mutatedVarList){
+					wrongVarIDs.add(value.getVarID());
+				}
+				
+				return wrongVarIDs;
 			}
 		}
-		
-		System.currentTimeMillis();
 		
 		return wrongVarIDs;
 	}
 	
-	public String findSingleWrongWrittenVarID(){
-		List<String> wrongVarIDs = new ArrayList<>();
-		
-		for(VarValue mutatedWrittenVar: mutatedNode.getWrittenVariables()){
-			VarValue originalWrittenVar = findCorrespondingVarWithDifferentValue(mutatedWrittenVar, 
-					originalNode.getWrittenVariables(), mutatedNode.getWrittenVariables());
-			if(originalWrittenVar != null){
-				wrongVarIDs.add(mutatedWrittenVar.getVarID());				
-			}
-		}
-		
-		if(!wrongVarIDs.isEmpty()){
-			return wrongVarIDs.get(0);
-		}
-		
-		return null;
-	}
-	
 	/**
-	 * Each time, the simulated user may select only one read variable. To this end, the priority of wrong variable
-	 * is as follows:
-	 * +++ primitive variable
-	 * ++  reference variable
-	 * +   virtual variable
+	 * 
 	 * @return
 	 */
-	public String findSingleWrongReadVarID(){
-		List<String> primitiveVars = new ArrayList<>();
-		List<String> referenceVars = new ArrayList<>();
-		List<String> virtualVars = new ArrayList<>();
+	public List<String> findSingleWrongReadVarID(Trace mutatedTrace){
+		
+		List<String> wrongVarIDs = new ArrayList<>();
 		
 		for(VarValue mutatedReadVar: mutatedNode.getReadVariables()){
-			VarValue originalReadVar = findCorrespondingVarWithDifferentValue(mutatedReadVar, 
-					originalNode.getReadVariables(), mutatedNode.getReadVariables());
-			if(originalReadVar != null){
-				if(mutatedReadVar instanceof PrimitiveValue){
-					primitiveVars.add(mutatedReadVar.getVarID());
+			List<VarValue> mutatedVarList = findCorrespondingVarWithDifferentValue(mutatedReadVar, 
+					originalNode.getReadVariables(), mutatedNode.getReadVariables(), mutatedTrace);
+			if(!mutatedVarList.isEmpty()){
+				for(VarValue value: mutatedVarList){
+					wrongVarIDs.add(value.getVarID());
 				}
-				else if(mutatedReadVar instanceof ReferenceValue){
-					referenceVars.add(mutatedReadVar.getVarID());
-				}
-				else if(mutatedReadVar instanceof VirtualValue){
-					virtualVars.add(mutatedReadVar.getVarID());
-				}
+				
+				return wrongVarIDs;
 			}
 		}
 		
-		if(!primitiveVars.isEmpty()){
-			return primitiveVars.get(0);
-		}
-		else if(!referenceVars.isEmpty()){
-			return referenceVars.get(0);
-		}
-		else if(!virtualVars.isEmpty()){
-			return virtualVars.get(0);
-		}
-		else{
-			return null;
-		}
+		return wrongVarIDs;
 	}
 
-	private VarValue findCorrespondingVarWithDifferentValue(VarValue mutatedVar, List<VarValue> originalList, List<VarValue> mutatedList) {
+	/**
+	 * Normally, it should return a list of a single variable value. 
+	 * 
+	 * However, it is possible that it returns a list
+	 * of two variable values. Such a case happen when the mutated variable and original variable are synonymous reference 
+	 * variable, e.g., obj. They are different because some of their attributes or elements are different, e.g., obj.x. In 
+	 * this case, the simulated user does not know whether the reference variable itself (e.g., obj) is wrong, or its 
+	 * attribute or element (e.g., obj.x) is wrong. Therefore, we return both case for the simulated debugging. In above case,
+	 * the first element is the reference variable value, and the second one is the wrong attribute variable value.
+	 * 
+	 * @param mutatedVar
+	 * @param originalList
+	 * @param mutatedList
+	 * @return
+	 */
+	private List<VarValue> findCorrespondingVarWithDifferentValue(VarValue mutatedVar, List<VarValue> originalList, 
+			List<VarValue> mutatedList, Trace mutatedTrace) {
+		List<VarValue> differentVarValueList = new ArrayList<>();
+		
 		if(mutatedVar instanceof VirtualValue && PrimitiveUtils.isPrimitiveTypeOrString(mutatedVar.getType())){
 			for(VarValue originalVar: originalList){
 				if(originalVar instanceof VirtualValue && mutatedVar.getType().equals(originalVar.getType())){
@@ -153,7 +152,8 @@ public class TraceNodePair {
 					int originalIndex = originalList.indexOf(originalVar);
 					
 					if(mutatedIndex==originalIndex && !mutatedVar.getStringValue().equals(originalVar.getStringValue())){
-						return originalVar;
+						differentVarValueList.add(mutatedVar);
+						return differentVarValueList;
 					}
 				}
 				
@@ -164,7 +164,8 @@ public class TraceNodePair {
 				if(originalVar instanceof PrimitiveValue){
 					if(mutatedVar.getVarName().equals(originalVar.getVarName()) 
 							&& !mutatedVar.getStringValue().equals(originalVar.getStringValue())){
-						return originalVar;
+						differentVarValueList.add(mutatedVar);
+						return differentVarValueList;
 					}
 				}
 			}
@@ -173,34 +174,50 @@ public class TraceNodePair {
 			for(VarValue originalVar: originalList){
 				if(originalVar instanceof ReferenceValue){
 					if(mutatedVar.getVarName().equals(originalVar.getVarName())){
-						ReferenceValue refVar1 = (ReferenceValue)mutatedVar;
-						setChildren(refVar1, mutatedNode);
-						ReferenceValue refVar2 = (ReferenceValue)originalVar;
-						setChildren(refVar2, originalNode);
+						ReferenceValue mutatedRefVar = (ReferenceValue)mutatedVar;
+						setChildren(mutatedRefVar, mutatedNode);
+						ReferenceValue originalRefVar = (ReferenceValue)originalVar;
+						setChildren(originalRefVar, originalNode);
 						
-						if(refVar1.getChildren() != null && refVar2.getChildren() != null){
+						if(mutatedRefVar.getChildren() != null && originalRefVar.getChildren() != null){
 							HierarchyGraphDiffer differ = new HierarchyGraphDiffer();
-							differ.diff(refVar1, refVar2);
+							differ.diff(mutatedRefVar, originalRefVar);
+							
 							if(!differ.getDiffs().isEmpty()){
-								return originalVar;						
-							}								
+								differentVarValueList.add(mutatedVar);
+							}
+							
+							for(GraphDiff diff: differ.getDiffs()){
+								if(diff.getDiffType().equals(GraphDiff.UPDATE)){
+									VarValue mutatedSubVarValue = (VarValue) diff.getNodeBefore();
+									
+									String varID = mutatedSubVarValue.getVarID();
+									if(!varID.contains(":") && !varID.contains(VirtualVar.VIRTUAL_PREFIX)){
+										String order = mutatedTrace.findDefiningNodeOrder(Variable.READ, mutatedNode, varID);
+										varID = varID + ":" + order;
+									}
+									mutatedSubVarValue.setVarID(varID);
+									
+									differentVarValueList.add(mutatedSubVarValue);
+									
+									/** one wrong attribute is enough for debugging. */
+									break;
+								}
+							}
+							
+							return differentVarValueList;	
 						}
-						else if(refVar1.getChildren() == null && refVar2.getChildren() == null){
-							return originalVar;
+						else if((mutatedRefVar.getChildren() == null && originalRefVar.getChildren() != null) ||
+								(mutatedRefVar.getChildren() != null && originalRefVar.getChildren() == null)){
+							differentVarValueList.add(mutatedVar);
+							return differentVarValueList;
 						}
-						
-						
-//						HierarchyGraphDiffer differ = new HierarchyGraphDiffer();
-//						differ.diff(mutatedVar, originalVar);
-//						if(!differ.getDiffs().isEmpty()){
-//							return originalVar;							
-//						}
 					}
 				}
 			}
 		}
 		
-		return null;
+		return differentVarValueList;
 	}
 	
 	private void setChildren(ReferenceValue refVar, TraceNode node){
