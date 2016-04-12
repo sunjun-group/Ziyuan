@@ -21,6 +21,11 @@ public class CfgEntryNode implements CfgNode {
 		return beginLine;
 	}
 	
+
+	public void setBeginLine(int beginLine){
+		this.beginLine = beginLine;
+	}
+	
 	public void setStartLine(int startLine) {
 		this.beginLine = startLine;
 	}

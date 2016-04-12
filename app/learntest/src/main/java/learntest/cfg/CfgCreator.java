@@ -752,6 +752,15 @@ public class CfgCreator extends CfgConverter {
 		cfg.addEdge(cfg.getEntry(), cfg.getExit());
 		CFG body = toCFG(method.getBody());
 		cfg.append(body);
+		
+		//set beginLine to entryNode
+		if(!method.getBody().getChildrenNodes().isEmpty()){
+			cfg.getEntry().setBeginLine(method.getBody().getChildrenNodes().get(0).getBeginLine());
+		}
+		else{
+			cfg.getEntry().setBeginLine(method.getBody().getBeginLine());
+		}
+		
 		return cfg;
 	}
 
@@ -816,7 +825,6 @@ public class CfgCreator extends CfgConverter {
 			else{
 				decision.setTrueBeginLine( ((WhileStmt) n).getBody().getBeginLine());
 			}
-//			System.out.println(decision.getTrueBeginLine());
 		}
 		else if(n instanceof japa.parser.ast.stmt.ForStmt){
 			if(!((ForStmt) n).getBody().getChildrenNodes().isEmpty()){
@@ -825,7 +833,6 @@ public class CfgCreator extends CfgConverter {
 			else{
 				decision.setTrueBeginLine( ((ForStmt) n).getBody().getBeginLine());
 			}
-//			System.out.println(decision.getTrueBeginLine());
 		}
 		else if(n instanceof japa.parser.ast.stmt.ForeachStmt){
 			if(!((ForeachStmt) n).getBody().getChildrenNodes().isEmpty()){
@@ -834,7 +841,6 @@ public class CfgCreator extends CfgConverter {
 			else{
 				decision.setTrueBeginLine( ((ForeachStmt) n).getBody().getBeginLine());
 			}
-//			System.out.println(decision.getTrueBeginLine());
 		}
 		else if(n instanceof japa.parser.ast.stmt.DoStmt){
 			if(!((DoStmt) n).getBody().getChildrenNodes().isEmpty()){
@@ -843,7 +849,6 @@ public class CfgCreator extends CfgConverter {
 			else{
 				decision.setTrueBeginLine( ((DoStmt) n).getBody().getBeginLine());
 			}
-//			System.out.println(decision.getTrueBeginLine());
 		}
 		else if(n instanceof japa.parser.ast.stmt.IfStmt){
 			if(!((IfStmt) n).getThenStmt().getChildrenNodes().isEmpty()){
@@ -852,7 +857,6 @@ public class CfgCreator extends CfgConverter {
 				else{
 					decision.setTrueBeginLine( ((IfStmt) n).getThenStmt().getBeginLine());
 				}
-//				System.out.println(decision.getTrueBeginLine());
 		}
 		else if(n instanceof japa.parser.ast.stmt.SwitchEntryStmt){
 			if(!n.getChildrenNodes().isEmpty()){
@@ -861,7 +865,6 @@ public class CfgCreator extends CfgConverter {
 			else{
 				decision.setTrueBeginLine( n.getBeginLine());
 			}
-//			System.out.println(decision.getTrueBeginLine());
 		}
 	}
 
