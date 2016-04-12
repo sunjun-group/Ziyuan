@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -94,32 +93,51 @@ public class TestCaseAnalyzer {
 		
 		sourceFolderPath = sourceFolderPath.substring(0, sourceFolderPath.indexOf(cName));
 		sourceFolderPath = sourceFolderPath.substring(5, sourceFolderPath.length());
+		
+		cleanClassInTestPackage(sourceFolderPath, locationList);
+		System.currentTimeMillis();
+		
 		Mutator mutator = new Mutator(sourceFolderPath);
 		Map<String, MutationResult> mutations = mutator.mutate(locationList);
 		
 		return mutations;
 	}
 	
-	public void runEvaluation() throws JavaModelException{
-		
-		ExcelReporter reporter = new ExcelReporter();
-		reporter.start();
-		
-		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
-		
-		for(IJavaElement element: testRoot.getChildren()){
-			if(element instanceof IPackageFragment){
-				runEvaluation((IPackageFragment)element, reporter);				
+	private void cleanClassInTestPackage(String sourceFolderPath,
+			List<ClassLocation> locationList) {
+		Iterator<ClassLocation> iterator = locationList.iterator();
+		while(iterator.hasNext()){
+			ClassLocation location = iterator.next();
+			String className = location.getClassCanonicalName();
+			String fileName  = sourceFolderPath + className.replace(".", "/") + ".java";
+			
+			File file = new File(fileName);
+			if(!file.exists()){
+				iterator.remove();
 			}
 		}
+	}
+
+	public void runEvaluation() throws JavaModelException{
 		
-		reporter.export(trials, Settings.projectName+trialFileNum);
+//		ExcelReporter reporter = new ExcelReporter();
+//		reporter.start();
+//		
+//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+//		
+//		for(IJavaElement element: testRoot.getChildren()){
+//			if(element instanceof IPackageFragment){
+//				runEvaluation((IPackageFragment)element, reporter);				
+//			}
+//		}
+//		
+//		reporter.export(trials, Settings.projectName+trialFileNum);
 		
 //		runSingeTestCase();
 		
-//		String className = "org.apache.commons.math.analysis.interpolation.DividedDifferenceInterpolatorTest";
-//		String methodName = "testSinFunction";
-//		runEvaluationForSingleMethod(className, methodName, null);
+		String className = "org.apache.commons.math.MathExceptionTest";
+		String methodName = "testSerialization";
+		runEvaluationForSingleMethod(className, methodName, null);
 	}
 	
 	private void runSingeTestCase(){
@@ -230,6 +248,8 @@ public class TestCaseAnalyzer {
 			List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
 			System.out.println("identifying the possible mutated location for " + testCaseName);
 			List<ClassLocation> locationList = findMutationLocation(executingStatements);
+			
+			System.currentTimeMillis();
 			
 			if(!locationList.isEmpty()){
 				System.out.println("mutating the tested methods of " + testCaseName);
