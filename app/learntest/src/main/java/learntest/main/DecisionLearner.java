@@ -18,8 +18,9 @@ import learntest.testcase.data.LoopTimesData;
 import libsvm.core.Category;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.FormulaProcessor;
-import libsvm.core.Machine;
 import libsvm.core.Machine.DataPoint;
+import libsvm.extension.PositiveSeparationMachine;
+import libsvm.extension.RandomNegativePointSelection;
 import sav.common.core.Pair;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
@@ -30,13 +31,13 @@ import sav.strategies.dto.execute.value.ExecVarType;
 public class DecisionLearner implements CategoryCalculator {
 	
 	protected static Logger log = LoggerFactory.getLogger(DecisionLearner.class);
-	private Machine machine = new Machine();
+	private PositiveSeparationMachine machine = new PositiveSeparationMachine(new RandomNegativePointSelection());
 	private List<ExecVar> vars;
 	private List<String> labels;
 	private List<ExecVar> boolVars;
 	
 	public void learn(List<BreakpointData> bkpsData) {
-		Map<DecisionLocation, Pair<Formula, Formula>> decisions = new HashMap<DecisionLocation, Pair<Formula,Formula>>(); 
+		Map<DecisionLocation, Pair<String, String>> decisions = new HashMap<DecisionLocation, Pair<String, String>>(); 
 		for (BreakpointData bkpData : bkpsData) {
 			log.info("Start to learn at " + bkpData.getLocation());
 			if (bkpData.getFalseValues().isEmpty() && bkpData.getTrueValues().isEmpty()) {
@@ -58,10 +59,10 @@ public class DecisionLearner implements CategoryCalculator {
 				decisions.put(bkpData.getLocation(), learn(bkpData));
 			}
 		}
-		Set<Entry<DecisionLocation, Pair<Formula, Formula>>> entrySet = decisions.entrySet();
-		for (Entry<DecisionLocation, Pair<Formula, Formula>> entry : entrySet) {
+		Set<Entry<DecisionLocation, Pair<String, String>>> entrySet = decisions.entrySet();
+		for (Entry<DecisionLocation, Pair<String, String>> entry : entrySet) {
 			System.out.println(entry.getKey());
-			Pair<Formula, Formula> formulas = entry.getValue();
+			Pair<String, String> formulas = entry.getValue();
 			System.out.println("True/False Decision: " + formulas.first());
 			if (formulas.second() != null) {
 				System.out.println("One/More Decision: " + formulas.second());
@@ -69,25 +70,27 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 	}
 	
-	private Pair<Formula, Formula> learn(BreakpointData bkpData) {
+	private Pair<String, String> learn(BreakpointData bkpData) {
 		machine.resetData();
 		addDataPoints(vars, bkpData.getTrueValues(), Category.POSITIVE);
 		addDataPoints(vars, bkpData.getFalseValues(), Category.NEGATIVE);
 		machine.train();
-		Formula trueFlase = machine.getLearnedLogic(new FormulaProcessor<ExecVar>(vars), true);
-		Formula oneMore = null;
+		//Formula trueFlase = machine.getLearnedLogic(new FormulaProcessor<ExecVar>(vars), true);
+		String trueFlase = machine.getLearnedLogic(true);
+		String oneMore = null;
 		if (bkpData instanceof LoopTimesData) {
 			oneMore = learn((LoopTimesData)bkpData);
 		}
-		return new Pair<Formula, Formula>(trueFlase, oneMore);
+		return new Pair<String, String>(trueFlase, oneMore);
 	}
 	
-	private Formula learn(LoopTimesData loopData) {
+	private String learn(LoopTimesData loopData) {
 		machine.resetData();
 		addDataPoints(vars, loopData.getMoreTimesValues(), Category.POSITIVE);
 		addDataPoints(vars, loopData.getOneTimeValues(), Category.NEGATIVE);
 		machine.train();
-		return machine.getLearnedLogic(new FormulaProcessor<ExecVar>(vars), true);
+		//return machine.getLearnedLogic(new FormulaProcessor<ExecVar>(vars), true);
+		return machine.getLearnedLogic(true);
 	}
 	
 	private boolean collectAllVars(BreakpointData bkpData) {
@@ -160,7 +163,6 @@ public class DecisionLearner implements CategoryCalculator {
 
 	@Override
 	public Category getCategory(DataPoint dataPoint) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
