@@ -15,6 +15,7 @@ public class Trial {
 	private String mutatedFile;
 	private int mutatedLineNumber;
 	private List<String> jumpSteps;
+	private int time;
 	
 	private String result;
 
@@ -23,7 +24,7 @@ public class Trial {
 	}
 	
 	public Trial(String testCaseName, int mutatedLineNumber, String mutatedFile,
-			boolean isBugFound, List<String> jumpSteps, int totalSteps, String result) {
+			boolean isBugFound, List<String> jumpSteps, int totalSteps, String result, int time) {
 		super();
 		this.testCaseName = testCaseName;
 		this.mutatedFile = mutatedFile;
@@ -32,6 +33,7 @@ public class Trial {
 		this.jumpSteps = jumpSteps;
 		this.totalSteps = totalSteps;
 		this.setResult(result);
+		this.setTime(time);
 	}
 
 	public String getTestCaseName() {
@@ -132,6 +134,14 @@ public class Trial {
 		} else if (!testCaseName.equals(other.testCaseName))
 			return false;
 		return true;
+	}
+
+	public int getTime() {
+		return time;
+	}
+
+	public void setTime(int time) {
+		this.time = time;
 	}
 
 	

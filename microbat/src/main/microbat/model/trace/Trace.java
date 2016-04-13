@@ -38,6 +38,11 @@ public class Trace {
 	 * variable.
 	 */
 	private Map<String, StepVariableRelationEntry> stepVariableTable = new HashMap<>();
+	
+	/**
+	 * the time used to construct the trace, which is used for evaluation.
+	 */
+	private int constructTime = 0;
 
 	public List<TraceNode> getExectionList() {
 		return exectionList;
@@ -654,6 +659,14 @@ public class Trace {
 		}
 		
 		return null;
+	}
+
+	public int getConstructTime() {
+		return constructTime;
+	}
+
+	public void setConstructTime(int constructTime) {
+		this.constructTime = constructTime;
 	}
 
 	

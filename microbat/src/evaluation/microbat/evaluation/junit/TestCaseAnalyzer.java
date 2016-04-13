@@ -142,16 +142,16 @@ public class TestCaseAnalyzer {
 	}
 	
 	private void runSingeTestCase(){
-		String className = "com.test.MainTest";
-		String methodName = "testMain";
-		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-				+ "mutation\\49_36_1\\Main.java";
+		String className = "org.apache.commons.math.analysis.ComposableFunctionTest";
+		String methodName = "testComposition";
 //		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-//				+ "apache-common-math-2.2\\810_22_3\\FastMath.java";
-		String mutatedClass = "com.Main";
+//				+ "mutation\\49_36_1\\Main.java";
+		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
+				+ "apache-common-math-2.2\\640_17_4\\FastMath.java";
+		String mutatedClass = "org.apache.commons.math.util.FastMath";
 //		String mutatedClass = "org.apache.commons.math.MathException";
 		
-		int mutatedLine = 49;
+		int mutatedLine = 640;
 		
 		try {
 			runEvaluationForSingleTrial(className, methodName, mutationFile, mutatedClass, mutatedLine);
@@ -289,6 +289,7 @@ public class TestCaseAnalyzer {
 										trial = microbat.detectMutatedBug(killingMutatantTrace, correctTrace, mutatedLocation, 
 												testCaseName, mutationFile.toString());
 										if(trial != null){
+											trial.setTime(killingMutatantTrace.getConstructTime());
 											trials.add(trial);	
 											if(!trial.isBugFound()){
 												String errorMsg = "Test case: " + testCaseName + 
@@ -402,7 +403,7 @@ public class TestCaseAnalyzer {
 			List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
 			
 			if(checker.isOverLong()){
-				Trial trial = new Trial(testCaseName, mutatedLine, mutationFile.toString(), false, null, 0, Trial.OVER_LONG);
+				Trial trial = new Trial(testCaseName, mutatedLine, mutationFile.toString(), false, null, 0, Trial.OVER_LONG, 0);
 				trials.add(trial);
 				killingMutantTrace = null;
 			}
@@ -410,14 +411,16 @@ public class TestCaseAnalyzer {
 				long t1 = System.currentTimeMillis();
 				killingMutantTrace = constructor.constructTraceModel(testcaseConfig, executingStatements);
 				long t2 = System.currentTimeMillis();
-				System.out.println("Trace length: " + killingMutantTrace.size() + ", which takes " + (t2-t1)/1000 + "s to analyze.");				
+				int time = (int) ((t2-t1)/1000);
+				killingMutantTrace.setConstructTime(time);
+				System.out.println("Trace length: " + killingMutantTrace.size() + ", which takes " + time + "s to analyze.");				
 			}
 			
 			
 			//TraceFilePair tfPair = new TraceFilePair(killingMutantTrace, mutationFile.toString());
 		}
 		else{
-			Trial trial = new Trial(testCaseName, mutatedLine, mutationFile.toString(), false, null, 0, Trial.NOT_KILL);
+			Trial trial = new Trial(testCaseName, mutatedLine, mutationFile.toString(), false, null, 0, Trial.NOT_KILL, 0);
 			trials.add(trial);
 		}
 		

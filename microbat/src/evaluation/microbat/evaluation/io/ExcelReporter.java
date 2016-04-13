@@ -35,7 +35,8 @@ public class ExcelReporter {
         		"mutated file",
         		"mutated line number",
         		"jump steps",
-        		"result"};
+        		"result",
+        		"time"};
         for(int i = 0; i < titles.length; i++){
         	row.createCell(i).setCellValue(titles[i]); 
         }
@@ -64,6 +65,7 @@ public class ExcelReporter {
         		}
         		
         		row.createCell(7).setCellValue(trial.getResult());
+        		row.createCell(8).setCellValue(trial.getTime());
         		
         		bookSize++;
         	}
@@ -71,7 +73,7 @@ public class ExcelReporter {
 			e.printStackTrace();
 		}
         
-        for(int i=0; i<8; i++){
+        for(int i=0; i<7; i++){
         	sheet.autoSizeColumn(i);
         }
         
