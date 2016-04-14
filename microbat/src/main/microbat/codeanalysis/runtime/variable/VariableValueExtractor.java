@@ -426,7 +426,7 @@ public class VariableValueExtractor {
 	 */
 	private void appendClassVarVal(VarValue parent, Variable variable, ObjectReference objRef, 
 			int level, ThreadReference thread, boolean isRoot) {
-		
+		System.currentTimeMillis();
 		ClassType type = (ClassType) objRef.type();
 		long refID = objRef.uniqueID();
 		
@@ -521,9 +521,10 @@ public class VariableValueExtractor {
 		for (int i = 0; i < value.length() /*&& i < MAX_ARRAY_ELEMENT_TO_COLLECT*/; i++) {
 			String varName = String.valueOf(i);
 			Value elementValue = getArrayEleValue(value, i);
-			ArrayElementVar var = new ArrayElementVar(varName, elementValue.type().toString());
-			
-			appendVarVal(arrayVal, var, elementValue, level, thread, false);
+			if(elementValue != null){
+				ArrayElementVar var = new ArrayElementVar(varName, elementValue.type().toString());
+				appendVarVal(arrayVal, var, elementValue, level, thread, false);
+			}
 		}
 		
 		parent.addChild(arrayVal);

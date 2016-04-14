@@ -33,6 +33,7 @@ public class HeuristicIgnoringFieldRule {
 		fieldList1.add("MAX_ARRAY_SIZE");
 		fieldList1.add("modCount");
 		fieldList1.add("ENUM$VALUES");
+		ignoringMap.put(c1, fieldList1);
 		
 		String c2 = ENUM;
 		ArrayList<String> fieldList2 = new ArrayList<>();
@@ -78,6 +79,13 @@ public class HeuristicIgnoringFieldRule {
 				if(interf.name().contains("java.util.Collection")){
 					return true;
 				}
+				else{
+					List<Type> allInterfaces = new ArrayList<>();
+					findAllSuperTypes(type, allInterfaces);
+					if(allInterfaces.toString().contains("java.util.Collection")){
+						return true;
+					}
+				}
 			}
 			
 			return false;
@@ -86,6 +94,32 @@ public class HeuristicIgnoringFieldRule {
 		return true;
 	}
 	
+	private static void findAllSuperTypes(Type type, List<Type> allSuperType) {
+		if(type instanceof ClassType){
+			ClassType classType = (ClassType)type;
+			if(!allSuperType.contains(classType)){
+				allSuperType.add(classType);				
+			}
+			ClassType superClass = classType.superclass();
+			findAllSuperTypes(superClass, allSuperType);
+			
+			for(InterfaceType interfaceType: classType.interfaces()){
+				findAllSuperTypes(interfaceType, allSuperType);
+			}
+		}
+		else if(type instanceof InterfaceType){
+			InterfaceType interfaceType = (InterfaceType)type;
+			if(!allSuperType.contains(interfaceType)){
+				allSuperType.add(interfaceType);
+			}
+			
+			for(InterfaceType superInterface: interfaceType.superinterfaces()){
+				findAllSuperTypes(superInterface, allSuperType);
+			}
+		}
+		
+	}
+
 	private static boolean containPrefix(String name, List<String> prefixList){
 		for(String prefix: prefixList){
 			if(name.startsWith(prefix)){

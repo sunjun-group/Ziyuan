@@ -219,7 +219,7 @@ public class ProgramExecutor extends Executor{
 			}
 			
 			if(trace.getLastestNode() != null){
-				if(trace.getLastestNode().getOrder() == 0){
+				if(trace.getLastestNode().getOrder() == 96){
 					System.currentTimeMillis();
 				}
 			}
