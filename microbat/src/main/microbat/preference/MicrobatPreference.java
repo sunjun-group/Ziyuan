@@ -144,21 +144,21 @@ public class MicrobatPreference extends PreferencePage implements
 		lanuchClassTextData.horizontalSpan = 2;
 		lanuchClassText.setLayoutData(lanuchClassTextData);
 		
-		Label classNameLabel = new Label(seedStatementGroup, SWT.NONE);
-		classNameLabel.setText("Class Name: ");
-		classNameText = new Text(seedStatementGroup, SWT.BORDER);
-		classNameText.setText(this.defaultClassName);
-		GridData classNameTextData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		classNameTextData.horizontalSpan = 2;
-		classNameText.setLayoutData(classNameTextData);
-		
-		Label lineNumberLabel = new Label(seedStatementGroup, SWT.NONE);
-		lineNumberLabel.setText("Line Number: ");
-		lineNumberText = new Text(seedStatementGroup, SWT.BORDER);
-		lineNumberText.setText(this.defaultLineNumber);
-		GridData lineNumTextData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		lineNumTextData.horizontalSpan = 2;
-		lineNumberText.setLayoutData(lineNumTextData);
+//		Label classNameLabel = new Label(seedStatementGroup, SWT.NONE);
+//		classNameLabel.setText("Class Name: ");
+//		classNameText = new Text(seedStatementGroup, SWT.BORDER);
+//		classNameText.setText(this.defaultClassName);
+//		GridData classNameTextData = new GridData(SWT.FILL, SWT.FILL, true, false);
+//		classNameTextData.horizontalSpan = 2;
+//		classNameText.setLayoutData(classNameTextData);
+//		
+//		Label lineNumberLabel = new Label(seedStatementGroup, SWT.NONE);
+//		lineNumberLabel.setText("Line Number: ");
+//		lineNumberText = new Text(seedStatementGroup, SWT.BORDER);
+//		lineNumberText.setText(this.defaultLineNumber);
+//		GridData lineNumTextData = new GridData(SWT.FILL, SWT.FILL, true, false);
+//		lineNumTextData.horizontalSpan = 2;
+//		lineNumberText.setLayoutData(lineNumTextData);
 		
 	}
 	
@@ -166,15 +166,15 @@ public class MicrobatPreference extends PreferencePage implements
 		IEclipsePreferences preferences = ConfigurationScope.INSTANCE.getNode("microbat.preference");
 		preferences.put(TARGET_PORJECT, this.projectCombo.getText());
 		preferences.put(LANUCH_CLASS, this.lanuchClassText.getText());
-		preferences.put(CLASS_NAME, this.classNameText.getText());
-		preferences.put(LINE_NUMBER, this.lineNumberText.getText());
+//		preferences.put(CLASS_NAME, this.classNameText.getText());
+//		preferences.put(LINE_NUMBER, this.lineNumberText.getText());
 		preferences.put(RECORD_SNAPSHORT, String.valueOf(this.recordSnapshotButton.getSelection()));
 		preferences.put(STEP_LIMIT, this.stepLimitText.getText());
 		
 		Activator.getDefault().getPreferenceStore().putValue(TARGET_PORJECT, this.projectCombo.getText());
 		Activator.getDefault().getPreferenceStore().putValue(LANUCH_CLASS, this.lanuchClassText.getText());
-		Activator.getDefault().getPreferenceStore().putValue(CLASS_NAME, this.classNameText.getText());
-		Activator.getDefault().getPreferenceStore().putValue(LINE_NUMBER, this.lineNumberText.getText());
+//		Activator.getDefault().getPreferenceStore().putValue(CLASS_NAME, this.classNameText.getText());
+//		Activator.getDefault().getPreferenceStore().putValue(LINE_NUMBER, this.lineNumberText.getText());
 		Activator.getDefault().getPreferenceStore().putValue(RECORD_SNAPSHORT, String.valueOf(this.recordSnapshotButton.getSelection()));
 		Activator.getDefault().getPreferenceStore().putValue(STEP_LIMIT, this.stepLimitText.getText());
 		
@@ -187,8 +187,8 @@ public class MicrobatPreference extends PreferencePage implements
 	private void confirmChanges(){
 		Settings.projectName = this.projectCombo.getText();
 		Settings.lanuchClass = this.lanuchClassText.getText();
-		Settings.buggyClassName = this.classNameText.getText();
-		Settings.buggyLineNumber = this.lineNumberText.getText();
+//		Settings.buggyClassName = this.classNameText.getText();
+//		Settings.buggyLineNumber = this.lineNumberText.getText();
 		Settings.isRecordSnapshot = this.recordSnapshotButton.getSelection();
 		Settings.stepLimit = Integer.valueOf(this.stepLimitText.getText());
 	}

@@ -65,9 +65,9 @@ public class StartDebugHandler extends AbstractHandler {
 		final AppJavaClassPath appClassPath = MicroBatUtil.constructClassPaths();
 		final ProgramExecutor tcExecutor = new ProgramExecutor();
 		
-		final String classQulifiedName = Settings.buggyClassName;
-		final int lineNumber = Integer.valueOf(Settings.buggyLineNumber);
-		final String methodSign = convertSignature(classQulifiedName, lineNumber);
+//		final String classQulifiedName = Settings.buggyClassName;
+//		final int lineNumber = Integer.valueOf(Settings.buggyLineNumber);
+//		final String methodSign = convertSignature(classQulifiedName, lineNumber);
 		
 		
 		try {
@@ -78,8 +78,8 @@ public class StartDebugHandler extends AbstractHandler {
 				protected IStatus run(IProgressMonitor monitor) {
 					/** 0. clear some static common variables **/
 					clearOldData();
-					BreakPoint ap = new BreakPoint(classQulifiedName, methodSign, lineNumber);
-					List<BreakPoint> startPoints = Arrays.asList(ap);
+//					BreakPoint ap = new BreakPoint(classQulifiedName, methodSign, lineNumber);
+//					List<BreakPoint> startPoints = Arrays.asList(ap);
 					
 					int stepNum = -1;
 					List<BreakPoint> executingStatements = new ArrayList<>();
