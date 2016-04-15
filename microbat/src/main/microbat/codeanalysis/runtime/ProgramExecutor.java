@@ -473,7 +473,9 @@ public class ProgramExecutor extends Executor{
 						JavaUtil.checkInvocationParentRelation(prevNode, node);
 				if(invokedMethod != null){
 					IMethodBinding invokedMethodBinding = invokedMethod.resolveBinding();
-					String invokedMethodSig = JavaUtil.convertFullSignature(invokedMethodBinding);
+					String complexInvokedMethodSig = JavaUtil.convertFullSignature(invokedMethodBinding);
+					
+					String invokedMethodSig = trimGenericType(complexInvokedMethodSig);
 					
 					StackFrame frame = findFrame(((StepEvent) event).thread(), ((StepEvent) event).location());
 					String declaringType = invokedMethodBinding.getDeclaringClass().getBinaryName();
@@ -507,6 +509,11 @@ public class ProgramExecutor extends Executor{
 				}
 			}
 		}
+	}
+
+	private String trimGenericType(String complexInvokedMethodSig) {
+		String simpleSig = complexInvokedMethodSig.replaceAll("<[^<|^>]*>", "");
+		return simpleSig;
 	}
 
 	private List<Param> findParamList(MethodDeclaration invokedMethod) {
@@ -1003,6 +1010,12 @@ public class ProgramExecutor extends Executor{
 	
 	private void parseReadWrittenVariableInThisStep(ThreadReference thread, Location location, TraceNode node, 
 			Map<String, StepVariableRelationEntry> stepVariableTable, String action) {
+		
+		try {
+			thread.frames();
+		} catch (IncompatibleThreadStateException e) {
+			e.printStackTrace();
+		}
 		
 		StackFrame frame = findFrame(thread, location);
 		if(frame == null){

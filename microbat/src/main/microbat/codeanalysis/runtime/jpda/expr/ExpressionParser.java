@@ -40,11 +40,13 @@ import java.util.Stack;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.BooleanValue;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
+import com.sun.jdi.LocalVariable;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
@@ -98,6 +100,7 @@ public class ExpressionParser implements ExpressionParserConstants {
 			throws ParseException, InvocationException,
 			InvalidTypeException, ClassNotLoadedException,
 			IncompatibleThreadStateException {
+		
 		// TODO StringBufferInputStream is deprecated.
 		java.io.InputStream in = new java.io.StringBufferInputStream(expr);
 		ExpressionParser parser = new ExpressionParser(in);
@@ -106,6 +109,7 @@ public class ExpressionParser implements ExpressionParserConstants {
 		parser.Expression();
 		lastFrameGetter = frameGetter;
 		lastLValue = parser.pop();
+		
 		return lastLValue.getValue();
 	}
 
