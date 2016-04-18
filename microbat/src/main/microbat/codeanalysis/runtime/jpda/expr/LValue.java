@@ -164,7 +164,7 @@ abstract class LValue {
 
     // Return the Value for this LValue that would be used to concatenate
     // to a String.  IE, if it is an Object, call toString in the debuggee.
-    Value getMassagedValue(ExpressionParser.GetFrame frameGetter) throws ParseException {
+    Value getMessagedValue(ExpressionParser.GetFrame frameGetter) throws ParseException {
         Value vv = interiorGetValue();
 
         // If vv is an ObjectReference, then we have to
@@ -1033,7 +1033,7 @@ abstract class LValue {
 
 	static String stringValue(LValue lval, ExpressionParser.GetFrame frameGetter
                               ) throws ParseException {
-        Value val = lval.getMassagedValue(frameGetter);
+        Value val = lval.getMessagedValue(frameGetter);
         if (val == null) {
             return "null";
         }

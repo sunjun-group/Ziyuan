@@ -87,8 +87,8 @@ public class ExpressionParser implements ExpressionParserConstants {
 		stack.push(lval);
 	}
 
-	public static Value getMassagedValue() throws ParseException {
-		return lastLValue.getMassagedValue(lastFrameGetter);
+	public static Value getMessagedValue() throws ParseException {
+		return lastLValue.getMessagedValue(lastFrameGetter);
 	}
 
 	public interface GetFrame {
@@ -101,7 +101,9 @@ public class ExpressionParser implements ExpressionParserConstants {
 			InvalidTypeException, ClassNotLoadedException,
 			IncompatibleThreadStateException {
 		
-		// TODO StringBufferInputStream is deprecated.
+		// TODO 
+		// StringBufferInputStream is deprecated. The stackframe will be invalid to 
+		// access variable value when two objects are visited in the same line
 		java.io.InputStream in = new java.io.StringBufferInputStream(expr);
 		ExpressionParser parser = new ExpressionParser(in);
 		parser.vm = vm;

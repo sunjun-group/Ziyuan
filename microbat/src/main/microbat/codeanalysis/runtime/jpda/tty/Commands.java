@@ -136,7 +136,7 @@ class Commands {
          Value val = null;
          String valStr = null;
          try {
-              val = ExpressionParser.getMassagedValue();
+              val = ExpressionParser.getMessagedValue();
               valStr = val.toString();
          } catch (ParseException e) {
               String msg = e.getMessage();

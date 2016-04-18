@@ -484,14 +484,46 @@ public class VariableValueExtractor {
 		val.addParent(parent);
 	}
 
-	private void setMessageValue(ThreadReference thread, ReferenceValue val) {
+	private synchronized void setMessageValue(ThreadReference thread, ReferenceValue val) {
 		StackFrame frame;
 		try {
 			frame = findFrameByLocation(thread.frames(), loc);
 			Value value = JavaUtil.retriveExpression(frame, val.getVarName());
-			if(value != null){
-				String message = value.toString();
-				val.setStringValue(message);					
+			
+			if(value instanceof ObjectReference){
+				ObjectReference objValue = (ObjectReference)value;
+				List<Method> mList = objValue.referenceType().methodsByName("toString");
+				String stringValue = "$Not Known$";
+				if(mList.isEmpty()){
+					if(objValue instanceof ArrayReference){
+						ArrayReference arrayValue = (ArrayReference)objValue;
+						List<Value> list = new ArrayList<>();
+						if(arrayValue.length() > 0){
+							list = arrayValue.getValues(0, arrayValue.length()); 
+						}
+						StringBuffer buffer = new StringBuffer();
+						for(Value v: list){
+							buffer.append(v.toString()+ ",") ;
+						}
+						stringValue = buffer.toString();
+					}
+				}
+				else{
+//					if(thread.isSuspended()){
+//						ReferenceType type = (ReferenceType) objValue.type();
+//						Method method = type.methodsByName(TO_STRING_NAME, TO_STRING_SIGN).get(0);
+//						Value messageValue = objValue.invokeMethod(thread, method, 
+//								new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);	
+//						stringValue = messageValue.toString();
+//						
+//					}
+					
+					stringValue = value.toString();
+				}
+				
+				
+				//String message = value.toString();
+				val.setStringValue(stringValue);
 			}
 			else{
 				System.currentTimeMillis();
@@ -502,6 +534,14 @@ public class VariableValueExtractor {
 			e.printStackTrace();
 		} catch (TimeoutException e){
 			System.out.println("Cannot parse " + val.getVarName());
+			e.printStackTrace();
+		} /*catch (InvalidTypeException e) {
+			e.printStackTrace();
+		} catch (ClassNotLoadedException e) {
+			e.printStackTrace();
+		} catch (InvocationException e) {
+			e.printStackTrace();
+		} */catch (Exception e){
 			e.printStackTrace();
 		}
 	}
