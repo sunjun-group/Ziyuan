@@ -238,18 +238,21 @@ public class StepRecommender {
 	private TraceNode findMoreAbstractDominator(LoopSequence loopSequence, List<TraceNode> dominators, TraceNode currentNode){
 		TraceNode moreAbstractDominator = null;
 		for(TraceNode dominator: dominators){
+			if(dominator.getOrder() > currentNode.getOrder()){
+				continue;
+			}
+			
 			if(dominator.getInvocationLevel() < currentNode.getInvocationLevel()){
-				if(currentNode.getInvocationParent() != null){
-					if(dominator.getOrder() <= currentNode.getInvocationParent().getOrder()){
-						moreAbstractDominator = dominator;		
-						break;
-					}
+				if(dominator.getOrder() <= currentNode.getInvocationParent().getOrder()){
+					moreAbstractDominator = dominator;		
+					break;
 				}
 				
 			}
-			
-			if(loopSequence != null){
-				if(loopSequence.containsRangeOf(dominator)){
+
+			if(dominator.getInvocationLevel() == currentNode.getInvocationLevel() && loopSequence != null){
+				if(loopSequence.containsRangeOf(dominator) && 
+						loopSequence.getStartOrder() != dominator.getOrder()){
 					continue;
 				}
 				else{

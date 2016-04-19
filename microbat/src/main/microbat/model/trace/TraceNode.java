@@ -598,8 +598,10 @@ public class TraceNode{
 
 	private void findAllControlDominatees(TraceNode node, List<TraceNode> controlDominatees) {
 		for(TraceNode dominatee: node.getControlDominatees()){
-			controlDominatees.add(dominatee);
-			findAllControlDominatees(dominatee, controlDominatees);
+			if(!controlDominatees.contains(dominatee)){
+				controlDominatees.add(dominatee);
+				findAllControlDominatees(dominatee, controlDominatees);				
+			}
 		}
 	}
 
@@ -609,17 +611,77 @@ public class TraceNode{
 	}
 
 	/**
-	 * The direct control diminator which is a loop condition.
+	 * The nearest control diminator which is a loop condition.
 	 * @return
 	 */
 	public TraceNode findContainingLoopControlDominator() {
-		for(TraceNode controlDominator: this.controlDominators){
-			if(controlDominator.isLoopCondition()){
-				if(controlDominator.getConditionScope().containsNodeScope(this)){
+//		for(TraceNode controlDominator: this.controlDominators){
+//			if(controlDominator.isLoopCondition()){
+//				if(controlDominator.getConditionScope().containsNodeScope(this)){
+//					return controlDominator;
+//				}
+//			}
+//		}
+		
+		if(!this.controlDominators.isEmpty()){
+			TraceNode controlDominator = this.controlDominators.get(0);
+			while(controlDominator != null){
+				if(controlDominator.isLoopCondition()  && controlDominator.isLoopContainsNodeScope(this)){
 					return controlDominator;
+				}
+				else{
+					List<TraceNode> controlDominators = controlDominator.getControlDominators();
+					if(!controlDominators.isEmpty()){
+						controlDominator = controlDominators.get(0);
+					}
+					else{
+						controlDominator = null;
+					}
 				}
 			}
 		}
+		
 		return null;
+	}
+
+	/**
+	 * If this node is a loop condition node, given another node <code>traceNode</code>, check 
+	 * whether <code>traceNode</code> is under the scope of this node. For example, the following
+	 * code: <br>
+	 * 
+	 * <code>
+	 * while(true){<br>
+	 *    int a = 1;<br>
+	 *    m();<br>
+	 * }<br>
+	 * void m(){<br>
+	 *    int b = 2;<br>
+	 * }<br>
+	 * </code>
+	 * 
+	 * the node (<code>int b = 2;</code>) is under the scope of node (<code>while(true)</code>).
+	 * 
+	 * @param traceNode
+	 * @return
+	 */
+	public boolean isLoopContainsNodeScope(TraceNode traceNode) {
+		
+		if(this.isLoopCondition()){
+			List<TraceNode> parentList = new ArrayList<>();
+			TraceNode node = traceNode;
+			while(node != null){
+				parentList.add(node);
+				node = node.getInvocationParent();
+			}
+			
+			Scope scope = getConditionScope();
+			for(TraceNode parent: parentList){
+				if(scope.containsNodeScope(parent)){
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 }

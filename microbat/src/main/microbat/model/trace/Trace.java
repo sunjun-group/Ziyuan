@@ -627,6 +627,13 @@ public class Trace {
 		return range;
 	}
 
+	/**
+	 * check by seeing whether the control loop dominator of <code>node</code> has the same location
+	 * with the parameter <code>controlLoopDominator</code>
+	 * @param node
+	 * @param controlLoopDominator
+	 * @return
+	 */
 	private boolean isInSameLoop(TraceNode node, TraceNode controlLoopDominator) {
 		
 		TraceNode testNode = node;

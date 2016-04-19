@@ -424,16 +424,6 @@ public class ProgramExecutor extends Executor{
 								lastestReturnedValue = mee.returnValue();
 							}						
 						}
-						
-//						if(!methodStack.isEmpty()){
-//							Method mInStack = methodStack.peek();
-//							if(method.equals(mInStack)){
-//								TraceNode node = methodNodeStack.pop();
-//								methodNodeJustPopedOut = node;
-//								methodStack.pop();
-//								lastestReturnedValue = mee.returnValue();
-//							}						
-//						}
 					}
 					else{
 						menr.setEnabled(false);

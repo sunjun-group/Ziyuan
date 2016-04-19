@@ -103,12 +103,16 @@ public class ExecutionStatementCollector extends Executor{
 			} catch (AbsentInformationException e) {
 				e.printStackTrace();
 			}
+			
+			
 		}
 		
 		if(vm != null){
 			vm.exit(0);
 			vm.dispose();
 		}
+		
+		System.out.println("There are totally " + steps + "in this execution.");
 		
 		return pointList;
 	}

@@ -9,6 +9,11 @@ public class Scope {
 	private CompilationUnit cu;
 	private int startLine;
 	private int endLine;
+	
+	/**
+	 * whether the scope contains some jump statments such as break, continue, 
+	 * return, and throw.
+	 */
 	private boolean hasJumpStatement;
 
 	private boolean isLoopScope;
