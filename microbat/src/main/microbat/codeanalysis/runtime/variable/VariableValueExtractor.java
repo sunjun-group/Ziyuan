@@ -32,9 +32,12 @@ import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.BooleanType;
 import com.sun.jdi.BooleanValue;
+import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.InvocationException;
 import com.sun.jdi.LocalVariable;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
@@ -497,28 +500,17 @@ public class VariableValueExtractor {
 				if(mList.isEmpty()){
 					if(objValue instanceof ArrayReference){
 						ArrayReference arrayValue = (ArrayReference)objValue;
-						List<Value> list = new ArrayList<>();
-						if(arrayValue.length() > 0){
-							list = arrayValue.getValues(0, arrayValue.length()); 
-						}
-						StringBuffer buffer = new StringBuffer();
-						for(Value v: list){
-							buffer.append(v.toString()+ ",") ;
-						}
-						stringValue = buffer.toString();
+						stringValue = JavaUtil.retrieveStringValueOfArray(arrayValue);
 					}
 				}
 				else{
-//					if(thread.isSuspended()){
-//						ReferenceType type = (ReferenceType) objValue.type();
-//						Method method = type.methodsByName(TO_STRING_NAME, TO_STRING_SIGN).get(0);
-//						Value messageValue = objValue.invokeMethod(thread, method, 
-//								new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);	
-//						stringValue = messageValue.toString();
-//						
-//					}
+					if(thread.isSuspended()){
+						stringValue = JavaUtil.retrieveToStringValue(thread, objValue);
+						
+						System.currentTimeMillis();
+					}
 					
-					stringValue = value.toString();
+//					stringValue = value.toString();
 				}
 				
 				

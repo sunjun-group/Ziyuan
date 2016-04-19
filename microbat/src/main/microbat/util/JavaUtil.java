@@ -31,18 +31,50 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
 
+import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
+import com.sun.jdi.Method;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 
 @SuppressWarnings("restriction")
 public class JavaUtil {
-	
+	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
+	private static final String TO_STRING_NAME= "toString";
 	private static HashMap<String, CompilationUnit> compilationUnitMap = new HashMap<>();
 	
+	public static String retrieveStringValueOfArray(ArrayReference arrayValue) {
+		String stringValue;
+		List<Value> list = new ArrayList<>();
+		if(arrayValue.length() > 0){
+			list = arrayValue.getValues(0, arrayValue.length()); 
+		}
+		StringBuffer buffer = new StringBuffer();
+		for(Value v: list){
+			buffer.append(v.toString()+ ",") ;
+		}
+		stringValue = buffer.toString();
+		return stringValue;
+	}
+	
+	public static String retrieveToStringValue(ThreadReference thread,
+			ObjectReference objValue) throws InvalidTypeException,
+			ClassNotLoadedException, IncompatibleThreadStateException,
+			InvocationException {
+		String stringValue;
+		ReferenceType type = (ReferenceType) objValue.type();
+		Method method = type.methodsByName(TO_STRING_NAME, TO_STRING_SIGN).get(0);
+		Value messageValue = objValue.invokeMethod(thread, method, 
+				new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);	
+		stringValue = messageValue.toString();
+		return stringValue;
+	}
 	
 	public static Value retriveExpression(final StackFrame frame, String expression){
 		ExpressionParser.GetFrame frameGetter = new ExpressionParser.GetFrame() {

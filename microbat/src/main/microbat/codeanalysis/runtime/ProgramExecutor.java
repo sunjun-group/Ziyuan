@@ -57,7 +57,9 @@ import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.vm.SimpleDebugger;
 
 import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.ClassObjectReference;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
@@ -904,13 +906,22 @@ public class ProgramExecutor extends Executor{
 					var.setVarID(varID);
 					
 					if(value.type().toString().equals("java.lang.String")){
-						String strValue = value.toString();
+						String strValue = JavaUtil.retrieveToStringValue(frame.thread(), objRef);
 						strValue = strValue.substring(1, strValue.length()-1);
 						varValue = new StringValue(strValue, false, var);
 					}
 					else{
+						String strValue = "$Unknown$"; 
+						if(objRef instanceof ArrayReference){
+							ArrayReference arrayValue = (ArrayReference)objRef;
+							strValue = JavaUtil.retrieveStringValueOfArray(arrayValue);
+						}
+						else{
+							strValue = JavaUtil.retrieveToStringValue(frame.thread(), objRef);
+						}
+						
 						varValue = new ReferenceValue(false, false, var);
-						((ReferenceValue)varValue).setStringValue(value.toString());						
+						((ReferenceValue)varValue).setStringValue(strValue);						
 						varValue.setChildren(null);
 					}
 				}
@@ -1090,7 +1101,10 @@ public class ProgramExecutor extends Executor{
 	}
 	
 	
-	private ExpressionValue retriveExpression(final StackFrame frame, String expression, BreakPoint point){
+	private ExpressionValue retriveExpression(final StackFrame frame0, String expression, BreakPoint point){
+		ThreadReference thread = frame0.thread();
+		final StackFrame frame = findFrame(thread, frame0.location());
+		
 		ExpressionParser.GetFrame frameGetter = new ExpressionParser.GetFrame() {
             @Override
             public StackFrame get()
