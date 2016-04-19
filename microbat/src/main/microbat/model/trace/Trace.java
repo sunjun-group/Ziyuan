@@ -676,5 +676,15 @@ public class Trace {
 		this.constructTime = constructTime;
 	}
 
+	public TraceNode getLatestCorrectNode() {
+		TraceNode latestCorrectNode = null;
+		for(TraceNode node: this.exectionList){
+			if(node.isAllReadWrittenVarCorrect(false)){
+				latestCorrectNode = node;
+			}
+		}
+		return latestCorrectNode;
+	}
+
 	
 }

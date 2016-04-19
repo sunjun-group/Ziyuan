@@ -205,7 +205,8 @@ public class StepRecommender {
 			while(iter.hasNext()){
 				TraceNode dominator = iter.next();
 				boolean shouldRemove = dominator.getOrder() < currentNode.getOrder() || 
-						dominator.getOrder() > earliestVisitedUnclearNode.getOrder();
+						dominator.getOrder() > earliestVisitedUnclearNode.getOrder() ||
+						dominator.getInvocationLevel() > earliestVisitedUnclearNode.getInvocationLevel();
 				if(shouldRemove){
 					iter.remove();
 				}
@@ -235,29 +236,46 @@ public class StepRecommender {
 	 * @param currentNode
 	 * @return
 	 */
-	private TraceNode findMoreAbstractDominator(LoopSequence loopSequence, List<TraceNode> dominators, TraceNode currentNode){
+	private TraceNode findMoreAbstractDominator(LoopSequence loopSequence, List<TraceNode> dominators, TraceNode currentNode, Trace trace){
+		
+		TraceNode latestCorrectNode = trace.getLatestCorrectNode();
+		
 		TraceNode moreAbstractDominator = null;
 		for(TraceNode dominator: dominators){
-			if(dominator.getOrder() > currentNode.getOrder()){
+			
+			boolean flag = (latestCorrectNode == null) ? true : dominator.getOrder() < latestCorrectNode.getOrder();
+			
+			if(dominator.getOrder() > currentNode.getOrder() || flag){
 				continue;
 			}
 			
 			if(dominator.getInvocationLevel() < currentNode.getInvocationLevel()){
+				/**
+				 * method invocation
+				 */
 				if(dominator.getOrder() <= currentNode.getInvocationParent().getOrder()){
 					moreAbstractDominator = dominator;		
 					break;
 				}
-				
 			}
 
-			if(dominator.getInvocationLevel() == currentNode.getInvocationLevel() && loopSequence != null){
-				if(loopSequence.containsRangeOf(dominator) && 
-						loopSequence.getStartOrder() != dominator.getOrder()){
-					continue;
-				}
-				else{
+			if(dominator.getInvocationLevel() == currentNode.getInvocationLevel()){
+				if(dominator.getOrder() > latestCorrectNode.getOrder()){
 					moreAbstractDominator = dominator;
-					break;
+				}
+				
+				/**
+				 * loop head
+				 */
+				if(loopSequence != null){
+					if(loopSequence.containsRangeOf(dominator) && 
+							loopSequence.getStartOrder() != dominator.getOrder()){
+						continue;
+					}
+					else{
+						moreAbstractDominator = dominator;
+						break;
+					}
 				}
 			}
 		}
@@ -280,7 +298,7 @@ public class StepRecommender {
 			Collections.sort(dominators, new TraceNodeReverseOrderComparator());
 			
 			LoopSequence loopSequence = trace.findLoopRangeOf(currentNode);
-			TraceNode moreAbstractDominator = findMoreAbstractDominator(loopSequence, dominators, currentNode);
+			TraceNode moreAbstractDominator = findMoreAbstractDominator(loopSequence, dominators, currentNode, trace);
 			
 			if(moreAbstractDominator != null){
 				/**
@@ -308,7 +326,7 @@ public class StepRecommender {
 			}
 		}
 		
-		System.currentTimeMillis();
+//		System.currentTimeMillis();
 		
 		return null;
 	}
