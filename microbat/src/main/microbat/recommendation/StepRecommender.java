@@ -243,7 +243,7 @@ public class StepRecommender {
 		TraceNode moreAbstractDominator = null;
 		for(TraceNode dominator: dominators){
 			
-			boolean flag = (latestCorrectNode == null) ? true : dominator.getOrder() < latestCorrectNode.getOrder();
+			boolean flag = (latestCorrectNode == null) ? false : dominator.getOrder() < latestCorrectNode.getOrder();
 			
 			if(dominator.getOrder() > currentNode.getOrder() || flag){
 				continue;
@@ -260,7 +260,7 @@ public class StepRecommender {
 			}
 
 			if(dominator.getInvocationLevel() == currentNode.getInvocationLevel()){
-				if(dominator.getOrder() > latestCorrectNode.getOrder()){
+				if(latestCorrectNode != null && dominator.getOrder() > latestCorrectNode.getOrder()){
 					moreAbstractDominator = dominator;
 				}
 				
