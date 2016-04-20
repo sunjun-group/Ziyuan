@@ -15,6 +15,7 @@ import com.sun.jdi.event.BreakpointEvent;
 
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.variable.DebugValueExtractor;
+import icsetlv.variable.DebugValueInstExtractor;
 import icsetlv.variable.JunitDebugger;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
@@ -113,6 +114,11 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	
 	public List<BreakpointData> getResult() {
 		return CollectionUtils.initIfEmpty(result);
+	}
+	
+	public void setDebugMode(Map<String, Object> instrVarMap) {
+		setValueExtractor(new DebugValueInstExtractor(getValRetrieveLevel(), instrVarMap));
+		//TODO limit test case
 	}
 	
 	private DebugValueExtractor getValueExtractor() {

@@ -19,8 +19,6 @@ import japa.parser.ast.body.Parameter;
 import japa.parser.ast.body.TypeDeclaration;
 import learntest.breakpoint.data.BreakpointBuilder;
 import learntest.breakpoint.data.DecisionLocation;
-import learntest.breakpoint.data.LoopTimesBkpBuilder;
-import learntest.breakpoint.data.TrueBkpBuilder;
 import learntest.cfg.CFG;
 import learntest.cfg.CfgCreator;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
@@ -100,7 +98,7 @@ public class Engine {
 		for (BreakPoint bkp : bkps) {
 			breakPoints.add(bkp);
 		}
-		dtBuilder = new BreakpointDataBuilder(decisionMap);
+		//dtBuilder = new BreakpointDataBuilder(decisionMap);
 	}
 	
 	public void run(boolean loopMode) throws ParseException, IOException, SavException {

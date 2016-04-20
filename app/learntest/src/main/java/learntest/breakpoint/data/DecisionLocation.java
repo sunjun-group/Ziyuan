@@ -1,7 +1,6 @@
 package learntest.breakpoint.data;
 
 import sav.common.core.utils.SignatureUtils;
-import sav.strategies.dto.ClassLocation;
 
 public class DecisionLocation {
 	
@@ -72,7 +71,7 @@ public class DecisionLocation {
 		if (getClass() != obj.getClass())
 			return false;
 		
-		ClassLocation other = (ClassLocation) obj;
+		DecisionLocation other = (DecisionLocation) obj;
 		
 		return classCanonicalName.equals(other.getClassCanonicalName())
 				&& lineNo == other.getLineNo();

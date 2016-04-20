@@ -13,13 +13,19 @@ import learntest.cfg.CfgNode;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 
-public abstract class BreakpointBuilder {
+public class BreakpointBuilder {
 	
-	protected String className;
-	protected String methodName;
-	protected List<Variable> variables;
-	protected CFG cfg;
-	protected List<BreakPoint> breakPoints;
+	private String className;
+	private String methodName;
+	private List<Variable> variables;
+	private CFG cfg;
+	
+	private BreakPoint entry;
+	private List<DecisionLocation> locations;
+	private List<BreakPoint> breakPoints;
+	private Map<DecisionLocation, BreakPoint> decisionMap;
+	private Map<DecisionLocation, DecisionLocation> parentMap;
+	
 
 	public BreakpointBuilder(String className, String methodName, List<Variable> variables, CFG cfg) {
 		this.className = className;
@@ -28,39 +34,63 @@ public abstract class BreakpointBuilder {
 		this.cfg = cfg;
 	}
 	
-	public Map<BreakPoint, List<DecisionLocation>> buildBreakpoints() {
+	public void buildBreakpoints() {
+		locations = new ArrayList<DecisionLocation>();
+		decisionMap = new HashMap<DecisionLocation, BreakPoint>();
+		parentMap = new HashMap<DecisionLocation, DecisionLocation>();
 		Set<BreakPoint> bkps = new HashSet<BreakPoint>();
-		Map<BreakPoint, List<DecisionLocation>> decisionMap = new HashMap<BreakPoint, List<DecisionLocation>>();
 		
 		List<CfgNode> nodes = cfg.getVertices();
 		for (CfgNode node : nodes) {
 			CfgDecisionNode decision = (CfgDecisionNode) node;
-			DecisionLocation location = buildLocation(decision);
-			BreakPoint breakPoint = buildBreakPoint(decision);
-			bkps.add(breakPoint);
-			List<DecisionLocation> locations = decisionMap.get(breakPoint);
-			if (locations == null) {
-				locations = new ArrayList<DecisionLocation>();
-				decisionMap.put(breakPoint, locations);
-			}
+			DecisionLocation location = new DecisionLocation(className, methodName, decision.getBeginLine(), decision.isLoop());
 			locations.add(location);
+			BreakPoint breakPoint = new BreakPoint(className, methodName, decision.getTrueBeginLine());
+			bkps.add(breakPoint);
+			decisionMap.put(location, breakPoint);
+			if (decision.getParentBeginLine() != -1) {
+				DecisionLocation parent = new DecisionLocation(className, methodName, decision.getParentBeginLine(), false);
+				parentMap.put(location, parent);
+			}
 		}
 		
-		BreakPoint entry = new BreakPoint(className, methodName, cfg.getEntry().getBeginLine());
+		entry = new BreakPoint(className, methodName, cfg.getEntry().getBeginLine());
 		bkps.remove(entry);
 		entry.addVars(variables);
 		bkps.add(entry);
 		
 		breakPoints = new ArrayList<BreakPoint>(bkps);
-		return decisionMap;
 	}
 	
-	protected abstract DecisionLocation buildLocation(CfgDecisionNode node);
-	
-	protected abstract BreakPoint buildBreakPoint(CfgDecisionNode node);
+	public List<DecisionLocation> getLocations() {
+		return locations;
+	}
 	
 	public List<BreakPoint> getBreakPoints() {
 		return breakPoints;
+	}
+	
+	public List<BreakPoint> buildBreakpoints(DecisionLocation location) {
+		List<BreakPoint> bkps = new ArrayList<BreakPoint>();
+		BreakPoint bkp = getBreakPoint(location);
+		if (bkp != null) {
+			bkps.add(bkp);
+			BreakPoint parent = getParentBreakPoint(location);
+			if (parent != null) {
+				bkps.add(parent);
+			}
+			bkps.remove(entry);
+			bkps.add(entry);
+		}
+		return bkps;
+	}
+	
+	public BreakPoint getBreakPoint(DecisionLocation location) {
+		return decisionMap.get(location);
+	}
+	
+	public BreakPoint getParentBreakPoint(DecisionLocation location) {
+		return decisionMap.get(parentMap.get(location));
 	}
 
 }

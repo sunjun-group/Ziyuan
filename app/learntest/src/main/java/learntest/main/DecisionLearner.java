@@ -15,13 +15,17 @@ import icsetlv.common.dto.BreakpointValue;
 import learntest.breakpoint.data.DecisionLocation;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.LoopTimesData;
+import libsvm.svm_model;
 import libsvm.core.Category;
 import libsvm.core.CategoryCalculator;
+import libsvm.core.Divider;
 import libsvm.core.FormulaProcessor;
+import libsvm.core.Model;
 import libsvm.core.Machine.DataPoint;
 import libsvm.extension.PositiveSeparationMachine;
 import libsvm.extension.RandomNegativePointSelection;
 import sav.common.core.Pair;
+import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.execute.value.ExecValue;
@@ -37,7 +41,7 @@ public class DecisionLearner implements CategoryCalculator {
 	private List<ExecVar> boolVars;
 	
 	public void learn(List<BreakpointData> bkpsData) {
-		Map<DecisionLocation, Pair<String, String>> decisions = new HashMap<DecisionLocation, Pair<String, String>>(); 
+		Map<DecisionLocation, Pair<Formula, Formula>> decisions = new HashMap<DecisionLocation, Pair<Formula, Formula>>(); 
 		for (BreakpointData bkpData : bkpsData) {
 			log.info("Start to learn at " + bkpData.getLocation());
 			if (bkpData.getFalseValues().isEmpty() && bkpData.getTrueValues().isEmpty()) {
@@ -59,10 +63,10 @@ public class DecisionLearner implements CategoryCalculator {
 				decisions.put(bkpData.getLocation(), learn(bkpData));
 			}
 		}
-		Set<Entry<DecisionLocation, Pair<String, String>>> entrySet = decisions.entrySet();
-		for (Entry<DecisionLocation, Pair<String, String>> entry : entrySet) {
+		Set<Entry<DecisionLocation, Pair<Formula, Formula>>> entrySet = decisions.entrySet();
+		for (Entry<DecisionLocation, Pair<Formula, Formula>> entry : entrySet) {
 			System.out.println(entry.getKey());
-			Pair<String, String> formulas = entry.getValue();
+			Pair<Formula, Formula> formulas = entry.getValue();
 			System.out.println("True/False Decision: " + formulas.first());
 			if (formulas.second() != null) {
 				System.out.println("One/More Decision: " + formulas.second());
@@ -70,27 +74,30 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 	}
 	
-	private Pair<String, String> learn(BreakpointData bkpData) {
+	private Pair<Formula, Formula> learn(BreakpointData bkpData) {
 		machine.resetData();
 		addDataPoints(vars, bkpData.getTrueValues(), Category.POSITIVE);
 		addDataPoints(vars, bkpData.getFalseValues(), Category.NEGATIVE);
 		machine.train();
+		Formula trueFlase = getLearnedFormula();
 		//Formula trueFlase = machine.getLearnedLogic(new FormulaProcessor<ExecVar>(vars), true);
-		String trueFlase = machine.getLearnedLogic(true);
-		String oneMore = null;
+		//String trueFlase = machine.getLearnedLogic(true);
+		//String oneMore = null;
+		Formula oneMore = null;
 		if (bkpData instanceof LoopTimesData) {
 			oneMore = learn((LoopTimesData)bkpData);
 		}
-		return new Pair<String, String>(trueFlase, oneMore);
+		return new Pair<Formula, Formula>(trueFlase, oneMore);
 	}
 	
-	private String learn(LoopTimesData loopData) {
+	private Formula learn(LoopTimesData loopData) {
 		machine.resetData();
 		addDataPoints(vars, loopData.getMoreTimesValues(), Category.POSITIVE);
 		addDataPoints(vars, loopData.getOneTimeValues(), Category.NEGATIVE);
 		machine.train();
 		//return machine.getLearnedLogic(new FormulaProcessor<ExecVar>(vars), true);
-		return machine.getLearnedLogic(true);
+		//return machine.getLearnedLogic(true);
+		return getLearnedFormula();
 	}
 	
 	private boolean collectAllVars(BreakpointData bkpData) {
@@ -161,6 +168,26 @@ public class DecisionLearner implements CategoryCalculator {
 		machine.addDataPoint(category, lineVals);
 	}
 
+	private Formula getLearnedFormula() {
+		Formula formula = null;
+		List<svm_model> models = machine.getLearnedModels();
+		final int numberOfFeatures = machine.getNumberOfFeatures();
+		if (numberOfFeatures > 0) {			
+			for (svm_model svmModel : models) {
+				if (svmModel != null) {				
+					final Divider explicitDivider = new Model(svmModel, numberOfFeatures).getExplicitDivider();
+					Formula current = new FormulaProcessor<ExecVar>(vars).process(explicitDivider, machine.getDataLabels(), true);
+					if (formula == null) {
+						formula = current;
+					} else {
+						formula = new AndFormula(formula, current);
+					}
+				}
+			}
+		}
+		return formula;
+	}
+	
 	@Override
 	public Category getCategory(DataPoint dataPoint) {
 		return null;

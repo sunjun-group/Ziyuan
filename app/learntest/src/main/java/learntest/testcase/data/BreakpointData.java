@@ -40,6 +40,15 @@ public abstract class BreakpointData {
 		return falseValues;
 	}
 	
+	public boolean merge(BreakpointData bkpData) {
+		if (location.equals(bkpData.getLocation())) {
+			trueValues.addAll(bkpData.getTrueValues());
+			falseValues.addAll(bkpData.getFalseValues());
+			return true;
+		}
+		return false;
+	}
+	
 	public List<DataPoint> toTrueFalseDatapoints(List<String> labels) {
 		Set<DataPoint> datapoints = new HashSet<DataPoint>();
 		for (BreakpointValue bValue : trueValues) {

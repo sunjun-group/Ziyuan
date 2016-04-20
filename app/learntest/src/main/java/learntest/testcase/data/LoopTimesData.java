@@ -34,8 +34,21 @@ public class LoopTimesData extends BreakpointData {
 	
 	public List<BreakpointValue> getMoreTimesValues() {
 		return moreTimesValues;
-	}
+	}	
 	
+	@Override
+	public boolean merge(BreakpointData bkpData) {
+		if(super.merge(bkpData)){
+			if(bkpData instanceof LoopTimesData) {
+				LoopTimesData loopData = (LoopTimesData) bkpData;
+				oneTimeValues.addAll(loopData.getOneTimeValues());
+				moreTimesValues.addAll(loopData.getMoreTimesValues());
+			}
+			return true;
+		}
+		return false;
+	}
+
 	public List<DataPoint> toOneMoreDatapoints(List<String> labels) {
 		Set<DataPoint> datapoints = new HashSet<DataPoint>();
 		for (BreakpointValue bValue : moreTimesValues) {
