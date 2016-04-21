@@ -132,6 +132,9 @@ public class SimulatedMicroBat {
 				/** It means that the bug cannot be found now */
 				if((suspiciousNode.getOrder() == lastNode.getOrder() && !feedbackType.equals(UserFeedback.UNCLEAR)) ||
 						(jumpingSteps.size() > mutatedTrace.size())){
+					
+					suspiciousNode = findSuspicioiusNode(suspiciousNode, mutatedTrace, feedbackType);
+					
 					if(!confusingStack.isEmpty()){
 						/** recover */
 						StateWrapper stateWrapper = confusingStack.pop();
@@ -165,7 +168,7 @@ public class SimulatedMicroBat {
 				else{
 					isBugFound = rootCause.getLineNumber()==suspiciousNode.getLineNumber();
 					
-					if(suspiciousNode.getOrder() == 900){
+					if(suspiciousNode.getOrder() == 448){
 						System.currentTimeMillis();
 					}
 					

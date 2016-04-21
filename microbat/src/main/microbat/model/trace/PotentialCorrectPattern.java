@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import microbat.model.value.VarValue;
-import microbat.recommendation.LabelPathIncompatibleException;
 
 
 public class PotentialCorrectPattern {
