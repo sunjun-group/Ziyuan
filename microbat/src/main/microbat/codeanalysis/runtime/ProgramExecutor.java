@@ -674,6 +674,9 @@ public class ProgramExecutor extends Executor{
 			if(returnedValue instanceof StringReference){
 				returnedStringValue = returnedStringValue.substring(1, returnedStringValue.length()-1);
 			}
+			else if(returnedValue instanceof ArrayReference){
+				returnedStringValue = JavaUtil.retrieveStringValueOfArray((ArrayReference)returnedValue);
+			}
 			else if(returnedValue instanceof ObjectReference){
 				try {
 					returnedStringValue = JavaUtil.retrieveToStringValue(thread, (ObjectReference)returnedValue);
@@ -683,9 +686,7 @@ public class ProgramExecutor extends Executor{
 					e.printStackTrace();
 				}
 			}
-			else if(returnedValue instanceof ArrayReference){
-				returnedStringValue = JavaUtil.retrieveStringValueOfArray((ArrayReference)returnedValue);
-			}
+			
 		}
 		
 		String name = VirtualVar.VIRTUAL_PREFIX + lastestNode.getOrder();
