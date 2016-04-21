@@ -142,19 +142,19 @@ public class TestCaseAnalyzer {
 	}
 	
 	private void runSingeTestCase(){
-		String className = "org.apache.commons.math.analysis.ComposableFunctionTest";
-		String methodName = "testComposition";
+		String testClassName = "test.SimpleCalculatorTest";
+		String testMethodName = "test";
 //		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-//				+ "mutation\\49_36_1\\Main.java";
+//				+ "apache-common-math-2.2\\640_17_4\\FastMath.java";
+//		String mutatedClass = "org.apache.commons.math.util.FastMath";
 		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-				+ "apache-common-math-2.2\\640_17_4\\FastMath.java";
-		String mutatedClass = "org.apache.commons.math.util.FastMath";
-//		String mutatedClass = "org.apache.commons.math.MathException";
+				+ "mutation\\111_29_1\\SimpleCalculator.java";
+		String mutatedClass = "com.simplecalculator.SimpleCalculator";
 		
-		int mutatedLine = 640;
+		int mutatedLine = 111;
 		
 		try {
-			runEvaluationForSingleTrial(className, methodName, mutationFile, mutatedClass, mutatedLine);
+			runEvaluationForSingleTrial(testClassName, testMethodName, mutationFile, mutatedClass, mutatedLine);
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		} catch (MalformedURLException e) {

@@ -44,7 +44,7 @@ public class SimulatedMicroBat {
 		TraceNode rootCause = findRootCause(mutatedLocation.getClassCanonicalName(), 
 				mutatedLocation.getLineNo(), mutatedTrace, pairList);
 		
-		System.currentTimeMillis();
+//		System.currentTimeMillis();
 //		Object dom = rootCause.findAllDominatees();
 //		dominatees.add(rootCause);
 		
@@ -130,7 +130,8 @@ public class SimulatedMicroBat {
 				suspiciousNode = findSuspicioiusNode(suspiciousNode, mutatedTrace, feedbackType);
 				
 				/** It means that the bug cannot be found now */
-				if(suspiciousNode.getOrder() == lastNode.getOrder()){
+				if((suspiciousNode.getOrder() == lastNode.getOrder() && !feedbackType.equals(UserFeedback.UNCLEAR)) ||
+						(jumpingSteps.size() > mutatedTrace.size())){
 					if(!confusingStack.isEmpty()){
 						/** recover */
 						StateWrapper stateWrapper = confusingStack.pop();
@@ -164,7 +165,7 @@ public class SimulatedMicroBat {
 				else{
 					isBugFound = rootCause.getLineNumber()==suspiciousNode.getLineNumber();
 					
-					if(suspiciousNode.getOrder() == 144){
+					if(suspiciousNode.getOrder() == 900){
 						System.currentTimeMillis();
 					}
 					
@@ -237,7 +238,7 @@ public class SimulatedMicroBat {
 				Settings.interestedVariables, Settings.potentialCorrectPatterns);
 		
 		String feedbackType = user.feedback(suspiciousNode, mutatedTrace, pairList, mutatedTrace.getCheckTime(), isFirstTime, enableClear);
-		
+
 		for(List<String> wrongVarIDs: user.getOtherOptions()){
 			ArrayList<StepOperationTuple> clonedJumpingSteps = (ArrayList<StepOperationTuple>) jumpingSteps.clone();
 			StateWrapper stateWrapper = new StateWrapper(state, wrongVarIDs, clonedJumpingSteps);
