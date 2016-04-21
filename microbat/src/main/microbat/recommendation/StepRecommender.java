@@ -17,6 +17,7 @@ import microbat.model.trace.TraceNodeOrderComparator;
 import microbat.model.trace.TraceNodeReverseOrderComparator;
 import microbat.model.value.VarValue;
 import microbat.model.variable.Variable;
+import microbat.util.MicroBatUtil;
 import microbat.util.Settings;
 
 public class StepRecommender {
@@ -65,7 +66,7 @@ public class StepRecommender {
 						return startNode;						
 					}
 					else{
-						System.err.println("In findCorrespondingStartNode(), the input endNode2 is the start of skipPoints");
+						return this.startNode;
 					}
 				}
 			}
@@ -433,7 +434,7 @@ public class StepRecommender {
 		List<VarValue> markedReadVars = currentNode.findMarkedReadVariable();
 		for(VarValue readVar: markedReadVars){
 			Variable readVariable = readVar.getVariable();
-			if(isEquivalentVariable(causingVariable, readVariable)){
+			if(MicroBatUtil.isEquivalentVariable(causingVariable, readVariable)){
 				return readVariable;
 			}
 		}
@@ -524,7 +525,7 @@ public class StepRecommender {
 			PathInstance path = null;
 			if(getLatestCause().getBuggyNode() != null){
 				path = new PathInstance(suspiciousNode, getLatestCause().getBuggyNode());
-				isPathInPattern = Settings.potentialCorrectPatterns.containsPattern(path)? true : false;					
+				isPathInPattern = Settings.potentialCorrectPatterns.containsPattern(path);	//TODO				
 			}
 			
 			if(isPathInPattern && !shouldStopOnCheckedNode(currentNode, path)){
@@ -539,17 +540,18 @@ public class StepRecommender {
 						&& !shouldStopOnCheckedNode(suspiciousNode, path)){
 					
 					Settings.potentialCorrectPatterns.addPathForPattern(path);
-					this.loopRange.skipPoints.add(suspiciousNode);
 					
-					PotentialCorrectPattern pattern = Settings.potentialCorrectPatterns.getPattern(path);
+//					PotentialCorrectPattern pattern = Settings.potentialCorrectPatterns.getPattern(path);
 					oldSusiciousNode = suspiciousNode;
 					
-					suspiciousNode = findNextSuspiciousNodeByPattern(pattern, oldSusiciousNode);
+					suspiciousNode = Settings.potentialCorrectPatterns.inferNextSuspiciousNode(oldSusiciousNode);
+					System.currentTimeMillis();
 					
 					if(suspiciousNode == null){
 						break;
 					}
 					else{
+						this.loopRange.skipPoints.add(oldSusiciousNode);
 						path = new PathInstance(suspiciousNode, oldSusiciousNode);					
 					}
 				}
@@ -726,7 +728,7 @@ public class StepRecommender {
 			for(VarValue writtenVar: dominator.getWrittenVariables()){
 				Variable writtenVariable = writtenVar.getVariable();
 				
-				if(isEquivalentVariable(causingVariable, writtenVariable)){
+				if(MicroBatUtil.isEquivalentVariable(causingVariable, writtenVariable)){
 					return dominator;					
 				}
 			}
@@ -736,23 +738,7 @@ public class StepRecommender {
 		return null;
 	}
 	
-	/**
-	 * For now, the virtual variable is never considered as equivalent (or, compatible). It means that the path between method invocation
-	 * is not jumped, which facilitates the abstraction intention. That is, the jump occurs only in the same abstraction level.
-	 * @param var1
-	 * @param var2
-	 * @return
-	 */
-	private boolean isEquivalentVariable(Variable var1, Variable var2){
-		String varID1 = var1.getVarID();
-		String simpleVarID1 = Variable.truncateSimpleID(varID1);
-		String varID2 = var2.getVarID();
-		String simpleVarID2 = Variable.truncateSimpleID(varID2);
-		
-		boolean isEquivalentVariable = simpleVarID1.equals(simpleVarID2) || var1.getName().equals(var2.getName());
-		
-		return isEquivalentVariable;
-	}
+	
 	
 
 	private List<AttributionVar> constructAttributionRelation(TraceNode currentNode, int checkTime){
