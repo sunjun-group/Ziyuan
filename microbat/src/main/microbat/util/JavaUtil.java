@@ -57,7 +57,9 @@ public class JavaUtil {
 		}
 		StringBuffer buffer = new StringBuffer();
 		for(Value v: list){
-			buffer.append(v.toString()+ ",") ;
+			if(v != null){
+				buffer.append(v.toString()+ ",") ;					
+			}
 		}
 		stringValue = buffer.toString();
 		return stringValue;
