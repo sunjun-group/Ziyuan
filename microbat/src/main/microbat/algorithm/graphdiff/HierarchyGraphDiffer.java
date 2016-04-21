@@ -3,6 +3,7 @@ package microbat.algorithm.graphdiff;
 import java.util.ArrayList;
 import java.util.List;
 
+import microbat.model.BreakPointValue;
 import microbat.model.value.GraphNode;
 
 public class HierarchyGraphDiffer {
@@ -70,12 +71,28 @@ public class HierarchyGraphDiffer {
 	
 	private List<GraphDiff> diffs = new ArrayList<>();
 	
+	/**
+	 * This diff result does not contain the difference of rootBefore and rootAfter themselves, only the
+	 * different of their children.
+	 * @param rootBefore
+	 * @param rootAfter
+	 */
 	public void diff(GraphNode rootBefore, GraphNode rootAfter){
+		if(!(rootBefore instanceof BreakPointValue) && !(rootAfter instanceof BreakPointValue)){
+			if(!rootBefore.isTheSameWith(rootAfter)){
+				GraphDiff diff = new GraphDiff(rootBefore, rootAfter);
+				this.diffs.add(diff);
+			}
+		}
+		
+		diffChildren(rootBefore, rootAfter);
+	}
+
+	private void diffChildren(GraphNode rootBefore, GraphNode rootAfter) {
 		List<? extends GraphNode> childrenBefore = rootBefore.getChildren();
 		List<? extends GraphNode> childrenAfter = rootAfter.getChildren();
-		
 		List<MatchingGraphPair> pairs = matchList(childrenBefore, childrenAfter);
-		
+
 		for(MatchingGraphPair pair: pairs){
 			GraphNode nodeBefore = pair.getNodeBefore();
 			GraphNode nodeAfter = pair.getNodeAfter();
@@ -86,13 +103,14 @@ public class HierarchyGraphDiffer {
 					this.diffs.add(diff);
 				}
 				
-				diff(nodeBefore, nodeAfter);
+				diffChildren(nodeBefore, nodeAfter);
 			}
 			else{
 				GraphDiff diff = new GraphDiff(nodeBefore, nodeAfter);
 				this.diffs.add(diff);
 			}
 		}
+		
 	}
 
 	/**
