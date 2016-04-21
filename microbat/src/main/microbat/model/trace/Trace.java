@@ -477,9 +477,8 @@ public class Trace {
 					return controlDominator;
 				}
 			}
+			return dominators.get(0);
 		}
-		
-		return buggyNode;
 	}
 	
 	
