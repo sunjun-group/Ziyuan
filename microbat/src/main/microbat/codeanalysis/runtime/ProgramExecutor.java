@@ -345,7 +345,8 @@ public class ProgramExecutor extends Executor{
 						if(this.trace.size() > 1){
 							TraceNode lastestNode = this.trace.getExectionList().get(this.trace.size()-2);
 							if(lastestNode.getBreakPoint().isReturnStatement()){
-								createVirutalVariableForReturnStatement(node, lastestNode, returnedValue);
+								createVirutalVariableForReturnStatement(((StepEvent) event).thread(), node, 
+										lastestNode, returnedValue);
 							}
 						}
 						
@@ -648,7 +649,7 @@ public class ProgramExecutor extends Executor{
 	 * when the last interesting stepping statement is a return statement, create a virtual
 	 * variable.
 	 */
-	private void createVirutalVariableForReturnStatement(TraceNode node,
+	private void createVirutalVariableForReturnStatement(ThreadReference thread, TraceNode node,
 			TraceNode lastestNode, Value returnedValue) {
 		
 		if(returnedValue instanceof VoidValueImpl){
@@ -672,6 +673,18 @@ public class ProgramExecutor extends Executor{
 			returnedStringValue = returnedValue.toString();
 			if(returnedValue instanceof StringReference){
 				returnedStringValue = returnedStringValue.substring(1, returnedStringValue.length()-1);
+			}
+			else if(returnedValue instanceof ObjectReference){
+				try {
+					returnedStringValue = JavaUtil.retrieveToStringValue(thread, (ObjectReference)returnedValue);
+				} catch (InvalidTypeException | ClassNotLoadedException
+						| IncompatibleThreadStateException
+						| InvocationException e) {
+					e.printStackTrace();
+				}
+			}
+			else if(returnedValue instanceof ArrayReference){
+				returnedStringValue = JavaUtil.retrieveStringValueOfArray((ArrayReference)returnedValue);
 			}
 		}
 		
