@@ -48,7 +48,7 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 
 	private boolean isPassingTest = false;
 	private boolean hasCompilationError = false;
-	private boolean isOverLong = false;
+	
 	
 	public void checkValidity(AppJavaClassPath appClassPath){
 		VirtualMachine vm = new VMStarter(appClassPath).start();
@@ -307,13 +307,5 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 
 	public void setHasCompilationError(boolean hasCompilationError) {
 		this.hasCompilationError = hasCompilationError;
-	}
-
-	public boolean isOverLong() {
-		return isOverLong;
-	}
-
-	public void setOverLong(boolean isOverLong) {
-		this.isOverLong = isOverLong;
 	}
 }

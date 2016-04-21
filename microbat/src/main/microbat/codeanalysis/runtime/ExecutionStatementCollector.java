@@ -30,7 +30,7 @@ import com.sun.jdi.request.StepRequest;
 @SuppressWarnings("restriction")
 public class ExecutionStatementCollector extends Executor{
 	
-	
+	private boolean isOverLong = false;
 	
 	public List<BreakPoint> collectBreakPoints(AppJavaClassPath appClassPath){
 		steps = 0;
@@ -80,6 +80,7 @@ public class ExecutionStatementCollector extends Executor{
 							
 							steps++;
 							if(steps >= Settings.stepLimit){
+								this.setOverLong(true);
 								connected = false;
 							}
 						}
@@ -160,5 +161,13 @@ public class ExecutionStatementCollector extends Executor{
 
 	public void setSteps(int steps) {
 		this.steps = steps;
+	}
+	
+	public boolean isOverLong() {
+		return isOverLong;
+	}
+
+	public void setOverLong(boolean isOverLong) {
+		this.isOverLong = isOverLong;
 	}
 }
