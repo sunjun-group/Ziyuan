@@ -1,5 +1,7 @@
 package microbat.model.variable;
 
+import microbat.util.PrimitiveUtils;
+
 /**
  * A virtual variable is a variable connecting the read/written relation between a return statement
  * and a method invocation. 
@@ -28,4 +30,7 @@ public class VirtualVar extends Variable {
 		return var;
 	}
 
+	public boolean isOfPrimitiveType(){
+		return PrimitiveUtils.isPrimitiveTypeOrString(type);
+	}
 }

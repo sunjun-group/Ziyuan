@@ -5,6 +5,7 @@ import java.util.List;
 
 import microbat.algorithm.graphdiff.GraphDiff;
 import microbat.algorithm.graphdiff.HierarchyGraphDiffer;
+import microbat.model.BreakPointValue;
 import microbat.model.trace.Trace;
 import microbat.model.trace.TraceNode;
 import microbat.model.value.PrimitiveValue;
@@ -87,7 +88,7 @@ public class TraceNodePair {
 		
 		for(VarValue mutatedWrittenVar: mutatedNode.getWrittenVariables()){
 			List<VarValue> mutatedVarList = findCorrespondingVarWithDifferentValue(mutatedWrittenVar, 
-					originalNode.getWrittenVariables(), mutatedNode.getWrittenVariables(), trace);
+					originalNode.getWrittenVariables(), mutatedNode.getWrittenVariables(), trace, Variable.WRITTEN);
 			if(!mutatedVarList.isEmpty()){
 				for(VarValue value: mutatedVarList){
 					wrongVarIDs.add(value.getVarID());
@@ -110,12 +111,12 @@ public class TraceNodePair {
 		
 		for(VarValue mutatedReadVar: mutatedNode.getReadVariables()){
 			List<VarValue> mutatedVarList = findCorrespondingVarWithDifferentValue(mutatedReadVar, 
-					originalNode.getReadVariables(), mutatedNode.getReadVariables(), mutatedTrace);
+					originalNode.getReadVariables(), mutatedNode.getReadVariables(), mutatedTrace, Variable.WRITTEN);
 			if(!mutatedVarList.isEmpty()){
 				for(VarValue value: mutatedVarList){
 					wrongVarIDs.add(value.getVarID());
 				}
-				
+				System.currentTimeMillis();
 				return wrongVarIDs;
 			}
 		}
@@ -139,10 +140,10 @@ public class TraceNodePair {
 	 * @return
 	 */
 	private List<VarValue> findCorrespondingVarWithDifferentValue(VarValue mutatedVar, List<VarValue> originalList, 
-			List<VarValue> mutatedList, Trace mutatedTrace) {
+			List<VarValue> mutatedList, Trace mutatedTrace, String RW) {
 		List<VarValue> differentVarValueList = new ArrayList<>();
 		
-		if(mutatedVar instanceof VirtualValue && PrimitiveUtils.isPrimitiveTypeOrString(mutatedVar.getType())){
+		if(mutatedVar instanceof VirtualValue){
 			for(VarValue originalVar: originalList){
 				if(originalVar instanceof VirtualValue && mutatedVar.getType().equals(originalVar.getType())){
 					/**
@@ -151,12 +152,15 @@ public class TraceNodePair {
 					int mutatedIndex = mutatedList.indexOf(mutatedVar);
 					int originalIndex = originalList.indexOf(originalVar);
 					
-					if(mutatedIndex==originalIndex && !mutatedVar.getStringValue().equals(originalVar.getStringValue())){
-						differentVarValueList.add(mutatedVar);
-						return differentVarValueList;
+					if(mutatedIndex==originalIndex){
+						if(((VirtualValue) mutatedVar).isOfPrimitiveType() || mutatedVar.isDefinedToStringMethod()){
+							if(!mutatedVar.getStringValue().equals(originalVar.getStringValue())){
+								differentVarValueList.add(mutatedVar);
+								return differentVarValueList;
+							}
+						}
 					}
 				}
-				
 			}
 		}
 		else if(mutatedVar instanceof PrimitiveValue){
@@ -175,9 +179,9 @@ public class TraceNodePair {
 				if(originalVar instanceof ReferenceValue){
 					if(mutatedVar.getVarName().equals(originalVar.getVarName())){
 						ReferenceValue mutatedRefVar = (ReferenceValue)mutatedVar;
-						setChildren(mutatedRefVar, mutatedNode);
+						setChildren(mutatedRefVar, mutatedNode, RW);
 						ReferenceValue originalRefVar = (ReferenceValue)originalVar;
-						setChildren(originalRefVar, originalNode);
+						setChildren(originalRefVar, originalNode, RW);
 						
 						if(mutatedRefVar.getChildren() != null && originalRefVar.getChildren() != null){
 							HierarchyGraphDiffer differ = new HierarchyGraphDiffer();
@@ -198,7 +202,9 @@ public class TraceNodePair {
 									}
 									mutatedSubVarValue.setVarID(varID);
 									
-									differentVarValueList.add(mutatedSubVarValue);
+									if(!differentVarValueList.contains(mutatedSubVarValue)){
+										differentVarValueList.add(mutatedSubVarValue);										
+									}
 									
 									/** one wrong attribute is enough for debugging. */
 									break;
@@ -220,14 +226,22 @@ public class TraceNodePair {
 		return differentVarValueList;
 	}
 	
-	private void setChildren(ReferenceValue refVar, TraceNode node){
+	private void setChildren(ReferenceValue refVar, TraceNode node, String RW){
 		if(refVar.getChildren()==null){
 			if(node.getProgramState() != null){
 				
 				String varID = refVar.getVarID();
 				varID = varID.substring(0, varID.indexOf(":"));
 				
-				VarValue vv = node.getProgramState().findVarValue(varID);
+				BreakPointValue programState = node.getProgramState();
+				if(RW.equals(Variable.WRITTEN)){
+					programState = node.getAfterState();
+				}
+				else if(RW.equals(Variable.READ)){
+					programState = node.getProgramState();
+				}
+				
+				VarValue vv = programState.findVarValue(varID);
 				if(vv != null){
 					refVar.setChildren(vv.getChildren());
 				}				

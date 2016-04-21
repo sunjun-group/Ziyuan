@@ -1,6 +1,7 @@
 package microbat.model.value;
 
 import microbat.model.variable.Variable;
+import microbat.model.variable.VirtualVar;
 
 public class VirtualValue extends VarValue {
 	
@@ -21,5 +22,12 @@ public class VirtualValue extends VarValue {
 		return false;
 	}
 
-	
+	public boolean isOfPrimitiveType(){
+		if(this.variable instanceof VirtualVar){
+			VirtualVar var = (VirtualVar)this.variable;
+			return var.isOfPrimitiveType();
+		}
+		
+		return false;
+	}
 }
