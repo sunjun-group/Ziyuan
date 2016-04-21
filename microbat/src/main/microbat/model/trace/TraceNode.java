@@ -684,4 +684,18 @@ public class TraceNode{
 		
 		return false;
 	}
+
+	public int findTraceLength() {
+		TraceNode node = this;
+		while(node.getStepInNext() != null){
+			if(node.getStepOverNext() != null){
+				node = node.getStepOverNext();
+			}
+			else{
+				node = node.getStepInNext();
+			}
+		}
+		
+		return node.getOrder();
+	}
 }

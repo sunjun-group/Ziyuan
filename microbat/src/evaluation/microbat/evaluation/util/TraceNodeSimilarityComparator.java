@@ -28,18 +28,25 @@ public class TraceNodeSimilarityComparator {
 			int totalVars = traceNode1.getReadVariables().size() + traceNode1.getWrittenVariables().size() +
 					traceNode2.getWrittenVariables().size() + traceNode2.getReadVariables().size();
 			
-			double score; 
+			double simVarScore; 
 			if(totalVars == 0){
-				score = 1;
+				simVarScore = 1;
 			}
 			else{
-				score = (2*(double)commonReadVarWithSameValue+2*commonWrittenVarWithSameValue)/totalVars;
+				simVarScore = (2*(double)commonReadVarWithSameValue+2*commonWrittenVarWithSameValue)/totalVars;
 			}
+			
+//			int len1 = traceNode1.findTraceLength();
+//			int len2 = traceNode2.findTraceLength();
+//			int len = (len1 > len2) ? len1 : len2;
+//			double diffLoc = Math.abs(traceNode1.getOrder() - traceNode2.getOrder());
+//			double simLocationScore = 1 - diffLoc/len;
 			
 			/**
 			 * give a value for same location similarity
 			 */
-			return 0.05 + 0.95*score;
+//			return 0.05 + 0.5*simVarScore + 0.45*simLocationScore;
+			return 0.05 + 0.95*simVarScore;
 		}
 		
 		return 0;
