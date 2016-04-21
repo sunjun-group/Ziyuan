@@ -106,26 +106,6 @@ public class ReferenceValue extends VarValue {
 		return false;
 	}
 	
-	/**
-	 * if the toString() of an object is undefined, the default toString() may return something like
-	 * "pack.Class@12fa231". Based on this observation, I build this method.
-	 * @param stringValue
-	 * @return
-	 */
-	public boolean isDefinedToStringMethod(){
-		if(stringValue == null){
-			return false;
-		}
-		else{
-			if(stringValue.contains("@") && stringValue.contains(".")){
-				return false;
-			}
-			else{
-				return true;
-			}
-		}
-	}
-	
 	@Override
 	public String getManifestationValue() {
 //		String manifestation = stringValue;

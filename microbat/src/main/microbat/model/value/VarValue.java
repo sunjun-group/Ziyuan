@@ -87,6 +87,26 @@ public abstract class VarValue implements GraphNode{
 		}
 	}
 	
+	/**
+	 * if the toString() of an object is undefined, the default toString() may return something like
+	 * "pack.Class@12fa231". Based on this observation, I build this method.
+	 * @param stringValue
+	 * @return
+	 */
+	public boolean isDefinedToStringMethod(){
+		if(stringValue == null){
+			return false;
+		}
+		else{
+			if(stringValue.contains("@") && stringValue.contains(".")){
+				return false;
+			}
+			else{
+				return true;
+			}
+		}
+	}
+	
 	public VarValue findVarValue(String varID){
 		ArrayList<String> visitedIDs = new ArrayList<>();
 		VarValue value = findVarValue(varID, visitedIDs);
