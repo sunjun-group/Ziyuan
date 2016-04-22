@@ -122,24 +122,24 @@ public class TestCaseAnalyzer {
 
 	public void runEvaluation() throws JavaModelException{
 		
-//		ExcelReporter reporter = new ExcelReporter();
-//		reporter.start();
-//		
-//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
-//		
-//		for(IJavaElement element: testRoot.getChildren()){
-//			if(element instanceof IPackageFragment){
-//				runEvaluation((IPackageFragment)element, reporter);				
-//			}
-//		}
-//		
-//		reporter.export(trials, Settings.projectName+trialFileNum);
+		ExcelReporter reporter = new ExcelReporter();
+		reporter.start();
+		
+		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+		
+		for(IJavaElement element: testRoot.getChildren()){
+			if(element instanceof IPackageFragment){
+				runEvaluation((IPackageFragment)element, reporter);				
+			}
+		}
+		
+		reporter.export(trials, Settings.projectName+trialFileNum);
 		
 //		runSingeTestCase();
 		
-		String className = "org.apache.commons.math.MaxIterationsExceededExceptionTest";
-		String methodName = "testComplexConstructor";
-		runEvaluationForSingleMethod(className, methodName, null);
+//		String className = "org.apache.commons.math.MaxIterationsExceededExceptionTest";
+//		String methodName = "testComplexConstructor";
+//		runEvaluationForSingleMethod(className, methodName, null);
 	}
 	
 	private void runSingeTestCase(){
