@@ -9,6 +9,7 @@ import microbat.model.trace.PathInstance.SourceLine;
 import microbat.model.value.VarValue;
 import microbat.model.variable.Variable;
 import microbat.util.MicroBatUtil;
+import microbat.util.Settings;
 
 public class PotentialCorrectPatternList {
 	
@@ -129,9 +130,12 @@ public class PotentialCorrectPatternList {
 			
 			if(dataDominator != null && 
 					pathInstance.getStartNode().getLineNumber()==dataDominator.getLineNumber()){
-				return dataDominator;
+				
+				PathInstance newIns = new PathInstance(dataDominator, existingSusiciousNode);
+				if(Settings.potentialCorrectPatterns.containsPattern(newIns)){
+					return dataDominator;					
+				}
 			}
-			
 		}
 		
 		return null;
