@@ -22,9 +22,9 @@ public class BreakpointBuilder {
 	
 	private BreakPoint entry;
 	private List<DecisionLocation> locations;
-	private List<BreakPoint> breakPoints;
 	private Map<DecisionLocation, BreakPoint> decisionMap;
 	private Map<DecisionLocation, DecisionLocation> parentMap;
+	private List<BreakPoint> breakPoints;
 	
 
 	public BreakpointBuilder(String className, String methodName, List<Variable> variables, CFG cfg) {
@@ -62,14 +62,6 @@ public class BreakpointBuilder {
 		breakPoints = new ArrayList<BreakPoint>(bkps);
 	}
 	
-	public List<DecisionLocation> getLocations() {
-		return locations;
-	}
-	
-	public List<BreakPoint> getBreakPoints() {
-		return breakPoints;
-	}
-	
 	public List<BreakPoint> buildBreakpoints(DecisionLocation location) {
 		List<BreakPoint> bkps = new ArrayList<BreakPoint>();
 		BreakPoint bkp = getBreakPoint(location);
@@ -85,6 +77,14 @@ public class BreakpointBuilder {
 		return bkps;
 	}
 	
+	public List<DecisionLocation> getLocations() {
+		return locations;
+	}
+
+	public List<BreakPoint> getBreakPoints() {
+		return breakPoints;
+	}
+
 	public BreakPoint getBreakPoint(DecisionLocation location) {
 		return decisionMap.get(location);
 	}

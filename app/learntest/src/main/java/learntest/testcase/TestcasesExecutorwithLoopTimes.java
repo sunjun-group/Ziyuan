@@ -17,6 +17,8 @@ import icsetlv.common.dto.BreakpointValue;
 import icsetlv.variable.DebugValueExtractor;
 import icsetlv.variable.DebugValueInstExtractor;
 import icsetlv.variable.JunitDebugger;
+import learntest.breakpoint.data.BreakpointBuilder;
+import learntest.breakpoint.data.DecisionLocation;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
 import sav.common.core.SavException;
@@ -37,9 +39,12 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	private List<BreakPoint> currentTestExePath;
 	private DebugValueExtractor valueExtractor;
 	private int valRetrieveLevel;
-	private BreakpointDataBuilder builder;
+	private BreakpointDataBuilder dtbuilder;
 	private StopTimer timer = new StopTimer("TestcasesExecutorwithLoopTimes");
 	private long timeout = DEFAULT_TIMEOUT;
+	
+	private BreakpointBuilder bkpBuilder;
+	private DecisionLocation target;
 	
 	public TestcasesExecutorwithLoopTimes(int valRetrieveLevel) {
 		this.valRetrieveLevel = valRetrieveLevel;
@@ -47,6 +52,15 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	
 	public TestcasesExecutorwithLoopTimes(DebugValueExtractor valueExtractor) {
 		setValueExtractor(valueExtractor);
+	}
+	
+	public void run() throws SavException {
+		if (target == null) {
+			this.run(bkpBuilder.getBreakPoints());
+		} else {
+			this.run(bkpBuilder.buildBreakpoints(target));
+			target = null;
+		}
 	}
 	
 	@Override
@@ -116,9 +130,17 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		return CollectionUtils.initIfEmpty(result);
 	}
 	
-	public void setDebugMode(Map<String, Object> instrVarMap) {
-		setValueExtractor(new DebugValueInstExtractor(getValRetrieveLevel(), instrVarMap));
+	public void setSingleMode() {
 		//TODO limit test case
+	}
+	
+	public void setTarget(DecisionLocation target) {
+		this.target = target;
+		dtbuilder.setTarget(target);
+	}
+
+	public void setVarMap(Map<String, Object> instrVarMap) {
+		setValueExtractor(new DebugValueInstExtractor(getValRetrieveLevel(), instrVarMap));
 	}
 	
 	private DebugValueExtractor getValueExtractor() {
@@ -146,14 +168,18 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		}
 	}
 	
-	public void setBuilder(BreakpointDataBuilder builder) {
-		this.builder = builder;
+	public void setBuilder(BreakpointDataBuilder dtbuilder) {
+		this.dtbuilder = dtbuilder;
 	}
 	
 	public BreakpointDataBuilder getBuilder() {
-		return builder;
-	}
+		return dtbuilder;
+	}	
 	
+	public void setBkpBuilder(BreakpointBuilder bkpBuilder) {
+		this.bkpBuilder = bkpBuilder;
+	}
+
 	@Override
 	protected long getTimeoutInSec() {
 		return timeout;

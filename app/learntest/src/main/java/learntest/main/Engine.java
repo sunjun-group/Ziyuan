@@ -17,6 +17,7 @@ import japa.parser.ast.body.TypeDeclaration;
 import learntest.breakpoint.data.BreakpointBuilder;
 import learntest.cfg.CFG;
 import learntest.cfg.CfgCreator;
+import learntest.sampling.SelectiveSampling;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
@@ -64,7 +65,6 @@ public class Engine {
 	
 	public void run() throws ParseException, IOException, SavException {
 		createCFG();
-		System.out.println(cfg);
 		bkpBuilder = new BreakpointBuilder(className, methodName, variables, cfg);
 		bkpBuilder.buildBreakpoints();
 		dtBuilder = new BreakpointDataBuilder(bkpBuilder);
@@ -73,10 +73,10 @@ public class Engine {
 		
 		ensureTcExecutor();
 		tcExecutor.setup(appClassPath, testcases);
-		tcExecutor.run(bkpBuilder.getBreakPoints());
+		tcExecutor.run();
 		List<BreakpointData> result = tcExecutor.getResult();
 		tcExecutor.setjResultFileDeleteOnExit(true);
-		new DecisionLearner().learn(result);
+		new DecisionLearner(new SelectiveSampling(tcExecutor)).learn(result);
 	}
 
 	private void createCFG() throws ParseException, IOException {
@@ -107,6 +107,7 @@ public class Engine {
 			tcExecutor = new TestcasesExecutorwithLoopTimes(DefaultValues.DEBUG_VALUE_RETRIEVE_LEVEL);
 		}
 		tcExecutor.setBuilder(dtBuilder);
+		tcExecutor.setBkpBuilder(bkpBuilder);
 	}	
 
 }

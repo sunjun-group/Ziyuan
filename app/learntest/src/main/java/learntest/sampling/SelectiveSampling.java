@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import icsetlv.sampling.IlpSolver;
+import learntest.breakpoint.data.DecisionLocation;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
 import libsvm.core.Machine.DataPoint;
@@ -15,29 +16,23 @@ import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.Eq;
 import sav.common.core.formula.Formula;
-import sav.common.core.utils.CollectionUtils;
-import sav.strategies.dto.BreakPoint;
 
 public class SelectiveSampling{
 	private static Logger log = LoggerFactory.getLogger(SelectiveSampling.class);
 	private TestcasesExecutorwithLoopTimes tcExecutor;
-	private BreakPoint bkp;
 	
 	public SelectiveSampling(TestcasesExecutorwithLoopTimes tcExecutor) {
 		this.tcExecutor = tcExecutor;
 	}
-	
-	public void setUp(BreakPoint bkp) {
-		//TODO entry BKP
-		this.bkp = bkp;		
-	}
 
-	public BreakpointData selectData(Formula formula, List<String> labels, List<DataPoint> datapoints) throws SavException {
+	public BreakpointData selectData(DecisionLocation target, Formula formula, 
+			List<String> labels, List<DataPoint> datapoints) throws SavException {
 		BreakpointData bkpData = null;		
 		if (formula == null) {
 			return bkpData;
 		}
-		
+
+		tcExecutor.setTarget(target);
 		Map<String, Pair<Double, Double>> minMax = calculateValRange(labels, datapoints);
 		
 		IlpSolver solver = new IlpSolver(minMax, true);
@@ -45,8 +40,8 @@ public class SelectiveSampling{
 		List<List<Eq<?>>> assignments = solver.getResult();
 		log.debug("Instrument values: ");
 		for (List<Eq<?>> valSet : assignments) {
-			tcExecutor.setDebugMode(toInstrVarMap(valSet));
-			tcExecutor.run(CollectionUtils.listOf(bkp));
+			tcExecutor.setVarMap(toInstrVarMap(valSet));
+			tcExecutor.run();
 			List<BreakpointData> result = tcExecutor.getResult();
 			if (result.isEmpty()) {
 				continue;

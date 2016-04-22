@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import icsetlv.common.dto.BreakpointValue;
 import learntest.breakpoint.data.DecisionLocation;
+import learntest.sampling.SelectiveSampling;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.LoopTimesData;
 import libsvm.svm_model;
@@ -25,6 +26,7 @@ import libsvm.core.Machine.DataPoint;
 import libsvm.extension.PositiveSeparationMachine;
 import libsvm.extension.RandomNegativePointSelection;
 import sav.common.core.Pair;
+import sav.common.core.SavException;
 import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
@@ -35,12 +37,19 @@ import sav.strategies.dto.execute.value.ExecVarType;
 public class DecisionLearner implements CategoryCalculator {
 	
 	protected static Logger log = LoggerFactory.getLogger(DecisionLearner.class);
-	private PositiveSeparationMachine machine = new PositiveSeparationMachine(new RandomNegativePointSelection());
+	private PositiveSeparationMachine machine;
 	private List<ExecVar> vars;
 	private List<String> labels;
 	private List<ExecVar> boolVars;
+	private SelectiveSampling selectiveSampling;
 	
-	public void learn(List<BreakpointData> bkpsData) {
+	public DecisionLearner(SelectiveSampling selectiveSampling) {
+		machine = new PositiveSeparationMachine(new RandomNegativePointSelection());
+		machine.setDefaultParams();
+		this.selectiveSampling = selectiveSampling;
+	}
+	
+	public void learn(List<BreakpointData> bkpsData) throws SavException {
 		Map<DecisionLocation, Pair<Formula, Formula>> decisions = new HashMap<DecisionLocation, Pair<Formula, Formula>>(); 
 		for (BreakpointData bkpData : bkpsData) {
 			log.info("Start to learn at " + bkpData.getLocation());
@@ -74,30 +83,58 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 	}
 	
-	private Pair<Formula, Formula> learn(BreakpointData bkpData) {
+	private Pair<Formula, Formula> learn(BreakpointData bkpData) throws SavException {
 		machine.resetData();
 		addDataPoints(vars, bkpData.getTrueValues(), Category.POSITIVE);
 		addDataPoints(vars, bkpData.getFalseValues(), Category.NEGATIVE);
 		machine.train();
 		Formula trueFlase = getLearnedFormula();
-		//Formula trueFlase = machine.getLearnedLogic(new FormulaProcessor<ExecVar>(vars), true);
-		//String trueFlase = machine.getLearnedLogic(true);
-		//String oneMore = null;
+		double tFAcc = machine.getModelAccuracy();
+		while (tFAcc < 1.0) {
+			BreakpointData newData = selectiveSampling.selectData(bkpData.getLocation(), 
+					trueFlase, machine.getDataLabels(), machine.getDataPoints());
+			addDataPoints(vars, newData.getTrueValues(), Category.POSITIVE);
+			addDataPoints(vars, newData.getFalseValues(), Category.NEGATIVE);
+			machine.train();
+			Formula tmp = getLearnedFormula();
+			if (machine.getModelAccuracy() > tFAcc && !tmp.equals(trueFlase)) {
+				trueFlase = tmp;
+				tFAcc = machine.getModelAccuracy();
+			} else {
+				break;
+			}
+		}
+		
 		Formula oneMore = null;
 		if (bkpData instanceof LoopTimesData) {
 			oneMore = learn((LoopTimesData)bkpData);
 		}
+		
 		return new Pair<Formula, Formula>(trueFlase, oneMore);
 	}
 	
-	private Formula learn(LoopTimesData loopData) {
+	private Formula learn(LoopTimesData loopData) throws SavException {
 		machine.resetData();
 		addDataPoints(vars, loopData.getMoreTimesValues(), Category.POSITIVE);
 		addDataPoints(vars, loopData.getOneTimeValues(), Category.NEGATIVE);
 		machine.train();
-		//return machine.getLearnedLogic(new FormulaProcessor<ExecVar>(vars), true);
-		//return machine.getLearnedLogic(true);
-		return getLearnedFormula();
+		Formula formula = getLearnedFormula();
+		double acc = machine.getModelAccuracy();
+		while (acc < 1.0) {
+			LoopTimesData newData = (LoopTimesData) selectiveSampling.selectData(loopData.getLocation(), 
+					formula, machine.getDataLabels(), machine.getDataPoints());			
+			addDataPoints(vars, newData.getMoreTimesValues(), Category.POSITIVE);
+			addDataPoints(vars, newData.getOneTimeValues(), Category.NEGATIVE);
+			machine.train();
+			Formula tmp = getLearnedFormula();
+			if (machine.getModelAccuracy() > acc && !tmp.equals(formula)) {
+				formula = tmp;
+				acc = machine.getModelAccuracy();
+			} else {
+				break;
+			}
+		}
+		return formula;
 	}
 	
 	private boolean collectAllVars(BreakpointData bkpData) {
@@ -116,7 +153,6 @@ public class DecisionLearner implements CategoryCalculator {
 		vars.removeAll(boolVars);
 		labels = extractLabels(vars);
 		machine.setDataLabels(labels);
-		machine.setDefaultParams();
 		return true;
 	}
 	
