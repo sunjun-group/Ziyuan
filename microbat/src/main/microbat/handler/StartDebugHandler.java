@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IMethodBinding;
@@ -148,7 +149,7 @@ public class StartDebugHandler extends AbstractHandler {
 								long t2 = System.currentTimeMillis();
 								System.out.println("time spent on collecting variables: " + (t2-t1));
 								
-							} catch (SavException e) {
+							} catch (SavException | TimeoutException e) {
 								e.printStackTrace();
 							} 
 							

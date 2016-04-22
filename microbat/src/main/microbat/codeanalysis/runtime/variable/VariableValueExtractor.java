@@ -524,18 +524,13 @@ public class VariableValueExtractor {
 			e.printStackTrace();
 		} catch (IncompatibleThreadStateException e) {
 			e.printStackTrace();
-		} catch (TimeoutException e){
-			System.out.println("Cannot parse " + val.getVarName());
-			e.printStackTrace();
-		} /*catch (InvalidTypeException e) {
+		} catch (InvalidTypeException e) {
 			e.printStackTrace();
 		} catch (ClassNotLoadedException e) {
 			e.printStackTrace();
 		} catch (InvocationException e) {
 			e.printStackTrace();
-		} */catch (Exception e){
-			e.printStackTrace();
-		}
+		} 
 	}
 
 	private void appendArrVarVal(VarValue parent, Variable variable,

@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -121,37 +122,37 @@ public class TestCaseAnalyzer {
 
 	public void runEvaluation() throws JavaModelException{
 		
-		ExcelReporter reporter = new ExcelReporter();
-		reporter.start();
-		
-		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
-		
-		for(IJavaElement element: testRoot.getChildren()){
-			if(element instanceof IPackageFragment){
-				runEvaluation((IPackageFragment)element, reporter);				
-			}
-		}
-		
-		reporter.export(trials, Settings.projectName+trialFileNum);
+//		ExcelReporter reporter = new ExcelReporter();
+//		reporter.start();
+//		
+//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+//		
+//		for(IJavaElement element: testRoot.getChildren()){
+//			if(element instanceof IPackageFragment){
+//				runEvaluation((IPackageFragment)element, reporter);				
+//			}
+//		}
+//		
+//		reporter.export(trials, Settings.projectName+trialFileNum);
 		
 //		runSingeTestCase();
 		
-//		String className = "org.apache.commons.math.MathExceptionTest";
-//		String methodName = "testSerialization";
-//		runEvaluationForSingleMethod(className, methodName, null);
+		String className = "org.apache.commons.math.MaxIterationsExceededExceptionTest";
+		String methodName = "testComplexConstructor";
+		runEvaluationForSingleMethod(className, methodName, null);
 	}
 	
 	private void runSingeTestCase(){
-		String testClassName = "test.SimpleCalculatorTest";
-		String testMethodName = "test";
+		String testClassName = "org.apache.commons.math.MaxIterationsExceededExceptionTest";
+		String testMethodName = "testComplexConstructor";
 //		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
 //				+ "apache-common-math-2.2\\640_17_4\\FastMath.java";
 //		String mutatedClass = "org.apache.commons.math.util.FastMath";
 		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-				+ "mutation\\111_29_1\\SimpleCalculator.java";
-		String mutatedClass = "com.simplecalculator.SimpleCalculator";
+				+ "mutation\\86_25_1\\MathException.java";
+		String mutatedClass = "org.apache.commons.math.MathException";
 		
-		int mutatedLine = 111;
+		int mutatedLine = 86;
 		
 		try {
 			runEvaluationForSingleTrial(testClassName, testMethodName, mutationFile, mutatedClass, mutatedLine);
@@ -310,21 +311,21 @@ public class TestCaseAnalyzer {
 									} catch (Exception e) {
 										e.printStackTrace();
 										String errorMsg = "Test case: " + testCaseName + 
-												" has exception\n" + "Mutated File: " + mutationFile;
+												" has exception when simulating debugging\n" + "Mutated File: " + mutationFile;
 										System.err.println(errorMsg);
-										errorMsgs.add(errorMsg);
+										//errorMsgs.add(errorMsg);
 									}
 									
-									if(errorMsgs.size() > 100){
-										System.currentTimeMillis();
-									}
+//									if(errorMsgs.size() > 100){
+//										System.currentTimeMillis();
+//									}
 								}
 								else{
 									System.out.println("No suitable mutants for test case " + testCaseName + "in line " + line);
 								}
 							} catch (Exception e) {
 								e.printStackTrace();
-								System.err.println("Test Case:");
+								System.err.println("test case has excpetion when generating trace:");
 								System.err.println(tmpTrial);
 							} 
 						}
@@ -408,15 +409,20 @@ public class TestCaseAnalyzer {
 				killingMutantTrace = null;
 			}
 			else{
-				long t1 = System.currentTimeMillis();
-				killingMutantTrace = constructor.constructTraceModel(testcaseConfig, executingStatements);
-				long t2 = System.currentTimeMillis();
-				int time = (int) ((t2-t1)/1000);
-				killingMutantTrace.setConstructTime(time);
-				System.out.println("Trace length: " + killingMutantTrace.size() + ", which takes " + time + "s to analyze.");				
+				killingMutantTrace = null;
+				try{
+					long t1 = System.currentTimeMillis();
+					killingMutantTrace = constructor.constructTraceModel(testcaseConfig, executingStatements);
+					long t2 = System.currentTimeMillis();
+					int time = (int) ((t2-t1)/1000);
+					killingMutantTrace.setConstructTime(time);
+					System.out.println("Trace length: " + killingMutantTrace.size() + ", which takes " + time + "s to analyze.");	
+				}
+				catch(TimeoutException e){
+					e.printStackTrace();
+				}
+							
 			}
-			
-			
 			//TraceFilePair tfPair = new TraceFilePair(killingMutantTrace, mutationFile.toString());
 		}
 		else{

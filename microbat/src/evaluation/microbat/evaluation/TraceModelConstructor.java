@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdi.TimeoutException;
 
 import sav.common.core.SavException;
 import sav.commons.TestConfiguration;
@@ -30,7 +31,8 @@ public class TraceModelConstructor {
 		//TODO
 	}
 	
-	public Trace constructTraceModel(AppJavaClassPath appClassPath, List<BreakPoint> executingStatements){
+	public Trace constructTraceModel(AppJavaClassPath appClassPath, List<BreakPoint> executingStatements)
+			throws TimeoutException{
 		setup();
 		
 		ProgramExecutor tcExecutor = new ProgramExecutor();
