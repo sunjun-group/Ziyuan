@@ -39,6 +39,8 @@ public class BreakpointBuilder {
 		decisionMap = new HashMap<DecisionLocation, BreakPoint>();
 		parentMap = new HashMap<DecisionLocation, DecisionLocation>();
 		Set<BreakPoint> bkps = new HashSet<BreakPoint>();
+		entry = new BreakPoint(className, methodName, cfg.getEntry().getBeginLine());
+		entry.addVars(variables);
 		
 		List<CfgNode> nodes = cfg.getVertices();
 		for (CfgNode node : nodes) {
@@ -54,9 +56,7 @@ public class BreakpointBuilder {
 			}
 		}
 		
-		entry = new BreakPoint(className, methodName, cfg.getEntry().getBeginLine());
 		bkps.remove(entry);
-		entry.addVars(variables);
 		bkps.add(entry);
 		
 		breakPoints = new ArrayList<BreakPoint>(bkps);
