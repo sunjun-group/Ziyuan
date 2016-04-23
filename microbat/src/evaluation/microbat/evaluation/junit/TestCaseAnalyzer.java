@@ -51,6 +51,7 @@ public class TestCaseAnalyzer {
 	
 	private List<String> errorMsgs = new ArrayList<>();
 	private int trialFileNum = 0;
+	private int trialNumPerTestCase = 3;
 	
 	public TestCaseAnalyzer(){
 		ignoredTestCaseFiles = new IgnoredTestCaseFiles();
@@ -143,16 +144,16 @@ public class TestCaseAnalyzer {
 	}
 	
 	private void runSingeTestCase(){
-		String testClassName = "org.apache.commons.math.MaxIterationsExceededExceptionTest";
-		String testMethodName = "testComplexConstructor";
+		String testClassName = "test.SimpleCalculatorTest";
+		String testMethodName = "test";
 //		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
 //				+ "apache-common-math-2.2\\640_17_4\\FastMath.java";
 //		String mutatedClass = "org.apache.commons.math.util.FastMath";
 		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-				+ "mutation\\86_25_1\\MathException.java";
-		String mutatedClass = "org.apache.commons.math.MathException";
+				+ "mutation\\85_40_1\\SimpleCalculator.java";
+		String mutatedClass = "com.simplecalculator.SimpleCalculator";
 		
-		int mutatedLine = 86;
+		int mutatedLine = 85;
 		
 		try {
 			runEvaluationForSingleTrial(testClassName, testMethodName, mutationFile, mutatedClass, mutatedLine);
@@ -221,7 +222,7 @@ public class TestCaseAnalyzer {
 					
 					for(MethodDeclaration testingMethod: testingMethods){
 						String methodName = testingMethod.getName().getIdentifier();
-						runEvaluationForSingleMethod(className, methodName, reporter);
+						runEvaluationForSingleTestCase(className, methodName, reporter);
 					}
 					
 				}
@@ -230,8 +231,9 @@ public class TestCaseAnalyzer {
 		
 	}
 	
-	private boolean runEvaluationForSingleMethod(String className, String methodName, ExcelReporter reporter) 
+	private boolean runEvaluationForSingleTestCase(String className, String methodName, ExcelReporter reporter) 
 			throws JavaModelException {
+		
 		AppJavaClassPath testcaseConfig = createProjectClassPath(className, methodName);
 		String testCaseName = className + "#" + methodName;
 		
@@ -251,12 +253,14 @@ public class TestCaseAnalyzer {
 			System.out.println("identifying the possible mutated location for " + testCaseName);
 			List<ClassLocation> locationList = findMutationLocation(executingStatements);
 			
-			System.currentTimeMillis();
+			int thisTrialNum = 0;
 			
 			if(!locationList.isEmpty()){
 				System.out.println("mutating the tested methods of " + testCaseName);
 				Map<String, MutationResult> mutations = generateMutationFiles(locationList);
 				System.out.println("mutation done for " + testCaseName);
+				
+				stop:
 				for(String tobeMutatedClass: mutations.keySet()){
 					MutationResult result = mutations.get(tobeMutatedClass);
 					for(Integer line: result.getMutatedFiles().keySet()){
@@ -277,7 +281,7 @@ public class TestCaseAnalyzer {
 								Trace killingMutatantTrace = 
 										mutateCode(tobeMutatedClass, mutationFile, testcaseConfig, line, testCaseName);
 								
-								if(killingMutatantTrace != null){
+								if(killingMutatantTrace != null && killingMutatantTrace.size() > 1){
 									if(null == correctTrace){
 										correctTrace = new TraceModelConstructor().
 												constructTraceModel(testcaseConfig, executingStatements);
@@ -291,12 +295,21 @@ public class TestCaseAnalyzer {
 												testCaseName, mutationFile.toString());
 										if(trial != null){
 											trial.setTime(killingMutatantTrace.getConstructTime());
-											trials.add(trial);	
+											trials.add(trial);
+											
 											if(!trial.isBugFound()){
 												String errorMsg = "Test case: " + testCaseName + 
 														" fail to find bug\n" + "Mutated File: " + mutationFile;
 												System.err.println(errorMsg);
-												errorMsgs.add(errorMsg);
+												//errorMsgs.add(errorMsg);
+												
+												/**
+												 * must be an implementation error, so I do not count it in the evaluation
+												 * for approach.
+												 */
+												if(trial.getJumpSteps().size() == 1){
+													trials.remove(trial);
+												}
 											}
 											
 											if(trials.size() > 100){
@@ -306,6 +319,11 @@ public class TestCaseAnalyzer {
 												reporter = new ExcelReporter();
 												reporter.start();
 												trialFileNum++;
+											}
+											
+											thisTrialNum++;
+											if(thisTrialNum >= trialNumPerTestCase){
+												break stop;
 											}
 										}
 									} catch (Exception e) {
