@@ -295,21 +295,22 @@ public class TestCaseAnalyzer {
 												testCaseName, mutationFile.toString());
 										if(trial != null){
 											trial.setTime(killingMutatantTrace.getConstructTime());
-											trials.add(trial);
+											/**
+											 * must be an implementation error, so I do not count it in the evaluation
+											 * for approach.
+											 */
+											if(trial.getJumpSteps().size() == 1 && !trial.isBugFound()){
+												//do nothing								
+											}
+											else{
+												trials.add(trial);	
+											}
 											
 											if(!trial.isBugFound()){
 												String errorMsg = "Test case: " + testCaseName + 
 														" fail to find bug\n" + "Mutated File: " + mutationFile;
 												System.err.println(errorMsg);
 												//errorMsgs.add(errorMsg);
-												
-												/**
-												 * must be an implementation error, so I do not count it in the evaluation
-												 * for approach.
-												 */
-												if(trial.getJumpSteps().size() == 1){
-													trials.remove(trial);
-												}
 											}
 											
 											if(trials.size() > 100){
@@ -444,8 +445,8 @@ public class TestCaseAnalyzer {
 			//TraceFilePair tfPair = new TraceFilePair(killingMutantTrace, mutationFile.toString());
 		}
 		else{
-			Trial trial = new Trial(testCaseName, mutatedLine, mutationFile.toString(), false, null, 0, Trial.NOT_KILL, 0);
-			trials.add(trial);
+			//Trial trial = new Trial(testCaseName, mutatedLine, mutationFile.toString(), false, null, 0, Trial.NOT_KILL, 0);
+			//trials.add(trial);
 		}
 		
 		iunit.getBuffer().setContents(originalCodeText);
