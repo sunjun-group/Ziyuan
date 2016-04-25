@@ -248,6 +248,9 @@ public class TestCaseAnalyzer {
 		
 		TestCaseRunner checker = new TestCaseRunner();
 		checker.checkValidity(testcaseConfig);
+		if(checker.isOverLong()){
+			return false;
+		}
 		
 		Trace correctTrace = null;
 		
