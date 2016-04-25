@@ -40,17 +40,19 @@ public class SelectiveSampling{
 		List<List<Eq<?>>> assignments = solver.getResult();
 		log.debug("Instrument values: ");
 		for (List<Eq<?>> valSet : assignments) {
-			tcExecutor.setVarMap(toInstrVarMap(valSet));
-			tcExecutor.run();
-			List<BreakpointData> result = tcExecutor.getResult();
-			if (result.isEmpty()) {
-				continue;
-			}
-			BreakpointData breakpointData = result.get(0);
-			if(bkpData == null) {
-				bkpData = breakpointData;
-			} else if (!bkpData.merge(breakpointData)) {
-				log.error("Wrong location: " + breakpointData.getLocation());
+			if (!valSet.isEmpty()) {
+				tcExecutor.setVarMap(toInstrVarMap(valSet));
+				tcExecutor.run();
+				List<BreakpointData> result = tcExecutor.getResult();
+				if (result.isEmpty()) {
+					continue;
+				}
+				BreakpointData breakpointData = result.get(0);
+				if(bkpData == null) {
+					bkpData = breakpointData;
+				} else if (!bkpData.merge(breakpointData)) {
+					log.error("Wrong location: " + breakpointData.getLocation());
+				}
 			}
 		}		
 		return bkpData;

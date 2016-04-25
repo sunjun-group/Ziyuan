@@ -37,7 +37,6 @@ public class BreakpointDataBuilder {
 			}
 		} else {
 			build(pathMap, inputValue, target);
-			target = null;
 		}
 	}
 	
@@ -105,16 +104,16 @@ public class BreakpointDataBuilder {
 			}
 		}
 		int last = parentOccurs.get(maxIdx);
-		times = 0;
+		int lastTimes = 0;
 		for (Integer occur : occurs) {
 			if (occur > last) {
-				times ++;
+				lastTimes ++;
 			}
-			if (times > 1) {
-				return times;
+			if (lastTimes > 1) {
+				return lastTimes;
 			}
 		}
-		return times;
+		return Math.max(times, lastTimes);
 	}
 	
 	public List<BreakpointData> getResult() {

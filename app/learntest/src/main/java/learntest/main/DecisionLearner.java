@@ -21,10 +21,10 @@ import libsvm.core.Category;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import libsvm.core.FormulaProcessor;
-import libsvm.core.Model;
 import libsvm.core.Machine.DataPoint;
+import libsvm.core.Model;
+import libsvm.extension.ByDistanceNegativePointSelection;
 import libsvm.extension.PositiveSeparationMachine;
-import libsvm.extension.RandomNegativePointSelection;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.AndFormula;
@@ -44,7 +44,7 @@ public class DecisionLearner implements CategoryCalculator {
 	private SelectiveSampling selectiveSampling;
 	
 	public DecisionLearner(SelectiveSampling selectiveSampling) {
-		machine = new PositiveSeparationMachine(new RandomNegativePointSelection());
+		machine = new PositiveSeparationMachine(new ByDistanceNegativePointSelection());
 		machine.setDefaultParams();
 		this.selectiveSampling = selectiveSampling;
 	}
@@ -93,6 +93,9 @@ public class DecisionLearner implements CategoryCalculator {
 		while (tFAcc < 1.0) {
 			BreakpointData newData = selectiveSampling.selectData(bkpData.getLocation(), 
 					trueFlase, machine.getDataLabels(), machine.getDataPoints());
+			if (newData == null) {
+				break;
+			}
 			addDataPoints(vars, newData.getTrueValues(), Category.POSITIVE);
 			addDataPoints(vars, newData.getFalseValues(), Category.NEGATIVE);
 			machine.train();
@@ -114,6 +117,14 @@ public class DecisionLearner implements CategoryCalculator {
 	}
 	
 	private Formula learn(LoopTimesData loopData) throws SavException {
+		if (loopData.getOneTimeValues().isEmpty()) {
+			log.info("Missing once loop data");
+			return null;
+		} 
+		if (loopData.getMoreTimesValues().isEmpty()) {
+			log.info("Missing more than once loop data");
+			return null;
+		}
 		machine.resetData();
 		addDataPoints(vars, loopData.getMoreTimesValues(), Category.POSITIVE);
 		addDataPoints(vars, loopData.getOneTimeValues(), Category.NEGATIVE);
@@ -122,7 +133,10 @@ public class DecisionLearner implements CategoryCalculator {
 		double acc = machine.getModelAccuracy();
 		while (acc < 1.0) {
 			LoopTimesData newData = (LoopTimesData) selectiveSampling.selectData(loopData.getLocation(), 
-					formula, machine.getDataLabels(), machine.getDataPoints());			
+					formula, machine.getDataLabels(), machine.getDataPoints());	
+			if (newData == null) {
+				break;
+			}
 			addDataPoints(vars, newData.getMoreTimesValues(), Category.POSITIVE);
 			addDataPoints(vars, newData.getOneTimeValues(), Category.NEGATIVE);
 			machine.train();
@@ -208,7 +222,7 @@ public class DecisionLearner implements CategoryCalculator {
 		Formula formula = null;
 		List<svm_model> models = machine.getLearnedModels();
 		final int numberOfFeatures = machine.getNumberOfFeatures();
-		if (numberOfFeatures > 0) {			
+		if (models != null && numberOfFeatures > 0) {			
 			for (svm_model svmModel : models) {
 				if (svmModel != null) {				
 					final Divider explicitDivider = new Model(svmModel, numberOfFeatures).getExplicitDivider();
