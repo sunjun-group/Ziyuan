@@ -45,9 +45,10 @@ public class ExcelReporter {
 	}
 	
 	public void export(List<Trial> trials, String fileName){
+		int rowNo = 1;
         try {
         	for(Trial trial: trials){
-        		Row row = sheet.createRow(bookSize);
+        		Row row = sheet.createRow(rowNo);
         		
         		row.createCell(0).setCellValue(trial.getTestCaseName());
         		row.createCell(1).setCellValue(trial.isBugFound());
@@ -67,7 +68,7 @@ public class ExcelReporter {
         		row.createCell(7).setCellValue(trial.getResult());
         		row.createCell(8).setCellValue(trial.getTime());
         		
-        		bookSize++;
+        		rowNo++;
         	}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -291,6 +291,7 @@ public class TestCaseAnalyzer {
 										mutateCode(tobeMutatedClass, mutationFile, testcaseConfig, line, testCaseName);
 								
 								if(mutateInfo.isTimeOut){
+									System.out.println("skip Time Out test case: " + testCaseName);
 									break stop;
 								}
 								
@@ -318,6 +319,8 @@ public class TestCaseAnalyzer {
 											}
 											else{
 												trials.add(trial);	
+												reporter.export(trials, Settings.projectName+trialFileNum);
+												System.currentTimeMillis();
 											}
 											
 											if(!trial.isBugFound()){
