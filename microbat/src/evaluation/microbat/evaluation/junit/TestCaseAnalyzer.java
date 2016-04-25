@@ -174,14 +174,15 @@ public class TestCaseAnalyzer {
 		
 		File mutatedFile = new File(mutationFile);
 		
-		Trace killingMutatantTrace = 
+		MutateInfo info =
 				mutateCode(mutatedClassName, mutatedFile, testcaseConfig, mutatedLine, testcaseName);
 		
-		if(killingMutatantTrace == null){
+		if(info.isTooLong){
 			System.out.println("mutated trace is over long");
 			return;
 		}
 		
+		Trace killingMutatantTrace = info.killingMutateTrace;
 		TestCaseRunner checker = new TestCaseRunner();
 		
 		List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
@@ -278,9 +279,14 @@ public class TestCaseAnalyzer {
 							}
 							
 							try {
-								Trace killingMutatantTrace = 
+								MutateInfo mutateInfo = 
 										mutateCode(tobeMutatedClass, mutationFile, testcaseConfig, line, testCaseName);
 								
+								if(mutateInfo.isTimeOut){
+									break stop;
+								}
+								
+								Trace killingMutatantTrace = mutateInfo.killingMutateTrace;
 								if(killingMutatantTrace != null && killingMutatantTrace.size() > 1){
 									if(null == correctTrace){
 										correctTrace = new TraceModelConstructor().
@@ -393,11 +399,31 @@ public class TestCaseAnalyzer {
 		
 	}
 
-	private Trace mutateCode(String toBeMutatedClass, File mutationFile, AppJavaClassPath testcaseConfig, 
+	class MutateInfo{
+		Trace killingMutateTrace = null;
+		boolean isTooLong = false;
+		boolean isKill = false;
+		boolean isTimeOut = false;
+		
+		public MutateInfo(Trace killingMutatnt, boolean isTooLong, boolean isKill, boolean isTimeOut) {
+			super();
+			this.killingMutateTrace = killingMutatnt;
+			this.isTooLong = isTooLong;
+			this.isKill = isKill;
+			this.isTimeOut = isTimeOut;
+		}
+		
+		
+	}
+	
+	private MutateInfo mutateCode(String toBeMutatedClass, File mutationFile, AppJavaClassPath testcaseConfig, 
 			int mutatedLine, String testCaseName) 
 			throws MalformedURLException, JavaModelException, IOException, NullPointerException {
 		
 		Trace killingMutantTrace = null;
+		boolean isTooLong = false;
+		boolean isKill = true;
+		boolean isTimeOut = false;
 		
 		ICompilationUnit iunit = JavaUtil.findICompilationUnitInProject(toBeMutatedClass);
 		String originalCodeText = iunit.getSource();
@@ -413,7 +439,7 @@ public class TestCaseAnalyzer {
 		TestCaseRunner checker = new TestCaseRunner();
 		checker.checkValidity(testcaseConfig);
 		
-		boolean isKill = !checker.isPassingTest() && !checker.hasCompilationError();
+		isKill = !checker.isPassingTest() && !checker.hasCompilationError();
 		System.out.println(": " + (isKill? "killed" : "not killed"));
 		
 		if(isKill){
@@ -426,6 +452,7 @@ public class TestCaseAnalyzer {
 				Trial trial = new Trial(testCaseName, mutatedLine, mutationFile.toString(), false, null, 0, Trial.OVER_LONG, 0);
 				trials.add(trial);
 				killingMutantTrace = null;
+				isTooLong = true;
 			}
 			else{
 				killingMutantTrace = null;
@@ -439,6 +466,7 @@ public class TestCaseAnalyzer {
 				}
 				catch(TimeoutException e){
 					e.printStackTrace();
+					isTimeOut = true;
 				}
 							
 			}
@@ -454,12 +482,13 @@ public class TestCaseAnalyzer {
 		autoCompile();
 		
 		try {
-			Thread.sleep(500);
+			Thread.sleep(300);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		
-		return killingMutantTrace;
+		MutateInfo mutateInfo = new MutateInfo(killingMutantTrace, isTooLong, isKill, isTimeOut);
+		return mutateInfo;
 	}
 	
 	private void autoCompile() {
