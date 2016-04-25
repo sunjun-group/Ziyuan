@@ -457,8 +457,8 @@ public class TestCaseAnalyzer {
 			List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
 			
 			if(checker.isOverLong()){
-				Trial trial = new Trial(testCaseName, mutatedLine, mutationFile.toString(), false, null, 0, Trial.OVER_LONG, 0);
-				trials.add(trial);
+				//Trial trial = new Trial(testCaseName, mutatedLine, mutationFile.toString(), false, null, 0, Trial.OVER_LONG, 0);
+				//trials.add(trial);
 				killingMutantTrace = null;
 				isTooLong = true;
 			}
