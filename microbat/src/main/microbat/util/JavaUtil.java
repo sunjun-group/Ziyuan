@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdi.TimeoutException;
+import org.eclipse.jdi.VirtualMachine;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -70,12 +71,18 @@ public class JavaUtil {
 			ObjectReference objValue) throws InvalidTypeException,
 			ClassNotLoadedException, IncompatibleThreadStateException,
 			InvocationException, TimeoutException {
-		String stringValue;
+		
 		ReferenceType type = (ReferenceType) objValue.type();
 		Method method = type.methodsByName(TO_STRING_NAME, TO_STRING_SIGN).get(0);
+		
+		if(type.toString().equals("com.insertinterval.Interval")){
+			System.currentTimeMillis();
+		}
+		
 		Value messageValue = objValue.invokeMethod(thread, method, 
 				new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);	
-		stringValue = (messageValue != null) ? messageValue.toString() : "null";
+		
+		String stringValue = (messageValue != null) ? messageValue.toString() : "null";
 		return stringValue;
 	}
 	

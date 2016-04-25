@@ -130,9 +130,10 @@ public class SocketLanchingConnector0 extends SocketLaunchingConnectorImpl {
 		String execString = fHome + slash + "bin" + slash + fLauncher; //$NON-NLS-1$
 
 		// Add Debug options.
-		execString += " -Xdebug -Xnoagent -Djava.compiler=NONE"; //$NON-NLS-1$
-		execString += " -Xrunjdwp:transport=dt_socket,address=" + address + ",server=n,suspend=" + (fSuspend ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-
+		//execString += " -Xdebug -Xnoagent -Djava.compiler=NONE"; //$NON-NLS-1$
+		//execString += " -Xrunjdwp:transport=dt_socket,address=" + address + ",server=n,suspend=" + (fSuspend ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		execString += " -agentlib:jdwp=transport=dt_socket,address="+ address + ",suspend=" + (fSuspend ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		
 		// Add User specified options.
 		if (fOptions != null)
 			execString += " " + fOptions; //$NON-NLS-1$
