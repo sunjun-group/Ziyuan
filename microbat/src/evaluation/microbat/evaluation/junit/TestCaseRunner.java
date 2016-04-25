@@ -49,7 +49,11 @@ public class TestCaseRunner extends ExecutionStatementCollector{
 	private boolean isPassingTest = false;
 	private boolean hasCompilationError = false;
 	
-	
+	/**
+	 * check whether it is a passing test case and having compilation error, however,
+	 * it cannot check whether it is over long.
+	 * @param appClassPath
+	 */
 	public void checkValidity(AppJavaClassPath appClassPath){
 		VirtualMachine vm = new VMStarter(appClassPath).start();
 		

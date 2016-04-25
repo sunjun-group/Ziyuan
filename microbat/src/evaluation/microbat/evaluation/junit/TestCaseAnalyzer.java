@@ -248,9 +248,6 @@ public class TestCaseAnalyzer {
 		
 		TestCaseRunner checker = new TestCaseRunner();
 		checker.checkValidity(testcaseConfig);
-		if(checker.isOverLong()){
-			return false;
-		}
 		
 		Trace correctTrace = null;
 		
@@ -258,6 +255,10 @@ public class TestCaseAnalyzer {
 			System.out.println(testCaseName + " is a passed test case");
 			
 			List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
+			if(checker.isOverLong()){
+				return false;
+			}
+			
 			System.out.println("identifying the possible mutated location for " + testCaseName);
 			List<ClassLocation> locationList = findMutationLocation(executingStatements);
 			
