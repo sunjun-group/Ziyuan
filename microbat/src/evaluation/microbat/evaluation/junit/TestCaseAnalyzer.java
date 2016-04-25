@@ -186,6 +186,10 @@ public class TestCaseAnalyzer {
 		TestCaseRunner checker = new TestCaseRunner();
 		
 		List<BreakPoint> executingStatements = checker.collectBreakPoints(testcaseConfig);
+		if(checker.isOverLong()){
+			return;
+		}
+		
 		Trace correctTrace = new TraceModelConstructor().
 				constructTraceModel(testcaseConfig, executingStatements);
 		
