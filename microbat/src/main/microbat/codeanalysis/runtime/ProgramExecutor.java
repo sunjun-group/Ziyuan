@@ -113,19 +113,10 @@ public class ProgramExecutor extends Executor {
 	 * the class patterns indicating the classes into which I will not step to
 	 * get the runtime values
 	 */
-	// private String[] excludes = { "java.*", "javax.*", "sun.*", "com.sun.*",
-	// "org.junit.*"};
-	// private VMConfiguration config;
 	private AppJavaClassPath config;
 	private SimpleDebugger debugger = new SimpleDebugger();
 	/** maps from a given class name to its contained breakpoints */
 	private Map<String, List<BreakPoint>> brkpsMap;
-
-	/**
-	 * fields for junit
-	 */
-	// private List<String> allTests;
-	// private long timeout = DEFAULT_TIMEOUT;
 
 	/**
 	 * for recording execution trace
@@ -259,6 +250,7 @@ public class ProgramExecutor extends Executor {
 			}
 
 			for (Event event : eventSet) {
+				
 				if (event instanceof VMStartEvent) {
 					System.out.println("JVM is started...");
 
@@ -269,9 +261,11 @@ public class ProgramExecutor extends Executor {
 				if (event instanceof VMDeathEvent || event instanceof VMDisconnectEvent) {
 					stop = true;
 					break;
-				} else if (event instanceof ClassPrepareEvent) {
+				} 
+				else if (event instanceof ClassPrepareEvent) {
 					parseBreakpoints(vm, (ClassPrepareEvent) event, locBrpMap);
 				} else if (event instanceof StepEvent) {
+					ThreadReference thread = ((StepEvent) event).thread();
 					Location currentLocation = ((StepEvent) event).location();
 					if (currentLocation.lineNumber() == 3751) {
 						System.currentTimeMillis();
@@ -288,7 +282,7 @@ public class ProgramExecutor extends Executor {
 					 */
 					boolean isContextChange = false;
 					if (lastSteppingInPoint != null) {
-						collectValueOfPreviousStep(lastSteppingInPoint, ((StepEvent) event).thread(), currentLocation);
+						collectValueOfPreviousStep(lastSteppingInPoint, thread, currentLocation);
 
 						/**
 						 * Parsing the written variables of last step.
@@ -301,7 +295,7 @@ public class ProgramExecutor extends Executor {
 						 */
 						isContextChange = checkContext(lastSteppingInPoint, currentLocation);
 						if (!isContextChange) {
-							parseReadWrittenVariableInThisStep(((StepEvent) event).thread(), currentLocation,
+							parseReadWrittenVariableInThisStep(thread, currentLocation,
 									this.trace.getLastestNode(), this.trace.getStepVariableTable(), Variable.WRITTEN);
 						}
 
@@ -316,7 +310,7 @@ public class ProgramExecutor extends Executor {
 					if (bkp != null) {
 						// TraceNode node = handleBreakpoint(bkp, ((StepEvent)
 						// event).thread(), currentLocation);
-						BreakPointValue bkpVal = extractValuesAtLocation(bkp, ((StepEvent) event).thread(),
+						BreakPointValue bkpVal = extractValuesAtLocation(bkp, thread,
 								currentLocation);
 						TraceNode node = recordTrace(bkp, bkpVal);
 						// System.out.println("Parsed node " + node);
@@ -374,7 +368,7 @@ public class ProgramExecutor extends Executor {
 							returnedValue = lastestReturnedValue;
 						}
 
-						parseReadWrittenVariableInThisStep(((StepEvent) event).thread(), currentLocation, node,
+						parseReadWrittenVariableInThisStep(thread, currentLocation, node,
 								this.trace.getStepVariableTable(), Variable.READ);
 
 						/**
@@ -383,7 +377,7 @@ public class ProgramExecutor extends Executor {
 						if (this.trace.size() > 1) {
 							TraceNode lastestNode = this.trace.getExectionList().get(this.trace.size() - 2);
 							if (lastestNode.getBreakPoint().isReturnStatement()) {
-								createVirutalVariableForReturnStatement(((StepEvent) event).thread(), node,
+								createVirutalVariableForReturnStatement(thread, node,
 										lastestNode, returnedValue);
 							}
 						}

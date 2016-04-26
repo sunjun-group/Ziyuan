@@ -18,6 +18,9 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdi.VirtualMachine;
+import org.eclipse.jdi.internal.ThreadReferenceImpl;
+import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.jdwp.JdwpThreadID;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -74,15 +77,23 @@ public class JavaUtil {
 		ReferenceType type = (ReferenceType) objValue.type();
 		Method method = type.methodsByName(TO_STRING_NAME, TO_STRING_SIGN).get(0);
 		
-		if(type.toString().equals("com.insertinterval.Interval")){
+		if(type.toString().equals("org.apache.commons.math.exception.NonMonotonousSequenceException")){
 			System.currentTimeMillis();
 		}
+		
+		boolean classPrepare = executor.getClassPrepareRequest().isEnabled();
+		boolean step = executor.getStepRequest().isEnabled();
+		boolean methodEntry = executor.getMethodEntryRequest().isEnabled();
+		boolean methodExit = executor.getMethodExitRequset().isEnabled();
+		boolean exception = executor.getExceptionRequest().isEnabled();
 		
 		executor.getClassPrepareRequest().disable();
 		executor.getStepRequest().disable();
 		executor.getMethodEntryRequest().disable();
 		executor.getMethodExitRequset().disable();
 		executor.getExceptionRequest().disable();
+		
+		((VirtualMachine)thread.virtualMachine()).setRequestTimeout(5000);
 		
 		Value messageValue = null;
 		try {
@@ -93,11 +104,11 @@ public class JavaUtil {
 			e.printStackTrace();
 		}
 		
-		executor.getClassPrepareRequest().enable();
-		executor.getStepRequest().enable();
-		executor.getMethodEntryRequest().enable();
-		executor.getMethodExitRequset().enable();
-		executor.getExceptionRequest().enable();
+		executor.getClassPrepareRequest().setEnabled(classPrepare);
+		executor.getStepRequest().setEnabled(step);
+		executor.getMethodEntryRequest().setEnabled(methodEntry);;
+		executor.getMethodExitRequset().setEnabled(methodExit);;
+		executor.getExceptionRequest().setEnabled(exception);;
 		
 		String stringValue = (messageValue != null) ? messageValue.toString() : "null";
 		return stringValue;

@@ -123,37 +123,45 @@ public class TestCaseAnalyzer {
 
 	public void runEvaluation() throws JavaModelException{
 		
-		ExcelReporter reporter = new ExcelReporter();
-		reporter.start();
+//		ExcelReporter reporter = new ExcelReporter();
+//		reporter.start();
+//		
+//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+//		
+//		for(IJavaElement element: testRoot.getChildren()){
+//			if(element instanceof IPackageFragment){
+//				runEvaluation((IPackageFragment)element, reporter);				
+//			}
+//		}
+//		
+//		reporter.export(trials, Settings.projectName+trialFileNum);
 		
-		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+		runSingeTrial();
 		
-		for(IJavaElement element: testRoot.getChildren()){
-			if(element instanceof IPackageFragment){
-				runEvaluation((IPackageFragment)element, reporter);				
-			}
-		}
-		
-		reporter.export(trials, Settings.projectName+trialFileNum);
-		
-//		runSingeTestCase();
-		
-//		String className = "org.apache.commons.math.MaxIterationsExceededExceptionTest";
-//		String methodName = "testComplexConstructor";
-//		runEvaluationForSingleMethod(className, methodName, null);
+//		String className = "org.apache.commons.math.analysis.interpolation.LinearInterpolatorTest";
+//		String methodName = "testInterpolateLinear";
+//		runEvaluationForSingleTestCase(className, methodName, null);
 	}
 	
-	private void runSingeTestCase(){
-		String testClassName = "test.SimpleCalculatorTest";
-		String testMethodName = "test";
+	private void runSingeTrial(){
+		//TODO BUG
+//		String testClassName = "org.apache.commons.math.analysis.interpolation.LinearInterpolatorTest";
+//		String testMethodName = "testInterpolateLinear";
 //		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-//				+ "apache-common-math-2.2\\640_17_4\\FastMath.java";
-//		String mutatedClass = "org.apache.commons.math.util.FastMath";
-		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-				+ "mutation\\85_40_1\\SimpleCalculator.java";
-		String mutatedClass = "com.simplecalculator.SimpleCalculator";
+//				+ "apache-common-math-2.2\\2081_22_1\\MathUtils.java";
+//		String mutatedClass = "org.apache.commons.math.util.MathUtils";
 		
-		int mutatedLine = 85;
+		String testClassName = "org.apache.commons.math.analysis.interpolation.LinearInterpolatorTest";
+		String testMethodName = "testInterpolateLinear";
+		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
+				+ "apache-common-math-2.2\\2081_22_1\\MathUtils.java";
+		String mutatedClass = "org.apache.commons.math.util.MathUtils";
+		
+//		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
+//				+ "mutation\\85_40_1\\SimpleCalculator.java";
+//		String mutatedClass = "com.simplecalculator.SimpleCalculator";
+		
+		int mutatedLine = 2081;
 		
 		try {
 			runEvaluationForSingleTrial(testClassName, testMethodName, mutationFile, mutatedClass, mutatedLine);
@@ -291,6 +299,7 @@ public class TestCaseAnalyzer {
 										mutateCode(tobeMutatedClass, mutationFile, testcaseConfig, line, testCaseName);
 								
 								if(mutateInfo.isTimeOut){
+									System.out.println("Timeout, mutated file: " + mutationFile);
 									System.out.println("skip Time Out test case: " + testCaseName);
 									break stop;
 								}
