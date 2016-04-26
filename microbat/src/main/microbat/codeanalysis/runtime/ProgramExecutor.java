@@ -60,7 +60,6 @@ import sav.strategies.vm.SimpleDebugger;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ClassNotLoadedException;
-import com.sun.jdi.ClassObjectReference;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
@@ -711,12 +710,7 @@ public class ProgramExecutor extends Executor {
 			} else if (returnedValue instanceof ArrayReference) {
 				returnedStringValue = JavaUtil.retrieveStringValueOfArray((ArrayReference) returnedValue);
 			} else if (returnedValue instanceof ObjectReference) {
-				try {
-					returnedStringValue = JavaUtil.retrieveToStringValue(thread, (ObjectReference) returnedValue, this);
-				} catch (InvalidTypeException | ClassNotLoadedException | IncompatibleThreadStateException
-						| InvocationException e) {
-					e.printStackTrace();
-				}
+				returnedStringValue = JavaUtil.retrieveToStringValue(thread, (ObjectReference) returnedValue, this);
 			}
 
 		}

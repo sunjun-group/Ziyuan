@@ -69,9 +69,7 @@ public class JavaUtil {
 	}
 	
 	public static String retrieveToStringValue(ThreadReference thread,
-			ObjectReference objValue, ProgramExecutor executor) throws InvalidTypeException,
-			ClassNotLoadedException, IncompatibleThreadStateException,
-			InvocationException, TimeoutException {
+			ObjectReference objValue, ProgramExecutor executor) throws TimeoutException {
 		
 		ReferenceType type = (ReferenceType) objValue.type();
 		Method method = type.methodsByName(TO_STRING_NAME, TO_STRING_SIGN).get(0);
@@ -86,8 +84,14 @@ public class JavaUtil {
 		executor.getMethodExitRequset().disable();
 		executor.getExceptionRequest().disable();
 		
-		Value messageValue = objValue.invokeMethod(thread, method, 
-				new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);	
+		Value messageValue = null;
+		try {
+			messageValue = objValue.invokeMethod(thread, method, 
+					new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
+		} catch (InvalidTypeException | ClassNotLoadedException | IncompatibleThreadStateException
+				| InvocationException e) {
+			e.printStackTrace();
+		}
 		
 		executor.getClassPrepareRequest().enable();
 		executor.getStepRequest().enable();

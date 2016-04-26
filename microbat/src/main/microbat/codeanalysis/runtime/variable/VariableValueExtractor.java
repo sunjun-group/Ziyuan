@@ -26,19 +26,15 @@ import microbat.util.JavaUtil;
 import microbat.util.PrimitiveUtils;
 
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.jdi.TimeoutException;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.BooleanType;
 import com.sun.jdi.BooleanValue;
-import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
-import com.sun.jdi.InvalidTypeException;
-import com.sun.jdi.InvocationException;
 import com.sun.jdi.LocalVariable;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
@@ -526,12 +522,6 @@ public class VariableValueExtractor {
 		} catch (AbsentInformationException e) {
 			e.printStackTrace();
 		} catch (IncompatibleThreadStateException e) {
-			e.printStackTrace();
-		} catch (InvalidTypeException e) {
-			e.printStackTrace();
-		} catch (ClassNotLoadedException e) {
-			e.printStackTrace();
-		} catch (InvocationException e) {
 			e.printStackTrace();
 		} 
 	}
