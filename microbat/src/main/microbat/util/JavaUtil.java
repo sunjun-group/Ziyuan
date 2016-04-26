@@ -80,16 +80,20 @@ public class JavaUtil {
 			System.currentTimeMillis();
 		}
 		
+		executor.getClassPrepareRequest().disable();
 		executor.getStepRequest().disable();
 		executor.getMethodEntryRequest().disable();
 		executor.getMethodExitRequset().disable();
+		executor.getExceptionRequest().disable();
 		
 		Value messageValue = objValue.invokeMethod(thread, method, 
 				new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);	
 		
+		executor.getClassPrepareRequest().enable();
 		executor.getStepRequest().enable();
 		executor.getMethodEntryRequest().enable();
 		executor.getMethodExitRequset().enable();
+		executor.getExceptionRequest().enable();
 		
 		String stringValue = (messageValue != null) ? messageValue.toString() : "null";
 		return stringValue;

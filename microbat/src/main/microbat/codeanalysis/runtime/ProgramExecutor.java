@@ -658,15 +658,16 @@ public class ProgramExecutor extends Executor {
 		return false;
 	}
 
+	private ExceptionRequest exceptionRequest;
 	private void addExceptionWatch(EventRequestManager erm) {
 
-		ExceptionRequest request = erm.createExceptionRequest(null, true, true);
-		request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+		setExceptionRequest(erm.createExceptionRequest(null, true, true));
+		getExceptionRequest().setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 		for (String ex : stepWatchExcludes) {
-			request.addClassExclusionFilter(ex);
+			getExceptionRequest().addClassExclusionFilter(ex);
 		}
 		// request.addClassFilter("java.io.FileNotFoundException");
-		request.enable();
+		getExceptionRequest().enable();
 	}
 
 	private StepRequest stepRequest;
@@ -849,10 +850,11 @@ public class ProgramExecutor extends Executor {
 		addClassWatch(erm, ENTER_TC_BKP.getClassCanonicalName());
 	}
 
+	private ClassPrepareRequest classPrepareRequest;
 	private final void addClassWatch(EventRequestManager erm, String className) {
-		ClassPrepareRequest classPrepareRequest = erm.createClassPrepareRequest();
-		classPrepareRequest.addClassFilter(className);
-		classPrepareRequest.setEnabled(true);
+		setClassPrepareRequest(erm.createClassPrepareRequest());
+		getClassPrepareRequest().addClassFilter(className);
+		getClassPrepareRequest().setEnabled(true);
 	}
 
 	private void parseBreakpoints(VirtualMachine vm, ClassPrepareEvent classPrepEvent, Map<String, BreakPoint> locBrpMap) {
@@ -1277,6 +1279,22 @@ public class ProgramExecutor extends Executor {
 
 	public void setMethodExitRequset(MethodExitRequest methodExitRequset) {
 		this.methodExitRequset = methodExitRequset;
+	}
+
+	public ClassPrepareRequest getClassPrepareRequest() {
+		return classPrepareRequest;
+	}
+
+	public void setClassPrepareRequest(ClassPrepareRequest classPrepareRequest) {
+		this.classPrepareRequest = classPrepareRequest;
+	}
+
+	public ExceptionRequest getExceptionRequest() {
+		return exceptionRequest;
+	}
+
+	public void setExceptionRequest(ExceptionRequest exceptionRequest) {
+		this.exceptionRequest = exceptionRequest;
 	}
 
 	class ExpressionValue {
