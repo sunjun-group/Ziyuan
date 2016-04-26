@@ -219,8 +219,7 @@ public class StepRecommender {
 				return moreDetailedNodeInBetween;
 			}
 			else{
-				System.err.println("In findMoreDetailedNodeInBetween(), cannot find a dominator between current node " + 
-						currentNode.getOrder() + ", and unclear node " + earliestVisitedUnclearNode.getOrder());
+				return earliestVisitedUnclearNode;
 			}
 		}
 		else{
