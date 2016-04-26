@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import microbat.codeanalysis.runtime.ProgramExecutor;
 import microbat.codeanalysis.runtime.herustic.HeuristicIgnoringFieldRule;
 import microbat.model.BreakPoint;
 import microbat.model.BreakPointValue;
@@ -68,12 +69,14 @@ public class VariableValueExtractor {
 	private BreakPoint bkp;
 	private ThreadReference thread;
 	private Location loc;
+	private ProgramExecutor executor;
 	
 	public VariableValueExtractor(BreakPoint bkp, ThreadReference thread,
-			Location loc) {
+			Location loc, ProgramExecutor executor) {
 		this.bkp = bkp;
 		this.thread = thread;
 		this.loc = loc;
+		this.executor = executor;
 	}
 
 	public final BreakPointValue extractValue()
@@ -505,7 +508,7 @@ public class VariableValueExtractor {
 				}
 				else{
 					if(thread.isSuspended()){
-						stringValue = JavaUtil.retrieveToStringValue(thread, objValue);
+						stringValue = JavaUtil.retrieveToStringValue(thread, objValue, this.executor);
 						
 						System.currentTimeMillis();
 					}

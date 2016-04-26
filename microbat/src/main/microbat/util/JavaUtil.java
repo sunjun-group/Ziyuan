@@ -7,6 +7,7 @@ import java.util.Map;
 
 import microbat.codeanalysis.ast.MethodDeclarationFinder;
 import microbat.codeanalysis.ast.MethodInvocationFinder;
+import microbat.codeanalysis.runtime.ProgramExecutor;
 import microbat.codeanalysis.runtime.jpda.expr.ExpressionParser;
 import microbat.codeanalysis.runtime.jpda.expr.ParseException;
 import microbat.model.trace.TraceNode;
@@ -68,7 +69,7 @@ public class JavaUtil {
 	}
 	
 	public static String retrieveToStringValue(ThreadReference thread,
-			ObjectReference objValue) throws InvalidTypeException,
+			ObjectReference objValue, ProgramExecutor executor) throws InvalidTypeException,
 			ClassNotLoadedException, IncompatibleThreadStateException,
 			InvocationException, TimeoutException {
 		
@@ -79,8 +80,16 @@ public class JavaUtil {
 			System.currentTimeMillis();
 		}
 		
+		executor.getStepRequest().disable();
+		executor.getMethodEntryRequest().disable();
+		executor.getMethodExitRequset().disable();
+		
 		Value messageValue = objValue.invokeMethod(thread, method, 
 				new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);	
+		
+		executor.getStepRequest().enable();
+		executor.getMethodEntryRequest().enable();
+		executor.getMethodExitRequset().enable();
 		
 		String stringValue = (messageValue != null) ? messageValue.toString() : "null";
 		return stringValue;

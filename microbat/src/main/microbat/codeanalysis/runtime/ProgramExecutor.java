@@ -239,7 +239,8 @@ public class ProgramExecutor extends Executor {
 		/** this variable is used to handle exception case. */
 		Location caughtLocationForJustException = null;
 
-		cancel: while (!stop && !eventTimeout) {
+		cancel: 
+		while (!stop && !eventTimeout) {
 			EventSet eventSet;
 			try {
 				eventSet = eventQueue.remove(10000);
@@ -394,8 +395,8 @@ public class ProgramExecutor extends Executor {
 						isLastStepEventRecordNode = false;
 					}
 
-					menr.setEnabled(true);
-					mexr.setEnabled(true);
+					getMethodEntryRequest().setEnabled(true);
+					getMethodExitRequset().setEnabled(true);
 
 					monitor.worked(1);
 					if (monitor.isCanceled() || this.trace.getExectionList().size() >= Settings.stepLimit) {
@@ -441,8 +442,8 @@ public class ProgramExecutor extends Executor {
 					 * saving time.
 					 */
 					else {
-						menr.setEnabled(false);
-						mexr.setEnabled(false);
+						getMethodEntryRequest().setEnabled(false);
+						getMethodExitRequset().setEnabled(false);
 					}
 
 				} else if (event instanceof MethodExitEvent) {
@@ -467,8 +468,8 @@ public class ProgramExecutor extends Executor {
 							}
 						}
 					} else {
-						menr.setEnabled(false);
-						mexr.setEnabled(false);
+						getMethodEntryRequest().setEnabled(false);
+						getMethodExitRequset().setEnabled(false);
 					}
 
 				} else if (event instanceof ExceptionEvent) {
@@ -668,9 +669,9 @@ public class ProgramExecutor extends Executor {
 		request.enable();
 	}
 
+	private StepRequest stepRequest;
 	private void addStepWatch(EventRequestManager erm, Event event) {
-
-		StepRequest stepRequest = erm.createStepRequest(((VMStartEvent) event).thread(), StepRequest.STEP_LINE,
+		stepRequest = erm.createStepRequest(((VMStartEvent) event).thread(), StepRequest.STEP_LINE,
 				StepRequest.STEP_INTO);
 		stepRequest.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 		for (String ex : stepWatchExcludes) {
@@ -710,7 +711,7 @@ public class ProgramExecutor extends Executor {
 				returnedStringValue = JavaUtil.retrieveStringValueOfArray((ArrayReference) returnedValue);
 			} else if (returnedValue instanceof ObjectReference) {
 				try {
-					returnedStringValue = JavaUtil.retrieveToStringValue(thread, (ObjectReference) returnedValue);
+					returnedStringValue = JavaUtil.retrieveToStringValue(thread, (ObjectReference) returnedValue, this);
 				} catch (InvalidTypeException | ClassNotLoadedException | IncompatibleThreadStateException
 						| InvocationException e) {
 					e.printStackTrace();
@@ -816,26 +817,26 @@ public class ProgramExecutor extends Executor {
 		}
 	}
 
-	private MethodEntryRequest menr;
-	private MethodExitRequest mexr;
+	private MethodEntryRequest methodEntryRequest;
+	private MethodExitRequest methodExitRequset;
 
 	/**
 	 * add method enter and exit event
 	 */
 	private void addMethodWatch(EventRequestManager erm) {
-		menr = erm.createMethodEntryRequest();
+		setMethodEntryRequest(erm.createMethodEntryRequest());
 		for (String classPattern : stepWatchExcludes) {
-			menr.addClassExclusionFilter(classPattern);
+			getMethodEntryRequest().addClassExclusionFilter(classPattern);
 		}
-		menr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-		menr.enable();
+		getMethodEntryRequest().setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+		getMethodEntryRequest().enable();
 
-		mexr = erm.createMethodExitRequest();
+		setMethodExitRequset(erm.createMethodExitRequest());
 		for (String classPattern : stepWatchExcludes) {
-			mexr.addClassExclusionFilter(classPattern);
+			getMethodExitRequset().addClassExclusionFilter(classPattern);
 		}
-		mexr.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-		mexr.enable();
+		getMethodExitRequset().setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+		getMethodExitRequset().enable();
 	}
 
 	/** add watch requests **/
@@ -949,7 +950,7 @@ public class ProgramExecutor extends Executor {
 					var.setVarID(varID);
 
 					if (value.type().toString().equals("java.lang.String")) {
-						String strValue = JavaUtil.retrieveToStringValue(frame.thread(), objRef);
+						String strValue = JavaUtil.retrieveToStringValue(frame.thread(), objRef, this);
 						strValue = strValue.substring(1, strValue.length() - 1);
 						varValue = new StringValue(strValue, false, var);
 					} else {
@@ -958,7 +959,7 @@ public class ProgramExecutor extends Executor {
 							ArrayReference arrayValue = (ArrayReference) objRef;
 							strValue = JavaUtil.retrieveStringValueOfArray(arrayValue);
 						} else {
-							strValue = JavaUtil.retrieveToStringValue(frame.thread(), objRef);
+							strValue = JavaUtil.retrieveToStringValue(frame.thread(), objRef, this);
 						}
 
 						varValue = new ReferenceValue(false, false, var);
@@ -1215,7 +1216,7 @@ public class ProgramExecutor extends Executor {
 		if (Settings.isRecordSnapshot) {
 			try {
 				// return getValueExtractor().extractValue(bkp, bkpEvent);
-				VariableValueExtractor extractor = new VariableValueExtractor(bkp, thread, loc);
+				VariableValueExtractor extractor = new VariableValueExtractor(bkp, thread, loc, this);
 				BreakPointValue bpValue = extractor.extractValue();
 				return bpValue;
 
@@ -1252,6 +1253,30 @@ public class ProgramExecutor extends Executor {
 
 	public void setConfig(AppJavaClassPath config) {
 		this.config = config;
+	}
+
+	public StepRequest getStepRequest() {
+		return stepRequest;
+	}
+
+	public void setStepRequest(StepRequest stepRequest) {
+		this.stepRequest = stepRequest;
+	}
+
+	public MethodEntryRequest getMethodEntryRequest() {
+		return methodEntryRequest;
+	}
+
+	public void setMethodEntryRequest(MethodEntryRequest methodEntryRequest) {
+		this.methodEntryRequest = methodEntryRequest;
+	}
+
+	public MethodExitRequest getMethodExitRequset() {
+		return methodExitRequset;
+	}
+
+	public void setMethodExitRequset(MethodExitRequest methodExitRequset) {
+		this.methodExitRequset = methodExitRequset;
 	}
 
 	class ExpressionValue {
