@@ -138,8 +138,8 @@ public class TestCaseAnalyzer {
 		
 //		runSingeTrial();
 		
-//		String className = "org.apache.commons.math.analysis.interpolation.LinearInterpolatorTest";
-//		String methodName = "testInterpolateLinear";
+//		String className = "org.apache.tools.ant.taskdefs.DeltreeTest";
+//		String methodName = "test1";
 //		runEvaluationForSingleTestCase(className, methodName, null);
 	}
 	
