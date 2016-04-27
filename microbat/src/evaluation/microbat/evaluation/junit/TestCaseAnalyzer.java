@@ -235,7 +235,12 @@ public class TestCaseAnalyzer {
 					
 					for(MethodDeclaration testingMethod: testingMethods){
 						String methodName = testingMethod.getName().getIdentifier();
-						runEvaluationForSingleTestCase(className, methodName, reporter);
+						try{
+							runEvaluationForSingleTestCase(className, methodName, reporter);							
+						}
+						catch(Exception e){
+							e.printStackTrace();
+						}
 					}
 					
 				}
