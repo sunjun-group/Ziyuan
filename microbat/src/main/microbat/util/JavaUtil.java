@@ -262,9 +262,15 @@ public class JavaUtil {
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setResolveBindings(true);
 		parser.setSource(iunit);
-		CompilationUnit cu = (CompilationUnit) parser.createAST(null);
 		
-		return cu;
+		CompilationUnit cu = null;
+		try{
+			cu = (CompilationUnit) parser.createAST(null);		
+			return cu;
+		}
+		catch(java.lang.IllegalStateException e){
+			return null;
+		}
 	}
 	
 	public static IProject getSpecificJavaProjectInWorkspace(){
@@ -306,7 +312,7 @@ public class JavaUtil {
 			CompilationUnit thatCU = JavaUtil.findCompilationUnitInProject(thatClassName);
 			
 			if(thisCU==null || thatCU==null){
-				return false;
+				return true;
 			}
 			
 			AbstractTypeDeclaration thisType = (AbstractTypeDeclaration) thisCU.types().get(0);
@@ -351,7 +357,7 @@ public class JavaUtil {
 			}
 		}
 		
-//		System.currentTimeMillis();
+		System.currentTimeMillis();
 		return null;
 	}
 
