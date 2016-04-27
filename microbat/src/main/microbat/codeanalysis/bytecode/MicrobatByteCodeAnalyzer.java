@@ -389,17 +389,22 @@ public class MicrobatByteCodeAnalyzer{
 		return null;
 	}
 	
+	Map<String, CompilationUnit> unitMap = new HashMap<>();
+	
 	private void appendReadWritenVariable(BreakPoint point, ShrikeCTMethod method, IInstruction[] insList, 
 			int insIndex, IR ir) throws InvalidClassFileException {
 		
 //		String varName = null;
-		
 		IInstruction ins = insList[insIndex];
 		
 		int pc = method.getBytecodeIndex(insIndex);
 		int lineNumber = method.getLineNumber(pc);
 		
-		CompilationUnit cu = JavaUtil.findCompilationUnitInProject(point.getClassCanonicalName());
+		CompilationUnit cu = unitMap.get(point.getClassCanonicalName());
+		if(cu == null){
+			cu = JavaUtil.findCompilationUnitInProject(point.getClassCanonicalName());
+			unitMap.put(point.getClassCanonicalName(), cu);
+		}
 		
 		if(lineNumber == 43){
 			System.currentTimeMillis();
