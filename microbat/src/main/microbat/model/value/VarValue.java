@@ -152,6 +152,9 @@ public abstract class VarValue implements GraphNode{
 	}
 
 	public void setVarID(String varID) {
+		if(varID == null){
+			System.currentTimeMillis();
+		}
 		this.variable.setVarID(varID);
 	}
 

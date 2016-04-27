@@ -123,20 +123,20 @@ public class TestCaseAnalyzer {
 
 	public void runEvaluation() throws JavaModelException{
 		
-//		ExcelReporter reporter = new ExcelReporter();
-//		reporter.start();
-//		
-//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
-//		
-//		for(IJavaElement element: testRoot.getChildren()){
-//			if(element instanceof IPackageFragment){
-//				runEvaluation((IPackageFragment)element, reporter);				
-//			}
-//		}
-//		
-//		reporter.export(trials, Settings.projectName+trialFileNum);
+		ExcelReporter reporter = new ExcelReporter();
+		reporter.start();
 		
-		runSingeTrial();
+		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+		
+		for(IJavaElement element: testRoot.getChildren()){
+			if(element instanceof IPackageFragment){
+				runEvaluation((IPackageFragment)element, reporter);				
+			}
+		}
+		
+		reporter.export(trials, Settings.projectName+trialFileNum);
+		
+//		runSingeTrial();
 		
 //		String className = "org.apache.commons.math.analysis.interpolation.LinearInterpolatorTest";
 //		String methodName = "testInterpolateLinear";
