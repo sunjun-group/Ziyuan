@@ -114,6 +114,12 @@ public class Mutator implements IMutator {
 					opMapConfig = MuMapParser.parse(file);
 				} catch (IOException e) {
 					e.printStackTrace();
+				} catch (NullPointerException e){
+					e.printStackTrace();
+					
+					String userDir = System.getProperty("user.dir");
+					String mutationDir = userDir + File.separator + "dropins" + File.separator + "MuMap.txt";
+					opMapConfig = MuMapParser.parse(mutationDir);
 				}
 			}
 			else{
