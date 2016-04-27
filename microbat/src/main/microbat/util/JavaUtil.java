@@ -233,7 +233,7 @@ public class JavaUtil {
 		IJavaProject project = JavaCore.create(getSpecificJavaProjectInWorkspace());
 		try {
 			for(IPackageFragmentRoot packageFragmentRoot: project.getPackageFragmentRoots()){
-				if(!(packageFragmentRoot instanceof JarPackageFragmentRoot) && packageFragmentRoot.toString().contains("test")){
+				if(!(packageFragmentRoot instanceof JarPackageFragmentRoot) && packageFragmentRoot.getResource().toString().contains("test")){
 					
 					return packageFragmentRoot;
 //					IPackageFragment packageFrag = packageFragmentRoot.getPackageFragment(packageName);

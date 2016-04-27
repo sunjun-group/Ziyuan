@@ -59,6 +59,8 @@ public class MicroBatUtil {
 		 * setting depended jars into classpath
 		 */
 		String workspacePath = projectPath.substring(0, projectPath.indexOf(File.separator+Settings.projectName)); 
+		appClassPath.addClasspath(projectPath);
+		
 		for(IClasspathEntry classpathEntry: javaProject.readRawClasspath()){
 			if(classpathEntry.getEntryKind()==IClasspathEntry.CPE_LIBRARY){
 				String path = classpathEntry.getPath().toOSString();
