@@ -119,8 +119,8 @@ public class MicrobatByteCodeAnalyzer{
 		IClassHierarchy cha = ClassHierarchy.make(scope);
 		
 //		Iterable<Entrypoint> entrypoints = Util.makeMainEntrypoints(scope, cha);
-		BreakPoint launchPoint = parseLanuchPoint(appClassPath);
-		Iterable<Entrypoint> entrypoints = makeEntrypoints(scope.getApplicationLoader(), cha, launchPoint);
+		List<BreakPoint> entryPoints = parseLanuchPoints(appClassPath);
+		Iterable<Entrypoint> entrypoints = makeEntrypoints(scope.getApplicationLoader(), cha, entryPoints);
 		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
 		
 //		CallGraphBuilder builder = Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope);
@@ -139,7 +139,8 @@ public class MicrobatByteCodeAnalyzer{
 		return breakPoints;
 	}
 
-	private BreakPoint parseLanuchPoint(AppJavaClassPath appClassPath) {
+	private List<BreakPoint> parseLanuchPoints(AppJavaClassPath appClassPath) {
+		List<BreakPoint> points = new ArrayList<>();
 		if(appClassPath.getOptionalTestClass() != null){
 			String testClassName = appClassPath.getOptionalTestClass();
 			CompilationUnit cu = JavaUtil.findCompilationUnitInProject(testClassName);
@@ -151,8 +152,17 @@ public class MicrobatByteCodeAnalyzer{
 					IMethodBinding mBinding = md.resolveBinding();
 					String methodSignature = JavaUtil.generateMethodSignature(mBinding);
 					BreakPoint point = new BreakPoint(testClassName, methodSignature, -1);
-					return point;
+					points.add(point);
+					break;
 				}
+			}
+			
+			List<MethodDeclaration> setupMdList = JTestUtil.findBeforeAfterMethod(cu);
+			for(MethodDeclaration md: setupMdList){
+				IMethodBinding mBinding = md.resolveBinding();
+				String methodSignature = JavaUtil.generateMethodSignature(mBinding);
+				BreakPoint point = new BreakPoint(testClassName, methodSignature, -1);
+				points.add(point);
 			}
 		}
 		else{
@@ -167,11 +177,11 @@ public class MicrobatByteCodeAnalyzer{
 				IMethodBinding mBinding = mainMethod.resolveBinding();
 				String methodSignature = JavaUtil.generateMethodSignature(mBinding);
 				BreakPoint point = new BreakPoint(launchClass, methodSignature, -1);
-				return point;
+				points.add(point);
 			}
 		}
 		
-		return null;
+		return points;
 	}
 	
 	class MainMethodFinder extends ASTVisitor{
@@ -997,10 +1007,55 @@ public class MicrobatByteCodeAnalyzer{
 		return new FileOfClasses(url.openStream()); 
 	}
 
+	private Descriptor createDescriptor(String methodSign) {
+		MethodTypeSignature methodTypeSign = MethodTypeSignature.make(methodSign);
+		TypeName[] types;
+		TypeSignature[] arguments = methodTypeSign.getArguments();
+		if (CollectionUtils.isEmpty(arguments)) {
+			types = new TypeName[0];
+		} else {
+			types = new TypeName[arguments.length];
+			for (int i = 0; i < arguments.length; i++) {
+				types[i] = toTypeName(arguments[i].toString());
+			}
+		}
+		TypeName returnType;
+		if (methodSign.substring(methodSign.lastIndexOf(")") + 1, methodSign.length()).equals("V")) {
+			returnType = TypeReference.VoidName; 
+		} else {
+			returnType = toTypeName(methodTypeSign.getReturnType().toString());
+		}
+		return Descriptor.findOrCreate(types, returnType);
+	}
+	
+	private TypeName toTypeName(String sign) {
+		return TypeName.findOrCreate(trimSignature(sign));
+	}
+	
+	public String trimSignature(String typeSign) {
+		String newSig = typeSign.replace(";", "");
+		return newSig;
+//		return StringUtils.replace(typeSign, ";", "");
+	}
 	
 	private Iterable<Entrypoint> makeEntrypoints(final ClassLoaderReference loaderRef, final IClassHierarchy cha,
-			final BreakPoint breakpoint){
+			List<BreakPoint> breakpoints){
 
+		final List<Entrypoint> entries = new ArrayList<>();
+		for(BreakPoint breakpoint: breakpoints){
+			String classSignature = trimSignature(SignatureUtils.getSignature(breakpoint.getClassCanonicalName()));
+			TypeReference typeRef = TypeReference.findOrCreate(loaderRef, TypeName.string2TypeName(classSignature));
+			
+			String methodName = SignatureUtils.extractMethodName(breakpoint.getMethodSign());
+			Atom method = Atom.findOrCreateAsciiAtom(methodName);
+			
+			Descriptor desc = createDescriptor(breakpoint.getMethodSign());
+			MethodReference mainRef = MethodReference.findOrCreate(typeRef, method, desc);
+			
+			Entrypoint entry = new DefaultEntrypoint(mainRef, cha);
+			entries.add(entry);
+		}
+		
 		return new Iterable<Entrypoint>() {
 			public Iterator<Entrypoint> iterator() {
 				return new Iterator<Entrypoint>() {
@@ -1011,54 +1066,13 @@ public class MicrobatByteCodeAnalyzer{
 					}
 
 					public boolean hasNext() {
-						return index == 0;
+						return index < entries.size();
 					}
 
 					public Entrypoint next() {
-						
-						String classSignature = trimSignature(SignatureUtils.getSignature(breakpoint.getClassCanonicalName()));
-						TypeReference typeRef = TypeReference.findOrCreate(loaderRef, TypeName.string2TypeName(classSignature));
-						
-						String methodName = SignatureUtils.extractMethodName(breakpoint.getMethodSign());
-						Atom method = Atom.findOrCreateAsciiAtom(methodName);
-						
-						Descriptor desc = createDescriptor(breakpoint.getMethodSign());
-						MethodReference mainRef = MethodReference.findOrCreate(typeRef, method, desc);
-						
+						Entrypoint entry = entries.get(index);
 						index++;
-						
-						return new DefaultEntrypoint(mainRef, cha);
-					}
-					
-					private Descriptor createDescriptor(String methodSign) {
-						MethodTypeSignature methodTypeSign = MethodTypeSignature.make(methodSign);
-						TypeName[] types;
-						TypeSignature[] arguments = methodTypeSign.getArguments();
-						if (CollectionUtils.isEmpty(arguments)) {
-							types = new TypeName[0];
-						} else {
-							types = new TypeName[arguments.length];
-							for (int i = 0; i < arguments.length; i++) {
-								types[i] = toTypeName(arguments[i].toString());
-							}
-						}
-						TypeName returnType;
-						if (methodSign.substring(methodSign.lastIndexOf(")") + 1, methodSign.length()).equals("V")) {
-							returnType = TypeReference.VoidName; 
-						} else {
-							returnType = toTypeName(methodTypeSign.getReturnType().toString());
-						}
-						return Descriptor.findOrCreate(types, returnType);
-					}
-					
-					private TypeName toTypeName(String sign) {
-						return TypeName.findOrCreate(trimSignature(sign));
-					}
-					
-					public String trimSignature(String typeSign) {
-						String newSig = typeSign.replace(";", "");
-						return newSig;
-//						return StringUtils.replace(typeSign, ";", "");
+						return entry;
 					}
 				};
 			}

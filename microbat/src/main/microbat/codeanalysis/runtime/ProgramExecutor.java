@@ -468,12 +468,15 @@ public class ProgramExecutor extends Executor {
 				} else if (event instanceof ExceptionEvent) {
 					ExceptionEvent ee = (ExceptionEvent) event;
 					Location catchLocation = ee.catchLocation();
-					this.trace.getLastestNode().setException(true);
-
-					if (catchLocation == null) {
-						stop = true;
-					} else {
-						caughtLocationForJustException = ee.catchLocation();
+					TraceNode lastNode = this.trace.getLastestNode();
+					if(lastNode != null){
+						lastNode.setException(true);
+						
+						if (catchLocation == null) {
+							stop = true;
+						} else {
+							caughtLocationForJustException = ee.catchLocation();
+						}						
 					}
 				}
 			}
@@ -1224,12 +1227,13 @@ public class ProgramExecutor extends Executor {
 
 	public Trace getTrace() {
 		int len = this.trace.size();
-		TraceNode lastNode = this.trace.getExectionList().get(len - 1);
-		if (lastNode.getAfterState() == null) {
-			BreakPointValue previousState = lastNode.getProgramState();
-			lastNode.setAfterStepInState(previousState);
+		if(len != 0){
+			TraceNode lastNode = this.trace.getExectionList().get(len - 1);
+			if (lastNode.getAfterState() == null) {
+				BreakPointValue previousState = lastNode.getProgramState();
+				lastNode.setAfterStepInState(previousState);
+			}
 		}
-
 		return trace;
 	}
 

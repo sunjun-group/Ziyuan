@@ -1,5 +1,7 @@
 package microbat.util;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -11,11 +13,14 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
+import org.eclipse.jdt.core.dom.ChildListPropertyDescriptor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.w3c.dom.Node;
 
 import sav.strategies.dto.ClassLocation;
 
@@ -128,5 +133,39 @@ public class JTestUtil {
 		}
 		
 		return false;
+	}
+
+	public static List<MethodDeclaration> findBeforeAfterMethod(CompilationUnit cu) {
+		final List<MethodDeclaration> mdList = new ArrayList<>();
+		cu.accept(new ASTVisitor() {
+			@SuppressWarnings("rawtypes")
+			public boolean visit(MethodDeclaration md){
+				ChildListPropertyDescriptor desc = md.getModifiersProperty();
+				Object obj = md.getStructuralProperty(desc);
+				Field field;
+				try {
+					field = obj.getClass().getDeclaredField("store");
+					field.setAccessible(true);
+					ArrayList list = (ArrayList)field.get(obj);
+					
+					for(Object item: list){
+						if(item instanceof MarkerAnnotation){
+							MarkerAnnotation annotation = (MarkerAnnotation)item;
+							String annName = annotation.getTypeName().getFullyQualifiedName();
+							if(annName.equals("Before") || annName.equals("After")){
+								mdList.add(md);
+							}
+						}
+					}
+				} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+				
+				
+				return false;
+			}
+		});
+		
+		return mdList;
 	}
 }

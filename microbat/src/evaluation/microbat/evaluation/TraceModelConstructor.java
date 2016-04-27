@@ -33,6 +33,7 @@ public class TraceModelConstructor {
 	
 	public Trace constructTraceModel(AppJavaClassPath appClassPath, List<BreakPoint> executingStatements)
 			throws TimeoutException{
+		
 		setup();
 		
 		ProgramExecutor tcExecutor = new ProgramExecutor();
