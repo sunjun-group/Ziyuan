@@ -138,8 +138,8 @@ public class TestCaseAnalyzer {
 		
 //		runSingeTrial();
 		
-//		String className = "org.apache.tools.ant.taskdefs.DeltreeTest";
-//		String methodName = "test1";
+//		String className = "org.apache.tools.ant.IntrospectionHelperTest";
+//		String methodName = "testIsDynamic";
 //		runEvaluationForSingleTestCase(className, methodName, null);
 	}
 	
@@ -445,12 +445,19 @@ public class TestCaseAnalyzer {
 			int mutatedLine, String testCaseName) 
 			throws MalformedURLException, JavaModelException, IOException, NullPointerException {
 		
+//		Settings.compilationUnitMap.clear();
+//		Settings.iCompilationUnitMap.clear();
+		
 		Trace killingMutantTrace = null;
 		boolean isTooLong = false;
 		boolean isKill = true;
 		boolean isTimeOut = false;
 		
-		ICompilationUnit iunit = JavaUtil.findICompilationUnitInProject(toBeMutatedClass);
+		ICompilationUnit iunit = JavaUtil.findNonCacheICompilationUnitInProject(toBeMutatedClass);
+		CompilationUnit unit = JavaUtil.convertICompilationUnitToASTNode(iunit);
+		Settings.iCompilationUnitMap.put(toBeMutatedClass, iunit);
+		Settings.compilationUnitMap.put(toBeMutatedClass, unit);
+		
 		String originalCodeText = iunit.getSource();
 		
 		System.out.print("checking mutated class " + iunit.getElementName() + " (line: " + mutatedLine + ")");
@@ -511,6 +518,14 @@ public class TestCaseAnalyzer {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
+		iunit = JavaUtil.findNonCacheICompilationUnitInProject(toBeMutatedClass);
+		unit = JavaUtil.convertICompilationUnitToASTNode(iunit);
+		Settings.iCompilationUnitMap.put(toBeMutatedClass, iunit);
+		Settings.compilationUnitMap.put(toBeMutatedClass, unit);
+		
+//		Settings.compilationUnitMap.clear();
+//		Settings.iCompilationUnitMap.clear();
 		
 		MutateInfo mutateInfo = new MutateInfo(killingMutantTrace, isTooLong, isKill, isTimeOut);
 		return mutateInfo;

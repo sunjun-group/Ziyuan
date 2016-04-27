@@ -1,7 +1,6 @@
 package microbat.handler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import microbat.Activator;
@@ -25,7 +24,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -46,6 +44,9 @@ public class StartDebugHandler extends AbstractHandler {
 		Settings.localVariableScopes.clear();
 		Settings.potentialCorrectPatterns.clear();
 		Settings.checkingStateStack.clear();
+		
+		Settings.compilationUnitMap.clear();
+		Settings.iCompilationUnitMap.clear();
 		
 		Display.getDefault().asyncExec(new Runnable(){
 			@Override

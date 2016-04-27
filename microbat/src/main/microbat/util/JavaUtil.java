@@ -53,7 +53,6 @@ import com.sun.jdi.Value;
 public class JavaUtil {
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
 	private static final String TO_STRING_NAME= "toString";
-	private static HashMap<String, CompilationUnit> compilationUnitMap = new HashMap<>();
 	
 	public static String retrieveStringValueOfArray(ArrayReference arrayValue) {
 		String stringValue;
@@ -196,30 +195,57 @@ public class JavaUtil {
 		return packageName + "." + typeName; 
 	}
 	
+	
+	
 	public static CompilationUnit findCompilationUnitInProject(String qualifiedName){
-		//CompilationUnit cu = compilationUnitMap.get(qualifiedName);
-		CompilationUnit cu = null;
-		//if(null == cu){
+		CompilationUnit cu = Settings.compilationUnitMap.get(qualifiedName);
+		if(null == cu){
 			try{
 				ICompilationUnit icu = findICompilationUnitInProject(qualifiedName);
 				cu = convertICompilationUnitToASTNode(icu);	
+				Settings.compilationUnitMap.put(qualifiedName, cu);
 				return cu;
 			}
 			catch(IllegalStateException e){
 				e.printStackTrace();
 			} 
-		//}
+		}
 		
+		return cu;
+	} 
+	
+	public static CompilationUnit findNonCacheCompilationUnitInProject(String qualifiedName){
+		ICompilationUnit icu = findNonCacheICompilationUnitInProject(qualifiedName);
+		CompilationUnit cu = convertICompilationUnitToASTNode(icu);
 		
 		return cu;
 	}
 	
 	public static ICompilationUnit findICompilationUnitInProject(String qualifiedName){
+		ICompilationUnit icu = Settings.iCompilationUnitMap.get(qualifiedName);
+		if(null == icu){
+			IJavaProject project = JavaCore.create(getSpecificJavaProjectInWorkspace());
+			try {
+				IType type = project.findType(qualifiedName);
+				if(type != null){
+					icu = type.getCompilationUnit();
+					Settings.iCompilationUnitMap.put(qualifiedName, icu);
+				}
+				
+			} catch (JavaModelException e1) {
+				e1.printStackTrace();
+			}
+		}
+		
+		return icu;
+	}
+	
+	public static ICompilationUnit findNonCacheICompilationUnitInProject(String qualifiedName) {
 		IJavaProject project = JavaCore.create(getSpecificJavaProjectInWorkspace());
 		try {
 			IType type = project.findType(qualifiedName);
 			if(type != null){
-				return type.getCompilationUnit();
+				return  type.getCompilationUnit();
 			}
 			
 		} catch (JavaModelException e1) {

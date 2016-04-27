@@ -1,6 +1,10 @@
 package microbat.util;
 
+import java.util.HashMap;
 import java.util.Stack;
+
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import microbat.Activator;
 import microbat.codeanalysis.ast.LocalVariableScopes;
@@ -69,5 +73,9 @@ public class Settings {
 	 */
 	public static Stack<CheckingState> checkingStateStack = new Stack<>();
 	
-	
+	/**
+	 * The following two map is used to trade space for time.
+	 */
+	public static HashMap<String, CompilationUnit> compilationUnitMap = new HashMap<>();
+	public static HashMap<String, ICompilationUnit> iCompilationUnitMap = new HashMap<>();
 }
