@@ -16,23 +16,18 @@ public class EvaluationHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
+//		ExcelHandler handler = new ExcelHandler();
+//		handler.start2();
+		
 		Job job = new Job("Do evaluation") {
-			
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				
-				
 				TestCaseAnalyzer parser = new TestCaseAnalyzer();
-//				parser.setUp();
-				
 				try {
 					parser.runEvaluation();
 				} catch (JavaModelException e) {
 					e.printStackTrace();
 				}
-				
-				//archievedSimulation();
-				
 				return Status.OK_STATUS;
 			}
 		};

@@ -97,4 +97,5 @@ public class ExcelReader {
 	public void setSet(Set<Trial> set) {
 		this.set = set;
 	}
+	
 }

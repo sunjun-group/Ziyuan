@@ -125,22 +125,22 @@ public class TestCaseAnalyzer {
 		
 		ExcelReporter reporter = new ExcelReporter();
 		reporter.start();
-		
-		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
-		
-		for(IJavaElement element: testRoot.getChildren()){
-			if(element instanceof IPackageFragment){
-				runEvaluation((IPackageFragment)element, reporter);				
-			}
-		}
-		
-		reporter.export(trials, Settings.projectName+trialFileNum);
+//		
+//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+//		
+//		for(IJavaElement element: testRoot.getChildren()){
+//			if(element instanceof IPackageFragment){
+//				runEvaluation((IPackageFragment)element, reporter);				
+//			}
+//		}
+//		
+//		reporter.export(trials, Settings.projectName+trialFileNum);
 		
 //		runSingeTrial();
 		
-//		String className = "org.apache.tools.ant.IntrospectionHelperTest";
-//		String methodName = "testIsDynamic";
-//		runEvaluationForSingleTestCase(className, methodName, null);
+		String className = "org.apache.commons.math.analysis.interpolation.LoessInterpolatorTest";
+		String methodName = "testOnStraightLine";
+		runEvaluationForSingleTestCase(className, methodName, reporter);
 	}
 	
 	private void runSingeTrial(){
@@ -151,17 +151,17 @@ public class TestCaseAnalyzer {
 //				+ "apache-common-math-2.2\\2081_22_1\\MathUtils.java";
 //		String mutatedClass = "org.apache.commons.math.util.MathUtils";
 		
-		String testClassName = "org.apache.commons.math.analysis.interpolation.LinearInterpolatorTest";
-		String testMethodName = "testInterpolateLinear";
+		String testClassName = "org.apache.commons.math.analysis.interpolation.LoessInterpolatorTest";
+		String testMethodName = "testOnStraightLine";
 		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-				+ "apache-common-math-2.2\\2081_22_1\\MathUtils.java";
-		String mutatedClass = "org.apache.commons.math.util.MathUtils";
+				+ "apache-common-math-2.2\\36_24_1\\QuinticFunction.java";
+		String mutatedClass = "org.apache.commons.math.analysis.QuinticFunction";
 		
 //		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
 //				+ "mutation\\85_40_1\\SimpleCalculator.java";
 //		String mutatedClass = "com.simplecalculator.SimpleCalculator";
 		
-		int mutatedLine = 2081;
+		int mutatedLine = 36;
 		
 		try {
 			runEvaluationForSingleTrial(testClassName, testMethodName, mutationFile, mutatedClass, mutatedLine);
@@ -344,7 +344,7 @@ public class TestCaseAnalyzer {
 												//errorMsgs.add(errorMsg);
 											}
 											
-											if(trials.size() > 100){
+											if(trials.size() > 1000){
 												reporter.export(trials, Settings.projectName+trialFileNum);
 												
 												trials.clear();
