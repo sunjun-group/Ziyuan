@@ -348,6 +348,9 @@ public class Trace {
 				if(stepOverPreviousNode.getLineNumber() == currentNode.getLineNumber()){
 					node = findLastestNodeDefiningPrimitiveVariable(varID, stepOverPreviousNode.getOrder());
 				}
+				else{
+					node = findLastestNodeDefiningPrimitiveVariable(varID, currentNode.getOrder());
+				}
 			}
 			else{
 				node = findLastestNodeDefiningPrimitiveVariable(varID, currentNode.getOrder());
