@@ -126,21 +126,21 @@ public class TestCaseAnalyzer {
 		ExcelReporter reporter = new ExcelReporter();
 		reporter.start();
 //		
-//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
-//		
-//		for(IJavaElement element: testRoot.getChildren()){
-//			if(element instanceof IPackageFragment){
-//				runEvaluation((IPackageFragment)element, reporter);				
-//			}
-//		}
-//		
-//		reporter.export(trials, Settings.projectName+trialFileNum);
+		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+		
+		for(IJavaElement element: testRoot.getChildren()){
+			if(element instanceof IPackageFragment){
+				runEvaluation((IPackageFragment)element, reporter);				
+			}
+		}
+		
+		reporter.export(trials, Settings.projectName+trialFileNum);
 		
 //		runSingeTrial();
 		
-		String className = "org.apache.commons.math.analysis.interpolation.LoessInterpolatorTest";
-		String methodName = "testOnStraightLine";
-		runEvaluationForSingleTestCase(className, methodName, reporter);
+//		String className = "org.apache.commons.math.analysis.interpolation.LoessInterpolatorTest";
+//		String methodName = "testOnStraightLine";
+//		runEvaluationForSingleTestCase(className, methodName, reporter);
 	}
 	
 	private void runSingeTrial(){
