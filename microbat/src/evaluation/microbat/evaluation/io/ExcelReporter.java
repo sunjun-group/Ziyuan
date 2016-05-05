@@ -62,7 +62,17 @@ public class ExcelReporter {
         		row.createCell(5).setCellValue(trial.getMutatedLineNumber());
         		
         		if(trial.getJumpSteps() != null){
-        			row.createCell(6).setCellValue(trial.getJumpSteps().toString());      			
+        			row.createCell(6).setCellValue(trial.getJumpSteps().toString());   
+        			
+        			if(trial.getJumpSteps().size() == 183){
+        				int i=0;
+        				for(String step: trial.getJumpSteps()){
+        					if(step.contains("unclear")){
+        						i++;
+        					}
+        				}
+        				System.out.println("unclear number: " + i);
+        			}
         		}
         		
         		row.createCell(7).setCellValue(trial.getResult());

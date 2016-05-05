@@ -239,6 +239,17 @@ public class ExcelHandler {
 			}
 		}
 		
+		
+		Trial maxTrial = null;
+		for(Trial trial: cleanTrials){
+			if(maxTrial == null){
+				maxTrial = trial;
+			}
+			else if(trial.getJumpSteps().size() > maxTrial.getJumpSteps().size()){
+				maxTrial = trial;
+			}
+		}
+		
 		ExcelReporter writer = new ExcelReporter();
 		writer.start();
 		writer.export(cleanTrials, "apache-total-clean");

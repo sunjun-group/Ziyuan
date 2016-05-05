@@ -138,9 +138,9 @@ public class TestCaseAnalyzer {
 		
 //		runSingeTrial();
 		
-//		String className = "org.apache.commons.math.analysis.interpolation.LoessInterpolatorTest";
-//		String methodName = "testOnStraightLine";
-//		runEvaluationForSingleTestCase(className, methodName, reporter);
+		String className = "org.apache.commons.collections.TestCollectionUtils";
+		String methodName = "testIsProperSubCollection";
+		runEvaluationForSingleTestCase(className, methodName, reporter);
 	}
 	
 	private void runSingeTrial(){
