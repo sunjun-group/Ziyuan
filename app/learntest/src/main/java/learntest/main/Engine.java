@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import gentest.builder.RandomTraceGentestBuilder;
+import gentest.junit.FileCompilationUnitPrinter;
+import gentest.junit.ICompilationUnitPrinter;
+import gentest.junit.TestsPrinter;
+import gentest.main.GentestConstants;
 import icsetlv.DefaultValues;
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
@@ -22,9 +27,12 @@ import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
 import sav.common.core.SavException;
+import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint.Variable;
+import sav.strategies.vm.VMConfiguration;
+import tzuyu.core.mutantbug.Recompiler;
 
 public class Engine {
 	
@@ -50,26 +58,18 @@ public class Engine {
 		this.className = className;
 		this.methodName = methodName;
 	}
-	
-	public void addTestcases(String testClass) throws ClassNotFoundException {
-		addTestcases(JunitUtils.extractTestMethods(Arrays.asList(testClass)));
-	}
-
-	private void addTestcases(List<String> testcases) {
-		this.testcases.addAll(testcases);
-	}
 
 	public void setTcExecutor(TestcasesExecutorwithLoopTimes tcExecutor) {
 		this.tcExecutor = tcExecutor;
 	}
 	
-	public void run() throws ParseException, IOException, SavException {
+	public void run() throws ParseException, IOException, SavException, ClassNotFoundException {
+		gentest();
+		
 		createCFG();
 		bkpBuilder = new BreakpointBuilder(className, methodName, variables, cfg);
 		bkpBuilder.buildBreakpoints();
 		dtBuilder = new BreakpointDataBuilder(bkpBuilder);
-
-		//TODO generate test cases randomly		
 		
 		ensureTcExecutor();
 		tcExecutor.setup(appClassPath, testcases);
@@ -77,6 +77,38 @@ public class Engine {
 		List<BreakpointData> result = tcExecutor.getResult();
 		tcExecutor.setjResultFileDeleteOnExit(true);
 		new DecisionLearner(new SelectiveSampling(tcExecutor)).learn(result);
+	}
+	
+	private void gentest() throws ClassNotFoundException, SavException {
+		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(10);
+		builder.queryMaxLength(1).testPerQuery(GentestConstants.DEFAULT_TEST_PER_QUERY);
+		builder.forClass(Class.forName(className)).method(methodName);
+		String pkg = "testdata.test." + typeName.toLowerCase();
+		final FileCompilationUnitPrinter cuPrinter = new FileCompilationUnitPrinter(
+				appClassPath.getTestTarget());
+		final List<String> junitClassNames = new ArrayList<String>();
+		TestsPrinter printer = new TestsPrinter(pkg, pkg, "test", typeName, 
+				new ICompilationUnitPrinter() {
+					
+					@Override
+					public void print(List<CompilationUnit> compilationUnits) {
+						for (CompilationUnit cu : compilationUnits) {
+							junitClassNames.add(ClassUtils.getCanonicalName(cu
+									.getPackage().getName().getName(), cu
+									.getTypes().get(0).getName()));
+						}
+						cuPrinter.print(compilationUnits);
+					}
+				});
+		printer.printTests(builder.generate());
+		List<File> generatedFiles = cuPrinter.getGeneratedFiles();
+		Recompiler recompiler = new Recompiler(new VMConfiguration(appClassPath));
+		recompiler.recompileJFile(appClassPath.getTestTarget(), generatedFiles);
+		addTestcases(junitClassNames.get(0));
+	}
+		
+	private void addTestcases(String testClass) throws ClassNotFoundException {
+		this.testcases.addAll(JunitUtils.extractTestMethods(Arrays.asList(testClass)));
 	}
 
 	private void createCFG() throws ParseException, IOException {
@@ -102,7 +134,7 @@ public class Engine {
 		}
 	}
 
-	public void ensureTcExecutor() {
+	private void ensureTcExecutor() {
 		if (tcExecutor == null) {
 			tcExecutor = new TestcasesExecutorwithLoopTimes(DefaultValues.DEBUG_VALUE_RETRIEVE_LEVEL);
 		}

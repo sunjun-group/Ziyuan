@@ -28,5 +28,14 @@
     		<artifactId>sav.commons</artifactId>
     		<type>test-jar</type>
     	</dependency>
+    	<dependency>
+    		<groupId>tzuyu-project</groupId>
+    		<artifactId>gentest</artifactId>
+    	</dependency>
+    	<dependency>
+    		<groupId>tzuyu-project</groupId>
+    		<artifactId>tzuyu.core</artifactId>
+    		<version>0.0.1-SNAPSHOT</version>
+    	</dependency>
   	</dependencies>
 </project>

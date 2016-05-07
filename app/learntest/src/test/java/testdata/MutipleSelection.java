@@ -11,5 +11,8 @@ public class MutipleSelection {
 			}
 		}
 	}
+	
+	public void tmp() {
+	}
 
 }
