@@ -123,48 +123,48 @@ public class TestCaseAnalyzer {
 
 	public void runEvaluation() throws JavaModelException{
 		
-		ExcelReporter reporter = new ExcelReporter();
-		reporter.start();
+//		ExcelReporter reporter = new ExcelReporter();
+//		reporter.start();
 //		
-		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+//		IPackageFragmentRoot testRoot = JavaUtil.findTestPackageRootInProject();
+//		
+//		for(IJavaElement element: testRoot.getChildren()){
+//			if(element instanceof IPackageFragment){
+//				runEvaluation((IPackageFragment)element, reporter);				
+//			}
+//		}
+//		
+//		reporter.export(trials, Settings.projectName+trialFileNum);
 		
-		for(IJavaElement element: testRoot.getChildren()){
-			if(element instanceof IPackageFragment){
-				runEvaluation((IPackageFragment)element, reporter);				
-			}
-		}
+		runSingeTrial();
 		
-		reporter.export(trials, Settings.projectName+trialFileNum);
-		
-//		runSingeTrial();
-		
-		String className = "org.apache.commons.collections.TestCollectionUtils";
-		String methodName = "testIsProperSubCollection";
-		runEvaluationForSingleTestCase(className, methodName, reporter);
+//		String className = "org.apache.commons.collections.TestCollectionUtils";
+//		String methodName = "testIsProperSubCollection";
+//		runEvaluationForSingleTestCase(className, methodName, reporter);
 	}
 	
 	private void runSingeTrial(){
-		//TODO BUG
+		//TODO BUG TimeOutException in JVM
 //		String testClassName = "org.apache.commons.math.analysis.interpolation.LinearInterpolatorTest";
 //		String testMethodName = "testInterpolateLinear";
 //		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
 //				+ "apache-common-math-2.2\\2081_22_1\\MathUtils.java";
 //		String mutatedClass = "org.apache.commons.math.util.MathUtils";
 		
-		String testClassName = "org.apache.commons.math.analysis.interpolation.LoessInterpolatorTest";
-		String testMethodName = "testOnStraightLine";
+		String testClassName = "org.apache.commons.math.analysis.BinaryFunctionTest";
+		String testMethodName = "testAtan2";
 		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
-				+ "apache-common-math-2.2\\36_24_1\\QuinticFunction.java";
-		String mutatedClass = "org.apache.commons.math.analysis.QuinticFunction";
+				+ "apache-common-math-2.2\\3054_38_1\\FastMath.java";
+		String mutatedClass = "org.apache.commons.math.util.FastMath";
 		
 //		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
 //				+ "mutation\\85_40_1\\SimpleCalculator.java";
 //		String mutatedClass = "com.simplecalculator.SimpleCalculator";
 		
-		int mutatedLine = 36;
+//		int mutatedLine = 36;
 		
 		try {
-			runEvaluationForSingleTrial(testClassName, testMethodName, mutationFile, mutatedClass, mutatedLine);
+			runEvaluationForSingleTrial(testClassName, testMethodName, mutationFile, mutatedClass);
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
@@ -175,12 +175,17 @@ public class TestCaseAnalyzer {
 	}
 
 	private void runEvaluationForSingleTrial(String testClassName,
-			String testMethodName, String mutationFile, String mutatedClassName, int mutatedLine) 
+			String testMethodName, String mutationFile, String mutatedClassName) 
 					throws JavaModelException, MalformedURLException, IOException {
 		String testcaseName = testClassName + "#" + testMethodName;
 		AppJavaClassPath testcaseConfig = createProjectClassPath(testClassName, testMethodName);
 		
 		File mutatedFile = new File(mutationFile);
+		
+		String[] sections = mutationFile.split("\\\\");
+		String mutatedLineString = sections[sections.length-2];
+		String[] lines = mutatedLineString.split("_");
+		int mutatedLine = Integer.valueOf(lines[0]);
 		
 		MutateInfo info =
 				mutateCode(mutatedClassName, mutatedFile, testcaseConfig, mutatedLine, testcaseName);
