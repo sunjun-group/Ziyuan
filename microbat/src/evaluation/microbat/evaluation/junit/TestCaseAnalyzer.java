@@ -59,8 +59,6 @@ public class TestCaseAnalyzer {
 		trialFileNum = parsedTrials.getStartFileOrder();
 	}
 	
-	
-	
 	public void test(){
 		String str = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\mutatedSource8245811234241496344\\47_25_1\\Main.java";
 		File file = new File(str);
@@ -155,16 +153,14 @@ public class TestCaseAnalyzer {
 		String testMethodName = "testAtan2";
 		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
 				+ "apache-common-math-2.2\\3054_38_1\\FastMath.java";
-		String mutatedClass = "org.apache.commons.math.util.FastMath";
+//		String mutatedClass = "org.apache.commons.math.util.FastMath";
 		
 //		String mutationFile = "C:\\Users\\YUNLIN~1\\AppData\\Local\\Temp\\"
 //				+ "mutation\\85_40_1\\SimpleCalculator.java";
 //		String mutatedClass = "com.simplecalculator.SimpleCalculator";
 		
-//		int mutatedLine = 36;
-		
 		try {
-			runEvaluationForSingleTrial(testClassName, testMethodName, mutationFile, mutatedClass);
+			runEvaluationForSingleTrial(testClassName, testMethodName, mutationFile);
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
@@ -173,9 +169,11 @@ public class TestCaseAnalyzer {
 			e.printStackTrace();
 		}
 	}
+	
+	
 
 	private void runEvaluationForSingleTrial(String testClassName,
-			String testMethodName, String mutationFile, String mutatedClassName) 
+			String testMethodName, String mutationFile) 
 					throws JavaModelException, MalformedURLException, IOException {
 		String testcaseName = testClassName + "#" + testMethodName;
 		AppJavaClassPath testcaseConfig = createProjectClassPath(testClassName, testMethodName);
@@ -186,6 +184,9 @@ public class TestCaseAnalyzer {
 		String mutatedLineString = sections[sections.length-2];
 		String[] lines = mutatedLineString.split("_");
 		int mutatedLine = Integer.valueOf(lines[0]);
+		
+		CompilationUnit cu = JavaUtil.parseCompilationUnit(mutationFile);
+		String mutatedClassName = JavaUtil.getFullNameOfCompilationUnit(cu);
 		
 		MutateInfo info =
 				mutateCode(mutatedClassName, mutatedFile, testcaseConfig, mutatedLine, testcaseName);

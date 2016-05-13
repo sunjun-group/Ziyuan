@@ -1,16 +1,12 @@
 package microbat.util;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import microbat.codeanalysis.ast.MethodDeclarationFinder;
-import microbat.codeanalysis.ast.MethodInvocationFinder;
-import microbat.codeanalysis.runtime.ProgramExecutor;
-import microbat.codeanalysis.runtime.jpda.expr.ExpressionParser;
-import microbat.codeanalysis.runtime.jpda.expr.ParseException;
-import microbat.model.trace.TraceNode;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -18,9 +14,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdi.VirtualMachine;
-import org.eclipse.jdi.internal.ThreadReferenceImpl;
-import org.eclipse.jdi.internal.VirtualMachineImpl;
-import org.eclipse.jdi.internal.jdwp.JdwpThreadID;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -49,10 +42,44 @@ import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 
+import microbat.codeanalysis.ast.MethodDeclarationFinder;
+import microbat.codeanalysis.ast.MethodInvocationFinder;
+import microbat.codeanalysis.runtime.ProgramExecutor;
+import microbat.codeanalysis.runtime.jpda.expr.ExpressionParser;
+import microbat.codeanalysis.runtime.jpda.expr.ParseException;
+import microbat.model.trace.TraceNode;
+
 @SuppressWarnings("restriction")
 public class JavaUtil {
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
 	private static final String TO_STRING_NAME= "toString";
+	
+	@SuppressWarnings({ "rawtypes", "deprecation" })
+	public static CompilationUnit parseCompilationUnit(String file){
+		ASTParser parser = ASTParser.newParser(AST.JLS4);
+		Map options = JavaCore.getOptions();
+		JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, options);
+		parser.setCompilerOptions(options);
+		parser.setKind(ASTParser.K_COMPILATION_UNIT);
+		parser.setResolveBindings(false);
+		
+		try {
+			String text = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
+			
+			parser.setSource(text.toCharArray());
+			
+			CompilationUnit cu = (CompilationUnit) parser.createAST(null);		
+			return cu;
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+		
+	}
+	
+	
 	
 	public static String retrieveStringValueOfArray(ArrayReference arrayValue) {
 		String stringValue;
@@ -188,13 +215,22 @@ public class JavaUtil {
 	}
 	
 	public static String getFullNameOfCompilationUnit(CompilationUnit cu){
-		String packageName = cu.getPackage().getName().toString();
+		
+		String packageName = "";
+		if(cu.getPackage() != null){
+			packageName = cu.getPackage().getName().toString();
+		}
 		AbstractTypeDeclaration typeDeclaration = (AbstractTypeDeclaration) cu.types().get(0);
 		String typeName = typeDeclaration.getName().getIdentifier();
 		
-		return packageName + "." + typeName; 
+		if(packageName.length() == 0){
+			return typeName;
+		}
+		else{
+			return packageName + "." + typeName; 			
+		}
+		
 	}
-	
 	
 	
 	public static CompilationUnit findCompilationUnitInProject(String qualifiedName){
@@ -279,7 +315,7 @@ public class JavaUtil {
 		return null;
 	}
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "deprecation" })
 	public static CompilationUnit convertICompilationUnitToASTNode(ICompilationUnit iunit){
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		Map options = JavaCore.getOptions();
