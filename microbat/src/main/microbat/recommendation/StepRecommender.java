@@ -296,14 +296,13 @@ public class StepRecommender {
 		List<TraceNode> clearNodeList = new ArrayList<>();
 		
 		TraceNode invocationParent = currentNode.getInvocationParent();
-		if(invocationParent != null){
-			clearNodeList.add(invocationParent);			
-		}
+		TraceNode containingLoopControlDominator = currentNode.findContainingLoopControlDominator();
 		
-		for(TraceNode controlDominator: currentNode.getControlDominators()){
-			if(controlDominator.isLoopCondition()){
-				clearNodeList.add(controlDominator);
-			}
+		if(invocationParent != null){
+			clearNodeList.add(invocationParent);
+		}
+		if(containingLoopControlDominator != null){
+			clearNodeList.add(containingLoopControlDominator);
 		}
 		
 		if(!clearNodeList.isEmpty()){
