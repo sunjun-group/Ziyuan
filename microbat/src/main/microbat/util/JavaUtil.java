@@ -119,7 +119,7 @@ public class JavaUtil {
 		executor.getMethodExitRequset().disable();
 		executor.getExceptionRequest().disable();
 		
-		((VirtualMachine)thread.virtualMachine()).setRequestTimeout(5000);
+		//((VirtualMachine)thread.virtualMachine()).setRequestTimeout(5000);
 		
 		Value messageValue = null;
 		try {
@@ -127,7 +127,7 @@ public class JavaUtil {
 					new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
 		} catch (InvalidTypeException | ClassNotLoadedException | IncompatibleThreadStateException
 				| InvocationException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		executor.getClassPrepareRequest().setEnabled(classPrepare);

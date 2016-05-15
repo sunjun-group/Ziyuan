@@ -284,12 +284,55 @@ public class StepRecommender {
 	}
 	
 	/**
-	 * More clear node means the data or control dominator in method invocation or loop head for current node.
+	 * Find the invocation parent or nearest loop control dominator. If the node has neither
+	 * invocation parent nor nearest loop control dominator, the previous step-over node will
+	 * be chosen.
+	 * 
 	 * @param trace
 	 * @param currentNode
 	 * @return
 	 */
-	private TraceNode findMoreClearNode(Trace trace, TraceNode currentNode) {
+	private TraceNode findMoreClearNode(Trace trace, TraceNode currentNode){
+		List<TraceNode> clearNodeList = new ArrayList<>();
+		
+		TraceNode invocationParent = currentNode.getInvocationParent();
+		if(invocationParent != null){
+			clearNodeList.add(invocationParent);			
+		}
+		
+		for(TraceNode controlDominator: currentNode.getControlDominators()){
+			if(controlDominator.isLoopCondition()){
+				clearNodeList.add(controlDominator);
+			}
+		}
+		
+		if(!clearNodeList.isEmpty()){
+			Collections.sort(clearNodeList, new TraceNodeReverseOrderComparator());
+			return clearNodeList.get(0);
+		}
+		else{
+			int order = currentNode.getOrder() - 1;
+			if(order-1>=0){
+				return trace.getExectionList().get(order-1);				
+			}
+			else{
+				return currentNode;
+			}
+		}
+	}
+	
+	/**
+	 * More clear node means the data or control dominator in method invocation or loop head for current node.
+	 * <p>
+	 * I am considering that the aim of more clear node is for understanding, thus, I decide to use a more simple
+	 * way to suggest unclear node. @see {@link microbat.recommendation.StepRecommender#findMoreClearNode()}
+	 * 
+	 * @param trace
+	 * @param currentNode
+	 * @return
+	 */
+	@Deprecated
+	private TraceNode findMoreClearNode0(Trace trace, TraceNode currentNode) {
 		TraceNode earliestNodeWithWrongVar = trace.getEarliestNodeWithWrongVar();
 		
 		if(earliestNodeWithWrongVar != null){
