@@ -535,6 +535,13 @@ public class StepRecommender {
 			wrongVarID = Settings.interestedVariables.getNewestVarID();
 		}
 		
+		/**
+		 * no variable has been selected yet.
+		 */
+		if(wrongVarID == null){
+			return currentNode;
+		}
+		
 		TraceNode suspiciousNode = trace.getProducer(wrongVarID);
 		
 		if(suspiciousNode == null){
