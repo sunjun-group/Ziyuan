@@ -17,6 +17,28 @@ public class TestGenerator {
 		TestsPrinter printer = new TestsPrinter(LearnTestConfig.pkg, LearnTestConfig.pkg, 
 				prefix, LearnTestConfig.typeName, TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
 		printer.printTests(builder.generate());
+		
+		/*final FileCompilationUnitPrinter cuPrinter = new FileCompilationUnitPrinter(
+				appClasspath.getSrc());
+		final List<String> junitClassNames = new ArrayList<String>();
+		TestsPrinter printer = new TestsPrinter(LearnTestConfig.pkg, LearnTestConfig.pkg, prefix, LearnTestConfig.typeName,
+				new ICompilationUnitPrinter() {
+					
+					@Override
+					public void print(List<CompilationUnit> compilationUnits) {
+						for (CompilationUnit cu : compilationUnits) {
+							junitClassNames.add(ClassUtils.getCanonicalName(cu
+									.getPackage().getName().getName(), cu
+									.getTypes().get(0).getName()));
+						}
+						cuPrinter.print(compilationUnits);
+					}
+				});
+		printer.printTests(builder.generate());
+		List<File> generatedFiles = cuPrinter.getGeneratedFiles();
+		
+		Recompiler recompiler = new Recompiler(new VMConfiguration(appClasspath));
+		recompiler.recompileJFile(appClasspath.getTestTarget(), generatedFiles);*/
 	}
 	
 }

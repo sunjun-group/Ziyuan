@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.breakpoint.data.DecisionLocation;
 import learntest.sampling.SelectiveSampling;
+import learntest.svm.MyPositiveSeparationMachine;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.LoopTimesData;
 import libsvm.svm_model;
@@ -24,7 +25,6 @@ import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine.DataPoint;
 import libsvm.core.Model;
 import libsvm.extension.ByDistanceNegativePointSelection;
-import libsvm.extension.PositiveSeparationMachine;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.AndFormula;
@@ -37,14 +37,14 @@ import sav.strategies.dto.execute.value.ExecVarType;
 public class DecisionLearner implements CategoryCalculator {
 	
 	protected static Logger log = LoggerFactory.getLogger(DecisionLearner.class);
-	private PositiveSeparationMachine machine;
+	private MyPositiveSeparationMachine machine;
 	private List<ExecVar> vars;
 	private List<String> labels;
 	private List<ExecVar> boolVars;
 	private SelectiveSampling selectiveSampling;
 	
 	public DecisionLearner(SelectiveSampling selectiveSampling) {
-		machine = new PositiveSeparationMachine(new ByDistanceNegativePointSelection());
+		machine = new MyPositiveSeparationMachine(new ByDistanceNegativePointSelection());
 		machine.setDefaultParams();
 		this.selectiveSampling = selectiveSampling;
 	}
@@ -60,8 +60,7 @@ public class DecisionLearner implements CategoryCalculator {
 			if (bkpData.getFalseValues().isEmpty()) {
 				log.info("Missing false branch data");
 				continue;
-			}
-			else if (bkpData.getTrueValues().isEmpty()) {
+			} else if (bkpData.getTrueValues().isEmpty()) {
 				log.info("Missing true branch data");
 				continue;
 			} else {
@@ -89,8 +88,7 @@ public class DecisionLearner implements CategoryCalculator {
 		addDataPoints(vars, bkpData.getFalseValues(), Category.NEGATIVE);
 		machine.train();
 		Formula trueFlase = getLearnedFormula();
-		double tFAcc = machine.getModelAccuracy();
-		while (tFAcc < 1.0) {
+		while(true) {
 			BreakpointData newData = selectiveSampling.selectData(bkpData.getLocation(), 
 					trueFlase, machine.getDataLabels(), machine.getDataPoints());
 			if (newData == null) {
@@ -98,15 +96,20 @@ public class DecisionLearner implements CategoryCalculator {
 			}
 			addDataPoints(vars, newData.getTrueValues(), Category.POSITIVE);
 			addDataPoints(vars, newData.getFalseValues(), Category.NEGATIVE);
+			double acc = machine.getModelAccuracy();
+			if (acc == 1.0) {
+				break;
+			}
 			machine.train();
 			Formula tmp = getLearnedFormula();
-			if (machine.getModelAccuracy() > tFAcc && !tmp.equals(trueFlase)) {
+			/*System.out.println(trueFlase);
+			System.out.println(tmp);*/
+			if (!tmp.equals(trueFlase)) {
 				trueFlase = tmp;
-				tFAcc = machine.getModelAccuracy();
 			} else {
 				break;
 			}
-		}
+		};
 		
 		Formula oneMore = null;
 		if (bkpData instanceof LoopTimesData) {
@@ -130,8 +133,7 @@ public class DecisionLearner implements CategoryCalculator {
 		addDataPoints(vars, loopData.getOneTimeValues(), Category.NEGATIVE);
 		machine.train();
 		Formula formula = getLearnedFormula();
-		double acc = machine.getModelAccuracy();
-		while (acc < 1.0) {
+		while(true) {
 			LoopTimesData newData = (LoopTimesData) selectiveSampling.selectData(loopData.getLocation(), 
 					formula, machine.getDataLabels(), machine.getDataPoints());	
 			if (newData == null) {
@@ -139,15 +141,18 @@ public class DecisionLearner implements CategoryCalculator {
 			}
 			addDataPoints(vars, newData.getMoreTimesValues(), Category.POSITIVE);
 			addDataPoints(vars, newData.getOneTimeValues(), Category.NEGATIVE);
+			double acc = machine.getModelAccuracy();
+			if (acc == 1.0) {
+				break;
+			}
 			machine.train();
 			Formula tmp = getLearnedFormula();
-			if (machine.getModelAccuracy() > acc && !tmp.equals(formula)) {
+			if (!tmp.equals(formula)) {
 				formula = tmp;
-				acc = machine.getModelAccuracy();
 			} else {
 				break;
 			}
-		}
+		};
 		return formula;
 	}
 	

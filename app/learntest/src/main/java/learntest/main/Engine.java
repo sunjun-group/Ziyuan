@@ -69,6 +69,7 @@ public class Engine {
 		tcExecutor.run();
 		List<BreakpointData> result = tcExecutor.getResult();
 		tcExecutor.setjResultFileDeleteOnExit(true);
+		tcExecutor.setSingleMode();
 		new DecisionLearner(new SelectiveSampling(tcExecutor)).learn(result);
 	}
 		

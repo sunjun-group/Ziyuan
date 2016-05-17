@@ -131,7 +131,9 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	}
 	
 	public void setSingleMode() {
-		//TODO limit test case
+		List<String> tcs = new ArrayList<String>(1);
+		tcs.add(allTests.get(0));
+		allTests = tcs;
 	}
 	
 	public void setTarget(DecisionLocation target) {
