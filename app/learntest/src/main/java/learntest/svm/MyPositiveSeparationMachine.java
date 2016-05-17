@@ -12,6 +12,7 @@ import libsvm.core.Category;
 import libsvm.core.Divider;
 import libsvm.core.Machine;
 import libsvm.core.Model;
+import libsvm.extension.ByDistanceNegativePointSelection;
 import libsvm.extension.MultiDividerBasedCategoryCalculator;
 import libsvm.extension.NegativePointSelection;
 
@@ -23,22 +24,26 @@ public class MyPositiveSeparationMachine extends Machine {
 	
 	private NegativePointSelection negativePointSelection;
 	
-	public MyPositiveSeparationMachine(NegativePointSelection negativePointSelection) {
-		this.negativePointSelection = negativePointSelection;
+	public MyPositiveSeparationMachine() {
+		negativePointSelection = new ByDistanceNegativePointSelection();
 	}
 
 	@Override
 	protected Machine train(List<DataPoint> dataPoints) {
-		learnedModels = new ArrayList<svm_model>();
 		super.train(dataPoints);
-		if(model != null && getModelAccuracy() == 1.0) {
+		if(model != null) {
+			learnedModels = new ArrayList<svm_model>();
 			learnedModels.add(model);
-			return this;
+			if (getModelAccuracy() == 1.0) {
+				return this;
+			}
 		}
 		
+		learnedModels = new ArrayList<svm_model>();
 		List<DataPoint> positives = new ArrayList<DataPoint>(dataPoints.size());
 		List<DataPoint> negatives = new ArrayList<DataPoint>(dataPoints.size());
 		classifyNegativePositivePoints(dataPoints, positives, negatives);
+		
 		List<DataPoint> trainingData = positives;
 		while (!negatives.isEmpty()) {
 			trainingData.add(negativePointSelection.select(negatives, positives));
