@@ -21,7 +21,7 @@ public class EngineTest extends AbstractTest {
 	}
 
 	@Test
-	public void testMutipleSelection() throws Exception {
+	public void test() throws Exception {
 		engine.run();
 	}
 
