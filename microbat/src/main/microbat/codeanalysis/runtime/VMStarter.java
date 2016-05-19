@@ -89,9 +89,13 @@ public class VMStarter {
         if (optionArg == null) {
             throw new Error("Bad launching connector");
         }
+        
+        String OSName = System.getProperty("os.name");
+        String classPathSeparator = OSName.toLowerCase().contains("win") ? ";" : ":";
+        
         String classPathString = "";
         for(String classPath: configuration.getClasspaths()){
-        	classPathString += classPath + ";";
+        	classPathString += classPath + classPathSeparator;
         }
         
         if(classPathString.length() != 0){
