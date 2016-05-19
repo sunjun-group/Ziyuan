@@ -49,4 +49,10 @@ public class CfgExitNode implements CfgNode {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public int getTrueBeginLine() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

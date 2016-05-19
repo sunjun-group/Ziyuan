@@ -5,6 +5,7 @@ import japa.parser.ast.Node;
 public class CfgDecisionNode implements CfgNode {
 	
 	private Node astNode;
+	private int beginLine;
 	private int trueBeginLine;
 	private int parentBeginLine = -1;
 	private String stmtType;
@@ -18,6 +19,7 @@ public class CfgDecisionNode implements CfgNode {
 		this.astNode = astNode;
 		this.stmtType = stmtType;
 		this.loop = loop;
+		beginLine = astNode.getBeginLine();
 		//TODO please determine whether this node is a loop node
 	}
 	
@@ -40,7 +42,11 @@ public class CfgDecisionNode implements CfgNode {
 
 	@Override
 	public int getBeginLine() {
-		return astNode.getBeginLine();
+		return beginLine;
+	}
+	
+	public void setBeginLine(int beginLine) {
+		this.beginLine = beginLine;
 	}
 	
 	public int getParentBeginLine() {

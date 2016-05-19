@@ -8,14 +8,34 @@
 
 package learntest.cfg;
 
+import gentest.GentestForTestdataRunner;
+import gentest.builder.RandomTraceGentestBuilder;
+import sav.commons.testdata.BoundedStack;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
+import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.Node;
+import japa.parser.ast.body.BodyDeclaration;
+import japa.parser.ast.body.MethodDeclaration;
+import japa.parser.ast.body.TypeDeclaration;
 
 import org.junit.Test;
 
+import sav.common.core.SavException;
+import sav.java.parser.cfg.CfgEdge;
+import sav.java.parser.cfg.CfgEntryNode;
+import sav.java.parser.cfg.CfgFactory;
+import sav.java.parser.cfg.CfgNode;
 import learntest.cfg.CFG;
 import learntest.cfg.CfgCreator;
+import learntest.gentest.PrimitiveParameterGenerator;
 
 /**
  * @author LLT
@@ -143,24 +163,31 @@ public class CfgTest {
 //			
 //				"			if (a.size() == 5) {}" +
 //
-//				"} while (x > 0);";
+//				"} while (x > 0);while(y > 0){}";
 //		cfgFromStmt(str);	
 //	}
 	
-	@Test
-	public void switchToCfg() throws ParseException {
-		String str = 
-				"while(t == 0){switch(x) {" +
-				"	case 1:" +
-				"		while(j > 10){if(i > 0){}else if (i > 1){break;}}executeFunc1();if(j > 2 ){} break;" +
-				"	case 2:" +
-				"		executeFunc2();if(y == 0){} return;" +
-				"   case 3: "+
-				"	default: return;" +
-				"		executeDefault();while(k < 0){if(l == 0){return;}} " +
-				"}}";
-		cfgFromStmt(str);
-	}
+//	@Test
+//	public void switchToCfg() throws ParseException  {
+//		String str = "switch(x){"
+//		+ "case 1 : while(i > 0){"
+//        +"}" 
+//       +" break;"
+ //      +"case 2 : "
+//     + "default: "
+ //    + "}";
+//				"while(t == 0){switch(x) {" +
+//				"	case 1:" +
+//				"		while(j > 10){if(i > 0){}else if (i > 1){break;}}executeFunc1();if(j > 2 ){} break;" +
+//				"	case 2:" +
+//				"		executeFunc2();if(y == 0){} return;" +
+//				"   case 3: "+
+//				"	default: return;" +
+//				"		executeDefault();while(k < 0){if(l == 0){return;}} " +
+//				"}}";
+		
+//		cfgFromStmt(str);
+//	}
 	
 //	@Test
 //	public void labledToCfg() throws ParseException {
@@ -179,6 +206,36 @@ public class CfgTest {
 //				"if (a.size() == 5) {return;} else if(i > 10 ){}" ;
 //		cfgFromStmt(str);	
 //	}
+	
+	@Test
+	public void methodToCfg() throws ParseException, IOException, SavException {
+//		GentestForTestdataRunner test = new GentestForTestdataRunner();
+//		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(100);
+//		builder.queryMaxLength(7)
+//				.testPerQuery(10);
+//		Class<BoundedStack> targetClazz = BoundedStack.class;
+//		builder.forClass(targetClazz);
+//		test.printTc(builder, targetClazz);
+//		test.testBoundedStack();
+//		PrimitiveParameterGenerator test = new PrimitiveParameterGenerator();
+		CompilationUnit cu = JavaParser.parse(new File("D:\\Ziyuan\\app\\learntest\\src\\main\\java\\learntest\\cfg\\MiniTest.txt"));
+		for (TypeDeclaration type : cu.getTypes()) {
+			for (BodyDeclaration body : type.getMembers()) {
+				if (body instanceof MethodDeclaration) {
+					MethodDeclaration method = (MethodDeclaration) body;
+					System.out.println("---------------------------------------------");
+					System.out.println(method.getName() + method.getParameters());
+					System.out.println("---------------------------------------------");
+					CfgCreator creator = new CfgCreator();
+					CFG cfg = creator.dealWithBreakStmt(creator.dealWithReturnStmt(creator.toCFG(method)));			
+					System.out.println(cfg.toString());
+					for(learntest.cfg.CfgNode node : cfg.getVertices()){
+						System.out.println(node.getBeginLine());
+					}
+				}
+			}
+		}
+	}
 	
 	
 	private void cfgFromStmt(String str) throws ParseException {
@@ -199,3 +256,4 @@ public class CfgTest {
 	
 	
 }
+

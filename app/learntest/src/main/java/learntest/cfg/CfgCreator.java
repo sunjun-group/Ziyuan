@@ -292,6 +292,7 @@ public class CfgCreator extends CfgConverter {
 				decisions.add(decision);
 				statementsList.add(entry.getStmts());
 				cfg.addNode(decision);
+				decision.setBeginLine(entry.getBeginLine());
 				temporaryDecisionNodeList.add(decision);
 				decisionNodeMap.put(n.toString(), decisionNodeIndex++);
 				setTrueBeginLine( entry ,  decision);
@@ -307,6 +308,7 @@ public class CfgCreator extends CfgConverter {
 			cfg.addNode(decisions.get(decisions.size() - 1));
 			temporaryDecisionNodeList.add(decisions.get(decisions.size() - 1));
 			decisionNodeMap.put(n.toString(), decisionNodeIndex++);
+			decisions.get(decisions.size() - 1).setBeginLine(defaultEntry.getBeginLine());
 			setTrueBeginLine( defaultEntry ,  decisions.get(decisions.size() - 1));
 		}
 
@@ -859,6 +861,7 @@ public class CfgCreator extends CfgConverter {
 				}
 		}
 		else if(n instanceof japa.parser.ast.stmt.SwitchEntryStmt){
+			//System.out.println(n.getBeginLine());
 			if(!n.getChildrenNodes().isEmpty()){
 				decision.setTrueBeginLine( n.getChildrenNodes().get(0).getBeginLine());
 			}

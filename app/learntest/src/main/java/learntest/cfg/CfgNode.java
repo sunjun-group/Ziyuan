@@ -10,6 +10,8 @@ public interface CfgNode {
 	
 	public int getBeginLine();
 	
+	public int getTrueBeginLine();
+	
 	public String getStmtType();
 
 	public static enum Type {
