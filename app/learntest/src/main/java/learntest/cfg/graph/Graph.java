@@ -31,6 +31,11 @@ public class Graph<V, E extends Edge<V>> extends PropertiesContainer {
 	
 	public void addVertex(V vertex) {
 		vertices.add(vertex);
+		
+	}
+	
+	public void removeVertex(V vertex){
+		vertices.remove(vertex);
 	}
 	
 	public void addVerties(List<V> newVertices) {

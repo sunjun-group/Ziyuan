@@ -442,6 +442,7 @@ public class CfgCreator extends CfgConverter {
 		
 		//remove default node
 		cfg.remove(decisions.get(decisions.size() - 1));
+		cfg.removeVertex(decisions.get(decisions.size() - 1));
 		
 		return cfg;
 	}
