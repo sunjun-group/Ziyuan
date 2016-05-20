@@ -301,16 +301,16 @@ public class CfgCreator extends CfgConverter {
 			}
 		}
 
-//		if (defaultEntry != null) {
-//			decisions.add(new CfgDecisionNode(n.getSelector(),
-//					"switch default", false));
-//			statementsList.add(defaultEntry.getStmts());
-//			cfg.addNode(decisions.get(decisions.size() - 1));
-//			temporaryDecisionNodeList.add(decisions.get(decisions.size() - 1));
-//			decisionNodeMap.put(n.toString(), decisionNodeIndex++);
-//			decisions.get(decisions.size() - 1).setBeginLine(defaultEntry.getBeginLine());
-//			setTrueBeginLine( defaultEntry ,  decisions.get(decisions.size() - 1));
-//		}
+		if (defaultEntry != null) {
+			decisions.add(new CfgDecisionNode(n.getSelector(),
+					"switch default", false));
+			statementsList.add(defaultEntry.getStmts());
+			cfg.addNode(decisions.get(decisions.size() - 1));
+			temporaryDecisionNodeList.add(decisions.get(decisions.size() - 1));
+			decisionNodeMap.put(n.toString(), decisionNodeIndex++);
+			decisions.get(decisions.size() - 1).setBeginLine(defaultEntry.getBeginLine());
+		    setTrueBeginLine( defaultEntry ,  decisions.get(decisions.size() - 1));
+		}
 
 		cfg.addEdge(cfg.getEntry(), decisions.get(0));
 		for (int i = 0; i < decisions.size(); i++) {
@@ -439,6 +439,10 @@ public class CfgCreator extends CfgConverter {
 				}
 			}
 		}
+		
+		//remove default node
+		cfg.remove(decisions.get(decisions.size() - 1));
+		
 		return cfg;
 	}
 
