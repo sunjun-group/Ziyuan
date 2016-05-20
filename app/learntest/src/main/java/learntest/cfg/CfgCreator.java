@@ -482,7 +482,7 @@ public class CfgCreator extends CfgConverter {
 				.removeAll(temporaryBreakTrueOrFalseNotToExitList);
 	}
 
-	protected CFG dealWithBreakStmt(CFG cfg) {
+	public CFG dealWithBreakStmt(CFG cfg) {
 		if (temporaryBreakNodeList.size() != 0) {
 			for (int i = 0; i < temporaryBreakNodeList.size(); i++) {
 				cfg.removeEdge(cfgEdgeMap.get(temporaryBreakNodeList.get(i)
@@ -541,7 +541,7 @@ public class CfgCreator extends CfgConverter {
 		}
 	}
 
-	protected CFG dealWithReturnStmt(CFG cfg) {
+	public CFG dealWithReturnStmt(CFG cfg) {
 		if (temporaryReturnEdgeList.size() != 0) {
 			for (CfgEdge edge : temporaryReturnEdgeList) {
 				cfg.removeEdge(edge);
