@@ -3,14 +3,14 @@ package testdata.benchmark;
 public class Complex {
 
 	public void complexCheck(int a, int b, int c, int d, int e) {
-		if (a < 10 && b > 1000 && c >999) {
+		if (a < 3 && b > 3 && c > 5) {
 			System.out.println("complex if executed");
 		}
-		else if (a > 10 && b > 1000 && c > 999 && (d > 999 && d < 1001)) {
+		else if (a > 3 && b > 3 && c > 5 && (d > 6 && d < 8)) {
 			System.out.println("complex else if executed");
-			if (c + b < 2003 && a + b < 1400 && a > 390) {
+			if (c + b < 12 && a + b < 15 && a > 5) {
 				System.out.println("the inner if executed");
-				if (d + e > 2001 && d + e < 2003) {
+				if (d + e > -1 && d + e < 1) {
 					System.out.println("Target reached");
 				}
 			}			
