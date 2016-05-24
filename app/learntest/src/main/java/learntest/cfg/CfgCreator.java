@@ -53,6 +53,7 @@ public class CfgCreator extends CfgConverter {
 	private boolean hasBreakNotToExitStmt = false;;
 	private boolean hasContinueStmt = false;
 	private boolean hasReturnStmt = false;
+	private boolean hasReturnStmtOutIf = false;
 	private CfgDecisionNode breakStmtToParentStmt;
 	private CfgDecisionNode continueStmtToParentStmt;
 	private Map<String, Integer> decisionNodeMap = new HashMap<String, Integer>();
@@ -139,7 +140,23 @@ public class CfgCreator extends CfgConverter {
 			attachExecutionBlock(cfg, decision, ifThen, cfg.getExit(), true);
 		}
 
-		CFG elseThen = toCFG(n.getElseStmt());
+
+		//deal with return outside if but not in else
+		   if(hasReturnStmtOutIf){
+			   hasReturnStmtOutIf = false;
+				int index = temporaryDecisionNodeList.indexOf(decision);	
+				for(int i = 0 ; i < cfg.getOutEdges(temporaryDecisionNodeList.get(index + 1)).size() ; i ++){
+					if( cfg.getOutEdges(temporaryDecisionNodeList.get(index + 1)).get(i).getDest().equals(cfg.getExit())){
+					cfg.removeEdge(cfg.getOutEdges(temporaryDecisionNodeList.get(index + 1)).get(i));
+				}
+				}			
+				attachExecutionBlock(cfg, temporaryDecisionNodeList.get(index + 1), temporaryDecisionNodeList.get(index + 1), false);
+				temporaryReturnEdgeList.add(cfgEdgeMap.get(temporaryDecisionNodeList.get(index + 1).toString()
+					+ temporaryDecisionNodeList.get(index + 1).toString() + false));
+			}
+		   
+	   if(n.getElseStmt() != null){
+		CFG elseThen = toCFG(n.getElseStmt());	
 		if (hasBreakStmt) {
 			hasBreakStmt = false;
 			if (breakStmtToParentStmt != null) {
@@ -166,9 +183,15 @@ public class CfgCreator extends CfgConverter {
 			attachExecutionBlock(cfg, decision, elseThen, decision, false);
 			temporaryReturnEdgeList.add(cfgEdgeMap.get(decision.toString()
 					+ decision.toString() + false));
-		} else {
+		} 
+		else {
 			attachExecutionBlock(cfg, decision, elseThen, cfg.getExit(), false);
 		}
+	   }
+	   else{
+		   attachExecutionBlock(cfg, decision, cfg.getExit(), false);
+	   }
+	   
 
 		return cfg;
 	}
@@ -562,8 +585,10 @@ public class CfgCreator extends CfgConverter {
 					cfg.addEdge(edge.getSource(), cfg.getExit());
 				}
 			}
+			
 			temporaryReturnEdgeList.removeAll(temporaryReturnEdgeList);
 		}
+
 
 		return cfg;
 	}
@@ -578,7 +603,15 @@ public class CfgCreator extends CfgConverter {
 
 	@Override
 	protected CFG convert(ReturnStmt n) {
+		
+		if( n.getParentNode().toString().contains("if (")){
+			//System.out.println(n.getParentNode().toString());
+			hasReturnStmtOutIf = true;
+		}
+		//System.out.println();
+		else{
 		hasReturnStmt = true;
+		}
 		returnNodeList.add(new CfgDecisionNode(n));
 		return convertProcessStmt(n);
 	}
