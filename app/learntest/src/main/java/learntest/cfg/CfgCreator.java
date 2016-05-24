@@ -62,6 +62,7 @@ public class CfgCreator extends CfgConverter {
 	private List<CfgDecisionNode> temporaryBreakNodeNotToExitList = new ArrayList<CfgDecisionNode>();
 	private List<Boolean> temporaryBreakTrueOrFalseList = new ArrayList<Boolean>();
 	private List<Boolean> temporaryBreakTrueOrFalseNotToExitList = new ArrayList<Boolean>();
+	private List<CfgDecisionNode> returnNodeList = new ArrayList<CfgDecisionNode>();
 
 	public CFG toCFG(Node node) {
 		if (node != null) {
@@ -578,6 +579,7 @@ public class CfgCreator extends CfgConverter {
 	@Override
 	protected CFG convert(ReturnStmt n) {
 		hasReturnStmt = true;
+		returnNodeList.add(new CfgDecisionNode(n));
 		return convertProcessStmt(n);
 	}
 
@@ -874,6 +876,11 @@ public class CfgCreator extends CfgConverter {
 				decision.setTrueBeginLine( n.getBeginLine());
 			}
 		}
+	}
+	
+	public List<CfgDecisionNode> getReturnNodeList(){
+		
+		return  returnNodeList;
 	}
 
 }
