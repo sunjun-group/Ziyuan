@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import icsetlv.common.dto.BreakpointValue;
 import learntest.breakpoint.data.BreakpointBuilder;
@@ -28,7 +29,48 @@ public class BreakpointDataBuilder {
 		result = null;
 	}
 	
-	public void build(List<BreakPoint> path, BreakpointValue inputValue) {
+
+	public void build(List<BreakPoint> exePathOfTcI, List<BreakpointValue> inputValueOfTcI) {
+		if(inputValueOfTcI.size() == 1) {
+			build(exePathOfTcI, inputValueOfTcI.get(0));
+			return;
+		}
+		Map<Integer, List<BreakPoint>> paths = new HashMap<Integer, List<BreakPoint>>();
+		Stack<BreakPoint> todo = new Stack<BreakPoint>();
+		Stack<Integer> order = new Stack<Integer>();
+		int idx = 0;
+		for(BreakPoint bkp : exePathOfTcI) {
+			if (bkpBuilder.isEntryNode(bkp)) {
+				order.push(idx ++);
+			}
+			if(bkpBuilder.isReturnNode(bkp.getLineNo())) {
+				Stack<BreakPoint> cur = new Stack<BreakPoint>();
+				cur.push(bkp);
+				if(!bkpBuilder.isEntryNode(bkp)) {
+					while (!todo.isEmpty()) {
+						BreakPoint next = todo.pop();
+						cur.push(next);
+						if(bkpBuilder.isEntryNode(next)) {
+							break;
+						}
+					}
+				}
+				List<BreakPoint> curList = new ArrayList<BreakPoint>();
+				while (!cur.isEmpty()) {
+					curList.add(cur.pop());
+				}
+				paths.put(order.pop(), curList);
+			} else {
+				todo.push(bkp);
+			}
+		}
+		idx = 0;
+		for (BreakpointValue inputValue : inputValueOfTcI) {
+			build(paths.get(idx ++), inputValue);
+		}
+	}
+	
+	private void build(List<BreakPoint> path, BreakpointValue inputValue) {
 		Map<BreakPoint, List<Integer>> pathMap = buildPathMap(path);
 		if(target == null) {
 			List<DecisionLocation> locations = bkpBuilder.getLocations();

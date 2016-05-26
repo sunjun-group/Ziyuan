@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import icsetlv.DefaultValues;
 import japa.parser.JavaParser;
@@ -17,6 +19,7 @@ import japa.parser.ast.body.TypeDeclaration;
 import learntest.breakpoint.data.BreakpointBuilder;
 import learntest.cfg.CFG;
 import learntest.cfg.CfgCreator;
+import learntest.cfg.CfgDecisionNode;
 import learntest.sampling.SelectiveSampling;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
@@ -39,6 +42,9 @@ public class Engine {
 	private CFG cfg;
 	private BreakpointBuilder bkpBuilder;
 	private BreakpointDataBuilder dtBuilder;
+	
+	//To handle recursion,can only handle recursion with returns
+	private Set<Integer> returns;
 
 	public Engine(AppJavaClassPath appClassPath){
 		this.appClassPath = appClassPath;
@@ -60,7 +66,8 @@ public class Engine {
 		addTestcases(LearnTestConfig.testPath);
 		
 		createCFG();
-		bkpBuilder = new BreakpointBuilder(className, methodName, variables, cfg);
+		System.out.println(cfg);
+		bkpBuilder = new BreakpointBuilder(className, methodName, variables, cfg, returns);
 		bkpBuilder.buildBreakpoints();
 		dtBuilder = new BreakpointDataBuilder(bkpBuilder);
 		
@@ -90,7 +97,13 @@ public class Engine {
 							for (Parameter parameter : parameters) {
 								variables.add(new Variable(parameter.getId().getName()));
 							}
-							cfg = CfgCreator.createCFG(method);
+							CfgCreator creator = new CfgCreator();
+							cfg = creator.dealWithBreakStmt(creator.dealWithReturnStmt(creator.toCFG(method)));
+							returns = new HashSet<Integer>();
+							List<CfgDecisionNode> returnNodeList = creator.getReturnNodeList();
+							for (CfgDecisionNode returnNode : returnNodeList) {
+								returns.add(returnNode.getBeginLine());
+							}
 							return;
 						}
 					}

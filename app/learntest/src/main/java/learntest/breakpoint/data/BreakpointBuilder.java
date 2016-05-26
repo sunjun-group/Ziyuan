@@ -26,12 +26,18 @@ public class BreakpointBuilder {
 	private Map<DecisionLocation, DecisionLocation> parentMap;
 	private List<BreakPoint> breakPoints;
 	
+	//recursion handling
+	private Set<Integer> returns;
+	private List<BreakPoint> returnBkps;
+	private Map<DecisionLocation, List<BreakPoint>> bkpListMap;
+	
 
-	public BreakpointBuilder(String className, String methodName, List<Variable> variables, CFG cfg) {
+	public BreakpointBuilder(String className, String methodName, List<Variable> variables, CFG cfg, Set<Integer> returns) {
 		this.className = className;
 		this.methodName = methodName;
 		this.variables = variables;
 		this.cfg = cfg;
+		this.returns = returns;
 	}
 	
 	public void buildBreakpoints() {
@@ -41,6 +47,7 @@ public class BreakpointBuilder {
 		Set<BreakPoint> bkps = new HashSet<BreakPoint>();
 		entry = new BreakPoint(className, methodName, cfg.getEntry().getBeginLine());
 		entry.addVars(variables);
+		bkps.add(entry);
 		
 		List<CfgNode> nodes = cfg.getVertices();
 		for (CfgNode node : nodes) {
@@ -55,26 +62,35 @@ public class BreakpointBuilder {
 				parentMap.put(location, parent);
 			}
 		}
-		
-		bkps.remove(entry);
-		bkps.add(entry);
-		
+
+		returnBkps = new ArrayList<BreakPoint>();
+		for(int returnLine : returns) {
+			BreakPoint bkp = new BreakPoint(className, methodName, returnLine);
+			returnBkps.add(bkp);
+			bkps.add(bkp);
+		}
+				
 		breakPoints = new ArrayList<BreakPoint>(bkps);
+		bkpListMap = new HashMap<DecisionLocation, List<BreakPoint>>();
+		buildBreakpointsForAllLocations();
 	}
 	
-	public List<BreakPoint> buildBreakpoints(DecisionLocation location) {
-		List<BreakPoint> bkps = new ArrayList<BreakPoint>();
-		BreakPoint bkp = getBreakPoint(location);
-		if (bkp != null) {
-			bkps.add(bkp);
+	private void buildBreakpointsForAllLocations() {
+		for (DecisionLocation location : locations) {
+			Set<BreakPoint> set = new HashSet<BreakPoint>();
+			set.add(entry);
+			set.addAll(returnBkps);
+			set.add(getBreakPoint(location));
 			BreakPoint parent = getParentBreakPoint(location);
 			if (parent != null) {
-				bkps.add(parent);
+				set.add(parent);
 			}
-			bkps.remove(entry);
-			bkps.add(entry);
+			bkpListMap.put(location, new ArrayList<BreakPoint>(set));
 		}
-		return bkps;
+	}
+
+	public List<BreakPoint> getBreakpoints(DecisionLocation location) {
+		return bkpListMap.get(location);
 	}
 	
 	public List<DecisionLocation> getLocations() {
@@ -91,6 +107,14 @@ public class BreakpointBuilder {
 	
 	public BreakPoint getParentBreakPoint(DecisionLocation location) {
 		return decisionMap.get(parentMap.get(location));
+	}
+	
+	public boolean isReturnNode(int line) {
+		return returns.contains(line);
+	}
+	
+	public boolean isEntryNode(BreakPoint bkp) {
+		return entry.equals(bkp);
 	}
 
 }

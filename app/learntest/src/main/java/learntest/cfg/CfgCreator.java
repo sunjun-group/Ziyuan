@@ -911,8 +911,7 @@ public class CfgCreator extends CfgConverter {
 		}
 	}
 	
-	public List<CfgDecisionNode> getReturnNodeList(){
-		
+	public List<CfgDecisionNode> getReturnNodeList(){		
 		return  returnNodeList;
 	}
 

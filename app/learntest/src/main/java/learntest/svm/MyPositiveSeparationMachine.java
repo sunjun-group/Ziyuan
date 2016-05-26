@@ -45,20 +45,45 @@ public class MyPositiveSeparationMachine extends Machine {
 		classifyNegativePositivePoints(dataPoints, positives, negatives);
 		
 		List<DataPoint> trainingData = positives;
+		List<DataPoint> lastRemoved = new ArrayList<Machine.DataPoint>();
+
+		trainingData.add(negativePointSelection.select(negatives, positives));
+		super.train(trainingData);
+		if (model != null) {
+			learnedModels.add(model);
+		}
+		trainingData.remove(trainingData.size() - 1);
+		removeClassifiedNegativePoints(negatives, lastRemoved);
+
 		while (!negatives.isEmpty()) {
 			trainingData.add(negativePointSelection.select(negatives, positives));
 			super.train(trainingData);
 			if (model != null) {
+				/*if(classify(lastRemoved)) {
+					learnedModels.remove(learnedModels.size() - 1);
+				} else {
+					lastRemoved = new ArrayList<Machine.DataPoint>();
+				}*/
 				learnedModels.add(model);
 			}
 
 			trainingData.remove(trainingData.size() - 1);
-			removeClassifiedNegativePoints(negatives);
+			removeClassifiedNegativePoints(negatives, lastRemoved);
 		}
 		
 		return this;
 	}
 	
+	/*private boolean classify(List<DataPoint> lastRemoved) {
+		Divider roundDivider = new Model(model, getNumberOfFeatures()).getExplicitDivider().round();
+		for (DataPoint dp : lastRemoved) {
+			if (roundDivider.dataPointBelongTo(dp, Category.POSITIVE)) {
+				return false;
+			}
+		}
+		return true;
+	}*/
+
 	private void classifyNegativePositivePoints(List<DataPoint> dataPoints, List<DataPoint> positives, 
 			List<DataPoint> negatives) {
 		for (DataPoint point : dataPoints) {
@@ -70,7 +95,7 @@ public class MyPositiveSeparationMachine extends Machine {
 		}
 	}
 	
-	private void removeClassifiedNegativePoints(final List<DataPoint> negatives) {
+	private void removeClassifiedNegativePoints(final List<DataPoint> negatives, List<DataPoint> removed) {
 		if (model == null) {
 			return;
 		}
@@ -79,6 +104,7 @@ public class MyPositiveSeparationMachine extends Machine {
 			DataPoint dp = it.next();
 			if (roundDivider.dataPointBelongTo(dp, Category.NEGATIVE)) {
 				it.remove();
+				removed.add(dp);
 			}
 		}
 	}
