@@ -130,6 +130,9 @@ public class DecisionLearner implements CategoryCalculator {
 			bkpData.merge(newData);
 			addDataPoints(vars, newData.getTrueValues(), Category.POSITIVE, machine);
 			addDataPoints(vars, newData.getFalseValues(), Category.NEGATIVE, machine);
+			if(machine.getModelAccuracy() == 1.0) {
+				break;
+			}
 			machine.train();
 			Formula tmp = getLearnedFormula();
 			if (!tmp.equals(trueFlase)) {
@@ -192,6 +195,9 @@ public class DecisionLearner implements CategoryCalculator {
 			}
 			addDataPoints(vars, newData.getMoreTimesValues(), Category.POSITIVE, machine);
 			addDataPoints(vars, newData.getOneTimeValues(), Category.NEGATIVE, machine);
+			if(machine.getModelAccuracy() == 1.0) {
+				break;
+			}
 			machine.train();
 			Formula tmp = getLearnedFormula();
 			if (!tmp.equals(formula)) {

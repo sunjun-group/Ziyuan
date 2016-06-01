@@ -40,50 +40,46 @@ public class MyPositiveSeparationMachine extends Machine {
 		}
 		
 		learnedModels = new ArrayList<svm_model>();
-		List<DataPoint> positives = new ArrayList<DataPoint>(dataPoints.size());
-		List<DataPoint> negatives = new ArrayList<DataPoint>(dataPoints.size());
+		List<DataPoint> positives = new ArrayList<DataPoint>();
+		List<DataPoint> negatives = new ArrayList<DataPoint>();
 		classifyNegativePositivePoints(dataPoints, positives, negatives);
 		
-		List<DataPoint> trainingData = positives;
-		List<DataPoint> lastRemoved = new ArrayList<Machine.DataPoint>();
-
-		trainingData.add(negativePointSelection.select(negatives, positives));
-		super.train(trainingData);
-		if (model != null) {
-			learnedModels.add(model);
-		}
-		trainingData.remove(trainingData.size() - 1);
-		removeClassifiedNegativePoints(negatives, lastRemoved);
+		List<DataPoint> trainingData = new ArrayList<Machine.DataPoint>(positives);
+		List<DataPoint> removed = null;
 
 		while (!negatives.isEmpty()) {
 			trainingData.add(negativePointSelection.select(negatives, positives));
 			super.train(trainingData);
-			if (model != null) {
-				/*if(classify(lastRemoved)) {
-					learnedModels.remove(learnedModels.size() - 1);
-				} else {
-					lastRemoved = new ArrayList<Machine.DataPoint>();
-				}*/
+			svm_model last = null;
+			if (model != null) {			
+				removed = new ArrayList<Machine.DataPoint>();
+				removeClassifiedNegativePoints(negatives, removed);
+				last = model;
+				while (!removed.isEmpty()) {
+					trainingData.addAll(removed);
+					super.train(trainingData);
+					removed = new ArrayList<Machine.DataPoint>();
+					if (model != null) {
+						removeClassifiedNegativePoints(negatives, removed);
+						last = model;
+					}
+				}
+				learnedModels.add(last);
+				trainingData = new ArrayList<Machine.DataPoint>(positives);
+			} else {
+				negatives.add(trainingData.remove(trainingData.size() - 1));
+			}
+			/*if (model != null) {
 				learnedModels.add(model);
 			}
 
 			trainingData.remove(trainingData.size() - 1);
-			removeClassifiedNegativePoints(negatives, lastRemoved);
+			removeClassifiedNegativePoints(negatives, lastRemoved);*/
 		}
 		
 		return this;
 	}
 	
-	/*private boolean classify(List<DataPoint> lastRemoved) {
-		Divider roundDivider = new Model(model, getNumberOfFeatures()).getExplicitDivider().round();
-		for (DataPoint dp : lastRemoved) {
-			if (roundDivider.dataPointBelongTo(dp, Category.POSITIVE)) {
-				return false;
-			}
-		}
-		return true;
-	}*/
-
 	private void classifyNegativePositivePoints(List<DataPoint> dataPoints, List<DataPoint> positives, 
 			List<DataPoint> negatives) {
 		for (DataPoint point : dataPoints) {
