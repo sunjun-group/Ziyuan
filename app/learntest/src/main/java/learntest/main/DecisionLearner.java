@@ -47,7 +47,7 @@ public class DecisionLearner implements CategoryCalculator {
 	private List<ExecVar> boolVars;
 	private SelectiveSampling selectiveSampling;
 	
-	private final int MAX_ONE_CLASS_ATTEMPT = 10;
+	private final int MAX_ATTEMPT = 10;
 	
 	public DecisionLearner(SelectiveSampling selectiveSampling) {
 		machine = new MyPositiveSeparationMachine();
@@ -90,7 +90,7 @@ public class DecisionLearner implements CategoryCalculator {
 		int times = 0;
 		boolean missTrue = oneClassData.getTrueValues().isEmpty();
 		boolean missFalse = oneClassData.getFalseValues().isEmpty();
-		while ((missFalse || missTrue) && times < MAX_ONE_CLASS_ATTEMPT) {
+		while ((missFalse || missTrue) && times < MAX_ATTEMPT) {
 			addDataPoints(vars, oneClassData.getTrueValues(), Category.POSITIVE, oneClass);
 			addDataPoints(vars, oneClassData.getFalseValues(), Category.NEGATIVE, oneClass);
 			oneClass.train();
@@ -103,6 +103,7 @@ public class DecisionLearner implements CategoryCalculator {
 			missTrue &= newData.getTrueValues().isEmpty();
 			missFalse &= newData.getFalseValues().isEmpty();
 			oneClassData = newData;
+			times ++;
 		}
 		if (missTrue) {
 			log.info("Missing true branch data");
@@ -116,12 +117,13 @@ public class DecisionLearner implements CategoryCalculator {
 			bkpData.merge(oneClassData);
 		}
 
+		times = 0;
 		machine.resetData();
 		addDataPoints(vars, bkpData.getTrueValues(), Category.POSITIVE, machine);
 		addDataPoints(vars, bkpData.getFalseValues(), Category.NEGATIVE, machine);
 		machine.train();
 		Formula trueFlase = getLearnedFormula();
-		while(true) {
+		while(times < MAX_ATTEMPT) {
 			BreakpointData newData = selectiveSampling.selectData(bkpData.getLocation(), 
 					trueFlase, machine.getDataLabels(), machine.getDataPoints());
 			if (newData == null) {
@@ -130,9 +132,6 @@ public class DecisionLearner implements CategoryCalculator {
 			bkpData.merge(newData);
 			addDataPoints(vars, newData.getTrueValues(), Category.POSITIVE, machine);
 			addDataPoints(vars, newData.getFalseValues(), Category.NEGATIVE, machine);
-			if(machine.getModelAccuracy() == 1.0) {
-				break;
-			}
 			machine.train();
 			Formula tmp = getLearnedFormula();
 			if (!tmp.equals(trueFlase)) {
@@ -140,7 +139,8 @@ public class DecisionLearner implements CategoryCalculator {
 			} else {
 				break;
 			}
-		};
+			times ++;
+		}
 		
 		Formula oneMore = null;
 		if (bkpData instanceof LoopTimesData) {
@@ -156,7 +156,7 @@ public class DecisionLearner implements CategoryCalculator {
 		LoopTimesData oneClassData = loopData;
 		boolean missOnce = oneClassData.getOneTimeValues().isEmpty();
 		boolean missMore = oneClassData.getMoreTimesValues().isEmpty();
-		while ((missOnce || missMore) && times < MAX_ONE_CLASS_ATTEMPT) {
+		while ((missOnce || missMore) && times < MAX_ATTEMPT) {
 			addDataPoints(vars, oneClassData.getMoreTimesValues(), Category.POSITIVE, oneClass);
 			addDataPoints(vars, oneClassData.getOneTimeValues(), Category.NEGATIVE, oneClass);
 			oneClass.train();
@@ -169,6 +169,7 @@ public class DecisionLearner implements CategoryCalculator {
 			missOnce &= newData.getOneTimeValues().isEmpty();
 			missMore &= newData.getMoreTimesValues().isEmpty();
 			oneClassData = newData;
+			times ++;
 		}
 		if (missOnce) {
 			log.info("Missing once loop data");
@@ -182,12 +183,13 @@ public class DecisionLearner implements CategoryCalculator {
 			loopData.merge(oneClassData);
 		}
 		
+		times = 0;
 		machine.resetData();
 		addDataPoints(vars, loopData.getMoreTimesValues(), Category.POSITIVE, machine);
 		addDataPoints(vars, loopData.getOneTimeValues(), Category.NEGATIVE, machine);
 		machine.train();
 		Formula formula = getLearnedFormula();
-		while(true) {
+		while(times < MAX_ATTEMPT) {
 			LoopTimesData newData = (LoopTimesData) selectiveSampling.selectData(loopData.getLocation(), 
 					formula, machine.getDataLabels(), machine.getDataPoints());	
 			if (newData == null) {
@@ -195,9 +197,6 @@ public class DecisionLearner implements CategoryCalculator {
 			}
 			addDataPoints(vars, newData.getMoreTimesValues(), Category.POSITIVE, machine);
 			addDataPoints(vars, newData.getOneTimeValues(), Category.NEGATIVE, machine);
-			if(machine.getModelAccuracy() == 1.0) {
-				break;
-			}
 			machine.train();
 			Formula tmp = getLearnedFormula();
 			if (!tmp.equals(formula)) {
@@ -205,7 +204,8 @@ public class DecisionLearner implements CategoryCalculator {
 			} else {
 				break;
 			}
-		};
+			times ++;
+		}
 		return formula;
 	}
 	

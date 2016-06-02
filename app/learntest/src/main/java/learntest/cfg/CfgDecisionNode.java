@@ -1,6 +1,10 @@
 package learntest.cfg;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import japa.parser.ast.Node;
+import sav.common.core.formula.Formula;
 
 public class CfgDecisionNode implements CfgNode {
 	
@@ -10,6 +14,11 @@ public class CfgDecisionNode implements CfgNode {
 	private int parentBeginLine = -1;
 	private String stmtType;
 	private boolean loop;
+	
+	private int order;
+	private int indegree;
+	private List<Formula> preconditions;
+	private Formula condition;
 	
 	public CfgDecisionNode(Node astNode) {
 		this.astNode = astNode;
@@ -91,6 +100,45 @@ public class CfgDecisionNode implements CfgNode {
 
 	public boolean isLoop() {
 		return loop;
+	}
+
+	public int getOrder() {
+		return order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
+	public int getIndegree() {
+		return indegree;
+	}
+
+	public void incIndegree() {
+		this.indegree ++;
+	}
+	
+	public void decIndegree() {
+		this.indegree --;
+	}
+
+	public List<Formula> getPreconditions() {
+		return preconditions;
+	}
+
+	public void addPrecondition(Formula precondition) {
+		if (this.preconditions == null) {
+			this.preconditions = new ArrayList<Formula>();
+		}
+		this.preconditions.add(precondition);
+	}
+
+	public Formula getCondition() {
+		return condition;
+	}
+
+	public void setCondition(Formula condition) {
+		this.condition = condition;
 	}
 	
 }
