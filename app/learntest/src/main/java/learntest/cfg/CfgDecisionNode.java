@@ -15,8 +15,6 @@ public class CfgDecisionNode implements CfgNode {
 	private String stmtType;
 	private boolean loop;
 	
-	private int order;
-	private int indegree;
 	private List<Formula> preconditions;
 	private Formula condition;
 	
@@ -100,26 +98,6 @@ public class CfgDecisionNode implements CfgNode {
 
 	public boolean isLoop() {
 		return loop;
-	}
-
-	public int getOrder() {
-		return order;
-	}
-
-	public void setOrder(int order) {
-		this.order = order;
-	}
-
-	public int getIndegree() {
-		return indegree;
-	}
-
-	public void incIndegree() {
-		this.indegree ++;
-	}
-	
-	public void decIndegree() {
-		this.indegree --;
 	}
 
 	public List<Formula> getPreconditions() {

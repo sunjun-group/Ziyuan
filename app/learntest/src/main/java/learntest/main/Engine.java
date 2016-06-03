@@ -20,6 +20,7 @@ import learntest.breakpoint.data.BreakpointBuilder;
 import learntest.cfg.CFG;
 import learntest.cfg.CfgCreator;
 import learntest.cfg.CfgDecisionNode;
+import learntest.cfg.traveller.CfgConditionManager;
 import learntest.sampling.SelectiveSampling;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
@@ -40,6 +41,7 @@ public class Engine {
 	private TestcasesExecutorwithLoopTimes tcExecutor;
 	private List<Variable> variables;
 	private CFG cfg;
+	private CfgConditionManager manager;
 	private BreakpointBuilder bkpBuilder;
 	private BreakpointDataBuilder dtBuilder;
 	
@@ -67,6 +69,7 @@ public class Engine {
 		
 		createCFG();
 		System.out.println(cfg);
+		manager = new CfgConditionManager(cfg);
 		bkpBuilder = new BreakpointBuilder(className, methodName, variables, cfg, returns);
 		bkpBuilder.buildBreakpoints();
 		dtBuilder = new BreakpointDataBuilder(bkpBuilder);
