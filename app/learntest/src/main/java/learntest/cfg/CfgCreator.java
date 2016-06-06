@@ -144,7 +144,8 @@ public class CfgCreator extends CfgConverter {
 		//deal with return outside if but not in else
 		   if(hasReturnStmtOutIf){
 			   hasReturnStmtOutIf = false;
-				int index = temporaryDecisionNodeList.indexOf(decision);	
+				int index = temporaryDecisionNodeList.indexOf(decision);
+				if(index !=  temporaryDecisionNodeList.size() -1){
 				for(int i = 0 ; i < cfg.getOutEdges(temporaryDecisionNodeList.get(index + 1)).size() ; i ++){
 					if( cfg.getOutEdges(temporaryDecisionNodeList.get(index + 1)).get(i).getDest().equals(cfg.getExit())){
 					cfg.removeEdge(cfg.getOutEdges(temporaryDecisionNodeList.get(index + 1)).get(i));
@@ -153,6 +154,7 @@ public class CfgCreator extends CfgConverter {
 				attachExecutionBlock(cfg, temporaryDecisionNodeList.get(index + 1), temporaryDecisionNodeList.get(index + 1), false);
 				temporaryReturnEdgeList.add(cfgEdgeMap.get(temporaryDecisionNodeList.get(index + 1).toString()
 					+ temporaryDecisionNodeList.get(index + 1).toString() + false));
+				}
 			}
 		   
 	   if(n.getElseStmt() != null){
@@ -354,7 +356,7 @@ public class CfgCreator extends CfgConverter {
 			}
 			if ((i + 1) > (decisions.size() - 1)) {
 				if (defaultEntry == null) {
-					if (hasReturnStmt) {
+					if (hasReturnStmt || hasReturnStmtOutIf) {
 						dealWithReturnStmt(cfg, tempCfg, decision);
 
 						attachExecutionBlock(cfg, decision, null,
@@ -368,16 +370,17 @@ public class CfgCreator extends CfgConverter {
 
 				} else {
 					if (tempCfg.getVertices().isEmpty()) {
-						if (hasReturnStmt) {
-							hasReturnStmt = false;
+						if (hasReturnStmt || hasReturnStmtOutIf) {
+							dealWithReturnStmt(cfg, tempCfg, decision);
+//							hasReturnStmt = false;
 							attachExecutionBlock(cfg, decision, decision, true);
-							temporaryReturnEdgeList.add(cfgEdgeMap.get(decision
-									.toString() + decision.toString() + true));
+//							temporaryReturnEdgeList.add(cfgEdgeMap.get(decision
+//									.toString() + decision.toString() + true));
 						} else {
 							cfg.addEdge(decision, cfg.getExit());
 						}
 					} else {
-						if (hasReturnStmt) {
+						if (hasReturnStmt || hasReturnStmtOutIf) {
 							dealWithReturnStmt(cfg, tempCfg, decision);
 
 							attachExecutionBlock(cfg, decision, null,
@@ -411,7 +414,7 @@ public class CfgCreator extends CfgConverter {
 					hasBreakStmt = false;
 					attachExecutionBlock(cfg, decision, tempCfg, cfg.getExit(),
 							true);
-				} else if (hasReturnStmt) {
+				} else if (hasReturnStmt || hasReturnStmtOutIf) {
 					dealWithReturnStmt(cfg, tempCfg, decision);
 				} else {
 
@@ -537,6 +540,7 @@ public class CfgCreator extends CfgConverter {
 	protected void dealWithReturnStmt(CFG cfg, CFG tempCfg,
 			CfgDecisionNode decision) {
 		hasReturnStmt = false;
+	    hasReturnStmtOutIf = false;
 		if (!tempCfg.getVertices().isEmpty()) {
 			List<CfgEdge> returnEdgeList = new ArrayList<CfgEdge>(
 					tempCfg.getExitInEdges());
