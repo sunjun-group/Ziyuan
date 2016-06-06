@@ -1,30 +1,39 @@
 package learntest.cfg.traveller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import learntest.calculator.MultiNotDividerBasedCategoryCalculator;
+import learntest.calculator.OrCategoryCalculator;
 import learntest.cfg.CFG;
 import learntest.cfg.CfgDecisionNode;
 import learntest.cfg.CfgEdge;
 import learntest.cfg.CfgFalseEdge;
 import learntest.cfg.CfgNode;
 import learntest.cfg.CfgTrueEdge;
-import sav.common.core.formula.AndFormula;
+import libsvm.core.CategoryCalculator;
+import libsvm.core.Divider;
+import libsvm.extension.MultiDividerBasedCategoryCalculator;
+import sav.common.core.Pair;
 import sav.common.core.formula.Formula;
-import sav.common.core.formula.NotFormula;
 
 public class CfgConditionManager {
+	
+	private Map<Integer, CfgDecisionNode> nodeMap;
 	
 	private Map<CfgDecisionNode, CfgDecisionNode> trueNext;
 	private Map<CfgDecisionNode, CfgDecisionNode> falseNext;
 	
 	public CfgConditionManager(CFG cfg) {
+		nodeMap = new HashMap<Integer, CfgDecisionNode>();
 		trueNext = new HashMap<CfgDecisionNode, CfgDecisionNode>();
 		falseNext = new HashMap<CfgDecisionNode, CfgDecisionNode>();
 		List<CfgNode> vertices = cfg.getVertices();
 		for (CfgNode node : vertices) {
 			if (node instanceof CfgDecisionNode) {
+				nodeMap.put(node.getBeginLine(), (CfgDecisionNode) node);
 				List<CfgEdge> outEdges = cfg.getOutEdges(node);
 				CfgDecisionNode trueNode = null;
 				CfgDecisionNode falseNode = null;
@@ -50,23 +59,52 @@ public class CfgConditionManager {
 		}
 	}
 	
-	public void setCondition(CfgDecisionNode node, Formula condition) {
-		node.setCondition(condition);
+	public void setCondition(int lineNo, Pair<Formula, Formula> formulas, List<Divider> dividers) {
+		CfgDecisionNode node = nodeMap.get(lineNo);
+		node.setTrueFalse(formulas.first());
+		if (node.isLoop()) {
+			node.setOneMore(formulas.second());
+		}
+		node.setDividers(dividers);
+		
 		CfgDecisionNode trueNode = trueNext.get(node);
 		CfgDecisionNode falseNode = falseNext.get(node);
 		if (trueNode != null || falseNode != null) {
-			List<Formula> preconditions = node.getPreconditions();
+			List<List<CategoryCalculator>> preconditions = node.getPreconditions();
 			if (trueNode != null) {
-				for (Formula formula : preconditions) {
-					trueNode.addPrecondition(new AndFormula(formula, condition));
-				}
+				CategoryCalculator condition = new MultiDividerBasedCategoryCalculator(dividers);
+				if (preconditions.isEmpty()) {
+					List<CategoryCalculator> cur = new ArrayList<CategoryCalculator>();
+					cur.add(condition);
+					trueNode.addPrecondition(cur);
+				} else {
+					for (List<CategoryCalculator> list : preconditions) {
+						List<CategoryCalculator> cur = new ArrayList<CategoryCalculator>(list);
+						cur.add(condition);
+						trueNode.addPrecondition(cur);
+					}
+				}				
 			}
 			if (falseNode != null) {
-				for (Formula formula : preconditions) {
-					falseNode.addPrecondition(new AndFormula(formula, new NotFormula(condition)));
-				}
+				CategoryCalculator condition = new MultiNotDividerBasedCategoryCalculator(dividers);
+				if (preconditions.isEmpty()) {
+					List<CategoryCalculator> cur = new ArrayList<CategoryCalculator>();
+					cur.add(condition);
+					falseNode.addPrecondition(cur);
+				} else {
+					for (List<CategoryCalculator> list : preconditions) {
+						List<CategoryCalculator> cur = new ArrayList<CategoryCalculator>(list);
+						cur.add(condition);
+						falseNode.addPrecondition(cur);
+					}
+				}				
 			}
 		}
+	}
+	
+	public OrCategoryCalculator getPreConditions(int lineNo) {
+		CfgDecisionNode node = nodeMap.get(lineNo);
+		return new OrCategoryCalculator(node.getPreconditions());
 	}
 
 }

@@ -2,7 +2,7 @@ package learntest.breakpoint.data;
 
 import sav.common.core.utils.SignatureUtils;
 
-public class DecisionLocation {
+public class DecisionLocation implements Comparable<DecisionLocation>{
 	
 	protected String id;
 	protected String classCanonicalName;
@@ -84,6 +84,11 @@ public class DecisionLocation {
 	
 	public String getMethodName() {
 		return SignatureUtils.extractMethodName(methodSign);
+	}
+
+	@Override
+	public int compareTo(DecisionLocation location) {
+		return lineNo - location.lineNo;
 	}
 	
 }

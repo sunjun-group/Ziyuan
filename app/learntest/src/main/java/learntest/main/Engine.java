@@ -68,7 +68,6 @@ public class Engine {
 		addTestcases(LearnTestConfig.testPath);
 		
 		createCFG();
-		System.out.println(cfg);
 		manager = new CfgConditionManager(cfg);
 		bkpBuilder = new BreakpointBuilder(className, methodName, variables, cfg, returns);
 		bkpBuilder.buildBreakpoints();
@@ -80,7 +79,8 @@ public class Engine {
 		List<BreakpointData> result = tcExecutor.getResult();
 		tcExecutor.setjResultFileDeleteOnExit(true);
 		tcExecutor.setSingleMode();
-		new DecisionLearner(new SelectiveSampling(tcExecutor)).learn(result);
+		new DecisionLearner(new SelectiveSampling(tcExecutor), manager).learn(result);
+		System.out.println(cfg);
 	}
 		
 	private void addTestcases(String testClass) throws ClassNotFoundException {

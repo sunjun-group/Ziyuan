@@ -123,4 +123,15 @@ public class MyPositiveSeparationMachine extends Machine {
 		return learnedModels;
 	}
 	
+	public List<Divider> getLearnedDividers() {
+		List<Divider> roundDividers = new ArrayList<Divider>();
+		for (svm_model learnModel : this.learnedModels) {
+			if (learnModel != null) {
+				roundDividers.add(new Model(learnModel, getNumberOfFeatures()).getExplicitDivider()
+						.round());
+			}
+		}
+		return roundDividers;
+	}
+	
 }

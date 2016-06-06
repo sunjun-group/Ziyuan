@@ -1,6 +1,7 @@
 package learntest.main;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import icsetlv.common.dto.BreakpointValue;
 import learntest.breakpoint.data.DecisionLocation;
+import learntest.calculator.OrCategoryCalculator;
+import learntest.cfg.traveller.CfgConditionManager;
 import learntest.sampling.SelectiveSampling;
 import learntest.svm.MyPositiveSeparationMachine;
 import learntest.testcase.data.BreakpointData;
@@ -47,9 +50,12 @@ public class DecisionLearner implements CategoryCalculator {
 	private List<ExecVar> boolVars;
 	private SelectiveSampling selectiveSampling;
 	
+	private CfgConditionManager manager;
+	private List<Divider> curDividers;
+	
 	private final int MAX_ATTEMPT = 10;
 	
-	public DecisionLearner(SelectiveSampling selectiveSampling) {
+	public DecisionLearner(SelectiveSampling selectiveSampling, CfgConditionManager manager) {
 		machine = new MyPositiveSeparationMachine();
 		machine.setDefaultParams();
 		oneClass = new Machine();
@@ -57,9 +63,11 @@ public class DecisionLearner implements CategoryCalculator {
 				.setKernelType(KernelType.LINEAR).setEps(0.00001).setUseShrinking(false)
 				.setPredictProbability(false).setC(Double.MAX_VALUE));
 		this.selectiveSampling = selectiveSampling;
+		this.manager = manager;
 	}
 	
 	public void learn(List<BreakpointData> bkpsData) throws SavException {
+		Collections.sort(bkpsData);
 		Map<DecisionLocation, Pair<Formula, Formula>> decisions = new HashMap<DecisionLocation, Pair<Formula, Formula>>(); 
 		for (BreakpointData bkpData : bkpsData) {
 			log.info("Start to learn at " + bkpData.getLocation());
@@ -71,7 +79,9 @@ public class DecisionLearner implements CategoryCalculator {
 				log.info("Missing variables");
 				continue;
 			}
-			decisions.put(bkpData.getLocation(), learn(bkpData));
+			Pair<Formula, Formula> res = learn(bkpData);
+			manager.setCondition(bkpData.getLocation().getLineNo(), res, curDividers);
+			decisions.put(bkpData.getLocation(), res);
 		}
 		Set<Entry<DecisionLocation, Pair<Formula, Formula>>> entrySet = decisions.entrySet();
 		for (Entry<DecisionLocation, Pair<Formula, Formula>> entry : entrySet) {
@@ -85,6 +95,7 @@ public class DecisionLearner implements CategoryCalculator {
 	}
 	
 	private Pair<Formula, Formula> learn(BreakpointData bkpData) throws SavException {
+		OrCategoryCalculator preconditions = manager.getPreConditions(bkpData.getLocation().getLineNo());
 		oneClass.resetData();
 		BreakpointData oneClassData = bkpData;
 		int times = 0;
@@ -141,6 +152,7 @@ public class DecisionLearner implements CategoryCalculator {
 			}
 			times ++;
 		}
+		curDividers = machine.getLearnedDividers();
 		
 		Formula oneMore = null;
 		if (bkpData instanceof LoopTimesData) {
