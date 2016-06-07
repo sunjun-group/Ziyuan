@@ -18,6 +18,7 @@ import libsvm.core.Divider;
 import libsvm.extension.MultiDividerBasedCategoryCalculator;
 import sav.common.core.Pair;
 import sav.common.core.formula.Formula;
+import sav.strategies.dto.execute.value.ExecVar;
 
 public class CfgConditionManager {
 	
@@ -25,6 +26,8 @@ public class CfgConditionManager {
 	
 	private Map<CfgDecisionNode, CfgDecisionNode> trueNext;
 	private Map<CfgDecisionNode, CfgDecisionNode> falseNext;
+	
+	private List<ExecVar> vars;
 	
 	public CfgConditionManager(CFG cfg) {
 		nodeMap = new HashMap<Integer, CfgDecisionNode>();
@@ -59,6 +62,10 @@ public class CfgConditionManager {
 		}
 	}
 	
+	public void setVars(List<ExecVar> vars) {
+		this.vars = vars;
+	}
+	
 	public void setCondition(int lineNo, Pair<Formula, Formula> formulas, List<Divider> dividers) {
 		CfgDecisionNode node = nodeMap.get(lineNo);
 		node.setTrueFalse(formulas.first());
@@ -66,6 +73,10 @@ public class CfgConditionManager {
 			node.setOneMore(formulas.second());
 		}
 		node.setDividers(dividers);
+		
+		if (dividers == null) {
+			return;
+		}
 		
 		CfgDecisionNode trueNode = trueNext.get(node);
 		CfgDecisionNode falseNode = falseNext.get(node);
@@ -104,7 +115,7 @@ public class CfgConditionManager {
 	
 	public OrCategoryCalculator getPreConditions(int lineNo) {
 		CfgDecisionNode node = nodeMap.get(lineNo);
-		return new OrCategoryCalculator(node.getPreconditions());
+		return new OrCategoryCalculator(node.getPreconditions(), vars);
 	}
 
 }
