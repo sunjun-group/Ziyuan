@@ -26,6 +26,7 @@ import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
 import sav.common.core.SavException;
+import sav.common.core.formula.Formula;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint.Variable;
@@ -80,7 +81,11 @@ public class Engine {
 		tcExecutor.setjResultFileDeleteOnExit(true);
 		tcExecutor.setSingleMode();
 		new DecisionLearner(new SelectiveSampling(tcExecutor), manager).learn(result);
+		System.out.println("==============================================");
 		System.out.println(cfg);
+		System.out.println("==============================================");
+		List<List<Formula>> paths = manager.buildPaths();
+		System.out.println(paths);
 	}
 		
 	private void addTestcases(String testClass) throws ClassNotFoundException {

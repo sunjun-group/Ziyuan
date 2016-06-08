@@ -17,22 +17,34 @@ import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import libsvm.extension.MultiDividerBasedCategoryCalculator;
 import sav.common.core.Pair;
+import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.Formula;
+import sav.common.core.formula.NotFormula;
 import sav.strategies.dto.execute.value.ExecVar;
 
 public class CfgConditionManager {
 	
-	private Map<Integer, CfgDecisionNode> nodeMap;
+	private CfgDecisionNode begin;
 	
+	private Map<Integer, CfgDecisionNode> nodeMap;	
 	private Map<CfgDecisionNode, CfgDecisionNode> trueNext;
 	private Map<CfgDecisionNode, CfgDecisionNode> falseNext;
+	private Map<CfgDecisionNode, CfgDecisionNode> next;
 	
 	private List<ExecVar> vars;
 	
 	public CfgConditionManager(CFG cfg) {
+		List<CfgEdge> entryOutEdges = cfg.getEntryOutEdges();
+		if (!entryOutEdges.isEmpty()) {
+			CfgNode dest = entryOutEdges.get(0).getDest();
+			if (dest instanceof CfgDecisionNode) {
+				begin = (CfgDecisionNode) dest;
+			}
+		}
 		nodeMap = new HashMap<Integer, CfgDecisionNode>();
 		trueNext = new HashMap<CfgDecisionNode, CfgDecisionNode>();
 		falseNext = new HashMap<CfgDecisionNode, CfgDecisionNode>();
+		next = new HashMap<CfgDecisionNode, CfgDecisionNode>();
 		List<CfgNode> vertices = cfg.getVertices();
 		for (CfgNode node : vertices) {
 			if (node instanceof CfgDecisionNode) {
@@ -57,6 +69,8 @@ public class CfgConditionManager {
 					if (falseNode != null && falseNode.getBeginLine() > node.getBeginLine()) {
 						falseNext.put((CfgDecisionNode) node, falseNode);	
 					}
+				} else if (trueNode != null && trueNode.getBeginLine() > node.getBeginLine()) {
+					next.put((CfgDecisionNode) node, trueNode);
 				}
 			}
 		}
@@ -133,6 +147,82 @@ public class CfgConditionManager {
 	public OrCategoryCalculator getPreConditions(int lineNo) {
 		CfgDecisionNode node = nodeMap.get(lineNo);
 		return new OrCategoryCalculator(node.getPreconditions(), vars);
+	}
+
+	public List<List<Formula>> buildPaths() {
+		List<List<Formula>> res = new ArrayList<List<Formula>>();
+		if (begin == null) {
+			return res;
+		}
+		buildPaths(begin, new ArrayList<Formula>(), res);
+		return res;
+	}
+	
+	private void buildPaths(CfgDecisionNode node, List<Formula> prefix, List<List<Formula>> res) {
+		CfgDecisionNode trueNode = trueNext.get(node);
+		CfgDecisionNode falseNode = falseNext.get(node);
+		if (trueNode == null && falseNode == null) {
+			trueNode = next.get(node);
+			falseNode = next.get(node);
+		}
+		Formula trueBranch = node.getTrueFalse();
+		Formula falseBranch = null;
+		Formula moreBranch = null;
+		if (trueBranch != null) {
+			falseBranch = new NotFormula(trueBranch);
+		}
+		if (node.isLoop()) {
+			moreBranch = node.getOneMore();
+			Formula tmp = moreBranch;
+			if (trueBranch != null) {
+				if (moreBranch == null) {
+					tmp = trueBranch;
+				} else {
+					tmp = new AndFormula(trueBranch, moreBranch);
+				}
+			}
+			if (moreBranch != null) {
+				if (trueBranch == null) {
+					trueBranch = new NotFormula(moreBranch);
+				} else {
+					trueBranch = new AndFormula(trueBranch, new NotFormula(moreBranch));
+				}
+			}
+			moreBranch = tmp;
+		}
+		if (falseNode != null) {
+			if (falseBranch != null) {
+				prefix.add(falseBranch);
+			}
+			buildPaths(falseNode, prefix, res);
+			if (falseBranch != null) {
+				prefix.remove(prefix.size() - 1);
+			}
+		}  else if (falseBranch != null) {
+			List<Formula> path = new ArrayList<Formula>(prefix);
+			path.add(falseBranch);
+			res.add(path);
+		}
+		if (trueNode != null) {
+			if (trueBranch != null) {
+				prefix.add(trueBranch);
+			}
+			buildPaths(trueNode, prefix, res);
+			if (trueBranch != null) {
+				prefix.remove(prefix.size() - 1);
+			}
+		} else {
+			List<Formula> path = new ArrayList<Formula>(prefix);
+			if (trueBranch != null) {
+				path.add(trueBranch);
+			}
+			res.add(path);
+		}
+		if (moreBranch != null) {
+			List<Formula> path = new ArrayList<Formula>(prefix);
+			path.add(moreBranch);
+			res.add(path);
+		}
 	}
 
 }
