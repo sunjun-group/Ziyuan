@@ -11,7 +11,7 @@ public class TestGenerator {
 	private static String prefix = "test";
 	
 	public void gentest() throws ClassNotFoundException, SavException {
-		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(20);
+		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(40);
 		builder.queryMaxLength(1).testPerQuery(GentestConstants.DEFAULT_TEST_PER_QUERY);
 		builder.forClass(Class.forName(LearnTestConfig.className)).method(LearnTestConfig.methodName);
 		TestsPrinter printer = new TestsPrinter(LearnTestConfig.pkg, LearnTestConfig.pkg, 

@@ -75,6 +75,23 @@ public class CfgConditionManager {
 		node.setDividers(dividers);
 		
 		if (dividers == null) {
+			CfgDecisionNode trueNode = trueNext.get(node);
+			CfgDecisionNode falseNode = falseNext.get(node);
+			if (trueNode != null || falseNode != null) {
+				List<List<CategoryCalculator>> preconditions = node.getPreconditions();
+				if (trueNode != null) {
+					for (List<CategoryCalculator> list : preconditions) {
+						List<CategoryCalculator> cur = new ArrayList<CategoryCalculator>(list);
+						trueNode.addPrecondition(cur);
+					}
+				}
+				if (falseNode != null && node.isLoop()) {
+					for (List<CategoryCalculator> list : preconditions) {
+						List<CategoryCalculator> cur = new ArrayList<CategoryCalculator>(list);
+						falseNode.addPrecondition(cur);
+					}
+				}
+			}
 			return;
 		}
 		

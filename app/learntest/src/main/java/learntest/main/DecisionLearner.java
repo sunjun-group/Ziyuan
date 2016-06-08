@@ -103,7 +103,11 @@ public class DecisionLearner implements CategoryCalculator {
 		} else if (bkpData.getFalseValues().isEmpty()) {
 			log.info("Missing false branch data");
 			curDividers = null;
-			return new Pair<Formula, Formula>(null, null);
+			Formula oneMore = null;
+			if (bkpData instanceof LoopTimesData) {
+				oneMore = learn((LoopTimesData)bkpData);
+			}
+			return new Pair<Formula, Formula>(null, oneMore);
 		}
 		
 		/*oneClass.resetData();

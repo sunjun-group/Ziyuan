@@ -79,7 +79,7 @@ public class CfgDecisionNode implements CfgNode {
 	public String toString() {
 		if(!getStmtType().equals("switch default")){
 			//System.out.println(getStmtType());
-		return  AstUtils.toString(getAstNode()) + "? ";
+		return  AstUtils.toString(getAstNode()) + "?  [preconditions: " + preconditions.size() + "]";
 		}
 		else{
 			//System.out.println(getStmtType());
