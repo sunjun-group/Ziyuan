@@ -175,9 +175,7 @@ public class CfgConditionManager {
 			moreBranch = node.getOneMore();
 			Formula tmp = moreBranch;
 			if (trueBranch != null) {
-				if (moreBranch == null) {
-					tmp = trueBranch;
-				} else {
+				if (moreBranch != null) {
 					tmp = new AndFormula(trueBranch, moreBranch);
 				}
 			}
@@ -189,39 +187,85 @@ public class CfgConditionManager {
 				}
 			}
 			moreBranch = tmp;
-		}
-		if (falseNode != null) {
-			if (falseBranch != null) {
-				prefix.add(falseBranch);
-			}
-			buildPaths(falseNode, prefix, res);
-			if (falseBranch != null) {
-				prefix.remove(prefix.size() - 1);
-			}
-		}  else if (falseBranch != null) {
-			List<Formula> path = new ArrayList<Formula>(prefix);
-			path.add(falseBranch);
-			res.add(path);
-		}
-		if (trueNode != null) {
+			
+			List<List<Formula>> truePaths = new ArrayList<List<Formula>>();
 			if (trueBranch != null) {
-				prefix.add(trueBranch);
+				if (trueNode != null) {
+					prefix.add(trueBranch);
+					buildPaths(trueNode, prefix, truePaths);
+					prefix.remove(prefix.size() - 1);
+				} else {
+					List<Formula> cur = new ArrayList<Formula>(prefix);
+					cur.add(trueBranch);
+					truePaths.add(cur);
+				}
+			} else {
+				if (trueNode != null) {
+					buildPaths(trueNode, prefix, truePaths);
+				} else {
+					List<Formula> cur = new ArrayList<Formula>(prefix);
+					truePaths.add(cur);
+				}
 			}
-			buildPaths(trueNode, prefix, res);
-			if (trueBranch != null) {
-				prefix.remove(prefix.size() - 1);
+			if (moreBranch != null) {
+				List<Formula> cur = new ArrayList<Formula>(prefix);
+				cur.add(moreBranch);
+				truePaths.add(cur);
+			}
+			if (falseBranch != null) {
+				res.addAll(truePaths);
+				if (falseNode != null) {
+					prefix.add(falseBranch);
+					buildPaths(falseNode, prefix, res);
+					prefix.remove(prefix.size() - 1);
+				} else {
+					List<Formula> cur = new ArrayList<Formula>(prefix);
+					cur.add(falseBranch);
+					res.add(cur);
+				}
+			} else {
+				List<Formula> pre = null;
+				if (!truePaths.isEmpty()) {
+					pre = truePaths.remove(0);
+				}
+				if (pre == null) {
+					pre = new ArrayList<Formula>(prefix);
+				}
+				res.addAll(truePaths);
+				if (falseNode != null) {
+					buildPaths(falseNode, pre, res);
+				} else {
+					res.add(pre);
+				}
 			}
 		} else {
-			List<Formula> path = new ArrayList<Formula>(prefix);
 			if (trueBranch != null) {
-				path.add(trueBranch);
+				if (trueNode != null) {
+					prefix.add(trueBranch);
+					buildPaths(trueNode, prefix, res);
+					prefix.remove(prefix.size() - 1);
+				} else {
+					List<Formula> cur = new ArrayList<Formula>(prefix);
+					cur.add(trueBranch);
+					res.add(cur);
+				}
+				if (falseNode != null) {
+					prefix.add(falseBranch);
+					buildPaths(falseNode, prefix, res);
+					prefix.remove(prefix.size() - 1);
+				} else {
+					List<Formula> cur = new ArrayList<Formula>(prefix);
+					cur.add(falseBranch);
+					res.add(cur);
+				}
+			} else {
+				if (trueNode != null) {
+					buildPaths(trueNode, prefix, res);
+				} else {
+					List<Formula> cur = new ArrayList<Formula>(prefix);
+					res.add(cur);
+				}
 			}
-			res.add(path);
-		}
-		if (moreBranch != null) {
-			List<Formula> path = new ArrayList<Formula>(prefix);
-			path.add(moreBranch);
-			res.add(path);
 		}
 	}
 
