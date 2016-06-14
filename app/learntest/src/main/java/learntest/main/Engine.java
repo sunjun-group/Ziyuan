@@ -21,10 +21,12 @@ import learntest.cfg.CFG;
 import learntest.cfg.CfgCreator;
 import learntest.cfg.CfgDecisionNode;
 import learntest.cfg.traveller.CfgConditionManager;
+import learntest.gentest.PathSolver;
 import learntest.sampling.SelectiveSampling;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
+import net.sf.javailp.Result;
 import sav.common.core.SavException;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.JunitUtils;
@@ -86,6 +88,8 @@ public class Engine {
 		System.out.println("==============================================");
 		List<List<Formula>> paths = manager.buildPaths();
 		System.out.println(paths);
+		List<Result> results = new PathSolver().solve(paths);
+		System.out.println(results);
 	}
 		
 	private void addTestcases(String testClass) throws ClassNotFoundException {
