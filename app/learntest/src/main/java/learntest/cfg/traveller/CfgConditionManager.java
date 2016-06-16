@@ -238,7 +238,7 @@ public class CfgConditionManager {
 					res.add(pre);
 				}
 			}
-		} else {
+		} else { // TODO: decrease test cases where trueNode = falseNode if necessary
 			if (trueBranch != null) {
 				if (trueNode != null) {
 					prefix.add(trueBranch);

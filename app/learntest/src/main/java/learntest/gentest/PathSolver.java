@@ -2,6 +2,7 @@ package learntest.gentest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import net.sf.javailp.Problem;
 import net.sf.javailp.Result;
@@ -11,12 +12,15 @@ import net.sf.javailp.SolverFactoryLpSolve;
 import sav.common.core.formula.Formula;
 
 public class PathSolver {
+	
 	private SolverFactory factory;
+	private List<Set<String>> variables;
 	
 	public PathSolver() {
 		factory = new SolverFactoryLpSolve();
 		factory.setParameter(Solver.VERBOSE, 0);
 		factory.setParameter(Solver.TIMEOUT, 100);
+		variables = new ArrayList<Set<String>>();
 	}
 
 	public List<Result> solve(List<List<Formula>> paths) {
@@ -38,9 +42,14 @@ public class PathSolver {
 			Result result = solver.solve(problem);
 			if (result != null) {
 				res.add(result);
+				variables.add(visitor.getVars());
 				break;
 			}
 		}		
+	}
+
+	public List<Set<String>> getVariables() {
+		return variables;
 	}
 	
 }

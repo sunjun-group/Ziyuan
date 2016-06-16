@@ -88,8 +88,10 @@ public class Engine {
 		System.out.println("==============================================");
 		List<List<Formula>> paths = manager.buildPaths();
 		System.out.println(paths);
-		List<Result> results = new PathSolver().solve(paths);
+		PathSolver pathSolver = new PathSolver();
+		List<Result> results = pathSolver.solve(paths);
 		System.out.println(results);
+		new TestGenerator().genTestAccordingToInput(results, pathSolver.getVariables());
 	}
 		
 	private void addTestcases(String testClass) throws ClassNotFoundException {

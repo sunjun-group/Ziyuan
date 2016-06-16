@@ -9,7 +9,7 @@ public class TestGeneratorTest extends AbstractTest {
 
 	@Test
 	public void test() throws Exception {
-		new TestGenerator().gentest();
+		new TestGenerator().genTest();
 	}
 	
 }

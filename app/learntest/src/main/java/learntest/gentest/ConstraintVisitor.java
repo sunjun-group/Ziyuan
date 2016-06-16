@@ -149,4 +149,8 @@ public class ConstraintVisitor extends ExpressionVisitor {
 		}
 	}
 
+	public Set<String> getVars() {
+		return vars;
+	}
+
 }
