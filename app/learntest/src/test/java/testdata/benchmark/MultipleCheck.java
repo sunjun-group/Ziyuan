@@ -1,6 +1,6 @@
 package testdata.benchmark;
 
-public class MutipleCheck {
+public class MultipleCheck {
 
 	public void check(int a, int b, int c) {
 		if (a > b + c) {
