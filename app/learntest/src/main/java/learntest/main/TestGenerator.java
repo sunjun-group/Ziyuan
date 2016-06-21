@@ -31,6 +31,7 @@ public class TestGenerator {
 		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(40);
 		builder.queryMaxLength(1).testPerQuery(GentestConstants.DEFAULT_TEST_PER_QUERY);
 		builder.forClass(Class.forName(LearnTestConfig.className)).method(LearnTestConfig.methodName);
+		//builder.forClass(Class.forName(LearnTestConfig.className));
 		TestsPrinter printer = new TestsPrinter(LearnTestConfig.pkg, LearnTestConfig.pkg, 
 				prefix, LearnTestConfig.typeName, TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
 		printer.printTests(builder.generate());

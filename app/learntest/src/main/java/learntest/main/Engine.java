@@ -108,9 +108,11 @@ public class Engine {
 						if (method.getName().equals(methodName)) {
 							variables = new ArrayList<Variable>();
 							List<Parameter> parameters = method.getParameters();
-							for (Parameter parameter : parameters) {
-								variables.add(new Variable(parameter.getId().getName()));
-							}
+							if (parameters != null) {
+								for (Parameter parameter : parameters) {
+									variables.add(new Variable(parameter.getId().getName()));
+								}
+							}							
 							CfgCreator creator = new CfgCreator();
 							cfg = creator.dealWithBreakStmt(creator.dealWithReturnStmt(creator.toCFG(method)));
 							returns = new HashSet<Integer>();
