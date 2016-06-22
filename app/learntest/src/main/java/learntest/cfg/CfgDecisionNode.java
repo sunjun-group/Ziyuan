@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import japa.parser.ast.Node;
+import libsvm.core.CategoryCalculator;
+import libsvm.core.Divider;
 import sav.common.core.formula.Formula;
 
 public class CfgDecisionNode implements CfgNode {
@@ -15,8 +17,10 @@ public class CfgDecisionNode implements CfgNode {
 	private String stmtType;
 	private boolean loop;
 	
-	private List<Formula> preconditions;
-	private Formula condition;
+	private List<List<CategoryCalculator>> preconditions = new ArrayList<List<CategoryCalculator>>();
+	private List<Divider> dividers;
+	private Formula trueFalse;
+	private Formula oneMore;
 	
 	public CfgDecisionNode(Node astNode) {
 		this.astNode = astNode;
@@ -75,7 +79,7 @@ public class CfgDecisionNode implements CfgNode {
 	public String toString() {
 		if(!getStmtType().equals("switch default")){
 			//System.out.println(getStmtType());
-		return  AstUtils.toString(getAstNode()) + "? ";
+		return  AstUtils.toString(getAstNode()) + "?  [preconditions: " + preconditions.size() + "]";
 		}
 		else{
 			//System.out.println(getStmtType());
@@ -100,23 +104,36 @@ public class CfgDecisionNode implements CfgNode {
 		return loop;
 	}
 
-	public List<Formula> getPreconditions() {
+	public List<List<CategoryCalculator>> getPreconditions() {
 		return preconditions;
 	}
 
-	public void addPrecondition(Formula precondition) {
-		if (this.preconditions == null) {
-			this.preconditions = new ArrayList<Formula>();
-		}
+	public void addPrecondition(List<CategoryCalculator> precondition) {
 		this.preconditions.add(precondition);
 	}
 
-	public Formula getCondition() {
-		return condition;
+	public List<Divider> getDividers() {
+		return dividers;
 	}
 
-	public void setCondition(Formula condition) {
-		this.condition = condition;
+	public void setDividers(List<Divider> dividers) {
+		this.dividers = dividers;
+	}
+
+	public Formula getTrueFalse() {
+		return trueFalse;
+	}
+
+	public void setTrueFalse(Formula trueFalse) {
+		this.trueFalse = trueFalse;
+	}
+
+	public Formula getOneMore() {
+		return oneMore;
+	}
+
+	public void setOneMore(Formula oneMore) {
+		this.oneMore = oneMore;
 	}
 	
 }

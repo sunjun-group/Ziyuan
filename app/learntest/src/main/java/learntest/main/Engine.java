@@ -21,11 +21,14 @@ import learntest.cfg.CFG;
 import learntest.cfg.CfgCreator;
 import learntest.cfg.CfgDecisionNode;
 import learntest.cfg.traveller.CfgConditionManager;
+import learntest.gentest.PathSolver;
 import learntest.sampling.SelectiveSampling;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
+import net.sf.javailp.Result;
 import sav.common.core.SavException;
+import sav.common.core.formula.Formula;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint.Variable;
@@ -68,7 +71,6 @@ public class Engine {
 		addTestcases(LearnTestConfig.testPath);
 		
 		createCFG();
-		System.out.println(cfg);
 		manager = new CfgConditionManager(cfg);
 		bkpBuilder = new BreakpointBuilder(className, methodName, variables, cfg, returns);
 		bkpBuilder.buildBreakpoints();
@@ -80,7 +82,16 @@ public class Engine {
 		List<BreakpointData> result = tcExecutor.getResult();
 		tcExecutor.setjResultFileDeleteOnExit(true);
 		tcExecutor.setSingleMode();
-		new DecisionLearner(new SelectiveSampling(tcExecutor)).learn(result);
+		new DecisionLearner(new SelectiveSampling(tcExecutor), manager).learn(result);
+		System.out.println("==============================================");
+		System.out.println(cfg);
+		System.out.println("==============================================");
+		List<List<Formula>> paths = manager.buildPaths();
+		System.out.println(paths);
+		PathSolver pathSolver = new PathSolver();
+		List<Result> results = pathSolver.solve(paths);
+		System.out.println(results);
+		new TestGenerator().genTestAccordingToInput(results, pathSolver.getVariables());
 	}
 		
 	private void addTestcases(String testClass) throws ClassNotFoundException {
@@ -97,9 +108,11 @@ public class Engine {
 						if (method.getName().equals(methodName)) {
 							variables = new ArrayList<Variable>();
 							List<Parameter> parameters = method.getParameters();
-							for (Parameter parameter : parameters) {
-								variables.add(new Variable(parameter.getId().getName()));
-							}
+							if (parameters != null) {
+								for (Parameter parameter : parameters) {
+									variables.add(new Variable(parameter.getId().getName()));
+								}
+							}							
 							CfgCreator creator = new CfgCreator();
 							cfg = creator.dealWithBreakStmt(creator.dealWithReturnStmt(creator.toCFG(method)));
 							returns = new HashSet<Integer>();

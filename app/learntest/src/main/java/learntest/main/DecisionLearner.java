@@ -1,6 +1,7 @@
 package learntest.main;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import icsetlv.common.dto.BreakpointValue;
 import learntest.breakpoint.data.DecisionLocation;
+import learntest.calculator.OrCategoryCalculator;
+import learntest.cfg.traveller.CfgConditionManager;
 import learntest.sampling.SelectiveSampling;
 import learntest.svm.MyPositiveSeparationMachine;
 import learntest.testcase.data.BreakpointData;
@@ -22,12 +25,9 @@ import libsvm.core.Category;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import libsvm.core.FormulaProcessor;
-import libsvm.core.KernelType;
 import libsvm.core.Machine;
-import libsvm.core.MachineType;
 import libsvm.core.Machine.DataPoint;
 import libsvm.core.Model;
-import libsvm.core.Parameter;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.AndFormula;
@@ -41,25 +41,31 @@ public class DecisionLearner implements CategoryCalculator {
 	
 	protected static Logger log = LoggerFactory.getLogger(DecisionLearner.class);
 	private MyPositiveSeparationMachine machine;
-	private Machine oneClass;
+	// one class does not perform well
+	//private Machine oneClass;
 	private List<ExecVar> vars;
 	private List<String> labels;
 	private List<ExecVar> boolVars;
 	private SelectiveSampling selectiveSampling;
 	
+	private CfgConditionManager manager;
+	private List<Divider> curDividers;
+	
 	private final int MAX_ATTEMPT = 10;
 	
-	public DecisionLearner(SelectiveSampling selectiveSampling) {
+	public DecisionLearner(SelectiveSampling selectiveSampling, CfgConditionManager manager) {
 		machine = new MyPositiveSeparationMachine();
 		machine.setDefaultParams();
-		oneClass = new Machine();
+		/*oneClass = new Machine();
 		oneClass.setParameter(new Parameter().setMachineType(MachineType.ONE_CLASS)
 				.setKernelType(KernelType.LINEAR).setEps(0.00001).setUseShrinking(false)
-				.setPredictProbability(false).setC(Double.MAX_VALUE));
+				.setPredictProbability(false).setC(Double.MAX_VALUE));*/
 		this.selectiveSampling = selectiveSampling;
+		this.manager = manager;
 	}
 	
 	public void learn(List<BreakpointData> bkpsData) throws SavException {
+		Collections.sort(bkpsData);
 		Map<DecisionLocation, Pair<Formula, Formula>> decisions = new HashMap<DecisionLocation, Pair<Formula, Formula>>(); 
 		for (BreakpointData bkpData : bkpsData) {
 			log.info("Start to learn at " + bkpData.getLocation());
@@ -71,7 +77,9 @@ public class DecisionLearner implements CategoryCalculator {
 				log.info("Missing variables");
 				continue;
 			}
-			decisions.put(bkpData.getLocation(), learn(bkpData));
+			Pair<Formula, Formula> res = learn(bkpData);
+			manager.setCondition(bkpData.getLocation().getLineNo(), res, curDividers);
+			decisions.put(bkpData.getLocation(), res);
 		}
 		Set<Entry<DecisionLocation, Pair<Formula, Formula>>> entrySet = decisions.entrySet();
 		for (Entry<DecisionLocation, Pair<Formula, Formula>> entry : entrySet) {
@@ -85,7 +93,24 @@ public class DecisionLearner implements CategoryCalculator {
 	}
 	
 	private Pair<Formula, Formula> learn(BreakpointData bkpData) throws SavException {
-		oneClass.resetData();
+		OrCategoryCalculator preconditions = manager.getPreConditions(bkpData.getLocation().getLineNo());
+		preconditions.clear(bkpData);
+		
+		if (bkpData.getTrueValues().isEmpty()) {
+			log.info("Missing true branch data");
+			curDividers = null;
+			return new Pair<Formula, Formula>(null, null);
+		} else if (bkpData.getFalseValues().isEmpty()) {
+			log.info("Missing false branch data");
+			curDividers = null;
+			Formula oneMore = null;
+			if (bkpData instanceof LoopTimesData) {
+				oneMore = learn((LoopTimesData)bkpData);
+			}
+			return new Pair<Formula, Formula>(null, oneMore);
+		}
+		
+		/*oneClass.resetData();
 		BreakpointData oneClassData = bkpData;
 		int times = 0;
 		boolean missTrue = oneClassData.getTrueValues().isEmpty();
@@ -115,9 +140,9 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 		if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
 			bkpData.merge(oneClassData);
-		}
+		}*/
 
-		times = 0;
+		int times = 0;
 		machine.resetData();
 		addDataPoints(vars, bkpData.getTrueValues(), Category.POSITIVE, machine);
 		addDataPoints(vars, bkpData.getFalseValues(), Category.NEGATIVE, machine);
@@ -129,6 +154,9 @@ public class DecisionLearner implements CategoryCalculator {
 			if (newData == null) {
 				break;
 			}
+			
+			preconditions.clear(newData);
+			
 			bkpData.merge(newData);
 			addDataPoints(vars, newData.getTrueValues(), Category.POSITIVE, machine);
 			addDataPoints(vars, newData.getFalseValues(), Category.NEGATIVE, machine);
@@ -141,6 +169,7 @@ public class DecisionLearner implements CategoryCalculator {
 			}
 			times ++;
 		}
+		curDividers = machine.getLearnedDividers();
 		
 		Formula oneMore = null;
 		if (bkpData instanceof LoopTimesData) {
@@ -151,7 +180,14 @@ public class DecisionLearner implements CategoryCalculator {
 	}
 	
 	private Formula learn(LoopTimesData loopData) throws SavException {
-		oneClass.resetData();
+		if (loopData.getOneTimeValues().isEmpty()) {
+			log.info("Missing once loop data");
+			return null;
+		} else if (loopData.getMoreTimesValues().isEmpty()) {
+			log.info("Missing more than once loop data");
+			return null;
+		}
+		/*oneClass.resetData();
 		int times = 0;
 		LoopTimesData oneClassData = loopData;
 		boolean missOnce = oneClassData.getOneTimeValues().isEmpty();
@@ -181,9 +217,9 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 		if (loopData.getOneTimeValues().isEmpty() || loopData.getMoreTimesValues().isEmpty()) {
 			loopData.merge(oneClassData);
-		}
+		}*/
 		
-		times = 0;
+		int times = 0;
 		machine.resetData();
 		addDataPoints(vars, loopData.getMoreTimesValues(), Category.POSITIVE, machine);
 		addDataPoints(vars, loopData.getOneTimeValues(), Category.NEGATIVE, machine);
@@ -225,7 +261,8 @@ public class DecisionLearner implements CategoryCalculator {
 		vars.removeAll(boolVars);
 		labels = extractLabels(vars);
 		machine.setDataLabels(labels);
-		oneClass.setDataLabels(labels);
+		//oneClass.setDataLabels(labels);
+		manager.setVars(vars);
 		return true;
 	}
 	
