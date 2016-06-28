@@ -8,13 +8,10 @@ import sav.common.core.utils.Randomness;
 
 public class ParamGeneratorConfig {
 	public static final int DEFAULT_STRING_MAX_LENGTH = 10;
-	public static final Ranges<Integer> DEFAULT_INT_RANGES = Ranges.of(-10, 10);
-	public static final Ranges<Long> DEFAULT_LONG_RANGES = Ranges.of(-1000l,
-			1000l);
-	public static final Ranges<Float> DEFAULT_FLOAT_RANGES = Ranges.of(-1000f,
-			1000f);
-	public static final Ranges<Double> DEFAULT_DOUBLE_RANGES = Ranges.of(
-			-1000d, 1000d);
+	public static final Ranges<Integer> DEFAULT_INT_RANGES = Ranges.of(Integer.MIN_VALUE, Integer.MAX_VALUE);
+	public static final Ranges<Long> DEFAULT_LONG_RANGES = Ranges.of(Long.MIN_VALUE, Long.MAX_VALUE);
+	public static final Ranges<Float> DEFAULT_FLOAT_RANGES = Ranges.of(Float.MIN_VALUE, Float.MAX_VALUE);
+	public static final Ranges<Double> DEFAULT_DOUBLE_RANGES = Ranges.of(Double.MIN_VALUE, Double.MAX_VALUE);
 
 	private Ranges<Integer> intRanges;
 	private Ranges<Long> longRanges;

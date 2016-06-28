@@ -1,8 +1,10 @@
 package learntest.gentest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.sf.javailp.Constraint;
@@ -17,12 +19,15 @@ import sav.common.core.formula.LIATerm;
 import sav.common.core.formula.NotFormula;
 import sav.common.core.formula.Operator;
 import sav.common.core.formula.utils.ExpressionVisitor;
+import sav.strategies.dto.execute.value.ExecVar;
+import sav.strategies.dto.execute.value.ExecVarType;
 
 public class ConstraintVisitor extends ExpressionVisitor {
 	
 	private List<Constraint> constraints;
 	private List<List<Constraint>> choices;
 	private Set<String> vars;
+	private Map<String, ExecVarType> typeMap;
 	
 	private static final OptType type = OptType.MIN;
 	
@@ -33,6 +38,7 @@ public class ConstraintVisitor extends ExpressionVisitor {
 		constraints = new ArrayList<Constraint>();
 		choices = new ArrayList<List<Constraint>>();
 		vars = new HashSet<String>();
+		typeMap = new HashMap<String, ExecVarType>();
 		indeices = new ArrayList<Integer>();
 		hasNext = true;
 	}
@@ -80,8 +86,10 @@ public class ConstraintVisitor extends ExpressionVisitor {
 
 		Linear constraint = new Linear();
 		for (LIATerm term : exp) {
-			String label = term.getVariable().getLabel();
+			ExecVar variable = term.getVariable();
+			String label = variable.getLabel();
 			vars.add(label);
+			typeMap.put(label, variable.getType());
 			constraint.add(term.getCoefficient(), label);
 		}
 		
@@ -122,13 +130,57 @@ public class ConstraintVisitor extends ExpressionVisitor {
 		Linear obj = new Linear();
 		for (String var : vars) {
 			obj.add(1, var);
-			problem.setVarType(var, Integer.class);
-			problem.setVarLowerBound(var, -10);
-			problem.setVarUpperBound(var, 10);
+			setTypeAndBound(problem, var);
 		}
 		problem.setObjective(obj, type);
 		calculateNext();
 		return problem;
+	}
+
+	private void setTypeAndBound(Problem problem, String var) {
+		ExecVarType varType = typeMap.get(var);
+		switch (varType) {
+		case BOOLEAN:
+			problem.setVarType(var, Integer.class);
+			problem.setVarLowerBound(var, 0);
+			problem.setVarUpperBound(var, 1);
+			break;
+		case BYTE:
+			problem.setVarType(var, Byte.class);
+			problem.setVarLowerBound(var, -100);
+			problem.setVarUpperBound(var, 100);
+			break;
+		case CHAR:
+			problem.setVarType(var, Character.class);
+			problem.setVarLowerBound(var, 100);
+			problem.setVarUpperBound(var, 100);
+			break;
+		case DOUBLE:
+			problem.setVarType(var, Double.class);
+			problem.setVarLowerBound(var, -1000d);
+			problem.setVarUpperBound(var, 1000d);
+			break;
+		case FLOAT:
+			problem.setVarType(var, Float.class);
+			problem.setVarLowerBound(var, -1000f);
+			problem.setVarUpperBound(var, 1000f);
+			break;
+		case LONG:
+			problem.setVarType(var, Long.class);
+			problem.setVarLowerBound(var, -1000l);
+			problem.setVarUpperBound(var, 1000l);
+			break;
+		case SHORT:
+			problem.setVarType(var, Short.class);
+			problem.setVarLowerBound(var, -100);
+			problem.setVarUpperBound(var, 100);
+			break;
+		default:
+			problem.setVarType(var, Integer.class);
+			problem.setVarLowerBound(var, -100);
+			problem.setVarUpperBound(var, 100);
+			break;
+		}
 	}
 
 	private void calculateNext() {

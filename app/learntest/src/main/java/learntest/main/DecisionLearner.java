@@ -35,7 +35,6 @@ import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
-import sav.strategies.dto.execute.value.ExecVarType;
 
 public class DecisionLearner implements CategoryCalculator {
 	
@@ -45,7 +44,7 @@ public class DecisionLearner implements CategoryCalculator {
 	//private Machine oneClass;
 	private List<ExecVar> vars;
 	private List<String> labels;
-	private List<ExecVar> boolVars;
+	//private Set<ExecVar> boolVars;
 	private SelectiveSampling selectiveSampling;
 	
 	private CfgConditionManager manager;
@@ -257,8 +256,8 @@ public class DecisionLearner implements CategoryCalculator {
 		if (vars.isEmpty()) {
 			return false;
 		}
-		boolVars = extractBoolVars(vars);
-		vars.removeAll(boolVars);
+		//boolVars = extractBoolVars(vars);
+		//vars.removeAll(boolVars);
 		labels = extractLabels(vars);
 		machine.setDataLabels(labels);
 		//oneClass.setDataLabels(labels);
@@ -279,15 +278,15 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 	}
 	
-	private List<ExecVar> extractBoolVars(List<ExecVar> allVars) {
-		List<ExecVar> result = new ArrayList<ExecVar>();
+	/*private Set<ExecVar> extractBoolVars(List<ExecVar> allVars) {
+		Set<ExecVar> result = new HashSet<ExecVar>();
 		for (ExecVar var : allVars) {
 			if (var.getType() == ExecVarType.BOOLEAN) {
 				result.add(var);
 			}
 		}
 		return result;
-	}
+	}*/
 	
 	private List<String> extractLabels(List<ExecVar> allVars) {
 		List<String> labels = new ArrayList<String>(allVars.size());

@@ -46,6 +46,7 @@ public class BreakpointBuilder {
 		parentMap = new HashMap<DecisionLocation, DecisionLocation>();
 		Set<BreakPoint> bkps = new HashSet<BreakPoint>();
 		entry = new BreakPoint(className, methodName, cfg.getEntry().getBeginLine());
+		//entry = new BreakPoint(className, methodName, 41);
 		entry.addVars(variables);
 		bkps.add(entry);
 		

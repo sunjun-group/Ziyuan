@@ -26,6 +26,8 @@ public class TestSeqGenerator {
 	private ValueGeneratorMediator valueGenerator;
 	@Inject
 	private PrimitiveFixValueGenerator fixValueGenerator;
+	@Inject
+	private FixLengthArrayValueGenerator arrayValueGenerator;
 	
 	private Map<String, Class<?>> classMap;
 	private Map<Class<?>, IType> typeMap;
@@ -86,10 +88,19 @@ public class TestSeqGenerator {
 				} else {
 					ISelectedVariable variable = varMap.get(receiver);
 					if (variable == null) {
-						variable = valueGenerator.generate(typeMap.get(classMap.get(receiver)), firstVarIdx, true);
-						sequence.append(variable);
-						firstVarIdx += variable.getNewVariables().size();
-						varMap.put(receiver, variable);
+						IType type = typeMap.get(classMap.get(receiver));
+						if (type.isArray() && parts.length == 2 && parts[1].equals("length")) {
+							variable = arrayValueGenerator.generate(type, firstVarIdx, value.intValue() < 0 ? 0 : value.intValue());
+							sequence.append(variable);
+							firstVarIdx += variable.getNewVariables().size();
+							varMap.put(receiver, variable);
+							continue;
+						} else {
+							variable = valueGenerator.generate(typeMap.get(classMap.get(receiver)), firstVarIdx, true);
+							sequence.append(variable);
+							firstVarIdx += variable.getNewVariables().size();
+							varMap.put(receiver, variable);
+						}
 					}
 					
 					for (int i = 1; i < parts.length - 1; i++) {
