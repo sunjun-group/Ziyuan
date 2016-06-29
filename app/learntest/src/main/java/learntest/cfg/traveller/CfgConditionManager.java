@@ -265,6 +265,9 @@ public class CfgConditionManager {
 					List<Formula> cur = new ArrayList<Formula>(prefix);
 					res.add(cur);
 				}
+				if (falseNode != null) {
+					buildPaths(falseNode, prefix, res);
+				}
 			}
 		}
 	}
