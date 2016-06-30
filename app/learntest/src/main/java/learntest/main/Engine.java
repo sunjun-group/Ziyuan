@@ -91,7 +91,8 @@ public class Engine {
 		PathSolver pathSolver = new PathSolver();
 		List<Result> results = pathSolver.solve(paths);
 		System.out.println(results);
-		new TestGenerator().genTestAccordingToInput(results, pathSolver.getVariables());
+		//new TestGenerator().genTestAccordingToInput(results, pathSolver.getVariables());
+		new TestGenerator().genTestAccordingToInput(results, variables);
 	}
 		
 	private void addTestcases(String testClass) throws ClassNotFoundException {

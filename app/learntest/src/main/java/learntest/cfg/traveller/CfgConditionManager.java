@@ -208,11 +208,36 @@ public class CfgConditionManager {
 				}
 			}
 			if (moreBranch != null) {
-				List<Formula> cur = new ArrayList<Formula>(prefix);
-				cur.add(moreBranch);
-				truePaths.add(cur);
+				if (trueNode != null) {
+					prefix.add(moreBranch);
+					buildPaths(trueNode, prefix, truePaths);
+					prefix.remove(prefix.size() - 1);
+				} else {
+					List<Formula> cur = new ArrayList<Formula>(prefix);
+					cur.add(moreBranch);
+					truePaths.add(cur);
+				}
 			}
-			if (falseBranch != null) {
+			if (falseNode != null) {
+				if (falseBranch != null) {
+					prefix.add(falseBranch);
+					buildPaths(falseNode, prefix, res);
+					prefix.remove(prefix.size() - 1);
+				} else {
+					buildPaths(falseNode, prefix, res);
+				}
+				for (List<Formula> truePath : truePaths) {
+					buildPaths(falseNode, truePath, res);
+				}
+			} else {
+				if (falseBranch != null) {
+					List<Formula> cur = new ArrayList<Formula>(prefix);
+					cur.add(falseBranch);
+					res.add(cur);
+				}
+				res.addAll(truePaths);
+			}
+			/*if (falseBranch != null) {
 				res.addAll(truePaths);
 				if (falseNode != null) {
 					prefix.add(falseBranch);
@@ -237,7 +262,7 @@ public class CfgConditionManager {
 				} else {
 					res.add(pre);
 				}
-			}
+			}*/
 		} else { // TODO: decrease test cases where trueNode = falseNode if necessary
 			if (trueBranch != null) {
 				if (trueNode != null) {

@@ -3,6 +3,7 @@ package learntest.main;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ import net.sf.javailp.Result;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.commons.TestConfiguration;
+import sav.strategies.dto.BreakPoint.Variable;
 
 public class TestGenerator {
 	
@@ -59,11 +61,18 @@ public class TestGenerator {
 		recompiler.recompileJFile(appClasspath.getTestTarget(), generatedFiles);*/
 	}
 	
-	public void genTestAccordingToInput(List<Result> inputs, List<Set<String>> variables) throws ClassNotFoundException, SavException {
+	public void genTestAccordingToInput(List<Result> inputs, 
+			//List<Set<String>> variables
+			List<Variable> variables) throws ClassNotFoundException, SavException {
 		MethodCall target = findTargetMethod();
 		if (target == null) {
 			return;
 		}
+		Set<String> vars = new HashSet<String>();
+		for (Variable variable : variables) {
+			vars.add(variable.getId());
+		}
+		inputs = clean(inputs, vars);
 		
 		//TestSeqGenerator generator = new TestSeqGenerator();
 		GentestModules injectorModule = new GentestModules();
@@ -73,9 +82,10 @@ public class TestGenerator {
 		generator.setTarget(target);
 		
 		List<Sequence> sequences = new ArrayList<Sequence>();
-		int index = 0;
+		//int index = 0;
 		for (Result input : inputs) {
-			sequences.add(generator.generateSequence(input, variables.get(index ++)));
+			//sequences.add(generator.generateSequence(input, variables.get(index ++)));
+			sequences.add(generator.generateSequence(input, vars));
 		}
 		injectorModule.exit(TestcaseGenerationScope.class);
 		
@@ -83,7 +93,7 @@ public class TestGenerator {
 				prefix, LearnTestConfig.typeName, TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
 		printer.printTests(new Pair<List<Sequence>, List<Sequence>>(sequences, new ArrayList<Sequence>()));
 	}
-	
+
 	private MethodCall findTargetMethod() throws ClassNotFoundException {
 		Class<?> clazz = Class.forName(LearnTestConfig.className);
 		Method method = MethodUtils.findMethod(clazz, LearnTestConfig.methodName);
@@ -91,6 +101,32 @@ public class TestGenerator {
 			return MethodCall.of(method, clazz);
 		}
 		return null;
+	}
+	
+	private List<Result> clean(List<Result> inputs, Set<String> variables) {
+		List<Result> res = new ArrayList<Result>();
+		for (Result input : inputs) {
+			boolean flag = true;
+			for (Result result : res) {
+				if (duplicate(input, result, variables)) {
+					flag = false;
+					break;
+				}
+			}
+			if (flag) {
+				res.add(input);
+			}
+		}
+		return res;
+	}
+
+	private boolean duplicate(Result input, Result result, Set<String> vars) {
+		for (String var : vars) {
+			if (input.get(var) != result.get(var)) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 }
