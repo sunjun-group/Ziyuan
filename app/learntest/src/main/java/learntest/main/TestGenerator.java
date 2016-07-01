@@ -122,7 +122,7 @@ public class TestGenerator {
 
 	private boolean duplicate(Result input, Result result, Set<String> vars) {
 		for (String var : vars) {
-			if (input.get(var) != result.get(var)) {
+			if (!input.get(var).equals(result.get(var))) {
 				return false;
 			}
 		}

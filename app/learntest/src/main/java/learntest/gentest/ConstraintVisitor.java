@@ -177,8 +177,8 @@ public class ConstraintVisitor extends ExpressionVisitor {
 			break;
 		default:
 			problem.setVarType(var, Integer.class);
-			problem.setVarLowerBound(var, -100);
-			problem.setVarUpperBound(var, 100);
+			problem.setVarLowerBound(var, -200);
+			problem.setVarUpperBound(var, 200);
 			break;
 		}
 	}

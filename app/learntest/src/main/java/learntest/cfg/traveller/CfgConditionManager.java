@@ -99,7 +99,7 @@ public class CfgConditionManager {
 						trueNode.addPrecondition(cur);
 					}
 				}
-				if (falseNode != null && node.isLoop()) {
+				if (falseNode != null) {
 					for (List<CategoryCalculator> list : preconditions) {
 						List<CategoryCalculator> cur = new ArrayList<CategoryCalculator>(list);
 						falseNode.addPrecondition(cur);
@@ -127,7 +127,7 @@ public class CfgConditionManager {
 					}
 				}				
 			}
-			if (falseNode != null) {
+			if (falseNode != null && !node.isLoop()) {
 				CategoryCalculator condition = new MultiNotDividerBasedCategoryCalculator(dividers);
 				if (preconditions.isEmpty()) {
 					List<CategoryCalculator> cur = new ArrayList<CategoryCalculator>();
