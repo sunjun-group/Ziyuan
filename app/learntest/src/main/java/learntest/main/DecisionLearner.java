@@ -50,7 +50,7 @@ public class DecisionLearner implements CategoryCalculator {
 	private CfgConditionManager manager;
 	private List<Divider> curDividers;
 	
-	private final int MAX_ATTEMPT = 20;
+	private final int MAX_ATTEMPT = 10;
 	
 	public DecisionLearner(SelectiveSampling selectiveSampling, CfgConditionManager manager) {
 		machine = new MyPositiveSeparationMachine();

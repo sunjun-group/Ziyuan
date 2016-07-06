@@ -157,8 +157,8 @@ public class ConstraintVisitor extends ExpressionVisitor {
 			break;
 		case DOUBLE:
 			problem.setVarType(var, Double.class);
-			problem.setVarLowerBound(var, -1000d);
-			problem.setVarUpperBound(var, 1000d);
+			problem.setVarLowerBound(var, -1d);
+			problem.setVarUpperBound(var, 1d);
 			break;
 		case FLOAT:
 			problem.setVarType(var, Float.class);

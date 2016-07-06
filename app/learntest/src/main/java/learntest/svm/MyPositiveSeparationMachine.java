@@ -50,11 +50,18 @@ public class MyPositiveSeparationMachine extends Machine {
 		while (!negatives.isEmpty()) {
 			trainingData.add(negativePointSelection.select(negatives, positives));
 			super.train(trainingData);
-			svm_model last = null;
-			if (model != null) {			
+			//svm_model last = null;
+			if (model != null) {
+				//trainingData.remove(trainingData.size() - 1);
 				removed = new ArrayList<Machine.DataPoint>();
 				removeClassifiedNegativePoints(negatives, removed);
-				last = model;
+				if (removed.isEmpty()) {
+					negatives.remove(trainingData.remove(trainingData.size() - 1));
+				} else {
+					learnedModels.add(model);
+					trainingData.remove(trainingData.size() - 1);
+				}
+				/*last = model;
 				while (!removed.isEmpty()) {
 					trainingData.addAll(removed);
 					super.train(trainingData);
@@ -65,9 +72,9 @@ public class MyPositiveSeparationMachine extends Machine {
 					}
 				}
 				learnedModels.add(last);
-				trainingData = new ArrayList<Machine.DataPoint>(positives);
+				trainingData = new ArrayList<Machine.DataPoint>(positives);*/
 			} else {
-				negatives.add(trainingData.remove(trainingData.size() - 1));
+				negatives.remove(trainingData.remove(trainingData.size() - 1));
 			}
 			/*if (model != null) {
 				learnedModels.add(model);
