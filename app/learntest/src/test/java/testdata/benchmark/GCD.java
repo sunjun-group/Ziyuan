@@ -9,4 +9,8 @@ public class GCD {
 		}
 		return gcdTest(s, f % s);
     }
+	
+	public static void main(String[] args) {
+		new GCD().gcdTest(20, 3);
+	}
 }

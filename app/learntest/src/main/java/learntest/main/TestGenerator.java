@@ -31,7 +31,7 @@ public class TestGenerator {
 	
 	public void genTest() throws ClassNotFoundException, SavException {
 		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(40);
-		builder.queryMaxLength(1).testPerQuery(GentestConstants.DEFAULT_TEST_PER_QUERY);
+		builder.queryMaxLength(1).testPerQuery(1);
 		builder.forClass(Class.forName(LearnTestConfig.className)).method(LearnTestConfig.methodName);
 		//builder.forClass(Class.forName(LearnTestConfig.className));
 		TestsPrinter printer = new TestsPrinter(LearnTestConfig.pkg, LearnTestConfig.pkg, 
@@ -63,16 +63,13 @@ public class TestGenerator {
 	
 	public void genTestAccordingToInput(List<Result> inputs, 
 			//List<Set<String>> variables
-			List<Variable> variables) throws ClassNotFoundException, SavException {
+			//List<Variable> variables
+			List<String> variables) throws ClassNotFoundException, SavException {
 		MethodCall target = findTargetMethod();
 		if (target == null) {
 			return;
 		}
-		Set<String> vars = new HashSet<String>();
-		for (Variable variable : variables) {
-			vars.add(variable.getId());
-		}
-		inputs = clean(inputs, vars);
+		inputs = clean(inputs, variables);
 		
 		//TestSeqGenerator generator = new TestSeqGenerator();
 		GentestModules injectorModule = new GentestModules();
@@ -85,7 +82,7 @@ public class TestGenerator {
 		//int index = 0;
 		for (Result input : inputs) {
 			//sequences.add(generator.generateSequence(input, variables.get(index ++)));
-			sequences.add(generator.generateSequence(input, vars));
+			sequences.add(generator.generateSequence(input, variables));
 		}
 		injectorModule.exit(TestcaseGenerationScope.class);
 		
@@ -103,7 +100,7 @@ public class TestGenerator {
 		return null;
 	}
 	
-	private List<Result> clean(List<Result> inputs, Set<String> variables) {
+	private List<Result> clean(List<Result> inputs, List<String> variables) {
 		List<Result> res = new ArrayList<Result>();
 		for (Result input : inputs) {
 			boolean flag = true;
@@ -120,9 +117,13 @@ public class TestGenerator {
 		return res;
 	}
 
-	private boolean duplicate(Result input, Result result, Set<String> vars) {
-		for (String var : vars) {
-			if (!input.get(var).equals(result.get(var))) {
+	private boolean duplicate(Result input, Result result, List<String> variables) {
+		for (String var : variables) {
+			if (input.get(var) == null) {
+				if (result.get(var) != null) {
+					return false;
+				}
+			} else if (!input.get(var).equals(result.get(var))) {
 				return false;
 			}
 		}

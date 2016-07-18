@@ -29,4 +29,7 @@ public class Fibonacci {
 
 	}
 
+	public static void main(String[] args) {
+		new Fibonacci().fibonacciTest(12);
+	}
 }

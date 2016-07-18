@@ -2,8 +2,8 @@ package learntest.gentest;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.inject.Inject;
 
@@ -63,13 +63,13 @@ public class TestSeqGenerator {
 		}
 	}
 
-	public Sequence generateSequence(Result result, Set<String> vars) throws SavException {
+	public Sequence generateSequence(Result result, List<String> variables) throws SavException {
 		Sequence sequence = new Sequence();
 
 		int firstVarIdx = 0;		
 		Map<String, ISelectedVariable> varMap = new HashMap<String, ISelectedVariable>();
 		//prepare inputs for target method
-		for (String var : vars) {
+		for (String var : variables) {
 			if (result.containsVar(var)) {
 				Number value  = result.get(var);
 				

@@ -17,4 +17,8 @@ public class ToOctal {
 		return Integer.parseInt(
 			sb.reverse().toString());
 	}
+	
+	public static void main(String[] args) {
+		new ToOctal().toOctalTest(134);
+	}
 }

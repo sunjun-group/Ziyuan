@@ -11,4 +11,9 @@ public class WrapRoundCounter {
 			return n;
 		}
 	}
+	
+	public static void main(String[] args) {
+		new WrapRoundCounter().wrap_int(13);
+	}
+	
 }

@@ -82,7 +82,8 @@ public class Engine {
 		List<BreakpointData> result = tcExecutor.getResult();
 		tcExecutor.setjResultFileDeleteOnExit(true);
 		tcExecutor.setSingleMode();
-		new DecisionLearner(new SelectiveSampling(tcExecutor), manager).learn(result);
+		DecisionLearner learner = new DecisionLearner(new SelectiveSampling(tcExecutor), manager);
+		learner.learn(result);
 		System.out.println("==============================================");
 		System.out.println(cfg);
 		System.out.println("==============================================");
@@ -92,7 +93,8 @@ public class Engine {
 		List<Result> results = pathSolver.solve(paths);
 		System.out.println(results);
 		//new TestGenerator().genTestAccordingToInput(results, pathSolver.getVariables());
-		new TestGenerator().genTestAccordingToInput(results, variables);
+		//new TestGenerator().genTestAccordingToInput(results, variables);
+		new TestGenerator().genTestAccordingToInput(results, learner.getLabels());
 	}
 		
 	private void addTestcases(String testClass) throws ClassNotFoundException {

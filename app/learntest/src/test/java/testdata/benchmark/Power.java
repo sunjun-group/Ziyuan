@@ -20,4 +20,8 @@ public class Power {
 
 		return power;
 	}
+	
+	public static void main(String[] args) {
+		new Power().powerTest(4, 3);
+	}
 }

@@ -18,4 +18,8 @@ public class Factorial {
 
 		return factorial;
 	}
+	
+	public static void main(String[] args) {
+		new Factorial().factorialTest(4);
+	}
 }

@@ -25,4 +25,8 @@ public class MiddleValue {
 		return b;
 	}
 	
+	public static void main(String[] args) {
+		new MiddleValue().middle(2, 3, 4);
+	}
+	
 }

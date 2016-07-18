@@ -9,4 +9,7 @@ public class MaxValue {
 		return b;
 	}
 	
+	public static void main(String[] args) {
+		new MaxValue().max(3, 19);
+	}
 }

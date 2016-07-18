@@ -29,4 +29,8 @@ public class Middle {
 		}
 	}
 	
+	public static void main(String[] args) {
+		new Middle().findMiddle(2, 1, 3);
+	}
+	
 }

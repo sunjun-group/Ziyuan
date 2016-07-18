@@ -9,4 +9,7 @@ public class Abs {
 		return x;
 	}
 
+	public static void main(String[] args) {
+		new Abs().getAbs(1);
+	}
 }

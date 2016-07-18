@@ -338,4 +338,8 @@ public class DecisionLearner implements CategoryCalculator {
 		return null;
 	}
 
+	public List<String> getLabels() {
+		return labels;
+	}
+
 }
