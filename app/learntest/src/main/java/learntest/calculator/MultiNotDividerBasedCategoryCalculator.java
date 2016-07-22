@@ -25,4 +25,8 @@ public class MultiNotDividerBasedCategoryCalculator implements CategoryCalculato
 		return Category.NEGATIVE;
 	}
 
+	public List<Divider> getDividers() {
+		return dividers;
+	}
+
 }

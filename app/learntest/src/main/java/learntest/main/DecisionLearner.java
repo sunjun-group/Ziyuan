@@ -93,6 +93,9 @@ public class DecisionLearner implements CategoryCalculator {
 	
 	private Pair<Formula, Formula> learn(BreakpointData bkpData) throws SavException {
 		OrCategoryCalculator preconditions = manager.getPreConditions(bkpData.getLocation().getLineNo());
+		if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
+			bkpData.merge(selectiveSampling.selectData(bkpData.getLocation(), preconditions, null));
+		}
 		preconditions.clear(bkpData);
 		
 		if (bkpData.getTrueValues().isEmpty()) {
@@ -147,6 +150,7 @@ public class DecisionLearner implements CategoryCalculator {
 		addDataPoints(vars, bkpData.getFalseValues(), Category.NEGATIVE, machine);
 		machine.train();
 		Formula trueFlase = getLearnedFormula();
+		double acc = machine.getModelAccuracy();
 		while(times < MAX_ATTEMPT) {
 			BreakpointData newData = selectiveSampling.selectData(bkpData.getLocation(), 
 					trueFlase, machine.getDataLabels(), machine.getDataPoints());
@@ -161,8 +165,10 @@ public class DecisionLearner implements CategoryCalculator {
 			addDataPoints(vars, newData.getFalseValues(), Category.NEGATIVE, machine);
 			machine.train();
 			Formula tmp = getLearnedFormula();
-			if (!tmp.equals(trueFlase)) {
+			double accTmp = machine.getModelAccuracy();
+			if (!tmp.equals(trueFlase) /*&& accTmp >= acc*/) {
 				trueFlase = tmp;
+				acc = accTmp;
 			} else {
 				break;
 			}
@@ -179,6 +185,10 @@ public class DecisionLearner implements CategoryCalculator {
 	}
 	
 	private Formula learn(LoopTimesData loopData) throws SavException {
+		if (loopData.getOneTimeValues().isEmpty() || loopData.getMoreTimesValues().isEmpty()) {
+			loopData.merge(selectiveSampling.selectData(loopData.getLocation(), 
+					manager.getPreConditions(loopData.getLocation().getLineNo()), curDividers));
+		}
 		if (loopData.getOneTimeValues().isEmpty()) {
 			log.info("Missing once loop data");
 			return null;
@@ -224,6 +234,7 @@ public class DecisionLearner implements CategoryCalculator {
 		addDataPoints(vars, loopData.getOneTimeValues(), Category.NEGATIVE, machine);
 		machine.train();
 		Formula formula = getLearnedFormula();
+		double acc = machine.getModelAccuracy();
 		while(times < MAX_ATTEMPT) {
 			LoopTimesData newData = (LoopTimesData) selectiveSampling.selectData(loopData.getLocation(), 
 					formula, machine.getDataLabels(), machine.getDataPoints());	
@@ -234,8 +245,10 @@ public class DecisionLearner implements CategoryCalculator {
 			addDataPoints(vars, newData.getOneTimeValues(), Category.NEGATIVE, machine);
 			machine.train();
 			Formula tmp = getLearnedFormula();
-			if (!tmp.equals(formula)) {
+			double accTmp = machine.getModelAccuracy();
+			if (!tmp.equals(formula)/* && accTmp >= acc*/) {
 				formula = tmp;
+				acc = accTmp;
 			} else {
 				break;
 			}

@@ -39,7 +39,7 @@ public class PrimitiveFixValueGenerator {
 			}
 			switch (primitiveType) {
 			case Boolean:
-				variable.append(RAssignment.assignmentFor(clazz, value.intValue() == 0 ? false : true));
+				variable.append(RAssignment.assignmentFor(clazz, value.intValue() <= 0 ? false : true));
 				break;
 			case Byte:
 				variable.append(RAssignment.assignmentFor(clazz, value.byteValue()));

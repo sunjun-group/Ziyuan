@@ -2,8 +2,10 @@ package learntest.gentest;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.inject.Inject;
 
@@ -15,6 +17,7 @@ import gentest.core.data.type.ITypeCreator;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.data.variable.ISelectedVariable;
 import gentest.core.value.generator.ValueGeneratorMediator;
+import mosek.Env.conetype;
 import net.sf.javailp.Result;
 import sav.common.core.SavException;
 
@@ -68,6 +71,7 @@ public class TestSeqGenerator {
 
 		int firstVarIdx = 0;		
 		Map<String, ISelectedVariable> varMap = new HashMap<String, ISelectedVariable>();
+		Set<String> nullVars = new HashSet<String>();
 		//prepare inputs for target method
 		for (String var : variables) {
 			if (result.containsVar(var)) {
@@ -103,7 +107,7 @@ public class TestSeqGenerator {
 						}
 					}
 					
-					for (int i = 1; i < parts.length - 1; i++) {
+					for (int i = 1; i < parts.length - 2; i++) {
 						String cur = receiver + "." + parts[i];
 						if (varMap.containsKey(cur)) {
 							receiver = cur;
@@ -140,6 +144,50 @@ public class TestSeqGenerator {
 					}
 					
 					String last = parts[parts.length -  1];
+					
+					int i = parts.length - 2;
+					if (i > 0) {
+						String cur = receiver + "." + parts[i];				
+						if (last.equals("isNull") && value.intValue() == 1) {
+							nullVars.add(cur);
+							continue;
+						}					
+						if (varMap.containsKey(cur)) {
+							receiver = cur;
+							variable = varMap.get(receiver);
+						} else {
+							Class<?> clazz = classMap.get(receiver);
+							try {
+								Class<?> fieldClazz = clazz.getDeclaredField(parts[i]).getType();
+								classMap.put(cur, fieldClazz);
+								IType type = typeMap.get(fieldClazz);
+								if (type == null) {
+									type = typeCreator.forClass(fieldClazz);
+									typeMap.put(fieldClazz, type);
+								}
+								ISelectedVariable field = valueGenerator.generate(type, firstVarIdx, true);
+								firstVarIdx += field.getNewVariables().size();
+								sequence.append(field);
+								varMap.put(cur, field);
+								
+								String methodName = "set" + parts[i].substring(0, 1).toUpperCase() + parts[i].substring(1);
+								Method setter = clazz.getDeclaredMethod(methodName, fieldClazz);
+								RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)), variable.getReturnVarId());
+								int[] varId = new int[] {field.getReturnVarId()};
+								method.setInVarIds(varId);
+								sequence.append(method);
+								
+								variable = field;
+								receiver = cur;
+							} catch (Exception e) {
+								System.err.println("can not find setter for " + cur);
+								break;
+							}
+						}
+						if (last.equals("isNull")) {
+							continue;
+						}
+					}
 					String cur = receiver + "." + last;
 					if (varMap.containsKey(cur)) {
 						continue;
