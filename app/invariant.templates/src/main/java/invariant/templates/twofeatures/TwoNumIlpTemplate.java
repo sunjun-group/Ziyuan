@@ -41,11 +41,6 @@ public class TwoNumIlpTemplate extends TwoFeaturesTemplate {
 	}
 	
 	@Override
-	public boolean isSatPass() {
-		return true;
-	}
-	
-	@Override
 	public boolean check() {
 		Machine m = getSimpleMachine();
 	

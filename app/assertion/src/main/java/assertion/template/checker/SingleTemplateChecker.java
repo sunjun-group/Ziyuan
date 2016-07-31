@@ -7,7 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import invariant.templates.Template;
+import invariant.templates.SingleTemplate;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVarType;
 
@@ -17,11 +17,9 @@ public class SingleTemplateChecker {
 	
 	private List<List<ExecValue>> failValues;
 	
-	private List<Template> singleTemplates;
+	private List<SingleTemplate> validTemplates;
 
-	private List<Template> satPassTemplates;
-	
-	private List<Template> satFailTemplates;
+	private List<SingleTemplate> allTemplates;
 	
 	private static Logger log = LoggerFactory.getLogger(SingleTemplateChecker.class);
 	
@@ -30,166 +28,17 @@ public class SingleTemplateChecker {
 		this.passValues = passValues;
 		this.failValues = failValues;
 		
-		singleTemplates = new ArrayList<Template>();
-		satPassTemplates = new ArrayList<Template>();
-		satFailTemplates = new ArrayList<Template>();
+		validTemplates = new ArrayList<SingleTemplate>();
+		allTemplates = new ArrayList<SingleTemplate>();
 	}
 	
-	public List<Template> getSingleTemplates() {
-		return singleTemplates;
+	public List<SingleTemplate> getValidTemplates() {
+		return validTemplates;
 	}
 	
-	public List<Template> getSatPassTemplates() {
-		return satPassTemplates;
+	public List<SingleTemplate> getAllTemplates() {
+		return allTemplates;
 	}
-	
-	public List<Template> getSatFailTemplates() {
-		return satFailTemplates;
-	}
-	
-	/*
-	public void recheckSingleTemplate(SingleTemplate st) {
-		List<ExecValue> origEvl = st.getPassExecValuesList().get(0);
-		
-		for (List<ExecValue> evl : newPassExecValuesList) {
-			List<ExecValue> newEvl = new ArrayList<ExecValue>();
-			
-			for (ExecValue ev1 : origEvl) {
-				for (ExecValue ev2 : evl) {
-					if (ev1.getVarId().equals(ev2.getVarId())) {
-						newEvl.add(ev2);
-					}
-				}
-			}
-			
-			st.addPassValues(newEvl);
-		}
-		
-		for (List<ExecValue> evl : newFailExecValuesList) {
-			List<ExecValue> newEvl = new ArrayList<ExecValue>();
-			
-			for (ExecValue ev1 : origEvl) {
-				for (ExecValue ev2 : evl) {
-					if (ev1.getVarId().equals(ev2.getVarId())) {
-						newEvl.add(ev2);
-					}
-				}
-			}
-			
-			st.addFailValues(newEvl);
-		}
-	}
-	*/
-	
-//	public void addNewExecValuesList(SingleTemplate st,
-//			List<List<ExecValue>> newPassExecValuesList,
-//			List<List<ExecValue>> newFailExecValuesList) {
-//		List<ExecValue> origEvl = st.getPassExecValuesList().get(0);
-//		
-//		for (List<ExecValue> evl : newPassExecValuesList) {
-//			List<ExecValue> newEvl = new ArrayList<ExecValue>();
-//			
-//			for (ExecValue ev1 : origEvl) {
-//				for (ExecValue ev2 : evl) {
-//					if (ev1.getVarId().equals(ev2.getVarId())) {
-//						newEvl.add(ev2);
-//						break;
-//					}
-//				}
-//			}
-//			
-//			st.addPassValues(newEvl);
-//		}
-//		
-//		for (List<ExecValue> evl : newFailExecValuesList) {
-//			List<ExecValue> newEvl = new ArrayList<ExecValue>();
-//			
-//			for (ExecValue ev1 : origEvl) {
-//				for (ExecValue ev2 : evl) {
-//					if (ev1.getVarId().equals(ev2.getVarId())) {
-//						newEvl.add(ev2);
-//						break;
-//					}
-//				}
-//			}
-//			
-//			st.addFailValues(newEvl);
-//		}
-//		
-//		
-//	}
-	
-//	public void removeTemplates(List<Template> toRemove, List<Template> templates) {
-//		for (Template t : toRemove) {
-//			templates.remove(t);
-//		}
-//		
-//		toRemove.clear();
-//	}
-//	
-//	public boolean recheckSingleTemplates(List<List<ExecValue>> newPassExecValuesList,
-//			List<List<ExecValue>> newFailExecValuesList) {
-//		boolean moreTemplates = false;
-//		
-//		passValues.addAll(newPassExecValuesList);
-//		failValues.addAll(newFailExecValuesList);
-//		
-//		List<List<ExecValue>> passExecValuesList = new ArrayList<List<ExecValue>>();
-//		flattenValues(passExecValuesList, newPassExecValuesList);
-//		
-//		List<List<ExecValue>> failExecValuesList = new ArrayList<List<ExecValue>>();
-//		flattenValues(failExecValuesList, newFailExecValuesList);
-//		
-//		List<Template> toRemove = new ArrayList<Template>();
-//		
-//		for (Template t : satifiedPassTemplates) {
-//			SingleTemplate st = (SingleTemplate) t;
-//			addNewExecValuesList(st, passExecValuesList, failExecValuesList);
-//			if (st instanceof OnePrimIlpTemplate || st instanceof TwoPrimIlpTemplate ||
-//					st instanceof ThreePrimIlpTemplate) {
-//				continue;
-//			} else {
-//				st.check();
-//				if (!st.isSatisfiedAllPassValues()) toRemove.add(st);
-//			}
-//		}
-//		
-//		removeTemplates(toRemove, satifiedPassTemplates);
-//		
-//		for (Template t : satifiedFailTemplates) {
-//			SingleTemplate st = (SingleTemplate) t;
-//			if (st instanceof OnePrimIlpTemplate || st instanceof TwoPrimIlpTemplate ||
-//					st instanceof ThreePrimIlpTemplate) {
-//				continue;
-//			} else {
-//				// already add before
-//				addNewExecValuesList(st, passExecValuesList, failExecValuesList);
-//				st.check();
-//				if (!st.isSatisfiedAllFailValues()) toRemove.add(st);
-//			}
-//		}
-//		
-//		removeTemplates(toRemove, satifiedFailTemplates);
-//		
-//		for (Template t : singleTemplates) {
-//			SingleTemplate st = (SingleTemplate) t;
-//			addNewExecValuesList(st, passExecValuesList, failExecValuesList);
-//			boolean valid = st.check();
-//			if (!valid) toRemove.add(st);
-//			if (!valid && st.isSatisfiedAllPassValues()) {
-//				moreTemplates = true;
-//				satifiedPassTemplates.add(st);
-//			}
-//			if (!valid && st.isSatisfiedAllFailValues()) {
-//				moreTemplates = true;
-//				satifiedFailTemplates.add(st);
-//			}
-//		}
-//		
-//		removeTemplates(toRemove, singleTemplates);
-//		
-//		return moreTemplates;
-//	}
 	
 	public void checkSingleTemplates() {
 		HashMap<ExecVarType, List<List<ExecValue>>> passMap = classifyExecValuesList(passValues);
@@ -220,9 +69,10 @@ public class SingleTemplateChecker {
 								failValues.size() == failMap.get(t).size()) {
 							tc.checkTemplates(passMap.get(t), failMap.get(t));
 					
-							singleTemplates.addAll(tc.getSingleTemplates());
-							satPassTemplates.addAll(tc.getSatPassTemplates());
-							satFailTemplates.addAll(tc.getSatFailTemplates());
+							validTemplates.addAll(tc.getValidTemplates());
+							if (!validTemplates.isEmpty()) return;
+							
+							allTemplates.addAll(tc.getAllTemplates());
 						}
 					} catch (IndexOutOfBoundsException e) {
 						log.info("The list of features do not have the same length\n");

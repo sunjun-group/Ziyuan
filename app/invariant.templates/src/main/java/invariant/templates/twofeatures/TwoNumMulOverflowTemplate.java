@@ -123,7 +123,7 @@ public class TwoNumMulOverflowTemplate extends TwoFeaturesTemplate {
 		String id1 = passValues.get(0).get(0).getVarId();
 		String id2 = passValues.get(0).get(1).getVarId();
 		
-		return id1 + " * " + id2 + " is overflow";
+		return id1 + " * " + id2 + " is not overflow";
 	}
 
 }

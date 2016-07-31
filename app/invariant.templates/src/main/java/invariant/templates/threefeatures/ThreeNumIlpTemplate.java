@@ -46,11 +46,6 @@ public class ThreeNumIlpTemplate extends ThreeFeaturesTemplate {
 	}
 	
 	@Override
-	public boolean isSatPass() {
-		return true;
-	}
-	
-	@Override
 	public boolean check() {
 		Machine m = getSimpleMachine();
 	

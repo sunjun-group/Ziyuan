@@ -6,7 +6,6 @@ import java.util.List;
 import japa.parser.ast.expr.BinaryExpr;
 import japa.parser.ast.expr.DoubleLiteralExpr;
 import japa.parser.ast.expr.Expression;
-import japa.parser.ast.expr.IntegerLiteralExpr;
 import japa.parser.ast.expr.NameExpr;
 import japa.parser.ast.stmt.AssertStmt;
 import libsvm.core.Category;
@@ -38,16 +37,6 @@ public class OneNumIlpTemplate extends OneFeatureTemplate {
 	
 	public void setB(double bb) {
 		b = bb;
-	}
-	
-	@Override
-	public boolean isSatPass() {
-		return true;
-	}
-	
-	@Override
-	public boolean isSatFail() {
-		return true;
 	}
 	
 	@Override

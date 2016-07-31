@@ -1,23 +1,56 @@
 package invariant.templates;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class CompositeTemplate extends Template {
 
-	public List<Template> templates;
+	public List<List<SingleTemplate>> disj;
 	
-	public CompositeTemplate() {
-		templates = new ArrayList<Template>();
+	public CompositeTemplate(List<List<SingleTemplate>> disj) {
+		this.disj = disj;
 	}
 	
-	public void addTemplates(Template... newTemplates) {
-		templates.addAll(new ArrayList<Template>(Arrays.asList(newTemplates)));
+	@Override
+	public String toString() {
+		String s = "";
+		
+		Iterator<List<SingleTemplate>> it1 = disj.iterator();
+		
+		while (it1.hasNext()) {
+			List<SingleTemplate> stl = it1.next();
+			Iterator<SingleTemplate> it2 = stl.iterator();
+			
+			while (it2.hasNext()) {
+				SingleTemplate st = it2.next();
+				s += st;
+				if (it2.hasNext()) s += " && ";
+			}
+			
+			if (it1.hasNext()) s += " || ";
+		}
+		
+		return s;
 	}
 	
-	public boolean check() {
-		return false;
+	public List<SingleTemplate> getSingleTemplates() {
+		List<SingleTemplate> ret = new ArrayList<SingleTemplate>();
+		
+		Iterator<List<SingleTemplate>> it1 = disj.iterator();
+		
+		while (it1.hasNext()) {
+			List<SingleTemplate> stl = it1.next();
+			Iterator<SingleTemplate> it2 = stl.iterator();
+			
+			while (it2.hasNext()) {
+				SingleTemplate st = it2.next();
+				ret.add(st);
+			}
+		}
+		
+		return ret;
+		
 	}
-	
+
 }

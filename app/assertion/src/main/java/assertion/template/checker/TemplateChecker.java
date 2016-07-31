@@ -6,7 +6,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import invariant.templates.Template;
+import invariant.templates.CompositeTemplate;
+import invariant.templates.SingleTemplate;
 import sav.strategies.dto.execute.value.ExecValue;
 
 public class TemplateChecker {
@@ -18,6 +19,8 @@ public class TemplateChecker {
 	public SingleTemplateChecker stc;
 	
  	public CompositeTemplateChecker ctc;
+ 	
+ 	public PACChecker pac;
 	
 	public boolean hasNewData;
 	
@@ -57,16 +60,6 @@ public class TemplateChecker {
 		return false;
 	}
 	
-//	public void recheckSingleTemplates() {
-//		log.info("pass values = " + newPassExecValuesList);
-//		log.info("fail values = " + newFailExecValuesList);
-//		
-//		moreTemplates = stc.recheckSingleTemplates(newPassExecValuesList, newFailExecValuesList);
-//		
-//		newPassExecValuesList.clear();
-//		newFailExecValuesList.clear();
-//	}
-	
 	public void checkSingleTemplates() {
 		log.info("Pass values: {}\n", passValues);
 		log.info("Fail values: {}\n", failValues);
@@ -75,49 +68,21 @@ public class TemplateChecker {
 		stc.checkSingleTemplates();
 	}
 	
-//	public boolean isAllIlp(List<Template> templates) {
-//		for (Template t : templates) {
-//			if (!(t instanceof OnePrimIlpTemplate || t instanceof TwoPrimIlpTemplate ||
-//					t instanceof ThreePrimIlpTemplate)) {
-//				return false;
-//			}
-//		}
-//		
-//		return true;
-//	}
-	
-//	public void recheckCompositeTemplates() {
-//		if (isAllIlp(stc.getSatifiedPassTemplates()) &&
-//				isAllIlp(stc.getSatifiedFailTemplates()) &&
-//				ctc.getCompositeTemplates().isEmpty()) return;
-//		else checkCompositeTemplates();
-//	}
-	
 	public void checkCompositeTemplates() {
 		ctc = new CompositeTemplateChecker(
-				stc.getSatPassTemplates(),
-				stc.getSatFailTemplates());
+				passValues, failValues,
+				stc.getAllTemplates());
 		ctc.checkCompositeTemplates();
 	}
 	
-	public List<Template> getSingleTemplates() {
-		if (stc != null) return stc.getSingleTemplates();
-		else return new ArrayList<Template>();
+	public List<SingleTemplate> getSingleTemplates() {
+		if (stc != null) return stc.getValidTemplates();
+		else return new ArrayList<SingleTemplate>();
 	}
 	
-	public List<Template> getSatPassTemplates() {
-		if (stc != null) return stc.getSatPassTemplates();
-		else return new ArrayList<Template>();
-	}
-	
-	public List<Template> getSatFailTemplates() {
-		if (stc != null) return stc.getSatFailTemplates();
-		else return new ArrayList<Template>();
-	}
-	
-	public List<Template> getCompositeTemplates() {
-		if (ctc != null) return ctc.getCompositeTemplates();
-		else return new ArrayList<Template>();
+	public List<CompositeTemplate> getCompositeTemplates() {
+		if (ctc != null) return ctc.getValidTemplates();
+		else return new ArrayList<CompositeTemplate>();
 	}
 	
 }

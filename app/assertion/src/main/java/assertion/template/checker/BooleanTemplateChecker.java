@@ -19,17 +19,19 @@ public class BooleanTemplateChecker extends TypeTemplateChecker {
 	private static Logger log = LoggerFactory.getLogger(BooleanTemplateChecker.class);
 
 	@Override
-	public void checkTemplates(List<List<ExecValue>> passValues, List<List<ExecValue>> failValues) {
+	public boolean checkTemplates(List<List<ExecValue>> passValues, List<List<ExecValue>> failValues) {
 //		log.info("Boolean pass values: {}\n", passValues);
 //		log.info("Boolean fail values: {}\n", failValues);
 		
-		if (passValues.isEmpty() || failValues.isEmpty()) return;
+		if (passValues.isEmpty() || failValues.isEmpty()) return false;
 		
-		checkOneFeatureTemplates(passValues, failValues);
+		if (checkOneFeatureTemplates(passValues, failValues)) return true;
 		// checkTwoFeaturesTemplates(passValues, failValues);
+		
+		return false;
 	}
 	
-	private void checkOneFeatureTemplates(List<List<ExecValue>> passValues,
+	private boolean checkOneFeatureTemplates(List<List<ExecValue>> passValues,
 			List<List<ExecValue>> failValues) {
 		SingleTemplate t = null;
 
@@ -47,11 +49,13 @@ public class BooleanTemplateChecker extends TypeTemplateChecker {
 			}
 
 			t = new OneBoolEq1Template(passEvl, failEvl);
-			check(t);
+			if (check(t)) return true;
 			
 			t = new OneBoolEq0Template(passEvl, failEvl);
-			check(t);
+			if (check(t)) return true;
 		}
+		
+		return false;
 	}
 	
 	private void checkTwoFeaturesTemplates(List<List<ExecValue>> passExecValuesList,
