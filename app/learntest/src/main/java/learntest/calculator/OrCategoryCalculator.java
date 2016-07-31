@@ -142,4 +142,8 @@ public class OrCategoryCalculator implements CategoryCalculator {
 		return vars;
 	}
 
+	public List<List<CategoryCalculator>> getCalculators() {
+		return calculators;
+	}
+
 }

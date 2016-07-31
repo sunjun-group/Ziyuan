@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.jacop.core.Domain;
+
 import icsetlv.DefaultValues;
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
@@ -21,12 +23,11 @@ import learntest.cfg.CFG;
 import learntest.cfg.CfgCreator;
 import learntest.cfg.CfgDecisionNode;
 import learntest.cfg.traveller.CfgConditionManager;
-import learntest.gentest.PathSolver;
-import learntest.sampling.SelectiveSampling;
+import learntest.sampling.JacopSelectiveSampling;
+import learntest.sampling.jacop.JacopPathSolver;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
-import net.sf.javailp.Result;
 import sav.common.core.SavException;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.JunitUtils;
@@ -82,19 +83,22 @@ public class Engine {
 		List<BreakpointData> result = tcExecutor.getResult();
 		tcExecutor.setjResultFileDeleteOnExit(true);
 		tcExecutor.setSingleMode();
-		DecisionLearner learner = new DecisionLearner(new SelectiveSampling(tcExecutor), manager);
+		DecisionLearner learner = new DecisionLearner(new JacopSelectiveSampling(tcExecutor), manager);
 		learner.learn(result);
 		System.out.println("==============================================");
 		System.out.println(cfg);
 		System.out.println("==============================================");
 		List<List<Formula>> paths = manager.buildPaths();
 		System.out.println(paths);
-		PathSolver pathSolver = new PathSolver();
-		List<Result> results = pathSolver.solve(paths);
-		System.out.println(results);
+		JacopPathSolver solver = new JacopPathSolver(learner.getOriginVars());
+		List<Domain[]> solutions = solver.solve(paths);
+		new TestGenerator().genTestAccordingToSolutions(solutions, learner.getOriginVars());
+		//PathSolver pathSolver = new PathSolver();
+		//List<Result> results = pathSolver.solve(paths);
+		//System.out.println(results);
 		//new TestGenerator().genTestAccordingToInput(results, pathSolver.getVariables());
 		//new TestGenerator().genTestAccordingToInput(results, variables);
-		new TestGenerator().genTestAccordingToInput(results, learner.getLabels());
+		//new TestGenerator().genTestAccordingToInput(results, learner.getLabels());
 	}
 		
 	private void addTestcases(String testClass) throws ClassNotFoundException {

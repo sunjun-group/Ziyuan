@@ -42,7 +42,7 @@ public abstract class BreakpointData implements Comparable<BreakpointData> {
 	
 	public boolean merge(BreakpointData bkpData) {
 		if (bkpData == null) {
-			return false;
+			return true;
 		}
 		if (location.equals(bkpData.getLocation())) {
 			trueValues.addAll(bkpData.getTrueValues());

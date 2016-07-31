@@ -141,7 +141,7 @@ public class SelectiveSampling{
 				obj.add((random.nextBoolean() ? 1 : -1) * (random.nextInt(10) + 1), var.getLabel());
 				setTypeAndBound(problem, var);
 			}
-			problem.setObjective(obj, random.nextBoolean() ? OptType.MIN : OptType.MAX);
+			problem.setObjective(obj, OptType.MIN);
 			Solver solver = factory.get();
 			Result result = solver.solve(problem);
 			if (result != null) {

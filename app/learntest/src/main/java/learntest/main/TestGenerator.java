@@ -3,9 +3,10 @@ package learntest.main;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import org.jacop.core.Domain;
+import org.jacop.core.IntDomain;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -17,13 +18,12 @@ import gentest.core.data.Sequence;
 import gentest.injection.GentestModules;
 import gentest.injection.TestcaseGenerationScope;
 import gentest.junit.TestsPrinter;
-import gentest.main.GentestConstants;
 import learntest.gentest.TestSeqGenerator;
 import net.sf.javailp.Result;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.commons.TestConfiguration;
-import sav.strategies.dto.BreakPoint.Variable;
+import sav.strategies.dto.execute.value.ExecVar;
 
 public class TestGenerator {
 	
@@ -61,6 +61,59 @@ public class TestGenerator {
 		recompiler.recompileJFile(appClasspath.getTestTarget(), generatedFiles);*/
 	}
 	
+	public void genTestAccordingToSolutions(List<Domain[]> solutions, List<ExecVar> vars) 
+			throws ClassNotFoundException, SavException {
+		MethodCall target = findTargetMethod();
+		if (target == null) {
+			return;
+		}
+		solutions = clean(solutions, vars.size());
+		
+		GentestModules injectorModule = new GentestModules();
+		injectorModule.enter(TestcaseGenerationScope.class);
+		Injector injector = Guice.createInjector(injectorModule);
+		TestSeqGenerator generator = injector.getInstance(TestSeqGenerator.class);
+		generator.setTarget(target);
+		
+		List<Sequence> sequences = new ArrayList<Sequence>();
+		//int index = 0;
+		for (Domain[] solution : solutions) {
+			//sequences.add(generator.generateSequence(input, variables.get(index ++)));
+			sequences.add(generator.generateSequence(solution, vars));
+		}
+		injectorModule.exit(TestcaseGenerationScope.class);
+		
+		TestsPrinter printer = new TestsPrinter(LearnTestConfig.resPkg, null, 
+				prefix, LearnTestConfig.typeName, TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
+		printer.printTests(new Pair<List<Sequence>, List<Sequence>>(sequences, new ArrayList<Sequence>()));
+	}
+	
+	private List<Domain[]> clean(List<Domain[]> solutions, int size) {
+		List<Domain[]> res = new ArrayList<Domain[]>();
+		for (Domain[] solution : solutions) {
+			boolean dup = false;
+			for (Domain[] r : res) {
+				if(duplicate(solution, r, size)) {
+					dup = true;
+					break;
+				}
+			}
+			if (!dup) {
+				res.add(solution);
+			}
+		}
+		return res;
+	}
+
+	private boolean duplicate(Domain[] solution, Domain[] r, int size) {
+		for (int i = 0; i < size; i++) {
+			if (((IntDomain) solution[i]).min() != ((IntDomain) r[i]).min()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public void genTestAccordingToInput(List<Result> inputs, 
 			//List<Set<String>> variables
 			//List<Variable> variables
