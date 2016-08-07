@@ -49,15 +49,33 @@ public class JacopSelectiveSampling {
 		if (basic != null) {
 			Domain[] solution = StoreSearcher.minSolve(basic);
 			if (solution != null) {
-				assignments.add(getAssignments(solution, originVars));
-				solutions.add(solution);
+				boolean flag = true;
+				for (Domain[] domains : solutions) {
+					if (StoreSearcher.duplicate(domains, solution)) {
+						flag = false;
+						break;
+					}
+				}
+				if (flag) {
+					assignments.add(getAssignments(solution, originVars));
+					solutions.add(solution);
+				}
 			}
 			
 			basic = StoreBuilder.build(null, originVars, dividers);
 			solution = StoreSearcher.maxSolve(basic);
 			if (solution != null) {
-				assignments.add(getAssignments(solution, originVars));
-				solutions.add(solution);
+				boolean flag = true;
+				for (Domain[] domains : solutions) {
+					if (StoreSearcher.duplicate(domains, solution)) {
+						flag = false;
+						break;
+					}
+				}
+				if (flag) {
+					assignments.add(getAssignments(solution, originVars));
+					solutions.add(solution);
+				}				
 			}
 		}
 		for (Divider divider : dividers) {
@@ -65,8 +83,17 @@ public class JacopSelectiveSampling {
 			if (store != null) {
 				Domain[] solution = StoreSearcher.solve(store);
 				if (solution != null) {
-					assignments.add(getAssignments(solution, originVars));
-					solutions.add(solution);
+					boolean flag = true;
+					for (Domain[] domains : solutions) {
+						if (StoreSearcher.duplicate(domains, solution)) {
+							flag = false;
+							break;
+						}
+					}
+					if (flag) {
+						assignments.add(getAssignments(solution, originVars));
+						solutions.add(solution);
+					}
 				}
 			}
 		}
@@ -79,14 +106,24 @@ public class JacopSelectiveSampling {
 				for (int i = 0; i < MAX_MORE_SELECTED_SAMPLE; i++) {
 					int idx = random.nextInt(originVars.size());
 					List<Eq<Number>> samples = selectSample(originVars, 
-							solutions.get(random.nextInt(solutions.size())), idx);
+							solutions.isEmpty() ? null 
+							: solutions.get(random.nextInt(solutions.size())), idx);
 					if (samples.isEmpty()) {
 						continue;
 					}
 					StoreBuilder.addConstraints(store, samples);
 					Domain[] solution = StoreSearcher.solve(store);
 					if (solution != null) {
-						assignments.add(getAssignments(solution, originVars));
+						boolean flag = true;
+						for (Domain[] domains : solutions) {
+							if (StoreSearcher.duplicate(domains, solution)) {
+								flag = false;
+								break;
+							}
+						}
+						if (flag) {
+							assignments.add(getAssignments(solution, originVars));
+						}
 					}
 				}
 			}
@@ -208,6 +245,8 @@ public class JacopSelectiveSampling {
 			Pair<Double, Double> range = minMax.get(var.getLabel());
 			if (range != null && ((range.b.intValue() - range.a.intValue()) > 0)) {
 				value = Randomness.nextInt(range.a.intValue(), range.b.intValue());
+			} else if (solution == null) {
+				continue;
 			} else {
 				value = ((IntDomain)solution[i]).min();
 			}

@@ -32,6 +32,7 @@ public class CfgConditionManager {
 	private Map<CfgDecisionNode, CfgDecisionNode> next;
 	
 	private List<ExecVar> vars;
+	private List<ExecVar> originalVars;
 	
 	public CfgConditionManager(CFG cfg) {
 		List<CfgEdge> entryOutEdges = cfg.getEntryOutEdges();
@@ -76,8 +77,9 @@ public class CfgConditionManager {
 		}
 	}
 	
-	public void setVars(List<ExecVar> vars) {
+	public void setVars(List<ExecVar> vars, List<ExecVar> originalVars) {
 		this.vars = vars;
+		this.originalVars = originalVars;
 	}
 	
 	public void setCondition(int lineNo, Pair<Formula, Formula> formulas, List<Divider> dividers) {
@@ -146,7 +148,7 @@ public class CfgConditionManager {
 	
 	public OrCategoryCalculator getPreConditions(int lineNo) {
 		CfgDecisionNode node = nodeMap.get(lineNo);
-		return new OrCategoryCalculator(node.getPreconditions(), vars);
+		return new OrCategoryCalculator(node.getPreconditions(), vars, originalVars);
 	}
 
 	public List<List<Formula>> buildPaths() {

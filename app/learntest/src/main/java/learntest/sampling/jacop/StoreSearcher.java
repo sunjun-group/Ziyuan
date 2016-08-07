@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jacop.core.Domain;
+import org.jacop.core.IntDomain;
 import org.jacop.core.IntVar;
 import org.jacop.core.Store;
 import org.jacop.search.DepthFirstSearch;
@@ -21,7 +22,16 @@ public class StoreSearcher {
 		for (Store store : stores) {
 			Domain[] solution = solve(store);
 			if (solution != null) {
-				res.add(solution);
+				boolean flag = true;
+				for (Domain[] domains : res) {
+					if (duplicate(domains, solution)) {
+						flag = false;
+						break;
+					}
+				}
+				if (flag) {
+					res.add(solution);
+				}				
 			}
 		}
 		return res;
@@ -75,13 +85,28 @@ public class StoreSearcher {
 	public static List<Domain[]> solve(List<Store> stores, int number) {
 		List<Domain[]> res = new ArrayList<Domain[]>();
 		for (Store store : stores) {
-			res.addAll(solve(store, number));
+			List<Domain[]> solutions = solve(store, number);
+			for (Domain[] solution : solutions) {
+				boolean flag = true;
+				for (Domain[] domains : res) {
+					if (duplicate(domains, solution)) {
+						flag = false;
+						break;
+					}
+				}
+				if (flag) {
+					res.add(solution);
+				}
+			}
 		}
 		return res;
 	}
 
 	public static List<Domain[]> solve(Store store, int number) {
 		List<Domain[]> res = new ArrayList<Domain[]>();
+		if (store == null) {
+			return res;
+		}
 		IntVar[] intVars = new IntVar[store.size()];
 		for (int i = 0; i < intVars.length; i++) {
 			intVars[i] = (IntVar)store.vars[i];
@@ -109,5 +134,22 @@ public class StoreSearcher {
 			}			
 		}
 		return res;
+	}
+	
+	public static boolean duplicate(Domain[] s1, Domain[] s2) {
+		if (s1 == null && s2 == null) {
+			return true;
+		} else if (s1 == null || s2 == null) {
+			return false;
+		}
+		if (s1.length != s2.length) {
+			return false;
+		}
+		for (int i = 0; i < s1.length; i++) {
+			if (((IntDomain) s1[i]).min() != ((IntDomain) s2[i]).min()) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

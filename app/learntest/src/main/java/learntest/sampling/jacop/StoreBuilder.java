@@ -186,7 +186,7 @@ public class StoreBuilder {
 			case SHORT:
 				return new IntVar(store, var.getLabel(), -100, 100);
 			default:
-				return new IntVar(store, var.getLabel(), -200, 200);
+				return new IntVar(store, var.getLabel(), -200, 200/*1, 20*/);
 		}
 	}
 	

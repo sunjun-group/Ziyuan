@@ -34,6 +34,7 @@ public class MyPositiveSeparationMachine extends Machine {
 		if(model != null) {
 			learnedModels = new ArrayList<svm_model>();
 			learnedModels.add(model);
+			String s = super.getLearnedLogic(true);
 			if (getModelAccuracy() == 1.0) {
 				return this;
 			}

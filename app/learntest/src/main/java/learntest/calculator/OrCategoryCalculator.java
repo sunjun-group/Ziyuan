@@ -20,10 +20,13 @@ public class OrCategoryCalculator implements CategoryCalculator {
 	
 	private List<List<CategoryCalculator>> calculators;
 	private List<ExecVar> vars;
+	private List<ExecVar> originalVars;
 	
-	public OrCategoryCalculator(List<List<CategoryCalculator>> calculators, List<ExecVar> vars) {
+	public OrCategoryCalculator(List<List<CategoryCalculator>> calculators, List<ExecVar> vars, 
+			List<ExecVar> originalVars) {
 		this.calculators = calculators;
 		this.vars = vars;
+		this.originalVars = originalVars;
 	}
 
 	@Override
@@ -59,13 +62,20 @@ public class OrCategoryCalculator implements CategoryCalculator {
 	}
 	
 	private DataPoint toDataPoint(BreakpointValue value) {
-		double[] lineVals = new double[vars.size()];
+		int cnt = originalVars.size();
+		int size = cnt + (1 + cnt) * cnt / 2;
+		double[] lineVals = new double[size];
 		int i = 0;
-		for (ExecVar var : vars) {
+		for (ExecVar var : originalVars) {
 			Double v = value.getValue(var.getLabel(), 0.0);
 			lineVals[i++] = v;
 		}
-		DataPoint dp = new DataPoint(vars.size());
+		for (int j = 0; j < cnt; j++) {
+			for (int k = j; k < cnt; k++) {
+				lineVals[i ++] = lineVals[j] * lineVals[k];
+			}
+		}
+		DataPoint dp = new DataPoint(size);
 		dp.setCategory(Category.NEGATIVE);
 		dp.setValues(lineVals);
 		return dp;

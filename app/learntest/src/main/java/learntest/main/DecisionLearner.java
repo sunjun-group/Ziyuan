@@ -52,7 +52,7 @@ public class DecisionLearner implements CategoryCalculator {
 	private CfgConditionManager manager;
 	private List<Divider> curDividers;
 	
-	private final int MAX_ATTEMPT = 10;
+	private final int MAX_ATTEMPT = 5;
 	
 	public DecisionLearner(JacopSelectiveSampling selectiveSampling, CfgConditionManager manager) {
 		machine = new MyPositiveSeparationMachine();
@@ -152,7 +152,7 @@ public class DecisionLearner implements CategoryCalculator {
 		addDataPoints(originVars, bkpData.getFalseValues(), Category.NEGATIVE, machine);
 		machine.train();
 		Formula trueFlase = getLearnedFormula();
-		double acc = machine.getModelAccuracy();
+		//double acc = machine.getModelAccuracy();
 		while(times < MAX_ATTEMPT) {
 			/*BreakpointData newData = selectiveSampling.selectData(bkpData.getLocation(), 
 					trueFlase, machine.getDataLabels(), machine.getDataPoints());*/
@@ -164,15 +164,18 @@ public class DecisionLearner implements CategoryCalculator {
 			
 			preconditions.clear(newData);
 			
-			bkpData.merge(newData);
+			//bkpData.merge(newData);
 			addDataPoints(originVars, newData.getTrueValues(), Category.POSITIVE, machine);
 			addDataPoints(originVars, newData.getFalseValues(), Category.NEGATIVE, machine);
+			/*if (machine.getModelAccuracy() == 1.0) {
+				break;
+			}*/
 			machine.train();
 			Formula tmp = getLearnedFormula();
-			double accTmp = machine.getModelAccuracy();
+			//double accTmp = machine.getModelAccuracy();
 			if (!tmp.equals(trueFlase) /*&& accTmp >= acc*/) {
 				trueFlase = tmp;
-				acc = accTmp;
+				//acc = accTmp;
 			} else {
 				break;
 			}
@@ -238,7 +241,7 @@ public class DecisionLearner implements CategoryCalculator {
 		addDataPoints(originVars, loopData.getOneTimeValues(), Category.NEGATIVE, machine);
 		machine.train();
 		Formula formula = getLearnedFormula();
-		double acc = machine.getModelAccuracy();
+		//double acc = machine.getModelAccuracy();
 		while(times < MAX_ATTEMPT) {
 			/*LoopTimesData newData = (LoopTimesData) selectiveSampling.selectData(loopData.getLocation(), 
 					formula, machine.getDataLabels(), machine.getDataPoints());	*/
@@ -249,12 +252,15 @@ public class DecisionLearner implements CategoryCalculator {
 			}
 			addDataPoints(originVars, newData.getMoreTimesValues(), Category.POSITIVE, machine);
 			addDataPoints(originVars, newData.getOneTimeValues(), Category.NEGATIVE, machine);
+			/*if (machine.getModelAccuracy() == 1.0) {
+				break;
+			}*/
 			machine.train();
 			Formula tmp = getLearnedFormula();
-			double accTmp = machine.getModelAccuracy();
+			//double accTmp = machine.getModelAccuracy();
 			if (!tmp.equals(formula)/* && accTmp >= acc*/) {
 				formula = tmp;
-				acc = accTmp;
+				//acc = accTmp;
 			} else {
 				break;
 			}
@@ -281,7 +287,7 @@ public class DecisionLearner implements CategoryCalculator {
 		labels = extractLabels(vars);
 		machine.setDataLabels(labels);
 		//oneClass.setDataLabels(labels);
-		manager.setVars(vars);
+		manager.setVars(vars, originVars);
 		return true;
 	}
 
