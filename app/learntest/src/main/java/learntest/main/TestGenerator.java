@@ -30,7 +30,7 @@ public class TestGenerator {
 	private static String prefix = "test";
 	
 	public void genTest() throws ClassNotFoundException, SavException {
-		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(40);
+		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(1);
 		builder.queryMaxLength(1).testPerQuery(1);
 		builder.forClass(Class.forName(LearnTestConfig.className)).method(LearnTestConfig.methodName);
 		//builder.forClass(Class.forName(LearnTestConfig.className));

@@ -6,11 +6,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.jacop.core.BoundDomain;
 import org.jacop.core.Domain;
 
 import icsetlv.DefaultValues;
+import icsetlv.common.dto.BreakpointValue;
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
@@ -19,6 +22,7 @@ import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.Parameter;
 import japa.parser.ast.body.TypeDeclaration;
 import learntest.breakpoint.data.BreakpointBuilder;
+import learntest.breakpoint.data.DecisionLocation;
 import learntest.cfg.CFG;
 import learntest.cfg.CfgCreator;
 import learntest.cfg.CfgDecisionNode;
@@ -33,6 +37,7 @@ import sav.common.core.formula.Formula;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint.Variable;
+import sav.strategies.dto.execute.value.ExecVar;
 
 public class Engine {
 	
@@ -80,11 +85,12 @@ public class Engine {
 		ensureTcExecutor();
 		tcExecutor.setup(appClassPath, testcases);
 		tcExecutor.run();
-		List<BreakpointData> result = tcExecutor.getResult();
+		Map<DecisionLocation, BreakpointData> result = tcExecutor.getResult();
 		tcExecutor.setjResultFileDeleteOnExit(true);
 		tcExecutor.setSingleMode();
 		DecisionLearner learner = new DecisionLearner(new JacopSelectiveSampling(tcExecutor), manager);
 		learner.learn(result);
+		List<BreakpointValue> records = learner.getRecords();
 		System.out.println("==============================================");
 		System.out.println(cfg);
 		System.out.println("==============================================");
@@ -92,6 +98,7 @@ public class Engine {
 		System.out.println(paths);
 		JacopPathSolver solver = new JacopPathSolver(learner.getOriginVars());
 		List<Domain[]> solutions = solver.solve(paths);
+		solutions.addAll(getSolutions(records, learner.getOriginVars()));
 		new TestGenerator().genTestAccordingToSolutions(solutions, learner.getOriginVars());
 		//PathSolver pathSolver = new PathSolver();
 		//List<Result> results = pathSolver.solve(paths);
@@ -101,6 +108,20 @@ public class Engine {
 		//new TestGenerator().genTestAccordingToInput(results, learner.getLabels());
 	}
 		
+	private List<Domain[]> getSolutions(List<BreakpointValue> records, List<ExecVar> originVars) {
+		List<Domain[]> res = new ArrayList<Domain[]>();
+		int size = originVars.size();
+		for (BreakpointValue record : records) {
+			Domain[] solution = new Domain[size];
+			for (int i = 0; i < size; i++) {
+				int value = record.getValue(originVars.get(i).getLabel(), 0.0).intValue();
+				solution[i] = new BoundDomain(value, value);
+			}
+			res.add(solution);
+		}
+		return res;
+	}
+
 	private void addTestcases(String testClass) throws ClassNotFoundException {
 		this.testcases.addAll(JunitUtils.extractTestMethods(Arrays.asList(testClass)));
 	}

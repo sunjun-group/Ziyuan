@@ -16,7 +16,7 @@ public class BreakpointDataBuilder {
 	private BreakpointBuilder bkpBuilder;
 	private DecisionLocation target;
 	private Map<DecisionLocation, BreakpointData> bkpDataMap;
-	private List<BreakpointData> result;
+	//private List<BreakpointData> result;
 	
 	public BreakpointDataBuilder(BreakpointBuilder bkpBuilder) {
 		this.bkpBuilder = bkpBuilder;
@@ -26,7 +26,7 @@ public class BreakpointDataBuilder {
 	public void setTarget(DecisionLocation target) {
 		this.target = target;
 		bkpDataMap = new HashMap<DecisionLocation, BreakpointData>();
-		result = null;
+		//result = null;
 	}
 	
 
@@ -158,11 +158,12 @@ public class BreakpointDataBuilder {
 		return Math.max(times, lastTimes);
 	}
 	
-	public List<BreakpointData> getResult() {
-		if (result == null) {
+	public Map<DecisionLocation, BreakpointData> getResult() {
+		/*if (result == null) {
 			result = new ArrayList<BreakpointData>(bkpDataMap.values());
 		}
-		return result;
+		return result;*/
+		return bkpDataMap;
 	}
-
+	
 }

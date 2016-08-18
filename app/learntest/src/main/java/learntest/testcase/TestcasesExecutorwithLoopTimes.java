@@ -31,7 +31,7 @@ import sav.strategies.junit.JunitResult;
 public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 
 	private static Logger log = LoggerFactory.getLogger(TestcasesExecutorwithLoopTimes.class);	
-	private List<BreakpointData> result;
+	//private Map<DecisionLocation, BreakpointData> result;
 	/* for internal purpose */
 	private Map<Integer, List<BreakpointValue>> inputValuesByTestIdx;
 	private Map<Integer, List<BreakPoint>> exePathsByTestIdx;
@@ -112,7 +112,7 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 			System.out.println("================");
 			getBuilder().build(exePathOfTcI, inputValueOfTcI);
 		}
-		result = getBuilder().getResult();
+		//result = getBuilder().getResult();
 	}
 
 	private BreakpointValue extractValuesAtLocation(BreakPoint bkp,
@@ -127,8 +127,8 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		return null;
 	}
 	
-	public List<BreakpointData> getResult() {
-		return CollectionUtils.initIfEmpty(result);
+	public Map<DecisionLocation, BreakpointData> getResult() {
+		return getBuilder().getResult();
 	}
 	
 	public void setSingleMode() {

@@ -34,13 +34,14 @@ public class MyPositiveSeparationMachine extends Machine {
 		if(model != null) {
 			learnedModels = new ArrayList<svm_model>();
 			learnedModels.add(model);
-			String s = super.getLearnedLogic(true);
-			if (getModelAccuracy() == 1.0) {
+			//String s = super.getLearnedLogic(true);
+			/*if (getModelAccuracy() == 1.0) {
 				return this;
-			}
+			}*/
+			return this;
 		}
 		
-		learnedModels = new ArrayList<svm_model>();
+		/*learnedModels = new ArrayList<svm_model>();
 		List<DataPoint> positives = new ArrayList<DataPoint>();
 		List<DataPoint> negatives = new ArrayList<DataPoint>();
 		classifyNegativePositivePoints(dataPoints, positives, negatives);
@@ -62,7 +63,7 @@ public class MyPositiveSeparationMachine extends Machine {
 					learnedModels.add(model);
 					trainingData.remove(trainingData.size() - 1);
 				}
-				/*last = model;
+				last = model;
 				while (!removed.isEmpty()) {
 					trainingData.addAll(removed);
 					super.train(trainingData);
@@ -73,17 +74,17 @@ public class MyPositiveSeparationMachine extends Machine {
 					}
 				}
 				learnedModels.add(last);
-				trainingData = new ArrayList<Machine.DataPoint>(positives);*/
+				trainingData = new ArrayList<Machine.DataPoint>(positives);
 			} else {
 				negatives.remove(trainingData.remove(trainingData.size() - 1));
 			}
-			/*if (model != null) {
+			if (model != null) {
 				learnedModels.add(model);
 			}
 
 			trainingData.remove(trainingData.size() - 1);
-			removeClassifiedNegativePoints(negatives, lastRemoved);*/
-		}
+			removeClassifiedNegativePoints(negatives, lastRemoved);
+		}*/
 		
 		return this;
 	}

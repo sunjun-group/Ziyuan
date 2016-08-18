@@ -82,6 +82,52 @@ public class StoreSearcher {
 	    return null;
 	}
 	
+	public static List<Domain[]> solveAll(List<Store> stores) {
+		List<Domain[]> res = new ArrayList<Domain[]>();
+		for (Store store : stores) {
+			List<Domain[]> solutions = solveAll(store);
+			for (Domain[] solution : solutions) {
+				boolean flag = true;
+				for (Domain[] domains : res) {
+					if (duplicate(domains, solution)) {
+						flag = false;
+						break;
+					}
+				}
+				if (flag) {
+					res.add(solution);
+				}
+			}
+		}
+		return res;
+	}
+	
+	public static List<Domain[]> solveAll(Store store) {
+		List<Domain[]> res = new ArrayList<Domain[]>();
+		if (store == null) {
+			return res;
+		}
+		IntVar[] intVars = new IntVar[store.size()];
+		for (int i = 0; i < intVars.length; i++) {
+			intVars[i] = (IntVar)store.vars[i];
+		}
+		Search<IntVar> search = new DepthFirstSearch<IntVar>();
+		search.getSolutionListener().searchAll(true);
+		search.getSolutionListener().recordSolutions(true);
+		search.setTimeOut(10);
+		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
+				store, intVars, new IndomainSimpleRandom<IntVar>()); 
+	    boolean result = search.labeling(store, select);
+	    if (result) {
+	    	int cnt = search.getSolutionListener().solutionsNo();
+    		for (int i = 1; i <= cnt; i++) {
+				res.add(search.getSolution(i));
+    		}
+				
+		}
+		return res;
+	}
+	
 	public static List<Domain[]> solve(List<Store> stores, int number) {
 		List<Domain[]> res = new ArrayList<Domain[]>();
 		for (Store store : stores) {

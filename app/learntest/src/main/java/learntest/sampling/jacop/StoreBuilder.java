@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.jacop.constraints.LinearInt;
 import org.jacop.constraints.XeqC;
+import org.jacop.constraints.XgteqY;
+import org.jacop.constraints.XlteqY;
 import org.jacop.constraints.XmulYeqZ;
 import org.jacop.core.IntVar;
 import org.jacop.core.Store;
@@ -22,12 +24,15 @@ import sav.strategies.dto.execute.value.ExecVar;
 
 public class StoreBuilder {
 	
-	public static Store build(Divider object, List<ExecVar> vars, List<Divider> dividers) {
-		Store store = build(vars, dividers, null);
-		if (store != null && object != null) {
-			addTarget(store, object);
+	public static List<Store> build(Divider object, List<ExecVar> vars, OrCategoryCalculator calculator, 
+			List<Divider> dividers) {
+		List<Store> stores = build(vars, calculator, dividers);
+		if (!stores.isEmpty() && object != null) {
+			for (Store store : stores) {
+				addTarget(store, object);
+			}
 		}
-		return store;
+		return stores;
 	}
 
 	private static void addTarget(Store store, Divider object) {
@@ -57,9 +62,14 @@ public class StoreBuilder {
 			List<Divider> current) {
 		List<Store> res = new ArrayList<Store>();
 		if (orCalculator == null) {
+			res.add(build(vars, current, null));
 			return res;
 		}
 		List<List<CategoryCalculator>> calculators = orCalculator.getCalculators();
+		if (calculators.isEmpty()) {
+			res.add(build(vars, current, null));
+			return res;
+		}
 		for (List<CategoryCalculator> list : calculators) {
 			List<Divider> dividers = current == null ? new ArrayList<Divider>() 
 					: new ArrayList<Divider>(current);
@@ -114,38 +124,36 @@ public class StoreBuilder {
 	
 	private static Store build(List<ExecVar> vars, List<Divider> dividers, 
 			List<Divider> notDividers) {
-		if (dividers == null || dividers.isEmpty()) {
-			return null;
-		}
 		Store store = build(vars);
-		for (Divider divider : dividers) {
-			double[] thetas = divider.getThetas();
-			int[] weights = new int[thetas.length];
-			for (int i = 0; i < thetas.length; i++) {
-				weights[i] = (int) thetas[i];
+		if (dividers != null) {
+			for (Divider divider : dividers) {
+				double[] thetas = divider.getThetas();
+				int[] weights = new int[thetas.length];
+				for (int i = 0; i < thetas.length; i++) {
+					weights[i] = (int) thetas[i];
+				}
+				IntVar[] intVars = new IntVar[store.size()];
+				for (int i = 0; i < intVars.length; i++) {
+					intVars[i] = (IntVar)store.vars[i];
+				}
+				store.impose(new LinearInt(store, intVars, weights, ">=", 
+						(int) divider.getTheta0()));
 			}
-			IntVar[] intVars = new IntVar[store.size()];
-			for (int i = 0; i < intVars.length; i++) {
-				intVars[i] = (IntVar)store.vars[i];
+		}		
+		if (notDividers != null) {
+			for (Divider divider : notDividers) {
+				double[] thetas = divider.getThetas();
+				int[] weights = new int[thetas.length];
+				for (int i = 0; i < thetas.length; i++) {
+					weights[i] = (int) thetas[i];
+				}
+				IntVar[] intVars = new IntVar[store.size()];
+				for (int i = 0; i < intVars.length; i++) {
+					intVars[i] = (IntVar)store.vars[i];
+				}
+				store.impose(new LinearInt(store, intVars, weights, "<", (int) divider.getTheta0()));
 			}
-			store.impose(new LinearInt(store, intVars, weights, ">=", 
-					(int) divider.getTheta0()));
-		}
-		if (notDividers == null || notDividers.isEmpty()) {
-			return store;
-		}
-		for (Divider divider : notDividers) {
-			double[] thetas = divider.getThetas();
-			int[] weights = new int[thetas.length];
-			for (int i = 0; i < thetas.length; i++) {
-				weights[i] = (int) thetas[i];
-			}
-			IntVar[] intVars = new IntVar[store.size()];
-			for (int i = 0; i < intVars.length; i++) {
-				intVars[i] = (IntVar)store.vars[i];
-			}
-			store.impose(new LinearInt(store, intVars, weights, "<", (int) divider.getTheta0()));
-		}
+		}		
 		return store;
 	}
 	
@@ -166,6 +174,11 @@ public class StoreBuilder {
 				store.impose(new XmulYeqZ(intVars[i], intVars[j], intVars[idx ++]));
 			}
 		}
+		IntVar x = (IntVar) store.findVariable("x");
+		IntVar y = (IntVar) store.findVariable("y");
+		IntVar z = (IntVar) store.findVariable("z");
+		store.impose(new XgteqY(x, y));
+		store.impose(new XgteqY(y, z));
 		return store;
 	}
 	
@@ -186,7 +199,7 @@ public class StoreBuilder {
 			case SHORT:
 				return new IntVar(store, var.getLabel(), -100, 100);
 			default:
-				return new IntVar(store, var.getLabel(), -200, 200/*1, 20*/);
+				return new IntVar(store, var.getLabel(), /*-200, 200*/1, 20);
 		}
 	}
 	
