@@ -2,8 +2,10 @@ package learntest.cfg.traveller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import learntest.calculator.MultiNotDividerBasedCategoryCalculator;
 import learntest.calculator.OrCategoryCalculator;
@@ -31,6 +33,8 @@ public class CfgConditionManager {
 	private Map<CfgDecisionNode, CfgDecisionNode> falseNext;
 	private Map<CfgDecisionNode, CfgDecisionNode> next;
 	
+	private Set<CfgDecisionNode> ends;
+	
 	private List<ExecVar> vars;
 	private List<ExecVar> originalVars;
 	
@@ -46,6 +50,7 @@ public class CfgConditionManager {
 		trueNext = new HashMap<CfgDecisionNode, CfgDecisionNode>();
 		falseNext = new HashMap<CfgDecisionNode, CfgDecisionNode>();
 		next = new HashMap<CfgDecisionNode, CfgDecisionNode>();
+		ends = new HashSet<CfgDecisionNode>();
 		List<CfgNode> vertices = cfg.getVertices();
 		for (CfgNode node : vertices) {
 			if (node instanceof CfgDecisionNode) {
@@ -72,6 +77,8 @@ public class CfgConditionManager {
 					}
 				} else if (trueNode != null && trueNode.getBeginLine() > node.getBeginLine()) {
 					next.put((CfgDecisionNode) node, trueNode);
+				} else {
+					ends.add((CfgDecisionNode) node);
 				}
 			}
 		}
@@ -149,6 +156,10 @@ public class CfgConditionManager {
 	public OrCategoryCalculator getPreConditions(int lineNo) {
 		CfgDecisionNode node = nodeMap.get(lineNo);
 		return new OrCategoryCalculator(node.getPreconditions(), vars, originalVars);
+	}
+	
+	public boolean isEnd(int lineNo) {
+		return ends.contains(nodeMap.get(lineNo));
 	}
 
 	public List<List<Formula>> buildPaths() {

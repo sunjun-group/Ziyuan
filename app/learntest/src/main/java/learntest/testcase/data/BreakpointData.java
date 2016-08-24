@@ -47,6 +47,20 @@ public abstract class BreakpointData implements Comparable<BreakpointData> {
 		if (location.equals(bkpData.getLocation())) {
 			trueValues.addAll(bkpData.getTrueValues());
 			falseValues.addAll(bkpData.getFalseValues());
+			/*List<BreakpointValue> trueValues = bkpData.getTrueValues();
+			for (BreakpointValue value : trueValues) {
+				if (this.trueValues.contains(value)) {
+					continue;
+				}
+				this.trueValues.add(value);
+			}
+			List<BreakpointValue> falseValues = bkpData.getFalseValues();
+			for (BreakpointValue value : falseValues) {
+				if (this.falseValues.contains(value)) {
+					continue;
+				}
+				this.falseValues.add(value);
+			}*/
 			return true;
 		}
 		return false;

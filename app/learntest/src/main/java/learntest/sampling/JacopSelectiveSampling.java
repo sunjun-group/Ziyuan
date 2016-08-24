@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.jacop.core.BoundDomain;
 import org.jacop.core.Domain;
 import org.jacop.core.IntDomain;
 import org.jacop.core.Store;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+/*import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;*/
 
+import icsetlv.common.dto.BreakpointValue;
 import learntest.breakpoint.data.DecisionLocation;
 import learntest.calculator.OrCategoryCalculator;
 import learntest.sampling.jacop.StoreBuilder;
@@ -29,16 +31,36 @@ import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
 
 public class JacopSelectiveSampling {
-	private static Logger log = LoggerFactory.getLogger(SelectiveSampling.class);
+	//private static Logger log = LoggerFactory.getLogger(SelectiveSampling.class);
 	private static final int MAX_MORE_SELECTED_SAMPLE = 4;
 	private static final int MIN_MORE_SELECTED_DATA = 5;
 	private TestcasesExecutorwithLoopTimes tcExecutor;
 	private Map<String, Pair<Double, Double>> minMax;
 	
-	Map<DecisionLocation, BreakpointData> selectResult;
+	private Map<DecisionLocation, BreakpointData> selectResult;
+	
+	private List<Domain[]> prevDatas;
 	
 	public JacopSelectiveSampling(TestcasesExecutorwithLoopTimes tcExecutor) {
 		this.tcExecutor = tcExecutor;
+		prevDatas = new ArrayList<Domain[]>();
+	}
+	
+	public void setUpData(BreakpointData breakpointData, List<ExecVar> originVars) {		
+		List<BreakpointValue> trueValues = breakpointData.getTrueValues();
+		for (BreakpointValue breakpointValue : trueValues) {
+			prevDatas.add(toSolution(breakpointValue, originVars));
+		}
+		List<BreakpointValue> falseValues = breakpointData.getFalseValues();
+		for (BreakpointValue breakpointValue : falseValues) {
+			prevDatas.add(toSolution(breakpointValue, originVars));
+		}
+	}
+	
+	private Domain[] toSolution(BreakpointValue value, List<ExecVar> vars) {
+		Domain[] res = new Domain[vars.size()];
+		int i = 0;
+		return res;
 	}
 	
 	public Map<DecisionLocation, BreakpointData> selectDataForModel(DecisionLocation target, 
@@ -48,6 +70,24 @@ public class JacopSelectiveSampling {
 		
 		List<Domain[]> solutions = new ArrayList<Domain[]>();
 		List<Store> basics = StoreBuilder.build(null, originVars, precondition, dividers);
+		for (Store basic : basics) {
+			Domain[] solution = StoreSearcher.solve(basic);
+			if (solution != null) {
+				boolean flag = true;
+				for (Domain[] domains : prevDatas) {
+					if (StoreSearcher.duplicate(domains, solution)) {
+						flag = false;
+						break;
+					}
+				}
+				if (flag) {
+					assignments.add(getAssignments(solution, originVars));
+					solutions.add(solution);
+					prevDatas.add(solution);
+				}
+			}
+		}
+		/*List<Store> basics = StoreBuilder.build(null, originVars, precondition, dividers);
 		for (Store basic : basics) {
 			Domain[] solution = StoreSearcher.minSolve(basic);
 			if (solution != null) {
@@ -81,7 +121,7 @@ public class JacopSelectiveSampling {
 					solutions.add(solution);
 				}				
 			}
-		}
+		}*/
 			
 		for (Divider divider : dividers) {
 			List<Store> stores = StoreBuilder.build(divider, originVars, precondition, dividers);
@@ -90,7 +130,7 @@ public class JacopSelectiveSampling {
 					Domain[] solution = StoreSearcher.solve(store);
 					if (solution != null) {
 						boolean flag = true;
-						for (Domain[] domains : solutions) {
+						for (Domain[] domains : prevDatas) {
 							if (StoreSearcher.duplicate(domains, solution)) {
 								flag = false;
 								break;
@@ -99,11 +139,62 @@ public class JacopSelectiveSampling {
 						if (flag) {
 							assignments.add(getAssignments(solution, originVars));
 							solutions.add(solution);
+							prevDatas.add(solution);
 						}
 					}
 				}				
 			}
 		}
+		
+		int size = dividers.size();
+		for (int i = 0; i < size; i++) {
+			List<Divider> list = new ArrayList<Divider>(dividers);
+			list.remove(i);
+			List<Store> stores = StoreBuilder.build(null, originVars, precondition, list);
+			Divider divider = dividers.get(i);
+			for (Store store : stores) {
+				StoreBuilder.addOpposite(store, divider);
+				Domain[] solution = StoreSearcher.solve(store);
+				if (solution != null) {
+					boolean flag = true;
+					for (Domain[] domains : prevDatas) {
+						if (StoreSearcher.duplicate(domains, solution)) {
+							flag = false;
+							break;
+						}
+					}
+					if (flag) {
+						assignments.add(getAssignments(solution, originVars));
+						solutions.add(solution);
+						prevDatas.add(solution);
+					}
+				}
+			}
+		}
+		
+		/*for (int i = 0; i < size; i++) {
+			List<Divider> list = new ArrayList<Divider>(dividers);
+			list.remove(i);
+			List<Store> stores = StoreBuilder.build(null, originVars, precondition, list);
+			Divider divider = dividers.get(i);
+			for (Store store : stores) {
+				StoreBuilder.addOpposite(store, divider);
+				Domain[] solution = StoreSearcher.maxSolve(store);
+				if (solution != null) {
+					boolean flag = true;
+					for (Domain[] domains : solutions) {
+						if (StoreSearcher.duplicate(domains, solution)) {
+							flag = false;
+							break;
+						}
+					}
+					if (flag) {
+						assignments.add(getAssignments(solution, originVars));
+						solutions.add(solution);
+					}
+				}
+			}
+		}*/
 		
 		Random random = new Random();
 		minMax = calculateValRange(originVars, datapoints);
@@ -123,7 +214,7 @@ public class JacopSelectiveSampling {
 						Domain[] solution = StoreSearcher.solve(store);
 						if (solution != null) {
 							boolean flag = true;
-							for (Domain[] domains : solutions) {
+							for (Domain[] domains : prevDatas) {
 								if (StoreSearcher.duplicate(domains, solution)) {
 									flag = false;
 									break;
@@ -132,6 +223,7 @@ public class JacopSelectiveSampling {
 							if (flag) {
 								assignments.add(getAssignments(solution, originVars));
 								solutions.add(solution);
+								prevDatas.add(solution);
 							}
 						}
 					}
@@ -139,14 +231,16 @@ public class JacopSelectiveSampling {
 			}
 		}
 		
-		if (solutions.size() < MIN_MORE_SELECTED_DATA) {
+		int times = 0;
+		while (solutions.size() < MIN_MORE_SELECTED_DATA && times ++ < MIN_MORE_SELECTED_DATA) {
 			List<Store> stores = StoreBuilder.build(null, originVars, precondition, dividers);
 			//List<Domain[]> more = StoreSearcher.solve(stores, MIN_MORE_SELECTED_DATA);
-			List<Domain[]> more = StoreSearcher.solveAll(stores);
+			List<Domain[]> more = StoreSearcher.solve(stores);
+			//List<Domain[]> more = StoreSearcher.solveAll(stores);
 			for (Domain[] solution : more) {
 				if (solution != null) {
 					boolean flag = true;
-					for (Domain[] domains : solutions) {
+					for (Domain[] domains : prevDatas) {
 						if (StoreSearcher.duplicate(domains, solution)) {
 							flag = false;
 							break;
@@ -155,6 +249,7 @@ public class JacopSelectiveSampling {
 					if (flag) {
 						assignments.add(getAssignments(solution, originVars));
 						solutions.add(solution);
+						prevDatas.add(solution);
 						if (solutions.size() >= MIN_MORE_SELECTED_DATA) {
 							break;
 						}
@@ -163,8 +258,77 @@ public class JacopSelectiveSampling {
 			}
 		}
 		
+		extendWithHeuristics(solutions, assignments, originVars);
+		
 		selectData(target, assignments);
 		return selectResult;
+	}
+
+	private void extendWithHeuristics(List<Domain[]> solutions, List<List<Eq<?>>> assignments, List<ExecVar> originVars) {
+		/*int xIdx = 0;
+		int yIdx = 0;
+		int zIdx = 0;
+		int idx = 0;
+		for (ExecVar execVar : originVars) {
+			char label = execVar.getLabel().charAt(0);
+			switch (label) {
+				case 'x':
+					xIdx = idx;
+					break;
+				case 'y':
+					yIdx = idx;
+					break;
+				case 'z':
+					zIdx = idx;
+					break;
+			}
+			idx ++;
+		}*/
+		List<Domain[]> tmp = new ArrayList<Domain[]>();
+		for (Domain[] domains : solutions) {
+			/*int x = ((IntDomain) domains[xIdx]).min();
+			int y = ((IntDomain) domains[yIdx]).min();
+			int z = ((IntDomain) domains[zIdx]).min();*/
+			for (int i = 0; i < domains.length; i++) {
+				int value = ((IntDomain) domains[i]).min();
+				if (value > -200 /*1 && (i == zIdx || (i == xIdx && value > y) || (i == yIdx && value > z))*/) {
+					Domain[] new1 = new Domain[domains.length];
+					new1[i] = new BoundDomain(value - 1, value - 1);
+					for (int j = 0; j < i; j++) {
+						new1[j] = domains[j];
+					}
+					for (int j = i + 1; j < new1.length; j++) {
+						new1[j] = domains[j];
+					}
+					tmp.add(new1);
+				}
+				if (value < 200 /*&& (i == xIdx || (i == yIdx && value < x) || (i == zIdx && value < y))*/) {
+					Domain[] new1 = new Domain[domains.length];
+					new1[i] = new BoundDomain(value + 1, value + 1);
+					for (int j = 0; j < i; j++) {
+						new1[j] = domains[j];
+					}
+					for (int j = i + 1; j < new1.length; j++) {
+						new1[j] = domains[j];
+					}
+					tmp.add(new1);
+				}
+			}
+		}
+		for (Domain[] solution : tmp) {
+			boolean flag = true;
+			for (Domain[] domains : prevDatas) {
+				if (StoreSearcher.duplicate(domains, solution)) {
+					flag = false;
+					break;
+				}
+			}
+			if (flag) {
+				assignments.add(getAssignments(solution, originVars));
+				solutions.add(solution);
+				prevDatas.add(solution);
+			}
+		}
 	}
 
 	public Map<DecisionLocation, BreakpointData> selectDataForEmpty(DecisionLocation target, 
@@ -173,10 +337,23 @@ public class JacopSelectiveSampling {
 			List<Divider> current, 
 			boolean trueOrFalse, 
 			boolean isLoop) throws SavException {
-		List<Store> stores = StoreBuilder.build(originVars, precondition, current);
-		List<Domain[]> solutions = StoreSearcher.solveAll(stores);
 		int cnt = 0;
+		for (int i = 0; i < 100; i++) {
+		
+		List<Store> stores = StoreBuilder.build(originVars, precondition, current);
+		List<Domain[]> solutions = StoreSearcher.solve(stores);
+		//List<Domain[]> solutions = StoreSearcher.solveAll(stores);
 		for (Domain[] solution : solutions) {
+			boolean flag = true;
+			for (Domain[] domains : prevDatas) {
+				if (StoreSearcher.duplicate(domains, solution)) {
+					flag = false;
+					break;
+				}
+			}
+			if (!flag) {
+				continue;
+			}
 			cnt ++;
 			BreakpointData selectData = selectData(getAssignments(solution, originVars), target);
 			if (!isLoop) {
@@ -203,6 +380,8 @@ public class JacopSelectiveSampling {
 					return selectResult;
 				}
 			}			
+		}
+		
 		}
 		System.out.println(cnt);
 		return null;

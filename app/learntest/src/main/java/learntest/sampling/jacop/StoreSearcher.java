@@ -10,7 +10,7 @@ import org.jacop.core.Store;
 import org.jacop.search.DepthFirstSearch;
 import org.jacop.search.IndomainMax;
 import org.jacop.search.IndomainMin;
-import org.jacop.search.IndomainSimpleRandom;
+import org.jacop.search.IndomainRandom;
 import org.jacop.search.InputOrderSelect;
 import org.jacop.search.Search;
 import org.jacop.search.SelectChoicePoint;
@@ -44,7 +44,7 @@ public class StoreSearcher {
 		}
 		Search<IntVar> search = new DepthFirstSearch<IntVar>();
 		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
-				store, intVars, new IndomainSimpleRandom<IntVar>()); 
+				store, intVars, new IndomainRandom<IntVar>()); 
 	    boolean result = search.labeling(store, select);
 	    if (result) {
 			return search.getSolution();
@@ -114,9 +114,9 @@ public class StoreSearcher {
 		Search<IntVar> search = new DepthFirstSearch<IntVar>();
 		search.getSolutionListener().searchAll(true);
 		search.getSolutionListener().recordSolutions(true);
-		search.setTimeOut(10);
+		search.setTimeOut(1);
 		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
-				store, intVars, new IndomainSimpleRandom<IntVar>()); 
+				store, intVars, new IndomainRandom<IntVar>()); 
 	    boolean result = search.labeling(store, select);
 	    if (result) {
 	    	int cnt = search.getSolutionListener().solutionsNo();
@@ -162,7 +162,7 @@ public class StoreSearcher {
 		search.getSolutionListener().recordSolutions(true);
 		search.setTimeOut(1);
 		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
-				store, intVars, new IndomainSimpleRandom<IntVar>()); 
+				store, intVars, new IndomainRandom<IntVar>()); 
 	    boolean result = search.labeling(store, select);
 	    if (result) {
 	    	int cnt = search.getSolutionListener().solutionsNo();

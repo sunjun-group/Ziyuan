@@ -6,7 +6,6 @@ import java.util.List;
 import org.jacop.constraints.LinearInt;
 import org.jacop.constraints.XeqC;
 import org.jacop.constraints.XgteqY;
-import org.jacop.constraints.XlteqY;
 import org.jacop.constraints.XmulYeqZ;
 import org.jacop.core.IntVar;
 import org.jacop.core.Store;
@@ -39,13 +38,28 @@ public class StoreBuilder {
 		double[] thetas = object.getThetas();
 		int[] weights = new int[thetas.length];
 		for (int i = 0; i < thetas.length; i++) {
-			weights[i] = (int) thetas[i];
+			//weights[i] = (int) thetas[i];
+			weights[i] = (int) Math.rint(thetas[i]);
 		}
 		IntVar[] intVars = new IntVar[store.size()];
 		for (int i = 0; i < intVars.length; i++) {
 			intVars[i] = (IntVar)store.vars[i];
 		}
 		store.impose(new LinearInt(store, intVars, weights, "==", (int) object.getTheta0()));
+	}
+	
+	public static void addOpposite(Store store, Divider divider) {
+		double[] thetas = divider.getThetas();
+		int[] weights = new int[thetas.length];
+		for (int i = 0; i < thetas.length; i++) {
+			//weights[i] = (int) thetas[i];
+			weights[i] = (int) Math.rint(thetas[i]);
+		}
+		IntVar[] intVars = new IntVar[store.size()];
+		for (int i = 0; i < intVars.length; i++) {
+			intVars[i] = (IntVar)store.vars[i];
+		}
+		store.impose(new LinearInt(store, intVars, weights, "<", (int) divider.getTheta0()));
 	}
 	
 	public static void addConstraints(Store store, List<Eq<Number>> constraints) {
@@ -130,7 +144,8 @@ public class StoreBuilder {
 				double[] thetas = divider.getThetas();
 				int[] weights = new int[thetas.length];
 				for (int i = 0; i < thetas.length; i++) {
-					weights[i] = (int) thetas[i];
+					//weights[i] = (int) thetas[i];
+					weights[i] = (int) Math.rint(thetas[i]);
 				}
 				IntVar[] intVars = new IntVar[store.size()];
 				for (int i = 0; i < intVars.length; i++) {
@@ -145,7 +160,8 @@ public class StoreBuilder {
 				double[] thetas = divider.getThetas();
 				int[] weights = new int[thetas.length];
 				for (int i = 0; i < thetas.length; i++) {
-					weights[i] = (int) thetas[i];
+					//weights[i] = (int) thetas[i];
+					weights[i] = (int) Math.rint(thetas[i]);
 				}
 				IntVar[] intVars = new IntVar[store.size()];
 				for (int i = 0; i < intVars.length; i++) {
@@ -174,11 +190,11 @@ public class StoreBuilder {
 				store.impose(new XmulYeqZ(intVars[i], intVars[j], intVars[idx ++]));
 			}
 		}
-		IntVar x = (IntVar) store.findVariable("x");
+		/*IntVar x = (IntVar) store.findVariable("x");
 		IntVar y = (IntVar) store.findVariable("y");
 		IntVar z = (IntVar) store.findVariable("z");
 		store.impose(new XgteqY(x, y));
-		store.impose(new XgteqY(y, z));
+		store.impose(new XgteqY(y, z));*/
 		return store;
 	}
 	
@@ -191,7 +207,7 @@ public class StoreBuilder {
 			case CHAR:
 				return new IntVar(store, var.getLabel(), -100, 100);
 			case DOUBLE:
-				return new IntVar(store, var.getLabel(), -2000, 2000);
+				return new IntVar(store, var.getLabel(), -20, 20);
 			case FLOAT:
 				return new IntVar(store, var.getLabel(), -1000, 1000);
 			case LONG:
@@ -199,7 +215,7 @@ public class StoreBuilder {
 			case SHORT:
 				return new IntVar(store, var.getLabel(), -100, 100);
 			default:
-				return new IntVar(store, var.getLabel(), /*-200, 200*/1, 20);
+				return new IntVar(store, var.getLabel(), -20, 20/*1, 20*/);
 		}
 	}
 	
@@ -212,7 +228,8 @@ public class StoreBuilder {
 			int idx = 0;
 			for (LIATerm term : exps) {
 				double coefficient = term.getCoefficient();
-				weights[idx] = (int) coefficient;
+				//weights[idx] = (int) coefficient;
+				weights[idx] = (int) Math.rint(coefficient);
 				Var variable = term.getVariable();
 				intVars[idx] = (IntVar) store.findVariable(variable.getLabel());
 				idx ++;
@@ -227,7 +244,8 @@ public class StoreBuilder {
 			int idx = 0;
 			for (LIATerm term : exps) {
 				double coefficient = term.getCoefficient();
-				weights[idx] = (int) coefficient;
+				//weights[idx] = (int) coefficient;
+				weights[idx] = (int) Math.rint(coefficient);
 				Var variable = term.getVariable();
 				intVars[idx] = (IntVar) store.findVariable(variable.getLabel());
 				idx ++;

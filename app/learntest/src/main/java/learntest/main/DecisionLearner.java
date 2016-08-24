@@ -59,6 +59,8 @@ public class DecisionLearner implements CategoryCalculator {
 	private final int MAX_ATTEMPT = 10;
 	private final int MAX_TO_RECORD = 5;
 	
+	private long startTime;
+	
 	public DecisionLearner(JacopSelectiveSampling selectiveSampling, CfgConditionManager manager) {
 		machine = new MyPositiveSeparationMachine();
 		machine.setDefaultParams();
@@ -133,6 +135,7 @@ public class DecisionLearner implements CategoryCalculator {
 		//clear(bkpData);
 		
 		if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
+			
 			Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataForEmpty(bkpData.getLocation(), originVars,
 					preconditions, null, bkpData.getTrueValues().isEmpty(), false);
 			if (selectMap != null) {
@@ -191,46 +194,59 @@ public class DecisionLearner implements CategoryCalculator {
 		if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
 			bkpData.merge(oneClassData);
 		}*/
+		
+		Formula trueFlase = null;
+		
+		if (!manager.isEnd(bkpData.getLocation().getLineNo())) {
 
-		int times = 0;
-		machine.resetData();
-		addDataPoints(originVars, bkpData.getTrueValues(), Category.POSITIVE, machine);
-		addDataPoints(originVars, bkpData.getFalseValues(), Category.NEGATIVE, machine);
-		machine.train();
-		Formula trueFlase = getLearnedFormula();
-		double acc = machine.getModelAccuracy();
-		while(times < MAX_ATTEMPT) {
-			/*BreakpointData newData = selectiveSampling.selectData(bkpData.getLocation(), 
-					trueFlase, machine.getDataLabels(), machine.getDataPoints());*/
-			Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(bkpData.getLocation(), 
-					originVars, machine.getDataPoints(), preconditions, machine.getLearnedDividers());
-			if (newMap == null) {
-				break;
-			}
-			mergeMap(newMap);
-			
-			//preconditions.clear(newData);
-			BreakpointData newData = newMap.get(bkpData.getLocation());
-			if (newData == null) {
-				break;
-			}
-			addDataPoints(originVars, newData.getTrueValues(), Category.POSITIVE, machine);
-			addDataPoints(originVars, newData.getFalseValues(), Category.NEGATIVE, machine);
-			/*if (machine.getModelAccuracy() == 1.0) {
-				break;
-			}*/
+			int times = 0;
+			machine.resetData();
+			addDataPoints(originVars, bkpData.getTrueValues(), Category.POSITIVE, machine);
+			addDataPoints(originVars, bkpData.getFalseValues(), Category.NEGATIVE, machine);
 			machine.train();
-			Formula tmp = getLearnedFormula();
-			double accTmp = machine.getModelAccuracy();
-			if (!tmp.equals(trueFlase) && accTmp >= acc) {
-				trueFlase = tmp;
-				acc = accTmp;
-			} else {
-				break;
+			/*Formula */trueFlase = getLearnedFormula();
+			double acc = machine.getModelAccuracy();
+			curDividers = machine.getLearnedDividers();
+			while(trueFlase != null && times < MAX_ATTEMPT) {
+				/*BreakpointData newData = selectiveSampling.selectData(bkpData.getLocation(), 
+						trueFlase, machine.getDataLabels(), machine.getDataPoints());*/
+				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(bkpData.getLocation(), 
+						originVars, machine.getDataPoints(), preconditions, machine.getLearnedDividers());
+				if (newMap == null) {
+					break;
+				}
+				mergeMap(newMap);
+				
+				//preconditions.clear(newData);
+				BreakpointData newData = newMap.get(bkpData.getLocation());
+				if (newData == null) {
+					break;
+				}
+				preconditions.clear(newData);
+				addDataPoints(originVars, newData.getTrueValues(), Category.POSITIVE, machine);
+				addDataPoints(originVars, newData.getFalseValues(), Category.NEGATIVE, machine);
+				/*if (machine.getModelAccuracy() == 1.0) {
+					break;
+				}*/
+				machine.train();
+				Formula tmp = getLearnedFormula();
+				double accTmp = machine.getModelAccuracy();
+				if (tmp == null) {
+					trueFlase = null;
+					curDividers = machine.getLearnedDividers();
+					break;
+				}
+				if (!tmp.equals(trueFlase) && accTmp >= acc) {
+					trueFlase = tmp;
+					curDividers = machine.getLearnedDividers();
+					acc = accTmp;
+				} else {
+					break;
+				}
+				times ++;
 			}
-			times ++;
+		
 		}
-		curDividers = machine.getLearnedDividers();
 		
 		Formula oneMore = null;
 		if (bkpData instanceof LoopTimesData) {
@@ -292,43 +308,50 @@ public class DecisionLearner implements CategoryCalculator {
 		if (loopData.getOneTimeValues().isEmpty() || loopData.getMoreTimesValues().isEmpty()) {
 			loopData.merge(oneClassData);
 		}*/
-		
-		int times = 0;
-		machine.resetData();
-		addDataPoints(originVars, loopData.getMoreTimesValues(), Category.POSITIVE, machine);
-		addDataPoints(originVars, loopData.getOneTimeValues(), Category.NEGATIVE, machine);
-		machine.train();
-		Formula formula = getLearnedFormula();
-		double acc = machine.getModelAccuracy();
-		while(times < MAX_ATTEMPT) {
-			/*LoopTimesData newData = (LoopTimesData) selectiveSampling.selectData(loopData.getLocation(), 
-					formula, machine.getDataLabels(), machine.getDataPoints());	*/
-			Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(loopData.getLocation(), 
-					originVars, machine.getDataPoints(), preConditions, machine.getLearnedDividers());
-			if (newMap == null) {
-				break;
-			}
-			mergeMap(newMap);
-			LoopTimesData newData = (LoopTimesData) newMap.get(loopData.getLocation());
-			if (newData == null) {
-				break;
-			}
-			addDataPoints(originVars, newData.getMoreTimesValues(), Category.POSITIVE, machine);
-			addDataPoints(originVars, newData.getOneTimeValues(), Category.NEGATIVE, machine);
-			/*if (machine.getModelAccuracy() == 1.0) {
-				break;
-			}*/
+		Formula formula = null;
+		if (!manager.isEnd(loopData.getLocation().getLineNo())) {
+			
+			int times = 0;
+			machine.resetData();
+			addDataPoints(originVars, loopData.getMoreTimesValues(), Category.POSITIVE, machine);
+			addDataPoints(originVars, loopData.getOneTimeValues(), Category.NEGATIVE, machine);
 			machine.train();
-			Formula tmp = getLearnedFormula();
-			double accTmp = machine.getModelAccuracy();
-			if (!tmp.equals(formula) && accTmp >= acc) {
-				formula = tmp;
-				acc = accTmp;
-			} else {
-				break;
+			formula = getLearnedFormula();
+			double acc = machine.getModelAccuracy();
+			while(formula != null && times < MAX_ATTEMPT) {
+				/*LoopTimesData newData = (LoopTimesData) selectiveSampling.selectData(loopData.getLocation(), 
+						formula, machine.getDataLabels(), machine.getDataPoints());	*/
+				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(loopData.getLocation(), 
+						originVars, machine.getDataPoints(), preConditions, machine.getLearnedDividers());
+				if (newMap == null) {
+					break;
+				}
+				mergeMap(newMap);
+				LoopTimesData newData = (LoopTimesData) newMap.get(loopData.getLocation());
+				if (newData == null) {
+					break;
+				}
+				addDataPoints(originVars, newData.getMoreTimesValues(), Category.POSITIVE, machine);
+				addDataPoints(originVars, newData.getOneTimeValues(), Category.NEGATIVE, machine);
+				/*if (machine.getModelAccuracy() == 1.0) {
+					break;
+				}*/
+				machine.train();
+				Formula tmp = getLearnedFormula();
+				double accTmp = machine.getModelAccuracy();
+				if (tmp == null) {
+					break;
+				}
+				if (!tmp.equals(formula) && accTmp >= acc) {
+					formula = tmp;
+					acc = accTmp;
+				} else {
+					break;
+				}
+				times ++;
 			}
-			times ++;
-		}
+			
+		}		
 		
 		if (!loopData.getOneTimeValues().isEmpty() && loopData.getOneTimeValues().size() < MAX_TO_RECORD) {
 			records.add(loopData.getOneTimeValues().get(0));

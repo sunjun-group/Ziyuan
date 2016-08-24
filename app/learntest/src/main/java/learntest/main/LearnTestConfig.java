@@ -4,12 +4,12 @@ public class LearnTestConfig {
 	
 	public static final String MODULE = "learntest";
 
-	public static String typeName = "Triangle";
-	public static String methodName = "triangleType";
-	public static String filePath = "D:/git/Ziyuan/app/learntest/src/test/java/testdata/example/" + typeName + ".java";
-	public static String className = "testdata.example." + typeName;
+	public static String typeName = "MathOps";
+	public static String methodName = "divide";
+	public static String filePath = "D:/git/Ziyuan/app/learntest/src/test/java/testdata/experiment/" + typeName + ".java";
+	public static String className = "testdata.experiment." + typeName;
 	
-	public static String pkg = "testdata.test.example." + typeName.toLowerCase() + "." + methodName.toLowerCase();
+	public static String pkg = "testdata.test.experiment." + typeName.toLowerCase() + "." + methodName.toLowerCase();
 	
 	public static String testPath = pkg + "." + typeName + "1";
 	
