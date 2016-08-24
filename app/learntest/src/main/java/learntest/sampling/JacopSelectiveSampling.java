@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.jacop.core.BoundDomain;
 import org.jacop.core.Domain;
@@ -41,6 +42,8 @@ public class JacopSelectiveSampling {
 	
 	private List<Domain[]> prevDatas;
 	
+	private long startTime;
+	
 	public JacopSelectiveSampling(TestcasesExecutorwithLoopTimes tcExecutor) {
 		this.tcExecutor = tcExecutor;
 		prevDatas = new ArrayList<Domain[]>();
@@ -68,6 +71,7 @@ public class JacopSelectiveSampling {
 			OrCategoryCalculator precondition, List<Divider> dividers) throws SavException {
 		List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
 		
+		startTime = System.currentTimeMillis();
 		List<Domain[]> solutions = new ArrayList<Domain[]>();
 		List<Store> basics = StoreBuilder.build(null, originVars, precondition, dividers);
 		for (Store basic : basics) {
@@ -256,11 +260,17 @@ public class JacopSelectiveSampling {
 					}
 				}
 			}
-		}
+		}		
+		System.out.println("selectDataForModel constraints solving time: " + (System.currentTimeMillis() - startTime) + " ms");
 		
+		startTime = System.currentTimeMillis();
 		extendWithHeuristics(solutions, assignments, originVars);
+		System.out.println("selectDataForModel extend with heuristics time: " + (System.currentTimeMillis() - startTime) + " ms");
 		
+		startTime = System.currentTimeMillis();
 		selectData(target, assignments);
+		System.out.println("selectDataForModel test cases execution time: " + (System.currentTimeMillis() - startTime) + " ms, "
+				+ assignments.size() + "test cases");
 		return selectResult;
 	}
 
@@ -359,24 +369,24 @@ public class JacopSelectiveSampling {
 			if (!isLoop) {
 				if (trueOrFalse && !selectData.getTrueValues().isEmpty()) {
 					System.out.println(cnt);
-					selectData(getAssignments(solution, originVars), null);
+					//selectData(getAssignments(solution, originVars), null);
 					return selectResult;
 				}
 				if (!trueOrFalse && !selectData.getFalseValues().isEmpty()) {
 					System.out.println(cnt);
-					selectData(getAssignments(solution, originVars), null);
+					//selectData(getAssignments(solution, originVars), null);
 					return selectResult;
 				}
 			} else {
 				LoopTimesData loopTimesData = (LoopTimesData) selectData;
 				if (trueOrFalse && !loopTimesData.getMoreTimesValues().isEmpty()) {
 					System.out.println(cnt);
-					selectData(getAssignments(solution, originVars), null);
+					//selectData(getAssignments(solution, originVars), null);
 					return selectResult;
 				}
 				if (!trueOrFalse && !loopTimesData.getOneTimeValues().isEmpty()) {
 					System.out.println(cnt);
-					selectData(getAssignments(solution, originVars), null);
+					//selectData(getAssignments(solution, originVars), null);
 					return selectResult;
 				}
 			}			
@@ -391,11 +401,12 @@ public class JacopSelectiveSampling {
 		if (assignments.isEmpty()) {
 			return null;
 		}
-		tcExecutor.setTarget(target);
+		tcExecutor.setTarget(/*target*/null);
 		tcExecutor.setVarMap(toInstrVarMap(assignments));
 		tcExecutor.run();
-		selectResult = tcExecutor.getResult();
-		return selectResult.get(target);
+		Map<DecisionLocation, BreakpointData> result = tcExecutor.getResult();
+		mergeMap(result);
+		return result.get(target);
 	}
 
 	private void selectData(DecisionLocation target, 
@@ -516,5 +527,21 @@ public class JacopSelectiveSampling {
 			i ++;
 		}
 		return atoms;
+	}
+	
+	private void mergeMap(Map<DecisionLocation, BreakpointData> newMap) {
+		startTime = System.currentTimeMillis();
+		if (newMap == null) {
+			return;
+		}
+		if (selectResult == null) {
+			selectResult = newMap;
+			return;
+		}
+		Set<DecisionLocation> locations = selectResult.keySet();
+		for (DecisionLocation location : locations) {
+			selectResult.get(location).merge(newMap.get(location));
+		}
+		System.out.println("selective sampling merge map time: " + (System.currentTimeMillis() - startTime) + " ms");
 	}
 }

@@ -136,8 +136,10 @@ public class DecisionLearner implements CategoryCalculator {
 		
 		if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
 			
+			startTime = System.currentTimeMillis();
 			Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataForEmpty(bkpData.getLocation(), originVars,
 					preconditions, null, bkpData.getTrueValues().isEmpty(), false);
+			System.out.println("learn select data for empty time: " + (System.currentTimeMillis() - startTime) + "ms");
 			if (selectMap != null) {
 				mergeMap(selectMap);
 				if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
@@ -203,7 +205,9 @@ public class DecisionLearner implements CategoryCalculator {
 			machine.resetData();
 			addDataPoints(originVars, bkpData.getTrueValues(), Category.POSITIVE, machine);
 			addDataPoints(originVars, bkpData.getFalseValues(), Category.NEGATIVE, machine);
+			startTime = System.currentTimeMillis();
 			machine.train();
+			System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
 			/*Formula */trueFlase = getLearnedFormula();
 			double acc = machine.getModelAccuracy();
 			curDividers = machine.getLearnedDividers();
@@ -228,7 +232,9 @@ public class DecisionLearner implements CategoryCalculator {
 				/*if (machine.getModelAccuracy() == 1.0) {
 					break;
 				}*/
+				startTime = System.currentTimeMillis();
 				machine.train();
+				System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
 				Formula tmp = getLearnedFormula();
 				double accTmp = machine.getModelAccuracy();
 				if (tmp == null) {
@@ -265,8 +271,10 @@ public class DecisionLearner implements CategoryCalculator {
 	private Formula learn(LoopTimesData loopData) throws SavException {
 		OrCategoryCalculator preConditions = manager.getPreConditions(loopData.getLocation().getLineNo());
 		if (loopData.getOneTimeValues().isEmpty() || loopData.getMoreTimesValues().isEmpty()) {
+			startTime = System.currentTimeMillis();
 			Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataForEmpty(loopData.getLocation(), originVars,
 					preConditions, curDividers, loopData.getMoreTimesValues().isEmpty(), true);
+			System.out.println("learn select data for empty time: " + (System.currentTimeMillis() - startTime) + "ms");
 			mergeMap(selectMap);
 			loopData = (LoopTimesData) bkpDataMap.get(loopData.getLocation());
 		}
@@ -315,7 +323,9 @@ public class DecisionLearner implements CategoryCalculator {
 			machine.resetData();
 			addDataPoints(originVars, loopData.getMoreTimesValues(), Category.POSITIVE, machine);
 			addDataPoints(originVars, loopData.getOneTimeValues(), Category.NEGATIVE, machine);
+			startTime = System.currentTimeMillis();
 			machine.train();
+			System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
 			formula = getLearnedFormula();
 			double acc = machine.getModelAccuracy();
 			while(formula != null && times < MAX_ATTEMPT) {
@@ -336,7 +346,9 @@ public class DecisionLearner implements CategoryCalculator {
 				/*if (machine.getModelAccuracy() == 1.0) {
 					break;
 				}*/
+				startTime = System.currentTimeMillis();
 				machine.train();
+				System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
 				Formula tmp = getLearnedFormula();
 				double accTmp = machine.getModelAccuracy();
 				if (tmp == null) {
@@ -487,6 +499,7 @@ public class DecisionLearner implements CategoryCalculator {
 	}
 	
 	private void mergeMap(Map<DecisionLocation, BreakpointData> newMap) {
+		startTime = System.currentTimeMillis();
 		if (newMap == null) {
 			return;
 		}
@@ -494,6 +507,7 @@ public class DecisionLearner implements CategoryCalculator {
 		for (DecisionLocation location : locations) {
 			bkpDataMap.get(location).merge(newMap.get(location));
 		}
+		System.out.println("learn merge map time: " + (System.currentTimeMillis() - startTime) + " ms");
 	}
 
 	public List<BreakpointValue> getRecords() {
