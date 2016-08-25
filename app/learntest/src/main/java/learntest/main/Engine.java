@@ -87,8 +87,10 @@ public class Engine {
 		tcExecutor.run();
 		Map<DecisionLocation, BreakpointData> result = tcExecutor.getResult();
 		tcExecutor.setjResultFileDeleteOnExit(true);
-		tcExecutor.setSingleMode();
-		DecisionLearner learner = new DecisionLearner(new JacopSelectiveSampling(tcExecutor), manager);
+		//tcExecutor.setSingleMode();
+		tcExecutor.setInstrMode(true);
+		JacopSelectiveSampling selectiveSampling = new JacopSelectiveSampling(tcExecutor);
+		DecisionLearner learner = new DecisionLearner(selectiveSampling, manager);
 		learner.learn(result);
 		List<BreakpointValue> records = learner.getRecords();
 		System.out.println("==============================================");
@@ -100,6 +102,7 @@ public class Engine {
 		List<Domain[]> solutions = solver.solve(paths);
 		solutions.addAll(getSolutions(records, learner.getOriginVars()));
 		new TestGenerator().genTestAccordingToSolutions(solutions, learner.getOriginVars());
+		System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
 		//PathSolver pathSolver = new PathSolver();
 		//List<Result> results = pathSolver.solve(paths);
 		//System.out.println(results);

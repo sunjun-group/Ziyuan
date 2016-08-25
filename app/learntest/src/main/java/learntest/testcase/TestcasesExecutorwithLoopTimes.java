@@ -47,6 +47,9 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	private BreakpointBuilder bkpBuilder;
 	private DecisionLocation target;
 	
+	private List<Map<String,Object>> instrVarMaps;
+	private boolean instrMode;
+	
 	public TestcasesExecutorwithLoopTimes(int valRetrieveLevel) {
 		this.valRetrieveLevel = valRetrieveLevel;
 		this.valueExtractor = new DebugValueExtractor(valRetrieveLevel);
@@ -80,6 +83,9 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 			currentTestInputValues = new ArrayList<BreakpointValue>();
 			inputValuesByTestIdx.put(testIdx, currentTestInputValues);
 		}
+		if (instrMode) {
+			setVarMap(instrVarMaps.get(testIdx));
+		}
 	}
 
 	@Override
@@ -104,12 +110,12 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 			Assert.assertNotNull(inputValueOfTcI, "Missing input value for test " + i);
 			List<BreakPoint> exePathOfTcI = exePathsByTestIdx.get(i);
 			Assert.assertNotNull(exePathOfTcI, "Missing execution path for test " + i);
-			System.out.println("Tc" + i + ":");
+			/*System.out.println("Tc" + i + ":");
 			System.out.println("input:" + inputValueOfTcI);
 			for (BreakPoint bkp : exePathOfTcI) {
 				System.out.println("\t" + bkp.getId());
 			}
-			System.out.println("================");
+			System.out.println("================");*/
 			getBuilder().build(exePathOfTcI, inputValueOfTcI);
 		}
 		//result = getBuilder().getResult();
@@ -131,18 +137,38 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		return getBuilder().getResult();
 	}
 	
-	public void setSingleMode() {
-		List<String> tcs = new ArrayList<String>(1);
-		tcs.add(allTests.get(0));
-		allTests = tcs;
+	public void setTcNum(int num) {		
+		int size = allTests.size();
+		if (size == num) {
+			return;
+		}
+		if (size > num) {
+			allTests = allTests.subList(0, num);
+		} else {
+			int remain = num - size;
+			while (remain >= size) {
+				allTests.addAll(allTests);
+				remain -= size;
+				size += size;
+			}
+			allTests.addAll(allTests.subList(0, remain));
+		}		
 	}
 	
 	public void setTarget(DecisionLocation target) {
 		this.target = target;
 		dtbuilder.setTarget(target);
 	}
+	
+	public void setInstrMode(boolean mode) {
+		instrMode = mode;
+	}
+	
+	public void setVarMaps(List<Map<String, Object>> instrVarMaps) {
+		this.instrVarMaps = instrVarMaps;
+	}
 
-	public void setVarMap(Map<String, Object> instrVarMap) {
+	private void setVarMap(Map<String, Object> instrVarMap) {
 		this.instValueExtractor = new DebugValueInstExtractor(getValRetrieveLevel(), instrVarMap);
 	}
 	

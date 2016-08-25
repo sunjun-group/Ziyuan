@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import org.jacop.core.BoundDomain;
 import org.jacop.core.Domain;
@@ -14,7 +13,6 @@ import org.jacop.core.Store;
 /*import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;*/
 
-import icsetlv.common.dto.BreakpointValue;
 import learntest.breakpoint.data.DecisionLocation;
 import learntest.calculator.OrCategoryCalculator;
 import learntest.sampling.jacop.StoreBuilder;
@@ -47,23 +45,6 @@ public class JacopSelectiveSampling {
 	public JacopSelectiveSampling(TestcasesExecutorwithLoopTimes tcExecutor) {
 		this.tcExecutor = tcExecutor;
 		prevDatas = new ArrayList<Domain[]>();
-	}
-	
-	public void setUpData(BreakpointData breakpointData, List<ExecVar> originVars) {		
-		List<BreakpointValue> trueValues = breakpointData.getTrueValues();
-		for (BreakpointValue breakpointValue : trueValues) {
-			prevDatas.add(toSolution(breakpointValue, originVars));
-		}
-		List<BreakpointValue> falseValues = breakpointData.getFalseValues();
-		for (BreakpointValue breakpointValue : falseValues) {
-			prevDatas.add(toSolution(breakpointValue, originVars));
-		}
-	}
-	
-	private Domain[] toSolution(BreakpointValue value, List<ExecVar> vars) {
-		Domain[] res = new Domain[vars.size()];
-		int i = 0;
-		return res;
 	}
 	
 	public Map<DecisionLocation, BreakpointData> selectDataForModel(DecisionLocation target, 
@@ -301,7 +282,7 @@ public class JacopSelectiveSampling {
 			int z = ((IntDomain) domains[zIdx]).min();*/
 			for (int i = 0; i < domains.length; i++) {
 				int value = ((IntDomain) domains[i]).min();
-				if (value > -200 /*1 && (i == zIdx || (i == xIdx && value > y) || (i == yIdx && value > z))*/) {
+				if (value > -20 /*1 && (i == zIdx || (i == xIdx && value > y) || (i == yIdx && value > z))*/) {
 					Domain[] new1 = new Domain[domains.length];
 					new1[i] = new BoundDomain(value - 1, value - 1);
 					for (int j = 0; j < i; j++) {
@@ -312,7 +293,7 @@ public class JacopSelectiveSampling {
 					}
 					tmp.add(new1);
 				}
-				if (value < 200 /*&& (i == xIdx || (i == yIdx && value < x) || (i == zIdx && value < y))*/) {
+				if (value < 20 /*&& (i == xIdx || (i == yIdx && value < x) || (i == zIdx && value < y))*/) {
 					Domain[] new1 = new Domain[domains.length];
 					new1[i] = new BoundDomain(value + 1, value + 1);
 					for (int j = 0; j < i; j++) {
@@ -347,6 +328,9 @@ public class JacopSelectiveSampling {
 			List<Divider> current, 
 			boolean trueOrFalse, 
 			boolean isLoop) throws SavException {
+		
+		tcExecutor.setTarget(null);
+		
 		int cnt = 0;
 		for (int i = 0; i < 100; i++) {
 		
@@ -364,8 +348,10 @@ public class JacopSelectiveSampling {
 			if (!flag) {
 				continue;
 			}
+			prevDatas.add(solution);
 			cnt ++;
-			BreakpointData selectData = selectData(getAssignments(solution, originVars), target);
+			selectData(getAssignments(solution, originVars)/*, target*/);
+			BreakpointData selectData = selectResult.get(target);
 			if (!isLoop) {
 				if (trueOrFalse && !selectData.getTrueValues().isEmpty()) {
 					System.out.println(cnt);
@@ -397,16 +383,20 @@ public class JacopSelectiveSampling {
 		return null;
 	}
 	
-	private BreakpointData selectData(List<Eq<?>> assignments, DecisionLocation target) throws SavException {
+	private void selectData(List<Eq<?>> assignments/*, DecisionLocation target*/) throws SavException {
 		if (assignments.isEmpty()) {
-			return null;
+			return;
 		}
-		tcExecutor.setTarget(/*target*/null);
-		tcExecutor.setVarMap(toInstrVarMap(assignments));
+		//tcExecutor.setTarget(/*target*/null);
+		tcExecutor.setTcNum(1);
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
+		list.add(toInstrVarMap(assignments));
+		tcExecutor.setVarMaps(list);
 		tcExecutor.run();
-		Map<DecisionLocation, BreakpointData> result = tcExecutor.getResult();
+		selectResult = tcExecutor.getResult();
+		/*Map<DecisionLocation, BreakpointData> result = tcExecutor.getResult();
 		mergeMap(result);
-		return result.get(target);
+		return result.get(target);*/
 	}
 
 	private void selectData(DecisionLocation target, 
@@ -416,10 +406,12 @@ public class JacopSelectiveSampling {
 			return;
 		}
 		tcExecutor.setTarget(null);
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		for (List<Eq<?>> valSet : assignments) {
 			if (!valSet.isEmpty()) {
-				tcExecutor.setVarMap(toInstrVarMap(valSet));
-				tcExecutor.run();
+				list.add(toInstrVarMap(valSet));
+				//tcExecutor.setVarMap(toInstrVarMap(valSet));
+				//tcExecutor.run();
 				/*selectResult = tcExecutor.getResult();
 				if (result.isEmpty()) {
 					continue;
@@ -431,7 +423,10 @@ public class JacopSelectiveSampling {
 					log.error("Wrong location: " + breakpointData.getLocation());
 				}*/
 			}
-		}	
+		}
+		tcExecutor.setTcNum(list.size());
+		tcExecutor.setVarMaps(list);
+		tcExecutor.run();
 		selectResult = tcExecutor.getResult();
 	}
 	
@@ -529,19 +524,7 @@ public class JacopSelectiveSampling {
 		return atoms;
 	}
 	
-	private void mergeMap(Map<DecisionLocation, BreakpointData> newMap) {
-		startTime = System.currentTimeMillis();
-		if (newMap == null) {
-			return;
-		}
-		if (selectResult == null) {
-			selectResult = newMap;
-			return;
-		}
-		Set<DecisionLocation> locations = selectResult.keySet();
-		for (DecisionLocation location : locations) {
-			selectResult.get(location).merge(newMap.get(location));
-		}
-		System.out.println("selective sampling merge map time: " + (System.currentTimeMillis() - startTime) + " ms");
+	public int getTotalNum() {
+		return prevDatas.size();
 	}
 }

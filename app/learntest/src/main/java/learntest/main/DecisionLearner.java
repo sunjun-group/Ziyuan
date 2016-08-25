@@ -77,7 +77,7 @@ public class DecisionLearner implements CategoryCalculator {
 		this.bkpDataMap = bkpDataMap;
 		List<BreakpointData> bkpDatas = new ArrayList<BreakpointData>(bkpDataMap.values());
 		Collections.sort(bkpDatas);
-		Map<DecisionLocation, Pair<Formula, Formula>> decisions = new HashMap<DecisionLocation, Pair<Formula, Formula>>(); 
+		Map<DecisionLocation, Pair<Formula, Formula>> decisions = new HashMap<DecisionLocation, Pair<Formula, Formula>>();
 		for (BreakpointData bkpData : bkpDatas) {
 			log.info("Start to learn at " + bkpData.getLocation());
 			if (bkpData.getFalseValues().isEmpty() && bkpData.getTrueValues().isEmpty()) {
@@ -508,6 +508,7 @@ public class DecisionLearner implements CategoryCalculator {
 			bkpDataMap.get(location).merge(newMap.get(location));
 		}
 		System.out.println("learn merge map time: " + (System.currentTimeMillis() - startTime) + " ms");
+		return;
 	}
 
 	public List<BreakpointValue> getRecords() {
