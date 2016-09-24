@@ -1,6 +1,7 @@
 package invariant.templates.threefeatures;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import sav.common.core.formula.Eq;
@@ -73,158 +74,56 @@ public class ThreeNumEqTemplate extends ThreeFeaturesTemplate {
 		List<List<Eq<?>>> samples = new ArrayList<List<Eq<?>>>();
 		
 		ExecValue ev1 = passValues.get(0).get(0);
-		Var v1 = new ExecVar(ev1.getVarId(), ev1.getType());
-		
 		ExecValue ev2 = passValues.get(0).get(1);
-		Var v2 = new ExecVar(ev2.getVarId(), ev2.getType());
+		ExecValue ev3 = passValues.get(0).get(3);
 		
-		ExecValue ev3 = passValues.get(0).get(2);
-		Var v3 = new ExecVar(ev3.getVarId(), ev3.getType());
+		String id1 = ev1.getVarId();
+		String id2 = ev2.getVarId();
+		String id3 = ev3.getVarId();
 		
-		List<Eq<?>> sample1 = new ArrayList<Eq<?>>();
-		if (ev1.getType() == ExecVarType.INTEGER) {
-			sample1.add(new Eq<Number>(v1, (int) (d / a)));
-			sample1.add(new Eq<Number>(v2, 0));
-			sample1.add(new Eq<Number>(v3, 0));
-		} else if (ev1.getType() == ExecVarType.LONG) {
-			sample1.add(new Eq<Number>(v1, (long) (d / a)));
-			sample1.add(new Eq<Number>(v2, 0L));
-			sample1.add(new Eq<Number>(v3, 0L));
-		} else {
-			sample1.add(new Eq<Number>(v1, (d / a)));
-			sample1.add(new Eq<Number>(v2, 0.0));
-			sample1.add(new Eq<Number>(v3, 0.0));
+		ExecVarType t1 = ev1.getType();
+		ExecVarType t2 = ev2.getType();
+		ExecVarType t3 = ev3.getType();
+		
+		Var v1 = new ExecVar(id1, t1);
+		Var v2 = new ExecVar(id2, t2);
+		Var v3 = new ExecVar(id3, t3);
+		
+		List<Var> vs = Arrays.asList(v1, v2, v3);
+		List<ExecVarType> ts = Arrays.asList(t1, t2, t3);
+		
+		if (t1 == ExecVarType.INTEGER || t1 == ExecVarType.LONG ||
+				t1 == ExecVarType.BYTE || t1 == ExecVarType.SHORT) {
+			samples.add(sampling(vs, ts, Arrays.asList(d / a, 0.0, 0.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(d / a - 1.0, 0.0, 0.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(d / a + 1.0, 0.0, 0.0)));
+		} else if (t1 == ExecVarType.FLOAT || t1 == ExecVarType.DOUBLE) {
+			samples.add(sampling(vs, ts, Arrays.asList(d / a, 0.0, 0.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(d / a - offset, 0.0, 0.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(d / a + offset, 0.0, 0.0)));
 		}
 		
-		List<Eq<?>> sample2 = new ArrayList<Eq<?>>();
-		if (ev1.getType() == ExecVarType.INTEGER) {
-			sample2.add(new Eq<Number>(v1, (int) (d / a) - 1));
-			sample2.add(new Eq<Number>(v2, 0));
-			sample2.add(new Eq<Number>(v3, 0));
-		} else if (ev1.getType() == ExecVarType.LONG) {
-			sample2.add(new Eq<Number>(v1, (long) (d / a) - 1));
-			sample2.add(new Eq<Number>(v2, 0L));
-			sample2.add(new Eq<Number>(v3, 0L));
-		} else {
-			sample2.add(new Eq<Number>(v1, (d / a) - 1));
-			sample2.add(new Eq<Number>(v2, 0.0));
-			sample2.add(new Eq<Number>(v3, 0.0));
+		if (t2 == ExecVarType.INTEGER || t2 == ExecVarType.LONG ||
+				t2 == ExecVarType.BYTE || t2 == ExecVarType.SHORT) {
+			samples.add(sampling(vs, ts, Arrays.asList(0.0, d / b, 0.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(0.0, d / b - 1.0, 0.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(0.0, d / b + 1.0, 0.0)));
+		} else if (t2 == ExecVarType.FLOAT || t2 == ExecVarType.DOUBLE) {
+			samples.add(sampling(vs, ts, Arrays.asList(0.0, d / b, 0.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(0.0, d / b - offset, 0.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(0.0, d / b + offset, 0.0)));
 		}
 		
-		List<Eq<?>> sample3 = new ArrayList<Eq<?>>();
-		if (ev1.getType() == ExecVarType.INTEGER) {
-			sample3.add(new Eq<Number>(v1, (int) (d / a) + 1));
-			sample3.add(new Eq<Number>(v2, 0));
-			sample3.add(new Eq<Number>(v3, 0));
-		} else if (ev1.getType() == ExecVarType.LONG) {
-			sample3.add(new Eq<Number>(v1, (long) (d / a) + 1));
-			sample3.add(new Eq<Number>(v2, 0L));
-			sample3.add(new Eq<Number>(v3, 0L));
-		} else {
-			sample3.add(new Eq<Number>(v1, (d / a) + 1));
-			sample3.add(new Eq<Number>(v2, 0.0));
-			sample3.add(new Eq<Number>(v3, 0.0));
+		if (t3 == ExecVarType.INTEGER || t3 == ExecVarType.LONG ||
+				t3 == ExecVarType.BYTE || t3 == ExecVarType.SHORT) {
+			samples.add(sampling(vs, ts, Arrays.asList(0.0, 0.0, d / c)));
+			samples.add(sampling(vs, ts, Arrays.asList(0.0, 0.0, d / c - 1.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(0.0, 0.0, d / c + 1.0)));
+		} else if (t3 == ExecVarType.FLOAT || t3 == ExecVarType.DOUBLE) {
+			samples.add(sampling(vs, ts, Arrays.asList(0.0, 0.0, d / c)));
+			samples.add(sampling(vs, ts, Arrays.asList(0.0, 0.0, d / c - offset)));
+			samples.add(sampling(vs, ts, Arrays.asList(0.0, 0.0, d / c + offset)));
 		}
-		
-		List<Eq<?>> sample4 = new ArrayList<Eq<?>>();
-		if (ev1.getType() == ExecVarType.INTEGER) {
-			sample4.add(new Eq<Number>(v1, 0));
-			sample4.add(new Eq<Number>(v2, (int) (d / b)));
-			sample4.add(new Eq<Number>(v3, 0));
-		} else if (ev1.getType() == ExecVarType.LONG) {
-			sample4.add(new Eq<Number>(v1, 0L));
-			sample4.add(new Eq<Number>(v2, (long) (d / b)));
-			sample4.add(new Eq<Number>(v3, 0L));
-		} else {
-			sample4.add(new Eq<Number>(v1, 0.0));
-			sample4.add(new Eq<Number>(v2, (d / b)));
-			sample4.add(new Eq<Number>(v3, 0.0));
-		}
-		
-		List<Eq<?>> sample5 = new ArrayList<Eq<?>>();
-		if (ev1.getType() == ExecVarType.INTEGER) {
-			sample5.add(new Eq<Number>(v1, 0));
-			sample5.add(new Eq<Number>(v2, (int) (d / b) - 1));
-			sample5.add(new Eq<Number>(v3, 0));
-		} else if (ev1.getType() == ExecVarType.LONG) {
-			sample5.add(new Eq<Number>(v1, 0L));
-			sample5.add(new Eq<Number>(v2, (long) (d / b) - 1));
-			sample5.add(new Eq<Number>(v3, 0L));
-		} else {
-			sample5.add(new Eq<Number>(v1, 0.0));
-			sample5.add(new Eq<Number>(v2, (d / b) - 1));
-			sample5.add(new Eq<Number>(v3, 0.0));
-		}
-		
-		List<Eq<?>> sample6 = new ArrayList<Eq<?>>();
-		if (ev1.getType() == ExecVarType.INTEGER) {
-			sample6.add(new Eq<Number>(v1, 0));
-			sample6.add(new Eq<Number>(v2, (int) (d / b) + 1));
-			sample6.add(new Eq<Number>(v3, 0));
-		} else if (ev1.getType() == ExecVarType.LONG) {
-			sample6.add(new Eq<Number>(v1, 0L));
-			sample6.add(new Eq<Number>(v2, (long) (d / b) + 1));
-			sample6.add(new Eq<Number>(v3, 0L));
-		} else {
-			sample6.add(new Eq<Number>(v1, 0.0));
-			sample6.add(new Eq<Number>(v2, (d / b) + 1));
-			sample6.add(new Eq<Number>(v3, 0.0));
-		}
-		
-		List<Eq<?>> sample7 = new ArrayList<Eq<?>>();
-		if (ev1.getType() == ExecVarType.INTEGER) {
-			sample7.add(new Eq<Number>(v1, 0));
-			sample7.add(new Eq<Number>(v2, 0));
-			sample7.add(new Eq<Number>(v3, (int) (d / c)));
-		} else if (ev1.getType() == ExecVarType.LONG) {
-			sample7.add(new Eq<Number>(v1, 0L));
-			sample7.add(new Eq<Number>(v2, 0L));
-			sample7.add(new Eq<Number>(v3, (long) (d / c)));
-		} else {
-			sample7.add(new Eq<Number>(v1, 0.0));
-			sample7.add(new Eq<Number>(v2, 0.0));
-			sample7.add(new Eq<Number>(v3, (d / c)));
-		}
-		
-		List<Eq<?>> sample8 = new ArrayList<Eq<?>>();
-		if (ev1.getType() == ExecVarType.INTEGER) {
-			sample8.add(new Eq<Number>(v1, 0));
-			sample8.add(new Eq<Number>(v2, 0));
-			sample8.add(new Eq<Number>(v3, (int) (d / c) - 1));
-		} else if (ev1.getType() == ExecVarType.LONG) {
-			sample8.add(new Eq<Number>(v1, 0L));
-			sample8.add(new Eq<Number>(v2, 0L));
-			sample8.add(new Eq<Number>(v3, (long) (d / c) - 1));
-		} else {
-			sample8.add(new Eq<Number>(v1, 0.0));
-			sample8.add(new Eq<Number>(v2, 0.0));
-			sample8.add(new Eq<Number>(v3, (d / c) - 1));
-		}
-		
-		List<Eq<?>> sample9 = new ArrayList<Eq<?>>();
-		if (ev1.getType() == ExecVarType.INTEGER) {
-			sample9.add(new Eq<Number>(v1, 0));
-			sample9.add(new Eq<Number>(v2, 0));
-			sample9.add(new Eq<Number>(v3, (int) (d / c) + 1));
-		} else if (ev1.getType() == ExecVarType.LONG) {
-			sample9.add(new Eq<Number>(v1, 0L));
-			sample9.add(new Eq<Number>(v2, 0L));
-			sample9.add(new Eq<Number>(v3, (long) (d / c) + 1));
-		} else {
-			sample9.add(new Eq<Number>(v1, 0.0));
-			sample9.add(new Eq<Number>(v2, 0.0));
-			sample9.add(new Eq<Number>(v3, (d / c) + 1));
-		}
-		
-		samples.add(sample1);
-		samples.add(sample2);
-		samples.add(sample3);
-		samples.add(sample4);
-		samples.add(sample5);
-		samples.add(sample6);
-		samples.add(sample7);
-		samples.add(sample8);
-		samples.add(sample9);
 		
 		return samples;
 	}

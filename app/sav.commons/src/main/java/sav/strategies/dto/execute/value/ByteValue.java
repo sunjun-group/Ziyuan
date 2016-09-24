@@ -1,20 +1,20 @@
 package sav.strategies.dto.execute.value;
 
 public class ByteValue extends PrimitiveValue {
-	private byte value;
+	private Byte value;
 	
-	public ByteValue(String id, byte value) {
+	public ByteValue(String id, Byte value) {
 		super(id, String.valueOf(value));
 		this.value = value;
 	}
 	
 	@Override
-	public double getDoubleVal() {
-		return value;
+	public Double getDoubleVal() {
+		return (value == null) ? null : (double) value;
 	}
 	
-	public byte getByteVal() {
-		return value;
+	public Byte getByteVal() {
+		return (value == null) ? null : value;
 	}
 	
 	public static ByteValue of(String id, byte value) {

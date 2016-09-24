@@ -6,7 +6,6 @@ import java.util.List;
 import invariant.templates.CompositeTemplate;
 import invariant.templates.SingleTemplate;
 import invariant.templates.onefeature.OneNumIlpTemplate;
-import invariant.templates.threefeatures.ThreeNumIlpTemplate;
 import invariant.templates.twofeatures.TwoNumIlpTemplate;
 import libsvm.svm_model;
 import libsvm.core.Category;
@@ -18,13 +17,14 @@ import libsvm.extension.PositiveSeparationMachine;
 import sav.common.core.formula.Formula;
 import sav.common.core.formula.LIAAtom;
 import sav.strategies.dto.execute.value.ExecValue;
+import sav.strategies.dto.execute.value.ExecVarType;
 
 public class IlpConjChecker {
 	
 	private List<SingleTemplate> ilpTemplates;
 	
 	private List<CompositeTemplate> validTemplates;
-
+	
 	public IlpConjChecker(List<SingleTemplate> ilpTemplates) {
 		this.ilpTemplates = ilpTemplates;
 		validTemplates = new ArrayList<CompositeTemplate>();
@@ -39,6 +39,8 @@ public class IlpConjChecker {
 		
 		for (int i = 0; i < size; i++) {
 			SingleTemplate t = ilpTemplates.get(i);
+			if (!t.validateInput()) return;
+			
 			Machine m = t.getMultiCutMachine();
 		
 			List<List<ExecValue>> passExecValuesList = t.getPassExecValuesList();
@@ -84,17 +86,28 @@ public class IlpConjChecker {
 					
 					for (svm_model svmModel : psm.getLearnedModels()) {
 						Divider explicitDivider = new Model(svmModel, numberOfFeatures).getExplicitDivider();
-						Formula formula = psm.getLearnedLogic(new StringDividerProcessor(), explicitDivider, false);
+						Formula formula = null;
+						
+						ExecVarType evt = passExecValuesList.get(0).get(0).getType();
+						if (evt == ExecVarType.INTEGER || evt == ExecVarType.LONG ||
+								evt == ExecVarType.BYTE || evt == ExecVarType.SHORT)
+							formula = psm.getLearnedLogic(new StringDividerProcessor(), explicitDivider, true);
+						else
+//							formula = psm.getLearnedLogic(new StringDividerProcessor(), explicitDivider, true, t.roundNum);
+							formula = psm.getLearnedLogic(new StringDividerProcessor(), explicitDivider, false);
 						
 						if (formula instanceof LIAAtom) {
 							LIAAtom lia = (LIAAtom) formula;
+							SingleTemplate newSt = null;
+							
 							if (lia.getMVFOExpr().size() == 1) {
-								conj.add(createOnePrimIlpTemplate(t, lia));
+								newSt = createOnePrimIlpTemplate(t, lia);
 							} else if (lia.getMVFOExpr().size() == 2) {
-								conj.add(createTwoPrimIlpTemplate(t, lia));
-							} else if (lia.getMVFOExpr().size() == 3) {
-								conj.add(createThreePrimIlpTemplate(t, lia));
+								newSt = createTwoPrimIlpTemplate(t, lia);
 							}
+							
+							if (newSt != null && satisfied(conj, newSt)) conj.add(newSt);
+							else return;
 						}
 					}
 					
@@ -105,6 +118,17 @@ public class IlpConjChecker {
 				}
 			}
 		}
+	}
+	
+	private boolean satisfied(List<SingleTemplate> conj, SingleTemplate st) {
+		if (st.toString().contains("NaN")) return false;
+		else {
+			for (SingleTemplate c : conj) {
+				if (c.toString().equals(st.toString())) return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	private SingleTemplate createOnePrimIlpTemplate(SingleTemplate t, LIAAtom lia) {
@@ -139,27 +163,6 @@ public class IlpConjChecker {
 		st.setA(lia.getMVFOExpr().get(0).getCoefficient());
 		st.setB(lia.getMVFOExpr().get(1).getCoefficient());
 		st.setC(lia.getConstant());
-		
-		return st;
-	}
-	
-	private SingleTemplate createThreePrimIlpTemplate(SingleTemplate t, LIAAtom lia) {
-		String id1 = lia.getMVFOExpr().get(0).getVariable().getLabel();
-		String id2 = lia.getMVFOExpr().get(1).getVariable().getLabel();
-		String id3 = lia.getMVFOExpr().get(2).getVariable().getLabel();
-		
-		List<List<ExecValue>> newPassExecValuesList = new ArrayList<List<ExecValue>>();
-		List<List<ExecValue>> newFailExecValuesList = new ArrayList<List<ExecValue>>();
-		
-		addValues(newPassExecValuesList, t.getPassExecValuesList(), id1, id2, id3);
-		addValues(newFailExecValuesList, t.getFailExecValuesList(), id1, id2, id3);
-		
-		ThreeNumIlpTemplate st = new ThreeNumIlpTemplate(newPassExecValuesList, newFailExecValuesList);
-		
-		st.setA(lia.getMVFOExpr().get(0).getCoefficient());
-		st.setB(lia.getMVFOExpr().get(1).getCoefficient());
-		st.setC(lia.getMVFOExpr().get(2).getCoefficient());
-		st.setD(lia.getConstant());
 		
 		return st;
 	}

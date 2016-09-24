@@ -29,7 +29,7 @@ public class TestUltility {
 	protected Machine setupMachine(Machine defaultMachine, int numberOfFeatures) {
 		return defaultMachine.setNumberOfFeatures(numberOfFeatures).setParameter(
 				new Parameter().setMachineType(MachineType.C_SVC).setKernelType(KernelType.LINEAR)
-						.setEps(1.0).setUseShrinking(false).setPredictProbability(false).setC(Double.MAX_VALUE));
+						.setEps(0.00001).setUseShrinking(false).setPredictProbability(false).setC(Double.MAX_VALUE));
 	}
 	
 	protected void runTest(Machine defaultMachine, int numOfFeatures, InputStream inputStream) {
@@ -67,7 +67,7 @@ public class TestUltility {
 	private double[] readIntegerArray(Scanner scanner, int length){
 		double[] result = new double[length];
 		for(int i = 0; i < length; i++){
-			result[i] = scanner.nextInt();
+			result[i] = scanner.nextDouble();
 		}
 		
 		return result;

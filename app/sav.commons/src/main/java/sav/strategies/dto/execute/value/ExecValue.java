@@ -43,8 +43,8 @@ public abstract class ExecValue implements IExecValue {
 		children.add(child);
 	}
 	
-	public double getDoubleVal() {
-		return NOT_NULL_VAL;
+	public Double getDoubleVal() {
+		return (double) NOT_NULL_VAL;
 	}
 	
 	public String getChildId(String childCode) {

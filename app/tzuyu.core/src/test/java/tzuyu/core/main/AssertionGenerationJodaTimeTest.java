@@ -7,6 +7,13 @@
 
 package tzuyu.core.main;
 
+import java.io.File;
+import java.nio.charset.Charset;
+import java.util.List;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -17,6 +24,7 @@ import libsvm.svm;
 import libsvm.svm_print_interface;
 import sav.common.core.SystemVariablesUtils;
 import sav.commons.testdata.opensource.TestPackage;
+import sav.commons.testdata.opensource.TestPackage.TestDataColumn;
 
 /**
  * @author LLT
@@ -34,8 +42,6 @@ public class AssertionGenerationJodaTimeTest extends AbstractTzPackageTest {
 
 		String jarPath = SystemVariablesUtils.updateSavJunitJarPath(appData);
 		appData.addClasspath(jarPath);
-
-		gen = new AssertionGeneration(context);
 
 		params = new AssertionGenerationParams();
 		params.setMachineLearningEnable(true);
@@ -58,6 +64,8 @@ public class AssertionGenerationJodaTimeTest extends AbstractTzPackageTest {
 
 	public void genAssertion(TestPackage testPkg) throws Exception {
 		prepare(testPkg);
+		
+		gen = new AssertionGeneration(context);
 
 		params.setTestingClassNames(testingClassNames);
 		params.setTestingPkgs(testingPackages);
@@ -71,6 +79,43 @@ public class AssertionGenerationJodaTimeTest extends AbstractTzPackageTest {
 	 * test part
 	 */
 
+	@Test
+	public void testAlgorithmsTotal() throws Exception {
+		long startTime = System.currentTimeMillis();
+		
+		String testDataFile = "/Users/HongLongPham/Workspace/Tzuyu/etc/testdata.csv";
+		int begin = 4;
+		int end = 7;
+		
+		CSVFormat format = CSVFormat.EXCEL.withHeader(TestDataColumn.allColumns());
+		CSVParser parser = CSVParser.parse(new File(
+				testDataFile), Charset.forName("UTF-8"), format);
+		List<CSVRecord> records = parser.getRecords();
+		
+		for (int i = begin; i <= end; i++) {
+			CSVRecord record = records.get(i);
+			
+			String projectName = record.get(0);
+			String id = record.get(1);
+			String methodName = record.get(11);
+			
+			System.out.println(projectName);
+			System.out.println(id);
+			System.out.println(methodName);
+			
+			if (projectName.equals("algorithms-master")) {
+				TestPackage testPkg = TestPackage.getPackage(projectName, id);
+				params.setMethodName(methodName);
+				genAssertion(testPkg);
+			}
+			
+		}
+		
+
+		long endTime = System.currentTimeMillis();
+		System.out.println(endTime - startTime);
+	}
+	
 	@Test
 	public void testDateMidnight_Basics3() throws Exception {
 		long startTime = System.currentTimeMillis();

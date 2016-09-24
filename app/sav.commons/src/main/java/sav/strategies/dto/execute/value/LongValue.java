@@ -1,20 +1,20 @@
 package sav.strategies.dto.execute.value;
 
 public class LongValue extends PrimitiveValue {
-	private long value;
+	private Long value;
 	
-	public LongValue(String id, long value) {
+	public LongValue(String id, Long value) {
 		super(id, String.valueOf(value));
 		this.value = value;
 	}
 	
 	@Override
-	public double getDoubleVal() {
-		return value;
+	public Double getDoubleVal() {
+		return (value == null) ? null : (double) value;
 	}
 	
-	public long getLongVal() {
-		return value;
+	public Long getLongVal() {
+		return (value == null) ? null : value;
 	}
 	
 	public static LongValue of(String id, long value) {

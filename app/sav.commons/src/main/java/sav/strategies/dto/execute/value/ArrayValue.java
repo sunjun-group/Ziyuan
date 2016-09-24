@@ -84,7 +84,7 @@ public class ArrayValue extends ReferenceValue {
 	}
 
 	@Override
-	public double getDoubleVal() {
+	public Double getDoubleVal() {
 		String lengthId = getChildId(LENGTH_CODE);
 		for (ExecValue child : children) {
 			if (lengthId.equals(child.getVarId())) {

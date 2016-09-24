@@ -8,6 +8,7 @@
 package tzuyu.core.main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -65,7 +66,21 @@ public class AssertionGenerationSVCOMPTest extends AbstractTzPackageTest {
 		params.setTestingPkgs(testingPackages);
 		params.setJunitClassNames(junitClassNames);
 
-		params.setJunitClassNames(new ArrayList<String>());
+		// params.setJunitClassNames(new ArrayList<String>());
+		gen.genAssertion(params);
+	}
+	
+	public void genAssertion(TestPackage testPkg, String className) throws Exception {
+		prepare(testPkg);
+
+		params.setTestingClassNames(testingClassNames);
+		params.setTestingPkgs(testingPackages);
+		
+		for (int i = 1; i <= 20; i++) {
+			params.setJunitClassNames(Arrays.asList("test." + className + i));
+			gen.genAssertion(params);
+		}
+		
 		gen.genAssertion(params);
 	}
 
@@ -84,14 +99,14 @@ public class AssertionGenerationSVCOMPTest extends AbstractTzPackageTest {
 		long endTime = System.currentTimeMillis();
 		System.out.println(endTime - startTime);
 	}
-	
+	 
 	@Test
 	public void testInvSqrt() throws Exception {
 		long startTime = System.currentTimeMillis();
 
 		TestPackage testPkg = TestPackage.getPackage("svcomp", "InvSqrt");
 		params.setMethodName("main1");
-		genAssertion(testPkg);
+		genAssertion(testPkg, "InvSqrt");
 
 		long endTime = System.currentTimeMillis();
 		System.out.println(endTime - startTime);
@@ -103,7 +118,7 @@ public class AssertionGenerationSVCOMPTest extends AbstractTzPackageTest {
 
 		TestPackage testPkg = TestPackage.getPackage("svcomp", "SqrtBiNewton");
 		params.setMethodName("main1");
-		genAssertion(testPkg);
+		genAssertion(testPkg, "SqrtBiNewton");
 
 		long endTime = System.currentTimeMillis();
 		System.out.println(endTime - startTime);
@@ -115,7 +130,7 @@ public class AssertionGenerationSVCOMPTest extends AbstractTzPackageTest {
 
 		TestPackage testPkg = TestPackage.getPackage("svcomp", "SqrtConst");
 		params.setMethodName("main1");
-		genAssertion(testPkg);
+		genAssertion(testPkg, "SqrtConst");
 
 		long endTime = System.currentTimeMillis();
 		System.out.println(endTime - startTime);

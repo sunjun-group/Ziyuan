@@ -13,24 +13,26 @@ package sav.strategies.dto.execute.value;
  *
  */
 public class BooleanValue extends PrimitiveValue {
-	private boolean value;
+	private Boolean value;
 
-	public BooleanValue(String id, boolean value) {
+	public BooleanValue(String id, Boolean value) {
 		super(id, String.valueOf(value));
 		this.value = value;
 	}
 
 	@Override
-	public double getDoubleVal() {
+	public Double getDoubleVal() {
+		if (value == null) return null;
+		
 		if (value) {
-			return 1;
+			return 1.0;
 		} else {
-			return 0;
+			return 0.0;
 		}
 	}
 	
-	public boolean getBooleanVal() {
-		return value;
+	public Boolean getBooleanVal() {
+		return (value == null) ? null : value;
 	}
 	
 	public static BooleanValue of(String id, boolean value) {

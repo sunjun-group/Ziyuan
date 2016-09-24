@@ -1,20 +1,20 @@
 package sav.strategies.dto.execute.value;
 
 public class FloatValue extends PrimitiveValue {
-	private float value;
+	private Float value;
 	
-	public FloatValue(String id, float value) {
+	public FloatValue(String id, Float value) {
 		super(id, String.valueOf(value));
 		this.value = value;
 	}
 	
 	@Override
-	public double getDoubleVal() {
-		return value;
+	public Double getDoubleVal() {
+		return (value == null) ? null : (double) value;
 	}
 	
-	public float getFloatVal() {
-		return value;
+	public Float getFloatVal() {
+		return (value == null) ? null : value;
 	}
 	
 	public static FloatValue of(String id, float value) {

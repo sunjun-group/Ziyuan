@@ -1,6 +1,7 @@
 package assertion.template.checker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,15 +45,19 @@ public class SingleTemplateChecker {
 		HashMap<ExecVarType, List<List<ExecValue>>> passMap = classifyExecValuesList(passValues);
 		HashMap<ExecVarType, List<List<ExecValue>>> failMap = classifyExecValuesList(failValues);
 		
-		for (ExecVarType t : passMap.keySet()) {
-			if (failMap.containsKey(t)) {
+		List<ExecVarType> ts = Arrays.asList(ExecVarType.BOOLEAN, ExecVarType.BYTE,
+				ExecVarType.CHAR, ExecVarType.SHORT, ExecVarType.INTEGER, ExecVarType.LONG,
+				ExecVarType.FLOAT, ExecVarType.DOUBLE);
+		
+		for (ExecVarType t : ts) {
+			if (passMap.containsKey(t) && failMap.containsKey(t)) {
 				TypeTemplateChecker tc = null;
 				switch (t) {
-				case PRIMITIVE:
+//				case PRIMITIVE:
 				case DOUBLE:
 				case FLOAT:
 				case BYTE:
-				case CHAR:
+//				case CHAR:
 				case INTEGER:
 				case LONG:
 				case SHORT:

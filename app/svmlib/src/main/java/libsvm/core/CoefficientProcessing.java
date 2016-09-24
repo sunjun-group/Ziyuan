@@ -8,6 +8,8 @@
 
 package libsvm.core;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 
 
@@ -27,6 +29,28 @@ public class CoefficientProcessing {
 		double[] backup = Arrays.copyOf(thetas, thetas.length);
 		
 		thetas = integerRounding(thetas);
+		
+		if(isValidated(thetas)){
+			return thetas;
+		}
+		else{
+			return backup;
+		}
+	}
+	
+	public double[] process(double[] thetas, int num) {
+		double[] backup = Arrays.copyOf(thetas, thetas.length);
+		String s = "#.";
+		
+		for (int i = 0; i < num; i++) s += "#";
+		
+		DecimalFormat df = new DecimalFormat(s);
+		df.setRoundingMode(RoundingMode.CEILING);
+		
+		for (int i = 0; i < thetas.length; i++) {
+		    double d = thetas[i];
+		    thetas[i] = Double.valueOf(df.format(d));
+		}
 		
 		if(isValidated(thetas)){
 			return thetas;

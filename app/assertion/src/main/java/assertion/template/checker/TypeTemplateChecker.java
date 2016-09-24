@@ -26,7 +26,7 @@ public class TypeTemplateChecker {
 	}
 	
 	public boolean check(SingleTemplate t) {
-		boolean valid = t.check();
+		boolean valid = t.validateInput() && t.check();
 		
 		allTemplates.add(t);
 		

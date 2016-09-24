@@ -3,8 +3,10 @@ package tzuyu.core.main;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -14,7 +16,6 @@ import assertion.template.checker.BreakpointTemplate;
 import assertion.template.checker.BreakpointTemplateChecker;
 import assertion.utility.Utility;
 import assertion.visitor.AddAssertStmtVisitor;
-import assertion.visitor.CollectAssertLocsVisitor;
 import de.unisb.cs.st.javaslicer.traceResult.TraceResult;
 import icsetlv.InvariantMediator;
 import icsetlv.common.dto.BreakpointData;
@@ -54,7 +55,6 @@ import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.vm.VMConfiguration;
 import slicer.javaslicer.JavaSlicer;
-import tzuyu.core.mutantbug.FilesBackup;
 import tzuyu.core.mutantbug.Recompiler;
 
 public class AssertionGeneration extends TzuyuCore {
@@ -65,32 +65,32 @@ public class AssertionGeneration extends TzuyuCore {
 	
 	private TraceResult traceResult = null;
 	
-		public AssertionGeneration(IApplicationContext appContext) {
+	public AssertionGeneration(IApplicationContext appContext) {
 		super(appContext);
 	}
-		
+	
 	public void genAssertion(AssertionGenerationParams params) throws Exception {
-		FilesBackup backup = null;
-		File origFile = null;
-		AppJavaClassPath appClasspath = appContext.getAppData();
-		String srcFolder = appClasspath.getSrc();
+//		FilesBackup backup = null;
+//		File origFile = null;
+//		AppJavaClassPath appClasspath = appContext.getAppData();
+//		String srcFolder = appClasspath.getSrc();
 		
 		try {
-			String className = params.getTestingClassName();
-			String methodName = params.getMethodName();
+//			String className = params.getTestingClassName();
+//			String methodName = params.getMethodName();
 			
 			// the original file
-			origFile = new File(ClassUtils.getJFilePath(srcFolder, className));
+//			origFile = new File(ClassUtils.getJFilePath(srcFolder, className));
 			
 			// create new file with assertions
-			File newFile = addAssertionToFile(srcFolder, className, methodName);
+//			File newFile = addAssertionToFile(srcFolder, className, methodName);
 			
 			// back up the original file
-			backup = FilesBackup.startBackup();
-			backup.backup(origFile);
+//			backup = FilesBackup.startBackup();
+//			backup.backup(origFile);
 			
 			// recompile new file
-			recompile(origFile, newFile);
+//			recompile(origFile, newFile);
 			
 			// generate test cases
 			if (params.getJunitClassNames().size() == 0) {
@@ -138,11 +138,11 @@ public class AssertionGeneration extends TzuyuCore {
 			e.printStackTrace();
 		} finally {
 			// restore the original file
-			if (backup != null) {
-				backup.restoreAll();
-				Recompiler recompiler = new Recompiler(new VMConfiguration(appClasspath));
-				recompiler.recompileJFile(appClasspath.getTarget(), origFile);
-			}
+//			if (backup != null) {
+//				backup.restoreAll();
+//				Recompiler recompiler = new Recompiler(new VMConfiguration(appClasspath));
+//				recompiler.recompileJFile(appClasspath.getTarget(), origFile);
+//			}
 		}
 		
 	}
@@ -177,31 +177,28 @@ public class AssertionGeneration extends TzuyuCore {
 			AssertionGenerationParams params,
 			JunitResult jresult)
 			throws Exception {
-		log.info("Begin learning at location: {}\n", learnLoc);
+//		log.info("Begin learning at location: {}\n", learnLoc);
 		
-		// collect assert locations
-		// assert locations include calling method locations
-		// if that method is in current checking file
-		// and include throw statements also
-		List<BreakPoint> assertLocs = new ArrayList<BreakPoint>();
-		collectAssertLocations(assertLocs, params);
-	log.info("Assert locations: {}\n", assertLocs);
+		// collect failure locations
+		List<BreakPoint> failureLocs = new ArrayList<BreakPoint>();
+		collectFailureLocations(failureLocs, params, jresult);
+//		log.info("Failure locations: {}\n", failureLocs);
 		
-		if (assertLocs.isEmpty()) return;
+		if (failureLocs.isEmpty()) return;
 		
 		// collect affected locations, they are locations from slices of the assertions
 		// that depend on learning locations
 		// and have the line number no less than learning locations
 		List<BreakPoint> affectedLocs = new ArrayList<BreakPoint>();
-		collectAffectedLocs(learnLoc.getLineNo(), affectedLocs, assertLocs, jresult, params);
-		log.info("Affected locations: {}\n", affectedLocs);
+		collectAffectedLocs(learnLoc.getLineNo(), affectedLocs, failureLocs, jresult, params);
+//		log.info("Affected locations: {}\n", affectedLocs);
 		
 		if (affectedLocs.isEmpty()) return;
 		
 		// collect learning variables
 		List<Variable> learnVars = new ArrayList<Variable>();
 		collectLearningVariables(learnVars, affectedLocs);
-		log.info("Learning varibles: {}\n", learnVars);
+//		log.info("Learning varibles: {}\n", learnVars);
 		
 //		if (learnVars.isEmpty()) return;
 				
@@ -212,20 +209,31 @@ public class AssertionGeneration extends TzuyuCore {
 		InvariantMediator im = new InvariantMediator(appContext.getAppData());
 		TestcasesExecutor tcExecutor = new TestcasesExecutor(params.getValueRetrieveLevel());
 		im.setTcExecutor(tcExecutor);
+		
+		long stop5 = System.currentTimeMillis();
 			
 		List<String> tests = new ArrayList<String>();
 		for (Pair<String,String> entry : jresult.getTests()) {
 			tests.add(entry.a + "." + entry.b);
 		}
+		
+		java.util.Collections.sort(tests, new Comparator<String>() {
+			@Override
+			public int compare(String s1, String s2) {
+				if (s1.length() < s2.length()) return -1;
+				else if (s1.length() > s2.length()) return 1;
+				else return s1.compareTo(s2);
+			}
+		});
+		
 		List<BreakpointData> bkpsData = im.debugTestAndCollectData(tests, CollectionUtils.listOf(learnLoc));
 		BreakpointData bkpData = bkpsData.get(0);
-		log.info("Breakpoint data: {}\n", bkpData);
+//		log.info("Breakpoint data: {}\n", bkpData);
 		
 		if (bkpData.getPassValues().isEmpty() || bkpData.getFailValues().isEmpty()) return;
 		
 		// check data with templates
 		BreakpointTemplateChecker tc = new BreakpointTemplateChecker(im);
-		// bkpsTemplates.addAll(tc.checkTemplates(bkpsData));
 		CollectionUtils.addIfNotNull(bkpsTemplates, tc.checkTemplates(bkpData));
 	}
 	
@@ -273,11 +281,9 @@ public class AssertionGeneration extends TzuyuCore {
 		}
 	}
 
-	public void collectAffectedLocs(int lineNo, List<BreakPoint> affectedLocs, List<BreakPoint> assertLocs,
+	public void collectAffectedLocs(int lineNo, List<BreakPoint> affectedLocs, List<BreakPoint> failureLocs,
 			JunitResult jresult, AssertionGenerationParams params) throws Exception {
 		String methodName = params.getMethodName();
-		int i = methodName.indexOf('(');
-		if (i > 0) methodName = methodName.substring(0, i);
 		
 		JavaSlicer slicer = (JavaSlicer) appContext.getSlicer();
 		
@@ -290,30 +296,39 @@ public class AssertionGeneration extends TzuyuCore {
 		
 		List<BreakPoint> collectLocs = new ArrayList<BreakPoint>();
 
-		for (BreakPoint assertLoc : assertLocs) {
-			if (assertLoc.getLineNo() >= lineNo) {
-				collectLocs.add(assertLoc);
+		for (BreakPoint failureLoc : failureLocs) {
+			if (failureLoc.getLineNo() >= lineNo) {
+				collectLocs.add(failureLoc);
 			}
 		}
 		
 		if (traceResult == null) traceResult = slicer.readTraceFile(traceFilePath);
 		// TraceResult traceResult = slicer.readTraceFile(traceFilePath);
+				
+		// when traceResult == null, there are some errors
+		if (traceResult == null) return;
 		
 		List<BreakPoint> slicedLocs = slicer.sliceFromTraceResult(traceResult,
 				new HashSet<BreakPoint>(collectLocs), junitClassMethods);
-		log.info("Sliced locations: {}\n", slicedLocs);
+//		log.info("Sliced locations: {}\n", slicedLocs);
 		
-		outer:
-		for (BreakPoint bkp1 : slicedLocs) {
-			if (methodName.equals(bkp1.getMethodName()) && bkp1.getLineNo() <= lineNo) {
-				for (BreakPoint bkp2 : slicedLocs) {
-					if (methodName.equals(bkp2.getMethodName()) && bkp2.getLineNo() >= lineNo) {
-						CollectionUtils.addIfNotNullNotExist(affectedLocs, bkp2);
-					}
-				}
-				break outer;
+		for (BreakPoint bkp : slicedLocs) {
+			if (methodName.contains(bkp.getMethodName())) {
+				CollectionUtils.addIfNotNullNotExist(affectedLocs, bkp);
 			}
 		}
+		
+//		outer:
+//		for (BreakPoint bkp1 : slicedLocs) {
+//			if (methodName.equals(bkp1.getMethodName()) && bkp1.getLineNo() <= lineNo) {
+//				for (BreakPoint bkp2 : slicedLocs) {
+//					if (methodName.equals(bkp2.getMethodName()) && bkp2.getLineNo() >= lineNo) {
+//						CollectionUtils.addIfNotNullNotExist(affectedLocs, bkp2);
+//					}
+//				}
+//				break outer;
+//			}
+//		}
 		
 		for (BreakPoint bkp : collectLocs) {
 			CollectionUtils.addIfNotNullNotExist(affectedLocs, bkp);
@@ -321,20 +336,32 @@ public class AssertionGeneration extends TzuyuCore {
 		
 	}
 	
-	public void collectAssertLocations(List<BreakPoint> locations, AssertionGenerationParams params) throws Exception {
-		// the original file
-		File file = new File(ClassUtils.getJFilePath(appContext.getAppData().getSrc(), params.getTestingClassName()));
-				
-		// parse the original file
-		FileInputStream in = new FileInputStream(file);
-		CompilationUnit cu = JavaParser.parse(in);
-				
-		// the visitor used to add assertions
-		CollectAssertLocsVisitor visitor = new CollectAssertLocsVisitor(params.getTestingClassName(),
-				params.getMethodName(), params.getListOfMethods());
-				
-		// visit the original file
-		visitor.visit(cu, locations);
+	public void collectFailureLocations(List<BreakPoint> locations, AssertionGenerationParams params,
+			JunitResult jresult) throws Exception {
+		String className = params.getTestingClassName();
+		String methodName = params.getMethodName();
+		Set<BreakPoint> failureTraces = jresult.getFailureTraces();
+		
+		for (BreakPoint bkp : failureTraces) {
+			if (bkp.getClassCanonicalName().equals(className) &&
+					methodName.contains(bkp.getMethodName())) {
+				locations.add(bkp);
+			}
+		}
+		
+//		// the original file
+//		File file = new File(ClassUtils.getJFilePath(appContext.getAppData().getSrc(), params.getTestingClassName()));
+//				
+//		// parse the original file
+//		FileInputStream in = new FileInputStream(file);
+//		CompilationUnit cu = JavaParser.parse(in);
+//				
+//		// the visitor used to add assertions
+//		CollectAssertLocsVisitor visitor = new CollectAssertLocsVisitor(params.getTestingClassName(),
+//				params.getMethodName(), params.getListOfMethods());
+//				
+//		// visit the original file
+//		visitor.visit(cu, locations);
 	}
 	
 	public List<BreakPoint> collectLearningLocations(AssertionGenerationParams params) throws Exception {
@@ -385,10 +412,11 @@ public class AssertionGeneration extends TzuyuCore {
 						// entry is not a decision node, we add it here to simplify the code below
 						decisionNodes.add(entry);
 						// cfg.getDecisionNode(entry, decisionNodes, new HashSet<CfgNode>());
-							
+						
 						for (CfgNode node : decisionNodes) {
 							for (CfgEdge edge : cfg.getOutEdges(node)) {
 								int line = edge.getDest().getAstNode().getBeginLine();
+								
 								BreakPoint bkp = new BreakPoint(className, methodName, line);
 								locations.add(bkp);
 							}

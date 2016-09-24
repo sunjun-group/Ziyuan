@@ -1,20 +1,20 @@
 package sav.strategies.dto.execute.value;
 
 public class IntegerValue extends PrimitiveValue {
-	private int value;
+	private Integer value;
 	
-	public IntegerValue(String id, int value) {
+	public IntegerValue(String id, Integer value) {
 		super(id, String.valueOf(value));
 		this.value = value;
 	}
 	
 	@Override
-	public double getDoubleVal() {
-		return value;
+	public Double getDoubleVal() {
+		return (value == null) ? null : (double) value;
 	}
 	
-	public int getIntegerVal() {
-		return value;
+	public Integer getIntegerVal() {
+		return (value == null) ? null : value;
 	}
 	
 	public static IntegerValue of(String id, int value) {

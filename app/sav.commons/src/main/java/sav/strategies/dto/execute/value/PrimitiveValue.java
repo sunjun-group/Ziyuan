@@ -26,7 +26,7 @@ public class PrimitiveValue extends ExecValue {
 	}
 	
 	@Override
-	public double getDoubleVal() {
+	public Double getDoubleVal() {
 		try {
 			return Double.parseDouble(strVal);
 		} catch (NumberFormatException e) {

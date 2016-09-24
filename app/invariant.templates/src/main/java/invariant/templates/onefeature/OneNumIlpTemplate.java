@@ -77,67 +77,61 @@ public class OneNumIlpTemplate extends OneFeatureTemplate {
 		if (m.getModel() == null) {
 			return false;
 		} else {
-			Formula formula = m.getLearnedLogic(new StringDividerProcessor(), m.getDivider(), true);
+			ExecVarType evt = passValues.get(0).get(0).getType();
+			Formula formula = null;
+			
+			if (evt == ExecVarType.INTEGER || evt == ExecVarType.LONG ||
+					evt == ExecVarType.BYTE || evt == ExecVarType.SHORT)
+				formula = m.getLearnedLogic(new StringDividerProcessor(), m.getDivider(), true);
+			else
+//				formula = m.getLearnedLogic(new StringDividerProcessor(), m.getDivider(), true, roundNum);
+				formula = m.getLearnedLogic(new StringDividerProcessor(), m.getDivider(), false);
 			
 			if (formula instanceof LIAAtom) {
 				LIAAtom lia = (LIAAtom) formula;
 				
 				if (lia.getMVFOExpr().size() != 1) {
 					return false;
-				} else if (b != lia.getConstant() ||
-						a != lia.getMVFOExpr().get(0).getCoefficient()) {
+				} else
+//					if (b != lia.getConstant() ||
+//						a != lia.getMVFOExpr().get(0).getCoefficient()) 
+				{
 					b = lia.getConstant();
 					a = lia.getMVFOExpr().get(0).getCoefficient();
-					return true;
-				} else {
+					
+					if (Double.isNaN(a) || Double.isNaN(b)) return false;
 					return true;
 				}
+//				else {
+//					return true;
+//				}
 			} else {
 				return false;
 			}
 		}
 	}
- 
+	
 	@Override
 	public List<List<Eq<?>>> sampling() {
 		List<List<Eq<?>>> samples = new ArrayList<List<Eq<?>>>();
 		
 		ExecValue ev = passValues.get(0).get(0);
-		Var v = new ExecVar(ev.getVarId(), ev.getType());
 		
-		List<Eq<?>> sample1 = new ArrayList<Eq<?>>();
-		if (ev.getType() == ExecVarType.INTEGER)
-			sample1.add(new Eq<Number>(v, (int) (b / a)));
-		else if (ev.getType() == ExecVarType.LONG)
-			sample1.add(new Eq<Number>(v, (long) (b / a)));
-		else if (ev.getType() == ExecVarType.FLOAT)
-			sample1.add(new Eq<Number>(v, (float) (b / a)));
-		else
-			sample1.add(new Eq<Number>(v, (b / a)));
+		String id = ev.getVarId();
+		ExecVarType t = ev.getType();
 		
-		List<Eq<?>> sample2 = new ArrayList<Eq<?>>();
-		if (ev.getType() == ExecVarType.INTEGER)
-			sample2.add(new Eq<Number>(v, (int) (b / a - 1.0)));
-		else if (ev.getType() == ExecVarType.LONG)
-			sample2.add(new Eq<Number>(v, (long) (b / a - 1.0)));
-		else if (ev.getType() == ExecVarType.FLOAT)
-			sample2.add(new Eq<Number>(v, (float) (b / a - 0.01)));
-		else
-			sample2.add(new Eq<Number>(v, (b / a - 0.01)));
+		Var v = new ExecVar(id, t);
 		
-		List<Eq<?>> sample3 = new ArrayList<Eq<?>>();
-		if (ev.getType() == ExecVarType.INTEGER)
-			sample3.add(new Eq<Number>(v, (int) (b / a + 1.0)));
-		else if (ev.getType() == ExecVarType.LONG)
-			sample3.add(new Eq<Number>(v, (long) (b / a + 1.0)));
-		else if (ev.getType() == ExecVarType.FLOAT)
-			sample3.add(new Eq<Number>(v, (float) (b / a + 0.01)));
-		else
-			sample3.add(new Eq<Number>(v, (b / a + 0.01)));
-		
-		samples.add(sample1);
-		samples.add(sample2);
-		samples.add(sample3);
+		if (t == ExecVarType.INTEGER || t == ExecVarType.LONG ||
+				t == ExecVarType.BYTE || t == ExecVarType.SHORT) {
+			samples.add(sampling(v, t, b / a));
+			samples.add(sampling(v, t, b / a - 1.0));
+			samples.add(sampling(v, t, b / a + 1.0));
+		} else if (t == ExecVarType.FLOAT || t == ExecVarType.DOUBLE) {
+			samples.add(sampling(v, t, b / a));
+			samples.add(sampling(v, t, b / a - offset));
+			samples.add(sampling(v, t, b / a + offset));
+		}
 		
 		return samples;
 	}
@@ -165,7 +159,8 @@ public class OneNumIlpTemplate extends OneFeatureTemplate {
 	
 	@Override
 	public String toString() {
-		return a + "*" + passValues.get(0).get(0).getVarId() + " >= " + b;
+		if (a > 0) return passValues.get(0).get(0).getVarId() + " >= " + round(b / a);
+		else return passValues.get(0).get(0).getVarId() + " <= " + round(b / a);
 	}
 	
 }

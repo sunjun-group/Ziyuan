@@ -137,7 +137,7 @@ public class TzuyuCore {
 
 		final List<LineCoverageInfo> suspectLocations = report.getFirstRanks(params
 				.getRankToExamine());
-
+		
 		if (CollectionUtils.isEmpty(suspectLocations)) {
 			log.warn("No suspect line to learn. SVM will not run.");
 		} else {

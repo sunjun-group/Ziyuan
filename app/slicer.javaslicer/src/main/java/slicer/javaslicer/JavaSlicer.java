@@ -129,6 +129,7 @@ public class JavaSlicer implements ISlicer {
 		log.debug("Slicing-slicing...");
 		log.debug("traceFilePath=", traceFilePath);
 		File traceFile = new File(traceFilePath);
+		
 		TraceResult trace;
 		try {
 			timer.newPoint("read trace file");

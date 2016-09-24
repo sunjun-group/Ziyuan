@@ -10,7 +10,7 @@ public class MachineSimpleTests extends TestUltility{
 		long startTime = System.currentTimeMillis();
 		
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("MyTwoFeatures.txt");
-		runTest(new Machine(), 2, inputStream);
+		runTest(new Machine(), 1, inputStream);
 		// checkLastDividerFound(new double[]{-2, -3, -15});
 		
 		long endTime = System.currentTimeMillis();

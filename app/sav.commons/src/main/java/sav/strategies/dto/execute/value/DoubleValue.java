@@ -1,16 +1,16 @@
 package sav.strategies.dto.execute.value;
 
 public class DoubleValue extends PrimitiveValue {
-	private double value;
+	private Double value;
 	
-	public DoubleValue(String id, double value) {
+	public DoubleValue(String id, Double value) {
 		super(id, String.valueOf(value));
 		this.value = value;
 	}
 	
 	@Override
-	public double getDoubleVal() {
-		return value;
+	public Double getDoubleVal() {
+		return (value == null) ? null : value;
 	}
 	
 	public static DoubleValue of(String id, double value) {

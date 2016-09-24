@@ -501,19 +501,6 @@ public class AssertionGenerationAlgorithmsTest extends AbstractTzPackageTest {
 	}
 
 	@Test
-	public void testAlg20() throws Exception {
-		long startTime = System.currentTimeMillis();
-
-		TestPackage testPkg = TestPackage.getPackage("algorithms-master", "20");
-		params.setMethodName("calculate");
-		genAssertion(testPkg);
-
-		long endTime = System.currentTimeMillis();
-
-		log.info((endTime - startTime) + "");
-	}
-
-	@Test
 	public void testAlg21a() throws Exception {
 		long startTime = System.currentTimeMillis();
 
@@ -1312,19 +1299,6 @@ public class AssertionGenerationAlgorithmsTest extends AbstractTzPackageTest {
 
 		TestPackage testPkg = TestPackage.getPackage("algorithms-master", "76");
 		params.setMethodName("sort");
-		genAssertion(testPkg);
-
-		long endTime = System.currentTimeMillis();
-
-		log.info((endTime - startTime) + "");
-	}
-
-	@Test
-	public void testAlg78() throws Exception {
-		long startTime = System.currentTimeMillis();
-
-		TestPackage testPkg = TestPackage.getPackage("algorithms-master", "78");
-		params.setMethodName("compare");
 		genAssertion(testPkg);
 
 		long endTime = System.currentTimeMillis();

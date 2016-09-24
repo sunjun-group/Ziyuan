@@ -17,4 +17,7 @@ import java.util.List;
 public interface IDividerProcessor<R> {
 	
 	R process(Divider divider, List<String> labels, boolean round);
+	
+	R process(Divider divider, List<String> labels, boolean round, int num);
+	
 }

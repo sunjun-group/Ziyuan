@@ -280,9 +280,14 @@ public class ZiyuanPackageTest extends AbstractTzPackageTest {
 	
 	@Test
 	public void testCommonsMath1234b() throws Exception {
+		long start = System.currentTimeMillis();
+		
 		TestPackage testPkg = TestPackage.getPackage("apache-commons-math", "1234b");
 		params.setRankToExamine(3);
 		runFaultLocate(testPkg);
+		
+		long end = System.currentTimeMillis();
+		System.out.println(end - start);
 	}
 	
 	@Test
@@ -294,9 +299,14 @@ public class ZiyuanPackageTest extends AbstractTzPackageTest {
 	
 	@Test
 	public void testCommonsPrimitives100b() throws Exception {
+		long start = System.currentTimeMillis();
+		
 		TestPackage testPkg = TestPackage.getPackage("apache-primitives", "100b");
 		params.setRankToExamine(3);
 		runFaultLocate(testPkg);
+		
+		long end = System.currentTimeMillis();
+		System.out.println(end - start);
 	}
 	
 	@Test
@@ -416,4 +426,292 @@ public class ZiyuanPackageTest extends AbstractTzPackageTest {
 		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
 		runFaultLocate(testPkg);
 	}
+	
+	
+	////////////////////////////////////////////
+	// New tests for defects4j
+	////////////////////////////////////////////
+	
+	@Test
+	public void testMath1() throws Exception {
+		long start = System.currentTimeMillis();
+		
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "1");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+		
+		long end = System.currentTimeMillis();
+		System.out.println(end - start);
+	}
+	
+	@Test
+	public void testMath3() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "3");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testMath4() throws Exception {
+		long start = System.currentTimeMillis();
+		
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "4");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+		
+		long end = System.currentTimeMillis();
+		System.out.println(end - start);
+	}
+	
+	@Test
+	public void testMath8() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "8");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testMath28() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "28");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testMath38() throws Exception {
+		long start = System.currentTimeMillis();
+		
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "38");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+		
+		long end = System.currentTimeMillis();
+		System.out.println(end - start);
+	}
+	
+	@Test
+	public void testMath40() throws Exception {
+		long start = System.currentTimeMillis();
+		
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "40");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+		
+		long end = System.currentTimeMillis();
+		System.out.println(end - start);
+	}
+	
+	@Test
+	public void testMath49() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "49");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testMath58() throws Exception {
+		long start = System.currentTimeMillis();
+		
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "58");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+		
+		long end = System.currentTimeMillis();
+		System.out.println(end - start);
+	}
+	
+	@Test
+	public void testMath60() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "60");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testMath61() throws Exception {
+		long start = System.currentTimeMillis();
+		
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "61");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+		
+		long end = System.currentTimeMillis();
+		System.out.println(end - start);
+	}
+	
+	@Test
+	public void testMath70() throws Exception {
+		long start = System.currentTimeMillis();
+		
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "70");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+		
+		long end = System.currentTimeMillis();
+		System.out.println(end - start);
+	}
+	
+	@Test
+	public void testMath79() throws Exception {
+		long start = System.currentTimeMillis();
+		
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "79");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+		
+		long end = System.currentTimeMillis();
+		System.out.println(end - start);
+	}
+	
+	@Test
+	public void testMath81() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "81");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testMath84() throws Exception {
+		long start = System.currentTimeMillis();
+		
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "84");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+		
+		long end = System.currentTimeMillis();
+		System.out.println(end - start);
+	}
+	
+	@Test
+	public void testMath85() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "85");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testMath89() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "89");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testMath90() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "90");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testMath95() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "95");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testMath97() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "97");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testMath98() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "98");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testMath100() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "100");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testMath101() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("apache-math", "101");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testTime2() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("joda-time", "2");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testTime5() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("joda-time", "5");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testTime6() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("joda-time", "6");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testTime8() throws Exception {
+		long start = System.currentTimeMillis();
+		
+		TestPackage testPkg = TestPackage.getPackage("joda-time", "8");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+		
+		long end = System.currentTimeMillis();
+		System.out.println(end - start);
+	}
+	
+	@Test
+	public void testTime10() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("joda-time", "10");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
+	@Test
+	public void testChart2() throws Exception {
+		TestPackage testPkg = TestPackage.getPackage("chart", "2");
+		params.setRankToExamine(4);
+		params.setVarNameCollectionMode(VarNameCollectionMode.HIGHEST_LEVEL_VAR);
+		runFaultLocate(testPkg);
+	}
+	
 }

@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import invariant.templates.SingleTemplate;
 import invariant.templates.onefeature.OneBoolEq0Template;
 import invariant.templates.onefeature.OneBoolEq1Template;
-import invariant.templates.twofeatures.TwoBoolAndTemplate;
-import invariant.templates.twofeatures.TwoBoolOrTemplate;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.execute.value.ExecValue;
 
@@ -26,7 +24,6 @@ public class BooleanTemplateChecker extends TypeTemplateChecker {
 		if (passValues.isEmpty() || failValues.isEmpty()) return false;
 		
 		if (checkOneFeatureTemplates(passValues, failValues)) return true;
-		// checkTwoFeaturesTemplates(passValues, failValues);
 		
 		return false;
 	}
@@ -56,36 +53,6 @@ public class BooleanTemplateChecker extends TypeTemplateChecker {
 		}
 		
 		return false;
-	}
-	
-	private void checkTwoFeaturesTemplates(List<List<ExecValue>> passExecValuesList,
-			List<List<ExecValue>> failExecValuesList) {
-		SingleTemplate t = null;
-
-		int n = passExecValuesList.get(0).size();
-		if (n < 2) return;
-
-		// check template with commutativity
-		for (int i = 0; i < n - 1; i++) {
-			for (int j = i + 1; j < n; j++) {
-				List<List<ExecValue>> passEvl = new ArrayList<List<ExecValue>>();
-				List<List<ExecValue>> failEvl = new ArrayList<List<ExecValue>>();
-
-				for (List<ExecValue> evl : passExecValuesList) {
-					passEvl.add(CollectionUtils.listOf(evl.get(i), evl.get(j)));
-				}
-
-				for (List<ExecValue> evl : failExecValuesList) {
-					failEvl.add(CollectionUtils.listOf(evl.get(i), evl.get(j)));
-				}
-
-				t = new TwoBoolAndTemplate(passEvl, failEvl);
-				check(t);
-				
-				t = new TwoBoolOrTemplate(passEvl, failEvl);
-				check(t);
-			}
-		}
 	}
 	
 }

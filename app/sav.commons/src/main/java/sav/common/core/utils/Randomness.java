@@ -49,10 +49,10 @@ public final class Randomness {
 			return -0.01f;
 		}
 		
-//		float rangeMin = -100;
-//		float rangeMax = 100;
-		float rangeMin = -15000000000f;
-		float rangeMax = 15000000000f;
+		float rangeMin = -100;
+		float rangeMax = 100;
+//		float rangeMin = -15000000000f;
+//		float rangeMax = 15000000000f;
 		float f = (rangeMin + (rangeMax - rangeMin) * getRandom().nextFloat());
 		return f;
 //		return getRandom().nextFloat();
@@ -218,11 +218,11 @@ public final class Randomness {
 			return -0.01;
 		}
 		
-//		double rangeMin = -100;
-//		double rangeMax = 100;
+		double rangeMin = -100;
+		double rangeMax = 100;
 		
-		double rangeMin = -2000;
-		double rangeMax = 2000;
+//		double rangeMin = -2000;
+//		double rangeMax = 2000;
 		
 		double d = (rangeMin + (rangeMax - rangeMin) * getRandom().nextDouble());
 		return d;

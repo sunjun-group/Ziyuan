@@ -69,12 +69,11 @@ public class FaultLocalization {
 		List<BreakPoint> filterPoints = Collections.emptyList();
 		List<String> testingClasses = analyzedClasses;
 		if (useSlicer) {
-			long startTime = System.currentTimeMillis();
 			Set<BreakPoint> traces = getSlicingTraces(analyzedClasses,
 					analyzedPackages, junitClassNames);
-			long endTime = System.currentTimeMillis();
-			System.out.println(endTime - startTime);
 			filterPoints = new ArrayList<BreakPoint>(traces);
+			// log.info("filterPoints = " + filterPoints);
+			log.info("filterPoints size = " + filterPoints.size());
 			testingClasses = BreakpointUtils.extractClasses(traces);
 		}
 		// coverage
