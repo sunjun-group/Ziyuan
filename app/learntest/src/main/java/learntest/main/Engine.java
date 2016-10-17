@@ -72,7 +72,7 @@ public class Engine {
 		this.tcExecutor = tcExecutor;
 	}
 	
-	public void run() throws ParseException, IOException, SavException, ClassNotFoundException {
+	public void run(boolean random) throws ParseException, IOException, SavException, ClassNotFoundException {
 		setTarget(LearnTestConfig.filePath, LearnTestConfig.typeName, LearnTestConfig.className, LearnTestConfig.methodName);
 		addTestcases(LearnTestConfig.testPath);
 		
@@ -90,7 +90,7 @@ public class Engine {
 		//tcExecutor.setSingleMode();
 		tcExecutor.setInstrMode(true);
 		JacopSelectiveSampling selectiveSampling = new JacopSelectiveSampling(tcExecutor);
-		DecisionLearner learner = new DecisionLearner(selectiveSampling, manager);
+		DecisionLearner learner = new DecisionLearner(selectiveSampling, manager, random);
 		learner.learn(result);
 		//List<BreakpointValue> records = learner.getRecords();
 		/*System.out.println("==============================================");

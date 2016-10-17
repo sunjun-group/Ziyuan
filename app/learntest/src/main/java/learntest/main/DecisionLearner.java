@@ -63,7 +63,7 @@ public class DecisionLearner implements CategoryCalculator {
 	
 	private boolean random = true;
 	
-	public DecisionLearner(JacopSelectiveSampling selectiveSampling, CfgConditionManager manager) {
+	public DecisionLearner(JacopSelectiveSampling selectiveSampling, CfgConditionManager manager, boolean random) {
 		machine = new MyPositiveSeparationMachine();
 		machine.setDefaultParams();
 		/*oneClass = new Machine();
@@ -72,6 +72,7 @@ public class DecisionLearner implements CategoryCalculator {
 				.setPredictProbability(false).setC(Double.MAX_VALUE));*/
 		this.selectiveSampling = selectiveSampling;
 		this.manager = manager;
+		this.random = random;
 	}
 	
 	public void learn(Map<DecisionLocation, BreakpointData> bkpDataMap) throws SavException {

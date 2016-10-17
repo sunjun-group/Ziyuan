@@ -196,11 +196,11 @@ public class StoreBuilder {
 				store.impose(new XmulYeqZ(intVars[i], intVars[j], intVars[idx ++]));
 			}
 		}
-		IntVar x = (IntVar) store.findVariable("x");
+		/*IntVar x = (IntVar) store.findVariable("x");
 		IntVar y = (IntVar) store.findVariable("y");
 		IntVar z = (IntVar) store.findVariable("z");
 		store.impose(new XgteqY(x, y));
-		store.impose(new XgteqY(y, z));
+		store.impose(new XgteqY(y, z));*/
 		return store;
 	}
 	
@@ -221,7 +221,7 @@ public class StoreBuilder {
 			case SHORT:
 				return new IntVar(store, var.getLabel(), -100, 100);
 			default:
-				return new IntVar(store, var.getLabel(), 1, 20);
+				return new IntVar(store, var.getLabel(), -200, 200);
 		}
 	}
 	
