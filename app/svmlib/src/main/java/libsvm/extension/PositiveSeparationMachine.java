@@ -31,7 +31,7 @@ public class PositiveSeparationMachine extends Machine {
 	private List<svm_model> learnedModels = new ArrayList<svm_model>();
 
 	private static final int MAXIMUM_ATTEMPT_COUNT = 10;
-	private static final int MAXIMUM_DIVIDER_COUNT = 2;
+	private static final int MAXIMUM_DIVIDER_COUNT = 20;
 
 	private NegativePointSelection negativePointSelection;
 
@@ -72,11 +72,7 @@ public class PositiveSeparationMachine extends Machine {
 		while (!negatives.isEmpty() && loopCount < MAXIMUM_DIVIDER_COUNT) {
 			loopCount++;
 			// Training set = all positives + 1 negative
-			DataPoint negPoint = negativePointSelection.select(negatives, positives);
-			
-			if (negPoint == null) return this;
-			trainingData.add(negPoint);
-			
+			trainingData.add(negativePointSelection.select(negatives, positives));
 			super.train(trainingData);
 
 			if (model != null) learnedModels.add(model);

@@ -74,7 +74,8 @@ public class Divider {
 	 */
 	public boolean dataPointBelongTo(DataPoint dataPoint, Category category){
 		double value = computeValueOfDataPoint(dataPoint);
-		return (Double.compare(value, 0) == 0) || (Category.fromDouble(value) == category);
+		//return (Double.compare(value, 0) == 0) || (Category.fromDouble(value) == category);
+		return Category.fromDouble(value) == category;
 	}
 	
 	public Category getCategory(final DataPoint dataPoint) {

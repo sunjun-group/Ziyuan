@@ -47,87 +47,87 @@ public class SelectiveSampling{
 		random = new Random();
 	}
 
-	public BreakpointData selectData(DecisionLocation target, Formula formula, 
-			List<String> labels, List<DataPoint> datapoints) throws SavException {
-		BreakpointData bkpData = null;		
-		if (formula == null) {
-			return bkpData;
-		}
-
-		tcExecutor.setTarget(target);
-		Map<String, Pair<Double, Double>> minMax = calculateValRange(labels, datapoints);
-		
-		IlpSolver solver = new IlpSolver(minMax, true);
-		formula.accept(solver);
-		List<List<Eq<?>>> assignments = solver.getResult();
-		log.debug("Instrument values: ");
-		for (List<Eq<?>> valSet : assignments) {
-			if (!valSet.isEmpty()) {
-				tcExecutor.setVarMap(toInstrVarMap(valSet));
-				tcExecutor.run();
-				List<BreakpointData> result = tcExecutor.getResult();
-				if (result.isEmpty()) {
-					continue;
-				}
-				BreakpointData breakpointData = result.get(0);
-				if(bkpData == null) {
-					bkpData = breakpointData;
-				} else if (!bkpData.merge(breakpointData)) {
-					log.error("Wrong location: " + breakpointData.getLocation());
-				}
-			}
-		}		
-		return bkpData;
-	}
+//	public BreakpointData selectData(DecisionLocation target, Formula formula, 
+//			List<String> labels, List<DataPoint> datapoints) throws SavException {
+//		BreakpointData bkpData = null;		
+//		if (formula == null) {
+//			return bkpData;
+//		}
+//
+//		tcExecutor.setTarget(target);
+//		Map<String, Pair<Double, Double>> minMax = calculateValRange(labels, datapoints);
+//		
+//		IlpSolver solver = new IlpSolver(minMax, true);
+//		formula.accept(solver);
+//		List<List<Eq<?>>> assignments = solver.getResult();
+//		log.debug("Instrument values: ");
+//		for (List<Eq<?>> valSet : assignments) {
+//			if (!valSet.isEmpty()) {
+//				tcExecutor.setVarMap(toInstrVarMap(valSet));
+//				tcExecutor.run();
+//				List<BreakpointData> result = tcExecutor.getResult();
+//				if (result.isEmpty()) {
+//					continue;
+//				}
+//				BreakpointData breakpointData = result.get(0);
+//				if(bkpData == null) {
+//					bkpData = breakpointData;
+//				} else if (!bkpData.merge(breakpointData)) {
+//					log.error("Wrong location: " + breakpointData.getLocation());
+//				}
+//			}
+//		}		
+//		return bkpData;
+//	}
 	
-	public BreakpointData selectData(DecisionLocation target, OrCategoryCalculator preconditions, 
-			List<Divider> dividers) throws SavException {
-		List<List<Constraint>> constraints = preconditions.getConstraints();
-		List<ExecVar> vars = preconditions.getVars();
-		if (dividers != null) {
-			List<Constraint> cur = new ArrayList<Constraint>();
-			for (Divider divider : dividers) {
-				Linear linear = new Linear();
-				double[] thetas = divider.getThetas();
-				double theta0 = divider.getTheta0();
-				int size = Math.min(vars.size(), thetas.length);
-				for (int i = 0; i < size; i++) {
-					linear.add(thetas[i], vars.get(i).getLabel());
-				}
-				Constraint constraint = new Constraint(linear, Operator.GE, theta0);
-				cur.add(constraint);
-			}
-			for (List<Constraint> list : constraints) {
-				list.addAll(cur);
-			}
-		}
-		List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
-		for (List<Constraint> list : constraints) {
-			assignments.addAll(solve(list, vars));
-		}
-		if (assignments.isEmpty()) {
-			return null;
-		}
-		BreakpointData bkpData = null;
-		tcExecutor.setTarget(target);
-		for (List<Eq<?>> valSet : assignments) {
-			if (!valSet.isEmpty()) {
-				tcExecutor.setVarMap(toInstrVarMap(valSet));
-				tcExecutor.run();
-				List<BreakpointData> result = tcExecutor.getResult();
-				if (result.isEmpty()) {
-					continue;
-				}
-				BreakpointData breakpointData = result.get(0);
-				if(bkpData == null) {
-					bkpData = breakpointData;
-				} else if (!bkpData.merge(breakpointData)) {
-					log.error("Wrong location: " + breakpointData.getLocation());
-				}
-			}
-		}	
-		return bkpData;
-	}
+//	public BreakpointData selectData(DecisionLocation target, OrCategoryCalculator preconditions, 
+//			List<Divider> dividers) throws SavException {
+//		List<List<Constraint>> constraints = preconditions.getConstraints();
+//		List<ExecVar> vars = preconditions.getVars();
+//		if (dividers != null) {
+//			List<Constraint> cur = new ArrayList<Constraint>();
+//			for (Divider divider : dividers) {
+//				Linear linear = new Linear();
+//				double[] thetas = divider.getThetas();
+//				double theta0 = divider.getTheta0();
+//				int size = Math.min(vars.size(), thetas.length);
+//				for (int i = 0; i < size; i++) {
+//					linear.add(thetas[i], vars.get(i).getLabel());
+//				}
+//				Constraint constraint = new Constraint(linear, Operator.GE, theta0);
+//				cur.add(constraint);
+//			}
+//			for (List<Constraint> list : constraints) {
+//				list.addAll(cur);
+//			}
+//		}
+//		List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
+//		for (List<Constraint> list : constraints) {
+//			assignments.addAll(solve(list, vars));
+//		}
+//		if (assignments.isEmpty()) {
+//			return null;
+//		}
+//		BreakpointData bkpData = null;
+//		tcExecutor.setTarget(target);
+//		for (List<Eq<?>> valSet : assignments) {
+//			if (!valSet.isEmpty()) {
+//				tcExecutor.setVarMap(toInstrVarMap(valSet));
+//				tcExecutor.run();
+//				List<BreakpointData> result = tcExecutor.getResult();
+//				if (result.isEmpty()) {
+//					continue;
+//				}
+//				BreakpointData breakpointData = result.get(0);
+//				if(bkpData == null) {
+//					bkpData = breakpointData;
+//				} else if (!bkpData.merge(breakpointData)) {
+//					log.error("Wrong location: " + breakpointData.getLocation());
+//				}
+//			}
+//		}	
+//		return bkpData;
+//	}
 	
 	private List<List<Eq<?>>> solve(List<Constraint> list, List<ExecVar> vars) {
 		List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();

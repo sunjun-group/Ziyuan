@@ -114,4 +114,24 @@ public class BreakpointValue extends ExecValue {
 	public ExecVarType getType() {
 		return null;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof BreakpointValue) || obj == null) {
+			return false;
+		}
+		BreakpointValue breakpointValue = (BreakpointValue) obj;
+		double[] allValues = this.getAllValues();
+		double[] values = breakpointValue.getAllValues();
+		if (allValues.length != values.length) {
+			return false;
+		}
+		for (int i = 0; i < values.length; i++) {
+			if (allValues[i] != values[i]) {
+				return false;
+			}
+		}
+		return true;
+	}	
+	
 }

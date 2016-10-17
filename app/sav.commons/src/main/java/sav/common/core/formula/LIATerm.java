@@ -48,4 +48,17 @@ public class LIATerm {
 	public static <T extends Var> LIATerm of(T var, double coeff) {
 		return new LIATerm(var, coeff);
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof LIATerm)) {
+			return false;
+		}
+		
+		LIATerm term = (LIATerm) obj;
+		return term.toString().equals(this.toString());
+	}
 }

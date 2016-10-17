@@ -6,7 +6,7 @@ public class LearnTestConfig {
 
 	public static String typeName = "Triangle";
 	public static String methodName = "triangleType";
-	public static String filePath = "D:/git/Ziyuan/app/learntest/src/test/java/testdata/example/" + typeName + ".java";
+	public static String filePath = "F:/git_space/Ziyuan_master/Ziyuan/app/learntest/src/test/java/testdata/example/" + typeName + ".java";
 	public static String className = "testdata.example." + typeName;
 	
 	public static String pkg = "testdata.test.example." + typeName.toLowerCase() + "." + methodName.toLowerCase();

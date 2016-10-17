@@ -8,6 +8,8 @@
 
 package sav.common.core.formula;
 
+import java.util.List;
+
 import sav.common.core.formula.utils.ExpressionVisitor;
 
 /**
@@ -37,5 +39,34 @@ public class AndFormula extends ConjunctionFormula {
 	@Override
 	public void accept(ExpressionVisitor visitor) {
 		visitor.visit(this);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		
+		if (!(obj instanceof AndFormula)) {
+			return false;
+		}
+		
+		AndFormula formula = (AndFormula) obj;
+		List<Formula> formulas = formula.elements;
+		
+		if (formulas.size() == 0 && elements.size() == 0) {
+			return true;
+		}
+		
+		if (formulas.size() != 2 || elements.size() != 2) {
+			return false;
+		}
+		boolean x = formulas.get(0).equals(elements.get(0));
+		x = formulas.get(1).equals(elements.get(1));
+		x = formulas.get(0).equals(elements.get(1));
+		x = formulas.get(1).equals(elements.get(0));
+		
+		return (formulas.get(0).equals(elements.get(0)) && formulas.get(1).equals(elements.get(1))) ||
+				(formulas.get(0).equals(elements.get(1)) && formulas.get(1).equals(elements.get(0)));
 	}
 }

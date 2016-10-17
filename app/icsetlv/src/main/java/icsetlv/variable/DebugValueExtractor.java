@@ -53,7 +53,6 @@ import com.sun.jdi.StringReference;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
-import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.BreakpointEvent;
 
 import icsetlv.DefaultValues;
@@ -97,9 +96,8 @@ public class DebugValueExtractor {
 		if (bkp == null) {
 			return null;
 		}
-				
-		BreakpointValue bkVal = new BreakpointValue(bkp.getId());
 		
+		BreakpointValue bkVal = new BreakpointValue(bkp.getId());
 		ThreadReference thread = event.thread();
 		synchronized (thread) {
 			if (!thread.frames().isEmpty()) {
@@ -122,10 +120,7 @@ public class DebugValueExtractor {
 				final Map<Variable, JdiParam> allVariables = new HashMap<Variable, JdiParam>();
 				final List<LocalVariable> visibleVars = frame.visibleVariables();
 				final List<Field> allFields = refType.allFields();
-				List<Variable> vars = new ArrayList<Variable>(bkp.getVars());
-				
 				for (Variable bpVar : bkp.getVars()) {
-					
 					// First check local variable
 					LocalVariable match = null;
 					if (bpVar.getScope() != VarScope.THIS) {
@@ -150,27 +145,11 @@ public class DebugValueExtractor {
 						String packageName = className.substring(0, className.lastIndexOf('.')); 
 						try {
 							Class<?> cl = loader.loadClass(packageName + "." + bpVar.getParentName());
+							Class<?> fl = cl.getField(bpVar.getSimpleName()).getType();
 							
-							java.lang.reflect.Field f = cl.getField(bpVar.getSimpleName());
-							Class<?> fl = f.getType();
-							
-							if (!java.lang.reflect.Modifier.isFinal(f.getModifiers()) && !f.isEnumConstant()) {
-								if (fl.equals(boolean.class) || fl.equals(Boolean.class)) {
-									boolean value = cl.getField(bpVar.getSimpleName()).getBoolean(null);
-									bkVal.add(sav.strategies.dto.execute.value.BooleanValue.of(bpVar.getFullName(), value));
-								} else if (fl.equals(int.class) || fl.equals(Integer.class)) {
-									int value = cl.getField(bpVar.getSimpleName()).getInt(null);
-									bkVal.add(sav.strategies.dto.execute.value.IntegerValue.of(bpVar.getFullName(), value));
-								} else if (fl.equals(long.class) || fl.equals(Long.class)) {
-									long value = cl.getField(bpVar.getSimpleName()).getLong(null);
-									bkVal.add(sav.strategies.dto.execute.value.LongValue.of(bpVar.getFullName(), value));
-								} else if (fl.equals(float.class) || fl.equals(Float.class)) {
-									float value = cl.getField(bpVar.getSimpleName()).getFloat(null);
-									bkVal.add(sav.strategies.dto.execute.value.FloatValue.of(bpVar.getFullName(), value));
-								} else if (fl.equals(double.class) || fl.equals(Double.class)) {
-									double value = cl.getField(bpVar.getSimpleName()).getDouble(null);
-									bkVal.add(sav.strategies.dto.execute.value.DoubleValue.of(bpVar.getFullName(), value));
-								}
+							if (fl.equals(int.class) || fl.equals(Integer.class)) {
+								int value = cl.getField(bpVar.getSimpleName()).getInt(null);
+								bkVal.add(sav.strategies.dto.execute.value.IntegerValue.of(bpVar.getFullName(), value));
 							}
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
@@ -180,29 +159,28 @@ public class DebugValueExtractor {
 					
 					// because it seems we need field information even that field is not accessed explicitly
 					// try to get all field, will be modified later (Long)
-					else {
-						// Then check class fields (static & non static)
-						Field matchedField = null;
-						for (Field field : allFields) {
-							if (field.name().equals(bpVar.getParentName())) {
-								matchedField = field;
-								break;
-							}
-						}
-
-						// if (matchedField != null) {
-						if (matchedField != null && !matchedField.isFinal() && !matchedField.isEnumConstant()) {
-							if (matchedField.isStatic()) {
-								param = JdiParam.staticField(matchedField, refType, refType.getValue(matchedField));
-							} else {
-								Value value = objRef == null ? null : objRef.getValue(matchedField);
-								param = JdiParam.nonStaticField(matchedField, objRef, value);
-							}
-							if (param.getValue() != null && !matchedField.name().equals(bpVar.getFullName())) {
-								param = recursiveMatch(param, extractSubProperty(bpVar.getFullName()));
-							}
-						}
-					}
+//					else {
+//						// Then check class fields (static & non static)
+//						Field matchedField = null;
+//						for (Field field : allFields) {
+//							if (field.name().equals(bpVar.getParentName())) {
+//								matchedField = field;
+//								break;
+//							}
+//						}
+//
+//						if (matchedField != null) {
+//							if (matchedField.isStatic()) {
+//								param = JdiParam.staticField(matchedField, refType, refType.getValue(matchedField));
+//							} else {
+//								Value value = objRef == null ? null : objRef.getValue(matchedField);
+//								param = JdiParam.nonStaticField(matchedField, objRef, value);
+//							}
+//							if (param.getValue() != null && !matchedField.name().equals(bpVar.getFullName())) {
+//								param = recursiveMatch(param, extractSubProperty(bpVar.getFullName()));
+//							}
+//						}
+//					}
 					
 					if (param != null) {
 						allVariables.put(bpVar, param);
@@ -210,44 +188,30 @@ public class DebugValueExtractor {
 				}
 				
 				// this code is added to get all fields of this object
-				for (Field field : allFields) {
-					// boolean isConstant = (field.isStatic() && field.isFinal()) || field.isEnumConstant();
-					boolean isConstant = field.isFinal() || field.isEnumConstant();
+				/*for (Field field : allFields) {
+					boolean isConstant = (field.isStatic() && field.isFinal()) || field.isEnumConstant();
 					if (!isConstant) {
 						if (field.isStatic()) {
 							Variable bpVar = new Variable(field.name(), field.name(), VarScope.THIS);
 							JdiParam param = JdiParam.staticField(field, refType, refType.getValue(field));
 							allVariables.put(bpVar, param);
-							vars.add(bpVar);
 						} else {
 							Variable bpVar = new Variable(field.name(), field.name(), VarScope.THIS);
 							Value value = objRef == null ? null : objRef.getValue(field);
 							JdiParam param = JdiParam.nonStaticField(field, objRef, value);
 							allVariables.put(bpVar, param);
-							vars.add(bpVar);
 						}
 					}
-				}
-				
+				}*/
+
 				if (!allVariables.isEmpty()) {
-					// collectValue(bkVal, thread, allVariables);
-					collectValue(bkVal, thread, allVariables, vars);
+					collectValue(bkVal, thread, allVariables);
 				}
 			}
 		}
 		return bkVal;
 	}
 
-	protected void collectValue(BreakpointValue bkVal, ThreadReference thread,
-			final Map<Variable, JdiParam> allVariables, final List<Variable> bpVars) throws SavException {
-		for (Variable var : bpVars) {
-			if (allVariables.containsKey(var)) {
-				String varId = var.getId();
-				appendVarVal(bkVal, varId, allVariables.get(var).getValue(), 1, thread);
-			}
-		}
-	}
-	
 	protected void collectValue(BreakpointValue bkVal, ThreadReference thread,
 			final Map<Variable, JdiParam> allVariables) throws SavException {
 		for (Entry<Variable, JdiParam> entry : allVariables.entrySet()) {
@@ -296,7 +260,6 @@ public class DebugValueExtractor {
 		if (ArrayReference.class.isAssignableFrom(value.getClass())) {
 			ArrayReference array = (ArrayReference) value;
 			// Can access to the array's length or values
-			
 			if (".length".equals(property)) {
 				subParam = JdiParam.nonStaticField(null, array, array.virtualMachine().mirrorOf(array.length()));
 				// No sub property is available after this
@@ -395,12 +358,8 @@ public class DebugValueExtractor {
 				parent.add(new sav.strategies.dto.execute.value.CharValue(
 						varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread).charAt(0)));
 			} else if (PrimitiveUtils.isDouble(typeName)) {
-				String s = toPrimitiveValue((ClassType) type, (ObjectReference)value, thread);
-				if (s.contains("\"")) {
-					s = s.substring(1, s.length() - 1);
-				}
 				parent.add(new sav.strategies.dto.execute.value.DoubleValue(
-						varId, Double.parseDouble(s)));
+						varId, Double.parseDouble(toPrimitiveValue((ClassType) type, (ObjectReference)value, thread))));
 			} else if (PrimitiveUtils.isFloat(typeName)) {
 				parent.add(new sav.strategies.dto.execute.value.FloatValue(
 						varId, Float.parseFloat(toPrimitiveValue((ClassType) type, (ObjectReference)value, thread))));
@@ -457,9 +416,8 @@ public class DebugValueExtractor {
 		ClassType type = (ClassType) value.type();
 		Map<Field, Value> fieldValueMap = value.getValues(type.allFields());
 		for (Field field : type.allFields()) {
-			boolean isConstant = field.isFinal() || field.isEnumConstant();
-			if (!isConstant) {
-			// if (!isConstant && !field.name().equals("hash")) {
+			boolean isConstant = (field.isStatic() && field.isFinal()) || field.isEnumConstant();
+			if (!isConstant && !field.name().equals("hash")) {
 				appendVarVal(val, val.getChildId(field.name()),
 						fieldValueMap.get(field), level, thread);
 			}
@@ -474,8 +432,7 @@ public class DebugValueExtractor {
 		Map<Field, Value> fieldValueMap = value.getValues(type.allFields());
 		for (Field field : type.allFields()) {
 			boolean isConstant = (field.isStatic() && field.isFinal()) || field.isEnumConstant();
-			if (!isConstant) {
-			// if (!isConstant && !field.name().equals("hash")) {
+			if (!isConstant && !field.name().equals("hash")) {
 				appendVarVal(val, val.getChildId(field.name()),
 						fieldValueMap.get(field), level, thread);
 			}

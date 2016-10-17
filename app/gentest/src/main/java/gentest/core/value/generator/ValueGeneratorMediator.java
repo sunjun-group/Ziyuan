@@ -15,6 +15,7 @@ import gentest.core.value.store.iface.IVariableStore;
 import gentest.main.GentestConstants;
 
 import java.util.List;
+import java.util.Random;
 
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
@@ -81,6 +82,16 @@ public class ValueGeneratorMediator {
 				goodVariable = primitiveGenerator.doAppend(variable, level, type.getRawType());
 			}  else if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL) {
 				ValueGenerator.assignNull(variable, type.getRawType());
+			} else if (level > 1) {
+				// increase the probability of generating null objects for fields
+				boolean isNull = new Random().nextInt(10) < 8;
+				if (isNull) {
+					ValueGenerator.assignNull(variable, type.getRawType());
+				} else {
+					ValueGenerator generator = ValueGenerator.findGenerator(type, isReceiver);
+					generator.setValueGeneratorMediator(this);
+					goodVariable = generator.doAppendVariable(variable, level);
+				}
 			} else {
 				ValueGenerator generator = ValueGenerator.findGenerator(type, isReceiver);
 				generator.setValueGeneratorMediator(this);

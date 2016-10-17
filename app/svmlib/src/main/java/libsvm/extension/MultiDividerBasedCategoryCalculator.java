@@ -26,4 +26,8 @@ public class MultiDividerBasedCategoryCalculator implements CategoryCalculator {
 		return Category.POSITIVE;
 	}
 
+	public List<Divider> getDividers() {
+		return dividers;
+	}
+
 }
