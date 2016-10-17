@@ -1,20 +1,20 @@
 package sav.strategies.dto.execute.value;
 
 public class ShortValue extends PrimitiveValue {
-	private short value;
+	private Short value;
 	
-	public ShortValue(String id, short value) {
+	public ShortValue(String id, Short value) {
 		super(id, String.valueOf(value));
 		this.value = value;
 	}
 	
 	@Override
-	public double getDoubleVal() {
-		return value;
+	public Double getDoubleVal() {
+		return (value == null) ? null : (double) value;
 	}
 	
-	public short getShortVal() {
-		return value;
+	public Short getShortVal() {
+		return (value == null) ? null : value;
 	}
 	
 	public static ShortValue of(String id, short value) {

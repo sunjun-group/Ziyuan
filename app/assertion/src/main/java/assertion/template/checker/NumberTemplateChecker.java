@@ -8,7 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import invariant.templates.SingleTemplate;
 import invariant.templates.onefeature.OneNumEqTemplate;
+import invariant.templates.onefeature.OneNumGt0Template;
+import invariant.templates.onefeature.OneNumGte0Template;
 import invariant.templates.onefeature.OneNumIlpTemplate;
+import invariant.templates.onefeature.OneNumNeMinTemplate;
 import invariant.templates.onefeature.OneNumNeTemplate;
 import invariant.templates.threefeatures.ThreeNumAddTemplate;
 import invariant.templates.threefeatures.ThreeNumDivTemplate;
@@ -22,6 +25,9 @@ import invariant.templates.twofeatures.TwoNumAbsTemplate;
 import invariant.templates.twofeatures.TwoNumAddOverflowTemplate;
 import invariant.templates.twofeatures.TwoNumCubeTemplate;
 import invariant.templates.twofeatures.TwoNumEqTemplate;
+import invariant.templates.twofeatures.TwoNumEqualTemplate;
+import invariant.templates.twofeatures.TwoNumGtTemplate;
+import invariant.templates.twofeatures.TwoNumGteTemplate;
 import invariant.templates.twofeatures.TwoNumIlpTemplate;
 import invariant.templates.twofeatures.TwoNumMulOverflowTemplate;
 import invariant.templates.twofeatures.TwoNumSqrtTemplate;
@@ -33,11 +39,13 @@ import sav.strategies.dto.execute.value.ExecValue;
 public class NumberTemplateChecker extends TypeTemplateChecker {
 	
 	private static Logger log = LoggerFactory.getLogger(NumberTemplateChecker.class);
+	
+	private int MAX_FEATURES = 20; // should not check if there are too many features
 
 	@Override
 	public boolean checkTemplates(List<List<ExecValue>> passValues, List<List<ExecValue>> failValues) {
-		log.info("Number pass values: {}\n", passValues);
-		log.info("Number fail values: {}\n", failValues);
+//		log.info("Number pass values: {}\n", passValues);
+//		log.info("Number fail values: {}\n", failValues);
 		
 		if (passValues.isEmpty() || failValues.isEmpty()) return false;
 		
@@ -68,10 +76,10 @@ public class NumberTemplateChecker extends TypeTemplateChecker {
 			}
 			
 			t = new OneNumIlpTemplate(passEvl, failEvl);
-			check(t);
+			if (check(t)) return true;
 		}
 		
-		if (n < 2) return false;
+		if (n < 2 || n > MAX_FEATURES) return false;
 		
 		for (int i = 0; i < n - 1; i++) {
 			for (int j = i + 1; j < n; j++) {
@@ -87,7 +95,7 @@ public class NumberTemplateChecker extends TypeTemplateChecker {
 				}
 				
 				t = new TwoNumIlpTemplate(passEvl, failEvl);
-				check(t);
+				if (check(t)) return true;
 			}
 		}
 		
@@ -114,14 +122,17 @@ public class NumberTemplateChecker extends TypeTemplateChecker {
 			t = new OneNumEqTemplate(passEvl, failEvl);
 			if (check(t)) return true;
 			
+			t = new OneNumNeMinTemplate(passEvl, failEvl);
+			if (check(t)) return true;
+			
 			t = new OneNumNeTemplate(passEvl, failEvl);
 			if (check(t)) return true;
 			
-//			t = new OneNumGte0Template(passEvl, failEvl);
-//			check(t);
-//			
-//			t = new OneNumGt0Template(passEvl, failEvl);
-//			check(t);	
+			t = new OneNumGte0Template(passEvl, failEvl);
+			if (check(t)) return true;
+			
+			t = new OneNumGt0Template(passEvl, failEvl);
+			if (check(t)) return true;
 		}
 		
 		return false;
@@ -132,7 +143,7 @@ public class NumberTemplateChecker extends TypeTemplateChecker {
 		SingleTemplate t = null;
 
 		int n = passValues.get(0).size();
-		if (n < 2) return false;
+		if (n < 2 || n > MAX_FEATURES) return false;
 
 		// check template with commutativity
 		for (int i = 0; i < n - 1; i++) {
@@ -148,13 +159,16 @@ public class NumberTemplateChecker extends TypeTemplateChecker {
 					failEvl.add(CollectionUtils.listOf(evl.get(i), evl.get(j)));
 				}
 
+				t = new TwoNumEqualTemplate(passEvl, failEvl);
+				if (check(t)) return true;
+				
 				t = new TwoNumEqTemplate(passEvl, failEvl);
 				if (check(t)) return true;
 				
-				t = new TwoNumAddOverflowTemplate(passEvl, failEvl);
+				t = new TwoNumMulOverflowTemplate(passEvl, failEvl);
 				if (check(t)) return true;
 				
-				t = new TwoNumMulOverflowTemplate(passEvl, failEvl);
+				t = new TwoNumAddOverflowTemplate(passEvl, failEvl);
 				if (check(t)) return true;
 			}
 		}
@@ -186,11 +200,11 @@ public class NumberTemplateChecker extends TypeTemplateChecker {
 					t = new TwoNumSquareTemplate(passEvl, failEvl);
 					if (check(t)) return true;
 					
-//					t = new TwoNumGteTemplate(passEvl, failEvl);
-//					check(t);
-//					
-//					t = new TwoNumGtTemplate(passEvl, failEvl);
-//					check(t);
+					t = new TwoNumGteTemplate(passEvl, failEvl);
+					if (check(t)) return true;
+					
+					t = new TwoNumGtTemplate(passEvl, failEvl);
+					if (check(t)) return true;
 					
 					t = new TwoNumSubOverflowTemplate(passEvl, failEvl);
 					if (check(t)) return true;
@@ -206,7 +220,7 @@ public class NumberTemplateChecker extends TypeTemplateChecker {
 		SingleTemplate t = null;
 
 		int n = passValues.get(0).size();
-		if (n < 3) return false;
+		if (n < 3 || n > MAX_FEATURES) return false;
 
 		// check template with commutativity
 		for (int i = 0; i < n - 2; i++) {
@@ -235,8 +249,8 @@ public class NumberTemplateChecker extends TypeTemplateChecker {
 		// check template without commutativity
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < n; j++) {
-				for (int k = j + 1; k < n; k++) {
-					if (i != j && i != k) {
+				for (int k = 0; k < n; k++) {
+					if (i != j && i != k && j != k) {
 						List<List<ExecValue>> passEvl = new ArrayList<List<ExecValue>>();
 						List<List<ExecValue>> failEvl = new ArrayList<List<ExecValue>>();
 

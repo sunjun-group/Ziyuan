@@ -4,12 +4,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.ClassLocation;
 import faultLocalization.LineCoverageInfo.LineCoverageInfoComparator;
 
 public class FaultLocalizationReport {
 
+	protected static Logger log = LoggerFactory.getLogger(FaultLocalizationReport.class);
+	
 	private CoverageReport coverageReport;
 	private List<LineCoverageInfo> lineCoverageInfos;
 
@@ -33,6 +38,9 @@ public class FaultLocalizationReport {
 		List<LineCoverageInfo> result = new ArrayList<LineCoverageInfo>();
 		
 		int size = lineCoverageInfos.size();
+		// log.info("lineCoverageInfos = " + lineCoverageInfos);
+		log.info("lineCoverageInfos size = " + size);
+		
 		int run = 0;
 		while(rank > 0 && run < size){
 			//add linecoverage for current rank

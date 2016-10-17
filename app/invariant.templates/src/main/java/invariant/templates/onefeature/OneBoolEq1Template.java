@@ -20,6 +20,8 @@ public class OneBoolEq1Template extends OneFeatureTemplate {
 	public boolean checkPassValue(List<ExecValue> evl) {
 		// list of pass and fail exec value only has one feature
 		// all pass values must be the same
+		if (evl.get(0).getDoubleVal() == null) return false;
+		
 		double v = evl.get(0).getDoubleVal();
 		return v == a;
 	}
@@ -28,6 +30,8 @@ public class OneBoolEq1Template extends OneFeatureTemplate {
 	public boolean checkFailValue(List<ExecValue> evl) {
 		// list of pass and fail exec value only has one feature
 		// all fail value must be different with the pass value
+		if (evl.get(0).getDoubleVal() == null) return false;
+		
 		double v = evl.get(0).getDoubleVal();
 		return v != a;
 	}

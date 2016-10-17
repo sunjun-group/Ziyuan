@@ -5,8 +5,12 @@ import java.util.List;
 import assertion.utility.Utility;
 import japa.parser.ast.body.ConstructorDeclaration;
 import japa.parser.ast.body.MethodDeclaration;
+import japa.parser.ast.expr.ArrayAccessExpr;
+import japa.parser.ast.expr.BinaryExpr;
+import japa.parser.ast.expr.FieldAccessExpr;
 import japa.parser.ast.expr.MethodCallExpr;
 import japa.parser.ast.expr.SuperExpr;
+import japa.parser.ast.expr.BinaryExpr.Operator;
 import japa.parser.ast.stmt.AssertStmt;
 import japa.parser.ast.stmt.ExplicitConstructorInvocationStmt;
 import japa.parser.ast.stmt.ThrowStmt;
@@ -105,6 +109,38 @@ public class CollectAssertLocsVisitor extends VoidVisitorAdapter<List<BreakPoint
 			// }
 		}
 	}
+	
+//	@Override
+//	public void visit(final ArrayAccessExpr n, final List<BreakPoint> arg) {
+//		if (isInMethod) {
+//			// if (contains(n.getName())) {
+//				BreakPoint bkp = new BreakPoint(className, methodName, n.getBeginLine());
+//				arg.add(bkp);
+//			// }
+//		}
+//	}
+//	
+//	@Override
+//	public void visit(final FieldAccessExpr n, final List<BreakPoint> arg) {
+//		if (isInMethod) {
+//			// if (contains(n.getName())) {
+//				BreakPoint bkp = new BreakPoint(className, methodName, n.getBeginLine());
+//				arg.add(bkp);
+//			// }
+//		}
+//	}
+//	
+//	@Override
+//	public void visit(final BinaryExpr n, final List<BreakPoint> arg) {
+//		if (isInMethod && (n.getOperator() == Operator.divide || n.getOperator() == Operator.remainder)) {
+//			// if (contains(n.getName())) {
+//				BreakPoint bkp = new BreakPoint(className, methodName, n.getBeginLine());
+//				arg.add(bkp);
+//			// }
+//		} else {
+//			super.visit(n, arg);
+//		}
+//	}
 	
 	private boolean contains(String name) {
 		if (listOfMethods == null) return false;

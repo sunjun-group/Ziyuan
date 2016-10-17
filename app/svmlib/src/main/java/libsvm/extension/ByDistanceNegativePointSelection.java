@@ -25,9 +25,13 @@ public class ByDistanceNegativePointSelection implements NegativePointSelection 
 	protected static final Logger LOGGER = LoggerFactory.getLogger(ByDistanceNegativePointSelection.class);
 	
 	public DataPoint select(List<DataPoint> negatives, List<DataPoint> positives){
-		DataPoint randomPositive = getRandomPositive(positives);
+		// this one is not deterministic !!!
+//		DataPoint randomPositive = getRandomPositive(positives);
+		DataPoint randomPositive = positives.get(0);
 		
 		double minDistance = Integer.MAX_VALUE;
+		
+//		double minDistance = Double.MAX_VALUE;
 		
 		DataPoint result = null;
 		for(DataPoint negative: negatives){

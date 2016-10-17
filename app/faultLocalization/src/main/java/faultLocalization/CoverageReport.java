@@ -132,7 +132,14 @@ public class CoverageReport implements ICoverageReport{
 		final List<LineCoverageInfo> linesCoverageInfo = new ArrayList<LineCoverageInfo>();
 
 		final List<String> pointLocIds = BreakpointUtils.toLocationIds(filteredPoints);
+		
+		int sum = 0;
+		
 		for (ClassCoverageInAllTestcases classCoverage : mapClassLineToTestCasesCover.values()) {
+			// log.info("classCoverage = " + classCoverage.getLineCoverageInfo());
+			log.info("classCoverage size = " + classCoverage.getLineCoverageInfo().size());
+			sum += classCoverage.getLineCoverageInfo().size();
+			
 			if (pointLocIds.isEmpty()) {
 				linesCoverageInfo.addAll(classCoverage.getLineCoverageInfo());
 				continue;
@@ -143,6 +150,8 @@ public class CoverageReport implements ICoverageReport{
 				}
 			}
 		}
+		
+		log.info("sum classCoverage size = " + sum);
 
 		// use slicing to remove unrelated lines in linesCoverageInfo
 		// failed test -> where failed assertion -> line -> slicing

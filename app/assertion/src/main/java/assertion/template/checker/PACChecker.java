@@ -91,23 +91,24 @@ public class PACChecker {
 		
 		matrix = new int[numRow][numCol];
 		
-		for (int i = 0; i < numCol; i++)
-			System.out.println(primTemplates.get(i));
-		
 		for (int i = 0; i < numRow; i++) {
 			for (int j = 0; j < numCol; j++) {
 				if (i < passSize) {
 					SingleTemplate st = (SingleTemplate) primTemplates.get(j);
 					if (st.checkPassValue(st.getPassExecValuesList().get(i)))
 						matrix[i][j] = 1;
-					else
+					else if (st.checkFailValue(st.getPassExecValuesList().get(i)))
 						matrix[i][j] = 0;
+					else
+						matrix[i][j] = -1;
 				} else {
 					SingleTemplate st = (SingleTemplate) primTemplates.get(j);
 					if (st.checkPassValue(st.getFailExecValuesList().get(i - passSize)))
 						matrix[i][j] = 1;
-					else
+					else if (st.checkFailValue(st.getFailExecValuesList().get(i - passSize)))
 						matrix[i][j] = 0;
+					else
+						matrix[i][j] = -1;
 				}
 			}
 		}
@@ -160,13 +161,15 @@ public class PACChecker {
 				}
 			}
 			
+			if (maxT == -1) return null;
 			chosenIndex.add(maxT);
 			
 			// remove the edges that have been cut
 			Iterator<Pair> it = edges.iterator();
 			while (it.hasNext()) {
 				Pair p = it.next();
-				if (matrix[p.pass][maxT] == 1 && matrix[p.fail][maxT] == 0) {
+				if (matrix[p.pass][maxT] == 1 && matrix[p.fail][maxT] == 0 &&
+						!p.isCut) {
 					p.isCut = true;
 					g.numEdges--;
 				}
@@ -175,7 +178,8 @@ public class PACChecker {
 			step++;
 		}
 		
-		return chosenIndex;
+		if (g.numEdges > 0) return null;
+		else return chosenIndex;
 	}
 	
 	public boolean checkRegion(List<Integer> comb) {
@@ -214,7 +218,7 @@ public class PACChecker {
 			
 			while (it.hasNext()) {
 				int j = it.next();
-				if (matrix[i][j] == 0) {
+				if (matrix[i][j] == 0 || matrix[i][j] == -1) {
 					cover = false;
 					break;
 				}
@@ -267,8 +271,6 @@ public class PACChecker {
 		
 		List<List<SingleTemplate>> disj = new ArrayList<List<SingleTemplate>>();
 		
-		System.out.println(passIndex);
-		
 		outer:
 		while (!passIndex.isEmpty()) {
 			int size = 0;
@@ -307,8 +309,10 @@ public class PACChecker {
 				}
 			}
 			
-			if (size >= chosenIndex.size()) break;
+			if (size > chosenIndex.size()) break;
 		}
+		
+		if (!passIndex.isEmpty()) disj = null;
 				
 //		// group the template that have the same pass values into conj
 //		while (chosenIndex.size() > 0) {
@@ -346,11 +350,34 @@ public class PACChecker {
 		if (primTemplates.isEmpty()) return;
 		
 		buildMatrix();
+		
+//		System.out.println(passValues.size());
+//		
+//		for (int i = 0; i < matrix.length; i++) {
+//			for (int j = 0; j < matrix[0].length; j++) {
+//				System.out.print(matrix[i][j] + " ");
+//			}
+//			
+//			System.out.println();
+//		}
+		
 		buildGraph();
 		List<Integer> chosenIndex = chooseTemplatesIndex();
+		
+//		System.out.println(chosenIndex);
+//		
+//		for (int i = 0; i < matrix.length; i++) {
+//			for (int j : chosenIndex) {
+//				System.out.print(matrix[i][j] + " ");
+//			}
+//			System.out.println();
+//		}
+		
+		// should not check regions if there are too many chosen indexes
+		if (chosenIndex == null || chosenIndex.size() > 10) return;
 		List<List<SingleTemplate>> disj = groupTemplates(chosenIndex);
 		
-		validTemplates.add(new CompositeTemplate(disj));
+		if (disj != null) validTemplates.add(new CompositeTemplate(disj));
 	}
 
 }

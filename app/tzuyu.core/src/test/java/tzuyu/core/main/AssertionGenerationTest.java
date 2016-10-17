@@ -42,7 +42,7 @@ public class AssertionGenerationTest extends AbstractTzTest {
 		long startTime = System.currentTimeMillis();
 		
 		List<String> junitClassNames = new ArrayList<String>();
-		// junitClassNames.add("sav.commons.testdata.assertion.PrimitiveAssertionTest");
+		junitClassNames.add("test.PrimitiveAssertion1");
 		
 		AssertionGenerationParams params = initAssertionGenerationParams(PrimitiveAssertion.class.getName(), "foo",
 				null, CollectionUtils.listOf("sav.commons.testdata.assertion"), junitClassNames, false);

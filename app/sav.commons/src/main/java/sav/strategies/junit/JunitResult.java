@@ -162,6 +162,7 @@ public class JunitResult {
 		boolean storeSingleFailTrace = false;
 		while(it.hasNext()) {
 			String line = it.next();
+			
 			if (STORE_SINGLE_FAIL_TRACE_FLAG.equals(line)) {
 				storeSingleFailTrace = true;
 				continue;

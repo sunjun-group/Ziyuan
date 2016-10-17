@@ -1,6 +1,7 @@
 package invariant.templates.twofeatures;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import sav.common.core.formula.Eq;
@@ -19,6 +20,10 @@ public class TwoNumAddOverflowTemplate extends TwoFeaturesTemplate {
 	
 	@Override
 	public boolean checkPassValue(List<ExecValue> evl) {
+		if (evl.get(0).getDoubleVal() == null ||
+				evl.get(1).getDoubleVal() == null)
+			return false;
+		
 		// not overflow for long and int
 		if (evl.get(0).getType() == ExecVarType.LONG &&
 				evl.get(1).getType() == ExecVarType.LONG) {
@@ -43,6 +48,10 @@ public class TwoNumAddOverflowTemplate extends TwoFeaturesTemplate {
 	
 	@Override
 	public boolean checkFailValue(List<ExecValue> evl) {
+		if (evl.get(0).getDoubleVal() == null ||
+				evl.get(1).getDoubleVal() == null)
+			return false;
+		
 		if (evl.get(0).getType() == ExecVarType.LONG &&
 				evl.get(1).getType() == ExecVarType.LONG) {
 			long l1 = ((LongValue) evl.get(0)).getLongVal();
@@ -69,51 +78,59 @@ public class TwoNumAddOverflowTemplate extends TwoFeaturesTemplate {
 		List<List<Eq<?>>> samples = new ArrayList<List<Eq<?>>>();
 		
 		ExecValue ev1 = passValues.get(0).get(0);
-		Var v1 = new ExecVar(ev1.getVarId(), ev1.getType());
-		
 		ExecValue ev2 = passValues.get(0).get(1);
-		Var v2 = new ExecVar(ev2.getVarId(), ev2.getType());
 		
-		List<Eq<?>> sample1 = new ArrayList<Eq<?>>();
-		if (ev1.getType() == ExecVarType.LONG && ev2.getType() == ExecVarType.LONG) {
-			sample1.add(new Eq<Number>(v1, Long.MAX_VALUE));
-			sample1.add(new Eq<Number>(v2, 1L));
-		} else if (ev1.getType() == ExecVarType.INTEGER && ev2.getType() == ExecVarType.INTEGER) {
-			sample1.add(new Eq<Number>(v1, Integer.MAX_VALUE));
-			sample1.add(new Eq<Number>(v2, 1));
+		String id1 = ev1.getVarId();
+		String id2 = ev2.getVarId();
+		
+		ExecVarType t1 = ev1.getType();
+		ExecVarType t2 = ev2.getType();
+		
+		Var v1 = new ExecVar(id1, t1);
+		Var v2 = new ExecVar(id2, t2);
+		
+		List<Var> vs = Arrays.asList(v1, v2);
+		List<ExecVarType> ts = Arrays.asList(t1, t2);
+		
+		if (t1 == ExecVarType.INTEGER) {
+			samples.add(sampling(vs, ts, Arrays.asList(Integer.MAX_VALUE * 1.0, 0.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(Integer.MAX_VALUE * 1.0, 1.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(Integer.MAX_VALUE * 1.0, -1.0)));
+		} else if (t1 == ExecVarType.LONG) {
+			samples.add(sampling(vs, ts, Arrays.asList(Long.MAX_VALUE * 1.0, 0.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(Long.MAX_VALUE * 1.0, 1.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(Long.MAX_VALUE * 1.0, -1.0)));
 		}
 		
-		List<Eq<?>> sample2 = new ArrayList<Eq<?>>();
-		if (ev1.getType() == ExecVarType.LONG && ev2.getType() == ExecVarType.LONG) {
-			sample2.add(new Eq<Number>(v1, Long.MAX_VALUE));
-			sample2.add(new Eq<Number>(v2, 0L));
-		} else if (ev1.getType() == ExecVarType.INTEGER && ev2.getType() == ExecVarType.INTEGER) {
-			sample2.add(new Eq<Number>(v1, Integer.MAX_VALUE));
-			sample2.add(new Eq<Number>(v2, 0));
+		/*else if (t1 == ExecVarType.FLOAT) {
+			samples.add(sampling(vs, ts, Arrays.asList(Float.MAX_VALUE * 1.0, 0.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(Float.MAX_VALUE * 1.0, 1.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(Float.MAX_VALUE * 1.0, -1.0)));
+		} else if (t1 == ExecVarType.DOUBLE) {
+			samples.add(sampling(vs, ts, Arrays.asList(Double.MAX_VALUE * 1.0, 0.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(Double.MAX_VALUE * 1.0, 1.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(Double.MAX_VALUE * 1.0, -1.0)));
+		}*/
+		
+		if (t2 == ExecVarType.INTEGER) {
+			samples.add(sampling(vs, ts, Arrays.asList(0.0, Integer.MAX_VALUE * 1.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(1.0, Integer.MAX_VALUE * 1.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(-1.0, Integer.MAX_VALUE * 1.0)));
+		} else if (t2 == ExecVarType.LONG) {
+			samples.add(sampling(vs, ts, Arrays.asList(0.0, Long.MAX_VALUE * 1.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(1.0, Long.MAX_VALUE * 1.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(-1.0, Long.MAX_VALUE * 1.0)));
 		}
 		
-		List<Eq<?>> sample3 = new ArrayList<Eq<?>>();
-		if (ev1.getType() == ExecVarType.LONG && ev2.getType() == ExecVarType.LONG) {
-			sample3.add(new Eq<Number>(v1, 1L));
-			sample3.add(new Eq<Number>(v2, Long.MAX_VALUE));
-		} else if (ev1.getType() == ExecVarType.INTEGER && ev2.getType() == ExecVarType.INTEGER) {
-			sample3.add(new Eq<Number>(v1, 1));
-			sample3.add(new Eq<Number>(v2, Integer.MAX_VALUE));
-		}
-		
-		List<Eq<?>> sample4 = new ArrayList<Eq<?>>();
-		if (ev1.getType() == ExecVarType.LONG && ev2.getType() == ExecVarType.LONG) {
-			sample4.add(new Eq<Number>(v1, 0L));
-			sample4.add(new Eq<Number>(v2, Long.MAX_VALUE));
-		} else if (ev1.getType() == ExecVarType.INTEGER && ev2.getType() == ExecVarType.INTEGER) {
-			sample4.add(new Eq<Number>(v1, 0));
-			sample4.add(new Eq<Number>(v2, Integer.MAX_VALUE));
-		}
-		
-		samples.add(sample1);
-		samples.add(sample2);
-		samples.add(sample3);
-		samples.add(sample4);
+		/*else if (t2 == ExecVarType.FLOAT) {
+			samples.add(sampling(vs, ts, Arrays.asList(0.0, Float.MAX_VALUE * 1.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(1.0, Float.MAX_VALUE * 1.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(-1.0, Float.MAX_VALUE * 1.0)));
+		} else if (t2 == ExecVarType.DOUBLE) {
+			samples.add(sampling(vs, ts, Arrays.asList(0.0, Double.MAX_VALUE * 1.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(1.0, Double.MAX_VALUE * 1.0)));
+			samples.add(sampling(vs, ts, Arrays.asList(-1.0, Double.MAX_VALUE * 1.0)));
+		}*/
 		
 		return samples;
 	}

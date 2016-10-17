@@ -10,36 +10,36 @@ import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
 
-public class TwoNumCubeTemplate extends TwoFeaturesTemplate {
+public class TwoNumEqualTemplate extends TwoFeaturesTemplate {
 
-	public TwoNumCubeTemplate(List<List<ExecValue>> passExecValuesList, List<List<ExecValue>> failExecValuesList) {
+	public TwoNumEqualTemplate(List<List<ExecValue>> passExecValuesList, List<List<ExecValue>> failExecValuesList) {
 		super(passExecValuesList, failExecValuesList);
 	}
 	
 	@Override
 	public boolean checkPassValue(List<ExecValue> evl) {
 		// list of pass and fail exec value only has two features
-		// first feature must be equals to cube of second feature
+		// first feature must be equals to abs of second feature
 		if (evl.get(0).getDoubleVal() == null ||
 				evl.get(1).getDoubleVal() == null)
 			return false;
 		
 		double v1 = evl.get(0).getDoubleVal();
 		double v2 = evl.get(1).getDoubleVal();
-		return v1 == Math.pow(v2, 3);
+		return v1 == v2;
 	}
 	
 	@Override
 	public boolean checkFailValue(List<ExecValue> evl) {
 		// list of pass and fail exec value only has two features
-		// first feature must not be equals to cube of second feature
+		// first feature must not be equals to abs of second feature
 		if (evl.get(0).getDoubleVal() == null ||
 				evl.get(1).getDoubleVal() == null)
 			return false;
 		
 		double v1 = evl.get(0).getDoubleVal();
 		double v2 = evl.get(1).getDoubleVal();
-		return v1 != Math.pow(v2, 3);
+		return v1 != v2;
 	}
 	
 	@Override
@@ -74,7 +74,7 @@ public class TwoNumCubeTemplate extends TwoFeaturesTemplate {
 		String id1 = passValues.get(0).get(0).getVarId();
 		String id2 = passValues.get(0).get(1).getVarId();
 		
-		return id1 + " = " + "cube(" + id2 + ")";
+		return id1 + " = " + id2;
 	}
 
 }

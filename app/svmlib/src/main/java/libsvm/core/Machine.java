@@ -272,6 +272,7 @@ public class Machine {
 		}
 
 		model = performTrainingTask(problem, parameter);
+		
 		return this;
 	}
 
@@ -396,6 +397,11 @@ public class Machine {
 	
 	public <R> R getLearnedLogic(IDividerProcessor<R> processor, Divider divider, boolean round) {
 		return processor.process(divider, dataLabels, round);
+	}
+	
+	public <R> R getLearnedLogic(IDividerProcessor<R> processor, Divider divider,
+			boolean round, int num) {
+		return processor.process(divider, dataLabels, round, num);
 	}
 
 	protected String getLearnedLogic(final Divider divider, boolean round) {

@@ -1,20 +1,20 @@
 package sav.strategies.dto.execute.value;
 
 public class CharValue extends PrimitiveValue {
-	private char value;
+	private Character value;
 	
-	public CharValue(String id, char value) {
+	public CharValue(String id, Character value) {
 		super(id, String.valueOf(value));
 		this.value = value;
 	}
 	
 	@Override
-	public double getDoubleVal() {
-		return value;
+	public Double getDoubleVal() {
+		return (value == null) ? null : (double) value;
 	}
 	
-	public char getCharVal() {
-		return value;
+	public Character getCharVal() {
+		return (value == null) ? null : value;
 	}
 	
 	public static CharValue of(String id, char value) {

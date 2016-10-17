@@ -94,6 +94,7 @@ public class TestcasesExecutor extends JunitDebugger {
 						.addAll(bkpValueOfTcI);
 			}
 		}
+		
 		result = buildBreakpointData(CollectionUtils.initIfEmpty(resultMap.get(TestResultType.PASS)), 
 				CollectionUtils.initIfEmpty(resultMap.get(TestResultType.FAIL)));
 		this.jResult = jResult; 
@@ -137,6 +138,7 @@ public class TestcasesExecutor extends JunitDebugger {
 				result.add(val);
 			}
 		}
+		
 		return result;
 	}
 

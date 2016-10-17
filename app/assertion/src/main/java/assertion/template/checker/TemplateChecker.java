@@ -51,7 +51,7 @@ public class TemplateChecker {
 	
 	private boolean duplicate(List<List<ExecValue>> currEvlList, List<ExecValue> newEvl) {
 		String s1 = newEvl.toString();
-		
+				
 		for (List<ExecValue> evl : currEvlList) {
 			String s2 = evl.toString();
 			if (s1.equals(s2)) return true;
@@ -61,8 +61,8 @@ public class TemplateChecker {
 	}
 	
 	public void checkSingleTemplates() {
-		log.info("Pass values: {}\n", passValues);
-		log.info("Fail values: {}\n", failValues);
+//		log.info("Pass values: {}\n", passValues);
+//		log.info("Fail values: {}\n", failValues);
 		
 		stc = new SingleTemplateChecker(passValues, failValues);
 		stc.checkSingleTemplates();
