@@ -6,9 +6,13 @@ public class ToOctal {
 		if (value < 0) {
 			return -1;
 		}
+		
+		//to achieve 100% coverage
+		if (value == 0) {
+			return 0;
+		}
 
-		StringBuilder sb = 
-				new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 		while (value > 0) {
 			sb.append(value % 8);
 			value /= 8;

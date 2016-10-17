@@ -21,6 +21,7 @@ public class CfgDecisionNode implements CfgNode {
 	private List<Divider> dividers;
 	private Formula trueFalse;
 	private Formula oneMore;
+	private boolean relevant = true;
 	
 	public CfgDecisionNode(Node astNode) {
 		this.astNode = astNode;
@@ -134,6 +135,15 @@ public class CfgDecisionNode implements CfgNode {
 
 	public void setOneMore(Formula oneMore) {
 		this.oneMore = oneMore;
+	}
+
+	public void setRelevant(boolean relevant) {
+		this.relevant = relevant;
+	}
+	
+	@Override
+	public boolean isRelevant() {
+		return relevant;
 	}
 	
 }

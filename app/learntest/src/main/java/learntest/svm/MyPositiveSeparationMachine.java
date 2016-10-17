@@ -41,7 +41,7 @@ public class MyPositiveSeparationMachine extends Machine {
 			return this;
 		}
 		
-		learnedModels = new ArrayList<svm_model>();
+		/*learnedModels = new ArrayList<svm_model>();
 		List<DataPoint> positives = new ArrayList<DataPoint>();
 		List<DataPoint> negatives = new ArrayList<DataPoint>();
 		classifyNegativePositivePoints(dataPoints, positives, negatives);
@@ -75,16 +75,16 @@ public class MyPositiveSeparationMachine extends Machine {
 				}
 				learnedModels.add(last);
 				trainingData = new ArrayList<Machine.DataPoint>(positives);*/
-			} else {
+			/*} else {
 				negatives.remove(trainingData.remove(trainingData.size() - 1));
-			}
+			}*/
 			/*if (model != null) {
 				learnedModels.add(model);
 			}*/
 
 			//trainingData.remove(trainingData.size() - 1);
 			//removeClassifiedNegativePoints(negatives, lastRemoved);
-		}
+		//}
 		
 		return this;
 	}

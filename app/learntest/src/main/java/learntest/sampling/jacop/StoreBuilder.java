@@ -12,6 +12,7 @@ import org.jacop.core.Store;
 
 import learntest.calculator.MultiNotDividerBasedCategoryCalculator;
 import learntest.calculator.OrCategoryCalculator;
+import learntest.sampling.PathRandom;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import libsvm.extension.MultiDividerBasedCategoryCalculator;
@@ -24,8 +25,8 @@ import sav.strategies.dto.execute.value.ExecVar;
 public class StoreBuilder {
 	
 	public static List<Store> build(Divider object, List<ExecVar> vars, OrCategoryCalculator calculator, 
-			List<Divider> dividers) {
-		List<Store> stores = build(vars, calculator, dividers);
+			List<Divider> dividers, boolean random) {
+		List<Store> stores = build(vars, calculator, dividers, random);
 		if (!stores.isEmpty() && object != null) {
 			for (Store store : stores) {
 				addTarget(store, object);
@@ -73,15 +74,15 @@ public class StoreBuilder {
 
 	// vars: original vars like x and y, not include x * x, y * y and x * y;
 	public static List<Store> build(List<ExecVar> vars, OrCategoryCalculator orCalculator, 
-			List<Divider> current) {
+			List<Divider> current, boolean random) {
 		List<Store> res = new ArrayList<Store>();
 		if (orCalculator == null) {
-			res.add(build(vars, current, null));
+			res.add(build(vars, current, null, random));
 			return res;
 		}
 		List<List<CategoryCalculator>> calculators = orCalculator.getCalculators();
 		if (calculators.isEmpty()) {
-			res.add(build(vars, current, null));
+			res.add(build(vars, current, null, random));
 			return res;
 		}
 		for (List<CategoryCalculator> list : calculators) {
@@ -98,11 +99,11 @@ public class StoreBuilder {
 			}
 			if (notDividers.isEmpty()) {
 				if (!dividers.isEmpty()) {
-					res.add(build(vars, dividers, null));
+					res.add(build(vars, dividers, null, random));
 				}
 			}
 			for (List<Divider> nots : notDividers) {
-				res.add(build(vars, dividers, nots));
+				res.add(build(vars, dividers, nots, random));
 			}
 		}
 		return res;
@@ -137,8 +138,13 @@ public class StoreBuilder {
 	}
 	
 	private static Store build(List<ExecVar> vars, List<Divider> dividers, 
-			List<Divider> notDividers) {
+			List<Divider> notDividers, boolean random) {
 		Store store = build(vars);
+		if (random) {
+			PathRandom.randomPath(dividers, notDividers);
+			dividers = PathRandom.dividers;
+			notDividers = PathRandom.notDividers;
+		}
 		if (dividers != null) {
 			for (Divider divider : dividers) {
 				double[] thetas = divider.getThetas();
@@ -190,11 +196,11 @@ public class StoreBuilder {
 				store.impose(new XmulYeqZ(intVars[i], intVars[j], intVars[idx ++]));
 			}
 		}
-		/*IntVar x = (IntVar) store.findVariable("x");
+		IntVar x = (IntVar) store.findVariable("x");
 		IntVar y = (IntVar) store.findVariable("y");
 		IntVar z = (IntVar) store.findVariable("z");
 		store.impose(new XgteqY(x, y));
-		store.impose(new XgteqY(y, z));*/
+		store.impose(new XgteqY(y, z));
 		return store;
 	}
 	
@@ -207,7 +213,7 @@ public class StoreBuilder {
 			case CHAR:
 				return new IntVar(store, var.getLabel(), -100, 100);
 			case DOUBLE:
-				return new IntVar(store, var.getLabel(), -20, 20);
+				return new IntVar(store, var.getLabel(), -2000, 2000);
 			case FLOAT:
 				return new IntVar(store, var.getLabel(), -1000, 1000);
 			case LONG:
@@ -215,7 +221,7 @@ public class StoreBuilder {
 			case SHORT:
 				return new IntVar(store, var.getLabel(), -100, 100);
 			default:
-				return new IntVar(store, var.getLabel(), -20, 20/*1, 20*/);
+				return new IntVar(store, var.getLabel(), 1, 20);
 		}
 	}
 	

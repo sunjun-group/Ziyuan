@@ -92,16 +92,18 @@ public class Engine {
 		JacopSelectiveSampling selectiveSampling = new JacopSelectiveSampling(tcExecutor);
 		DecisionLearner learner = new DecisionLearner(selectiveSampling, manager);
 		learner.learn(result);
-		List<BreakpointValue> records = learner.getRecords();
-		System.out.println("==============================================");
+		//List<BreakpointValue> records = learner.getRecords();
+		/*System.out.println("==============================================");
 		System.out.println(cfg);
-		System.out.println("==============================================");
-		List<List<Formula>> paths = manager.buildPaths();
+		System.out.println("==============================================");*/
+		/*List<List<Formula>> paths = manager.buildPaths();
 		System.out.println(paths);
 		JacopPathSolver solver = new JacopPathSolver(learner.getOriginVars());
-		List<Domain[]> solutions = solver.solve(paths);
-		solutions.addAll(getSolutions(records, learner.getOriginVars()));
-		new TestGenerator().genTestAccordingToSolutions(solutions, learner.getOriginVars());
+		List<Domain[]> solutions = solver.solve(paths);*/
+		//solutions.addAll(getSolutions(records, learner.getOriginVars()));
+		//new TestGenerator().genTestAccordingToSolutions(solutions, learner.getOriginVars());
+		new TestGenerator().genTestAccordingToSolutions(getSolutions(learner.getRecords(), learner.getOriginVars()), 
+				learner.getOriginVars());
 		System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
 		//PathSolver pathSolver = new PathSolver();
 		//List<Result> results = pathSolver.solve(paths);

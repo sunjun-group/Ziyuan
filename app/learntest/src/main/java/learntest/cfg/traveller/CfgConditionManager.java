@@ -2,11 +2,12 @@ package learntest.cfg.traveller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import learntest.breakpoint.data.DecisionLocation;
 import learntest.calculator.MultiNotDividerBasedCategoryCalculator;
 import learntest.calculator.OrCategoryCalculator;
 import learntest.cfg.CFG;
@@ -15,6 +16,8 @@ import learntest.cfg.CfgEdge;
 import learntest.cfg.CfgFalseEdge;
 import learntest.cfg.CfgNode;
 import learntest.cfg.CfgTrueEdge;
+import learntest.testcase.data.BreakpointData;
+import learntest.testcase.data.LoopTimesData;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import libsvm.extension.MultiDividerBasedCategoryCalculator;
@@ -33,7 +36,9 @@ public class CfgConditionManager {
 	private Map<CfgDecisionNode, CfgDecisionNode> falseNext;
 	private Map<CfgDecisionNode, CfgDecisionNode> next;
 	
-	private Set<CfgDecisionNode> ends;
+	private Map<CfgDecisionNode, List<CfgDecisionNode>> parents;
+	
+	//private Set<CfgDecisionNode> ends;
 	
 	private List<ExecVar> vars;
 	private List<ExecVar> originalVars;
@@ -50,7 +55,8 @@ public class CfgConditionManager {
 		trueNext = new HashMap<CfgDecisionNode, CfgDecisionNode>();
 		falseNext = new HashMap<CfgDecisionNode, CfgDecisionNode>();
 		next = new HashMap<CfgDecisionNode, CfgDecisionNode>();
-		ends = new HashSet<CfgDecisionNode>();
+		parents = new HashMap<CfgDecisionNode, List<CfgDecisionNode>>();
+		//ends = new HashSet<CfgDecisionNode>();
 		List<CfgNode> vertices = cfg.getVertices();
 		for (CfgNode node : vertices) {
 			if (node instanceof CfgDecisionNode) {
@@ -71,15 +77,33 @@ public class CfgConditionManager {
 				if (trueNode != falseNode) {
 					if (trueNode != null && trueNode.getBeginLine() > node.getBeginLine()) {
 						trueNext.put((CfgDecisionNode) node, trueNode);
+						List<CfgDecisionNode> parentList = parents.get(trueNode);
+						if (parentList == null) {
+							parentList = new ArrayList<CfgDecisionNode>();
+							parents.put(trueNode, parentList);
+						}
+						parentList.add((CfgDecisionNode) node);
 					}
 					if (falseNode != null && falseNode.getBeginLine() > node.getBeginLine()) {
-						falseNext.put((CfgDecisionNode) node, falseNode);	
+						falseNext.put((CfgDecisionNode) node, falseNode);
+						List<CfgDecisionNode> parentList = parents.get(falseNode);
+						if (parentList == null) {
+							parentList = new ArrayList<CfgDecisionNode>();
+							parents.put(falseNode, parentList);
+						}
+						parentList.add((CfgDecisionNode) node);
 					}
 				} else if (trueNode != null && trueNode.getBeginLine() > node.getBeginLine()) {
 					next.put((CfgDecisionNode) node, trueNode);
-				} else {
+					List<CfgDecisionNode> parentList = parents.get(trueNode);
+					if (parentList == null) {
+						parentList = new ArrayList<CfgDecisionNode>();
+						parents.put(trueNode, parentList);
+					}
+					parentList.add((CfgDecisionNode) node);
+				} /*else {
 					ends.add((CfgDecisionNode) node);
-				}
+				}*/
 			}
 		}
 	}
@@ -158,8 +182,12 @@ public class CfgConditionManager {
 		return new OrCategoryCalculator(node.getPreconditions(), vars, originalVars);
 	}
 	
-	public boolean isEnd(int lineNo) {
+	/*public boolean isEnd(int lineNo) {
 		return ends.contains(nodeMap.get(lineNo));
+	}*/
+	
+	public boolean isRelevant(int lineNo) {
+		return nodeMap.get(lineNo).isRelevant();
 	}
 
 	public List<List<Formula>> buildPaths() {
@@ -308,6 +336,104 @@ public class CfgConditionManager {
 				}
 			}
 		}
+	}
+	
+	/*public void updateRelevance(Map<DecisionLocation, BreakpointData> bkpDataMap) {
+		Map<Integer, DecisionLocation> map = new HashMap<Integer, DecisionLocation>();
+		Set<Entry<DecisionLocation, BreakpointData>> entrySet = bkpDataMap.entrySet();
+		List<Integer> changeList = new ArrayList<Integer>();
+		for (Entry<DecisionLocation, BreakpointData> entry : entrySet) {
+			map.put(entry.getKey().getLineNo(), entry.getKey());
+			if(updateRelevance(nodeMap.get(entry.getKey().getLineNo()), entry.getValue())) {
+				changeList.add(entry.getKey().getLineNo());
+			}
+		}
+		while (!changeList.isEmpty()) {
+			List<Integer> tmp = new ArrayList<Integer>();
+			for (Integer lineNo : changeList) {
+				List<CfgDecisionNode> parentList = parents.get(nodeMap.get(lineNo));
+				if (parentList == null) {
+					continue;
+				}
+				for (CfgDecisionNode node : parentList) {
+					if (updateRelevance(node, bkpDataMap.get(map.get(node.getBeginLine())))) {
+						tmp.add(node.getBeginLine());
+					}
+				}
+			}
+			changeList = tmp;
+		}
+	}*/
+	
+	public void updateRelevance(BreakpointData breakpointData) {
+		int line = breakpointData.getLocation().getLineNo();
+		if (!updateRelevance(nodeMap.get(line), breakpointData)) {
+			return;
+		}
+		List<Integer> changeList = new ArrayList<Integer>();
+		changeList.add(line);
+		while (!changeList.isEmpty()) {
+			List<Integer> tmp = new ArrayList<Integer>();
+			for (Integer lineNo : changeList) {
+				List<CfgDecisionNode> parentList = parents.get(nodeMap.get(lineNo));
+				if (parentList == null) {
+					continue;
+				}
+				for (CfgDecisionNode node : parentList) {
+					if (updateRelevance(node, null)) {
+						tmp.add(node.getBeginLine());
+					}
+				}
+			}
+			changeList = tmp;
+		}
+	}
+	
+	private boolean updateRelevance(CfgDecisionNode node, BreakpointData breakpointData) {
+		CfgDecisionNode nextNode = trueNext.get(node);
+		if (nextNode != null) {
+			if (nextNode.isRelevant()) {
+				node.setRelevant(true);
+				return false;
+			}
+		}
+		nextNode = falseNext.get(node);
+		if (nextNode != null) {
+			if (nextNode.isRelevant()) {
+				node.setRelevant(true);
+				return false;
+			}
+		}
+		nextNode = next.get(node);
+		if (nextNode != null) {
+			if (nextNode.isRelevant()) {
+				node.setRelevant(true);
+				return false;
+			}
+		}
+		if (breakpointData == null) {
+			if (!node.isRelevant()) {
+				return false;
+			}
+			node.setRelevant(false);
+			return true;
+		}
+		if (breakpointData.getFalseValues().isEmpty() || breakpointData.getTrueValues().isEmpty()) {
+			node.setRelevant(true);
+			return false;
+		}
+		if (breakpointData instanceof LoopTimesData) {
+			if (((LoopTimesData) breakpointData).getOneTimeValues().isEmpty() 
+					|| ((LoopTimesData) breakpointData).getMoreTimesValues().isEmpty()) {
+				node.setRelevant(true);
+				return false;
+			}
+		}
+		if (!node.isRelevant()) {
+			return false;
+		}
+		node.setRelevant(false);
+		return true;
 	}
 
 }

@@ -23,7 +23,6 @@ import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
-import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;

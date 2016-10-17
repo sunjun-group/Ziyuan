@@ -57,9 +57,11 @@ public class DecisionLearner implements CategoryCalculator {
 	private List<BreakpointValue> records;
 	
 	private final int MAX_ATTEMPT = 10;
-	private final int MAX_TO_RECORD = 5;
+	//private final int MAX_TO_RECORD = 5;
 	
-	private long startTime;
+	//private long startTime;
+	
+	private boolean random = true;
 	
 	public DecisionLearner(JacopSelectiveSampling selectiveSampling, CfgConditionManager manager) {
 		machine = new MyPositiveSeparationMachine();
@@ -129,17 +131,19 @@ public class DecisionLearner implements CategoryCalculator {
 	}*/
 	
 	private Pair<Formula, Formula> learn(BreakpointData bkpData) throws SavException {
-		OrCategoryCalculator preconditions = manager.getPreConditions(bkpData.getLocation().getLineNo());
-		preconditions.clear(bkpData);
+		OrCategoryCalculator preconditions = null;
+		if (!random) {
+			preconditions = manager.getPreConditions(bkpData.getLocation().getLineNo());
+			preconditions.clear(bkpData);
+		}
 
 		//clear(bkpData);
 		
-		if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
-			
-			startTime = System.currentTimeMillis();
+		if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {			
+			//startTime = System.currentTimeMillis();
 			Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataForEmpty(bkpData.getLocation(), originVars,
 					preconditions, null, bkpData.getTrueValues().isEmpty(), false);
-			System.out.println("learn select data for empty time: " + (System.currentTimeMillis() - startTime) + "ms");
+			//System.out.println("learn select data for empty time: " + (System.currentTimeMillis() - startTime) + "ms");
 			if (selectMap != null) {
 				mergeMap(selectMap);
 				if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
@@ -163,6 +167,28 @@ public class DecisionLearner implements CategoryCalculator {
 				oneMore = learn((LoopTimesData)bkpData);
 			}
 			return new Pair<Formula, Formula>(null, oneMore);
+		}
+		
+		if (random) {
+			List<BreakpointValue> falseValues = bkpData.getFalseValues();
+			for (BreakpointValue value : falseValues) {
+				if (!records.contains(value)) {
+					records.add(value);
+				}
+			}
+			
+			if (bkpData instanceof LoopTimesData) {
+				learn((LoopTimesData)bkpData);
+			} else {
+				List<BreakpointValue> trueValues = bkpData.getTrueValues();
+				for (BreakpointValue value : trueValues) {
+					if (!records.contains(value)) {
+						records.add(value);
+					}
+				}
+			}
+			
+			return new Pair<Formula, Formula>(null, null);
 		}
 		
 		/*oneClass.resetData();
@@ -198,20 +224,21 @@ public class DecisionLearner implements CategoryCalculator {
 		}*/
 		
 		Formula trueFlase = null;
+		manager.updateRelevance(bkpData);
 		
-		if (!manager.isEnd(bkpData.getLocation().getLineNo())) {
+		//if (/*!manager.isEnd(bkpData.getLocation().getLineNo())*/manager.isRelevant(bkpData.getLocation().getLineNo())) {
 
 			int times = 0;
 			machine.resetData();
 			addDataPoints(originVars, bkpData.getTrueValues(), Category.POSITIVE, machine);
 			addDataPoints(originVars, bkpData.getFalseValues(), Category.NEGATIVE, machine);
-			startTime = System.currentTimeMillis();
+			//startTime = System.currentTimeMillis();
 			machine.train();
-			System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
+			//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
 			/*Formula */trueFlase = getLearnedFormula();
 			double acc = machine.getModelAccuracy();
 			curDividers = machine.getLearnedDividers();
-			while(trueFlase != null && times < MAX_ATTEMPT) {
+			while(trueFlase != null && times < MAX_ATTEMPT && manager.isRelevant(bkpData.getLocation().getLineNo())) {
 				/*BreakpointData newData = selectiveSampling.selectData(bkpData.getLocation(), 
 						trueFlase, machine.getDataLabels(), machine.getDataPoints());*/
 				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(bkpData.getLocation(), 
@@ -227,14 +254,15 @@ public class DecisionLearner implements CategoryCalculator {
 					break;
 				}
 				preconditions.clear(newData);
+				manager.updateRelevance(bkpData);
 				addDataPoints(originVars, newData.getTrueValues(), Category.POSITIVE, machine);
 				addDataPoints(originVars, newData.getFalseValues(), Category.NEGATIVE, machine);
 				/*if (machine.getModelAccuracy() == 1.0) {
 					break;
 				}*/
-				startTime = System.currentTimeMillis();
+				//startTime = System.currentTimeMillis();
 				machine.train();
-				System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
+				//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
 				Formula tmp = getLearnedFormula();
 				double accTmp = machine.getModelAccuracy();
 				if (tmp == null) {
@@ -252,29 +280,56 @@ public class DecisionLearner implements CategoryCalculator {
 				times ++;
 			}
 		
+//		}
+		
+		List<BreakpointValue> falseValues = bkpData.getFalseValues();
+		boolean needMore = true;
+		for (BreakpointValue value : falseValues) {
+			if (records.contains(value)) {
+				needMore = false;
+				break;
+			}
+		}
+		if (needMore) {
+			records.add(falseValues.get(0));
 		}
 		
 		Formula oneMore = null;
 		if (bkpData instanceof LoopTimesData) {
 			oneMore = learn((LoopTimesData)bkpData);
+		} else {
+			List<BreakpointValue> trueValues = bkpData.getTrueValues();
+			needMore = true;
+			for (BreakpointValue value : trueValues) {
+				if (records.contains(value)) {
+					needMore = false;
+					break;
+				}
+			}
+			if (needMore) {
+				records.add(trueValues.get(0));
+			}
 		}
 		
-		if (!bkpData.getFalseValues().isEmpty() && bkpData.getFalseValues().size() < MAX_TO_RECORD) {
+		/*if (!bkpData.getFalseValues().isEmpty() && bkpData.getFalseValues().size() < MAX_TO_RECORD) {
 			records.add(bkpData.getFalseValues().get(0));
 		}
 		if (!(bkpData instanceof LoopTimesData) && !bkpData.getTrueValues().isEmpty() && bkpData.getTrueValues().size() < MAX_TO_RECORD) {
 			records.add(bkpData.getTrueValues().get(0));
-		}
+		}*/
 		return new Pair<Formula, Formula>(trueFlase, oneMore);
 	}
 	
 	private Formula learn(LoopTimesData loopData) throws SavException {
-		OrCategoryCalculator preConditions = manager.getPreConditions(loopData.getLocation().getLineNo());
+		OrCategoryCalculator preConditions = null;
+		if (!random) {
+			preConditions = manager.getPreConditions(loopData.getLocation().getLineNo());			
+		}
 		if (loopData.getOneTimeValues().isEmpty() || loopData.getMoreTimesValues().isEmpty()) {
-			startTime = System.currentTimeMillis();
+			//startTime = System.currentTimeMillis();
 			Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataForEmpty(loopData.getLocation(), originVars,
 					preConditions, curDividers, loopData.getMoreTimesValues().isEmpty(), true);
-			System.out.println("learn select data for empty time: " + (System.currentTimeMillis() - startTime) + "ms");
+			//System.out.println("learn select data for empty time: " + (System.currentTimeMillis() - startTime) + "ms");
 			mergeMap(selectMap);
 			loopData = (LoopTimesData) bkpDataMap.get(loopData.getLocation());
 		}
@@ -285,6 +340,23 @@ public class DecisionLearner implements CategoryCalculator {
 			log.info("Missing more than once loop data");
 			return null;
 		}
+		
+		if (random) {
+			List<BreakpointValue> choices = loopData.getOneTimeValues();
+			for (BreakpointValue value : choices) {
+				if (!records.contains(value)) {
+					records.add(value);
+				}
+			}
+			choices = loopData.getMoreTimesValues();
+			for (BreakpointValue value : choices) {
+				if (!records.contains(value)) {
+					records.add(value);
+				}
+			}
+			return null;
+		}
+		
 		/*oneClass.resetData();
 		int times = 0;
 		LoopTimesData oneClassData = loopData;
@@ -317,18 +389,19 @@ public class DecisionLearner implements CategoryCalculator {
 			loopData.merge(oneClassData);
 		}*/
 		Formula formula = null;
-		if (!manager.isEnd(loopData.getLocation().getLineNo())) {
+		manager.updateRelevance(loopData);
+		//if (/*!manager.isEnd(loopData.getLocation().getLineNo())*/manager.isRelevant(loopData.getLocation().getLineNo())) {
 			
 			int times = 0;
 			machine.resetData();
 			addDataPoints(originVars, loopData.getMoreTimesValues(), Category.POSITIVE, machine);
 			addDataPoints(originVars, loopData.getOneTimeValues(), Category.NEGATIVE, machine);
-			startTime = System.currentTimeMillis();
+			//startTime = System.currentTimeMillis();
 			machine.train();
-			System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
+			//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
 			formula = getLearnedFormula();
 			double acc = machine.getModelAccuracy();
-			while(formula != null && times < MAX_ATTEMPT) {
+			while(formula != null && times < MAX_ATTEMPT && manager.isRelevant(loopData.getLocation().getLineNo())) {
 				/*LoopTimesData newData = (LoopTimesData) selectiveSampling.selectData(loopData.getLocation(), 
 						formula, machine.getDataLabels(), machine.getDataPoints());	*/
 				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(loopData.getLocation(), 
@@ -341,14 +414,15 @@ public class DecisionLearner implements CategoryCalculator {
 				if (newData == null) {
 					break;
 				}
+				manager.updateRelevance(loopData);
 				addDataPoints(originVars, newData.getMoreTimesValues(), Category.POSITIVE, machine);
 				addDataPoints(originVars, newData.getOneTimeValues(), Category.NEGATIVE, machine);
 				/*if (machine.getModelAccuracy() == 1.0) {
 					break;
 				}*/
-				startTime = System.currentTimeMillis();
+				//startTime = System.currentTimeMillis();
 				machine.train();
-				System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
+				//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
 				Formula tmp = getLearnedFormula();
 				double accTmp = machine.getModelAccuracy();
 				if (tmp == null) {
@@ -363,14 +437,37 @@ public class DecisionLearner implements CategoryCalculator {
 				times ++;
 			}
 			
-		}		
+//		}	
 		
-		if (!loopData.getOneTimeValues().isEmpty() && loopData.getOneTimeValues().size() < MAX_TO_RECORD) {
+		List<BreakpointValue> choices = loopData.getOneTimeValues();
+		boolean needMore = true;
+		for (BreakpointValue value : choices) {
+			if (records.contains(value)) {
+				needMore = false;
+				break;
+			}
+		}
+		if (needMore) {
+			records.add(choices.get(0));
+		}
+		choices = loopData.getMoreTimesValues();
+		needMore = true;
+		for (BreakpointValue value : choices) {
+			if (records.contains(value)) {
+				needMore = false;
+				break;
+			}
+		}
+		if (needMore) {
+			records.add(choices.get(0));
+		}
+		
+		/*if (!loopData.getOneTimeValues().isEmpty() && loopData.getOneTimeValues().size() < MAX_TO_RECORD) {
 			records.add(loopData.getOneTimeValues().get(0));
 		}
 		if (!loopData.getMoreTimesValues().isEmpty() && loopData.getMoreTimesValues().size() < MAX_TO_RECORD) {
 			records.add(loopData.getMoreTimesValues().get(0));
-		}
+		}*/
 		
 		return formula;
 	}
@@ -499,7 +596,7 @@ public class DecisionLearner implements CategoryCalculator {
 	}
 	
 	private void mergeMap(Map<DecisionLocation, BreakpointData> newMap) {
-		startTime = System.currentTimeMillis();
+		//startTime = System.currentTimeMillis();
 		if (newMap == null) {
 			return;
 		}
@@ -507,7 +604,7 @@ public class DecisionLearner implements CategoryCalculator {
 		for (DecisionLocation location : locations) {
 			bkpDataMap.get(location).merge(newMap.get(location));
 		}
-		System.out.println("learn merge map time: " + (System.currentTimeMillis() - startTime) + " ms");
+		//System.out.println("learn merge map time: " + (System.currentTimeMillis() - startTime) + " ms");
 		return;
 	}
 

@@ -5,9 +5,14 @@ public class ToHex {
 	public static void main(String[] args) {
 		new ToHex().toHexTest(233);
 	}
+	
 	public String toHexTest(int value) {
 		if (value < 0) {
 			return "-1";
+		}
+		
+		if (value == 0) {
+			return "0";
 		}
 
 		StringBuilder sb = new StringBuilder();

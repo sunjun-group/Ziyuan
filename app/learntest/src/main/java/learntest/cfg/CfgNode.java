@@ -13,6 +13,8 @@ public interface CfgNode {
 	public int getTrueBeginLine();
 	
 	public String getStmtType();
+	
+	public boolean isRelevant();
 
 	public static enum Type {
 		ENTRY,

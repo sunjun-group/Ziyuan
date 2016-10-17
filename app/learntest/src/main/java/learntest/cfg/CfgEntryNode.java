@@ -47,4 +47,9 @@ public class CfgEntryNode implements CfgNode {
 		return 0;
 	}
 
+	@Override
+	public boolean isRelevant() {
+		return true;
+	}
+
 }

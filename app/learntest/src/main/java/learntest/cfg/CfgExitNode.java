@@ -55,4 +55,11 @@ public class CfgExitNode implements CfgNode {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public boolean isRelevant() {
+		return false;
+	}
+
+	
 }
