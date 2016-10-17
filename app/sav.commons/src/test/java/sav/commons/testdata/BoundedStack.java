@@ -1,5 +1,6 @@
 package sav.commons.testdata;
 
+import java.util.ArrayList;
 
 /**
  * Bounded Stack implementation, cased adapted from paper "Active Automata
@@ -43,5 +44,9 @@ public class BoundedStack {
 		size--;
 		return ret;
 
+	}
+
+	public int check(ArrayList arraylist0) {
+		return arraylist0.size();
 	}
 }
