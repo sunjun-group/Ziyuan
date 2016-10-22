@@ -2,6 +2,7 @@ package learntest.util;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Map;
@@ -13,12 +14,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.internal.core.PackageFragmentRoot;
 
 import learntest.main.LearnTestConfig;
 
@@ -102,6 +105,36 @@ public class LearnTestUtil {
 		return projectPath;
 	}
 	
+	
+	public static String retrieveTestSourceFolder() {
+		String projectPath = LearnTestUtil.getProjectPath();
+		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.projectName);
+		IJavaProject javaProject = JavaCore.create(iProject);
+		
+		try {
+			for(IPackageFragmentRoot root: javaProject.getAllPackageFragmentRoots()){
+				if(root instanceof PackageFragmentRoot){
+					String name = root.getElementName();
+					if(name.equals("test")){
+						URI uri = root.getCorrespondingResource().getLocationURI();
+						String sourceFolderPath = uri.toString();
+						sourceFolderPath = sourceFolderPath.substring(6, sourceFolderPath.length());
+						
+						return sourceFolderPath;
+					}
+					
+					
+				}
+				
+			}
+		} catch (JavaModelException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return null;
+	}
 	
 	@SuppressWarnings("rawtypes")
 	public static Class retrieveClass(String qualifiedName){
