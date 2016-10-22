@@ -4,6 +4,8 @@ import java.net.URI;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 
+import learntest.Activator;
+import learntest.preference.LearnTestPreference;
 import learntest.util.LearnTestUtil;
 
 public class LearnTestConfig {
@@ -13,6 +15,20 @@ public class LearnTestConfig {
 	public static String projectName;
 	public static String testClassName;
 	public static String testMethodName;
+	
+	static{
+		if(Activator.getDefault() != null){
+			try{
+				projectName = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.TARGET_PORJECT);
+				testClassName = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.CLASS_NAME);
+				testMethodName = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.METHOD_NAME);
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	
 //	public static String typeName = "Triangle";
 	public static String getSimpleClassName(){

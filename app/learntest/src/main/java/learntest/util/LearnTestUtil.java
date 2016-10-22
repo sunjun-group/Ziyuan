@@ -1,5 +1,9 @@
 package learntest.util;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
@@ -85,5 +89,54 @@ public class LearnTestUtil {
 		}
 		
 		return null;
+	}
+	
+	public static String getProjectPath(){
+		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.projectName);
+		
+		String projectPath = iProject.getLocationURI().getPath();
+//		projectPath = projectPath.substring(1, projectPath.length());
+		projectPath = projectPath.replace("/", File.separator);
+		
+		return projectPath;
+	}
+	
+	
+	@SuppressWarnings("rawtypes")
+	public static Class retrieveClass(String qualifiedName){
+		String projectPath = LearnTestUtil.getProjectPath();
+		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.projectName);
+		IJavaProject javaProject = JavaCore.create(iProject);
+		
+		String outputFolder = "";
+		try {
+			for(String seg: javaProject.getOutputLocation().segments()){
+				if(!seg.equals(LearnTestConfig.projectName)){
+					outputFolder += seg + File.separator;
+				}
+			}
+		} catch (JavaModelException e) {
+			e.printStackTrace();
+		}
+		String outputPath = projectPath + File.separator + outputFolder; 
+		File f = new File(outputPath);
+		URL[] cp = new URL[1];
+		try {
+			cp[0] = f.toURI().toURL();
+		} 
+		catch (MalformedURLException e){
+			e.printStackTrace();
+		}
+		URLClassLoader urlCL = new URLClassLoader(cp);
+		Class clazz = null;
+		try {
+			clazz = urlCL.loadClass(LearnTestConfig.testClassName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		return clazz;
 	}
 }

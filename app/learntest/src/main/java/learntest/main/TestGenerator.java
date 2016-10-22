@@ -1,10 +1,20 @@
 package learntest.main;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.jacop.core.Domain;
 import org.jacop.core.IntDomain;
 
@@ -19,6 +29,7 @@ import gentest.injection.GentestModules;
 import gentest.injection.TestcaseGenerationScope;
 import gentest.junit.TestsPrinter;
 import learntest.gentest.TestSeqGenerator;
+import learntest.util.LearnTestUtil;
 import net.sf.javailp.Result;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
@@ -29,10 +40,17 @@ public class TestGenerator {
 	
 	private static String prefix = "test";
 	
+	
+	
+	@SuppressWarnings("rawtypes")
 	public void genTest() throws ClassNotFoundException, SavException {
 		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(1);
 		builder.queryMaxLength(1).testPerQuery(1);
-		builder.forClass(Class.forName(LearnTestConfig.testClassName)).method(LearnTestConfig.testMethodName);
+		
+//		Class clazz = Class.forName(LearnTestConfig.testClassName);
+		Class clazz = LearnTestUtil.retrieveClass(LearnTestConfig.testClassName);
+		builder.forClass(clazz).method(LearnTestConfig.testMethodName);
+		
 		//builder.forClass(Class.forName(LearnTestConfig.className));
 		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getTestPackageName(), LearnTestConfig.getTestPackageName(), 
 				prefix, LearnTestConfig.getSimpleClassName(), TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
