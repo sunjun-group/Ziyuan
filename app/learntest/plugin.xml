@@ -25,5 +25,13 @@
          </menu>
       </menuContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="learntest.preference.LearnTestPreference"
+            id="learntest.preference"
+            name="Test Generation">
+      </page>
+   </extension>
 
 </plugin>
