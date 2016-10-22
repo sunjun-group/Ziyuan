@@ -1,11 +1,11 @@
 package learntest.preference;
 
-import java.awt.Button;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -20,6 +20,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import learntest.Activator;
+import learntest.main.LearnTestConfig;
+
 public class LearnTestPreference extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private Combo projectCombo;
@@ -29,6 +32,10 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 	private String defaultTargetProject = "";
 	private String defaultTestClass = "";
 	private String defaultTestMethod = "";
+	
+	public static final String TARGET_PORJECT = "targetProjectName";
+	public static final String CLASS_NAME = "className";
+	public static final String METHOD_NAME = "methodName";
 	
 	public LearnTestPreference() {
 	}
@@ -43,7 +50,9 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 
 	@Override
 	public void init(IWorkbench workbench) {
-
+		this.defaultTargetProject = Activator.getDefault().getPreferenceStore().getString(TARGET_PORJECT);
+		this.defaultTestClass = Activator.getDefault().getPreferenceStore().getString(CLASS_NAME);
+		this.defaultTestMethod = Activator.getDefault().getPreferenceStore().getString(METHOD_NAME);
 	}
 
 	@Override
@@ -90,22 +99,39 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 		testClassText.setLayoutData(lanuchClassTextData);
 		
 		Label classNameLabel = new Label(testInfoGroup, SWT.NONE);
-		classNameLabel.setText("Class Name: ");
+		classNameLabel.setText("Test Method: ");
 		testMethodText = new Text(testInfoGroup, SWT.BORDER);
 		testMethodText.setText(this.defaultTestMethod);
 		GridData methodNameTextData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		methodNameTextData.horizontalSpan = 2;
 		testMethodText.setLayoutData(methodNameTextData);
-//		
-//		Label lineNumberLabel = new Label(seedStatementGroup, SWT.NONE);
-//		lineNumberLabel.setText("Line Number: ");
-//		lineNumberText = new Text(seedStatementGroup, SWT.BORDER);
-//		lineNumberText.setText(this.defaultLineNumber);
-//		GridData lineNumTextData = new GridData(SWT.FILL, SWT.FILL, true, false);
-//		lineNumTextData.horizontalSpan = 2;
-//		lineNumberText.setLayoutData(lineNumTextData);
 		
 	}
+	
+	
+	
+	public boolean performOk(){
+		IEclipsePreferences preferences = ConfigurationScope.INSTANCE.getNode("learntest.preference");
+		preferences.put(TARGET_PORJECT, this.projectCombo.getText());
+		preferences.put(CLASS_NAME, this.testClassText.getText());
+		preferences.put(METHOD_NAME, this.testMethodText.getText());
+		
+		Activator.getDefault().getPreferenceStore().putValue(TARGET_PORJECT, this.projectCombo.getText());
+		Activator.getDefault().getPreferenceStore().putValue(CLASS_NAME, this.testClassText.getText());
+		Activator.getDefault().getPreferenceStore().putValue(METHOD_NAME, this.testMethodText.getText());
+		
+		confirmChanges();
+		
+		return true;
+		
+	}
+	
+	private void confirmChanges(){
+		LearnTestConfig.projectName = this.projectCombo.getText();
+		LearnTestConfig.testClassName = this.testClassText.getText();
+		LearnTestConfig.testMethodName = this.testMethodText.getText();
+	}
+	
 	
 	private String[] getProjectsInWorkspace(){
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();

@@ -73,8 +73,8 @@ public class Engine {
 	}
 	
 	public void run(boolean random) throws ParseException, IOException, SavException, ClassNotFoundException {
-		setTarget(LearnTestConfig.filePath, LearnTestConfig.typeName, LearnTestConfig.className, LearnTestConfig.methodName);
-		addTestcases(LearnTestConfig.testPath);
+		setTarget(LearnTestConfig.getTestClassFilePath(), LearnTestConfig.getSimpleClassName(), LearnTestConfig.testClassName, LearnTestConfig.testMethodName);
+		addTestcases(LearnTestConfig.getTestClass());
 		
 		createCFG();
 		manager = new CfgConditionManager(cfg);

@@ -32,10 +32,10 @@ public class TestGenerator {
 	public void genTest() throws ClassNotFoundException, SavException {
 		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(1);
 		builder.queryMaxLength(1).testPerQuery(1);
-		builder.forClass(Class.forName(LearnTestConfig.className)).method(LearnTestConfig.methodName);
+		builder.forClass(Class.forName(LearnTestConfig.testClassName)).method(LearnTestConfig.testMethodName);
 		//builder.forClass(Class.forName(LearnTestConfig.className));
-		TestsPrinter printer = new TestsPrinter(LearnTestConfig.pkg, LearnTestConfig.pkg, 
-				prefix, LearnTestConfig.typeName, TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
+		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getTestPackageName(), LearnTestConfig.getTestPackageName(), 
+				prefix, LearnTestConfig.getSimpleClassName(), TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
 		printer.printTests(builder.generate());
 		
 		/*final FileCompilationUnitPrinter cuPrinter = new FileCompilationUnitPrinter(
@@ -83,8 +83,8 @@ public class TestGenerator {
 		}
 		injectorModule.exit(TestcaseGenerationScope.class);
 		
-		TestsPrinter printer = new TestsPrinter(LearnTestConfig.resPkg, null, 
-				prefix, LearnTestConfig.typeName, TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
+		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(), null, 
+				prefix, LearnTestConfig.getSimpleClassName(), TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
 		printer.printTests(new Pair<List<Sequence>, List<Sequence>>(sequences, new ArrayList<Sequence>()));
 	}
 	
@@ -139,14 +139,14 @@ public class TestGenerator {
 		}
 		injectorModule.exit(TestcaseGenerationScope.class);
 		
-		TestsPrinter printer = new TestsPrinter(LearnTestConfig.resPkg, null, 
-				prefix, LearnTestConfig.typeName, TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
+		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(), null, 
+				prefix, LearnTestConfig.getSimpleClassName(), TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
 		printer.printTests(new Pair<List<Sequence>, List<Sequence>>(sequences, new ArrayList<Sequence>()));
 	}
 
 	private MethodCall findTargetMethod() throws ClassNotFoundException {
-		Class<?> clazz = Class.forName(LearnTestConfig.className);
-		Method method = MethodUtils.findMethod(clazz, LearnTestConfig.methodName);
+		Class<?> clazz = Class.forName(LearnTestConfig.testClassName);
+		Method method = MethodUtils.findMethod(clazz, LearnTestConfig.testMethodName);
 		if (Modifier.isPublic(method.getModifiers())) {
 			return MethodCall.of(method, clazz);
 		}
