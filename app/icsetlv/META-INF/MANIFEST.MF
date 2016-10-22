@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: icsetlv
+Bundle-SymbolicName: icsetlv
+Bundle-Version: 1.0.0.qualifier
+Export-Package: icsetlv,
+ icsetlv.common.dto,
+ icsetlv.common.exception,
+ icsetlv.common.utils,
+ icsetlv.printout,
+ icsetlv.sampling,
+ icsetlv.variable,
+ testdata,
+ testdata.testcasesexecutor.test1
+Require-Bundle: sav.commons;bundle-version="1.0.0",
+ svmlib;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy

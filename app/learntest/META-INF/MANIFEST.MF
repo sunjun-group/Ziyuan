@@ -84,5 +84,10 @@ Require-Bundle: org.eclipse.ui,
  org.junit,
  org.eclipse.e4.core.commands;bundle-version="0.11.0",
  org.eclipse.ui.workbench,
- org.eclipse.ui.ide;bundle-version="3.11.0"
+ org.eclipse.ui.ide;bundle-version="3.11.0",
+ sav.commons;bundle-version="1.0.0",
+ icsetlv;bundle-version="1.0.0",
+ svmlib;bundle-version="1.0.0",
+ gentest;bundle-version="1.0.0",
+ assertion;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
