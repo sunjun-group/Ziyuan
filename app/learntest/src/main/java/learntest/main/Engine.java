@@ -109,9 +109,14 @@ public class Engine {
 		List<Domain[]> solutions = solver.solve(paths);*/
 		//solutions.addAll(getSolutions(records, learner.getOriginVars()));
 		//new TestGenerator().genTestAccordingToSolutions(solutions, learner.getOriginVars());
-		new TestGenerator().genTestAccordingToSolutions(getSolutions(learner.getRecords(), learner.getOriginVars()), 
-				learner.getOriginVars());
+		
+		List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
+		
+		new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());
 		System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
+		
+		System.currentTimeMillis();
+		
 		//PathSolver pathSolver = new PathSolver();
 		//List<Result> results = pathSolver.solve(paths);
 		//System.out.println(results);
