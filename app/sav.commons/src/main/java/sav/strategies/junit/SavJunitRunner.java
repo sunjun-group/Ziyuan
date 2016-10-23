@@ -9,6 +9,7 @@
 package sav.strategies.junit;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,8 +18,8 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.junit.runner.JUnitCore;
 
-import sav.common.core.SystemVariablesUtils;
 import sav.common.core.SavRtException;
+import sav.common.core.SystemVariablesUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
@@ -50,8 +51,21 @@ public class SavJunitRunner {
 	}
 
 	public static void extractTo(File destFile) throws FileNotFoundException, IOException {
-		InputStream inStream = SavJunitRunner.class.getResourceAsStream(RESOURCE);
+//		String path = "E:/eclipse-java-mars/eclipse" + RESOURCE;
+		String path = org.eclipse.core.runtime.Platform.getInstallLocation().getURL().toExternalForm() + RESOURCE;
+		path = path.substring(6, path.length());
+		
+		
+		File file = new File(path);
+		if(file.exists()){
+			System.currentTimeMillis();
+		}
+		
+//		InputStream inStream = SavJunitRunner.class.getResourceAsStream();
+//		InputStream inStream = IOUtils.toInputStream(path);
+		InputStream inStream = new FileInputStream(file);
 		IOUtils.copy(inStream, new FileOutputStream(destFile));
+		System.currentTimeMillis();
 	}
 
 	public static VMConfiguration createVmConfig(AppJavaClassPath appClasspath) {

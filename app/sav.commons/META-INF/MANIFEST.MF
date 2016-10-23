@@ -381,3 +381,4 @@ Bundle-ClassPath: lib/commons-cli-1.2.jar,
  lib/commons-collections-3.2.1.jar,
  lib/javailp-1.2a.jar
 Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.11.1"

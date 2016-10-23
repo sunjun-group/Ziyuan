@@ -155,7 +155,8 @@ public class TestGenerator {
 	}
 
 	private MethodCall findTargetMethod() throws ClassNotFoundException {
-		Class<?> clazz = Class.forName(LearnTestConfig.testClassName);
+//		Class<?> clazz = Class.forName(LearnTestConfig.testClassName);
+		Class<?> clazz = LearnTestUtil.retrieveClass(LearnTestConfig.testClassName);
 		Method method = MethodUtils.findMethod(clazz, LearnTestConfig.testMethodName);
 		if (Modifier.isPublic(method.getModifiers())) {
 			return MethodCall.of(method, clazz);
