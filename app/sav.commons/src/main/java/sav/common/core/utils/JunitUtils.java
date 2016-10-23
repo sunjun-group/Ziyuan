@@ -26,8 +26,8 @@ import sav.common.core.Pair;
  *
  */
 public class JunitUtils {
-	private static final String JUNIT_TEST_METHOD_PREFIX = "test";
-	private static final String JUNIT_TEST_SUITE_PREFIX = "suite";
+	public static final String JUNIT_TEST_METHOD_PREFIX = "test";
+	public static final String JUNIT_TEST_SUITE_PREFIX = "suite";
 	
 	public static List<String> extractTestMethods(List<String> junitClassNames)
 			throws ClassNotFoundException {
@@ -41,6 +41,7 @@ public class JunitUtils {
 	private static void extractTestMethods(List<String> result, String className)
 			throws ClassNotFoundException {
 		Class<?> junitClass = Class.forName(className);
+		
 		Method[] methods = junitClass.getDeclaredMethods();
 		for (Method method : methods) {
 			if (isTestMethod(junitClass, method)) {
@@ -61,7 +62,7 @@ public class JunitUtils {
 		}
 	}
 
-	private static void findTestcasesInSuite(TestSuite suite,
+	public static void findTestcasesInSuite(TestSuite suite,
 			List<String> classMethods) throws ClassNotFoundException {
 		Enumeration<junit.framework.Test> tests = suite.tests();
 		while (tests.hasMoreElements()) {

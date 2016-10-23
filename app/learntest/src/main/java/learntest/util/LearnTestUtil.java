@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
@@ -20,11 +21,15 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.internal.core.PackageFragmentRoot;
 
 import learntest.main.LearnTestConfig;
 
+@SuppressWarnings("restriction")
 public class LearnTestUtil {
 	public static CompilationUnit findCompilationUnitInProject(String qualifiedName){
 		try{
@@ -107,7 +112,7 @@ public class LearnTestUtil {
 	
 	
 	public static String retrieveTestSourceFolder() {
-		String projectPath = LearnTestUtil.getProjectPath();
+//		String projectPath = LearnTestUtil.getProjectPath();
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.projectName);
 		IJavaProject javaProject = JavaCore.create(iProject);
@@ -136,8 +141,7 @@ public class LearnTestUtil {
 		return null;
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public static Class retrieveClass(String qualifiedName){
+	public static String getOutputPath(){
 		String projectPath = LearnTestUtil.getProjectPath();
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.projectName);
@@ -153,7 +157,14 @@ public class LearnTestUtil {
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}
+		
 		String outputPath = projectPath + File.separator + outputFolder; 
+		return outputPath;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "resource" })
+	public static Class retrieveClass(String qualifiedName){
+		String outputPath = getOutputPath();
 		File f = new File(outputPath);
 		URL[] cp = new URL[1];
 		try {
@@ -165,11 +176,72 @@ public class LearnTestUtil {
 		URLClassLoader urlCL = new URLClassLoader(cp);
 		Class clazz = null;
 		try {
-			clazz = urlCL.loadClass(LearnTestConfig.testClassName);
+			clazz = urlCL.loadClass(qualifiedName);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		
 		return clazz;
+	}
+	
+	public static List<MethodDeclaration> findTestingMethod(CompilationUnit cu) {
+		boolean isSubclassOfTestCase = isSubclassOfTestCase(cu);
+		
+		TestingMethodChecker checker = new TestingMethodChecker(isSubclassOfTestCase);
+		cu.accept(checker);
+		
+		List<MethodDeclaration> testingMethods = checker.getTestingMethods();
+		
+		return testingMethods;
+	}
+	
+	public static boolean isSubclassOfTestCase(CompilationUnit cu) {
+		if(cu.types().isEmpty()){
+			return false;
+		}
+		
+		AbstractTypeDeclaration typeDel = (AbstractTypeDeclaration) cu.types().get(0);
+		ITypeBinding binding = typeDel.resolveBinding();
+		
+		boolean isSubclassOfTestCase = false;
+		String parentName = "";
+		while(true){
+			if(binding == null){
+				break;
+			}
+			
+			ITypeBinding superBinding = binding.getSuperclass();
+			if(superBinding == null){
+				break;
+			}
+			
+			parentName = superBinding.getQualifiedName();
+			if(parentName.equals("junit.framework.TestCase")){
+				isSubclassOfTestCase = true;
+				break;
+			}
+			
+			binding = superBinding;
+		}
+		
+		return isSubclassOfTestCase;
+	}
+	
+	public static String getFullNameOfCompilationUnit(CompilationUnit cu){
+		
+		String packageName = "";
+		if(cu.getPackage() != null){
+			packageName = cu.getPackage().getName().toString();
+		}
+		AbstractTypeDeclaration typeDeclaration = (AbstractTypeDeclaration) cu.types().get(0);
+		String typeName = typeDeclaration.getName().getIdentifier();
+		
+		if(packageName.length() == 0){
+			return typeName;
+		}
+		else{
+			return packageName + "." + typeName; 			
+		}
+		
 	}
 }

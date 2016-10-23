@@ -1,5 +1,7 @@
 package learntest.handler;
 
+import java.io.IOException;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -10,9 +12,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
+import japa.parser.ParseException;
+import learntest.main.Engine;
 import learntest.main.LearnTestConfig;
 import learntest.main.TestGenerator;
+import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
+import sav.commons.TestConfiguration;
+import sav.strategies.dto.AppJavaClassPath;
 
 public class GenerateTestHandler extends AbstractHandler {
 
@@ -31,9 +38,27 @@ public class GenerateTestHandler extends AbstractHandler {
 				e.printStackTrace();
 			}
 			
+			
+			AppJavaClassPath appClasspath = new AppJavaClassPath();
+			appClasspath.setJavaHome(TestConfiguration.getJavaHome());
+			
+//			appClasspath.addClasspath(SAV_COMMONS_TEST_TARGET);
+//			appClasspath.addClasspath(TestConfiguration.getTestTarget(LearnTestConfig.MODULE));
+			
+			String outputPath = LearnTestUtil.getOutputPath();
+			outputPath = outputPath.substring(1, outputPath.length());
+			appClasspath.addClasspath(outputPath);
+			
+			Engine engine = new Engine(appClasspath);
+			engine.run(false);
+			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SavException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		

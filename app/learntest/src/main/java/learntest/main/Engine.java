@@ -2,6 +2,7 @@ package learntest.main;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -21,6 +22,7 @@ import japa.parser.ast.body.BodyDeclaration;
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.Parameter;
 import japa.parser.ast.body.TypeDeclaration;
+import junit.framework.TestSuite;
 import learntest.breakpoint.data.BreakpointBuilder;
 import learntest.breakpoint.data.DecisionLocation;
 import learntest.cfg.CFG;
@@ -32,8 +34,10 @@ import learntest.sampling.jacop.JacopPathSolver;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
+import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
 import sav.common.core.formula.Formula;
+import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint.Variable;
@@ -73,7 +77,10 @@ public class Engine {
 	}
 	
 	public void run(boolean random) throws ParseException, IOException, SavException, ClassNotFoundException {
-		setTarget(LearnTestConfig.getTestClassFilePath(), LearnTestConfig.getSimpleClassName(), LearnTestConfig.testClassName, LearnTestConfig.testMethodName);
+		String filePath = LearnTestConfig.getTestClassFilePath();
+		filePath = filePath.substring(6, filePath.length());
+		
+		setTarget(filePath, LearnTestConfig.getSimpleClassName(), LearnTestConfig.testClassName, LearnTestConfig.testMethodName);
 		addTestcases(LearnTestConfig.getTestClass());
 		
 		createCFG();
@@ -128,9 +135,19 @@ public class Engine {
 	}
 
 	private void addTestcases(String testClass) throws ClassNotFoundException {
-		this.testcases.addAll(JunitUtils.extractTestMethods(Arrays.asList(testClass)));
+		
+		org.eclipse.jdt.core.dom.CompilationUnit cu = LearnTestUtil.findCompilationUnitInProject(testClass);
+		List<org.eclipse.jdt.core.dom.MethodDeclaration> mList = LearnTestUtil.findTestingMethod(cu);
+		
+		List<String> result = new ArrayList<>();
+		for(org.eclipse.jdt.core.dom.MethodDeclaration m: mList){
+			String testcaseName = testClass + "." + m.getName();
+			result.add(testcaseName);
+		}
+		
+		this.testcases.addAll(result);
 	}
-
+	
 	private void createCFG() throws ParseException, IOException {
 		CompilationUnit cu = JavaParser.parse(new File(filePath));
 		for (TypeDeclaration type : cu.getTypes()) {
