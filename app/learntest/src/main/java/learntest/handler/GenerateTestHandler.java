@@ -23,21 +23,25 @@ import sav.strategies.dto.AppJavaClassPath;
 
 public class GenerateTestHandler extends AbstractHandler {
 
+	private void refreshProject(){
+		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.projectName);
+		
+		try {
+			iProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
 		try {
 			new TestGenerator().genTest();
 			
-			IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-			IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.projectName);
-			
-			try {
-				iProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
-			
+			refreshProject();
 			
 			AppJavaClassPath appClasspath = new AppJavaClassPath();
 			appClasspath.setJavaHome(TestConfiguration.getJavaHome());
@@ -51,6 +55,8 @@ public class GenerateTestHandler extends AbstractHandler {
 			
 			Engine engine = new Engine(appClasspath);
 			engine.run(false);
+			
+			refreshProject();
 			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

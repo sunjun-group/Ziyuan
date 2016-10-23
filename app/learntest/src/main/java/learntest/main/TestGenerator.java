@@ -93,10 +93,41 @@ public class TestGenerator {
 		}
 		injectorModule.exit(TestcaseGenerationScope.class);
 		
+//		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(), null, 
+//				prefix, LearnTestConfig.getSimpleClassName(), TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
 		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(), null, 
-				prefix, LearnTestConfig.getSimpleClassName(), TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
+				prefix, LearnTestConfig.getSimpleClassName(), LearnTestUtil.retrieveTestSourceFolder());
 		printer.printTests(new Pair<List<Sequence>, List<Sequence>>(sequences, new ArrayList<Sequence>()));
 	}
+	
+//	public String retrieveTestSourceFolder() {
+//		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+//		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.projectName);
+//		IJavaProject javaProject = JavaCore.create(iProject);
+//		
+//		try {
+//			for(IPackageFragmentRoot root: javaProject.getAllPackageFragmentRoots()){
+//				if(root instanceof PackageFragmentRoot){
+//					String name = root.getElementName();
+//					if(name.equals("test")){
+//						URI uri = root.getCorrespondingResource().getLocationURI();
+//						String sourceFolderPath = uri.toString();
+//						sourceFolderPath = sourceFolderPath.substring(6, sourceFolderPath.length());
+//						
+//						return sourceFolderPath;
+//					}
+//					
+//					
+//				}
+//				
+//			}
+//		} catch (JavaModelException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		
+//		return null;
+//	}
 	
 	private List<Domain[]> clean(List<Domain[]> solutions, int size) {
 		List<Domain[]> res = new ArrayList<Domain[]>();
