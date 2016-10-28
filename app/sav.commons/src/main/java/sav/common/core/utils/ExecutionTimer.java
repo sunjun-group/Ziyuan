@@ -32,7 +32,7 @@ public class ExecutionTimer {
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			
-			@SuppressWarnings("deprecation")
+//			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
 				if (thread.isAlive()) {
@@ -48,7 +48,8 @@ public class ExecutionTimer {
 					 * run javaParser46, at instrumentation step (run program in debug mode and change data, which might create an infinitive loop)
 					 * when it's timeout, jvm crash and we get empty jResult. This happens sometimes, depend on selected samples.    
 					 *  */
-					thread.stop();
+//					thread.stop();
+					thread.interrupt();
 				}
 			}
 		}, timeout);

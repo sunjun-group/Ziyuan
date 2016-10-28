@@ -55,6 +55,12 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	}
 	
 	public void run() throws SavException {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		if (target == null) {
 			this.run(bkpBuilder.getBreakPoints());
 		} else {

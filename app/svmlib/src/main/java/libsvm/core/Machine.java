@@ -9,15 +9,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
 import libsvm.extension.ISelectiveSampling;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.ExecutionTimer;
@@ -277,11 +276,10 @@ public class Machine {
 	}
 
 	private svm_model performTrainingTask(final svm_problem prob, final svm_parameter param) {
+				
 		ExecutionTimer timer = new ExecutionTimer(SVM_TIMEOUT, TimeUnit.SECONDS);
 		SvmRunner svmRunner = new SvmRunner(prob, param);
 		timer.run(svmRunner);
-		
-		//TODO
 		
 		return svmRunner.getResult();
 	}
