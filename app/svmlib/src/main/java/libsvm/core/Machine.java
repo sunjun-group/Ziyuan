@@ -233,7 +233,7 @@ public class Machine {
 		Assert.assertNotNull(parameter, "SVM parameters is not set.");
 		Assert.assertTrue(!data.isEmpty(), "SVM training data is empty.");
 
-		this.data = cleanUp(data);
+//		this.data = cleanUp(data);
 		if (getNumberOfFeatures() <= 0) {
 //			LOGGER.warn("The feature list is empty. SVM will not run.");
 			return this;

@@ -2,6 +2,7 @@ package learntest.cfg.traveller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,7 +39,7 @@ public class CfgConditionManager {
 	
 	private Map<CfgDecisionNode, List<CfgDecisionNode>> parents;
 	
-	//private Set<CfgDecisionNode> ends;
+	private Set<CfgDecisionNode> ends;
 	
 	private List<ExecVar> vars;
 	private List<ExecVar> originalVars;
@@ -56,7 +57,7 @@ public class CfgConditionManager {
 		falseNext = new HashMap<CfgDecisionNode, CfgDecisionNode>();
 		next = new HashMap<CfgDecisionNode, CfgDecisionNode>();
 		parents = new HashMap<CfgDecisionNode, List<CfgDecisionNode>>();
-		//ends = new HashSet<CfgDecisionNode>();
+		ends = new HashSet<CfgDecisionNode>();
 		List<CfgNode> vertices = cfg.getVertices();
 		for (CfgNode node : vertices) {
 			if (node instanceof CfgDecisionNode) {
@@ -101,9 +102,9 @@ public class CfgConditionManager {
 						parents.put(trueNode, parentList);
 					}
 					parentList.add((CfgDecisionNode) node);
-				} /*else {
+				} else {
 					ends.add((CfgDecisionNode) node);
-				}*/
+				}
 			}
 		}
 	}
@@ -434,6 +435,10 @@ public class CfgConditionManager {
 		}
 		node.setRelevant(false);
 		return true;
+	}
+
+	public boolean isEnd(int lineNo) {
+		return ends.contains(nodeMap.get(lineNo));
 	}
 
 }
