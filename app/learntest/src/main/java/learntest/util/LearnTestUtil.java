@@ -111,6 +111,23 @@ public class LearnTestUtil {
 		return projectPath;
 	}
 	
+	public static IPackageFragmentRoot findMainPackageRootInProject(){
+		IJavaProject project = JavaCore.create(getSpecificJavaProjectInWorkspace());
+		try {
+			for(IPackageFragmentRoot packageFragmentRoot: project.getPackageFragmentRoots()){
+				if(!(packageFragmentRoot instanceof JarPackageFragmentRoot) 
+						&& packageFragmentRoot.getResource().toString().contains("main")){
+					
+					return packageFragmentRoot;
+				}
+			}
+			
+		} catch (JavaModelException e1) {
+			e1.printStackTrace();
+		}
+		
+		return null;
+	}
 	
 	public static String retrieveTestSourceFolder() {
 //		String projectPath = LearnTestUtil.getProjectPath();

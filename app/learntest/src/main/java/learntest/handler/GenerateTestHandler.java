@@ -38,6 +38,12 @@ public class GenerateTestHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
+		generateTest();
+		
+		return null;
+	}
+	
+	public void generateTest(){
 		try {
 			new TestGenerator().genTest();
 			
@@ -67,8 +73,6 @@ public class GenerateTestHandler extends AbstractHandler {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		return null;
 	}
 
 }
