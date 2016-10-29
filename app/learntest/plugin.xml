@@ -8,6 +8,11 @@
             id="learntest.command.generatetest"
             name="Generate Test">
       </command>
+      <command
+            defaultHandler="learntest.handler.EvaluationHandler"
+            id="learntest.command.evaluateAllMethods"
+            name="Evaluate All Methods">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -20,6 +25,11 @@
                   commandId="learntest.command.generatetest"
                   icon="icon/icon-test-management.png"
                   label="Generate Test"
+                  style="push">
+            </command>
+            <command
+                  commandId="learntest.command.evaluateAllMethods"
+                  label="Evaluate All Methods"
                   style="push">
             </command>
          </menu>
