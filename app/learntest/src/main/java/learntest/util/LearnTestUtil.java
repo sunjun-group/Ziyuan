@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
 import org.eclipse.jdt.internal.core.PackageFragmentRoot;
 
 import learntest.main.LearnTestConfig;
@@ -119,9 +120,9 @@ public class LearnTestUtil {
 		
 		try {
 			for(IPackageFragmentRoot root: javaProject.getAllPackageFragmentRoots()){
-				if(root instanceof PackageFragmentRoot){
-					String name = root.getElementName();
-					if(name.equals("test")){
+				if(root instanceof PackageFragmentRoot && !(root instanceof JarPackageFragmentRoot)){
+					String name = root.getPath().toString();
+					if(name.contains("test")){
 						URI uri = root.getCorrespondingResource().getLocationURI();
 						String sourceFolderPath = uri.toString();
 						sourceFolderPath = sourceFolderPath.substring(6, sourceFolderPath.length());

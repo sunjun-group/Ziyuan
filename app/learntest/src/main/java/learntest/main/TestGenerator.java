@@ -44,6 +44,9 @@ public class TestGenerator {
 		//builder.forClass(Class.forName(LearnTestConfig.className));
 		
 		String testSourceFolder = LearnTestUtil.retrieveTestSourceFolder();
+		
+		System.currentTimeMillis();
+		
 		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getTestPackageName(), LearnTestConfig.getTestPackageName(), 
 				prefix, LearnTestConfig.getSimpleClassName(), testSourceFolder);
 		printer.printTests(builder.generate());
