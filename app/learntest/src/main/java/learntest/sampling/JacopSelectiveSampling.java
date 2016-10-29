@@ -392,7 +392,7 @@ public class JacopSelectiveSampling {
 			}
 		}
 		//System.out.println(cnt);
-		return null;
+		return selectResult;
 	}
 	
 	private void selectData(List<List<Eq<?>>> assignments/*, DecisionLocation target*/) throws SavException {

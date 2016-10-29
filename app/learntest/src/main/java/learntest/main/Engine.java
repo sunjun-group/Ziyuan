@@ -144,7 +144,7 @@ public class Engine {
 		org.eclipse.jdt.core.dom.CompilationUnit cu = LearnTestUtil.findCompilationUnitInProject(testClass);
 		List<org.eclipse.jdt.core.dom.MethodDeclaration> mList = LearnTestUtil.findTestingMethod(cu);
 		
-		List<String> result = new ArrayList<>();
+		List<String> result = new ArrayList<String>();
 		for(org.eclipse.jdt.core.dom.MethodDeclaration m: mList){
 			String testcaseName = testClass + "." + m.getName();
 			result.add(testcaseName);

@@ -11,7 +11,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 public class TestingMethodChecker extends ASTVisitor {
 	private boolean isSubclassOfTestCase;
-	private ArrayList<MethodDeclaration> testingMethods = new ArrayList<>();
+	private ArrayList<MethodDeclaration> testingMethods = new ArrayList<MethodDeclaration>();
 	
 	public TestingMethodChecker(boolean isSubclassOfTestCase) {
 		super();
