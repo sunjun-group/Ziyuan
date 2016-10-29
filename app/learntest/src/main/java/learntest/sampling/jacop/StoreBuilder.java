@@ -37,7 +37,8 @@ public class StoreBuilder {
 
 	private static void addTarget(Store store, Divider object) {
 		double[] thetas = object.getThetas();
-		int[] weights = new int[thetas.length];
+		//int[] weights = new int[thetas.length];
+		int[] weights = new int[store.size()];
 		for (int i = 0; i < thetas.length; i++) {
 			//weights[i] = (int) thetas[i];
 			weights[i] = (int) Math.rint(thetas[i]);
@@ -51,7 +52,8 @@ public class StoreBuilder {
 	
 	public static void addOpposite(Store store, Divider divider) {
 		double[] thetas = divider.getThetas();
-		int[] weights = new int[thetas.length];
+		//int[] weights = new int[thetas.length];
+		int[] weights = new int[store.size()];
 		for (int i = 0; i < thetas.length; i++) {
 			//weights[i] = (int) thetas[i];
 			weights[i] = (int) Math.rint(thetas[i]);
@@ -148,7 +150,8 @@ public class StoreBuilder {
 		if (dividers != null) {
 			for (Divider divider : dividers) {
 				double[] thetas = divider.getThetas();
-				int[] weights = new int[thetas.length];
+				//int[] weights = new int[thetas.length];
+				int[] weights = new int[store.size()];
 				for (int i = 0; i < thetas.length; i++) {
 					//weights[i] = (int) thetas[i];
 					weights[i] = (int) Math.rint(thetas[i]);
@@ -164,7 +167,8 @@ public class StoreBuilder {
 		if (notDividers != null) {
 			for (Divider divider : notDividers) {
 				double[] thetas = divider.getThetas();
-				int[] weights = new int[thetas.length];
+				//int[] weights = new int[thetas.length];
+				int[] weights = new int[store.size()];
 				for (int i = 0; i < thetas.length; i++) {
 					//weights[i] = (int) thetas[i];
 					weights[i] = (int) Math.rint(thetas[i]);

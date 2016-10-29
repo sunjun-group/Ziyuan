@@ -227,8 +227,8 @@ public class DecisionLearner implements CategoryCalculator {
 		Formula trueFlase = null;
 		manager.updateRelevance(bkpData);
 		
-		//if (/*!manager.isEnd(bkpData.getLocation().getLineNo())*/manager.isRelevant(bkpData.getLocation().getLineNo())) {
-
+		if (!manager.isEnd(bkpData.getLocation().getLineNo())/*manager.isRelevant(bkpData.getLocation().getLineNo())*/) {
+			
 			int times = 0;
 			machine.resetData();
 			addDataPoints(originVars, bkpData.getTrueValues(), Category.POSITIVE, machine);
@@ -281,7 +281,7 @@ public class DecisionLearner implements CategoryCalculator {
 				times ++;
 			}
 		
-//		}
+		}
 		
 		List<BreakpointValue> falseValues = bkpData.getFalseValues();
 		boolean needMore = true;
