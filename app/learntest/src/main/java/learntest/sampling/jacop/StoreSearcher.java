@@ -45,6 +45,7 @@ public class StoreSearcher {
 		Search<IntVar> search = new DepthFirstSearch<IntVar>();
 		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
 				store, intVars, new IndomainRandom<IntVar>()); 
+		search.setPrintInfo(false);
 	    boolean result = search.labeling(store, select);
 	    if (result) {
 			return search.getSolution();
