@@ -111,6 +111,9 @@ public class EvaluationHandler extends AbstractHandler {
 								String methodName = method.getName().getIdentifier();
 								LearnTestConfig.testMethodName = methodName;
 								
+								System.out.print("working method: " + LearnTestConfig.testClassName 
+										+ "." + LearnTestConfig.testMethodName);
+								
 								try{
 									new GenerateTestHandler().generateTest();									
 								}
