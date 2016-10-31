@@ -34,7 +34,7 @@ public class TestGenerator {
 		builder.queryMaxLength(1).testPerQuery(1);
 		builder.forClass(Class.forName(LearnTestConfig.className)).method(LearnTestConfig.methodName);
 		//builder.forClass(Class.forName(LearnTestConfig.className));
-		TestsPrinter printer = new TestsPrinter(LearnTestConfig.pkg, LearnTestConfig.pkg, 
+		TestsPrinter printer = new TestsPrinter(LearnTestConfig.pkg, /*LearnTestConfig.pkg*/null, 
 				prefix, LearnTestConfig.typeName, TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
 		printer.printTests(builder.generate());
 		
