@@ -17,7 +17,7 @@ import learntest.main.LearnTestConfig;
 
 public class ExcelReader {
 	
-	private HashSet<String> parsedMethodSet;
+	private HashSet<String> parsedMethodSet = new HashSet<>();
 	
 	@SuppressWarnings("resource")
 	public void readXLSX() throws IOException {

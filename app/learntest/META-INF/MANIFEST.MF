@@ -7,7 +7,8 @@ Bundle-ClassPath: learntest.jar,
  jacop-4.4.0.jar,
  lib/poi-3.11-20141221.jar,
  lib/poi-ooxml-3.11-20141221.jar,
- lib/poi-ooxml-schemas-3.11-20141221.jar
+ lib/poi-ooxml-schemas-3.11-20141221.jar,
+ lib/xmlbeans-2.6.0.jar
 Export-Package: learntest,
  learntest.breakpoint.data,
  learntest.calculator,
