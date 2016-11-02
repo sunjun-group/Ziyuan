@@ -28,6 +28,7 @@ import learntest.io.excel.ExcelReader;
 import learntest.io.excel.ExcelWriter;
 import learntest.io.excel.Trial;
 import learntest.main.LearnTestConfig;
+import learntest.main.RunTimeInfo;
 import learntest.util.LearnTestUtil;
 
 public class EvaluationHandler extends AbstractHandler {
@@ -146,7 +147,12 @@ public class EvaluationHandler extends AbstractHandler {
 											+ "." + LearnTestConfig.testMethodName);
 									
 									try{
-										Trial trial = new GenerateTestHandler().generateTest();		
+										RunTimeInfo l2tInfo = new GenerateTestHandler().generateTest(true);
+										RunTimeInfo ramInfo = new GenerateTestHandler().generateTest(false);
+										
+										String fullMN = LearnTestConfig.testClassName + "." + LearnTestConfig.testMethodName;
+										Trial trial = new Trial(fullMN, l2tInfo.getTime(), l2tInfo.getCoverage(), 
+												ramInfo.getTime(), ramInfo.getCoverage());
 										writer.export(trial);
 									}
 									catch(Exception e){

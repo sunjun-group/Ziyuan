@@ -2,9 +2,7 @@ package learntest.main;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +20,6 @@ import japa.parser.ast.body.BodyDeclaration;
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.Parameter;
 import japa.parser.ast.body.TypeDeclaration;
-import junit.framework.TestSuite;
 import learntest.breakpoint.data.BreakpointBuilder;
 import learntest.breakpoint.data.DecisionLocation;
 import learntest.cfg.CFG;
@@ -30,15 +27,11 @@ import learntest.cfg.CfgCreator;
 import learntest.cfg.CfgDecisionNode;
 import learntest.cfg.traveller.CfgConditionManager;
 import learntest.sampling.JacopSelectiveSampling;
-import learntest.sampling.jacop.JacopPathSolver;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
 import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
-import sav.common.core.formula.Formula;
-import sav.common.core.utils.ClassUtils;
-import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.dto.execute.value.ExecVar;
@@ -76,12 +69,12 @@ public class Engine {
 		this.tcExecutor = tcExecutor;
 	}
 	
-	public void run(boolean random) throws ParseException, IOException, SavException, ClassNotFoundException {
+	public RunTimeInfo run(boolean random) throws ParseException, IOException, SavException, ClassNotFoundException {
 		String filePath = LearnTestConfig.getTestClassFilePath();
 		filePath = filePath.substring(6, filePath.length());
 		
 		setTarget(filePath, LearnTestConfig.getSimpleClassName(), LearnTestConfig.testClassName, LearnTestConfig.testMethodName);
-		addTestcases(LearnTestConfig.getTestClass());
+		addTestcases(LearnTestConfig.getTestClass(LearnTestConfig.isL2TApproach));
 		
 		createCFG();
 		manager = new CfgConditionManager(cfg);
@@ -123,6 +116,10 @@ public class Engine {
 		//new TestGenerator().genTestAccordingToInput(results, pathSolver.getVariables());
 		//new TestGenerator().genTestAccordingToInput(results, variables);
 		//new TestGenerator().genTestAccordingToInput(results, learner.getLabels());
+		
+		//TODO for Gao
+		RunTimeInfo info = new RunTimeInfo(0, 0);
+		return info;
 	}
 		
 	private List<Domain[]> getSolutions(List<BreakpointValue> records, List<ExecVar> originVars) {

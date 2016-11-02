@@ -47,7 +47,8 @@ public class TestGenerator {
 		
 		System.currentTimeMillis();
 		
-		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getTestPackageName(), LearnTestConfig.getTestPackageName(), 
+		boolean isL2T = LearnTestConfig.isL2TApproach;
+		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getTestPackageName(isL2T), LearnTestConfig.getTestPackageName(isL2T), 
 				prefix, LearnTestConfig.getSimpleClassName(), testSourceFolder);
 		printer.printTests(builder.generate());
 		
@@ -98,7 +99,7 @@ public class TestGenerator {
 		
 //		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(), null, 
 //				prefix, LearnTestConfig.getSimpleClassName(), TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
-		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(), null, 
+		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(LearnTestConfig.isL2TApproach), null, 
 				prefix, LearnTestConfig.getSimpleClassName(), LearnTestUtil.retrieveTestSourceFolder());
 		printer.printTests(new Pair<List<Sequence>, List<Sequence>>(sequences, new ArrayList<Sequence>()));
 	}
@@ -183,7 +184,7 @@ public class TestGenerator {
 		}
 		injectorModule.exit(TestcaseGenerationScope.class);
 		
-		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(), null, 
+		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(LearnTestConfig.isL2TApproach), null, 
 				prefix, LearnTestConfig.getSimpleClassName(), TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
 		printer.printTests(new Pair<List<Sequence>, List<Sequence>>(sequences, new ArrayList<Sequence>()));
 	}

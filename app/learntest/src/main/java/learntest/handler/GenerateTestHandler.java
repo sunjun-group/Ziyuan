@@ -16,6 +16,7 @@ import japa.parser.ParseException;
 import learntest.io.excel.Trial;
 import learntest.main.Engine;
 import learntest.main.LearnTestConfig;
+import learntest.main.RunTimeInfo;
 import learntest.main.TestGenerator;
 import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
@@ -39,12 +40,12 @@ public class GenerateTestHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
-		generateTest();
+		generateTest(LearnTestConfig.isL2TApproach);
 		
 		return null;
 	}
 	
-	public Trial generateTest(){
+	public RunTimeInfo generateTest(boolean isL2T){
 		try {
 			new TestGenerator().genTest();
 			
@@ -53,20 +54,16 @@ public class GenerateTestHandler extends AbstractHandler {
 			AppJavaClassPath appClasspath = new AppJavaClassPath();
 			appClasspath.setJavaHome(TestConfiguration.getJavaHome());
 			
-//			appClasspath.addClasspath(SAV_COMMONS_TEST_TARGET);
-//			appClasspath.addClasspath(TestConfiguration.getTestTarget(LearnTestConfig.MODULE));
-			
 			String outputPath = LearnTestUtil.getOutputPath();
 			outputPath = outputPath.substring(1, outputPath.length());
 			appClasspath.addClasspath(outputPath);
 			
 			Engine engine = new Engine(appClasspath);
-			engine.run(!LearnTestConfig.isL2TApproach);
+			RunTimeInfo l2tInfo = engine.run(!isL2T);
 			
 			refreshProject();
 			
-			//TODO
-			return null;
+			return l2tInfo;
 			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
