@@ -42,21 +42,29 @@ public class LearnTestConfig {
 	}
 	
 //	public static String pkg = "testdata.test.example." + typeName.toLowerCase() + "." + testMethodName.toLowerCase();
-	public static String getTestPackageName(){
-		String packName = "testdata.test.example." + getSimpleClassName().toLowerCase() + "." + testMethodName.toLowerCase();
+	public static String getTestPackageName(boolean isL2T){
+		
+		String approachName = isL2T ? "l2t" : "ram"; 
+		
+		String packName = "testdata." + approachName + ".test.init." +
+				getSimpleClassName().toLowerCase() + "." + testMethodName.toLowerCase();
 		return packName;
 	}
 	
 //	public static String testPath = pkg + "." + typeName + "1";
-	public static String getTestClass(){
-		String testPath = getTestPackageName() + "." + getSimpleClassName() + "1";
+	public static String getTestClass(boolean isL2T){
+		String testPath = getTestPackageName(isL2T) + "." + getSimpleClassName() + "1";
 		return testPath;
 	}
 	
 	
 //	public static String resPkg = "testdata.result." + typeName.toLowerCase() + "." + testMethodName.toLowerCase();
-	public static String getResultedTestPackage(){
-		String resultPack = "testdata.result." + getTestPackageName().toLowerCase() + "." + testMethodName.toLowerCase();
+	public static String getResultedTestPackage(boolean isL2T){
+		
+		String approachName = isL2T ? "l2t" : "ram"; 
+		
+		String resultPack = "testdata." + approachName + ".result." + 
+				getTestPackageName(isL2T).toLowerCase() + "." + testMethodName.toLowerCase();
 		return resultPack;
 	}
 	
