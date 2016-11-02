@@ -11,6 +11,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -28,14 +29,17 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 	private Combo projectCombo;
 	private Text testClassText;
 	private Text testMethodText;
+	private Button isL2TButton;
 	
 	private String defaultTargetProject = "";
 	private String defaultTestClass = "";
 	private String defaultTestMethod = "";
+	private String defaultL2T = "";
 	
 	public static final String TARGET_PORJECT = "targetProjectName";
 	public static final String CLASS_NAME = "className";
 	public static final String METHOD_NAME = "methodName";
+	public static final String IS_L2T = "isL2T";
 	
 	public LearnTestPreference() {
 	}
@@ -53,6 +57,10 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 		this.defaultTargetProject = Activator.getDefault().getPreferenceStore().getString(TARGET_PORJECT);
 		this.defaultTestClass = Activator.getDefault().getPreferenceStore().getString(CLASS_NAME);
 		this.defaultTestMethod = Activator.getDefault().getPreferenceStore().getString(METHOD_NAME);
+		this.defaultL2T = Activator.getDefault().getPreferenceStore().getString(IS_L2T);
+		if(this.defaultL2T == null){
+			this.defaultL2T = "true";
+		}
 	}
 
 	@Override
@@ -90,6 +98,8 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 		
 		testInfoGroup.setLayout(layout);
 		
+		
+		
 		Label testClassLabel = new Label(testInfoGroup, SWT.NONE);
 		testClassLabel.setText("Test Class: ");
 		testClassText = new Text(testInfoGroup, SWT.BORDER);
@@ -106,19 +116,30 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 		methodNameTextData.horizontalSpan = 2;
 		testMethodText.setLayoutData(methodNameTextData);
 		
+		Label isL2TLabel = new Label(testInfoGroup, SWT.NONE);
+		isL2TLabel.setText("Use L2T: ");
+		isL2TButton = new Button(testInfoGroup, SWT.CHECK);
+		isL2TButton.setSelection(Boolean.valueOf(this.defaultL2T));
+		GridData isL2TData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		isL2TData.horizontalSpan = 2;
+		isL2TButton.setLayoutData(isL2TData);
 	}
 	
 	
 	
 	public boolean performOk(){
+		String isL2TString = String.valueOf(this.isL2TButton.getSelection());
+		
 		IEclipsePreferences preferences = ConfigurationScope.INSTANCE.getNode("learntest.preference");
 		preferences.put(TARGET_PORJECT, this.projectCombo.getText());
 		preferences.put(CLASS_NAME, this.testClassText.getText());
 		preferences.put(METHOD_NAME, this.testMethodText.getText());
+		preferences.put(IS_L2T, isL2TString);
 		
 		Activator.getDefault().getPreferenceStore().putValue(TARGET_PORJECT, this.projectCombo.getText());
 		Activator.getDefault().getPreferenceStore().putValue(CLASS_NAME, this.testClassText.getText());
 		Activator.getDefault().getPreferenceStore().putValue(METHOD_NAME, this.testMethodText.getText());
+		Activator.getDefault().getPreferenceStore().putValue(IS_L2T, isL2TString);
 		
 		confirmChanges();
 		
@@ -130,6 +151,7 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 		LearnTestConfig.projectName = this.projectCombo.getText();
 		LearnTestConfig.testClassName = this.testClassText.getText();
 		LearnTestConfig.testMethodName = this.testMethodText.getText();
+		LearnTestConfig.isL2TApproach = this.isL2TButton.getSelection();
 	}
 	
 	

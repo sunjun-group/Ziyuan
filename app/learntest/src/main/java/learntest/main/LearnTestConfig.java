@@ -15,6 +15,7 @@ public class LearnTestConfig {
 	public static String projectName;
 	public static String testClassName;
 	public static String testMethodName;
+	public static boolean isL2TApproach;
 	
 	static{
 		if(Activator.getDefault() != null){
@@ -22,6 +23,10 @@ public class LearnTestConfig {
 				projectName = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.TARGET_PORJECT);
 				testClassName = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.CLASS_NAME);
 				testMethodName = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.METHOD_NAME);
+				String L2TString = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.IS_L2T);
+				if(L2TString != null){
+					isL2TApproach = Boolean.valueOf(L2TString);
+				}
 			}
 			catch(Exception e){
 				e.printStackTrace();

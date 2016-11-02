@@ -61,7 +61,7 @@ public class GenerateTestHandler extends AbstractHandler {
 			appClasspath.addClasspath(outputPath);
 			
 			Engine engine = new Engine(appClasspath);
-			engine.run(false);
+			engine.run(!LearnTestConfig.isL2TApproach);
 			
 			refreshProject();
 			
