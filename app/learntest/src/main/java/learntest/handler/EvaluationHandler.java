@@ -1,6 +1,8 @@
 package learntest.handler;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -22,6 +24,9 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
+import learntest.io.excel.ExcelReader;
+import learntest.io.excel.ExcelWriter;
+import learntest.io.excel.Trial;
 import learntest.main.LearnTestConfig;
 import learntest.util.LearnTestUtil;
 
@@ -59,12 +64,35 @@ public class EvaluationHandler extends AbstractHandler {
 		IPackageFragmentRoot root = LearnTestUtil.findMainPackageRootInProject();
 		
 		Job job = new Job("Do evaluation") {
+			
+			private HashSet<String> parsedMethods = new HashSet<>();
+			
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
+				
+				ExcelReader reader = null;
+				ExcelWriter writer = null;
+				try {
+					reader = new ExcelReader();
+					reader.readXLSX();
+					parsedMethods = reader.getParsedMethodSet();
+					
+					writer = new ExcelWriter(LearnTestConfig.projectName);
+					
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				
+				if(reader==null || writer==null){
+					return Status.CANCEL_STATUS;
+				}
+				
+				
+				
 				try {
 					for(IJavaElement element: root.getChildren()){
 						if(element instanceof IPackageFragment){
-							runEvaluation((IPackageFragment)element);			
+							runEvaluation((IPackageFragment)element, writer);			
 						}
 					}
 				} catch (JavaModelException e) {
@@ -74,10 +102,10 @@ public class EvaluationHandler extends AbstractHandler {
 				return Status.OK_STATUS;
 			}
 
-			private void runEvaluation(IPackageFragment pack) throws JavaModelException {
+			private void runEvaluation(IPackageFragment pack, ExcelWriter writer) throws JavaModelException {
 				for(IJavaElement javaElement: pack.getChildren()){
 					if(javaElement instanceof IPackageFragment){
-						runEvaluation((IPackageFragment)javaElement);
+						runEvaluation((IPackageFragment)javaElement, writer);
 					}
 					else if(javaElement instanceof ICompilationUnit){
 						ICompilationUnit icu = (ICompilationUnit)javaElement;
@@ -108,17 +136,23 @@ public class EvaluationHandler extends AbstractHandler {
 							LearnTestConfig.testClassName = className;
 							
 							for(MethodDeclaration method: validMethods){
-								String methodName = method.getName().getIdentifier();
-								LearnTestConfig.testMethodName = methodName;
+								String simpleMethodName = method.getName().getIdentifier();
+								LearnTestConfig.testMethodName = simpleMethodName;
 								
-								System.out.print("working method: " + LearnTestConfig.testClassName 
-										+ "." + LearnTestConfig.testMethodName);
+								String methodName = className + "." + simpleMethodName;
 								
-								try{
-									new GenerateTestHandler().generateTest();									
-								}
-								catch(Exception e){
-									System.out.println(e);
+								if(!parsedMethods.contains(methodName)){
+									System.out.print("working method: " + LearnTestConfig.testClassName 
+											+ "." + LearnTestConfig.testMethodName);
+									
+									try{
+										Trial trial = new GenerateTestHandler().generateTest();		
+										writer.export(trial);
+									}
+									catch(Exception e){
+										System.out.println(e);
+									}
+									
 								}
 							}
 							

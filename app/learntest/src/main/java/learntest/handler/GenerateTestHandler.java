@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import japa.parser.ParseException;
+import learntest.io.excel.Trial;
 import learntest.main.Engine;
 import learntest.main.LearnTestConfig;
 import learntest.main.TestGenerator;
@@ -43,7 +44,7 @@ public class GenerateTestHandler extends AbstractHandler {
 		return null;
 	}
 	
-	public void generateTest(){
+	public Trial generateTest(){
 		try {
 			new TestGenerator().genTest();
 			
@@ -64,6 +65,9 @@ public class GenerateTestHandler extends AbstractHandler {
 			
 			refreshProject();
 			
+			//TODO
+			return null;
+			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SavException e) {
@@ -73,6 +77,8 @@ public class GenerateTestHandler extends AbstractHandler {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		return null;
 	}
 
 }
