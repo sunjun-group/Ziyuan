@@ -36,7 +36,7 @@ public class EvaluationHandler extends AbstractHandler {
 
 	class ValidMethodCollector extends ASTVisitor{
 		
-		List<MethodDeclaration> mdList = new ArrayList<>();
+		List<MethodDeclaration> mdList = new ArrayList<MethodDeclaration>();
 		
 		public boolean visit(MethodDeclaration md){
 			
@@ -63,11 +63,11 @@ public class EvaluationHandler extends AbstractHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IPackageFragmentRoot root = LearnTestUtil.findMainPackageRootInProject();
+		final IPackageFragmentRoot root = LearnTestUtil.findMainPackageRootInProject();
 		
 		Job job = new Job("Do evaluation") {
 			
-			private HashSet<String> parsedMethods = new HashSet<>();
+			private HashSet<String> parsedMethods = new HashSet<String>();
 			
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {

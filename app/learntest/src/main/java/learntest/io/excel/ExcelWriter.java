@@ -58,7 +58,7 @@ public class ExcelWriter {
 		book = new XSSFWorkbook();
 		sheet = book.createSheet("data");
 		
-		List<String> titles = new ArrayList<>();
+		List<String> titles = new ArrayList<String>();
 		titles.add("method name");
 		titles.add("l2t time");
 		titles.add("l2t coverage");
