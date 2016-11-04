@@ -232,4 +232,8 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		UNKNOWN;
 	}
 
+	public List<BreakpointValue> getCurrentTestInputValues() {
+		return currentTestInputValues;
+	}
+
 }

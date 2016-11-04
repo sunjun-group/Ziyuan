@@ -48,6 +48,24 @@ public class JacopSelectiveSampling {
 		prevDatas = new ArrayList<Domain[]>();
 	}
 	
+	public void addPrevValues(List<Domain[]> values) throws SAVExecutionTimeOutException {
+		for (Domain[] value : values) {
+			if (value == null) {
+				continue;
+			}
+			boolean flag = true;
+			for (Domain[] domains : prevDatas) {
+				if (StoreSearcher.duplicate(domains, value)) {
+					flag = false;
+					break;
+				}
+			}
+			if (flag) {
+				prevDatas.add(value);
+			}
+		}
+	}
+	
 	public Map<DecisionLocation, BreakpointData> selectDataForModel(DecisionLocation target, 
 			List<ExecVar> originVars, List<DataPoint> datapoints,
 			OrCategoryCalculator precondition, List<Divider> dividers) throws SavException, SAVExecutionTimeOutException {
@@ -393,7 +411,7 @@ public class JacopSelectiveSampling {
 			}
 		}
 		//System.out.println(cnt);
-		return selectResult;
+		return null;
 	}
 	
 	private void selectData(List<List<Eq<?>>> assignments/*, DecisionLocation target*/) throws SavException, SAVExecutionTimeOutException {

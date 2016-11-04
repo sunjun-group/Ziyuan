@@ -32,10 +32,12 @@ import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
 import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
+import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint.Variable;
+import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
 
 public class Engine {
@@ -89,41 +91,74 @@ public class Engine {
 		long time = -1;
 		double coverage = 0;
 		
+		JacopSelectiveSampling selectiveSampling = null;
+		DecisionLearner learner = null;
+		
 		try{
 			ensureTcExecutor();
 			tcExecutor.setup(appClassPath, testcases);
 			tcExecutor.run();
 			Map<DecisionLocation, BreakpointData> result = tcExecutor.getResult();
-			tcExecutor.setjResultFileDeleteOnExit(true);
-			//tcExecutor.setSingleMode();
-			tcExecutor.setInstrMode(true);
-			JacopSelectiveSampling selectiveSampling = new JacopSelectiveSampling(tcExecutor);
-			DecisionLearner learner = new DecisionLearner(selectiveSampling, manager, random);
-			learner.learn(result);
-			//List<BreakpointValue> records = learner.getRecords();
-			/*System.out.println("==============================================");
-			System.out.println(cfg);
-			System.out.println("==============================================");*/
-			/*List<List<Formula>> paths = manager.buildPaths();
-			System.out.println(paths);
-			JacopPathSolver solver = new JacopPathSolver(learner.getOriginVars());
-			List<Domain[]> solutions = solver.solve(paths);*/
-			//solutions.addAll(getSolutions(records, learner.getOriginVars()));
-			//new TestGenerator().genTestAccordingToSolutions(solutions, learner.getOriginVars());
 			
-			List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
+			if (result.isEmpty()) {
+				List<BreakpointValue> tests = tcExecutor.getCurrentTestInputValues();
+				if (tests != null && !tests.isEmpty()) {
+					BreakpointValue test = tests.get(0);
+					Set<ExecVar> allVars = new HashSet<ExecVar>();
+					collectExecVar(test.getChildren(), allVars);
+					List<ExecVar> vars = new ArrayList<ExecVar>(allVars);
+					List<BreakpointValue> list = new ArrayList<BreakpointValue>();
+					list.add(test);
+					new TestGenerator().genTestAccordingToSolutions(getSolutions(list, vars), vars);
+					System.out.println("Total test cases number: " + tests.size());
+					coverage = 1;
+				}
+			} else {
+				List<Domain[]> values = null;
+				List<BreakpointValue> tests = tcExecutor.getCurrentTestInputValues();
+				if (tests != null) {
+					Set<ExecVar> allVars = new HashSet<ExecVar>();
+					for (BreakpointValue test : tests) {
+						collectExecVar(test.getChildren(), allVars);
+					}
+					List<ExecVar> vars = new ArrayList<ExecVar>(allVars);
+					values = getSolutions(tests, vars);
+				}
+				tcExecutor.setjResultFileDeleteOnExit(true);
+				//tcExecutor.setSingleMode();
+				tcExecutor.setInstrMode(true);
+				selectiveSampling = new JacopSelectiveSampling(tcExecutor);
+				if (values != null) {
+					selectiveSampling.addPrevValues(values);
+				}
+				learner = new DecisionLearner(selectiveSampling, manager, random);
+				learner.learn(result);
+				//List<BreakpointValue> records = learner.getRecords();
+				/*System.out.println("==============================================");
+				System.out.println(cfg);
+				System.out.println("==============================================");*/
+				/*List<List<Formula>> paths = manager.buildPaths();
+				System.out.println(paths);
+				JacopPathSolver solver = new JacopPathSolver(learner.getOriginVars());
+				List<Domain[]> solutions = solver.solve(paths);*/
+				//solutions.addAll(getSolutions(records, learner.getOriginVars()));
+				//new TestGenerator().genTestAccordingToSolutions(solutions, learner.getOriginVars());
+				
+				List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
+				
+				new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());
+				System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
+			}
 			
-			new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());
-			System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
-			
-			time = SAVTimer.getExecutionTime();
-		}
-		catch(SAVExecutionTimeOutException e){
+			time = SAVTimer.getExecutionTime();		
+		} catch(SAVExecutionTimeOutException e){
+			if (learner != null) {
+				List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
+				new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());
+				System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
+			}
 			e.printStackTrace();
-		}
-		
-		
-		
+		}		
 		//PathSolver pathSolver = new PathSolver();
 		//List<Result> results = pathSolver.solve(paths);
 		//System.out.println(results);
@@ -131,7 +166,10 @@ public class Engine {
 		//new TestGenerator().genTestAccordingToInput(results, variables);
 		//new TestGenerator().genTestAccordingToInput(results, learner.getLabels());
 		
-		//TODO for Gao
+		if (learner != null) {
+			coverage = learner.getCoverage();
+		}
+		
 		RunTimeInfo info = new RunTimeInfo(time, coverage);
 		return info;
 	}
@@ -202,5 +240,18 @@ public class Engine {
 		tcExecutor.setBuilder(dtBuilder);
 		tcExecutor.setBkpBuilder(bkpBuilder);
 	}	
+	
+	private void collectExecVar(List<ExecValue> vals, Set<ExecVar> vars) {
+		if (CollectionUtils.isEmpty(vals)) {
+			return;
+		}
+		for (ExecValue val : vals) {
+			if (val == null || CollectionUtils.isEmpty(val.getChildren())) {
+				String varId = val.getVarId();
+				vars.add(new ExecVar(varId, val.getType()));
+			}
+			collectExecVar(val.getChildren(), vars);
+		}
+	}
 
 }

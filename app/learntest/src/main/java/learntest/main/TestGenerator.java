@@ -48,7 +48,7 @@ public class TestGenerator {
 		System.currentTimeMillis();
 		
 		boolean isL2T = LearnTestConfig.isL2TApproach;
-		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getTestPackageName(isL2T), LearnTestConfig.getTestPackageName(isL2T), 
+		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getTestPackageName(isL2T), null/*LearnTestConfig.getTestPackageName(isL2T)*/, 
 				prefix, LearnTestConfig.getSimpleClassName(), testSourceFolder);
 		printer.printTests(builder.generate());
 		

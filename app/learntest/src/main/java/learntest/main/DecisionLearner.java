@@ -64,6 +64,13 @@ public class DecisionLearner implements CategoryCalculator {
 	
 	private boolean random = true;
 	
+	private double curBranch = 1;
+	
+	private boolean needFalse = true;
+	private boolean needTrue = true;
+	private boolean needOne = true;
+	private boolean needMore = true;
+	
 	public DecisionLearner(JacopSelectiveSampling selectiveSampling, CfgConditionManager manager, boolean random) {
 		machine = new MyPositiveSeparationMachine();
 		machine.setDefaultParams();
@@ -133,11 +140,16 @@ public class DecisionLearner implements CategoryCalculator {
 	}*/
 	
 	private Pair<Formula, Formula> learn(BreakpointData bkpData) throws SavException, SAVExecutionTimeOutException {
+		needFalse = true;
+		needTrue = !(bkpData instanceof LoopTimesData);
+		
 		OrCategoryCalculator preconditions = null;
 		if (!random) {
 			preconditions = manager.getPreConditions(bkpData.getLocation().getLineNo());
 			preconditions.clear(bkpData);
 		}
+		
+		updateCoverage(bkpData);
 
 		//clear(bkpData);
 		
@@ -148,12 +160,14 @@ public class DecisionLearner implements CategoryCalculator {
 			//System.out.println("learn select data for empty time: " + (System.currentTimeMillis() - startTime) + "ms");
 			if (selectMap != null) {
 				mergeMap(selectMap);
+				updateCoverage(bkpData);
 				if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
 					selectMap = selectiveSampling.selectDataForEmpty(bkpData.getLocation(), originVars, 
 							preconditions, null, bkpData.getTrueValues().isEmpty(), false);	
 					mergeMap(selectMap);
+					updateCoverage(bkpData);
 				}
-				bkpData = bkpDataMap.get(bkpData.getLocation());
+				//bkpData = bkpDataMap.get(bkpData.getLocation());
 			}
 		}
 				
@@ -284,7 +298,7 @@ public class DecisionLearner implements CategoryCalculator {
 		
 		}
 		
-		List<BreakpointValue> falseValues = bkpData.getFalseValues();
+		/*List<BreakpointValue> falseValues = bkpData.getFalseValues();
 		boolean needMore = true;
 		for (BreakpointValue value : falseValues) {
 			if (records.contains(value)) {
@@ -294,12 +308,12 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 		if (needMore) {
 			records.add(falseValues.get(0));
-		}
+		}*/
 		
 		Formula oneMore = null;
 		if (bkpData instanceof LoopTimesData) {
 			oneMore = learn((LoopTimesData)bkpData);
-		} else {
+		} /*else {
 			List<BreakpointValue> trueValues = bkpData.getTrueValues();
 			needMore = true;
 			for (BreakpointValue value : trueValues) {
@@ -311,7 +325,7 @@ public class DecisionLearner implements CategoryCalculator {
 			if (needMore) {
 				records.add(trueValues.get(0));
 			}
-		}
+		}*/
 		
 		/*if (!bkpData.getFalseValues().isEmpty() && bkpData.getFalseValues().size() < MAX_TO_RECORD) {
 			records.add(bkpData.getFalseValues().get(0));
@@ -323,17 +337,22 @@ public class DecisionLearner implements CategoryCalculator {
 	}
 	
 	private Formula learn(LoopTimesData loopData) throws SavException, SAVExecutionTimeOutException {
+		needOne = true;
+		needMore = true;
+		
 		OrCategoryCalculator preConditions = null;
 		if (!random) {
 			preConditions = manager.getPreConditions(loopData.getLocation().getLineNo());			
 		}
+		updateCoverage(loopData);
 		if (loopData.getOneTimeValues().isEmpty() || loopData.getMoreTimesValues().isEmpty()) {
 			//startTime = System.currentTimeMillis();
 			Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataForEmpty(loopData.getLocation(), originVars,
 					preConditions, curDividers, loopData.getMoreTimesValues().isEmpty(), true);
 			//System.out.println("learn select data for empty time: " + (System.currentTimeMillis() - startTime) + "ms");
 			mergeMap(selectMap);
-			loopData = (LoopTimesData) bkpDataMap.get(loopData.getLocation());
+			updateCoverage(loopData);
+			//loopData = (LoopTimesData) bkpDataMap.get(loopData.getLocation());
 		}
 		if (loopData.getOneTimeValues().isEmpty()) {
 			log.info("Missing once loop data");
@@ -392,7 +411,7 @@ public class DecisionLearner implements CategoryCalculator {
 		}*/
 		Formula formula = null;
 		manager.updateRelevance(loopData);
-		//if (/*!manager.isEnd(loopData.getLocation().getLineNo())*/manager.isRelevant(loopData.getLocation().getLineNo())) {
+		if (!manager.isEnd(loopData.getLocation().getLineNo())/*manager.isRelevant(loopData.getLocation().getLineNo())*/) {
 			
 			int times = 0;
 			machine.resetData();
@@ -439,9 +458,9 @@ public class DecisionLearner implements CategoryCalculator {
 				times ++;
 			}
 			
-//		}	
+		}	
 		
-		List<BreakpointValue> choices = loopData.getOneTimeValues();
+		/*List<BreakpointValue> choices = loopData.getOneTimeValues();
 		boolean needMore = true;
 		for (BreakpointValue value : choices) {
 			if (records.contains(value)) {
@@ -462,7 +481,7 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 		if (needMore) {
 			records.add(choices.get(0));
-		}
+		}*/
 		
 		/*if (!loopData.getOneTimeValues().isEmpty() && loopData.getOneTimeValues().size() < MAX_TO_RECORD) {
 			records.add(loopData.getOneTimeValues().get(0));
@@ -539,6 +558,72 @@ public class DecisionLearner implements CategoryCalculator {
 		return labels;
 	}
 	
+	private void updateCoverage(BreakpointData data) {
+		if (needFalse) {
+			List<BreakpointValue> falseValues = data.getFalseValues();
+			for (BreakpointValue value : falseValues) {
+				if (records.contains(value)) {
+					needFalse = false;
+					curBranch += 1;
+					break;
+				}
+			}
+			if (needFalse && !falseValues.isEmpty()) {
+				records.add(falseValues.get(0));
+				needFalse = false;
+				curBranch += 1;
+			}
+		}
+		if (needTrue) {
+			List<BreakpointValue> trueValues = data.getTrueValues();
+			for (BreakpointValue value : trueValues) {
+				if (records.contains(value)) {
+					needTrue = false;
+					curBranch += 1;
+					break;
+				}
+			}
+			if (needTrue && !trueValues.isEmpty()) {
+				records.add(trueValues.get(0));
+				needTrue = false;
+				curBranch += 1;
+			}
+		}
+	}
+	
+	private void updateCoverage(LoopTimesData data) {
+		if (needOne) {
+			List<BreakpointValue> oneTimeValues = data.getOneTimeValues();
+			for (BreakpointValue value : oneTimeValues) {
+				if (records.contains(value)) {
+					needOne = false;
+					curBranch += 1;
+					break;
+				}
+			}
+			if (needOne && !oneTimeValues.isEmpty()) {
+				records.add(oneTimeValues.get(0));
+				needOne = false;
+				curBranch += 1;
+			}
+		}
+		if (needMore) {
+			List<BreakpointValue> moreTimesValues = data.getMoreTimesValues();
+			for (BreakpointValue value : moreTimesValues) {
+				if (records.contains(value)) {
+					needMore = false;
+					curBranch += 1;
+					break;
+				}
+			}
+			if (needMore && !moreTimesValues.isEmpty()) {
+				records.add(moreTimesValues.get(0));
+				needMore = false;
+				curBranch += 1;
+			}
+		}
+	}
+	
 	private void addDataPoints(List<ExecVar> vars, List<BreakpointValue> values, Category category, Machine machine) {
 		for (BreakpointValue value : values) {
 			addDataPoint(vars, value, category, machine);
@@ -612,6 +697,10 @@ public class DecisionLearner implements CategoryCalculator {
 
 	public List<BreakpointValue> getRecords() {
 		return records;
+	}
+
+	public double getCoverage() {
+		return curBranch / manager.getTotalBranch();
 	}
 
 }
