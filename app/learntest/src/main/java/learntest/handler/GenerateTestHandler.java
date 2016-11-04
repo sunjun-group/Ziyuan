@@ -42,16 +42,12 @@ public class GenerateTestHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
-		try {
-			generateTest(LearnTestConfig.isL2TApproach);
-		} catch (SAVExecutionTimeOutException e) {
-			e.printStackTrace();
-		}
+		generateTest(LearnTestConfig.isL2TApproach);
 		
 		return null;
 	}
 	
-	public RunTimeInfo generateTest(boolean isL2T) throws SAVExecutionTimeOutException{
+	public RunTimeInfo generateTest(boolean isL2T){
 		try {
 			SAVTimer.enableExecutionTimeout = true;
 			SAVTimer.exeuctionTimeout = 10000;

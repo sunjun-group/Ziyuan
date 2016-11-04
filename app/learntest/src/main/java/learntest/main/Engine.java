@@ -71,7 +71,7 @@ public class Engine {
 		this.tcExecutor = tcExecutor;
 	}
 	
-	public RunTimeInfo run(boolean random) throws ParseException, IOException, SavException, ClassNotFoundException, SAVExecutionTimeOutException {
+	public RunTimeInfo run(boolean random) throws ParseException, IOException, SavException, ClassNotFoundException {
 		SAVTimer.startCount();
 		
 		String filePath = LearnTestConfig.getTestClassFilePath();
@@ -86,33 +86,43 @@ public class Engine {
 		bkpBuilder.buildBreakpoints();
 		dtBuilder = new BreakpointDataBuilder(bkpBuilder);
 		
-		ensureTcExecutor();
-		tcExecutor.setup(appClassPath, testcases);
-		tcExecutor.run();
-		Map<DecisionLocation, BreakpointData> result = tcExecutor.getResult();
-		tcExecutor.setjResultFileDeleteOnExit(true);
-		//tcExecutor.setSingleMode();
-		tcExecutor.setInstrMode(true);
-		JacopSelectiveSampling selectiveSampling = new JacopSelectiveSampling(tcExecutor);
-		DecisionLearner learner = new DecisionLearner(selectiveSampling, manager, random);
-		learner.learn(result);
-		//List<BreakpointValue> records = learner.getRecords();
-		/*System.out.println("==============================================");
-		System.out.println(cfg);
-		System.out.println("==============================================");*/
-		/*List<List<Formula>> paths = manager.buildPaths();
-		System.out.println(paths);
-		JacopPathSolver solver = new JacopPathSolver(learner.getOriginVars());
-		List<Domain[]> solutions = solver.solve(paths);*/
-		//solutions.addAll(getSolutions(records, learner.getOriginVars()));
-		//new TestGenerator().genTestAccordingToSolutions(solutions, learner.getOriginVars());
+		long time = -1;
+		double coverage = 0;
 		
-		List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
+		try{
+			ensureTcExecutor();
+			tcExecutor.setup(appClassPath, testcases);
+			tcExecutor.run();
+			Map<DecisionLocation, BreakpointData> result = tcExecutor.getResult();
+			tcExecutor.setjResultFileDeleteOnExit(true);
+			//tcExecutor.setSingleMode();
+			tcExecutor.setInstrMode(true);
+			JacopSelectiveSampling selectiveSampling = new JacopSelectiveSampling(tcExecutor);
+			DecisionLearner learner = new DecisionLearner(selectiveSampling, manager, random);
+			learner.learn(result);
+			//List<BreakpointValue> records = learner.getRecords();
+			/*System.out.println("==============================================");
+			System.out.println(cfg);
+			System.out.println("==============================================");*/
+			/*List<List<Formula>> paths = manager.buildPaths();
+			System.out.println(paths);
+			JacopPathSolver solver = new JacopPathSolver(learner.getOriginVars());
+			List<Domain[]> solutions = solver.solve(paths);*/
+			//solutions.addAll(getSolutions(records, learner.getOriginVars()));
+			//new TestGenerator().genTestAccordingToSolutions(solutions, learner.getOriginVars());
+			
+			List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
+			
+			new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());
+			System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
+			
+			System.currentTimeMillis();
+		}
+		catch(SAVExecutionTimeOutException e){
+			e.printStackTrace();
+		}
 		
-		new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());
-		System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
 		
-		System.currentTimeMillis();
 		
 		//PathSolver pathSolver = new PathSolver();
 		//List<Result> results = pathSolver.solve(paths);
@@ -122,7 +132,7 @@ public class Engine {
 		//new TestGenerator().genTestAccordingToInput(results, learner.getLabels());
 		
 		//TODO for Gao
-		RunTimeInfo info = new RunTimeInfo(0, 0);
+		RunTimeInfo info = new RunTimeInfo(time, coverage);
 		return info;
 	}
 		
