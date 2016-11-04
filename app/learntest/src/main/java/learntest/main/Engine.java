@@ -74,6 +74,8 @@ public class Engine {
 	}
 	
 	public RunTimeInfo run(boolean random) throws ParseException, IOException, SavException, ClassNotFoundException {
+		//TODO: change logic to stop when first bug found
+		
 		SAVTimer.startCount();
 		
 		String filePath = LearnTestConfig.getTestClassFilePath();
