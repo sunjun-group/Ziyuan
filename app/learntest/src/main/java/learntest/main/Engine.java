@@ -132,6 +132,10 @@ public class Engine {
 		//new TestGenerator().genTestAccordingToInput(results, learner.getLabels());
 		
 		//TODO for Gao
+		if(time != -1){
+			time = SAVTimer.getExecutionTime();
+		}
+		
 		RunTimeInfo info = new RunTimeInfo(time, coverage);
 		return info;
 	}
