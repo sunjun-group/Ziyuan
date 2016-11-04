@@ -19,4 +19,9 @@ public class SAVTimer {
 		}
 		return false;
 	}
+	
+	public static long getExecutionTime(){
+		long time = System.currentTimeMillis();
+		return time-startTime;
+	}
 }
