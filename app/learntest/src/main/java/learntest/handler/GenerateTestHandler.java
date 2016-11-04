@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import japa.parser.ParseException;
-import learntest.io.excel.Trial;
 import learntest.main.Engine;
 import learntest.main.LearnTestConfig;
 import learntest.main.RunTimeInfo;
@@ -21,7 +20,6 @@ import learntest.main.TestGenerator;
 import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
 import sav.commons.TestConfiguration;
-import sav.settings.SAVExecutionTimeOutException;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 
