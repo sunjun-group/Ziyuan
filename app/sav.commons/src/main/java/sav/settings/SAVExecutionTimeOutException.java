@@ -12,5 +12,10 @@ public class SAVExecutionTimeOutException extends Exception {
 	 * 
 	 */
 	private static final long serialVersionUID = 7458090025653213056L;
-
+	
+	public SAVExecutionTimeOutException(){}
+	
+	public SAVExecutionTimeOutException(String msg){
+		super(msg);
+	}
 }

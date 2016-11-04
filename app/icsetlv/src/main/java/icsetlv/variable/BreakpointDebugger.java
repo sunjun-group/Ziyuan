@@ -93,7 +93,7 @@ public abstract class BreakpointDebugger {
 			for (Event event : eventSet) {
 				
 				if(SAVTimer.isTimeOut()){
-					throw new SAVExecutionTimeOutException();
+					throw new SAVExecutionTimeOutException("Time out at retrieving runtime data");
 				}
 				
 				if (event instanceof VMDeathEvent

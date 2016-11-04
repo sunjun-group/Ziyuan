@@ -197,7 +197,7 @@ public class StoreSearcher {
 		}
 		for (int i = 0; i < s1.length; i++) {
 			if(SAVTimer.isTimeOut()){
-				throw new SAVExecutionTimeOutException();
+				throw new SAVExecutionTimeOutException("Time out in StoreSearchr.duplicate()");
 			}
 			
 			if (((IntDomain) s1[i]).min() != ((IntDomain) s2[i]).min()) {
