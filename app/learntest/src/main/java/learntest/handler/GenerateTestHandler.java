@@ -22,6 +22,7 @@ import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
 import sav.commons.TestConfiguration;
 import sav.settings.SAVExecutionTimeOutException;
+import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 
 public class GenerateTestHandler extends AbstractHandler {
@@ -52,6 +53,9 @@ public class GenerateTestHandler extends AbstractHandler {
 	
 	public RunTimeInfo generateTest(boolean isL2T) throws SAVExecutionTimeOutException{
 		try {
+			SAVTimer.enableExecutionTimeout = true;
+			SAVTimer.exeuctionTimeout = 10000;
+			
 			new TestGenerator().genTest();
 			
 			refreshProject();

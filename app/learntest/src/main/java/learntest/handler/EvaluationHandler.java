@@ -30,6 +30,7 @@ import learntest.io.excel.Trial;
 import learntest.main.LearnTestConfig;
 import learntest.main.RunTimeInfo;
 import learntest.util.LearnTestUtil;
+import sav.settings.SAVTimer;
 
 public class EvaluationHandler extends AbstractHandler {
 
@@ -88,7 +89,8 @@ public class EvaluationHandler extends AbstractHandler {
 					return Status.CANCEL_STATUS;
 				}
 				
-				
+				SAVTimer.enableExecutionTimeout = true;
+				SAVTimer.exeuctionTimeout = 10000;
 				
 				try {
 					for(IJavaElement element: root.getChildren()){

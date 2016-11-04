@@ -13,7 +13,7 @@ public class SAVTimer {
 	public static boolean isTimeOut(){
 		if(enableExecutionTimeout){
 			long time = System.currentTimeMillis();
-			if(startTime-time>exeuctionTimeout){
+			if(time-startTime>exeuctionTimeout){
 				return true;
 			}			
 		}
