@@ -116,7 +116,7 @@ public class Engine {
 			new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());
 			System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
 			
-			System.currentTimeMillis();
+			time = SAVTimer.getExecutionTime();
 		}
 		catch(SAVExecutionTimeOutException e){
 			e.printStackTrace();
@@ -132,10 +132,6 @@ public class Engine {
 		//new TestGenerator().genTestAccordingToInput(results, learner.getLabels());
 		
 		//TODO for Gao
-		if(time != -1){
-			time = SAVTimer.getExecutionTime();
-		}
-		
 		RunTimeInfo info = new RunTimeInfo(time, coverage);
 		return info;
 	}
