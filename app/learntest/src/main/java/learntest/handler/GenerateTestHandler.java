@@ -21,6 +21,7 @@ import learntest.main.TestGenerator;
 import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
 import sav.commons.TestConfiguration;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.AppJavaClassPath;
 
 public class GenerateTestHandler extends AbstractHandler {
@@ -40,12 +41,16 @@ public class GenerateTestHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
-		generateTest(LearnTestConfig.isL2TApproach);
+		try {
+			generateTest(LearnTestConfig.isL2TApproach);
+		} catch (SAVExecutionTimeOutException e) {
+			e.printStackTrace();
+		}
 		
 		return null;
 	}
 	
-	public RunTimeInfo generateTest(boolean isL2T){
+	public RunTimeInfo generateTest(boolean isL2T) throws SAVExecutionTimeOutException{
 		try {
 			new TestGenerator().genTest();
 			

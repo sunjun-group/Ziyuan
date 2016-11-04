@@ -26,6 +26,7 @@ import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.Eq;
 import sav.common.core.utils.Randomness;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
 
@@ -49,7 +50,7 @@ public class JacopSelectiveSampling {
 	
 	public Map<DecisionLocation, BreakpointData> selectDataForModel(DecisionLocation target, 
 			List<ExecVar> originVars, List<DataPoint> datapoints,
-			OrCategoryCalculator precondition, List<Divider> dividers) throws SavException {
+			OrCategoryCalculator precondition, List<Divider> dividers) throws SavException, SAVExecutionTimeOutException {
 		List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
 		
 		//startTime = System.currentTimeMillis();
@@ -255,7 +256,7 @@ public class JacopSelectiveSampling {
 		return selectResult;
 	}
 
-	private void extendWithHeuristics(List<Domain[]> solutions, List<List<Eq<?>>> assignments, List<ExecVar> originVars) {
+	private void extendWithHeuristics(List<Domain[]> solutions, List<List<Eq<?>>> assignments, List<ExecVar> originVars) throws SAVExecutionTimeOutException {
 		int xIdx = 0;
 		int yIdx = 0;
 		int zIdx = 0;
@@ -327,7 +328,7 @@ public class JacopSelectiveSampling {
 			OrCategoryCalculator precondition, 
 			List<Divider> current, 
 			boolean trueOrFalse, 
-			boolean isLoop) throws SavException {
+			boolean isLoop) throws SavException, SAVExecutionTimeOutException {
 		
 		tcExecutor.setTarget(null);
 
@@ -395,7 +396,7 @@ public class JacopSelectiveSampling {
 		return selectResult;
 	}
 	
-	private void selectData(List<List<Eq<?>>> assignments/*, DecisionLocation target*/) throws SavException {
+	private void selectData(List<List<Eq<?>>> assignments/*, DecisionLocation target*/) throws SavException, SAVExecutionTimeOutException {
 		if (assignments.isEmpty()) {
 			return;
 		}
@@ -416,7 +417,7 @@ public class JacopSelectiveSampling {
 	}
 
 	private void selectData(DecisionLocation target, 
-			List<List<Eq<?>>> assignments) throws SavException {
+			List<List<Eq<?>>> assignments) throws SavException, SAVExecutionTimeOutException {
 		if (assignments.isEmpty()) {
 			selectResult = null;
 			return;

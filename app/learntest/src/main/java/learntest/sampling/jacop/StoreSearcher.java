@@ -15,9 +15,12 @@ import org.jacop.search.InputOrderSelect;
 import org.jacop.search.Search;
 import org.jacop.search.SelectChoicePoint;
 
+import sav.settings.SAVExecutionTimeOutException;
+import sav.settings.SAVTimer;
+
 public class StoreSearcher {
 	
-	public static List<Domain[]> solve(List<Store> stores) {
+	public static List<Domain[]> solve(List<Store> stores) throws SAVExecutionTimeOutException {
 		List<Domain[]> res = new ArrayList<Domain[]>();
 		for (Store store : stores) {
 			Domain[] solution = solve(store);
@@ -83,7 +86,7 @@ public class StoreSearcher {
 	    return null;
 	}
 	
-	public static List<Domain[]> solveAll(List<Store> stores) {
+	public static List<Domain[]> solveAll(List<Store> stores) throws SAVExecutionTimeOutException {
 		List<Domain[]> res = new ArrayList<Domain[]>();
 		for (Store store : stores) {
 			List<Domain[]> solutions = solveAll(store);
@@ -129,7 +132,7 @@ public class StoreSearcher {
 		return res;
 	}
 	
-	public static List<Domain[]> solve(List<Store> stores, int number) {
+	public static List<Domain[]> solve(List<Store> stores, int number) throws SAVExecutionTimeOutException {
 		List<Domain[]> res = new ArrayList<Domain[]>();
 		for (Store store : stores) {
 			List<Domain[]> solutions = solve(store, number);
@@ -183,7 +186,7 @@ public class StoreSearcher {
 		return res;
 	}
 	
-	public static boolean duplicate(Domain[] s1, Domain[] s2) {
+	public static boolean duplicate(Domain[] s1, Domain[] s2) throws SAVExecutionTimeOutException {
 		if (s1 == null && s2 == null) {
 			return true;
 		} else if (s1 == null || s2 == null) {
@@ -193,6 +196,10 @@ public class StoreSearcher {
 			return false;
 		}
 		for (int i = 0; i < s1.length; i++) {
+			if(SAVTimer.isTimeOut()){
+				throw new SAVExecutionTimeOutException();
+			}
+			
 			if (((IntDomain) s1[i]).min() != ((IntDomain) s2[i]).min()) {
 				return false;
 			}

@@ -15,6 +15,7 @@ import libsvm.core.Model;
 import libsvm.extension.ByDistanceNegativePointSelection;
 import libsvm.extension.MultiDividerBasedCategoryCalculator;
 import libsvm.extension.NegativePointSelection;
+import sav.settings.SAVExecutionTimeOutException;
 
 public class MyPositiveSeparationMachine extends Machine {
 
@@ -29,7 +30,7 @@ public class MyPositiveSeparationMachine extends Machine {
 	}
 
 	@Override
-	protected Machine train(List<DataPoint> dataPoints) {
+	protected Machine train(List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
 		learnedModels = new ArrayList<svm_model>();
 		super.train(dataPoints);
 		if(model != null) {

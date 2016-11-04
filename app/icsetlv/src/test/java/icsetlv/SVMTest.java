@@ -11,11 +11,12 @@ import libsvm.core.Parameter;
 import org.junit.Test;
 
 import sav.commons.AbstractTest;
+import sav.settings.SAVExecutionTimeOutException;
 
 public class SVMTest extends AbstractTest {
 	
 	@Test
-	public void svmTest() throws IOException{
+	public void svmTest() throws IOException, SAVExecutionTimeOutException{
 		final Machine machine = setupMachine(new Machine(), 3);
 		for(int i = 0; i < 100; i++){
 			machine.addDataPoint(Category.POSITIVE, Math.random(),Math.random(),Math.random());

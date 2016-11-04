@@ -24,6 +24,7 @@ import learntest.testcase.data.BreakpointDataBuilder;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.StopTimer;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
 
@@ -54,9 +55,9 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		this.valueExtractor = new DebugValueExtractor(valRetrieveLevel);
 	}
 	
-	public void run() throws SavException {
+	public void run() throws SavException, SAVExecutionTimeOutException {
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(50);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

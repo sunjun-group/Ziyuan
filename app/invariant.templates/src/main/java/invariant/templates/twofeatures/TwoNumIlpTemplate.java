@@ -11,6 +11,7 @@ import sav.common.core.formula.Eq;
 import sav.common.core.formula.Formula;
 import sav.common.core.formula.LIAAtom;
 import sav.common.core.formula.Var;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
@@ -42,7 +43,7 @@ public class TwoNumIlpTemplate extends TwoFeaturesTemplate {
 	}
 	
 	@Override
-	public boolean check() {
+	public boolean check() throws SAVExecutionTimeOutException {
 		Machine m = getSimpleMachine();
 	
 		List<String> labels = new ArrayList<String>();

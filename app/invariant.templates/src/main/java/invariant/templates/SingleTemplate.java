@@ -9,8 +9,10 @@ import libsvm.core.Machine;
 import libsvm.extension.ByDistanceNegativePointSelection;
 import libsvm.extension.NegativePointSelection;
 import libsvm.extension.PositiveSeparationMachine;
+import libsvm.extension.SVMTimeOutException;
 import sav.common.core.formula.Eq;
 import sav.common.core.formula.Var;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVarType;
 
@@ -80,7 +82,7 @@ public abstract class SingleTemplate extends Template {
 		return b1 && b2; 
 	}
 	
-	public boolean check() {
+	public boolean check() throws SAVExecutionTimeOutException{
 		return check(passValues, failValues);
 	}
 

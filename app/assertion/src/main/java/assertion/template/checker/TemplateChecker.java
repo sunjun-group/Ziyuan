@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import invariant.templates.CompositeTemplate;
 import invariant.templates.SingleTemplate;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecValue;
 
 public class TemplateChecker {
@@ -60,7 +61,7 @@ public class TemplateChecker {
 		return false;
 	}
 	
-	public void checkSingleTemplates() {
+	public void checkSingleTemplates() throws SAVExecutionTimeOutException {
 //		log.info("Pass values: {}\n", passValues);
 //		log.info("Fail values: {}\n", failValues);
 		
@@ -68,7 +69,7 @@ public class TemplateChecker {
 		stc.checkSingleTemplates();
 	}
 	
-	public void checkCompositeTemplates() {
+	public void checkCompositeTemplates() throws SAVExecutionTimeOutException {
 		ctc = new CompositeTemplateChecker(
 				passValues, failValues,
 				stc.getAllTemplates());

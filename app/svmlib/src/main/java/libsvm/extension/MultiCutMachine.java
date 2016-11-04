@@ -13,6 +13,7 @@ import libsvm.core.Machine;
 import libsvm.core.Model;
 import libsvm.core.ModelBasedCategoryCalculator;
 import sav.common.core.utils.Assert;
+import sav.settings.SAVExecutionTimeOutException;
 
 
 /**
@@ -63,7 +64,7 @@ public class MultiCutMachine extends Machine {
 	}
 
 	@Override
-	protected Machine train(final List<DataPoint> dataPoints) {
+	protected Machine train(final List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
 		List<DataPoint> trainingData = dataPoints;
 		// We learned nothing, so all points are wrong
 		int wrongCategories = Category.getValues().size();

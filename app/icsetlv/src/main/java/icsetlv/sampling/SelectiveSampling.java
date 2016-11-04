@@ -33,6 +33,7 @@ import sav.common.core.formula.Eq;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -55,7 +56,7 @@ public class SelectiveSampling implements ISelectiveSampling {
 	}
 	
 	@Override
-	public List<DataPoint> selectData(Machine machine) {
+	public List<DataPoint> selectData(Machine machine) throws SAVExecutionTimeOutException {
 		/* TODO: the param round = false should be the same to the value in machine.selectiveSampling()
 		 * => do something 
 		 */
@@ -93,7 +94,7 @@ public class SelectiveSampling implements ISelectiveSampling {
 		return minMax;
 	}
 
-	public List<DataPoint> execute(Formula divider, List<String> allLabels, List<DataPoint> datapoints) throws SavException {
+	public List<DataPoint> execute(Formula divider, List<String> allLabels, List<DataPoint> datapoints) throws SavException, SAVExecutionTimeOutException {
 		List<DataPoint> newPoints = new ArrayList<Machine.DataPoint>();
 		if (divider == null) {
 			return newPoints;

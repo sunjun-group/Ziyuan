@@ -5,6 +5,7 @@ import java.util.Random;
 import libsvm.core.Machine.DataPoint;
 import libsvm.extension.AbstractSimpleSelectiveSamplingImpl;
 import libsvm.extension.FeatureSelectionMachine;
+import sav.settings.SAVExecutionTimeOutException;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -16,7 +17,7 @@ public class FeatureSelectionMachineTest extends TestUltility {
 	private static final Random RAND = new Random();
 
 	@Test
-	public void test() {
+	public void test() throws SAVExecutionTimeOutException {
 		// Initialize an instance of the SVM
 		machine = setupMachine(new FeatureSelectionMachine(), NUMBER_OF_FEATURES);
 		// This handler simulates the behavior of re-run the test cases

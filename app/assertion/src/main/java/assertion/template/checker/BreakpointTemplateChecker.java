@@ -15,6 +15,7 @@ import invariant.templates.SingleTemplate;
 import invariant.templates.Template;
 import sav.common.core.formula.Eq;
 import sav.common.core.utils.CollectionUtils;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.execute.value.BooleanValue;
 import sav.strategies.dto.execute.value.ByteValue;
@@ -42,7 +43,7 @@ public class BreakpointTemplateChecker {
 		bkpsTemplates = new ArrayList<BreakpointTemplate>();
 	}
 	
-	public List<BreakpointTemplate> checkTemplates(List<BreakpointData> bkpsData) {
+	public List<BreakpointTemplate> checkTemplates(List<BreakpointData> bkpsData) throws SAVExecutionTimeOutException {
 		for (BreakpointData bkpData : bkpsData) {
 			checkTemplates(bkpData);
 		}
@@ -50,7 +51,7 @@ public class BreakpointTemplateChecker {
 		return bkpsTemplates;
 	}
 	
-	public BreakpointTemplate checkTemplates(BreakpointData bkpData) {
+	public BreakpointTemplate checkTemplates(BreakpointData bkpData) throws SAVExecutionTimeOutException {
 		List<ExecValue> oldAllExecValues = null;
 		
 		for (int level = 0; level < 3; level++) {
@@ -100,7 +101,7 @@ public class BreakpointTemplateChecker {
 		return true;
 	}
 	
-	private boolean checkTemplatesInactive(BreakpointData bkpData, TemplateChecker tc, int level) {
+	private boolean checkTemplatesInactive(BreakpointData bkpData, TemplateChecker tc, int level) throws SAVExecutionTimeOutException {
 		List<Template> templates = new ArrayList<Template>();
 		
 		tc.checkSingleTemplates();
@@ -116,7 +117,7 @@ public class BreakpointTemplateChecker {
 		return false;
 	}
 	
-	private boolean checkTemplatesActive(BreakpointData bkpData, TemplateChecker tc, int level) {
+	private boolean checkTemplatesActive(BreakpointData bkpData, TemplateChecker tc, int level) throws SAVExecutionTimeOutException {
 		List<Template> templates = null;
 		
 		for (int i = 0; i < 10; i++) {
@@ -156,7 +157,7 @@ public class BreakpointTemplateChecker {
 	}
 	
 	private boolean checkTemplates(BreakpointData bkpData, TemplateChecker tc,
-			int level, boolean isActive) {
+			int level, boolean isActive) throws SAVExecutionTimeOutException {
 		if (isActive) return checkTemplatesActive(bkpData, tc, level);
 		else return checkTemplatesInactive(bkpData, tc, level);
 	}

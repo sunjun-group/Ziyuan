@@ -32,6 +32,8 @@ import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
 import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
+import sav.settings.SAVExecutionTimeOutException;
+import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.dto.execute.value.ExecVar;
@@ -69,7 +71,9 @@ public class Engine {
 		this.tcExecutor = tcExecutor;
 	}
 	
-	public RunTimeInfo run(boolean random) throws ParseException, IOException, SavException, ClassNotFoundException {
+	public RunTimeInfo run(boolean random) throws ParseException, IOException, SavException, ClassNotFoundException, SAVExecutionTimeOutException {
+		SAVTimer.startCount();
+		
 		String filePath = LearnTestConfig.getTestClassFilePath();
 		filePath = filePath.substring(6, filePath.length());
 		

@@ -9,6 +9,7 @@ import libsvm.core.Category;
 import libsvm.core.Divider;
 import libsvm.core.Machine;
 import libsvm.core.Model;
+import sav.settings.SAVExecutionTimeOutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,7 @@ public class PositiveSeparationMachine extends Machine {
 	}
 
 	@Override
-	protected Machine train(final List<DataPoint> dataPoints) {
+	protected Machine train(final List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
 		int attemptCount = 0;
 		double bestAccuracy = 0.0;
 		List<svm_model> bestLearnedModels = null;
@@ -61,7 +62,7 @@ public class PositiveSeparationMachine extends Machine {
 		return this;
 	}
 
-	private Machine attemptTraining(final List<DataPoint> dataPoints) {
+	private Machine attemptTraining(final List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
 		final List<DataPoint> positives = new ArrayList<DataPoint>(dataPoints.size());
 		final List<DataPoint> negatives = new ArrayList<DataPoint>(dataPoints.size());
 

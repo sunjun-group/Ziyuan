@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import invariant.templates.SingleTemplate;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVarType;
 
@@ -41,7 +42,7 @@ public class SingleTemplateChecker {
 		return allTemplates;
 	}
 	
-	public void checkSingleTemplates() {
+	public void checkSingleTemplates() throws SAVExecutionTimeOutException {
 		HashMap<ExecVarType, List<List<ExecValue>>> passMap = classifyExecValuesList(passValues);
 		HashMap<ExecVarType, List<List<ExecValue>>> failMap = classifyExecValuesList(failValues);
 		

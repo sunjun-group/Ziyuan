@@ -6,6 +6,7 @@ import java.util.List;
 import libsvm.extension.FeatureSelectionMachine;
 import libsvm.extension.PositiveSeparationMachine;
 import libsvm.extension.RandomNegativePointSelection;
+import sav.settings.SAVExecutionTimeOutException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +30,7 @@ public class SunJunTest extends TestUltility {
 			{ 1, 85, 2, 60, 3, 94, 85 } };
 
 	@Test
-	public void test1() {
+	public void test1() throws SAVExecutionTimeOutException {
 		for (double[] point : positivePoints) {
 			machine1.addDataPoint(Category.POSITIVE, point);
 		}
@@ -82,7 +83,7 @@ public class SunJunTest extends TestUltility {
 	}
 
 	@Test
-	public void test2() {
+	public void test2() throws SAVExecutionTimeOutException {
 		for (double[] point : generatePoints()) {
 			machine1.addDataPoint(point[5] <= point[6] ? Category.POSITIVE : Category.NEGATIVE,
 					point);

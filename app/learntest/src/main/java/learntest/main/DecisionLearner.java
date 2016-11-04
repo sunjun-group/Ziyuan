@@ -33,6 +33,7 @@ import sav.common.core.SavException;
 import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
@@ -75,7 +76,7 @@ public class DecisionLearner implements CategoryCalculator {
 		this.random = random;
 	}
 	
-	public void learn(Map<DecisionLocation, BreakpointData> bkpDataMap) throws SavException {
+	public void learn(Map<DecisionLocation, BreakpointData> bkpDataMap) throws SavException, SAVExecutionTimeOutException {
 		records = new ArrayList<BreakpointValue>();
 		this.bkpDataMap = bkpDataMap;
 		List<BreakpointData> bkpDatas = new ArrayList<BreakpointData>(bkpDataMap.values());
@@ -131,7 +132,7 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 	}*/
 	
-	private Pair<Formula, Formula> learn(BreakpointData bkpData) throws SavException {
+	private Pair<Formula, Formula> learn(BreakpointData bkpData) throws SavException, SAVExecutionTimeOutException {
 		OrCategoryCalculator preconditions = null;
 		if (!random) {
 			preconditions = manager.getPreConditions(bkpData.getLocation().getLineNo());
@@ -321,7 +322,7 @@ public class DecisionLearner implements CategoryCalculator {
 		return new Pair<Formula, Formula>(trueFlase, oneMore);
 	}
 	
-	private Formula learn(LoopTimesData loopData) throws SavException {
+	private Formula learn(LoopTimesData loopData) throws SavException, SAVExecutionTimeOutException {
 		OrCategoryCalculator preConditions = null;
 		if (!random) {
 			preConditions = manager.getPreConditions(loopData.getLocation().getLineNo());			

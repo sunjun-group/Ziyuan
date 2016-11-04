@@ -12,6 +12,7 @@ import java.util.List;
 
 import libsvm.core.Machine;
 import libsvm.core.Machine.DataPoint;
+import sav.settings.SAVExecutionTimeOutException;
 
 /**
  * @author LLT
@@ -19,6 +20,6 @@ import libsvm.core.Machine.DataPoint;
  */
 public interface ISelectiveSampling {
 
-	List<DataPoint> selectData(Machine machine);
+	List<DataPoint> selectData(Machine machine) throws SAVExecutionTimeOutException;
 
 }

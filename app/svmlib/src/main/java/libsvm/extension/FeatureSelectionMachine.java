@@ -6,6 +6,7 @@ import java.util.List;
 import libsvm.core.IDividerProcessor;
 import libsvm.core.Machine;
 import libsvm.core.Model;
+import sav.settings.SAVExecutionTimeOutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class FeatureSelectionMachine extends Machine {
 	}
 
 	@Override
-	protected Machine train(final List<DataPoint> dataPoints) {
+	protected Machine train(final List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
 		int toSelect = 0;
 		final int features = getNumberOfFeatures();
 

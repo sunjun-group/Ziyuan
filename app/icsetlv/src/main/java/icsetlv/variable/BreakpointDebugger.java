@@ -19,6 +19,8 @@ import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.utils.BreakpointUtils;
 import sav.common.core.utils.CollectionUtils;
+import sav.settings.SAVExecutionTimeOutException;
+import sav.settings.SAVTimer;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.SimpleDebugger;
 import sav.strategies.vm.VMConfiguration;
@@ -55,7 +57,7 @@ public abstract class BreakpointDebugger {
 		this.config = config;
 	}
 
-	public final void run(List<BreakPoint> brkps) throws SavException {
+	public final void run(List<BreakPoint> brkps) throws SavException, SAVExecutionTimeOutException {
 		this.bkps = brkps;
 		this.brkpsMap = BreakpointUtils.initBrkpsMap(brkps);
 		/* before debugging */
@@ -89,6 +91,11 @@ public abstract class BreakpointDebugger {
 				break;
 			}
 			for (Event event : eventSet) {
+				
+				if(SAVTimer.isTimeOut()){
+					throw new SAVExecutionTimeOutException();
+				}
+				
 				if (event instanceof VMDeathEvent
 						|| event instanceof VMDisconnectEvent) {
 					stop = true;
