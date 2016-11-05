@@ -48,7 +48,7 @@ public class GenerateTestHandler extends AbstractHandler {
 	public RunTimeInfo generateTest(boolean isL2T){
 		try {
 			SAVTimer.enableExecutionTimeout = true;
-			SAVTimer.exeuctionTimeout = 10000;
+			SAVTimer.exeuctionTimeout = 100000;
 			
 			new TestGenerator().genTest();
 			

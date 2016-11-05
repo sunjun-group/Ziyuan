@@ -100,10 +100,19 @@ public class Engine {
 			ensureTcExecutor();
 			tcExecutor.setup(appClassPath, testcases);
 			tcExecutor.run();
+			List<BreakpointValue> tests = tcExecutor.getCurrentTestInputValues();
 			Map<DecisionLocation, BreakpointData> result = tcExecutor.getResult();
 			
-			if (result.isEmpty()) {
-				List<BreakpointValue> tests = tcExecutor.getCurrentTestInputValues();
+			if (tcExecutor.isBuggy()) {
+				Set<ExecVar> allVars = new HashSet<ExecVar>();
+				for (BreakpointValue test : tests) {
+					collectExecVar(test.getChildren(), allVars);
+				}
+				List<ExecVar> vars = new ArrayList<ExecVar>(allVars);
+				new TestGenerator().genTestAccordingToSolutions(getSolutions(tests, vars), vars);
+				System.out.println("Find First Bug After: " + tests.size() + " Test cases");
+				coverage = 1 / manager.getTotalBranch();
+			} else if (result.isEmpty()) {
 				if (tests != null && !tests.isEmpty()) {
 					BreakpointValue test = tests.get(0);
 					Set<ExecVar> allVars = new HashSet<ExecVar>();
@@ -112,26 +121,24 @@ public class Engine {
 					List<BreakpointValue> list = new ArrayList<BreakpointValue>();
 					list.add(test);
 					new TestGenerator().genTestAccordingToSolutions(getSolutions(list, vars), vars);
-					System.out.println("Total test cases number: " + tests.size());
+					System.out.println("Total test cases number: " + tests.size());								
 					coverage = 1;
 				}
 			} else {
-				List<Domain[]> values = null;
-				List<BreakpointValue> tests = tcExecutor.getCurrentTestInputValues();
+				List<ExecVar> vars = null;
 				if (tests != null) {
 					Set<ExecVar> allVars = new HashSet<ExecVar>();
 					for (BreakpointValue test : tests) {
 						collectExecVar(test.getChildren(), allVars);
 					}
-					List<ExecVar> vars = new ArrayList<ExecVar>(allVars);
-					values = getSolutions(tests, vars);
+					vars = new ArrayList<ExecVar>(allVars);
 				}
 				tcExecutor.setjResultFileDeleteOnExit(true);
 				//tcExecutor.setSingleMode();
 				tcExecutor.setInstrMode(true);
 				selectiveSampling = new JacopSelectiveSampling(tcExecutor);
-				if (values != null) {
-					selectiveSampling.addPrevValues(values);
+				if (vars != null) {
+					selectiveSampling.addPrevValues(getSolutions(tests, vars));
 				}
 				learner = new DecisionLearner(selectiveSampling, manager, random);
 				learner.learn(result);
@@ -146,10 +153,13 @@ public class Engine {
 				//solutions.addAll(getSolutions(records, learner.getOriginVars()));
 				//new TestGenerator().genTestAccordingToSolutions(solutions, learner.getOriginVars());
 				
-				List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
-				
+				List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());					
 				new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());
-				System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
+				if (learner.isBuggy()) {
+					System.out.println("Find First Bug After: " + selectiveSampling.getTotalNum() + " Test cases");			
+				} else {
+					System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
+				}			
 			}
 			
 			time = SAVTimer.getExecutionTime();		
@@ -157,7 +167,11 @@ public class Engine {
 			if (learner != null) {
 				List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
 				new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());
-				System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
+				if (learner.isBuggy()) {
+					System.out.println("Find First Bug After: " + selectiveSampling.getTotalNum() + " Test cases");			
+				} else {
+					System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
+				}
 			}
 			e.printStackTrace();
 		}		
@@ -172,6 +186,8 @@ public class Engine {
 			coverage = learner.getCoverage();
 		}
 		
+		System.out.println(random ? "Random" : "L2T");
+		System.out.println("Execution Time: " + time + "ms");
 		RunTimeInfo info = new RunTimeInfo(time, coverage);
 		return info;
 	}

@@ -26,19 +26,24 @@ import sav.strategies.vm.SimpleDebugger;
 import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.IntegerValue;
 import com.sun.jdi.Location;
+import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.BreakpointEvent;
 import com.sun.jdi.event.ClassPrepareEvent;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.event.EventSet;
+import com.sun.jdi.event.MethodExitEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequestManager;
+import com.sun.jdi.request.MethodExitRequest;
 
 /**
  * @author LLT
@@ -52,6 +57,7 @@ public abstract class BreakpointDebugger {
 	// map of classes and their breakpoints
 	private Map<String, List<BreakPoint>> brkpsMap;
 	protected List<BreakPoint> bkps;
+	protected boolean buggy;
 
 	public void setup(VMConfiguration config) {
 		this.config = config;
@@ -100,6 +106,21 @@ public abstract class BreakpointDebugger {
 						|| event instanceof VMDisconnectEvent) {
 					stop = true;
 					break;
+				} else if (event instanceof MethodExitEvent) {
+					if (((MethodExitEvent) event).location().lineNumber() != 165) {
+						continue;
+					}
+					Value returnValue = ((MethodExitEvent) event).returnValue();					
+					if (returnValue.type().name().equals("org.junit.runner.Result")) {
+						ObjectReference result = (ObjectReference) returnValue;
+						ObjectReference failList = (ObjectReference) result.getValue(result.referenceType().fieldByName("fFailures"));
+						ObjectReference innerList = (ObjectReference) failList.getValue(failList.referenceType().fieldByName("list"));
+						if (((IntegerValue)innerList.getValue(innerList.referenceType().fieldByName("size"))).value() != 0) {
+							buggy = true;
+							stop = true; 
+							break;
+						}
+					}
 				} else if (event instanceof ClassPrepareEvent) {
 					// add breakpoint watch on loaded class
 					ClassPrepareEvent classPrepEvent = (ClassPrepareEvent) event;
@@ -121,7 +142,8 @@ public abstract class BreakpointDebugger {
 		if (!eventTimeout) {
 			vm.resume();
 			/* wait until the process completes */
-			debugger.waitProcessUntilStop();
+			// wait for will cause the process to wait forever, comment it seems works, but may cause some problems.
+			//debugger.waitProcessUntilStop();
 		}
 		/* end of debug */
 		afterDebugging();
@@ -147,6 +169,9 @@ public abstract class BreakpointDebugger {
 				.createClassPrepareRequest();
 		classPrepareRequest.addClassFilter(className);
 		classPrepareRequest.setEnabled(true);
+		MethodExitRequest methodExitRequest = erm.createMethodExitRequest();
+		methodExitRequest.addClassFilter(className);
+		methodExitRequest.enable();
 	}
 	
 	private void addBreakpointWatch(VirtualMachine vm, ReferenceType refType,
@@ -187,4 +212,9 @@ public abstract class BreakpointDebugger {
 	protected VMConfiguration getVmConfig() {
 		return config;
 	}
+	
+	public boolean isBuggy() {
+		return buggy;
+	}
+	
 }

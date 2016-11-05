@@ -381,6 +381,9 @@ public class JacopSelectiveSampling {
 			}
 			//cnt ++;
 			selectData(assignments);
+			if (isBuggy()) {
+				return selectResult;
+			}
 			if (selectResult == null) {
 				continue;
 			}
@@ -561,5 +564,9 @@ public class JacopSelectiveSampling {
 	
 	public int getTotalNum() {
 		return prevDatas.size();
+	}
+	
+	public boolean isBuggy() {
+		return tcExecutor.isBuggy();
 	}
 }

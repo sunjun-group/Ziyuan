@@ -90,6 +90,9 @@ public class DecisionLearner implements CategoryCalculator {
 		Collections.sort(bkpDatas);
 		Map<DecisionLocation, Pair<Formula, Formula>> decisions = new HashMap<DecisionLocation, Pair<Formula, Formula>>();
 		for (BreakpointData bkpData : bkpDatas) {
+			if (isBuggy()) {
+				return;
+			}
 			log.info("Start to learn at " + bkpData.getLocation());
 			if (bkpData.getFalseValues().isEmpty() && bkpData.getTrueValues().isEmpty()) {
 				log.info("Missing data");
@@ -159,11 +162,19 @@ public class DecisionLearner implements CategoryCalculator {
 					preconditions, null, bkpData.getTrueValues().isEmpty(), false);
 			//System.out.println("learn select data for empty time: " + (System.currentTimeMillis() - startTime) + "ms");
 			if (selectMap != null) {
+				if (isBuggy()) {
+					handleBuggyMap(selectMap);
+					return new Pair<Formula, Formula>(null, null);
+				}
 				mergeMap(selectMap);
 				updateCoverage(bkpData);
 				if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
 					selectMap = selectiveSampling.selectDataForEmpty(bkpData.getLocation(), originVars, 
 							preconditions, null, bkpData.getTrueValues().isEmpty(), false);	
+					if (isBuggy()) {
+						handleBuggyMap(selectMap);
+						return new Pair<Formula, Formula>(null, null);
+					}
 					mergeMap(selectMap);
 					updateCoverage(bkpData);
 				}
@@ -262,6 +273,10 @@ public class DecisionLearner implements CategoryCalculator {
 				if (newMap == null) {
 					break;
 				}
+				if (isBuggy()) {
+					handleBuggyMap(newMap);
+					return new Pair<Formula, Formula>(null, null);
+				}
 				mergeMap(newMap);
 				
 				//preconditions.clear(newData);
@@ -350,6 +365,10 @@ public class DecisionLearner implements CategoryCalculator {
 			Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataForEmpty(loopData.getLocation(), originVars,
 					preConditions, curDividers, loopData.getMoreTimesValues().isEmpty(), true);
 			//System.out.println("learn select data for empty time: " + (System.currentTimeMillis() - startTime) + "ms");
+			if (isBuggy()) {
+				handleBuggyMap(selectMap);
+				return null;
+			}
 			mergeMap(selectMap);
 			updateCoverage(loopData);
 			//loopData = (LoopTimesData) bkpDataMap.get(loopData.getLocation());
@@ -430,6 +449,10 @@ public class DecisionLearner implements CategoryCalculator {
 				if (newMap == null) {
 					break;
 				}
+				if (isBuggy()) {
+					handleBuggyMap(newMap);
+					return null;
+				}
 				mergeMap(newMap);
 				LoopTimesData newData = (LoopTimesData) newMap.get(loopData.getLocation());
 				if (newData == null) {
@@ -491,6 +514,20 @@ public class DecisionLearner implements CategoryCalculator {
 		}*/
 		
 		return formula;
+	}
+	
+	private void handleBuggyMap(Map<DecisionLocation, BreakpointData> buggyMap) {
+		records.clear();
+		if (buggyMap == null) {
+			return;
+		}
+		Set<DecisionLocation> keySet = buggyMap.keySet();
+		for (DecisionLocation decisionLocation : keySet) {
+			BreakpointData data = buggyMap.get(decisionLocation);
+			records.addAll(data.getFalseValues());
+			records.addAll(data.getTrueValues());
+			return;
+		}
 	}
 	
 	private boolean collectAllVars(BreakpointData bkpData) {
@@ -697,6 +734,10 @@ public class DecisionLearner implements CategoryCalculator {
 
 	public List<BreakpointValue> getRecords() {
 		return records;
+	}
+	
+	public boolean isBuggy() {
+		return selectiveSampling.isBuggy();
 	}
 
 	public double getCoverage() {
