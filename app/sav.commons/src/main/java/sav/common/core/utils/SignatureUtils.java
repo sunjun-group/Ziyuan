@@ -92,8 +92,6 @@ public class SignatureUtils {
 		return "L" + className + ";";
 	}
 	
-	
-	
 	public static String extractMethodName(String methodNameOrSign) {
 		int endNameIdx = methodNameOrSign.indexOf("(");
 		if (endNameIdx < 0) {
