@@ -90,7 +90,7 @@ public class EvaluationHandler extends AbstractHandler {
 				}
 				
 				SAVTimer.enableExecutionTimeout = true;
-				SAVTimer.exeuctionTimeout = 10000;
+				SAVTimer.exeuctionTimeout = 100000;
 				
 				try {
 					for(IJavaElement element: root.getChildren()){
@@ -145,7 +145,7 @@ public class EvaluationHandler extends AbstractHandler {
 								String methodName = className + "." + simpleMethodName;
 								
 								if(!parsedMethods.contains(methodName)){
-									System.out.print("working method: " + LearnTestConfig.testClassName 
+									System.out.println("working method: " + LearnTestConfig.testClassName 
 											+ "." + LearnTestConfig.testMethodName);
 									
 									try{
