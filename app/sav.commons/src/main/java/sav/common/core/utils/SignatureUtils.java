@@ -72,7 +72,7 @@ public class SignatureUtils {
 				type = "V";
 			}
 		} else {
-			type = getSignature(clazz.getName());
+			type = getSignature(clazz.getName(), 0);
 		}
 		return type;
 	}
@@ -86,6 +86,13 @@ public class SignatureUtils {
 		}
 		return "L" + className.replace('.', '/') + ";";
 	}
+	
+	// to remove the bug (class not found -[LString;)
+	public static String getSignature(String className, int i){
+		return "L" + className + ";";
+	}
+	
+	
 	
 	public static String extractMethodName(String methodNameOrSign) {
 		int endNameIdx = methodNameOrSign.indexOf("(");
