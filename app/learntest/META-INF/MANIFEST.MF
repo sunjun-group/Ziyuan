@@ -64,14 +64,7 @@ Export-Package: learntest,
  org.jacop.set.search,
  org.jacop.ui,
  org.jacop.util,
- org.jacop.util.fsm,
- testdata,
- testdata.benchmark,
- testdata.example,
- testdata.result.triangle.triangletype,
- testdata.test,
- testdata.test.benchmark,
- testdata.test.example.triangle.triangletype
+ org.jacop.util.fsm
 Bundle-Activator: learntest.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
