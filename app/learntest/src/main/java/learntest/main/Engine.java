@@ -8,10 +8,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 import org.jacop.core.BoundDomain;
 import org.jacop.core.Domain;
 
+import gov.nasa.jpf.Config;
+import gov.nasa.jpf.JPF;
+import gov.nasa.jpf.symbc.sequences.MethodSequences;
 import icsetlv.DefaultValues;
 import icsetlv.common.dto.BreakpointValue;
 import japa.parser.JavaParser;
@@ -111,6 +115,16 @@ public class Engine {
 		//new TestGenerator().genTestAccordingToInput(results, pathSolver.getVariables());
 		//new TestGenerator().genTestAccordingToInput(results, variables);
 		//new TestGenerator().genTestAccordingToInput(results, learner.getLabels());
+		
+		/*Config config = JPF.createConfig(new String[] {"MyClass.jpf"});
+		JPF jpf = new JPF(config);
+		jpf.run();
+		System.out.println("Main Results:");
+		int idx = 0;
+		for (Vector<String> vc : MethodSequences.methodSequences) {
+			System.out.println("test" + idx ++);
+			System.out.println(vc);
+		}*/
 	}
 		
 	private List<Domain[]> getSolutions(List<BreakpointValue> records, List<ExecVar> originVars) {
