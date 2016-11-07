@@ -82,6 +82,10 @@ public class Engine {
 		setTarget(filePath, LearnTestConfig.getSimpleClassName(), LearnTestConfig.testClassName, LearnTestConfig.testMethodName);
 		addTestcases(LearnTestConfig.getTestClass(LearnTestConfig.isL2TApproach));
 		
+		if (testcases == null || testcases.isEmpty()) {
+			return null;
+		}
+		
 		createCFG();
 		manager = new CfgConditionManager(cfg);
 		bkpBuilder = new BreakpointBuilder(className, methodName, variables, cfg, returns);
