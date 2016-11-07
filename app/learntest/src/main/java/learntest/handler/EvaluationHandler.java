@@ -149,7 +149,10 @@ public class EvaluationHandler extends AbstractHandler {
 											+ "." + LearnTestConfig.testMethodName);
 									
 									try{
+										LearnTestConfig.isL2TApproach = true;
 										RunTimeInfo l2tInfo = new GenerateTestHandler().generateTest(true);
+										
+										LearnTestConfig.isL2TApproach = false;
 										RunTimeInfo ramInfo = new GenerateTestHandler().generateTest(false);
 										
 										if(l2tInfo!=null && ramInfo!=null){
