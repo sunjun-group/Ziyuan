@@ -104,6 +104,10 @@ public class Engine {
 			tcExecutor.run();
 			Map<DecisionLocation, BreakpointData> result = tcExecutor.getResult();
 			
+			if (tcExecutor.getCurrentTestInputValues().isEmpty()) {
+				return null;
+			}
+			
 			if (result.isEmpty()) {
 				List<BreakpointValue> tests = tcExecutor.getCurrentTestInputValues();
 				if (tests != null && !tests.isEmpty()) {
