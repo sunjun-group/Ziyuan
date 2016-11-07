@@ -77,54 +77,65 @@ public abstract class BreakpointDebugger {
 		boolean stop = false;
 		boolean eventTimeout = false;
 		Map<String, BreakPoint> locBrpMap = new HashMap<String, BreakPoint>();
-		while (!stop && !eventTimeout) {
-			EventSet eventSet;
-			try {
-				eventSet = eventQueue.remove(3000);
-			} catch (InterruptedException e) {
-				// do nothing, just return.
-				break;
-			}
-			if (eventSet == null) {
-				log.warn("Time out! Cannot get event set!");
-				eventTimeout = true;
-				break;
-			}
-			for (Event event : eventSet) {
-				
-				if(SAVTimer.isTimeOut()){
-					throw new SAVExecutionTimeOutException("Time out at retrieving runtime data");
-				}
-				
-				if (event instanceof VMDeathEvent
-						|| event instanceof VMDisconnectEvent) {
-					stop = true;
+		
+		try{
+			while (!stop && !eventTimeout) {
+				EventSet eventSet;
+				try {
+					eventSet = eventQueue.remove(3000);
+				} catch (InterruptedException e) {
+					// do nothing, just return.
 					break;
-				} else if (event instanceof ClassPrepareEvent) {
-					// add breakpoint watch on loaded class
-					ClassPrepareEvent classPrepEvent = (ClassPrepareEvent) event;
-					handleClassPrepareEvent(vm, classPrepEvent);
-					/* add breakpoint request */
-					ReferenceType refType = classPrepEvent.referenceType();
-					// breakpoints
-					addBreakpointWatch(vm, refType, locBrpMap);
-					
-				} else if (event instanceof BreakpointEvent) {
-					BreakpointEvent bkpEvent = (BreakpointEvent) event;
-					BreakPoint bkp = locBrpMap.get(bkpEvent.location()
-							.toString());
-					handleBreakpointEvent(bkp, vm, bkpEvent);
 				}
+				if (eventSet == null) {
+					log.warn("Time out! Cannot get event set!");
+					eventTimeout = true;
+					break;
+				}
+				for (Event event : eventSet) {
+					
+					if(SAVTimer.isTimeOut()){
+						throw new SAVExecutionTimeOutException("Time out at retrieving runtime data");
+					}
+					
+					if (event instanceof VMDeathEvent
+							|| event instanceof VMDisconnectEvent) {
+						stop = true;
+						break;
+					} else if (event instanceof ClassPrepareEvent) {
+						// add breakpoint watch on loaded class
+						ClassPrepareEvent classPrepEvent = (ClassPrepareEvent) event;
+						handleClassPrepareEvent(vm, classPrepEvent);
+						/* add breakpoint request */
+						ReferenceType refType = classPrepEvent.referenceType();
+						// breakpoints
+						addBreakpointWatch(vm, refType, locBrpMap);
+						
+					} else if (event instanceof BreakpointEvent) {
+						BreakpointEvent bkpEvent = (BreakpointEvent) event;
+						BreakPoint bkp = locBrpMap.get(bkpEvent.location()
+								.toString());
+						handleBreakpointEvent(bkp, vm, bkpEvent);
+					}
+				}
+				eventSet.resume();
 			}
-			eventSet.resume();
+			if (!eventTimeout) {
+				vm.resume();
+				/* wait until the process completes */
+				debugger.waitProcessUntilStop();
+			}
+			/* end of debug */
+			afterDebugging();
 		}
-		if (!eventTimeout) {
-			vm.resume();
-			/* wait until the process completes */
-			debugger.waitProcessUntilStop();
+		catch(SAVExecutionTimeOutException e){
+			if(vm != null){
+				vm.exit(0);
+			}
+			throw new SAVExecutionTimeOutException("Time out at retrieving runtime data");
 		}
-		/* end of debug */
-		afterDebugging();
+		
+		
 	}
 
 	/** abstract methods */
