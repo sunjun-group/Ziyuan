@@ -80,13 +80,13 @@ public class SignatureUtils {
 	public static String getSignature(String className) {
 		// not correct, use for method in assertion generation
 //		return "L" + className.replace('.', '/') + ";";
-		int i = className.lastIndexOf('.');
-		if (i != -1) {
-			className = className.substring(i + 1);
-		}
+//		int i = className.lastIndexOf('.');
+//		if (i != -1) {
+//			className = className.substring(i + 1);
+//		}
 		return "L" + className.replace('.', '/') + ";";
 	}
-	
+		
 	public static String extractMethodName(String methodNameOrSign) {
 		int endNameIdx = methodNameOrSign.indexOf("(");
 		if (endNameIdx < 0) {
