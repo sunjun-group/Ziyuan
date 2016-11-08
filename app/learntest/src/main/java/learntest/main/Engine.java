@@ -38,9 +38,11 @@ import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
 import sav.common.core.SavException;
 import sav.common.core.formula.Formula;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint.Variable;
+import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
 
 public class Engine {
@@ -77,8 +79,15 @@ public class Engine {
 	}
 	
 	public void run(boolean random) throws ParseException, IOException, SavException, ClassNotFoundException {
+		long startTime = System.currentTimeMillis();
+		
 		setTarget(LearnTestConfig.filePath, LearnTestConfig.typeName, LearnTestConfig.className, LearnTestConfig.methodName);
 		addTestcases(LearnTestConfig.testPath);
+		
+		if (testcases == null || testcases.isEmpty()) {
+			System.out.println("Can not generate test case");
+			return;
+		}
 		
 		createCFG();
 		manager = new CfgConditionManager(cfg);
@@ -89,11 +98,45 @@ public class Engine {
 		ensureTcExecutor();
 		tcExecutor.setup(appClassPath, testcases);
 		tcExecutor.run();
+		List<BreakpointValue> inputValues = tcExecutor.getCurrentTestInputValues();
+		
+		if (inputValues == null || inputValues.isEmpty()) {
+			System.out.println("No Method Input Variables");
+			return;
+		
+		}
+		
 		Map<DecisionLocation, BreakpointData> result = tcExecutor.getResult();
+		
+		if (result.isEmpty()) {
+			BreakpointValue test = inputValues.get(0);
+			Set<ExecVar> allVars = new HashSet<ExecVar>();
+			collectExecVar(test.getChildren(), allVars);
+			List<ExecVar> vars = new ArrayList<ExecVar>(allVars);
+			List<BreakpointValue> list = new ArrayList<BreakpointValue>();
+			list.add(test);
+			new TestGenerator().genTestAccordingToSolutions(getSolutions(list, vars), 
+					vars);
+			
+			System.out.println("No Decision Nodes");
+			System.out.println("Coverage: 1");
+			System.out.println("Total test cases number: " + inputValues.size());
+			System.out.println("Execution Time: " + (System.currentTimeMillis() - startTime) + "ms");
+			return;
+		}
+		
+		Set<ExecVar> allVars = new HashSet<ExecVar>();
+		for (BreakpointValue test : inputValues) {
+			collectExecVar(test.getChildren(), allVars);			
+		}
+		List<ExecVar> vars = new ArrayList<ExecVar>(allVars);
+		List<Domain[]> solutions = getSolutions(inputValues, vars);
+		
 		tcExecutor.setjResultFileDeleteOnExit(true);
 		//tcExecutor.setSingleMode();
 		tcExecutor.setInstrMode(true);
 		JacopSelectiveSampling selectiveSampling = new JacopSelectiveSampling(tcExecutor);
+		selectiveSampling.addPrevData(solutions);
 		DecisionLearner learner = new DecisionLearner(selectiveSampling, manager, random);
 		learner.learn(result);
 		//List<BreakpointValue> records = learner.getRecords();
@@ -108,7 +151,10 @@ public class Engine {
 		//new TestGenerator().genTestAccordingToSolutions(solutions, learner.getOriginVars());
 		new TestGenerator().genTestAccordingToSolutions(getSolutions(learner.getRecords(), learner.getOriginVars()), 
 				learner.getOriginVars());
+		
+		System.out.println("Coverage: " + learner.getCoverage());
 		System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
+		System.out.println("Execution Time: " + (System.currentTimeMillis() - startTime) + "ms");
 		//PathSolver pathSolver = new PathSolver();
 		//List<Result> results = pathSolver.solve(paths);
 		//System.out.println(results);
@@ -125,6 +171,19 @@ public class Engine {
 			System.out.println("test" + idx ++);
 			System.out.println(vc);
 		}*/
+	}
+	
+	private void collectExecVar(List<ExecValue> vals, Set<ExecVar> vars) {
+		if (CollectionUtils.isEmpty(vals)) {
+			return;
+		}
+		for (ExecValue val : vals) {
+			if (val == null || CollectionUtils.isEmpty(val.getChildren())) {
+				String varId = val.getVarId();
+				vars.add(new ExecVar(varId, val.getType()));
+			}
+			collectExecVar(val.getChildren(), vars);
+		}
 	}
 		
 	private List<Domain[]> getSolutions(List<BreakpointValue> records, List<ExecVar> originVars) {

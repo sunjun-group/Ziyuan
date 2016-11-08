@@ -43,6 +43,10 @@ public class StoreSearcher {
 			intVars[i] = (IntVar)store.vars[i];
 		}
 		Search<IntVar> search = new DepthFirstSearch<IntVar>();
+		search.getSolutionListener().searchAll(true);
+		search.getSolutionListener().recordSolutions(true);
+		search.setTimeOut(1);
+		search.setPrintInfo(false);
 		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
 				store, intVars, new IndomainRandom<IntVar>()); 
 	    boolean result = search.labeling(store, select);
@@ -58,6 +62,10 @@ public class StoreSearcher {
 			intVars[i] = (IntVar)store.vars[i];
 		}
 		Search<IntVar> search = new DepthFirstSearch<IntVar>();
+		search.getSolutionListener().searchAll(true);
+		search.getSolutionListener().recordSolutions(true);
+		search.setTimeOut(1);
+		search.setPrintInfo(false);
 		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
 				store, intVars, new IndomainMin<IntVar>()); 
 	    boolean result = search.labeling(store, select);
@@ -73,6 +81,10 @@ public class StoreSearcher {
 			intVars[i] = (IntVar)store.vars[i];
 		}
 		Search<IntVar> search = new DepthFirstSearch<IntVar>();
+		search.getSolutionListener().searchAll(true);
+		search.getSolutionListener().recordSolutions(true);
+		search.setTimeOut(1);
+		search.setPrintInfo(false);
 		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
 				store, intVars, new IndomainMax<IntVar>()); 
 	    boolean result = search.labeling(store, select);
@@ -115,6 +127,7 @@ public class StoreSearcher {
 		search.getSolutionListener().searchAll(true);
 		search.getSolutionListener().recordSolutions(true);
 		search.setTimeOut(1);
+		search.setPrintInfo(false);
 		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
 				store, intVars, new IndomainRandom<IntVar>()); 
 	    boolean result = search.labeling(store, select);
@@ -161,6 +174,7 @@ public class StoreSearcher {
 		search.getSolutionListener().searchAll(true);
 		search.getSolutionListener().recordSolutions(true);
 		search.setTimeOut(1);
+		search.setPrintInfo(false);
 		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
 				store, intVars, new IndomainRandom<IntVar>()); 
 	    boolean result = search.labeling(store, select);

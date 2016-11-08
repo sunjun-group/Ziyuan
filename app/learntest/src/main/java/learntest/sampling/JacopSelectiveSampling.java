@@ -47,6 +47,21 @@ public class JacopSelectiveSampling {
 		prevDatas = new ArrayList<Domain[]>();
 	}
 	
+	public void addPrevData(List<Domain[]> solutions) {
+		for (Domain[] solution : solutions) {
+			boolean flag = true;
+			for (Domain[] domains : prevDatas) {
+				if (StoreSearcher.duplicate(domains, solution)) {
+					flag = false;
+					break;
+				}
+			}
+			if (flag) {
+				prevDatas.add(solution);
+			}
+		}
+	}
+	
 	public Map<DecisionLocation, BreakpointData> selectDataForModel(DecisionLocation target, 
 			List<ExecVar> originVars, List<DataPoint> datapoints,
 			OrCategoryCalculator precondition, List<Divider> dividers) throws SavException {

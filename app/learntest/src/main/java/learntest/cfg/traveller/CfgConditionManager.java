@@ -44,6 +44,8 @@ public class CfgConditionManager {
 	private List<ExecVar> vars;
 	private List<ExecVar> originalVars;
 	
+	private double totalBranch = 1;
+	
 	public CfgConditionManager(CFG cfg) {
 		List<CfgEdge> entryOutEdges = cfg.getEntryOutEdges();
 		if (!entryOutEdges.isEmpty()) {
@@ -61,6 +63,12 @@ public class CfgConditionManager {
 		List<CfgNode> vertices = cfg.getVertices();
 		for (CfgNode node : vertices) {
 			if (node instanceof CfgDecisionNode) {
+				if (((CfgDecisionNode) node).isLoop()) {
+					totalBranch += 3;
+				} else {
+					totalBranch += 2;
+				}
+				
 				nodeMap.put(node.getBeginLine(), (CfgDecisionNode) node);
 				List<CfgEdge> outEdges = cfg.getOutEdges(node);
 				CfgDecisionNode trueNode = null;
@@ -439,6 +447,10 @@ public class CfgConditionManager {
 
 	public boolean isEnd(int lineNo) {
 		return ends.contains(nodeMap.get(lineNo));
+	}
+
+	public double getTotalBranch() {
+		return totalBranch;
 	}
 
 }
