@@ -144,7 +144,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		try {
 			Object obj = getExecData(stmt.getReceiverVarId());
 			Method method = stmt.getMethod();
-			System.out.println(method);
+//			System.out.println(method);
 			
 //			returnedValue = method.invoke(obj, (Object[]) inputs.toArray());
 			
