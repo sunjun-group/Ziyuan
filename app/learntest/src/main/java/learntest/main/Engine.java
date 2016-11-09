@@ -130,7 +130,7 @@ public class Engine {
 						collectExecVar(test.getChildren(), allVars);
 					}
 					List<ExecVar> vars = new ArrayList<ExecVar>(allVars);
-					values = getSolutions(tests, vars);
+					values = getFullSolutions(tests, vars);
 				}
 				tcExecutor.setjResultFileDeleteOnExit(true);
 				//tcExecutor.setSingleMode();
@@ -180,6 +180,28 @@ public class Engine {
 		
 		RunTimeInfo info = new RunTimeInfo(time, coverage);
 		return info;
+	}
+	
+	private List<Domain[]> getFullSolutions(List<BreakpointValue> records, List<ExecVar> originVars) {
+		List<Domain[]> res = new ArrayList<Domain[]>();
+		int size = originVars.size();
+		for (BreakpointValue record : records) {
+			Domain[] solution = new Domain[size + (size + 1) * size / 2];
+			int i = 0;
+			for (; i < size; i++) {
+				int value = record.getValue(originVars.get(i).getLabel(), 0.0).intValue();
+				solution[i] = new BoundDomain(value, value);
+			}
+			for(int j = 0; j < size; j ++) {
+				int value = record.getValue(originVars.get(j).getLabel(), 0.0).intValue();
+				for(int k = j; k < size; k ++) {
+					int tmp = value * record.getValue(originVars.get(k).getLabel(), 0.0).intValue();
+					solution[i ++] = new BoundDomain(tmp, tmp);
+				}
+			}
+			res.add(solution);
+		}
+		return res;
 	}
 		
 	private List<Domain[]> getSolutions(List<BreakpointValue> records, List<ExecVar> originVars) {
