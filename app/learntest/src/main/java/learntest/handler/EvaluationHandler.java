@@ -20,9 +20,16 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.DoStatement;
+import org.eclipse.jdt.core.dom.EnhancedForStatement;
+import org.eclipse.jdt.core.dom.ForStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.WhileStatement;
 
 import learntest.io.excel.ExcelReader;
 import learntest.io.excel.ExcelWriter;
@@ -34,6 +41,121 @@ import sav.settings.SAVTimer;
 
 public class EvaluationHandler extends AbstractHandler {
 
+	class ChildJudgeStatementChecker extends ASTVisitor{
+		
+		boolean containJudge = false;
+
+		private Statement parentStatement;
+		public ChildJudgeStatementChecker(Statement parentStat){
+			this.parentStatement = parentStat;
+		}
+		
+		public boolean visit(DoStatement stat){
+			if(stat != parentStatement){
+				containJudge = true;				
+				return false;
+			}
+			else{
+				return true;
+			}
+		}
+		
+		public boolean visit(EnhancedForStatement stat){
+			if(stat != parentStatement){
+				containJudge = true;				
+				return false;
+			}
+			else{
+				return true;
+			}
+		}
+		
+		public boolean visit(ForStatement stat){
+			if(stat != parentStatement){
+				containJudge = true;				
+				return false;
+			}
+			else{
+				return true;
+			}
+		}
+		
+		public boolean visit(IfStatement stat){
+			if(stat != parentStatement){
+				containJudge = true;				
+				return false;
+			}
+			else{
+				return true;
+			}
+		}
+		
+		public boolean visit(SwitchStatement stat){
+			if(stat != parentStatement){
+				containJudge = true;				
+				return false;
+			}
+			else{
+				return true;
+			}
+		}
+		
+		public boolean visit(WhileStatement stat){
+			if(stat != parentStatement){
+				containJudge = true;				
+				return false;
+			}
+			else{
+				return true;
+			}
+		}
+	}
+	
+	class NestedBlockChecker extends ASTVisitor{
+		boolean isNestedJudge = false;
+		private void checkChildNestCondition(Statement stat) {
+			ChildJudgeStatementChecker checker = new ChildJudgeStatementChecker(stat);
+			stat.accept(checker);
+			if(checker.containJudge){
+				isNestedJudge = true;
+			}
+		}
+		
+		public boolean visit(IfStatement stat){
+			if(isNestedJudge){
+				return false;
+			}
+			checkChildNestCondition(stat);
+			
+			return false;
+		}
+
+		
+		public boolean visit(DoStatement stat){
+			if(isNestedJudge){
+				return false;
+			}
+			checkChildNestCondition(stat);
+			return false;
+		}
+		
+		public boolean visit(EnhancedForStatement stat){
+			if(isNestedJudge){
+				return false;
+			}
+			checkChildNestCondition(stat);
+			return false;
+		}
+		
+		public boolean visit(ForStatement stat){
+			if(isNestedJudge){
+				return false;
+			}
+			checkChildNestCondition(stat);
+			return false;
+		}
+	}
+	
 	class ValidMethodCollector extends ASTVisitor{
 		
 		List<MethodDeclaration> mdList = new ArrayList<MethodDeclaration>();
@@ -53,7 +175,13 @@ public class EvaluationHandler extends AbstractHandler {
 				}
 				
 				if(isPublic){
-					mdList.add(md);
+					NestedBlockChecker checker = new NestedBlockChecker();
+					md.accept(checker);
+					if(checker.isNestedJudge){
+						mdList.add(md);			
+						System.currentTimeMillis();
+					}
+					
 				}
 			}
 			
