@@ -10,7 +10,7 @@ import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;
 import sav.strategies.dto.AppJavaClassPath;
 
-public class EngineTestForRandom extends AbstractTest {
+public class EngineTestForSPF extends AbstractTest {
 	private Engine engine;
 
 	@Before

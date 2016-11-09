@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;*/
 
 import learntest.breakpoint.data.DecisionLocation;
 import learntest.calculator.OrCategoryCalculator;
+import learntest.main.LearnTestConfig;
 import learntest.sampling.jacop.StoreBuilder;
 import learntest.sampling.jacop.StoreSearcher;
 import learntest.spf.SPFUtil;
@@ -337,6 +338,29 @@ public class JacopSelectiveSampling {
 			}
 		}
 	}
+	
+	public Map<DecisionLocation, BreakpointData> selectDataUsingSPF(
+			DecisionLocation target, List<ExecVar> originVars) throws SavException {
+		tcExecutor.setTarget(null);
+		List<Domain[]> solutions = selectBySPF(target, originVars);
+		List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
+		for (Domain[] solution : solutions) {
+			boolean flag = true;
+			for (Domain[] domains : prevDatas) {
+				if (StoreSearcher.duplicate(domains, solution)) {
+					flag = false;
+					break;
+				}
+			}
+			if (!flag) {
+				continue;
+			}
+			prevDatas.add(solution);
+			assignments.add(getAssignments(solution, originVars));
+		}
+		selectData(assignments);
+		return selectResult;
+	}
 
 	public Map<DecisionLocation, BreakpointData> selectDataForEmpty(DecisionLocation target, 
 			List<ExecVar> originVars, 
@@ -408,7 +432,7 @@ public class JacopSelectiveSampling {
 			}
 		}
 		//System.out.println(cnt);
-		List<Domain[]> solutions = selectBySPF(originVars);
+		List<Domain[]> solutions = selectBySPF(target, originVars);
 		List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
 		for (Domain[] solution : solutions) {
 			boolean flag = true;
@@ -429,8 +453,8 @@ public class JacopSelectiveSampling {
 	}
 	
 	//TODO: configPath to be added
-	public List<Domain[]> selectBySPF(List<ExecVar> originVars) {
-		String configPath = null;
+	private List<Domain[]> selectBySPF(DecisionLocation target, List<ExecVar> originVars) {
+		String configPath = LearnTestConfig.typeName + target.getLineNo() + ".jpf";
 		List<Map<String, Integer>> maps = SPFUtil.runJPF(configPath);
 		int size = originVars.size();
 		int length = size + (size + 1) * size / 2;

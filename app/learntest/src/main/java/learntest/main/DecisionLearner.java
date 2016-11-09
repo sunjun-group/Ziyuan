@@ -61,7 +61,7 @@ public class DecisionLearner implements CategoryCalculator {
 	
 	//private long startTime;
 	
-	private boolean random = true;
+	private boolean onlySPF = true;
 	
 	private boolean needTrue;
 	private boolean needFalse;
@@ -69,7 +69,7 @@ public class DecisionLearner implements CategoryCalculator {
 	private boolean needMore;
 	private double curBranch = 1;
 	
-	public DecisionLearner(JacopSelectiveSampling selectiveSampling, CfgConditionManager manager, boolean random) {
+	public DecisionLearner(JacopSelectiveSampling selectiveSampling, CfgConditionManager manager, boolean onlySPF) {
 		machine = new MyPositiveSeparationMachine();
 		machine.setDefaultParams();
 		/*oneClass = new Machine();
@@ -78,7 +78,7 @@ public class DecisionLearner implements CategoryCalculator {
 				.setPredictProbability(false).setC(Double.MAX_VALUE));*/
 		this.selectiveSampling = selectiveSampling;
 		this.manager = manager;
-		this.random = random;
+		this.onlySPF = onlySPF;
 	}
 	
 	public void learn(Map<DecisionLocation, BreakpointData> bkpDataMap) throws SavException {
@@ -142,31 +142,37 @@ public class DecisionLearner implements CategoryCalculator {
 		needTrue = !(bkpData instanceof LoopTimesData);
 		
 		OrCategoryCalculator preconditions = null;
-		if (!random) {
+		//if (!random) {
 			preconditions = manager.getPreConditions(bkpData.getLocation().getLineNo());
 			preconditions.clear(bkpData);
-		}
+		//}
 		
 		updateCoverage(bkpData);
 
 		//clear(bkpData);
 		
-		if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {			
-			//startTime = System.currentTimeMillis();
-			Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataForEmpty(bkpData.getLocation(), originVars,
-					preconditions, null, bkpData.getTrueValues().isEmpty(), false);
-			//System.out.println("learn select data for empty time: " + (System.currentTimeMillis() - startTime) + "ms");
-			if (selectMap != null) {
-				mergeMap(selectMap);
-				updateCoverage(bkpData);
-				if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
-					selectMap = selectiveSampling.selectDataForEmpty(bkpData.getLocation(), originVars, 
-							preconditions, null, bkpData.getTrueValues().isEmpty(), false);	
+		if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
+			if (!onlySPF) {
+				//startTime = System.currentTimeMillis();
+				Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataForEmpty(bkpData.getLocation(), originVars,
+						preconditions, null, bkpData.getTrueValues().isEmpty(), false);
+				//System.out.println("learn select data for empty time: " + (System.currentTimeMillis() - startTime) + "ms");
+				if (selectMap != null) {
 					mergeMap(selectMap);
 					updateCoverage(bkpData);
+					if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
+						selectMap = selectiveSampling.selectDataForEmpty(bkpData.getLocation(), originVars, 
+								preconditions, null, bkpData.getTrueValues().isEmpty(), false);	
+						mergeMap(selectMap);
+						updateCoverage(bkpData);
+					}
+					//bkpData = bkpDataMap.get(bkpData.getLocation());
 				}
-				//bkpData = bkpDataMap.get(bkpData.getLocation());
-			}
+			} else {
+				Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataUsingSPF(bkpData.getLocation(), originVars);
+				mergeMap(selectMap);
+				updateCoverage(bkpData);
+			}			
 		}
 				
 		if (bkpData.getTrueValues().isEmpty()) {
@@ -183,7 +189,11 @@ public class DecisionLearner implements CategoryCalculator {
 			return new Pair<Formula, Formula>(null, oneMore);
 		}
 		
-		if (random) {
+		if (onlySPF) {
+			return new Pair<Formula, Formula>(null, null);
+		}
+		
+		/*if (random) {
 			List<BreakpointValue> falseValues = bkpData.getFalseValues();
 			for (BreakpointValue value : falseValues) {
 				if (!records.contains(value)) {
@@ -203,7 +213,7 @@ public class DecisionLearner implements CategoryCalculator {
 			}
 			
 			return new Pair<Formula, Formula>(null, null);
-		}
+		}*/
 		
 		/*oneClass.resetData();
 		BreakpointData oneClassData = bkpData;
@@ -339,19 +349,24 @@ public class DecisionLearner implements CategoryCalculator {
 		needMore = true;
 		
 		OrCategoryCalculator preConditions = null;
-		if (!random) {
+		//if (!random) {
 			preConditions = manager.getPreConditions(loopData.getLocation().getLineNo());			
-		}
+		//}
 		updateCoverage(loopData);
 		if (loopData.getOneTimeValues().isEmpty() || loopData.getMoreTimesValues().isEmpty()) {
-			//startTime = System.currentTimeMillis();
-			Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataForEmpty(loopData.getLocation(), originVars,
-					preConditions, curDividers, loopData.getMoreTimesValues().isEmpty(), true);
-			//System.out.println("learn select data for empty time: " + (System.currentTimeMillis() - startTime) + "ms");
-			mergeMap(selectMap);
-			updateCoverage(loopData);
-			//loopData = (LoopTimesData) bkpDataMap.get(loopData.getLocation());
+			if (!onlySPF) {
+				//startTime = System.currentTimeMillis();
+				Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataForEmpty(loopData.getLocation(), originVars,
+						preConditions, curDividers, loopData.getMoreTimesValues().isEmpty(), true);
+				//System.out.println("learn select data for empty time: " + (System.currentTimeMillis() - startTime) + "ms");
+				mergeMap(selectMap);
+				updateCoverage(loopData);
+				//loopData = (LoopTimesData) bkpDataMap.get(loopData.getLocation());
+			} else {
+				updateCoverage(loopData);
+			}			
 		}
+		
 		if (loopData.getOneTimeValues().isEmpty()) {
 			log.info("Missing once loop data");
 			return null;
@@ -360,7 +375,11 @@ public class DecisionLearner implements CategoryCalculator {
 			return null;
 		}
 		
-		if (random) {
+		if (onlySPF) {
+			return null;
+		}
+		
+		/*if (random) {
 			List<BreakpointValue> choices = loopData.getOneTimeValues();
 			for (BreakpointValue value : choices) {
 				if (!records.contains(value)) {
@@ -374,7 +393,7 @@ public class DecisionLearner implements CategoryCalculator {
 				}
 			}
 			return null;
-		}
+		}*/
 		
 		/*oneClass.resetData();
 		int times = 0;

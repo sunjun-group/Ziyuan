@@ -19,7 +19,6 @@ public class SPFUtil {
 	}
 	
 	public static List<Map<String,Integer>> runJPF(String configPath) {
-		configPath = "MyClass.jpf";
 		Config config = JPF.createConfig(new String[] {configPath});
 		JPF jpf = new JPF(config);
 		jpf.run();
