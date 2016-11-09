@@ -10,7 +10,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 import japa.parser.ParseException;
 import learntest.main.Engine;
@@ -39,8 +43,16 @@ public class GenerateTestHandler extends AbstractHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		Job job = new Job("Do evaluation") {
+			
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				generateTest(LearnTestConfig.isL2TApproach);
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 		
-		generateTest(LearnTestConfig.isL2TApproach);
 		
 		return null;
 	}
@@ -48,7 +60,7 @@ public class GenerateTestHandler extends AbstractHandler {
 	public RunTimeInfo generateTest(boolean isL2T){
 		try {
 			SAVTimer.enableExecutionTimeout = true;
-			SAVTimer.exeuctionTimeout = 10000;
+			SAVTimer.exeuctionTimeout = 50000;
 			
 			new TestGenerator().genTest();
 			
@@ -62,11 +74,15 @@ public class GenerateTestHandler extends AbstractHandler {
 			appClasspath.addClasspath(outputPath);
 			
 			Engine engine = new Engine(appClasspath);
-			RunTimeInfo l2tInfo = engine.run(!isL2T);
+			RunTimeInfo runtimeInfo = engine.run(!isL2T);
+			
+			if(runtimeInfo != null){
+				System.out.print("time: " + runtimeInfo.getTime() + "; coverage: " + runtimeInfo.getCoverage());
+			}
 			
 			refreshProject();
 			
-			return l2tInfo;
+			return runtimeInfo;
 			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
