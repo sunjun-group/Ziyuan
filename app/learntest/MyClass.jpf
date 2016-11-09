@@ -1,6 +1,6 @@
 target=main.Test
 classpath=D:\\workspace\\TestJPF\\bin 
-symbolic.method=main.Test.compare(sym)  
+symbolic.method=main.Test.compare(sym#sym)  
 #listener=gov.nasa.jpf.symbc.SymbolicListener
 listener = gov.nasa.jpf.symbc.sequences.SymbolicSequenceListener 
 vm.storage.class=nil  

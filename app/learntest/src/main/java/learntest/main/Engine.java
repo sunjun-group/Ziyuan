@@ -161,16 +161,6 @@ public class Engine {
 		//new TestGenerator().genTestAccordingToInput(results, pathSolver.getVariables());
 		//new TestGenerator().genTestAccordingToInput(results, variables);
 		//new TestGenerator().genTestAccordingToInput(results, learner.getLabels());
-		
-		/*Config config = JPF.createConfig(new String[] {"MyClass.jpf"});
-		JPF jpf = new JPF(config);
-		jpf.run();
-		System.out.println("Main Results:");
-		int idx = 0;
-		for (Vector<String> vc : MethodSequences.methodSequences) {
-			System.out.println("test" + idx ++);
-			System.out.println(vc);
-		}*/
 	}
 	
 	private void collectExecVar(List<ExecValue> vals, Set<ExecVar> vars) {

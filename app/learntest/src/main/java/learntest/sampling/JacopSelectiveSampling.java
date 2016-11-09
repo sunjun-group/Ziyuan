@@ -17,6 +17,7 @@ import learntest.breakpoint.data.DecisionLocation;
 import learntest.calculator.OrCategoryCalculator;
 import learntest.sampling.jacop.StoreBuilder;
 import learntest.sampling.jacop.StoreSearcher;
+import learntest.spf.SPFUtil;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.LoopTimesData;
@@ -407,7 +408,14 @@ public class JacopSelectiveSampling {
 			}
 		}
 		//System.out.println(cnt);
+		selectBySPF();
 		return selectResult;
+	}
+	
+	//TODO: use SPF to generate test cases
+	public void selectBySPF() {
+		String configPath = null;
+		SPFUtil.runJPF(configPath);		
 	}
 	
 	private void selectData(List<List<Eq<?>>> assignments/*, DecisionLocation target*/) throws SavException {
