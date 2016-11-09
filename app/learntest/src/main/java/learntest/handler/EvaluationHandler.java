@@ -34,6 +34,7 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 import learntest.io.excel.ExcelReader;
 import learntest.io.excel.ExcelWriter;
 import learntest.io.excel.Trial;
+import learntest.io.txt.IgnoredMethodFiles;
 import learntest.main.LearnTestConfig;
 import learntest.main.RunTimeInfo;
 import learntest.util.LearnTestUtil;
@@ -196,6 +197,7 @@ public class EvaluationHandler extends AbstractHandler {
 		Job job = new Job("Do evaluation") {
 			
 			private HashSet<String> parsedMethods = new HashSet<String>();
+			private IgnoredMethodFiles ignoredMethods = new IgnoredMethodFiles();
 			
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -272,7 +274,7 @@ public class EvaluationHandler extends AbstractHandler {
 								
 								String methodName = className + "." + simpleMethodName;
 								
-								if(!parsedMethods.contains(methodName)){
+								if(!parsedMethods.contains(methodName) && !ignoredMethods.contains(methodName)){
 									System.out.println("working method: " + LearnTestConfig.testClassName 
 											+ "." + LearnTestConfig.testMethodName);
 									
@@ -294,6 +296,10 @@ public class EvaluationHandler extends AbstractHandler {
 										System.out.println(e);
 									}
 									
+								}
+								
+								if(!ignoredMethods.contains(methodName)){
+									ignoredMethods.addMethod(methodName);									
 								}
 							}
 							
