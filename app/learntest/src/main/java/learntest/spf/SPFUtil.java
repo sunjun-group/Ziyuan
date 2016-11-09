@@ -40,8 +40,9 @@ public class SPFUtil {
 				return null;
 			}
 			Map<String, Integer> map = new HashMap<String, Integer>();
+			int i = 0;
 			for (String value : values) {
-				System.out.println(Double.parseDouble(value));
+				map.put(args[i ++], ((Double)Double.parseDouble(value)).intValue());
 			}
 			selectValues.add(map);
 		}

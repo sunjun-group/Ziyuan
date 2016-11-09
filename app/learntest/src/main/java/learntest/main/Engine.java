@@ -8,14 +8,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import org.jacop.core.BoundDomain;
 import org.jacop.core.Domain;
 
-import gov.nasa.jpf.Config;
-import gov.nasa.jpf.JPF;
-import gov.nasa.jpf.symbc.sequences.MethodSequences;
 import icsetlv.DefaultValues;
 import icsetlv.common.dto.BreakpointValue;
 import japa.parser.JavaParser;
@@ -32,12 +28,11 @@ import learntest.cfg.CfgCreator;
 import learntest.cfg.CfgDecisionNode;
 import learntest.cfg.traveller.CfgConditionManager;
 import learntest.sampling.JacopSelectiveSampling;
-import learntest.sampling.jacop.JacopPathSolver;
+import learntest.spf.SPFUtil;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
 import sav.common.core.SavException;
-import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.AppJavaClassPath;
@@ -130,7 +125,7 @@ public class Engine {
 			collectExecVar(test.getChildren(), allVars);			
 		}
 		List<ExecVar> vars = new ArrayList<ExecVar>(allVars);
-		List<Domain[]> solutions = getSolutions(inputValues, vars);
+		List<Domain[]> solutions = getFullSolutions(inputValues, vars);
 		
 		tcExecutor.setjResultFileDeleteOnExit(true);
 		//tcExecutor.setSingleMode();
@@ -175,6 +170,28 @@ public class Engine {
 			collectExecVar(val.getChildren(), vars);
 		}
 	}
+	
+	private List<Domain[]> getFullSolutions(List<BreakpointValue> records, List<ExecVar> originVars) {
+		List<Domain[]> res = new ArrayList<Domain[]>();
+		int size = originVars.size();
+		for (BreakpointValue record : records) {
+			Domain[] solution = new Domain[size + (size + 1) * size / 2];
+			int i = 0;
+			for (; i < size; i++) {
+				int value = record.getValue(originVars.get(i).getLabel(), 0.0).intValue();
+				solution[i] = new BoundDomain(value, value);
+			}
+			for(int j = 0; j < size; j ++) {
+				int value = record.getValue(originVars.get(j).getLabel(), 0.0).intValue();
+				for(int k = j; k < size; k ++) {
+					int tmp = value * record.getValue(originVars.get(k).getLabel(), 0.0).intValue();
+					solution[i ++] = new BoundDomain(tmp, tmp);
+				}
+			}
+			res.add(solution);
+		}
+		return res;
+	}
 		
 	private List<Domain[]> getSolutions(List<BreakpointValue> records, List<ExecVar> originVars) {
 		List<Domain[]> res = new ArrayList<Domain[]>();
@@ -205,9 +222,13 @@ public class Engine {
 							variables = new ArrayList<Variable>();
 							List<Parameter> parameters = method.getParameters();
 							if (parameters != null) {
+								String[] args = new String[parameters.size()];
+								int i = 0;
 								for (Parameter parameter : parameters) {
 									variables.add(new Variable(parameter.getId().getName()));
+									args[i ++] = parameter.getId().getName();
 								}
+								SPFUtil.args = args;
 							}							
 							CfgCreator creator = new CfgCreator();
 							cfg = creator.dealWithBreakStmt(creator.dealWithReturnStmt(creator.toCFG(method)));

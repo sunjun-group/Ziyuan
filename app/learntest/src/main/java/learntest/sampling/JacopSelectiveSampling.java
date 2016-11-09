@@ -408,14 +408,50 @@ public class JacopSelectiveSampling {
 			}
 		}
 		//System.out.println(cnt);
-		selectBySPF();
+		List<Domain[]> solutions = selectBySPF(originVars);
+		List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
+		for (Domain[] solution : solutions) {
+			boolean flag = true;
+			for (Domain[] domains : prevDatas) {
+				if (StoreSearcher.duplicate(domains, solution)) {
+					flag = false;
+					break;
+				}
+			}
+			if (!flag) {
+				continue;
+			}
+			prevDatas.add(solution);
+			assignments.add(getAssignments(solution, originVars));
+		}
+		selectData(assignments);
 		return selectResult;
 	}
 	
-	//TODO: use SPF to generate test cases
-	public void selectBySPF() {
+	//TODO: configPath to be added
+	public List<Domain[]> selectBySPF(List<ExecVar> originVars) {
 		String configPath = null;
-		SPFUtil.runJPF(configPath);		
+		List<Map<String, Integer>> maps = SPFUtil.runJPF(configPath);
+		int size = originVars.size();
+		int length = size + (size + 1) * size / 2;
+		List<Domain[]> list = new ArrayList<Domain[]>();
+		for (Map<String, Integer> map : maps) {
+			Domain[] solution = new Domain[length];
+			int i = 0;
+			for (ExecVar var : originVars) {
+				Integer value = map.get(var.getLabel());
+				solution[i ++] = new BoundDomain(value, value);
+			}
+			for(int j = 0; j < size; j ++) {
+				int valJ = ((IntDomain)solution[j]).min();
+				for(int k = j; k < size; k ++) {
+					int value = valJ * ((IntDomain)solution[k]).min();
+					solution[i ++] = new BoundDomain(value, value);
+				}
+			}
+			list.add(solution);
+		}
+		return list;
 	}
 	
 	private void selectData(List<List<Eq<?>>> assignments/*, DecisionLocation target*/) throws SavException {
