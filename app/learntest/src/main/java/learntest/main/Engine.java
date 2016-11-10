@@ -150,6 +150,7 @@ public class Engine {
 		System.out.println("Coverage: " + learner.getCoverage());
 		System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
 		System.out.println("Execution Time: " + (System.currentTimeMillis() - startTime) + "ms");
+		System.out.println("SPF Times: " + selectiveSampling.getUsingSPF());
 		//PathSolver pathSolver = new PathSolver();
 		//List<Result> results = pathSolver.solve(paths);
 		//System.out.println(results);

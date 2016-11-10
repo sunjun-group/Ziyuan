@@ -42,6 +42,8 @@ public class JacopSelectiveSampling {
 	
 	private List<Domain[]> prevDatas;
 	
+	private int usingSPF = 0;
+	
 	//private long startTime;
 	
 	public JacopSelectiveSampling(TestcasesExecutorwithLoopTimes tcExecutor) {
@@ -375,11 +377,11 @@ public class JacopSelectiveSampling {
 		/*int timesLimit = 2000;
 		int numPerExe = 10;*/
 		//parameters for L2T
-		int timesLimit = 200;
+		//int timesLimit = 200;
 		int numPerExe = 100;
 		
 		//int cnt = 0;
-		for (int i = 0; i < timesLimit; i++) {
+		//for (int i = 0; i < timesLimit; i++) {
 			List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
 			for (int j = 0; j < numPerExe; j++) {
 				List<Store> stores = StoreBuilder.build(originVars, precondition, current, true);
@@ -402,38 +404,37 @@ public class JacopSelectiveSampling {
 			}
 			//cnt ++;
 			selectData(assignments);
-			if (selectResult == null) {
-				continue;
-			}
-			BreakpointData selectData = selectResult.get(target);
-			if (!isLoop) {
-				if (trueOrFalse && !selectData.getTrueValues().isEmpty()) {
-					//System.out.println(cnt);
-					//selectData(getAssignments(solution, originVars), null);
-					return selectResult;
+			if (selectResult != null) {
+				BreakpointData selectData = selectResult.get(target);
+				if (!isLoop) {
+					if (trueOrFalse && !selectData.getTrueValues().isEmpty()) {
+						//System.out.println(cnt);
+						//selectData(getAssignments(solution, originVars), null);
+						return selectResult;
+					}
+					if (!trueOrFalse && !selectData.getFalseValues().isEmpty()) {
+						//System.out.println(cnt);
+						//selectData(getAssignments(solution, originVars), null);
+						return selectResult;
+					}
+				} else {
+					LoopTimesData loopTimesData = (LoopTimesData) selectData;
+					if (trueOrFalse && !loopTimesData.getMoreTimesValues().isEmpty()) {
+						//System.out.println(cnt);
+						//selectData(getAssignments(solution, originVars), null);
+						return selectResult;
+					}
+					if (!trueOrFalse && !loopTimesData.getOneTimeValues().isEmpty()) {
+						//System.out.println(cnt);
+						//selectData(getAssignments(solution, originVars), null);
+						return selectResult;
+					}
 				}
-				if (!trueOrFalse && !selectData.getFalseValues().isEmpty()) {
-					//System.out.println(cnt);
-					//selectData(getAssignments(solution, originVars), null);
-					return selectResult;
-				}
-			} else {
-				LoopTimesData loopTimesData = (LoopTimesData) selectData;
-				if (trueOrFalse && !loopTimesData.getMoreTimesValues().isEmpty()) {
-					//System.out.println(cnt);
-					//selectData(getAssignments(solution, originVars), null);
-					return selectResult;
-				}
-				if (!trueOrFalse && !loopTimesData.getOneTimeValues().isEmpty()) {
-					//System.out.println(cnt);
-					//selectData(getAssignments(solution, originVars), null);
-					return selectResult;
-				}
-			}
-		}
+			}			
+		//}
 		//System.out.println(cnt);
 		List<Domain[]> solutions = selectBySPF(target, originVars);
-		List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
+		assignments = new ArrayList<List<Eq<?>>>();
 		for (Domain[] solution : solutions) {
 			boolean flag = true;
 			for (Domain[] domains : prevDatas) {
@@ -454,6 +455,7 @@ public class JacopSelectiveSampling {
 	
 	//TODO: configPath to be added
 	private List<Domain[]> selectBySPF(DecisionLocation target, List<ExecVar> originVars) {
+		usingSPF ++;
 		String configPath = LearnTestConfig.typeName + target.getLineNo() + ".jpf";
 		List<Map<String, Integer>> maps = SPFUtil.runJPF(configPath);
 		int size = originVars.size();
@@ -625,5 +627,9 @@ public class JacopSelectiveSampling {
 	
 	public int getTotalNum() {
 		return prevDatas.size() + 1;
+	}
+
+	public int getUsingSPF() {
+		return usingSPF;
 	}
 }

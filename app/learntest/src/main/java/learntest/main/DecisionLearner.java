@@ -142,10 +142,10 @@ public class DecisionLearner implements CategoryCalculator {
 		needTrue = !(bkpData instanceof LoopTimesData);
 		
 		OrCategoryCalculator preconditions = null;
-		//if (!random) {
+		if (!onlySPF) {
 			preconditions = manager.getPreConditions(bkpData.getLocation().getLineNo());
 			preconditions.clear(bkpData);
-		//}
+		}
 		
 		updateCoverage(bkpData);
 
@@ -190,6 +190,9 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 		
 		if (onlySPF) {
+			if (bkpData instanceof LoopTimesData) {
+				learn((LoopTimesData)bkpData);
+			}
 			return new Pair<Formula, Formula>(null, null);
 		}
 		
@@ -349,9 +352,9 @@ public class DecisionLearner implements CategoryCalculator {
 		needMore = true;
 		
 		OrCategoryCalculator preConditions = null;
-		//if (!random) {
+		if (!onlySPF) {
 			preConditions = manager.getPreConditions(loopData.getLocation().getLineNo());			
-		//}
+		}
 		updateCoverage(loopData);
 		if (loopData.getOneTimeValues().isEmpty() || loopData.getMoreTimesValues().isEmpty()) {
 			if (!onlySPF) {
