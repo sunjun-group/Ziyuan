@@ -626,7 +626,7 @@ public class JacopSelectiveSampling {
 	}
 	
 	public int getTotalNum() {
-		return prevDatas.size() + 1;
+		return prevDatas.size();
 	}
 
 	public int getUsingSPF() {
