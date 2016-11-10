@@ -10,11 +10,6 @@ public class Power {
 		if (exp == 0) {
 			return 1; // n^0 = 1
 		}
-		
-		//to achieve 100% coverage
-		if (exp == 1) {
-			return base;
-		}
 
 		int power = base;
 		while (exp > 1) {

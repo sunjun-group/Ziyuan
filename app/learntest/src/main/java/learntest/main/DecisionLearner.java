@@ -366,6 +366,8 @@ public class DecisionLearner implements CategoryCalculator {
 				updateCoverage(loopData);
 				//loopData = (LoopTimesData) bkpDataMap.get(loopData.getLocation());
 			} else {
+				Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataUsingSPF(loopData.getLocation(), originVars);
+				mergeMap(selectMap);
 				updateCoverage(loopData);
 			}			
 		}

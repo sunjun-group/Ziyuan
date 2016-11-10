@@ -3,11 +3,9 @@ package testdata.benchmark;
 public class Fibonacci {
 
 	public int fibonacciTest(int number) {
-
 		if (number < 0) {
 			return -1;
 		}
-
 		switch (number) {
 		case 0:
 			return 0;

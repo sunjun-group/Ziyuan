@@ -1,0 +1,12 @@
+target=testdata.benchmark.slicers.WrapRoundCounter6
+classpath=D:\\git\\Ziyuan\\app\\learntest\\target\\test-classes 
+symbolic.method=testdata.benchmark.slicers.WrapRoundCounter6.wrap_int(sym)  
+listener = gov.nasa.jpf.symbc.sequences.SymbolicSequenceListener 
+vm.storage.class=nil  
+search.multiple_errors=false
+search.depth_limit=10
+symbolic.debug=true 
+symbolic.min_int=-200
+symbolic.max_int=200
+symbolic.min_double=-2000.0
+symbolic.max_double=2000.0

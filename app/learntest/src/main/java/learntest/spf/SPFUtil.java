@@ -31,7 +31,7 @@ public class SPFUtil {
 		List<Vector<String>> results = MethodSequences.methodSequences;
 		List<Map<String, Integer>> selectValues = new ArrayList<Map<String,Integer>>();
 		for (Vector<String> vector : results) {
-			String statement = vector.get(0);
+			String statement = vector.size() == 1 ? vector.get(0) : vector.get(1);
 			String[] values = statement.substring(statement.indexOf('(') + 1, 
 					statement.indexOf(')')).split(",");
 			if (values.length != args.length) {
