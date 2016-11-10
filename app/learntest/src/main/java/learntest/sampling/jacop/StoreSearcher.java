@@ -46,7 +46,7 @@ public class StoreSearcher {
 			intVars[i] = (IntVar)store.vars[i];
 		}
 		Search<IntVar> search = new DepthFirstSearch<IntVar>();
-		search.getSolutionListener().searchAll(true);
+		/*search.getSolutionListener().searchAll(true);*/
 		search.getSolutionListener().recordSolutions(true);
 		search.setTimeOut(1);
 		search.setPrintInfo(false);
@@ -65,7 +65,7 @@ public class StoreSearcher {
 			intVars[i] = (IntVar)store.vars[i];
 		}
 		Search<IntVar> search = new DepthFirstSearch<IntVar>();
-		search.getSolutionListener().searchAll(true);
+		/*search.getSolutionListener().searchAll(true);*/
 		search.getSolutionListener().recordSolutions(true);
 		search.setTimeOut(1);
 		search.setPrintInfo(false);
@@ -84,7 +84,7 @@ public class StoreSearcher {
 			intVars[i] = (IntVar)store.vars[i];
 		}
 		Search<IntVar> search = new DepthFirstSearch<IntVar>();
-		search.getSolutionListener().searchAll(true);
+		/*search.getSolutionListener().searchAll(true);*/
 		search.getSolutionListener().recordSolutions(true);
 		search.setTimeOut(1);
 		search.setPrintInfo(false);
