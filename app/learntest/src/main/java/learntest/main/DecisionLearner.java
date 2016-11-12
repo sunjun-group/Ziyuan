@@ -57,7 +57,7 @@ public class DecisionLearner implements CategoryCalculator {
 	
 	private List<BreakpointValue> records;
 	
-	private final int MAX_ATTEMPT = 10;
+	private final int MAX_ATTEMPT = 20;
 	//private final int MAX_TO_RECORD = 5;
 	
 	//private long startTime;

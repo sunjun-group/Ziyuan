@@ -77,7 +77,7 @@ public class GenerateTestHandler extends AbstractHandler {
 			RunTimeInfo runtimeInfo = engine.run(!isL2T);
 			
 			if(runtimeInfo != null){
-				System.out.print("time: " + runtimeInfo.getTime() + "; coverage: " + runtimeInfo.getCoverage());
+				System.out.println("time: " + runtimeInfo.getTime() + "; coverage: " + runtimeInfo.getCoverage());
 			}
 			
 			refreshProject();

@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+
 import icsetlv.common.dto.BreakpointValue;
 import learntest.breakpoint.data.BreakpointBuilder;
 import learntest.breakpoint.data.DecisionLocation;
@@ -83,7 +86,6 @@ public class BreakpointDataBuilder {
 	}
 	
 	private void build(Map<BreakPoint, List<Integer>> pathMap, BreakpointValue inputValue, DecisionLocation location) {
-		List<Integer> occurs = pathMap.get(bkpBuilder.getBreakPoint(location));
 		BreakpointData bkpData = bkpDataMap.get(location);
 		if (bkpData == null) {
 			if (location.isLoop()) {
@@ -93,8 +95,15 @@ public class BreakpointDataBuilder {
 			}
 			bkpDataMap.put(location, bkpData);
 		}
-		if (occurs == null) {
-			bkpData.addFalseValue(inputValue);
+		
+		//only true branch data
+		List<Integer> occurs = pathMap.get(bkpBuilder.getTrueBreakPoint(location));
+		if (occurs == null || occurs.isEmpty()) {
+			//bkpData.addFalseValue(inputValue);
+			List<Integer> self = pathMap.get(bkpBuilder.getSelfBreakPoint(location));
+			if (self != null && !self.isEmpty()) {
+				bkpData.addFalseValue(inputValue);
+			}
 			return;
 		}
 		if (location.isLoop()) {

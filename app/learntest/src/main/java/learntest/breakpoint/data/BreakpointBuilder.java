@@ -24,6 +24,8 @@ public class BreakpointBuilder {
 	private List<DecisionLocation> locations;
 	private Map<DecisionLocation, BreakPoint> decisionMap;
 	private Map<DecisionLocation, DecisionLocation> parentMap;
+	//to change false branch logic
+	private Map<DecisionLocation, BreakPoint> selfBkps;
 	private List<BreakPoint> breakPoints;
 	
 	//recursion handling
@@ -44,6 +46,7 @@ public class BreakpointBuilder {
 		locations = new ArrayList<DecisionLocation>();
 		decisionMap = new HashMap<DecisionLocation, BreakPoint>();
 		parentMap = new HashMap<DecisionLocation, DecisionLocation>();
+		selfBkps = new HashMap<DecisionLocation, BreakPoint>();
 		Set<BreakPoint> bkps = new HashSet<BreakPoint>();
 		entry = new BreakPoint(className, methodName, cfg.getEntry().getBeginLine());
 		//entry = new BreakPoint(className, methodName, 41);
@@ -58,6 +61,9 @@ public class BreakpointBuilder {
 			BreakPoint breakPoint = new BreakPoint(className, methodName, decision.getTrueBeginLine());
 			bkps.add(breakPoint);
 			decisionMap.put(location, breakPoint);
+			BreakPoint selfBkp = new BreakPoint(className, methodName, decision.getBeginLine());
+			bkps.add(selfBkp);
+			selfBkps.put(location, selfBkp);
 			if (decision.getParentBeginLine() != -1) {
 				DecisionLocation parent = new DecisionLocation(className, methodName, decision.getParentBeginLine(), false);
 				parentMap.put(location, parent);
@@ -81,7 +87,8 @@ public class BreakpointBuilder {
 			Set<BreakPoint> set = new HashSet<BreakPoint>();
 			set.add(entry);
 			set.addAll(returnBkps);
-			set.add(getBreakPoint(location));
+			set.add(selfBkps.get(location));
+			set.add(getTrueBreakPoint(location));
 			BreakPoint parent = getParentBreakPoint(location);
 			if (parent != null) {
 				set.add(parent);
@@ -102,8 +109,12 @@ public class BreakpointBuilder {
 		return breakPoints;
 	}
 
-	public BreakPoint getBreakPoint(DecisionLocation location) {
+	public BreakPoint getTrueBreakPoint(DecisionLocation location) {
 		return decisionMap.get(location);
+	}
+	
+	public BreakPoint getSelfBreakPoint(DecisionLocation location) {
+		return selfBkps.get(location);
 	}
 	
 	public BreakPoint getParentBreakPoint(DecisionLocation location) {
