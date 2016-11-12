@@ -18,7 +18,7 @@ import java.util.HashSet;
  */
 public class IgnoredMethodFiles {
 	private String fileName = "ignored_method.txt";
-	private HashSet<String> set = new HashSet<>();
+	private HashSet<String> set = new HashSet<String>();
 
 	public IgnoredMethodFiles() {
 		File file = new File(fileName);

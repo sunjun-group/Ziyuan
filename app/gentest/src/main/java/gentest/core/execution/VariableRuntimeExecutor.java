@@ -135,15 +135,15 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 	
 	@Override
 	public boolean visitRmethod(Rmethod stmt) {
-		List<Object> inputs = new ArrayList<Object>(stmt.getInVarIds().length);
+		final List<Object> inputs = new ArrayList<Object>(stmt.getInVarIds().length);
 		for (int var : stmt.getInVarIds()) {
 			inputs.add(getExecData(var));
 		}
 		
-		ReturnValue value = new ReturnValue();
+		final ReturnValue value = new ReturnValue();
 		try {
-			Object obj = getExecData(stmt.getReceiverVarId());
-			Method method = stmt.getMethod();
+			final Object obj = getExecData(stmt.getReceiverVarId());
+			final Method method = stmt.getMethod();
 //			System.out.println(method);
 			
 //			returnedValue = method.invoke(obj, (Object[]) inputs.toArray());
