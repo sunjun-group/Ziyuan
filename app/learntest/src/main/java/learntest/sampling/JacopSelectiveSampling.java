@@ -41,6 +41,9 @@ public class JacopSelectiveSampling {
 	
 	private List<Domain[]> prevDatas;
 	
+	private int numPerExe;
+	private int timesLimit;
+	
 	//private long startTime;
 	
 	public JacopSelectiveSampling(TestcasesExecutorwithLoopTimes tcExecutor) {
@@ -354,8 +357,8 @@ public class JacopSelectiveSampling {
 		/*int timesLimit = 2000;
 		int numPerExe = 10;*/
 		//parameters for L2T
-		int timesLimit = 200;
-		int numPerExe = 100;
+		/*int timesLimit = 200;
+		int numPerExe = 100;*/
 		
 		//int cnt = 0;
 		for (int i = 0; i < timesLimit; i++) {
@@ -557,6 +560,19 @@ public class JacopSelectiveSampling {
 			i ++;
 		}
 		return atoms;
+	}
+	
+	public void setNumLimit(int limit) {
+		if (limit <= 100) {
+			numPerExe = limit;
+			timesLimit = 1;
+		} else {
+			numPerExe = 100;
+			timesLimit = limit / 100;
+			if (limit - 100 * timesLimit >= 50) {
+				timesLimit += 1;
+			}
+		}
 	}
 	
 	public int getTotalNum() {
