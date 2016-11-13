@@ -561,7 +561,7 @@ public class DecisionLearner implements CategoryCalculator {
 					break;
 			}
 		}
-		selectiveSampling.setNumLimit((int) Math.sqrt(num));
+		selectiveSampling.setNumLimit(num / 10);
 	}
 	
 	/*private Set<ExecVar> extractBoolVars(List<ExecVar> allVars) {
