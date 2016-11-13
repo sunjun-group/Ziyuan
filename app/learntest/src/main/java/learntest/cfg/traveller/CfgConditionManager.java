@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import learntest.breakpoint.data.DecisionLocation;
 import learntest.calculator.MultiNotDividerBasedCategoryCalculator;
 import learntest.calculator.OrCategoryCalculator;
 import learntest.cfg.CFG;
@@ -374,7 +375,58 @@ public class CfgConditionManager {
 		}
 	}*/
 	
-	public void updateRelevance(BreakpointData breakpointData) {
+	public void updateRelevance(Map<DecisionLocation, BreakpointData> dataMap) {
+		Map<Integer, BreakpointData> map = new HashMap<Integer, BreakpointData>();
+		Set<DecisionLocation> locations = dataMap.keySet();
+		for (DecisionLocation location : locations) {
+			map.put(location.getLineNo(), dataMap.get(location));
+		}
+		updateRelevance(begin, map);
+	}
+
+	private boolean updateRelevance(CfgDecisionNode node, Map<Integer, BreakpointData> map) {
+		if (!isRelevant(node.getBeginLine())) {
+			return false;
+		}
+		boolean relevant = true;
+		CfgDecisionNode trueNode = trueNext.get(node);
+		if (trueNode != null) {
+			relevant |= updateRelevance(trueNode, map);
+		}
+		CfgDecisionNode falseNode = falseNext.get(node);
+		if (falseNode != null) {
+			relevant |= updateRelevance(falseNode, map);
+		}
+		if (trueNode == null && falseNode == null) {
+			CfgDecisionNode nextNode = next.get(node);
+			if (nextNode != null) {
+				relevant |= updateRelevance(nextNode, map);
+			} else {
+				relevant = false;
+			}
+		}
+		if (relevant) {
+			return true;
+		}
+		BreakpointData breakpointData = map.get(node.getBeginLine());
+		relevant = breakpointData.getFalseValues().isEmpty() 
+					|| breakpointData.getTrueValues().isEmpty();
+		if (relevant) {
+			return true;
+		}
+		if (breakpointData instanceof LoopTimesData) {
+			LoopTimesData loopTimesData = (LoopTimesData) breakpointData;
+			relevant = loopTimesData.getOneTimeValues().isEmpty() 
+						|| loopTimesData.getMoreTimesValues().isEmpty();
+			if (relevant) {
+				return true;
+			}
+		}
+		node.setRelevant(false);
+		return false;
+	}
+
+	/*public void updateRelevance(BreakpointData breakpointData) {
 		int line = breakpointData.getLocation().getLineNo();
 		if (!updateRelevance(nodeMap.get(line), breakpointData)) {
 			return;
@@ -443,7 +495,7 @@ public class CfgConditionManager {
 		}
 		node.setRelevant(false);
 		return true;
-	}
+	}*/
 	
 	public boolean isEnd(int lineNo) {
 		return ends.contains(nodeMap.get(lineNo));

@@ -567,6 +567,9 @@ public class JacopSelectiveSampling {
 			numPerExe = limit;
 			timesLimit = 1;
 		} else {
+			if (limit > 10000) {
+				limit = 10000;
+			}
 			numPerExe = 100;
 			timesLimit = limit / 100;
 			if (limit - 100 * timesLimit >= 50) {
