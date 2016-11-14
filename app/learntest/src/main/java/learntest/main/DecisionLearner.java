@@ -1,5 +1,9 @@
 package learntest.main;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,6 +21,7 @@ import learntest.breakpoint.data.DecisionLocation;
 import learntest.calculator.OrCategoryCalculator;
 import learntest.cfg.traveller.CfgConditionManager;
 import learntest.sampling.JacopSelectiveSampling;
+import learntest.sampling.jacop.StoreSearcher;
 import learntest.svm.MyPositiveSeparationMachine;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.LoopTimesData;
@@ -57,7 +62,7 @@ public class DecisionLearner implements CategoryCalculator {
 	
 	private List<BreakpointValue> records;
 	
-	private final int MAX_ATTEMPT = 20;
+	//private final int MAX_ATTEMPT = 10;
 	//private final int MAX_TO_RECORD = 5;
 	
 	//private long startTime;
@@ -104,15 +109,32 @@ public class DecisionLearner implements CategoryCalculator {
 			manager.setCondition(bkpData.getLocation().getLineNo(), res, curDividers);
 			decisions.put(bkpData.getLocation(), res);
 		}
-		Set<Entry<DecisionLocation, Pair<Formula, Formula>>> entrySet = decisions.entrySet();
-		for (Entry<DecisionLocation, Pair<Formula, Formula>> entry : entrySet) {
+		if (!random) {
+			Set<Entry<DecisionLocation, Pair<Formula, Formula>>> entrySet = decisions.entrySet();
+			try {
+				FileWriter writer = new FileWriter(new File("trees/" + LearnTestConfig.getSimpleClassName() + "." 
+						+ LearnTestConfig.testMethodName));
+				for (Entry<DecisionLocation, Pair<Formula, Formula>> entry : entrySet) {
+					writer.write(entry.getKey() + "\n");
+					Pair<Formula, Formula> formulas = entry.getValue();
+					writer.write("True/False Decision: " + formulas.first() + "\n");
+					if (entry.getKey().isLoop()) {
+						writer.write("One/More Decision: " + formulas.second() + "\n");
+					}
+				}
+				writer.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}		
+		/*for (Entry<DecisionLocation, Pair<Formula, Formula>> entry : entrySet) {
 			System.out.println(entry.getKey());
 			Pair<Formula, Formula> formulas = entry.getValue();
 			System.out.println("True/False Decision: " + formulas.first());
 			if (formulas.second() != null) {
 				System.out.println("One/More Decision: " + formulas.second());
 			}
-		}
+		}*/
 	}
 	
 	/*private void clear(BreakpointData breakpointData) {
@@ -153,6 +175,14 @@ public class DecisionLearner implements CategoryCalculator {
 		//updateCoverage(bkpData);
 
 		//clear(bkpData);
+		if (random) {
+			while (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
+				Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.randomSelectData(originVars);
+				if (selectMap != null) {
+					mergeMap(selectMap);
+				}
+			}
+		}
 		
 		if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {			
 			//startTime = System.currentTimeMillis();
@@ -259,7 +289,7 @@ public class DecisionLearner implements CategoryCalculator {
 			/*Formula */trueFlase = getLearnedFormula();
 			double acc = machine.getModelAccuracy();
 			curDividers = machine.getLearnedDividers();
-			while(trueFlase != null && times < MAX_ATTEMPT && manager.isRelevant(bkpData.getLocation().getLineNo())) {
+			while(trueFlase != null /*&& times < MAX_ATTEMPT*/ && manager.isRelevant(bkpData.getLocation().getLineNo())) {
 				/*BreakpointData newData = selectiveSampling.selectData(bkpData.getLocation(), 
 						trueFlase, machine.getDataLabels(), machine.getDataPoints());*/
 				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(bkpData.getLocation(), 
@@ -292,7 +322,7 @@ public class DecisionLearner implements CategoryCalculator {
 					curDividers = machine.getLearnedDividers();
 					break;
 				}
-				if (!tmp.equals(trueFlase) && accTmp >= acc) {
+				if (!tmp.equals(trueFlase) && accTmp > acc) {
 					trueFlase = tmp;
 					curDividers = machine.getLearnedDividers();
 					acc = accTmp;
@@ -349,6 +379,14 @@ public class DecisionLearner implements CategoryCalculator {
 		OrCategoryCalculator preConditions = null;
 		if (!random) {
 			preConditions = manager.getPreConditions(loopData.getLocation().getLineNo());			
+		}
+		if (random) {
+			while (loopData.getOneTimeValues().isEmpty() || loopData.getMoreTimesValues().isEmpty()) {
+				Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.randomSelectData(originVars);
+				if (selectMap != null) {
+					mergeMap(selectMap);
+				}
+			}
 		}
 		//updateCoverage(loopData);
 		if (loopData.getOneTimeValues().isEmpty() || loopData.getMoreTimesValues().isEmpty()) {
@@ -430,7 +468,7 @@ public class DecisionLearner implements CategoryCalculator {
 			//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
 			formula = getLearnedFormula();
 			double acc = machine.getModelAccuracy();
-			while(formula != null && times < MAX_ATTEMPT && manager.isRelevant(loopData.getLocation().getLineNo())) {
+			while(formula != null && /*times < MAX_ATTEMPT &&*/ manager.isRelevant(loopData.getLocation().getLineNo())) {
 				/*LoopTimesData newData = (LoopTimesData) selectiveSampling.selectData(loopData.getLocation(), 
 						formula, machine.getDataLabels(), machine.getDataPoints());	*/
 				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(loopData.getLocation(), 
@@ -458,7 +496,7 @@ public class DecisionLearner implements CategoryCalculator {
 				if (tmp == null) {
 					break;
 				}
-				if (!tmp.equals(formula) && accTmp >= acc) {
+				if (!tmp.equals(formula) && accTmp > acc) {
 					formula = tmp;
 					acc = accTmp;
 				} else {
@@ -511,7 +549,8 @@ public class DecisionLearner implements CategoryCalculator {
 			collectExecVar(bkpVal.getChildren(), allVars);
 		}
 		originVars = new ArrayList<ExecVar>(allVars);
-		calculateNums();
+		StoreSearcher.length = originVars.size();
+		//calculateNums();
 		if (originVars.isEmpty()) {
 			return false;
 		}
@@ -538,7 +577,7 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 	}
 
-	private void calculateNums() {
+	/*private void calculateNums() {
 		int num = 1;
 		for (ExecVar var : originVars) {
 			switch (var.getType()) {
@@ -571,7 +610,7 @@ public class DecisionLearner implements CategoryCalculator {
 			}
 		}
 		selectiveSampling.setNumLimit(num / 10);
-	}
+	}*/
 	
 	/*private Set<ExecVar> extractBoolVars(List<ExecVar> allVars) {
 		Set<ExecVar> result = new HashSet<ExecVar>();
@@ -686,8 +725,8 @@ public class DecisionLearner implements CategoryCalculator {
 		for (int j = 0; j < size; j++) {
 			double value = bValue.getValue(vars.get(j).getLabel(), 0.0);
 			for (int k = j; k < size; k++) {
-				lineVals[i ++] = value * bValue.getValue(vars.get(k).getLabel(), 0.0);
-				//lineVals[i ++] = 0.0;
+				//lineVals[i ++] = value * bValue.getValue(vars.get(k).getLabel(), 0.0);
+				lineVals[i ++] = 0.0;
 			}
 		}
 

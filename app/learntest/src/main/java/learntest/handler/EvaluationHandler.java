@@ -176,12 +176,12 @@ public class EvaluationHandler extends AbstractHandler {
 				}
 				
 				if(isPublic){
-					NestedBlockChecker checker = new NestedBlockChecker();
+					/*NestedBlockChecker checker = new NestedBlockChecker();
 					md.accept(checker);
-					if(checker.isNestedJudge){
+					if(checker.isNestedJudge){*/
 						mdList.add(md);			
 						System.currentTimeMillis();
-					}
+					//}
 					
 				}
 			}
@@ -279,9 +279,13 @@ public class EvaluationHandler extends AbstractHandler {
 											+ "." + LearnTestConfig.testMethodName);
 									
 									try{
+										SAVTimer.exeuctionTimeout = 600000;
 										LearnTestConfig.isL2TApproach = true;
 										RunTimeInfo l2tInfo = new GenerateTestHandler().generateTest(true);
 										
+										if (l2tInfo != null) {
+											SAVTimer.exeuctionTimeout = l2tInfo.getTime();											
+										}
 										LearnTestConfig.isL2TApproach = false;
 										RunTimeInfo ramInfo = new GenerateTestHandler().generateTest(false);
 										

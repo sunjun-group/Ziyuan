@@ -41,8 +41,8 @@ public class JacopSelectiveSampling {
 	
 	private List<Domain[]> prevDatas;
 	
-	private int numPerExe;
-	private int timesLimit;
+	private int numPerExe = 100;
+	private int timesLimit = 20;
 	
 	//private long startTime;
 	
@@ -278,7 +278,7 @@ public class JacopSelectiveSampling {
 	}
 
 	private void extendWithHeuristics(List<Domain[]> solutions, List<List<Eq<?>>> assignments, List<ExecVar> originVars) throws SAVExecutionTimeOutException {
-		int xIdx = 0;
+		/*int xIdx = 0;
 		int yIdx = 0;
 		int zIdx = 0;
 		int idx = 0;
@@ -296,10 +296,36 @@ public class JacopSelectiveSampling {
 					break;
 			}
 			idx ++;
-		}
+		}*/
 		List<Domain[]> tmp = new ArrayList<Domain[]>();
+		int max = (int) Math.sqrt(Integer.MAX_VALUE);
 		for (Domain[] domains : solutions) {
-			int x = ((IntDomain) domains[xIdx]).min();
+			for(int i = 0; i < domains.length; i ++) {
+				int value = ((IntDomain) domains[i]).min();
+				if (value > -max) {
+					Domain[] new1 = new Domain[domains.length];
+					new1[i] = new BoundDomain(value - 1, value - 1);
+					for (int j = 0; j < i; j++) {
+						new1[j] = domains[j];
+					}
+					for (int j = i + 1; j < new1.length; j++) {
+						new1[j] = domains[j];
+					}
+					tmp.add(new1);
+				}
+				if (value < max) {
+					Domain[] new1 = new Domain[domains.length];
+					new1[i] = new BoundDomain(value + 1, value + 1);
+					for (int j = 0; j < i; j++) {
+						new1[j] = domains[j];
+					}
+					for (int j = i + 1; j < new1.length; j++) {
+						new1[j] = domains[j];
+					}
+					tmp.add(new1);
+				}
+			}
+			/*int x = ((IntDomain) domains[xIdx]).min();
 			int y = ((IntDomain) domains[yIdx]).min();
 			int z = ((IntDomain) domains[zIdx]).min();
 			for (int i = 0; i < domains.length; i++) {
@@ -326,7 +352,7 @@ public class JacopSelectiveSampling {
 					}
 					tmp.add(new1);
 				}
-			}
+			}*/
 		}
 		for (Domain[] solution : tmp) {
 			boolean flag = true;
@@ -342,6 +368,34 @@ public class JacopSelectiveSampling {
 				prevDatas.add(solution);
 			}
 		}
+	}
+	
+	public Map<DecisionLocation, BreakpointData> randomSelectData(List<ExecVar> originVars) 
+			throws SAVExecutionTimeOutException, SavException {
+		tcExecutor.setTarget(null);
+		List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
+		for (int j = 0; j < numPerExe; j++) {
+			List<Store> stores = StoreBuilder.build(originVars, null, null, false);
+			List<Domain[]> solutions = StoreSearcher.solve(stores);
+			//List<Domain[]> solutions = StoreSearcher.solveAll(stores);
+			for (Domain[] solution : solutions) {
+				boolean flag = true;
+				for (Domain[] domains : prevDatas) {
+					if (StoreSearcher.duplicate(domains, solution)) {
+						flag = false;
+						break;
+					}
+				}
+				if (!flag) {
+					continue;
+				}
+				prevDatas.add(solution);
+				assignments.add(getAssignments(solution, originVars));
+			}	
+		}
+		//cnt ++;
+		selectData(assignments);
+		return selectResult;
 	}
 
 	public Map<DecisionLocation, BreakpointData> selectDataForEmpty(DecisionLocation target, 
@@ -562,7 +616,7 @@ public class JacopSelectiveSampling {
 		return atoms;
 	}
 	
-	public void setNumLimit(int limit) {
+	/*public void setNumLimit(int limit) {
 		if (limit <= 100) {
 			numPerExe = limit;
 			timesLimit = 1;
@@ -576,7 +630,7 @@ public class JacopSelectiveSampling {
 				timesLimit += 1;
 			}
 		}
-	}
+	}*/
 	
 	public int getTotalNum() {
 		return prevDatas.size();

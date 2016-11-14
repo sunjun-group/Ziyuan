@@ -20,6 +20,8 @@ import sav.settings.SAVTimer;
 
 public class StoreSearcher {
 	
+	public static int length;
+
 	public static List<Domain[]> solve(List<Store> stores) throws SAVExecutionTimeOutException {
 		List<Domain[]> res = new ArrayList<Domain[]>();
 		for (Store store : stores) {
@@ -50,7 +52,7 @@ public class StoreSearcher {
 		search.setTimeOut(1);
 		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
 				store, intVars, new IndomainRandom<IntVar>()); 
-		search.setPrintInfo(false);
+		//search.setPrintInfo(false);
 	    boolean result = search.labeling(store, select);
 	    if (result) {
 			return search.getSolution();
@@ -66,7 +68,7 @@ public class StoreSearcher {
 		Search<IntVar> search = new DepthFirstSearch<IntVar>();
 		search.getSolutionListener().recordSolutions(true);
 		search.setTimeOut(1);
-		search.setPrintInfo(false);
+		//search.setPrintInfo(false);
 		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
 				store, intVars, new IndomainMin<IntVar>()); 
 	    boolean result = search.labeling(store, select);
@@ -84,7 +86,7 @@ public class StoreSearcher {
 		Search<IntVar> search = new DepthFirstSearch<IntVar>();
 		search.getSolutionListener().recordSolutions(true);
 		search.setTimeOut(1);
-		search.setPrintInfo(false);
+		//search.setPrintInfo(false);
 		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
 				store, intVars, new IndomainMax<IntVar>()); 
 	    boolean result = search.labeling(store, select);
@@ -127,7 +129,7 @@ public class StoreSearcher {
 		search.getSolutionListener().searchAll(true);
 		search.getSolutionListener().recordSolutions(true);
 		search.setTimeOut(1);
-		search.setPrintInfo(false);
+		//search.setPrintInfo(false);
 		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
 				store, intVars, new IndomainRandom<IntVar>()); 
 	    boolean result = search.labeling(store, select);
@@ -174,7 +176,7 @@ public class StoreSearcher {
 		search.getSolutionListener().searchAll(true);
 		search.getSolutionListener().recordSolutions(true);
 		search.setTimeOut(1);
-		search.setPrintInfo(false);
+		//search.setPrintInfo(false);
 		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
 				store, intVars, new IndomainRandom<IntVar>()); 
 	    boolean result = search.labeling(store, select);
@@ -205,7 +207,10 @@ public class StoreSearcher {
 		if (s1.length != s2.length) {
 			return false;
 		}
-		for (int i = 0; i < s1.length; i++) {
+		if (s1.length < length) {
+			return false;
+		}
+		for (int i = 0; i < length; i++) {
 			if(SAVTimer.isTimeOut()){
 				throw new SAVExecutionTimeOutException("Time out in StoreSearchr.duplicate()");
 			}

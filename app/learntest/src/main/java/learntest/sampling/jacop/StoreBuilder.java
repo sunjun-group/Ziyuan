@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.jacop.constraints.LinearInt;
 import org.jacop.constraints.XeqC;
-import org.jacop.constraints.XgteqY;
 import org.jacop.constraints.XmulYeqZ;
 import org.jacop.core.IntVar;
 import org.jacop.core.Store;
@@ -22,7 +21,9 @@ import sav.common.core.formula.LIATerm;
 import sav.common.core.formula.Var;
 import sav.strategies.dto.execute.value.ExecVar;
 
-public class StoreBuilder {
+public class StoreBuilder {	
+
+	public static int max = (int) Math.sqrt(Integer.MAX_VALUE);
 	
 	public static List<Store> build(Divider object, List<ExecVar> vars, OrCategoryCalculator calculator, 
 			List<Divider> dividers, boolean random) {
@@ -213,19 +214,19 @@ public class StoreBuilder {
 			case BOOLEAN:
 				return new IntVar(store, var.getLabel(), 0, 1);
 			case BYTE:
-				return new IntVar(store, var.getLabel(), -100, 100);
+				return new IntVar(store, var.getLabel(), Byte.MIN_VALUE, Byte.MAX_VALUE);
 			case CHAR:
 				return new IntVar(store, var.getLabel(), -100, 100);
-			case DOUBLE:
+			case SHORT:
+				return new IntVar(store, var.getLabel(), Short.MIN_VALUE, Short.MAX_VALUE);
+			/*case DOUBLE:
 				return new IntVar(store, var.getLabel(), -2000, 2000);
 			case FLOAT:
 				return new IntVar(store, var.getLabel(), -1000, 1000);
 			case LONG:
-				return new IntVar(store, var.getLabel(), -1000, 1000);
-			case SHORT:
-				return new IntVar(store, var.getLabel(), -100, 100);
+				return new IntVar(store, var.getLabel(), -1000, 1000);*/
 			default:
-				return new IntVar(store, var.getLabel(), -200, 200);
+				return new IntVar(store, var.getLabel(), -max, max);
 		}
 	}
 	
