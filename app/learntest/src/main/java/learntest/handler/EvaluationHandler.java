@@ -45,6 +45,7 @@ public class EvaluationHandler extends AbstractHandler {
 	class ChildJudgeStatementChecker extends ASTVisitor{
 		
 		boolean containJudge = false;
+		boolean containIfJudge = false;
 
 		private Statement parentStatement;
 		public ChildJudgeStatementChecker(Statement parentStat){
@@ -83,7 +84,8 @@ public class EvaluationHandler extends AbstractHandler {
 		
 		public boolean visit(IfStatement stat){
 			if(stat != parentStatement){
-				containJudge = true;				
+				containJudge = true;	
+				containIfJudge = true;
 				return false;
 			}
 			else{
@@ -93,7 +95,8 @@ public class EvaluationHandler extends AbstractHandler {
 		
 		public boolean visit(SwitchStatement stat){
 			if(stat != parentStatement){
-				containJudge = true;				
+				containJudge = true;		
+				containIfJudge = true;
 				return false;
 			}
 			else{
@@ -114,19 +117,29 @@ public class EvaluationHandler extends AbstractHandler {
 	
 	class NestedBlockChecker extends ASTVisitor{
 		boolean isNestedJudge = false;
-		private void checkChildNestCondition(Statement stat) {
+		private void checkChildNestCondition(Statement stat, boolean isParentLoop) {
 			ChildJudgeStatementChecker checker = new ChildJudgeStatementChecker(stat);
 			stat.accept(checker);
-			if(checker.containJudge){
+			if((!isParentLoop && checker.containJudge) ||
+				(isParentLoop && checker.containIfJudge)){
 				isNestedJudge = true;
 			}
+		}
+		
+		public boolean visit(SwitchStatement stat){
+			if(isNestedJudge){
+				return false;
+			}
+			checkChildNestCondition(stat, false);
+			
+			return false;
 		}
 		
 		public boolean visit(IfStatement stat){
 			if(isNestedJudge){
 				return false;
 			}
-			checkChildNestCondition(stat);
+			checkChildNestCondition(stat, false);
 			
 			return false;
 		}
@@ -136,7 +149,7 @@ public class EvaluationHandler extends AbstractHandler {
 			if(isNestedJudge){
 				return false;
 			}
-			checkChildNestCondition(stat);
+			checkChildNestCondition(stat, true);
 			return false;
 		}
 		
@@ -144,7 +157,7 @@ public class EvaluationHandler extends AbstractHandler {
 			if(isNestedJudge){
 				return false;
 			}
-			checkChildNestCondition(stat);
+			checkChildNestCondition(stat, true);
 			return false;
 		}
 		
@@ -152,7 +165,7 @@ public class EvaluationHandler extends AbstractHandler {
 			if(isNestedJudge){
 				return false;
 			}
-			checkChildNestCondition(stat);
+			checkChildNestCondition(stat, true);
 			return false;
 		}
 	}
