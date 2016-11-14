@@ -292,18 +292,18 @@ public class EvaluationHandler extends AbstractHandler {
 											+ "." + LearnTestConfig.testMethodName);
 									
 									try{
-//										LearnTestConfig.isL2TApproach = true;
-//										RunTimeInfo l2tInfo = new GenerateTestHandler().generateTest(true);
-//										
-//										LearnTestConfig.isL2TApproach = false;
-//										RunTimeInfo ramInfo = new GenerateTestHandler().generateTest(false);
-//										
-//										if(l2tInfo!=null && ramInfo!=null){
-//											String fullMN = LearnTestConfig.testClassName + "." + LearnTestConfig.testMethodName;
-//											Trial trial = new Trial(fullMN, l2tInfo.getTime(), l2tInfo.getCoverage(), 
-//													ramInfo.getTime(), ramInfo.getCoverage());
-//											writer.export(trial);											
-//										}
+										LearnTestConfig.isL2TApproach = true;
+										RunTimeInfo l2tInfo = new GenerateTestHandler().generateTest(true);
+										
+										LearnTestConfig.isL2TApproach = false;
+										RunTimeInfo ramInfo = new GenerateTestHandler().generateTest(false);
+										
+										if(l2tInfo!=null && ramInfo!=null){
+											String fullMN = LearnTestConfig.testClassName + "." + LearnTestConfig.testMethodName;
+											Trial trial = new Trial(fullMN, l2tInfo.getTime(), l2tInfo.getCoverage(), 
+													ramInfo.getTime(), ramInfo.getCoverage());
+											writer.export(trial);											
+										}
 									}
 									catch(Exception e){
 										System.out.println(e);
