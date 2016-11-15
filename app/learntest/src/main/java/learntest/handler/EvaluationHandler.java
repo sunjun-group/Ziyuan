@@ -296,7 +296,7 @@ public class EvaluationHandler extends AbstractHandler {
 										LearnTestConfig.isL2TApproach = true;
 										RunTimeInfo l2tInfo = new GenerateTestHandler().generateTest(true);
 										
-										if (l2tInfo != null) {
+										if (l2tInfo != null && l2tInfo.getTime() > 0) {
 											SAVTimer.exeuctionTimeout = l2tInfo.getTime();											
 										}
 										LearnTestConfig.isL2TApproach = false;

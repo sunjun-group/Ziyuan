@@ -199,12 +199,19 @@ public class DecisionLearner implements CategoryCalculator {
 				//updateCoverage(bkpData);
 				if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
 					selectMap = selectiveSampling.selectDataForEmpty(bkpData.getLocation(), originVars, 
-							preconditions, null, bkpData.getTrueValues().isEmpty(), false);	
-					mergeMap(selectMap);
+							preconditions, null, bkpData.getTrueValues().isEmpty(), false);
+					if (selectMap != null) {
+						mergeMap(selectMap);
+					} else {
+						mergeMap(selectiveSampling.getSelectResult());
+					}
 					manager.updateRelevance(bkpDataMap);
 					//updateCoverage(bkpData);
 				}
 				//bkpData = bkpDataMap.get(bkpData.getLocation());
+			} else {
+				mergeMap(selectiveSampling.getSelectResult());
+				manager.updateRelevance(bkpDataMap);
 			}
 		}
 		
@@ -401,9 +408,13 @@ public class DecisionLearner implements CategoryCalculator {
 			Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataForEmpty(loopData.getLocation(), originVars,
 					preConditions, curDividers, loopData.getMoreTimesValues().isEmpty(), true);
 			//System.out.println("learn select data for empty time: " + (System.currentTimeMillis() - startTime) + "ms");
-			mergeMap(selectMap);
+			if (selectMap != null) {
+				mergeMap(selectMap);			
+			} else {
+				mergeMap(selectiveSampling.getSelectResult());
+			}
 			manager.updateRelevance(bkpDataMap);
-			//updateCoverage(loopData);
+			//updateCoverage(loopData);	
 			//loopData = (LoopTimesData) bkpDataMap.get(loopData.getLocation());
 		}
 		updateCoverage(loopData);

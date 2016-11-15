@@ -470,6 +470,10 @@ public class JacopSelectiveSampling {
 		return null;
 	}
 	
+	public Map<DecisionLocation, BreakpointData> getSelectResult() {
+		return selectResult;
+	}
+
 	private void selectData(List<List<Eq<?>>> assignments/*, DecisionLocation target*/) throws SavException, SAVExecutionTimeOutException {
 		if (assignments.isEmpty()) {
 			return;
