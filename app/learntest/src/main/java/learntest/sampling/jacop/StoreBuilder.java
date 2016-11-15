@@ -23,7 +23,7 @@ import sav.strategies.dto.execute.value.ExecVar;
 
 public class StoreBuilder {	
 
-	public static int max = (int) Math.sqrt(Integer.MAX_VALUE);
+	public static int max = 2000;
 	
 	public static List<Store> build(Divider object, List<ExecVar> vars, OrCategoryCalculator calculator, 
 			List<Divider> dividers, boolean random) {

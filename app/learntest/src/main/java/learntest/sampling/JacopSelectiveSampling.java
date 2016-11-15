@@ -298,11 +298,10 @@ public class JacopSelectiveSampling {
 			idx ++;
 		}*/
 		List<Domain[]> tmp = new ArrayList<Domain[]>();
-		int max = (int) Math.sqrt(Integer.MAX_VALUE);
 		for (Domain[] domains : solutions) {
 			for(int i = 0; i < domains.length; i ++) {
 				int value = ((IntDomain) domains[i]).min();
-				if (value > -max) {
+				if (value > -StoreBuilder.max) {
 					Domain[] new1 = new Domain[domains.length];
 					new1[i] = new BoundDomain(value - 1, value - 1);
 					for (int j = 0; j < i; j++) {
@@ -313,7 +312,7 @@ public class JacopSelectiveSampling {
 					}
 					tmp.add(new1);
 				}
-				if (value < max) {
+				if (value < StoreBuilder.max) {
 					Domain[] new1 = new Domain[domains.length];
 					new1[i] = new BoundDomain(value + 1, value + 1);
 					for (int j = 0; j < i; j++) {

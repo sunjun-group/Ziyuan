@@ -39,6 +39,7 @@ import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
+import sav.settings.SAVTimer;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
@@ -175,14 +176,17 @@ public class DecisionLearner implements CategoryCalculator {
 		//updateCoverage(bkpData);
 
 		//clear(bkpData);
-		if (random) {
+		/*if (random) {
 			while (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
+				if(SAVTimer.isTimeOut()){
+					throw new SAVExecutionTimeOutException("Time out in random learn");
+				}
 				Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.randomSelectData(originVars);
 				if (selectMap != null) {
 					mergeMap(selectMap);
 				}
 			}
-		}
+		}*/
 		
 		if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {			
 			//startTime = System.currentTimeMillis();
@@ -380,14 +384,17 @@ public class DecisionLearner implements CategoryCalculator {
 		if (!random) {
 			preConditions = manager.getPreConditions(loopData.getLocation().getLineNo());			
 		}
-		if (random) {
+		/*if (random) {
 			while (loopData.getOneTimeValues().isEmpty() || loopData.getMoreTimesValues().isEmpty()) {
+				if(SAVTimer.isTimeOut()){
+					throw new SAVExecutionTimeOutException("Time out in random learn");
+				}
 				Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.randomSelectData(originVars);
 				if (selectMap != null) {
 					mergeMap(selectMap);
 				}
 			}
-		}
+		}*/
 		//updateCoverage(loopData);
 		if (loopData.getOneTimeValues().isEmpty() || loopData.getMoreTimesValues().isEmpty()) {
 			//startTime = System.currentTimeMillis();
@@ -725,8 +732,8 @@ public class DecisionLearner implements CategoryCalculator {
 		for (int j = 0; j < size; j++) {
 			double value = bValue.getValue(vars.get(j).getLabel(), 0.0);
 			for (int k = j; k < size; k++) {
-				//lineVals[i ++] = value * bValue.getValue(vars.get(k).getLabel(), 0.0);
-				lineVals[i ++] = 0.0;
+				lineVals[i ++] = value * bValue.getValue(vars.get(k).getLabel(), 0.0);
+				//lineVals[i ++] = 0.0;
 			}
 		}
 
