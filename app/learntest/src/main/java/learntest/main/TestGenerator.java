@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jacop.core.Domain;
-import org.jacop.core.IntDomain;
+import org.jacop.floats.core.FloatDomain;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -152,7 +152,7 @@ public class TestGenerator {
 
 	private boolean duplicate(Domain[] solution, Domain[] r, int size) {
 		for (int i = 0; i < size; i++) {
-			if (((IntDomain) solution[i]).min() != ((IntDomain) r[i]).min()) {
+			if (((FloatDomain) solution[i]).min() != ((FloatDomain) r[i]).min()) {
 				return false;
 			}
 		}

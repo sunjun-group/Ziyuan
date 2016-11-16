@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jacop.core.BoundDomain;
 import org.jacop.core.Domain;
+import org.jacop.floats.core.FloatIntervalDomain;
 
 import icsetlv.DefaultValues;
 import icsetlv.common.dto.BreakpointValue;
@@ -189,14 +189,14 @@ public class Engine {
 			Domain[] solution = new Domain[size + (size + 1) * size / 2];
 			int i = 0;
 			for (; i < size; i++) {
-				int value = record.getValue(originVars.get(i).getLabel(), 0.0).intValue();
-				solution[i] = new BoundDomain(value, value);
+				double value = record.getValue(originVars.get(i).getLabel(), 0.0).doubleValue();
+				solution[i] = new FloatIntervalDomain(value, value);
 			}
 			for(int j = 0; j < size; j ++) {
-				int value = record.getValue(originVars.get(j).getLabel(), 0.0).intValue();
+				double value = record.getValue(originVars.get(j).getLabel(), 0.0).doubleValue();
 				for(int k = j; k < size; k ++) {
-					int tmp = value * record.getValue(originVars.get(k).getLabel(), 0.0).intValue();
-					solution[i ++] = new BoundDomain(tmp, tmp);
+					double tmp = value * record.getValue(originVars.get(k).getLabel(), 0.0).doubleValue();
+					solution[i ++] = new FloatIntervalDomain(tmp, tmp);
 				}
 			}
 			res.add(solution);
@@ -210,8 +210,8 @@ public class Engine {
 		for (BreakpointValue record : records) {
 			Domain[] solution = new Domain[size];
 			for (int i = 0; i < size; i++) {
-				int value = record.getValue(originVars.get(i).getLabel(), 0.0).intValue();
-				solution[i] = new BoundDomain(value, value);
+				double value = record.getValue(originVars.get(i).getLabel(), 0.0).doubleValue();
+				solution[i] = new FloatIntervalDomain(value, value);
 			}
 			res.add(solution);
 		}
