@@ -97,17 +97,21 @@ public class DecisionLearner implements CategoryCalculator {
 		Collections.sort(bkpDatas);
 		Map<DecisionLocation, Pair<Formula, Formula>> decisions = new HashMap<DecisionLocation, Pair<Formula, Formula>>();
 		for (BreakpointData bkpData : bkpDatas) {
-			log.info("Start to learn at " + bkpData.getLocation());
+			System.out.println("Start to learn at " + bkpData.getLocation());
 			if (bkpData.getFalseValues().isEmpty() && bkpData.getTrueValues().isEmpty()) {
-				log.info("Missing data");
+				System.out.println("Missing data");
 				continue;
 			}
 			if (vars == null && !collectAllVars(bkpData)) {
-				log.info("Missing variables");
+				System.out.println("Missing variables");
 				continue;
 			}
 			Pair<Formula, Formula> res = learn(bkpData);
 			manager.setCondition(bkpData.getLocation().getLineNo(), res, curDividers);
+			
+			/**
+			 * used for debug
+			 */
 			decisions.put(bkpData.getLocation(), res);
 		}
 		if (!random) {
@@ -640,6 +644,9 @@ public class DecisionLearner implements CategoryCalculator {
 		return result;
 	}*/
 	
+	/**
+	 * create new variables for polynomial classification
+	 */
 	private void mappingVars() {
 		vars = new ArrayList<ExecVar>(originVars);
 		int size = originVars.size();

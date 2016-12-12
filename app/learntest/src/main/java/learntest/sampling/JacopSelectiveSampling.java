@@ -409,6 +409,19 @@ public class JacopSelectiveSampling {
 		return selectResult;
 	}
 
+	/**
+	 * randomly genreate test case to cover empty branch.
+	 * 
+	 * @param target
+	 * @param originVars
+	 * @param precondition
+	 * @param current
+	 * @param trueOrFalse
+	 * @param isLoop
+	 * @return
+	 * @throws SavException
+	 * @throws SAVExecutionTimeOutException
+	 */
 	public Map<DecisionLocation, BreakpointData> selectDataForEmpty(DecisionLocation target, 
 			List<ExecVar> originVars, 
 			OrCategoryCalculator precondition, 
