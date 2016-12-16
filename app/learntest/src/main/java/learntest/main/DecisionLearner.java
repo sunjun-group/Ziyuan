@@ -1,8 +1,6 @@
 package learntest.main;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +37,6 @@ import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
-import sav.settings.SAVTimer;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
@@ -71,6 +68,8 @@ public class DecisionLearner implements CategoryCalculator {
 	private boolean random = true;
 	
 	private double curBranch = 1;
+	//The first integer indicates the line number of condition, the second integer indicates branch: 0-false, 1-true/once, 2-more
+	private List<Pair<Integer, Integer>> branchRec;
 	
 	private boolean needFalse = true;
 	private boolean needTrue = true;
@@ -92,6 +91,7 @@ public class DecisionLearner implements CategoryCalculator {
 	public void learn(Map<DecisionLocation, BreakpointData> bkpDataMap) throws SavException, SAVExecutionTimeOutException {
 		manager.updateRelevance(bkpDataMap);
 		records = new ArrayList<BreakpointValue>();
+		branchRec = new ArrayList<Pair<Integer,Integer>>();
 		this.bkpDataMap = bkpDataMap;
 		List<BreakpointData> bkpDatas = new ArrayList<BreakpointData>(bkpDataMap.values());
 		Collections.sort(bkpDatas);
@@ -328,6 +328,7 @@ public class DecisionLearner implements CategoryCalculator {
 					break;
 				}*/
 				//startTime = System.currentTimeMillis();
+				acc = machine.getModelAccuracy();
 				machine.train();
 				//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
 				Formula tmp = getLearnedFormula();
@@ -511,6 +512,7 @@ public class DecisionLearner implements CategoryCalculator {
 					break;
 				}*/
 				//startTime = System.currentTimeMillis();
+				acc = machine.getModelAccuracy();
 				machine.train();
 				//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
 				Formula tmp = getLearnedFormula();
@@ -668,12 +670,14 @@ public class DecisionLearner implements CategoryCalculator {
 	}
 	
 	private void updateCoverage(BreakpointData data) {
+		int lineNo = data.getLocation().getLineNo();
 		if (needFalse) {
 			List<BreakpointValue> falseValues = data.getFalseValues();
 			for (BreakpointValue value : falseValues) {
 				if (records.contains(value)) {
 					needFalse = false;
 					curBranch += 1;
+					branchRec.add(new Pair<Integer, Integer>(lineNo, 0));
 					break;
 				}
 			}
@@ -681,6 +685,7 @@ public class DecisionLearner implements CategoryCalculator {
 				records.add(falseValues.get(0));
 				needFalse = false;
 				curBranch += 1;
+				branchRec.add(new Pair<Integer, Integer>(lineNo, 0));
 			}
 		}
 		if (needTrue) {
@@ -689,6 +694,7 @@ public class DecisionLearner implements CategoryCalculator {
 				if (records.contains(value)) {
 					needTrue = false;
 					curBranch += 1;
+					branchRec.add(new Pair<Integer, Integer>(lineNo, 1));
 					break;
 				}
 			}
@@ -696,17 +702,20 @@ public class DecisionLearner implements CategoryCalculator {
 				records.add(trueValues.get(0));
 				needTrue = false;
 				curBranch += 1;
+				branchRec.add(new Pair<Integer, Integer>(lineNo, 1));
 			}
 		}
 	}
 	
 	private void updateCoverage(LoopTimesData data) {
+		int lineNo = data.getLocation().getLineNo();
 		if (needOne) {
 			List<BreakpointValue> oneTimeValues = data.getOneTimeValues();
 			for (BreakpointValue value : oneTimeValues) {
 				if (records.contains(value)) {
 					needOne = false;
 					curBranch += 1;
+					branchRec.add(new Pair<Integer, Integer>(lineNo, 1));
 					break;
 				}
 			}
@@ -714,6 +723,7 @@ public class DecisionLearner implements CategoryCalculator {
 				records.add(oneTimeValues.get(0));
 				needOne = false;
 				curBranch += 1;
+				branchRec.add(new Pair<Integer, Integer>(lineNo, 1));
 			}
 		}
 		if (needMore) {
@@ -722,6 +732,7 @@ public class DecisionLearner implements CategoryCalculator {
 				if (records.contains(value)) {
 					needMore = false;
 					curBranch += 1;
+					branchRec.add(new Pair<Integer, Integer>(lineNo, 2));
 					break;
 				}
 			}
@@ -729,6 +740,7 @@ public class DecisionLearner implements CategoryCalculator {
 				records.add(moreTimesValues.get(0));
 				needMore = false;
 				curBranch += 1;
+				branchRec.add(new Pair<Integer, Integer>(lineNo, 2));
 			}
 		}
 	}
