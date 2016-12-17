@@ -38,6 +38,10 @@ public class OrCategoryCalculator implements CategoryCalculator {
 
 	@Override
 	public Category getCategory(DataPoint dataPoint) {
+		/**
+		 * TODO left by Lin Yun
+		 * Why?
+		 */
 		if (calculators.isEmpty()) {
 			return Category.POSITIVE;
 		}

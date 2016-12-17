@@ -59,6 +59,10 @@ public class DecisionLearner implements CategoryCalculator {
 	
 	private Map<DecisionLocation, BreakpointData> bkpDataMap;
 	
+	/**
+	 * TODO left by Lin Yun
+	 * What does this field used for?
+	 */
 	private List<BreakpointValue> records;
 	
 	//private final int MAX_ATTEMPT = 10;
@@ -113,13 +117,13 @@ public class DecisionLearner implements CategoryCalculator {
 				System.out.println("Missing variables");
 				continue;
 			}
-			Pair<Formula, Formula> res = learn(bkpData);
-			manager.setCondition(bkpData.getLocation().getLineNo(), res, curDividers);
+			Pair<Formula, Formula> learnedClassifier = learn(bkpData);
+			manager.setCondition(bkpData.getLocation().getLineNo(), learnedClassifier, curDividers);
 			
 			/**
 			 * used for debug
 			 */
-			decisions.put(bkpData.getLocation(), res);
+			decisions.put(bkpData.getLocation(), learnedClassifier);
 		}
 		if (!random) {
 			Set<Entry<DecisionLocation, Pair<Formula, Formula>>> entrySet = decisions.entrySet();
@@ -190,6 +194,11 @@ public class DecisionLearner implements CategoryCalculator {
 		OrCategoryCalculator preconditions = null;
 		if (!random) {
 			preconditions = manager.getPreConditions(bkpData.getLocation().getLineNo());
+			/**
+			 * TODO left by Lin Yun
+			 * a design flaw, this method should not be put inside OrCategoryCalculator.
+			 * 
+			 */
 			preconditions.clear(bkpData);
 		}
 		

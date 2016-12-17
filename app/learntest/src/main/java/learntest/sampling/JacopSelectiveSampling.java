@@ -410,7 +410,7 @@ public class JacopSelectiveSampling {
 	}
 
 	/**
-	 * randomly genreate test case to cover empty branch.
+	 * randomly generate test case to cover empty branch.
 	 * 
 	 * @param target
 	 * @param originVars
