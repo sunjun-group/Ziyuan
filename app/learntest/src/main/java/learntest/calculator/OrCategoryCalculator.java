@@ -16,6 +16,13 @@ import net.sf.javailp.Linear;
 import net.sf.javailp.Operator;
 import sav.strategies.dto.execute.value.ExecVar;
 
+/**
+ * This class maintain a set of categories (or classifier, see {@code calculators}), if one of them returns
+ * a positive result for a given data point, this classifier return a positive result.
+ * 
+ * @author Yun Lin
+ *
+ */
 public class OrCategoryCalculator implements CategoryCalculator {
 	
 	private List<List<CategoryCalculator>> calculators;
