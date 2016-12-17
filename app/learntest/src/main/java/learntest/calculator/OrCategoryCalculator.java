@@ -40,7 +40,7 @@ public class OrCategoryCalculator implements CategoryCalculator {
 	public Category getCategory(DataPoint dataPoint) {
 		/**
 		 * TODO left by Lin Yun
-		 * Why?
+		 * Why the empty set returns positive category?
 		 */
 		if (calculators.isEmpty()) {
 			return Category.POSITIVE;
