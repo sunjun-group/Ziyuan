@@ -60,10 +60,9 @@ public class DecisionLearner implements CategoryCalculator {
 	private Map<DecisionLocation, BreakpointData> bkpDataMap;
 	
 	/**
-	 * TODO left by Lin Yun
-	 * What does this field used for?
+	 * recorded test cases
 	 */
-	private List<BreakpointValue> records;
+	private List<BreakpointValue> recordedTestInputs;
 	
 	//private final int MAX_ATTEMPT = 10;
 	//private final int MAX_TO_RECORD = 5;
@@ -98,7 +97,7 @@ public class DecisionLearner implements CategoryCalculator {
 	
 	public void learn(Map<DecisionLocation, BreakpointData> bkpDataMap) throws SavException, SAVExecutionTimeOutException {
 		manager.updateRelevance(bkpDataMap);
-		records = new ArrayList<BreakpointValue>();
+		recordedTestInputs = new ArrayList<BreakpointValue>();
 		branchRecord = new ArrayList<Pair<Integer,Integer>>();
 		this.bkpDataMap = bkpDataMap;
 		List<BreakpointData> bkpDatas = new ArrayList<BreakpointData>(bkpDataMap.values());
@@ -263,8 +262,8 @@ public class DecisionLearner implements CategoryCalculator {
 		if (random) {
 			List<BreakpointValue> falseValues = bkpData.getFalseValues();
 			for (BreakpointValue value : falseValues) {
-				if (!records.contains(value)) {
-					records.add(value);
+				if (!recordedTestInputs.contains(value)) {
+					recordedTestInputs.add(value);
 				}
 			}
 			
@@ -273,8 +272,8 @@ public class DecisionLearner implements CategoryCalculator {
 			} else {
 				List<BreakpointValue> trueValues = bkpData.getTrueValues();
 				for (BreakpointValue value : trueValues) {
-					if (!records.contains(value)) {
-						records.add(value);
+					if (!recordedTestInputs.contains(value)) {
+						recordedTestInputs.add(value);
 					}
 				}
 			}
@@ -466,14 +465,14 @@ public class DecisionLearner implements CategoryCalculator {
 		if (random) {
 			List<BreakpointValue> choices = loopData.getOneTimeValues();
 			for (BreakpointValue value : choices) {
-				if (!records.contains(value)) {
-					records.add(value);
+				if (!recordedTestInputs.contains(value)) {
+					recordedTestInputs.add(value);
 				}
 			}
 			choices = loopData.getMoreTimesValues();
 			for (BreakpointValue value : choices) {
-				if (!records.contains(value)) {
-					records.add(value);
+				if (!recordedTestInputs.contains(value)) {
+					recordedTestInputs.add(value);
 				}
 			}
 			return null;
@@ -706,7 +705,7 @@ public class DecisionLearner implements CategoryCalculator {
 		if (needFalse) {
 			List<BreakpointValue> falseValues = data.getFalseValues();
 			for (BreakpointValue value : falseValues) {
-				if (records.contains(value)) {
+				if (recordedTestInputs.contains(value)) {
 					needFalse = false;
 					curBranch += 1;
 					branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.FALSE));
@@ -714,7 +713,7 @@ public class DecisionLearner implements CategoryCalculator {
 				}
 			}
 			if (needFalse && !falseValues.isEmpty()) {
-				records.add(falseValues.get(0));
+				recordedTestInputs.add(falseValues.get(0));
 				needFalse = false;
 				curBranch += 1;
 				branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.FALSE));
@@ -723,7 +722,7 @@ public class DecisionLearner implements CategoryCalculator {
 		if (needTrue) {
 			List<BreakpointValue> trueValues = data.getTrueValues();
 			for (BreakpointValue value : trueValues) {
-				if (records.contains(value)) {
+				if (recordedTestInputs.contains(value)) {
 					needTrue = false;
 					curBranch += 1;
 					branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.TRUE));
@@ -731,7 +730,7 @@ public class DecisionLearner implements CategoryCalculator {
 				}
 			}
 			if (needTrue && !trueValues.isEmpty()) {
-				records.add(trueValues.get(0));
+				recordedTestInputs.add(trueValues.get(0));
 				needTrue = false;
 				curBranch += 1;
 				branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.TRUE));
@@ -744,7 +743,7 @@ public class DecisionLearner implements CategoryCalculator {
 		if (needOne) {
 			List<BreakpointValue> oneTimeValues = data.getOneTimeValues();
 			for (BreakpointValue value : oneTimeValues) {
-				if (records.contains(value)) {
+				if (recordedTestInputs.contains(value)) {
 					needOne = false;
 					curBranch += 1;
 					branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.TRUE));
@@ -752,7 +751,7 @@ public class DecisionLearner implements CategoryCalculator {
 				}
 			}
 			if (needOne && !oneTimeValues.isEmpty()) {
-				records.add(oneTimeValues.get(0));
+				recordedTestInputs.add(oneTimeValues.get(0));
 				needOne = false;
 				curBranch += 1;
 				branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.TRUE));
@@ -761,7 +760,7 @@ public class DecisionLearner implements CategoryCalculator {
 		if (needMore) {
 			List<BreakpointValue> moreTimesValues = data.getMoreTimesValues();
 			for (BreakpointValue value : moreTimesValues) {
-				if (records.contains(value)) {
+				if (recordedTestInputs.contains(value)) {
 					needMore = false;
 					curBranch += 1;
 					branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.MORE));
@@ -769,7 +768,7 @@ public class DecisionLearner implements CategoryCalculator {
 				}
 			}
 			if (needMore && !moreTimesValues.isEmpty()) {
-				records.add(moreTimesValues.get(0));
+				recordedTestInputs.add(moreTimesValues.get(0));
 				needMore = false;
 				curBranch += 1;
 				branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.MORE));
@@ -849,7 +848,7 @@ public class DecisionLearner implements CategoryCalculator {
 	}
 
 	public List<BreakpointValue> getRecords() {
-		return records;
+		return recordedTestInputs;
 	}
 
 	public double getCoverage() {
