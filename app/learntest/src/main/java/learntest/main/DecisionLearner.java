@@ -314,6 +314,49 @@ public class DecisionLearner implements CategoryCalculator {
 			bkpData.merge(oneClassData);
 		}*/
 		
+		
+		Formula trueFlaseFormula = generateTrueFalseFormula(bkpData, preconditions);
+		
+		/*List<BreakpointValue> falseValues = bkpData.getFalseValues();
+		boolean needMore = true;
+		for (BreakpointValue value : falseValues) {
+			if (records.contains(value)) {
+				needMore = false;
+				break;
+			}
+		}
+		if (needMore) {
+			records.add(falseValues.get(0));
+		}*/
+		
+		Formula oneMoreFormula = null;
+		if (bkpData instanceof LoopTimesData) {
+			oneMoreFormula = learn((LoopTimesData)bkpData);
+		} /*else {
+			List<BreakpointValue> trueValues = bkpData.getTrueValues();
+			needMore = true;
+			for (BreakpointValue value : trueValues) {
+				if (records.contains(value)) {
+					needMore = false;
+					break;
+				}
+			}
+			if (needMore) {
+				records.add(trueValues.get(0));
+			}
+		}*/
+		
+		/*if (!bkpData.getFalseValues().isEmpty() && bkpData.getFalseValues().size() < MAX_TO_RECORD) {
+			records.add(bkpData.getFalseValues().get(0));
+		}
+		if (!(bkpData instanceof LoopTimesData) && !bkpData.getTrueValues().isEmpty() && bkpData.getTrueValues().size() < MAX_TO_RECORD) {
+			records.add(bkpData.getTrueValues().get(0));
+		}*/
+		return new Pair<Formula, Formula>(trueFlaseFormula, oneMoreFormula);
+	}
+
+	private Formula generateTrueFalseFormula(BreakpointData bkpData, OrCategoryCalculator preconditions)
+			throws SAVExecutionTimeOutException, SavException {
 		Formula trueFlaseFormula = null;
 		//manager.updateRelevance(bkpData);
 		
@@ -374,43 +417,7 @@ public class DecisionLearner implements CategoryCalculator {
 			}
 		
 		}
-		
-		/*List<BreakpointValue> falseValues = bkpData.getFalseValues();
-		boolean needMore = true;
-		for (BreakpointValue value : falseValues) {
-			if (records.contains(value)) {
-				needMore = false;
-				break;
-			}
-		}
-		if (needMore) {
-			records.add(falseValues.get(0));
-		}*/
-		
-		Formula oneMoreFormula = null;
-		if (bkpData instanceof LoopTimesData) {
-			oneMoreFormula = learn((LoopTimesData)bkpData);
-		} /*else {
-			List<BreakpointValue> trueValues = bkpData.getTrueValues();
-			needMore = true;
-			for (BreakpointValue value : trueValues) {
-				if (records.contains(value)) {
-					needMore = false;
-					break;
-				}
-			}
-			if (needMore) {
-				records.add(trueValues.get(0));
-			}
-		}*/
-		
-		/*if (!bkpData.getFalseValues().isEmpty() && bkpData.getFalseValues().size() < MAX_TO_RECORD) {
-			records.add(bkpData.getFalseValues().get(0));
-		}
-		if (!(bkpData instanceof LoopTimesData) && !bkpData.getTrueValues().isEmpty() && bkpData.getTrueValues().size() < MAX_TO_RECORD) {
-			records.add(bkpData.getTrueValues().get(0));
-		}*/
-		return new Pair<Formula, Formula>(trueFlaseFormula, oneMoreFormula);
+		return trueFlaseFormula;
 	}
 	
 	private Formula learn(LoopTimesData loopData) throws SavException, SAVExecutionTimeOutException {
