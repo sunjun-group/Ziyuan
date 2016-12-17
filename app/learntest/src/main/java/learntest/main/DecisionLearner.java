@@ -21,6 +21,7 @@ import learntest.cfg.traveller.CfgConditionManager;
 import learntest.sampling.JacopSelectiveSampling;
 import learntest.sampling.jacop.StoreSearcher;
 import learntest.svm.MyPositiveSeparationMachine;
+import learntest.testcase.data.BranchType;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.LoopTimesData;
 import libsvm.svm_model;
@@ -68,8 +69,11 @@ public class DecisionLearner implements CategoryCalculator {
 	private boolean random = true;
 	
 	private double curBranch = 1;
-	//The first integer indicates the line number of condition, the second integer indicates branch: 0-false, 1-true/once, 2-more
-	private List<Pair<Integer, Integer>> branchRec;
+	/**
+	 * The first integer indicates the line number of condition, the second integer indicates branch: 0-false, 1-true/once, 2-more
+	 * See {@link BranchType}
+	 */
+	private List<Pair<Integer, Integer>> branchRecord;
 	
 	private boolean needFalse = true;
 	private boolean needTrue = true;
@@ -91,7 +95,7 @@ public class DecisionLearner implements CategoryCalculator {
 	public void learn(Map<DecisionLocation, BreakpointData> bkpDataMap) throws SavException, SAVExecutionTimeOutException {
 		manager.updateRelevance(bkpDataMap);
 		records = new ArrayList<BreakpointValue>();
-		branchRec = new ArrayList<Pair<Integer,Integer>>();
+		branchRecord = new ArrayList<Pair<Integer,Integer>>();
 		this.bkpDataMap = bkpDataMap;
 		List<BreakpointData> bkpDatas = new ArrayList<BreakpointData>(bkpDataMap.values());
 		Collections.sort(bkpDatas);
@@ -677,7 +681,7 @@ public class DecisionLearner implements CategoryCalculator {
 				if (records.contains(value)) {
 					needFalse = false;
 					curBranch += 1;
-					branchRec.add(new Pair<Integer, Integer>(lineNo, 0));
+					branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.FALSE));
 					break;
 				}
 			}
@@ -685,7 +689,7 @@ public class DecisionLearner implements CategoryCalculator {
 				records.add(falseValues.get(0));
 				needFalse = false;
 				curBranch += 1;
-				branchRec.add(new Pair<Integer, Integer>(lineNo, 0));
+				branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.FALSE));
 			}
 		}
 		if (needTrue) {
@@ -694,7 +698,7 @@ public class DecisionLearner implements CategoryCalculator {
 				if (records.contains(value)) {
 					needTrue = false;
 					curBranch += 1;
-					branchRec.add(new Pair<Integer, Integer>(lineNo, 1));
+					branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.TRUE));
 					break;
 				}
 			}
@@ -702,7 +706,7 @@ public class DecisionLearner implements CategoryCalculator {
 				records.add(trueValues.get(0));
 				needTrue = false;
 				curBranch += 1;
-				branchRec.add(new Pair<Integer, Integer>(lineNo, 1));
+				branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.TRUE));
 			}
 		}
 	}
@@ -715,7 +719,7 @@ public class DecisionLearner implements CategoryCalculator {
 				if (records.contains(value)) {
 					needOne = false;
 					curBranch += 1;
-					branchRec.add(new Pair<Integer, Integer>(lineNo, 1));
+					branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.TRUE));
 					break;
 				}
 			}
@@ -723,7 +727,7 @@ public class DecisionLearner implements CategoryCalculator {
 				records.add(oneTimeValues.get(0));
 				needOne = false;
 				curBranch += 1;
-				branchRec.add(new Pair<Integer, Integer>(lineNo, 1));
+				branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.TRUE));
 			}
 		}
 		if (needMore) {
@@ -732,7 +736,7 @@ public class DecisionLearner implements CategoryCalculator {
 				if (records.contains(value)) {
 					needMore = false;
 					curBranch += 1;
-					branchRec.add(new Pair<Integer, Integer>(lineNo, 2));
+					branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.MORE));
 					break;
 				}
 			}
@@ -740,7 +744,7 @@ public class DecisionLearner implements CategoryCalculator {
 				records.add(moreTimesValues.get(0));
 				needMore = false;
 				curBranch += 1;
-				branchRec.add(new Pair<Integer, Integer>(lineNo, 2));
+				branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.MORE));
 			}
 		}
 	}
