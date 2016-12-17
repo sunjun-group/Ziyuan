@@ -199,7 +199,7 @@ public class DecisionLearner implements CategoryCalculator {
 			 * a design flaw, this method should not be put inside OrCategoryCalculator.
 			 * 
 			 */
-			preconditions.clear(bkpData);
+			preconditions.clearInvalidData(bkpData);
 		}
 		
 		//updateCoverage(bkpData);
@@ -345,7 +345,7 @@ public class DecisionLearner implements CategoryCalculator {
 				if (newData == null) {
 					break;
 				}
-				preconditions.clear(newData);
+				preconditions.clearInvalidData(newData);
 				//manager.updateRelevance(bkpData);
 				addDataPoints(originVars, newData.getTrueValues(), Category.POSITIVE, machine);
 				addDataPoints(originVars, newData.getFalseValues(), Category.NEGATIVE, machine);

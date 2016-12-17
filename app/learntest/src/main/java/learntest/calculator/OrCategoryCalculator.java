@@ -62,7 +62,7 @@ public class OrCategoryCalculator implements CategoryCalculator {
 		return Category.POSITIVE;
 	}
 	
-	public void clear(BreakpointData breakpointData) {
+	public void clearInvalidData(BreakpointData breakpointData) {
 		Iterator<BreakpointValue> values = breakpointData.getFalseValues().iterator();
 		while (values.hasNext()) {
 			BreakpointValue value = (BreakpointValue) values.next();
