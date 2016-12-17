@@ -99,6 +99,9 @@ public class DecisionLearner implements CategoryCalculator {
 		this.bkpDataMap = bkpDataMap;
 		List<BreakpointData> bkpDatas = new ArrayList<BreakpointData>(bkpDataMap.values());
 		Collections.sort(bkpDatas);
+		/**
+		 * each decision location has two formula, one for true/false and one for loop
+		 */
 		Map<DecisionLocation, Pair<Formula, Formula>> decisions = new HashMap<DecisionLocation, Pair<Formula, Formula>>();
 		for (BreakpointData bkpData : bkpDatas) {
 			System.out.println("Start to learn at " + bkpData.getLocation());
@@ -173,7 +176,16 @@ public class DecisionLearner implements CategoryCalculator {
 	
 	private Pair<Formula, Formula> learn(BreakpointData bkpData) throws SavException, SAVExecutionTimeOutException {
 		needFalse = true;
-		needTrue = !(bkpData instanceof LoopTimesData);
+		
+		/**
+		 * It means if begins to learn loop times data, the true branch must have been satisfied.
+		 */
+		if(bkpData instanceof LoopTimesData){
+			needTrue = false;
+		}
+		else{
+			needTrue = true;
+		}
 		
 		OrCategoryCalculator preconditions = null;
 		if (!random) {
@@ -293,7 +305,7 @@ public class DecisionLearner implements CategoryCalculator {
 			bkpData.merge(oneClassData);
 		}*/
 		
-		Formula trueFlase = null;
+		Formula trueFlaseFormula = null;
 		//manager.updateRelevance(bkpData);
 		
 		if (/*!manager.isEnd(bkpData.getLocation().getLineNo())*/manager.isRelevant(bkpData.getLocation().getLineNo())) {
@@ -305,10 +317,10 @@ public class DecisionLearner implements CategoryCalculator {
 			//startTime = System.currentTimeMillis();
 			machine.train();
 			//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
-			/*Formula */trueFlase = getLearnedFormula();
+			/*Formula */trueFlaseFormula = getLearnedFormula();
 			double acc = machine.getModelAccuracy();
 			curDividers = machine.getLearnedDividers();
-			while(trueFlase != null /*&& times < MAX_ATTEMPT*/ && manager.isRelevant(bkpData.getLocation().getLineNo())) {
+			while(trueFlaseFormula != null /*&& times < MAX_ATTEMPT*/ && manager.isRelevant(bkpData.getLocation().getLineNo())) {
 				/*BreakpointData newData = selectiveSampling.selectData(bkpData.getLocation(), 
 						trueFlase, machine.getDataLabels(), machine.getDataPoints());*/
 				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(bkpData.getLocation(), 
@@ -338,12 +350,12 @@ public class DecisionLearner implements CategoryCalculator {
 				Formula tmp = getLearnedFormula();
 				double accTmp = machine.getModelAccuracy();
 				if (tmp == null) {
-					trueFlase = null;
+					trueFlaseFormula = null;
 					curDividers = machine.getLearnedDividers();
 					break;
 				}
-				if (!tmp.equals(trueFlase) && accTmp > acc) {
-					trueFlase = tmp;
+				if (!tmp.equals(trueFlaseFormula) && accTmp > acc) {
+					trueFlaseFormula = tmp;
 					curDividers = machine.getLearnedDividers();
 					acc = accTmp;
 				} else {
@@ -366,9 +378,9 @@ public class DecisionLearner implements CategoryCalculator {
 			records.add(falseValues.get(0));
 		}*/
 		
-		Formula oneMore = null;
+		Formula oneMoreFormula = null;
 		if (bkpData instanceof LoopTimesData) {
-			oneMore = learn((LoopTimesData)bkpData);
+			oneMoreFormula = learn((LoopTimesData)bkpData);
 		} /*else {
 			List<BreakpointValue> trueValues = bkpData.getTrueValues();
 			needMore = true;
@@ -389,7 +401,7 @@ public class DecisionLearner implements CategoryCalculator {
 		if (!(bkpData instanceof LoopTimesData) && !bkpData.getTrueValues().isEmpty() && bkpData.getTrueValues().size() < MAX_TO_RECORD) {
 			records.add(bkpData.getTrueValues().get(0));
 		}*/
-		return new Pair<Formula, Formula>(trueFlase, oneMore);
+		return new Pair<Formula, Formula>(trueFlaseFormula, oneMoreFormula);
 	}
 	
 	private Formula learn(LoopTimesData loopData) throws SavException, SAVExecutionTimeOutException {
