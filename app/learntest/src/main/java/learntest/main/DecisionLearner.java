@@ -71,7 +71,7 @@ public class DecisionLearner implements CategoryCalculator {
 	
 	private boolean random = true;
 	
-	private double curBranch = 1;
+	private double curBranchNumber = 1;
 	/**
 	 * The first integer indicates the line number of condition, the second integer indicates branch: 0-false, 1-true/once, 2-more
 	 * See {@link BranchType}
@@ -707,7 +707,7 @@ public class DecisionLearner implements CategoryCalculator {
 			for (BreakpointValue value : falseValues) {
 				if (recordedTestInputs.contains(value)) {
 					needFalse = false;
-					curBranch += 1;
+					curBranchNumber += 1;
 					branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.FALSE));
 					break;
 				}
@@ -715,7 +715,7 @@ public class DecisionLearner implements CategoryCalculator {
 			if (needFalse && !falseValues.isEmpty()) {
 				recordedTestInputs.add(falseValues.get(0));
 				needFalse = false;
-				curBranch += 1;
+				curBranchNumber += 1;
 				branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.FALSE));
 			}
 		}
@@ -724,7 +724,7 @@ public class DecisionLearner implements CategoryCalculator {
 			for (BreakpointValue value : trueValues) {
 				if (recordedTestInputs.contains(value)) {
 					needTrue = false;
-					curBranch += 1;
+					curBranchNumber += 1;
 					branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.TRUE));
 					break;
 				}
@@ -732,7 +732,7 @@ public class DecisionLearner implements CategoryCalculator {
 			if (needTrue && !trueValues.isEmpty()) {
 				recordedTestInputs.add(trueValues.get(0));
 				needTrue = false;
-				curBranch += 1;
+				curBranchNumber += 1;
 				branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.TRUE));
 			}
 		}
@@ -745,7 +745,7 @@ public class DecisionLearner implements CategoryCalculator {
 			for (BreakpointValue value : oneTimeValues) {
 				if (recordedTestInputs.contains(value)) {
 					needOne = false;
-					curBranch += 1;
+					curBranchNumber += 1;
 					branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.TRUE));
 					break;
 				}
@@ -753,7 +753,7 @@ public class DecisionLearner implements CategoryCalculator {
 			if (needOne && !oneTimeValues.isEmpty()) {
 				recordedTestInputs.add(oneTimeValues.get(0));
 				needOne = false;
-				curBranch += 1;
+				curBranchNumber += 1;
 				branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.TRUE));
 			}
 		}
@@ -762,7 +762,7 @@ public class DecisionLearner implements CategoryCalculator {
 			for (BreakpointValue value : moreTimesValues) {
 				if (recordedTestInputs.contains(value)) {
 					needMore = false;
-					curBranch += 1;
+					curBranchNumber += 1;
 					branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.MORE));
 					break;
 				}
@@ -770,7 +770,7 @@ public class DecisionLearner implements CategoryCalculator {
 			if (needMore && !moreTimesValues.isEmpty()) {
 				recordedTestInputs.add(moreTimesValues.get(0));
 				needMore = false;
-				curBranch += 1;
+				curBranchNumber += 1;
 				branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.MORE));
 			}
 		}
@@ -852,7 +852,7 @@ public class DecisionLearner implements CategoryCalculator {
 	}
 
 	public double getCoverage() {
-		return curBranch / manager.getTotalBranch();
+		return curBranchNumber / manager.getTotalBranch();
 	}
 
 }
