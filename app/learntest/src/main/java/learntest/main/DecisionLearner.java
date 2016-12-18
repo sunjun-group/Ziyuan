@@ -124,24 +124,29 @@ public class DecisionLearner implements CategoryCalculator {
 			 */
 			decisions.put(bkpData.getLocation(), learnedClassifier);
 		}
+		
 		if (!random) {
-			Set<Entry<DecisionLocation, Pair<Formula, Formula>>> entrySet = decisions.entrySet();
-			try {
-				FileWriter writer = new FileWriter(new File("trees/" + LearnTestConfig.getSimpleClassName() + "." 
-						+ LearnTestConfig.testMethodName));
-				for (Entry<DecisionLocation, Pair<Formula, Formula>> entry : entrySet) {
-					writer.write(entry.getKey() + "\n");
-					Pair<Formula, Formula> formulas = entry.getValue();
-					writer.write("True/False Decision: " + formulas.first() + "\n");
-					if (entry.getKey().isLoop()) {
-						writer.write("One/More Decision: " + formulas.second() + "\n");
-					}
-				}
-				writer.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			logLearningProcessInFile(decisions);
 		}		
+	}
+
+	private void logLearningProcessInFile(Map<DecisionLocation, Pair<Formula, Formula>> decisions) {
+		Set<Entry<DecisionLocation, Pair<Formula, Formula>>> entrySet = decisions.entrySet();
+		try {
+			FileWriter writer = new FileWriter(new File("trees/" + LearnTestConfig.getSimpleClassName() + "." 
+					+ LearnTestConfig.testMethodName));
+			for (Entry<DecisionLocation, Pair<Formula, Formula>> entry : entrySet) {
+				writer.write(entry.getKey() + "\n");
+				Pair<Formula, Formula> formulas = entry.getValue();
+				writer.write("True/False Decision: " + formulas.first() + "\n");
+				if (entry.getKey().isLoop()) {
+					writer.write("One/More Decision: " + formulas.second() + "\n");
+				}
+			}
+			writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private Pair<Formula, Formula> learn(BreakpointData bkpData) throws SavException, SAVExecutionTimeOutException {
@@ -204,11 +209,11 @@ public class DecisionLearner implements CategoryCalculator {
 		} else if (bkpData.getFalseValues().isEmpty()) {
 			log.info("Missing false branch data");
 			curDividers = null;
-			Formula oneMore = null;
+			Formula oneMoreFormula = null;
 			if (bkpData instanceof LoopTimesData) {
-				oneMore = learn((LoopTimesData)bkpData);
+				oneMoreFormula = generateLoopFormula((LoopTimesData)bkpData);
 			}
-			return new Pair<Formula, Formula>(null, oneMore);
+			return new Pair<Formula, Formula>(null, oneMoreFormula);
 		}
 		
 		if (random) {
@@ -220,7 +225,7 @@ public class DecisionLearner implements CategoryCalculator {
 			}
 			
 			if (bkpData instanceof LoopTimesData) {
-				learn((LoopTimesData)bkpData);
+				generateLoopFormula((LoopTimesData)bkpData);
 			} else {
 				List<BreakpointValue> trueValues = bkpData.getTrueValues();
 				for (BreakpointValue value : trueValues) {
@@ -237,7 +242,7 @@ public class DecisionLearner implements CategoryCalculator {
 		
 		Formula oneMoreFormula = null;
 		if (bkpData instanceof LoopTimesData) {
-			oneMoreFormula = learn((LoopTimesData)bkpData);
+			oneMoreFormula = generateLoopFormula((LoopTimesData)bkpData);
 		} 
 		
 		return new Pair<Formula, Formula>(trueFlaseFormula, oneMoreFormula);
@@ -308,7 +313,7 @@ public class DecisionLearner implements CategoryCalculator {
 		return trueFlaseFormula;
 	}
 	
-	private Formula learn(LoopTimesData loopData) throws SavException, SAVExecutionTimeOutException {
+	private Formula generateLoopFormula(LoopTimesData loopData) throws SavException, SAVExecutionTimeOutException {
 		needOne = true;
 		needMore = true;
 		
@@ -316,18 +321,7 @@ public class DecisionLearner implements CategoryCalculator {
 		if (!random) {
 			preConditions = manager.getPreConditions(loopData.getLocation().getLineNo());			
 		}
-		/*if (random) {
-			while (loopData.getOneTimeValues().isEmpty() || loopData.getMoreTimesValues().isEmpty()) {
-				if(SAVTimer.isTimeOut()){
-					throw new SAVExecutionTimeOutException("Time out in random learn");
-				}
-				Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.randomSelectData(originVars);
-				if (selectMap != null) {
-					mergeMap(selectMap);
-				}
-			}
-		}*/
-		//updateCoverage(loopData);
+		
 		if (loopData.getOneTimeValues().isEmpty() || loopData.getMoreTimesValues().isEmpty()) {
 			//startTime = System.currentTimeMillis();
 			Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataForEmpty(loopData.getLocation(), originVars,
