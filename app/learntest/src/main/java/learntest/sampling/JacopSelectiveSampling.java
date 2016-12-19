@@ -461,6 +461,11 @@ public class JacopSelectiveSampling {
 				}	
 			}*/
 			List<Store> stores = StoreBuilder.build(originVars, precondition, current, true);
+			
+			/**
+			 * TODO left by Lin Yun
+			 * Does this means that the selective sampling results are very close?
+			 */
 			List<Domain[]> solutions = StoreSearcher.solve(stores, numPerExe);
 			for (Domain[] solution : solutions) {
 				/*boolean flag = true;
@@ -519,11 +524,11 @@ public class JacopSelectiveSampling {
 		if (assignments.isEmpty()) {
 			return;
 		}
-		//tcExecutor.setTarget(/*target*/null);
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		for (List<Eq<?>> valSet : assignments) {
 			if (!valSet.isEmpty()) {
-				list.add(toInstrVarMap(valSet));
+				Map<String, Object> varMap = toInstrVarMap(valSet);
+				list.add(varMap);
 			}
 		}
 		tcExecutor.setTcNum(list.size());
@@ -582,6 +587,7 @@ public class JacopSelectiveSampling {
 				case CHAR:
 				case SHORT:
 					assignments.add(new Eq<Number>(var, number.intValue()));
+					break;
 				case BOOLEAN:
 					if (number.intValue() > 0) {
 						assignments.add(new Eq<Boolean>(var, true));
