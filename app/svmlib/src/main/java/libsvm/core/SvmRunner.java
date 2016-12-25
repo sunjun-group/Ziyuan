@@ -19,7 +19,10 @@ public class SvmRunner implements Runnable {
 	@Override
 	public void run() {
 		try {
-			svm.svm_set_print_string_function(null);
+			svm.svm_set_print_string_function(new libsvm.svm_print_interface(){
+			    @Override public void print(String s) {} // Disables svm output
+			});
+			
 			long t1 = System.currentTimeMillis();
 			result = svm.svm_train(problem, parameter);
 			long t2 = System.currentTimeMillis();
