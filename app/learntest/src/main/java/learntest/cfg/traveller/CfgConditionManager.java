@@ -27,6 +27,12 @@ import sav.common.core.formula.Formula;
 import sav.common.core.formula.NotFormula;
 import sav.strategies.dto.execute.value.ExecVar;
 
+/**
+ * contain all the cfg structure information. The original author does not maintain
+ * structure information inside cfg.
+ * @author linyun
+ *
+ */
 public class CfgConditionManager {
 	
 	private CfgDecisionNode begin;

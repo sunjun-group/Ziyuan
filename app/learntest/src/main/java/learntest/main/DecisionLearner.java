@@ -54,7 +54,7 @@ public class DecisionLearner implements CategoryCalculator {
 	//private Set<ExecVar> boolVars;
 	private JacopSelectiveSampling selectiveSampling;
 	
-	private CfgConditionManager manager;
+	private CfgConditionManager cfgConditionManager;
 	private List<Divider> curDividers;
 	
 	private Map<DecisionLocation, BreakpointData> bkpDataMap;
@@ -91,12 +91,12 @@ public class DecisionLearner implements CategoryCalculator {
 				.setKernelType(KernelType.LINEAR).setEps(0.00001).setUseShrinking(false)
 				.setPredictProbability(false).setC(Double.MAX_VALUE));*/
 		this.selectiveSampling = selectiveSampling;
-		this.manager = manager;
+		this.cfgConditionManager = manager;
 		this.random = random;
 	}
 	
 	public void learn(Map<DecisionLocation, BreakpointData> bkpDataMap) throws SavException, SAVExecutionTimeOutException {
-		manager.updateRelevance(bkpDataMap);
+		cfgConditionManager.updateRelevance(bkpDataMap);
 		recordedTestInputs = new ArrayList<BreakpointValue>();
 		branchRecord = new ArrayList<Pair<Integer,Integer>>();
 		this.bkpDataMap = bkpDataMap;
@@ -121,7 +121,7 @@ public class DecisionLearner implements CategoryCalculator {
 			Pair<Formula, Formula> learnedClassifier = learn(bkpData);
 			
 			System.out.println("true or false classifier at " + bkpData.getLocation() + " is :" + learnedClassifier.first());
-			manager.setCondition(bkpData.getLocation().getLineNo(), learnedClassifier, curDividers);
+			cfgConditionManager.setCondition(bkpData.getLocation().getLineNo(), learnedClassifier, curDividers);
 			
 			/**
 			 * used for debug
@@ -168,7 +168,7 @@ public class DecisionLearner implements CategoryCalculator {
 		
 		OrCategoryCalculator preconditions = null;
 		if (!random) {
-			preconditions = manager.getPreConditions(bkpData.getLocation().getLineNo());
+			preconditions = cfgConditionManager.getPreConditions(bkpData.getLocation().getLineNo());
 			/**
 			 * TODO left by Lin Yun
 			 * a design flaw, this method should not be put inside OrCategoryCalculator.
@@ -181,11 +181,12 @@ public class DecisionLearner implements CategoryCalculator {
 			long startTime = System.currentTimeMillis();
 			Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataForEmpty(bkpData.getLocation(), originVars,
 					preconditions, null, bkpData.getTrueValues().isEmpty(), false);
-			System.out.println("learn select data for empty time: " + (System.currentTimeMillis() - startTime) + "ms");
+			System.out.println("learn select data for empty time for " + bkpData.getLocation()
+					+ ": " + (System.currentTimeMillis() - startTime) + "ms");
 			
 			if (selectMap != null) {
 				mergeMap(selectMap);
-				manager.updateRelevance(bkpDataMap);
+				cfgConditionManager.updateRelevance(bkpDataMap);
 				//updateCoverage(bkpData);
 				if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
 					selectMap = selectiveSampling.selectDataForEmpty(bkpData.getLocation(), originVars, 
@@ -195,13 +196,13 @@ public class DecisionLearner implements CategoryCalculator {
 					} else {
 						mergeMap(selectiveSampling.getSelectResult());
 					}
-					manager.updateRelevance(bkpDataMap);
+					cfgConditionManager.updateRelevance(bkpDataMap);
 					//updateCoverage(bkpData);
 				}
 				//bkpData = bkpDataMap.get(bkpData.getLocation());
 			} else {
 				mergeMap(selectiveSampling.getSelectResult());
-				manager.updateRelevance(bkpDataMap);
+				cfgConditionManager.updateRelevance(bkpDataMap);
 			}
 		}
 		
@@ -261,19 +262,19 @@ public class DecisionLearner implements CategoryCalculator {
 			throws SAVExecutionTimeOutException, SavException {
 		Formula trueFlaseFormula = null;
 		
-		if (manager.isRelevant(bkpData.getLocation().getLineNo())) {
+		if (cfgConditionManager.isRelevant(bkpData.getLocation().getLineNo())) {
 			
 			int times = 0;
 			machine.resetData();
 			addDataPoints(originVars, bkpData.getTrueValues(), Category.POSITIVE, machine);
 			addDataPoints(originVars, bkpData.getFalseValues(), Category.NEGATIVE, machine);
-			//startTime = System.currentTimeMillis();
+			long startTime0 = System.currentTimeMillis();
 			machine.train();
-			//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
+			System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime0) + " ms");
 			trueFlaseFormula = getLearnedFormula();
 			double acc = machine.getModelAccuracy();
 			curDividers = machine.getLearnedDividers();
-			while(trueFlaseFormula != null /*&& times < MAX_ATTEMPT*/ && manager.isRelevant(bkpData.getLocation().getLineNo())) {
+			while(trueFlaseFormula != null /*&& times < MAX_ATTEMPT*/ && cfgConditionManager.isRelevant(bkpData.getLocation().getLineNo())) {
 				long startTime = System.currentTimeMillis();				
 				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(bkpData.getLocation(), 
 						originVars, machine.getDataPoints(), preconditions, machine.getLearnedDividers());
@@ -283,7 +284,7 @@ public class DecisionLearner implements CategoryCalculator {
 					break;
 				}
 				mergeMap(newMap);
-				manager.updateRelevance(bkpDataMap);
+				cfgConditionManager.updateRelevance(bkpDataMap);
 				
 				BreakpointData newData = newMap.get(bkpData.getLocation());
 				if (newData == null) {
@@ -325,7 +326,7 @@ public class DecisionLearner implements CategoryCalculator {
 		
 		OrCategoryCalculator preConditions = null;
 		if (!random) {
-			preConditions = manager.getPreConditions(loopData.getLocation().getLineNo());			
+			preConditions = cfgConditionManager.getPreConditions(loopData.getLocation().getLineNo());			
 		}
 		
 		if (loopData.getOneTimeValues().isEmpty() || loopData.getMoreTimesValues().isEmpty()) {
@@ -339,7 +340,7 @@ public class DecisionLearner implements CategoryCalculator {
 			} else {
 				mergeMap(selectiveSampling.getSelectResult());
 			}
-			manager.updateRelevance(bkpDataMap);
+			cfgConditionManager.updateRelevance(bkpDataMap);
 			//updateCoverage(loopData);	
 			//loopData = (LoopTimesData) bkpDataMap.get(loopData.getLocation());
 		}
@@ -372,7 +373,7 @@ public class DecisionLearner implements CategoryCalculator {
 		
 		Formula formula = null;
 		if (/*!manager.isEnd(loopData.getLocation().getLineNo())*/
-				manager.isRelevant(loopData.getLocation().getLineNo())) {
+				cfgConditionManager.isRelevant(loopData.getLocation().getLineNo())) {
 			
 			int times = 0;
 			machine.resetData();
@@ -383,7 +384,7 @@ public class DecisionLearner implements CategoryCalculator {
 			//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
 			formula = getLearnedFormula();
 			double acc = machine.getModelAccuracy();
-			while(formula != null && /*times < MAX_ATTEMPT &&*/ manager.isRelevant(loopData.getLocation().getLineNo())) {
+			while(formula != null && /*times < MAX_ATTEMPT &&*/ cfgConditionManager.isRelevant(loopData.getLocation().getLineNo())) {
 				/*LoopTimesData newData = (LoopTimesData) selectiveSampling.selectData(loopData.getLocation(), 
 						formula, machine.getDataLabels(), machine.getDataPoints());	*/
 				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(loopData.getLocation(), 
@@ -392,7 +393,7 @@ public class DecisionLearner implements CategoryCalculator {
 					break;
 				}
 				mergeMap(newMap);
-				manager.updateRelevance(bkpDataMap);
+				cfgConditionManager.updateRelevance(bkpDataMap);
 				LoopTimesData newData = (LoopTimesData) newMap.get(loopData.getLocation());
 				if (newData == null) {
 					break;
@@ -453,7 +454,7 @@ public class DecisionLearner implements CategoryCalculator {
 		labels = extractLabels(vars);
 		machine.setDataLabels(labels);
 		//oneClass.setDataLabels(labels);
-		manager.setVars(vars, originVars);
+		cfgConditionManager.setVars(vars, originVars);
 		
 		return true;
 	}
@@ -700,7 +701,7 @@ public class DecisionLearner implements CategoryCalculator {
 	}
 
 	public double getCoverage() {
-		return curBranchNumber / manager.getTotalBranch();
+		return curBranchNumber / cfgConditionManager.getTotalBranch();
 	}
 
 }
