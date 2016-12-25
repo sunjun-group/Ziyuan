@@ -28,6 +28,7 @@ import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
 
+@SuppressWarnings("restriction")
 public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 
 	private static Logger log = LoggerFactory.getLogger(TestcasesExecutorwithLoopTimes.class);	
@@ -47,6 +48,9 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	private BreakpointBuilder bkpBuilder;
 	private DecisionLocation target;
 	
+	/**
+	 * keep the map from variable name to its variable value.
+	 */
 	private List<Map<String,Object>> instrVarMaps;
 	private boolean instrMode;
 	
@@ -90,7 +94,8 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 			inputValuesByTestIdx.put(testIdx, currentTestInputValues);
 		}
 		if (instrMode) {
-			setVarMap(instrVarMaps.get(testIdx));
+			Map<String,Object> map = instrVarMaps.get(testIdx);
+			setVarMap(map);
 		}
 	}
 
@@ -130,7 +135,9 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	private BreakpointValue extractValuesAtLocation(BreakPoint bkp,
 			BreakpointEvent bkpEvent) throws SavException {
 		try {
-			return getValueExtractor().extractValue(bkp, bkpEvent);
+			DebugValueExtractor debugValueExtractor = getValueExtractor();
+			BreakpointValue value = debugValueExtractor.extractValue(bkp, bkpEvent);
+			return value;
 		} catch (IncompatibleThreadStateException e) {
 			log.error(e.getMessage());
 		} catch (AbsentInformationException e) {

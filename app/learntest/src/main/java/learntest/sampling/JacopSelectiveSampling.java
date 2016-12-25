@@ -441,25 +441,6 @@ public class JacopSelectiveSampling {
 		//int cnt = 0;
 		for (int i = 0; i < timesLimit; i++) {
 			List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
-			/*for (int j = 0; j < numPerExe; j++) {
-				List<Store> stores = StoreBuilder.build(originVars, precondition, current, true);
-				List<Domain[]> solutions = StoreSearcher.solve(stores);
-				//List<Domain[]> solutions = StoreSearcher.solveAll(stores);
-				for (Domain[] solution : solutions) {
-					boolean flag = true;
-					for (Domain[] domains : prevDatas) {
-						if (StoreSearcher.duplicate(domains, solution)) {
-							flag = false;
-							break;
-						}
-					}
-					if (!flag) {
-						continue;
-					}
-					prevDatas.add(solution);
-					assignments.add(getAssignments(solution, originVars));
-				}	
-			}*/
 			List<Store> stores = StoreBuilder.build(originVars, precondition, current, true);
 			
 			/**
