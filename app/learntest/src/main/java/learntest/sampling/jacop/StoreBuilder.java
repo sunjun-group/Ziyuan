@@ -93,14 +93,17 @@ public class StoreBuilder {
 			res.add(build(vars, current, null, random));
 			return res;
 		}
+		
+		/**
+		 * otherwise, calculate the or-relation of precondition.
+		 */
 		for (List<CategoryCalculator> list : calculators) {
 			List<Divider> dividers = current == null ? new ArrayList<Divider>() 
 					: new ArrayList<Divider>(current);
 			List<List<Divider>> notDividers = new ArrayList<List<Divider>>();
 			for (CategoryCalculator calculator : list) {
 				if (calculator instanceof MultiDividerBasedCategoryCalculator) {
-					dividers.addAll(
-							((MultiDividerBasedCategoryCalculator) calculator).getDividers());
+					dividers.addAll(((MultiDividerBasedCategoryCalculator) calculator).getDividers());
 				} else if (calculator instanceof MultiNotDividerBasedCategoryCalculator) {
 					unfold((MultiNotDividerBasedCategoryCalculator) calculator, notDividers);
 				}
@@ -110,6 +113,7 @@ public class StoreBuilder {
 					res.add(build(vars, dividers, null, random));
 				}
 			}
+			
 			for (List<Divider> nots : notDividers) {
 				res.add(build(vars, dividers, nots, random));
 			}

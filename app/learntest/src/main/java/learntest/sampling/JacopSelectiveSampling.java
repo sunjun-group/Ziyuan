@@ -349,7 +349,7 @@ public class JacopSelectiveSampling {
 			}	
 		//}
 		//cnt ++;
-		selectData(assignments);
+		runData(assignments);
 		return selectResult;
 	}
 
@@ -375,14 +375,6 @@ public class JacopSelectiveSampling {
 		
 		tcExecutor.setTarget(null);
 
-		//parameters for Randoop
-		/*int timesLimit = 2000;
-		int numPerExe = 10;*/
-		//parameters for L2T
-		/*int timesLimit = 200;
-		int numPerExe = 100;*/
-		
-		//int cnt = 0;
 		for (int i = 0; i < timesLimit; i++) {
 			List<List<Eq<?>>> assignmentList = new ArrayList<List<Eq<?>>>();
 			List<Store> stores = StoreBuilder.build(originVars, precondition, current, true);
@@ -399,38 +391,30 @@ public class JacopSelectiveSampling {
 					assignmentList.add(assignment);
 				}
 			}
-			//cnt ++;
-			selectData(assignmentList);
+			
+			runData(assignmentList);
+			
 			if (selectResult == null) {
 				continue;
 			}
 			BreakpointData selectData = selectResult.get(target);
 			if (!isLoop) {
 				if (trueOrFalse && !selectData.getTrueValues().isEmpty()) {
-					//System.out.println(cnt);
-					//selectData(getAssignments(solution, originVars), null);
 					return selectResult;
 				}
 				if (!trueOrFalse && !selectData.getFalseValues().isEmpty()) {
-					//System.out.println(cnt);
-					//selectData(getAssignments(solution, originVars), null);
 					return selectResult;
 				}
 			} else {
 				LoopTimesData loopTimesData = (LoopTimesData) selectData;
 				if (trueOrFalse && !loopTimesData.getMoreTimesValues().isEmpty()) {
-					//System.out.println(cnt);
-					//selectData(getAssignments(solution, originVars), null);
 					return selectResult;
 				}
 				if (!trueOrFalse && !loopTimesData.getOneTimeValues().isEmpty()) {
-					//System.out.println(cnt);
-					//selectData(getAssignments(solution, originVars), null);
 					return selectResult;
 				}
 			}
 		}
-		//System.out.println(cnt);
 		return null;
 	}
 	
@@ -438,7 +422,7 @@ public class JacopSelectiveSampling {
 		return selectResult;
 	}
 
-	private void selectData(List<List<Eq<?>>> assignments/*, DecisionLocation target*/) throws SavException, SAVExecutionTimeOutException {
+	private void runData(List<List<Eq<?>>> assignments/*, DecisionLocation target*/) throws SavException, SAVExecutionTimeOutException {
 		if (assignments.isEmpty()) {
 			return;
 		}
