@@ -390,16 +390,6 @@ public class JacopSelectiveSampling {
 			 */
 			List<Domain[]> solutions = StoreSearcher.solve(stores, numPerExe);
 			for (Domain[] solution : solutions) {
-				/*boolean flag = true;
-				for (Domain[] domains : prevDatas) {
-					if (StoreSearcher.duplicate(domains, solution)) {
-						flag = false;
-						break;
-					}
-				}
-				if (!flag) {
-					continue;
-				}*/
 				prevDatas.add(solution);
 				assignments.add(getAssignments(solution, originVars));
 			}
