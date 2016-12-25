@@ -152,58 +152,15 @@ public class DebugValueExtractor {
 								bkVal.add(sav.strategies.dto.execute.value.IntegerValue.of(bpVar.getFullName(), value));
 							}
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							// log.info(e.getMessage());
+							
 						}
 					}
-					
-					// because it seems we need field information even that field is not accessed explicitly
-					// try to get all field, will be modified later (Long)
-//					else {
-//						// Then check class fields (static & non static)
-//						Field matchedField = null;
-//						for (Field field : allFields) {
-//							if (field.name().equals(bpVar.getParentName())) {
-//								matchedField = field;
-//								break;
-//							}
-//						}
-//
-//						if (matchedField != null) {
-//							if (matchedField.isStatic()) {
-//								param = JdiParam.staticField(matchedField, refType, refType.getValue(matchedField));
-//							} else {
-//								Value value = objRef == null ? null : objRef.getValue(matchedField);
-//								param = JdiParam.nonStaticField(matchedField, objRef, value);
-//							}
-//							if (param.getValue() != null && !matchedField.name().equals(bpVar.getFullName())) {
-//								param = recursiveMatch(param, extractSubProperty(bpVar.getFullName()));
-//							}
-//						}
-//					}
 					
 					if (param != null) {
 						allVariables.put(bpVar, param);
 					}
 				}
 				
-				// this code is added to get all fields of this object
-				/*for (Field field : allFields) {
-					boolean isConstant = (field.isStatic() && field.isFinal()) || field.isEnumConstant();
-					if (!isConstant) {
-						if (field.isStatic()) {
-							Variable bpVar = new Variable(field.name(), field.name(), VarScope.THIS);
-							JdiParam param = JdiParam.staticField(field, refType, refType.getValue(field));
-							allVariables.put(bpVar, param);
-						} else {
-							Variable bpVar = new Variable(field.name(), field.name(), VarScope.THIS);
-							Value value = objRef == null ? null : objRef.getValue(field);
-							JdiParam param = JdiParam.nonStaticField(field, objRef, value);
-							allVariables.put(bpVar, param);
-						}
-					}
-				}*/
-
 				if (!allVariables.isEmpty()) {
 					collectValue(bkVal, thread, allVariables);
 				}

@@ -63,7 +63,8 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		}
 		
 		if (target == null) {
-			this.run(bkpBuilder.getBreakPoints());
+			List<BreakPoint> breakpointList = bkpBuilder.getBreakPoints();
+			this.run(breakpointList);
 		} else {
 			this.run(bkpBuilder.getBreakpoints(target));
 		}
@@ -182,6 +183,7 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		if (instValueExtractor != null && currentTestInputValues.isEmpty()) {
 			return instValueExtractor;
 		}
+		
 		return valueExtractor;
 	}
 	
