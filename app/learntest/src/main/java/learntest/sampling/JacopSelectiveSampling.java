@@ -94,41 +94,6 @@ public class JacopSelectiveSampling {
 				}
 			}
 		}
-		/*List<Store> basics = StoreBuilder.build(null, originVars, precondition, dividers);
-		for (Store basic : basics) {
-			Domain[] solution = StoreSearcher.minSolve(basic);
-			if (solution != null) {
-				boolean flag = true;
-				for (Domain[] domains : solutions) {
-					if (StoreSearcher.duplicate(domains, solution)) {
-						flag = false;
-						break;
-					}
-				}
-				if (flag) {
-					assignments.add(getAssignments(solution, originVars));
-					solutions.add(solution);
-				}
-			}
-		}			
-		
-		basics = StoreBuilder.build(null, originVars, precondition, dividers);
-		for (Store basic : basics) {
-			Domain[] solution = StoreSearcher.maxSolve(basic);
-			if (solution != null) {
-				boolean flag = true;
-				for (Domain[] domains : solutions) {
-					if (StoreSearcher.duplicate(domains, solution)) {
-						flag = false;
-						break;
-					}
-				}
-				if (flag) {
-					assignments.add(getAssignments(solution, originVars));
-					solutions.add(solution);
-				}				
-			}
-		}*/
 			
 		for (Divider divider : dividers) {
 			List<Store> stores = StoreBuilder.build(divider, originVars, precondition, dividers, false);
@@ -178,30 +143,6 @@ public class JacopSelectiveSampling {
 				}
 			}
 		}
-		
-		/*for (int i = 0; i < size; i++) {
-			List<Divider> list = new ArrayList<Divider>(dividers);
-			list.remove(i);
-			List<Store> stores = StoreBuilder.build(null, originVars, precondition, list);
-			Divider divider = dividers.get(i);
-			for (Store store : stores) {
-				StoreBuilder.addOpposite(store, divider);
-				Domain[] solution = StoreSearcher.maxSolve(store);
-				if (solution != null) {
-					boolean flag = true;
-					for (Domain[] domains : solutions) {
-						if (StoreSearcher.duplicate(domains, solution)) {
-							flag = false;
-							break;
-						}
-					}
-					if (flag) {
-						assignments.add(getAssignments(solution, originVars));
-						solutions.add(solution);
-					}
-				}
-			}
-		}*/
 		
 		Random random = new Random();
 		minMax = calculateValRange(originVars, datapoints);
