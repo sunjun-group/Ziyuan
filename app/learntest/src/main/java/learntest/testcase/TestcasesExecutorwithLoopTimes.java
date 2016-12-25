@@ -67,7 +67,8 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		}
 		
 		if (target == null) {
-			this.run(bkpBuilder.getBreakPoints());
+			List<BreakPoint> breakpointList = bkpBuilder.getBreakPoints();
+			this.run(breakpointList);
 		} else {
 			this.run(bkpBuilder.getBreakpoints(target));
 		}
@@ -94,8 +95,7 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 			inputValuesByTestIdx.put(testIdx, currentTestInputValues);
 		}
 		if (instrMode) {
-			Map<String,Object> map = instrVarMaps.get(testIdx);
-			setVarMap(map);
+			setVarMap(instrVarMaps.get(testIdx));
 		}
 	}
 
@@ -135,9 +135,7 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	private BreakpointValue extractValuesAtLocation(BreakPoint bkp,
 			BreakpointEvent bkpEvent) throws SavException {
 		try {
-			DebugValueExtractor debugValueExtractor = getValueExtractor();
-			BreakpointValue value = debugValueExtractor.extractValue(bkp, bkpEvent);
-			return value;
+			return getValueExtractor().extractValue(bkp, bkpEvent);
 		} catch (IncompatibleThreadStateException e) {
 			log.error(e.getMessage());
 		} catch (AbsentInformationException e) {
@@ -189,6 +187,7 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		if (instValueExtractor != null && currentTestInputValues.isEmpty()) {
 			return instValueExtractor;
 		}
+		
 		return valueExtractor;
 	}
 	
@@ -244,3 +243,4 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	}
 
 }
+

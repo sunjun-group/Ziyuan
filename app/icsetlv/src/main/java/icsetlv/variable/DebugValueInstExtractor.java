@@ -40,13 +40,6 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 		this.instVals = instrVarMap;
 	}
 
-//	@Override
-//	protected void collectValue(BreakpointValue bkVal, ThreadReference thread,
-//			Map<Variable, JdiParam> allVariables, final List<Variable> bpVars) throws SavException {
-//		modifyValues(thread, allVariables);
-//		super.collectValue(bkVal, thread, allVariables, bpVars);
-//	}
-	
 	@Override
 	protected void collectValue(BreakpointValue bkVal, ThreadReference thread,
 			Map<Variable, JdiParam> allVariables) throws SavException {
