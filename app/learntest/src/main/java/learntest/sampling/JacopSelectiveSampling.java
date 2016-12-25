@@ -72,7 +72,7 @@ public class JacopSelectiveSampling {
 	public Map<DecisionLocation, BreakpointData> selectDataForModel(DecisionLocation target, 
 			List<ExecVar> originVars, List<DataPoint> datapoints,
 			OrCategoryCalculator precondition, List<Divider> dividers) throws SavException, SAVExecutionTimeOutException {
-		List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
+		List<List<Eq<?>>> assignmentList = new ArrayList<List<Eq<?>>>();
 		
 		//startTime = System.currentTimeMillis();
 		List<Domain[]> solutions = new ArrayList<Domain[]>();
@@ -88,7 +88,10 @@ public class JacopSelectiveSampling {
 					}
 				}
 				if (flag) {
-					assignments.add(getAssignments(solution, originVars));
+					List<Eq<?>> assignment = getAssignments(solution, originVars); 
+					if(assignmentList.contains(assignment)){
+						assignmentList.add(assignment);						
+					}
 					solutions.add(solution);
 					prevDatas.add(solution);
 				}
@@ -109,7 +112,7 @@ public class JacopSelectiveSampling {
 							}
 						}
 						if (flag) {
-							assignments.add(getAssignments(solution, originVars));
+							assignmentList.add(getAssignments(solution, originVars));
 							solutions.add(solution);
 							prevDatas.add(solution);
 						}
@@ -136,7 +139,7 @@ public class JacopSelectiveSampling {
 						}
 					}
 					if (flag) {
-						assignments.add(getAssignments(solution, originVars));
+						assignmentList.add(getAssignments(solution, originVars));
 						solutions.add(solution);
 						prevDatas.add(solution);
 					}
@@ -169,7 +172,7 @@ public class JacopSelectiveSampling {
 								}
 							}
 							if (flag) {
-								assignments.add(getAssignments(solution, originVars));
+								assignmentList.add(getAssignments(solution, originVars));
 								solutions.add(solution);
 								prevDatas.add(solution);
 							}
@@ -195,7 +198,7 @@ public class JacopSelectiveSampling {
 						}
 					}
 					if (flag) {
-						assignments.add(getAssignments(solution, originVars));
+						assignmentList.add(getAssignments(solution, originVars));
 						solutions.add(solution);
 						prevDatas.add(solution);
 						if (solutions.size() >= MIN_MORE_SELECTED_DATA) {
@@ -208,11 +211,11 @@ public class JacopSelectiveSampling {
 		//System.out.println("selectDataForModel constraints solving time: " + (System.currentTimeMillis() - startTime) + " ms");
 		
 		//startTime = System.currentTimeMillis();
-		extendWithHeuristics(solutions, assignments, originVars);
+		extendWithHeuristics(solutions, assignmentList, originVars);
 		//System.out.println("selectDataForModel extend with heuristics time: " + (System.currentTimeMillis() - startTime) + " ms");
 		
 		//startTime = System.currentTimeMillis();
-		selectData(target, assignments);
+		selectData(target, assignmentList);
 		//System.out.println("selectDataForModel test cases execution time: " + (System.currentTimeMillis() - startTime) + " ms, "
 				//+ assignments.size() + "test cases");
 		return selectResult;
@@ -381,7 +384,7 @@ public class JacopSelectiveSampling {
 		
 		//int cnt = 0;
 		for (int i = 0; i < timesLimit; i++) {
-			List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
+			List<List<Eq<?>>> assignmentList = new ArrayList<List<Eq<?>>>();
 			List<Store> stores = StoreBuilder.build(originVars, precondition, current, true);
 			
 			/**
@@ -391,10 +394,13 @@ public class JacopSelectiveSampling {
 			List<Domain[]> solutions = StoreSearcher.solve(stores, numPerExe);
 			for (Domain[] solution : solutions) {
 				prevDatas.add(solution);
-				assignments.add(getAssignments(solution, originVars));
+				List<Eq<?>> assignment = getAssignments(solution, originVars); 
+				if(!assignmentList.contains(assignment)){					
+					assignmentList.add(assignment);
+				}
 			}
 			//cnt ++;
-			selectData(assignments);
+			selectData(assignmentList);
 			if (selectResult == null) {
 				continue;
 			}

@@ -198,7 +198,8 @@ public class StoreBuilder {
 		FloatVar[] intVars = new FloatVar[size + size * (size + 1) / 2];
 		int idx = 0;
 		for (ExecVar var : vars) {
-			intVars[idx ++] = buildVar(store, var);
+			intVars[idx] = buildVar(store, var);
+			idx++;
 		}
 		for (int i = 0; i < size; i++) {
 			String label = vars.get(i).getLabel();
@@ -206,7 +207,8 @@ public class StoreBuilder {
 				double max = intVars[i].dom().max() * intVars[j].dom().max();
 				intVars[idx] = new FloatVar(store, label + " * " + vars.get(j).getLabel(), 
 						-max, max);
-				store.impose(new PmulQeqR(intVars[i], intVars[j], intVars[idx ++]));
+				store.impose(new PmulQeqR(intVars[i], intVars[j], intVars[idx]));
+				idx++;
 			}
 		}
 		/*IntVar x = (IntVar) store.findVariable("x");

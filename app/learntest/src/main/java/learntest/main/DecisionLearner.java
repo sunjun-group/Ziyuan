@@ -179,6 +179,7 @@ public class DecisionLearner implements CategoryCalculator {
 		
 		if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {			
 			long startTime = System.currentTimeMillis();
+			System.out.println("start selecting data for empty branch");
 			Map<DecisionLocation, BreakpointData> selectMap = selectiveSampling.selectDataForEmpty(bkpData.getLocation(), originVars,
 					preconditions, null, bkpData.getTrueValues().isEmpty(), false);
 			System.out.println("learn select data for empty time for " + bkpData.getLocation()
