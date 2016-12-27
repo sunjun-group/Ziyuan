@@ -19,6 +19,7 @@ import learntest.breakpoint.data.DecisionLocation;
 import learntest.calculator.OrCategoryCalculator;
 import learntest.cfg.traveller.CfgConditionManager;
 import learntest.sampling.JacopSelectiveSampling;
+import learntest.sampling.JavailpSelectiveSampling;
 import learntest.sampling.jacop.StoreSearcher;
 import learntest.svm.MyPositiveSeparationMachine;
 import learntest.testcase.data.BranchType;
@@ -52,7 +53,8 @@ public class DecisionLearner implements CategoryCalculator {
 	private List<ExecVar> vars;
 	private List<String> labels;
 	//private Set<ExecVar> boolVars;
-	private JacopSelectiveSampling selectiveSampling;
+	//private JacopSelectiveSampling selectiveSampling;
+	private JavailpSelectiveSampling selectiveSampling;
 	
 	private CfgConditionManager cfgConditionManager;
 	private List<Divider> curDividers;
@@ -83,7 +85,8 @@ public class DecisionLearner implements CategoryCalculator {
 	private boolean needOne = true;
 	private boolean needMore = true;
 	
-	public DecisionLearner(JacopSelectiveSampling selectiveSampling, CfgConditionManager manager, boolean random) {
+	public DecisionLearner(/*JacopSelectiveSampling*/JavailpSelectiveSampling selectiveSampling, 
+			CfgConditionManager manager, boolean random) {
 		machine = new MyPositiveSeparationMachine();
 		machine.setDefaultParams();
 		/*oneClass = new Machine();
