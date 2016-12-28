@@ -2,6 +2,7 @@ package learntest.sampling.javailp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import learntest.calculator.MultiNotDividerBasedCategoryCalculator;
 import learntest.calculator.OrCategoryCalculator;
@@ -17,6 +18,8 @@ import sav.common.core.formula.Eq;
 import sav.strategies.dto.execute.value.ExecVar;
 
 public class ProblemBuilder {
+	
+	private static Random random = new Random();
 	
 	public static List<Problem> build(Divider object, List<ExecVar> vars, 
 			OrCategoryCalculator calculator, List<Divider> dividers, boolean random) {
@@ -51,11 +54,22 @@ public class ProblemBuilder {
 		problem.add(constraint);
 	}
 	
+	//TODO add constraint according to variable type
 	public static void addConstraints(Problem problem, List<Eq<Number>> constraints) {
 		for (Eq<Number> eq : constraints) {
 			Linear linear = new Linear();
 			linear.add(1, eq.getVar().getLabel());
 			Constraint constraint = new Constraint(linear, Operator.EQ, eq.getValue());
+			problem.add(constraint);
+		}
+	}
+	
+	public static void addRandomConstraint(List<Problem> problems, List<ExecVar> vars) {
+		for (Problem problem : problems) {
+			Linear linear = new Linear();
+			linear.add(1, vars.get(random.nextInt(vars.size())).getLabel());
+			Constraint constraint = new Constraint(linear, Operator.EQ, 
+					random.nextBoolean() ? 1 : -1 * random.nextInt(101));
 			problem.add(constraint);
 		}
 	}
@@ -174,38 +188,52 @@ public class ProblemBuilder {
 					break;
 				case BYTE:
 					problem.setVarType(var.getLabel(), Byte.class);
-					problem.setVarLowerBound(var.getLabel(), Byte.MIN_VALUE);
-					problem.setVarUpperBound(var.getLabel(), Byte.MAX_VALUE);
+					/*problem.setVarLowerBound(var.getLabel(), Byte.MIN_VALUE);
+					problem.setVarUpperBound(var.getLabel(), Byte.MAX_VALUE);*/
+					problem.setVarLowerBound(var.getLabel(), -100);
+					problem.setVarUpperBound(var.getLabel(), 100);
 					break;
 				case CHAR:
 					problem.setVarType(var.getLabel(), Character.class);
-					problem.setVarLowerBound(var.getLabel(), (int)Character.MIN_VALUE);
-					problem.setVarUpperBound(var.getLabel(), (int)Character.MAX_VALUE);
+					/*problem.setVarLowerBound(var.getLabel(), (int)Character.MIN_VALUE);
+					problem.setVarUpperBound(var.getLabel(), (int)Character.MAX_VALUE);*/
+					problem.setVarLowerBound(var.getLabel(), -100);
+					problem.setVarUpperBound(var.getLabel(), 100);
 					break;
 				case DOUBLE:
 					problem.setVarType(var.getLabel(), Double.class);
-					problem.setVarLowerBound(var.getLabel(), Double.MIN_VALUE);
-					problem.setVarUpperBound(var.getLabel(), Double.MAX_VALUE);
+					/*problem.setVarLowerBound(var.getLabel(), Double.MIN_VALUE);
+					problem.setVarUpperBound(var.getLabel(), Double.MAX_VALUE);*/
+					problem.setVarLowerBound(var.getLabel(), -100);
+					problem.setVarUpperBound(var.getLabel(), 100);
 					break;
 				case FLOAT:
 					problem.setVarType(var.getLabel(), Float.class);
-					problem.setVarLowerBound(var.getLabel(), Float.MIN_VALUE);
-					problem.setVarUpperBound(var.getLabel(), Float.MAX_VALUE);
+					/*problem.setVarLowerBound(var.getLabel(), Float.MIN_VALUE);
+					problem.setVarUpperBound(var.getLabel(), Float.MAX_VALUE);*/
+					problem.setVarLowerBound(var.getLabel(), -100);
+					problem.setVarUpperBound(var.getLabel(), 100);
 					break;
 				case LONG:
 					problem.setVarType(var.getLabel(), Long.class);
-					problem.setVarLowerBound(var.getLabel(), Long.MIN_VALUE);
-					problem.setVarUpperBound(var.getLabel(), Long.MAX_VALUE);
+					/*problem.setVarLowerBound(var.getLabel(), Long.MIN_VALUE);
+					problem.setVarUpperBound(var.getLabel(), Long.MAX_VALUE);*/
+					problem.setVarLowerBound(var.getLabel(), -100);
+					problem.setVarUpperBound(var.getLabel(), 100);
 					break;
 				case SHORT:
 					problem.setVarType(var.getLabel(), Short.class);
-					problem.setVarLowerBound(var.getLabel(), Short.MIN_VALUE);
-					problem.setVarUpperBound(var.getLabel(), Short.MAX_VALUE);
+					/*problem.setVarLowerBound(var.getLabel(), Short.MIN_VALUE);
+					problem.setVarUpperBound(var.getLabel(), Short.MAX_VALUE);*/
+					problem.setVarLowerBound(var.getLabel(), -100);
+					problem.setVarUpperBound(var.getLabel(), 100);
 					break;
 				default:
 					problem.setVarType(var.getLabel(), Integer.class);
-					problem.setVarLowerBound(var.getLabel(), Integer.MIN_VALUE);
-					problem.setVarUpperBound(var.getLabel(), Integer.MAX_VALUE);
+					/*problem.setVarLowerBound(var.getLabel(), Integer.MIN_VALUE);
+					problem.setVarUpperBound(var.getLabel(), Integer.MAX_VALUE);*/
+					problem.setVarLowerBound(var.getLabel(), -100);
+					problem.setVarUpperBound(var.getLabel(), 100);
 					break;
 			}
 		}

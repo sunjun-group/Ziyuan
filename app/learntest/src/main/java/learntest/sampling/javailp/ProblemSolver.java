@@ -22,25 +22,25 @@ public class ProblemSolver {
 		factory.setParameter(Solver.TIMEOUT, 100);
 	}
 	
-	public static List<Result> solve(List<Problem> problems, List<ExecVar> vars, int num) {
-		List<Result> res = new ArrayList<Result>();
-		num /= problems.size();
-		num ++;
-		for (Problem problem : problems) {
-			res.addAll(solve(problem, vars, num));
-		}
-		return res;
-	}
-	
-	public static List<Result> solve(Problem problem, List<ExecVar> vars, int num) {
+	public static List<Result> solveMultipleTimes(Problem problem, List<ExecVar> vars) {
 		List<Result> res = new ArrayList<Result>();
 		if (problem == null) {
 			return res;
 		}
-		for (int i = 0; i < num; i++) {
-			addRandomObjective(problem, vars);
+		for (ExecVar var : vars) {
+			Linear obj = new Linear();
+			obj.add(1, var.getLabel());
+			
+			problem.setObjective(obj, OptType.MIN);
 			Solver solver = factory.get();
 			Result result = solver.solve(problem);
+			if (result != null) {
+				res.add(result);
+			}
+			
+			problem.setObjective(obj, OptType.MAX);
+			solver = factory.get();
+			result = solver.solve(problem);
 			if (result != null) {
 				res.add(result);
 			}
@@ -52,17 +52,15 @@ public class ProblemSolver {
 		if (problem == null) {
 			return null;
 		}
-		addRandomObjective(problem, vars);
-		Solver solver = factory.get();
-		return solver.solve(problem);
-	}
-	
-	private static void addRandomObjective(Problem problem, List<ExecVar> vars) {
+		
 		Linear obj = new Linear();
 		for (ExecVar var : vars) {
 			obj.add(random.nextBoolean() ? 1 : -1 * random.nextDouble(), var.getLabel());
 		}
 		problem.setObjective(obj, random.nextBoolean() ? OptType.MIN : OptType.MAX);
+		
+		Solver solver = factory.get();
+		return solver.solve(problem);
 	}
 
 }

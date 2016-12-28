@@ -68,12 +68,18 @@ public class JavailpSelectiveSampling {
 			boolean isLoop) throws SavException, SAVExecutionTimeOutException {
 		tcExecutor.setTarget(null);
 		for (int i = 0; i < timesLimit; i++) {
-			List<Problem> problems = ProblemBuilder.build(originVars, precondition, current, true);
-			List<Result> results = ProblemSolver.solve(problems, originVars, numPerExe);
 			List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
-			for (Result result : results) {
-				checkResult(result, originVars, assignments);
-			}
+			while (assignments.size() < numPerExe) {
+				List<Problem> problems = ProblemBuilder.build(originVars, precondition, current, true);
+				ProblemBuilder.addRandomConstraint(problems, originVars);
+				//List<Result> results = ProblemSolver.solve(problems, originVars, numPerExe);
+				for (Problem problem : problems) {
+					List<Result> results = ProblemSolver.solveMultipleTimes(problem, originVars);
+					for (Result result : results) {
+						checkResult(result, originVars, assignments);
+					}				
+				}
+			}			
 			runData(assignments);
 			if (selectResult == null) {
 				continue;
@@ -380,7 +386,7 @@ public class JavailpSelectiveSampling {
 				return false;
 			}
 			//TODO compare value according to variable type
-			if (r1.containsVar(label) && r1.get(label) != r2.get(label)) {
+			if (r1.containsVar(label) && !r1.get(label).equals( r2.get(label))) {
 				return false;
 			}
 		}
