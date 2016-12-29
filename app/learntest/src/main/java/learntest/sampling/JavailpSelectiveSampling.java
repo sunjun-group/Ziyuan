@@ -70,6 +70,9 @@ public class JavailpSelectiveSampling {
 		for (int i = 0; i < timesLimit; i++) {
 			List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
 			while (assignments.size() < numPerExe) {
+				/**
+				 * TODO, Lin Yun, this random strategy is wierd, it's better to figure out another way.
+				 */
 				List<Problem> problems = ProblemBuilder.build(originVars, precondition, current, true);
 				ProblemBuilder.addRandomConstraint(problems, originVars);
 				//List<Result> results = ProblemSolver.solve(problems, originVars, numPerExe);
@@ -114,6 +117,9 @@ public class JavailpSelectiveSampling {
 		List<Result> results = new ArrayList<Result>();
 		
 		List<Problem> basics = ProblemBuilder.build(null, originVars, precondition, dividers, false);
+		/**
+		 * generate a basic data point according to precondition
+		 */
 		for (Problem basic : basics) {
 			Result res = ProblemSolver.generateRandomResultToConstraints(basic, originVars);
 			if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
@@ -121,6 +127,9 @@ public class JavailpSelectiveSampling {
 			}
 		}
 		
+		/**
+		 * generate data point on the svm model
+		 */
 		for (Divider divider : dividers) {
 			List<Problem> problems = ProblemBuilder.build(divider, originVars, precondition, dividers, false);
 			for (Problem problem : problems) {
@@ -131,6 +140,9 @@ public class JavailpSelectiveSampling {
 			}
 		}
 		
+		/**
+		 * generate data point on the opposite side of svm model
+		 */
 		int size = dividers.size();
 		for (int i = 0; i < size; i++) {
 			List<Divider> list = new ArrayList<Divider>(dividers);
@@ -145,6 +157,9 @@ public class JavailpSelectiveSampling {
 			}
 		}
 		
+		/**
+		 * fix some variables to a random number, then solve other variables.
+		 */
 		Random random = new Random();
 		calculateValRange(originVars, datapoints);
 		if (originVars.size() > 1) {
@@ -168,6 +183,9 @@ public class JavailpSelectiveSampling {
 			}
 		}
 		
+		/**
+		 * generate more data points on the positive side of svm model.
+		 */
 		int times = 0;
 		while (results.size() < MIN_MORE_SELECTED_DATA && times ++ < MIN_MORE_SELECTED_DATA) {
 			List<Problem> problems = ProblemBuilder.build(null, originVars, precondition, dividers, false);
@@ -187,6 +205,12 @@ public class JavailpSelectiveSampling {
 		return selectResult;
 	}
 
+	/**
+	 * slight moving existing data points.
+	 * @param results
+	 * @param assignments
+	 * @param originVars
+	 */
 	private void extendWithHeuristics(List<Result> results, List<List<Eq<?>>> assignments, 
 			List<ExecVar> originVars) {
 		for (Result result : results) {
