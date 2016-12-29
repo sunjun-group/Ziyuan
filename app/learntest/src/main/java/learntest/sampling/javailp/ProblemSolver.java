@@ -48,7 +48,7 @@ public class ProblemSolver {
 		return res;
 	}
 	
-	public static Result solve(Problem problem, List<ExecVar> vars) {
+	public static Result generateRandomResultToConstraints(Problem problem, List<ExecVar> vars) {
 		if (problem == null) {
 			return null;
 		}

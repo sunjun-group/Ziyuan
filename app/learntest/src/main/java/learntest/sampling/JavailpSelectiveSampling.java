@@ -76,7 +76,7 @@ public class JavailpSelectiveSampling {
 				for (Problem problem : problems) {
 					List<Result> results = ProblemSolver.solveMultipleTimes(problem, originVars);
 					for (Result result : results) {
-						checkResult(result, originVars, assignments);
+						checkNonduplicateResult(result, originVars, prevDatas, assignments);
 					}				
 				}
 			}			
@@ -115,8 +115,8 @@ public class JavailpSelectiveSampling {
 		
 		List<Problem> basics = ProblemBuilder.build(null, originVars, precondition, dividers, false);
 		for (Problem basic : basics) {
-			Result res = ProblemSolver.solve(basic, originVars);
-			if (res != null && checkResult(res, originVars, assignments)) {
+			Result res = ProblemSolver.generateRandomResultToConstraints(basic, originVars);
+			if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
 				results.add(res);
 			}
 		}
@@ -124,8 +124,8 @@ public class JavailpSelectiveSampling {
 		for (Divider divider : dividers) {
 			List<Problem> problems = ProblemBuilder.build(divider, originVars, precondition, dividers, false);
 			for (Problem problem : problems) {
-				Result res = ProblemSolver.solve(problem, originVars);
-				if (res != null && checkResult(res, originVars, assignments)) {
+				Result res = ProblemSolver.generateRandomResultToConstraints(problem, originVars);
+				if (res != null && checkNonduplicateResult(res, originVars, prevDatas,assignments)) {
 					results.add(res);
 				}
 			}
@@ -138,8 +138,8 @@ public class JavailpSelectiveSampling {
 			List<Problem> problems = ProblemBuilder.build(null, originVars, precondition, list, false);
 			for (Problem problem : problems) {
 				ProblemBuilder.addOpposite(problem, divider, originVars);
-				Result res = ProblemSolver.solve(problem, originVars);
-				if (res != null && checkResult(res, originVars, assignments)) {
+				Result res = ProblemSolver.generateRandomResultToConstraints(problem, originVars);
+				if (res != null && checkNonduplicateResult(res, originVars, prevDatas,assignments)) {
 					results.add(res);
 				}
 			}
@@ -159,8 +159,8 @@ public class JavailpSelectiveSampling {
 							continue;
 						}
 						ProblemBuilder.addConstraints(problem, samples);
-						Result res = ProblemSolver.solve(problem, originVars);
-						if (res != null && checkResult(res, originVars, assignments)) {
+						Result res = ProblemSolver.generateRandomResultToConstraints(problem, originVars);
+						if (res != null && checkNonduplicateResult(res, originVars, prevDatas,assignments)) {
 							results.add(res);
 						}
 					}
@@ -172,8 +172,8 @@ public class JavailpSelectiveSampling {
 		while (results.size() < MIN_MORE_SELECTED_DATA && times ++ < MIN_MORE_SELECTED_DATA) {
 			List<Problem> problems = ProblemBuilder.build(null, originVars, precondition, dividers, false);
 			for (Problem problem : problems) {
-				Result res = ProblemSolver.solve(problem, originVars);
-				if (res != null && checkResult(res, originVars, assignments)) {
+				Result res = ProblemSolver.generateRandomResultToConstraints(problem, originVars);
+				if (res != null && checkNonduplicateResult(res, originVars, prevDatas,assignments)) {
 					results.add(res);
 					if (results.size() >= MIN_MORE_SELECTED_DATA) {
 						break;
@@ -245,8 +245,8 @@ public class JavailpSelectiveSampling {
 					i ++;
 				}
 				
-				checkResult(r1, originVars, assignments);
-				checkResult(r2, originVars, assignments);
+				checkNonduplicateResult(r1, originVars, prevDatas,assignments);
+				checkNonduplicateResult(r2, originVars, prevDatas,assignments);
 				idx ++;
 			}
 		}
@@ -300,19 +300,26 @@ public class JavailpSelectiveSampling {
 		return map;
 	}
 
-	private boolean checkResult(Result result, List<ExecVar> vars, List<List<Eq<?>>> assignments) {
-		boolean flag = true;
+	private boolean checkNonduplicateResult(Result result, List<ExecVar> vars, List<Result> prevDatas, List<List<Eq<?>>> assignments) {
+		boolean isDuplicateWithResult = isDuplicate(result, vars, prevDatas);
+		
+		if (!isDuplicateWithResult) {
+			prevDatas.add(result);
+			List<Eq<?>> assignment = getAssignments(result, vars);
+			assignments.add(assignment);
+		}
+		
+		return !isDuplicateWithResult;
+	}
+	
+	private boolean isDuplicate(Result result, List<ExecVar> vars, List<Result> prevDatas){
 		for (Result r : prevDatas) {
 			if (duplicate(result, r, vars)) {
-				flag = false;
-				break;
+				return true;
 			}
 		}
-		if (flag) {
-			prevDatas.add(result);
-			assignments.add(getAssignments(result, vars));
-		}
-		return flag;
+		
+		return false;
 	}
 	
 	private void calculateValRange(List<ExecVar> vars, List<DataPoint> dataPoints) {

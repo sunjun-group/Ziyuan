@@ -76,15 +76,15 @@ public class ProblemBuilder {
 
 	public static List<Problem> build(List<ExecVar> vars, OrCategoryCalculator orCalculator, 
 			List<Divider> current, boolean random) {
-		List<Problem> res = new ArrayList<Problem>();
+		List<Problem> problems = new ArrayList<Problem>();
 		if (orCalculator == null) {
-			res.add(build(vars, current, null, random));
-			return res;
+			problems.add(build(vars, current, null, random));
+			return problems;
 		}
 		List<List<CategoryCalculator>> calculators = orCalculator.getCalculators();
 		if (calculators.isEmpty()) {
-			res.add(build(vars, current, null, random));
-			return res;
+			problems.add(build(vars, current, null, random));
+			return problems;
 		}
 		
 		/**
@@ -103,14 +103,14 @@ public class ProblemBuilder {
 			}
 			if (notDividers.isEmpty()) {
 				if (!dividers.isEmpty()) {
-					res.add(build(vars, dividers, null, random));
+					problems.add(build(vars, dividers, null, random));
 				}
 			}			
 			for (List<Divider> nots : notDividers) {
-				res.add(build(vars, dividers, nots, random));
+				problems.add(build(vars, dividers, nots, random));
 			}
 		}
-		return res;
+		return problems;
 	}
 	
 	private static void unfold(MultiNotDividerBasedCategoryCalculator calculator, 
@@ -141,9 +141,18 @@ public class ProblemBuilder {
 		}
 	}
 	
+	/**
+	 * dividers and notDividers should represent the preconditions
+	 * 
+	 * @param vars
+	 * @param dividers
+	 * @param notDividers
+	 * @param random
+	 * @return
+	 */
 	private static Problem build(List<ExecVar> vars, List<Divider> dividers, 
 			List<Divider> notDividers, boolean random) {
-		Problem problem = build(vars);
+		Problem problem = buildVarBoundContraint(vars);
 		if (random) {
 			PathRandom.randomPath(dividers, notDividers);
 			dividers = PathRandom.dividers;
@@ -177,7 +186,7 @@ public class ProblemBuilder {
 		return problem;
 	}
 	
-	private static Problem build(List<ExecVar> vars) {
+	private static Problem buildVarBoundContraint(List<ExecVar> vars) {
 		Problem problem = new Problem();
 		for (ExecVar var : vars) {
 			switch (var.getType()) {
