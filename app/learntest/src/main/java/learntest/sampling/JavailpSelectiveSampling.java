@@ -70,9 +70,7 @@ public class JavailpSelectiveSampling {
 		for (int i = 0; i < timesLimit; i++) {
 			List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
 			while (assignments.size() < numPerExe) {
-				/**
-				 * TODO, Lin Yun, this random strategy is wierd, it's better to figure out another way.
-				 */
+				
 				List<Problem> problems = ProblemBuilder.build(originVars, precondition, current, true);
 				ProblemBuilder.addRandomConstraint(problems, originVars);
 				//List<Result> results = ProblemSolver.solve(problems, originVars, numPerExe);
@@ -158,7 +156,7 @@ public class JavailpSelectiveSampling {
 		}
 		
 		/**
-		 * fix some variables to a random number, then solve other variables.
+		 * randomly generate more data points on svm model. 
 		 */
 		Random random = new Random();
 		calculateValRange(originVars, datapoints);
@@ -167,15 +165,15 @@ public class JavailpSelectiveSampling {
 				List<Problem> probelms = ProblemBuilder.build(divider, originVars, precondition, dividers, false);
 				for (Problem problem : probelms) {
 					for (int i = 0; i < MAX_MORE_SELECTED_SAMPLE; i++) {
-						int idx = random.nextInt(originVars.size());
-						List<Eq<Number>> samples = selectSample(originVars, results.isEmpty() ? null 
-								: results.get(random.nextInt(results.size())), idx);
+						int fixedVarIndex = random.nextInt(originVars.size());
+						Result randomResult = results.get(random.nextInt(results.size()));
+						List<Eq<Number>> samples = generateRandomVariableAssignment(originVars, results.isEmpty() ? null : randomResult, fixedVarIndex);
 						if (samples.isEmpty()) {
 							continue;
 						}
 						ProblemBuilder.addConstraints(problem, samples);
 						Result res = ProblemSolver.generateRandomResultToConstraints(problem, originVars);
-						if (res != null && checkNonduplicateResult(res, originVars, prevDatas,assignments)) {
+						if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
 							results.add(res);
 						}
 					}
@@ -191,7 +189,7 @@ public class JavailpSelectiveSampling {
 			List<Problem> problems = ProblemBuilder.build(null, originVars, precondition, dividers, false);
 			for (Problem problem : problems) {
 				Result res = ProblemSolver.generateRandomResultToConstraints(problem, originVars);
-				if (res != null && checkNonduplicateResult(res, originVars, prevDatas,assignments)) {
+				if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
 					results.add(res);
 					if (results.size() >= MIN_MORE_SELECTED_DATA) {
 						break;
@@ -269,8 +267,8 @@ public class JavailpSelectiveSampling {
 					i ++;
 				}
 				
-				checkNonduplicateResult(r1, originVars, prevDatas,assignments);
-				checkNonduplicateResult(r2, originVars, prevDatas,assignments);
+				checkNonduplicateResult(r1, originVars, prevDatas, assignments);
+				checkNonduplicateResult(r2, originVars, prevDatas, assignments);
 				idx ++;
 			}
 		}
@@ -369,11 +367,11 @@ public class JavailpSelectiveSampling {
 		}
 	}
 	
-	private List<Eq<Number>> selectSample(List<ExecVar> vars, Result result, int idx) {
+	private List<Eq<Number>> generateRandomVariableAssignment(List<ExecVar> vars, Result result, int fixedIndex) {
 		List<Eq<Number>> atoms = new ArrayList<Eq<Number>>();
 		int i = 0;
 		for (ExecVar var : vars) {
-			if (i == idx) {
+			if (i == fixedIndex) {
 				i ++;
 				continue;
 			}
