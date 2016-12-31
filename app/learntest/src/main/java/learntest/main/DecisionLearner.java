@@ -278,6 +278,11 @@ public class DecisionLearner implements CategoryCalculator {
 			trueFlaseFormula = getLearnedFormula();
 			double acc = machine.getModelAccuracy();
 			curDividers = machine.getLearnedDividers();
+			
+			/**
+			 * TODO left by Lin Yun,
+			 * 
+			 */
 			while(trueFlaseFormula != null /*&& times < MAX_ATTEMPT*/ && cfgConditionManager.isRelevant(bkpData.getLocation().getLineNo())) {
 				long startTime = System.currentTimeMillis();				
 				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(bkpData.getLocation(), 
@@ -295,7 +300,6 @@ public class DecisionLearner implements CategoryCalculator {
 					break;
 				}
 				preconditions.clearInvalidData(newData);
-				//manager.updateRelevance(bkpData);
 				addDataPoints(originVars, newData.getTrueValues(), Category.POSITIVE, machine);
 				addDataPoints(originVars, newData.getFalseValues(), Category.NEGATIVE, machine);
 				
@@ -310,7 +314,7 @@ public class DecisionLearner implements CategoryCalculator {
 					curDividers = machine.getLearnedDividers();
 					break;
 				}
-				if (!tmp.equals(trueFlaseFormula) && accTmp > acc) {
+				if (!tmp.equals(trueFlaseFormula) && accTmp > acc /*&& accTmp != 1.0*/) {
 					trueFlaseFormula = tmp;
 					curDividers = machine.getLearnedDividers();
 					acc = accTmp;
