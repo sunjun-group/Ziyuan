@@ -314,7 +314,7 @@ public class DecisionLearner implements CategoryCalculator {
 					curDividers = machine.getLearnedDividers();
 					break;
 				}
-				if (!tmp.equals(trueFlaseFormula) && accTmp > acc /*&& accTmp != 1.0*/) {
+				if (!tmp.equals(trueFlaseFormula) && accTmp > acc && accTmp != 1.0) {
 					trueFlaseFormula = tmp;
 					curDividers = machine.getLearnedDividers();
 					acc = accTmp;

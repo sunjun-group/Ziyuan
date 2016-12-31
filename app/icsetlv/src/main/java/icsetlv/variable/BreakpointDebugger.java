@@ -134,7 +134,11 @@ public abstract class BreakpointDebugger {
 			}
 			throw new SAVExecutionTimeOutException("Time out at retrieving runtime data");
 		}
-		
+		finally{
+			if(vm != null){
+				vm = null;
+			}
+		}
 		
 	}
 

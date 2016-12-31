@@ -66,11 +66,19 @@ public class JavailpSelectiveSampling {
 			List<Divider> current, 
 			boolean trueOrFalse, 
 			boolean isLoop) throws SavException, SAVExecutionTimeOutException {
+		
+		if(target.getLineNo()==11){
+			System.currentTimeMillis();
+		}
+		
 		tcExecutor.setTarget(null);
 		for (int i = 0; i < timesLimit; i++) {
 			List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
+			int previousAssignmentSize = 0;
+			
+			int threshold = 10;
+			
 			while (assignments.size() < numPerExe) {
-				
 				List<Problem> problems = ProblemBuilder.build(originVars, precondition, current, true);
 				ProblemBuilder.addRandomConstraint(problems, originVars);
 				//List<Result> results = ProblemSolver.solve(problems, originVars, numPerExe);
@@ -80,8 +88,26 @@ public class JavailpSelectiveSampling {
 						checkNonduplicateResult(result, originVars, prevDatas, assignments);
 					}				
 				}
-			}			
+				
+				if(previousAssignmentSize == assignments.size()){
+					if(threshold==0){
+						break;						
+					}
+					else{
+						threshold--;
+					}
+				}
+				else{
+					previousAssignmentSize = assignments.size();
+				}
+				
+			}
+			
+//			System.out.println("Iteartion " + (i+1) + " running " + assignments.size() + " test cases");
+//			long t = System.currentTimeMillis();
 			runData(assignments);
+//			System.out.println("Done: running " + assignments.size() + " test cases, takes " + (System.currentTimeMillis()-t) + "ms");
+			
 			if (selectResult == null) {
 				continue;
 			}
@@ -291,7 +317,7 @@ public class JavailpSelectiveSampling {
 		}
 		tcExecutor.setTcNum(list.size());
 		tcExecutor.setVarMaps(list);
-		tcExecutor.run();
+		tcExecutor.run(); 
 		selectResult = tcExecutor.getResult();
 	}
 	
