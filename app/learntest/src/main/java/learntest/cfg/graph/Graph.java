@@ -75,10 +75,15 @@ public class Graph<V, E extends Edge<V>> extends PropertiesContainer {
 	@SuppressWarnings("unchecked")
 	public void remove(V vertex) {
 		/* isolate node, and create path from its predecessors to its successors */
+		List<E> newEdges = new ArrayList<E>();
 		for (E inEdge : getInEdges(vertex)) {
 			for (E outEdge : getOutEdges(vertex)) {
-				addEdge((E) inEdge.clone(outEdge.getDest()));
+				newEdges.add((E) inEdge.clone(outEdge.getDest()));
 			}
+		}
+		// should it be iterated?
+		for (E edge : newEdges) {
+			addEdge(edge);
 		}
 		/* remove node, and all its edges */
 		Iterator<E> it;
