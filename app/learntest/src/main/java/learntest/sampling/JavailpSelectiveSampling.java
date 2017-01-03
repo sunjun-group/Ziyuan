@@ -73,7 +73,7 @@ public class JavailpSelectiveSampling {
 		
 		tcExecutor.setTarget(null);
 		for (int i = 0; i < timesLimit; i++) {
-			List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
+			/*List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
 			int previousAssignmentSize = 0;
 			
 			int threshold = 10;
@@ -101,6 +101,21 @@ public class JavailpSelectiveSampling {
 					previousAssignmentSize = assignments.size();
 				}
 				
+			}*/
+			List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
+			List<Problem> problems = ProblemBuilder.build(originVars, precondition, current, true);
+			int num = numPerExe / problems.size() + 1;
+			//ProblemBuilder.addRandomConstraint(problems, originVars);
+			//List<Result> results = ProblemSolver.solve(problems, originVars, numPerExe);
+			for (Problem problem : problems) {
+				List<Result> results = ProblemSolver.calculateRanges(problem, originVars);
+				for (Result result : results) {
+					checkNonduplicateResult(result, originVars, prevDatas, assignments);
+				}
+				results = ProblemSolver.solveMultipleTimes(problem, num);
+				for (Result result : results) {
+					checkNonduplicateResult(result, originVars, prevDatas, assignments);
+				}
 			}
 			
 //			System.out.println("Iteartion " + (i+1) + " running " + assignments.size() + " test cases");

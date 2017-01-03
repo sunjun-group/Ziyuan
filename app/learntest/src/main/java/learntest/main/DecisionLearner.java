@@ -18,7 +18,6 @@ import icsetlv.common.dto.BreakpointValue;
 import learntest.breakpoint.data.DecisionLocation;
 import learntest.calculator.OrCategoryCalculator;
 import learntest.cfg.traveller.CfgConditionManager;
-import learntest.sampling.JacopSelectiveSampling;
 import learntest.sampling.JavailpSelectiveSampling;
 import learntest.sampling.jacop.StoreSearcher;
 import learntest.svm.MyPositiveSeparationMachine;

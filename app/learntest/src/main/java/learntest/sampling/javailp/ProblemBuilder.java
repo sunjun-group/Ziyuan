@@ -2,7 +2,6 @@ package learntest.sampling.javailp;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import learntest.calculator.MultiNotDividerBasedCategoryCalculator;
 import learntest.calculator.OrCategoryCalculator;
@@ -18,8 +17,6 @@ import sav.common.core.formula.Eq;
 import sav.strategies.dto.execute.value.ExecVar;
 
 public class ProblemBuilder {
-	
-	private static Random random = new Random();
 	
 	public static List<Problem> build(Divider object, List<ExecVar> vars, 
 			OrCategoryCalculator calculator, List<Divider> dividers, boolean random) {
@@ -54,22 +51,11 @@ public class ProblemBuilder {
 		problem.add(constraint);
 	}
 	
-	//TODO add constraint according to variable type
 	public static void addConstraints(Problem problem, List<Eq<Number>> constraints) {
 		for (Eq<Number> eq : constraints) {
 			Linear linear = new Linear();
 			linear.add(1, eq.getVar().getLabel());
 			Constraint constraint = new Constraint(linear, Operator.EQ, eq.getValue());
-			problem.add(constraint);
-		}
-	}
-	
-	public static void addRandomConstraint(List<Problem> problems, List<ExecVar> vars) {
-		for (Problem problem : problems) {
-			Linear linear = new Linear();
-			linear.add(1, vars.get(random.nextInt(vars.size())).getLabel());
-			Constraint constraint = new Constraint(linear, Operator.EQ, 
-					random.nextBoolean() ? 1 : -1 * random.nextInt(101));
 			problem.add(constraint);
 		}
 	}

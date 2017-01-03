@@ -394,7 +394,7 @@ public class CfgConditionManager {
 		if (!isRelevant(node.getBeginLine())) {
 			return false;
 		}
-		boolean relevant = true;
+		boolean relevant = false;
 		CfgDecisionNode trueNode = trueNext.get(node);
 		if (trueNode != null) {
 			relevant |= updateRelevance(trueNode, map);
@@ -407,17 +407,17 @@ public class CfgConditionManager {
 			CfgDecisionNode nextNode = next.get(node);
 			if (nextNode != null) {
 				relevant |= updateRelevance(nextNode, map);
-			} else {
-				relevant = false;
 			}
 		}
 		if (relevant) {
+			//System.out.println("Node: " + node.getBeginLine() + " is relevant because of children");
 			return true;
 		}
 		BreakpointData breakpointData = map.get(node.getBeginLine());
 		relevant = breakpointData.getFalseValues().isEmpty() 
 					|| breakpointData.getTrueValues().isEmpty();
 		if (relevant) {
+			//System.out.println("Node: " + node.getBeginLine() + " is relevant because of true/false");
 			return true;
 		}
 		if (breakpointData instanceof LoopTimesData) {
@@ -425,6 +425,7 @@ public class CfgConditionManager {
 			relevant = loopTimesData.getOneTimeValues().isEmpty() 
 						|| loopTimesData.getMoreTimesValues().isEmpty();
 			if (relevant) {
+				//System.out.println("Node: " + node.getBeginLine() + " is relevant because of once/more");
 				return true;
 			}
 		}
