@@ -199,15 +199,15 @@ public class ProblemBuilder {
 					problem.setVarType(var.getLabel(), Double.class);
 					/*problem.setVarLowerBound(var.getLabel(), Double.MIN_VALUE);
 					problem.setVarUpperBound(var.getLabel(), Double.MAX_VALUE);*/
-					problem.setVarLowerBound(var.getLabel(), -100);
-					problem.setVarUpperBound(var.getLabel(), 100);
+					problem.setVarLowerBound(var.getLabel(), -1000000);
+					problem.setVarUpperBound(var.getLabel(), 1000000);
 					break;
 				case FLOAT:
 					problem.setVarType(var.getLabel(), Float.class);
 					/*problem.setVarLowerBound(var.getLabel(), Float.MIN_VALUE);
 					problem.setVarUpperBound(var.getLabel(), Float.MAX_VALUE);*/
-					problem.setVarLowerBound(var.getLabel(), -100);
-					problem.setVarUpperBound(var.getLabel(), 100);
+					problem.setVarLowerBound(var.getLabel(), -1000000);
+					problem.setVarUpperBound(var.getLabel(), 1000000);
 					break;
 				case LONG:
 					problem.setVarType(var.getLabel(), Long.class);
@@ -227,8 +227,8 @@ public class ProblemBuilder {
 					problem.setVarType(var.getLabel(), Integer.class);
 					/*problem.setVarLowerBound(var.getLabel(), Integer.MIN_VALUE);
 					problem.setVarUpperBound(var.getLabel(), Integer.MAX_VALUE);*/
-					problem.setVarLowerBound(var.getLabel(), -100);
-					problem.setVarUpperBound(var.getLabel(), 100);
+					problem.setVarLowerBound(var.getLabel(), -1000000);
+					problem.setVarUpperBound(var.getLabel(), 1000000);
 					break;
 			}
 		}

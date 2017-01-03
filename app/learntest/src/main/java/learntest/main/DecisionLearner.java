@@ -313,6 +313,7 @@ public class DecisionLearner implements CategoryCalculator {
 					curDividers = machine.getLearnedDividers();
 					break;
 				}
+				// != 1.0?
 				if (!tmp.equals(trueFlaseFormula) && accTmp > acc && accTmp != 1.0) {
 					trueFlaseFormula = tmp;
 					curDividers = machine.getLearnedDividers();
@@ -664,7 +665,8 @@ public class DecisionLearner implements CategoryCalculator {
 		if (models != null && numberOfFeatures > 0) {			
 			for (svm_model svmModel : models) {
 				if (svmModel != null) {				
-					final Divider explicitDivider = new Model(svmModel, numberOfFeatures).getExplicitDivider();
+					Model model = new Model(svmModel, numberOfFeatures);
+					final Divider explicitDivider = model.getExplicitDivider();
 					Formula current = new FormulaProcessor<ExecVar>(vars).process(explicitDivider, machine.getDataLabels(), true);
 					if (formula == null) {
 						formula = current;
