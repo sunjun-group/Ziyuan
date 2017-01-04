@@ -313,11 +313,13 @@ public class DecisionLearner implements CategoryCalculator {
 					curDividers = machine.getLearnedDividers();
 					break;
 				}
-				// != 1.0?
-				if (!tmp.equals(trueFlaseFormula) && accTmp > acc && accTmp != 1.0) {
+				if (!tmp.equals(trueFlaseFormula) && accTmp > acc) {
 					trueFlaseFormula = tmp;
 					curDividers = machine.getLearnedDividers();
 					acc = accTmp;
+					if (acc == 1.0) {
+						break;
+					}
 				} else {
 					break;
 				}
@@ -424,6 +426,9 @@ public class DecisionLearner implements CategoryCalculator {
 				if (!tmp.equals(formula) && accTmp > acc) {
 					formula = tmp;
 					acc = accTmp;
+					if (acc == 1.0) {
+						break;
+					}
 				} else {
 					break;
 				}
