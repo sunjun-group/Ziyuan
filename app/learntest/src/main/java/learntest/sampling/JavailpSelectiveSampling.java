@@ -104,6 +104,9 @@ public class JavailpSelectiveSampling {
 			}*/
 			List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
 			List<Problem> problems = ProblemBuilder.build(originVars, precondition, current, true);
+			if (problems.isEmpty()) {
+				return null;
+			}
 			int num = numPerExe / problems.size() + 1;
 			//ProblemBuilder.addRandomConstraint(problems, originVars);
 			//List<Result> results = ProblemSolver.solve(problems, originVars, numPerExe);
