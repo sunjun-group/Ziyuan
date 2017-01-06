@@ -317,10 +317,6 @@ public class DecisionLearner implements CategoryCalculator {
 				Formula tmp = getLearnedFormula();
 				double accTmp = machine.getModelAccuracy();
 				if (tmp == null) {
-					if(trueFlaseFormula == null){
-						curDividers = machine.getLearnedDividers();						
-					}
-					
 					break;
 				}
 				if (!tmp.equals(trueFlaseFormula) && accTmp > acc) {
