@@ -139,8 +139,15 @@ public class DecisionLearner implements CategoryCalculator {
 	private void logLearningProcessInFile(Map<DecisionLocation, Pair<Formula, Formula>> decisions) {
 		Set<Entry<DecisionLocation, Pair<Formula, Formula>>> entrySet = decisions.entrySet();
 		try {
-			FileWriter writer = new FileWriter(new File("trees/" + LearnTestConfig.getSimpleClassName() + "." 
-					+ LearnTestConfig.testMethodName));
+			
+			File treeDir = new File("trees");
+			if(!treeDir.exists()){
+				treeDir.mkdirs();
+			}
+			
+			File file = new File("trees/" + LearnTestConfig.getSimpleClassName() + "." 
+					+ LearnTestConfig.testMethodName);
+			FileWriter writer = new FileWriter(file);
 			for (Entry<DecisionLocation, Pair<Formula, Formula>> entry : entrySet) {
 				writer.write(entry.getKey() + "\n");
 				Pair<Formula, Formula> formulas = entry.getValue();
