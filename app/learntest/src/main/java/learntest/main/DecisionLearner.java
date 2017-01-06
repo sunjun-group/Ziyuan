@@ -32,6 +32,7 @@ import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
 import libsvm.core.Machine.DataPoint;
 import libsvm.core.Model;
+import libsvm.extension.SVMTimeOutException;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.AndFormula;
@@ -285,15 +286,11 @@ public class DecisionLearner implements CategoryCalculator {
 			double acc = machine.getModelAccuracy();
 			curDividers = machine.getLearnedDividers();
 			
-			/**
-			 * TODO left by Lin Yun,
-			 * 
-			 */
 			while(trueFlaseFormula != null /*&& times < MAX_ATTEMPT*/ && cfgConditionManager.isRelevant(bkpData.getLocation().getLineNo())) {
 				long startTime = System.currentTimeMillis();				
 				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(bkpData.getLocation(), 
 						originVars, machine.getDataPoints(), preconditions, machine.getLearnedDividers());
-				System.out.println("learn select data: " + (System.currentTimeMillis() - startTime) + "ms");
+				System.out.println("learn select data for model: " + (System.currentTimeMillis() - startTime) + "ms");
 				
 				if (newMap == null) {
 					break;
@@ -314,13 +311,16 @@ public class DecisionLearner implements CategoryCalculator {
 				if (acc == 1.0) {
 					break;
 				}
+				
 				machine.train();
 				//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
 				Formula tmp = getLearnedFormula();
 				double accTmp = machine.getModelAccuracy();
 				if (tmp == null) {
-					trueFlaseFormula = null;
-					curDividers = machine.getLearnedDividers();
+					if(trueFlaseFormula == null){
+						curDividers = machine.getLearnedDividers();						
+					}
+					
 					break;
 				}
 				if (!tmp.equals(trueFlaseFormula) && accTmp > acc) {

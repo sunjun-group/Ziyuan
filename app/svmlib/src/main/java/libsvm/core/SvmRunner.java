@@ -23,10 +23,10 @@ public class SvmRunner implements Runnable {
 			    @Override public void print(String s) {} // Disables svm output
 			});
 			
-			long t1 = System.currentTimeMillis();
+//			long t1 = System.currentTimeMillis();
 			result = svm.svm_train(problem, parameter);
-			long t2 = System.currentTimeMillis();
-			System.out.println("time for training once: " + (t2-t1));
+//			long t2 = System.currentTimeMillis();
+//			System.out.println("time for training once: " + (t2-t1));
 		} catch (SVMTimeOutException e) {
 			e.printStackTrace();
 			result = null;
