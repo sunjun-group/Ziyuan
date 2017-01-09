@@ -487,41 +487,6 @@ public class DecisionLearner implements CategoryCalculator {
 			collectExecVar(val.getChildren(), vars);
 		}
 	}
-
-	/*private void calculateNums() {
-		int num = 1;
-		for (ExecVar var : originVars) {
-			switch (var.getType()) {
-				case BOOLEAN:
-					num *= 2;
-					break;
-				case INTEGER:
-					num *= 400;
-					break;
-				case BYTE:
-					num *= 200;
-					break;
-				case CHAR:
-					num *= 200;
-					break;
-				case DOUBLE:
-					num *= 4000;
-					break;
-				case FLOAT:
-					num *= 2000;
-					break;
-				case LONG:
-					num *= 2000;
-					break;
-				case SHORT:
-					num *= 200;
-					break;
-				default:
-					break;
-			}
-		}
-		selectiveSampling.setNumLimit(num / 10);
-	}*/
 	
 	/*private Set<ExecVar> extractBoolVars(List<ExecVar> allVars) {
 		Set<ExecVar> result = new HashSet<ExecVar>();
