@@ -139,6 +139,17 @@ public class ProblemBuilder {
 	private static Problem build(List<ExecVar> vars, List<Divider> dividers, 
 			List<Divider> notDividers, boolean random) {
 		Problem problem = buildVarBoundContraint(vars);
+		
+		//special constraint for triangle
+		/*Linear triangle = new Linear();
+		triangle.add(1, "x");
+		triangle.add(-1, "y");
+		problem.add(new Constraint(triangle, Operator.GE, 0));
+		triangle = new Linear();
+		triangle.add(1, "y");
+		triangle.add(-1, "z");
+		problem.add(new Constraint(triangle, Operator.GE, 0));*/
+		
 		if (random) {
 			PathRandom.randomPath(dividers, notDividers);
 			dividers = PathRandom.dividers;

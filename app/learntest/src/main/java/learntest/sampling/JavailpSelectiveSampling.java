@@ -204,7 +204,7 @@ public class JavailpSelectiveSampling {
 		 */
 		Random random = new Random();
 		calculateValRange(originVars, datapoints);
-		if (originVars.size() > 1) {
+		if (originVars.size() > 1 && !results.isEmpty()) {
 			for (Divider divider : dividers) {
 				List<Problem> probelms = ProblemBuilder.build(divider, originVars, precondition, dividers, false);
 				for (Problem problem : probelms) {
@@ -310,12 +310,25 @@ public class JavailpSelectiveSampling {
 					r2.put(tmp, result.get(tmp));
 					i ++;
 				}
-				
+				/*if (isValid(r1)) {
+					checkNonduplicateResult(r1, originVars, prevDatas, assignments);	
+				}
+				if (isValid(r2)) {
+					checkNonduplicateResult(r2, originVars, prevDatas, assignments);	
+				}*/
 				checkNonduplicateResult(r1, originVars, prevDatas, assignments);
 				checkNonduplicateResult(r2, originVars, prevDatas, assignments);
 				idx ++;
 			}
 		}
+	}
+	
+	//special checker for triangle
+	private boolean isValid(Result result) {
+		int x = result.get("x").intValue();
+		int y = result.get("y").intValue();
+		int z = result.get("z").intValue();
+		return 20 >= x && x >= y && y >= z && z >= 1;
 	}
 
 	public Map<DecisionLocation, BreakpointData> getSelectResult() {
