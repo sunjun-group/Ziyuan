@@ -34,6 +34,7 @@ import sav.common.core.formula.ConjunctionFormula;
 import sav.common.core.formula.Eq;
 import sav.common.core.formula.LIAAtom;
 import sav.common.core.formula.LIATerm;
+import sav.common.core.formula.Var;
 import sav.common.core.formula.utils.ExpressionVisitor;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
@@ -69,6 +70,11 @@ public class IlpSolver extends ExpressionVisitor {
 	public void visitConjunctionFormula(ConjunctionFormula conj) {
 		List<Atom> atomics = conj.getAtomics();
 		List<LIAAtom> atoms = new ArrayList<LIAAtom>(atomics.size());
+		for (Atom atom : atomics) {
+			if (atom instanceof LIAAtom) {
+				atoms.add((LIAAtom) atom);
+			}
+		}
 		solveProblem(atoms);
 	}
 
@@ -93,41 +99,60 @@ public class IlpSolver extends ExpressionVisitor {
 			double value = atom.getConstant() / term.getCoefficient();
 			Eq<Number> assign = new Eq<Number>(term.getVariable(), (int) value);
 			addAssignments(CollectionUtils.<Eq<?>>listOf(assign));
+			return true;
 		}
 		return false;
 	}
 
 	private void lpSolveProblem(List<LIAAtom> atoms) {
+		Map<ExecVar, List<Term>> termMap = new HashMap<ExecVar, List<Term>>();
+		int num = constructObjective(atoms, termMap);
+		List<ExecVar> vars = new ArrayList<ExecVar>(termMap.keySet());
+		
+		List<Result> results = new ArrayList<Result>();
+		List<Problem> problems = new ArrayList<Problem>();
+		for (int i = 0; i < num; i++) {
+			Problem problem = new Problem();
+			constructSubjectives(atoms, problem);
+			constructObjective(problem, termMap, i);
+			results.add(solveProblem(problem, vars));
+			problems.add(problem);
+		}
+		
 		/* original problem */
-		Problem problem = new Problem();
+		/*Problem problem = new Problem();
 		constructSubjectives(atoms, problem);
 		
-			/* set objective */
-		List<ExecVar> vars = new ArrayList<ExecVar>(constructObjective(atoms, problem));
+			 set objective 
+		//List<ExecVar> vars = new ArrayList<ExecVar>(constructObjective(atoms, problem));
 		
-			/* get result */
-		Result result = solveProblem(problem, vars);
+			 get result 
+		Result result = solveProblem(problem, vars);*/
 		
 		/* selective sampling */
 		if (minMax != null && useSampling) {
-			int constraintsCount = problem.getConstraintsCount();
-			int maxVarToCalcul = Math.min(MAX_VAR_TO_CALCULATE, vars.size());
-			log.debug("useSampling:");
-			for (int i = 1; i <= MAX_MORE_SELECTED_SAMPLE; i++) {
-				List<ExecVar> selectedVars = selectVarsForSampling(vars, maxVarToCalcul);
-				List<Eq<?>> samples = selectSample(selectedVars, result);
-				if (samples.isEmpty()) {
-					continue;
+			int idx = 0;
+			for (Problem problem : problems) {
+				int constraintsCount = problem.getConstraintsCount();
+				int maxVarToCalcul = Math.min(MAX_VAR_TO_CALCULATE, vars.size());
+				log.debug("useSampling:");
+				for (int i = 1; i <= MAX_MORE_SELECTED_SAMPLE; i++) {
+					List<ExecVar> selectedVars = selectVarsForSampling(vars, maxVarToCalcul);
+					List<Eq<?>> samples = selectSample(selectedVars, results.get(idx));
+					if (samples.isEmpty()) {
+						continue;
+					}
+					/* construct more subjective from selected samples */
+					constructSubjective(samples, problem);
+					
+					solveProblem(problem, vars);
+					
+					/* reset */
+					problem.getConstraints().subList(constraintsCount,
+									problem.getConstraintsCount()).clear();
 				}
-				/* construct more subjective from selected samples */
-				constructSubjective(samples, problem);
-				
-				solveProblem(problem, vars);
-				
-				/* reset */
-				problem.getConstraints().subList(constraintsCount,
-								problem.getConstraintsCount()).clear();
-			}
+				idx ++;
+			}			
 		}
 	}
 
@@ -190,6 +215,42 @@ public class IlpSolver extends ExpressionVisitor {
 					atom.getConstant());
 		}
 	}
+
+	private int constructObjective(List<LIAAtom> atoms, Map<ExecVar, List<Term>> termMap) {
+		for (LIAAtom atom : atoms) {
+			List<LIATerm> exps = atom.getMVFOExpr();
+			for (LIATerm exp : exps) {
+				ExecVar variable = exp.getVariable();
+				List<Term> terms = termMap.get(variable);
+				if (terms == null) {
+					terms = new ArrayList<Term>();
+					termMap.put(variable, terms);
+				}
+				terms.add(new Term(variable, exp.getCoefficient()));
+			}
+		}
+		int max = 1;
+		Collection<List<Term>> values = termMap.values();
+		for (List<Term> terms : values) {
+			if (terms.size() > max) {
+				max = terms.size();
+			}
+		}
+		return max;
+	}
+
+	private void constructObjective(Problem problem, Map<ExecVar, List<Term>> termMap, int i) {
+		Linear obj = new Linear();
+		Collection<List<Term>> values = termMap.values();
+		for (List<Term> terms : values) {
+			if (terms.size() > i) {
+				obj.add(terms.get(i));
+			} else {
+				obj.add(terms.get(0));
+			}
+		}
+		setObjective(problem, obj);
+	}
 	
 	private Set<ExecVar> constructObjective(List<LIAAtom> atoms, Problem problem) {
 		Linear obj = new Linear();
@@ -248,6 +309,13 @@ public class IlpSolver extends ExpressionVisitor {
 	private Eq<?> getAssignment(ExecVar var, Number number) {
 		switch (var.getType()) {
 		case PRIMITIVE:
+		case INTEGER:
+		case BYTE:
+		case CHAR:
+		case DOUBLE:
+		case FLOAT:
+		case LONG:
+		case SHORT:
 			return new Eq<Number>(var, number);
 		case BOOLEAN:
 			if (number.intValue() > 0) {

@@ -9,6 +9,7 @@ import libsvm.core.Category;
 import libsvm.core.Divider;
 import libsvm.core.Machine;
 import libsvm.core.Model;
+import sav.settings.SAVExecutionTimeOutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ public class PositiveSeparationMachine extends Machine {
 	private List<svm_model> learnedModels = new ArrayList<svm_model>();
 
 	private static final int MAXIMUM_ATTEMPT_COUNT = 10;
-	private static final int MAXIMUM_DIVIDER_COUNT = 2;
+	private static final int MAXIMUM_DIVIDER_COUNT = 20;
 
 	private NegativePointSelection negativePointSelection;
 
@@ -40,7 +41,7 @@ public class PositiveSeparationMachine extends Machine {
 	}
 
 	@Override
-	protected Machine train(final List<DataPoint> dataPoints) {
+	protected Machine train(final List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
 		int attemptCount = 0;
 		double bestAccuracy = 0.0;
 		List<svm_model> bestLearnedModels = null;
@@ -61,7 +62,7 @@ public class PositiveSeparationMachine extends Machine {
 		return this;
 	}
 
-	private Machine attemptTraining(final List<DataPoint> dataPoints) {
+	private Machine attemptTraining(final List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
 		final List<DataPoint> positives = new ArrayList<DataPoint>(dataPoints.size());
 		final List<DataPoint> negatives = new ArrayList<DataPoint>(dataPoints.size());
 
@@ -72,11 +73,7 @@ public class PositiveSeparationMachine extends Machine {
 		while (!negatives.isEmpty() && loopCount < MAXIMUM_DIVIDER_COUNT) {
 			loopCount++;
 			// Training set = all positives + 1 negative
-			DataPoint negPoint = negativePointSelection.select(negatives, positives);
-			
-			if (negPoint == null) return this;
-			trainingData.add(negPoint);
-			
+			trainingData.add(negativePointSelection.select(negatives, positives));
 			super.train(trainingData);
 
 			if (model != null) learnedModels.add(model);

@@ -34,6 +34,7 @@ import invariant.templates.twofeatures.TwoNumSqrtTemplate;
 import invariant.templates.twofeatures.TwoNumSquareTemplate;
 import invariant.templates.twofeatures.TwoNumSubOverflowTemplate;
 import sav.common.core.utils.CollectionUtils;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecValue;
 
 public class NumberTemplateChecker extends TypeTemplateChecker {
@@ -43,7 +44,7 @@ public class NumberTemplateChecker extends TypeTemplateChecker {
 	private int MAX_FEATURES = 20; // should not check if there are too many features
 
 	@Override
-	public boolean checkTemplates(List<List<ExecValue>> passValues, List<List<ExecValue>> failValues) {
+	public boolean checkTemplates(List<List<ExecValue>> passValues, List<List<ExecValue>> failValues) throws SAVExecutionTimeOutException {
 //		log.info("Number pass values: {}\n", passValues);
 //		log.info("Number fail values: {}\n", failValues);
 		
@@ -59,7 +60,7 @@ public class NumberTemplateChecker extends TypeTemplateChecker {
 	}
 
 	private boolean checkIlpTemplates(List<List<ExecValue>> passValues,
-			List<List<ExecValue>> failValues) {
+			List<List<ExecValue>> failValues) throws SAVExecutionTimeOutException {
 		SingleTemplate t = null;
 		
 		int n = passValues.get(0).size();
@@ -103,7 +104,7 @@ public class NumberTemplateChecker extends TypeTemplateChecker {
 	}
 	
 	private boolean checkOneFeatureTemplates(List<List<ExecValue>> passValues,
-			List<List<ExecValue>> failValues) {
+			List<List<ExecValue>> failValues) throws SAVExecutionTimeOutException {
 		SingleTemplate t = null;
 
 		int n = passValues.get(0).size();
@@ -139,7 +140,7 @@ public class NumberTemplateChecker extends TypeTemplateChecker {
 	}
 
 	private boolean checkTwoFeaturesTemplates(List<List<ExecValue>> passValues,
-			List<List<ExecValue>> failValues) {
+			List<List<ExecValue>> failValues) throws SAVExecutionTimeOutException {
 		SingleTemplate t = null;
 
 		int n = passValues.get(0).size();
@@ -216,7 +217,7 @@ public class NumberTemplateChecker extends TypeTemplateChecker {
 	}
 
 	private boolean checkThreeFeaturesTemplates(List<List<ExecValue>> passValues,
-			List<List<ExecValue>> failValues) {
+			List<List<ExecValue>> failValues) throws SAVExecutionTimeOutException {
 		SingleTemplate t = null;
 
 		int n = passValues.get(0).size();

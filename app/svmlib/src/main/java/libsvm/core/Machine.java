@@ -9,19 +9,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
 import libsvm.extension.ISelectiveSampling;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.ExecutionTimer;
 import sav.common.core.utils.StringUtils;
+import sav.settings.SAVExecutionTimeOutException;
 
 /**
  * This class represents an SVM machine. After initialization, it is possible to
@@ -228,12 +228,13 @@ public class Machine {
 	 * </p>
 	 * 
 	 * @return The instance of the current machine after training completed.
+	 * @throws SAVExecutionTimeOutException 
 	 */
-	public final Machine train() {
+	public final Machine train() throws SAVExecutionTimeOutException {
 		Assert.assertNotNull(parameter, "SVM parameters is not set.");
 		Assert.assertTrue(!data.isEmpty(), "SVM training data is empty.");
 
-		this.data = cleanUp(data);
+		//this.data = cleanUp(data);
 		if (getNumberOfFeatures() <= 0) {
 //			LOGGER.warn("The feature list is empty. SVM will not run.");
 			return this;
@@ -253,7 +254,7 @@ public class Machine {
 	 *            The data used to learn.
 	 * @return The instance of the current machine after training completed.
 	 */
-	protected Machine train(final List<DataPoint> dataPoints) {
+	protected Machine train(final List<DataPoint> dataPoints) throws SAVExecutionTimeOutException{
 		Assert.assertNotNull(parameter, "SVM parameters is not set.");
 		Assert.assertTrue(!dataPoints.isEmpty(), "SVM training data is empty.");
 
@@ -277,9 +278,11 @@ public class Machine {
 	}
 
 	private svm_model performTrainingTask(final svm_problem prob, final svm_parameter param) {
+				
 		ExecutionTimer timer = new ExecutionTimer(SVM_TIMEOUT, TimeUnit.SECONDS);
 		SvmRunner svmRunner = new SvmRunner(prob, param);
 		timer.run(svmRunner);
+		
 		return svmRunner.getResult();
 	}
 
@@ -427,8 +430,9 @@ public class Machine {
 	 * 
 	 * @return <code>true</code> if the logic was fine-tuned successfully, or
 	 *         <code>false</code> otherwise.
+	 * @throws SAVExecutionTimeOutException 
 	 */
-	public boolean selectiveSampling() {
+	public boolean selectiveSampling() throws SAVExecutionTimeOutException {
 		final Model currentModel = getModel();
 		if (currentModel == null) {
 			return false;
@@ -471,7 +475,7 @@ public class Machine {
 		return Double.compare(adjustedAccuracy, 1.0) >= 0;
 	}
 
-	private List<DataPoint> generateNewPoints() {
+	private List<DataPoint> generateNewPoints() throws SAVExecutionTimeOutException {
 		final ISelectiveSampling handler = getSelectiveSamplingHandler();
 		if (handler != null) {
 			return handler.selectData(this);

@@ -10,6 +10,7 @@ import invariant.templates.SingleTemplate;
 import invariant.templates.onefeature.OneBoolEq0Template;
 import invariant.templates.onefeature.OneBoolEq1Template;
 import sav.common.core.utils.CollectionUtils;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecValue;
 
 public class BooleanTemplateChecker extends TypeTemplateChecker {
@@ -17,7 +18,7 @@ public class BooleanTemplateChecker extends TypeTemplateChecker {
 	private static Logger log = LoggerFactory.getLogger(BooleanTemplateChecker.class);
 
 	@Override
-	public boolean checkTemplates(List<List<ExecValue>> passValues, List<List<ExecValue>> failValues) {
+	public boolean checkTemplates(List<List<ExecValue>> passValues, List<List<ExecValue>> failValues) throws SAVExecutionTimeOutException {
 //		log.info("Boolean pass values: {}\n", passValues);
 //		log.info("Boolean fail values: {}\n", failValues);
 		
@@ -29,7 +30,7 @@ public class BooleanTemplateChecker extends TypeTemplateChecker {
 	}
 	
 	private boolean checkOneFeatureTemplates(List<List<ExecValue>> passValues,
-			List<List<ExecValue>> failValues) {
+			List<List<ExecValue>> failValues) throws SAVExecutionTimeOutException {
 		SingleTemplate t = null;
 
 		int n = passValues.get(0).size();

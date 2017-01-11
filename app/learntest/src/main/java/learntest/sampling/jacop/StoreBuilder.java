@@ -3,12 +3,12 @@ package learntest.sampling.jacop;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jacop.constraints.LinearInt;
-import org.jacop.constraints.XeqC;
-import org.jacop.constraints.XgteqY;
-import org.jacop.constraints.XmulYeqZ;
-import org.jacop.core.IntVar;
 import org.jacop.core.Store;
+import org.jacop.floats.constraints.LinearFloat;
+import org.jacop.floats.constraints.PeqC;
+import org.jacop.floats.constraints.PmulQeqR;
+import org.jacop.floats.core.FloatDomain;
+import org.jacop.floats.core.FloatVar;
 
 import learntest.calculator.MultiNotDividerBasedCategoryCalculator;
 import learntest.calculator.OrCategoryCalculator;
@@ -22,7 +22,9 @@ import sav.common.core.formula.LIATerm;
 import sav.common.core.formula.Var;
 import sav.strategies.dto.execute.value.ExecVar;
 
-public class StoreBuilder {
+public class StoreBuilder {	
+
+	public static int max = 2000;
 	
 	public static List<Store> build(Divider object, List<ExecVar> vars, OrCategoryCalculator calculator, 
 			List<Divider> dividers, boolean random) {
@@ -37,38 +39,44 @@ public class StoreBuilder {
 
 	private static void addTarget(Store store, Divider object) {
 		double[] thetas = object.getThetas();
-		int[] weights = new int[thetas.length];
+		//int[] weights = new int[thetas.length];
+		double[] weights = new double[store.size()];
 		for (int i = 0; i < thetas.length; i++) {
 			//weights[i] = (int) thetas[i];
-			weights[i] = (int) Math.rint(thetas[i]);
+			//weights[i] = (int) Math.rint(thetas[i]);
+			weights[i] = thetas[i];
 		}
-		IntVar[] intVars = new IntVar[store.size()];
+		FloatVar[] intVars = new FloatVar[store.size()];
 		for (int i = 0; i < intVars.length; i++) {
-			intVars[i] = (IntVar)store.vars[i];
+			intVars[i] = (FloatVar)store.vars[i];
 		}
-		store.impose(new LinearInt(store, intVars, weights, "==", (int) object.getTheta0()));
+		/*new Linear(coefficients, variables);
+		new LinearFloat(store, list, weights, rel, sum)*/
+		store.impose(new LinearFloat(store, intVars, weights, "==", (int) object.getTheta0()));
 	}
 	
 	public static void addOpposite(Store store, Divider divider) {
 		double[] thetas = divider.getThetas();
-		int[] weights = new int[thetas.length];
+		//int[] weights = new int[thetas.length];
+		double[] weights = new double[store.size()];
 		for (int i = 0; i < thetas.length; i++) {
 			//weights[i] = (int) thetas[i];
-			weights[i] = (int) Math.rint(thetas[i]);
+			//weights[i] = (int) Math.rint(thetas[i]);
+			weights[i] = thetas[i];
 		}
-		IntVar[] intVars = new IntVar[store.size()];
+		FloatVar[] intVars = new FloatVar[store.size()];
 		for (int i = 0; i < intVars.length; i++) {
-			intVars[i] = (IntVar)store.vars[i];
+			intVars[i] = (FloatVar)store.vars[i];
 		}
-		store.impose(new LinearInt(store, intVars, weights, "<", (int) divider.getTheta0()));
+		store.impose(new LinearFloat(store, intVars, weights, "<", (int) divider.getTheta0()));
 	}
 	
 	public static void addConstraints(Store store, List<Eq<Number>> constraints) {
 		for (Eq<Number> eq : constraints) {
 			String name = eq.getVar().getLabel();
-			IntVar var = (IntVar) store.findVariable(name);
+			FloatVar var = (FloatVar) store.findVariable(name);
 			Number c = eq.getValue();
-			store.impose(new XeqC(var, c.intValue()));
+			store.impose(new PeqC(var, c.doubleValue()));
 		}
 	}
 
@@ -85,14 +93,17 @@ public class StoreBuilder {
 			res.add(build(vars, current, null, random));
 			return res;
 		}
+		
+		/**
+		 * otherwise, calculate the or-relation of precondition.
+		 */
 		for (List<CategoryCalculator> list : calculators) {
 			List<Divider> dividers = current == null ? new ArrayList<Divider>() 
 					: new ArrayList<Divider>(current);
 			List<List<Divider>> notDividers = new ArrayList<List<Divider>>();
 			for (CategoryCalculator calculator : list) {
 				if (calculator instanceof MultiDividerBasedCategoryCalculator) {
-					dividers.addAll(
-							((MultiDividerBasedCategoryCalculator) calculator).getDividers());
+					dividers.addAll(((MultiDividerBasedCategoryCalculator) calculator).getDividers());
 				} else if (calculator instanceof MultiNotDividerBasedCategoryCalculator) {
 					unfold((MultiNotDividerBasedCategoryCalculator) calculator, notDividers);
 				}
@@ -102,6 +113,7 @@ public class StoreBuilder {
 					res.add(build(vars, dividers, null, random));
 				}
 			}
+			
 			for (List<Divider> nots : notDividers) {
 				res.add(build(vars, dividers, nots, random));
 			}
@@ -148,52 +160,59 @@ public class StoreBuilder {
 		if (dividers != null) {
 			for (Divider divider : dividers) {
 				double[] thetas = divider.getThetas();
-				int[] weights = new int[thetas.length];
+				//int[] weights = new int[thetas.length];
+				double[] weights = new double[store.size()];
 				for (int i = 0; i < thetas.length; i++) {
 					//weights[i] = (int) thetas[i];
-					weights[i] = (int) Math.rint(thetas[i]);
+					//weights[i] = (int) Math.rint(thetas[i]);
+					weights[i] = thetas[i];
 				}
-				IntVar[] intVars = new IntVar[store.size()];
+				FloatVar[] intVars = new FloatVar[store.size()];
 				for (int i = 0; i < intVars.length; i++) {
-					intVars[i] = (IntVar)store.vars[i];
+					intVars[i] = (FloatVar)store.vars[i];
 				}
-				store.impose(new LinearInt(store, intVars, weights, ">=", 
-						(int) divider.getTheta0()));
+				store.impose(new LinearFloat(store, intVars, weights, ">=", divider.getTheta0()));
 			}
 		}		
 		if (notDividers != null) {
 			for (Divider divider : notDividers) {
 				double[] thetas = divider.getThetas();
-				int[] weights = new int[thetas.length];
+				//int[] weights = new int[thetas.length];
+				double[] weights = new double[store.size()];
 				for (int i = 0; i < thetas.length; i++) {
 					//weights[i] = (int) thetas[i];
-					weights[i] = (int) Math.rint(thetas[i]);
+					//weights[i] = (int) Math.rint(thetas[i]);
+					weights[i] = thetas[i];
 				}
-				IntVar[] intVars = new IntVar[store.size()];
+				FloatVar[] intVars = new FloatVar[store.size()];
 				for (int i = 0; i < intVars.length; i++) {
-					intVars[i] = (IntVar)store.vars[i];
+					intVars[i] = (FloatVar)store.vars[i];
 				}
-				store.impose(new LinearInt(store, intVars, weights, "<", (int) divider.getTheta0()));
+				store.impose(new LinearFloat(store, intVars, weights, "<", (int) divider.getTheta0()));
 			}
 		}		
 		return store;
 	}
 	
 	private static Store build(List<ExecVar> vars) {
+		FloatDomain.setPrecision(1.0e-14);
+		FloatDomain.intervalPrint(false);
 		Store store = new Store();
 		int size = vars.size();
-		IntVar[] intVars = new IntVar[size + size * (size + 1) / 2];
+		FloatVar[] intVars = new FloatVar[size + size * (size + 1) / 2];
 		int idx = 0;
 		for (ExecVar var : vars) {
-			intVars[idx ++] = buildVar(store, var);
+			intVars[idx] = buildVar(store, var);
+			idx++;
 		}
 		for (int i = 0; i < size; i++) {
 			String label = vars.get(i).getLabel();
 			for (int j = i; j < size; j++) {
-				int max = intVars[i].dom().max() * intVars[j].dom().max();
-				intVars[idx] = new IntVar(store, label + " * " + vars.get(j).getLabel(), 
+				double max = intVars[i].dom().max() * intVars[j].dom().max();
+				intVars[idx] = new FloatVar(store, label + " * " + vars.get(j).getLabel(), 
 						-max, max);
-				store.impose(new XmulYeqZ(intVars[i], intVars[j], intVars[idx ++]));
+				store.impose(new PmulQeqR(intVars[i], intVars[j], intVars[idx]));
+				idx++;
 			}
 		}
 		/*IntVar x = (IntVar) store.findVariable("x");
@@ -204,24 +223,24 @@ public class StoreBuilder {
 		return store;
 	}
 	
-	private static IntVar buildVar(Store store, ExecVar var) {
+	private static FloatVar buildVar(Store store, ExecVar var) {
 		switch (var.getType()) {
 			case BOOLEAN:
-				return new IntVar(store, var.getLabel(), 0, 1);
+				return new FloatVar(store, var.getLabel(), 0, 1);
 			case BYTE:
-				return new IntVar(store, var.getLabel(), -100, 100);
+				return new FloatVar(store, var.getLabel(), Byte.MIN_VALUE, Byte.MAX_VALUE);
 			case CHAR:
-				return new IntVar(store, var.getLabel(), -100, 100);
-			case DOUBLE:
+				return new FloatVar(store, var.getLabel(), -100, 100);
+			case SHORT:
+				return new FloatVar(store, var.getLabel(), Short.MIN_VALUE, Short.MAX_VALUE);
+			/*case DOUBLE:
 				return new IntVar(store, var.getLabel(), -2000, 2000);
 			case FLOAT:
 				return new IntVar(store, var.getLabel(), -1000, 1000);
 			case LONG:
-				return new IntVar(store, var.getLabel(), -1000, 1000);
-			case SHORT:
-				return new IntVar(store, var.getLabel(), -100, 100);
+				return new IntVar(store, var.getLabel(), -1000, 1000);*/
 			default:
-				return new IntVar(store, var.getLabel(), -200, 200);
+				return new FloatVar(store, var.getLabel(), -max, max);
 		}
 	}
 	
@@ -229,35 +248,37 @@ public class StoreBuilder {
 		Store store = build(vars);
 		for (LIAAtom atom : atoms) {
 			List<LIATerm> exps = atom.getMVFOExpr();
-			IntVar[] intVars = new IntVar[exps.size()];
-			int[] weights = new int[exps.size()];
+			FloatVar[] intVars = new FloatVar[exps.size()];
+			double[] weights = new double[exps.size()];
 			int idx = 0;
 			for (LIATerm term : exps) {
 				double coefficient = term.getCoefficient();
 				//weights[idx] = (int) coefficient;
-				weights[idx] = (int) Math.rint(coefficient);
+				//weights[idx] = (int) Math.rint(coefficient);
+				weights[idx] = coefficient;
 				Var variable = term.getVariable();
-				intVars[idx] = (IntVar) store.findVariable(variable.getLabel());
+				intVars[idx] = (FloatVar) store.findVariable(variable.getLabel());
 				idx ++;
 			}
 			double constant = atom.getConstant();
-			store.impose(new LinearInt(store, intVars, weights, ">=", (int) constant));
+			store.impose(new LinearFloat(store, intVars, weights, ">=", constant));
 		}
 		for (LIAAtom atom : nots) {
 			List<LIATerm> exps = atom.getMVFOExpr();
-			IntVar[] intVars = new IntVar[exps.size()];
-			int[] weights = new int[exps.size()];
+			FloatVar[] intVars = new FloatVar[exps.size()];
+			double[] weights = new double[exps.size()];
 			int idx = 0;
 			for (LIATerm term : exps) {
 				double coefficient = term.getCoefficient();
 				//weights[idx] = (int) coefficient;
-				weights[idx] = (int) Math.rint(coefficient);
+				//weights[idx] = (int) Math.rint(coefficient);
+				weights[idx] = coefficient;
 				Var variable = term.getVariable();
-				intVars[idx] = (IntVar) store.findVariable(variable.getLabel());
+				intVars[idx] = (FloatVar) store.findVariable(variable.getLabel());
 				idx ++;
 			}
 			double constant = atom.getConstant();
-			store.impose(new LinearInt(store, intVars, weights, "<", (int) constant));
+			store.impose(new LinearFloat(store, intVars, weights, "<", constant));
 		}
 		return store;
 	}

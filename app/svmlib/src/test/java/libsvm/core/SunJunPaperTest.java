@@ -2,6 +2,7 @@ package libsvm.core;
 
 import libsvm.extension.AbstractSimpleSelectiveSamplingImpl;
 import libsvm.extension.FeatureSelectionMachine;
+import sav.settings.SAVExecutionTimeOutException;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -11,7 +12,7 @@ public class SunJunPaperTest extends TestUltility {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SunJunPaperTest.class);
 
 	@Test
-	public void test3() {
+	public void test3() throws SAVExecutionTimeOutException {
 		machine = setupMachine(new FeatureSelectionMachine(), 2);
 
 		machine.addDataPoint(Category.NEGATIVE, 94, 0);
@@ -33,7 +34,7 @@ public class SunJunPaperTest extends TestUltility {
 	}
 
 	@Test
-	public void test4() {
+	public void test4() throws SAVExecutionTimeOutException {
 		machine = setupMachine(new FeatureSelectionMachine(), 7);
 
 		machine.addDataPoint(Category.NEGATIVE, 94, 1, 94, 2, 60, 3, 100);
@@ -54,7 +55,7 @@ public class SunJunPaperTest extends TestUltility {
 	}
 
 	@Test
-	public void test5() {
+	public void test5() throws SAVExecutionTimeOutException {
 		machine = setupMachine(new FeatureSelectionMachine(), 2);
 		machine.setSelectiveSamplingHandler(new AbstractSimpleSelectiveSamplingImpl(10) {
 			@Override

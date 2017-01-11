@@ -8,6 +8,18 @@
 
 package gentest.core.execution;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import gentest.core.data.statement.RArrayAssignment;
 import gentest.core.data.statement.RArrayConstructor;
 import gentest.core.data.statement.RAssignment;
@@ -17,14 +29,6 @@ import gentest.core.data.statement.Rmethod;
 import gentest.core.data.statement.Statement;
 import gentest.core.data.statement.StatementVisitor;
 import gentest.core.data.variable.ISelectedVariable;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import sav.common.core.utils.Assert;
 
 /**
@@ -125,23 +129,55 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		return successful;
 	}
 
+	class ReturnValue{
+		Object returnedValue = null;
+	}
+	
 	@Override
 	public boolean visitRmethod(Rmethod stmt) {
-		List<Object> inputs = new ArrayList<Object>(stmt.getInVarIds().length);
+		final List<Object> inputs = new ArrayList<Object>(stmt.getInVarIds().length);
 		for (int var : stmt.getInVarIds()) {
 			inputs.add(getExecData(var));
 		}
-		Object returnedValue;
+		
+		final ReturnValue value = new ReturnValue();
 		try {
-			returnedValue = stmt.getMethod().invoke(
-					getExecData(stmt.getReceiverVarId()),
-					(Object[]) inputs.toArray());
+			final Object obj = getExecData(stmt.getReceiverVarId());
+			final Method method = stmt.getMethod();
+//			System.out.println(method);
+			
+//			returnedValue = method.invoke(obj, (Object[]) inputs.toArray());
+			
+			FutureTask<?> theTask = null;
+			try{
+				theTask = new FutureTask<Object>(new Runnable(){
+					@Override
+					public void run() {
+						try {
+							Object returnedValue = method.invoke(obj, (Object[]) inputs.toArray());
+							value.returnedValue = returnedValue;
+						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+							e.printStackTrace();
+						}
+					}
+					
+				}, null);
+				
+				new Thread(theTask).start();
+				
+				/**according to jdk document, the get methods will block if the computation has not yet completed*/
+				theTask.get(10L, TimeUnit.SECONDS);
+			}
+			catch(TimeoutException e){
+				e.printStackTrace();
+			}
+			
 			// update data
 			for (int i = 0; i < stmt.getInVarIds().length; i++) {
 				addExecData(stmt.getInVarIds()[i], inputs.get(i));
 			}
 			if (stmt.getOutVarId() != Statement.INVALID_VAR_ID) {
-				addExecData(stmt.getOutVarId(), returnedValue);
+				addExecData(stmt.getOutVarId(), value.returnedValue);
 			}
 		} catch (Throwable e) {
 			log.debug(e.getMessage());

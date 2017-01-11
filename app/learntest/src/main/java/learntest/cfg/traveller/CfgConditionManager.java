@@ -2,9 +2,9 @@ package learntest.cfg.traveller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import learntest.breakpoint.data.DecisionLocation;
@@ -27,6 +27,12 @@ import sav.common.core.formula.Formula;
 import sav.common.core.formula.NotFormula;
 import sav.strategies.dto.execute.value.ExecVar;
 
+/**
+ * contain all the cfg structure information. The original author does not maintain
+ * structure information inside cfg.
+ * @author linyun
+ *
+ */
 public class CfgConditionManager {
 	
 	private CfgDecisionNode begin;
@@ -38,10 +44,12 @@ public class CfgConditionManager {
 	
 	private Map<CfgDecisionNode, List<CfgDecisionNode>> parents;
 	
-	//private Set<CfgDecisionNode> ends;
+	private Set<CfgDecisionNode> ends;
 	
 	private List<ExecVar> vars;
 	private List<ExecVar> originalVars;
+	
+	private double totalBranch = 1;
 	
 	public CfgConditionManager(CFG cfg) {
 		List<CfgEdge> entryOutEdges = cfg.getEntryOutEdges();
@@ -56,10 +64,18 @@ public class CfgConditionManager {
 		falseNext = new HashMap<CfgDecisionNode, CfgDecisionNode>();
 		next = new HashMap<CfgDecisionNode, CfgDecisionNode>();
 		parents = new HashMap<CfgDecisionNode, List<CfgDecisionNode>>();
-		//ends = new HashSet<CfgDecisionNode>();
+		ends = new HashSet<CfgDecisionNode>();
 		List<CfgNode> vertices = cfg.getVertices();
 		for (CfgNode node : vertices) {
 			if (node instanceof CfgDecisionNode) {
+				
+				//calculate total branches
+				if (((CfgDecisionNode) node).isLoop()) {
+					totalBranch += 3;
+				} else {
+					totalBranch += 2;
+				}
+				
 				nodeMap.put(node.getBeginLine(), (CfgDecisionNode) node);
 				List<CfgEdge> outEdges = cfg.getOutEdges(node);
 				CfgDecisionNode trueNode = null;
@@ -101,9 +117,9 @@ public class CfgConditionManager {
 						parents.put(trueNode, parentList);
 					}
 					parentList.add((CfgDecisionNode) node);
-				} /*else {
+				} else {
 					ends.add((CfgDecisionNode) node);
-				}*/
+				}
 			}
 		}
 	}
@@ -365,7 +381,59 @@ public class CfgConditionManager {
 		}
 	}*/
 	
-	public void updateRelevance(BreakpointData breakpointData) {
+	public void updateRelevance(Map<DecisionLocation, BreakpointData> dataMap) {
+		Map<Integer, BreakpointData> map = new HashMap<Integer, BreakpointData>();
+		Set<DecisionLocation> locations = dataMap.keySet();
+		for (DecisionLocation location : locations) {
+			map.put(location.getLineNo(), dataMap.get(location));
+		}
+		updateRelevance(begin, map);
+	}
+
+	private boolean updateRelevance(CfgDecisionNode node, Map<Integer, BreakpointData> map) {
+		if (!isRelevant(node.getBeginLine())) {
+			return false;
+		}
+		boolean relevant = false;
+		CfgDecisionNode trueNode = trueNext.get(node);
+		if (trueNode != null) {
+			relevant |= updateRelevance(trueNode, map);
+		}
+		CfgDecisionNode falseNode = falseNext.get(node);
+		if (falseNode != null) {
+			relevant |= updateRelevance(falseNode, map);
+		}
+		if (trueNode == null && falseNode == null) {
+			CfgDecisionNode nextNode = next.get(node);
+			if (nextNode != null) {
+				relevant |= updateRelevance(nextNode, map);
+			}
+		}
+		if (relevant) {
+			//System.out.println("Node: " + node.getBeginLine() + " is relevant because of children");
+			return true;
+		}
+		BreakpointData breakpointData = map.get(node.getBeginLine());
+		relevant = breakpointData.getFalseValues().isEmpty() 
+					|| breakpointData.getTrueValues().isEmpty();
+		if (relevant) {
+			//System.out.println("Node: " + node.getBeginLine() + " is relevant because of true/false");
+			return true;
+		}
+		if (breakpointData instanceof LoopTimesData) {
+			LoopTimesData loopTimesData = (LoopTimesData) breakpointData;
+			relevant = loopTimesData.getOneTimeValues().isEmpty() 
+						|| loopTimesData.getMoreTimesValues().isEmpty();
+			if (relevant) {
+				//System.out.println("Node: " + node.getBeginLine() + " is relevant because of once/more");
+				return true;
+			}
+		}
+		node.setRelevant(false);
+		return false;
+	}
+
+	/*public void updateRelevance(BreakpointData breakpointData) {
 		int line = breakpointData.getLocation().getLineNo();
 		if (!updateRelevance(nodeMap.get(line), breakpointData)) {
 			return;
@@ -434,6 +502,14 @@ public class CfgConditionManager {
 		}
 		node.setRelevant(false);
 		return true;
+	}*/
+	
+	public boolean isEnd(int lineNo) {
+		return ends.contains(nodeMap.get(lineNo));
+	}
+
+	public double getTotalBranch() {
+		return totalBranch;
 	}
 
 }

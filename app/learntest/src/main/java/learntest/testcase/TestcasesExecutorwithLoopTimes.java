@@ -24,9 +24,11 @@ import learntest.testcase.data.BreakpointDataBuilder;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.StopTimer;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
 
+@SuppressWarnings("restriction")
 public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 
 	private static Logger log = LoggerFactory.getLogger(TestcasesExecutorwithLoopTimes.class);	
@@ -46,6 +48,9 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	private BreakpointBuilder bkpBuilder;
 	private DecisionLocation target;
 	
+	/**
+	 * keep the map from variable name to its variable value.
+	 */
 	private List<Map<String,Object>> instrVarMaps;
 	private boolean instrMode;
 	
@@ -54,9 +59,16 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		this.valueExtractor = new DebugValueExtractor(valRetrieveLevel);
 	}
 	
-	public void run() throws SavException {
+	public void run() throws SavException, SAVExecutionTimeOutException {
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		if (target == null) {
-			this.run(bkpBuilder.getBreakPoints());
+			List<BreakPoint> breakpointList = bkpBuilder.getBreakPoints();
+			this.run(breakpointList);
 		} else {
 			this.run(bkpBuilder.getBreakpoints(target));
 		}
@@ -175,6 +187,7 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		if (instValueExtractor != null && currentTestInputValues.isEmpty()) {
 			return instValueExtractor;
 		}
+		
 		return valueExtractor;
 	}
 	
@@ -225,4 +238,9 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		UNKNOWN;
 	}
 
+	public List<BreakpointValue> getCurrentTestInputValues() {
+		return currentTestInputValues;
+	}
+
 }
+

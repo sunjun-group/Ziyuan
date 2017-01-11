@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Templates
+Bundle-SymbolicName: invariant.templates
+Bundle-Version: 1.0.0.qualifier
+Export-Package: invariant.templates,
+ invariant.templates.onefeature,
+ invariant.templates.threefeatures,
+ invariant.templates.twofeatures
+Require-Bundle: sav.commons;bundle-version="1.0.0",
+ mutation;bundle-version="1.0.0",
+ svmlib;bundle-version="1.0.0"

@@ -3,10 +3,12 @@ package libsvm.core;
 import java.io.InputStream;
 import org.junit.Test;
 
+import sav.settings.SAVExecutionTimeOutException;
+
 public class MachineSimpleTests extends TestUltility{
 
 	@Test
-	public void whenThereAreMyOneFeatures() {
+	public void whenThereAreMyOneFeatures() throws SAVExecutionTimeOutException {
 		long startTime = System.currentTimeMillis();
 		
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("MyTwoFeatures.txt");
@@ -19,35 +21,35 @@ public class MachineSimpleTests extends TestUltility{
 	}
 	
 	@Test
-	public void whenThereAreMyTwoFeatures() {
+	public void whenThereAreMyTwoFeatures() throws SAVExecutionTimeOutException {
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("MyTwoFeatures.txt");
 		runTest(new Machine(), 2, inputStream);
 		// checkLastDividerFound(new double[]{-2, -3, -15});
 	}
 	
 	@Test
-	public void whenThereAreTwoFeatures() {
+	public void whenThereAreTwoFeatures() throws SAVExecutionTimeOutException {
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("TwoFeatures.txt");
 		runTest(new Machine(), 2, inputStream);
 		checkLastDividerFound(new double[]{-2, -3, -15});
 	}
 
 	@Test
-	public void whenThereAreThreeFeatures() {
+	public void whenThereAreThreeFeatures() throws SAVExecutionTimeOutException {
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ThreeFeatures.txt");
 		runTest(new Machine(), 3, inputStream);
 		checkLastDividerFound(new double[]{3, 7, 19, 80});
 	}
 	
 	@Test
-	public void whenRequireManyDividersInPositiveMachine() {
+	public void whenRequireManyDividersInPositiveMachine() throws SAVExecutionTimeOutException {
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ManyDuplicatedCuts.txt");
 		runTest(new Machine(), 3, inputStream);
 		checkLastDividerFound(new double[]{3, 7, 19, 80});
 	}
 	
 	@Test
-	public void whenThereIsOneNegativePoint() {
+	public void whenThereIsOneNegativePoint() throws SAVExecutionTimeOutException {
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("1Div1Negative.txt");
 		runTest(new Machine(), 2, inputStream);
 		checkLastDividerFound(new double[]{1, -1, -10});

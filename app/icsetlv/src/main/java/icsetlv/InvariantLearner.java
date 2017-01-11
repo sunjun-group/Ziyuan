@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
@@ -54,7 +55,7 @@ public class InvariantLearner implements CategoryCalculator {
 		machine = mediator.getMachine();
 	}
 
-	public List<BkpInvariantResult> learn(List<BreakpointData> bkpsData) {
+	public List<BkpInvariantResult> learn(List<BreakpointData> bkpsData) throws SAVExecutionTimeOutException {
 		List<BkpInvariantResult> result = new ArrayList<BkpInvariantResult>();
 		for (BreakpointData bkpData : bkpsData) {
 			log.info("Start to learn at " + bkpData.getBkp());
@@ -93,8 +94,9 @@ public class InvariantLearner implements CategoryCalculator {
 
 	/**
 	 * apply svm
+	 * @throws SAVExecutionTimeOutException 
 	 */
-	private Formula learn(BreakpointData bkpData, List<ExecVar> allVars) {
+	private Formula learn(BreakpointData bkpData, List<ExecVar> allVars) throws SAVExecutionTimeOutException {
 		mediator.logBkpData(bkpData, allVars);
 		/* handle boolean variables first */
 		List<ExecVar> boolVars = extractBoolVars(allVars);

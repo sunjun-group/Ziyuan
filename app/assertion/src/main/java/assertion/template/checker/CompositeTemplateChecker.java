@@ -32,6 +32,7 @@ import invariant.templates.twofeatures.TwoNumMulOverflowTemplate;
 import invariant.templates.twofeatures.TwoNumSqrtTemplate;
 import invariant.templates.twofeatures.TwoNumSquareTemplate;
 import invariant.templates.twofeatures.TwoNumSubOverflowTemplate;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecValue;
 
 public class CompositeTemplateChecker {
@@ -64,7 +65,7 @@ public class CompositeTemplateChecker {
 		return validTemplates;
 	}
 	
-	public void checkCompositeTemplates() {
+	public void checkCompositeTemplates() throws SAVExecutionTimeOutException {
 		catTemplates();
 		
 		IlpConjChecker ilp = new IlpConjChecker(ilpTemplates);

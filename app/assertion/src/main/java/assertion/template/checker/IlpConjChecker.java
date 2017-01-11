@@ -16,6 +16,7 @@ import libsvm.core.StringDividerProcessor;
 import libsvm.extension.PositiveSeparationMachine;
 import sav.common.core.formula.Formula;
 import sav.common.core.formula.LIAAtom;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVarType;
 
@@ -34,7 +35,7 @@ public class IlpConjChecker {
 		return validTemplates;
 	}
 	
-	public void checkIlpConjunction() {
+	public void checkIlpConjunction() throws SAVExecutionTimeOutException {
 		int size = ilpTemplates.size();
 		
 		for (int i = 0; i < size; i++) {

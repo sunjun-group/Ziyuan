@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import invariant.templates.SingleTemplate;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecValue;
 
 public class TypeTemplateChecker {
@@ -13,7 +14,7 @@ public class TypeTemplateChecker {
 	protected List<SingleTemplate> allTemplates = new ArrayList<SingleTemplate>();
 	
 	public boolean checkTemplates(List<List<ExecValue>> passExecValuesList,
-			List<List<ExecValue>> failExecValuesList) {
+			List<List<ExecValue>> failExecValuesList) throws SAVExecutionTimeOutException {
 		return false;
 	}
 	
@@ -25,7 +26,7 @@ public class TypeTemplateChecker {
 		return allTemplates;
 	}
 	
-	public boolean check(SingleTemplate t) {
+	public boolean check(SingleTemplate t) throws SAVExecutionTimeOutException {
 		boolean valid = t.validateInput() && t.check();
 		
 		allTemplates.add(t);

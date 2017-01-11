@@ -16,6 +16,13 @@ import net.sf.javailp.Linear;
 import net.sf.javailp.Operator;
 import sav.strategies.dto.execute.value.ExecVar;
 
+/**
+ * This class maintain a set of categories (or classifier, see {@code calculators}), if one of them returns
+ * a positive result for a given data point, this classifier return a positive result.
+ * 
+ * @author Yun Lin
+ *
+ */
 public class OrCategoryCalculator implements CategoryCalculator {
 	
 	private List<List<CategoryCalculator>> calculators;
@@ -31,6 +38,10 @@ public class OrCategoryCalculator implements CategoryCalculator {
 
 	@Override
 	public Category getCategory(DataPoint dataPoint) {
+		/**
+		 * TODO left by Lin Yun
+		 * Why the empty set returns positive category?
+		 */
 		if (calculators.isEmpty()) {
 			return Category.POSITIVE;
 		}
@@ -51,7 +62,7 @@ public class OrCategoryCalculator implements CategoryCalculator {
 		return Category.POSITIVE;
 	}
 	
-	public void clear(BreakpointData breakpointData) {
+	public void clearInvalidData(BreakpointData breakpointData) {
 		Iterator<BreakpointValue> values = breakpointData.getFalseValues().iterator();
 		while (values.hasNext()) {
 			BreakpointValue value = (BreakpointValue) values.next();

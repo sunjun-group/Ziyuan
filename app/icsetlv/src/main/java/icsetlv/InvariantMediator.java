@@ -27,6 +27,7 @@ import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
 import sav.common.core.utils.StopTimer;
 import sav.common.core.utils.StringUtils;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.execute.value.ExecVar;
@@ -48,7 +49,7 @@ public class InvariantMediator {
 	}
 
 	public List<BkpInvariantResult> learn(List<String> allTests,
-			List<BreakPoint> bkps) throws SavException {
+			List<BreakPoint> bkps) throws SavException, SAVExecutionTimeOutException {
 		Assert.assertNotNull(tcExecutor, "TestcasesExecutor cannot be null!");
 		Assert.assertNotNull(machine, "machine cannot be null!");
 		List<BreakpointData> bkpsData = debugTestAndCollectData(allTests, bkps);
@@ -83,20 +84,20 @@ public class InvariantMediator {
 	}
 
 	public List<BreakpointData> debugTestAndCollectData(List<String> allTests,
-			List<BreakPoint> bkps) throws SavException {
+			List<BreakPoint> bkps) throws SavException, SAVExecutionTimeOutException {
 		ensureTcExecutor();
 		tcExecutor.setup(appClassPath, allTests);
 		return debugTestAndCollectData(bkps);
 	}
 	
 	public List<BreakpointData> debugTestAndCollectData(List<BreakPoint> bkps)
-			throws SavException {
+			throws SavException, SAVExecutionTimeOutException {
 		tcExecutor.run(bkps);
 		return tcExecutor.getResult();
 	}
 	
 	public List<BreakpointData> instDebugAndCollectData(
-			List<BreakPoint> bkps, Map<String, Object> instrVarMap) throws SavException {
+			List<BreakPoint> bkps, Map<String, Object> instrVarMap) throws SavException, SAVExecutionTimeOutException {
 		ensureTcExecutor();
 		tcExecutor.setValueExtractor(new DebugValueInstExtractor(tcExecutor.getValRetrieveLevel(), instrVarMap));
 		List<BreakpointData> result = debugTestAndCollectData(bkps);

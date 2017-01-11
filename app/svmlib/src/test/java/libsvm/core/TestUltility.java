@@ -16,6 +16,8 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sav.settings.SAVExecutionTimeOutException;
+
 /**
  * @author khanh
  *
@@ -32,7 +34,7 @@ public class TestUltility {
 						.setEps(0.00001).setUseShrinking(false).setPredictProbability(false).setC(Double.MAX_VALUE));
 	}
 	
-	protected void runTest(Machine defaultMachine, int numOfFeatures, InputStream inputStream) {
+	protected void runTest(Machine defaultMachine, int numOfFeatures, InputStream inputStream) throws SAVExecutionTimeOutException {
 		machine = setupMachine(defaultMachine, numOfFeatures);
 		
 		readDataFromFile(inputStream, numOfFeatures);

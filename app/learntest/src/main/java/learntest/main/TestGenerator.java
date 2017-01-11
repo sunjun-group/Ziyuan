@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jacop.core.Domain;
-import org.jacop.core.IntDomain;
+import org.jacop.floats.core.FloatDomain;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -19,6 +19,7 @@ import gentest.injection.GentestModules;
 import gentest.injection.TestcaseGenerationScope;
 import gentest.junit.TestsPrinter;
 import learntest.gentest.TestSeqGenerator;
+import learntest.util.LearnTestUtil;
 import net.sf.javailp.Result;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
@@ -29,13 +30,26 @@ public class TestGenerator {
 	
 	private static String prefix = "test";
 	
+	
+	
+	@SuppressWarnings("rawtypes")
 	public void genTest() throws ClassNotFoundException, SavException {
 		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(1);
 		builder.queryMaxLength(1).testPerQuery(1);
-		builder.forClass(Class.forName(LearnTestConfig.className)).method(LearnTestConfig.methodName);
+		
+//		Class clazz = Class.forName(LearnTestConfig.testClassName);
+		Class clazz = LearnTestUtil.retrieveClass(LearnTestConfig.testClassName);
+		builder.forClass(clazz).method(LearnTestConfig.testMethodName);
+		
 		//builder.forClass(Class.forName(LearnTestConfig.className));
-		TestsPrinter printer = new TestsPrinter(LearnTestConfig.pkg, LearnTestConfig.pkg, 
-				prefix, LearnTestConfig.typeName, TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
+		
+		String testSourceFolder = LearnTestUtil.retrieveTestSourceFolder();
+		
+		System.currentTimeMillis();
+		
+		boolean isL2T = LearnTestConfig.isL2TApproach;
+		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getTestPackageName(isL2T), null/*LearnTestConfig.getTestPackageName(isL2T)*/, 
+				prefix, LearnTestConfig.getSimpleClassName(), testSourceFolder);
 		printer.printTests(builder.generate());
 		
 		/*final FileCompilationUnitPrinter cuPrinter = new FileCompilationUnitPrinter(
@@ -83,10 +97,41 @@ public class TestGenerator {
 		}
 		injectorModule.exit(TestcaseGenerationScope.class);
 		
-		TestsPrinter printer = new TestsPrinter(LearnTestConfig.resPkg, null, 
-				prefix, LearnTestConfig.typeName, TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
+//		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(), null, 
+//				prefix, LearnTestConfig.getSimpleClassName(), TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
+		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(LearnTestConfig.isL2TApproach), null, 
+				prefix, LearnTestConfig.getSimpleClassName(), LearnTestUtil.retrieveTestSourceFolder());
 		printer.printTests(new Pair<List<Sequence>, List<Sequence>>(sequences, new ArrayList<Sequence>()));
 	}
+	
+//	public String retrieveTestSourceFolder() {
+//		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+//		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.projectName);
+//		IJavaProject javaProject = JavaCore.create(iProject);
+//		
+//		try {
+//			for(IPackageFragmentRoot root: javaProject.getAllPackageFragmentRoots()){
+//				if(root instanceof PackageFragmentRoot){
+//					String name = root.getElementName();
+//					if(name.equals("test")){
+//						URI uri = root.getCorrespondingResource().getLocationURI();
+//						String sourceFolderPath = uri.toString();
+//						sourceFolderPath = sourceFolderPath.substring(6, sourceFolderPath.length());
+//						
+//						return sourceFolderPath;
+//					}
+//					
+//					
+//				}
+//				
+//			}
+//		} catch (JavaModelException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		
+//		return null;
+//	}
 	
 	private List<Domain[]> clean(List<Domain[]> solutions, int size) {
 		List<Domain[]> res = new ArrayList<Domain[]>();
@@ -107,7 +152,7 @@ public class TestGenerator {
 
 	private boolean duplicate(Domain[] solution, Domain[] r, int size) {
 		for (int i = 0; i < size; i++) {
-			if (((IntDomain) solution[i]).min() != ((IntDomain) r[i]).min()) {
+			if (((FloatDomain) solution[i]).min() != ((FloatDomain) r[i]).min()) {
 				return false;
 			}
 		}
@@ -139,14 +184,15 @@ public class TestGenerator {
 		}
 		injectorModule.exit(TestcaseGenerationScope.class);
 		
-		TestsPrinter printer = new TestsPrinter(LearnTestConfig.resPkg, null, 
-				prefix, LearnTestConfig.typeName, TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
+		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(LearnTestConfig.isL2TApproach), null, 
+				prefix, LearnTestConfig.getSimpleClassName(), TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
 		printer.printTests(new Pair<List<Sequence>, List<Sequence>>(sequences, new ArrayList<Sequence>()));
 	}
 
 	private MethodCall findTargetMethod() throws ClassNotFoundException {
-		Class<?> clazz = Class.forName(LearnTestConfig.className);
-		Method method = MethodUtils.findMethod(clazz, LearnTestConfig.methodName);
+//		Class<?> clazz = Class.forName(LearnTestConfig.testClassName);
+		Class<?> clazz = LearnTestUtil.retrieveClass(LearnTestConfig.testClassName);
+		Method method = MethodUtils.findMethod(clazz, LearnTestConfig.testMethodName);
 		if (Modifier.isPublic(method.getModifiers())) {
 			return MethodCall.of(method, clazz);
 		}

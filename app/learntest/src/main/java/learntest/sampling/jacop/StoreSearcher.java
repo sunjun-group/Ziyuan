@@ -4,20 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jacop.core.Domain;
-import org.jacop.core.IntDomain;
-import org.jacop.core.IntVar;
 import org.jacop.core.Store;
+import org.jacop.floats.core.FloatDomain;
+import org.jacop.floats.core.FloatVar;
+import org.jacop.floats.search.SplitSelectFloat;
 import org.jacop.search.DepthFirstSearch;
-import org.jacop.search.IndomainMax;
-import org.jacop.search.IndomainMin;
-import org.jacop.search.IndomainRandom;
-import org.jacop.search.InputOrderSelect;
 import org.jacop.search.Search;
-import org.jacop.search.SelectChoicePoint;
+
+import sav.settings.SAVExecutionTimeOutException;
+import sav.settings.SAVTimer;
 
 public class StoreSearcher {
 	
-	public static List<Domain[]> solve(List<Store> stores) {
+	public static int length;
+
+	public static List<Domain[]> solve(List<Store> stores) throws SAVExecutionTimeOutException {
 		List<Domain[]> res = new ArrayList<Domain[]>();
 		for (Store store : stores) {
 			Domain[] solution = solve(store);
@@ -38,13 +39,17 @@ public class StoreSearcher {
 	}
 	
 	public static Domain[] solve(Store store) {
-		IntVar[] intVars = new IntVar[store.size()];
+		FloatVar[] intVars = new FloatVar[store.size()];
 		for (int i = 0; i < intVars.length; i++) {
-			intVars[i] = (IntVar)store.vars[i];
+			intVars[i] = (FloatVar)store.vars[i];
 		}
-		Search<IntVar> search = new DepthFirstSearch<IntVar>();
-		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
-				store, intVars, new IndomainRandom<IntVar>()); 
+		Search<FloatVar> search = new DepthFirstSearch<FloatVar>();
+		//search.setSolutionListener(new PrintOutListener<FloatVar>());
+		search.getSolutionListener().searchAll(true);
+		search.getSolutionListener().recordSolutions(true);
+		search.setTimeOut(1);
+		search.setPrintInfo(false);
+		SplitSelectFloat<FloatVar> select = new SplitSelectFloat<FloatVar>(store, intVars, null);
 	    boolean result = search.labeling(store, select);
 	    if (result) {
 			return search.getSolution();
@@ -53,13 +58,16 @@ public class StoreSearcher {
 	}
 	
 	public static Domain[] minSolve(Store store) {
-		IntVar[] intVars = new IntVar[store.size()];
+		FloatVar[] intVars = new FloatVar[store.size()];
 		for (int i = 0; i < intVars.length; i++) {
-			intVars[i] = (IntVar)store.vars[i];
+			intVars[i] = (FloatVar)store.vars[i];
 		}
-		Search<IntVar> search = new DepthFirstSearch<IntVar>();
-		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
-				store, intVars, new IndomainMin<IntVar>()); 
+		Search<FloatVar> search = new DepthFirstSearch<FloatVar>();
+		search.getSolutionListener().searchAll(true);
+		search.getSolutionListener().recordSolutions(true);
+		search.setTimeOut(1);
+		search.setPrintInfo(false);
+		SplitSelectFloat<FloatVar> select = new SplitSelectFloat<FloatVar>(store, intVars, null); 
 	    boolean result = search.labeling(store, select);
 	    if (result) {
 			return search.getSolution();
@@ -68,13 +76,16 @@ public class StoreSearcher {
 	}
 	
 	public static Domain[] maxSolve(Store store) {
-		IntVar[] intVars = new IntVar[store.size()];
+		FloatVar[] intVars = new FloatVar[store.size()];
 		for (int i = 0; i < intVars.length; i++) {
-			intVars[i] = (IntVar)store.vars[i];
+			intVars[i] = (FloatVar)store.vars[i];
 		}
-		Search<IntVar> search = new DepthFirstSearch<IntVar>();
-		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
-				store, intVars, new IndomainMax<IntVar>()); 
+		Search<FloatVar> search = new DepthFirstSearch<FloatVar>();
+		search.getSolutionListener().searchAll(true);
+		search.getSolutionListener().recordSolutions(true);
+		search.setTimeOut(1);
+		search.setPrintInfo(false);
+		SplitSelectFloat<FloatVar> select = new SplitSelectFloat<FloatVar>(store, intVars, null);
 	    boolean result = search.labeling(store, select);
 	    if (result) {
 			return search.getSolution();
@@ -82,7 +93,7 @@ public class StoreSearcher {
 	    return null;
 	}
 	
-	public static List<Domain[]> solveAll(List<Store> stores) {
+	public static List<Domain[]> solveAll(List<Store> stores) throws SAVExecutionTimeOutException {
 		List<Domain[]> res = new ArrayList<Domain[]>();
 		for (Store store : stores) {
 			List<Domain[]> solutions = solveAll(store);
@@ -107,16 +118,16 @@ public class StoreSearcher {
 		if (store == null) {
 			return res;
 		}
-		IntVar[] intVars = new IntVar[store.size()];
+		FloatVar[] intVars = new FloatVar[store.size()];
 		for (int i = 0; i < intVars.length; i++) {
-			intVars[i] = (IntVar)store.vars[i];
+			intVars[i] = (FloatVar)store.vars[i];
 		}
-		Search<IntVar> search = new DepthFirstSearch<IntVar>();
+		Search<FloatVar> search = new DepthFirstSearch<FloatVar>();
 		search.getSolutionListener().searchAll(true);
 		search.getSolutionListener().recordSolutions(true);
 		search.setTimeOut(1);
-		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
-				store, intVars, new IndomainRandom<IntVar>()); 
+		search.setPrintInfo(false);
+		SplitSelectFloat<FloatVar> select = new SplitSelectFloat<FloatVar>(store, intVars, null);
 	    boolean result = search.labeling(store, select);
 	    if (result) {
 	    	int cnt = search.getSolutionListener().solutionsNo();
@@ -128,8 +139,9 @@ public class StoreSearcher {
 		return res;
 	}
 	
-	public static List<Domain[]> solve(List<Store> stores, int number) {
+	public static List<Domain[]> solve(List<Store> stores, int number) throws SAVExecutionTimeOutException {
 		List<Domain[]> res = new ArrayList<Domain[]>();
+		number /= stores.size();
 		for (Store store : stores) {
 			List<Domain[]> solutions = solve(store, number);
 			for (Domain[] solution : solutions) {
@@ -153,16 +165,16 @@ public class StoreSearcher {
 		if (store == null) {
 			return res;
 		}
-		IntVar[] intVars = new IntVar[store.size()];
+		FloatVar[] intVars = new FloatVar[store.size()];
 		for (int i = 0; i < intVars.length; i++) {
-			intVars[i] = (IntVar)store.vars[i];
+			intVars[i] = (FloatVar)store.vars[i];
 		}
-		Search<IntVar> search = new DepthFirstSearch<IntVar>();
+		Search<FloatVar> search = new DepthFirstSearch<FloatVar>();
 		search.getSolutionListener().searchAll(true);
 		search.getSolutionListener().recordSolutions(true);
 		search.setTimeOut(1);
-		SelectChoicePoint<IntVar> select = new InputOrderSelect<IntVar>(
-				store, intVars, new IndomainRandom<IntVar>()); 
+		search.setPrintInfo(false);
+		SplitSelectFloat<FloatVar> select = new SplitSelectFloat<FloatVar>(store, intVars, null);
 	    boolean result = search.labeling(store, select);
 	    if (result) {
 	    	int cnt = search.getSolutionListener().solutionsNo();
@@ -182,7 +194,7 @@ public class StoreSearcher {
 		return res;
 	}
 	
-	public static boolean duplicate(Domain[] s1, Domain[] s2) {
+	public static boolean duplicate(Domain[] s1, Domain[] s2) throws SAVExecutionTimeOutException {
 		if (s1 == null && s2 == null) {
 			return true;
 		} else if (s1 == null || s2 == null) {
@@ -191,8 +203,15 @@ public class StoreSearcher {
 		if (s1.length != s2.length) {
 			return false;
 		}
-		for (int i = 0; i < s1.length; i++) {
-			if (((IntDomain) s1[i]).min() != ((IntDomain) s2[i]).min()) {
+		if (s1.length < length) {
+			return false;
+		}
+		for (int i = 0; i < length; i++) {
+			if(SAVTimer.isTimeOut()){
+				throw new SAVExecutionTimeOutException("Time out in StoreSearchr.duplicate()");
+			}
+			
+			if (((FloatDomain) s1[i]).min() != ((FloatDomain) s2[i]).min()) {
 				return false;
 			}
 		}

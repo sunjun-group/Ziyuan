@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jacop.core.Domain;
-import org.jacop.core.IntDomain;
+import org.jacop.floats.core.FloatDomain;
 
 import com.google.inject.Inject;
 
@@ -78,7 +78,7 @@ public class TestSeqGenerator {
 		//prepare inputs for target method
 		int idx = 0;
 		for (ExecVar var : vars) {
-			int value  = ((IntDomain) solution[idx ++]).min();
+			double value  = ((FloatDomain) solution[idx ++]).min();
 			
 			String[] parts = var.getLabel().split("[.]");
 			String receiver = parts[0];
@@ -97,7 +97,7 @@ public class TestSeqGenerator {
 				if (variable == null) {
 					IType type = typeMap.get(classMap.get(receiver));
 					if (type.isArray() && parts.length == 2 && parts[1].equals("length")) {
-						variable = arrayValueGenerator.generate(type, firstVarIdx, value < 0 ? 0 : value);
+						variable = arrayValueGenerator.generate(type, firstVarIdx, value < 0 ? 0 : (int)value);
 						sequence.append(variable);
 						firstVarIdx += variable.getNewVariables().size();
 						varMap.put(receiver, variable);
