@@ -94,6 +94,7 @@ public class Engine {
 		
 		long time = -1;
 		double coverage = 0;
+		int testCnt = 1;
 		
 		//JacopSelectiveSampling selectiveSampling = null;
 		JavailpSelectiveSampling selectiveSampling = null;
@@ -119,7 +120,7 @@ public class Engine {
 					List<BreakpointValue> list = new ArrayList<BreakpointValue>();
 					list.add(test);
 					new TestGenerator().genTestAccordingToSolutions(getSolutions(list, vars), vars);
-					System.out.println("Total test cases number: " + tests.size());
+					System.out.println("Total test cases number: " + testCnt);
 					coverage = 1;
 				}
 			} else {
@@ -158,7 +159,8 @@ public class Engine {
 				List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
 				
 				new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());
-				System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
+				testCnt = selectiveSampling.getTotalNum();
+				System.out.println("Total test cases number: " + testCnt);
 			}
 			
 			time = SAVTimer.getExecutionTime();		
@@ -166,7 +168,8 @@ public class Engine {
 			if (learner != null) {
 				List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
 				new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());
-				System.out.println("Total test cases number: " + selectiveSampling.getTotalNum());
+				testCnt = selectiveSampling.getTotalNum();
+				System.out.println("Total test cases number: " + testCnt);
 			}
 			e.printStackTrace();
 		}		
@@ -181,7 +184,7 @@ public class Engine {
 			coverage = learner.getCoverage();
 		}
 		
-		RunTimeInfo info = new RunTimeInfo(time, coverage);
+		RunTimeInfo info = new RunTimeInfo(time, coverage, testCnt);
 		return info;
 	}
 	

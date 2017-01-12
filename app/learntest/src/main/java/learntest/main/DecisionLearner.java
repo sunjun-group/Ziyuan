@@ -3,6 +3,7 @@ package learntest.main;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,7 +33,6 @@ import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
 import libsvm.core.Machine.DataPoint;
 import libsvm.core.Model;
-import libsvm.extension.SVMTimeOutException;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.AndFormula;
@@ -217,7 +217,7 @@ public class DecisionLearner implements CategoryCalculator {
 			}
 		}
 		
-		updateCoverage(bkpData);
+		//updateCoverage(bkpData);
 				
 		if (bkpData.getTrueValues().isEmpty()) {
 			log.info("Missing true branch data");
@@ -275,7 +275,7 @@ public class DecisionLearner implements CategoryCalculator {
 		
 		if (cfgConditionManager.isRelevant(bkpData.getLocation().getLineNo())) {
 			
-			int times = 0;
+			//int times = 0;
 			machine.resetData();
 			addDataPoints(originVars, bkpData.getTrueValues(), Category.POSITIVE, machine);
 			addDataPoints(originVars, bkpData.getFalseValues(), Category.NEGATIVE, machine);
@@ -326,7 +326,7 @@ public class DecisionLearner implements CategoryCalculator {
 				} else {
 					break;
 				}
-				times ++;
+				//times ++;
 			}
 		}
 		
@@ -358,7 +358,7 @@ public class DecisionLearner implements CategoryCalculator {
 			//loopData = (LoopTimesData) bkpDataMap.get(loopData.getLocation());
 		}
 		
-		updateCoverage(loopData);
+		//updateCoverage(loopData);
 		
 		if (loopData.getOneTimeValues().isEmpty()) {
 			log.info("Missing once loop data");
@@ -388,7 +388,7 @@ public class DecisionLearner implements CategoryCalculator {
 		if (/*!manager.isEnd(loopData.getLocation().getLineNo())*/
 				cfgConditionManager.isRelevant(loopData.getLocation().getLineNo())) {
 			
-			int times = 0;
+			//int times = 0;
 			machine.resetData();
 			addDataPoints(originVars, loopData.getMoreTimesValues(), Category.POSITIVE, machine);
 			addDataPoints(originVars, loopData.getOneTimeValues(), Category.NEGATIVE, machine);
@@ -435,7 +435,7 @@ public class DecisionLearner implements CategoryCalculator {
 				} else {
 					break;
 				}
-				times ++;
+				//times ++;
 			}
 			
 		}	
@@ -621,7 +621,7 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 		int size = vars.size();
 		for (int j = 0; j < size; j++) {
-			double value = bValue.getValue(vars.get(j).getLabel(), 0.0);
+			//double value = bValue.getValue(vars.get(j).getLabel(), 0.0);
 			for (int k = j; k < size; k++) {
 				//lineVals[i ++] = value * bValue.getValue(vars.get(k).getLabel(), 0.0);
 				lineVals[i ++] = 0.0;
@@ -683,6 +683,20 @@ public class DecisionLearner implements CategoryCalculator {
 	}
 
 	public double getCoverage() {
+		Collection<BreakpointData> values = bkpDataMap.values();
+		for (BreakpointData value : values) {
+			needFalse = true;
+			if (value instanceof LoopTimesData) {
+				needTrue = false;
+				needOne = true;
+				needMore = true;
+				updateCoverage(value);
+				updateCoverage((LoopTimesData) value);
+			} else {
+				needTrue = true;
+				updateCoverage(value);
+			}
+		}
 		return curBranchNumber / cfgConditionManager.getTotalBranch();
 	}
 
