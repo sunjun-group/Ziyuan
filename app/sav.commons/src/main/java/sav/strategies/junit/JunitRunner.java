@@ -166,6 +166,7 @@ public class JunitRunner {
 		VMRunner runner = new VMRunner();
 		config.setLaunchClass(JunitRunner.class.getName());
 		config.setDebug(false);
+		
 		List<String> args = new JunitRunnerProgramArgBuilder()
 				.methods(params.getClassMethods())
 				.testClassNames(params.getTestingClassNames())
@@ -173,6 +174,7 @@ public class JunitRunner {
 				.destinationFile(destFile)
 				.testcaseTimeout(params.getTimeout())
 				.build();
+		
 		config.setProgramArgs(args);
 		runner.startAndWaitUntilStop(config);
 		return JunitResult.readFrom(destFile);

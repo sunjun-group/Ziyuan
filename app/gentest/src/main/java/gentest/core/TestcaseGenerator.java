@@ -4,6 +4,14 @@
 package gentest.core;
 
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.google.inject.Inject;
+
 import gentest.core.data.IDataProvider;
 import gentest.core.data.LocalVariable;
 import gentest.core.data.MethodCall;
@@ -13,16 +21,7 @@ import gentest.core.data.type.IType;
 import gentest.core.data.type.ITypeCreator;
 import gentest.core.data.variable.ISelectedVariable;
 import gentest.core.execution.RuntimeExecutor;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import sav.common.core.SavException;
-
-import com.google.inject.Inject;
 
 /**
  * @author LLT
@@ -86,6 +85,7 @@ public class TestcaseGenerator {
 			 * which initializes those values into the sequence */
 			List<ISelectedVariable> selectParams = selectParams(method, receiverType);
 			int[] inVars = new int[selectParams.size()];
+			
 			for (int j = 0; j < selectParams.size(); j++) {
 				ISelectedVariable param = selectParams.get(j);
 				inVars[j] = param.getReturnVarId();

@@ -37,6 +37,10 @@ public class ValueGeneratorMediator {
 	@Inject
 	private PrimitiveValueGenerator primitiveGenerator;
 	
+//	private static boolean firstNull = true;
+//	
+//	private static boolean isRoot = true;
+	
 	public GeneratedVariable generate(IType type, 
 			int firstVarId, boolean isReceiver) throws SavException {
 		GeneratedVariable variable = new GeneratedVariable(firstVarId);
@@ -51,6 +55,17 @@ public class ValueGeneratorMediator {
 	public GeneratedVariable append(GeneratedVariable rootVariable, int level,
 			IType type, boolean isReceiver) throws SavException {
 		GeneratedVariable variable = null;
+		
+//		if (!PrimitiveValueGenerator.accept(type.getRawType()) && firstNull && !isRoot) {
+//			firstNull = false;
+//			variable = rootVariable.newVariable();
+//			ValueGenerator.assignNull(variable, type.getRawType());
+//			rootVariable.append(variable);
+//			return variable;
+//		}
+//		
+//		if (isRoot) isRoot = false;
+		
 		List<GeneratedVariable> candidatesInCache = getVariableStore()
 				.getVariableByType(type);
 		boolean selectFromCache = Randomness

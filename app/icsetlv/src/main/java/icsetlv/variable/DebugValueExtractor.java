@@ -53,7 +53,6 @@ import com.sun.jdi.StringReference;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
-import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.BreakpointEvent;
 
 import icsetlv.DefaultValues;
@@ -68,7 +67,6 @@ import sav.strategies.dto.execute.value.ArrayValue;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.PrimitiveValue;
 import sav.strategies.dto.execute.value.ReferenceValue;
-import sav.strategies.dto.execute.value.StringValue;
 
 /**
  * @author LLT
@@ -92,7 +90,7 @@ public class DebugValueExtractor {
 		this.valRetrieveLevel = valRetrieveLevel;
 	}
 	
-	public final BreakpointValue extractValue(BreakPoint bkp, BreakpointEvent event)
+	public BreakpointValue extractValue(BreakPoint bkp, BreakpointEvent event)
 			throws IncompatibleThreadStateException, AbsentInformationException, SavException {
 		if (bkp == null) {
 			return null;

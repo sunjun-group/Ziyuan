@@ -75,4 +75,9 @@ public class MethodCall {
 	public boolean requireReceiver() {
 		return !Modifier.isStatic(method.getModifiers());
 	}
+	
+	public String toString() {
+		return method.getName() + "(" + method.getParameters() + ")";
+	}
+	
 }

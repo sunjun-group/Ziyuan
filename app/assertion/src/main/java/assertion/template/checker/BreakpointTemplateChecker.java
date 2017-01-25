@@ -127,7 +127,7 @@ public class BreakpointTemplateChecker {
 			
 			if (!templates.isEmpty()) {
 				Template t = templates.get(0);
-//				log.info("Single template {}\n", t);
+				log.info("Single template {}\n", t);
 				
 				samplingNewData(bkpData.getBkp(), tc, t, level);
 				

@@ -14,6 +14,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.sun.jdi.LocalVariable;
+
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVarType;
@@ -23,6 +25,8 @@ import sav.strategies.dto.execute.value.ExecVarType;
  * 
  */
 public class BreakpointValue extends ExecValue {
+	
+	private List<LocalVariable> vars;
 
 	public BreakpointValue(String id) {
 		super(id);
@@ -114,4 +118,13 @@ public class BreakpointValue extends ExecValue {
 	public ExecVarType getType() {
 		return null;
 	}
+	
+	public void setVars(List<LocalVariable> vars) {
+		this.vars = vars;
+	}
+	
+	public List<LocalVariable> getVars() {
+		return vars;
+	}
+	
 }

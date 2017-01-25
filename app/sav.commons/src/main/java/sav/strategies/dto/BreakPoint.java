@@ -131,6 +131,7 @@ public class BreakPoint extends ClassLocation {
 		private final String fullName;
 		private final VarScope scope;
 		private String id;
+		private String type;
 		
 		public Variable(String name, String fullName, VarScope scope) {
 			this.parentName = name;
@@ -146,6 +147,13 @@ public class BreakPoint extends ClassLocation {
 			this.parentName = name;
 			this.fullName = name;
 			scope = VarScope.UNDEFINED;
+		}
+		
+		public Variable(String name, String type, boolean b) {
+			this.parentName = name;
+			this.fullName = name;
+			scope = VarScope.UNDEFINED;
+			this.type = type;
 		}
 
 		public String getParentName() {
@@ -176,9 +184,14 @@ public class BreakPoint extends ClassLocation {
 			return scope;
 		}
 
+		public String getType() {
+			return type;
+		}
+		
 		@Override
 		public String toString() {
 			return "Variable [name=" + parentName + ", fullName=" + fullName
+					+ ", type=" + type
 					+ ", scope=" + scope + "]";
 		}
 
