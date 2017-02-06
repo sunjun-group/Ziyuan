@@ -26,8 +26,10 @@ import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SwitchStatement;
+import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
@@ -189,15 +191,33 @@ public class EvaluationHandler extends AbstractHandler {
 				}
 				
 				if(isPublic){
-					/*NestedBlockChecker checker = new NestedBlockChecker();
-					md.accept(checker);
-					if(checker.isNestedJudge){*/
-						mdList.add(md);			
-						System.currentTimeMillis();
-					//}
+					NestedBlockChecker checker = new NestedBlockChecker();
+						md.accept(checker);
+						if(checker.isNestedJudge){
+							if(!containsArray(md.parameters())){
+								mdList.add(md);									
+							}
+						}
 					
 				}
 			}
+			
+			return false;
+		}
+
+		@SuppressWarnings("rawtypes")
+		private boolean containsArray(List parameters) {
+			for(Object obj: parameters){
+				if(obj instanceof SingleVariableDeclaration){
+					SingleVariableDeclaration svd = (SingleVariableDeclaration)obj;
+					Type type = svd.getType();
+					if(type.isArrayType()){
+						return true;
+					}
+				}
+				
+			}
+			
 			
 			return false;
 		}
