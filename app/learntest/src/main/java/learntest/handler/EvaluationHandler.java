@@ -194,7 +194,7 @@ public class EvaluationHandler extends AbstractHandler {
 					NestedBlockChecker checker = new NestedBlockChecker();
 						md.accept(checker);
 						if(checker.isNestedJudge){
-							if(!containsArray(md.parameters())){
+							if(!containsArrayOrString(md.parameters())){
 								mdList.add(md);									
 							}
 						}
@@ -206,12 +206,12 @@ public class EvaluationHandler extends AbstractHandler {
 		}
 
 		@SuppressWarnings("rawtypes")
-		private boolean containsArray(List parameters) {
+		private boolean containsArrayOrString(List parameters) {
 			for(Object obj: parameters){
 				if(obj instanceof SingleVariableDeclaration){
 					SingleVariableDeclaration svd = (SingleVariableDeclaration)obj;
 					Type type = svd.getType();
-					if(type.isArrayType()){
+					if(type.isArrayType() || type.toString().contains("String")){
 						return true;
 					}
 				}
