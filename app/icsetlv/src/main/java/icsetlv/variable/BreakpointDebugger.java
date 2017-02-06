@@ -8,22 +8,13 @@
 
 package icsetlv.variable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import sav.common.core.ModuleEnum;
-import sav.common.core.SavException;
-import sav.common.core.utils.BreakpointUtils;
-import sav.common.core.utils.CollectionUtils;
-import sav.settings.SAVExecutionTimeOutException;
-import sav.settings.SAVTimer;
-import sav.strategies.dto.BreakPoint;
-import sav.strategies.vm.SimpleDebugger;
-import sav.strategies.vm.VMConfiguration;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;
@@ -39,6 +30,16 @@ import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequestManager;
+
+import sav.common.core.ModuleEnum;
+import sav.common.core.SavException;
+import sav.common.core.utils.BreakpointUtils;
+import sav.common.core.utils.CollectionUtils;
+import sav.settings.SAVExecutionTimeOutException;
+import sav.settings.SAVTimer;
+import sav.strategies.dto.BreakPoint;
+import sav.strategies.vm.SimpleDebugger;
+import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT
@@ -113,8 +114,11 @@ public abstract class BreakpointDebugger {
 						
 					} else if (event instanceof BreakpointEvent) {
 						BreakpointEvent bkpEvent = (BreakpointEvent) event;
-						BreakPoint bkp = locBrpMap.get(bkpEvent.location()
-								.toString());
+						
+						if(bkpEvent.location().lineNumber()==100){
+							System.currentTimeMillis();
+						}
+						BreakPoint bkp = locBrpMap.get(bkpEvent.location().toString());
 						handleBreakpointEvent(bkp, vm, bkpEvent);
 					}
 				}
@@ -167,32 +171,35 @@ public abstract class BreakpointDebugger {
 	private void addBreakpointWatch(VirtualMachine vm, ReferenceType refType,
 			Map<String, BreakPoint> locBrpMap) {
 		for (BreakPoint brkp : CollectionUtils.initIfEmpty(brkpsMap.get(refType.name()))) {
-			Location location = addBreakpointWatch(vm, refType, brkp.getLineNo());
-			if (location != null) {
-				locBrpMap.put(location.toString(), brkp);
-			} else {
-				log.warn("Cannot add break point " + brkp);
+			if(brkp.getLineNo()==100){
+				System.currentTimeMillis();
 			}
+			
+			List<Location> locationList = addBreakpointWatch(vm, refType, brkp.getLineNo());
+			for (Location location: locationList) {
+				locBrpMap.put(location.toString(), brkp);
+			} 
 		}
 	}
 	
-	protected final Location addBreakpointWatch(VirtualMachine vm,
+	protected final List<Location> addBreakpointWatch(VirtualMachine vm,
 			ReferenceType refType, int lineNumber) {
-		List<Location> locations;
+		List<Location> returnLocations = new ArrayList<>();
 		try {
-			locations = refType.locationsOfLine(lineNumber);
+			List<Location> locations = refType.locationsOfLine(lineNumber);
+			for(Location location: locations) {
+//				Location location = locations.get(0);
+				BreakpointRequest breakpointRequest = vm.eventRequestManager()
+						.createBreakpointRequest(location);
+				breakpointRequest.setEnabled(true);
+				returnLocations.add(location);
+				
+			} 
 		} catch (AbsentInformationException e) {
 			log.warn(e.getMessage());
-			return null;
 		}
-		if (!locations.isEmpty()) {
-			Location location = locations.get(0);
-			BreakpointRequest breakpointRequest = vm.eventRequestManager()
-					.createBreakpointRequest(location);
-			breakpointRequest.setEnabled(true);
-			return location;
-		} 
-		return null;
+		
+		return returnLocations;
 	}
 	
 	public String getProccessError() {

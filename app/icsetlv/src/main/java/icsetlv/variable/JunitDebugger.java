@@ -97,7 +97,7 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 		ReferenceType refType = event.referenceType();
 		if (refType.name().equals(ENTER_TC_BKP.getClassCanonicalName())) {
 			junitLoc = addBreakpointWatch(vm, refType,
-					ENTER_TC_BKP.getLineNo());
+					ENTER_TC_BKP.getLineNo()).get(0);
 		} 
 	}
 	

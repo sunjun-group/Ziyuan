@@ -163,6 +163,7 @@ public class DebugValueExtractor {
 				
 				if (!allVariables.isEmpty()) {
 					collectValue(bkVal, thread, allVariables);
+					System.currentTimeMillis();
 				}
 			}
 		}
