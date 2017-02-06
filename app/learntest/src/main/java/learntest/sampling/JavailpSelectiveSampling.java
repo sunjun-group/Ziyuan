@@ -41,6 +41,8 @@ public class JavailpSelectiveSampling {
 	private int numPerExe = 100;
 	private int timesLimit = 20;
 	
+	private int delta;
+	
 	public JavailpSelectiveSampling(TestcasesExecutorwithLoopTimes tcExecutor) {
 		this.tcExecutor = tcExecutor;
 		prevDatas = new ArrayList<Result>();
@@ -58,6 +60,7 @@ public class JavailpSelectiveSampling {
 			}
 			prevDatas.add(result);
 		}
+		delta = values.size() - 1;
 	}
 
 	public Map<DecisionLocation, BreakpointData> selectDataForEmpty(DecisionLocation target, 
@@ -510,7 +513,7 @@ public class JavailpSelectiveSampling {
 	}
 	
 	public int getTotalNum() {
-		return prevDatas.size();
+		return prevDatas.size() - delta;
 	}
 
 }

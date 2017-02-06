@@ -3,11 +3,13 @@ package learntest.main;
 public class RunTimeInfo {
 	private long time;
 	private double coverage;
+	private int testCnt;
 
-	public RunTimeInfo(long time, double coverage) {
+	public RunTimeInfo(long time, double coverage, int testCnt) {
 		super();
 		this.time = time;
 		this.coverage = coverage;
+		this.testCnt = testCnt;
 	}
 
 	public long getTime() {
@@ -24,6 +26,14 @@ public class RunTimeInfo {
 
 	public void setCoverage(double coverage) {
 		this.coverage = coverage;
+	}
+
+	public int getTestCnt() {
+		return testCnt;
+	}
+
+	public void setTestCnt(int testCnt) {
+		this.testCnt = testCnt;
 	}
 
 }

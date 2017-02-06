@@ -8,8 +8,10 @@ public class Trial {
 	
 	private double l2tTime;
 	private double l2tCoverage;
-	private double ramdoopTime;
+	private int l2tTestCnt;
+	private double randoopTime;
 	private double randoopCoverage;
+	private int randoopTestCnt;
 
 	public Trial(){
 		
@@ -40,15 +42,15 @@ public class Trial {
 		return true;
 	}
 
-
-
-	public Trial(String methodName, double l2tTime, double l2tCoverage, double ramdoopTime, double randoopCoverage) {
+	public Trial(String methodName, double l2tTime, double l2tCoverage, int l2tTestCnt, double randoopTime, double randoopCoverage, int randoopTestCnt) {
 		super();
 		this.methodName = methodName;
 		this.l2tTime = l2tTime;
 		this.l2tCoverage = l2tCoverage;
-		this.ramdoopTime = ramdoopTime;
+		this.l2tTestCnt = l2tTestCnt;
+		this.randoopTime = randoopTime;
 		this.randoopCoverage = randoopCoverage;
+		this.randoopTestCnt = randoopTestCnt;
 	}
 
 	public String getMethodName() {
@@ -75,12 +77,20 @@ public class Trial {
 		this.l2tCoverage = l2tCoverage;
 	}
 
-	public double getRamdoopTime() {
-		return ramdoopTime;
+	public int getL2tTestCnt() {
+		return l2tTestCnt;
 	}
 
-	public void setRamdoopTime(double ramdoopTime) {
-		this.ramdoopTime = ramdoopTime;
+	public void setL2tTestCnt(int l2tTestCnt) {
+		this.l2tTestCnt = l2tTestCnt;
+	}
+
+	public double getRandoopTime() {
+		return randoopTime;
+	}
+
+	public void setRandoopTime(double randoopTime) {
+		this.randoopTime = randoopTime;
 	}
 
 	public double getRandoopCoverage() {
@@ -89,6 +99,14 @@ public class Trial {
 
 	public void setRandoopCoverage(double randoopCoverage) {
 		this.randoopCoverage = randoopCoverage;
+	}
+
+	public int getRandoopTestCnt() {
+		return randoopTestCnt;
+	}
+
+	public void setRandoopTestCnt(int randoopTestCnt) {
+		this.randoopTestCnt = randoopTestCnt;
 	}
 
 }

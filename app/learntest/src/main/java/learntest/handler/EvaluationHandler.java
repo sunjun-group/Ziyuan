@@ -300,12 +300,12 @@ public class EvaluationHandler extends AbstractHandler {
 											SAVTimer.exeuctionTimeout = l2tInfo.getTime();											
 										}
 										LearnTestConfig.isL2TApproach = false;
-										RunTimeInfo ramInfo = new GenerateTestHandler().generateTest(false);
+										RunTimeInfo ranInfo = new GenerateTestHandler().generateTest(false);
 										
-										if(l2tInfo!=null && ramInfo!=null){
+										if(l2tInfo!=null && ranInfo!=null){
 											String fullMN = LearnTestConfig.testClassName + "." + LearnTestConfig.testMethodName;
-											Trial trial = new Trial(fullMN, l2tInfo.getTime(), l2tInfo.getCoverage(), 
-													ramInfo.getTime(), ramInfo.getCoverage());
+											Trial trial = new Trial(fullMN, l2tInfo.getTime(), l2tInfo.getCoverage(), l2tInfo.getTestCnt(),
+													ranInfo.getTime(), ranInfo.getCoverage(), ranInfo.getTestCnt());
 											writer.export(trial);											
 										}
 									}

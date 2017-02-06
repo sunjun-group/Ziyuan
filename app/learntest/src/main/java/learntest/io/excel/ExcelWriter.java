@@ -62,8 +62,10 @@ public class ExcelWriter {
 		titles.add("method name");
 		titles.add("l2t time");
 		titles.add("l2t coverage");
-		titles.add("ramdoop time");
-		titles.add("ramdoop coverage");
+		titles.add("l2t test cnt");
+		titles.add("randoop time");
+		titles.add("randoop coverage");
+		titles.add("randoop test cnt");
 		
 		Row row = sheet.createRow(0);
 		for(int i = 0; i < titles.size(); i++){
@@ -93,8 +95,10 @@ public class ExcelWriter {
 		row.createCell(0).setCellValue(trial.getMethodName());
 		row.createCell(1).setCellValue(trial.getL2tTime());
 		row.createCell(2).setCellValue(trial.getL2tCoverage());
-		row.createCell(3).setCellValue(trial.getRamdoopTime());
-		row.createCell(4).setCellValue(trial.getRandoopCoverage());
+		row.createCell(3).setCellValue(trial.getL2tTestCnt());
+		row.createCell(4).setCellValue(trial.getRandoopTime());
+		row.createCell(5).setCellValue(trial.getRandoopCoverage());
+		row.createCell(6).setCellValue(trial.getRandoopTestCnt());
 	}
 	
 	private void writeToExcel(Workbook book, String fileName){
