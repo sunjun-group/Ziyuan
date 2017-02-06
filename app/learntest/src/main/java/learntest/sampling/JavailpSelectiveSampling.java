@@ -75,44 +75,14 @@ public class JavailpSelectiveSampling {
 		}
 		
 		tcExecutor.setTarget(null);
-		for (int i = 0; i < timesLimit; i++) {
-			/*List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
-			int previousAssignmentSize = 0;
+		for (int i = 0; i < 3; i++) {
 			
-			int threshold = 10;
-			
-			while (assignments.size() < numPerExe) {
-				List<Problem> problems = ProblemBuilder.build(originVars, precondition, current, true);
-				ProblemBuilder.addRandomConstraint(problems, originVars);
-				//List<Result> results = ProblemSolver.solve(problems, originVars, numPerExe);
-				for (Problem problem : problems) {
-					List<Result> results = ProblemSolver.solveMultipleTimes(problem, originVars);
-					for (Result result : results) {
-						checkNonduplicateResult(result, originVars, prevDatas, assignments);
-					}				
-				}
-				
-				if(previousAssignmentSize == assignments.size()){
-					if(threshold==0){
-						break;						
-					}
-					else{
-						threshold--;
-					}
-				}
-				else{
-					previousAssignmentSize = assignments.size();
-				}
-				
-			}*/
 			List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
 			List<Problem> problems = ProblemBuilder.build(originVars, precondition, current, true);
 			if (problems.isEmpty()) {
 				return null;
 			}
 			int num = numPerExe / problems.size() + 1;
-			//ProblemBuilder.addRandomConstraint(problems, originVars);
-			//List<Result> results = ProblemSolver.solve(problems, originVars, numPerExe);
 			for (Problem problem : problems) {
 				List<Result> results = ProblemSolver.calculateRanges(problem, originVars);
 				for (Result result : results) {
@@ -349,7 +319,8 @@ public class JavailpSelectiveSampling {
 				list.add(varMap);
 			}
 		}
-		tcExecutor.setTcNum(list.size());
+		
+		tcExecutor.duplicateTestCases(list.size());
 		tcExecutor.setVarMaps(list);
 		tcExecutor.run(); 
 		selectResult = tcExecutor.getResult();
@@ -368,7 +339,7 @@ public class JavailpSelectiveSampling {
 				list.add(toInstrVarMap(valSet));
 			}
 		}
-		tcExecutor.setTcNum(list.size());
+		tcExecutor.duplicateTestCases(list.size());
 		tcExecutor.setVarMaps(list);
 		tcExecutor.run();
 		selectResult = tcExecutor.getResult();

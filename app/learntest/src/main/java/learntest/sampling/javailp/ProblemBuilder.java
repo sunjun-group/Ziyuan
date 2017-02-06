@@ -6,6 +6,7 @@ import java.util.List;
 import learntest.calculator.MultiNotDividerBasedCategoryCalculator;
 import learntest.calculator.OrCategoryCalculator;
 import learntest.sampling.PathRandom;
+import learntest.util.Settings;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import libsvm.extension.MultiDividerBasedCategoryCalculator;
@@ -184,6 +185,9 @@ public class ProblemBuilder {
 	}
 	
 	private static Problem buildVarBoundContraint(List<ExecVar> vars) {
+		
+		int bound = Settings.bound;
+		
 		Problem problem = new Problem();
 		for (ExecVar var : vars) {
 			switch (var.getType()) {
@@ -210,15 +214,15 @@ public class ProblemBuilder {
 					problem.setVarType(var.getLabel(), Double.class);
 					/*problem.setVarLowerBound(var.getLabel(), Double.MIN_VALUE);
 					problem.setVarUpperBound(var.getLabel(), Double.MAX_VALUE);*/
-					problem.setVarLowerBound(var.getLabel(), -10000000);
-					problem.setVarUpperBound(var.getLabel(), 10000000);
+					problem.setVarLowerBound(var.getLabel(), -bound);
+					problem.setVarUpperBound(var.getLabel(), bound);
 					break;
 				case FLOAT:
 					problem.setVarType(var.getLabel(), Float.class);
 					/*problem.setVarLowerBound(var.getLabel(), Float.MIN_VALUE);
 					problem.setVarUpperBound(var.getLabel(), Float.MAX_VALUE);*/
-					problem.setVarLowerBound(var.getLabel(), -10000000);
-					problem.setVarUpperBound(var.getLabel(), 10000000);
+					problem.setVarLowerBound(var.getLabel(), -bound);
+					problem.setVarUpperBound(var.getLabel(), bound);
 					break;
 				case LONG:
 					problem.setVarType(var.getLabel(), Long.class);
@@ -238,8 +242,8 @@ public class ProblemBuilder {
 					problem.setVarType(var.getLabel(), Integer.class);
 					/*problem.setVarLowerBound(var.getLabel(), Integer.MIN_VALUE);
 					problem.setVarUpperBound(var.getLabel(), Integer.MAX_VALUE);*/
-					problem.setVarLowerBound(var.getLabel(), -10000000);
-					problem.setVarUpperBound(var.getLabel(), 10000000);
+					problem.setVarLowerBound(var.getLabel(), -bound);
+					problem.setVarUpperBound(var.getLabel(), bound);
 					break;
 			}
 		}

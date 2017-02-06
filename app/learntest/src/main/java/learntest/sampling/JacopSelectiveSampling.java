@@ -433,7 +433,7 @@ public class JacopSelectiveSampling {
 				list.add(varMap);
 			}
 		}
-		tcExecutor.setTcNum(list.size());
+		tcExecutor.duplicateTestCases(list.size());
 		tcExecutor.setVarMaps(list);
 		tcExecutor.run();
 		selectResult = tcExecutor.getResult();
@@ -467,7 +467,7 @@ public class JacopSelectiveSampling {
 				}*/
 			}
 		}
-		tcExecutor.setTcNum(list.size());
+		tcExecutor.duplicateTestCases(list.size());
 		tcExecutor.setVarMaps(list);
 		tcExecutor.run();
 		selectResult = tcExecutor.getResult();

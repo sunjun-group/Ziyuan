@@ -148,14 +148,16 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		return getBuilder().getResult();
 	}
 	
-	public void setTcNum(int num) {		
+	public void duplicateTestCases(int num) {		
 		int size = allTests.size();
 		if (size == num) {
 			return;
 		}
+		
 		if (size > num) {
 			allTests = allTests.subList(0, num);
-		} else {
+		} 
+		else {
 			int remain = num - size;
 			while (remain >= size) {
 				allTests.addAll(allTests);
