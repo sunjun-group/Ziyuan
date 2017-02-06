@@ -156,6 +156,10 @@ public class Engine {
 				//solutions.addAll(getSolutions(records, learner.getOriginVars()));
 				//new TestGenerator().genTestAccordingToSolutions(solutions, learner.getOriginVars());
 				
+				if (learner != null) {
+					coverage = learner.getCoverage();
+				}
+				
 				List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
 				
 				new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());
@@ -166,6 +170,7 @@ public class Engine {
 			time = SAVTimer.getExecutionTime();		
 		} catch(SAVExecutionTimeOutException e){
 			if (learner != null) {
+				coverage = learner.getCoverage();
 				List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
 				new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());
 				testCnt = selectiveSampling.getTotalNum();
@@ -180,9 +185,7 @@ public class Engine {
 		//new TestGenerator().genTestAccordingToInput(results, variables);
 		//new TestGenerator().genTestAccordingToInput(results, learner.getLabels());
 		
-		if (learner != null) {
-			coverage = learner.getCoverage();
-		}
+		
 		
 		RunTimeInfo info = new RunTimeInfo(time, coverage, testCnt);
 		return info;
