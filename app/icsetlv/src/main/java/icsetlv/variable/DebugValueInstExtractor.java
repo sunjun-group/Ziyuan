@@ -51,12 +51,16 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 		for (Variable var : allVariables.keySet()) {
 			JdiParam jdiParam = allVariables.get(var);
 			Map<String, JdiParam> modificationMap = getInstrMap(var, jdiParam);
+			
+//			System.currentTimeMillis();
+			
 			for (String varId : modificationMap.keySet()) {
 				JdiParam param = modificationMap.get(varId);
 				if (param == null) {
 					continue;
 				}
 				Object newVal = instVals.get(varId);
+				
 				switch (param.getType()) {
 				case ARRAY_ELEMENT:
 					instArrElement(thread, param, newVal, var);
@@ -65,13 +69,38 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 					instLocalVar(thread, param, newVal , var);
 					break;
 				case NON_STATIC_FIELD:
-					instObjField(thread, param, newVal, var);
+					String fieldName = varId.substring(varId.indexOf("."));
+					if (ArrayReference.class.isAssignableFrom(jdiParam.getValue().getClass()) && fieldName.equals("length")){
+						instArr(thread, jdiParam, newVal, var);
+					}
+					else{
+						instObjField(thread, param, newVal, var);						
+					}
+					
 					break;
 				}
 			}
 		}
 	}
 	
+	private void instArr(ThreadReference thread, JdiParam arrayParam, Object arrayLength, Variable var) {
+		Value length = jdiValueOf(arrayLength, thread);
+		try{
+			Integer len = Integer.valueOf(length.toString());
+			Value aValue = arrayParam.getValue();
+			if(aValue instanceof ArrayReference){
+				ArrayReference arrayRef = (ArrayReference)aValue;
+				for(int i=0; i<len; i++){
+					arrayRef.setValue(i, null);
+				}
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+	}
+
 	private Map<String, JdiParam> getInstrMap(Variable var, JdiParam param) {
 		Map<String, JdiParam> instrMap = new HashMap<String, JdiParam>();
 		String varId = var.getId();
@@ -89,6 +118,8 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 			if (subParam != param) {
 				instrMap.put(key, subParam);
 			}
+			
+			System.currentTimeMillis();
 		}
 		return instrMap;
 	}
