@@ -124,24 +124,11 @@ public class Engine {
 					coverage = 1;
 				}
 			} else {
-				/*List<Domain[]> values = null;
-				List<BreakpointValue> tests = tcExecutor.getCurrentTestInputValues();
-				if (tests != null) {
-					Set<ExecVar> allVars = new HashSet<ExecVar>();
-					for (BreakpointValue test : tests) {
-						collectExecVar(test.getChildren(), allVars);
-					}
-					List<ExecVar> vars = new ArrayList<ExecVar>(allVars);
-					values = getFullSolutions(tests, vars);
-				}*/
 				tcExecutor.setjResultFileDeleteOnExit(true);
 				//tcExecutor.setSingleMode();
 				tcExecutor.setInstrMode(true);
 				//selectiveSampling = new JacopSelectiveSampling(tcExecutor);
 				selectiveSampling = new JavailpSelectiveSampling(tcExecutor);
-				/*if (values != null) {
-					selectiveSampling.addPrevValues(values);
-				}*/
 				selectiveSampling.addPrevValues(tcExecutor.getCurrentTestInputValues());
 				learner = new DecisionLearner(selectiveSampling, manager, random);
 				learner.learn(result);

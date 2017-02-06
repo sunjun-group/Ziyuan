@@ -30,9 +30,9 @@ public class ProblemSolver {
 	}
 	
 	public static List<Result> calculateRanges(Problem problem, List<ExecVar> vars) {
-		List<Result> res = new ArrayList<Result>();
+		List<Result> resultList = new ArrayList<Result>();
 		if (problem == null) {
-			return res;
+			return resultList;
 		}
 		minMax = new HashMap<ExecVar, Pair<Number,Number>>();
 		Linear linear = new Linear();
@@ -49,7 +49,7 @@ public class ProblemSolver {
 			Solver solver = factory.get();
 			Result result = solver.solve(problem);
 			if (result != null) {
-				res.add(result);
+				resultList.add(result);
 				min = result.get(label);
 			}
 			
@@ -57,7 +57,7 @@ public class ProblemSolver {
 			solver = factory.get();
 			result = solver.solve(problem);
 			if (result != null) {
-				res.add(result);
+				resultList.add(result);
 				max = result.get(label);
 			}
 			
@@ -66,7 +66,7 @@ public class ProblemSolver {
 			}
 		}
 		problem.setObjective(linear);
-		return res;
+		return resultList;
 	}
 	
 	public static List<Result> solveMultipleTimes(Problem problem, int times) {
