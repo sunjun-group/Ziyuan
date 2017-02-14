@@ -140,6 +140,7 @@ public abstract class BreakpointDebugger {
 		}
 		finally{
 			if(vm != null){
+//				vm.exit(0);
 				vm = null;
 			}
 		}
@@ -170,15 +171,29 @@ public abstract class BreakpointDebugger {
 	
 	private void addBreakpointWatch(VirtualMachine vm, ReferenceType refType,
 			Map<String, BreakPoint> locBrpMap) {
-		for (BreakPoint brkp : CollectionUtils.initIfEmpty(brkpsMap.get(refType.name()))) {
-			if(brkp.getLineNo()==100){
-				System.currentTimeMillis();
-			}
+		List<BreakPoint> points = CollectionUtils.initIfEmpty(brkpsMap.get(refType.name()));
+		
+		boolean canTheFirstPointSetBreakPoint = false;
+		List<sav.strategies.dto.BreakPoint.Variable> variableList = null;
+		if(!points.isEmpty()){
+			variableList = points.get(0).getVars();
+		}
+		
+		for (int i=0; i<points.size(); i++) {
+			BreakPoint brkp = points.get(i);
+			int lineNumber = brkp.getLineNo();
+			List<Location> locationList = addBreakpointWatch(vm, refType, lineNumber);
 			
-			List<Location> locationList = addBreakpointWatch(vm, refType, brkp.getLineNo());
+			if(!locationList.isEmpty() && !canTheFirstPointSetBreakPoint){
+				brkp.setVars(variableList);
+				canTheFirstPointSetBreakPoint = true;
+			}
+
 			for (Location location: locationList) {
 				locBrpMap.put(location.toString(), brkp);
 			} 
+			
+			
 		}
 	}
 	
