@@ -92,6 +92,8 @@ public class Engine {
 		bkpBuilder.buildBreakpoints();
 		dtBuilder = new BreakpointDataBuilder(bkpBuilder);
 		
+		System.currentTimeMillis();
+		
 		long time = -1;
 		double coverage = 0;
 		int testCnt = 1;

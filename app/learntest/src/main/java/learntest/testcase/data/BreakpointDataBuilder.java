@@ -68,6 +68,8 @@ public class BreakpointDataBuilder {
 		for (BreakpointValue inputValue : inputValueOfTcI) {
 			build(paths.get(idx ++), inputValue);
 		}
+		
+		System.currentTimeMillis();
 	}
 	
 	private void build(List<BreakPoint> path, BreakpointValue inputValue) {

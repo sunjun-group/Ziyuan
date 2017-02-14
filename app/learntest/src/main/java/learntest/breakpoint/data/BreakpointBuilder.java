@@ -59,9 +59,11 @@ public class BreakpointBuilder {
 			DecisionLocation location = new DecisionLocation(className, methodName, decision.getBeginLine(), decision.isLoop());
 			locations.add(location);
 			BreakPoint breakPoint = new BreakPoint(className, methodName, decision.getTrueBeginLine());
+//			breakPoint.addVars(variables);
 			bkps.add(breakPoint);
 			decisionMap.put(location, breakPoint);
 			BreakPoint selfBkp = new BreakPoint(className, methodName, decision.getBeginLine());
+//			selfBkp.addVars(variables);
 			bkps.add(selfBkp);
 			selfBkps.put(location, selfBkp);
 			if (decision.getParentBeginLine() != -1) {

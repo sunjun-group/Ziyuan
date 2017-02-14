@@ -19,6 +19,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,15 +128,18 @@ public class VMRunner {
 
 	public boolean startVm(List<String> commands, boolean waitUntilStop)
 			throws SavException {
+
+		StringBuffer buffer = new StringBuffer();
 		if (isLog && log.isDebugEnabled()) {
 			log.debug("start cmd..");
 			log.debug(StringUtils.join(commands, " "));
 			for (String cmd : commands) {
 				log.debug(cmd);
+				buffer.append(cmd + " ");
 			}
 		}
 		
-//		System.out.println(commands);
+//		System.out.println(buffer.toString());
 		
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
 		try {
