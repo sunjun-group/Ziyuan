@@ -139,7 +139,7 @@ public class VMRunner {
 			}
 		}
 		
-//		System.out.println(buffer.toString());
+		System.out.println(buffer.toString());
 		
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
 		try {
