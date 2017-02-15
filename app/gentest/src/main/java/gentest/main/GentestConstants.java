@@ -41,7 +41,7 @@ public class GentestConstants {
 	public static final int PROBABILITY_OF_STATIC_METHOD_INIT = 2;
 	public static final int PROBABILITY_OF_BUILDER_METHOD_CALL_INIT = 1;
 	public static final int MAX_VALUE_FOR_A_CLASS_STORED_IN_CACHE = 50; 
-	public static final int OBJECT_VALUE_GENERATOR_MAX_TRY_SELECTING_CONSTRUCTOR = 3;
+	public static final int OBJECT_VALUE_GENERATOR_MAX_TRY_SELECTING_CONSTRUCTOR = 100;
 	/**
 	 * for {@link ExtObjectValueGenerator}
 	 */
