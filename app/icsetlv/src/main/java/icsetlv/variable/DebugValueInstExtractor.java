@@ -69,13 +69,16 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 					instLocalVar(thread, param, newVal , var);
 					break;
 				case NON_STATIC_FIELD:
-					String fieldName = varId.substring(varId.indexOf("."));
-					if (ArrayReference.class.isAssignableFrom(jdiParam.getValue().getClass()) && fieldName.equals("length")){
-						instArr(thread, jdiParam, newVal, var);
-					}
-					else{
-						instObjField(thread, param, newVal, var);						
-					}
+					System.currentTimeMillis();
+//					String fieldName = varId.substring(varId.indexOf("."));
+//					if (ArrayReference.class.isAssignableFrom(jdiParam.getValue().getClass()) && fieldName.equals("length")){
+//						instArr(thread, jdiParam, newVal, var);
+//					}
+//					else{
+//						instObjField(thread, param, newVal, var);						
+//					}
+					
+					instObjField(thread, param, newVal, var);
 					
 					break;
 				}
