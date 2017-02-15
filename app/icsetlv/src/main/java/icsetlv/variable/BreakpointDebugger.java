@@ -117,7 +117,7 @@ public abstract class BreakpointDebugger {
 					} else if (event instanceof BreakpointEvent) {
 						BreakpointEvent bkpEvent = (BreakpointEvent) event;
 						
-						if(bkpEvent.location().lineNumber()==100){
+						if(bkpEvent.location().lineNumber()==198){
 							System.currentTimeMillis();
 						}
 						BreakPoint bkp = locBrpMap.get(bkpEvent.location().toString());

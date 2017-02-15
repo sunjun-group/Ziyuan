@@ -8,6 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.IVariableBinding;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.jacop.core.Domain;
 import org.jacop.floats.core.FloatIntervalDomain;
 
@@ -248,7 +253,11 @@ public class Engine {
 								for (Parameter parameter : parameters) {
 									variables.add(new Variable(parameter.getId().getName()));
 								}
-							}							
+							}		
+
+							List<Variable> visitFields = findFields(cu, method);
+							variables.addAll(visitFields);
+							
 							CfgCreator creator = new CfgCreator();
 							cfg = creator.dealWithBreakStmt(creator.dealWithReturnStmt(creator.toCFG(method)));
 							returns = new HashSet<Integer>();
@@ -263,6 +272,84 @@ public class Engine {
 				return;
 			}
 		}
+	}
+
+	class MethodFinder extends ASTVisitor{
+		org.eclipse.jdt.core.dom.MethodDeclaration foundMethod;
+		MethodDeclaration method;
+		
+		public MethodFinder(MethodDeclaration m){
+			this.method = m;
+		}
+		
+		public boolean visit(org.eclipse.jdt.core.dom.MethodDeclaration md){
+			if(md.getName().getFullyQualifiedName().equals(method.getName())){
+				if(md.parameters().size()==method.getParameters().size()){
+					int size = md.parameters().size();
+					for(int i=0; i<size; i++){
+						Object obj = md.parameters().get(i);
+						SingleVariableDeclaration svd = (SingleVariableDeclaration)obj;
+						String p1String = svd.getType().toString();
+						
+						Parameter p2 = method.getParameters().get(i);
+						String p2String = p2.getType().toString();
+						
+						if(!p1String.equals(p2String)){
+							return false;
+						}
+					}
+					
+					foundMethod = md;
+				}
+			}
+			
+			return false;
+		}
+	}
+	
+	class FieldAccessChecker extends ASTVisitor{
+		List<String> fields = new ArrayList<>();
+		
+		public boolean visit(SimpleName name){
+			IBinding binding = name.resolveBinding();
+			if(binding instanceof IVariableBinding){
+				IVariableBinding vb = (IVariableBinding)binding;
+				if(vb.isField()){
+					fields.add(vb.getName());
+				}
+			}
+			
+			return false;
+		}
+	} 
+	
+	private List<Variable> findFields(CompilationUnit cu, MethodDeclaration method) {
+		List<Variable> fields = new ArrayList<>();
+		
+		String pack = cu.getPackage().getName().getName();
+		String type = cu.getTypes().get(0).getName();
+		
+		String cuName = pack + "." + type;
+		String methodName = method.getName();
+		
+		org.eclipse.jdt.core.dom.CompilationUnit domCU = LearnTestUtil.findCompilationUnitInProject(cuName);
+		MethodFinder finder = new MethodFinder(method);
+		domCU.accept(finder);
+		org.eclipse.jdt.core.dom.MethodDeclaration md = finder.foundMethod;
+		if(md != null){
+			FieldAccessChecker checker = new FieldAccessChecker();
+			md.accept(checker);
+			
+			for(String fieldName: checker.fields){
+				Variable field = new Variable(fieldName);
+				fields.add(field);
+			}
+		}
+		
+		
+//		System.currentTimeMillis();
+		
+		return fields;
 	}
 
 	private void ensureTcExecutor() {

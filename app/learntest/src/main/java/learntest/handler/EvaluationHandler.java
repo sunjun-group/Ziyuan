@@ -256,14 +256,18 @@ public class EvaluationHandler extends AbstractHandler {
 					md.accept(checker);
 					if (checker.isNestedJudge) {
 						
-						FieldAccessChecker checker2 = new FieldAccessChecker();
-						md.accept(checker2);
+						if (containsAllPrimitiveType(md.parameters())) {
+							mdList.add(md);
+						}	
 						
-						if(!checker2.isFieldAccess){
-							if (containsAllPrimitiveType(md.parameters())) {
-								mdList.add(md);
-							}							
-						}
+//						FieldAccessChecker checker2 = new FieldAccessChecker();
+//						md.accept(checker2);
+//						
+//						if(!checker2.isFieldAccess){
+//							if (containsAllPrimitiveType(md.parameters())) {
+//								mdList.add(md);
+//							}							
+//						}
 					}
 
 //					DecisionStructureChecker checker = new DecisionStructureChecker();
@@ -347,11 +351,15 @@ public class EvaluationHandler extends AbstractHandler {
 				SAVTimer.exeuctionTimeout = 100000;
 
 				try {
+					int sum = 0;
 					for (IJavaElement element : root.getChildren()) {
 						if (element instanceof IPackageFragment) {
-							runEvaluation((IPackageFragment) element, writer);
+							int num = runEvaluation((IPackageFragment) element, writer);
+							sum += num;
 						}
 					}
+					
+					System.out.println("total valid methods: " + sum );
 				} catch (JavaModelException e) {
 					e.printStackTrace();
 				}
@@ -360,7 +368,7 @@ public class EvaluationHandler extends AbstractHandler {
 			}
 
 				
-			private void runEvaluation(IPackageFragment pack, ExcelWriter writer) throws JavaModelException {
+			private int runEvaluation(IPackageFragment pack, ExcelWriter writer) throws JavaModelException {
 				int sum = 0;
 				
 				for (IJavaElement javaElement : pack.getChildren()) {
@@ -370,14 +378,18 @@ public class EvaluationHandler extends AbstractHandler {
 						ICompilationUnit icu = (ICompilationUnit) javaElement;
 						CompilationUnit cu = LearnTestUtil.convertICompilationUnitToASTNode(icu);
 
-						AbstractTypeDeclaration type = (AbstractTypeDeclaration) cu.types().get(0);
-						String typeName = type.getName().getIdentifier();
-						if(typeName.contains("ZipfDistributionImpl")){
-							System.currentTimeMillis();
-						}
-						else{
+						if(cu.types().isEmpty()){
 							continue;
 						}
+						
+						AbstractTypeDeclaration type = (AbstractTypeDeclaration) cu.types().get(0);
+						String typeName = type.getName().getIdentifier();
+//						if(typeName.contains("ZipfDistributionImpl")){
+//							System.currentTimeMillis();
+//						}
+//						else{
+//							continue;
+//						}
 			
 						if (type instanceof TypeDeclaration) {
 							TypeDeclaration td = (TypeDeclaration) type;
@@ -401,46 +413,61 @@ public class EvaluationHandler extends AbstractHandler {
 						}
 
 						List<MethodDeclaration> validMethods = findValidMethod(cu);
-						if (!validMethods.isEmpty()) {
+						for(MethodDeclaration md: validMethods){
 							String className = LearnTestUtil.getFullNameOfCompilationUnit(cu);
-							LearnTestConfig.testClassName = className;
-
-							for (MethodDeclaration method : validMethods) {
-								String simpleMethodName = method.getName().getIdentifier();
-								LearnTestConfig.testMethodName = simpleMethodName;
-
-								String methodName = className + "." + simpleMethodName;
-
-								System.out.println("working method: " + LearnTestConfig.testClassName + "."
-										+ LearnTestConfig.testMethodName);
-
-								try {
-									LearnTestConfig.isL2TApproach = true;
-									RunTimeInfo l2tInfo = new GenerateTestHandler().generateTest(true);
-
-									LearnTestConfig.isL2TApproach = false;
-									RunTimeInfo ranInfo = new GenerateTestHandler().generateTest(false);
-
-									if (l2tInfo != null && ranInfo != null) {
-										String fullMN = LearnTestConfig.testClassName + "."
-												+ LearnTestConfig.testMethodName;
-										Trial trial = new Trial(fullMN, l2tInfo.getTime(), l2tInfo.getCoverage(),
-												l2tInfo.getTestCnt(), ranInfo.getTime(), ranInfo.getCoverage(),
-												ranInfo.getTestCnt());
-										writer.export(trial);
-										sum++;
-									}
-								} catch (Exception e) {
-									e.printStackTrace();
-									System.currentTimeMillis();
-								}
-
-							}
-
+							String simpleMethodName = md.getName().getIdentifier();
+							System.out.println(className + "." + simpleMethodName);
 						}
+						sum += validMethods.size();
+						evaluateForMethodList(writer, sum, cu, validMethods);
 					}
 				}
 
+				
+				return sum;
+			}
+
+
+			private void evaluateForMethodList(ExcelWriter writer, int sum, CompilationUnit cu,
+					List<MethodDeclaration> validMethods) {
+				if (!validMethods.isEmpty()) {
+					String className = LearnTestUtil.getFullNameOfCompilationUnit(cu);
+					LearnTestConfig.testClassName = className;
+
+					for (MethodDeclaration method : validMethods) {
+						String simpleMethodName = method.getName().getIdentifier();
+						LearnTestConfig.testMethodName = simpleMethodName;
+
+						String methodName = className + "." + simpleMethodName;
+
+						System.out.println("working method: " + LearnTestConfig.testClassName + "."
+								+ LearnTestConfig.testMethodName);
+
+						try {
+							LearnTestConfig.isL2TApproach = true;
+							RunTimeInfo l2tInfo = new GenerateTestHandler().generateTest(true);
+
+							LearnTestConfig.isL2TApproach = false;
+							RunTimeInfo ranInfo = new GenerateTestHandler().generateTest(false);
+
+							if (l2tInfo != null && ranInfo != null) {
+								String fullMN = LearnTestConfig.testClassName + "."
+										+ LearnTestConfig.testMethodName;
+								Trial trial = new Trial(fullMN, l2tInfo.getTime(), l2tInfo.getCoverage(),
+										l2tInfo.getTestCnt(), ranInfo.getTime(), ranInfo.getCoverage(),
+										ranInfo.getTestCnt());
+								writer.export(trial);
+								sum++;
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+							System.currentTimeMillis();
+						}
+
+					}
+
+				}
+				
 			}
 
 			private List<MethodDeclaration> findValidMethod(CompilationUnit cu) {

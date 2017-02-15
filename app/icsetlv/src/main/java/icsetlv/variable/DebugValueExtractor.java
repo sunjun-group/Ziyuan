@@ -67,7 +67,6 @@ import sav.strategies.dto.execute.value.ArrayValue;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.PrimitiveValue;
 import sav.strategies.dto.execute.value.ReferenceValue;
-import sav.strategies.dto.execute.value.StringValue;
 
 /**
  * @author LLT
@@ -153,6 +152,23 @@ public class DebugValueExtractor {
 							}
 						} catch (Exception e) {
 							
+						}
+					}
+					/**
+					 * deal with field
+					 */
+					else{
+						for(Field field: allFields){
+							if(field.name().equals(bpVar.getParentName())){
+								if (field != null) {
+									if (field.isStatic()) {
+										param = JdiParam.staticField(field, refType, refType.getValue(field));
+									} else {
+										Value value = objRef == null ? null : objRef.getValue(field);
+										param = JdiParam.nonStaticField(field, objRef, value);
+									}
+								}
+							}
 						}
 					}
 					
