@@ -38,13 +38,24 @@ public final class Randomness {
 	}
 
 	public static float nextFloat() {
-		if (callToFloat == 0) {
+//		if (callToFloat == 0) {
+//			callToFloat++;
+//			return 0.0f;
+//		} else if (callToFloat == 1) {
+//			callToFloat++;
+//			return 0.01f;
+//		} else if (callToFloat == 2) {
+//			callToFloat++;
+//			return -0.01f;
+//		}
+		
+		if (callToFloat < 5) {
 			callToFloat++;
 			return 0.0f;
-		} else if (callToFloat == 1) {
+		} else if (callToFloat < 10) {
 			callToFloat++;
 			return 0.01f;
-		} else if (callToFloat == 2) {
+		} else if (callToFloat < 20) {
 			callToFloat++;
 			return -0.01f;
 		}
@@ -207,13 +218,13 @@ public final class Randomness {
 	public static Double nextDouble() {
 //		double rangeMin = -100;
 //		double rangeMax = 100;
-		if (callToDouble == 0) {
+		if (callToDouble < 5) {
 			callToDouble++;
 			return 0.0;
-		} else if (callToDouble == 1) {
+		} else if (callToDouble < 10) {
 			callToDouble++;
 			return 0.01;
-		} else if (callToDouble == 2) {
+		} else if (callToDouble < 20) {
 			callToDouble++;
 			return -0.01;
 		}
