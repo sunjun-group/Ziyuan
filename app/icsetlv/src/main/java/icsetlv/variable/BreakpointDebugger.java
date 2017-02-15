@@ -175,9 +175,15 @@ public abstract class BreakpointDebugger {
 		
 		boolean canTheFirstPointSetBreakPoint = false;
 		List<sav.strategies.dto.BreakPoint.Variable> variableList = null;
-		if(!points.isEmpty()){
-			variableList = points.get(0).getVars();
+		for(BreakPoint point: points){
+			List<sav.strategies.dto.BreakPoint.Variable> varList = point.getVars();
+			if(varList != null && !varList.isEmpty()){
+				variableList = varList;
+				break;
+			}
 		}
+		
+		System.currentTimeMillis();
 		
 		for (int i=0; i<points.size(); i++) {
 			BreakPoint brkp = points.get(i);
