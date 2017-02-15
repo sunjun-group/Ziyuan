@@ -75,6 +75,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		for (Statement stmt : stmts) {
 			execute(stmt);
 		}
+//		System.currentTimeMillis();
 		return successful;
 	}
 
@@ -123,7 +124,8 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 			}
 			addExecData(stmt.getOutVarId(), newInstance);
 		} catch (Throwable e) {
-			log.debug(e.getMessage());
+			e.printStackTrace();
+//			log.debug(e.getMessage());
 			onFail();
 		}
 		return successful;

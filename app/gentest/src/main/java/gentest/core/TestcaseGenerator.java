@@ -75,6 +75,7 @@ public class TestcaseGenerator {
 							.selectReceiver(receiverType, seq.getStmtsSize(),
 									seq.getVarsSize());
 					seq.appendReceiver(receiverParam, method.getReceiverType());
+//					System.currentTimeMillis();
 				} 
 				rmethod = new RqueryMethod(method, seq.getReceiver(
 						method.getReceiverType()).getVarId());

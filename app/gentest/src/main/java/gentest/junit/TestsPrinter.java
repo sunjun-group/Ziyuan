@@ -80,6 +80,7 @@ public class TestsPrinter implements ITestsPrinter {
 			List<Sequence> allTests = CollectionUtils.join(
 					testSeqs.a, testSeqs.b);
 			units = createCompilationUnits(allTests, pkg);
+			System.currentTimeMillis();
 		} else {
 			units = createCompilationUnits(testSeqs.a, pkg);
 			units.addAll(createCompilationUnits(testSeqs.b, failPkg));
