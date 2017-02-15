@@ -2,7 +2,6 @@ package learntest.handler;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -17,16 +16,18 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.ForStatement;
+import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SwitchStatement;
@@ -42,11 +43,26 @@ import learntest.io.txt.IgnoredMethodFiles;
 import learntest.main.LearnTestConfig;
 import learntest.main.RunTimeInfo;
 import learntest.util.LearnTestUtil;
-import sav.common.core.utils.StringUtils;
 import sav.settings.SAVTimer;
 
 public class EvaluationHandler extends AbstractHandler {
 
+	class FieldAccessChecker extends ASTVisitor{
+		boolean isFieldAccess = false;
+		
+		public boolean visit(SimpleName name){
+			IBinding binding = name.resolveBinding();
+			if(binding instanceof IVariableBinding){
+				IVariableBinding vb = (IVariableBinding)binding;
+				if(vb.isField()){
+					isFieldAccess = true;
+				}
+			}
+			
+			return false;
+		}
+	}
+	
 	class ChildJudgeStatementChecker extends ASTVisitor {
 
 		boolean containJudge = false;
@@ -239,8 +255,14 @@ public class EvaluationHandler extends AbstractHandler {
 					NestedBlockChecker checker = new NestedBlockChecker();
 					md.accept(checker);
 					if (checker.isNestedJudge) {
-						if (containsAllPrimitiveType(md.parameters())) {
-							mdList.add(md);
+						
+						FieldAccessChecker checker2 = new FieldAccessChecker();
+						md.accept(checker2);
+						
+						if(checker2.isFieldAccess){
+							if (containsAllPrimitiveType(md.parameters())) {
+								mdList.add(md);
+							}							
 						}
 					}
 
@@ -337,8 +359,8 @@ public class EvaluationHandler extends AbstractHandler {
 				return Status.OK_STATUS;
 			}
 
-			private void runEvaluation(IPackageFragment pack, ExcelWriter writer) throws JavaModelException {
 				
+			private void runEvaluation(IPackageFragment pack, ExcelWriter writer) throws JavaModelException {
 				int sum = 0;
 				
 				for (IJavaElement javaElement : pack.getChildren()) {
@@ -349,21 +371,32 @@ public class EvaluationHandler extends AbstractHandler {
 						CompilationUnit cu = LearnTestUtil.convertICompilationUnitToASTNode(icu);
 
 						AbstractTypeDeclaration type = (AbstractTypeDeclaration) cu.types().get(0);
+						String typeName = type.getName().getIdentifier();
+//						if(typeName.contains("AbstractIntegerDistribution") || typeName.contains("PoissonDistributionImpl")){
+//							System.currentTimeMillis();
+//						}
+//						else{
+//							continue;
+//						}
+			
 						if (type instanceof TypeDeclaration) {
 							TypeDeclaration td = (TypeDeclaration) type;
 							if (td.isInterface()) {
 								continue;
 							}
-
+							
+							boolean isAbstract = false;
 							for (Object obj : td.modifiers()) {
 								if (obj instanceof Modifier) {
 									Modifier modifier = (Modifier) obj;
 									if (modifier.isAbstract()) {
-										continue;
+										isAbstract = true;
 									}
 								}
-
-								System.currentTimeMillis();
+							}
+							
+							if(isAbstract){
+								continue;
 							}
 						}
 

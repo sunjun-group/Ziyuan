@@ -191,8 +191,9 @@ public class SubTypesScanner implements ISubTypesScanner {
 			}
 			return (Class<?>) Randomness.randomMember(subTypes.toArray());
 		} catch (Exception e) {
-			log.debug("key =", key);
-			log.error(e.getMessage());
+			System.out.println("key = " + key);
+			System.currentTimeMillis();
+			System.out.println(e.getMessage());
 			throw new SavRtException(ModuleEnum.TESTCASE_GENERATION,
 					"error when executing cache to get subtypes");
 		}

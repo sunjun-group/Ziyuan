@@ -109,7 +109,7 @@ public class Engine {
 			Map<DecisionLocation, BreakpointData> result = tcExecutor.getResult();
 			
 			if(tcExecutor.getCurrentTestInputValues()==null){
-				System.currentTimeMillis();
+				return null;
 			}
 			
 			if (tcExecutor.getCurrentTestInputValues().isEmpty()) {
