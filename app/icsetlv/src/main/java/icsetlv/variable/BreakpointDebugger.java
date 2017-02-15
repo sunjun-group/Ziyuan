@@ -9,6 +9,8 @@
 package icsetlv.variable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -169,9 +171,16 @@ public abstract class BreakpointDebugger {
 		classPrepareRequest.setEnabled(true);
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void addBreakpointWatch(VirtualMachine vm, ReferenceType refType,
 			Map<String, BreakPoint> locBrpMap) {
 		List<BreakPoint> points = CollectionUtils.initIfEmpty(brkpsMap.get(refType.name()));
+		Collections.sort((ArrayList)points, new Comparator<BreakPoint>() {
+			@Override
+			public int compare(BreakPoint o1, BreakPoint o2) {
+				return o1.getLineNo()-o2.getLineNo();
+			}
+		});
 		
 		boolean canTheFirstPointSetBreakPoint = false;
 		List<sav.strategies.dto.BreakPoint.Variable> variableList = null;
@@ -179,11 +188,11 @@ public abstract class BreakpointDebugger {
 			List<sav.strategies.dto.BreakPoint.Variable> varList = point.getVars();
 			if(varList != null && !varList.isEmpty()){
 				variableList = varList;
+				point.setVars(new ArrayList<>());
 				break;
 			}
+			System.currentTimeMillis();
 		}
-		
-		System.currentTimeMillis();
 		
 		for (int i=0; i<points.size(); i++) {
 			BreakPoint brkp = points.get(i);
