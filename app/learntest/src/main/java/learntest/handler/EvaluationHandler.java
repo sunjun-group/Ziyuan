@@ -259,7 +259,7 @@ public class EvaluationHandler extends AbstractHandler {
 						FieldAccessChecker checker2 = new FieldAccessChecker();
 						md.accept(checker2);
 						
-						if(checker2.isFieldAccess){
+						if(!checker2.isFieldAccess){
 							if (containsAllPrimitiveType(md.parameters())) {
 								mdList.add(md);
 							}							
@@ -372,12 +372,12 @@ public class EvaluationHandler extends AbstractHandler {
 
 						AbstractTypeDeclaration type = (AbstractTypeDeclaration) cu.types().get(0);
 						String typeName = type.getName().getIdentifier();
-//						if(typeName.contains("AbstractIntegerDistribution") || typeName.contains("PoissonDistributionImpl")){
-//							System.currentTimeMillis();
-//						}
-//						else{
-//							continue;
-//						}
+						if(typeName.contains("ZipfDistributionImpl")){
+							System.currentTimeMillis();
+						}
+						else{
+							continue;
+						}
 			
 						if (type instanceof TypeDeclaration) {
 							TypeDeclaration td = (TypeDeclaration) type;
@@ -409,7 +409,7 @@ public class EvaluationHandler extends AbstractHandler {
 								String simpleMethodName = method.getName().getIdentifier();
 								LearnTestConfig.testMethodName = simpleMethodName;
 
-//								String methodName = className + "." + simpleMethodName;
+								String methodName = className + "." + simpleMethodName;
 
 								System.out.println("working method: " + LearnTestConfig.testClassName + "."
 										+ LearnTestConfig.testMethodName);
@@ -433,17 +433,11 @@ public class EvaluationHandler extends AbstractHandler {
 								} catch (Exception e) {
 									e.printStackTrace();
 									System.currentTimeMillis();
-//									System.out.println(e);
 								}
 
-//								if (!ignoredMethods.contains(methodName)) {
-//									ignoredMethods.addMethod(methodName);
-//								}
 							}
 
 						}
-						
-						//System.out.println("parsed " + sum + " methods");
 					}
 				}
 
