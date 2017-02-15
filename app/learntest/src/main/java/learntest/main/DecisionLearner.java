@@ -125,6 +125,7 @@ public class DecisionLearner implements CategoryCalculator {
 				System.currentTimeMillis();
 			}
 			
+			System.currentTimeMillis();
 			Pair<Formula, Formula> learnedClassifier = learn(bkpData);
 			
 			System.out.println("true or false classifier at " + bkpData.getLocation() + " is :" + learnedClassifier.first());

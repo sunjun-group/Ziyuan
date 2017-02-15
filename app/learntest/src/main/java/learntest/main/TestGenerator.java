@@ -48,9 +48,12 @@ public class TestGenerator {
 		System.currentTimeMillis();
 		
 		boolean isL2T = LearnTestConfig.isL2TApproach;
-		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getTestPackageName(isL2T), null/*LearnTestConfig.getTestPackageName(isL2T)*/, 
-				prefix, LearnTestConfig.getSimpleClassName(), testSourceFolder);
-		printer.printTests(builder.generate());
+		String packageName = LearnTestConfig.getTestPackageName(isL2T);
+		String simpleClassName = LearnTestConfig.getSimpleClassName();
+		TestsPrinter printer = new TestsPrinter(packageName, null, 
+				prefix, simpleClassName, testSourceFolder);
+		Pair<List<Sequence>, List<Sequence>> pair = builder.generate();
+		printer.printTests(pair);
 		
 		/*final FileCompilationUnitPrinter cuPrinter = new FileCompilationUnitPrinter(
 				appClasspath.getSrc());
