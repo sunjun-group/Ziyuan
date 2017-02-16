@@ -54,7 +54,7 @@ public class EvaluationHandler extends AbstractHandler {
 			IBinding binding = name.resolveBinding();
 			if(binding instanceof IVariableBinding){
 				IVariableBinding vb = (IVariableBinding)binding;
-				if(vb.isField()){
+				if(vb.isField() && !vb.getType().isPrimitive()){
 					isFieldAccess = true;
 				}
 			}
@@ -235,10 +235,6 @@ public class EvaluationHandler extends AbstractHandler {
 				return false;
 			}
 			
-			if(methodName.contains("FastMath.atan2")){
-				System.currentTimeMillis();
-			}
-			
 			if (!md.parameters().isEmpty()) {
 
 				boolean isPublic = false;
@@ -256,18 +252,18 @@ public class EvaluationHandler extends AbstractHandler {
 					md.accept(checker);
 					if (checker.isNestedJudge) {
 						
-						if (containsAllPrimitiveType(md.parameters())) {
-							mdList.add(md);
-						}	
+//						if (containsAllPrimitiveType(md.parameters())) {
+//							mdList.add(md);
+//						}	
 						
-//						FieldAccessChecker checker2 = new FieldAccessChecker();
-//						md.accept(checker2);
-//						
-//						if(!checker2.isFieldAccess){
-//							if (containsAllPrimitiveType(md.parameters())) {
-//								mdList.add(md);
-//							}							
-//						}
+						FieldAccessChecker checker2 = new FieldAccessChecker();
+						md.accept(checker2);
+						
+						if(!checker2.isFieldAccess){
+							if (containsAllPrimitiveType(md.parameters())) {
+								mdList.add(md);
+							}							
+						}
 					}
 
 //					DecisionStructureChecker checker = new DecisionStructureChecker();
@@ -384,7 +380,7 @@ public class EvaluationHandler extends AbstractHandler {
 						
 						AbstractTypeDeclaration type = (AbstractTypeDeclaration) cu.types().get(0);
 						String typeName = type.getName().getIdentifier();
-//						if(typeName.contains("ZipfDistributionImpl")){
+//						if(typeName.contains("OpenIntToDoubleHashMap")){
 //							System.currentTimeMillis();
 //						}
 //						else{
@@ -419,7 +415,7 @@ public class EvaluationHandler extends AbstractHandler {
 							System.out.println(className + "." + simpleMethodName);
 						}
 						sum += validMethods.size();
-						evaluateForMethodList(writer, sum, cu, validMethods);
+//						evaluateForMethodList(writer, sum, cu, validMethods);
 					}
 				}
 
