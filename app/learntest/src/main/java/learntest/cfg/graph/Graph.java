@@ -65,10 +65,16 @@ public class Graph<V, E extends Edge<V>> extends PropertiesContainer {
 	
 	public void removeEdge(E edge) {
 		if (edge.getSource() != null) {
-			outNeighbourhood.get(edge.getSource()).remove(edge);
+			List<E> list = outNeighbourhood.get(edge.getSource());
+			if(list != null){
+				list.remove(edge);
+			}
 		}
 		if (edge.getDest() != null) {
-			inNeighbourhood.get(edge.getDest()).remove(edge);
+			List<E> list = inNeighbourhood.get(edge.getDest());
+			if(list != null){
+				list.remove(edge);
+			}
 		}
 	}
 	

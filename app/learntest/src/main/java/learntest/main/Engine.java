@@ -259,7 +259,9 @@ public class Engine {
 							variables.addAll(visitFields);
 							
 							CfgCreator creator = new CfgCreator();
-							cfg = creator.dealWithBreakStmt(creator.dealWithReturnStmt(creator.toCFG(method)));
+							CFG cfg1 = creator.toCFG(method);
+							CFG cfg2 = creator.dealWithReturnStmt(cfg1);
+							cfg = creator.dealWithBreakStmt(cfg2);
 							returns = new HashSet<Integer>();
 							List<CfgDecisionNode> returnNodeList = creator.getReturnNodeList();
 							for (CfgDecisionNode returnNode : returnNodeList) {
@@ -326,7 +328,7 @@ public class Engine {
 	private List<Variable> findFields(CompilationUnit cu, MethodDeclaration method) {
 		List<Variable> fields = new ArrayList<>();
 		
-		String pack = cu.getPackage().getName().getName();
+		String pack = cu.getPackage().getChildrenNodes().get(0).toString();
 		String type = cu.getTypes().get(0).getName();
 		
 		String cuName = pack + "." + type;
