@@ -415,7 +415,7 @@ public class EvaluationHandler extends AbstractHandler {
 							System.out.println(className + "." + simpleMethodName);
 						}
 						sum += validMethods.size();
-//						evaluateForMethodList(writer, sum, cu, validMethods);
+						evaluateForMethodList(writer, sum, cu, validMethods);
 					}
 				}
 
