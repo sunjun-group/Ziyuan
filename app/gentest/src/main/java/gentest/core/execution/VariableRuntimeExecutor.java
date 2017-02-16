@@ -124,7 +124,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 			}
 			addExecData(stmt.getOutVarId(), newInstance);
 		} catch (Throwable e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 //			log.debug(e.getMessage());
 			onFail();
 		}
