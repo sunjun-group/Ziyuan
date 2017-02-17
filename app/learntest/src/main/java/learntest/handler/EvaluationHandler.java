@@ -218,18 +218,21 @@ public class EvaluationHandler extends AbstractHandler {
 		}
 	}
 
-	class MethodModifier extends ASTVisitor {
+	class MethodCollector extends ASTVisitor {
 
 		List<MethodDeclaration> mdList = new ArrayList<MethodDeclaration>();
 		CompilationUnit cu;
+		int totalMethodNum = 0;
 		
-		public MethodModifier(CompilationUnit cu){
+		public MethodCollector(CompilationUnit cu){
 			this.cu = cu;
 		}
 		
 		public boolean visit(MethodDeclaration md) {
+			
+			
 			AbstractTypeDeclaration node = (AbstractTypeDeclaration) cu.types().get(0);
-			String methodName = node.getName().toString() + "." + md.getName().getIdentifier();
+//			String methodName = node.getName().toString() + "." + md.getName().getIdentifier();
 			
 			if(md.isConstructor()){
 				return false;
@@ -248,6 +251,8 @@ public class EvaluationHandler extends AbstractHandler {
 				}
 
 				if (isPublic) {
+					totalMethodNum++;
+					
 					NestedBlockChecker checker = new NestedBlockChecker();
 					md.accept(checker);
 					if (checker.isNestedJudge) {
@@ -313,15 +318,23 @@ public class EvaluationHandler extends AbstractHandler {
 			return false;
 		}
 	}
+	
+	class RunTimeCananicalInfo{
+		
+		public RunTimeCananicalInfo(int validNum, int totalNum) {
+			super();
+			this.validNum = validNum;
+			this.totalNum = totalNum;
+		}
+		int validNum;
+		int totalNum;
+	}
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final IPackageFragmentRoot root = LearnTestUtil.findMainPackageRootInProject();
 
 		Job job = new Job("Do evaluation") {
-
-//			private HashSet<String> parsedMethods = new HashSet<String>();
-			private IgnoredMethodFiles ignoredMethods = new IgnoredMethodFiles();
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -331,7 +344,6 @@ public class EvaluationHandler extends AbstractHandler {
 				try {
 					reader = new ExcelReader();
 					reader.readXLSX();
-//					parsedMethods = reader.getParsedMethodSet();
 
 					writer = new ExcelWriter(LearnTestConfig.projectName);
 
@@ -346,16 +358,19 @@ public class EvaluationHandler extends AbstractHandler {
 				SAVTimer.enableExecutionTimeout = true;
 				SAVTimer.exeuctionTimeout = 100000;
 
+				RunTimeCananicalInfo overalInfo = new RunTimeCananicalInfo(0, 0);
+				
 				try {
-					int sum = 0;
 					for (IJavaElement element : root.getChildren()) {
 						if (element instanceof IPackageFragment) {
-							int num = runEvaluation((IPackageFragment) element, writer);
-							sum += num;
+							RunTimeCananicalInfo info = runEvaluation((IPackageFragment) element, writer);
+							overalInfo.totalNum += info.totalNum;
+							overalInfo.validNum += info.validNum;
 						}
 					}
 					
-					System.out.println("total valid methods: " + sum );
+					System.out.println("total valid methods: " + overalInfo.validNum );
+					System.out.println("total methods: " + overalInfo.totalNum );
 				} catch (JavaModelException e) {
 					e.printStackTrace();
 				}
@@ -364,8 +379,9 @@ public class EvaluationHandler extends AbstractHandler {
 			}
 
 				
-			private int runEvaluation(IPackageFragment pack, ExcelWriter writer) throws JavaModelException {
-				int sum = 0;
+			private RunTimeCananicalInfo runEvaluation(IPackageFragment pack, ExcelWriter writer) throws JavaModelException {
+				int validSum = 0;
+				int totalSum = 0;
 				
 				for (IJavaElement javaElement : pack.getChildren()) {
 					if (javaElement instanceof IPackageFragment) {
@@ -379,7 +395,7 @@ public class EvaluationHandler extends AbstractHandler {
 						}
 						
 						AbstractTypeDeclaration type = (AbstractTypeDeclaration) cu.types().get(0);
-						String typeName = type.getName().getIdentifier();
+//						String typeName = type.getName().getIdentifier();
 //						if(typeName.contains("OpenIntToDoubleHashMap")){
 //							System.currentTimeMillis();
 //						}
@@ -408,19 +424,23 @@ public class EvaluationHandler extends AbstractHandler {
 							}
 						}
 
-						List<MethodDeclaration> validMethods = findValidMethod(cu);
-						for(MethodDeclaration md: validMethods){
+						MethodCollector collector = new MethodCollector(cu);
+						cu.accept(collector);
+
+						
+						for(MethodDeclaration md: collector.mdList){
 							String className = LearnTestUtil.getFullNameOfCompilationUnit(cu);
 							String simpleMethodName = md.getName().getIdentifier();
 							System.out.println(className + "." + simpleMethodName);
 						}
-						sum += validMethods.size();
-						evaluateForMethodList(writer, sum, cu, validMethods);
+						validSum += collector.mdList.size();
+						totalSum += collector.totalMethodNum;
+//						evaluateForMethodList(writer, sum, cu, validMethods);
 					}
 				}
 
 				
-				return sum;
+				return new RunTimeCananicalInfo(validSum, totalSum);
 			}
 
 
@@ -464,13 +484,6 @@ public class EvaluationHandler extends AbstractHandler {
 
 				}
 				
-			}
-
-			private List<MethodDeclaration> findValidMethod(CompilationUnit cu) {
-				MethodModifier collector = new MethodModifier(cu);
-				cu.accept(collector);
-
-				return collector.mdList;
 			}
 		};
 

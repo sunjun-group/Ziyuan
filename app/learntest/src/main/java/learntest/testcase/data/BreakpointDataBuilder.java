@@ -31,45 +31,48 @@ public class BreakpointDataBuilder {
 	
 
 	public void build(List<BreakPoint> exePathOfTcI, List<BreakpointValue> inputValueOfTcI) {
-		if(inputValueOfTcI.size() == 1) {
-			build(exePathOfTcI, inputValueOfTcI.get(0));
-			return;
-		}
-		Map<Integer, List<BreakPoint>> paths = new HashMap<Integer, List<BreakPoint>>();
-		Stack<BreakPoint> todo = new Stack<BreakPoint>();
-		Stack<Integer> order = new Stack<Integer>();
-		int idx = 0;
-		for(BreakPoint bkp : exePathOfTcI) {
-			if (bkpBuilder.isEntryNode(bkp)) {
-				order.push(idx ++);
-			}
-			if(bkpBuilder.isReturnNode(bkp.getLineNo())) {
-				Stack<BreakPoint> cur = new Stack<BreakPoint>();
-				cur.push(bkp);
-				if(!bkpBuilder.isEntryNode(bkp)) {
-					while (!todo.isEmpty()) {
-						BreakPoint next = todo.pop();
-						cur.push(next);
-						if(bkpBuilder.isEntryNode(next)) {
-							break;
-						}
-					}
-				}
-				List<BreakPoint> curList = new ArrayList<BreakPoint>();
-				while (!cur.isEmpty()) {
-					curList.add(cur.pop());
-				}
-				paths.put(order.pop(), curList);
-			} else {
-				todo.push(bkp);
-			}
-		}
-		idx = 0;
-		for (BreakpointValue inputValue : inputValueOfTcI) {
-			build(paths.get(idx ++), inputValue);
-		}
-		
-		System.currentTimeMillis();
+		build(exePathOfTcI, inputValueOfTcI.get(0));
+		return;
+//		if(inputValueOfTcI.size() == 1) {
+//			build(exePathOfTcI, inputValueOfTcI.get(0));
+//			return;
+//		}
+//		
+//		Map<Integer, List<BreakPoint>> paths = new HashMap<Integer, List<BreakPoint>>();
+//		Stack<BreakPoint> todo = new Stack<BreakPoint>();
+//		Stack<Integer> order = new Stack<Integer>();
+//		int idx = 0;
+//		for(BreakPoint bkp : exePathOfTcI) {
+//			if (bkpBuilder.isEntryNode(bkp)) {
+//				order.push(idx ++);
+//			}
+//			if(bkpBuilder.isReturnNode(bkp.getLineNo())) {
+//				Stack<BreakPoint> cur = new Stack<BreakPoint>();
+//				cur.push(bkp);
+//				if(!bkpBuilder.isEntryNode(bkp)) {
+//					while (!todo.isEmpty()) {
+//						BreakPoint next = todo.pop();
+//						cur.push(next);
+//						if(bkpBuilder.isEntryNode(next)) {
+//							break;
+//						}
+//					}
+//				}
+//				List<BreakPoint> curList = new ArrayList<BreakPoint>();
+//				while (!cur.isEmpty()) {
+//					curList.add(cur.pop());
+//				}
+//				paths.put(order.pop(), curList);
+//			} else {
+//				todo.push(bkp);
+//			}
+//		}
+//		idx = 0;
+//		for (BreakpointValue inputValue : inputValueOfTcI) {
+//			build(paths.get(idx ++), inputValue);
+//		}
+//		
+//		System.currentTimeMillis();
 	}
 	
 	private void build(List<BreakPoint> path, BreakpointValue inputValue) {
