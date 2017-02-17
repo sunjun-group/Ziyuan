@@ -13,6 +13,11 @@
             id="learntest.command.evaluateAllMethods"
             name="Evaluate All Methods">
       </command>
+      <command
+            defaultHandler="learntest.handler.ChangeModiferHandler"
+            id="learntest.command.changeModifier"
+            name="Change Modifier to Public">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -30,6 +35,11 @@
             <command
                   commandId="learntest.command.evaluateAllMethods"
                   label="Evaluate All Methods"
+                  style="push">
+            </command>
+            <command
+                  commandId="learntest.command.changeModifier"
+                  label="Chnage Modifier to Public"
                   style="push">
             </command>
          </menu>

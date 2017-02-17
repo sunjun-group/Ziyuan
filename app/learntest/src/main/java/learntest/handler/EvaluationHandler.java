@@ -218,12 +218,12 @@ public class EvaluationHandler extends AbstractHandler {
 		}
 	}
 
-	class ValidMethodCollector extends ASTVisitor {
+	class MethodModifier extends ASTVisitor {
 
 		List<MethodDeclaration> mdList = new ArrayList<MethodDeclaration>();
 		CompilationUnit cu;
 		
-		public ValidMethodCollector(CompilationUnit cu){
+		public MethodModifier(CompilationUnit cu){
 			this.cu = cu;
 		}
 		
@@ -467,7 +467,7 @@ public class EvaluationHandler extends AbstractHandler {
 			}
 
 			private List<MethodDeclaration> findValidMethod(CompilationUnit cu) {
-				ValidMethodCollector collector = new ValidMethodCollector(cu);
+				MethodModifier collector = new MethodModifier(cu);
 				cu.accept(collector);
 
 				return collector.mdList;
