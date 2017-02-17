@@ -626,9 +626,9 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 		int size = vars.size();
 		for (int j = 0; j < size; j++) {
-			//double value = bValue.getValue(vars.get(j).getLabel(), 0.0);
+//			double value = bValue.getValue(vars.get(j).getLabel(), 0.0);
 			for (int k = j; k < size; k++) {
-				//lineVals[i ++] = value * bValue.getValue(vars.get(k).getLabel(), 0.0);
+//				lineVals[i ++] = value * bValue.getValue(vars.get(k).getLabel(), 0.0);
 				lineVals[i ++] = 0.0;
 			}
 		}

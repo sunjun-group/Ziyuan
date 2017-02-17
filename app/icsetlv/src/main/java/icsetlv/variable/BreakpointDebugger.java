@@ -113,6 +113,7 @@ public abstract class BreakpointDebugger {
 						ReferenceType refType = classPrepEvent.referenceType();
 						// breakpoints
 						addBreakpointWatch(vm, refType, locBrpMap);
+						System.currentTimeMillis();
 						
 					} else if (event instanceof BreakpointEvent) {
 						BreakpointEvent bkpEvent = (BreakpointEvent) event;
