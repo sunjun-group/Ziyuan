@@ -183,7 +183,7 @@ public class ChangeModiferHandler extends AbstractHandler {
 				}
 			}
 			
-			return false;
+			return true;
 		}
 	}
 }
