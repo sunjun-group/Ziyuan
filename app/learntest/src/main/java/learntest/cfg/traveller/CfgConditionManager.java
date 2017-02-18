@@ -137,7 +137,7 @@ public class CfgConditionManager {
 		}
 		node.setDividers(dividers);
 		
-		if (dividers == null) {
+		if (dividers == null || dividers.isEmpty()) {
 			CfgDecisionNode trueNode = trueNext.get(node);
 			CfgDecisionNode falseNode = falseNext.get(node);
 			if (trueNode != null || falseNode != null) {
