@@ -31,8 +31,10 @@ public class BreakpointDataBuilder {
 	
 
 	public void build(List<BreakPoint> exePathOfTcI, List<BreakpointValue> inputValueOfTcI) {
-		build(exePathOfTcI, inputValueOfTcI.get(0));
-		return;
+		if(inputValueOfTcI.size() > 0) {
+			build(exePathOfTcI, inputValueOfTcI.get(0));
+			return;
+		}
 //		if(inputValueOfTcI.size() == 1) {
 //			build(exePathOfTcI, inputValueOfTcI.get(0));
 //			return;
