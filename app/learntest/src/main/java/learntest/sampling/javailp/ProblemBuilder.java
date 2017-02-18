@@ -68,6 +68,7 @@ public class ProblemBuilder {
 			problems.add(build(vars, current, null, random));
 			return problems;
 		}
+		
 		List<List<CategoryCalculator>> calculators = orCalculator.getCalculators();
 		if (calculators.isEmpty()) {
 			problems.add(build(vars, current, null, random));

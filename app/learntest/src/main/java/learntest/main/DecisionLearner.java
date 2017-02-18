@@ -121,12 +121,10 @@ public class DecisionLearner implements CategoryCalculator {
 				continue;
 			}
 			
-			if(bkpData.getLocation().getLineNo()==356){
-				System.currentTimeMillis();
-			}
-			
-			System.currentTimeMillis();
 			Pair<Formula, Formula> learnedClassifier = learn(bkpData);
+			
+			System.out.println("true data: " + bkpData.getTrueValues());
+			System.out.println("false data: " + bkpData.getFalseValues());
 			
 			System.out.println("true or false classifier at " + bkpData.getLocation() + " is :" + learnedClassifier.first());
 			cfgConditionManager.setCondition(bkpData.getLocation().getLineNo(), learnedClassifier, curDividers);
@@ -185,9 +183,8 @@ public class DecisionLearner implements CategoryCalculator {
 		if (!random) {
 			preconditions = cfgConditionManager.getPreConditions(bkpData.getLocation().getLineNo());
 			/**
-			 * TODO left by Lin Yun
+			 * TODO left by Lin Yun 
 			 * a design flaw, this method should not be put inside OrCategoryCalculator.
-			 * 
 			 */
 			preconditions.clearInvalidData(bkpData);
 		}
@@ -221,11 +218,11 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 		
 		if (bkpData.getTrueValues().isEmpty()) {
-			log.info("Missing true branch data");
+			System.out.println("Missing true branch data");
 			curDividers = null;
 			return new Pair<Formula, Formula>(null, null);
 		} else if (bkpData.getFalseValues().isEmpty()) {
-			log.info("Missing false branch data");
+			System.out.println("Missing false branch data");
 			curDividers = null;
 			Formula oneMoreFormula = null;
 			if (bkpData instanceof LoopTimesData) {

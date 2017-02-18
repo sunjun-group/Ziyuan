@@ -39,7 +39,6 @@ import icsetlv.common.utils.PrimitiveUtils;
 import learntest.io.excel.ExcelReader;
 import learntest.io.excel.ExcelWriter;
 import learntest.io.excel.Trial;
-import learntest.io.txt.IgnoredMethodFiles;
 import learntest.main.LearnTestConfig;
 import learntest.main.RunTimeInfo;
 import learntest.util.LearnTestUtil;
@@ -217,7 +216,7 @@ public class EvaluationHandler extends AbstractHandler {
 			this.isStructured = isStructured;
 		}
 	}
-
+	
 	class MethodCollector extends ASTVisitor {
 
 		List<MethodDeclaration> mdList = new ArrayList<MethodDeclaration>();
@@ -229,8 +228,6 @@ public class EvaluationHandler extends AbstractHandler {
 		}
 		
 		public boolean visit(MethodDeclaration md) {
-			
-			
 			AbstractTypeDeclaration node = (AbstractTypeDeclaration) cu.types().get(0);
 //			String methodName = node.getName().toString() + "." + md.getName().getIdentifier();
 			
@@ -239,7 +236,6 @@ public class EvaluationHandler extends AbstractHandler {
 			}
 			
 			if (!md.parameters().isEmpty()) {
-
 				boolean isPublic = false;
 				for (Object obj : md.modifiers()) {
 					if (obj instanceof Modifier) {
@@ -252,33 +248,41 @@ public class EvaluationHandler extends AbstractHandler {
 
 				if (isPublic) {
 					totalMethodNum++;
-					
 					NestedBlockChecker checker = new NestedBlockChecker();
 					md.accept(checker);
 					if (checker.isNestedJudge) {
-						
-//						if (containsAllPrimitiveType(md.parameters())) {
-//							mdList.add(md);
-//						}	
-						
 						FieldAccessChecker checker2 = new FieldAccessChecker();
 						md.accept(checker2);
 						
 						if(!checker2.isFieldAccess){
-							if (containsAllPrimitiveType(md.parameters())) {
+//							if (containsAllPrimitiveType(md.parameters())) {
+//								mdList.add(md);
+//							}	
+							
+							if (containsAtLeastOnePrimitiveType(md.parameters())) {
 								mdList.add(md);
-							}							
+							}	
 						}
 					}
 
-//					DecisionStructureChecker checker = new DecisionStructureChecker();
-//					md.accept(checker);
-//					if (checker.isStructured()) {
-//						if (containsAllPrimitiveType(md.parameters())) {
-//							mdList.add(md);
-//						}
-//					}
 				}
+			}
+
+			return false;
+		}
+		
+		public boolean containsAtLeastOnePrimitiveType(List parameters){
+			for (Object obj : parameters) {
+				if (obj instanceof SingleVariableDeclaration) {
+					SingleVariableDeclaration svd = (SingleVariableDeclaration) obj;
+					Type type = svd.getType();
+					String typeString = type.toString();
+					
+					if(PrimitiveUtils.isPrimitive(typeString) && svd.getExtraDimensions() == 0){
+						return true;
+					}
+				}
+
 			}
 
 			return false;
@@ -433,9 +437,10 @@ public class EvaluationHandler extends AbstractHandler {
 							String simpleMethodName = md.getName().getIdentifier();
 							System.out.println(className + "." + simpleMethodName);
 						}
+						
 						validSum += collector.mdList.size();
 						totalSum += collector.totalMethodNum;
-//						evaluateForMethodList(writer, sum, cu, validMethods);
+						evaluateForMethodList(writer, cu, collector.mdList);
 					}
 				}
 
@@ -444,7 +449,7 @@ public class EvaluationHandler extends AbstractHandler {
 			}
 
 
-			private void evaluateForMethodList(ExcelWriter writer, int sum, CompilationUnit cu,
+			private void evaluateForMethodList(ExcelWriter writer, CompilationUnit cu,
 					List<MethodDeclaration> validMethods) {
 				if (!validMethods.isEmpty()) {
 					String className = LearnTestUtil.getFullNameOfCompilationUnit(cu);
@@ -454,7 +459,7 @@ public class EvaluationHandler extends AbstractHandler {
 						String simpleMethodName = method.getName().getIdentifier();
 						LearnTestConfig.testMethodName = simpleMethodName;
 
-						String methodName = className + "." + simpleMethodName;
+//						String methodName = className + "." + simpleMethodName;
 
 						System.out.println("working method: " + LearnTestConfig.testClassName + "."
 								+ LearnTestConfig.testMethodName);
@@ -473,7 +478,6 @@ public class EvaluationHandler extends AbstractHandler {
 										l2tInfo.getTestCnt(), ranInfo.getTime(), ranInfo.getCoverage(),
 										ranInfo.getTestCnt());
 								writer.export(trial);
-								sum++;
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
