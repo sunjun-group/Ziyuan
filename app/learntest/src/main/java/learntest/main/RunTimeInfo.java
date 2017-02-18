@@ -1,9 +1,9 @@
 package learntest.main;
 
 public class RunTimeInfo {
-	private long time;
-	private double coverage;
-	private int testCnt;
+	public long time;
+	public double coverage;
+	public int testCnt;
 
 	public RunTimeInfo(long time, double coverage, int testCnt) {
 		super();

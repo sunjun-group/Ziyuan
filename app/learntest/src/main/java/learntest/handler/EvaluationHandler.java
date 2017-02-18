@@ -465,18 +465,50 @@ public class EvaluationHandler extends AbstractHandler {
 								+ LearnTestConfig.testMethodName);
 
 						try {
-							LearnTestConfig.isL2TApproach = true;
-							RunTimeInfo l2tInfo = new GenerateTestHandler().generateTest(true);
-
-							LearnTestConfig.isL2TApproach = false;
-							RunTimeInfo ranInfo = new GenerateTestHandler().generateTest(false);
-
-							if (l2tInfo != null && ranInfo != null) {
+							int times = 1;
+							RunTimeInfo l2tAverageInfo = new RunTimeInfo(0, 0, 0);
+							RunTimeInfo ranAverageInfo = new RunTimeInfo(0, 0, 0);
+							
+							for(int i=0; i<times; i++){
+								LearnTestConfig.isL2TApproach = true;
+								RunTimeInfo l2tInfo = new GenerateTestHandler().generateTest(true);
+								
+								if(l2tAverageInfo !=null && l2tInfo != null){
+									l2tAverageInfo.coverage += l2tInfo.coverage;
+									l2tAverageInfo.time += l2tInfo.time;
+									l2tAverageInfo.testCnt += l2tInfo.testCnt;									
+								}
+								else{
+									l2tAverageInfo = null;
+								}
+								
+								LearnTestConfig.isL2TApproach = false;
+								RunTimeInfo ranInfo = new GenerateTestHandler().generateTest(false);
+								
+								if(ranAverageInfo!=null && ranInfo!=null){
+									ranAverageInfo.coverage += ranInfo.coverage;
+									ranAverageInfo.time += ranInfo.time;
+									ranAverageInfo.testCnt += ranInfo.testCnt;									
+								}
+								else{
+									ranAverageInfo = null;
+								}
+							}
+							
+							if (l2tAverageInfo != null && ranAverageInfo != null) {
+								l2tAverageInfo.coverage /= times;
+								l2tAverageInfo.time /= times;
+								l2tAverageInfo.testCnt /= times;
+								
+								ranAverageInfo.coverage /= times;
+								ranAverageInfo.time /= times;
+								ranAverageInfo.testCnt /= times;
+								
 								String fullMN = LearnTestConfig.testClassName + "."
 										+ LearnTestConfig.testMethodName;
-								Trial trial = new Trial(fullMN, l2tInfo.getTime(), l2tInfo.getCoverage(),
-										l2tInfo.getTestCnt(), ranInfo.getTime(), ranInfo.getCoverage(),
-										ranInfo.getTestCnt());
+								Trial trial = new Trial(fullMN, l2tAverageInfo.getTime(), l2tAverageInfo.getCoverage(),
+										l2tAverageInfo.getTestCnt(), ranAverageInfo.getTime(), ranAverageInfo.getCoverage(),
+										ranAverageInfo.getTestCnt());
 								writer.export(trial);
 							}
 						} catch (Exception e) {
