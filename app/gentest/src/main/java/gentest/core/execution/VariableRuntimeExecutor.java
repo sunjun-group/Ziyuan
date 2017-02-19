@@ -159,13 +159,14 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 							Object returnedValue = method.invoke(obj, (Object[]) inputs.toArray());
 							value.returnedValue = returnedValue;
 						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-							e.printStackTrace();
+//							e.printStackTrace();
 						}
 					}
 					
 				}, null);
 				
-				new Thread(theTask).start();
+				Thread t = new Thread(theTask);
+				t.start();
 				
 				/**according to jdk document, the get methods will block if the computation has not yet completed*/
 				theTask.get(10L, TimeUnit.SECONDS);
