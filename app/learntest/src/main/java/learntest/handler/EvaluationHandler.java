@@ -459,7 +459,7 @@ public class EvaluationHandler extends AbstractHandler {
 						String simpleMethodName = method.getName().getIdentifier();
 						LearnTestConfig.testMethodName = simpleMethodName;
 						
-						int lineNumber = cu.getLineNumber(method.getStartPosition());
+						int lineNumber = cu.getLineNumber(method.getName().getStartPosition());
 						LearnTestConfig.methodLineNumber = String.valueOf(lineNumber);
 
 //						String methodName = className + "." + simpleMethodName;

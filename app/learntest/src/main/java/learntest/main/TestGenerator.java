@@ -41,11 +41,11 @@ public class TestGenerator {
 		MethodDeclaration md = LearnTestUtil.findSpecificMethod(LearnTestConfig.testClassName, 
 				LearnTestConfig.testMethodName, LearnTestConfig.methodLineNumber);
 		String key = md.resolveBinding().getKey();
-		
+		String mSig = key.substring(key.indexOf(".")+1);
 //		Class clazz = Class.forName(LearnTestConfig.testClassName);
 		Class clazz = LearnTestUtil.retrieveClass(LearnTestConfig.testClassName);
 		
-		builder.forClass(clazz).method(key);
+		builder.forClass(clazz).method(mSig);
 		
 		//builder.forClass(Class.forName(LearnTestConfig.className));
 		
