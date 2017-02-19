@@ -440,7 +440,7 @@ public class EvaluationHandler extends AbstractHandler {
 						
 						validSum += collector.mdList.size();
 						totalSum += collector.totalMethodNum;
-//						evaluateForMethodList(writer, cu, collector.mdList);
+						evaluateForMethodList(writer, cu, collector.mdList);
 					}
 				}
 
@@ -458,6 +458,9 @@ public class EvaluationHandler extends AbstractHandler {
 					for (MethodDeclaration method : validMethods) {
 						String simpleMethodName = method.getName().getIdentifier();
 						LearnTestConfig.testMethodName = simpleMethodName;
+						
+						int lineNumber = cu.getLineNumber(method.getStartPosition());
+						LearnTestConfig.methodLineNumber = String.valueOf(lineNumber);
 
 //						String methodName = className + "." + simpleMethodName;
 
