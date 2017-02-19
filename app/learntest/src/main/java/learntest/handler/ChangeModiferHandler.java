@@ -31,7 +31,6 @@ import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 
@@ -42,8 +41,8 @@ public class ChangeModiferHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final IPackageFragmentRoot root = LearnTestUtil.findMainPackageRootInProject();
-
+//		final IPackageFragmentRoot root = LearnTestUtil.findMainPackageRootInProject();
+		final List<IPackageFragmentRoot> roots = LearnTestUtil.findAllPackageRootInProject();
 		Job job = new Job("Do evaluation") {
 
 			@Override
@@ -53,15 +52,14 @@ public class ChangeModiferHandler extends AbstractHandler {
 				SAVTimer.exeuctionTimeout = 100000;
 
 				try {
-					int sum = 0;
-					for (IJavaElement element : root.getChildren()) {
-						if (element instanceof IPackageFragment) {
-							int num = changeModifier((IPackageFragment) element);
-							sum += num;
-						}
+					for(IPackageFragmentRoot root: roots){
+						for (IJavaElement element : root.getChildren()) {
+							if (element instanceof IPackageFragment) {
+								changeModifier((IPackageFragment) element);
+							}
+						}						
 					}
 					
-					System.out.println("total valid methods: " + sum );
 				} catch (JavaModelException e) {
 					e.printStackTrace();
 				}

@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -127,6 +128,25 @@ public class LearnTestUtil {
 		}
 		
 		return null;
+	}
+	
+	
+	public static List<IPackageFragmentRoot> findAllPackageRootInProject(){
+		List<IPackageFragmentRoot> rootList = new ArrayList<>();
+		IJavaProject project = JavaCore.create(getSpecificJavaProjectInWorkspace());
+		try {
+			for(IPackageFragmentRoot packageFragmentRoot: project.getPackageFragmentRoots()){
+				if(!(packageFragmentRoot instanceof JarPackageFragmentRoot)){
+					rootList.add(packageFragmentRoot);
+//					return packageFragmentRoot;
+				}
+			}
+			
+		} catch (JavaModelException e1) {
+			e1.printStackTrace();
+		}
+		
+		return rootList;
 	}
 	
 	public static String retrieveTestSourceFolder() {
