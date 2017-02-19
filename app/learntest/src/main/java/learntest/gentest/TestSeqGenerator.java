@@ -83,7 +83,7 @@ public class TestSeqGenerator {
 			String[] parts = var.getLabel().split("[.]");
 			String receiver = parts[0];
 			if (!classMap.containsKey(receiver)) {
-				System.err.println("not input parameter [" + var.getLabel() + "]");
+//				System.err.println("not input parameter [" + var.getLabel() + "]");
 				continue;
 			}
 			if (parts.length == 1) {
@@ -267,7 +267,7 @@ public class TestSeqGenerator {
 				String[] parts = var.split("[.]");
 				String receiver = parts[0];
 				if (!classMap.containsKey(receiver)) {
-					System.err.println("not input parameter [" + var + "]");
+//					System.err.println("not input parameter [" + var + "]");
 					continue;
 				}
 				if (parts.length == 1) {

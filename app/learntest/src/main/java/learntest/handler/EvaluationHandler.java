@@ -343,11 +343,11 @@ public class EvaluationHandler extends AbstractHandler {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 
-				ExcelReader reader = null;
+//				ExcelReader reader = null;
 				ExcelWriter writer = null;
 				try {
-					reader = new ExcelReader();
-					reader.readXLSX();
+//					reader = new ExcelReader();
+//					reader.readXLSX();
 
 					writer = new ExcelWriter(LearnTestConfig.projectName);
 
@@ -355,7 +355,7 @@ public class EvaluationHandler extends AbstractHandler {
 					e1.printStackTrace();
 				}
 
-				if (reader == null || writer == null) {
+				if (writer == null) {
 					return Status.CANCEL_STATUS;
 				}
 
@@ -440,7 +440,7 @@ public class EvaluationHandler extends AbstractHandler {
 						
 						validSum += collector.mdList.size();
 						totalSum += collector.totalMethodNum;
-						evaluateForMethodList(writer, cu, collector.mdList);
+//						evaluateForMethodList(writer, cu, collector.mdList);
 					}
 				}
 
