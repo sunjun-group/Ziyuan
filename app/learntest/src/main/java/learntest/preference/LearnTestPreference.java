@@ -30,16 +30,19 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 	private Text testClassText;
 	private Text testMethodText;
 	private Button isL2TButton;
+	private Text methodLineNumberText;
 	
 	private String defaultTargetProject = "";
 	private String defaultTestClass = "";
 	private String defaultTestMethod = "";
 	private String defaultL2T = "";
+	private String defaultMethodLineNumber = "";
 	
 	public static final String TARGET_PORJECT = "targetProjectName";
 	public static final String CLASS_NAME = "className";
 	public static final String METHOD_NAME = "methodName";
 	public static final String IS_L2T = "isL2T";
+	public static final String METHOD_LINE_NUMBER = "methodLineNumber";
 	
 	public LearnTestPreference() {
 	}
@@ -60,6 +63,11 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 		this.defaultL2T = Activator.getDefault().getPreferenceStore().getString(IS_L2T);
 		if(this.defaultL2T == null){
 			this.defaultL2T = "true";
+		}
+		
+		this.defaultMethodLineNumber = Activator.getDefault().getPreferenceStore().getString(METHOD_LINE_NUMBER);
+		if(this.defaultMethodLineNumber == null){
+			this.defaultMethodLineNumber = "0";
 		}
 	}
 
@@ -108,13 +116,21 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 		lanuchClassTextData.horizontalSpan = 2;
 		testClassText.setLayoutData(lanuchClassTextData);
 		
-		Label classNameLabel = new Label(testInfoGroup, SWT.NONE);
-		classNameLabel.setText("Test Method: ");
+		Label methodNameLabel = new Label(testInfoGroup, SWT.NONE);
+		methodNameLabel.setText("Test Method: ");
 		testMethodText = new Text(testInfoGroup, SWT.BORDER);
 		testMethodText.setText(this.defaultTestMethod);
 		GridData methodNameTextData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		methodNameTextData.horizontalSpan = 2;
 		testMethodText.setLayoutData(methodNameTextData);
+		
+		Label methodLineNumberLabel = new Label(testInfoGroup, SWT.NONE);
+		methodLineNumberLabel.setText("Method Line Number: ");
+		methodLineNumberText = new Text(testInfoGroup, SWT.BORDER);
+		methodLineNumberText.setText(this.defaultMethodLineNumber);
+		GridData methodLineNumberData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		methodLineNumberData.horizontalSpan = 2;
+		methodLineNumberText.setLayoutData(methodLineNumberData);
 		
 		Label isL2TLabel = new Label(testInfoGroup, SWT.NONE);
 		isL2TLabel.setText("Use L2T: ");
@@ -135,11 +151,13 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 		preferences.put(CLASS_NAME, this.testClassText.getText());
 		preferences.put(METHOD_NAME, this.testMethodText.getText());
 		preferences.put(IS_L2T, isL2TString);
+		preferences.put(METHOD_LINE_NUMBER, this.methodLineNumberText.getText());
 		
 		Activator.getDefault().getPreferenceStore().putValue(TARGET_PORJECT, this.projectCombo.getText());
 		Activator.getDefault().getPreferenceStore().putValue(CLASS_NAME, this.testClassText.getText());
 		Activator.getDefault().getPreferenceStore().putValue(METHOD_NAME, this.testMethodText.getText());
 		Activator.getDefault().getPreferenceStore().putValue(IS_L2T, isL2TString);
+		Activator.getDefault().getPreferenceStore().putValue(METHOD_LINE_NUMBER, this.methodLineNumberText.getText());
 		
 		confirmChanges();
 		
@@ -152,6 +170,7 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 		LearnTestConfig.testClassName = this.testClassText.getText();
 		LearnTestConfig.testMethodName = this.testMethodText.getText();
 		LearnTestConfig.isL2TApproach = this.isL2TButton.getSelection();
+		LearnTestConfig.methodLineNumber = this.methodLineNumberText.getText();
 	}
 	
 	

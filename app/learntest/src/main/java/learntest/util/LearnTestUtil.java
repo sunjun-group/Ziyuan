@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -130,6 +131,20 @@ public class LearnTestUtil {
 		return null;
 	}
 	
+	public static MethodDeclaration findSpecificMethod(String className, String methodName, String lineNumberString){
+		int lineNumber = 0; 
+		try{
+			lineNumber = Integer.valueOf(lineNumberString);			
+		}catch (Exception e){}
+		
+		CompilationUnit cu = findCompilationUnitInProject(className);
+		
+		MethodFinder finder = new MethodFinder(lineNumber, cu, methodName);
+		
+		cu.accept(finder);
+		
+		return finder.requiredMD;
+	}
 	
 	public static List<IPackageFragmentRoot> findAllPackageRootInProject(){
 		List<IPackageFragmentRoot> rootList = new ArrayList<>();

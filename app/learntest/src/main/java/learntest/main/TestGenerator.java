@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.jacop.core.Domain;
 import org.jacop.floats.core.FloatDomain;
 
@@ -37,9 +38,14 @@ public class TestGenerator {
 		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(1);
 		builder.queryMaxLength(1).testPerQuery(1);
 		
+		MethodDeclaration md = LearnTestUtil.findSpecificMethod(LearnTestConfig.testClassName, 
+				LearnTestConfig.testMethodName, LearnTestConfig.methodLineNumber);
+		String key = md.resolveBinding().getKey();
+		
 //		Class clazz = Class.forName(LearnTestConfig.testClassName);
 		Class clazz = LearnTestUtil.retrieveClass(LearnTestConfig.testClassName);
-		builder.forClass(clazz).method(LearnTestConfig.testMethodName);
+		
+		builder.forClass(clazz).method(key);
 		
 		//builder.forClass(Class.forName(LearnTestConfig.className));
 		

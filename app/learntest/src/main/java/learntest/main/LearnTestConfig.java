@@ -16,6 +16,7 @@ public class LearnTestConfig {
 	public static String testClassName;
 	public static String testMethodName;
 	public static boolean isL2TApproach;
+	public static String methodLineNumber;
 	
 	static{
 		if(Activator.getDefault() != null){
@@ -27,6 +28,7 @@ public class LearnTestConfig {
 				if(L2TString != null){
 					isL2TApproach = Boolean.valueOf(L2TString);
 				}
+				methodLineNumber = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.METHOD_LINE_NUMBER);
 			}
 			catch(Exception e){
 				e.printStackTrace();
@@ -74,5 +76,14 @@ public class LearnTestConfig {
 		URI uri = icu.getResource().getLocationURI();
 		String sourceFolderPath = uri.toString();
 		return sourceFolderPath;
+	}
+
+	public static int getMethodLineNumber() {
+		int lineNumber = 0;
+		try{
+			lineNumber = Integer.valueOf(methodLineNumber);
+		}catch(Exception e){}
+		
+		return lineNumber;
 	}
 }

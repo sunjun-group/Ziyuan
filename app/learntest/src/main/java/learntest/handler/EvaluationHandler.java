@@ -440,7 +440,7 @@ public class EvaluationHandler extends AbstractHandler {
 						
 						validSum += collector.mdList.size();
 						totalSum += collector.totalMethodNum;
-						evaluateForMethodList(writer, cu, collector.mdList);
+//						evaluateForMethodList(writer, cu, collector.mdList);
 					}
 				}
 

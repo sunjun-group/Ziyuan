@@ -246,7 +246,17 @@ public class Engine {
 				for (BodyDeclaration body : type.getMembers()) {
 					if (body instanceof MethodDeclaration) {
 						MethodDeclaration method = (MethodDeclaration) body;
+						
+						int lineNumber = LearnTestConfig.getMethodLineNumber();
+						
 						if (method.getName().equals(methodName)) {
+							
+							if(lineNumber != 0){
+								if(!(method.getBeginLine()<=lineNumber && lineNumber<=method.getEndLine())){
+									continue;
+								}
+							}
+							
 							variables = new ArrayList<Variable>();
 							List<Parameter> parameters = method.getParameters();
 							if (parameters != null) {
