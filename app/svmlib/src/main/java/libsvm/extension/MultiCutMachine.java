@@ -161,7 +161,7 @@ public class MultiCutMachine extends Machine {
 		for (LearnedData data : learnedDatas) {
 			if (data.model != null) {				
 				final Divider explicitDivider = new Model(data.model, numberOfFeatures)
-				.getExplicitDivider();
+						.getExplicitDivider();
 				if (str.length() != 0) {
 					str.append(" ^ ");
 				}

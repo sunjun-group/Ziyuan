@@ -33,6 +33,7 @@ import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
 import libsvm.core.Machine.DataPoint;
 import libsvm.core.Model;
+import libsvm.extension.MultiCutMachine;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.AndFormula;
@@ -277,6 +278,7 @@ public class DecisionLearner implements CategoryCalculator {
 			
 			//int times = 0;
 			machine.resetData();
+			
 			addDataPoints(originVars, bkpData.getTrueValues(), Category.POSITIVE, machine);
 			addDataPoints(originVars, bkpData.getFalseValues(), Category.NEGATIVE, machine);
 			long startTime0 = System.currentTimeMillis();
@@ -285,6 +287,17 @@ public class DecisionLearner implements CategoryCalculator {
 			trueFlaseFormula = getLearnedFormula();
 			double acc = machine.getModelAccuracy();
 			curDividers = machine.getLearnedDividers();
+			
+			
+			MultiCutMachine mcm = new MultiCutMachine();
+			for(BreakpointValue value: bkpData.getTrueValues()){
+				addDataPoint(originVars, value, Category.POSITIVE, mcm);
+			}
+			for(BreakpointValue value: bkpData.getFalseValues()){
+				addDataPoint(originVars, value, Category.NEGATIVE, mcm);
+			}
+			mcm.train();
+			System.currentTimeMillis();
 			
 			while(trueFlaseFormula != null /*&& times < MAX_ATTEMPT*/ && cfgConditionManager.isRelevant(bkpData.getLocation().getLineNo())) {
 				long startTime = System.currentTimeMillis();				

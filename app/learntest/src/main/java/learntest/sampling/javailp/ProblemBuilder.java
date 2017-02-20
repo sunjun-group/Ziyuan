@@ -187,7 +187,7 @@ public class ProblemBuilder {
 	
 	private static Problem buildVarBoundContraint(List<ExecVar> vars) {
 		
-		int bound = Settings.bound;
+		int bound = 10000;
 		
 		Problem problem = new Problem();
 		for (ExecVar var : vars) {
