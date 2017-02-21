@@ -44,8 +44,25 @@ public class PositiveSeparationMachine extends Machine {
 		this.negativePointSelection = pointSelection;
 	}
 
+	private boolean canDivideWithOneFormula(List<DataPoint> dataPoints){
+		boolean canDivideWithOneFormula = true;
+		
+		try {
+			super.train(dataPoints);
+			if (model != null) learnedModels.add(model);
+		} catch (SAVExecutionTimeOutException e) {
+			canDivideWithOneFormula = false;
+		}
+		
+		return canDivideWithOneFormula;
+	}
+	
 	@Override
 	protected Machine train(final List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
+		if(canDivideWithOneFormula(dataPoints)){
+			return this;
+		}
+		
 		int attemptCount = 0;
 		double bestAccuracy = 0.0;
 		List<svm_model> bestLearnedModels = new ArrayList<>();
