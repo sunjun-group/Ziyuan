@@ -196,6 +196,9 @@ public class DecisionLearner implements CategoryCalculator {
 			System.out.println("learn select data for empty time for " + bkpData.getLocation()
 					+ ": " + (System.currentTimeMillis() - startTime) + "ms");
 			
+			System.out.println("true data after selective for empty: " + selectMap.get(bkpData.getLocation()).getTrueValues());
+			System.out.println("false data after selective for empty: " + selectMap.get(bkpData.getLocation()).getFalseValues());
+			
 			if (selectMap != null) {
 				mergeMap(selectMap);
 				cfgConditionManager.updateRelevance(bkpDataMap);
@@ -278,7 +281,7 @@ public class DecisionLearner implements CategoryCalculator {
 			double acc = mcm.getModelAccuracy();
 			curDividers = mcm.getLearnedDividers();
 			System.out.println("=============learned multiple cut: " + trueFlaseFormula);
-			while(trueFlaseFormula != null /*&& times < MAX_ATTEMPT*/ && cfgConditionManager.isRelevant(bkpData.getLocation().getLineNo())) {
+			while(trueFlaseFormula != null && cfgConditionManager.isRelevant(bkpData.getLocation().getLineNo())) {
 				long startTime = System.currentTimeMillis();				
 				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(bkpData.getLocation(), 
 						originVars, mcm.getDataPoints(), preconditions, mcm.getLearnedDividers());
@@ -297,6 +300,8 @@ public class DecisionLearner implements CategoryCalculator {
 				preconditions.clearInvalidData(newData);
 				addDataPoints(originVars, newData.getTrueValues(), Category.POSITIVE, mcm);
 				addDataPoints(originVars, newData.getFalseValues(), Category.NEGATIVE, mcm);
+				System.out.println("true data after selective sampling" + bkpData.getTrueValues());
+				System.out.println("false data after selective sampling" + bkpData.getFalseValues());
 				
 				//startTime = System.currentTimeMillis();
 				acc = mcm.getModelAccuracy();
@@ -305,7 +310,7 @@ public class DecisionLearner implements CategoryCalculator {
 				}
 				
 				mcm.train();
-				//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
+
 				Formula tmp = mcm.getLearnedMultiFormula(originVars, getLabels());
 				double accTmp = mcm.getModelAccuracy();
 				if (tmp == null) {

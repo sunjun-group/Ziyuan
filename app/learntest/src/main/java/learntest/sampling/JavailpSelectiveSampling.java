@@ -128,42 +128,23 @@ public class JavailpSelectiveSampling {
 		List<Result> results = new ArrayList<Result>();
 		
 		/**
-		 * generate some true-side data points
-		 */
-		List<Problem> basics = ProblemBuilder.buildTrueValueProblems(originVars, preconditions, learnedFormulas, false);
-		for (Problem basic : basics) {
-			Result res = ProblemSolver.generateRandomResultToConstraints(basic, originVars);
-			if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
-				results.add(res);
-			}
-		}
-		
-		/**
 		 * generate data point on the border of divider 
 		 */
 		for (Divider learnedFormula : learnedFormulas) {
 			List<Problem> problems = ProblemBuilder.buildOnBorderProblems(learnedFormula, 
 					originVars, preconditions, learnedFormulas, false);
 			for (Problem problem : problems) {
-				Result res = ProblemSolver.generateRandomResultToConstraints(problem, originVars);
-				if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
-					results.add(res);
-				}
-			}
-		}
-//		System.currentTimeMillis();
-		
-		/**
-		 * generate data point on the opposite side of svm model
-		 */
-		int size = learnedFormulas.size();
-		for (int i = 0; i < size; i++) {
-			List<Divider> clonedLearnedFormulas = new ArrayList<Divider>(learnedFormulas);
-			List<Problem> problems = ProblemBuilder.buildFalseValueProblems(originVars, preconditions, clonedLearnedFormulas, false);
-			for (Problem problem : problems) {
-				Result res = ProblemSolver.generateRandomResultToConstraints(problem, originVars);
-				if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
-					results.add(res);
+				Result result = ProblemSolver.generateRandomResultToConstraints(problem, originVars);
+				if (result != null) {
+					boolean isDuplicateWithResult = isDuplicate(result, originVars, prevDatas);
+					
+					if (!isDuplicateWithResult) {
+						prevDatas.add(result);
+					}
+					
+					List<Eq<?>> assignment = getAssignments(result, originVars);
+					assignments.add(assignment);
+					results.add(result);
 				}
 			}
 		}
@@ -173,7 +154,7 @@ public class JavailpSelectiveSampling {
 		 */
 		Random random = new Random();
 		calculateValRange(originVars, datapoints);
-		if (originVars.size() > 1 && !results.isEmpty()) {
+		if (originVars.size() > 1) {
 			List<Problem> probelms = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
 			for (Problem problem : probelms) {
 				for (int i = 0; i < MAX_MORE_SELECTED_SAMPLE; i++) {
@@ -192,9 +173,10 @@ public class JavailpSelectiveSampling {
 			}
 		}
 		
-		extendWithHeuristics(results, assignments, originVars);
+		for(int i=0; i<30; i++){
+			extendWithHeuristics(results, assignments, originVars);			
+		}
 		selectData(target, assignments);
-		System.currentTimeMillis();
 		return selectResult;
 	}
 
@@ -206,6 +188,11 @@ public class JavailpSelectiveSampling {
 	 */
 	private void extendWithHeuristics(List<Result> results, List<List<Eq<?>>> assignments, 
 			List<ExecVar> originVars) {
+		
+		double selectiveBound = 5;
+		Random random = new Random();
+		double offset = random.nextDouble()*selectiveBound;
+		
 		for (Result result : results) {
 			int idx = 0;
 			for (ExecVar var : originVars) {
@@ -218,6 +205,9 @@ public class JavailpSelectiveSampling {
 				Result r2 = new ResultImpl();
 				switch (var.getType()) {
 					case INTEGER:
+						r1.put(label, value.intValue() + (int)offset);
+						r2.put(label, value.intValue() - (int)offset);
+						break;
 					case CHAR:
 						r1.put(label, value.intValue() + 1);
 						r2.put(label, value.intValue() - 1);
@@ -227,20 +217,20 @@ public class JavailpSelectiveSampling {
 						r2.put(label, value.byteValue() - 1);
 						break;
 					case DOUBLE:
-						r1.put(label, value.doubleValue() + 1);
-						r2.put(label, value.doubleValue() - 1);
+						r1.put(label, value.doubleValue() + offset);
+						r2.put(label, value.doubleValue() - offset);
 						break;
 					case FLOAT:
-						r1.put(label, value.floatValue() + 1);
-						r2.put(label, value.floatValue() - 1);
+						r1.put(label, value.floatValue() + (float)offset);
+						r2.put(label, value.floatValue() - (float)offset);
 						break;
 					case LONG:
-						r1.put(label, value.longValue() + 1);
-						r2.put(label, value.longValue() - 1);
+						r1.put(label, value.longValue() + (long)offset);
+						r2.put(label, value.longValue() - (long)offset);
 						break;
 					case SHORT:
-						r1.put(label, value.shortValue() + 1);
-						r2.put(label, value.shortValue() - 1);
+						r1.put(label, value.shortValue() + (short)offset);
+						r2.put(label, value.shortValue() - (short)offset);
 						break;
 					case BOOLEAN:
 						r1.put(label, 1 - value.intValue());
@@ -261,12 +251,7 @@ public class JavailpSelectiveSampling {
 					r2.put(tmp, result.get(tmp));
 					i ++;
 				}
-				/*if (isValid(r1)) {
-					checkNonduplicateResult(r1, originVars, prevDatas, assignments);	
-				}
-				if (isValid(r2)) {
-					checkNonduplicateResult(r2, originVars, prevDatas, assignments);	
-				}*/
+				
 				checkNonduplicateResult(r1, originVars, prevDatas, assignments);
 				checkNonduplicateResult(r2, originVars, prevDatas, assignments);
 				idx ++;
