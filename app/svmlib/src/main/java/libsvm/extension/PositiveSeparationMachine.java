@@ -62,7 +62,7 @@ public class PositiveSeparationMachine extends Machine {
 			}
 		}
 		learnedModels = bestLearnedModels;
-
+		
 		return this;
 	}
 
@@ -72,12 +72,14 @@ public class PositiveSeparationMachine extends Machine {
 
 		classifyNegativePositivePoints(dataPoints, positives, negatives);
 
-		List<DataPoint> trainingData = positives;
+		List<DataPoint> trainingData = (positives.size()>negatives.size()) ? negatives : positives;
+		List<DataPoint> selectionData = (positives.size()>negatives.size()) ? positives : negatives;
+		
 		int loopCount = 0;
 		while (!negatives.isEmpty() && loopCount < MAXIMUM_DIVIDER_COUNT) {
 			loopCount++;
 			// Training set = all positives + 1 negative
-			trainingData.add(negativePointSelection.select(negatives, positives));
+			trainingData.add(negativePointSelection.select(selectionData, trainingData));
 			super.train(trainingData);
 
 			if (model != null) learnedModels.add(model);
