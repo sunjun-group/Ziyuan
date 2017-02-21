@@ -49,8 +49,13 @@ public class PositiveSeparationMachine extends Machine {
 		
 		try {
 			super.train(dataPoints);
-			if (model != null) learnedModels.add(model);
 		} catch (SAVExecutionTimeOutException e) {
+			e.printStackTrace();
+		}
+		if (model != null) {
+			learnedModels.add(model);
+		}
+		else{
 			canDivideWithOneFormula = false;
 		}
 		

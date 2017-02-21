@@ -277,6 +277,7 @@ public class DecisionLearner implements CategoryCalculator {
 			NegativePointSelection negative = new ByDistanceNegativePointSelection();
 			PositiveSeparationMachine mcm = new PositiveSeparationMachine(negative);
 			trueFlaseFormula = generateInitialFormula(bkpData, mcm);
+			System.currentTimeMillis();
 			double acc = mcm.getModelAccuracy();
 			curDividers = mcm.getLearnedDividers();
 			System.out.println("=============learned multiple cut: " + trueFlaseFormula);
