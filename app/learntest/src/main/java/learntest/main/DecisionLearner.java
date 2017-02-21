@@ -21,22 +21,19 @@ import learntest.calculator.OrCategoryCalculator;
 import learntest.cfg.traveller.CfgConditionManager;
 import learntest.sampling.JavailpSelectiveSampling;
 import learntest.sampling.jacop.StoreSearcher;
-import learntest.svm.MyPositiveSeparationMachine;
 import learntest.testcase.data.BranchType;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.LoopTimesData;
-import libsvm.svm_model;
 import libsvm.core.Category;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
-import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
 import libsvm.core.Machine.DataPoint;
-import libsvm.core.Model;
-import libsvm.extension.MultiCutMachine;
+import libsvm.extension.ByDistanceNegativePointSelection;
+import libsvm.extension.NegativePointSelection;
+import libsvm.extension.PositiveSeparationMachine;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
-import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
@@ -47,7 +44,7 @@ import sav.strategies.dto.execute.value.ExecVarType;
 public class DecisionLearner implements CategoryCalculator {
 	
 	protected static Logger log = LoggerFactory.getLogger(DecisionLearner.class);
-	private MyPositiveSeparationMachine machine;
+//	private MyPositiveSeparationMachine machine;
 	// one class does not perform well
 	//private Machine oneClass;
 	private List<ExecVar> originVars;
@@ -88,8 +85,8 @@ public class DecisionLearner implements CategoryCalculator {
 	
 	public DecisionLearner(/*JacopSelectiveSampling*/JavailpSelectiveSampling selectiveSampling, 
 			CfgConditionManager manager, boolean random) {
-		machine = new MyPositiveSeparationMachine();
-		machine.setDefaultParams();
+//		machine = new MyPositiveSeparationMachine();
+//		machine.setDefaultParams();
 		/*oneClass = new Machine();
 		oneClass.setParameter(new Parameter().setMachineType(MachineType.ONE_CLASS)
 				.setKernelType(KernelType.LINEAR).setEps(0.00001).setUseShrinking(false)
@@ -111,7 +108,7 @@ public class DecisionLearner implements CategoryCalculator {
 		 */
 		Map<DecisionLocation, Pair<Formula, Formula>> decisions = new HashMap<DecisionLocation, Pair<Formula, Formula>>();
 		for (BreakpointData bkpData : bkpDatas) {
-			System.out.println("Start to learn at " + bkpData.getLocation());
+			System.out.println("========Start to learn at " + bkpData.getLocation());
 			if (bkpData.getFalseValues().isEmpty() && bkpData.getTrueValues().isEmpty()) {
 				System.out.println("Cannot find any data at " + bkpData.getLocation());
 				continue;
@@ -122,10 +119,10 @@ public class DecisionLearner implements CategoryCalculator {
 				continue;
 			}
 			
-			Pair<Formula, Formula> learnedClassifier = learn(bkpData);
-			
 			System.out.println("true data: " + bkpData.getTrueValues());
 			System.out.println("false data: " + bkpData.getFalseValues());
+			Pair<Formula, Formula> learnedClassifier = learn(bkpData);
+			
 			
 			System.out.println("true or false classifier at " + bkpData.getLocation() + " is :" + learnedClassifier.first());
 			cfgConditionManager.setCondition(bkpData.getLocation().getLineNo(), learnedClassifier, curDividers);
@@ -273,36 +270,18 @@ public class DecisionLearner implements CategoryCalculator {
 	private Formula generateTrueFalseFormula(BreakpointData bkpData, OrCategoryCalculator preconditions)
 			throws SAVExecutionTimeOutException, SavException {
 		Formula trueFlaseFormula = null;
-		
 		if (cfgConditionManager.isRelevant(bkpData.getLocation().getLineNo())) {
 			
-			//int times = 0;
-			machine.resetData();
-			
-			addDataPoints(originVars, bkpData.getTrueValues(), Category.POSITIVE, machine);
-			addDataPoints(originVars, bkpData.getFalseValues(), Category.NEGATIVE, machine);
-			long startTime0 = System.currentTimeMillis();
-			machine.train();
-			System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime0) + " ms");
-			trueFlaseFormula = getLearnedFormula();
-			double acc = machine.getModelAccuracy();
-			curDividers = machine.getLearnedDividers();
-			
-			
-			MultiCutMachine mcm = new MultiCutMachine();
-			for(BreakpointValue value: bkpData.getTrueValues()){
-				addDataPoint(originVars, value, Category.POSITIVE, mcm);
-			}
-			for(BreakpointValue value: bkpData.getFalseValues()){
-				addDataPoint(originVars, value, Category.NEGATIVE, mcm);
-			}
-			mcm.train();
-			System.currentTimeMillis();
-			
+			NegativePointSelection negative = new ByDistanceNegativePointSelection();
+			PositiveSeparationMachine mcm = new PositiveSeparationMachine(negative);
+			Formula newFormula = generateInitialFormula(bkpData, mcm);
+			double acc = mcm.getModelAccuracy();
+			curDividers = mcm.getLearnedDividers();
+			System.out.println("=============learned multiple cut: " + newFormula);
 			while(trueFlaseFormula != null /*&& times < MAX_ATTEMPT*/ && cfgConditionManager.isRelevant(bkpData.getLocation().getLineNo())) {
 				long startTime = System.currentTimeMillis();				
 				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(bkpData.getLocation(), 
-						originVars, machine.getDataPoints(), preconditions, machine.getLearnedDividers());
+						originVars, mcm.getDataPoints(), preconditions, mcm.getLearnedDividers());
 				System.out.println("learn select data for model: " + (System.currentTimeMillis() - startTime) + "ms");
 				
 				if (newMap == null) {
@@ -316,25 +295,25 @@ public class DecisionLearner implements CategoryCalculator {
 					break;
 				}
 				preconditions.clearInvalidData(newData);
-				addDataPoints(originVars, newData.getTrueValues(), Category.POSITIVE, machine);
-				addDataPoints(originVars, newData.getFalseValues(), Category.NEGATIVE, machine);
+				addDataPoints(originVars, newData.getTrueValues(), Category.POSITIVE, mcm);
+				addDataPoints(originVars, newData.getFalseValues(), Category.NEGATIVE, mcm);
 				
 				//startTime = System.currentTimeMillis();
-				acc = machine.getModelAccuracy();
+				acc = mcm.getModelAccuracy();
 				if (acc == 1.0) {
 					break;
 				}
 				
-				machine.train();
+				mcm.train();
 				//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
-				Formula tmp = getLearnedFormula();
-				double accTmp = machine.getModelAccuracy();
+				Formula tmp = mcm.getLearnedMultiFormula(originVars, getLabels());
+				double accTmp = mcm.getModelAccuracy();
 				if (tmp == null) {
 					break;
 				}
 				if (!tmp.equals(trueFlaseFormula) && accTmp > acc) {
 					trueFlaseFormula = tmp;
-					curDividers = machine.getLearnedDividers();
+					curDividers = mcm.getLearnedDividers();
 					acc = accTmp;
 				} else {
 					break;
@@ -344,6 +323,22 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 		
 		return trueFlaseFormula;
+	}
+
+	private Formula generateInitialFormula(BreakpointData bkpData, PositiveSeparationMachine mcm)
+			throws SAVExecutionTimeOutException {
+		mcm.setDefaultParams();
+		mcm.setDataLabels(labels);
+		mcm.setDefaultParams();
+		for(BreakpointValue value: bkpData.getTrueValues()){
+			addDataPoint(originVars, value, Category.POSITIVE, mcm);
+		}
+		for(BreakpointValue value: bkpData.getFalseValues()){
+			addDataPoint(originVars, value, Category.NEGATIVE, mcm);
+		}
+		mcm.train();
+		Formula newFormula = mcm.getLearnedMultiFormula(originVars, getLabels());
+		return newFormula;
 	}
 	
 	private Formula generateLoopFormula(LoopTimesData loopData) throws SavException, SAVExecutionTimeOutException {
@@ -367,11 +362,7 @@ public class DecisionLearner implements CategoryCalculator {
 				mergeMap(selectiveSampling.getSelectResult());
 			}
 			cfgConditionManager.updateRelevance(bkpDataMap);
-			//updateCoverage(loopData);	
-			//loopData = (LoopTimesData) bkpDataMap.get(loopData.getLocation());
 		}
-		
-		//updateCoverage(loopData);
 		
 		if (loopData.getOneTimeValues().isEmpty()) {
 			log.info("Missing once loop data");
@@ -401,20 +392,17 @@ public class DecisionLearner implements CategoryCalculator {
 			if (/*!manager.isEnd(loopData.getLocation().getLineNo())*/
 					cfgConditionManager.isRelevant(loopData.getLocation().getLineNo())) {
 				
+				NegativePointSelection negative = new ByDistanceNegativePointSelection();
+				PositiveSeparationMachine mcm = new PositiveSeparationMachine(negative);
+				formula = generateInitialFormula(loopData, mcm);
+				
 				//int times = 0;
-				machine.resetData();
-				addDataPoints(originVars, loopData.getMoreTimesValues(), Category.POSITIVE, machine);
-				addDataPoints(originVars, loopData.getOneTimeValues(), Category.NEGATIVE, machine);
-				//startTime = System.currentTimeMillis();
-				machine.train();
-				//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
-				formula = getLearnedFormula();
-				double acc = machine.getModelAccuracy();
+				double acc = mcm.getModelAccuracy();
 				while(formula != null && /*times < MAX_ATTEMPT &&*/ cfgConditionManager.isRelevant(loopData.getLocation().getLineNo())) {
 					/*LoopTimesData newData = (LoopTimesData) selectiveSampling.selectData(loopData.getLocation(), 
 							formula, machine.getDataLabels(), machine.getDataPoints());	*/
 					Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(loopData.getLocation(), 
-							originVars, machine.getDataPoints(), preConditions, machine.getLearnedDividers());
+							originVars, mcm.getDataPoints(), preConditions, mcm.getLearnedDividers());
 					if (newMap == null) {
 						break;
 					}
@@ -425,20 +413,20 @@ public class DecisionLearner implements CategoryCalculator {
 						break;
 					}
 					//manager.updateRelevance(loopData);
-					addDataPoints(originVars, newData.getMoreTimesValues(), Category.POSITIVE, machine);
-					addDataPoints(originVars, newData.getOneTimeValues(), Category.NEGATIVE, machine);
+					addDataPoints(originVars, newData.getMoreTimesValues(), Category.POSITIVE, mcm);
+					addDataPoints(originVars, newData.getOneTimeValues(), Category.NEGATIVE, mcm);
 					/*if (machine.getModelAccuracy() == 1.0) {
 						break;
 					}*/
 					//startTime = System.currentTimeMillis();
-					acc = machine.getModelAccuracy();
+					acc = mcm.getModelAccuracy();
 					if (acc == 1.0) {
 						break;
 					}
-					machine.train();
+					mcm.train();
 					//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
-					Formula tmp = getLearnedFormula();
-					double accTmp = machine.getModelAccuracy();
+					Formula tmp = mcm.getLearnedMultiFormula(originVars, getLabels());
+					double accTmp = mcm.getModelAccuracy();
 					if (tmp == null) {
 						break;
 					}
@@ -483,7 +471,7 @@ public class DecisionLearner implements CategoryCalculator {
 		mappingVars();
 		
 		labels = extractLabels(vars);
-		machine.setDataLabels(labels);
+//		machine.setDataLabels(labels);
 		//oneClass.setDataLabels(labels);
 		cfgConditionManager.setVars(vars, originVars);
 		
@@ -645,27 +633,27 @@ public class DecisionLearner implements CategoryCalculator {
 
 		machine.addDataPoint(category, lineVals);
 	}
-
-	private Formula getLearnedFormula() {
-		Formula formula = null;
-		List<svm_model> models = machine.getLearnedModels();
-		final int numberOfFeatures = machine.getNumberOfFeatures();
-		if (models != null && numberOfFeatures > 0) {			
-			for (svm_model svmModel : models) {
-				if (svmModel != null) {				
-					Model model = new Model(svmModel, numberOfFeatures);
-					final Divider explicitDivider = model.getExplicitDivider();
-					Formula current = new FormulaProcessor<ExecVar>(vars).process(explicitDivider, machine.getDataLabels(), true);
-					if (formula == null) {
-						formula = current;
-					} else {
-						formula = new AndFormula(formula, current);
-					}
-				}
-			}
-		}
-		return formula;
-	}
+	
+//	private Formula getLearnedFormula() {
+//		Formula formula = null;
+//		List<svm_model> models = machine.getLearnedModels();
+//		final int numberOfFeatures = machine.getNumberOfFeatures();
+//		if (models != null && numberOfFeatures > 0) {			
+//			for (svm_model svmModel : models) {
+//				if (svmModel != null) {				
+//					Model model = new Model(svmModel, numberOfFeatures);
+//					final Divider explicitDivider = model.getExplicitDivider();
+//					Formula current = new FormulaProcessor<ExecVar>(vars).process(explicitDivider, machine.getDataLabels(), true);
+//					if (formula == null) {
+//						formula = current;
+//					} else {
+//						formula = new AndFormula(formula, current);
+//					}
+//				}
+//			}
+//		}
+//		return formula;
+//	}
 	
 	@Override
 	public Category getCategory(DataPoint dataPoint) {

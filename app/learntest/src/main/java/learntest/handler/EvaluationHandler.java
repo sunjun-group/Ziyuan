@@ -251,6 +251,9 @@ public class EvaluationHandler extends AbstractHandler {
 					NestedBlockChecker checker = new NestedBlockChecker();
 					md.accept(checker);
 					if (checker.isNestedJudge) {
+						
+						mdList.add(md);
+						
 						FieldAccessChecker checker2 = new FieldAccessChecker();
 						md.accept(checker2);
 						
@@ -259,9 +262,9 @@ public class EvaluationHandler extends AbstractHandler {
 //								mdList.add(md);
 //							}	
 							
-							if (containsAtLeastOnePrimitiveType(md.parameters())) {
-								mdList.add(md);
-							}	
+//							if (containsAtLeastOnePrimitiveType(md.parameters())) {
+//								mdList.add(md);
+//							}	
 						}
 					}
 

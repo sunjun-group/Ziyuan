@@ -89,7 +89,7 @@ public class MultiCutMachine extends Machine {
 	private LearnedData getLearnedData(final List<DataPoint> trainingData,
 			final svm_model learnedModel) {
 		final List<DataPoint> wrongClassifications = getWrongClassifiedDataPoints(trainingData,
-				null);
+				new LearnedDataBasedCategoryCalculator(learnedDatas));
 
 		LearnedData learnedData = new LearnedData();
 		learnedData.model = learnedModel;

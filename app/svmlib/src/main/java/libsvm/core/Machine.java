@@ -35,7 +35,7 @@ public class Machine {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Machine.class);
 	private static final String DEFAULT_FEATURE_PREFIX = "x";
-	private static final int SVM_TIMEOUT = 5; // In seconds
+	private static final int SVM_TIMEOUT = 2; // In seconds
 
 	private svm_parameter parameter = null;
 	private List<DataPoint> data = new ArrayList<DataPoint>();

@@ -28,7 +28,8 @@ public class SvmRunner implements Runnable {
 //			long t2 = System.currentTimeMillis();
 //			System.out.println("time for training once: " + (t2-t1));
 		} catch (SVMTimeOutException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.err.println("SVM Time Out");
 			result = null;
 		}
 	}

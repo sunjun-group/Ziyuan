@@ -70,10 +70,6 @@ public class JavailpSelectiveSampling {
 			boolean trueOrFalse, 
 			boolean isLoop) throws SavException, SAVExecutionTimeOutException {
 		
-		if(target.getLineNo()==11){
-			System.currentTimeMillis();
-		}
-		
 		tcExecutor.setTarget(null);
 		for (int i = 0; i < 3; i++) {
 			

@@ -7,9 +7,13 @@ import java.util.List;
 import libsvm.svm_model;
 import libsvm.core.Category;
 import libsvm.core.Divider;
+import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
 import libsvm.core.Model;
+import sav.common.core.formula.AndFormula;
+import sav.common.core.formula.Formula;
 import sav.settings.SAVExecutionTimeOutException;
+import sav.strategies.dto.execute.value.ExecVar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +48,7 @@ public class PositiveSeparationMachine extends Machine {
 	protected Machine train(final List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
 		int attemptCount = 0;
 		double bestAccuracy = 0.0;
-		List<svm_model> bestLearnedModels = null;
+		List<svm_model> bestLearnedModels = new ArrayList<>();
 		while (Double.compare(bestAccuracy, 1.0) < 0
 				&& (attemptCount == 0 || !this.negativePointSelection.isConsistent())
 				&& attemptCount < MAXIMUM_ATTEMPT_COUNT) {
@@ -155,6 +159,39 @@ public class PositiveSeparationMachine extends Machine {
 		}
 
 		return str.toString();
+	}
+	
+	public List<Divider> getLearnedDividers() {
+		List<Divider> roundDividers = new ArrayList<Divider>();
+		for (svm_model learnModel : this.learnedModels) {
+			if (learnModel != null) {
+				roundDividers.add(new Model(learnModel, getNumberOfFeatures()).getExplicitDivider()
+						.round());
+			}
+		}
+		return roundDividers;
+	}
+	
+	public Formula getLearnedMultiFormula(List<ExecVar> vars, List<String> dataLabels) {
+		Formula formula = null;
+		List<svm_model> models = getLearnedModels();
+		final int numberOfFeatures = getNumberOfFeatures();
+		if (models != null && numberOfFeatures > 0) {			
+			for (svm_model svmModel : models) {
+				if (svmModel != null) {				
+					Model model = new Model(svmModel, numberOfFeatures);
+					final Divider explicitDivider = model.getExplicitDivider();
+					Formula current = new FormulaProcessor<ExecVar>(vars).
+							process(explicitDivider, dataLabels, true);
+					if (formula == null) {
+						formula = current;
+					} else {
+						formula = new AndFormula(formula, current);
+					}
+				}
+			}
+		}
+		return formula;
 	}
 
 }
