@@ -274,16 +274,16 @@ public class DecisionLearner implements CategoryCalculator {
 			
 			NegativePointSelection negative = new ByDistanceNegativePointSelection();
 			PositiveSeparationMachine mcm = new PositiveSeparationMachine(negative);
-			Formula newFormula = generateInitialFormula(bkpData, mcm);
+			trueFlaseFormula = generateInitialFormula(bkpData, mcm);
 			double acc = mcm.getModelAccuracy();
 			curDividers = mcm.getLearnedDividers();
-			System.out.println("=============learned multiple cut: " + newFormula);
+			System.out.println("=============learned multiple cut: " + trueFlaseFormula);
 			while(trueFlaseFormula != null /*&& times < MAX_ATTEMPT*/ && cfgConditionManager.isRelevant(bkpData.getLocation().getLineNo())) {
 				long startTime = System.currentTimeMillis();				
 				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(bkpData.getLocation(), 
 						originVars, mcm.getDataPoints(), preconditions, mcm.getLearnedDividers());
 				System.out.println("learn select data for model: " + (System.currentTimeMillis() - startTime) + "ms");
-				
+				System.currentTimeMillis();
 				if (newMap == null) {
 					break;
 				}

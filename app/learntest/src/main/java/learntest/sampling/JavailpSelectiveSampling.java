@@ -74,7 +74,7 @@ public class JavailpSelectiveSampling {
 		for (int i = 0; i < 3; i++) {
 			
 			List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
-			List<Problem> problems = ProblemBuilder.build(originVars, precondition, current, true);
+			List<Problem> problems = ProblemBuilder.buildTrueValueProblems(originVars, precondition, current, true);
 			if (problems.isEmpty()) {
 				return null;
 			}
@@ -122,15 +122,15 @@ public class JavailpSelectiveSampling {
 	public Map<DecisionLocation, BreakpointData> selectDataForModel(DecisionLocation target, 
 			List<ExecVar> originVars, 
 			List<DataPoint> datapoints,
-			OrCategoryCalculator precondition, 
-			List<Divider> dividers) throws SavException, SAVExecutionTimeOutException {
+			OrCategoryCalculator preconditions, 
+			List<Divider> learnedFormulas) throws SavException, SAVExecutionTimeOutException {
 		List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
 		List<Result> results = new ArrayList<Result>();
 		
-		List<Problem> basics = ProblemBuilder.build(null, originVars, precondition, dividers, false);
 		/**
-		 * generate a basic data point according to precondition
+		 * generate some true-side data points
 		 */
+		List<Problem> basics = ProblemBuilder.buildTrueValueProblems(originVars, preconditions, learnedFormulas, false);
 		for (Problem basic : basics) {
 			Result res = ProblemSolver.generateRandomResultToConstraints(basic, originVars);
 			if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
@@ -139,30 +139,30 @@ public class JavailpSelectiveSampling {
 		}
 		
 		/**
-		 * generate data point on the svm model
+		 * generate data point on the border of divider 
 		 */
-		for (Divider divider : dividers) {
-			List<Problem> problems = ProblemBuilder.build(divider, originVars, precondition, dividers, false);
+		for (Divider learnedFormula : learnedFormulas) {
+			List<Problem> problems = ProblemBuilder.buildOnBorderProblems(learnedFormula, 
+					originVars, preconditions, learnedFormulas, false);
 			for (Problem problem : problems) {
 				Result res = ProblemSolver.generateRandomResultToConstraints(problem, originVars);
-				if (res != null && checkNonduplicateResult(res, originVars, prevDatas,assignments)) {
+				if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
 					results.add(res);
 				}
 			}
 		}
+//		System.currentTimeMillis();
 		
 		/**
 		 * generate data point on the opposite side of svm model
 		 */
-		int size = dividers.size();
+		int size = learnedFormulas.size();
 		for (int i = 0; i < size; i++) {
-			List<Divider> list = new ArrayList<Divider>(dividers);
-			Divider divider = list.remove(i);
-			List<Problem> problems = ProblemBuilder.build(null, originVars, precondition, list, false);
+			List<Divider> clonedLearnedFormulas = new ArrayList<Divider>(learnedFormulas);
+			List<Problem> problems = ProblemBuilder.buildFalseValueProblems(originVars, preconditions, clonedLearnedFormulas, false);
 			for (Problem problem : problems) {
-				ProblemBuilder.addOpposite(problem, divider, originVars);
 				Result res = ProblemSolver.generateRandomResultToConstraints(problem, originVars);
-				if (res != null && checkNonduplicateResult(res, originVars, prevDatas,assignments)) {
+				if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
 					results.add(res);
 				}
 			}
@@ -174,38 +174,19 @@ public class JavailpSelectiveSampling {
 		Random random = new Random();
 		calculateValRange(originVars, datapoints);
 		if (originVars.size() > 1 && !results.isEmpty()) {
-			for (Divider divider : dividers) {
-				List<Problem> probelms = ProblemBuilder.build(divider, originVars, precondition, dividers, false);
-				for (Problem problem : probelms) {
-					for (int i = 0; i < MAX_MORE_SELECTED_SAMPLE; i++) {
-						int fixedVarIndex = random.nextInt(originVars.size());
-						Result randomResult = results.get(random.nextInt(results.size()));
-						List<Eq<Number>> samples = generateRandomVariableAssignment(originVars, results.isEmpty() ? null : randomResult, fixedVarIndex);
-						if (samples.isEmpty()) {
-							continue;
-						}
-						ProblemBuilder.addConstraints(problem, samples);
-						Result res = ProblemSolver.generateRandomResultToConstraints(problem, originVars);
-						if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
-							results.add(res);
-						}
+			List<Problem> probelms = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
+			for (Problem problem : probelms) {
+				for (int i = 0; i < MAX_MORE_SELECTED_SAMPLE; i++) {
+					int fixedVarIndex = random.nextInt(originVars.size());
+					Result randomResult = results.get(random.nextInt(results.size()));
+					List<Eq<Number>> samples = generateRandomVariableAssignment(originVars, results.isEmpty() ? null : randomResult, fixedVarIndex);
+					if (samples.isEmpty()) {
+						continue;
 					}
-				}
-			}
-		}
-		
-		/**
-		 * generate more data points on the positive side of svm model.
-		 */
-		int times = 0;
-		while (results.size() < MIN_MORE_SELECTED_DATA && times ++ < MIN_MORE_SELECTED_DATA) {
-			List<Problem> problems = ProblemBuilder.build(null, originVars, precondition, dividers, false);
-			for (Problem problem : problems) {
-				Result res = ProblemSolver.generateRandomResultToConstraints(problem, originVars);
-				if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
-					results.add(res);
-					if (results.size() >= MIN_MORE_SELECTED_DATA) {
-						break;
+					ProblemBuilder.addEqualConstraints(problem, samples);
+					Result res = ProblemSolver.generateRandomResultToConstraints(problem, originVars);
+					if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
+						results.add(res);
 					}
 				}
 			}
@@ -213,6 +194,7 @@ public class JavailpSelectiveSampling {
 		
 		extendWithHeuristics(results, assignments, originVars);
 		selectData(target, assignments);
+		System.currentTimeMillis();
 		return selectResult;
 	}
 
