@@ -173,7 +173,7 @@ public class JavailpSelectiveSampling {
 			}
 		}
 		
-		for(int i=0; i<30; i++){
+		for(int i=0; i<150; i++){
 			extendWithHeuristics(results, assignments, originVars);			
 		}
 		selectData(target, assignments);

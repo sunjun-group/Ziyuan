@@ -123,9 +123,8 @@ public class DecisionLearner implements CategoryCalculator {
 			System.out.println("false data: " + bkpData.getFalseValues());
 			Pair<Formula, Formula> learnedClassifier = learn(bkpData);
 			
-			
 			System.out.println("true or false classifier at " + bkpData.getLocation() + " is :" + learnedClassifier.first());
-			cfgConditionManager.setCondition(bkpData.getLocation().getLineNo(), learnedClassifier, curDividers);
+			cfgConditionManager.setPrecondition(bkpData.getLocation().getLineNo(), learnedClassifier, curDividers);
 			
 			/**
 			 * used for debug
@@ -298,32 +297,33 @@ public class DecisionLearner implements CategoryCalculator {
 					break;
 				}
 				preconditions.clearInvalidData(newData);
+				
+//				mcm.resetData();
+				mcm.getLearnedModels().clear();
 				addDataPoints(originVars, newData.getTrueValues(), Category.POSITIVE, mcm);
 				addDataPoints(originVars, newData.getFalseValues(), Category.NEGATIVE, mcm);
 				System.out.println("true data after selective sampling" + bkpData.getTrueValues());
 				System.out.println("false data after selective sampling" + bkpData.getFalseValues());
 				
-				//startTime = System.currentTimeMillis();
-				acc = mcm.getModelAccuracy();
-				if (acc == 1.0) {
-					break;
-				}
-				
 				mcm.train();
-
 				Formula tmp = mcm.getLearnedMultiFormula(originVars, getLabels());
-				double accTmp = mcm.getModelAccuracy();
 				if (tmp == null) {
 					break;
 				}
-				if (!tmp.equals(trueFlaseFormula) && accTmp > acc) {
+				
+				double accTmp = mcm.getModelAccuracy();
+				acc = mcm.getModelAccuracy();
+				if (!tmp.equals(trueFlaseFormula)) {
 					trueFlaseFormula = tmp;
 					curDividers = mcm.getLearnedDividers();
 					acc = accTmp;
+					
+					if(acc == 1.0){
+						break;
+					}
 				} else {
 					break;
 				}
-				//times ++;
 			}
 		}
 		
@@ -343,6 +343,7 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 		mcm.train();
 		Formula newFormula = mcm.getLearnedMultiFormula(originVars, getLabels());
+		
 		return newFormula;
 	}
 	

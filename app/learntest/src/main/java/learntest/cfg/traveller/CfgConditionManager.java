@@ -129,7 +129,7 @@ public class CfgConditionManager {
 		this.originalVars = originalVars;
 	}
 	
-	public void setCondition(int lineNo, Pair<Formula, Formula> formulas, List<Divider> dividers) {
+	public void setPrecondition(int lineNo, Pair<Formula, Formula> formulas, List<Divider> dividers) {
 		CfgDecisionNode node = nodeMap.get(lineNo);
 		node.setTrueFalse(formulas.first());
 		if (node.isLoop()) {
