@@ -109,7 +109,8 @@ public class DecisionLearner implements CategoryCalculator {
 		List<BreakpointData> bkpDatas = new ArrayList<BreakpointData>(bkpDataMap.values());
 		Collections.sort(bkpDatas);
 		
-		System.out.print("total branches:" + cfgConditionManager.getTotalBranches());
+		List<Branch> totalBranches = cfgConditionManager.getTotalBranches();
+		System.out.println("total branches:" + totalBranches);
 		
 		/**
 		 * each decision location has two formula, one for true/false and one for loop
@@ -143,9 +144,22 @@ public class DecisionLearner implements CategoryCalculator {
 			decisions.put(bkpData.getLocation(), learnedClassifier);
 		}
 		
+		List<Branch> missingBranches = findMissingBranch(totalBranches, this.coveredBranches);
+		System.out.println("missing branches:" + missingBranches);
+		
 		if (!random) {
 			logLearningProcessInFile(decisions);
 		}		
+	}
+
+	private List<Branch> findMissingBranch(List<Branch> totalBranches, List<Branch> coveredBranches2) {
+		
+		List<Branch> newTotal = new ArrayList<>(totalBranches);
+		for(Branch b: coveredBranches2){
+			newTotal.remove(b);
+		}
+		
+		return newTotal;
 	}
 
 	private void logLearningProcessInFile(Map<DecisionLocation, Pair<Formula, Formula>> decisions) {
@@ -358,6 +372,8 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 		mcm.train();
 		Formula newFormula = mcm.getLearnedMultiFormula(originVars, getLabels());
+		
+//		System.currentTimeMillis();
 		
 		return newFormula;
 	}
@@ -589,7 +605,7 @@ public class DecisionLearner implements CategoryCalculator {
 			}
 		}
 		
-		printCoverageInfo();
+		//printCoverageInfo();
 	}
 	
 	private void printCoverageInfo() {
