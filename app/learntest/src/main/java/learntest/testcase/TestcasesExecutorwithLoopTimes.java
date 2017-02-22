@@ -81,8 +81,11 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		timer.start();
 	}
 
+	private int testIdx = 0;
+	
 	@Override
 	protected void onEnterTestcase(int testIdx) {
+		this.testIdx = testIdx;
 		timer.newPoint(String.valueOf(testIdx));
 		currentTestExePath = exePathsByTestIdx.get(testIdx);
 		if (currentTestExePath == null) {
@@ -103,6 +106,9 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	protected void onEnterBreakpoint(BreakPoint bkp, BreakpointEvent bkpEvent) throws SavException {
 		if (!bkp.getVars().isEmpty()) {
 			BreakpointValue bkpValue = extractValuesAtLocation(bkp, bkpEvent);
+			List<BreakpointValue> list = new ArrayList<>();
+			list.add(bkpValue);
+			inputValuesByTestIdx.put(this.testIdx, list);
 			currentTestInputValues.add(bkpValue);
 		}
 		currentTestExePath.add(bkp);
@@ -127,7 +133,7 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 				System.out.println("\t" + bkp.getId());
 			}
 			System.out.println("================");*/
-			getBuilder().build(exePathOfTcI, inputValueOfTcI);
+			dtbuilder.build(exePathOfTcI, inputValueOfTcI);
 		}
 		//result = getBuilder().getResult();
 	}
@@ -135,7 +141,10 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	private BreakpointValue extractValuesAtLocation(BreakPoint bkp,
 			BreakpointEvent bkpEvent) throws SavException {
 		try {
-			return getValueExtractor().extractValue(bkp, bkpEvent);
+			DebugValueExtractor extractor = getValueExtractor();
+			BreakpointValue value = extractor.extractValue(bkp, bkpEvent);
+			
+			return value;
 		} catch (IncompatibleThreadStateException e) {
 			log.error(e.getMessage());
 		} catch (AbsentInformationException e) {
@@ -145,7 +154,7 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	}
 	
 	public Map<DecisionLocation, BreakpointData> getResult() {
-		return getBuilder().getResult();
+		return dtbuilder.getResult();
 	}
 	
 	public void duplicateTestCases(int num) {		
@@ -210,10 +219,6 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	public void setBuilder(BreakpointDataBuilder dtbuilder) {
 		this.dtbuilder = dtbuilder;
 	}
-	
-	public BreakpointDataBuilder getBuilder() {
-		return dtbuilder;
-	}	
 	
 	public void setBkpBuilder(BreakpointBuilder bkpBuilder) {
 		this.bkpBuilder = bkpBuilder;

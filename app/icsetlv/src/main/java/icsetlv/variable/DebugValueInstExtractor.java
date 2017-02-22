@@ -8,15 +8,16 @@
 
 package icsetlv.variable;
 
-import java.awt.Frame;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.sun.jdi.ArrayReference;
+import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.LocalVariable;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
@@ -56,7 +57,6 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 			Map<String, JdiParam> modificationMap = getInstrMap(var, jdiParam);
 			
 			for (String varId : modificationMap.keySet()) {
-				
 				JdiParam param = modificationMap.get(varId);
 				if (param == null) {
 					try{
@@ -80,15 +80,15 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 					break;
 				case NON_STATIC_FIELD:
 					System.currentTimeMillis();
-//					String fieldName = varId.substring(varId.indexOf("."));
-//					if (ArrayReference.class.isAssignableFrom(jdiParam.getValue().getClass()) && fieldName.equals("length")){
-//						instArr(thread, jdiParam, newVal, var);
-//					}
-//					else{
-//						instObjField(thread, param, newVal, var);						
-//					}
-					
-					instObjField(thread, param, newVal, var);
+					String fieldName = varId.substring(varId.indexOf(".")+1);
+					if (jdiParam.getValue() != null && ArrayReference.class.isAssignableFrom(jdiParam.getValue().getClass())){
+						if(fieldName != null && fieldName.equals("length")){
+							instArr(thread, jdiParam, newVal, var);							
+						}
+					}
+					else{
+						instObjField(thread, param, newVal, var);						
+					}
 					
 					break;
 				}
@@ -109,6 +109,7 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 				else if(jdiParam.getType()==JdiParamType.NON_STATIC_FIELD || jdiParam.getType()==JdiParamType.NON_STATIC_FIELD){
 					thread.setValue(jdiParam.getField(), null);
 				}
+				jdiParam.setValue(null);
 			}
 		}
 	}
@@ -118,15 +119,28 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 		try{
 			Integer len = Integer.valueOf(length.toString());
 			Value aValue = arrayParam.getValue();
-			if(aValue instanceof ArrayReference){
+			if(aValue instanceof ArrayReference && len>=0){
 				ArrayReference arrayRef = (ArrayReference)aValue;
-				for(int i=0; i<len; i++){
-					arrayRef.setValue(i, null);
+				ReferenceType type = arrayRef.referenceType();
+				
+				if(type instanceof ArrayType){
+					ArrayType aType = (ArrayType)type;
+					ArrayReference newRef = aType.newInstance(len);
+					
+					if(arrayParam.getType()==JdiParamType.LOCAL_VAR){
+						StackFrame frame = getFrame(thread);
+						frame.setValue(arrayParam.getLocalVariable(), newRef);
+					}
+					else if(arrayParam.getType()==JdiParamType.NON_STATIC_FIELD || arrayParam.getType()==JdiParamType.STATIC_FIELD){
+						thread.setValue(arrayParam.getField(), newRef);
+					}
+					
+					arrayParam.setValue(newRef);
 				}
 			}
 		}
 		catch(Exception e){
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 	}

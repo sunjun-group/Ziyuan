@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
+import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
@@ -252,19 +253,13 @@ public class EvaluationHandler extends AbstractHandler {
 					md.accept(checker);
 					if (checker.isNestedJudge) {
 						
-						mdList.add(md);
-						
 						FieldAccessChecker checker2 = new FieldAccessChecker();
 						md.accept(checker2);
 						
 						if(!checker2.isFieldAccess){
-//							if (containsAllPrimitiveType(md.parameters())) {
-//								mdList.add(md);
-//							}	
-							
-//							if (containsAtLeastOnePrimitiveType(md.parameters())) {
-//								mdList.add(md);
-//							}	
+							if(containsAtLeastOnePrimitiveType(md.parameters())){
+								mdList.add(md);								
+							}
 						}
 					}
 
@@ -279,10 +274,16 @@ public class EvaluationHandler extends AbstractHandler {
 				if (obj instanceof SingleVariableDeclaration) {
 					SingleVariableDeclaration svd = (SingleVariableDeclaration) obj;
 					Type type = svd.getType();
-					String typeString = type.toString();
 					
-					if(PrimitiveUtils.isPrimitive(typeString) && svd.getExtraDimensions() == 0){
+					if(type.isPrimitiveType()){
 						return true;
+					}
+					
+					if(type.isArrayType()){
+						ArrayType aType = (ArrayType)type;
+						if(aType.getElementType().isPrimitiveType()){
+							return true;
+						}
 					}
 				}
 
