@@ -189,7 +189,16 @@ public class JavailpSelectiveSampling {
 		for(int i=0; i<Settings.selectiveNumber; i++){
 			extendWithHeuristics(results, assignments, originVars);			
 		}
+		
+		if(assignments.size() > Settings.selectiveNumber){
+			int size = assignments.size();
+			for(int i=Settings.selectiveNumber; i<size; i++){
+				assignments.remove(Settings.selectiveNumber);
+			}			
+		}
+		
 		selectData(target, assignments);
+		System.currentTimeMillis();
 		return selectResult;
 	}
 

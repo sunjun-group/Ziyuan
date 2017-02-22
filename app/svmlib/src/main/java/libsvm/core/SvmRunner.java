@@ -29,7 +29,7 @@ public class SvmRunner implements Runnable {
 //			System.out.println("time for training once: " + (t2-t1));
 		} catch (SVMTimeOutException e) {
 			//e.printStackTrace();
-			System.err.println("SVM Time Out");
+//			System.err.println("SVM Time Out");
 			result = null;
 		}
 	}

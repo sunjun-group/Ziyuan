@@ -54,6 +54,12 @@ public class ExecutionTimer {
 			}
 		}, timeout);
 		thread.start();
+//		try {
+//			thread.join();
+//		} catch (InterruptedException e1) {
+//			e1.printStackTrace();
+//		}
+		
 		synchronized (thread) {
 			try {
 				/* make the current thread wait until target thread stops */
