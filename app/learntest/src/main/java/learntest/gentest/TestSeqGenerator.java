@@ -140,7 +140,7 @@ public class TestSeqGenerator {
 							variable = field;
 							receiver = cur;
 						} catch (Exception e) {
-							System.err.println("can not find setter for " + cur);
+//							System.err.println("can not find setter for " + cur);
 							break;
 						}
 					}
@@ -183,7 +183,7 @@ public class TestSeqGenerator {
 							variable = field;
 							receiver = cur;
 						} catch (Exception e) {
-							System.err.println("can not find setter for " + cur);
+//							System.err.println("can not find setter for " + cur);
 							break;
 						}
 					}
@@ -216,7 +216,7 @@ public class TestSeqGenerator {
 					method.setInVarIds(varId);
 					sequence.append(method);
 				} catch (Exception e) {
-					System.err.println("can not find setter for " + cur);
+//					System.err.println("can not find setter for " + cur);
 					continue;
 				}
 			}	
@@ -324,7 +324,7 @@ public class TestSeqGenerator {
 								variable = field;
 								receiver = cur;
 							} catch (Exception e) {
-								System.err.println("can not find setter for " + cur);
+//								System.err.println("can not find setter for " + cur);
 								break;
 							}
 						}
@@ -367,7 +367,7 @@ public class TestSeqGenerator {
 								variable = field;
 								receiver = cur;
 							} catch (Exception e) {
-								System.err.println("can not find setter for " + cur);
+//								System.err.println("can not find setter for " + cur);
 								break;
 							}
 						}
@@ -400,7 +400,7 @@ public class TestSeqGenerator {
 						method.setInVarIds(varId);
 						sequence.append(method);
 					} catch (Exception e) {
-						System.err.println("can not find setter for " + cur);
+//						System.err.println("can not find setter for " + cur);
 						continue;
 					}
 				}
