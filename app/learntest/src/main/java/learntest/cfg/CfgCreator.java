@@ -5,23 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import sav.common.core.utils.CollectionUtils;
-import learntest.cfg.ForeachConverter;
-import learntest.cfg.CfgBranchEdge;
-import learntest.cfg.CfgEdge;
-import learntest.cfg.CfgFalseEdge;
-import learntest.cfg.CfgNode;
-import learntest.cfg.CfgTrueEdge;
-import learntest.cfg.CfgDecisionNode;
-import learntest.cfg.CFG;
-import learntest.cfg.CfgEntryNode;
-import learntest.cfg.CfgExitNode;
-import learntest.cfg.CfgProperty;
 import japa.parser.ast.Node;
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.expr.BinaryExpr;
-import japa.parser.ast.expr.Expression;
 import japa.parser.ast.expr.BinaryExpr.Operator;
+import japa.parser.ast.expr.Expression;
 import japa.parser.ast.stmt.AssertStmt;
 import japa.parser.ast.stmt.BlockStmt;
 import japa.parser.ast.stmt.BreakStmt;
@@ -43,6 +31,7 @@ import japa.parser.ast.stmt.ThrowStmt;
 import japa.parser.ast.stmt.TryStmt;
 import japa.parser.ast.stmt.TypeDeclarationStmt;
 import japa.parser.ast.stmt.WhileStmt;
+import sav.common.core.utils.CollectionUtils;
 
 public class CfgCreator extends CfgConverter {
 
@@ -133,8 +122,8 @@ public class CfgCreator extends CfgConverter {
 		} else if (hasReturnStmt) {
 			hasReturnStmt = false;
 			attachExecutionBlock(cfg, decision, ifThen, decision, true);
-			temporaryReturnEdgeList.add(cfgEdgeMap.get(decision.toString()
-					+ decision.toString() + true));
+			CfgEdge edge = cfgEdgeMap.get(decision.toString() + decision.toString() + true);
+			temporaryReturnEdgeList.add(edge);
 
 		} else {
 			attachExecutionBlock(cfg, decision, ifThen, cfg.getExit(), true);
@@ -152,8 +141,10 @@ public class CfgCreator extends CfgConverter {
 				}
 				}			
 				attachExecutionBlock(cfg, temporaryDecisionNodeList.get(index + 1), temporaryDecisionNodeList.get(index + 1), false);
-				temporaryReturnEdgeList.add(cfgEdgeMap.get(temporaryDecisionNodeList.get(index + 1).toString()
-					+ temporaryDecisionNodeList.get(index + 1).toString() + false));
+				
+				CfgEdge edge = cfgEdgeMap.get(temporaryDecisionNodeList.get(index + 1).toString()
+						+ temporaryDecisionNodeList.get(index + 1).toString() + false);
+				temporaryReturnEdgeList.add(edge);
 				}
 			}
 		   
@@ -183,8 +174,8 @@ public class CfgCreator extends CfgConverter {
 		} else if (hasReturnStmt) {
 			hasReturnStmt = false;
 			attachExecutionBlock(cfg, decision, elseThen, decision, false);
-			temporaryReturnEdgeList.add(cfgEdgeMap.get(decision.toString()
-					+ decision.toString() + false));
+			CfgEdge edge = cfgEdgeMap.get(decision.toString() + decision.toString() + false);
+			temporaryReturnEdgeList.add(edge);
 		} 
 		else {
 			attachExecutionBlock(cfg, decision, elseThen, cfg.getExit(), false);
@@ -574,22 +565,27 @@ public class CfgCreator extends CfgConverter {
 	public CFG dealWithReturnStmt(CFG cfg) {
 		if (temporaryReturnEdgeList.size() != 0) {
 			for (CfgEdge edge : temporaryReturnEdgeList) {
-				cfg.removeEdge(edge);
-				if (!edge.getSource().toString().equals("default")) {
-					if (edge.getType().toString().equals("TRUE")) {
-						cfg.addEdge(newBranchEdge(
-								(CfgDecisionNode) edge.getSource(),
-								cfg.getExit(), true));
-						// System.out.println(edge);
+				
+				if(edge != null){
+					cfg.removeEdge(edge);
+					if (!edge.getSource().toString().equals("default")) {
+						if (edge.getType().toString().equals("TRUE")) {
+							cfg.addEdge(newBranchEdge(
+									(CfgDecisionNode) edge.getSource(),
+									cfg.getExit(), true));
+							// System.out.println(edge);
+						} else {
+							cfg.addEdge(newBranchEdge(
+									(CfgDecisionNode) edge.getSource(),
+									cfg.getExit(), false));
+							// System.out.println(edge);
+						}
 					} else {
-						cfg.addEdge(newBranchEdge(
-								(CfgDecisionNode) edge.getSource(),
-								cfg.getExit(), false));
-						// System.out.println(edge);
+						cfg.addEdge(edge.getSource(), cfg.getExit());
 					}
-				} else {
-					cfg.addEdge(edge.getSource(), cfg.getExit());
 				}
+				
+				
 			}
 			
 			temporaryReturnEdgeList.removeAll(temporaryReturnEdgeList);
