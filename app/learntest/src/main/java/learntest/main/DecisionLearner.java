@@ -190,10 +190,6 @@ public class DecisionLearner implements CategoryCalculator {
 		OrCategoryCalculator preconditions = null;
 		if (!random) {
 			preconditions = cfgConditionManager.getPreConditions(bkpData.getLocation().getLineNo());
-			/**
-			 * TODO left by Lin Yun 
-			 * a design flaw, this method should not be put inside OrCategoryCalculator.
-			 */
 			preconditions.clearInvalidData(bkpData);
 		}
 		

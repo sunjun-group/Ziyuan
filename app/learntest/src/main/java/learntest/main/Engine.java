@@ -103,7 +103,6 @@ public class Engine {
 		double coverage = 0;
 		int testCnt = 1;
 		
-		//JacopSelectiveSampling selectiveSampling = null;
 		JavailpSelectiveSampling selectiveSampling = null;
 		DecisionLearner learner = null;
 		
@@ -143,16 +142,6 @@ public class Engine {
 				selectiveSampling.addPrevValues(tcExecutor.getCurrentTestInputValues());
 				learner = new DecisionLearner(selectiveSampling, manager, random);
 				learner.learn(result);
-				//List<BreakpointValue> records = learner.getRecords();
-				/*System.out.println("==============================================");
-				System.out.println(cfg);
-				System.out.println("==============================================");*/
-				/*List<List<Formula>> paths = manager.buildPaths();
-				System.out.println(paths);
-				JacopPathSolver solver = new JacopPathSolver(learner.getOriginVars());
-				List<Domain[]> solutions = solver.solve(paths);*/
-				//solutions.addAll(getSolutions(records, learner.getOriginVars()));
-				//new TestGenerator().genTestAccordingToSolutions(solutions, learner.getOriginVars());
 				
 				if (learner != null) {
 					coverage = learner.getCoverage();
@@ -342,7 +331,6 @@ public class Engine {
 		String type = cu.getTypes().get(0).getName();
 		
 		String cuName = pack + "." + type;
-		String methodName = method.getName();
 		
 		org.eclipse.jdt.core.dom.CompilationUnit domCU = LearnTestUtil.findCompilationUnitInProject(cuName);
 		MethodFinder finder = new MethodFinder(method);
