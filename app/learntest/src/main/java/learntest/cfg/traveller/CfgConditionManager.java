@@ -124,6 +124,23 @@ public class CfgConditionManager {
 		}
 	}
 	
+	public List<Branch> getTotalBranches(){
+		List<Branch> totalBranches = new ArrayList<>();
+		for(Integer lineNo: nodeMap.keySet()){
+			CfgDecisionNode node = nodeMap.get(lineNo);
+			
+			totalBranches.add(new DecisionBranch(lineNo, true));
+			totalBranches.add(new DecisionBranch(lineNo, false));
+			
+			if(node.isLoop()){
+				totalBranches.add(new LoopBranch(lineNo, true));
+				totalBranches.add(new LoopBranch(lineNo, false));
+			}
+		}
+		
+		return totalBranches;
+	}
+	
 	public void setVars(List<ExecVar> vars, List<ExecVar> originalVars) {
 		this.vars = vars;
 		this.originalVars = originalVars;
