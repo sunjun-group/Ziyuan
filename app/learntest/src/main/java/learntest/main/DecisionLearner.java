@@ -195,10 +195,10 @@ public class DecisionLearner implements CategoryCalculator {
 			System.out.println("learn select data for empty time for " + bkpData.getLocation()
 					+ ": " + (System.currentTimeMillis() - startTime) + "ms");
 			
-			System.out.println("true data after selective for empty: " + selectMap.get(bkpData.getLocation()).getTrueValues());
-			System.out.println("false data after selective for empty: " + selectMap.get(bkpData.getLocation()).getFalseValues());
-			
 			if (selectMap != null) {
+				System.out.println("true data after selective for empty: " + selectMap.get(bkpData.getLocation()).getTrueValues());
+				System.out.println("false data after selective for empty: " + selectMap.get(bkpData.getLocation()).getFalseValues());
+				
 				mergeMap(selectMap);
 				cfgConditionManager.updateRelevance(bkpDataMap);
 				if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {
@@ -269,6 +269,8 @@ public class DecisionLearner implements CategoryCalculator {
 		
 	}
 
+	private int maxAttempt = 10;
+	
 	private Formula generateTrueFalseFormula(BreakpointData bkpData, OrCategoryCalculator preconditions)
 			throws SAVExecutionTimeOutException, SavException {
 		Formula trueFlaseFormula = null;
@@ -281,7 +283,9 @@ public class DecisionLearner implements CategoryCalculator {
 			double acc = mcm.getModelAccuracy();
 			curDividers = mcm.getLearnedDividers();
 			System.out.println("=============learned multiple cut: " + trueFlaseFormula);
-			while(trueFlaseFormula != null && cfgConditionManager.isRelevant(bkpData.getLocation().getLineNo())) {
+			
+			int time =0;
+			while(trueFlaseFormula != null && time < maxAttempt && cfgConditionManager.isRelevant(bkpData.getLocation().getLineNo())) {
 				long startTime = System.currentTimeMillis();				
 				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(bkpData.getLocation(), 
 						originVars, mcm.getDataPoints(), preconditions, mcm.getLearnedDividers());
@@ -299,7 +303,6 @@ public class DecisionLearner implements CategoryCalculator {
 				}
 				preconditions.clearInvalidData(newData);
 				
-//				mcm.resetData();
 				mcm.getLearnedModels().clear();
 				addDataPoints(originVars, newData.getTrueValues(), Category.POSITIVE, mcm);
 				addDataPoints(originVars, newData.getFalseValues(), Category.NEGATIVE, mcm);
@@ -325,6 +328,8 @@ public class DecisionLearner implements CategoryCalculator {
 				} else {
 					break;
 				}
+				
+				time++;
 			}
 		}
 		
@@ -395,62 +400,59 @@ public class DecisionLearner implements CategoryCalculator {
 			return null;
 		}
 		else{
-			Formula formula = null;
-			if (/*!manager.isEnd(loopData.getLocation().getLineNo())*/
-					cfgConditionManager.isRelevant(loopData.getLocation().getLineNo())) {
-				
-				NegativePointSelection negative = new ByDistanceNegativePointSelection();
-				PositiveSeparationMachine mcm = new PositiveSeparationMachine(negative);
-				formula = generateInitialFormula(loopData, mcm);
-				
-				//int times = 0;
-				double acc = mcm.getModelAccuracy();
-				while(formula != null && /*times < MAX_ATTEMPT &&*/ cfgConditionManager.isRelevant(loopData.getLocation().getLineNo())) {
-					/*LoopTimesData newData = (LoopTimesData) selectiveSampling.selectData(loopData.getLocation(), 
-							formula, machine.getDataLabels(), machine.getDataPoints());	*/
-					Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(loopData.getLocation(), 
-							originVars, mcm.getDataPoints(), preConditions, mcm.getLearnedDividers());
-					if (newMap == null) {
-						break;
-					}
-					mergeMap(newMap);
-					cfgConditionManager.updateRelevance(bkpDataMap);
-					LoopTimesData newData = (LoopTimesData) newMap.get(loopData.getLocation());
-					if (newData == null) {
-						break;
-					}
-					//manager.updateRelevance(loopData);
-					addDataPoints(originVars, newData.getMoreTimesValues(), Category.POSITIVE, mcm);
-					addDataPoints(originVars, newData.getOneTimeValues(), Category.NEGATIVE, mcm);
-					/*if (machine.getModelAccuracy() == 1.0) {
-						break;
-					}*/
-					//startTime = System.currentTimeMillis();
-					acc = mcm.getModelAccuracy();
-					if (acc == 1.0) {
-						break;
-					}
-					mcm.train();
-					//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
-					Formula tmp = mcm.getLearnedMultiFormula(originVars, getLabels());
-					double accTmp = mcm.getModelAccuracy();
-					if (tmp == null) {
-						break;
-					}
-					if (!tmp.equals(formula) && accTmp > acc) {
-						formula = tmp;
-						acc = accTmp;
-					} else {
-						break;
-					}
-					//times ++;
-				}
-				
-			}	
-			
-			return formula;
+			Formula loopFormula = generateConcreteLoopFormula(loopData, preConditions);
+			return loopFormula;
 		}
 		
+	}
+
+	private Formula generateConcreteLoopFormula(LoopTimesData loopData, OrCategoryCalculator preConditions)
+			throws SAVExecutionTimeOutException, SavException {
+		Formula formula = null;
+		if (cfgConditionManager.isRelevant(loopData.getLocation().getLineNo())) {
+			
+			NegativePointSelection negative = new ByDistanceNegativePointSelection();
+			PositiveSeparationMachine mcm = new PositiveSeparationMachine(negative);
+			formula = generateInitialFormula(loopData, mcm);
+			
+			int times = 0;
+			double acc = mcm.getModelAccuracy();
+			while(formula != null && times < maxAttempt && cfgConditionManager.isRelevant(loopData.getLocation().getLineNo())) {
+				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(loopData.getLocation(), 
+						originVars, mcm.getDataPoints(), preConditions, mcm.getLearnedDividers());
+				if (newMap == null) {
+					break;
+				}
+				mergeMap(newMap);
+				cfgConditionManager.updateRelevance(bkpDataMap);
+				LoopTimesData newData = (LoopTimesData) newMap.get(loopData.getLocation());
+				if (newData == null) {
+					break;
+				}
+				addDataPoints(originVars, newData.getMoreTimesValues(), Category.POSITIVE, mcm);
+				addDataPoints(originVars, newData.getOneTimeValues(), Category.NEGATIVE, mcm);
+				acc = mcm.getModelAccuracy();
+				if (acc == 1.0) {
+					break;
+				}
+				mcm.train();
+				Formula tmp = mcm.getLearnedMultiFormula(originVars, getLabels());
+				double accTmp = mcm.getModelAccuracy();
+				if (tmp == null) {
+					break;
+				}
+				if (!tmp.equals(formula) && accTmp > acc) {
+					formula = tmp;
+					acc = accTmp;
+				} else {
+					break;
+				}
+				times ++;
+			}
+			
+		}	
+		
+		return formula;
 	}
 	
 	/**
