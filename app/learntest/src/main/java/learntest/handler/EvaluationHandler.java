@@ -444,7 +444,7 @@ public class EvaluationHandler extends AbstractHandler {
 						
 						validSum += collector.mdList.size();
 						totalSum += collector.totalMethodNum;
-//						evaluateForMethodList(writer, cu, collector.mdList);
+						evaluateForMethodList(writer, cu, collector.mdList);
 					}
 				}
 
@@ -472,7 +472,7 @@ public class EvaluationHandler extends AbstractHandler {
 								+ LearnTestConfig.testMethodName);
 
 						try {
-							int times = 1;
+							int times = 5;
 							RunTimeInfo l2tAverageInfo = new RunTimeInfo(0, 0, 0);
 							RunTimeInfo ranAverageInfo = new RunTimeInfo(0, 0, 0);
 							
