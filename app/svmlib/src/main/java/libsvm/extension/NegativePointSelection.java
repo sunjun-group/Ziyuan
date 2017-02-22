@@ -23,14 +23,14 @@ public interface NegativePointSelection {
 	 * selection can be made to take into consideration the information of the
 	 * given positive points list, but this is not mandatory.
 	 * 
-	 * @param negatives
+	 * @param selectionData
 	 *            List of negative points to select from.
-	 * @param positives
+	 * @param referenceData
 	 *            List of positive points for reference when needed.
 	 * @return One negative point selected from <code>negatives</code>, or
 	 *         <code>null</code> if the given list is empty.
 	 */
-	DataPoint select(List<DataPoint> negatives, List<DataPoint> positives);
+	DataPoint select(List<DataPoint> selectionData, List<DataPoint> referenceData);
 
 	/**
 	 * Tell whether the current selection algorithm can give different results
