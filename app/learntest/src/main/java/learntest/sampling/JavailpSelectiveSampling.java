@@ -159,8 +159,12 @@ public class JavailpSelectiveSampling {
 			for (Problem problem : probelms) {
 				for (int i = 0; i < MAX_MORE_SELECTED_SAMPLE; i++) {
 					int fixedVarIndex = random.nextInt(originVars.size());
-					Result randomResult = results.get(random.nextInt(results.size()));
-					List<Eq<Number>> samples = generateRandomVariableAssignment(originVars, results.isEmpty() ? null : randomResult, fixedVarIndex);
+					Result randomResult = null;
+					if(!results.isEmpty()){
+						randomResult = results.get(random.nextInt(results.size()));
+					}
+					 
+					List<Eq<Number>> samples = generateRandomVariableAssignment(originVars, randomResult, fixedVarIndex);
 					if (samples.isEmpty()) {
 						continue;
 					}
