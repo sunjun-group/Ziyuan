@@ -195,6 +195,8 @@ public class DecisionLearner implements CategoryCalculator {
 			System.out.println("learn select data for empty time for " + bkpData.getLocation()
 					+ ": " + (System.currentTimeMillis() - startTime) + "ms");
 			
+			System.currentTimeMillis();
+			
 			if (selectMap != null) {
 				System.out.println("true data after selective for empty: " + selectMap.get(bkpData.getLocation()).getTrueValues());
 				System.out.println("false data after selective for empty: " + selectMap.get(bkpData.getLocation()).getFalseValues());

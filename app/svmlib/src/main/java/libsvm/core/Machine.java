@@ -595,9 +595,13 @@ public class Machine {
 	}
 	
 	public void setDefaultParams() {
-		setParameter(new Parameter().setMachineType(MachineType.C_SVC)
-				.setKernelType(KernelType.LINEAR).setEps(0.00001).setUseShrinking(false)
-				.setPredictProbability(false).setC(Double.MAX_VALUE));
+		setParameter(new Parameter().
+				setMachineType(MachineType.C_SVC).
+				setKernelType(KernelType.LINEAR).
+				setEps(0.00001).
+				setUseShrinking(false).
+				setPredictProbability(false).
+				setC(Double.MAX_VALUE));
 	}
 
 	public List<DataPoint> getDataPoints() {

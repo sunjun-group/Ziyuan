@@ -15,8 +15,10 @@ import learntest.sampling.javailp.ProblemSolver;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.LoopTimesData;
+import learntest.util.Settings;
 import libsvm.core.Divider;
 import libsvm.core.Machine.DataPoint;
+import net.sf.javailp.OptType;
 import net.sf.javailp.Problem;
 import net.sf.javailp.Result;
 import net.sf.javailp.ResultImpl;
@@ -69,10 +71,10 @@ public class JavailpSelectiveSampling {
 			List<Divider> current, 
 			boolean trueOrFalse, 
 			boolean isLoop) throws SavException, SAVExecutionTimeOutException {
+		System.currentTimeMillis();
 		
 		tcExecutor.setTarget(null);
 		for (int i = 0; i < 3; i++) {
-			
 			List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
 			List<Problem> problems = ProblemBuilder.buildTrueValueProblems(originVars, precondition, current, true);
 			if (problems.isEmpty()) {
@@ -84,6 +86,13 @@ public class JavailpSelectiveSampling {
 				for (Result result : results) {
 					checkNonduplicateResult(result, originVars, prevDatas, assignments);
 				}
+				problem.setObjective(problem.getObjective(), OptType.MAX);
+				results = ProblemSolver.solveMultipleTimes(problem, num);
+				for (Result result : results) {
+					checkNonduplicateResult(result, originVars, prevDatas, assignments);
+				}
+				
+				problem.setObjective(problem.getObjective(), OptType.MIN);
 				results = ProblemSolver.solveMultipleTimes(problem, num);
 				for (Result result : results) {
 					checkNonduplicateResult(result, originVars, prevDatas, assignments);
@@ -177,7 +186,7 @@ public class JavailpSelectiveSampling {
 			}
 		}
 		
-		for(int i=0; i<100; i++){
+		for(int i=0; i<Settings.selectiveNumber; i++){
 			extendWithHeuristics(results, assignments, originVars);			
 		}
 		selectData(target, assignments);
