@@ -8,12 +8,14 @@
 
 package icsetlv.variable;
 
+import java.awt.Frame;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.sun.jdi.ArrayReference;
+import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.LocalVariable;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadReference;
@@ -21,6 +23,7 @@ import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 
 import icsetlv.common.dto.BreakpointValue;
+import icsetlv.variable.JdiParam.JdiParamType;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.strategies.dto.BreakPoint.Variable;
@@ -52,15 +55,22 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 			JdiParam jdiParam = allVariables.get(var);
 			Map<String, JdiParam> modificationMap = getInstrMap(var, jdiParam);
 			
-//			System.currentTimeMillis();
-			
 			for (String varId : modificationMap.keySet()) {
+				
 				JdiParam param = modificationMap.get(varId);
 				if (param == null) {
+					try{
+						String fieldName = varId.substring(var.getFullName().length()+1);	
+						if(fieldName.equals("isNull")){
+							setNullValue(thread, jdiParam, varId);
+						}
+					}
+					catch(Exception e){}
+					
 					continue;
 				}
-				Object newVal = instVals.get(varId);
 				
+				Object newVal = instVals.get(varId);
 				switch (param.getType()) {
 				case ARRAY_ELEMENT:
 					instArrElement(thread, param, newVal, var);
@@ -81,6 +91,23 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 					instObjField(thread, param, newVal, var);
 					
 					break;
+				}
+			}
+		}
+	}
+
+	private void setNullValue(ThreadReference thread, JdiParam jdiParam, String varId)
+			throws SavException, InvalidTypeException, ClassNotLoadedException {
+		Object newVal = instVals.get(varId);
+		if(newVal instanceof Boolean){
+			Boolean isNull = (Boolean)newVal;
+			if(isNull){
+				if(jdiParam.getType()==JdiParamType.LOCAL_VAR){
+					StackFrame frame = getFrame(thread);
+					frame.setValue(jdiParam.getLocalVariable(), null);
+				}
+				else if(jdiParam.getType()==JdiParamType.NON_STATIC_FIELD || jdiParam.getType()==JdiParamType.NON_STATIC_FIELD){
+					thread.setValue(jdiParam.getField(), null);
 				}
 			}
 		}
