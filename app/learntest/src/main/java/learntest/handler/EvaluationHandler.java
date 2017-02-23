@@ -489,6 +489,8 @@ public class EvaluationHandler extends AbstractHandler {
 									l2tAverageInfo = null;
 								}
 								
+								Thread.sleep(5000);
+								
 								LearnTestConfig.isL2TApproach = false;
 								RunTimeInfo ranInfo = new GenerateTestHandler().generateTest(false);
 								
@@ -500,6 +502,8 @@ public class EvaluationHandler extends AbstractHandler {
 								else{
 									ranAverageInfo = null;
 								}
+								
+								Thread.sleep(5000);
 							}
 							
 							if (l2tAverageInfo != null && ranAverageInfo != null) {

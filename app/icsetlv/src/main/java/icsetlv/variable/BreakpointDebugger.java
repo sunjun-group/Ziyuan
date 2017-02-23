@@ -82,6 +82,7 @@ public abstract class BreakpointDebugger {
 		Map<String, BreakPoint> locBrpMap = new HashMap<String, BreakPoint>();
 		
 		long startTime = System.currentTimeMillis();
+		boolean exitTimeOutVM = false;
 		
 		try{
 			while (!stop && !eventTimeout) {
@@ -107,6 +108,7 @@ public abstract class BreakpointDebugger {
 						System.err.println("run time over 5s, stop");
 						stop = true;
 						eventTimeout = true;
+						exitTimeOutVM = true;
 					}
 					
 					if (event instanceof VMDeathEvent
@@ -137,6 +139,15 @@ public abstract class BreakpointDebugger {
 				/* wait until the process completes */
 				debugger.waitProcessUntilStop();
 			}
+			
+			if(exitTimeOutVM){
+				if(vm != null){
+					try{
+						vm.exit(0);					
+					}catch(Exception e){}
+				}
+			}
+			
 			/* end of debug */
 			afterDebugging();
 		}
@@ -148,7 +159,9 @@ public abstract class BreakpointDebugger {
 		}
 		finally{
 			if(vm != null){
-//				vm.exit(0);
+				try{
+					vm.exit(0);					
+				}catch(Exception e){}
 				vm = null;
 			}
 		}
