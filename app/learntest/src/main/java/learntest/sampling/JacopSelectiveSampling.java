@@ -435,6 +435,12 @@ public class JacopSelectiveSampling {
 		}
 		tcExecutor.duplicateTestCases(list.size());
 		tcExecutor.setVarMaps(list);
+		
+		if(list != null){
+			int size = list.size();
+			System.out.println("Running " + size + " data points...");			
+		}
+		
 		tcExecutor.run();
 		selectResult = tcExecutor.getResult();
 		/*Map<DecisionLocation, BreakpointData> result = tcExecutor.getResult();
@@ -469,6 +475,12 @@ public class JacopSelectiveSampling {
 		}
 		tcExecutor.duplicateTestCases(list.size());
 		tcExecutor.setVarMaps(list);
+		
+		if(list != null){
+			int size = list.size();
+			System.out.println("Running " + size + " data points...");			
+		}
+		
 		tcExecutor.run();
 		selectResult = tcExecutor.getResult();
 	}

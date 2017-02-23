@@ -364,7 +364,7 @@ public class EvaluationHandler extends AbstractHandler {
 				}
 
 				SAVTimer.enableExecutionTimeout = true;
-				SAVTimer.exeuctionTimeout = 100000;
+				SAVTimer.exeuctionTimeout = 300000;
 
 				RunTimeCananicalInfo overalInfo = new RunTimeCananicalInfo(0, 0);
 				

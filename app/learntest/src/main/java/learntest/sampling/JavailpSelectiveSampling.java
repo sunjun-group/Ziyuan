@@ -307,6 +307,12 @@ public class JavailpSelectiveSampling {
 		
 		tcExecutor.duplicateTestCases(list.size());
 		tcExecutor.setVarMaps(list);
+		
+		if(list != null){
+			int size = list.size();
+			System.out.println("Running " + size + " data points...");			
+		}
+		
 		tcExecutor.run(); 
 		selectResult = tcExecutor.getResult();
 	}
@@ -326,6 +332,12 @@ public class JavailpSelectiveSampling {
 		}
 		tcExecutor.duplicateTestCases(list.size());
 		tcExecutor.setVarMaps(list);
+		
+		if(list != null){
+			int size = list.size();
+			System.out.println("Running " + size + " data points...");			
+		}
+		
 		tcExecutor.run();
 		selectResult = tcExecutor.getResult();
 	}

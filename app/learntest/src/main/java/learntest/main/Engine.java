@@ -147,9 +147,11 @@ public class Engine {
 					coverage = learner.getCoverage();
 				}
 				
-				List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
+				try{
+					List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
+					new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());					
+				}catch(Exception e){}
 				
-				new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());
 				testCnt = selectiveSampling.getTotalNum();
 				System.out.println("Total test cases number: " + testCnt);
 			}
@@ -165,14 +167,6 @@ public class Engine {
 			}
 			e.printStackTrace();
 		}		
-		//PathSolver pathSolver = new PathSolver();
-		//List<Result> results = pathSolver.solve(paths);
-		//System.out.println(results);
-		//new TestGenerator().genTestAccordingToInput(results, pathSolver.getVariables());
-		//new TestGenerator().genTestAccordingToInput(results, variables);
-		//new TestGenerator().genTestAccordingToInput(results, learner.getLabels());
-		
-		
 		
 		RunTimeInfo info = new RunTimeInfo(time, coverage, testCnt);
 		return info;
