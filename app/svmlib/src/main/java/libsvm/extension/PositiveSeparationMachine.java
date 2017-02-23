@@ -200,13 +200,15 @@ public class PositiveSeparationMachine extends Machine {
 		List<Divider> roundDividers = new ArrayList<Divider>();
 		for (svm_model learnModel : this.learnedModels) {
 			if (learnModel != null) {
-				roundDividers.add(new Model(learnModel, getNumberOfFeatures()).getExplicitDivider()
-						.round());
+				Divider divider = new Model(learnModel, getNumberOfFeatures()).getExplicitDivider();
+				if(divider != null){
+					divider = divider.round();
+					roundDividers.add(divider);					
+				}
 			}
 		}
 
-		return getWrongClassifiedDataPoints(dataPoints, new MultiDividerBasedCategoryCalculator(
-				roundDividers));
+		return getWrongClassifiedDataPoints(dataPoints, new MultiDividerBasedCategoryCalculator(roundDividers));
 	}
 
 	@Override
@@ -260,6 +262,8 @@ public class PositiveSeparationMachine extends Machine {
 				}
 			}
 		}
+		
+		
 		return formula;
 	}
 

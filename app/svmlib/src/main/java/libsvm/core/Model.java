@@ -107,7 +107,17 @@ public class Model {
 		Assert.assertNotNull(model, "SVM model is not available yet.");
 
 		// coef = [x][number of SVs]
-		DoubleMatrix coefficientMatrix = new DoubleMatrix(model.sv_coef);
+		DoubleMatrix coefficientMatrix = null;
+		try{
+			coefficientMatrix = new DoubleMatrix(model.sv_coef);
+		}
+		catch(Exception e){}
+		
+		if(coefficientMatrix == null){
+			System.currentTimeMillis();
+			return null;
+		}
+		
 		// (!) NOTE: We assert that x is always equal to 1
 		Assert.assertTrue(coefficientMatrix.getRows() == 1, "Unexpected size of matrices.");
 
