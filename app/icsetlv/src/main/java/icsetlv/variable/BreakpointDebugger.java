@@ -81,6 +81,8 @@ public abstract class BreakpointDebugger {
 		boolean eventTimeout = false;
 		Map<String, BreakPoint> locBrpMap = new HashMap<String, BreakPoint>();
 		
+		long startTime = System.currentTimeMillis();
+		
 		try{
 			while (!stop && !eventTimeout) {
 				EventSet eventSet;
@@ -101,6 +103,12 @@ public abstract class BreakpointDebugger {
 						throw new SAVExecutionTimeOutException("Time out at retrieving runtime data");
 					}
 					
+					if(System.currentTimeMillis()-startTime > 5000){
+						System.err.println("run time over 5s, stop");
+						stop = true;
+						eventTimeout = true;
+					}
+					
 					if (event instanceof VMDeathEvent
 							|| event instanceof VMDisconnectEvent) {
 						stop = true;
@@ -118,9 +126,6 @@ public abstract class BreakpointDebugger {
 					} else if (event instanceof BreakpointEvent) {
 						BreakpointEvent bkpEvent = (BreakpointEvent) event;
 						
-						if(bkpEvent.location().lineNumber()==198){
-							System.currentTimeMillis();
-						}
 						BreakPoint bkp = locBrpMap.get(bkpEvent.location().toString());
 						handleBreakpointEvent(bkp, vm, bkpEvent);
 					}
