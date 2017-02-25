@@ -78,7 +78,7 @@ public class ProblemSolver {
 		int size = vars.size();
 		while (times > 0) {
 			for (ExecVar var : vars) {
-				addConstraint(problem, var);
+				addRandomConstraint(problem, var);
 				Solver solver = factory.get();
 				Result result = solver.solve(problem);
 				if (result != null) {
@@ -92,7 +92,7 @@ public class ProblemSolver {
 		return res;
 	}
 
-	private static void addConstraint(Problem problem, ExecVar var) {
+	private static void addRandomConstraint(Problem problem, ExecVar var) {
 		Linear linear = new Linear();
 		linear.add(1, var.getLabel());
 		Pair<Number, Number> range = minMax.get(var);
