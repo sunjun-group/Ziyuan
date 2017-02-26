@@ -136,7 +136,7 @@ public class PositiveSeparationMachine extends Machine {
 		List<DataPoint> selectionData = (positives.size()>negatives.size()) ? positives : negatives;
 		
 		int loopCount = 0;
-		while (!selectionData.isEmpty() && loopCount < MAXIMUM_DIVIDER_COUNT) {
+		while (!selectionData.isEmpty() && loopCount < 3) {
 			loopCount++;
 			// Training set = all positives + 1 negative
 			DataPoint p = negativePointSelection.select(selectionData, trainingData);
