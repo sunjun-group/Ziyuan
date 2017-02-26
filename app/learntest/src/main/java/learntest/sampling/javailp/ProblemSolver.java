@@ -149,9 +149,9 @@ public class ProblemSolver {
 		return res;
 	}*/
 	
-	public static Result generateRandomResultToConstraints(Problem problem, List<ExecVar> vars) {
+	public static void generateRandomObjective(Problem problem, List<ExecVar> vars) {
 		if (problem == null) {
-			return null;
+			return;
 		}
 		
 		Linear obj = new Linear();
@@ -159,9 +159,10 @@ public class ProblemSolver {
 			obj.add(random.nextBoolean() ? 1 : -1 * random.nextDouble(), var.getLabel());
 		}
 		problem.setObjective(obj, random.nextBoolean() ? OptType.MIN : OptType.MAX);
-		
+	}
+
+	public static Result solve(Problem problem){
 		Solver solver = factory.get();
 		return solver.solve(problem);
 	}
-
 }

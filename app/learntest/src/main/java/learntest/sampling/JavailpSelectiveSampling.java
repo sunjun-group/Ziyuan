@@ -18,10 +18,12 @@ import learntest.testcase.data.LoopTimesData;
 import learntest.util.Settings;
 import libsvm.core.Divider;
 import libsvm.core.Machine.DataPoint;
+import net.sf.javailp.Constraint;
 import net.sf.javailp.OptType;
 import net.sf.javailp.Problem;
 import net.sf.javailp.Result;
 import net.sf.javailp.ResultImpl;
+import net.sf.javailp.Solver;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.Eq;
@@ -142,8 +144,10 @@ public class JavailpSelectiveSampling {
 		for (Divider learnedFormula : learnedFormulas) {
 			List<Problem> problems = ProblemBuilder.buildOnBorderProblems(learnedFormula, 
 					originVars, preconditions, learnedFormulas, false);
+			
 			for (Problem problem : problems) {
-				Result result = ProblemSolver.generateRandomResultToConstraints(problem, originVars);
+				ProblemSolver.generateRandomObjective(problem, originVars);
+				Result result = ProblemSolver.solve(problem);
 				if (result != null) {
 					boolean isDuplicateWithResult = isDuplicate(result, originVars, prevDatas);
 					
@@ -165,6 +169,7 @@ public class JavailpSelectiveSampling {
 		calculateValRange(originVars, datapoints);
 		if (originVars.size() > 1) {
 			List<Problem> probelms = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
+			System.currentTimeMillis();
 			for (Problem problem : probelms) {
 				for (int i = 0; i < MAX_MORE_SELECTED_SAMPLE; i++) {
 					int fixedVarIndex = random.nextInt(originVars.size());
@@ -173,12 +178,19 @@ public class JavailpSelectiveSampling {
 						randomResult = results.get(random.nextInt(results.size()));
 					}
 					 
+					System.currentTimeMillis();
+					
+					Problem p = ProblemBuilder.buildVarBoundContraint(originVars);
+					ProblemSolver.generateRandomObjective(p, originVars);
+					
 					List<Eq<Number>> samples = generateRandomVariableAssignment(originVars, randomResult, fixedVarIndex);
 					if (samples.isEmpty()) {
 						continue;
 					}
-					ProblemBuilder.addEqualConstraints(problem, samples);
-					Result res = ProblemSolver.generateRandomResultToConstraints(problem, originVars);
+					ProblemBuilder.addEqualConstraints(p, samples);
+					ProblemSolver.generateRandomObjective(p, originVars);
+					Result res = ProblemSolver.solve(p);
+					
 					if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
 						results.add(res);
 					}
@@ -190,10 +202,11 @@ public class JavailpSelectiveSampling {
 			extendWithHeuristics(results, assignments, originVars);			
 		}
 		
-		if(assignments.size() > Settings.selectiveNumber){
+		
+		if(assignments.size() > 100){
 			int size = assignments.size();
-			for(int i=Settings.selectiveNumber; i<size; i++){
-				assignments.remove(Settings.selectiveNumber);
+			for(int i=100; i<size; i++){
+				assignments.remove(100);
 			}			
 		}
 		
@@ -216,68 +229,53 @@ public class JavailpSelectiveSampling {
 		double offset = random.nextDouble()*selectiveBound;
 		
 		for (Result result : results) {
-			int idx = 0;
+			Result rightPoint = new ResultImpl();
+			Result leftPoint = new ResultImpl();
+			
 			for (ExecVar var : originVars) {
 				String label = var.getLabel();
 				Number value = result.get(label);
 				
-				//value + 1
-				Result r1 = new ResultImpl();
-				//value - 1
-				Result r2 = new ResultImpl();
 				switch (var.getType()) {
 					case INTEGER:
-						r1.put(label, value.intValue() + (int)offset);
-						r2.put(label, value.intValue() - (int)offset);
+						rightPoint.put(label, value.intValue() + (int)offset);
+						leftPoint.put(label, value.intValue() - (int)offset);
 						break;
 					case CHAR:
-						r1.put(label, value.intValue() + 1);
-						r2.put(label, value.intValue() - 1);
+						rightPoint.put(label, value.intValue() + 1);
+						leftPoint.put(label, value.intValue() - 1);
 						break;
 					case BYTE:
-						r1.put(label, value.byteValue() + 1);
-						r2.put(label, value.byteValue() - 1);
+						rightPoint.put(label, value.byteValue() + 1);
+						leftPoint.put(label, value.byteValue() - 1);
 						break;
 					case DOUBLE:
-						r1.put(label, value.doubleValue() + offset);
-						r2.put(label, value.doubleValue() - offset);
+						rightPoint.put(label, value.doubleValue() + offset);
+						leftPoint.put(label, value.doubleValue() - offset);
 						break;
 					case FLOAT:
-						r1.put(label, value.floatValue() + (float)offset);
-						r2.put(label, value.floatValue() - (float)offset);
+						rightPoint.put(label, value.floatValue() + (float)offset);
+						leftPoint.put(label, value.floatValue() - (float)offset);
 						break;
 					case LONG:
-						r1.put(label, value.longValue() + (long)offset);
-						r2.put(label, value.longValue() - (long)offset);
+						rightPoint.put(label, value.longValue() + (long)offset);
+						leftPoint.put(label, value.longValue() - (long)offset);
 						break;
 					case SHORT:
-						r1.put(label, value.shortValue() + (short)offset);
-						r2.put(label, value.shortValue() - (short)offset);
+						rightPoint.put(label, value.shortValue() + (short)offset);
+						leftPoint.put(label, value.shortValue() - (short)offset);
 						break;
 					case BOOLEAN:
-						r1.put(label, 1 - value.intValue());
-						r2.put(label, 1 - value.intValue());
+						rightPoint.put(label, 1 - value.intValue());
+						leftPoint.put(label, 1 - value.intValue());
 						break;
 					default:
 						break;
 				}
-				
-				int i = 0;
-				for (ExecVar execVar : originVars) {
-					if (i == idx) {
-						i ++;
-						continue;
-					}
-					String tmp = execVar.getLabel();
-					r1.put(tmp, result.get(tmp));
-					r2.put(tmp, result.get(tmp));
-					i ++;
-				}
-				
-				checkNonduplicateResult(r1, originVars, prevDatas, assignments);
-				checkNonduplicateResult(r2, originVars, prevDatas, assignments);
-				idx ++;
 			}
+			
+			checkNonduplicateResult(rightPoint, originVars, prevDatas, assignments);
+			checkNonduplicateResult(leftPoint, originVars, prevDatas, assignments);
 		}
 	}
 	
@@ -399,10 +397,10 @@ public class JavailpSelectiveSampling {
 		List<Eq<Number>> atoms = new ArrayList<Eq<Number>>();
 		int i = 0;
 		for (ExecVar var : vars) {
-			if (i == fixedIndex) {
-				i ++;
-				continue;
-			}
+//			if (i == fixedIndex) {
+//				i ++;
+//				continue;
+//			}
 			
 			Number value = null;
 			String label = var.getLabel();

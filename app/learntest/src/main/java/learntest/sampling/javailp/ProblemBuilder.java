@@ -320,7 +320,7 @@ public class ProblemBuilder {
 		return problem;
 	}
 	
-	private static Problem buildVarBoundContraint(List<ExecVar> vars) {
+	public static Problem buildVarBoundContraint(List<ExecVar> vars) {
 		
 		int bound = Settings.bound;
 		
