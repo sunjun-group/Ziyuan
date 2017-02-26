@@ -37,6 +37,7 @@ import libsvm.extension.NegativePointSelection;
 import libsvm.extension.PositiveSeparationMachine;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
+import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
@@ -204,7 +205,7 @@ public class DecisionLearner implements CategoryCalculator {
 		OrCategoryCalculator preconditions = null;
 		if (!random) {
 			preconditions = cfgConditionManager.getPreConditions(bkpData.getLocation().getLineNo());
-			preconditions.clearInvalidData(bkpData);
+//			preconditions.clearInvalidData(bkpData);
 		}
 		
 		if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {			
@@ -288,7 +289,7 @@ public class DecisionLearner implements CategoryCalculator {
 		
 	}
 
-	private int maxAttempt = 10;
+	private int maxAttempt = 5;
 	
 	private Formula generateTrueFalseFormula(BreakpointData bkpData, OrCategoryCalculator preconditions)
 			throws SAVExecutionTimeOutException, SavException {
@@ -330,6 +331,7 @@ public class DecisionLearner implements CategoryCalculator {
 				
 				mcm.train();
 				Formula tmp = mcm.getLearnedMultiFormula(originVars, getLabels());
+				System.out.println("improved the formula: "  + tmp);
 				if (tmp == null) {
 					break;
 				}
@@ -353,6 +355,31 @@ public class DecisionLearner implements CategoryCalculator {
 		}
 		
 		return trueFlaseFormula;
+	}
+
+	private boolean isEqual(Formula tmp, Formula trueFlaseFormula) {
+		if(tmp == null || trueFlaseFormula == null){
+			return false;
+		}
+		
+		if(tmp instanceof AndFormula && trueFlaseFormula instanceof AndFormula){
+			AndFormula f1 = (AndFormula)tmp;
+			AndFormula f2 = (AndFormula)trueFlaseFormula;
+			
+			if(f1.getElements().size()==f2.getElements().size()){
+				for(int i=0; i<f1.getElements().size(); i++){
+					Formula for1 = f1.getElements().get(i);
+					Formula for2 = f2.getElements().get(i);
+					
+					if(!for1.equals(for2)){
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	private Formula generateInitialFormula(BreakpointData bkpData, PositiveSeparationMachine mcm)
