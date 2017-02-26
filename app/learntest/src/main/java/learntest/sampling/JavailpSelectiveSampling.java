@@ -18,13 +18,10 @@ import learntest.testcase.data.LoopTimesData;
 import learntest.util.Settings;
 import libsvm.core.Divider;
 import libsvm.core.Machine.DataPoint;
-import net.sf.javailp.Constraint;
 import net.sf.javailp.OptType;
 import net.sf.javailp.Problem;
 import net.sf.javailp.Result;
 import net.sf.javailp.ResultImpl;
-import net.sf.javailp.Solver;
-import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.Eq;
 import sav.common.core.utils.Randomness;
@@ -38,7 +35,7 @@ public class JavailpSelectiveSampling {
 	private static final int MIN_MORE_SELECTED_DATA = 5;
 
 	private TestcasesExecutorwithLoopTimes tcExecutor;
-	private Map<String, Pair<Double, Double>> minMax;
+//	private Map<String, Pair<Double, Double>> minMax;
 	private List<Result> prevDatas;
 	private Map<DecisionLocation, BreakpointData> selectResult;
 	
@@ -142,8 +139,13 @@ public class JavailpSelectiveSampling {
 		 * generate data point on the border of divider 
 		 */
 		for (Divider learnedFormula : learnedFormulas) {
-			List<Problem> problems = ProblemBuilder.buildOnBorderProblems(learnedFormula, 
-					originVars, preconditions, learnedFormulas, false);
+			
+			List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
+			if (!problems.isEmpty() && learnedFormula != null) {
+				for (Problem problem : problems) {
+					ProblemBuilder.addOnBorderConstaints(problem, learnedFormula, originVars);
+				}
+			}
 			
 			for (Problem problem : problems) {
 				ProblemSolver.generateRandomObjective(problem, originVars);
@@ -165,38 +167,7 @@ public class JavailpSelectiveSampling {
 		/**
 		 * randomly generate more data points on svm model. 
 		 */
-		Random random = new Random();
-		calculateValRange(originVars, datapoints);
-		if (originVars.size() > 1) {
-			List<Problem> probelms = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
-			System.currentTimeMillis();
-			for (Problem problem : probelms) {
-				for (int i = 0; i < MAX_MORE_SELECTED_SAMPLE; i++) {
-					int fixedVarIndex = random.nextInt(originVars.size());
-					Result randomResult = null;
-					if(!results.isEmpty()){
-						randomResult = results.get(random.nextInt(results.size()));
-					}
-					 
-					System.currentTimeMillis();
-					
-					Problem p = ProblemBuilder.buildVarBoundContraint(originVars);
-					ProblemSolver.generateRandomObjective(p, originVars);
-					
-					List<Eq<Number>> samples = generateRandomVariableAssignment(originVars, randomResult, fixedVarIndex);
-					if (samples.isEmpty()) {
-						continue;
-					}
-					ProblemBuilder.addEqualConstraints(p, samples);
-					ProblemSolver.generateRandomObjective(p, originVars);
-					Result res = ProblemSolver.solve(p);
-					
-					if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
-						results.add(res);
-					}
-				}
-			}
-		}
+		assignments = generateRandomPointsWithPrecondition(preconditions, originVars, datapoints, assignments, results, 3);
 		
 		for(int i=0; i<Settings.selectiveNumber; i++){
 			extendWithHeuristics(results, assignments, originVars);			
@@ -213,6 +184,51 @@ public class JavailpSelectiveSampling {
 		selectData(target, assignments);
 		System.currentTimeMillis();
 		return selectResult;
+	}
+
+	private List<List<Eq<?>>> generateRandomPointsWithPrecondition(OrCategoryCalculator preconditions, List<ExecVar> originVars, List<DataPoint> datapoints,
+			List<List<Eq<?>>> assignments, List<Result> results, int toBeGeneratedDataNum) {
+		
+		int trialNumThreshold = 100;
+		List<Result> dataPoints = new ArrayList<>();
+		
+		if (originVars.size() > 1) {
+			
+			for(int i = 0; dataPoints.size()<toBeGeneratedDataNum && i<trialNumThreshold; i++){
+				List<Problem> pList = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, true);
+				
+				if(pList.isEmpty()){
+					break;
+				}
+				
+//				Problem p = ProblemBuilder.buildVarBoundContraint(originVars);
+				Problem p = pList.get(0);
+				ProblemSolver.generateRandomObjective(p, originVars);
+				
+				for(int reducedVarNum=0; reducedVarNum<=originVars.size(); reducedVarNum++){
+					List<Eq<Number>> samples = generateRandomVariableAssignment(originVars, reducedVarNum);
+					int bound=5;
+					int k=0;
+					while(samples.isEmpty() && k<bound){
+						samples = generateRandomVariableAssignment(originVars, reducedVarNum);
+					}
+					
+					if(!samples.isEmpty()){
+						ProblemBuilder.addEqualConstraints(p, samples);
+						Result res = ProblemSolver.solve(p);
+						
+						if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
+							results.add(res);
+							dataPoints.add(res);
+						}
+						
+						break;
+					}
+				}
+			}
+		}
+		
+		return assignments;
 	}
 
 	/**
@@ -370,50 +386,33 @@ public class JavailpSelectiveSampling {
 		return false;
 	}
 	
-	private void calculateValRange(List<ExecVar> vars, List<DataPoint> dataPoints) {
-		minMax = new HashMap<String, Pair<Double,Double>>();
-		for (DataPoint dp : dataPoints) {
-			for (int i = 0; i < vars.size(); i++) {
-				double val = dp.getValue(i);
-				String label = vars.get(i).getLabel();
-				Pair<Double, Double> mm = minMax.get(label);
-				if (mm == null) {
-					mm = new Pair<Double, Double>(val, val);
-					minMax.put(label, mm);
-				}
-				/* min */
-				if (mm.a.doubleValue() > val) {
-					mm.a = val;
-				}
-				/* max */
-				if (mm.b.doubleValue() < val) {
-					mm.b = val;
-				}
-			}
-		}
-	}
-	
-	private List<Eq<Number>> generateRandomVariableAssignment(List<ExecVar> vars, Result result, int fixedIndex) {
+	/**
+	 * randomly reduce some vars to generate equation constraints.
+	 */
+	private List<Eq<Number>> generateRandomVariableAssignment(List<ExecVar> vars, int reducedVarNum) {
 		List<Eq<Number>> atoms = new ArrayList<Eq<Number>>();
-		int i = 0;
+		
+		if(vars.size()<=reducedVarNum){
+			return atoms;
+		}
+		
+		int remainedVars = vars.size();
+		
+		Random random = new Random();
 		for (ExecVar var : vars) {
-//			if (i == fixedIndex) {
-//				i ++;
-//				continue;
-//			}
-			
-			Number value = null;
-			String label = var.getLabel();
-			Pair<Double, Double> range = minMax.get(label);
-			if (range != null && ((range.b.intValue() - range.a.intValue()) > 0)) {
-				value = Randomness.nextInt(range.a.intValue(), range.b.intValue());
-			} else if (result == null || !result.containsVar(label)) {
-				i ++;
+			if((remainedVars-reducedVarNum) == 0){
 				continue;
-			} else {
-				value = result.get(label);
 			}
 			
+			if(reducedVarNum > 0){
+				if(random.nextDouble()>=0.5){
+					reducedVarNum--;
+					remainedVars--;
+					continue;
+				}
+			}
+			
+			Number value = Randomness.nextInt(-Settings.bound, Settings.bound);
 			if (var.getType() == ExecVarType.BOOLEAN) {
 				if (value.intValue() > 0) {
 					atoms.add(new Eq<Number>(var, 1));
@@ -423,8 +422,10 @@ public class JavailpSelectiveSampling {
 			} else {
 				atoms.add(new Eq<Number>(var, value));
 			}
-			i ++;
+			
+			remainedVars--;
 		}
+		
 		return atoms;
 	}
 

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import libsvm.core.Divider;
 import net.sf.javailp.Constraint;
 import net.sf.javailp.Linear;
 import net.sf.javailp.Operator;
@@ -164,5 +165,9 @@ public class ProblemSolver {
 	public static Result solve(Problem problem){
 		Solver solver = factory.get();
 		return solver.solve(problem);
+	}
+	
+	public static Result solve(List<ExecVar> vars, List<Divider> preconditions){
+		return null;
 	}
 }
