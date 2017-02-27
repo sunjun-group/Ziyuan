@@ -131,6 +131,25 @@ public class LearnTestUtil {
 		return null;
 	}
 	
+	public static List<IPackageFragmentRoot> findMainPackageRootInProjects(){
+		List<IPackageFragmentRoot> roots = new ArrayList<>();
+		IJavaProject project = JavaCore.create(getSpecificJavaProjectInWorkspace());
+		try {
+			for(IPackageFragmentRoot packageFragmentRoot: project.getPackageFragmentRoots()){
+				if(!(packageFragmentRoot instanceof JarPackageFragmentRoot) 
+						&& packageFragmentRoot.getResource().toString().contains("main")){
+					
+					roots.add(packageFragmentRoot);
+				}
+			}
+			
+		} catch (JavaModelException e1) {
+			e1.printStackTrace();
+		}
+		
+		return roots;
+	}
+	
 	public static MethodDeclaration findSpecificMethod(String className, String methodName, String lineNumberString){
 		int lineNumber = 0; 
 		try{

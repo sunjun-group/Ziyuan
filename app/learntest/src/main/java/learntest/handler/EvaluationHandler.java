@@ -37,7 +37,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
 import icsetlv.common.utils.PrimitiveUtils;
-import learntest.io.excel.ExcelReader;
 import learntest.io.excel.ExcelWriter;
 import learntest.io.excel.Trial;
 import learntest.main.LearnTestConfig;
@@ -54,8 +53,16 @@ public class EvaluationHandler extends AbstractHandler {
 			IBinding binding = name.resolveBinding();
 			if(binding instanceof IVariableBinding){
 				IVariableBinding vb = (IVariableBinding)binding;
-				if(vb.isField() && !vb.getType().isPrimitive()){
-					isFieldAccess = true;
+				if(vb.isField()){
+					if(vb.getType().isPrimitive()){
+						isFieldAccess = true;						
+					}
+					
+					if(vb.getType().isArray()){
+						if(vb.getType().getElementType().isPrimitive()){
+							isFieldAccess = true;
+						}
+					}
 				}
 			}
 			
@@ -256,7 +263,7 @@ public class EvaluationHandler extends AbstractHandler {
 						FieldAccessChecker checker2 = new FieldAccessChecker();
 						md.accept(checker2);
 						
-						if(!checker2.isFieldAccess){
+						if(checker2.isFieldAccess){
 							if(containsAtLeastOnePrimitiveType(md.parameters())){
 								mdList.add(md);								
 							}
@@ -340,7 +347,7 @@ public class EvaluationHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final IPackageFragmentRoot root = LearnTestUtil.findMainPackageRootInProject();
+		final List<IPackageFragmentRoot> roots = LearnTestUtil.findMainPackageRootInProjects();
 
 		Job job = new Job("Do evaluation") {
 
@@ -369,11 +376,13 @@ public class EvaluationHandler extends AbstractHandler {
 				RunTimeCananicalInfo overalInfo = new RunTimeCananicalInfo(0, 0);
 				
 				try {
-					for (IJavaElement element : root.getChildren()) {
-						if (element instanceof IPackageFragment) {
-							RunTimeCananicalInfo info = runEvaluation((IPackageFragment) element, writer);
-							overalInfo.totalNum += info.totalNum;
-							overalInfo.validNum += info.validNum;
+					for(IPackageFragmentRoot root: roots){
+						for (IJavaElement element : root.getChildren()) {
+							if (element instanceof IPackageFragment) {
+								RunTimeCananicalInfo info = runEvaluation((IPackageFragment) element, writer);
+								overalInfo.totalNum += info.totalNum;
+								overalInfo.validNum += info.validNum;
+							}
 						}
 					}
 					
@@ -390,7 +399,6 @@ public class EvaluationHandler extends AbstractHandler {
 			private RunTimeCananicalInfo runEvaluation(IPackageFragment pack, ExcelWriter writer) throws JavaModelException {
 				int validSum = 0;
 				int totalSum = 0;
-				
 				for (IJavaElement javaElement : pack.getChildren()) {
 					if (javaElement instanceof IPackageFragment) {
 						runEvaluation((IPackageFragment) javaElement, writer);
@@ -403,14 +411,6 @@ public class EvaluationHandler extends AbstractHandler {
 						}
 						
 						AbstractTypeDeclaration type = (AbstractTypeDeclaration) cu.types().get(0);
-//						String typeName = type.getName().getIdentifier();
-//						if(typeName.contains("OpenIntToDoubleHashMap")){
-//							System.currentTimeMillis();
-//						}
-//						else{
-//							continue;
-//						}
-			
 						if (type instanceof TypeDeclaration) {
 							TypeDeclaration td = (TypeDeclaration) type;
 							if (td.isInterface()) {
@@ -472,7 +472,7 @@ public class EvaluationHandler extends AbstractHandler {
 								+ LearnTestConfig.testMethodName);
 
 						try {
-							int times = 5;
+							int times = 3;
 							RunTimeInfo l2tAverageInfo = new RunTimeInfo(0, 0, 0);
 							RunTimeInfo ranAverageInfo = new RunTimeInfo(0, 0, 0);
 							
@@ -517,14 +517,22 @@ public class EvaluationHandler extends AbstractHandler {
 								
 								String fullMN = LearnTestConfig.testClassName + "."
 										+ LearnTestConfig.testMethodName;
+								
+								int start = cu.getLineNumber(method.getStartPosition());
+								int end = cu.getLineNumber(method.getStartPosition()+method.getLength());
+								int length = end-start+1;
+								
+								
 								Trial trial = new Trial(fullMN, l2tAverageInfo.getTime(), l2tAverageInfo.getCoverage(),
 										l2tAverageInfo.getTestCnt(), ranAverageInfo.getTime(), ranAverageInfo.getCoverage(),
-										ranAverageInfo.getTestCnt());
+										ranAverageInfo.getTestCnt(), length, start);
 								writer.export(trial);
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
 							System.currentTimeMillis();
+						} catch (java.lang.NoClassDefFoundError error){
+							error.printStackTrace();
 						}
 
 					}
