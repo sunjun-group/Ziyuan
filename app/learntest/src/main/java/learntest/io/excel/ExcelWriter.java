@@ -66,6 +66,9 @@ public class ExcelWriter {
 		titles.add("randoop time");
 		titles.add("randoop coverage");
 		titles.add("randoop test cnt");
+		titles.add("advantage");
+		titles.add("method length");
+		titles.add("start line");
 		
 		Row row = sheet.createRow(0);
 		for(int i = 0; i < titles.size(); i++){
@@ -99,6 +102,9 @@ public class ExcelWriter {
 		row.createCell(4).setCellValue(trial.getRandoopTime());
 		row.createCell(5).setCellValue(trial.getRandoopCoverage());
 		row.createCell(6).setCellValue(trial.getRandoopTestCnt());
+		row.createCell(7).setCellValue(trial.getL2tCoverage()-trial.getRandoopCoverage());
+		row.createCell(8).setCellValue(trial.getMethodLength());
+		row.createCell(9).setCellValue(trial.getMethodStartLine());
 	}
 	
 	private void writeToExcel(Workbook book, String fileName){
