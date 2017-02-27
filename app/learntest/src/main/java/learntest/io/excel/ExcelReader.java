@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -17,7 +19,7 @@ import learntest.main.LearnTestConfig;
 
 public class ExcelReader {
 	
-	private HashSet<String> parsedMethodSet = new HashSet<String>();
+	private HashMap<String, List<Integer>> parsedMethodSet = new HashMap<>();
 	
 	@SuppressWarnings("resource")
 	public void readXLSX() throws IOException {
@@ -25,7 +27,7 @@ public class ExcelReader {
 		String projectName = LearnTestConfig.projectName;
 		int filePage = 0;
 
-		String fileName = projectName + "_" + filePage + ".xlsx";
+		String fileName = "experimentresults.xlsx";
 		
 		File file = new File(fileName);
 		while(file.exists()) {
@@ -41,9 +43,15 @@ public class ExcelReader {
 				row = (XSSFRow) rows.next();
 
 				if (row.getRowNum() > 0) {
-					cell = row.getCell(0);
+					cell = row.getCell(1);
 					String methodName = cell.getStringCellValue();
-					parsedMethodSet.add(methodName);
+					
+					List<Integer> rowList = getParsedMethodSet().get(methodName);
+					if(rowList==null){
+						rowList = new ArrayList<>();
+					}
+					rowList.add(row.getRowNum());
+					this.parsedMethodSet.put(methodName, rowList);
 				}
 			}
 			
@@ -53,11 +61,12 @@ public class ExcelReader {
 		}
 	}
 
-	public HashSet<String> getParsedMethodSet() {
+	public HashMap<String, List<Integer>> getParsedMethodSet() {
 		return parsedMethodSet;
 	}
 
-	public void setParsedMethodSet(HashSet<String> parsedMethodSet) {
+	public void setParsedMethodSet(HashMap<String, List<Integer>> parsedMethodSet) {
 		this.parsedMethodSet = parsedMethodSet;
 	}
+
 }

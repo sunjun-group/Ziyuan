@@ -2,6 +2,7 @@ package learntest.handler;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -37,7 +38,9 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
 import icsetlv.common.utils.PrimitiveUtils;
+import learntest.io.excel.ExcelReader;
 import learntest.io.excel.ExcelWriter;
+import learntest.io.excel.ExcelWriter2;
 import learntest.io.excel.Trial;
 import learntest.main.LearnTestConfig;
 import learntest.main.RunTimeInfo;
@@ -263,11 +266,11 @@ public class EvaluationHandler extends AbstractHandler {
 						FieldAccessChecker checker2 = new FieldAccessChecker();
 						md.accept(checker2);
 						
-						if(checker2.isFieldAccess){
-							if(containsAtLeastOnePrimitiveType(md.parameters())){
+						//if(checker2.isFieldAccess){
+							//if(containsAtLeastOnePrimitiveType(md.parameters())){
 								mdList.add(md);								
-							}
-						}
+							//}
+						//}
 					}
 
 				}
@@ -399,6 +402,9 @@ public class EvaluationHandler extends AbstractHandler {
 			private RunTimeCananicalInfo runEvaluation(IPackageFragment pack, ExcelWriter writer) throws JavaModelException {
 				int validSum = 0;
 				int totalSum = 0;
+				
+				ExcelWriter2 writer2 = new ExcelWriter2();
+				
 				for (IJavaElement javaElement : pack.getChildren()) {
 					if (javaElement instanceof IPackageFragment) {
 						runEvaluation((IPackageFragment) javaElement, writer);
@@ -439,17 +445,30 @@ public class EvaluationHandler extends AbstractHandler {
 						for(MethodDeclaration md: collector.mdList){
 							String className = LearnTestUtil.getFullNameOfCompilationUnit(cu);
 							String simpleMethodName = md.getName().getIdentifier();
+							String fullName = className + "." + simpleMethodName;
 							
 							int end = cu.getLineNumber(md.getStartPosition()+md.getLength()); 
 							int start = cu.getLineNumber(md.getName().getStartPosition());
 							int length = end-start+1;
 							
-							System.out.println(className + "." + simpleMethodName + ": length " + length);
+							ExcelReader reader = new ExcelReader();
+							try {
+								reader.readXLSX();
+							} catch (IOException e1) {
+								e1.printStackTrace();
+							}
+							HashMap<String, List<Integer>> readMethodSet = reader.getParsedMethodSet();
+							
+							List<Integer> rowList = readMethodSet.get(fullName);
+							if(rowList!=null && !rowList.isEmpty()){
+								int row = rowList.get(0);
+								writer2.export(row, length, fullName);
+							}
 						}
 						
 						validSum += collector.mdList.size();
 						totalSum += collector.totalMethodNum;
-						evaluateForMethodList(writer, cu, collector.mdList);
+//						evaluateForMethodList(writer, cu, collector.mdList);
 					}
 				}
 
@@ -460,6 +479,7 @@ public class EvaluationHandler extends AbstractHandler {
 
 			private void evaluateForMethodList(ExcelWriter writer, CompilationUnit cu,
 					List<MethodDeclaration> validMethods) {
+				
 				if (!validMethods.isEmpty()) {
 					String className = LearnTestUtil.getFullNameOfCompilationUnit(cu);
 					LearnTestConfig.testClassName = className;
