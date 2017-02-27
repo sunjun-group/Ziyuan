@@ -169,7 +169,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 				t.start();
 				
 				/**according to jdk document, the get methods will block if the computation has not yet completed*/
-				theTask.get(10L, TimeUnit.SECONDS);
+				theTask.get(2L, TimeUnit.SECONDS);
 			}
 			catch(TimeoutException e){
 				e.printStackTrace();
