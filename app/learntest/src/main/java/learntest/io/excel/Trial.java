@@ -12,6 +12,9 @@ public class Trial {
 	private double randoopTime;
 	private double randoopCoverage;
 	private int randoopTestCnt;
+	
+	private int methodLength;
+	private int methodStartLine;
 
 	public Trial(){
 		
@@ -42,7 +45,8 @@ public class Trial {
 		return true;
 	}
 
-	public Trial(String methodName, double l2tTime, double l2tCoverage, int l2tTestCnt, double randoopTime, double randoopCoverage, int randoopTestCnt) {
+	public Trial(String methodName, double l2tTime, double l2tCoverage, int l2tTestCnt, double randoopTime, 
+			double randoopCoverage, int randoopTestCnt, int methodLength, int methodStartLine) {
 		super();
 		this.methodName = methodName;
 		this.l2tTime = l2tTime;
@@ -51,6 +55,8 @@ public class Trial {
 		this.randoopTime = randoopTime;
 		this.randoopCoverage = randoopCoverage;
 		this.randoopTestCnt = randoopTestCnt;
+		this.methodLength = methodLength;
+		this.setMethodStartLine(methodStartLine);
 	}
 
 	public String getMethodName() {
@@ -107,6 +113,22 @@ public class Trial {
 
 	public void setRandoopTestCnt(int randoopTestCnt) {
 		this.randoopTestCnt = randoopTestCnt;
+	}
+
+	public int getMethodLength() {
+		return methodLength;
+	}
+
+	public void setMethodLength(int methodLength) {
+		this.methodLength = methodLength;
+	}
+
+	public int getMethodStartLine() {
+		return methodStartLine;
+	}
+
+	public void setMethodStartLine(int methodStartLine) {
+		this.methodStartLine = methodStartLine;
 	}
 
 }
