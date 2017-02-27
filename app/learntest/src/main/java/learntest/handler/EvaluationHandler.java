@@ -439,7 +439,12 @@ public class EvaluationHandler extends AbstractHandler {
 						for(MethodDeclaration md: collector.mdList){
 							String className = LearnTestUtil.getFullNameOfCompilationUnit(cu);
 							String simpleMethodName = md.getName().getIdentifier();
-							System.out.println(className + "." + simpleMethodName);
+							
+							int end = cu.getLineNumber(md.getStartPosition()+md.getLength()); 
+							int start = cu.getLineNumber(md.getName().getStartPosition());
+							int length = end-start+1;
+							
+							System.out.println(className + "." + simpleMethodName + ": length " + length);
 						}
 						
 						validSum += collector.mdList.size();
