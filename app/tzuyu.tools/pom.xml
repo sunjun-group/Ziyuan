@@ -48,11 +48,11 @@
 			<artifactId>commons-math3</artifactId>
 			<version>3.0</version>
 		</dependency>
-		<dependency>
-			<groupId>net.sf.javailp</groupId>
-			<artifactId>javailp</artifactId>
-			<version>${javailp-version}</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>net.sf.javailp</groupId> -->
+<!-- 			<artifactId>javailp</artifactId> -->
+<!-- 			<version>${javailp-version}</version> -->
+<!-- 		</dependency> -->
 	</dependencies>
 </project>
 
