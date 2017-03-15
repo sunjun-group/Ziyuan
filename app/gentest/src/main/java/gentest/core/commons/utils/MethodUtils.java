@@ -41,8 +41,9 @@ public class MethodUtils {
 	public static Method findMethod(Class<?> clazz, String methodNameOrSign) {
 		/* find with full name first */
 		for (Method method : clazz.getMethods()) {
-			if (methodNameOrSign.equals(StringUtils.join("", method.getName(),
-					SignatureUtils.getSignature(method)))) {
+			String mSig = StringUtils.join("", method.getName(), SignatureUtils.getSignature(method));
+			if (methodNameOrSign.equals(mSig)) {
+				System.currentTimeMillis();
 				return method;
 			}
 		}

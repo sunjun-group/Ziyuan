@@ -15,6 +15,7 @@ import gentest.core.value.store.iface.IVariableStore;
 import gentest.main.GentestConstants;
 
 import java.util.List;
+import java.util.Random;
 
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
@@ -37,10 +38,6 @@ public class ValueGeneratorMediator {
 	@Inject
 	private PrimitiveValueGenerator primitiveGenerator;
 	
-//	private static boolean firstNull = true;
-//	
-//	private static boolean isRoot = true;
-	
 	public GeneratedVariable generate(IType type, 
 			int firstVarId, boolean isReceiver) throws SavException {
 		GeneratedVariable variable = new GeneratedVariable(firstVarId);
@@ -55,17 +52,6 @@ public class ValueGeneratorMediator {
 	public GeneratedVariable append(GeneratedVariable rootVariable, int level,
 			IType type, boolean isReceiver) throws SavException {
 		GeneratedVariable variable = null;
-		
-//		if (!PrimitiveValueGenerator.accept(type.getRawType()) && firstNull && !isRoot) {
-//			firstNull = false;
-//			variable = rootVariable.newVariable();
-//			ValueGenerator.assignNull(variable, type.getRawType());
-//			rootVariable.append(variable);
-//			return variable;
-//		}
-//		
-//		if (isRoot) isRoot = false;
-		
 		List<GeneratedVariable> candidatesInCache = getVariableStore()
 				.getVariableByType(type);
 		boolean selectFromCache = Randomness
@@ -96,6 +82,16 @@ public class ValueGeneratorMediator {
 				goodVariable = primitiveGenerator.doAppend(variable, level, type.getRawType());
 			}  else if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL) {
 				ValueGenerator.assignNull(variable, type.getRawType());
+			} else if (level > 1) {
+				// increase the probability of generating null objects for fields
+				boolean isNull = new Random().nextInt(10) < 8;
+				if (isNull) {
+					ValueGenerator.assignNull(variable, type.getRawType());
+				} else {
+					ValueGenerator generator = ValueGenerator.findGenerator(type, isReceiver);
+					generator.setValueGeneratorMediator(this);
+					goodVariable = generator.doAppendVariable(variable, level);
+				}
 			} else {
 				ValueGenerator generator = ValueGenerator.findGenerator(type, isReceiver);
 				generator.setValueGeneratorMediator(this);
