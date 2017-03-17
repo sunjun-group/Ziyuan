@@ -3,7 +3,6 @@
  */
 package gentest.core.commons.utils;
 
-
 /**
  * @author LLT
  *

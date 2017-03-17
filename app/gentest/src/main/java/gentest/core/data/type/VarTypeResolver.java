@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.Randomness;
 import sav.strategies.gentest.ISubTypesScanner;
 
 
@@ -54,6 +55,8 @@ public class VarTypeResolver extends TypeVisitor {
 			return (Class<?>) paramType.getRawType();
 		case WILDCARDS_TYPE:
 			return resolveWildcardsType((WildcardType) type);
+		case GENERIC_ARRAY_TYPE:
+			// todo?
 		}
 		log.debug("VarTypeResolver: missing handle for the case type=", typeEnum);
 		return null;
@@ -92,11 +95,11 @@ public class VarTypeResolver extends TypeVisitor {
 	}
 
 	private Class<?> selectResolveTypeByUpperbounds(Type[] bounds) {
-		// if (CollectionUtils.isEmpty(bounds)) {
-		// return resolve(Object.class);
-		// } else {
-		return subTypeScanner.getRandomImplClzz(resolve(bounds));
-		// }
+		 if (CollectionUtils.isEmpty(bounds)) {
+			 return resolve(Object.class);
+		 } 
+		 Class<?>[] implClasses = resolve(bounds);
+		 return Randomness.randomMember(implClasses);
 	}
 	
 	public Class<?>[] resolve(Type[] bounds) {

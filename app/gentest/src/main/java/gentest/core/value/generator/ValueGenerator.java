@@ -59,7 +59,7 @@ public abstract class ValueGenerator {
 			return new ExtObjectValueGenerator(type.resolveType(typeDef.a),
 					typeDef.b);
 		}
-		// comment follwing condition will call method multiple times
+		// comment following condition will call method multiple times
 		if (isReceiver) {
 			return new ObjectValueGenerator(type);
 		}
