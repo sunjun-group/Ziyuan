@@ -13,9 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +28,7 @@ import gentest.core.data.statement.Statement;
 import gentest.core.data.statement.StatementVisitor;
 import gentest.core.data.variable.ISelectedVariable;
 import sav.common.core.utils.Assert;
+import sav.common.core.utils.ExecutionTimer;
 
 /**
  * @author LLT
@@ -132,6 +131,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 	}
 
 	class ReturnValue{
+		boolean valid = true;
 		Object returnedValue = null;
 	}
 	
@@ -146,41 +146,27 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		try {
 			final Object obj = getExecData(stmt.getReceiverVarId());
 			final Method method = stmt.getMethod();
-//			System.out.println(method);
-			
-//			returnedValue = method.invoke(obj, (Object[]) inputs.toArray());
-			
-			FutureTask<?> theTask = null;
-			try{
-				theTask = new FutureTask<Object>(new Runnable(){
-					@Override
-					public void run() {
-						try {
-							Object returnedValue = method.invoke(obj, (Object[]) inputs.toArray());
-							value.returnedValue = returnedValue;
-						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-//							e.printStackTrace();
-						}
+			new ExecutionTimer(2, TimeUnit.SECONDS).run(new Runnable() {
+				@Override
+				public void run() {
+					Object returnedValue;
+					try {
+						returnedValue = method.invoke(obj, (Object[]) inputs.toArray());
+						value.returnedValue = returnedValue;
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+						log.debug(e.getMessage());
+						onFail();
 					}
-					
-				}, null);
-				
-				Thread t = new Thread(theTask);
-				t.start();
-				
-				/**according to jdk document, the get methods will block if the computation has not yet completed*/
-				theTask.get(2L, TimeUnit.SECONDS);
-			}
-			catch(TimeoutException e){
-				e.printStackTrace();
-			}
-			
-			// update data
-			for (int i = 0; i < stmt.getInVarIds().length; i++) {
-				addExecData(stmt.getInVarIds()[i], inputs.get(i));
-			}
-			if (stmt.getOutVarId() != Statement.INVALID_VAR_ID) {
-				addExecData(stmt.getOutVarId(), value.returnedValue);
+				}
+			});			
+			if (isSuccessful()) {
+				// update data
+				for (int i = 0; i < stmt.getInVarIds().length; i++) {
+					addExecData(stmt.getInVarIds()[i], inputs.get(i));
+				}
+				if (stmt.getOutVarId() != Statement.INVALID_VAR_ID) {
+					addExecData(stmt.getOutVarId(), value.returnedValue);
+				}
 			}
 		} catch (Throwable e) {
 			log.debug(e.getMessage());
