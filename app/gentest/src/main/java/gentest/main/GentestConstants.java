@@ -8,6 +8,9 @@
 
 package gentest.main;
 
+import java.util.Arrays;
+import java.util.List;
+
 import gentest.core.value.generator.ArrayValueGenerator;
 import gentest.core.value.generator.ExtObjectValueGenerator;
 import gentest.core.value.generator.ValueGenerator;
@@ -41,12 +44,11 @@ public class GentestConstants {
 	public static final int PROBABILITY_OF_STATIC_METHOD_INIT = 2;
 	public static final int PROBABILITY_OF_BUILDER_METHOD_CALL_INIT = 1;
 	public static final int MAX_VALUE_FOR_A_CLASS_STORED_IN_CACHE = 50; 
-	public static final int OBJECT_VALUE_GENERATOR_MAX_TRY_SELECTING_CONSTRUCTOR = 3;
+	public static final int OBJECT_VALUE_GENERATOR_MAX_TRY_SELECTING_CONSTRUCTOR = 100;
 	/**
 	 * for {@link ExtObjectValueGenerator}
 	 */
-	public static final String[] OBJ_INIT_EXCLUDED_METHOD_PREFIXIES = new String[] {
-			"get", "is", "equal" };
+	public static final List<String> OBJ_INIT_EXCLUDED_METHOD_PREFIXIES = Arrays.asList("get", "is", "equal", "toString", "hashCode");
 	public static final Class<?>[] DELEGATING_CANDIDATES_FOR_OBJECT = new Class<?>[] {
 			Integer.class, Long.class, String.class, Short.class, Byte.class };
 	public static final Class<?>[] CANDIDATE_DELEGATES_FOR_NUMBER = new Class<?>[] {

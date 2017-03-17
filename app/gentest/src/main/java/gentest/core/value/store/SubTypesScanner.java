@@ -85,7 +85,8 @@ public class SubTypesScanner implements ISubTypesScanner {
 		Set<?> subTypes = reflections.getSubTypesOf(key);
 		log.debug("Subtypes of ", key.getSimpleName());
 		log.debug(subTypes.toString());
-		return filterAndSelect(subTypes, key, filters);
+		Set<Class<?>> subClasses = filterAndSelect(subTypes, key, filters);
+		return subClasses;
 	}
 
 	/**
@@ -172,6 +173,14 @@ public class SubTypesScanner implements ISubTypesScanner {
 
 	@Override
 	public Class<?> getRandomImplClzz(Class<?> type) {
+		Class<?> delegateClass = getDelegateClass(type);
+		if (delegateClass != null) {
+			return delegateClass;
+		}
+		return loadFromCache(type, subTypesCache);
+	}
+
+	public static Class<?> getDelegateClass(Class<?> type) {
 		if (Object.class.equals(type)) {
 			return Randomness
 					.randomMember(GentestConstants.DELEGATING_CANDIDATES_FOR_OBJECT);
@@ -179,7 +188,7 @@ public class SubTypesScanner implements ISubTypesScanner {
 		if (Number.class.equals(type)) {
 			return Randomness.randomMember(GentestConstants.CANDIDATE_DELEGATES_FOR_NUMBER);
 		}
-		return loadFromCache(type, subTypesCache);
+		return null;
 	}
 
 	private <K>Class<?> loadFromCache(K key, LoadingCache<K, Set<Class<?>>> cache) {

@@ -8,11 +8,11 @@
 
 package gentest.core.value.generator;
 
+import static gentest.main.GentestConstants.*;
 import gentest.core.commons.utils.MethodUtils;
 import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.execution.VariableRuntimeExecutor;
-import gentest.main.GentestConstants;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -35,40 +35,38 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 	}
 
 	private void initMethodCalls(List<String> methodSigns) {
-		methodcalls = new ArrayList<Method>();
 		List<Method> initMethods;
 		if (methodSigns == null) {
 			initMethods = getCandidatesMethodForObjInit(type.getRawType());
 		} else {
 			initMethods = MethodUtils.findMethods(type.getRawType(), methodSigns);
 		}
-		List<Method> methodsSeq = Randomness
-				.randomSequence(
-						initMethods,
-						GentestConstants.OBJECT_VALUE_GENERATOR_MAX_SELECTED_METHODS);
-		for (Method method : methodsSeq) {
-			if (MethodUtils.isPublic(method)) {
-				methodcalls.add(method);
-			}
-		}
+		methodcalls = new ArrayList<Method>(Randomness.randomSequence(initMethods, OBJECT_VALUE_GENERATOR_MAX_SELECTED_METHODS));
 	}
 
+	/**
+	 * select from declared method list only methods which 
+	 * - do not contain excluded method prefix
+	 * - are public methods
+	 */
 	private List<Method> getCandidatesMethodForObjInit(Class<?> targetClazz) {
 		Method[] declaredMethods = targetClazz.getDeclaredMethods();
 		List<Method> methods = new ArrayList<Method>(declaredMethods.length);
 		for (Method method : declaredMethods) {
-			boolean isExcluded = false;
-			for (String excludePref : GentestConstants.OBJ_INIT_EXCLUDED_METHOD_PREFIXIES) {
-				if (method.getName().startsWith(excludePref)) {
-					isExcluded = true;
-					continue;
-				}
-			}
-			if (!isExcluded) {
+			if (MethodUtils.isPublic(method) && !doesContainExcludedMethodPrefix(method)) {
 				methods.add(method);
 			}
 		}
 		return methods;
+	}
+
+	private boolean doesContainExcludedMethodPrefix(Method method) {
+		for (String excludePref : OBJ_INIT_EXCLUDED_METHOD_PREFIXIES) {
+			if (method.getName().startsWith(excludePref)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	@Override
