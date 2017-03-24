@@ -339,13 +339,15 @@ public class EvaluationHandler extends AbstractHandler {
 	
 	class RunTimeCananicalInfo{
 		
-		public RunTimeCananicalInfo(int validNum, int totalNum) {
+		public RunTimeCananicalInfo(int validNum, int totalNum, int totalLen) {
 			super();
 			this.validNum = validNum;
 			this.totalNum = totalNum;
+			this.totalLen = totalLen;
 		}
 		int validNum;
 		int totalNum;
+		int totalLen;
 	}
 
 	@Override
@@ -376,7 +378,7 @@ public class EvaluationHandler extends AbstractHandler {
 				SAVTimer.enableExecutionTimeout = true;
 				SAVTimer.exeuctionTimeout = 300000;
 
-				RunTimeCananicalInfo overalInfo = new RunTimeCananicalInfo(0, 0);
+				RunTimeCananicalInfo overalInfo = new RunTimeCananicalInfo(0, 0, 0);
 				
 				try {
 					for(IPackageFragmentRoot root: roots){
@@ -385,12 +387,14 @@ public class EvaluationHandler extends AbstractHandler {
 								RunTimeCananicalInfo info = runEvaluation((IPackageFragment) element, writer);
 								overalInfo.totalNum += info.totalNum;
 								overalInfo.validNum += info.validNum;
+								overalInfo.totalLen += info.totalLen;
 							}
 						}
 					}
 					
 					System.out.println("total valid methods: " + overalInfo.validNum );
 					System.out.println("total methods: " + overalInfo.totalNum );
+					System.out.println("total LOC: " + overalInfo.totalLen );
 				} catch (JavaModelException e) {
 					e.printStackTrace();
 				}
@@ -403,7 +407,9 @@ public class EvaluationHandler extends AbstractHandler {
 				int validSum = 0;
 				int totalSum = 0;
 				
-				ExcelWriter2 writer2 = new ExcelWriter2();
+				int totalLength = 0;
+				
+//				ExcelWriter2 writer2 = new ExcelWriter2();
 				
 				for (IJavaElement javaElement : pack.getChildren()) {
 					if (javaElement instanceof IPackageFragment) {
@@ -412,6 +418,9 @@ public class EvaluationHandler extends AbstractHandler {
 						ICompilationUnit icu = (ICompilationUnit) javaElement;
 						CompilationUnit cu = LearnTestUtil.convertICompilationUnitToASTNode(icu);
 
+						int length0 = cu.getLineNumber(cu.getStartPosition()+cu.getLength()-1);
+						totalLength += length0;
+						
 						if(cu.types().isEmpty()){
 							continue;
 						}
@@ -442,38 +451,38 @@ public class EvaluationHandler extends AbstractHandler {
 						cu.accept(collector);
 
 						
-						for(MethodDeclaration md: collector.mdList){
-							String className = LearnTestUtil.getFullNameOfCompilationUnit(cu);
-							String simpleMethodName = md.getName().getIdentifier();
-							String fullName = className + "." + simpleMethodName;
-							
-							int end = cu.getLineNumber(md.getStartPosition()+md.getLength()); 
-							int start = cu.getLineNumber(md.getName().getStartPosition());
-							int length = end-start+1;
-							
-							ExcelReader reader = new ExcelReader();
-							try {
-								reader.readXLSX();
-							} catch (IOException e1) {
-								e1.printStackTrace();
-							}
-							HashMap<String, List<Integer>> readMethodSet = reader.getParsedMethodSet();
-							
-							List<Integer> rowList = readMethodSet.get(fullName);
-							if(rowList!=null && !rowList.isEmpty()){
-								int row = rowList.get(0);
-								writer2.export(row, length, fullName);
-							}
-						}
+//						for(MethodDeclaration md: collector.mdList){
+//							String className = LearnTestUtil.getFullNameOfCompilationUnit(cu);
+//							String simpleMethodName = md.getName().getIdentifier();
+//							String fullName = className + "." + simpleMethodName;
+//							
+//							int end = cu.getLineNumber(md.getStartPosition()+md.getLength()); 
+//							int start = cu.getLineNumber(md.getName().getStartPosition());
+//							int length = end-start+1;
+//							
+//							ExcelReader reader = new ExcelReader();
+//							try {
+//								reader.readXLSX();
+//							} catch (IOException e1) {
+//								e1.printStackTrace();
+//							}
+//							HashMap<String, List<Integer>> readMethodSet = reader.getParsedMethodSet();
+//							
+//							List<Integer> rowList = readMethodSet.get(fullName);
+//							if(rowList!=null && !rowList.isEmpty()){
+//								int row = rowList.get(0);
+//								writer2.export(row, length, fullName);
+//							}
+//						}
 						
 						validSum += collector.mdList.size();
 						totalSum += collector.totalMethodNum;
-//						evaluateForMethodList(writer, cu, collector.mdList);
+						evaluateForMethodList(writer, cu, collector.mdList);
 					}
 				}
 
 				
-				return new RunTimeCananicalInfo(validSum, totalSum);
+				return new RunTimeCananicalInfo(validSum, totalSum, totalLength);
 			}
 
 
@@ -497,7 +506,7 @@ public class EvaluationHandler extends AbstractHandler {
 								+ LearnTestConfig.testMethodName);
 
 						try {
-							int times = 3;
+							int times = 1;
 							RunTimeInfo l2tAverageInfo = new RunTimeInfo(0, 0, 0);
 							RunTimeInfo ranAverageInfo = new RunTimeInfo(0, 0, 0);
 							

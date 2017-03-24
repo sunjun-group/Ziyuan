@@ -84,5 +84,6 @@ Require-Bundle: org.eclipse.ui,
  icsetlv;bundle-version="1.0.0",
  svmlib;bundle-version="1.0.0",
  gentest;bundle-version="1.0.0",
- assertion;bundle-version="1.0.0"
+ assertion;bundle-version="1.0.0",
+ cfgextractor;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy

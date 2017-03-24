@@ -16,6 +16,8 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.jacop.core.Domain;
 import org.jacop.floats.core.FloatIntervalDomain;
 
+import cfgextractor.CFGBuilder;
+import cfgextractor.JavaUtil;
 import icsetlv.DefaultValues;
 import icsetlv.common.dto.BreakpointValue;
 import japa.parser.JavaParser;
@@ -89,6 +91,14 @@ public class Engine {
 		
 		if (testcases == null || testcases.isEmpty()) {
 			return null;
+		}
+		
+		CFGBuilder builder = new CFGBuilder();
+		int methodLineNumber = Integer.valueOf(LearnTestConfig.methodLineNumber);
+		try {
+			builder.parsingCFG(appClassPath, LearnTestConfig.testClassName, LearnTestConfig.testMethodName, methodLineNumber);
+		} catch (Exception e1) {
+			e1.printStackTrace();
 		}
 		
 		createCFG();
@@ -229,6 +239,8 @@ public class Engine {
 				for (BodyDeclaration body : type.getMembers()) {
 					if (body instanceof MethodDeclaration) {
 						MethodDeclaration method = (MethodDeclaration) body;
+						
+						
 						
 						int lineNumber = LearnTestConfig.getMethodLineNumber();
 						

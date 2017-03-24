@@ -34,7 +34,7 @@ public class ExcelReader {
 			InputStream excelFileToRead = new FileInputStream(file);
 			
 			XSSFWorkbook wb = new XSSFWorkbook(excelFileToRead);
-			XSSFSheet sheet = wb.getSheetAt(0);
+			XSSFSheet sheet = wb.getSheetAt(1);
 			XSSFRow row;
 			XSSFCell cell;
 
@@ -43,7 +43,7 @@ public class ExcelReader {
 				row = (XSSFRow) rows.next();
 
 				if (row.getRowNum() > 0) {
-					cell = row.getCell(1);
+					cell = row.getCell(0);
 					String methodName = cell.getStringCellValue();
 					
 					List<Integer> rowList = getParsedMethodSet().get(methodName);
