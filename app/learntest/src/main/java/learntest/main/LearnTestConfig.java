@@ -73,9 +73,7 @@ public class LearnTestConfig {
 //	public static String filePath = "F:/git_space/Ziyuan_master/Ziyuan/app/learntest/src/test/java/testdata/example/" + typeName + ".java";
 	public static String getTestClassFilePath(){
 		ICompilationUnit icu = LearnTestUtil.findICompilationUnitInProject(testClassName);
-		URI uri = icu.getResource().getLocationURI();
-		String sourceFolderPath = uri.toString();
-		return sourceFolderPath;
+		return LearnTestUtil.getOsPath(icu);
 	}
 
 	public static int getMethodLineNumber() {

@@ -80,8 +80,7 @@ public class SubTypesScanner implements ISubTypesScanner {
 	
 	private Set<Class<?>> loadSubClasses(Class<?> key, FilterType... filters) {
 		Reflections reflections = new Reflections(
-				new ConfigurationBuilder().setUrls(Arrays
-						.asList(ClasspathHelper.forClass(key))));
+				new ConfigurationBuilder().setUrls(Arrays.asList(ClasspathHelper.forClass(key))));
 		Set<?> subTypes = reflections.getSubTypesOf(key);
 		log.debug("Subtypes of ", key.getSimpleName());
 		log.debug(subTypes.toString());
@@ -193,8 +192,7 @@ public class SubTypesScanner implements ISubTypesScanner {
 
 	private <K>Class<?> loadFromCache(K key, LoadingCache<K, Set<Class<?>>> cache) {
 		try {
-			Set<?> subTypes;
-			subTypes = cache.get(key);
+			Set<?> subTypes = cache.get(key);
 			if (CollectionUtils.isEmpty(subTypes)) {
 				return null;
 			}

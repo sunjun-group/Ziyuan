@@ -17,7 +17,6 @@ import org.jacop.core.Domain;
 import org.jacop.floats.core.FloatIntervalDomain;
 
 import cfgextractor.CFGBuilder;
-import cfgextractor.JavaUtil;
 import icsetlv.DefaultValues;
 import icsetlv.common.dto.BreakpointValue;
 import japa.parser.JavaParser;
@@ -84,8 +83,6 @@ public class Engine {
 		SAVTimer.startCount();
 		
 		String filePath = LearnTestConfig.getTestClassFilePath();
-		filePath = filePath.substring(6, filePath.length());
-		
 		setTarget(filePath, LearnTestConfig.getSimpleClassName(), LearnTestConfig.testClassName, LearnTestConfig.testMethodName);
 		addTestcases(LearnTestConfig.getTestClass(LearnTestConfig.isL2TApproach));
 		

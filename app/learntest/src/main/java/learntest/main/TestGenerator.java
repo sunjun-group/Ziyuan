@@ -32,7 +32,6 @@ public class TestGenerator {
 	private static String prefix = "test";
 	
 	
-	
 	@SuppressWarnings("rawtypes")
 	public void genTest() throws ClassNotFoundException, SavException {
 		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(1);

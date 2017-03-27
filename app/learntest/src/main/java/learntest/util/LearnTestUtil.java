@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
@@ -22,7 +23,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -31,6 +31,7 @@ import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
 import org.eclipse.jdt.internal.core.PackageFragmentRoot;
 
 import learntest.main.LearnTestConfig;
+import sav.common.core.SavRtException;
 
 @SuppressWarnings("restriction")
 public class LearnTestUtil {
@@ -105,12 +106,7 @@ public class LearnTestUtil {
 	public static String getProjectPath(){
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.projectName);
-		
-		String projectPath = iProject.getLocationURI().getPath();
-//		projectPath = projectPath.substring(1, projectPath.length());
-		projectPath = projectPath.replace("/", File.separator);
-		
-		return projectPath;
+		return iProject.getLocation().toOSString();
 	}
 	
 	public static IPackageFragmentRoot findMainPackageRootInProject(){
@@ -194,11 +190,7 @@ public class LearnTestUtil {
 				if(root instanceof PackageFragmentRoot && !(root instanceof JarPackageFragmentRoot)){
 					String name = root.getPath().toString();
 					if(name.contains("test")){
-						URI uri = root.getCorrespondingResource().getLocationURI();
-						String sourceFolderPath = uri.toString();
-						sourceFolderPath = sourceFolderPath.substring(6, sourceFolderPath.length());
-						
-						return sourceFolderPath;
+						return getOsPath(root);
 					}
 					
 					
@@ -209,8 +201,15 @@ public class LearnTestUtil {
 			e.printStackTrace();
 		}
 		
-		
 		return null;
+	}
+	
+	public static String getOsPath(IJavaElement element) {
+		try {
+			return element.getCorrespondingResource().getLocation().toString();
+		} catch (JavaModelException e) {
+			throw new SavRtException(e);
+		}
 	}
 	
 	public static String getOutputPath(){

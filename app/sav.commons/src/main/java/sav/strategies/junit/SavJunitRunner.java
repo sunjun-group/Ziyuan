@@ -9,7 +9,6 @@
 package sav.strategies.junit;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,21 +48,9 @@ public class SavJunitRunner {
 		}
 		return jar;
 	}
-
+	
 	public static void extractTo(File destFile) throws FileNotFoundException, IOException {
-//		String path = "E:/eclipse-java-mars/eclipse" + RESOURCE;
-		String path = org.eclipse.core.runtime.Platform.getInstallLocation().getURL().toExternalForm() + RESOURCE;
-		path = path.substring(6, path.length());
-		
-		
-		File file = new File(path);
-		if(file.exists()){
-			System.currentTimeMillis();
-		}
-		
-//		InputStream inStream = SavJunitRunner.class.getResourceAsStream();
-//		InputStream inStream = IOUtils.toInputStream(path);
-		InputStream inStream = new FileInputStream(file);
+		InputStream inStream = SavJunitRunner.class.getResourceAsStream(RESOURCE);
 		IOUtils.copy(inStream, new FileOutputStream(destFile));
 		System.currentTimeMillis();
 	}
