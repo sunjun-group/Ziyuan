@@ -8,31 +8,30 @@
 
 package gentest.core.value.store;
 
-import gentest.injection.TestcaseGenerationScope;
-import gentest.main.GentestConstants;
-
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
+import gentest.injection.TestcaseGenerationScope;
+import gentest.main.GentestConstants;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
 import sav.strategies.gentest.ISubTypesScanner;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 /**
  * @author LLT
@@ -43,6 +42,8 @@ public class SubTypesScanner implements ISubTypesScanner {
 	private static Logger log = LoggerFactory.getLogger(SubTypesScanner.class);
 	private LoadingCache<Class<?>, Set<Class<?>>> subTypesCache;
 	private LoadingCache<Class<?>[], Set<Class<?>>> subTypesBoundsCache;
+	@Inject @Named("prjClassLoader")
+	private ClassLoader prjClassLoader;
 	
 	public SubTypesScanner() {
 		subTypesCache = CacheBuilder.newBuilder().build(
@@ -80,7 +81,7 @@ public class SubTypesScanner implements ISubTypesScanner {
 	
 	private Set<Class<?>> loadSubClasses(Class<?> key, FilterType... filters) {
 		Reflections reflections = new Reflections(
-				new ConfigurationBuilder().setUrls(Arrays.asList(ClasspathHelper.forClass(key))));
+				ConfigurationBuilder.build(prjClassLoader).setExpandSuperTypes(false));
 		Set<?> subTypes = reflections.getSubTypesOf(key);
 		log.debug("Subtypes of ", key.getSimpleName());
 		log.debug(subTypes.toString());
@@ -202,7 +203,7 @@ public class SubTypesScanner implements ISubTypesScanner {
 			System.currentTimeMillis();
 			System.out.println(e.getMessage());
 			throw new SavRtException(ModuleEnum.TESTCASE_GENERATION,
-					"error when executing cache to get subtypes");
+					"error when executing cache to get subtypes: " + e.getMessage());
 		}
 	}
 	

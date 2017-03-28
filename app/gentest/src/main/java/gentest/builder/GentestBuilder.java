@@ -8,6 +8,7 @@
 
 package gentest.builder;
 
+import gentest.core.commons.utils.GenTestUtils;
 import gentest.core.commons.utils.MethodUtils;
 import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
@@ -31,6 +32,7 @@ public abstract class GentestBuilder<T extends GentestBuilder<T>> {
 	protected Class<?> clazz;
 	private boolean specificMethod = false;
 	protected List<MethodCall> methodCalls;
+	private ClassLoader prjClassLoader;
 	
 	public GentestBuilder(int numberOfTcs) {
 		methodCalls = new ArrayList<MethodCall>();
@@ -54,6 +56,16 @@ public abstract class GentestBuilder<T extends GentestBuilder<T>> {
 		return (T) this;
 	}
 
+	public T method(String methodNameOrSign) {
+		findAndAddTestingMethod(methodNameOrSign);
+		return (T) this;
+	}
+	
+	public T classLoader(ClassLoader prjClassLoader) {
+		this.prjClassLoader = prjClassLoader;
+		return (T) this;
+	}
+	
 	private void addAllMethodsOfLastClazzIfNotSpecified() {
 		if (this.clazz != null && !specificMethod) {
 			addAllMethods(methodCalls, this.clazz);
@@ -73,11 +85,6 @@ public abstract class GentestBuilder<T extends GentestBuilder<T>> {
 		return methodCall;
 	}
 
-	public T method(String methodNameOrSign) {
-		findAndAddTestingMethod(methodNameOrSign);
-		return (T) this;
-	}
-	
 	protected MethodCall findAndAddTestingMethod(String methodNameOrSign) {
 		specificMethod = true;
 		Method testingMethod = findTestingMethod(clazz, methodNameOrSign);
@@ -104,6 +111,13 @@ public abstract class GentestBuilder<T extends GentestBuilder<T>> {
 				String.format(
 						"The class for method %s is not set. Expect forClass() is called before method(String methodNameOrSign)",
 						methodNameOrSign));
+	}
+	
+	protected ClassLoader getPrjClassLoader() {
+		if (prjClassLoader == null) {
+			return GenTestUtils.getDefaultClassLoader();
+		}
+		return prjClassLoader;
 	}
 	
 	/**

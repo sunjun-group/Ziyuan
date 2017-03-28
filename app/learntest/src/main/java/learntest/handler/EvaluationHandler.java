@@ -2,7 +2,6 @@ package learntest.handler;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -38,9 +37,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
 import icsetlv.common.utils.PrimitiveUtils;
-import learntest.io.excel.ExcelReader;
 import learntest.io.excel.ExcelWriter;
-import learntest.io.excel.ExcelWriter2;
 import learntest.io.excel.Trial;
 import learntest.main.LearnTestConfig;
 import learntest.main.RunTimeInfo;

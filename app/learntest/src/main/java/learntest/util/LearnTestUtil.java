@@ -2,7 +2,6 @@ package learntest.util;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -13,7 +12,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -29,6 +31,7 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
 import org.eclipse.jdt.internal.core.PackageFragmentRoot;
+import org.eclipse.jdt.launching.JavaRuntime;
 
 import learntest.main.LearnTestConfig;
 import sav.common.core.SavRtException;
@@ -314,5 +317,29 @@ public class LearnTestUtil {
 			return packageName + "." + typeName; 			
 		}
 		
+	}
+
+	public static ClassLoader getPrjClassLoader() {
+		IJavaProject project = JavaCore.create(getSpecificJavaProjectInWorkspace());
+		
+		String[] classPathEntries;
+		try {
+			classPathEntries = JavaRuntime.computeDefaultRuntimeClassPath(project);
+			List<URL> urlList = new ArrayList<URL>();
+			for (int i = 0; i < classPathEntries.length; i++) {
+				String entry = classPathEntries[i];
+				IPath path = new Path(entry);
+				URL url = path.toFile().toURI().toURL();
+				urlList.add(url);
+			}
+			ClassLoader parentClassLoader = project.getClass().getClassLoader();
+			URL[] urls = (URL[]) urlList.toArray(new URL[urlList.size()]);
+			URLClassLoader classLoader = new URLClassLoader(urls, parentClassLoader);
+			return classLoader;
+		} catch (CoreException e) {
+			throw new SavRtException(e);
+		} catch (MalformedURLException e) {
+			throw new SavRtException(e);
+		}
 	}
 }

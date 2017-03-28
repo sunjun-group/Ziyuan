@@ -8,6 +8,15 @@
 
 package gentest.injection;
 
+import java.lang.annotation.Annotation;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
+
 import gentest.core.ParamGeneratorConfig;
 import gentest.core.data.DataProvider;
 import gentest.core.data.IDataProvider;
@@ -19,16 +28,7 @@ import gentest.core.value.store.TypeMethodCallsCache;
 import gentest.core.value.store.VariableCache;
 import gentest.core.value.store.iface.ITypeMethodCallStore;
 import gentest.core.value.store.iface.IVariableStore;
-
-import java.lang.annotation.Annotation;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import sav.strategies.gentest.ISubTypesScanner;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author LLT
@@ -36,10 +36,16 @@ import com.google.inject.TypeLiteral;
  */
 public class GentestModules extends AbstractModule {
 	private Map<Class<? extends Annotation>, EnterableScope> scopes;
+	private ClassLoader prjClassLoader;
 	
 	public GentestModules() {
 		scopes = new HashMap<Class<? extends Annotation>, EnterableScope>();
 		scopes.put(TestcaseGenerationScope.class, new EnterableScope());
+	}
+	
+	public GentestModules(ClassLoader prjClassLoader) {
+		this();
+		this.prjClassLoader = prjClassLoader;
 	}
 
 	@Override
@@ -48,6 +54,7 @@ public class GentestModules extends AbstractModule {
 				.entrySet()) {
 			bindScope(scope.getKey(), scope.getValue());
 		}
+		bind(ClassLoader.class).annotatedWith(Names.named("prjClassLoader")).toInstance(getPrjClassLoader());
 		bind(IVariableStore.class).to(VariableCache.class);
 		bind(ISubTypesScanner.class).to(SubTypesScanner.class);
 		bind(ITypeMethodCallStore.class).to(TypeMethodCallsCache.class);
@@ -57,6 +64,13 @@ public class GentestModules extends AbstractModule {
 				// .to((Class<? extends IDataProvider<?>>) DataProvider.class)
 				// .in(scopes.get(TestcaseGenerationScope.class));
 		bind(ParamGeneratorConfig.class).toInstance(ParamGeneratorConfig.getDefault());
+	}
+	
+	public ClassLoader getPrjClassLoader() {
+		if (prjClassLoader == null) {
+			prjClassLoader = Thread.currentThread().getContextClassLoader();
+		}
+		return prjClassLoader;
 	}
 
 	public void enter(Class<? extends Annotation> scope) {

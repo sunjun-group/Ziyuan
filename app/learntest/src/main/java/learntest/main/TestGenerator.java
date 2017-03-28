@@ -35,8 +35,7 @@ public class TestGenerator {
 	@SuppressWarnings("rawtypes")
 	public void genTest() throws ClassNotFoundException, SavException {
 		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(1);
-		builder.queryMaxLength(1).testPerQuery(1);
-		
+		builder.classLoader(LearnTestUtil.getPrjClassLoader()).queryMaxLength(1).testPerQuery(1);
 		MethodDeclaration md = LearnTestUtil.findSpecificMethod(LearnTestConfig.testClassName, 
 				LearnTestConfig.testMethodName, LearnTestConfig.methodLineNumber);
 		String key = md.resolveBinding().getKey();

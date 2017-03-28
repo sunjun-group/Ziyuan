@@ -150,7 +150,7 @@ public class FixTraceGentestBuilder extends GentestBuilder<FixTraceGentestBuilde
 	 */
 	@Override
 	public Pair<List<Sequence>, List<Sequence>> doGenerate() throws SavException {
-		FixTraceTester tester = new FixTraceTester(numberOfTcs);
+		FixTraceTester tester = new FixTraceTester(numberOfTcs, getPrjClassLoader());
 		tester.setListener(new GentestListener() {
 			
 			@Override

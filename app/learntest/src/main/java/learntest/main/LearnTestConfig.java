@@ -1,7 +1,5 @@
 package learntest.main;
 
-import java.net.URI;
-
 import org.eclipse.jdt.core.ICompilationUnit;
 
 import learntest.Activator;

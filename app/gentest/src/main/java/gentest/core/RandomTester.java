@@ -3,6 +3,7 @@
  */
 package gentest.core;
 
+import gentest.core.commons.utils.GenTestUtils;
 import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
 import gentest.injection.GentestModules;
@@ -23,7 +24,7 @@ import com.google.inject.Injector;
  *
  */
 public class RandomTester implements ITester {
-	private GentestModules injectorModule = new GentestModules();
+	private GentestModules injectorModule;
 	private GentestListener listener;
 	// max length of joined methods.
 	private int queryMaxLength;
@@ -31,10 +32,16 @@ public class RandomTester implements ITester {
 	private int numberOfTcs;
 	
 	public RandomTester(int queryMaxLength, int testPerQuery,
-			int numberOfTcs) {
+			int numberOfTcs, ClassLoader prjClassLoader) {
 		this.queryMaxLength = queryMaxLength;
 		this.testPerQuery = testPerQuery;
 		this.numberOfTcs = numberOfTcs;
+		injectorModule = new GentestModules(prjClassLoader);
+	}
+	
+	public RandomTester(int queryMaxLength, int testPerQuery,
+			int numberOfTcs) {
+		this(queryMaxLength, testPerQuery, numberOfTcs, GenTestUtils.getDefaultClassLoader());
 	}
 	
 	/**
@@ -90,6 +97,10 @@ public class RandomTester implements ITester {
 			query.add(nextMethodCall);
 		}
 		return query;
+	}
+	
+	public GentestModules getInjectorModule() {
+		return injectorModule;
 	}
 	
 	public void setListener(GentestListener listener) {
