@@ -76,6 +76,14 @@ public class VMConfiguration {
 		classpaths.add(path);
 	}
 	
+	public void addClasspath(String path, boolean addFirst) {
+		if (addFirst) {
+			classpaths.add(0, path);
+		} else {
+			addClasspath(path);
+		}
+	}
+	
 	public void addClasspaths(List<String> paths) {
 		classpaths.addAll(paths);
 	}

@@ -82,7 +82,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		try {
 			stmt.accept(this);
 		} catch(Throwable ex) {
-			log.debug(ex.getMessage());
+//			log.debug(ex.getMessage());
 			onFail();
 		}
 		return successful;
@@ -154,7 +154,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 						returnedValue = method.invoke(obj, (Object[]) inputs.toArray());
 						value.returnedValue = returnedValue;
 					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						log.debug(e.getMessage());
+//						log.debug(e.getMessage());
 						onFail();
 					}
 				}
@@ -169,7 +169,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 				}
 			}
 		} catch (Throwable e) {
-			log.debug(e.getMessage());
+//			log.debug(e.getMessage());
 			onFail();
 		}
 		return successful;

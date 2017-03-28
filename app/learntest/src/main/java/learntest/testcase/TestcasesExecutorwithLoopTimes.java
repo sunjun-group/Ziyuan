@@ -23,6 +23,7 @@ import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.BreakPoint;
@@ -92,11 +93,8 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 			currentTestExePath = new ArrayList<BreakPoint>();
 			exePathsByTestIdx.put(testIdx, currentTestExePath);
 		}
-		currentTestInputValues = inputValuesByTestIdx.get(testIdx);
-		if (currentTestInputValues == null) {
-			currentTestInputValues = new ArrayList<BreakpointValue>();
-			inputValuesByTestIdx.put(testIdx, currentTestInputValues);
-		}
+		currentTestInputValues = CollectionUtils.getListInitIfEmpty(inputValuesByTestIdx, testIdx);
+		
 		if (instrMode) {
 			setVarMap(instrVarMaps.get(testIdx));
 		}
@@ -246,7 +244,7 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	}
 
 	public List<BreakpointValue> getCurrentTestInputValues() {
-		return currentTestInputValues;
+		return CollectionUtils.copy(currentTestInputValues);
 	}
 
 }

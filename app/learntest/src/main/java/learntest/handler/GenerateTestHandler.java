@@ -68,10 +68,7 @@ public class GenerateTestHandler extends AbstractHandler {
 			
 			AppJavaClassPath appClasspath = new AppJavaClassPath();
 			appClasspath.setJavaHome(TestConfiguration.getJavaHome());
-			
-			String outputPath = LearnTestUtil.getOutputPath();
-			outputPath = outputPath.substring(1, outputPath.length());
-			appClasspath.addClasspath(outputPath);
+			appClasspath.addClasspaths(LearnTestUtil.getPrjectClasspath());
 			
 			Engine engine = new Engine(appClasspath);
 			RunTimeInfo runtimeInfo = engine.run(!isL2T);

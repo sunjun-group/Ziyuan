@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +53,7 @@ public class LearnTestUtil {
 	} 
 	
 	public static ICompilationUnit findICompilationUnitInProject(String qualifiedName){
-		IJavaProject project = JavaCore.create(getSpecificJavaProjectInWorkspace());
+		IJavaProject project = getJavaProject();
 		try {
 			IType type = project.findType(qualifiedName);
 			if(type == null){
@@ -113,7 +114,7 @@ public class LearnTestUtil {
 	}
 	
 	public static IPackageFragmentRoot findMainPackageRootInProject(){
-		IJavaProject project = JavaCore.create(getSpecificJavaProjectInWorkspace());
+		IJavaProject project = getJavaProject();
 		try {
 			for(IPackageFragmentRoot packageFragmentRoot: project.getPackageFragmentRoots()){
 				if(!(packageFragmentRoot instanceof JarPackageFragmentRoot) 
@@ -132,7 +133,7 @@ public class LearnTestUtil {
 	
 	public static List<IPackageFragmentRoot> findMainPackageRootInProjects(){
 		List<IPackageFragmentRoot> roots = new ArrayList<>();
-		IJavaProject project = JavaCore.create(getSpecificJavaProjectInWorkspace());
+		IJavaProject project = getJavaProject();
 		try {
 			for(IPackageFragmentRoot packageFragmentRoot: project.getPackageFragmentRoots()){
 				if(!(packageFragmentRoot instanceof JarPackageFragmentRoot) 
@@ -166,7 +167,7 @@ public class LearnTestUtil {
 	
 	public static List<IPackageFragmentRoot> findAllPackageRootInProject(){
 		List<IPackageFragmentRoot> rootList = new ArrayList<>();
-		IJavaProject project = JavaCore.create(getSpecificJavaProjectInWorkspace());
+		IJavaProject project = getJavaProject();
 		try {
 			for(IPackageFragmentRoot packageFragmentRoot: project.getPackageFragmentRoots()){
 				if(!(packageFragmentRoot instanceof JarPackageFragmentRoot)){
@@ -320,26 +321,34 @@ public class LearnTestUtil {
 	}
 
 	public static ClassLoader getPrjClassLoader() {
-		IJavaProject project = JavaCore.create(getSpecificJavaProjectInWorkspace());
-		
-		String[] classPathEntries;
 		try {
-			classPathEntries = JavaRuntime.computeDefaultRuntimeClassPath(project);
 			List<URL> urlList = new ArrayList<URL>();
-			for (int i = 0; i < classPathEntries.length; i++) {
-				String entry = classPathEntries[i];
-				IPath path = new Path(entry);
+			List<String> classPathEntries = getPrjectClasspath();
+			for (String cpEntry : classPathEntries) {
+				IPath path = new Path(cpEntry);
 				URL url = path.toFile().toURI().toURL();
 				urlList.add(url);
 			}
-			ClassLoader parentClassLoader = project.getClass().getClassLoader();
+			ClassLoader parentClassLoader = getJavaProject().getClass().getClassLoader();
 			URL[] urls = (URL[]) urlList.toArray(new URL[urlList.size()]);
 			URLClassLoader classLoader = new URLClassLoader(urls, parentClassLoader);
 			return classLoader;
-		} catch (CoreException e) {
-			throw new SavRtException(e);
 		} catch (MalformedURLException e) {
 			throw new SavRtException(e);
 		}
+	}
+	
+	public static List<String> getPrjectClasspath() {
+		IJavaProject project = getJavaProject();
+		try {
+			String[] classPathEntries = JavaRuntime.computeDefaultRuntimeClassPath(project);
+			return Arrays.asList(classPathEntries);
+		} catch (CoreException e) {
+			throw new SavRtException(e);
+		}
+	}
+
+	private static IJavaProject getJavaProject() {
+		return JavaCore.create(getSpecificJavaProjectInWorkspace());
 	}
 }
