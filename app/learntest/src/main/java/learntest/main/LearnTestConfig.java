@@ -4,8 +4,8 @@ public class LearnTestConfig {
 	
 	public static final String MODULE = "learntest";
 
-	public static String typeName = "IntToString";
-	public static String methodName = "transform";
+	public static String typeName = "FastMath";
+	public static String methodName = "tanh";
 	public static String filePath = "D:/git/Ziyuan/app/learntest/src/test/java/testdata/finaltest/" + typeName + ".java";
 	public static String className = "testdata.finaltest." + typeName;
 	
