@@ -27,7 +27,7 @@ import learntest.cfg.CFG;
 import learntest.cfg.CfgCreator;
 import learntest.cfg.CfgDecisionNode;
 import learntest.cfg.traveller.CfgConditionManager;
-import learntest.sampling.JacopSelectiveSampling;
+import learntest.sampling.JavailpSelectiveSampling;
 import learntest.spf.SPFUtil;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
@@ -130,7 +130,7 @@ public class Engine {
 		tcExecutor.setjResultFileDeleteOnExit(true);
 		//tcExecutor.setSingleMode();
 		tcExecutor.setInstrMode(true);
-		JacopSelectiveSampling selectiveSampling = new JacopSelectiveSampling(tcExecutor);
+		JavailpSelectiveSampling selectiveSampling = new JavailpSelectiveSampling(tcExecutor);
 		selectiveSampling.addPrevData(solutions);
 		DecisionLearner learner = new DecisionLearner(selectiveSampling, manager, onlySPF);
 		learner.learn(result);

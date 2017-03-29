@@ -5,6 +5,11 @@ import java.util.Random;
 
 import libsvm.core.Divider;
 
+/**
+ * This class is used to randomly remove some constraints in dividers or non-dividers
+ * @author Gao Donjing
+ *
+ */
 public class PathRandom {
 	
 	private static Random random = new Random();

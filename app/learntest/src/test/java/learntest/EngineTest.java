@@ -22,7 +22,7 @@ public class EngineTest extends AbstractTest {
 
 	@Test
 	public void test() throws Exception {
-		engine.run(false);
+		engine.run(true);
 	}
 
 }
