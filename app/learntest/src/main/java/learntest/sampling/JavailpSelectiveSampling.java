@@ -10,8 +10,10 @@ import java.util.Set;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.breakpoint.data.DecisionLocation;
 import learntest.calculator.OrCategoryCalculator;
+import learntest.main.LearnTestConfig;
 import learntest.sampling.javailp.ProblemBuilder;
 import learntest.sampling.javailp.ProblemSolver;
+import learntest.spf.SPFUtil;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.LoopTimesData;
@@ -64,6 +66,34 @@ public class JavailpSelectiveSampling {
 		}
 		delta = values.size() - 1;
 	}
+	
+	public Map<DecisionLocation, BreakpointData> selectDataUsingSPF(
+			DecisionLocation target, List<ExecVar> originVars) throws SavException {
+		tcExecutor.setTarget(null);
+		List<Result> results = selectBySPF(target, originVars);
+		List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
+		for (Result result : results) {
+			checkNonduplicateResult(result, originVars, prevDatas, assignments);
+		}
+		runData(assignments);
+		return selectResult;
+	}
+
+	private List<Result> selectBySPF(DecisionLocation target, List<ExecVar> originVars) {
+		usingSPF ++;
+		String configPath = LearnTestConfig.typeName + target.getLineNo() + ".jpf";
+		List<Map<String, Integer>> maps = SPFUtil.runJPF(configPath);
+		List<Result> results = new ArrayList<Result>();
+		for (Map<String, Integer> map : maps) {
+			Result result = new ResultImpl();
+			Set<String> keySet = map.keySet();
+			for (String key : keySet) {
+				result.put(key, map.get(key));
+			}
+			results.add(result);
+		}
+		return results;
+	}
 
 	public Map<DecisionLocation, BreakpointData> selectDataForEmpty(DecisionLocation target, 
 			List<ExecVar> originVars, 
@@ -72,9 +102,9 @@ public class JavailpSelectiveSampling {
 			boolean trueOrFalse, 
 			boolean isLoop) throws SavException/*, SAVExecutionTimeOutException*/ {
 		
-		if(target.getLineNo()==11){
+		/*if(target.getLineNo()==11){
 			System.currentTimeMillis();
-		}
+		}*/
 		
 		tcExecutor.setTarget(null);
 		for (int i = 0; i < timesLimit; i++) {
@@ -152,7 +182,13 @@ public class JavailpSelectiveSampling {
 				}
 			}
 		}
-		return null;
+		List<Result> results = selectBySPF(target, originVars);
+		List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
+		for (Result result : results) {
+			checkNonduplicateResult(result, originVars, prevDatas, assignments);
+		}
+		runData(assignments);
+		return selectResult;
 	}
 	
 	public Map<DecisionLocation, BreakpointData> selectDataForModel(DecisionLocation target, 
@@ -329,12 +365,12 @@ public class JavailpSelectiveSampling {
 	}
 	
 	//special checker for triangle
-	private boolean isValid(Result result) {
+	/*private boolean isValid(Result result) {
 		int x = result.get("x").intValue();
 		int y = result.get("y").intValue();
 		int z = result.get("z").intValue();
 		return 20 >= x && x >= y && y >= z && z >= 1;
-	}
+	}*/
 
 	public Map<DecisionLocation, BreakpointData> getSelectResult() {
 		return selectResult;

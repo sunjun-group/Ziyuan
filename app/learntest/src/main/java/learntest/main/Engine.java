@@ -120,18 +120,18 @@ public class Engine {
 			return;
 		}
 		
-		Set<ExecVar> allVars = new HashSet<ExecVar>();
+		/*Set<ExecVar> allVars = new HashSet<ExecVar>();
 		for (BreakpointValue test : inputValues) {
 			collectExecVar(test.getChildren(), allVars);			
 		}
 		List<ExecVar> vars = new ArrayList<ExecVar>(allVars);
-		List<Domain[]> solutions = getFullSolutions(inputValues, vars);
+		List<Domain[]> solutions = getFullSolutions(inputValues, vars);*/
 		
 		tcExecutor.setjResultFileDeleteOnExit(true);
 		//tcExecutor.setSingleMode();
 		tcExecutor.setInstrMode(true);
 		JavailpSelectiveSampling selectiveSampling = new JavailpSelectiveSampling(tcExecutor);
-		selectiveSampling.addPrevData(solutions);
+		selectiveSampling.addPrevValues(inputValues);
 		DecisionLearner learner = new DecisionLearner(selectiveSampling, manager, onlySPF);
 		learner.learn(result);
 		//List<BreakpointValue> records = learner.getRecords();
@@ -172,7 +172,7 @@ public class Engine {
 		}
 	}
 	
-	private List<Domain[]> getFullSolutions(List<BreakpointValue> records, List<ExecVar> originVars) {
+	/*private List<Domain[]> getFullSolutions(List<BreakpointValue> records, List<ExecVar> originVars) {
 		List<Domain[]> res = new ArrayList<Domain[]>();
 		int size = originVars.size();
 		for (BreakpointValue record : records) {
@@ -192,7 +192,7 @@ public class Engine {
 			res.add(solution);
 		}
 		return res;
-	}
+	}*/
 		
 	private List<Domain[]> getSolutions(List<BreakpointValue> records, List<ExecVar> originVars) {
 		List<Domain[]> res = new ArrayList<Domain[]>();

@@ -1,0 +1,10 @@
+target=testdata.finaltest.slicers.IntToString36
+classpath=D:\\git\\Ziyuan\\app\\learntest\\target\\test-classes 
+symbolic.method=testdata.finaltest.slicers.IntToString36.transform(sym)  
+listener = gov.nasa.jpf.symbc.sequences.SymbolicSequenceListener 
+vm.storage.class=nil  
+search.multiple_errors=false
+search.depth_limit=10
+symbolic.debug=true 
+symbolic.min_int=-10000000
+symbolic.max_int=10000000

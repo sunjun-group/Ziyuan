@@ -288,6 +288,10 @@ public class DecisionLearner implements CategoryCalculator {
 					break;
 				}*/
 				//startTime = System.currentTimeMillis();
+				acc = machine.getModelAccuracy();
+				if (acc == 1.0) {
+					break;
+				}
 				machine.train();
 				//System.out.println("learn model training time: " + (System.currentTimeMillis() - startTime) + " ms");
 				Formula tmp = getLearnedFormula();
@@ -297,7 +301,7 @@ public class DecisionLearner implements CategoryCalculator {
 					curDividers = machine.getLearnedDividers();
 					break;
 				}
-				if (!tmp.equals(trueFlase) && accTmp >= acc) {
+				if (!tmp.equals(trueFlase) && accTmp > acc) {
 					trueFlase = tmp;
 					curDividers = machine.getLearnedDividers();
 					acc = accTmp;
