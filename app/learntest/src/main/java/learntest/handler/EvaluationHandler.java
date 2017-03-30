@@ -1,6 +1,5 @@
 package learntest.handler;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +36,8 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
 import icsetlv.common.utils.PrimitiveUtils;
-import learntest.io.excel.ExcelWriter;
 import learntest.io.excel.Trial;
+import learntest.io.excel.TrialExcelHandler;
 import learntest.main.LearnTestConfig;
 import learntest.main.RunTimeInfo;
 import learntest.util.LearnTestUtil;
@@ -355,20 +354,14 @@ public class EvaluationHandler extends AbstractHandler {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-
-//				ExcelReader reader = null;
-				ExcelWriter writer = null;
+				TrialExcelHandler excelHandler = null;
 				try {
-//					reader = new ExcelReader();
-//					reader.readXLSX();
-
-					writer = new ExcelWriter(LearnTestConfig.projectName);
-
-				} catch (IOException e1) {
+					excelHandler = new TrialExcelHandler(LearnTestConfig.projectName);
+				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 
-				if (writer == null) {
+				if (excelHandler == null) {
 					return Status.CANCEL_STATUS;
 				}
 
@@ -381,7 +374,7 @@ public class EvaluationHandler extends AbstractHandler {
 					for(IPackageFragmentRoot root: roots){
 						for (IJavaElement element : root.getChildren()) {
 							if (element instanceof IPackageFragment) {
-								RunTimeCananicalInfo info = runEvaluation((IPackageFragment) element, writer);
+								RunTimeCananicalInfo info = runEvaluation((IPackageFragment) element, excelHandler);
 								overalInfo.totalNum += info.totalNum;
 								overalInfo.validNum += info.validNum;
 								overalInfo.totalLen += info.totalLen;
@@ -400,7 +393,7 @@ public class EvaluationHandler extends AbstractHandler {
 			}
 
 				
-			private RunTimeCananicalInfo runEvaluation(IPackageFragment pack, ExcelWriter writer) throws JavaModelException {
+			private RunTimeCananicalInfo runEvaluation(IPackageFragment pack, TrialExcelHandler excelHandler) throws JavaModelException {
 				int validSum = 0;
 				int totalSum = 0;
 				
@@ -410,7 +403,7 @@ public class EvaluationHandler extends AbstractHandler {
 				
 				for (IJavaElement javaElement : pack.getChildren()) {
 					if (javaElement instanceof IPackageFragment) {
-						runEvaluation((IPackageFragment) javaElement, writer);
+						runEvaluation((IPackageFragment) javaElement, excelHandler);
 					} else if (javaElement instanceof ICompilationUnit) {
 						ICompilationUnit icu = (ICompilationUnit) javaElement;
 						CompilationUnit cu = LearnTestUtil.convertICompilationUnitToASTNode(icu);
@@ -474,7 +467,7 @@ public class EvaluationHandler extends AbstractHandler {
 						
 						validSum += collector.mdList.size();
 						totalSum += collector.totalMethodNum;
-						evaluateForMethodList(writer, cu, collector.mdList);
+						evaluateForMethodList(excelHandler, cu, collector.mdList);
 					}
 				}
 
@@ -483,7 +476,7 @@ public class EvaluationHandler extends AbstractHandler {
 			}
 
 
-			private void evaluateForMethodList(ExcelWriter writer, CompilationUnit cu,
+			private void evaluateForMethodList(TrialExcelHandler excelHandler, CompilationUnit cu,
 					List<MethodDeclaration> validMethods) {
 				
 				if (!validMethods.isEmpty()) {
@@ -557,7 +550,7 @@ public class EvaluationHandler extends AbstractHandler {
 								Trial trial = new Trial(fullMN, l2tAverageInfo.getTime(), l2tAverageInfo.getCoverage(),
 										l2tAverageInfo.getTestCnt(), ranAverageInfo.getTime(), ranAverageInfo.getCoverage(),
 										ranAverageInfo.getTestCnt(), length, start);
-								writer.export(trial);
+								excelHandler.export(trial);
 							}
 						} catch (Exception e) {
 							e.printStackTrace();

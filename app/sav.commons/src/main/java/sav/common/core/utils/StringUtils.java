@@ -44,6 +44,10 @@ public class StringUtils {
 		}
 		return org.apache.commons.lang.StringUtils.join(valStrs, separator);
 	}
+	
+	public static String concatenate(String... params) {
+		return org.apache.commons.lang.StringUtils.join(params);
+	}
 
 	public static String join(String separator, Object... params) {
 		return join(Arrays.asList(params), separator);

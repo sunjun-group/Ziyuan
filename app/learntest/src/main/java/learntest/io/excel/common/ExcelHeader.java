@@ -6,15 +6,13 @@
  *  Version:  $Revision: 1 $
  */
 
-package sav.common.core;
+package learntest.io.excel.common;
 
 /**
  * @author LLT
  *
  */
-public enum ModuleEnum {
-	SLICING,
-	FAULT_LOCALIZATION,
-	JVM,
-	TESTCASE_GENERATION
+public interface ExcelHeader {
+	public String getTitle();
+	public int getCellIdx();
 }

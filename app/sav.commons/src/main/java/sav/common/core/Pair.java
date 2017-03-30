@@ -1,10 +1,5 @@
 package sav.common.core;
 
-
-import java.util.Arrays;
-
-import sav.common.core.utils.ObjectUtils;
-
 public class Pair<A, B> {
 	public A a;
 	public B b;
@@ -34,7 +29,7 @@ public class Pair<A, B> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Pair other = (Pair) obj;
+		Pair<?, ?> other = (Pair<?, ?>) obj;
 		if (a == null) {
 			if (other.a != null)
 				return false;

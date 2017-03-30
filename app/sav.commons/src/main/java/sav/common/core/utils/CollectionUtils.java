@@ -280,5 +280,9 @@ public class CollectionUtils {
 		}
 		return list;
 	}
+
+	public static <T, V>boolean isEmpty(Map<T, V> map) {
+		return map == null || map.isEmpty();
+	}
 	
 }

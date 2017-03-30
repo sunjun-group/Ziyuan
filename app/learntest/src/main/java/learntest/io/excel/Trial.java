@@ -15,6 +15,8 @@ public class Trial {
 	
 	private int methodLength;
 	private int methodStartLine;
+	
+	private double advandtage;
 
 	public Trial(){
 		
@@ -81,6 +83,7 @@ public class Trial {
 
 	public void setL2tCoverage(double l2tCoverage) {
 		this.l2tCoverage = l2tCoverage;
+		updateAdvantage();
 	}
 
 	public int getL2tTestCnt() {
@@ -105,6 +108,7 @@ public class Trial {
 
 	public void setRandoopCoverage(double randoopCoverage) {
 		this.randoopCoverage = randoopCoverage;
+		updateAdvantage();
 	}
 
 	public int getRandoopTestCnt() {
@@ -131,4 +135,11 @@ public class Trial {
 		this.methodStartLine = methodStartLine;
 	}
 
+	public double getAdvantage() {
+		return advandtage;
+	}
+	
+	private void updateAdvantage() {
+		advandtage = l2tCoverage - randoopCoverage;
+	}
 }
