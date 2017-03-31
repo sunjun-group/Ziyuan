@@ -16,7 +16,6 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.jacop.core.Domain;
 import org.jacop.floats.core.FloatIntervalDomain;
 
-import cfgextractor.CFGBuilder;
 import icsetlv.DefaultValues;
 import icsetlv.common.dto.BreakpointValue;
 import japa.parser.JavaParser;
@@ -26,12 +25,13 @@ import japa.parser.ast.body.BodyDeclaration;
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.Parameter;
 import japa.parser.ast.body.TypeDeclaration;
-import learntest.breakpoint.data.BreakpointBuilder;
 import learntest.breakpoint.data.DecisionLocation;
-import learntest.cfg.CFG;
-import learntest.cfg.CfgCreator;
-import learntest.cfg.CfgDecisionNode;
-import learntest.cfg.traveller.CfgConditionManager;
+import learntest.cfg.iface.ContextFreeGrammar;
+import learntest.cfg.impl.javasource.BreakpointCreator;
+import learntest.cfg.impl.javasource.core.CFG;
+import learntest.cfg.impl.javasource.core.CfgCreator;
+import learntest.cfg.impl.javasource.core.CfgDecisionNode;
+import learntest.cfg.impl.javasource.core.traveller.CfgConditionManager;
 import learntest.sampling.JavailpSelectiveSampling;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
@@ -49,16 +49,13 @@ import sav.strategies.dto.execute.value.ExecVar;
 public class Engine {
 	
 	private AppJavaClassPath appClassPath;
-	private String filePath;
-	private String typeName;
-	private String className;
-	private String methodName;
+	private LearnTestParams params;
 	private List<String> testcases = new ArrayList<String>();
 	private TestcasesExecutorwithLoopTimes tcExecutor;
 	private List<Variable> variables;
-	private CFG cfg;
+	private ContextFreeGrammar cfg;
 	private CfgConditionManager manager;
-	private BreakpointBuilder bkpBuilder;
+	private BreakpointCreator bkpCreator;
 	private BreakpointDataBuilder dtBuilder;
 	
 	//To handle recursion,can only handle recursion with returns
@@ -68,41 +65,28 @@ public class Engine {
 		this.appClassPath = appClassPath;
 	}
 	
-	private void setTarget(String filePath, String typeName, String className, String methodName) {
-		this.filePath = filePath;
-		this.typeName = typeName;
-		this.className = className;
-		this.methodName = methodName;
-	}
-
 	public void setTcExecutor(TestcasesExecutorwithLoopTimes tcExecutor) {
 		this.tcExecutor = tcExecutor;
 	}
 	
 	public RunTimeInfo run(boolean random) throws ParseException, IOException, SavException, ClassNotFoundException {
 		SAVTimer.startCount();
+		initTestData();
 		
-		String filePath = LearnTestConfig.getTestClassFilePath();
-		setTarget(filePath, LearnTestConfig.getSimpleClassName(), LearnTestConfig.testClassName, LearnTestConfig.testMethodName);
-		addTestcases(LearnTestConfig.getTestClass(LearnTestConfig.isL2TApproach));
-		
-		if (testcases == null || testcases.isEmpty()) {
+		if (CollectionUtils.isEmpty(testcases)) {
 			return null;
 		}
 		
-		CFGBuilder builder = new CFGBuilder();
-		int methodLineNumber = Integer.valueOf(LearnTestConfig.methodLineNumber);
-		try {
-			builder.parsingCFG(appClassPath, LearnTestConfig.testClassName, LearnTestConfig.testMethodName, methodLineNumber);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
+		CompilationUnit cu = JavaParser.parse(new File(params.getFilePath()));
+		MethodDeclaration method = getMethod(cu, params.getMethodName(), params.getMethodLineNum());
+		prepareVariables(cu, method);
+		// create cfg
+		createCFG(method);
 		
-		createCFG();
 		manager = new CfgConditionManager(cfg);
-		bkpBuilder = new BreakpointBuilder(className, methodName, variables, cfg, returns);
-		bkpBuilder.buildBreakpoints();
-		dtBuilder = new BreakpointDataBuilder(bkpBuilder);
+		bkpCreator = new BreakpointCreator(params.getClassName(), params.getMethodName(), variables, returns);
+		bkpCreator.createBkpsfromCfg(cfg);
+		dtBuilder = new BreakpointDataBuilder(bkpCreator.getDecisionBkpData());
 		
 		System.currentTimeMillis();
 		
@@ -114,16 +98,17 @@ public class Engine {
 		DecisionLearner learner = null;
 		
 		try{
+			/**
+			 * run testcases
+			 */
 			ensureTcExecutor();
 			tcExecutor.setup(appClassPath, testcases);
 			tcExecutor.run();
 			Map<DecisionLocation, BreakpointData> result = tcExecutor.getResult();
 			
-			if(tcExecutor.getCurrentTestInputValues()==null){
-				return null;
-			}
-			
-			if (tcExecutor.getCurrentTestInputValues().isEmpty()) {
+			/* why return null if currentTestInputValues empty? this list is only for last breakpoint, 
+			 * not for the whole testcase */
+			if (CollectionUtils.isEmpty(tcExecutor.getCurrentTestInputValues())) {
 				return null;
 			}
 			
@@ -136,6 +121,8 @@ public class Engine {
 					List<ExecVar> vars = new ArrayList<ExecVar>(allVars);
 					List<BreakpointValue> list = new ArrayList<BreakpointValue>();
 					list.add(test);
+					
+					/* GENERATE NEW TESTCASES */
 					new TestGenerator().genTestAccordingToSolutions(getSolutions(list, vars), vars);
 					System.out.println("Total test cases number: " + testCnt);
 					coverage = 1;
@@ -149,10 +136,7 @@ public class Engine {
 				selectiveSampling.addPrevValues(tcExecutor.getCurrentTestInputValues());
 				learner = new DecisionLearner(selectiveSampling, manager, random);
 				learner.learn(result);
-				
-				if (learner != null) {
-					coverage = learner.getCoverage();
-				}
+				coverage = learner.getCoverage();
 				
 				try{
 					List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
@@ -177,6 +161,24 @@ public class Engine {
 		
 		RunTimeInfo info = new RunTimeInfo(time, coverage, testCnt);
 		return info;
+	}
+
+	private void prepareVariables(CompilationUnit cu, MethodDeclaration method) {
+		variables = new ArrayList<Variable>();
+		List<Parameter> parameters = method.getParameters();
+		if (parameters != null) {
+			for (Parameter parameter : parameters) {
+				variables.add(new Variable(parameter.getId().getName()));
+			}
+		}		
+
+		List<Variable> visitFields = findFields(cu, method);
+		variables.addAll(visitFields);		
+	}
+
+	private void initTestData() throws ClassNotFoundException {
+		params = LearnTestParams.initFromLearnTestConfig();
+		prepareTestcases(params.getTestClass());
 	}
 	
 	/*private List<Domain[]> getFullSolutions(List<BreakpointValue> records, List<ExecVar> originVars) {
@@ -215,7 +217,7 @@ public class Engine {
 		return res;
 	}
 
-	private void addTestcases(String testClass) throws ClassNotFoundException {
+	private void prepareTestcases(String testClass) throws ClassNotFoundException {
 		
 		org.eclipse.jdt.core.dom.CompilationUnit cu = LearnTestUtil.findCompilationUnitInProject(testClass);
 		List<org.eclipse.jdt.core.dom.MethodDeclaration> mList = LearnTestUtil.findTestingMethod(cu);
@@ -229,55 +231,40 @@ public class Engine {
 		this.testcases.addAll(result);
 	}
 	
-	private void createCFG() throws ParseException, IOException {
-		CompilationUnit cu = JavaParser.parse(new File(filePath));
+	private void createCFG(MethodDeclaration method) throws ParseException, IOException {
+		CfgCreator creator = new CfgCreator();
+		CFG cfg1 = creator.toCFG(method);
+		CFG cfg2 = creator.dealWithReturnStmt(cfg1);
+		cfg = creator.dealWithBreakStmt(cfg2);
+		returns = new HashSet<Integer>();
+		List<CfgDecisionNode> returnNodeList = creator.getReturnNodeList();
+		for (CfgDecisionNode returnNode : returnNodeList) {
+			returns.add(returnNode.getBeginLine());
+		}
+	}
+	
+	private MethodDeclaration getMethod (CompilationUnit cu, String methodName, int lineNumber) {
 		for (TypeDeclaration type : cu.getTypes()) {
-			if (type.getName().equals(typeName)) {
+			if (type.getName().equals(params.getTypeName())) {
 				for (BodyDeclaration body : type.getMembers()) {
 					if (body instanceof MethodDeclaration) {
 						MethodDeclaration method = (MethodDeclaration) body;
-						
-						
-						
-						int lineNumber = LearnTestConfig.getMethodLineNumber();
-						
 						if (method.getName().equals(methodName)) {
-							
 							if(lineNumber != 0){
-								if(!(method.getBeginLine()<=lineNumber && lineNumber<=method.getEndLine())){
+								if (!(method.getBeginLine() <= lineNumber && lineNumber <= method.getEndLine())) {
 									continue;
 								}
 							}
-							
-							variables = new ArrayList<Variable>();
-							List<Parameter> parameters = method.getParameters();
-							if (parameters != null) {
-								for (Parameter parameter : parameters) {
-									variables.add(new Variable(parameter.getId().getName()));
-								}
-							}		
-
-							List<Variable> visitFields = findFields(cu, method);
-							variables.addAll(visitFields);
-							
-							CfgCreator creator = new CfgCreator();
-							CFG cfg1 = creator.toCFG(method);
-							CFG cfg2 = creator.dealWithReturnStmt(cfg1);
-							cfg = creator.dealWithBreakStmt(cfg2);
-							returns = new HashSet<Integer>();
-							List<CfgDecisionNode> returnNodeList = creator.getReturnNodeList();
-							for (CfgDecisionNode returnNode : returnNodeList) {
-								returns.add(returnNode.getBeginLine());
-							}
-							return;
+							return method;
 						}
 					}
 				}
-				return;
 			}
+			return null;
 		}
+		return null;
 	}
-
+	
 	class MethodFinder extends ASTVisitor{
 		org.eclipse.jdt.core.dom.MethodDeclaration foundMethod;
 		MethodDeclaration method;
@@ -360,7 +347,7 @@ public class Engine {
 			tcExecutor = new TestcasesExecutorwithLoopTimes(DefaultValues.DEBUG_VALUE_RETRIEVE_LEVEL);
 		}
 		tcExecutor.setBuilder(dtBuilder);
-		tcExecutor.setBkpBuilder(bkpBuilder);
+		tcExecutor.setDecisionBkpsData(bkpCreator.getDecisionBkpData());
 	}	
 	
 	private void collectExecVar(List<ExecValue> vals, Set<ExecVar> vars) {

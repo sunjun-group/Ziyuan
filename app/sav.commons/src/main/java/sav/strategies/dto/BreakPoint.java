@@ -22,7 +22,7 @@ import sav.common.core.utils.StringUtils;
  * 
  */
 public class BreakPoint extends ClassLocation {
-	protected List<Variable> vars; // to keep order
+	protected List<Variable> vars; // use List instead of Set in order to keep the order of variables
 	private int charStart;
 	private int charEnd;
 	

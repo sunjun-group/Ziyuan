@@ -23,7 +23,7 @@ import sav.common.core.utils.StringUtils;
 import sav.java.parser.cfg.CfgNode.Type;
 import sav.java.parser.cfg.graph.Graph;
 
-public class CFG extends Graph<CfgNode, CfgEdge>{
+public class CFG extends Graph<CfgNode, CfgEdge> {
 	private CfgEntryNode entry;
 	private CfgExitNode exit;
 	private Map<EdgeUnCompletedType, List<CfgEdge>> uncompletedEdges;

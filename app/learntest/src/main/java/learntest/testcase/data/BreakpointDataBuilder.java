@@ -4,22 +4,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import icsetlv.common.dto.BreakpointValue;
-import learntest.breakpoint.data.BreakpointBuilder;
+import learntest.breakpoint.data.DecisionBkpsData;
 import learntest.breakpoint.data.DecisionLocation;
 import sav.strategies.dto.BreakPoint;
 
 public class BreakpointDataBuilder {
 	
-	private BreakpointBuilder bkpBuilder;
 	private DecisionLocation target;
 	private Map<DecisionLocation, BreakpointData> bkpDataMap;
 	//private List<BreakpointData> result;
 	
-	public BreakpointDataBuilder(BreakpointBuilder bkpBuilder) {
-		this.bkpBuilder = bkpBuilder;
+	/* input data */
+	private DecisionBkpsData decisionBkpsData;
+	
+	public BreakpointDataBuilder(DecisionBkpsData decisionBkpsData) {
+		this.decisionBkpsData = decisionBkpsData;
 		bkpDataMap = new HashMap<DecisionLocation, BreakpointData>();
 	}
 	
@@ -80,7 +81,7 @@ public class BreakpointDataBuilder {
 	private void build(List<BreakPoint> path, BreakpointValue inputValue) {
 		Map<BreakPoint, List<Integer>> pathMap = buildPathMap(path);
 		if(target == null) {
-			List<DecisionLocation> locations = bkpBuilder.getLocations();
+			List<DecisionLocation> locations = decisionBkpsData.getLocations();
 			for (DecisionLocation location : locations) {
 				build(pathMap, inputValue, location);
 			}
@@ -101,17 +102,17 @@ public class BreakpointDataBuilder {
 		}
 		
 		//only true branch data
-		List<Integer> occurs = pathMap.get(bkpBuilder.getTrueBreakPoint(location));
+		List<Integer> occurs = pathMap.get(decisionBkpsData.getTrueBreakPoint(location));
 		if (occurs == null || occurs.isEmpty()) {
 			//bkpData.addFalseValue(inputValue);
-			List<Integer> self = pathMap.get(bkpBuilder.getSelfBreakPoint(location));
+			List<Integer> self = pathMap.get(decisionBkpsData.getSelfBreakPoint(location));
 			if (self != null && !self.isEmpty()) {
 				bkpData.addFalseValue(inputValue);
 			}
 			return;
 		}
 		if (location.isLoop()) {
-			List<Integer> parentOccurs = pathMap.get(bkpBuilder.getParentBreakPoint(location));
+			List<Integer> parentOccurs = pathMap.get(decisionBkpsData.getParentBreakPoint(location));
 			int cnt = 0;
 			if (parentOccurs == null) {
 				cnt = occurs.size();

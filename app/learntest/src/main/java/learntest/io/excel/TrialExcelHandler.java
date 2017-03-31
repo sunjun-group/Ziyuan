@@ -39,9 +39,9 @@ public class TrialExcelHandler {
 		this(trialFilePrefix, true);
 	}
 	
-	public TrialExcelHandler(String trialFilePrefix, boolean append) throws Exception {
+	public TrialExcelHandler(String trialFilePrefix, boolean appendLastFile) throws Exception {
 		reader = new TrialExcelReader();
-		fileInfo = getExperimentalExcel(trialFilePrefix, append);
+		fileInfo = getExperimentalExcel(trialFilePrefix, appendLastFile);
 		writer = new TrialExcelWriter(fileInfo.a);
 	}
 	

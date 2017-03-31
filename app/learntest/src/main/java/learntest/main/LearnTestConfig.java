@@ -58,6 +58,7 @@ public class LearnTestConfig {
 	}
 	
 	
+	
 //	public static String resPkg = "testdata.result." + typeName.toLowerCase() + "." + testMethodName.toLowerCase();
 	public static String getResultedTestPackage(boolean isL2T){
 		

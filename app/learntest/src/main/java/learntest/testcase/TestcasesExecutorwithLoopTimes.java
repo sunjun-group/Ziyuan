@@ -17,7 +17,7 @@ import icsetlv.common.dto.BreakpointValue;
 import icsetlv.variable.DebugValueExtractor;
 import icsetlv.variable.DebugValueInstExtractor;
 import icsetlv.variable.JunitDebugger;
-import learntest.breakpoint.data.BreakpointBuilder;
+import learntest.breakpoint.data.DecisionBkpsData;
 import learntest.breakpoint.data.DecisionLocation;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
@@ -46,7 +46,9 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	private StopTimer timer = new StopTimer("TestcasesExecutorwithLoopTimes");
 	private long timeout = DEFAULT_TIMEOUT;
 	
-	private BreakpointBuilder bkpBuilder;
+	
+	/* input data */
+	private DecisionBkpsData decisionBkpsData;
 	private DecisionLocation target;
 	
 	/**
@@ -68,10 +70,10 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		}
 		
 		if (target == null) {
-			List<BreakPoint> breakpointList = bkpBuilder.getBreakPoints();
+			List<BreakPoint> breakpointList = decisionBkpsData.getBreakPoints();
 			this.run(breakpointList);
 		} else {
-			this.run(bkpBuilder.getBreakpoints(target));
+			this.run(decisionBkpsData.getBreakpoints(target));
 		}
 	}
 	
@@ -218,8 +220,8 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 		this.dtbuilder = dtbuilder;
 	}
 	
-	public void setBkpBuilder(BreakpointBuilder bkpBuilder) {
-		this.bkpBuilder = bkpBuilder;
+	public void setDecisionBkpsData(DecisionBkpsData decisionBkpsData) {
+		this.decisionBkpsData = decisionBkpsData;
 	}
 
 	@Override
