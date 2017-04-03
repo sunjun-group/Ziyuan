@@ -20,6 +20,8 @@ public class LearnTestParams {
 	private String testClass;
 	private int methodLineNum;
 	
+	private boolean randomDecision;
+	
 	public static LearnTestParams initFromLearnTestConfig() {
 		LearnTestParams params = new LearnTestParams();
 		params.filePath = LearnTestConfig.getTestClassFilePath();
@@ -77,6 +79,14 @@ public class LearnTestParams {
 
 	public void setMethodLineNum(int methodLineNum) {
 		this.methodLineNum = methodLineNum;
+	}
+
+	public boolean isRandomDecision() {
+		return randomDecision;
+	}
+
+	public void setRandomDecision(boolean randomDecision) {
+		this.randomDecision = randomDecision;
 	}
 	
 }

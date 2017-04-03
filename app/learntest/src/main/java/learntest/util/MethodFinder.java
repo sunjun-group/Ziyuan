@@ -4,7 +4,7 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
-public class MethodFinder extends ASTVisitor{
+public class MethodFinder extends ASTVisitor {
 	MethodDeclaration requiredMD;
 	
 	int lineNumber;

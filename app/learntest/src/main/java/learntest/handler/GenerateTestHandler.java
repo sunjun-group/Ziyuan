@@ -1,7 +1,5 @@
 package learntest.handler;
 
-import java.io.IOException;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -16,8 +14,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import japa.parser.ParseException;
-import learntest.main.Engine;
+import learntest.exception.LearnTestException;
+import learntest.main.LearnTest;
 import learntest.main.LearnTestConfig;
 import learntest.main.RunTimeInfo;
 import learntest.main.TestGenerator;
@@ -70,7 +68,7 @@ public class GenerateTestHandler extends AbstractHandler {
 			appClasspath.setJavaHome(TestConfiguration.getJavaHome());
 			appClasspath.addClasspaths(LearnTestUtil.getPrjectClasspath());
 			
-			Engine engine = new Engine(appClasspath);
+			LearnTest engine = new LearnTest(appClasspath);
 			RunTimeInfo runtimeInfo = engine.run(!isL2T);
 			
 			if(runtimeInfo != null){
@@ -82,13 +80,11 @@ public class GenerateTestHandler extends AbstractHandler {
 			
 			return runtimeInfo;
 			
+		} catch (LearnTestException e) {
+			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SavException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
