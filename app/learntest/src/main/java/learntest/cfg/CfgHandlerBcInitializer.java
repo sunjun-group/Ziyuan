@@ -9,7 +9,7 @@
 package learntest.cfg;
 
 import cfgextractor.CFG;
-import cfgextractor.CFGCreator;
+import cfgextractor.CFGBuilder;
 import learntest.cfg.bytecode.CfgHandler;
 import learntest.exception.LearnTestException;
 import learntest.main.LearnTestConfig;
@@ -24,7 +24,7 @@ public class CfgHandlerBcInitializer {
 	private static CfgHandlerBcInitializer INSTANCE;
 	
 	public CfgHandler create(AppJavaClassPath appClassPath, LearnTestParams params) throws LearnTestException {
-		CFGCreator builder = new CFGCreator();
+		CFGBuilder builder = new CFGBuilder();
 		int methodLineNumber = Integer.valueOf(LearnTestConfig.methodLineNumber);
 		CFG cfg;
 		try {
