@@ -9,6 +9,7 @@
 package learntest.breakpoint.data;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,15 +30,28 @@ public class DecisionBkpsData {
 	//to change false branch logic
 	private Map<DecisionLocation, BreakPoint> selfBkps;
 	
+	public DecisionBkpsData() {
+		bkpListMap = new HashMap<DecisionLocation, List<BreakPoint>>();
+		breakPoints = new ArrayList<BreakPoint>();
+	}
+	
 	public DecisionBkpsData(List<DecisionLocation> locations, Set<BreakPoint> allBkps,
 			Map<DecisionLocation, BreakPoint> decisionMap, Map<DecisionLocation, DecisionLocation> parentMap) {
-		bkpListMap = new HashMap<DecisionLocation, List<BreakPoint>>();
-		breakPoints = new ArrayList<BreakPoint>(allBkps);
+		this();
+		addBreakpoints(allBkps);
 		this.decisionMap = decisionMap;
 		this.parentMap = parentMap;
 		this.decisionLocations = locations;
 	}
 	
+	public void addBreakpoints(Collection<BreakPoint> newBkps) {
+		getBreakPoints().addAll(newBkps);
+	}
+	
+	public void addBreakpoint(BreakPoint newBkp) {
+		getBreakPoints().add(newBkp);
+	}
+
 	public Map<DecisionLocation, List<BreakPoint>> getDecisionBkpsMap() {
 		return bkpListMap;
 	}
@@ -77,4 +91,6 @@ public class DecisionBkpsData {
 	public Map<DecisionLocation, BreakPoint> getSelfBkps() {
 		return selfBkps;
 	}
+
+	
 }

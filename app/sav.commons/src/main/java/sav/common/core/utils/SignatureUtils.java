@@ -92,12 +92,12 @@ public class SignatureUtils {
 		if (endNameIdx < 0) {
 			return methodNameOrSign;
 		}
-		String fullMethodName = methodNameOrSign.substring(0, endNameIdx);
-		if (fullMethodName.contains(".")) {
-			return fullMethodName.substring(fullMethodName.lastIndexOf("."),
-					fullMethodName.length() - 1);
+		String methodName = methodNameOrSign.substring(0, endNameIdx);
+		if (methodName.contains(".")) {
+			return methodName.substring(methodName.lastIndexOf("."),
+					methodName.length() - 1);
 		}
-		return fullMethodName;
+		return methodName;
 	}
 	
 	public static String extractSignature(String methodNameAndSign) {
@@ -105,7 +105,7 @@ public class SignatureUtils {
 		if (endNameIdx > 1) {
 			return methodNameAndSign.substring(endNameIdx);
 		}
-		return methodNameAndSign;
+		return StringUtils.EMPTY;
 	}
 	
 	public static String trimSignature(String typeSign) {
@@ -113,6 +113,10 @@ public class SignatureUtils {
 	}
 
 	public static String createMethodNameSign(String methodName, String signature) {
-		return methodName + signature;
+		return new StringBuilder(methodName).append(signature).toString();
+	}
+	
+	public static String createMethodNameSign(Method method) {
+		return createMethodNameSign(method.getName(), getSignature(method));
 	}
 }

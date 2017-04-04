@@ -101,7 +101,7 @@ public class BreakpointUtils {
 
 	public static BreakPoint toBreakPoint(ClassLocation location) {
 		BreakPoint breakpoint = new BreakPoint(
-				location.getClassCanonicalName(), location.getMethodSign(),
+				location.getClassCanonicalName(), location.getMethodName(),
 				location.getLineNo());
 		return breakpoint;
 	}

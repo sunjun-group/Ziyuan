@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
@@ -35,7 +36,10 @@ import org.eclipse.jdt.internal.core.PackageFragmentRoot;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 import learntest.main.LearnTestConfig;
+import sav.common.core.SavException;
 import sav.common.core.SavRtException;
+import sav.common.core.utils.ObjectUtils;
+import sav.common.core.utils.SignatureUtils;
 
 @SuppressWarnings("restriction")
 public class LearnTestUtil {
@@ -151,20 +155,48 @@ public class LearnTestUtil {
 	}
 	
 	public static MethodDeclaration findSpecificMethod(String className, String methodName, String lineNumberString){
-		int lineNumber = 0; 
-		try{
-			lineNumber = Integer.valueOf(lineNumberString);			
-		}catch (Exception e){}
-		
+		return findSpecificMethod(className, methodName, ObjectUtils.toInteger(lineNumberString, 0));
+	}
+
+	private static MethodDeclaration findSpecificMethod(String className, String methodName, int lineNumber) {
 		CompilationUnit cu = findCompilationUnitInProject(className);
-		
 		MethodFinder finder = new MethodFinder(lineNumber, cu, methodName);
-		
 		cu.accept(finder);
-		
 		return finder.requiredMD;
 	}
 	
+	private static String getMethodWthSignatureByBindingKey(String className, String methodName, int lineNumber) {
+		MethodDeclaration md = LearnTestUtil.findSpecificMethod(className, methodName, lineNumber);
+		String key = md.resolveBinding().getKey();
+		String mSig = key.substring(key.indexOf(".")+1);
+		return mSig;
+	}
+	
+	public static String getMethodWthSignature(String className, String methodName, int lineNumber)
+			throws SavException {
+		/* we cannot be sure if resolveBinding key is build in the same way as method signature, but this still works for now and faster,
+		 * otherwise, call getMethodWthSignatureBySignParser instead. */
+		return getMethodWthSignatureByBindingKey(className, methodName, lineNumber);
+	}
+	
+	/**
+	 * only the signature of method is returned, not include methodName. 
+	 * if you need full method name with signature, use
+	 * {@link LearnTestUtil#getMethodWthSignature(String, String, int)}
+	 */
+	public static String getMethodSignature(String className, String methodName, int lineNumber)
+			throws SavException {
+		return SignatureUtils.extractSignature(getMethodWthSignatureByBindingKey(className, methodName, lineNumber));
+	}
+
+	public static String getMethodWthSignatureBySignParser(String className, String methodName, int lineNumber)
+			throws SavException {
+		MethodDeclaration methodDecl = findSpecificMethod(className, methodName, lineNumber);
+		IMethod method = (IMethod) methodDecl.resolveBinding().getJavaElement();
+		String signature = SignatureParser.parse(method);
+		return signature;
+	}
+
 	public static List<IPackageFragmentRoot> findAllPackageRootInProject(){
 		List<IPackageFragmentRoot> rootList = new ArrayList<>();
 		IJavaProject project = getJavaProject();
@@ -184,7 +216,6 @@ public class LearnTestUtil {
 	}
 	
 	public static String retrieveTestSourceFolder() {
-//		String projectPath = LearnTestUtil.getProjectPath();
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.projectName);
 		IJavaProject javaProject = JavaCore.create(iProject);
@@ -237,26 +268,8 @@ public class LearnTestUtil {
 		return outputPath;
 	}
 	
-	@SuppressWarnings({ "rawtypes", "resource" })
-	public static Class retrieveClass(String qualifiedName){
-		String outputPath = getOutputPath();
-		File f = new File(outputPath);
-		URL[] cp = new URL[1];
-		try {
-			cp[0] = f.toURI().toURL();
-		} 
-		catch (MalformedURLException e){
-			e.printStackTrace();
-		}
-		URLClassLoader urlCL = new URLClassLoader(cp);
-		Class clazz = null;
-		try {
-			clazz = urlCL.loadClass(qualifiedName);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		
-		return clazz;
+	public static Class<?> retrieveClass(String qualifiedName) throws ClassNotFoundException{
+		return getPrjClassLoader().loadClass(qualifiedName);
 	}
 	
 	public static List<MethodDeclaration> findTestingMethod(CompilationUnit cu) {

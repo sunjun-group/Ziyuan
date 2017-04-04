@@ -21,7 +21,7 @@ public class MethodFinder extends ASTVisitor {
 	public boolean visit(MethodDeclaration md){
 		
 		if(md.getName().getFullyQualifiedName().equals(methodName)){
-			if(lineNumber == 0){
+			if(lineNumber <= 0){
 				requiredMD = md;
 			}
 			else{

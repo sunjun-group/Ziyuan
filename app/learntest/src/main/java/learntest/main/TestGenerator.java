@@ -5,7 +5,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.jacop.core.Domain;
 import org.jacop.floats.core.FloatDomain;
 
@@ -35,18 +34,12 @@ public class TestGenerator {
 	@SuppressWarnings("rawtypes")
 	public void genTest() throws ClassNotFoundException, SavException {
 		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(1);
-		builder.classLoader(LearnTestUtil.getPrjClassLoader()).queryMaxLength(1).testPerQuery(1);
-		MethodDeclaration md = LearnTestUtil.findSpecificMethod(LearnTestConfig.testClassName, 
-				LearnTestConfig.testMethodName, LearnTestConfig.methodLineNumber);
-		String key = md.resolveBinding().getKey();
-		String mSig = key.substring(key.indexOf(".")+1);
-//		Class clazz = Class.forName(LearnTestConfig.testClassName);
-		Class clazz = LearnTestUtil.retrieveClass(LearnTestConfig.testClassName);
-		
-		builder.forClass(clazz).method(mSig);
-		
-		//builder.forClass(Class.forName(LearnTestConfig.className));
-		
+		String mSig = LearnTestUtil.getMethodWthSignature(LearnTestConfig.targetClassName, 
+				LearnTestConfig.targetMethodName, LearnTestConfig.getMethodLineNumber());
+		Class clazz = LearnTestUtil.retrieveClass(LearnTestConfig.targetClassName);
+
+		builder.classLoader(LearnTestUtil.getPrjClassLoader()).queryMaxLength(1).testPerQuery(1)
+				.forClass(clazz).method(mSig);
 		String testSourceFolder = LearnTestUtil.retrieveTestSourceFolder();
 		
 		System.currentTimeMillis();
@@ -81,7 +74,7 @@ public class TestGenerator {
 		Recompiler recompiler = new Recompiler(new VMConfiguration(appClasspath));
 		recompiler.recompileJFile(appClasspath.getTestTarget(), generatedFiles);*/
 	}
-	
+
 	public void genTestAccordingToSolutions(List<Domain[]> solutions, List<ExecVar> vars) 
 			throws ClassNotFoundException, SavException {
 		MethodCall target = findTargetMethod();
@@ -197,9 +190,8 @@ public class TestGenerator {
 	}
 
 	private MethodCall findTargetMethod() throws ClassNotFoundException {
-//		Class<?> clazz = Class.forName(LearnTestConfig.testClassName);
-		Class<?> clazz = LearnTestUtil.retrieveClass(LearnTestConfig.testClassName);
-		Method method = MethodUtils.findMethod(clazz, LearnTestConfig.testMethodName);
+		Class<?> clazz = LearnTestUtil.retrieveClass(LearnTestConfig.targetClassName);
+		Method method = MethodUtils.findMethod(clazz, LearnTestConfig.targetMethodName);
 		if (Modifier.isPublic(method.getModifiers())) {
 			return MethodCall.of(method, clazz);
 		}

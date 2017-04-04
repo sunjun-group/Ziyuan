@@ -62,9 +62,9 @@ public class BreakPoint extends ClassLocation {
 		return lineNo > 0;
 	}
 	
-	public String getMethodSign() {
-		Assert.notNull(methodSign, "missing method name!");
-		return methodSign;
+	public String getMethodName() {
+		Assert.notNull(methodName, "missing method name!");
+		return methodName;
 	}
 	
 	public int getCharStart() {
@@ -90,7 +90,7 @@ public class BreakPoint extends ClassLocation {
 	@Override
 	public String toString() {
 		return "BreakPoint [classCanonicalName=" + classCanonicalName
-				+ ", methodName=" + methodSign + ", lineNo=" + lineNo
+				+ ", methodName=" + methodName + ", lineNo=" + lineNo
 				+ ", vars=" + vars + ", charStart=" + charStart + ", charEnd="
 				+ charEnd + "]";
 	}

@@ -8,8 +8,8 @@
 
 package sav.strategies.dto;
 
+import sav.common.core.Constants;
 import sav.common.core.utils.BreakpointUtils;
-import sav.common.core.utils.SignatureUtils;
 
 /**
  * @author LLT
@@ -18,12 +18,12 @@ import sav.common.core.utils.SignatureUtils;
 public class ClassLocation {
 	protected String id;
 	protected String classCanonicalName;
-	protected String methodSign; // methodName or signature
-	protected int lineNo = -1; // started with 1?
-
+	protected String methodName; 
+	protected int lineNo = Constants.UNKNOWN_LINE_NUMBER; 
+	
 	public ClassLocation(String className, String methodName, int lineNumber) {
 		this.classCanonicalName = className;
-		this.methodSign = methodName;
+		this.methodName = methodName;
 		this.lineNo = lineNumber;
 	}
 
@@ -35,12 +35,8 @@ public class ClassLocation {
 		this.classCanonicalName = classCanonicalName;
 	}
 
-	public String getMethodSign() {
-		return methodSign;
-	}
-
-	public void setMethodSign(String methodSign) {
-		this.methodSign = methodSign;
+	public String getMethodName() {
+		return methodName;
 	}
 
 	public int getLineNo() {
@@ -85,7 +81,4 @@ public class ClassLocation {
 		return this.id;
 	}
 	
-	public String getMethodName() {
-		return SignatureUtils.extractMethodName(methodSign);
-	}
 }

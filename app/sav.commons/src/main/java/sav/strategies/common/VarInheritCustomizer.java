@@ -76,7 +76,7 @@ public class VarInheritCustomizer implements IBreakpointCustomizer {
 
 	private String getClassMethod(BreakPoint bkp) {
 		return new StringBuilder(bkp.getClassCanonicalName()).append(".")
-				.append(bkp.getMethodSign()).toString();
+				.append(bkp.getMethodName()).toString();
 	}
 
 	public static enum InheritType {

@@ -481,19 +481,19 @@ public class EvaluationHandler extends AbstractHandler {
 				
 				if (!validMethods.isEmpty()) {
 					String className = LearnTestUtil.getFullNameOfCompilationUnit(cu);
-					LearnTestConfig.testClassName = className;
+					LearnTestConfig.targetClassName = className;
 
 					for (MethodDeclaration method : validMethods) {
 						String simpleMethodName = method.getName().getIdentifier();
-						LearnTestConfig.testMethodName = simpleMethodName;
+						LearnTestConfig.targetMethodName = simpleMethodName;
 						
 						int lineNumber = cu.getLineNumber(method.getName().getStartPosition());
-						LearnTestConfig.methodLineNumber = String.valueOf(lineNumber);
+						LearnTestConfig.targetMethodLineNum = String.valueOf(lineNumber);
 
 //						String methodName = className + "." + simpleMethodName;
 
-						System.out.println("working method: " + LearnTestConfig.testClassName + "."
-								+ LearnTestConfig.testMethodName);
+						System.out.println("working method: " + LearnTestConfig.targetClassName + "."
+								+ LearnTestConfig.targetMethodName);
 
 						try {
 							int times = 1;
@@ -539,8 +539,8 @@ public class EvaluationHandler extends AbstractHandler {
 								ranAverageInfo.time /= times;
 								ranAverageInfo.testCnt /= times;
 								
-								String fullMN = LearnTestConfig.testClassName + "."
-										+ LearnTestConfig.testMethodName;
+								String fullMN = LearnTestConfig.targetClassName + "."
+										+ LearnTestConfig.targetMethodName;
 								
 								int start = cu.getLineNumber(method.getStartPosition());
 								int end = cu.getLineNumber(method.getStartPosition()+method.getLength());

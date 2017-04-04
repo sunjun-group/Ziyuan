@@ -8,28 +8,31 @@
 
 package learntest.main;
 
+import learntest.main.model.MethodInfo;
+import learntest.util.LearnTestUtil;
+import sav.common.core.SavException;
+
 /**
  * @author LLT
  *
  */
 public class LearnTestParams {
 	private String filePath;
-	private String typeName;
-	private String className;
-	private String methodName;
 	private String testClass;
-	private int methodLineNum;
+	private MethodInfo targetMethodInfo;
 	
 	private boolean randomDecision;
 	
-	public static LearnTestParams initFromLearnTestConfig() {
+	public static LearnTestParams initFromLearnTestConfig() throws SavException {
 		LearnTestParams params = new LearnTestParams();
 		params.filePath = LearnTestConfig.getTestClassFilePath();
-		params.typeName = LearnTestConfig.getSimpleClassName();
-		params.className = LearnTestConfig.testClassName;
-		params.methodName = LearnTestConfig.testMethodName;
 		params.testClass = LearnTestConfig.getTestClass(LearnTestConfig.isL2TApproach);
-		params.methodLineNum = LearnTestConfig.getMethodLineNumber();
+
+		String className = LearnTestConfig.targetClassName;
+		String methodName = LearnTestConfig.targetMethodName;
+		int lineNumber = LearnTestConfig.getMethodLineNumber();
+		String methodSign = LearnTestUtil.getMethodSignature(className, methodName, lineNumber);
+		params.targetMethodInfo = new MethodInfo(className, methodName, methodSign, lineNumber);
 		return params;
 	}
 
@@ -41,44 +44,12 @@ public class LearnTestParams {
 		this.filePath = filePath;
 	}
 
-	public String getTypeName() {
-		return typeName;
-	}
-
-	public void setTypeName(String typeName) {
-		this.typeName = typeName;
-	}
-
-	public String getClassName() {
-		return className;
-	}
-
-	public void setClassName(String className) {
-		this.className = className;
-	}
-
-	public String getMethodName() {
-		return methodName;
-	}
-
-	public void setMethodName(String methodName) {
-		this.methodName = methodName;
-	}
-
 	public String getTestClass() {
 		return testClass;
 	}
 
 	public void setTestClass(String testClass) {
 		this.testClass = testClass;
-	}
-
-	public int getMethodLineNum() {
-		return methodLineNum;
-	}
-
-	public void setMethodLineNum(int methodLineNum) {
-		this.methodLineNum = methodLineNum;
 	}
 
 	public boolean isRandomDecision() {
@@ -89,4 +60,7 @@ public class LearnTestParams {
 		this.randomDecision = randomDecision;
 	}
 	
+	public MethodInfo getTestMethodInfo() {
+		return targetMethodInfo;
+	}
 }

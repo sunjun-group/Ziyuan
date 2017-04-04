@@ -35,6 +35,7 @@ import learntest.cfg.javasource.BreakpointCreator;
 import learntest.cfg.javasource.CfgHandler;
 import learntest.exception.LearnTestException;
 import learntest.main.LearnTestParams;
+import learntest.main.model.MethodInfo;
 import learntest.util.LearnTestUtil;
 import sav.strategies.dto.BreakPoint.Variable;
 
@@ -49,16 +50,16 @@ public class CfgHandlerScInitializer {
 		CompilationUnit cu;
 		try {
 			cu = JavaParser.parse(new File(params.getFilePath()));
-			MethodDeclaration method = getMethod(cu, params);
+			MethodDeclaration method = getMethod(cu, params.getTestMethodInfo());
 			List<Variable> variables = prepareVariables(cu, method);
 			// create cfg
-			return initCfgHanlder(method, params, variables);
+			return initCfgHanlder(method, params.getTestMethodInfo(), variables);
 		} catch (ParseException | IOException e) {
 			throw new LearnTestException(e);
 		}
 	}
 	
-	private CfgHandler initCfgHanlder(MethodDeclaration method, LearnTestParams params, List<Variable> variables)
+	private CfgHandler initCfgHanlder(MethodDeclaration method, MethodInfo targetMethodInfo, List<Variable> variables)
 			throws ParseException, IOException {
 		CfgCreator creator = new CfgCreator();
 		CFG cfg1 = creator.toCFG(method);
@@ -72,7 +73,7 @@ public class CfgHandlerScInitializer {
 			returns.add(returnNode.getBeginLine());
 		}
 
-		BreakpointCreator bkpCreator = new BreakpointCreator(params.getClassName(), params.getMethodName(), variables,
+		BreakpointCreator bkpCreator = new BreakpointCreator(targetMethodInfo, variables,
 				returns);
 
 		return new CfgHandler(cfg, bkpCreator);
@@ -120,11 +121,12 @@ public class CfgHandlerScInitializer {
 		return fields;
 	}
 	
-	private MethodDeclaration getMethod (CompilationUnit cu, LearnTestParams params) {
-		String methodName = params.getMethodName();
-		int lineNumber = params.getMethodLineNum();
+	private MethodDeclaration getMethod (CompilationUnit cu, MethodInfo targetMethodInfo) {
+		String methodName = targetMethodInfo.getMethodName();
+		int lineNumber = targetMethodInfo.getLineNum();
+		String classSimpleName = targetMethodInfo.getClassSimpleName();
 		for (TypeDeclaration type : cu.getTypes()) {
-			if (type.getName().equals(params.getTypeName())) {
+			if (type.getName().equals(classSimpleName)) {
 				for (BodyDeclaration body : type.getMembers()) {
 					if (body instanceof MethodDeclaration) {
 						MethodDeclaration method = (MethodDeclaration) body;

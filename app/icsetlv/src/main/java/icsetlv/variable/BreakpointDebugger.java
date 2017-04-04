@@ -99,20 +99,19 @@ public abstract class BreakpointDebugger {
 					break;
 				}
 				for (Event event : eventSet) {
-					
-					if(SAVTimer.isTimeOut()){
+
+					if (SAVTimer.isTimeOut()) {
 						throw new SAVExecutionTimeOutException("Time out at retrieving runtime data");
 					}
-					
-					if(System.currentTimeMillis()-startTime > 5000){
+
+					if (System.currentTimeMillis() - startTime > 5000) {
 						System.err.println("run time over 5s, stop");
 						stop = true;
 						eventTimeout = true;
 						exitTimeOutVM = true;
 					}
-					
-					if (event instanceof VMDeathEvent
-							|| event instanceof VMDisconnectEvent) {
+
+					if (event instanceof VMDeathEvent || event instanceof VMDisconnectEvent) {
 						stop = true;
 						break;
 					} else if (event instanceof ClassPrepareEvent) {
@@ -124,10 +123,10 @@ public abstract class BreakpointDebugger {
 						// breakpoints
 						addBreakpointWatch(vm, refType, locBrpMap);
 						System.currentTimeMillis();
-						
+
 					} else if (event instanceof BreakpointEvent) {
 						BreakpointEvent bkpEvent = (BreakpointEvent) event;
-						
+
 						BreakPoint bkp = locBrpMap.get(bkpEvent.location().toString());
 						handleBreakpointEvent(bkp, vm, bkpEvent);
 					}
@@ -150,22 +149,21 @@ public abstract class BreakpointDebugger {
 			
 			/* end of debug */
 			afterDebugging();
-		}
-		catch(SAVExecutionTimeOutException e){
-			if(vm != null){
+		} catch (SAVExecutionTimeOutException e) {
+			if (vm != null) {
 				vm.exit(0);
 			}
 			throw new SAVExecutionTimeOutException("Time out at retrieving runtime data");
-		}
-		finally{
-			if(vm != null){
-				try{
-					vm.exit(0);					
-				}catch(Exception e){}
+		} finally {
+			if (vm != null) {
+				try {
+					vm.exit(0);
+				} catch (Exception e) {
+				}
 				vm = null;
 			}
 		}
-		
+
 	}
 
 	/** abstract methods */
@@ -237,7 +235,6 @@ public abstract class BreakpointDebugger {
 		try {
 			List<Location> locations = refType.locationsOfLine(lineNumber);
 			for(Location location: locations) {
-//				Location location = locations.get(0);
 				BreakpointRequest breakpointRequest = vm.eventRequestManager()
 						.createBreakpointRequest(location);
 				breakpointRequest.setEnabled(true);

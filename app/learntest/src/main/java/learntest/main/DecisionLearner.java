@@ -172,7 +172,7 @@ public class DecisionLearner implements CategoryCalculator {
 			}
 			
 			File file = new File("trees/" + LearnTestConfig.getSimpleClassName() + "." 
-					+ LearnTestConfig.testMethodName);
+					+ LearnTestConfig.targetMethodName);
 			FileWriter writer = new FileWriter(file);
 			for (Entry<DecisionLocation, Pair<Formula, Formula>> entry : entrySet) {
 				writer.write(entry.getKey() + "\n");

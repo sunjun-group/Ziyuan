@@ -76,4 +76,15 @@ public class ObjectUtils {
 		}
 		return Boolean.valueOf(val);
 	}
+	
+	public static int toInteger(String val, int defaultIfInvalid) {
+		if (StringUtils.isEmpty(val)) {
+			return defaultIfInvalid;
+		}
+		try {
+			return Integer.valueOf(val);
+		} catch (Exception e) {
+			return defaultIfInvalid;
+		}
+	}
 }

@@ -48,9 +48,9 @@ public class LearnTest {
 	}
 	
 	public RunTimeInfo run(boolean random) throws LearnTestException {
-		LearnTestParams params = LearnTestParams.initFromLearnTestConfig();
-		params.setRandomDecision(random);
 		 try {
+			 LearnTestParams params = LearnTestParams.initFromLearnTestConfig();
+			 params.setRandomDecision(random);
 			return run(params);
 		} catch (ParseException e) {
 			throw new LearnTestException(e);

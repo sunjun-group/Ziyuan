@@ -12,6 +12,7 @@ import common.cfg.CfgDecisionNode;
 import common.cfg.CfgNode;
 import learntest.breakpoint.data.DecisionBkpsData;
 import learntest.breakpoint.data.DecisionLocation;
+import learntest.main.model.MethodInfo;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 
@@ -29,9 +30,9 @@ public class BreakpointCreator {
 	private DecisionBkpsData decisionBkpData;
 	
 
-	public BreakpointCreator(String className, String methodName, List<Variable> variables, Set<Integer> returns) {
-		this.className = className;
-		this.methodName = methodName;
+	public BreakpointCreator(MethodInfo methodInfo, List<Variable> variables, Set<Integer> returns) {
+		this.className = methodInfo.getClassName();
+		this.methodName = methodInfo.getMethodName();
 		this.variables = variables;
 		this.returns = returns;
 	}

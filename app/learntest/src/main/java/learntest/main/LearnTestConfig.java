@@ -11,22 +11,22 @@ public class LearnTestConfig {
 	public static final String MODULE = "learntest";
 	
 	public static String projectName;
-	public static String testClassName;
-	public static String testMethodName;
+	public static String targetClassName;
+	public static String targetMethodName;
 	public static boolean isL2TApproach;
-	public static String methodLineNumber;
+	public static String targetMethodLineNum;
 	
 	static{
 		if(Activator.getDefault() != null){
 			try{
 				projectName = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.TARGET_PORJECT);
-				testClassName = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.CLASS_NAME);
-				testMethodName = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.METHOD_NAME);
+				targetClassName = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.CLASS_NAME);
+				targetMethodName = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.METHOD_NAME);
 				String L2TString = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.IS_L2T);
 				if(L2TString != null){
 					isL2TApproach = Boolean.valueOf(L2TString);
 				}
-				methodLineNumber = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.METHOD_LINE_NUMBER);
+				targetMethodLineNum = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.METHOD_LINE_NUMBER);
 			}
 			catch(Exception e){
 				e.printStackTrace();
@@ -37,7 +37,7 @@ public class LearnTestConfig {
 	
 //	public static String typeName = "Triangle";
 	public static String getSimpleClassName(){
-		String name = testClassName.substring(testClassName.lastIndexOf(".")+1, testClassName.length());
+		String name = targetClassName.substring(targetClassName.lastIndexOf(".")+1, targetClassName.length());
 		return name;
 	}
 	
@@ -47,7 +47,7 @@ public class LearnTestConfig {
 		String approachName = isL2T ? "l2t" : "ram"; 
 		
 		String packName = "testdata." + approachName + ".test.init." +
-				getSimpleClassName().toLowerCase() + "." + testMethodName.toLowerCase();
+				getSimpleClassName().toLowerCase() + "." + targetMethodName.toLowerCase();
 		return packName;
 	}
 	
@@ -65,20 +65,20 @@ public class LearnTestConfig {
 		String approachName = isL2T ? "l2t" : "ram"; 
 		
 		String resultPack = "testdata." + approachName + ".result." + 
-				getTestPackageName(isL2T).toLowerCase() + "." + testMethodName.toLowerCase();
+				getTestPackageName(isL2T).toLowerCase() + "." + targetMethodName.toLowerCase();
 		return resultPack;
 	}
 	
 //	public static String filePath = "F:/git_space/Ziyuan_master/Ziyuan/app/learntest/src/test/java/testdata/example/" + typeName + ".java";
 	public static String getTestClassFilePath(){
-		ICompilationUnit icu = LearnTestUtil.findICompilationUnitInProject(testClassName);
+		ICompilationUnit icu = LearnTestUtil.findICompilationUnitInProject(targetClassName);
 		return LearnTestUtil.getOsPath(icu);
 	}
 
 	public static int getMethodLineNumber() {
 		int lineNumber = 0;
 		try{
-			lineNumber = Integer.valueOf(methodLineNumber);
+			lineNumber = Integer.valueOf(targetMethodLineNum);
 		}catch(Exception e){}
 		
 		return lineNumber;
