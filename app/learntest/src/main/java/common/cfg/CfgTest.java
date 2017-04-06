@@ -8,15 +8,10 @@
 
 package common.cfg;
 
-import gentest.GentestForTestdataRunner;
-import gentest.builder.RandomTraceGentestBuilder;
-import sav.commons.testdata.BoundedStack;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+
+import org.junit.Test;
 
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
@@ -25,17 +20,7 @@ import japa.parser.ast.Node;
 import japa.parser.ast.body.BodyDeclaration;
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.TypeDeclaration;
-
-import org.junit.Test;
-
-import common.cfg.CFG;
-import common.cfg.CfgCreator;
 import sav.common.core.SavException;
-import sav.java.parser.cfg.CfgEdge;
-import sav.java.parser.cfg.CfgEntryNode;
-import sav.java.parser.cfg.CfgFactory;
-import sav.java.parser.cfg.CfgNode;
-import learntest.gentest.PrimitiveParameterGenerator;
 
 /**
  * @author LLT

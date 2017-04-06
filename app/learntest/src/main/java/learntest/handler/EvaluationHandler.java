@@ -396,10 +396,7 @@ public class EvaluationHandler extends AbstractHandler {
 			private RunTimeCananicalInfo runEvaluation(IPackageFragment pack, TrialExcelHandler excelHandler) throws JavaModelException {
 				int validSum = 0;
 				int totalSum = 0;
-				
 				int totalLength = 0;
-				
-//				ExcelWriter2 writer2 = new ExcelWriter2();
 				
 				for (IJavaElement javaElement : pack.getChildren()) {
 					if (javaElement instanceof IPackageFragment) {
@@ -411,7 +408,7 @@ public class EvaluationHandler extends AbstractHandler {
 						int length0 = cu.getLineNumber(cu.getStartPosition()+cu.getLength()-1);
 						totalLength += length0;
 						
-						if(cu.types().isEmpty()){
+						if (cu.types().isEmpty()) {
 							continue;
 						}
 						

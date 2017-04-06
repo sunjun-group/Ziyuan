@@ -8,9 +8,8 @@
 
 package common.cfg;
 
-import static sav.java.parser.cfg.AstUtils.markNodeAsFake;
-import static sav.java.parser.cfg.AstUtils.markNodesAsFake;
-
+import static common.cfg.AstUtils.markNodeAsFake;
+import static common.cfg.AstUtils.markNodesAsFake;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +27,8 @@ import japa.parser.ast.stmt.ForStmt;
 import japa.parser.ast.stmt.ForeachStmt;
 import japa.parser.ast.stmt.Statement;
 import japa.parser.ast.type.PrimitiveType;
-import japa.parser.ast.type.Type;
 import japa.parser.ast.type.PrimitiveType.Primitive;
+import japa.parser.ast.type.Type;
 import japa.parser.ast.visitor.CloneVisitor;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;

@@ -22,4 +22,5 @@ public class TrialExcelConstants {
 	public static final String FILE_IDX_START_CH = "_";
 	public static final int DATA_SHEET_HEADER_ROW_IDX = 0;
 	public static final String METHOD_ID_SEPARATOR = "_";
+	public static final boolean DEFAULT_EXCEL_APPEND = true;
 }

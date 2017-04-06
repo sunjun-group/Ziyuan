@@ -36,7 +36,7 @@ public class TrialExcelHandler {
 	private TrialExcelWriter writer;
 	
 	public TrialExcelHandler(String trialFilePrefix) throws Exception {
-		this(trialFilePrefix, true);
+		this(trialFilePrefix, TrialExcelConstants.DEFAULT_EXCEL_APPEND);
 	}
 	
 	public TrialExcelHandler(String trialFilePrefix, boolean appendLastFile) throws Exception {
