@@ -36,6 +36,7 @@ import org.eclipse.jdt.internal.core.PackageFragmentRoot;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 import learntest.main.LearnTestConfig;
+import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.ObjectUtils;
@@ -176,7 +177,8 @@ public class LearnTestUtil {
 			throws SavException {
 		/* we cannot be sure if resolveBinding key is build in the same way as method signature, but this still works for now and faster,
 		 * otherwise, call getMethodWthSignatureBySignParser instead. */
-		return getMethodWthSignatureByBindingKey(className, methodName, lineNumber);
+//		return getMethodWthSignatureByBindingKey(className, methodName, lineNumber);
+		return getMethodWthSignatureBySignParser(className, methodName, lineNumber);
 	}
 	
 	/**
@@ -186,7 +188,14 @@ public class LearnTestUtil {
 	 */
 	public static String getMethodSignature(String className, String methodName, int lineNumber)
 			throws SavException {
-		return SignatureUtils.extractSignature(getMethodWthSignatureByBindingKey(className, methodName, lineNumber));
+		MethodDeclaration methodDecl = findSpecificMethod(className, methodName, lineNumber);
+		IMethod method = (IMethod) methodDecl.resolveBinding().getJavaElement();
+		try {
+			return SignatureParser.getMethodSignature(method);
+		} catch(JavaModelException e) {
+			throw new SavException(ModuleEnum.UNSPECIFIED, e, e.getMessage());
+		}
+//		return SignatureUtils.extractSignature(getMethodWthSignatureByBindingKey(className, methodName, lineNumber));
 	}
 
 	public static String getMethodWthSignatureBySignParser(String className, String methodName, int lineNumber)

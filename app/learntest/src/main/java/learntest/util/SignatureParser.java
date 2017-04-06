@@ -145,12 +145,16 @@ public class SignatureParser {
 
 	public static String parse(IMethod method) throws SavException {
 		try {
-			String signature = new SignatureParser(method.getDeclaringType())
-					.toMethodJVMSignature(method.getParameterTypes(), method.getReturnType());
+			String signature = getMethodSignature(method);
 			return SignatureUtils.createMethodNameSign(method.getElementName(), signature);
 		} catch (Exception e) {
 			throw new SavException(ModuleEnum.UNSPECIFIED, e, "Cannot parse methodSignature for method: ", method);
 		}
 		
+	}
+
+	public static String getMethodSignature(IMethod method) throws SavException, JavaModelException {
+		return new SignatureParser(method.getDeclaringType())
+				.toMethodJVMSignature(method.getParameterTypes(), method.getReturnType());
 	}
 }
