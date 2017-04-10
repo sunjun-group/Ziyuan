@@ -45,7 +45,7 @@ public class MethodSignatureGetter {
 		List<String> signs = new ArrayList<String>();
 		for (Method method : clazz.getMethods()) {
 			if (method.getName().equals(methodName)) {
-				signs.add(SignatureUtils.getSignature(method));
+				signs.add(SignatureUtils.createMethodNameSign(method));
 			}
 		}
 		return signs;

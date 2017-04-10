@@ -63,7 +63,7 @@ public class ExecutionTimerTest {
 		Assert.assertTrue(System.currentTimeMillis() - start < 10000);
 	}
 	
-	@Test
+//	@Test
 	public void testFutureTaskLoop() throws InterruptedException, ExecutionException {
 		FutureTask<?> theTask = null;
 		final List<String> result = new ArrayList<String>();

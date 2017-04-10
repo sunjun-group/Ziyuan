@@ -113,6 +113,10 @@ public class SignatureUtils {
 	}
 
 	public static String createMethodNameSign(String methodName, String signature) {
-		return methodName + signature;
+		return new StringBuilder(methodName).append(signature).toString();
+	}
+	
+	public static String createMethodNameSign(Method method) {
+		return createMethodNameSign(method.getName(), getSignature(method));
 	}
 }

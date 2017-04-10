@@ -13,26 +13,26 @@
 	<dependencies>
 		<!-- java slicer [need a stable nexus server for mvn 
 			in order to use this way, so temporary we only use these as external libraries]-->
-<!-- 		<dependency> -->
-<!-- 			<groupId>de.unisb.cs.st</groupId> -->
-<!-- 			<artifactId>slicer</artifactId> -->
-<!-- 			<version>${javaslicer-version}</version> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>de.unisb.cs.st</groupId> -->
-<!-- 			<artifactId>tracer</artifactId> -->
-<!-- 			<version>${javaslicer-version}</version> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>de.unisb.cs.st</groupId> -->
-<!-- 			<artifactId>traceReader</artifactId> -->
-<!-- 			<version>${javaslicer-version}</version> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>de.unisb.cs.st</groupId> -->
-<!-- 			<artifactId>visualize</artifactId> -->
-<!-- 			<version>${javaslicer-version}</version> -->
-<!-- 		</dependency> -->
+		<dependency>
+			<groupId>de.unisb.cs.st</groupId>
+			<artifactId>slicer</artifactId>
+			<version>${javaslicer-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.unisb.cs.st</groupId>
+			<artifactId>tracer</artifactId>
+			<version>${javaslicer-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.unisb.cs.st</groupId>
+			<artifactId>traceReader</artifactId>
+			<version>${javaslicer-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.unisb.cs.st</groupId>
+			<artifactId>visualize</artifactId>
+			<version>${javaslicer-version}</version>
+		</dependency>
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>

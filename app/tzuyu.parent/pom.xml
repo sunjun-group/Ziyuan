@@ -46,7 +46,7 @@
 		<toolsjar>${java.home}/../lib/tools.jar</toolsjar>
 		<toolsjar-version>${java.version}</toolsjar-version>
 		<tzuyu.libs>${basedir}/../tzuyuEclipsePlugin/libs</tzuyu.libs>
-		<reflections-version>0.9.8</reflections-version>
+		<reflections-version>0.9.11</reflections-version>
 
 		<!-- repository -->
 		<repo-url-snapshots>http://52.89.202.3:8081/nexus/content/repositories/snapshots</repo-url-snapshots>

@@ -28,11 +28,11 @@
 	</build>
 
 	<dependencies>
-<!-- 		<dependency> -->
-<!-- 			<groupId>net.sf.javailp</groupId> -->
-<!-- 			<artifactId>javailp</artifactId> -->
-<!-- 			<version>${javailp-version}</version> -->
-<!-- 		</dependency> -->
+		<dependency>
+			<groupId>net.sf.javailp</groupId>
+			<artifactId>javailp</artifactId>
+			<version>${javailp-version}</version>
+		</dependency>
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>svmlib</artifactId>
