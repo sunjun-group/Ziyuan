@@ -21,6 +21,7 @@ import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.ICounter;
+import org.jacoco.core.analysis.ICoverageVisitor;
 import org.jacoco.core.analysis.ILine;
 import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataReader;
@@ -46,8 +47,8 @@ import sav.strategies.junit.JunitResult;
  *
  */
 public class ExecutionDataReporter {
-	private Logger log = LoggerFactory.getLogger(ExecutionDataReporter.class);
-	private ICoverageReport report;
+	protected Logger log = LoggerFactory.getLogger(ExecutionDataReporter.class);
+	protected ICoverageReport report;
 	private static final char JACOCO_FILE_SEPARATOR = '/';
 	/* target folder of testing project */
 	private List<String> targetFolders;
@@ -63,25 +64,10 @@ public class ExecutionDataReporter {
 	
 	public void report(String execFile, String junitResultFile,
 			final List<String> testingClassNames) throws SavException {
-		report(execFile, junitResultFile, new Analysis() {
-			
-			@Override
-			public void analyze(Analyzer analyzer) throws IOException {
-				for (String testingClassName : testingClassNames) {
-					analyzer.analyzeClass(getTargetClass(testingClassName),
-							testingClassName);
-				}
-			}
-			
-			@Override
-			public boolean accept(String coverageClassName) {
-				// do not display data for junit test file
-				return testingClassNames.contains(coverageClassName);
-			}
-		});
+		report(execFile, junitResultFile, getTestingClassAnalysis(testingClassNames));
 	}
-	
-	protected void report(String execFile, String junitResultFile, Analysis analysis) throws SavException {
+
+	protected void report(String execFile, String junitResultFile, IAnalysis analysis) throws SavException {
 		StopTimer timer = new StopTimer("Collect coverage data");
 		try {
 			timer.newPoint("Read execFile");
@@ -91,14 +77,14 @@ public class ExecutionDataReporter {
 			report.setFailTests(junitResult.getFailTests());
 			final CoverageBuilder coverageBuilder = new CoverageBuilder();
 			ExecutionDataStore dataStore = new ExecutionDataStore();
-			final Analyzer analyzer = new Analyzer(dataStore, coverageBuilder);
+			analysis.initAnalyzer(dataStore, coverageBuilder);
 			int testcaseIdx = 0;
 			for (String session : execDataMap.keySet()) {
 				dataStore.reset();
 				for (ExecutionData data : execDataMap.get(session)) {
 					dataStore.put(data);
 				}
-				analysis.analyze(analyzer);
+				analysis.analyze(testcaseIdx);
 				/* report data */
 				boolean isPass = junitResult.getResult(testcaseIdx);
 				// Let's dump some metrics and line coverage information:
@@ -109,6 +95,8 @@ public class ExecutionDataReporter {
 								.getLastLine(); j++) {
 							ILine lineInfo = cc.getLine(j);
 							if (lineInfo.getStatus() != ICounter.EMPTY) {
+								lineInfo.getInstructionCounter();
+								
 								boolean isCovered = lineInfo.getStatus() != ICounter.NOT_COVERED;
 								report.addInfo(testcaseIdx, coverageClassName,
 										j,
@@ -125,16 +113,20 @@ public class ExecutionDataReporter {
 					.getFailureTraces()));
 			timer.logResults(log);
 		} catch (IOException e) {
-			throw new SavException(ModuleEnum.SLICING, e);
+			throw new SavException(ModuleEnum.UNDEFINED, e);
 		}
 	}
 	
-	public void report(String execFile, String junitResultFile,
+	protected void report(String execFile, String junitResultFile,
 			final String targetFolder) throws SavException {
-		report(execFile, junitResultFile, new Analysis() {
+		report(execFile, junitResultFile, getTargetFolderAnalysis(targetFolder));
+	}
+
+	private AbstractAnalysis getTargetFolderAnalysis(final String targetFolder) {
+		return new AbstractAnalysis() {
 
 			@Override
-			public void analyze(Analyzer analyzer) throws IOException {
+			public void analyze(int testcaseIdx) throws IOException {
 				analyzer.analyzeAll(new File(targetFolder));
 			}
 
@@ -142,14 +134,34 @@ public class ExecutionDataReporter {
 			public boolean accept(String clazz) {
 				return true;
 			}
-		});
+		};
 	}
+	
+	private AbstractAnalysis getTestingClassAnalysis(final List<String> testingClassNames) {
+		return new AbstractAnalysis() {
+			
+			@Override
+			public void analyze(int testcaseIdx) throws IOException {
+				for (String testingClassName : testingClassNames) {
+					analyzer.analyzeClass(getTargetClass(testingClassName),
+							testingClassName);
+				}
+			}
+			
+			@Override
+			public boolean accept(String coverageClassName) {
+				// do not display data for junit test file
+				return testingClassNames.contains(coverageClassName);
+			}
+		};
+	}
+	
 
-	private String getClassName(String name) {
+	protected String getClassName(String name) {
 		return name.replace(JACOCO_FILE_SEPARATOR, '.');
 	}
 
-	private InputStream getTargetClass(String className) throws IOException {
+	public InputStream getTargetClass(String className) throws IOException {
 		if (!targetFolders.isEmpty()) {
 			for (String target : targetFolders) {
 				File file = new File(ClassUtils.getClassFilePath(target, className));
@@ -165,7 +177,7 @@ public class ExecutionDataReporter {
 		throw new SavRtException("Cannot find .class file for class " + className);
 	}
 	
-	private Map<String, List<ExecutionData>> read(final String file)
+	protected Map<String, List<ExecutionData>> read(final String file)
 			throws IOException {
 		if (log.isDebugEnabled()) {
 			log.debug("read exec file ", file);
@@ -202,8 +214,20 @@ public class ExecutionDataReporter {
 		}
 	}
 	
-	private static interface Analysis {
-		void analyze(Analyzer analyzer) throws IOException;
-		boolean accept(String coverageClassName);
+	public interface IAnalysis {
+		public void analyze(int testcaseIdx) throws IOException;
+		public boolean accept(String coverageClassName);
+		public void initAnalyzer(ExecutionDataStore dataStore, ICoverageVisitor coverageBuilder);
 	}
+	
+	public abstract class AbstractAnalysis implements IAnalysis {
+		protected Analyzer analyzer;
+
+		@Override
+		public void initAnalyzer(ExecutionDataStore dataStore, ICoverageVisitor coverageBuilder) {
+			analyzer = new Analyzer(dataStore, coverageBuilder);
+		}
+
+	}
+
 }

@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>tzuyu-project</groupId>
+	<artifactId>cfg-jacoco-rt</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<properties>
+		<jacoco-version>0.7.10-SNAPSHOT</jacoco-version>
+		<slf4j-log4j-binding>slf4j-log4j12</slf4j-log4j-binding>
+		<slf4j-version>1.7.12</slf4j-version>
+		<asm.version>5.2</asm.version>
+	</properties>
+	<dependencies>
+		<!-- internal dependencies -->
+		<dependency>
+			<artifactId>codecoverage.jacoco</artifactId>
+			<groupId>tzuyu-project</groupId>
+			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jacoco</groupId>
+					<artifactId>org.jacoco.core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jacoco</groupId>
+					<artifactId>org.jacoco.agent</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.graphstream/gs-core -->
+		<dependency>
+			<groupId>org.graphstream</groupId>
+			<artifactId>gs-core</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>org.jacoco.core</artifactId>
+			<version>${jacoco-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>org.jacoco.agent</artifactId>
+			<version>${jacoco-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm-debug-all</artifactId>
+			<version>${asm.version}</version>
+		</dependency>
+		<!-- for test -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>${slf4j-log4j-binding}</artifactId>
+			<version>${slf4j-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>codecoverage.jacoco</artifactId>
+			<groupId>tzuyu-project</groupId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jacoco</groupId>
+					<artifactId>org.jacoco.core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jacoco</groupId>
+					<artifactId>org.jacoco.agent</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>sav.commons</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+		</dependency>
+	</dependencies>
+</project>

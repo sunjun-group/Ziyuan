@@ -34,14 +34,14 @@ public class CodeCoverageCounter extends TzuyuCore {
 	}
 
 	public int count(FaultLocateParams params) throws Exception {
-		CoverageCountReport reporter = new CoverageCountReport();
+		CoverageCountReport countReport = new CoverageCountReport();
 		JaCoCo codeCoverageTool = (JaCoCo) appContext.getCodeCoverageTool();
-		codeCoverageTool.setReporter(getReporter()); 
+		codeCoverageTool.setExecutionDataReporter(getReporter()); 
 	
-		codeCoverageTool.run(reporter, params.getTestingClassNames(),
+		codeCoverageTool.run(countReport, params.getTestingClassNames(),
 				params.getJunitClassNames());
-		logBkps(reporter.bpks);
-		return reporter.bpks.size();
+		logBkps(countReport.bpks);
+		return countReport.bpks.size();
 	}
 	
 	private ExecutionDataReporter getReporter() {

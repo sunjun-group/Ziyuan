@@ -38,10 +38,14 @@ public class JaCoCo implements ICodeCoverage {
 	private AppJavaClassPath appClasspath;
 	
 	public JaCoCo(AppJavaClassPath appClasspath) {
-		reporter = new ExecutionDataReporter(new String[] {
-				appClasspath.getTarget(), appClasspath.getTestTarget() });
+		reporter = initReport(appClasspath);
 		this.appClasspath = appClasspath;
 		report = null;
+	}
+
+	protected ExecutionDataReporter initReport(AppJavaClassPath appClasspath) {
+		return new ExecutionDataReporter(new String[] {
+				appClasspath.getTarget(), appClasspath.getTestTarget() });
 	}
 	
 	@Override
@@ -101,11 +105,11 @@ public class JaCoCo implements ICodeCoverage {
 		reporter.report(destfile, junitResultFile, testingClassNames);
 	}
 	
-	public ExecutionDataReporter getReporter() {
+	protected ExecutionDataReporter getReporter() {
 		return reporter;
 	}
 	
-	public void setReporter(ExecutionDataReporter reporter) {
+	public void setExecutionDataReporter(ExecutionDataReporter reporter) {
 		this.reporter = reporter;
 	}
 }

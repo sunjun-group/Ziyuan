@@ -51,6 +51,7 @@
 			<artifactId>org.jacoco.agent</artifactId>
 			<version>${jacoco-version}</version>
 		</dependency>
+		<!-- internal dependencies -->
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
@@ -61,10 +62,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- for test -->
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
 			<type>test-jar</type>
 		</dependency>
+
 	</dependencies>
+
 </project>
