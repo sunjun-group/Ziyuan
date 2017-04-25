@@ -33,33 +33,25 @@ import sav.strategies.vm.VMConfiguration;
  */
 public class JaCoCo implements ICodeCoverage {
 	private Logger log = LoggerFactory.getLogger(JaCoCo.class);
-	private ICoverageReport report;
-	private ExecutionDataReporter reporter;
 	private AppJavaClassPath appClasspath;
 	
 	public JaCoCo(AppJavaClassPath appClasspath) {
-		reporter = initReport(appClasspath);
 		this.appClasspath = appClasspath;
-		report = null;
-	}
-
-	protected ExecutionDataReporter initReport(AppJavaClassPath appClasspath) {
-		return new ExecutionDataReporter(new String[] {
-				appClasspath.getTarget(), appClasspath.getTestTarget() });
 	}
 	
 	@Override
-	public void run(ICoverageReport reporter, List<String> testingClassNames,
+	public void run(ICoverageReport report, List<String> testingClassNames,
 			List<String> junitClassNames) throws Exception {
 		try { 
-			this.report = reporter;
-			run(testingClassNames, junitClassNames);
+			IExecutionReporter reporter = new ExecutionDataReporter(new String[] {
+					appClasspath.getTarget(), appClasspath.getTestTarget() });
+			run(reporter, testingClassNames, junitClassNames);
 		} catch (IOException e) {
 			throw new SavException(ModuleEnum.JVM, e);
 		}
 	}
-
-	private void run(List<String> testingClassNames,
+	
+	public void run(IExecutionReporter reporter, List<String> testingClassNames,
 			List<String> junitClassNames) throws SavException, IOException,
 			ClassNotFoundException {
 		log.debug("RUNNING JACOCO..");
@@ -76,8 +68,8 @@ public class JaCoCo implements ICodeCoverage {
 		vmRunner.setAnalyzedClassNames(testingClassNames);
 		VMConfiguration vmConfig = SavJunitRunner.createVmConfig(appClasspath);
 		vmConfig.setLaunchClass(JunitRunner.class.getName());
-		reporter.setReport(report);
 		List<String> testMethods = JunitUtils.extractTestMethods(junitClassNames);
+		reporter.setTestcases(testMethods);
 		@SuppressWarnings("unchecked")
 		List<String> allClassNames = CollectionUtils.join(testingClassNames,
 				junitClassNames);
@@ -103,13 +95,5 @@ public class JaCoCo implements ICodeCoverage {
 		}
 		
 		reporter.report(destfile, junitResultFile, testingClassNames);
-	}
-	
-	protected ExecutionDataReporter getReporter() {
-		return reporter;
-	}
-	
-	public void setExecutionDataReporter(ExecutionDataReporter reporter) {
-		this.reporter = reporter;
 	}
 }

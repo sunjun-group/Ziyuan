@@ -36,9 +36,9 @@ public class CodeCoverageCounter extends TzuyuCore {
 	public int count(FaultLocateParams params) throws Exception {
 		CoverageCountReport countReport = new CoverageCountReport();
 		JaCoCo codeCoverageTool = (JaCoCo) appContext.getCodeCoverageTool();
-		codeCoverageTool.setExecutionDataReporter(getReporter()); 
-	
-		codeCoverageTool.run(countReport, params.getTestingClassNames(),
+		ExecutionDataReporter reporter = getReporter();
+		reporter.setReport(countReport);
+		codeCoverageTool.run(reporter, params.getTestingClassNames(),
 				params.getJunitClassNames());
 		logBkps(countReport.bpks);
 		return countReport.bpks.size();
@@ -46,7 +46,7 @@ public class CodeCoverageCounter extends TzuyuCore {
 	
 	private ExecutionDataReporter getReporter() {
 		final AppJavaClassPath appClasspath = appContext.getAppData();
-		return new ExecutionDataReporter(appClasspath.getTarget()) {
+		return new ExecutionDataReporter(new String[]{appClasspath.getTarget()}) {
 			@Override
 			public void report(String execFile, String junitResultFile,
 					List<String> testingClassNames) throws SavException {
