@@ -36,12 +36,10 @@ public class CfgCoverageBuilder {
 	private int testcaseIdx;
 	private List<String> testMethods;
 	private boolean newCoverage;
-	private List<ExtInstruction> instrs;
 	private State state;
 	
 	public CfgCoverageBuilder() {
 		methodCfgMap = new HashMap<String, CfgCoverage>();
-		instrs = new ArrayList<>();
 	}
 	
 	public CfgCoverageBuilder startClass(String name, String signature) {
@@ -83,7 +81,6 @@ public class CfgCoverageBuilder {
 			cfgCoverage.addNode(extInstruction.getCfgNode());
 		} else {
 			extInstruction = new ExtInstruction(cfgNode);
-			instrs.add(extInstruction);
 		}
 		extInstruction.setTestcase(testMethods.get(testcaseIdx));
 		return extInstruction;

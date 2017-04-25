@@ -58,7 +58,7 @@ public class CfgCoverage {
 	}
 
 	public CfgNode getNode(int nodeIdx) {
-		if (nodeIdx >= nodeList.size() - 1) {
+		if (nodeIdx >= nodeList.size()) {
 			return null;
 		}
 		return nodeList.get(nodeIdx);
