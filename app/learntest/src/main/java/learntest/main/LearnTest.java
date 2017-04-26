@@ -2,6 +2,7 @@ package learntest.main;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,8 @@ import java.util.Set;
 import org.jacop.core.Domain;
 import org.jacop.floats.core.FloatIntervalDomain;
 
+import cfgcoverage.jacoco.CfgJaCoCo;
+import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import icsetlv.DefaultValues;
 import icsetlv.common.dto.BreakpointValue;
 import japa.parser.ParseException;
@@ -71,6 +74,10 @@ public class LearnTest {
 			return null;
 		}
 		
+		CfgJaCoCo cfgCoverage = new CfgJaCoCo(appClassPath);
+		List<CfgCoverage> cfgcoverage = cfgCoverage.run(Arrays.asList(params.getTestMethodInfo().getClassName()),
+				Arrays.asList(params.getTestClass()));
+		System.out.println(cfgcoverage);
 		ICfgHandler cfgHandler = new CfgHandlerAdapter(appClassPath, params, CfgAproach.SOURCE_CODE_LEVEL);
 		dtBuilder = new BreakpointDataBuilder(cfgHandler.getDecisionBkpsData());
 		

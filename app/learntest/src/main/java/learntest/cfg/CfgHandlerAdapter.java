@@ -37,6 +37,7 @@ public class CfgHandlerAdapter implements ICfgHandler {
 	}
 	
 	public CfgHandlerAdapter(AppJavaClassPath appClassPath, LearnTestParams params, CfgAproach approach) throws LearnTestException {
+		CfgHandlerBcInitializer.getINSTANCE().create(appClassPath, params);
 		switch (approach) {
 		case SOURCE_CODE_LEVEL:
 			cfgHandler = CfgHandlerScInitializer.getINSTANCE().create(params);

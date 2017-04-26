@@ -42,7 +42,6 @@ public class GenerateTestHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Job job = new Job("Do evaluation") {
-			
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				generateTest(LearnTestConfig.isL2TApproach);
@@ -50,7 +49,6 @@ public class GenerateTestHandler extends AbstractHandler {
 			}
 		};
 		job.schedule();
-		
 		
 		return null;
 	}
