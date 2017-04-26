@@ -39,7 +39,6 @@ public class ExecutionReporter extends AbstractExecutionReporter implements IExe
 		super(targetFolders);
 	}
 	
-	@Override
 	public void report(String execFile, String junitResultFile, List<String> testingClassNames) throws SavException {
 		StopTimer timer = new StopTimer("Collect coverage data");
 		try {
@@ -67,10 +66,13 @@ public class ExecutionReporter extends AbstractExecutionReporter implements IExe
 			}
 			timer.logResults(log);
 		} catch (IOException e) {
-			throw new SavException(ModuleEnum.SLICING, e);
+			throw new SavException(ModuleEnum.UNDEFINED, e);
 		}
 		List<CfgCoverage> coverage = coverageBuilder.getCoverage();
 		System.out.println(coverage);
 	}
 	
+	public List<CfgCoverage> getCoverage() {
+		return coverageBuilder.getCoverage();
+	}
 }

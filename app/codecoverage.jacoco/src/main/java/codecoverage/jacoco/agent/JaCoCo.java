@@ -11,6 +11,8 @@ package codecoverage.jacoco.agent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,7 @@ import sav.strategies.vm.VMConfiguration;
 public class JaCoCo implements ICodeCoverage {
 	private Logger log = LoggerFactory.getLogger(JaCoCo.class);
 	private AppJavaClassPath appClasspath;
+	private  Map<String, String> extraAgentParams; 
 	
 	public JaCoCo(AppJavaClassPath appClasspath) {
 		this.appClasspath = appClasspath;
@@ -65,6 +68,7 @@ public class JaCoCo implements ICodeCoverage {
 		JaCoCoVmRunner vmRunner = new JaCoCoVmRunner()
 					.setDestfile(destfile)
 					.setAppend(true);
+		addExtraAgentParams(vmRunner);
 		vmRunner.setAnalyzedClassNames(testingClassNames);
 		VMConfiguration vmConfig = SavJunitRunner.createVmConfig(appClasspath);
 		vmConfig.setLaunchClass(JunitRunner.class.getName());
@@ -95,5 +99,18 @@ public class JaCoCo implements ICodeCoverage {
 		}
 		
 		reporter.report(destfile, junitResultFile, testingClassNames);
+	}
+	
+	private void addExtraAgentParams(JaCoCoVmRunner vmRunner) {
+		if (extraAgentParams == null) {
+			return;
+		}
+		for (Entry<String, String> entry : extraAgentParams.entrySet()) {
+			vmRunner.addAgentParam(entry.getKey(), entry.getValue());
+		}
+	}
+
+	public void setMoreAgentParams(Map<String, String> extraAgentParams) {
+		this.extraAgentParams = extraAgentParams;
 	}
 }

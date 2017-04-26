@@ -60,6 +60,10 @@
 					<groupId>com.sun</groupId>
 					<artifactId>tools</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>commons-cli</groupId> <!-- for parsing command line -->
+					<artifactId>commons-cli</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<!-- for test -->

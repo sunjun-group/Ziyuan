@@ -9,9 +9,14 @@
 package cfgcoverage.jacoco;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import codecoverage.jacoco.agent.IExecutionReporter;
+import org.jacoco.core.data.ExecutionData.ProbesType;
+import org.jacoco.core.runtime.AgentOptions;
+
+import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import codecoverage.jacoco.agent.JaCoCo;
 import sav.common.core.SavException;
 import sav.strategies.dto.AppJavaClassPath;
@@ -27,13 +32,18 @@ public class CfgJaCoCo {
 	public CfgJaCoCo(AppJavaClassPath appClasspath) {
 		this.appClasspath = appClasspath;
 		jacoco = new JaCoCo(appClasspath);
+		Map<String, String> extraAgentParams = new HashMap<String, String>();
+		extraAgentParams.put(AgentOptions.PROBESTYPE, ProbesType.INTEGER.name());
+		jacoco.setMoreAgentParams(extraAgentParams);
 	}
 	
-	public void run(List<String> testingClassNames,
+	public List<CfgCoverage> run(List<String> testingClassNames,
 			List<String> junitClassNames) throws SavException, IOException,
 			ClassNotFoundException {
-		IExecutionReporter reporter = new ExecutionReporter(new String[] {
+		ExecutionReporter reporter = new ExecutionReporter(new String[] {
 				appClasspath.getTarget(), appClasspath.getTestTarget() });
 		jacoco.run(reporter, testingClassNames, junitClassNames);
+		return reporter.getCoverage();
 	}
+	
 }

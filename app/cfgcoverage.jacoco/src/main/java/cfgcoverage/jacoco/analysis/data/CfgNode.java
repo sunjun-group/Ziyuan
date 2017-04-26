@@ -23,6 +23,7 @@ import sav.common.core.utils.CollectionUtils;
  *
  */
 public class CfgNode {
+	private boolean isCondionalNode;
 	private List<CfgNode> branches;
 	private Map<String, List<CfgNode>> coveredBranches;
 	private List<CfgNode> predecessors;

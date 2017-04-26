@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>tzuyu-project</groupId>
-	<artifactId>cfg-jacoco-rt</artifactId>
+	<artifactId>cfgcoverage.jacoco</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
@@ -10,13 +10,83 @@
 		<slf4j-log4j-binding>slf4j-log4j12</slf4j-log4j-binding>
 		<slf4j-version>1.7.12</slf4j-version>
 		<asm.version>5.2</asm.version>
+<!-- 		<cfgcoverage.libs.target>${basedir}/../../etc/libs/cfgcoverage</cfgcoverage.libs.target> -->
+		<cfgcoverage.libs.target>${basedir}/../../../Ziyuan-branches/learntest-eclipse/app/learntest/lib</cfgcoverage.libs.target>
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
+		<shade.pkg.prefix>cfgcoverage</shade.pkg.prefix>
+		<maven-source-plugin-version>2.4</maven-source-plugin-version>
 	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven-source-plugin-version}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- create shaded jar -->
+			<plugin>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<minimizeJar>true</minimizeJar>
+							<shadedArtifactAttached>true</shadedArtifactAttached>
+							<finalName>cfgcoverage.jacoco-${timestamp}.jar</finalName>
+							<outputFile>${cfgcoverage.libs.target}/cfgcoverage.jacoco-${timestamp}.jar</outputFile>
+							<createSourcesJar>true</createSourcesJar>
+							<outputDirectory>${cfgcoverage.libs.target}</outputDirectory>
+							<shadeSourcesContent>true</shadeSourcesContent>
+							<artifactSet>
+								<excludes>
+									<exclude>tzuyu-project:sav.commons</exclude>
+									<exclude>commons-io:commons-io</exclude>
+									<exclude>commons-lang:commons-lang</exclude>
+									<exclude>junit:junit</exclude>
+									<exclude>commons-cli:commons-cli</exclude>
+									<exclude>org.hamcrest:hamcrest-core</exclude>
+								</excludes>
+							</artifactSet>
+							<relocations>
+								<relocation>
+									<pattern>org.jacoco</pattern>
+									<shadedPattern>${shade.pkg.prefix}.org.jacoco</shadedPattern>
+								</relocation>
+								<relocation>
+									<pattern>org.objectweb.asm</pattern>
+									<shadedPattern>${shade.pkg.prefix}.org.objectweb.asm</shadedPattern>
+								</relocation>
+							</relocations>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<!-- internal dependencies -->
 		<dependency>
+			<groupId>tzuyu-project</groupId>
+			<artifactId>sav.commons</artifactId>
+		</dependency>
+		<dependency>
 			<artifactId>codecoverage.jacoco</artifactId>
 			<groupId>tzuyu-project</groupId>
-			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.jacoco</groupId>
@@ -26,28 +96,23 @@
 					<groupId>org.jacoco</groupId>
 					<artifactId>org.jacoco.agent</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>tzuyu-project</groupId>
+					<artifactId>sav.commons</artifactId>
+				</exclusion>
 			</exclusions>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.graphstream/gs-core -->
-		<dependency>
-			<groupId>org.graphstream</groupId>
-			<artifactId>gs-core</artifactId>
-			<version>1.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jacoco</groupId>
 			<artifactId>org.jacoco.core</artifactId>
-			<version>${jacoco-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jacoco</groupId>
 			<artifactId>org.jacoco.agent</artifactId>
-			<version>${jacoco-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm-debug-all</artifactId>
-			<version>${asm.version}</version>
 		</dependency>
 		<!-- for test -->
 		<dependency>
@@ -61,6 +126,7 @@
 			<groupId>tzuyu-project</groupId>
 			<version>${project.version}</version>
 			<type>test-jar</type>
+			<scope>test</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>org.jacoco</groupId>
@@ -75,8 +141,44 @@
 		<dependency>
 			<groupId>tzuyu-project</groupId>
 			<artifactId>sav.commons</artifactId>
-			<version>${project.version}</version>
 			<type>test-jar</type>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>sav.commons</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<artifactId>codecoverage.jacoco</artifactId>
+				<groupId>tzuyu-project</groupId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>tzuyu-project</groupId>
+				<artifactId>sav.commons</artifactId>
+				<version>${project.version}</version>
+				<type>test-jar</type>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.ow2.asm</groupId>
+				<artifactId>asm-debug-all</artifactId>
+				<version>${asm.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jacoco</groupId>
+				<artifactId>org.jacoco.core</artifactId>
+				<version>${jacoco-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jacoco</groupId>
+				<artifactId>org.jacoco.agent</artifactId>
+				<version>${jacoco-version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>

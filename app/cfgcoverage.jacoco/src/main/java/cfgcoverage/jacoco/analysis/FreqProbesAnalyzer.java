@@ -10,7 +10,7 @@ package cfgcoverage.jacoco.analysis;
 
 import org.jacoco.core.analysis.AbstractAnalyzer;
 import org.jacoco.core.data.ExecutionData;
-import org.jacoco.core.data.ExecutionData.DataType;
+import org.jacoco.core.data.ExecutionData.ProbesType;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.internal.data.CRC64;
 import org.jacoco.core.internal.flow.ClassProbesAdapter;
@@ -40,7 +40,7 @@ public class FreqProbesAnalyzer extends AbstractAnalyzer {
 	@Override
 	protected ClassVisitor createAnalyzingVisitor(final long classid,
 			final String className) {
-		ExecutionData.dataType = DataType.EXTENDED;
+		ExecutionData.probesType = ProbesType.INTEGER;
 		final ExecutionData data = executionData.get(classid);
 		final int[] probes;
 		if (data == null) {

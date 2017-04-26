@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jacoco.agent.AgentJar;
+import org.jacoco.core.runtime.AgentOptions;
 
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
@@ -38,25 +39,25 @@ public class JaCoCoVmRunner extends AgentVmRunner {
 	}
 	
 	public JaCoCoVmRunner setAppend(boolean append) {
-		agentParams.put("append", String.valueOf(append));
+		addAgentParam(AgentOptions.APPEND, String.valueOf(append));
 		return this;
 	}
 	
 	public JaCoCoVmRunner setOutputMode(String outputMode) {
-		agentParams.put("output", outputMode);
+		addAgentParam(AgentOptions.OUTPUT, outputMode);
 		return this;
 	}
 
 	public JaCoCoVmRunner setDestfile(String destfile) {
-		agentParams.put("destfile", destfile);
+		addAgentParam(AgentOptions.DESTFILE, destfile);
 		return this;
 	}
 	
 	public JaCoCoVmRunner setClassdumpdir(String classdumpdir) {
-		agentParams.put("classdumpdir", classdumpdir);
+		addAgentParam(AgentOptions.CLASSDUMPDIR, classdumpdir);
 		return this;
 	}
-	
+
 	public JaCoCoVmRunner setAnalyzedClassNames(List<String> analyzedClassNames) {
 		this.analyzedClassNames = analyzedClassNames;
 		return this;
@@ -71,5 +72,5 @@ public class JaCoCoVmRunner extends AgentVmRunner {
 		this.analyzedClassNames.add(className);
 		return this;
 	}
-	
+
 }
