@@ -8,6 +8,7 @@
 
 package sav.common.core.utils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -79,9 +80,11 @@ public class JunitUtils {
 	}
 
 	public static boolean isTestMethod(Class<?> junitClass, Method method) {
-		Test test = method.getAnnotation(Test.class);
-		if (test != null) {
-			return true;
+		for (Annotation annotation : method.getAnnotations()) {
+			Class<? extends Annotation> annotationType = annotation.annotationType();
+			if (Test.class.getName().equals(annotationType.getName())) {
+				return true;
+			}
 		}
 		if (TestCase.class.isAssignableFrom(junitClass)) {
 			int modifiers = method.getModifiers();
