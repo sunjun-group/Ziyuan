@@ -21,6 +21,7 @@ import learntest.main.RunTimeInfo;
 import learntest.main.TestGenerator;
 import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
+import sav.common.core.SystemVariables;
 import sav.commons.TestConfiguration;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
@@ -65,7 +66,8 @@ public class GenerateTestHandler extends AbstractHandler {
 			AppJavaClassPath appClasspath = new AppJavaClassPath();
 			appClasspath.setJavaHome(TestConfiguration.getJavaHome());
 			appClasspath.addClasspaths(LearnTestUtil.getPrjectClasspath());
-			
+			appClasspath.setTarget(LearnTestUtil.getOutputPath());
+			appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER, LearnTestUtil.getPrjClassLoader());
 			LearnTest engine = new LearnTest(appClasspath);
 			RunTimeInfo runtimeInfo = engine.run(!isL2T);
 			

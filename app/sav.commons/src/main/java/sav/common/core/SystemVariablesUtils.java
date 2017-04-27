@@ -24,7 +24,7 @@ public class SystemVariablesUtils {
 		String jarPath = appClasspath.getPreferences().get(SYS_SAV_JUNIT_JAR);
 		if (jarPath == null) {
 			jarPath = SavJunitRunner.extractToTemp().getAbsolutePath();
-			appClasspath.getPreferences().put(SYS_SAV_JUNIT_JAR, jarPath);
+			appClasspath.getPreferences().set(SYS_SAV_JUNIT_JAR, jarPath);
 		}
 		return jarPath;
 	}

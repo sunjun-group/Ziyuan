@@ -78,6 +78,7 @@ public class LearnTest {
 		List<CfgCoverage> cfgcoverage = cfgCoverage.run(Arrays.asList(params.getTestMethodInfo().getClassName()),
 				Arrays.asList(params.getTestClass()));
 		System.out.println(cfgcoverage);
+		
 		ICfgHandler cfgHandler = new CfgHandlerAdapter(appClassPath, params, CfgAproach.SOURCE_CODE_LEVEL);
 		dtBuilder = new BreakpointDataBuilder(cfgHandler.getDecisionBkpsData());
 		
