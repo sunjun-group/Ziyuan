@@ -110,7 +110,7 @@ public class AbstractTest {
 		String[] configs = configStr.split("\n");
 		for (String config : configs) {
 			String[] keyValue = config.split("=");
-			preferences.put(keyValue[0].trim(), keyValue[1].trim());
+			preferences.set(keyValue[0].trim(), keyValue[1].trim());
 		}
 	}
 }

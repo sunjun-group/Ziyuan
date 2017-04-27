@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionData.ProbesType;
 import org.jacoco.core.runtime.AgentOptions;
 
@@ -31,9 +32,12 @@ public class CfgJaCoCo {
 	
 	public CfgJaCoCo(AppJavaClassPath appClasspath) {
 		this.appClasspath = appClasspath;
-		jacoco = new JaCoCo(appClasspath);
+		// set up jacoco
+		ProbesType probesType = ProbesType.INTEGER;
+		ExecutionData.setProbesType(probesType);
 		Map<String, String> extraAgentParams = new HashMap<String, String>();
-		extraAgentParams.put(AgentOptions.PROBESTYPE, ProbesType.INTEGER.name());
+		extraAgentParams.put(AgentOptions.PROBESTYPE, probesType.name());
+		jacoco = new JaCoCo(appClasspath);
 		jacoco.setMoreAgentParams(extraAgentParams);
 	}
 	

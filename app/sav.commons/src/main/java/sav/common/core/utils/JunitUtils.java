@@ -14,11 +14,10 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.junit.Test;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import sav.common.core.Pair;
 
 /**
@@ -29,18 +28,22 @@ public class JunitUtils {
 	private static final String JUNIT_TEST_METHOD_PREFIX = "test";
 	private static final String JUNIT_TEST_SUITE_PREFIX = "suite";
 	
-	public static List<String> extractTestMethods(List<String> junitClassNames)
-			throws ClassNotFoundException {
+	public static List<String> extractTestMethods(List<String> junitClassNames, ClassLoader classLoader) throws ClassNotFoundException {
 		List<String> result = new ArrayList<String>();
 		for (String className : junitClassNames) {
-			extractTestMethods(result, className);
+			extractTestMethodsForClass(result, className, classLoader);
 		}
 		return result;
 	}
-
-	private static void extractTestMethods(List<String> result, String className)
+	
+	public static List<String> extractTestMethods(List<String> junitClassNames)
 			throws ClassNotFoundException {
-		Class<?> junitClass = Class.forName(className);
+		return extractTestMethods(junitClassNames, null);
+	}
+
+	private static void extractTestMethodsForClass(List<String> result, String className, ClassLoader classLoader)
+			throws ClassNotFoundException {
+		Class<?> junitClass = ClassLoaderUtils.forName(className, classLoader);
 		Method[] methods = junitClass.getDeclaredMethods();
 		for (Method method : methods) {
 			if (isTestMethod(junitClass, method)) {
@@ -53,7 +56,7 @@ public class JunitUtils {
 			try {
 				Method suiteMth = junitClass.getMethod(JUNIT_TEST_SUITE_PREFIX);
 				TestSuite suite = (TestSuite) suiteMth.invoke(junitClass);
-				findTestcasesInSuite(suite, result);
+				findTestcasesInSuite(suite, result, classLoader);
 			} catch (Exception e) {
 				throw new IllegalArgumentException("cannot find testcases in class " + className);
 			}
@@ -62,15 +65,15 @@ public class JunitUtils {
 	}
 
 	private static void findTestcasesInSuite(TestSuite suite,
-			List<String> classMethods) throws ClassNotFoundException {
+			List<String> classMethods, ClassLoader classLoader) throws ClassNotFoundException {
 		Enumeration<junit.framework.Test> tests = suite.tests();
 		while (tests.hasMoreElements()) {
 			junit.framework.Test test = tests.nextElement();
 			if (test instanceof TestSuite) {
-				findTestcasesInSuite((TestSuite) test, classMethods);
+				findTestcasesInSuite((TestSuite) test, classMethods, classLoader);
 			} else if (test instanceof TestCase) {
 				TestCase tc = (TestCase) test;
-				extractTestMethods(classMethods, tc.getClass().getName());
+				extractTestMethodsForClass(classMethods, tc.getClass().getName(), classLoader);
 			}
 		}
 	}

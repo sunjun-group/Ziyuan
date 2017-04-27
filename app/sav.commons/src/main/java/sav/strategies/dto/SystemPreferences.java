@@ -17,49 +17,56 @@ import sav.common.core.SystemVariables;
  *
  */
 public class SystemPreferences {
-	private HashMap<String, String> variables = new HashMap<String, String>();
+	private HashMap<String, Object> variables = new HashMap<String, Object>();
 	
 	public SystemPreferences() {
-		variables = new HashMap<String, String>();
+		variables = new HashMap<String, Object>();
 	}
 	
-	public String get(String key, String def) {
-		return getValue(variables.get(key), def); 
-	}
-	
-	public void put(String key, String value) {
-		variables.put(key, value);
-	}
-	
-	public String set(String key, String value) {
+	public Object set(String key, Object value) {
 		return variables.put(key, value); 
 	}
 	
-	private String getValue(String value, String defIfNull) {
+	public void set(SystemVariables var, Object value) {
+		set(var.getName(), value);
+	}
+
+	public void setBoolean(SystemVariables var, boolean value) {
+		set(var, value);
+	}
+	
+	public void setEnum(SystemVariables var, Enum<?> value) {
+		set(var.getName(), value.name());
+	}
+	
+	private Object getValue(Object value, Object defIfNull) {
 		if (value == null) {
 			return defIfNull;
 		}
 		return value;
 	}
 
-	public Boolean getBoolean(SystemVariables var) {
-		String value = get(var);
-		return value == null ? null : Boolean.valueOf(value);
+	@SuppressWarnings("unchecked")
+	public <T> T get(String key, Object def) {
+		Object value = getValue(variables.get(key), def);
+		return value == null ? null : (T) value; 
 	}
-
-	public String get(SystemVariables var) {
+	
+	@SuppressWarnings("unchecked")
+	public <T> T get(String key) {
+		Object value = getValue(variables.get(key), null);
+		return value == null ? null : (T) value; 
+	}
+	
+	public <T> T get(SystemVariables var) {
 		return get(var.getName(), var.getDefValue());
 	}
-	
-	public void put(SystemVariables var, String value) {
-		put(var.getName(), value);
+
+	public Boolean getBoolean(SystemVariables var) {
+		return get(var);
 	}
 
-	public void putBoolean(SystemVariables var, boolean value) {
-		put(var, String.valueOf(value));
-	}
-	
-	public void putEnum(SystemVariables var, Enum<?> value) {
-		put(var.getName(), value.name());
+	public String getString(SystemVariables var) {
+		return get(var);
 	}
 }

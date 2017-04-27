@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
+import sav.common.core.SystemVariables;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.codecoverage.ICodeCoverage;
@@ -72,7 +73,7 @@ public class JaCoCo implements ICodeCoverage {
 		vmRunner.setAnalyzedClassNames(testingClassNames);
 		VMConfiguration vmConfig = SavJunitRunner.createVmConfig(appClasspath);
 		vmConfig.setLaunchClass(JunitRunner.class.getName());
-		List<String> testMethods = JunitUtils.extractTestMethods(junitClassNames);
+		List<String> testMethods = JunitUtils.extractTestMethods(junitClassNames, getPrjClassLoader());
 		reporter.setTestcases(testMethods);
 		@SuppressWarnings("unchecked")
 		List<String> allClassNames = CollectionUtils.join(testingClassNames,
@@ -101,6 +102,10 @@ public class JaCoCo implements ICodeCoverage {
 		reporter.report(destfile, junitResultFile, testingClassNames);
 	}
 	
+	private ClassLoader getPrjClassLoader() {
+		return appClasspath.getPreferences().get(SystemVariables.PROJECT_CLASSLOADER);
+	}
+
 	private void addExtraAgentParams(JaCoCoVmRunner vmRunner) {
 		if (extraAgentParams == null) {
 			return;

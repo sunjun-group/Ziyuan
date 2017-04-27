@@ -34,7 +34,7 @@ public class SavJunitRunner {
 	
 	static {
 		/* at junit 4.0 */
-		ENTER_TC_BKP = new BreakPoint(JUnitCore.class.getName(), 138);
+		ENTER_TC_BKP = new BreakPoint(JUnitCore.class.getName(), 115);
 	}
 
 	public static File extractToTemp() throws SavRtException {

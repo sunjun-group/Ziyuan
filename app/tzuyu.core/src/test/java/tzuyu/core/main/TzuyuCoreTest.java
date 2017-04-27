@@ -35,8 +35,8 @@ public abstract class TzuyuCoreTest extends AbstractTzTest {
 	
 	@Override
 	protected void loadPreferences(SystemPreferences preferences) {
-		preferences.putEnum(SystemVariables.FAULT_LOCATE_SPECTRUM_ALGORITHM, 
-				SpectrumAlgorithm.OCHIAI);
+		preferences.set(SystemVariables.FAULT_LOCATE_SPECTRUM_ALGORITHM, 
+				SpectrumAlgorithm.OCHIAI.name());
 	}
 	
 	protected FaultLocateParams initFaultLocateParams(String testingClassName, String methodName, String verificationMethod,

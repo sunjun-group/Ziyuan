@@ -37,7 +37,7 @@
 		<guice-version>3.0</guice-version>
 		<javailp-version>1.2a</javailp-version>
 		<javaparser-version>1.0.11</javaparser-version>
-		<junit-version>4.11</junit-version>
+		<junit-version>4.12</junit-version>
 		<linear-algebra-version>1.2.4</linear-algebra-version>
 		<log4j-version>1.2.17</log4j-version>
 		<slf4j-log4j-binding>slf4j-log4j12</slf4j-log4j-binding>
@@ -65,6 +65,7 @@
 		<module>../slicer.wala</module>
 		<module>../slicer.javaslicer</module>
 		<module>../codecoverage.jacoco</module>
+		<module>../cfgcoverage.jacoco</module>
 		<module>../svmlib</module>
 		<!-- algorithm modules -->
 		<module>../faultLocalization</module>
@@ -74,7 +75,7 @@
 		<module>../tzuyu.core</module>
 		<module>../tzuyu</module>
 		<module>../assertion</module>
-		<module>../invariant.templates</module>
+<!-- 		<module>../invariant.templates</module> -->
     
   </modules>
 	<build>
@@ -162,7 +163,7 @@
 					<executions>
 						<execution>
 							<id>attach-sources</id>
-							<phase>deploy</phase>
+							<phase>package</phase>
 							<goals>
 								<goal>jar</goal>
 							</goals>
