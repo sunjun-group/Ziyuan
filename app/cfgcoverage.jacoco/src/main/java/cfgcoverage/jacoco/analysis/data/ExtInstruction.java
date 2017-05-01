@@ -9,7 +9,6 @@
 package cfgcoverage.jacoco.analysis.data;
 
 import org.jacoco.core.internal.flow.Instruction;
-import org.objectweb.asm.tree.AbstractInsnNode;
 
 /**
  * @author LLT
@@ -17,22 +16,18 @@ import org.objectweb.asm.tree.AbstractInsnNode;
  */
 public class ExtInstruction extends Instruction {
 	private CfgNode cfgNode;
+	private NodeCoverage nodeCoverage;
 	private boolean newCfg;
 	private String testMethod;
 	private ExtInstruction predecessor; // jacocoPredecessor
 	
-	public ExtInstruction(AbstractInsnNode node, int line) {
-		super(node, line);
-		cfgNode = new CfgNode(node, line);
-		newCfg = true;
-	}
-	
-	public ExtInstruction(CfgNode cfgNode) {
+	public ExtInstruction(CfgNode cfgNode, NodeCoverage nodeCoverage, boolean newCfg) {
 		super(cfgNode.getInsnNode(), cfgNode.getLine());
 		this.cfgNode = cfgNode;
-		newCfg = false;
+		this.nodeCoverage = nodeCoverage;
+		this.newCfg = newCfg;
 	}
-
+	
 	public void setPredecessor(Instruction predecessorInsn) {
 		super.setPredecessor(predecessorInsn);
 		this.predecessor = (ExtInstruction) predecessorInsn;
@@ -47,14 +42,14 @@ public class ExtInstruction extends Instruction {
 	
 	public void setCovered(ExtInstruction coveredBranch, int count) {
 		if (coveredBranch != null) {
-			cfgNode.updateCoveredBranchesForTc(coveredBranch.cfgNode, testMethod);
+			nodeCoverage.updateCoveredBranchesForTc(coveredBranch.cfgNode, testMethod);
 		}
-		if (cfgNode.getCoverage().isCovered(testMethod)) {
+		if (nodeCoverage.isCovered(testMethod)) {
 			// no need to update its predecessors
 			return;
 		}
 		// otherwise, mark covered and update all its predecessors
-		cfgNode.getCoverage().setCovered(testMethod, count);
+		nodeCoverage.setCovered(testMethod, count);
 		if (predecessor != null) {
 			predecessor.setCovered(this, count);
 		}

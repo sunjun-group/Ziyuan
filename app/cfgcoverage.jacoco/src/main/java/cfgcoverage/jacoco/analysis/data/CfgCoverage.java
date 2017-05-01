@@ -11,7 +11,8 @@ package cfgcoverage.jacoco.analysis.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.objectweb.asm.tree.MethodNode;
+import sav.common.core.utils.Assert;
+import sav.common.core.utils.TextFormatUtils;
 
 
 /**
@@ -19,54 +20,34 @@ import org.objectweb.asm.tree.MethodNode;
  *
  */
 public class CfgCoverage {
-	private List<CfgNode> nodeList;
-	private CfgNode startNode;
-	private List<CfgNode> exitList;
+	private CFG cfg;
+	private List<NodeCoverage> nodeCoverages;
 	
-	private MethodNode methodNode;
-	
-	public CfgCoverage() {
-		nodeList = new ArrayList<CfgNode>();
-		exitList = new ArrayList<CfgNode>();
-	}
-	
-	public void setStartNode(CfgNode startNode) {
-		this.startNode = startNode;
+	public CfgCoverage(CFG cfg) {
+		this.cfg = cfg;
+		nodeCoverages = new ArrayList<NodeCoverage>();
 	}
 
-	public void addNode(CfgNode node) {
-		if (startNode == null) {
-			setStartNode(node);
-		}
-		nodeList.add(node);
+	public CFG getCfg() {
+		return cfg;
 	}
 	
-	public void updateExitNodes() {
-		for (CfgNode node : nodeList) {
-			if (node.isLeaf()) {
-				exitList.add(node);
-			}
-		}
-	}
-
-	public void setMethodNode(MethodNode methodNode) {
-		this.methodNode = methodNode;
+	public NodeCoverage getCoverage(CfgNode node) {
+		Assert.assertTrue(node.getIdx() < nodeCoverages.size(), "");
+		return nodeCoverages.get(node.getIdx());
 	}
 	
-	public MethodNode getMethodNode() {
-		return methodNode;
-	}
-
-	public CfgNode getNode(int nodeIdx) {
-		if (nodeIdx >= nodeList.size()) {
-			return null;
-		}
-		return nodeList.get(nodeIdx);
+	public NodeCoverage addCoverage(CfgNode node) {
+		Assert.assertTrue(node.getIdx() == nodeCoverages.size(), "");
+		NodeCoverage nodeCoverage = new NodeCoverage(this, node);
+		nodeCoverages.add(nodeCoverage);
+		return nodeCoverage;
 	}
 
 	@Override
 	public String toString() {
-		return "CfgCoverage [nodeList=" + nodeList + ", startNode=" + startNode + ", exitList=" + exitList
-				+ ", methodNode=" + methodNode + "]";
+		return "CfgCoverage \n cfg=[" + cfg + "],\n nodeCoverages=" + TextFormatUtils.printListSeparateWithNewLine(nodeCoverages) + "]";
 	}
+	
+	
 }

@@ -10,8 +10,8 @@
 		<slf4j-log4j-binding>slf4j-log4j12</slf4j-log4j-binding>
 		<slf4j-version>1.7.12</slf4j-version>
 		<asm.version>5.2</asm.version>
-<!-- 		<cfgcoverage.libs.target>${basedir}/../../etc/libs/cfgcoverage</cfgcoverage.libs.target> -->
-		<cfgcoverage.libs.target>${basedir}/../../../Ziyuan-branches/learntest-eclipse/app/learntest/lib</cfgcoverage.libs.target>
+		<cfgcoverage.libs.target>${basedir}/../../etc/libs/cfgcoverage</cfgcoverage.libs.target>
+<!-- 		<cfgcoverage.libs.target>${basedir}/../../../Ziyuan-branches/learntest-eclipse/app/learntest/lib</cfgcoverage.libs.target> -->
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<shade.pkg.prefix>cfgcoverage</shade.pkg.prefix>

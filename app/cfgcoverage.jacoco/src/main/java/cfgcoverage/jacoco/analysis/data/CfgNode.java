@@ -9,9 +9,7 @@
 package cfgcoverage.jacoco.analysis.data;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
 
@@ -23,47 +21,20 @@ import sav.common.core.utils.CollectionUtils;
  *
  */
 public class CfgNode {
-	private boolean isCondionalNode;
+	public static int INVALID_IDX = -1;
+	private int idx = INVALID_IDX;
 	private List<CfgNode> branches;
-	private Map<String, List<CfgNode>> coveredBranches;
 	private List<CfgNode> predecessors;
+	private boolean isInLoop;	
+	private boolean isDecisionNode;
 	
 	private AbstractInsnNode insnNode;
 	private int line;
-	
-	private NodeCoverage coverage;
 
 	public CfgNode(AbstractInsnNode insnNode, int line) {
 		predecessors = new ArrayList<CfgNode>();
-		coverage = new NodeCoverage();
-		coveredBranches = new HashMap<String, List<CfgNode>>();
 		this.insnNode = insnNode;
 		this.line = line;
-	}
-
-	public void markCovered(CfgNode coveredBranch, String testMethod, int count) {
-		if (coveredBranch != null) {
-			updateCoveredBranchesForTc(coveredBranch, testMethod);
-		}
-		
-		if (coverage.isCovered(testMethod)) {
-			// no need to update its predecessors
-			return;
-		}
-		// otherwise, mark covered and update all its predecessors
-		coverage.setCovered(testMethod, count);
-		for (CfgNode predecessor : predecessors) {
-			predecessor.markCovered(this, testMethod, count);
-		}
-	}
-
-	public void updateCoveredBranchesForTc(CfgNode coveredBranch, String testMethod) {
-		List<CfgNode> coveredBranchesOnTc = coveredBranches.get(testMethod);
-		if (CollectionUtils.isEmpty(coveredBranchesOnTc)) {
-			coveredBranchesOnTc = new ArrayList<CfgNode>();
-			coveredBranches.put(testMethod, coveredBranchesOnTc);
-		}
-		coveredBranchesOnTc.add(coveredBranch);
 	}
 
 	public void addBranch(CfgNode node) {
@@ -92,18 +63,51 @@ public class CfgNode {
 		return line;
 	}
 
-	public NodeCoverage getCoverage() {
-		return coverage;
-	}
-	
 	public boolean isLeaf() {
 		return CollectionUtils.isEmpty(branches);
 	}
 
+	public void setIdx(int idx) {
+		this.idx = idx;
+	}
+	
+	public int getIdx() {
+		return idx;
+	}
+	
+	public boolean isDecisionNode() {
+		return isDecisionNode;
+	}
+
+	public void setDecisionNode(boolean isDecisionNode) {
+		this.isDecisionNode = isDecisionNode;
+	}
+
+	public boolean isInLoop() {
+		return isInLoop;
+	}
+
+	public void setInLoop(boolean isInLoop) {
+		this.isInLoop = isInLoop;
+	}
+
 	@Override
 	public String toString() {
-		return "CfgNode [insnNode=" + OpcodeUtils.getCode(insnNode.getOpcode()) + ", line=" + line +", coverage="
-				+ coverage + "]";
+		return "node[" + OpcodeUtils.getCode(insnNode.getOpcode()) + ",line " + line +
+				(isDecisionNode ? ", decis" : "") + (isInLoop ? ", inloop" : "") + "]";
+	}
+
+	public int getFistBlkIdxIfLoopHeader() {
+		if (isLeaf()) {
+			return INVALID_IDX;
+		}
+		for (CfgNode child : branches) {
+			/* if the node try to jump backward, it must be a loop header */
+			if (child.idx < idx) {
+				return child.idx;
+			}
+		}
+		return INVALID_IDX;
 	}
 	
 }

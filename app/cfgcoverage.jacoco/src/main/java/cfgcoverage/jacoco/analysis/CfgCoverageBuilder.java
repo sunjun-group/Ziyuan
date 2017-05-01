@@ -16,9 +16,11 @@ import java.util.Map;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import cfgcoverage.jacoco.analysis.data.CFG;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.ExtInstruction;
+import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.SignatureUtils;
 import sav.common.core.utils.StringUtils;
@@ -28,9 +30,12 @@ import sav.common.core.utils.StringUtils;
  *
  */
 public class CfgCoverageBuilder {
-	private CfgCoverage cfgCoverage;
 	private String className;
 	private Map<String, CfgCoverage> methodCfgMap;
+	private CfgCoverage cfgCoverage;
+	private CFG cfg;
+	
+	/* internal info */
 	private String methodId;
 	private int nodeIdx;
 	private int testcaseIdx;
@@ -65,22 +70,27 @@ public class CfgCoverageBuilder {
 		cfgCoverage = methodCfgMap.get(methodId);
 		if (cfgCoverage == null) {
 			newCoverage = true;
-			cfgCoverage = new CfgCoverage();
-			cfgCoverage.setMethodNode(methodNode);
+			cfg = new CFG();
+			cfg.setMethodNode(methodNode);
+			cfgCoverage = new CfgCoverage(cfg);
 			methodCfgMap.put(methodId, cfgCoverage);
+		} else {
+			cfg = cfgCoverage.getCfg();
 		}
 	}
 	
 	public ExtInstruction instruction(AbstractInsnNode node, int line) {
 		Assert.assertTrue(state == State.METHOD, "expect state METHOD, get state ", state.toString());
 		/* look up for existing node */
-		CfgNode cfgNode = cfgCoverage.getNode(nodeIdx ++);
+		CfgNode cfgNode = cfg.getNode(nodeIdx ++);
 		ExtInstruction extInstruction;
 		if (cfgNode == null) {
-			extInstruction = new ExtInstruction(node, line);
-			cfgCoverage.addNode(extInstruction.getCfgNode());
+			cfgNode = new CfgNode(node, line);
+			cfg.addNode(cfgNode);
+			NodeCoverage nodeCoverage = cfgCoverage.addCoverage(cfgNode);
+			extInstruction = new ExtInstruction(cfgNode, nodeCoverage, true);
 		} else {
-			extInstruction = new ExtInstruction(cfgNode);
+			extInstruction = new ExtInstruction(cfgNode, cfgCoverage.getCoverage(cfgNode), false);
 		}
 		extInstruction.setTestcase(testMethods.get(testcaseIdx));
 		return extInstruction;
@@ -89,12 +99,18 @@ public class CfgCoverageBuilder {
 	public void endMethod() {
 		Assert.assertTrue(state == State.METHOD, "expect state METHOD, get state ", state.toString());
 		if (newCoverage) {
-			cfgCoverage.updateExitNodes();
+			CFG.updateExitNodes(cfg);
+			CFG.updateDecisionNodes(cfg);
+			CFG.updateNodesInLoop(cfg);
 		}
+		reset();
+		state = State.CLASS;
+	}
+
+	private void reset() {
 		newCoverage = false;
 		methodId = null;
 		nodeIdx = 0;
-		state = State.CLASS;
 	}
 	
 	private String createMethodId(MethodNode method) {
@@ -102,12 +118,8 @@ public class CfgCoverageBuilder {
 		return SignatureUtils.createMethodNameSign(fullMethodName, method.signature);
 	}
 	
-	/**
-	 * @param b
-	 */
 	public void match(boolean b) {
-		// TODO Auto-generated method stub
-		
+		// nothing to do for now.
 	}
 	
 	public Map<String, CfgCoverage> getMethodCfgMap() {

@@ -78,6 +78,31 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 	}
 	
 	@Override
+	public void visitLookupSwitchInsnWithProbes(Label dflt, int[] keys, Label[] labels, IFrame frame) {
+		super.visitLookupSwitchInsnWithProbes(dflt, keys, labels, frame);
+		visitSwitchInsn(dflt, labels);
+	}
+	
+	@Override
+	public void visitTableSwitchInsnWithProbes(int min, int max, Label dflt, Label[] labels, IFrame frame) {
+		super.visitTableSwitchInsnWithProbes(min, max, dflt, labels, frame);
+		visitSwitchInsn(dflt, labels);
+	}
+	
+	private void visitSwitchInsn(final Label dflt,
+			final Label[] labels) {
+		LabelInfo.resetDone(dflt);
+		LabelInfo.resetDone(labels);
+		allJumps.add(new Jump(lastInsn, dflt));
+		for (final Label l : labels) {
+			if (!LabelInfo.isDone(l)) {
+				allJumps.add(new Jump(lastInsn, l));
+				LabelInfo.setDone(l);
+			}
+		}
+	}
+	
+	@Override
 	public void visitEnd() {
 		super.visitEnd();
 		allJumps.addAll(jumps);

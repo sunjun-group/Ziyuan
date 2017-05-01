@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Bundle-Name: cfgcoverage.jacoco
+Bundle-SymbolicName: cfgcoverage.jacoco;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: src/
