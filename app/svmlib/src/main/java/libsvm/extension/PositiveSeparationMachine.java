@@ -263,7 +263,6 @@ public class PositiveSeparationMachine extends Machine {
 			}
 		}
 		
-		
 		return formula;
 	}
 

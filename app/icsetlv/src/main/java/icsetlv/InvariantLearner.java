@@ -8,35 +8,31 @@
 
 package icsetlv;
 
-import icsetlv.common.dto.BkpInvariantResult;
-import icsetlv.common.dto.BreakpointData;
-import icsetlv.common.dto.BreakpointValue;
-import icsetlv.sampling.SelectiveSampling;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import icsetlv.common.dto.BkpInvariantResult;
+import icsetlv.common.dto.BreakpointData;
+import icsetlv.common.dto.BreakpointValue;
+import icsetlv.common.utils.BreakpointDataUtils;
+import icsetlv.sampling.SelectiveSampling;
 import libsvm.core.Category;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
 import libsvm.core.Machine.DataPoint;
 import libsvm.extension.ISelectiveSampling;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
 
@@ -71,7 +67,7 @@ public class InvariantLearner implements CategoryCalculator {
 				formula = Formula.FALSE;
 			} else {
 				/* collect variable labels */
-				List<ExecVar> allVars = collectAllVars(bkpData);
+				List<ExecVar> allVars = BreakpointDataUtils.collectAllVars(bkpData);
 				if (allVars.isEmpty()) {
 					continue;
 				}
@@ -187,30 +183,6 @@ public class InvariantLearner implements CategoryCalculator {
 			labels.add(var.getVarId());
 		}
 		return labels;
-	}
-
-	private List<ExecVar> collectAllVars(BreakpointData bkpData) {
-		Set<ExecVar> allVars = new HashSet<ExecVar>();
-		for (ExecValue bkpVal : bkpData.getFailValues()) {
-			collectExecVar(bkpVal.getChildren(), allVars);
-		}
-		for (ExecValue bkpVal : bkpData.getPassValues()) {
-			collectExecVar(bkpVal.getChildren(), allVars);
-		}
-		return new ArrayList<ExecVar>(allVars);
-	}
-	
-	private void collectExecVar(List<ExecValue> vals, Set<ExecVar> vars) {
-		if (CollectionUtils.isEmpty(vals)) {
-			return;
-		}
-		for (ExecValue val : vals) {
-			if (val == null || CollectionUtils.isEmpty(val.getChildren())) {
-				String varId = val.getVarId();
-				vars.add(new ExecVar(varId, val.getType()));
-			}
-			collectExecVar(val.getChildren(), vars);
-		}
 	}
 
 	private Formula learnFromBoolVars(List<ExecVar> boolVars, BreakpointData bkpData) {

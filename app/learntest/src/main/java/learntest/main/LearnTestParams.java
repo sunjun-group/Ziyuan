@@ -8,6 +8,7 @@
 
 package learntest.main;
 
+import learntest.core.data.testtarget.TargetMethod;
 import learntest.main.model.MethodInfo;
 import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
@@ -20,6 +21,7 @@ public class LearnTestParams {
 	private String filePath;
 	private String testClass;
 	private MethodInfo targetMethodInfo;
+	private TargetMethod targetMethod;
 	
 	private boolean randomDecision;
 	
@@ -63,4 +65,13 @@ public class LearnTestParams {
 	public MethodInfo getTestMethodInfo() {
 		return targetMethodInfo;
 	}
+
+	public TargetMethod getTargetMethod() {
+		return targetMethod;
+	}
+
+	public void setTargetMethod(TargetMethod targetMethod) {
+		this.targetMethod = targetMethod;
+	}
+	
 }

@@ -36,17 +36,9 @@ public class CfgHandlerAdapter implements ICfgHandler {
 		BYTE_CODE_LEVEL
 	}
 	
-	public CfgHandlerAdapter(AppJavaClassPath appClassPath, LearnTestParams params, CfgAproach approach) throws LearnTestException {
-		CfgHandlerBcInitializer.getINSTANCE().create(appClassPath, params);
-		switch (approach) {
-		case SOURCE_CODE_LEVEL:
-			cfgHandler = CfgHandlerScInitializer.getINSTANCE().create(params);
-			break;
-		case BYTE_CODE_LEVEL:
-			cfgHandler = CfgHandlerBcInitializer.getINSTANCE().create(appClassPath, params);
-		default:
-			break;
-		}
+	public CfgHandlerAdapter(AppJavaClassPath appClassPath, LearnTestParams params, CfgAproach approach)
+			throws LearnTestException {
+		cfgHandler = CfgHandlerScInitializer.getINSTANCE().create(params);
 	}
 	
 	public DecisionBkpsData getDecisionBkpsData() {

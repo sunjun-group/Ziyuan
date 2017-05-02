@@ -75,6 +75,13 @@ public class CollectionUtils {
 		}
 		return vals[0];
 	}
+	
+	public static <T> T getFirstElement(List<T> vals) {
+		if (isEmpty(vals)) {
+			return null;
+		}
+		return vals.get(0);
+	}
 
 	public static <T> boolean existIn(T val, T... valList) {
 		for (T valInList : valList) {
@@ -284,5 +291,6 @@ public class CollectionUtils {
 	public static <T, V>boolean isEmpty(Map<T, V> map) {
 		return map == null || map.isEmpty();
 	}
+
 	
 }

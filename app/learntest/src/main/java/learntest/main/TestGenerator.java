@@ -10,6 +10,7 @@ import org.jacop.floats.core.FloatDomain;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 import gentest.builder.RandomTraceGentestBuilder;
 import gentest.core.commons.utils.MethodUtils;
@@ -85,7 +86,9 @@ public class TestGenerator {
 		
 		GentestModules injectorModule = new GentestModules();
 		injectorModule.enter(TestcaseGenerationScope.class);
-		Injector injector = Guice.createInjector(injectorModule);
+		List<Module> modules = new ArrayList<Module>();
+		modules.add(injectorModule);
+		Injector injector = Guice.createInjector(modules);
 		TestSeqGenerator generator = injector.getInstance(TestSeqGenerator.class);
 		generator.setTarget(target);
 		

@@ -31,7 +31,7 @@ public class CfgCoverageTest extends AbstractTest {
 		AppJavaClassPath appClasspath = initAppClasspath();
 		appClasspath.addClasspath(classesFolder);
 		CfgJaCoCo jacoco = new CfgJaCoCo(appClasspath);
-		jacoco.run(testingClassNames, junitClassNames);
+//		jacoco.run(testingClassNames, junitClassNames);
 	}
 
 	@Test

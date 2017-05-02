@@ -32,21 +32,17 @@ import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.Parameter;
 import japa.parser.ast.body.TypeDeclaration;
 import learntest.cfg.javasource.BreakpointCreator;
-import learntest.cfg.javasource.CfgHandler;
+import learntest.cfg.javasource.CfgManager;
 import learntest.exception.LearnTestException;
 import learntest.main.LearnTestParams;
 import learntest.main.model.MethodInfo;
 import learntest.util.LearnTestUtil;
 import sav.strategies.dto.BreakPoint.Variable;
 
-/**
- * @author LLT
- *
- */
 public class CfgHandlerScInitializer {
 	private static CfgHandlerScInitializer INSTANCE;
 	
-	public CfgHandler create(LearnTestParams params) throws LearnTestException {
+	public CfgManager create(LearnTestParams params) throws LearnTestException {
 		CompilationUnit cu;
 		try {
 			cu = JavaParser.parse(new File(params.getFilePath()));
@@ -59,7 +55,7 @@ public class CfgHandlerScInitializer {
 		}
 	}
 	
-	private CfgHandler initCfgHanlder(MethodDeclaration method, MethodInfo targetMethodInfo, List<Variable> variables)
+	private CfgManager initCfgHanlder(MethodDeclaration method, MethodInfo targetMethodInfo, List<Variable> variables)
 			throws ParseException, IOException {
 		CfgCreator creator = new CfgCreator();
 		CFG cfg1 = creator.toCFG(method);
@@ -76,7 +72,7 @@ public class CfgHandlerScInitializer {
 		BreakpointCreator bkpCreator = new BreakpointCreator(targetMethodInfo, variables,
 				returns);
 
-		return new CfgHandler(cfg, bkpCreator);
+		return new CfgManager(cfg, bkpCreator);
 	}
 	
 	private List<Variable> prepareVariables(CompilationUnit cu, MethodDeclaration method) {
@@ -108,7 +104,10 @@ public class CfgHandlerScInitializer {
 		if(md != null){
 			FieldAccessChecker checker = new FieldAccessChecker();
 			md.accept(checker);
-			
+			/* 
+			 * LLT: this is not correct! 
+			 * What do we want to collect here?
+			 * */
 			for(String fieldName: checker.fields){
 				Variable field = new Variable(fieldName);
 				fields.add(field);

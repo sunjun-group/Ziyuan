@@ -127,23 +127,32 @@ public class BreakPoint extends ClassLocation {
 	}
 
 	public static class Variable {
+		/* if variable is something like objectA.fieldB
+		 * then parentName would be objectA.
+		 * and fullName is objectA.fieldB
+		 * simpleName is fieldB
+		 * */
 		private final String parentName;
+		/* including its object if variable is an object's field
+		 * ex: objA.fieldX
+		 */
 		private final String fullName;
+		// specify whether the variable is belonged to class object or method.
 		private final VarScope scope;
 		private String id;
 		
-		public Variable(String name, String fullName, VarScope scope) {
-			this.parentName = name;
+		public Variable(String varParentName, String fullName, VarScope scope) {
+			this.parentName = varParentName;
 			this.fullName = fullName;
 			this.scope = scope;
 		}
 		
-		public Variable(String name, String fullName) {
-			this(name, fullName, VarScope.UNDEFINED);
+		public Variable(String varParentName, String fullName) {
+			this(varParentName, fullName, VarScope.UNDEFINED);
 		}
 
 		public Variable(String name) {
-			this.parentName = name;
+			this.parentName = name; // TODO-LLT: CONFUSED, TO FIX!
 			this.fullName = name;
 			scope = VarScope.UNDEFINED;
 		}
@@ -178,7 +187,7 @@ public class BreakPoint extends ClassLocation {
 
 		@Override
 		public String toString() {
-			return "Variable [name=" + parentName + ", fullName=" + fullName
+			return "Variable [parentName=" + parentName + ", fullName=" + fullName
 					+ ", scope=" + scope + "]";
 		}
 
