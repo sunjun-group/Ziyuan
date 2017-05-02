@@ -57,8 +57,16 @@ public class CFG {
 		return nodeList.get(nodeIdx);
 	}
 	
+	public CfgNode getStartNode() {
+		return startNode;
+	}
+	
+	public List<CfgNode> getNodeList() {
+		return nodeList;
+	}
+	
 	@Override
-	public String toString() {
+	public String toString () {
 		return "CfgCoverage [nodeList=" + nodeList + ", \nstartNode=" + startNode + ",\n exitList=" + exitList
 				+ ", \nmethodNode=" + methodNode + "]";
 	}

@@ -21,9 +21,10 @@ import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.ExtInstruction;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
+import codecoverage.jacoco.agent.JaCoCoUtils;
 import sav.common.core.utils.Assert;
+import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.SignatureUtils;
-import sav.common.core.utils.StringUtils;
 
 /**
  * @author LLT
@@ -31,6 +32,7 @@ import sav.common.core.utils.StringUtils;
  */
 public class CfgCoverageBuilder {
 	private String className;
+	private List<String> targetMethods;
 	private Map<String, CfgCoverage> methodCfgMap;
 	private CfgCoverage cfgCoverage;
 	private CFG cfg;
@@ -43,13 +45,14 @@ public class CfgCoverageBuilder {
 	private boolean newCoverage;
 	private State state;
 	
-	public CfgCoverageBuilder() {
+	public CfgCoverageBuilder(List<String> targetMethods) {
 		methodCfgMap = new HashMap<String, CfgCoverage>();
+		this.targetMethods = targetMethods;
 	}
 	
 	public CfgCoverageBuilder startClass(String name, String signature) {
 		state = State.CLASS;
-		this.className = name;
+		this.className = JaCoCoUtils.getClassName(name);
 		return this;
 	}
 	
@@ -62,8 +65,15 @@ public class CfgCoverageBuilder {
 		this.testMethods = testMethods;
 		return this;
 	}
+	
+	public void setTargetMethods(List<String> targetMethods) {
+		this.targetMethods = targetMethods;
+	}
 
-	public void startMethod(MethodNode methodNode) {
+	public boolean startMethod(MethodNode methodNode) {
+		if (!targetMethods.contains(ClassUtils.toClassMethodStr(className, methodNode.name))) {
+			return false;
+		}
 		Assert.assertTrue(state == State.CLASS, "expect state CLASS, get state ", state.toString());
 		state = State.METHOD;
 		methodId = createMethodId(methodNode);
@@ -77,6 +87,7 @@ public class CfgCoverageBuilder {
 		} else {
 			cfg = cfgCoverage.getCfg();
 		}
+		return true;
 	}
 	
 	public ExtInstruction instruction(AbstractInsnNode node, int line) {
@@ -114,7 +125,7 @@ public class CfgCoverageBuilder {
 	}
 	
 	private String createMethodId(MethodNode method) {
-		String fullMethodName = StringUtils.dotJoin(className, method.name);
+		String fullMethodName = ClassUtils.toClassMethodStr(className, method.name);
 		return SignatureUtils.createMethodNameSign(fullMethodName, method.signature);
 	}
 	

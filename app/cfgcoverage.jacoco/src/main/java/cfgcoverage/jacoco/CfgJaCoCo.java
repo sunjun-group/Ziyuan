@@ -29,6 +29,7 @@ import sav.strategies.dto.AppJavaClassPath;
 public class CfgJaCoCo {
 	private AppJavaClassPath appClasspath;
 	private JaCoCo jacoco;
+	private ExecutionReporter reporter;
 	
 	public CfgJaCoCo(AppJavaClassPath appClasspath) {
 		this.appClasspath = appClasspath;
@@ -41,13 +42,35 @@ public class CfgJaCoCo {
 		jacoco.setMoreAgentParams(extraAgentParams);
 	}
 	
-	public List<CfgCoverage> run(List<String> testingClassNames,
+	/**
+	 * 
+	 * @param targetMethods 
+	 * 				methods that we need to collect coverage
+	 * 				format: className.methodName (ex: sav.commons.testdata.SamplePrograms.Max)
+	 * @param testingClassNames
+	 * 				classNames of classes we need to test (ex: sav.commons.testdata.SamplePrograms)
+	 * @param junitClassNames
+	 * 				junit tests (ex: sav.commons.testdata.SampleProgramTest)
+	 * @return
+	 * @throws SavException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	public List<CfgCoverage> run(List<String> targetMethods, List<String> testingClassNames,
 			List<String> junitClassNames) throws SavException, IOException,
 			ClassNotFoundException {
-		ExecutionReporter reporter = new ExecutionReporter(new String[] {
-				appClasspath.getTarget(), appClasspath.getTestTarget() });
+		if (reporter == null) {
+			reporter = new ExecutionReporter(targetMethods, new String[] {
+					appClasspath.getTarget(), appClasspath.getTestTarget() });
+		} else {
+			reporter.reset(targetMethods, new String[] {
+					appClasspath.getTarget(), appClasspath.getTestTarget() });
+		}
 		jacoco.run(reporter, testingClassNames, junitClassNames);
 		return reporter.getCoverage();
 	}
 	
+	public void reset() {
+		reporter = null;
+	}
 }

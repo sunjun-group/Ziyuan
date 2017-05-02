@@ -28,10 +28,6 @@ public class CfgCoverage {
 		nodeCoverages = new ArrayList<NodeCoverage>();
 	}
 
-	public CFG getCfg() {
-		return cfg;
-	}
-	
 	public NodeCoverage getCoverage(CfgNode node) {
 		Assert.assertTrue(node.getIdx() < nodeCoverages.size(), "");
 		return nodeCoverages.get(node.getIdx());
@@ -43,11 +39,26 @@ public class CfgCoverage {
 		nodeCoverages.add(nodeCoverage);
 		return nodeCoverage;
 	}
+	
+	public CFG getCfg() {
+		return cfg;
+	}
+
+	public void setCfg(CFG cfg) {
+		this.cfg = cfg;
+	}
+
+	public List<NodeCoverage> getNodeCoverages() {
+		return nodeCoverages;
+	}
+
+	public void setNodeCoverages(List<NodeCoverage> nodeCoverages) {
+		this.nodeCoverages = nodeCoverages;
+	}
 
 	@Override
 	public String toString() {
 		return "CfgCoverage \n cfg=[" + cfg + "],\n nodeCoverages=" + TextFormatUtils.printListSeparateWithNewLine(nodeCoverages) + "]";
 	}
-	
 	
 }

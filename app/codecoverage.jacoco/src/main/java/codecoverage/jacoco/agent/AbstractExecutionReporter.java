@@ -35,12 +35,16 @@ import sav.common.core.utils.CollectionUtils;
  */
 public abstract class AbstractExecutionReporter implements IExecutionReporter {
 	protected Logger log = LoggerFactory.getLogger(AbstractExecutionReporter.class);
-	protected static final char JACOCO_FILE_SEPARATOR = '/';
+	
 	/* target folder of testing project */
 	protected List<String> targetFolders;
 	protected List<String> testMethods;
 	
 	public AbstractExecutionReporter(String[] targetFolders) {
+		reset(targetFolders);
+	}
+
+	protected void reset(String[] targetFolders) {
 		this.targetFolders = new ArrayList<String>();
 		CollectionUtils.addIfNotNullNotExist(this.targetFolders, targetFolders);
 	}
@@ -59,8 +63,7 @@ public abstract class AbstractExecutionReporter implements IExecutionReporter {
 				}
 			}
 		} else {
-			String resource = JACOCO_FILE_SEPARATOR
-					+ className.replace('.', JACOCO_FILE_SEPARATOR) + ".class";
+			String resource = JaCoCoUtils.getClassResourceStr(className);
 			return getClass().getResourceAsStream(resource);
 		}
 		throw new SavRtException("Cannot find .class file for class " + className);

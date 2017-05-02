@@ -90,7 +90,7 @@ public class ExecutionDataReporter extends AbstractExecutionReporter implements 
 				boolean isPass = junitResult.getResult(testcaseIdx);
 				// Let's dump some metrics and line coverage information:
 				for (final IClassCoverage cc : coverageBuilder.getClasses()) {
-					String coverageClassName = getClassName(cc.getName());
+					String coverageClassName = JaCoCoUtils.getClassName(cc.getName());
 					if (analysis.accept(coverageClassName)) {
 						for (int j = cc.getFirstLine(); j <= cc
 								.getLastLine(); j++) {
@@ -130,10 +130,6 @@ public class ExecutionDataReporter extends AbstractExecutionReporter implements 
 				return true;
 			}
 		});
-	}
-
-	private String getClassName(String name) {
-		return name.replace(JACOCO_FILE_SEPARATOR, '.');
 	}
 
 	private static interface Analysis {

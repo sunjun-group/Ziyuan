@@ -35,14 +35,18 @@ public class ExecutionReporter extends AbstractExecutionReporter implements IExe
 	private Logger log = LoggerFactory.getLogger(ExecutionDataReporter.class);
 	private CfgCoverageBuilder coverageBuilder;
 
-	public ExecutionReporter(String... targetFolders) {
+	public ExecutionReporter(List<String> targetMethods, String... targetFolders) {
 		super(targetFolders);
+		coverageBuilder = new CfgCoverageBuilder(targetMethods);
+	}
+	
+	public void reset(List<String> targetMethods, String... targetFolders) {
+		coverageBuilder.setTargetMethods(targetMethods);
 	}
 	
 	public void report(String execFile, String junitResultFile, List<String> testingClassNames) throws SavException {
 		StopTimer timer = new StopTimer("Collect coverage data");
 		try {
-			coverageBuilder = new CfgCoverageBuilder();
 			timer.newPoint("Read execFile");
 			Map<String, List<ExecutionData>> execDataMap = read(execFile);
 			timer.newPoint("Analyze data and count code coverage");

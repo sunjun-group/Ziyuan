@@ -71,6 +71,22 @@ public class NodeCoverage {
 		}
 		return false;
 	}
+	
+	public CfgCoverage getCfgCoverage() {
+		return cfgCoverage;
+	}
+
+	public CfgNode getCfgNode() {
+		return cfgNode;
+	}
+
+	public Map<String, Integer> getCoveredTcs() {
+		return coveredTcs;
+	}
+
+	public Map<String, List<Integer>> getCoveredBranches() {
+		return coveredBranches;
+	}
 
 	@Override
 	public String toString() {

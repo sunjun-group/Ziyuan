@@ -224,4 +224,8 @@ public final class OpcodeUtils {
 	public static String getCode(int opcode) {
 		return OPCODES[opcode];
 	}
+	
+	public static boolean isLoadInst(int opcode) {
+		return (opcode >= 21 && opcode <= 53);
+	}
 }

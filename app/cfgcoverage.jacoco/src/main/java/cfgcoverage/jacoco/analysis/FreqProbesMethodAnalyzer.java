@@ -45,8 +45,10 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 	
 	@Override
 	public void accept(MethodNode methodNode, MethodVisitor methodVisitor) {
-		coverageBuilder.startMethod(methodNode);
-		super.accept(methodNode, methodVisitor);
+		boolean accept = coverageBuilder.startMethod(methodNode);
+		if (accept) {
+			super.accept(methodNode, methodVisitor);
+		}
 	}
 	
 	@Override

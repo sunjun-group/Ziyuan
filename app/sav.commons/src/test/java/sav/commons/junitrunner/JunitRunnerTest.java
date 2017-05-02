@@ -35,4 +35,13 @@ public class JunitRunnerTest extends AbstractTest {
 		System.out.println(result);
 	}
 
+//	@Test
+	public void testSampleProgram() throws Exception {
+		JunitRunnerParameters params = new JunitRunnerParameters();
+		params.setTimeout(3, TimeUnit.SECONDS);
+		params.setClassMethods(JunitUtils.extractTestMethods(Arrays
+				.asList(JunitRunnerTestdata.class.getName())));
+		JunitResult result = JunitRunner.runTestcases(params);
+		System.out.println(result);
+	}
 }
