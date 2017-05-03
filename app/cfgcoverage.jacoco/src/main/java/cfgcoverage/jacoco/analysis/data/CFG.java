@@ -71,14 +71,17 @@ public class CFG {
 				+ ", \nmethodNode=" + methodNode + "]";
 	}
 
+	private List<CfgNode> decisionNodes;
 	public List<CfgNode> getDecisionNodes() {
-		List<CfgNode> nodes = new ArrayList<CfgNode>();
-		for (CfgNode node : nodeList) {
-			if (node.isDecisionNode()) {
-				nodes.add(node);
+		if (decisionNodes == null) {
+			decisionNodes = new ArrayList<CfgNode>();
+			for (CfgNode node : nodeList) {
+				if (node.isDecisionNode()) {
+					decisionNodes.add(node);
+				}
 			}
 		}
-		return nodes;
+		return decisionNodes;
 	}
 	
 	public static void updateExitNodes(CFG cfg) {

@@ -103,7 +103,7 @@ public class CfgCoverageBuilder {
 		} else {
 			extInstruction = new ExtInstruction(cfgNode, cfgCoverage.getCoverage(cfgNode), false);
 		}
-		extInstruction.setTestcase(testMethods.get(testcaseIdx));
+		extInstruction.setTestIdx(testcaseIdx);
 		return extInstruction;
 	}
 

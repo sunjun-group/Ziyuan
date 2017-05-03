@@ -8,14 +8,13 @@
 
 package icsetlv.variable;
 
-import icsetlv.variable.TestcasesExecutor.TestResultType;
-
 import java.util.HashSet;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sav.strategies.dto.TestResultType;
 import sav.strategies.junit.JunitResult;
 
 

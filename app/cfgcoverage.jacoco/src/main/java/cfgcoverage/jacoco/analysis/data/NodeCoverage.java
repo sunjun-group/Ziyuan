@@ -22,50 +22,51 @@ import sav.common.core.utils.CollectionUtils;
 public class NodeCoverage {
 	private CfgCoverage cfgCoverage;
 	private CfgNode cfgNode;
-	private Map<String, Integer> coveredTcs;
+	/* map between testcase idx and covered frequency */
+	private Map<Integer, Integer> coveredTcs;
 	/* we keep node idx to refers to branch node */
-	private Map<String, List<Integer>> coveredBranches;
+	private Map<Integer, List<Integer>> coveredBranches;
 	
 	public NodeCoverage(CfgCoverage cfgCoverage, CfgNode cfgNode) {
 		this.cfgCoverage = cfgCoverage;
 		this.cfgNode = cfgNode;
-		coveredTcs = new HashMap<String, Integer>();
-		coveredBranches = new HashMap<String, List<Integer>>();
+		coveredTcs = new HashMap<Integer, Integer>();
+		coveredBranches = new HashMap<Integer, List<Integer>>();
 	}
 	
-	public void markCovered(CfgNode coveredBranch, String testMethod, int count) {
+	public void markCovered(CfgNode coveredBranch, int testIndx, int count) {
 		if (coveredBranch != null) {
-			updateCoveredBranchesForTc(coveredBranch, testMethod);
+			updateCoveredBranchesForTc(coveredBranch, testIndx);
 		}
 		
-		if (isCovered(testMethod)) {
+		if (isCovered(testIndx)) {
 			// no need to update its predecessors
 			return;
 		}
 		// otherwise, mark covered and update all its predecessors
-		setCovered(testMethod, count);
+		setCovered(testIndx, count);
 		for (CfgNode predecessor : cfgNode.getPredecessors()) {
-			cfgCoverage.getCoverage(predecessor).markCovered(cfgNode, testMethod, count);
+			cfgCoverage.getCoverage(predecessor).markCovered(cfgNode, testIndx, count);
 		}
 	}
 
-	public void updateCoveredBranchesForTc(CfgNode coveredBranch, String testMethod) {
-		List<Integer> coveredBranchesOnTc = coveredBranches.get(testMethod);
+	public void updateCoveredBranchesForTc(CfgNode coveredBranch, int testIndx) {
+		List<Integer> coveredBranchesOnTc = coveredBranches.get(testIndx);
 		if (CollectionUtils.isEmpty(coveredBranchesOnTc)) {
 			coveredBranchesOnTc = new ArrayList<Integer>();
-			coveredBranches.put(testMethod, coveredBranchesOnTc);
+			coveredBranches.put(testIndx, coveredBranchesOnTc);
 		}
 		coveredBranchesOnTc.add(coveredBranch.getIdx());
 	}
 	
-	public void setCovered(String testMethod, int count) {
-		Integer coveredCount = coveredTcs.get(testMethod);
+	public void setCovered(int testIndx, int count) {
+		Integer coveredCount = coveredTcs.get(testIndx);
 		coveredCount = coveredCount == null ? count : coveredCount + count;
-		coveredTcs.put(testMethod, coveredCount);
+		coveredTcs.put(testIndx, coveredCount);
 	}
 
-	public boolean isCovered(String testMethod) {
-		Integer coveredCount = coveredTcs.get(testMethod);
+	public boolean isCovered(int testIndx) {
+		Integer coveredCount = coveredTcs.get(testIndx);
 		if (coveredCount != null && coveredCount > 0) {
 			return true;
 		}
@@ -80,11 +81,11 @@ public class NodeCoverage {
 		return cfgNode;
 	}
 
-	public Map<String, Integer> getCoveredTcs() {
+	public Map<Integer, Integer> getCoveredTcs() {
 		return coveredTcs;
 	}
 
-	public Map<String, List<Integer>> getCoveredBranches() {
+	public Map<Integer, List<Integer>> getCoveredBranches() {
 		return coveredBranches;
 	}
 

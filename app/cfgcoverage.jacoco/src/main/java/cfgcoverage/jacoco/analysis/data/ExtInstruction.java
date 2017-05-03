@@ -18,7 +18,7 @@ public class ExtInstruction extends Instruction {
 	private CfgNode cfgNode;
 	private NodeCoverage nodeCoverage;
 	private boolean newCfg;
-	private String testMethod;
+	private int testIdx;
 	private ExtInstruction predecessor; // jacocoPredecessor
 	
 	public ExtInstruction(CfgNode cfgNode, NodeCoverage nodeCoverage, boolean newCfg) {
@@ -42,14 +42,14 @@ public class ExtInstruction extends Instruction {
 	
 	public void setCovered(ExtInstruction coveredBranch, int count) {
 		if (coveredBranch != null) {
-			nodeCoverage.updateCoveredBranchesForTc(coveredBranch.cfgNode, testMethod);
+			nodeCoverage.updateCoveredBranchesForTc(coveredBranch.cfgNode, testIdx);
 		}
-		if (nodeCoverage.isCovered(testMethod)) {
+		if (nodeCoverage.isCovered(testIdx)) {
 			// no need to update its predecessors
 			return;
 		}
 		// otherwise, mark covered and update all its predecessors
-		nodeCoverage.setCovered(testMethod, count);
+		nodeCoverage.setCovered(testIdx, count);
 		if (predecessor != null) {
 			predecessor.setCovered(this, count);
 		}
@@ -59,8 +59,8 @@ public class ExtInstruction extends Instruction {
 		return cfgNode;
 	}
 
-	public void setTestcase(String testMethod) {
-		this.testMethod = testMethod;
+	public void setTestIdx(int testIdx) {
+		this.testIdx = testIdx;
 	}
 
 	public void setNodePredecessor(ExtInstruction source) {
