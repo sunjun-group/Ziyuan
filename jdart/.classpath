@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main"/>
+	<classpathentry exported="true" kind="lib" path="libs/jdart/"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="libs/aima-core.jar"/>
+	<classpathentry kind="lib" path="libs/antlr-3.4-complete.jar"/>
+	<classpathentry kind="lib" path="libs/automaton.jar"/>
+	<classpathentry kind="lib" path="libs/bcel.jar"/>
+	<classpathentry kind="lib" path="libs/choco-1_2_04.jar"/>
+	<classpathentry kind="lib" path="libs/choco-solver-2.1.1-20100709.142532-2.jar"/>
+	<classpathentry kind="lib" path="libs/classloader_specific_tests.jar"/>
+	<classpathentry kind="lib" path="libs/com.microsoft.z3.jar"/>
+	<classpathentry kind="lib" path="libs/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="libs/commons-math-1.2.jar"/>
+	<classpathentry kind="lib" path="libs/coral.jar"/>
+	<classpathentry kind="lib" path="libs/grappa.jar"/>
+	<classpathentry kind="lib" path="libs/green.jar"/>
+	<classpathentry kind="lib" path="libs/gson-2.2.4.jar"/>
+	<classpathentry kind="lib" path="libs/guava-14.0.1.jar"/>
+	<classpathentry kind="lib" path="libs/hampi.jar"/>
+	<classpathentry kind="lib" path="libs/iasolver.jar"/>
+	<classpathentry kind="lib" path="libs/jaxen.jar"/>
+	<classpathentry kind="lib" path="libs/jconstraints-0.9.2-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="libs/jconstraints-z3-0.9.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="libs/jedis-2.0.0.jar"/>
+	<classpathentry kind="lib" path="libs/jpf-annotations.jar"/>
+	<classpathentry kind="lib" path="libs/jpf-classes.jar"/>
+	<classpathentry kind="lib" path="libs/jpf-symbc-annotations.jar"/>
+	<classpathentry kind="lib" path="libs/jpf-symbc-classes.jar"/>
+	<classpathentry kind="lib" path="libs/jpf-symbc.jar"/>
+	<classpathentry kind="lib" path="libs/jpf.jar" sourcepath="E:/workspace/JPF/jpf_src/jpf-core">
+		<attributes>
+			<attribute name="source_encoding" value="UTF-8"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libs/JSAP-2.1.jar"/>
+	<classpathentry kind="lib" path="libs/libcvc3.jar"/>
+	<classpathentry kind="lib" path="libs/opt4j-2.4.jar"/>
+	<classpathentry kind="lib" path="libs/org.sat4j.core.jar"/>
+	<classpathentry kind="lib" path="libs/org.sat4j.pb.jar"/>
+	<classpathentry kind="lib" path="libs/proteus.jar"/>
+	<classpathentry kind="lib" path="libs/RunJPF.jar"/>
+	<classpathentry kind="lib" path="libs/RunTest.jar"/>
+	<classpathentry kind="lib" path="libs/scale.jar"/>
+	<classpathentry kind="lib" path="libs/solver.jar"/>
+	<classpathentry kind="lib" path="libs/ST-4.0.5.jar"/>
+	<classpathentry kind="lib" path="libs/Statemachines.jar"/>
+	<classpathentry kind="lib" path="libs/STPJNI.jar"/>
+	<classpathentry kind="lib" path="libs/string.jar"/>
+	<classpathentry kind="lib" path="libs/yicesapijava.jar"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
