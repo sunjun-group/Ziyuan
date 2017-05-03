@@ -8,9 +8,6 @@
 
 package icsetlv.variable;
 
-import icsetlv.common.dto.BreakpointData;
-import icsetlv.common.dto.BreakpointValue;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,17 +17,20 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.event.BreakpointEvent;
+
+import icsetlv.common.dto.BreakpointData;
+import icsetlv.common.dto.BreakpointValue;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.TestResultType;
 import sav.strategies.junit.JunitResult;
-
-import com.sun.jdi.AbsentInformationException;
-import com.sun.jdi.IncompatibleThreadStateException;
-import com.sun.jdi.event.BreakpointEvent;
 
 /**
  * @author LLT
@@ -101,7 +101,7 @@ public class TestcasesExecutor extends JunitDebugger {
 	}
 
 	private Map<String, TestResultType> getTcExResult(JunitResult jResult) {
-		Map<String, TestResultType> testResults = new HashMap<String, TestcasesExecutor.TestResultType>();
+		Map<String, TestResultType> testResults = new HashMap<String, TestResultType>();
 		log.debug(StringUtils.toStringNullToEmpty(jResult.getTestResults()));
 		for (String test : allTests) {
 			TestResultType testResult = getTestVerifier().verify(jResult, test);
@@ -227,19 +227,6 @@ public class TestcasesExecutor extends JunitDebugger {
 		long timeoutInSec = timeUnit.toSeconds(timeout);
 		log.debug("Testcase execution timeout = " + timeoutInSec + "s");
 		this.timeout = timeoutInSec;
-	}
-	
-	public static enum TestResultType {
-		PASS,
-		FAIL,
-		UNKNOWN;
-		
-		public static TestResultType of(boolean isPass) {
-			if (isPass) {
-				return PASS;
-			}
-			return FAIL;
-		}
 	}
 }
 

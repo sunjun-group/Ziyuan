@@ -46,8 +46,10 @@ public class TargetMethod {
 		return cfg;
 	}
 
-	public void setCfg(CFG cfg) {
-		this.cfg = cfg;
+	public void updateCfgIfNotExist(CFG cfg) {
+		if (this.cfg == null) {
+			this.cfg = cfg;
+		}
 	}
 
 	public List<String> getParams() {

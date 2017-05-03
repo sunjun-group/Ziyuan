@@ -8,7 +8,7 @@
 
 package icsetlv.variable;
 
-import icsetlv.variable.TestcasesExecutor.TestResultType;
+import sav.strategies.dto.TestResultType;
 import sav.strategies.junit.JunitResult;
 
 /**

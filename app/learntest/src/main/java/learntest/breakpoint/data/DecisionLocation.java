@@ -23,4 +23,8 @@ public class DecisionLocation extends ClassLocation implements Comparable<Decisi
 		return lineNo - location.lineNo;
 	}
 	
+	@Override
+	public String toString() {
+		return super.toString();
+	}
 }
