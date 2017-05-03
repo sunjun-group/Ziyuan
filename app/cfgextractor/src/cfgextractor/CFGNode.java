@@ -19,11 +19,13 @@ public class CFGNode {
 	private HashSet<CFGNode> postDominatee = new HashSet<>();
 	
 	private List<CFGNode> controlDependentees = new ArrayList<>();
+	private int lineNo;
 
 	public CFGNode(InstructionHandle insHandle, Code code) {
 		super();
 		this.instructionHandle = insHandle;
 		this.code = code;
+		lineNo = getLineNumber();
 	}
 	
 	public int getLineNumber(){
@@ -70,7 +72,7 @@ public class CFGNode {
 
 	@Override
 	public String toString() {
-		return "CFGNode [insHandle=" + instructionHandle + "]";
+		return "CFGNode [insHandle=" + instructionHandle + "] " + getLineNumber();
 	}
 
 	@Override

@@ -38,7 +38,7 @@ import sav.strategies.dto.execute.value.ExecVar;
  * @author linyun
  *
  */
-public class CfgHandler implements ICfgHandler {
+public class CfgManager implements ICfgHandler {
 	private CFG cfg;
 	private BreakpointCreator bkpsCreator;
 	private DecisionBkpsData decisionBkpsData;
@@ -59,7 +59,7 @@ public class CfgHandler implements ICfgHandler {
 	
 	private double totalBranch = 1;
 	
-	public CfgHandler(CFG cfg, BreakpointCreator bkpsCreator) {
+	public CfgManager(CFG cfg, BreakpointCreator bkpsCreator) {
 		this.cfg = cfg;
 		this.bkpsCreator = bkpsCreator;
 		List<CfgEdge> entryOutEdges = cfg.getEntryOutEdges();
@@ -76,16 +76,18 @@ public class CfgHandler implements ICfgHandler {
 		parents = new HashMap<CfgDecisionNode, List<CfgDecisionNode>>();
 		ends = new HashSet<CfgDecisionNode>();
 		List<CfgNode> vertices = cfg.getVertices();
+		
+		/* build branches for decisionNodes */
 		for (CfgNode node : vertices) {
 			if (node instanceof CfgDecisionNode) {
 				
-				//calculate total branches
+				//calculate total branches (for the whole CFG?)
 				if (((CfgDecisionNode) node).isLoop()) {
-					totalBranch += 3;
+					totalBranch += 3; // LLT: WHY 3?
 				} else {
 					totalBranch += 2;
 				}
-				
+				/* LLT: 1 line for EACH decision node? */
 				nodeMap.put(node.getBeginLine(), (CfgDecisionNode) node);
 				List<CfgEdge> outEdges = cfg.getOutEdges(node);
 				CfgDecisionNode trueNode = null;
@@ -101,6 +103,16 @@ public class CfgHandler implements ICfgHandler {
 					}
 				}
 				if (trueNode != falseNode) {
+					/*
+					 * LLT: Do you think this might be wrong in a certain case? 
+					 * eg:do {
+					 * 			if (cond(x, y)) {
+					 * 			......
+					 * 
+					 * 			}
+					 * 			.....
+					 * 		} while (a > b);
+					 * */
 					if (trueNode != null && trueNode.getBeginLine() > node.getBeginLine()) {
 						trueNext.put((CfgDecisionNode) node, trueNode);
 						List<CfgDecisionNode> parentList = parents.get(trueNode);

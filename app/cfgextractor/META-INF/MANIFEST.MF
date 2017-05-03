@@ -32,5 +32,4 @@ Require-Bundle: sav.commons;bundle-version="1.0.0",
  sav.commons;bundle-version="1.0.0",
  icsetlv;bundle-version="1.0.0",
  svmlib;bundle-version="1.0.0",
- gentest;bundle-version="1.0.0",
- assertion;bundle-version="1.0.0"
+ gentest;bundle-version="1.0.0"

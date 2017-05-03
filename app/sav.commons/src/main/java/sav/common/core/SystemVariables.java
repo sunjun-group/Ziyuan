@@ -14,21 +14,22 @@ package sav.common.core;
  */
 public enum SystemVariables {
 	SYS_SAV_JUNIT_JAR("sav.junit.runner.jar"), 
-	APP_ENABLE_ASSERTION("assertion.enable", "true"),
-	SLICE_COLLECT_VAR("slicing.collect.var", "false"),
+	APP_ENABLE_ASSERTION("assertion.enable", Boolean.TRUE),
+	SLICE_COLLECT_VAR("slicing.collect.var", Boolean.FALSE),
 	//SLICE_BKP_VAR_INHERIT: values([empty], BACKWARD, FORWARD);
 	SLICE_BKP_VAR_INHERIT("slicing.collected.vars.inherit", ""),
-	FAULT_LOCATE_USE_SLICE("fault.localization.use.slice", "true"),
-	FAULT_LOCATE_SPECTRUM_ALGORITHM("fault.localization.spectrum.algorithm", "OCHIAI")
-	;
+	FAULT_LOCATE_USE_SLICE("fault.localization.use.slice", Boolean.TRUE),
+	FAULT_LOCATE_SPECTRUM_ALGORITHM("fault.localization.spectrum.algorithm", "OCHIAI"),
+	PROJECT_CLASSLOADER("project.classloader");
+	
 	private String name;
-	private String defValue;
+	private Object defValue;
 
 	private SystemVariables(String name) {
 		this(name, null);
 	}
 
-	private SystemVariables(String name, String defValue) {
+	private SystemVariables(String name, Object defValue) {
 		this.name = name;
 		this.defValue = defValue;
 	}
@@ -37,7 +38,7 @@ public enum SystemVariables {
 		return name;
 	}
 
-	public String getDefValue() {
+	public Object getDefValue() {
 		return defValue;
 	}
 }

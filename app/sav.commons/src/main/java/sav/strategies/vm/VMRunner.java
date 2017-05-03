@@ -19,7 +19,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,9 +137,6 @@ public class VMRunner {
 				buffer.append(cmd + " ");
 			}
 		}
-		
-//		System.out.println(buffer.toString());
-		
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
 		try {
 			process = processBuilder.start();

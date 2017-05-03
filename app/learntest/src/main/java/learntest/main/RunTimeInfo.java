@@ -1,15 +1,24 @@
 package learntest.main;
 
 public class RunTimeInfo {
-	public long time;
-	public double coverage;
-	public int testCnt;
+	private long time;
+	private double coverage;
+	private int testCnt;
 
 	public RunTimeInfo(long time, double coverage, int testCnt) {
-		super();
 		this.time = time;
 		this.coverage = coverage;
 		this.testCnt = testCnt;
+	}
+	
+	public RunTimeInfo() {
+		
+	}
+
+	public void add(RunTimeInfo subRunInfo) {
+		time += subRunInfo.time;
+		coverage += subRunInfo.coverage;
+		testCnt += subRunInfo.testCnt;
 	}
 
 	public long getTime() {
@@ -36,4 +45,17 @@ public class RunTimeInfo {
 		this.testCnt = testCnt;
 	}
 
+	public boolean isZero() {
+		return time == 0 && coverage == 0 && testCnt == 0;
+	}
+	
+	public boolean isNotZero() {
+		return !isZero();
+	}
+
+	public void reduceByTimes(int times) {
+		coverage /= times;
+		time /= times;
+		testCnt /= times;
+	}
 }

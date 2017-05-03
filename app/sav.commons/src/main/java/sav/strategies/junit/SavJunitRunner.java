@@ -17,8 +17,8 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.junit.runner.JUnitCore;
 
-import sav.common.core.SavRtException;
 import sav.common.core.SystemVariablesUtils;
+import sav.common.core.SavRtException;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
@@ -33,8 +33,8 @@ public class SavJunitRunner {
 	public static final String JUNIT_RUNNER_CLASS_NAME = JunitRunner.class.getName();
 	
 	static {
-		/* at junit 4.0 */
-		ENTER_TC_BKP = new BreakPoint(JUnitCore.class.getName(), 138);
+		/* at junit 4.12 */
+		ENTER_TC_BKP = new BreakPoint(JUnitCore.class.getName(), 115);
 	}
 
 	public static File extractToTemp() throws SavRtException {
@@ -48,17 +48,16 @@ public class SavJunitRunner {
 		}
 		return jar;
 	}
-	
+
 	public static void extractTo(File destFile) throws FileNotFoundException, IOException {
 		InputStream inStream = SavJunitRunner.class.getResourceAsStream(RESOURCE);
 		IOUtils.copy(inStream, new FileOutputStream(destFile));
-		System.currentTimeMillis();
 	}
 
 	public static VMConfiguration createVmConfig(AppJavaClassPath appClasspath) {
 		VMConfiguration vmConfig = new VMConfiguration(appClasspath);
 		String savJunitJar = SystemVariablesUtils.updateSavJunitJarPath(appClasspath);
-		vmConfig.addClasspath(savJunitJar, true);
+		vmConfig.addClasspath(savJunitJar);
 		return vmConfig;
 	}
 }

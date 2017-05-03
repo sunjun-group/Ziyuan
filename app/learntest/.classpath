@@ -2,12 +2,14 @@
 <classpath>
 	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cfgcoverage.jacoco.jar" sourcepath="lib/cfgcoverage.jacoco.shade-0.0.1-SNAPSHOT-shaded-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jacop-4.4.0.jar" sourcepath="lib/jacop-4.4.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xmlbeans-2.6.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-3.11-20141221.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-3.11-20141221.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-schemas-3.11-20141221.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="target/classes"/>

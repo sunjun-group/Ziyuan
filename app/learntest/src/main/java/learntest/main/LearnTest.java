@@ -2,6 +2,7 @@ package learntest.main;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -10,21 +11,25 @@ import java.util.Set;
 import org.jacop.core.Domain;
 import org.jacop.floats.core.FloatIntervalDomain;
 
+import cfgcoverage.jacoco.CfgJaCoCo;
+import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import icsetlv.DefaultValues;
 import icsetlv.common.dto.BreakpointValue;
 import japa.parser.ParseException;
 import learntest.breakpoint.data.DecisionBkpsData;
 import learntest.breakpoint.data.DecisionLocation;
 import learntest.cfg.CfgHandlerAdapter;
-import learntest.cfg.ICfgHandler;
 import learntest.cfg.CfgHandlerAdapter.CfgAproach;
+import learntest.cfg.ICfgHandler;
 import learntest.exception.LearnTestException;
+import learntest.main.model.MethodInfo;
 import learntest.sampling.JavailpSelectiveSampling;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.BreakpointDataBuilder;
 import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
+import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.settings.SAVTimer;
@@ -71,6 +76,11 @@ public class LearnTest {
 			return null;
 		}
 		
+		/* collect coverage and build cfg */
+		MethodInfo targetMethod = params.getTestMethodInfo();
+		List<CfgCoverage> cfgcoverage = runCfgCoverage(params, targetMethod);
+		System.out.println(cfgcoverage);
+		
 		ICfgHandler cfgHandler = new CfgHandlerAdapter(appClassPath, params, CfgAproach.SOURCE_CODE_LEVEL);
 		dtBuilder = new BreakpointDataBuilder(cfgHandler.getDecisionBkpsData());
 		
@@ -92,8 +102,6 @@ public class LearnTest {
 			tcExecutor.run();
 			Map<DecisionLocation, BreakpointData> result = tcExecutor.getResult();
 			
-			/* why return null if currentTestInputValues empty? this list is only for last breakpoint, 
-			 * not for the whole testcase */
 			if (CollectionUtils.isEmpty(tcExecutor.getCurrentTestInputValues())) {
 				return null;
 			}
@@ -115,7 +123,6 @@ public class LearnTest {
 				}
 			} else {
 				tcExecutor.setjResultFileDeleteOnExit(true);
-				//tcExecutor.setSingleMode();
 				tcExecutor.setInstrMode(true);
 				//selectiveSampling = new JacopSelectiveSampling(tcExecutor);
 				selectiveSampling = new JavailpSelectiveSampling(tcExecutor);
@@ -127,7 +134,9 @@ public class LearnTest {
 				try{
 					List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
 					new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());					
-				}catch(Exception e){}
+				} catch(Exception e){
+					System.out.println(e);
+				}
 				
 				testCnt = selectiveSampling.getTotalNum();
 				System.out.println("Total test cases number: " + testCnt);
@@ -147,6 +156,16 @@ public class LearnTest {
 		
 		RunTimeInfo info = new RunTimeInfo(time, coverage, testCnt);
 		return info;
+	}
+	
+	private List<CfgCoverage> runCfgCoverage(LearnTestParams params, MethodInfo targetMethod)
+			throws SavException, IOException, ClassNotFoundException {
+		CfgJaCoCo cfgCoverage = new CfgJaCoCo(appClassPath);
+		List<String> targetMethods = CollectionUtils.listOf(ClassUtils.toClassMethodStr(targetMethod.getClassName(),
+				targetMethod.getMethodName()));
+		List<CfgCoverage> coverage = cfgCoverage.run(targetMethods, Arrays.asList(params.getTestMethodInfo().getClassName()),
+				Arrays.asList(params.getTestClass()));
+		return coverage;
 	}
 	
 	/*private List<Domain[]> getFullSolutions(List<BreakpointValue> records, List<ExecVar> originVars) {
