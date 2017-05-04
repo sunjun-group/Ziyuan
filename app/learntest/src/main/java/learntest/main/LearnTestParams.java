@@ -8,7 +8,7 @@
 
 package learntest.main;
 
-import learntest.core.data.testtarget.TargetMethod;
+import learntest.core.commons.data.testtarget.TargetMethod;
 import learntest.main.model.MethodInfo;
 import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;

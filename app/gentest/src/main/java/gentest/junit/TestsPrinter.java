@@ -52,13 +52,6 @@ public class TestsPrinter implements ITestsPrinter {
 		}
 	}
 
-	private int getMaxIdxOfExistingClass(String srcPath, String pkg,
-			String classPrefix) {
-		List<String> existedFiles = PrinterUtils.listJavaFileNames(
-				PrinterUtils.getClassFolder(srcPath, pkg), classPrefix);
-		return getMaxClassIdx(existedFiles, classPrefix);
-	}
-	
 	public TestsPrinter(String pkg, String failPkg,
 			String methodPrefix, String classPrefix, ICompilationUnitPrinter cuPrinter) {
 		this.pkg = pkg;
@@ -71,10 +64,17 @@ public class TestsPrinter implements ITestsPrinter {
 		classIdx = 1;
 		this.cuPrinter = cuPrinter;
 	}
+
+	private int getMaxIdxOfExistingClass(String srcPath, String pkg,
+			String classPrefix) {
+		List<String> existedFiles = PrinterUtils.listJavaFileNames(
+				PrinterUtils.getClassFolder(srcPath, pkg), classPrefix);
+		return getMaxClassIdx(existedFiles, classPrefix);
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void printTests(Pair<List<Sequence>, List<Sequence>> testSeqs) {
+	public List<String> printTests(Pair<List<Sequence>, List<Sequence>> testSeqs) {
 		List<CompilationUnit> units;
 		if (!separatePassFail) {
 			List<Sequence> allTests = CollectionUtils.join(
@@ -87,8 +87,17 @@ public class TestsPrinter implements ITestsPrinter {
 		}
 		/* print all compilation units */
 		cuPrinter.print(units);
+		return getJunitClassNames(units);
 	}
 	
+	private List<String> getJunitClassNames(List<CompilationUnit> units) {
+		List<String> result = new ArrayList<String>(units.size());
+		for (CompilationUnit cu : units) {
+			result.add(cu.getTypes().get(0).getName());
+		}
+		return result;
+	}
+
 	public List<CompilationUnit> createCompilationUnits(List<Sequence> seqs,
 			String pkgName) {
 		JWriter jwriter = new JWriter();
@@ -154,6 +163,10 @@ public class TestsPrinter implements ITestsPrinter {
 
 	public void setCuPrinter(ICompilationUnitPrinter cuPrinter) {
 		this.cuPrinter = cuPrinter;
+	}
+	
+	public ICompilationUnitPrinter getCuPrinter() {
+		return cuPrinter;
 	}
 
 	public enum PrintOption {

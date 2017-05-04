@@ -10,6 +10,10 @@ public class CharValue extends PrimitiveValue {
 	
 	@Override
 	public Double getDoubleVal() {
+		return getDoubleVal(value);
+	}
+	
+	public static Double getDoubleVal(Character value) {
 		return (value == null) ? null : (double) value;
 	}
 	

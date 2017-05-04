@@ -1,5 +1,6 @@
 package learntest.main;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -18,7 +19,10 @@ import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
 import gentest.injection.GentestModules;
 import gentest.injection.TestcaseGenerationScope;
+import gentest.junit.FileCompilationUnitPrinter;
 import gentest.junit.TestsPrinter;
+import gentest.junit.TestsPrinter.PrintOption;
+import learntest.core.gentest.ITestGenerator;
 import learntest.gentest.TestSeqGenerator;
 import learntest.util.LearnTestUtil;
 import net.sf.javailp.Result;
@@ -27,60 +31,53 @@ import sav.common.core.SavException;
 import sav.commons.TestConfiguration;
 import sav.strategies.dto.execute.value.ExecVar;
 
-public class TestGenerator {
-	
+public class TestGenerator implements ITestGenerator {
+	private static int NUMBER_OF_INIT_TEST = 1;
 	private static String prefix = "test";
 	
-	
-	@SuppressWarnings("rawtypes")
+	/**
+	 * 
+	 * @throws ClassNotFoundException
+	 * @throws SavException
+	 */
 	public void genTest() throws ClassNotFoundException, SavException {
-		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(1);
 		String mSig = LearnTestUtil.getMethodWthSignature(LearnTestConfig.targetClassName, 
 				LearnTestConfig.targetMethodName, LearnTestConfig.getMethodLineNumber());
-		Class clazz = LearnTestUtil.retrieveClass(LearnTestConfig.targetClassName);
-
-		builder.classLoader(LearnTestUtil.getPrjClassLoader()).queryMaxLength(1).testPerQuery(1)
-				.forClass(clazz).method(mSig);
-		String testSourceFolder = LearnTestUtil.retrieveTestSourceFolder();
 		
-		System.currentTimeMillis();
+		Class<?> clazz = LearnTestUtil.retrieveClass(LearnTestConfig.targetClassName);
+		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(NUMBER_OF_INIT_TEST)
+										.classLoader(LearnTestUtil.getPrjClassLoader())
+										.queryMaxLength(1)
+										.testPerQuery(1)
+										.forClass(clazz)
+										.method(mSig);
+		String testSourceFolder = LearnTestUtil.retrieveTestSourceFolder();
 		
 		boolean isL2T = LearnTestConfig.isL2TApproach;
 		String packageName = LearnTestConfig.getTestPackageName(isL2T);
 		String simpleClassName = LearnTestConfig.getSimpleClassName();
-		TestsPrinter printer = new TestsPrinter(packageName, null, 
-				prefix, simpleClassName, testSourceFolder);
+		TestsPrinter printer = new TestsPrinter(packageName, null, prefix, simpleClassName, testSourceFolder);
 		Pair<List<Sequence>, List<Sequence>> pair = builder.generate();
 		printer.printTests(pair);
-		
-		/*final FileCompilationUnitPrinter cuPrinter = new FileCompilationUnitPrinter(
-				appClasspath.getSrc());
-		final List<String> junitClassNames = new ArrayList<String>();
-		TestsPrinter printer = new TestsPrinter(LearnTestConfig.pkg, LearnTestConfig.pkg, prefix, LearnTestConfig.typeName,
-				new ICompilationUnitPrinter() {
-					
-					@Override
-					public void print(List<CompilationUnit> compilationUnits) {
-						for (CompilationUnit cu : compilationUnits) {
-							junitClassNames.add(ClassUtils.getCanonicalName(cu
-									.getPackage().getName().getName(), cu
-									.getTypes().get(0).getName()));
-						}
-						cuPrinter.print(compilationUnits);
-					}
-				});
-		printer.printTests(builder.generate());
-		List<File> generatedFiles = cuPrinter.getGeneratedFiles();
-		
-		Recompiler recompiler = new Recompiler(new VMConfiguration(appClasspath));
-		recompiler.recompileJFile(appClasspath.getTestTarget(), generatedFiles);*/
 	}
-
-	public void genTestAccordingToSolutions(List<Domain[]> solutions, List<ExecVar> vars) 
+	
+	public GentestResult genTestAccordingToSolutions(List<Domain[]> solutions, List<ExecVar> vars) 
+			throws ClassNotFoundException, SavException {
+		return genTestAccordingToSolutions(solutions, vars, PrintOption.OVERRIDE);
+	}
+	
+	/**
+	 * 
+	 * @param solutions
+	 * @param vars
+	 * @param printOption whether to append existing test file or create a new one.
+	 * @return 
+	 */
+	public GentestResult genTestAccordingToSolutions(List<Domain[]> solutions, List<ExecVar> vars, PrintOption printOption) 
 			throws ClassNotFoundException, SavException {
 		MethodCall target = findTargetMethod();
 		if (target == null) {
-			return;
+			return null;
 		}
 		solutions = clean(solutions, vars.size());
 		
@@ -99,42 +96,14 @@ public class TestGenerator {
 			sequences.add(generator.generateSequence(solution, vars));
 		}
 		injectorModule.exit(TestcaseGenerationScope.class);
-		
-//		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(), null, 
-//				prefix, LearnTestConfig.getSimpleClassName(), TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
-		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(LearnTestConfig.isL2TApproach), null, 
-				prefix, LearnTestConfig.getSimpleClassName(), LearnTestUtil.retrieveTestSourceFolder());
-		printer.printTests(new Pair<List<Sequence>, List<Sequence>>(sequences, new ArrayList<Sequence>()));
+
+		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(LearnTestConfig.isL2TApproach),
+				null, prefix, LearnTestConfig.getSimpleClassName(), LearnTestUtil.retrieveTestSourceFolder(),
+				printOption);
+		List<String> junitClassName = printer.printTests(Pair.of(sequences, new ArrayList<Sequence>(0)));
+		return new GentestResult(junitClassName,
+				((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles());
 	}
-	
-//	public String retrieveTestSourceFolder() {
-//		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-//		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.projectName);
-//		IJavaProject javaProject = JavaCore.create(iProject);
-//		
-//		try {
-//			for(IPackageFragmentRoot root: javaProject.getAllPackageFragmentRoots()){
-//				if(root instanceof PackageFragmentRoot){
-//					String name = root.getElementName();
-//					if(name.equals("test")){
-//						URI uri = root.getCorrespondingResource().getLocationURI();
-//						String sourceFolderPath = uri.toString();
-//						sourceFolderPath = sourceFolderPath.substring(6, sourceFolderPath.length());
-//						
-//						return sourceFolderPath;
-//					}
-//					
-//					
-//				}
-//				
-//			}
-//		} catch (JavaModelException e) {
-//			e.printStackTrace();
-//		}
-//		
-//		
-//		return null;
-//	}
 	
 	private List<Domain[]> clean(List<Domain[]> solutions, int size) {
 		List<Domain[]> res = new ArrayList<Domain[]>();
@@ -162,17 +131,14 @@ public class TestGenerator {
 		return true;
 	}
 
-	public void genTestAccordingToInput(List<Result> inputs, 
-			//List<Set<String>> variables
-			//List<Variable> variables
-			List<String> variables) throws ClassNotFoundException, SavException {
+	public void genTestAccordingToInput(List<Result> inputs, List<String> variables)
+			throws ClassNotFoundException, SavException {
 		MethodCall target = findTargetMethod();
 		if (target == null) {
 			return;
 		}
 		inputs = clean(inputs, variables);
 		
-		//TestSeqGenerator generator = new TestSeqGenerator();
 		GentestModules injectorModule = new GentestModules();
 		injectorModule.enter(TestcaseGenerationScope.class);
 		Injector injector = Guice.createInjector(injectorModule);
@@ -193,8 +159,12 @@ public class TestGenerator {
 	}
 
 	private MethodCall findTargetMethod() throws ClassNotFoundException {
-		Class<?> clazz = LearnTestUtil.retrieveClass(LearnTestConfig.targetClassName);
-		Method method = MethodUtils.findMethod(clazz, LearnTestConfig.targetMethodName);
+		return findTargetMethod(LearnTestConfig.targetClassName, LearnTestConfig.targetMethodName);
+	}
+	
+	private MethodCall findTargetMethod(String targetClassName, String targetmethodName) throws ClassNotFoundException {
+		Class<?> clazz = LearnTestUtil.retrieveClass(targetClassName);
+		Method method = MethodUtils.findMethod(clazz, targetmethodName);
 		if (Modifier.isPublic(method.getModifiers())) {
 			return MethodCall.of(method, clazz);
 		}
@@ -231,4 +201,21 @@ public class TestGenerator {
 		return true;
 	}
 	
+	public static class GentestResult {
+		private List<String> junitClassNames;
+		private List<File> junitfiles;
+
+		public GentestResult(List<String> junitClassNames, List<File> generatedFiles) {
+			this.junitClassNames = junitClassNames;
+			this.junitfiles = generatedFiles;
+		}
+
+		public List<String> getJunitClassNames() {
+			return junitClassNames;
+		}
+
+		public List<File> getJunitfiles() {
+			return junitfiles;
+		}
+	}
 }

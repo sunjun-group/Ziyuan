@@ -1,18 +1,18 @@
 package learntest.core.machinelearning;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
 import icsetlv.common.dto.BreakpointValue;
-import learntest.breakpoint.data.DecisionLocation;
 import learntest.calculator.OrCategoryCalculator;
 import learntest.core.LearningMediator;
+import learntest.core.commons.data.IDecisionNode;
 import learntest.sampling.javailp.ProblemBuilder;
 import learntest.sampling.javailp.ProblemSolver;
+import learntest.testcase.data.BranchType;
 import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.LoopTimesData;
 import learntest.util.Settings;
@@ -32,7 +32,7 @@ import sav.strategies.dto.execute.value.ExecVarType;
 public class JavailpSelectiveSampling {
 	private LearningMediator mediator;
 	private List<Result> prevDatas;
-	private Map<DecisionLocation, BreakpointData> selectResult;
+	private Map<IDecisionNode, BreakpointData> selectResult;
 	
 	private int numPerExe = 100;
 	
@@ -58,11 +58,11 @@ public class JavailpSelectiveSampling {
 		delta = values.size() - 1;
 	}
 
-	public Map<DecisionLocation, BreakpointData> selectDataForEmpty(DecisionLocation target, 
+	public Map<IDecisionNode, BreakpointData> selectDataForEmpty(IDecisionNode target, 
 			List<ExecVar> originVars, 
 			OrCategoryCalculator precondition, 
 			List<Divider> current, 
-			boolean trueOrFalse, 
+			BranchType missingBranch, 
 			boolean isLoop) throws SavException, SAVExecutionTimeOutException {
 		System.currentTimeMillis();
 		
@@ -91,25 +91,25 @@ public class JavailpSelectiveSampling {
 				}
 			}
 			
-			runData(assignments);
+			runData(assignments, originVars);
 			
 			if (selectResult == null) {
 				continue;
 			}
 			BreakpointData selectData = selectResult.get(target);
 			if (!isLoop) {
-				if (trueOrFalse && !selectData.getTrueValues().isEmpty()) {
+				if ((missingBranch.isTrueBranch()) && !selectData.getTrueValues().isEmpty()) {
 					return selectResult;
 				}
-				if (!trueOrFalse && !selectData.getFalseValues().isEmpty()) {
+				if (missingBranch.isFalseBranch() && !selectData.getFalseValues().isEmpty()) {
 					return selectResult;
 				}
 			} else {
 				LoopTimesData loopTimesData = (LoopTimesData) selectData;
-				if (trueOrFalse && !loopTimesData.getMoreTimesValues().isEmpty()) {
+				if (missingBranch.isTrueBranch() && !loopTimesData.getMoreTimesValues().isEmpty()) {
 					return selectResult;
 				}
-				if (!trueOrFalse && !loopTimesData.getOneTimeValues().isEmpty()) {
+				if (missingBranch.isFalseBranch() && !loopTimesData.getOneTimeValues().isEmpty()) {
 					return selectResult;
 				}
 			}
@@ -117,7 +117,7 @@ public class JavailpSelectiveSampling {
 		return null;
 	}
 	
-	public Map<DecisionLocation, BreakpointData> selectDataForModel(DecisionLocation target, 
+	public Map<IDecisionNode, BreakpointData> selectDataForModel(IDecisionNode target, 
 			List<ExecVar> originVars, 
 			List<DataPoint> datapoints,
 			OrCategoryCalculator preconditions, 
@@ -171,7 +171,7 @@ public class JavailpSelectiveSampling {
 			}			
 		}
 		
-		selectData(target, assignments);
+		selectData(target, assignments, originVars);
 		System.currentTimeMillis();
 		return selectResult;
 	}
@@ -293,58 +293,27 @@ public class JavailpSelectiveSampling {
 		return 20 >= x && x >= y && y >= z && z >= 1;
 	}
 
-	public Map<DecisionLocation, BreakpointData> getSelectResult() {
+	public Map<IDecisionNode, BreakpointData> getSelectResult() {
 		return selectResult;
 	}
 
-	private void runData(List<List<Eq<?>>> assignments) throws SavException, SAVExecutionTimeOutException {
+	private void runData(List<List<Eq<?>>> assignments, List<ExecVar> originVars) throws SavException, SAVExecutionTimeOutException {
 		if (assignments.isEmpty()) {
 			return;
 		}
-		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
-		for (List<Eq<?>> valSet : assignments) {
-			if (!valSet.isEmpty()) {
-				Map<String, Object> varMap = toInstrVarMap(valSet);
-				list.add(varMap);
-			}
-		}
-		logSample(list);
-		selectResult = mediator.runSamples(list);
+		selectResult = mediator.runSamples(assignments, originVars);
 	}
 
-	private void logSample(List<Map<String, Object>> list) {
-		if(list != null){
-			int size = list.size();
-			System.out.println("Running " + size + " data points...");			
-		}
-	}
-	
-	private void selectData(DecisionLocation target, 
-			List<List<Eq<?>>> assignments) throws SavException, SAVExecutionTimeOutException {
+	private void selectData(IDecisionNode target, 
+			List<List<Eq<?>>> assignments, List<ExecVar> originVars) throws SavException, SAVExecutionTimeOutException {
 		if (assignments.isEmpty()) {
 			selectResult = null;
 			return;
 		}
-		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
-		for (List<Eq<?>> valSet : assignments) {
-			if (!valSet.isEmpty()) {
-				list.add(toInstrVarMap(valSet));
-			}
-		}
 		
-		logSample(list);
-		
-		selectResult = mediator.runSamples(list);
+		selectResult = mediator.runSamples(assignments, originVars);
 	}
 	
-	private Map<String, Object> toInstrVarMap(List<Eq<?>> assignments) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		for (Eq<?> asgt : assignments) {
-			map.put(asgt.getVar().getLabel(), asgt.getValue());
-		}
-		return map;
-	}
-
 	private boolean checkNonduplicateResult(Result result, List<ExecVar> vars, List<Result> prevDatas, List<List<Eq<?>>> assignments) {
 		boolean isDuplicateWithResult = isDuplicate(result, vars, prevDatas);
 		

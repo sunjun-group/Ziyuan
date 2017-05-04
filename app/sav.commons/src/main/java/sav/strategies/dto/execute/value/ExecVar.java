@@ -75,4 +75,26 @@ public class ExecVar implements Var {
 	public void accept(ExpressionVisitor visitor) {
 		visitor.visit(this);
 	}
+
+	/**
+	 * @param object
+	 * @return
+	 */
+	public double getDoubleValue(Object object) {
+		switch (type) {
+		case INTEGER:
+		case BYTE:
+		case CHAR:
+		case DOUBLE:
+		case FLOAT:
+		case LONG:
+		case SHORT:
+			return ((Number) object).doubleValue();
+		case BOOLEAN:
+			return BooleanValue.getDoubleVal((Boolean) object);
+		default:
+			break;
+		}
+		return 0;
+	}
 }

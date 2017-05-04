@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jacop.core.Domain;
-import org.jacop.floats.core.FloatIntervalDomain;
 
 import cfgcoverage.jacoco.CfgJaCoCo;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
@@ -21,6 +20,7 @@ import learntest.breakpoint.data.DecisionLocation;
 import learntest.cfg.CfgHandlerAdapter;
 import learntest.cfg.CfgHandlerAdapter.CfgAproach;
 import learntest.cfg.ICfgHandler;
+import learntest.core.commons.utils.DomainUtils;
 import learntest.exception.LearnTestException;
 import learntest.main.model.MethodInfo;
 import learntest.sampling.JavailpSelectiveSampling;
@@ -31,6 +31,7 @@ import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.StopTimer;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
@@ -77,9 +78,14 @@ public class LearnTest {
 		}
 		
 		/* collect coverage and build cfg */
+		StopTimer timer = new StopTimer("jacoco");
+		timer.start();
+		timer.newPoint("start");
 		MethodInfo targetMethod = params.getTestMethodInfo();
 		List<CfgCoverage> cfgcoverage = runCfgCoverage(params, targetMethod);
 		System.out.println(cfgcoverage);
+		timer.stop();
+		System.out.println(timer.getResults());
 		
 		ICfgHandler cfgHandler = new CfgHandlerAdapter(appClassPath, params, CfgAproach.SOURCE_CODE_LEVEL);
 		dtBuilder = new BreakpointDataBuilder(cfgHandler.getDecisionBkpsData());
@@ -117,7 +123,7 @@ public class LearnTest {
 					list.add(test);
 					
 					/* GENERATE NEW TESTCASES */
-					new TestGenerator().genTestAccordingToSolutions(getSolutions(list, vars), vars);
+					new TestGenerator().genTestAccordingToSolutions(DomainUtils.buildSolutions(list, vars), vars);
 					System.out.println("Total test cases number: " + testCnt);
 					coverage = 1;
 				}
@@ -132,7 +138,7 @@ public class LearnTest {
 				coverage = learner.getCoverage();
 				
 				try{
-					List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
+					List<Domain[]> domainList = DomainUtils.buildSolutions(learner.getRecords(), learner.getOriginVars());
 					new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());					
 				} catch(Exception e){
 					System.out.println(e);
@@ -146,7 +152,7 @@ public class LearnTest {
 		} catch(SAVExecutionTimeOutException e){
 			if (learner != null) {
 				coverage = learner.getCoverage();
-				List<Domain[]> domainList = getSolutions(learner.getRecords(), learner.getOriginVars());
+				List<Domain[]> domainList = DomainUtils.buildSolutions(learner.getRecords(), learner.getOriginVars());
 				new TestGenerator().genTestAccordingToSolutions(domainList, learner.getOriginVars());
 				testCnt = selectiveSampling.getTotalNum();
 				System.out.println("Total test cases number: " + testCnt);
@@ -189,20 +195,6 @@ public class LearnTest {
 		}
 		return res;
 	}*/
-		
-	private List<Domain[]> getSolutions(List<BreakpointValue> records, List<ExecVar> originVars) {
-		List<Domain[]> res = new ArrayList<Domain[]>();
-		int size = originVars.size();
-		for (BreakpointValue record : records) {
-			Domain[] solution = new Domain[size];
-			for (int i = 0; i < size; i++) {
-				double value = record.getValue(originVars.get(i).getLabel(), 0.0).doubleValue();
-				solution[i] = new FloatIntervalDomain(value, value);
-			}
-			res.add(solution);
-		}
-		return res;
-	}
 
 	private List<String> collectExistingTestcases(String testClass) {
 		org.eclipse.jdt.core.dom.CompilationUnit cu = LearnTestUtil.findCompilationUnitInProject(testClass);

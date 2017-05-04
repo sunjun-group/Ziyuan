@@ -11,7 +11,7 @@ package learntest.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import learntest.core.data.testtarget.TargetMethod;
+import learntest.core.commons.data.testtarget.TargetMethod;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.dto.BreakPoint.Variable.VarScope;

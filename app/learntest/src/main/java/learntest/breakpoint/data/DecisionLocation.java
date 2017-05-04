@@ -1,8 +1,9 @@
 package learntest.breakpoint.data;
 
+import learntest.core.commons.data.IDecisionNode;
 import sav.strategies.dto.ClassLocation;
 
-public class DecisionLocation extends ClassLocation implements Comparable<DecisionLocation> {
+public class DecisionLocation extends ClassLocation implements IDecisionNode, Comparable<DecisionLocation> {
 	private boolean loop;
 
 	public DecisionLocation(String className, String methodName, int lineNumber, boolean loop) {

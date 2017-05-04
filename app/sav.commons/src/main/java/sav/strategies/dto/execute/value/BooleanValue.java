@@ -22,6 +22,10 @@ public class BooleanValue extends PrimitiveValue {
 
 	@Override
 	public Double getDoubleVal() {
+		return getDoubleVal(value);
+	}
+	
+	public static Double getDoubleVal(Boolean value) {
 		if (value == null) return null;
 		
 		if (value) {

@@ -81,7 +81,7 @@ public class DecisionLearner implements CategoryCalculator {
 	 * The first integer indicates the line number of condition, the second integer indicates branch: 0-false, 1-true/once, 2-more
 	 * See {@link BranchType}
 	 */
-	private List<Pair<Integer, Integer>> branchRecord;
+	private List<Pair<Integer, BranchType>> branchRecord;
 	
 	private boolean needFalse = true;
 	private boolean needTrue = true;
@@ -104,7 +104,7 @@ public class DecisionLearner implements CategoryCalculator {
 	public void learn(Map<DecisionLocation, BreakpointData> bkpDataMap) throws SavException, SAVExecutionTimeOutException {
 		cfgContainer.updateRelevance(bkpDataMap);
 		recordedTestInputs = new ArrayList<BreakpointValue>();
-		branchRecord = new ArrayList<Pair<Integer,Integer>>();
+		branchRecord = new ArrayList<Pair<Integer,BranchType>>();
 		this.bkpDataMap = bkpDataMap;
 		List<BreakpointData> bkpDatas = new ArrayList<BreakpointData>(bkpDataMap.values());
 		Collections.sort(bkpDatas);
@@ -583,7 +583,7 @@ public class DecisionLearner implements CategoryCalculator {
 						this.coveredBranches.add(branch);
 					}
 					
-					branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.FALSE));
+					branchRecord.add(new Pair<Integer, BranchType>(lineNo, BranchType.FALSE));
 					break;
 				}
 			}
@@ -596,7 +596,7 @@ public class DecisionLearner implements CategoryCalculator {
 					this.coveredBranches.add(branch);
 				}
 				
-				branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.FALSE));
+				branchRecord.add(new Pair<Integer, BranchType>(lineNo, BranchType.FALSE));
 			}
 		}
 		if (needTrue) {
@@ -610,7 +610,7 @@ public class DecisionLearner implements CategoryCalculator {
 						this.coveredBranches.add(branch);
 					}
 					
-					branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.TRUE));
+					branchRecord.add(new Pair<Integer, BranchType>(lineNo, BranchType.TRUE));
 					break;
 				}
 			}
@@ -623,7 +623,7 @@ public class DecisionLearner implements CategoryCalculator {
 					this.coveredBranches.add(branch);
 				}
 				
-				branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.TRUE));
+				branchRecord.add(new Pair<Integer, BranchType>(lineNo, BranchType.TRUE));
 			}
 		}
 		
@@ -631,8 +631,8 @@ public class DecisionLearner implements CategoryCalculator {
 	}
 	
 	private void printCoverageInfo() {
-		for(Pair<Integer, Integer> pair: branchRecord){
-			System.out.println("Branch: line " + pair.a + ", " + BranchType.getBranchType(pair.b));
+		for(Pair<Integer, BranchType> pair: branchRecord){
+			System.out.println("Branch: line " + pair.a + ", " + pair.b.toString());
 		}
 		
 	}
@@ -650,7 +650,7 @@ public class DecisionLearner implements CategoryCalculator {
 						this.coveredBranches.add(branch);
 					}
 					
-					branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.TRUE));
+					branchRecord.add(new Pair<Integer, BranchType>(lineNo, BranchType.TRUE));
 					break;
 				}
 			}
@@ -663,7 +663,7 @@ public class DecisionLearner implements CategoryCalculator {
 					this.coveredBranches.add(branch);
 				}
 				
-				branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.TRUE));
+				branchRecord.add(new Pair<Integer, BranchType>(lineNo, BranchType.TRUE));
 			}
 		}
 		if (needMore) {
@@ -677,7 +677,7 @@ public class DecisionLearner implements CategoryCalculator {
 						this.coveredBranches.add(branch);
 					}
 
-					branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.MORE));
+					branchRecord.add(new Pair<Integer, BranchType>(lineNo, BranchType.MORE));
 					break;
 				}
 			}
@@ -690,7 +690,7 @@ public class DecisionLearner implements CategoryCalculator {
 					this.coveredBranches.add(branch);
 				}
 				
-				branchRecord.add(new Pair<Integer, Integer>(lineNo, BranchType.MORE));
+				branchRecord.add(new Pair<Integer, BranchType>(lineNo, BranchType.MORE));
 			}
 		}
 	}

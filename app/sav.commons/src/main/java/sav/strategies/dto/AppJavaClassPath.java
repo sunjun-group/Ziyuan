@@ -24,6 +24,7 @@ public class AppJavaClassPath {
 	private String javaHome;
 	private Set<String> classpaths;
 	private String src;
+	private String testSrc;
 	private String target;
 	private String testTarget;
 	private SystemPreferences preferences;
@@ -60,6 +61,14 @@ public class AppJavaClassPath {
 	public void setSrc(String src) {
 		this.src = src;
 	}
+	
+	public String getTestSrc() {
+		return testSrc;
+	}
+
+	public void setTestSrc(String testSrc) {
+		this.testSrc = testSrc;
+	}
 
 	public String getTarget() {
 		return target;
@@ -76,7 +85,7 @@ public class AppJavaClassPath {
 	public void setTestTarget(String testTarget) {
 		this.testTarget = testTarget;
 	}
-
+	
 	public String getClasspathStr() {
 		return StringUtils.join(classpaths, File.pathSeparator);		
 	}
