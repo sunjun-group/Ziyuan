@@ -21,9 +21,9 @@ import cfgcoverage.jacoco.CfgJaCoCo;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import gentest.junit.TestsPrinter.PrintOption;
 import learntest.calculator.OrCategoryCalculator;
-import learntest.core.commons.data.DecisionNodeProbe;
-import learntest.core.commons.data.DecisionProbes;
-import learntest.core.commons.data.IDecisionNode;
+import learntest.core.commons.data.decision.DecisionNodeProbe;
+import learntest.core.commons.data.decision.DecisionProbes;
+import learntest.core.commons.data.decision.IDecisionNode;
 import learntest.core.commons.data.testtarget.TargetMethod;
 import learntest.core.commons.utils.DomainUtils;
 import learntest.core.machinelearning.ITestCaseExecutor;
@@ -80,9 +80,6 @@ public class LearningMediator {
 	 * @param originVars 
 	 * @param list
 	 * @return
-	 * @throws SavException 
-	 * @throws IOException 
-	 * @throws ClassNotFoundException 
 	 */
 	public Map<IDecisionNode, BreakpointData> runSamples(List<List<Eq<?>>> assignments, List<ExecVar> originVars)
 			throws SavException {

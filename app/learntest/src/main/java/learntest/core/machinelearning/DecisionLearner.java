@@ -7,24 +7,28 @@
  */
 package learntest.core.machinelearning;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.calculator.OrCategoryCalculator;
 import learntest.core.LearningMediator;
-import learntest.core.commons.data.DecisionNodeProbe;
-import learntest.core.commons.data.DecisionProbes;
+import learntest.core.commons.data.decision.DecisionNodeProbe;
+import learntest.core.commons.data.decision.DecisionProbes;
+import learntest.sampling.jacop.StoreSearcher;
 import learntest.testcase.data.BranchType;
+import libsvm.core.Divider;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.Formula;
-import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
+import sav.strategies.dto.execute.value.ExecVarType;
 
 /**
  * @author LLT
@@ -36,6 +40,9 @@ public class DecisionLearner {
 	
 	private boolean usingPrecondsCache;
 	
+	/* LLT: temporary keep */
+	private List<Divider> curDividers;
+	
 	public DecisionLearner(LearningMediator mediator) {
 		this.mediator = mediator;
 	}
@@ -43,18 +50,32 @@ public class DecisionLearner {
 	/**
 	 * Each decision location has two formula, 
 	 * one for true/false, and one for loop
-	 * @param dataCoverage
-	 * @throws SAVExecutionTimeOutException 
-	 * @throws SavException 
+	 * 
+	 * @throws SAVExecutionTimeOutException, SavException 
 	 */
-	public void learn(List<ExecVar> orgVars) throws SavException, SAVExecutionTimeOutException {
-		Assert.assertTrue(CollectionUtils.isNotEmpty(orgVars));
+	public void learn() throws SavException, SAVExecutionTimeOutException {
 		DecisionProbes decisionProbes = getDecisionProbes();
+		List<ExecVar> orgVars = BreakpointDataUtils.collectAllVars(decisionProbes.getTestInputs());
+		if (CollectionUtils.isEmpty(orgVars)) {
+			return;
+		}
+		
+		List<ExecVar> polyClassifierVars = createPolyClassifierVars(orgVars);
+		StoreSearcher.length = orgVars.size();
+		List<String> labels = BreakpointDataUtils.extractLabels(orgVars);
 		List<DecisionNodeProbe> probes = decisionProbes.getNodeProbes();
 		for (DecisionNodeProbe decisInput : probes) {
+			if (decisInput.isAllbranchesMissing()) {
+				/* log and ignore */
+				continue;
+			}
+			
 			log(decisInput);
-			/* learn classifier */
+			/* learn classifier, after learning we will have curDividers and decisionProbes updated */
 			Pair<Formula, Formula> classifier = learn(decisInput, orgVars);
+			
+			
+			decisInput.setPrecondition(classifier, curDividers);
 		}
 	}
 
@@ -68,8 +89,7 @@ public class DecisionLearner {
 		boolean needFalse = true; // need to learn false branch.
 		boolean needTrue = false; // need to learn true branch.
 		if (decisCoveredInput.getNode().isInLoop()) {
-			/* if begins to learn loop times data, the true branch must have been satisfied. 
-			 * LLT: NOT CLEAR ENOUGH */
+			/* if begins to learn loop times data, the true branch must have been satisfied. */
 			needTrue = false; 
 		}
 		OrCategoryCalculator preconditions = getExistingPrecondition(decisCoveredInput.getNode());
@@ -91,6 +111,24 @@ public class DecisionLearner {
 		}
 			
 		return null;
+	}
+	
+	/**
+	 * create new variables for polynomial classification
+	 * @param orgVars 
+	 * @return 
+	 */
+	private List<ExecVar> createPolyClassifierVars(List<ExecVar> orgVars) {
+		List<ExecVar> polyClassifierVars = new ArrayList<ExecVar>(orgVars);
+		int size = orgVars.size();
+		for (int i = 0; i < size; i++) {
+			ExecVar var = orgVars.get(i);
+			for (int j = i; j < size; j++) {
+				polyClassifierVars.add(new ExecVar(var.getLabel() + " * " + orgVars.get(j).getLabel(), 
+						ExecVarType.INTEGER));
+			}
+		}
+		return polyClassifierVars;
 	}
 
 	/**

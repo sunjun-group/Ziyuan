@@ -9,7 +9,7 @@ import java.util.Set;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.calculator.OrCategoryCalculator;
 import learntest.core.LearningMediator;
-import learntest.core.commons.data.IDecisionNode;
+import learntest.core.commons.data.decision.IDecisionNode;
 import learntest.sampling.javailp.ProblemBuilder;
 import learntest.sampling.javailp.ProblemSolver;
 import learntest.testcase.data.BranchType;

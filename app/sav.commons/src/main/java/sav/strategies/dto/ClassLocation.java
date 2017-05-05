@@ -78,7 +78,7 @@ public class ClassLocation {
 
 	@Override
 	public String toString() {
-		return this.id;
+		return getId();
 	}
 	
 }

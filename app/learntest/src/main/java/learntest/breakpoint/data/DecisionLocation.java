@@ -1,6 +1,6 @@
 package learntest.breakpoint.data;
 
-import learntest.core.commons.data.IDecisionNode;
+import learntest.core.commons.data.decision.IDecisionNode;
 import sav.strategies.dto.ClassLocation;
 
 public class DecisionLocation extends ClassLocation implements IDecisionNode, Comparable<DecisionLocation> {
