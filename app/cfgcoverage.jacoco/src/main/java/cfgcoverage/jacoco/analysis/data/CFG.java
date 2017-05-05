@@ -65,6 +65,10 @@ public class CFG {
 		return nodeList;
 	}
 	
+	public void addExitNode(CfgNode node) {
+		exitList.add(node);
+	}
+
 	@Override
 	public String toString () {
 		return "CfgCoverage [nodeList=" + nodeList + ", \nstartNode=" + startNode + ",\n exitList=" + exitList
@@ -82,42 +86,6 @@ public class CFG {
 			}
 		}
 		return decisionNodes;
-	}
-	
-	public static void updateExitNodes(CFG cfg) {
-		for (CfgNode node : cfg.nodeList) {
-			if (node.isLeaf()) {
-				cfg.exitList.add(node);
-			}
-		}
-	}
-	
-	public static void updateNodesInLoop(CFG cfg) {
-		int size = cfg.nodeList.size();
-		int i = size - 1;
-		while (i > 0) {
-			CfgNode node = cfg.nodeList.get(i);
-			int firstIdxOfLoopBlk = node.getFistBlkIdxIfLoopHeader();
-			/* if firstIdx is not valid meaning node is not a loop header, we move to another node */
-			if (firstIdxOfLoopBlk == CfgNode.INVALID_IDX) {
-				i--;
-				continue;
-			} else {
-				for (int j = firstIdxOfLoopBlk; j <= node.getIdx(); j++) {
-					cfg.getNode(j).setInLoop(true);
-				}
-				i = firstIdxOfLoopBlk - 1;
-			}
-		}
-	}
-	
-	public static void updateDecisionNodes(CFG cfg) {
-		for (CfgNode node : cfg.nodeList) {
-			if (node.getBranches() != null &&
-					node.getBranches().size() > 1) {
-					node.setDecisionNode(true);
-			}
-		}
 	}
 
 }

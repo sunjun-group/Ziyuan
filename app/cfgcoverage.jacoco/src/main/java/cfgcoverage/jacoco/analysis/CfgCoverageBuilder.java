@@ -21,6 +21,7 @@ import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.ExtInstruction;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
+import cfgcoverage.jacoco.utils.CfgConstructorUtils;
 import codecoverage.jacoco.agent.JaCoCoUtils;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.ClassUtils;
@@ -110,9 +111,7 @@ public class CfgCoverageBuilder {
 	public void endMethod() {
 		Assert.assertTrue(state == State.METHOD, "expect state METHOD, get state ", state.toString());
 		if (newCoverage) {
-			CFG.updateExitNodes(cfg);
-			CFG.updateDecisionNodes(cfg);
-			CFG.updateNodesInLoop(cfg);
+			CfgConstructorUtils.completeCfg(cfg);
 		}
 		reset();
 		state = State.CLASS;
