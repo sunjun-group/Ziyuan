@@ -40,7 +40,8 @@ public class CfgJaCoCoTest extends AbstractTest {
 		String targetClass = SamplePrograms.class.getName();
 		List<String> testingClassNames = Arrays.asList(targetClass);
 		List<String> junitClassNames = Arrays.asList(SampleProgramTest.class.getName());
-		List<String> targetMethods = CollectionUtils.listOf(ClassUtils.toClassMethodStr(targetClass, "Max"));
+		List<String> targetMethods = CollectionUtils.listOf(ClassUtils.toClassMethodStr(targetClass, "Max"),
+				ClassUtils.toClassMethodStr(targetClass, "ifInloop"));
 		run(targetMethods, testingClassNames, junitClassNames, TestConfiguration.SAV_COMMONS_TEST_TARGET);
 	}
 

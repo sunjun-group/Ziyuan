@@ -10,6 +10,8 @@ package cfgcoverage.jacoco.analysis.data;
 
 import org.jacoco.core.internal.flow.Instruction;
 
+import cfgcoverage.jacoco.utils.OpcodeUtils;
+
 /**
  * @author LLT
  *
@@ -64,8 +66,16 @@ public class ExtInstruction extends Instruction {
 	}
 
 	public void setNodePredecessor(ExtInstruction source) {
-		if (newCfg) {
-			cfgNode.setPredecessor(source.cfgNode);
-		}
+		setNodePredecessor(source, false);
 	}
+	
+	public void setNodePredecessor(ExtInstruction source, boolean jump) {
+		if (!newCfg) {
+			return;
+		}
+		boolean jumpForward = jump && (source.cfgNode.getIdx() < this.cfgNode.getIdx());
+		boolean falseBranch = jumpForward && OpcodeUtils.isCondition(source.cfgNode.getInsnNode().getOpcode());
+		cfgNode.setPredecessor(source.cfgNode, falseBranch);
+	}
+
 }

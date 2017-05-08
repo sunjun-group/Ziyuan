@@ -9,7 +9,9 @@
 package cfgcoverage.jacoco.analysis.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -48,6 +50,8 @@ public class CfgNode {
 	 */
 	private Set<CfgNode> dependentees;
 	private Set<CfgNode> loopDependentees;
+	/* keep type of relationship between this node with other nodes */
+	private Map<Integer, BranchRelationship> branchTypes = new HashMap<Integer, BranchRelationship>();
 	
 	public CfgNode(AbstractInsnNode insnNode, int line) {
 		predecessors = new ArrayList<CfgNode>();
@@ -55,14 +59,25 @@ public class CfgNode {
 		this.line = line;
 	}
 
-	public void addBranch(CfgNode node) {
+	public void addBranch(CfgNode node, boolean falseBranch) {
 		branches = CollectionUtils.initIfEmpty(branches);
 		branches.add(node);
+		addBranchRelationship(node, falseBranch);
 	}
 
-	public void setPredecessor(CfgNode predecessor) {
-		predecessor.addBranch(this);
+	private void addBranchRelationship(CfgNode node, boolean falseBranch) {
+		addBranchRelationship(node.idx, BranchRelationship.valueOf(falseBranch));
+	}
+	
+	private void addBranchRelationship(int nodeIdx, BranchRelationship branchRelationship) {
+		BranchRelationship curRelationship = branchTypes.get(nodeIdx);
+		branchTypes.put(nodeIdx, BranchRelationship.merge(curRelationship, branchRelationship));
+	}
+
+	public void setPredecessor(CfgNode predecessor, boolean falseBranch) {
+		predecessor.addBranch(this, falseBranch);
 		predecessors.add(predecessor);
+		addBranchRelationship(predecessor, falseBranch);
 	}
 
 	public List<CfgNode> getBranches() {
@@ -115,6 +130,10 @@ public class CfgNode {
 		return "node[" + OpcodeUtils.getCode(insnNode.getOpcode()) + ",line " + line +
 				(isDecisionNode ? ", decis" : "") + (isInLoop() ? ", inloop" : "") + "]";
 	}
+	
+	public boolean isLoopHeader() {
+		return loopHeaders != null && loopHeaders.contains(this);
+	} 
 
 	public int getFistBlkIdxIfLoopHeader() {
 		if (isLeaf()) {
@@ -146,24 +165,27 @@ public class CfgNode {
 	 * and node 15 has node 20 as its loopdependentee
 	 * 
 	 * @param node
+	 * @param branchType 
 	 */
-	public void addDominatee(CfgNode node, boolean loop) {
+	public void addDominatee(CfgNode node, boolean loop, BranchRelationship branchType) {
 		if (loop) {
 			loopDominatees = CollectionUtils.initIfEmpty(loopDominatees);
 			loopDominatees.add(node);
 		} else {
 			dominatees = CollectionUtils.initIfEmpty(dominatees);
 			dominatees.add(node);
+			addBranchRelationship(node.idx, branchType);
 		}
 	}
 	
-	public void addDependentee(CfgNode node, boolean loop) {
+	public void addDependentee(CfgNode node, boolean loop, BranchRelationship branchType) {
 		if (loop) {
 			loopDependentees = CollectionUtils.initIfEmpty(loopDependentees);
 			loopDependentees.add(node);
 		} else {
 			dependentees = CollectionUtils.initIfEmpty(dependentees);
 			dependentees.add(node);
+			addBranchRelationship(node.idx, branchType);
 		}
 	}
 	
@@ -196,8 +218,13 @@ public class CfgNode {
 
 	public void addChildsDependentees(CfgNode dependentee) {
 		if (dependentee.getDependentees() != null) {
-			dependentees.addAll(dependentee.getDependentees());
+			for (CfgNode childDependentee : dependentee.getDependentees()) {
+				addDependentee(childDependentee, false, dependentee.getBranchRelationship(childDependentee.idx));
+			}
 		}
 	}
 	
+	public BranchRelationship getBranchRelationship(int nodeIdx) {
+		return branchTypes.get(nodeIdx);
+	}
 }

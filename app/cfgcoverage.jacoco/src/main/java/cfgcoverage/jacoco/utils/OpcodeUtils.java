@@ -8,6 +8,8 @@
 
 package cfgcoverage.jacoco.utils;
 
+import org.objectweb.asm.Opcodes;
+
 /**
  * @author LLT
  *
@@ -226,6 +228,11 @@ public final class OpcodeUtils {
 	}
 	
 	public static boolean isLoadInst(int opcode) {
-		return (opcode >= 21 && opcode <= 53);
+		return (opcode >= Opcodes.ILOAD && opcode <= Opcodes.SALOAD);
+	}
+
+	public static boolean isCondition(int opcode) {
+		return (opcode >= Opcodes.IFEQ  && opcode <= Opcodes.IF_ACMPNE) || 
+				( opcode >= Opcodes.IFNULL && opcode <= Opcodes.IFNONNULL);
 	}
 }

@@ -112,7 +112,7 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 		for (Jump j : allJumps) {
 			ExtInstruction target = (ExtInstruction) LabelInfo.getInstruction(j.getTarget());
 			ExtInstruction source = (ExtInstruction) j.getSource();
-			target.setNodePredecessor(source);
+			target.setNodePredecessor(source, true);
 		}
 		coverageBuilder.endMethod();
 	}

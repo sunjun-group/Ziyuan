@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CFG;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import sav.common.core.SavRtException;
@@ -79,13 +80,14 @@ public class CfgConstructorUtils {
 		for (CfgNode node : decisionNodes) {
 			for (CfgNode branch : node.getBranches()) {
 				CfgNode child = branch;
+				BranchRelationship branchType = node.getBranchRelationship(branch.getIdx());
 				/* iterate when child is not a leaf node or at the end of the loop */
 				while (child != null && child != node) {
 					/* if the branch of node is actually its loop header, then add */
 					boolean childIsLoopHeaderOfNode = child.isLoopHeaderOf(node);
-					child.addDominatee(node, childIsLoopHeaderOfNode);
+					child.addDominatee(node, childIsLoopHeaderOfNode, branchType);
 					if (child.isDecisionNode()) {
-						node.addDependentee(child, childIsLoopHeaderOfNode);
+						node.addDependentee(child, childIsLoopHeaderOfNode, branchType);
 						break;
 					}
 					child = child.getNext();
@@ -109,15 +111,11 @@ public class CfgConstructorUtils {
 				continue;
 			}
 			for (CfgNode dependentee : node.getDependentees()) {
-				dependentee.addDominatee(node, false);
+				dependentee.addDominatee(node, false, node.getBranchRelationship(dependentee.getIdx()));
 			}
 		}
 	}
 	
-	/**
-	 * @param visitStack
-	 * @param visited
-	 */
 	private static void updateDependentees(CfgNode root) {
 		Set<CfgNode> visited = new HashSet<CfgNode>();
 		Stack<CfgNode> visitStack = new Stack<CfgNode>();
