@@ -145,12 +145,12 @@ public class LearningMediator {
 	 * data.
 	 * @return  updated node probe (with additional result of new tests generated from selective sampling).
 	 */
-	public DecisionNodeProbe selectiveSamplingForEmpty(DecisionNodeProbe target, List<ExecVar> originVars,
+	public DecisionProbes selectiveSamplingForEmpty(DecisionNodeProbe target, List<ExecVar> originVars,
 			OrCategoryCalculator precondition, List<Divider> current, BranchType missingBranch, boolean isLoop)
 			throws SavException, SAVExecutionTimeOutException {
 		selectiveSampling.selectDataForEmpty(target, originVars, precondition, current, missingBranch, isLoop);
 		// TODO LLT: UPDATE THE NEW ONE.
-		return target;
+		return decisionProbes;
 	}
 
 	/**

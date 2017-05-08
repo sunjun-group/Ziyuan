@@ -5,30 +5,31 @@
  * 	Author: SUTD
  *  Version:  $Revision: 1 $
  */
+
 package learntest.core.machinelearning;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
-import icsetlv.common.utils.BreakpointDataUtils;
+import icsetlv.common.dto.BreakpointValue;
 import learntest.calculator.OrCategoryCalculator;
-import learntest.core.LearningMediator;
+import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
-import learntest.sampling.jacop.StoreSearcher;
-import learntest.testcase.data.BranchType;
+import libsvm.core.Category;
 import libsvm.core.Divider;
+import libsvm.core.Machine;
+import libsvm.extension.ByDistanceNegativePointSelection;
+import libsvm.extension.NegativePointSelection;
+import libsvm.extension.PositiveSeparationMachine;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.Formula;
-import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
-import sav.strategies.dto.execute.value.ExecVarType;
 
 /**
  * @author LLT
@@ -36,130 +37,165 @@ import sav.strategies.dto.execute.value.ExecVarType;
  */
 public class DecisionLearner {
 	protected static Logger log = LoggerFactory.getLogger(DecisionLearner.class);
-	private LearningMediator mediator;
-	
-	private boolean usingPrecondsCache;
-	
-	/* LLT: temporary keep */
-	private List<Divider> curDividers;
-	
-	public DecisionLearner(LearningMediator mediator) {
-		this.mediator = mediator;
-	}
-	
-	/**
-	 * Each decision location has two formula, 
-	 * one for true/false, and one for loop
-	 * 
-	 * @throws SAVExecutionTimeOutException, SavException 
-	 */
-	public void learn() throws SavException, SAVExecutionTimeOutException {
-		DecisionProbes decisionProbes = getDecisionProbes();
-		List<ExecVar> orgVars = BreakpointDataUtils.collectAllVars(decisionProbes.getTestInputs());
-		if (CollectionUtils.isEmpty(orgVars)) {
-			return;
-		}
-		
-		List<ExecVar> polyClassifierVars = createPolyClassifierVars(orgVars);
-		StoreSearcher.length = orgVars.size();
-		List<String> labels = BreakpointDataUtils.extractLabels(orgVars);
-		List<DecisionNodeProbe> probes = decisionProbes.getNodeProbes();
-		for (DecisionNodeProbe decisInput : probes) {
-			if (decisInput.isAllbranchesMissing()) {
-				/* log and ignore */
+	private LearnedDataProcessor dataPreprocessor;
+
+	public void learn(DecisionProbes inputProbes) throws SavException {
+		List<CfgNode> decisionNodes = inputProbes.getCfg().getDecisionNodes();
+		DecisionProbes probes = inputProbes;
+
+		for (CfgNode node : decisionNodes) {
+			DecisionNodeProbe nodeProbe = probes.getNodeProbe(node);
+			if (nodeProbe.areAllbranchesMissing()) {
 				continue;
 			}
-			
-			log(decisInput);
-			/* learn classifier, after learning we will have curDividers and decisionProbes updated */
-			Pair<Formula, Formula> classifier = learn(decisInput, orgVars);
-			
-			
-			decisInput.setPrecondition(classifier, curDividers);
+			probes = dataPreprocessor.preprocess(probes, node);
+
+			/* at this point only 1 branch is missing at most */
+			nodeProbe = probes.getNodeProbe(node);
+			CoveredBranches coveredType = nodeProbe.getCoveredBranches();
+			TrueFalseLearningResult trueFalseResult = generateTrueFalseFormula(nodeProbe, coveredType);
+			Formula oneMore = generateLoopFormula(nodeProbe);
+			nodeProbe.setPrecondition(Pair.of(trueFalseResult.formula, oneMore), trueFalseResult.dividers);
 		}
 	}
 
-	/**
-	 * @param decisCoveredInput inputdata of all testcases at decision nodes. 
-	 * @return first formula is true/false formula, and the second formula is loop formula
-	 * @throws SAVExecutionTimeOutException 
-	 * @throws SavException 
-	 */
-	private Pair<Formula, Formula> learn(DecisionNodeProbe decisCoveredInput, List<ExecVar> originVars) throws SavException, SAVExecutionTimeOutException {
-		boolean needFalse = true; // need to learn false branch.
-		boolean needTrue = false; // need to learn true branch.
-		if (decisCoveredInput.getNode().isInLoop()) {
-			/* if begins to learn loop times data, the true branch must have been satisfied. */
-			needTrue = false; 
+	private static final int TRUE_FALSE_LEARN_MAX_ATTEMPT = 5;
+	private TrueFalseLearningResult generateTrueFalseFormula(DecisionNodeProbe orgNodeProbe, CoveredBranches coveredType) throws SAVExecutionTimeOutException {
+		/* only generate if both branches are covered */
+		if (coveredType != CoveredBranches.TRUE_AND_FALSE || !orgNodeProbe.doesNodeNeedToLearnPrecond()) {
+			return null;
 		}
-		OrCategoryCalculator preconditions = getExistingPrecondition(decisCoveredInput.getNode());
-		BranchType missingBranch;
-		if ((missingBranch = decisCoveredInput.getMissingBranch()) != null) {
-			decisCoveredInput = mediator.selectiveSamplingForEmpty(decisCoveredInput, originVars, 
-						preconditions, null, missingBranch, false);
-			/* after running, if selecting samples successful, we will have new testcases covered */
-			/* if testcases still missing one branch, try another time */
-			if ((missingBranch = decisCoveredInput.getMissingBranch()) != null) {
-				decisCoveredInput = mediator.selectiveSamplingForEmpty(decisCoveredInput, originVars, 
-						preconditions, null, missingBranch, false);
+		Formula trueFlaseFormula = null;
+		/* do generate formula and return */
+		NegativePointSelection negative = new ByDistanceNegativePointSelection();
+		PositiveSeparationMachine mcm = new PositiveSeparationMachine(negative);
+		trueFlaseFormula = generateInitialFormula(orgNodeProbe, mcm);
+		System.currentTimeMillis();
+		double acc = mcm.getModelAccuracy();
+		List<Divider> dividers = mcm.getLearnedDividers();
+		System.out.println("=============learned multiple cut: " + trueFlaseFormula);
+
+		int time = 0;
+		DecisionNodeProbe nodeProbe = orgNodeProbe;
+		CfgNode node = nodeProbe.getNode();
+		while (trueFlaseFormula != null && time < TRUE_FALSE_LEARN_MAX_ATTEMPT
+				&& nodeProbe.doesNodeNeedToLearnPrecond()) {
+			long startTime = System.currentTimeMillis();
+			DecisionProbes probes = nodeProbe.getDecisionProbes();
+			nodeProbe = dataPreprocessor.processData(probes, node).getNodeProbe(node);
+		
+			/* TODO LLT: to adapt (as in old implementation, input data is newBreakpointData, check whether it includes all or only new ones)*/
+			nodeProbe.getPreconditions().clearInvalidData(nodeProbe);
+			mcm.getLearnedModels().clear();
+			addDataPoints(probes.getLabels(), probes.getOriginalVars(), nodeProbe.getTrueValues(), Category.POSITIVE, mcm);
+			addDataPoints(probes.getLabels(), probes.getOriginalVars(), nodeProbe.getFalseValues(), Category.NEGATIVE, mcm);
+			System.out.println("true data after selective sampling" + nodeProbe.getTrueValues());
+			System.out.println("false data after selective sampling" + nodeProbe.getFalseValues());
+
+			mcm.train();
+			Formula tmp = mcm.getLearnedMultiFormula(probes.getOriginalVars(), probes.getLabels());
+			System.out.println("improved the formula: " + tmp);
+			if (tmp == null) {
+				break;
 			}
+
+			double accTmp = mcm.getModelAccuracy();
+			acc = mcm.getModelAccuracy();
+			if (!tmp.equals(trueFlaseFormula)) {
+				trueFlaseFormula = tmp;
+				dividers = mcm.getLearnedDividers();
+				acc = accTmp;
+
+				if (acc == 1.0) {
+					break;
+				}
+			} else {
+				break;
+			}
+
+			time++;
+		}
+		TrueFalseLearningResult result = new TrueFalseLearningResult();
+		result.formula = trueFlaseFormula;
+		result.dividers = dividers;
+		return result;
+	}
+	
+	private Formula generateInitialFormula(DecisionNodeProbe nodeProbe, PositiveSeparationMachine mcm)
+			throws SAVExecutionTimeOutException {
+		DecisionProbes probes = nodeProbe.getDecisionProbes();
+		mcm.setDefaultParams();
+		List<String> labels = probes.getLabels();
+		mcm.setDataLabels(labels);
+		mcm.setDefaultParams();
+		for(BreakpointValue value: nodeProbe.getTrueValues()){
+			addDataPoint(labels, probes.getOriginalVars(), value, Category.POSITIVE, mcm);
+		}
+		for(BreakpointValue value: nodeProbe.getFalseValues()){
+			addDataPoint(labels, probes.getOriginalVars(), value, Category.NEGATIVE, mcm);
+		}
+		mcm.train();
+		Formula newFormula = mcm.getLearnedMultiFormula(probes.getOriginalVars(), labels);
+		
+		return newFormula;
+	}
+	
+	private void addDataPoints(List<String> labels, List<ExecVar> vars, List<BreakpointValue> values, Category category, Machine machine) {
+		for (BreakpointValue value : values) {
+			addDataPoint(labels, vars, value, category, machine);
+		}
+	}
+	
+	private void addDataPoint(List<String> labels, List<ExecVar> vars, BreakpointValue bValue, Category category, Machine machine) {
+		double[] lineVals = new double[labels.size()];
+		int i = 0;
+		for (ExecVar var : vars) {
+			final Double value = bValue.getValue(var.getLabel(), 0.0);
+			lineVals[i++] = value;
+		}
+		int size = vars.size();
+		for (int j = 0; j < size; j++) {
+//			double value = bValue.getValue(vars.get(j).getLabel(), 0.0);
+			for (int k = j; k < size; k++) {
+//				lineVals[i ++] = value * bValue.getValue(vars.get(k).getLabel(), 0.0);
+				lineVals[i ++] = 0.0;
+			}
+		}
+
+		machine.addDataPoint(category, lineVals);
+	}
+
+	/**
+	 * @param nodeProbe
+	 */
+	private void recordTestInput(DecisionNodeProbe nodeProbe) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * @param nodeProbe
+	 * @return
+	 */
+	private Formula generateLoopFormula(DecisionNodeProbe nodeProbe) {
+		if (!nodeProbe.getNode().isLoopHeader()) {
+			return null;
+		}
+		/* TODO LLT: to solve random flag */
+		OrCategoryCalculator preconditions = nodeProbe.getPreconditions();
+		DecisionProbes probes = dataPreprocessor.onBeforeLearningLoop(nodeProbe.getDecisionProbes(), nodeProbe.getNode());
+		/* after trying to prepare data */
+		if (nodeProbe.getOneTimeValues().isEmpty()) {
+			log.info("Missing once loop data");
+			return null;
 		}
 		
-		/* after doing selective sampling, create formula */
-		if (!usingPrecondsCache) {
-			
-		}
-			
+		
 		return null;
 	}
 	
-	/**
-	 * create new variables for polynomial classification
-	 * @param orgVars 
-	 * @return 
-	 */
-	private List<ExecVar> createPolyClassifierVars(List<ExecVar> orgVars) {
-		List<ExecVar> polyClassifierVars = new ArrayList<ExecVar>(orgVars);
-		int size = orgVars.size();
-		for (int i = 0; i < size; i++) {
-			ExecVar var = orgVars.get(i);
-			for (int j = i; j < size; j++) {
-				polyClassifierVars.add(new ExecVar(var.getLabel() + " * " + orgVars.get(j).getLabel(), 
-						ExecVarType.INTEGER));
-			}
-		}
-		return polyClassifierVars;
+	private static class TrueFalseLearningResult {
+		Formula formula;
+		List<Divider> dividers;
 	}
-
-	/**
-	 * base on mode of learning,
-	 * if inherit, we try to get the existing one, otherwise, return nothing.
-	 * @param node
-	 * @return
-	 */
-	private OrCategoryCalculator getExistingPrecondition(CfgNode node) {
-		if (usingPrecondsCache) {
-			return getDecisionProbes().getPrecondition(node);
-		}
-		return null;
-	}
-
-	/**
-	 * always get the coverage infor in mediator which can only be change inside
-	 * mediator (for centralisation purpose)
-	 * 
-	 * @return
-	 */
-	private DecisionProbes getDecisionProbes() {
-		return mediator.getDecisionProbes();
-	}
-
-	/**
-	 * @param decisInput inputdata of all testcases at decision nodes. 
-	 */
-	private void log(DecisionNodeProbe decisInput) {
-		System.out.println("true data: " + decisInput.getTrueValues());
-		System.out.println("false data: " + decisInput.getFalseValues());
-	}
-	
 }

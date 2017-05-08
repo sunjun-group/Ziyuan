@@ -299,5 +299,12 @@ public class CollectionUtils {
 		return new HashSet<T>();
 	}
 
+	public static <T> Set<T> nullToEmpty(Set<T> set) {
+		if (set == null) {
+			return Collections.emptySet();
+		}
+		return set;
+	}
+
 	
 }

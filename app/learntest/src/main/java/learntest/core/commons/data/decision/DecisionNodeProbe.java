@@ -16,7 +16,7 @@ import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.calculator.OrCategoryCalculator;
-import learntest.testcase.data.BranchType;
+import learntest.testcase.data.IBreakpointData;
 import libsvm.core.Divider;
 import sav.common.core.Pair;
 import sav.common.core.formula.Formula;
@@ -27,9 +27,9 @@ import sav.strategies.dto.TestResultType;
  * @author LLT
  *
  */
-public class DecisionNodeProbe implements IDecisionNode {
+public class DecisionNodeProbe implements IDecisionNode, IBreakpointData {
 	/* reference to cfg node */
-	private CfgNode cfgNode;
+	private NodeCoverage coverage;
 	/* reference to its parent */
 	private DecisionProbes decisionProbes;
 	
@@ -44,7 +44,7 @@ public class DecisionNodeProbe implements IDecisionNode {
 
 	public DecisionNodeProbe(NodeCoverage nodeCoverage, Map<TestResultType, List<Integer>> testResults,
 			List<BreakpointValue> testInputs) {
-		cfgNode = nodeCoverage.getCfgNode();
+		this.coverage = nodeCoverage;
 		Map<Integer, List<Integer>> coveredBranches = nodeCoverage.getCoveredBranches();
 		/* true branch is first branch of cfg node */
 		trueValues = getCoveredInputValues(coveredBranches.get(0), testInputs);
@@ -76,17 +76,11 @@ public class DecisionNodeProbe implements IDecisionNode {
 		return trueValues.isEmpty() || falseValues.isEmpty();
 	}
 
-	public BranchType getMissingBranch() {
-		if (trueValues.isEmpty()) {
-			return BranchType.TRUE;
-		} 
-		if (falseValues.isEmpty()) {
-			return BranchType.FALSE;
-		}
-		return null;
+	public CoveredBranches getCoveredBranches() {
+		return CoveredBranches.valueOf(!trueValues.isEmpty(), !falseValues.isEmpty());
 	}
 
-	public boolean isAllbranchesMissing() {
+	public boolean areAllbranchesMissing() {
 		return trueValues.isEmpty() && falseValues.isEmpty();
 	}
 
@@ -102,21 +96,10 @@ public class DecisionNodeProbe implements IDecisionNode {
 			precondition = new Precondition();
 		}
 		precondition.setTrueFalse(classifier.first());
-		if (cfgNode.isInLoop()) {
+		if (getNode().isInLoop()) {
 			precondition.setOneMore(classifier.second());
 		}
 		precondition.setDividers(dividers);
-	}
-	
-//	public OrCategoryCalculator getPreConditions(int lineNo) {
-//		CfgDecisionNode node = nodeMap.get(lineNo);
-//		return new OrCategoryCalculator(node.getPreconditions(), vars, originalVars);
-//	}
-//	
-	public OrCategoryCalculator getNodePrecondition() {
-		/*  */
-//		for ()
-		return null;
 	}
 	
 	public Precondition getPrecondition() {
@@ -164,6 +147,40 @@ public class DecisionNodeProbe implements IDecisionNode {
 	}
 
 	public CfgNode getNode() {
-		return cfgNode;
+		return coverage.getCfgNode();
+	}
+	
+	public NodeCoverage getCoverage() {
+		return coverage;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean hasUncoveredBranch() {
+		int branchSize = CollectionUtils.getSize(getNode().getBranches());
+		return branchSize > coverage.getCoveredBranches().size();
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean doesNodeNeedToLearnPrecond() {
+		return decisionProbes.doesNodeNeedToLearnPrecond(this);
+	}
+	
+	/**
+	 * @return the decisionProbes
+	 */
+	public DecisionProbes getDecisionProbes() {
+		return decisionProbes;
+	}
+
+	private OrCategoryCalculator cachePreconditions;
+	public OrCategoryCalculator getPreconditions() {
+		if (cachePreconditions == null) {
+			cachePreconditions = decisionProbes.getPrecondition(getNode());
+		}
+		return cachePreconditions;
 	}
 }

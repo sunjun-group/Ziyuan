@@ -11,9 +11,11 @@ package learntest.core.commons.data.decision;
 import java.util.ArrayList;
 import java.util.List;
 
+import cfgcoverage.jacoco.analysis.data.CfgNode;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import sav.common.core.formula.Formula;
+import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
@@ -55,5 +57,30 @@ public class Precondition {
 
 	public void setPreconditions(List<List<CategoryCalculator>> preconditions) {
 		this.preconditions = preconditions;
+	}
+
+	public void addPreconditions(List<List<CategoryCalculator>> dominateePreconds) {
+		for (List<CategoryCalculator> precond : dominateePreconds) {
+			this.preconditions.add(new ArrayList<CategoryCalculator>(precond));
+		}
+	}
+
+	/**
+	 * 
+	 * @param list
+	 * @param condFromDivicers condition which builds by dominatee dividers
+	 */
+	public void addPreconditions(List<List<CategoryCalculator>> dominateePreconds, CategoryCalculator condFromDivicers) {
+		if (dominateePreconds.isEmpty()) {
+			List<CategoryCalculator> cur = new ArrayList<CategoryCalculator>();
+			cur.add(condFromDivicers);
+			this.preconditions.add(cur);
+		} else {
+			for (List<CategoryCalculator> list : preconditions) {
+				List<CategoryCalculator> cur = new ArrayList<CategoryCalculator>(list);
+				cur.add(condFromDivicers);
+				this.preconditions.add(cur);
+			}
+		}		
 	}
 }
