@@ -34,21 +34,37 @@ import sav.common.core.utils.SignatureUtils;
 public class CfgCoverageBuilder {
 	private String className;
 	private List<String> targetMethods;
-	private Map<String, CfgCoverage> methodCfgMap;
+	private Map<String, CfgCoverage> methodCfgCoverageMap;
 	private CfgCoverage cfgCoverage;
 	private CFG cfg;
 	
 	/* internal info */
 	private String methodId;
 	private int nodeIdx;
+	/* index of testcase in testMethodsList */
 	private int testcaseIdx;
 	private List<String> testMethods;
-	private boolean newCoverage;
+	/*
+	 * testcase index in method coverage, this idx and testcaseIdx can be
+	 * different if the testcase list for the builder is different from testcase
+	 * list in cfgCoverage
+	 */
+	private int methodTestcaseIdx;
+	private boolean newCfg;
 	private State state;
 	
 	public CfgCoverageBuilder(List<String> targetMethods) {
-		methodCfgMap = new HashMap<String, CfgCoverage>();
+		methodCfgCoverageMap = new HashMap<String, CfgCoverage>();
 		this.targetMethods = targetMethods;
+	}
+	
+	/**
+	 * @param cfgCoverageMap  the map between methodIds (className.methodName) and theirs existing cfgcoverage
+	 */
+	public void setMethodCfgCoverageMap(Map<String, CfgCoverage> cfgCoverageMap) {
+		this.methodCfgCoverageMap = cfgCoverageMap;
+		/* calculate offsetTestIdx based on the current coverages */
+		cfgCoverageMap.values();
 	}
 	
 	public CfgCoverageBuilder startClass(String name, String signature) {
@@ -78,16 +94,17 @@ public class CfgCoverageBuilder {
 		Assert.assertTrue(state == State.CLASS, "expect state CLASS, get state ", state.toString());
 		state = State.METHOD;
 		methodId = createMethodId(methodNode);
-		cfgCoverage = methodCfgMap.get(methodId);
+		cfgCoverage = methodCfgCoverageMap.get(methodId);
 		if (cfgCoverage == null) {
-			newCoverage = true;
-			cfg = new CFG();
+			newCfg = true;
+			cfg = new CFG(methodId);
 			cfg.setMethodNode(methodNode);
 			cfgCoverage = new CfgCoverage(cfg);
-			methodCfgMap.put(methodId, cfgCoverage);
+			methodCfgCoverageMap.put(methodId, cfgCoverage);
 		} else {
 			cfg = cfgCoverage.getCfg();
 		}
+		methodTestcaseIdx = cfgCoverage.addTestcases(testMethods.get(testcaseIdx));
 		return true;
 	}
 	
@@ -104,25 +121,27 @@ public class CfgCoverageBuilder {
 		} else {
 			extInstruction = new ExtInstruction(cfgNode, cfgCoverage.getCoverage(cfgNode), false);
 		}
-		extInstruction.setTestIdx(testcaseIdx);
+		extInstruction.setTestIdx(methodTestcaseIdx);
 		return extInstruction;
 	}
 
 	public void endMethod() {
 		Assert.assertTrue(state == State.METHOD, "expect state METHOD, get state ", state.toString());
-		if (newCoverage) {
+		if (newCfg) {
 			CfgConstructorUtils.completeCfg(cfg);
 		}
 		reset();
 		state = State.CLASS;
 	}
-
+	
 	private void reset() {
-		newCoverage = false;
+		newCfg = false;
 		methodId = null;
 		nodeIdx = 0;
+		cfgCoverage = null;
+		cfg = null;
 	}
-	
+
 	private String createMethodId(MethodNode method) {
 		String fullMethodName = ClassUtils.toClassMethodStr(className, method.name);
 		return SignatureUtils.createMethodNameSign(fullMethodName, method.signature);
@@ -132,12 +151,12 @@ public class CfgCoverageBuilder {
 		// nothing to do for now.
 	}
 	
-	public Map<String, CfgCoverage> getMethodCfgMap() {
-		return methodCfgMap;
+	public Map<String, CfgCoverage> getMethodCfgCoverageMap() {
+		return methodCfgCoverageMap;
 	}
 	
 	public List<CfgCoverage> getCoverage() {
-		return new ArrayList<CfgCoverage>(methodCfgMap.values());
+		return new ArrayList<CfgCoverage>(getMethodCfgCoverageMap().values());
 	}
 	
 	public void endClass() {

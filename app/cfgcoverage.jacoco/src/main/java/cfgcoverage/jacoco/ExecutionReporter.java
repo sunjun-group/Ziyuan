@@ -51,7 +51,6 @@ public class ExecutionReporter extends AbstractExecutionReporter implements IExe
 			Map<String, List<ExecutionData>> execDataMap = read(execFile);
 			timer.newPoint("Analyze data and count code coverage");
 			
-			
 			ExecutionDataStore dataStore = new ExecutionDataStore();
 			final FreqProbesAnalyzer analyzer = new FreqProbesAnalyzer(dataStore, coverageBuilder);
 			coverageBuilder.testcases(testMethods);
@@ -78,5 +77,16 @@ public class ExecutionReporter extends AbstractExecutionReporter implements IExe
 	
 	public List<CfgCoverage> getCoverage() {
 		return coverageBuilder.getCoverage();
+	}
+	
+	public Map<String, CfgCoverage> getMethodCfgCoverageMap() {
+		return coverageBuilder.getMethodCfgCoverageMap();
+	}
+
+	/**
+	 * @param cfgCoverageMap  the map between methodIds (className.methodName) and theirs existing cfgcoverage
+	 */
+	public void setCfgCoverageMap(Map<String, CfgCoverage> cfgCoverageMap) {
+		this.coverageBuilder.setMethodCfgCoverageMap(cfgCoverageMap);
 	}
 }

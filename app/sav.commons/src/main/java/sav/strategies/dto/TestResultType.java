@@ -15,7 +15,8 @@ package sav.strategies.dto;
 public enum TestResultType {
 	PASS,
 	FAIL,
-	UNKNOWN; // target method is uncovered.
+	UNKNOWN, // exception
+	UNCOVERED; // target method is uncovered.
 	
 	public static TestResultType of(boolean isPass) {
 		if (isPass) {

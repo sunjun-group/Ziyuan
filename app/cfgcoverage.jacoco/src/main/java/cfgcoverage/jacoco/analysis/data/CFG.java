@@ -18,13 +18,15 @@ import org.objectweb.asm.tree.MethodNode;
  *
  */
 public class CFG {
+	private String id;
 	private List<CfgNode> nodeList;
 	private CfgNode startNode;
 	private List<CfgNode> exitList;
 	
 	private MethodNode methodNode;
 	
-	public CFG() {
+	public CFG(String methodId) {
+		this.id = methodId;
 		nodeList = new ArrayList<CfgNode>();
 		exitList = new ArrayList<CfgNode>();
 	}
@@ -88,4 +90,10 @@ public class CFG {
 		return decisionNodes;
 	}
 
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
 }

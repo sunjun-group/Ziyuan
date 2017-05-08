@@ -30,6 +30,7 @@ public class CfgJaCoCo {
 	private AppJavaClassPath appClasspath;
 	private JaCoCo jacoco;
 	private ExecutionReporter reporter;
+	private Map<String, CfgCoverage> cfgCoverageMap;
 	
 	public CfgJaCoCo(AppJavaClassPath appClasspath) {
 		this.appClasspath = appClasspath;
@@ -56,21 +57,26 @@ public class CfgJaCoCo {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	public List<CfgCoverage> run(List<String> targetMethods, List<String> testingClassNames,
+	public Map<String, CfgCoverage> run(List<String> targetMethods, List<String> testingClassNames,
 			List<String> junitClassNames) throws SavException, IOException,
 			ClassNotFoundException {
-		if (reporter == null) {
-			reporter = new ExecutionReporter(targetMethods, new String[] {
-					appClasspath.getTarget(), appClasspath.getTestTarget() });
-		} else {
-			reporter.reset(targetMethods, new String[] {
-					appClasspath.getTarget(), appClasspath.getTestTarget() });
+		reporter = new ExecutionReporter(targetMethods, new String[] {
+				appClasspath.getTarget(), appClasspath.getTestTarget() });
+		if (cfgCoverageMap != null) {
+			reporter.setCfgCoverageMap(cfgCoverageMap);
 		}
 		jacoco.run(reporter, testingClassNames, junitClassNames);
-		return reporter.getCoverage();
+		return reporter.getMethodCfgCoverageMap();
 	}
 	
 	public void reset() {
-		reporter = null;
+		cfgCoverageMap = null;
+	}
+	
+	/**
+	 * @param cfgCoverageMap the map between methodIds (className.methodName) and theirs existing cfgcoverage
+	 */
+	public void setCfgCoverageMap(Map<String, CfgCoverage> cfgCoverageMap) {
+		this.cfgCoverageMap = cfgCoverageMap;
 	}
 }
