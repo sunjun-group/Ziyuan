@@ -17,7 +17,6 @@ import java.util.Set;
 import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
-import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.calculator.OrCategoryCalculator;
@@ -167,5 +166,12 @@ public class DecisionProbes extends CfgCoverage {
 	 */
 	public List<ExecVar> getOriginalVars() {
 		return originalVars;
+	}
+	
+	/**
+	 * @return the testcases
+	 */
+	public List<String> getTestcases() {
+		return testcases;
 	}
 }

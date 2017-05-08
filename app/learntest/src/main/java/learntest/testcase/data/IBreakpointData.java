@@ -20,4 +20,10 @@ public interface IBreakpointData {
 
 	List<BreakpointValue> getFalseValues();
 
+	List<BreakpointValue> getTrueValues();
+
+	List<BreakpointValue> getMoreTimesValues();
+
+	List<BreakpointValue> getOneTimeValues();
+
 }

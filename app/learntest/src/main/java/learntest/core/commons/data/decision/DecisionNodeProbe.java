@@ -165,7 +165,7 @@ public class DecisionNodeProbe implements IDecisionNode, IBreakpointData {
 	/**
 	 * @return
 	 */
-	public boolean doesNodeNeedToLearnPrecond() {
+	public boolean needToLearnPrecond() {
 		return decisionProbes.doesNodeNeedToLearnPrecond(this);
 	}
 	

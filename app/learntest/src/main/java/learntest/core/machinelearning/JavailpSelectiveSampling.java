@@ -2,7 +2,6 @@ package learntest.core.machinelearning;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -10,10 +9,11 @@ import icsetlv.common.dto.BreakpointValue;
 import learntest.calculator.OrCategoryCalculator;
 import learntest.core.LearningMediator;
 import learntest.core.commons.data.decision.IDecisionNode;
+import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.sampling.javailp.ProblemBuilder;
 import learntest.sampling.javailp.ProblemSolver;
 import learntest.testcase.data.BranchType;
-import learntest.testcase.data.BreakpointData;
+import learntest.testcase.data.IBreakpointData;
 import learntest.testcase.data.LoopTimesData;
 import learntest.util.Settings;
 import libsvm.core.Divider;
@@ -32,7 +32,7 @@ import sav.strategies.dto.execute.value.ExecVarType;
 public class JavailpSelectiveSampling {
 	private LearningMediator mediator;
 	private List<Result> prevDatas;
-	private Map<IDecisionNode, BreakpointData> selectResult;
+	private SamplingResult selectResult;
 	
 	private int numPerExe = 100;
 	
@@ -58,7 +58,7 @@ public class JavailpSelectiveSampling {
 		delta = values.size() - 1;
 	}
 
-	public Map<IDecisionNode, BreakpointData> selectDataForEmpty(IDecisionNode target, 
+	public SamplingResult selectDataForEmpty(IDecisionNode target, 
 			List<ExecVar> originVars, 
 			OrCategoryCalculator precondition, 
 			List<Divider> current, 
@@ -96,7 +96,7 @@ public class JavailpSelectiveSampling {
 			if (selectResult == null) {
 				continue;
 			}
-			BreakpointData selectData = selectResult.get(target);
+			IBreakpointData selectData = selectResult.get(target);
 			if (!isLoop) {
 				if ((missingBranch.isTrueBranch()) && !selectData.getTrueValues().isEmpty()) {
 					return selectResult;
@@ -117,7 +117,7 @@ public class JavailpSelectiveSampling {
 		return null;
 	}
 	
-	public Map<IDecisionNode, BreakpointData> selectDataForModel(IDecisionNode target, 
+	public SamplingResult selectDataForModel(IDecisionNode target, 
 			List<ExecVar> originVars, 
 			List<DataPoint> datapoints,
 			OrCategoryCalculator preconditions, 
@@ -293,7 +293,7 @@ public class JavailpSelectiveSampling {
 		return 20 >= x && x >= y && y >= z && z >= 1;
 	}
 
-	public Map<IDecisionNode, BreakpointData> getSelectResult() {
+	public SamplingResult getSelectResult() {
 		return selectResult;
 	}
 

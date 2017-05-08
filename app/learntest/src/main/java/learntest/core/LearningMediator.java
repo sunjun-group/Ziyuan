@@ -11,6 +11,7 @@ package learntest.core;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import learntest.calculator.OrCategoryCalculator;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.IDecisionNode;
+import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.data.testtarget.TargetMethod;
 import learntest.core.commons.utils.DomainUtils;
 import learntest.core.machinelearning.ITestCaseExecutor;
@@ -81,8 +83,9 @@ public class LearningMediator {
 	 * @param list
 	 * @return
 	 */
-	public Map<IDecisionNode, BreakpointData> runSamples(List<List<Eq<?>>> assignments, List<ExecVar> originVars)
+	public SamplingResult runSamples(List<List<Eq<?>>> assignments, List<ExecVar> originVars)
 			throws SavException {
+		SamplingResult samples = new SamplingResult(decisionProbes);
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		for (List<Eq<?>> valSet : assignments) {
 			if (!valSet.isEmpty()) {
@@ -96,25 +99,38 @@ public class LearningMediator {
 		try {
 			GentestResult result = testGenerator.genTestAccordingToSolutions(domains, originVars, PrintOption.APPEND);
 			getJavaCompiler().compile(appClassPath.getTestTarget(), result.getJunitfiles());
+			samples.setNewInputData(result.getTestInputs());
 			/* run and update coverage */
-			runCfgCoverage(result.getJunitClassNames());
+			runCfgCoverage(samples, result.getJunitClassNames());
 		} catch (ClassNotFoundException e) {
 			throw new SavException(ModuleEnum.TESTCASE_GENERATION, e, "");
 		} catch (IOException e) {
 			throw new SavException(ModuleEnum.TESTCASE_GENERATION, e, "");
 		}
-		return null;
+		return samples;
 	}
 	
-	public List<CfgCoverage> runCfgCoverage(List<String> junitClassNames)
+	/**
+	 * after running coverage, samples will be updated, the original
+	 * decisionProbes will be modified as well. 
+	 * 
+	 * @param samples
+	 * @param junitClassNames
+	 * @return
+	 * @throws SavException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	public void runCfgCoverage(SamplingResult samples, List<String> junitClassNames)
 			throws SavException, IOException, ClassNotFoundException {
 		/* collect coverage and build cfg */
 		timer.newPoint("start cfg coverage");
 		List<String> targetMethods = CollectionUtils.listOf(targetMethod.getMethodFullName());
-		List<CfgCoverage> coverage = cfgCoverage.run(targetMethods, Arrays.asList(targetMethod.getClassName()),
+		cfgCoverage.reset();
+		cfgCoverage.setCfgCoverageMap(samples.getCfgCoverageMap());
+		cfgCoverage.run(targetMethods, Arrays.asList(targetMethod.getClassName()),
 				junitClassNames);
 		timer.newPoint("end cfg coverage");
-		return coverage;
 	}
 	
 	public JavaCompiler getJavaCompiler() {
@@ -145,18 +161,9 @@ public class LearningMediator {
 	 * data.
 	 * @return  updated node probe (with additional result of new tests generated from selective sampling).
 	 */
-	public DecisionProbes selectiveSamplingForEmpty(DecisionNodeProbe target, List<ExecVar> originVars,
+	public SamplingResult selectiveSamplingForEmpty(DecisionNodeProbe target, List<ExecVar> originVars,
 			OrCategoryCalculator precondition, List<Divider> current, BranchType missingBranch, boolean isLoop)
 			throws SavException, SAVExecutionTimeOutException {
-		selectiveSampling.selectDataForEmpty(target, originVars, precondition, current, missingBranch, isLoop);
-		// TODO LLT: UPDATE THE NEW ONE.
-		return decisionProbes;
-	}
-
-	/**
-	 * @return the decisionCoverages
-	 */
-	public DecisionProbes getDecisionProbes() {
-		return decisionProbes;
+		return selectiveSampling.selectDataForEmpty(target, originVars, precondition, current, missingBranch, isLoop);
 	}
 }

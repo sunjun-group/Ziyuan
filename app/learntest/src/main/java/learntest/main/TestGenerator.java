@@ -22,6 +22,8 @@ import gentest.injection.TestcaseGenerationScope;
 import gentest.junit.FileCompilationUnitPrinter;
 import gentest.junit.TestsPrinter;
 import gentest.junit.TestsPrinter.PrintOption;
+import icsetlv.common.dto.BreakpointData;
+import icsetlv.common.dto.BreakpointValue;
 import learntest.core.gentest.ITestGenerator;
 import learntest.gentest.TestSeqGenerator;
 import learntest.util.LearnTestUtil;
@@ -204,6 +206,7 @@ public class TestGenerator implements ITestGenerator {
 	public static class GentestResult {
 		private List<String> junitClassNames;
 		private List<File> junitfiles;
+		private List<BreakpointValue> inputData;
 
 		public GentestResult(List<String> junitClassNames, List<File> generatedFiles) {
 			this.junitClassNames = junitClassNames;
@@ -216,6 +219,13 @@ public class TestGenerator implements ITestGenerator {
 
 		public List<File> getJunitfiles() {
 			return junitfiles;
+		}
+		
+		/**
+		 * @return the inputData
+		 */
+		public List<BreakpointValue> getTestInputs() {
+			return inputData;
 		}
 	}
 }

@@ -52,4 +52,8 @@ public enum CoveredBranches {
 	public boolean isOneBranchMissing() {
 		return this == TRUE || this == FALSE;
 	}
+
+	public boolean coversTrue() {
+		return this == TRUE || this == TRUE_AND_FALSE;
+	}
 }
