@@ -81,13 +81,11 @@ public class CfgManager implements ICfgHandler {
 		for (CfgNode node : vertices) {
 			if (node instanceof CfgDecisionNode) {
 				
-				//calculate total branches (for the whole CFG?)
 				if (((CfgDecisionNode) node).isLoop()) {
-					totalBranch += 3; // LLT: WHY 3?
+					totalBranch += 3; 
 				} else {
 					totalBranch += 2;
 				}
-				/* LLT: 1 line for EACH decision node? */
 				nodeMap.put(node.getBeginLine(), (CfgDecisionNode) node);
 				List<CfgEdge> outEdges = cfg.getOutEdges(node);
 				CfgDecisionNode trueNode = null;
@@ -103,16 +101,6 @@ public class CfgManager implements ICfgHandler {
 					}
 				}
 				if (trueNode != falseNode) {
-					/*
-					 * LLT: Do you think this might be wrong in a certain case? 
-					 * eg:do {
-					 * 			if (cond(x, y)) {
-					 * 			......
-					 * 
-					 * 			}
-					 * 			.....
-					 * 		} while (a > b);
-					 * */
 					if (trueNode != null && trueNode.getBeginLine() > node.getBeginLine()) {
 						trueNext.put((CfgDecisionNode) node, trueNode);
 						List<CfgDecisionNode> parentList = parents.get(trueNode);
@@ -176,9 +164,9 @@ public class CfgManager implements ICfgHandler {
 		}
 		node.setDividers(dividers);
 		
+		CfgDecisionNode trueNode = trueNext.get(node);
+		CfgDecisionNode falseNode = falseNext.get(node);
 		if (dividers == null || dividers.isEmpty()) {
-			CfgDecisionNode trueNode = trueNext.get(node);
-			CfgDecisionNode falseNode = falseNext.get(node);
 			if (trueNode != null || falseNode != null) {
 				List<List<CategoryCalculator>> preconditions = node.getPreconditions();
 				if (trueNode != null) {
@@ -197,8 +185,6 @@ public class CfgManager implements ICfgHandler {
 			return;
 		}
 		
-		CfgDecisionNode trueNode = trueNext.get(node);
-		CfgDecisionNode falseNode = falseNext.get(node);
 		if (trueNode != null || falseNode != null) {
 			List<List<CategoryCalculator>> preconditions = node.getPreconditions();
 			if (trueNode != null) {

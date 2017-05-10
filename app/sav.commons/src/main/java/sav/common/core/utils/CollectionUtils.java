@@ -277,7 +277,7 @@ public class CollectionUtils {
 		return true;
 	}
 
-	public static int getSize(List<?> list) {
+	public static int getSize(Collection<?> list) {
 		return list == null ? 0 : list.size();
 	}
 
@@ -290,6 +290,20 @@ public class CollectionUtils {
 
 	public static <T, V>boolean isEmpty(Map<T, V> map) {
 		return map == null || map.isEmpty();
+	}
+
+	public static <T>Set<T> initIfEmpty(Set<T> set) {
+		if (set != null) {
+			return set;
+		}
+		return new HashSet<T>();
+	}
+
+	public static <T> Set<T> nullToEmpty(Set<T> set) {
+		if (set == null) {
+			return Collections.emptySet();
+		}
+		return set;
 	}
 
 	

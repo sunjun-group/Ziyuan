@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package learntest.core.commons.data;
+package learntest.core.commons.data.decision;
 
 /**
  * @author LLT

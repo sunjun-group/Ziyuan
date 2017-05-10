@@ -3,6 +3,7 @@ package learntest.main;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +83,7 @@ public class LearnTest {
 		timer.start();
 		timer.newPoint("start");
 		MethodInfo targetMethod = params.getTestMethodInfo();
-		List<CfgCoverage> cfgcoverage = runCfgCoverage(params, targetMethod);
+		Collection<CfgCoverage> cfgcoverage = runCfgCoverage(params, targetMethod);
 		System.out.println(cfgcoverage);
 		timer.stop();
 		System.out.println(timer.getResults());
@@ -164,14 +165,14 @@ public class LearnTest {
 		return info;
 	}
 	
-	private List<CfgCoverage> runCfgCoverage(LearnTestParams params, MethodInfo targetMethod)
+	private Collection<CfgCoverage> runCfgCoverage(LearnTestParams params, MethodInfo targetMethod)
 			throws SavException, IOException, ClassNotFoundException {
 		CfgJaCoCo cfgCoverage = new CfgJaCoCo(appClassPath);
 		List<String> targetMethods = CollectionUtils.listOf(ClassUtils.toClassMethodStr(targetMethod.getClassName(),
 				targetMethod.getMethodName()));
-		List<CfgCoverage> coverage = cfgCoverage.run(targetMethods, Arrays.asList(params.getTestMethodInfo().getClassName()),
+		Map<String, CfgCoverage> coverage = cfgCoverage.run(targetMethods, Arrays.asList(params.getTestMethodInfo().getClassName()),
 				Arrays.asList(params.getTestClass()));
-		return coverage;
+		return coverage.values();
 	}
 	
 	/*private List<Domain[]> getFullSolutions(List<BreakpointValue> records, List<ExecVar> originVars) {

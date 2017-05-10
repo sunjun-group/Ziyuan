@@ -10,7 +10,7 @@ import learntest.breakpoint.data.DecisionLocation;
 import libsvm.core.Category;
 import libsvm.core.Machine.DataPoint;
 
-public abstract class BreakpointData implements Comparable<BreakpointData> {
+public abstract class BreakpointData implements Comparable<BreakpointData>, IBreakpointData {
 	
 	protected DecisionLocation location;
 	protected List<BreakpointValue> trueValues;

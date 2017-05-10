@@ -207,6 +207,7 @@ public class DecisionLearner implements CategoryCalculator {
 //			preconditions.clearInvalidData(bkpData);
 		}
 		
+		/* if at least one branch is missing */
 		if (bkpData.getTrueValues().isEmpty() || bkpData.getFalseValues().isEmpty()) {			
 			Map<DecisionLocation, BreakpointData> selectMap = 
 					selectiveSampling.selectDataForEmpty(bkpData.getLocation(), originVars,
