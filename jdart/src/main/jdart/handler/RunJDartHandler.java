@@ -22,6 +22,8 @@ public class RunJDartHandler extends AbstractHandler {
 		
 		RunJPF.run(quicksortConfig);
 		
+		System.currentTimeMillis();
+		
 		return null;
 	}
 
