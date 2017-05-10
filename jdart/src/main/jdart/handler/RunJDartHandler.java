@@ -13,6 +13,7 @@ public class RunJDartHandler extends AbstractHandler {
 		
 		String[] quicksortConfig = new String[]{
 				"+app=libs/jdart/jpf.properties",
+				"+site=libs/jpf.properties",
 				"+jpf-jdart.classpath+=../../bin",
 				"+target=Sorting",
 				"+concolic.method=quicksort",
