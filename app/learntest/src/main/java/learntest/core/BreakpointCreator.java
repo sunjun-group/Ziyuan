@@ -28,7 +28,7 @@ public class BreakpointCreator {
 		List<Variable> generalVars = createMethodEntryVariables(method);
 		/* collect breakpoints from method cfg */
 		int lineNo = method.getCfg().getStartNode().getLine();
-		BreakPoint bkp = new BreakPoint(method.getTargetClazz().getClassName(), lineNo);
+		BreakPoint bkp = new BreakPoint(method.getClassName(), lineNo);
 		bkp.setVars(generalVars);
 		return bkp;
 	}
@@ -37,12 +37,12 @@ public class BreakpointCreator {
 		List<Variable> generalVars = new ArrayList<Variable>();
 		/* create from method params */
 		for (String paramName : method.getParams()) {
-			Variable var = new Variable("", paramName);
+			Variable var = new Variable(paramName, paramName);
 			generalVars.add(var);
 		}
 		/* create from class fields which are accessed in method */
 		for (String fieldName : method.getAccessedFields()) {
-			Variable var = new Variable("", fieldName, VarScope.THIS);
+			Variable var = new Variable(fieldName, fieldName, VarScope.THIS);
 			generalVars.add(var);
 		}
 		return generalVars;

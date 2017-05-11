@@ -22,9 +22,8 @@ import gentest.injection.TestcaseGenerationScope;
 import gentest.junit.FileCompilationUnitPrinter;
 import gentest.junit.TestsPrinter;
 import gentest.junit.TestsPrinter.PrintOption;
-import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
-import learntest.core.gentest.ITestGenerator;
+import learntest.core.commons.utils.DomainUtils;
 import learntest.gentest.TestSeqGenerator;
 import learntest.util.LearnTestUtil;
 import net.sf.javailp.Result;
@@ -33,7 +32,7 @@ import sav.common.core.SavException;
 import sav.commons.TestConfiguration;
 import sav.strategies.dto.execute.value.ExecVar;
 
-public class TestGenerator implements ITestGenerator {
+public class TestGenerator {
 	private static int NUMBER_OF_INIT_TEST = 1;
 	private static String prefix = "test";
 	
@@ -91,9 +90,11 @@ public class TestGenerator implements ITestGenerator {
 		TestSeqGenerator generator = injector.getInstance(TestSeqGenerator.class);
 		generator.setTarget(target);
 		
+		GentestResult result = new GentestResult();
 		List<Sequence> sequences = new ArrayList<Sequence>();
 		//int index = 0;
 		for (Domain[] solution : solutions) {
+			result.addInputData(DomainUtils.toBreakpointValue(solution, vars));
 			//sequences.add(generator.generateSequence(input, variables.get(index ++)));
 			sequences.add(generator.generateSequence(solution, vars));
 		}
@@ -102,9 +103,10 @@ public class TestGenerator implements ITestGenerator {
 		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(LearnTestConfig.isL2TApproach),
 				null, prefix, LearnTestConfig.getSimpleClassName(), LearnTestUtil.retrieveTestSourceFolder(),
 				printOption);
-		List<String> junitClassName = printer.printTests(Pair.of(sequences, new ArrayList<Sequence>(0)));
-		return new GentestResult(junitClassName,
-				((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles());
+		result.junitClassNames = printer.printTests(Pair.of(sequences, new ArrayList<Sequence>(0)));
+		result.junitfiles = ((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles();
+		
+		return result;
 	}
 	
 	private List<Domain[]> clean(List<Domain[]> solutions, int size) {
@@ -204,13 +206,19 @@ public class TestGenerator implements ITestGenerator {
 	}
 	
 	public static class GentestResult {
-		private List<String> junitClassNames;
-		private List<File> junitfiles;
-		private List<BreakpointValue> inputData;
+		List<String> junitClassNames;
+		List<File> junitfiles;
+		List<BreakpointValue> inputData = new ArrayList<BreakpointValue>();
 
-		public GentestResult(List<String> junitClassNames, List<File> generatedFiles) {
-			this.junitClassNames = junitClassNames;
-			this.junitfiles = generatedFiles;
+		public GentestResult() {
+		
+		}
+
+		/**
+		 * @param buildBreakpointValue
+		 */
+		public void addInputData(BreakpointValue value) {
+			inputData.add(value);
 		}
 
 		public List<String> getJunitClassNames() {

@@ -24,17 +24,22 @@ import sav.common.core.SavException;
 import sav.strategies.dto.execute.value.ExecVar;
 
 /**
- * @author LLT
- *
+ * @author LLT 
+ * after running selective sampling, decision coverages will be
+ *  updated based on running new testcases which are generated based on
+ *  new sample data.
  */
 public class LearnedDataProcessor {
-	private LearningMediator mediator;
+	private JavailpSelectiveSampling<SamplingResult> selectiveSampling;
+	private DecisionProbes decisionProbes;
 	
-	public LearnedDataProcessor(LearningMediator mediator) {
-		this.mediator = mediator;
+	public LearnedDataProcessor(LearningMediator mediator, DecisionProbes decisionProbes) {
+		SampleExecutor sampleExecutor = new SampleExecutor(mediator, decisionProbes);
+		this.selectiveSampling = new JavailpSelectiveSampling<SamplingResult>(sampleExecutor);
+		this.decisionProbes = decisionProbes;
 	}
 	
-	public DecisionProbes sampleForBranchCvg(DecisionProbes decisionProbes, CfgNode node, OrCategoryCalculator preconditions)
+	public DecisionProbes sampleForBranchCvg(CfgNode node, OrCategoryCalculator preconditions)
 			throws SavException {
 		DecisionNodeProbe nodeProbe = decisionProbes.getNodeProbe(node);
 		/*
@@ -51,7 +56,7 @@ public class LearnedDataProcessor {
 		do {
 			coveredType = nodeProbe.getCoveredBranches();
 			if (coveredType.isOneBranchMissing()) {
-				SamplingResult samplingResult = mediator.selectiveSamplingForEmpty(nodeProbe, processedProbes.getAllVars(),
+				SamplingResult samplingResult = selectiveSampling.selectDataForEmpty(nodeProbe, processedProbes.getOriginalVars(),
 						preconditions, null, coveredType.getOnlyOneMissingBranch(), false);
 				processedProbes = samplingResult.getDecisionProbes();
 				/* update node probe */
@@ -65,7 +70,7 @@ public class LearnedDataProcessor {
 	/**
 	 * only run sampling if node is loop header and its true branch is covered.
 	 */
-	public DecisionProbes sampleForLoopCvg(DecisionProbes decisionProbes, CfgNode node,
+	public DecisionProbes sampleForLoopCvg(CfgNode node,
 			OrCategoryCalculator preconditions) throws SavException {
 		DecisionNodeProbe nodeProbe = decisionProbes.getNodeProbe(node);
 		if (node.isLoopHeader() || !nodeProbe.getCoveredBranches().coversTrue()
@@ -74,14 +79,14 @@ public class LearnedDataProcessor {
 		}
 		BranchType missingBranch = nodeProbe.getMoreTimesValues().isEmpty() ? BranchType.TRUE
 																			: BranchType.FALSE; /* ?? */
-		SamplingResult samplingResult = mediator.selectiveSamplingForEmpty(nodeProbe, decisionProbes.getAllVars(),
+		SamplingResult samplingResult = selectiveSampling.selectDataForEmpty(nodeProbe, decisionProbes.getOriginalVars(),
 				preconditions, null, missingBranch, false);
 		return samplingResult.getDecisionProbes();
 	}
 
 	public SamplingResult sampleForModel(DecisionNodeProbe nodeProbe, List<ExecVar> originalVars,
-			List<DataPoint> dataPoints, OrCategoryCalculator preconditions, List<Divider> learnedDividers) {
-		// TODO Auto-generated method stub
-		return null;
+			List<DataPoint> dataPoints, OrCategoryCalculator preconditions, List<Divider> learnedDividers)
+			throws SavException {
+		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, dataPoints, preconditions, learnedDividers);
 	}
 }

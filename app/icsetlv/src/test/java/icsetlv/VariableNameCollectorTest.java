@@ -57,10 +57,10 @@ public class VariableNameCollectorTest extends AbstractTest {
 		BreakPoint bkp = runUpdateVars(20).get(0);
 		Assert.assertEquals(2, bkp.getVars().size());
 		Variable var = bkp.getVars().get(0);
-		Assert.assertEquals("a", var.getParentName());
+		Assert.assertEquals("a", var.getRoot());
 		Assert.assertEquals(VarScope.THIS, var.getScope());
 		var = bkp.getVars().get(1);
-		Assert.assertEquals("a", var.getParentName());
+		Assert.assertEquals("a", var.getRoot());
 		Assert.assertEquals(VarScope.UNDEFINED, var.getScope());
 	}
 	
@@ -69,7 +69,7 @@ public class VariableNameCollectorTest extends AbstractTest {
 		BreakPoint bkp = runUpdateVars(23).get(0);
 		Assert.assertEquals(1, bkp.getVars().size());
 		Variable var = bkp.getVars().get(0);
-		Assert.assertEquals("innerClass", var.getParentName());
+		Assert.assertEquals("innerClass", var.getRoot());
 		Assert.assertEquals("innerClass.inner", var.getFullName());
 		Assert.assertEquals(VarScope.UNDEFINED, var.getScope());
 	}
@@ -79,7 +79,7 @@ public class VariableNameCollectorTest extends AbstractTest {
 		BreakPoint bkp = runUpdateVars(24).get(0);
 		Assert.assertEquals(1, bkp.getVars().size());
 		Variable var = bkp.getVars().get(0);
-		Assert.assertEquals("innerClass", var.getParentName());
+		Assert.assertEquals("innerClass", var.getRoot());
 		Assert.assertEquals("innerClass.inner.b", var.getFullName());
 	}
 	
@@ -90,7 +90,7 @@ public class VariableNameCollectorTest extends AbstractTest {
 		Variable var = bkp.getVars().get(0);
 		Assert.assertEquals("a", var.getFullName());
 		var = bkp.getVars().get(1);
-		Assert.assertEquals("innerClass", var.getParentName());
+		Assert.assertEquals("innerClass", var.getRoot());
 		Assert.assertEquals("innerClass.b", var.getFullName());
 	}
 	

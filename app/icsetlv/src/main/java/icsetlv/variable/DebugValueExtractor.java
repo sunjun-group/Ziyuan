@@ -124,7 +124,7 @@ public class DebugValueExtractor {
 					LocalVariable match = null;
 					if (bpVar.getScope() != VarScope.THIS) {
 						for (LocalVariable localVar : visibleVars) {
-							if (localVar.name().equals(bpVar.getParentName())) {
+							if (localVar.name().equals(bpVar.getRoot())) {
 								match = localVar;
 								break;
 							}
@@ -143,7 +143,7 @@ public class DebugValueExtractor {
 						String className = bkp.getClassCanonicalName();
 						String packageName = className.substring(0, className.lastIndexOf('.')); 
 						try {
-							Class<?> cl = loader.loadClass(packageName + "." + bpVar.getParentName());
+							Class<?> cl = loader.loadClass(packageName + "." + bpVar.getRoot());
 							Class<?> fl = cl.getField(bpVar.getSimpleName()).getType();
 							
 							if (fl.equals(int.class) || fl.equals(Integer.class)) {
@@ -159,7 +159,7 @@ public class DebugValueExtractor {
 					 */
 					else{
 						for(Field field: allFields){
-							if(field.name().equals(bpVar.getParentName())){
+							if(field.name().equals(bpVar.getRoot())){
 								if (field != null) {
 									if (field.isStatic()) {
 										param = JdiParam.staticField(field, refType, refType.getValue(field));

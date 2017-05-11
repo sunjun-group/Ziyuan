@@ -43,6 +43,8 @@ import sav.common.core.utils.ObjectUtils;
 
 @SuppressWarnings("restriction")
 public class LearnTestUtil {
+	private LearnTestUtil(){}
+	
 	public static CompilationUnit findCompilationUnitInProject(String qualifiedName){
 		try{
 			ICompilationUnit icu = findICompilationUnitInProject(qualifiedName);
@@ -187,20 +189,27 @@ public class LearnTestUtil {
 	 */
 	public static String getMethodSignature(String className, String methodName, int lineNumber)
 			throws SavException {
-		MethodDeclaration methodDecl = findSpecificMethod(className, methodName, lineNumber);
-		IMethod method = (IMethod) methodDecl.resolveBinding().getJavaElement();
+		IMethod method = findMethod(className, methodName, lineNumber);
+		return getMethodSignature(method);
+	}
+
+	public static String getMethodSignature(IMethod method) throws SavException {
 		try {
 			return SignatureParser.getMethodSignature(method);
-		} catch(JavaModelException e) {
+		} catch (JavaModelException e) {
 			throw new SavException(ModuleEnum.UNSPECIFIED, e, e.getMessage());
 		}
-//		return SignatureUtils.extractSignature(getMethodWthSignatureByBindingKey(className, methodName, lineNumber));
+	}
+
+	public static IMethod findMethod(String className, String methodName, int lineNumber) {
+		MethodDeclaration methodDecl = findSpecificMethod(className, methodName, lineNumber);
+		IMethod method = (IMethod) methodDecl.resolveBinding().getJavaElement();
+		return method;
 	}
 
 	public static String getMethodWthSignatureBySignParser(String className, String methodName, int lineNumber)
 			throws SavException {
-		MethodDeclaration methodDecl = findSpecificMethod(className, methodName, lineNumber);
-		IMethod method = (IMethod) methodDecl.resolveBinding().getJavaElement();
+		IMethod method = findMethod(className, methodName, lineNumber);
 		String signature = SignatureParser.parse(method);
 		return signature;
 	}
@@ -369,7 +378,7 @@ public class LearnTestUtil {
 		}
 	}
 
-	private static IJavaProject getJavaProject() {
+	public static IJavaProject getJavaProject() {
 		return JavaCore.create(getSpecificJavaProjectInWorkspace());
 	}
 }

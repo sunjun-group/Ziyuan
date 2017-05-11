@@ -20,6 +20,7 @@ import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.calculator.OrCategoryCalculator;
+import learntest.core.commons.utils.LearningUtils;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import libsvm.extension.MultiDividerBasedCategoryCalculator;
@@ -32,7 +33,6 @@ import sav.strategies.dto.execute.value.ExecVar;
  *
  */
 public class DecisionProbes extends CfgCoverage {
-	private List<String> testcases;
 	private Map<TestResultType, List<Integer>> testResults;
 	private List<BreakpointValue> testInputs;
 	private List<ExecVar> originalVars;
@@ -43,31 +43,26 @@ public class DecisionProbes extends CfgCoverage {
 	/* map between cfgNode idx of decision node with its probe */
 	private Map<Integer, DecisionNodeProbe> nodeProbeMap;
 	
-	public DecisionProbes(List<String> testcases) {
-		super(null);
-		this.testcases = testcases;
+	public DecisionProbes(CfgCoverage cfgCoverage) {
+		super(cfgCoverage.getCfg());
+		transferCoverage(cfgCoverage);
 	}
 	
-	public void setRunningResult(CfgCoverage cfgCoverage, List<String> testcases, List<BreakpointValue> testInputs) {
-		transferCoverage(cfgCoverage);
-		this.testcases = testcases;
+	public void setRunningResult(List<BreakpointValue> testInputs) {
 		this.testInputs = testInputs;
 		originalVars = BreakpointDataUtils.collectAllVars(testInputs);
+		learningVars = LearningUtils.createPolyClassifierVars(originalVars);
 	}
-	
+
 	public void transferCoverage(CfgCoverage cfgCoverage) {
 		setCfg(cfgCoverage.getCfg());
 		setNodeCoverages(cfgCoverage.getNodeCoverages());
+		setTestcases(cfgCoverage.getTestcases());
 	}
 	
-	/**
-	 * @param node
-	 * @return
-	 */
 	public OrCategoryCalculator getPrecondition(CfgNode node) {
-		Set<CfgNode> dominatees = node.getDominatees();
 		Precondition precondition = getNodeProbe(node).getPrecondition();
-		for (CfgNode dominatee : dominatees) {
+		for (CfgNode dominatee : CollectionUtils.nullToEmpty(node.getDominatees())) {
 			Precondition domPrecond = getNodeProbe(dominatee).getPrecondition();
 			List<Divider> domDividers = domPrecond.getDividers();
 			if (CollectionUtils.isEmpty(domDividers)) {
@@ -111,6 +106,10 @@ public class DecisionProbes extends CfgCoverage {
 		return new ArrayList<>(getNodeProbeMap().values());
 	}
 
+	/***
+	 * get or build nodeProbes if not exist.
+	 * @return
+	 */
 	public Map<Integer, DecisionNodeProbe> getNodeProbeMap() {
 		if (nodeProbeMap == null) {
 			nodeProbeMap = new HashMap<Integer, DecisionNodeProbe>();
@@ -140,13 +139,6 @@ public class DecisionProbes extends CfgCoverage {
 		return testInputs;
 	}
 
-	/**
-	 * @return allVars all execVar that we collected in test inputs.
-	 */
-	public List<ExecVar> getAllVars() {
-		return originalVars;
-	}
-
 	public DecisionNodeProbe getNodeProbe(CfgNode node) {
 		return getNodeProbeMap().get(node.getIdx());
 	}
@@ -168,10 +160,4 @@ public class DecisionProbes extends CfgCoverage {
 		return originalVars;
 	}
 	
-	/**
-	 * @return the testcases
-	 */
-	public List<String> getTestcases() {
-		return testcases;
-	}
 }

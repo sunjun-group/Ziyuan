@@ -10,6 +10,7 @@ package learntest.core.machinelearning;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import learntest.calculator.OrCategoryCalculator;
+import learntest.core.LearningMediator;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
 import sav.settings.SAVExecutionTimeOutException;
@@ -20,6 +21,10 @@ import sav.settings.SAVExecutionTimeOutException;
  */
 public class DecisionLearner extends PrecondDecisionLearner {
 
+	public DecisionLearner(LearningMediator mediator) {
+		super(mediator);
+	}
+	
 	@Override
 	protected void updatePrecondition(DecisionNodeProbe nodeProbe) throws SAVExecutionTimeOutException {
 		/* do nothing */

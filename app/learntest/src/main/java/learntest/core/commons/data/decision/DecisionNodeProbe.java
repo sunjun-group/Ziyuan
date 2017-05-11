@@ -16,6 +16,7 @@ import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.calculator.OrCategoryCalculator;
+import learntest.core.commons.utils.CfgUtils;
 import learntest.testcase.data.IBreakpointData;
 import libsvm.core.Divider;
 import sav.common.core.Pair;
@@ -34,7 +35,7 @@ public class DecisionNodeProbe implements IDecisionNode, IBreakpointData {
 	private DecisionProbes decisionProbes;
 	
 	/* node precondition */
-	private Precondition precondition;
+	private Precondition precondition = new Precondition();
 	private List<DecisionNodeProbe> dominatees;
 	
 	private List<BreakpointValue> trueValues;
@@ -47,9 +48,11 @@ public class DecisionNodeProbe implements IDecisionNode, IBreakpointData {
 		this.coverage = nodeCoverage;
 		Map<Integer, List<Integer>> coveredBranches = nodeCoverage.getCoveredBranches();
 		/* true branch is first branch of cfg node */
-		trueValues = getCoveredInputValues(coveredBranches.get(0), testInputs);
+		CfgNode trueBranch = CfgUtils.getTrueBranch(nodeCoverage.getCfgNode());
+		trueValues = getCoveredInputValues(coveredBranches, trueBranch, testInputs);
 		/* false branch is the second branch of cfg node */
-		falseValues = getCoveredInputValues(coveredBranches.get(1), testInputs);
+		CfgNode falseBranch = CfgUtils.getFalseBranch(nodeCoverage.getCfgNode());
+		falseValues = getCoveredInputValues(coveredBranches, falseBranch, testInputs);
 		oneTimeValues = new ArrayList<BreakpointValue>(nodeCoverage.getCoveredTcs().size());
 		moreTimesValues = new ArrayList<BreakpointValue>(nodeCoverage.getCoveredTcs().size());
 		for (int idx : nodeCoverage.getCoveredTcs().keySet()) {
@@ -63,10 +66,15 @@ public class DecisionNodeProbe implements IDecisionNode, IBreakpointData {
 		}
 	}
 
-	private List<BreakpointValue> getCoveredInputValues(List<Integer> tcIdxCovered, List<BreakpointValue> testInputs) {
+	private List<BreakpointValue> getCoveredInputValues(Map<Integer, List<Integer>> coveredBranches, CfgNode branch,
+			List<BreakpointValue> testInputs) {
+		if (branch == null) {
+			return new ArrayList<BreakpointValue>(0);
+		}
+		List<Integer> tcIdxCovered = coveredBranches.get(branch.getIdx());
 		int size = CollectionUtils.getSize(tcIdxCovered);
 		List<BreakpointValue> values = new ArrayList<BreakpointValue>(size);
-		for (Integer idx : tcIdxCovered) {
+		for (Integer idx : CollectionUtils.nullToEmpty(tcIdxCovered)) {
 			values.add(testInputs.get(idx));
 		}
 		return values;
@@ -92,9 +100,6 @@ public class DecisionNodeProbe implements IDecisionNode, IBreakpointData {
 	}
 
 	private void setNodePrecondition(Pair<Formula, Formula> classifier, List<Divider> dividers) {
-		if (precondition == null) {
-			precondition = new Precondition();
-		}
 		precondition.setTrueFalse(classifier.first());
 		if (getNode().isInLoop()) {
 			precondition.setOneMore(classifier.second());

@@ -127,12 +127,12 @@ public class BreakPoint extends ClassLocation {
 	}
 
 	public static class Variable {
-		/* if variable is something like objectA.fieldB
-		 * then parentName would be objectA.
-		 * and fullName is objectA.fieldB
-		 * simpleName is fieldB
+		/* 
+		 * very first variable, 
+		 * if var is a.b.c, root is a
+		 * if var is a, root is a
 		 * */
-		private final String parentName;
+		private final String root;
 		/* including its object if variable is an object's field
 		 * ex: objA.fieldX
 		 */
@@ -141,33 +141,42 @@ public class BreakPoint extends ClassLocation {
 		private final VarScope scope;
 		private String id;
 		
-		public Variable(String varParentName, String fullName, VarScope scope) {
-			this.parentName = varParentName;
+		public Variable(String root, String fullName, VarScope scope) {
+			this.root = root;
 			this.fullName = fullName;
 			this.scope = scope;
 		}
 		
-		public Variable(String varParentName, String fullName) {
-			this(varParentName, fullName, VarScope.UNDEFINED);
+		public Variable(String root, String fullName) {
+			this(root, fullName, VarScope.UNDEFINED);
 		}
 
 		public Variable(String name) {
-			this.parentName = name; // TODO-LLT: CONFUSED, TO FIX!
 			this.fullName = name;
+			int i = fullName.indexOf(Constants.DOT);
+			if (i >= 0) {
+				root = fullName.substring(0, i);
+			} else {
+				root = name;
+			}
 			scope = VarScope.UNDEFINED;
 		}
 
-		public String getParentName() {
-			return parentName;
+		public String getRoot() {
+			return root;
 		}
 		
 		public String getFullName() {
 			return fullName;
 		}
 
+		private String simpleName;
 		public String getSimpleName() {
-			int l = fullName.lastIndexOf(Constants.DOT);
-			return fullName.substring(l + 1);
+			if (simpleName == null) {
+				int l = fullName.lastIndexOf(Constants.DOT);
+				simpleName = fullName.substring(l + 1);
+			}
+			return simpleName;
 		}
 		
 		public String getId() {
@@ -187,7 +196,7 @@ public class BreakPoint extends ClassLocation {
 
 		@Override
 		public String toString() {
-			return "Variable [parentName=" + parentName + ", fullName=" + fullName
+			return "Variable [root=" + root + ", fullName=" + fullName
 					+ ", scope=" + scope + "]";
 		}
 

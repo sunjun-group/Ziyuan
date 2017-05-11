@@ -8,19 +8,24 @@
 
 package learntest.main;
 
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.JavaModelException;
+
+import learntest.core.commons.data.testtarget.TargetClass;
 import learntest.core.commons.data.testtarget.TargetMethod;
-import learntest.main.model.MethodInfo;
 import learntest.util.LearnTestUtil;
+import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
+import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
  *
  */
 public class LearnTestParams {
+	private boolean learnByPrecond;
 	private String filePath;
 	private String testClass;
-	private MethodInfo targetMethodInfo;
 	private TargetMethod targetMethod;
 	
 	private boolean randomDecision;
@@ -29,13 +34,24 @@ public class LearnTestParams {
 		LearnTestParams params = new LearnTestParams();
 		params.filePath = LearnTestConfig.getTestClassFilePath();
 		params.testClass = LearnTestConfig.getTestClass(LearnTestConfig.isL2TApproach);
-
-		String className = LearnTestConfig.targetClassName;
-		String methodName = LearnTestConfig.targetMethodName;
-		int lineNumber = LearnTestConfig.getMethodLineNumber();
-		String methodSign = LearnTestUtil.getMethodSignature(className, methodName, lineNumber);
-		params.targetMethodInfo = new MethodInfo(className, methodName, methodSign, lineNumber);
+		params.learnByPrecond = LearnTestConfig.isL2TApproach;
+		try {
+			initTargetMethod(params);
+		} catch (JavaModelException e) {
+			throw new SavException(ModuleEnum.UNSPECIFIED, e, e.getMessage());
+		}
 		return params;
+	}
+
+	private static void initTargetMethod(LearnTestParams params) throws SavException, JavaModelException {
+		TargetClass targetClass = new TargetClass(LearnTestConfig.targetClassName);
+		TargetMethod method = new TargetMethod(targetClass);
+		method.setMethodName(LearnTestConfig.targetMethodName);
+		method.setLineNum( LearnTestConfig.getMethodLineNumber());
+		IMethod imethod = LearnTestUtil.findMethod(method.getClassName(), method.getMethodName(), method.getLineNum());
+		method.setMethodSignature(LearnTestUtil.getMethodSignature(imethod));
+		method.setParams(CollectionUtils.toArrayList(imethod.getParameterNames()));
+		params.targetMethod = method;
 	}
 
 	public String getFilePath() {
@@ -62,10 +78,6 @@ public class LearnTestParams {
 		this.randomDecision = randomDecision;
 	}
 	
-	public MethodInfo getTestMethodInfo() {
-		return targetMethodInfo;
-	}
-
 	public TargetMethod getTargetMethod() {
 		return targetMethod;
 	}
@@ -74,4 +86,7 @@ public class LearnTestParams {
 		this.targetMethod = targetMethod;
 	}
 	
+	public boolean isLearnByPrecond() {
+		return learnByPrecond;
+	}
 }

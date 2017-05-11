@@ -7,9 +7,9 @@ import java.util.Set;
 
 import icsetlv.common.dto.BreakpointValue;
 import learntest.calculator.OrCategoryCalculator;
-import learntest.core.LearningMediator;
 import learntest.core.commons.data.decision.IDecisionNode;
-import learntest.core.commons.data.sampling.SamplingResult;
+import learntest.core.machinelearning.iface.ISampleExecutor;
+import learntest.core.machinelearning.iface.ISampleResult;
 import learntest.sampling.javailp.ProblemBuilder;
 import learntest.sampling.javailp.ProblemSolver;
 import learntest.testcase.data.BranchType;
@@ -29,17 +29,17 @@ import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
 
-public class JavailpSelectiveSampling {
-	private LearningMediator mediator;
+public class JavailpSelectiveSampling<T extends ISampleResult> {
+	private ISampleExecutor<T> sampleExecutor;
 	private List<Result> prevDatas;
-	private SamplingResult selectResult;
+	private T selectResult;
 	
 	private int numPerExe = 100;
 	
 	private int delta;
 	
-	public JavailpSelectiveSampling(LearningMediator mediator) {
-		this.mediator = mediator;
+	public JavailpSelectiveSampling(ISampleExecutor<T> mediator) {
+		this.sampleExecutor = mediator;
 		prevDatas = new ArrayList<Result>();
 	}
 	
@@ -58,7 +58,7 @@ public class JavailpSelectiveSampling {
 		delta = values.size() - 1;
 	}
 
-	public SamplingResult selectDataForEmpty(IDecisionNode target, 
+	public T selectDataForEmpty(IDecisionNode target, 
 			List<ExecVar> originVars, 
 			OrCategoryCalculator precondition, 
 			List<Divider> current, 
@@ -117,11 +117,11 @@ public class JavailpSelectiveSampling {
 		return null;
 	}
 	
-	public SamplingResult selectDataForModel(IDecisionNode target, 
+	public T selectDataForModel(IDecisionNode target, 
 			List<ExecVar> originVars, 
 			List<DataPoint> datapoints,
 			OrCategoryCalculator preconditions, 
-			List<Divider> learnedFormulas) throws SavException, SAVExecutionTimeOutException {
+			List<Divider> learnedFormulas) throws SavException {
 		List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
 		List<Result> results = new ArrayList<Result>();
 		
@@ -293,7 +293,7 @@ public class JavailpSelectiveSampling {
 		return 20 >= x && x >= y && y >= z && z >= 1;
 	}
 
-	public SamplingResult getSelectResult() {
+	public T getSelectResult() {
 		return selectResult;
 	}
 
@@ -301,7 +301,7 @@ public class JavailpSelectiveSampling {
 		if (assignments.isEmpty()) {
 			return;
 		}
-		selectResult = mediator.runSamples(assignments, originVars);
+		selectResult = sampleExecutor.runSamples(assignments, originVars);
 	}
 
 	private void selectData(IDecisionNode target, 
@@ -311,7 +311,7 @@ public class JavailpSelectiveSampling {
 			return;
 		}
 		
-		selectResult = mediator.runSamples(assignments, originVars);
+		selectResult = sampleExecutor.runSamples(assignments, originVars);
 	}
 	
 	private boolean checkNonduplicateResult(Result result, List<ExecVar> vars, List<Result> prevDatas, List<List<Eq<?>>> assignments) {

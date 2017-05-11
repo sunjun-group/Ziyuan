@@ -10,12 +10,14 @@ package gentest.junit;
 
 import gentest.core.data.Sequence;
 import japa.parser.ast.CompilationUnit;
+import japa.parser.ast.body.TypeDeclaration;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import sav.common.core.Constants;
 import sav.common.core.Pair;
+import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 
 /**
@@ -93,7 +95,9 @@ public class TestsPrinter implements ITestsPrinter {
 	private List<String> getJunitClassNames(List<CompilationUnit> units) {
 		List<String> result = new ArrayList<String>(units.size());
 		for (CompilationUnit cu : units) {
-			result.add(cu.getTypes().get(0).getName());
+			TypeDeclaration type = cu.getTypes().get(0);
+			result.add(ClassUtils.getCanonicalName(cu.getPackage().getName().getName(), 
+					type.getName()));
 		}
 		return result;
 	}

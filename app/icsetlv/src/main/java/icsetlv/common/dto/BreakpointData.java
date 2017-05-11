@@ -16,6 +16,7 @@ import java.util.Set;
 
 import libsvm.core.Category;
 import libsvm.core.Machine.DataPoint;
+import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint;
 
 /**
@@ -75,6 +76,13 @@ public class BreakpointData {
 		dp.setCategory(category);
 		dp.setValues(lineVals);
 		return dp;
+	}
+	
+	public List<BreakpointValue> getAllValues() {
+		List<BreakpointValue> all = new ArrayList<BreakpointValue>();
+		all.addAll(CollectionUtils.nullToEmpty(getPassValues()));
+		all.addAll(CollectionUtils.nullToEmpty(getFailValues()));
+		return all;
 	}
 	
 	@Override

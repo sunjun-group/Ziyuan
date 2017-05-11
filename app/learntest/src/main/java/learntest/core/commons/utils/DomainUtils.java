@@ -13,9 +13,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jacop.core.Domain;
+import org.jacop.floats.core.FloatDomain;
 import org.jacop.floats.core.FloatIntervalDomain;
 
 import icsetlv.common.dto.BreakpointValue;
+import icsetlv.common.utils.BreakpointDataUtils;
 import sav.common.core.formula.Eq;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -68,6 +70,7 @@ public class DomainUtils {
 					/* collect from existing input value */
 					domain = getDomain(testInput, execVar);
 				}
+				sol[i] = domain;
 			}
 			result.add(sol);
 		}
@@ -92,6 +95,17 @@ public class DomainUtils {
 		FloatIntervalDomain domain = new FloatIntervalDomain(value, value);
 		return domain;
 	}
-
 	
+	public static double getDomainValue(Domain domain) {
+		return ((FloatDomain)domain).min();
+	}
+
+	public static BreakpointValue toBreakpointValue(Domain[] solution, List<ExecVar> vars) {
+		BreakpointValue value = new BreakpointValue(null);
+		for (int i = 0; i < vars.size(); i++) {
+			BreakpointDataUtils.addToBreakpointValue(value, vars.get(i), getDomainValue(solution[i]));
+		}
+		return value;
+	}
+
 }

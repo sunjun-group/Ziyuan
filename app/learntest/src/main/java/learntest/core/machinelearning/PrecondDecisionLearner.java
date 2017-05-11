@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.calculator.OrCategoryCalculator;
+import learntest.core.AbstractLearningComponent;
+import learntest.core.LearningMediator;
 import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
@@ -39,27 +41,32 @@ import sav.strategies.dto.execute.value.ExecVar;
  * this learner using precondition (which is build based on classifier of node's dominatees) 
  * for sampling.
  */
-public class PrecondDecisionLearner {
+public class PrecondDecisionLearner extends AbstractLearningComponent {
 	protected static Logger log = LoggerFactory.getLogger(DecisionLearner.class);
 	private static final int FORMULAR_LEARN_MAX_ATTEMPT = 5;
 	protected LearnedDataProcessor dataPreprocessor;
 
-	public void learn(DecisionProbes inputProbes) throws SavException {
+	public PrecondDecisionLearner(LearningMediator mediator) {
+		super(mediator);
+	}
+	
+	public DecisionProbes learn(DecisionProbes inputProbes) throws SavException {
 		List<CfgNode> decisionNodes = inputProbes.getCfg().getDecisionNodes();
 		DecisionProbes probes = inputProbes;
-
+		dataPreprocessor = new LearnedDataProcessor(mediator, inputProbes);
 		for (CfgNode node : decisionNodes) {
 			DecisionNodeProbe nodeProbe = probes.getNodeProbe(node);
 			if (nodeProbe.areAllbranchesMissing()) {
 				continue;
 			}
-			probes = dataPreprocessor.sampleForBranchCvg(probes, node, getPreconditions(probes, node));
-			probes = dataPreprocessor.sampleForLoopCvg(probes, nodeProbe.getNode(),
-														getPreconditions(probes, nodeProbe.getNode()));
+			OrCategoryCalculator preconditions = getPreconditions(probes, node);
+			dataPreprocessor.sampleForBranchCvg(node, preconditions);
+			dataPreprocessor.sampleForLoopCvg(node, preconditions);
 			
 			nodeProbe = probes.getNodeProbe(node);
 			updatePrecondition(nodeProbe);
 		}
+		return probes;
 	}
 	
 	protected void updatePrecondition(DecisionNodeProbe nodeProbe) throws SavException {
@@ -74,7 +81,8 @@ public class PrecondDecisionLearner {
 		return probes.getPrecondition(node);
 	}
 
-	private TrueFalseLearningResult generateTrueFalseFormula(DecisionNodeProbe orgNodeProbe, CoveredBranches coveredType) throws SAVExecutionTimeOutException {
+	private TrueFalseLearningResult generateTrueFalseFormula(DecisionNodeProbe orgNodeProbe,
+			CoveredBranches coveredType) throws SavException {
 		/* only generate if both branches are covered */
 		if (coveredType != CoveredBranches.TRUE_AND_FALSE || !orgNodeProbe.needToLearnPrecond()) {
 			return null;

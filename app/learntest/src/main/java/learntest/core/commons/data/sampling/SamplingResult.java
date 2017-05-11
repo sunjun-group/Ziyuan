@@ -17,13 +17,14 @@ import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.IDecisionNode;
+import learntest.core.machinelearning.iface.ISampleResult;
 import learntest.testcase.data.IBreakpointData;
 
 /**
  * @author LLT
  *
  */
-public class SamplingResult {
+public class SamplingResult implements ISampleResult {
 	private List<String> sampleTestcases;
 	/* after sampling, original decisionProbes is modified. */
 	private DecisionProbes orgDecisionProbes;

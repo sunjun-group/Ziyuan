@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jacop.core.Domain;
-import org.jacop.floats.core.FloatDomain;
 
 import com.google.inject.Inject;
 
@@ -20,6 +19,7 @@ import gentest.core.data.type.ITypeCreator;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.data.variable.ISelectedVariable;
 import gentest.core.value.generator.ValueGeneratorMediator;
+import learntest.core.commons.utils.DomainUtils;
 import net.sf.javailp.Result;
 import sav.common.core.SavException;
 import sav.strategies.dto.execute.value.ExecVar;
@@ -78,7 +78,7 @@ public class TestSeqGenerator {
 		//prepare inputs for target method
 		int idx = 0;
 		for (ExecVar var : vars) {
-			double value  = ((FloatDomain) solution[idx ++]).min();
+			double value  = DomainUtils.getDomainValue(solution[idx ++]);
 			
 			String[] parts = var.getLabel().split("[.]");
 			String receiver = parts[0];

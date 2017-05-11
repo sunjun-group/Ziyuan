@@ -11,11 +11,9 @@ package learntest.core.commons.data.decision;
 import java.util.ArrayList;
 import java.util.List;
 
-import cfgcoverage.jacoco.analysis.data.CfgNode;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import sav.common.core.formula.Formula;
-import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT

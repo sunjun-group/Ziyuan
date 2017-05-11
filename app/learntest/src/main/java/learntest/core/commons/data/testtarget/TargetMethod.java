@@ -35,8 +35,9 @@ public class TargetMethod {
 	private CFG cfg;
 	private List<String> accessedFields;
 
-	public TargetMethod() {
-
+	public TargetMethod(TargetClass targetClass) {
+		this.targetClazz = targetClass;
+		targetClass.addMethod(this);
 	}
 
 	public TargetClass getTargetClazz() {
@@ -118,5 +119,9 @@ public class TargetMethod {
 
 	public String getClassName() {
 		return targetClazz.getClassName();
+	}
+
+	public void setParams(List<String> params) {
+		this.params = params;
 	}
 }

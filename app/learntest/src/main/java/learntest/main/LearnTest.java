@@ -21,9 +21,9 @@ import learntest.breakpoint.data.DecisionLocation;
 import learntest.cfg.CfgHandlerAdapter;
 import learntest.cfg.CfgHandlerAdapter.CfgAproach;
 import learntest.cfg.ICfgHandler;
+import learntest.core.commons.data.testtarget.TargetMethod;
 import learntest.core.commons.utils.DomainUtils;
 import learntest.exception.LearnTestException;
-import learntest.main.model.MethodInfo;
 import learntest.sampling.JavailpSelectiveSampling;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
 import learntest.testcase.data.BreakpointData;
@@ -82,7 +82,7 @@ public class LearnTest {
 		StopTimer timer = new StopTimer("jacoco");
 		timer.start();
 		timer.newPoint("start");
-		MethodInfo targetMethod = params.getTestMethodInfo();
+		TargetMethod targetMethod = params.getTargetMethod();
 		Collection<CfgCoverage> cfgcoverage = runCfgCoverage(params, targetMethod);
 		System.out.println(cfgcoverage);
 		timer.stop();
@@ -165,12 +165,12 @@ public class LearnTest {
 		return info;
 	}
 	
-	private Collection<CfgCoverage> runCfgCoverage(LearnTestParams params, MethodInfo targetMethod)
+	private Collection<CfgCoverage> runCfgCoverage(LearnTestParams params, TargetMethod targetMethod)
 			throws SavException, IOException, ClassNotFoundException {
 		CfgJaCoCo cfgCoverage = new CfgJaCoCo(appClassPath);
 		List<String> targetMethods = CollectionUtils.listOf(ClassUtils.toClassMethodStr(targetMethod.getClassName(),
 				targetMethod.getMethodName()));
-		Map<String, CfgCoverage> coverage = cfgCoverage.run(targetMethods, Arrays.asList(params.getTestMethodInfo().getClassName()),
+		Map<String, CfgCoverage> coverage = cfgCoverage.run(targetMethods, Arrays.asList(params.getTargetMethod().getClassName()),
 				Arrays.asList(params.getTestClass()));
 		return coverage.values();
 	}
