@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.jacoco.agent.AgentJar;
 import org.jacoco.core.runtime.AgentOptions;
+import org.jacoco.core.runtime.AgentOptions.OutputMode;
 
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
@@ -43,8 +44,8 @@ public class JaCoCoVmRunner extends AgentVmRunner {
 		return this;
 	}
 	
-	public JaCoCoVmRunner setOutputMode(String outputMode) {
-		addAgentParam(AgentOptions.OUTPUT, outputMode);
+	public JaCoCoVmRunner setOutputMode(OutputMode outputMode) {
+		addAgentParam(AgentOptions.OUTPUT, outputMode.name());
 		return this;
 	}
 

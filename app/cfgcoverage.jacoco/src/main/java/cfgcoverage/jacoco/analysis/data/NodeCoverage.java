@@ -50,13 +50,19 @@ public class NodeCoverage {
 		}
 	}
 
-	public void updateCoveredBranchesForTc(CfgNode coveredBranch, int testIndx) {
-		List<Integer> coveredBranchesOnTc = coveredBranches.get(testIndx);
-		if (CollectionUtils.isEmpty(coveredBranchesOnTc)) {
-			coveredBranchesOnTc = new ArrayList<Integer>();
-			coveredBranches.put(testIndx, coveredBranchesOnTc);
+	/**
+	 * update the map that keeps which branch is covered by which testcases
+	 * @param coveredBranch
+	 * @param testIdx
+	 */
+	public void updateCoveredBranchesForTc(CfgNode coveredBranch, int testIdx) {
+		int branchId = coveredBranch.getIdx();
+		List<Integer> coverTcs = coveredBranches.get(branchId);
+		if (CollectionUtils.isEmpty(coverTcs)) {
+			coverTcs = new ArrayList<Integer>();
+			coveredBranches.put(branchId, coverTcs);
 		}
-		coveredBranchesOnTc.add(coveredBranch.getIdx());
+		coverTcs.add(testIdx);
 	}
 	
 	public void setCovered(int testIndx, int count) {
@@ -81,10 +87,16 @@ public class NodeCoverage {
 		return cfgNode;
 	}
 
+	/**
+	 * @return map is always not null
+	 */
 	public Map<Integer, Integer> getCoveredTcs() {
 		return coveredTcs;
 	}
 
+	/**
+	 * @return map is always not null
+	 */
 	public Map<Integer, List<Integer>> getCoveredBranches() {
 		return coveredBranches;
 	}

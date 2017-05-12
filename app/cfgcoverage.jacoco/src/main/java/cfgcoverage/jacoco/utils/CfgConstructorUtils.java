@@ -165,13 +165,13 @@ public class CfgConstructorUtils {
 		
 		/* if first node is inside a loop, then lookup its loopheader */
 		if (!first.isInLoop()) {
-			throw new SavRtException("first decision node has deominatee but not inside a loop! " + first.toString());
+			throw new SavRtException("first decision node has dominatee but not inside a loop! " + first.toString());
 		}
 		for (CfgNode loopHeader : first.getLoopHeaders()) {
 			if (loopHeader.getDominatees() == null) {
 				return loopHeader;
 			}
 		}
-		return null;
+		throw new SavRtException("could not find the very root node of cfg!");
 	}
 }

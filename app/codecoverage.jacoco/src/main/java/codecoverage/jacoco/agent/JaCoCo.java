@@ -71,6 +71,7 @@ public class JaCoCo implements ICodeCoverage {
 					.setAppend(true);
 		addExtraAgentParams(vmRunner);
 		vmRunner.setAnalyzedClassNames(testingClassNames);
+		
 		VMConfiguration vmConfig = SavJunitRunner.createVmConfig(appClasspath);
 		vmConfig.setLaunchClass(JunitRunner.class.getName());
 		List<String> testMethods = JunitUtils.extractTestMethods(junitClassNames, getPrjClassLoader());

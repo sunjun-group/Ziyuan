@@ -10,11 +10,9 @@ package cfgcoverage.jacoco.analysis.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.TextFormatUtils;
-import sav.strategies.dto.TestResultType;
 
 
 /**
@@ -25,7 +23,6 @@ public class CfgCoverage {
 	private CFG cfg;
 	private List<NodeCoverage> nodeCoverages;
 	private List<String> testcases;
-	private Map<TestResultType, List<Integer>> testResults;
 	
 	public CfgCoverage(CFG cfg) {
 		this.cfg = cfg;
@@ -39,6 +36,10 @@ public class CfgCoverage {
 		}
 		this.testcases.add(testcase);
 		return testcases.size() - 1;
+	}
+	
+	public void setTestcases(List<String> testcases) {
+		this.testcases = testcases;
 	}
 
 	public NodeCoverage getCoverage(CfgNode node) {

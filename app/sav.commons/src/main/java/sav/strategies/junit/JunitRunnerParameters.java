@@ -8,13 +8,10 @@
 
 package sav.strategies.junit;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
@@ -22,14 +19,15 @@ import org.apache.commons.cli.ParseException;
 
 import sav.common.core.SavRtException;
 import sav.common.core.utils.JunitUtils;
+import sav.strategies.vm.ProgramArgumentBuilder;
 
 /**
  * @author LLT
  * 
  */
 @SuppressWarnings("static-access")
-public class JunitRunnerParameters {
-	private static final Options opts;
+public class JunitRunnerParameters extends Parameters {
+	public static final Options opts;
 	static final String CLASS_METHODS = "methods";
 	static final String TESTING_CLASS_NAMES = "testingclass";
 	static final String TESTING_PACKAGE_NAMES = "testingpkgs";
@@ -112,33 +110,23 @@ public class JunitRunnerParameters {
 	}
 
 	public static JunitRunnerParameters parse(String[] args) throws ParseException {
-		CommandLineParser parser = new GnuParser();
-		CommandLine cmd = parser.parse(opts, args);
-		if (cmd.getOptions().length == 0) {
-			throw new ParseException("No specified option");
-		}
+		CommandLine cmd = parse(opts, args);
+		return createFrom(cmd);
+	}
+
+	public static JunitRunnerParameters createFrom(CommandLine cmd) {
 		JunitRunnerParameters params = new JunitRunnerParameters();
-		if (cmd.hasOption(CLASS_METHODS)) {
-			params.classMethods = Arrays.asList(cmd.getOptionValues(CLASS_METHODS));
-		}
-		if (cmd.hasOption(TESTING_CLASS_NAMES)) {
-			params.testingClassNames = Arrays.asList(cmd.getOptionValues(TESTING_CLASS_NAMES));
-		}
-		if (cmd.hasOption(TESTING_PACKAGE_NAMES)) {
-			params.testingPkgs = Arrays.asList(cmd.getOptionValues(TESTING_PACKAGE_NAMES));
-		}
-		if (cmd.hasOption(DEST_FILE)) {
-			params.destfile = cmd.getOptionValue(DEST_FILE);
-		}
+		params.classMethods = getListStringOption(cmd, CLASS_METHODS);
+		params.testingClassNames = getListStringOption(cmd, TESTING_CLASS_NAMES);
+		params.testingPkgs = getListStringOption(cmd, TESTING_PACKAGE_NAMES);
+		params.destfile = getOption(cmd, DEST_FILE);
 		if (cmd.hasOption(TESTCASE_TIME_OUT)) {
 			params.timeout = Long.valueOf(cmd.getOptionValue(TESTCASE_TIME_OUT));
 		}
-		if (cmd.hasOption(SINGLE_TEST_RESULT_DETAIL)) {
-			params.storeTestResultDetail = true;
-		}
+		params.storeTestResultDetail = getSingleOption(cmd, SINGLE_TEST_RESULT_DETAIL);
 		return params;
 	}
-
+	
 	public List<String> getClassMethods() {
 		return classMethods;
 	}
@@ -210,4 +198,49 @@ public class JunitRunnerParameters {
 				+ "]";
 	}
 	
+	
+	public static class JunitRunnerProgramArgBuilder extends ProgramArgumentBuilder {
+		public JunitRunnerProgramArgBuilder methods(List<String> classMethods){
+			addArgument(JunitRunnerParameters.CLASS_METHODS, classMethods);
+			return this;
+		}
+
+		public JunitRunnerProgramArgBuilder method(String classMethod){
+			addArgument(JunitRunnerParameters.CLASS_METHODS, classMethod);
+			return this;
+		}
+		
+		public JunitRunnerProgramArgBuilder destinationFile(String destFile){
+			addArgument(JunitRunnerParameters.DEST_FILE, destFile);
+			return this;
+		}
+		
+		public JunitRunnerProgramArgBuilder testClassNames(List<String> testClassNames){
+			addArgument(JunitRunnerParameters.TESTING_CLASS_NAMES, testClassNames);
+			return this;
+		}
+		
+		public JunitRunnerProgramArgBuilder testingPackages(List<String> testingPkgs) {
+			addArgument(JunitRunnerParameters.TESTING_PACKAGE_NAMES, testingPkgs);
+			return this;
+		}
+		
+		public ProgramArgumentBuilder testcaseTimeout(long timeout) {
+			if (timeout > 0) {
+				addArgument(JunitRunnerParameters.TESTCASE_TIME_OUT, String.valueOf(timeout));
+			}
+			return this;
+		}
+		
+		public JunitRunnerProgramArgBuilder testcaseTimeout(long timeout,
+				TimeUnit unit) {
+			testcaseTimeout(unit.toMillis(timeout));
+			return this;
+		}
+		
+		public JunitRunnerProgramArgBuilder storeSingleTestResultDetail() {
+			addOptionArgument(JunitRunnerParameters.SINGLE_TEST_RESULT_DETAIL);
+			return this;
+		}
+	}
 }
