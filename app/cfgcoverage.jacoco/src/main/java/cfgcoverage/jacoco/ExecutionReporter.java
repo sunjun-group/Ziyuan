@@ -71,8 +71,6 @@ public class ExecutionReporter extends AbstractExecutionReporter implements IExe
 		} catch (IOException e) {
 			throw new SavException(ModuleEnum.UNDEFINED, e);
 		}
-		List<CfgCoverage> coverage = coverageBuilder.getCoverage();
-		System.out.println(coverage);
 	}
 	
 	public List<CfgCoverage> getCoverage() {

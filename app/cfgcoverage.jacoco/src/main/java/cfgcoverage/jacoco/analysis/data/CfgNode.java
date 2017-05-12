@@ -127,7 +127,7 @@ public class CfgNode {
 
 	@Override
 	public String toString() {
-		return "node[" + OpcodeUtils.getCode(insnNode.getOpcode()) + ",line " + line +
+		return "node[" + idx + "," + OpcodeUtils.getCode(insnNode.getOpcode()) + ",line " + line +
 				(isDecisionNode ? ", decis" : "") + (isInLoop() ? ", inloop" : "") + "]";
 	}
 	

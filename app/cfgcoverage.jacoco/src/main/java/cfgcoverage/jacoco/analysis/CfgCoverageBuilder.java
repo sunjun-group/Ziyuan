@@ -144,7 +144,7 @@ public class CfgCoverageBuilder {
 
 	private String createMethodId(MethodNode method) {
 		String fullMethodName = ClassUtils.toClassMethodStr(className, method.name);
-		return SignatureUtils.createMethodNameSign(fullMethodName, method.signature);
+		return SignatureUtils.createMethodNameSign(fullMethodName, method.desc);
 	}
 	
 	public void match(boolean b) {
