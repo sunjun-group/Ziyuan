@@ -57,7 +57,6 @@ public class JaCoCoMockJunitRunner extends JunitRunner {
 			result.save(file, junitParams.isStoreTestResultDetail());
 		}
 	}
-	
 	/**
 	 * make an access to jacoco to build execution result file.
 	 * @throws ClassNotFoundException 
