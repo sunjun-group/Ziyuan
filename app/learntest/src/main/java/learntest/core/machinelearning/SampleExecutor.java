@@ -52,6 +52,8 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 	 */
 	public SamplingResult runSamples(List<List<Eq<?>>> assignments, List<ExecVar> originVars)
 			throws SavException {
+		StopTimer timer = new StopTimer("runSample");
+		timer.start();
 		SamplingResult samples = new SamplingResult(decisionProbes);
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		for (List<Eq<?>> valSet : assignments) {
@@ -64,17 +66,15 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 		List<Domain[]> domains = DomainUtils.buildSolutionsFromAssignments(assignments, originVars,
 				decisionProbes.getTestInputs());
 		try {
+			timer.newPoint("gentest");
 			GentestResult result = getTestGenerator().genTestAccordingToSolutions(domains, originVars, PrintOption.APPEND);
-			StopTimer timer = new StopTimer("coverage");
-			timer.start();
 			timer.newPoint("compile");
-			getJavaCompiler().compile(getAppClassPath().getTestTarget(), result.getJunitfiles());
-			timer.newPoint("end compile");
+			compile(result);
 			samples.setNewInputData(result.getTestInputs());
 			/* run and update coverage */
-			System.out.println(timer.getResults());
 			timer.newPoint("coverage");
 			runCfgCoverage(samples, result.getJunitClassNames());
+			samples.updateNewData();
 			timer.newPoint("end");
 			timer.stop();
 			System.out.println(timer.getResults());
@@ -83,7 +83,11 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 		} catch (IOException e) {
 			throw new SavException(ModuleEnum.TESTCASE_GENERATION, e, "");
 		}
-		return samples;
+		return samples;  
+	}
+
+	private void compile(GentestResult result) throws SavException {
+		getJavaCompiler().compile(getAppClassPath().getTestTarget(), result.getJunitfiles());
 	}
 	
 	/**
@@ -97,10 +101,10 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 		timer.newPoint("start cfg coverage");
 		TargetMethod targetMethod = getTargetMethod();
 		List<String> targetMethods = CollectionUtils.listOf(targetMethod.getMethodFullName());
-		CfgJaCoCo cfgCoverage = getCfgCoverage();
-		cfgCoverage .reset();
-		cfgCoverage.setCfgCoverageMap(samples.getCfgCoverageMap());
-		cfgCoverage.run(targetMethods, Arrays.asList(targetMethod.getClassName()),
+		CfgJaCoCo cfgCoverageTool = getCfgCoverage();
+		cfgCoverageTool .reset();
+		cfgCoverageTool.setCfgCoverageMap(samples.getCfgCoverageMap());
+		cfgCoverageTool.runBySimpleRunner(targetMethods, Arrays.asList(targetMethod.getClassName()),
 				junitClassNames);
 		timer.newPoint("end cfg coverage");
 	}

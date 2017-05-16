@@ -19,6 +19,7 @@ import org.jacop.floats.core.FloatIntervalDomain;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
 import sav.common.core.formula.Eq;
+import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.execute.value.ExecVar;
 
 /**
@@ -101,7 +102,7 @@ public class DomainUtils {
 	}
 
 	public static BreakpointValue toBreakpointValue(Domain[] solution, List<ExecVar> vars) {
-		BreakpointValue value = new BreakpointValue(null);
+		BreakpointValue value = new BreakpointValue(StringUtils.EMPTY);
 		for (int i = 0; i < vars.size(); i++) {
 			BreakpointDataUtils.addToBreakpointValue(value, vars.get(i), getDomainValue(solution[i]));
 		}

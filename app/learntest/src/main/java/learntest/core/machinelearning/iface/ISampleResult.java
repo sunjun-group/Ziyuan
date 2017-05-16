@@ -9,7 +9,7 @@
 package learntest.core.machinelearning.iface;
 
 import learntest.core.commons.data.decision.IDecisionNode;
-import learntest.testcase.data.IBreakpointData;
+import learntest.testcase.data.INodeCoveredData;
 
 /**
  * @author LLT
@@ -17,6 +17,6 @@ import learntest.testcase.data.IBreakpointData;
  */
 public interface ISampleResult {
 
-	IBreakpointData get(IDecisionNode target);
+	INodeCoveredData getNewData(IDecisionNode target);
 
 }

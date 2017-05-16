@@ -6,7 +6,7 @@ import java.util.List;
 
 import icsetlv.common.dto.BreakpointValue;
 import learntest.testcase.data.BreakpointData;
-import learntest.testcase.data.IBreakpointData;
+import learntest.testcase.data.INodeCoveredData;
 import libsvm.core.Category;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
@@ -63,7 +63,7 @@ public class OrCategoryCalculator implements CategoryCalculator {
 		return Category.POSITIVE;
 	}
 	
-	public void clearInvalidData(IBreakpointData breakpointData) {
+	public void clearInvalidData(INodeCoveredData breakpointData) {
 		Iterator<BreakpointValue> values = breakpointData.getFalseValues().iterator();
 		while (values.hasNext()) {
 			BreakpointValue value = (BreakpointValue) values.next();

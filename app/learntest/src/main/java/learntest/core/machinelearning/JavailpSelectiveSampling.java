@@ -13,7 +13,7 @@ import learntest.core.machinelearning.iface.ISampleResult;
 import learntest.sampling.javailp.ProblemBuilder;
 import learntest.sampling.javailp.ProblemSolver;
 import learntest.testcase.data.BranchType;
-import learntest.testcase.data.IBreakpointData;
+import learntest.testcase.data.INodeCoveredData;
 import learntest.testcase.data.LoopTimesData;
 import learntest.util.Settings;
 import libsvm.core.Divider;
@@ -96,7 +96,7 @@ public class JavailpSelectiveSampling<T extends ISampleResult> {
 			if (selectResult == null) {
 				continue;
 			}
-			IBreakpointData selectData = selectResult.get(target);
+			INodeCoveredData selectData = selectResult.getNewData(target);
 			if (!isLoop) {
 				if ((missingBranch.isTrueBranch()) && !selectData.getTrueValues().isEmpty()) {
 					return selectResult;

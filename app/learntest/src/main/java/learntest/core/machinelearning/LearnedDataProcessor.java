@@ -46,23 +46,20 @@ public class LearnedDataProcessor {
 		 * if all branches are missing, nothing we can do, and if all branches
 		 * are covered, then do not need to do anything
 		 */
-		if (nodeProbe.areAllbranchesMissing()) {
+		if (nodeProbe.areAllbranchesUncovered()) {
 			return decisionProbes;
 		}
 		
 		CoveredBranches coveredType;
-		int round = 1;
 		DecisionProbes processedProbes = decisionProbes;
-		do {
+		// try 2 times to select sampling
+		for (int i = 0; i < 2; i++) {
 			coveredType = nodeProbe.getCoveredBranches();
 			if (coveredType.isOneBranchMissing()) {
-				SamplingResult samplingResult = selectiveSampling.selectDataForEmpty(nodeProbe, processedProbes.getOriginalVars(),
+				selectiveSampling.selectDataForEmpty(nodeProbe, processedProbes.getOriginalVars(),
 						preconditions, null, coveredType.getOnlyOneMissingBranch(), false);
-				processedProbes = samplingResult.getDecisionProbes();
-				/* update node probe */
-				nodeProbe = processedProbes.getNodeProbe(node);
 			}
-		} while (round <= 2); // try 2 times to select sampling
+		} 
 		
 		return processedProbes;
 	}

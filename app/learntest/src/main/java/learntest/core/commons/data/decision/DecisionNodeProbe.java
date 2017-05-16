@@ -8,16 +8,15 @@
 
 package learntest.core.commons.data.decision;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.calculator.OrCategoryCalculator;
-import learntest.core.commons.utils.CfgUtils;
-import learntest.testcase.data.IBreakpointData;
+import learntest.testcase.data.INodeCoveredData;
 import libsvm.core.Divider;
 import sav.common.core.Pair;
 import sav.common.core.formula.Formula;
@@ -28,7 +27,7 @@ import sav.strategies.dto.TestResultType;
  * @author LLT
  *
  */
-public class DecisionNodeProbe implements IDecisionNode, IBreakpointData {
+public class DecisionNodeProbe implements IDecisionNode, INodeCoveredData {
 	/* reference to cfg node */
 	private NodeCoverage coverage;
 	/* reference to its parent */
@@ -38,58 +37,13 @@ public class DecisionNodeProbe implements IDecisionNode, IBreakpointData {
 	private Precondition precondition = new Precondition();
 	private List<DecisionNodeProbe> dominatees;
 	
-	private List<BreakpointValue> trueValues;
-	private List<BreakpointValue> falseValues;
-	private List<BreakpointValue> oneTimeValues;
-	private List<BreakpointValue> moreTimesValues;
+	private NodeCoveredData coveredData;
 
-	public DecisionNodeProbe(NodeCoverage nodeCoverage, Map<TestResultType, List<Integer>> testResults,
+	public DecisionNodeProbe(DecisionProbes probes, NodeCoverage nodeCoverage, Map<TestResultType, List<Integer>> testResults,
 			List<BreakpointValue> testInputs) {
+		this.decisionProbes = probes;
 		this.coverage = nodeCoverage;
-		Map<Integer, List<Integer>> coveredBranches = nodeCoverage.getCoveredBranches();
-		/* true branch is first branch of cfg node */
-		CfgNode trueBranch = CfgUtils.getTrueBranch(nodeCoverage.getCfgNode());
-		trueValues = getCoveredInputValues(coveredBranches, trueBranch, testInputs);
-		/* false branch is the second branch of cfg node */
-		CfgNode falseBranch = CfgUtils.getFalseBranch(nodeCoverage.getCfgNode());
-		falseValues = getCoveredInputValues(coveredBranches, falseBranch, testInputs);
-		oneTimeValues = new ArrayList<BreakpointValue>(nodeCoverage.getCoveredTcs().size());
-		moreTimesValues = new ArrayList<BreakpointValue>(nodeCoverage.getCoveredTcs().size());
-		for (int idx : nodeCoverage.getCoveredTcs().keySet()) {
-			Integer freq = nodeCoverage.getCoveredTcs().get(idx);
-			/* add to one time values if tc covers node once, otherwise, add to moretimesValues */
-			if (freq == 1) {
-				oneTimeValues.add(testInputs.get(idx));
-			} else {
-				moreTimesValues.add(testInputs.get(idx));
-			}
-		}
-	}
-
-	private List<BreakpointValue> getCoveredInputValues(Map<Integer, List<Integer>> coveredBranches, CfgNode branch,
-			List<BreakpointValue> testInputs) {
-		if (branch == null) {
-			return new ArrayList<BreakpointValue>(0);
-		}
-		List<Integer> tcIdxCovered = coveredBranches.get(branch.getIdx());
-		int size = CollectionUtils.getSize(tcIdxCovered);
-		List<BreakpointValue> values = new ArrayList<BreakpointValue>(size);
-		for (Integer idx : CollectionUtils.nullToEmpty(tcIdxCovered)) {
-			values.add(testInputs.get(idx));
-		}
-		return values;
-	}
-
-	public boolean isOnlyOneBranchCovered() {
-		return trueValues.isEmpty() || falseValues.isEmpty();
-	}
-
-	public CoveredBranches getCoveredBranches() {
-		return CoveredBranches.valueOf(!trueValues.isEmpty(), !falseValues.isEmpty());
-	}
-
-	public boolean areAllbranchesMissing() {
-		return trueValues.isEmpty() && falseValues.isEmpty();
+		coveredData = new NodeCoveredData(nodeCoverage, testInputs);
 	}
 
 	/**
@@ -111,38 +65,6 @@ public class DecisionNodeProbe implements IDecisionNode, IBreakpointData {
 		return precondition;
 	}
 
-	public List<BreakpointValue> getTrueValues() {
-		return trueValues;
-	}
-
-	public void setTrueValues(List<BreakpointValue> trueValues) {
-		this.trueValues = trueValues;
-	}
-
-	public List<BreakpointValue> getFalseValues() {
-		return falseValues;
-	}
-
-	public void setFalseValues(List<BreakpointValue> falseValues) {
-		this.falseValues = falseValues;
-	}
-
-	public List<BreakpointValue> getOneTimeValues() {
-		return oneTimeValues;
-	}
-
-	public void setOneTimeValues(List<BreakpointValue> oneTimeValues) {
-		this.oneTimeValues = oneTimeValues;
-	}
-
-	public List<BreakpointValue> getMoreTimesValues() {
-		return moreTimesValues;
-	}
-
-	public void setMoreTimesValues(List<BreakpointValue> moreTimesValues) {
-		this.moreTimesValues = moreTimesValues;
-	}
-	
 	public List<DecisionNodeProbe> getDominatees() {
 		return dominatees;
 	}
@@ -188,4 +110,33 @@ public class DecisionNodeProbe implements IDecisionNode, IBreakpointData {
 		}
 		return cachePreconditions;
 	}
+
+	public boolean isOnlyOneBranchCovered() {
+		return coveredData.isOnlyOneBranchCovered();
+	}
+
+	public CoveredBranches getCoveredBranches() {
+		return coveredData.getCoveredBranches();
+	}
+
+	public boolean areAllbranchesUncovered() {
+		return coveredData.areAllbranchesUncovered();
+	}
+
+	public List<BreakpointValue> getTrueValues() {
+		return coveredData.getTrueValues();
+	}
+
+	public List<BreakpointValue> getFalseValues() {
+		return coveredData.getFalseValues();
+	}
+
+	public List<BreakpointValue> getOneTimeValues() {
+		return coveredData.getOneTimeValues();
+	}
+
+	public List<BreakpointValue> getMoreTimesValues() {
+		return coveredData.getMoreTimesValues();
+	}
+	
 }

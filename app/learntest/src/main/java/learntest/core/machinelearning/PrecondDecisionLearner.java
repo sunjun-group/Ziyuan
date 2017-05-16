@@ -22,7 +22,7 @@ import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.sampling.SamplingResult;
-import learntest.testcase.data.IBreakpointData;
+import learntest.testcase.data.INodeCoveredData;
 import libsvm.core.Category;
 import libsvm.core.Divider;
 import libsvm.core.Machine;
@@ -56,7 +56,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 		dataPreprocessor = new LearnedDataProcessor(mediator, inputProbes);
 		for (CfgNode node : decisionNodes) {
 			DecisionNodeProbe nodeProbe = probes.getNodeProbe(node);
-			if (nodeProbe.areAllbranchesMissing()) {
+			if (nodeProbe.areAllbranchesUncovered()) {
 				continue;
 			}
 			OrCategoryCalculator preconditions = getPreconditions(probes, node);
@@ -74,7 +74,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 		CoveredBranches coveredType = nodeProbe.getCoveredBranches();
 		TrueFalseLearningResult trueFalseResult = generateTrueFalseFormula(nodeProbe, coveredType);
 		Formula oneMore = generateLoopFormula(nodeProbe);
-		nodeProbe.setPrecondition(Pair.of(trueFalseResult.formula, oneMore), trueFalseResult.dividers);
+		Formula truefalseFormula = trueFalseResult == null ? null : trueFalseResult.formula;
+		List<Divider> divider = trueFalseResult == null ? null : trueFalseResult.dividers;
+		nodeProbe.setPrecondition(Pair.of(truefalseFormula, oneMore), divider);
 	}
 
 	protected OrCategoryCalculator getPreconditions(DecisionProbes probes, CfgNode node) {
@@ -107,7 +109,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 			/* after running sampling, probes will be updated as well */
 			SamplingResult sampleResult = dataPreprocessor.sampleForModel(nodeProbe, probes.getOriginalVars(),
 					mcm.getDataPoints(), getPreconditions(probes, node), mcm.getLearnedDividers());
-			IBreakpointData newData = sampleResult.getNewData(node);
+			INodeCoveredData newData = sampleResult.getNewData(nodeProbe);
 			nodeProbe.getPreconditions().clearInvalidData(newData);
 			mcm.getLearnedModels().clear();
 			addDataPoints(probes.getLabels(), probes.getOriginalVars(), newData.getTrueValues(), Category.POSITIVE, mcm);
@@ -216,7 +218,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 			while(formula != null && times < FORMULAR_LEARN_MAX_ATTEMPT && nodeProbe.needToLearnPrecond()) {
 				SamplingResult samples = dataPreprocessor.sampleForModel(nodeProbe, 
 						originalVars, mcm.getDataPoints(), nodeProbe.getPreconditions(), mcm.getLearnedDividers());
-				IBreakpointData newData = samples.getNewData(nodeProbe.getNode());
+				INodeCoveredData newData = samples.getNewData(nodeProbe);
 				addDataPoints(labels, originalVars, newData.getMoreTimesValues(), Category.POSITIVE, mcm);
 				addDataPoints(labels, originalVars, newData.getOneTimeValues(), Category.NEGATIVE, mcm);
 				acc = mcm.getModelAccuracy();

@@ -128,7 +128,7 @@ public class LearnTest {
 		CfgJaCoCo cfgCoverage = new CfgJaCoCo(appClassPath);
 		List<String> targetMethods = CollectionUtils.listOf(ClassUtils.toClassMethodStr(targetMethod.getClassName(),
 				targetMethod.getMethodName()));
-		Map<String, CfgCoverage> coverage = cfgCoverage.run(targetMethods, Arrays.asList(targetMethod.getClassName()),
+		Map<String, CfgCoverage> coverage = cfgCoverage.runJunit(targetMethods, Arrays.asList(targetMethod.getClassName()),
 				Arrays.asList(testClasses));
 		timer.newPoint("end cfgCoverage");
 		return coverage.get(CfgJaCoCoUtils.createMethodId(targetMethod.getClassName(), targetMethod.getMethodName(),

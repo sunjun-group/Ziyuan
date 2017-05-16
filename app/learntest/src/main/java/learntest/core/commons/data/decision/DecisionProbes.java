@@ -39,7 +39,7 @@ public class DecisionProbes extends CfgCoverage {
 	private List<ExecVar> learningVars;
 	private List<String> labels;
 	
-	/* TODO LLT: cache the node list, but be careful with the update */
+	/* cache the node list, but be careful with the update */
 	/* map between cfgNode idx of decision node with its probe */
 	private Map<Integer, DecisionNodeProbe> nodeProbeMap;
 	
@@ -111,11 +111,11 @@ public class DecisionProbes extends CfgCoverage {
 	 * @return
 	 */
 	public Map<Integer, DecisionNodeProbe> getNodeProbeMap() {
-		if (nodeProbeMap == null) {
+		if (CollectionUtils.isEmpty(nodeProbeMap)) {
 			nodeProbeMap = new HashMap<Integer, DecisionNodeProbe>();
 			List<CfgNode> decisionNodes = getCfg().getDecisionNodes();
 			for (CfgNode node : decisionNodes) {
-				DecisionNodeProbe nodeProbe = new DecisionNodeProbe(getCoverage(node), testResults, testInputs);
+				DecisionNodeProbe nodeProbe = new DecisionNodeProbe(this, getCoverage(node), testResults, testInputs);
 				nodeProbeMap.put(node.getIdx(), nodeProbe);
 			}
 			
@@ -158,6 +158,18 @@ public class DecisionProbes extends CfgCoverage {
 	 */
 	public List<ExecVar> getOriginalVars() {
 		return originalVars;
+	}
+
+	/**
+	 * whenever the probes object is updated, this method should be call to make sure 
+	 * the getting data is not out of date.
+	 */
+	public void clearCaches() {
+		nodeProbeMap.clear();
+	}
+
+	public void addNewTestInputs(List<BreakpointValue> newTestInputs) {
+		this.testInputs.addAll(newTestInputs);
 	}
 	
 }

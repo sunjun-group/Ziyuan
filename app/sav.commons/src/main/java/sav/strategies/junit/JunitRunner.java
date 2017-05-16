@@ -54,24 +54,24 @@ public class JunitRunner {
 		if (CollectionUtils.isEmpty(args)) {
 			System.exit(0);
 		}
+		JunitRunner junitRunner = new JunitRunner();
 		JunitRunnerParameters params = JunitRunnerParameters.parse(args);
-		JunitResult result = runTestcases(params);
+		JunitResult result = junitRunner.runTestcases(params);
 		if (params.getDestfile() != null) {
 			File file = new File(params.getDestfile());
 			result.save(file, params.isStoreTestResultDetail());
 		}
 	}
-
-	public static JunitResult runTestcases(JunitRunnerParameters params)
+	
+	public JunitResult runTestcases(JunitRunnerParameters params)
 			throws ClassNotFoundException, IOException {
 		System.out.println("RunTestcases:");
-		List<Pair<String, String>> classMethods = JunitUtils.toPair(params
-				.getClassMethods());
 		RequestExecution requestExec = new RequestExecution();
 		JunitResult result = new JunitResult();
 		List<Failure> falures = new ArrayList<Failure>();
 		ExecutionTimer executionTimer = getExecutionTimer(params.getTimeout());
-		for (Pair<String, String> classMethod : classMethods) {
+		for (String classMethodStr : params.getClassMethods()) {
+			Pair<String, String> classMethod = JunitUtils.toPair(classMethodStr);
 			Request request = toRequest(classMethod);
 			if (request == null) {
 				continue;
@@ -82,11 +82,21 @@ public class JunitRunner {
 			falures.addAll(requestExec.getFailures());
 			boolean isPass = requestExec.getResult();
 			result.addResult(classMethod, isPass, getLastFailureTrace(requestExec.getFailures()));
+			onFinishTestCase(classMethodStr);
 		}
 		extractBrkpsFromTrace(falures, params, result.getFailureTraces());
 		return result;
 	}
 	
+	public static JunitResult run(JunitRunnerParameters params) throws ClassNotFoundException, IOException {
+		JunitRunner junitRunner = new JunitRunner();
+		return junitRunner.runTestcases(params);
+	}
+	
+	protected void onFinishTestCase(String classMethodStr) {
+		// do nothing by default.
+	}
+
 	private static String getLastFailureTrace(List<Failure> failures) {
 		Failure lastFailures = CollectionUtils.getLast(failures);
 		if (lastFailures == null) {
@@ -166,6 +176,7 @@ public class JunitRunner {
 		VMRunner runner = new VMRunner();
 		config.setLaunchClass(JunitRunner.class.getName());
 		config.setDebug(false);
+		
 		List<String> args = new JunitRunnerProgramArgBuilder()
 				.methods(params.getClassMethods())
 				.testClassNames(params.getTestingClassNames())
@@ -173,6 +184,7 @@ public class JunitRunner {
 				.destinationFile(destFile)
 				.testcaseTimeout(params.getTimeout())
 				.build();
+		
 		config.setProgramArgs(args);
 		runner.startAndWaitUntilStop(config);
 		return JunitResult.readFrom(destFile);
