@@ -43,7 +43,6 @@ public class ExecutionDataReporter extends AbstractExecutionReporter implements 
 		super(targetFolders);
 	}
 	
-
 	public void setReport(ICoverageReport report) {
 		this.report = report;
 	}

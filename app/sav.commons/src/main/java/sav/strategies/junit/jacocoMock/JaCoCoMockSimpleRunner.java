@@ -15,6 +15,7 @@ import sav.common.core.Pair;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.ExecutionTimer;
 import sav.common.core.utils.JunitUtils;
+import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunnerParameters;
 
 /**
@@ -25,8 +26,8 @@ import sav.strategies.junit.JunitRunnerParameters;
  */
 public class JaCoCoMockSimpleRunner extends JaCoCoMockJunitRunner {
 	
-	public void simpleRun(JunitRunnerParameters params)
-			throws ClassNotFoundException, IOException {
+	@Override
+	public JunitResult runTestcases(JunitRunnerParameters params) throws ClassNotFoundException, IOException {
 		System.out.println("RunTestcases:");
 		ExecutionTimer executionTimer = getExecutionTimer(params.getTimeout());
 		for (String classMethodStr : params.getClassMethods()) {
@@ -47,6 +48,7 @@ public class JaCoCoMockSimpleRunner extends JaCoCoMockJunitRunner {
 			});
 			onFinishTestCase(classMethodStr);
 		}
+		return null;
 	}
 	
 }

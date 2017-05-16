@@ -1,6 +1,7 @@
 package cfgcoverage.jacoco.analysis;
 
 import org.jacoco.core.data.ExecutionData;
+import org.jacoco.core.internal.analysis.MethodAnalyzer;
 import org.jacoco.core.internal.analysis.StringPool;
 import org.jacoco.core.internal.flow.ClassProbesVisitor;
 import org.jacoco.core.internal.flow.MethodProbesVisitor;
@@ -16,7 +17,7 @@ public class FreqProbesClassAnalyzer extends ClassProbesVisitor {
 	private final IInstrSupport instrSupport = ExecutionData.getInstrSupport();
 	private final String className;
 	private String superName;
-	private CfgCoverageBuilder coverage;
+	private CfgCoverageBuilder coverageBuilder;
 
 	/**
 	 * Creates a new analyzer that builds coverage data for a class.
@@ -28,7 +29,7 @@ public class FreqProbesClassAnalyzer extends ClassProbesVisitor {
 	 */
 	public FreqProbesClassAnalyzer(CfgCoverageBuilder coverageBuilder, final String className, final int[] probes,
 			final StringPool stringPool) {
-		this.coverage = coverageBuilder;
+		this.coverageBuilder = coverageBuilder;
 		this.className = className;
 		this.probes = probes;
 		this.stringPool = stringPool;
@@ -39,15 +40,23 @@ public class FreqProbesClassAnalyzer extends ClassProbesVisitor {
 			final String signature, String superName,
 			final String[] interfaces) {
 		superName = stringPool.get(superName);
-		coverage.startClass(name, signature);
+		coverageBuilder.startClass(name, signature);
 	}
 
 	@Override
 	public MethodProbesVisitor visitMethod(final int access, final String name,
 			final String desc, final String signature, final String[] exceptions) {
 		instrSupport.assertNotInstrumented(name, className);
-		return new FreqProbesMethodAnalyzer(coverage, className, superName,
-				 probes);
+		if (coverageBuilder.acceptMethod(name)) {
+			return new FreqProbesMethodAnalyzer(coverageBuilder, className, superName,
+					probes);
+		} else {
+			/*
+			 * we don't need to collect coverage for this method, but still need
+			 * to analyze, to synchronize the probe Id which is build for the whole class.
+			 */
+			return new EmptyMethodAnalyzer(className, superName);
+		}
 	}
 
 	@Override
@@ -60,7 +69,7 @@ public class FreqProbesClassAnalyzer extends ClassProbesVisitor {
 	@Override
 	public void visitEnd() {
 		super.visitEnd();
-		coverage.endClass();
+		coverageBuilder.endClass();
 	}
 
 	@Override

@@ -138,7 +138,7 @@ public class CfgJaCoCo {
 				.testClassNames(allClassNames).build();
 		vmRunner.setProgramArgs(arguments);
 		vmRunner.startAndWaitUntilStop(vmConfig);
-		
+		timer.newPoint("report");
 		reporter.report(destfile, null, testingClassNames);
 	}
 	

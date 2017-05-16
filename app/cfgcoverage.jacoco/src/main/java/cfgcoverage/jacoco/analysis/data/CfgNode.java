@@ -69,6 +69,13 @@ public class CfgNode {
 		addBranchRelationship(node.idx, BranchRelationship.valueOf(falseBranch));
 	}
 	
+	private void addBranchRelationship(CfgNode node, BranchRelationship branchRelationship) {
+		addBranchRelationship(node.idx, branchRelationship);
+		if (node.branchTypes.get(idx) != null) {
+			node.addBranchRelationship(idx, branchRelationship);
+		}
+	}
+	
 	private void addBranchRelationship(int nodeIdx, BranchRelationship branchRelationship) {
 		BranchRelationship curRelationship = branchTypes.get(nodeIdx);
 		branchTypes.put(nodeIdx, BranchRelationship.merge(curRelationship, branchRelationship));
@@ -174,7 +181,7 @@ public class CfgNode {
 		} else {
 			dominatees = CollectionUtils.initIfEmpty(dominatees);
 			dominatees.add(node);
-			addBranchRelationship(node.idx, branchType);
+			addBranchRelationship(node, branchType);
 		}
 	}
 	
@@ -185,7 +192,7 @@ public class CfgNode {
 		} else {
 			dependentees = CollectionUtils.initIfEmpty(dependentees);
 			dependentees.add(node);
-			addBranchRelationship(node.idx, branchType);
+			addBranchRelationship(node, branchType);
 		}
 	}
 	
@@ -226,5 +233,30 @@ public class CfgNode {
 	
 	public BranchRelationship getBranchRelationship(int nodeIdx) {
 		return branchTypes.get(nodeIdx);
+	}
+	
+	/**
+	 * if the branch is undefined, it will return an alternative node with 
+	 * TRUE_FALSE relationship.
+	 * if you need to get branch with exact relationship, call findBranch instead.
+	 */
+	public CfgNode getBranch(BranchRelationship relationship) {
+		if (isLeaf()) {
+			return null;
+		}
+		CfgNode branch = findBranch(relationship);
+		if (branch == null) {
+			branch = findBranch(BranchRelationship.TRUE_FALSE);
+		}
+		return branch;
+	}
+
+	public CfgNode findBranch(BranchRelationship relationship) {
+		for (CfgNode branch : CollectionUtils.nullToEmpty(branches)) {
+			if (getBranchRelationship(branch.getIdx()) == relationship) {
+				return branch;
+			}
+		}
+		return null;
 	}
 }

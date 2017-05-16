@@ -63,8 +63,6 @@ public class CfgCoverageBuilder {
 	 */
 	public void setMethodCfgCoverageMap(Map<String, CfgCoverage> cfgCoverageMap) {
 		this.methodCfgCoverageMap = cfgCoverageMap;
-		/* calculate offsetTestIdx based on the current coverages */
-		cfgCoverageMap.values();
 	}
 	
 	public CfgCoverageBuilder startClass(String name, String signature) {
@@ -86,11 +84,15 @@ public class CfgCoverageBuilder {
 	public void setTargetMethods(List<String> targetMethods) {
 		this.targetMethods = targetMethods;
 	}
-
-	public boolean startMethod(MethodNode methodNode) {
-		if (!targetMethods.contains(ClassUtils.toClassMethodStr(className, methodNode.name))) {
+	
+	public boolean acceptMethod(String name) {
+		if (!targetMethods.contains(ClassUtils.toClassMethodStr(className, name))) {
 			return false;
 		}
+		return true;
+	}
+
+	public void startMethod(MethodNode methodNode) {
 		Assert.assertTrue(state == State.CLASS, "expect state CLASS, get state ", state.toString());
 		state = State.METHOD;
 		methodId = createMethodId(methodNode);
@@ -105,7 +107,6 @@ public class CfgCoverageBuilder {
 			cfg = cfgCoverage.getCfg();
 		}
 		methodTestcaseIdx = cfgCoverage.addTestcases(testMethods.get(testcaseIdx));
-		return true;
 	}
 	
 	public ExtInstruction instruction(AbstractInsnNode node, int line) {
@@ -161,6 +162,15 @@ public class CfgCoverageBuilder {
 	
 	public void endClass() {
 		state = State.INIT;
+	}
+	
+	public void endReport() {
+		if (methodCfgCoverageMap.isEmpty()) {
+			return;
+		}
+		for (CfgCoverage cfgCvg : methodCfgCoverageMap.values()) {
+			cfgCvg.solveMissingBranchesCoverage();
+		}
 	}
 
 	private enum State {

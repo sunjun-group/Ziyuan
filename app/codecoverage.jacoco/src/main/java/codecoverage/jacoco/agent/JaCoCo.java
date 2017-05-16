@@ -47,8 +47,9 @@ public class JaCoCo implements ICodeCoverage {
 	public void run(ICoverageReport report, List<String> testingClassNames,
 			List<String> junitClassNames) throws Exception {
 		try { 
-			IExecutionReporter reporter = new ExecutionDataReporter(new String[] {
+			ExecutionDataReporter reporter = new ExecutionDataReporter(new String[] {
 					appClasspath.getTarget(), appClasspath.getTestTarget() });
+			reporter.setReport(report);
 			run(reporter, testingClassNames, junitClassNames);
 		} catch (IOException e) {
 			throw new SavException(ModuleEnum.JVM, e);

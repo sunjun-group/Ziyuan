@@ -36,7 +36,8 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 	private final List<Jump> allJumps = new ArrayList<Jump>();
 	private Instruction thisLastInsn;
 	
-	public FreqProbesMethodAnalyzer(CfgCoverageBuilder coverageBuilder, String className, String superClassName, int[] probes) {
+	public FreqProbesMethodAnalyzer(CfgCoverageBuilder coverageBuilder, String className, String superClassName,
+			int[] probes) {
 		super(className, superClassName);
 		this.probes = probes;
 		this.coverageBuilder = coverageBuilder;
@@ -45,10 +46,8 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 	
 	@Override
 	public void accept(MethodNode methodNode, MethodVisitor methodVisitor) {
-		boolean accept = coverageBuilder.startMethod(methodNode);
-		if (accept) {
-			super.accept(methodNode, methodVisitor);
-		}
+		coverageBuilder.startMethod(methodNode);
+		super.accept(methodNode, methodVisitor);
 	}
 	
 	@Override

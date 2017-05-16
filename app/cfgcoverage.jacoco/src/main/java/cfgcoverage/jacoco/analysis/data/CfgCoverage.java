@@ -82,4 +82,17 @@ public class CfgCoverage {
 		return "CfgCoverage \n cfg=[" + cfg + "],\n nodeCoverages=" + TextFormatUtils.printListSeparateWithNewLine(nodeCoverages) + "]";
 	}
 
+	/**
+	 * in case of a false branch of a decision node is undefined,
+	 * branch coverage for it will not be update in nodeCoverage (as default behavior of jacoco),
+	 * so we have to do it manually for that case, 
+	 * if next node after condition block is covered and true branch is not covered, then false branch is covered,
+	 * otherwise if true branch is covered then false branch is of course uncovered.
+	 */
+	public void solveMissingBranchesCoverage() {
+		for (CfgNode node : cfg.getDecisionNodes()) {
+			nodeCoverages.get(node.getIdx()).solveMissingBranchesCoverage();
+		}
+	}
+
 }

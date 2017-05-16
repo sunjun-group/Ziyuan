@@ -8,6 +8,7 @@
 
 package cfgcoverage.jacoco.utils;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,9 +61,8 @@ public class CfgConstructorUtils {
 	
 	public static void updateDecisionNodes(CFG cfg) {
 		for (CfgNode node : cfg.getNodeList()) {
-			if (node.getBranches() != null &&
-					node.getBranches().size() > 1) {
-					node.setDecisionNode(true);
+			if (CollectionUtils.getSize(node.getBranches()) > 1) {
+				node.setDecisionNode(true);
 			}
 		}
 	}
@@ -102,20 +102,6 @@ public class CfgConstructorUtils {
 		updateDominatees(decisionNodes);
 	}
 
-	/**
-	 * @param decisionNodes
-	 */
-	private static void updateDominatees(List<CfgNode> decisionNodes) {
-		for (CfgNode node : decisionNodes) {
-			if (node.getDependentees() == null) {
-				continue;
-			}
-			for (CfgNode dependentee : node.getDependentees()) {
-				dependentee.addDominatee(node, false, node.getBranchRelationship(dependentee.getIdx()));
-			}
-		}
-	}
-	
 	private static void updateDependentees(CfgNode root) {
 		Set<CfgNode> visited = new HashSet<CfgNode>();
 		Stack<CfgNode> visitStack = new Stack<CfgNode>();
@@ -148,6 +134,20 @@ public class CfgConstructorUtils {
 				}
 				visited.add(lastNode);
 				visitStack.pop();
+			}
+		}
+	}
+	
+	/**
+	 * @param decisionNodes
+	 */
+	private static void updateDominatees(List<CfgNode> decisionNodes) {
+		for (CfgNode node : decisionNodes) {
+			if (node.getDependentees() == null) {
+				continue;
+			}
+			for (CfgNode dependentee : node.getDependentees()) {
+				dependentee.addDominatee(node, false, node.getBranchRelationship(dependentee.getIdx()));
 			}
 		}
 	}

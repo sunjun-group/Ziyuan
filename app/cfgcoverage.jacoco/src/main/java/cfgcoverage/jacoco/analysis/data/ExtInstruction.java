@@ -30,11 +30,6 @@ public class ExtInstruction extends Instruction {
 		this.newCfg = newCfg;
 	}
 	
-	public void setPredecessor(Instruction predecessorInsn) {
-		super.setPredecessor(predecessorInsn);
-		this.predecessor = (ExtInstruction) predecessorInsn;
-	}
-	
 	public void setCovered(int count) {
 		if (count > 0) {
 			setCovered();
@@ -63,6 +58,11 @@ public class ExtInstruction extends Instruction {
 
 	public void setTestIdx(int testIdx) {
 		this.testIdx = testIdx;
+	}
+	
+	public void setPredecessor(Instruction predecessorInsn) {
+		super.setPredecessor(predecessorInsn);
+		this.predecessor = (ExtInstruction) predecessorInsn;
 	}
 
 	public void setNodePredecessor(ExtInstruction source) {
