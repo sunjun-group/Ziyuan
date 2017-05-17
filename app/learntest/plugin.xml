@@ -18,6 +18,11 @@
             id="learntest.command.changeModifier"
             name="Change Modifier to Public">
       </command>
+      <command
+            defaultHandler="learntest.handler.CodeCoverageHandler"
+            id="learntest.command.codeCoverage"
+            name="Generate code coverage">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -42,7 +47,14 @@
                   label="Chnage Modifier to Public"
                   style="push">
             </command>
+            <command
+                  commandId="learntest.command.codeCoverage"
+                  icon="icon/icon-test-management.png"
+                  label="Generate Code coverage"
+                  style="push">
+            </command>
          </menu>
+         
       </menuContribution>
    </extension>
    <extension

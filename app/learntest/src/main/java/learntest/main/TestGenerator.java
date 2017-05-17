@@ -33,7 +33,7 @@ import sav.commons.TestConfiguration;
 import sav.strategies.dto.execute.value.ExecVar;
 
 public class TestGenerator {
-	private static int NUMBER_OF_INIT_TEST = 1;
+	public static int NUMBER_OF_INIT_TEST = 1;
 	private static String prefix = "test";
 	
 	/**
@@ -105,7 +105,6 @@ public class TestGenerator {
 				printOption);
 		result.junitClassNames = printer.printTests(Pair.of(sequences, new ArrayList<Sequence>(0)));
 		result.junitfiles = ((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles();
-		
 		return result;
 	}
 	
@@ -206,14 +205,11 @@ public class TestGenerator {
 	}
 	
 	public static class GentestResult {
+		private static GentestResult EMTPY_RESULT;
 		List<String> junitClassNames;
 		List<File> junitfiles;
 		List<BreakpointValue> inputData = new ArrayList<BreakpointValue>();
-
-		public GentestResult() {
 		
-		}
-
 		/**
 		 * @param buildBreakpointValue
 		 */
@@ -234,6 +230,16 @@ public class TestGenerator {
 		 */
 		public List<BreakpointValue> getTestInputs() {
 			return inputData;
+		}
+		
+		/**
+		 * @return the eMTPY_RESULT
+		 */
+		public static GentestResult getEmptyResult() {
+			if (EMTPY_RESULT == null) {
+				EMTPY_RESULT = new GentestResult();
+			}
+			return EMTPY_RESULT;
 		}
 	}
 }

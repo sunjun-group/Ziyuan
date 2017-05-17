@@ -25,7 +25,6 @@ import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import libsvm.extension.MultiDividerBasedCategoryCalculator;
 import sav.common.core.utils.CollectionUtils;
-import sav.strategies.dto.TestResultType;
 import sav.strategies.dto.execute.value.ExecVar;
 
 /**
@@ -33,11 +32,12 @@ import sav.strategies.dto.execute.value.ExecVar;
  *
  */
 public class DecisionProbes extends CfgCoverage {
-	private Map<TestResultType, List<Integer>> testResults;
+//	private Map<TestResultType, List<Integer>> testResults;
 	private List<BreakpointValue> testInputs;
 	private List<ExecVar> originalVars;
 	private List<ExecVar> learningVars;
 	private List<String> labels;
+	private int totalTestNum;
 	
 	/* cache the node list, but be careful with the update */
 	/* map between cfgNode idx of decision node with its probe */
@@ -46,6 +46,7 @@ public class DecisionProbes extends CfgCoverage {
 	public DecisionProbes(CfgCoverage cfgCoverage) {
 		super(cfgCoverage.getCfg());
 		transferCoverage(cfgCoverage);
+		totalTestNum = cfgCoverage.getTestcases().size();
 	}
 	
 	public void setRunningResult(List<BreakpointValue> testInputs) {
@@ -115,7 +116,7 @@ public class DecisionProbes extends CfgCoverage {
 			nodeProbeMap = new HashMap<Integer, DecisionNodeProbe>();
 			List<CfgNode> decisionNodes = getCfg().getDecisionNodes();
 			for (CfgNode node : decisionNodes) {
-				DecisionNodeProbe nodeProbe = new DecisionNodeProbe(this, getCoverage(node), testResults, testInputs);
+				DecisionNodeProbe nodeProbe = new DecisionNodeProbe(this, getCoverage(node), testInputs);
 				nodeProbeMap.put(node.getIdx(), nodeProbe);
 			}
 			
@@ -159,17 +160,28 @@ public class DecisionProbes extends CfgCoverage {
 	public List<ExecVar> getOriginalVars() {
 		return originalVars;
 	}
-
+	
+	public boolean isOutOfDate() {
+		return this.totalTestNum != super.getTestcases().size();
+	}
+	
 	/**
 	 * whenever the probes object is updated, this method should be call to make sure 
 	 * the getting data is not out of date.
+	 * @param newTcsFirstIdx 
+	 * @param newTestInputs 
 	 */
-	public void clearCaches() {
-		nodeProbeMap.clear();
-	}
-
-	public void addNewTestInputs(List<BreakpointValue> newTestInputs) {
-		this.testInputs.addAll(newTestInputs);
+	public void update(int newTcsFirstIdx, List<BreakpointValue> newTestInputs) {
+		if (isOutOfDate()) {
+			for (DecisionNodeProbe nodeProbe : nodeProbeMap.values()) {
+				nodeProbe.update(newTcsFirstIdx, newTestInputs);
+			}
+			this.testInputs.addAll(newTestInputs);
+			totalTestNum = getTestcases().size();
+		}
 	}
 	
+	public int getTotalTestNum() {
+		return totalTestNum;
+	}
 }

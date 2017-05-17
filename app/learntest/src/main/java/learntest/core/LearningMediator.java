@@ -8,10 +8,20 @@
 
 package learntest.core;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import cfgcoverage.jacoco.CfgJaCoCo;
+import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import learntest.core.commons.data.testtarget.TargetMethod;
+import learntest.core.machinelearning.DecisionLearner;
+import learntest.core.machinelearning.PrecondDecisionLearner;
 import learntest.main.TestGenerator;
-import sav.common.core.utils.StopTimer;
+import sav.common.core.SavException;
+import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.vm.JavaCompiler;
 import sav.strategies.vm.VMConfiguration;
@@ -27,18 +37,15 @@ public class LearningMediator {
 	/* services */
 	private TestGenerator testGenerator;
 	private JavaCompiler javaCompiler;
-	private CfgJaCoCo cfgCoverage;
-	
+	private CfgJaCoCo cfgCoverageTool;
 	
 	/* share utils and project configuration */
 	private TargetMethod targetMethod;
 	private AppJavaClassPath appClassPath;
-	private StopTimer timer;
 	
-	public LearningMediator(AppJavaClassPath appClassPath, TargetMethod targetMethod, StopTimer timer) {
+	public LearningMediator(AppJavaClassPath appClassPath, TargetMethod targetMethod) {
 		this.appClassPath = appClassPath;
 		this.targetMethod = targetMethod;
-		this.timer = timer;
 	}
 
 	public TestGenerator getTestGenerator() {
@@ -54,6 +61,10 @@ public class LearningMediator {
 		}
 		return javaCompiler;
 	}
+	
+	public void compile(List<File> junitFiles) throws SavException {
+		getJavaCompiler().compile(getAppClassPath().getTestTarget(), junitFiles);
+	}
 
 	public TargetMethod getTargetMethod() {
 		return targetMethod;
@@ -63,15 +74,31 @@ public class LearningMediator {
 		return appClassPath;
 	}
 
-	public StopTimer getTimer() {
-		return timer;
+	public CfgJaCoCo getCfgCoverageTool() {
+		if (cfgCoverageTool == null) {
+			cfgCoverageTool = new CfgJaCoCo(appClassPath);
+		}
+		cfgCoverageTool.reset();
+		return cfgCoverageTool;
 	}
 	
-	public CfgJaCoCo getCfgCoverage() {
-		if (cfgCoverage == null) {
-			cfgCoverage = new CfgJaCoCo(appClassPath);
+	public PrecondDecisionLearner initDecisionLearner(boolean precondApproach) {
+		if (precondApproach) {
+			return new PrecondDecisionLearner(this);
+		} else {
+			return new DecisionLearner(this);
 		}
-		cfgCoverage.reset();
-		return cfgCoverage;
 	}
+
+	public void runCoverageForGeneratedTests(Map<String, CfgCoverage> coverageMap, List<String> junitClassNames)
+			throws SavException, IOException, ClassNotFoundException {
+		TargetMethod targetMethod = getTargetMethod();
+		List<String> targetMethods = CollectionUtils.listOf(targetMethod.getMethodFullName());
+		CfgJaCoCo cfgCoverageTool = getCfgCoverageTool();
+		cfgCoverageTool .reset();
+		cfgCoverageTool.setCfgCoverageMap(coverageMap);
+		cfgCoverageTool.runBySimpleRunner(targetMethods, Arrays.asList(targetMethod.getClassName()),
+				junitClassNames);
+	}
+
 }

@@ -19,6 +19,7 @@ import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.IDecisionNode;
 import learntest.core.commons.data.decision.NodeCoveredData;
+import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.machinelearning.iface.ISampleResult;
 import learntest.testcase.data.INodeCoveredData;
 
@@ -67,9 +68,7 @@ public class SamplingResult implements ISampleResult {
 	 * @return
 	 */
 	public Map<String, CfgCoverage> getCfgCoverageMap() {
-		Map<String, CfgCoverage> map = new HashMap<String, CfgCoverage>();
-		map.put(decisionProbes.getCfg().getId(), decisionProbes);
-		return map;
+		return CoverageUtils.getCfgCoverageMap(decisionProbes);
 	}
 
 	/**
@@ -83,8 +82,7 @@ public class SamplingResult implements ISampleResult {
 	 * clear cache data 
 	 */
 	public void updateNewData() {
-		decisionProbes.clearCaches();
-		decisionProbes.addNewTestInputs(newTestInputs);
+		decisionProbes.update(newTcsFirstIdx, newTestInputs);
 		dataMap.clear();
 	}
 }

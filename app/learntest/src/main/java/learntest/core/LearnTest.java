@@ -19,16 +19,17 @@ import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.testtarget.TargetMethod;
 import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.commons.utils.DomainUtils;
-import learntest.core.machinelearning.DecisionLearner;
 import learntest.core.machinelearning.PrecondDecisionLearner;
 import learntest.main.LearnTestParams;
 import learntest.main.RunTimeInfo;
 import learntest.main.TestGenerator;
+import learntest.main.TestGenerator.GentestResult;
 import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
@@ -39,6 +40,7 @@ public class LearnTest {
 	private AppJavaClassPath appClassPath;
 	private TestcasesExecutor testcaseExecutor;
 	private StopTimer timer;
+	private LearningMediator mediator;
 	
 	public LearnTest(AppJavaClassPath appClassPath){
 		this.appClassPath = appClassPath;
@@ -52,36 +54,70 @@ public class LearnTest {
 		if (CollectionUtils.isEmpty(testcases)) {
 			return null;
 		}
+		init(params);
+		boolean learningStarted = false;
+		CfgCoverage cfgCoverage = null;
+		try {
+			/* collect coverage and build cfg */
+			TargetMethod targetMethod = params.getTargetMethod();
+			cfgCoverage = runCfgCoverage(targetMethod, params.getTestClass());
+			targetMethod.updateCfgIfNotExist(cfgCoverage.getCfg());
 
-		/* collect coverage and build cfg */
-		TargetMethod targetMethod = params.getTargetMethod();
-		CfgCoverage cfgcoverage = runCfgCoverage(targetMethod, params.getTestClass());
-		targetMethod.updateCfgIfNotExist(cfgcoverage.getCfg());
+			if (CoverageUtils.notCoverAtAll(cfgCoverage)) {
+				return null;
+			}
 
-		if (CoverageUtils.notCoverAtAll(cfgcoverage)) {
-			return null;
+			BreakPoint methodEntryBkp = BreakpointCreator.createMethodEntryBkp(targetMethod);
+			/**
+			 * run testcases
+			 */
+			ensureTestcaseExecutor();
+			testcaseExecutor.setup(appClassPath, testcases);
+			testcaseExecutor.run(CollectionUtils.listOf(methodEntryBkp, 1));
+			BreakpointData result = CollectionUtils.getFirstElement(testcaseExecutor.getResult());
+
+			if (CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
+				return regenerateTestNotLearning(cfgCoverage, result);
+			} else {
+				/* learn */
+				PrecondDecisionLearner learner = mediator.initDecisionLearner(params.isLearnByPrecond());
+				learningStarted = true;
+				DecisionProbes probes = learner.learn(initProbes(cfgCoverage, result));
+				return getRuntimeInfo(probes);
+			}
+		} catch (SAVExecutionTimeOutException e) {
+			if (learningStarted) {
+				// LLT: still trying to figure out what to do with new approach.
+				if (cfgCoverage != null) {
+					return getRuntimeInfo(cfgCoverage);
+				} 
+			}
 		}
+		return null;
+	}
 
-		BreakPoint methodEntryBkp = BreakpointCreator.createMethodEntryBkp(targetMethod);
-		/**
-		 * run testcases
-		 */
-		ensureTestcaseExecutor();
-		testcaseExecutor.setup(appClassPath, testcases);
-		testcaseExecutor.run(CollectionUtils.listOf(methodEntryBkp, 1));
-		icsetlv.common.dto.BreakpointData result = CollectionUtils.getFirstElement(testcaseExecutor.getResult());
+	private RunTimeInfo regenerateTestNotLearning(CfgCoverage cfgCoverage, BreakpointData result)
+			throws ClassNotFoundException, SavException, IOException {
+		CfgCoverage newCoverage = new CfgCoverage(cfgCoverage.getCfg());
+		/* generate new testcases */
+		GentestResult gentestResult = createSolutionAndGentest(result);
+		/* update coverage */
+		mediator.compile(gentestResult.getJunitfiles());
+		mediator.runCoverageForGeneratedTests(CoverageUtils.getCfgCoverageMap(newCoverage), 
+				gentestResult.getJunitClassNames());
+		return getRuntimeInfo(newCoverage);
+	}
+	
+	private RunTimeInfo getRuntimeInfo(CfgCoverage cfgCoverage) {
+		return new RunTimeInfo(SAVTimer.getExecutionTime(), CoverageUtils.calculateCoverage(cfgCoverage),
+				cfgCoverage.getTestcases().size());
+	}
 
-		if (CoverageUtils.noDecisionNodeIsCovered(cfgcoverage)) {
-			/* generate new testcases */
-			createSolutionAndGentest(result);
-			return null;
-		} else {
-			/* learn */
-			PrecondDecisionLearner learner = initDecisionLearner(targetMethod, params.isLearnByPrecond());
-			learner.learn(initProbes(cfgcoverage, result));
-		}
-		RunTimeInfo info = null;
-		return info;
+	/**
+	 * init fields.
+	 */
+	private void init(LearnTestParams params) {
+		mediator = new LearningMediator(appClassPath, params.getTargetMethod());
 	}
 
 	private DecisionProbes initProbes(CfgCoverage cfgcoverage, BreakpointData result) {
@@ -90,16 +126,7 @@ public class LearnTest {
 		return probes;
 	}
 
-	private PrecondDecisionLearner initDecisionLearner(TargetMethod targetMethod, boolean precondApproach) {
-		LearningMediator mediator = new LearningMediator(appClassPath, targetMethod, timer);
-		if (precondApproach) {
-			return new PrecondDecisionLearner(mediator);
-		} else {
-			return new DecisionLearner(mediator);
-		}
-	}
-
-	private void createSolutionAndGentest(icsetlv.common.dto.BreakpointData result)
+	private GentestResult createSolutionAndGentest(BreakpointData result)
 			throws ClassNotFoundException, SavException {
 		List<BreakpointValue> tests = result.getAllValues();
 		if (tests != null && !tests.isEmpty()) {
@@ -111,8 +138,11 @@ public class LearnTest {
 			list.add(test);
 
 			/* GENERATE NEW TESTCASES */
-			new TestGenerator().genTestAccordingToSolutions(DomainUtils.buildSolutions(list, vars), vars);
+			GentestResult gentestResult = new TestGenerator()
+					.genTestAccordingToSolutions(DomainUtils.buildSolutions(list, vars), vars);
+			return gentestResult;
 		}
+		return GentestResult.getEmptyResult();
 	}
 	
 	public TestcasesExecutor ensureTestcaseExecutor() {

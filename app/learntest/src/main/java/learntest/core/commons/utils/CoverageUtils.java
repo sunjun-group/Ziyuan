@@ -8,9 +8,13 @@
 
 package learntest.core.commons.utils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
+import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
@@ -37,6 +41,25 @@ public class CoverageUtils {
 			}
 		}
 		return true;
+	}
+	
+	public static double calculateCoverage(CfgCoverage cfgCoverage) {
+		int totalBranches = 0;
+		int coveredBranches = 0;
+		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
+			totalBranches += CollectionUtils.getSize(node.getBranches());
+			coveredBranches += cfgCoverage.getCoverage(node).getCoveredBranches().size();
+		}
+		return coveredBranches / (double) totalBranches;
+	}
+	
+	/**
+	 * build a coverage map from one single cfg coverage.
+	 */
+	public static Map<String, CfgCoverage> getCfgCoverageMap(CfgCoverage cfgCoverage) {
+		Map<String, CfgCoverage> map = new HashMap<String, CfgCoverage>();
+		map.put(cfgCoverage.getCfg().getId(), cfgCoverage);
+		return map;
 	}
 	
 }

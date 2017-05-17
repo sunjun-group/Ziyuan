@@ -9,9 +9,7 @@
 package learntest.core.commons.data.decision;
 
 import java.util.List;
-import java.util.Map;
 
-import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
@@ -21,7 +19,6 @@ import libsvm.core.Divider;
 import sav.common.core.Pair;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
-import sav.strategies.dto.TestResultType;
 
 /**
  * @author LLT
@@ -39,13 +36,17 @@ public class DecisionNodeProbe implements IDecisionNode, INodeCoveredData {
 	
 	private NodeCoveredData coveredData;
 
-	public DecisionNodeProbe(DecisionProbes probes, NodeCoverage nodeCoverage, Map<TestResultType, List<Integer>> testResults,
+	public DecisionNodeProbe(DecisionProbes probes, NodeCoverage nodeCoverage,
 			List<BreakpointValue> testInputs) {
 		this.decisionProbes = probes;
 		this.coverage = nodeCoverage;
 		coveredData = new NodeCoveredData(nodeCoverage, testInputs);
 	}
-
+	
+	public void update(int newTcsFirstIdx, List<BreakpointValue> newTestInputs) {
+		coveredData.update(coverage, newTcsFirstIdx, newTestInputs);
+	}
+	
 	/**
 	 * @param classifier
 	 */

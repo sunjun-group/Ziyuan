@@ -1,0 +1,63 @@
+package learntest.handler;
+
+import java.util.List;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+
+import cfgcoverage.jacoco.analysis.data.CfgCoverage;
+import learntest.core.CodeCoverageGenerator;
+import learntest.main.TestGenerator;
+import learntest.util.LearnTestUtil;
+import sav.common.core.utils.StopTimer;
+import sav.settings.SAVTimer;
+import sav.strategies.dto.AppJavaClassPath;
+
+public class CodeCoverageHandler extends AbstractHandler {
+
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		// final IPackageFragmentRoot root =
+		// LearnTestUtil.findMainPackageRootInProject();
+		final List<IPackageFragmentRoot> roots = LearnTestUtil.findAllPackageRootInProject();
+		Job job = new Job("Do evaluation") {
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					SAVTimer.enableExecutionTimeout = true;
+					SAVTimer.exeuctionTimeout = 100000;
+					
+					TestGenerator.NUMBER_OF_INIT_TEST = 20;
+					new TestGenerator().genTest();
+
+					HandlerUtils.refreshProject();
+					StopTimer timer = new StopTimer("learntest");
+					timer.start();
+					timer.newPoint("learntest");
+					AppJavaClassPath appClasspath = HandlerUtils.initAppJavaClassPath();
+
+					CodeCoverageGenerator generator = new CodeCoverageGenerator();
+					CfgCoverage cfgCoverage = generator.generateCoverage(appClasspath);
+					System.out.println();
+					// TODO
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return Status.OK_STATUS;
+			}
+
+		};
+
+		job.schedule();
+
+		return null;
+	}
+
+}

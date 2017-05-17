@@ -10,27 +10,23 @@ package learntest.core.machinelearning;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.jacop.core.Domain;
 
-import cfgcoverage.jacoco.CfgJaCoCo;
 import gentest.junit.TestsPrinter.PrintOption;
 import learntest.core.AbstractLearningComponent;
 import learntest.core.LearningMediator;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.sampling.SamplingResult;
-import learntest.core.commons.data.testtarget.TargetMethod;
 import learntest.core.commons.utils.DomainUtils;
 import learntest.core.machinelearning.iface.ISampleExecutor;
 import learntest.main.TestGenerator.GentestResult;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.formula.Eq;
-import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -69,7 +65,7 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 			timer.newPoint("gentest");
 			GentestResult result = getTestGenerator().genTestAccordingToSolutions(domains, originVars, PrintOption.APPEND);
 			timer.newPoint("compile");
-			compile(result);
+			mediator.compile(result.getJunitfiles());
 			samples.setNewInputData(result.getTestInputs());
 			/* run and update coverage */
 			timer.newPoint("coverage");
@@ -86,10 +82,6 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 		return samples;  
 	}
 
-	private void compile(GentestResult result) throws SavException {
-		getJavaCompiler().compile(getAppClassPath().getTestTarget(), result.getJunitfiles());
-	}
-	
 	/**
 	 * after running coverage, samples will be updated, the original
 	 * decisionProbes will be modified as well. 
@@ -97,15 +89,9 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 	public void runCfgCoverage(SamplingResult samples, List<String> junitClassNames)
 			throws SavException, IOException, ClassNotFoundException {
 		/* collect coverage and build cfg */
-		StopTimer timer = getTimer();
+		StopTimer timer = new StopTimer("cfgCoverage");
 		timer.newPoint("start cfg coverage");
-		TargetMethod targetMethod = getTargetMethod();
-		List<String> targetMethods = CollectionUtils.listOf(targetMethod.getMethodFullName());
-		CfgJaCoCo cfgCoverageTool = getCfgCoverage();
-		cfgCoverageTool .reset();
-		cfgCoverageTool.setCfgCoverageMap(samples.getCfgCoverageMap());
-		cfgCoverageTool.runBySimpleRunner(targetMethods, Arrays.asList(targetMethod.getClassName()),
-				junitClassNames);
+		mediator.runCoverageForGeneratedTests(samples.getCfgCoverageMap(), junitClassNames);
 		timer.newPoint("end cfg coverage");
 	}
 	

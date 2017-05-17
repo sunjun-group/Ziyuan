@@ -32,7 +32,6 @@ public class NodeCoveredData implements INodeCoveredData {
 	public NodeCoveredData(NodeCoverage coverage, List<BreakpointValue> newTestInputs) {
 		this(coverage, newTestInputs, 0);
 	}
-		
 	
 	public NodeCoveredData(NodeCoverage coverage, List<BreakpointValue> newTestInputs, int newTcsFirstIdx) {
 		/* collect input values of true branch */
@@ -41,7 +40,20 @@ public class NodeCoveredData implements INodeCoveredData {
 		/* collect input values of false branch */
 		falseValues = getBranchCoveredValue(coverage, newTestInputs, BranchRelationship.FALSE,
 				newTcsFirstIdx);
-		buildFreqCoveredValue(coverage, newTestInputs, newTcsFirstIdx);
+		oneTimeValues = new ArrayList<BreakpointValue>(coverage.getCoveredTcs().size());
+		moreTimesValues = new ArrayList<BreakpointValue>(coverage.getCoveredTcs().size());
+		updateFreqCoveredValue(coverage, newTestInputs, newTcsFirstIdx);
+	}
+	
+	/**
+	 * @param coverage 
+	 * @param newTcsFirstIdx
+	 * @param newTestInputs
+	 */
+	public void update(NodeCoverage coverage, int newTcsFirstIdx, List<BreakpointValue> newTestInputs) {
+		trueValues.addAll(getBranchCoveredValue(coverage, newTestInputs, BranchRelationship.TRUE, newTcsFirstIdx));
+		falseValues.addAll(getBranchCoveredValue(coverage, newTestInputs, BranchRelationship.FALSE, newTcsFirstIdx));
+		updateFreqCoveredValue(coverage, newTestInputs, newTcsFirstIdx);
 	}
 	
 	/**
@@ -49,9 +61,7 @@ public class NodeCoveredData implements INodeCoveredData {
 	 * @param moreTimesValues list of more time covered input values needed to update.
 	 * @param testOffset first test idx from which we collect the coverage
 	 */
-	private void buildFreqCoveredValue(NodeCoverage nodeCoverage, List<BreakpointValue> testInputs, int testOffset) {
-		oneTimeValues = new ArrayList<BreakpointValue>(nodeCoverage.getCoveredTcs().size());
-		moreTimesValues = new ArrayList<BreakpointValue>(nodeCoverage.getCoveredTcs().size());
+	private void updateFreqCoveredValue(NodeCoverage nodeCoverage, List<BreakpointValue> testInputs, int testOffset) {
 		for (int idx : nodeCoverage.getCoveredTcs().keySet()) {
 			int newTestIdx = idx - testOffset;
 			if (newTestIdx < 0) {
@@ -79,7 +89,7 @@ public class NodeCoveredData implements INodeCoveredData {
 	 * @param testOffset first test idx from which we collect the coverage
 	 * @return
 	 */
-	private List<BreakpointValue> getBranchCoveredValue(NodeCoverage nodeCoverage, List<BreakpointValue> testInputs,
+	private static List<BreakpointValue> getBranchCoveredValue(NodeCoverage nodeCoverage, List<BreakpointValue> testInputs,
 			BranchRelationship branchType, int testOffset) {
 		CfgNode branch = nodeCoverage.getCfgNode().getBranch(branchType);
 		if (branch == null) {
@@ -106,7 +116,7 @@ public class NodeCoveredData implements INodeCoveredData {
 		return values;
 	}
 
-	private List<Integer> getCoveredTestIdexies(Map<Integer, List<Integer>> coveredBranches, int branchIdx,
+	private static List<Integer> getCoveredTestIdexies(Map<Integer, List<Integer>> coveredBranches, int branchIdx,
 			int testOffset) {
 		List<Integer> tcIdxCovered = coveredBranches.get(branchIdx);
 		if (testOffset == 0 || CollectionUtils.isEmpty(tcIdxCovered)) {
@@ -149,5 +159,5 @@ public class NodeCoveredData implements INodeCoveredData {
 	public List<BreakpointValue> getMoreTimesValues() {
 		return moreTimesValues;
 	}
-	
+
 }

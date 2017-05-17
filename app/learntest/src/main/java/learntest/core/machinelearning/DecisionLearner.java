@@ -34,4 +34,9 @@ public class DecisionLearner extends PrecondDecisionLearner {
 	protected OrCategoryCalculator getPreconditions(DecisionProbes probes, CfgNode node) {
 		return null;
 	}
+	
+	@Override
+	public boolean isUsingPrecondApproache() {
+		return false;
+	}
 }

@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.core.IJavaProject;
 
 import learntest.exception.LearnTestException;
 import learntest.main.LearnTest;
@@ -20,27 +21,16 @@ import learntest.main.LearnTestConfig;
 import learntest.main.LearnTestParams;
 import learntest.main.RunTimeInfo;
 import learntest.main.TestGenerator;
+import learntest.plugin.utils.IProjectUtils;
 import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
 import sav.common.core.SystemVariables;
-import sav.commons.TestConfiguration;
+import sav.common.core.utils.StopTimer;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 
 public class GenerateTestHandler extends AbstractHandler {
 
-	private void refreshProject(){
-		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.projectName);
-		
-		try {
-			iProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Job job = new Job("Do evaluation") {
@@ -62,9 +52,11 @@ public class GenerateTestHandler extends AbstractHandler {
 			
 			new TestGenerator().genTest();
 			
-			refreshProject();
-			
-			AppJavaClassPath appClasspath = initAppJavaClassPath();
+			HandlerUtils.refreshProject();
+			StopTimer timer = new StopTimer("learntest");
+			timer.start();
+			timer.newPoint("learntest");
+			AppJavaClassPath appClasspath = HandlerUtils.initAppJavaClassPath();
 			RunTimeInfo runtimeInfo = runLearntest(isL2T, appClasspath);
 //			RunTimeInfo runtimeInfo = runLearntest2(isL2T, appClasspath);
 			
@@ -72,8 +64,9 @@ public class GenerateTestHandler extends AbstractHandler {
 				String type = isL2T ? "l2t" : "randoop";
 				System.out.println(type + " time: " + runtimeInfo.getTime() + "; coverage: " + runtimeInfo.getCoverage());
 			}
-			
-			refreshProject();
+			timer.newPoint("end");
+			System.out.println(timer.getResults());
+			HandlerUtils.refreshProject();
 			
 			return runtimeInfo;
 			
@@ -89,20 +82,6 @@ public class GenerateTestHandler extends AbstractHandler {
 		}
 		
 		return null;
-	}
-
-	private AppJavaClassPath initAppJavaClassPath() throws CoreException {
-//		IProject project = IProjectUtils.getProject(LearnTestConfig.projectName);
-//		IJavaProject javaProject = IProjectUtils.getJavaProject(project);
-		AppJavaClassPath appClasspath = new AppJavaClassPath();
-		appClasspath.setJavaHome(TestConfiguration.getJavaHome());
-//		appClasspath.setJavaHome(IProjectUtils.getJavaHome(javaProject));
-		appClasspath.addClasspaths(LearnTestUtil.getPrjectClasspath());
-		String outputPath = LearnTestUtil.getOutputPath();
-		appClasspath.setTarget(outputPath);
-		appClasspath.setTestTarget(outputPath);
-		appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER, LearnTestUtil.getPrjClassLoader());
-		return appClasspath;
 	}
 
 	private RunTimeInfo runLearntest(boolean isL2T, AppJavaClassPath appClasspath) throws LearnTestException {
