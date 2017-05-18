@@ -33,7 +33,9 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 	private final int[] probes;
 	private CfgCoverageBuilder coverageBuilder;
 	private Map<Instruction, Integer> coveredProbes;
-	private final List<Jump> allJumps = new ArrayList<Jump>();
+	private final List<Jump> multitargetJumps = new ArrayList<Jump>();
+	/* thisLastInsn is used to keep track the last node when building predecessor for node,
+	 * we cannot use default lastInsn because it will cut the path in case of jump insn (goto, if, while, switch) */
 	private Instruction thisLastInsn;
 	
 	public FreqProbesMethodAnalyzer(CfgCoverageBuilder coverageBuilder, String className, String superClassName,
@@ -75,7 +77,7 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 	@Override
 	public void visitJumpInsnWithProbe(int opcode, Label label, int probeId, IFrame frame) {
 		super.visitJumpInsnWithProbe(opcode, label, probeId, frame);
-		allJumps.add(new Jump(lastInsn, label));
+		multitargetJumps.add(new Jump(lastInsn, label));
 	}
 	
 	@Override
@@ -94,10 +96,10 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 			final Label[] labels) {
 		LabelInfo.resetDone(dflt);
 		LabelInfo.resetDone(labels);
-		allJumps.add(new Jump(lastInsn, dflt));
+		multitargetJumps.add(new Jump(lastInsn, dflt));
 		for (final Label l : labels) {
 			if (!LabelInfo.isDone(l)) {
-				allJumps.add(new Jump(lastInsn, l));
+				multitargetJumps.add(new Jump(lastInsn, l));
 				LabelInfo.setDone(l);
 			}
 		}
@@ -106,20 +108,44 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 	@Override
 	public void visitEnd() {
 		super.visitEnd();
-		allJumps.addAll(jumps);
-		/* update predecessor and branches for nodes */
-		for (Jump j : allJumps) {
-			ExtInstruction target = (ExtInstruction) LabelInfo.getInstruction(j.getTarget());
-			ExtInstruction source = (ExtInstruction) j.getSource();
-			target.setNodePredecessor(source, true);
+		List<ExtInstruction> multitargetJumpSources = getMultitargetJumpSources();
+		for (Entry<Instruction, Integer> entry : coveredProbes.entrySet()) {
+			Instruction instn = entry.getKey();
+			((ExtInstruction)instn).setCovered(entry.getValue(), multitargetJumpSources.contains(instn));
+		}
+		/* update true branch coverage for multitaget jump source */
+		for (ExtInstruction insn : multitargetJumpSources) {
+			insn.updateTrueBranchCvgInCaseMultitargetJumpSources();
+		}
+		createBranchFromJumps(jumps, false);
+		createBranchFromJumps(multitargetJumps, true);
+		/* update false branch coverage for multitaget jump source */
+		for (ExtInstruction insn : multitargetJumpSources) {
+			insn.updateFalseBranchCvgInCaseMultitargetJumpSources();
 		}
 		coverageBuilder.endMethod();
 	}
 
-	@Override
-	protected void setCovered() {
-		for (Entry<Instruction, Integer> entry : coveredProbes.entrySet()) {
-			((ExtInstruction)entry.getKey()).setCovered(entry.getValue());
+	/**
+	 * @return
+	 */
+	private List<ExtInstruction> getMultitargetJumpSources() {
+		List<ExtInstruction> insns = new ArrayList<ExtInstruction>(multitargetJumps.size());
+		for (Jump jump : multitargetJumps) {
+			insns.add((ExtInstruction) jump.getSource());
+		}
+		return insns;
+	}
+
+	/**
+	 * @param jumps
+	 */
+	private void createBranchFromJumps(List<Jump> jumps, boolean multitarget) {
+		/* update predecessor and branches for nodes */
+		for (Jump j : jumps) {
+			ExtInstruction target = (ExtInstruction) LabelInfo.getInstruction(j.getTarget());
+			ExtInstruction source = (ExtInstruction) j.getSource();
+			target.setNodePredecessor(source, true, multitarget);
 		}
 	}
 

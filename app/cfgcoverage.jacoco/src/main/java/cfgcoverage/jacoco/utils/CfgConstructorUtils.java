@@ -8,7 +8,6 @@
 
 package cfgcoverage.jacoco.utils;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,9 +31,30 @@ public class CfgConstructorUtils {
 		updateExitNodes(cfg);
 		updateDecisionNodes(cfg);
 		updateNodesInLoop(cfg);
+		reconcileLoopHeaderBranches(cfg);
 		computeControlDependency(cfg);
 	}
 	
+	/**
+	 * before this, if the decision node is a loop header,
+	 * the false branch is outside the loop, but not be reached by a jump,
+	 * so it is not distinguished with other normal next nodes which are treated as a TRUES branch of current node.
+	 * So we have to check again and in the case that the branch is outside loop, we treat it as a TRUE_FALSE branch.
+	 * @param cfg
+	 */
+	private static void reconcileLoopHeaderBranches(CFG cfg) {
+		for (CfgNode node : cfg.getDecisionNodes()) {
+			if (!node.isLoopHeader()) {
+				continue;
+			}
+			for (CfgNode branch : node.getBranches()) {
+				if (!node.isLoopHeaderOf(branch)) {
+					node.addBranchRelationship(branch, BranchRelationship.FALSE);
+				}
+			}
+		}
+	}
+
 	public static void updateExitNodes(CFG cfg) {
 		for (CfgNode node : cfg.getNodeList()) {
 			if (node.isLeaf()) {
@@ -129,7 +149,8 @@ public class CfgConstructorUtils {
 			}
 			if (allDependenteesVisited) {
 				/* update dependentees from its dependentees and remove from stack */
-				for (CfgNode dependentee : lastNode.getDependentees()) {
+				List<CfgNode> directDependentees = CollectionUtils.copy(lastNode.getDependentees());
+				for (CfgNode dependentee : directDependentees) {
 					lastNode.addChildsDependentees(dependentee);
 				}
 				visited.add(lastNode);

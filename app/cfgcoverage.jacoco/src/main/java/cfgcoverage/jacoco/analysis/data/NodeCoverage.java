@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 
 /**
@@ -65,7 +64,7 @@ public class NodeCoverage {
 			coverTcs = new ArrayList<Integer>();
 			coveredBranches.put(branchId, coverTcs);
 		}
-		coverTcs.add(testIdx);
+		CollectionUtils.addIfNotNullNotExist(coverTcs, testIdx);
 	}
 	
 	public void setCovered(int testIndx, int count) {
@@ -108,44 +107,6 @@ public class NodeCoverage {
 	public String toString() {
 		return "NodeCoverage [" + cfgNode + ", coveredTcs=" + coveredTcs + ", coveredBranches="
 				+ coveredBranches + "]";
-	}
-
-	/**
-	 * in case of a false branch of a decision node is undefined,
-	 * branch coverage for it will not be update in nodeCoverage (as default behavior of jacoco),
-	 * so we have to do it manually for that case, 
-	 * if next node after condition block is covered and true branch is not covered, then false branch is covered,
-	 * otherwise if true branch is covered then false branch is of course uncovered.
-	 */
-	public void solveMissingBranchesCoverage() {
-		if (!cfgNode.isDecisionNode() || coveredTcs.isEmpty()) {
-			return;
-		}
-		CfgNode trueBranch = cfgNode.findBranch(BranchRelationship.TRUE);
-		Assert.assertNotNull(trueBranch, "missing True branch: " + cfgNode.getIdx());
-		CfgNode falseBranch = cfgNode.getBranch(BranchRelationship.FALSE);
-		if (falseBranch == null) {
-			return;
-		}
-		/*
-		 * using next node to get coverage of undefined branch.
-		 */
-		Map<Integer, Integer> coveredTcsOfNextNode = cfgCoverage.getNodeCoverages().get(falseBranch.getIdx())
-				.getCoveredTcs();
-		List<Integer> trueCoveredTcs = coveredBranches.get(trueBranch.getIdx());
-		
-		List<Integer> falseCoveredTcs = coveredBranches.get(falseBranch.getIdx());
-		if (falseCoveredTcs == null) {
-			falseCoveredTcs = new ArrayList<Integer>();
-			coveredBranches.put(falseBranch.getIdx(), falseCoveredTcs);
-		}
-		
-		for (Integer testIdx : coveredTcs.keySet()) {
-			if ((trueCoveredTcs == null || !trueCoveredTcs.contains(testIdx))
-					&& coveredTcsOfNextNode.containsKey(testIdx)) {
-				falseCoveredTcs.add(testIdx);
-			}
-		}
 	}
 
 }

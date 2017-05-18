@@ -164,15 +164,6 @@ public class CfgCoverageBuilder {
 		state = State.INIT;
 	}
 	
-	public void endReport() {
-		if (methodCfgCoverageMap.isEmpty()) {
-			return;
-		}
-		for (CfgCoverage cfgCvg : methodCfgCoverageMap.values()) {
-			cfgCvg.solveMissingBranchesCoverage();
-		}
-	}
-
 	private enum State {
 		INIT,
 		CLASS,

@@ -28,11 +28,6 @@ public class EmptyMethodAnalyzer extends AbstractMethodAnalyzer {
 	}
 
 	@Override
-	protected void setCovered() {
-		// do nothing
-	}
-
-	@Override
 	protected void addProbe(int probeId) {
 		// do nothing
 	}

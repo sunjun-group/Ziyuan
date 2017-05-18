@@ -59,17 +59,13 @@ public class CfgNode {
 		this.line = line;
 	}
 
-	public void addBranch(CfgNode node, boolean falseBranch) {
+	public void addBranch(CfgNode node, BranchRelationship branchRelationship) {
 		branches = CollectionUtils.initIfEmpty(branches);
 		branches.add(node);
-		addBranchRelationship(node, falseBranch);
+		addBranchRelationship(node, branchRelationship);
 	}
 
-	private void addBranchRelationship(CfgNode node, boolean falseBranch) {
-		addBranchRelationship(node.idx, BranchRelationship.valueOf(falseBranch));
-	}
-	
-	private void addBranchRelationship(CfgNode node, BranchRelationship branchRelationship) {
+	public void addBranchRelationship(CfgNode node, BranchRelationship branchRelationship) {
 		addBranchRelationship(node.idx, branchRelationship);
 		if (node.branchTypes.get(idx) != null) {
 			node.addBranchRelationship(idx, branchRelationship);
@@ -81,10 +77,10 @@ public class CfgNode {
 		branchTypes.put(nodeIdx, BranchRelationship.merge(curRelationship, branchRelationship));
 	}
 
-	public void setPredecessor(CfgNode predecessor, boolean falseBranch) {
-		predecessor.addBranch(this, falseBranch);
+	public void setPredecessor(CfgNode predecessor, BranchRelationship branchRelationship) {
+		predecessor.addBranch(this, branchRelationship);
 		predecessors.add(predecessor);
-		addBranchRelationship(predecessor, falseBranch);
+		addBranchRelationship(predecessor, branchRelationship);
 	}
 
 	public List<CfgNode> getBranches() {

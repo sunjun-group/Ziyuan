@@ -67,7 +67,6 @@ public class ExecutionReporter extends AbstractExecutionReporter implements IExe
 				}
 				testcaseIdx++;
 			}
-			coverageBuilder.endReport();
 			timer.logResults(log);
 		} catch (IOException e) {
 			throw new SavException(ModuleEnum.UNDEFINED, e);
