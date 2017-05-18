@@ -215,8 +215,11 @@ public class CollectionUtils {
 		return list;
 	}
 	
-	public static <T>List<T> copy(List<T> list) {
-		return new ArrayList<T>(initIfEmpty(list));
+	public static <T>List<T> copy(Collection<T> list) {
+		if (list == null || list.isEmpty()) {
+			return new ArrayList<T>(0);
+		}
+		return new ArrayList<T>(list);
 	}
 	
 	public static <T> T getLast(List<T> list) {
@@ -305,6 +308,4 @@ public class CollectionUtils {
 		}
 		return set;
 	}
-
-	
 }
