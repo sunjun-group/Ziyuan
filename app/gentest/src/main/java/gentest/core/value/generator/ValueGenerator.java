@@ -54,19 +54,21 @@ public abstract class ValueGenerator {
 		if (type.isArray()) {
 			return new ArrayValueGenerator(type);
 		}
-		Pair<Class<?>, List<String>> typeDef = specificObjectMap.get(type.getRawType());
+		Class<?> rawType = type.getRawType();
+		Pair<Class<?>, List<String>> typeDef = specificObjectMap.get(rawType);
 		if (typeDef != null) {
 			return new ExtObjectValueGenerator(type.resolveType(typeDef.a),
 					typeDef.b);
 		}
 		// comment following condition will call method multiple times
-		if (isReceiver) {
+		if (isReceiver || ignoreMethodCalls.contains(rawType)) {
 			return new ObjectValueGenerator(type);
 		}
 		return new ExtObjectValueGenerator(type, null);
 	}
 	
 	private static Map<Class<?>, Pair<Class<?>, List<String>>> specificObjectMap;
+	private static List<Class<?>> ignoreMethodCalls;
 	static {
 		specificObjectMap = new HashMap<Class<?>, Pair<Class<?>,List<String>>>();
 		specificObjectMap.put(List.class, new Pair(ArrayList.class, listOf("add(Ljava/lang/Object;)Z")));
@@ -74,7 +76,10 @@ public abstract class ValueGenerator {
 		specificObjectMap.put(Map.class,
 									new Pair(HashMap.class,
 											listOf("put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")));
+		ignoreMethodCalls = new ArrayList<Class<?>>();
+		ignoreMethodCalls.add(Thread.class);
 	}
+	
 	
 	protected ISubTypesScanner getSubTypesScanner() {
 		return valueGeneratorMediator.getSubTypeScanner();

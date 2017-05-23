@@ -25,6 +25,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import gentest.core.data.type.ReflectionsHelper;
 import gentest.injection.TestcaseGenerationScope;
 import gentest.main.GentestConstants;
 import sav.common.core.ModuleEnum;
@@ -45,6 +46,9 @@ public class SubTypesScanner implements ISubTypesScanner {
 	@Inject @Named("prjClassLoader")
 	private ClassLoader prjClassLoader;
 	
+	static {
+		ReflectionsHelper.registerUrlTypes();
+	}
 	public SubTypesScanner() {
 		subTypesCache = CacheBuilder.newBuilder().build(
 				new CacheLoader<Class<?>, Set<Class<?>>>() {
@@ -187,6 +191,12 @@ public class SubTypesScanner implements ISubTypesScanner {
 		}
 		if (Number.class.equals(type)) {
 			return Randomness.randomMember(GentestConstants.CANDIDATE_DELEGATES_FOR_NUMBER);
+		}
+		/* not abstract and not interface */
+		int modifiers = type.getModifiers();
+		if (((modifiers & (Modifier.INTERFACE | Modifier.ABSTRACT)) == 0)
+				&& Modifier.isPublic(type.getModifiers())) {
+			return type;
 		}
 		return null;
 	}

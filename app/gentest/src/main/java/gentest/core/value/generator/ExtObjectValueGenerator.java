@@ -41,7 +41,8 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 		} else {
 			initMethods = MethodUtils.findMethods(type.getRawType(), methodSigns);
 		}
-		methodcalls = new ArrayList<Method>(Randomness.randomSequence(initMethods, OBJECT_VALUE_GENERATOR_MAX_SELECTED_METHODS));
+		methodcalls = new ArrayList<Method>(
+				Randomness.randomSequence(initMethods, OBJECT_VALUE_GENERATOR_MAX_SELECTED_METHODS));
 	}
 
 	/**

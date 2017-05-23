@@ -225,7 +225,7 @@ public class AstNodeConverter implements StatementVisitor {
 			case Boolean:
 				return new BooleanLiteralExpr((Boolean) value);
 			case Char:
-				return new CharLiteralExpr(value.toString());
+				return new CharLiteralExpr(getDisplayString((Character) value));
 			case Byte:
 			case Int:
 			case Short:
@@ -279,6 +279,17 @@ public class AstNodeConverter implements StatementVisitor {
 			stmtExpr = callExpr;
 		}
 		return stmtExpr;
+	}
+	
+	private static final List<Character> escapeSequence = Arrays.asList('\t', '\b', '\n', '\r', '\f', '\'', '\"', '\\');
+	private String getDisplayString(Character ch) {
+		String value;
+		if (escapeSequence.contains(ch)) {
+			value = new String(new char[] {'\\', ch});
+		} else {
+			value = ch.toString();
+		}
+		return value;
 	}
 
 	private ReferenceType toReferenceType(String typeName) {
