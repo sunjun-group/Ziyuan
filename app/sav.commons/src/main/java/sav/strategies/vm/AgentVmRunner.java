@@ -37,6 +37,7 @@ public class AgentVmRunner extends VMRunner {
 	@Override
 	protected void buildVmOption(CollectionBuilder<String, ?> builder,
 			VMConfiguration config) {
+		super.buildVmOption(builder, config);
 		StringBuilder sb = new StringBuilder("-javaagent:").append(agentJarPath);
 		List<String> agentParams = getAgentParams();
 		if (agentParams != null) {
@@ -44,7 +45,6 @@ public class AgentVmRunner extends VMRunner {
 				.append(StringUtils.join(agentParams, ","));
 		}
 		builder.append(sb.toString());
-		super.buildVmOption(builder, config);
 	}
 	
 	@Override

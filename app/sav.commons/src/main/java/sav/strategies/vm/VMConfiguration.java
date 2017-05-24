@@ -22,7 +22,7 @@ import sav.strategies.dto.AppJavaClassPath;
  * @author LLT
  * 
  */
-public class VMConfiguration {
+public class VMConfiguration implements IDebuggerConfig {
 	public static final boolean DEFAULT_EA = true;
 	public static final int INVALID_PORT = -1;
 	private String javaHome;

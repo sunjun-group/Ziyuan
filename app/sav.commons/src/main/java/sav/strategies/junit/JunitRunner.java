@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -82,7 +83,7 @@ public class JunitRunner {
 			falures.addAll(requestExec.getFailures());
 			boolean isPass = requestExec.getResult();
 			result.addResult(classMethod, isPass, getLastFailureTrace(requestExec.getFailures()));
-			onFinishTestCase(classMethodStr);
+			onFinishTestCase(classMethodStr, requestExec);
 		}
 		extractBrkpsFromTrace(falures, params, result.getFailureTraces());
 		return result;
@@ -93,7 +94,7 @@ public class JunitRunner {
 		return junitRunner.runTestcases(params);
 	}
 	
-	protected void onFinishTestCase(String classMethodStr) {
+	protected void onFinishTestCase(String classMethodStr, RequestExecution requestExec) {
 		// do nothing by default.
 	}
 
@@ -206,7 +207,7 @@ public class JunitRunner {
 			return this;
 		}
 		
-		public JunitRunnerProgramArgBuilder testClassNames(List<String> testClassNames){
+		public JunitRunnerProgramArgBuilder testClassNames(Collection<String> testClassNames){
 			addArgument(JunitRunnerParameters.TESTING_CLASS_NAMES, testClassNames);
 			return this;
 		}

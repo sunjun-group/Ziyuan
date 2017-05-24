@@ -138,7 +138,7 @@ public class LearnTest {
 			list.add(test);
 
 			/* GENERATE NEW TESTCASES */
-			GentestResult gentestResult = new TestGenerator()
+			GentestResult gentestResult = new TestGenerator(appClassPath)
 					.genTestAccordingToSolutions(DomainUtils.buildSolutions(list, vars), vars);
 			return gentestResult;
 		}

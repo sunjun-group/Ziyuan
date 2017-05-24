@@ -46,7 +46,6 @@ public class TestcasesExecutorwithLoopTimes extends JunitDebugger {
 	private StopTimer timer = new StopTimer("TestcasesExecutorwithLoopTimes");
 	private long timeout = DEFAULT_TIMEOUT;
 	
-	
 	/* input data */
 	private DecisionBkpsData decisionBkpsData;
 	private DecisionLocation target;

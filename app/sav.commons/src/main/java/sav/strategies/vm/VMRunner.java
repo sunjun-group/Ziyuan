@@ -127,16 +127,7 @@ public class VMRunner {
 
 	public boolean startVm(List<String> commands, boolean waitUntilStop)
 			throws SavException {
-
-		StringBuffer buffer = new StringBuffer();
-		if (isLog && log.isDebugEnabled()) {
-			log.debug("start cmd..");
-			log.debug(StringUtils.join(commands, " "));
-			for (String cmd : commands) {
-				log.debug(cmd);
-				buffer.append(cmd + " ");
-			}
-		}
+		logCommands(commands);
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
 		try {
 			process = processBuilder.start();
@@ -159,6 +150,16 @@ public class VMRunner {
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			throw new SavException(ModuleEnum.JVM, e, "cannot start jvm process");
+		}
+	}
+
+	private void logCommands(List<String> commands) {
+		if (isLog && log.isDebugEnabled()) {
+			log.debug("start cmd..");
+			log.debug(StringUtils.join(commands, " "));
+			for (String cmd : commands) {
+				log.debug(cmd);
+			}
 		}
 	}
 	

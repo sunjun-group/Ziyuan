@@ -34,14 +34,14 @@ public class CodeCoverageHandler extends AbstractHandler {
 					SAVTimer.enableExecutionTimeout = true;
 					SAVTimer.exeuctionTimeout = 100000;
 					
+					AppJavaClassPath appClasspath = HandlerUtils.initAppJavaClassPath();
 					TestGenerator.NUMBER_OF_INIT_TEST = 20;
-					new TestGenerator().genTest();
+					new TestGenerator(appClasspath).genTest();
 
 					HandlerUtils.refreshProject();
 					StopTimer timer = new StopTimer("learntest");
 					timer.start();
 					timer.newPoint("learntest");
-					AppJavaClassPath appClasspath = HandlerUtils.initAppJavaClassPath();
 
 					CodeCoverageGenerator generator = new CodeCoverageGenerator();
 					CfgCoverage cfgCoverage = generator.generateCoverage(appClasspath);

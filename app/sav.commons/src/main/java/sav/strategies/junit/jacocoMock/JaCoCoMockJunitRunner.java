@@ -10,7 +10,6 @@ package sav.strategies.junit.jacocoMock;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
@@ -18,6 +17,8 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.IOUtils;
+import org.junit.runner.notification.Failure;
 
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
@@ -25,12 +26,14 @@ import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunnerParameters;
 import sav.strategies.junit.Parameters;
+import sav.strategies.junit.RequestExecution;
 
 /**
  * @author LLT
  *
  */
 public class JaCoCoMockJunitRunner extends JunitRunner {
+	private static boolean logfile = false;
 	public static final String ERROR_LOG_FILE = "JacocoMockJunitRunner.log"; 
 	private JParameters params;
 	private File logFile;
@@ -62,7 +65,7 @@ public class JaCoCoMockJunitRunner extends JunitRunner {
 	 * @throws ClassNotFoundException 
 	 */
 	@Override
-	protected void onFinishTestCase(String classMethod) {
+	protected void onFinishTestCase(String classMethod, RequestExecution requestExec) {
 		try {
 			if ((savMock == null || savMockCollectDataMethod == null) && params.getMockAccessClassName() != null) {
 				// class which contains SavMock object 
@@ -75,33 +78,43 @@ public class JaCoCoMockJunitRunner extends JunitRunner {
 			savMockCollectDataMethod.invoke(savMock, classMethod);
 		} catch (Exception ex) {
 			/* write to error file */
-			FileOutputStream out = null;
-			try {
-				if (logFile == null) {
-					logFile = new File(ERROR_LOG_FILE);
-					if (!logFile.exists()) {
-						logFile.createNewFile();
-					}
-					out = new FileOutputStream(logFile);
-					String id = Long.valueOf(System.currentTimeMillis()).toString();
-					out.write(id.getBytes());
-					out.write(ex.getClass().getName().getBytes());
-					out.write(ex.getMessage().getBytes());
-					out.write(ex.getStackTrace().toString().getBytes());
+			StringBuilder sb = new StringBuilder();
+			String id = Long.valueOf(System.currentTimeMillis()).toString();
+			sb.append("\n\n").append(id).append("\n").append(ex.getClass().getName()).append(":")
+				.append(ex.getStackTrace());
+			log(sb.toString());
+		} finally {
+			/* log execution result */
+			if (requestExec != null && requestExec.getFailures() != null) {
+				StringBuilder sb = new StringBuilder();
+				for (Failure fail : requestExec.getFailures()) {
+					sb.append(fail.getTrace());
 				}
-			} catch (Exception e) {
-				// do nothing.
-			} finally {
-				if (out != null) {
-					try {
-						out.close();
-					} catch (IOException e) {
-						// do nothing.
-					}
-				}
+				log(sb.toString());
 			}
 		}
  	}
+	
+	private void log(String log) {
+		if (!logfile) {
+			return;
+		}
+		FileOutputStream output = null;
+		try {
+			if (logFile == null) {
+				logFile = new File(ERROR_LOG_FILE);
+				if (!logFile.exists()) {
+					logFile.createNewFile();
+				}
+			}
+			output = new FileOutputStream(logFile);
+			IOUtils.write(log, output);
+		} catch (Exception e) {
+			// do nothing.
+		} finally {
+			IOUtils.closeQuietly(output);
+		}
+	}
 	
 	public static class JParameters extends Parameters {
 		private JunitRunnerParameters junitRunnerParams;

@@ -67,6 +67,11 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 		testIdx = 0;
 		junitLoc = null;
 		jResultFile = createExecutionResultFile();
+		setupVmConfig();
+		onStart();
+	}
+
+	protected void setupVmConfig() {
 		getVmConfig().setLaunchClass(JUNIT_RUNNER_CLASS_NAME);
 		List<String> args = new JunitRunnerProgramArgBuilder()
 				.methods(allTests).destinationFile(jResultFile)
@@ -75,7 +80,6 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 				.build();
 		getVmConfig().setProgramArgs(args);
 		getVmConfig().resetPort();
-		onStart();
 	}
 
 	protected long getTimeoutInSec() {

@@ -142,7 +142,7 @@ public class TestcasesExecutor extends JunitDebugger {
 		return result;
 	}
 
-	private BreakpointValue extractValuesAtLocation(BreakPoint bkp,
+	protected BreakpointValue extractValuesAtLocation(BreakPoint bkp,
 			BreakpointEvent bkpEvent) throws SavException {
 		try {
 			return getValueExtractor().extractValue(bkp, bkpEvent);
@@ -185,7 +185,7 @@ public class TestcasesExecutor extends JunitDebugger {
 		return jResult;
 	}
 	
-	private DebugValueExtractor getValueExtractor() {
+	protected DebugValueExtractor getValueExtractor() {
 		if (valueExtractor == null) {
 			setValueExtractor(new DebugValueExtractor(valRetrieveLevel));
 		}

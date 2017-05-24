@@ -1,6 +1,7 @@
 package learntest.gentest;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +22,7 @@ import gentest.core.data.variable.ISelectedVariable;
 import gentest.core.value.generator.ValueGeneratorMediator;
 import learntest.core.commons.utils.DomainUtils;
 import net.sf.javailp.Result;
+import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -64,8 +66,10 @@ public class TestSeqGenerator {
 		int index = 0;
 		for (String param : params) {
 			Class<?> clazz = paramTypes[index].getRawType();
-			classMap.put(param, clazz);
-			typeMap.put(clazz, paramTypes[index ++]);
+			if (Modifier.isPublic(clazz.getModifiers())) {
+				classMap.put(param, clazz);
+				typeMap.put(clazz, paramTypes[index ++]);
+			}
 		}
 	}
 	
@@ -162,6 +166,9 @@ public class TestSeqGenerator {
 						Class<?> clazz = classMap.get(receiver);
 						try {
 							Class<?> fieldClazz = clazz.getDeclaredField(parts[i]).getType();
+							if (!Modifier.isPublic(fieldClazz.getModifiers())) {
+								throw new SavException(ModuleEnum.TESTCASE_GENERATION, "cannot init instance for an invisible class");
+							}
 							classMap.put(cur, fieldClazz);
 							IType type = typeMap.get(fieldClazz);
 							if (type == null) {

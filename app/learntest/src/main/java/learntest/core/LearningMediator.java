@@ -50,7 +50,7 @@ public class LearningMediator {
 
 	public TestGenerator getTestGenerator() {
 		if (testGenerator == null) {
-			testGenerator = new TestGenerator();
+			testGenerator = new TestGenerator(appClassPath);
 		}
 		return testGenerator;
 	}
@@ -100,5 +100,6 @@ public class LearningMediator {
 		cfgCoverageTool.runBySimpleRunner(targetMethods, Arrays.asList(targetMethod.getClassName()),
 				junitClassNames);
 	}
-
+	
+	
 }

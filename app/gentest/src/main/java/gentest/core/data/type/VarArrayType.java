@@ -23,9 +23,11 @@ public class VarArrayType implements IType {
 	private IType componentType;
 	private Class<?> rawType;
 	private Type type;
+	private ClassLoader prjClassLoader;
 	
-	public VarArrayType(IType componentType) {
+	public VarArrayType(ClassLoader prjClassLoader, IType componentType) {
 		this.componentType = componentType;
+		this.prjClassLoader = prjClassLoader;
 	}
 
 	@Override
@@ -57,7 +59,7 @@ public class VarArrayType implements IType {
 					className = "[" + SignatureUtils.getSignature(
 									componentType.getRawType()).replace('/', '.');
 				}
-				rawType = Class.forName(className);
+				rawType = Class.forName(className, true, prjClassLoader);
 			} catch (ClassNotFoundException e) {
 				throw new SavRtException("class not found - " + className);
 			}

@@ -161,12 +161,12 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			}
 
 		}
-		
 	}
 
+	private GenerateTestHandler testHandler = new GenerateTestHandler();
 	private RunTimeInfo runLearntest(RunTimeInfo runInfo, boolean l2tApproach) throws InterruptedException {
 		LearnTestConfig.isL2TApproach = l2tApproach;
-		RunTimeInfo l2tInfo = new GenerateTestHandler().generateTest(l2tApproach);
+		RunTimeInfo l2tInfo = testHandler.generateTest(l2tApproach);
 		if (runInfo != null && l2tInfo != null) {
 			runInfo.add(l2tInfo);
 		} else {

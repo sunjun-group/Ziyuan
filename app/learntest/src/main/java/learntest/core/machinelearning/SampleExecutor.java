@@ -8,6 +8,7 @@
 
 package learntest.core.machinelearning;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,9 +25,9 @@ import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.utils.DomainUtils;
 import learntest.core.machinelearning.iface.ISampleExecutor;
 import learntest.main.TestGenerator.GentestResult;
-import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.formula.Eq;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -61,11 +62,13 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 		logSample(list);
 		List<Domain[]> domains = DomainUtils.buildSolutionsFromAssignments(assignments, originVars,
 				decisionProbes.getTestInputs());
+		GentestResult result = null;
 		try {
 			timer.newPoint("gentest");
-			GentestResult result = getTestGenerator().genTestAccordingToSolutions(domains, originVars, PrintOption.APPEND);
+			result = getTestGenerator().genTestAccordingToSolutions(domains, originVars, PrintOption.APPEND);
 			timer.newPoint("compile");
 			mediator.compile(result.getJunitfiles());
+			compilationUpdate(result);
 			samples.setNewInputData(result.getTestInputs());
 			/* run and update coverage */
 			timer.newPoint("coverage");
@@ -74,12 +77,23 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 			timer.newPoint("end");
 			timer.stop();
 			System.out.println(timer.getResults());
-		} catch (ClassNotFoundException e) {
-			throw new SavException(ModuleEnum.TESTCASE_GENERATION, e, "");
-		} catch (IOException e) {
-			throw new SavException(ModuleEnum.TESTCASE_GENERATION, e, "");
+		} catch (Exception e) {
+			// LOG
+//			e.printStackTrace();
+			System.out.println("sample execution fail: " + e.getMessage());
+			if (result != null) {
+				for (File file : CollectionUtils.nullToEmpty(result.getJunitfiles())) {
+					file.delete();
+				}
+			}
+			return null;
+//			throw new SavException(ModuleEnum.TESTCASE_GENERATION, e, e.getMessage());
 		}
 		return samples;  
+	}
+
+	private void compilationUpdate(GentestResult result) {
+		
 	}
 
 	/**

@@ -9,4 +9,5 @@ package gentest.core.commons.utils;
  */
 public class ObjectUtils {
 	private ObjectUtils(){}
+	
 }

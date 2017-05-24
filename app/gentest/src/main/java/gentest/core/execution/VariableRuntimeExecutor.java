@@ -175,7 +175,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 					try {
 						Object returnedValue = method.invoke(obj, (Object[]) inputs.toArray());
 						value.returnedValue = returnedValue;
-					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					} catch (Exception e) {
 						onFail();
 					}
 				}

@@ -31,7 +31,7 @@ public class VMListener {
 	private ListeningConnector connector;
 	private Map<String, Argument> args;
 	
-	public void startListening(VMConfiguration config) throws SavException {
+	public void startListening(IDebuggerConfig config) throws SavException {
 		connector = getConnector(config);
 		try {
 			connector.startListening(args);
@@ -52,7 +52,7 @@ public class VMListener {
 		}
 	}
 
-	public ListeningConnector getConnector(VMConfiguration config)
+	public ListeningConnector getConnector(IDebuggerConfig config)
 			throws SavException {
 		ListeningConnector connector = getListeningConnector();
 		args = connector.defaultArguments();

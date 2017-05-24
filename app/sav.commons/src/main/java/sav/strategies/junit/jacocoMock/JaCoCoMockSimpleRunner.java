@@ -46,7 +46,7 @@ public class JaCoCoMockSimpleRunner extends JaCoCoMockJunitRunner {
 					} 
 				}
 			});
-			onFinishTestCase(classMethodStr);
+			onFinishTestCase(classMethodStr, null);
 		}
 		return null;
 	}

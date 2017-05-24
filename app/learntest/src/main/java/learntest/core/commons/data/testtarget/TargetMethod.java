@@ -8,8 +8,12 @@
 
 package learntest.core.commons.data.testtarget;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import cfgcoverage.jacoco.analysis.data.CFG;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
@@ -19,8 +23,11 @@ import cfgcoverage.org.objectweb.asm.tree.AbstractInsnNode;
 import cfgcoverage.org.objectweb.asm.tree.FieldInsnNode;
 import cfgcoverage.org.objectweb.asm.tree.LocalVariableNode;
 import cfgcoverage.org.objectweb.asm.tree.VarInsnNode;
+import learntest.core.BreakpointCreator;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.ClassUtils;
+import sav.common.core.utils.CollectionUtils;
+import sav.strategies.dto.BreakPoint;
 
 /**
  * @author LLT
@@ -33,7 +40,8 @@ public class TargetMethod {
 	private int lineNum;
 	private List<String> params;
 	private CFG cfg;
-	private List<String> accessedFields;
+	private Collection<String> accessedFields;
+	private BreakPoint methodEntryBkp;
 
 	public TargetMethod(TargetClass targetClass) {
 		this.targetClazz = targetClass;
@@ -58,20 +66,24 @@ public class TargetMethod {
 		return params;
 	}
 
-	public List<String> getAccessedFields() {
+	public Collection<String> getAccessedFields() {
 		if (accessedFields == null) {
 			accessedFields = getAccessedFields(cfg);
 		}
 		return accessedFields;
 	}
 
-	private static List<String> getAccessedFields(CFG cfg) {
-		List<String> fields = new ArrayList<String>();
+	private static Collection<String> getAccessedFields(CFG cfg) {
+		Set<String> fields = new HashSet<String>();
 		for (CfgNode node : cfg.getNodeList()) {
 			AbstractInsnNode asmNode = node.getInsnNode();
 			if (OpcodeUtils.isLoadInst(asmNode.getOpcode())) {
 				VarInsnNode varNode = (VarInsnNode) asmNode;
-				LocalVariableNode accessedVar = cfg.getMethodNode().localVariables.get(varNode.var);
+				List<LocalVariableNode> localVariables = cfg.getMethodNode().localVariables;
+				if (localVariables == null || varNode.var >= localVariables.size()) {
+					continue;
+				}
+				LocalVariableNode accessedVar = localVariables.get(varNode.var);
 				if ("this".equals(accessedVar.name)) {
 					AbstractInsnNode nextNode = getNextNode(node);
 					if (nextNode.getOpcode() == Opcodes.GETFIELD) {
@@ -123,5 +135,19 @@ public class TargetMethod {
 
 	public void setParams(List<String> params) {
 		this.params = params;
+	}
+
+	public BreakPoint getEntryBkp() {
+		if (methodEntryBkp == null) {
+			Assert.assertNotNull(cfg, "cfg for method is not set!");
+			methodEntryBkp = BreakpointCreator.createMethodEntryBkp(this);
+		}
+		return methodEntryBkp;
+	}
+
+	public Map<String, List<String>> createClassMethodMap() {
+		Map<String, List<String>> map = new HashMap<String, List<String>>();
+		map.put(getClassName(), CollectionUtils.listOf(methodName, 1));
+		return map;
 	}
 }

@@ -91,7 +91,11 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 					}
 					
 					break;
+				case STATIC_FIELD:
+					// do nothing for now
+					break;
 				}
+				
 			}
 		}
 	}
@@ -243,5 +247,9 @@ public class DebugValueInstExtractor extends DebugValueExtractor {
 		} catch (IncompatibleThreadStateException e) {
 			throw new SavException(ModuleEnum.JVM, e);
 		}
+	}
+	
+	public void setInstVals(Map<String, Object> instVals) {
+		this.instVals = instVals;
 	}
 }

@@ -54,6 +54,11 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 		Method[] declaredMethods = targetClazz.getDeclaredMethods();
 		List<Method> methods = new ArrayList<Method>(declaredMethods.length);
 		for (Method method : declaredMethods) {
+			/* ignore if method is a static method declared in interface, 'cause this type
+			 * of method is not supposed to call via an instance */
+			if (MethodUtils.isStatic(method) && method.getDeclaringClass().isInterface()) {
+				continue;
+			}
 			if (MethodUtils.isPublic(method) && !doesContainExcludedMethodPrefix(method)) {
 				methods.add(method);
 			}

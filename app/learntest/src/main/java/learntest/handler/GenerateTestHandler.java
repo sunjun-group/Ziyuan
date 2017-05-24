@@ -1,5 +1,8 @@
 package learntest.handler;
 
+import java.io.File;
+import java.util.List;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -19,6 +22,8 @@ import sav.common.core.SavException;
 import sav.common.core.utils.StopTimer;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
+import sav.strategies.vm.JavaCompiler;
+import sav.strategies.vm.VMConfiguration;
 
 public class GenerateTestHandler extends AbstractHandler {
 
@@ -41,15 +46,15 @@ public class GenerateTestHandler extends AbstractHandler {
 			SAVTimer.enableExecutionTimeout = true;
 			SAVTimer.exeuctionTimeout = 50000000;
 			
-			new TestGenerator().genTest();
-			
+			AppJavaClassPath appClasspath = HandlerUtils.initAppJavaClassPath();
+			List<File> newTests = new TestGenerator(appClasspath).genTest();
+			new JavaCompiler(new VMConfiguration(appClasspath)).compile(appClasspath.getTestTarget(), newTests);
 			HandlerUtils.refreshProject();
 			StopTimer timer = new StopTimer("learntest");
 			timer.start();
 			timer.newPoint("learntest");
-			AppJavaClassPath appClasspath = HandlerUtils.initAppJavaClassPath();
-			RunTimeInfo runtimeInfo = runLearntest(isL2T, appClasspath);
-//			RunTimeInfo runtimeInfo = runLearntest2(isL2T, appClasspath);
+//			RunTimeInfo runtimeInfo = runLearntest(isL2T, appClasspath);
+			RunTimeInfo runtimeInfo = runLearntest2(isL2T, appClasspath);
 			
 			if(runtimeInfo != null){
 				String type = isL2T ? "l2t" : "randoop";

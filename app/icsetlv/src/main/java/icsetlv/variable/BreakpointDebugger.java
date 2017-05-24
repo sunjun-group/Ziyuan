@@ -33,6 +33,7 @@ import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequestManager;
 
+import sav.common.core.Constants;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.utils.BreakpointUtils;
@@ -104,7 +105,7 @@ public abstract class BreakpointDebugger {
 						throw new SAVExecutionTimeOutException("Time out at retrieving runtime data");
 					}
 
-					if (System.currentTimeMillis() - startTime > 5000) {
+					if (System.currentTimeMillis() - startTime > Constants.DEFAULT_TESTCASE_TIMEOUT) {
 						System.err.println("run time over 5s, stop");
 						stop = true;
 						eventTimeout = true;
@@ -254,5 +255,9 @@ public abstract class BreakpointDebugger {
 	
 	protected VMConfiguration getVmConfig() {
 		return config;
+	}
+	
+	public void setDebugger(SimpleDebugger debugger) {
+		this.debugger = debugger;
 	}
 }

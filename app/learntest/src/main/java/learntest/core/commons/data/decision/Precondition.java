@@ -74,7 +74,8 @@ public class Precondition {
 			cur.add(condFromDivicers);
 			this.preconditions.add(cur);
 		} else {
-			for (List<CategoryCalculator> list : preconditions) {
+			List<List<CategoryCalculator>> orgPreconditions = new ArrayList<List<CategoryCalculator>>(preconditions);
+			for (List<CategoryCalculator> list : orgPreconditions) {
 				List<CategoryCalculator> cur = new ArrayList<CategoryCalculator>(list);
 				cur.add(condFromDivicers);
 				this.preconditions.add(cur);

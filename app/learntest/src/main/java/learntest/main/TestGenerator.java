@@ -29,25 +29,33 @@ import learntest.util.LearnTestUtil;
 import net.sf.javailp.Result;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
+import sav.common.core.SystemVariables;
 import sav.commons.TestConfiguration;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.execute.value.ExecVar;
 
 public class TestGenerator {
 	public static int NUMBER_OF_INIT_TEST = 1;
 	private static String prefix = "test";
+	private ClassLoader prjClassLoader;
+	
+	public TestGenerator(AppJavaClassPath appClasspath) {
+		this.prjClassLoader = appClasspath.getPreferences().get(SystemVariables.PROJECT_CLASSLOADER);
+	}
 	
 	/**
 	 * 
+	 * @return 
 	 * @throws ClassNotFoundException
 	 * @throws SavException
 	 */
-	public void genTest() throws ClassNotFoundException, SavException {
+	public List<File> genTest() throws ClassNotFoundException, SavException {
 		String mSig = LearnTestUtil.getMethodWthSignature(LearnTestConfig.targetClassName, 
 				LearnTestConfig.targetMethodName, LearnTestConfig.getMethodLineNumber());
 		
 		Class<?> clazz = LearnTestUtil.retrieveClass(LearnTestConfig.targetClassName);
 		RandomTraceGentestBuilder builder = new RandomTraceGentestBuilder(NUMBER_OF_INIT_TEST)
-										.classLoader(LearnTestUtil.getPrjClassLoader())
+										.classLoader(prjClassLoader)
 										.queryMaxLength(1)
 										.testPerQuery(1)
 										.forClass(clazz)
@@ -60,6 +68,7 @@ public class TestGenerator {
 		TestsPrinter printer = new TestsPrinter(packageName, null, prefix, simpleClassName, testSourceFolder);
 		Pair<List<Sequence>, List<Sequence>> pair = builder.generate();
 		printer.printTests(pair);
+		return ((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles();
 	}
 	
 	public GentestResult genTestAccordingToSolutions(List<Domain[]> solutions, List<ExecVar> vars) 
@@ -82,7 +91,7 @@ public class TestGenerator {
 		}
 		solutions = clean(solutions, vars.size());
 		
-		GentestModules injectorModule = new GentestModules();
+		GentestModules injectorModule = new GentestModules(prjClassLoader);
 		injectorModule.enter(TestcaseGenerationScope.class);
 		List<Module> modules = new ArrayList<Module>();
 		modules.add(injectorModule);
@@ -142,7 +151,7 @@ public class TestGenerator {
 		}
 		inputs = clean(inputs, variables);
 		
-		GentestModules injectorModule = new GentestModules();
+		GentestModules injectorModule = new GentestModules(prjClassLoader);
 		injectorModule.enter(TestcaseGenerationScope.class);
 		Injector injector = Guice.createInjector(injectorModule);
 		TestSeqGenerator generator = injector.getInstance(TestSeqGenerator.class);

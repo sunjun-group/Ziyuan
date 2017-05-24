@@ -67,18 +67,17 @@ public class LearnedDataProcessor {
 	/**
 	 * only run sampling if node is loop header and its true branch is covered.
 	 */
-	public DecisionProbes sampleForLoopCvg(CfgNode node,
+	public void sampleForLoopCvg(CfgNode node,
 			OrCategoryCalculator preconditions) throws SavException {
 		DecisionNodeProbe nodeProbe = decisionProbes.getNodeProbe(node);
 		if (node.isLoopHeader() || !nodeProbe.getCoveredBranches().coversTrue()
 				|| (!nodeProbe.getOneTimeValues().isEmpty() && !nodeProbe.getMoreTimesValues().isEmpty())) {
-			return decisionProbes;
+			return;
 		}
 		BranchType missingBranch = nodeProbe.getMoreTimesValues().isEmpty() ? BranchType.TRUE
 																			: BranchType.FALSE; /* ?? */
-		SamplingResult samplingResult = selectiveSampling.selectDataForEmpty(nodeProbe, decisionProbes.getOriginalVars(),
+		selectiveSampling.selectDataForEmpty(nodeProbe, decisionProbes.getOriginalVars(),
 				preconditions, null, missingBranch, false);
-		return samplingResult.getDecisionProbes();
 	}
 
 	public SamplingResult sampleForModel(DecisionNodeProbe nodeProbe, List<ExecVar> originalVars,

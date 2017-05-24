@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import learntest.main.LearnTestConfig;
 import learntest.plugin.utils.IProjectUtils;
 import learntest.util.LearnTestUtil;
+import sav.common.core.Constants;
 import sav.common.core.SystemVariables;
 import sav.strategies.dto.AppJavaClassPath;
 
@@ -50,6 +51,7 @@ public class HandlerUtils {
 		appClasspath.setTarget(outputPath);
 		appClasspath.setTestTarget(outputPath);
 		appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER, LearnTestUtil.getPrjClassLoader());
+		appClasspath.getPreferences().set(SystemVariables.TESTCASE_TIMEOUT, Constants.DEFAULT_TESTCASE_TIMEOUT);
 		return appClasspath;
 	}
 }

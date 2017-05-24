@@ -21,7 +21,16 @@ import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 public class SimpleDebugger {
 	private Process process;
 	private VMRunner vmRunner;
+	
 
+	public SimpleDebugger() {
+		vmRunner = new VMRunner();
+	}
+	
+	public SimpleDebugger(VMRunner vmRunner) {
+		this.vmRunner = vmRunner;
+	}
+	
 	/**
 	 * using scenario Target VM attaches to previously-running debugger.
 	 */
@@ -29,7 +38,6 @@ public class SimpleDebugger {
 		VMListener listener = new VMListener();
 		listener.startListening(config);
 		try {
-			vmRunner = new VMRunner();
 			vmRunner.startVm(config);
 			process = vmRunner.getProcess();
 			if (process != null) {
