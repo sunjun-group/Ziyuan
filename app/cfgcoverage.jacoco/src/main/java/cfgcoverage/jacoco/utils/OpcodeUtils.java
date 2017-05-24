@@ -228,7 +228,7 @@ public final class OpcodeUtils {
 	}
 	
 	public static boolean isLoadInst(int opcode) {
-		return (opcode >= Opcodes.ILOAD && opcode <= Opcodes.SALOAD);
+		return (opcode >= Opcodes.ILOAD && opcode <= Opcodes.ALOAD);
 	}
 
 	public static boolean isCondition(int opcode) {

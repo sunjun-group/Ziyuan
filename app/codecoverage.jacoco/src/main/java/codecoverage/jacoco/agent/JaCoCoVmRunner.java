@@ -10,6 +10,7 @@ package codecoverage.jacoco.agent;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.jacoco.agent.AgentJar;
@@ -25,7 +26,7 @@ import sav.strategies.vm.AgentVmRunner;
  *
  */
 public class JaCoCoVmRunner extends AgentVmRunner {
-	private List<String> analyzedClassNames;
+	private Collection<String> analyzedClassNames;
 	
 	public JaCoCoVmRunner() throws IOException {
 		super(AgentJar.extractToTempLocation().getAbsolutePath());
@@ -59,7 +60,7 @@ public class JaCoCoVmRunner extends AgentVmRunner {
 		return this;
 	}
 
-	public JaCoCoVmRunner setAnalyzedClassNames(List<String> analyzedClassNames) {
+	public JaCoCoVmRunner setAnalyzedClassNames(Collection<String> analyzedClassNames) {
 		this.analyzedClassNames = analyzedClassNames;
 		return this;
 	}

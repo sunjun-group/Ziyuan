@@ -8,6 +8,7 @@
 
 package codecoverage.jacoco.agent;
 
+import java.util.Collection;
 import java.util.List;
 
 import sav.common.core.SavException;
@@ -18,7 +19,7 @@ import sav.common.core.SavException;
  */
 public interface IExecutionReporter {
 
-	void report(String execFile, String junitResultFile, List<String> testingClassNames) throws SavException;
+	void report(String execFile, String junitResultFile, Collection<String> testingClassNames) throws SavException;
 
 	void setTestcases(List<String> testMethods);
 

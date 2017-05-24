@@ -1,7 +1,6 @@
 package cfgcoverage.jacoco.analysis;
 
 import org.jacoco.core.data.ExecutionData;
-import org.jacoco.core.internal.analysis.MethodAnalyzer;
 import org.jacoco.core.internal.analysis.StringPool;
 import org.jacoco.core.internal.flow.ClassProbesVisitor;
 import org.jacoco.core.internal.flow.MethodProbesVisitor;
@@ -12,6 +11,8 @@ import org.objectweb.asm.FieldVisitor;
  * Analyzes the structure of a class.
  */
 public class FreqProbesClassAnalyzer extends ClassProbesVisitor {
+	private static MethodProbesVisitor EMPTY_PROBE_VISITOR = new MethodProbesVisitor() {
+	};
 	protected final int[] probes;
 	protected final StringPool stringPool;
 	private final IInstrSupport instrSupport = ExecutionData.getInstrSupport();
@@ -55,7 +56,7 @@ public class FreqProbesClassAnalyzer extends ClassProbesVisitor {
 			 * we don't need to collect coverage for this method, but still need
 			 * to analyze, to synchronize the probe Id which is build for the whole class.
 			 */
-			return new EmptyMethodAnalyzer(className, superName);
+			return EMPTY_PROBE_VISITOR;
 		}
 	}
 

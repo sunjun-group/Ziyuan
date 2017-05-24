@@ -9,6 +9,7 @@
 package cfgcoverage.jacoco;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,7 @@ public class ExecutionReporter extends AbstractExecutionReporter implements IExe
 		coverageBuilder.setTargetMethods(targetMethods);
 	}
 	
-	public void report(String execFile, String junitResultFile, List<String> testingClassNames) throws SavException {
+	public void report(String execFile, String junitResultFile, Collection<String> testingClassNames) throws SavException {
 		StopTimer timer = new StopTimer("Collect coverage data");
 		try {
 			timer.newPoint("Read execFile");
@@ -69,7 +70,7 @@ public class ExecutionReporter extends AbstractExecutionReporter implements IExe
 			}
 			timer.logResults(log);
 		} catch (IOException e) {
-			throw new SavException(ModuleEnum.UNDEFINED, e);
+			throw new SavException(ModuleEnum.UNDEFINED, e, e.getMessage());
 		}
 	}
 	

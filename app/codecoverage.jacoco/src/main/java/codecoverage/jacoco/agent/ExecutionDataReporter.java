@@ -11,6 +11,7 @@ package codecoverage.jacoco.agent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +49,7 @@ public class ExecutionDataReporter extends AbstractExecutionReporter implements 
 	}
 	
 	public void report(String execFile, String junitResultFile,
-			final List<String> testingClassNames) throws SavException {
+			final Collection<String> testingClassNames) throws SavException {
 		report(execFile, junitResultFile, new Analysis() {
 			
 			@Override
