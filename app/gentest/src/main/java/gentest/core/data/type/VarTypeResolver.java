@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sav.common.core.utils.CollectionUtils;
-import sav.common.core.utils.Randomness;
 import sav.strategies.gentest.ISubTypesScanner;
 
 
@@ -31,6 +30,7 @@ import sav.strategies.gentest.ISubTypesScanner;
  *
  */
 public class VarTypeResolver extends TypeVisitor {
+	private static final int RESOLVE_LEVEL = 7; // to prevent stack overflow.
 	private static Logger log = LoggerFactory.getLogger(VarTypeResolver.class);
 	private Map<TypeVariable<?>, Type> rTypeMap; // value can be either Class, TypeVariable or ParameterizedType
 	private Set<Type> visitedTypes;
@@ -44,17 +44,28 @@ public class VarTypeResolver extends TypeVisitor {
 	}
 	
 	public Class<?> resolve(Type type) {
+		return resolve(type, 0);
+	}
+	
+	public Class<?>[] resolve(Type[] bounds) {
+		return resolve(bounds, 0);
+	}
+	
+	private Class<?> resolve(Type type, int level) {
+		if (level > RESOLVE_LEVEL) {
+			return null;
+		}
 		TypeEnum typeEnum = TypeEnum.of(type);
 		switch (typeEnum) {
 		case CLASS:
 			return (Class<?>) type;
 		case TYPE_VARIABLE:
-			return resolveTypeVariable((TypeVariable<?>) type);
+			return resolveTypeVariable((TypeVariable<?>) type, level + 1);
 		case PARAMETER_TYPE:
 			ParameterizedType paramType = (ParameterizedType) type;
 			return (Class<?>) paramType.getRawType();
 		case WILDCARDS_TYPE:
-			return resolveWildcardsType((WildcardType) type);
+			return resolveWildcardsType((WildcardType) type, level + 1);
 		case GENERIC_ARRAY_TYPE:
 			// todo?
 		}
@@ -62,7 +73,7 @@ public class VarTypeResolver extends TypeVisitor {
 		return null;
 	}
 	
-	private Class<?> resolveWildcardsType(WildcardType type) {
+	private Class<?> resolveWildcardsType(WildcardType type, int level) {
 		// TODO LLT[gentest clean up]: handle lower bound case
 //		Type[] lowerBounds = type.getLowerBounds();
 //		if (!CollectionUtils.isEmpty(lowerBounds)) {
@@ -75,37 +86,39 @@ public class VarTypeResolver extends TypeVisitor {
 //		}
 		Type[] upperBounds = type.getUpperBounds();
 		if (!CollectionUtils.isEmpty(upperBounds)) {
-			return selectResolveTypeByUpperbounds(upperBounds);
+			return selectResolveTypeByUpperbounds(upperBounds, level);
 		}
 		
 		return Object.class;
 	}
 
-	private Class<?> resolveTypeVariable(TypeVariable<?> variable) {
+	private Class<?> resolveTypeVariable(TypeVariable<?> variable, int level) {
 		Type mappedType = rTypeMap.get(variable);
 		if (mappedType == null) {
 			// assign a type for it
-			return selectResolveTypeByUpperbounds(variable.getBounds());
+			return selectResolveTypeByUpperbounds(variable.getBounds(), level);
 		}
-		Class<?> resolvedType = resolve(mappedType);
+		Class<?> resolvedType = resolve(mappedType, level + 1);
 		if ((TypeEnum.isClass(mappedType) && resolvedType != mappedType)) {
 			rTypeMap.put((TypeVariable<?>) variable, resolvedType);
 		}
 		return resolvedType;
 	}
 
-	private Class<?> selectResolveTypeByUpperbounds(Type[] bounds) {
-		 if (CollectionUtils.isEmpty(bounds)) {
-			 return resolve(Object.class);
-		 } 
-		 Class<?>[] implClasses = resolve(bounds);
-		 return Randomness.randomMember(implClasses);
+	private Class<?> selectResolveTypeByUpperbounds(Type[] bounds, int level) {
+//		 if (CollectionUtils.isEmpty(bounds)) {
+//			 return resolve(Object.class, level);
+//		 } 
+//		 Class<?>[] implClasses = resolve(bounds, level);
+//		 return subTypeScanner.getRandomImplClzz(implClasses);
+		Class<?>[] implClazz = resolve(bounds, level);
+		return subTypeScanner.getRandomImplClzz(implClazz);
 	}
 	
-	public Class<?>[] resolve(Type[] bounds) {
+	private Class<?>[] resolve(Type[] bounds, int level) {
 		Class<?>[] resolvedTypes = new Class<?>[bounds.length];
 		for (int i = 0; i < bounds.length; i++) {
-			resolvedTypes[i] = resolve(bounds[i]);
+			resolvedTypes[i] = resolve(bounds[i], level);
 		}
 		return resolvedTypes;
 	}
@@ -162,7 +175,7 @@ public class VarTypeResolver extends TypeVisitor {
 		Type[] typeArgs = type.getActualTypeArguments();
 		for (int i = 0; i < vars.length; i++) {
 			Type argType = typeArgs[i];
-//			log.debug("visit parameterized type-argType=", argType);
+			log.debug("visit parameterized type-argType=", argType);
 			if (!rTypeMap.containsKey(vars[i])) {
 				rTypeMap.put(vars[i], argType);
 			}

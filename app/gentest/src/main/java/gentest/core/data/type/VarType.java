@@ -66,8 +66,7 @@ public class VarType implements IType {
 	public IType resolveSubType(Class<?> a) {
 		VarType subtype = (VarType)creator.forClass(a);
 		if (CollectionUtils.isNotEmpty(this.rawType.getTypeParameters())) {
-			Class<?>[] typeParams = getResolver().resolve(
-					this.rawType.getTypeParameters());
+			Class<?>[] typeParams = getResolver().resolve(this.rawType.getTypeParameters());
 			subtype.getResolver().assignParamTypes(this.rawType, typeParams);
 		}
 		

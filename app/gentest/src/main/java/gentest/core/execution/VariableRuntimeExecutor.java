@@ -9,11 +9,13 @@
 package gentest.core.execution;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +30,6 @@ import gentest.core.data.statement.Statement;
 import gentest.core.data.statement.StatementVisitor;
 import gentest.core.data.variable.ISelectedVariable;
 import sav.common.core.utils.Assert;
-import sav.common.core.utils.ExecutionTimer;
 
 /**
  * @author LLT
@@ -82,7 +83,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		try {
 			stmt.accept(this);
 		} catch(Throwable ex) {
-			log.debug(ex.getMessage());
+//			log.debug(ex.getMessage());
 			onFail();
 		}
 		return successful;
@@ -146,25 +147,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		try {
 			final Object obj = getExecData(stmt.getReceiverVarId());
 			final Method method = stmt.getMethod();
-			new ExecutionTimer(2, TimeUnit.SECONDS).run(new Runnable() {
-				@Override
-				public void run() {
-					Object returnedValue;
-					try {
-						returnedValue = method.invoke(obj, (Object[]) inputs.toArray());
-						value.returnedValue = returnedValue;
-					} catch (IllegalAccessException e) {
-						log.debug(e.getMessage());
-						onFail();
-					} catch (IllegalArgumentException e) {
-						log.debug(e.getMessage());
-						onFail();
-					} catch (InvocationTargetException e) {
-						log.debug(e.getMessage());
-						onFail();
-					}
-				}
-			});			
+			invokeMethod(inputs, value, obj, method);			
 			if (isSuccessful()) {
 				// update data
 				for (int i = 0; i < stmt.getInVarIds().length; i++) {
@@ -175,10 +158,40 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 				}
 			}
 		} catch (Throwable e) {
-			log.debug(e.getMessage());
+//			log.debug(e.getMessage());
 			onFail();
 		}
 		return successful;
+	}
+	
+	private void invokeMethod(final List<Object> inputs, final ReturnValue value, final Object obj,
+			final Method method) throws InterruptedException, ExecutionException {
+		FutureTask<?> theTask = null;
+		try {
+			theTask = new FutureTask<Object>(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						Object returnedValue = method.invoke(obj, (Object[]) inputs.toArray());
+						value.returnedValue = returnedValue;
+					} catch (Exception e) {
+						onFail();
+					}
+				}
+
+			}, null);
+
+			Thread t = new Thread(theTask);
+			t.start();
+
+			/**
+			 * according to jdk document, the get methods will block if the
+			 * computation has not yet completed
+			 */
+			theTask.get(2L, TimeUnit.SECONDS);
+		} catch (TimeoutException e) {
+//			e.printStackTrace();
+		}
 	}
 	
 	@Override

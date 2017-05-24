@@ -3,6 +3,11 @@
  */
 package gentest.junit;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import gentest.core.commons.utils.TypeUtils;
 import japa.parser.ASTHelper;
 import japa.parser.ast.CompilationUnit;
@@ -20,23 +25,20 @@ import japa.parser.ast.stmt.BlockStmt;
 import japa.parser.ast.stmt.Statement;
 import japa.parser.ast.type.VoidType;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * @author LLT
  *
  */
 public class CompilationUnitBuilder {
 	private CompilationUnit cu;
+	private Set<String> declaredClassNames;
 	private Set<String> imports;
 	private TypeDeclaration curType;
 	
 	public CompilationUnitBuilder() {
 		cu = new CompilationUnit();
 		imports = new HashSet<String>();
+		declaredClassNames = new HashSet<String>();
 		cu.setTypes(new ArrayList<TypeDeclaration>());
 	}
 	
@@ -47,13 +49,19 @@ public class CompilationUnitBuilder {
 		return this;
 	}
 	
-	public CompilationUnitBuilder imports(Set<Class<?>> declaredTypes) {
+	public Set<String> imports(Set<Class<?>> declaredTypes) {
+		Set<String> duplicatedImports = new HashSet<String>();
 		for (Class<?> type : declaredTypes) {
 			if (!TypeUtils.isPrimitive(type) && !type.isArray()) {
-				imports.add(type.getCanonicalName());
+				if (!declaredClassNames.contains(type.getSimpleName())) {
+					imports.add(type.getCanonicalName());
+					declaredClassNames.add(type.getSimpleName());
+				} else {
+					duplicatedImports.add(type.getCanonicalName());
+				}
 			}
 		}
-		return this;
+		return duplicatedImports;
 	}
 	
 	public CompilationUnitBuilder imports(String importType) {

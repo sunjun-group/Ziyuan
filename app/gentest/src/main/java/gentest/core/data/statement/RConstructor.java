@@ -29,8 +29,8 @@ public class RConstructor extends Statement {
 		return new RConstructor(ctor);
 	}
 
-	public String getName() {
-		return constructor.getDeclaringClass().getSimpleName();
+	public Class<?> getDeclaringClass() {
+		return constructor.getDeclaringClass();
 	}
 	
 	public Class<?>[] getInputTypes() {

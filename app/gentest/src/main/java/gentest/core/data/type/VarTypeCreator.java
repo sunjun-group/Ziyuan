@@ -22,6 +22,7 @@ import sav.common.core.utils.ClassUtils;
 import sav.strategies.gentest.ISubTypesScanner;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * @author LLT
@@ -30,6 +31,8 @@ import com.google.inject.Inject;
 public class VarTypeCreator implements ITypeCreator {
 	@Inject
 	private ISubTypesScanner subTypesScanner;
+	@Inject @Named("prjClassLoader")
+	private ClassLoader prjClassLoader;
 
 	@Override
 	public IType forClass(Class<?> type) {
@@ -38,7 +41,7 @@ public class VarTypeCreator implements ITypeCreator {
 	
 	public IType forParamClass(Class<?> type, Class<?>... paramTypes) {
 		if (type.isArray()) {
-			return new VarArrayType(forParamClass(type.getComponentType(),
+			return new VarArrayType(prjClassLoader, forParamClass(type.getComponentType(),
 					paramTypes));
 		} else {
 			VarType varType = new VarType(initTypeResolver(), type, paramTypes);
@@ -69,7 +72,7 @@ public class VarTypeCreator implements ITypeCreator {
 			componentType = ((GenericArrayType) type).getGenericComponentType();
 		}
 		if (componentType != null) {
-			return new VarArrayType(forType(componentType, preClazz, resolver));
+			return new VarArrayType(prjClassLoader, forType(componentType, preClazz, resolver));
 		} else {
 			Class<?> resolvedType = resolver.resolve(type);
 			VarType varType = new VarType(initTypeResolver(), resolvedType);

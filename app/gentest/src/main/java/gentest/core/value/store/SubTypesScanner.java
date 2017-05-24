@@ -8,31 +8,31 @@
 
 package gentest.core.value.store;
 
-import gentest.injection.TestcaseGenerationScope;
-import gentest.main.GentestConstants;
-
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
+import gentest.core.data.type.ReflectionsHelper;
+import gentest.injection.TestcaseGenerationScope;
+import gentest.main.GentestConstants;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
 import sav.strategies.gentest.ISubTypesScanner;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 /**
  * @author LLT
@@ -43,7 +43,12 @@ public class SubTypesScanner implements ISubTypesScanner {
 	private static Logger log = LoggerFactory.getLogger(SubTypesScanner.class);
 	private LoadingCache<Class<?>, Set<Class<?>>> subTypesCache;
 	private LoadingCache<Class<?>[], Set<Class<?>>> subTypesBoundsCache;
+	@Inject @Named("prjClassLoader")
+	private ClassLoader prjClassLoader;
 	
+	static {
+		ReflectionsHelper.registerUrlTypes();
+	}
 	public SubTypesScanner() {
 		subTypesCache = CacheBuilder.newBuilder().build(
 				new CacheLoader<Class<?>, Set<Class<?>>>() {
@@ -80,8 +85,7 @@ public class SubTypesScanner implements ISubTypesScanner {
 	
 	private Set<Class<?>> loadSubClasses(Class<?> key, FilterType... filters) {
 		Reflections reflections = new Reflections(
-				new ConfigurationBuilder().setUrls(Arrays
-						.asList(ClasspathHelper.forClass(key))));
+				ConfigurationBuilder.build(prjClassLoader).setExpandSuperTypes(false));
 		Set<?> subTypes = reflections.getSubTypesOf(key);
 		log.debug("Subtypes of ", key.getSimpleName());
 		log.debug(subTypes.toString());
@@ -188,22 +192,28 @@ public class SubTypesScanner implements ISubTypesScanner {
 		if (Number.class.equals(type)) {
 			return Randomness.randomMember(GentestConstants.CANDIDATE_DELEGATES_FOR_NUMBER);
 		}
+		/* not abstract and not interface */
+		int modifiers = type.getModifiers();
+		if (((modifiers & (Modifier.INTERFACE | Modifier.ABSTRACT)) == 0)
+				&& Modifier.isPublic(type.getModifiers())) {
+			return type;
+		}
 		return null;
 	}
 
 	private <K>Class<?> loadFromCache(K key, LoadingCache<K, Set<Class<?>>> cache) {
 		try {
-			Set<?> subTypes;
-			subTypes = cache.get(key);
+			Set<?> subTypes = cache.get(key);
 			if (CollectionUtils.isEmpty(subTypes)) {
 				return null;
 			}
 			return (Class<?>) Randomness.randomMember(subTypes.toArray());
 		} catch (Exception e) {
-			log.debug("key =", key);
-			log.error(e.getMessage());
+			System.out.println("key = " + key);
+			System.currentTimeMillis();
+			System.out.println(e.getMessage());
 			throw new SavRtException(ModuleEnum.TESTCASE_GENERATION,
-					"error when executing cache to get subtypes");
+					"error when executing cache to get subtypes: " + e.getMessage());
 		}
 	}
 	

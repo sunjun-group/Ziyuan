@@ -10,12 +10,14 @@ package gentest.junit;
 
 import gentest.core.data.Sequence;
 import japa.parser.ast.CompilationUnit;
+import japa.parser.ast.body.TypeDeclaration;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import sav.common.core.Constants;
 import sav.common.core.Pair;
+import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 
 /**
@@ -52,13 +54,6 @@ public class TestsPrinter implements ITestsPrinter {
 		}
 	}
 
-	private int getMaxIdxOfExistingClass(String srcPath, String pkg,
-			String classPrefix) {
-		List<String> existedFiles = PrinterUtils.listJavaFileNames(
-				PrinterUtils.getClassFolder(srcPath, pkg), classPrefix);
-		return getMaxClassIdx(existedFiles, classPrefix);
-	}
-	
 	public TestsPrinter(String pkg, String failPkg,
 			String methodPrefix, String classPrefix, ICompilationUnitPrinter cuPrinter) {
 		this.pkg = pkg;
@@ -71,23 +66,42 @@ public class TestsPrinter implements ITestsPrinter {
 		classIdx = 1;
 		this.cuPrinter = cuPrinter;
 	}
+
+	private int getMaxIdxOfExistingClass(String srcPath, String pkg,
+			String classPrefix) {
+		List<String> existedFiles = PrinterUtils.listJavaFileNames(
+				PrinterUtils.getClassFolder(srcPath, pkg), classPrefix);
+		return getMaxClassIdx(existedFiles, classPrefix);
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void printTests(Pair<List<Sequence>, List<Sequence>> testSeqs) {
+	public List<String> printTests(Pair<List<Sequence>, List<Sequence>> testSeqs) {
 		List<CompilationUnit> units;
 		if (!separatePassFail) {
 			List<Sequence> allTests = CollectionUtils.join(
 					testSeqs.a, testSeqs.b);
 			units = createCompilationUnits(allTests, pkg);
+			System.currentTimeMillis();
 		} else {
 			units = createCompilationUnits(testSeqs.a, pkg);
 			units.addAll(createCompilationUnits(testSeqs.b, failPkg));
 		}
 		/* print all compilation units */
 		cuPrinter.print(units);
+		return getJunitClassNames(units);
 	}
 	
+	private List<String> getJunitClassNames(List<CompilationUnit> units) {
+		List<String> result = new ArrayList<String>(units.size());
+		for (CompilationUnit cu : units) {
+			TypeDeclaration type = cu.getTypes().get(0);
+			result.add(ClassUtils.getCanonicalName(cu.getPackage().getName().getName(), 
+					type.getName()));
+		}
+		return result;
+	}
+
 	public List<CompilationUnit> createCompilationUnits(List<Sequence> seqs,
 			String pkgName) {
 		JWriter jwriter = new JWriter();
@@ -153,6 +167,10 @@ public class TestsPrinter implements ITestsPrinter {
 
 	public void setCuPrinter(ICompilationUnitPrinter cuPrinter) {
 		this.cuPrinter = cuPrinter;
+	}
+	
+	public ICompilationUnitPrinter getCuPrinter() {
+		return cuPrinter;
 	}
 
 	public enum PrintOption {

@@ -10,6 +10,7 @@ import gentest.junit.variable.VariableNamer;
 import japa.parser.ast.CompilationUnit;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author LLT
@@ -22,19 +23,20 @@ public class JWriter {
 	private String clazzName;
 	private String packageName;
 	private String methodPrefix;
+	private Set<String> duplicateImports;
 	
 	public CompilationUnit write(List<Sequence> methods) {
 		VariableNamer varNamer = new VariableNamer();
-		AstNodeConverter converter = new AstNodeConverter(varNamer);
 		CompilationUnitBuilder cu = new CompilationUnitBuilder();
 		/* package */
 		cu.pakage(getPackageName());
 		/* import */
 		cu.imports(JUNIT_TEST_ANNOTATION_IMPORT);
 		for (Sequence method : methods) {
-			cu.imports(method.getDeclaredTypes());
+			duplicateImports = cu.imports(method.getDeclaredTypes());
 		}
 		cu.startType(getClazzName());
+		AstNodeConverter converter = new AstNodeConverter(varNamer, duplicateImports);
 		for (int i = 0; i < methods.size(); i++) {
 			Sequence method = methods.get(i);
 			varNamer.reset(method);

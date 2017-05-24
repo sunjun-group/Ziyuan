@@ -20,6 +20,6 @@ import sav.common.core.Pair;
  */
 public interface ITestsPrinter {
 
-	void printTests(Pair<List<Sequence>, List<Sequence>> testSeqss);
+	List<String> printTests(Pair<List<Sequence>, List<Sequence>> testSeqss);
 
 }

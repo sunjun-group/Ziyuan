@@ -3,17 +3,19 @@
  */
 package gentest;
 
+import java.lang.reflect.Constructor;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import gentest.core.data.statement.RAssignment;
 import gentest.core.data.statement.RConstructor;
 import gentest.core.data.statement.Rmethod;
 import gentest.junit.AstNodeConverter;
 import gentest.junit.variable.VariableNamer;
 import japa.parser.ast.type.PrimitiveType.Primitive;
-
-import java.lang.reflect.Constructor;
-
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * @author LLT
@@ -24,7 +26,9 @@ public class AstNodeConverterTest {
 	@Before
 	public void setup() {
 		VariableNamer varNamer = new VariableNamer();
-		astConverter = new AstNodeConverter(varNamer);
+		Set<String> duplicatedImports = new HashSet<String>();
+		duplicatedImports.add(Primitive.class.getCanonicalName());
+		astConverter = new AstNodeConverter(varNamer, duplicatedImports);
 	}
 	
 	@Test
