@@ -29,7 +29,6 @@ public class RunJDartHandler extends AbstractHandler {
 		String[] quicksortConfig = new String[]{
 				"+app=libs/jdart/jpf.properties",
 				"+site=libs/jpf.properties",
-//				"+jpf-jdart.classpath+=../../bin",
 				"+jpf-jdart.classpath+=" + pathString,
 				"+target=com.Sorting",
 				"+concolic.method=quicksort",
@@ -39,8 +38,26 @@ public class RunJDartHandler extends AbstractHandler {
 		
 		RunJPF.run(quicksortConfig);
 		
-		
 		return null;
+	}
+
+	public static void main(String[] args) throws ExecutionException {
+		String[] quicksortConfig = new String[]{
+				"+app=libs/jdart/jpf.properties",
+				"+site=libs/jpf.properties",
+//				"+jpf-jdart.classpath+=../../bin",
+//				"+jpf-jdart.classpath=" + classpaths.get(0),
+				"+target=com.Sorting",
+				"+concolic.method=quicksort",
+				"+concolic.method.quicksort=${target}.quicksort(a:int[])",
+				"+concolic.method.quicksort.config=all_fields_symbolic",
+				"+jpf-jdart.classpath=E:\\workspace\\JPF\\data\\apache-common-math-2.2\\bin",
+//				"+target=features.simple.Input",
+//				"+concolic.method=foo",
+//				"+concolic.method.foo=${target}.foo(i:int)",
+//				"+concolic.method.foo.config=all_fields_symbolic"
+		};
+		RunJPF.run(quicksortConfig);
 	}
 	
 	private AppJavaClassPath initAppJavaClassPath() throws CoreException {
