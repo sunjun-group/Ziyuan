@@ -96,7 +96,7 @@ public class JunitResult {
 	}
 	
 	public boolean getResult(String tc) {
-		return testResult.get(JunitUtils.toPair(tc)).isPass();
+		return getTestResult(tc).isPass();
 	}
 	
 	public TestResult getTestResult(String tc) {

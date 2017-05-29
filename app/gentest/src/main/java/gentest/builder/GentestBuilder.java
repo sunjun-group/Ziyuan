@@ -8,16 +8,15 @@
 
 package gentest.builder;
 
-import gentest.core.commons.utils.GenTestUtils;
-import gentest.core.commons.utils.MethodUtils;
-import gentest.core.data.MethodCall;
-import gentest.core.data.Sequence;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import gentest.core.commons.utils.GenTestUtils;
+import gentest.core.commons.utils.MethodUtils;
+import gentest.core.data.MethodCall;
+import gentest.core.data.Sequence;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
@@ -33,6 +32,7 @@ public abstract class GentestBuilder<T extends GentestBuilder<T>> {
 	private boolean specificMethod = false;
 	protected List<MethodCall> methodCalls;
 	private ClassLoader prjClassLoader;
+	private long methodExecTimeout;
 	
 	public GentestBuilder(int numberOfTcs) {
 		methodCalls = new ArrayList<MethodCall>();
@@ -63,6 +63,11 @@ public abstract class GentestBuilder<T extends GentestBuilder<T>> {
 	
 	public T classLoader(ClassLoader prjClassLoader) {
 		this.prjClassLoader = prjClassLoader;
+		return (T) this;
+	}
+	
+	public T methodExecTimeout(long timeout) {
+		this.methodExecTimeout = timeout;
 		return (T) this;
 	}
 	
@@ -118,6 +123,10 @@ public abstract class GentestBuilder<T extends GentestBuilder<T>> {
 			return GenTestUtils.getDefaultClassLoader();
 		}
 		return prjClassLoader;
+	}
+	
+	public long getMethodExecTimeout() {
+		return methodExecTimeout;
 	}
 	
 	/**

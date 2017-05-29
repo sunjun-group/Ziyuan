@@ -51,7 +51,7 @@ public class HandlerUtils {
 		appClasspath.setTarget(outputPath);
 		appClasspath.setTestTarget(outputPath);
 		appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER, LearnTestUtil.getPrjClassLoader());
-		appClasspath.getPreferences().set(SystemVariables.TESTCASE_TIMEOUT, Constants.DEFAULT_TESTCASE_TIMEOUT);
+		appClasspath.getPreferences().set(SystemVariables.TESTCASE_TIMEOUT, Constants.DEFAULT_JUNIT_TESTCASE_TIMEOUT);
 		return appClasspath;
 	}
 }

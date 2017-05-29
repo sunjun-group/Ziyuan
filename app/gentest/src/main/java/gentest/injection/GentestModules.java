@@ -23,6 +23,7 @@ import gentest.core.data.IDataProvider;
 import gentest.core.data.Sequence;
 import gentest.core.data.type.ITypeCreator;
 import gentest.core.data.type.VarTypeCreator;
+import gentest.core.execution.VariableRuntimeExecutor;
 import gentest.core.value.store.SubTypesScanner;
 import gentest.core.value.store.TypeMethodCallsCache;
 import gentest.core.value.store.VariableCache;
@@ -35,8 +36,10 @@ import sav.strategies.gentest.ISubTypesScanner;
  *
  */
 public class GentestModules extends AbstractModule {
+	private static final long DEFAULT_METHOD_EXECUTION_TIMEOUT = 200l;
 	private Map<Class<? extends Annotation>, EnterableScope> scopes;
 	private ClassLoader prjClassLoader;
+	private long methodExecTimeout;
 	
 	public GentestModules() {
 		scopes = new HashMap<Class<? extends Annotation>, EnterableScope>();
@@ -64,6 +67,8 @@ public class GentestModules extends AbstractModule {
 				// .to((Class<? extends IDataProvider<?>>) DataProvider.class)
 				// .in(scopes.get(TestcaseGenerationScope.class));
 		bind(ParamGeneratorConfig.class).toInstance(ParamGeneratorConfig.getDefault());
+		bind(long.class).annotatedWith(Names.named("methodExecTimeout")).toInstance(getMethodExecTimeout());
+		requestStaticInjection(VariableRuntimeExecutor.class);
 	}
 	
 	public ClassLoader getPrjClassLoader() {
@@ -71,6 +76,17 @@ public class GentestModules extends AbstractModule {
 			prjClassLoader = Thread.currentThread().getContextClassLoader();
 		}
 		return prjClassLoader;
+	}
+	
+	public long getMethodExecTimeout() {
+		if (methodExecTimeout <= 0) {
+			methodExecTimeout = DEFAULT_METHOD_EXECUTION_TIMEOUT;
+		}
+		return methodExecTimeout;
+	}
+	
+	public void setMethodExecTimeout(long methodExecTimeout) {
+		this.methodExecTimeout = methodExecTimeout;
 	}
 
 	public void enter(Class<? extends Annotation> scope) {

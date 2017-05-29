@@ -6,7 +6,6 @@ import java.util.List;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -18,7 +17,6 @@ import learntest.main.LearnTestConfig;
 import learntest.main.LearnTestParams;
 import learntest.main.RunTimeInfo;
 import learntest.main.TestGenerator;
-import sav.common.core.SavException;
 import sav.common.core.utils.StopTimer;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
@@ -56,7 +54,7 @@ public class GenerateTestHandler extends AbstractHandler {
 //			RunTimeInfo runtimeInfo = runLearntest(isL2T, appClasspath);
 			RunTimeInfo runtimeInfo = runLearntest2(isL2T, appClasspath);
 			
-			if(runtimeInfo != null){
+			if(runtimeInfo != null) {
 				String type = isL2T ? "l2t" : "randoop";
 				System.out.println(type + " time: " + runtimeInfo.getTime() + "; coverage: " + runtimeInfo.getCoverage());
 			}
@@ -66,16 +64,9 @@ public class GenerateTestHandler extends AbstractHandler {
 			
 			return runtimeInfo;
 			
-		} catch (LearnTestException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SavException e) {
-			e.printStackTrace();
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 		
 		return null;
 	}

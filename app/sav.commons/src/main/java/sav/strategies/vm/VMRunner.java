@@ -161,6 +161,7 @@ public class VMRunner {
 				log.debug(cmd);
 			}
 		}
+		System.out.println(StringUtils.join(commands, " "));
 	}
 	
 	public boolean waitUntilStop(Process process) throws SavException {
@@ -197,20 +198,20 @@ public class VMRunner {
 //				}
 //				return true;
 //			} catch (IOException e) {
-//				log.logEx(e, "");
+//				log.debug(e.getMessage());
 //				throw new SavException(ModuleEnum.JVM, e);
 //			} catch (IllegalThreadStateException ex) {
 //				// means: not yet terminated
 //				try {
 //					Thread.sleep(100);
 //				} catch (InterruptedException e) {
-//					log.logEx(e, "");
+//					log.debug(e.getMessage());
 //					throw new SavException(ModuleEnum.JVM, e);
 //				}
 //			} 
 //		}
 //	}
-//	
+	
 	public void setTimeout(int timeout, TimeUnit unit) {
 		this.timeout = unit.toMillis(timeout);
 	}

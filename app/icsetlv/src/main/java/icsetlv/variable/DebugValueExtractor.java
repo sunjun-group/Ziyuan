@@ -363,18 +363,29 @@ public class DebugValueExtractor {
 		if (method != null) {
 			try {
 				if (thread.isSuspended()) {
-					if (value instanceof StringReference) {
-						return ((StringReference) value).value();
+					String strValue = getStringValue(value);
+					if (strValue == null) {
+						Value toStringValue = value.invokeMethod(thread, method,
+								new ArrayList<Value>(),
+								ObjectReference.INVOKE_SINGLE_THREADED);
+						strValue = getStringValue(toStringValue);
+						if (strValue == null) {
+							strValue = toStringValue.toString();
+						}
 					}
-					Value toStringValue = value.invokeMethod(thread, method,
-							new ArrayList<Value>(),
-							ObjectReference.INVOKE_SINGLE_THREADED);
-					return toStringValue.toString();
+					return strValue;
 				}
 			} catch (Exception e) {
 				// ignore.
 				log.warn(e.getMessage());
 			}
+		}
+		return null;
+	}
+	
+	private String getStringValue(Value value) {
+		if (value instanceof StringReference) {
+			return ((StringReference) value).value();
 		}
 		return null;
 	}

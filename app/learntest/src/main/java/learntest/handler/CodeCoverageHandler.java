@@ -1,5 +1,6 @@
 package learntest.handler;
 
+import java.io.File;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -18,6 +19,8 @@ import learntest.util.LearnTestUtil;
 import sav.common.core.utils.StopTimer;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
+import sav.strategies.vm.JavaCompiler;
+import sav.strategies.vm.VMConfiguration;
 
 public class CodeCoverageHandler extends AbstractHandler {
 
@@ -36,16 +39,16 @@ public class CodeCoverageHandler extends AbstractHandler {
 					
 					AppJavaClassPath appClasspath = HandlerUtils.initAppJavaClassPath();
 					TestGenerator.NUMBER_OF_INIT_TEST = 20;
-					new TestGenerator(appClasspath).genTest();
-
-					HandlerUtils.refreshProject();
+					List<File> newTests = new TestGenerator(appClasspath).genTest();
+					JavaCompiler jcompiler = new JavaCompiler(new VMConfiguration(appClasspath));
+					jcompiler.compile(appClasspath.getTestTarget(), newTests);
 					StopTimer timer = new StopTimer("learntest");
 					timer.start();
 					timer.newPoint("learntest");
 
 					CodeCoverageGenerator generator = new CodeCoverageGenerator();
 					CfgCoverage cfgCoverage = generator.generateCoverage(appClasspath);
-					System.out.println();
+					System.out.println(cfgCoverage);
 					// TODO
 				} catch (Exception e) {
 					e.printStackTrace();

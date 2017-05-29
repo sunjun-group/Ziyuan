@@ -8,6 +8,7 @@
 
 package learntest.plugin.utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,9 +18,10 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.debug.internal.core.LaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 
@@ -68,4 +70,33 @@ public class IProjectUtils {
 			throw new SavRtException(e);
 		}
 	}
+	
+	public static List<IPackageFragmentRoot> findTargetSourcePkgRoots(IJavaProject project) {
+		List<IPackageFragmentRoot> roots = new ArrayList<>();
+		try {
+			for (IPackageFragmentRoot packageFragmentRoot : project.getPackageFragmentRoots()) {
+				if (packageFragmentRoot.getKind() == IPackageFragmentRoot.K_SOURCE
+						&& !startWith(packageFragmentRoot.getResource().getProjectRelativePath().toString(), "src/test",
+								"test")) {
+					roots.add(packageFragmentRoot);
+				}
+			}
+
+		} catch (JavaModelException e1) {
+			e1.printStackTrace();
+		}
+
+		return roots;
+	}
+
+	private static boolean startWith(String name, String... prefixes) {
+		for (String prefix : prefixes) {
+			if (name.startsWith(prefix)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
 }

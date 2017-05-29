@@ -10,6 +10,7 @@ package icsetlv.variable;
 
 import sav.strategies.dto.TestResultType;
 import sav.strategies.junit.JunitResult;
+import sav.strategies.junit.TestResult;
 
 /**
  * @author LLT
@@ -24,10 +25,10 @@ public class DefaultTestResultVerifier implements ITestResultVerifier {
 
 	@Override
 	public TestResultType verify(JunitResult jResult, String test) {
-		if (jResult == null) {
+		TestResult testResult;
+		if (jResult == null || ((testResult = jResult.getTestResult(test)) == null)) {
 			return TestResultType.UNKNOWN;
 		}
-		return TestResultType.of(jResult.getResult(test));
+		return TestResultType.of(testResult.isPass());
 	}
-
 }

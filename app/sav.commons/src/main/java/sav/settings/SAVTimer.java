@@ -10,18 +10,18 @@ public class SAVTimer {
 		startTime = System.currentTimeMillis();
 	}
 	
-	public static boolean isTimeOut(){
-		if(enableExecutionTimeout){
+	public static boolean isTimeOut() {
+		if (enableExecutionTimeout) {
 			long time = System.currentTimeMillis();
-			if(time-startTime>exeuctionTimeout){
+			if (time - startTime > exeuctionTimeout) {
 				return true;
-			}			
+			}
 		}
 		return false;
 	}
-	
-	public static long getExecutionTime(){
+
+	public static long getExecutionTime() {
 		long time = System.currentTimeMillis();
-		return time-startTime;
+		return time - startTime;
 	}
 }

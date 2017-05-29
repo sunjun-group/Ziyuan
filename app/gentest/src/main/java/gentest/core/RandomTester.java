@@ -30,6 +30,7 @@ public class RandomTester implements ITester {
 	private int queryMaxLength;
 	private int testPerQuery;
 	private int numberOfTcs;
+	private long methodExecTimeout;
 	
 	public RandomTester(int queryMaxLength, int testPerQuery,
 			int numberOfTcs, ClassLoader prjClassLoader) {
@@ -51,8 +52,8 @@ public class RandomTester implements ITester {
 	@Override
 	public Pair<List<Sequence>, List<Sequence>> test(
 			List<MethodCall> methodcalls) throws SavException {
+		injectorModule.setMethodExecTimeout(methodExecTimeout);
 		injectorModule.enter(TestcaseGenerationScope.class);
-		
 		List<Sequence> passTcs = new ArrayList<Sequence>();
 		List<Sequence> failTcs = new ArrayList<Sequence>();
 		TestcaseGenerator tcGenerator = getTestcaseGenerator();
@@ -105,5 +106,9 @@ public class RandomTester implements ITester {
 	
 	public void setListener(GentestListener listener) {
 		this.listener = listener;
+	}
+	
+	public void setMethodExecTimeout(long methodExecTimeout) {
+		this.methodExecTimeout = methodExecTimeout;
 	}
 }

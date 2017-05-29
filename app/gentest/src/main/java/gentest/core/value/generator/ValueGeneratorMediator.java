@@ -8,21 +8,20 @@
 
 package gentest.core.value.generator;
 
+import java.util.List;
+import java.util.Random;
+
+import com.google.inject.Inject;
+
 import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.value.store.iface.ITypeMethodCallStore;
 import gentest.core.value.store.iface.IVariableStore;
 import gentest.main.GentestConstants;
-
-import java.util.List;
-import java.util.Random;
-
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
 import sav.strategies.gentest.ISubTypesScanner;
-
-import com.google.inject.Inject;
 
 /**
  * @author LLT
@@ -142,4 +141,5 @@ public class ValueGeneratorMediator {
 	public void setPrimitiveGenerator(PrimitiveValueGenerator primitiveGenerator) {
 		this.primitiveGenerator = primitiveGenerator;
 	}
+	
 }

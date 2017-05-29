@@ -20,6 +20,7 @@ import learntest.core.commons.data.testtarget.TargetMethod;
 import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.commons.utils.DomainUtils;
 import learntest.core.machinelearning.PrecondDecisionLearner;
+import learntest.exception.LearnTestException;
 import learntest.main.LearnTestParams;
 import learntest.main.RunTimeInfo;
 import learntest.main.TestGenerator;
@@ -66,7 +67,7 @@ public class LearnTest {
 			if (CoverageUtils.notCoverAtAll(cfgCoverage)) {
 				return null;
 			}
-
+			System.out.println("first coverage: " + CoverageUtils.calculateCoverage(cfgCoverage));
 			BreakPoint methodEntryBkp = BreakpointCreator.createMethodEntryBkp(targetMethod);
 			/**
 			 * run testcases
@@ -75,14 +76,15 @@ public class LearnTest {
 			testcaseExecutor.setup(appClassPath, testcases);
 			testcaseExecutor.run(CollectionUtils.listOf(methodEntryBkp, 1));
 			BreakpointData result = CollectionUtils.getFirstElement(testcaseExecutor.getResult());
-
+			System.out.println();
 			if (CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
 				return regenerateTestNotLearning(cfgCoverage, result);
 			} else {
 				/* learn */
 				PrecondDecisionLearner learner = mediator.initDecisionLearner(params.isLearnByPrecond());
+				DecisionProbes initProbes = initProbes(cfgCoverage, result);
 				learningStarted = true;
-				DecisionProbes probes = learner.learn(initProbes(cfgCoverage, result));
+				DecisionProbes probes = learner.learn(initProbes);
 				return getRuntimeInfo(probes);
 			}
 		} catch (SAVExecutionTimeOutException e) {
@@ -92,6 +94,8 @@ public class LearnTest {
 					return getRuntimeInfo(cfgCoverage);
 				} 
 			}
+		} catch (LearnTestException e) {
+			System.out.println("Warning: cannot get entry value when coverage is still not empty!");
 		}
 		return null;
 	}
@@ -120,9 +124,13 @@ public class LearnTest {
 		mediator = new LearningMediator(appClassPath, params.getTargetMethod());
 	}
 
-	private DecisionProbes initProbes(CfgCoverage cfgcoverage, BreakpointData result) {
+	private DecisionProbes initProbes(CfgCoverage cfgcoverage, BreakpointData result) throws LearnTestException {
 		DecisionProbes probes = new DecisionProbes(cfgcoverage);
-		probes.setRunningResult(result.getAllValues());
+		List<BreakpointValue> entryValues = result.getAllValues();
+		if (CollectionUtils.isEmpty(entryValues)) {
+			throw new LearnTestException("cannot get entry value when coverage is still not empty");
+		}
+		probes.setRunningResult(entryValues);
 		return probes;
 	}
 

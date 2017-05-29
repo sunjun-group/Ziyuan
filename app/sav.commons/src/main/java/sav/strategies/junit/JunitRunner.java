@@ -110,13 +110,14 @@ public class JunitRunner {
 
 	public static ExecutionTimer getExecutionTimer(long timeout) {
 		if (timeout > 0) {
-			return new ExecutionTimer(timeout);
+			return ExecutionTimer.getDefaultExecutionTimer(timeout);
 		} else {
 			return new ExecutionTimer(timeout) {
 				
 				@Override
-				public void run(Runnable target) {
+				public boolean run(Runnable target) {
 					target.run();
+					return true;
 				}
 			};
 		}
