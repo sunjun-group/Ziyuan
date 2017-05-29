@@ -9,9 +9,15 @@
 package sav.common.core.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.io.IOUtils;
 
 import sav.common.core.SavRtException;
 
@@ -47,5 +53,39 @@ public class FileUtils {
 		} catch (IOException e) {
 			throw new SavRtException(e);
 		}
+	}
+	
+	public static void deleteFiles(List<File> files) {
+		for (File file : CollectionUtils.nullToEmpty(files)) {
+			file.delete();
+		}
+	}
+	
+	public static void copyFiles(List<File> files, String folderPath) throws FileNotFoundException, IOException {
+		File targetFolder = new File(folderPath);
+		if (!targetFolder.exists()) {
+			targetFolder.mkdirs();
+		}
+		for (File file : files) {
+			InputStream inStream = new FileInputStream(file);
+			File copyFile = new File(targetFolder, file.getName());
+			IOUtils.copy(inStream, new FileOutputStream(copyFile));
+		}
+	}
+
+	public static void copyFilesSilently(List<File> files, String folderPath) {
+		try {
+			copyFiles(files, folderPath);
+		} catch (Exception e) {
+			// do nothing
+		}
+	}
+
+	public static List<String> getFileNames(List<File> files) {
+		List<String> names = new ArrayList<String>(CollectionUtils.getSize(files));
+		for (File file : CollectionUtils.nullToEmpty(files)) {
+			names.add(file.getName());
+		}
+		return names;
 	}
 }
