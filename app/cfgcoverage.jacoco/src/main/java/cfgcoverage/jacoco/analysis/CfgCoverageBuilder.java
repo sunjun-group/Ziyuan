@@ -105,6 +105,7 @@ public class CfgCoverageBuilder {
 			methodCfgCoverageMap.put(methodId, cfgCoverage);
 		} else {
 			cfg = cfgCoverage.getCfg();
+			cfgCoverage.initNodeCoveragesIfEmpty();
 		}
 		methodTestcaseIdx = cfgCoverage.addTestcases(testMethods.get(testcaseIdx));
 	}

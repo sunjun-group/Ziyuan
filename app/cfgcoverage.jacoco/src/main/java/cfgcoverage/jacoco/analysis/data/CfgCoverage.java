@@ -43,12 +43,12 @@ public class CfgCoverage {
 	}
 
 	public NodeCoverage getCoverage(CfgNode node) {
-		Assert.assertTrue(node.getIdx() < nodeCoverages.size(), "");
+		Assert.assertTrue(node.getIdx() < nodeCoverages.size(), "node doesnot have corresponding coverage!");
 		return nodeCoverages.get(node.getIdx());
 	}
 	
 	public NodeCoverage addCoverage(CfgNode node) {
-		Assert.assertTrue(node.getIdx() == nodeCoverages.size(), "");
+		Assert.assertTrue(node.getIdx() == nodeCoverages.size(), "node and nodeCoverages are not consistent!");
 		NodeCoverage nodeCoverage = new NodeCoverage(this, node);
 		nodeCoverages.add(nodeCoverage);
 		return nodeCoverage;
@@ -80,6 +80,15 @@ public class CfgCoverage {
 	@Override
 	public String toString() {
 		return "CfgCoverage \n cfg=[" + cfg + "],\n nodeCoverages=" + TextFormatUtils.printListSeparateWithNewLine(nodeCoverages) + "]";
+	}
+
+	public void initNodeCoveragesIfEmpty() {
+		if (cfg != null && nodeCoverages.isEmpty()) {
+			for (CfgNode node : cfg.getNodeList()) {
+				NodeCoverage nodeCoverage = new NodeCoverage(this, node);
+				nodeCoverages.add(nodeCoverage);
+			}
+		}
 	}
 
 }

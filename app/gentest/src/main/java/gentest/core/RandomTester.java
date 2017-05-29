@@ -3,6 +3,7 @@
  */
 package gentest.core;
 
+import gentest.core.commons.utils.GenTestUtils;
 import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
 import gentest.injection.GentestModules;
@@ -23,18 +24,25 @@ import com.google.inject.Injector;
  *
  */
 public class RandomTester implements ITester {
-	private GentestModules injectorModule = new GentestModules();
+	private GentestModules injectorModule;
 	private GentestListener listener;
 	// max length of joined methods.
 	private int queryMaxLength;
 	private int testPerQuery;
 	private int numberOfTcs;
+	private long methodExecTimeout;
 	
 	public RandomTester(int queryMaxLength, int testPerQuery,
-			int numberOfTcs) {
+			int numberOfTcs, ClassLoader prjClassLoader) {
 		this.queryMaxLength = queryMaxLength;
 		this.testPerQuery = testPerQuery;
 		this.numberOfTcs = numberOfTcs;
+		injectorModule = new GentestModules(prjClassLoader);
+	}
+	
+	public RandomTester(int queryMaxLength, int testPerQuery,
+			int numberOfTcs) {
+		this(queryMaxLength, testPerQuery, numberOfTcs, GenTestUtils.getDefaultClassLoader());
 	}
 	
 	/**
@@ -44,8 +52,8 @@ public class RandomTester implements ITester {
 	@Override
 	public Pair<List<Sequence>, List<Sequence>> test(
 			List<MethodCall> methodcalls) throws SavException {
+		injectorModule.setMethodExecTimeout(methodExecTimeout);
 		injectorModule.enter(TestcaseGenerationScope.class);
-		
 		List<Sequence> passTcs = new ArrayList<Sequence>();
 		List<Sequence> failTcs = new ArrayList<Sequence>();
 		TestcaseGenerator tcGenerator = getTestcaseGenerator();
@@ -92,7 +100,15 @@ public class RandomTester implements ITester {
 		return query;
 	}
 	
+	public GentestModules getInjectorModule() {
+		return injectorModule;
+	}
+	
 	public void setListener(GentestListener listener) {
 		this.listener = listener;
+	}
+	
+	public void setMethodExecTimeout(long methodExecTimeout) {
+		this.methodExecTimeout = methodExecTimeout;
 	}
 }

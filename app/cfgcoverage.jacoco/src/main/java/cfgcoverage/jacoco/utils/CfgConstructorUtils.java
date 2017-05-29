@@ -110,7 +110,11 @@ public class CfgConstructorUtils {
 						node.addDependentee(child, childIsLoopHeaderOfNode, branchType);
 						break;
 					}
-					child = child.getNext();
+					CfgNode next = child.getNext();
+					if (next == null || next.getIdx() < child.getIdx()) {
+						break;
+					}
+					child = next;
 				}
 			}
 		}
@@ -178,7 +182,7 @@ public class CfgConstructorUtils {
 	 * @return
 	 */
 	private static CfgNode getVeryFirstDecisionNode(List<CfgNode> decisionNodes) {
-		Assert.assertTrue(CollectionUtils.isNotEmpty(decisionNodes), "");
+		Assert.assertTrue(CollectionUtils.isNotEmpty(decisionNodes), "cfg has no decisionNode!");
 		CfgNode first = decisionNodes.get(0);
 		if (first.getDominatees() == null) {
 			return first;

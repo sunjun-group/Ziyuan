@@ -16,6 +16,10 @@ import java.util.List;
  */
 public class FixTraceTester extends RandomTester implements ITester {
 	
+	public FixTraceTester(int numberOfTcs, ClassLoader prjClassLoader) {
+		super(-1, numberOfTcs, numberOfTcs, prjClassLoader);
+	}
+	
 	public FixTraceTester(int numberOfTcs) {
 		super(-1, numberOfTcs, numberOfTcs);
 	}

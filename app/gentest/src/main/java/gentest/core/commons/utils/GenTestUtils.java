@@ -3,7 +3,6 @@
  */
 package gentest.core.commons.utils;
 
-
 /**
  * @author LLT
  *
@@ -11,4 +10,7 @@ package gentest.core.commons.utils;
 public class GenTestUtils {
 	private GenTestUtils() {}
 
+	public static ClassLoader getDefaultClassLoader() {
+		return Thread.currentThread().getContextClassLoader();
+	}
 }
