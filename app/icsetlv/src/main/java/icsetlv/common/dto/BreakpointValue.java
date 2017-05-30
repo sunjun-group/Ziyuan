@@ -133,4 +133,9 @@ public class BreakpointValue extends ExecValue {
 		}
 		return true;
 	}
+
+	@Override
+	public String getStrVal() {
+		return null;
+	}
 }

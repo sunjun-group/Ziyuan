@@ -28,4 +28,9 @@ public class ReferenceValue extends ExecValue {
 	public ExecVarType getType() {
 		return ExecVarType.REFERENCE;
 	}
+
+	@Override
+	public String getStrVal() {
+		return null;
+	}
 }

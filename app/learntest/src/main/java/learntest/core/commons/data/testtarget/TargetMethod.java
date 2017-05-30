@@ -42,6 +42,7 @@ public class TargetMethod {
 	private CFG cfg;
 	private Collection<String> accessedFields;
 	private BreakPoint methodEntryBkp;
+	private List<String> paramTypes;
 
 	public TargetMethod(TargetClass targetClass) {
 		this.targetClazz = targetClass;
@@ -149,5 +150,13 @@ public class TargetMethod {
 		Map<String, List<String>> map = new HashMap<String, List<String>>();
 		map.put(getClassName(), CollectionUtils.listOf(methodName, 1));
 		return map;
+	}
+
+	public void setParamTypes(List<String> paramTypes) {
+		this.paramTypes = paramTypes;
+	}
+	
+	public List<String> getParamTypes() {
+		return paramTypes;
 	}
 }

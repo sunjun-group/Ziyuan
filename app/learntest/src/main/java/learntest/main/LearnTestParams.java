@@ -8,6 +8,8 @@
 
 package learntest.main;
 
+import java.util.Arrays;
+
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaModelException;
 
@@ -16,7 +18,6 @@ import learntest.core.commons.data.testtarget.TargetMethod;
 import learntest.util.LearnTestUtil;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
-import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
@@ -50,7 +51,11 @@ public class LearnTestParams {
 		method.setLineNum( LearnTestConfig.getMethodLineNumber());
 		IMethod imethod = LearnTestUtil.findMethod(method.getClassName(), method.getMethodName(), method.getLineNum());
 		method.setMethodSignature(LearnTestUtil.getMethodSignature(imethod));
-		method.setParams(CollectionUtils.toArrayList(imethod.getParameterNames()));
+		String[] parameterNames = imethod.getParameterNames();
+		if (parameterNames != null && parameterNames.length > 0) {
+			method.setParams(Arrays.asList(parameterNames));
+			method.setParamTypes(Arrays.asList(imethod.getParameterTypes()));
+		}
 		params.targetMethod = method;
 	}
 

@@ -82,7 +82,7 @@ public class LearnTest {
 			} else {
 				/* learn */
 				PrecondDecisionLearner learner = mediator.initDecisionLearner(params.isLearnByPrecond());
-				DecisionProbes initProbes = initProbes(cfgCoverage, result);
+				DecisionProbes initProbes = initProbes(targetMethod, cfgCoverage, result);
 				learningStarted = true;
 				DecisionProbes probes = learner.learn(initProbes);
 				return getRuntimeInfo(probes);
@@ -124,13 +124,17 @@ public class LearnTest {
 		mediator = new LearningMediator(appClassPath, params.getTargetMethod());
 	}
 
-	private DecisionProbes initProbes(CfgCoverage cfgcoverage, BreakpointData result) throws LearnTestException {
-		DecisionProbes probes = new DecisionProbes(cfgcoverage);
+	private DecisionProbes initProbes(TargetMethod targetMethod, CfgCoverage cfgcoverage, BreakpointData result)
+			throws LearnTestException {
+		DecisionProbes probes = new DecisionProbes(targetMethod, cfgcoverage);
 		List<BreakpointValue> entryValues = result.getAllValues();
 		if (CollectionUtils.isEmpty(entryValues)) {
 			throw new LearnTestException("cannot get entry value when coverage is still not empty");
 		}
 		probes.setRunningResult(entryValues);
+//		XmlCoverageWriter writer = new XmlCoverageWriter();
+//		ProbesXmlConverter converter = new ProbesXmlConverter();
+//		writer.writeXml(converter.toMethodsElement(probes), LearntestConstant.XML_FILE_PATH);
 		return probes;
 	}
 

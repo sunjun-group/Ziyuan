@@ -20,6 +20,7 @@ import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.calculator.OrCategoryCalculator;
+import learntest.core.commons.data.testtarget.TargetMethod;
 import learntest.core.commons.utils.LearningUtils;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
@@ -32,7 +33,7 @@ import sav.strategies.dto.execute.value.ExecVar;
  *
  */
 public class DecisionProbes extends CfgCoverage {
-//	private Map<TestResultType, List<Integer>> testResults;
+	private TargetMethod targetMethod;
 	private List<BreakpointValue> testInputs;
 	private List<ExecVar> originalVars;
 	private List<ExecVar> learningVars;
@@ -43,8 +44,9 @@ public class DecisionProbes extends CfgCoverage {
 	/* map between cfgNode idx of decision node with its probe */
 	private Map<Integer, DecisionNodeProbe> nodeProbeMap;
 	
-	public DecisionProbes(CfgCoverage cfgCoverage) {
+	public DecisionProbes(TargetMethod targetMethod, CfgCoverage cfgCoverage) {
 		super(cfgCoverage.getCfg());
+		this.targetMethod = targetMethod;
 		transferCoverage(cfgCoverage);
 		totalTestNum = cfgCoverage.getTestcases().size();
 	}
@@ -71,7 +73,6 @@ public class DecisionProbes extends CfgCoverage {
 			} else {
 				/* based on branch relationship between node with its dominatee, create calculator by dividers 
 				 * from the current implementation, we treat TRUE_FALSE relationship as FALSE 
-				 * TODO LLT: confirm with YUN LIN.
 				 * */
 				BranchRelationship branchRel = node.getBranchRelationship(dominatee.getIdx());
 				CategoryCalculator condFromDivicers = null;
@@ -183,5 +184,9 @@ public class DecisionProbes extends CfgCoverage {
 	
 	public int getTotalTestNum() {
 		return totalTestNum;
+	}
+	
+	public TargetMethod getTargetMethod() {
+		return targetMethod;
 	}
 }
