@@ -21,7 +21,7 @@ public enum SystemVariables {
 	FAULT_LOCATE_USE_SLICE("fault.localization.use.slice", Boolean.TRUE),
 	FAULT_LOCATE_SPECTRUM_ALGORITHM("fault.localization.spectrum.algorithm", "OCHIAI"),
 	PROJECT_CLASSLOADER("project.classloader"),
-	TESTCASE_TIMEOUT("testcase.running.timeout", -1);
+	TESTCASE_TIMEOUT("testcase.running.timeout", -1l);
 	
 	private String name;
 	private Object defValue;

@@ -31,16 +31,22 @@ public class CountDownExecutionTimerTest {
 			
 			@Override
 			public void run() {
+
+				long start = System.currentTimeMillis();
 				try {
 					while (true) {
 						System.out.println("running testLoop");
 					}
 				} finally {
 					result.add("testLoop stopped");
+					System.out.println("running time: " + (System.currentTimeMillis() - start));
 				}
 			}
 		});
-		
+		try {
+			Thread.sleep(2000l);
+		} catch (InterruptedException e) {
+		}
 		System.out.println("finish");
 		Assert.assertFalse(result.isEmpty());
 	}

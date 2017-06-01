@@ -42,7 +42,7 @@ public class JavaSlicerVmRunner extends AgentVmRunner {
 	protected void buildVmOption(CollectionBuilder<String, ?> builder,
 			VMConfiguration config) {
 		/* disable jdk verifier, no checking version */
-		builder.add("-noverify");
+		builder.append("-noverify");
 		super.buildVmOption(builder, config);
 	}
 	

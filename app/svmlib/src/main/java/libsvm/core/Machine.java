@@ -278,7 +278,6 @@ public class Machine {
 	}
 
 	private svm_model performTrainingTask(final svm_problem prob, final svm_parameter param) {
-				
 		ExecutionTimer timer = ExecutionTimer.getDefaultExecutionTimer(SVM_TIMEOUT, TimeUnit.SECONDS);
 		SvmRunner svmRunner = new SvmRunner(prob, param);
 		timer.run(svmRunner);

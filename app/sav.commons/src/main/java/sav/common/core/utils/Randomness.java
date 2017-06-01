@@ -34,6 +34,7 @@ public final class Randomness {
 	}
 
 	public static boolean nextBoolean() {
+		System.out.println("boolean");
 		return getRandom().nextBoolean();
 	}
 

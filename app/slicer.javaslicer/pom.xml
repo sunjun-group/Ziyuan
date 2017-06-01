@@ -11,7 +11,8 @@
 	</parent>
 
 	<dependencies>
-		<!-- java slicer -->
+		<!-- java slicer [need a stable nexus server for mvn 
+			in order to use this way, so temporary we only use these as external libraries]-->
 		<dependency>
 			<groupId>de.unisb.cs.st</groupId>
 			<artifactId>slicer</artifactId>

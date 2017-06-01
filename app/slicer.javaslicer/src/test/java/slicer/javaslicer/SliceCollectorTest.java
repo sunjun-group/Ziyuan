@@ -8,18 +8,14 @@
 
 package slicer.javaslicer;
 
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Test;
 
-import sav.common.core.SavException;
 import sav.common.core.SystemVariables;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.common.VarInheritCustomizer.InheritType;
-import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import slicer.javaslicer.testdata.SliceCollectorTestdata;
 
@@ -45,8 +41,8 @@ public class SliceCollectorTest extends AbstractJavaSlicerTest {
 //			}
 		};
 		appClasspath = initAppClasspath();
-		appClasspath.getPreferences().putBoolean(SystemVariables.SLICE_COLLECT_VAR, true);
-		appClasspath.getPreferences().put(SystemVariables.SLICE_BKP_VAR_INHERIT, InheritType.FORWARD.name());
+		appClasspath.getPreferences().setBoolean(SystemVariables.SLICE_COLLECT_VAR, true);
+		appClasspath.getPreferences().set(SystemVariables.SLICE_BKP_VAR_INHERIT, InheritType.FORWARD.name());
 	}
 	
 	@Test

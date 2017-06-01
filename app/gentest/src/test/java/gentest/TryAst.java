@@ -10,6 +10,7 @@ import japa.parser.ast.body.BodyDeclaration;
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.TypeDeclaration;
 import japa.parser.ast.stmt.Statement;
+import sav.commons.TestConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,8 +27,8 @@ public class TryAst extends AbstractGTTest {
 	@Test
 	public void test() throws ParseException, IOException {
 		CompilationUnit cu = JavaParser
-				.parse(new File(config.getTestScrPath("gentest") + 
-						"/testdata/Program.java"));
+				.parse(new File(TestConfiguration.getTestScrPath("gentest") + 
+						"/gentest/testdata/Program.java"));
 		TypeDeclaration type = cu.getTypes().get(0);
 		for (BodyDeclaration member : type.getMembers()) {
 			if (member instanceof MethodDeclaration) {

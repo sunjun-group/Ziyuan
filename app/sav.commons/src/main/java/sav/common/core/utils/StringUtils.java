@@ -65,6 +65,10 @@ public class StringUtils {
 		return join(Arrays.asList(params), ".");
 	}
 	
+	public static String lowLineJoin(Object...params) {
+		return join(Constants.LOW_LINE, params);
+	}
+	
 	public static String toStringNullToEmpty(Object val) {
 		return toString(val, EMPTY);
 	}
@@ -127,4 +131,5 @@ public class StringUtils {
 		return dotJoin(new String(packageName), dotJoin(enclosing),
 				new String(simpleTypeName));
 	}
+	
 }

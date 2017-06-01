@@ -27,7 +27,7 @@ public class AstNodeConverterTest {
 	public void setup() {
 		VariableNamer varNamer = new VariableNamer();
 		Set<String> duplicatedImports = new HashSet<String>();
-		duplicatedImports.add("japa.parser.ast.type.PrimitiveType.Primitive");
+		duplicatedImports.add(Primitive.class.getCanonicalName());
 		astConverter = new AstNodeConverter(varNamer, duplicatedImports);
 	}
 	

@@ -8,6 +8,10 @@
 
 package icsetlv;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import icsetlv.common.dto.BkpInvariantResult;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.sampling.SelectiveSampling;
@@ -15,11 +19,6 @@ import icsetlv.variable.DebugValueInstExtractor;
 import icsetlv.variable.JunitDebugger;
 import icsetlv.variable.TestResultVerifier;
 import icsetlv.variable.TestcasesExecutor;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import libsvm.core.Machine;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
@@ -82,7 +81,7 @@ public class InvariantMediator {
 		}
 		return max;
 	}
-
+	
 	public List<BreakpointData> debugTestAndCollectData(List<String> allTests,
 			List<BreakPoint> bkps) throws SavException, SAVExecutionTimeOutException {
 		ensureTcExecutor();
