@@ -102,8 +102,8 @@ public class RunJDartHandler extends AbstractHandler {
 				"+jpf-jdart.classpath+=" + pathString,
 				"+target=" + className,
 				"+concolic.method=" + methodName,
-				"+concolic.method.quicksort=${target}." + methodName + paramString,
-				"+concolic.method.quicksort.config=all_fields_symbolic"
+				"+concolic.method" + methodName + "=${target}." + methodName + paramString,
+				"+concolic.method" + methodName + ".config=all_fields_symbolic"
 		};
 		
 		RunJPF.run(quicksortConfig);
