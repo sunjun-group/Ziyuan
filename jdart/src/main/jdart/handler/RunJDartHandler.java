@@ -102,8 +102,8 @@ public class RunJDartHandler extends AbstractHandler {
 				"+jpf-jdart.classpath+=" + pathString,
 				"+target=" + className,
 				"+concolic.method=" + methodName,
-				"+concolic.method" + methodName + "=${target}." + methodName + paramString,
-				"+concolic.method" + methodName + ".config=all_fields_symbolic"
+				"+concolic.method." + methodName + "=${target}." + methodName + paramString,
+				"+concolic.method." + methodName + ".config=all_fields_symbolic"
 		};
 		
 		RunJPF.run(quicksortConfig);
@@ -127,6 +127,21 @@ public class RunJDartHandler extends AbstractHandler {
 //				"+concolic.method.foo=${target}.foo(i:int)",
 //				"+concolic.method.foo.config=all_fields_symbolic"
 		};
+		RunJPF.run(quicksortConfig);
+
+		String className = "org.apache.commons.math.analysis.integration.TrapezoidIntegrator", 
+				pathString = "E:\\workspace\\JPF\\data\\apache-common-math-2.2\\bin", methodName = "integrate",
+				paramString = "(ue:UnivariateRealFunction,mi:double, ma:double)";
+		quicksortConfig = new String[]{
+				"+app=libs/jdart/jpf.properties",
+				"+site=libs/jpf.properties",
+				"+jpf-jdart.classpath+=" + pathString,
+				"+target=" + className,
+				"+concolic.method=" + methodName,
+				"+concolic.method." + methodName + "=${target}." + methodName + paramString,
+				"+concolic.method." + methodName + ".config=all_fields_symbolic"
+		};
+		
 		RunJPF.run(quicksortConfig);
 	}
 	
