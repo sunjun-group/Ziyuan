@@ -9,6 +9,7 @@
 package learntest.core.commons.utils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
@@ -46,7 +47,14 @@ public class CoverageUtils {
 	public static double calculateCoverage(CfgCoverage cfgCoverage) {
 		int totalBranches = 0;
 		int coveredBranches = 0;
-		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
+		List<CfgNode> decisionNodes = cfgCoverage.getCfg().getDecisionNodes();
+		if (decisionNodes.isEmpty()) {
+			if (cfgCoverage.getCoverage(cfgCoverage.getCfg().getStartNode()).getCoveredTcs().isEmpty()) {
+				return 0.0;
+			}
+			return 1.0;
+		}
+		for (CfgNode node : decisionNodes) {
 			totalBranches += CollectionUtils.getSize(node.getBranches());
 			coveredBranches += cfgCoverage.getCoverage(node).getCoveredBranches().size();
 		}
