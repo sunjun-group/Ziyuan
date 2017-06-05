@@ -14,7 +14,6 @@ import learntest.sampling.javailp.ProblemBuilder;
 import learntest.sampling.javailp.ProblemSolver;
 import learntest.testcase.data.BranchType;
 import learntest.testcase.data.INodeCoveredData;
-import learntest.testcase.data.LoopTimesData;
 import learntest.util.Settings;
 import libsvm.core.Divider;
 import libsvm.core.Machine.DataPoint;
@@ -105,11 +104,10 @@ public class JavailpSelectiveSampling<T extends ISampleResult> {
 					return selectResult;
 				}
 			} else {
-				LoopTimesData loopTimesData = (LoopTimesData) selectData;
-				if (missingBranch.isTrueBranch() && !loopTimesData.getMoreTimesValues().isEmpty()) {
+				if (missingBranch.isTrueBranch() && !selectData.getMoreTimesValues().isEmpty()) {
 					return selectResult;
 				}
-				if (missingBranch.isFalseBranch() && !loopTimesData.getOneTimeValues().isEmpty()) {
+				if (missingBranch.isFalseBranch() && !selectData.getOneTimeValues().isEmpty()) {
 					return selectResult;
 				}
 			}
