@@ -70,11 +70,10 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 			}
 		}
 		DecisionNodeProbe nodeProbe = probes.getNodeProbe(node);
-		if (notNeedToLearn(nodeProbe)) {
+		if (noNeedToLearn(nodeProbe)) {
 			visitedNodes.add(node.getIdx());
 			return;
 		}
-		
 		System.out.println("learning the node in line " + node.getLine());
 		OrCategoryCalculator preconditions = getPreconditions(probes, node);
 		dataPreprocessor.sampleForBranchCvg(node, preconditions);
@@ -88,7 +87,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 		}
 	}
 	
-	private boolean notNeedToLearn(DecisionNodeProbe nodeProbe) {
+	private boolean noNeedToLearn(DecisionNodeProbe nodeProbe) {
 		return nodeProbe.areAllbranchesUncovered()
 				|| !nodeProbe.needToLearnPrecond();
 	}
