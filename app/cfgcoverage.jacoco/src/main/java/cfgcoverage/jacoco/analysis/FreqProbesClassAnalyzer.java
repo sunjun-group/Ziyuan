@@ -11,8 +11,6 @@ import org.objectweb.asm.FieldVisitor;
  * Analyzes the structure of a class.
  */
 public class FreqProbesClassAnalyzer extends ClassProbesVisitor {
-	private static MethodProbesVisitor EMPTY_PROBE_VISITOR = new MethodProbesVisitor() {
-	};
 	protected final int[] probes;
 	protected final StringPool stringPool;
 	private final IInstrSupport instrSupport = ExecutionData.getInstrSupport();
@@ -51,13 +49,8 @@ public class FreqProbesClassAnalyzer extends ClassProbesVisitor {
 		if (coverageBuilder.acceptMethod(name)) {
 			return new FreqProbesMethodAnalyzer(coverageBuilder, className, superName,
 					probes);
-		} else {
-			/*
-			 * we don't need to collect coverage for this method, but still need
-			 * to analyze, to synchronize the probe Id which is build for the whole class.
-			 */
-			return EMPTY_PROBE_VISITOR;
-		}
+		} 
+		return null;
 	}
 
 	@Override

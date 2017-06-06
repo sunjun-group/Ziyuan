@@ -181,7 +181,7 @@ public class CfgConstructorUtils {
 	 * @param decisionNodes
 	 * @return
 	 */
-	private static CfgNode getVeryFirstDecisionNode(List<CfgNode> decisionNodes) {
+	public static CfgNode getVeryFirstDecisionNode(List<CfgNode> decisionNodes) {
 		Assert.assertTrue(CollectionUtils.isNotEmpty(decisionNodes), "cfg has no decisionNode!");
 		CfgNode first = decisionNodes.get(0);
 		if (first.getDominatees() == null) {

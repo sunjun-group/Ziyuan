@@ -21,11 +21,13 @@ import sav.strategies.dto.AppJavaClassPath;
  *
  */
 public class CfgJaCoCo {
+	public static final String JACOCO_LOG_FILE = "jacocoLogFile";
 	private CfgJaCoCoRunner runner;
 	
 	public CfgJaCoCo(AppJavaClassPath appClasspath) {
 		runner = new CfgJaCoCoRunner();
 		runner.appClasspath(appClasspath);
+		runner.logFile(appClasspath.getPreferences().<String>get(JACOCO_LOG_FILE));
 	}
 	
 	/**

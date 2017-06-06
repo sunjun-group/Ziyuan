@@ -32,7 +32,7 @@ public class OrgExecutionTimer extends ExecutionTimer {
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			
-//			@SuppressWarnings("deprecation")
+			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
 				if (thread.isAlive()) {

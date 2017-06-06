@@ -43,6 +43,7 @@ public class CountDownExecutionTimer extends ExecutionTimer {
 					 * infinitive loop will still be running forever.
 					 */
 					thread.interrupt();
+					executor.isTimeout = true;
 					executor.latch.countDown();
 					/* allow the thread to run for a while, if after concession time,
 					 * it is still alive, we have to force to kill it */
@@ -77,8 +78,11 @@ public class CountDownExecutionTimer extends ExecutionTimer {
 		}
 		
 		public void run() {
-			runnable.run();
-			latch.countDown();
+			try {
+				runnable.run();
+			} finally {
+				latch.countDown();
+			}
 		}
 	}
 }

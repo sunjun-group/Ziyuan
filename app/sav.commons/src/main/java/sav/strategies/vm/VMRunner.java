@@ -107,7 +107,8 @@ public class VMRunner {
 			return StringUtils.EMPTY;
 		}
 		StringBuilder sb = new StringBuilder();
-		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
+		InputStreamReader inputReader = new InputStreamReader(stream);
+		BufferedReader in = new BufferedReader(inputReader);
 		String inputLine;
 		/* Note: The input stream must be read if available to be closed, 
 		 * otherwise, the process will never end. So, keep doing this even if 
@@ -117,6 +118,7 @@ public class VMRunner {
 				.append("\n");
 		}
 		in.close();
+		inputReader.close();
 		return sb.toString();
 	}
 
@@ -160,54 +162,54 @@ public class VMRunner {
 		}
 	}
 	
-	public boolean waitUntilStop(Process process) throws SavException {
-		try {
-			getText(process.getInputStream());
-			processError = getText(process.getErrorStream());
-			process.waitFor();
-			String error = getText((process.getErrorStream()));
-			if (!StringUtils.isEmpty(error)) {
-				log.debug(error);
-				return false;
-			}
-			return true;
-		} catch (IOException e) {
-			log.error(e.getMessage());
-			throw new SavException(ModuleEnum.JVM, e);
-		} catch (InterruptedException e) {
-			log.error(e.getMessage());
-			throw new SavException(ModuleEnum.JVM, e);
-		}
-	}
-
-//	public boolean waitUntilStop(Process process)
-//			throws SavException {
-//		while (true) {
-//			try {
-//				getText(process.getInputStream());
-//				processError = getText(process.getErrorStream());
-//				process.exitValue();
-//				processError = getText((process.getErrorStream()));
-//				if (!StringUtils.isEmpty(processError)) {
-//					log.debug(processError);
-//					return false;
-//				}
-//				return true;
-//			} catch (IOException e) {
-//				log.logEx(e, "");
-//				throw new SavException(ModuleEnum.JVM, e);
-//			} catch (IllegalThreadStateException ex) {
-//				// means: not yet terminated
-//				try {
-//					Thread.sleep(100);
-//				} catch (InterruptedException e) {
-//					log.logEx(e, "");
-//					throw new SavException(ModuleEnum.JVM, e);
-//				}
-//			} 
+//	public boolean waitUntilStop(Process process) throws SavException {
+//		try {
+//			getText(process.getInputStream());
+//			processError = getText(process.getErrorStream());
+//			process.waitFor();
+//			String error = getText((process.getErrorStream()));
+//			if (!StringUtils.isEmpty(error)) {
+//				log.debug(error);
+//				return false;
+//			}
+//			return true;
+//		} catch (IOException e) {
+//			log.error(e.getMessage());
+//			throw new SavException(ModuleEnum.JVM, e);
+//		} catch (InterruptedException e) {
+//			log.error(e.getMessage());
+//			throw new SavException(ModuleEnum.JVM, e);
 //		}
 //	}
-//	
+
+	public boolean waitUntilStop(Process process)
+			throws SavException {
+		while (true) {
+			try {
+				getText(process.getInputStream());
+				processError = getText(process.getErrorStream());
+				process.exitValue();
+				processError = getText((process.getErrorStream()));
+				if (!StringUtils.isEmpty(processError)) {
+					log.debug(processError);
+					return false;
+				}
+				return true;
+			} catch (IOException e) {
+				log.debug(e.getMessage());
+				throw new SavException(ModuleEnum.JVM, e);
+			} catch (IllegalThreadStateException ex) {
+				// means: not yet terminated
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					log.debug(e.getMessage());
+					throw new SavException(ModuleEnum.JVM, e);
+				}
+			} 
+		}
+	}
+	
 	public void setTimeout(int timeout, TimeUnit unit) {
 		this.timeout = unit.toMillis(timeout);
 	}

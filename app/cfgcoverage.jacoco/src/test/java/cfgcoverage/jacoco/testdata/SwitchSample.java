@@ -19,8 +19,8 @@ public class SwitchSample {
 	public String getName(ModuleEnum module) {
 		String name = "unknown";
 		while (true) {
-			switch (module == null ? module : ModuleEnum.FALT_LOCALIZATION) {
-			case FALT_LOCALIZATION:
+			switch (module == null ? module : ModuleEnum.FAULT_LOCALIZATION) {
+			case FAULT_LOCALIZATION:
 				name = "fault localization";
 				break;
 			case SLICING:

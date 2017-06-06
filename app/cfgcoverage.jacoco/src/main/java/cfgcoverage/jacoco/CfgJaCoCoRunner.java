@@ -60,6 +60,8 @@ public class CfgJaCoCoRunner {
 	private List<String> junitMethods;
 
 	private long timeout;
+
+	private String jacocoLogFile;
 	
 	
 	public VMConfiguration appClasspath(AppJavaClassPath appClasspath) {
@@ -122,7 +124,7 @@ public class CfgJaCoCoRunner {
 			/* report */
 			return report();
 		} catch (Exception e) {
-			throw new SavException(ModuleEnum.UNDEFINED, e, e.getMessage());
+			throw new SavException(ModuleEnum.UNSPECIFIED, e, e.getMessage());
 		}
 	}
 	
@@ -137,7 +139,7 @@ public class CfgJaCoCoRunner {
 			reporter.report(destfile, null, targetClassNames);
 			return reporter.getMethodCfgCoverageMap();
 		} catch (Exception e) {
-			throw new SavException(ModuleEnum.UNDEFINED, e, e.getMessage());
+			throw new SavException(ModuleEnum.UNSPECIFIED, e, e.getMessage());
 		}
 	}
 	
@@ -159,6 +161,9 @@ public class CfgJaCoCoRunner {
 		vmRunner.addAgentParam(AgentOptions.PROBESTYPE, probesType.name());
 		String mockClass = JaCoCoMock.class.getName();
 		vmRunner.addAgentParam(AgentOptions.SAVMOCKCLASSNAME, mockClass);
+		if (jacocoLogFile != null) {
+			vmRunner.addAgentParam(AgentOptions.SAVLOGFILE, jacocoLogFile);
+		}
 		vmRunner.setAnalyzedClassNames(targetClassNames);
 		@SuppressWarnings("unchecked")
 		List<String> allClassNames = CollectionUtils.join(targetClassNames,
@@ -182,5 +187,9 @@ public class CfgJaCoCoRunner {
 	
 	private ClassLoader getPrjClassLoader() {
 		return appClasspath.getPreferences().get(SystemVariables.PROJECT_CLASSLOADER);
+	}
+
+	public void logFile(String logFile) {
+		this.jacocoLogFile = logFile;
 	}
 }

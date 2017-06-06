@@ -21,6 +21,6 @@ public class SwitchSampleTest {
 	@Test
 	public void run() {
 		SwitchSample sample = new SwitchSample();
-		sample.getName(ModuleEnum.FALT_LOCALIZATION);
+		sample.getName(ModuleEnum.FAULT_LOCALIZATION);
 	}
 }

@@ -9,10 +9,14 @@
 package cfgcoverage.jacoco;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.objectweb.asm.tree.ParameterNode;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.testdata.LoopSample;
@@ -36,11 +40,16 @@ import sav.strategies.dto.AppJavaClassPath;
 public class CfgJaCoCoTest extends AbstractTest {
 	private boolean runSimpleRunner = false;
 	private long timeout = 5000;
-
-	public Map<String, CfgCoverage> run(List<String> targetMethods, List<String> testingClassNames, List<String> junitClassNames, String classesFolder)
-			throws Exception {
-		AppJavaClassPath appClasspath = initAppClasspath();
+	private AppJavaClassPath appClasspath;
+	
+	@Before
+	public void beforeMethod() throws Exception {
+		appClasspath = initAppClasspath();
 		appClasspath.getPreferences().set(SystemVariables.TESTCASE_TIMEOUT, timeout);
+	}
+
+	public Map<String, CfgCoverage> run(List<String> targetMethods, List<String> testingClassNames,
+			List<String> junitClassNames, String classesFolder) throws Exception {
 		appClasspath.addClasspath(classesFolder);
 		CfgJaCoCo jacoco = new CfgJaCoCo(appClasspath);
 		if (runSimpleRunner) {
@@ -56,14 +65,17 @@ public class CfgJaCoCoTest extends AbstractTest {
 		List<String> testingClassNames = Arrays.asList(targetClass.getName());
 		List<String> junitClassNames = Arrays.asList(junitClass.getName());
 		List<String> targetMethods = CollectionUtils.listOf(ClassUtils.toClassMethodStr(targetClass.getName(), targetMethod));
-		Map<String, CfgCoverage> result = run(targetMethods, testingClassNames, junitClassNames, TestConfiguration.getTestTarget("cfgcoverage.jacoco"));
+		Map<String, CfgCoverage> result = run(targetMethods, testingClassNames, junitClassNames,
+				TestConfiguration.getTestTarget("cfgcoverage.jacoco"));
 		timer.newPoint("stop");
-		System.out.println(result.values());
+		CfgCoverage values = result.values().iterator().next();
+		System.out.println(values);
 		System.out.println(timer.getResults());
 	}
 
 	@Test
 	public void testSampleProgram() throws Exception {
+		appClasspath.setTarget(TestConfiguration.getTestTarget(SAV_COMMONS));
 		runTest(SamplePrograms.class, SampleProgramTest.class, "Max");
 	}
 

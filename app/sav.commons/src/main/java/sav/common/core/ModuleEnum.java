@@ -14,8 +14,8 @@ package sav.common.core;
  */
 public enum ModuleEnum {
 	SLICING,
-	FALT_LOCALIZATION,
+	FAULT_LOCALIZATION,
 	JVM,
 	TESTCASE_GENERATION,
-	UNDEFINED
+	UNSPECIFIED
 }

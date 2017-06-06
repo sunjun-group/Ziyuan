@@ -51,16 +51,20 @@ public class ExecutionTimerTest {
 	@Test
 	public void testNoLoop() {
 		long start = System.currentTimeMillis();
-		ExecutionTimer timer = ExecutionTimer.getExecutionTimer(10, TimeUnit.SECONDS);
-		timer.run(new Runnable() {
+		ExecutionTimer timer = ExecutionTimer.getDefaultExecutionTimer(10, TimeUnit.SECONDS);
+		boolean timeout = timer.run(new Runnable() {
 			
 			@Override
 			public void run() {
 				System.out.println("runing testNoLoop");
+				throw new NullPointerException();
 			}
 		});
 		System.out.println("finish");
-		Assert.assertTrue(System.currentTimeMillis() - start < 10000);
+		long time = System.currentTimeMillis() - start;
+		Assert.assertTrue(time < 10000);
+		System.out.println(time);
+		System.out.println(timeout ? "timeout!" : "not timeout!");
 	}
 	
 //	@Test

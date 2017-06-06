@@ -33,7 +33,7 @@ public class SavJunitRunner {
 	public static final String JUNIT_RUNNER_CLASS_NAME = JunitRunner.class.getName();
 	
 	static {
-		/* at junit 4.0 */
+		/* at junit 4.12 */
 		ENTER_TC_BKP = new BreakPoint(JUnitCore.class.getName(), 115);
 	}
 

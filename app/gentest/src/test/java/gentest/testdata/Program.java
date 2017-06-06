@@ -17,7 +17,7 @@ import japa.parser.ast.type.PrimitiveType.Primitive;
 public class Program {
 
 	public void method1() {
-		sav.common.core.ModuleEnum module = sav.common.core.ModuleEnum.FALT_LOCALIZATION;
+		sav.common.core.ModuleEnum module = sav.common.core.ModuleEnum.FAULT_LOCALIZATION;
 		Primitive type = Primitive.Boolean;
 	}
 }
