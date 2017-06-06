@@ -18,17 +18,19 @@ package main;
  */
 
 
-import gov.nasa.jpf.Config;
-import gov.nasa.jpf.JPFShell;
-import gov.nasa.jpf.tool.Run;
-import gov.nasa.jpf.util.JPFSiteUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import gov.nasa.jpf.Config;
+import gov.nasa.jpf.JPFShell;
+import gov.nasa.jpf.tool.Run;
+import gov.nasa.jpf.util.JPFSiteUtils;
+import jdart.model.TestInput;
 
 /**
  * This class is a wrapper for loading JPF or a JPFShell through a classloader
@@ -64,18 +66,18 @@ public class RunJPF extends Run {
     }    
   }
   
-  public static void run (String[] args) {
+  public static List<TestInput> run (String[] args) {
     try {
       int options = getOptions(args);
 
       if (args.length == 0 || isOptionEnabled(HELP, options)) {
         showUsage();
-        return;
+        return null;
       }
 
       if (isOptionEnabled(ADD_PROJECT, options)){
         addProject(args);
-        return;
+        return null;
       }
       
       if (isOptionEnabled(DELAY_START, options)) {
@@ -134,6 +136,7 @@ public class RunJPF extends Run {
       ix.getCause().printStackTrace();
     }
     
+    return null;
   }
 
   public static int getOptions (String[] args){

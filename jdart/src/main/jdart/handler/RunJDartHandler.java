@@ -11,6 +11,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
+import jdart.model.TestInput;
 import learntest.main.LearnTestConfig;
 import learntest.util.LearnTestUtil;
 import main.RunJPF;
@@ -106,7 +107,7 @@ public class RunJDartHandler extends AbstractHandler {
 				"+concolic.method." + methodName + ".config=all_fields_symbolic"
 		};
 		
-		RunJPF.run(quicksortConfig);
+		List<TestInput> inputList = RunJPF.run(quicksortConfig);
 		
 		return null;
 	}
