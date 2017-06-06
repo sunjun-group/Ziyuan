@@ -1,7 +1,11 @@
 package learntest.handler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,7 +30,9 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 
 import icsetlv.common.utils.PrimitiveUtils;
+import learntest.handler.filter.classfilter.ClassNameFilter;
 import learntest.handler.filter.classfilter.TargetClassFilter;
+import learntest.handler.filter.classfilter.TestableClassFilter;
 import learntest.handler.filter.methodfilter.MethodNameFilter;
 import learntest.handler.filter.methodfilter.NestedBlockChecker;
 import learntest.handler.filter.methodfilter.TargetMethodFilter;
@@ -41,22 +47,23 @@ import sav.common.core.utils.ClassUtils;
 import sav.settings.SAVTimer;
 
 public class EvaluationHandler extends AbstractLearntestHandler {
-	private static final List<TargetMethodFilter> methodFilters;
-	private static final TargetClassFilter classFilter;
+	private static final List<TargetMethodFilter> DEFAULT_METHOD_FILTERS;
+	private static final List<TargetClassFilter> DEFAULT_CLASS_FILTERS;
+	private List<TargetMethodFilter> methodFilters;
+	private List<TargetClassFilter> classFilters;
 	static {
-		methodFilters = new ArrayList<TargetMethodFilter>();
-		methodFilters.add(new MethodNameFilter());
-		methodFilters.add(new TestableMethodFilter());
-		methodFilters.add(new NestedBlockChecker());
-		classFilter = new TargetClassFilter();
+		DEFAULT_METHOD_FILTERS = Arrays.asList(new TestableMethodFilter(),
+				new NestedBlockChecker());
+		DEFAULT_CLASS_FILTERS = Arrays.asList(new TestableClassFilter());
 	}
-
+	
 	@Override
 	protected IStatus execute(IProgressMonitor monitor) {
 		final List<IPackageFragmentRoot> roots = IProjectUtils.findTargetSourcePkgRoots(LearnTestUtil.getJavaProject());
 		TrialExcelHandler excelHandler = null;
 		try {
 			excelHandler = new TrialExcelHandler(LearnTestConfig.projectName);
+			initFilters(excelHandler.readOldTrials());
 		} catch (Exception e1) {
 			handleException(e1);
 			return Status.CANCEL_STATUS;
@@ -80,6 +87,31 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		return Status.OK_STATUS;
 	}
 
+	private void initFilters(Collection<Trial> oldTrials) {
+		methodFilters = new ArrayList<TargetMethodFilter>(DEFAULT_METHOD_FILTERS);
+		classFilters = new ArrayList<TargetClassFilter>(DEFAULT_CLASS_FILTERS);
+		classFilters.add(new ClassNameFilter(getExcludedClasses()));
+		// to excluded tested methods.
+//		addMethodFilter(oldTrials);
+	}
+
+	@SuppressWarnings("unused")
+	private void addMethodFilter(Collection<Trial> oldTrials) {
+		if (oldTrials.isEmpty()) {
+			return;
+		}
+		Set<String> methods = new HashSet<String>(oldTrials.size());
+		for (Trial trial : oldTrials) {
+			methods.add(MethodNameFilter.toMethodId(trial.getMethodName(), trial.getMethodStartLine()));
+		}
+		methodFilters.add(new MethodNameFilter(methods));
+	}
+
+	private List<String> getExcludedClasses() {
+		/* TODO - temporary hard code */
+		return Arrays.asList("org.apache.tools.ant.Main");
+	}
+
 	private RunTimeCananicalInfo runEvaluation(IPackageFragment pkg, TrialExcelHandler excelHandler)
 			throws JavaModelException {
 		RunTimeCananicalInfo info = new RunTimeCananicalInfo();
@@ -89,8 +121,10 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			} else if (javaElement instanceof ICompilationUnit) {
 				ICompilationUnit icu = (ICompilationUnit) javaElement;
 				CompilationUnit cu = LearnTestUtil.convertICompilationUnitToASTNode(icu);
-				if (!classFilter.isValid(cu)) {
-					continue;
+				for (TargetClassFilter classFilter : classFilters) {
+					if (!classFilter.isValid(cu)) {
+						continue;
+					}
 				}
 				MethodCollector collector = new MethodCollector(cu);
 				cu.accept(collector);
@@ -243,7 +277,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		public boolean visit(MethodDeclaration md) {
 			boolean shouldTest = true;
 			for (TargetMethodFilter filter : methodFilters) {
-				if (!filter.isValid(md)) {
+				if (!filter.isValid(cu, md)) {
 					shouldTest = false;
 				}
 			}

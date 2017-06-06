@@ -8,33 +8,14 @@
 
 package learntest.handler.filter.classfilter;
 
-import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Modifier;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 /**
  * @author LLT
  *
  */
-public class TargetClassFilter {
+public interface TargetClassFilter {
 
-	public boolean isValid(CompilationUnit cu) {
-		if (cu.types().isEmpty()) {
-			return false;
-		}
-		AbstractTypeDeclaration type = (AbstractTypeDeclaration) cu.types().get(0);
-		if (isInterfaceOrAbstractType(type) || !Modifier.isPublic(type.getModifiers())) {
-			return false;
-		}
-		return true;
-	}
+	public boolean isValid(CompilationUnit cu);
 
-	private boolean isInterfaceOrAbstractType(AbstractTypeDeclaration type) {
-		if (!(type instanceof TypeDeclaration)) {
-			return false;
-		}
-		TypeDeclaration td = (TypeDeclaration) type;
-		return td.isInterface() || Modifier.isAbstract(type.getModifiers());
-	}
 }

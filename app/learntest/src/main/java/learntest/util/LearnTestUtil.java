@@ -333,7 +333,6 @@ public class LearnTestUtil {
 	}
 	
 	public static String getFullNameOfCompilationUnit(CompilationUnit cu){
-		
 		String packageName = "";
 		if(cu.getPackage() != null){
 			packageName = cu.getPackage().getName().toString();

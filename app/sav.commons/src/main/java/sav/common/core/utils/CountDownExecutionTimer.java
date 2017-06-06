@@ -78,8 +78,11 @@ public class CountDownExecutionTimer extends ExecutionTimer {
 		}
 		
 		public void run() {
-			runnable.run();
-			latch.countDown();
+			try {
+				runnable.run();
+			} finally {
+				latch.countDown();
+			}
 		}
 	}
 }

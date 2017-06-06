@@ -107,7 +107,8 @@ public class VMRunner {
 			return StringUtils.EMPTY;
 		}
 		StringBuilder sb = new StringBuilder();
-		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
+		InputStreamReader inputReader = new InputStreamReader(stream);
+		BufferedReader in = new BufferedReader(inputReader);
 		String inputLine;
 		/* Note: The input stream must be read if available to be closed, 
 		 * otherwise, the process will never end. So, keep doing this even if 
@@ -117,6 +118,7 @@ public class VMRunner {
 				.append("\n");
 		}
 		in.close();
+		inputReader.close();
 		return sb.toString();
 	}
 

@@ -9,6 +9,7 @@
 package learntest.handler.filter.methodfilter;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 /**
@@ -19,7 +20,7 @@ public abstract class AbstractMethodFilter extends ASTVisitor implements TargetM
 	protected boolean isValid;
 	
 	@Override
-	public boolean isValid(MethodDeclaration md) {
+	public boolean isValid(CompilationUnit cu, MethodDeclaration md) {
 		reset();
 		md.accept(this);
 		return isValid;
