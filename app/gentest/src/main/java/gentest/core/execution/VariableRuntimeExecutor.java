@@ -117,7 +117,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		}
 		try {
 			ExecutionTimer executionTimer = ExecutionTimer.getFutureTaskExecutionTimer(methodExecTimeout);
-			boolean timeout = executionTimer.run(new Runnable() {
+			boolean success = executionTimer.run(new Runnable() {
 				
 				@Override
 				public void run() {
@@ -135,7 +135,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 					}
 				}
 			});
-			if (timeout) {
+			if (!success) {
 				onFail();
 			}
 		} catch (Throwable e) {
