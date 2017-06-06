@@ -1,5 +1,5 @@
 package jdart.model;
 
-public class ArrayTestVar extends TestInput {
+public class ArrayTestVar extends TestVar {
 
 }

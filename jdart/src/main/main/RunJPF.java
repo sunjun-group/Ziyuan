@@ -22,15 +22,30 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.logging.Level;
+
+import org.antlr.grammar.v3.CodeGenTreeWalker.element_action_return;
 
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPFShell;
+import gov.nasa.jpf.constraints.api.Variable;
+import gov.nasa.jpf.jdart.CompletedAnalysis;
+import gov.nasa.jpf.jdart.JDart;
+import gov.nasa.jpf.jdart.config.ConcolicMethodConfig;
+import gov.nasa.jpf.jdart.constraints.Path;
+import gov.nasa.jpf.jdart.testsuites.TestSuiteGenerator;
 import gov.nasa.jpf.tool.Run;
 import gov.nasa.jpf.util.JPFSiteUtils;
+import jdart.model.ArrayTestVar;
+import jdart.model.ObjectTestVar;
+import jdart.model.PrimaryTestVar;
 import jdart.model.TestInput;
+import jdart.model.TestVar;
 
 /**
  * This class is a wrapper for loading JPF or a JPFShell through a classloader
@@ -110,7 +125,7 @@ public class RunJPF extends Run {
       JPFShell shell = conf.getInstance("shell", JPFShell.class);
       if (shell != null) {
         shell.start( removeConfigArgs(args)); // responsible for exception handling itself
-
+        return(constructPath((JDart) shell));
       } else {
         // we have to load JPF explicitly through the URLClassLoader, and
         // call its start() via reflection - interfaces would only work if
@@ -139,7 +154,53 @@ public class RunJPF extends Run {
     return null;
   }
 
-  public static int getOptions (String[] args){
+  private static List<TestInput> constructPath(JDart jdart) {
+	  List<TestInput> paths = new LinkedList<>();	  
+	  Set<Map.Entry<String, List<CompletedAnalysis>>> analyses =jdart.getAnalyses();
+	  for (Map.Entry<String, List<CompletedAnalysis>> e : analyses) {
+	        String id = e.getKey();
+	        for (CompletedAnalysis ca : e.getValue()) {	          
+	          for (Path p : ca.getConstraintsTree().getAllPaths()) {
+	            if (p.getValuation() == null) {
+	              // dont know cases
+	              continue;
+	            }
+	            TestInput testInput = new TestInput();
+	            List<TestVar> paramList = new LinkedList<>();
+	            for (Variable v : p.getValuation().getVariables()) {
+
+	                String vResultType = v.getResultType().getName();
+	            	TestVar var = null;
+
+	                if (vResultType.equals("java.lang.Integer") || vResultType.equals("java.lang.Long")
+	                		|| vResultType.equals("java.lang.Float") || vResultType.equals("java.lang.Double")
+	                		|| vResultType.equals("java.lang.Boolean")) {
+	                	var = new PrimaryTestVar(); 
+	                }else if (vResultType.equals("java.lang.array")) {
+						var = new ArrayTestVar();
+					}else {
+						var = new ObjectTestVar();
+					}
+	                
+	            	var.setName(v.getName());
+	            	var.setType(vResultType);
+	            	var.setValue(p.getValuation().getValue(v).toString());
+	            	paramList.add(var);
+	            }	
+	            testInput.setParamList(paramList);
+	            paths.add(testInput);
+              }
+            }
+          }
+	  if (paths.size() == 0) {
+			return null;
+		}else
+			return paths;
+	  
+	
+}
+
+public static int getOptions (String[] args){
     int mask = 0;
 
     if (args != null){

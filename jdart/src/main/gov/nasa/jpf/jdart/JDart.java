@@ -36,8 +36,10 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
@@ -122,7 +124,16 @@ public class JDart implements JPFShell {
     logger = JPF.getLogger("jdart");
   }
 
-  /*
+  private Set<Map.Entry<String, List<CompletedAnalysis>>> analyses;
+  public Set<Map.Entry<String, List<CompletedAnalysis>>> getAnalyses() {
+	return analyses;
+}
+
+private void setAnalyses(Set<Map.Entry<String, List<CompletedAnalysis>>> analyses) {
+	this.analyses = analyses;
+}
+
+/*
    * (non-Javadoc)
    * @see gov.nasa.jpf.JPFShell#start(java.lang.String[])
    */
@@ -231,6 +242,8 @@ public class JDart implements JPFShell {
     logger.info("Completed Analyses: " + ce.getCompletedAnalyses().size());
     System.err.println("Completed Analyses: " + ce.getCompletedAnalyses().size());
 
+    setAnalyses(ce.getCompletedAnalyses().entrySet());
+    
     for (Map.Entry<String, List<CompletedAnalysis>> e : ce.getCompletedAnalyses().entrySet()) {
       String id = e.getKey();
       ConcolicMethodConfig mc = cc.getMethodConfig(id);
