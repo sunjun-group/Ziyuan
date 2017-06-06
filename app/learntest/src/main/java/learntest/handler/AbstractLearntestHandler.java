@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 
+import learntest.plugin.utils.IStatusUtils;
+
 /**
  * @author LLT
  *
@@ -27,7 +29,12 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				return execute(monitor);
+				try {
+					execute(monitor);
+				} finally {
+					monitor.done();
+				}
+				return IStatusUtils.afterRunning(monitor);
 			}
 		};
 		job.schedule();

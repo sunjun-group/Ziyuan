@@ -8,6 +8,7 @@
 
 package learntest.handler.filter.methodfilter;
 
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 /**
@@ -16,6 +17,6 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
  */
 public interface TargetMethodFilter {
 
-	boolean isValid(MethodDeclaration md);
+	boolean isValid(CompilationUnit cu, MethodDeclaration md);
 
 }

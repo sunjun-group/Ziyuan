@@ -115,21 +115,54 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		for (int var : stmt.getInVarIds()) {
 			inputs.add(getExecData(var));
 		}
+		try {
+			boolean success = newInstance(stmt, inputs);
+			if (!success) {
+				onFail();
+			}
+		} catch (Throwable e) {
+			onFail();
+		}
+		return successful;
+	}
+	
+	private boolean newInstance(RConstructor stmt, List<Object> inputs) {
 		Object newInstance;
 		try {
-			newInstance = stmt.getConstructor().newInstance(
-					(Object[]) inputs.toArray());
+			newInstance = stmt.getConstructor().newInstance((Object[]) inputs.toArray());
 			// update data
 			for (int i = 0; i < stmt.getInVarIds().length; i++) {
 				addExecData(stmt.getInVarIds()[i], inputs.get(i));
 			}
 			addExecData(stmt.getOutVarId(), newInstance);
 		} catch (Throwable e) {
-//			log.debug(e.getMessage());
 			onFail();
 		}
 		return successful;
 	}
+
+//	private boolean newInstance(RConstructor stmt, List<Object> inputs) {
+//		ExecutionTimer executionTimer = ExecutionTimer.getFutureTaskExecutionTimer(methodExecTimeout);
+//		boolean success = executionTimer.run(new Runnable() {
+//			
+//			@Override
+//			public void run() {
+//				Object newInstance;
+//				try {
+//					newInstance = stmt.getConstructor().newInstance(
+//							(Object[]) inputs.toArray());
+//					// update data
+//					for (int i = 0; i < stmt.getInVarIds().length; i++) {
+//						addExecData(stmt.getInVarIds()[i], inputs.get(i));
+//					}
+//					addExecData(stmt.getOutVarId(), newInstance);
+//				} catch (Throwable e) {
+//					onFail();
+//				}
+//			}
+//		});
+//		return success;
+//	}
 
 	class ReturnValue{
 		boolean valid = true;

@@ -17,6 +17,8 @@ import static learntest.io.excel.TrialExcelConstants.TRIAL_NUMBER_LIMIT_PER_FILE
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -34,6 +36,7 @@ public class TrialExcelHandler {
 	private String trialFilePrefix;
 	private TrialExcelReader reader;
 	private TrialExcelWriter writer;
+	private boolean isNewFile = false;
 	
 	public TrialExcelHandler(String trialFilePrefix) throws Exception {
 		this(trialFilePrefix, TrialExcelConstants.DEFAULT_EXCEL_APPEND);
@@ -107,11 +110,24 @@ public class TrialExcelHandler {
 		return Pair.of(lastFile, lastIdx);
 	}
 
-	private static Pair<File, Integer> newExperimentalExcelFile(String trialFilePrefix, int fileIdx) {
+	private Pair<File, Integer> newExperimentalExcelFile(String trialFilePrefix, int fileIdx) {
 		String filepath = ResourceUtils.appendPath(EXCEL_FOLDER,
 				StringUtils.concatenate(trialFilePrefix, FILE_IDX_START_CH, String.valueOf(fileIdx), EXCEL_EXT_WITH_DOT));
 		File file = new File(filepath);
+		isNewFile = true;
 		return Pair.of(file, fileIdx);
 	}
 
+	@SuppressWarnings("unchecked")
+	public Collection<Trial> readOldTrials() {
+		if (isNewFile) {
+			return Collections.EMPTY_LIST;
+		} 
+		try {
+			reader.reset(fileInfo.a);
+			return reader.readDataSheet().values();
+		} catch (Exception e) {
+			return Collections.EMPTY_LIST;
+		}
+	}
 }

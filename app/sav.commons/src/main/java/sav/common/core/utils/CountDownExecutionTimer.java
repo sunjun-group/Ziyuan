@@ -43,7 +43,7 @@ public class CountDownExecutionTimer extends ExecutionTimer {
 					 * infinitive loop will still be running forever.
 					 */
 					thread.interrupt();
-					executor.isTimeout = true;
+					executor.isSuccess = false;
 					executor.latch.countDown();
 					/* allow the thread to run for a while, if after concession time,
 					 * it is still alive, we have to force to kill it */
@@ -65,11 +65,11 @@ public class CountDownExecutionTimer extends ExecutionTimer {
 			// do nothing
 		}
 		timer.cancel();
-		return executor.isTimeout;
+		return executor.isSuccess;
 	}
 	
 	protected static class Executor implements Runnable {
-		boolean isTimeout = false;
+		boolean isSuccess = true;
 		Runnable runnable;
 		CountDownLatch latch = new CountDownLatch(1);
 
@@ -78,8 +78,13 @@ public class CountDownExecutionTimer extends ExecutionTimer {
 		}
 		
 		public void run() {
-			runnable.run();
-			latch.countDown();
+			try {
+				runnable.run();
+			} catch (Throwable th) {
+				isSuccess = false;
+			} finally {
+				latch.countDown();
+			}
 		}
 	}
 }

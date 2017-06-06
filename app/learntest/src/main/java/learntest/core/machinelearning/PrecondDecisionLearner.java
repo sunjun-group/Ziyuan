@@ -8,6 +8,7 @@
 
 package learntest.core.machinelearning;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.sampling.SamplingResult;
+import learntest.core.commons.utils.CfgUtils;
 import learntest.testcase.data.INodeCoveredData;
 import libsvm.core.Category;
 import libsvm.core.Divider;
@@ -32,6 +34,7 @@ import libsvm.extension.PositiveSeparationMachine;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.Formula;
+import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -54,21 +57,42 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 		List<CfgNode> decisionNodes = inputProbes.getCfg().getDecisionNodes();
 		DecisionProbes probes = inputProbes;
 		dataPreprocessor = new LearnedDataProcessor(mediator, inputProbes);
-		for (CfgNode node : decisionNodes) {
-			DecisionNodeProbe nodeProbe = probes.getNodeProbe(node);
-			if (nodeProbe.areAllbranchesUncovered()) {
-				continue;
-			}
-			OrCategoryCalculator preconditions = getPreconditions(probes, node);
-			dataPreprocessor.sampleForBranchCvg(node, preconditions);
-			dataPreprocessor.sampleForLoopCvg(node, preconditions);
-			
-			nodeProbe = probes.getNodeProbe(node);
-			updatePrecondition(nodeProbe);
-		}
+		learn(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()), probes, new ArrayList<Integer>(decisionNodes.size()));
 		return probes;
 	}
+
+	private void learn(CfgNode node, DecisionProbes probes, List<Integer> visitedNodes) throws SavException {
+		System.out.println("parsing the node in line " + node.getLine());
+		
+		for (CfgNode dominatee : CfgUtils.getPrecondInherentDominatee(node)) {
+			if (!visitedNodes.contains(dominatee.getIdx())) {
+				learn(dominatee, probes, visitedNodes);
+			}
+		}
+		DecisionNodeProbe nodeProbe = probes.getNodeProbe(node);
+		if (notNeedToLearn(nodeProbe)) {
+			visitedNodes.add(node.getIdx());
+			return;
+		}
+		
+		System.out.println("learning the node in line " + node.getLine());
+		OrCategoryCalculator preconditions = getPreconditions(probes, node);
+		dataPreprocessor.sampleForBranchCvg(node, preconditions);
+		dataPreprocessor.sampleForLoopCvg(node, preconditions);
+		
+		nodeProbe = probes.getNodeProbe(node);
+		updatePrecondition(nodeProbe);
+		visitedNodes.add(node.getIdx());
+		for (CfgNode dependentee : CollectionUtils.nullToEmpty(node.getDependentees())) {
+			learn(dependentee, probes, visitedNodes);
+		}
+	}
 	
+	private boolean notNeedToLearn(DecisionNodeProbe nodeProbe) {
+		return nodeProbe.areAllbranchesUncovered()
+				|| !nodeProbe.needToLearnPrecond();
+	}
+
 	protected void updatePrecondition(DecisionNodeProbe nodeProbe) throws SavException {
 		/* at this point only 1 branch is missing at most */
 		CoveredBranches coveredType = nodeProbe.getCoveredBranches();
@@ -180,7 +204,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 		int size = vars.size();
 		for (int j = 0; j < size; j++) {
 //			double value = bValue.getValue(vars.get(j).getLabel(), 0.0);
-			for (int k = j; k < size; k++) {
+			for (int k = j + 1; k < size; k++) {
 //				lineVals[i ++] = value * bValue.getValue(vars.get(k).getLabel(), 0.0);
 				lineVals[i ++] = 0.0;
 			}

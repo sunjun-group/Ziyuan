@@ -8,6 +8,7 @@
 
 package learntest.handler.filter.methodfilter;
 
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 
@@ -18,7 +19,7 @@ import org.eclipse.jdt.core.dom.Modifier;
 public class TestableMethodFilter implements TargetMethodFilter {
 
 	@Override
-	public boolean isValid(MethodDeclaration md) {
+	public boolean isValid(CompilationUnit cu, MethodDeclaration md) {
 		if(md.isConstructor() || md.parameters().isEmpty()
 				|| !Modifier.isPublic(md.getModifiers())){
 			return false;

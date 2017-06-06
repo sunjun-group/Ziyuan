@@ -8,27 +8,39 @@
 
 package learntest.handler.filter.methodfilter;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+
+import learntest.util.LearnTestUtil;
+import sav.common.core.utils.ClassUtils;
+import sav.common.core.utils.StringUtils;
 
 /**
  * @author LLT
  *
  */
 public class MethodNameFilter implements TargetMethodFilter {
-	private Set<String> excludedMethods;
+	private Collection<String> excludedMethods;
 	
-	public MethodNameFilter() {
-		excludedMethods = new HashSet<String>();
-		excludedMethods.add("demuxOutput");
+	public MethodNameFilter(Collection<String> excludedMethods) {
+		this.excludedMethods = excludedMethods;
 	}
-	
 
 	@Override
-	public boolean isValid(MethodDeclaration md) {
-		return !excludedMethods.contains(md.getName().toString());
+	public boolean isValid(CompilationUnit cu, MethodDeclaration method) {
+		String methodName = ClassUtils.toClassMethodStr(LearnTestUtil.getFullNameOfCompilationUnit(cu),
+				method.getName().getIdentifier());
+		int startLine = cu.getLineNumber(method.getStartPosition());
+		return !excludedMethods.contains(toMethodId(methodName, startLine));
+	}
+
+	public static String toMethodId(String methodName, int methodStartLine) {
+		return StringUtils.dotJoin(methodName, methodStartLine);
 	}
 	
 

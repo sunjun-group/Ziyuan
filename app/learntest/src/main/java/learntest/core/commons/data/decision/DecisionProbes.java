@@ -21,6 +21,7 @@ import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.calculator.OrCategoryCalculator;
 import learntest.core.commons.data.testtarget.TargetMethod;
+import learntest.core.commons.utils.CfgUtils;
 import learntest.core.commons.utils.LearningUtils;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
@@ -63,26 +64,24 @@ public class DecisionProbes extends CfgCoverage {
 		setTestcases(cfgCoverage.getTestcases());
 	}
 	
+	/* build precondition of a node based on its dominatees */
 	public OrCategoryCalculator getPrecondition(CfgNode node) {
 		Precondition precondition = getNodeProbe(node).getPrecondition();
-		for (CfgNode dominatee : CollectionUtils.nullToEmpty(node.getDominatees())) {
+		for (CfgNode dominatee : CfgUtils.getPrecondInherentDominatee(node)) {
 			Precondition domPrecond = getNodeProbe(dominatee).getPrecondition();
 			List<Divider> domDividers = domPrecond.getDividers();
 			if (CollectionUtils.isEmpty(domDividers)) {
 				precondition.addPreconditions(domPrecond.getPreconditions());
 			} else {
-				/* based on branch relationship between node with its dominatee, create calculator by dividers 
-				 * from the current implementation, we treat TRUE_FALSE relationship as FALSE 
-				 * */
 				BranchRelationship branchRel = node.getBranchRelationship(dominatee.getIdx());
-				CategoryCalculator condFromDivicers = null;
+				CategoryCalculator condFromDividers = null;
 				if (branchRel == BranchRelationship.TRUE) {
-					condFromDivicers = new MultiDividerBasedCategoryCalculator(domDividers);
+					condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
 				} else if (dominatee.isLoopHeaderOf(node)) {
-					condFromDivicers = new MultiDividerBasedCategoryCalculator(domDividers);
+					condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
 				}
-				if (condFromDivicers != null) {
-					precondition.addPreconditions(domPrecond.getPreconditions(), condFromDivicers);
+				if (condFromDividers != null) {
+					precondition.addPreconditions(domPrecond.getPreconditions(), condFromDividers);
 				}
 			}
 		}

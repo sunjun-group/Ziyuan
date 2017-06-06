@@ -52,14 +52,11 @@ public class LearnedDataProcessor {
 		
 		CoveredBranches coveredType;
 		DecisionProbes processedProbes = decisionProbes;
-		// try 2 times to select sampling
-		for (int i = 0; i < 2; i++) {
-			coveredType = nodeProbe.getCoveredBranches();
-			if (coveredType.isOneBranchMissing()) {
-				selectiveSampling.selectDataForEmpty(nodeProbe, processedProbes.getOriginalVars(),
-						preconditions, null, coveredType.getOnlyOneMissingBranch(), false);
-			}
-		} 
+		coveredType = nodeProbe.getCoveredBranches();
+		if (coveredType.isOneBranchMissing()) {
+			selectiveSampling.selectDataForEmpty(nodeProbe, processedProbes.getOriginalVars(),
+					preconditions, null, coveredType.getOnlyOneMissingBranch(), false);
+		}
 		
 		return processedProbes;
 	}
@@ -70,14 +67,14 @@ public class LearnedDataProcessor {
 	public void sampleForLoopCvg(CfgNode node,
 			OrCategoryCalculator preconditions) throws SavException {
 		DecisionNodeProbe nodeProbe = decisionProbes.getNodeProbe(node);
-		if (node.isLoopHeader() || !nodeProbe.getCoveredBranches().coversTrue()
+		if (!node.isLoopHeader() || !nodeProbe.getCoveredBranches().coversTrue()
 				|| (!nodeProbe.getOneTimeValues().isEmpty() && !nodeProbe.getMoreTimesValues().isEmpty())) {
 			return;
 		}
 		BranchType missingBranch = nodeProbe.getMoreTimesValues().isEmpty() ? BranchType.TRUE
 																			: BranchType.FALSE; /* ?? */
 		selectiveSampling.selectDataForEmpty(nodeProbe, decisionProbes.getOriginalVars(),
-				preconditions, null, missingBranch, false);
+				preconditions, null, missingBranch, true);
 	}
 
 	public SamplingResult sampleForModel(DecisionNodeProbe nodeProbe, List<ExecVar> originalVars,
