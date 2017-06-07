@@ -6,6 +6,10 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -61,53 +65,65 @@ public class RunJDartHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
-		List<String> classpaths = LearnTestUtil.getPrjectClasspath();
-		StringBuffer buffer = new StringBuffer();
-		for(String classpath: classpaths){
-			buffer.append(classpath);
-			buffer.append(";");
-		}
-		String pathString = buffer.toString();
+		List<TestInput> inputList = null;
 		
-		String className = LearnTestConfig.targetClassName;
-		String methodName = LearnTestConfig.targetMethodName;
-		String lineNumber = LearnTestConfig.targetMethodLineNum;
-		CompilationUnit cu = LearnTestUtil.findCompilationUnitInProject(className);
-		
-		MethodFinder finder = new MethodFinder(methodName, Integer.valueOf(lineNumber), cu);
-		cu.accept(finder);
-		MethodDeclaration md = finder.method;
-		
-		StringBuffer buffer2 = new StringBuffer();
-		buffer2.append("(");
-		for(Object obj: md.parameters()){
-			if(obj instanceof SingleVariableDeclaration){
-				SingleVariableDeclaration svd = (SingleVariableDeclaration)obj;
-				String paramName = svd.getName().getIdentifier();
-				String paramType = svd.getType().toString();
+		Job job = new Job("running JDart") {
+			
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				List<String> classpaths = LearnTestUtil.getPrjectClasspath();
+				StringBuffer buffer = new StringBuffer();
+				for(String classpath: classpaths){
+					buffer.append(classpath);
+					buffer.append(";");
+				}
+				String pathString = buffer.toString();
 				
-				buffer2.append(paramName);
-				buffer2.append(":");
-				buffer2.append(paramType);
+				String className = LearnTestConfig.targetClassName;
+				String methodName = LearnTestConfig.targetMethodName;
+				String lineNumber = LearnTestConfig.targetMethodLineNum;
+				CompilationUnit cu = LearnTestUtil.findCompilationUnitInProject(className);
 				
-				buffer2.append(",");
+				MethodFinder finder = new MethodFinder(methodName, Integer.valueOf(lineNumber), cu);
+				cu.accept(finder);
+				MethodDeclaration md = finder.method;
+				
+				StringBuffer buffer2 = new StringBuffer();
+				buffer2.append("(");
+				for(Object obj: md.parameters()){
+					if(obj instanceof SingleVariableDeclaration){
+						SingleVariableDeclaration svd = (SingleVariableDeclaration)obj;
+						String paramName = svd.getName().getIdentifier();
+						String paramType = svd.getType().toString();
+						
+						buffer2.append(paramName);
+						buffer2.append(":");
+						buffer2.append(paramType);
+						
+						buffer2.append(",");
+					}
+				}
+				String paramString = buffer2.toString();
+				paramString = paramString.substring(0, paramString.length()-1);
+				paramString = paramString + ")";
+				
+				String[] config = new String[]{
+						"+app=libs/jdart/jpf.properties",
+						"+site=libs/jpf.properties",
+						"+jpf-jdart.classpath+=" + pathString,
+						"+target=" + className,
+						"+concolic.method=" + methodName,
+						"+concolic.method." + methodName + "=${target}." + methodName + paramString,
+						"+concolic.method." + methodName + ".config=all_fields_symbolic"
+				};
+				
+				List<TestInput> inputList = RunJPF.run(config);
+				
+				return Status.OK_STATUS;
 			}
-		}
-		String paramString = buffer2.toString();
-		paramString = paramString.substring(0, paramString.length()-1);
-		paramString = paramString + ")";
-		
-		String[] quicksortConfig = new String[]{
-				"+app=libs/jdart/jpf.properties",
-				"+site=libs/jpf.properties",
-				"+jpf-jdart.classpath+=" + pathString,
-				"+target=" + className,
-				"+concolic.method=" + methodName,
-				"+concolic.method." + methodName + "=${target}." + methodName + paramString,
-				"+concolic.method." + methodName + ".config=all_fields_symbolic"
 		};
+		job.schedule();
 		
-		List<TestInput> inputList = RunJPF.run(quicksortConfig);
 		
 		return null;
 	}
