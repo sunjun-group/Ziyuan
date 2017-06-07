@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +31,11 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 
+import javax.print.DocFlavor.STRING;
+
 import org.antlr.grammar.v3.CodeGenTreeWalker.element_action_return;
 
+import coral.util.options.Options.Test;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPFShell;
 import gov.nasa.jpf.constraints.api.Variable;
@@ -167,6 +172,7 @@ public class RunJPF extends Run {
 	            }
 	            TestInput testInput = new TestInput();
 	            List<TestVar> paramList = new LinkedList<>();
+	            HashMap<String, List<TestVar>> arrayList = new HashMap<>();
 	            for (Variable v : p.getValuation().getVariables()) {
 
 	                String vResultType = v.getResultType().getName();
@@ -176,17 +182,29 @@ public class RunJPF extends Run {
 	                		|| vResultType.equals("java.lang.Float") || vResultType.equals("java.lang.Double")
 	                		|| vResultType.equals("java.lang.Boolean")) {
 	                	var = new PrimaryTestVar(); 
-	                }else if (vResultType.equals("java.lang.array")) {
-						var = new ArrayTestVar();
-					}else {
+	                	if (v.getName().contains("[")) {
+	                		String name = v.getName();
+	                		String arrayName = name.substring(0, name.indexOf('['));
+	                		int index = Integer.parseInt(name.substring(name.indexOf('[')+1, name.indexOf(']')));
+	                		var.setName(""+index);
+	    	            	var.setType(vResultType);
+	    	            	var.setValue(p.getValuation().getValue(v).toString());		
+	    	            	if (!arrayList.containsKey(arrayName)) {
+								LinkedList<TestVar> vars = new LinkedList<>();
+								arrayList.put(arrayName, vars);
+							}
+	    	            	arrayList.get(arrayName).add(var);
+						}else {
+			            	var.setName(v.getName());
+			            	var.setType(vResultType);
+			            	var.setValue(p.getValuation().getValue(v).toString());
+			            	paramList.add(var);
+						}
+	                }else {
 						var = new ObjectTestVar();
-					}
-	                
-	            	var.setName(v.getName());
-	            	var.setType(vResultType);
-	            	var.setValue(p.getValuation().getValue(v).toString());
-	            	paramList.add(var);
+					}	                
 	            }	
+	            putArrayVar(arrayList, paramList);
 	            testInput.setParamList(paramList);
 	            paths.add(testInput);
               }
@@ -197,6 +215,40 @@ public class RunJPF extends Run {
 		}else
 			return paths;
 	  
+	
+}
+
+private static void putArrayVar(HashMap<String, List<TestVar>> arrayList, List<TestVar> paramList) {
+	for (Map.Entry<String, List<TestVar>> e : arrayList.entrySet()) {
+	      String arrayName = e.getKey();
+	      TestVar array = new ArrayTestVar();
+	      array.setName(arrayName);
+	      e.getValue().sort(new Comparator<TestVar>() {
+
+			@Override
+			public int compare(TestVar o1, TestVar o2) {
+				return Integer.parseInt(o1.getName())-Integer.parseInt((o2.getName()));
+			}
+		});
+	      array.setType(e.getValue().get(0).getType());
+	      array.setChildren(e.getValue());
+	      printArrayVar(array);
+	      paramList.add(array);
+	}
+	
+}
+
+private static void printArrayVar(TestVar array) {
+	StringBuffer sb = new StringBuffer();
+	sb.append(String.format("TestVar [name=%s,type=%s, value=%s, children=[",array.getName(), array.getType(), array.getValue()));
+	sb.append("\n");
+	for (TestVar var : array.getChildren()) {
+		sb.append("\t");
+		sb.append(var.toString());
+		sb.append("\n");
+	}
+	sb.append("]");
+	System.out.println(sb.toString());
 	
 }
 
