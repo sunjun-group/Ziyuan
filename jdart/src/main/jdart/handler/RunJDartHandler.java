@@ -106,10 +106,14 @@ public class RunJDartHandler extends AbstractHandler {
 				String paramString = buffer2.toString();
 				paramString = paramString.substring(0, paramString.length()-1);
 				paramString = paramString + ")";
-				
+			    /* LLT: change the way loading properties files to make it works on MAC as well
+			     * please let me know if it does not work properly on your side.
+			     * */
 				String[] config = new String[]{
-						"+app=libs/jdart/jpf.properties",
-						"+site=libs/jpf.properties",
+//						"+app=libs/jdart/jpf.properties",
+//						"+site=libs/jpf.properties",
+						"+app=" + PluginUtils.loadAbsolutePath("libs/jdart/jpf.properties"),
+						"+site=" + PluginUtils.loadAbsolutePath("libs/jpf.properties"),
 						"+jpf-jdart.classpath+=" + pathString,
 						"+target=" + className,
 						"+concolic.method=" + methodName,
