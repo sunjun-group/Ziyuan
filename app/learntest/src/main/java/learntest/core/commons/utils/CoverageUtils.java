@@ -44,7 +44,7 @@ public class CoverageUtils {
 		return true;
 	}
 	
-	public static double calculateCoverage(CfgCoverage cfgCoverage) {
+	public static double calculateCoverageByBranch(CfgCoverage cfgCoverage) {
 		int totalBranches = 0;
 		int coveredBranches = 0;
 		List<CfgNode> decisionNodes = cfgCoverage.getCfg().getDecisionNodes();
@@ -59,6 +59,17 @@ public class CoverageUtils {
 			coveredBranches += cfgCoverage.getCoverage(node).getCoveredBranches().size();
 		}
 		return coveredBranches / (double) totalBranches;
+	}
+	
+	public static double calculateCoverage(CfgCoverage cfgCoverage) {
+		int covered = 0;
+		for (NodeCoverage nodeCvg : cfgCoverage.getNodeCoverages()) {
+			if (!nodeCvg.getCoveredTcs().isEmpty()) {
+				covered++;
+			}
+		}
+		double coverage = covered / (double) cfgCoverage.getCfg().getNodeList().size();
+		return Math.round (coverage * 100.0) / 100.0;
 	}
 	
 	/**

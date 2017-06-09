@@ -83,7 +83,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 		updatePrecondition(nodeProbe);
 		visitedNodes.add(node.getIdx());
 		for (CfgNode dependentee : CollectionUtils.nullToEmpty(node.getDependentees())) {
-			learn(dependentee, probes, visitedNodes);
+			if (!visitedNodes.contains(dependentee.getIdx())) {
+				learn(dependentee, probes, visitedNodes);
+			}
 		}
 	}
 	

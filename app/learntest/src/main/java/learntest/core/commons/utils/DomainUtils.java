@@ -9,8 +9,10 @@
 package learntest.core.commons.utils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.jacop.core.Domain;
 import org.jacop.floats.core.FloatDomain;
@@ -18,6 +20,7 @@ import org.jacop.floats.core.FloatIntervalDomain;
 
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
+import sav.common.core.Constants;
 import sav.common.core.formula.Eq;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.execute.value.ExecVar;
@@ -38,7 +41,8 @@ public class DomainUtils {
 			List<BreakpointValue> testInputs) {
 		List<Domain[]> result = new ArrayList<Domain[]>(assignments.size());
 		int tcInputIdx = 0;
-		
+		Set<String> existingPatterns = new HashSet<String>();
+		int duplicate = 0;
 		for (List<Eq<?>> ele : assignments) {
 			List<Eq<?>> assignment = new ArrayList<Eq<?>>(ele);
 			
@@ -47,7 +51,7 @@ public class DomainUtils {
 			if (tcInputIdx >= testInputs.size()) {
 				tcInputIdx = 0;
 			}
-
+			StringBuilder sb = new StringBuilder();
 			/* build solution */
 			Domain[] sol = new Domain[originVars.size()];
 			for (int i = 0; i < originVars.size(); i++) {
@@ -72,8 +76,18 @@ public class DomainUtils {
 					domain = getDomain(testInput, execVar);
 				}
 				sol[i] = domain;
+				sb.append(getDomainValue(domain)).append(Constants.LOW_LINE);
 			}
-			result.add(sol);
+			String valuesPattern = sb.toString();
+			if (!existingPatterns.contains(valuesPattern)) {
+				result.add(sol);
+				existingPatterns.add(valuesPattern);
+			} else {
+				duplicate++;
+			}
+		}
+		if (duplicate > 0) {
+			System.out.println(String.format("remove %d duplicated solutions: ", duplicate));
 		}
 		return result;
 	}
@@ -107,6 +121,10 @@ public class DomainUtils {
 			BreakpointDataUtils.addToBreakpointValue(value, vars.get(i), getDomainValue(solution[i]));
 		}
 		return value;
+	}
+
+	public static Domain toDomain(int val) {
+		return new FloatIntervalDomain(val, val);
 	}
 
 }

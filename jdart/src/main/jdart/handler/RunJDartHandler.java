@@ -245,9 +245,6 @@ public class RunJDartHandler extends AbstractHandler {
 	}
 
 	private static String[] constructConfig(String mainEntry, String className, String pathString, String methodName, String paramString) {
-	    /* LLT: change the way loading properties files to make it works on MAC as well
-	     * please let me know if it does not work properly on your side.
-	     * */
 		return  new String[]{
 				"+app=" + PluginUtils.loadAbsolutePath("libs/jdart/jpf.properties"),
 				"+site=" + PluginUtils.loadAbsolutePath("libs/jpf.properties"),

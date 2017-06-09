@@ -9,7 +9,10 @@ import java.util.Map;
 import java.util.Set;
 
 import cfgcoverage.jacoco.CfgJaCoCo;
+import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
+import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
 import icsetlv.DefaultValues;
 import icsetlv.common.dto.BreakpointData;
@@ -19,12 +22,12 @@ import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.testtarget.TargetMethod;
 import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.commons.utils.DomainUtils;
+import learntest.core.gentest.TestGenerator.GentestResult;
 import learntest.core.machinelearning.PrecondDecisionLearner;
 import learntest.exception.LearnTestException;
 import learntest.main.LearnTestParams;
 import learntest.main.RunTimeInfo;
 import learntest.main.TestGenerator;
-import learntest.main.TestGenerator.GentestResult;
 import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
 import sav.common.core.utils.ClassUtils;
@@ -53,18 +56,19 @@ public class LearnTest {
 		/* collect testcases in project */
 		List<String> testcases = collectExistingTestcases(params.getTestClass());
 		if (CollectionUtils.isEmpty(testcases)) {
+			System.out.println("empty testcase!");
 			return null;
 		}
 		init(params);
 		boolean learningStarted = false;
 		CfgCoverage cfgCoverage = null;
+		TargetMethod targetMethod = params.getTargetMethod();
 		try {
 			/* collect coverage and build cfg */
-			TargetMethod targetMethod = params.getTargetMethod();
-			cfgCoverage = runCfgCoverage(targetMethod, params.getTestClass());
-			targetMethod.updateCfgIfNotExist(cfgCoverage.getCfg());
+			cfgCoverage = tryBestForInitialCoverage(params, targetMethod);
 
 			if (CoverageUtils.notCoverAtAll(cfgCoverage)) {
+				System.out.println("start node is not covered!");
 				return null;
 			}
 			System.out.println("first coverage: " + CoverageUtils.calculateCoverage(cfgCoverage));
@@ -78,6 +82,7 @@ public class LearnTest {
 			BreakpointData result = CollectionUtils.getFirstElement(testcaseExecutor.getResult());
 			System.out.println();
 			if (CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
+				System.out.println("no decision node is covered!");
 				return regenerateTestNotLearning(cfgCoverage, result);
 			} else {
 				/* learn */
@@ -100,6 +105,29 @@ public class LearnTest {
 		return null;
 	}
 
+	/**
+	 * run coverage, and in case the coverage is too bad (means no branch is covered)
+	 * try to generate another testcase.
+	 */
+	private CfgCoverage tryBestForInitialCoverage(LearnTestParams params, TargetMethod targetMethod)
+			throws SavException, IOException, ClassNotFoundException {
+		CfgCoverage cfgCoverage = null;
+		int i;
+		for (i = 0; i < 3; i++) {
+			cfgCoverage = runCfgCoverage(targetMethod, params.getTestClass());
+			if (CoverageUtils.notCoverAtAll(cfgCoverage) || CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
+				String newTestClass = randomGentest();
+				params.setTestClass(newTestClass);
+			} else {
+				break;
+			}
+		}
+		if (i > 0) {
+			System.out.println(String.format("Get best coverage after regenerate test %d times", i));
+		}
+		return cfgCoverage;
+	}
+
 	private RunTimeInfo regenerateTestNotLearning(CfgCoverage cfgCoverage, BreakpointData result)
 			throws ClassNotFoundException, SavException, IOException {
 		CfgCoverage newCoverage = new CfgCoverage(cfgCoverage.getCfg());
@@ -112,7 +140,29 @@ public class LearnTest {
 		return getRuntimeInfo(newCoverage);
 	}
 	
+	private String randomGentest()
+			throws ClassNotFoundException, SavException, IOException {
+		GentestResult result = mediator.getTestGenerator().genTest();
+		/* update coverage */
+		mediator.compile(result.getJunitfiles());
+		return result.getJunitClassNames().get(0);
+	}
+	
 	private RunTimeInfo getRuntimeInfo(CfgCoverage cfgCoverage) {
+		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
+			StringBuilder sb = new StringBuilder();
+			NodeCoverage nodeCvg = cfgCoverage.getCoverage(node);
+			Set<BranchRelationship> coveredBranches = new HashSet<BranchRelationship>(2);
+			for (int branchIdx : nodeCvg.getCoveredBranches().keySet()) {
+				BranchRelationship branchRelationship = node.getBranchRelationship(branchIdx);
+				coveredBranches.add(branchRelationship == BranchRelationship.TRUE ? branchRelationship : 
+										BranchRelationship.FALSE);
+			}
+			sb.append("NodeCoverage [").append(node).append(", coveredTcs=").append(nodeCvg.getCoveredTcs().size())
+						.append(", coveredBranches=").append(nodeCvg.getCoveredBranches().size()).append(", ")
+						.append(coveredBranches).append("]");
+			System.out.println(sb.toString());
+		}
 		return new RunTimeInfo(SAVTimer.getExecutionTime(), CoverageUtils.calculateCoverage(cfgCoverage),
 				cfgCoverage.getTestcases().size());
 	}
@@ -167,14 +217,16 @@ public class LearnTest {
 	private CfgCoverage runCfgCoverage(TargetMethod targetMethod, String testClasses)
 			throws SavException, IOException, ClassNotFoundException {
 		timer.newPoint("start cfgCoverage");
-		CfgJaCoCo cfgCoverage = new CfgJaCoCo(appClassPath);
+		CfgJaCoCo jacoco = new CfgJaCoCo(appClassPath);
 		List<String> targetMethods = CollectionUtils.listOf(ClassUtils.toClassMethodStr(targetMethod.getClassName(),
 				targetMethod.getMethodName()));
-		Map<String, CfgCoverage> coverage = cfgCoverage.runJunit(targetMethods, Arrays.asList(targetMethod.getClassName()),
+		Map<String, CfgCoverage> coverageMap = jacoco.runJunit(targetMethods, Arrays.asList(targetMethod.getClassName()),
 				Arrays.asList(testClasses));
 		timer.newPoint("end cfgCoverage");
-		return coverage.get(CfgJaCoCoUtils.createMethodId(targetMethod.getClassName(), targetMethod.getMethodName(),
+		CfgCoverage cfgCoverage = coverageMap.get(CfgJaCoCoUtils.createMethodId(targetMethod.getClassName(), targetMethod.getMethodName(),
 				targetMethod.getMethodSignature()));
+		targetMethod.updateCfgIfNotExist(cfgCoverage.getCfg());
+		return cfgCoverage;
 	}
 	
 	private List<String> collectExistingTestcases(String testClass) {

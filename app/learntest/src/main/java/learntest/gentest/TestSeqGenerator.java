@@ -80,9 +80,9 @@ public class TestSeqGenerator {
 		Map<String, ISelectedVariable> varMap = new HashMap<String, ISelectedVariable>();
 		Set<String> nullVars = new HashSet<String>();
 		//prepare inputs for target method
-		int idx = 0;
-		for (ExecVar var : vars) {
-			double value  = DomainUtils.getDomainValue(solution[idx ++]);
+		for (int idx = 0; idx < vars.size(); idx++) {
+			ExecVar var = vars.get(idx);
+			double value  = DomainUtils.getDomainValue(solution[idx]);
 			
 			String[] parts = var.getLabel().split("[.]");
 			String receiver = parts[0];
@@ -96,15 +96,18 @@ public class TestSeqGenerator {
 				sequence.append(variable);
 				varMap.put(var.getLabel(), variable);
 				firstVarIdx += variable.getNewVariables().size();
+				
 			} else {
 				ISelectedVariable variable = varMap.get(receiver);
 				if (variable == null) {
 					IType type = typeMap.get(classMap.get(receiver));
 					if (type.isArray() && parts.length == 2 && parts[1].equals("length")) {
-						variable = arrayValueGenerator.generate(type, firstVarIdx, value < 0 ? 0 : (int)value);
+						int newVal = value < 0 ? 0 : (int)value;
+						variable = arrayValueGenerator.generate(type, firstVarIdx, newVal);
 						sequence.append(variable);
 						firstVarIdx += variable.getNewVariables().size();
 						varMap.put(receiver, variable);
+						solution[idx] = DomainUtils.toDomain(newVal) ;
 						continue;
 					} else {
 						variable = valueGenerator.generate(typeMap.get(classMap.get(receiver)), firstVarIdx, true);
@@ -190,6 +193,7 @@ public class TestSeqGenerator {
 							variable = field;
 							receiver = cur;
 						} catch (Exception e) {
+							solution[idx] = DomainUtils.toDomain(0); // set null
 //							System.err.println("can not find setter for " + cur);
 							break;
 						}
