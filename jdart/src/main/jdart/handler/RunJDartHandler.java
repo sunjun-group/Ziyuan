@@ -106,20 +106,8 @@ public class RunJDartHandler extends AbstractHandler {
 				String paramString = buffer2.toString();
 				paramString = paramString.substring(0, paramString.length()-1);
 				paramString = paramString + ")";
-			    /* LLT: change the way loading properties files to make it works on MAC as well
-			     * please let me know if it does not work properly on your side.
-			     * */
-				String[] config = new String[]{
-//						"+app=libs/jdart/jpf.properties",
-//						"+site=libs/jpf.properties",
-						"+app=" + PluginUtils.loadAbsolutePath("libs/jdart/jpf.properties"),
-						"+site=" + PluginUtils.loadAbsolutePath("libs/jpf.properties"),
-						"+jpf-jdart.classpath+=" + pathString,
-						"+target=" + className,
-						"+concolic.method=" + methodName,
-						"+concolic.method." + methodName + "=${target}." + methodName + paramString,
-						"+concolic.method." + methodName + ".config=all_fields_symbolic"
-				};
+				String mainEntry = "com.MainEntry";
+				String[] config = constructConfig(mainEntry, className, pathString, methodName, paramString);
 				
 				List<TestInput> inputList = RunJPF.run(config);
 				
@@ -135,6 +123,7 @@ public class RunJDartHandler extends AbstractHandler {
 	public static void main(String[] args) throws ExecutionException {
 
 		String  pathString = "E:\\workspace\\JPF\\data\\apache-common-math-2.2\\bin", 
+				mainEntry = "com.MainEntry",
 				className = "com.Sorting",				
 				methodName = "quicksort",
 				paramString = "(a:int[])";
@@ -251,18 +240,21 @@ public class RunJDartHandler extends AbstractHandler {
 //		methodName = "findInsertionIndex";
 //		paramString = "(a:int)";
 				
-		String[] config = constructConfig(className, pathString, methodName, paramString);		
+		String[] config = constructConfig(mainEntry, className, pathString, methodName, paramString);		
 		List<TestInput> inputList = RunJPF.run(config);
 	}
 
-	private static String[] constructConfig(String className, String pathString, String methodName, String paramString) {
+	private static String[] constructConfig(String mainEntry, String className, String pathString, String methodName, String paramString) {
+	    /* LLT: change the way loading properties files to make it works on MAC as well
+	     * please let me know if it does not work properly on your side.
+	     * */
 		return  new String[]{
-				"+app=libs/jdart/jpf.properties",
-				"+site=libs/jpf.properties",
+				"+app=" + PluginUtils.loadAbsolutePath("libs/jdart/jpf.properties"),
+				"+site=" + PluginUtils.loadAbsolutePath("libs/jpf.properties"),
 				"+jpf-jdart.classpath+=" + pathString,
-				"+target=" + className,
+				"+target=" + mainEntry,
 				"+concolic.method=" + methodName,
-				"+concolic.method." + methodName + "=${target}." + methodName + paramString,
+				"+concolic.method." + methodName + "=" +className+"."+ methodName + paramString,
 				"+concolic.method." + methodName + ".config=all_fields_symbolic"
 		};
 	}
