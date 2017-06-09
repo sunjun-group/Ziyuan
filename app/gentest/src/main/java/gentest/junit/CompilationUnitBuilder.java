@@ -4,6 +4,7 @@
 package gentest.junit;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +18,7 @@ import japa.parser.ast.body.BodyDeclaration;
 import japa.parser.ast.body.ClassOrInterfaceDeclaration;
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.ModifierSet;
+import japa.parser.ast.body.Parameter;
 import japa.parser.ast.body.TypeDeclaration;
 import japa.parser.ast.expr.AnnotationExpr;
 import japa.parser.ast.expr.MarkerAnnotationExpr;
@@ -98,6 +100,7 @@ public class CompilationUnitBuilder {
 	public class MethodBuilder {
 		private MethodDeclaration curMethod;
 		private BlockStmt body;
+		private List<NameExpr> throwsExprs;
 		
 		MethodBuilder(String name) {
 			MethodDeclaration method = new MethodDeclaration(
@@ -105,11 +108,23 @@ public class CompilationUnitBuilder {
 			body = new BlockStmt(new ArrayList<Statement>());
 			method.setBody(body);
 			method.setAnnotations(new ArrayList<AnnotationExpr>());
-			method.setThrows(new ArrayList<NameExpr>());
+			throwsExprs = new ArrayList<NameExpr>();
 			curMethod = method;
 		}
 		
+		public MethodBuilder parameters(Parameter... parameters) {
+			return parameters(Arrays.asList(parameters));
+		}
+		
+		public MethodBuilder parameters(List<Parameter> parameters) {
+			curMethod.setParameters(parameters);
+			return this;
+		}
+		
 		public CompilationUnitBuilder endMethod() {
+			if (!throwsExprs.isEmpty()) {
+				curMethod.setThrows(throwsExprs);
+			}
 			curType.getMembers().add(curMethod);
 			return CompilationUnitBuilder.this;
 		}
@@ -127,7 +142,7 @@ public class CompilationUnitBuilder {
 		}
 
 		public MethodBuilder throwException(String name) {
-			curMethod.getThrows().add(new NameExpr(name));
+			throwsExprs.add(new NameExpr(name));
 			return this;
 		}
 	}

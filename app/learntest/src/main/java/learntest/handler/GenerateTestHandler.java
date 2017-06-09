@@ -3,13 +3,9 @@ package learntest.handler;
 import java.io.File;
 import java.util.List;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 
 import learntest.exception.LearnTestException;
 import learntest.main.LearnTest;
@@ -23,20 +19,17 @@ import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.vm.JavaCompiler;
 import sav.strategies.vm.VMConfiguration;
 
-public class GenerateTestHandler extends AbstractHandler {
+public class GenerateTestHandler extends AbstractLearntestHandler {
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Job job = new Job("Do evaluation") {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				generateTest(LearnTestConfig.isL2TApproach);
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-		
-		return null;
+	protected IStatus execute(IProgressMonitor monitor) {
+		generateTest(LearnTestConfig.isL2TApproach);
+		return Status.OK_STATUS;
+	}
+	
+	@Override
+	protected String getJobName() {
+		return "Do evaluation for single method";
 	}
 	
 	public RunTimeInfo generateTest(boolean isL2T){
@@ -44,15 +37,14 @@ public class GenerateTestHandler extends AbstractHandler {
 			SAVTimer.enableExecutionTimeout = true;
 			SAVTimer.exeuctionTimeout = 50000000;
 			
-			AppJavaClassPath appClasspath = HandlerUtils.initAppJavaClassPath();
-			List<File> newTests = new TestGenerator(appClasspath).genTest();
-			new JavaCompiler(new VMConfiguration(appClasspath)).compile(appClasspath.getTestTarget(), newTests);
-			HandlerUtils.refreshProject();
+			List<File> newTests = new TestGenerator(getAppClasspath()).genTest().getJunitfiles();
+			new JavaCompiler(new VMConfiguration(getAppClasspath())).compile(getAppClasspath().getTestTarget(), newTests);
+			refreshProject();
 			StopTimer timer = new StopTimer("learntest");
 			timer.start();
 			timer.newPoint("learntest");
-//			RunTimeInfo runtimeInfo = runLearntest(isL2T, appClasspath);
-			RunTimeInfo runtimeInfo = runLearntest2(isL2T, appClasspath);
+//			RunTimeInfo runtimeInfo = runLearntest(isL2T, getAppClasspath());
+			RunTimeInfo runtimeInfo = runLearntest2(isL2T, getAppClasspath());
 			
 			if(runtimeInfo != null) {
 				String type = isL2T ? "l2t" : "randoop";
@@ -60,7 +52,7 @@ public class GenerateTestHandler extends AbstractHandler {
 			}
 			timer.newPoint("end");
 			System.out.println(timer.getResults());
-			HandlerUtils.refreshProject();
+			refreshProject();
 			
 			return runtimeInfo;
 			
@@ -71,7 +63,7 @@ public class GenerateTestHandler extends AbstractHandler {
 		return null;
 	}
 
-	private RunTimeInfo runLearntest(boolean isL2T, AppJavaClassPath appClasspath) throws LearnTestException {
+	private RunTimeInfo runLearntest(boolean isL2T, AppJavaClassPath appClasspath) throws Exception {
 		LearnTest engine = new LearnTest(appClasspath);
 		RunTimeInfo runtimeInfo = engine.run(!isL2T);
 		return runtimeInfo;
@@ -79,12 +71,8 @@ public class GenerateTestHandler extends AbstractHandler {
 
 	/**
 	 * To test new version of learntest which uses another cfg and jacoco for code coverage. 
-	 * @param isL2T
-	 * @param appClasspath
-	 * @return
-	 * @throws LearnTestException
 	 */
-	private RunTimeInfo runLearntest2(boolean isL2T, AppJavaClassPath appClasspath) throws LearnTestException {
+	private RunTimeInfo runLearntest2(boolean isL2T, AppJavaClassPath appClasspath) throws Exception {
 		learntest.core.LearnTest learntest = new learntest.core.LearnTest(appClasspath);
 		try {
 			LearnTestParams params = LearnTestParams.initFromLearnTestConfig();

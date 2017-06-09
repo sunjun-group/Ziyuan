@@ -15,9 +15,12 @@ import org.eclipse.jdt.core.JavaModelException;
 
 import learntest.core.commons.data.testtarget.TargetClass;
 import learntest.core.commons.data.testtarget.TargetMethod;
+import learntest.core.gentest.GentestParams;
 import learntest.util.LearnTestUtil;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
+import sav.common.core.utils.StringUtils;
+import sav.strategies.dto.AppJavaClassPath;
 
 /**
  * @author LLT
@@ -41,6 +44,22 @@ public class LearnTestParams {
 		} catch (JavaModelException e) {
 			throw new SavException(ModuleEnum.UNSPECIFIED, e, e.getMessage());
 		}
+		return params;
+	}
+	
+	public GentestParams initGentestParams(AppJavaClassPath appClassPath) {
+		GentestParams params = new GentestParams();
+		params.setMethodSignature(targetMethod.getMethodSignature());
+		params.setTargetClassName(targetMethod.getClassName());
+		params.setNumberOfTcs(1);
+		params.setTestPerQuery(1);
+		params.setTestSrcFolder(appClassPath.getTestSrc());
+		String approachPrefix = learnByPrecond ? "l2t" : "ram";
+		params.setTestPkg(StringUtils.dotJoin("testdata", approachPrefix, "test.init",
+				targetMethod.getTargetClazz().getClassSimpleName().toLowerCase(),
+				targetMethod.getMethodName().toLowerCase()));
+		params.setTestClassPrefix(targetMethod.getTargetClazz().getClassSimpleName());
+		params.setTestMethodPrefix("test");
 		return params;
 	}
 

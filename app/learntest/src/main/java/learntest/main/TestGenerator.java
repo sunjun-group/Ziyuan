@@ -1,6 +1,5 @@
 package learntest.main;
 
-import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ import gentest.injection.TestcaseGenerationScope;
 import gentest.junit.FileCompilationUnitPrinter;
 import gentest.junit.TestsPrinter;
 import gentest.junit.TestsPrinter.PrintOption;
-import icsetlv.common.dto.BreakpointValue;
 import learntest.core.commons.utils.DomainUtils;
 import learntest.gentest.TestSeqGenerator;
 import learntest.util.LearnTestUtil;
@@ -34,22 +32,21 @@ import sav.commons.TestConfiguration;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.execute.value.ExecVar;
 
-public class TestGenerator {
+/**
+ * 
+ * will be replace with learntest.core.gentest.TestGenerator.
+ */
+public class TestGenerator extends learntest.core.gentest.TestGenerator {
 	public static int NUMBER_OF_INIT_TEST = 1;
 	private static String prefix = "test";
 	private ClassLoader prjClassLoader;
 	
 	public TestGenerator(AppJavaClassPath appClasspath) {
+		super(appClasspath);
 		this.prjClassLoader = appClasspath.getPreferences().get(SystemVariables.PROJECT_CLASSLOADER);
 	}
 	
-	/**
-	 * 
-	 * @return 
-	 * @throws ClassNotFoundException
-	 * @throws SavException
-	 */
-	public List<File> genTest() throws ClassNotFoundException, SavException {
+	public GentestResult genTest() throws ClassNotFoundException, SavException {
 		String mSig = LearnTestUtil.getMethodWthSignature(LearnTestConfig.targetClassName, 
 				LearnTestConfig.targetMethodName, LearnTestConfig.getMethodLineNumber());
 		
@@ -67,8 +64,10 @@ public class TestGenerator {
 		String simpleClassName = LearnTestConfig.getSimpleClassName();
 		TestsPrinter printer = new TestsPrinter(packageName, null, prefix, simpleClassName, testSourceFolder);
 		Pair<List<Sequence>, List<Sequence>> pair = builder.generate();
-		printer.printTests(pair);
-		return ((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles();
+		GentestResult result = new GentestResult();
+		result.setJunitClassNames(printer.printTests(pair));
+		result.setJunitfiles(((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles());
+		return result;
 	}
 	
 	public GentestResult genTestAccordingToSolutions(List<Domain[]> solutions, List<ExecVar> vars) 
@@ -112,8 +111,8 @@ public class TestGenerator {
 		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(LearnTestConfig.isL2TApproach),
 				null, prefix, LearnTestConfig.getSimpleClassName(), LearnTestUtil.retrieveTestSourceFolder(),
 				printOption);
-		result.junitClassNames = printer.printTests(Pair.of(sequences, new ArrayList<Sequence>(0)));
-		result.junitfiles = ((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles();
+		result.setJunitClassNames(printer.printTests(Pair.of(sequences, new ArrayList<Sequence>(0))));
+		result.setJunitfiles(((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles());
 		return result;
 	}
 	
@@ -213,42 +212,4 @@ public class TestGenerator {
 		return true;
 	}
 	
-	public static class GentestResult {
-		private static GentestResult EMTPY_RESULT;
-		List<String> junitClassNames;
-		List<File> junitfiles;
-		List<BreakpointValue> inputData = new ArrayList<BreakpointValue>();
-		
-		/**
-		 * @param buildBreakpointValue
-		 */
-		public void addInputData(BreakpointValue value) {
-			inputData.add(value);
-		}
-
-		public List<String> getJunitClassNames() {
-			return junitClassNames;
-		}
-
-		public List<File> getJunitfiles() {
-			return junitfiles;
-		}
-		
-		/**
-		 * @return the inputData
-		 */
-		public List<BreakpointValue> getTestInputs() {
-			return inputData;
-		}
-		
-		/**
-		 * @return the eMTPY_RESULT
-		 */
-		public static GentestResult getEmptyResult() {
-			if (EMTPY_RESULT == null) {
-				EMTPY_RESULT = new GentestResult();
-			}
-			return EMTPY_RESULT;
-		}
-	}
 }
