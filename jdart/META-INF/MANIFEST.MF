@@ -42,7 +42,8 @@ Bundle-ClassPath: jdart.jar,
  libs/STPJNI.jar,
  libs/string.jar,
  libs/yicesapijava.jar,
- libs/
+ libs/,
+ resources/
 Export-Package: aima.core.agent,
  aima.core.agent.impl,
  aima.core.agent.impl.aprog,

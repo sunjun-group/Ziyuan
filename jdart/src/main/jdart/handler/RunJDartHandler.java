@@ -106,8 +106,21 @@ public class RunJDartHandler extends AbstractHandler {
 				String paramString = buffer2.toString();
 				paramString = paramString.substring(0, paramString.length()-1);
 				paramString = paramString + ")";
-				String mainEntry = "com.MainEntry";
-				String[] config = constructConfig(mainEntry, className, pathString, methodName, paramString);	
+			    /* LLT: change the way loading properties files to make it works on MAC as well
+			     * please let me know if it does not work properly on your side.
+			     * */
+				String[] config = new String[]{
+//						"+app=libs/jdart/jpf.properties",
+//						"+site=libs/jpf.properties",
+						"+app=" + PluginUtils.loadAbsolutePath("libs/jdart/jpf.properties"),
+						"+site=" + PluginUtils.loadAbsolutePath("libs/jpf.properties"),
+						"+jpf-jdart.classpath+=" + pathString,
+						"+target=" + className,
+						"+concolic.method=" + methodName,
+						"+concolic.method." + methodName + "=${target}." + methodName + paramString,
+						"+concolic.method." + methodName + ".config=all_fields_symbolic"
+				};
+				
 				List<TestInput> inputList = RunJPF.run(config);
 				
 				return Status.OK_STATUS;
@@ -122,34 +135,33 @@ public class RunJDartHandler extends AbstractHandler {
 	public static void main(String[] args) throws ExecutionException {
 
 		String  pathString = "E:\\workspace\\JPF\\data\\apache-common-math-2.2\\bin", 
-				mainEntry = "com.MainEntry",
 				className = "com.Sorting",				
 				methodName = "quicksort",
 				paramString = "(a:int[])";
 		
-//		className = "org.apache.commons.math.analysis.integration.TrapezoidIntegrator";
-//		methodName = "integrate";
-//		paramString = "(ue:org.apache.commons.math.analysis.UnivariateRealFunction,mi:double, ma:double)";
+		className = "org.apache.commons.math.analysis.integration.TrapezoidIntegrator";
+		methodName = "integrate";
+		paramString = "(ue:UnivariateRealFunction,mi:double, ma:double)";
 		
-//		className = "org.apache.commons.math.distribution.BetaDistributionImpl";
-//		methodName = "cumulativeProbability";
-//		paramString = "(d:double)";
-//		
-//		className = "org.apache.commons.math.linear.OpenMapRealVector";
-//		methodName = "getLInfDistance";
-//		paramString = "(op:org.apache.commons.math.linear.OpenMapRealVector)";
+		className = "org.apache.commons.math.distribution.BetaDistributionImpl";
+		methodName = "cumulativeProbability";
+		paramString = "(d:double)";
+		
+		className = "org.apache.commons.math.linear.OpenMapRealVector";
+		methodName = "getLInfDistance";
+		paramString = "(op:OpenMapRealVector)";
 //		
 //		className = "org.apache.commons.math.special.Gamma";
 //		methodName = "regularizedGammaQ";
 //		paramString = "(a:double, b:double)";
 //		
-//		className = "org.apache.commons.math.stat.descriptive.moment.Variance";
-//		methodName = "evaluate";
-//		paramString = "(a:double[], b:double[], c:double, i1:int, i2:int)";
-////		
-//		className = "org.apache.commons.math.stat.descriptive.summary.Sum";
-//		methodName = "evaluate";
-//		paramString = "(a:double[],i1:int,i2:int)";
+		className = "org.apache.commons.math.stat.descriptive.moment.Variance";
+		methodName = "evaluate";
+		paramString = "(a:double[], b:double[], c:double, i1:int, i2:int)";
+//		
+		className = "org.apache.commons.math.stat.descriptive.summary.Sum";
+		methodName = "evaluate";
+		paramString = "(a:double[],i1:int,i2:int)";
 //		
 //		className = "org.apache.commons.math.stat.descriptive.summary.Sum";
 //		methodName = "evaluate";
@@ -159,9 +171,9 @@ public class RunJDartHandler extends AbstractHandler {
 //		methodName = "evaluate";
 //		paramString = "(a:double[],i1:int,i2:int)";
 //		
-		className = "org.apache.commons.math.util.FastMath";
-		methodName = "asinh";
-		paramString = "(a:double)";
+//		className = "org.apache.commons.math.util.FastMath";
+//		methodName = "asinh";
+//		paramString = "(a:double)";
 //
 //		className = "org.apache.commons.math.util.FastMath";
 //		methodName = "atan2";
@@ -171,9 +183,9 @@ public class RunJDartHandler extends AbstractHandler {
 //		methodName = "cos";
 //		paramString = "(a:double)";
 //
-		className = "org.apache.commons.math.util.FastMath";
-		methodName = "hypot";
-		paramString = "(a:double, b:double)";
+//		className = "org.apache.commons.math.util.FastMath";
+//		methodName = "hypot";
+//		paramString = "(a:double, b:double)";
 //		
 //		className = "org.apache.commons.math.util.FastMath";
 //		methodName = "log1p";
@@ -239,18 +251,18 @@ public class RunJDartHandler extends AbstractHandler {
 //		methodName = "findInsertionIndex";
 //		paramString = "(a:int)";
 				
-		String[] config = constructConfig(mainEntry, className, pathString, methodName, paramString);		
+		String[] config = constructConfig(className, pathString, methodName, paramString);		
 		List<TestInput> inputList = RunJPF.run(config);
 	}
 
-	private static String[] constructConfig(String mainEntry, String className, String pathString, String methodName, String paramString) {
+	private static String[] constructConfig(String className, String pathString, String methodName, String paramString) {
 		return  new String[]{
 				"+app=libs/jdart/jpf.properties",
 				"+site=libs/jpf.properties",
 				"+jpf-jdart.classpath+=" + pathString,
-				"+target=" + mainEntry,
+				"+target=" + className,
 				"+concolic.method=" + methodName,
-				"+concolic.method." + methodName + "=" +className+"."+ methodName + paramString,
+				"+concolic.method." + methodName + "=${target}." + methodName + paramString,
 				"+concolic.method." + methodName + ".config=all_fields_symbolic"
 		};
 	}
