@@ -23,6 +23,7 @@ import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.body.BodyDeclaration;
 import japa.parser.ast.body.MethodDeclaration;
+import japa.parser.ast.body.ModifierSet;
 import japa.parser.ast.body.Parameter;
 import japa.parser.ast.body.VariableDeclarator;
 import japa.parser.ast.body.VariableDeclaratorId;
@@ -38,6 +39,7 @@ import japa.parser.ast.type.ClassOrInterfaceType;
 import japa.parser.ast.type.ReferenceType;
 import japa.parser.ast.type.Type;
 import sav.common.core.SavRtException;
+import sav.common.core.utils.ClassUtils;
 
 /**
  * @author LLT
@@ -47,10 +49,17 @@ public class MainClassJWriter extends JWriter implements ICompilationUnitWriter 
 	private static final String CLASS_SUFFIX = "Main";
 	private static final String TEST_OBJ_VAR_PREFIX = "obj";
 	private MethodBuilder mainMethod;
+	private CompilationUnitBuilder cuBuilder;
 	private int idx;
+	private CompilationUnit result;
 	
 	public MainClassJWriter(String pkgName, String classPrefix) {
+		reset(pkgName, classPrefix);
+	}
+
+	private void reset(String pkgName, String classPrefix) {
 		try {
+			result = null;
 			initMainClass(pkgName, classPrefix);
 		} catch(ParseException ex) {
 			throw new SavRtException(ex);
@@ -71,6 +80,7 @@ public class MainClassJWriter extends JWriter implements ICompilationUnitWriter 
 		}
 	 */
 	public void createCallInMainClass(String pkgName, String className, CompilationUnit cu) {
+		cuBuilder.imports(ClassUtils.getCanonicalName(pkgName, className));
 		/* add class initialization statement
 		 * TestClass clazz = new TestClass(); */
 		Type type = toType(className, 0);
@@ -103,11 +113,12 @@ public class MainClassJWriter extends JWriter implements ICompilationUnitWriter 
 	}
 
 	private void initMainClass(String pkgName, String classPrefix) throws ParseException {
-		CompilationUnitBuilder cu = CompilationUnitBuilder.createNew()
+		cuBuilder = CompilationUnitBuilder.createNew()
 			.pakage(pkgName)
 			.startType(classPrefix + CLASS_SUFFIX);
-		createInvokeMethod(cu);
-		mainMethod = cu.startMethod("main")
+		createInvokeMethod(cuBuilder);
+		mainMethod = cuBuilder.startMethod("main")
+			.modifiers(ModifierSet.addModifier(ModifierSet.PUBLIC, ModifierSet.STATIC))
 			.parameters(toParameter(String.class, "args", 1));
 	}
 	
@@ -124,6 +135,7 @@ public class MainClassJWriter extends JWriter implements ICompilationUnitWriter 
 				+ "		return;"
 				+ "};");
 		cu.startMethod(INVOKE_METHOD_NAME)
+			.modifiers(ModifierSet.addModifier(ModifierSet.PRIVATE, ModifierSet.STATIC))
 			.parameters(toParameter(Object.class, "obj", 0),
 					toParameter(String.class, "methodName", 0))
 			.statement(tryStmt)
@@ -143,7 +155,9 @@ public class MainClassJWriter extends JWriter implements ICompilationUnitWriter 
 	}
 	
 	public CompilationUnit getMainClass() {
-		CompilationUnitBuilder cu = mainMethod.endMethod();
-		return cu.getResult();
+		if (result == null) {
+			result = mainMethod.endMethod().getResult();
+		}
+		return result;
 	}
 }

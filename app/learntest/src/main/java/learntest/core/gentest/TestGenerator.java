@@ -53,7 +53,7 @@ public class TestGenerator {
 		return result;
 	}
 	
-	public GentestResult gentest(GentestParams params, TestsPrinter printer) throws SavException, ClassNotFoundException {
+	protected GentestResult gentest(GentestParams params, TestsPrinter printer) throws SavException, ClassNotFoundException {
 		Class<?> clazz = prjClassLoader.loadClass(params.getTargetClassName());
 		RandomTraceGentestBuilder gentest = new RandomTraceGentestBuilder(params.getNumberOfTcs())
 										.classLoader(prjClassLoader)

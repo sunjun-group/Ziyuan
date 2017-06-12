@@ -22,11 +22,14 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 
+import learntest.core.gentest.GentestParams;
 import learntest.main.LearnTestConfig;
+import learntest.main.LearnTestParams;
 import learntest.plugin.utils.IProjectUtils;
 import learntest.plugin.utils.IStatusUtils;
 import learntest.util.LearnTestUtil;
 import sav.common.core.Constants;
+import sav.common.core.SavRtException;
 import sav.common.core.SystemVariables;
 import sav.strategies.dto.AppJavaClassPath;
 
@@ -60,28 +63,38 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	}
 	
 	protected void prepareData() throws CoreException {
+		appClasspath = initAppJavaClassPath();
 	}
 	
-	public AppJavaClassPath getAppClasspath() throws CoreException {
+	public AppJavaClassPath getAppClasspath() {
 		if (appClasspath == null) {
 			appClasspath = initAppJavaClassPath();
 		}
 		return appClasspath;
 	}
 	
-	private AppJavaClassPath initAppJavaClassPath() throws CoreException {
-		IProject project = IProjectUtils.getProject(LearnTestConfig.projectName);
-		IJavaProject javaProject = IProjectUtils.getJavaProject(project);
-		AppJavaClassPath appClasspath = new AppJavaClassPath();
-		appClasspath.setJavaHome(IProjectUtils.getJavaHome(javaProject));
-		appClasspath.addClasspaths(LearnTestUtil.getPrjectClasspath());
-		String outputPath = LearnTestUtil.getOutputPath();
-		appClasspath.setTarget(outputPath);
-		appClasspath.setTestTarget(outputPath);
-		appClasspath.setTestSrc(LearnTestUtil.retrieveTestSourceFolder());
-		appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER, LearnTestUtil.getPrjClassLoader());
-		appClasspath.getPreferences().set(SystemVariables.TESTCASE_TIMEOUT, Constants.DEFAULT_JUNIT_TESTCASE_TIMEOUT);
-		return appClasspath;
+	protected GentestParams initGentestParams(LearnTestParams learntestParams) {
+		return learntestParams.initGentestParams(getAppClasspath());
+	}
+	
+	private AppJavaClassPath initAppJavaClassPath() {
+		try {
+			IProject project = IProjectUtils.getProject(LearnTestConfig.projectName);
+			IJavaProject javaProject = IProjectUtils.getJavaProject(project);
+			AppJavaClassPath appClasspath = new AppJavaClassPath();
+			appClasspath.setJavaHome(IProjectUtils.getJavaHome(javaProject));
+			appClasspath.addClasspaths(LearnTestUtil.getPrjectClasspath());
+			String outputPath = LearnTestUtil.getOutputPath();
+			appClasspath.setTarget(outputPath);
+			appClasspath.setTestTarget(outputPath);
+			appClasspath.setTestSrc(LearnTestUtil.retrieveTestSourceFolder());
+			appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER, LearnTestUtil.getPrjClassLoader());
+			appClasspath.getPreferences().set(SystemVariables.TESTCASE_TIMEOUT,
+					Constants.DEFAULT_JUNIT_TESTCASE_TIMEOUT);
+			return appClasspath;
+		} catch (CoreException ex) {
+			throw new SavRtException(ex);
+		}
 	}
 	
 	public void refreshProject(){

@@ -112,6 +112,11 @@ public class CompilationUnitBuilder {
 			curMethod = method;
 		}
 		
+		public MethodBuilder modifiers(int modifiers) {
+			curMethod.setModifiers(modifiers);
+			return this;
+		}
+		
 		public MethodBuilder parameters(Parameter... parameters) {
 			return parameters(Arrays.asList(parameters));
 		}

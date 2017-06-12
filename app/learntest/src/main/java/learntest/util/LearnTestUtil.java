@@ -160,11 +160,11 @@ public class LearnTestUtil {
 		return findSpecificMethod(className, methodName, ObjectUtils.toInteger(lineNumberString, 0));
 	}
 
-	private static MethodDeclaration findSpecificMethod(String className, String methodName, int lineNumber) {
+	public static MethodDeclaration findSpecificMethod(String className, String methodName, int lineNumber) {
 		CompilationUnit cu = findCompilationUnitInProject(className);
-		MethodFinder finder = new MethodFinder(lineNumber, cu, methodName);
+		MethodFinder finder = new MethodFinder(cu, methodName, lineNumber);
 		cu.accept(finder);
-		return finder.requiredMD;
+		return finder.getResult();
 	}
 	
 	private static String getMethodWthSignatureByBindingKey(String className, String methodName, int lineNumber) {
@@ -203,8 +203,12 @@ public class LearnTestUtil {
 
 	public static IMethod findMethod(String className, String methodName, int lineNumber) {
 		MethodDeclaration methodDecl = findSpecificMethod(className, methodName, lineNumber);
-		IMethod method = (IMethod) methodDecl.resolveBinding().getJavaElement();
+		IMethod method = toIMethod(methodDecl);
 		return method;
+	}
+
+	private static IMethod toIMethod(MethodDeclaration methodDecl) {
+		return (IMethod) methodDecl.resolveBinding().getJavaElement();
 	}
 
 	public static String getMethodWthSignatureBySignParser(String className, String methodName, int lineNumber)
@@ -379,5 +383,9 @@ public class LearnTestUtil {
 
 	public static IJavaProject getJavaProject() {
 		return JavaCore.create(getSpecificJavaProjectInWorkspace());
+	}
+
+	public static String getMethodSignature(MethodDeclaration methodDecl) throws SavException {
+		return getMethodSignature(toIMethod(methodDecl));
 	}
 }

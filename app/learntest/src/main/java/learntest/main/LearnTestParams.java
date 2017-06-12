@@ -8,10 +8,12 @@
 
 package learntest.main;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
 import learntest.core.commons.data.testtarget.TargetClass;
 import learntest.core.commons.data.testtarget.TargetMethod;
@@ -19,6 +21,8 @@ import learntest.core.gentest.GentestParams;
 import learntest.util.LearnTestUtil;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
+import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.SignatureUtils;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
 
@@ -49,7 +53,8 @@ public class LearnTestParams {
 	
 	public GentestParams initGentestParams(AppJavaClassPath appClassPath) {
 		GentestParams params = new GentestParams();
-		params.setMethodSignature(targetMethod.getMethodSignature());
+		params.setMethodSignature(SignatureUtils.createMethodNameSign(targetMethod.getMethodName(), 
+				targetMethod.getMethodSignature()));
 		params.setTargetClassName(targetMethod.getClassName());
 		params.setNumberOfTcs(1);
 		params.setTestPerQuery(1);
@@ -68,13 +73,19 @@ public class LearnTestParams {
 		TargetMethod method = new TargetMethod(targetClass);
 		method.setMethodName(LearnTestConfig.targetMethodName);
 		method.setLineNum( LearnTestConfig.getMethodLineNumber());
-		IMethod imethod = LearnTestUtil.findMethod(method.getClassName(), method.getMethodName(), method.getLineNum());
-		method.setMethodSignature(LearnTestUtil.getMethodSignature(imethod));
-		String[] parameterNames = imethod.getParameterNames();
-		if (parameterNames != null && parameterNames.length > 0) {
-			method.setParams(Arrays.asList(parameterNames));
-			method.setParamTypes(Arrays.asList(imethod.getParameterTypes()));
+		MethodDeclaration methodDeclaration = LearnTestUtil.findSpecificMethod(method.getClassName(), method.getMethodName(), method.getLineNum());
+		method.setMethodSignature(LearnTestUtil.getMethodSignature(methodDeclaration));
+		List<String> paramNames = new ArrayList<String>(CollectionUtils.getSize(methodDeclaration.parameters()));
+		List<String> paramTypes = new ArrayList<String>(paramNames.size());
+		for(Object obj: methodDeclaration.parameters()){
+			if(obj instanceof SingleVariableDeclaration){
+				SingleVariableDeclaration svd = (SingleVariableDeclaration)obj;
+				paramNames.add(svd.getName().getIdentifier());
+				paramTypes.add(svd.getType().toString());
+			}
 		}
+		method.setParams(paramNames);
+		method.setParamTypes(paramTypes);
 		params.targetMethod = method;
 	}
 

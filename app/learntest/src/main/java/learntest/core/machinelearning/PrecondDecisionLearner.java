@@ -133,6 +133,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 			/* after running sampling, probes will be updated as well */
 			SamplingResult sampleResult = dataPreprocessor.sampleForModel(nodeProbe, probes.getOriginalVars(),
 					mcm.getDataPoints(), getPreconditions(probes, node), mcm.getLearnedDividers());
+			if (sampleResult == null) {
+				continue;
+			}
 			INodeCoveredData newData = sampleResult.getNewData(nodeProbe);
 			nodeProbe.getPreconditions().clearInvalidData(newData);
 			mcm.getLearnedModels().clear();
