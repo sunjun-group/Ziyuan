@@ -10,7 +10,7 @@ Bundle-ClassPath: learntest.jar,
  lib/xmlbeans-2.6.0.jar,
  lib/jacop-4.4.0.jar,
  lib/cfgcoverage.jacoco.jar,
- lib/guice-3.0.jar,
+ lib/guice-3.0.jar
 Export-Package: common.cfg,
  common.cfg.graph,
  learntest,
