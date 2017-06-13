@@ -167,6 +167,8 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				System.out.println("working method: " + LearnTestConfig.targetClassName + "."
 						+ LearnTestConfig.targetMethodName);
 
+				runJDart();
+				
 				try {
 					int times = 1;
 					
@@ -186,6 +188,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 						int end = cu.getLineNumber(method.getStartPosition() + method.getLength());
 						int length = end - start + 1;
 
+						//TODO export JDart information here
 						Trial trial = new Trial(fullMN, l2tAverageInfo.getTime(), l2tAverageInfo.getCoverage(),
 								l2tAverageInfo.getTestCnt(), ranAverageInfo.getTime(), ranAverageInfo.getCoverage(),
 								ranAverageInfo.getTestCnt(), length, start);
