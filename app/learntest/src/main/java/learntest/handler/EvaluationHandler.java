@@ -30,6 +30,8 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 
 import icsetlv.common.utils.PrimitiveUtils;
+import jdart.handler.RunJDartHandler;
+import jdart.model.TestInput;
 import learntest.handler.filter.classfilter.ClassNameFilter;
 import learntest.handler.filter.classfilter.TargetClassFilter;
 import learntest.handler.filter.classfilter.TestableClassFilter;
@@ -142,6 +144,14 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		info.totalNum += collector.totalMethodNum;
 	}
 
+	private void runJDart(){
+		RunJDartHandler handler = new RunJDartHandler();
+		List<TestInput> inputs = handler.runJDart();
+		
+		//calculate coverage
+		
+	}
+	
 	private void evaluateForMethodList(TrialExcelHandler excelHandler, CompilationUnit cu,
 			List<MethodDeclaration> validMethods) {
 		if (!validMethods.isEmpty()) {

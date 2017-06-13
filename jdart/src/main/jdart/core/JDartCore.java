@@ -22,9 +22,10 @@ import main.RunJPF;
  */
 public class JDartCore {
 	
-	public void run(JDartParams jdartParams) {
+	public List<TestInput> run(JDartParams jdartParams) {
 		String[] config = constructConfig(jdartParams);
 		List<TestInput> inputList = RunJPF.run(config);
+		return inputList;
 	}
 	
 	private static String[] constructConfig(JDartParams params) {

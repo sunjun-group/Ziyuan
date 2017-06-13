@@ -1,5 +1,7 @@
 package jdart.handler;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -7,6 +9,7 @@ import org.eclipse.core.runtime.Status;
 
 import jdart.core.JDartCore;
 import jdart.core.JDartParams;
+import jdart.model.TestInput;
 import learntest.core.commons.data.testtarget.TargetMethod;
 import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.TestGenerator;
@@ -21,8 +24,8 @@ import sav.strategies.vm.VMConfiguration;
 
 public class RunJDartHandler extends AbstractLearntestHandler {
 
-	@Override
-	protected IStatus execute(IProgressMonitor monitor) {
+	
+	public List<TestInput> runJDart(){
 		try {
 			/* init params */
 			LearnTestParams learntestParams = LearnTestParams.initFromLearnTestConfig();
@@ -33,11 +36,18 @@ public class RunJDartHandler extends AbstractLearntestHandler {
 			/* run jdart */
 			jdartParams.setMainEntry(testResult.getMainClassName());
 			JDartCore jdartCore = new JDartCore();
-			jdartCore.run(jdartParams);
+			List<TestInput> inputs = jdartCore.run(jdartParams);
+			return inputs;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
+		return null;
+	}
+	
+	@Override
+	protected IStatus execute(IProgressMonitor monitor) {
+		runJDart();
 		return Status.OK_STATUS;
 	}
 	

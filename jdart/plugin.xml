@@ -8,6 +8,11 @@
             id="learntest.command.jdart"
             name="Run JDart">
       </command>
+      <command
+            defaultHandler="jdart.handler.RunAllJDartHandler"
+            id="jdart.command.runAll"
+            name="Run All Methods With JDart">
+      </command>
    </extension>
 	<extension
          point="org.eclipse.ui.menus">
@@ -19,6 +24,11 @@
             <command
                   commandId="learntest.command.jdart"
                   label="Run JDart"
+                  style="push">
+            </command>
+            <command
+                  commandId="jdart.command.runAll"
+                  label="Run All Methods with JDart"
                   style="push">
             </command>
          </menu>
