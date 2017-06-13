@@ -8,13 +8,12 @@
 
 package gentest.junit;
 
-import gentest.core.data.Sequence;
-import japa.parser.ast.CompilationUnit;
-import japa.parser.ast.body.TypeDeclaration;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import gentest.core.data.Sequence;
+import japa.parser.ast.CompilationUnit;
+import japa.parser.ast.body.TypeDeclaration;
 import sav.common.core.Constants;
 import sav.common.core.Pair;
 import sav.common.core.utils.ClassUtils;
@@ -27,13 +26,11 @@ import sav.common.core.utils.CollectionUtils;
 public class TestsPrinter implements ITestsPrinter {
 	public static final int INFINITIVE_METHODS_PER_CLASS = -1;
 	private ICompilationUnitPrinter cuPrinter;
+	private ICompilationUnitWriter cuWriter;
 	private boolean separatePassFail = true; 
 	private int methodSPerClass = INFINITIVE_METHODS_PER_CLASS;
-	private String pkg;
-	private String failPkg;
-	private String methodPrefix;
-	private String classPrefix;
 	private int classIdx;
+	private PrinterParams params;
 	
 	public TestsPrinter(String pkg, String failPkg, String methodPrefix, String classPrefix,
 			String srcPath) {
@@ -56,11 +53,12 @@ public class TestsPrinter implements ITestsPrinter {
 
 	public TestsPrinter(String pkg, String failPkg,
 			String methodPrefix, String classPrefix, ICompilationUnitPrinter cuPrinter) {
-		this.pkg = pkg;
-		this.failPkg = failPkg;
-		this.methodPrefix = methodPrefix;
-		this.classPrefix = classPrefix;
-		if (failPkg == null) {
+		this(PrinterParams.of(pkg, failPkg, methodPrefix, classPrefix), cuPrinter);
+	}
+	
+	public TestsPrinter(PrinterParams params, ICompilationUnitPrinter cuPrinter) {
+		this.params = params;
+		if (params.failPkg == null) {
 			separatePassFail = false;
 		}
 		classIdx = 1;
@@ -81,42 +79,52 @@ public class TestsPrinter implements ITestsPrinter {
 		if (!separatePassFail) {
 			List<Sequence> allTests = CollectionUtils.join(
 					testSeqs.a, testSeqs.b);
-			units = createCompilationUnits(allTests, pkg);
+			units = createCompilationUnits(allTests, params.pkg);
 			System.currentTimeMillis();
 		} else {
-			units = createCompilationUnits(testSeqs.a, pkg);
-			units.addAll(createCompilationUnits(testSeqs.b, failPkg));
+			units = createCompilationUnits(testSeqs.a, params.pkg);
+			units.addAll(createCompilationUnits(testSeqs.b, params.failPkg));
 		}
 		/* print all compilation units */
 		cuPrinter.print(units);
 		return getJunitClassNames(units);
 	}
 	
-	private List<String> getJunitClassNames(List<CompilationUnit> units) {
+	public static List<String> getJunitClassNames(List<CompilationUnit> units) {
 		List<String> result = new ArrayList<String>(units.size());
 		for (CompilationUnit cu : units) {
-			TypeDeclaration type = cu.getTypes().get(0);
-			result.add(ClassUtils.getCanonicalName(cu.getPackage().getName().getName(), 
-					type.getName()));
+			String className = getJunitClassName(cu);
+			result.add(className);
 		}
 		return result;
 	}
 
+	public static String getJunitClassName(CompilationUnit cu) {
+		TypeDeclaration type = cu.getTypes().get(0);
+		String className = ClassUtils.getCanonicalName(cu.getPackage().getName().getName(), 
+				type.getName());
+		return className;
+	}
+	
 	public List<CompilationUnit> createCompilationUnits(List<Sequence> seqs,
 			String pkgName) {
-		JWriter jwriter = new JWriter();
-		jwriter.setPackageName(pkgName);
-		jwriter.setMethodPrefix(methodPrefix);
+		ensureCuWriter();
 		List<List<Sequence>> subSeqs = divideSequencess(seqs);
 		List<CompilationUnit> units = new ArrayList<CompilationUnit>();
 		for (List<Sequence> subSeq : subSeqs) {
-			jwriter.setClazzName(getClassName());
-			CompilationUnit cu = jwriter.write(subSeq);
+			CompilationUnit cu = cuWriter.write(subSeq, pkgName, getClassName(),
+					params.methodPrefix);
 			units.add(cu);
 		}
 		return units;
 	}
-
+	
+	private void ensureCuWriter() {
+		if (cuWriter == null) {
+			cuWriter = new JWriter();
+		}
+	}
+	
 	/**
 	 * divide sequences into small parts depend on methods per class
 	 * configuration.
@@ -139,7 +147,7 @@ public class TestsPrinter implements ITestsPrinter {
 	}
 
 	private String getClassName() {
-		return classPrefix + (classIdx ++);
+		return params.classPrefix + (classIdx ++);
 	}
 	
 	private int getMaxClassIdx(List<String> existedFiles, String classPrefix) {
@@ -171,6 +179,10 @@ public class TestsPrinter implements ITestsPrinter {
 	
 	public ICompilationUnitPrinter getCuPrinter() {
 		return cuPrinter;
+	}
+	
+	public void setCuWriter(ICompilationUnitWriter cuWriter) {
+		this.cuWriter = cuWriter;
 	}
 
 	public enum PrintOption {

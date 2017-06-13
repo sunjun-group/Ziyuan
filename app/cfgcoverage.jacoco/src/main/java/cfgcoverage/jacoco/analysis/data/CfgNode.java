@@ -221,8 +221,9 @@ public class CfgNode {
 
 	public void addChildsDependentees(CfgNode dependentee) {
 		if (dependentee.getDependentees() != null) {
+			BranchRelationship branchType = getBranchRelationship(dependentee.getIdx());
 			for (CfgNode childDependentee : dependentee.getDependentees()) {
-				addDependentee(childDependentee, false, dependentee.getBranchRelationship(childDependentee.idx));
+				addDependentee(childDependentee, false, branchType);
 			}
 		}
 	}

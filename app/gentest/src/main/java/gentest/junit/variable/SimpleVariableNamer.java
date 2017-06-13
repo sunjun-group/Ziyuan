@@ -16,6 +16,15 @@ import gentest.core.data.Sequence;
  */
 public class SimpleVariableNamer implements IVariableNamer {
 	private static final String VAR_PREFIX = "var";
+	private String varPrefix;
+	
+	public SimpleVariableNamer() {
+		this(VAR_PREFIX);
+	}
+	
+	public SimpleVariableNamer(String varPrefix) {
+		this.varPrefix = varPrefix;
+	}
 	
 	@Override
 	public String getName(Class<?> type, int varId) {
@@ -23,7 +32,7 @@ public class SimpleVariableNamer implements IVariableNamer {
 	}
 
 	private String getVar(int varId) {
-		return VAR_PREFIX + varId;
+		return varPrefix + varId;
 	}
 
 	@Override

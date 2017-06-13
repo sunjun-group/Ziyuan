@@ -25,6 +25,9 @@ public abstract class ExecutionTimer {
 		this.timeout = unit.toMillis(timeout);
 	}
 	
+	/**
+	 * @return whether the process is success or not.
+	 */
 	public abstract boolean run(final Runnable target);
 	
 	public static ExecutionTimer getDefaultExecutionTimer(long timeout) {
