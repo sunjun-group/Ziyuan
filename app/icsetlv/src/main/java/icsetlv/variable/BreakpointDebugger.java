@@ -40,6 +40,7 @@ import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.BreakPoint;
+import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.vm.SimpleDebugger;
 import sav.strategies.vm.VMConfiguration;
 
@@ -206,7 +207,7 @@ public abstract class BreakpointDebugger {
 			List<sav.strategies.dto.BreakPoint.Variable> varList = point.getVars();
 			if(varList != null && !varList.isEmpty()){
 				variableList = varList;
-				point.setVars(new ArrayList<>());
+				point.setVars(new ArrayList<Variable>());
 				break;
 			}
 			System.currentTimeMillis();
@@ -232,7 +233,7 @@ public abstract class BreakpointDebugger {
 	
 	protected final List<Location> addBreakpointWatch(VirtualMachine vm,
 			ReferenceType refType, int lineNumber) {
-		List<Location> returnLocations = new ArrayList<>();
+		List<Location> returnLocations = new ArrayList<Location>();
 		try {
 			List<Location> locations = refType.locationsOfLine(lineNumber);
 			for(Location location: locations) {

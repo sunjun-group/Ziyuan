@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.ui.commands">
+         point="org.eclipse.ui.commands" id="learntestCommands">
       <command
             defaultHandler="learntest.handler.GenerateTestHandler"
             id="learntest.command.generatetest"
@@ -25,7 +25,7 @@
       </command>
    </extension>
    <extension
-         point="org.eclipse.ui.menus">
+         point="org.eclipse.ui.menus" id="learntestMenu">
       <menuContribution
             allPopups="false"
             locationURI="menu:org.eclipse.ui.main.menu">
@@ -58,6 +58,7 @@
       </menuContribution>
    </extension>
    <extension
+         id="learntestPreferences"
          point="org.eclipse.ui.preferencePages">
       <page
             class="learntest.preference.LearnTestPreference"
@@ -66,4 +67,39 @@
       </page>
    </extension>
 
+	<extension
+       id="jdartCommands"
+       point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="learntest.plugin.handler.RunJDartHandler"
+            id="learntest.command.jdart"
+            name="Run JDart">
+      </command>
+      <command
+            defaultHandler="learntest.plugin.handler.RunAllJDartHandler"
+            id="jdart.command.runAll"
+            name="Run All Methods With JDart">
+      </command>
+   </extension>
+	<extension
+       id="jdartMenus"
+       point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               label="Run JDart">
+            <command
+                  commandId="learntest.command.jdart"
+                  label="Run JDart"
+                  style="push">
+            </command>
+            <command
+                  commandId="jdart.command.runAll"
+                  label="Run All Methods with JDart"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
 </plugin>

@@ -106,8 +106,6 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 		
 		testInfoGroup.setLayout(layout);
 		
-		
-		
 		Label testClassLabel = new Label(testInfoGroup, SWT.NONE);
 		testClassLabel.setText("Test Class: ");
 		testClassText = new Text(testInfoGroup, SWT.BORDER);

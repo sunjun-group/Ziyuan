@@ -12,7 +12,6 @@ import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
 
-import jdart.handler.PluginUtils;
 import jdart.model.TestInput;
 import main.RunJPF;
 
@@ -30,8 +29,8 @@ public class JDartCore {
 	
 	private static String[] constructConfig(JDartParams params) {
 		return  new String[]{
-				"+app=" + PluginUtils.loadAbsolutePath("libs/jdart/jpf.properties"),
-				"+site=" + PluginUtils.loadAbsolutePath("libs/jpf.properties"),
+				"+app=" + params.getAppProperties(),
+				"+site=" + params.getSiteProperties(),
 				"+jpf-jdart.classpath+=" + params.getClasspathStr(),
 				"+target=" + params.getMainEntry(),
 				"+concolic.method=" + params.getMethodName(),
@@ -42,8 +41,8 @@ public class JDartCore {
 	
 	private static String[] constructConfig(String mainEntry, String className, String pathString, String methodName, String paramString) {
 		return  new String[]{
-				"+app=" + PluginUtils.loadAbsolutePath("libs/jdart/jpf.properties"),
-				"+site=" + PluginUtils.loadAbsolutePath("libs/jpf.properties"),
+				"+app=libs/jdart/jpf.properties",
+				"+site=libs/jpf.properties",
 				"+jpf-jdart.classpath+=" + pathString,
 				"+target=" + className,
 				"+concolic.method=" + methodName,

@@ -140,6 +140,7 @@ public class BreakPoint extends ClassLocation {
 		// specify whether the variable is belonged to class object or method.
 		private final VarScope scope;
 		private String id;
+		private String type;
 		
 		public Variable(String root, String fullName, VarScope scope) {
 			this.root = root;
@@ -192,6 +193,14 @@ public class BreakPoint extends ClassLocation {
 
 		public VarScope getScope() {
 			return scope;
+		}
+		
+		public String getType() {
+			return type;
+		}
+		
+		public void setType(String type) {
+			this.type = type;
 		}
 
 		@Override
