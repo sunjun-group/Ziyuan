@@ -29,11 +29,12 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 
-import icsetlv.common.utils.PrimitiveUtils;
-import jdart.model.TestInput;
+import learntest.core.JDartLearntest;
+import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.io.excel.Trial;
 import learntest.io.excel.TrialExcelHandler;
 import learntest.main.LearnTestConfig;
+import learntest.main.LearnTestParams;
 import learntest.main.RunTimeInfo;
 import learntest.plugin.handler.filter.classfilter.ClassNameFilter;
 import learntest.plugin.handler.filter.classfilter.TargetClassFilter;
@@ -45,6 +46,7 @@ import learntest.plugin.handler.filter.methodfilter.TestableMethodFilter;
 import learntest.plugin.utils.IProjectUtils;
 import learntest.util.LearnTestUtil;
 import sav.common.core.utils.ClassUtils;
+import sav.common.core.utils.PrimitiveUtils;
 import sav.settings.SAVTimer;
 
 public class EvaluationHandler extends AbstractLearntestHandler {
@@ -143,72 +145,65 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		info.totalNum += collector.totalMethodNum;
 	}
 
-	private void runJDart(){
-		RunJDartHandler handler = new RunJDartHandler();
-		List<TestInput> inputs = handler.runJDart();
-		
-		//calculate coverage
-		
-	}
-	
 	private void evaluateForMethodList(TrialExcelHandler excelHandler, CompilationUnit cu,
 			List<MethodDeclaration> validMethods) {
-		if (!validMethods.isEmpty()) {
-			String className = LearnTestUtil.getFullNameOfCompilationUnit(cu);
-			LearnTestConfig.targetClassName = className;
-			for (MethodDeclaration method : validMethods) {
-				String simpleMethodName = method.getName().getIdentifier();
-				LearnTestConfig.targetMethodName = simpleMethodName;
+		if (validMethods.isEmpty()) {
+			return;
+		}
+		
+		String className = LearnTestUtil.getFullNameOfCompilationUnit(cu);
+		LearnTestConfig.targetClassName = className;
+		for (MethodDeclaration method : validMethods) {
+			TargetMethod targetMethod = initTargetMethod(className, cu, method);
+
+			log("working method: " + targetMethod.getMethodFullName());
+			try {
+				LearnTestParams params = initLearntestParams(targetMethod);
+				RunTimeInfo l2tAverageInfo = new RunTimeInfo();
+				RunTimeInfo ranAverageInfo = new RunTimeInfo();
+				log("run l2t..");
+				runLearntest(l2tAverageInfo, params, true);
+				log("run randoop..");
+				runLearntest(ranAverageInfo, params.createNew(), false);
+				log("run jdart..");
+				params = params.createNew();
+				LearnTestConfig.isL2TApproach = true; // TODO to remove
+				params.setLearnByPrecond(true);
+				RunTimeInfo jdartInfo = runJdartLearntest(params);
 				
-				int lineNumber = cu.getLineNumber(method.getName().getStartPosition());
-				LearnTestConfig.targetMethodLineNum = String.valueOf(lineNumber);
+				if (l2tAverageInfo.isNotZero() && ranAverageInfo.isNotZero()) {
+					String fullMN = ClassUtils.toClassMethodStr(LearnTestConfig.targetClassName,
+							LearnTestConfig.targetMethodName);
+					int start = cu.getLineNumber(method.getStartPosition());
+					int end = cu.getLineNumber(method.getStartPosition() + method.getLength());
+					int length = end - start + 1;
 
-				System.out.println("working method: " + LearnTestConfig.targetClassName + "."
-						+ LearnTestConfig.targetMethodName);
-
-				runJDart();
-				
-				try {
-					int times = 1;
-					
-					RunTimeInfo l2tAverageInfo = new RunTimeInfo();
-					RunTimeInfo ranAverageInfo = new RunTimeInfo();
-					for (int i = 0; i < times; i++) {
-						runLearntest(l2tAverageInfo, true);
-						runLearntest(ranAverageInfo, false);
-					}
-					
-					if (l2tAverageInfo.isNotZero() && ranAverageInfo.isNotZero()) {
-						l2tAverageInfo.reduceByTimes(times);
-						ranAverageInfo.reduceByTimes(times);
-						String fullMN = ClassUtils.toClassMethodStr(LearnTestConfig.targetClassName,
-								LearnTestConfig.targetMethodName);
-						int start = cu.getLineNumber(method.getStartPosition());
-						int end = cu.getLineNumber(method.getStartPosition() + method.getLength());
-						int length = end - start + 1;
-
-						//TODO export JDart information here
-						Trial trial = new Trial(fullMN, l2tAverageInfo.getTime(), l2tAverageInfo.getCoverage(),
-								l2tAverageInfo.getTestCnt(), ranAverageInfo.getTime(), ranAverageInfo.getCoverage(),
-								ranAverageInfo.getTestCnt(), length, start);
-						excelHandler.export(trial);
-					}
-				} catch (Exception e) {
-					handleException(e);
-					System.currentTimeMillis();
-				} catch (java.lang.NoClassDefFoundError error){
-					error.printStackTrace();
+					Trial trial = new Trial(fullMN, length, start, l2tAverageInfo, ranAverageInfo, jdartInfo);
+					excelHandler.export(trial);
 				}
-
+			} catch (Exception e) {
+				handleException(e);
 			}
 
 		}
 	}
+	
+	private RunTimeInfo runJdartLearntest(LearnTestParams params) throws Exception {
+		JDartLearntest learntest = new JDartLearntest(getAppClasspath());
+		return learntest.jdart(params);
+	}
+
+	private LearnTestParams initLearntestParams(TargetMethod targetMethod) {
+		LearnTestParams params = new LearnTestParams(targetMethod);
+		setSystemConfig(params);
+		return params;
+	}
 
 	private GenerateTestHandler testHandler = new GenerateTestHandler();
-	private RunTimeInfo runLearntest(RunTimeInfo runInfo, boolean l2tApproach) throws InterruptedException {
+	private RunTimeInfo runLearntest(RunTimeInfo runInfo, LearnTestParams params, boolean l2tApproach) throws Exception {
 		LearnTestConfig.isL2TApproach = l2tApproach;
-		RunTimeInfo l2tInfo = testHandler.generateTest(l2tApproach);
+		params.setLearnByPrecond(l2tApproach);
+		RunTimeInfo l2tInfo = testHandler.runLearntest(params);
 		if (runInfo != null && l2tInfo != null) {
 			runInfo.add(l2tInfo);
 		} else {
@@ -324,7 +319,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		}
 
 		@SuppressWarnings("unused")
-		private boolean containsAllPrimitiveType(List parameters){
+		private boolean containsAllPrimitiveType(List<?> parameters){
 			for (Object obj : parameters) {
 				if (obj instanceof SingleVariableDeclaration) {
 					SingleVariableDeclaration svd = (SingleVariableDeclaration) obj;

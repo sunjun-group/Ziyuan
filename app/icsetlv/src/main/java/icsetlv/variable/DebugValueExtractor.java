@@ -57,9 +57,9 @@ import com.sun.jdi.event.BreakpointEvent;
 
 import icsetlv.DefaultValues;
 import icsetlv.common.dto.BreakpointValue;
-import icsetlv.common.utils.PrimitiveUtils;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
+import sav.common.core.utils.PrimitiveUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.dto.BreakPoint.Variable.VarScope;
@@ -322,30 +322,30 @@ public class DebugValueExtractor {
 			if (PrimitiveUtils.isString(typeName)) {
 				appendStringVarVal(parent, varId, (ObjectReference) value, level, thread);
 				// parent.add(new StringValue(varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread)));
-			} else if (PrimitiveUtils.isBoolean(typeName)) {
+			} else if (PrimitiveUtils.isBooleanType(typeName)) {
 				parent.add(new sav.strategies.dto.execute.value.BooleanValue(
 						varId, Boolean.parseBoolean(toPrimitiveValue((ClassType) type, (ObjectReference)value, thread))));
-			} else if (PrimitiveUtils.isByte(typeName)) {
+			} else if (PrimitiveUtils.isByteType(typeName)) {
 				parent.add(new sav.strategies.dto.execute.value.ByteValue(
 						varId, Byte.parseByte(toPrimitiveValue((ClassType) type, (ObjectReference)value, thread))));
-			} else if (PrimitiveUtils.isChar(typeName)) {
+			} else if (PrimitiveUtils.isCharType(typeName)) {
 				parent.add(new sav.strategies.dto.execute.value.CharValue(
 						varId, toPrimitiveValue((ClassType) type, (ObjectReference)value, thread).charAt(0)));
-			} else if (PrimitiveUtils.isDouble(typeName)) {
+			} else if (PrimitiveUtils.isDoubleType(typeName)) {
 				parent.add(new sav.strategies.dto.execute.value.DoubleValue(
 						varId, Double.parseDouble(toPrimitiveValue((ClassType) type, (ObjectReference)value, thread))));
-			} else if (PrimitiveUtils.isFloat(typeName)) {
+			} else if (PrimitiveUtils.isFloatType(typeName)) {
 				parent.add(new sav.strategies.dto.execute.value.FloatValue(
 						varId, Float.parseFloat(toPrimitiveValue((ClassType) type, (ObjectReference)value, thread))));
-			} else if (PrimitiveUtils.isInteger(typeName)) {
+			} else if (PrimitiveUtils.isIntegerType(typeName)) {
 				String s = toPrimitiveValue((ClassType) type, (ObjectReference)value, thread);
 				if (s.contains("\"")) s = s.substring(1, s.length() - 1);
 				parent.add(new sav.strategies.dto.execute.value.IntegerValue(
 						varId, Integer.parseInt(s)));
-			} else if (PrimitiveUtils.isLong(typeName)) {
+			} else if (PrimitiveUtils.isLongType(typeName)) {
 				parent.add(new sav.strategies.dto.execute.value.LongValue(
 						varId, Long.parseLong(toPrimitiveValue((ClassType) type, (ObjectReference)value, thread))));
-			} else if (PrimitiveUtils.isShort(typeName)) {
+			} else if (PrimitiveUtils.isShortType(typeName)) {
 				parent.add(new sav.strategies.dto.execute.value.ShortValue(
 						varId, Short.parseShort(toPrimitiveValue((ClassType) type, (ObjectReference)value, thread))));
 			} else if (PrimitiveUtils.isPrimitiveType(typeName)) {

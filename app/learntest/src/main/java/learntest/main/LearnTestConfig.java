@@ -3,7 +3,7 @@ package learntest.main;
 import org.eclipse.jdt.core.ICompilationUnit;
 
 import learntest.Activator;
-import learntest.preference.LearnTestPreference;
+import learntest.plugin.preferences.LearnTestPreference;
 import learntest.util.LearnTestUtil;
 
 public class LearnTestConfig {

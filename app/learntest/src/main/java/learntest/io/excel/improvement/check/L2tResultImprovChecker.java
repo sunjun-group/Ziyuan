@@ -66,7 +66,7 @@ public class L2tResultImprovChecker {
 		for (String method : commonMethods) {
 			Trial oldTrial = oldTrials.get(method);
 			Trial newTrial = newTrials.get(method);
-			double coverageDif = newTrial.getL2tCoverage() - oldTrial.getL2tCoverage();
+			double coverageDif = newTrial.getL2tRtInfo().getCoverage() - oldTrial.getL2tRtInfo().getCoverage();
 			if (coverageDif > 0) {
 				result.coverageIncreased(method, coverageDif);
 			} else {

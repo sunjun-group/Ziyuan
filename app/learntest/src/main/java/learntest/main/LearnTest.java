@@ -21,7 +21,7 @@ import learntest.breakpoint.data.DecisionLocation;
 import learntest.cfg.CfgHandlerAdapter;
 import learntest.cfg.CfgHandlerAdapter.CfgAproach;
 import learntest.cfg.ICfgHandler;
-import learntest.core.commons.data.testtarget.TargetMethod;
+import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.utils.DomainUtils;
 import learntest.core.gentest.TestGenerator.GentestResult;
 import learntest.exception.LearnTestException;
@@ -58,7 +58,7 @@ public class LearnTest {
 	public RunTimeInfo run(boolean random) throws LearnTestException {
 		try {
 			LearnTestParams params = LearnTestParams.initFromLearnTestConfig();
-			params.setRandomDecision(random);
+			params.setLearnByPrecond(!random);
 			return run(params);
 		} catch (ParseException e) {
 			throw new LearnTestException(e);
@@ -136,7 +136,7 @@ public class LearnTest {
 				// selectiveSampling = new JacopSelectiveSampling(tcExecutor);
 				selectiveSampling = new JavailpSelectiveSampling(tcExecutor);
 				selectiveSampling.addPrevValues(tcExecutor.getCurrentTestInputValues());
-				learner = new DecisionLearner(selectiveSampling, cfgHandler, params.isRandomDecision());
+				learner = new DecisionLearner(selectiveSampling, cfgHandler, params.isLearnByPrecond());
 				learner.learn(result);
 				coverage = learner.getCoverage();
 

@@ -4,22 +4,22 @@
    <extension
          point="org.eclipse.ui.commands" id="learntestCommands">
       <command
-            defaultHandler="learntest.handler.GenerateTestHandler"
+            defaultHandler="learntest.plugin.handler.GenerateTestHandler"
             id="learntest.command.generatetest"
             name="Generate Test">
       </command>
       <command
-            defaultHandler="learntest.handler.EvaluationHandler"
+            defaultHandler="learntest.plugin.handler.EvaluationHandler"
             id="learntest.command.evaluateAllMethods"
             name="Evaluate All Methods">
       </command>
       <command
-            defaultHandler="learntest.handler.ChangeModiferHandler"
+            defaultHandler="learntest.plugin.handler.ChangeModiferHandler"
             id="learntest.command.changeModifier"
             name="Change Modifier to Public">
       </command>
       <command
-            defaultHandler="learntest.handler.CodeCoverageHandler"
+            defaultHandler="learntest.plugin.handler.CodeCoverageHandler"
             id="learntest.command.codeCoverage"
             name="Generate code coverage">
       </command>
@@ -61,7 +61,7 @@
          id="learntestPreferences"
          point="org.eclipse.ui.preferencePages">
       <page
-            class="learntest.preference.LearnTestPreference"
+            class="learntest.plugin.preferences.LearnTestPreference"
             id="learntest.preference"
             name="Test Generation">
       </page>

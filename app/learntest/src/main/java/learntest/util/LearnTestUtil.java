@@ -385,7 +385,11 @@ public class LearnTestUtil {
 		return JavaCore.create(getSpecificJavaProjectInWorkspace());
 	}
 
-	public static String getMethodSignature(MethodDeclaration methodDecl) throws SavException {
-		return getMethodSignature(toIMethod(methodDecl));
+	public static String getMethodSignature(MethodDeclaration methodDecl) {
+		try {
+			return getMethodSignature(toIMethod(methodDecl));
+		} catch (SavException e) {
+			throw new SavRtException(e);
+		}
 	}
 }

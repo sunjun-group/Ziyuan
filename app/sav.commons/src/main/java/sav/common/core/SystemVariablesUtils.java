@@ -29,4 +29,7 @@ public class SystemVariablesUtils {
 		return jarPath;
 	}
 	
+	public static ClassLoader getClassLoadder(AppJavaClassPath appClasspath) {
+		return appClasspath.getPreferences().get(SystemVariables.PROJECT_CLASSLOADER);
+	}
 }

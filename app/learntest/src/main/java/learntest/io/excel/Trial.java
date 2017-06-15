@@ -1,35 +1,23 @@
 package learntest.io.excel;
 
+import learntest.main.RunTimeInfo;
+
 public class Trial {
 	/**
 	 * It should be a full name of method, including declaring class name.
 	 */
 	private String methodName;
-	
-	private double l2tTime;
-	private double l2tCoverage;
-	private int l2tTestCnt;
-	private double randoopTime;
-	private double randoopCoverage;
-	private int randoopTestCnt;
-	
 	private int methodLength;
 	private int methodStartLine;
-	
-	private double advandtage;
+
+	private RunTimeInfo l2tRtInfo;
+	private RunTimeInfo ranRtInfo;
+	private RunTimeInfo jdartRtInfo;
 
 	public Trial(){
 		
 	}
 	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((methodName == null) ? 0 : methodName.hashCode());
-		return result;
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -47,18 +35,14 @@ public class Trial {
 		return true;
 	}
 
-	public Trial(String methodName, double l2tTime, double l2tCoverage, int l2tTestCnt, double randoopTime, 
-			double randoopCoverage, int randoopTestCnt, int methodLength, int methodStartLine) {
-		super();
+	public Trial(String methodName, int methodLength, int methodEntryLineNo, RunTimeInfo l2tAverageInfo, RunTimeInfo ranAverageInfo,
+			RunTimeInfo jdartInfo) {
 		this.methodName = methodName;
-		this.l2tTime = l2tTime;
-		this.l2tCoverage = l2tCoverage;
-		this.l2tTestCnt = l2tTestCnt;
-		this.randoopTime = randoopTime;
-		this.randoopCoverage = randoopCoverage;
-		this.randoopTestCnt = randoopTestCnt;
 		this.methodLength = methodLength;
-		this.setMethodStartLine(methodStartLine);
+		this.methodStartLine = methodEntryLineNo;
+		this.l2tRtInfo = l2tAverageInfo;
+		this.ranRtInfo = ranAverageInfo;
+		this.jdartRtInfo = jdartInfo;
 	}
 
 	public String getMethodName() {
@@ -67,56 +51,6 @@ public class Trial {
 
 	public void setMethodName(String methodName) {
 		this.methodName = methodName;
-	}
-
-	public double getL2tTime() {
-		return l2tTime;
-	}
-
-	public void setL2tTime(double l2tTime) {
-		this.l2tTime = l2tTime;
-	}
-
-	public double getL2tCoverage() {
-		return l2tCoverage;
-	}
-
-	public void setL2tCoverage(double l2tCoverage) {
-		this.l2tCoverage = l2tCoverage;
-		updateAdvantage();
-	}
-
-	public int getL2tTestCnt() {
-		return l2tTestCnt;
-	}
-
-	public void setL2tTestCnt(int l2tTestCnt) {
-		this.l2tTestCnt = l2tTestCnt;
-	}
-
-	public double getRandoopTime() {
-		return randoopTime;
-	}
-
-	public void setRandoopTime(double randoopTime) {
-		this.randoopTime = randoopTime;
-	}
-
-	public double getRandoopCoverage() {
-		return randoopCoverage;
-	}
-
-	public void setRandoopCoverage(double randoopCoverage) {
-		this.randoopCoverage = randoopCoverage;
-		updateAdvantage();
-	}
-
-	public int getRandoopTestCnt() {
-		return randoopTestCnt;
-	}
-
-	public void setRandoopTestCnt(int randoopTestCnt) {
-		this.randoopTestCnt = randoopTestCnt;
 	}
 
 	public int getMethodLength() {
@@ -136,10 +70,38 @@ public class Trial {
 	}
 
 	public double getAdvantage() {
-		return advandtage;
+		return l2tRtInfo.getCoverage() - ranRtInfo.getCoverage();
 	}
 	
-	private void updateAdvantage() {
-		advandtage = l2tCoverage - randoopCoverage;
+	public RunTimeInfo getL2tRtInfo() {
+		return l2tRtInfo;
+	}
+
+	public void setL2tRtInfo(RunTimeInfo l2tRtInfo) {
+		this.l2tRtInfo = l2tRtInfo;
+	}
+
+	public RunTimeInfo getRanRtInfo() {
+		return ranRtInfo;
+	}
+
+	public void setRanRtInfo(RunTimeInfo ranRtInfo) {
+		this.ranRtInfo = ranRtInfo;
+	}
+
+	public RunTimeInfo getJdartRtInfo() {
+		return jdartRtInfo;
+	}
+
+	public void setJdartRtInfo(RunTimeInfo jdartRtInfo) {
+		this.jdartRtInfo = jdartRtInfo;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((methodName == null) ? 0 : methodName.hashCode());
+		return result;
 	}
 }

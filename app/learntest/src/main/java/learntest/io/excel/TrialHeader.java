@@ -16,6 +16,9 @@ import learntest.io.excel.common.ExcelHeader;
  */
 public enum TrialHeader implements ExcelHeader {
 	METHOD_NAME("method name"),
+	JDART_TIME("jdart time"),
+	JDART_COVERAGE("jdart coverage"),
+	JDART_TEST_CNT("jdart cnt"),
 	L2T_TIME("l2t time"),
 	L2T_COVERAGE("l2t coverage"),
 	L2T_TEST_CNT("l2t test cnt"),

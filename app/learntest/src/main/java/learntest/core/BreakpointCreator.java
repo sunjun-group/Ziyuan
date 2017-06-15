@@ -11,7 +11,7 @@ package learntest.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import learntest.core.commons.data.testtarget.TargetMethod;
+import learntest.core.commons.data.classinfo.TargetMethod;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.dto.BreakPoint.Variable.VarScope;
@@ -27,10 +27,17 @@ public class BreakpointCreator {
 		/* collect general variables for breakpoints */
 		List<Variable> generalVars = createMethodEntryVariables(method);
 		/* collect breakpoints from method cfg */
-		int lineNo = method.getCfg().getStartNode().getLine();
+		int lineNo = getMethodStartLine(method);
 		BreakPoint bkp = new BreakPoint(method.getClassName(), lineNo);
 		bkp.setVars(generalVars);
 		return bkp;
+	}
+
+	private static int getMethodStartLine(TargetMethod method) {
+		if (method.getCfg() == null) {
+			return method.getLineNum();
+		}
+		return method.getCfg().getStartNode().getLine();
 	}
 
 	private static List<Variable> createMethodEntryVariables(TargetMethod method) {

@@ -15,16 +15,19 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
-import learntest.core.commons.data.testtarget.TargetClass;
-import learntest.core.commons.data.testtarget.TargetMethod;
+import learntest.core.commons.data.classinfo.TargetClass;
+import learntest.core.commons.data.classinfo.TargetMethod;
+import learntest.core.commons.data.classinfo.JunitTestsInfo;
 import learntest.core.gentest.GentestParams;
 import learntest.util.LearnTestUtil;
+import sav.common.core.ISystemVariable;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.SignatureUtils;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
+import sav.strategies.dto.SystemPreferences;
 
 /**
  * @author LLT
@@ -32,16 +35,22 @@ import sav.strategies.dto.AppJavaClassPath;
  */
 public class LearnTestParams {
 	private boolean learnByPrecond;
-	private String filePath;
-	private String testClass;
 	private TargetMethod targetMethod;
+	private JunitTestsInfo initialTests;
+	private SystemPreferences systemConfig;
 	
-	private boolean randomDecision;
+	public LearnTestParams() {
+		systemConfig = new SystemPreferences();
+	}
 	
+	public LearnTestParams(TargetMethod targetMethod) {
+		this();
+		this.targetMethod = targetMethod;
+	}
+
+	@Deprecated
 	public static LearnTestParams initFromLearnTestConfig() throws SavException {
 		LearnTestParams params = new LearnTestParams();
-		params.filePath = LearnTestConfig.getTestClassFilePath();
-		params.testClass = LearnTestConfig.getTestClass(LearnTestConfig.isL2TApproach);
 		params.learnByPrecond = LearnTestConfig.isL2TApproach;
 		try {
 			initTargetMethod(params);
@@ -68,6 +77,7 @@ public class LearnTestParams {
 		return params;
 	}
 
+	@Deprecated
 	private static void initTargetMethod(LearnTestParams params) throws SavException, JavaModelException {
 		TargetClass targetClass = new TargetClass(LearnTestConfig.targetClassName);
 		TargetMethod method = new TargetMethod(targetClass);
@@ -89,30 +99,6 @@ public class LearnTestParams {
 		params.targetMethod = method;
 	}
 
-	public String getFilePath() {
-		return filePath;
-	}
-
-	public void setFilePath(String filePath) {
-		this.filePath = filePath;
-	}
-
-	public String getTestClass() {
-		return testClass;
-	}
-
-	public void setTestClass(String testClass) {
-		this.testClass = testClass;
-	}
-
-	public boolean isRandomDecision() {
-		return randomDecision;
-	}
-
-	public void setRandomDecision(boolean randomDecision) {
-		this.randomDecision = randomDecision;
-	}
-	
 	public TargetMethod getTargetMethod() {
 		return targetMethod;
 	}
@@ -123,5 +109,57 @@ public class LearnTestParams {
 	
 	public boolean isLearnByPrecond() {
 		return learnByPrecond;
+	}
+
+	public List<String> getInitialTestcases() {
+		return initialTests.getJunitTestcases();
+	}
+	
+	public void setInitialTests(JunitTestsInfo initialTests) {
+		this.initialTests = initialTests;
+	}
+	
+	public JunitTestsInfo getInitialTests() {
+		if (initialTests == null) {
+			initialTests = new JunitTestsInfo();
+		}
+		return initialTests;
+	}
+
+	public void setLearnByPrecond(boolean learnByPrecond) {
+		this.learnByPrecond = learnByPrecond;
+	}
+	
+
+	@Deprecated
+	public String getFilePath() {
+		return LearnTestConfig.getTestClassFilePath();
+	}
+
+	@Deprecated
+	public String getTestClass() {
+		return LearnTestConfig.getTestClass(LearnTestConfig.isL2TApproach);
+	}
+	
+	public LearnTestParams createNew() {
+		LearnTestParams params = new LearnTestParams();
+		params.targetMethod = targetMethod;
+		params.systemConfig = systemConfig;
+		return params;
+	}
+	
+	public SystemPreferences getSystemConfig() {
+		return systemConfig;
+	}
+	
+	public static enum LearntestSystemVariable implements ISystemVariable {
+		JDART_APP_PROPRETIES,
+		JDART_SITE_PROPRETIES;
+
+		public String getName() {
+			return name();
+		}
+		
+		
 	}
 }

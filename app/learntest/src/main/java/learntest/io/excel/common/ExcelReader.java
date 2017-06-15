@@ -50,6 +50,10 @@ public class ExcelReader {
 	protected int getIntCellValue(Row row, ExcelHeader header) {
 		return (int)getDoubleCellValue(row, header);
 	}
+	
+	protected long getLongCellValue(Row row, ExcelHeader header) {
+		return (long)getDoubleCellValue(row, header);
+	}
 
 	public void close() throws IOException {
 		if (in != null) {

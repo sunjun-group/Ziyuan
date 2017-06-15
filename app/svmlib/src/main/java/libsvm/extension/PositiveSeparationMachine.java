@@ -70,7 +70,7 @@ public class PositiveSeparationMachine extends Machine {
 		
 		int attemptCount = 0;
 		double bestAccuracy = 0.0;
-		List<svm_model> bestLearnedModels = new ArrayList<>();
+		List<svm_model> bestLearnedModels = new ArrayList<svm_model>();
 		while (Double.compare(bestAccuracy, 1.0) < 0
 				&& (attemptCount == 0 || !this.negativePointSelection.isConsistent())
 				&& attemptCount < MAXIMUM_ATTEMPT_COUNT) {

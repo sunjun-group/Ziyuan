@@ -33,7 +33,7 @@ import japa.parser.ast.body.Parameter;
 import japa.parser.ast.body.TypeDeclaration;
 import learntest.cfg.javasource.BreakpointCreator;
 import learntest.cfg.javasource.CfgManager;
-import learntest.core.commons.data.testtarget.TargetMethod;
+import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.exception.LearnTestException;
 import learntest.main.LearnTestParams;
 import learntest.util.LearnTestUtil;

@@ -43,13 +43,20 @@ public class TrialExcelWriter extends ExcelWriter {
 	public int addRowData(Trial trial) throws IOException {
 		Row row = newDataSheetRow();
 		addCell(row, METHOD_NAME, trial.getMethodName());
-		addCell(row, L2T_TIME, trial.getL2tTime());
-		addCell(row, L2T_COVERAGE, trial.getL2tCoverage());
-		addCell(row, L2T_TEST_CNT, trial.getL2tTestCnt());
-		addCell(row, RANDOOP_TIME, trial.getRandoopTime());
-		addCell(row, RANDOOP_COVERAGE, trial.getRandoopCoverage());
-		addCell(row, RANDOOP_TEST_CNT, trial.getRandoopTestCnt());
-		addCell(row, ADVANTAGE, trial.getL2tCoverage()-trial.getRandoopCoverage());
+		
+		addCell(row, JDART_TIME, trial.getJdartRtInfo().getTime());
+		addCell(row, JDART_COVERAGE, trial.getJdartRtInfo().getCoverage());
+		addCell(row, JDART_TEST_CNT, trial.getJdartRtInfo().getTestCnt());
+		
+		addCell(row, L2T_TIME, trial.getL2tRtInfo().getTime());
+		addCell(row, L2T_COVERAGE, trial.getL2tRtInfo().getCoverage());
+		addCell(row, L2T_TEST_CNT, trial.getL2tRtInfo().getTestCnt());
+		
+		addCell(row, RANDOOP_TIME, trial.getRanRtInfo().getTime());
+		addCell(row, RANDOOP_COVERAGE, trial.getRanRtInfo().getCoverage());
+		addCell(row, RANDOOP_TEST_CNT, trial.getRanRtInfo().getTestCnt());
+		
+		addCell(row, ADVANTAGE, trial.getAdvantage());
 		addCell(row, METHOD_LENGTH, trial.getMethodLength());
 		addCell(row, METHOD_START_LINE, trial.getMethodStartLine());
 		writeWorkbook();

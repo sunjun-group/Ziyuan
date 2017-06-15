@@ -12,4 +12,9 @@ public class TestInput {
 	public void setParamList(List<TestVar> paramList) {
 		this.paramList = paramList;
 	}
+
+	@Override
+	public String toString() {
+		return paramList == null ? "empty" : paramList.toString();
+	}
 }

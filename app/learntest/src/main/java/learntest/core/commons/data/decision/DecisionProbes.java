@@ -20,7 +20,7 @@ import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.calculator.OrCategoryCalculator;
-import learntest.core.commons.data.testtarget.TargetMethod;
+import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.utils.CfgUtils;
 import learntest.core.commons.utils.LearningUtils;
 import libsvm.core.CategoryCalculator;

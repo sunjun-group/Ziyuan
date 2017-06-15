@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import sav.common.core.SystemVariables;
 import sav.common.core.utils.StringUtils;
 
 /**
@@ -92,5 +93,17 @@ public class AppJavaClassPath {
 	
 	public SystemPreferences getPreferences() {
 		return preferences;
+	}
+	
+	public ClassLoader getClassLoader(ClassLoader defaultIfNull) {
+		ClassLoader classLoader = getClassLoader();
+		if (classLoader == null) {
+			return defaultIfNull;
+		}
+		return classLoader;
+	}
+	
+	public ClassLoader getClassLoader() {
+		return getPreferences().get(SystemVariables.PROJECT_CLASSLOADER);
 	}
 }

@@ -76,11 +76,7 @@ public class TestGenerator extends learntest.core.gentest.TestGenerator {
 	}
 	
 	/**
-	 * 
-	 * @param solutions
-	 * @param vars
 	 * @param printOption whether to append existing test file or create a new one.
-	 * @return 
 	 */
 	public GentestResult genTestAccordingToSolutions(List<Domain[]> solutions, List<ExecVar> vars, PrintOption printOption) 
 			throws ClassNotFoundException, SavException {

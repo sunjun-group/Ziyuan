@@ -12,7 +12,7 @@ import common.cfg.CfgDecisionNode;
 import common.cfg.CfgNode;
 import learntest.breakpoint.data.DecisionBkpsData;
 import learntest.breakpoint.data.DecisionLocation;
-import learntest.core.commons.data.testtarget.TargetMethod;
+import learntest.core.commons.data.classinfo.TargetMethod;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 

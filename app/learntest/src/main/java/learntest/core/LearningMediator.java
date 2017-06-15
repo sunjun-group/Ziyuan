@@ -16,7 +16,7 @@ import java.util.Map;
 
 import cfgcoverage.jacoco.CfgJaCoCo;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
-import learntest.core.commons.data.testtarget.TargetMethod;
+import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.machinelearning.DecisionLearner;
 import learntest.core.machinelearning.PrecondDecisionLearner;
 import learntest.main.TestGenerator;

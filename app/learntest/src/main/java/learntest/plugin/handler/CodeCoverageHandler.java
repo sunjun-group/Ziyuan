@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
-import learntest.core.CodeCoverageGenerator;
+import learntest.core.CodeCoverage;
 import learntest.main.TestGenerator;
 import learntest.util.LearnTestUtil;
 import sav.common.core.utils.StopTimer;
@@ -33,7 +33,7 @@ public class CodeCoverageHandler extends AbstractLearntestHandler {
 			timer.start();
 			timer.newPoint("learntest");
 
-			CodeCoverageGenerator generator = new CodeCoverageGenerator();
+			CodeCoverage generator = new CodeCoverage();
 			CfgCoverage cfgCoverage = generator.generateCoverage(getAppClasspath());
 			System.out.println(cfgCoverage);
 			// TODO

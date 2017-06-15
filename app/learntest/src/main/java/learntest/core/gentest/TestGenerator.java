@@ -99,6 +99,10 @@ public class TestGenerator {
 			return EMTPY_RESULT;
 		}
 
+		public boolean isEmpty() {
+			return CollectionUtils.isEmpty(junitClassNames);
+		}
+		
 		public void setJunitClassNames(List<String> junitClassNames) {
 			this.junitClassNames = junitClassNames;
 		}

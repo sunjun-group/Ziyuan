@@ -12,7 +12,7 @@ package sav.common.core;
  * @author LLT
  * 
  */
-public enum SystemVariables {
+public enum SystemVariables implements ISystemVariable {
 	SYS_SAV_JUNIT_JAR("sav.junit.runner.jar"), 
 	APP_ENABLE_ASSERTION("assertion.enable", Boolean.TRUE),
 	SLICE_COLLECT_VAR("slicing.collect.var", Boolean.FALSE),
@@ -35,6 +35,7 @@ public enum SystemVariables {
 		this.defValue = defValue;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
