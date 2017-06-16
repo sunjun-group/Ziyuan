@@ -9,6 +9,7 @@
 package learntest.main;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jdt.core.JavaModelException;
@@ -112,6 +113,9 @@ public class LearnTestParams {
 	}
 
 	public List<String> getInitialTestcases() {
+		if (initialTests == null) {
+			return Collections.EMPTY_LIST;
+		}
 		return initialTests.getJunitTestcases();
 	}
 	

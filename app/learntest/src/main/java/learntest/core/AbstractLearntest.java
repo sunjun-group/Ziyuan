@@ -110,6 +110,8 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 	}
 	
 	protected RunTimeInfo getRuntimeInfo(CfgCoverage cfgCoverage) {
+		double coverage = CoverageUtils.calculateCoverage(cfgCoverage);
+		System.out.println("coverage: " + coverage);
 		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
 			StringBuilder sb = new StringBuilder();
 			NodeCoverage nodeCvg = cfgCoverage.getCoverage(node);
@@ -124,7 +126,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 						.append(coveredBranches).append("]");
 			System.out.println(sb.toString());
 		}
-		return new RunTimeInfo(SAVTimer.getExecutionTime(), CoverageUtils.calculateCoverage(cfgCoverage),
+		return new RunTimeInfo(SAVTimer.getExecutionTime(), coverage,
 				cfgCoverage.getTestcases().size());
 	}
 	

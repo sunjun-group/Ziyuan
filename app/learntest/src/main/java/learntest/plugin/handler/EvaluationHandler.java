@@ -159,17 +159,22 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			log("working method: " + targetMethod.getMethodFullName());
 			try {
 				LearnTestParams params = initLearntestParams(targetMethod);
+				LearnTestParams l2tParams = params;
+				LearnTestParams randoopParam = params.createNew();
+				
 				RunTimeInfo l2tAverageInfo = new RunTimeInfo();
 				RunTimeInfo ranAverageInfo = new RunTimeInfo();
-				log("run l2t..");
-				runLearntest(l2tAverageInfo, params, true);
-				log("run randoop..");
-				runLearntest(ranAverageInfo, params.createNew(), false);
+				
 				log("run jdart..");
-				params = params.createNew();
 				LearnTestConfig.isL2TApproach = true; // TODO to remove
-				params.setLearnByPrecond(true);
-				RunTimeInfo jdartInfo = runJdartLearntest(params);
+				l2tParams.setLearnByPrecond(true);
+				RunTimeInfo jdartInfo = runJdart(l2tParams);
+				
+				log("run l2t..");
+				runLearntest(l2tAverageInfo, l2tParams, true);
+				
+				log("run randoop..");
+				runLearntest(ranAverageInfo, randoopParam, false);
 				
 				if (l2tAverageInfo.isNotZero() && ranAverageInfo.isNotZero()) {
 					String fullMN = ClassUtils.toClassMethodStr(LearnTestConfig.targetClassName,
@@ -188,7 +193,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		}
 	}
 	
-	private RunTimeInfo runJdartLearntest(LearnTestParams params) throws Exception {
+	private RunTimeInfo runJdart(LearnTestParams params) throws Exception {
 		JDartLearntest learntest = new JDartLearntest(getAppClasspath());
 		return learntest.jdart(params);
 	}

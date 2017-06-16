@@ -90,6 +90,9 @@ public class LearnTest extends AbstractLearntest {
 	}
 
 	protected void prepareInitTestcase(LearnTestParams params) throws SavException {
+		if (!params.getInitialTestcases().isEmpty()) {
+			return;
+		}
 		/* init test */
 		GentestParams gentestParams = params.initGentestParams(appClasspath);
 		GentestResult initTests = generateTestcases(gentestParams);
@@ -124,10 +127,13 @@ public class LearnTest extends AbstractLearntest {
 		CfgCoverage newCoverage = new CfgCoverage(cfgCoverage.getCfg());
 		/* generate new testcases */
 		GentestResult gentestResult = createSolutionAndGentest(result);
-		/* update coverage */
-		mediator.runCoverageForGeneratedTests(CoverageUtils.getCfgCoverageMap(newCoverage), 
-				gentestResult.getJunitClassNames());
-		return getRuntimeInfo(newCoverage);
+		if (!gentestResult.isEmpty()) {
+			/* update coverage */
+			mediator.runCoverageForGeneratedTests(CoverageUtils.getCfgCoverageMap(newCoverage), 
+					gentestResult.getJunitClassNames());
+			return getRuntimeInfo(newCoverage);
+		}
+		return getRuntimeInfo(cfgCoverage);
 	}
 	
 	private String randomGentest()
