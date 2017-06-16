@@ -67,10 +67,10 @@ public class TrialExcelHandler {
 		/* check if the file is valid to append or not */
 		try {
 			reader.reset(lastFileInfo.a);
-			if (reader.getLastDataSheetRow() < TRIAL_NUMBER_LIMIT_PER_FILE) {
+			if (reader.hasValidHeader() && reader.getLastDataSheetRow() < TRIAL_NUMBER_LIMIT_PER_FILE) {
 				// appendable
 				return lastFileInfo;
-			} 
+			}
 		} catch (Exception e) {
 			return newExperimentalExcelFile(trialFilePrefix, lastFileInfo.b + 1);
 		}
@@ -107,6 +107,7 @@ public class TrialExcelHandler {
 		if (lastIdx < 0) {
 			return null;
 		} 
+		
 		return Pair.of(lastFile, lastIdx);
 	}
 

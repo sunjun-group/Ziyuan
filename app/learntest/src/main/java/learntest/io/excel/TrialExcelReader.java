@@ -67,18 +67,33 @@ public class TrialExcelReader extends ExcelReader {
 		return data;
 	}
 	
+	public boolean hasValidHeader() {
+		Row header = dataSheet.iterator().next();
+		return isDataSheetHeader(header);
+	}
+	
 	private void readDataSheetRow(Row row, Map<String, Trial> data) {
 		Trial trial = new Trial();
 		trial.setMethodName(getStringCellValue(row, TrialHeader.METHOD_NAME));
+
+		RunTimeInfo jdartInfo = new RunTimeInfo();
+		jdartInfo.setTime(getLongCellValue(row, TrialHeader.JDART_TIME));
+		jdartInfo.setCoverage(getDoubleCellValue(row, TrialHeader.JDART_COVERAGE));
+		jdartInfo.setTestCnt(getIntCellValue(row, TrialHeader.JDART_TEST_CNT));
+		trial.setJdartRtInfo(jdartInfo);
+		
 		RunTimeInfo l2tInfo = new RunTimeInfo();
 		l2tInfo.setTime(getLongCellValue(row, TrialHeader.L2T_TIME));
 		l2tInfo.setCoverage(getDoubleCellValue(row, L2T_COVERAGE));
 		l2tInfo.setTestCnt(getIntCellValue(row, L2T_TEST_CNT));
 		trial.setL2tRtInfo(l2tInfo);
+		
 		RunTimeInfo randoopInfo = new RunTimeInfo();
 		randoopInfo.setTime(getLongCellValue(row, RANDOOP_TIME));
 		randoopInfo.setCoverage(getDoubleCellValue(row, RANDOOP_COVERAGE));
 		randoopInfo.setTestCnt(getIntCellValue(row, RANDOOP_TEST_CNT));
+		trial.setRanRtInfo(randoopInfo);
+		
 		trial.setMethodLength((int) getDoubleCellValue(row, METHOD_LENGTH));
 		trial.setMethodStartLine(getIntCellValue(row, METHOD_START_LINE));
 		data.put(StringUtils.join(TrialExcelConstants.METHOD_ID_SEPARATOR, trial.getMethodName(), trial.getMethodStartLine()), 

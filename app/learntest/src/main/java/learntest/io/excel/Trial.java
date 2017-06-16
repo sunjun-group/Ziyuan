@@ -18,23 +18,6 @@ public class Trial {
 		
 	}
 	
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Trial other = (Trial) obj;
-		if (methodName == null) {
-			if (other.methodName != null)
-				return false;
-		} else if (!methodName.equals(other.methodName))
-			return false;
-		return true;
-	}
-
 	public Trial(String methodName, int methodLength, int methodEntryLineNo, RunTimeInfo l2tAverageInfo, RunTimeInfo ranAverageInfo,
 			RunTimeInfo jdartInfo) {
 		this.methodName = methodName;
@@ -95,6 +78,23 @@ public class Trial {
 
 	public void setJdartRtInfo(RunTimeInfo jdartRtInfo) {
 		this.jdartRtInfo = jdartRtInfo;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Trial other = (Trial) obj;
+		if (methodName == null) {
+			if (other.methodName != null)
+				return false;
+		} else if (!methodName.equals(other.methodName))
+			return false;
+		return true;
 	}
 
 	@Override
