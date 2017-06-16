@@ -129,6 +129,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 		CfgNode node = nodeProbe.getNode();
 		while (trueFlaseFormula != null && time < FORMULAR_LEARN_MAX_ATTEMPT
 				&& nodeProbe.needToLearnPrecond()) {
+			time++;
 			DecisionProbes probes = nodeProbe.getDecisionProbes();
 			/* after running sampling, probes will be updated as well */
 			SamplingResult sampleResult = dataPreprocessor.sampleForModel(nodeProbe, probes.getOriginalVars(),
@@ -165,7 +166,6 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 				break;
 			}
 
-			time++;
 		}
 		TrueFalseLearningResult result = new TrueFalseLearningResult();
 		result.formula = trueFlaseFormula;
