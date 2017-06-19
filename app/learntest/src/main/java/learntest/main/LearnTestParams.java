@@ -16,9 +16,11 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
+import learntest.core.commons.LearntestConstants;
+import learntest.core.commons.data.LearnTestApproach;
+import learntest.core.commons.data.classinfo.JunitTestsInfo;
 import learntest.core.commons.data.classinfo.TargetClass;
 import learntest.core.commons.data.classinfo.TargetMethod;
-import learntest.core.commons.data.classinfo.JunitTestsInfo;
 import learntest.core.gentest.GentestParams;
 import learntest.util.LearnTestUtil;
 import sav.common.core.ISystemVariable;
@@ -26,7 +28,6 @@ import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.SignatureUtils;
-import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.SystemPreferences;
 
@@ -35,10 +36,12 @@ import sav.strategies.dto.SystemPreferences;
  *
  */
 public class LearnTestParams {
-	private boolean learnByPrecond;
+	private LearnTestApproach approach;
 	private TargetMethod targetMethod;
 	private JunitTestsInfo initialTests;
 	private SystemPreferences systemConfig;
+	private String initTestPkg;
+	private String resultTestPkg;
 	
 	public LearnTestParams() {
 		systemConfig = new SystemPreferences();
@@ -52,7 +55,7 @@ public class LearnTestParams {
 	@Deprecated
 	public static LearnTestParams initFromLearnTestConfig() throws SavException {
 		LearnTestParams params = new LearnTestParams();
-		params.learnByPrecond = LearnTestConfig.isL2TApproach;
+		params.setApproach(LearnTestConfig.isL2TApproach ? LearnTestApproach.L2T : LearnTestApproach.RANDOOP);
 		try {
 			initTargetMethod(params);
 		} catch (JavaModelException e) {
@@ -61,18 +64,15 @@ public class LearnTestParams {
 		return params;
 	}
 	
-	public GentestParams initGentestParams(AppJavaClassPath appClassPath) {
+	public GentestParams initGentestParams(AppJavaClassPath appClasspath) {
 		GentestParams params = new GentestParams();
 		params.setMethodSignature(SignatureUtils.createMethodNameSign(targetMethod.getMethodName(), 
 				targetMethod.getMethodSignature()));
 		params.setTargetClassName(targetMethod.getClassName());
 		params.setNumberOfTcs(1);
 		params.setTestPerQuery(1);
-		params.setTestSrcFolder(appClassPath.getTestSrc());
-		String approachPrefix = learnByPrecond ? "l2t" : "ram";
-		params.setTestPkg(StringUtils.dotJoin("testdata", approachPrefix, "test.init",
-				targetMethod.getTargetClazz().getClassSimpleName().toLowerCase(),
-				targetMethod.getMethodName().toLowerCase()));
+		params.setTestSrcFolder(appClasspath.getTestSrc());
+		params.setTestPkg(getInitTestPkg());
 		params.setTestClassPrefix(targetMethod.getTargetClazz().getClassSimpleName());
 		params.setTestMethodPrefix("test");
 		return params;
@@ -109,9 +109,10 @@ public class LearnTestParams {
 	}
 	
 	public boolean isLearnByPrecond() {
-		return learnByPrecond;
+		return approach == LearnTestApproach.L2T;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<String> getInitialTestcases() {
 		if (initialTests == null) {
 			return Collections.EMPTY_LIST;
@@ -130,10 +131,10 @@ public class LearnTestParams {
 		return initialTests;
 	}
 
-	public void setLearnByPrecond(boolean learnByPrecond) {
-		this.learnByPrecond = learnByPrecond;
+	public void setApproach(LearnTestApproach approach) {
+		LearnTestConfig.isL2TApproach = (approach == LearnTestApproach.L2T); //  TODO: TO REMOVE
+		this.approach = approach;
 	}
-	
 
 	@Deprecated
 	public String getFilePath() {
@@ -143,6 +144,20 @@ public class LearnTestParams {
 	@Deprecated
 	public String getTestClass() {
 		return LearnTestConfig.getTestClass(LearnTestConfig.isL2TApproach);
+	}
+	
+	public String getInitTestPkg() {
+		if (initTestPkg == null) {
+			initTestPkg = LearntestConstants.getInitTestPackage(approach.getName(), targetMethod);
+		}
+		return initTestPkg;
+	}
+	
+	public String getResultTestPkg() {
+		if (resultTestPkg == null) {
+			resultTestPkg = LearntestConstants.getResultTestPackage(approach.getName(), targetMethod);
+		}
+		return resultTestPkg;
 	}
 	
 	public LearnTestParams createNew() {
@@ -163,7 +178,5 @@ public class LearnTestParams {
 		public String getName() {
 			return name();
 		}
-		
-		
 	}
 }

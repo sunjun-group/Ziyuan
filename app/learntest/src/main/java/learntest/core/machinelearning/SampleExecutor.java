@@ -22,7 +22,7 @@ import learntest.core.LearningMediator;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.utils.DomainUtils;
-import learntest.core.gentest.TestGenerator.GentestResult;
+import learntest.core.gentest.GentestResult;
 import learntest.core.machinelearning.iface.ISampleExecutor;
 import sav.common.core.SavException;
 import sav.common.core.formula.Eq;

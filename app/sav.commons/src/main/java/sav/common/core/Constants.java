@@ -23,5 +23,5 @@ public class Constants {
 	public static final String LOW_LINE = "_";
 	public static final int UNKNOWN_LINE_NUMBER = -1;
 	/* time out for each running testcase */
-	public static final long DEFAULT_JUNIT_TESTCASE_TIMEOUT = 200l; // ms
+	public static final long DEFAULT_JUNIT_TESTCASE_TIMEOUT = 1000l; // ms
 }

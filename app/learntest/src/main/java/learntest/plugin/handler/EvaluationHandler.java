@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 
 import learntest.core.JDartLearntest;
+import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.io.excel.Trial;
 import learntest.io.excel.TrialExcelHandler;
@@ -168,22 +169,24 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			
 			try {
 				LearnTestParams params = initLearntestParams(targetMethod);
+				// l2t params
 				LearnTestParams l2tParams = params;
+				// randoop params
 				LearnTestParams randoopParam = params.createNew();
 				
 				RunTimeInfo l2tAverageInfo = new RunTimeInfo();
 				RunTimeInfo ranAverageInfo = new RunTimeInfo();
 				
+				l2tParams.setApproach(LearnTestApproach.L2T);
 				log("run jdart..");
-				LearnTestConfig.isL2TApproach = true; // TODO to remove
-				l2tParams.setLearnByPrecond(true);
 				RunTimeInfo jdartInfo = runJdart(l2tParams);
 				
 				log("run l2t..");
-				runLearntest(l2tAverageInfo, l2tParams, true);
+				runLearntest(l2tAverageInfo, l2tParams);
 				
+				randoopParam.setApproach(LearnTestApproach.RANDOOP);
 				log("run randoop..");
-				runLearntest(ranAverageInfo, randoopParam, false);
+				runLearntest(ranAverageInfo, randoopParam);
 				
 				if (l2tAverageInfo.isNotZero() && ranAverageInfo.isNotZero()) {
 					String fullMN = ClassUtils.toClassMethodStr(LearnTestConfig.targetClassName,
@@ -214,9 +217,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	}
 
 	private GenerateTestHandler testHandler = new GenerateTestHandler();
-	private RunTimeInfo runLearntest(RunTimeInfo runInfo, LearnTestParams params, boolean l2tApproach) throws Exception {
-		LearnTestConfig.isL2TApproach = l2tApproach;
-		params.setLearnByPrecond(l2tApproach);
+	private RunTimeInfo runLearntest(RunTimeInfo runInfo, LearnTestParams params) throws Exception {
 		RunTimeInfo l2tInfo = testHandler.runLearntest(params);
 		if (runInfo != null && l2tInfo != null) {
 			runInfo.add(l2tInfo);
@@ -344,7 +345,6 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 						return false;
 					}
 				}
-
 			}
 
 			return true;

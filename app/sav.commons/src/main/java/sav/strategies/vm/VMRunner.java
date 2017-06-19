@@ -86,40 +86,30 @@ public class VMRunner {
 	}
 	
 	public String getProccessError() throws SavRtException {
-		if (processError == null) {
-			if (process != null) {
-				try {
-					processError = getText(process.getErrorStream());
-				} catch (IOException e) {
-					throw new SavRtException(e);
-				}
-			}
-			processError = StringUtils.EMPTY;
-		}
 		return processError;
 	}
-	
-	private String getText(InputStream stream) throws IOException {
-		try {
-			stream.available();
-		} catch (IOException ex) {
-			// stream closed already!
-			return StringUtils.EMPTY;
-		}
-		StringBuilder sb = new StringBuilder();
-		InputStreamReader inputReader = new InputStreamReader(stream);
-		BufferedReader in = new BufferedReader(inputReader);
-		String inputLine;
-		/* Note: The input stream must be read if available to be closed, 
-		 * otherwise, the process will never end. So, keep doing this even if 
-		 * the printStream is not set */
-		while (in.ready() && (inputLine = in.readLine()) != null) {
-			sb.append(inputLine)
-				.append("\n");
-		}
-		in.close();
-		inputReader.close();
-		return sb.toString();
+
+	public static void setupInputStream(final InputStream is, final StringBuffer sb) {
+		final InputStreamReader streamReader = new InputStreamReader(is);
+		new Thread(new Runnable() {
+			public void run() {
+				BufferedReader br = new BufferedReader(streamReader);
+				String line = null;
+				try {
+					while ((line = br.readLine()) != null) {
+						sb.append(line).append("\n");
+					}
+				} catch (IOException e) {
+					// do nothing
+				} finally {
+					try {
+						br.close();
+					} catch (IOException e) {
+						// do nothing
+					}
+				}
+			}
+		}).start();
 	}
 
 	protected void buildVmOption(CollectionBuilder<String, ?> builder, VMConfiguration config) {
@@ -129,10 +119,16 @@ public class VMRunner {
 
 	public boolean startVm(List<String> commands, boolean waitUntilStop)
 			throws SavException {
+		StringBuffer sb = new StringBuffer();
 		logCommands(commands);
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
 		try {
 			process = processBuilder.start();
+			setupInputStream(process.getErrorStream(), sb);
+			/* Note: The input stream must be read if available to be closed, 
+			 * otherwise, the process will never end. So, keep doing this even if 
+			 * the printStream is not set */
+			setupInputStream(process.getInputStream(), new StringBuffer());
 			Timer t = new Timer();
 			if (timeout != NO_TIME_OUT) {
 			    t.schedule(new TimerTask() {
@@ -144,9 +140,10 @@ public class VMRunner {
 			    }, timeout); 
 			}
 			if (waitUntilStop) {
-				boolean success = waitUntilStop(process);
+				waitUntilStop(process);
 				t.cancel();
-				return success;
+				processError = sb.toString();
+				return processError.trim().isEmpty();
 			}
 			return true;
 		} catch (IOException e) {
@@ -163,56 +160,34 @@ public class VMRunner {
 				log.debug(cmd);
 			}
 		}
+		//TODO TO REMOVE
 		System.out.println(StringUtils.join(commands, " "));
 	}
 	
-	public boolean waitUntilStop(Process process) throws SavException {
+	public void waitUntilStop(Process process) throws SavException {
+		waitUntilStopByALoop(process);
+	}
+	
+	public void waitUntilStopByWaitfor(Process process) throws SavException {
 		try {
-			getText(process.getInputStream());
-			processError = getText(process.getErrorStream());
 			process.waitFor();
-			String error = getText((process.getErrorStream()));
-			if (!StringUtils.isEmpty(error)) {
-				log.debug(error);
-				return false;
-			}
-			return true;
-		} catch (IOException e) {
-			log.error(e.getMessage());
-			throw new SavException(ModuleEnum.JVM, e);
 		} catch (InterruptedException e) {
 			log.error(e.getMessage());
 			throw new SavException(ModuleEnum.JVM, e);
 		}
 	}
 
-//	public boolean waitUntilStop(Process process)
-//			throws SavException {
-//		while (true) {
-//			try {
-//				getText(process.getInputStream());
-//				processError = getText(process.getErrorStream());
-//				process.exitValue();
-//				processError = getText((process.getErrorStream()));
-//				if (!StringUtils.isEmpty(processError)) {
-//					log.debug(processError);
-//					return false;
-//				}
-//				return true;
-//			} catch (IOException e) {
-//				log.debug(e.getMessage());
-//				throw new SavException(ModuleEnum.JVM, e);
-//			} catch (IllegalThreadStateException ex) {
-//				// means: not yet terminated
-//				try {
-//					Thread.sleep(100);
-//				} catch (InterruptedException e) {
-//					log.debug(e.getMessage());
-//					throw new SavException(ModuleEnum.JVM, e);
-//				}
-//			} 
-//		}
-//	}
+	public void waitUntilStopByALoop(Process process)
+			throws SavException {
+		while (true) {
+			try {
+				process.exitValue();
+				return;
+			} catch (IllegalThreadStateException ex) {
+				// means: not yet terminated
+			} 
+		}
+	}
 	
 	public void setTimeout(int timeout, TimeUnit unit) {
 		this.timeout = unit.toMillis(timeout);

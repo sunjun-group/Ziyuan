@@ -18,8 +18,8 @@ import sav.strategies.dto.execute.value.ExecVarType;
  * @author LLT
  *
  */
-public class LearningUtils {
-	private LearningUtils() {
+public class MachineLearningUtils {
+	private MachineLearningUtils() {
 	}
 	
 	public static List<ExecVar> createPolyClassifierVars(List<ExecVar> orgVars) {

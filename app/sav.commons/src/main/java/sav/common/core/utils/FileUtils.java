@@ -62,16 +62,23 @@ public class FileUtils {
 	}
 	
 	public static void copyFiles(List<File> files, String folderPath) throws FileNotFoundException, IOException {
-		File targetFolder = new File(folderPath);
-		if (!targetFolder.exists()) {
-			targetFolder.mkdirs();
-		}
+		File targetFolder = mkDirs(folderPath);
 		for (File file : files) {
 			InputStream inStream = new FileInputStream(file);
 			File copyFile = new File(targetFolder, file.getName());
 			IOUtils.copy(inStream, new FileOutputStream(copyFile));
 		}
 	}
+
+	public static File mkDirs(String folderPath) {
+		File targetFolder = new File(folderPath);
+		if (!targetFolder.exists()) {
+			targetFolder.mkdirs();
+		}
+		return targetFolder;
+	}
+	
+	
 
 	public static void copyFilesSilently(List<File> files, String folderPath) {
 		try {
@@ -88,4 +95,13 @@ public class FileUtils {
 		}
 		return names;
 	}
+
+	public static List<String> getFilePaths(List<File> files) {
+		List<String> paths = new ArrayList<String>(CollectionUtils.getSize(files));
+		for (File file : CollectionUtils.nullToEmpty(files)) {
+			paths.add(file.getAbsolutePath());
+		}
+		return paths;
+	}
+
 }

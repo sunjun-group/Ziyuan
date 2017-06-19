@@ -8,6 +8,9 @@
 
 package learntest.core.gentest;
 
+import gentest.junit.PrinterParams;
+import gentest.junit.TestsPrinter.PrintOption;
+
 /**
  * @author LLT
  *
@@ -20,10 +23,7 @@ public class GentestParams {
 	private int testPerQuery;
 
 	/* for generated tests printer */
-	private String testSrcFolder;
-	private String testPkg;
-	private String testClassPrefix;
-	private String testMethodPrefix;
+	private PrinterParams printerParams = new PrinterParams();
 	private boolean generateMainClass;
 
 	public String getMethodSignature() {
@@ -58,36 +58,20 @@ public class GentestParams {
 		this.testPerQuery = testPerQuery;
 	}
 
-	public String getTestSrcFolder() {
-		return testSrcFolder;
-	}
-
 	public void setTestSrcFolder(String testSrcFolder) {
-		this.testSrcFolder = testSrcFolder;
-	}
-
-	public String getTestPkg() {
-		return testPkg;
+		this.printerParams.setSrcPath(testSrcFolder);
 	}
 
 	public void setTestPkg(String testPkg) {
-		this.testPkg = testPkg;
-	}
-
-	public String getTestClassPrefix() {
-		return testClassPrefix;
+		this.printerParams.setPkg(testPkg);
 	}
 
 	public void setTestClassPrefix(String testClassPrefix) {
-		this.testClassPrefix = testClassPrefix;
-	}
-
-	public String getTestMethodPrefix() {
-		return testMethodPrefix;
+		this.printerParams.setClassPrefix(testClassPrefix);
 	}
 
 	public void setTestMethodPrefix(String testMethodPrefix) {
-		this.testMethodPrefix = testMethodPrefix;
+		this.printerParams.setMethodPrefix(testMethodPrefix);
 	}
 
 	public int getQueryMaxLength() {
@@ -102,4 +86,11 @@ public class GentestParams {
 		this.generateMainClass = generateMainClass;
 	}
 	
+	public void setPrintOption(PrintOption option) {
+		printerParams.setPrintOption(option);
+	}
+	
+	public PrinterParams getPrinterParams() {
+		return printerParams;
+	}
 }

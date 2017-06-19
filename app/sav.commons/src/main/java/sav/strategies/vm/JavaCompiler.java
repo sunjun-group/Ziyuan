@@ -51,7 +51,7 @@ public class JavaCompiler {
 		vmRunner.setLog(vmConfig.isVmLogEnable());
 		boolean success = vmRunner.startAndWaitUntilStop(builder.toCollection());
 		if (!success) {
-			throw new SavException(ModuleEnum.JVM, "Compilation error: " + vmRunner.getProccessError());
+			throw new SavException("Compilation error: " + vmRunner.getProccessError(), ModuleEnum.JVM);
 		}
 		return success;
 	}
