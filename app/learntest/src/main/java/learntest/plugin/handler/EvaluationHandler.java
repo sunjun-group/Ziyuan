@@ -1,5 +1,7 @@
 package learntest.plugin.handler;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -157,6 +159,13 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			TargetMethod targetMethod = initTargetMethod(className, cu, method);
 
 			log("working method: " + targetMethod.getMethodFullName());
+			try{
+			    PrintWriter writer = new PrintWriter("latest_working_method.txt", "UTF-8");
+			    writer.println("working method: " + targetMethod.getMethodFullName());
+			    writer.close();
+			} catch (IOException e) {
+			}
+			
 			try {
 				LearnTestParams params = initLearntestParams(targetMethod);
 				LearnTestParams l2tParams = params;
