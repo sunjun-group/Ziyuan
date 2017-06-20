@@ -191,10 +191,6 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 				IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jpf.properties"));
 	}
 	
-	protected void log(String logStr) {
-		System.out.println(logStr);
-	}
-	
 	/* END PLUGIN HANDLER  */
 	protected GentestResult generateTestcases(GentestParams params) throws SavException {
 		try {

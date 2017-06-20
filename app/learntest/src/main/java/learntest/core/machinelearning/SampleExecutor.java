@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.jacop.core.Domain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import gentest.junit.TestsPrinter.PrintOption;
 import learntest.core.AbstractLearningComponent;
@@ -35,6 +37,7 @@ import sav.strategies.dto.execute.value.ExecVar;
  *
  */
 public class SampleExecutor extends AbstractLearningComponent implements ISampleExecutor<SamplingResult> {
+	private static Logger log = LoggerFactory.getLogger(SampleExecutor.class);
 	/* data object in context */
 	private DecisionProbes decisionProbes;
 	
@@ -64,46 +67,30 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 		GentestResult result = null;
 		try {
 			timer.newPoint("gentest");
-			log("gentest..");
+			log.debug("gentest..");
 			result = getTestGenerator().genTestAccordingToSolutions(domains, originVars, PrintOption.APPEND);
 			timer.newPoint("compile");
-			log("compile..");
+			log.debug("compile..");
 			mediator.compile(result.getJunitfiles());
-			compilationUpdate(result);
 			samples.setNewInputData(result.getTestInputs());
 			/* run and update coverage */
 			timer.newPoint("coverage");
-			log("run coverage..");
-			log("new tcs: " + FileUtils.getFileNames(result.getJunitfiles()));
+			log.debug("run coverage..");
+			log.debug("new tcs: " + FileUtils.getFileNames(result.getJunitfiles()));
 			runCfgCoverage(samples, result.getJunitClassNames());
 			samples.updateNewData();
-			timer.newPoint("end");
-			timer.stop();
-			log(timer.getResults());
+			timer.logResults(log);
 		} catch (Exception e) {
 			// LOG
-			log("sample execution fail: " + e.getMessage());
+			log.warn("sample execution fail: " + e.getMessage());
 			if (result != null) {
 				FileUtils.copyFilesSilently(result.getJunitfiles(), mediator.getAppClassPath().getTestSrc()
 						+ "/compilationErrorBak");
 				FileUtils.deleteFiles(result.getJunitfiles());
 			}
 			return null;
-//			throw new SavException(ModuleEnum.TESTCASE_GENERATION, e, e.getMessage());
 		}
 		return samples;  
-	}
-
-	/**
-	 * @param text 
-	 * 
-	 */
-	private void log(Object text) {
-		System.out.println(text);
-	}
-
-	private void compilationUpdate(GentestResult result) {
-		
 	}
 
 	/**
@@ -122,7 +109,7 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 	private void logSample(List<Map<String, Object>> list) {
 		if(list != null){
 			int size = list.size();
-			System.out.println("Running " + size + " data points...");			
+			log.debug("Running " + size + " data points...");			
 		}
 	}
 	

@@ -156,16 +156,11 @@ public class VMRunner {
 		if (isLog && log.isDebugEnabled()) {
 			log.debug("start cmd..");
 			log.debug(StringUtils.join(commands, " "));
-			for (String cmd : commands) {
-				log.debug(cmd);
-			}
 		}
-		//TODO TO REMOVE
-		System.out.println(StringUtils.join(commands, " "));
 	}
 	
 	public void waitUntilStop(Process process) throws SavException {
-		waitUntilStopByALoop(process);
+		waitUntilStopByWaitfor(process);
 	}
 	
 	public void waitUntilStopByWaitfor(Process process) throws SavException {

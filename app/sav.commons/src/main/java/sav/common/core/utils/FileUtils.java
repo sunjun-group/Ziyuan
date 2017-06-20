@@ -15,10 +15,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 
+import sav.common.core.Constants;
 import sav.common.core.SavRtException;
 
 /**
@@ -104,4 +106,7 @@ public class FileUtils {
 		return paths;
 	}
 
+	public static String getFilePath(String... fragments) {
+		return StringUtils.join(Arrays.asList(fragments), Constants.FILE_SEPARATOR);
+	}
 }

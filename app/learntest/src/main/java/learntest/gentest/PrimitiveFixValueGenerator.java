@@ -1,5 +1,8 @@
 package learntest.gentest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.inject.Inject;
 
 import gentest.core.commons.utils.TypeUtils;
@@ -16,7 +19,7 @@ import sav.common.core.utils.Randomness;
 import sav.strategies.gentest.ISubTypesScanner;
 
 public class PrimitiveFixValueGenerator {
-
+	private static Logger log = LoggerFactory.getLogger(PrimitiveFixValueGenerator.class);
 	@Inject
 	private IVariableStore variableStore;
 	@Inject
@@ -34,7 +37,7 @@ public class PrimitiveFixValueGenerator {
 			}
 			Primitive primitiveType = TypeUtils.getAssociatePrimitiveType(clazz);
 			if (primitiveType == null) {
-				System.out.println("error: try to assign value for non-primitive type");
+				log.warn("error: try to assign value for non-primitive type");
 				return variable;
 			}
 			switch (primitiveType) {
@@ -66,7 +69,7 @@ public class PrimitiveFixValueGenerator {
 			getVariableStore().put(type, variable);
 			root.append(variable);			
 		} else {
-			System.out.println("error: try to assign value for non-primitive type");
+			log.warn("error: try to assign value for non-primitive type");
 		}
 		return variable;
 	}

@@ -3,6 +3,9 @@ package learntest.core;
 import java.io.IOException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.common.dto.BreakpointData;
@@ -27,6 +30,7 @@ import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 
 public class LearnTest extends AbstractLearntest {
+	private static Logger log = LoggerFactory.getLogger(LearnTest.class);
 	private LearningMediator mediator;
 	
 	public LearnTest(AppJavaClassPath appClasspath) {
@@ -38,7 +42,7 @@ public class LearnTest extends AbstractLearntest {
 		SAVTimer.startCount();
 		/* collect testcases in project */
 		if (CollectionUtils.isEmpty(params.getInitialTestcases())) {
-			System.out.println("empty testcase!");
+			log.info("empty testcase!");
 			return null;
 		}
 		init(params);
@@ -50,18 +54,17 @@ public class LearnTest extends AbstractLearntest {
 			cfgCoverage = tryBestForInitialCoverage(params, targetMethod);
 
 			if (CoverageUtils.notCoverAtAll(cfgCoverage)) {
-				System.out.println("start node is not covered!");
+				log.info("start node is not covered!");
 				return null;
 			}
-			System.out.println("first coverage: " + CoverageUtils.calculateCoverage(cfgCoverage));
+			log.info("first coverage: " + CoverageUtils.calculateCoverage(cfgCoverage));
 			BreakPoint methodEntryBkp = BreakpointCreator.createMethodEntryBkp(targetMethod);
 			/**
 			 * run testcases
 			 */
 			BreakpointData result = executeTestcaseAndGetTestInput(params.getInitialTestcases(), methodEntryBkp);
-			System.out.println();
 			if (CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
-				System.out.println("no decision node is covered!");
+				log.info("no decision node is covered!");
 				copyTestsToResultFolder(params);
 				return getRuntimeInfo(cfgCoverage);
 			} else {
@@ -80,7 +83,7 @@ public class LearnTest extends AbstractLearntest {
 				} 
 			}
 		} catch (LearnTestException e) {
-			System.out.println("Warning: still cannot get entry value when coverage is not empty!");
+			log.warn("still cannot get entry value when coverage is not empty!");
 		}
 		return null;
 	}
@@ -134,7 +137,7 @@ public class LearnTest extends AbstractLearntest {
 			gentestResult = randomGentest(gentestParams);
 		}
 		if (i > 0) {
-			System.out.println(String.format("Get best initial coverage after trying to regenerate test %d times", i));
+			log.debug(String.format("Get best initial coverage after trying to regenerate test %d times", i));
 		}
 		return cfgCoverage;
 	}

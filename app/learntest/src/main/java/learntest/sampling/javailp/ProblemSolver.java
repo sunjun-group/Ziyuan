@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import libsvm.core.Divider;
 import net.sf.javailp.Constraint;
 import net.sf.javailp.Linear;
@@ -18,10 +21,11 @@ import net.sf.javailp.Solver;
 import net.sf.javailp.SolverFactory;
 import net.sf.javailp.SolverFactoryLpSolve;
 import sav.common.core.Pair;
+import sav.common.core.utils.SingleTimer;
 import sav.strategies.dto.execute.value.ExecVar;
 
 public class ProblemSolver {
-	
+	private static Logger log = LoggerFactory.getLogger(ProblemSolver.class);
 	private static SolverFactory factory = new SolverFactoryLpSolve();
 	private static Random random = new Random();
 	private static Map<ExecVar, Pair<Number, Number>> minMax;
@@ -163,8 +167,11 @@ public class ProblemSolver {
 	}
 
 	public static Result solve(Problem problem){
+		SingleTimer timer = SingleTimer.start("ilpSolver");
 		Solver solver = factory.get();
-		return solver.solve(problem);
+		Result result = solver.solve(problem);
+		timer.logResults(log, 2000l);
+		return result;
 	}
 	
 	public static Result solve(List<ExecVar> vars, List<Divider> preconditions){

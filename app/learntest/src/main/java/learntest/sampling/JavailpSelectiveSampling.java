@@ -7,9 +7,13 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import icsetlv.common.dto.BreakpointValue;
 import learntest.breakpoint.data.DecisionLocation;
 import learntest.calculator.OrCategoryCalculator;
+import learntest.core.machinelearning.SampleExecutor;
 import learntest.sampling.javailp.ProblemBuilder;
 import learntest.sampling.javailp.ProblemSolver;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
@@ -30,7 +34,7 @@ import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
 
 public class JavailpSelectiveSampling {
-	
+	private static Logger log = LoggerFactory.getLogger(JavailpSelectiveSampling.class);
 	private static final int MAX_MORE_SELECTED_SAMPLE = 4;
 	private static final int MIN_MORE_SELECTED_DATA = 5;
 
@@ -98,10 +102,10 @@ public class JavailpSelectiveSampling {
 				}
 			}
 			
-//			System.out.println("Iteartion " + (i+1) + " running " + assignments.size() + " test cases");
+//			log.debug("Iteartion " + (i+1) + " running " + assignments.size() + " test cases");
 //			long t = System.currentTimeMillis();
 			runData(assignments);
-//			System.out.println("Done: running " + assignments.size() + " test cases, takes " + (System.currentTimeMillis()-t) + "ms");
+//			log.debug("Done: running " + assignments.size() + " test cases, takes " + (System.currentTimeMillis()-t) + "ms");
 			
 			if (selectResult == null) {
 				continue;
@@ -324,7 +328,7 @@ public class JavailpSelectiveSampling {
 		
 		if(list != null){
 			int size = list.size();
-			System.out.println("Running " + size + " data points...");			
+			log.debug("Running " + size + " data points...");			
 		}
 		
 		tcExecutor.run(); 
@@ -349,7 +353,7 @@ public class JavailpSelectiveSampling {
 		
 		if(list != null){
 			int size = list.size();
-			System.out.println("Running " + size + " data points...");			
+			log.debug("Running " + size + " data points...");			
 		}
 		
 		tcExecutor.run();
