@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package tzuyu.core.mutantbug;
+package sav.strategies.vm;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,26 +24,26 @@ import sav.strategies.vm.VmRunnerUtils;
  * @author LLT
  * 
  */
-public class Recompiler {
+public class JavaCompiler {
 	private VMConfiguration vmConfig;
 
-	public Recompiler(VMConfiguration vmConfig) {
+	public JavaCompiler(VMConfiguration vmConfig) {
 		setVmConfig(vmConfig);
 	}
 
-	public boolean recompileJFile(String targetFolder, File... mutatedFiles)
+	public boolean compile(String targetFolder, File... javaFiles)
 			throws SavException {
-		return recompileJFile(targetFolder, Arrays.asList(mutatedFiles));
+		return compile(targetFolder, Arrays.asList(javaFiles));
 	}
 
-	public boolean recompileJFile(String targetFolder, List<File> mutatedFiles)
+	public boolean compile(String targetFolder, List<File> javaFiles)
 			throws SavException {
 		CollectionBuilder<String, List<String>> builder = new CollectionBuilder<String, List<String>>(
 				new ArrayList<String>())
 				.append(VmRunnerUtils.buildJavaCPrefix(vmConfig))
 				.append("-classpath").append(vmConfig.getClasspathStr()).append("-d")
 				.append(targetFolder);
-		for (File mutatedFile : mutatedFiles) {
+		for (File mutatedFile : javaFiles) {
 			builder.append(mutatedFile.getAbsolutePath());
 		}
 		builder.append("-g");
@@ -51,7 +51,7 @@ public class Recompiler {
 		vmRunner.setLog(vmConfig.isVmLogEnable());
 		boolean success = vmRunner.startAndWaitUntilStop(builder.toCollection());
 		if (!success) {
-			throw new SavException("Recompilation error: " + vmRunner.getProccessError(), ModuleEnum.JVM);
+			throw new SavException("Compilation error: " + vmRunner.getProccessError(), ModuleEnum.JVM);
 		}
 		return success;
 	}

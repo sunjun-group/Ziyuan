@@ -35,8 +35,7 @@ public class CfgJaCoCo {
 	 * this is used for simple testcases which helps to reduce running time consumption.
 	 */
 	public Map<String, CfgCoverage> runBySimpleRunner(List<String> targetMethods, List<String> testingClassNames,
-			List<String> junitClassNames) throws SavException, IOException,
-			ClassNotFoundException {
+			List<String> junitClassNames) throws SavException {
 		return run(targetMethods, testingClassNames, junitClassNames, true);
 	}
 	
@@ -61,8 +60,7 @@ public class CfgJaCoCo {
 	}
 	
 	public Map<String, CfgCoverage> run(List<String> targetMethods, List<String> testingClassNames,
-			List<String> junitClassNames, boolean usingSimpleRunner) throws SavException, IOException,
-			ClassNotFoundException {
+			List<String> junitClassNames, boolean usingSimpleRunner) throws SavException {
 		return runner.targetMethods(targetMethods)
 				.targetClassNames(testingClassNames)
 				.junitClassNames(junitClassNames)

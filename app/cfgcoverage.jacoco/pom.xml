@@ -47,7 +47,7 @@
 							<minimizeJar>true</minimizeJar>
 							<shadedArtifactAttached>true</shadedArtifactAttached>
 							<finalName>cfgcoverage.jacoco-${timestamp}.jar</finalName>
-							<outputFile>${cfgcoverage.libs.target}/cfgcoverage.jacoco-${timestamp}.jar</outputFile>
+							<outputFile>${cfgcoverage.libs.target}/cfgcoverage.jacoco.jar</outputFile>
 							<createSourcesJar>true</createSourcesJar>
 							<outputDirectory>${cfgcoverage.libs.target}</outputDirectory>
 							<shadeSourcesContent>true</shadeSourcesContent>
