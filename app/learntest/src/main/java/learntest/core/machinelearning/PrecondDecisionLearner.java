@@ -45,7 +45,7 @@ import sav.strategies.dto.execute.value.ExecVar;
  * for sampling.
  */
 public class PrecondDecisionLearner extends AbstractLearningComponent {
-	protected static Logger log = LoggerFactory.getLogger(DecisionLearner.class);
+	private static Logger log = LoggerFactory.getLogger(PrecondDecisionLearner.class);
 	private static final int FORMULAR_LEARN_MAX_ATTEMPT = 5;
 	protected LearnedDataProcessor dataPreprocessor;
 
@@ -62,7 +62,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 	}
 
 	private void learn(CfgNode node, DecisionProbes probes, List<Integer> visitedNodes) throws SavException {
-		System.out.println("parsing the node in line " + node.getLine());
+		log.debug("parsing the node in line " + node.getLine());
 		
 		for (CfgNode dominatee : CfgUtils.getPrecondInherentDominatee(node)) {
 			if (!visitedNodes.contains(dominatee.getIdx())) {
@@ -74,7 +74,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 			visitedNodes.add(node.getIdx());
 			return;
 		}
-		System.out.println("learning the node in line " + node.getLine());
+		log.debug("learning the node in line " + node.getLine());
 		OrCategoryCalculator preconditions = getPreconditions(probes, node);
 		dataPreprocessor.sampleForBranchCvg(node, preconditions);
 		dataPreprocessor.sampleForLoopCvg(node, preconditions);
@@ -122,7 +122,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 		System.currentTimeMillis();
 		double acc = mcm.getModelAccuracy();
 		List<Divider> dividers = mcm.getLearnedDividers();
-		System.out.println("=============learned multiple cut: " + trueFlaseFormula);
+		log.info("=============learned multiple cut: " + trueFlaseFormula);
 
 		int time = 0;
 		DecisionNodeProbe nodeProbe = orgNodeProbe;
@@ -142,12 +142,12 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 			mcm.getLearnedModels().clear();
 			addDataPoints(probes.getLabels(), probes.getOriginalVars(), newData.getTrueValues(), Category.POSITIVE, mcm);
 			addDataPoints(probes.getLabels(), probes.getOriginalVars(), newData.getFalseValues(), Category.NEGATIVE, mcm);
-			System.out.println("true data after selective sampling" + newData.getTrueValues());
-			System.out.println("false data after selective sampling" + nodeProbe.getFalseValues());
+			log.info("true data after selective sampling" + newData.getTrueValues());
+			log.info("false data after selective sampling" + nodeProbe.getFalseValues());
 
 			mcm.train();
 			Formula tmp = mcm.getLearnedMultiFormula(probes.getOriginalVars(), probes.getLabels());
-			System.out.println("improved the formula: " + tmp);
+			log.info("improved the formula: " + tmp);
 			if (tmp == null) {
 				break;
 			}

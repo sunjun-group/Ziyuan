@@ -21,9 +21,10 @@ import learntest.breakpoint.data.DecisionLocation;
 import learntest.cfg.CfgHandlerAdapter;
 import learntest.cfg.CfgHandlerAdapter.CfgAproach;
 import learntest.cfg.ICfgHandler;
+import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.utils.DomainUtils;
-import learntest.core.gentest.TestGenerator.GentestResult;
+import learntest.core.gentest.GentestResult;
 import learntest.exception.LearnTestException;
 import learntest.sampling.JavailpSelectiveSampling;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
@@ -58,7 +59,7 @@ public class LearnTest {
 	public RunTimeInfo run(boolean random) throws LearnTestException {
 		try {
 			LearnTestParams params = LearnTestParams.initFromLearnTestConfig();
-			params.setLearnByPrecond(!random);
+			params.setApproach(random ? LearnTestApproach.RANDOOP : LearnTestApproach.L2T);
 			return run(params);
 		} catch (ParseException e) {
 			throw new LearnTestException(e);

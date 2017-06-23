@@ -12,6 +12,8 @@ import org.jacop.core.Store;
 import org.slf4j.LoggerFactory;*/
 import org.jacop.floats.core.FloatDomain;
 import org.jacop.floats.core.FloatIntervalDomain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import learntest.breakpoint.data.DecisionLocation;
 import learntest.calculator.OrCategoryCalculator;
@@ -31,7 +33,7 @@ import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
 
 public class JacopSelectiveSampling {
-	//private static Logger log = LoggerFactory.getLogger(SelectiveSampling.class);
+	private static Logger log = LoggerFactory.getLogger(JacopSelectiveSampling.class);
 	private static final int MAX_MORE_SELECTED_SAMPLE = 4;
 	private static final int MIN_MORE_SELECTED_DATA = 5;
 	private TestcasesExecutorwithLoopTimes tcExecutor;
@@ -208,15 +210,15 @@ public class JacopSelectiveSampling {
 				}
 			}
 		}		
-		//System.out.println("selectDataForModel constraints solving time: " + (System.currentTimeMillis() - startTime) + " ms");
+		//log.debug("selectDataForModel constraints solving time: " + (System.currentTimeMillis() - startTime) + " ms");
 		
 		//startTime = System.currentTimeMillis();
 		extendWithHeuristics(solutions, assignmentList, originVars);
-		//System.out.println("selectDataForModel extend with heuristics time: " + (System.currentTimeMillis() - startTime) + " ms");
+		//log.debug("selectDataForModel extend with heuristics time: " + (System.currentTimeMillis() - startTime) + " ms");
 		
 		//startTime = System.currentTimeMillis();
 		selectData(target, assignmentList);
-		//System.out.println("selectDataForModel test cases execution time: " + (System.currentTimeMillis() - startTime) + " ms, "
+		//log.debug("selectDataForModel test cases execution time: " + (System.currentTimeMillis() - startTime) + " ms, "
 				//+ assignments.size() + "test cases");
 		return selectResult;
 	}
@@ -438,7 +440,7 @@ public class JacopSelectiveSampling {
 		
 		if(list != null){
 			int size = list.size();
-			System.out.println("Running " + size + " data points...");			
+			log.debug("Running " + size + " data points...");			
 		}
 		
 		tcExecutor.run();
@@ -478,7 +480,7 @@ public class JacopSelectiveSampling {
 		
 		if(list != null){
 			int size = list.size();
-			System.out.println("Running " + size + " data points...");			
+			log.debug("Running " + size + " data points...");			
 		}
 		
 		tcExecutor.run();

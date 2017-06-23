@@ -22,6 +22,7 @@ import gentest.junit.FileCompilationUnitPrinter;
 import gentest.junit.TestsPrinter;
 import gentest.junit.TestsPrinter.PrintOption;
 import learntest.core.commons.utils.DomainUtils;
+import learntest.core.gentest.GentestResult;
 import learntest.gentest.TestSeqGenerator;
 import learntest.util.LearnTestUtil;
 import net.sf.javailp.Result;

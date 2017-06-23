@@ -2,11 +2,17 @@ package learntest;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import sav.common.core.utils.ConfigUtils;
+import sav.common.core.utils.FileUtils;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -38,6 +44,21 @@ public class Activator extends AbstractUIPlugin {
 //		imgReg.put(ImageUI.WRONG_VALUE_MARK, getImageDescriptor(ImageUI.WRONG_VALUE_MARK));
 //		imgReg.put(ImageUI.WRONG_PATH_MARK, getImageDescriptor(ImageUI.WRONG_PATH_MARK));
 //		imgReg.put(ImageUI.QUESTION_MARK, getImageDescriptor(ImageUI.QUESTION_MARK));
+		initLog4j();
+	}
+	
+	public static void initLog4j() throws Exception {
+		ResourceBundle log4j = ResourceBundle.getBundle("learntest_log4j");
+		Properties props = new Properties();
+		for (String key : log4j.keySet()) {
+			props.setProperty(key, log4j.getString(key));
+		}
+		/* TODO temporary get default files using user.dir */
+		if (props.getProperty("log4j.appender.file.File") == null) {
+			props.setProperty("log4j.appender.file.File", FileUtils.getFilePath(ConfigUtils.getProperty("user.dir"),
+					"learntest-eclipse.log"));
+		}
+		PropertyConfigurator.configure(props);
 	}
 	
 	/**

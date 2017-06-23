@@ -24,6 +24,11 @@ public class SavException extends Exception {
 		this.params = params;
 	}
 	
+	public SavException(String msg, Enum<?> type) {
+		super(msg);
+		this.type = type;
+	}
+	
 	public SavException(Enum<?> type, Exception ex, Object... params) {
 		super(ex);
 		this.type = type;
@@ -40,4 +45,5 @@ public class SavException extends Exception {
 	public Object[] getParams() {
 		return params;
 	}
+	
 }

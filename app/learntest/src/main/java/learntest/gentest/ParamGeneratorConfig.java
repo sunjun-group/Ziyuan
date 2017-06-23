@@ -3,10 +3,14 @@ package learntest.gentest;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.Pair;
 import sav.common.core.utils.Randomness;
 
 public class ParamGeneratorConfig {
+	private static Logger log = LoggerFactory.getLogger(ParamGeneratorConfig.class);
 	public static final int DEFAULT_STRING_MAX_LENGTH = 10;
 	public static final Ranges<Integer> DEFAULT_INT_RANGES = Ranges.of(Integer.MIN_VALUE, Integer.MAX_VALUE);
 	public static final Ranges<Long> DEFAULT_LONG_RANGES = Ranges.of(Long.MIN_VALUE, Long.MAX_VALUE);
@@ -20,7 +24,7 @@ public class ParamGeneratorConfig {
 	private int stringMaxLength;
 
 	public static void main(String[] args) {
-		System.out.println(DEFAULT_INT_RANGES);
+		log.debug(DEFAULT_INT_RANGES.toString());
 	}
 
 	public static ParamGeneratorConfig getDefault() {

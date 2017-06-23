@@ -11,9 +11,10 @@ package learntest.core.commons.data.classinfo;
 import java.util.ArrayList;
 import java.util.List;
 
-import learntest.core.gentest.TestGenerator.GentestResult;
+import learntest.core.gentest.GentestResult;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.FileUtils;
 import sav.common.core.utils.JunitUtils;
 
 /**
@@ -24,6 +25,7 @@ public class JunitTestsInfo {
 	private String mainClass;
 	private List<String> junitClasses;
 	private List<String> junitTestcases;
+	private List<String> junitFiles;
 	
 	public JunitTestsInfo(List<String> junitClasses, ClassLoader classLoader) {
 		this();
@@ -33,6 +35,7 @@ public class JunitTestsInfo {
 	public JunitTestsInfo() {
 		junitClasses = new ArrayList<String>();
 		junitTestcases = new ArrayList<String>();
+		junitFiles = new ArrayList<String>(); 
 	}
 	
 	public JunitTestsInfo(GentestResult testResult, ClassLoader classLoader) {
@@ -44,13 +47,14 @@ public class JunitTestsInfo {
 		if (testResult.isEmpty()) {
 			return;
 		}
+		CollectionUtils.addIfNotNullNotExist(junitFiles, FileUtils.getFilePaths(testResult.getJunitfiles()));
 		addJunitClass(testResult.getJunitClassNames(), classLoader);
 		this.mainClass = testResult.getMainClassName();
 	}
 
 	public void addJunitClass(String clazz, List<String> testMethods) {
-		junitClasses.add(clazz);
-		junitTestcases.addAll(testMethods);
+		CollectionUtils.addIfNotNullNotExist(this.junitClasses, clazz);
+		CollectionUtils.addIfNotNullNotExist(this.junitTestcases, testMethods);
 	}
 
 	public List<String> getJunitClasses() {
@@ -61,10 +65,10 @@ public class JunitTestsInfo {
 		return junitTestcases;
 	}
 
-	public void addJunitClass(List<String> junitClasses, ClassLoader classLoader) {
+	private void addJunitClass(List<String> junitClasses, ClassLoader classLoader) {
 		try {
-			this.junitClasses.addAll(junitClasses);
-			this.junitTestcases.addAll(JunitUtils.extractTestMethods(junitClasses, classLoader));
+			CollectionUtils.addIfNotNullNotExist(this.junitClasses, junitClasses);
+			CollectionUtils.addIfNotNullNotExist(this.junitTestcases, JunitUtils.extractTestMethods(junitClasses, classLoader));
 		} catch (ClassNotFoundException e) {
 			throw new SavRtException(e);
 		}
@@ -82,4 +86,7 @@ public class JunitTestsInfo {
 		this.mainClass = mainClass;
 	}
 	
+	public List<String> getJunitFiles() {
+		return junitFiles;
+	}
 }

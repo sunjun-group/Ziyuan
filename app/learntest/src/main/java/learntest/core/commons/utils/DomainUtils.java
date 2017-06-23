@@ -17,6 +17,8 @@ import java.util.Set;
 import org.jacop.core.Domain;
 import org.jacop.floats.core.FloatDomain;
 import org.jacop.floats.core.FloatIntervalDomain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
@@ -30,6 +32,7 @@ import sav.strategies.dto.execute.value.ExecVar;
  *
  */
 public class DomainUtils {
+	private static Logger log = LoggerFactory.getLogger(DomainUtils.class);
 	private DomainUtils(){}
 	
 	/**
@@ -87,7 +90,7 @@ public class DomainUtils {
 			}
 		}
 		if (duplicate > 0) {
-			System.out.println(String.format("remove %d duplicated solutions: ", duplicate));
+			log.debug(String.format("remove %d duplicated solutions: ", duplicate));
 		}
 		return result;
 	}

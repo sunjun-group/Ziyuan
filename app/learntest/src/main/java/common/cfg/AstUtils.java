@@ -10,10 +10,6 @@ package common.cfg;
 
 import japa.parser.ast.Node;
 
-import java.util.List;
-
-import sav.common.core.utils.Assert;
-
 /**
  * @author LLT
  *

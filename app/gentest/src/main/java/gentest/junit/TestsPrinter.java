@@ -40,15 +40,8 @@ public class TestsPrinter implements ITestsPrinter {
 	
 	public TestsPrinter(String pkg, String failPkg, String methodPrefix, String classPrefix,
 			String srcPath, PrintOption printOption) {
-		this(pkg, failPkg, methodPrefix, classPrefix, new FileCompilationUnitPrinter(srcPath));
-		if (printOption == PrintOption.APPEND) {
-			// check if there is any test class which name has the same format, reset classIdx if found
-			classIdx = getMaxIdxOfExistingClass(srcPath, pkg, classPrefix);
-			if (failPkg != null) {
-				classIdx = Math.max(classIdx, getMaxIdxOfExistingClass(srcPath, pkg, classPrefix));
-			}
-			classIdx++;
-		}
+		this(new PrinterParams(pkg, failPkg, methodPrefix, classPrefix, srcPath, printOption),
+				new FileCompilationUnitPrinter(srcPath));
 	}
 
 	public TestsPrinter(String pkg, String failPkg,
@@ -56,12 +49,25 @@ public class TestsPrinter implements ITestsPrinter {
 		this(PrinterParams.of(pkg, failPkg, methodPrefix, classPrefix), cuPrinter);
 	}
 	
+	public TestsPrinter(PrinterParams params) {
+		this(params, new FileCompilationUnitPrinter(params.getSrcPath()));
+	}
+	
 	public TestsPrinter(PrinterParams params, ICompilationUnitPrinter cuPrinter) {
 		this.params = params;
+		classIdx = 1;
+		if (params.printOption == PrintOption.APPEND) {
+			// check if there is any test class which name has the same format, reset classIdx if found
+			classIdx = getMaxIdxOfExistingClass(params.srcPath, params.pkg, params.classPrefix);
+			if (params.failPkg != null) {
+				classIdx = Math.max(classIdx, getMaxIdxOfExistingClass(params.srcPath, params.pkg, params.classPrefix));
+			}
+			classIdx++;
+		}
+		
 		if (params.failPkg == null) {
 			separatePassFail = false;
 		}
-		classIdx = 1;
 		this.cuPrinter = cuPrinter;
 	}
 

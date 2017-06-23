@@ -1,37 +1,36 @@
 package learntest.core;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.jacop.core.Domain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
+import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.commons.data.classinfo.JunitTestsInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.utils.CoverageUtils;
-import learntest.core.commons.utils.DomainUtils;
+import learntest.core.commons.utils.JavaFileCopier;
 import learntest.core.gentest.GentestParams;
-import learntest.core.gentest.TestGenerator.GentestResult;
+import learntest.core.gentest.GentestResult;
 import learntest.core.machinelearning.PrecondDecisionLearner;
 import learntest.exception.LearnTestException;
 import learntest.main.LearnTestParams;
 import learntest.main.RunTimeInfo;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.FileUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.dto.execute.value.ExecValue;
-import sav.strategies.dto.execute.value.ExecVar;
 
 public class LearnTest extends AbstractLearntest {
+	private static Logger log = LoggerFactory.getLogger(LearnTest.class);
 	private LearningMediator mediator;
 	
 	public LearnTest(AppJavaClassPath appClasspath) {
@@ -43,7 +42,7 @@ public class LearnTest extends AbstractLearntest {
 		SAVTimer.startCount();
 		/* collect testcases in project */
 		if (CollectionUtils.isEmpty(params.getInitialTestcases())) {
-			System.out.println("empty testcase!");
+			log.info("empty testcase!");
 			return null;
 		}
 		init(params);
@@ -55,19 +54,19 @@ public class LearnTest extends AbstractLearntest {
 			cfgCoverage = tryBestForInitialCoverage(params, targetMethod);
 
 			if (CoverageUtils.notCoverAtAll(cfgCoverage)) {
-				System.out.println("start node is not covered!");
+				log.info("start node is not covered!");
 				return null;
 			}
-			System.out.println("first coverage: " + CoverageUtils.calculateCoverage(cfgCoverage));
+			log.info("first coverage: " + CoverageUtils.calculateCoverage(cfgCoverage));
 			BreakPoint methodEntryBkp = BreakpointCreator.createMethodEntryBkp(targetMethod);
 			/**
 			 * run testcases
 			 */
 			BreakpointData result = executeTestcaseAndGetTestInput(params.getInitialTestcases(), methodEntryBkp);
-			System.out.println();
 			if (CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
-				System.out.println("no decision node is covered!");
-				return regenerateTestNotLearning(cfgCoverage, result);
+				log.info("no decision node is covered!");
+				copyTestsToResultFolder(params);
+				return getRuntimeInfo(cfgCoverage);
 			} else {
 				/* learn */
 				PrecondDecisionLearner learner = mediator.initDecisionLearner(params.isLearnByPrecond());
@@ -84,9 +83,14 @@ public class LearnTest extends AbstractLearntest {
 				} 
 			}
 		} catch (LearnTestException e) {
-			System.out.println("Warning: cannot get entry value when coverage is still not empty!");
+			log.warn("still cannot get entry value when coverage is not empty!");
 		}
 		return null;
+	}
+
+	private void copyTestsToResultFolder(LearnTestParams params) {
+		JavaFileCopier.copy(params.getInitialTests().getJunitFiles(), params.getInitTestPkg(),
+				params.getResultTestPkg(), appClasspath.getTestSrc());
 	}
 
 	protected void prepareInitTestcase(LearnTestParams params) throws SavException {
@@ -95,8 +99,9 @@ public class LearnTest extends AbstractLearntest {
 		}
 		/* init test */
 		GentestParams gentestParams = params.initGentestParams(appClasspath);
+		gentestParams.setTestPkg(params.getInitTestPkg());
 		GentestResult initTests = generateTestcases(gentestParams);
-		params.setInitialTests(new JunitTestsInfo(initTests.getJunitClassNames(), appClasspath.getClassLoader()));
+		params.setInitialTests(new JunitTestsInfo(initTests, appClasspath.getClassLoader()));
 	}
 
 	/**
@@ -107,41 +112,42 @@ public class LearnTest extends AbstractLearntest {
 			throws SavException, IOException, ClassNotFoundException {
 		CfgCoverage cfgCoverage = null;
 		int i;
-		for (i = 0; i < 3; i++) {
-			cfgCoverage = runCfgCoverage(targetMethod, params.getInitialTests().getJunitClasses());
-			if (CoverageUtils.notCoverAtAll(cfgCoverage) || CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
-				String newTestClass = randomGentest();
-				params.getInitialTests().addJunitClass(newTestClass, appClasspath.getClassLoader());
-			} else {
+		GentestParams gentestParams = params.initGentestParams(appClasspath);
+		gentestParams.setPrintOption(PrintOption.APPEND);
+		List<String> junitClasses = params.getInitialTests().getJunitClasses();
+
+		double bestCvg = 0.0;
+		GentestResult gentestResult = null;
+		for (i = 0; ; i++) {
+			cfgCoverage = runCfgCoverage(targetMethod, junitClasses);
+			double cvg = CoverageUtils.calculateCoverage(cfgCoverage);
+			/* replace current init test with new generated test */
+			if (cvg > bestCvg) {
+				bestCvg = cvg;
+				if(gentestResult != null) {
+					params.setInitialTests(new JunitTestsInfo(gentestResult, appClasspath.getClassLoader()));
+				}
+			} else if (gentestResult != null) {
+				// remove files
+				FileUtils.deleteFiles(gentestResult.getJunitfiles());
+			}
+			if (i >= 3 || !CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
 				break;
 			}
+			gentestResult = randomGentest(gentestParams);
 		}
 		if (i > 0) {
-			System.out.println(String.format("Get best coverage after regenerate test %d times", i));
+			log.debug(String.format("Get best initial coverage after trying to regenerate test %d times", i));
 		}
 		return cfgCoverage;
 	}
 
-	private RunTimeInfo regenerateTestNotLearning(CfgCoverage cfgCoverage, BreakpointData result)
+	private GentestResult randomGentest(GentestParams gentestParams)
 			throws ClassNotFoundException, SavException, IOException {
-		CfgCoverage newCoverage = new CfgCoverage(cfgCoverage.getCfg());
-		/* generate new testcases */
-		GentestResult gentestResult = createSolutionAndGentest(result);
-		if (!gentestResult.isEmpty()) {
-			/* update coverage */
-			mediator.runCoverageForGeneratedTests(CoverageUtils.getCfgCoverageMap(newCoverage), 
-					gentestResult.getJunitClassNames());
-			return getRuntimeInfo(newCoverage);
-		}
-		return getRuntimeInfo(cfgCoverage);
-	}
-	
-	private String randomGentest()
-			throws ClassNotFoundException, SavException, IOException {
-		GentestResult result = mediator.getTestGenerator().genTest();
+		GentestResult result = mediator.getTestGenerator().genTest(gentestParams);
 		/* update coverage */
 		mediator.compile(result.getJunitfiles());
-		return result.getJunitClassNames().get(0);
+		return result;
 	}
 	
 	/**
@@ -163,37 +169,6 @@ public class LearnTest extends AbstractLearntest {
 //		ProbesXmlConverter converter = new ProbesXmlConverter();
 //		writer.writeXml(converter.toMethodsElement(probes), LearntestConstant.XML_FILE_PATH);
 		return probes;
-	}
-
-	private GentestResult createSolutionAndGentest(BreakpointData result)
-			throws ClassNotFoundException, SavException {
-		List<BreakpointValue> tests = result.getAllValues();
-		if (tests != null && !tests.isEmpty()) {
-			BreakpointValue test = tests.get(0);
-			Set<ExecVar> allVars = new HashSet<ExecVar>();
-			collectExecVar(test.getChildren(), allVars);
-			List<ExecVar> vars = new ArrayList<ExecVar>(allVars);
-			List<BreakpointValue> list = new ArrayList<BreakpointValue>();
-			list.add(test);
-
-			/* GENERATE NEW TESTCASES */
-			List<Domain[]> solutions = DomainUtils.buildSolutions(list, vars);
-			return genterateTestFromSolutions(vars, solutions);
-		}
-		return GentestResult.getEmptyResult();
-	}
-
-	private void collectExecVar(List<ExecValue> vals, Set<ExecVar> vars) {
-		if (CollectionUtils.isEmpty(vals)) {
-			return;
-		}
-		for (ExecValue val : vals) {
-			if (val == null || CollectionUtils.isEmpty(val.getChildren())) {
-				String varId = val.getVarId();
-				vars.add(new ExecVar(varId, val.getType()));
-			}
-			collectExecVar(val.getChildren(), vars);
-		}
 	}
 
 }

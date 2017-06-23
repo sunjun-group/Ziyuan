@@ -22,7 +22,7 @@ import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.calculator.OrCategoryCalculator;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.utils.CfgUtils;
-import learntest.core.commons.utils.LearningUtils;
+import learntest.core.commons.utils.MachineLearningUtils;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import libsvm.extension.MultiDividerBasedCategoryCalculator;
@@ -55,7 +55,7 @@ public class DecisionProbes extends CfgCoverage {
 	public void setRunningResult(List<BreakpointValue> testInputs) {
 		this.testInputs = testInputs;
 		originalVars = BreakpointDataUtils.collectAllVars(testInputs);
-		learningVars = LearningUtils.createPolyClassifierVars(originalVars);
+		learningVars = MachineLearningUtils.createPolyClassifierVars(originalVars);
 	}
 
 	public void transferCoverage(CfgCoverage cfgCoverage) {

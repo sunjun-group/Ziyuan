@@ -30,8 +30,11 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import learntest.core.JDartLearntest;
+import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.io.excel.Trial;
 import learntest.io.excel.TrialExcelHandler;
@@ -52,6 +55,7 @@ import sav.common.core.utils.PrimitiveUtils;
 import sav.settings.SAVTimer;
 
 public class EvaluationHandler extends AbstractLearntestHandler {
+	private static Logger log = LoggerFactory.getLogger(EvaluationHandler.class);
 	private static final List<TargetMethodFilter> DEFAULT_METHOD_FILTERS;
 	private static final List<TargetClassFilter> DEFAULT_CLASS_FILTERS;
 	private List<TargetMethodFilter> methodFilters;
@@ -85,7 +89,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 					}
 				}
 			}
-			System.out.println(overalInfo.toString());
+			log.info(overalInfo.toString());
 		} catch (JavaModelException e) {
 			handleException(e);
 		}
@@ -134,6 +138,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				MethodCollector collector = new MethodCollector(cu);
 				cu.accept(collector);
 				updateRuntimeInfo(info, cu, collector);
+				
 				evaluateForMethodList(excelHandler, cu, collector.mdList);
 			}
 		}
@@ -158,7 +163,9 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		for (MethodDeclaration method : validMethods) {
 			TargetMethod targetMethod = initTargetMethod(className, cu, method);
 
-			log("working method: " + targetMethod.getMethodFullName());
+			log.info("---------------------------------------------------------");
+			log.info("WORKING METHOD: " + targetMethod.getMethodFullName());
+			log.info("---------------------------------------------------------");
 			try{
 			    PrintWriter writer = new PrintWriter("latest_working_method.txt", "UTF-8");
 			    writer.println("working method: " + targetMethod.getMethodFullName());
@@ -168,22 +175,24 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			
 			try {
 				LearnTestParams params = initLearntestParams(targetMethod);
+				// l2t params
 				LearnTestParams l2tParams = params;
+				// randoop params
 				LearnTestParams randoopParam = params.createNew();
 				
 				RunTimeInfo l2tAverageInfo = new RunTimeInfo();
 				RunTimeInfo ranAverageInfo = new RunTimeInfo();
 				
-				log("run jdart..");
-				LearnTestConfig.isL2TApproach = true; // TODO to remove
-				l2tParams.setLearnByPrecond(true);
+				l2tParams.setApproach(LearnTestApproach.L2T);
+				log.info("run jdart..");
 				RunTimeInfo jdartInfo = runJdart(l2tParams);
 				
-				log("run l2t..");
-				runLearntest(l2tAverageInfo, l2tParams, true);
+				log.info("run l2t..");
+				runLearntest(l2tAverageInfo, l2tParams);
 				
-				log("run randoop..");
-				runLearntest(ranAverageInfo, randoopParam, false);
+				randoopParam.setApproach(LearnTestApproach.RANDOOP);
+				log.info("run randoop..");
+				runLearntest(ranAverageInfo, randoopParam);
 				
 				if (l2tAverageInfo.isNotZero() && ranAverageInfo.isNotZero()) {
 					String fullMN = ClassUtils.toClassMethodStr(LearnTestConfig.targetClassName,
@@ -214,9 +223,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	}
 
 	private GenerateTestHandler testHandler = new GenerateTestHandler();
-	private RunTimeInfo runLearntest(RunTimeInfo runInfo, LearnTestParams params, boolean l2tApproach) throws Exception {
-		LearnTestConfig.isL2TApproach = l2tApproach;
-		params.setLearnByPrecond(l2tApproach);
+	private RunTimeInfo runLearntest(RunTimeInfo runInfo, LearnTestParams params) throws Exception {
 		RunTimeInfo l2tInfo = testHandler.runLearntest(params);
 		if (runInfo != null && l2tInfo != null) {
 			runInfo.add(l2tInfo);
@@ -344,7 +351,6 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 						return false;
 					}
 				}
-
 			}
 
 			return true;

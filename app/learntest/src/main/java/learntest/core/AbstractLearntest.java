@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jacop.core.Domain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.CfgJaCoCo;
 import cfgcoverage.jacoco.analysis.data.BranchRelationship;
@@ -30,12 +32,11 @@ import icsetlv.variable.TestcasesExecutor;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.gentest.GentestParams;
+import learntest.core.gentest.GentestResult;
 import learntest.core.gentest.TestGenerator;
-import learntest.core.gentest.TestGenerator.GentestResult;
 import learntest.main.RunTimeInfo;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
-import sav.common.core.SavRtException;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
@@ -52,6 +53,7 @@ import sav.strategies.vm.VMConfiguration;
  *
  */
 public abstract class AbstractLearntest implements ILearnTestSolution {
+	private Logger log = LoggerFactory.getLogger(AbstractLearntest.class);
 	protected AppJavaClassPath appClasspath;
 	protected TestGenerator testGenerator;
 	protected JavaCompiler compiler;
@@ -111,7 +113,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 	
 	protected RunTimeInfo getRuntimeInfo(CfgCoverage cfgCoverage) {
 		double coverage = CoverageUtils.calculateCoverage(cfgCoverage);
-		System.out.println("coverage: " + coverage);
+		log.debug("coverage: " + coverage);
 		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
 			StringBuilder sb = new StringBuilder();
 			NodeCoverage nodeCvg = cfgCoverage.getCoverage(node);
@@ -124,7 +126,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 			sb.append("NodeCoverage [").append(node).append(", coveredTcs=").append(nodeCvg.getCoveredTcs().size())
 						.append(", coveredBranches=").append(nodeCvg.getCoveredBranches().size()).append(", ")
 						.append(coveredBranches).append("]");
-			System.out.println(sb.toString());
+			log.debug(sb.toString());
 		}
 		return new RunTimeInfo(SAVTimer.getExecutionTime(), coverage,
 				cfgCoverage.getTestcases().size());

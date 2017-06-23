@@ -18,7 +18,7 @@ import icsetlv.common.utils.BreakpointDataUtils;
 import jdart.model.TestInput;
 import learntest.core.commons.utils.DomainUtils;
 import learntest.core.gentest.GentestParams;
-import learntest.core.gentest.TestGenerator.GentestResult;
+import learntest.core.gentest.GentestResult;
 import learntest.core.jdart.JdartTestInputUtils;
 import learntest.main.LearnTestParams;
 import learntest.main.RunTimeInfo;
