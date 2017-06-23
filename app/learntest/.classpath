@@ -2,8 +2,19 @@
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry exported="true" kind="lib" path="lib/poi-3.11-20141221.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-3.11-20141221.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-schemas-3.11-20141221.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xmlbeans-2.6.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cfgcoverage.jacoco.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="javailp-1.2a.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cfgcoverage.jacoco.shade-0.0.1-SNAPSHOT-shaded-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jacop-4.4.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jacop-4.4.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/javaparser-1.0.11.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
