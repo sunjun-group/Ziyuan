@@ -22,6 +22,14 @@ public class VmRunnerUtils {
 	}
 	
 	public static String buildJavaCPrefix(VMConfiguration config) {
-		return StringUtils.join(Constants.FILE_SEPARATOR, config.getJavaHome(), "bin", "javac");
+		
+		String javaHome = config.getJavaHome();
+		/**
+		 * javac has been moved to jdk folder since java 1.8.
+		 */
+		if(javaHome.contains("1.8")){
+			javaHome = javaHome.replace("jre", "jdk");
+		}
+		return StringUtils.join(Constants.FILE_SEPARATOR, javaHome, "bin", "javac");
 	}
 }
