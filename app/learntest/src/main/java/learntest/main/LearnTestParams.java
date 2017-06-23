@@ -66,6 +66,7 @@ public class LearnTestParams {
 	
 	public GentestParams initGentestParams(AppJavaClassPath appClasspath) {
 		GentestParams params = new GentestParams();
+		params.setMethodExecTimeout(LearntestConstants.GENTEST_METHOD_EXEC_TIMEOUT);
 		params.setMethodSignature(SignatureUtils.createMethodNameSign(targetMethod.getMethodName(), 
 				targetMethod.getMethodSignature()));
 		params.setTargetClassName(targetMethod.getClassName());
@@ -110,6 +111,10 @@ public class LearnTestParams {
 	
 	public boolean isLearnByPrecond() {
 		return approach == LearnTestApproach.L2T;
+	}
+	
+	public LearnTestApproach getApproach() {
+		return approach;
 	}
 
 	@SuppressWarnings("unchecked")

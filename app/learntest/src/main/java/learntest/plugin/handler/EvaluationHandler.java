@@ -33,14 +33,11 @@ import org.eclipse.jdt.core.dom.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import learntest.core.JDartLearntest;
-import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.io.excel.Trial;
 import learntest.io.excel.TrialExcelHandler;
 import learntest.main.LearnTestConfig;
 import learntest.main.LearnTestParams;
-import learntest.main.RunTimeInfo;
 import learntest.plugin.handler.filter.classfilter.ClassNameFilter;
 import learntest.plugin.handler.filter.classfilter.TargetClassFilter;
 import learntest.plugin.handler.filter.classfilter.TestableClassFilter;
@@ -48,9 +45,9 @@ import learntest.plugin.handler.filter.methodfilter.MethodNameFilter;
 import learntest.plugin.handler.filter.methodfilter.NestedBlockChecker;
 import learntest.plugin.handler.filter.methodfilter.TargetMethodFilter;
 import learntest.plugin.handler.filter.methodfilter.TestableMethodFilter;
+import learntest.plugin.utils.IMethodUtils;
 import learntest.plugin.utils.IProjectUtils;
 import learntest.util.LearnTestUtil;
-import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.PrimitiveUtils;
 import sav.settings.SAVTimer;
 
@@ -66,6 +63,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		DEFAULT_CLASS_FILTERS = Arrays.asList(new TestableClassFilter());
 	}
 	
+	private int curMethodIdx = 0;
 	@Override
 	protected IStatus execute(IProgressMonitor monitor) {
 		final List<IPackageFragmentRoot> roots = IProjectUtils.findTargetSourcePkgRoots(LearnTestUtil.getJavaProject());
@@ -100,18 +98,17 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		methodFilters = new ArrayList<TargetMethodFilter>(DEFAULT_METHOD_FILTERS);
 		classFilters = new ArrayList<TargetClassFilter>(DEFAULT_CLASS_FILTERS);
 		classFilters.add(new ClassNameFilter(getExcludedClasses()));
-		// to excluded tested methods.
 //		addMethodFilter(oldTrials);
 	}
 
-	@SuppressWarnings("unused")
+//	@SuppressWarnings("unused")
 	private void addMethodFilter(Collection<Trial> oldTrials) {
 		if (oldTrials.isEmpty()) {
 			return;
 		}
 		Set<String> methods = new HashSet<String>(oldTrials.size());
 		for (Trial trial : oldTrials) {
-			methods.add(MethodNameFilter.toMethodId(trial.getMethodName(), trial.getMethodStartLine()));
+			methods.add(IMethodUtils.getMethodId(trial.getMethodName(), trial.getMethodStartLine()));
 		}
 		methodFilters.add(new MethodNameFilter(methods));
 	}
@@ -130,10 +127,15 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			} else if (javaElement instanceof ICompilationUnit) {
 				ICompilationUnit icu = (ICompilationUnit) javaElement;
 				CompilationUnit cu = LearnTestUtil.convertICompilationUnitToASTNode(icu);
+				boolean valid = true;
 				for (TargetClassFilter classFilter : classFilters) {
 					if (!classFilter.isValid(cu)) {
+						valid = false;
 						continue;
 					}
+				}
+				if (!valid) {
+					continue;
 				}
 				MethodCollector collector = new MethodCollector(cu);
 				cu.accept(collector);
@@ -163,9 +165,10 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		for (MethodDeclaration method : validMethods) {
 			TargetMethod targetMethod = initTargetMethod(className, cu, method);
 
-			log.info("---------------------------------------------------------");
-			log.info("WORKING METHOD: " + targetMethod.getMethodFullName());
-			log.info("---------------------------------------------------------");
+			log.info("-----------------------------------------------------------------------------------------------");
+			log.info("WORKING METHOD [{}]: {}, line {}", ++curMethodIdx, targetMethod.getMethodFullName(),
+																					targetMethod.getLineNum());
+			log.info("-----------------------------------------------------------------------------------------------");
 			try{
 			    PrintWriter writer = new PrintWriter("latest_working_method.txt", "UTF-8");
 			    writer.println("working method: " + targetMethod.getMethodFullName());
@@ -173,47 +176,16 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			} catch (IOException e) {
 			}
 			
-			try {
-				LearnTestParams params = initLearntestParams(targetMethod);
-				// l2t params
-				LearnTestParams l2tParams = params;
-				// randoop params
-				LearnTestParams randoopParam = params.createNew();
-				
-				RunTimeInfo l2tAverageInfo = new RunTimeInfo();
-				RunTimeInfo ranAverageInfo = new RunTimeInfo();
-				
-				l2tParams.setApproach(LearnTestApproach.L2T);
-				log.info("run jdart..");
-				RunTimeInfo jdartInfo = runJdart(l2tParams);
-				
-				log.info("run l2t..");
-				runLearntest(l2tAverageInfo, l2tParams);
-				
-				randoopParam.setApproach(LearnTestApproach.RANDOOP);
-				log.info("run randoop..");
-				runLearntest(ranAverageInfo, randoopParam);
-				
-				if (l2tAverageInfo.isNotZero() && ranAverageInfo.isNotZero()) {
-					String fullMN = ClassUtils.toClassMethodStr(LearnTestConfig.targetClassName,
-							LearnTestConfig.targetMethodName);
-					int start = cu.getLineNumber(method.getStartPosition());
-					int end = cu.getLineNumber(method.getStartPosition() + method.getLength());
-					int length = end - start + 1;
-
-					Trial trial = new Trial(fullMN, length, start, l2tAverageInfo, ranAverageInfo, jdartInfo);
+			LearnTestParams params = initLearntestParams(targetMethod);
+			Trial trial = evaluateLearntestForSingleMethod(params);
+			if (trial != null) {
+				try {
 					excelHandler.export(trial);
+				} catch (Exception e) {
+					handleException(e);
 				}
-			} catch (Exception e) {
-				handleException(e);
 			}
-
 		}
-	}
-	
-	private RunTimeInfo runJdart(LearnTestParams params) throws Exception {
-		JDartLearntest learntest = new JDartLearntest(getAppClasspath());
-		return learntest.jdart(params);
 	}
 
 	private LearnTestParams initLearntestParams(TargetMethod targetMethod) {
@@ -221,19 +193,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		setSystemConfig(params);
 		return params;
 	}
-
-	private GenerateTestHandler testHandler = new GenerateTestHandler();
-	private RunTimeInfo runLearntest(RunTimeInfo runInfo, LearnTestParams params) throws Exception {
-		RunTimeInfo l2tInfo = testHandler.runLearntest(params);
-		if (runInfo != null && l2tInfo != null) {
-			runInfo.add(l2tInfo);
-		} else {
-			runInfo = null;
-		}
-		Thread.sleep(5000);
-		return runInfo;
-	}
-
+	
 	class FieldAccessChecker extends ASTVisitor{
 		boolean isFieldAccess = false;
 		
@@ -307,6 +267,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			for (TargetMethodFilter filter : methodFilters) {
 				if (!filter.isValid(cu, md)) {
 					shouldTest = false;
+					break;
 				}
 			}
 			if (shouldTest) {

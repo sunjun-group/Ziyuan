@@ -73,7 +73,7 @@ import sav.strategies.dto.execute.value.ReferenceValue;
  *
  */
 public class DebugValueExtractor {
-	protected static Logger log = LoggerFactory.getLogger(DebugValueExtractor.class);
+	private static Logger log = LoggerFactory.getLogger(DebugValueExtractor.class);
 	private static final String TO_STRING_SIGN= "()Ljava/lang/String;";
 	private static final String TO_STRING_NAME= "toString";
 	private static final Pattern OBJECT_ACCESS_PATTERN = Pattern.compile("^\\.([^.\\[]+)(\\..+)*(\\[.+)*$");
@@ -399,6 +399,9 @@ public class DebugValueExtractor {
 			ObjectReference value, int level, ThreadReference thread) {
 		ReferenceValue val = new ReferenceValue(varId, false);
 		ClassType type = (ClassType) value.type();
+		if (isIgnoredType(type)) {
+			return;
+		}
 		Map<Field, Value> fieldValueMap = value.getValues(type.allFields());
 		for (Field field : type.allFields()) {
 			boolean isConstant = (field.isStatic() && field.isFinal()) || field.isEnumConstant();
@@ -410,6 +413,10 @@ public class DebugValueExtractor {
 		parent.add(val);
 	}
 	
+	private boolean isIgnoredType(ClassType type) {
+		return DefaultValues.EXTRACT_IGNORE_REFERENCES.contains(type.name());
+	}
+
 	private void appendStringVarVal(ExecValue parent, String varId,
 			ObjectReference value, int level, ThreadReference thread) {
 		ReferenceValue val = new ReferenceValue(varId, false);

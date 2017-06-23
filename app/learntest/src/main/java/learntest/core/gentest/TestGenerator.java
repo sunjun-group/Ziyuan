@@ -10,6 +10,9 @@ package learntest.core.gentest;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import gentest.builder.RandomTraceGentestBuilder;
 import gentest.core.data.Sequence;
 import gentest.junit.FileCompilationUnitPrinter;
@@ -27,6 +30,7 @@ import sav.strategies.dto.AppJavaClassPath;
  */
 /* LLT: THIS IS CREATED FOR A PURPOSE! */
 public class TestGenerator {
+	private static Logger log = LoggerFactory.getLogger(TestGenerator.class);
 	private ClassLoader prjClassLoader;
 	
 	public TestGenerator(AppJavaClassPath appClasspath) {
@@ -53,17 +57,20 @@ public class TestGenerator {
 	}
 	
 	protected GentestResult gentest(GentestParams params, TestsPrinter printer) throws SavException, ClassNotFoundException {
+		log.debug("start random gentest..");
 		Class<?> clazz = prjClassLoader.loadClass(params.getTargetClassName());
 		RandomTraceGentestBuilder gentest = new RandomTraceGentestBuilder(params.getNumberOfTcs())
 										.classLoader(prjClassLoader)
+										.methodExecTimeout(params.getMethodExecTimeout())
 										.queryMaxLength(params.getQueryMaxLength())
 										.testPerQuery(params.getTestPerQuery())
 										.forClass(clazz)
 										.method(params.getMethodSignature());
-		Pair<List<Sequence>, List<Sequence>> pair = gentest.generate();
+		Pair<List<Sequence>, List<Sequence>> pair = gentest.generate() ;
 		GentestResult result = new GentestResult();
 		result.setJunitClassNames(printer.printTests(pair));
 		result.setJunitfiles(((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles());
+		log.debug("generated junit classes: {}", result.getJunitClassNames());
 		return result;
 	}
 	

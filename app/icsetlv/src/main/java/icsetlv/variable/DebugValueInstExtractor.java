@@ -11,6 +11,9 @@ package icsetlv.variable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassNotLoadedException;
@@ -34,6 +37,7 @@ import sav.strategies.dto.BreakPoint.Variable;
  * 
  */
 public class DebugValueInstExtractor extends DebugValueExtractor {
+	private static Logger log = LoggerFactory.getLogger(DebugValueInstExtractor.class);
 	/**
 	 * instrument value map for {@link Variable#getId()}
 	 */

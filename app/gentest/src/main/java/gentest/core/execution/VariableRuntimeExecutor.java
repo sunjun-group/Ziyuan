@@ -36,11 +36,12 @@ import sav.common.core.utils.ExecutionTimer;
  *
  */
 public class VariableRuntimeExecutor implements StatementVisitor {
+	private static Logger log = LoggerFactory.getLogger(VariableRuntimeExecutor.class);
 	@Inject @Named("methodExecTimeout")
 	static long methodExecTimeout;
-	protected static Logger log = LoggerFactory.getLogger(VariableRuntimeExecutor.class);
 	protected RuntimeData data;
 	protected Boolean successful;
+	private static ExecutionTimer executionTimer = ExecutionTimer.getFutureTaskExecutionTimer(methodExecTimeout);
 	
 	public VariableRuntimeExecutor() {
 		data = new RuntimeData();
@@ -76,7 +77,6 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		for (Statement stmt : stmts) {
 			execute(stmt);
 		}
-//		System.currentTimeMillis();
 		return successful;
 	}
 
@@ -84,7 +84,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		try {
 			stmt.accept(this);
 		} catch(Throwable ex) {
-//			log.debug(ex.getMessage());
+			log.debug(ex.getMessage());
 			onFail();
 		}
 		return successful;
@@ -191,7 +191,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 				}
 			}
 		} catch (Throwable e) {
-//			log.debug(e.getMessage());
+			log.debug(e.getMessage());
 			onFail();
 		}
 		return successful;
@@ -199,7 +199,6 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 	
 	private void invokeMethodByExecutionTimer(final List<Object> inputs, final ReturnValue value, final Object obj,
 			final Method method) throws Exception {
-		ExecutionTimer executionTimer = ExecutionTimer.getFutureTaskExecutionTimer(methodExecTimeout);
 		boolean success = executionTimer.run(new Runnable() {
 			@Override
 			public void run() {
