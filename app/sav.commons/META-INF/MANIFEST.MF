@@ -382,9 +382,9 @@ Bundle-ClassPath: lib/commons-cli-1.2.jar,
  .,
  lib/javaparser-1.0.11.jar,
  lib/commons-collections-3.2.1.jar,
- lib/javailp-1.2a.jar,
  lib/commons-logging-1.1.3.jar,
  src/main/resources/,
- lib/junit-4.12.jar
+ lib/junit-4.12.jar,
+ lib/javailp-1.2a.jar
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.10"
