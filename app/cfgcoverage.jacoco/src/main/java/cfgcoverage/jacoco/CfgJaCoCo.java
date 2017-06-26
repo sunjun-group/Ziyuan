@@ -54,8 +54,7 @@ public class CfgJaCoCo {
 	 * @throws ClassNotFoundException
 	 */
 	public Map<String, CfgCoverage> runJunit(List<String> targetMethods, List<String> testingClassNames,
-			List<String> junitClassNames) throws SavException, IOException,
-			ClassNotFoundException {
+			List<String> junitClassNames) throws SavException {
 		return run(targetMethods, testingClassNames, junitClassNames, false);
 	}
 	

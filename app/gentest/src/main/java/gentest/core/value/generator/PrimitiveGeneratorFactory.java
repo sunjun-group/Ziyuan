@@ -40,17 +40,20 @@ public class PrimitiveGeneratorFactory {
 			generator = getGeneratorIfString(key);
 		}
 		if (generator == null) {
+			generator = getGeneratorIfEnum(key);
+		}
+		if (generator == null) {
 			throw new SavRtException("Primitive value generator for type " + key + " is not defined!");
 		}
 		return generator;
 	}
 	
 	public PrimitiveGenerator<?> getGeneratorIfEnum(Class<?> key) {
-		if (TypeUtils.isEnum(key)) {
+		if (TypeUtils.isEnumType(key)) {
 			PrimitiveGenerator<?> generator = generators.get(Enum.class);
 			if (generator == null) {
 				generator = new EnumGenerator();
-				generators.put(String.class, generator);
+				generators.put(Enum.class, generator);
 			}
 			return generator;
 		}
@@ -111,7 +114,7 @@ public class PrimitiveGeneratorFactory {
 	}
 	
 	static abstract class PrimitiveGenerator<T> {
-		public abstract T next();
+		abstract T next();
 		
 		public T next(Class<?> type) {
 			return next();

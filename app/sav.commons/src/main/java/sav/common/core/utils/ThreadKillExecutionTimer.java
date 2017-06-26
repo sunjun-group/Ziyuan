@@ -16,13 +16,13 @@ import java.util.concurrent.TimeUnit;
  * @author LLT
  *
  */
-public class OrgExecutionTimer extends ExecutionTimer {
+public class ThreadKillExecutionTimer extends ExecutionTimer {
 	
-	public OrgExecutionTimer(long timeout) {
+	public ThreadKillExecutionTimer(long timeout) {
 		super(timeout);
 	}
 	
-	public OrgExecutionTimer(int timeout, TimeUnit unit) {
+	public ThreadKillExecutionTimer(int timeout, TimeUnit unit) {
 		super(timeout, unit);
 	}
 	
@@ -50,7 +50,6 @@ public class OrgExecutionTimer extends ExecutionTimer {
 					 * when it's timeout, jvm crash and we get empty jResult. This happens sometimes, depend on selected samples.    
 					 *  */
 					thread.stop();
-//					thread.interrupt();
 				}
 			}
 		}, timeout);

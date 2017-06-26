@@ -25,8 +25,10 @@ import gentest.core.data.type.ITypeCreator;
 import gentest.core.data.type.VarTypeCreator;
 import gentest.core.execution.VariableRuntimeExecutor;
 import gentest.core.value.store.SubTypesScanner;
+import gentest.core.value.store.TypeInitializerStore;
 import gentest.core.value.store.TypeMethodCallsCache;
 import gentest.core.value.store.VariableCache;
+import gentest.core.value.store.iface.ITypeInitializerStore;
 import gentest.core.value.store.iface.ITypeMethodCallStore;
 import gentest.core.value.store.iface.IVariableStore;
 import sav.strategies.gentest.ISubTypesScanner;
@@ -61,6 +63,7 @@ public class GentestModules extends AbstractModule {
 		bind(IVariableStore.class).to(VariableCache.class);
 		bind(ISubTypesScanner.class).to(SubTypesScanner.class);
 		bind(ITypeMethodCallStore.class).to(TypeMethodCallsCache.class);
+		bind(ITypeInitializerStore.class).to(TypeInitializerStore.class);
 		bind(ITypeCreator.class).to(VarTypeCreator.class);
 		bind(new TypeLiteral<IDataProvider<Sequence>>() {})
 				.toInstance(new DataProvider<Sequence>());

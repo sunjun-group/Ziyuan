@@ -22,14 +22,19 @@ public class SignatureUtils {
 	public static String getSignature(Method meth) {
 		StringBuffer sb = new StringBuffer();
 
+		sb.append(getParamsSignature(meth.getParameterTypes()));// avoid clone
+		sb.append(getSignature(meth.getReturnType()));
+		return sb.toString();
+	}
+
+	public static String getParamsSignature(Class<?>[] params) {
+		StringBuffer sb = new StringBuffer();
 		sb.append("(");
 
-		Class<?>[] params = meth.getParameterTypes(); // avoid clone
 		for (int j = 0; j < params.length; j++) {
 			sb.append(getSignature(params[j]));
 		}
 		sb.append(")");
-		sb.append(getSignature(meth.getReturnType()));
 		return sb.toString();
 	}
 

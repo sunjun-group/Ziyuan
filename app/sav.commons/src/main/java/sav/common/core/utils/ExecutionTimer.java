@@ -40,10 +40,14 @@ public abstract class ExecutionTimer {
 	
 	@Deprecated
 	public static ExecutionTimer getExecutionTimer(int timeout, TimeUnit timeunit) {
-		return new OrgExecutionTimer(timeout, timeunit);
+		return new ThreadKillExecutionTimer(timeout, timeunit);
 	}
 	
 	public static ExecutionTimer getFutureTaskExecutionTimer(long timeout) {
 		return new FutureTaskExecutionTimer((int) timeout, TimeUnit.MILLISECONDS);
+	}
+	
+	public static ExecutionTimer getCachePoolExecutionTimer(long timeout) {
+		return new CachePoolExecutionTimer(timeout);
 	}
 }
