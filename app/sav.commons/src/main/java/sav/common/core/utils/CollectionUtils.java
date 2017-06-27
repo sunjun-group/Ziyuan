@@ -191,6 +191,15 @@ public class CollectionUtils {
 		return value;
 	}
 	
+	public static <K, E> List<E> getListInitIfEmpty(Map<K, List<E>> map, K key, int listSize) {
+		List<E> value = map.get(key);
+		if (value == null) {
+			value = new ArrayList<E>(listSize);
+			map.put(key, value);
+		}
+		return value;
+	}
+	
 	public static <K, E> Set<E> getSetInitIfEmpty(Map<K, Set<E>> map, K key) {
 		Set<E> value = map.get(key);
 		if (value == null) {

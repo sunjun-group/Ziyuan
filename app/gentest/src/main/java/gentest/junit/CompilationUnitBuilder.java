@@ -83,6 +83,16 @@ public class CompilationUnitBuilder {
 		cu.getTypes().add(type);
 		return this;
 	}
+	
+	public CompilationUnitBuilder markAnnotation(String annotationName) {
+		if (curType.getAnnotations() == null) {
+			curType.setAnnotations(new ArrayList<AnnotationExpr>());
+		}
+		curType.getAnnotations().add(
+				new MarkerAnnotationExpr(ASTHelper
+						.createNameExpr(annotationName)));
+		return this;
+	}
 
 	public CompilationUnitBuilder endType() {
 		curType = null;

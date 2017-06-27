@@ -19,6 +19,7 @@ import java.util.Set;
  */
 public class JWriter implements ICompilationUnitWriter {
 	private static final String JUNIT_TEST_ANNOTATION = "Test";
+	private static final String DEPRECATION_SUPPRESS_WARNING = "SuppressWarnings(\"deprecation\")";
 	private static final String JUNIT_TEST_ANNOTATION_IMPORT = "org.junit.Test";
 	private static final String JUNIT_ASSERT_CLAZZ = "org.junit.Assert";
 	private String clazzName;
@@ -49,7 +50,8 @@ public class JWriter implements ICompilationUnitWriter {
 		for (Sequence method : methods) {
 			duplicateImports.addAll(cu.imports(method.getDeclaredTypes()));
 		}
-		cu.startType(getClazzName());
+		cu.startType(getClazzName())
+			.markAnnotation(DEPRECATION_SUPPRESS_WARNING);
 		AstNodeConverter astConverter = new AstNodeConverter(varNamer, duplicateImports);
 		for (int i = 0; i < methods.size(); i++) {
 			Sequence method = methods.get(i);

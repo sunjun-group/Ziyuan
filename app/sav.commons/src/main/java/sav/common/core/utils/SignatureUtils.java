@@ -110,7 +110,7 @@ public class SignatureUtils {
 		if (endNameIdx > 1) {
 			return methodNameAndSign.substring(endNameIdx);
 		}
-		return methodNameAndSign;
+		return StringUtils.EMPTY;
 	}
 	
 	public static String trimSignature(String typeSign) {
