@@ -44,7 +44,7 @@ public class JDartCore {
 				"+app=libs/jdart/jpf.properties",
 				"+site=libs/jpf.properties",
 				"+jpf-jdart.classpath+=" + pathString,
-				"+target=" + className,
+				"+target=" + mainEntry,
 				"+concolic.method=" + methodName,
 				"+concolic.method." + methodName + "=" +className+"."+ methodName + paramString,
 				"+concolic.method." + methodName + ".config=all_fields_symbolic"
@@ -52,8 +52,8 @@ public class JDartCore {
 	}
 
 	public static void main(String[] args) throws ExecutionException {
-
-		String  pathString = "E:\\workspace\\JPF\\data\\apache-common-math-2.2\\bin", 
+		
+		String  pathString = "E:\\linyun\\git_space\\apache-common-math-2.2\\apache-common-math-2.2\\bin", 
 				mainEntry = "com.MainEntry",
 				className = "com.Sorting",				
 				methodName = "quicksort",
@@ -170,9 +170,16 @@ public class JDartCore {
 //		className = "org.apache.commons.math.util.OpenIntToFieldHashMap";
 //		methodName = "findInsertionIndex";
 //		paramString = "(a:int)";
+		
+		mainEntry = "testdata.l2t.result.testdata.l2t.test.init.DfpMain";
+		className = "org.apache.commons.math.dfp.Dfp";
+		methodName = "align";
+		paramString = "(e:int)";
 				
 		String[] config = constructConfig(mainEntry, className, pathString, methodName, paramString);		
 		List<TestInput> inputList = RunJPF.run(config);
+		
+		System.currentTimeMillis();
 	}
 
 }
