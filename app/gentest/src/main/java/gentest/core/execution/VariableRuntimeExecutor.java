@@ -126,18 +126,13 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		return successful;
 	}
 	
-	private boolean newInstance(RConstructor stmt, List<Object> inputs) {
-		Object newInstance;
-		try {
-			newInstance = stmt.getConstructor().newInstance((Object[]) inputs.toArray());
-			// update data
-			for (int i = 0; i < stmt.getInVarIds().length; i++) {
-				addExecData(stmt.getInVarIds()[i], inputs.get(i));
-			}
-			addExecData(stmt.getOutVarId(), newInstance);
-		} catch (Throwable e) {
-			onFail();
+	private boolean newInstance(RConstructor stmt, List<Object> inputs) throws Exception {
+		Object newInstance = stmt.getConstructor().newInstance((Object[]) inputs.toArray());
+		// update data
+		for (int i = 0; i < stmt.getInVarIds().length; i++) {
+			addExecData(stmt.getInVarIds()[i], inputs.get(i));
 		}
+		addExecData(stmt.getOutVarId(), newInstance);
 		return successful;
 	}
 

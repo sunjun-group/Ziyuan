@@ -49,6 +49,7 @@ import learntest.plugin.utils.IMethodUtils;
 import learntest.plugin.utils.IProjectUtils;
 import learntest.util.LearnTestUtil;
 import sav.common.core.utils.PrimitiveUtils;
+import sav.common.core.utils.SingleTimer;
 import sav.settings.SAVTimer;
 
 public class EvaluationHandler extends AbstractLearntestHandler {
@@ -66,6 +67,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	private int curMethodIdx = 0;
 	@Override
 	protected IStatus execute(IProgressMonitor monitor) {
+		SingleTimer timer = SingleTimer.start("Evaluation all methods");
 		final List<IPackageFragmentRoot> roots = IProjectUtils.findTargetSourcePkgRoots(LearnTestUtil.getJavaProject());
 		TrialExcelHandler excelHandler = null;
 		try {
@@ -91,6 +93,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		} catch (JavaModelException e) {
 			handleException(e);
 		}
+		timer.logResults(log);
 		return Status.OK_STATUS;
 	}
 
@@ -194,7 +197,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		return params;
 	}
 	
-	class FieldAccessChecker extends ASTVisitor{
+	class FieldAccessChecker extends ASTVisitor {
 		boolean isFieldAccess = false;
 		
 		public boolean visit(SimpleName name){

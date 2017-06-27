@@ -81,21 +81,21 @@ public class TypeInitializerStore implements ITypeInitializerStore {
 	 */
 	public static TypeInitializer initTypeInitializer(Class<?> type) {
 		TypeInitializer initializer = new TypeInitializer(type);
-		List<Constructor<?>> mightCreateLoopList = new ArrayList<Constructor<?>>();
+		List<Object> badConstructors = new ArrayList<Object>();
 		try {
 			/*
 			 * try with the perfect one which is public constructor with no
 			 * parameter
 			 */
 			Constructor<?> constructor = type.getConstructor();
-			if (canBeCandidateForConstructor(constructor, type, mightCreateLoopList)) {
+			if (canBeCandidateForConstructor(constructor, type, badConstructors)) {
 				initializer.addConstructor(constructor, false);
 			}
 		} catch (Exception e) {
 			// do nothing, just keep trying.
 		}
 		for (Constructor<?> constructor : type.getConstructors()) {
-			if (canBeCandidateForConstructor(constructor, type, mightCreateLoopList)) {
+			if (canBeCandidateForConstructor(constructor, type, badConstructors)) {
 				initializer.addConstructor(constructor, true);
 			}
 		}
@@ -121,23 +121,31 @@ public class TypeInitializerStore implements ITypeInitializerStore {
 				}
 			}
 		}
-		if (initializer.hasNoConstructor()) {
-			initializer.addConstructors(mightCreateLoopList);
+		if (initializer.hasNoConstructor() && !badConstructors.isEmpty()) {
+			initializer.addBadConstructors(badConstructors);
 		}
 		return initializer;
 	}
 
 	private static boolean canBeCandidateForConstructor(Constructor<?> constructor,
-			Class<?> type, List<Constructor<?>> mightCreateLoopList) {
+			Class<?> type, List<Object> badConstructors) {
 		Class<?>[] parameterTypes = constructor.getParameterTypes();
 		for (Class<?> paramType : parameterTypes) {
 			if (type.equals(paramType) || paramType.isAssignableFrom(type)) {
-				mightCreateLoopList.add(constructor);
+				badConstructors.add(constructor);
 				return false;
 			}
 		}
-		return Modifier.isPublic(constructor.getModifiers());
+		boolean isPublic = Modifier.isPublic(constructor.getModifiers());
+		if (isPublic && constructor.isAnnotationPresent(Deprecated.class)) {
+			badConstructors.add(constructor);
+			return false;
+		}
+		return isPublic;
 	}
 	//------------------------------------------------------------------------------------------
 
+	public void setPrjClassLoader(ClassLoader prjClassLoader) {
+		this.prjClassLoader = prjClassLoader;
+	}
 }
