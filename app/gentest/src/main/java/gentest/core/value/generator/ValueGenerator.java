@@ -12,6 +12,7 @@ import static sav.common.core.utils.CollectionUtils.listOf;
 import gentest.core.data.statement.RAssignment;
 import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
+import gentest.core.value.store.iface.ITypeInitializerStore;
 import gentest.core.value.store.iface.ITypeMethodCallStore;
 
 import java.util.ArrayList;
@@ -91,6 +92,10 @@ public abstract class ValueGenerator {
 	
 	protected ITypeMethodCallStore getTypeMethodCallsStore() {
 		return valueGeneratorMediator.getTypeMethodCallsStore();
+	}
+	
+	protected ITypeInitializerStore getTypeInitializerStore() {
+		return valueGeneratorMediator.getTypeInitializerStore();
 	}
 
 	public void setValueGeneratorMediator(

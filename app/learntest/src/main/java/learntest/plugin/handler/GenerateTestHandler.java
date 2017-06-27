@@ -6,10 +6,8 @@ import org.eclipse.core.runtime.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import learntest.exception.LearnTestException;
 import learntest.main.LearnTestParams;
 import learntest.main.RunTimeInfo;
-import sav.settings.SAVTimer;
 
 public class GenerateTestHandler extends AbstractLearntestHandler {
 	private static Logger log = LoggerFactory.getLogger(GenerateTestHandler.class);
@@ -17,12 +15,13 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 	@Override
 	protected IStatus execute(IProgressMonitor monitor) {
 		generateTest();
+		log.debug("Finish!");
 		return Status.OK_STATUS;
 	}
 	
 	@Override
 	protected String getJobName() {
-		return "Do evaluation for single method";
+		return "Run single learntest for a single method";
 	}
 	
 	public RunTimeInfo generateTest(){
@@ -30,33 +29,11 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 			LearnTestParams params = initLearntestParams();
 			RunTimeInfo runtimeInfo = runLearntest(params);
 			return runtimeInfo;
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 		
 		return null;
-	}
-
-	/**
-	 * To test new version of learntest which uses another cfg and jacoco for code coverage. 
-	 */
-	 public RunTimeInfo runLearntest(LearnTestParams params) throws Exception {
-		try {
-			SAVTimer.enableExecutionTimeout = true;
-			SAVTimer.exeuctionTimeout = 50000000;
-			learntest.core.LearnTest learntest = new learntest.core.LearnTest(getAppClasspath());
-			RunTimeInfo runtimeInfo = learntest.run(params);
-			refreshProject();
-
-			if(runtimeInfo != null) {
-				String type = params.isLearnByPrecond() ? "l2t" : "randoop";
-				log.info(type + " time: " + runtimeInfo.getTime() + "; coverage: " + runtimeInfo.getCoverage());
-			}
-			return runtimeInfo;
-		} catch (Exception e) {
-			throw new LearnTestException(e);
-		}
 	}
 
 }

@@ -39,6 +39,7 @@ public class TargetMethod {
 	private String methodName;
 	private String methodSignature;
 	private int lineNum;
+	private int methodLength = -1; // can be null
 	private List<String> params;
 	private CFG cfg;
 	private Collection<String> accessedFields;
@@ -164,4 +165,13 @@ public class TargetMethod {
 	public List<String> getParamTypes() {
 		return paramTypes;
 	}
+
+	public int getMethodLength() {
+		return methodLength;
+	}
+
+	public void setMethodLength(int methodLength) {
+		this.methodLength = methodLength;
+	}
+	
 }

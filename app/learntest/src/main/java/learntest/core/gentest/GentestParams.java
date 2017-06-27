@@ -21,6 +21,7 @@ public class GentestParams {
 	private String targetClassName;
 	private int numberOfTcs;
 	private int testPerQuery;
+	private long methodExecTimeout;
 
 	/* for generated tests printer */
 	private PrinterParams printerParams = new PrinterParams();
@@ -92,5 +93,13 @@ public class GentestParams {
 	
 	public PrinterParams getPrinterParams() {
 		return printerParams;
+	}
+
+	public long getMethodExecTimeout() {
+		return methodExecTimeout;
+	}
+
+	public void setMethodExecTimeout(long methodExecTimeout) {
+		this.methodExecTimeout = methodExecTimeout;
 	}
 }

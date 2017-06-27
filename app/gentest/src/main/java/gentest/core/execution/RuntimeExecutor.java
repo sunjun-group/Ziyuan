@@ -10,16 +10,18 @@ import gentest.core.data.variable.ISelectedVariable;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * @author LLT
  * A runtimeExecutor of a {@link Sequence}. 
  * to execute a {@link Sequence} during the generation
- * and run whenever a new method added to the {@link Sequence}
+ * and run whenever a new method is added to the {@link Sequence}
  */
-public class RuntimeExecutor extends VariableRuntimeExecutor implements
-		StatementVisitor {
-	
+public class RuntimeExecutor extends VariableRuntimeExecutor implements StatementVisitor {
+	private static Logger log = LoggerFactory.getLogger(RuntimeExecutor.class);
 	public RuntimeExecutor() {
 		data = new RuntimeData();
 	}

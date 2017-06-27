@@ -8,7 +8,6 @@
 
 package learntest.core;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -29,17 +28,19 @@ import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.DefaultValues;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.variable.TestcasesExecutor;
+import learntest.core.commons.data.classinfo.JunitTestsInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.GentestResult;
 import learntest.core.gentest.TestGenerator;
+import learntest.main.LearnTestParams;
 import learntest.main.RunTimeInfo;
-import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
-import sav.common.core.utils.StopTimer;
+import sav.common.core.utils.FileUtils;
+import sav.common.core.utils.SingleTimer;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
@@ -63,7 +64,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		this.appClasspath = appClasspath;
 	}
 	
-	protected GentestResult generateTestcases(GentestParams params) throws SavException {
+	private GentestResult randomGentests(GentestParams params) {
 		ensureTestGenerator();
 		ensureCompiler();
 		try {
@@ -71,8 +72,50 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 			compiler.compile(appClasspath.getTestTarget(), result.getAllFiles());
 			return result;
 		} catch (Exception e) {
-			throw new SavException(ModuleEnum.UNSPECIFIED, e, e.getMessage());
+			log.debug(e.getMessage());
+			return GentestResult.getEmptyResult();
 		}
+	}
+	
+	/**
+	 * run coverage, and in case the coverage is too bad (means no branch is covered)
+	 * try to generate another testcase.
+	 */
+	protected GentestResult randomGentestWithBestEffort(LearnTestParams params, GentestParams gentestParams) {
+		TargetMethod targetMethod = params.getTargetMethod();
+		CfgCoverage cfgCoverage = null;
+		gentestParams.setPrintOption(PrintOption.APPEND);
+		
+		double bestCvg = -1;
+		GentestResult gentestResult = null;
+		int i = 0;
+		for (i = 0; i <= 3; i++) {
+			try {
+				gentestResult = randomGentests(gentestParams);
+				cfgCoverage = runCfgCoverage(targetMethod, gentestResult.getJunitClassNames());
+				double cvg = CoverageUtils.calculateCoverage(cfgCoverage);
+				/* replace current init test with new generated test */
+				if (cvg > bestCvg) {
+					bestCvg = cvg;
+					params.setInitialTests(new JunitTestsInfo(gentestResult, appClasspath.getClassLoader()));
+				} else if (gentestResult != null) {
+					// remove files
+					FileUtils.deleteFiles(gentestResult.getJunitfiles());
+				}
+				if (i >= 3 || !CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
+					break;
+				}
+			} catch (Exception e) {
+				// ignore
+				log.debug(e.getMessage());
+				continue;
+			}
+		}
+		// end of trying
+		if (i > 0) {
+			log.debug(String.format("Get best initial coverage after trying to regenerate test %d times", i));
+		}
+		return gentestResult;
 	}
 	
 	protected GentestResult genterateTestFromSolutions(List<ExecVar> vars, List<Domain[]> solutions)
@@ -95,25 +138,25 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		}
 	}
 	
-	protected CfgCoverage runCfgCoverage(TargetMethod targetMethod, List<String> junitClasses)
-			throws SavException, IOException, ClassNotFoundException {
-		StopTimer timer = new StopTimer("");
-		timer.newPoint("start cfgCoverage");
+	protected CfgCoverage runCfgCoverage(TargetMethod targetMethod, List<String> junitClasses) throws SavException {
+		log.debug("calculate coverage..");
+		SingleTimer timer = SingleTimer.start("cfg-coverage");
 		CfgJaCoCo jacoco = new CfgJaCoCo(appClasspath);
 		List<String> targetMethods = CollectionUtils.listOf(ClassUtils.toClassMethodStr(targetMethod.getClassName(),
 				targetMethod.getMethodName()));
 		Map<String, CfgCoverage> coverageMap = jacoco.runJunit(targetMethods, Arrays.asList(targetMethod.getClassName()),
 				junitClasses);
-		timer.newPoint("end cfgCoverage");
 		CfgCoverage cfgCoverage = coverageMap.get(CfgJaCoCoUtils.createMethodId(targetMethod.getClassName(), targetMethod.getMethodName(),
 				targetMethod.getMethodSignature()));
 		targetMethod.updateCfgIfNotExist(cfgCoverage.getCfg());
+		timer.logResults(log);
+		log.debug("coverage: {}", CoverageUtils.calculateCoverage(cfgCoverage));
 		return cfgCoverage;
 	}
 	
 	protected RunTimeInfo getRuntimeInfo(CfgCoverage cfgCoverage) {
 		double coverage = CoverageUtils.calculateCoverage(cfgCoverage);
-		log.debug("coverage: " + coverage);
+		log.debug("coverage: {}", coverage);
 		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
 			StringBuilder sb = new StringBuilder();
 			NodeCoverage nodeCvg = cfgCoverage.getCoverage(node);

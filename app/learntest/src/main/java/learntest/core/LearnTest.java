@@ -7,23 +7,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
-import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
-import learntest.core.commons.data.classinfo.JunitTestsInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.commons.utils.JavaFileCopier;
 import learntest.core.gentest.GentestParams;
-import learntest.core.gentest.GentestResult;
 import learntest.core.machinelearning.PrecondDecisionLearner;
 import learntest.exception.LearnTestException;
 import learntest.main.LearnTestParams;
 import learntest.main.RunTimeInfo;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
-import sav.common.core.utils.FileUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
@@ -38,6 +34,7 @@ public class LearnTest extends AbstractLearntest {
 	}
 	
 	public RunTimeInfo run(LearnTestParams params) throws Exception {
+		log.debug("Start learntest..({})", params.getApproach());
 		prepareInitTestcase(params);
 		SAVTimer.startCount();
 		/* collect testcases in project */
@@ -51,7 +48,7 @@ public class LearnTest extends AbstractLearntest {
 		TargetMethod targetMethod = params.getTargetMethod();
 		try {
 			/* collect coverage and build cfg */
-			cfgCoverage = tryBestForInitialCoverage(params, targetMethod);
+			cfgCoverage = runCfgCoverage(targetMethod, params.getInitialTests().getJunitClasses());
 
 			if (CoverageUtils.notCoverAtAll(cfgCoverage)) {
 				log.info("start node is not covered!");
@@ -93,63 +90,22 @@ public class LearnTest extends AbstractLearntest {
 				params.getResultTestPkg(), appClasspath.getTestSrc());
 	}
 
-	protected void prepareInitTestcase(LearnTestParams params) throws SavException {
+	protected void prepareInitTestcase(LearnTestParams params) throws SavException, ClassNotFoundException, IOException {
 		if (!params.getInitialTestcases().isEmpty()) {
+			logInitTests(params.getInitialTests().getJunitClasses());
 			return;
 		}
 		/* init test */
 		GentestParams gentestParams = params.initGentestParams(appClasspath);
 		gentestParams.setTestPkg(params.getInitTestPkg());
-		GentestResult initTests = generateTestcases(gentestParams);
-		params.setInitialTests(new JunitTestsInfo(initTests, appClasspath.getClassLoader()));
+		randomGentestWithBestEffort(params, gentestParams);
+		logInitTests(params.getInitialTests().getJunitClasses());
 	}
 
-	/**
-	 * run coverage, and in case the coverage is too bad (means no branch is covered)
-	 * try to generate another testcase.
-	 */
-	private CfgCoverage tryBestForInitialCoverage(LearnTestParams params, TargetMethod targetMethod)
-			throws SavException, IOException, ClassNotFoundException {
-		CfgCoverage cfgCoverage = null;
-		int i;
-		GentestParams gentestParams = params.initGentestParams(appClasspath);
-		gentestParams.setPrintOption(PrintOption.APPEND);
-		List<String> junitClasses = params.getInitialTests().getJunitClasses();
-
-		double bestCvg = 0.0;
-		GentestResult gentestResult = null;
-		for (i = 0; ; i++) {
-			cfgCoverage = runCfgCoverage(targetMethod, junitClasses);
-			double cvg = CoverageUtils.calculateCoverage(cfgCoverage);
-			/* replace current init test with new generated test */
-			if (cvg > bestCvg) {
-				bestCvg = cvg;
-				if(gentestResult != null) {
-					params.setInitialTests(new JunitTestsInfo(gentestResult, appClasspath.getClassLoader()));
-				}
-			} else if (gentestResult != null) {
-				// remove files
-				FileUtils.deleteFiles(gentestResult.getJunitfiles());
-			}
-			if (i >= 3 || !CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
-				break;
-			}
-			gentestResult = randomGentest(gentestParams);
-		}
-		if (i > 0) {
-			log.debug(String.format("Get best initial coverage after trying to regenerate test %d times", i));
-		}
-		return cfgCoverage;
+	private void logInitTests(List<String> junitClasses) {
+		log.info("Initial junit classes: {}", junitClasses);
 	}
 
-	private GentestResult randomGentest(GentestParams gentestParams)
-			throws ClassNotFoundException, SavException, IOException {
-		GentestResult result = mediator.getTestGenerator().genTest(gentestParams);
-		/* update coverage */
-		mediator.compile(result.getJunitfiles());
-		return result;
-	}
-	
 	/**
 	 * init fields.
 	 */

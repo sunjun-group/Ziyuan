@@ -31,19 +31,31 @@ public abstract class ExecutionTimer {
 	public abstract boolean run(final Runnable target);
 	
 	public static ExecutionTimer getDefaultExecutionTimer(long timeout) {
-		return new CountDownExecutionTimer(timeout);
+		return getCountDownExecutionTimer(timeout);
 	}
-	
+
 	public static ExecutionTimer getDefaultExecutionTimer(int timeout, TimeUnit timeunit) {
 		return new CountDownExecutionTimer(timeout, timeunit);
 	}
 	
 	@Deprecated
 	public static ExecutionTimer getExecutionTimer(int timeout, TimeUnit timeunit) {
-		return new OrgExecutionTimer(timeout, timeunit);
+		return new ThreadKillExecutionTimer(timeout, timeunit);
 	}
 	
 	public static ExecutionTimer getFutureTaskExecutionTimer(long timeout) {
 		return new FutureTaskExecutionTimer((int) timeout, TimeUnit.MILLISECONDS);
+	}
+	
+	public static ExecutionTimer getCachePoolExecutionTimer(long timeout) {
+		return new CachePoolExecutionTimer(timeout);
+	}
+	
+	public static ExecutionTimer getCountDownExecutionTimer(long timeout) {
+		return new CountDownExecutionTimer(timeout);
+	}
+	
+	public void shutdown() {
+		// do nothing by default
 	}
 }

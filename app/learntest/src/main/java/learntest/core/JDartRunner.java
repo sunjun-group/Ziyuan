@@ -8,9 +8,12 @@
 
 package learntest.core;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jdart.core.JDartCore;
 import jdart.core.JDartParams;
@@ -26,25 +29,31 @@ import sav.strategies.dto.AppJavaClassPath;
  *
  */
 public class JDartRunner {
+	private static Logger log = LoggerFactory.getLogger(JDartRunner.class);
 	private AppJavaClassPath appClasspath;
 
 	public JDartRunner(AppJavaClassPath appClasspath) {
 		this.appClasspath = appClasspath;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<TestInput> runJDart(LearnTestParams learntestParams){
 		try {
 			JDartParams jdartParams = initJDartParams(learntestParams);
 			/* run jdart */
-			jdartParams.setMainEntry(learntestParams.getInitialTests().getMainClass());
+			String mainClass = learntestParams.getInitialTests().getMainClass();
+			if (mainClass == null) {
+				return Collections.EMPTY_LIST;
+			}
+			jdartParams.setMainEntry(mainClass);
 			JDartCore jdartCore = new JDartCore();
 			List<TestInput> inputs = jdartCore.run(jdartParams);
 			return inputs;
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.debug("Fail running JDart", e.getMessage());
 		}
 		
-		return null;
+		return Collections.EMPTY_LIST;
 	}
 	
 	private JDartParams initJDartParams(LearnTestParams learntestParams) throws CoreException {
