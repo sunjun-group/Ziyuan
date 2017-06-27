@@ -97,7 +97,9 @@ public class VMRunner {
 				String line = null;
 				try {
 					while ((line = br.readLine()) != null) {
-						sb.append(line).append("\n");
+						if (!line.contains("Class JavaLaunchHelper is implemented in both")) {
+							sb.append(line).append("\n");
+						}
 					}
 				} catch (IOException e) {
 					// do nothing

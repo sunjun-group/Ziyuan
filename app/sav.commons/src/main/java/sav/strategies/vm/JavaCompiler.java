@@ -46,7 +46,8 @@ public class JavaCompiler {
 		for (File mutatedFile : javaFiles) {
 			builder.append(mutatedFile.getAbsolutePath());
 		}
-		builder.append("-g");
+		builder.append("-g")
+			.append("-nowarn");
 		VMRunner vmRunner = VMRunner.getDefault();
 		vmRunner.setLog(vmConfig.isVmLogEnable());
 		boolean success = vmRunner.startAndWaitUntilStop(builder.toCollection());
