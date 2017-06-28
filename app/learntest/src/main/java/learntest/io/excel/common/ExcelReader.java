@@ -13,9 +13,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import sav.common.core.utils.StringUtils;
 
 /**
  * @author LLT
@@ -40,11 +43,23 @@ public class ExcelReader {
 	}
 	
 	protected String getStringCellValue(Row row, ExcelHeader header) {
-		return row.getCell(header.getCellIdx()).getStringCellValue();
+		Cell cell = getCell(row, header);
+		if (cell == null) {
+			return StringUtils.EMPTY;
+		}
+		return cell.getStringCellValue();
+	}
+
+	private Cell getCell(Row row, ExcelHeader header) {
+		return row.getCell(header.getCellIdx());
 	}
 	
 	protected double getDoubleCellValue(Row row, ExcelHeader header) {
-		return row.getCell(header.getCellIdx()).getNumericCellValue();
+		Cell cell = getCell(row, header);
+		if (cell == null) {
+			return 0.0;
+		}
+		return cell.getNumericCellValue();
 	}
 	
 	protected int getIntCellValue(Row row, ExcelHeader header) {

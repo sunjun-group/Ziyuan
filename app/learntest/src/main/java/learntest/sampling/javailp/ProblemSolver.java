@@ -170,7 +170,9 @@ public class ProblemSolver {
 		SingleTimer timer = SingleTimer.start("ilpSolver");
 		Solver solver = factory.get();
 		Result result = solver.solve(problem);
-		timer.logResults(log, 2000l);
+		if (timer.logResults(log, 2000l)) {
+			log.debug("ilpSolver result: {}", result);
+		}
 		return result;
 	}
 	

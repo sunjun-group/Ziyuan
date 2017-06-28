@@ -44,9 +44,11 @@ public class TrialExcelWriter extends ExcelWriter {
 		Row row = newDataSheetRow();
 		addCell(row, METHOD_NAME, trial.getMethodName());
 		
-		addCell(row, JDART_TIME, trial.getJdartRtInfo().getTime());
-		addCell(row, JDART_COVERAGE, trial.getJdartRtInfo().getCoverage());
-		addCell(row, JDART_TEST_CNT, trial.getJdartRtInfo().getTestCnt());
+		if (trial.getJdartRtInfo() != null) {
+			addCell(row, JDART_TIME, trial.getJdartRtInfo().getTime());
+			addCell(row, JDART_COVERAGE, trial.getJdartRtInfo().getCoverage());
+			addCell(row, JDART_TEST_CNT, trial.getJdartRtInfo().getTestCnt());
+		}
 		
 		addCell(row, L2T_TIME, trial.getL2tRtInfo().getTime());
 		addCell(row, L2T_COVERAGE, trial.getL2tRtInfo().getCoverage());
