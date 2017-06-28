@@ -104,7 +104,6 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 //		addMethodFilter(oldTrials);
 	}
 
-//	@SuppressWarnings("unused")
 	private void addMethodFilter(Collection<Trial> oldTrials) {
 		if (oldTrials.isEmpty()) {
 			return;

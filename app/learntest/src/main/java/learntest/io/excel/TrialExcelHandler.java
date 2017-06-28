@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sav.common.core.Pair;
 import sav.common.core.utils.CollectionUtils;
@@ -32,6 +34,7 @@ import sav.common.core.utils.StringUtils;
  *
  */
 public class TrialExcelHandler {
+	private Logger log = LoggerFactory.getLogger(TrialExcelHandler.class);
 	private Pair<File, Integer> fileInfo;
 	private String trialFilePrefix;
 	private TrialExcelReader reader;
@@ -72,6 +75,7 @@ public class TrialExcelHandler {
 				return lastFileInfo;
 			}
 		} catch (Exception e) {
+			log.debug(e.getMessage());
 			return newExperimentalExcelFile(trialFilePrefix, lastFileInfo.b + 1);
 		}
 		return newExperimentalExcelFile(trialFilePrefix, FIRST_FILE_IDX);
@@ -128,6 +132,7 @@ public class TrialExcelHandler {
 			reader.reset(fileInfo.a);
 			return reader.readDataSheet().values();
 		} catch (Exception e) {
+			log.debug(e.getMessage());
 			return Collections.EMPTY_LIST;
 		}
 	}

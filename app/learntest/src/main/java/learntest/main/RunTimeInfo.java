@@ -58,4 +58,9 @@ public class RunTimeInfo {
 		time /= times;
 		testCnt /= times;
 	}
+
+	@Override
+	public String toString() {
+		return "[time=" + time + ", coverage=" + coverage + ", testCnt=" + testCnt + "]";
+	}
 }

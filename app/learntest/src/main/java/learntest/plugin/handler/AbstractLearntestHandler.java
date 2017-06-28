@@ -224,10 +224,11 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			
 			RunTimeInfo l2tAverageInfo = new RunTimeInfo();
 			RunTimeInfo ranAverageInfo = new RunTimeInfo();
+			RunTimeInfo jdartInfo = null;
 			
 			l2tParams.setApproach(LearnTestApproach.L2T);
-			log.info("run jdart..");
-			RunTimeInfo jdartInfo = runJdart(l2tParams);
+//			log.info("run jdart..");
+//			jdartInfo = runJdart(l2tParams);
 			
 			log.info("run l2t..");
 			runLearntest(l2tAverageInfo, l2tParams);

@@ -104,4 +104,11 @@ public class Trial {
 		result = prime * result + ((methodName == null) ? 0 : methodName.hashCode());
 		return result;
 	}
+
+	@Override
+	public String toString() {
+		return "Trial [methodName=" + methodName + ", methodLength=" + methodLength + ", methodStartLine="
+				+ methodStartLine + ", l2tRtInfo=" + l2tRtInfo + ", ranRtInfo=" + ranRtInfo + ", jdartRtInfo="
+				+ jdartRtInfo + "]";
+	}
 }
