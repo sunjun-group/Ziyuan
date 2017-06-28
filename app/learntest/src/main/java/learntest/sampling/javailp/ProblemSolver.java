@@ -26,20 +26,26 @@ import sav.strategies.dto.execute.value.ExecVar;
 
 public class ProblemSolver {
 	private static Logger log = LoggerFactory.getLogger(ProblemSolver.class);
-	private static SolverFactory factory = new SolverFactoryLpSolve();
-	private static Random random = new Random();
-	private static Map<ExecVar, Pair<Number, Number>> minMax;
-	static {
+	
+	private Solver solver;
+	private Random random = new Random();
+	private Map<ExecVar, Pair<Number, Number>> minMax;
+	private int solvingTotal;
+	
+	public ProblemSolver() {
+		SolverFactory factory = new SolverFactoryLpSolve();
 		factory.setParameter(Solver.VERBOSE, 0);
 		factory.setParameter(Solver.TIMEOUT, 100);
+		solver = factory.get();
+		minMax = new HashMap<ExecVar, Pair<Number, Number>>();
 	}
 	
-	public static List<Result> calculateRanges(Problem problem, List<ExecVar> vars) {
+	public List<Result> calculateRanges(Problem problem, List<ExecVar> vars) {
 		List<Result> resultList = new ArrayList<Result>();
 		if (problem == null) {
 			return resultList;
 		}
-		minMax = new HashMap<ExecVar, Pair<Number,Number>>();
+		minMax.clear();
 		Linear linear = new Linear();
 		for (ExecVar var : vars) {
 			Number min = null;
@@ -51,16 +57,14 @@ public class ProblemSolver {
 			obj.add(1, label);
 			
 			problem.setObjective(obj, OptType.MIN);
-			Solver solver = factory.get();
-			Result result = solver.solve(problem);
+			Result result = solveProblem(problem);
 			if (result != null) {
 				resultList.add(result);
 				min = result.get(label);
 			}
 			
 			problem.setObjective(obj, OptType.MAX);
-			solver = factory.get();
-			result = solver.solve(problem);
+			result = solveProblem(problem);
 			if (result != null) {
 				resultList.add(result);
 				max = result.get(label);
@@ -74,18 +78,18 @@ public class ProblemSolver {
 		return resultList;
 	}
 	
-	public static List<Result> solveMultipleTimes(Problem problem, int times) {
+	public List<Result> solveMultipleTimes(Problem problem, int times) {
 		List<Result> res = new ArrayList<Result>();
 		if (problem == null || minMax.isEmpty()) {
 			return res;
 		}
 		Set<ExecVar> vars = minMax.keySet();
 		int size = vars.size();
+		
 		while (times > 0) {
 			for (ExecVar var : vars) {
 				addRandomConstraint(problem, var);
-				Solver solver = factory.get();
-				Result result = solver.solve(problem);
+				Result result = solveProblem(problem);
 				if (result != null) {
 					res.add(result);
 				}
@@ -97,7 +101,12 @@ public class ProblemSolver {
 		return res;
 	}
 
-	private static void addRandomConstraint(Problem problem, ExecVar var) {
+	private Result solveProblem(Problem problem) {
+		solvingTotal++;
+		return solver.solve(problem);
+	}
+
+	private void addRandomConstraint(Problem problem, ExecVar var) {
 		Linear linear = new Linear();
 		linear.add(1, var.getLabel());
 		Pair<Number, Number> range = minMax.get(var);
@@ -128,7 +137,7 @@ public class ProblemSolver {
 		problem.add(new Constraint(linear, Operator.EQ, number));
 	}
 	
-	/*public static List<Result> solveMultipleTimes(Problem problem, List<ExecVar> vars) {
+	/*public List<Result> solveMultipleTimes(Problem problem, List<ExecVar> vars) {
 		List<Result> res = new ArrayList<Result>();
 		if (problem == null) {
 			return res;
@@ -154,7 +163,7 @@ public class ProblemSolver {
 		return res;
 	}*/
 	
-	public static void generateRandomObjective(Problem problem, List<ExecVar> vars) {
+	public void generateRandomObjective(Problem problem, List<ExecVar> vars) {
 		if (problem == null) {
 			return;
 		}
@@ -166,17 +175,20 @@ public class ProblemSolver {
 		problem.setObjective(obj, random.nextBoolean() ? OptType.MIN : OptType.MAX);
 	}
 
-	public static Result solve(Problem problem){
+	public Result solve(Problem problem){
 		SingleTimer timer = SingleTimer.start("ilpSolver");
-		Solver solver = factory.get();
-		Result result = solver.solve(problem);
+		Result result = solveProblem(problem);
 		if (timer.logResults(log, 2000l)) {
 			log.debug("ilpSolver result: {}", result);
 		}
 		return result;
 	}
 	
-	public static Result solve(List<ExecVar> vars, List<Divider> preconditions){
+	public Result solve(List<ExecVar> vars, List<Divider> preconditions){
 		return null;
+	}
+	
+	public int getSolvingTotal() {
+		return solvingTotal;
 	}
 }

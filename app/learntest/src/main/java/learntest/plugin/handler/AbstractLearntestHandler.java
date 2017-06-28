@@ -239,6 +239,9 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			
 			if (l2tAverageInfo.isNotZero() && ranAverageInfo.isNotZero()) {
 				TargetMethod method = params.getTargetMethod();
+				log.info("Result: ");
+				log.info("lt2: {}", l2tAverageInfo);
+				log.info("randoop: {}", ranAverageInfo);
 				return new Trial(method.getMethodFullName(), method.getMethodLength(), method.getLineNum(),
 						l2tAverageInfo, ranAverageInfo, jdartInfo);
 			}

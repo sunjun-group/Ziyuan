@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jacop.core.Domain;
-
 import com.google.inject.Inject;
 
 import gentest.core.data.MethodCall;
@@ -20,7 +18,6 @@ import gentest.core.data.type.ITypeCreator;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.data.variable.ISelectedVariable;
 import gentest.core.value.generator.ValueGeneratorMediator;
-import learntest.core.commons.utils.DomainUtils;
 import net.sf.javailp.Result;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
@@ -73,7 +70,7 @@ public class TestSeqGenerator {
 		}
 	}
 	
-	public Sequence generateSequence(Domain[] solution, List<ExecVar> vars) throws SavException {
+	public Sequence generateSequence(double[] solution, List<ExecVar> vars) throws SavException {
 		Sequence sequence = new Sequence();
 
 		int firstVarIdx = 0;		
@@ -82,7 +79,7 @@ public class TestSeqGenerator {
 		//prepare inputs for target method
 		for (int idx = 0; idx < vars.size(); idx++) {
 			ExecVar var = vars.get(idx);
-			double value  = DomainUtils.getDomainValue(solution[idx]);
+			double value  = solution[idx];
 			
 			String[] parts = var.getLabel().split("[.]");
 			String receiver = parts[0];
@@ -107,7 +104,7 @@ public class TestSeqGenerator {
 						sequence.append(variable);
 						firstVarIdx += variable.getNewVariables().size();
 						varMap.put(receiver, variable);
-						solution[idx] = DomainUtils.toDomain(newVal) ;
+						solution[idx] = newVal ;
 						continue;
 					} else {
 						variable = valueGenerator.generate(typeMap.get(classMap.get(receiver)), firstVarIdx, true);
@@ -193,7 +190,7 @@ public class TestSeqGenerator {
 							variable = field;
 							receiver = cur;
 						} catch (Exception e) {
-							solution[idx] = DomainUtils.toDomain(0); // set null
+							solution[idx] = 0; // set null
 //							System.err.println("can not find setter for " + cur);
 							break;
 						}

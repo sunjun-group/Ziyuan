@@ -92,7 +92,7 @@ public class DecisionProbes extends CfgCoverage {
 	 * in order to avoid unnecessarily generate divider for a node, we check if it is needed to learn at the current node.
 	 * it is needed iff
 	 * one of its dependentees is not covered
-	 * */
+	 **/
 	public boolean doesNodeNeedToLearnPrecond(DecisionNodeProbe nodeProbe) {
 		for (CfgNode dependentee : CollectionUtils.nullToEmpty(nodeProbe.getNode().getDependentees())) {
 			DecisionNodeProbe dependenteeProbe = getNodeProbe(dependentee);

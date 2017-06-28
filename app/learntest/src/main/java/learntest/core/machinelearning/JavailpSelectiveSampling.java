@@ -3,9 +3,10 @@ package learntest.core.machinelearning;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
-import icsetlv.common.dto.BreakpointValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import learntest.calculator.OrCategoryCalculator;
 import learntest.core.commons.data.decision.IDecisionNode;
 import learntest.core.machinelearning.iface.ISampleExecutor;
@@ -29,32 +30,17 @@ import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
 
 public class JavailpSelectiveSampling<T extends ISampleResult> {
+	private static Logger log = LoggerFactory.getLogger(JavailpSelectiveSampling.class);
 	private ISampleExecutor<T> sampleExecutor;
 	private List<Result> prevDatas;
 	private T selectResult;
+	private ProblemSolver solver = new ProblemSolver();
 	
 	private int numPerExe = 100;
 	
-	private int delta;
-	
 	public JavailpSelectiveSampling(ISampleExecutor<T> mediator) {
 		this.sampleExecutor = mediator;
-		prevDatas = new ArrayList<Result>();
-	}
-	
-	public void addPrevValues(List<BreakpointValue> values) {
-		if (values == null) {
-			return;
-		}
-		for (BreakpointValue value : values) {
-			Result result = new ResultImpl();
-			Set<String> labels = value.getAllLabels();
-			for (String label : labels) {
-				result.put(label, value.getValue(label, 0.0));
-			}
-			prevDatas.add(result);
-		}
-		delta = values.size() - 1;
+		prevDatas = new ArrayList<Result>(0);
 	}
 
 	public T selectDataForEmpty(IDecisionNode target, 
@@ -63,37 +49,32 @@ public class JavailpSelectiveSampling<T extends ISampleResult> {
 			List<Divider> current, 
 			BranchType missingBranch, 
 			boolean isLoop) throws SavException, SAVExecutionTimeOutException {
-		System.currentTimeMillis();
-		
-		for (int i = 0; i < 3; i++) {
+		int firstCount = solver.getSolvingTotal();
+		for (int i = 0; i < 2; i++) {
 			List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
 			List<Problem> problems = ProblemBuilder.buildTrueValueProblems(originVars, precondition, current, true);
 			if (problems.isEmpty()) {
 				return null;
 			}
 			int num = numPerExe / problems.size() + 1;
+			log.debug("solveMultiple with random join attempt times = {}", num);
 			for (Problem problem : problems) {
-				List<Result> results = ProblemSolver.calculateRanges(problem, originVars);
-				for (Result result : results) {
-					checkNonduplicateResult(result, originVars, prevDatas, assignments);
-				}
+				List<Result> results = solver.calculateRanges(problem, originVars);
+				updateAssignments(results, originVars, assignments);
+				
 				problem.setObjective(problem.getObjective(), OptType.MAX);
-				results = ProblemSolver.solveMultipleTimes(problem, num);
-				for (Result result : results) {
-					checkNonduplicateResult(result, originVars, prevDatas, assignments);
-				}
+				results = solver.solveMultipleTimes(problem, num);
+				updateAssignments(results, originVars, assignments);
 				
 				problem.setObjective(problem.getObjective(), OptType.MIN);
-				results = ProblemSolver.solveMultipleTimes(problem, num);
-				for (Result result : results) {
-					checkNonduplicateResult(result, originVars, prevDatas, assignments);
-				}
+				results = solver.solveMultipleTimes(problem, num);
+				updateAssignments(results, originVars, assignments);
 			}
-			
+			log.debug("run solver {} times", solver.getSolvingTotal() - firstCount);
 			runData(assignments, originVars);
 			
 			if (selectResult == null) {
-				continue;
+				return null;
 			}
 			INodeCoveredData selectData = selectResult.getNewData(target);
 			if (!isLoop) {
@@ -115,11 +96,14 @@ public class JavailpSelectiveSampling<T extends ISampleResult> {
 		return null;
 	}
 	
-	public T selectDataForModel(IDecisionNode target, 
-			List<ExecVar> originVars, 
-			List<DataPoint> datapoints,
-			OrCategoryCalculator preconditions, 
-			List<Divider> learnedFormulas) throws SavException {
+	private void updateAssignments(List<Result> results, List<ExecVar> originVars, List<List<Eq<?>>> assignments) {
+		for (Result result : results) {
+			checkNonduplicateResult(result, originVars, prevDatas, assignments);
+		}
+	}
+
+	public T selectDataForModel(IDecisionNode target, List<ExecVar> originVars, List<DataPoint> datapoints,
+			OrCategoryCalculator preconditions, List<Divider> learnedFormulas) throws SavException {
 		List<List<Eq<?>>> assignments = new ArrayList<List<Eq<?>>>();
 		List<Result> results = new ArrayList<Result>();
 		
@@ -136,13 +120,13 @@ public class JavailpSelectiveSampling<T extends ISampleResult> {
 			}
 			
 			for (Problem problem : problems) {
-				ProblemSolver.generateRandomObjective(problem, originVars);
-				Result result = ProblemSolver.solve(problem);
+				solver.generateRandomObjective(problem, originVars);
+				Result result = solver.solve(problem);
 				if (result != null) {
 					boolean isDuplicateWithResult = isDuplicate(result, originVars, prevDatas);
 					
 					if (!isDuplicateWithResult) {
-						prevDatas.add(result);
+//						prevDatas.add(result);
 					}
 					
 					List<Eq<?>> assignment = getAssignments(result, originVars);
@@ -191,7 +175,7 @@ public class JavailpSelectiveSampling<T extends ISampleResult> {
 				
 //				Problem p = ProblemBuilder.buildVarBoundContraint(originVars);
 				Problem p = pList.get(0);
-				ProblemSolver.generateRandomObjective(p, originVars);
+				solver.generateRandomObjective(p, originVars);
 				
 				for(int reducedVarNum=0; reducedVarNum<=originVars.size(); reducedVarNum++){
 					List<Eq<Number>> samples = generateRandomVariableAssignment(originVars, reducedVarNum);
@@ -203,7 +187,7 @@ public class JavailpSelectiveSampling<T extends ISampleResult> {
 					
 					if(!samples.isEmpty()){
 						ProblemBuilder.addEqualConstraints(p, samples);
-						Result res = ProblemSolver.solve(p);
+						Result res = solver.solve(p);
 						
 						if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
 							results.add(res);
@@ -221,9 +205,6 @@ public class JavailpSelectiveSampling<T extends ISampleResult> {
 
 	/**
 	 * slight moving existing data points.
-	 * @param results
-	 * @param assignments
-	 * @param originVars
 	 */
 	private void extendWithHeuristics(List<Result> results, List<List<Eq<?>>> assignments, 
 			List<ExecVar> originVars) {
@@ -316,7 +297,7 @@ public class JavailpSelectiveSampling<T extends ISampleResult> {
 		boolean isDuplicateWithResult = isDuplicate(result, vars, prevDatas);
 		
 		if (!isDuplicateWithResult) {
-			prevDatas.add(result);
+//			prevDatas.add(result);
 			List<Eq<?>> assignment = getAssignments(result, vars);
 			assignments.add(assignment);
 		}
@@ -325,11 +306,11 @@ public class JavailpSelectiveSampling<T extends ISampleResult> {
 	}
 	
 	private boolean isDuplicate(Result result, List<ExecVar> vars, List<Result> prevDatas){
-		for (Result r : prevDatas) {
-			if (duplicate(result, r, vars)) {
-				return true;
-			}
-		}
+//		for (Result r : prevDatas) {
+//			if (duplicate(result, r, vars)) {
+//				return true;
+//			}
+//		}
 		
 		return false;
 	}
@@ -427,8 +408,4 @@ public class JavailpSelectiveSampling<T extends ISampleResult> {
 		return assignments;
 	}
 	
-	public int getTotalNum() {
-		return prevDatas.size() - delta;
-	}
-
 }

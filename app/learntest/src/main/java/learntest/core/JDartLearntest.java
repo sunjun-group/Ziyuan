@@ -10,7 +10,6 @@ package learntest.core;
 
 import java.util.List;
 
-import org.jacop.core.Domain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +17,7 @@ import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
 import jdart.model.TestInput;
-import learntest.core.commons.utils.DomainUtils;
+import learntest.core.commons.utils.VarSolutionUtils;
 import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.GentestResult;
 import learntest.core.jdart.JdartTestInputUtils;
@@ -50,7 +49,7 @@ public class JDartLearntest extends LearnTest {
 		List<BreakpointValue> bkpVals = JdartTestInputUtils.toBreakpointValue(inputs,
 				params.getTargetMethod().getMethodFullName());
 		List<ExecVar> vars = BreakpointDataUtils.collectAllVars(bkpVals);
-		List<Domain[]> solutions = DomainUtils.buildSolutions(bkpVals, vars);
+		List<double[]> solutions = VarSolutionUtils.buildSolutions(bkpVals, vars);
 		GentestResult testResult = genterateTestFromSolutions(vars, solutions, false);
 		params.getInitialTests().addJunitClass(testResult, appClasspath.getClassLoader());
 	}
@@ -71,7 +70,7 @@ public class JDartLearntest extends LearnTest {
 		GentestParams gentestParams = params.initGentestParams(appClasspath);
 		/* generate testcase and jdart entry */
 		gentestParams.setGenerateMainClass(true);
-		randomGentestWithBestEffort(params, gentestParams);
+		randomGenerateInitTestWithBestEffort(params, gentestParams);
 		JDartRunner jdartRunner = new JDartRunner(appClasspath);
 		return jdartRunner.runJDart(params);
 	}

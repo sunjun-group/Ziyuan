@@ -98,7 +98,7 @@ public class LearnTest extends AbstractLearntest {
 		/* init test */
 		GentestParams gentestParams = params.initGentestParams(appClasspath);
 		gentestParams.setTestPkg(params.getInitTestPkg());
-		randomGentestWithBestEffort(params, gentestParams);
+		randomGenerateInitTestWithBestEffort(params, gentestParams);
 		logInitTests(params.getInitialTests().getJunitClasses());
 	}
 

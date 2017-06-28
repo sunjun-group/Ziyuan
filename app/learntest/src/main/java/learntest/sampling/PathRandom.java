@@ -14,14 +14,15 @@ public class PathRandom {
 	
 	private static Random random = new Random();
 	
-	public static List<Divider> dividers;
-	public static List<Divider> notDividers;
+	private List<Divider> dividers;
+	private List<Divider> notDividers;
 	
-	public static void randomPath(List<Divider> dividers, List<Divider> notDividers) {
+	public static PathRandom randomPath(List<Divider> dividers, List<Divider> notDividers) {
+		PathRandom pathRandom = new PathRandom();
 		if (dividers == null && notDividers == null) {
-			PathRandom.dividers = null;
-			PathRandom.notDividers = null;
-			return;
+			pathRandom.dividers = null;
+			pathRandom.notDividers = null;
+			return pathRandom;
 		}
 		List<Divider> base = null;
 		boolean flag = random.nextBoolean();
@@ -32,10 +33,10 @@ public class PathRandom {
 		}
 		if (flag) {
 			base = dividers;
-			PathRandom.notDividers = notDividers;
+			pathRandom.notDividers = notDividers;
 		} else {
 			base = notDividers;
-			PathRandom.dividers = dividers;
+			pathRandom.dividers = dividers;
 		}
 		int n = base.size();
 		if (n > 0) {
@@ -53,10 +54,26 @@ public class PathRandom {
 			}
 		}		
 		if (flag) {
-			PathRandom.dividers = base;
+			pathRandom.dividers = base;
 		} else {
-			PathRandom.notDividers = base;
+			pathRandom.notDividers = base;
 		}
+		return pathRandom;
 	}
 
+	public List<Divider> getDividers() {
+		return dividers;
+	}
+
+	public void setDividers(List<Divider> dividers) {
+		this.dividers = dividers;
+	}
+
+	public List<Divider> getNotDividers() {
+		return notDividers;
+	}
+
+	public void setNotDividers(List<Divider> notDividers) {
+		this.notDividers = notDividers;
+	}
 }

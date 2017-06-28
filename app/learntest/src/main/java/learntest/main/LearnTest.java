@@ -171,8 +171,8 @@ public class LearnTest {
 	
 	private void gentestAccordingToSolutions(List<Domain[]> domainList, List<ExecVar> vars)
 			throws ClassNotFoundException, SavException {
-		GentestResult gentestResult = new TestGenerator(appClassPath).genTestAccordingToSolutions(domainList, vars);
-		jcompiler.compile(appClassPath.getTestTarget(), gentestResult.getJunitfiles());
+//		GentestResult gentestResult = new TestGenerator(appClassPath).genTestAccordingToSolutions(domainList, vars);
+//		jcompiler.compile(appClassPath.getTestTarget(), gentestResult.getJunitfiles());
 	}
 
 	private Collection<CfgCoverage> runCfgCoverage(LearnTestParams params, TargetMethod targetMethod)

@@ -109,4 +109,15 @@ public class FileUtils {
 	public static String getFilePath(String... fragments) {
 		return StringUtils.join(Arrays.asList(fragments), Constants.FILE_SEPARATOR);
 	}
+
+	public static void deleteAllFiles(String folderPath) {
+		File folder = new File(folderPath);
+		if (!folder.exists() || !folder.isDirectory()) {
+			return;
+		}
+		File[] files = folder.listFiles();
+		if (!CollectionUtils.isEmpty(files)) {
+			deleteFiles(Arrays.asList(files));
+		}
+	}
 }

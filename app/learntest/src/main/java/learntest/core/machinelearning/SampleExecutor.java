@@ -9,12 +9,11 @@
 package learntest.core.machinelearning;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
-import org.jacop.core.Domain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +22,10 @@ import learntest.core.AbstractLearningComponent;
 import learntest.core.LearningMediator;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.sampling.SamplingResult;
-import learntest.core.commons.utils.DomainUtils;
+import learntest.core.commons.utils.VarSolutionUtils;
 import learntest.core.gentest.GentestResult;
 import learntest.core.machinelearning.iface.ISampleExecutor;
+import sav.common.core.Constants;
 import sav.common.core.SavException;
 import sav.common.core.formula.Eq;
 import sav.common.core.utils.FileUtils;
@@ -40,11 +40,13 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 	private static Logger log = LoggerFactory.getLogger(SampleExecutor.class);
 	/* data object in context */
 	private DecisionProbes decisionProbes;
+	private Set<String> prevSolutions;
 	
 	public SampleExecutor(LearningMediator mediator, DecisionProbes decisionProbes) {
 		super(mediator);
 		this.decisionProbes = decisionProbes;
-	}
+		prevSolutions = new HashSet<String>();
+	} 
 	
 	/**
 	 * try to run testcases with new selected input for target method.
@@ -54,16 +56,11 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 		StopTimer timer = new StopTimer("runSample");
 		timer.start();
 		SamplingResult samples = new SamplingResult(decisionProbes);
-		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-		for (List<Eq<?>> valSet : assignments) {
-			if (!valSet.isEmpty()) {
-				Map<String, Object> varMap = toInstrVarMap(valSet);
-				list.add(varMap);
-			}
-		}
-		logSample(list);
-		List<Domain[]> domains = DomainUtils.buildSolutionsFromAssignments(assignments, originVars,
+		List<double[]> domains = VarSolutionUtils.buildSolutionsFromAssignments(assignments, originVars,
 				decisionProbes.getTestInputs());
+		
+		removeDuplicates(domains);
+		log.debug("Number of samples: {}", domains.size());
 		GentestResult result = null;
 		try {
 			timer.newPoint("gentest");
@@ -93,6 +90,31 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 		return samples;  
 	}
 
+	private void removeDuplicates(List<double[]> domains) {
+		Iterator<double[]> it = domains.iterator();
+		/* 
+		 * domains 10: duplicate prev: 5, duplicate: 2 (3)
+		 * add: 10 - 5 - 2 = 3
+		 * remains: = add
+		 */
+		int count = 0;
+		while(it.hasNext()) {
+			double[] domain = it.next();
+			StringBuilder sb = new StringBuilder();
+			for (double val : domain) {
+				sb.append(val).append(Constants.LOW_LINE);
+			}
+			String key = sb.toString();
+			if (prevSolutions.contains(key)) {
+				it.remove();
+				count++;
+			} else {
+				prevSolutions.add(key);
+			}
+		}
+		log.debug("prevSolutions.size = {}, duplicate: {}", prevSolutions.size(), count);
+	}
+
 	/**
 	 * after running coverage, samples will be updated, the original
 	 * decisionProbes will be modified as well. 
@@ -106,19 +128,4 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 		timer.newPoint("end cfg coverage");
 	}
 	
-	private void logSample(List<Map<String, Object>> list) {
-		if(list != null){
-			int size = list.size();
-			log.debug("Running " + size + " data points...");			
-		}
-	}
-	
-	private Map<String, Object> toInstrVarMap(List<Eq<?>> assignments) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		for (Eq<?> asgt : assignments) {
-			map.put(asgt.getVar().getLabel(), asgt.getValue());
-		}
-		return map;
-	}
-
 }

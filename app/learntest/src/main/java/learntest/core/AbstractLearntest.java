@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jacop.core.Domain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +71,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 			compiler.compile(appClasspath.getTestTarget(), result.getAllFiles());
 			return result;
 		} catch (Exception e) {
+			
 			log.debug(e.getMessage());
 			return GentestResult.getEmptyResult();
 		}
@@ -81,7 +81,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 	 * run coverage, and in case the coverage is too bad (means no branch is covered)
 	 * try to generate another testcase.
 	 */
-	protected GentestResult randomGentestWithBestEffort(LearnTestParams params, GentestParams gentestParams) {
+	protected GentestResult randomGenerateInitTestWithBestEffort(LearnTestParams params, GentestParams gentestParams) {
 		TargetMethod targetMethod = params.getTargetMethod();
 		CfgCoverage cfgCoverage = null;
 		gentestParams.setPrintOption(PrintOption.APPEND);
@@ -100,7 +100,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 					params.setInitialTests(new JunitTestsInfo(gentestResult, appClasspath.getClassLoader()));
 				} else if (gentestResult != null) {
 					// remove files
-					FileUtils.deleteFiles(gentestResult.getJunitfiles());
+					FileUtils.deleteFiles(gentestResult.getAllFiles());
 				}
 				if (i >= 3 || !CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
 					break;
@@ -117,13 +117,13 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		}
 		return gentestResult;
 	}
-	
-	protected GentestResult genterateTestFromSolutions(List<ExecVar> vars, List<Domain[]> solutions)
+
+	protected GentestResult genterateTestFromSolutions(List<ExecVar> vars, List<double[]> solutions)
 			throws SavException {
 		return genterateTestFromSolutions(vars, solutions, true);
 	}
 	
-	protected GentestResult genterateTestFromSolutions(List<ExecVar> vars, List<Domain[]> solutions, boolean override)
+	protected GentestResult genterateTestFromSolutions(List<ExecVar> vars, List<double[]> solutions, boolean override)
 			throws SavException {
 		try {
 			ensureCompiler();

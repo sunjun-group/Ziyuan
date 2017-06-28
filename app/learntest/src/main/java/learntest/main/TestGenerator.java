@@ -5,9 +5,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jacop.core.Domain;
-import org.jacop.floats.core.FloatDomain;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -71,7 +68,7 @@ public class TestGenerator extends learntest.core.gentest.TestGenerator {
 		return result;
 	}
 	
-	public GentestResult genTestAccordingToSolutions(List<Domain[]> solutions, List<ExecVar> vars) 
+	public GentestResult genTestAccordingToSolutions(List<double[]> solutions, List<ExecVar> vars) 
 			throws ClassNotFoundException, SavException {
 		return genTestAccordingToSolutions(solutions, vars, PrintOption.OVERRIDE);
 	}
@@ -79,7 +76,7 @@ public class TestGenerator extends learntest.core.gentest.TestGenerator {
 	/**
 	 * @param printOption whether to append existing test file or create a new one.
 	 */
-	public GentestResult genTestAccordingToSolutions(List<Domain[]> solutions, List<ExecVar> vars, PrintOption printOption) 
+	public GentestResult genTestAccordingToSolutions(List<double[]> solutions, List<ExecVar> vars, PrintOption printOption) 
 			throws ClassNotFoundException, SavException {
 		MethodCall target = findTargetMethod();
 		if (target == null) {
@@ -98,7 +95,7 @@ public class TestGenerator extends learntest.core.gentest.TestGenerator {
 		GentestResult result = new GentestResult();
 		List<Sequence> sequences = new ArrayList<Sequence>();
 		//int index = 0;
-		for (Domain[] solution : solutions) {
+		for (double[] solution : solutions) {
 			result.addInputData(DomainUtils.toBreakpointValue(solution, vars));
 			//sequences.add(generator.generateSequence(input, variables.get(index ++)));
 			sequences.add(generator.generateSequence(solution, vars));
@@ -113,11 +110,11 @@ public class TestGenerator extends learntest.core.gentest.TestGenerator {
 		return result;
 	}
 	
-	private List<Domain[]> clean(List<Domain[]> solutions, int size) {
-		List<Domain[]> res = new ArrayList<Domain[]>();
-		for (Domain[] solution : solutions) {
+	private List<double[]> clean(List<double[]> solutions, int size) {
+		List<double[]> res = new ArrayList<double[]>();
+		for (double[] solution : solutions) {
 			boolean dup = false;
-			for (Domain[] r : res) {
+			for (double[] r : res) {
 				if(duplicate(solution, r, size)) {
 					dup = true;
 					break;
@@ -130,9 +127,9 @@ public class TestGenerator extends learntest.core.gentest.TestGenerator {
 		return res;
 	}
 
-	private boolean duplicate(Domain[] solution, Domain[] r, int size) {
+	private boolean duplicate(double[] solution, double[] r, int size) {
 		for (int i = 0; i < size; i++) {
-			if (((FloatDomain) solution[i]).min() != ((FloatDomain) r[i]).min()) {
+			if (solution[i] != r[i]) {
 				return false;
 			}
 		}

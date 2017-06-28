@@ -153,9 +153,9 @@ public class StoreBuilder {
 			List<Divider> notDividers, boolean random) {
 		Store store = build(vars);
 		if (random) {
-			PathRandom.randomPath(dividers, notDividers);
-			dividers = PathRandom.dividers;
-			notDividers = PathRandom.notDividers;
+			PathRandom randomPath = PathRandom.randomPath(dividers, notDividers);
+			dividers = randomPath.getDividers();
+			notDividers = randomPath.getNotDividers();
 		}
 		if (dividers != null) {
 			for (Divider divider : dividers) {

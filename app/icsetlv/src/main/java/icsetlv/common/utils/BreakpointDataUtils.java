@@ -117,11 +117,6 @@ public class BreakpointDataUtils {
 		return labels;
 	}
 
-	/**
-	 * @param value
-	 * @param execVar
-	 * @param domainValue
-	 */
 	public static void addToBreakpointValue(BreakpointValue bkpVal, ExecVar execVar, Number value) {
 		ExecValue child = null;
 		String id = execVar.getVarId();

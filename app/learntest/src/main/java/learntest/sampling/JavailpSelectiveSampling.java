@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.breakpoint.data.DecisionLocation;
 import learntest.calculator.OrCategoryCalculator;
-import learntest.core.machinelearning.SampleExecutor;
 import learntest.sampling.javailp.ProblemBuilder;
 import learntest.sampling.javailp.ProblemSolver;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;
@@ -42,6 +41,7 @@ public class JavailpSelectiveSampling {
 //	private Map<String, Pair<Double, Double>> minMax;
 	private List<Result> prevDatas;
 	private Map<DecisionLocation, BreakpointData> selectResult;
+	private ProblemSolver solver = new ProblemSolver();
 	
 	private int numPerExe = 100;
 	private int timesLimit = 20;
@@ -85,18 +85,18 @@ public class JavailpSelectiveSampling {
 			}
 			int num = numPerExe / problems.size() + 1;
 			for (Problem problem : problems) {
-				List<Result> results = ProblemSolver.calculateRanges(problem, originVars);
+				List<Result> results = solver.calculateRanges(problem, originVars);
 				for (Result result : results) {
 					checkNonduplicateResult(result, originVars, prevDatas, assignments);
 				}
 				problem.setObjective(problem.getObjective(), OptType.MAX);
-				results = ProblemSolver.solveMultipleTimes(problem, num);
+				results = solver.solveMultipleTimes(problem, num);
 				for (Result result : results) {
 					checkNonduplicateResult(result, originVars, prevDatas, assignments);
 				}
 				
 				problem.setObjective(problem.getObjective(), OptType.MIN);
-				results = ProblemSolver.solveMultipleTimes(problem, num);
+				results = solver.solveMultipleTimes(problem, num);
 				for (Result result : results) {
 					checkNonduplicateResult(result, originVars, prevDatas, assignments);
 				}
@@ -152,8 +152,8 @@ public class JavailpSelectiveSampling {
 			}
 			
 			for (Problem problem : problems) {
-				ProblemSolver.generateRandomObjective(problem, originVars);
-				Result result = ProblemSolver.solve(problem);
+				solver.generateRandomObjective(problem, originVars);
+				Result result = solver.solve(problem);
 				if (result != null) {
 					boolean isDuplicateWithResult = isDuplicate(result, originVars, prevDatas);
 					
@@ -207,7 +207,7 @@ public class JavailpSelectiveSampling {
 				
 //				Problem p = ProblemBuilder.buildVarBoundContraint(originVars);
 				Problem p = pList.get(0);
-				ProblemSolver.generateRandomObjective(p, originVars);
+				solver.generateRandomObjective(p, originVars);
 				
 				for(int reducedVarNum=0; reducedVarNum<=originVars.size(); reducedVarNum++){
 					List<Eq<Number>> samples = generateRandomVariableAssignment(originVars, reducedVarNum);
@@ -219,7 +219,7 @@ public class JavailpSelectiveSampling {
 					
 					if(!samples.isEmpty()){
 						ProblemBuilder.addEqualConstraints(p, samples);
-						Result res = ProblemSolver.solve(p);
+						Result res = solver.solve(p);
 						
 						if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
 							results.add(res);

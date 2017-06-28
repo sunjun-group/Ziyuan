@@ -70,7 +70,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 			}
 		}
 		DecisionNodeProbe nodeProbe = probes.getNodeProbe(node);
-		if (noNeedToLearn(nodeProbe)) {
+		if (!needToLearn(nodeProbe)) {
 			visitedNodes.add(node.getIdx());
 			return;
 		}
@@ -89,9 +89,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 		}
 	}
 	
-	private boolean noNeedToLearn(DecisionNodeProbe nodeProbe) {
-		return nodeProbe.areAllbranchesUncovered()
-				|| !nodeProbe.needToLearnPrecond();
+	private boolean needToLearn(DecisionNodeProbe nodeProbe) {
+		return !nodeProbe.areAllbranchesUncovered()
+				|| nodeProbe.needToLearnPrecond();
 	}
 
 	protected void updatePrecondition(DecisionNodeProbe nodeProbe) throws SavException {
@@ -131,6 +131,8 @@ public class PrecondDecisionLearner extends AbstractLearningComponent {
 				&& nodeProbe.needToLearnPrecond()) {
 			time++;
 			DecisionProbes probes = nodeProbe.getDecisionProbes();
+			log.debug("selective sampling: ");
+			log.debug("original vars: {}", probes.getOriginalVars());
 			/* after running sampling, probes will be updated as well */
 			SamplingResult sampleResult = dataPreprocessor.sampleForModel(nodeProbe, probes.getOriginalVars(),
 					mcm.getDataPoints(), getPreconditions(probes, node), mcm.getLearnedDividers());

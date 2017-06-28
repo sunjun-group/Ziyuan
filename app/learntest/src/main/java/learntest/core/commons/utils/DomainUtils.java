@@ -94,7 +94,7 @@ public class DomainUtils {
 		}
 		return result;
 	}
-
+	
 	public static List<Domain[]> buildSolutions(List<BreakpointValue> records, List<ExecVar> originVars) {
 		List<Domain[]> res = new ArrayList<Domain[]>();
 		int size = originVars.size();
@@ -118,10 +118,10 @@ public class DomainUtils {
 		return ((FloatDomain)domain).min();
 	}
 
-	public static BreakpointValue toBreakpointValue(Domain[] solution, List<ExecVar> vars) {
+	public static BreakpointValue toBreakpointValue(double[] solution, List<ExecVar> vars) {
 		BreakpointValue value = new BreakpointValue(StringUtils.EMPTY);
 		for (int i = 0; i < vars.size(); i++) {
-			BreakpointDataUtils.addToBreakpointValue(value, vars.get(i), getDomainValue(solution[i]));
+			BreakpointDataUtils.addToBreakpointValue(value, vars.get(i), solution[i]);
 		}
 		return value;
 	}

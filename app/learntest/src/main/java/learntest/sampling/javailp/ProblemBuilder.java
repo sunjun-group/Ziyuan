@@ -21,12 +21,6 @@ public class ProblemBuilder {
 	
 	/**
 	 * Generate some data points on the onBorder *and* on the true side of trueBorder, with regard to preconditions
-	 * @param equalConstraint
-	 * @param vars
-	 * @param precondition
-	 * @param greaterThanConstraints
-	 * @param random
-	 * @return
 	 */
 	public static List<Problem> buildOnBorderTrueValueProblems(Divider equalConstraint, List<ExecVar> vars, 
 			OrCategoryCalculator precondition, List<Divider> greaterThanConstraints, boolean random) {
@@ -229,9 +223,9 @@ public class ProblemBuilder {
 			List<Divider> notDividers, boolean random) {
 		Problem problem = buildVarBoundContraint(vars);
 		if (random) {
-			PathRandom.randomPath(dividers, notDividers);
-			dividers = PathRandom.dividers;
-			notDividers = PathRandom.notDividers;
+			PathRandom randomPath = PathRandom.randomPath(dividers, notDividers);
+			dividers = randomPath.getDividers();
+			notDividers = randomPath.getNotDividers();
 		}
 		if (dividers != null) {
 			for (Divider divider : dividers) {
@@ -275,9 +269,9 @@ public class ProblemBuilder {
 			List<Divider> notDividers, boolean random) {
 		Problem problem = buildVarBoundContraint(vars);
 		if (random) {
-			PathRandom.randomPath(dividers, notDividers);
-			dividers = PathRandom.dividers;
-			notDividers = PathRandom.notDividers;
+			PathRandom randomPath = PathRandom.randomPath(dividers, notDividers);
+			dividers = randomPath.getDividers();
+			notDividers = randomPath.getNotDividers();
 		}
 		if (dividers != null) {
 			for (Divider divider : dividers) {
