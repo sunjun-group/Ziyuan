@@ -14,7 +14,7 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 	
 	@Override
 	protected IStatus execute(IProgressMonitor monitor) {
-		generateTest();
+		evaluateLearntestForSingleMethod(initLearntestParams());
 		log.debug("Finish!");
 		return Status.OK_STATUS;
 	}

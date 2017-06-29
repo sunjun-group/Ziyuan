@@ -3,7 +3,12 @@ package learntest.main;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -35,6 +40,7 @@ import sav.strategies.dto.execute.value.ExecVar;
  * will be replace with learntest.core.gentest.TestGenerator.
  */
 public class TestGenerator extends learntest.core.gentest.TestGenerator {
+	private static Logger log = LoggerFactory.getLogger(TestGenerator.class);
 	public static int NUMBER_OF_INIT_TEST = 1;
 	private static String prefix = "test";
 	private ClassLoader prjClassLoader;
@@ -95,10 +101,14 @@ public class TestGenerator extends learntest.core.gentest.TestGenerator {
 		GentestResult result = new GentestResult();
 		List<Sequence> sequences = new ArrayList<Sequence>();
 		//int index = 0;
+		Set<String> failToSetVars = new HashSet<String>();
 		for (double[] solution : solutions) {
 			result.addInputData(DomainUtils.toBreakpointValue(solution, vars));
 			//sequences.add(generator.generateSequence(input, variables.get(index ++)));
-			sequences.add(generator.generateSequence(solution, vars));
+			sequences.add(generator.generateSequence(solution, vars, failToSetVars));
+		}
+		if (!failToSetVars.isEmpty()) {
+			log.debug("Cannot modify value for variables: {}", failToSetVars);
 		}
 		injectorModule.exit(TestcaseGenerationScope.class);
 

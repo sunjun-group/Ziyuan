@@ -306,6 +306,9 @@ public class ProblemBuilder {
 		int bound = Settings.bound;
 		
 		Problem problem = new Problem();
+		/* only these types are accepted in javailp: 
+		 * Integer.class, Boolean.class, Double.class
+		 *  */
 		for (ExecVar var : vars) {
 			switch (var.getType()) {
 				case BOOLEAN:
@@ -314,14 +317,14 @@ public class ProblemBuilder {
 					problem.setVarUpperBound(var.getLabel(), 1);
 					break;
 				case BYTE:
-					problem.setVarType(var.getLabel(), Byte.class);
+					problem.setVarType(var.getLabel(), Integer.class);
 					/*problem.setVarLowerBound(var.getLabel(), Byte.MIN_VALUE);
 					problem.setVarUpperBound(var.getLabel(), Byte.MAX_VALUE);*/
 					problem.setVarLowerBound(var.getLabel(), -100);
 					problem.setVarUpperBound(var.getLabel(), 100);
 					break;
 				case CHAR:
-					problem.setVarType(var.getLabel(), Character.class);
+					problem.setVarType(var.getLabel(), Integer.class);
 					/*problem.setVarLowerBound(var.getLabel(), (int)Character.MIN_VALUE);
 					problem.setVarUpperBound(var.getLabel(), (int)Character.MAX_VALUE);*/
 					problem.setVarLowerBound(var.getLabel(), -100);
@@ -335,21 +338,21 @@ public class ProblemBuilder {
 					problem.setVarUpperBound(var.getLabel(), bound);
 					break;
 				case FLOAT:
-					problem.setVarType(var.getLabel(), Float.class);
+					problem.setVarType(var.getLabel(), Double.class);
 					/*problem.setVarLowerBound(var.getLabel(), Float.MIN_VALUE);
 					problem.setVarUpperBound(var.getLabel(), Float.MAX_VALUE);*/
 					problem.setVarLowerBound(var.getLabel(), -bound);
 					problem.setVarUpperBound(var.getLabel(), bound);
 					break;
 				case LONG:
-					problem.setVarType(var.getLabel(), Long.class);
+					problem.setVarType(var.getLabel(), Double.class);
 					/*problem.setVarLowerBound(var.getLabel(), Long.MIN_VALUE);
 					problem.setVarUpperBound(var.getLabel(), Long.MAX_VALUE);*/
 					problem.setVarLowerBound(var.getLabel(), -100);
 					problem.setVarUpperBound(var.getLabel(), 100);
 					break;
 				case SHORT:
-					problem.setVarType(var.getLabel(), Short.class);
+					problem.setVarType(var.getLabel(), Integer.class);
 					/*problem.setVarLowerBound(var.getLabel(), Short.MIN_VALUE);
 					problem.setVarUpperBound(var.getLabel(), Short.MAX_VALUE);*/
 					problem.setVarLowerBound(var.getLabel(), -100);

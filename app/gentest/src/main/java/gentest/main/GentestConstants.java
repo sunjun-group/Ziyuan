@@ -31,13 +31,13 @@ public class GentestConstants {
 	 * generate values for list -> level 2
 	 * see {@link ValueGenerator} 
 	 * */
-	public static final int VALUE_GENERATION_MAX_LEVEL = 10;
+	public static final int VALUE_GENERATION_MAX_LEVEL = 5;
 	/**
 	 * see {@link ArrayValueGenerator}
 	 * NOTE This must be less than 255
 	 */
 	public static final int VALUE_GENERATION_ARRAY_MAXLENGTH = 10;
-	public static final int OBJECT_VALUE_GENERATOR_MAX_SELECTED_METHODS = 10;
+	public static final int OBJECT_VALUE_GENERATOR_MAX_SELECTED_METHODS = 7;
 	public static final double PROBABILITY_OF_CACHE_VALUE = 0.5;
 	public static final int PROBABILITY_OF_PUBLIC_NO_PARAM_CONSTRUCTOR = 20;
 	public static final int PROBABILITY_OF_PUBLIC_CONSTRUCTOR = 4;

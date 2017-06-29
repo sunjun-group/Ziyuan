@@ -3,6 +3,7 @@
  */
 package gentest.core.data.statement;
 
+import sav.common.core.utils.StringUtils;
 
 /**
  * @author LLT
@@ -43,5 +44,14 @@ public class RAssignment extends Statement {
 	@Override
 	public boolean accept(StatementVisitor visitor) {
 		return visitor.visit(this);
+	}
+	
+	@Override
+	public String toString() {
+		return new StringBuilder().append(type.getSimpleName())
+				.append(" ").append(String.valueOf(outVarId))
+				.append(": ")
+				.append(StringUtils.toStringNullToEmpty(value))
+				.toString();
 	}
 }

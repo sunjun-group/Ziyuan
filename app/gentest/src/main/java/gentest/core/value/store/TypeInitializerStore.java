@@ -8,6 +8,7 @@
 
 package gentest.core.value.store;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -104,7 +105,8 @@ public class TypeInitializerStore implements ITypeInitializerStore {
 		for (Method method : type.getMethods()) {
 			if (Modifier.isStatic(method.getModifiers())
 					&& Modifier.isPublic(method.getModifiers())) {
-				if (method.getReturnType().equals(type)) {
+				if (method.getReturnType().equals(type)
+						&& canBeCandidateForConstructor(method, type, badConstructors)) {
 					initializer.addStaticMethod(method);
 				}
 			}
@@ -121,6 +123,7 @@ public class TypeInitializerStore implements ITypeInitializerStore {
 				}
 			}
 		}
+		
 		if (initializer.hasNoConstructor() && !badConstructors.isEmpty()) {
 			initializer.addBadConstructors(badConstructors);
 		}
@@ -129,20 +132,34 @@ public class TypeInitializerStore implements ITypeInitializerStore {
 
 	private static boolean canBeCandidateForConstructor(Constructor<?> constructor,
 			Class<?> type, List<Object> badConstructors) {
-		Class<?>[] parameterTypes = constructor.getParameterTypes();
+		return canBeCandidateForConstructor(constructor, constructor.getParameterTypes(), constructor.getModifiers(),
+				type, badConstructors);
+	}
+	
+	private static boolean canBeCandidateForConstructor(Method staticMethod,
+			Class<?> type, List<Object> badConstructors) {
+		return canBeCandidateForConstructor(staticMethod, staticMethod.getParameterTypes(), staticMethod.getModifiers(),
+				type, badConstructors);
+	}
+	
+	private static boolean canBeCandidateForConstructor(AccessibleObject constructorOrMethod,
+			Class<?>[] parameterTypes, int modifier,
+			Class<?> type, List<Object> badConstructors) {
 		for (Class<?> paramType : parameterTypes) {
+			/* loop */
 			if (type.equals(paramType) || paramType.isAssignableFrom(type)) {
-				badConstructors.add(constructor);
 				return false;
 			}
 		}
-		boolean isPublic = Modifier.isPublic(constructor.getModifiers());
-		if (isPublic && constructor.isAnnotationPresent(Deprecated.class)) {
-			badConstructors.add(constructor);
+		boolean isPublic = Modifier.isPublic(modifier);
+		/* deprecated methods/constructor */
+		if (isPublic && constructorOrMethod.isAnnotationPresent(Deprecated.class)) {
+			badConstructors.add(constructorOrMethod);
 			return false;
 		}
 		return isPublic;
 	}
+
 	//------------------------------------------------------------------------------------------
 
 	public void setPrjClassLoader(ClassLoader prjClassLoader) {

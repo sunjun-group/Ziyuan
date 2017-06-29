@@ -24,7 +24,6 @@ import sav.common.core.SavException;
 import sav.strategies.dto.execute.value.ExecVar;
 
 public class TestSeqGenerator {
-	
 	@Inject
 	private ITypeCreator typeCreator;
 	@Inject
@@ -70,9 +69,10 @@ public class TestSeqGenerator {
 		}
 	}
 	
-	public Sequence generateSequence(double[] solution, List<ExecVar> vars) throws SavException {
+	public Sequence generateSequence(double[] solution, List<ExecVar> vars, Set<String> failToSetVars) throws SavException {
 		Sequence sequence = new Sequence();
-
+		Set<Integer> failToSetIdxies = new HashSet<Integer>();
+		
 		int firstVarIdx = 0;		
 		Map<String, ISelectedVariable> varMap = new HashMap<String, ISelectedVariable>();
 		Set<String> nullVars = new HashSet<String>();
@@ -84,7 +84,8 @@ public class TestSeqGenerator {
 			String[] parts = var.getLabel().split("[.]");
 			String receiver = parts[0];
 			if (!classMap.containsKey(receiver)) {
-//				System.err.println("not input parameter [" + var.getLabel() + "]");
+				failToSetIdxies.add(idx);
+//				log.debug("not input parameter [" + var.getLabel() + "]");
 				continue;
 			}
 			if (parts.length == 1) {
@@ -144,7 +145,7 @@ public class TestSeqGenerator {
 							variable = field;
 							receiver = cur;
 						} catch (Exception e) {
-//							System.err.println("can not find setter for " + cur);
+							failToSetIdxies.add(idx);
 							break;
 						}
 					}
@@ -190,8 +191,7 @@ public class TestSeqGenerator {
 							variable = field;
 							receiver = cur;
 						} catch (Exception e) {
-							solution[idx] = 0; // set null
-//							System.err.println("can not find setter for " + cur);
+							failToSetIdxies.add(idx);
 							break;
 						}
 					}
@@ -256,10 +256,22 @@ public class TestSeqGenerator {
 		}
 		rmethod.setInVarIds(paramIds);
 		sequence.append(rmethod);
-		
+		addFailToSetValues(failToSetIdxies, vars, failToSetVars);
+		resetFailValues(failToSetIdxies, solution);
 		return sequence;
 	}
 	
+	private void addFailToSetValues(Set<Integer> failToSetIdxies, List<ExecVar> vars, Set<String> failToSetVars) {
+		for (int idx : failToSetIdxies) {
+			failToSetVars.add(vars.get(idx).getVarId());
+		}
+	}
+
+	private void resetFailValues(Set<Integer> failToSetIdxies, double[] solution) {
+		for (int idx : failToSetIdxies) {
+			solution[idx] = 0.0;
+		}
+	}
 
 	public Sequence generateSequence(Result result, List<String> variables) throws SavException {
 		Sequence sequence = new Sequence();

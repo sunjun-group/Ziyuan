@@ -57,7 +57,7 @@ public class JavailpSelectiveSampling<T extends ISampleResult> {
 				return null;
 			}
 			int num = numPerExe / problems.size() + 1;
-			log.debug("solveMultiple with random join attempt times = {}", num);
+			log.debug("solveMultiple: attempt {} times", num);
 			for (Problem problem : problems) {
 				List<Result> results = solver.calculateRanges(problem, originVars);
 				updateAssignments(results, originVars, assignments);

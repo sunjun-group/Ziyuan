@@ -56,4 +56,11 @@ public class LocalVariable {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "LocalVariable [varId=" + varId + ", clazz=" + clazz + "]";
+	}
+	
+	
 }
