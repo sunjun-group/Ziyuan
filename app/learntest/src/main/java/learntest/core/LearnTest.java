@@ -14,7 +14,7 @@ import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.commons.utils.JavaFileCopier;
 import learntest.core.gentest.GentestParams;
-import learntest.core.machinelearning.PrecondDecisionLearner;
+import learntest.core.machinelearning.IInputLearner;
 import learntest.exception.LearnTestException;
 import learntest.main.LearnTestParams;
 import learntest.main.RunTimeInfo;
@@ -52,7 +52,7 @@ public class LearnTest extends AbstractLearntest {
 
 			if (CoverageUtils.notCoverAtAll(cfgCoverage)) {
 				log.info("start node is not covered!");
-				return null;
+				return getRuntimeInfo(cfgCoverage);
 			}
 			log.info("first coverage: " + CoverageUtils.calculateCoverage(cfgCoverage));
 			BreakPoint methodEntryBkp = BreakpointCreator.createMethodEntryBkp(targetMethod);
@@ -66,7 +66,7 @@ public class LearnTest extends AbstractLearntest {
 				return getRuntimeInfo(cfgCoverage);
 			} else {
 				/* learn */
-				PrecondDecisionLearner learner = mediator.initDecisionLearner(params.isLearnByPrecond());
+				IInputLearner learner = mediator.initDecisionLearner(params);
 				DecisionProbes initProbes = initProbes(targetMethod, cfgCoverage, result);
 				learningStarted = true;
 				DecisionProbes probes = learner.learn(initProbes);

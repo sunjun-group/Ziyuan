@@ -16,9 +16,12 @@ import java.util.Map;
 
 import cfgcoverage.jacoco.CfgJaCoCo;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
+import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.TargetMethod;
-import learntest.core.machinelearning.DecisionLearner;
+import learntest.core.machinelearning.RandomLearner;
+import learntest.core.machinelearning.IInputLearner;
 import learntest.core.machinelearning.PrecondDecisionLearner;
+import learntest.main.LearnTestParams;
 import learntest.main.TestGenerator;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
@@ -82,11 +85,11 @@ public class LearningMediator {
 		return cfgCoverageTool;
 	}
 	
-	public PrecondDecisionLearner initDecisionLearner(boolean precondApproach) {
-		if (precondApproach) {
+	public IInputLearner initDecisionLearner(LearnTestParams params) {
+		if (params.getApproach() == LearnTestApproach.L2T) {
 			return new PrecondDecisionLearner(this);
 		} else {
-			return new DecisionLearner(this);
+			return new RandomLearner(this, params.getMaxTcs());
 		}
 	}
 

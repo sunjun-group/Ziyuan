@@ -8,9 +8,11 @@
 
 package sav.commons.utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import sav.common.core.iface.HasProbabilityType;
@@ -30,6 +32,27 @@ public class RandomnessTest {
 		}
 	}
 	
+	@Test
+	public void testRandomSubListFix() {
+		List<Integer> allList = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+		for (int i = 0; i < 100; i++) {
+			List<Integer> subList = Randomness.randomSubList(allList, 5);
+			System.out.println(subList);
+			Assert.assertFalse(duplicate(subList));
+		}
+	}
+	
+	private boolean duplicate(List<Integer> subList) {
+		List<Integer> checkedList = new ArrayList<Integer>();
+		for (Integer val : subList) {
+			if (checkedList.contains(val)) {
+				return true;
+			}
+			checkedList.add(val);
+		}
+		return false;
+	}
+
 	@Test
 	public void testRandomInt() {
 		for (int i = 0; i < 100; i++) {

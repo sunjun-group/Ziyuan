@@ -151,4 +151,15 @@ public class BreakpointDataUtils {
 		bkpVal.add(child);
 	}
 	
+	public static List<double[]> toDataPoint(List<ExecVar> vars, List<BreakpointValue> values) {
+		List<double[]> result = new ArrayList<double[]>(values.size());
+		for (BreakpointValue value : values) {
+			double[] datapoint = new double[vars.size()];
+			for (int i = 0; i < vars.size(); i++) {
+				datapoint[i] = value.getValue(vars.get(i).getVarId(), 0.0);
+			}
+			result.add(datapoint);
+		}
+		return result;
+	}
 }

@@ -71,9 +71,6 @@ public class SamplingResult implements ISampleResult {
 		return CoverageUtils.getCfgCoverageMap(decisionProbes);
 	}
 
-	/**
-	 * @param testInputs
-	 */
 	public void setNewInputData(List<BreakpointValue> testInputs) {
 		this.newTestInputs = testInputs;
 	}

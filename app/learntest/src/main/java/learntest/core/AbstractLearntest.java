@@ -171,8 +171,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 						.append(coveredBranches).append("]");
 			log.debug(sb.toString());
 		}
-		return new RunTimeInfo(SAVTimer.getExecutionTime(), coverage,
-				cfgCoverage.getTestcases().size());
+		return new RunTimeInfo(SAVTimer.getExecutionTime(), coverage, cfgCoverage.getTotalTcs());
 	}
 	
 	protected BreakpointData executeTestcaseAndGetTestInput(List<String> testcases, BreakPoint methodEntryBkp)

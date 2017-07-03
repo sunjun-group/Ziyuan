@@ -16,11 +16,14 @@ import learntest.core.LearningMediator;
 import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
+import learntest.core.commons.data.decision.IDecisionNode;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.testcase.data.BranchType;
+import learntest.testcase.data.INodeCoveredData;
 import libsvm.core.Divider;
 import libsvm.core.Machine.DataPoint;
 import sav.common.core.SavException;
+import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
 
 /**
@@ -30,12 +33,12 @@ import sav.strategies.dto.execute.value.ExecVar;
  *  new sample data.
  */
 public class LearnedDataProcessor {
-	private JavailpSelectiveSampling<SamplingResult> selectiveSampling;
+	private SelectiveSampling<SamplingResult> selectiveSampling;
 	private DecisionProbes decisionProbes;
 	
 	public LearnedDataProcessor(LearningMediator mediator, DecisionProbes decisionProbes) {
 		SampleExecutor sampleExecutor = new SampleExecutor(mediator, decisionProbes);
-		this.selectiveSampling = new JavailpSelectiveSampling<SamplingResult>(sampleExecutor);
+		this.selectiveSampling = new SelectiveSampling<SamplingResult>(sampleExecutor, decisionProbes);
 		this.decisionProbes = decisionProbes;
 	}
 	
@@ -54,11 +57,42 @@ public class LearnedDataProcessor {
 		DecisionProbes processedProbes = decisionProbes;
 		coveredType = nodeProbe.getCoveredBranches();
 		if (coveredType.isOneBranchMissing()) {
-			selectiveSampling.selectDataForEmpty(nodeProbe, processedProbes.getOriginalVars(),
+			selectDataForEmpty(nodeProbe, 
 					preconditions, null, coveredType.getOnlyOneMissingBranch(), false);
 		}
 		
 		return processedProbes;
+	}
+	
+	public SamplingResult selectDataForEmpty(IDecisionNode nodeProbe, OrCategoryCalculator precondition,
+			List<Divider> divider, BranchType missingBranch, boolean isLoop)
+			throws SavException, SAVExecutionTimeOutException {
+		/* try to select 2 times */
+		SamplingResult selectResult = null;
+		for (int i = 0; i < 2; i++) {
+			selectResult = selectiveSampling.selectData(decisionProbes.getOriginalVars(), precondition, divider);
+			if (selectResult == null) {
+				continue;
+			}
+
+			INodeCoveredData selectData = selectResult.getNewData(nodeProbe);
+			if (!isLoop) {
+				if ((missingBranch.isTrueBranch()) && !selectData.getTrueValues().isEmpty()) {
+					return selectResult;
+				}
+				if (missingBranch.isFalseBranch() && !selectData.getFalseValues().isEmpty()) {
+					return selectResult;
+				}
+			} else {
+				if (missingBranch.isTrueBranch() && !selectData.getMoreTimesValues().isEmpty()) {
+					return selectResult;
+				}
+				if (missingBranch.isFalseBranch() && !selectData.getOneTimeValues().isEmpty()) {
+					return selectResult;
+				}
+			}
+		}
+		return selectResult;
 	}
 
 	/**
@@ -73,8 +107,7 @@ public class LearnedDataProcessor {
 		}
 		BranchType missingBranch = nodeProbe.getMoreTimesValues().isEmpty() ? BranchType.TRUE
 																			: BranchType.FALSE; /* ?? */
-		selectiveSampling.selectDataForEmpty(nodeProbe, decisionProbes.getOriginalVars(),
-				preconditions, null, missingBranch, true);
+		selectDataForEmpty(nodeProbe, preconditions, null, missingBranch, true);
 	}
 
 	public SamplingResult sampleForModel(DecisionNodeProbe nodeProbe, List<ExecVar> originalVars,

@@ -45,11 +45,6 @@ public class NodeCoveredData implements INodeCoveredData {
 		updateFreqCoveredValue(coverage, newTestInputs, newTcsFirstIdx);
 	}
 	
-	/**
-	 * @param coverage 
-	 * @param newTcsFirstIdx
-	 * @param newTestInputs
-	 */
 	public void update(NodeCoverage coverage, int newTcsFirstIdx, List<BreakpointValue> newTestInputs) {
 		trueValues.addAll(getBranchCoveredValue(coverage, newTestInputs, BranchRelationship.TRUE, newTcsFirstIdx));
 		falseValues.addAll(getBranchCoveredValue(coverage, newTestInputs, BranchRelationship.FALSE, newTcsFirstIdx));

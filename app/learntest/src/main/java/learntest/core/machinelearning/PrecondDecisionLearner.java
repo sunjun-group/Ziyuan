@@ -41,10 +41,10 @@ import sav.strategies.dto.execute.value.ExecVar;
 /**
  * @author LLT 
  * different from DecisionLearner which does sampling randomly,
- * this learner using precondition (which is build based on classifier of node's dominatees) 
+ * this learner using precondition (which is built based on classifier of node's dominatees) 
  * for sampling.
  */
-public class PrecondDecisionLearner extends AbstractLearningComponent {
+public class PrecondDecisionLearner extends AbstractLearningComponent implements IInputLearner {
 	private static Logger log = LoggerFactory.getLogger(PrecondDecisionLearner.class);
 	private static final int FORMULAR_LEARN_MAX_ATTEMPT = 5;
 	protected LearnedDataProcessor dataPreprocessor;

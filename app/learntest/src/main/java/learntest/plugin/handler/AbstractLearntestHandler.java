@@ -30,6 +30,7 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cfgcoverage.jacoco.CfgJaCoCoConfigs;
 import learntest.core.JDartLearntest;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.JunitTestsInfo;
@@ -56,6 +57,7 @@ import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.common.core.SystemVariables;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.TextFormatUtils;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.vm.JavaCompiler;
@@ -150,6 +152,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER, LearnTestUtil.getPrjClassLoader());
 			appClasspath.getPreferences().set(SystemVariables.TESTCASE_TIMEOUT,
 					Constants.DEFAULT_JUNIT_TESTCASE_TIMEOUT);
+			appClasspath.getPreferences().set(CfgJaCoCoConfigs.DUPLICATE_FILTER, false);
 			return appClasspath;
 		} catch (CoreException ex) {
 			throw new SavRtException(ex);
@@ -234,6 +237,8 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			runLearntest(l2tAverageInfo, l2tParams);
 			
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
+			randoopParam.setInitialTests(l2tParams.getInitialTests());
+			randoopParam.setMaxTcs(l2tAverageInfo.getTestCnt());
 			log.info("run randoop..");
 			runLearntest(ranAverageInfo, randoopParam);
 			
@@ -279,8 +284,8 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			refreshProject();
 
 			if(runtimeInfo != null) {
-				log.info("{} time: {}; coverage: {}", params.getApproach().getName(), runtimeInfo.getTime(), 
-						runtimeInfo.getCoverage());
+				log.info("{} time: {}; coverage: {}; cnt: {}", params.getApproach().getName(), TextFormatUtils.printTimeString(runtimeInfo.getTime()), 
+						runtimeInfo.getCoverage(), runtimeInfo.getTestCnt());
 			}
 			return runtimeInfo;
 		} catch (Exception e) {

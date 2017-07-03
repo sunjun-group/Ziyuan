@@ -42,6 +42,7 @@ public class LearnTestParams {
 	private SystemPreferences systemConfig;
 	private String initTestPkg;
 	private String resultTestPkg;
+	private int maxTcs;
 	
 	public LearnTestParams() {
 		systemConfig = new SystemPreferences();
@@ -151,6 +152,14 @@ public class LearnTestParams {
 		return LearnTestConfig.getTestClass(LearnTestConfig.isL2TApproach);
 	}
 	
+	public int getMaxTcs() {
+		return maxTcs;
+	}
+
+	public void setMaxTcs(int maxTcs) {
+		this.maxTcs = maxTcs;
+	}
+
 	public String getInitTestPkg() {
 		if (initTestPkg == null) {
 			initTestPkg = LearntestConstants.getInitTestPackage(approach.getName(), targetMethod);

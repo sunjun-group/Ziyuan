@@ -11,7 +11,6 @@ package learntest.core.machinelearning.iface;
 import java.util.List;
 
 import sav.common.core.SavException;
-import sav.common.core.formula.Eq;
 import sav.strategies.dto.execute.value.ExecVar;
 
 /**
@@ -20,6 +19,6 @@ import sav.strategies.dto.execute.value.ExecVar;
  */
 public interface ISampleExecutor<T extends ISampleResult> {
 
-	T runSamples(List<List<Eq<?>>> assignments, List<ExecVar> originVars) throws SavException;
+	T runSamples(List<double[]> data, List<ExecVar> vars) throws SavException;
 
 }

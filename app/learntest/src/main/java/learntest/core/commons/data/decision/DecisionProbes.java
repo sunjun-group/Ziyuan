@@ -172,7 +172,7 @@ public class DecisionProbes extends CfgCoverage {
 	 * @param newTestInputs 
 	 */
 	public void update(int newTcsFirstIdx, List<BreakpointValue> newTestInputs) {
-		if (isOutOfDate()) {
+		if (nodeProbeMap != null && isOutOfDate()) {
 			for (DecisionNodeProbe nodeProbe : nodeProbeMap.values()) {
 				nodeProbe.update(newTcsFirstIdx, newTestInputs);
 			}

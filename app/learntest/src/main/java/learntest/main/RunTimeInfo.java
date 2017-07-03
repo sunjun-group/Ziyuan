@@ -1,5 +1,7 @@
 package learntest.main;
 
+import sav.common.core.utils.TextFormatUtils;
+
 public class RunTimeInfo {
 	private long time;
 	private double coverage;
@@ -61,6 +63,6 @@ public class RunTimeInfo {
 
 	@Override
 	public String toString() {
-		return "[time=" + time + ", coverage=" + coverage + ", testCnt=" + testCnt + "]";
+		return "[time=" + TextFormatUtils.printTimeString(time) + ", coverage=" + coverage + ", testCnt=" + testCnt + "]";
 	}
 }
