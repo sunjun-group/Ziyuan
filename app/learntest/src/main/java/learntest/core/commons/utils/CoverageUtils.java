@@ -29,15 +29,12 @@ public class CoverageUtils {
 	 */
 	public static boolean notCoverAtAll(CfgCoverage cfgcoverage) {
 		NodeCoverage nodeCvg = cfgcoverage.getCoverage(cfgcoverage.getCfg().getStartNode());
-		if(nodeCvg.getCoveredTcs().isEmpty()) {
-			return true;
-		}
-		return false;
+		return !nodeCvg.isCovered();
 	}
 
 	public static boolean noDecisionNodeIsCovered(CfgCoverage cfgcoverage) {
 		for (CfgNode node : cfgcoverage.getCfg().getDecisionNodes()) {
-			if (!cfgcoverage.getCoverage(node).getCoveredTcs().isEmpty()) {
+			if (cfgcoverage.getCoverage(node).isCovered()) {
 				return false;
 			}
 		}
@@ -49,7 +46,7 @@ public class CoverageUtils {
 		int coveredBranches = 0;
 		List<CfgNode> decisionNodes = cfgCoverage.getCfg().getDecisionNodes();
 		if (decisionNodes.isEmpty()) {
-			if (cfgCoverage.getCoverage(cfgCoverage.getCfg().getStartNode()).getCoveredTcs().isEmpty()) {
+			if (!cfgCoverage.getCoverage(cfgCoverage.getCfg().getStartNode()).isCovered()) {
 				return 0.0;
 			}
 			return 1.0;
@@ -64,7 +61,7 @@ public class CoverageUtils {
 	public static double calculateCoverage(CfgCoverage cfgCoverage) {
 		int covered = 0;
 		for (NodeCoverage nodeCvg : cfgCoverage.getNodeCoverages()) {
-			if (!nodeCvg.getCoveredTcs().isEmpty()) {
+			if (nodeCvg.isCovered()) {
 				covered++;
 			}
 		}

@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import learntest.core.commons.data.classinfo.TargetMethod;
+import learntest.io.excel.MultiTrial;
 import learntest.io.excel.Trial;
 import learntest.io.excel.TrialExcelHandler;
 import learntest.main.LearnTestConfig;
@@ -56,6 +57,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	private static Logger log = LoggerFactory.getLogger(EvaluationHandler.class);
 	private static final List<TargetMethodFilter> DEFAULT_METHOD_FILTERS;
 	private static final List<TargetClassFilter> DEFAULT_CLASS_FILTERS;
+	private static final int EVALUATIONS_PER_METHOD = 5;
 	private List<TargetMethodFilter> methodFilters;
 	private List<TargetClassFilter> classFilters;
 	static {
@@ -68,6 +70,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	@Override
 	protected IStatus execute(IProgressMonitor monitor) {
 		SingleTimer timer = SingleTimer.start("Evaluation all methods");
+		curMethodIdx = 0;
 		final List<IPackageFragmentRoot> roots = IProjectUtils.findTargetSourcePkgRoots(LearnTestUtil.getJavaProject());
 		TrialExcelHandler excelHandler = null;
 		try {
@@ -168,21 +171,28 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			TargetMethod targetMethod = initTargetMethod(className, cu, method);
 
 			log.info("-----------------------------------------------------------------------------------------------");
-			log.info("WORKING METHOD [{}]: {}, line {}", ++curMethodIdx, targetMethod.getMethodFullName(),
-																					targetMethod.getLineNum());
-			log.info("-----------------------------------------------------------------------------------------------");
+			log.info("Method {}", ++curMethodIdx);
 			try{
 			    PrintWriter writer = new PrintWriter("latest_working_method.txt", "UTF-8");
 			    writer.println("working method: " + targetMethod.getMethodFullName());
 			    writer.close();
 			} catch (IOException e) {
 			}
-			
-			LearnTestParams params = initLearntestParams(targetMethod);
-			Trial trial = evaluateLearntestForSingleMethod(params);
-			if (trial != null) {
+			MultiTrial multiTrial = new MultiTrial();
+			for (int i = 0; i < EVALUATIONS_PER_METHOD; i++) {
 				try {
-					excelHandler.export(trial);
+					LearnTestParams params = initLearntestParams(targetMethod);
+					Trial trial = evaluateLearntestForSingleMethod(params);
+					if (trial != null) {
+						multiTrial.addTrial(trial);
+					}
+				} catch (Exception e) {
+					handleException(e);
+				}
+			}
+			if (!multiTrial.isEmpty()) {
+				try {
+					excelHandler.export(multiTrial);
 				} catch (Exception e) {
 					handleException(e);
 				}

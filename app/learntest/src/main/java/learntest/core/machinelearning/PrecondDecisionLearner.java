@@ -110,8 +110,13 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 
 	private TrueFalseLearningResult generateTrueFalseFormula(DecisionNodeProbe orgNodeProbe,
 			CoveredBranches coveredType) throws SavException {
+		if (!orgNodeProbe.needToLearnPrecond()) {
+			return null;
+		}
+		log.debug("generate true false formula..");
 		/* only generate if both branches are covered */
-		if (coveredType != CoveredBranches.TRUE_AND_FALSE || !orgNodeProbe.needToLearnPrecond()) {
+		if (coveredType != CoveredBranches.TRUE_AND_FALSE) {
+			log.debug("Only branch {} is covered!", coveredType);
 			return null;
 		}
 		Formula trueFlaseFormula = null;
@@ -119,7 +124,6 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		NegativePointSelection negative = new ByDistanceNegativePointSelection();
 		PositiveSeparationMachine mcm = new PositiveSeparationMachine(negative);
 		trueFlaseFormula = generateInitialFormula(orgNodeProbe, mcm);
-		System.currentTimeMillis();
 		double acc = mcm.getModelAccuracy();
 		List<Divider> dividers = mcm.getLearnedDividers();
 		log.info("=============learned multiple cut: " + trueFlaseFormula);
@@ -223,6 +227,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		if (!nodeProbe.getNode().isLoopHeader() || !nodeProbe.getCoveredBranches().coversTrue()) {
 			return null;
 		}
+		log.debug("generate loop formula..");
 		if (nodeProbe.getOneTimeValues().isEmpty() || nodeProbe.getMoreTimesValues().isEmpty()) {
 			log.info("Missing once loop data");
 			return null;

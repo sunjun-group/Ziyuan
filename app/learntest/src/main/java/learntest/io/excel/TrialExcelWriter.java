@@ -61,6 +61,12 @@ public class TrialExcelWriter extends ExcelWriter {
 		addCell(row, ADVANTAGE, trial.getAdvantage());
 		addCell(row, METHOD_LENGTH, trial.getMethodLength());
 		addCell(row, METHOD_START_LINE, trial.getMethodStartLine());
+		
+		if (trial instanceof MultiTrial) {
+			MultiTrial multiTrial = (MultiTrial) trial;
+			addCell(row, L2T_BEST_COVERAGE, multiTrial.getBestL2tRtCoverage());
+			addCell(row, RANDOOP_BEST_COVERAGE, multiTrial.getBestRanRtCoverage());
+		}
 		writeWorkbook();
 		return lastDataSheetRow;
 	}

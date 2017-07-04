@@ -95,8 +95,9 @@ public class IlpSelectiveSampling {
 		}
 		log.debug("generated samples: {}", samples.size());
 		List<double[]> selectedSamples = Randomness.randomSubList(samples, maxTcs);
-		allSelectedSamples.removeAll(selectedSamples);
-		log.debug("selected samples: {}", selectedSamples.size());
+		samples.removeAll(selectedSamples);
+		allSelectedSamples.removeAll(samples);
+		log.debug("selected samples: {}, all selected samples: {}", selectedSamples.size(), allSelectedSamples.size());
 		return selectedSamples;
 	}
 
@@ -315,6 +316,7 @@ public class IlpSelectiveSampling {
 			}
 		}
 		if (!duplicate) {
+			allSelectedSamples.add(solution);
 			samples.add(solution);
 		}
 	}

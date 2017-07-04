@@ -65,4 +65,34 @@ public class RunTimeInfo {
 	public String toString() {
 		return "[time=" + TextFormatUtils.printTimeString(time) + ", coverage=" + coverage + ", testCnt=" + testCnt + "]";
 	}
+
+	public static RunTimeInfo average(RunTimeInfo info1, RunTimeInfo info2) {
+		if (isEmpty(info1)) {
+			return info2;
+		}
+		if (isEmpty(info2)) {
+			return info1;
+		}
+		long avgTime = (info1.time + info2.time) / 2;
+		double avgCoverage = (info1.coverage + info2.coverage) / 2;
+		int avgTestCnt = (info1.testCnt + info2.testCnt) / 2;
+		return new RunTimeInfo(avgTime, avgCoverage, avgTestCnt);
+	}
+
+	public static boolean isEmpty(RunTimeInfo info) {
+		return info == null || info.isZero();
+	}
+
+	public static double getBestCoverage(double bestL2tRtCoverage, RunTimeInfo info2) {
+		return Math.max(bestL2tRtCoverage, getCoverage(info2));
+	}
+
+	private static double getCoverage(RunTimeInfo info) {
+		if (isEmpty(info)) {
+			return 0.0;
+		}
+		return info.getCoverage();
+	}
+	
+	
 }

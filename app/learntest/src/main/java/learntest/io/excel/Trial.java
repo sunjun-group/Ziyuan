@@ -6,20 +6,20 @@ public class Trial {
 	/**
 	 * It should be a full name of method, including declaring class name.
 	 */
-	private String methodName;
-	private int methodLength;
-	private int methodStartLine;
+	protected String methodName;
+	protected int methodLength;
+	protected int methodStartLine;
 
-	private RunTimeInfo l2tRtInfo;
-	private RunTimeInfo ranRtInfo;
-	private RunTimeInfo jdartRtInfo;
+	protected RunTimeInfo l2tRtInfo;
+	protected RunTimeInfo ranRtInfo;
+	protected RunTimeInfo jdartRtInfo;
 
 	public Trial(){
 		
 	}
 	
-	public Trial(String methodName, int methodLength, int methodEntryLineNo, RunTimeInfo l2tAverageInfo, RunTimeInfo ranAverageInfo,
-			RunTimeInfo jdartInfo) {
+	public Trial(String methodName, int methodLength, int methodEntryLineNo, RunTimeInfo l2tAverageInfo,
+			RunTimeInfo ranAverageInfo, RunTimeInfo jdartInfo) {
 		this.methodName = methodName;
 		this.methodLength = methodLength;
 		this.methodStartLine = methodEntryLineNo;

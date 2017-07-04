@@ -9,8 +9,8 @@
 package learntest.core.commons.data.decision;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
@@ -40,8 +40,8 @@ public class NodeCoveredData implements INodeCoveredData {
 		/* collect input values of false branch */
 		falseValues = getBranchCoveredValue(coverage, newTestInputs, BranchRelationship.FALSE,
 				newTcsFirstIdx);
-		oneTimeValues = new ArrayList<BreakpointValue>(coverage.getCoveredTcs().size());
-		moreTimesValues = new ArrayList<BreakpointValue>(coverage.getCoveredTcs().size());
+		oneTimeValues = new ArrayList<BreakpointValue>(coverage.getCoveredTcsTotal());
+		moreTimesValues = new ArrayList<BreakpointValue>(coverage.getCoveredTcsTotal());
 		updateFreqCoveredValue(coverage, newTestInputs, newTcsFirstIdx);
 	}
 	
@@ -57,17 +57,17 @@ public class NodeCoveredData implements INodeCoveredData {
 	 * @param testOffset first test idx from which we collect the coverage
 	 */
 	private void updateFreqCoveredValue(NodeCoverage nodeCoverage, List<BreakpointValue> testInputs, int testOffset) {
-		for (int idx : nodeCoverage.getCoveredTcs().keySet()) {
-			int newTestIdx = idx - testOffset;
+		for (Iterator<int[]> it = nodeCoverage.coveredTcsIterator(); it.hasNext();) {
+			int[] coveredInfo = it.next();
+			int newTestIdx = coveredInfo[0] - testOffset;
 			if (newTestIdx < 0) {
 				continue;
 			}
-			Integer freq = nodeCoverage.getCoveredTcs().get(idx);
 			/*
 			 * add to one time values if tc covers node once, otherwise, add to
 			 * moretimesValues
 			 */
-			if (freq == 1) {
+			if (coveredInfo[1] == 1) {
 				oneTimeValues.add(testInputs.get(newTestIdx));
 			} else {
 				moreTimesValues.add(testInputs.get(newTestIdx));
@@ -101,8 +101,8 @@ public class NodeCoveredData implements INodeCoveredData {
 		 * we still consider FALSE branch is covered.
 		 * (this is the current implementation in CfgCoverage)
 		 *  */
-		Map<Integer, List<Integer>> coveredBranches = nodeCoverage.getCoveredBranches();
-		List<Integer> tcIdxCovered = getCoveredTestIdexies(coveredBranches, branch.getIdx(), testOffset);
+		List<Integer> coveredTcsForBranch = nodeCoverage.getCoveredTcsForBranch(branch.getIdx());
+		List<Integer> tcIdxCovered = getCoveredTestIdexies(coveredTcsForBranch, testOffset);
 		int size = CollectionUtils.getSize(tcIdxCovered);
 		List<BreakpointValue> values = new ArrayList<BreakpointValue>(size);
 		for (Integer idx : CollectionUtils.nullToEmpty(tcIdxCovered)) {
@@ -111,9 +111,7 @@ public class NodeCoveredData implements INodeCoveredData {
 		return values;
 	}
 
-	private static List<Integer> getCoveredTestIdexies(Map<Integer, List<Integer>> coveredBranches, int branchIdx,
-			int testOffset) {
-		List<Integer> tcIdxCovered = coveredBranches.get(branchIdx);
+	private static List<Integer> getCoveredTestIdexies(List<Integer> tcIdxCovered, int testOffset) {
 		if (testOffset == 0 || CollectionUtils.isEmpty(tcIdxCovered)) {
 			return tcIdxCovered;
 		}

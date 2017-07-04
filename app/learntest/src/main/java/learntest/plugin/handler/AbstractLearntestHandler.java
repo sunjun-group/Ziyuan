@@ -110,6 +110,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	}
 
 	protected void handleException(Exception e) {
+		log.debug("error: {}", (Object)e.getStackTrace());
 		e.printStackTrace();
 	}
 	
@@ -152,7 +153,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER, LearnTestUtil.getPrjClassLoader());
 			appClasspath.getPreferences().set(SystemVariables.TESTCASE_TIMEOUT,
 					Constants.DEFAULT_JUNIT_TESTCASE_TIMEOUT);
-			appClasspath.getPreferences().set(CfgJaCoCoConfigs.DUPLICATE_FILTER, false);
+			appClasspath.getPreferences().set(CfgJaCoCoConfigs.DUPLICATE_FILTER, true);
 			return appClasspath;
 		} catch (CoreException ex) {
 			throw new SavRtException(ex);
@@ -166,7 +167,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		TargetMethod targetMethod = new TargetMethod(targetClass);
 		targetMethod.setMethodName(simpleMethodName);
 		targetMethod.setLineNum(lineNumber);
-		targetMethod.setMethodLength(method.getLength());
+		targetMethod.setMethodLength(IMethodUtils.getLength(cu, method));
 		targetMethod.setMethodSignature(LearnTestUtil.getMethodSignature(method));
 		List<String> paramNames = new ArrayList<String>(CollectionUtils.getSize(method.parameters()));
 		List<String> paramTypes = new ArrayList<String>(paramNames.size());
@@ -220,6 +221,10 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 	protected Trial evaluateLearntestForSingleMethod(LearnTestParams params) {
 		try {
+			log.info("");
+			log.info("WORKING METHOD: {}, line {}", params.getTargetMethod().getMethodFullName(),
+					params.getTargetMethod().getLineNum());
+			log.info("-----------------------------------------------------------------------------------------------");
 			// l2t params
 			LearnTestParams l2tParams = params;
 			// randoop params

@@ -161,12 +161,12 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 			StringBuilder sb = new StringBuilder();
 			NodeCoverage nodeCvg = cfgCoverage.getCoverage(node);
 			Set<BranchRelationship> coveredBranches = new HashSet<BranchRelationship>(2);
-			for (int branchIdx : nodeCvg.getCoveredBranches().keySet()) {
+			for (int branchIdx : nodeCvg.getCoveredBranches()) {
 				BranchRelationship branchRelationship = node.getBranchRelationship(branchIdx);
 				coveredBranches.add(branchRelationship == BranchRelationship.TRUE ? branchRelationship : 
 										BranchRelationship.FALSE);
 			}
-			sb.append("NodeCoverage [").append(node).append(", coveredTcs=").append(nodeCvg.getCoveredTcs().size())
+			sb.append("NodeCoverage [").append(node).append(", coveredTcs=").append(nodeCvg.getCoveredTcsTotal())
 						.append(", coveredBranches=").append(nodeCvg.getCoveredBranches().size()).append(", ")
 						.append(coveredBranches).append("]");
 			log.debug(sb.toString());
