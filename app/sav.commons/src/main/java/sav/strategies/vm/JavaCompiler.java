@@ -13,18 +13,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionBuilder;
-import sav.strategies.vm.VMConfiguration;
-import sav.strategies.vm.VMRunner;
-import sav.strategies.vm.VmRunnerUtils;
 
 /**
  * @author LLT
  * 
  */
 public class JavaCompiler {
+	private Logger log = LoggerFactory.getLogger(JavaCompiler.class);
 	private VMConfiguration vmConfig;
 
 	public JavaCompiler(VMConfiguration vmConfig) {
@@ -51,8 +52,14 @@ public class JavaCompiler {
 		VMRunner vmRunner = VMRunner.getDefault();
 		vmRunner.setLog(vmConfig.isVmLogEnable());
 		boolean success = vmRunner.startAndWaitUntilStop(builder.toCollection());
-		if (!success) {
-			throw new SavException("Compilation error: " + vmRunner.getProccessError(), ModuleEnum.JVM);
+		if (!success ) {
+			String errorMsg = vmRunner.getProccessError();
+			if (errorMsg.startsWith("Note: ")) {
+				log.warn(errorMsg);
+				return success;
+			} else {
+				throw new SavException(ModuleEnum.JVM, errorMsg);
+			}
 		}
 		return success;
 	}
