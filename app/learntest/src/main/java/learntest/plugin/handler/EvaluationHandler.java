@@ -106,7 +106,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		methodFilters = new ArrayList<TargetMethodFilter>(DEFAULT_METHOD_FILTERS);
 		classFilters = new ArrayList<TargetClassFilter>(DEFAULT_CLASS_FILTERS);
 		classFilters.add(new ClassNameFilter(getExcludedClasses()));
-		methodFilters.add(new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME));
+//		methodFilters.add(new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME));
 	}
 
 	private List<String> getExcludedClasses() {
