@@ -144,6 +144,7 @@ public final class Randomness {
 	public static <T> List<T> randomSubList(List<T> allList, int subSize) {
 		List<T> sublist = new ArrayList<T>();
 		int n = allList.size();
+		Assert.assertTrue(n >= subSize, "subSize is greater than allList size");
 		int[] swaps = new int[allList.size()];
 		for (int i = 0; i < subSize; i++) {
 			int nextIdx = nextInt(n);

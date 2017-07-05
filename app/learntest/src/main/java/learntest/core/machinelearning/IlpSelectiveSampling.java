@@ -258,8 +258,10 @@ public class IlpSelectiveSampling {
 			addIfNotDuplicate(candidates, leftPoint);
 		}
 		int fullCandidateSize = candidates.size();
-		candidates = Randomness.randomSubList(candidates, maxSamples);
-		log.debug("heuristics samples: generated {}, selected candidates {}", fullCandidateSize, candidates.size());
+		if (maxSamples < fullCandidateSize) {
+			candidates = Randomness.randomSubList(candidates, maxSamples);
+			log.debug("heuristics samples: generated {}, selected candidates {}", fullCandidateSize, candidates.size());
+		}
 		allSelectedSamples.addAll(candidates);
 		return candidates;
 	}
