@@ -16,8 +16,10 @@ import learntest.core.commons.data.classinfo.TargetMethod;
  */
 public class LearntestConstants {
 	private LearntestConstants(){}
+
+	public static final String EXCLUSIVE_METHOD_FILE_NAME = "exclusive_methods.txt";
 	
-	public static long GENTEST_METHOD_EXEC_TIMEOUT = 200l; //ms
+	public static final long GENTEST_METHOD_EXEC_TIMEOUT = 200l; //ms
 	/* testdata.[approachName].result.[init_test_package_name]*/
 	private static final String RESULT_TEST_PKG_FORMAT = "testdata.%s.result.%s";
 	/* testdata.[approachName].test.init.[classSimpleName].[methodName]*/

@@ -129,10 +129,7 @@ public class IlpSelectiveSampling {
 		 * randomly generate more data points on svm model.
 		 */
 		samples.addAll(generateRandomPointsWithPrecondition(preconditions, originVars, datapoints, 3));
-
-		for (int i = 0; i < Settings.selectiveNumber; i++) {
-			selectHeuristicsSamples(samples, originVars);
-		}
+		samples.addAll(selectHeuristicsSamples(samples, originVars, maxSamplesPerSelect * 2));
 
 		return limitSamples(samples);
 	}
@@ -207,13 +204,13 @@ public class IlpSelectiveSampling {
 	
 	/**
 	 * slight moving existing data points.
+	 * @return 
 	 */
-	private void selectHeuristicsSamples(List<double[]> existingSamples, List<ExecVar> originVars) {
+	private List<double[]> selectHeuristicsSamples(List<double[]> existingSamples, List<ExecVar> originVars, int maxSamples) {
 		double selectiveBound = 5;
 		Random random = new Random();
 		double offset = random.nextDouble() * selectiveBound;
-		List<double[]> samples = new ArrayList<double[]>();
-		
+		List<double[]> candidates = new ArrayList<double[]>();
 		for (double[] result : existingSamples) {
 			double[] rightPoint = new double[originVars.size()];
 			double[] leftPoint =  new double[originVars.size()];
@@ -257,8 +254,22 @@ public class IlpSelectiveSampling {
 						break;
 				}
 			}
-			updateSamples(samples, rightPoint);
-			updateSamples(samples, leftPoint);
+			addIfNotDuplicate(candidates, rightPoint);
+			addIfNotDuplicate(candidates, leftPoint);
+		}
+		int fullCandidateSize = candidates.size();
+		candidates = Randomness.randomSubList(candidates, maxSamples);
+		log.debug("heuristics samples: generated {}, selected candidates {}", fullCandidateSize, candidates.size());
+		allSelectedSamples.addAll(candidates);
+		return candidates;
+	}
+
+	/**
+	 * add to candidates list but not update allSelectedSamples
+	 * */
+	private void addIfNotDuplicate(List<double[]> candidates, double[] rightPoint) {
+		if (!isDuplicate(rightPoint)) {
+			candidates.add(rightPoint);
 		}
 	}
 
@@ -308,6 +319,18 @@ public class IlpSelectiveSampling {
 	}
 
 	private void updateSamples(List<double[]> samples, double[] solution) {
+		boolean duplicate = isDuplicate(solution);
+		updateSamples(samples, solution, duplicate);
+	}
+
+	private void updateSamples(List<double[]> samples, double[] solution, boolean duplicate) {
+		if (!duplicate) {
+			allSelectedSamples.add(solution);
+			samples.add(solution);
+		}
+	}
+
+	private boolean isDuplicate(double[] solution) {
 		boolean duplicate = false;
 		for (double[] prevSample : allSelectedSamples) {
 			if (Arrays.equals(prevSample, solution)) {
@@ -315,11 +338,9 @@ public class IlpSelectiveSampling {
 				break;
 			}
 		}
-		if (!duplicate) {
-			allSelectedSamples.add(solution);
-			samples.add(solution);
-		}
+		return duplicate;
 	}
+	
 	
 	public void setMaxSamplesPerSelect(int maxSamplesPerSelect) {
 		this.maxSamplesPerSelect = maxSamplesPerSelect;
