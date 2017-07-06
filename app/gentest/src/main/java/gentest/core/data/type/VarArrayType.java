@@ -10,7 +10,7 @@ package gentest.core.data.type;
 
 import java.lang.reflect.Type;
 
-import org.apache.commons.lang3.reflect.TypeUtils;
+import com.google.inject.util.Types;
 
 import sav.common.core.SavRtException;
 import sav.common.core.utils.SignatureUtils;
@@ -43,7 +43,7 @@ public class VarArrayType implements IType {
 	@Override
 	public Type getType() {
 		if (type == null) {
-			type = TypeUtils.genericArrayType(componentType.getType()); 
+			type = Types.arrayOf(componentType.getType());
 		}
 		return type;
 	}

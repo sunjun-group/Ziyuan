@@ -10,8 +10,6 @@ package gentest.core.data.type;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.google.inject.util.Types;
 
@@ -48,17 +46,13 @@ public class VarType implements IType {
 			if (CollectionUtils.isEmpty(typeParameters)) {
 				return rawType;
 			}
-//			Map<TypeVariable<?>, Type> typeMap = new HashMap<TypeVariable<?>, Type>();
-			
 			Type[] typeArguments = new Type[typeParameters.length];
 			for (int i = 0; i < typeParameters.length; i++) {
 				TypeVariable<?> paramType = typeParameters[i];
 				Class<?> resolvedType = getResolver().resolve(paramType);
-//				typeMap.put(paramType, resolvedType);
 				typeArguments[i] = resolvedType;
 			}
 			genericType = Types.newParameterizedType(rawType, typeArguments);
-//			genericType = TypeUtils.parameterize(rawType, typeMap);
 		}
 		return genericType; 
 	}

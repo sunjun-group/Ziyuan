@@ -1,6 +1,5 @@
 package learntest.plugin.handler;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -8,7 +7,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -51,6 +49,7 @@ import learntest.plugin.utils.IMethodUtils;
 import learntest.plugin.utils.IProjectUtils;
 import learntest.util.LearnTestUtil;
 import sav.common.core.SavRtException;
+import sav.common.core.utils.FileUtils;
 import sav.common.core.utils.PrimitiveUtils;
 import sav.common.core.utils.SingleTimer;
 import sav.settings.SAVTimer;
@@ -156,10 +155,6 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			return;
 		}
 		
-//		if (curMethodIdx > 1) {
-//			throw new SavRtException("Force stop!");
-//		}
-		
 		String className = LearnTestUtil.getFullNameOfCompilationUnit(cu);
 		LearnTestConfig.targetClassName = className;
 		for (MethodDeclaration method : validMethods) {
@@ -198,11 +193,10 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	}
 
 	private static void logSuccessfulMethod(TargetMethod targetMethod) {
-		File file = new File(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME);
 		try {
-			FileUtils.writeLines(file, Arrays
-					.asList(IMethodUtils.getMethodId(targetMethod.getMethodFullName(), targetMethod.getLineNum())));
-		} catch (IOException e) {
+			FileUtils.appendFile(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME, 
+					IMethodUtils.getMethodId(targetMethod.getMethodFullName(), targetMethod.getLineNum()) + "\n");
+		} catch(SavRtException e) {
 			// ignore
 		}
 	}

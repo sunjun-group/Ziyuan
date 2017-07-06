@@ -261,6 +261,8 @@ public class IlpSelectiveSampling {
 		if (maxSamples < fullCandidateSize) {
 			candidates = Randomness.randomSubList(candidates, maxSamples);
 			log.debug("heuristics samples: generated {}, selected candidates {}", fullCandidateSize, candidates.size());
+		} else {
+			log.debug("heuristics samples: {}", fullCandidateSize);
 		}
 		allSelectedSamples.addAll(candidates);
 		return candidates;

@@ -75,13 +75,13 @@ public class LearnTest extends AbstractLearntest {
 		} catch (SAVExecutionTimeOutException e) {
 			if (learningStarted) {
 				// LLT: still trying to figure out what to do with new approach.
-				if (cfgCoverage != null) {
-					return getRuntimeInfo(cfgCoverage);
-				} 
 			}
 		} catch (LearnTestException e) {
 			log.warn("still cannot get entry value when coverage is not empty!");
 		}
+		if (cfgCoverage != null) {
+			return getRuntimeInfo(cfgCoverage);
+		} 
 		return null;
 	}
 
