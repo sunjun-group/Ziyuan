@@ -35,25 +35,32 @@ public class JDartCore {
 				"+target=" + params.getMainEntry(),
 				"+concolic.method=" + params.getMethodName(),
 				"+concolic.method." + params.getMethodName() + "=" +params.getClassName()+"."+ params.getMethodName() + params.getParamString(),
-				"+concolic.method." + params.getMethodName() + ".config=all_fields_symbolic"
+				"+concolic.method." + params.getMethodName() + ".config=all_fields_symbolic",
+				"+jdart.tree.dont.print=true", // do not print tree
+				"+search.min_free="+params.getMinFree(),
+				"+search.timeLimit="+params.getTimeLimit()
 		};
 	}
 	
-	private static String[] constructConfig(String mainEntry, String className, String pathString, String methodName, String paramString) {
+	private static String[] constructConfig(String mainEntry, String className, String pathString, String methodName, String paramString,
+			long min_free, long timeLimit) {
 		return  new String[]{
+				"+jdart.tree.dont.print=true", // do not print tree
 				"+app=libs/jdart/jpf.properties",
 				"+site=libs/jpf.properties",
 				"+jpf-jdart.classpath+=" + pathString,
 				"+target=" + mainEntry,
 				"+concolic.method=" + methodName,
 				"+concolic.method." + methodName + "=" +className+"."+ methodName + paramString,
-				"+concolic.method." + methodName + ".config=all_fields_symbolic"
+				"+concolic.method." + methodName + ".config=all_fields_symbolic",
+				"+search.min_free="+min_free,
+				"+search.timeLimit="+timeLimit
 		};
 	}
 
 	public static void main(String[] args) throws ExecutionException {
 		
-		String  pathString = "E:\\linyun\\git_space\\apache-common-math-2.2\\apache-common-math-2.2\\bin", 
+		String  pathString = "E:\\hairui\\git\\apache-common-math-2.2\\apache-common-math-2.2\\bin", 
 				mainEntry = "com.MainEntry",
 				className = "com.Sorting",				
 				methodName = "quicksort",
@@ -171,12 +178,15 @@ public class JDartCore {
 //		methodName = "findInsertionIndex";
 //		paramString = "(a:int)";
 		
-		mainEntry = "testdata.l2t.result.testdata.l2t.test.init.DfpMain";
+		mainEntry = "testdata.l2t.test.init.dfp.align.DfpMain";
 		className = "org.apache.commons.math.dfp.Dfp";
 		methodName = "align";
 		paramString = "(e:int)";
 				
-		String[] config = constructConfig(mainEntry, className, pathString, methodName, paramString);		
+		long min_free = 20*(1024<<10); // min free memory
+		long timeLimit = 3 * 1000;
+		String[] config = constructConfig(mainEntry, className, pathString, methodName, paramString,
+				min_free, timeLimit);		
 		List<TestInput> inputList = RunJPF.run(config);
 		
 		System.currentTimeMillis();

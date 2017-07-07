@@ -287,44 +287,44 @@ private void setAnalyses(Set<Map.Entry<String, List<CompletedAnalysis>>> analyse
         logger.info("-------Valuation Statistics-------");
         logger.info("# of valuations (OK+ERR): " + (ca.getConstraintsTree().getCoveredPaths().size() + ca.getConstraintsTree().getErrorPaths().size()));
         logger.info("");
-        for (Path p : ca.getConstraintsTree().getAllPaths()) {
-          if (p.getValuation() == null) {
-            // dont know cases
-            continue;
-          }
-          String file_output = "";
-          String out = "";
-          for (Variable v : p.getValuation().getVariables()) {
-            out += v.getResultType().getName() + ":" + v.getName() + "=" + p.getValuation().getValue(v) + ", ";
-            String vResultType = v.getResultType().getName();
-            String type = null;
-
-            if (vResultType.equals("java.lang.Integer")) {
-              type = "int";
-            } else if (vResultType.equals("java.lang.Long")) {
-              type = "long";
-            } else if (vResultType.equals("java.lang.Float")) {
-              type = "float";
-            } else if (vResultType.equals("java.lang.Double")) {
-              type = "double";
-            } else if (vResultType.equals("java.lang.Boolean")) {
-              type = "boolean";
-            }
-
-            if (type != null) {
-              file_output += type + ":" + p.getValuation().getValue(v) + "\n";
-            }
-          }
-          logger.info(out);
-
-          if (printStream != null) {
-            try {
-              printStream.print(file_output);
-            } catch (Exception ex) {
-              logger.severe(ex);
-            }
-          }
-        }
+//        for (Path p : ca.getConstraintsTree().getAllPaths()) {
+//          if (p.getValuation() == null) {
+//            // dont know cases
+//            continue;
+//          }
+//          String file_output = "";
+//          String out = "";
+//          for (Variable v : p.getValuation().getVariables()) {
+//            out += v.getResultType().getName() + ":" + v.getName() + "=" + p.getValuation().getValue(v) + ", ";
+//            String vResultType = v.getResultType().getName();
+//            String type = null;
+//
+//            if (vResultType.equals("java.lang.Integer")) {
+//              type = "int";
+//            } else if (vResultType.equals("java.lang.Long")) {
+//              type = "long";
+//            } else if (vResultType.equals("java.lang.Float")) {
+//              type = "float";
+//            } else if (vResultType.equals("java.lang.Double")) {
+//              type = "double";
+//            } else if (vResultType.equals("java.lang.Boolean")) {
+//              type = "boolean";
+//            }
+//
+//            if (type != null) {
+//              file_output += type + ":" + p.getValuation().getValue(v) + "\n";
+//            }
+//          }
+//          logger.info(out);
+//
+//          if (printStream != null) {
+//            try {
+//              printStream.print(file_output);
+//            } catch (Exception ex) {
+//              logger.severe(ex);
+//            }
+//          }
+//        }
         logger.info("--------------------------------");
       }
     }

@@ -20,6 +20,8 @@ public class JDartParams {
 	private String classpathStr;
 	private String methodName;
 	private String methodParamsStr;
+	private long timeLimit; // run time limit, unit of ms
+	private long minFree; // min free memory, unit of byte
 	
 	public JDartParams() {
 		
@@ -79,6 +81,22 @@ public class JDartParams {
 
 	public void setSiteProperties(String siteProperties) {
 		this.siteProperties = siteProperties;
+	}
+
+	public long getTimeLimit() {
+		return timeLimit;
+	}
+
+	public void setTimeLimit(long timeLimit) {
+		this.timeLimit = timeLimit;
+	}
+
+	public long getMinFree() {
+		return minFree;
+	}
+
+	public void setMinFree(long minFree) {
+		this.minFree = minFree;
 	}
 	
 }

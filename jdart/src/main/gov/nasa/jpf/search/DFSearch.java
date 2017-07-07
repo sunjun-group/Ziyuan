@@ -60,7 +60,9 @@ public class DFSearch extends Search {
   @Override
   public void search () {
     boolean depthLimitReached = false;
-
+    
+    startTime = System.currentTimeMillis();      
+    
     depth = 0;
 
     notifySearchStarted();
@@ -101,6 +103,11 @@ public class DFSearch extends Search {
           // can't go on, we exhausted our memory
           break;
         }
+        
+        if (!checkTimeLimit()) {
+            notifySearchConstraintHit("time out");
+            break;
+          }
 
       } else { // forward did not execute any instructions
         notifyStateProcessed();

@@ -81,6 +81,10 @@ public abstract class Search {
 
   protected final Config config; // to later-on access settings that are only used once (not ideal)
 
+  protected long startTime;
+  
+  protected long timeLimit;
+  
   // don't forget to unregister or we have a HUGE memory leak if the same Config object is
   // reused for several JPF runs
   class ConfigListener implements ConfigChangeListener {
@@ -131,6 +135,7 @@ public abstract class Search {
     matchDepth = conf.getBoolean("search.match_depth");
     minFreeMemory = conf.getMemorySize("search.min_free", 1024<<10);    
     getAllErrors = conf.getBoolean("search.multiple_errors");
+    timeLimit = conf.getLong("search.timeLimit", 30 * 1000);
   }
   
   /**
@@ -638,5 +643,22 @@ public abstract class Search {
 
     return true;
   }
+  
+
+/**
+ * check if we have timeout
+ * by zhanghr
+ */
+public boolean checkTimeLimit () {
+
+  long curTime = System.currentTimeMillis();
+  if (curTime - startTime >= timeLimit) {
+	  return false;
+  }
+  return true;
 }
+
+}
+
+
 

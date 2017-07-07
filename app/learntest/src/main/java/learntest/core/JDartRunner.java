@@ -65,6 +65,8 @@ public class JDartRunner {
 		params.setMethodName(targetMethod.getMethodName());
 		params.setParamString(buildJDartParamStr(targetMethod));
 		params.setClasspathStr(StringUtils.join(appClasspath.getClasspaths(), ";"));
+		params.setMinFree(20*(1024<<10));
+		params.setTimeLimit(3 * 1000);
 		return params;
 	}
 
