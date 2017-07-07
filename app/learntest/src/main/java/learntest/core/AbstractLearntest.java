@@ -36,10 +36,10 @@ import learntest.core.gentest.TestGenerator;
 import learntest.main.LearnTestParams;
 import learntest.main.RunTimeInfo;
 import sav.common.core.SavException;
-import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
 import sav.common.core.utils.SingleTimer;
+import sav.common.core.utils.TextFormatUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
@@ -141,12 +141,16 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		log.debug("calculate coverage..");
 		SingleTimer timer = SingleTimer.start("cfg-coverage");
 		CfgJaCoCo jacoco = new CfgJaCoCo(appClasspath);
-		List<String> targetMethods = CollectionUtils.listOf(ClassUtils.toClassMethodStr(targetMethod.getClassName(),
-				targetMethod.getMethodName()));
+		String methodId = CfgJaCoCoUtils.createMethodId(targetMethod.getClassName(), targetMethod.getMethodName(),
+				targetMethod.getMethodSignature());
+		List<String> targetMethods = CollectionUtils.listOf(methodId);
 		Map<String, CfgCoverage> coverageMap = jacoco.runJunit(targetMethods, Arrays.asList(targetMethod.getClassName()),
 				junitClasses);
-		CfgCoverage cfgCoverage = coverageMap.get(CfgJaCoCoUtils.createMethodId(targetMethod.getClassName(), targetMethod.getMethodName(),
-				targetMethod.getMethodSignature()));
+		CfgCoverage cfgCoverage = coverageMap.get(methodId);
+		if (cfgCoverage == null) {
+			log.debug("Cannot get cfgCoverage from result map!");
+			log.debug("coverageMap={}", TextFormatUtils.printMap(coverageMap));
+		}
 		targetMethod.updateCfgIfNotExist(cfgCoverage.getCfg());
 		timer.logResults(log);
 		log.debug("coverage: {}", CoverageUtils.calculateCoverage(cfgCoverage));

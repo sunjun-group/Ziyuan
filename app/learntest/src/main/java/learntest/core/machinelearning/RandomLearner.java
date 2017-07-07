@@ -31,7 +31,7 @@ public class RandomLearner implements IInputLearner {
 		DecisionProbes probes = inputProbes;
 		SampleExecutor sampleExecutor = new SampleExecutor(mediator, inputProbes);
 		SelectiveSampling<SamplingResult> selectiveSampling = new SelectiveSampling<SamplingResult>(sampleExecutor, inputProbes);
-		int tc = maxTcs;
+		int tc = maxTcs - probes.getTotalTcs();
 		while (tc > 0) {
 			int sampleTotal = tc < 100 ? tc : 100;
 			selectiveSampling.selectData(inputProbes.getOriginalVars(), null, null, sampleTotal);

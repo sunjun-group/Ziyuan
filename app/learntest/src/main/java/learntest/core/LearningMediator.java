@@ -16,6 +16,7 @@ import java.util.Map;
 
 import cfgcoverage.jacoco.CfgJaCoCo;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
+import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.machinelearning.RandomLearner;
@@ -96,7 +97,9 @@ public class LearningMediator {
 	public void runCoverageForGeneratedTests(Map<String, CfgCoverage> coverageMap, List<String> junitClassNames)
 			throws SavException, IOException, ClassNotFoundException {
 		TargetMethod targetMethod = getTargetMethod();
-		List<String> targetMethods = CollectionUtils.listOf(targetMethod.getMethodFullName());
+		String methodId = CfgJaCoCoUtils.createMethodId(targetMethod.getClassName(), targetMethod.getMethodName(),
+				targetMethod.getMethodSignature());
+		List<String> targetMethods = CollectionUtils.listOf(methodId);
 		CfgJaCoCo cfgCoverageTool = getCfgCoverageTool();
 		cfgCoverageTool .reset();
 		cfgCoverageTool.setCfgCoverageMap(coverageMap);

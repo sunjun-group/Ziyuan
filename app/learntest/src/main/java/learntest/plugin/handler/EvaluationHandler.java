@@ -41,7 +41,6 @@ import learntest.main.LearnTestParams;
 import learntest.plugin.handler.filter.classfilter.ClassNameFilter;
 import learntest.plugin.handler.filter.classfilter.TargetClassFilter;
 import learntest.plugin.handler.filter.classfilter.TestableClassFilter;
-import learntest.plugin.handler.filter.methodfilter.MethodNameFilter;
 import learntest.plugin.handler.filter.methodfilter.NestedBlockChecker;
 import learntest.plugin.handler.filter.methodfilter.TargetMethodFilter;
 import learntest.plugin.handler.filter.methodfilter.TestableMethodFilter;
@@ -218,7 +217,6 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 					if(vb.getType().isPrimitive()){
 						isFieldAccess = true;						
 					}
-					
 					if(vb.getType().isArray()){
 						if(vb.getType().getElementType().isPrimitive()){
 							isFieldAccess = true;
@@ -226,7 +224,6 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 					}
 				}
 			}
-			
 			return false;
 		}
 	}
@@ -295,11 +292,9 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				if (obj instanceof SingleVariableDeclaration) {
 					SingleVariableDeclaration svd = (SingleVariableDeclaration) obj;
 					Type type = svd.getType();
-					
 					if(type.isPrimitiveType()){
 						return true;
 					}
-					
 					if(type.isArrayType()){
 						ArrayType aType = (ArrayType)type;
 						if(aType.getElementType().isPrimitiveType()){
@@ -307,9 +302,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 						}
 					}
 				}
-
 			}
-
 			return false;
 		}
 
@@ -320,13 +313,11 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 					SingleVariableDeclaration svd = (SingleVariableDeclaration) obj;
 					Type type = svd.getType();
 					String typeString = type.toString();
-					
 					if(!PrimitiveUtils.isPrimitive(typeString) || svd.getExtraDimensions() > 0){
 						return false;
 					}
 				}
 			}
-
 			return true;
 		}
 		
@@ -341,9 +332,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 						return true;
 					}
 				}
-
 			}
-
 			return false;
 		}
 	}
