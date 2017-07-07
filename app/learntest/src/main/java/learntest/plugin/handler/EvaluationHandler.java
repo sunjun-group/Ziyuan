@@ -5,9 +5,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -33,6 +31,7 @@ import org.eclipse.jdt.core.dom.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import learntest.core.commons.LearntestConstants;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.io.excel.MultiTrial;
 import learntest.io.excel.Trial;
@@ -49,6 +48,8 @@ import learntest.plugin.handler.filter.methodfilter.TestableMethodFilter;
 import learntest.plugin.utils.IMethodUtils;
 import learntest.plugin.utils.IProjectUtils;
 import learntest.util.LearnTestUtil;
+import sav.common.core.SavRtException;
+import sav.common.core.utils.FileUtils;
 import sav.common.core.utils.PrimitiveUtils;
 import sav.common.core.utils.SingleTimer;
 import sav.settings.SAVTimer;
@@ -104,18 +105,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		methodFilters = new ArrayList<TargetMethodFilter>(DEFAULT_METHOD_FILTERS);
 		classFilters = new ArrayList<TargetClassFilter>(DEFAULT_CLASS_FILTERS);
 		classFilters.add(new ClassNameFilter(getExcludedClasses()));
-//		addMethodFilter(oldTrials);
-	}
-
-	private void addMethodFilter(Collection<Trial> oldTrials) {
-		if (oldTrials.isEmpty()) {
-			return;
-		}
-		Set<String> methods = new HashSet<String>(oldTrials.size());
-		for (Trial trial : oldTrials) {
-			methods.add(IMethodUtils.getMethodId(trial.getMethodName(), trial.getMethodStartLine()));
-		}
-		methodFilters.add(new MethodNameFilter(methods));
+//		methodFilters.add(new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME));
 	}
 
 	private List<String> getExcludedClasses() {
@@ -178,6 +168,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			    writer.close();
 			} catch (IOException e) {
 			}
+			
 			MultiTrial multiTrial = new MultiTrial();
 			for (int i = 0; i < EVALUATIONS_PER_METHOD; i++) {
 				try {
@@ -193,10 +184,20 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			if (!multiTrial.isEmpty()) {
 				try {
 					excelHandler.export(multiTrial);
+					logSuccessfulMethod(targetMethod);
 				} catch (Exception e) {
 					handleException(e);
 				}
 			}
+		}
+	}
+
+	private static void logSuccessfulMethod(TargetMethod targetMethod) {
+		try {
+			FileUtils.appendFile(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME, 
+					IMethodUtils.getMethodId(targetMethod.getMethodFullName(), targetMethod.getLineNum()) + "\n");
+		} catch(SavRtException e) {
+			// ignore
 		}
 	}
 

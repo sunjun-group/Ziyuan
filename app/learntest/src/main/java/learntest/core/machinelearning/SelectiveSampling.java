@@ -10,9 +10,6 @@ package learntest.core.machinelearning;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.calculator.OrCategoryCalculator;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
@@ -22,6 +19,7 @@ import learntest.core.machinelearning.iface.ISampleResult;
 import libsvm.core.Divider;
 import libsvm.core.Machine.DataPoint;
 import sav.common.core.SavException;
+import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -30,7 +28,6 @@ import sav.strategies.dto.execute.value.ExecVar;
  *
  */
 public class SelectiveSampling<T extends ISampleResult> {
-	private static Logger log = LoggerFactory.getLogger(SelectiveSampling.class);
 	private ISampleExecutor<T> sampleExecutor;
 	private IlpSelectiveSampling selectiveSampling;
 	
@@ -53,6 +50,9 @@ public class SelectiveSampling<T extends ISampleResult> {
 	}
 
 	private T runData(List<double[]> data, List<ExecVar> vars) throws SavException {
+		if (CollectionUtils.isEmpty(data)) {
+			return null;
+		}
 		return sampleExecutor.runSamples(data, vars);
 	}
 

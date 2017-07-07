@@ -11,6 +11,9 @@ package gentest.core.value.generator;
 import java.util.List;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.inject.Inject;
 
 import gentest.core.data.type.IType;
@@ -29,6 +32,7 @@ import sav.strategies.gentest.ISubTypesScanner;
  *
  */
 public class ValueGeneratorMediator {
+	private static Logger log = LoggerFactory.getLogger(ValueGeneratorMediator.class);
 	@Inject
 	private IVariableStore variableStore;
 	@Inject
@@ -83,6 +87,7 @@ public class ValueGeneratorMediator {
 			if (PrimitiveValueGenerator.accept(type.getRawType())) {
 				goodVariable = primitiveGenerator.doAppend(variable, level, type.getRawType());
 			}  else if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL) {
+				log.debug("level of value generation exceeds the limit ({} levels)", GentestConstants.VALUE_GENERATION_MAX_LEVEL);
 				ValueGenerator.assignNull(variable, type.getRawType());
 			} else if (level > 1) {
 				// increase the probability of generating null objects for fields

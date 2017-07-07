@@ -24,6 +24,7 @@ import static org.eclipse.jdt.core.Signature.WILDCARD_TYPE_SIGNATURE;
 
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.ITypeParameter;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
@@ -88,17 +89,21 @@ public class SignatureParser {
 	 * QClass<*>  => Class
 	 */
 	private String getClassName(String paramType, IType type) throws SavException {
-		String ptype = getClassName(paramType);
+		String ptype = getClassNameWithOwner(paramType, type);
 		try {
 			String[][] resolveType = type.resolveType(ptype);
-			return StringUtils.dotJoin(resolveType[0][0], 
-					resolveType[0][1].replace(C_DOT, C_DOLLAR));
+			return toClassName(resolveType);
 		} catch (JavaModelException e) {
 			throw new SavException(ModuleEnum.UNSPECIFIED, e);
 		}
 	}
 
-	public static String getClassName(String paramType) {
+	private static String toClassName(String[][] resolveType) {
+		return StringUtils.dotJoin(resolveType[0][0], 
+				resolveType[0][1].replace(C_DOT, C_DOLLAR));
+	}
+
+	public static String getClassNameWithOwner(String paramType, IType type) throws SavException {
 		char start = paramType.charAt(0);
 		if (start == C_RESOLVED) {
 			return paramType;
@@ -118,19 +123,29 @@ public class SignatureParser {
 			i ++;
 		}
 		String ptype = paramType.substring(1, end);
+		try {
+			for (ITypeParameter typeParameter : type.getTypeParameters()) {
+				if (typeParameter.getElementName().equals(ptype)) {
+					String[][] resolveTypes = type.resolveType(typeParameter.getBounds()[0]);
+					ptype = toClassName(resolveTypes);
+				}
+			}
+		} catch (JavaModelException e) {
+			throw new SavException(ModuleEnum.UNSPECIFIED, e.getMessage());
+		}
 		if (ptype.equals(C_TYPE_VARIABLE + "")) {
 			return "java.lang.Object";
 		}
 		return ptype;
 	}
 	
-	public static String getClassSimpleName(String paramType) {
+	public static String getClassSimpleName(String paramType) throws SavException {
 		switch (Signature.getTypeSignatureKind(paramType)) {
 		case ARRAY_TYPE_SIGNATURE:
 			String elementType = Signature.getElementType(paramType);
 			return paramType.replace(elementType, getClassSimpleName(elementType));
 		case CLASS_TYPE_SIGNATURE:
-			String className = getClassName(paramType);
+			String className = getClassNameWithOwner(paramType, null);
 			return className.substring(className.lastIndexOf(".") + 1);
 		case TYPE_VARIABLE_SIGNATURE:
 			return paramType;

@@ -71,7 +71,6 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 			compiler.compile(appClasspath.getTestTarget(), result.getAllFiles());
 			return result;
 		} catch (Exception e) {
-			
 			log.debug(e.getMessage());
 			return GentestResult.getEmptyResult();
 		}
