@@ -197,7 +197,7 @@ public class LearnTestUtil {
 		try {
 			return SignatureParser.getMethodSignature(method);
 		} catch (JavaModelException e) {
-			throw new SavException(ModuleEnum.UNSPECIFIED, e, e.getMessage());
+			throw new SavException(e ,ModuleEnum.UNSPECIFIED, e.getMessage());
 		}
 	}
 

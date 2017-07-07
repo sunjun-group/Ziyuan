@@ -214,7 +214,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			compiler.compile(appClasspath.getTestTarget(), result.getAllFiles());
 			return result;
 		} catch (Exception e) {
-			throw new SavException(ModuleEnum.UNSPECIFIED, e, e.getMessage());
+			throw new SavException(e, ModuleEnum.UNSPECIFIED, e.getMessage());
 		}
 	}
 	
@@ -235,26 +235,24 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			RunTimeInfo jdartInfo = null;
 			
 			l2tParams.setApproach(LearnTestApproach.L2T);
-//			log.info("run jdart..");
-//			jdartInfo = runJdart(l2tParams);
+			log.info("run jdart..");
+			jdartInfo = runJdart(l2tParams);
 			
-			log.info("run l2t..");
-			runLearntest(l2tAverageInfo, l2tParams);
+//			log.info("run l2t..");
+//			runLearntest(l2tAverageInfo, l2tParams);
+//			
+//			randoopParam.setApproach(LearnTestApproach.RANDOOP);
+//			randoopParam.setInitialTests(l2tParams.getInitialTests());
+//			randoopParam.setMaxTcs(l2tAverageInfo.getTestCnt());
+//			log.info("run randoop..");
+//			runLearntest(ranAverageInfo, randoopParam);
 			
-			randoopParam.setApproach(LearnTestApproach.RANDOOP);
-			randoopParam.setInitialTests(l2tParams.getInitialTests());
-			randoopParam.setMaxTcs(l2tAverageInfo.getTestCnt());
-			log.info("run randoop..");
-			runLearntest(ranAverageInfo, randoopParam);
-			
-			if (l2tAverageInfo.isNotZero() && ranAverageInfo.isNotZero()) {
-				TargetMethod method = params.getTargetMethod();
-				log.info("Result: ");
-				log.info("lt2: {}", l2tAverageInfo);
-				log.info("randoop: {}", ranAverageInfo);
-				return new Trial(method.getMethodFullName(), method.getMethodLength(), method.getLineNum(),
-						l2tAverageInfo, ranAverageInfo, jdartInfo);
-			}
+			TargetMethod method = params.getTargetMethod();
+			log.info("Result: ");
+			log.info("lt2: {}", l2tAverageInfo);
+			log.info("randoop: {}", ranAverageInfo);
+			return new Trial(method.getMethodFullName(), method.getMethodLength(), method.getLineNum(),
+					l2tAverageInfo, ranAverageInfo, jdartInfo);
 		} catch (Exception e) {
 			handleException(e);
 		}

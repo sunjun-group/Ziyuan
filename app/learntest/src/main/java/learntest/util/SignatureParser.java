@@ -131,7 +131,7 @@ public class SignatureParser {
 				}
 			}
 		} catch (JavaModelException e) {
-			throw new SavException(ModuleEnum.UNSPECIFIED, e.getMessage());
+			throw new SavException(e, ModuleEnum.UNSPECIFIED, e.getMessage());
 		}
 		if (ptype.equals(C_TYPE_VARIABLE + "")) {
 			return "java.lang.Object";
@@ -163,7 +163,7 @@ public class SignatureParser {
 			String signature = getMethodSignature(method);
 			return SignatureUtils.createMethodNameSign(method.getElementName(), signature);
 		} catch (Exception e) {
-			throw new SavException(ModuleEnum.UNSPECIFIED, e, "Cannot parse methodSignature for method: ", method);
+			throw new SavException(e, ModuleEnum.UNSPECIFIED, "Cannot parse methodSignature for method: ", method);
 		}
 		
 	}

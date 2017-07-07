@@ -149,7 +149,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		info.totalNum += collector.totalMethodNum;
 	}
 
-	private void evaluateForMethodList(TrialExcelHandler excelHandler, CompilationUnit cu,
+	protected void evaluateForMethodList(TrialExcelHandler excelHandler, CompilationUnit cu,
 			List<MethodDeclaration> validMethods) {
 		if (validMethods.isEmpty()) {
 			return;

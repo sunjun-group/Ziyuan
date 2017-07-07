@@ -50,13 +50,17 @@ public class TrialExcelWriter extends ExcelWriter {
 			addCell(row, JDART_TEST_CNT, trial.getJdartRtInfo().getTestCnt());
 		}
 		
-		addCell(row, L2T_TIME, trial.getL2tRtInfo().getTime());
-		addCell(row, L2T_COVERAGE, trial.getL2tRtInfo().getCoverage());
-		addCell(row, L2T_TEST_CNT, trial.getL2tRtInfo().getTestCnt());
+		if (trial.getL2tRtInfo() != null) {
+			addCell(row, L2T_TIME, trial.getL2tRtInfo().getTime());
+			addCell(row, L2T_COVERAGE, trial.getL2tRtInfo().getCoverage());
+			addCell(row, L2T_TEST_CNT, trial.getL2tRtInfo().getTestCnt());
+		}
 		
-		addCell(row, RANDOOP_TIME, trial.getRanRtInfo().getTime());
-		addCell(row, RANDOOP_COVERAGE, trial.getRanRtInfo().getCoverage());
-		addCell(row, RANDOOP_TEST_CNT, trial.getRanRtInfo().getTestCnt());
+		if (trial.getRanRtInfo() != null) {
+			addCell(row, RANDOOP_TIME, trial.getRanRtInfo().getTime());
+			addCell(row, RANDOOP_COVERAGE, trial.getRanRtInfo().getCoverage());
+			addCell(row, RANDOOP_TEST_CNT, trial.getRanRtInfo().getTestCnt());
+		}
 		
 		addCell(row, ADVANTAGE, trial.getAdvantage());
 		addCell(row, METHOD_LENGTH, trial.getMethodLength());

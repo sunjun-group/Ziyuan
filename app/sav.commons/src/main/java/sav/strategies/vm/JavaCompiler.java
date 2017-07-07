@@ -16,8 +16,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
+import sav.common.core.SavExceptionType;
 import sav.common.core.utils.CollectionBuilder;
 
 /**
@@ -58,7 +58,7 @@ public class JavaCompiler {
 				log.warn(errorMsg);
 				return success;
 			} else {
-				throw new SavException(ModuleEnum.JVM, errorMsg);
+				throw new SavException(SavExceptionType.COMPILATION_ERROR, errorMsg);
 			}
 		}
 		return success;

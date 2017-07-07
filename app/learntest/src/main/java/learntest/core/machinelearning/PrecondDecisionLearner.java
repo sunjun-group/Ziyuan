@@ -136,7 +136,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			time++;
 			DecisionProbes probes = nodeProbe.getDecisionProbes();
 			log.debug("selective sampling: ");
-			log.debug("original vars: {}", probes.getOriginalVars());
+			log.debug("original vars: size={}, {}", probes.getOriginalVars().size(), probes.getOriginalVars());
 			/* after running sampling, probes will be updated as well */
 			SamplingResult sampleResult = dataPreprocessor.sampleForModel(nodeProbe, probes.getOriginalVars(),
 					mcm.getDataPoints(), getPreconditions(probes, node), mcm.getLearnedDividers());

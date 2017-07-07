@@ -22,6 +22,7 @@ import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.gentest.GentestResult;
 import learntest.core.machinelearning.iface.ISampleExecutor;
 import sav.common.core.SavException;
+import sav.common.core.SavExceptionType;
 import sav.common.core.utils.FileUtils;
 import sav.common.core.utils.StopTimer;
 import sav.strategies.dto.execute.value.ExecVar;
@@ -68,8 +69,11 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 			// LOG
 			log.warn("sample execution fail: " + e.getMessage());
 			if (result != null) {
-				FileUtils.copyFilesSilently(result.getJunitfiles(), mediator.getAppClassPath().getTestSrc()
-						+ "/compilationErrorBak");
+				/* backup to analyze compilation error */
+				if (SavException.isExceptionOfType(e, SavExceptionType.COMPILATION_ERROR)) {
+					FileUtils.copyFilesSilently(result.getJunitfiles(), mediator.getAppClassPath().getTestSrc()
+							+ "/compilationErrorBak");
+				}
 				FileUtils.deleteFiles(result.getJunitfiles());
 			}
 			return null;

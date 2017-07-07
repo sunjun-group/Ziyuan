@@ -33,7 +33,8 @@ public class MultiTrial extends Trial {
 	}
 	
 	public boolean isEmpty() {
-		return methodName == null || RunTimeInfo.isEmpty(l2tRtInfo);
+		return methodName == null;
+//		return methodName == null || RunTimeInfo.isEmpty(l2tRtInfo);
 	}
 
 	public double getBestL2tRtCoverage() {

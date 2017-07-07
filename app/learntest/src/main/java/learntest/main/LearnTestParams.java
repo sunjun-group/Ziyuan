@@ -60,7 +60,7 @@ public class LearnTestParams {
 		try {
 			initTargetMethod(params);
 		} catch (JavaModelException e) {
-			throw new SavException(ModuleEnum.UNSPECIFIED, e, e.getMessage());
+			throw new SavException(e, ModuleEnum.UNSPECIFIED, e.getMessage());
 		}
 		return params;
 	}
