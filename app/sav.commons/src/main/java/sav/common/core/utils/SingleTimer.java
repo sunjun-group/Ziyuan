@@ -41,9 +41,11 @@ public class SingleTimer {
 		log.debug(taskName + ": " + TextFormatUtils.printTimeString(getExecutionTime()));
 	}
 	
-	public void logResults(org.slf4j.Logger log, long maxRt) {
+	public boolean logResults(org.slf4j.Logger log, long maxRt) {
 		if (getExecutionTime() > maxRt) {
 			logResults(log);
+			return true;
 		}
+		return false;
 	}
 }

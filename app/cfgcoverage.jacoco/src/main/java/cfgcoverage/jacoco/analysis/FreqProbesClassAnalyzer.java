@@ -46,7 +46,7 @@ public class FreqProbesClassAnalyzer extends ClassProbesVisitor {
 	public MethodProbesVisitor visitMethod(final int access, final String name,
 			final String desc, final String signature, final String[] exceptions) {
 		instrSupport.assertNotInstrumented(name, className);
-		if (coverageBuilder.acceptMethod(name)) {
+		if (coverageBuilder.acceptMethod(name, desc)) {
 			return new FreqProbesMethodAnalyzer(coverageBuilder, className, superName,
 					probes);
 		} 

@@ -8,15 +8,17 @@
 
 package sav.strategies.vm;
 
+import java.util.List;
+
+import java.util.ArrayList;
+
 /**
  * @author LLT
  *
  */
-@SuppressWarnings("deprecation")
-public class TargetClass {
+public class RawUncheckTestData {
 
-	public void wrongMethod() {
-		DeprecatedClass clazz = new DeprecatedClass(1, 3);
-		String  a = "safsdf";
+	public void test() {
+		List a = new ArrayList();
 	}
 }

@@ -8,7 +8,6 @@
 
 package cfgcoverage.jacoco;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -48,10 +47,6 @@ public class CfgJaCoCo {
 	 * 				classNames of classes we need to test (ex: sav.commons.testdata.SamplePrograms)
 	 * @param junitClassNames
 	 * 				junit tests (ex: sav.commons.testdata.SampleProgramTest)
-	 * @return
-	 * @throws SavException
-	 * @throws IOException
-	 * @throws ClassNotFoundException
 	 */
 	public Map<String, CfgCoverage> runJunit(List<String> targetMethods, List<String> testingClassNames,
 			List<String> junitClassNames) throws SavException {

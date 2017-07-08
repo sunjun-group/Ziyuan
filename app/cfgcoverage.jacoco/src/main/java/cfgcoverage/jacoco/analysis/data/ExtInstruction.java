@@ -50,7 +50,7 @@ public class ExtInstruction extends Instruction {
 	
 	public void updateTrueBranchCvgInCaseMultitargetJumpSources() {
 		if (nextNode != null) {
-			Set<Integer> coverTcs = nextNode.nodeCoverage.getCoveredTcs().keySet();
+			Set<Integer> coverTcs = nextNode.nodeCoverage.getUndupCoveredTcs().keySet();
 			for (Integer coverTc : coverTcs) {
 				nodeCoverage.updateCoveredBranchesForTc(nextNode.cfgNode, coverTc);
 			}
@@ -60,8 +60,8 @@ public class ExtInstruction extends Instruction {
 	public void updateFalseBranchCvgInCaseMultitargetJumpSources() {
 		CfgNode trueFalseBranch = cfgNode.findBranch(BranchRelationship.TRUE_FALSE);
 		CfgNode trueBranch = cfgNode.findBranch(BranchRelationship.TRUE);
-		List<Integer> trueCoverage = trueBranch == null ? null
-				: nodeCoverage.getCoveredBranches().get(trueBranch.getIdx());
+		List<Integer> trueCoverage = ((trueBranch == null) ? null
+				: nodeCoverage.getUnDupCoveredBranches().get(trueBranch.getIdx()));
 		if (nodeCoverage.isCovered(testIdx) && (trueCoverage == null || !trueCoverage.contains(testIdx))) {
 			nodeCoverage.updateCoveredBranchesForTc(trueFalseBranch, testIdx);
 		}

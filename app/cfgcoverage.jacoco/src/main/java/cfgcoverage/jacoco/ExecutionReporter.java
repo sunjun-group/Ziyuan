@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.CfgCoverageBuilder;
+import cfgcoverage.jacoco.analysis.DuplicateFilterFreqProbesAnalyzer;
 import cfgcoverage.jacoco.analysis.FreqProbesAnalyzer;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import codecoverage.jacoco.agent.AbstractExecutionReporter;
@@ -35,6 +36,7 @@ import sav.common.core.utils.StopTimer;
 public class ExecutionReporter extends AbstractExecutionReporter implements IExecutionReporter {
 	private Logger log = LoggerFactory.getLogger(ExecutionDataReporter.class);
 	private CfgCoverageBuilder coverageBuilder;
+	private boolean duplicateFilter;
 
 	public ExecutionReporter(List<String> targetMethods, String... targetFolders) {
 		super(targetFolders);
@@ -53,7 +55,7 @@ public class ExecutionReporter extends AbstractExecutionReporter implements IExe
 			timer.newPoint("Analyze data and count code coverage");
 			
 			ExecutionDataStore dataStore = new ExecutionDataStore();
-			final FreqProbesAnalyzer analyzer = new FreqProbesAnalyzer(dataStore, coverageBuilder);
+			final FreqProbesAnalyzer analyzer = initAnalyzer(dataStore);
 			coverageBuilder.testcases(testMethods);
 			int testcaseIdx = 0;
 			for (String session : execDataMap.keySet()) {
@@ -68,10 +70,18 @@ public class ExecutionReporter extends AbstractExecutionReporter implements IExe
 				}
 				testcaseIdx++;
 			}
+			coverageBuilder.endAnalyzing();
 			timer.logResults(log);
 		} catch (IOException e) {
-			throw new SavException(ModuleEnum.UNSPECIFIED, e, e.getMessage());
+			throw new SavException(e, ModuleEnum.UNSPECIFIED, e.getMessage());
 		}
+	}
+
+	private FreqProbesAnalyzer initAnalyzer(ExecutionDataStore dataStore) {
+		if (duplicateFilter) {
+			return new DuplicateFilterFreqProbesAnalyzer(dataStore, coverageBuilder);
+		}
+		return new FreqProbesAnalyzer(dataStore, coverageBuilder);
 	}
 	
 	public List<CfgCoverage> getCoverage() {
@@ -87,5 +97,9 @@ public class ExecutionReporter extends AbstractExecutionReporter implements IExe
 	 */
 	public void setCfgCoverageMap(Map<String, CfgCoverage> cfgCoverageMap) {
 		this.coverageBuilder.setMethodCfgCoverageMap(cfgCoverageMap);
+	}
+
+	public void setConfig(CfgJaCoCoConfigs config) {
+		duplicateFilter = config.needToFilterDuplicate();
 	}
 }

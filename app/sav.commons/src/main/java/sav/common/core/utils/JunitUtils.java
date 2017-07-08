@@ -12,6 +12,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -44,25 +45,31 @@ public class JunitUtils {
 
 	private static void extractTestMethodsForClass(List<String> result, String className, ClassLoader classLoader)
 			throws ClassNotFoundException {
+		List<String> tcs = new ArrayList<String>();
 		Class<?> junitClass = ClassLoaderUtils.forName(className, classLoader);
 		Method[] methods = junitClass.getDeclaredMethods();
 		for (Method method : methods) {
 			if (isTestMethod(junitClass, method)) {
-				result.add(ClassUtils.toClassMethodStr(className,
+				tcs.add(ClassUtils.toClassMethodStr(className,
 						method.getName()));
 			}
 		}
 		/* TODO: to remove. just for test the specific testcases in SIR */
-		if (result.isEmpty()) {
+		if (tcs.isEmpty()) {
 			try {
 				Method suiteMth = junitClass.getMethod(JUNIT_TEST_SUITE_PREFIX);
 				TestSuite suite = (TestSuite) suiteMth.invoke(junitClass);
-				findTestcasesInSuite(suite, result, classLoader);
+				findTestcasesInSuite(suite, tcs, classLoader);
 			} catch (Exception e) {
 				throw new IllegalArgumentException("cannot find testcases in class " + className);
 			}
-			
 		}
+		sortMethods(tcs);
+		result.addAll(tcs);
+	}
+
+	private static void sortMethods(List<String> tcs) {
+		Collections.sort(tcs, new AlphanumComparator());
 	}
 
 	private static void findTestcasesInSuite(TestSuite suite,

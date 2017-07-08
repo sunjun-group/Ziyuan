@@ -13,6 +13,7 @@ import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.internal.data.CRC64;
 import org.jacoco.core.internal.flow.ClassProbesAdapter;
+import org.jacoco.core.internal.instr.InstrSupport;
 import org.objectweb.asm.ClassVisitor;
 
 /**
@@ -20,7 +21,7 @@ import org.objectweb.asm.ClassVisitor;
  *
  */
 public class FreqProbesAnalyzer extends AbstractAnalyzer {
-	private final CfgCoverageBuilder coverage;
+	protected final CfgCoverageBuilder coverage;
 
 	public FreqProbesAnalyzer(ExecutionDataStore executionData, CfgCoverageBuilder coverage) {
 		super(executionData);
@@ -48,8 +49,17 @@ public class FreqProbesAnalyzer extends AbstractAnalyzer {
 			probes = (int[]) data.getRawProbes();
 			coverage.match(false);
 		}
+		
+		if(!checkIfNeededToAnalyze(probes)) {
+			return new ClassVisitor(InstrSupport.ASM_API_VERSION) {
+			};
+		}
 		final FreqProbesClassAnalyzer analyzer = new FreqProbesClassAnalyzer(coverage, className, probes,
 				stringPool);
 		return new ClassProbesAdapter(analyzer, false);
+	}
+
+	protected boolean checkIfNeededToAnalyze(int[] probes) {
+		return true;
 	}
 }

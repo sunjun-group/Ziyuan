@@ -9,9 +9,15 @@
 package cfgcoverage.jacoco.analysis.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import sav.common.core.utils.Assert;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.TextFormatUtils;
 
 
@@ -20,9 +26,10 @@ import sav.common.core.utils.TextFormatUtils;
  *
  */
 public class CfgCoverage {
-	private CFG cfg;
-	private List<NodeCoverage> nodeCoverages;
-	private List<String> testcases;
+	protected CFG cfg;
+	protected List<NodeCoverage> nodeCoverages;
+	protected List<String> testcases;
+	protected Map<Integer, List<Integer>> dupTcMap;
 	
 	public CfgCoverage(CFG cfg) {
 		this.cfg = cfg;
@@ -91,4 +98,80 @@ public class CfgCoverage {
 		}
 	}
 
+	public void updateDuplicateTcs(Map<String, Set<String>> duplicatedTcs) {
+		if (CollectionUtils.isEmpty(duplicatedTcs)) {
+			return;
+		}
+//		for (Entry<String, Set<String>> entry : duplicatedTcs.entrySet()) {
+//			Set<Integer> dupIdxies = toIdx(entry.getValue());
+//			int testIdx = testcases.indexOf(entry.getKey());
+//			if (testIdx < 0) {
+//				continue;
+//			}
+//			for (NodeCoverage nodeCvg : nodeCoverages) {
+//				int count = nodeCvg.getCoveredFreq(testIdx);
+//				if (count > 0) {
+//					List<Integer> coveredBranches = nodeCvg.getCoveredBranches(testIdx);
+//					for (int dupIdx : dupIdxies) {
+//						nodeCvg.setCovered(dupIdx, count);
+//						for (int branchIdx : coveredBranches) {
+//							nodeCvg.updateCoveredBranchesForTc(branchIdx, dupIdx);
+//						}
+//					}
+//				}
+//			}
+//		}
+		if (dupTcMap == null) {
+			this.dupTcMap = new HashMap<Integer, List<Integer>>(duplicatedTcs.size());
+		}
+		for (Entry<String, Set<String>> entry : duplicatedTcs.entrySet()) {
+			List<Integer> dupTcIdxies = CollectionUtils.getListInitIfEmpty(dupTcMap, testcases.indexOf(entry.getKey()),
+					entry.getValue().size());
+			for (String tc : entry.getValue()) {
+				dupTcIdxies.add(testcases.indexOf(tc));
+			}
+		}
+	}
+	
+	/**
+	 * map can be null
+	 */
+	public Map<Integer, List<Integer>> getDupTcs() {
+		return dupTcMap;
+	}
+	
+	public List<Integer> getDupTcs(int testIdx) {
+		List<Integer> dupTcs = null;
+		if (dupTcMap != null) {
+			dupTcs = dupTcMap.get(testIdx);
+		}
+		return CollectionUtils.nullToEmpty(dupTcs);
+	}
+
+	private Set<Integer> toIdx(Set<String> tcs) {
+		Set<Integer> idxies = new HashSet<Integer>(tcs.size());
+		for (String dupTc : tcs) {
+			idxies.add(testcases.indexOf(dupTc));
+		}
+		return idxies;
+	}
+
+	public int getTotalTcs() {
+		return testcases.size();
+	}
+
+	public void addNewTestcases(List<String> newTestcases) {
+		if (newTestcases.isEmpty()) {
+			return;
+		}
+		if (testcases == null) {
+			setTestcases(newTestcases);
+		} else if (!testcases.contains(newTestcases.get(0))) {
+			testcases.addAll(newTestcases);
+		}
+	}
+
+	public int getTestIdx(String tc) {
+		return testcases.indexOf(tc);
+	}
 }

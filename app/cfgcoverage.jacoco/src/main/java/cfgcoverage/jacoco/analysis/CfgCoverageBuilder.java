@@ -10,11 +10,15 @@ package cfgcoverage.jacoco.analysis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CFG;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
@@ -22,9 +26,11 @@ import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.ExtInstruction;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import cfgcoverage.jacoco.utils.CfgConstructorUtils;
+import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
 import codecoverage.jacoco.agent.JaCoCoUtils;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.ClassUtils;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.SignatureUtils;
 
 /**
@@ -32,6 +38,7 @@ import sav.common.core.utils.SignatureUtils;
  *
  */
 public class CfgCoverageBuilder {
+	private static Logger log = LoggerFactory.getLogger(CfgCoverageBuilder.class);
 	private String className;
 	private List<String> targetMethods;
 	private Map<String, CfgCoverage> methodCfgCoverageMap;
@@ -52,6 +59,8 @@ public class CfgCoverageBuilder {
 	private int methodTestcaseIdx;
 	private boolean newCfg;
 	private State state;
+	private Map<String, Set<String>> duplicatedTcs;
+	private Set<CfgCoverage> updatedCfgCvgs = new HashSet<CfgCoverage>();
 	
 	public CfgCoverageBuilder(List<String> targetMethods) {
 		methodCfgCoverageMap = new HashMap<String, CfgCoverage>();
@@ -78,6 +87,7 @@ public class CfgCoverageBuilder {
 
 	public CfgCoverageBuilder testcases(List<String> testMethods) {
 		this.testMethods = testMethods;
+		updatedCfgCvgs.clear();
 		return this;
 	}
 	
@@ -85,11 +95,20 @@ public class CfgCoverageBuilder {
 		this.targetMethods = targetMethods;
 	}
 	
-	public boolean acceptMethod(String name) {
-		if (!targetMethods.contains(ClassUtils.toClassMethodStr(className, name))) {
-			return false;
+	public boolean acceptMethod(String method, String signature) {
+		for (String targetMethod : targetMethods) {
+			String targetMethodSign = SignatureUtils.extractSignature(targetMethod);
+			if (targetMethodSign.isEmpty()) {
+				if (targetMethod.equals(ClassUtils.toClassMethodStr(className, method))) {
+					return true;
+				}
+			} else {
+				if (targetMethod.equals(CfgJaCoCoUtils.createMethodId(className, method, signature))) {
+					return true;
+				}
+			}
 		}
-		return true;
+		return false;
 	}
 
 	public void startMethod(MethodNode methodNode) {
@@ -107,7 +126,11 @@ public class CfgCoverageBuilder {
 			cfg = cfgCoverage.getCfg();
 			cfgCoverage.initNodeCoveragesIfEmpty();
 		}
-		methodTestcaseIdx = cfgCoverage.addTestcases(testMethods.get(testcaseIdx));
+		if (!updatedCfgCvgs.contains(cfgCoverage)) {
+			cfgCoverage.addNewTestcases(testMethods);
+			updatedCfgCvgs.add(cfgCoverage);
+		}
+		methodTestcaseIdx = cfgCoverage.getTestIdx(testMethods.get(testcaseIdx));
 	}
 	
 	public ExtInstruction instruction(AbstractInsnNode node, int line) {
@@ -161,6 +184,14 @@ public class CfgCoverageBuilder {
 		return new ArrayList<CfgCoverage>(getMethodCfgCoverageMap().values());
 	}
 	
+	List<String> getTestMethods() {
+		return testMethods;
+	}
+	
+	String getCurrentTestCase() {
+		return testMethods.get(testcaseIdx);
+	}
+	
 	public void endClass() {
 		state = State.INIT;
 	}
@@ -171,4 +202,23 @@ public class CfgCoverageBuilder {
 		METHOD,
 	}
 
+	public void addDuplicate(String orgTc, String dupTc) {
+		if (duplicatedTcs == null) {
+			duplicatedTcs = new HashMap<String, Set<String>>();
+		}
+		CollectionUtils.getSetInitIfEmpty(duplicatedTcs, orgTc).add(dupTc);
+	}
+
+	public void commitDuplicate() {
+		for (CfgCoverage coverage : methodCfgCoverageMap.values()) {
+			coverage.updateDuplicateTcs(duplicatedTcs);
+		}
+	}
+
+	public void endAnalyzing() {
+		if (duplicatedTcs != null) {
+			log.debug("duplicate coverage path: {}", duplicatedTcs.size());
+			commitDuplicate();
+		}
+	}
 }

@@ -29,6 +29,7 @@ import sav.common.core.SavRtException;
 import sav.common.core.SystemVariables;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
+import sav.common.core.utils.SingleTimer;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.junit.SavJunitRunner;
 import sav.strategies.junit.jacocoMock.JaCoCoMock;
@@ -59,18 +60,16 @@ public class CfgJaCoCoRunner {
 	private String destfile;
 	private List<String> junitMethods;
 
-	private long timeout;
-
 	private String jacocoLogFile;
-	
+	private CfgJaCoCoConfigs config;
 	
 	public VMConfiguration appClasspath(AppJavaClassPath appClasspath) {
 		this.appClasspath = appClasspath;
-		timeout = appClasspath.getPreferences().get(SystemVariables.TESTCASE_TIMEOUT);
 		// set up jacoco
 		ExecutionData.setProbesType(probesType);
 		vmConfig = SavJunitRunner.createVmConfig(appClasspath);
 		vmConfig.setLaunchClass(JaCoCoMockJunitRunner.class.getName());
+		config = new CfgJaCoCoConfigs(appClasspath);
 		return vmConfig;
 	}
 	
@@ -118,13 +117,15 @@ public class CfgJaCoCoRunner {
 	
 	public Map<String, CfgCoverage> runAll() throws SavException {
 		try {
+			SingleTimer timer = SingleTimer.start("JaCoCo-execution");
 			startVm();
 			/* run */
 			vmRunner.startAndWaitUntilStop(vmConfig);
+			timer.logResults(log);
 			/* report */
 			return report();
 		} catch (Exception e) {
-			throw new SavException(ModuleEnum.UNSPECIFIED, e, e.getMessage());
+			throw new SavException(e, ModuleEnum.UNSPECIFIED, e.getMessage());
 		}
 	}
 	
@@ -132,6 +133,7 @@ public class CfgJaCoCoRunner {
 		try {
 			reporter = new ExecutionReporter(targetMethods,
 					new String[] { appClasspath.getTarget(), appClasspath.getTestTarget() });
+			reporter.setConfig(config);
 			if (cfgCoverageMap != null) {
 				reporter.setCfgCoverageMap(cfgCoverageMap);
 			}
@@ -139,7 +141,7 @@ public class CfgJaCoCoRunner {
 			reporter.report(destfile, null, targetClassNames);
 			return reporter.getMethodCfgCoverageMap();
 		} catch (Exception e) {
-			throw new SavException(ModuleEnum.UNSPECIFIED, e, e.getMessage());
+			throw new SavException(e, ModuleEnum.UNSPECIFIED, e.getMessage());
 		}
 	}
 	
@@ -176,7 +178,7 @@ public class CfgJaCoCoRunner {
 				.mockAccessFieldName(SavMock.accessFieldName)
 				.methods(junitMethods)
 				.testClassNames(allClassNames)
-				.testcaseTimeout(timeout).build();
+				.testcaseTimeout(config.getTimeout()).build();
 		vmRunner.setProgramArgs(arguments);
 		return vmRunner;
 	}

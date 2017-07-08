@@ -9,16 +9,15 @@
 package cfgcoverage.jacoco;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.objectweb.asm.tree.ParameterNode;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
+import cfgcoverage.jacoco.testdata.ForSample;
+import cfgcoverage.jacoco.testdata.ForSampleTest;
 import cfgcoverage.jacoco.testdata.LoopSample;
 import cfgcoverage.jacoco.testdata.LoopSampleTest;
 import cfgcoverage.jacoco.testdata.SwitchSample;
@@ -91,6 +90,13 @@ public class CfgJaCoCoTest extends AbstractTest {
 	public void testSwitch() throws Exception {
 		runSimpleRunner = true;
 		runTest(SwitchSample.class, SwitchSampleTest.class, "getName");
+		runSimpleRunner = false;
+	}
+	
+	@Test
+	public void testFor() throws Exception {
+		runSimpleRunner = true;
+		runTest(ForSample.class, ForSampleTest.class, "run");
 		runSimpleRunner = false;
 	}
 }

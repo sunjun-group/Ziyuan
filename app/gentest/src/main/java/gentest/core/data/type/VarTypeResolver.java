@@ -37,7 +37,7 @@ public class VarTypeResolver extends TypeVisitor {
 	
 	private ISubTypesScanner subTypeScanner;
 	
-	VarTypeResolver(ISubTypesScanner subTypesScanner) {
+	public VarTypeResolver(ISubTypesScanner subTypesScanner) {
 		rTypeMap = new HashMap<TypeVariable<?>, Type>();
 		visitedTypes = new HashSet<Type>();
 		this.subTypeScanner = subTypesScanner;
