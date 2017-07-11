@@ -18,7 +18,7 @@ import sav.common.core.formula.Eq;
 import sav.strategies.dto.execute.value.ExecVar;
 
 public class ProblemBuilder {
-	
+	private ProblemBuilder() {}
 	/**
 	 * Generate some data points on the onBorder *and* on the true side of trueBorder, with regard to preconditions
 	 */

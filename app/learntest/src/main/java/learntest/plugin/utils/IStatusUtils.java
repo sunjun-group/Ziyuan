@@ -19,8 +19,6 @@ import learntest.Activator;
  *
  */
 public class IStatusUtils {
-	public static final IStatus OK_STATUS = status(IStatus.OK, ""); //$NON-NLS-1$
-	public static final IStatus CANCEL_STATUS = status(IStatus.CANCEL, ""); //$NON-NLS-1$
 	
 	public static IStatus error(String msg) {
 		return status(IStatus.ERROR, msg);
@@ -38,11 +36,19 @@ public class IStatusUtils {
 		return new Status(type, Activator.PLUGIN_ID, msg);
 	}
 	
+	public static IStatus ok() {
+		return status(IStatus.OK, ""); //$NON-NLS-1$
+	}
+	
+	public static IStatus cancel() {
+		return status(IStatus.CANCEL, ""); //$NON-NLS-1$
+	}
+	
 	public static IStatus exception(Throwable ex, String msg) {
 		return new Status(IStatus.ERROR, Activator.PLUGIN_ID, msg, ex);
 	}
 	
 	public static IStatus afterRunning(IProgressMonitor monitor) {
-		return monitor.isCanceled() ? CANCEL_STATUS : OK_STATUS;
+		return monitor.isCanceled() ? cancel() : ok();
 	}
 }

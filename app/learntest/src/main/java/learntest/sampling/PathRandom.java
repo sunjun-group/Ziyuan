@@ -12,12 +12,11 @@ import libsvm.core.Divider;
  */
 public class PathRandom {
 	
-	private static Random random = new Random();
-	
 	private List<Divider> dividers;
 	private List<Divider> notDividers;
 	
 	public static PathRandom randomPath(List<Divider> dividers, List<Divider> notDividers) {
+		Random random = new Random();
 		PathRandom pathRandom = new PathRandom();
 		if (dividers == null && notDividers == null) {
 			pathRandom.dividers = null;

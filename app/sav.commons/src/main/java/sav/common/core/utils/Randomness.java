@@ -5,8 +5,10 @@ package sav.common.core.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import sav.common.core.iface.HasProbabilityType;
 
@@ -141,7 +143,16 @@ public final class Randomness {
 	}
 	
 	public static <T> List<T> randomSubList(List<T> allList, int subSize) {
-		List<T> sublist = new ArrayList<T>();
+		Set<Integer> idexies = randomIdxSubList(allList, subSize);
+		List<T> sublist = new ArrayList<T>(subSize);
+		for (Integer idx : idexies) {
+			sublist.add(allList.get(idx));
+		}
+		return sublist;
+	}
+
+	public static <T> Set<Integer> randomIdxSubList(List<T> allList, int subSize) {
+		Set<Integer> sublist = new HashSet<Integer>(subSize);
 		int n = allList.size();
 		Assert.assertTrue(n >= subSize, "subSize is greater than allList size");
 		int[] swaps = new int[allList.size()];
@@ -152,7 +163,7 @@ public final class Randomness {
 				nextIdx = realIdx - 1;
 				realIdx = swaps[realIdx - 1];
 			}
-			sublist.add(allList.get(nextIdx));
+			sublist.add(nextIdx);
 			swaps[nextIdx] = n;
 			n--;
 		}

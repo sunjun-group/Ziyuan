@@ -18,7 +18,7 @@ import icsetlv.common.dto.BreakpointValue;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.IDecisionNode;
-import learntest.core.commons.data.decision.NodeCoveredData;
+import learntest.core.commons.data.decision.SampleNodeCoveredData;
 import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.machinelearning.iface.ISampleResult;
 import learntest.testcase.data.INodeCoveredData;
@@ -52,7 +52,7 @@ public class SamplingResult implements ISampleResult {
 			return bkpData;
 		}
 		/* build input data for new coverage */
-		bkpData = new NodeCoveredData(decisionProbes.getCoverage(node), newTestInputs, newTcsFirstIdx);
+		bkpData = new SampleNodeCoveredData(decisionProbes.getCoverage(node), newTestInputs, newTcsFirstIdx);
 		dataMap.put(node.getIdx(), bkpData);
 		return bkpData;
 	}

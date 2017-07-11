@@ -27,7 +27,6 @@ import sav.common.core.utils.TextFormatUtils;
  *
  */
 public class L2tResultImprovChecker {
-	private static L2tResultImprovChecker INSTANCE = new L2tResultImprovChecker();
 	
 	public ImprovementResult checkImprovement(String oldFileName, String newFileName) throws Exception {
 		return checkImprovement(new File(ResourceUtils.appendPath(TrialExcelConstants.EXCEL_FOLDER, oldFileName)), 
@@ -83,10 +82,6 @@ public class L2tResultImprovChecker {
 		return result;
 	}
 	
-	public static L2tResultImprovChecker getINSTANCE() {
-		return INSTANCE;
-	}
-
 	public class ImprovementResult {
 		private List<String> newMethods;
 		private List<String> missingMethods;

@@ -14,7 +14,6 @@ import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.calculator.OrCategoryCalculator;
-import learntest.testcase.data.INodeCoveredData;
 import libsvm.core.Divider;
 import sav.common.core.Pair;
 import sav.common.core.formula.Formula;
@@ -24,7 +23,7 @@ import sav.common.core.utils.CollectionUtils;
  * @author LLT
  *
  */
-public class DecisionNodeProbe implements IDecisionNode, INodeCoveredData {
+public class DecisionNodeProbe implements IDecisionNode {
 	/* reference to cfg node */
 	private NodeCoverage coverage;
 	/* reference to its parent */
@@ -34,13 +33,13 @@ public class DecisionNodeProbe implements IDecisionNode, INodeCoveredData {
 	private Precondition precondition = new Precondition();
 	private List<DecisionNodeProbe> dominatees;
 	
-	private NodeCoveredData coveredData;
+	private CompositeNodeCoveredData coveredData;
 
 	public DecisionNodeProbe(DecisionProbes probes, NodeCoverage nodeCoverage,
 			List<BreakpointValue> testInputs) {
 		this.decisionProbes = probes;
 		this.coverage = nodeCoverage;
-		coveredData = new NodeCoveredData(nodeCoverage, testInputs);
+		coveredData = new CompositeNodeCoveredData(nodeCoverage, testInputs);
 	}
 	
 	public void update(int newTcsFirstIdx, List<BreakpointValue> newTestInputs) {
@@ -112,10 +111,6 @@ public class DecisionNodeProbe implements IDecisionNode, INodeCoveredData {
 		return cachePreconditions;
 	}
 
-	public boolean isOnlyOneBranchCovered() {
-		return coveredData.isOnlyOneBranchCovered();
-	}
-
 	public CoveredBranches getCoveredBranches() {
 		return coveredData.getCoveredBranches();
 	}
@@ -139,5 +134,9 @@ public class DecisionNodeProbe implements IDecisionNode, INodeCoveredData {
 	public List<BreakpointValue> getMoreTimesValues() {
 		return coveredData.getMoreTimesValues();
 	}
-	
+
+	public void clearCache() {
+		coveredData.clearCache();
+	}
+
 }

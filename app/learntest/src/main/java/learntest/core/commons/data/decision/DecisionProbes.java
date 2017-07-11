@@ -51,12 +51,14 @@ public class DecisionProbes extends CfgCoverage {
 		this.targetMethod = targetMethod;
 		transferCoverage(cfgCoverage);
 		totalTestNum = cfgCoverage.getTestcases().size();
+		testInputs = new CompositeList<BreakpointValue>();
 	}
 	
 	public void setRunningResult(List<BreakpointValue> testInputs) {
-		this.testInputs = testInputs;
+		this.testInputs.addAll(testInputs);
 		originalVars = BreakpointDataUtils.collectAllVars(testInputs);
 		learningVars = MachineLearningUtils.createPolyClassifierVars(originalVars);
+		initProbeMap(testInputs);
 	}
 
 	public void transferCoverage(CfgCoverage cfgCoverage) {
@@ -109,19 +111,19 @@ public class DecisionProbes extends CfgCoverage {
 	}
 
 	public List<DecisionNodeProbe> getNodeProbes() {
-		return new ArrayList<>(getNodeProbeMap().values());
+		return new ArrayList<DecisionNodeProbe>(getNodeProbeMap().values());
 	}
 
-	/***
-	 * get or build nodeProbes if not exist.
-	 * @return
-	 */
 	public Map<Integer, DecisionNodeProbe> getNodeProbeMap() {
+		return nodeProbeMap;
+	}
+
+	private void initProbeMap(List<BreakpointValue> initTestInputs) {
 		if (CollectionUtils.isEmpty(nodeProbeMap)) {
 			nodeProbeMap = new HashMap<Integer, DecisionNodeProbe>();
 			List<CfgNode> decisionNodes = getCfg().getDecisionNodes();
 			for (CfgNode node : decisionNodes) {
-				DecisionNodeProbe nodeProbe = new DecisionNodeProbe(this, getCoverage(node), testInputs);
+				DecisionNodeProbe nodeProbe = new DecisionNodeProbe(this, getCoverage(node), initTestInputs);
 				nodeProbeMap.put(node.getIdx(), nodeProbe);
 			}
 			
@@ -138,7 +140,6 @@ public class DecisionProbes extends CfgCoverage {
 				nodeProbe.setDominatees(dominatees);
 			}
 		}
-		return nodeProbeMap;
 	}
 	
 	public List<BreakpointValue> getTestInputs() {

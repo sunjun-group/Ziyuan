@@ -21,7 +21,7 @@ public class L2tResultImprovCheckerTest {
 
 	@Test
 	public void testImprovCheck() throws Exception {
-		ImprovementResult result = L2tResultImprovChecker.getINSTANCE().checkImprovement("apache-ant-1.9.6_0.xlsx",
+		ImprovementResult result = new L2tResultImprovChecker().checkImprovement("apache-ant-1.9.6_0.xlsx",
 				"apache-ant-1.9.6_new.xlsx");
 		System.out.println(result);
 	}

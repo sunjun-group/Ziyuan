@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import sav.common.core.Constants;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.JavaFileUtils;
 
 /**
  * @author LLT
@@ -70,7 +71,7 @@ public class FileCompilationUnitPrinter implements ICompilationUnitPrinter {
 			List<CompilationUnit> compilationUnits) {
 		Map<String, List<CompilationUnit>> result = new HashMap<String, List<CompilationUnit>>();
 		for (CompilationUnit cu : compilationUnits) {
-			String pkgFolder = PrinterUtils.getClassFolder(srcFolder, 
+			String pkgFolder = JavaFileUtils.getClassFolder(srcFolder, 
 					cu.getPackage().getName().getName());
 			CollectionUtils.getListInitIfEmpty(result, pkgFolder)
 					.add(cu);

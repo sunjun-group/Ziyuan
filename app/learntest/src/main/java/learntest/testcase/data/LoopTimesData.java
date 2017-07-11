@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.breakpoint.data.DecisionLocation;
 import libsvm.core.Category;
@@ -66,6 +67,15 @@ public class LoopTimesData extends BreakpointData {
 		return "LoopTimesData (" + location + "), \nfalseValues=" + falseValues
 				+ ", \ntrueValues=" + trueValues + ", \n\toneTimeValues="
 				+ oneTimeValues + ", \n\tmoreTimesValues=" + moreTimesValues + "]\n";
+	}
+
+	/* (non-Javadoc)
+	 * @see learntest.testcase.data.INodeCoveredData#update(cfgcoverage.jacoco.analysis.data.NodeCoverage, int, java.util.List)
+	 */
+	@Override
+	public void update(NodeCoverage coverage, int samplesFirstIdx, List<BreakpointValue> sampleTestInputs) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

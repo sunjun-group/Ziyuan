@@ -10,8 +10,11 @@ package learntest.core.machinelearning;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +42,7 @@ public class IlpSelectiveSampling {
 	private int numPerExe = 100;
 	private List<ExecVar> vars;
 	private List<double[]> initValues;
-	private List<double[]> allSelectedSamples;
+	private Set<Integer> samplesHashcodes;
 	private int maxSamplesPerSelect = 100; // by default;
 	
 	/* ilpSolver */
@@ -48,8 +51,8 @@ public class IlpSelectiveSampling {
 	public IlpSelectiveSampling(List<ExecVar> vars, List<double[]> initVals) {
 		this.vars = vars;
 		this.initValues = initVals;
-		allSelectedSamples = new ArrayList<double[]>();
-		allSelectedSamples.addAll(initVals);
+		samplesHashcodes = new HashSet<Integer>();
+		updateSampleHashcodes(initVals);
 	}
 	
 	public List<double[]> selectData(List<ExecVar> vars, OrCategoryCalculator precondition, List<Divider> divider)
@@ -94,12 +97,20 @@ public class IlpSelectiveSampling {
 			return samples;
 		}
 		log.debug("generated samples: {}", samples.size());
-		List<double[]> selectedSamples = Randomness.randomSubList(samples, maxTcs);
-		samples.removeAll(selectedSamples);
-		allSelectedSamples.removeAll(samples);
-		log.debug("selected samples: {}, all selected samples: {}", selectedSamples.size(), allSelectedSamples.size());
+		List<double[]> selectedSamples = new ArrayList<double[]>(maxTcs);
+		Set<Integer> selectedIdxies = Randomness.randomIdxSubList(samples, maxTcs);
+		for (int i = 0; i < samples.size(); i++) {
+			if (selectedIdxies.contains(i)) {
+				selectedSamples.add(samples.get(i));
+			} else {
+				samplesHashcodes.remove(Arrays.hashCode(samples.get(i)));
+			}
+		}
+		log.debug("selected samples: {}, all selected samples: {}", selectedSamples.size(), samplesHashcodes.size());
 		return selectedSamples;
 	}
+	
+	
 
 	public List<double[]> selectDataForModel(IDecisionNode target, List<ExecVar> originVars, List<DataPoint> datapoints,
 			OrCategoryCalculator preconditions, List<Divider> learnedFormulas) throws SavException {
@@ -264,12 +275,22 @@ public class IlpSelectiveSampling {
 		} else {
 			log.debug("heuristics samples: {}", fullCandidateSize);
 		}
-		allSelectedSamples.addAll(candidates);
+		updateSampleHashcodes(candidates);
 		return candidates;
+	}
+	
+	private void updateSampleHashcodes(Collection<double[]> samples) {
+		for (double[] val : samples) {
+			updateSampleHashcodes(val);
+		}
+	}
+
+	private void updateSampleHashcodes(double[] val) {
+		samplesHashcodes.add(Arrays.hashCode(val));
 	}
 
 	/**
-	 * add to candidates list but not update allSelectedSamples
+	 * add to candidates list but not update sampleHashcodes
 	 * */
 	private void addIfNotDuplicate(List<double[]> candidates, double[] rightPoint) {
 		if (!isDuplicate(rightPoint)) {
@@ -329,20 +350,13 @@ public class IlpSelectiveSampling {
 
 	private void updateSamples(List<double[]> samples, double[] solution, boolean duplicate) {
 		if (!duplicate) {
-			allSelectedSamples.add(solution);
+			updateSampleHashcodes(solution);
 			samples.add(solution);
 		}
 	}
 
 	private boolean isDuplicate(double[] solution) {
-		boolean duplicate = false;
-		for (double[] prevSample : allSelectedSamples) {
-			if (Arrays.equals(prevSample, solution)) {
-				duplicate = true;
-				break;
-			}
-		}
-		return duplicate;
+		return samplesHashcodes.contains(Arrays.hashCode(solution));
 	}
 	
 	

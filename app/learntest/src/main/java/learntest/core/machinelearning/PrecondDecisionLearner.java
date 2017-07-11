@@ -9,6 +9,7 @@
 package learntest.core.machinelearning;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -102,6 +103,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		Formula truefalseFormula = trueFalseResult == null ? null : trueFalseResult.formula;
 		List<Divider> divider = trueFalseResult == null ? null : trueFalseResult.dividers;
 		nodeProbe.setPrecondition(Pair.of(truefalseFormula, oneMore), divider);
+		nodeProbe.clearCache();
 	}
 
 	protected OrCategoryCalculator getPreconditions(DecisionProbes probes, CfgNode node) {
@@ -198,7 +200,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		return newFormula;
 	}
 	
-	private void addDataPoints(List<String> labels, List<ExecVar> vars, List<BreakpointValue> values, Category category, Machine machine) {
+	private void addDataPoints(List<String> labels, List<ExecVar> vars, Collection<BreakpointValue> values, Category category, Machine machine) {
 		for (BreakpointValue value : values) {
 			addDataPoint(labels, vars, value, category, machine);
 		}

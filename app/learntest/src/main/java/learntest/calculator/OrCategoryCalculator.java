@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import icsetlv.common.dto.BreakpointValue;
-import learntest.testcase.data.BreakpointData;
 import learntest.testcase.data.INodeCoveredData;
 import libsvm.core.Category;
 import libsvm.core.CategoryCalculator;

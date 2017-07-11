@@ -88,7 +88,6 @@ public class TestGenerator extends learntest.core.gentest.TestGenerator {
 		if (target == null) {
 			return null;
 		}
-		solutions = clean(solutions, vars.size());
 		
 		GentestModules injectorModule = new GentestModules(prjClassLoader);
 		injectorModule.enter(TestcaseGenerationScope.class);
@@ -120,32 +119,6 @@ public class TestGenerator extends learntest.core.gentest.TestGenerator {
 		return result;
 	}
 	
-	private List<double[]> clean(List<double[]> solutions, int size) {
-		List<double[]> res = new ArrayList<double[]>();
-		for (double[] solution : solutions) {
-			boolean dup = false;
-			for (double[] r : res) {
-				if(duplicate(solution, r, size)) {
-					dup = true;
-					break;
-				}
-			}
-			if (!dup) {
-				res.add(solution);
-			}
-		}
-		return res;
-	}
-
-	private boolean duplicate(double[] solution, double[] r, int size) {
-		for (int i = 0; i < size; i++) {
-			if (solution[i] != r[i]) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	public void genTestAccordingToInput(List<Result> inputs, List<String> variables)
 			throws ClassNotFoundException, SavException {
 		MethodCall target = findTargetMethod();

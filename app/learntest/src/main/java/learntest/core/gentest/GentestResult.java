@@ -20,14 +20,16 @@ import sav.common.core.utils.CollectionUtils;
  *
  */
 public class GentestResult {
-	private static GentestResult EMTPY_RESULT;
 	private List<String> junitClassNames;
 	private List<File> junitfiles;
 	private File mainClassFile;
 	private String mainClassName;
-	private List<BreakpointValue> inputData = new ArrayList<BreakpointValue>();
+	private List<BreakpointValue> inputData;
 	
 	public void addInputData(BreakpointValue value) {
+		if (inputData == null) {
+			inputData = new ArrayList<BreakpointValue>();
+		}
 		inputData.add(value);
 	}
 
@@ -40,14 +42,11 @@ public class GentestResult {
 	}
 	
 	public List<BreakpointValue> getTestInputs() {
-		return inputData;
+		return CollectionUtils.nullToEmpty(inputData);
 	}
 	
 	public static GentestResult getEmptyResult() {
-		if (EMTPY_RESULT == null) {
-			EMTPY_RESULT = new GentestResult();
-		}
-		return EMTPY_RESULT;
+		return new GentestResult();
 	}
 
 	public boolean isEmpty() {
@@ -94,4 +93,5 @@ public class GentestResult {
 	public void setMainClassName(String mainClassName) {
 		this.mainClassName = mainClassName;
 	}
+	
 }

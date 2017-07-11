@@ -18,6 +18,7 @@ import sav.common.core.Constants;
 import sav.common.core.Pair;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.JavaFileUtils;
 
 /**
  * @author LLT
@@ -73,8 +74,8 @@ public class TestsPrinter implements ITestsPrinter {
 
 	private int getMaxIdxOfExistingClass(String srcPath, String pkg,
 			String classPrefix) {
-		List<String> existedFiles = PrinterUtils.listJavaFileNames(
-				PrinterUtils.getClassFolder(srcPath, pkg), classPrefix);
+		List<String> existedFiles = JavaFileUtils.listJavaFileNames(
+				JavaFileUtils.getClassFolder(srcPath, pkg), classPrefix);
 		return getMaxClassIdx(existedFiles, classPrefix);
 	}
 	

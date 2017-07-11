@@ -8,6 +8,7 @@
 
 package learntest.core.commons.data.decision;
 
+import cfgcoverage.jacoco.analysis.data.BranchCoveredType;
 import learntest.testcase.data.BranchType;
 import sav.common.core.utils.Assert;
 
@@ -16,10 +17,15 @@ import sav.common.core.utils.Assert;
  *
  */
 public enum CoveredBranches {
-	TRUE,
-	FALSE,
-	TRUE_AND_FALSE,
-	NONE;
+	TRUE (BranchCoveredType.TRUE),
+	FALSE(BranchCoveredType.FALSE),
+	TRUE_AND_FALSE(BranchCoveredType.TRUE_AND_FALSE),
+	NONE(BranchCoveredType.NONE);
+	
+	private BranchCoveredType type;
+	private CoveredBranches(BranchCoveredType type) {
+		this.type = type;
+	}
 	
 	public boolean onlyMissingTrue() {
 		return this == TRUE;
@@ -55,5 +61,18 @@ public enum CoveredBranches {
 
 	public boolean coversTrue() {
 		return this == TRUE || this == TRUE_AND_FALSE;
+	}
+
+	public static CoveredBranches valueOf(BranchCoveredType branchCoveredType) {
+		for (CoveredBranches type : values()) {
+			if (type.type == branchCoveredType) {
+				return type;
+			}
+		}
+		return null;
+	}
+	
+	public BranchCoveredType getType() {
+		return type;
 	}
 }
