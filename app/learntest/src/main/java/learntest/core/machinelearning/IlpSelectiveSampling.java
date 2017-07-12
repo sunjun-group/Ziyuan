@@ -93,7 +93,7 @@ public class IlpSelectiveSampling {
 	
 	private List<double[]> limitSamples(List<double[]> samples, int maxTcs) {
 		if (samples.size() <= maxTcs) {
-			log.debug("selected samples: {}", samples.size());
+			log.debug("selected samples: {}, all selected samples: {}", samples.size(), samplesHashcodes.size());
 			return samples;
 		}
 		log.debug("generated samples: {}", samples.size());

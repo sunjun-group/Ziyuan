@@ -15,44 +15,49 @@ import java.util.concurrent.TimeUnit;
  *
  */
 public abstract class ExecutionTimer {
-	protected long timeout;
+	private long defaultTimeout;
 	
 	protected ExecutionTimer(long timeout) {
-		this.timeout = timeout;
+		this.defaultTimeout = timeout;
 	}
 	
 	protected ExecutionTimer(int timeout, TimeUnit unit) {
-		this.timeout = unit.toMillis(timeout);
+		this.defaultTimeout = unit.toMillis(timeout);
 	}
 	
 	/**
 	 * @return whether the process is success or not.
 	 */
-	public abstract boolean run(final Runnable target);
+	public boolean run(final Runnable target) {
+		return run(target, defaultTimeout);
+	}
 	
-	public static ExecutionTimer getDefaultExecutionTimer(long timeout) {
-		return getCountDownExecutionTimer(timeout);
+	public abstract boolean run(final Runnable target, long timeout);
+	
+	
+	public static ExecutionTimer getDefaultExecutionTimer(long defaultTimeout) {
+		return getCountDownExecutionTimer(defaultTimeout);
 	}
 
-	public static ExecutionTimer getDefaultExecutionTimer(int timeout, TimeUnit timeunit) {
-		return new CountDownExecutionTimer(timeout, timeunit);
+	public static ExecutionTimer getDefaultExecutionTimer(int defaultTimeout, TimeUnit timeunit) {
+		return new CountDownExecutionTimer(defaultTimeout, timeunit);
 	}
 	
 	@Deprecated
-	public static ExecutionTimer getExecutionTimer(int timeout, TimeUnit timeunit) {
-		return new ThreadKillExecutionTimer(timeout, timeunit);
+	public static ExecutionTimer getExecutionTimer(int defaultTimeout, TimeUnit timeunit) {
+		return new ThreadKillExecutionTimer(defaultTimeout, timeunit);
 	}
 	
-	public static ExecutionTimer getFutureTaskExecutionTimer(long timeout) {
-		return new FutureTaskExecutionTimer((int) timeout, TimeUnit.MILLISECONDS);
+	public static ExecutionTimer getFutureTaskExecutionTimer(long defaultTimeout) {
+		return new FutureTaskExecutionTimer((int) defaultTimeout, TimeUnit.MILLISECONDS);
 	}
 	
-	public static ExecutionTimer getCachePoolExecutionTimer(long timeout) {
-		return new CachePoolExecutionTimer(timeout);
+	public static ExecutionTimer getCachePoolExecutionTimer(long defaultTimeout) {
+		return new CachePoolExecutionTimer(defaultTimeout);
 	}
 	
-	public static ExecutionTimer getCountDownExecutionTimer(long timeout) {
-		return new CountDownExecutionTimer(timeout);
+	public static ExecutionTimer getCountDownExecutionTimer(long defaultTimeout) {
+		return new CountDownExecutionTimer(defaultTimeout);
 	}
 	
 	public void shutdown() {

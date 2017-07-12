@@ -18,14 +18,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class CachePoolExecutionTimer extends ExecutionTimer {
 	private ExecutorService executorService;
-	private int count;
 	
-	protected CachePoolExecutionTimer(long timeout) {
-		super(timeout);
+	protected CachePoolExecutionTimer(long defaultTimeout) {
+		super(defaultTimeout);
 	}
 
 	@Override
-	public boolean run(Runnable target) {
+	public boolean run(Runnable target, long timeout) {
 		refreshExecutorService();
 		executorService.execute(target);
 		try {
@@ -37,12 +36,9 @@ public class CachePoolExecutionTimer extends ExecutionTimer {
 	}
 
 	private void refreshExecutorService() {
-		if (count == 10 || executorService == null) {
-			shutdown();
+		if (executorService == null) {
 			executorService = Executors.newCachedThreadPool();
-			count = 0;
 		}
-		count++;
 	}
 
 	@Override

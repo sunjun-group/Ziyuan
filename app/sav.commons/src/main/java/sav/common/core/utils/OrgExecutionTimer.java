@@ -26,7 +26,7 @@ public class OrgExecutionTimer extends ExecutionTimer {
 		super(timeout, unit);
 	}
 	
-	public boolean run(final Runnable target) {
+	public boolean run(final Runnable target, long timeout) {
 		final ObjectWrapper<Boolean> success = new ObjectWrapper<Boolean>(true);
 		final Thread thread = new Thread(target);
 		Timer timer = new Timer();

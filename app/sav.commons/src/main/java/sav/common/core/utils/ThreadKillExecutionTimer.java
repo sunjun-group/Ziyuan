@@ -26,7 +26,7 @@ public class ThreadKillExecutionTimer extends ExecutionTimer {
 		super(timeout, unit);
 	}
 
-	public boolean run(final Runnable target) {
+	public boolean run(final Runnable target, long timeout) {
 		final Executor executor = new Executor(target);
 		final Thread thread = new Thread(executor);
 		Timer timer = new Timer();

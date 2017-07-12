@@ -115,7 +115,7 @@ public class JunitRunner {
 			return new ExecutionTimer(timeout) {
 				
 				@Override
-				public boolean run(Runnable target) {
+				public boolean run(Runnable target, long timeout) {
 					target.run();
 					return true;
 				}

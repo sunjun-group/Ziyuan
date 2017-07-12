@@ -24,7 +24,7 @@ public class FutureTaskExecutionTimer extends ExecutionTimer {
 	}
 
 	@Override
-	public boolean run(Runnable target) {
+	public boolean run(Runnable target, long timeout) {
 		FutureTask<?> theTask = null;
 		try {
 			theTask = new FutureTask<Object>(target, null);
@@ -36,7 +36,7 @@ public class FutureTaskExecutionTimer extends ExecutionTimer {
 			 * according to jdk document, the get methods will block if the
 			 * computation has not yet completed
 			 */
-			theTask.get(2L, TimeUnit.SECONDS);
+			theTask.get(timeout, TimeUnit.SECONDS);
 		} catch (TimeoutException e) {
 			return false;
 		} catch (InterruptedException e) {
