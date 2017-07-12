@@ -126,37 +126,37 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		return successful;
 	}
 	
-//	private boolean newInstance(RConstructor stmt, List<Object> inputs) throws Exception {
-//		Object newInstance = stmt.getConstructor().newInstance((Object[]) inputs.toArray());
-//		// update data
-//		for (int i = 0; i < stmt.getInVarIds().length; i++) {
-//			addExecData(stmt.getInVarIds()[i], inputs.get(i));
-//		}
-//		addExecData(stmt.getOutVarId(), newInstance);
-//		return successful;
-//	}
-
-	private boolean newInstance(final RConstructor stmt, final List<Object> inputs) {
-		boolean success = executionTimer.run(new Runnable() {
-			
-			@Override
-			public void run() {
-				Object newInstance;
-				try {
-					newInstance = stmt.getConstructor().newInstance(
-							(Object[]) inputs.toArray());
-					// update data
-					for (int i = 0; i < stmt.getInVarIds().length; i++) {
-						addExecData(stmt.getInVarIds()[i], inputs.get(i));
-					}
-					addExecData(stmt.getOutVarId(), newInstance);
-				} catch (Throwable e) {
-					onFail();
-				}
-			}
-		}, 2000l);
-		return success;
+	private boolean newInstance(RConstructor stmt, List<Object> inputs) throws Exception {
+		Object newInstance = stmt.getConstructor().newInstance((Object[]) inputs.toArray());
+		// update data
+		for (int i = 0; i < stmt.getInVarIds().length; i++) {
+			addExecData(stmt.getInVarIds()[i], inputs.get(i));
+		}
+		addExecData(stmt.getOutVarId(), newInstance);
+		return successful;
 	}
+
+//	private boolean newInstance(final RConstructor stmt, final List<Object> inputs) {
+//		boolean success = executionTimer.run(new Runnable() {
+//			
+//			@Override
+//			public void run() {
+//				Object newInstance;
+//				try {
+//					newInstance = stmt.getConstructor().newInstance(
+//							(Object[]) inputs.toArray());
+//					// update data
+//					for (int i = 0; i < stmt.getInVarIds().length; i++) {
+//						addExecData(stmt.getInVarIds()[i], inputs.get(i));
+//					}
+//					addExecData(stmt.getOutVarId(), newInstance);
+//				} catch (Throwable e) {
+//					onFail();
+//				}
+//			}
+//		}, 2000l);
+//		return success;
+//	}
 
 	class ReturnValue{
 		boolean valid = true;
