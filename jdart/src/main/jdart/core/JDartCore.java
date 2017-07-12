@@ -182,9 +182,24 @@ public class JDartCore {
 		className = "org.apache.commons.math.dfp.Dfp";
 		methodName = "align";
 		paramString = "(e:int)";
+		
+		mainEntry = "testdata.l2t.test.init.dfp.divide.DfpMain";
+		className = "org.apache.commons.math.dfp.Dfp";
+		methodName = "divide";
+		paramString = "(e:int)";
+		
+		mainEntry = "testdata.l2t.test.init.zipfdistributionimpl.cumulativeprobability.ZipfDistributionImplMain";
+		className = "org.apache.commons.math.distribution.ZipfDistributionImpl";
+		methodName = "cumulativeProbability";
+		paramString = "(e:int)";
+		
+		mainEntry = "testdata.l2t.test.init.poissondistributionimpl.probability.PoissonDistributionImplMain";
+		className = "org.apache.commons.math.distribution.PoissonDistributionImpl";
+		methodName = "probability";
+		paramString = "(e:int)";
 				
 		long min_free = 20*(1024<<10); // min free memory
-		long timeLimit = 3 * 1000;
+		long timeLimit = 10 * 1000;
 		String[] config = constructConfig(mainEntry, className, pathString, methodName, paramString,
 				min_free, timeLimit);		
 		List<TestInput> inputList = RunJPF.run(config);
