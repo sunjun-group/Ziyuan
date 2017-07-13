@@ -37,8 +37,12 @@ public class TypeInitializer {
 		constructorsMap = new HashMap<TypeInitializer.ConstructorType, List<Object>>();
 	}
 
-	public boolean hasNoConstructor() {
+	public boolean doesNotHaveGoodConstructor() {
 		return constructorsMap.isEmpty();
+	}
+	
+	public boolean hasNoConstructor() {
+		return doesNotHaveGoodConstructor() && CollectionUtils.isEmpty(badConstructors);
 	}
 	
 	public void addBadConstructors(List<Object> constructors) {

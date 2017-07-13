@@ -61,7 +61,7 @@ public class TypeInitializerStore implements ITypeInitializerStore {
 	
 	@Override
 	public TypeInitializer load(Class<?> type) {
-		if (type == null) {
+		if (type == null || type.isInterface() || Modifier.isAbstract(type.getModifiers())) {
 			return null;
 		}
 		try {
@@ -82,21 +82,22 @@ public class TypeInitializerStore implements ITypeInitializerStore {
 	 */
 	public static TypeInitializer initTypeInitializer(Class<?> type) {
 		TypeInitializer initializer = new TypeInitializer(type);
-		List<Object> badConstructors = new ArrayList<Object>();
+		List<Object> badConstructors = new ArrayList<Object>(3);
+		List<Object> loopPotentialConstructors = new ArrayList<Object>(1);
 		try {
 			/*
 			 * try with the perfect one which is public constructor with no
 			 * parameter
 			 */
 			Constructor<?> constructor = type.getConstructor();
-			if (canBeCandidateForConstructor(constructor, type, badConstructors)) {
+			if (canBeCandidateForConstructor(constructor, type, badConstructors, loopPotentialConstructors)) {
 				initializer.addConstructor(constructor, false);
 			}
 		} catch (Exception e) {
 			// do nothing, just keep trying.
 		}
 		for (Constructor<?> constructor : type.getConstructors()) {
-			if (canBeCandidateForConstructor(constructor, type, badConstructors)) {
+			if (canBeCandidateForConstructor(constructor, type, badConstructors, loopPotentialConstructors)) {
 				initializer.addConstructor(constructor, true);
 			}
 		}
@@ -124,30 +125,36 @@ public class TypeInitializerStore implements ITypeInitializerStore {
 			}
 		}
 		
-		if (initializer.hasNoConstructor() && !badConstructors.isEmpty()) {
-			initializer.addBadConstructors(badConstructors);
+		if (initializer.doesNotHaveGoodConstructor()) {
+			if (!badConstructors.isEmpty()) {
+				initializer.addBadConstructors(badConstructors);
+			} else if (!loopPotentialConstructors.isEmpty()) {
+				initializer.addBadConstructors(loopPotentialConstructors);
+			}
 		}
 		return initializer;
 	}
 
 	private static boolean canBeCandidateForConstructor(Constructor<?> constructor,
-			Class<?> type, List<Object> badConstructors) {
+			Class<?> type, List<Object> badConstructors, List<Object> loopPotentialConstructors) {
 		return canBeCandidateForConstructor(constructor, constructor.getParameterTypes(), constructor.getModifiers(),
-				type, badConstructors);
+				type, badConstructors, loopPotentialConstructors);
 	}
 	
 	private static boolean canBeCandidateForConstructor(Method staticMethod,
 			Class<?> type, List<Object> badConstructors) {
 		return canBeCandidateForConstructor(staticMethod, staticMethod.getParameterTypes(), staticMethod.getModifiers(),
-				type, badConstructors);
+				type, badConstructors, null);
 	}
 	
-	private static boolean canBeCandidateForConstructor(AccessibleObject constructorOrMethod,
-			Class<?>[] parameterTypes, int modifier,
-			Class<?> type, List<Object> badConstructors) {
+	private static boolean canBeCandidateForConstructor(AccessibleObject constructorOrMethod, Class<?>[] parameterTypes,
+			int modifier, Class<?> type, List<Object> badConstructors, List<Object> loopPotentialConstructors) {
 		for (Class<?> paramType : parameterTypes) {
 			/* loop */
 			if (type.equals(paramType) || paramType.isAssignableFrom(type)) {
+				if (loopPotentialConstructors != null) {
+					loopPotentialConstructors.add(constructorOrMethod);
+				}
 				return false;
 			}
 		}

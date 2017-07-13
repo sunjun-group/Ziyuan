@@ -37,6 +37,12 @@ public class TextFormatUtils {
 		return sb.toString();
 	}
 	
+	public static <T>String printArray(T[] values) {
+		return new StringBuilder("[")
+						.append(StringUtils.join(", ", values))
+						.append("]").toString();
+	}
+	
 	public static String printTimeString(long time) {
 		TimeUnit timeUnit = TimeUnit.MILLISECONDS;
 		long diffSec = timeUnit.toSeconds(time);
@@ -52,4 +58,5 @@ public class TextFormatUtils {
 		}
 		return sb.toString();
 	}
+
 }

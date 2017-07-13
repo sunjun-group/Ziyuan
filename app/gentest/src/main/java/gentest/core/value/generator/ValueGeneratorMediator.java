@@ -54,6 +54,9 @@ public class ValueGeneratorMediator {
 		return append(rootVariable, level, type, false);
 	}
 
+	/**
+	 * @param level: start from 1.
+	 */
 	public GeneratedVariable append(GeneratedVariable rootVariable, int level,
 			IType type, boolean isReceiver) throws SavException {
 		GeneratedVariable variable = null;
@@ -88,7 +91,8 @@ public class ValueGeneratorMediator {
 			}  else if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL) {
 				log.debug("level of value generation exceeds the limit ({} levels)", GentestConstants.VALUE_GENERATION_MAX_LEVEL);
 				ValueGenerator.assignNull(variable, type.getRawType());
-			} else if (level > 1 && Randomness.weighedCoinFlip(0.5)) {
+			} else if (level > 1 && Randomness
+					.weighedCoinFlip(getProbIncreaseByLevel(level, GentestConstants.VALUE_GENERATION_MAX_LEVEL))) {
 				// increase the probability of generating null objects for fields
 					ValueGenerator.assignNull(variable, type.getRawType());
 			} else {
@@ -102,6 +106,13 @@ public class ValueGeneratorMediator {
 		}
 		rootVariable.append(variable);
 		return variable;
+	}
+
+	private double getProbIncreaseByLevel(int level, int maxLevel) {
+		if (level <= 3) {
+			return 0.4;
+		}
+		return 0.8; 
 	}
 
 	protected double calculateProbToGetValFromCache(int varsSizeInCache) {

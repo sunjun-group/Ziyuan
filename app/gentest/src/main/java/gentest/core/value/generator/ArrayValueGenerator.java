@@ -20,10 +20,8 @@ import sav.common.core.utils.Randomness;
  * @author Nguyen Phuoc Nguong Phuc
  */
 public class ArrayValueGenerator extends ValueGenerator {
-	private int dimension;
+	private int dimension; // start from 1
 	private IType lastContenType;
-	/* TODO LLT: make this configurable */
-	private static int DEFAULT_ARRAY_SIZE = 3;
 	
 	public ArrayValueGenerator(IType type) {
 		super(type);
@@ -36,7 +34,7 @@ public class ArrayValueGenerator extends ValueGenerator {
 		// Generate the array
 		int sizes[] = new int[dimension];
 		for (int i = 0; i < dimension; i++) {
-			sizes[i] = selectArraySize();
+			sizes[i] = selectArraySize(i + 1, dimension);
 		}
 		final RArrayConstructor arrayConstructor = new RArrayConstructor(sizes,
 				type.getRawType(), lastContenType.getRawType());
@@ -58,21 +56,20 @@ public class ArrayValueGenerator extends ValueGenerator {
 		return true;
 	}
 
-	private int selectArraySize() {
-		int size = Randomness
-				.nextInt(GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH);
-		if (size < 0) {
-			return DEFAULT_ARRAY_SIZE;
-		} else {
-			return size;
-		}
-		/*
-		if (DEFAULT_ARRAY_SIZE >= 0) {
-			return DEFAULT_ARRAY_SIZE;
-		}
-		return Randomness
-				.nextInt(GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH);
-		*/
+	/**
+	 * maxsize of the last dimension = 10, and is decreased by dimension.
+	 * maxsize of other dimension not the last one is from 1 -> 2.
+	 * */
+	private int selectArraySize(int curLevel, int dimension) {
+		int arrayMaxLength = GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH;
+		if (curLevel == dimension) {
+			int maxSize = arrayMaxLength - (dimension * 2) + 1;
+			if (maxSize <= 0) {
+				maxSize = arrayMaxLength / 2;
+			}
+			return Randomness.nextInt(1, maxSize);
+		} 
+		return Randomness.nextInt(1, 2);
 	}
 	
 	private IType getLastContentType() {
