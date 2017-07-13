@@ -18,6 +18,7 @@ import java.util.List;
 
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.TextFormatUtils;
 
 /**
  * @author LLT
@@ -220,7 +221,9 @@ public class GeneratedVariable extends SelectedVariable {
 
 	@Override
 	public String toString() {
-		return "GeneratedVariable [stmts=" + stmts + "]";
+		StringBuilder sb = new StringBuilder("GeneratedVariable, stmts: ");
+		sb.append(TextFormatUtils.printListSeparateWithNewLine(stmts));
+		return sb.toString();
 	}
 	
 }

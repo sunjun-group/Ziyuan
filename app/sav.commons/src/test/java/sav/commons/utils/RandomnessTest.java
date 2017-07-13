@@ -11,11 +11,13 @@ package sav.commons.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import sav.common.core.iface.HasProbabilityType;
+import sav.common.core.utils.RandomUtils;
 import sav.common.core.utils.Randomness;
 
 /**
@@ -23,6 +25,20 @@ import sav.common.core.utils.Randomness;
  *
  */
 public class RandomnessTest {
+	
+	@Test
+	public void testRandomDouble() {
+		for (int i = 0; i < 100; i++) {
+			System.out.println(Randomness.nextDouble());
+		}
+	}
+	
+	@Test
+	public void testRandomLong() {
+		for (int i = 0; i < 1000; i++) {
+			System.out.println(RandomUtils.nextLong(-1000, 1000, new Random()));
+		}
+	}
 
 	@Test
 	public void testRandomSubList() {

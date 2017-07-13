@@ -50,4 +50,9 @@ public class RConstructor extends Statement {
 	public boolean hasOutputVar() {
 		return true;
 	}
+	
+	@Override
+	public String toString() {
+		return constructor.toString();
+	}
 }

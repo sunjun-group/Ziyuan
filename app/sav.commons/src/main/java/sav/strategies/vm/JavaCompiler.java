@@ -58,7 +58,7 @@ public class JavaCompiler {
 				log.warn(errorMsg);
 				return success;
 			} else {
-				throw new SavException(SavExceptionType.COMPILATION_ERROR, errorMsg);
+				throw new SavException("compilation error: " + errorMsg, SavExceptionType.COMPILATION_ERROR);
 			}
 		}
 		return success;

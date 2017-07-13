@@ -38,7 +38,7 @@ public class SingleTimer {
 		if (!log.isDebugEnabled()) {
 			return;
 		}
-		log.debug(taskName + ": " + TextFormatUtils.printTimeString(getExecutionTime()));
+		log.debug("{}: {}", taskName, TextFormatUtils.printTimeString(getExecutionTime()));
 	}
 	
 	public boolean logResults(org.slf4j.Logger log, long maxRt) {
@@ -47,5 +47,9 @@ public class SingleTimer {
 			return true;
 		}
 		return false;
+	}
+	
+	public String getResult() {
+		return String.format("%s: %s", taskName, TextFormatUtils.printTimeString(getExecutionTime()));
 	}
 }

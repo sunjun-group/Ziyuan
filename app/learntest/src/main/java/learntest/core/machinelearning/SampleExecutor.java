@@ -67,7 +67,7 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 			timer.logResults(log);
 		} catch (Exception e) {
 			// LOG
-			log.warn("sample execution fail: " + e.getMessage());
+			log.warn("sample execution fail:[{}] {} ", e, e.getMessage());
 			if (result != null) {
 				/* backup to analyze compilation error */
 				if (SavException.isExceptionOfType(e, SavExceptionType.COMPILATION_ERROR)) {
@@ -76,6 +76,7 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 				}
 				FileUtils.deleteFiles(result.getJunitfiles());
 			}
+			timer.logResults(log);
 			return null;
 		}
 		return samples;  

@@ -9,7 +9,6 @@
 package gentest.core.value.generator;
 
 import java.util.List;
-import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,16 +88,9 @@ public class ValueGeneratorMediator {
 			}  else if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL) {
 				log.debug("level of value generation exceeds the limit ({} levels)", GentestConstants.VALUE_GENERATION_MAX_LEVEL);
 				ValueGenerator.assignNull(variable, type.getRawType());
-			} else if (level > 1) {
+			} else if (level > 1 && Randomness.weighedCoinFlip(0.5)) {
 				// increase the probability of generating null objects for fields
-				boolean isNull = new Random().nextInt(10) < 8;
-				if (isNull) {
 					ValueGenerator.assignNull(variable, type.getRawType());
-				} else {
-					ValueGenerator generator = ValueGenerator.findGenerator(type, isReceiver);
-					generator.setValueGeneratorMediator(this);
-					goodVariable = generator.doAppendVariable(variable, level);
-				}
 			} else {
 				ValueGenerator generator = ValueGenerator.findGenerator(type, isReceiver);
 				generator.setValueGeneratorMediator(this);

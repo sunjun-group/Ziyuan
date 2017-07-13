@@ -22,6 +22,7 @@ import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.SystemVariables;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.SingleTimer;
 import sav.strategies.dto.AppJavaClassPath;
 
 /**
@@ -58,6 +59,7 @@ public class TestGenerator {
 	
 	protected GentestResult gentest(GentestParams params, TestsPrinter printer) throws SavException, ClassNotFoundException {
 		log.debug("start random gentest..");
+		SingleTimer timer = SingleTimer.start("random gentest");
 		Class<?> clazz = prjClassLoader.loadClass(params.getTargetClassName());
 		RandomTraceGentestBuilder gentest = new RandomTraceGentestBuilder(params.getNumberOfTcs())
 										.classLoader(prjClassLoader)
@@ -71,6 +73,7 @@ public class TestGenerator {
 		result.setJunitClassNames(printer.printTests(pair));
 		result.setJunitfiles(((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles());
 		log.debug("generated junit classes: {}", result.getJunitClassNames());
+		log.debug(timer.getResult());
 		return result;
 	}
 	

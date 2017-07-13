@@ -3,21 +3,21 @@
  */
 package gentest.core;
 
+import java.util.List;
+
+import com.google.inject.Inject;
+
 import gentest.core.data.IDataProvider;
 import gentest.core.data.LocalVariable;
 import gentest.core.data.Sequence;
 import gentest.core.data.type.IType;
 import gentest.core.data.variable.ISelectedVariable;
 import gentest.core.data.variable.ReferenceVariable;
+import gentest.core.value.generator.IRandomness;
 import gentest.core.value.generator.ValueGeneratorMediator;
-
-import java.util.List;
-
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
-
-import com.google.inject.Inject;
 
 /**
  * @author LLT
@@ -31,6 +31,9 @@ public class ParameterSelector {
 	
 	@Inject
 	private ValueGeneratorMediator valueGenerator;
+	
+	@Inject
+	private IRandomness randomness;
 	
 	public Sequence getSequence() {
 		return sequenceProvider.getData();
@@ -86,7 +89,7 @@ public class ParameterSelector {
 		if (CollectionUtils.isEmpty(existedVars)) {
 			return SelectionMode.GENERATE_NEW;
 		}
-		if (Randomness.randomBoolFromDistribution(3, 2)) {
+		if (randomness.randomBoolFromDistribution(3, 2)) {
 			return SelectionMode.REFERENCE;
 		}
 		return SelectionMode.GENERATE_NEW;
