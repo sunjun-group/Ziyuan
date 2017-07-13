@@ -13,6 +13,7 @@ import gentest.core.commons.utils.MethodUtils;
 import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.execution.VariableRuntimeExecutor;
+import gentest.core.value.AccesibleObjectVerifier;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -57,6 +58,9 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 			/* ignore if method is a static method declared in interface, 'cause this type
 			 * of method is not supposed to call via an instance */
 			if (MethodUtils.isStatic(method) && method.getDeclaringClass().isInterface()) {
+				continue;
+			}
+			if (!AccesibleObjectVerifier.verify(method, method.getParameterTypes())) {
 				continue;
 			}
 			if (MethodUtils.isPublic(method) && !doesContainExcludedMethodPrefix(method)) {

@@ -86,5 +86,18 @@ public class VarArrayType implements IType {
 	public String toString() {
 		return "VarArrayType [componentType=" + componentType + "]";
 	}
+
+	public static int getDimension(VarArrayType type) {
+		VarArrayType arrType = type;
+		int dimension = 0;
+		while (arrType != null) {
+			dimension++;
+			if (!arrType.componentType.isArray()) {
+				break;
+			}
+			arrType = (VarArrayType) arrType.componentType;
+		}
+		return dimension;
+	}
 	
 }

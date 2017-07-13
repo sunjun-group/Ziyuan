@@ -15,6 +15,7 @@ import gentest.core.data.Sequence;
 import gentest.core.data.statement.RqueryMethod;
 import gentest.core.data.type.IType;
 import gentest.core.data.type.ITypeCreator;
+import gentest.core.data.type.VarArrayType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.data.variable.ISelectedVariable;
 import gentest.core.value.generator.ValueGeneratorMediator;
@@ -99,7 +100,9 @@ public class TestSeqGenerator {
 				ISelectedVariable variable = varMap.get(receiver);
 				if (variable == null) {
 					IType type = typeMap.get(classMap.get(receiver));
-					if (type.isArray() && parts.length == 2 && parts[1].equals("length")) {
+					if (type.isArray() && parts.length == 2 && parts[1].equals("length")
+							&& VarArrayType.getDimension((VarArrayType)type) == 1) {
+						/* only try to change length for an array with dimension = 1 */
 						int newVal = value < 0 ? 0 : (int)value;
 						variable = arrayValueGenerator.generate(type, firstVarIdx, newVal);
 						sequence.append(variable);

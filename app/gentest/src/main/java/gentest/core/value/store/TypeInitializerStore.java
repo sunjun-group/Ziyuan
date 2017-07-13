@@ -27,6 +27,7 @@ import com.google.inject.name.Named;
 
 import gentest.core.data.MethodCall;
 import gentest.core.data.typeinitilizer.TypeInitializer;
+import gentest.core.value.AccesibleObjectVerifier;
 import gentest.core.value.store.iface.ITypeInitializerStore;
 import gentest.injection.TestcaseGenerationScope;
 
@@ -149,12 +150,18 @@ public class TypeInitializerStore implements ITypeInitializerStore {
 	
 	private static boolean canBeCandidateForConstructor(AccessibleObject constructorOrMethod, Class<?>[] parameterTypes,
 			int modifier, Class<?> type, List<Object> badConstructors, List<Object> loopPotentialConstructors) {
+		if (!AccesibleObjectVerifier.verify(constructorOrMethod, parameterTypes)) {
+			return false;
+		}
 		for (Class<?> paramType : parameterTypes) {
 			/* loop */
 			if (type.equals(paramType) || paramType.isAssignableFrom(type)) {
 				if (loopPotentialConstructors != null) {
 					loopPotentialConstructors.add(constructorOrMethod);
 				}
+				return false;
+			}
+			if (isAccessRestrictionClass(paramType)) {
 				return false;
 			}
 		}
@@ -165,6 +172,10 @@ public class TypeInitializerStore implements ITypeInitializerStore {
 			return false;
 		}
 		return isPublic;
+	}
+
+	private static boolean isAccessRestrictionClass(Class<?> paramType) {
+		return "sun.util.locale.BaseLocale".equals(paramType.getName());
 	}
 
 	//------------------------------------------------------------------------------------------
