@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 
 import jdart.core.JDartCore;
 import jdart.core.JDartParams;
+import jdart.core.socket.JDartServer;
+import jdart.core.socket.JDartProcess;
 import jdart.model.TestInput;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.main.LearnTestParams;
@@ -46,7 +48,9 @@ public class JDartRunner {
 				return Collections.EMPTY_LIST;
 			}
 			jdartParams.setMainEntry(mainClass);
-			JDartCore jdartCore = new JDartCore();
+//			JDartCore jdartCore = new JDartCore();
+//			JDartServer jdartCore = new JDartServer();
+			JDartProcess jdartCore = new JDartProcess();
 			List<TestInput> inputs = jdartCore.run(jdartParams);
 			return inputs;
 		} catch (Exception e) {

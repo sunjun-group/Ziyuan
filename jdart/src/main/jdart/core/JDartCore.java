@@ -10,6 +10,7 @@ package jdart.core;
 
 import java.util.List;
 
+import org.apache.commons.math.stat.descriptive.rank.Median;
 import org.eclipse.core.commands.ExecutionException;
 
 import jdart.model.TestInput;
@@ -134,9 +135,9 @@ public class JDartCore {
 //		methodName = "scalb1";
 //		paramString = "(a:double, i:int)";	
 //
-//		className = "org.apache.commons.math.util.FastMath";
-//		methodName = "scalb2";
-//		paramString = "(a:float, i:int)";
+		mainEntry = className = "org.apache.commons.math.util.FastMath";
+		methodName = "scalb2";
+		paramString = "(a:float, i:int)";
 //		
 //		className = "org.apache.commons.math.util.FastMath";
 //		methodName = "sin";
@@ -178,33 +179,61 @@ public class JDartCore {
 //		methodName = "findInsertionIndex";
 //		paramString = "(a:int)";
 		
-		mainEntry = "testdata.l2t.test.init.dfp.align.DfpMain";
-		className = "org.apache.commons.math.dfp.Dfp";
-		methodName = "align";
-		paramString = "(e:int)";
-		
-		mainEntry = "testdata.l2t.test.init.dfp.divide.DfpMain";
-		className = "org.apache.commons.math.dfp.Dfp";
-		methodName = "divide";
-		paramString = "(e:int)";
-		
-		mainEntry = "testdata.l2t.test.init.zipfdistributionimpl.cumulativeprobability.ZipfDistributionImplMain";
-		className = "org.apache.commons.math.distribution.ZipfDistributionImpl";
-		methodName = "cumulativeProbability";
-		paramString = "(e:int)";
-		
-		mainEntry = "testdata.l2t.test.init.poissondistributionimpl.probability.PoissonDistributionImplMain";
-		className = "org.apache.commons.math.distribution.PoissonDistributionImpl";
-		methodName = "probability";
-		paramString = "(e:int)";
+//		mainEntry = "testdata.l2t.test.init.dfp.align.DfpMain";
+//		className = "org.apache.commons.math.dfp.Dfp";
+//		methodName = "align";
+//		paramString = "(e:int)";
+//		
+//		mainEntry = "testdata.l2t.test.init.dfp.divide.DfpMain";
+//		className = "org.apache.commons.math.dfp.Dfp";
+//		methodName = "divide";
+//		paramString = "(e:int)";
+//		
+//		mainEntry = "testdata.l2t.test.init.zipfdistributionimpl.cumulativeprobability.ZipfDistributionImplMain";
+//		className = "org.apache.commons.math.distribution.ZipfDistributionImpl";
+//		methodName = "cumulativeProbability";
+//		paramString = "(e:int)";
+//		
+//		mainEntry = "testdata.l2t.test.init.poissondistributionimpl.probability.PoissonDistributionImplMain";
+//		className = "org.apache.commons.math.distribution.PoissonDistributionImpl";
+//		methodName = "probability";
+//		paramString = "(e:int)";
 				
 		long min_free = 20*(1024<<10); // min free memory
 		long timeLimit = 10 * 1000;
 		String[] config = constructConfig(mainEntry, className, pathString, methodName, paramString,
 				min_free, timeLimit);		
-		List<TestInput> inputList = RunJPF.run(config);
+		List<TestInput> inputList = new JDartCore().run(constructJDartParams(args));
+//		inputList = RunJPF.run(config);
 		
 		System.currentTimeMillis();
 	}
 
+	private static JDartParams constructJDartParams(String[] args) {
+		String  classpathStr = "E:\\hairui\\git\\apache-common-math-2.2\\apache-common-math-2.2\\bin", 
+				mainEntry = "testdata.l2t.test.init.zipfdistributionimpl.cumulativeprobability.ZipfDistributionImplMain",
+				className = "org.apache.commons.math.distribution.ZipfDistributionImpl",
+				methodName = "cumulativeProbability",
+				paramString = "(e:int)";
+		
+		className = "org.apache.commons.math.util.FastMath";
+		mainEntry = className;
+		methodName = "scalb2";
+		paramString = "(a:float, i:int)";
+		long minFree = 20*(1024<<10); // min free memory
+		long timeLimit = 10 * 1000;
+		
+		JDartParams params = new JDartParams();
+		params.setAppProperties("libs/jdart/jpf.properties");
+		params.setClassName(className);
+		params.setClasspathStr(classpathStr);
+		params.setMainEntry(mainEntry);
+		params.setMethodName(methodName);
+		params.setMinFree(minFree);
+		params.setParamString(paramString);
+		params.setSiteProperties("libs/jpf.properties");
+		params.setTimeLimit(timeLimit);
+		
+		return params;
+	}
 }

@@ -171,7 +171,7 @@ public class RunJPF extends Run {
 	              continue;
 	            }
 	            TestInput testInput = new TestInput();
-	            List<TestVar> paramList = new LinkedList<>();
+	            LinkedList<TestVar> paramList = new LinkedList<>();
 	            HashMap<String, List<TestVar>> arrayList = new HashMap<>();
 	            for (Variable v : p.getValuation().getVariables()) {
 
@@ -231,7 +231,7 @@ private static void putArrayVar(HashMap<String, List<TestVar>> arrayList, List<T
 			}
 		});
 	      array.setType(e.getValue().get(0).getType());
-	      array.setChildren(e.getValue());
+	      array.setChildren((LinkedList<TestVar> )e.getValue());
 	      printArrayVar(array);
 	      paramList.add(array);
 	}

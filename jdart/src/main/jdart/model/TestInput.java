@@ -1,15 +1,21 @@
 package jdart.model;
 
+import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 
-public class TestInput {
-	private List<TestVar> paramList;
+public class TestInput implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6978495569842605977L;
+	private LinkedList<TestVar> paramList;
 
-	public List<TestVar> getParamList() {
+	public LinkedList<TestVar> getParamList() {
 		return paramList;
 	}
 
-	public void setParamList(List<TestVar> paramList) {
+	public void setParamList(LinkedList<TestVar> paramList) {
 		this.paramList = paramList;
 	}
 

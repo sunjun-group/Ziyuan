@@ -1,9 +1,16 @@
 package jdart.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
-public abstract class TestVar {
+public abstract class TestVar implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4090103948503310247L;
+
 	//variable name, or array element index
 	protected String name;
 	
@@ -11,7 +18,7 @@ public abstract class TestVar {
 	
 	protected String value;
 	
-	protected List<TestVar> children = new ArrayList<>();
+	protected LinkedList<TestVar> children = new LinkedList<>();
 
 	@Override
 	public String toString() {
@@ -46,7 +53,7 @@ public abstract class TestVar {
 		return children;
 	}
 
-	public void setChildren(List<TestVar> children) {
+	public void setChildren(LinkedList<TestVar> children) {
 		this.children = children;
 	}
 	
