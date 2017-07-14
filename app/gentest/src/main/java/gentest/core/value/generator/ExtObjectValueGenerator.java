@@ -59,7 +59,8 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 			if (MethodUtils.isStatic(method)) {
 				continue;
 			}
-			if (!AccesibleObjectVerifier.verify(method, method.getParameterTypes())) {
+			if (!AccesibleObjectVerifier.verify(method, method.getParameterTypes()) || 
+					method.isBridge()) {
 				continue;
 			}
 			if (MethodUtils.isPublic(method) && !doesContainExcludedMethodPrefix(method)) {
