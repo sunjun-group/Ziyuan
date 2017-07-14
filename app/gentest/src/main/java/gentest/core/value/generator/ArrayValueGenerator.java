@@ -14,6 +14,7 @@ import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.main.GentestConstants;
 import sav.common.core.SavException;
+import sav.common.core.utils.PrimitiveUtils;
 import sav.common.core.utils.Randomness;
 
 /**
@@ -34,7 +35,7 @@ public class ArrayValueGenerator extends ValueGenerator {
 		// Generate the array
 		int sizes[] = new int[dimension];
 		for (int i = 0; i < dimension; i++) {
-			sizes[i] = selectArraySize(i + 1, dimension);
+			sizes[i] = selectArraySize(i + 1, dimension, lastContenType.getRawType());
 		}
 		final RArrayConstructor arrayConstructor = new RArrayConstructor(sizes,
 				type.getRawType(), lastContenType.getRawType());
@@ -43,8 +44,11 @@ public class ArrayValueGenerator extends ValueGenerator {
 		// Generate the array content
 		int[] location = next(null, arrayConstructor.getSizes());
 		while (location != null) {
+			/* keep level the same for better chance to generate a non-null value for content, this would be make
+			 * more sense in case of an array.
+			 */
 			GeneratedVariable newVar = appendVariable(variable,
-					level + 1, lastContenType);
+					level, lastContenType);
 			int localVariableID = newVar.getReturnVarId(); // the last ID
 
 			// get the variable
@@ -57,11 +61,15 @@ public class ArrayValueGenerator extends ValueGenerator {
 	}
 
 	/**
-	 * maxsize of the last dimension = 10, and is decreased by dimension.
+	 * maxsize of the last dimension = 10 (if primitive/String) or 1 -> 3 (if not primitive), and is decreased by dimension.
 	 * maxsize of other dimension not the last one is from 1 -> 2.
 	 * */
-	private int selectArraySize(int curLevel, int dimension) {
+	private static int selectArraySize(int curLevel, int dimension, Class<?> contentType) {
 		int arrayMaxLength = GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH;
+		String clazzName = contentType.getName();
+		if (!PrimitiveUtils.isPrimitive(clazzName) && !PrimitiveUtils.isPrimitiveTypeOrString(clazzName)) {
+			arrayMaxLength = 3;
+		}
 		if (curLevel == dimension) {
 			int maxSize = arrayMaxLength - (dimension * 2) + 1;
 			if (maxSize <= 0) {
