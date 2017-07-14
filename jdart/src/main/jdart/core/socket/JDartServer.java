@@ -51,7 +51,7 @@ public class JDartServer {
                 }  
 				list.add(str);
 			}
-			System.err.println("result size :"+list.size());
+			System.err.println("jdart result size :"+list.size());
 		}catch (Exception e) {
 			work.stop();
 			// TODO Auto-generated catch block
@@ -128,11 +128,13 @@ public class JDartServer {
 				methodName = "cumulativeProbability",
 				paramString = "(e:int)";
 		
+		/** simple return result */
 		className = "org.apache.commons.math.util.FastMath";
 		mainEntry = className;
 		methodName = "scalb2";
 		paramString = "(a:float, i:int)";
 		
+		/** run time out */
 //		mainEntry = "testdata.l2t.test.init.zipfdistributionimpl.cumulativeprobability.ZipfDistributionImplMain";
 //		className = "org.apache.commons.math.distribution.ZipfDistributionImpl";
 //		methodName = "cumulativeProbability";
@@ -142,6 +144,12 @@ public class JDartServer {
 		className = "org.apache.commons.math.distribution.PoissonDistributionImpl";
 		methodName = "probability";
 		paramString = "(e:int)";
+		
+//		/** long return result */
+//		mainEntry = "testdata.l2t.test.init.bigmatriximpl.getsubmatrix.BigMatrixImplMain";
+//		className = "org.apache.commons.math.linear.BigMatrixImpl";
+//		methodName = "getSubMatrix";
+//		paramString = "(r:int[], c:int[])";
 		
 		return constructJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site);
 	}

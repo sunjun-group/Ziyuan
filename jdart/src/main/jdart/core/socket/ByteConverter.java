@@ -11,19 +11,37 @@ import java.io.ObjectOutputStream;
 public class ByteConverter {
 
 	public static byte[] convertToBytes(Object object) throws IOException {
-	    try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-	         ObjectOutput out = new ObjectOutputStream(bos)) {
-	        out.writeObject(object);
-	        return bos.toByteArray();
-	    } 
+		byte[] bytes;
+		ByteArrayOutputStream bos = null;
+		ObjectOutput out = null;
+		try{
+			bos = new ByteArrayOutputStream();
+			out = new ObjectOutputStream(bos);
+			out.writeObject(object);
+			bytes = bos.toByteArray();
+			System.out.println("send byte[] : "+bytes.length);
+		}finally{
+			bos.close();
+			out.close();
+		}
+	    return bytes;
 	}
 	
 
 	public static Object convertFromBytes(byte[] bytes) throws IOException, ClassNotFoundException {
-	    try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-	         ObjectInput in = new ObjectInputStream(bis)) {
-	        return in.readObject();
-	    } 
+		System.out.println("receive byte[] : "+bytes.length);
+		Object object;
+		ByteArrayInputStream bis = null;
+        ObjectInput in = null;
+		try{
+			bis = new ByteArrayInputStream(bytes);
+	        in = new ObjectInputStream(bis);
+	        object = in.readObject();
+		}finally{
+			bis.close();
+			in.close();
+		}
+        return object;
 	}
 
 }

@@ -21,7 +21,11 @@ import main.RunJPF;
  * extracted from RunJDartHandler.
  */
 public class JDartCore {
-	
+	/**
+	 * 
+	 * @param jdartParams
+	 * @return perhaps NULL
+	 */
 	public List<TestInput> run(JDartParams jdartParams) {
 		String[] config = constructConfig(jdartParams);
 		List<TestInput> inputList = RunJPF.run(config);

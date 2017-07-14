@@ -20,7 +20,6 @@ public class JDartProcess {
 	public static int JDART_INTER_PORT = 8990;
 	
 	public static void main(String[] args) {
-		System.out.println(System.getProperty("java.class.path"));
 		new JDartProcess().run(JDartServer.constructJDartParams());
 	}
 	
@@ -88,14 +87,21 @@ public class JDartProcess {
 			System.out.println("IntraConnection accept socket:"+socket);
 			list = new ArrayList<>();
 			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			while(true){
-				String str = br.readLine();
-                if(str.equals("END")){  
-                    break;  
-                }  
-				list.add((TestInput)(ByteConverter.convertFromBytes(str.getBytes())));
-			}
-			System.err.println("result size :"+list.size());
+			JDartServerSingle.parseList(list, br);
+//			StringBuffer sb  = new StringBuffer();
+//			while(true){
+//				String str = br.readLine();
+//                if(str.equals("END")){  
+//                    break;  
+//                }else if (str.equals("line end")) {
+//    				list.add((TestInput)(ByteConverter.convertFromBytes(sb.toString().getBytes())));
+//    				sb = new StringBuffer();
+//				}else {
+//					sb.append(str);
+//					sb.append("\n");
+//				}
+//			}
+			System.err.println("receive lines size :"+list.size());
 		}catch (Exception e) {
 			e.printStackTrace();
 		} finally{

@@ -31,10 +31,15 @@ public class JDartClient {
 			System.out.println("Socket=" + socket);
 			pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
 					socket.getOutputStream())));
-			 for (int i = 0; i < result.size(); i++) {  
-	                pw.println(new String(ByteConverter.convertToBytes(result.get(i))));  
-	                pw.flush();  
-	        }			 
+			if (result != null) {
+				 for (int i = 0; i < result.size(); i++) {  
+					 String string = new String(ByteConverter.convertToBytes(result.get(i)));
+					 pw.println(string);
+					 pw.flush();  
+					 pw.println("line end");
+					 pw.flush();  
+		        }			 
+			}
 			pw.println("END"); 
 			pw.flush();
 		} catch (Exception e) {
