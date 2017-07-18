@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.CfgJaCoCoConfigs;
 import learntest.core.JDartLearntest;
+import learntest.core.LearntestParamsUtils;
+import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.JunitTestsInfo;
 import learntest.core.commons.data.classinfo.TargetClass;
@@ -120,7 +122,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	
 	protected LearnTestParams prepareLearnTestData() throws SavException {
 		LearnTestParams params = initLearntestParams();
-		GentestParams gentestParams = initGentestParams(params);
+		GentestParams gentestParams = LearntestParamsUtils.createGentestParams(appClasspath, params, GenTestPackage.INIT);
 		gentestParams.setGenerateMainClass(true);
 		/* generate testcase and jdart entry */
 		GentestResult testResult = generateTestcases(gentestParams);
@@ -133,10 +135,6 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			appClasspath = initAppJavaClassPath();
 		}
 		return appClasspath;
-	}
-	
-	protected GentestParams initGentestParams(LearnTestParams learntestParams) {
-		return learntestParams.initGentestParams(getAppClasspath());
 	}
 	
 	private AppJavaClassPath initAppJavaClassPath() {
@@ -225,6 +223,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			log.info("WORKING METHOD: {}, line {}", params.getTargetMethod().getMethodFullName(),
 					params.getTargetMethod().getLineNum());
 			log.info("-----------------------------------------------------------------------------------------------");
+			
 			// l2t params
 			LearnTestParams l2tParams = params;
 			// randoop params
@@ -271,7 +270,6 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		} else {
 			runInfo = null;
 		}
-		Thread.sleep(5000);
 		return runInfo;
 	}
 	
@@ -284,7 +282,6 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			SAVTimer.exeuctionTimeout = 50000000;
 			learntest.core.LearnTest learntest = new learntest.core.LearnTest(getAppClasspath());
 			RunTimeInfo runtimeInfo = learntest.run(params);
-			refreshProject();
 
 			if(runtimeInfo != null) {
 				log.info("{} time: {}; coverage: {}; cnt: {}", params.getApproach().getName(), TextFormatUtils.printTimeString(runtimeInfo.getTime()), 

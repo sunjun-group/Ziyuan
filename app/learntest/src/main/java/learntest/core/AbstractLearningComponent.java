@@ -10,7 +10,7 @@ package learntest.core;
 
 import cfgcoverage.jacoco.CfgJaCoCo;
 import learntest.core.commons.data.classinfo.TargetMethod;
-import learntest.main.TestGenerator;
+import learntest.core.gentest.TestGenerator;
 import sav.strategies.dto.AppJavaClassPath;
 
 /**

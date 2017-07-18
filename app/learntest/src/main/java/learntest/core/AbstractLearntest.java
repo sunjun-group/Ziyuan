@@ -44,7 +44,6 @@ import sav.settings.SAVExecutionTimeOutException;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.vm.JavaCompiler;
 import sav.strategies.vm.VMConfiguration;
 
@@ -88,7 +87,8 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		double bestCvg = -1;
 		GentestResult gentestResult = null;
 		int i = 0;
-		for (i = 0; i <= 3; i++) {
+		int maxTry = 3;
+		while(true) {
 			try {
 				gentestResult = randomGentests(gentestParams);
 				cfgCoverage = runCfgCoverage(targetMethod, gentestResult.getJunitClassNames());
@@ -101,9 +101,10 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 					// remove files
 					FileUtils.deleteFiles(gentestResult.getAllFiles());
 				}
-				if (i >= 3 || !CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
+				if (i >= maxTry || !CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
 					break;
 				}
+				i++;
 			} catch (Exception e) {
 				// ignore
 				log.debug(e.getMessage());
@@ -117,26 +118,6 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		return gentestResult;
 	}
 
-	protected GentestResult genterateTestFromSolutions(List<ExecVar> vars, List<double[]> solutions)
-			throws SavException {
-		return genterateTestFromSolutions(vars, solutions, true);
-	}
-	
-	protected GentestResult genterateTestFromSolutions(List<ExecVar> vars, List<double[]> solutions, boolean override)
-			throws SavException {
-		try {
-			ensureCompiler();
-			PrintOption printOption = override ? PrintOption.OVERRIDE : PrintOption.APPEND;
-			GentestResult gentestResult = new learntest.main.TestGenerator(appClasspath)
-					.genTestAccordingToSolutions(solutions, vars, printOption);
-			compiler.compile(appClasspath.getTestTarget(), gentestResult.getJunitfiles());
-			return gentestResult;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return GentestResult.getEmptyResult();
-		}
-	}
-	
 	protected CfgCoverage runCfgCoverage(TargetMethod targetMethod, List<String> junitClasses) throws SavException {
 		log.debug("calculate coverage..");
 		SingleTimer timer = SingleTimer.start("cfg-coverage");

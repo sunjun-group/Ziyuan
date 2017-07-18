@@ -14,9 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
+import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
 import jdart.model.TestInput;
+import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.utils.VarSolutionUtils;
 import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.GentestResult;
@@ -47,11 +49,12 @@ public class JDartLearntest extends LearnTest {
 			log.info("jdart result: {}", TextFormatUtils.printListSeparateWithNewLine(inputs));
 			return;
 		}
+		init(params);
 		List<BreakpointValue> bkpVals = JdartTestInputUtils.toBreakpointValue(inputs,
 				params.getTargetMethod().getMethodFullName());
 		List<ExecVar> vars = BreakpointDataUtils.collectAllVars(bkpVals);
 		List<double[]> solutions = VarSolutionUtils.buildSolutions(bkpVals, vars);
-		GentestResult testResult = genterateTestFromSolutions(vars, solutions, false);
+		GentestResult testResult = mediator.genTestAccordingToSolutions(solutions, vars, PrintOption.APPEND);
 		params.getInitialTests().addJunitClass(testResult, appClasspath.getClassLoader());
 	}
 	
@@ -69,7 +72,7 @@ public class JDartLearntest extends LearnTest {
 	}
 
 	public List<TestInput> generateTestAndRunJDart(LearnTestParams params) throws SavException {
-		GentestParams gentestParams = params.initGentestParams(appClasspath);
+		GentestParams gentestParams = LearntestParamsUtils.createGentestParams(appClasspath, params, GenTestPackage.INIT);
 		/* generate testcase and jdart entry */
 		gentestParams.setGenerateMainClass(true);
 		randomGenerateInitTestWithBestEffort(params, gentestParams);

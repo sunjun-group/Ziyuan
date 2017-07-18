@@ -17,16 +17,21 @@ import java.util.Map;
 import cfgcoverage.jacoco.CfgJaCoCo;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
+import gentest.junit.TestsPrinter.PrintOption;
+import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.TargetMethod;
-import learntest.core.machinelearning.RandomLearner;
+import learntest.core.gentest.GentestParams;
+import learntest.core.gentest.GentestResult;
+import learntest.core.gentest.TestGenerator;
 import learntest.core.machinelearning.IInputLearner;
 import learntest.core.machinelearning.PrecondDecisionLearner;
+import learntest.core.machinelearning.RandomLearner;
 import learntest.main.LearnTestParams;
-import learntest.main.TestGenerator;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.AppJavaClassPath;
+import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.vm.JavaCompiler;
 import sav.strategies.vm.VMConfiguration;
 
@@ -46,10 +51,12 @@ public class LearningMediator {
 	/* share utils and project configuration */
 	private TargetMethod targetMethod;
 	private AppJavaClassPath appClassPath;
+	private LearnTestParams learntestParams;
 	
-	public LearningMediator(AppJavaClassPath appClassPath, TargetMethod targetMethod) {
+	public LearningMediator(AppJavaClassPath appClassPath, LearnTestParams params) {
 		this.appClassPath = appClassPath;
-		this.targetMethod = targetMethod;
+		this.targetMethod = params.getTargetMethod();
+		this.learntestParams = params;
 	}
 
 	public TestGenerator getTestGenerator() {
@@ -106,6 +113,11 @@ public class LearningMediator {
 		cfgCoverageTool.runBySimpleRunner(targetMethods, Arrays.asList(targetMethod.getClassName()),
 				junitClassNames);
 	}
-	
+
+	public GentestResult genTestAccordingToSolutions(List<double[]> solutions, List<ExecVar> vars,
+			PrintOption printOption) throws SavException {
+		GentestParams params = LearntestParamsUtils.createGentestParams(appClassPath, learntestParams, GenTestPackage.RESULT);
+		return getTestGenerator().genTestAccordingToSolutions(params, solutions, vars, printOption);
+	}
 	
 }

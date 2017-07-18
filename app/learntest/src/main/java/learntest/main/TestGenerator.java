@@ -27,11 +27,9 @@ import learntest.core.commons.utils.DomainUtils;
 import learntest.core.gentest.GentestResult;
 import learntest.gentest.TestSeqGenerator;
 import learntest.util.LearnTestUtil;
-import net.sf.javailp.Result;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.SystemVariables;
-import sav.commons.TestConfiguration;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -118,33 +116,6 @@ public class TestGenerator extends learntest.core.gentest.TestGenerator {
 		result.setJunitfiles(((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles());
 		return result;
 	}
-	
-	public void genTestAccordingToInput(List<Result> inputs, List<String> variables)
-			throws ClassNotFoundException, SavException {
-		MethodCall target = findTargetMethod();
-		if (target == null) {
-			return;
-		}
-		inputs = clean(inputs, variables);
-		
-		GentestModules injectorModule = new GentestModules(prjClassLoader);
-		injectorModule.enter(TestcaseGenerationScope.class);
-		Injector injector = Guice.createInjector(injectorModule);
-		TestSeqGenerator generator = injector.getInstance(TestSeqGenerator.class);
-		generator.setTarget(target);
-		
-		List<Sequence> sequences = new ArrayList<Sequence>();
-		//int index = 0;
-		for (Result input : inputs) {
-			//sequences.add(generator.generateSequence(input, variables.get(index ++)));
-			sequences.add(generator.generateSequence(input, variables));
-		}
-		injectorModule.exit(TestcaseGenerationScope.class);
-		
-		TestsPrinter printer = new TestsPrinter(LearnTestConfig.getResultedTestPackage(LearnTestConfig.isL2TApproach), null, 
-				prefix, LearnTestConfig.getSimpleClassName(), TestConfiguration.getTestScrPath(LearnTestConfig.MODULE));
-		printer.printTests(new Pair<List<Sequence>, List<Sequence>>(sequences, new ArrayList<Sequence>()));
-	}
 
 	private MethodCall findTargetMethod() throws ClassNotFoundException {
 		return findTargetMethod(LearnTestConfig.targetClassName, LearnTestConfig.targetMethodName);
@@ -157,36 +128,6 @@ public class TestGenerator extends learntest.core.gentest.TestGenerator {
 			return MethodCall.of(method, clazz);
 		}
 		return null;
-	}
-	
-	private List<Result> clean(List<Result> inputs, List<String> variables) {
-		List<Result> res = new ArrayList<Result>();
-		for (Result input : inputs) {
-			boolean flag = true;
-			for (Result result : res) {
-				if (duplicate(input, result, variables)) {
-					flag = false;
-					break;
-				}
-			}
-			if (flag) {
-				res.add(input);
-			}
-		}
-		return res;
-	}
-
-	private boolean duplicate(Result input, Result result, List<String> variables) {
-		for (String var : variables) {
-			if (input.get(var) == null) {
-				if (result.get(var) != null) {
-					return false;
-				}
-			} else if (!input.get(var).equals(result.get(var))) {
-				return false;
-			}
-		}
-		return true;
 	}
 	
 }

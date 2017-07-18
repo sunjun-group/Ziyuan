@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
+import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.utils.CoverageUtils;
@@ -27,7 +28,7 @@ import sav.strategies.dto.BreakPoint;
 
 public class LearnTest extends AbstractLearntest {
 	private static Logger log = LoggerFactory.getLogger(LearnTest.class);
-	private LearningMediator mediator;
+	protected LearningMediator mediator;
 	
 	public LearnTest(AppJavaClassPath appClasspath) {
 		super(appClasspath);
@@ -86,8 +87,8 @@ public class LearnTest extends AbstractLearntest {
 	}
 
 	private void copyTestsToResultFolder(LearnTestParams params) {
-		JavaFileCopier.copy(params.getInitialTests().getJunitFiles(), params.getInitTestPkg(),
-				params.getResultTestPkg(), appClasspath.getTestSrc());
+		JavaFileCopier.copy(params.getInitialTests().getJunitFiles(), params.getTestPackage(GenTestPackage.INIT),
+				params.getTestPackage(GenTestPackage.RESULT), appClasspath.getTestSrc());
 	}
 
 	protected void prepareInitTestcase(LearnTestParams params) throws SavException, ClassNotFoundException, IOException {
@@ -96,8 +97,7 @@ public class LearnTest extends AbstractLearntest {
 			return;
 		}
 		/* init test */
-		GentestParams gentestParams = params.initGentestParams(appClasspath);
-		gentestParams.setTestPkg(params.getInitTestPkg());
+		GentestParams gentestParams = LearntestParamsUtils.createGentestParams(appClasspath, params, GenTestPackage.INIT);
 		randomGenerateInitTestWithBestEffort(params, gentestParams);
 		logInitTests(params.getInitialTests().getJunitClasses());
 	}
@@ -109,8 +109,8 @@ public class LearnTest extends AbstractLearntest {
 	/**
 	 * init fields.
 	 */
-	private void init(LearnTestParams params) {
-		mediator = new LearningMediator(appClasspath, params.getTargetMethod());
+	protected void init(LearnTestParams params) {
+		mediator = new LearningMediator(appClasspath, params);
 	}
 
 	private DecisionProbes initProbes(TargetMethod targetMethod, CfgCoverage cfgcoverage, BreakpointData result)
