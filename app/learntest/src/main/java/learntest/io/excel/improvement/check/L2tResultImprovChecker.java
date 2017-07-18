@@ -68,14 +68,14 @@ public class L2tResultImprovChecker {
 			double coverageDif = newTrial.getL2tRtInfo().getCoverage() - oldTrial.getL2tRtInfo().getCoverage();
 			if (coverageDif > 0) {
 				result.coverageIncreased(method, coverageDif);
-			} else {
+			} else if (coverageDif < 0) {
 				result.coverageDecreased(method, -coverageDif);
 			}
 
 			double advDif = newTrial.getAdvantage() - oldTrial.getAdvantage();
 			if (advDif > 0) {
 				result.moreAdvantage(method, advDif);
-			} else {
+			} else if (advDif < 0) {
 				result.lessAdvantage(method, -advDif);
 			}
 		}

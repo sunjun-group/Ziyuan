@@ -51,12 +51,8 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 		log.debug("Executing {} samples...", domains.size());
 		GentestResult result = null;
 		try {
-			timer.newPoint("gentest");
-			log.debug("gentest..");
-			result = mediator.genTestAccordingToSolutions(domains, originVars, PrintOption.APPEND);
-			timer.newPoint("compile");
-			log.debug("compile..");
-			mediator.compile(result.getJunitfiles());
+			timer.newPoint("gentest & compile");
+			result = mediator.genTestAndCompile(domains, originVars, PrintOption.APPEND);
 			samples.setNewInputData(result.getTestInputs());
 			/* run and update coverage */
 			timer.newPoint("coverage");

@@ -81,7 +81,7 @@ public class TestConfiguration {
 		return JAVA_HOME + "/bin";
 	}
 
-	/* work around for getting jdk, not jre */
+	/* work around to get jdk, not jre */
 	public static String getJavaHome() {
 		// work around in case java home not point to jdk but jre.
 		String javaHome = System.getProperty("java.home");

@@ -10,7 +10,11 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import learntest.core.CodeCoverage;
-import learntest.main.TestGenerator;
+import learntest.core.LearntestParamsUtils;
+import learntest.core.LearntestParamsUtils.GenTestPackage;
+import learntest.core.gentest.GentestParams;
+import learntest.core.gentest.TestGenerator;
+import learntest.main.LearnTestParams;
 import learntest.util.LearnTestUtil;
 import sav.common.core.utils.StopTimer;
 import sav.settings.SAVTimer;
@@ -25,8 +29,11 @@ public class CodeCoverageHandler extends AbstractLearntestHandler {
 		try {
 			SAVTimer.enableExecutionTimeout = true;
 			SAVTimer.exeuctionTimeout = 100000;
-			TestGenerator.NUMBER_OF_INIT_TEST = 20;
-			List<File> newTests = new TestGenerator(getAppClasspath()).genTest().getJunitfiles();
+			LearnTestParams params = initLearntestParams();
+			GentestParams gentestParams = LearntestParamsUtils.createGentestParams(getAppClasspath(), params,
+					GenTestPackage.INIT);
+			gentestParams.setNumberOfTcs(20);
+			List<File> newTests = new TestGenerator(getAppClasspath()).genTest(gentestParams).getJunitfiles();
 			JavaCompiler jcompiler = new JavaCompiler(new VMConfiguration(getAppClasspath()));
 			jcompiler.compile(getAppClasspath().getTestTarget(), newTests);
 			StopTimer timer = new StopTimer("learntest");

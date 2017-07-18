@@ -24,7 +24,6 @@ import learntest.cfg.ICfgHandler;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.utils.DomainUtils;
-import learntest.core.gentest.GentestResult;
 import learntest.exception.LearnTestException;
 import learntest.sampling.JavailpSelectiveSampling;
 import learntest.testcase.TestcasesExecutorwithLoopTimes;

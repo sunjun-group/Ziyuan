@@ -14,6 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cfgcoverage.jacoco.CfgJaCoCo;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
@@ -43,6 +46,7 @@ import sav.strategies.vm.VMConfiguration;
  * 
  */
 public class LearningMediator {
+	private static final Logger log = LoggerFactory.getLogger(LearningMediator.class);
 	/* services */
 	private TestGenerator testGenerator;
 	private JavaCompiler javaCompiler;
@@ -112,6 +116,17 @@ public class LearningMediator {
 		cfgCoverageTool.setCfgCoverageMap(coverageMap);
 		cfgCoverageTool.runBySimpleRunner(targetMethods, Arrays.asList(targetMethod.getClassName()),
 				junitClassNames);
+	}
+	
+	public GentestResult genTestAndCompile(List<double[]> solutions, List<ExecVar> vars, PrintOption printOption)
+			throws SavException {
+		log.debug("gentest..");
+		GentestResult result = genTestAccordingToSolutions(solutions, vars, printOption);
+		if (!result.isEmpty()) {
+			log.debug("compile..");
+			compile(result.getJunitfiles());
+		}
+		return result;
 	}
 
 	public GentestResult genTestAccordingToSolutions(List<double[]> solutions, List<ExecVar> vars,

@@ -54,7 +54,7 @@ public class JDartLearntest extends LearnTest {
 				params.getTargetMethod().getMethodFullName());
 		List<ExecVar> vars = BreakpointDataUtils.collectAllVars(bkpVals);
 		List<double[]> solutions = VarSolutionUtils.buildSolutions(bkpVals, vars);
-		GentestResult testResult = mediator.genTestAccordingToSolutions(solutions, vars, PrintOption.APPEND);
+		GentestResult testResult = mediator.genTestAndCompile(solutions, vars, PrintOption.APPEND);
 		params.getInitialTests().addJunitClass(testResult, appClasspath.getClassLoader());
 	}
 	
