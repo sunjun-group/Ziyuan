@@ -53,7 +53,7 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 		try {
 			timer.newPoint("gentest");
 			log.debug("gentest..");
-			result = getTestGenerator().genTestAccordingToSolutions(domains, originVars, PrintOption.APPEND);
+			result = mediator.genTestAccordingToSolutions(domains, originVars, PrintOption.APPEND);
 			timer.newPoint("compile");
 			log.debug("compile..");
 			mediator.compile(result.getJunitfiles());

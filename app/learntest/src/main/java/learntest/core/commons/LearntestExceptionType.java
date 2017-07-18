@@ -13,5 +13,6 @@ package learntest.core.commons;
  *
  */
 public enum LearntestExceptionType {
-	
+	CLASS_NOT_FOUND, 
+	METHOD_NOT_FOUND
 }

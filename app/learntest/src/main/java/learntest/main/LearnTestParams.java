@@ -16,19 +16,17 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
-import learntest.core.commons.LearntestConstants;
+import learntest.core.LearntestParamsUtils;
+import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.JunitTestsInfo;
 import learntest.core.commons.data.classinfo.TargetClass;
 import learntest.core.commons.data.classinfo.TargetMethod;
-import learntest.core.gentest.GentestParams;
 import learntest.util.LearnTestUtil;
 import sav.common.core.ISystemVariable;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
-import sav.common.core.utils.SignatureUtils;
-import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.SystemPreferences;
 
 /**
@@ -40,8 +38,6 @@ public class LearnTestParams {
 	private TargetMethod targetMethod;
 	private JunitTestsInfo initialTests;
 	private SystemPreferences systemConfig;
-	private String initTestPkg;
-	private String resultTestPkg;
 	private int maxTcs;
 	
 	public LearnTestParams() {
@@ -65,21 +61,6 @@ public class LearnTestParams {
 		return params;
 	}
 	
-	public GentestParams initGentestParams(AppJavaClassPath appClasspath) {
-		GentestParams params = new GentestParams();
-		params.setMethodExecTimeout(LearntestConstants.GENTEST_METHOD_EXEC_TIMEOUT);
-		params.setMethodSignature(SignatureUtils.createMethodNameSign(targetMethod.getMethodName(), 
-				targetMethod.getMethodSignature()));
-		params.setTargetClassName(targetMethod.getClassName());
-		params.setNumberOfTcs(1);
-		params.setTestPerQuery(1);
-		params.setTestSrcFolder(appClasspath.getTestSrc());
-		params.setTestPkg(getInitTestPkg());
-		params.setTestClassPrefix(targetMethod.getTargetClazz().getClassSimpleName());
-		params.setTestMethodPrefix("test");
-		return params;
-	}
-
 	@Deprecated
 	private static void initTargetMethod(LearnTestParams params) throws SavException, JavaModelException {
 		TargetClass targetClass = new TargetClass(LearnTestConfig.targetClassName);
@@ -160,18 +141,8 @@ public class LearnTestParams {
 		this.maxTcs = maxTcs;
 	}
 
-	public String getInitTestPkg() {
-		if (initTestPkg == null) {
-			initTestPkg = LearntestConstants.getInitTestPackage(approach.getName(), targetMethod);
-		}
-		return initTestPkg;
-	}
-	
-	public String getResultTestPkg() {
-		if (resultTestPkg == null) {
-			resultTestPkg = LearntestConstants.getResultTestPackage(approach.getName(), targetMethod);
-		}
-		return resultTestPkg;
+	public String getTestPackage(GenTestPackage phase) {
+		return LearntestParamsUtils.getTestPackage(this, phase);
 	}
 	
 	public LearnTestParams createNew() {

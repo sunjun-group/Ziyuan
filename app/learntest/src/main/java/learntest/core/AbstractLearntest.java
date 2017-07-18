@@ -44,7 +44,6 @@ import sav.settings.SAVExecutionTimeOutException;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.vm.JavaCompiler;
 import sav.strategies.vm.VMConfiguration;
 
@@ -119,26 +118,6 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		return gentestResult;
 	}
 
-	protected GentestResult genterateTestFromSolutions(List<ExecVar> vars, List<double[]> solutions)
-			throws SavException {
-		return genterateTestFromSolutions(vars, solutions, true);
-	}
-	
-	protected GentestResult genterateTestFromSolutions(List<ExecVar> vars, List<double[]> solutions, boolean override)
-			throws SavException {
-		try {
-			ensureCompiler();
-			PrintOption printOption = override ? PrintOption.OVERRIDE : PrintOption.APPEND;
-			GentestResult gentestResult = new learntest.main.TestGenerator(appClasspath)
-					.genTestAccordingToSolutions(solutions, vars, printOption);
-			compiler.compile(appClasspath.getTestTarget(), gentestResult.getJunitfiles());
-			return gentestResult;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return GentestResult.getEmptyResult();
-		}
-	}
-	
 	protected CfgCoverage runCfgCoverage(TargetMethod targetMethod, List<String> junitClasses) throws SavException {
 		log.debug("calculate coverage..");
 		SingleTimer timer = SingleTimer.start("cfg-coverage");
