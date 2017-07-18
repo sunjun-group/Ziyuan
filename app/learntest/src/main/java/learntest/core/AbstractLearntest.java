@@ -88,7 +88,8 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		double bestCvg = -1;
 		GentestResult gentestResult = null;
 		int i = 0;
-		for (i = 0; i <= 3; i++) {
+		int maxTry = 3;
+		while(true) {
 			try {
 				gentestResult = randomGentests(gentestParams);
 				cfgCoverage = runCfgCoverage(targetMethod, gentestResult.getJunitClassNames());
@@ -101,9 +102,10 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 					// remove files
 					FileUtils.deleteFiles(gentestResult.getAllFiles());
 				}
-				if (i >= 3 || !CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
+				if (i >= maxTry || !CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
 					break;
 				}
+				i++;
 			} catch (Exception e) {
 				// ignore
 				log.debug(e.getMessage());
