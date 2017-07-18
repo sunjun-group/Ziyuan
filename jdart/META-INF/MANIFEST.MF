@@ -42,6 +42,8 @@ Bundle-ClassPath: jdart.jar,
  libs/STPJNI.jar,
  libs/string.jar,
  libs/yicesapijava.jar,
+ libs/jna-4.4.0.jar,
+ libs/jconsole.jar,
  libs/,
  resources/
 Export-Package: aima.core.agent,

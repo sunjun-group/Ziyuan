@@ -1,4 +1,4 @@
-package jdart.core.socket;
+package jdart.core.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,8 +8,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ByteConverter {
 
+	private static Logger log = LoggerFactory.getLogger(ByteConverter.class);
 	public static byte[] convertToBytes(Object object) throws IOException {
 		byte[] bytes;
 		ByteArrayOutputStream bos = null;
@@ -19,7 +23,6 @@ public class ByteConverter {
 			out = new ObjectOutputStream(bos);
 			out.writeObject(object);
 			bytes = bos.toByteArray();
-			System.out.println("send byte[] : "+bytes.length);
 		}finally{
 			bos.close();
 			out.close();
@@ -29,7 +32,7 @@ public class ByteConverter {
 	
 
 	public static Object convertFromBytes(byte[] bytes) throws IOException, ClassNotFoundException {
-		System.out.println("receive byte[] : "+bytes.length);
+		log.info("receive byte[] : "+bytes.length);
 		Object object;
 		ByteArrayInputStream bis = null;
         ObjectInput in = null;

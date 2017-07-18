@@ -10,7 +10,6 @@ package jdart.core;
 
 import java.util.List;
 
-import org.apache.commons.math.stat.descriptive.rank.Median;
 import org.eclipse.core.commands.ExecutionException;
 
 import jdart.model.TestInput;

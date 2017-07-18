@@ -1,11 +1,14 @@
 package learntest.plugin.handler;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -28,6 +31,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
+import org.jacop.scala.network;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +40,7 @@ import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.io.excel.MultiTrial;
 import learntest.io.excel.Trial;
 import learntest.io.excel.TrialExcelHandler;
+import learntest.io.excel.TrialExcelReader;
 import learntest.main.LearnTestConfig;
 import learntest.main.LearnTestParams;
 import learntest.plugin.handler.filter.classfilter.ClassNameFilter;
@@ -60,10 +65,21 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	private static final int EVALUATIONS_PER_METHOD = 5;
 	private List<TargetMethodFilter> methodFilters;
 	private List<TargetClassFilter> classFilters;
+	private static Map<String, Trial> oldTrials;
 	static {
 		DEFAULT_METHOD_FILTERS = Arrays.asList(new TestableMethodFilter(),
 				new NestedBlockChecker());
 		DEFAULT_CLASS_FILTERS = Arrays.asList(new TestableClassFilter());
+
+		/* todo : skip old trial start*/
+		try {
+			TrialExcelReader reader = new TrialExcelReader(new File("E:/hairui/eclipse-java-mars-clean/eclipse/apache-common-math-2.2_0.xlsx"));
+			oldTrials = reader.readDataSheet();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/* todo : skip old trial end */
 	}
 	
 	private int curMethodIdx = 0;
@@ -153,11 +169,19 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		if (validMethods.isEmpty()) {
 			return;
 		}
-		
 		String className = LearnTestUtil.getFullNameOfCompilationUnit(cu);
 		LearnTestConfig.targetClassName = className;
 		for (MethodDeclaration method : validMethods) {
 			TargetMethod targetMethod = initTargetMethod(className, cu, method);
+
+			/* todo : skip old trial start*/
+			String fullName = targetMethod.getMethodFullName();
+			int line = targetMethod.getLineNum();
+			if (oldTrials.containsKey(fullName+"_"+line)) {
+				continue;
+			}
+			
+			/* todo : skip old trial end */
 
 			log.info("-----------------------------------------------------------------------------------------------");
 			log.info("Method {}", ++curMethodIdx);
