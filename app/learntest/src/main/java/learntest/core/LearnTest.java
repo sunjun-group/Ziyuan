@@ -55,7 +55,7 @@ public class LearnTest extends AbstractLearntest {
 				log.info("start node is not covered!");
 				return getRuntimeInfo(cfgCoverage);
 			}
-			log.info("first coverage: " + CoverageUtils.calculateCoverage(cfgCoverage));
+			log.info("first coverage: " + CoverageUtils.calculateCoverageByBranch(cfgCoverage));
 			BreakPoint methodEntryBkp = BreakpointCreator.createMethodEntryBkp(targetMethod);
 			/**
 			 * run testcases
