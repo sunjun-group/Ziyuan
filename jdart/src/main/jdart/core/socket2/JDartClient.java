@@ -1,4 +1,4 @@
-package jdart.core.socket;
+package jdart.core.socket2;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -17,18 +17,14 @@ import jdart.model.TestInput;
 
 public class JDartClient {
 	private static Logger log = LoggerFactory.getLogger(JDartClient.class);
-	public static void main(String[] args) {
-		new JDartClient().run(JDartServer.constructJDartParams());
-	}
-	
-	public void run(JDartParams jdartParams){
+	public void run(JDartParams jdartParams, int port){
 		log.info("JDart begin : "+jdartParams.getClassName()+"."+jdartParams.getMethodName());
 		List<TestInput> result = new JDartCore().run(jdartParams);
 		log.info("JDart over");
 		Socket socket = null;
 		PrintWriter pw = null;
 		try {
-			socket = new Socket("127.0.0.1", JDartProcess.JDART_INTER_PORT);
+			socket = new Socket("127.0.0.1", port);
 			log.info("Connect InterSocket=" + socket);
 			pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
 					socket.getOutputStream())));
@@ -58,5 +54,21 @@ public class JDartClient {
 		}
 	}
 	
+	public static void main(String[] args) throws IOException {
+		if (args.length == 8) {
+			String classpathStr, mainEntry, className, methodName, paramString, app, site;
+			classpathStr = args[0];
+			mainEntry = args[1];
+			className = args[2];
+			methodName = args[3];
+			paramString = args[4];
+			app = args[5];
+			site = args[6];	
+			int port = Integer.parseInt(args[7]);
+			new JDartClient().run(JDartServerSingle.constructJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site), port);
+		}else{
+			new JDartClient().run(JDartServerSingle.constructJDartParams(), 8989);
+		}
+	}
 	
 }

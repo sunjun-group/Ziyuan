@@ -56,6 +56,9 @@ public class TaskManager {
 		for (final Entry<Integer, LocalVirtualMachine> entry : virtualMachines.entrySet()) {
 	        System.out.println(entry.getKey() + " : " + entry.getValue().displayName());
 	    }
+		if (virtualMachines.size()>=4) {
+			System.out.println("");
+		}
 	}
 	public static void main(String[] args) {
 		try {

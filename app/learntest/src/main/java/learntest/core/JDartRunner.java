@@ -15,11 +15,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jdart.core.JDartCore;
 import jdart.core.JDartParams;
-import jdart.core.socket.JDartServer;
-import jdart.core.socket.JDartProcess;
-import jdart.core.socket.JDartProcess;
+import jdart.core.socket2.JDartProcess;
 import jdart.model.TestInput;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.main.LearnTestParams;
