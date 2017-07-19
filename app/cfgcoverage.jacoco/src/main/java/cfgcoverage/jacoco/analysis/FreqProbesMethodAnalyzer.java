@@ -153,6 +153,10 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 	protected void addProbe(int probeId) {
 		int count = 0;
 		if (probes != null &&  (count = probes[probeId]) > 0) {
+			Integer curTotal = coveredProbes.get(lastInsn);
+			if (curTotal != null) {
+				count += curTotal;
+			}
 			coveredProbes.put(lastInsn, count);
 		}
 	}

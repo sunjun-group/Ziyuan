@@ -18,6 +18,9 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+import codecoverage.jacoco.agent.JaCoCo;
+import codecoverage.jacoco.testdata.CoverageSample;
+import codecoverage.jacoco.testdata.CoverageSampleTest;
 import sav.common.core.Pair;
 import sav.common.core.utils.StringUtils;
 import sav.commons.TestConfiguration;
@@ -26,9 +29,6 @@ import sav.commons.testdata.SamplePrograms;
 import sav.strategies.codecoverage.ICoverageReport;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import codecoverage.jacoco.agent.JaCoCo;
-import codecoverage.jacoco.testdata.CoverageSample;
-import codecoverage.jacoco.testdata.CoverageSampleTest;
 
 
 /**

@@ -52,7 +52,7 @@ public class NodeCoverage {
 
 	public void updateCoveredBranchesForTc(int testIdx, int branchId) {
 		List<Integer> coverTcs = coveredBranches.get(branchId);
-		if (CollectionUtils.isEmpty(coverTcs)) {
+		if (coverTcs == null) {
 			coverTcs = new ArrayList<Integer>();
 			coveredBranches.put(branchId, coverTcs);
 		}
@@ -170,6 +170,14 @@ public class NodeCoverage {
 	 */
 	public Collection<Integer> getCoveredBranches() {
 		return coveredBranches.keySet();
+	}
+	
+	public BranchCoveredType getBranchCoveredType() {
+		BranchCoveredType type = BranchCoveredType.NONE;
+		for (int branchIdx : getCoveredBranches()) {
+			type = BranchCoveredType.append(type, cfgNode.getBranchRelationship(branchIdx));
+		}
+		return type;
 	}
 	
 	@SuppressWarnings("unchecked")

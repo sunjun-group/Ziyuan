@@ -59,12 +59,22 @@ public class ExtInstruction extends Instruction {
 
 	public void updateFalseBranchCvgInCaseMultitargetJumpSources() {
 		CfgNode trueFalseBranch = cfgNode.findBranch(BranchRelationship.TRUE_FALSE);
+		if (!nodeCoverage.isCovered(testIdx) || trueFalseBranch == null) {
+			return;
+		}
 		CfgNode trueBranch = cfgNode.findBranch(BranchRelationship.TRUE);
-		List<Integer> trueCoverage = ((trueBranch == null) ? null
-				: nodeCoverage.getUnDupCoveredBranches().get(trueBranch.getIdx()));
-		if (nodeCoverage.isCovered(testIdx) && (trueCoverage == null || !trueCoverage.contains(testIdx))) {
+		int trueCoveredFreq = getCoveredFreq(nodeCoverage.getCfgCoverage(), trueBranch, testIdx);
+		int nodeCoveredFreq = nodeCoverage.getCoveredFreq(testIdx);
+		if (nodeCoveredFreq - trueCoveredFreq > 0) {
 			nodeCoverage.updateCoveredBranchesForTc(trueFalseBranch, testIdx);
 		}
+	}
+	
+	private static int getCoveredFreq(CfgCoverage cfgCoverage, CfgNode branch, int testIdx) {
+		if (branch == null) {
+			return 0;
+		}
+		return cfgCoverage.getCoverage(branch).getCoveredFreq(testIdx);
 	}
 	
 	private void setCovered(ExtInstruction coveredBranch, int count) {
@@ -115,4 +125,8 @@ public class ExtInstruction extends Instruction {
 		cfgNode.setPredecessor(source.cfgNode, branchRelationship);
 	}
 
+	@Override
+	public String toString() {
+		return cfgNode.toString();
+	}
 }
