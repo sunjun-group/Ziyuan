@@ -48,13 +48,7 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 	 */
 	public SamplingResult runSamples(List<double[]> domains, List<ExecVar> originVars) throws SavException {
 		StopTimer timer = new StopTimer("runSample");
-		log.debug("vars: {}", originVars);
-		StringBuilder builder = new StringBuilder();
-		for (double[] value : domains) {
-			builder.append(Arrays.toString(value));
-			builder.append("\n");
-		}
-		log.debug(builder.toString());
+//		logGeneratedInputs(domains, originVars);
 		timer.start();
 		SamplingResult samples = new SamplingResult(decisionProbes);
 		log.debug("Executing {} samples...", domains.size());
@@ -85,6 +79,16 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 			return null;
 		}
 		return samples;  
+	}
+
+	private void logGeneratedInputs(List<double[]> domains, List<ExecVar> originVars) {
+		log.debug("vars: {}", originVars);
+		StringBuilder builder = new StringBuilder();
+		for (double[] value : domains) {
+			builder.append(Arrays.toString(value));
+			builder.append("\n");
+		}
+		log.debug(builder.toString());
 	}
 
 	/**

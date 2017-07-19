@@ -52,5 +52,16 @@ public class GentestTest {
 			}
 		}
 	}
+	
+	@Test
+	public void testVisibleParam() throws SecurityException, SavException, FileNotFoundException {
+		RandomTester tester = new RandomTester(5, 5, 100);
+		List<Method> methods = new ArrayList<Method>();
+		addMethods(methods, BoundedStack.class);
+		Pair<List<Sequence>, List<Sequence>> result = tester.test(toMethodCalls(methods));
+		TestsPrinter printer = new TestsPrinter("testdata.test.result.boundedstack", 
+				"testdata.test.result.boundedstack", "test", "BoundedStack", "./src/test/java");
+		printer.printTests(result);
+	}
 }
  

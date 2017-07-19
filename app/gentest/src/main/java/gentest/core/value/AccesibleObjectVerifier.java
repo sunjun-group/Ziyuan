@@ -9,6 +9,7 @@
 package gentest.core.value;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Modifier;
 
 /**
  * @author LLT
@@ -23,10 +24,14 @@ public class AccesibleObjectVerifier {
 
 	public static boolean verify(AccessibleObject constructorOrMethod, Class<?>[] parameterTypes) {
 		for (Class<?> paramType : parameterTypes) {
-			if (isAccessRestrictionClass(paramType)) {
+			if (isAccessRestrictionClass(paramType) || invisibleClass(paramType)) {
 				return false;
 			}
 		}
 		return true;
+	}
+
+	private static boolean invisibleClass(Class<?> paramType) {
+		return !Modifier.isPublic(paramType.getModifiers());
 	}
 }

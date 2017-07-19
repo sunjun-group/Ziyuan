@@ -10,6 +10,7 @@ package learntest.core.gentest;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,9 +28,11 @@ import gentest.core.data.Sequence;
 import gentest.injection.GentestModules;
 import gentest.injection.TestcaseGenerationScope;
 import gentest.junit.FileCompilationUnitPrinter;
+import gentest.junit.JWriter;
 import gentest.junit.PrinterParams;
 import gentest.junit.TestsPrinter;
 import gentest.junit.TestsPrinter.PrintOption;
+import japa.parser.ast.CompilationUnit;
 import learntest.core.commons.LearntestExceptionType;
 import learntest.core.commons.utils.DomainUtils;
 import learntest.gentest.TestSeqGenerator;
@@ -46,7 +49,6 @@ import sav.strategies.dto.execute.value.ExecVar;
  * @author LLT
  * 
  */
-/* LLT: THIS IS CREATED FOR A PURPOSE! */
 public class TestGenerator {
 	private static Logger log = LoggerFactory.getLogger(TestGenerator.class);
 	protected ClassLoader prjClassLoader;
@@ -118,7 +120,6 @@ public class TestGenerator {
 		Set<String> failToSetVars = new HashSet<String>();
 		for (double[] solution : solutions) {
 			result.addInputData(DomainUtils.toBreakpointValue(solution, vars));
-			//sequences.add(generator.generateSequence(input, variables.get(index ++)));
 			sequences.add(generator.generateSequence(solution, vars, failToSetVars));
 		}
 		if (!failToSetVars.isEmpty()) {
