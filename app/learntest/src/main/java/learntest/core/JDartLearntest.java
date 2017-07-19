@@ -49,6 +49,12 @@ public class JDartLearntest extends LearnTest {
 			log.info("jdart result: {}", TextFormatUtils.printListSeparateWithNewLine(inputs));
 			return;
 		}
+		else{
+			log.info("jdart result:");
+			for(TestInput input: inputs){
+				log.info("input: " + input.toString());
+			}
+		}
 		init(params);
 		List<BreakpointValue> bkpVals = JdartTestInputUtils.toBreakpointValue(inputs,
 				params.getTargetMethod().getMethodFullName());

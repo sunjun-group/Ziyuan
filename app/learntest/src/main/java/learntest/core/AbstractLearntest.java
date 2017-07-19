@@ -134,12 +134,12 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		}
 		targetMethod.updateCfgIfNotExist(cfgCoverage.getCfg());
 		timer.logResults(log);
-		log.debug("coverage: {}", CoverageUtils.calculateCoverage(cfgCoverage));
+		log.debug("coverage: {}", CoverageUtils.calculateCoverageByBranch(cfgCoverage));
 		return cfgCoverage;
 	}
 	
 	protected RunTimeInfo getRuntimeInfo(CfgCoverage cfgCoverage) {
-		double coverage = CoverageUtils.calculateCoverage(cfgCoverage);
+		double coverage = CoverageUtils.calculateCoverageByBranch(cfgCoverage);
 		log.debug("coverage: {}", coverage);
 		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
 			StringBuilder sb = new StringBuilder();
