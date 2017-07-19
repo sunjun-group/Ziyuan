@@ -43,9 +43,11 @@ public class TextFormatUtils {
 		long diffMin = timeUnit.toMinutes(time);
 		StringBuilder sb = new StringBuilder();
 		sb.append(time).append(" ms");
-		if (diffMin > 1) {
-			sb.append("(").append(diffMin).append("m").append(")");
-		} else if (diffSec > 1) {
+		if (diffMin >= 1) {
+			sb.append("(").append(diffMin).append("m")
+				.append(" ").append(diffSec - TimeUnit.MINUTES.toSeconds(diffMin)).append("s")
+				.append(")");
+		} else if (diffSec >= 1) {
 			sb.append("(").append(diffSec).append("s").append(")");
 		}
 		return sb.toString();

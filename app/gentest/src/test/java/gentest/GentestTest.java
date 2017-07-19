@@ -19,12 +19,24 @@ import org.junit.Test;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.commons.testdata.BoundedStack;
+import testdata.RunBigDecimal;
 
 /**
  * @author LLT
  *
  */
 public class GentestTest {
+	
+	@Test
+	public void testBigDecimal() throws SecurityException, SavException, FileNotFoundException {
+		RandomTester tester = new RandomTester(5, 5, 100);
+		List<Method> methods = new ArrayList<Method>();
+		addMethods(methods, RunBigDecimal.class);
+		Pair<List<Sequence>, List<Sequence>> result = tester.test(toMethodCalls(methods));
+		TestsPrinter printer = new TestsPrinter("testdata.test.result.runbigdecimal", 
+				"testdata.test.result.runbigdecimal", "setSubMatrix", "RunBigDecimal", "./src/test/java");
+		printer.printTests(result);
+	}
 
 	@Test
 	public void test() throws SecurityException, SavException, FileNotFoundException {

@@ -8,6 +8,7 @@
 
 package sav.commons.utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,6 +22,29 @@ import sav.common.core.utils.Randomness;
  *
  */
 public class RandomnessTest {
+	
+	@Test
+	public void testAssignable() {
+		System.out.println(ArrayList.class.isAssignableFrom(List.class));
+	}
+	
+	@Test
+	public void testProb() {
+		int maxLevel = 5;
+		for (int i = 0; i < 100; i++) {
+			int level = Randomness.nextInt(maxLevel) + 1;
+			double prob = getProbIncreaseByLevel(level, maxLevel);
+			System.out.println("level = " + level + ", prob = " + prob + ", " +  
+					Randomness.weighedCoinFlip(prob));
+		}
+	}
+	
+	private double getProbIncreaseByLevel(int level, int maxLevel) {
+		if (level <= 3) {
+			return 0.45;
+		}
+		return 0.8; 
+	}
 	
 	@Test
 	public void testRandomSubList_bound() {
