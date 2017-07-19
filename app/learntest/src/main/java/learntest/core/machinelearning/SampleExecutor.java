@@ -9,6 +9,7 @@
 package learntest.core.machinelearning;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import sav.common.core.SavException;
 import sav.common.core.SavExceptionType;
 import sav.common.core.utils.FileUtils;
 import sav.common.core.utils.StopTimer;
+import sav.common.core.utils.TextFormatUtils;
 import sav.strategies.dto.execute.value.ExecVar;
 
 /**
@@ -46,6 +48,13 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 	 */
 	public SamplingResult runSamples(List<double[]> domains, List<ExecVar> originVars) throws SavException {
 		StopTimer timer = new StopTimer("runSample");
+		log.debug("vars: {}", originVars);
+		StringBuilder builder = new StringBuilder();
+		for (double[] value : domains) {
+			builder.append(Arrays.toString(value));
+			builder.append("\n");
+		}
+		log.debug(builder.toString());
 		timer.start();
 		SamplingResult samples = new SamplingResult(decisionProbes);
 		log.debug("Executing {} samples...", domains.size());

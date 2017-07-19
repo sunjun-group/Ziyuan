@@ -65,9 +65,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	private void learn(CfgNode node, DecisionProbes probes, List<Integer> visitedNodes) throws SavException {
 		log.debug("parsing the node in line " + node.getLine());
 		
-		for (CfgNode dominatee : CfgUtils.getPrecondInherentDominatee(node)) {
-			if (!visitedNodes.contains(dominatee.getIdx())) {
-				learn(dominatee, probes, visitedNodes);
+		for (CfgNode dominator : CfgUtils.getPrecondInherentDominatee(node)) {
+			if (!visitedNodes.contains(dominator.getIdx())) {
+				learn(dominator, probes, visitedNodes);
 			}
 		}
 		DecisionNodeProbe nodeProbe = probes.getNodeProbe(node);
@@ -79,6 +79,8 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		OrCategoryCalculator preconditions = getPreconditions(probes, node);
 		dataPreprocessor.sampleForBranchCvg(node, preconditions);
 		dataPreprocessor.sampleForLoopCvg(node, preconditions);
+		
+		System.currentTimeMillis();
 		
 		nodeProbe = probes.getNodeProbe(node);
 		updatePrecondition(nodeProbe);
