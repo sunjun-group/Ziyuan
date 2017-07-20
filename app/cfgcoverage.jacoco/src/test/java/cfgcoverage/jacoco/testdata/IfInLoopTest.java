@@ -19,6 +19,7 @@ public class IfInLoopTest {
 	@Test
 	public void test() {
 		IfInLoop sample = new IfInLoop();
-		sample.run();
+		sample.run(2);
+		sample.run(-1);
 	}
 }

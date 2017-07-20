@@ -31,6 +31,7 @@ public class JaCoCoMockSimpleRunner extends JaCoCoMockJunitRunner {
 		System.out.println("RunTestcases:");
 		ExecutionTimer executionTimer = getExecutionTimer(params.getTimeout());
 		for (String classMethodStr : params.getClassMethods()) {
+			System.out.println(classMethodStr + "...");
 			Pair<String, String> classMethod = JunitUtils.toPair(classMethodStr);
 			final Class<?> clazz = Class.forName(classMethod.a);
 			final Method method = ClassUtils.loockupMethod(clazz, classMethod.b);

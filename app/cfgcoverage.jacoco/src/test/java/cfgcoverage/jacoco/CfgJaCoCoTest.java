@@ -20,6 +20,8 @@ import cfgcoverage.jacoco.testdata.ForSample;
 import cfgcoverage.jacoco.testdata.ForSampleTest;
 import cfgcoverage.jacoco.testdata.IfInLoop;
 import cfgcoverage.jacoco.testdata.IfInLoopTest;
+import cfgcoverage.jacoco.testdata.IfSample;
+import cfgcoverage.jacoco.testdata.IfSampleTest;
 import cfgcoverage.jacoco.testdata.LoopSample;
 import cfgcoverage.jacoco.testdata.LoopSampleTest;
 import cfgcoverage.jacoco.testdata.SwitchSample;
@@ -104,5 +106,11 @@ public class CfgJaCoCoTest extends AbstractTest {
 	public void testIfInLoop() throws Exception {
 		runSimpleRunner = true;
 		runTest(IfInLoop.class, IfInLoopTest.class, "run");
+	}
+	
+	@Test
+	public void testIf() throws Exception {
+		runSimpleRunner = true;
+		runTest(IfSample.class, IfSampleTest.class, "run");
 	}
 }

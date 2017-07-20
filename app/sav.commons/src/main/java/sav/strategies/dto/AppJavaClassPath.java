@@ -53,6 +53,10 @@ public class AppJavaClassPath {
 		classpaths.add(path);
 	}
 	
+	public void clearClasspath() {
+		classpaths.clear();
+	}
+	
 	public String getSrc() {
 		return src;
 	}

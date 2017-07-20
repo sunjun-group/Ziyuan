@@ -72,6 +72,7 @@ public class JunitRunner {
 		List<Failure> falures = new ArrayList<Failure>();
 		ExecutionTimer executionTimer = getExecutionTimer(params.getTimeout());
 		for (String classMethodStr : params.getClassMethods()) {
+			System.out.println(classMethodStr+ "...");
 			Pair<String, String> classMethod = JunitUtils.toPair(classMethodStr);
 			Request request = toRequest(classMethod);
 			if (request == null) {
