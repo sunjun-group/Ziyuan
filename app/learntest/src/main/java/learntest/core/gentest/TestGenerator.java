@@ -10,7 +10,6 @@ package learntest.core.gentest;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,11 +27,8 @@ import gentest.core.data.Sequence;
 import gentest.injection.GentestModules;
 import gentest.injection.TestcaseGenerationScope;
 import gentest.junit.FileCompilationUnitPrinter;
-import gentest.junit.JWriter;
 import gentest.junit.PrinterParams;
 import gentest.junit.TestsPrinter;
-import gentest.junit.TestsPrinter.PrintOption;
-import japa.parser.ast.CompilationUnit;
 import learntest.core.commons.LearntestExceptionType;
 import learntest.core.commons.utils.DomainUtils;
 import learntest.gentest.TestSeqGenerator;
@@ -99,8 +95,7 @@ public class TestGenerator {
 	/**
 	 * @param printOption whether to append existing test file or create a new one.
 	 */
-	public GentestResult genTestAccordingToSolutions(GentestParams params, List<double[]> solutions, List<ExecVar> vars,
-			PrintOption printOption) throws SavException {
+	public GentestResult genTestAccordingToSolutions(GentestParams params, List<double[]> solutions, List<ExecVar> vars) throws SavException {
 		MethodCall target = createMethodCall(params);
 		if (target == null) {
 			return null;

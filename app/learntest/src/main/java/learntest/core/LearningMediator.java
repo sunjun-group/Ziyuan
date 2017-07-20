@@ -132,7 +132,8 @@ public class LearningMediator {
 	public GentestResult genTestAccordingToSolutions(List<double[]> solutions, List<ExecVar> vars,
 			PrintOption printOption) throws SavException {
 		GentestParams params = LearntestParamsUtils.createGentestParams(appClassPath, learntestParams, GenTestPackage.RESULT);
-		return getTestGenerator().genTestAccordingToSolutions(params, solutions, vars, printOption);
+		params.setPrintOption(printOption);
+		return getTestGenerator().genTestAccordingToSolutions(params, solutions, vars);
 	}
 	
 }
