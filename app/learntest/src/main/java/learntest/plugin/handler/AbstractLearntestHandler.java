@@ -224,6 +224,8 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 					params.getTargetMethod().getLineNum());
 			log.info("-----------------------------------------------------------------------------------------------");
 			
+			params.setMaxTcs(100);
+			
 			// l2t params
 			LearnTestParams l2tParams = params;
 			// randoop params
@@ -237,8 +239,8 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			log.info("run jdart..");
 			jdartInfo = runJdart(l2tParams);
 			
-			log.info("run l2t..");
-			runLearntest(l2tAverageInfo, l2tParams);
+//			log.info("run l2t..");
+//			runLearntest(l2tAverageInfo, l2tParams);
 			
 //			randoopParam.setApproach(LearnTestApproach.RANDOOP);
 //			randoopParam.setInitialTests(l2tParams.getInitialTests());

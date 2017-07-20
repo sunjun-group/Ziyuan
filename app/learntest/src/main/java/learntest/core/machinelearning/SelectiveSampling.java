@@ -40,6 +40,17 @@ public class SelectiveSampling<T extends ISampleResult> {
 	public T selectData(List<ExecVar> vars, OrCategoryCalculator precondition, List<Divider> divider, int maxTcs)
 			throws SavException, SAVExecutionTimeOutException {
 		List<double[]> data = selectiveSampling.selectData(vars, precondition, divider, maxTcs);
+		
+		StringBuffer buf = new StringBuffer();
+		for(double[] d: data){
+			buf.append("[");
+			for(double val: d){
+				buf.append(val + ", ");				
+			}
+			buf.append("]");
+		}
+		buf.append("\n");
+		
 		return runData(data, vars);
 	}
 	
