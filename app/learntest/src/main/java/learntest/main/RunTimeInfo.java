@@ -6,11 +6,20 @@ public class RunTimeInfo {
 	private long time;
 	private double coverage;
 	private int testCnt;
+	
+	private String coverageInfo;
 
 	public RunTimeInfo(long time, double coverage, int testCnt) {
 		this.time = time;
 		this.coverage = coverage;
 		this.testCnt = testCnt;
+	}
+	
+	public RunTimeInfo(long time, double coverage, int testCnt, String coverageInfo) {
+		this.time = time;
+		this.coverage = coverage;
+		this.testCnt = testCnt;
+		this.coverageInfo = coverageInfo;
 	}
 	
 	public RunTimeInfo() {
@@ -92,6 +101,14 @@ public class RunTimeInfo {
 			return 0.0;
 		}
 		return info.getCoverage();
+	}
+
+	public String getCoverageInfo() {
+		return coverageInfo;
+	}
+
+	public void setCoverageInfo(String coverageInfo) {
+		this.coverageInfo = coverageInfo;
 	}
 	
 	

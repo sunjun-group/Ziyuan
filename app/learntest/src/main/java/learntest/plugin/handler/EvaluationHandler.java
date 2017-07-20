@@ -175,11 +175,11 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			TargetMethod targetMethod = initTargetMethod(className, cu, method);
 
 			/* todo : skip old trial start*/
-			String fullName = targetMethod.getMethodFullName();
-			int line = targetMethod.getLineNum();
-			if (oldTrials.containsKey(fullName+"_"+line)) {
-				continue;
-			}
+//			String fullName = targetMethod.getMethodFullName();
+//			int line = targetMethod.getLineNum();
+//			if (oldTrials.containsKey(fullName+"_"+line)) {
+//				continue;
+//			}
 			
 			/* todo : skip old trial end */
 
