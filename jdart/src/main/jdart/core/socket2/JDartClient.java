@@ -30,6 +30,7 @@ public class JDartClient {
 					socket.getOutputStream())));
 			if (result != null) {
 				 for (int i = 0; i < result.size(); i++) {  
+					 log.info("JDart result : "+result.get(i));
 					 byte[] bytes = ByteConverter.convertToBytes(result.get(i));
 					 log.info("send byte[] :"+bytes.length);
 					 pw.println(new String(bytes));
