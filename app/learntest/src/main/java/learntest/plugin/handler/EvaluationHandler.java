@@ -3,10 +3,8 @@ package learntest.plugin.handler;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,66 +16,46 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.DoStatement;
-import org.eclipse.jdt.core.dom.EnhancedForStatement;
-import org.eclipse.jdt.core.dom.ForStatement;
-import org.eclipse.jdt.core.dom.IBinding;
-import org.eclipse.jdt.core.dom.IVariableBinding;
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.Type;
-import org.jacop.scala.network;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import learntest.core.LearnTestParams;
 import learntest.core.commons.LearntestConstants;
 import learntest.core.commons.data.classinfo.TargetMethod;
-import learntest.io.excel.MultiTrial;
-import learntest.io.excel.Trial;
-import learntest.io.excel.TrialExcelHandler;
-import learntest.io.excel.TrialExcelReader;
-import learntest.main.LearnTestConfig;
-import learntest.main.LearnTestParams;
+import learntest.plugin.LearnTestConfig;
+import learntest.plugin.export.io.excel.MultiTrial;
+import learntest.plugin.export.io.excel.Trial;
+import learntest.plugin.export.io.excel.TrialExcelHandler;
+import learntest.plugin.export.io.excel.TrialExcelReader;
 import learntest.plugin.handler.filter.classfilter.ClassNameFilter;
 import learntest.plugin.handler.filter.classfilter.TargetClassFilter;
 import learntest.plugin.handler.filter.classfilter.TestableClassFilter;
+import learntest.plugin.handler.filter.methodfilter.MethodNameFilter;
 import learntest.plugin.handler.filter.methodfilter.NestedBlockChecker;
 import learntest.plugin.handler.filter.methodfilter.TargetMethodFilter;
 import learntest.plugin.handler.filter.methodfilter.TestableMethodFilter;
 import learntest.plugin.utils.IMethodUtils;
 import learntest.plugin.utils.IProjectUtils;
-import learntest.util.LearnTestUtil;
+import learntest.plugin.utils.LearnTestUtil;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.FileUtils;
-import sav.common.core.utils.PrimitiveUtils;
 import sav.common.core.utils.SingleTimer;
 import sav.settings.SAVTimer;
 
 public class EvaluationHandler extends AbstractLearntestHandler {
 	private static Logger log = LoggerFactory.getLogger(EvaluationHandler.class);
-	private static final List<TargetMethodFilter> DEFAULT_METHOD_FILTERS;
-	private static final List<TargetClassFilter> DEFAULT_CLASS_FILTERS;
 	private static final int EVALUATIONS_PER_METHOD = 5;
 	private List<TargetMethodFilter> methodFilters;
 	private List<TargetClassFilter> classFilters;
 	private static Map<String, Trial> oldTrials;
 	static {
-		DEFAULT_METHOD_FILTERS = Arrays.asList(new TestableMethodFilter(),
-				new NestedBlockChecker());
-		DEFAULT_CLASS_FILTERS = Arrays.asList(new TestableClassFilter());
-
 		/* todo : skip old trial start*/
 		try {
 			TrialExcelReader reader = new TrialExcelReader(new File("E:/hairui/eclipse-java-mars-clean/eclipse/apache-common-math-2.2_0.xlsx"));
 			oldTrials = reader.readDataSheet();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// ignore
 		}
 		/* todo : skip old trial end */
 	}
@@ -90,7 +68,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		final List<IPackageFragmentRoot> roots = IProjectUtils.findTargetSourcePkgRoots(LearnTestUtil.getJavaProject());
 		TrialExcelHandler excelHandler = null;
 		try {
-			excelHandler = new TrialExcelHandler(LearnTestConfig.projectName);
+			excelHandler = new TrialExcelHandler(LearnTestConfig.getINSTANCE().getProjectName());
 			initFilters(excelHandler.readOldTrials());
 		} catch (Exception e1) {
 			handleException(e1);
@@ -117,10 +95,9 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	}
 
 	private void initFilters(Collection<Trial> oldTrials) {
-		methodFilters = new ArrayList<TargetMethodFilter>(DEFAULT_METHOD_FILTERS);
-		classFilters = new ArrayList<TargetClassFilter>(DEFAULT_CLASS_FILTERS);
-		classFilters.add(new ClassNameFilter(getExcludedClasses()));
-//		methodFilters.add(new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME));
+		methodFilters = Arrays.asList(new TestableMethodFilter(), new NestedBlockChecker(),
+				new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME));
+		classFilters = Arrays.asList(new TestableClassFilter(), new ClassNameFilter(getExcludedClasses()));
 	}
 
 	private List<String> getExcludedClasses() {
@@ -147,32 +124,31 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				if (!valid) {
 					continue;
 				}
-				MethodCollector collector = new MethodCollector(cu);
+				TestableMethodCollector collector = new TestableMethodCollector(cu, methodFilters);
 				cu.accept(collector);
-				updateRuntimeInfo(info, cu, collector);
-				
-				evaluateForMethodList(excelHandler, cu, collector.mdList);
+				List<TargetMethod> validMethods = collector.getValidMethods();
+				updateRuntimeInfo(info, cu, collector.getTotalMethodNum(), validMethods.size());
+				evaluateForMethodList(excelHandler, validMethods);
 			}
 		}
 		return info;
 	}
 
-	private void updateRuntimeInfo(RunTimeCananicalInfo info, CompilationUnit cu, MethodCollector collector) {
+	private void updateRuntimeInfo(RunTimeCananicalInfo info, CompilationUnit cu, int totalMethods, int validMethods) {
 		int length0 = cu.getLineNumber(cu.getStartPosition() + cu.getLength() - 1);
 		info.addTotalLen(length0);
-		info.validNum += collector.mdList.size();
-		info.totalNum += collector.totalMethodNum;
+		info.validNum += validMethods;
+		info.totalNum += totalMethods;
 	}
 
-	protected void evaluateForMethodList(TrialExcelHandler excelHandler, CompilationUnit cu,
-			List<MethodDeclaration> validMethods) {
-		if (validMethods.isEmpty()) {
+	protected void evaluateForMethodList(TrialExcelHandler excelHandler, List<TargetMethod> targetMethods) {
+		if (targetMethods.isEmpty()) {
 			return;
 		}
-		String className = LearnTestUtil.getFullNameOfCompilationUnit(cu);
-		LearnTestConfig.targetClassName = className;
-		for (MethodDeclaration method : validMethods) {
-			TargetMethod targetMethod = initTargetMethod(className, cu, method);
+		
+		for (TargetMethod targetMethod : targetMethods) {
+			log.info("-----------------------------------------------------------------------------------------------");
+			log.info("Method {}", ++curMethodIdx);
 
 			/* todo : skip old trial start*/
 //			String fullName = targetMethod.getMethodFullName();
@@ -182,15 +158,13 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 //			}
 			
 			/* todo : skip old trial end */
-
-			log.info("-----------------------------------------------------------------------------------------------");
-			log.info("Method {}", ++curMethodIdx);
 			try{
 			    PrintWriter writer = new PrintWriter("latest_working_method.txt", "UTF-8");
 			    writer.println("working method: " + targetMethod.getMethodFullName());
 			    writer.close();
 			} catch (IOException e) {
 			}
+
 			
 			MultiTrial multiTrial = new MultiTrial();
 			for (int i = 0; i < EVALUATIONS_PER_METHOD; i++) {
@@ -228,137 +202,6 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		LearnTestParams params = new LearnTestParams(targetMethod);
 		setSystemConfig(params);
 		return params;
-	}
-	
-	class FieldAccessChecker extends ASTVisitor {
-		boolean isFieldAccess = false;
-		
-		public boolean visit(SimpleName name){
-			IBinding binding = name.resolveBinding();
-			if(binding instanceof IVariableBinding){
-				IVariableBinding vb = (IVariableBinding)binding;
-				if(vb.isField()){
-					if(vb.getType().isPrimitive()){
-						isFieldAccess = true;						
-					}
-					if(vb.getType().isArray()){
-						if(vb.getType().getElementType().isPrimitive()){
-							isFieldAccess = true;
-						}
-					}
-				}
-			}
-			return false;
-		}
-	}
-	
-	
-	
-	class DecisionStructureChecker extends ASTVisitor {
-
-		private boolean isStructured = false;
-
-		public boolean visit(IfStatement stat) {
-			this.setStructured(true);
-			return false;
-		}
-
-		public boolean visit(DoStatement stat) {
-			this.setStructured(true);
-			return false;
-		}
-
-		public boolean visit(EnhancedForStatement stat) {
-			this.setStructured(true);
-			return false;
-		}
-
-		public boolean visit(ForStatement stat) {
-			this.setStructured(true);
-			return false;
-		}
-
-		public boolean isStructured() {
-			return isStructured;
-		}
-
-		public void setStructured(boolean isStructured) {
-			this.isStructured = isStructured;
-		}
-	}
-	
-	class MethodCollector extends ASTVisitor {
-		List<MethodDeclaration> mdList = new ArrayList<MethodDeclaration>();
-		CompilationUnit cu;
-		int totalMethodNum = 0;
-		
-		public MethodCollector(CompilationUnit cu){
-			this.cu = cu;
-		}
-		
-		public boolean visit(MethodDeclaration md) {
-			boolean shouldTest = true;
-			for (TargetMethodFilter filter : methodFilters) {
-				if (!filter.isValid(cu, md)) {
-					shouldTest = false;
-					break;
-				}
-			}
-			if (shouldTest) {
-				mdList.add(md);
-			}
-			return false;
-		}
-		
-		@SuppressWarnings("unused")
-		private boolean containsAtLeastOnePrimitiveType(List<?> parameters){
-			for (Object obj : parameters) {
-				if (obj instanceof SingleVariableDeclaration) {
-					SingleVariableDeclaration svd = (SingleVariableDeclaration) obj;
-					Type type = svd.getType();
-					if(type.isPrimitiveType()){
-						return true;
-					}
-					if(type.isArrayType()){
-						ArrayType aType = (ArrayType)type;
-						if(aType.getElementType().isPrimitiveType()){
-							return true;
-						}
-					}
-				}
-			}
-			return false;
-		}
-
-		@SuppressWarnings("unused")
-		private boolean containsAllPrimitiveType(List<?> parameters){
-			for (Object obj : parameters) {
-				if (obj instanceof SingleVariableDeclaration) {
-					SingleVariableDeclaration svd = (SingleVariableDeclaration) obj;
-					Type type = svd.getType();
-					String typeString = type.toString();
-					if(!PrimitiveUtils.isPrimitive(typeString) || svd.getExtraDimensions() > 0){
-						return false;
-					}
-				}
-			}
-			return true;
-		}
-		
-		
-		@SuppressWarnings({ "rawtypes", "unused" })
-		private boolean containsArrayOrString(List parameters) {
-			for (Object obj : parameters) {
-				if (obj instanceof SingleVariableDeclaration) {
-					SingleVariableDeclaration svd = (SingleVariableDeclaration) obj;
-					Type type = svd.getType();
-					if (type.isArrayType() || type.toString().contains("String")) {
-						return true;
-					}
-				}
-			}
-			return false;
-		}
 	}
 	
 	class RunTimeCananicalInfo {

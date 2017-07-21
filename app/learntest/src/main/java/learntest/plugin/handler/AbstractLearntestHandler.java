@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.slf4j.Logger;
@@ -32,27 +32,23 @@ import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.CfgJaCoCoConfigs;
 import learntest.core.JDartLearntest;
-import learntest.core.LearntestParamsUtils;
-import learntest.core.LearntestParamsUtils.GenTestPackage;
+import learntest.core.LearnTestParams;
+import learntest.core.LearnTestParams.LearntestSystemVariable;
+import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;
-import learntest.core.commons.data.classinfo.JunitTestsInfo;
 import learntest.core.commons.data.classinfo.TargetClass;
 import learntest.core.commons.data.classinfo.TargetMethod;
+import learntest.core.commons.exception.LearnTestException;
 import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.GentestResult;
 import learntest.core.gentest.TestGenerator;
-import learntest.exception.LearnTestException;
-import learntest.io.excel.Trial;
-import learntest.main.LearnTestConfig;
-import learntest.main.LearnTestParams;
-import learntest.main.LearnTestParams.LearntestSystemVariable;
-import learntest.main.RunTimeInfo;
-import learntest.plugin.utils.IMethodUtils;
+import learntest.plugin.LearnTestConfig;
+import learntest.plugin.export.io.excel.Trial;
 import learntest.plugin.utils.IProjectUtils;
 import learntest.plugin.utils.IResourceUtils;
 import learntest.plugin.utils.IStatusUtils;
 import learntest.plugin.utils.JdartConstants;
-import learntest.util.LearnTestUtil;
+import learntest.plugin.utils.LearnTestUtil;
 import sav.common.core.Constants;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
@@ -102,7 +98,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	
 	public void refreshProject(){
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.projectName);
+		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.getINSTANCE().getProjectName());
 		
 		try {
 			iProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
@@ -120,16 +116,6 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		appClasspath = initAppJavaClassPath();
 	}
 	
-	protected LearnTestParams prepareLearnTestData() throws SavException {
-		LearnTestParams params = initLearntestParams();
-		GentestParams gentestParams = LearntestParamsUtils.createGentestParams(appClasspath, params, GenTestPackage.INIT);
-		gentestParams.setGenerateMainClass(true);
-		/* generate testcase and jdart entry */
-		GentestResult testResult = generateTestcases(gentestParams);
-		params.setInitialTests(new JunitTestsInfo(testResult, getAppClasspath().getClassLoader()));
-		return params;
-	}
-	
 	public AppJavaClassPath getAppClasspath() {
 		if (appClasspath == null) {
 			appClasspath = initAppJavaClassPath();
@@ -139,7 +125,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	
 	private AppJavaClassPath initAppJavaClassPath() {
 		try {
-			IProject project = IProjectUtils.getProject(LearnTestConfig.projectName);
+			IProject project = IProjectUtils.getProject(LearnTestConfig.getINSTANCE().getProjectName());
 			IJavaProject javaProject = IProjectUtils.getJavaProject(project);
 			AppJavaClassPath appClasspath = new AppJavaClassPath();
 			appClasspath.setJavaHome(IProjectUtils.getJavaHome(javaProject));
@@ -158,42 +144,48 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		}
 	}
 	
-	protected TargetMethod initTargetMethod(String className, CompilationUnit cu, MethodDeclaration method) {
-		String simpleMethodName = method.getName().getIdentifier();
-		int lineNumber = IMethodUtils.getStartLineNo(cu, method);
-		TargetClass targetClass = new TargetClass(className);
-		TargetMethod targetMethod = new TargetMethod(targetClass);
-		targetMethod.setMethodName(simpleMethodName);
-		targetMethod.setLineNum(lineNumber);
-		targetMethod.setMethodLength(IMethodUtils.getLength(cu, method));
-		targetMethod.setMethodSignature(LearnTestUtil.getMethodSignature(method));
-		List<String> paramNames = new ArrayList<String>(CollectionUtils.getSize(method.parameters()));
-		List<String> paramTypes = new ArrayList<String>(paramNames.size());
-		for(Object obj: method.parameters()){
-			if(obj instanceof SingleVariableDeclaration){
-				SingleVariableDeclaration svd = (SingleVariableDeclaration)obj;
-				paramNames.add(svd.getName().getIdentifier());
-				paramTypes.add(svd.getType().toString());
-			}
-		}
-		targetMethod.setParams(paramNames);
-		targetMethod.setParamTypes(paramTypes);
-		
-		/* TODO to remove*/
-		LearnTestConfig.targetMethodName = simpleMethodName;
-		LearnTestConfig.targetMethodLineNum = String.valueOf(lineNumber);
-		return targetMethod;
+	protected LearnTestParams initLearntestParamsFromPreference() {
+		return initLearntestParams(LearnTestConfig.getINSTANCE());
 	}
-
-	protected LearnTestParams initLearntestParams() {
+	
+	protected LearnTestParams initLearntestParams(LearnTestConfig config) {
 		try {
-			LearnTestParams params = LearnTestParams.initFromLearnTestConfig();
+			LearnTestParams params = new LearnTestParams();
+			params.setApproach(config.isL2TApproach() ? LearnTestApproach.L2T : LearnTestApproach.RANDOOP);
+			try {
+				TargetMethod targetMethod = initTargetMethod(config);
+				params.setTargetMethod(targetMethod);
+			} catch (JavaModelException e) {
+				throw new SavException(e, ModuleEnum.UNSPECIFIED, e.getMessage());
+			}
 			setSystemConfig(params);
 			return params;
 		} catch (SavException e) {
 			throw new SavRtException(e);
 		}
 	}
+	
+	private static TargetMethod initTargetMethod(LearnTestConfig config) throws SavException, JavaModelException {
+		TargetClass targetClass = new TargetClass(config.getTargetClassName());
+		TargetMethod method = new TargetMethod(targetClass);
+		method.setMethodName(config.getTargetMethodName());
+		method.setLineNum( config.getMethodLineNumber());
+		MethodDeclaration methodDeclaration = LearnTestUtil.findSpecificMethod(method.getClassName(), method.getMethodName(), method.getLineNum());
+		method.setMethodSignature(LearnTestUtil.getMethodSignature(methodDeclaration));
+		List<String> paramNames = new ArrayList<String>(CollectionUtils.getSize(methodDeclaration.parameters()));
+		List<String> paramTypes = new ArrayList<String>(paramNames.size());
+		for(Object obj: methodDeclaration.parameters()){
+			if(obj instanceof SingleVariableDeclaration){
+				SingleVariableDeclaration svd = (SingleVariableDeclaration)obj;
+				paramNames.add(svd.getName().getIdentifier());
+				paramTypes.add(svd.getType().toString());
+			}
+		}
+		method.setParams(paramNames);
+		method.setParamTypes(paramTypes);
+		return method;
+	}
+
 	
 	public void setSystemConfig(LearnTestParams params) {
 		params.getSystemConfig().set(LearntestSystemVariable.JDART_APP_PROPRETIES, 
@@ -225,7 +217,6 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			log.info("-----------------------------------------------------------------------------------------------");
 			
 			params.setMaxTcs(100);
-			
 			// l2t params
 			LearnTestParams l2tParams = params;
 			// randoop params

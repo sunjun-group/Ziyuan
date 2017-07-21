@@ -17,8 +17,7 @@ import cfgcoverage.jacoco.CfgJaCoCo;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
 import learntest.core.commons.data.classinfo.TargetMethod;
-import learntest.exception.LearnTestException;
-import learntest.main.LearnTestParams;
+import learntest.core.commons.exception.LearnTestException;
 import sav.common.core.SavException;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
@@ -30,12 +29,11 @@ import sav.strategies.dto.AppJavaClassPath;
  */
 public class CodeCoverage {
 	
-	public CfgCoverage generateCoverage(AppJavaClassPath appClasspath) throws LearnTestException {
+	public CfgCoverage generateCoverage(AppJavaClassPath appClasspath, LearnTestParams params) throws LearnTestException {
 		try {
-			LearnTestParams params = LearnTestParams.initFromLearnTestConfig();
 			/* collect coverage and build cfg */
 			TargetMethod targetMethod = params.getTargetMethod();
-			CfgCoverage cfgCoverage = runCfgCoverage(appClasspath, targetMethod, params.getTestClass());
+			CfgCoverage cfgCoverage = runCfgCoverage(appClasspath, targetMethod, params.getInitialTests().getJunitClasses());
 			targetMethod.updateCfgIfNotExist(cfgCoverage.getCfg());
 			return cfgCoverage;
 		} catch (Exception e) {
@@ -43,13 +41,13 @@ public class CodeCoverage {
 		}
 	}
 	
-	private CfgCoverage runCfgCoverage(AppJavaClassPath appClasspath, TargetMethod targetMethod, String testClasses)
+	private CfgCoverage runCfgCoverage(AppJavaClassPath appClasspath, TargetMethod targetMethod, List<String> junitClasses)
 			throws SavException, IOException, ClassNotFoundException {
 		CfgJaCoCo cfgCoverage = new CfgJaCoCo(appClasspath);
 		List<String> targetMethods = CollectionUtils.listOf(ClassUtils.toClassMethodStr(targetMethod.getClassName(),
 				targetMethod.getMethodName()));
 		Map<String, CfgCoverage> coverage = cfgCoverage.runJunit(targetMethods, Arrays.asList(targetMethod.getClassName()),
-				Arrays.asList(testClasses));
+				junitClasses);
 		return coverage.get(CfgJaCoCoUtils.createMethodId(targetMethod.getClassName(), targetMethod.getMethodName(),
 				targetMethod.getMethodSignature()));
 	}

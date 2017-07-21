@@ -9,7 +9,6 @@
 package learntest.core.commons.data.decision;
 
 import cfgcoverage.jacoco.analysis.data.BranchCoveredType;
-import learntest.testcase.data.BranchType;
 import sav.common.core.utils.Assert;
 
 /**

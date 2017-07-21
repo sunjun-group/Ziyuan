@@ -6,15 +6,15 @@ import org.eclipse.core.runtime.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import learntest.main.LearnTestParams;
-import learntest.main.RunTimeInfo;
+import learntest.core.LearnTestParams;
+import learntest.core.RunTimeInfo;
 
 public class GenerateTestHandler extends AbstractLearntestHandler {
 	private static Logger log = LoggerFactory.getLogger(GenerateTestHandler.class);
 	
 	@Override
 	protected IStatus execute(IProgressMonitor monitor) {
-		evaluateLearntestForSingleMethod(initLearntestParams());
+		evaluateLearntestForSingleMethod(initLearntestParamsFromPreference());
 		log.debug("Finish!");
 		return Status.OK_STATUS;
 	}
@@ -26,7 +26,7 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 	
 	public RunTimeInfo generateTest(){
 		try {
-			LearnTestParams params = initLearntestParams();
+			LearnTestParams params = initLearntestParamsFromPreference();
 			RunTimeInfo runtimeInfo = runLearntest(params);
 			return runtimeInfo;
 		} catch (Exception e) {

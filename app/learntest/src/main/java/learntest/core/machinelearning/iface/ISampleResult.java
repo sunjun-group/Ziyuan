@@ -9,7 +9,7 @@
 package learntest.core.machinelearning.iface;
 
 import learntest.core.commons.data.decision.IDecisionNode;
-import learntest.testcase.data.INodeCoveredData;
+import learntest.core.commons.data.decision.INodeCoveredData;
 
 /**
  * @author LLT

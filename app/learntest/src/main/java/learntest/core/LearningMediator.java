@@ -30,7 +30,6 @@ import learntest.core.gentest.TestGenerator;
 import learntest.core.machinelearning.IInputLearner;
 import learntest.core.machinelearning.PrecondDecisionLearner;
 import learntest.core.machinelearning.RandomLearner;
-import learntest.main.LearnTestParams;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.AppJavaClassPath;

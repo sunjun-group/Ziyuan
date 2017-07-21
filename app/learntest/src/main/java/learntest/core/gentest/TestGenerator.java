@@ -31,7 +31,7 @@ import gentest.junit.PrinterParams;
 import gentest.junit.TestsPrinter;
 import learntest.core.commons.LearntestExceptionType;
 import learntest.core.commons.utils.DomainUtils;
-import learntest.gentest.TestSeqGenerator;
+import learntest.core.gentest.generator.TestSeqGenerator;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.SystemVariables;

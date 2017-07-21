@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import learntest.Activator;
+import learntest.plugin.Activator;
 
 /**
  * @author LLT

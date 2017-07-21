@@ -13,7 +13,7 @@ import java.util.List;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
-import learntest.calculator.OrCategoryCalculator;
+import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import libsvm.core.Divider;
 import sav.common.core.Pair;
 import sav.common.core.formula.Formula;

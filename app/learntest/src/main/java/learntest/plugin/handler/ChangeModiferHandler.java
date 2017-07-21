@@ -34,7 +34,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 
-import learntest.util.LearnTestUtil;
+import learntest.plugin.utils.LearnTestUtil;
 import sav.settings.SAVTimer;
 
 public class ChangeModiferHandler extends AbstractHandler {

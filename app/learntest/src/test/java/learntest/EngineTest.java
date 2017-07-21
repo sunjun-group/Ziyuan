@@ -3,8 +3,8 @@ package learntest;
 import org.junit.Before;
 import org.junit.Test;
 
-import learntest.main.LearnTest;
-import learntest.main.LearnTestConfig;
+import learntest.backup.main.LearnTest;
+import learntest.plugin.LearnTestConfig;
 import sav.common.core.SavException;
 import sav.commons.AbstractTest;
 import sav.commons.TestConfiguration;

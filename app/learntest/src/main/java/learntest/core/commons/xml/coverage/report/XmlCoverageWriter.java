@@ -20,8 +20,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 
+import learntest.core.commons.exception.LearnTestException;
 import learntest.core.commons.xml.coverage.report.element.MethodsElement;
-import learntest.exception.LearnTestException;
 
 /**
  * @author LLT

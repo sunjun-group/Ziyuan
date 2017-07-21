@@ -22,10 +22,8 @@ import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.utils.VarSolutionUtils;
 import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.GentestResult;
+import learntest.core.jdart.JDartRunner;
 import learntest.core.jdart.JdartTestInputUtils;
-import learntest.main.LearnTestParams;
-import learntest.main.RunTimeInfo;
-import learntest.util.LearnTestUtil;
 import sav.common.core.SavException;
 import sav.common.core.utils.TextFormatUtils;
 import sav.settings.SAVTimer;
@@ -52,7 +50,7 @@ public class JDartLearntest extends LearnTest {
 		else{
 			log.info("jdart result:");
 			for(TestInput input: inputs){
-				log.info("input: " + input.toString());
+				log.info("input: {}", input.toString());
 			}
 		}
 		init(params);
@@ -67,7 +65,6 @@ public class JDartLearntest extends LearnTest {
 	public RunTimeInfo jdart(LearnTestParams params) {
 		SAVTimer.startCount();
 		try {
-			System.out.println(LearnTestUtil.getPrjectClasspath());
 			prepareInitTestcase(params);
 			CfgCoverage cfgCoverage = runCfgCoverage(params.getTargetMethod(), params.getInitialTests().getJunitClasses());
 			return getRuntimeInfo(cfgCoverage);
