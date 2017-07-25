@@ -17,7 +17,7 @@ import sav.common.core.utils.RandomUtils;
 @TestcaseGenerationScope
 public class GentestRandomness implements IRandomness {
 	private static final double PROB_VALUE_IN_LIST = 0.4;
-	private Random random = new Random(System.nanoTime());
+	private Random random = new Random();
 	
 	private Random getRandom() {
 		return random;
@@ -116,5 +116,13 @@ public class GentestRandomness implements IRandomness {
 	public boolean randomBoolFromDistribution(double trueProb_, double falseProb_) {
 		double falseProb = falseProb_ / (falseProb_ + trueProb_);
 		return (getRandom().nextDouble() >= falseProb);
+	}
+
+	/* (non-Javadoc)
+	 * @see gentest.core.value.generator.IRandomness#weightFlipCoin(double)
+	 */
+	@Override
+	public boolean weighedCoinFlip(double trueProb) {
+		return RandomUtils.weighedCoinFlip(trueProb, getRandom());
 	}
 }

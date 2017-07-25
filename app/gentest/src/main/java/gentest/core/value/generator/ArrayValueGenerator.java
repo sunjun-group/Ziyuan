@@ -35,7 +35,7 @@ public class ArrayValueGenerator extends ValueGenerator {
 		// Generate the array
 		int sizes[] = new int[dimension];
 		for (int i = 0; i < dimension; i++) {
-			sizes[i] = selectArraySize(i + 1, dimension, lastContenType.getRawType());
+			sizes[i] = selectArraySize(i + 1, dimension, lastContenType.getRawType(), level);
 		}
 		final RArrayConstructor arrayConstructor = new RArrayConstructor(sizes,
 				type.getRawType(), lastContenType.getRawType());
@@ -64,20 +64,25 @@ public class ArrayValueGenerator extends ValueGenerator {
 	 * maxsize of the last dimension = 10 (if primitive/String) or 1 -> 3 (if not primitive), and is decreased by dimension.
 	 * maxsize of other dimension not the last one is from 1 -> 2.
 	 * */
-	private static int selectArraySize(int curLevel, int dimension, Class<?> contentType) {
-		int arrayMaxLength = GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH;
-		String clazzName = contentType.getName();
-		if (!PrimitiveUtils.isPrimitive(clazzName) && !PrimitiveUtils.isPrimitiveTypeOrString(clazzName)) {
-			arrayMaxLength = 3;
+	private int selectArraySize(int curLevel, int dimension, Class<?> contentType, int varLevel) {
+		if ((curLevel != dimension && dimension > 1) || varLevel >= 4) {
+			return Randomness.nextInt(1, 2);
 		}
-		if (curLevel == dimension) {
-			int maxSize = arrayMaxLength - (dimension * 2) + 1;
+		
+		String clazzName = contentType.getName();
+		boolean isSimpleType = PrimitiveUtils.isPrimitive(clazzName) || PrimitiveUtils.isPrimitiveTypeOrString(clazzName);
+		int maxSize = GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH;
+		
+		if (!isSimpleType && maxSize > 5) {
+			maxSize = getRandomness().weighedCoinFlip(0.7) ? 3 : 5;
+		}
+		if (curLevel == dimension && dimension > 1) {
+			maxSize = maxSize - (dimension * 2) + 1;
 			if (maxSize <= 0) {
-				maxSize = arrayMaxLength / 2;
+				maxSize = 2;
 			}
-			return Randomness.nextInt(1, maxSize);
 		} 
-		return Randomness.nextInt(1, 2);
+		return Randomness.nextInt(1, maxSize);
 	}
 	
 	private IType getLastContentType() {

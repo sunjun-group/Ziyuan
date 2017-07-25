@@ -18,8 +18,10 @@ import java.lang.reflect.TypeVariable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.utils.ClassUtils;
-import sav.strategies.gentest.ISubTypesScanner;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -29,6 +31,7 @@ import com.google.inject.name.Named;
  * 
  */
 public class VarTypeCreator implements ITypeCreator {
+	private static final Logger log = LoggerFactory.getLogger(VarTypeCreator.class);
 	@Inject
 	private ISubTypesScanner subTypesScanner;
 	@Inject @Named("prjClassLoader")
@@ -118,7 +121,12 @@ public class VarTypeCreator implements ITypeCreator {
 			TypeVariable<?> typeVar = (TypeVariable<?>) type;
 			Type mapTypeVar = typeVar;
 			while (TypeEnum.isTypeVariable(mapTypeVar)) {
-				mapTypeVar = preTypeMap.get(mapTypeVar);
+				Type newType = preTypeMap.get(mapTypeVar);
+				if (newType == mapTypeVar) {
+					log.warn("detected a loop in preTypeMap: {}", mapTypeVar);
+					break;
+				}
+				mapTypeVar = newType;
 			}
 			if (mapTypeVar != null) {
 				extractedMap.put(typeVar , mapTypeVar);

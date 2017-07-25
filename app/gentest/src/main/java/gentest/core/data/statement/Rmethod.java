@@ -68,5 +68,10 @@ public class Rmethod extends Statement {
 	public boolean isStatic() {
 		return Modifier.isStatic(method.getModifiers());
 	}
+	
+	@Override
+	public String toString() {
+		return method.toString();
+	}
 }
  

@@ -21,19 +21,19 @@ import gentest.core.ParamGeneratorConfig;
 import gentest.core.data.DataProvider;
 import gentest.core.data.IDataProvider;
 import gentest.core.data.Sequence;
+import gentest.core.data.type.ISubTypesScanner;
 import gentest.core.data.type.ITypeCreator;
+import gentest.core.data.type.SubTypesScanner;
 import gentest.core.data.type.VarTypeCreator;
 import gentest.core.execution.VariableRuntimeExecutor;
 import gentest.core.value.generator.GentestRandomness;
 import gentest.core.value.generator.IRandomness;
-import gentest.core.value.store.SubTypesScanner;
 import gentest.core.value.store.TypeInitializerStore;
 import gentest.core.value.store.TypeMethodCallsCache;
 import gentest.core.value.store.VariableCache;
 import gentest.core.value.store.iface.ITypeInitializerStore;
 import gentest.core.value.store.iface.ITypeMethodCallStore;
 import gentest.core.value.store.iface.IVariableStore;
-import sav.strategies.gentest.ISubTypesScanner;
 
 /**
  * @author LLT

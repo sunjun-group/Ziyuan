@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
@@ -26,28 +25,29 @@ import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import learntest.core.commons.data.classinfo.TargetClass;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.plugin.handler.filter.methodfilter.TargetMethodFilter;
 import learntest.plugin.utils.IMethodUtils;
 import learntest.plugin.utils.LearnTestUtil;
+import sav.common.core.SavRtException;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
-import sav.common.core.utils.PrimitiveUtils;
 
 /**
  * @author LLT
  * [extracted from EvaluationHandler]
  */
 public class TestableMethodCollector extends ASTVisitor {
-	private List<MethodDeclaration> mdList = new ArrayList<MethodDeclaration>();
+	private static final Logger log = LoggerFactory.getLogger(TestableMethodCollector.class);
 	private CompilationUnit cu;
 	private Collection<TargetMethodFilter> methodFilters;
 	private int totalMethodNum = 0;
-	private TypeDeclaration curType;
+	private TypeDeclaration rootType;
 	private int typeIdx;
 	private List<TargetMethod> validMethods = new ArrayList<TargetMethod>();
 	private String pkgName;
@@ -67,12 +67,16 @@ public class TestableMethodCollector extends ASTVisitor {
 	@Override
 	public boolean visit(TypeDeclaration node) {
 		typeIdx++;
-		curType = node;
+		if (node.isPackageMemberTypeDeclaration()) {
+			rootType = node;
+		}
 		if (node.isInterface() || node.isMemberTypeDeclaration() ||
 				(node.isLocalTypeDeclaration() && !Modifier.isPublic(node.getModifiers()))) {
 			return false;
 		} 
-		// TODO-LLT: temporary only test the first type of compilation unit.
+		/* TODO-LLT: temporary only test the first type of compilation unit.
+		 * still need to test before enable the second condition.
+		 */
 		if (typeIdx > 1 /* && !Modifier.isPublic(node.getModifiers()) */) {
 			return false;
 		}
@@ -89,58 +93,8 @@ public class TestableMethodCollector extends ASTVisitor {
 			}
 		}
 		if (testable) {
-			mdList.add(md);
 			validMethods.add(initTargetMethod(md));
-			System.out.println(initTargetMethod(md));
-		}
-		return false;
-	}
-	
-	@SuppressWarnings("unused")
-	private boolean containsAtLeastOnePrimitiveType(List<?> parameters){
-		for (Object obj : parameters) {
-			if (obj instanceof SingleVariableDeclaration) {
-				SingleVariableDeclaration svd = (SingleVariableDeclaration) obj;
-				Type type = svd.getType();
-				if(type.isPrimitiveType()){
-					return true;
-				}
-				if(type.isArrayType()){
-					ArrayType aType = (ArrayType)type;
-					if(aType.getElementType().isPrimitiveType()){
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-
-	@SuppressWarnings("unused")
-	private boolean containsAllPrimitiveType(List<?> parameters){
-		for (Object obj : parameters) {
-			if (obj instanceof SingleVariableDeclaration) {
-				SingleVariableDeclaration svd = (SingleVariableDeclaration) obj;
-				Type type = svd.getType();
-				String typeString = type.toString();
-				if(!PrimitiveUtils.isPrimitive(typeString) || svd.getExtraDimensions() > 0){
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	
-	@SuppressWarnings({ "rawtypes", "unused" })
-	private boolean containsArrayOrString(List parameters) {
-		for (Object obj : parameters) {
-			if (obj instanceof SingleVariableDeclaration) {
-				SingleVariableDeclaration svd = (SingleVariableDeclaration) obj;
-				Type type = svd.getType();
-				if (type.isArrayType() || type.toString().contains("String")) {
-					return true;
-				}
-			}
+			md.parameters();
 		}
 		return false;
 	}
@@ -148,7 +102,17 @@ public class TestableMethodCollector extends ASTVisitor {
 	protected TargetMethod initTargetMethod(MethodDeclaration method) {
 		String simpleMethodName = method.getName().getIdentifier();
 		int lineNumber = IMethodUtils.getStartLineNo(cu, method);
-		String className = ClassUtils.getCanonicalName(pkgName, curType.getName().getFullyQualifiedName());
+		if (!(method.getParent() instanceof TypeDeclaration)) {
+			log.debug("expect: TypeDeclaration type, get: {}", method.getParent().getClass());
+			throw new SavRtException(String.format("Unexpected type: %s", method.getParent().getClass()));
+		}
+		String className = null;
+		TypeDeclaration type = (TypeDeclaration) method.getParent();
+		if (type != rootType && type.isMemberTypeDeclaration()) {
+			className = ClassUtils.getCanonicalName(pkgName, rootType.getName().getIdentifier(), type.getName().getIdentifier());
+		} else {
+			className = ClassUtils.getCanonicalName(pkgName, type.getName().getFullyQualifiedName());
+		}
 		TargetClass targetClass = new TargetClass(className);
 		TargetMethod targetMethod = new TargetMethod(targetClass);
 		targetMethod.setMethodName(simpleMethodName);
@@ -168,10 +132,6 @@ public class TestableMethodCollector extends ASTVisitor {
 		targetMethod.setParamTypes(paramTypes);
 		
 		return targetMethod;
-	}
-	
-	public List<MethodDeclaration> getMdList() {
-		return mdList;
 	}
 	
 	public int getTotalMethodNum() {

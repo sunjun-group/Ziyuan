@@ -25,6 +25,7 @@ public class VmRunnerUtils {
 		
 		String javaHome = config.getJavaHome();
 		/**
+		 * FIX ME:
 		 * javac has been moved to jdk folder since java 1.8.
 		 */
 		if(javaHome.contains("1.8")){

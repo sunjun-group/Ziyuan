@@ -195,19 +195,6 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	}
 	
 	/* END PLUGIN HANDLER  */
-	protected GentestResult generateTestcases(GentestParams params) throws SavException {
-		try {
-			AppJavaClassPath appClasspath = getAppClasspath();
-			TestGenerator testGenerator = new TestGenerator(appClasspath);
-			JavaCompiler compiler = new JavaCompiler(new VMConfiguration(appClasspath));
-			GentestResult result = testGenerator.genTest(params);
-			compiler.compile(appClasspath.getTestTarget(), result.getAllFiles());
-			return result;
-		} catch (Exception e) {
-			throw new SavException(e, ModuleEnum.UNSPECIFIED, e.getMessage());
-		}
-	}
-	
 
 	protected Trial evaluateLearntestForSingleMethod(LearnTestParams params) {
 		try {

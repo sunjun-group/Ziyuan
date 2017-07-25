@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
+import gentest.core.data.type.ISubTypesScanner;
 import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.value.store.iface.ITypeInitializerStore;
@@ -24,7 +25,6 @@ import gentest.main.GentestConstants;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
-import sav.strategies.gentest.ISubTypesScanner;
 
 /**
  * @author LLT
@@ -42,6 +42,8 @@ public class ValueGeneratorMediator {
 	private ITypeInitializerStore typeInitializerStore;
 	@Inject
 	private PrimitiveValueGenerator primitiveGenerator;
+	@Inject
+	private IRandomness randomness;
 	
 	public GeneratedVariable generate(IType type, 
 			int firstVarId, boolean isReceiver) throws SavException {
@@ -109,7 +111,13 @@ public class ValueGeneratorMediator {
 	}
 
 	private double getProbIncreaseByLevel(int level, int maxLevel) {
+		if (level <= 2) {
+			return 0.1;
+		}
 		if (level <= 3) {
+			return 0.2;
+		}
+		if (level <= 4) {
 			return 0.4;
 		}
 		return 0.8; 
@@ -161,4 +169,7 @@ public class ValueGeneratorMediator {
 		this.typeInitializerStore = typeInitializerStore;
 	}
 	
+	public IRandomness getRandomness() {
+		return randomness;
+	}
 }

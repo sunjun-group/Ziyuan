@@ -121,11 +121,13 @@ public class VMConfiguration implements IDebuggerConfig {
 			socket= new ServerSocket(0);
 			return socket.getLocalPort();
 		} catch (IOException e) { 
+			// ignore
 		} finally {
 			if (socket != null) {
 				try {
 					socket.close();
 				} catch (IOException e) {
+					// ignore
 				}
 			}
 		}

@@ -22,6 +22,7 @@ public class Constants {
 	public static final String CLASS_EXT_WITH_DOT = ".class";
 	public static final String LOW_LINE = "_";
 	public static final int UNKNOWN_LINE_NUMBER = -1;
+	public static final String NESTED_CLASS_SEPARATOR = "$";
 	/* time out for each running testcase */
 	public static final long DEFAULT_JUNIT_TESTCASE_TIMEOUT = 1000l; // ms
 }

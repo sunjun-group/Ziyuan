@@ -52,7 +52,7 @@ public class ParameterSelector {
 	private ISelectedVariable selectParam(IType type,
 			int firstStmtIdx, int firstVarIdx, boolean isReceiver)
 			throws SavException {
-		SelectionMode selectingMode = randomChooseSelectorType(type);
+		SelectionMode selectingMode = randomChooseSelectorType(type, firstStmtIdx - 1, firstVarIdx - 1);
 		switch (selectingMode) {
 		case REFERENCE:
 			return selectReferenceParam(type);
@@ -83,13 +83,19 @@ public class ParameterSelector {
 	 * only do random select type if there is any variables for type
 	 * available in the sequence.
 	 * Otherwise, just exclude REFERENCE option out of selectionMode.
+	 * @param curTotalVars 
+	 * @param curTotalStmts 
 	 */
-	public SelectionMode randomChooseSelectorType(IType type) {
+	public SelectionMode randomChooseSelectorType(IType type, int curTotalStmts, int curTotalVars) {
 		List<LocalVariable> existedVars = getSequence().getVariablesByType(type);
 		if (CollectionUtils.isEmpty(existedVars)) {
 			return SelectionMode.GENERATE_NEW;
 		}
-		if (randomness.randomBoolFromDistribution(3, 2)) {
+		double refProb = 0.3;
+		if (curTotalStmts > 15 || existedVars.size() > 5) {
+			refProb = 0.8;
+		}
+		if (randomness.weighedCoinFlip(refProb)) {
 			return SelectionMode.REFERENCE;
 		}
 		return SelectionMode.GENERATE_NEW;

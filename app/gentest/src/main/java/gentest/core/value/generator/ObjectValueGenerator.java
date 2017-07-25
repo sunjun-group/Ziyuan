@@ -92,7 +92,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 				 * we try to choose a subtype for it. In the worse case that subtype is the same with receiver type,
 				 * we better ignore it to avoid a loop call */
 				if (paramResolvedType.getRawType().isAssignableFrom(constructor.getDeclaringClass())) {
-					Class<?> paramSubType = getSubTypesScanner().getRandomImplClzz(paramResolvedType.getRawType());
+					Class<?> paramSubType = getSubTypesScanner().getRandomImplClzz(paramResolvedType);
 					if (paramSubType == null || 
 							paramSubType.isAssignableFrom(constructor.getDeclaringClass())) {
 						return false;
@@ -166,7 +166,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 			// its subclass instead.
 			if (type.isInterface() || Modifier.isAbstract(type.getModifiers())) {
 				// try to search subclass
-				Class<?> subClass = getSubTypesScanner().getRandomImplClzz(type);
+				Class<?> subClass = getSubTypesScanner().getRandomImplClzz(itype);
 				if (subClass != null) {
 					return loadInitializer(itype.resolveType(subClass), level + 1);
 				}
@@ -174,7 +174,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 			// if still cannot get constructor,
 			// try to search subclass if it's not an abstract class
 			if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())) {
-				Class<?> subClass = getSubTypesScanner().getRandomImplClzz(type);
+				Class<?> subClass = getSubTypesScanner().getRandomImplClzz(itype);
 				if (type.equals(subClass)) {
 					/* 
 					 * if the class do not have any subClass and has only bad constructor, we will accept it as

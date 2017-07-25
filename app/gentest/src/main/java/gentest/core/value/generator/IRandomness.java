@@ -79,4 +79,10 @@ public interface IRandomness {
 	 */
 	public boolean randomBoolFromDistribution(double trueProb_, double falseProb_);
 
+	/**
+	 * @param refProb
+	 * @return
+	 */
+	public boolean weighedCoinFlip(double refProb);
+
 }

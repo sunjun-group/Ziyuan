@@ -32,6 +32,10 @@ public class ClassUtils {
 		return StringUtils.dotJoin(pkg, clName);
 	}
 	
+	public static String getCanonicalName(String pkgName, String ownerClName, String innerClName) {
+		return String.format("%s.%s$%s", pkgName, ownerClName, innerClName);
+	}
+	
 	public static String toClassCanonicalName(String classPath) {
 		return classPath.replace(Constants.FILE_SEPARATOR, Constants.DOT);
 	}
@@ -169,4 +173,5 @@ public class ClassUtils {
 		throw new IllegalArgumentException(String.format("cannot find method %s in class %s", methodNameOrSign
 				, clazz.getName()));
 	}
+
 }

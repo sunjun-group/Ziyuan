@@ -9,22 +9,24 @@
 package gentest.core.value.generator;
 
 import static sav.common.core.utils.CollectionUtils.listOf;
-import gentest.core.data.statement.RAssignment;
-import gentest.core.data.type.IType;
-import gentest.core.data.variable.GeneratedVariable;
-import gentest.core.value.store.iface.ITypeInitializerStore;
-import gentest.core.value.store.iface.ITypeMethodCallStore;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import gentest.core.data.statement.RAssignment;
+import gentest.core.data.type.ISubTypesScanner;
+import gentest.core.data.type.IType;
+import gentest.core.data.variable.GeneratedVariable;
+import gentest.core.value.store.iface.ITypeInitializerStore;
+import gentest.core.value.store.iface.ITypeMethodCallStore;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
-import sav.strategies.gentest.ISubTypesScanner;
+import sav.common.core.utils.Randomness;
 
 /**
  * @author LLT
@@ -56,7 +58,7 @@ public abstract class ValueGenerator {
 			return new ArrayValueGenerator(type);
 		}
 		Class<?> rawType = type.getRawType();
-		Pair<Class<?>, List<String>> typeDef = specificObjectMap.get(rawType);
+		Pair<Class<?>, List<String>> typeDef = loadSpecialObjDescription(rawType);
 		if (typeDef != null) {
 			return new ExtObjectValueGenerator(type.resolveType(typeDef.a),
 					typeDef.b);
@@ -67,14 +69,22 @@ public abstract class ValueGenerator {
 		}
 		return new ExtObjectValueGenerator(type, null);
 	}
+
+	private static Pair<Class<?>, List<String>> loadSpecialObjDescription(Class<?> rawType) {
+		String type = rawType.getName();
+		if (Collection.class.getName().equals(type)) {
+			type = Randomness.randomMember(new String[]{List.class.getName(), Set.class.getName()});
+		}
+		return specificObjectMap.get(type);
+	}
 	
-	private static Map<Class<?>, Pair<Class<?>, List<String>>> specificObjectMap;
+	private static Map<String, Pair<Class<?>, List<String>>> specificObjectMap;
 	private static List<Class<?>> ignoreMethodCalls;
 	static {
-		specificObjectMap = new HashMap<Class<?>, Pair<Class<?>,List<String>>>();
-		specificObjectMap.put(List.class, new Pair(ArrayList.class, listOf("add(Ljava/lang/Object;)Z")));
-		specificObjectMap.put(Set.class, new Pair(HashSet.class, listOf("add(Ljava/lang/Object;)Z")));
-		specificObjectMap.put(Map.class,
+		specificObjectMap = new HashMap<String, Pair<Class<?>,List<String>>>();
+		specificObjectMap.put(List.class.getName(), new Pair(ArrayList.class, listOf("add(ILjava/lang/Object;)V")));
+		specificObjectMap.put(Set.class.getName(), new Pair(HashSet.class, listOf("add(Ljava/lang/Object;)Z")));
+		specificObjectMap.put(Map.class.getName(),
 									new Pair(HashMap.class,
 											listOf("put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")));
 		ignoreMethodCalls = new ArrayList<Class<?>>();
@@ -103,4 +113,7 @@ public abstract class ValueGenerator {
 		this.valueGeneratorMediator = valueGeneratorMediator;
 	}
 	
+	public IRandomness getRandomness() {
+		return valueGeneratorMediator.getRandomness();
+	}
 }

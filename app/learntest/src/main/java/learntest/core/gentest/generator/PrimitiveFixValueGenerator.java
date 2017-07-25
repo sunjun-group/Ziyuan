@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 
 import gentest.core.commons.utils.TypeUtils;
 import gentest.core.data.statement.RAssignment;
+import gentest.core.data.type.ISubTypesScanner;
 import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.value.generator.PrimitiveValueGenerator;
@@ -16,7 +17,6 @@ import gentest.main.GentestConstants;
 import japa.parser.ast.type.PrimitiveType.Primitive;
 import sav.common.core.SavException;
 import sav.common.core.utils.Randomness;
-import sav.strategies.gentest.ISubTypesScanner;
 
 public class PrimitiveFixValueGenerator {
 	private static Logger log = LoggerFactory.getLogger(PrimitiveFixValueGenerator.class);
