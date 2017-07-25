@@ -8,9 +8,6 @@
 
 package learntest.core;
 
-import learntest.main.LearnTestParams;
-import learntest.main.RunTimeInfo;
-
 /**
  * @author LLT
  *

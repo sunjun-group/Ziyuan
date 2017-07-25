@@ -17,15 +17,15 @@ import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
-import learntest.calculator.OrCategoryCalculator;
 import learntest.core.AbstractLearningComponent;
 import learntest.core.LearningMediator;
 import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
+import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.utils.CfgUtils;
-import learntest.testcase.data.INodeCoveredData;
+import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import libsvm.core.Category;
 import libsvm.core.Divider;
 import libsvm.core.Machine;

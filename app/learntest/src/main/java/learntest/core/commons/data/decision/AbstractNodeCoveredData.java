@@ -16,7 +16,6 @@ import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
-import learntest.testcase.data.INodeCoveredData;
 import sav.common.core.utils.CollectionUtils;
 
 /**

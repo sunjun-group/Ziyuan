@@ -14,7 +14,6 @@ import java.util.List;
 import cfgcoverage.jacoco.analysis.data.BranchCoveredType;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
-import learntest.testcase.data.INodeCoveredData;
 
 /**
  * @author LLT

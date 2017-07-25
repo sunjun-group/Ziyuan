@@ -11,15 +11,15 @@ package learntest.core.machinelearning;
 import java.util.List;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
-import learntest.calculator.OrCategoryCalculator;
 import learntest.core.LearningMediator;
+import learntest.core.commons.data.decision.BranchType;
 import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.IDecisionNode;
+import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
-import learntest.testcase.data.BranchType;
-import learntest.testcase.data.INodeCoveredData;
+import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import libsvm.core.Divider;
 import libsvm.core.Machine.DataPoint;
 import sav.common.core.SavException;

@@ -11,11 +11,12 @@ package learntest.core.machinelearning;
 import java.util.List;
 
 import icsetlv.common.utils.BreakpointDataUtils;
-import learntest.calculator.OrCategoryCalculator;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
+import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import learntest.core.machinelearning.iface.ISampleExecutor;
 import learntest.core.machinelearning.iface.ISampleResult;
+import learntest.core.machinelearning.sampling.IlpSelectiveSampling;
 import libsvm.core.Divider;
 import libsvm.core.Machine.DataPoint;
 import sav.common.core.SavException;

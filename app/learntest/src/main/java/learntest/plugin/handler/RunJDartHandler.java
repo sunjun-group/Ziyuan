@@ -5,7 +5,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import learntest.core.JDartLearntest;
-import learntest.main.LearnTestParams;
+import learntest.core.LearnTestParams;
 
 public class RunJDartHandler extends AbstractLearntestHandler {
 
@@ -13,7 +13,7 @@ public class RunJDartHandler extends AbstractLearntestHandler {
 	protected IStatus execute(IProgressMonitor monitor) {
 		try {
 			JDartLearntest jdart = new JDartLearntest(getAppClasspath());
-			LearnTestParams params = initLearntestParams();
+			LearnTestParams params = initLearntestParamsFromPreference();
 			jdart.jdart(params);
 //			jdart.run(initLearntestParams());
 		} catch (Exception e) {

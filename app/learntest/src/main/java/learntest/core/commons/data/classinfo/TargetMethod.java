@@ -28,6 +28,7 @@ import learntest.core.BreakpointCreator;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.BreakPoint;
 
 /**
@@ -174,4 +175,8 @@ public class TargetMethod {
 		this.methodLength = methodLength;
 	}
 	
+	@Override
+	public String toString() {
+		return StringUtils.dotJoin(getClassName(), methodName, lineNum);
+	}
 }

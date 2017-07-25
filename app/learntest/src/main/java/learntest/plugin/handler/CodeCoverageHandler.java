@@ -10,12 +10,12 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import learntest.core.CodeCoverage;
+import learntest.core.LearnTestParams;
 import learntest.core.LearntestParamsUtils;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.TestGenerator;
-import learntest.main.LearnTestParams;
-import learntest.util.LearnTestUtil;
+import learntest.plugin.utils.LearnTestUtil;
 import sav.common.core.utils.StopTimer;
 import sav.settings.SAVTimer;
 import sav.strategies.vm.JavaCompiler;
@@ -29,7 +29,7 @@ public class CodeCoverageHandler extends AbstractLearntestHandler {
 		try {
 			SAVTimer.enableExecutionTimeout = true;
 			SAVTimer.exeuctionTimeout = 100000;
-			LearnTestParams params = initLearntestParams();
+			LearnTestParams params = initLearntestParamsFromPreference();
 			GentestParams gentestParams = LearntestParamsUtils.createGentestParams(getAppClasspath(), params,
 					GenTestPackage.INIT);
 			gentestParams.setNumberOfTcs(20);
@@ -41,7 +41,7 @@ public class CodeCoverageHandler extends AbstractLearntestHandler {
 			timer.newPoint("learntest");
 
 			CodeCoverage generator = new CodeCoverage();
-			CfgCoverage cfgCoverage = generator.generateCoverage(getAppClasspath());
+			CfgCoverage cfgCoverage = generator.generateCoverage(getAppClasspath(), params);
 			System.out.println(cfgCoverage);
 			// TODO
 		} catch (Exception e) {

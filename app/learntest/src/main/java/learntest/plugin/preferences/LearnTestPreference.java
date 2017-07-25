@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import learntest.Activator;
-import learntest.main.LearnTestConfig;
+import learntest.plugin.Activator;
+import learntest.plugin.LearnTestConfig;
 
 public class LearnTestPreference extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -164,11 +164,11 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 	}
 	
 	private void confirmChanges(){
-		LearnTestConfig.projectName = this.projectCombo.getText();
-		LearnTestConfig.targetClassName = this.testClassText.getText();
-		LearnTestConfig.targetMethodName = this.testMethodText.getText();
-		LearnTestConfig.isL2TApproach = this.isL2TButton.getSelection();
-		LearnTestConfig.targetMethodLineNum = this.methodLineNumberText.getText();
+		LearnTestConfig.getINSTANCE().setProjectName(this.projectCombo.getText());
+		LearnTestConfig.getINSTANCE().setTargetClassName(this.testClassText.getText());
+		LearnTestConfig.getINSTANCE().setTargetMethodName(this.testMethodText.getText());
+		LearnTestConfig.getINSTANCE().setL2TApproach(this.isL2TButton.getSelection());
+		LearnTestConfig.getINSTANCE().setTargetMethodLineNum(this.methodLineNumberText.getText());
 	}
 	
 	

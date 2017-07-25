@@ -11,7 +11,6 @@ package learntest.core;
 import learntest.core.commons.LearntestConstants;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.gentest.GentestParams;
-import learntest.main.LearnTestParams;
 import sav.common.core.utils.SignatureUtils;
 import sav.strategies.dto.AppJavaClassPath;
 

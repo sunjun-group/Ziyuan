@@ -33,8 +33,6 @@ import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.GentestResult;
 import learntest.core.gentest.TestGenerator;
-import learntest.main.LearnTestParams;
-import learntest.main.RunTimeInfo;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
