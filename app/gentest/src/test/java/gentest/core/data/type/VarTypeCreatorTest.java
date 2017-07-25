@@ -8,13 +8,18 @@
 
 package gentest.core.data.type;
 
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.HashSet;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import gentest.core.commons.utils.MethodUtils;
-import gentest.core.value.store.SubTypesScanner;
 import testdata.type.paramtype.VariableClass;
 
 /**
@@ -27,11 +32,35 @@ public class VarTypeCreatorTest {
 	public void testCreator() {
 		VarTypeCreator creator = new VarTypeCreator();
 		creator.setSubTypesScanner(new SubTypesScanner());
-		IType type = creator.forClass(VariableClass.class);
-		System.out.println(type.getType());
+		IType iType = creator.forClass(VariableClass.class);
+		ParameterizedType type  = (ParameterizedType) iType.getType();
+		Type expectedType = type.getActualTypeArguments()[0];
+		
+		System.out.println(iType.getType());
 		Method method = MethodUtils.findMethod(VariableClass.class, "method");
 		Parameter[] params = method.getParameters();
-		IType arrType = type.resolveType(params[0].getParameterizedType());
-		System.out.println(arrType.getType());
+		IType arrType = iType.resolveType(params[0].getParameterizedType());
+		GenericArrayType actualType = (GenericArrayType) arrType.getType();
+		
+		Assert.assertEquals(expectedType, actualType.getGenericComponentType());
+		System.out.println(actualType);
+	}
+	
+	@Test
+	public void testHashSet() {
+		VarTypeCreator creator = new VarTypeCreator();
+		creator.setSubTypesScanner(new SubTypesScanner());
+		IType type = creator.forClass(Collection.class);
+		ParameterizedType collectionType = (ParameterizedType) type.getType();
+		Type expectedType = collectionType.getActualTypeArguments()[0];
+		
+		IType set = type.resolveType(HashSet.class);
+		Method method = MethodUtils.findMethod(HashSet.class, "add");
+		Parameter[] params = method.getParameters();
+		IType arrType = set.resolveType(params[0].getParameterizedType());
+		Type actualType = arrType.getType();
+		
+		Assert.assertEquals(expectedType, actualType);
+		System.out.println(actualType);
 	}
 }

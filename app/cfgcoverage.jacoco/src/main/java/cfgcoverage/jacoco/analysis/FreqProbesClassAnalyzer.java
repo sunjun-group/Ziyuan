@@ -8,6 +8,7 @@ import org.jacoco.core.internal.instr.IInstrSupport;
 import org.objectweb.asm.FieldVisitor;
 
 /**
+ * @author LLT
  * Analyzes the structure of a class.
  */
 public class FreqProbesClassAnalyzer extends ClassProbesVisitor {

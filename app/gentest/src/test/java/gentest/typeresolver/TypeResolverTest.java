@@ -10,11 +10,13 @@ package gentest.typeresolver;
 
 import gentest.AbstractGTTest;
 import gentest.core.data.type.IType;
+import gentest.core.data.type.SubTypesScanner;
 import gentest.core.data.type.VarTypeCreator;
-import gentest.core.value.store.SubTypesScanner;
+import gentest.testdata.DrawPanel;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -155,12 +157,15 @@ public class TypeResolverTest extends AbstractGTTest {
 	@Test
 	public void resolveType_inheriVarType2() throws Exception {
 		IType type = creator.forParamClass(Test1.class, String.class);
+		
 		Method method = Test1.class.getMethod("mListListParam", List.class);
 		Type[] genericParameterTypes = method.getGenericParameterTypes();
 		IType listlistType = type.resolveType(genericParameterTypes)[0];
 		Method addMethod = List.class.getMethod("add", Object.class);
+		
 		IType addParam = listlistType.resolveType(addMethod.getGenericParameterTypes())[0];
 		Assert.assertEquals(List.class, addParam.getRawType());
+		
 		addParam = addParam.resolveType(addMethod.getGenericParameterTypes())[0];
 		Assert.assertEquals(Integer.class, addParam.getRawType());
 	}
@@ -204,6 +209,35 @@ public class TypeResolverTest extends AbstractGTTest {
 		Method method = Test1.class.getMethod("staticMethodWithParam", IParamType.class);
 		IType[] itypes = creator.forType(method.getGenericParameterTypes());
 		System.out.println(Arrays.toString(itypes));
+	}
+	
+	@Test
+	public void varTypeResolveType_classParam() {
+		Class<?> clazz = DrawPanel.class;
+		TypeVariable<?>[] typeParameters = clazz.getTypeParameters();
+		System.out.println(typeParameters);
+	}
+	
+	@Test
+	public void varTypeResolveType_inheritParamType() throws Exception {
+		Class<?> clazz = DrawPanel.class;
+		IType type = creator.forClass(clazz);
+		Type expectedResolveType = type.getType();
+		
+		/* resolve "append" method param */
+		Method method = DrawPanel.class.getMethod("copy", DrawPanel.class);
+		IType paramType = type.resolveType(method.getGenericParameterTypes())[0];
+		Type actualResolveType = paramType.getType();
+
+		Assert.assertEquals(expectedResolveType, actualResolveType);
+		System.out.println(actualResolveType);
+	}
+	
+	@Test
+	public void testInnerclass() throws Exception {
+		System.out.println(Test1.class.getName());
+		Class<?> clzz = Class.forName("gentest.typeresolver.TypeResolverTest$Test1");
+		System.out.println(clzz);
 	}
 	
 	@SuppressWarnings("unused")

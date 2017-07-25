@@ -6,13 +6,20 @@
  *  Version:  $Revision: 1 $
  */
 
-package gentest.core.value.store;
+package gentest.core.data.type;
 
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import org.reflections.Reflections;
 import org.reflections.util.ConfigurationBuilder;
@@ -25,14 +32,12 @@ import com.google.common.cache.LoadingCache;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import gentest.core.data.type.ReflectionsHelper;
 import gentest.injection.TestcaseGenerationScope;
 import gentest.main.GentestConstants;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
-import sav.strategies.gentest.ISubTypesScanner;
 
 /**
  * @author LLT
@@ -87,8 +92,7 @@ public class SubTypesScanner implements ISubTypesScanner {
 		Reflections reflections = new Reflections(
 				ConfigurationBuilder.build(prjClassLoader).setExpandSuperTypes(false));
 		Set<?> subTypes = reflections.getSubTypesOf(key);
-		log.debug("Subtypes of ", key.getSimpleName());
-		log.debug(subTypes.toString());
+		log.debug("Subtypes of {}: {}", key.getName(), subTypes);
 		Set<Class<?>> subClasses = filterAndSelect(subTypes, key, filters);
 		return subClasses;
 	}
@@ -172,7 +176,7 @@ public class SubTypesScanner implements ISubTypesScanner {
 		if (bounds.length == 1) {
 			return getRandomImplClzz(bounds[0]);
 		}
-		return loadFromCache(bounds, subTypesBoundsCache);
+		return randomFromCache(bounds, subTypesBoundsCache);
 	}
 
 	@Override
@@ -181,7 +185,7 @@ public class SubTypesScanner implements ISubTypesScanner {
 		if (delegateClass != null) {
 			return delegateClass;
 		}
-		return loadFromCache(type, subTypesCache);
+		return randomFromCache(type, subTypesCache);
 	}
 
 	public static Class<?> getDelegateClass(Class<?> type) {
@@ -201,21 +205,26 @@ public class SubTypesScanner implements ISubTypesScanner {
 		return null;
 	}
 
-	private <K>Class<?> loadFromCache(K key, LoadingCache<K, Set<Class<?>>> cache) {
+	private <K>Class<?> randomFromCache(K key, LoadingCache<K, Set<Class<?>>> cache) {
+		Set<?> subTypes = loadFromCache(key, cache);
+		return (Class<?>) Randomness.randomMember(subTypes.toArray());
+	}
+
+	private <K> Set<?> loadFromCache(K key, LoadingCache<K, Set<Class<?>>> cache) {
+		Set<?> subTypes = Collections.EMPTY_SET;
 		try {
-			Set<?> subTypes = cache.get(key);
+			subTypes = cache.get(key);
 			if (CollectionUtils.isEmpty(subTypes)) {
-				return null;
+				subTypes = Collections.EMPTY_SET;
 			}
-			return (Class<?>) Randomness.randomMember(subTypes.toArray());
-		} catch (Exception e) {
-			System.out.println("key = " + key);
-			System.currentTimeMillis();
-			System.out.println(e.getMessage());
+		} catch (ExecutionException e) {
 			throw new SavRtException(ModuleEnum.TESTCASE_GENERATION,
 					"error when executing cache to get subtypes: " + e.getMessage());
 		}
+		return subTypes;
 	}
+	
+	
 	
 	public void clear() {
 		subTypesCache.cleanUp();
@@ -223,6 +232,56 @@ public class SubTypesScanner implements ISubTypesScanner {
 	
 	private enum FilterType {
 		CLOSED_SUBTYPES
+	}
+
+	@Override
+	public Class<?> getRandomImplClzz(IType itype) {
+		if (CollectionUtils.isEmpty(itype.getRawType().getTypeParameters())) {
+			return getRandomImplClzz(itype.getRawType());
+		}
+		Set<?> subTypes = loadFromCache(itype.getRawType(), subTypesCache);
+		List<Class<?>> assignableSubTypes = new ArrayList<Class<?>>(subTypes.size());
+		for (Object obj : subTypes) {
+			Class<?> subType = (Class<?>) obj;
+			if (isAssignable(itype, subType)) {
+				assignableSubTypes.add(subType);
+			}
+		}
+		if (assignableSubTypes.isEmpty()) {
+			List<?> subTypeList = new ArrayList<Object>(subTypes);
+			return (Class<?>)Randomness.randomMember(subTypeList);
+		}
+		return Randomness.randomMember(assignableSubTypes);
+	}
+	
+	private boolean isAssignable(IType itype, Class<?> subType) {
+		for (Type genericIface : subType.getGenericInterfaces()) {
+			if (genericIface instanceof ParameterizedType) {
+				ParameterizedType pType = (ParameterizedType) genericIface;
+				if (itype.getRawType().equals(pType.getRawType()) && 
+						matchVariableType(itype, pType.getActualTypeArguments())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean matchVariableType(IType itype, Type[] actualTypeArguments) {
+		TypeVariable<?>[] typeParameters = itype.getRawType().getTypeParameters();
+		for (int i = 0; i < typeParameters.length; i++) {
+			IType resolvedType = itype.resolveType(typeParameters[i]);
+			Type actualType = actualTypeArguments[i];
+			if (actualType instanceof Class<?>) {
+				Class<?> actualClazz = (Class<?>) actualType;
+				if (!actualClazz.equals(resolvedType.getRawType())) {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 }

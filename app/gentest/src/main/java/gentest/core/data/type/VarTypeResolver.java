@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sav.common.core.utils.CollectionUtils;
-import sav.strategies.gentest.ISubTypesScanner;
 
 
 /**
@@ -62,8 +61,7 @@ public class VarTypeResolver extends TypeVisitor {
 		case TYPE_VARIABLE:
 			return resolveTypeVariable((TypeVariable<?>) type, level + 1);
 		case PARAMETER_TYPE:
-			ParameterizedType paramType = (ParameterizedType) type;
-			return (Class<?>) paramType.getRawType();
+			return resolveParameterType(type);
 		case WILDCARDS_TYPE:
 			return resolveWildcardsType((WildcardType) type, level + 1);
 		case GENERIC_ARRAY_TYPE:
@@ -71,6 +69,11 @@ public class VarTypeResolver extends TypeVisitor {
 		}
 		log.debug("VarTypeResolver: missing handle for the case type=", typeEnum);
 		return null;
+	}
+
+	private Class<?> resolveParameterType(Type type) {
+		ParameterizedType paramType = (ParameterizedType) type;
+		return (Class<?>) paramType.getRawType();
 	}
 	
 	private Class<?> resolveWildcardsType(WildcardType type, int level) {
@@ -96,11 +99,13 @@ public class VarTypeResolver extends TypeVisitor {
 		Type mappedType = rTypeMap.get(variable);
 		if (mappedType == null) {
 			// assign a type for it
-			return selectResolveTypeByUpperbounds(variable.getBounds(), level);
+			Class<?> resolvedType = selectResolveTypeByUpperbounds(variable.getBounds(), level);
+			putToRTypeMap(variable, resolvedType);
+			return resolvedType;
 		}
 		Class<?> resolvedType = resolve(mappedType, level + 1);
 		if ((TypeEnum.isClass(mappedType) && resolvedType != mappedType)) {
-			rTypeMap.put((TypeVariable<?>) variable, resolvedType);
+			putToRTypeMap(variable, resolvedType);
 		}
 		return resolvedType;
 	}
@@ -175,9 +180,21 @@ public class VarTypeResolver extends TypeVisitor {
 		Type[] typeArgs = type.getActualTypeArguments();
 		for (int i = 0; i < vars.length; i++) {
 			Type argType = typeArgs[i];
-			log.debug("visit parameterized type-argType=", argType);
-			if (!rTypeMap.containsKey(vars[i])) {
-				rTypeMap.put(vars[i], argType);
+//			log.debug("visit parameterized type-argType={}", argType);
+			putToRTypeMap(vars[i], argType);
+		}
+		visit(rawClass);
+	}
+	
+	private void putToRTypeMap(TypeVariable<?> var, Type argType) {
+		if (var == null || argType == null) {
+			return;
+		}
+		if (!rTypeMap.containsKey(var)) {
+			if (var.equals(argType)) {
+				log.warn("duplicate var: type {} is not solved!", var);
+			} else {
+				rTypeMap.put(var, argType);
 			}
 		}
 	}
@@ -208,7 +225,7 @@ public class VarTypeResolver extends TypeVisitor {
 				mappedType = rTypeMap.get(lastType);
 			}
 			if (mappedType == null) {
-				rTypeMap.put(lastType, entry.getValue());
+				putToRTypeMap(lastType, entry.getValue());
 			}
 		}
 	}

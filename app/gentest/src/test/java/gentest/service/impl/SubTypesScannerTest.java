@@ -8,16 +8,17 @@
 
 package gentest.service.impl;
 
-import gentest.core.value.store.SubTypesScanner;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import gentest.core.data.type.SubTypesScanner;
 
 /**
  * @author LLT
  *
  */
 public class SubTypesScannerTest {
+	private SubTypesScannerMock scanner = new SubTypesScannerMock();
 	
 	@Test
 	public void areClosePkgs() {
@@ -29,7 +30,7 @@ public class SubTypesScannerTest {
 		Assert.assertFalse(sc.areClosePkgs("java", "jar"));
 		Assert.assertFalse(sc.areClosePkgs("java", "jav"));
 	}
-
+	
 	private static class SubTypesScannerMock extends SubTypesScanner {
 		@Override
 		protected boolean areClosePkgs(String subTypePkg, String typePkg) {

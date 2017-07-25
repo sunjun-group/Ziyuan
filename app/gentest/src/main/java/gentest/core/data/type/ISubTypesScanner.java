@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package sav.strategies.gentest;
+package gentest.core.data.type;
 
 
 
@@ -21,4 +21,6 @@ public interface ISubTypesScanner {
 	public Class<?> getRandomImplClzz(Class<?> clazz);
 
 	public Class<?> getRandomImplClzz(Class<?>[] bounds);
+	
+	public Class<?> getRandomImplClzz(IType itype);
 }

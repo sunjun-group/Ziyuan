@@ -36,7 +36,7 @@ public class ParameterSelector implements IParameterSelector {
 	private static final int IMPL_CLASS_MAX_TRY = 5;
 	
 	private final ComponentManager componentManager;
-	private sav.strategies.gentest.ISubTypesScanner refAnalyzer;
+	private ISubTypesScanner refAnalyzer;
 	private TzClass project;
 	private TzConfiguration config;
 

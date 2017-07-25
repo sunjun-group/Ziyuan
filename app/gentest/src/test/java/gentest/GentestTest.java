@@ -7,6 +7,7 @@ import gentest.core.RandomTester;
 import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
 import gentest.junit.TestsPrinter;
+import gentest.testdata.InvisibleParamTypeClass;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
@@ -63,6 +64,17 @@ public class GentestTest {
 				methods.add(method);
 			}
 		}
+	}
+	
+	@Test
+	public void testInValidMethod() throws Exception {
+		RandomTester tester = new RandomTester(5, 5, 100);
+		List<Method> methods = new ArrayList<Method>();
+		addMethods(methods, InvisibleParamTypeClass.class);
+		Pair<List<Sequence>, List<Sequence>> result = tester.test(toMethodCalls(methods));
+		TestsPrinter printer = new TestsPrinter("testdata.test.result.invalidMethod", 
+				"testdata.test.result.invalidMethod", "test", "InvisibleParamTypeClass", "./src/test/java");
+		printer.printTests(result);
 	}
 }
  

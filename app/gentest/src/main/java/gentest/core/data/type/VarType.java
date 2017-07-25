@@ -46,24 +46,35 @@ public class VarType implements IType {
 			if (CollectionUtils.isEmpty(typeParameters)) {
 				return rawType;
 			}
-			
 			Type[] typeArguments = new Type[typeParameters.length];
 			for (int i = 0; i < typeParameters.length; i++) {
 				TypeVariable<?> paramType = typeParameters[i];
-				Class<?> resolvedType = getResolver().resolve(paramType);
+				Class<?> resolvedType = resolver.resolve(paramType);
 				typeArguments[i] = resolvedType;
 			}
-			genericType = Types.newParameterizedType(rawType, typeArguments);
+			if (!CollectionUtils.isEmptyCheckNull(typeArguments)) {
+				Class<?> owner = null;
+				if (rawType.getEnclosingClass() != null) {
+					owner = rawType.getEnclosingClass();
+				}
+				genericType = Types.newParameterizedTypeWithOwner(owner, rawType, typeArguments);
+			}
 		}
 		return genericType; 
 	}
 
 	@Override
 	public IType resolveType(Class<?> a) {
+		beforeResolveRefType();
 		return creator.forType(a, rawType, getResolver());
 	}
 
+	private void beforeResolveRefType() {
+		getType(); // make sure variable type of this varType is solved.
+	}
+
 	public IType resolveSubType(Class<?> a) {
+		beforeResolveRefType();
 		VarType subtype = (VarType)creator.forClass(a);
 		if (CollectionUtils.isNotEmpty(this.rawType.getTypeParameters())) {
 			Class<?>[] typeParams = getResolver().resolve(this.rawType.getTypeParameters());
@@ -75,11 +86,13 @@ public class VarType implements IType {
 
 	@Override
 	public IType resolveType(Type type) {
+		beforeResolveRefType();
 		return creator.forType(type, rawType, getResolver());
 	}
 	
 	@Override
 	public IType[] resolveType(Type[] genericParameterTypes) {
+		beforeResolveRefType();
 		IType[] types = new IType[genericParameterTypes.length];
 		for (int i = 0; i < genericParameterTypes.length; i++) {
 			types[i] = resolveType(genericParameterTypes[i]);

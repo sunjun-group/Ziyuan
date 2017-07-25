@@ -9,10 +9,13 @@
 package gentest.core.value.generator;
 
 import java.util.List;
-import java.util.Random;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
+import gentest.core.data.type.ISubTypesScanner;
 import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.value.store.iface.ITypeInitializerStore;
@@ -22,13 +25,13 @@ import gentest.main.GentestConstants;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
-import sav.strategies.gentest.ISubTypesScanner;
 
 /**
  * @author LLT
  *
  */
 public class ValueGeneratorMediator {
+	private static Logger log = LoggerFactory.getLogger(ValueGeneratorMediator.class);
 	@Inject
 	private IVariableStore variableStore;
 	@Inject
@@ -39,6 +42,8 @@ public class ValueGeneratorMediator {
 	private ITypeInitializerStore typeInitializerStore;
 	@Inject
 	private PrimitiveValueGenerator primitiveGenerator;
+	@Inject
+	private IRandomness randomness;
 	
 	public GeneratedVariable generate(IType type, 
 			int firstVarId, boolean isReceiver) throws SavException {
@@ -51,6 +56,9 @@ public class ValueGeneratorMediator {
 		return append(rootVariable, level, type, false);
 	}
 
+	/**
+	 * @param level: start from 1.
+	 */
 	public GeneratedVariable append(GeneratedVariable rootVariable, int level,
 			IType type, boolean isReceiver) throws SavException {
 		GeneratedVariable variable = null;
@@ -83,17 +91,12 @@ public class ValueGeneratorMediator {
 			if (PrimitiveValueGenerator.accept(type.getRawType())) {
 				goodVariable = primitiveGenerator.doAppend(variable, level, type.getRawType());
 			}  else if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL) {
+				log.debug("level of value generation exceeds the limit ({} levels)", GentestConstants.VALUE_GENERATION_MAX_LEVEL);
 				ValueGenerator.assignNull(variable, type.getRawType());
-			} else if (level > 1) {
+			} else if (level > 1 && Randomness
+					.weighedCoinFlip(getProbIncreaseByLevel(level, GentestConstants.VALUE_GENERATION_MAX_LEVEL))) {
 				// increase the probability of generating null objects for fields
-				boolean isNull = new Random().nextInt(10) < 8;
-				if (isNull) {
 					ValueGenerator.assignNull(variable, type.getRawType());
-				} else {
-					ValueGenerator generator = ValueGenerator.findGenerator(type, isReceiver);
-					generator.setValueGeneratorMediator(this);
-					goodVariable = generator.doAppendVariable(variable, level);
-				}
 			} else {
 				ValueGenerator generator = ValueGenerator.findGenerator(type, isReceiver);
 				generator.setValueGeneratorMediator(this);
@@ -105,6 +108,19 @@ public class ValueGeneratorMediator {
 		}
 		rootVariable.append(variable);
 		return variable;
+	}
+
+	private double getProbIncreaseByLevel(int level, int maxLevel) {
+		if (level <= 2) {
+			return 0.1;
+		}
+		if (level <= 3) {
+			return 0.2;
+		}
+		if (level <= 4) {
+			return 0.4;
+		}
+		return 0.8; 
 	}
 
 	protected double calculateProbToGetValFromCache(int varsSizeInCache) {
@@ -153,4 +169,7 @@ public class ValueGeneratorMediator {
 		this.typeInitializerStore = typeInitializerStore;
 	}
 	
+	public IRandomness getRandomness() {
+		return randomness;
+	}
 }

@@ -87,8 +87,20 @@ public class ObjectValueGenerator extends ValueGenerator {
 			Type[] types = constructor.getGenericParameterTypes();
 			int[] paramIds = new int[types.length];
 			for (int i = 0; i < types.length; i++) {
+				IType paramResolvedType = selectedType.resolveType(types[i]);
+				/* in case resolved type of param is the super type of receiver, 
+				 * we try to choose a subtype for it. In the worse case that subtype is the same with receiver type,
+				 * we better ignore it to avoid a loop call */
+				if (paramResolvedType.getRawType().isAssignableFrom(constructor.getDeclaringClass())) {
+					Class<?> paramSubType = getSubTypesScanner().getRandomImplClzz(paramResolvedType);
+					if (paramSubType == null || 
+							paramSubType.isAssignableFrom(constructor.getDeclaringClass())) {
+						return false;
+					}
+					paramResolvedType = selectedType.resolveType(paramSubType);
+				}
 				GeneratedVariable newVariable = appendVariable(variable, level + 1,
-						selectedType.resolveType(types[i]));
+						paramResolvedType);
 				paramIds[i] = newVariable.getReturnVarId();
 			}
 			variable.append(rconstructor, paramIds);
@@ -149,21 +161,30 @@ public class ObjectValueGenerator extends ValueGenerator {
 		}
 		Class<?> type = itype.getRawType();
 		TypeInitializer initializer = getTypeInitializerStore().load(type);
-		if (initializer == null || initializer.hasNoConstructor()) {
+		if (initializer == null || initializer.doesNotHaveGoodConstructor()) {
 			// if type is an interface or abstract, look up for constructor of
 			// its subclass instead.
 			if (type.isInterface() || Modifier.isAbstract(type.getModifiers())) {
 				// try to search subclass
-				Class<?> subClass = getSubTypesScanner().getRandomImplClzz(type);
+				Class<?> subClass = getSubTypesScanner().getRandomImplClzz(itype);
 				if (subClass != null) {
 					return loadInitializer(itype.resolveType(subClass), level + 1);
 				}
 			} 
 			// if still cannot get constructor,
 			// try to search subclass if it's not an abstract class
-			if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())
-					&& initializer.hasNoConstructor()) {
-				Class<?> subClass = getSubTypesScanner().getRandomImplClzz(type);
+			if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())) {
+				Class<?> subClass = getSubTypesScanner().getRandomImplClzz(itype);
+				if (type.equals(subClass)) {
+					/* 
+					 * if the class do not have any subClass and has only bad constructor, we will accept it as
+					 * last choice constructor.
+					 * */
+					if (initializer != null && !initializer.hasNoConstructor()) {
+						return initializer;
+					} 
+					return null;
+				}
 				if (subClass != null) {
 					IType subType = itype.resolveType(subClass);
 					loadInitializer(subType, level + 1);

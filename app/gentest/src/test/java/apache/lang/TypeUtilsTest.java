@@ -21,8 +21,8 @@ import org.junit.Test;
 import com.google.inject.util.Types;
 
 import gentest.core.commons.utils.MethodUtils;
+import gentest.core.data.type.SubTypesScanner;
 import gentest.core.data.type.VarTypeResolver;
-import gentest.core.value.store.SubTypesScanner;
 import sav.common.core.utils.CollectionUtils;
 import sav.commons.AbstractTest;
 import testdata.type.paramtype.VariableClass;
