@@ -2,6 +2,7 @@ package learntest.core.machinelearning.sampling.javailp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -190,5 +191,52 @@ public class ProblemSolver {
 	
 	public int getSolvingTotal() {
 		return solvingTotal;
+	}
+	
+
+	/**
+	 * assign random value to some vars and then try to solve rest vars
+	 * @param problem
+	 * @param times
+	 * @return
+	 */
+	public List<Result> solveWithPreAssignment(Problem problem, int times) {
+		List<Result> res = new ArrayList<Result>();
+		if (problem == null || minMax.isEmpty()) {
+			return res;
+		}
+		
+		Set<ExecVar> vars = minMax.keySet();
+		int count = vars.size()-1;
+		while (times > 0) {
+			int tryTimes = 3;
+			while(tryTimes >= 0){
+				pickAndRandomSet(problem, vars, count);
+				Result result = solveProblem(problem);
+				if (result != null) {
+					res.add(result);
+					count++; /** keep count */
+					break;
+				}else{
+					tryTimes--;
+				}
+			}
+			List<Constraint> constraints = problem.getConstraints();
+			constraints.clear();
+			count--;
+			times -= count;
+		}
+		return res;
+	}
+
+	private void pickAndRandomSet(Problem problem, Set<ExecVar> vars, int count) {
+		List<ExecVar> list = new LinkedList<>();
+		list.addAll(vars);
+		for (int i = 0; i <= count; i++) {
+			int random = (int) (Math.random()*list.size());
+			addRandomConstraint(problem, list.get(random));
+			list.remove(random);
+		}
+		
 	}
 }
