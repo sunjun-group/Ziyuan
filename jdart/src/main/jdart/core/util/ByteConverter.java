@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 public class ByteConverter {
 
-	private static Logger log = LoggerFactory.getLogger(ByteConverter.class);
 	public static byte[] convertToBytes(Object object) throws IOException {
 		byte[] bytes;
 		ByteArrayOutputStream bos = null;
@@ -32,7 +31,6 @@ public class ByteConverter {
 	
 
 	public static Object convertFromBytes(byte[] bytes) throws IOException, ClassNotFoundException {
-		log.info("receive byte[] : "+bytes.length);
 		Object object;
 		ByteArrayInputStream bis = null;
         ObjectInput in = null;

@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jdart.core.JDartParams;
+import jdart.core.util.ByteConverter;
 import jdart.core.util.TaskManager;
 import jdart.model.TestInput;
 
@@ -34,11 +35,12 @@ public class JDartProcess {
 		try {
 			list = JDartProcess.exec(JDartClient.class, args);
 			if (list != null) {
-				log.info("list size : " + list.size());
+				log.info("JDart return " + list.size() +" test cases");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			log.info("JDart return 0 test case");
 		}
 		return list;
 	}
@@ -69,6 +71,7 @@ public class JDartProcess {
 			while(tryTime <= 1000){
 				try{
 					s = new ServerSocket(port);
+					break;
 				}catch(java.net.BindException exception){
 					tryTime++;
 					port = (int) (Math.random()*1000)+8000;
@@ -79,14 +82,13 @@ public class JDartProcess {
 						throw exception;
 					}
 				}
-				break;
 			}
 			s.setSoTimeout(40 * 1000);
 			log.info("IntraSocket Start:" + s);
 			log.info("JDart method : "+targetClass+"."+methodName);
 			log.info("JDart mainEntry : "+mainEntry);
 			log.info("JDart param : "+paramString);
-			ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath, className, classpathStr, mainEntry,
+			ProcessBuilder builder = new ProcessBuilder(javaBin, "-Xms1024m", "-Xmx9000m", "-cp", classpath, className, classpathStr, mainEntry,
 					targetClass, methodName, paramString, app, site, ""+port);
 			builder.directory(new File("E:\\hairui\\git\\Ziyuan\\jdart"));
 			Process process = builder.start();
@@ -108,7 +110,7 @@ public class JDartProcess {
 			socket = s.accept();
 			log.info("IntraConnection accept socket:" + socket);
 			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			JDartServerSingle.parseList(list, br);
+			parseList(list, br);
 			log.info("receive lines size :" + list.size());
 		} catch (Exception e) {
 			log.info(e.toString());
@@ -161,4 +163,23 @@ public class JDartProcess {
 
 	}
 
+	public static void parseList(List<TestInput> list, BufferedReader br) throws IOException, ClassNotFoundException {
+		StringBuffer sb  = new StringBuffer();
+		while(true){
+			String str = br.readLine();
+            if(str.equals("END")){  
+                break;  
+            }else if (str.equals("line end")) {
+            	sb.delete(sb.length()-1, sb.length());
+            	byte[] bytes = sb.toString().getBytes();
+            	log.info("receive byte[] : "+bytes.length);
+				list.add((TestInput)(ByteConverter.convertFromBytes(bytes)));
+				sb = new StringBuffer();
+			}else {
+				sb.append(str);
+				sb.append("\n");
+			}
+		}
+		
+	}
 }

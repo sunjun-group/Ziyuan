@@ -56,8 +56,11 @@ public class TaskManager {
 		for (final Entry<Integer, LocalVirtualMachine> entry : virtualMachines.entrySet()) {
 	        System.out.println(entry.getKey() + " : " + entry.getValue().displayName());
 	    }
-		if (virtualMachines.size()>=4) {
-			System.out.println("");
+		if (virtualMachines.size()>=3) {
+			log.info("The number of JVM is larger than 2");
+			for (final Entry<Integer, LocalVirtualMachine> entry : virtualMachines.entrySet()) {
+				log.info(entry.getKey() + " : " + entry.getValue().displayName());
+		    }
 		}
 	}
 	public static void main(String[] args) {

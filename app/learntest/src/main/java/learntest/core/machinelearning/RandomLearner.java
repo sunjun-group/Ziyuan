@@ -39,7 +39,7 @@ public class RandomLearner implements IInputLearner {
 		int failToSelectSample = 0;
 		while (tc > 0) {
 			int sampleTotal = tc < 100 ? tc : 100;
-			selectiveSampling.selectData(inputProbes.getOriginalVars(), null, null, sampleTotal);
+			selectiveSampling.selectData(inputProbes.getOriginalVars(), null, null, sampleTotal); /** gentest and run test cases*/
 			int remainTc = maxTcs - probes.getTotalTcs();
 			if (remainTc == tc) {
 				if (failToSelectSample == 5) {
