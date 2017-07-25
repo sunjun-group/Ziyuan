@@ -2,6 +2,7 @@ package learntest.sampling.javailp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -40,6 +41,13 @@ public class ProblemSolver {
 		minMax = new HashMap<ExecVar, Pair<Number, Number>>();
 	}
 	
+	/**
+	 * Each Result is an assignment for a var, and a var has two related Result which indicates its range. 
+	 * The range of vars is stored in global variable named minMax
+	 * @param problem
+	 * @param vars
+	 * @return List<Result>
+	 */
 	public List<Result> calculateRanges(Problem problem, List<ExecVar> vars) {
 		List<Result> resultList = new ArrayList<Result>();
 		if (problem == null) {
@@ -100,12 +108,64 @@ public class ProblemSolver {
 		}
 		return res;
 	}
+	
+	/**
+	 * assign random value to some vars and then try to solve rest vars
+	 * @param problem
+	 * @param times
+	 * @return
+	 */
+	public List<Result> solveWithPreAssignment(Problem problem, int times) {
+		List<Result> res = new ArrayList<Result>();
+		if (problem == null || minMax.isEmpty()) {
+			return res;
+		}
+		
+		Set<ExecVar> vars = minMax.keySet();
+		int count = vars.size()-1;
+		while (times > 0) {
+			int tryTimes = 3;
+			while(tryTimes >= 0){
+				pickAndRandomSet(problem, vars, count);
+				Result result = solveProblem(problem);
+				if (result != null) {
+					res.add(result);
+					count++; /** keep count */
+					break;
+				}else{
+					tryTimes--;
+				}
+			}
+			List<Constraint> constraints = problem.getConstraints();
+			constraints.clear();
+			count--;
+			times -= count;
+		}
+		return res;
+	}
+
+	private void pickAndRandomSet(Problem problem, Set<ExecVar> vars, int count) {
+		List<ExecVar> list = new LinkedList<>();
+		list.addAll(vars);
+		for (int i = 0; i <= count; i++) {
+			int random = (int) (Math.random()*list.size());
+			addRandomConstraint(problem, list.get(random));
+			list.remove(random);
+		}
+		
+	}
 
 	private Result solveProblem(Problem problem) {
 		solvingTotal++;
 		return solver.solve(problem);
 	}
 
+	/**
+	 * create a random constraint of var
+	 * this implementation will create an equation var = randV, where randV is restricted by var's range 
+	 * @param problem
+	 * @param var
+	 */
 	private void addRandomConstraint(Problem problem, ExecVar var) {
 		Linear linear = new Linear();
 		linear.add(1, var.getLabel());
