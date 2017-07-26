@@ -50,14 +50,6 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	private List<TargetClassFilter> classFilters;
 	private static Map<String, Trial> oldTrials;
 	static {
-		/* todo : skip old trial start*/
-		try {
-			TrialExcelReader reader = new TrialExcelReader(new File("E:/hairui/eclipse-java-mars-clean/eclipse/apache-common-math-2.2_0.xlsx"));
-			oldTrials = reader.readDataSheet();
-		} catch (Exception e) {
-			// ignore
-		}
-		/* todo : skip old trial end */
 	}
 	
 	private int curMethodIdx = 0;
@@ -150,14 +142,6 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			log.info("-----------------------------------------------------------------------------------------------");
 			log.info("Method {}", ++curMethodIdx);
 
-			/* todo : skip old trial start*/
-//			String fullName = targetMethod.getMethodFullName();
-//			int line = targetMethod.getLineNum();
-//			if (oldTrials.containsKey(fullName+"_"+line)) {
-//				continue;
-//			}
-			
-			/* todo : skip old trial end */
 			try{
 			    PrintWriter writer = new PrintWriter("latest_working_method.txt", "UTF-8");
 			    writer.println("working method: " + targetMethod.getMethodFullName());
