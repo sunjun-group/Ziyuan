@@ -208,7 +208,7 @@ public class ProblemSolver {
 		
 		Set<ExecVar> vars = minMax.keySet();
 		int count = vars.size()-1;
-		while (times > 0) {
+		while (times > 0 && count > 0) {
 			int tryTimes = 3;
 			while(tryTimes >= 0){
 				pickAndRandomSet(problem, vars, count);
@@ -230,6 +230,7 @@ public class ProblemSolver {
 	}
 
 	private void pickAndRandomSet(Problem problem, Set<ExecVar> vars, int count) {
+		assert count>0 : "count should be non-negative!";
 		List<ExecVar> list = new LinkedList<>();
 		list.addAll(vars);
 		for (int i = 0; i <= count; i++) {
