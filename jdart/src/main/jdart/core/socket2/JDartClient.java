@@ -20,6 +20,17 @@ public class JDartClient {
 	public void run(JDartParams jdartParams, int port){
 		log.info("JDart begin : "+jdartParams.getClassName()+"."+jdartParams.getMethodName());
 		List<TestInput> result = new JDartCore().run(jdartParams);
+		
+
+//		 for (int i = 0; i < result.size(); i++) {  
+//			 try {
+//				byte[] bytes = ByteConverter.convertToBytes(result.get(i));
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			 }
+		
 		log.info("JDart over");
 		Socket socket = null;
 		PrintWriter pw = null;
@@ -29,7 +40,8 @@ public class JDartClient {
 			pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
 					socket.getOutputStream())));
 			if (result != null) {
-				 for (int i = 0; i < result.size(); i++) {  
+				int javaPathLimit = 500; /** to constraint the number of returned result, which may cause java error : The filename or extension is too long */
+				 for (int i = 0; i < result.size() && i < javaPathLimit; i++) {  
 					 log.info("JDart result : "+result.get(i));
 					 byte[] bytes = ByteConverter.convertToBytes(result.get(i));
 					 log.info("send byte[] :"+bytes.length);

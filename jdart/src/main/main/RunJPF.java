@@ -232,9 +232,10 @@ private static void putArrayVar(HashMap<String, List<TestVar>> arrayList, List<T
 		});
 	      array.setType(e.getValue().get(0).getType());
 	      array.setChildren((LinkedList<TestVar> )e.getValue());
-	      printArrayVar(array);
+//	      printArrayVar(array);
 	      paramList.add(array);
 	}
+	System.out.println("TestVar size : "+paramList.size());
 	
 }
 
