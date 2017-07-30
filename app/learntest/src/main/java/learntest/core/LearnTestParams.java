@@ -93,6 +93,7 @@ public class LearnTestParams {
 		LearnTestParams params = new LearnTestParams();
 		params.targetMethod = targetMethod;
 		params.systemConfig = systemConfig;
+		params.maxTcs = maxTcs;
 		return params;
 	}
 	

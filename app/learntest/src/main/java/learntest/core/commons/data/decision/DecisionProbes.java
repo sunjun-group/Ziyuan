@@ -74,24 +74,40 @@ public class DecisionProbes extends CfgCoverage {
 	/* build precondition of a node based on its dominatees */
 	public OrCategoryCalculator getPrecondition(CfgNode node) {
 		Precondition precondition = getNodeProbe(node).getPrecondition();
-		for (CfgNode dominatee : CfgUtils.getPrecondInherentDominatee(node)) {
-			Precondition domPrecond = getNodeProbe(dominatee).getPrecondition();
+		for (CfgNode dominator : CfgUtils.getPrecondInherentDominatee(node)) {
+			Precondition domPrecond = getNodeProbe(dominator).getPrecondition();
 			List<Divider> domDividers = domPrecond.getDividers();
 			if (CollectionUtils.isEmpty(domDividers)) {
 				precondition.addPreconditions(domPrecond.getPreconditions());
 			} else {
-				BranchRelationship branchRel = node.getBranchRelationship(dominatee.getIdx());
+				BranchRelationship branchRel = node.getBranchRelationship(dominator.getIdx());
 				CategoryCalculator condFromDividers = null;
 				if (branchRel == BranchRelationship.TRUE) {
 					condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
-				} else if (dominatee.isLoopHeaderOf(node)) {
+				} else if (dominator.isLoopHeaderOf(node)) {
 					condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
+				} 
+				else {
+					List<Divider> clonedDividers = new ArrayList<>();
+					for(Divider d: domDividers){
+						double[] clonedThetas = new double[d.getThetas().length];
+						for(int i=0; i<clonedThetas.length; i++){
+							clonedThetas[i]=-1*d.getThetas()[i];
+						}
+						
+						Divider d0 = new Divider(clonedThetas, d.getTheta0(), true);
+						clonedDividers.add(d0);
+					}
+					condFromDividers = new MultiDividerBasedCategoryCalculator(clonedDividers);
+					System.currentTimeMillis();
 				}
 				if (condFromDividers != null) {
 					precondition.addPreconditions(domPrecond.getPreconditions(), condFromDividers);
 				}
 			}
 		}
+		System.currentTimeMillis();
+		
 		return new OrCategoryCalculator(precondition.getPreconditions(), learningVars, originalVars);
 	}
 
