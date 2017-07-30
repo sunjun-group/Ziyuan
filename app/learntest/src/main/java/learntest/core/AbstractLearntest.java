@@ -60,7 +60,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		this.appClasspath = appClasspath;
 	}
 	
-	private GentestResult randomGentests(GentestParams params) {
+	public GentestResult randomGentests(GentestParams params) {
 		ensureTestGenerator();
 		ensureCompiler();
 		try {
@@ -77,7 +77,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 	 * run coverage, and in case the coverage is too bad (means no branch is covered)
 	 * try to generate another testcase.
 	 */
-	protected GentestResult randomGenerateInitTestWithBestEffort(LearnTestParams params, GentestParams gentestParams) {
+	public GentestResult randomGenerateInitTestWithBestEffort(LearnTestParams params, GentestParams gentestParams) {
 		TargetMethod targetMethod = params.getTargetMethod();
 		CfgCoverage cfgCoverage = null;
 		gentestParams.setPrintOption(PrintOption.APPEND);
@@ -115,7 +115,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		return gentestResult;
 	}
 
-	protected CfgCoverage runCfgCoverage(TargetMethod targetMethod, List<String> junitClasses) throws SavException {
+	public CfgCoverage runCfgCoverage(TargetMethod targetMethod, List<String> junitClasses) throws SavException {
 		log.debug("calculate coverage..");
 		SingleTimer timer = SingleTimer.start("cfg-coverage");
 		CfgJaCoCo jacoco = new CfgJaCoCo(appClasspath);
