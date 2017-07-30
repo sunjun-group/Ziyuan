@@ -53,7 +53,8 @@ public class ProblemSolver {
 			Number max = null;
 			String label = var.getLabel();
 
-			linear.add(1, label);
+			int coefficient = (Math.random()>0.5)? 1 : -1;
+			linear.add(coefficient, label);
 			Linear obj = new Linear();
 			obj.add(1, label);
 			
@@ -209,23 +210,30 @@ public class ProblemSolver {
 		Set<ExecVar> vars = minMax.keySet();
 		int count = vars.size()-1;
 		while (times > 0 && count > 0) {
-			int tryTimes = 3;
+			int tryTimes = 10;
 			while(tryTimes >= 0){
-				pickAndRandomSet(problem, vars, count);
+				pickAndRandomSet(problem, vars, count);					
 				Result result = solveProblem(problem);
 				if (result != null) {
 					res.add(result);
+					for (int i = 0; i <= count; i++) { /** clear added constraints */
+						List<Constraint> constraints = problem.getConstraints();
+						constraints.remove(constraints.size()-1);
+					}
 					count++; /** keep count */
 					break;
 				}else{
 					tryTimes--;
 				}
+				for (int i = 0; i <= count; i++) { /** clear added constraints */
+					List<Constraint> constraints = problem.getConstraints();
+					constraints.remove(constraints.size()-1);
+				}
 			}
-			List<Constraint> constraints = problem.getConstraints();
-			constraints.clear();
 			count--;
 			times -= count;
 		}
+		System.currentTimeMillis();
 		return res;
 	}
 

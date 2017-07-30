@@ -212,19 +212,26 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			RunTimeInfo l2tAverageInfo = new RunTimeInfo();
 			RunTimeInfo ranAverageInfo = new RunTimeInfo();
 			RunTimeInfo jdartInfo = null;
+			System.out.println();
+
+			randoopParam.setApproach(LearnTestApproach.RANDOOP);
+			log.info("run randoop..");
+			runLearntest(ranAverageInfo, randoopParam);
 			
 			l2tParams.setApproach(LearnTestApproach.L2T);
 			log.info("run jdart..");
 			jdartInfo = runJdart(l2tParams);
 			
+			l2tParams.setInitialTests(randoopParam.getInitialTests());
+			l2tParams.setMaxTcs(ranAverageInfo.getTestCnt());
 			log.info("run l2t..");
 			runLearntest(l2tAverageInfo, l2tParams);
 			
-			randoopParam.setApproach(LearnTestApproach.RANDOOP);
-			randoopParam.setInitialTests(l2tParams.getInitialTests());
-			randoopParam.setMaxTcs(l2tAverageInfo.getTestCnt());
-			log.info("run randoop..");
-			runLearntest(ranAverageInfo, randoopParam);
+//			randoopParam.setApproach(LearnTestApproach.RANDOOP);
+//			randoopParam.setInitialTests(l2tParams.getInitialTests());
+//			randoopParam.setMaxTcs(l2tAverageInfo.getTestCnt());
+//			log.info("run randoop..");
+//			runLearntest(ranAverageInfo, randoopParam);
 			
 			TargetMethod method = params.getTargetMethod();
 			log.info("Result: ");
