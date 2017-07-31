@@ -215,13 +215,13 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			System.out.println();
 
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
+			log.info("run jdart..");
+			jdartInfo = runJdart(randoopParam);
+			
 			log.info("run randoop..");
 			runLearntest(ranAverageInfo, randoopParam);
 			
-			l2tParams.setApproach(LearnTestApproach.L2T);
-			log.info("run jdart..");
-			jdartInfo = runJdart(l2tParams);
-			
+			l2tParams.setApproach(LearnTestApproach.L2T);			
 			l2tParams.setInitialTests(randoopParam.getInitialTests());
 			l2tParams.setMaxTcs(ranAverageInfo.getTestCnt());
 			log.info("run l2t..");
