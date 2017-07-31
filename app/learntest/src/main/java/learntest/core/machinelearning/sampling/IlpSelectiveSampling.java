@@ -27,7 +27,6 @@ import learntest.core.machinelearning.sampling.javailp.ProblemSolver;
 import learntest.plugin.utils.Settings;
 import libsvm.core.Divider;
 import libsvm.core.Machine.DataPoint;
-import net.sf.javailp.OptType;
 import net.sf.javailp.Problem;
 import net.sf.javailp.Result;
 import sav.common.core.SavException;
@@ -121,30 +120,38 @@ public class IlpSelectiveSampling {
 		/**
 		 * generate data point on the border of divider
 		 */
-		for (Divider learnedFormula : learnedFormulas) {
-			List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
-			if (!problems.isEmpty() && learnedFormula != null) {
-				for (Problem problem : problems) {
-					ProblemBuilder.addOnBorderConstaints(problem, learnedFormula, originVars);
+		int selectiveSamplingDataSize = 30;
+		for(int i=0; i<selectiveSamplingDataSize; i++){
+			for (Divider learnedFormula : learnedFormulas) {
+				List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
+				if (!problems.isEmpty() && learnedFormula != null) {
+					for (Problem problem : problems) {
+						ProblemBuilder.addOnBorderConstaints(problem, learnedFormula, originVars);
+					}
 				}
-			}
 
-			for (Problem problem : problems) {
-				solver.generateRandomObjective(problem, originVars);
-				Result result = solver.solve(problem);
-				if (result != null) {
-					updateSamples(Arrays.asList(result), samples);
+				for (Problem problem : problems) {
+					solver.generateRandomObjective(problem, originVars);
+					Result result = solver.solve(problem);
+					if (result != null) {
+						updateSamples(Arrays.asList(result), samples);
+					}
 				}
 			}
 		}
+		samples.addAll(selectHeuristicsSamples(samples, originVars, maxSamplesPerSelect * 2));
 
 		/**
 		 * randomly generate more data points on svm model.
 		 */
-		samples.addAll(generateRandomPointsWithPrecondition(preconditions, originVars, datapoints, 3));
-		samples.addAll(selectHeuristicsSamples(samples, originVars, maxSamplesPerSelect * 2));
+		List<double[]> randomSamples = generateRandomPointsWithPrecondition(preconditions, originVars, datapoints, 3);
+		randomSamples = limitSamples(randomSamples, samples.size());
+		
+		samples.addAll(randomSamples);
+		
+		samples = limitSamples(samples);
 
-		return limitSamples(samples);
+		return samples;
 	}
 	
 	private List<double[]> generateRandomPointsWithPrecondition(OrCategoryCalculator preconditions,

@@ -44,9 +44,9 @@ public class PositiveSeparationMachine extends Machine {
 		this.negativePointSelection = pointSelection;
 	}
 
-	private boolean canDivideWithOneFormula(List<DataPoint> dataPoints){
+	private boolean canDivideWithOneFormula(List<DataPoint> dataPoints) {
 		boolean canDivideWithOneFormula = true;
-		
+
 		try {
 			super.train(dataPoints);
 		} catch (SAVExecutionTimeOutException e) {
@@ -54,20 +54,19 @@ public class PositiveSeparationMachine extends Machine {
 		}
 		if (model != null) {
 			learnedModels.add(model);
-		}
-		else{
+		} else {
 			canDivideWithOneFormula = false;
 		}
-		
+
 		return canDivideWithOneFormula;
 	}
-	
+
 	@Override
 	protected Machine train(final List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
-		if(canDivideWithOneFormula(dataPoints)){
+		if (canDivideWithOneFormula(dataPoints)) {
 			return this;
 		}
-		
+
 		int attemptCount = 0;
 		double bestAccuracy = 0.0;
 		List<svm_model> bestLearnedModels = new ArrayList<svm_model>();
@@ -84,45 +83,45 @@ public class PositiveSeparationMachine extends Machine {
 			}
 		}
 		learnedModels = bestLearnedModels;
-		
+
 		return this;
 	}
-	
-	private boolean isModelEqual(svm_model m1, svm_model m2){
-		if(m1.sv_coef.length==m2.sv_coef.length){
-			for(int i=0; i<m1.sv_coef.length; i++){
-				if(m1.sv_coef[i].length == m2.sv_coef[i].length){
-					for(int j=0; j<m1.sv_coef[i].length; j++){
-						if(Math.abs(m1.sv_coef[i][j]-m2.sv_coef[i][j])>0.1){
+
+	private boolean isModelEqual(svm_model m1, svm_model m2) {
+		if (m1.sv_coef.length == m2.sv_coef.length) {
+			for (int i = 0; i < m1.sv_coef.length; i++) {
+				if (m1.sv_coef[i].length == m2.sv_coef[i].length) {
+					for (int j = 0; j < m1.sv_coef[i].length; j++) {
+						if (Math.abs(m1.sv_coef[i][j] - m2.sv_coef[i][j]) > 0.1) {
 							return false;
 						}
 					}
 				}
 			}
 		}
-		
-		if(m1.rho.length==m2.rho.length){
-			for(int i=0; i<m1.rho.length; i++){
-				if(Math.abs(m1.rho[i]-m2.rho[i])>0.1){
+
+		if (m1.rho.length == m2.rho.length) {
+			for (int i = 0; i < m1.rho.length; i++) {
+				if (Math.abs(m1.rho[i] - m2.rho[i]) > 0.1) {
 					return false;
 				}
 			}
 		}
-		
+
 		return true;
 	}
-	
-	private boolean isContain(List<svm_model> list, svm_model m0){
-		if(list.isEmpty()){
+
+	private boolean isContain(List<svm_model> list, svm_model m0) {
+		if (list.isEmpty()) {
 			return false;
 		}
-		
-		for(svm_model m: list){
-			if(isModelEqual(m, m0)){
+
+		for (svm_model m : list) {
+			if (isModelEqual(m, m0)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -132,30 +131,60 @@ public class PositiveSeparationMachine extends Machine {
 
 		classifyNegativePositivePoints(dataPoints, positives, negatives);
 
-		List<DataPoint> trainingData = (positives.size()>negatives.size()) ? negatives : positives;
-		List<DataPoint> selectionData = (positives.size()>negatives.size()) ? positives : negatives;
-		
-		int loopCount = 0;
-		while (!selectionData.isEmpty() && loopCount < 3) {
-			loopCount++;
-			// Training set = all positives + 1 negative
-			DataPoint p = negativePointSelection.select(selectionData, trainingData);
-			trainingData.add(p);
-			super.train(trainingData);
+		List<DataPoint> trainingData = (positives.size() > negatives.size()) ? negatives : positives;
+		List<DataPoint> selectionData = (positives.size() > negatives.size()) ? positives : negatives;
 
-			if (model != null) {
-				if(!isContain(learnedModels,model)){
-					learnedModels.add(model);					
+		List<DataPoint> allData = new ArrayList<>();
+		allData.addAll(trainingData);
+		allData.addAll(selectionData);
+		super.train(allData);
+		if (model == null) { /** learn model with partial data */
+			/** Training set = all positives + limited size of negative */
+			int limit = 10;
+			int selectionSize = (selectionData.size() < limit) ? selectionData.size() : limit;
+			int modelSize = 0, modelLimit = 2;
+
+			learnLoop: while (selectionSize > 0) {
+				int trialSize = 2;
+				for (int k = 0; k < trialSize; k++) {
+					List<DataPoint> selectedPoints = select(10, selectionData, trainingData);
+					trainingData.addAll(selectedPoints);
+
+					super.train(trainingData);
+					for (int i = 0; i < selectionSize; i++) {
+						DataPoint p = trainingData.remove(trainingData.size() - 1);
+						selectionData.remove(p);
+					}
+					removeClassifiedNegativePoints(selectionData);
+					
+					/** record model and loop until the number of models is greater than modelLimit */
+					if (model != null) { 
+						if (!isContain(learnedModels, model)) {
+							learnedModels.add(model);
+							modelSize++;
+							if (modelSize > modelLimit) {
+								break learnLoop;
+							}
+						}
+					}
 				}
+				selectionSize -= 2;
 			}
 
-			trainingData.remove(trainingData.size() - 1);
-			selectionData.remove(p);
-			
-			removeClassifiedNegativePoints(selectionData);
+		} else {
+			learnedModels.add(model);
 		}
 
 		return this;
+	}
+
+	private List<DataPoint> select(int limit, List<DataPoint> selectionData, List<DataPoint> trainingData) {
+		List<DataPoint> list = new ArrayList<>();
+		for (int i = 0; i < limit; i++) {
+			DataPoint p = negativePointSelection.select(selectionData, trainingData);
+			list.add(p);
+		}
+		return list;
 	}
 
 	/**
@@ -163,8 +192,8 @@ public class PositiveSeparationMachine extends Machine {
 	 * @param positives
 	 * @param negatives
 	 */
-	private void classifyNegativePositivePoints(final List<DataPoint> dataPoints,
-			final List<DataPoint> positives, final List<DataPoint> negatives) {
+	private void classifyNegativePositivePoints(final List<DataPoint> dataPoints, final List<DataPoint> positives,
+			final List<DataPoint> negatives) {
 		for (DataPoint point : dataPoints) {
 			if (Category.POSITIVE == point.getCategory()) {
 				positives.add(point);
@@ -190,7 +219,7 @@ public class PositiveSeparationMachine extends Machine {
 			}
 		}
 	}
-	
+
 	public List<svm_model> getLearnedModels() {
 		return learnedModels;
 	}
@@ -201,9 +230,9 @@ public class PositiveSeparationMachine extends Machine {
 		for (svm_model learnModel : this.learnedModels) {
 			if (learnModel != null) {
 				Divider divider = new Model(learnModel, getNumberOfFeatures()).getExplicitDivider();
-				if(divider != null){
+				if (divider != null) {
 					divider = divider.round();
-					roundDividers.add(divider);					
+					roundDividers.add(divider);
 				}
 			}
 		}
@@ -216,11 +245,10 @@ public class PositiveSeparationMachine extends Machine {
 		StringBuilder str = new StringBuilder();
 
 		final int numberOfFeatures = getRandomData().getNumberOfFeatures();
-		if (numberOfFeatures > 0) {			
+		if (numberOfFeatures > 0) {
 			for (svm_model svmModel : learnedModels) {
-				if (svmModel != null) {				
-					final Divider explicitDivider = new Model(svmModel, numberOfFeatures)
-					.getExplicitDivider();
+				if (svmModel != null) {
+					final Divider explicitDivider = new Model(svmModel, numberOfFeatures).getExplicitDivider();
 					if (str.length() != 0) {
 						str.append("\n");
 					}
@@ -231,29 +259,27 @@ public class PositiveSeparationMachine extends Machine {
 
 		return str.toString();
 	}
-	
+
 	public List<Divider> getLearnedDividers() {
 		List<Divider> roundDividers = new ArrayList<Divider>();
 		for (svm_model learnModel : this.learnedModels) {
 			if (learnModel != null) {
-				roundDividers.add(new Model(learnModel, getNumberOfFeatures()).getExplicitDivider()
-						.round());
+				roundDividers.add(new Model(learnModel, getNumberOfFeatures()).getExplicitDivider().round());
 			}
 		}
 		return roundDividers;
 	}
-	
+
 	public Formula getLearnedMultiFormula(List<ExecVar> vars, List<String> dataLabels) {
 		Formula formula = null;
 		List<svm_model> models = getLearnedModels();
 		final int numberOfFeatures = getNumberOfFeatures();
-		if (models != null && numberOfFeatures > 0) {			
+		if (models != null && numberOfFeatures > 0) {
 			for (svm_model svmModel : models) {
-				if (svmModel != null) {				
+				if (svmModel != null) {
 					Model model = new Model(svmModel, numberOfFeatures);
 					final Divider explicitDivider = model.getExplicitDivider();
-					Formula current = new FormulaProcessor<ExecVar>(vars).
-							process(explicitDivider, dataLabels, true);
+					Formula current = new FormulaProcessor<ExecVar>(vars).process(explicitDivider, dataLabels, true);
 					if (formula == null) {
 						formula = current;
 					} else {
@@ -262,7 +288,7 @@ public class PositiveSeparationMachine extends Machine {
 				}
 			}
 		}
-		
+
 		return formula;
 	}
 

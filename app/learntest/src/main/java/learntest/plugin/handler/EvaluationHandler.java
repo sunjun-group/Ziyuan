@@ -137,11 +137,28 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		if (targetMethods.isEmpty()) {
 			return;
 		}
-		
-		for (TargetMethod targetMethod : targetMethods) {
-			log.info("-----------------------------------------------------------------------------------------------");
-			log.info("Method {}", ++curMethodIdx);
 
+		/* todo : test special method start */
+//		 		try {
+//					TrialExcelReader reader = new TrialExcelReader(new File("E:/hairui/eclipse-java-mars-clean/eclipse/check.xlsx"));
+//		 			oldTrials = reader.readDataSheet();
+//		 		} catch (Exception e) {
+//		 			// ignore
+//		 	}
+		/* todo : test special method end */
+		 		
+		for (TargetMethod targetMethod : targetMethods) {
+
+			/* todo : test special method start*/
+//			 			String fullName = targetMethod.getMethodFullName();
+//			 			int line = targetMethod.getLineNum();
+//			 			if (!oldTrials.containsKey(fullName+"_"+line)) {
+//			 				continue;
+//			 			}			 			
+			 /* todo : test special method end */
+			log.info("-----------------------------------------------------------------------------------------------");
+			log.info("Method {}", ++curMethodIdx);			
+			
 			try{
 			    PrintWriter writer = new PrintWriter("latest_working_method.txt", "UTF-8");
 			    writer.println("working method: " + targetMethod.getMethodFullName());

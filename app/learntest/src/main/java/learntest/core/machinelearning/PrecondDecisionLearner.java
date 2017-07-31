@@ -29,6 +29,7 @@ import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import libsvm.core.Category;
 import libsvm.core.Divider;
 import libsvm.core.Machine;
+import libsvm.core.Machine.DataPoint;
 import libsvm.extension.ByDistanceNegativePointSelection;
 import libsvm.extension.NegativePointSelection;
 import libsvm.extension.PositiveSeparationMachine;
@@ -63,7 +64,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	}
 
 	private void learn(CfgNode node, DecisionProbes probes, List<Integer> visitedNodes) throws SavException {
-		log.debug("parsing the node in line " + node.getLine());
+		log.debug("parsing the node in line " + node.getLine() + "(" + node + ")");
 		
 		for (CfgNode dominator : CfgUtils.getPrecondInherentDominatee(node)) {
 			if (!visitedNodes.contains(dominator.getIdx())) {
@@ -75,14 +76,13 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			visitedNodes.add(node.getIdx());
 			return;
 		}
-		log.debug("learning the node in line " + node.getLine());
+		log.debug("learning the node in line " + node.getLine() + "(" + node + ")");
 		OrCategoryCalculator preconditions = getPreconditions(probes, node);
 		dataPreprocessor.sampleForBranchCvg(node, preconditions);
 		dataPreprocessor.sampleForLoopCvg(node, preconditions);
 		
-		System.currentTimeMillis();
-		
 		nodeProbe = probes.getNodeProbe(node);
+		
 		updatePrecondition(nodeProbe);
 		visitedNodes.add(node.getIdx());
 		for (CfgNode dependentee : CollectionUtils.nullToEmpty(node.getDependentees())) {
@@ -129,12 +129,14 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		PositiveSeparationMachine mcm = new PositiveSeparationMachine(negative);
 		trueFlaseFormula = generateInitialFormula(orgNodeProbe, mcm);
 		double acc = mcm.getModelAccuracy();
+		
 		List<Divider> dividers = mcm.getLearnedDividers();
 		log.info("=============learned multiple cut: " + trueFlaseFormula);
 
 		int time = 0;
 		DecisionNodeProbe nodeProbe = orgNodeProbe;
 		CfgNode node = nodeProbe.getNode();
+		
 		while (trueFlaseFormula != null && time < FORMULAR_LEARN_MAX_ATTEMPT
 				&& nodeProbe.needToLearnPrecond()) {
 			time++;
@@ -161,7 +163,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			if (tmp == null) {
 				break;
 			}
-
+			
 			double accTmp = mcm.getModelAccuracy();
 			acc = mcm.getModelAccuracy();
 			if (!tmp.equals(trueFlaseFormula)) {
@@ -198,6 +200,10 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		}
 		mcm.train();
 		Formula newFormula = mcm.getLearnedMultiFormula(probes.getOriginalVars(), labels);
+		
+		for(DataPoint point: mcm.getDataPoints()){
+			System.out.println(point);
+		}
 		
 		return newFormula;
 	}
