@@ -30,6 +30,7 @@ import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.utils.CfgUtils;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
+import learntest.core.machinelearning.sampling.IlpSelectiveSampling;
 import libsvm.core.Category;
 import libsvm.core.Divider;
 import libsvm.core.Machine;
@@ -54,7 +55,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	private static Logger log = LoggerFactory.getLogger(PrecondDecisionLearner.class);
 	private static final int FORMULAR_LEARN_MAX_ATTEMPT = 5;
 	protected LearnedDataProcessor dataPreprocessor;
-
+	
 	public PrecondDecisionLearner(LearningMediator mediator) {
 		super(mediator);
 	}
@@ -169,6 +170,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		
 		while (trueFlaseFormula != null && time < FORMULAR_LEARN_MAX_ATTEMPT
 				&& nodeProbe.needToLearnPrecond()) {
+			IlpSelectiveSampling.iterationTime = FORMULAR_LEARN_MAX_ATTEMPT-time;
 			time++;
 			DecisionProbes probes = nodeProbe.getDecisionProbes();
 			log.debug("selective sampling: ");
@@ -201,9 +203,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				dividers = mcm.getLearnedDividers();
 				acc = accTmp;
 
-				if (acc == 1.0) {
-					break;
-				}
+//				if (acc == 1.0) {
+//					break;
+//				}
 			} else {
 				break;
 			}

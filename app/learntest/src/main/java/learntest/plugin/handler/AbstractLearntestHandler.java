@@ -11,6 +11,7 @@ package learntest.plugin.handler;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.math.DoubleRange;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -68,8 +69,8 @@ import sav.strategies.vm.VMConfiguration;
 public abstract class AbstractLearntestHandler extends AbstractHandler {
 	private AppJavaClassPath appClasspath;
 	private Logger log = LoggerFactory.getLogger(AbstractLearntestHandler.class);
-	
-	/* PLUGIN HANDLER  */
+
+	/* PLUGIN HANDLER */
 	@Override
 	public Object execute(ExecutionEvent arg0) throws ExecutionException {
 		Job job = new Job(getJobName()) {
@@ -91,15 +92,15 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 		return null;
 	}
-	
+
 	protected abstract IStatus execute(IProgressMonitor monitor);
 
 	protected abstract String getJobName();
-	
-	public void refreshProject(){
+
+	public void refreshProject() {
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.getINSTANCE().getProjectName());
-		
+
 		try {
 			iProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 		} catch (CoreException e) {
@@ -108,21 +109,21 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	}
 
 	protected void handleException(Exception e) {
-		log.debug("error: {}", (Object)e.getStackTrace());
+		log.debug("error: {}", (Object) e.getStackTrace());
 		e.printStackTrace();
 	}
-	
+
 	protected void prepareData() throws CoreException {
 		appClasspath = initAppJavaClassPath();
 	}
-	
+
 	public AppJavaClassPath getAppClasspath() {
 		if (appClasspath == null) {
 			appClasspath = initAppJavaClassPath();
 		}
 		return appClasspath;
 	}
-	
+
 	private AppJavaClassPath initAppJavaClassPath() {
 		try {
 			IProject project = IProjectUtils.getProject(LearnTestConfig.getINSTANCE().getProjectName());
@@ -143,11 +144,11 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			throw new SavRtException(ex);
 		}
 	}
-	
+
 	protected LearnTestParams initLearntestParamsFromPreference() {
 		return initLearntestParams(LearnTestConfig.getINSTANCE());
 	}
-	
+
 	protected LearnTestParams initLearntestParams(LearnTestConfig config) {
 		try {
 			LearnTestParams params = new LearnTestParams();
@@ -164,19 +165,20 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			throw new SavRtException(e);
 		}
 	}
-	
+
 	private static TargetMethod initTargetMethod(LearnTestConfig config) throws SavException, JavaModelException {
 		TargetClass targetClass = new TargetClass(config.getTargetClassName());
 		TargetMethod method = new TargetMethod(targetClass);
 		method.setMethodName(config.getTargetMethodName());
-		method.setLineNum( config.getMethodLineNumber());
-		MethodDeclaration methodDeclaration = LearnTestUtil.findSpecificMethod(method.getClassName(), method.getMethodName(), method.getLineNum());
+		method.setLineNum(config.getMethodLineNumber());
+		MethodDeclaration methodDeclaration = LearnTestUtil.findSpecificMethod(method.getClassName(),
+				method.getMethodName(), method.getLineNum());
 		method.setMethodSignature(LearnTestUtil.getMethodSignature(methodDeclaration));
 		List<String> paramNames = new ArrayList<String>(CollectionUtils.getSize(methodDeclaration.parameters()));
 		List<String> paramTypes = new ArrayList<String>(paramNames.size());
-		for(Object obj: methodDeclaration.parameters()){
-			if(obj instanceof SingleVariableDeclaration){
-				SingleVariableDeclaration svd = (SingleVariableDeclaration)obj;
+		for (Object obj : methodDeclaration.parameters()) {
+			if (obj instanceof SingleVariableDeclaration) {
+				SingleVariableDeclaration svd = (SingleVariableDeclaration) obj;
 				paramNames.add(svd.getName().getIdentifier());
 				paramTypes.add(svd.getType().toString());
 			}
@@ -186,15 +188,14 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		return method;
 	}
 
-	
 	public void setSystemConfig(LearnTestParams params) {
-		params.getSystemConfig().set(LearntestSystemVariable.JDART_APP_PROPRETIES, 
+		params.getSystemConfig().set(LearntestSystemVariable.JDART_APP_PROPRETIES,
 				IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jdart/jpf.properties"));
-		params.getSystemConfig().set(LearntestSystemVariable.JDART_SITE_PROPRETIES, 
+		params.getSystemConfig().set(LearntestSystemVariable.JDART_SITE_PROPRETIES,
 				IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jpf.properties"));
 	}
-	
-	/* END PLUGIN HANDLER  */
+
+	/* END PLUGIN HANDLER */
 
 	protected Trial evaluateLearntestForSingleMethod(LearnTestParams params) {
 		try {
@@ -202,49 +203,48 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			log.info("WORKING METHOD: {}, line {}", params.getTargetMethod().getMethodFullName(),
 					params.getTargetMethod().getLineNum());
 			log.info("-----------------------------------------------------------------------------------------------");
-			
+
 			params.setMaxTcs(100);
 			// l2t params
 			LearnTestParams l2tParams = params;
 			// randoop params
 			LearnTestParams randoopParam = params.createNew();
-			
+
 			RunTimeInfo l2tAverageInfo = new RunTimeInfo();
 			RunTimeInfo ranAverageInfo = new RunTimeInfo();
 			RunTimeInfo jdartInfo = null;
-			System.out.println();
 
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
 			log.info("run jdart..");
 			jdartInfo = runJdart(randoopParam);
-			
+
 			log.info("run randoop..");
 			runLearntest(ranAverageInfo, randoopParam);
-			
-			l2tParams.setApproach(LearnTestApproach.L2T);			
+
+			l2tParams.setApproach(LearnTestApproach.L2T);
 			l2tParams.setInitialTests(randoopParam.getInitialTests());
 			l2tParams.setMaxTcs(ranAverageInfo.getTestCnt());
 			log.info("run l2t..");
 			runLearntest(l2tAverageInfo, l2tParams);
-			
-//			randoopParam.setApproach(LearnTestApproach.RANDOOP);
-//			randoopParam.setInitialTests(l2tParams.getInitialTests());
-//			randoopParam.setMaxTcs(l2tAverageInfo.getTestCnt());
-//			log.info("run randoop..");
-//			runLearntest(ranAverageInfo, randoopParam);
-			
+
+			// randoopParam.setApproach(LearnTestApproach.RANDOOP);
+			// randoopParam.setInitialTests(l2tParams.getInitialTests());
+			// randoopParam.setMaxTcs(l2tAverageInfo.getTestCnt());
+			// log.info("run randoop..");
+			// runLearntest(ranAverageInfo, randoopParam);
+
 			TargetMethod method = params.getTargetMethod();
 			log.info("Result: ");
 			log.info("lt2: {}", l2tAverageInfo);
 			log.info("randoop: {}", ranAverageInfo);
-			return new Trial(method.getMethodFullName(), method.getMethodLength(), method.getLineNum(),
-					l2tAverageInfo, ranAverageInfo, jdartInfo);
+			return new Trial(method.getMethodFullName(), method.getMethodLength(), method.getLineNum(), l2tAverageInfo,
+					ranAverageInfo, jdartInfo);
 		} catch (Exception e) {
 			handleException(e);
 		}
 		return null;
 	}
-	
+
 	private RunTimeInfo runJdart(LearnTestParams params) throws Exception {
 		JDartLearntest learntest = new JDartLearntest(getAppClasspath());
 		return learntest.jdart(params);
@@ -259,20 +259,22 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		}
 		return runInfo;
 	}
-	
+
 	/**
-	 * To test new version of learntest which uses another cfg and jacoco for code coverage. 
+	 * To test new version of learntest which uses another cfg and jacoco for
+	 * code coverage.
 	 */
-	 public RunTimeInfo runLearntest(LearnTestParams params) throws Exception {
+	public RunTimeInfo runLearntest(LearnTestParams params) throws Exception {
 		try {
 			SAVTimer.enableExecutionTimeout = true;
 			SAVTimer.exeuctionTimeout = 50000000;
 			learntest.core.LearnTest learntest = new learntest.core.LearnTest(getAppClasspath());
 			RunTimeInfo runtimeInfo = learntest.run(params);
 
-			if(runtimeInfo != null) {
-				log.info("{} time: {}; coverage: {}; cnt: {}", params.getApproach().getName(), TextFormatUtils.printTimeString(runtimeInfo.getTime()), 
-						runtimeInfo.getCoverage(), runtimeInfo.getTestCnt());
+			if (runtimeInfo != null) {
+				log.info("{} time: {}; coverage: {}; cnt: {}", params.getApproach().getName(),
+						TextFormatUtils.printTimeString(runtimeInfo.getTime()), runtimeInfo.getCoverage(),
+						runtimeInfo.getTestCnt());
 				log.info("coverageInfo: {}", runtimeInfo.getCoverageInfo());
 			}
 			return runtimeInfo;

@@ -26,6 +26,7 @@ import learntest.backup.testcase.data.BreakpointData;
 import learntest.backup.testcase.data.LoopTimesData;
 import learntest.core.commons.data.decision.BranchType;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
+import learntest.core.machinelearning.sampling.IlpSelectiveSampling;
 import learntest.plugin.LearnTestConfig;
 import libsvm.core.Category;
 import libsvm.core.CategoryCalculator;
@@ -306,6 +307,8 @@ public class DecisionLearner implements CategoryCalculator {
 			System.out.println("=============learned multiple cut: " + trueFlaseFormula);
 			
 			int time =0;
+			IlpSelectiveSampling.iterationTime = maxAttempt-time;
+			
 			while(trueFlaseFormula != null && time < maxAttempt && cfgContainer.isRelevant(bkpData.getLocation().getLineNo())) {
 				long startTime = System.currentTimeMillis();				
 				Map<DecisionLocation, BreakpointData> newMap = selectiveSampling.selectDataForModel(bkpData.getLocation(), 
@@ -344,14 +347,15 @@ public class DecisionLearner implements CategoryCalculator {
 					curDividers = mcm.getLearnedDividers();
 					acc = accTmp;
 					
-					if(acc == 1.0){
-						break;
-					}
+//					if(acc == 1.0 && time>=maxAttempt-2){
+//						break;
+//					}
 				} else {
 					break;
 				}
 				
 				time++;
+				IlpSelectiveSampling.iterationTime = maxAttempt-time;
 			}
 		}
 		

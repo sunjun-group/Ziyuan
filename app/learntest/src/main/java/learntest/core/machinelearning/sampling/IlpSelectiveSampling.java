@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.apache.poi.hssf.record.IterationRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,7 +112,7 @@ public class IlpSelectiveSampling {
 		return selectedSamples;
 	}
 	
-	
+	public static int iterationTime;
 
 	public List<double[]> selectDataForModel(IDecisionNode target, List<ExecVar> originVars, List<DataPoint> datapoints,
 			OrCategoryCalculator preconditions, List<Divider> learnedFormulas) throws SavException {
@@ -139,8 +140,12 @@ public class IlpSelectiveSampling {
 				}
 			}
 		}
-		samples.addAll(selectHeuristicsSamples(samples, originVars, maxSamplesPerSelect * 2));
-		System.currentTimeMillis();
+		for(int i=0; i<2; i++){
+			int bound = 10-(2*iterationTime--);
+			List<double[]> heuList = selectHeuristicsSamples(samples, originVars, maxSamplesPerSelect * 2, bound);
+			samples.addAll(heuList);			
+		}
+//		System.currentTimeMillis();
 		/**
 		 * randomly generate more data points on svm model.
 		 */
@@ -227,8 +232,7 @@ public class IlpSelectiveSampling {
 	 * slight moving existing data points.
 	 * @return 
 	 */
-	private List<double[]> selectHeuristicsSamples(List<double[]> existingSamples, List<ExecVar> originVars, int maxSamples) {
-		double selectiveBound = 5;
+	private List<double[]> selectHeuristicsSamples(List<double[]> existingSamples, List<ExecVar> originVars, int maxSamples, double selectiveBound) {
 		Random random = new Random();
 		double offset = random.nextDouble() * selectiveBound;
 		List<double[]> candidates = new ArrayList<double[]>();
