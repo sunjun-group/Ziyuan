@@ -10,10 +10,14 @@ package learntest.core.machinelearning;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.sun.org.apache.regexp.internal.recompile;
+import com.sun.tools.classfile.Annotation.element_value;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
@@ -65,12 +69,12 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 
 	private void learn(CfgNode node, DecisionProbes probes, List<Integer> visitedNodes) throws SavException {
 		log.debug("parsing the node in line " + node.getLine() + "(" + node + ")");
-		
-		for (CfgNode dominator : CfgUtils.getPrecondInherentDominatee(node)) {
-			if (!visitedNodes.contains(dominator.getIdx())) {
-				learn(dominator, probes, visitedNodes);
-			}
-		}
+
+//		for (CfgNode dominator : CfgUtils.getPrecondInherentDominatee(node)) { /** update dominator node's condition*/
+//			if (!visitedNodes.contains(dominator.getIdx())) {
+//				learn(dominator, probes, visitedNodes);
+//			}
+//		}
 		DecisionNodeProbe nodeProbe = probes.getNodeProbe(node);
 		if (!needToLearn(nodeProbe)) {
 			visitedNodes.add(node.getIdx());
@@ -84,14 +88,39 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		nodeProbe = probes.getNodeProbe(node);
 		
 		updatePrecondition(nodeProbe);
+		
+		System.currentTimeMillis();
+		
 		visitedNodes.add(node.getIdx());
-		for (CfgNode dependentee : CollectionUtils.nullToEmpty(node.getDependentees())) {
+		List<CfgNode> childDecisonNodes = getChildDecision(node);
+		for (CfgNode dependentee : CollectionUtils.nullToEmpty(childDecisonNodes)) {
 			if (!visitedNodes.contains(dependentee.getIdx())) {
 				learn(dependentee, probes, visitedNodes);
 			}
 		}
 	}
 	
+	private List<CfgNode> getChildDecision(CfgNode node) {
+		List<CfgNode> childDecisonNodes = new LinkedList<>();
+		List<CfgNode> children = node.getBranches();
+		for(CfgNode child : children){
+			getChildDecision(child, childDecisonNodes);			
+		}
+		return childDecisonNodes;
+	}
+
+	private void getChildDecision(CfgNode node, List<CfgNode> list) {
+		List<CfgNode> children = node.getBranches();
+		if (null == children || children.size() == 0) {
+			return;
+		}else if (children.size() == 1) {
+			getChildDecision(children.get(0), list);
+		}else if (children.size() >= 2) {
+			list.add(node);
+		}
+		
+	}
+
 	private boolean needToLearn(DecisionNodeProbe nodeProbe) {
 		return !nodeProbe.areAllbranchesUncovered()
 				|| nodeProbe.needToLearnPrecond();
@@ -124,6 +153,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			return null;
 		}
 		Formula trueFlaseFormula = null;
+		System.currentTimeMillis();
 		/* do generate formula and return */
 		NegativePointSelection negative = new ByDistanceNegativePointSelection();
 		PositiveSeparationMachine mcm = new PositiveSeparationMachine(negative);
@@ -201,9 +231,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		mcm.train();
 		Formula newFormula = mcm.getLearnedMultiFormula(probes.getOriginalVars(), labels);
 		
-		for(DataPoint point: mcm.getDataPoints()){
-			System.out.println(point);
-		}
+//		for(DataPoint point: mcm.getDataPoints()){
+//			System.out.println(point);
+//		}
 		
 		return newFormula;
 	}
