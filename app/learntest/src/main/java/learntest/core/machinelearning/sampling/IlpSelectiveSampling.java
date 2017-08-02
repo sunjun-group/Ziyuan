@@ -140,12 +140,13 @@ public class IlpSelectiveSampling {
 			}
 		}
 		samples.addAll(selectHeuristicsSamples(samples, originVars, maxSamplesPerSelect * 2));
-
+		System.currentTimeMillis();
 		/**
 		 * randomly generate more data points on svm model.
 		 */
 		List<double[]> randomSamples = generateRandomPointsWithPrecondition(preconditions, originVars, datapoints, 3);
-		randomSamples = limitSamples(randomSamples, samples.size());
+		randomSamples = samples.size() >= maxSamplesPerSelect ? 
+				limitSamples(randomSamples, samples.size()) : limitSamples(randomSamples,maxSamplesPerSelect);
 		
 		samples.addAll(randomSamples);
 		
@@ -160,7 +161,7 @@ public class IlpSelectiveSampling {
 		int trialNumThreshold = 100;
 		List<Result> dataPoints = new ArrayList<>();
 		List<double[]> samples = new ArrayList<double[]>();
-		if (originVars.size() > 1) {
+		if (originVars.size() > 0) {
 			
 			for (int i = 0; dataPoints.size() < toBeGeneratedDataNum && i < trialNumThreshold; i++) {
 				List<Problem> pList = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, true);
