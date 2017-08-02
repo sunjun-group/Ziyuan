@@ -9,6 +9,8 @@
 package learntest.core.commons.data.decision;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import libsvm.core.CategoryCalculator;
@@ -68,18 +70,32 @@ public class Precondition {
 	 * @param list
 	 * @param condFromDivicers condition which builds by dominatee dividers
 	 */
-	public void addPreconditions(List<List<CategoryCalculator>> dominateePreconds, CategoryCalculator condFromDivicers) {
-		if (dominateePreconds.isEmpty()) {
+	public void addPreconditions(List<List<CategoryCalculator>> dominatorPreconds, CategoryCalculator condFromDivicers) {
+		if (dominatorPreconds.isEmpty()) {
 			List<CategoryCalculator> cur = new ArrayList<CategoryCalculator>();
 			cur.add(condFromDivicers);
 			this.preconditions.add(cur);
 		} else {
-			List<List<CategoryCalculator>> orgPreconditions = new ArrayList<List<CategoryCalculator>>(preconditions);
-			for (List<CategoryCalculator> list : orgPreconditions) {
-				List<CategoryCalculator> cur = new ArrayList<CategoryCalculator>(list);
-				cur.add(condFromDivicers);
-				this.preconditions.add(cur);
+//			List<List<CategoryCalculator>> orgPreconditions = new ArrayList<List<CategoryCalculator>>(preconditions);
+//			for (List<CategoryCalculator> list : orgPreconditions) {
+//				List<CategoryCalculator> cur = new ArrayList<CategoryCalculator>(list);
+//				cur.add(condFromDivicers);
+//				this.preconditions.add(cur);
+//			}
+			HashMap<String, Integer> map = new HashMap<>();
+			for (List<CategoryCalculator> list : dominatorPreconds) {
+				StringBuffer sbBuffer = new StringBuffer();
+				for (int i =0; i<list.size(); i++){
+					sbBuffer.append(list.get(i).toString()+",");
+				}
+				if (!map.containsKey(sbBuffer.toString())) {
+					map.put(sbBuffer.toString(), 1);
+					List<CategoryCalculator> cur = new ArrayList<CategoryCalculator>(list);
+					cur.add(condFromDivicers);
+					this.preconditions.add(cur);
+				}
 			}
+			System.currentTimeMillis();
 		}		
 	}
 }
