@@ -95,19 +95,21 @@ public class DecisionProbes extends CfgCoverage {
 							clonedThetas[i]=-1*d.getThetas()[i];
 						}
 						
-						Divider d0 = new Divider(clonedThetas, d.getTheta0(), true);
+						Divider d0 = new Divider(clonedThetas, -1*d.getTheta0(), true);
 						clonedDividers.add(d0);
 					}
 					condFromDividers = new MultiDividerBasedCategoryCalculator(clonedDividers);
-					System.currentTimeMillis();
 				}
+				System.currentTimeMillis();
 				if (condFromDividers != null) {
 					precondition.addPreconditions(domPrecond.getPreconditions(), condFromDividers);
 				}
 			}
 		}
 		System.currentTimeMillis();
-		
+		if (!precondition.getPreconditions().isEmpty() && precondition.getPreconditions().get(0).size()>20) {
+			System.currentTimeMillis();
+		}
 		return new OrCategoryCalculator(precondition.getPreconditions(), learningVars, originalVars);
 	}
 
