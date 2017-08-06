@@ -29,7 +29,11 @@ public enum TrialHeader implements ExcelHeader {
 	RANDOOP_BEST_COVERAGE("randoop best coverage"),
 	ADVANTAGE("advantage"),
 	METHOD_LENGTH("method length"),
-	METHOD_START_LINE("start line");
+	METHOD_START_LINE("start line"),
+	L2T_VALID_COVERAGE("l2t valid coverage"),
+	RANDOOP_VALID_COVERAGE("randoop valid coverage"),
+	VALID_COVERAGE_ADV("valid average coverage advantage"),
+	VALID_NUM("learn formulas iterations");
 	
 	private String title;
 
