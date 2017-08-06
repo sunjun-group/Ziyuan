@@ -17,13 +17,12 @@ public class FormulaInfo{
 	 public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(node+"\n");
-		sb.append("trueFalseFormula : ");
+		sb.append("trueFalseFormula :\n");
 		for(String formula : trueFalseFormula)
-			sb.append(formula+" , ");
-		sb.append("\n");
-		sb.append("loopFormula : ");
+			sb.append(formula+" ,\n");
+		sb.append("loopFormula :\n");
 		for(String formula : loopFormula)
-			sb.append(formula+" , ");
+			sb.append(formula+" ,\n");
 		return sb.toString();
 	}
 }

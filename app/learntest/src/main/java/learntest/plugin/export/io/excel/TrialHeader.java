@@ -33,7 +33,33 @@ public enum TrialHeader implements ExcelHeader {
 	L2T_VALID_COVERAGE("l2t valid coverage"),
 	RANDOOP_VALID_COVERAGE("randoop valid coverage"),
 	VALID_COVERAGE_ADV("valid average coverage advantage"),
-	VALID_NUM("learn formulas iterations");
+	VALID_NUM("learn formulas iterations"),
+	AVE_COVERAGE_ADV("average coverage advantage"),
+	FIRST_TRIAL_R("1st trial ran"), /** 1st trial randoop coverage */
+	FIRST_TRIAL_L2T("1st trial l2t"), /** 1st trial l2t coverage */
+	FIRST_TRIAL_ADV("1st trial advantage"), 
+	FIRST_TRIAL_L("1st trial learned"), /** 1st trial l2t learn formulas */
+	
+	SECOND_TRIAL_R("2nd trial ran"),
+	SECOND_TRIAL_L2T("2nd trial l2t"),
+	SECOND_TRIAL_ADV("2nd trial advantage"), 
+	SECOND_TRIAL_L("2nd trial learned"),
+	
+	THIRD_TRIAL_R("3rd trial ran"),
+	THIRD_TRIAL_L2T("3rd trial l2t"),
+	THIRD_TRIAL_ADV("3rd trial advantage"), 
+	THIRD_TRIAL_L("3rd trial learned"),
+	
+	FORTH_TRIAL_R("4th trial ran"),
+	FORTH_TRIAL_L2T("4th trial l2t"),
+	FORTH_TRIAL_ADV("4th trial advantage"), 
+	FORTH_TRIAL_L("4th trial learned"),
+	
+	FIFTH_TRIAL_R("5th trial ran"),
+	FIFTH_TRIAL_L2T("5th trial l2t"),
+	FIFTH_TRIAL_ADV("5th trial advantage"), 
+	FIFTH_TRIAL_L("5th trial learned")
+	;
 	
 	private String title;
 

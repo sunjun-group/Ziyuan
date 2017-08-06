@@ -4,6 +4,7 @@ import static learntest.plugin.export.io.excel.TrialHeader.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -69,15 +70,60 @@ public class TrialExcelWriter extends ExcelWriter {
 		addCell(row, L2T_VALID_COVERAGE, trial.getL2tRtInfo().getValidCoverage());
 		addCell(row, RANDOOP_VALID_COVERAGE, trial.getRanRtInfo().getValidCoverage());
 		addCell(row, VALID_COVERAGE_ADV, trial.getL2tRtInfo().getValidCoverage()-trial.getRanRtInfo().getValidCoverage());
+		addCell(row, AVE_COVERAGE_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());
 		
 		if (trial instanceof MultiTrial) {
 			MultiTrial multiTrial = (MultiTrial) trial;
 			addCell(row, L2T_BEST_COVERAGE, multiTrial.getBestL2tRtCoverage());
 			addCell(row, RANDOOP_BEST_COVERAGE, multiTrial.getBestRanRtCoverage());
 			addCell(row, VALID_NUM, multiTrial.getValidNum());
+			List<Trial> trials = ((MultiTrial) trial).getTrials();
+			export5Trials(row, trials);
 		}
 		writeWorkbook();
 		return lastDataSheetRow;
+	}
+
+	private void export5Trials(Row row, List<Trial> trials) {
+		for (int i = 0; i < trials.size() && i < 5; i++) {
+			Trial trial = trials.get(i);
+			switch (i) {
+			case 0:
+				addCell(row, FIRST_TRIAL_R, trial.getRanRtInfo().getCoverage());
+				addCell(row, FIRST_TRIAL_L2T, trial.getL2tRtInfo().getCoverage());
+				addCell(row, FIRST_TRIAL_L, trial.getL2tRtInfo().learnFormula() ? 1 : 0);	
+				addCell(row, FIRST_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());
+				break;
+			case 1:
+				addCell(row, SECOND_TRIAL_R, trial.getRanRtInfo().getCoverage());
+				addCell(row, SECOND_TRIAL_L2T, trial.getL2tRtInfo().getCoverage());
+				addCell(row, SECOND_TRIAL_L, trial.getL2tRtInfo().learnFormula() ? 1 : 0);		
+				addCell(row, SECOND_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());				
+				break;
+			case 2:
+				addCell(row, THIRD_TRIAL_R, trial.getRanRtInfo().getCoverage());
+				addCell(row, THIRD_TRIAL_L2T, trial.getL2tRtInfo().getCoverage());
+				addCell(row, THIRD_TRIAL_L, trial.getL2tRtInfo().learnFormula() ? 1 : 0);	
+				addCell(row, THIRD_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());					
+				break;
+			case 3:
+				addCell(row, FORTH_TRIAL_R, trial.getRanRtInfo().getCoverage());
+				addCell(row, FORTH_TRIAL_L2T, trial.getL2tRtInfo().getCoverage());
+				addCell(row, FORTH_TRIAL_L, trial.getL2tRtInfo().learnFormula() ? 1 : 0);	
+				addCell(row, FORTH_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());					
+				break;
+			case 4:
+				addCell(row, FIFTH_TRIAL_R, trial.getRanRtInfo().getCoverage());
+				addCell(row, FIFTH_TRIAL_L2T, trial.getL2tRtInfo().getCoverage());
+				addCell(row, FIFTH_TRIAL_L, trial.getL2tRtInfo().learnFormula() ? 1 : 0);	
+				addCell(row, FIFTH_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());					
+				break;
+
+			default:
+				break;
+			}
+		}
+		
 	}
 
 	private Row newDataSheetRow() {
