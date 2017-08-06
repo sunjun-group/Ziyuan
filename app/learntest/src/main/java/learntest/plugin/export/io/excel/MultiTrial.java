@@ -8,6 +8,9 @@
 
 package learntest.plugin.export.io.excel;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import learntest.core.RunTimeInfo;
 
 /**
@@ -17,6 +20,8 @@ import learntest.core.RunTimeInfo;
 public class MultiTrial extends Trial {
 	private double bestL2tRtCoverage;
 	private double bestRanRtCoverage;
+	private List<Trial> trials = new LinkedList<>();
+	private int validNum;
 	
 	
 	public void addTrial(Trial trial) {
@@ -25,8 +30,9 @@ public class MultiTrial extends Trial {
 			this.methodLength = trial.methodLength;
 			this.methodStartLine = trial.methodStartLine;
 		}
-		this.l2tRtInfo = RunTimeInfo.average(this.l2tRtInfo, trial.l2tRtInfo);
-		this.ranRtInfo = RunTimeInfo.average(this.ranRtInfo, trial.ranRtInfo);
+		trials.add(trial);
+//		this.l2tRtInfo = RunTimeInfo.average(this.l2tRtInfo, trial.l2tRtInfo);
+//		this.ranRtInfo = RunTimeInfo.average(this.ranRtInfo, trial.ranRtInfo);
 		this.jdartRtInfo = RunTimeInfo.average(this.jdartRtInfo, trial.jdartRtInfo);
 		this.bestL2tRtCoverage = RunTimeInfo.getBestCoverage(this.bestL2tRtCoverage, trial.l2tRtInfo);
 		this.bestRanRtCoverage = RunTimeInfo.getBestCoverage(this.bestRanRtCoverage, trial.ranRtInfo);
@@ -48,4 +54,44 @@ public class MultiTrial extends Trial {
 	public double getAdvantage() {
 		return bestL2tRtCoverage - bestRanRtCoverage;
 	}
+
+	public void setAvgInfo() {
+		int size = trials.size();
+		double l2tCoverage = 0, ranCovergage = 0; 
+		double l2tValidCoverage = 0, ranValidCovergage = 0; /** only concern those trials where l2t learn formulas */
+		int validNum = 0;
+		long l2tTime = 0, ranTime = 0;
+		int l2tTestCnt = 0, ranTestCnt = 0;
+		for(Trial trial : trials){
+			if (trial != null) {
+				RunTimeInfo l2TimeInfo = trial.getL2tRtInfo(), ranTimeInfo = trial.getRanRtInfo();
+				l2tCoverage += l2TimeInfo.getCoverage();
+				l2tTime += l2TimeInfo.getTime();
+				l2tTestCnt += l2TimeInfo.getTestCnt();
+				
+				ranCovergage += ranTimeInfo.getCoverage();
+				ranTime += ranTimeInfo.getTime();
+				ranTestCnt += ranTimeInfo.getTestCnt();
+				
+				if (l2TimeInfo.learnFormula()) {
+					l2tValidCoverage += l2TimeInfo.getCoverage();
+					ranValidCovergage += ranTimeInfo.getCoverage();
+					validNum++;
+				}
+			}
+		}
+	   this.l2tRtInfo = new RunTimeInfo(l2tTime/size, l2tCoverage/size, l2tTestCnt/size, validNum == 0 ? 0: l2tValidCoverage/validNum);
+	   this.ranRtInfo = new RunTimeInfo(ranTime/size, ranCovergage/size, ranTestCnt/size, validNum == 0? 0:ranValidCovergage/validNum);
+	   this.validNum = validNum;
+	}
+
+	public List<Trial> getTrials() {
+		return trials;
+	}
+
+	public int getValidNum() {
+		return validNum;
+	}
+	
+	
 }
