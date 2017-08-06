@@ -23,7 +23,7 @@ public class FormulaInfo{
 		sb.append("\n");
 		sb.append("loopFormula : ");
 		for(String formula : loopFormula)
-			sb.append(formula+" && ");
+			sb.append(formula+" , ");
 		return sb.toString();
 	}
 }
