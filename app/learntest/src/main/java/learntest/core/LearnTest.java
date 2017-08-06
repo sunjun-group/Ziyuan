@@ -1,12 +1,15 @@
 package learntest.core;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
+import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
@@ -16,7 +19,9 @@ import learntest.core.commons.exception.LearnTestException;
 import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.commons.utils.JavaFileCopier;
 import learntest.core.gentest.GentestParams;
+import learntest.core.machinelearning.FormulaInfo;
 import learntest.core.machinelearning.IInputLearner;
+import learntest.core.machinelearning.PrecondDecisionLearner;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
@@ -69,7 +74,16 @@ public class LearnTest extends AbstractLearntest {
 				DecisionProbes initProbes = initProbes(targetMethod, cfgCoverage, result);
 				learningStarted = true;
 				DecisionProbes probes = learner.learn(initProbes);
-				return getRuntimeInfo(probes);
+				RunTimeInfo info = getRuntimeInfo(probes);
+				if (learner instanceof PrecondDecisionLearner) {
+					if (!((PrecondDecisionLearner)learner).learnedFormulas.isEmpty()) {
+						info.learnFormula = true;
+						for (Entry<CfgNode, FormulaInfo> entry : ((PrecondDecisionLearner)learner).learnedFormulas.entrySet()){
+							info.learnedFormulas.add(entry.getValue());
+						}
+					}
+				}
+				return info;
 			}
 		} catch (SAVExecutionTimeOutException e) {
 			if (learningStarted) {

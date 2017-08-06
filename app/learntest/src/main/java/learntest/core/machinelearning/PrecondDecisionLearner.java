@@ -10,12 +10,15 @@ package learntest.core.machinelearning;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.swt.widgets.Link;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.corba.se.impl.orbutil.graph.Node;
 import com.sun.org.apache.regexp.internal.recompile;
 import com.sun.tools.classfile.Annotation.element_value;
 
@@ -55,6 +58,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	private static Logger log = LoggerFactory.getLogger(PrecondDecisionLearner.class);
 	private static final int FORMULAR_LEARN_MAX_ATTEMPT = 5;
 	protected LearnedDataProcessor dataPreprocessor;
+	public HashMap<CfgNode, FormulaInfo> learnedFormulas = new HashMap<>();
 	
 	public PrecondDecisionLearner(LearningMediator mediator) {
 		super(mediator);
@@ -170,6 +174,13 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		
 		while (trueFlaseFormula != null && time < FORMULAR_LEARN_MAX_ATTEMPT
 				&& nodeProbe.needToLearnPrecond()) {
+
+			/** record learned formulas */
+			if (!learnedFormulas.containsKey(node)) {
+				learnedFormulas.put(node, new FormulaInfo(node.toString()));
+			}
+			learnedFormulas.get(node).trueFalseFormula.add(trueFlaseFormula.toString());
+			
 			IlpSelectiveSampling.iterationTime = FORMULAR_LEARN_MAX_ATTEMPT-time;
 			time++;
 			DecisionProbes probes = nodeProbe.getDecisionProbes();
@@ -292,6 +303,14 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			List<ExecVar> originalVars = nodeProbe.getDecisionProbes().getOriginalVars();
 			List<String> labels = nodeProbe.getDecisionProbes().getLabels();
 			while(formula != null && times < FORMULAR_LEARN_MAX_ATTEMPT && nodeProbe.needToLearnPrecond()) {
+
+				/** record learned formulas */
+				CfgNode node = nodeProbe.getNode();
+				if (!learnedFormulas.containsKey(node)) {
+					learnedFormulas.put(node, new FormulaInfo(node.toString()));
+				}
+				learnedFormulas.get(node).loopFormula.add(formula.toString());
+				
 				SamplingResult samples = dataPreprocessor.sampleForModel(nodeProbe, 
 						originalVars, mcm.getDataPoints(), nodeProbe.getPreconditions(), mcm.getLearnedDividers());
 				INodeCoveredData newData = samples.getNewData(nodeProbe);
@@ -303,10 +322,11 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				}
 				mcm.train();
 				Formula tmp = mcm.getLearnedMultiFormula(originalVars, labels);
+				
 				double accTmp = mcm.getModelAccuracy();
-				if (tmp == null) {
-					break;
-				}
+//				if (tmp == null) {
+//					break;
+//				}
 				if (!tmp.equals(formula) && accTmp > acc) {
 					formula = tmp;
 					acc = accTmp;

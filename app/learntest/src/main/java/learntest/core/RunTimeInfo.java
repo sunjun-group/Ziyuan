@@ -1,5 +1,9 @@
 package learntest.core;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import learntest.core.machinelearning.FormulaInfo;
 import sav.common.core.utils.TextFormatUtils;
 
 public class RunTimeInfo {
@@ -8,6 +12,9 @@ public class RunTimeInfo {
 	private int testCnt;
 	
 	private String coverageInfo;
+	protected boolean learnFormula = false; /** if has learned formula*/
+	List<FormulaInfo> learnedFormulas = new LinkedList<>();
+	private double validCoverage;
 
 	public RunTimeInfo(long time, double coverage, int testCnt) {
 		this.time = time;
@@ -22,6 +29,13 @@ public class RunTimeInfo {
 		this.coverageInfo = coverageInfo;
 	}
 	
+	public RunTimeInfo(long time, double coverage, int testCnt, double validCoverage) {
+		this.time = time;
+		this.coverage = coverage;
+		this.testCnt = testCnt;
+		this.validCoverage = validCoverage;
+	}
+	
 	public RunTimeInfo() {
 		
 	}
@@ -30,6 +44,8 @@ public class RunTimeInfo {
 		time += subRunInfo.time;
 		coverage += subRunInfo.coverage;
 		testCnt += subRunInfo.testCnt;
+		learnedFormulas.addAll(subRunInfo.learnedFormulas);
+		learnFormula = learnFormula | subRunInfo.learnFormula;
 	}
 
 	public long getTime() {
@@ -109,6 +125,18 @@ public class RunTimeInfo {
 
 	public void setCoverageInfo(String coverageInfo) {
 		this.coverageInfo = coverageInfo;
+	}
+
+	public double getValidCoverage() {
+		return validCoverage;
+	}
+
+	public List<FormulaInfo> getLearnedFormulas() {
+		return learnedFormulas;
+	}
+
+	public boolean learnFormula() {
+		return learnFormula;
 	}
 	
 	

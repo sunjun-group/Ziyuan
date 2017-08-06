@@ -43,6 +43,7 @@ import learntest.core.commons.exception.LearnTestException;
 import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.GentestResult;
 import learntest.core.gentest.TestGenerator;
+import learntest.core.machinelearning.FormulaInfo;
 import learntest.plugin.LearnTestConfig;
 import learntest.plugin.export.io.excel.Trial;
 import learntest.plugin.utils.IProjectUtils;
@@ -237,12 +238,21 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			log.info("Result: ");
 			log.info("lt2: {}", l2tAverageInfo);
 			log.info("randoop: {}", ranAverageInfo);
+			printLearnedFormulas(l2tAverageInfo.getLearnedFormulas());
 			return new Trial(method.getMethodFullName(), method.getMethodLength(), method.getLineNum(), l2tAverageInfo,
 					ranAverageInfo, jdartInfo);
 		} catch (Exception e) {
 			handleException(e);
 		}
 		return null;
+	}
+
+	private void printLearnedFormulas(List<FormulaInfo> list) {
+		StringBuffer sb = new StringBuffer();
+		for (FormulaInfo formulaInfo : list){
+			sb.append(formulaInfo+"\n");
+		}
+		log.info("learned formulas : {}",sb.toString());
 	}
 
 	private RunTimeInfo runJdart(LearnTestParams params) throws Exception {
