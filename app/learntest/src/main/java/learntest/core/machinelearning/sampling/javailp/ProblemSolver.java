@@ -11,6 +11,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import learntest.core.machinelearning.sampling.IlpSelectiveSampling;
 import libsvm.core.Divider;
 import net.sf.javailp.Constraint;
 import net.sf.javailp.Linear;
@@ -177,13 +178,23 @@ public class ProblemSolver {
 		problem.setObjective(obj, random.nextBoolean() ? OptType.MIN : OptType.MAX);
 	}
 
-	public Result solve(Problem problem){
+//	public Result solve(Problem problem){
+//		SingleTimer timer = SingleTimer.start("ilpSolver");
+//		Result result = solveProblem(problem);
+//		if (timer.logResults(log, 2000l)) {
+//			log.debug("ilpSolver result: {}", result);
+//		}
+//		return result;
+//	}
+	
+	public Pair<Result, Boolean> solve(Problem problem, long timeLimit){
 		SingleTimer timer = SingleTimer.start("ilpSolver");
 		Result result = solveProblem(problem);
 		if (timer.logResults(log, 2000l)) {
 			log.debug("ilpSolver result: {}", result);
 		}
-		return result;
+		Boolean b = timer.getExecutionTime() < timeLimit;
+		return new Pair<Result, Boolean>(result, b);
 	}
 	
 	public Result solve(List<ExecVar> vars, List<Divider> preconditions){
@@ -212,10 +223,15 @@ public class ProblemSolver {
 		while (times > 0 && count > 0) {
 			int tryTimes = 10;
 			while(tryTimes >= 0){
-				pickAndRandomSet(problem, vars, count);					
-				Result result = solveProblem(problem);
+				pickAndRandomSet(problem, vars, count);	
+				Pair<Result, Boolean> solverResult = solve(problem, IlpSelectiveSampling.solveTimeLimit);				
+				Result result = solverResult.first();
 				if (result != null) {
 					res.add(result);
+					if (!solverResult.second()) { /** run long time to solve this problem ,maybe means that these problems are too difficult*/
+						log.debug("run long time to solve this problem");
+						break;
+					}
 					for (int i = 0; i <= count; i++) { /** clear added constraints */
 						List<Constraint> constraints = problem.getConstraints();
 						constraints.remove(constraints.size()-1);

@@ -80,8 +80,8 @@ public class MultiTrial extends Trial {
 				}
 			}
 		}
-	   this.l2tRtInfo = new RunTimeInfo(l2tTime/size, l2tCoverage/size, l2tTestCnt/size, validNum == 0 ? 0: l2tValidCoverage/validNum);
-	   this.ranRtInfo = new RunTimeInfo(ranTime/size, ranCovergage/size, ranTestCnt/size, validNum == 0? 0:ranValidCovergage/validNum);
+	   this.l2tRtInfo = new RunTimeInfo(size==0?0:l2tTime/size, size==0?0:l2tCoverage/size, size==0?0:l2tTestCnt/size, validNum == 0 ? 0: l2tValidCoverage/validNum);
+	   this.ranRtInfo = new RunTimeInfo(size==0?0:ranTime/size, size==0?0:ranCovergage/size, size==0?0:ranTestCnt/size, validNum == 0? 0:ranValidCovergage/validNum);
 	   this.validNum = validNum;
 	}
 

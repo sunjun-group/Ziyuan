@@ -30,6 +30,7 @@ import libsvm.core.Divider;
 import libsvm.core.Machine.DataPoint;
 import net.sf.javailp.Problem;
 import net.sf.javailp.Result;
+import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.Eq;
 import sav.common.core.utils.Randomness;
@@ -44,6 +45,7 @@ public class IlpSelectiveSampling {
 	private List<double[]> initValues;
 	private Set<Integer> samplesHashcodes;
 	private int maxSamplesPerSelect = 100; // by default;
+	public static long solveTimeLimit = 60 * 1000;
 	
 	/* ilpSolver */
 	private ProblemSolver solver = new ProblemSolver();
@@ -133,9 +135,14 @@ public class IlpSelectiveSampling {
 
 				for (Problem problem : problems) {
 					solver.generateRandomObjective(problem, originVars);
-					Result result = solver.solve(problem);
+					Pair<Result, Boolean> solverResult = solver.solve(problem, solveTimeLimit);
+					Result result = solverResult.first();
 					if (result != null) {
 						updateSamples(Arrays.asList(result), samples);
+					}
+					if (!solverResult.second()) { /** run long time to solve this problem ,maybe means that these problems are too difficult*/
+						log.debug("run long time to solve this problem");
+						break;
 					}
 				}
 			}
@@ -188,7 +195,8 @@ public class IlpSelectiveSampling {
 
 					if (sample != null) {
 						ProblemBuilder.addEqualConstraints(p, toAssignments(sample, originVars));
-						Result res = solver.solve(p);
+						Pair<Result, Boolean> solverResult = solver.solve(p, solveTimeLimit);
+						Result res = solverResult.first();
 						updateSamples(Arrays.asList(res), samples);
 						break;
 					}

@@ -25,6 +25,7 @@ import net.sf.javailp.OptType;
 import net.sf.javailp.Problem;
 import net.sf.javailp.Result;
 import net.sf.javailp.ResultImpl;
+import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.Eq;
 import sav.common.core.utils.Randomness;
@@ -42,6 +43,7 @@ public class JavailpSelectiveSampling {
 	private List<Result> prevDatas;
 	private Map<DecisionLocation, BreakpointData> selectResult;
 	private ProblemSolver solver = new ProblemSolver();
+	private long solveTimeLimit = 60 * 1000;
 	
 	private int numPerExe = 100;
 	private int timesLimit = 20;
@@ -153,7 +155,8 @@ public class JavailpSelectiveSampling {
 			
 			for (Problem problem : problems) {
 				solver.generateRandomObjective(problem, originVars);
-				Result result = solver.solve(problem);
+				Pair<Result, Boolean> solverResult = solver.solve(problem, solveTimeLimit);
+				Result result = solverResult.first();
 				if (result != null) {
 					boolean isDuplicateWithResult = isDuplicate(result, originVars, prevDatas);
 					
@@ -219,7 +222,8 @@ public class JavailpSelectiveSampling {
 					
 					if(!samples.isEmpty()){
 						ProblemBuilder.addEqualConstraints(p, samples);
-						Result res = solver.solve(p);
+						Pair<Result, Boolean> solverResult = solver.solve(p, solveTimeLimit);
+						Result res = solverResult.first();
 						
 						if (res != null && checkNonduplicateResult(res, originVars, prevDatas, assignments)) {
 							results.add(res);
