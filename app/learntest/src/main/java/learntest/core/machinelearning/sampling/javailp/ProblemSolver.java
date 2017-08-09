@@ -256,9 +256,33 @@ public class ProblemSolver {
 		System.currentTimeMillis();
 		return res;
 	}
+	
+	public List<Result> solveWithOnlyVar(Problem problem, int loopTimes) {
+		assert problem.getVariablesCount()==1 : "only support for signle variable problem";
+		List<Result> res = new ArrayList<Result>();
+		if (problem == null || minMax.isEmpty()) {
+			return res;
+		}		
+		
+		Set<ExecVar> vars = minMax.keySet();
+		int count = 0;
+		for (; loopTimes > 0; loopTimes--) {
+			pickAndRandomSet(problem, vars, count);	
+			Pair<Result, Boolean> solverResult = solve(problem, IlpSelectiveSampling.solveTimeLimit);	
+			Result result = solverResult.first();
+			if (result != null) {
+				res.add(result);
+
+				for (int i = 0; i <= count; i++) { /** clear added constraints */
+					List<Constraint> constraints = problem.getConstraints();
+					constraints.remove(constraints.size()-1);
+				}
+			}
+		}
+		return res;
+	}
 
 	private void pickAndRandomSet(Problem problem, Set<ExecVar> vars, int count) {
-		assert count>0 : "count should be non-negative!";
 		List<ExecVar> list = new LinkedList<>();
 		list.addAll(vars);
 		for (int i = 0; i <= count; i++) {

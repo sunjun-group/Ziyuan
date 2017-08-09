@@ -75,8 +75,15 @@ public class IlpSelectiveSampling {
 		for (Problem problem : problems) {
 			List<Result> results = solver.calculateRanges(problem, vars);
 			updateSamples(results, samples);
-			
-			results = solver.solveWithPreAssignment(problem, num);
+			if (problem.getVariablesCount()==1) {
+				int loopTimes = 1;
+				if (problems.size()==1) {
+					loopTimes = maxTcs;
+				}
+				results = solver.solveWithOnlyVar(problem, loopTimes);
+			}else {
+				results = solver.solveWithPreAssignment(problem, num);
+			}
 			updateSamples(results, samples);
 //			problem.setObjective(problem.getObjective(), OptType.MAX);
 //			results = solver.solveMultipleTimes(problem, num);
