@@ -220,7 +220,8 @@ public class ProblemSolver {
 		
 		Set<ExecVar> vars = minMax.keySet();
 		int count = vars.size()-1;
-		while (times > 0 && count > 0) {
+		int complexTimes = 0; /** break iteration if there occurs too many complex problems */
+		outer : while (times > 0 && count > 0) {
 			int tryTimes = 10;
 			while(tryTimes >= 0){
 				pickAndRandomSet(problem, vars, count);	
@@ -228,15 +229,18 @@ public class ProblemSolver {
 				Result result = solverResult.first();
 				if (result != null) {
 					res.add(result);
-					if (!solverResult.second()) { /** run long time to solve this problem ,maybe means that these problems are too difficult*/
-						log.debug("run long time to solve this problem");
-						break;
-					}
 					for (int i = 0; i <= count; i++) { /** clear added constraints */
 						List<Constraint> constraints = problem.getConstraints();
 						constraints.remove(constraints.size()-1);
 					}
 					count++; /** keep count */
+					if (!solverResult.second()) { /** run long time to solve this problem ,maybe means that these problems are too difficult*/
+						log.debug("run long time to solve this problem");
+						complexTimes++;
+						if (complexTimes >= 10) {
+							break outer;
+						}
+					}
 					break;
 				}else{
 					tryTimes--;

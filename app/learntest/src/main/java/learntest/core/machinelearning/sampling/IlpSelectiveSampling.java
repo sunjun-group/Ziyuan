@@ -120,30 +120,47 @@ public class IlpSelectiveSampling {
 			OrCategoryCalculator preconditions, List<Divider> learnedFormulas) throws SavException {
 		List<double[]> samples = new ArrayList<double[]>();
 
-		/**
-		 * generate data point on the border of divider
-		 */
-		int selectiveSamplingDataSize = 30;
-		for(int i=0; i<selectiveSamplingDataSize; i++){
-			for (Divider learnedFormula : learnedFormulas) {
-				List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
-				if (!problems.isEmpty() && learnedFormula != null) {
+		if (originVars.size() < 60) { /** too many variables which will cost much time because we will construct a linear with all variables */
+
+			/**
+			 * generate data point on the border of divider
+			 */
+			int selectiveSamplingDataSize = 30;
+			int complexTimes = 0; /** break iteration if there occurs too many complex problems */
+			iteration: for(int i=0; i<selectiveSamplingDataSize; i++){
+				int complexProblem = 0;
+				outer : for (Divider learnedFormula : learnedFormulas) {
+					List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
+					if (!problems.isEmpty() && learnedFormula != null) {
+						for (Problem problem : problems) {
+							ProblemBuilder.addOnBorderConstaints(problem, learnedFormula, originVars);
+						}
+					}
+
 					for (Problem problem : problems) {
-						ProblemBuilder.addOnBorderConstaints(problem, learnedFormula, originVars);
+						solver.generateRandomObjective(problem, originVars);
+						Pair<Result, Boolean> solverResult = solver.solve(problem, solveTimeLimit);
+						Result result = solverResult.first();
+						if (result != null) {
+							updateSamples(Arrays.asList(result), samples);
+						}
+						if (!solverResult.second()) { /** run long time to solve this problem ,maybe means that these problems are too difficult*/
+							log.debug("run long time to solve this problem");
+							complexProblem++;
+							complexTimes++;
+							if (complexTimes>=4) {
+								log.debug("break selectiveSamplingData iteration");
+								break iteration;
+							}
+							if (complexProblem >= 2) { /** separate the chances of running long time problem into different iteration */
+								break outer;
+							}else
+								break ;
+						}
 					}
 				}
-
-				for (Problem problem : problems) {
-					solver.generateRandomObjective(problem, originVars);
-					Pair<Result, Boolean> solverResult = solver.solve(problem, solveTimeLimit);
-					Result result = solverResult.first();
-					if (result != null) {
-						updateSamples(Arrays.asList(result), samples);
-					}
-					if (!solverResult.second()) { /** run long time to solve this problem ,maybe means that these problems are too difficult*/
-						log.debug("run long time to solve this problem");
-						break;
-					}
+				if (complexProblem>0) {
+					i = i+ Math.max(selectiveSamplingDataSize/6, learnedFormulas.size());
 				}
 			}
 		}
