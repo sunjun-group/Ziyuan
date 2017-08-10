@@ -149,6 +149,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 				coveredBranches.add(branchRelationship == BranchRelationship.TRUE ? branchRelationship : 
 										BranchRelationship.FALSE);
 			}
+			sb.append("\n");
 			sb.append("NodeCoverage [").append(node).append(", coveredTcs=").append(nodeCvg.getCoveredTcsTotal())
 						.append(", coveredBranches=").append(nodeCvg.getCoveredBranches().size()).append(", ")
 						.append(coveredBranches).append("]");

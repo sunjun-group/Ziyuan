@@ -16,7 +16,7 @@ public class FormulaInfo{
 	 
 	 public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append(node+"\n");
+		sb.append("\n"+node+"\n");
 		sb.append("trueFalseFormula :\n");
 		for(String formula : trueFalseFormula)
 			sb.append(formula+" ,\n");

@@ -303,7 +303,7 @@ public class ProblemBuilder {
 	
 	public static Problem buildVarBoundContraint(List<ExecVar> vars) {
 		
-		int bound = Settings.bound;
+		int bound = Settings.getBound();
 		
 		Problem problem = new Problem();
 		/* only these types are accepted in javailp: 

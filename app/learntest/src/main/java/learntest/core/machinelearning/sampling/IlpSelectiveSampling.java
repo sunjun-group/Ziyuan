@@ -44,7 +44,7 @@ public class IlpSelectiveSampling {
 	private List<ExecVar> vars;
 	private List<double[]> initValues;
 	private Set<Integer> samplesHashcodes;
-	private int maxSamplesPerSelect = 100; // by default;
+	private int maxSamplesPerSelect = 20; // by default;
 	public static long solveTimeLimit = 60 * 1000;
 	
 	/* ilpSolver */
@@ -365,7 +365,7 @@ public class IlpSelectiveSampling {
 					continue;
 				}
 			}
-			Number value = Randomness.nextInt(-Settings.bound, Settings.bound);
+			Number value = Randomness.nextInt(-Settings.getBound(), Settings.getBound());
 			ExecVar var = vars.get(i);
 			if (var.getType() == ExecVarType.BOOLEAN) {
 				if (value.intValue() > 0) {

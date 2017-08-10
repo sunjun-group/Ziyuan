@@ -1,6 +1,10 @@
 package learntest.plugin.utils;
 
 public class Settings {
-	public static int bound = 500;
+	private static int bound = 1000;
+	public static int  getBound(){
+		return bound;
+	}
+	
 	public static int selectiveNumber = 20;
 }
