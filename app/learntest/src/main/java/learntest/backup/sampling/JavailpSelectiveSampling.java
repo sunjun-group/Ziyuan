@@ -420,7 +420,7 @@ public class JavailpSelectiveSampling {
 				}
 			}
 			
-			Number value = Randomness.nextInt(-Settings.bound, Settings.bound);
+			Number value = Randomness.nextInt(-Settings.getBound(), Settings.getBound());
 			if (var.getType() == ExecVarType.BOOLEAN) {
 				if (value.intValue() > 0) {
 					atoms.add(new Eq<Number>(var, 1));

@@ -205,7 +205,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 					params.getTargetMethod().getLineNum());
 			log.info("-----------------------------------------------------------------------------------------------");
 
-			params.setMaxTcs(100);
+			// params.setMaxTcs(50);
 			// l2t params
 			LearnTestParams l2tParams = params;
 			// randoop params
@@ -216,11 +216,11 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			RunTimeInfo jdartInfo = null;
 
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
-//			log.info("run jdart..");
-//			jdartInfo = runJdart(randoopParam);
+			log.info("run jdart..");
+			jdartInfo = runJdart(randoopParam);
 
-//			log.info("run randoop..");
-//			runLearntest(ranAverageInfo, randoopParam);
+			// log.info("run randoop..");
+			// runLearntest(ranAverageInfo, randoopParam);
 
 			l2tParams.setApproach(LearnTestApproach.L2T);
 			l2tParams.setInitialTests(randoopParam.getInitialTests());
@@ -228,11 +228,11 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			log.info("run l2t..");
 			runLearntest(l2tAverageInfo, l2tParams);
 
-			 randoopParam.setApproach(LearnTestApproach.RANDOOP);
-			 randoopParam.setInitialTests(l2tParams.getInitialTests());
-			 randoopParam.setMaxTcs(l2tAverageInfo.getTestCnt());
-			 log.info("run randoop..");
-			 runLearntest(ranAverageInfo, randoopParam);
+			randoopParam.setApproach(LearnTestApproach.RANDOOP);
+			randoopParam.setInitialTests(l2tParams.getInitialTests());
+			randoopParam.setMaxTcs(l2tAverageInfo.getTestCnt());
+			log.info("run randoop..");
+			runLearntest(ranAverageInfo, randoopParam);
 
 			TargetMethod method = params.getTargetMethod();
 			log.info("Result: ");
@@ -249,10 +249,10 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 	private void printLearnedFormulas(List<FormulaInfo> list) {
 		StringBuffer sb = new StringBuffer();
-		for (FormulaInfo formulaInfo : list){
-			sb.append(formulaInfo+"\n");
+		for (FormulaInfo formulaInfo : list) {
+			sb.append(formulaInfo + "\n");
 		}
-		log.info("learned formulas : {}",sb.toString());
+		log.info("learned formulas : {}", sb.toString());
 	}
 
 	private RunTimeInfo runJdart(LearnTestParams params) throws Exception {
