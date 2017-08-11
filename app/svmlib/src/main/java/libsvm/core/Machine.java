@@ -38,7 +38,7 @@ public class Machine {
 	private static final int SVM_TIMEOUT = 2; // In seconds
 
 	private svm_parameter parameter = null;
-	private List<DataPoint> data = new ArrayList<DataPoint>();
+	protected List<DataPoint> data = new ArrayList<DataPoint>();
 	protected svm_model model = null;
 	private List<String> dataLabels = new ArrayList<String>();
 	private boolean isGeneratedDataLabel = false;

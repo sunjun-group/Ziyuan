@@ -100,15 +100,10 @@ public class DecisionProbes extends CfgCoverage {
 					}
 					condFromDividers = new MultiDividerBasedCategoryCalculator(clonedDividers);
 				}
-				System.currentTimeMillis();
 				if (condFromDividers != null) {
 					precondition.addPreconditions(domPrecond.getPreconditions(), condFromDividers);
 				}
 			}
-		}
-		System.currentTimeMillis();
-		if (!precondition.getPreconditions().isEmpty() && precondition.getPreconditions().get(0).size()>20) {
-			System.currentTimeMillis();
 		}
 		return new OrCategoryCalculator(precondition.getPreconditions(), learningVars, originalVars);
 	}

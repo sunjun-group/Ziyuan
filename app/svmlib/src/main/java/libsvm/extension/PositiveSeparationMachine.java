@@ -241,6 +241,14 @@ public class PositiveSeparationMachine extends Machine {
 	}
 
 	@Override
+	public double getModelAccuracy() {
+		if (learnedModels == null || learnedModels.size() == 0) {
+			return 0.0;
+		}
+		return 1.0 - ((double) getWrongClassifiedDataPoints(data).size() / data.size());
+	}
+	
+	@Override
 	public String getLearnedLogic(boolean round) {
 		StringBuilder str = new StringBuilder();
 
