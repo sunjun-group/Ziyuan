@@ -77,9 +77,13 @@ public class LearnTest extends AbstractLearntest {
 				RunTimeInfo info = getRuntimeInfo(probes);
 				if (learner instanceof PrecondDecisionLearner) {
 					if (!((PrecondDecisionLearner)learner).learnedFormulas.isEmpty()) {
-						info.learnFormula = true;
 						for (Entry<CfgNode, FormulaInfo> entry : ((PrecondDecisionLearner)learner).learnedFormulas.entrySet()){
 							info.learnedFormulas.add(entry.getValue());
+							if (entry.getValue().learned() == -1) {
+								info.learnFormula = -1;								
+							}else if (info.learnFormula != -1) {
+								info.learnFormula = 1;
+							}
 						}
 					}
 				}

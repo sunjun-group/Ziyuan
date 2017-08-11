@@ -12,7 +12,7 @@ public class RunTimeInfo {
 	private int testCnt;
 	
 	private String coverageInfo;
-	protected boolean learnFormula = false; /** if has learned formula*/
+	protected int learnFormula = 0; /** if has learned formula 1, if has rubbish learned formula -1, no formula 0 */
 	List<FormulaInfo> learnedFormulas = new LinkedList<>();
 	private double validCoverage;
 
@@ -135,7 +135,7 @@ public class RunTimeInfo {
 		return learnedFormulas;
 	}
 
-	public boolean learnFormula() {
+	public int learnFormula() {
 		return learnFormula;
 	}
 	
