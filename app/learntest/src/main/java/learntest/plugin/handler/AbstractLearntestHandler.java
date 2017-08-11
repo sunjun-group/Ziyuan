@@ -285,7 +285,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 				log.info("{} time: {}; coverage: {}; cnt: {}", params.getApproach().getName(),
 						TextFormatUtils.printTimeString(runtimeInfo.getTime()), runtimeInfo.getCoverage(),
 						runtimeInfo.getTestCnt());
-				log.info("coverageInfo: {}", runtimeInfo.getCoverageInfo());
+				log.info("coverageInfo: \n{}", runtimeInfo.getCoverageInfo());
 			}
 			return runtimeInfo;
 		} catch (Exception e) {

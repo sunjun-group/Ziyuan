@@ -68,9 +68,9 @@ public class SelectiveSampling<T extends ISampleResult> {
 		return sampleExecutor.runSamples(data, vars);
 	}
 
-	public T selectDataForModel(DecisionNodeProbe nodeProbe, List<ExecVar> originalVars, List<DataPoint> dataPoints,
+	public T selectDataForModel(DecisionNodeProbe nodeProbe, List<ExecVar> originalVars, 
 			OrCategoryCalculator preconditions, List<Divider> learnedDividers) throws SavException {
-		List<double[]> data = selectiveSampling.selectDataForModel(nodeProbe, originalVars, dataPoints, preconditions,
+		List<double[]> data = selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions,
 				learnedDividers);
 		return runData(data, originalVars);
 	}

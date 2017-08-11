@@ -6,13 +6,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import java.util.Map.Entry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Queue;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import sun.util.logging.resources.logging;
 
 /**
  * @author ZhangHr
  */
 public class CfgDomain {
+	private static Logger log = LoggerFactory.getLogger(PrecondDecisionLearner.class);
 	HashMap<CfgNode, CfgNodeDomainInfo> dominationMap = new HashMap<>();
 
 	public HashMap<CfgNode, CfgNodeDomainInfo> constructDominationMap(CfgNode startNode) {
@@ -48,7 +54,7 @@ public class CfgDomain {
 			}
 		}
 		for (CfgNodeDomainInfo info : dominationMap.values()) {
-			System.out.println(info+"\n");
+			log.info(info+"\n");
 		}
 		return dominationMap;
 	}

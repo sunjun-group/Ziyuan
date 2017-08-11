@@ -123,8 +123,8 @@ public class LearnedDataProcessor {
 	}
 
 	public SamplingResult sampleForModel(DecisionNodeProbe nodeProbe, List<ExecVar> originalVars,
-			List<DataPoint> dataPoints, OrCategoryCalculator preconditions, List<Divider> learnedDividers)
+			OrCategoryCalculator preconditions, List<Divider> learnedDividers)
 			throws SavException {
-		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, dataPoints, preconditions, learnedDividers);
+		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions, learnedDividers);
 	}
 }
