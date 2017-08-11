@@ -80,6 +80,10 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	
 
 	private void learn(CfgNode node, DecisionProbes probes, List<Integer> visitedNodes) throws SavException {
+		if (probes.getOriginalVars().size()>50) { /** discard those method with too many variables */
+			log.debug("OriginalVars size is "+probes.getOriginalVars().size() + " > 50, return directly");
+			return;
+		}
 		log.debug("parsing the node in line " + node.getLine() + "(" + node + ")");
 
 		// for (CfgNode dominator : CfgUtils.getPrecondInherentDominatee(node))
@@ -184,7 +188,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			if (!learnedFormulas.containsKey(node)) {
 				learnedFormulas.put(node, new FormulaInfo(node.toString()));
 			}
-			learnedFormulas.get(node).trueFalseFormula.add(trueFlaseFormula.toString()+", acc : "+acc);
+			learnedFormulas.get(node).addTFFormula(trueFlaseFormula.toString(), acc);
 		}
 
 		while (trueFlaseFormula != null && time < FORMULAR_LEARN_MAX_ATTEMPT && nodeProbe.needToLearnPrecond()) {
@@ -193,7 +197,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			if (!learnedFormulas.containsKey(node)) {
 				learnedFormulas.put(node, new FormulaInfo(node.toString()));
 			}
-			learnedFormulas.get(node).trueFalseFormula.add(trueFlaseFormula.toString()+", acc : "+acc);
+			learnedFormulas.get(node).addTFFormula(trueFlaseFormula.toString(), acc);
 
 			IlpSelectiveSampling.iterationTime = FORMULAR_LEARN_MAX_ATTEMPT - time;
 			time++;
@@ -202,8 +206,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			log.debug("original vars: size={}, {}", probes.getOriginalVars().size(), probes.getOriginalVars());
 			/* after running sampling, probes will be updated as well */
 			SamplingResult sampleResult = dataPreprocessor.sampleForModel(nodeProbe, probes.getOriginalVars(),
-					mcm.getDataPoints(), getPreconditions(probes, node), mcm.getLearnedDividers());
+					getPreconditions(probes, node), mcm.getLearnedDividers());
 			if (sampleResult == null) {
+				log.debug("sampling result is null");
 				continue;
 			}
 			INodeCoveredData newData = sampleResult.getNewData(nodeProbe);
@@ -214,7 +219,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			addDataPoints(probes.getLabels(), probes.getOriginalVars(), newData.getFalseValues(), Category.NEGATIVE,
 					mcm);
 			log.info("true data after selective sampling" + newData.getTrueValues());
-			log.info("false data after selective sampling" + nodeProbe.getFalseValues());
+			log.info("false data after selective sampling" + newData.getFalseValues());
 
 			mcm.train();
 			Formula tmp = mcm.getLearnedMultiFormula(probes.getOriginalVars(), probes.getLabels());
@@ -230,9 +235,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				dividers = mcm.getLearnedDividers();
 				acc = accTmp;
 
-				// if (acc == 1.0) {
-				// break;
-				// }
+//				 if (acc == 1.0) {
+//				 break;
+//				 }
 			} else {
 				break;
 			}
@@ -328,9 +333,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				if (!learnedFormulas.containsKey(node)) {
 					learnedFormulas.put(node, new FormulaInfo(node.toString()));
 				}
-				learnedFormulas.get(node).loopFormula.add(formula.toString()+", acc : "+acc);
+				learnedFormulas.get(node).addLoopFormula(formula.toString(), acc);
 
-				SamplingResult samples = dataPreprocessor.sampleForModel(nodeProbe, originalVars, mcm.getDataPoints(),
+				SamplingResult samples = dataPreprocessor.sampleForModel(nodeProbe, originalVars,
 						nodeProbe.getPreconditions(), mcm.getLearnedDividers());
 				INodeCoveredData newData = samples.getNewData(nodeProbe);
 				addDataPoints(labels, originalVars, newData.getMoreTimesValues(), Category.POSITIVE, mcm);
