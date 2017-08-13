@@ -68,4 +68,10 @@ public class CfgNodeDomainInfo {
 			}
 			return false;
 		}
+
+		public List<CfgNode> getDominatees() {
+			return dominatees;
+		}
+		
+		
 }

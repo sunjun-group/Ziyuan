@@ -91,31 +91,31 @@ public class TrialExcelWriter extends ExcelWriter {
 			case 0:
 				addCell(row, FIRST_TRIAL_R, trial.getRanRtInfo().getCoverage());
 				addCell(row, FIRST_TRIAL_L2T, trial.getL2tRtInfo().getCoverage());
-				addCell(row, FIRST_TRIAL_L, trial.getL2tRtInfo().learnFormula());	
+				addCell(row, FIRST_TRIAL_L, trial.getL2tRtInfo().getLearnState());	
 				addCell(row, FIRST_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());
 				break;
 			case 1:
 				addCell(row, SECOND_TRIAL_R, trial.getRanRtInfo().getCoverage());
 				addCell(row, SECOND_TRIAL_L2T, trial.getL2tRtInfo().getCoverage());
-				addCell(row, SECOND_TRIAL_L, trial.getL2tRtInfo().learnFormula());		
+				addCell(row, SECOND_TRIAL_L, trial.getL2tRtInfo().getLearnState());		
 				addCell(row, SECOND_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());				
 				break;
 			case 2:
 				addCell(row, THIRD_TRIAL_R, trial.getRanRtInfo().getCoverage());
 				addCell(row, THIRD_TRIAL_L2T, trial.getL2tRtInfo().getCoverage());
-				addCell(row, THIRD_TRIAL_L, trial.getL2tRtInfo().learnFormula());	
+				addCell(row, THIRD_TRIAL_L, trial.getL2tRtInfo().getLearnState());	
 				addCell(row, THIRD_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());					
 				break;
 			case 3:
 				addCell(row, FORTH_TRIAL_R, trial.getRanRtInfo().getCoverage());
 				addCell(row, FORTH_TRIAL_L2T, trial.getL2tRtInfo().getCoverage());
-				addCell(row, FORTH_TRIAL_L, trial.getL2tRtInfo().learnFormula());	
+				addCell(row, FORTH_TRIAL_L, trial.getL2tRtInfo().getLearnState());	
 				addCell(row, FORTH_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());					
 				break;
 			case 4:
 				addCell(row, FIFTH_TRIAL_R, trial.getRanRtInfo().getCoverage());
 				addCell(row, FIFTH_TRIAL_L2T, trial.getL2tRtInfo().getCoverage());
-				addCell(row, FIFTH_TRIAL_L, trial.getL2tRtInfo().learnFormula());	
+				addCell(row, FIFTH_TRIAL_L, trial.getL2tRtInfo().getLearnState());	
 				addCell(row, FIFTH_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());					
 				break;
 

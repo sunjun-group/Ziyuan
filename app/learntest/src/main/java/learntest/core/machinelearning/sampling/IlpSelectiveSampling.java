@@ -95,6 +95,15 @@ public class IlpSelectiveSampling {
 		}
 		log.debug("run solver {} times", solver.getSolvingTotal() - firstCount);
 		samples = limitSamples(samples, maxTcs);
+		
+		StringBuffer sBuffer = new StringBuffer();
+		sBuffer.append("select sample with precondition : ");
+		if (divider != null) {
+			for (Divider d : divider) {
+				sBuffer.append(d+",");
+			}
+		}
+		System.out.println(sBuffer.toString());
 		return samples;
 	}
 	

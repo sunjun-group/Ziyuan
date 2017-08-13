@@ -73,7 +73,7 @@ public class MultiTrial extends Trial {
 				ranTime += ranTimeInfo.getTime();
 				ranTestCnt += ranTimeInfo.getTestCnt();
 				
-				if (l2TimeInfo.learnFormula() > 0) {
+				if (l2TimeInfo.getLearnState() > 0) {
 					l2tValidCoverage += l2TimeInfo.getCoverage();
 					ranValidCovergage += ranTimeInfo.getCoverage();
 					validNum++;

@@ -54,7 +54,9 @@ public class CfgDomain {
 			}
 		}
 		for (CfgNodeDomainInfo info : dominationMap.values()) {
-			log.info(info+"\n");
+			if (!info.dominatees.isEmpty()) {
+				log.info(info+"\n");
+			}
 		}
 		return dominationMap;
 	}
