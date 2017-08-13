@@ -1,9 +1,16 @@
 package learntest.core;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import cfgcoverage.jacoco.analysis.data.CfgNode;
+import icsetlv.common.dto.BreakpointValue;
+import learntest.core.commons.data.decision.DecisionNodeProbe;
+import learntest.core.machinelearning.CfgNodeDomainInfo;
 import learntest.core.machinelearning.FormulaInfo;
+import learntest.core.machinelearning.IInputLearner;
 import sav.common.core.utils.TextFormatUtils;
 
 public class RunTimeInfo {
@@ -12,10 +19,14 @@ public class RunTimeInfo {
 	private int testCnt;
 	
 	private String coverageInfo;
-	protected int learnFormula = 0; /** if has learned formula 1, if has rubbish learned formula -1, no formula 0 */
+	protected int learnState = 0; /** if only learn valid formula 1, also has rubbish learned formula 2; only rubbish -1, no formula 0 */
 	List<FormulaInfo> learnedFormulas = new LinkedList<>();
 	private double validCoverage;
 
+	private HashMap<DecisionNodeProbe, Collection<BreakpointValue>> trueSample = new HashMap<>(),
+			falseSample = new HashMap<>();
+	private HashMap<CfgNode, CfgNodeDomainInfo> domainMap = new HashMap<>(1);
+	
 	public RunTimeInfo(long time, double coverage, int testCnt) {
 		this.time = time;
 		this.coverage = coverage;
@@ -45,7 +56,9 @@ public class RunTimeInfo {
 		coverage += subRunInfo.coverage;
 		testCnt += subRunInfo.testCnt;
 		learnedFormulas.addAll(subRunInfo.learnedFormulas);
-		learnFormula = learnFormula | subRunInfo.learnFormula;
+		learnState = learnState | subRunInfo.learnState;
+		trueSample.putAll(subRunInfo.trueSample);
+		falseSample.putAll(subRunInfo.falseSample);
 	}
 
 	public long getTime() {
@@ -135,8 +148,29 @@ public class RunTimeInfo {
 		return learnedFormulas;
 	}
 
-	public int learnFormula() {
-		return learnFormula;
+	public int getLearnState() {
+		return learnState;
+	}
+
+	public void setSample(IInputLearner learner) {
+		this.trueSample.putAll(learner.getTrueSample());
+		this.falseSample.putAll(learner.getFalseSample());		
+	}
+
+	public HashMap<DecisionNodeProbe, Collection<BreakpointValue>> getTrueSample() {
+		return trueSample;
+	}
+
+	public HashMap<DecisionNodeProbe, Collection<BreakpointValue>> getFalseSample() {
+		return falseSample;
+	}
+
+	public HashMap<CfgNode, CfgNodeDomainInfo> getDomainMap() {
+		return domainMap;
+	}
+
+	public void setDomainMap(HashMap<CfgNode, CfgNodeDomainInfo> domainMap) {
+		this.domainMap = domainMap;
 	}
 	
 	

@@ -75,18 +75,10 @@ public class LearnTest extends AbstractLearntest {
 				learningStarted = true;
 				DecisionProbes probes = learner.learn(initProbes);
 				RunTimeInfo info = getRuntimeInfo(probes);
-				if (learner instanceof PrecondDecisionLearner) {
-					if (!((PrecondDecisionLearner)learner).learnedFormulas.isEmpty()) {
-						for (Entry<CfgNode, FormulaInfo> entry : ((PrecondDecisionLearner)learner).learnedFormulas.entrySet()){
-							info.learnedFormulas.add(entry.getValue());
-							if (entry.getValue().learned() == -1) {
-								info.learnFormula = -1;								
-							}else if (info.learnFormula != -1) {
-								info.learnFormula = 1;
-							}
-						}
-					}
+				if (learner instanceof PrecondDecisionLearner) { 
+					setLearnState((PrecondDecisionLearner)learner, info);
 				}
+				info.setSample(learner);
 				return info;
 			}
 		} catch (SAVExecutionTimeOutException e) {
@@ -100,6 +92,33 @@ public class LearnTest extends AbstractLearntest {
 			return getRuntimeInfo(cfgCoverage);
 		} 
 		return null;
+	}
+
+	private void setLearnState(PrecondDecisionLearner learner, RunTimeInfo info) {
+		boolean hasPoorFormula = false, hasValidFormula = false;;
+		if (!((PrecondDecisionLearner)learner).learnedFormulas.isEmpty()) {
+			for (Entry<CfgNode, FormulaInfo> entry : ((PrecondDecisionLearner)learner).learnedFormulas.entrySet()){
+				info.learnedFormulas.add(entry.getValue());
+				if (entry.getValue().learnedState() == -1) {
+					hasPoorFormula = true;					
+				}else if (entry.getValue().learnedState() == 1) {
+					hasValidFormula = true;
+				}
+			}
+			if (hasValidFormula) {
+				if (hasPoorFormula) {
+					info.learnState = 2;
+				}else {
+					info.learnState = 1;
+				}
+			}else if (hasPoorFormula) {
+				info.learnState = -1;
+			}else {
+				info.learnState = 0;
+			}
+		}
+		info.setDomainMap(learner.getDominationMap());
+		
 	}
 
 	private void copyTestsToResultFolder(LearnTestParams params) {

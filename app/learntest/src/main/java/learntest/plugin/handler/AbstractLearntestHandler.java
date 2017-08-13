@@ -9,9 +9,11 @@
 package learntest.plugin.handler;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
-import org.apache.commons.lang.math.DoubleRange;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -32,6 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.CfgJaCoCoConfigs;
+import cfgcoverage.jacoco.analysis.data.CfgNode;
+import icsetlv.common.dto.BreakpointValue;
 import learntest.core.JDartLearntest;
 import learntest.core.LearnTestParams;
 import learntest.core.LearnTestParams.LearntestSystemVariable;
@@ -39,10 +43,9 @@ import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.TargetClass;
 import learntest.core.commons.data.classinfo.TargetMethod;
+import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.exception.LearnTestException;
-import learntest.core.gentest.GentestParams;
-import learntest.core.gentest.GentestResult;
-import learntest.core.gentest.TestGenerator;
+import learntest.core.machinelearning.CfgNodeDomainInfo;
 import learntest.core.machinelearning.FormulaInfo;
 import learntest.plugin.LearnTestConfig;
 import learntest.plugin.export.io.excel.Trial;
@@ -60,8 +63,6 @@ import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.TextFormatUtils;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
-import sav.strategies.vm.JavaCompiler;
-import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT
@@ -216,21 +217,18 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			RunTimeInfo jdartInfo = null;
 
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
-			log.info("run jdart..");
-			jdartInfo = runJdart(randoopParam);
-
-			// log.info("run randoop..");
-			// runLearntest(ranAverageInfo, randoopParam);
+//			log.info("run jdart..");
+//			jdartInfo = runJdart(randoopParam);
 
 			l2tParams.setApproach(LearnTestApproach.L2T);
 			l2tParams.setInitialTests(randoopParam.getInitialTests());
 			l2tParams.setMaxTcs(ranAverageInfo.getTestCnt());
-			log.info("run l2t..");
-			runLearntest(l2tAverageInfo, l2tParams);
+//			log.info("run l2t..");
+//			runLearntest(l2tAverageInfo, l2tParams);
 
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
 			randoopParam.setInitialTests(l2tParams.getInitialTests());
-			randoopParam.setMaxTcs(l2tAverageInfo.getTestCnt());
+			randoopParam.setMaxTcs(100);//l2tAverageInfo.getTestCnt());
 			log.info("run randoop..");
 			runLearntest(ranAverageInfo, randoopParam);
 
@@ -239,12 +237,60 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			log.info("lt2: {}", l2tAverageInfo);
 			log.info("randoop: {}", ranAverageInfo);
 			printLearnedFormulas(l2tAverageInfo.getLearnedFormulas());
+			showInnormalBranch(l2tAverageInfo, ranAverageInfo);
 			return new Trial(method.getMethodFullName(), method.getMethodLength(), method.getLineNum(), l2tAverageInfo,
 					ranAverageInfo, jdartInfo);
 		} catch (Exception e) {
 			handleException(e);
 		}
 		return null;
+	}
+
+	private void showInnormalBranch(RunTimeInfo l2tAverageInfo, RunTimeInfo ranAverageInfo) {
+		System.out.println("l2t");
+		System.out.println("false branch : ");
+		for (Entry<DecisionNodeProbe, Collection<BreakpointValue>> entry : l2tAverageInfo.getTrueSample().entrySet()){
+			System.out.println(entry.getKey().getNode()+":"+entry.getValue().size());
+		}
+		System.out.println("true branch : ");
+		for (Entry<DecisionNodeProbe, Collection<BreakpointValue>> entry : l2tAverageInfo.getFalseSample().entrySet()){
+			System.out.println(entry.getKey().getNode()+":"+entry.getValue().size());
+		}
+		System.out.println("ran");
+		System.out.println("false branch : ");
+		for (Entry<DecisionNodeProbe, Collection<BreakpointValue>> entry : ranAverageInfo.getTrueSample().entrySet()){
+			System.out.println(entry.getKey().getNode()+":"+entry.getValue().size());
+		}
+		System.out.println("true branch : ");
+		for (Entry<DecisionNodeProbe, Collection<BreakpointValue>> entry : ranAverageInfo.getFalseSample().entrySet()){
+			System.out.println(entry.getKey().getNode()+":"+entry.getValue().size());
+		}
+		
+		
+		
+		HashMap<CfgNode, CfgNodeDomainInfo> domainMap = l2tAverageInfo.getDomainMap();
+		for (FormulaInfo info : l2tAverageInfo.getLearnedFormulas()){
+			if (info.learnedState() == info.VALID) {
+				for (CfgNode dominatee : domainMap.get(info.getNode()).getDominatees()){
+					if (ranAverageInfo.getFalseSample().containsKey(dominatee) 
+							&& !l2tAverageInfo.getFalseSample().containsKey(dominatee)) {
+						StringBuffer sBuffer = new StringBuffer();
+						sBuffer.append("l2t learn "+info);
+						sBuffer.append("false branch of its dominatee " + dominatee + " is covered only by randoop : \n");
+						sBuffer.append(ranAverageInfo.getFalseSample().get(dominatee));
+						System.out.println(sBuffer.toString());
+					}
+					if (ranAverageInfo.getTrueSample().containsKey(dominatee) 
+							&& !l2tAverageInfo.getTrueSample().containsKey(dominatee)) {
+						StringBuffer sBuffer = new StringBuffer();
+						sBuffer.append("l2t learn "+info);
+						sBuffer.append("true branch of its dominatee " + dominatee + " is covered only by randoop : \n");
+						sBuffer.append(ranAverageInfo.getTrueSample().get(dominatee));
+						System.out.println(sBuffer.toString());
+					}
+				}
+			}
+		}
 	}
 
 	private void printLearnedFormulas(List<FormulaInfo> list) {
