@@ -280,13 +280,13 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 					log.info("if ran better than l2t in true :");
 					boolean rt = checkIfBetter(ranT, l2tT);
 					
-					l2tAverageInfo.l2tWorseThanRand = rf || rt;
+					l2tAverageInfo.l2tWorseThanRand = rf || rt || l2tAverageInfo.l2tWorseThanRand;
 					
 					log.info("if l2t better than randoop in false :");
 					boolean l2tf = checkIfBetter(l2tF, ranF);
 					log.info("if l2t better than randoop in true :");
 					boolean l2tt = checkIfBetter(l2tT, ranT);
-					l2tAverageInfo.l2tWorseThanRand = l2tf || l2tt;
+					l2tAverageInfo.randWorseThanl2t = l2tf || l2tt || l2tAverageInfo.randWorseThanl2t;
 				}
 			}
 		}

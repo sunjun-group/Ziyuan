@@ -39,35 +39,34 @@ public enum TrialHeader implements ExcelHeader {
 	FIRST_TRIAL_L2T("1st trial l2t"), /** 1st trial l2t coverage */
 	FIRST_TRIAL_ADV("1st trial advantage"), 
 	FIRST_TRIAL_L("1st trial learned"), /** 1st trial l2t learn formulas */
+	FIRST_L2T_WORSE_THAN_RAND("1st l2t worse than randoop"),
+	FIRST_RAND_WORSE_THAN_L2T("1st randoop worse than l2t"),
 	
 	SECOND_TRIAL_R("2nd trial ran"),
 	SECOND_TRIAL_L2T("2nd trial l2t"),
 	SECOND_TRIAL_ADV("2nd trial advantage"), 
 	SECOND_TRIAL_L("2nd trial learned"),
+	SECOND_L2T_WORSE_THAN_RAND("2nd l2t worse than randoop"),
+	SECOND_RAND_WORSE_THAN_L2T("2nd randoop worse than l2t"),
 	
 	THIRD_TRIAL_R("3rd trial ran"),
 	THIRD_TRIAL_L2T("3rd trial l2t"),
 	THIRD_TRIAL_ADV("3rd trial advantage"), 
 	THIRD_TRIAL_L("3rd trial learned"),
+	THIRD_L2T_WORSE_THAN_RAND("3rd l2t worse than randoop"),
+	THIRD_RAND_WORSE_THAN_L2T("3rd randoop worse than l2t"),
 	
 	FORTH_TRIAL_R("4th trial ran"),
 	FORTH_TRIAL_L2T("4th trial l2t"),
 	FORTH_TRIAL_ADV("4th trial advantage"), 
 	FORTH_TRIAL_L("4th trial learned"),
+	FORTH_L2T_WORSE_THAN_RAND("4th l2t worse than randoop"),
+	FORTH_RAND_WORSE_THAN_L2T("4th randoop worse than l2t"),
 	
 	FIFTH_TRIAL_R("5th trial ran"),
 	FIFTH_TRIAL_L2T("5th trial l2t"),
 	FIFTH_TRIAL_ADV("5th trial advantage"), 
 	FIFTH_TRIAL_L("5th trial learned"),
-
-	FIRST_L2T_WORSE_THAN_RAND("1st l2t worse than randoop"),
-	FIRST_RAND_WORSE_THAN_L2T("1st randoop worse than l2t"),
-	SECOND_L2T_WORSE_THAN_RAND("2nd l2t worse than randoop"),
-	SECOND_RAND_WORSE_THAN_L2T("2nd randoop worse than l2t"),
-	THIRD_L2T_WORSE_THAN_RAND("3rd l2t worse than randoop"),
-	THIRD_RAND_WORSE_THAN_L2T("3rd randoop worse than l2t"),
-	FORTH_L2T_WORSE_THAN_RAND("4th l2t worse than randoop"),
-	FORTH_RAND_WORSE_THAN_L2T("4th randoop worse than l2t"),
 	FIFTH_L2T_WORSE_THAN_RAND("5th l2t worse than randoop"),
 	FIFTH_RAND_WORSE_THAN_L2T("5th randoop worse than l2t")
 	;
