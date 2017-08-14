@@ -13,6 +13,7 @@ import java.util.List;
 import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
+import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import learntest.core.machinelearning.iface.ISampleExecutor;
 import learntest.core.machinelearning.iface.ISampleResult;
@@ -61,7 +62,7 @@ public class SelectiveSampling<T extends ISampleResult> {
 		return runData(data, vars);
 	}
 
-	private T runData(List<double[]> data, List<ExecVar> vars) throws SavException {
+	public T runData(List<double[]> data, List<ExecVar> vars) throws SavException {
 		if (CollectionUtils.isEmpty(data)) {
 			return null;
 		}

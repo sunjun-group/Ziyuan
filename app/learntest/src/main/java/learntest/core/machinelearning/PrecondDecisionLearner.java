@@ -13,19 +13,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.Stack;
-
-import org.eclipse.swt.widgets.Link;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.corba.se.impl.orbutil.graph.Node;
-import com.sun.org.apache.regexp.internal.recompile;
-import com.sun.tools.classfile.Annotation.element_value;
-
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.AbstractLearningComponent;
 import learntest.core.LearningMediator;
@@ -40,7 +32,6 @@ import learntest.core.machinelearning.sampling.IlpSelectiveSampling;
 import libsvm.core.Category;
 import libsvm.core.Divider;
 import libsvm.core.Machine;
-import libsvm.core.Machine.DataPoint;
 import libsvm.extension.ByDistanceNegativePointSelection;
 import libsvm.extension.NegativePointSelection;
 import libsvm.extension.PositiveSeparationMachine;
@@ -62,18 +53,19 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	protected LearnedDataProcessor dataPreprocessor;
 	public HashMap<CfgNode, FormulaInfo> learnedFormulas = new HashMap<>();
 	private HashMap<CfgNode, CfgNodeDomainInfo> dominationMap = new HashMap<>();
-	HashMap<DecisionNodeProbe, Collection<BreakpointValue>> branchTrueRecord = new HashMap<>(), branchFalseRecord = new HashMap<>();
+	HashMap<String, Collection<BreakpointValue>> branchTrueRecord = new HashMap<>(), branchFalseRecord = new HashMap<>();
 
 	public PrecondDecisionLearner(LearningMediator mediator) {
 		super(mediator);
 	}
 
-	public DecisionProbes learn(DecisionProbes inputProbes) throws SavException {
-		System.currentTimeMillis();
+	public DecisionProbes learn(DecisionProbes inputProbes, BreakpointData bpdata) throws SavException {
 		List<CfgNode> decisionNodes = inputProbes.getCfg().getDecisionNodes();
 		DecisionProbes probes = inputProbes;
 		dataPreprocessor = new LearnedDataProcessor(mediator, inputProbes);
 		dominationMap = new CfgDomain().constructDominationMap(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()));
+		recordSample(inputProbes, dataPreprocessor.getSampleOfInitCase(bpdata, inputProbes.getOriginalVars()));
+		System.currentTimeMillis();
 		learn(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()), probes, new ArrayList<Integer>(decisionNodes.size()));
 		return probes;
 	}
@@ -221,10 +213,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 					mcm);
 			addDataPoints(probes.getLabels(), probes.getOriginalVars(), newData.getFalseValues(), Category.NEGATIVE,
 					mcm);
-			System.out.println(nodeProbe.getNode());
-			log.info("true data after selective sampling" + newData.getTrueValues());
-			log.info("false data after selective sampling" + newData.getFalseValues());
-			recordSample(nodeProbe, sampleResult);
+			recordSample(probes, sampleResult);
 			
 			mcm.train();
 			Formula tmp = mcm.getLearnedMultiFormula(probes.getOriginalVars(), probes.getLabels());
@@ -266,11 +255,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		mcm.setDefaultParams();
 		for (BreakpointValue value : nodeProbe.getTrueValues()) {
 			addDataPoint(labels, probes.getOriginalVars(), value, Category.POSITIVE, mcm);
-			System.out.println("positive "+ value);
 		}
 		for (BreakpointValue value : nodeProbe.getFalseValues()) {
 			addDataPoint(labels, probes.getOriginalVars(), value, Category.NEGATIVE, mcm);
-			System.out.println("negative "+ value);
 		}
 		mcm.train();
 		Formula newFormula = mcm.getLearnedMultiFormula(probes.getOriginalVars(), labels);
@@ -350,7 +337,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				INodeCoveredData newData = samples.getNewData(nodeProbe);
 				addDataPoints(labels, originalVars, newData.getMoreTimesValues(), Category.POSITIVE, mcm);
 				addDataPoints(labels, originalVars, newData.getOneTimeValues(), Category.NEGATIVE, mcm);
-				recordSample(nodeProbe, samples);
+				recordSample(nodeProbe.getDecisionProbes(), samples);
 				acc = mcm.getModelAccuracy();
 				if (acc == 1.0) {
 					break;
@@ -389,11 +376,11 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		List<Divider> dividers;
 	}
 
-	public HashMap<DecisionNodeProbe, Collection<BreakpointValue>> getTrueSample(){
+	public HashMap<String, Collection<BreakpointValue>> getTrueSample(){
 		return branchTrueRecord;
 	}
 	
-	public HashMap<DecisionNodeProbe, Collection<BreakpointValue>> getFalseSample(){
+	public HashMap<String, Collection<BreakpointValue>> getFalseSample(){
 		return branchFalseRecord;
 	}
 

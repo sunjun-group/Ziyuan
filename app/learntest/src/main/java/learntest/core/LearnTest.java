@@ -73,7 +73,7 @@ public class LearnTest extends AbstractLearntest {
 				IInputLearner learner = mediator.initDecisionLearner(params);
 				DecisionProbes initProbes = initProbes(targetMethod, cfgCoverage, result);
 				learningStarted = true;
-				DecisionProbes probes = learner.learn(initProbes);
+				DecisionProbes probes = learner.learn(initProbes, result);
 				RunTimeInfo info = getRuntimeInfo(probes);
 				if (learner instanceof PrecondDecisionLearner) { 
 					setLearnState((PrecondDecisionLearner)learner, info);

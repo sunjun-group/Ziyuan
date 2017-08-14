@@ -5,13 +5,19 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.debug.core.model.Breakpoint;
+
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
+import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.machinelearning.CfgNodeDomainInfo;
 import learntest.core.machinelearning.FormulaInfo;
 import learntest.core.machinelearning.IInputLearner;
+import learntest.core.machinelearning.iface.ISampleExecutor;
 import sav.common.core.utils.TextFormatUtils;
+import sav.strategies.dto.execute.value.ExecVar;
 
 public class RunTimeInfo {
 	private long time;
@@ -22,8 +28,9 @@ public class RunTimeInfo {
 	protected int learnState = 0; /** if only learn valid formula 1, also has rubbish learned formula 2; only rubbish -1, no formula 0 */
 	List<FormulaInfo> learnedFormulas = new LinkedList<>();
 	private double validCoverage;
+	public boolean l2tWorseThanRand = false, randWorseThanl2t = false;
 
-	private HashMap<DecisionNodeProbe, Collection<BreakpointValue>> trueSample = new HashMap<>(),
+	private HashMap<String, Collection<BreakpointValue>> trueSample = new HashMap<>(),
 			falseSample = new HashMap<>();
 	private HashMap<CfgNode, CfgNodeDomainInfo> domainMap = new HashMap<>(1);
 	
@@ -59,6 +66,7 @@ public class RunTimeInfo {
 		learnState = learnState | subRunInfo.learnState;
 		trueSample.putAll(subRunInfo.trueSample);
 		falseSample.putAll(subRunInfo.falseSample);
+		domainMap = subRunInfo.domainMap;
 	}
 
 	public long getTime() {
@@ -157,11 +165,11 @@ public class RunTimeInfo {
 		this.falseSample.putAll(learner.getFalseSample());		
 	}
 
-	public HashMap<DecisionNodeProbe, Collection<BreakpointValue>> getTrueSample() {
+	public HashMap<String, Collection<BreakpointValue>> getTrueSample() {
 		return trueSample;
 	}
 
-	public HashMap<DecisionNodeProbe, Collection<BreakpointValue>> getFalseSample() {
+	public HashMap<String, Collection<BreakpointValue>> getFalseSample() {
 		return falseSample;
 	}
 
@@ -172,6 +180,7 @@ public class RunTimeInfo {
 	public void setDomainMap(HashMap<CfgNode, CfgNodeDomainInfo> domainMap) {
 		this.domainMap = domainMap;
 	}
+
 	
 	
 }

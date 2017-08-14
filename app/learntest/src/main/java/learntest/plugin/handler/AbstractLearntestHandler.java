@@ -54,6 +54,7 @@ import learntest.plugin.utils.IResourceUtils;
 import learntest.plugin.utils.IStatusUtils;
 import learntest.plugin.utils.JdartConstants;
 import learntest.plugin.utils.LearnTestUtil;
+import mosek.Env.checkconvexitytype;
 import sav.common.core.Constants;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
@@ -217,18 +218,18 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			RunTimeInfo jdartInfo = null;
 
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
-//			log.info("run jdart..");
-//			jdartInfo = runJdart(randoopParam);
+			log.info("run jdart..");
+			jdartInfo = runJdart(randoopParam);
 
 			l2tParams.setApproach(LearnTestApproach.L2T);
 			l2tParams.setInitialTests(randoopParam.getInitialTests());
 			l2tParams.setMaxTcs(ranAverageInfo.getTestCnt());
-//			log.info("run l2t..");
-//			runLearntest(l2tAverageInfo, l2tParams);
+			log.info("run l2t..");
+			runLearntest(l2tAverageInfo, l2tParams);
 
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
 			randoopParam.setInitialTests(l2tParams.getInitialTests());
-			randoopParam.setMaxTcs(100);//l2tAverageInfo.getTestCnt());
+			randoopParam.setMaxTcs(5*l2tAverageInfo.getTestCnt());
 			log.info("run randoop..");
 			runLearntest(ranAverageInfo, randoopParam);
 
@@ -247,50 +248,61 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	}
 
 	private void showInnormalBranch(RunTimeInfo l2tAverageInfo, RunTimeInfo ranAverageInfo) {
-		System.out.println("l2t");
-		System.out.println("false branch : ");
-		for (Entry<DecisionNodeProbe, Collection<BreakpointValue>> entry : l2tAverageInfo.getTrueSample().entrySet()){
-			System.out.println(entry.getKey().getNode()+":"+entry.getValue().size());
+		log.info("l2t");
+		log.info("true branch : ");
+		for (Entry<String, Collection<BreakpointValue>> entry : l2tAverageInfo.getTrueSample().entrySet()){
+			log.info(entry.getKey()+" "+":"+entry.getValue().size());
 		}
-		System.out.println("true branch : ");
-		for (Entry<DecisionNodeProbe, Collection<BreakpointValue>> entry : l2tAverageInfo.getFalseSample().entrySet()){
-			System.out.println(entry.getKey().getNode()+":"+entry.getValue().size());
+		log.info("false branch : ");
+		for (Entry<String, Collection<BreakpointValue>> entry : l2tAverageInfo.getFalseSample().entrySet()){
+			log.info(entry.getKey()+" "+":"+entry.getValue().size());
 		}
-		System.out.println("ran");
-		System.out.println("false branch : ");
-		for (Entry<DecisionNodeProbe, Collection<BreakpointValue>> entry : ranAverageInfo.getTrueSample().entrySet()){
-			System.out.println(entry.getKey().getNode()+":"+entry.getValue().size());
+		log.info("ran");
+		log.info("true branch : ");
+		for (Entry<String, Collection<BreakpointValue>> entry : ranAverageInfo.getTrueSample().entrySet()){
+			log.info(entry.getKey()+" "+":"+entry.getValue().size());
 		}
-		System.out.println("true branch : ");
-		for (Entry<DecisionNodeProbe, Collection<BreakpointValue>> entry : ranAverageInfo.getFalseSample().entrySet()){
-			System.out.println(entry.getKey().getNode()+":"+entry.getValue().size());
+		log.info("false branch : ");
+		for (Entry<String, Collection<BreakpointValue>> entry : ranAverageInfo.getFalseSample().entrySet()){
+			log.info(entry.getKey()+" "+":"+entry.getValue().size());
 		}
-		
-		
-		
+
+		log.info("\nshow different branch if l2t has learned formula:");
 		HashMap<CfgNode, CfgNodeDomainInfo> domainMap = l2tAverageInfo.getDomainMap();
 		for (FormulaInfo info : l2tAverageInfo.getLearnedFormulas()){
 			if (info.learnedState() == info.VALID) {
 				for (CfgNode dominatee : domainMap.get(info.getNode()).getDominatees()){
-					if (ranAverageInfo.getFalseSample().containsKey(dominatee) 
-							&& !l2tAverageInfo.getFalseSample().containsKey(dominatee)) {
-						StringBuffer sBuffer = new StringBuffer();
-						sBuffer.append("l2t learn "+info);
-						sBuffer.append("false branch of its dominatee " + dominatee + " is covered only by randoop : \n");
-						sBuffer.append(ranAverageInfo.getFalseSample().get(dominatee));
-						System.out.println(sBuffer.toString());
-					}
-					if (ranAverageInfo.getTrueSample().containsKey(dominatee) 
-							&& !l2tAverageInfo.getTrueSample().containsKey(dominatee)) {
-						StringBuffer sBuffer = new StringBuffer();
-						sBuffer.append("l2t learn "+info);
-						sBuffer.append("true branch of its dominatee " + dominatee + " is covered only by randoop : \n");
-						sBuffer.append(ranAverageInfo.getTrueSample().get(dominatee));
-						System.out.println(sBuffer.toString());
-					}
+					log.info("node : " + info.getNode() + "dominatee : "+dominatee);
+					Collection<BreakpointValue> ranF = ranAverageInfo.getFalseSample().get(dominatee.toString()), ranT = ranAverageInfo.getTrueSample().get(dominatee.toString()),
+							l2tF = l2tAverageInfo.getFalseSample().get(dominatee.toString()), l2tT = l2tAverageInfo.getTrueSample().get(dominatee.toString());
+					log.info("if ran better than l2t in false :");
+					boolean rf = checkIfBetter(ranF, l2tF);
+					log.info("if ran better than l2t in true :");
+					boolean rt = checkIfBetter(ranT, l2tT);
+					
+					l2tAverageInfo.l2tWorseThanRand = rf || rt;
+					
+					log.info("if l2t better than randoop in false :");
+					boolean l2tf = checkIfBetter(l2tF, ranF);
+					log.info("if l2t better than randoop in true :");
+					boolean l2tt = checkIfBetter(l2tT, ranT);
+					l2tAverageInfo.l2tWorseThanRand = l2tf || l2tt;
 				}
 			}
 		}
+	}
+
+	private boolean checkIfBetter(Collection<BreakpointValue> first, Collection<BreakpointValue> second) {
+
+		if (null!=first && first.size() > 0 &&  
+				(null == second || second.size()==0)) {
+			StringBuffer sBuffer = new StringBuffer();
+			sBuffer.append(first);
+			log.info(sBuffer.toString());
+			return true;
+		}
+		return false;
+		
 	}
 
 	private void printLearnedFormulas(List<FormulaInfo> list) {

@@ -13,6 +13,7 @@ public class Trial {
 	protected RunTimeInfo l2tRtInfo;
 	protected RunTimeInfo ranRtInfo;
 	protected RunTimeInfo jdartRtInfo;
+	protected boolean l2tWorseThanRand, randWorseThanl2t;
 
 	public Trial(){
 		
@@ -26,6 +27,8 @@ public class Trial {
 		this.l2tRtInfo = l2tAverageInfo;
 		this.ranRtInfo = ranAverageInfo;
 		this.jdartRtInfo = jdartInfo;
+		this.l2tWorseThanRand = l2tAverageInfo.l2tWorseThanRand;
+		this.randWorseThanl2t = l2tAverageInfo.randWorseThanl2t;
 	}
 
 	public String getMethodName() {

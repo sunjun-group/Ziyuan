@@ -93,30 +93,40 @@ public class TrialExcelWriter extends ExcelWriter {
 				addCell(row, FIRST_TRIAL_L2T, trial.getL2tRtInfo().getCoverage());
 				addCell(row, FIRST_TRIAL_L, trial.getL2tRtInfo().getLearnState());	
 				addCell(row, FIRST_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());
+				addCell(row, FIRST_RAND_WORSE_THAN_L2T, trial.randWorseThanl2t?1:0);
+				addCell(row, FIRST_L2T_WORSE_THAN_RAND, trial.l2tWorseThanRand?1:0);
 				break;
 			case 1:
 				addCell(row, SECOND_TRIAL_R, trial.getRanRtInfo().getCoverage());
 				addCell(row, SECOND_TRIAL_L2T, trial.getL2tRtInfo().getCoverage());
 				addCell(row, SECOND_TRIAL_L, trial.getL2tRtInfo().getLearnState());		
-				addCell(row, SECOND_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());				
+				addCell(row, SECOND_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());
+				addCell(row, SECOND_RAND_WORSE_THAN_L2T, trial.randWorseThanl2t?1:0);	
+				addCell(row, SECOND_L2T_WORSE_THAN_RAND, trial.l2tWorseThanRand?1:0);	
 				break;
 			case 2:
 				addCell(row, THIRD_TRIAL_R, trial.getRanRtInfo().getCoverage());
 				addCell(row, THIRD_TRIAL_L2T, trial.getL2tRtInfo().getCoverage());
 				addCell(row, THIRD_TRIAL_L, trial.getL2tRtInfo().getLearnState());	
-				addCell(row, THIRD_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());					
+				addCell(row, THIRD_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());
+				addCell(row, THIRD_RAND_WORSE_THAN_L2T, trial.randWorseThanl2t?1:0);
+				addCell(row, THIRD_L2T_WORSE_THAN_RAND, trial.l2tWorseThanRand?1:0);	
 				break;
 			case 3:
 				addCell(row, FORTH_TRIAL_R, trial.getRanRtInfo().getCoverage());
 				addCell(row, FORTH_TRIAL_L2T, trial.getL2tRtInfo().getCoverage());
 				addCell(row, FORTH_TRIAL_L, trial.getL2tRtInfo().getLearnState());	
-				addCell(row, FORTH_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());					
+				addCell(row, FORTH_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());	
+				addCell(row, FORTH_RAND_WORSE_THAN_L2T, trial.randWorseThanl2t?1:0);		
+				addCell(row, FORTH_L2T_WORSE_THAN_RAND, trial.l2tWorseThanRand?1:0);	
 				break;
 			case 4:
 				addCell(row, FIFTH_TRIAL_R, trial.getRanRtInfo().getCoverage());
 				addCell(row, FIFTH_TRIAL_L2T, trial.getL2tRtInfo().getCoverage());
 				addCell(row, FIFTH_TRIAL_L, trial.getL2tRtInfo().getLearnState());	
-				addCell(row, FIFTH_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());					
+				addCell(row, FIFTH_TRIAL_ADV, trial.getL2tRtInfo().getCoverage()-trial.getRanRtInfo().getCoverage());	
+				addCell(row, FIFTH_RAND_WORSE_THAN_L2T, trial.randWorseThanl2t?1:0);
+				addCell(row, FIFTH_L2T_WORSE_THAN_RAND, trial.l2tWorseThanRand?1:0);	
 				break;
 
 			default:

@@ -82,4 +82,8 @@ public class SamplingResult implements ISampleResult {
 		decisionProbes.update(newTcsFirstIdx, newTestInputs);
 		dataMap.clear();
 	}
+
+	public List<BreakpointValue> getNewTestInputs() {
+		return newTestInputs;
+	}
 }

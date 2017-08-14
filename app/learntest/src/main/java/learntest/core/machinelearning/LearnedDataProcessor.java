@@ -8,9 +8,12 @@
 
 package learntest.core.machinelearning;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import icsetlv.common.dto.BreakpointData;
+import icsetlv.common.dto.BreakpointValue;
 import learntest.core.LearningMediator;
 import learntest.core.commons.data.decision.BranchType;
 import learntest.core.commons.data.decision.CoveredBranches;
@@ -70,15 +73,14 @@ public class LearnedDataProcessor {
 //			}
 			
 			SamplingResult sampleResult = selectDataForEmpty(nodeProbe, 
-					preconditions, null, coveredType.getOnlyOneMissingBranch(), false);
-			learner.recordSample(nodeProbe, sampleResult);
+					preconditions, null, coveredType.getOnlyOneMissingBranch(), false, learner);
 		}
 		
 		return processedProbes;
 	}
 	
 	public SamplingResult selectDataForEmpty(IDecisionNode nodeProbe, OrCategoryCalculator precondition,
-			List<Divider> divider, BranchType missingBranch, boolean isLoop)
+			List<Divider> divider, BranchType missingBranch, boolean isLoop, IInputLearner learner)
 			throws SavException, SAVExecutionTimeOutException {
 		/* try to select 2 times */
 		SamplingResult selectResult = null;
@@ -87,7 +89,8 @@ public class LearnedDataProcessor {
 			if (selectResult == null) {
 				continue;
 			}
-
+			learner.recordSample(decisionProbes, selectResult);
+			
 			INodeCoveredData selectData = selectResult.getNewData(nodeProbe);
 			if (!isLoop) {
 				if ((missingBranch.isTrueBranch()) && !selectData.getTrueValues().isEmpty()) {
@@ -121,13 +124,22 @@ public class LearnedDataProcessor {
 		}
 		BranchType missingBranch = nodeProbe.getMoreTimesValues().isEmpty() ? BranchType.TRUE
 																			: BranchType.FALSE; /* ?? */
-		SamplingResult sampleResult = selectDataForEmpty(nodeProbe, preconditions, null, missingBranch, true);
-		learner.recordSample(nodeProbe, sampleResult);
+		SamplingResult sampleResult = selectDataForEmpty(nodeProbe, preconditions, null, missingBranch, true, learner);
 	}
 
 	public SamplingResult sampleForModel(DecisionNodeProbe nodeProbe, List<ExecVar> originalVars,
 			OrCategoryCalculator preconditions, List<Divider> learnedDividers)
 			throws SavException {
 		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions, learnedDividers);
+	}
+	
+	public SamplingResult getSampleOfInitCase(BreakpointData result, List<ExecVar> vars) throws SavException {
+		List<double[]> list = new LinkedList<>();
+		for (BreakpointValue bpv : result.getAllValues()) {
+			double[] values = bpv.getAllValues();
+			list.add(values);
+		}
+		return selectiveSampling.runData(list, vars);
+		
 	}
 }
