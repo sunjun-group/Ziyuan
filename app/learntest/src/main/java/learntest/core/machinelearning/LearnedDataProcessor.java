@@ -72,7 +72,7 @@ public class LearnedDataProcessor {
 //				}
 //			}
 			
-			SamplingResult sampleResult = selectDataForEmpty(nodeProbe, 
+			selectDataForEmpty(nodeProbe, 
 					preconditions, null, coveredType.getOnlyOneMissingBranch(), false, learner);
 		}
 		
@@ -124,7 +124,7 @@ public class LearnedDataProcessor {
 		}
 		BranchType missingBranch = nodeProbe.getMoreTimesValues().isEmpty() ? BranchType.TRUE
 																			: BranchType.FALSE; /* ?? */
-		SamplingResult sampleResult = selectDataForEmpty(nodeProbe, preconditions, null, missingBranch, true, learner);
+		selectDataForEmpty(nodeProbe, preconditions, null, missingBranch, true, learner);
 	}
 
 	public SamplingResult sampleForModel(DecisionNodeProbe nodeProbe, List<ExecVar> originalVars,

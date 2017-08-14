@@ -20,6 +20,7 @@ import icsetlv.common.dto.BreakpointValue;
  */
 public interface INodeCoveredData {
 
+	/** note : if node is loop header, only return values that never enter loop */
 	Collection<BreakpointValue> getFalseValues();
 
 	Collection<BreakpointValue> getTrueValues();

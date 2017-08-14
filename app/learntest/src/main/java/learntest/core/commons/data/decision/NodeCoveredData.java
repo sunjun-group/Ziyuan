@@ -59,6 +59,9 @@ public class NodeCoveredData extends AbstractNodeCoveredData implements INodeCov
 	}
 
 	public List<BreakpointValue> getFalseValues() {
+		for (BreakpointValue bkp : getTrueValues()) {
+			falseValues.remove(bkp);
+		}
 		return falseValues;
 	}
 

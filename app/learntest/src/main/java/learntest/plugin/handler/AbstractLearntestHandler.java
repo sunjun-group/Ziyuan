@@ -229,7 +229,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
 			randoopParam.setInitialTests(l2tParams.getInitialTests());
-			randoopParam.setMaxTcs(5*l2tAverageInfo.getTestCnt());
+			randoopParam.setMaxTcs(l2tAverageInfo.getTestCnt());
 			log.info("run randoop..");
 			runLearntest(ranAverageInfo, randoopParam);
 
@@ -238,7 +238,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			log.info("lt2: {}", l2tAverageInfo);
 			log.info("randoop: {}", ranAverageInfo);
 			printLearnedFormulas(l2tAverageInfo.getLearnedFormulas());
-			showInnormalBranch(l2tAverageInfo, ranAverageInfo);
+			setBetterBranch(l2tAverageInfo, ranAverageInfo);
 			return new Trial(method.getMethodFullName(), method.getMethodLength(), method.getLineNum(), l2tAverageInfo,
 					ranAverageInfo, jdartInfo);
 		} catch (Exception e) {
@@ -247,7 +247,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		return null;
 	}
 
-	private void showInnormalBranch(RunTimeInfo l2tAverageInfo, RunTimeInfo ranAverageInfo) {
+	private void setBetterBranch(RunTimeInfo l2tAverageInfo, RunTimeInfo ranAverageInfo) {
 		log.info("l2t");
 		log.info("true branch : ");
 		for (Entry<String, Collection<BreakpointValue>> entry : l2tAverageInfo.getTrueSample().entrySet()){
@@ -273,8 +273,10 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			if (info.learnedState() == info.VALID) {
 				for (CfgNode dominatee : domainMap.get(info.getNode()).getDominatees()){
 					log.info("node : " + info.getNode() + "dominatee : "+dominatee);
-					Collection<BreakpointValue> ranF = ranAverageInfo.getFalseSample().get(dominatee.toString()), ranT = ranAverageInfo.getTrueSample().get(dominatee.toString()),
-							l2tF = l2tAverageInfo.getFalseSample().get(dominatee.toString()), l2tT = l2tAverageInfo.getTrueSample().get(dominatee.toString());
+					Collection<BreakpointValue> ranF = ranAverageInfo.getFalseSample().get(dominatee.toString()), 
+							ranT = ranAverageInfo.getTrueSample().get(dominatee.toString()),
+							l2tF = l2tAverageInfo.getFalseSample().get(dominatee.toString()), 
+							l2tT = l2tAverageInfo.getTrueSample().get(dominatee.toString());
 					log.info("if ran better than l2t in false :");
 					boolean rf = checkIfBetter(ranF, l2tF);
 					log.info("if ran better than l2t in true :");

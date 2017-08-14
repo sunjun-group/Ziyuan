@@ -53,6 +53,9 @@ public class SampleNodeCoveredData extends AbstractNodeCoveredData implements IN
 		if (falseValues == null) {
 			falseValues = getBranchCoveredValue(nodeCoverage, sampleTestInputs, BranchRelationship.FALSE,
 					samplesFirstIdx);
+			for (BreakpointValue bkp : getTrueValues()) {
+				falseValues.remove(bkp);
+			}
 		}
 		return falseValues;
 	}

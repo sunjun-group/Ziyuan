@@ -124,7 +124,11 @@ public class DecisionNodeProbe implements IDecisionNode {
 	}
 
 	public List<BreakpointValue> getFalseValues() {
-		return coveredData.getFalseValues();
+		List<BreakpointValue> trueV = getTrueValues(), falseV = coveredData.getFalseValues();
+		for (BreakpointValue bpv : trueV) {
+			falseV.remove(bpv);
+		}
+		return falseV;
 	}
 
 	public List<BreakpointValue> getOneTimeValues() {
