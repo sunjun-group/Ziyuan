@@ -66,10 +66,10 @@ public enum TrialHeader implements ExcelHeader {
 	SECOND_RAND_WORSE_THAN_L2T("2nd randoop worse than l2t"),
 	THIRD_L2T_WORSE_THAN_RAND("3rd l2t worse than randoop"),
 	THIRD_RAND_WORSE_THAN_L2T("3rd randoop worse than l2t"),
-	FORTH_L2T_WORSE_THAN_RAND("l2t worse than randoop"),
-	FORTH_RAND_WORSE_THAN_L2T("randoop worse than l2t"),
-	FIFTH_L2T_WORSE_THAN_RAND("l2t worse than randoop"),
-	FIFTH_RAND_WORSE_THAN_L2T("randoop worse than l2t")
+	FORTH_L2T_WORSE_THAN_RAND("4th l2t worse than randoop"),
+	FORTH_RAND_WORSE_THAN_L2T("4th randoop worse than l2t"),
+	FIFTH_L2T_WORSE_THAN_RAND("5th l2t worse than randoop"),
+	FIFTH_RAND_WORSE_THAN_L2T("5th randoop worse than l2t")
 	;
 	
 	private String title;
