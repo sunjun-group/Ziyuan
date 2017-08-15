@@ -99,9 +99,9 @@ public class LearnTest extends AbstractLearntest {
 		if (!((PrecondDecisionLearner)learner).learnedFormulas.isEmpty()) {
 			for (Entry<CfgNode, FormulaInfo> entry : ((PrecondDecisionLearner)learner).learnedFormulas.entrySet()){
 				info.learnedFormulas.add(entry.getValue());
-				if (entry.getValue().learnedState() == -1) {
+				if (entry.getValue().getLearnedState() == FormulaInfo.INVALID) {
 					hasPoorFormula = true;					
-				}else if (entry.getValue().learnedState() == 1) {
+				}else if (entry.getValue().getLearnedState() == FormulaInfo.VALID) {
 					hasValidFormula = true;
 				}
 			}

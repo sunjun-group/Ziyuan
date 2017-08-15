@@ -219,7 +219,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
 			log.info("run jdart..");
-			jdartInfo = runJdart(randoopParam);
+			jdartInfo = runJdart(l2tParams);
 
 			l2tParams.setApproach(LearnTestApproach.L2T);
 			l2tParams.setInitialTests(randoopParam.getInitialTests());
@@ -252,25 +252,29 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		log.info("true branch : ");
 		for (Entry<String, Collection<BreakpointValue>> entry : l2tAverageInfo.getTrueSample().entrySet()){
 			log.info(entry.getKey()+" "+":"+entry.getValue().size());
+			log.info(entry.getValue().toString());
 		}
 		log.info("false branch : ");
 		for (Entry<String, Collection<BreakpointValue>> entry : l2tAverageInfo.getFalseSample().entrySet()){
 			log.info(entry.getKey()+" "+":"+entry.getValue().size());
+			log.info(entry.getValue().toString());
 		}
 		log.info("ran");
 		log.info("true branch : ");
 		for (Entry<String, Collection<BreakpointValue>> entry : ranAverageInfo.getTrueSample().entrySet()){
 			log.info(entry.getKey()+" "+":"+entry.getValue().size());
+			log.info(entry.getValue().toString());
 		}
 		log.info("false branch : ");
 		for (Entry<String, Collection<BreakpointValue>> entry : ranAverageInfo.getFalseSample().entrySet()){
 			log.info(entry.getKey()+" "+":"+entry.getValue().size());
+			log.info(entry.getValue().toString());
 		}
 
 		log.info("\nshow different branch if l2t has learned formula:");
 		HashMap<CfgNode, CfgNodeDomainInfo> domainMap = l2tAverageInfo.getDomainMap();
 		for (FormulaInfo info : l2tAverageInfo.getLearnedFormulas()){
-			if (info.learnedState() == info.VALID) {
+			if (info.getLearnedState() == info.VALID) {
 				for (CfgNode dominatee : domainMap.get(info.getNode()).getDominatees()){
 					log.info("node : " + info.getNode() + "dominatee : "+dominatee);
 					Collection<BreakpointValue> ranF = ranAverageInfo.getFalseSample().get(dominatee.toString()), 

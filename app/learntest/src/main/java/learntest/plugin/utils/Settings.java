@@ -6,5 +6,9 @@ public class Settings {
 		return bound;
 	}
 	
-	public static int selectiveNumber = 20;
+	private static int selectiveNumber = 20;
+	public static double formulaAccThreshold = 0.5;
+	public static int getSelectiveNumber() {
+		return selectiveNumber;
+	}
 }

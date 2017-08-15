@@ -176,7 +176,7 @@ public class JavailpSelectiveSampling {
 		 */
 		assignments = generateRandomPointsWithPrecondition(preconditions, originVars, datapoints, assignments, results, 3);
 		
-		for(int i=0; i<Settings.selectiveNumber; i++){
+		for(int i=0; i<Settings.getSelectiveNumber(); i++){
 			extendWithHeuristics(results, assignments, originVars);			
 		}
 		

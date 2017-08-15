@@ -63,7 +63,7 @@ public class RunTimeInfo {
 		coverage += subRunInfo.coverage;
 		testCnt += subRunInfo.testCnt;
 		learnedFormulas.addAll(subRunInfo.learnedFormulas);
-		learnState = learnState | subRunInfo.learnState;
+		learnState = subRunInfo.learnState;
 		trueSample.putAll(subRunInfo.trueSample);
 		falseSample.putAll(subRunInfo.falseSample);
 		domainMap = subRunInfo.domainMap;

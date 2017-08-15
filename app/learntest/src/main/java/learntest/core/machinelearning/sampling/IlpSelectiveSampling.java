@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class IlpSelectiveSampling {
 	private List<ExecVar> vars;
 	private List<double[]> initValues;
 	private Set<Integer> samplesHashcodes;
-	private int maxSamplesPerSelect = 20; // by default;
+	private int maxSamplesPerSelect = Settings.getSelectiveNumber(); // by default;
 	public static long solveTimeLimit = 60 * 1000;
 	
 	/* ilpSolver */
@@ -64,6 +65,14 @@ public class IlpSelectiveSampling {
 	
 	public List<double[]> selectData(List<ExecVar> vars, OrCategoryCalculator precondition, List<Divider> divider, int maxTcs)
 			throws SavException, SAVExecutionTimeOutException {
+		StringBuffer sBuffer = new StringBuffer();
+		sBuffer.append("select sample with precondition : ");
+		if (divider != null) {
+			for (Divider d : divider) {
+				sBuffer.append(d+",");
+			}
+		}
+		log.info(sBuffer.toString());
 		List<double[]> samples = new ArrayList<double[]>();
 		List<Problem> problems = ProblemBuilder.buildTrueValueProblems(vars, precondition, divider, true);
 		if (problems.isEmpty()) {
@@ -96,14 +105,6 @@ public class IlpSelectiveSampling {
 		log.debug("run solver {} times", solver.getSolvingTotal() - firstCount);
 		samples = limitSamples(samples, maxTcs);
 		
-		StringBuffer sBuffer = new StringBuffer();
-		sBuffer.append("select sample with precondition : ");
-		if (divider != null) {
-			for (Divider d : divider) {
-				sBuffer.append(d+",");
-			}
-		}
-		System.out.println(sBuffer.toString());
 		return samples;
 	}
 	
@@ -181,21 +182,29 @@ public class IlpSelectiveSampling {
 			}
 		}
 		log.debug("selectiveSamplingData : " + samples.size());
+		List<double[]> heuList = new LinkedList<>(), randomSamples = new LinkedList<>();
 		for(int i=0; i<2; i++){
 			int bound = 10-(2*iterationTime--);
-			List<double[]> heuList = selectHeuristicsSamples(samples, originVars, maxSamplesPerSelect * 2, bound);
-			samples.addAll(heuList);			
+			heuList.addAll(selectHeuristicsSamples(samples, originVars, maxSamplesPerSelect * 2, bound));
 		}
 		/**
 		 * randomly generate more data points on svm model.
 		 */
-		List<double[]> randomSamples = generateRandomPointsWithPrecondition(preconditions, originVars, 
-				Math.max(samples.size() , maxSamplesPerSelect));
+		randomSamples.addAll(generateRandomPointsWithPrecondition(preconditions, originVars, 
+				Math.max(samples.size() , maxSamplesPerSelect)));
 		
+		int total = heuList.size() + samples.size() + randomSamples.size();
+		if (total > maxSamplesPerSelect) {
+			int heulistNum = heuList.size()* maxSamplesPerSelect/total ,
+					randomNum = randomSamples.size()  * maxSamplesPerSelect/ total,
+					orignalNum = samples.size() * maxSamplesPerSelect/total; 
+			samples = limitSamples(samples, orignalNum > 0 ? orignalNum : 1);
+			heuList = limitSamples(heuList, heulistNum > 0 ? heulistNum : 1);
+			randomSamples = limitSamples(randomSamples, randomNum > 0 ? randomNum : 1);
+		}
+		
+		samples.addAll(heuList);
 		samples.addAll(randomSamples);
-		
-		samples = limitSamples(samples);
-
 		return samples;
 	}
 	

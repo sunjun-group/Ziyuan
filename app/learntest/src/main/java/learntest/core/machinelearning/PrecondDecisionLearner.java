@@ -16,6 +16,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion.Setting;
+
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
@@ -29,6 +31,7 @@ import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.utils.CfgUtils;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import learntest.core.machinelearning.sampling.IlpSelectiveSampling;
+import learntest.plugin.utils.Settings;
 import libsvm.core.Category;
 import libsvm.core.Divider;
 import libsvm.core.Machine;
@@ -121,7 +124,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		nodeProbe.setPrecondition(Pair.of(truefalseFormula, null), divider);
 		nodeProbe.clearCache();
 		
-		System.out.println("final formula : "+ truefalseFormula);
+		log.info("final formula : "+ truefalseFormula);
 	}
 
 	protected OrCategoryCalculator getPreconditions(DecisionProbes probes, CfgNode node) {
@@ -148,21 +151,16 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		PositiveSeparationMachine mcm = new PositiveSeparationMachine(negative);
 		trueFlaseFormula = generateInitialFormula(orgNodeProbe, mcm);
 		double acc = mcm.getModelAccuracy();
-
+		if (mcm.getDataPoints().size()<=1) {
+			log.info("there is only one data point !!! svm could not learn");
+			return null;
+		}
 		List<Divider> dividers = mcm.getLearnedDividers();
 		log.info("=============learned multiple cut: " + trueFlaseFormula);
 
 		int time = 0;
 		DecisionNodeProbe nodeProbe = orgNodeProbe;
 		CfgNode node = nodeProbe.getNode();
-
-		if (trueFlaseFormula != null && (!(time < FORMULAR_LEARN_MAX_ATTEMPT) || !nodeProbe.needToLearnPrecond())) {
-			/** record learned formulas */
-			if (!learnedFormulas.containsKey(node)) {
-				learnedFormulas.put(node, new FormulaInfo(node));
-			}
-			learnedFormulas.get(node).addTFFormula(trueFlaseFormula.toString(), acc);
-		}
 
 		while (trueFlaseFormula != null && time < FORMULAR_LEARN_MAX_ATTEMPT && nodeProbe.needToLearnPrecond()) {
 
@@ -204,17 +202,21 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				trueFlaseFormula = tmp;
 				dividers = mcm.getLearnedDividers();
 				acc = accTmp;
-
-//				 if (acc == 1.0) {
-//				 break;
-//				 }
 			} else {
 				break;
 			}
 
 		}
-		if (trueFlaseFormula != null && acc < 0.5) {
-			return null;
+		
+		if (trueFlaseFormula != null ) {
+			/** record learned formulas */
+			if (!learnedFormulas.containsKey(node)) {
+				learnedFormulas.put(node, new FormulaInfo(node));
+			}
+			learnedFormulas.get(node).addTFFormula(trueFlaseFormula.toString(), acc);
+			if (acc < Settings.formulaAccThreshold) {
+				return null;
+			}
 		}
 		TrueFalseLearningResult result = new TrueFalseLearningResult();
 		result.formula = trueFlaseFormula;
@@ -249,6 +251,8 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		for (BreakpointValue value : falseV) {
 			addBkp(labels, vars, value, Category.NEGATIVE, mcm);
 		}
+		log.info("new data true : " + trueV.toString());
+		log.info("new data false : " + falseV.toString());
 		
 	}
 

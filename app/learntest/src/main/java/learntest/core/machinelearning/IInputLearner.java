@@ -37,8 +37,6 @@ public interface IInputLearner {
 
 	default void recordSample(DecisionProbes inputProbes, SamplingResult sampleResult) {
 		
-		System.out.println(sampleResult.getNewTestInputs().size() + " " + sampleResult.getNewTestInputs());
-		
 		for (DecisionNodeProbe nodeProbe : inputProbes.getNodeProbes()) {
 			INodeCoveredData newData = sampleResult.getNewData(nodeProbe);
 			log.info(nodeProbe.getNode().toString());
