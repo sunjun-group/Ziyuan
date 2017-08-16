@@ -16,9 +16,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion.Setting;
-
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfgcoverage.org.objectweb.asm.tree.AbstractInsnNode;
+import cfgcoverage.org.objectweb.asm.tree.VarInsnNode;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.AbstractLearningComponent;
@@ -69,6 +69,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		dominationMap = new CfgDomain().constructDominationMap(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()));
 		recordSample(inputProbes, dataPreprocessor.getSampleOfInitCase(bpdata, inputProbes.getOriginalVars()));
 		learn(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()), probes, new ArrayList<Integer>(decisionNodes.size()));
+				
 		return probes;
 	}
 
@@ -128,7 +129,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	}
 
 	protected OrCategoryCalculator getPreconditions(DecisionProbes probes, CfgNode node) {
-		return probes.getPrecondition(node);
+		return probes.getPrecondition(node, dominationMap);
 	}
 
 	private TrueFalseLearningResult generateTrueFalseFormula(DecisionNodeProbe orgNodeProbe,
@@ -183,7 +184,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				continue;
 			}
 			INodeCoveredData newData = sampleResult.getNewData(nodeProbe);
-			nodeProbe.getPreconditions().clearInvalidData(newData);
+			nodeProbe.getPreconditions(dominationMap).clearInvalidData(newData);
 			mcm.getLearnedModels().clear();
 			addDataPoint(probes.getLabels(), probes.getOriginalVars(), 
 					newData.getTrueValues(), newData.getFalseValues(), mcm);

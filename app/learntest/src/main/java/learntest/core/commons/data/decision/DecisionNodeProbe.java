@@ -8,11 +8,13 @@
 
 package learntest.core.commons.data.decision;
 
+import java.util.HashMap;
 import java.util.List;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
+import learntest.core.machinelearning.CfgNodeDomainInfo;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import libsvm.core.Divider;
 import sav.common.core.Pair;
@@ -104,9 +106,9 @@ public class DecisionNodeProbe implements IDecisionNode {
 	}
 
 	private OrCategoryCalculator cachePreconditions;
-	public OrCategoryCalculator getPreconditions() {
+	public OrCategoryCalculator getPreconditions(HashMap<CfgNode, CfgNodeDomainInfo> dominationMap) {
 		if (cachePreconditions == null) {
-			cachePreconditions = decisionProbes.getPrecondition(getNode());
+			cachePreconditions = decisionProbes.getPrecondition(getNode(), dominationMap);
 		}
 		return cachePreconditions;
 	}

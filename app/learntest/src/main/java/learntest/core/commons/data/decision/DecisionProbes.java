@@ -23,6 +23,7 @@ import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.utils.CfgUtils;
 import learntest.core.commons.utils.MachineLearningUtils;
+import learntest.core.machinelearning.CfgNodeDomainInfo;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
@@ -72,9 +73,45 @@ public class DecisionProbes extends CfgCoverage {
 	}
 	
 	/* build precondition of a node based on its dominatees */
-	public OrCategoryCalculator getPrecondition(CfgNode node) {
+//	@Deprecated this method use cfg, but we should use cdg
+//	public OrCategoryCalculator getPrecondition(CfgNode node) {
+//		Precondition precondition = getNodeProbe(node).getPrecondition();
+//		for (CfgNode dominator : CfgUtils.getPrecondInherentDominatee(node)) {
+//			Precondition domPrecond = getNodeProbe(dominator).getPrecondition();
+//			List<Divider> domDividers = domPrecond.getDividers();
+//			if (CollectionUtils.isEmpty(domDividers)) {
+//				precondition.addPreconditions(domPrecond.getPreconditions());
+//			} else {
+//				BranchRelationship branchRel = node.getBranchRelationship(dominator.getIdx());
+//				CategoryCalculator condFromDividers = null;
+//				if (branchRel == BranchRelationship.TRUE) {
+//					condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
+//				} else if (dominator.isLoopHeaderOf(node)) {
+//					condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
+//				} 
+//				else {
+//					List<Divider> clonedDividers = new ArrayList<>();
+//					for(Divider d: domDividers){
+//						double[] clonedThetas = new double[d.getThetas().length];
+//						for(int i=0; i<clonedThetas.length; i++){
+//							clonedThetas[i]=-1*d.getThetas()[i];
+//						}
+//						
+//						Divider d0 = new Divider(clonedThetas, -1*d.getTheta0(), true);
+//						clonedDividers.add(d0);
+//					}
+//					condFromDividers = new MultiDividerBasedCategoryCalculator(clonedDividers);
+//				}
+//				if (condFromDividers != null) {
+//					precondition.addPreconditions(domPrecond.getPreconditions(), condFromDividers);
+//				}
+//			}
+//		}
+//		return new OrCategoryCalculator(precondition.getPreconditions(), learningVars, originalVars);
+//	}
+	public OrCategoryCalculator getPrecondition(CfgNode node, HashMap<CfgNode, CfgNodeDomainInfo> dominationMap) {
 		Precondition precondition = getNodeProbe(node).getPrecondition();
-		for (CfgNode dominator : CfgUtils.getPrecondInherentDominatee(node)) {
+		for (CfgNode dominator : dominationMap.get(node).getDominators()) {
 			Precondition domPrecond = getNodeProbe(dominator).getPrecondition();
 			List<Divider> domDividers = domPrecond.getDividers();
 			if (CollectionUtils.isEmpty(domDividers)) {
