@@ -13,7 +13,7 @@ public class Trial {
 	protected RunTimeInfo l2tRtInfo;
 	protected RunTimeInfo ranRtInfo;
 	protected RunTimeInfo jdartRtInfo;
-	protected boolean l2tWorseThanRand, randWorseThanl2t;
+	protected String l2tWorseThanRand, randWorseThanl2t;
 
 	public Trial(){
 		

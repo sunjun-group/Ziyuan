@@ -36,7 +36,10 @@ public interface IInputLearner {
 	
 
 	default void recordSample(DecisionProbes inputProbes, SamplingResult sampleResult) {
-		
+		if (sampleResult == null) {
+			log.info("sample result is null!!!");
+			return;
+		}
 		for (DecisionNodeProbe nodeProbe : inputProbes.getNodeProbes()) {
 			INodeCoveredData newData = sampleResult.getNewData(nodeProbe);
 			log.info(nodeProbe.getNode().toString());

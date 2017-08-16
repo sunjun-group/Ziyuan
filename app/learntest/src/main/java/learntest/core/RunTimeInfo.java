@@ -28,7 +28,7 @@ public class RunTimeInfo {
 	protected int learnState = 0; /** if only learn valid formula 1, also has rubbish learned formula 2; only rubbish -1, no formula 0 */
 	List<FormulaInfo> learnedFormulas = new LinkedList<>();
 	private double validCoverage;
-	public boolean l2tWorseThanRand = false, randWorseThanl2t = false;
+	public String l2tWorseThanRand = "", randWorseThanl2t = "";
 
 	private HashMap<String, Collection<BreakpointValue>> trueSample = new HashMap<>(),
 			falseSample = new HashMap<>();
