@@ -1,5 +1,6 @@
 package learntest.core.machinelearning;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,13 +70,23 @@ public class CfgNodeDomainInfo {
 			return false;
 		}
 
+		/**
+		 * this method should be invoked after all add operations,
+		 *  i.e. this instance is constructed validly and completely
+		 * @return
+		 */
 		public List<CfgNode> getDominatees() {
+			dominatees.remove(node);
 			return dominatees;
 		}
 
+		/**
+		 * this method should be invoked after all add operations,
+		 *  i.e. this instance is constructed validly and completely
+		 * @return
+		 */
 		public List<CfgNode> getDominators() {
+			dominators.remove(node);
 			return dominators;
-		}
-		
-		
+		}		
 }

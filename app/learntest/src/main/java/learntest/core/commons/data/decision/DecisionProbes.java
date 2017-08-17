@@ -10,9 +10,13 @@ package learntest.core.commons.data.decision;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
@@ -24,29 +28,33 @@ import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.utils.CfgUtils;
 import learntest.core.commons.utils.MachineLearningUtils;
 import learntest.core.machinelearning.CfgNodeDomainInfo;
+import learntest.core.machinelearning.PrecondDecisionLearner;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import libsvm.extension.MultiDividerBasedCategoryCalculator;
+import sav.common.core.Pair;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.execute.value.ExecVar;
+import sun.util.logging.resources.logging;
 
 /**
  * @author LLT
  *
  */
 public class DecisionProbes extends CfgCoverage {
+	private static Logger log = LoggerFactory.getLogger(DecisionProbes.class);
 	private TargetMethod targetMethod;
 	private List<BreakpointValue> testInputs;
 	private List<ExecVar> originalVars;
 	private List<ExecVar> learningVars;
 	private List<String> labels;
 	private int totalTestNum;
-	
+
 	/* cache the node list, but be careful with the update */
 	/* map between cfgNode idx of decision node with its probe */
 	private Map<Integer, DecisionNodeProbe> nodeProbeMap;
-	
+
 	public DecisionProbes(TargetMethod targetMethod, CfgCoverage cfgCoverage) {
 		super(cfgCoverage.getCfg());
 		this.targetMethod = targetMethod;
@@ -54,7 +62,7 @@ public class DecisionProbes extends CfgCoverage {
 		totalTestNum = cfgCoverage.getTestcases().size();
 		testInputs = new CompositeList<BreakpointValue>();
 	}
-	
+
 	public void setRunningResult(List<BreakpointValue> testInputs) {
 		this.testInputs.addAll(testInputs);
 		originalVars = BreakpointDataUtils.collectAllVars(testInputs);
@@ -71,84 +79,149 @@ public class DecisionProbes extends CfgCoverage {
 		this.dupTcMap = cfgCoverage.getDupTcs();
 		setTestcases(cfgCoverage.getTestcases());
 	}
-	
+
 	/* build precondition of a node based on its dominatees */
-//	@Deprecated this method use cfg, but we should use cdg
-//	public OrCategoryCalculator getPrecondition(CfgNode node) {
-//		Precondition precondition = getNodeProbe(node).getPrecondition();
-//		for (CfgNode dominator : CfgUtils.getPrecondInherentDominatee(node)) {
-//			Precondition domPrecond = getNodeProbe(dominator).getPrecondition();
-//			List<Divider> domDividers = domPrecond.getDividers();
-//			if (CollectionUtils.isEmpty(domDividers)) {
-//				precondition.addPreconditions(domPrecond.getPreconditions());
-//			} else {
-//				BranchRelationship branchRel = node.getBranchRelationship(dominator.getIdx());
-//				CategoryCalculator condFromDividers = null;
-//				if (branchRel == BranchRelationship.TRUE) {
-//					condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
-//				} else if (dominator.isLoopHeaderOf(node)) {
-//					condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
-//				} 
-//				else {
-//					List<Divider> clonedDividers = new ArrayList<>();
-//					for(Divider d: domDividers){
-//						double[] clonedThetas = new double[d.getThetas().length];
-//						for(int i=0; i<clonedThetas.length; i++){
-//							clonedThetas[i]=-1*d.getThetas()[i];
-//						}
-//						
-//						Divider d0 = new Divider(clonedThetas, -1*d.getTheta0(), true);
-//						clonedDividers.add(d0);
-//					}
-//					condFromDividers = new MultiDividerBasedCategoryCalculator(clonedDividers);
-//				}
-//				if (condFromDividers != null) {
-//					precondition.addPreconditions(domPrecond.getPreconditions(), condFromDividers);
-//				}
-//			}
-//		}
-//		return new OrCategoryCalculator(precondition.getPreconditions(), learningVars, originalVars);
-//	}
-	public OrCategoryCalculator getPrecondition(CfgNode node, HashMap<CfgNode, CfgNodeDomainInfo> dominationMap) {
+	// @Deprecated this method use cfg, but we should use cdg
+	// public OrCategoryCalculator getPrecondition(CfgNode node) {
+	// Precondition precondition = getNodeProbe(node).getPrecondition();
+	// for (CfgNode dominator : CfgUtils.getPrecondInherentDominatee(node)) {
+	// Precondition domPrecond = getNodeProbe(dominator).getPrecondition();
+	// List<Divider> domDividers = domPrecond.getDividers();
+	// if (CollectionUtils.isEmpty(domDividers)) {
+	// precondition.addPreconditions(domPrecond.getPreconditions());
+	// } else {
+	// BranchRelationship branchRel =
+	// node.getBranchRelationship(dominator.getIdx());
+	// CategoryCalculator condFromDividers = null;
+	// if (branchRel == BranchRelationship.TRUE) {
+	// condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
+	// }
+	//// else if (dominator.isLoopHeaderOf(node)) {
+	//// condFromDividers = new
+	// MultiDividerBasedCategoryCalculator(domDividers);
+	//// }
+	// else {
+	// List<Divider> clonedDividers = new ArrayList<>();
+	// for(Divider d: domDividers){
+	// double[] clonedThetas = new double[d.getThetas().length];
+	// for(int i=0; i<clonedThetas.length; i++){
+	// clonedThetas[i]=-1*d.getThetas()[i];
+	// }
+	//
+	// Divider d0 = new Divider(clonedThetas, -1*d.getTheta0(), true);
+	// clonedDividers.add(d0);
+	// }
+	// condFromDividers = new
+	// MultiDividerBasedCategoryCalculator(clonedDividers);
+	// }
+	// if (condFromDividers != null) {
+	// precondition.addPreconditions(domPrecond.getPreconditions(),
+	// condFromDividers);
+	// }
+	// }
+	// }
+	// return new OrCategoryCalculator(precondition.getPreconditions(),
+	// learningVars, originalVars);
+	// }
+	
+	/**
+	 * set the preconditions of node, and return it
+	 * @param node
+	 * @param list
+	 * @return
+	 */
+	public Pair<OrCategoryCalculator, Boolean> getPrecondition(CfgNode node, List<CfgNode> dominators) {
+		if (!precondFinished(dominators)) {
+			return new Pair<OrCategoryCalculator, Boolean>(null, false);			
+		}
+		
+		int maxSize = 20;
 		Precondition precondition = getNodeProbe(node).getPrecondition();
-		for (CfgNode dominator : dominationMap.get(node).getDominators()) {
+		List<CfgNode> bothBranchNode = new LinkedList<>(); /** nodes could reach target node in false and true branch, 
+																the BranchRelationship should be determined by other nodes reaching target node through it */
+		for (CfgNode dominator : dominators) {
+			if (precondition.getPreconditions().size() > maxSize) {
+				break;
+			}
 			Precondition domPrecond = getNodeProbe(dominator).getPrecondition();
 			List<Divider> domDividers = domPrecond.getDividers();
+			BranchRelationship branchRel = node.getBranchRelationship(dominator.getIdx());
 			if (CollectionUtils.isEmpty(domDividers)) {
 				precondition.addPreconditions(domPrecond.getPreconditions());
+				if (branchRel == BranchRelationship.TRUE || branchRel == BranchRelationship.FALSE) {
+					precondition.getPath().putAll(domPrecond.getPath());
+					precondition.getPath().put(dominator, branchRel);
+				}
 			} else {
-				BranchRelationship branchRel = node.getBranchRelationship(dominator.getIdx());
+				log.info("from "+dominator + " to "+node+" : "+branchRel);
 				CategoryCalculator condFromDividers = null;
-				if (branchRel == BranchRelationship.TRUE) {
-					condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
-				} else if (dominator.isLoopHeaderOf(node)) {
-					condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
-				} 
-				else {
-					List<Divider> clonedDividers = new ArrayList<>();
-					for(Divider d: domDividers){
-						double[] clonedThetas = new double[d.getThetas().length];
-						for(int i=0; i<clonedThetas.length; i++){
-							clonedThetas[i]=-1*d.getThetas()[i];
-						}
-						
-						Divider d0 = new Divider(clonedThetas, -1*d.getTheta0(), true);
-						clonedDividers.add(d0);
-					}
-					condFromDividers = new MultiDividerBasedCategoryCalculator(clonedDividers);
+				if (branchRel == BranchRelationship.TRUE || branchRel == BranchRelationship.FALSE) {
+					condFromDividers = getCalculator(domDividers, branchRel);
+					precondition.getPath().putAll(domPrecond.getPath());
+					precondition.getPath().put(dominator, branchRel);
+				} else if (branchRel == BranchRelationship.TRUE_FALSE) {
+					bothBranchNode.add(dominator);
 				}
 				if (condFromDividers != null) {
 					precondition.addPreconditions(domPrecond.getPreconditions(), condFromDividers);
 				}
 			}
 		}
-		return new OrCategoryCalculator(precondition.getPreconditions(), learningVars, originalVars);
+		for (CfgNode dominator : bothBranchNode) {
+			if (precondition.getPreconditions().size() > maxSize) {
+				break;
+			}
+			Precondition domPrecond = getNodeProbe(dominator).getPrecondition();
+			List<Divider> domDividers = domPrecond.getDividers();
+			BranchRelationship branchRel = null;
+			if (precondition.getPath().get(dominator) == BranchRelationship.FALSE) {
+				branchRel = BranchRelationship.TRUE;
+			} else {
+				branchRel = BranchRelationship.FALSE;
+			}
+			log.info("from "+dominator + " to "+node+" : "+branchRel);
+			CategoryCalculator condFromDividers = getCalculator(domDividers, branchRel);
+			if (condFromDividers != null) {
+				precondition.addPreconditions(domPrecond.getPreconditions(), condFromDividers);
+			}
+		}
+		return new Pair<OrCategoryCalculator, Boolean>(new OrCategoryCalculator(precondition.getPreconditions(), learningVars, originalVars), true);
+	}
+
+	private boolean precondFinished(List<CfgNode> dominators) {
+		for (CfgNode dominator : dominators) {
+			Precondition domPrecond = getNodeProbe(dominator).getPrecondition();
+			if (!domPrecond.isVisited()) { // there is a dominator not been learned
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private CategoryCalculator getCalculator(List<Divider> domDividers, BranchRelationship branchRel) {
+		CategoryCalculator condFromDividers = null;
+		if (branchRel == BranchRelationship.TRUE) {
+			condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
+		} else if (branchRel == BranchRelationship.FALSE) {
+			List<Divider> clonedDividers = new ArrayList<>();
+			for (Divider d : domDividers) {
+				double[] clonedThetas = new double[d.getThetas().length];
+				for (int i = 0; i < clonedThetas.length; i++) {
+					clonedThetas[i] = -1 * d.getThetas()[i];
+				}
+
+				Divider d0 = new Divider(clonedThetas, -1 * d.getTheta0(), true);
+				clonedDividers.add(d0);
+			}
+			condFromDividers = new MultiDividerBasedCategoryCalculator(clonedDividers);
+		}
+		return condFromDividers;
 	}
 
 	/**
-	 * in order to avoid unnecessarily generate divider for a node, we check if it is needed to learn at the current node.
-	 * it is needed iff
-	 * one of its dependentees is not covered
+	 * in order to avoid unnecessarily generate divider for a node, we check if
+	 * it is needed to learn at the current node. it is needed iff one of its
+	 * dependentees is not covered
 	 **/
 	public boolean doesNodeNeedToLearnPrecond(DecisionNodeProbe nodeProbe) {
 		for (CfgNode dependentee : CollectionUtils.nullToEmpty(nodeProbe.getNode().getDependentees())) {
@@ -176,7 +249,7 @@ public class DecisionProbes extends CfgCoverage {
 				DecisionNodeProbe nodeProbe = new DecisionNodeProbe(this, getCoverage(node), initTestInputs);
 				nodeProbeMap.put(node.getIdx(), nodeProbe);
 			}
-			
+
 			/* update node dominatees */
 			for (DecisionNodeProbe nodeProbe : nodeProbeMap.values()) {
 				Set<CfgNode> nodeDominatees = nodeProbe.getNode().getDominatees();
@@ -191,7 +264,7 @@ public class DecisionProbes extends CfgCoverage {
 			}
 		}
 	}
-	
+
 	public List<BreakpointValue> getTestInputs() {
 		return testInputs;
 	}
@@ -209,23 +282,24 @@ public class DecisionProbes extends CfgCoverage {
 		}
 		return labels;
 	}
-	
+
 	/**
 	 * @return the originalVars
 	 */
 	public List<ExecVar> getOriginalVars() {
 		return originalVars;
 	}
-	
+
 	public boolean isOutOfDate() {
 		return this.totalTestNum != super.getTestcases().size();
 	}
-	
+
 	/**
-	 * whenever the probes object is updated, this method should be call to make sure 
-	 * the getting data is not out of date.
-	 * @param newTcsFirstIdx 
-	 * @param newTestInputs 
+	 * whenever the probes object is updated, this method should be call to make
+	 * sure the getting data is not out of date.
+	 * 
+	 * @param newTcsFirstIdx
+	 * @param newTestInputs
 	 */
 	public void update(int newTcsFirstIdx, List<BreakpointValue> newTestInputs) {
 		if (nodeProbeMap != null && isOutOfDate()) {
@@ -236,11 +310,11 @@ public class DecisionProbes extends CfgCoverage {
 			totalTestNum = getTestcases().size();
 		}
 	}
-	
+
 	public int getTotalTestNum() {
 		return totalTestNum;
 	}
-	
+
 	public TargetMethod getTargetMethod() {
 		return targetMethod;
 	}
