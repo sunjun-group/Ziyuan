@@ -101,7 +101,13 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			// }
 			DecisionNodeProbe nodeProbe = probes.getNodeProbe(node);
 			if (needToLearn(nodeProbe)) {
-				Pair<OrCategoryCalculator, Boolean> pair = getPreconditions(probes, node);
+				Pair<OrCategoryCalculator, Boolean> pair = null;
+				if (node.isLoopHeader()) {
+					pair = getPreconditions(probes, node, true);
+				}else {
+					pair = getPreconditions(probes, node, false);
+				}
+				
 				if (!pair.second()) {
 					log.debug("to learn the node in line " + node.getLine() + "(" + node + "), its dominator has to be learned");
 					queue.add(node);
@@ -148,13 +154,13 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		log.info("final formula : "+ truefalseFormula);
 	}
 
-	protected Pair<OrCategoryCalculator, Boolean> getPreconditions(DecisionProbes probes, CfgNode node) {
-		return probes.getPrecondition(node, dominationMap.get(node).getDominators());
+	protected Pair<OrCategoryCalculator, Boolean> getPreconditions(DecisionProbes probes, CfgNode node, boolean isLoopHeader) {
+		return probes.getPrecondition(node, dominationMap, isLoopHeader);
 	}
 
 	private TrueFalseLearningResult generateTrueFalseFormula(DecisionNodeProbe orgNodeProbe,
 			CoveredBranches coveredType, OrCategoryCalculator preconditions) throws SavException {
-		System.currentTimeMillis();
+
 		if (!orgNodeProbe.needToLearnPrecond()) {
 			log.debug("no need to learn precondition");
 			return null;

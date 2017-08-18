@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -25,10 +26,8 @@ import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.core.commons.data.classinfo.TargetMethod;
-import learntest.core.commons.utils.CfgUtils;
 import learntest.core.commons.utils.MachineLearningUtils;
 import learntest.core.machinelearning.CfgNodeDomainInfo;
-import learntest.core.machinelearning.PrecondDecisionLearner;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
@@ -36,7 +35,6 @@ import libsvm.extension.MultiDividerBasedCategoryCalculator;
 import sav.common.core.Pair;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.execute.value.ExecVar;
-import sun.util.logging.resources.logging;
 
 /**
  * @author LLT
@@ -127,12 +125,20 @@ public class DecisionProbes extends CfgCoverage {
 	/**
 	 * set the preconditions of node, and return it
 	 * @param node
+	 * @param check 
 	 * @param list
 	 * @return
 	 */
-	public Pair<OrCategoryCalculator, Boolean> getPrecondition(CfgNode node, List<CfgNode> dominators) {
-		if (!precondFinished(dominators)) {
-			return new Pair<OrCategoryCalculator, Boolean>(null, false);			
+	public Pair<OrCategoryCalculator, Boolean> getPrecondition(CfgNode node, HashMap<CfgNode, CfgNodeDomainInfo> dominationMap, boolean isLoopHeader) {
+		List<CfgNode> dominators = dominationMap.get(node).getDominators();
+		if (!isLoopHeader) {
+			if (!precondFinished(dominators)) {
+				return new Pair<OrCategoryCalculator, Boolean>(null, false);			
+			}
+		}else {
+			if (!loopPrecondFinished(dominators, node, dominationMap)) {
+				return new Pair<OrCategoryCalculator, Boolean>(null, false);			
+			}
 		}
 		
 		int maxSize = 20;
@@ -230,6 +236,40 @@ public class DecisionProbes extends CfgCoverage {
 			}
 		}
 		return true;
+	}
+	
+	private boolean loopPrecondFinished(List<CfgNode> dominators, CfgNode loopHeader, HashMap<CfgNode, CfgNodeDomainInfo> dominationMap) {
+		assert loopHeader.isLoopHeader() : "The node must be loop header";
+		for (CfgNode dominator : dominators) {
+			Precondition domPrecond = getNodeProbe(dominator).getPrecondition();
+			if (!domPrecond.isVisited()) { // there is a dominator not been learned
+				if (!inChain(dominator, loopHeader, dominationMap)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private boolean inChain(CfgNode dominator, CfgNode loopHeader, HashMap<CfgNode, CfgNodeDomainInfo> dominationMap) {
+		HashMap<CfgNode, Boolean> visited = new HashMap<>();
+		Queue<CfgNode> queue = new LinkedList<>();
+		queue.add(loopHeader);
+		while (!queue.isEmpty()) {
+			CfgNode node = queue.poll();
+			visited.put(node, true);
+			if (node == dominator) {
+				return true;
+			}else {
+				for (CfgNode cfgNode : dominationMap.get(node).getDominatees()) {
+					if (!visited.containsKey(cfgNode)) {
+						queue.add(cfgNode);
+					}
+				}
+			}
+			
+		}
+		return false;
 	}
 
 	private CategoryCalculator getCalculator(List<Divider> domDividers, BranchRelationship branchRel) {
