@@ -9,6 +9,8 @@ import org.apache.bcel.generic.IfInstruction;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.Select;
 
+import variable.Variable;
+
 public class CFGNode {
 
 	private InstructionHandle instructionHandle;
@@ -16,16 +18,22 @@ public class CFGNode {
 	private List<CFGNode> parents = new ArrayList<>();
 	private List<CFGNode> children = new ArrayList<>();
 	
+	private List<Variable> writenVars =  new ArrayList<>();
+	private List<Variable> readVars = new ArrayList<>();
+	
 	private HashSet<CFGNode> postDominatee = new HashSet<>();
 	
 	private List<CFGNode> controlDependentees = new ArrayList<>();
 	private int lineNo;
+	
+	private int index;
 
-	public CFGNode(InstructionHandle insHandle, Code code) {
+	public CFGNode(InstructionHandle insHandle, Code code, int index) {
 		super();
 		this.instructionHandle = insHandle;
 		this.code = code;
-		lineNo = getLineNumber();
+		this.index = index;
+		setLineNo(getLineNumber());
 	}
 	
 	public int getLineNumber(){
@@ -131,5 +139,45 @@ public class CFGNode {
 		}
 		
 		return false;
+	}
+
+	public List<Variable> getWritenVars() {
+		return writenVars;
+	}
+
+	public void setWritenVars(List<Variable> writenVars) {
+		this.writenVars = writenVars;
+	}
+
+	public List<Variable> getReadVars() {
+		return readVars;
+	}
+
+	public void setReadVars(List<Variable> readVars) {
+		this.readVars = readVars;
+	}
+
+	public void addReadVariable(Variable var) {
+		this.readVars.add(var);
+	}
+
+	public void addWrittenVariable(Variable var) {
+		this.writenVars.add(var);
+	}
+
+	public int getLineNo() {
+		return lineNo;
+	}
+
+	public void setLineNo(int lineNo) {
+		this.lineNo = lineNo;
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
 	}
 }

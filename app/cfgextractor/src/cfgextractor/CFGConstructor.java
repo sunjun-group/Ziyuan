@@ -1,15 +1,32 @@
 package cfgextractor;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.bcel.classfile.Code;
+import org.apache.bcel.classfile.LocalVariable;
+import org.apache.bcel.classfile.LocalVariableTable;
+import org.apache.bcel.generic.ArrayInstruction;
 import org.apache.bcel.generic.BranchInstruction;
+import org.apache.bcel.generic.ConstantPoolGen;
+import org.apache.bcel.generic.FieldInstruction;
+import org.apache.bcel.generic.IINC;
 import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.InstructionList;
+import org.apache.bcel.generic.LoadInstruction;
+import org.apache.bcel.generic.LocalVariableInstruction;
 import org.apache.bcel.generic.Select;
+import org.apache.bcel.generic.StoreInstruction;
+
+import variable.ArrayElementVar;
+import variable.FieldVar;
+import variable.LocalVar;
+import variable.Variable;
 
 
 /**
@@ -25,20 +42,224 @@ public class CFGConstructor {
 	private Code code;
 	
 	public CFG buildCFGWithControlDomiance(Code code){
-		this.code = code;
+		this.setCode(code);
 		
 		CFG cfg = constructCFG(code);
 		
-//		System.currentTimeMillis();
+		attachDUVar(code, cfg);
+		Map<Integer, List<Variable>> map = analyzeRelevantVars(cfg);
+		cfg.setRelevantVarMap(map);
 		
 		constructPostDomination(cfg);
 		constructControlDependency(cfg);
 		
-//		LineNumberTable table = code.getLineNumberTable();
+//		System.currentTimeMillis();
 		
 		return cfg;
 	}
 	
+	private Map<Integer, List<Variable>> analyzeRelevantVars(CFG cfg) {
+		Map<Integer, List<Variable>> map = new HashMap<>();
+		for(int i=0; i<cfg.getNodeList().size(); i++){
+			CFGNode node = cfg.getNodeList().get(i);
+			if(i==4){
+				System.currentTimeMillis();
+			}
+			List<Variable> varList = getRelevantVarList(node);
+			map.put(node.getInstructionHandle().getPosition(), varList);
+		}
+		
+		return map;
+	}
+
+	private List<Variable> getRelevantVarList(CFGNode node) {
+		List<CFGNode> block = retrieveBlock(node);
+		List<Variable> relevantVars = new ArrayList<>();
+		for(CFGNode n: block){
+			for(Variable readV: n.getReadVars()){
+				if(!isVarListContains(readV, relevantVars)){
+					relevantVars.add(readV);
+				}
+			}
+		}
+		
+		boolean isChange = true;
+		while(isChange){
+			int relSize = relevantVars.size();
+			List<Integer> visitedNodes = new ArrayList<>();
+			increaseRelVars(relevantVars, node, visitedNodes);
+			
+			isChange = relSize!=relevantVars.size();
+		}
+		
+		System.currentTimeMillis();
+		
+		return relevantVars;
+	}
+
+	private void increaseRelVars(List<Variable> relevantVars, CFGNode node, List<Integer> visitedNodes) {
+		visitedNodes.add(node.getIndex());	
+		
+		List<CFGNode> blockParents = retrieveBlock(node);
+		if(blockParents.isEmpty()){
+			return;
+		}
+		for(CFGNode bN: blockParents){
+			visitedNodes.add(bN.getIndex());				
+		}
+		
+		Variable writtenVar = null;
+		for(CFGNode parent: blockParents){
+			if(!parent.getWritenVars().isEmpty()){
+				writtenVar = parent.getWritenVars().get(0);
+			}
+			
+			if(writtenVar!=null){
+				if(isVarListContains(writtenVar, relevantVars)){
+					for(Variable readVar: parent.getReadVars()){
+						if(!isVarListContains(readVar, relevantVars)){
+							relevantVars.add(readVar);						
+						}
+					}
+				}
+				
+			}
+		}
+		
+		
+		if(!blockParents.isEmpty()){
+			CFGNode newStart = blockParents.get(blockParents.size()-1);
+			for(CFGNode parent: newStart.getParents()){
+				if(!visitedNodes.contains(parent.getIndex())){
+					increaseRelVars(relevantVars, parent, visitedNodes);				
+				}
+			}
+		}
+		
+	}
+
+	private List<CFGNode> retrieveBlock(CFGNode node) {
+		/**
+		 * identify a block
+		 */
+		List<CFGNode> blockParents = new ArrayList<>();
+		blockParents.add(node);
+		
+		if(!node.getParents().isEmpty() && node.getParents().size()==1){
+			CFGNode n = node.getParents().get(0);
+			while(n!=null && n.getParents().size()==1 && n.getChildren().size()==1){
+				blockParents.add(n);
+				n = n.getParents().get(0);
+			}
+		}
+		
+		if(!node.getChildren().isEmpty() && node.getChildren().size()==1){
+			CFGNode n = node.getChildren().get(0);
+			while(n!=null && n.getChildren().size()==1 && n.getParents().size()==1){
+				blockParents.add(n);
+				n = n.getChildren().get(0);
+			}
+		}
+		
+		
+		return blockParents;
+	}
+
+	private boolean isVarListContains(Variable writtenVar, List<Variable> relevantVars) {
+		for(Variable var: relevantVars){
+			if(var.getClass().getName()==writtenVar.getClass().getName()){
+				if(var.getName().equals(writtenVar.getName())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private void attachDUVar(Code code, CFG cfg) {
+		ConstantPoolGen pool = new ConstantPoolGen(code.getConstantPool()); 
+		for(CFGNode node: cfg.getNodeList()){
+			InstructionHandle handle = node.getInstructionHandle();
+			if(handle.getInstruction() instanceof FieldInstruction){
+				FieldInstruction gIns = (FieldInstruction)handle.getInstruction();
+				String fullFieldName = gIns.getFieldName(pool);
+				if(fullFieldName != null){
+					/** rw being true means read; and rw being false means write. **/
+					boolean rw = handle.getInstruction().getName().toLowerCase().contains("get");;
+					boolean isStatic = handle.getInstruction().getName().toLowerCase().contains("static");
+					String type = gIns.getFieldType(pool).getSignature();
+					FieldVar var = new FieldVar(isStatic, fullFieldName, type);
+					
+					if(rw){
+						node.addReadVariable(var);										
+					}
+					else{
+						node.addWrittenVariable(var);
+					}
+				}
+			}
+			else if(handle.getInstruction() instanceof LocalVariableInstruction){
+				LocalVariableInstruction lIns = (LocalVariableInstruction)handle.getInstruction();
+				LocalVariable variable = code.getLocalVariableTable().getLocalVariable(lIns.getIndex(), handle.getPosition());
+				if(variable == null){
+					variable = findOptimalVariable(handle, lIns.getIndex(), code.getLocalVariableTable());
+				}
+				
+				if(variable != null && !variable.getName().equals("this")){
+					LocalVar var = new LocalVar(variable.getName(), variable.getSignature(), 
+							null, 0);
+					if(handle.getInstruction() instanceof IINC){
+						node.addReadVariable(var);
+						node.addWrittenVariable(var);
+					}
+					else if(handle.getInstruction() instanceof LoadInstruction){
+						node.addReadVariable(var);
+					}
+					else if(handle.getInstruction() instanceof StoreInstruction){
+						node.addWrittenVariable(var);
+					}
+				}
+			}
+			else if(handle.getInstruction() instanceof ArrayInstruction){
+				ArrayInstruction aIns = (ArrayInstruction)handle.getInstruction();
+				String typeSig = aIns.getType(pool).getSignature();
+				
+				if(handle.getInstruction().getName().toLowerCase().contains("load")){
+					ArrayElementVar var = new ArrayElementVar(aIns.getName(), typeSig);
+					node.addReadVariable(var);	
+				}
+				else if(handle.getInstruction().getName().toLowerCase().contains("store")){
+					ArrayElementVar var = new ArrayElementVar(aIns.getName(), typeSig);
+					node.addWrittenVariable(var);
+				}
+			}
+		}
+		
+	}
+	
+	private LocalVariable findOptimalVariable(InstructionHandle insHandle, int variableIndex, LocalVariableTable localVariableTable) {
+		LocalVariable bestVar = null;
+		int diff = -1;
+		
+		for(LocalVariable var: localVariableTable.getLocalVariableTable()){
+			if(var.getIndex() == variableIndex){
+				if(diff == -1){
+					bestVar = var;
+					diff = Math.abs(insHandle.getPosition() - var.getStartPC());
+				}
+				else{
+					int newDiff = Math.abs(insHandle.getPosition() - var.getStartPC());
+					if(newDiff < diff){
+						bestVar = var;
+						diff = newDiff;
+					}
+				}
+			}
+		}
+		
+		return bestVar;
+	}
+
 	@SuppressWarnings("rawtypes")
 	public CFG constructCFG(Code code){
 		CFG cfg = new CFG();
@@ -239,5 +460,13 @@ public class CFGConstructor {
 			}
 		}
 		
+	}
+
+	public Code getCode() {
+		return code;
+	}
+
+	public void setCode(Code code) {
+		this.code = code;
 	}
 }

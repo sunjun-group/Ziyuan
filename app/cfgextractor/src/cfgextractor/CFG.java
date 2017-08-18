@@ -1,15 +1,21 @@
 package cfgextractor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.bcel.classfile.Code;
 import org.apache.bcel.generic.InstructionHandle;
+
+import variable.Variable;
 
 public class CFG {
 	private List<CFGNode> nodeList = new ArrayList<>();
 	private CFGNode startNode;
 	private List<CFGNode> exitList = new ArrayList<>();
+	
+	private Map<Integer, List<Variable>> relevantVarMap = new HashMap<>();
 
 	public CFGNode getStartNode() {
 		return startNode;
@@ -52,7 +58,7 @@ public class CFG {
 	public CFGNode findOrCreateNewNode(InstructionHandle handle, Code code){
 		CFGNode node = findNode(handle);
 		if(node == null){
-			node = new CFGNode(handle, code);
+			node = new CFGNode(handle, code, this.nodeList.size());
 			this.nodeList.add(node);
 		}
 		
@@ -79,5 +85,13 @@ public class CFG {
 
 	public int size() {
 		return nodeList.size();
+	}
+
+	public Map<Integer, List<Variable>> getRelevantVarMap() {
+		return relevantVarMap;
+	}
+
+	public void setRelevantVarMap(Map<Integer, List<Variable>> relevantVarMap) {
+		this.relevantVarMap = relevantVarMap;
 	}
 }
