@@ -139,6 +139,8 @@ public class DecisionProbes extends CfgCoverage {
 		Precondition precondition = getNodeProbe(node).getPrecondition();
 		List<CfgNode> bothBranchNode = new LinkedList<>(); /** nodes could reach target node in false and true branch, 
 																the BranchRelationship should be determined by other nodes reaching target node through it */
+		HashMap<CfgNode, BranchRelationship> path = precondition.getPath(); // record determined branch dominator pick
+		
 		for (CfgNode dominator : dominators) {
 			if (precondition.getPreconditions().size() > maxSize) {
 				break;
@@ -146,19 +148,18 @@ public class DecisionProbes extends CfgCoverage {
 			Precondition domPrecond = getNodeProbe(dominator).getPrecondition();
 			List<Divider> domDividers = domPrecond.getDividers();
 			BranchRelationship branchRel = node.getBranchRelationship(dominator.getIdx());
+			path.putAll(domPrecond.getPath());
 			if (CollectionUtils.isEmpty(domDividers)) {
 				precondition.addPreconditions(domPrecond.getPreconditions());
 				if (branchRel == BranchRelationship.TRUE || branchRel == BranchRelationship.FALSE) {
-					precondition.getPath().putAll(domPrecond.getPath());
-					precondition.getPath().put(dominator, branchRel);
+					path.put(dominator, branchRel);
 				}
 			} else {
 				log.info("from "+dominator + " to "+node+" : "+branchRel);
 				CategoryCalculator condFromDividers = null;
 				if (branchRel == BranchRelationship.TRUE || branchRel == BranchRelationship.FALSE) {
 					condFromDividers = getCalculator(domDividers, branchRel);
-					precondition.getPath().putAll(domPrecond.getPath());
-					precondition.getPath().put(dominator, branchRel);
+					path.put(dominator, branchRel);
 				} else if (branchRel == BranchRelationship.TRUE_FALSE) {
 					bothBranchNode.add(dominator);
 				}
@@ -167,17 +168,50 @@ public class DecisionProbes extends CfgCoverage {
 				}
 			}
 		}
+		
+		/** determine another branch of bothBranchNode to reach target node */
 		for (CfgNode dominator : bothBranchNode) {
 			if (precondition.getPreconditions().size() > maxSize) {
 				break;
 			}
 			Precondition domPrecond = getNodeProbe(dominator).getPrecondition();
 			List<Divider> domDividers = domPrecond.getDividers();
-			BranchRelationship branchRel = null;
-			if (precondition.getPath().get(dominator) == BranchRelationship.FALSE) {
+			BranchRelationship branchRel = precondition.getPath().get(dominator);
+			
+			/**
+			 * dominator node is direct dominator of target node, thus when dominator has TRUE_FALSE relationship,
+			 * dominator must reach target node in one branch directly, 
+			 * and reach target node through its another dominatee, that is also dominator of target node, 
+			 * in the other branch we should have known  
+			 * */
+			if (branchRel == BranchRelationship.FALSE) {
 				branchRel = BranchRelationship.TRUE;
-			} else {
+			} else if (branchRel == BranchRelationship.TRUE){
 				branchRel = BranchRelationship.FALSE;
+			} else if (branchRel == BranchRelationship.TRUE_FALSE || branchRel == null){ 
+				/** todo :
+				 *  this situation is wrong, a single branch choice is regarded as both branch ,
+				 *  here is a patch
+				 *  
+				 *  for example : from B to C, B should have just one branch, but B is labeled TRUE_FALSE to C
+				 *   	  A
+				 *  	/	\
+				 *     B  -> C
+				 *    /		  \
+				 *   E		   E
+				 *   
+				 *  */
+				for (CfgNode branch : dominator.getBranches()) {
+					if (dominator.getBranchRelationship(branch.getIdx()) == BranchRelationship.TRUE) {
+						branchRel = BranchRelationship.FALSE;
+						path.put(dominator, branchRel);
+						break;
+					}else if (dominator.getBranchRelationship(branch.getIdx()) == BranchRelationship.FALSE) {
+						branchRel = BranchRelationship.TRUE;
+						path.put(dominator, branchRel);
+						break;
+					}
+				}
 			}
 			log.info("from "+dominator + " to "+node+" : "+branchRel);
 			CategoryCalculator condFromDividers = getCalculator(domDividers, branchRel);

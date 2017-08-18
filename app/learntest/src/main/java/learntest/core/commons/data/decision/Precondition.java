@@ -28,7 +28,7 @@ public class Precondition {
 	private Formula oneMore;
 	private List<Divider> dividers;
 	private List<List<CategoryCalculator>> preconditions = new ArrayList<List<CategoryCalculator>>(); /** each element of list is a path of dominator indeed*/
-	private HashMap<CfgNode, BranchRelationship> path = new HashMap<>(); /** dominator node take which branch */
+	private HashMap<CfgNode, BranchRelationship> path = new HashMap<>(); /** dominator node take which branch to reach it */
 	private boolean visited = false;
 
 	public Formula getTrueFalse() {
