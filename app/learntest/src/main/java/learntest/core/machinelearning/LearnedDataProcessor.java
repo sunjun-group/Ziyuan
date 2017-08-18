@@ -11,6 +11,9 @@ package learntest.core.machinelearning;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
@@ -23,6 +26,7 @@ import learntest.core.commons.data.decision.IDecisionNode;
 import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
+import learntest.core.machinelearning.sampling.IlpSelectiveSampling;
 import libsvm.core.Divider;
 import libsvm.core.Machine.DataPoint;
 import sav.common.core.SavException;
@@ -36,6 +40,7 @@ import sav.strategies.dto.execute.value.ExecVar;
  *  new sample data.
  */
 public class LearnedDataProcessor {
+	private static Logger log = LoggerFactory.getLogger(LearnedDataProcessor.class);
 	private SelectiveSampling<SamplingResult> selectiveSampling;
 	private DecisionProbes decisionProbes;
 	
@@ -130,6 +135,14 @@ public class LearnedDataProcessor {
 	public SamplingResult sampleForModel(DecisionNodeProbe nodeProbe, List<ExecVar> originalVars,
 			OrCategoryCalculator preconditions, List<Divider> learnedDividers)
 			throws SavException {
+		StringBuffer sBuffer = new StringBuffer();
+		sBuffer.append("select sample with precondition : ");
+		if (learnedDividers != null) {
+			for (Divider d : learnedDividers) {
+				sBuffer.append(d+",");
+			}
+		}
+		log.info(sBuffer.toString());
 		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions, learnedDividers);
 	}
 	

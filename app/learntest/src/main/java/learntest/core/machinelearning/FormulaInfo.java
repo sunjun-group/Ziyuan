@@ -79,4 +79,8 @@ public class FormulaInfo {
 	public CfgNode getNode() {
 		return node;
 	}
+
+	public List<String> getTrueFalseFormula() {
+		return trueFalseFormula;
+	}
 }

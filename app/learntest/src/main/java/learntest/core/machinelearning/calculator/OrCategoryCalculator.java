@@ -166,5 +166,10 @@ public class OrCategoryCalculator implements CategoryCalculator {
 	public List<List<CategoryCalculator>> getCalculators() {
 		return calculators;
 	}
+	
+	public OrCategoryCalculator clone() {
+		OrCategoryCalculator calculator = new OrCategoryCalculator(calculators, vars, originalVars);
+		return calculator;
+	}
 
 }

@@ -69,10 +69,10 @@ public class CfgDomain {
 			HashMap<CfgNode, Integer> post = new HashMap<>();
 			if (curNodeInfo.children.size() == 1) {
 				CfgNode child = curNodeInfo.children.keySet().iterator().next();
-				post = dominationMap.get(child).postDomain;
+				post.putAll(dominationMap.get(child).postDomain);
 				post.put(child, child.getLine());
 			}else if (curNodeInfo.children.size() > 1) {
-				post = getCommonPostD(curNodeInfo.children);
+				post.putAll(getCommonPostD(curNodeInfo.children)); // get intersection of post-domain set
 			}
 			int originalSize = curNodeInfo.postDomain.size();
 			curNodeInfo.postDomain.putAll(post);
@@ -144,7 +144,9 @@ public class CfgDomain {
 		} else if (children.size() == 1) {
 			getChildDecision(children.get(0), list);
 		} else if (children.size() >= 2) { /** branch node */
-			list.add(node);
+			if (!list.contains(node)) {
+				list.add(node);
+			}
 		}
 
 	}

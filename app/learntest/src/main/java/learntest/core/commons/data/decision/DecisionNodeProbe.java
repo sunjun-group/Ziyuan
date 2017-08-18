@@ -104,9 +104,9 @@ public class DecisionNodeProbe implements IDecisionNode {
 	}
 
 	private OrCategoryCalculator cachePreconditions;
-	public OrCategoryCalculator getPreconditions() {
+	public OrCategoryCalculator getPreconditions(OrCategoryCalculator preconditions) {
 		if (cachePreconditions == null) {
-			cachePreconditions = decisionProbes.getPrecondition(getNode());
+			cachePreconditions = preconditions.clone();
 		}
 		return cachePreconditions;
 	}

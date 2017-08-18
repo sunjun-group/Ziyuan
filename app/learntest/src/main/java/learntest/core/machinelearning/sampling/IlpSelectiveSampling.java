@@ -65,14 +65,6 @@ public class IlpSelectiveSampling {
 	
 	public List<double[]> selectData(List<ExecVar> vars, OrCategoryCalculator precondition, List<Divider> divider, int maxTcs)
 			throws SavException, SAVExecutionTimeOutException {
-		StringBuffer sBuffer = new StringBuffer();
-		sBuffer.append("select sample with precondition : ");
-		if (divider != null) {
-			for (Divider d : divider) {
-				sBuffer.append(d+",");
-			}
-		}
-		log.info(sBuffer.toString());
 		List<double[]> samples = new ArrayList<double[]>();
 		List<Problem> problems = ProblemBuilder.buildTrueValueProblems(vars, precondition, divider, true);
 		if (problems.isEmpty()) {

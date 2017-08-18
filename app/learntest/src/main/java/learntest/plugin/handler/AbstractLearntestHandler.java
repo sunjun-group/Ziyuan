@@ -30,6 +30,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.jacop.scala.node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -219,7 +220,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
 			log.info("run jdart..");
-			jdartInfo = runJdart(l2tParams);
+			jdartInfo = runJdart(randoopParam);
 
 			l2tParams.setApproach(LearnTestApproach.L2T);
 			l2tParams.setInitialTests(randoopParam.getInitialTests());
@@ -273,29 +274,40 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 		log.info("\nshow different branch if l2t has learned formula:");
 		HashMap<CfgNode, CfgNodeDomainInfo> domainMap = l2tAverageInfo.getDomainMap();
+		StringBuffer l2tSb = new StringBuffer(), ranSb = new StringBuffer();
 		for (FormulaInfo info : l2tAverageInfo.getLearnedFormulas()){
 			if (info.getLearnedState() == info.VALID) {
+				String formula = info.getTrueFalseFormula().get(info.getTrueFalseFormula().size()-1);
 				for (CfgNode dominatee : domainMap.get(info.getNode()).getDominatees()){
-					log.info("node : " + info.getNode() + "dominatee : "+dominatee);
+					log.info(dominatee + ", dominator node : " + info.getNode());
 					Collection<BreakpointValue> ranF = ranAverageInfo.getFalseSample().get(dominatee.toString()), 
 							ranT = ranAverageInfo.getTrueSample().get(dominatee.toString()),
 							l2tF = l2tAverageInfo.getFalseSample().get(dominatee.toString()), 
 							l2tT = l2tAverageInfo.getTrueSample().get(dominatee.toString());
 					log.info("if ran better than l2t in false :");
-					boolean rf = checkIfBetter(ranF, l2tF);
-					log.info("if ran better than l2t in true :");
-					boolean rt = checkIfBetter(ranT, l2tT);
+					if (checkIfBetter(ranF, l2tF)) {
+						l2tSb.append("false : "+dominatee+" "+ formula +";");
+					}
 					
-					l2tAverageInfo.l2tWorseThanRand = rf || rt || l2tAverageInfo.l2tWorseThanRand;
+					log.info("if ran better than l2t in true :");
+					if (checkIfBetter(ranT, l2tT)) {
+						l2tSb.append("true : "+dominatee+" "+ formula +";");
+					}
 					
 					log.info("if l2t better than randoop in false :");
-					boolean l2tf = checkIfBetter(l2tF, ranF);
+					if (checkIfBetter(l2tF, ranF)) {
+						ranSb.append("false : "+dominatee+" "+ formula +";");
+					}
+					
 					log.info("if l2t better than randoop in true :");
-					boolean l2tt = checkIfBetter(l2tT, ranT);
-					l2tAverageInfo.randWorseThanl2t = l2tf || l2tt || l2tAverageInfo.randWorseThanl2t;
+					if (checkIfBetter(l2tT, ranT)) {
+						ranSb.append("true : "+dominatee+" "+ formula +";");
+					}
 				}
 			}
 		}
+		l2tAverageInfo.l2tWorseThanRand += l2tSb.toString();
+		l2tAverageInfo.randWorseThanl2t += ranSb.toString();
 	}
 
 	private boolean checkIfBetter(Collection<BreakpointValue> first, Collection<BreakpointValue> second) {
