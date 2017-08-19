@@ -1,6 +1,8 @@
 package cfgextractor;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -74,6 +76,12 @@ public class CFGConstructor {
 
 	private List<Variable> getRelevantVarList(CFGNode node) {
 		List<CFGNode> block = retrieveBlock(node);
+		Collections.sort(block, new Comparator<CFGNode>() {
+			@Override
+			public int compare(CFGNode o1, CFGNode o2) {
+				return o2.getInstructionHandle().getPosition()-o1.getInstructionHandle().getPosition();
+			}
+		});
 		List<Variable> relevantVars = new ArrayList<>();
 		for(CFGNode n: block){
 			for(Variable readV: n.getReadVars()){
@@ -82,6 +90,8 @@ public class CFGConstructor {
 				}
 			}
 		}
+		
+		System.currentTimeMillis();
 		
 		boolean isChange = true;
 		while(isChange){
@@ -147,17 +157,27 @@ public class CFGConstructor {
 		
 		if(!node.getParents().isEmpty() && node.getParents().size()==1){
 			CFGNode n = node.getParents().get(0);
-			while(n!=null && n.getParents().size()==1 && n.getChildren().size()==1){
+			while(n!=null && n.getParents().size()<=1 && n.getChildren().size()<=1){
 				blockParents.add(n);
-				n = n.getParents().get(0);
+				if(n.getParents().size()==1){
+					n = n.getParents().get(0);					
+				}
+				else{
+					break;
+				}
 			}
 		}
 		
 		if(!node.getChildren().isEmpty() && node.getChildren().size()==1){
 			CFGNode n = node.getChildren().get(0);
-			while(n!=null && n.getChildren().size()==1 && n.getParents().size()==1){
+			while(n!=null && n.getChildren().size()<=1 && n.getParents().size()<=1){
 				blockParents.add(n);
-				n = n.getChildren().get(0);
+				if(n.getChildren().size()==1){
+					n = n.getChildren().get(0);					
+				}
+				else{
+					break;
+				}
 			}
 		}
 		
