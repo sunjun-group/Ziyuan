@@ -11,6 +11,7 @@ package learntest.plugin.handler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.CfgJaCoCoConfigs;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import dataPoint2Sample.DataRunner;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.JDartLearntest;
 import learntest.core.LearnTestParams;
@@ -203,6 +205,14 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 	protected Trial evaluateLearntestForSingleMethod(LearnTestParams params) {
 		try {
+			/** data point runner example */
+//			dataPoint2Sample.SimpleLearntest learntest = new dataPoint2Sample.SimpleLearntest(getAppClasspath());
+//			learntest.run(params);
+//			List<double[]> data = new LinkedList<>();
+//			data.add(new double[]{2,2,2});
+//			new DataRunner(learntest).runData(data, learntest.initProbes.getOriginalVars());
+			/** data point runner example */
+			
 			log.info("");
 			log.info("WORKING METHOD: {}, line {}", params.getTargetMethod().getMethodFullName(),
 					params.getTargetMethod().getLineNum());
