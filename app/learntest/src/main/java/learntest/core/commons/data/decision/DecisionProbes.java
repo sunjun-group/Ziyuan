@@ -239,7 +239,7 @@ public class DecisionProbes extends CfgCoverage {
 	}
 	
 	private boolean loopPrecondFinished(List<CfgNode> dominators, CfgNode loopHeader, HashMap<CfgNode, CfgNodeDomainInfo> dominationMap) {
-		assert loopHeader.isLoopHeader() : "The node must be loop header";
+		assert loopHeader.isInLoop() : "The node must be loop node";
 		for (CfgNode dominator : dominators) {
 			Precondition domPrecond = getNodeProbe(dominator).getPrecondition();
 			if (!domPrecond.isVisited()) { // there is a dominator not been learned

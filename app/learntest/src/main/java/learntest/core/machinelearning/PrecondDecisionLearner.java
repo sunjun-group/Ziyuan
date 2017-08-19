@@ -15,18 +15,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 
-import org.eclipse.swt.dnd.Transfer;
-import org.jacop.scala.node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 import cfgcoverage.jacoco.analysis.data.CfgNode;
-import cfgcoverage.org.objectweb.asm.tree.AbstractInsnNode;
-import cfgcoverage.org.objectweb.asm.tree.VarInsnNode;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.AbstractLearningComponent;
@@ -35,7 +30,6 @@ import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.INodeCoveredData;
-import learntest.core.commons.data.decision.Precondition;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.utils.CfgUtils;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
@@ -53,6 +47,7 @@ import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
+import variable.FieldVar;
 import variable.Variable;
 
 /**
@@ -67,7 +62,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	public HashMap<CfgNode, FormulaInfo> learnedFormulas = new HashMap<>();
 	private HashMap<CfgNode, CfgNodeDomainInfo> dominationMap = new HashMap<>();
 	HashMap<String, Collection<BreakpointValue>> branchTrueRecord = new HashMap<>(), branchFalseRecord = new HashMap<>();
-	Map<Integer, List<Variable>> relevantVarMap ;
+	List<VarInfo> relevantVars ;
 
 	public PrecondDecisionLearner(LearningMediator mediator) {
 		super(mediator);
@@ -79,13 +74,78 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		dataPreprocessor = new LearnedDataProcessor(mediator, inputProbes);
 		dominationMap = new CfgDomain().constructDominationMap(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()));
 		recordSample(inputProbes, dataPreprocessor.getSampleOfInitCase(bpdata, inputProbes.getOriginalVars()));
-		this.relevantVarMap = relevantVarMap;
+		if (relevantVarMap == null || probes.getCfg().getNodeList().size() != relevantVarMap.size()) {
+			log.debug("The size of CfgNodes is differnt from the size of map!!!!");
+			this.relevantVars = null;
+		}else {
+			this.relevantVars = varsTransform(relevantVarMap, inputProbes.getOriginalVars());
+		}
 		learn(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()), probes, new ArrayList<Integer>(decisionNodes.size()));
 				
 		return probes;
 	}
 
 	
+
+	/**
+	 * determine the responding relationship of vars between two CFG
+	 * @param relevantVarMap map from linyun'ss CFG
+	 * @param list nodes from LLY's CFG
+	 * @return
+	 */
+	private List<VarInfo> varsTransform(Map<Integer, List<Variable>> relevantVarMap, List<ExecVar> originalVars) {
+		HashMap<String, ExecVar> execVarMap = new HashMap<>();
+		for (ExecVar execVar : originalVars) {
+			execVarMap.put(execVar.getLabel(), execVar);
+		}
+		List<VarInfo> list = new ArrayList<>(relevantVarMap.size());
+		for (Entry<Integer, List<Variable>> entry : relevantVarMap.entrySet()) {
+			VarInfo info = new VarInfo(entry.getKey(), entry.getValue());
+			info.setExecVar(execVarMap);
+			list.add(info);
+		}
+		list.sort(new Comparator<VarInfo>() {
+			@Override
+			public int compare(VarInfo o1, VarInfo o2) {
+				return o1.offset - o2.offset;
+			}
+		});
+		return list;
+		
+	}
+	
+	class VarInfo {
+		Integer offset;
+		List<Variable> variables;
+		List<ExecVar> execVars;
+		VarInfo(Integer integer, List<Variable> vars){
+			this.offset = integer;
+			this.variables = vars;
+		}
+		public void setExecVar(HashMap<String, ExecVar> execVarMap) {
+			execVars = new ArrayList<>(variables.size());
+			for (Variable var : variables) {
+				String label = var.getSimpleName();
+				if (var instanceof FieldVar) {
+					label = "this."+label;
+				}
+				ExecVar execVar = execVarMap.get(label);
+				if (execVar != null) {
+					execVars.add(execVar);
+				}else {
+					log.info(var + "does not exist in original ExecVars.");
+				}
+			}			
+		}
+		
+		public String toString() {
+			StringBuffer sb = new StringBuffer();
+			sb.append(offset + " : ");
+			sb.append("Variables : "+variables+";  ");
+			sb.append("ExecVars : "+execVars + "\n");
+			return sb.toString();
+		}
+	}
 
 	private void learn(CfgNode node, DecisionProbes probes, List<Integer> visitedNodes) throws SavException {
 		if (probes.getOriginalVars().size()>50) { /** discard those method with too many variables */
@@ -128,7 +188,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				dataPreprocessor.sampleForLoopCvg(node, preconditions, this);
 
 				nodeProbe = probes.getNodeProbe(node);
-				List<ExecVar> targetVars = transfer(node, probes.getOriginalVars());
+				List<ExecVar> targetVars = relevantVars != null ? 
+						relevantVars.get(node.getIdx()).execVars
+						: null;
 				updatePrecondition(nodeProbe, preconditions, targetVars);
 				nodeProbe.getPrecondition().setVisited(true);
 			}else {
@@ -144,13 +206,6 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				}
 			}
 		}
-	}
-
-	private List<ExecVar> transfer(CfgNode node, List<ExecVar> originalVars) {
-		if (relevantVarMap != null) {
-			List<Variable> variables = relevantVarMap.get(node.getInsnNode());
-		}
-		return null;
 	}
 
 	private boolean needToLearn(DecisionNodeProbe nodeProbe) {
@@ -306,7 +361,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		int i = 0;
 		for (ExecVar var : vars) {
 			final Double value ;
-			if (targetVars == null || targetVars.size() == 0 || targetVars.contains(var)) {
+			if (targetVars == null || targetVars.contains(var)) {
 				value = bValue.getValue(var.getLabel(), 0.0);
 			}else {
 				value = 0.0;

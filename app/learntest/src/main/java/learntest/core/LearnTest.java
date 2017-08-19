@@ -1,8 +1,8 @@
 package learntest.core;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfgextractor.CFGBuilder;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
@@ -28,6 +29,7 @@ import sav.settings.SAVExecutionTimeOutException;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
+import variable.Variable;
 
 public class LearnTest extends AbstractLearntest {
 	private static Logger log = LoggerFactory.getLogger(LearnTest.class);
@@ -73,7 +75,11 @@ public class LearnTest extends AbstractLearntest {
 				IInputLearner learner = mediator.initDecisionLearner(params);
 				DecisionProbes initProbes = initProbes(targetMethod, cfgCoverage, result);
 				learningStarted = true;
-				DecisionProbes probes = learner.learn(initProbes, result);
+				
+				Map<Integer, List<Variable>> relevantVarMap = new CFGBuilder().parsingCFG(getAppClasspath(), 
+						targetMethod.getClassName(), targetMethod.getMethodFullName(), targetMethod.getLineNum()).getRelevantVarMap();
+						
+				DecisionProbes probes = learner.learn(initProbes, result, relevantVarMap);
 				RunTimeInfo info = getRuntimeInfo(probes);
 				if (learner instanceof PrecondDecisionLearner) { 
 					setLearnState((PrecondDecisionLearner)learner, info);
