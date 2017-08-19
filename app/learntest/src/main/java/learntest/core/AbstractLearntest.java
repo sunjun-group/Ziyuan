@@ -188,4 +188,8 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 			testGenerator = new TestGenerator(appClasspath);
 		}
 	}
+
+	public AppJavaClassPath getAppClasspath() {
+		return appClasspath;
+	}
 }

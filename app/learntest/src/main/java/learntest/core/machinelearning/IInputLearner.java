@@ -11,6 +11,7 @@ package learntest.core.machinelearning;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
 import sav.common.core.SavException;
+import variable.Variable;
 
 /**
  * @author LLT
@@ -32,7 +34,7 @@ public interface IInputLearner {
 
 	static Logger log = LoggerFactory.getLogger(IInputLearner.class);
 	
-	DecisionProbes learn(DecisionProbes inputProbes, BreakpointData result) throws SavException;
+	DecisionProbes learn(DecisionProbes inputProbes, BreakpointData result, Map<Integer, List<Variable>> relevantVarMap) throws SavException;
 	
 
 	default void recordSample(DecisionProbes inputProbes, SamplingResult sampleResult) {
@@ -44,18 +46,18 @@ public interface IInputLearner {
 			INodeCoveredData newData = sampleResult.getNewData(nodeProbe);
 			log.info(nodeProbe.getNode().toString());
 			Collection<BreakpointValue> trueV = newData.getTrueValues(), falseV = newData.getFalseValues();
-			log.info("	true data after selective sampling " + trueV.size());
-			log.info("	false data after selective sampling " + falseV.size());
+//			log.info("	true data after selective sampling " + trueV.size());
+//			log.info("	false data after selective sampling " + falseV.size());
 			recordSample(nodeProbe, trueV, getTrueSample());
 			recordSample(nodeProbe, falseV, getFalseSample());
 		}
 
-		for (Entry<String, Collection<BreakpointValue>> entry : getTrueSample().entrySet()) {
-			log.info("true : "+entry.getKey()+" "+entry.getValue().size());
-		}
-		for (Entry<String, Collection<BreakpointValue>> entry : getFalseSample().entrySet()) {
-			log.info("false : "+entry.getKey()+" "+entry.getValue().size());
-		}
+//		for (Entry<String, Collection<BreakpointValue>> entry : getTrueSample().entrySet()) {
+//			log.info("true : "+entry.getKey()+" "+entry.getValue().size());
+//		}
+//		for (Entry<String, Collection<BreakpointValue>> entry : getFalseSample().entrySet()) {
+//			log.info("false : "+entry.getKey()+" "+entry.getValue().size());
+//		}
 	}
 
 	default void recordSample(DecisionNodeProbe nodeProbe,

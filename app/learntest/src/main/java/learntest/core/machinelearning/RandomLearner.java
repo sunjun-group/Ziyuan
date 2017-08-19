@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ import learntest.core.commons.data.sampling.SamplingResult;
 import libsvm.core.Category;
 import sav.common.core.SavException;
 import sav.strategies.dto.execute.value.ExecVar;
+import variable.Variable;
 
 /**
  * @author LLT
@@ -47,7 +49,7 @@ public class RandomLearner implements IInputLearner {
 	}
 	
 	@Override
-	public DecisionProbes learn(DecisionProbes inputProbes, BreakpointData bpdata) throws SavException {
+	public DecisionProbes learn(DecisionProbes inputProbes, BreakpointData bpdata, Map<Integer, List<Variable>> relevantVarMap) throws SavException {
 		DecisionProbes probes = inputProbes;
 		SampleExecutor sampleExecutor = new SampleExecutor(mediator, inputProbes);
 		
