@@ -26,9 +26,8 @@ import learntest.core.commons.data.decision.IDecisionNode;
 import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
-import learntest.core.machinelearning.sampling.IlpSelectiveSampling;
+import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
-import libsvm.core.Machine.DataPoint;
 import sav.common.core.SavException;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
@@ -137,6 +136,15 @@ public class LearnedDataProcessor {
 			throws SavException {
 		StringBuffer sBuffer = new StringBuffer();
 		sBuffer.append("select sample with precondition : ");
+		for (List<CategoryCalculator> list : preconditions.getCalculators()) {
+			sBuffer.append("(");
+			for (CategoryCalculator cc : list) {
+				sBuffer.append(cc);
+				sBuffer.append("&&");
+			}
+			sBuffer.append(")||");
+		}
+		sBuffer.append("\nselect sample with learnedDividers : ");
 		if (learnedDividers != null) {
 			for (Divider d : learnedDividers) {
 				sBuffer.append(d+",");

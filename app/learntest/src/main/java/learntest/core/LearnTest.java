@@ -76,8 +76,7 @@ public class LearnTest extends AbstractLearntest {
 				DecisionProbes initProbes = initProbes(targetMethod, cfgCoverage, result);
 				learningStarted = true;
 				
-				Map<Integer, List<Variable>> relevantVarMap = new CFGBuilder().parsingCFG(getAppClasspath(), 
-						targetMethod.getClassName(), targetMethod.getMethodFullName(), targetMethod.getLineNum()).getRelevantVarMap();
+				Map<Integer, List<Variable>> relevantVarMap = new CFGBuilder().parsingCFG(getAppClasspath(), targetMethod.getClassName(), targetMethod.getMethodFullName(), targetMethod.getLineNum()).getRelevantVarMap();
 						
 				DecisionProbes probes = learner.learn(initProbes, result, relevantVarMap);
 				RunTimeInfo info = getRuntimeInfo(probes);

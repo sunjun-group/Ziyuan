@@ -32,6 +32,7 @@ import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.utils.CfgUtils;
+import learntest.core.commons.utils.MachineLearningUtils;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import learntest.core.machinelearning.sampling.IlpSelectiveSampling;
 import learntest.plugin.utils.Settings;
@@ -127,7 +128,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		public void setExecVar(HashMap<String, ExecVar> execVarMap, List<ExecVar> originalVars) {
 			List<VarInfo> infos = new ArrayList<>(variables.size());
 			for (Variable var : variables) {
-				String label = var.getSimpleName();
+				String label = var.getName();
 				if (var instanceof FieldVar) {
 					label = "this."+label;
 				}
@@ -136,6 +137,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 					VarInfo info = new VarInfo(originalVars.indexOf(execVar), null);
 					info.execVars = new LinkedList<>();
 					info.execVars.add(execVar);
+					infos.add(info);
 				}else {
 					log.info(var + "does not exist in original ExecVars.");
 				}
@@ -175,6 +177,13 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			// }
 			DecisionNodeProbe nodeProbe = probes.getNodeProbe(node);
 			if (needToLearn(nodeProbe)) {
+				List<ExecVar> targetVars ;
+				if (relevantVars != null) {
+					targetVars = relevantVars.get(node.getIdx()).execVars;
+				}else {
+					targetVars = probes.getOriginalVars();
+				}
+						
 				Pair<OrCategoryCalculator, Boolean> pair = null;
 				log.debug("learning the node in line " + node.getLine() + "(" + node + ")");
 				if (node.isInLoop()) { // should be node.inLoopHeader(), todo : this is a patch, because the loop header is labeled incorrectly
@@ -192,9 +201,6 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 					queue.add(node);
 					continue;
 				}
-				List<ExecVar> targetVars = relevantVars != null ? 
-						relevantVars.get(node.getIdx()).execVars
-						: probes.getOriginalVars();
 				log.debug("relevant vars : "+targetVars);
 				OrCategoryCalculator preconditions = pair.first();
 				dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
@@ -252,6 +258,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			return null;
 		}
 		Formula trueFlaseFormula = null;
+		List<ExecVar> orignalVars = orgNodeProbe.getDecisionProbes().getOriginalVars();
 
 		/* do generate formula and return */
 		NegativePointSelection negative = new ByDistanceNegativePointSelection();
@@ -263,7 +270,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			log.info("there is only one data point !!! svm could not learn");
 			return null;
 		}
-		List<Divider> dividers = mcm.getLearnedDividers();
+		List<Divider> dividers = mcm.getFullLearnedDividers(mcm.getDataLabels(), orignalVars);
 		log.info("=============learned multiple cut: " + trueFlaseFormula);
 
 		int time = 0;
@@ -281,11 +288,12 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			IlpSelectiveSampling.iterationTime = FORMULAR_LEARN_MAX_ATTEMPT - time;
 			time++;
 			DecisionProbes probes = nodeProbe.getDecisionProbes();
+			System.currentTimeMillis();
 			log.debug("selective sampling: ");
 			log.debug("original vars: {}, targetVars : {}", probes.getOriginalVars(), targetVars);
 			/* after running sampling, probes will be updated as well */
 			SamplingResult sampleResult = dataPreprocessor.sampleForModel(nodeProbe, targetVars,
-					preconditions, mcm.getLearnedDividers());
+					preconditions, mcm.getFullLearnedDividers(mcm.getDataLabels(), orignalVars));
 			if (sampleResult == null) {
 				log.debug("sampling result is null");
 				continue;
@@ -308,7 +316,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			acc = mcm.getModelAccuracy();
 			if (!tmp.equals(trueFlaseFormula)) {
 				trueFlaseFormula = tmp;
-				dividers = mcm.getLearnedDividers();
+				dividers = mcm.getFullLearnedDividers(mcm.getDataLabels(), probes.getOriginalVars());
 				acc = accTmp;
 			} else {
 				break;
@@ -345,10 +353,12 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 //		Formula newFormula = mcm.getLearnedMultiFormula(probes.getOriginalVars(), labels);
 		
 		mcm.setDefaultParams();
+		
 		List<String> labels = new LinkedList<>();
 		for (ExecVar var : targetVars) {
 			labels.add(var.getLabel());
 		}
+		
 		mcm.setDataLabels(labels);
 		mcm.setDefaultParams();
 		addDataPoint(mcm.getDataLabels(), targetVars,
@@ -382,13 +392,13 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			lineVals[i++] = value;
 		}
 		/** below is about derived vars like x*y */
-//		int size = targetVars.size();
-//		for (int j = 0; j < size; j++) {
-//			// double value = bValue.getValue(vars.get(j).getLabel(), 0.0);
-//			for (int k = j + 1; k < size; k++) {
-//				// lineVals[i ++] = value *
-//				// bValue.getValue(vars.get(k).getLabel(), 0.0);
-//				lineVals[i++] = 0.0;
+//		if (i < labels.size()) {
+//			int size = targetVars.size();
+//			for (int j = 0; j < size; j++) {
+//				 double value = bValue.getValue(targetVars.get(j).getLabel(), 0.0);
+//				for (int k = j + 1; k < size; k++) {
+//					 lineVals[i ++] = value * bValue.getValue(targetVars.get(k).getLabel(), 0.0);
+//				}
 //			}
 //		}
 

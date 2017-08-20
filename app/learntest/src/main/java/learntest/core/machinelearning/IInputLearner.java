@@ -52,12 +52,12 @@ public interface IInputLearner {
 			recordSample(nodeProbe, falseV, getFalseSample());
 		}
 
-//		for (Entry<String, Collection<BreakpointValue>> entry : getTrueSample().entrySet()) {
-//			log.info("true : "+entry.getKey()+" "+entry.getValue().size());
-//		}
-//		for (Entry<String, Collection<BreakpointValue>> entry : getFalseSample().entrySet()) {
-//			log.info("false : "+entry.getKey()+" "+entry.getValue().size());
-//		}
+		for (Entry<String, Collection<BreakpointValue>> entry : getTrueSample().entrySet()) {
+			log.info("true : "+entry.getKey()+" "+entry.getValue().size());
+		}
+		for (Entry<String, Collection<BreakpointValue>> entry : getFalseSample().entrySet()) {
+			log.info("false : "+entry.getKey()+" "+entry.getValue().size());
+		}
 	}
 
 	default void recordSample(DecisionNodeProbe nodeProbe,
