@@ -41,10 +41,13 @@ public class CfgDomain {
 				if (!postD.containsKey(child)) { // child is reachable from node, and child is not post-dominator of node 
 					domainInfo.addDominatee(child);
 					dominationMap.get(child).addDominator(node);
-				}else{ // child is post-dominator of node , the dominators of node will also dominate child
+				}else{ // child is post-dominator of node , the dominators of node may also dominate child
 					for (CfgNode dominator : domainInfo.dominators) {
-						dominationMap.get(dominator).addDominatee(child);
-						dominationMap.get(child).addDominator(dominator);
+						HashMap<CfgNode, Integer> doMinatorPostD = dominationMap.get(dominator).postDomain; 
+						if (!doMinatorPostD.containsKey(child)) {
+							dominationMap.get(dominator).addDominatee(child);
+							dominationMap.get(child).addDominator(dominator);
+						}
 					}
 				}
 				if (!visited.containsKey(child)) {
