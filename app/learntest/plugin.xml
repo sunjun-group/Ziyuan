@@ -23,6 +23,11 @@
             id="learntest.command.codeCoverage"
             name="Generate code coverage">
       </command>
+      <command
+            defaultHandler="learntest.plugin.handler.SetterMethodGenerationHandler"
+            id="learntest.command.generateSetter"
+            name="Generate Setter Method">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus" id="learntestMenu">
@@ -44,7 +49,12 @@
             </command>
             <command
                   commandId="learntest.command.changeModifier"
-                  label="Chnage Modifier to Public"
+                  label="Change Modifier to Public"
+                  style="push">
+            </command>
+            <command
+                  commandId="learntest.command.generateSetter"
+                  label="Generate Setter Method for Fields"
                   style="push">
             </command>
             <command
