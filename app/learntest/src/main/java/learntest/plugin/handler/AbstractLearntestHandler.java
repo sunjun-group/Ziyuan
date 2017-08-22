@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Queue;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -31,13 +32,11 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.jacop.scala.node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.CfgJaCoCoConfigs;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
-import dataPoint2Sample.DataRunner;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.JDartLearntest;
 import learntest.core.LearnTestParams;
@@ -46,7 +45,6 @@ import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.TargetClass;
 import learntest.core.commons.data.classinfo.TargetMethod;
-import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.exception.LearnTestException;
 import learntest.core.machinelearning.CfgNodeDomainInfo;
 import learntest.core.machinelearning.FormulaInfo;
@@ -57,7 +55,6 @@ import learntest.plugin.utils.IResourceUtils;
 import learntest.plugin.utils.IStatusUtils;
 import learntest.plugin.utils.JdartConstants;
 import learntest.plugin.utils.LearnTestUtil;
-import mosek.Env.checkconvexitytype;
 import sav.common.core.Constants;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
@@ -205,13 +202,6 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 	protected Trial evaluateLearntestForSingleMethod(LearnTestParams params) {
 		try {
-			/** data point runner example */
-//			dataPoint2Sample.SimpleLearntest learntest = new dataPoint2Sample.SimpleLearntest(getAppClasspath());
-//			learntest.run(params);
-//			List<double[]> data = new LinkedList<>();
-//			data.add(new double[]{2,2,2});
-//			new DataRunner(learntest).runData(data, learntest.initProbes.getOriginalVars());
-			/** data point runner example */
 			
 			log.info("");
 			log.info("WORKING METHOD: {}, line {}", params.getTargetMethod().getMethodFullName(),
@@ -259,60 +249,50 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	}
 
 	private void setBetterBranch(RunTimeInfo l2tAverageInfo, RunTimeInfo ranAverageInfo) {
-		log.info("l2t");
-		log.info("true branch : ");
+		StringBuffer sBuffer = new StringBuffer();
+		sBuffer.append("l2t covered branch ============================= \n");
+		sBuffer.append("true branch : \n");
 		for (Entry<String, Collection<BreakpointValue>> entry : l2tAverageInfo.getTrueSample().entrySet()){
-			log.info(entry.getKey()+" "+":"+entry.getValue().size());
-			log.info(entry.getValue().toString());
+			sBuffer.append(entry.getKey()+" "+":"+entry.getValue().size()+"\n"+entry.getValue().toString()+"\n");
 		}
-		log.info("false branch : ");
+		
+		sBuffer.append("false branch : \n");
 		for (Entry<String, Collection<BreakpointValue>> entry : l2tAverageInfo.getFalseSample().entrySet()){
-			log.info(entry.getKey()+" "+":"+entry.getValue().size());
-			log.info(entry.getValue().toString());
+			sBuffer.append(entry.getKey()+" "+":"+entry.getValue().size()+"\n"+entry.getValue().toString()+"\n");
 		}
-		log.info("ran");
-		log.info("true branch : ");
+		
+		sBuffer.append("ran covered branch ============================= \n");
+		sBuffer.append("true branch : \n");
 		for (Entry<String, Collection<BreakpointValue>> entry : ranAverageInfo.getTrueSample().entrySet()){
-			log.info(entry.getKey()+" "+":"+entry.getValue().size());
-			log.info(entry.getValue().toString());
+			sBuffer.append(entry.getKey()+" "+":"+entry.getValue().size()+"\n"+entry.getValue().toString()+"\n");
 		}
-		log.info("false branch : ");
+		
+		sBuffer.append("false branch : \n");
 		for (Entry<String, Collection<BreakpointValue>> entry : ranAverageInfo.getFalseSample().entrySet()){
-			log.info(entry.getKey()+" "+":"+entry.getValue().size());
-			log.info(entry.getValue().toString());
+			sBuffer.append(entry.getKey()+" "+":"+entry.getValue().size()+"\n"+entry.getValue().toString()+"\n");
 		}
+		RunTimeInfo.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
 
-		log.info("\nshow different branch if l2t has learned formula:");
 		HashMap<CfgNode, CfgNodeDomainInfo> domainMap = l2tAverageInfo.getDomainMap();
 		StringBuffer l2tSb = new StringBuffer(), ranSb = new StringBuffer();
+		HashMap<CfgNode, Boolean> visited = new HashMap<>();
 		for (FormulaInfo info : l2tAverageInfo.getLearnedFormulas()){
-			if (info.getLearnedState() == info.VALID) {
-				String formula = info.getTrueFalseFormula().get(info.getTrueFalseFormula().size()-1);
-				for (CfgNode dominatee : domainMap.get(info.getNode()).getDominatees()){
-					log.info(dominatee + ", dominator node : " + info.getNode());
-					Collection<BreakpointValue> ranF = ranAverageInfo.getFalseSample().get(dominatee.toString()), 
-							ranT = ranAverageInfo.getTrueSample().get(dominatee.toString()),
-							l2tF = l2tAverageInfo.getFalseSample().get(dominatee.toString()), 
-							l2tT = l2tAverageInfo.getTrueSample().get(dominatee.toString());
-					log.info("if ran better than l2t in false :");
-					if (checkIfBetter(ranF, l2tF)) {
-						l2tSb.append("false : "+dominatee+" "+ formula +";");
+			if (!visited.containsKey(info.getNode()) 
+					&& info.getLearnedState() == info.VALID) {
+				Queue<CfgNode> queue = new LinkedList<>();
+				queue.add(info.getNode());
+				recordBetterInfo(info.getNode(), domainMap,
+						l2tSb, ranSb, info, ranAverageInfo, l2tAverageInfo);	
+				while (!queue.isEmpty()) {
+					CfgNode node = queue.poll();
+					for (CfgNode dominatee : domainMap.get(node).getDominatees()){					
+						if (!visited.containsKey(dominatee)) {
+							recordBetterInfo(dominatee, domainMap, 
+									l2tSb, ranSb, info, ranAverageInfo, l2tAverageInfo);		
+							queue.add(dominatee);
+						}				
 					}
-					
-					log.info("if ran better than l2t in true :");
-					if (checkIfBetter(ranT, l2tT)) {
-						l2tSb.append("true : "+dominatee+" "+ formula +";");
-					}
-					
-					log.info("if l2t better than randoop in false :");
-					if (checkIfBetter(l2tF, ranF)) {
-						ranSb.append("false : "+dominatee+" "+ formula +";");
-					}
-					
-					log.info("if l2t better than randoop in true :");
-					if (checkIfBetter(l2tT, ranT)) {
-						ranSb.append("true : "+dominatee+" "+ formula +";");
-					}
+					visited.put(node, true);
 				}
 			}
 		}
@@ -320,13 +300,56 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		l2tAverageInfo.randWorseThanl2t += ranSb.toString();
 	}
 
-	private boolean checkIfBetter(Collection<BreakpointValue> first, Collection<BreakpointValue> second) {
+	private void recordBetterInfo(CfgNode dominatee, HashMap<CfgNode,CfgNodeDomainInfo> domainMap, StringBuffer l2tSb, StringBuffer ranSb, 
+			FormulaInfo info, RunTimeInfo ranAverageInfo, RunTimeInfo l2tAverageInfo) {
+		StringBuffer sBuffer = new StringBuffer();
+		String formula = info.getTrueFalseFormula().get(info.getTrueFalseFormula().size()-1);
+		CfgNode ancient = info.getNode();
+		List<CfgNode> dominators = domainMap.get(dominatee).getDominators();
+				
+		sBuffer.append("differen branch data ponits : =========================================\n");
+		sBuffer.append(dominatee + ", ancient node : " + info.getNode()+"\n");
+		Collection<BreakpointValue> ranF = ranAverageInfo.getFalseSample().get(dominatee.toString()), 
+				ranT = ranAverageInfo.getTrueSample().get(dominatee.toString()),
+				l2tF = l2tAverageInfo.getFalseSample().get(dominatee.toString()), 
+				l2tT = l2tAverageInfo.getTrueSample().get(dominatee.toString());
+
+		sBuffer.append("if ran better than l2t in false :"+"\n");
+		if (checkIfBetter(ranF, l2tF, sBuffer)) {
+			l2tSb.append("false : "+dominatee+", ancient node : " + ancient +","+ formula);
+			l2tSb.append(", domainator nodes : " + dominators  +";");
+		}
+
+
+		sBuffer.append("if ran better than l2t in true :"+"\n");
+		if (checkIfBetter(ranT, l2tT, sBuffer)) {
+			l2tSb.append("true : "+dominatee+", ancient node : " + ancient +","+ formula);
+			l2tSb.append(", domainator nodes : " + dominators  +";");
+		}
+
+
+		sBuffer.append("if l2t better than randoop in false :"+"\n");
+		if (checkIfBetter(l2tF, ranF, sBuffer)) {
+			ranSb.append("false : "+dominatee+", ancient node : " + ancient +","+ formula);
+			l2tSb.append(", domainator nodes : " + dominators +";");
+		}
+
+
+		sBuffer.append("if l2t better than randoop in true :"+"\n");
+		if (checkIfBetter(l2tT, ranT, sBuffer)) {
+			ranSb.append("true : "+dominatee+", ancient node : " + ancient +","+ formula);
+			l2tSb.append(", domainator nodes : " + dominators +";");
+		}
+		
+		RunTimeInfo.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
+	}
+
+	private boolean checkIfBetter(Collection<BreakpointValue> first, Collection<BreakpointValue> second, StringBuffer sBuffer) {
 
 		if (null!=first && first.size() > 0 &&  
 				(null == second || second.size()==0)) {
-			StringBuffer sBuffer = new StringBuffer();
-			sBuffer.append(first);
-			log.info(sBuffer.toString());
+			log.info("size : "+first.size());
+			sBuffer.append(first+"\n");
 			return true;
 		}
 		return false;

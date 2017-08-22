@@ -18,6 +18,7 @@ import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.LearningMediator;
+import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.decision.BranchType;
 import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
@@ -26,9 +27,8 @@ import learntest.core.commons.data.decision.IDecisionNode;
 import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
-import learntest.core.machinelearning.sampling.IlpSelectiveSampling;
+import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
-import libsvm.core.Machine.DataPoint;
 import sav.common.core.SavException;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
@@ -94,7 +94,7 @@ public class LearnedDataProcessor {
 			if (selectResult == null) {
 				continue;
 			}
-			learner.recordSample(decisionProbes, selectResult);
+			learner.recordSample(decisionProbes, selectResult, learner.getLogFile());
 			
 			INodeCoveredData selectData = selectResult.getNewData(nodeProbe);
 			if (!isLoop) {
@@ -133,26 +133,29 @@ public class LearnedDataProcessor {
 	}
 
 	public SamplingResult sampleForModel(DecisionNodeProbe nodeProbe, List<ExecVar> originalVars,
-			OrCategoryCalculator preconditions, List<Divider> learnedDividers)
+			OrCategoryCalculator preconditions, List<Divider> learnedDividers, String logFile)
 			throws SavException {
 		StringBuffer sBuffer = new StringBuffer();
+		sBuffer.append("vars : "+originalVars+"\n");
 		sBuffer.append("select sample with precondition : ");
+		for (List<CategoryCalculator> list : preconditions.getCalculators()) {
+			sBuffer.append("(");
+			for (CategoryCalculator cc : list) {
+				sBuffer.append(cc);
+				sBuffer.append("&&");
+			}
+			sBuffer.append(")||");
+		}
+		sBuffer.append("\nselect sample with learnedDividers : ");
 		if (learnedDividers != null) {
 			for (Divider d : learnedDividers) {
 				sBuffer.append(d+",");
 			}
 		}
 		log.info(sBuffer.toString());
+		sBuffer.append("\n");
+		RunTimeInfo.write(logFile, sBuffer.toString());
 		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions, learnedDividers);
 	}
 	
-	public SamplingResult getSampleOfInitCase(BreakpointData result, List<ExecVar> vars) throws SavException {
-		List<double[]> list = new LinkedList<>();
-		for (BreakpointValue bpv : result.getAllValues()) {
-			double[] values = bpv.getAllValues();
-			list.add(values);
-		}
-		return selectiveSampling.runData(list, vars);
-		
-	}
 }

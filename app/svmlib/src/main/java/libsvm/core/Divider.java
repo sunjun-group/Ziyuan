@@ -104,4 +104,10 @@ public class Divider {
 		linearExpr[linearExpr.length - 1] = theta0;
 		return linearExpr;
 	}
+
+	public boolean isRounded() {
+		return isRounded;
+	}
+	
+	
 }

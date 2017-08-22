@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Queue;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
-import sun.util.logging.resources.logging;
 
 /**
  * @author ZhangHr
@@ -53,11 +52,7 @@ public class CfgDomain {
 				}
 			}
 		}
-		for (CfgNodeDomainInfo info : dominationMap.values()) {
-			if (!info.dominatees.isEmpty()) {
-				log.info(info+"\n");
-			}
-		}
+		
 		return dominationMap;
 	}
 

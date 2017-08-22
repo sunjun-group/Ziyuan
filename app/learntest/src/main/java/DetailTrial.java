@@ -6,6 +6,7 @@ public class DetailTrial {
 	private int line;
 	private double randoop, l2t, advantage;
 	private String l2tBetter, ranBetter;
+	private int learnedState;
 	public String getMethodName() {
 		return methodName;
 	}
@@ -47,6 +48,12 @@ public class DetailTrial {
 	}
 	public void setRanBetter(String ranBetter) {
 		this.ranBetter = ranBetter;
+	}
+	public int getLearnedState() {
+		return learnedState;
+	}
+	public void setLearnedState(int learnedState) {
+		this.learnedState = learnedState;
 	}
 	
 }

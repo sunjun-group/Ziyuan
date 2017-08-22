@@ -101,7 +101,7 @@ public class DetailExcelReader extends ExcelReader {
 		MethodTrial trial = new MethodTrial();
 		trial.setMethodName(getStringCellValue(row, TrialHeader.METHOD_NAME));
 		trial.setLine(getIntCellValue(row, TrialHeader.METHOD_START_LINE));
-		trial.setAverageAdv(getDoubleCellValue(row, TrialHeader.VALID_COVERAGE_ADV));
+		trial.setValidCoverageAdv(getDoubleCellValue(row, TrialHeader.VALID_COVERAGE_ADV));
 
 		for (int i = 0; i < 5; i++) {
 			DetailTrial dTrial = new DetailTrial();
@@ -110,6 +110,7 @@ public class DetailExcelReader extends ExcelReader {
 			switch (i) {
 			case 0:
 				if (row.getCell(FIRST_TRIAL_ADV.getCellIdx()) != null) {
+					dTrial.setLearnedState(getIntCellValue(row, FIRST_TRIAL_L));
 					dTrial.setAdvantage(getDoubleCellValue(row, FIRST_TRIAL_ADV));
 					dTrial.setL2t(getDoubleCellValue(row, FIRST_TRIAL_L2T));
 					dTrial.setRandoop(getDoubleCellValue(row, FIRST_TRIAL_R));
@@ -120,6 +121,7 @@ public class DetailExcelReader extends ExcelReader {
 				break;
 			case 1:
 				if (row.getCell(SECOND_TRIAL_ADV.getCellIdx()) != null) {
+					dTrial.setLearnedState(getIntCellValue(row, SECOND_TRIAL_L));
 					dTrial.setAdvantage(getDoubleCellValue(row, SECOND_TRIAL_ADV));
 					dTrial.setL2t(getDoubleCellValue(row, SECOND_TRIAL_L2T));
 					dTrial.setRandoop(getDoubleCellValue(row, SECOND_TRIAL_R));
@@ -130,6 +132,7 @@ public class DetailExcelReader extends ExcelReader {
 				break;
 			case 2:
 				if (row.getCell(THIRD_TRIAL_ADV.getCellIdx()) != null) {
+					dTrial.setLearnedState(getIntCellValue(row, THIRD_TRIAL_L));
 					dTrial.setAdvantage(getDoubleCellValue(row, THIRD_TRIAL_ADV));
 					dTrial.setL2t(getDoubleCellValue(row, THIRD_TRIAL_L2T));
 					dTrial.setRandoop(getDoubleCellValue(row, THIRD_TRIAL_R));
@@ -140,6 +143,7 @@ public class DetailExcelReader extends ExcelReader {
 				break;
 			case 3:
 				if (row.getCell(FORTH_TRIAL_ADV.getCellIdx()) != null) {
+					dTrial.setLearnedState(getIntCellValue(row, FORTH_TRIAL_L));
 					dTrial.setAdvantage(getDoubleCellValue(row, FORTH_TRIAL_ADV));
 					dTrial.setL2t(getDoubleCellValue(row, FORTH_TRIAL_L2T));
 					dTrial.setRandoop(getDoubleCellValue(row, FORTH_TRIAL_R));
@@ -150,6 +154,7 @@ public class DetailExcelReader extends ExcelReader {
 				break;
 			case 4:
 				if (row.getCell(FIFTH_TRIAL_ADV.getCellIdx()) != null) {
+					dTrial.setLearnedState(getIntCellValue(row, FIFTH_TRIAL_L));
 					dTrial.setAdvantage(getDoubleCellValue(row, FIFTH_TRIAL_ADV));
 					dTrial.setL2t(getDoubleCellValue(row, FIFTH_TRIAL_L2T));
 					dTrial.setRandoop(getDoubleCellValue(row, FIFTH_TRIAL_R));

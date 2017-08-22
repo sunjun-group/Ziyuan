@@ -29,5 +29,10 @@ public class MultiDividerBasedCategoryCalculator implements CategoryCalculator {
 	public List<Divider> getDividers() {
 		return dividers;
 	}
+	
+	@Override
+	public String toString() {
+		return dividers.toString();
+	}
 
 }

@@ -1,8 +1,13 @@
 package libsvm.extension;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import libsvm.svm_model;
 import libsvm.core.Category;
@@ -14,9 +19,7 @@ import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.Formula;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import sav.strategies.dto.execute.value.ExecVarType;
 
 /**
  * This machine tries to separate the positive points from negative points by
@@ -134,7 +137,7 @@ public class PositiveSeparationMachine extends Machine {
 		List<DataPoint> trainingData = (positives.size() > negatives.size()) ? negatives : positives;
 		List<DataPoint> selectionData = (positives.size() > negatives.size()) ? positives : negatives;
 
-		List<DataPoint> allData = new ArrayList<>();
+		List<DataPoint> allData = new ArrayList<DataPoint>();
 		allData.addAll(trainingData);
 		allData.addAll(selectionData);
 		super.train(allData);
@@ -179,7 +182,7 @@ public class PositiveSeparationMachine extends Machine {
 	}
 
 	private List<DataPoint> select(int limit, List<DataPoint> selectionData, List<DataPoint> trainingData) {
-		List<DataPoint> list = new ArrayList<>();
+		List<DataPoint> list = new ArrayList<DataPoint>();
 		for (int i = 0; i < limit; i++) {
 			DataPoint p = negativePointSelection.select(selectionData, trainingData);
 			list.add(p);
@@ -268,6 +271,7 @@ public class PositiveSeparationMachine extends Machine {
 		return str.toString();
 	}
 
+	@Deprecated
 	public List<Divider> getLearnedDividers() {
 		List<Divider> roundDividers = new ArrayList<Divider>();
 		for (svm_model learnModel : this.learnedModels) {
@@ -298,6 +302,57 @@ public class PositiveSeparationMachine extends Machine {
 		}
 
 		return formula;
+	}
+
+	/**
+	 * targetVars is subset of originalVars, because Divider is reused by Precondition,
+	 * complete Divider of targetVars  
+	 * 
+	 * @param targetVars
+	 * @param originalVars
+	 * @return
+	 */
+	public List<Divider> getFullLearnedDividers(List<String> targetLabels, List<ExecVar> originalVars) {
+		List<ExecVar> learningVars = new LinkedList<ExecVar>();
+		learningVars.addAll(originalVars);
+//		learningVars.addAll(createPolyClassifierVars(originalVars));
+		
+		List<Divider> dividers = getLearnedDividers();		
+		if (targetLabels.size() == learningVars.size()) {
+			return dividers;
+		}
+		
+		List<Divider> completeDividers = new ArrayList<Divider>(dividers.size());
+		for (Divider divider : dividers) {
+			double[] thetas = new double[learningVars.size()];
+			double[] targetThetas = divider.getThetas();
+			int j = 0;
+			
+			for (int i = 0; i < thetas.length; i++) {
+				if (j<targetLabels.size() && learningVars.get(i).getLabel().equals(targetLabels.get(j))) {
+					thetas[i] = targetThetas[j];
+					j++;
+				}else {
+					thetas[i] = 0;
+				}
+			}
+			Divider divider2 = new Divider(thetas, divider.getTheta0(), divider.isRounded());
+			completeDividers.add(divider2);
+		}
+		return completeDividers;
+	}
+
+	private Collection<? extends ExecVar> createPolyClassifierVars(List<ExecVar> orgVars) {
+		List<ExecVar> polyClassifierVars = new ArrayList<ExecVar>(orgVars);
+		int size = orgVars.size();
+		for (int i = 0; i < size; i++) {
+			ExecVar var = orgVars.get(i);
+			for (int j = i; j < size; j++) {
+				polyClassifierVars
+						.add(new ExecVar(var.getLabel() + " * " + orgVars.get(j).getLabel(), ExecVarType.DOUBLE));
+			}
+		}
+		return polyClassifierVars;
 	}
 
 }

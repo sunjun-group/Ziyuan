@@ -392,4 +392,12 @@ public class DecisionProbes extends CfgCoverage {
 	public TargetMethod getTargetMethod() {
 		return targetMethod;
 	}
+
+	public void setOriginalVars(List<ExecVar> originalVars) {
+		this.originalVars = originalVars;
+	}
+
+	public void setLabels(List<String> labels) {
+		this.labels = labels;
+	}
 }
