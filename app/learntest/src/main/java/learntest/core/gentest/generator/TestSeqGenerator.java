@@ -146,16 +146,21 @@ public class TestSeqGenerator {
 			ISelectedVariable variable = varMap.get(receiver);
 			if (variable == null) {
 				IType type = typeMap.get(classMap.get(receiver));
-				if (type.isArray() && parts.length == 2 && parts[1].equals("length")
-						&& VarArrayType.getDimension((VarArrayType)type) == 1) {
-					/* only try to change length for an array with dimension = 1 */
-					int newVal = value < 0 ? 0 : (int)value;
-					variable = arrayValueGenerator.generate(type, firstVarIdx, newVal);
-					sequence.append(variable);
-					firstVarIdx += variable.getNewVariables().size();
-					varMap.put(receiver, variable);
-					solution[idx] = newVal ;
-					return firstVarIdx;
+				if (type.isArray()) {
+					if (parts.length == 2 && parts[1].equals("length")
+							&& VarArrayType.getDimension((VarArrayType)type) == 1) {
+						/* only try to change length for an array with dimension = 1 */
+						int newVal = value < 0 ? 0 : (int)value;
+						variable = arrayValueGenerator.generate(type, firstVarIdx, newVal);
+						sequence.append(variable);
+						firstVarIdx += variable.getNewVariables().size();
+						varMap.put(receiver, variable);
+						solution[idx] = newVal ;
+						return firstVarIdx;
+					} else {
+						failToSetIdxies.add(idx);
+						return firstVarIdx;
+					}
 				} else {
 					variable = valueGenerator.generate(typeMap.get(classMap.get(receiver)), firstVarIdx, true);
 					sequence.append(variable);

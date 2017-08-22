@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import libsvm.svm_model;
 import libsvm.core.Category;
 import libsvm.core.Divider;
@@ -17,9 +20,6 @@ import sav.common.core.formula.Formula;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This machine tries to separate the positive points from negative points by
@@ -137,7 +137,7 @@ public class PositiveSeparationMachine extends Machine {
 		List<DataPoint> trainingData = (positives.size() > negatives.size()) ? negatives : positives;
 		List<DataPoint> selectionData = (positives.size() > negatives.size()) ? positives : negatives;
 
-		List<DataPoint> allData = new ArrayList<>();
+		List<DataPoint> allData = new ArrayList<DataPoint>();
 		allData.addAll(trainingData);
 		allData.addAll(selectionData);
 		super.train(allData);
@@ -182,7 +182,7 @@ public class PositiveSeparationMachine extends Machine {
 	}
 
 	private List<DataPoint> select(int limit, List<DataPoint> selectionData, List<DataPoint> trainingData) {
-		List<DataPoint> list = new ArrayList<>();
+		List<DataPoint> list = new ArrayList<DataPoint>();
 		for (int i = 0; i < limit; i++) {
 			DataPoint p = negativePointSelection.select(selectionData, trainingData);
 			list.add(p);
@@ -313,7 +313,7 @@ public class PositiveSeparationMachine extends Machine {
 	 * @return
 	 */
 	public List<Divider> getFullLearnedDividers(List<String> targetLabels, List<ExecVar> originalVars) {
-		List<ExecVar> learningVars = new LinkedList<>();
+		List<ExecVar> learningVars = new LinkedList<ExecVar>();
 		learningVars.addAll(originalVars);
 //		learningVars.addAll(createPolyClassifierVars(originalVars));
 		
@@ -322,7 +322,7 @@ public class PositiveSeparationMachine extends Machine {
 			return dividers;
 		}
 		
-		List<Divider> completeDividers = new ArrayList<>(dividers.size());
+		List<Divider> completeDividers = new ArrayList<Divider>(dividers.size());
 		for (Divider divider : dividers) {
 			double[] thetas = new double[learningVars.size()];
 			double[] targetThetas = divider.getThetas();
