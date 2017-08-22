@@ -10,6 +10,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.ArrayType;
@@ -38,24 +44,78 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
-import learntest.core.LearnTestParams;
 import learntest.plugin.utils.LearnTestUtil;
 
 public class SetterMethodGenerationHandler extends AbstractLearntestHandler {
 
-	
-	
-	@SuppressWarnings("rawtypes")
 	@Override
 	protected IStatus execute(IProgressMonitor monitor) {
-		LearnTestParams params = initLearntestParamsFromPreference();
+		//LearnTestParams params = initLearntestParamsFromPreference();
+		//CompilationUnit cu = LearnTestUtil.findCompilationUnitInProject(params.getTargetMethod().getClassName());
 		
-		CompilationUnit cu = LearnTestUtil.findCompilationUnitInProject(params.getTargetMethod().getClassName());
+		final List<IPackageFragmentRoot> roots = LearnTestUtil.findAllPackageRootInProject();
+		Job job = new Job("Generating setter method") {
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					for(IPackageFragmentRoot root: roots){
+						for (IJavaElement element : root.getChildren()) {
+							if (element instanceof IPackageFragment) {
+								generateSetter((IPackageFragment) element);
+							}
+						}						
+					}
+					
+				} catch (JavaModelException e) {
+					e.printStackTrace();
+				}
+
+				return Status.OK_STATUS;
+			}
+
+				
+			private int generateSetter(IPackageFragment pack) throws JavaModelException {
+				int sum = 0;
+				
+				for (IJavaElement javaElement : pack.getChildren()) {
+					if (javaElement instanceof IPackageFragment) {
+						generateSetter((IPackageFragment) javaElement);
+					} else if (javaElement instanceof ICompilationUnit) {
+						ICompilationUnit icu = (ICompilationUnit) javaElement;
+						CompilationUnit cu = LearnTestUtil.convertICompilationUnitToASTNode(icu);
+
+						generateSetterMethod(cu);
+					}
+				}
+
+				return sum;
+			}
+
+		};
+
+		job.schedule();
+
+		return Status.OK_STATUS;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private void generateSetterMethod(CompilationUnit cu){
 		List types = cu.types();
 		if(!types.isEmpty()){
 			AbstractTypeDeclaration atype = (AbstractTypeDeclaration) types.get(0);
 			if(atype instanceof TypeDeclaration){
 				TypeDeclaration type = (TypeDeclaration)atype;
+				
+				for(Object obj: type.modifiers()){
+					if(obj instanceof Modifier){
+						Modifier mod = (Modifier)obj;
+						if(mod.isAbstract()){
+							return;
+						}
+					}
+				}
+				
 				for(FieldDeclaration field: type.getFields()){
 					String supposedSetterMethodName = getSupposedSetterMethodName(field);
 					if(doesNotHaveSetter(field, supposedSetterMethodName, type)){
@@ -72,13 +132,20 @@ public class SetterMethodGenerationHandler extends AbstractLearntestHandler {
 				}
 			}
 		}
-		
-		
-		return Status.OK_STATUS;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void generateSetterMethod(TypeDeclaration type, FieldDeclaration field, String supposedSetterMethodName) throws CoreException, MalformedTreeException, BadLocationException {
 		String fieldName = getFieldName(field);
+		
+		for(Object obj: field.modifiers()){
+			if(obj instanceof Modifier){
+				Modifier mod = (Modifier)obj;
+				if(mod.getKeyword().equals(ModifierKeyword.FINAL_KEYWORD)){
+					return;
+				}
+			}
+		}
 		
 		AST ast = type.getAST();
 		ASTRewrite astRewrite = ASTRewrite.create(ast);
@@ -109,6 +176,7 @@ public class SetterMethodGenerationHandler extends AbstractLearntestHandler {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private MethodDeclaration createSetterMethod(FieldDeclaration field, String supposedSetterMethodName, String fieldName,
 			AST ast) {
 		MethodDeclaration method = ast.newMethodDeclaration();
