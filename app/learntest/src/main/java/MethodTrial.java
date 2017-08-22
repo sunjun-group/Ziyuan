@@ -8,7 +8,7 @@ public class MethodTrial {
 	private List<DetailTrial> trials = new ArrayList<>(5);
 	private String methodName;
 	private int line;
-	private double averageAdv;
+	private double validCoverageAdv;
 	public List<DetailTrial> getTrials() {
 		return trials;
 	}
@@ -27,11 +27,11 @@ public class MethodTrial {
 	public void setLine(int line) {
 		this.line = line;
 	}
-	public double getAverageAdv() {
-		return averageAdv;
+	public double getValidCoverageAdv() {
+		return validCoverageAdv;
 	}
-	public void setAverageAdv(double averageAdv) {
-		this.averageAdv = averageAdv;
+	public void setValidCoverageAdv(double averageAdv) {
+		this.validCoverageAdv = averageAdv;
 	}
 	
 }
