@@ -10,12 +10,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.ArrayType;
@@ -44,57 +38,59 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
+import learntest.core.LearnTestParams;
 import learntest.plugin.utils.LearnTestUtil;
 
 public class SetterMethodGenerationHandler extends AbstractLearntestHandler {
 
 	@Override
 	protected IStatus execute(IProgressMonitor monitor) {
-		//LearnTestParams params = initLearntestParamsFromPreference();
-		//CompilationUnit cu = LearnTestUtil.findCompilationUnitInProject(params.getTargetMethod().getClassName());
+		LearnTestParams params = initLearntestParamsFromPreference();
+		CompilationUnit cu = LearnTestUtil.findCompilationUnitInProject(params.getTargetMethod().getClassName());
+		generateSetterMethod(cu);
 		
-		final List<IPackageFragmentRoot> roots = LearnTestUtil.findAllPackageRootInProject();
-		Job job = new Job("Generating setter method") {
-
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					for(IPackageFragmentRoot root: roots){
-						for (IJavaElement element : root.getChildren()) {
-							if (element instanceof IPackageFragment) {
-								generateSetter((IPackageFragment) element);
-							}
-						}						
-					}
-					
-				} catch (JavaModelException e) {
-					e.printStackTrace();
-				}
-
-				return Status.OK_STATUS;
-			}
-
-				
-			private int generateSetter(IPackageFragment pack) throws JavaModelException {
-				int sum = 0;
-				
-				for (IJavaElement javaElement : pack.getChildren()) {
-					if (javaElement instanceof IPackageFragment) {
-						generateSetter((IPackageFragment) javaElement);
-					} else if (javaElement instanceof ICompilationUnit) {
-						ICompilationUnit icu = (ICompilationUnit) javaElement;
-						CompilationUnit cu = LearnTestUtil.convertICompilationUnitToASTNode(icu);
-
-						generateSetterMethod(cu);
-					}
-				}
-
-				return sum;
-			}
-
-		};
-
-		job.schedule();
+//		final List<IPackageFragmentRoot> roots = LearnTestUtil.findAllPackageRootInProject();
+//		Job job = new Job("Generating setter method") {
+//
+//			@Override
+//			protected IStatus run(IProgressMonitor monitor) {
+//				try {
+//					for(IPackageFragmentRoot root: roots){
+//						for (IJavaElement element : root.getChildren()) {
+//							if (element instanceof IPackageFragment) {
+//								generateSetter((IPackageFragment) element);
+//							}
+//						}						
+//					}
+//					
+//				} catch (JavaModelException e) {
+//					e.printStackTrace();
+//				}
+//
+//				return Status.OK_STATUS;
+//			}
+//
+//				
+//			private int generateSetter(IPackageFragment pack) throws JavaModelException {
+//				int sum = 0;
+//				
+//				for (IJavaElement javaElement : pack.getChildren()) {
+//					if (javaElement instanceof IPackageFragment) {
+//						generateSetter((IPackageFragment) javaElement);
+//					} else if (javaElement instanceof ICompilationUnit) {
+//						ICompilationUnit icu = (ICompilationUnit) javaElement;
+//						CompilationUnit cu = LearnTestUtil.convertICompilationUnitToASTNode(icu);
+//
+//						generateSetterMethod(cu);
+//					}
+//				}
+//
+//				return sum;
+//			}
+//
+//		};
+//
+//		job.schedule();
 
 		return Status.OK_STATUS;
 	}
@@ -197,7 +193,11 @@ public class SetterMethodGenerationHandler extends AbstractLearntestHandler {
 		SimpleName paramName = ast.newSimpleName(fieldName);
 		svd.setName(paramName);
 		Type fieldType = field.getType();
-		Type paramType = copyType(fieldType, ast);
+		
+		VariableDeclarationFragment frag = (VariableDeclarationFragment) field.fragments().get(0);
+		int extraDimension = frag.getExtraDimensions();
+		
+		Type paramType = copyType(fieldType, ast, extraDimension);
 		if(paramType==null){
 			return null;
 		}
@@ -222,33 +222,39 @@ public class SetterMethodGenerationHandler extends AbstractLearntestHandler {
 		return method;
 	}
 	
-	private Type copyType(Type type, AST ast) {
-		
-		if(type.isSimpleType()){
-			SimpleType sName0 = (SimpleType)type;
-			SimpleName sName = ast.newSimpleName(sName0.getName().getFullyQualifiedName()); 
-			SimpleType sType = ast.newSimpleType(sName);
-			return sType;
+	private Type copyType(Type type, AST ast, int extraDimension) {
+		if(extraDimension==0){
+			if(type.isSimpleType()){
+				SimpleType sName0 = (SimpleType)type;
+				SimpleName sName = ast.newSimpleName(sName0.getName().getFullyQualifiedName()); 
+				SimpleType sType = ast.newSimpleType(sName);
+				return sType;
+			}
+			else if(type.isPrimitiveType()){
+				PrimitiveType pType0 = (PrimitiveType)type;
+				PrimitiveType pType = ast.newPrimitiveType(pType0.getPrimitiveTypeCode());
+				return pType;
+			}
+			else if(type.isQualifiedType()){
+				QualifiedType qType0 = (QualifiedType)type;
+				Type cType0 = qType0.getQualifier();
+				Type cType = copyType(cType0, ast, 0);
+				SimpleName sName0 = qType0.getName();
+				SimpleName sName = ast.newSimpleName(sName0.getIdentifier()); 
+				QualifiedType qType = ast.newQualifiedType(cType, sName);
+				return qType;
+			}
+			else if(type.isArrayType()){
+				ArrayType aType0 = (ArrayType)type;
+				Type eType0 = aType0.getElementType();
+				Type eType = copyType(eType0, ast, 0);
+				ArrayType aType = ast.newArrayType(eType, aType0.getDimensions());
+				return aType;
+			}
 		}
-		else if(type.isPrimitiveType()){
-			PrimitiveType pType0 = (PrimitiveType)type;
-			PrimitiveType pType = ast.newPrimitiveType(pType0.getPrimitiveTypeCode());
-			return pType;
-		}
-		else if(type.isQualifiedType()){
-			QualifiedType qType0 = (QualifiedType)type;
-			Type cType0 = qType0.getQualifier();
-			Type cType = copyType(cType0, ast);
-			SimpleName sName0 = qType0.getName();
-			SimpleName sName = ast.newSimpleName(sName0.getIdentifier()); 
-			QualifiedType qType = ast.newQualifiedType(cType, sName);
-			return qType;
-		}
-		else if(type.isArrayType()){
-			ArrayType aType0 = (ArrayType)type;
-			Type eType0 = aType0.getElementType();
-			Type eType = copyType(eType0, ast);
-			ArrayType aType = ast.newArrayType(eType, aType0.getDimensions());
+		else{
+			Type eType = copyType(type, ast, 0);
+			ArrayType aType = ast.newArrayType(eType, extraDimension);
 			return aType;
 		}
 		
