@@ -18,6 +18,7 @@ import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.LearningMediator;
+import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.decision.BranchType;
 import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
@@ -132,9 +133,10 @@ public class LearnedDataProcessor {
 	}
 
 	public SamplingResult sampleForModel(DecisionNodeProbe nodeProbe, List<ExecVar> originalVars,
-			OrCategoryCalculator preconditions, List<Divider> learnedDividers)
+			OrCategoryCalculator preconditions, List<Divider> learnedDividers, String logFile)
 			throws SavException {
 		StringBuffer sBuffer = new StringBuffer();
+		sBuffer.append("vars : "+originalVars+"\n");
 		sBuffer.append("select sample with precondition : ");
 		for (List<CategoryCalculator> list : preconditions.getCalculators()) {
 			sBuffer.append("(");
@@ -151,6 +153,8 @@ public class LearnedDataProcessor {
 			}
 		}
 		log.info(sBuffer.toString());
+		sBuffer.append("\n");
+		RunTimeInfo.write(logFile, sBuffer.toString());
 		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions, learnedDividers);
 	}
 	

@@ -76,14 +76,24 @@ public class LearnTest extends AbstractLearntest {
 				DecisionProbes initProbes = initProbes(targetMethod, cfgCoverage, result);
 				learningStarted = true;
 				
-				Map<Integer, List<Variable>> relevantVarMap = new CFGBuilder().parsingCFG(getAppClasspath(), targetMethod.getClassName(), targetMethod.getMethodFullName(), targetMethod.getLineNum()).getRelevantVarMap();
+				Map<Integer, List<Variable>> relevantVarMap = null;//new CFGBuilder().parsingCFG(getAppClasspath(), targetMethod.getClassName(), targetMethod.getMethodFullName(), targetMethod.getLineNum()).getRelevantVarMap();
 						
 				DecisionProbes probes = learner.learn(initProbes, result, relevantVarMap);
+				
+				/** In this way, all samples are recorded.
+				 *  But record sample data after sample selecting is also important, 
+				 *  because we may want to see which sample is selected after learning. 
+				 * */
+				learner.getTrueSample().clear();
+				learner.getFalseSample().clear();
+				learner.recordSample(probes, learner.getLogFile());
+				
 				RunTimeInfo info = getRuntimeInfo(probes);
 				if (learner instanceof PrecondDecisionLearner) { 
 					setLearnState((PrecondDecisionLearner)learner, info);
 				}
 				info.setSample(learner);
+				info.setLogFile(learner.getLogFile());
 				return info;
 			}
 		} catch (SAVExecutionTimeOutException e) {

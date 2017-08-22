@@ -305,7 +305,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			log.debug("original vars: {}, targetVars : {}", probes.getOriginalVars(), targetVars);
 			/* after running sampling, probes will be updated as well */
 			SamplingResult sampleResult = dataPreprocessor.sampleForModel(nodeProbe, targetVars,
-					preconditions, mcm.getFullLearnedDividers(mcm.getDataLabels(), orignalVars));
+					preconditions, mcm.getFullLearnedDividers(mcm.getDataLabels(), orignalVars), logFile);
 			if (sampleResult == null) {
 				log.debug("sampling result is null");
 				continue;
@@ -316,7 +316,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			addDataPoint(mcm.getDataLabels(), targetVars,
 					newData.getTrueValues(), newData.getFalseValues(), mcm);
 			recordSample(probes, sampleResult, logFile);
-			System.out.println(mcm.getDataPoints().size());
+
 			mcm.train();
 			Formula tmp = mcm.getLearnedMultiFormula(targetVars, mcm.getDataLabels());
 			log.info("improved the formula: " + tmp);

@@ -49,8 +49,8 @@ public interface IInputLearner {
 			INodeCoveredData newData = sampleResult.getNewData(nodeProbe);
 			Collection<BreakpointValue> trueV = newData.getTrueValues(), falseV = newData.getFalseValues();
 			sBuffer.append(nodeProbe.getNode().toString() + "\n");
-			sBuffer.append("	true data after selective sampling " + trueV.size() + "\n");
-			sBuffer.append("	false data after selective sampling " + falseV.size() + "\n");
+			sBuffer.append("	true data in selective sampling " + trueV.size() +trueV.toString()+ "\n");
+			sBuffer.append("	false data in selective sampling " + falseV.size() +falseV.toString()+ "\n");
 			recordSample(nodeProbe, trueV, getTrueSample());
 			recordSample(nodeProbe, falseV, getFalseSample());
 		}
