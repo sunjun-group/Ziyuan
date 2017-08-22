@@ -97,10 +97,12 @@ public class LearningMediator {
 	}
 	
 	public IInputLearner initDecisionLearner(LearnTestParams params) {
+		String methodName = params.getTargetMethod().getMethodFullName()+"."+params.getTargetMethod().getLineNum();
+		long time = System.currentTimeMillis();
 		if (params.getApproach() == LearnTestApproach.L2T) {
-			return new PrecondDecisionLearner(this);
+			return new PrecondDecisionLearner(this, "E:/hairui/log/"+methodName+".l2t."+time+"."+".log");
 		} else {
-			return new RandomLearner(this, params.getMaxTcs());
+			return new RandomLearner(this, params.getMaxTcs(), "E:/hairui/log/"+methodName+".randoop."+time+"."+".log");
 		}
 	}
 

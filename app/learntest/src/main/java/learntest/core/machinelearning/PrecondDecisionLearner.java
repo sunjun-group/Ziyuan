@@ -26,13 +26,13 @@ import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.AbstractLearningComponent;
 import learntest.core.LearningMediator;
+import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.utils.CfgUtils;
-import learntest.core.commons.utils.MachineLearningUtils;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import learntest.core.machinelearning.sampling.IlpSelectiveSampling;
 import learntest.plugin.utils.Settings;
@@ -64,9 +64,11 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	private HashMap<CfgNode, CfgNodeDomainInfo> dominationMap = new HashMap<>();
 	HashMap<String, Collection<BreakpointValue>> branchTrueRecord = new HashMap<>(), branchFalseRecord = new HashMap<>();
 	List<VarInfo> relevantVars ;
+	private String logFile ;
 
-	public PrecondDecisionLearner(LearningMediator mediator) {
+	public PrecondDecisionLearner(LearningMediator mediator, String logFile) {
 		super(mediator);
+		this.logFile = logFile;
 	}
 
 	public DecisionProbes learn(DecisionProbes inputProbes, BreakpointData bpdata, Map<Integer, List<Variable>> relevantVarMap) throws SavException {
@@ -74,13 +76,23 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		DecisionProbes probes = inputProbes;
 		dataPreprocessor = new LearnedDataProcessor(mediator, inputProbes);
 		dominationMap = new CfgDomain().constructDominationMap(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()));
-		recordSample(inputProbes, dataPreprocessor.getSampleOfInitCase(bpdata, inputProbes.getOriginalVars()));
+		
+		StringBuffer sBuffer = new StringBuffer();
+		sBuffer.append("dominationMap : \n");
+		for (CfgNodeDomainInfo info : dominationMap.values()) {
+			if (!info.dominatees.isEmpty()) {
+				sBuffer.append(info+"\n\n");
+			}
+		}		
+		RunTimeInfo.write(logFile, sBuffer.toString());
+		
 		if (relevantVarMap == null || probes.getCfg().getNodeList().size() != relevantVarMap.size()) {
 			log.debug("The size of CfgNodes is differnt from the size of map!!!!");
 			this.relevantVars = null;
 		}else {
 			this.relevantVars = varsTransform(relevantVarMap, inputProbes.getOriginalVars());
 		}
+		
 		learn(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()), probes, new ArrayList<Integer>(decisionNodes.size()));
 				
 		return probes;
@@ -303,7 +315,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			mcm.getLearnedModels().clear();
 			addDataPoint(mcm.getDataLabels(), targetVars,
 					newData.getTrueValues(), newData.getFalseValues(), mcm);
-			recordSample(probes, sampleResult);
+			recordSample(probes, sampleResult, logFile);
 			System.out.println(mcm.getDataPoints().size());
 			mcm.train();
 			Formula tmp = mcm.getLearnedMultiFormula(targetVars, mcm.getDataLabels());
@@ -377,9 +389,12 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		for (BreakpointValue value : falseV) {
 			addBkp(labels, targetVars, value, Category.NEGATIVE, mcm);
 		}
-		log.info("new data true : " + trueV.toString());
-		log.info("new data false : " + falseV.toString());
-		
+		StringBuffer sBuffer = new StringBuffer();
+		sBuffer.append("add data point to svm : =============================\n");
+		sBuffer.append("new data true : "+trueV.size()+" , "+trueV.toString()+"\n");
+		sBuffer.append("new data false : "+falseV.size()+" , "+falseV.toString()+"\n");		
+
+		RunTimeInfo.write(logFile, sBuffer.toString());
 	}
 
 	private void addBkp(List<String> labels, List<ExecVar> targetVars, BreakpointValue bValue, 
@@ -495,6 +510,11 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 
 	public HashMap<CfgNode, CfgNodeDomainInfo> getDominationMap() {
 		return dominationMap;
+	}
+
+	@Override
+	public String getLogFile() {
+		return logFile;
 	}
 	
 	

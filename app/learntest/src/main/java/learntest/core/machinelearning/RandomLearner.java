@@ -10,26 +10,17 @@ package learntest.core.machinelearning;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.tools.javac.util.Pair;
 
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.LearningMediator;
-import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
-import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
-import libsvm.core.Category;
 import sav.common.core.SavException;
-import sav.strategies.dto.execute.value.ExecVar;
 import variable.Variable;
 
 /**
@@ -41,27 +32,26 @@ public class RandomLearner implements IInputLearner {
 	private LearningMediator mediator;
 	private int maxTcs;
 	HashMap<String, Collection<BreakpointValue>> branchTrueRecord = new HashMap<>(), branchFalseRecord = new HashMap<>();
+	private String logFile;
 	
-	
-	public RandomLearner(LearningMediator mediator, int maxTcs) {
+	public RandomLearner(LearningMediator mediator, int maxTcs, String logFile) {
 		this.mediator = mediator;
 		this.maxTcs = maxTcs;
+		this.logFile = logFile;
 	}
 	
 	@Override
 	public DecisionProbes learn(DecisionProbes inputProbes, BreakpointData bpdata, Map<Integer, List<Variable>> relevantVarMap) throws SavException {
 		DecisionProbes probes = inputProbes;
 		SampleExecutor sampleExecutor = new SampleExecutor(mediator, inputProbes);
-		
-		recordSample(inputProbes, getSampleOfInitCase(bpdata, inputProbes.getOriginalVars(), sampleExecutor));
-		
+
 		SelectiveSampling<SamplingResult> selectiveSampling = new SelectiveSampling<SamplingResult>(sampleExecutor, inputProbes);
 		int tc = maxTcs - probes.getTotalTcs();
 		int failToSelectSample = 0;
 		while (tc > 0) {
 			int sampleTotal = tc < 100 ? tc : 100;
 			SamplingResult sampleResult = selectiveSampling.selectData(inputProbes.getOriginalVars(), null, null, sampleTotal); /** gentest and run test cases*/
-			recordSample(inputProbes, sampleResult);
+			recordSample(inputProbes, sampleResult, logFile);
 			
 			int remainTc = maxTcs - probes.getTotalTcs();
 			if (remainTc == tc) {
@@ -80,15 +70,6 @@ public class RandomLearner implements IInputLearner {
 		return probes;
 	}
 
-	public SamplingResult getSampleOfInitCase(BreakpointData result, List<ExecVar> vars, SampleExecutor sampleExecutor) throws SavException {
-		List<double[]> list = new LinkedList<>();
-		for (BreakpointValue bpv : result.getAllValues()) {
-			double[] values = bpv.getAllValues();
-			list.add(values);
-		}
-		return sampleExecutor.runSamples(list, vars);
-		
-	}
 	public HashMap<String, Collection<BreakpointValue>> getTrueSample(){
 		return branchTrueRecord;
 	}
@@ -96,5 +77,11 @@ public class RandomLearner implements IInputLearner {
 	public HashMap<String, Collection<BreakpointValue>> getFalseSample(){
 		return branchFalseRecord;
 	}
+
+	@Override
+	public String getLogFile() {
+		return logFile;
+	}
+	
 	
 }

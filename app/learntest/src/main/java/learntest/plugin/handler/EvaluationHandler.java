@@ -180,11 +180,11 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			if (!multiTrial.isEmpty()) {
 				try {
 					excelHandler.export(multiTrial);
-					logSuccessfulMethod(targetMethod);
 				} catch (Exception e) {
 					handleException(e);
 				}
 			}
+			logSuccessfulMethod(targetMethod);
 		}
 	}
 

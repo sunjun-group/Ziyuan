@@ -1,23 +1,18 @@
 package learntest.core;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.debug.core.model.Breakpoint;
-
 import cfgcoverage.jacoco.analysis.data.CfgNode;
-import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
-import learntest.core.commons.data.decision.DecisionNodeProbe;
-import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.machinelearning.CfgNodeDomainInfo;
 import learntest.core.machinelearning.FormulaInfo;
 import learntest.core.machinelearning.IInputLearner;
-import learntest.core.machinelearning.iface.ISampleExecutor;
 import sav.common.core.utils.TextFormatUtils;
-import sav.strategies.dto.execute.value.ExecVar;
 
 public class RunTimeInfo {
 	private long time;
@@ -33,6 +28,7 @@ public class RunTimeInfo {
 	private HashMap<String, Collection<BreakpointValue>> trueSample = new HashMap<>(),
 			falseSample = new HashMap<>();
 	private HashMap<CfgNode, CfgNodeDomainInfo> domainMap = new HashMap<>(1);
+	private String logFile;
 	
 	public RunTimeInfo(long time, double coverage, int testCnt) {
 		this.time = time;
@@ -67,6 +63,7 @@ public class RunTimeInfo {
 		trueSample.putAll(subRunInfo.trueSample);
 		falseSample.putAll(subRunInfo.falseSample);
 		domainMap = subRunInfo.domainMap;
+		logFile = subRunInfo.logFile;
 	}
 
 	public long getTime() {
@@ -181,6 +178,29 @@ public class RunTimeInfo {
 		this.domainMap = domainMap;
 	}
 
-	
+	public String getLogFile() {
+		return logFile;
+	}
+
+	public void setLogFile(String logFile) {
+		this.logFile = logFile;
+	}
+
+	public static void write(String file, String log) {
+		FileWriter writer = null;
+		try {
+			writer = new FileWriter(file, true);
+			writer.write(log);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
 	
 }

@@ -190,6 +190,7 @@ public class IlpSelectiveSampling {
 			int heulistNum = heuList.size()* maxSamplesPerSelect/total ,
 					randomNum = randomSamples.size()  * maxSamplesPerSelect/ total,
 					orignalNum = samples.size() * maxSamplesPerSelect/total; 
+			log.info("heulistNum : {}, randomNum : {}, sampleNum : {}", heulistNum, randomNum, orignalNum);
 			samples = limitSamples(samples, orignalNum > 0 ? orignalNum : 1);
 			heuList = limitSamples(heuList, heulistNum > 0 ? heulistNum : 1);
 			randomSamples = limitSamples(randomSamples, randomNum > 0 ? randomNum : 1);

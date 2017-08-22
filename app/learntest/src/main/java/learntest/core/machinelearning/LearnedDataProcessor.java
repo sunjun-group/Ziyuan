@@ -93,7 +93,7 @@ public class LearnedDataProcessor {
 			if (selectResult == null) {
 				continue;
 			}
-			learner.recordSample(decisionProbes, selectResult);
+			learner.recordSample(decisionProbes, selectResult, learner.getLogFile());
 			
 			INodeCoveredData selectData = selectResult.getNewData(nodeProbe);
 			if (!isLoop) {
@@ -154,13 +154,4 @@ public class LearnedDataProcessor {
 		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions, learnedDividers);
 	}
 	
-	public SamplingResult getSampleOfInitCase(BreakpointData result, List<ExecVar> vars) throws SavException {
-		List<double[]> list = new LinkedList<>();
-		for (BreakpointValue bpv : result.getAllValues()) {
-			double[] values = bpv.getAllValues();
-			list.add(values);
-		}
-		return selectiveSampling.runData(list, vars);
-		
-	}
 }
