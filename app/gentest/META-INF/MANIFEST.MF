@@ -170,5 +170,4 @@ Bundle-ClassPath: .,
  lib/reflections-0.9.11.jar,
  lib/spring-core-4.0.3.RELEASE.jar,
  lib/xml-apis-1.0.b2.jar
-Import-Package: sav.strategies.gentest
 Require-Bundle: sav.commons;bundle-version="1.0.0"
