@@ -134,6 +134,7 @@ public class IlpSelectiveSampling {
 			/**
 			 * generate data point on the border of divider
 			 */
+			solver.initRangeIfEmpty(originVars);
 			int selectiveSamplingDataSize = 30;
 			for(int i=0; i<selectiveSamplingDataSize; i++){
 				for (Divider learnedFormula : learnedFormulas) {

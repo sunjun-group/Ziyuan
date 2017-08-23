@@ -292,4 +292,11 @@ public class ProblemSolver {
 		}
 		
 	}
+	
+	public void initRangeIfEmpty(List<ExecVar> vars) {
+		if (minMax.isEmpty()) {
+			Problem problem = ProblemBuilder.buildVarBoundContraint(vars);
+			calculateRanges(problem, vars);
+		}
+	}
 }
