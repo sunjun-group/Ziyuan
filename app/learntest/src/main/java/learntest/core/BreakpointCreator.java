@@ -9,12 +9,18 @@
 package learntest.core;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import learntest.core.commons.data.classinfo.TargetMethod;
+import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.dto.BreakPoint.Variable;
 import sav.strategies.dto.BreakPoint.Variable.VarScope;
+import variable.FieldVar;
+import variable.LocalVar;
 
 /**
  * @author LLT
@@ -53,5 +59,51 @@ public class BreakpointCreator {
 			generalVars.add(var);
 		}
 		return generalVars;
+	}
+
+	public static BreakPoint createMethodEntryBkp(TargetMethod method,
+			Map<Integer, List<variable.Variable>> relevantVarMap) {
+		/* collect general variables for breakpoints */
+		List<Variable> allRelevantVars = toBkpVariables(relevantVarMap);
+		/* collect breakpoints from method cfg */
+		int lineNo = getMethodStartLine(method);
+		BreakPoint bkp = new BreakPoint(method.getClassName(), lineNo);
+		bkp.setVars(allRelevantVars);
+		return bkp;
+	}
+
+	private static List<Variable> toBkpVariables(Map<Integer, List<variable.Variable>> relevantVarMap) {
+		List<variable.Variable> relevantVars = new ArrayList<variable.Variable>();
+		for (List<variable.Variable> relVars : relevantVarMap.values()) {
+			CollectionUtils.addIfNotNullNotExist(relevantVars, relVars);
+		}
+		List<Variable> vars = new ArrayList<Variable>();
+		for (variable.Variable relVar : relevantVars) {
+			Variable var = null;
+			if (relVar instanceof FieldVar) {
+				var = new Variable(relVar.getName(), relVar.getName(), VarScope.THIS);
+			} else if (relVar instanceof LocalVar) {
+				var = new Variable(relVar.getName(), relVar.getName());
+			}
+			if (var != null) {
+				relVar.setVarID(var.getId());
+				vars.add(var);
+			}
+		}
+		/*
+		 * since equal variables in relevantVarMap might not the same object, we
+		 * need this step to update back to the map
+		 */
+		for (List<variable.Variable> relVars : relevantVarMap.values()) {
+			for (variable.Variable relVar : relVars) {
+				for (variable.Variable hasIdVar : relevantVars) {
+					if (hasIdVar.equals(relVar)) {
+						relVar.setVarID(hasIdVar.getVarID());
+						break;
+					}
+				}
+			}
+		}
+		return vars;
 	}
 }

@@ -137,14 +137,11 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			this.offset = integer;
 			this.variables = vars;
 		}
+		
 		public void setExecVar(HashMap<String, ExecVar> execVarMap, List<ExecVar> originalVars) {
 			List<VarInfo> infos = new ArrayList<>(variables.size());
 			for (Variable var : variables) {
-				String label = var.getName();
-				if (var instanceof FieldVar) {
-					label = "this."+label;
-				}
-				ExecVar execVar = execVarMap.get(label);
+				ExecVar execVar = execVarMap.get(var.getVarID());
 				if (execVar != null) {
 					VarInfo info = new VarInfo(originalVars.indexOf(execVar), null);
 					info.execVars = new LinkedList<>();
@@ -160,6 +157,31 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				execVars.add(varInfo.execVars.get(0));
 			}
 		}
+		
+		//llt: backup
+//		public void setExecVar(HashMap<String, ExecVar> execVarMap, List<ExecVar> originalVars) {
+//			List<VarInfo> infos = new ArrayList<>(variables.size());
+//			for (Variable var : variables) {
+//				String label = var.getName();
+//				if (var instanceof FieldVar) {
+//					label = "this."+label;
+//				}
+//				ExecVar execVar = execVarMap.get(label);
+//				if (execVar != null) {
+//					VarInfo info = new VarInfo(originalVars.indexOf(execVar), null);
+//					info.execVars = new LinkedList<>();
+//					info.execVars.add(execVar);
+//					infos.add(info);
+//				}else {
+//					log.info(var + "does not exist in original ExecVars.");
+//				}
+//			}			
+//			infos.sort(new VarInfoComparator()); // keep the sequence in originalVars
+//			execVars = new ArrayList<>(variables.size());
+//			for (VarInfo varInfo : infos) {
+//				execVars.add(varInfo.execVars.get(0));
+//			}
+//		}
 		
 		public String toString() {
 			StringBuffer sb = new StringBuffer();
