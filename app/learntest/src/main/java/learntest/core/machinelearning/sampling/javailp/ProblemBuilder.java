@@ -351,8 +351,8 @@ public class ProblemBuilder {
 					problem.setVarType(var.getLabel(), Double.class);
 					/*problem.setVarLowerBound(var.getLabel(), Long.MIN_VALUE);
 					problem.setVarUpperBound(var.getLabel(), Long.MAX_VALUE);*/
-					problem.setVarLowerBound(var.getLabel(), -100);
-					problem.setVarUpperBound(var.getLabel(), 100);
+					problem.setVarLowerBound(var.getLabel(), -bound);
+					problem.setVarUpperBound(var.getLabel(), bound);
 					break;
 				case SHORT:
 					problem.setVarType(var.getLabel(), Integer.class);

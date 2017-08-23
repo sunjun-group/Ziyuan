@@ -267,7 +267,20 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	}
 
 	private boolean needToLearn(DecisionNodeProbe nodeProbe) {
-		return !nodeProbe.areAllbranchesUncovered() || nodeProbe.needToLearnPrecond();
+//		return !nodeProbe.areAllbranchesUncovered() || nodeProbe.needToLearnPrecond();
+
+		if (!nodeProbe.areAllbranchesUncovered()) {
+			return true;
+		}else {
+			DecisionProbes probes = nodeProbe.getDecisionProbes();
+			for (CfgNode dependentee : dominationMap.get(nodeProbe.getNode()).getDominatees()) {
+				DecisionNodeProbe dependenteeProbe = probes.getNodeProbe(dependentee);
+				if (dependenteeProbe.hasUncoveredBranch()) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 
 	protected void updatePrecondition(DecisionNodeProbe nodeProbe, OrCategoryCalculator preconditions, List<ExecVar> targetVars) throws SavException {

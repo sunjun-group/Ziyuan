@@ -28,5 +28,14 @@ public class MultiNotDividerBasedCategoryCalculator implements CategoryCalculato
 	public List<Divider> getDividers() {
 		return dividers;
 	}
+	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("not divider:");
+		for (Divider divider : dividers) {
+			sb.append(divider+",");
+		}
+		return sb.toString();
+	}
 
 }
