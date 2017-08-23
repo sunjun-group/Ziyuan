@@ -238,7 +238,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			log.info("Result: ");
 			log.info("lt2: {}", l2tAverageInfo);
 			log.info("randoop: {}", ranAverageInfo);
-			printLearnedFormulas(l2tAverageInfo.getLearnedFormulas());
+			printLearnedFormulas(l2tAverageInfo.getLearnedFormulas(), l2tAverageInfo.getLogFile());
 			setBetterBranch(l2tAverageInfo, ranAverageInfo);
 			return new Trial(method.getMethodFullName(), method.getMethodLength(), method.getLineNum(), l2tAverageInfo,
 					ranAverageInfo, jdartInfo);
@@ -253,23 +253,23 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		sBuffer.append("l2t covered branch ============================= \n");
 		sBuffer.append("true branch : \n");
 		for (Entry<String, Collection<BreakpointValue>> entry : l2tAverageInfo.getTrueSample().entrySet()){
-			sBuffer.append(entry.getKey()+" "+":"+entry.getValue().size()+"\n"+entry.getValue().toString()+"\n");
+			sBuffer.append(entry.getKey()+" "+":"+entry.getValue().size()+" "+entry.getValue().toString()+"\n");
 		}
 		
 		sBuffer.append("false branch : \n");
 		for (Entry<String, Collection<BreakpointValue>> entry : l2tAverageInfo.getFalseSample().entrySet()){
-			sBuffer.append(entry.getKey()+" "+":"+entry.getValue().size()+"\n"+entry.getValue().toString()+"\n");
+			sBuffer.append(entry.getKey()+" "+":"+entry.getValue().size()+" "+entry.getValue().toString()+"\n");
 		}
 		
 		sBuffer.append("ran covered branch ============================= \n");
 		sBuffer.append("true branch : \n");
 		for (Entry<String, Collection<BreakpointValue>> entry : ranAverageInfo.getTrueSample().entrySet()){
-			sBuffer.append(entry.getKey()+" "+":"+entry.getValue().size()+"\n"+entry.getValue().toString()+"\n");
+			sBuffer.append(entry.getKey()+" "+":"+entry.getValue().size()+" "+entry.getValue().toString()+"\n");
 		}
 		
 		sBuffer.append("false branch : \n");
 		for (Entry<String, Collection<BreakpointValue>> entry : ranAverageInfo.getFalseSample().entrySet()){
-			sBuffer.append(entry.getKey()+" "+":"+entry.getValue().size()+"\n"+entry.getValue().toString()+"\n");
+			sBuffer.append(entry.getKey()+" "+":"+entry.getValue().size()+" "+entry.getValue().toString()+"\n");
 		}
 		RunTimeInfo.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
 
@@ -356,12 +356,14 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		
 	}
 
-	private void printLearnedFormulas(List<FormulaInfo> list) {
+	private void printLearnedFormulas(List<FormulaInfo> list, String logFile) {
 		StringBuffer sb = new StringBuffer();
+		sb.append("learned formulas : =====================================");
 		for (FormulaInfo formulaInfo : list) {
 			sb.append(formulaInfo + "\n");
 		}
-		log.info("learned formulas : {}", sb.toString());
+		log.info(sb.toString());
+		RunTimeInfo.write(logFile, sb.toString());
 	}
 
 	private RunTimeInfo runJdart(LearnTestParams params) throws Exception {

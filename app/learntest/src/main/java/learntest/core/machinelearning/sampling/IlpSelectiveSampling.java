@@ -174,6 +174,7 @@ public class IlpSelectiveSampling {
 			}
 		}
 		log.debug("selectiveSamplingData : " + samples.size());
+//		log.info("select sample : {}", array2Str(samples));
 		List<double[]> heuList = new LinkedList<>(), randomSamples = new LinkedList<>();
 		for(int i=0; i<2; i++){
 			int bound = 10-(2*iterationTime--);
@@ -195,12 +196,29 @@ public class IlpSelectiveSampling {
 			heuList = limitSamples(heuList, heulistNum > 0 ? heulistNum : 1);
 			randomSamples = limitSamples(randomSamples, randomNum > 0 ? randomNum : 1);
 		}
+		log.info("helist : {}", array2Str(heuList));
+		log.info("randomPointsWithPrecondition : {}", array2Str(randomSamples));
+		log.info("original sample : {}", array2Str(samples));
 		
 		samples.addAll(heuList);
 		samples.addAll(randomSamples);
 		return samples;
 	}
 	
+	private String array2Str(List<double[]> list) {
+
+		StringBuffer sBuffer = new StringBuffer();
+		for (double[] ds : list) {
+			sBuffer.append("[");
+			for (double d : ds) {
+				sBuffer.append(d+",");
+			}
+			sBuffer.append("]");
+		}
+		return sBuffer.toString();
+		
+	}
+
 	private List<double[]> generateRandomPointsWithPrecondition(OrCategoryCalculator preconditions,
 			List<ExecVar> originVars, int toBeGeneratedDataNum) {
 		
@@ -216,22 +234,24 @@ public class IlpSelectiveSampling {
 				}
 				
 //				Problem p = ProblemBuilder.buildVarBoundContraint(originVars);
-				Problem p = pList.get(0);
-				solver.generateRandomObjective(p, originVars);
-				for (int reducedVarNum = 0; reducedVarNum <= originVars.size(); reducedVarNum++) {
-					double[] sample = generateRandomVariableAssignment(originVars, reducedVarNum);
-					int bound = 5;
-					int k = 0;
-					while (sample == null && k < bound) {
-						sample = generateRandomVariableAssignment(originVars, reducedVarNum);
-					}
+				for (Problem p : pList) {
+					solver.generateRandomObjective(p, originVars);
+					for (int reducedVarNum = 0; reducedVarNum <= originVars.size(); reducedVarNum++) {
+						double[] sample = generateRandomVariableAssignment(originVars, reducedVarNum);
+						int bound = 5;
+						int k = 0;
+						while (sample == null && k < bound) {
+							sample = generateRandomVariableAssignment(originVars, reducedVarNum);
+							k++;
+						}
 
-					if (sample != null) {
-						ProblemBuilder.addEqualConstraints(p, toAssignments(sample, originVars));
-						Pair<Result, Boolean> solverResult = solver.solve(p, solveTimeLimit);
-						Result res = solverResult.first();
-						updateSamples(Arrays.asList(res), samples);
-						break;
+						if (sample != null) {
+							ProblemBuilder.addEqualConstraints(p, toAssignments(sample, originVars));
+							Pair<Result, Boolean> solverResult = solver.solve(p, solveTimeLimit);
+							Result res = solverResult.first();
+							updateSamples(Arrays.asList(res), samples);
+							break;
+						}
 					}
 				}
 			}

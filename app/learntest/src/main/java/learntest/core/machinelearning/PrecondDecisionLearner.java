@@ -393,6 +393,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		sBuffer.append("add data point to svm : =============================\n");
 		sBuffer.append("new data true : "+trueV.size()+" , "+trueV.toString()+"\n");
 		sBuffer.append("new data false : "+falseV.size()+" , "+falseV.toString()+"\n");		
+		log.info("add data point to svm :");
+		log.info("new data true : "+trueV.size()+" , "+trueV.toString());
+		log.info("new data false : "+falseV.size()+" , "+falseV.toString());		
 
 		RunTimeInfo.write(logFile, sBuffer.toString());
 	}

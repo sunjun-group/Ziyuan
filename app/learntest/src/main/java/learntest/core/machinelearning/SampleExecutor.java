@@ -52,6 +52,16 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 		timer.start();
 		SamplingResult samples = new SamplingResult(decisionProbes);
 		log.debug("Executing {} samples...", domains.size());
+		log.info("Executing sample data points : ");
+		StringBuffer sBuffer = new StringBuffer();
+		for (double[] points : domains) {
+			sBuffer.append("[");
+			for (double d : points) {
+				sBuffer.append(d+",");
+			}
+			sBuffer.append("],");
+		}
+		log.info(sBuffer.toString());
 		GentestResult result = null;
 		try {
 			timer.newPoint("gentest & compile");

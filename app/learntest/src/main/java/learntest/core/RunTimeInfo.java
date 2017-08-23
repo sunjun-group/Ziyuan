@@ -187,6 +187,9 @@ public class RunTimeInfo {
 	}
 
 	public static void write(String file, String log) {
+		if (log == null) {
+			return;
+		}
 		FileWriter writer = null;
 		try {
 			writer = new FileWriter(file, true);
