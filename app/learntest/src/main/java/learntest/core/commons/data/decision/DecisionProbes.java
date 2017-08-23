@@ -28,6 +28,7 @@ import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.utils.MachineLearningUtils;
 import learntest.core.machinelearning.CfgNodeDomainInfo;
+import learntest.core.machinelearning.calculator.MultiNotDividerBasedCategoryCalculator;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
@@ -203,8 +204,8 @@ public class DecisionProbes extends CfgCoverage {
 				 *   	  A
 				 *  	/	\
 				 *     B  -> C
-				 *    /		  \
-				 *   E		   E
+				 *    	\	/  
+				 *       Exit
 				 *   
 				 *  */
 				for (CfgNode branch : dominator.getBranches()) {
@@ -277,17 +278,18 @@ public class DecisionProbes extends CfgCoverage {
 		if (branchRel == BranchRelationship.TRUE) {
 			condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
 		} else if (branchRel == BranchRelationship.FALSE) {
-			List<Divider> clonedDividers = new ArrayList<>();
-			for (Divider d : domDividers) {
-				double[] clonedThetas = new double[d.getThetas().length];
-				for (int i = 0; i < clonedThetas.length; i++) {
-					clonedThetas[i] = -1 * d.getThetas()[i];
-				}
-
-				Divider d0 = new Divider(clonedThetas, -1 * d.getTheta0(), true);
-				clonedDividers.add(d0);
-			}
-			condFromDividers = new MultiDividerBasedCategoryCalculator(clonedDividers);
+			condFromDividers = new MultiNotDividerBasedCategoryCalculator(domDividers);
+//			List<Divider> clonedDividers = new ArrayList<>();
+//			for (Divider d : domDividers) {
+//				double[] clonedThetas = new double[d.getThetas().length];
+//				for (int i = 0; i < clonedThetas.length; i++) {
+//					clonedThetas[i] = -1 * d.getThetas()[i];
+//				}
+//
+//				Divider d0 = new Divider(clonedThetas, -1 * d.getTheta0(), true);
+//				clonedDividers.add(d0);
+//			}
+//			condFromDividers = new MultiDividerBasedCategoryCalculator(clonedDividers);
 		}
 		return condFromDividers;
 	}
