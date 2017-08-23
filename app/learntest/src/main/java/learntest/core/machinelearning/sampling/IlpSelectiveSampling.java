@@ -140,7 +140,7 @@ public class IlpSelectiveSampling {
 					List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
 					if (!problems.isEmpty() && learnedFormula != null) {
 						for (Problem problem : problems) {
-							ProblemBuilder.addOnBorderConstaints(problem, learnedFormula, originVars);
+							ProblemBuilder.addOnBorderConstaints(solver, problem, learnedFormula, originVars);
 						}
 					}
 

@@ -141,14 +141,23 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		public void setExecVar(HashMap<String, ExecVar> execVarMap, List<ExecVar> originalVars) {
 			List<VarInfo> infos = new ArrayList<>(variables.size());
 			for (Variable var : variables) {
-				ExecVar execVar = execVarMap.get(var.getVarID());
-				if (execVar != null) {
-					VarInfo info = new VarInfo(originalVars.indexOf(execVar), null);
-					info.execVars = new LinkedList<>();
-					info.execVars.add(execVar);
-					infos.add(info);
-				}else {
-					log.info(var + "does not exist in original ExecVars.");
+				boolean found = false;
+				if (var.getVarID() != null) {
+					for (String execVarId : execVarMap.keySet()) {
+						if (execVarId.startsWith(var.getVarID())) {
+							ExecVar execVar = execVarMap.get(execVarId);
+							VarInfo info = new VarInfo(originalVars.indexOf(execVar), null);
+							info.execVars = new LinkedList<>();
+							info.execVars.add(execVar);
+							infos.add(info);
+							found = true;
+						}
+					}
+				} else {
+					log.info("{} does not exist in original ExecVars.", var);
+				}
+				if (!found) {
+					log.info("{} does not exist in original ExecVars.", var);
 				}
 			}			
 			infos.sort(new VarInfoComparator()); // keep the sequence in originalVars

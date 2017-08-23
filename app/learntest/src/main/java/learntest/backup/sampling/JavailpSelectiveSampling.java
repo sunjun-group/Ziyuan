@@ -149,7 +149,7 @@ public class JavailpSelectiveSampling {
 			List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
 			if (!problems.isEmpty() && learnedFormula != null) {
 				for (Problem problem : problems) {
-					ProblemBuilder.addOnBorderConstaints(problem, learnedFormula, originVars);
+					ProblemBuilder.addOnBorderConstaints(null, problem, learnedFormula, originVars);
 				}
 			}
 			

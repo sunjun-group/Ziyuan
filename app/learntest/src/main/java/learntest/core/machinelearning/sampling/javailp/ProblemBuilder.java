@@ -22,24 +22,27 @@ public class ProblemBuilder {
 	/**
 	 * Generate some data points on the onBorder *and* on the true side of trueBorder, with regard to preconditions
 	 */
-	public static List<Problem> buildOnBorderTrueValueProblems(Divider equalConstraint, List<ExecVar> vars, 
+	public static List<Problem> buildOnBorderTrueValueProblems(ProblemSolver solver, Divider equalConstraint, List<ExecVar> vars, 
 			OrCategoryCalculator precondition, List<Divider> greaterThanConstraints, boolean random) {
 		List<Problem> problems = buildTrueValueProblems(vars, precondition, greaterThanConstraints, random);
 		
 		if (!problems.isEmpty() && equalConstraint != null) {
 			for (Problem problem : problems) {
-				addOnBorderConstaints(problem, equalConstraint, vars);
+				addOnBorderConstaints(solver, problem, equalConstraint, vars);
 			}
 		}
 		return problems;
 	}
 	
-	public static void addOnBorderConstaints(Problem problem, Divider object, List<ExecVar> vars) {
+	public static void addOnBorderConstaints(ProblemSolver solver, Problem problem, Divider object, List<ExecVar> vars) {
 		double[] thetas = object.getThetas();
 		Linear linear = new Linear();
 		int num = Math.min(thetas.length, vars.size());
 		for (int i = 0; i < num; i++) {
 			linear.add(thetas[i], vars.get(i).getLabel());
+			if (thetas[i] == 0.0 && solver != null) {
+				solver.addRandomConstraint(problem, vars.get(i));
+			}
 		}
 		Constraint constraint = new Constraint(linear, Operator.EQ, object.getTheta0());
 		problem.add(constraint);

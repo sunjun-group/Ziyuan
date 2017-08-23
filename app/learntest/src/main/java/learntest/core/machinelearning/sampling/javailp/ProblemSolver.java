@@ -109,7 +109,7 @@ public class ProblemSolver {
 		return solver.solve(problem);
 	}
 
-	private void addRandomConstraint(Problem problem, ExecVar var) {
+	public void addRandomConstraint(Problem problem, ExecVar var) {
 		Linear linear = new Linear();
 		linear.add(1, var.getLabel());
 		Pair<Number, Number> range = minMax.get(var);
