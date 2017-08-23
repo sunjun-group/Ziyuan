@@ -169,7 +169,7 @@ public class IlpSelectiveSampling {
 		 * randomly generate more data points on svm model.
 		 */
 		randomSamples.addAll(generateRandomPointsWithPrecondition(preconditions, originVars, 
-				Math.max(heuList.size() , maxSamplesPerSelect)));
+				Math.max(samples.size() , maxSamplesPerSelect)));
 		
 		int total = heuList.size() + samples.size() + randomSamples.size();
 		if (total > maxSamplesPerSelect) {
@@ -206,13 +206,13 @@ public class IlpSelectiveSampling {
 
 	private List<double[]> generateRandomPointsWithPrecondition(OrCategoryCalculator preconditions,
 			List<ExecVar> originVars, int toBeGeneratedDataNum) {
-		
+		System.currentTimeMillis();
 		int trialNumThreshold = 100;
 		List<double[]> samples = new ArrayList<double[]>();
 		if (originVars.size() > 0) {
 			
 			for (int i = 0; samples.size() < toBeGeneratedDataNum && i < trialNumThreshold; i++) {
-				List<Problem> pList = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, true);
+				List<Problem> pList = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
 
 				if(pList.isEmpty()){
 					break;
