@@ -280,7 +280,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 
 	private TrueFalseLearningResult generateTrueFalseFormula(DecisionNodeProbe orgNodeProbe,
 			CoveredBranches coveredType, OrCategoryCalculator preconditions, List<ExecVar> targetVars) throws SavException {
-
+		System.currentTimeMillis();
 		if (!orgNodeProbe.needToLearnPrecond()) {
 			log.debug("no need to learn precondition");
 			return null;
@@ -326,7 +326,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			log.debug("selective sampling: ");
 			log.debug("original vars: {}, targetVars : {}", probes.getOriginalVars(), targetVars);
 			/* after running sampling, probes will be updated as well */
-			SamplingResult sampleResult = dataPreprocessor.sampleForModel(nodeProbe, targetVars,
+			SamplingResult sampleResult = dataPreprocessor.sampleForModel(nodeProbe, orignalVars,
 					preconditions, mcm.getFullLearnedDividers(mcm.getDataLabels(), orignalVars), logFile);
 			if (sampleResult == null) {
 				log.debug("sampling result is null");
@@ -405,31 +405,33 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 
 	private void addDataPoint(List<String> labels, List<ExecVar> targetVars, Collection<BreakpointValue> trueV, Collection<BreakpointValue> falseV,
 			PositiveSeparationMachine mcm) {
-		for (BreakpointValue value : trueV) {
-			addBkp(labels, targetVars, value, Category.POSITIVE, mcm);
-		}
-		for (BreakpointValue value : falseV) {
-			addBkp(labels, targetVars, value, Category.NEGATIVE, mcm);
-		}
 		StringBuffer sBuffer = new StringBuffer();
 		sBuffer.append("add data point to svm : =============================\n");
 		sBuffer.append("new data true : "+trueV.size()+" , "+trueV.toString()+"\n");
+		for (BreakpointValue value : trueV) {
+			addBkp(labels, targetVars, value, Category.POSITIVE, mcm, sBuffer);
+		}
 		sBuffer.append("new data false : "+falseV.size()+" , "+falseV.toString()+"\n");		
-		log.info("add data point to svm :");
-		log.info("new data true : "+trueV.size()+" , "+trueV.toString());
-		log.info("new data false : "+falseV.size()+" , "+falseV.toString());		
+		for (BreakpointValue value : falseV) {
+			addBkp(labels, targetVars, value, Category.NEGATIVE, mcm, sBuffer);
+		}
+		log.info(sBuffer.toString());
+//		log.info("new data true : "+trueV.size()+" , "+trueV.toString());
+//		log.info("new data false : "+falseV.size()+" , "+falseV.toString());		
 
 		RunTimeInfo.write(logFile, sBuffer.toString());
 	}
 
 	private void addBkp(List<String> labels, List<ExecVar> targetVars, BreakpointValue bValue, 
-			Category category, Machine machine) {
+			Category category, Machine machine, StringBuffer sBuffer) {
 		double[] lineVals = new double[labels.size()];
 		int i = 0;
+		sBuffer.append("(");
 		for (ExecVar var : targetVars) {
 			final Double value ;
 			value = bValue.getValue(var.getLabel(), 0.0);
 			lineVals[i++] = value;
+			sBuffer.append(var.getLabel()+":"+value+", ");
 		}
 		/** below is about derived vars like x*y */
 //		if (i < labels.size()) {
@@ -441,7 +443,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 //				}
 //			}
 //		}
-
+		sBuffer.append(")\n");
 		machine.addDataPoint(category, lineVals);
 	}
 
