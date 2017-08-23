@@ -135,10 +135,8 @@ public class IlpSelectiveSampling {
 			 * generate data point on the border of divider
 			 */
 			int selectiveSamplingDataSize = 30;
-			int complexTimes = 0; /** break iteration if there occurs too many complex problems */
-			iteration: for(int i=0; i<selectiveSamplingDataSize; i++){
-				int complexProblem = 0;
-				outer : for (Divider learnedFormula : learnedFormulas) {
+			for(int i=0; i<selectiveSamplingDataSize; i++){
+				for (Divider learnedFormula : learnedFormulas) {
 					List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
 					if (!problems.isEmpty() && learnedFormula != null) {
 						for (Problem problem : problems) {
@@ -155,21 +153,8 @@ public class IlpSelectiveSampling {
 						}
 						if (!solverResult.second()) { /** run long time to solve this problem ,maybe means that these problems are too difficult*/
 							log.debug("run long time to solve this problem");
-							complexProblem++;
-							complexTimes++;
-							if (complexTimes>=4) {
-								log.debug("break selectiveSamplingData iteration");
-								break iteration;
-							}
-							if (complexProblem >= 2) { /** separate the chances of running long time problem into different iteration */
-								break outer;
-							}else
-								break ;
 						}
 					}
-				}
-				if (complexProblem>0) {
-					i = i+ Math.max(selectiveSamplingDataSize/6, learnedFormulas.size());
 				}
 			}
 		}
@@ -184,7 +169,7 @@ public class IlpSelectiveSampling {
 		 * randomly generate more data points on svm model.
 		 */
 		randomSamples.addAll(generateRandomPointsWithPrecondition(preconditions, originVars, 
-				Math.max(samples.size() , maxSamplesPerSelect)));
+				Math.max(heuList.size() , maxSamplesPerSelect)));
 		
 		int total = heuList.size() + samples.size() + randomSamples.size();
 		if (total > maxSamplesPerSelect) {
@@ -236,7 +221,7 @@ public class IlpSelectiveSampling {
 //				Problem p = ProblemBuilder.buildVarBoundContraint(originVars);
 				for (Problem p : pList) {
 					solver.generateRandomObjective(p, originVars);
-					for (int reducedVarNum = 0; reducedVarNum <= originVars.size(); reducedVarNum++) {
+					for (int reducedVarNum = 0; samples.size() < toBeGeneratedDataNum && reducedVarNum <= originVars.size(); reducedVarNum++) {
 						double[] sample = generateRandomVariableAssignment(originVars, reducedVarNum);
 						int bound = 5;
 						int k = 0;
@@ -246,11 +231,15 @@ public class IlpSelectiveSampling {
 						}
 
 						if (sample != null) {
-							ProblemBuilder.addEqualConstraints(p, toAssignments(sample, originVars));
+							List<Eq<Number>> constraints = toAssignments(sample, originVars);
+							ProblemBuilder.addEqualConstraints(p, constraints);
 							Pair<Result, Boolean> solverResult = solver.solve(p, solveTimeLimit);
 							Result res = solverResult.first();
 							updateSamples(Arrays.asList(res), samples);
-							break;
+							p.getConstraints().clear();
+							if (res != null) {
+								break;
+							}
 						}
 					}
 				}
