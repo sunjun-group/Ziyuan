@@ -274,7 +274,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		RunTimeInfo.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
 
 		HashMap<CfgNode, CfgNodeDomainInfo> domainMap = l2tAverageInfo.getDomainMap();
-		StringBuffer l2tSb = new StringBuffer(), ranSb = new StringBuffer();
+		StringBuffer l2tWorseSb = new StringBuffer(), ranWorseSb = new StringBuffer();
 		HashMap<CfgNode, Boolean> visited = new HashMap<>();
 		for (FormulaInfo info : l2tAverageInfo.getLearnedFormulas()){
 			if (!visited.containsKey(info.getNode()) 
@@ -282,13 +282,13 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 				Queue<CfgNode> queue = new LinkedList<>();
 				queue.add(info.getNode());
 				recordBetterInfo(info.getNode(), domainMap,
-						l2tSb, ranSb, info, ranAverageInfo, l2tAverageInfo);	
+						l2tWorseSb, ranWorseSb, info, ranAverageInfo, l2tAverageInfo);	
 				while (!queue.isEmpty()) {
 					CfgNode node = queue.poll();
 					for (CfgNode dominatee : domainMap.get(node).getDominatees()){					
 						if (!visited.containsKey(dominatee)) {
 							recordBetterInfo(dominatee, domainMap, 
-									l2tSb, ranSb, info, ranAverageInfo, l2tAverageInfo);		
+									l2tWorseSb, ranWorseSb, info, ranAverageInfo, l2tAverageInfo);		
 							queue.add(dominatee);
 						}				
 					}
@@ -296,11 +296,11 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 				}
 			}
 		}
-		l2tAverageInfo.l2tWorseThanRand += l2tSb.toString();
-		l2tAverageInfo.randWorseThanl2t += ranSb.toString();
+		l2tAverageInfo.l2tWorseThanRand += l2tWorseSb.toString();
+		l2tAverageInfo.randWorseThanl2t += ranWorseSb.toString();
 	}
 
-	private void recordBetterInfo(CfgNode dominatee, HashMap<CfgNode,CfgNodeDomainInfo> domainMap, StringBuffer l2tSb, StringBuffer ranSb, 
+	private void recordBetterInfo(CfgNode dominatee, HashMap<CfgNode,CfgNodeDomainInfo> domainMap, StringBuffer l2tWorseSb, StringBuffer ranWorseSb, 
 			FormulaInfo info, RunTimeInfo ranAverageInfo, RunTimeInfo l2tAverageInfo) {
 		StringBuffer sBuffer = new StringBuffer();
 		String formula = info.getTrueFalseFormula().get(info.getTrueFalseFormula().size()-1);
@@ -316,29 +316,29 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 		sBuffer.append("if ran better than l2t in false :"+"\n");
 		if (checkIfBetter(ranF, l2tF, sBuffer)) {
-			l2tSb.append("false : "+dominatee+", ancient node : " + ancient +","+ formula);
-			l2tSb.append(", domainator nodes : " + dominators  +";");
+			l2tWorseSb.append("false : "+dominatee+", ancient node : " + ancient +","+ formula);
+			l2tWorseSb.append(", domainator nodes : " + dominators  +";");
 		}
 
 
 		sBuffer.append("if ran better than l2t in true :"+"\n");
 		if (checkIfBetter(ranT, l2tT, sBuffer)) {
-			l2tSb.append("true : "+dominatee+", ancient node : " + ancient +","+ formula);
-			l2tSb.append(", domainator nodes : " + dominators  +";");
+			l2tWorseSb.append("true : "+dominatee+", ancient node : " + ancient +","+ formula);
+			l2tWorseSb.append(", domainator nodes : " + dominators  +";");
 		}
 
 
 		sBuffer.append("if l2t better than randoop in false :"+"\n");
 		if (checkIfBetter(l2tF, ranF, sBuffer)) {
-			ranSb.append("false : "+dominatee+", ancient node : " + ancient +","+ formula);
-			l2tSb.append(", domainator nodes : " + dominators +";");
+			ranWorseSb.append("false : "+dominatee+", ancient node : " + ancient +","+ formula);
+			ranWorseSb.append(", domainator nodes : " + dominators +";");
 		}
 
 
 		sBuffer.append("if l2t better than randoop in true :"+"\n");
 		if (checkIfBetter(l2tT, ranT, sBuffer)) {
-			ranSb.append("true : "+dominatee+", ancient node : " + ancient +","+ formula);
-			l2tSb.append(", domainator nodes : " + dominators +";");
+			ranWorseSb.append("true : "+dominatee+", ancient node : " + ancient +","+ formula);
+			ranWorseSb.append(", domainator nodes : " + dominators +";");
 		}
 		
 		RunTimeInfo.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
