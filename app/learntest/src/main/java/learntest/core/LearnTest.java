@@ -62,7 +62,7 @@ public class LearnTest extends AbstractLearntest {
 			}
 			
 			Map<Integer, List<Variable>> relevantVarMap = new CFGBuilder().parsingCFG(getAppClasspath(),
-					targetMethod.getClassName(), targetMethod.getMethodFullName(), targetMethod.getLineNum())
+					targetMethod.getClassName(), targetMethod.getMethodFullName(), targetMethod.getLineNum(), targetMethod.getMethodSignature())
 					.getRelevantVarMap();
 			
 			log.info("first coverage: " + CoverageUtils.calculateCoverageByBranch(cfgCoverage));

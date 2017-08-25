@@ -9,6 +9,7 @@ import org.apache.bcel.classfile.Code;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.LineNumber;
 import org.apache.bcel.classfile.Method;
+import org.apache.bcel.generic.Type;
 import org.apache.bcel.util.ClassPath;
 import org.apache.bcel.util.SyntheticRepository;
 
@@ -17,7 +18,7 @@ import sav.strategies.dto.AppJavaClassPath;
 public class CFGBuilder {
 	private static CFGBuilder INSTANCE;
 	
-	public CFG parsingCFG(AppJavaClassPath appClassPath, String className, String methodName, int lineNumber) throws Exception {
+	public CFG parsingCFG(AppJavaClassPath appClassPath, String className, String methodName, int lineNumber, String signature) throws Exception {
 		
 		String originalSystemClassPath = System.getProperty("java.class.path");
 		String[] paths = originalSystemClassPath.split(File.pathSeparator);
@@ -36,13 +37,13 @@ public class CFGBuilder {
 		
 		/** current evaluation does not change line number, so we can keep the cache to speed up the progress */
 		Repository.clearCache();				
-		ClassPath classPath = new ClassPath(s);
+		ClassPath0 classPath = new ClassPath0(s);
 		Repository.setRepository(SyntheticRepository.getInstance(classPath));
 		
 		
 		JavaClass clazz = Repository.lookupClass(className);
-		Method method = findMethod(clazz, methodName, lineNumber);
-		
+		Method method = findMethod(clazz, methodName, lineNumber, signature);
+		System.currentTimeMillis();
 		Code code = method.getCode();
 		
 		if(code == null){
@@ -53,8 +54,14 @@ public class CFGBuilder {
 		return cfg;
 	}
 
-	private Method findMethod(JavaClass clazz, String methodName, int lineNumber) {
+	private Method findMethod(JavaClass clazz, String methodName, int lineNumber, String signature) {
 		for(Method method: clazz.getMethods()){
+			String mString = method.getSignature();
+			String name =method.getName();
+			methodName = methodName.substring(methodName.lastIndexOf('.')+1);
+			if (name.equals(methodName) && mString.equals(signature)) {
+				return method;
+			}
 			for(LineNumber lineNum: method.getLineNumberTable().getLineNumberTable()){
 				if(lineNum.getLineNumber()==lineNumber){
 					return method;
