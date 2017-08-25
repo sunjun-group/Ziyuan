@@ -24,6 +24,7 @@ import libsvm.core.Divider;
 import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
 import libsvm.core.Model;
+import libsvm.extension.MultiDividerBasedCategoryCalculator;
 import libsvm.extension.NegativePointSelection;
 import libsvm.extension.PositiveSeparationMachine;
 import sav.common.core.formula.Formula;
@@ -132,6 +133,28 @@ public class LearningMachine extends PositiveSeparationMachine {
 		}
 
 		return null;
+	}
+	
+	public double getModelAccuracy(List<svm_model> models) {
+		if (models == null || models.size() == 0) {
+			return 0.0;
+		}
+		return 1.0 - ((double) getWrongClassifiedDataPoints(data, models).size() / data.size());
+	}
+	
+	protected List<DataPoint> getWrongClassifiedDataPoints(List<DataPoint> dataPoints, List<svm_model> models) {
+		List<Divider> roundDividers = new ArrayList<Divider>();
+		for (svm_model learnModel : models) {
+			if (learnModel != null) {
+				Divider divider = new Model(learnModel, getNumberOfFeatures()).getExplicitDivider();
+				if (divider != null) {
+					divider = divider.round();
+					roundDividers.add(divider);
+				}
+			}
+		}
+
+		return getWrongClassifiedDataPoints(dataPoints, new MultiDividerBasedCategoryCalculator(roundDividers));
 	}
 
 	private void updatePotentialSingleFeatureModel(Formula current, double accuracy, Model model) {
