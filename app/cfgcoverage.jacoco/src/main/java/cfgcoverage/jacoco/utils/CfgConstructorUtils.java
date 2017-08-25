@@ -68,17 +68,60 @@ public class CfgConstructorUtils {
 		int i = size - 1;
 		for (i = size - 1; i > 0; i--) {
 			CfgNode node = cfg.getNodeList().get(i);
-			int firstIdxOfLoopBlk = node.getFistBlkIdxIfLoopHeader();
+			int firstIdxOfLoopBlk = node.getBackwardJumpIdx();
 			/* if firstIdx is not valid meaning node is not a loop header, we move to another node */
 			if (firstIdxOfLoopBlk != CfgNode.INVALID_IDX) {
+				CfgNode loopHeader = getLoopHeader(cfg.getNodeList(), node);
 				/* this decision node is loop header */
 				for (int j = firstIdxOfLoopBlk; j <= node.getIdx(); j++) {
-					cfg.getNode(j).addLoopHeader(node);
+					cfg.getNode(j).addLoopHeader(loopHeader);
 				}
 			}
 		}
 	}
 	
+	/**
+	 * in a simple case which only contain one loop condition, the 
+	 * the node which has backward jump is also a loop header,
+	 * but in case there are more than loop condition, we should consider the first condition
+	 * as the loop header.
+	 * @param list 
+	 * */
+	private static CfgNode getLoopHeader(List<CfgNode> nodeList, CfgNode hasBackwardJumpNode) {
+		for (int j = hasBackwardJumpNode.getBackwardJumpIdx(); j < hasBackwardJumpNode.getIdx(); j++) {
+			CfgNode inLoopNode = nodeList.get(j);
+			/* if hasBackwardJumpNode is on the false branch of this inLoop decision node,
+			 * this must be the correct loop header. 
+			 * */
+			if (inLoopNode.isDecisionNode() && isAHasFalseBranchToB(inLoopNode, hasBackwardJumpNode, false)) {
+				return inLoopNode;
+			}
+		}
+		return hasBackwardJumpNode;
+	}
+
+	private static boolean isAHasFalseBranchToB(CfgNode a, CfgNode b, boolean onFalsePath) {
+		if (b.equals(a)) {
+			return true;
+		}
+		if (a.isDecisionNode()) {
+			CfgNode falseBranch = a.getBranch(BranchRelationship.TRUE); /*TODO LLT: this is due to the inconsistent in branchType implementation*/
+			if (falseBranch == null) {
+				return false;
+			}
+			return isAHasFalseBranchToB(falseBranch, b, true);
+		}
+		if (onFalsePath) {
+			if (a.isLeaf() || (a.getIdx() > b.getIdx())) {
+				return false;
+			}
+			return isAHasFalseBranchToB(a.getNext(), b, onFalsePath);
+		}
+		return false;
+	}
+	
+	
+
 	public static void updateDecisionNodes(CFG cfg) {
 		for (CfgNode node : cfg.getNodeList()) {
 			if (CollectionUtils.getSize(node.getBranches()) > 1) {

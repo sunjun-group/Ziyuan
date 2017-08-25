@@ -22,6 +22,8 @@ import cfgcoverage.jacoco.testdata.IfInLoop;
 import cfgcoverage.jacoco.testdata.IfInLoopTest;
 import cfgcoverage.jacoco.testdata.IfSample;
 import cfgcoverage.jacoco.testdata.IfSampleTest;
+import cfgcoverage.jacoco.testdata.LoopHeaderSample;
+import cfgcoverage.jacoco.testdata.LoopHeaderSampleTest;
 import cfgcoverage.jacoco.testdata.LoopSample;
 import cfgcoverage.jacoco.testdata.LoopSampleTest;
 import cfgcoverage.jacoco.testdata.SwitchSample;
@@ -113,4 +115,16 @@ public class CfgJaCoCoTest extends AbstractTest {
 		runSimpleRunner = true;
 		runTest(IfSample.class, IfSampleTest.class, "run");
 	}
+	
+	@Test
+	public void testLoopHeader() throws Exception {
+		runSimpleRunner = true;
+//		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "multiLoopCond");
+//		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "multiLoopCondNeg");
+//		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "singleLoopCond");
+//		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "forLoop");
+//		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "doWhileMultiCond");
+//		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "doWhileSingleCondWithInLoopCond");
+	}
+	
 }

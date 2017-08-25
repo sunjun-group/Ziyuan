@@ -130,15 +130,29 @@ public class CfgNode {
 
 	@Override
 	public String toString() {
-		return "node[" + idx + "," + OpcodeUtils.getCode(insnNode.getOpcode()) + ",line " + line +
-				(isDecisionNode ? ", decis" : "") + (isInLoop() ? ", inloop" : "") + "]";
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("node[%d,%s,line %d]", idx, OpcodeUtils.getCode(insnNode.getOpcode()), line));
+		if (isDecisionNode) {
+			sb.append(", decis");
+		}
+		if (isLoopHeader()) {
+			sb.append(", loopHeader");
+		} else if (isInLoop()) {
+			sb.append(", inloop");
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 	
 	public boolean isLoopHeader() {
 		return loopHeaders != null && loopHeaders.contains(this);
 	} 
 
-	public int getFistBlkIdxIfLoopHeader() {
+	/**
+	 * note: in case of a loop has multiple conditions conjunction, 
+	 * the loopHeader would not have a backwardJumpIdx;
+	 */
+	public int getBackwardJumpIdx() {
 		if (isLeaf()) {
 			return INVALID_IDX;
 		}

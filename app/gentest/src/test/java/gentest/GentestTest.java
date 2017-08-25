@@ -50,7 +50,7 @@ public class GentestTest {
 		printer.printTests(result);
 	}
 
-	private List<MethodCall> toMethodCalls(List<Method> methods) {
+	protected List<MethodCall> toMethodCalls(List<Method> methods) {
 		List<MethodCall> methodCalls = new ArrayList<MethodCall>(methods.size());
 		for (Method method : methods) {
 			methodCalls.add(MethodCall.of(method, method.getDeclaringClass()));
@@ -58,7 +58,7 @@ public class GentestTest {
 		return methodCalls;
 	}
 
-	private void addMethods(List<Method> methods, Class<?> clazz) {
+	protected void addMethods(List<Method> methods, Class<?> clazz) {
 		for (Method method : clazz.getDeclaredMethods()) {
 			if (Modifier.isPublic(method.getModifiers())) {
 				methods.add(method);
@@ -76,5 +76,6 @@ public class GentestTest {
 				"testdata.test.result.invalidMethod", "test", "InvisibleParamTypeClass", "./src/test/java");
 		printer.printTests(result);
 	}
+	
 }
  

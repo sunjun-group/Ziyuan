@@ -26,6 +26,8 @@ import gentest.core.data.type.ITypeCreator;
 import gentest.core.data.type.SubTypesScanner;
 import gentest.core.data.type.VarTypeCreator;
 import gentest.core.execution.VariableRuntimeExecutor;
+import gentest.core.value.generator.GentestRandomness;
+import gentest.core.value.generator.IRandomness;
 import gentest.core.value.store.TypeInitializerStore;
 import gentest.core.value.store.TypeMethodCallsCache;
 import gentest.core.value.store.VariableCache;
@@ -71,6 +73,7 @@ public class GentestModules extends AbstractModule {
 				// .in(scopes.get(TestcaseGenerationScope.class));
 		bind(ParamGeneratorConfig.class).toInstance(ParamGeneratorConfig.getDefault());
 		bind(long.class).annotatedWith(Names.named("methodExecTimeout")).toInstance(getMethodExecTimeout());
+		bind(IRandomness.class).to(GentestRandomness.class);
 		requestStaticInjection(VariableRuntimeExecutor.class);
 	}
 	

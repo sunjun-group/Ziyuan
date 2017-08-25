@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -56,6 +57,24 @@ public class VarTypeCreatorTest {
 		
 		IType set = type.resolveType(HashSet.class);
 		Method method = MethodUtils.findMethod(HashSet.class, "add");
+		Parameter[] params = method.getParameters();
+		IType arrType = set.resolveType(params[0].getParameterizedType());
+		Type actualType = arrType.getType();
+		
+		Assert.assertEquals(expectedType, actualType);
+		System.out.println(actualType);
+	}
+	
+	@Test
+	public void testArrayList() {
+		VarTypeCreator creator = new VarTypeCreator();
+		creator.setSubTypesScanner(new SubTypesScanner());
+		IType type = creator.forClass(Collection.class);
+		ParameterizedType collectionType = (ParameterizedType) type.getType();
+		Type expectedType = collectionType.getActualTypeArguments()[0];
+		
+		IType set = type.resolveType(ArrayList.class);
+		Method method = MethodUtils.findMethod(ArrayList.class, "add");
 		Parameter[] params = method.getParameters();
 		IType arrType = set.resolveType(params[0].getParameterizedType());
 		Type actualType = arrType.getType();

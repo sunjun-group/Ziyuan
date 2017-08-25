@@ -8,7 +8,6 @@
 
 package cfgcoverage.jacoco.analysis.data;
 
-import java.util.List;
 import java.util.Set;
 
 import org.jacoco.core.internal.flow.Instruction;
