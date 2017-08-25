@@ -318,7 +318,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 
 		/* do generate formula and return */
 		NegativePointSelection negative = new ByDistanceNegativePointSelection();
-		PositiveSeparationMachine mcm = new PositiveSeparationMachine(negative);		
+		PositiveSeparationMachine mcm = new LearningMachine(negative);		
 		log.info("generate initial formula");
 		trueFlaseFormula = generateInitialFormula(orgNodeProbe, mcm, targetVars);
 		double acc = mcm.getModelAccuracy();

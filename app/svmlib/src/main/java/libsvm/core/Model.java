@@ -165,4 +165,7 @@ public class Model {
 		return new ModelBasedCategoryCalculator(rawModel);
 	}
 
+	public svm_model getModel() {
+		return model;
+	}
 }

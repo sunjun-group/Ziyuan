@@ -9,11 +9,16 @@
 package sav.common.core.formula.utils;
 import static sav.common.core.formula.Formula.FALSE;
 import static sav.common.core.formula.Formula.TRUE;
+
+import java.util.List;
+
 import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.ConjunctionFormula;
 import sav.common.core.formula.Formula;
 import sav.common.core.formula.Operator;
 import sav.common.core.formula.OrFormula;
+import sav.common.core.utils.Assert;
+import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
@@ -81,6 +86,15 @@ public class FormulaConjunction extends ExpressionVisitor {
 			return new AndFormula(newCond, curCond);
 		}
 		return result;
+	}
+	
+	public static Formula and(List<Formula> formulas) {
+		Assert.assertTrue(CollectionUtils.isNotEmpty(formulas), "conj formula array must not be empty!");
+		Formula formula = formulas.get(0);
+		for (int i = 1; i < formulas.size(); i++) {
+			formula = and(formula, formulas.get(i));
+		}
+		return formula;
 	}
 
 	private static Formula conjOf(Formula curCond, Formula newCond, Operator op) {
