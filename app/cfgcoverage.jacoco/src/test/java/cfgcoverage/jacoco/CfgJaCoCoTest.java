@@ -119,12 +119,12 @@ public class CfgJaCoCoTest extends AbstractTest {
 	@Test
 	public void testLoopHeader() throws Exception {
 		runSimpleRunner = true;
-//		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "multiLoopCond");
-//		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "multiLoopCondNeg");
-//		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "singleLoopCond");
-//		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "forLoop");
-//		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "doWhileMultiCond");
-//		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "doWhileSingleCondWithInLoopCond");
+		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "multiLoopCond");
+		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "multiLoopCondNeg");
+		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "singleLoopCond");
+		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "forLoop");
+		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "doWhileMultiCond");
+		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "doWhileSingleCondWithInLoopCond");
 	}
 	
 }

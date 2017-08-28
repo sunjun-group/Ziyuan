@@ -1,7 +1,5 @@
 package cfgcoverage.jacoco.testdata;
 
-import java.util.UUID;
-
 public class Program {
 	
 	public int Max(int a, int b, int c)
