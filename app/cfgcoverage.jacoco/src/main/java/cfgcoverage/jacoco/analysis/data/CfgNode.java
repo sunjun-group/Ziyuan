@@ -22,7 +22,11 @@ import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
- *
+ * NOTE for BranchRelationship: for a decision node in which instruction is reverted in byte code, 
+ * we still handle it as in the normal flow of source code.
+ * So the logic will be as in the source code instead of the byte code.
+ * Meanwhile, decision instruction of a loop condition keep the same logic in byte code, the branch relationship would have 
+ * no different compare to source code.
  */
 public class CfgNode {
 	public static int INVALID_IDX = -1;
@@ -166,8 +170,10 @@ public class CfgNode {
 	}
 	
 	public void addLoopHeader(CfgNode loopHeader) {
-		loopHeaders = CollectionUtils.initIfEmpty(loopHeaders);
-		loopHeaders.add(loopHeader);
+		if (loopHeaders == null) {
+			loopHeaders = new ArrayList<CfgNode>(3); // there is not a normal case that we have more than 3-level loop.
+		}
+		CollectionUtils.addIfNotNullNotExist(loopHeaders, loopHeader);
 	}
 
 	/**

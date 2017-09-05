@@ -101,22 +101,25 @@ public class ExtInstruction extends Instruction {
 		this.predecessor = (ExtInstruction) predecessorInsn;
 	}
 
-	public void setNodePredecessor(ExtInstruction source) {
+	public void setNodePredecessor(ExtInstruction source, BranchRelationship branchRelationship) {
 		source.nextNode = this;
-		setNodePredecessor(source, false, false);
+		if (!newCfg) {
+			return;
+		}
+		cfgNode.setPredecessor(source.cfgNode, branchRelationship);
 	}
 	
-	public void setNodePredecessor(ExtInstruction source, boolean jump, boolean multiTarget) {
+	public void setNodePredecessorForJump(ExtInstruction source, boolean multiTarget) {
 		if (!newCfg) {
 			return;
 		}
 		/* jump to a multitarget label */
-		if (jump && multiTarget) {
+		if (multiTarget) {
 			cfgNode.setPredecessor(source.cfgNode, BranchRelationship.TRUE_FALSE);
 			return;
 		}
 		BranchRelationship branchRelationship = BranchRelationship.TRUE;
-		boolean jumpForward = jump && (source.cfgNode.getIdx() < this.cfgNode.getIdx());
+		boolean jumpForward = source.cfgNode.getIdx() < this.cfgNode.getIdx();
 		if (jumpForward && OpcodeUtils.isCondition(source.cfgNode.getInsnNode().getOpcode())) {
 			branchRelationship = BranchRelationship.FALSE;
 		}

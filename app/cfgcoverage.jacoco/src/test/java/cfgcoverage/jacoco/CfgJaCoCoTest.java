@@ -26,6 +26,8 @@ import cfgcoverage.jacoco.testdata.LoopHeaderSample;
 import cfgcoverage.jacoco.testdata.LoopHeaderSampleTest;
 import cfgcoverage.jacoco.testdata.LoopSample;
 import cfgcoverage.jacoco.testdata.LoopSampleTest;
+import cfgcoverage.jacoco.testdata.MultiLevelLoopSample;
+import cfgcoverage.jacoco.testdata.MultiLevelLoopSampleTest;
 import cfgcoverage.jacoco.testdata.SwitchSample;
 import cfgcoverage.jacoco.testdata.SwitchSampleTest;
 import sav.common.core.SystemVariables;
@@ -85,7 +87,6 @@ public class CfgJaCoCoTest extends AbstractTest {
 		runTest(SamplePrograms.class, SampleProgramTest.class, "Max");
 	}
 
-
 	@Test
 	public void testLoopProgram() throws Exception {
 		runSimpleRunner = true;
@@ -127,4 +128,9 @@ public class CfgJaCoCoTest extends AbstractTest {
 		runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "doWhileSingleCondWithInLoopCond");
 	}
 	
+	@Test
+	public void testMultiLevelLoop() throws Exception {
+		runSimpleRunner = true;
+		runTest(MultiLevelLoopSample.class, MultiLevelLoopSampleTest.class, "run");
+	}
 }

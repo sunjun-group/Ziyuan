@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CFG;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
@@ -25,6 +28,7 @@ import sav.common.core.utils.CollectionUtils;
  *
  */
 public class CfgConstructorUtils {
+	private static final Logger log = LoggerFactory.getLogger(CfgConstructorUtils.class);
 	private CfgConstructorUtils() {}
 	
 	public static void completeCfg(CFG cfg) {
@@ -93,34 +97,16 @@ public class CfgConstructorUtils {
 			/* if hasBackwardJumpNode is on the false branch of this inLoop decision node,
 			 * this must be the correct loop header. 
 			 * */
-			if (inLoopNode.isDecisionNode() && isAHasFalseBranchToB(inLoopNode, hasBackwardJumpNode, false)) {
-				return inLoopNode;
+			if (inLoopNode.isDecisionNode()) {
+				/* in case of a loop condition, the false branch will be out of the loop */
+				CfgNode falseBranch = inLoopNode.getBranch(BranchRelationship.FALSE);
+				if (falseBranch != null && falseBranch.getIdx() > hasBackwardJumpNode.getIdx()) {
+					return inLoopNode;
+				}
 			}
 		}
 		return hasBackwardJumpNode;
 	}
-
-	private static boolean isAHasFalseBranchToB(CfgNode a, CfgNode b, boolean onFalsePath) {
-		if (b.equals(a)) {
-			return true;
-		}
-		if (a.isDecisionNode()) {
-			CfgNode falseBranch = a.getBranch(BranchRelationship.TRUE); /*TODO LLT: this is due to the inconsistent in branchType implementation*/
-			if (falseBranch == null) {
-				return false;
-			}
-			return isAHasFalseBranchToB(falseBranch, b, true);
-		}
-		if (onFalsePath) {
-			if (a.isLeaf() || (a.getIdx() > b.getIdx())) {
-				return false;
-			}
-			return isAHasFalseBranchToB(a.getNext(), b, onFalsePath);
-		}
-		return false;
-	}
-	
-	
 
 	public static void updateDecisionNodes(CFG cfg) {
 		for (CfgNode node : cfg.getNodeList()) {
@@ -190,8 +176,13 @@ public class CfgConstructorUtils {
 			
 			for (CfgNode dependentee : lastNode.getDependentees()) {
 				if (!visited.contains(dependentee)) {
-					visitStack.push(dependentee);
 					allDependenteesVisited = false;
+					if (!visitStack.contains(dependentee)) {
+						visitStack.push(dependentee);
+					} else {
+						log.warn("suspicious dependency!!: dependentee[{}], lastNode[{}]", dependentee,
+								lastNode);
+					}
 				}
 			}
 			if (allDependenteesVisited) {

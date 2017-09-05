@@ -23,6 +23,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.ExtInstruction;
 
 /**
@@ -69,9 +70,25 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 	protected void visitInsn() {
 		super.visitInsn();
 		if (thisLastInsn != null) {
-			((ExtInstruction) lastInsn).setNodePredecessor((ExtInstruction) thisLastInsn);
+			BranchRelationship branchRelationship = BranchRelationship.TRUE;
+			if (isLastLoopConditionNode((ExtInstruction)thisLastInsn)) {
+				branchRelationship = BranchRelationship.FALSE;
+			}
+			((ExtInstruction) lastInsn).setNodePredecessor((ExtInstruction) thisLastInsn, branchRelationship);
 		}
 		this.thisLastInsn = lastInsn;
+	}
+	
+	private boolean isLastLoopConditionNode(ExtInstruction insn) {
+		for (Jump j : jumps) {
+			if (j.getSource().equals(insn)) {
+				ExtInstruction target = (ExtInstruction) LabelInfo.getInstruction(j.getTarget());
+				if (target != null && target.getCfgNode().getIdx() < insn.getCfgNode().getIdx()) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	@Override
@@ -145,7 +162,7 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 		for (Jump j : jumps) {
 			ExtInstruction target = (ExtInstruction) LabelInfo.getInstruction(j.getTarget());
 			ExtInstruction source = (ExtInstruction) j.getSource();
-			target.setNodePredecessor(source, true, multitarget);
+			target.setNodePredecessorForJump(source, multitarget);
 		}
 	}
 
