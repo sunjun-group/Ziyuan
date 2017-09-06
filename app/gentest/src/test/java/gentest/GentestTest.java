@@ -3,12 +3,6 @@
  */
 package gentest;
 
-import gentest.core.RandomTester;
-import gentest.core.data.MethodCall;
-import gentest.core.data.Sequence;
-import gentest.junit.TestsPrinter;
-import gentest.testdata.InvisibleParamTypeClass;
-
 import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -17,9 +11,14 @@ import java.util.List;
 
 import org.junit.Test;
 
+import gentest.core.RandomTester;
+import gentest.core.data.MethodCall;
+import gentest.core.data.Sequence;
+import gentest.junit.TestsPrinter;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.commons.testdata.BoundedStack;
+import testdata.InvisibleParamTypeClass;
 import testdata.RunBigDecimal;
 
 /**

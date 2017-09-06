@@ -12,7 +12,6 @@ import gentest.AbstractGTTest;
 import gentest.core.data.type.IType;
 import gentest.core.data.type.SubTypesScanner;
 import gentest.core.data.type.VarTypeCreator;
-import gentest.testdata.DrawPanel;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -29,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sav.common.core.utils.SignatureUtils;
+import testdata.DrawPanel;
 
 /**
  * @author LLT
