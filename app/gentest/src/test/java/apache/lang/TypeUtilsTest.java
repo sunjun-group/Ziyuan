@@ -9,7 +9,6 @@
 package apache.lang;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.HashMap;
@@ -17,8 +16,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.junit.Test;
-
-import com.google.inject.util.Types;
 
 import gentest.core.commons.utils.MethodUtils;
 import gentest.core.data.type.SubTypesScanner;
@@ -43,7 +40,6 @@ public class TypeUtilsTest extends AbstractTest {
 	public void runArray() {
 		Type type = getType(VariableClass.class);
 		Method method = MethodUtils.findMethod(VariableClass.class, "method");
-		Parameter[] params = method.getParameters();
 		
 		Type arrType = getArrayType(type);
 		System.out.println(arrType);

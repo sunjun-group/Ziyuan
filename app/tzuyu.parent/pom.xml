@@ -75,7 +75,7 @@
 		<module>../tzuyu.core</module>
 		<module>../tzuyu</module>
 		<module>../assertion</module>
-<!-- 		<module>../invariant.templates</module> -->
+		<module>../invariant.templates</module>
     
   </modules>
 	<build>

@@ -50,7 +50,7 @@ public class JavaCompilerTest extends AbstractTest {
 		compile(RawUncheckTestData.class.getName(), TargetClass.class.getName());
 	}
 	
-	@Test
+//	@Test
 	public void testCompilationErrorBak() {
 		VMConfiguration vmConfig = initVmConfig();
 		vmConfig.setJavaHome("/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home");

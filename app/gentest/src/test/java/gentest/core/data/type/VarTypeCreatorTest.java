@@ -10,7 +10,6 @@ package gentest.core.data.type;
 
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -39,8 +38,7 @@ public class VarTypeCreatorTest {
 		
 		System.out.println(iType.getType());
 		Method method = MethodUtils.findMethod(VariableClass.class, "method");
-		Parameter[] params = method.getParameters();
-		IType arrType = iType.resolveType(params[0].getParameterizedType());
+		IType arrType = iType.resolveType(method.getGenericParameterTypes()[0]);
 		GenericArrayType actualType = (GenericArrayType) arrType.getType();
 		
 		Assert.assertEquals(expectedType, actualType.getGenericComponentType());
@@ -57,8 +55,7 @@ public class VarTypeCreatorTest {
 		
 		IType set = type.resolveType(HashSet.class);
 		Method method = MethodUtils.findMethod(HashSet.class, "add");
-		Parameter[] params = method.getParameters();
-		IType arrType = set.resolveType(params[0].getParameterizedType());
+		IType arrType = set.resolveType(method.getGenericParameterTypes()[0]);
 		Type actualType = arrType.getType();
 		
 		Assert.assertEquals(expectedType, actualType);
@@ -75,8 +72,7 @@ public class VarTypeCreatorTest {
 		
 		IType set = type.resolveType(ArrayList.class);
 		Method method = MethodUtils.findMethod(ArrayList.class, "add");
-		Parameter[] params = method.getParameters();
-		IType arrType = set.resolveType(params[0].getParameterizedType());
+		IType arrType = set.resolveType(method.getGenericParameterTypes()[0]);
 		Type actualType = arrType.getType();
 		
 		Assert.assertEquals(expectedType, actualType);

@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
-import org.junit.Test;
 
 import sav.common.core.utils.ExecutionTimer;
 
@@ -23,7 +22,7 @@ import sav.common.core.utils.ExecutionTimer;
  */
 public class CountDownExecutionTimerTest {
 
-	@Test
+//	@Test
 	public void testLoop() {
 		ExecutionTimer timer = ExecutionTimer.getDefaultExecutionTimer(2, TimeUnit.SECONDS);
 		final List<String> result = new ArrayList<String>();

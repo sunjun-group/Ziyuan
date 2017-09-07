@@ -82,13 +82,13 @@ public class JaCoCo implements ICodeCoverage {
 				junitClassNames);
 		if (log.isDebugEnabled()) {
 			log.debug("Start vmRunner..");
-			log.debug("destfile=", destfile);
-			log.debug("junitResultFile=", junitResultFile);
+			log.debug("destfile={}", destfile);
+			log.debug("junitResultFile={}", junitResultFile);
 			log.debug("append=true");
-			log.debug("testMethods=", testMethods);
-			log.debug("allClassNames=", allClassNames);
-			log.debug("junitClassNames=", junitClassNames);
-			log.debug("testingClassNames=", testingClassNames);
+			log.debug("testMethods={}", testMethods);
+			log.debug("allClassNames={}", allClassNames);
+			log.debug("junitClassNames={}", junitClassNames);
+			log.debug("testingClassNames={}", testingClassNames);
 		}
 		for (String testMethod : testMethods) {
 			/* define arguments for JunitRunner */

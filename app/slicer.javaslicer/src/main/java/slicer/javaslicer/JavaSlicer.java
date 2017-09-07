@@ -119,7 +119,8 @@ public class JavaSlicer implements ISlicer {
 		/**/
 		vmRunner.setTraceFilePath(tempFileName);
 		if (!vmRunner.startAndWaitUntilStop(vmConfig)) {
-			throw new SavException(ModuleEnum.SLICING, vmRunner.getProccessError());
+			log.warn(vmRunner.getProccessError());
+//			throw new SavException(ModuleEnum.SLICING, vmRunner.getProccessError());
 		}
 
 		return tempFileName;
@@ -195,8 +196,8 @@ public class JavaSlicer implements ISlicer {
 			List<String> junitClassMethods)
 			throws InterruptedException, SavException {
 		log.debug("Slicing-slicing...");
-		log.debug("traceFilePath=", traceFilePath);
-		log.debug("entry points=", BreakpointUtils.getPrintStr(bkps));
+		log.debug("traceFilePath={}", traceFilePath);
+		log.debug("entry points={}", BreakpointUtils.getPrintStr(bkps));
 		File traceFile = new File(traceFilePath);
 		TraceResult trace;
 		try {

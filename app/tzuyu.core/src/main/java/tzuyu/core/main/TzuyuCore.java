@@ -130,7 +130,7 @@ public class TzuyuCore {
 					junitClassNames.addAll(randomTests);
 					break;
 				} catch (Throwable exception) {
-
+					log.debug(exception.getMessage());
 				}
 			}
 		}

@@ -46,7 +46,7 @@ public class RandomnessTest {
 		return 0.8; 
 	}
 	
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void testRandomSubList_bound() {
 		List<Integer> allList = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 		System.out.println(Randomness.randomSubList(allList, 12));

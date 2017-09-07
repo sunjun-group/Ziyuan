@@ -3,6 +3,7 @@ package datastructure;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -181,8 +182,14 @@ public class LearnDataStructureInvariant {
 	
 	private void buildMatrix() {
 		File folder = new File(path);
-		File[] files = folder.listFiles((dir, name) -> !name.equals(".DS_Store"));
-		
+//		File[] files = folder.listFiles((dir, name) -> !name.equals(".DS_Store"));
+		File[] files = folder.listFiles(new FilenameFilter() {
+			
+			@Override
+			public boolean accept(File dir, String name) {
+				return !name.equals(".DS_Store");
+			}
+		});
 		matrix = new int[testResults.size()][files.length];
 		
 		for (int i = 0; i < files.length; i++) {
