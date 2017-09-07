@@ -102,11 +102,9 @@ public class ConcolicMethodExplorer {
    */
   private Valuation initValuation;
   
-  /*pxzhang*/
   public Valuation getInitValuation() {
 	return initValuation; 
   }
-  /*pxzhang*/
   
   private Valuation currValuation;
   private Valuation nextValuation;

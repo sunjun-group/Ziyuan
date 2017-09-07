@@ -45,11 +45,17 @@ public class MySearch extends Search {
   public void search () {
 	  boolean initialized = true;
 	  ConcolicMethodExplorer cme = null;
+	  /**
+	   * An obsevation from Peixin lies in that: the target method is to be executed when 
+	   * the initial value of ConcolicMethodExplorer is not null. Therefore, the method keep
+	   * check the initial value until it's not null.
+	   */
 	  while(initialized) {
 		  forward();
 		  cme = (ConcolicMethodExplorer)vm.getSystemState().getThreadInfo().getAttr();
-		  if(cme.getInitValuation() != null)
-			  initialized = false;
+		  if(cme.getInitValuation() != null){
+			  initialized = false;			  
+		  }
 	  }
 	  int[] node_branch = new int[2];
 	  node_branch[0] = Integer.valueOf((String)config.get("explore.node"));
