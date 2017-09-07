@@ -42,12 +42,14 @@ public class JDartCore {
 				"+concolic.method." + params.getMethodName() + ".config=all_fields_symbolic",
 				"+jdart.tree.dont.print=true", // do not print tree
 				"+search.min_free="+params.getMinFree(),
-				"+search.timeLimit="+params.getTimeLimit()
+				"+search.timeLimit="+params.getTimeLimit(),
+				"+explore.node="+params.getExploreNode(),
+				"+explore.branch="+params.getExploreBranch()//pxzhang
 		};
 	}
 	
 	private static String[] constructConfig(String mainEntry, String className, String pathString, String methodName, String paramString,
-			long min_free, long timeLimit) {
+			long min_free, long timeLimit, int[] node_branch) {//pxzhang
 		return  new String[]{
 				"+jdart.tree.dont.print=true", // do not print tree
 				"+app=libs/jdart/jpf.properties",
@@ -58,7 +60,9 @@ public class JDartCore {
 				"+concolic.method." + methodName + "=" +className+"."+ methodName + paramString,
 				"+concolic.method." + methodName + ".config=all_fields_symbolic",
 				"+search.min_free="+min_free,
-				"+search.timeLimit="+timeLimit
+				"+search.timeLimit="+timeLimit,
+				"+explore.node="+ node_branch[0],
+				"+explore.branch="+ node_branch[1]//pxzhang
 		};
 	}
 
@@ -205,7 +209,7 @@ public class JDartCore {
 		long min_free = 20*(1024<<10); // min free memory
 		long timeLimit = 10 * 1000;
 		String[] config = constructConfig(mainEntry, className, pathString, methodName, paramString,
-				min_free, timeLimit);		
+				min_free, timeLimit, new int[2]);	//pxzhang	
 		List<TestInput> inputList = new JDartCore().run(constructJDartParams(args));
 //		inputList = RunJPF.run(config);
 		

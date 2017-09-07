@@ -25,10 +25,12 @@ import gov.nasa.jpf.jdart.config.ConcolicConfig;
 import gov.nasa.jpf.jdart.config.ConcolicMethodConfig;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.testsuites.TestSuiteGenerator;
+import gov.nasa.jpf.search.MySearch;
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.LogHandler;
 import gov.nasa.jpf.util.LogManager;
 import gov.nasa.jpf.util.SimpleProfiler;
+import gov.nasa.jpf.vm.VM;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

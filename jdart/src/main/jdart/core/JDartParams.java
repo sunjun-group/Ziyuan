@@ -22,6 +22,9 @@ public class JDartParams {
 	private String methodParamsStr;
 	private long timeLimit; // run time limit, unit of ms
 	private long minFree; // min free memory, unit of byte
+	/*pxzhang*/
+	private int explore_node = -1;
+	private int explore_branch = -1;
 	
 	public JDartParams() {
 		
@@ -98,5 +101,22 @@ public class JDartParams {
 	public void setMinFree(long minFree) {
 		this.minFree = minFree;
 	}
+
+	public int getExploreNode() {
+		return explore_node;
+	}
+
+	public void setExploreNode(int explore_node) {
+		this.explore_node = explore_node;
+	}
+
+	public int getExploreBranch() {
+		return explore_branch;
+	}
+
+	public void setExploreBranch(int explore_branch) {
+		this.explore_branch = explore_branch;
+	}
+
 	
 }
