@@ -2,12 +2,12 @@ package jdart.core.socket2;
 
 import jdart.core.JDartParams;
 
-public class JDartServerOnce {
+public class JDartServerByRequire {
 	
 	public static JDartParams constructJDartParams() {
 		String  classpathStr = "/Users/pxzhang/Documents/git/apache-common-math-2.2/apache-common-math-2.2/bin", 
 				app = "libs/jdart/jpf.properties",
-				site = "libs/jpf_once.properties",
+				site = "libs/jpf_by_require.properties",
 				
 				mainEntry = "com.Test",
 				className = "org.apache.commons.math.util.FastMath",
@@ -20,7 +20,8 @@ public class JDartServerOnce {
 		return constructJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site, node, branch);
 	}
 	
-	public static JDartParams constructJDartParams(String classpathStr, String mainEntry, String className, String methodName, String paramString,
+	public static JDartParams constructJDartParams(String classpathStr, String mainEntry, String className, 
+			String methodName, String paramString,
 			String app, String site, int node, int branch) {
 		
 		long minFree = 20*(1024<<10); // min free memory
@@ -37,7 +38,7 @@ public class JDartServerOnce {
 		params.setSiteProperties(site);
 		params.setTimeLimit(timeLimit);
 		params.setExploreNode(node);
-		params.setExploreBranch(branch);;
+		params.setExploreBranch(branch);
 
 		return params;
 	}
