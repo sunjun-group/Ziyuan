@@ -62,11 +62,13 @@ Set up
 	- All necessary settings (.classpath, .project) are ready for eclipse. 
 		+ Click on File/Import...
 		+ Select General/Existing Projects into workspace 
-		+ Browse to Ziyuan project folder, unselect modules:[tzuyuEclipsePlugin-test, tzuyuEclipsePlugin, tzuyu.repo, tzuyu.feature], 
+		+ Browse to Ziyuan project folder, select these modules:[sav.commons, slicer.wala, slicer.javaslicer, codecoverage.jacoco, cfgcoverage.jacoco, svmlib, faultLocalization, mutation, gentest, icsetlv, tzuyu.core, tzuyu, assertion, invariant.templates], 
 				then click "finish".
-		+ Wait until the building proccess finishes (this may take a while).		
-6.	Run the application:
-	- run tzuyu.core.main.TzuyuCoreDemoTest.testClass()
+		+ Wait until the building proccess finishes (this may take a while).	
+6. Configuration for ilpsolver:
+    Following the instruction in /etc/libs/javailp/javailp-native/readme.txt.
+7.	Run the application:
+	- run tzuyu.core.main.TzuyuCoreDemoTest.testStudentEvaluate2()
 	- if everything is setup properly, we should get learning result in the console view.
 
 Contacts
