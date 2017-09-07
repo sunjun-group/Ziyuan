@@ -22,7 +22,6 @@ public class JDartParams {
 	private String methodParamsStr;
 	private long timeLimit; // run time limit, unit of ms
 	private long minFree; // min free memory, unit of byte
-	/*pxzhang*/
 	private int explore_node = -1;
 	private int explore_branch = -1;
 	

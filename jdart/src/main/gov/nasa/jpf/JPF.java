@@ -482,12 +482,6 @@ public class JPF implements Runnable {
   public Search getSearch() {
     return search;
   }
-  
-  /*pxzhang*/
-  public void setSearch(Search search) {
-	  this.search = search;
-  }
-  /*pxzhang*/
 
   /**
    * return the VM object. This can be null if the initialization has failed

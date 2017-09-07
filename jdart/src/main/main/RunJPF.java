@@ -84,12 +84,11 @@ public class RunJPF extends Run {
   public static final int DELAY_EXIT   = 0x80;
 
   static final String JPF_CLASSNAME = "gov.nasa.jpf.JPF";
-  /*pxzhang*/
-  public static Map<List<int[]>, String[]> pathMap = new HashMap<>();
+
+  public static Map<List<int[]>, String[]> pathMap = new HashMap<>(); //store all the paths jDart solved
   public static Map<List<int[]>, String[]> getPathMap() {
 	return pathMap;
   }
-  /*pxzhang*/
 
   static void delay (String msg) {
     System.out.println(msg);
@@ -144,7 +143,7 @@ public class RunJPF extends Run {
       JPFShell shell = conf.getInstance("shell", JPFShell.class);
       if (shell != null) {
         shell.start( removeConfigArgs(args)); // responsible for exception handling itself
-        /*pxzhang*/
+
         InternalConstraintsTree ict = ((JDart)shell).getConcolicExplorer().getMethodExplorers().get(0).getInternalConstraintsTree();
         Set<Map.Entry<String, List<CompletedAnalysis>>> analy = ((JDart)shell).getAnalyses();
         Iterator<Entry<String, List<CompletedAnalysis>>> it = analy.iterator();
@@ -158,10 +157,7 @@ public class RunJPF extends Run {
         		entry.getValue()[1] = String.valueOf(val); 
         }
         pathMap = ict.getPathMap();
-//        for (Entry<List<Integer>, String[]> entry : pathMap.entrySet()) {  
-//            System.out.println("Key = " + entry.getKey() + ", Value = " + ((String[])entry.getValue())[0]);  
-//        }  
-        /*pxzhang*/
+
         return(constructPath((JDart) shell));
       } else {
         // we have to load JPF explicitly through the URLClassLoader, and

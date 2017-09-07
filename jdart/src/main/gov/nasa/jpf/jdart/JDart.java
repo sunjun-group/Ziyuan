@@ -25,7 +25,7 @@ import gov.nasa.jpf.jdart.config.ConcolicConfig;
 import gov.nasa.jpf.jdart.config.ConcolicMethodConfig;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.testsuites.TestSuiteGenerator;
-import gov.nasa.jpf.search.MySearch;
+import gov.nasa.jpf.search.OnceSearch;
 import gov.nasa.jpf.util.JPFLogger;
 import gov.nasa.jpf.util.LogHandler;
 import gov.nasa.jpf.util.LogManager;

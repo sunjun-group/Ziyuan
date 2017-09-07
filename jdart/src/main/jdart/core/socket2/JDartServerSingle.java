@@ -7,8 +7,7 @@ public class JDartServerSingle {
 	public static JDartParams constructJDartParams() {
 		String  classpathStr = "/Users/pxzhang/Documents/git/apache-common-math-2.2/apache-common-math-2.2/bin", 
 				app = "libs/jdart/jpf.properties",
-//				site = "libs/jpf.properties", //if only want to solve once, change to libs/jpf_once.properties
-				site = "libs/jpf_once.properties",
+				site = "libs/jpf.properties", //if only want to solve once, change to libs/jpf_once.properties
 				
 				mainEntry = "com.Test",
 				className = "org.apache.commons.math.util.FastMath",
@@ -78,12 +77,6 @@ public class JDartServerSingle {
 		params.setParamString(paramString);
 		params.setSiteProperties(site);
 		params.setTimeLimit(timeLimit);
-		
-		/*pxzhang*/
-		params.setExploreNode(22);
-		params.setExploreBranch(1);;
-		
-		
 		
 		return params;
 	}

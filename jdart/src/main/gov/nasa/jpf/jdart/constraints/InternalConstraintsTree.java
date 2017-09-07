@@ -38,7 +38,7 @@ import java.util.Queue;
 import java.util.Map.Entry;
 
 public class InternalConstraintsTree {
-	/* pxzhang */
+
 	public Map<List<int[]>, String[]> pathMap = new HashMap<>();
 
 	public Map<List<int[]>, String[]> getPathMap() {
@@ -46,7 +46,7 @@ public class InternalConstraintsTree {
 	}
 
 	Valuation lastVal = null;
-	/* pxzhang */
+
 
 	public enum BranchEffect {
 		NORMAL, UNEXPECTED, INCONCLUSIVE
@@ -463,11 +463,13 @@ public class InternalConstraintsTree {
 		return node;
 	}
 
-	/* pxzhang */
-	public Valuation solve(int[] node_branch) {
-		int last_node = node_branch[0];
-		int branch = node_branch[1];
-
+	/**
+	 * It is a method for search once(OnceSearch.java) from a given path.
+	 * 
+	 * @param node_branch
+	 * @return
+	 */
+	public Valuation solve(int last_node, int branch) {
 		Node node = currentTarget;
 		if (node == null)
 			return null;
@@ -533,12 +535,9 @@ public class InternalConstraintsTree {
 		System.out.println();
 		return null;
 	}
-	/* pxzhang */
 
 	public Valuation findNext() {
-		/* pxzhang */
 		long startTime = System.currentTimeMillis();
-		/* pxzhang */
 		replay = false;
 
 		if (diverged) {
@@ -549,7 +548,7 @@ public class InternalConstraintsTree {
 		while ((currentTarget = backtrack(currentTarget, true)) != null) {
 			DecisionData dec = currentTarget.decisionData();
 			if (dec == null) {
-				/* pxzhang */
+				
 				int length = currentTarget.depth;
 				Integer[] temp = new Integer[length];
 				Node node = currentTarget.parent;
@@ -563,7 +562,6 @@ public class InternalConstraintsTree {
 					map[1] = expectedPath.get(i);
 					path1.add(map);
 				}
-
 				// assume solve both true and false of constrains has same cost
 				List<int[]> path2 = new ArrayList<>();
 				for (int i = 0; i < length - 1; i++)
@@ -574,7 +572,7 @@ public class InternalConstraintsTree {
 
 				String[] result = new String[2];
 				double time = 0.0;
-				/* pxzhang */
+
 				assert currentTarget.isVirgin();
 				int ad = currentTarget.incAltDepth();
 				if (anaConf.maxAltDepthExceeded(ad) || anaConf.maxDepthExceeded(currentTarget.depth)) {
@@ -590,23 +588,23 @@ public class InternalConstraintsTree {
 				switch (res) {
 				case UNSAT:
 					currentTarget.unsatisfiable();
-					/* pxzhang */
+
 					time = System.currentTimeMillis() - startTime;
 					result[0] = String.valueOf(time);
 					result[1] = "NULL";
 					pathMap.put(path1, result);
 					pathMap.put(path2, result);
-					/* pxzhang */
+
 					break;
 				case DONT_KNOW:
 					currentTarget.dontKnow();
-					/* pxzhang */
+
 					time = System.currentTimeMillis() - startTime;
 					result[0] = String.valueOf(time);
 					result[1] = "NULL";
 					pathMap.put(path1, result);
 					pathMap.put(path2, result);
-					/* pxzhang */
+	
 					break;
 				case SAT:
 					Node predictedTarget = simulate(val);
@@ -616,30 +614,30 @@ public class InternalConstraintsTree {
 						if (inconclusive) {
 							logger.finer("NOT attempting execution");
 							currentTarget.dontKnow();
-							/* pxzhang */
+
 							time = System.currentTimeMillis() - startTime;
 							result[0] = String.valueOf(time);
 							result[1] = "NULL";
 							pathMap.put(path1, result);
 							pathMap.put(path2, result);
-							/* pxzhang */
+
 							break;
 						}
 					}
 					if (val.equals(prev)) {
 						logger.finer("Wont re-execute with known valuation");
 						currentTarget.dontKnow();
-						/* pxzhang */
+
 						time = System.currentTimeMillis() - startTime;
 						result[0] = String.valueOf(time);
 						result[1] = "NULL";
 						pathMap.put(path1, result);
 						pathMap.put(path2, result);
-						/* pxzhang */
+
 						break;
 					}
 					prev = val;
-					/* pxzhang */
+
 					time = System.currentTimeMillis() - startTime;
 					result[0] = String.valueOf(time);
 					result[1] = String.valueOf(val);
@@ -652,7 +650,7 @@ public class InternalConstraintsTree {
 						str[1] = String.valueOf(lastVal);
 					pathMap.put(path2, str);
 					lastVal = val;
-					/* pxzhang */
+
 					return ExpressionUtil.combineValuations(val);
 				}
 			} else {

@@ -625,11 +625,9 @@ public class SystemState {
     return ks.threads.length();
   }
   
-  /*pxzhang*/
   public ThreadInfo getThreadInfo() {
   	return execThread;
   }
-  /*pxzhang*/
   
   public UncaughtException getUncaughtException () {
     return uncaughtException;
