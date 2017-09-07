@@ -40,12 +40,12 @@ Set up
 	- Download maven (binary package) at https://maven.apache.org/download.cgi
 	- Unzip maven to folder [mvn folder]
 	- copy and override /etc/maven/local-settings.xml --> [mvn folder]/conf/settings.xml
-	- Go to /etc
-	For Window:
+	- Go to /etc.
+	- For Window:
 		+ copy win-setenv-example.bat --> setenv.bat
 		+ modify setenv.bat, set absolute path to the folders on your local machine.
-		+ run win-mvn-install-libs.bat 
-	For Linux:
+		+ run win-mvn-install-libs.bat. 
+	- For Linux:
 		+ copy linux-runall-example.sh --> linux-runall.sh
 		+ modify linux-runall.sh, set absolute path to the folders on your local machine.
 		+ run linux-runall.sh
@@ -68,6 +68,9 @@ Set up
 6. Configuration for ilpsolver:
     Following the instruction in /etc/libs/javailp/javailp-native/readme.txt.
 7.	Run the application:
+    - in Eclipse, go to Run/Run Configurations, under Maven Build, there are many maven build configuration for project, run flowing launchs:
+        sav build
+        then,  parent build skip test.
 	- run tzuyu.core.main.TzuyuCoreDemoTest.testStudentEvaluate2()
 	- if everything is setup properly, we should get learning result in the console view.
 
