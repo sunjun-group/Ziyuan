@@ -22,11 +22,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
@@ -38,10 +41,15 @@ import org.antlr.grammar.v3.CodeGenTreeWalker.element_action_return;
 import coral.util.options.Options.Test;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPFShell;
+import gov.nasa.jpf.constraints.api.SolverContext;
+import gov.nasa.jpf.constraints.api.Valuation;
 import gov.nasa.jpf.constraints.api.Variable;
+import gov.nasa.jpf.constraints.solvers.nativez3.NativeZ3SolverContext;
 import gov.nasa.jpf.jdart.CompletedAnalysis;
 import gov.nasa.jpf.jdart.JDart;
 import gov.nasa.jpf.jdart.config.ConcolicMethodConfig;
+import gov.nasa.jpf.jdart.constraints.ConstraintsTree;
+import gov.nasa.jpf.jdart.constraints.InternalConstraintsTree;
 import gov.nasa.jpf.jdart.constraints.Path;
 import gov.nasa.jpf.jdart.testsuites.TestSuiteGenerator;
 import gov.nasa.jpf.tool.Run;
@@ -76,6 +84,11 @@ public class RunJPF extends Run {
   public static final int DELAY_EXIT   = 0x80;
 
   static final String JPF_CLASSNAME = "gov.nasa.jpf.JPF";
+
+  public static Map<List<int[]>, String[]> pathMap = new HashMap<>(); //store all the paths jDart solved
+  public static Map<List<int[]>, String[]> getPathMap() {
+	return pathMap;
+  }
 
   static void delay (String msg) {
     System.out.println(msg);
@@ -130,6 +143,21 @@ public class RunJPF extends Run {
       JPFShell shell = conf.getInstance("shell", JPFShell.class);
       if (shell != null) {
         shell.start( removeConfigArgs(args)); // responsible for exception handling itself
+
+        InternalConstraintsTree ict = ((JDart)shell).getConcolicExplorer().getMethodExplorers().get(0).getInternalConstraintsTree();
+        Set<Map.Entry<String, List<CompletedAnalysis>>> analy = ((JDart)shell).getAnalyses();
+        Iterator<Entry<String, List<CompletedAnalysis>>> it = analy.iterator();
+        Valuation val = new Valuation();
+        while (it.hasNext()) {
+        	Entry<String, List<CompletedAnalysis>> entry = it.next();
+        	val = entry.getValue().get(0).getInitialValuation();
+        }
+        for(Entry<List<int[]>, String[]> entry : ict.getPathMap().entrySet()) {
+        	if(entry.getValue()[1] == "")
+        		entry.getValue()[1] = String.valueOf(val); 
+        }
+        pathMap = ict.getPathMap();
+
         return(constructPath((JDart) shell));
       } else {
         // we have to load JPF explicitly through the URLClassLoader, and

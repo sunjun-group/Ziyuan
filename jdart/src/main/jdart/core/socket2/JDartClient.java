@@ -1,6 +1,7 @@
 package jdart.core.socket2;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -20,7 +21,6 @@ public class JDartClient {
 	public void run(JDartParams jdartParams, int port){
 		log.info("JDart begin : "+jdartParams.getClassName()+"."+jdartParams.getMethodName());
 		List<TestInput> result = new JDartCore().run(jdartParams);
-		
 
 //		 for (int i = 0; i < result.size(); i++) {  
 //			 try {
@@ -31,40 +31,40 @@ public class JDartClient {
 //			}
 //			 }
 		
-		log.info("JDart over");
-		Socket socket = null;
-		PrintWriter pw = null;
-		try {
-			socket = new Socket("127.0.0.1", port);
-			log.info("Connect InterSocket=" + socket);
-			pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-					socket.getOutputStream())));
-			if (result != null) {
-				int javaPathLimit = 500; /** to constraint the number of returned result, which may cause java error : The filename or extension is too long */
-				 for (int i = 0; i < result.size() && i < javaPathLimit; i++) {  
-					 log.info("JDart result : "+result.get(i));
-					 byte[] bytes = ByteConverter.convertToBytes(result.get(i));
-					 log.info("send byte[] :"+bytes.length);
-					 pw.println(new String(bytes));
-					 pw.flush();  
-					 pw.println("line end");
-					 pw.flush();  
-		        }			 
-			}
-			pw.println("END"); 
-			pw.flush();
-		} catch (Exception e) {
-			log.info(e.toString());
-			e.printStackTrace();
-		} finally {
-			try {
-				log.info("Disconnect InterSocket......");
-				pw.close();
-				socket.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+//		log.info("JDart over");
+//		Socket socket = null;
+//		PrintWriter pw = null;
+//		try {
+//			socket = new Socket("127.0.0.1", port);
+//			log.info("Connect InterSocket=" + socket);
+//			pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+//					socket.getOutputStream())));
+//			if (result != null) {
+//				int javaPathLimit = 500; /** to constraint the number of returned result, which may cause java error : The filename or extension is too long */
+//				 for (int i = 0; i < result.size() && i < javaPathLimit; i++) {  
+//					 log.info("JDart result : "+result.get(i));
+//					 byte[] bytes = ByteConverter.convertToBytes(result.get(i));
+//					 log.info("send byte[] :"+bytes.length);
+//					 pw.println(new String(bytes));
+//					 pw.flush();  
+//					 pw.println("line end");
+//					 pw.flush();  
+//		        }			 
+//			}
+//			pw.println("END"); 
+//			pw.flush();
+//		} catch (Exception e) {
+//			log.info(e.toString());
+//			e.printStackTrace();
+//		} finally {
+//			try {
+//				log.info("Disconnect InterSocket......");
+//				pw.close();
+//				socket.close();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
 	}
 	
 	public static void main(String[] args) throws IOException {

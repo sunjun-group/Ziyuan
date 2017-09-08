@@ -15,28 +15,11 @@
  */
 package gov.nasa.jpf.jdart;
 
-import gov.nasa.jpf.Config;
-import gov.nasa.jpf.JPF;
-import gov.nasa.jpf.JPFShell;
-import gov.nasa.jpf.constraints.api.Expression;
-import gov.nasa.jpf.constraints.api.Variable;
-import gov.nasa.jpf.constraints.util.ExpressionUtil;
-import gov.nasa.jpf.jdart.config.ConcolicConfig;
-import gov.nasa.jpf.jdart.config.ConcolicMethodConfig;
-import gov.nasa.jpf.jdart.constraints.Path;
-import gov.nasa.jpf.jdart.testsuites.TestSuiteGenerator;
-import gov.nasa.jpf.util.JPFLogger;
-import gov.nasa.jpf.util.LogHandler;
-import gov.nasa.jpf.util.LogManager;
-import gov.nasa.jpf.util.SimpleProfiler;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,7 +27,16 @@ import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import java.util.logging.SimpleFormatter;
+
+import gov.nasa.jpf.Config;
+import gov.nasa.jpf.JPF;
+import gov.nasa.jpf.JPFShell;
+import gov.nasa.jpf.jdart.config.ConcolicConfig;
+import gov.nasa.jpf.jdart.config.ConcolicMethodConfig;
+import gov.nasa.jpf.jdart.testsuites.TestSuiteGenerator;
+import gov.nasa.jpf.util.JPFLogger;
+import gov.nasa.jpf.util.LogManager;
+import gov.nasa.jpf.util.SimpleProfiler;
 
 /**
  * The actual jdart jpf-shell to be started from config files.

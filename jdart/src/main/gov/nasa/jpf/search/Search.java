@@ -135,7 +135,7 @@ public abstract class Search {
     matchDepth = conf.getBoolean("search.match_depth");
     minFreeMemory = conf.getMemorySize("search.min_free", 1024<<10);    
     getAllErrors = conf.getBoolean("search.multiple_errors");
-    timeLimit = conf.getLong("search.timeLimit", 30 * 1000);
+    timeLimit = conf.getLong("search.timeLimit", 3000 * 1000);
   }
   
   /**

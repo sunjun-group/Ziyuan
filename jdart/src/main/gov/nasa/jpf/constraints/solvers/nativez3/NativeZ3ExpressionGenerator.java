@@ -96,7 +96,7 @@ public class NativeZ3ExpressionGenerator extends AbstractExpressionVisitor<Expr,
 		
 		this.count = 0;
 		this.startTime = System.currentTimeMillis();
-		this.timeLimit = 1 * 1000;
+		this.timeLimit = 3000 * 1000;
 	}
 
 	protected NativeZ3ExpressionGenerator(NativeZ3ExpressionGenerator parent)
