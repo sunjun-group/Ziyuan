@@ -38,9 +38,5 @@ public class JDartMain {
 			return;
 		}
 		JDartResult.saveToFile(result, file);
-		while (true) {
-			// do nothing
-			System.out.println("abc");
-		}
 	}
 }
