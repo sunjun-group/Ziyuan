@@ -138,6 +138,7 @@ public class VMRunner {
 			        @Override
 			        public void run() {
 			            process.destroy();
+			            log.info("destroy thread due to timeout!");
 			        }
 			    }, timeout); 
 			}
@@ -187,7 +188,11 @@ public class VMRunner {
 	}
 	
 	public void setTimeout(int timeout, TimeUnit unit) {
-		this.timeout = unit.toMillis(timeout);
+		setTimeout(unit.toMillis(timeout));
+	}
+	
+	public void setTimeout(long timeout) {
+		this.timeout = timeout;
 	}
 	
 	public static boolean start(VMConfiguration config) throws SavException {
