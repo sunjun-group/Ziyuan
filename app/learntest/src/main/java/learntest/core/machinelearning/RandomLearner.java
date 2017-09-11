@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.LearningMediator;
+import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.sampling.SamplingResult;
 import sav.common.core.SavException;
@@ -38,6 +39,7 @@ public class RandomLearner implements IInputLearner {
 		this.mediator = mediator;
 		this.maxTcs = maxTcs;
 		this.logFile = logFile;
+		RunTimeInfo.createFile(logFile);
 	}
 	
 	@Override

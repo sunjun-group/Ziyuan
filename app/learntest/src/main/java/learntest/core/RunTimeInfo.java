@@ -1,5 +1,6 @@
 package learntest.core;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
@@ -204,6 +205,13 @@ public class RunTimeInfo {
 			}
 		}
 
+	}
+	
+	public static void createFile(String path) {
+		File file = new File(path);
+		if (!file.exists()) {
+			file.getParentFile().mkdirs();
+		}
 	}
 	
 }

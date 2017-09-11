@@ -69,6 +69,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	public PrecondDecisionLearner(LearningMediator mediator, String logFile) {
 		super(mediator);
 		this.logFile = logFile;
+		RunTimeInfo.createFile(logFile);
 	}
 
 	public DecisionProbes learn(DecisionProbes inputProbes, BreakpointData bpdata, Map<Integer, List<Variable>> relevantVarMap) throws SavException {
@@ -85,7 +86,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			}
 		}		
 		RunTimeInfo.write(logFile, sBuffer.toString());
-		
+		log.info(sBuffer.toString());
 		if (relevantVarMap == null || probes.getCfg().getNodeList().size() != relevantVarMap.size()) {
 			log.debug("The size of CfgNodes is differnt from the size of map!!!!");
 			this.relevantVars = null;
@@ -154,10 +155,10 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 						}
 					}
 				} else {
-					log.info("{} does not exist in original ExecVars.", var);
+//					log.info("{} does not exist in original ExecVars.", var);
 				}
 				if (!found) {
-					log.info("{} does not exist in original ExecVars.", var);
+//					log.info("{} does not exist in original ExecVars.", var);
 				}
 			}			
 			infos.sort(new VarInfoComparator()); // keep the sequence in originalVars
@@ -229,7 +230,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 						
 				Pair<OrCategoryCalculator, Boolean> pair = null;
 				log.debug("learning the node in line " + node.getLine() + "(" + node + ")");
-				if (node.isInLoop()) { // should be node.inLoopHeader(), todo : this is a patch, because the loop header is labeled incorrectly
+				if (node.isLoopHeader()) { // should be node.inLoopHeader(), todo : this is a patch, because the loop header is labeled incorrectly
 					/** todo : handle the loop
 					 *  loop header dominate and is dominated by nodes in loop, 
 					 *  thus in order to break the wait lock, loop header should be learned first without learing nodes in loop 
