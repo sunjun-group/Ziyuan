@@ -33,6 +33,7 @@ public class JDartParameters extends Parameters {
 	static final String JDART_SITE_PROPERTIES = "jdartSiteProperties";
 	static final String TIME_LIMIT = "timelimit";
 	static final String MIN_MEMORY_FREE = "memoryFree";
+	static final String LIMIT_RESULT = "limitResult";
 	static final String RESULT_FILE_PATH = "jdartResultFilePath";
 	
 	static {
@@ -46,6 +47,7 @@ public class JDartParameters extends Parameters {
 		opts.addOption(JDART_SITE_PROPERTIES, true, "jdart site properties file path");
 		opts.addOption(TIME_LIMIT, true, "time limit");
 		opts.addOption(MIN_MEMORY_FREE, true, "min memory");
+		opts.addOption(LIMIT_RESULT, true, "maximum number of test input result");
 		opts.addOption(RESULT_FILE_PATH, true, "jdart result file");
 	}
 	
@@ -62,8 +64,9 @@ public class JDartParameters extends Parameters {
 				.addArgument(TARGET_METHOD_PARAM_STR, params.getParamString())
 				.addArgument(JDART_APP_PROPERTIES, params.getAppProperties())
 				.addArgument(JDART_SITE_PROPERTIES, params.getSiteProperties())
-				.addArgument(TIME_LIMIT, String.valueOf(params.getTimeLimit()))
+				.addArgument(TIME_LIMIT, params.getTimeLimit())
 				.addArgument(MIN_MEMORY_FREE, String.valueOf(params.getMinFree()))
+				.addArgument(LIMIT_RESULT, params.getLimitNumberOfResultSet())
 				.addArgument(RESULT_FILE_PATH, paramters.resultFile)
 				.build();
 	}
@@ -85,6 +88,7 @@ public class JDartParameters extends Parameters {
 		params.setSiteProperties(getOption(cmd, JDART_SITE_PROPERTIES));
 		params.setTimeLimit(getLongOption(cmd, TIME_LIMIT));
 		params.setMinFree(getLongOption(cmd, MIN_MEMORY_FREE));
+		params.setLimitNumberOfResultSet(getIntOption(cmd, LIMIT_RESULT));
 		paramters.jdartParams = params;
 		paramters.resultFile = getOption(cmd, RESULT_FILE_PATH);
 		return paramters;

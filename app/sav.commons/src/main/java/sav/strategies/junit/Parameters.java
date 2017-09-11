@@ -60,6 +60,13 @@ public class Parameters {
 		return 0;
 	}
 	
+	protected static int getIntOption(CommandLine cmd, String optName) {
+		if (cmd.hasOption(optName)) {
+			return Integer.valueOf(cmd.getOptionValue(optName));
+		}
+		return 0;
+	}
+	
 	
 	protected static List<String> getListStringOption(CommandLine cmd, String optName) {
 		if (cmd.hasOption(optName)) {

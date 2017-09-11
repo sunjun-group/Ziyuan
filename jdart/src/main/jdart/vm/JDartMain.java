@@ -37,6 +37,6 @@ public class JDartMain {
 		if (CollectionUtils.isEmpty(result)) {
 			return;
 		}
-		JDartResult.saveToFile(result, file);
+		JDartResult.saveToFile(result, file, jdartParams.getLimitNumberOfResultSet());
 	}
 }

@@ -25,6 +25,7 @@ import learntest.core.gentest.GentestResult;
 import learntest.core.jdart.JDartRunner;
 import learntest.core.jdart.JdartTestInputUtils;
 import sav.common.core.SavException;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.TextFormatUtils;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
@@ -43,11 +44,10 @@ public class JDartLearntest extends LearnTest {
 	@Override
 	protected void prepareInitTestcase(LearnTestParams params) throws SavException {
 		List<TestInput> inputs = generateTestAndRunJDart(params);
-		if (inputs == null) {
+		if (CollectionUtils.isEmpty(inputs)) {
 			log.info("jdart result: {}", TextFormatUtils.printListSeparateWithNewLine(inputs));
 			return;
-		}
-		else{
+		} else{
 			log.info("jdart result (print 100 result at most):");
 			for (int i = 0; i < inputs.size() && i < 100; i++) {
 				log.info("input: {}", inputs.get(i).toString());

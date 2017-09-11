@@ -22,6 +22,7 @@ public class JDartParams {
 	private String methodParamsStr;
 	private long timeLimit; // run time limit, unit of ms
 	private long minFree; // min free memory, unit of byte
+	private int limitNumberOfResultSet = 500; // default, copy from JDartClient class.
 	
 	public JDartParams() {
 		
@@ -98,5 +99,12 @@ public class JDartParams {
 	public void setMinFree(long minFree) {
 		this.minFree = minFree;
 	}
-	
+
+	public int getLimitNumberOfResultSet() {
+		return limitNumberOfResultSet;
+	}
+
+	public void setLimitNumberOfResultSet(int limitNumberOfResultSet) {
+		this.limitNumberOfResultSet = limitNumberOfResultSet;
+	}
 }

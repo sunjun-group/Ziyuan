@@ -24,6 +24,8 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 
 import jdart.model.TestInput;
+import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.Randomness;
 
 /**
  * @author LLT
@@ -32,29 +34,15 @@ import jdart.model.TestInput;
 public class JDartResult implements Serializable {
 	private static final long serialVersionUID = 6134006353166948700L;
 
-	private List<TestInput> inputs;
-
-	public JDartResult() {
-
-	}
-
-	public JDartResult(List<TestInput> result) {
-		this.inputs = result;
-	}
-
-	public List<TestInput> getInputs() {
-		return inputs;
-	}
-
-	public void setInputs(List<TestInput> inputs) {
-		this.inputs = inputs;
-	}
-
-	public static void saveToFile(List<TestInput> result, File file) throws IOException {
+	public static void saveToFile(List<TestInput> result, File file, int limitResult) throws IOException {
+		List<TestInput> selectedResult = result;
+		if (CollectionUtils.getSize(selectedResult) > limitResult) {
+			selectedResult = Randomness.randomSubList(selectedResult, limitResult);
+		}
 		FileOutputStream output = null;
 		try {
 			output = new FileOutputStream(file, true);
-			convertToBytes(result, output);
+			convertToBytes(selectedResult, output);
 		} finally {
 			IOUtils.closeQuietly(output);
 		}
