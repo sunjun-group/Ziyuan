@@ -240,7 +240,7 @@ public class DecisionProbes extends CfgCoverage {
 	}
 	
 	private boolean loopPrecondFinished(List<CfgNode> dominators, CfgNode loopHeader, HashMap<CfgNode, CfgNodeDomainInfo> dominationMap) {
-		assert loopHeader.isInLoop() : "The node must be loop node";
+		assert loopHeader.isLoopHeader() : "The node must be loop node";
 		for (CfgNode dominator : dominators) {
 			Precondition domPrecond = getNodeProbe(dominator).getPrecondition();
 			if (!domPrecond.isVisited()) { // there is a dominator not been learned
@@ -262,9 +262,14 @@ public class DecisionProbes extends CfgCoverage {
 			if (node == dominator) {
 				return true;
 			}else {
-				for (CfgNode cfgNode : dominationMap.get(node).getDominatees()) {
-					if (!visited.containsKey(cfgNode)) {
-						queue.add(cfgNode);
+				List<CfgNode> children =  node.getBranches();
+				if (children != null) {
+					for (CfgNode cfgNode : children) {
+						if (!visited.containsKey(cfgNode)) {
+							if (cfgNode != null) {
+								queue.add(cfgNode);
+							}
+						}
 					}
 				}
 			}

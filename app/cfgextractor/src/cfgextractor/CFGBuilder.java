@@ -37,7 +37,7 @@ public class CFGBuilder {
 		
 		/** current evaluation does not change line number, so we can keep the cache to speed up the progress */
 		Repository.clearCache();				
-		ClassPath0 classPath = new ClassPath0(s);
+		ClassPath classPath = new ClassPath(s);
 		Repository.setRepository(SyntheticRepository.getInstance(classPath));
 		
 		

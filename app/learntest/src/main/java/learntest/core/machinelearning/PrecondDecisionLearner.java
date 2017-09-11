@@ -230,7 +230,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 						
 				Pair<OrCategoryCalculator, Boolean> pair = null;
 				log.debug("learning the node in line " + node.getLine() + "(" + node + ")");
-				if (node.isLoopHeader()) { // should be node.inLoopHeader(), todo : this is a patch, because the loop header is labeled incorrectly
+				if (node.isLoopHeader()) {
 					/** todo : handle the loop
 					 *  loop header dominate and is dominated by nodes in loop, 
 					 *  thus in order to break the wait lock, loop header should be learned first without learing nodes in loop 
