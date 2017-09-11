@@ -22,6 +22,7 @@ import cfgcoverage.jacoco.analysis.data.CfgNode;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.TextFormatUtils;
 
 /**
  * @author LLT
@@ -177,12 +178,11 @@ public class CfgConstructorUtils {
 			for (CfgNode dependentee : lastNode.getDependentees()) {
 				if (!visited.contains(dependentee)) {
 					allDependenteesVisited = false;
-					if (!visitStack.contains(dependentee)) {
-						visitStack.push(dependentee);
-					} else {
+					if (visitStack.contains(dependentee)) {
 						log.warn("suspicious dependency!!: dependentee[{}], lastNode[{}]", dependentee,
 								lastNode);
 					}
+					visitStack.push(dependentee);
 				}
 			}
 			if (allDependenteesVisited) {

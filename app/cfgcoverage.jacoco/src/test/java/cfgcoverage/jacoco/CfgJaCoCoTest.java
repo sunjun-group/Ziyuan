@@ -115,6 +115,7 @@ public class CfgJaCoCoTest extends AbstractTest {
 	public void testIf() throws Exception {
 		runSimpleRunner = true;
 		runTest(IfSample.class, IfSampleTest.class, "run");
+		runTest(IfSample.class, IfSampleTest.class, "multiCond");
 	}
 	
 	@Test
@@ -133,4 +134,6 @@ public class CfgJaCoCoTest extends AbstractTest {
 		runSimpleRunner = true;
 		runTest(MultiLevelLoopSample.class, MultiLevelLoopSampleTest.class, "run");
 	}
+	
+	
 }

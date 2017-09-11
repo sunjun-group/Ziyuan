@@ -21,4 +21,14 @@ public class IfSample {
 		
 		System.out.println("c");
 	}
+	
+	public void multiCond(int a, int b) {
+		if ((a == 1) || (b > 0)) {
+			System.out.println();
+			if (b < 3) {
+				System.out.println();
+			}
+		}
+		
+	}
 }

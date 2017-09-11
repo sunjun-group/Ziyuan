@@ -28,4 +28,16 @@ public class IfSampleTest {
 		IfSample sample = new IfSample();
 		sample.run(-1);
 	}
+	
+	@Test
+	public void test3() {
+		IfSample sample = new IfSample();
+		sample.multiCond(1, 3);
+	}
+	
+	@Test
+	public void test4() {
+		IfSample sample = new IfSample();
+		sample.multiCond(3, 1);
+	}
 }
