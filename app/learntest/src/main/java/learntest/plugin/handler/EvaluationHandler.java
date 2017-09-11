@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -197,7 +198,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		}
 	}
 
-	private LearnTestParams initLearntestParams(TargetMethod targetMethod) {
+	private LearnTestParams initLearntestParams(TargetMethod targetMethod) throws CoreException {
 		LearnTestParams params = new LearnTestParams(targetMethod);
 		setSystemConfig(params);
 		return params;

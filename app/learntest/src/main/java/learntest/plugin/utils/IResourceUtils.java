@@ -9,34 +9,40 @@
 package learntest.plugin.utils;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.net.URI;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jdt.core.IJavaProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import learntest.plugin.commons.LearntestPluginExeception;
 
 /**
  * @author LLT
  *
  */
 public class IResourceUtils {
+	private static Logger log = LoggerFactory.getLogger(IResourceUtils.class);
 	private IResourceUtils(){}
 	
 	public static void getTestTarget(IJavaProject project) {
 	}
 	
-	public static String getResourceAbsolutePath(String pluginId, String resourceRelativePath) {
+	public static String getResourceAbsolutePath(String pluginId, String resourceRelativePath)
+			throws LearntestPluginExeception {
 		try {
-			URL fileURL = new URL(getResourceUrl(pluginId, resourceRelativePath));
-			File file = new File(FileLocator.resolve(fileURL).toURI());
-		    return file.getAbsolutePath();
-		} catch (URISyntaxException e1) {
-		    e1.printStackTrace();
-		} catch (IOException e1) {
-		    e1.printStackTrace();
+			String resourceUrl = getResourceUrl(pluginId, resourceRelativePath);
+			URL fileURL = new URL(resourceUrl);
+			URL resolve = FileLocator.resolve(fileURL);
+			URI uri = resolve.toURI();
+			File file = new File(uri);
+			return file.getAbsolutePath();
+		} catch (Exception e1) {
+			log.error(e1.getMessage());
+			throw new LearntestPluginExeception(e1);
 		}
-		return null;
 	}
 
 	private static String getResourceUrl(String pluginId, String resourceRelativePath) {
@@ -44,4 +50,5 @@ public class IResourceUtils {
 				.append(resourceRelativePath);
 		return sb.toString();
 	}
+	
 }

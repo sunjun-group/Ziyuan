@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.machinelearning.CfgNodeDomainInfo;
@@ -195,13 +197,9 @@ public class RunTimeInfo {
 			writer = new FileWriter(file, true);
 			writer.write(log);
 		} catch (IOException e) {
-			e.printStackTrace();
+			// ignore
 		} finally {
-			try {
-				writer.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			IOUtils.closeQuietly(writer);
 		}
 
 	}

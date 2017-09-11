@@ -1,5 +1,6 @@
 package learntest.plugin.handler;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -13,7 +14,7 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 	private static Logger log = LoggerFactory.getLogger(GenerateTestHandler.class);
 	
 	@Override
-	protected IStatus execute(IProgressMonitor monitor) {
+	protected IStatus execute(IProgressMonitor monitor) throws CoreException {
 		evaluateLearntestForSingleMethod(initLearntestParamsFromPreference());
 		log.debug("Finish!");
 		return Status.OK_STATUS;

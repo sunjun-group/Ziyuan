@@ -49,6 +49,7 @@ import learntest.core.commons.exception.LearnTestException;
 import learntest.core.machinelearning.CfgNodeDomainInfo;
 import learntest.core.machinelearning.FormulaInfo;
 import learntest.plugin.LearnTestConfig;
+import learntest.plugin.commons.LearntestPluginExeception;
 import learntest.plugin.export.io.excel.Trial;
 import learntest.plugin.utils.IProjectUtils;
 import learntest.plugin.utils.IResourceUtils;
@@ -96,7 +97,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		return null;
 	}
 
-	protected abstract IStatus execute(IProgressMonitor monitor);
+	protected abstract IStatus execute(IProgressMonitor monitor) throws CoreException;
 
 	protected abstract String getJobName();
 
@@ -148,11 +149,11 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		}
 	}
 
-	protected LearnTestParams initLearntestParamsFromPreference() {
+	protected LearnTestParams initLearntestParamsFromPreference() throws CoreException {
 		return initLearntestParams(LearnTestConfig.getINSTANCE());
 	}
 
-	protected LearnTestParams initLearntestParams(LearnTestConfig config) {
+	protected LearnTestParams initLearntestParams(LearnTestConfig config) throws CoreException {
 		try {
 			LearnTestParams params = new LearnTestParams();
 			params.setApproach(config.isL2TApproach() ? LearnTestApproach.L2T : LearnTestApproach.RANDOOP);
@@ -191,11 +192,15 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		return method;
 	}
 
-	public void setSystemConfig(LearnTestParams params) {
-		params.getSystemConfig().set(LearntestSystemVariable.JDART_APP_PROPRETIES,
-				IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jdart/jpf.properties"));
-		params.getSystemConfig().set(LearntestSystemVariable.JDART_SITE_PROPRETIES,
-				IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jpf.properties"));
+	public void setSystemConfig(LearnTestParams params) throws CoreException {
+		try {
+			params.getSystemConfig().set(LearntestSystemVariable.JDART_APP_PROPRETIES,
+					IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jdart/jpf.properties"));
+			params.getSystemConfig().set(LearntestSystemVariable.JDART_SITE_PROPRETIES,
+					IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jpf.properties"));
+		} catch (LearntestPluginExeception e) {
+			throw new CoreException(IStatusUtils.exception(e, e.getMessage()));
+		}
 	}
 
 	/* END PLUGIN HANDLER */
