@@ -1,5 +1,6 @@
 package learntest.core;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
@@ -8,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
@@ -17,6 +20,7 @@ import learntest.core.machinelearning.IInputLearner;
 import sav.common.core.utils.TextFormatUtils;
 
 public class RunTimeInfo {
+	private static Logger logger = LoggerFactory.getLogger(RunTimeInfo.class);
 	private long time;
 	private double coverage;
 	private int testCnt;
@@ -197,11 +201,19 @@ public class RunTimeInfo {
 			writer = new FileWriter(file, true);
 			writer.write(log);
 		} catch (IOException e) {
+			logger.debug("cannot write log to file!");
 			// ignore
 		} finally {
 			IOUtils.closeQuietly(writer);
 		}
 
+	}
+	
+	public static void createFile(String path) {
+		File file = new File(path);
+		if (!file.exists()) {
+			file.getParentFile().mkdirs();
+		}
 	}
 	
 }

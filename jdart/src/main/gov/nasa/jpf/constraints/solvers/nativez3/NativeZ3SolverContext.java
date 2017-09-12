@@ -62,7 +62,7 @@ public class NativeZ3SolverContext extends SolverContext {
     this.generatorStack.push(rootGenerator);
     this.freeVarsStack.push(new HashMap<String, Variable<?>>());
     this.startTime = System.currentTimeMillis();
-    this.timeLimit = 30 * 1000;
+    this.timeLimit = 3000 * 1000;
   }
 
   @Override

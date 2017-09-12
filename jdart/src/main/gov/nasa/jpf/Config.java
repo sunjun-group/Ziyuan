@@ -210,7 +210,7 @@ public class Config extends Properties {
     }
 
     //--- get the project properties from current dir + site configured extensions
-    loadProjectProperties();
+//    loadProjectProperties(); //it is not necessary for our configuration, pxzhang
 
     //--- the application properties
     if (appProperties != null){

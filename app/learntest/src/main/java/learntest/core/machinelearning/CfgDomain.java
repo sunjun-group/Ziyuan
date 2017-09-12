@@ -72,14 +72,57 @@ public class CfgDomain {
 			}else if (curNodeInfo.children.size() > 1) {
 				post.putAll(getCommonPostD(curNodeInfo.children)); // get intersection of post-domain set
 			}
-			int originalSize = curNodeInfo.postDomain.size();
-			curNodeInfo.postDomain.putAll(post);
-			int curSize = curNodeInfo.postDomain.size();
-			if (curSize > originalSize) {
-				modified = true;
+			if(addAndmodified(curNodeInfo, post))
+				modified = true;;
+		}
+		
+		/**
+		 * check the situation of loop.
+		 * The loop header may have two branches, first branch is inloop and does not exit process, second branch break loop.
+		 * Thus, loop header should dominate second branch indeed.
+		 */
+		if (!modified) {
+			for (Entry<CfgNode, CfgNodeDomainInfo> entry : set) {
+				CfgNodeDomainInfo curNodeInfo = dominationMap.get(entry.getKey());
+				if (curNodeInfo.children.size() > 1) {
+					CfgNode dominatedChild;
+					if ( (dominatedChild = doMinatedChild(curNodeInfo)) != null) {
+						HashMap<CfgNode, Integer> post = new HashMap<>();
+						post.putAll(dominationMap.get(dominatedChild).postDomain);
+						post.put(dominatedChild, dominatedChild.getLine());
+						if(addAndmodified(curNodeInfo, post))
+							modified = true;;
+					}
+				}
 			}
 		}
+		
 		return modified;
+	}
+
+	private CfgNode doMinatedChild(CfgNodeDomainInfo curNodeInfo) {
+		int count = 0;
+		CfgNode domainee = null;
+		for (CfgNode node : curNodeInfo.children.keySet()) {
+			if (!dominationMap.get(node).postDomain.containsKey(curNodeInfo.node)) {
+				count++;
+				domainee = node;
+				if (count > 1) {
+					return null;
+				}
+			}
+		}
+		return domainee;
+	}
+
+	private boolean addAndmodified(CfgNodeDomainInfo curNodeInfo, HashMap<CfgNode, Integer> post) {
+		int originalSize = curNodeInfo.postDomain.size();
+		curNodeInfo.postDomain.putAll(post);
+		int curSize = curNodeInfo.postDomain.size();
+		if (curSize > originalSize) {
+			return true;
+		}
+		return false;
 	}
 
 	private HashMap<CfgNode, Integer> getCommonPostD(HashMap<CfgNode, Integer> parent) {

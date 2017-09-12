@@ -23,9 +23,11 @@ public class JDartParams {
 	private long timeLimit; // run time limit, unit of ms
 	private long minFree; // min free memory, unit of byte
 	private int limitNumberOfResultSet = 500; // default, copy from JDartClient class.
-	
+	private int explore_node = -1;
+	private int explore_branch = -1;
+
 	public JDartParams() {
-		
+
 	}
 
 	public String getMainEntry() {
@@ -104,7 +106,24 @@ public class JDartParams {
 		return limitNumberOfResultSet;
 	}
 
+	public int getExploreNode() {
+		return explore_node;
+	}
+
 	public void setLimitNumberOfResultSet(int limitNumberOfResultSet) {
 		this.limitNumberOfResultSet = limitNumberOfResultSet;
 	}
+
+	public void setExploreNode(int explore_node) {
+		this.explore_node = explore_node;
+	}
+
+	public int getExploreBranch() {
+		return explore_branch;
+	}
+
+	public void setExploreBranch(int explore_branch) {
+		this.explore_branch = explore_branch;
+	}
+
 }

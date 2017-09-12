@@ -624,7 +624,11 @@ public class SystemState {
   public int getThreadCount () {
     return ks.threads.length();
   }
-
+  
+  public ThreadInfo getThreadInfo() {
+  	return execThread;
+  }
+  
   public UncaughtException getUncaughtException () {
     return uncaughtException;
   }
