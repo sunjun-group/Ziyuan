@@ -317,4 +317,24 @@ public class CollectionUtils {
 		}
 		return set;
 	}
+
+	public static <T>Set<T> concateToSet(Collection<T> col1, Collection<T> col2) {
+		Set<T> set = new HashSet<T>(col1);
+		set.addAll(col2);
+		return set;
+	}
+	
+	public static <T>Set<T> concateToSet(Collection<List<T>> colOfCol) {
+		Set<T> set = new HashSet<T>();
+		for (Collection<T> col : colOfCol) {
+			set.addAll(col);
+		}
+		return set;
+	}
+
+	public static <T, V>void addAllIfNotNull(Map<T, V> map, Map<T, V> toAddMap) {
+		if (toAddMap != null) {
+			map.putAll(toAddMap);
+		}
+	}
 }

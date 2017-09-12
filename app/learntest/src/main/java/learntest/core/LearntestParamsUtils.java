@@ -42,6 +42,7 @@ public class LearntestParamsUtils {
 		params.setTestPkg(getTestPackage(learntestParams, gentestPackage));
 		params.setTestClassPrefix(targetMethod.getTargetClazz().getClassSimpleName());
 		params.setTestMethodPrefix("test");
+		params.setExtractTestcaseSequenceMap(true);
 		return params;
 	}
 	

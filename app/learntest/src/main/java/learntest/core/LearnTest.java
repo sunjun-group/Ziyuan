@@ -33,13 +33,13 @@ import variable.Variable;
 
 public class LearnTest extends AbstractLearntest {
 	private static Logger log = LoggerFactory.getLogger(LearnTest.class);
-	protected LearningMediator mediator;
 	
 	public LearnTest(AppJavaClassPath appClasspath) {
 		super(appClasspath);
 	}
 	
 	public RunTimeInfo run(LearnTestParams params) throws Exception {
+		init(params);
 		log.debug("Start learntest..({})", params.getApproach());
 		prepareInitTestcase(params);
 		SAVTimer.startCount();
@@ -48,7 +48,6 @@ public class LearnTest extends AbstractLearntest {
 			log.info("empty testcase!");
 			return null;
 		}
-		init(params);
 		boolean learningStarted = false;
 		CfgCoverage cfgCoverage = null;
 		TargetMethod targetMethod = params.getTargetMethod();
@@ -58,7 +57,7 @@ public class LearnTest extends AbstractLearntest {
 
 			if (CoverageUtils.notCoverAtAll(cfgCoverage)) {
 				log.info("start node is not covered!");
-				return getRuntimeInfo(cfgCoverage);
+				return cleanupTestcasesAndGetRuntimeInfo(cfgCoverage);
 			}
 			
 			Map<Integer, List<Variable>> relevantVarMap = new CFGBuilder().parsingCFG(getAppClasspath(),
@@ -74,7 +73,7 @@ public class LearnTest extends AbstractLearntest {
 			if (CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
 				log.info("no decision node is covered!");
 				copyTestsToResultFolder(params);
-				return getRuntimeInfo(cfgCoverage);
+				return cleanupTestcasesAndGetRuntimeInfo(cfgCoverage);
 			} else {
 				/* learn */
 				IInputLearner learner = mediator.initDecisionLearner(params);
@@ -83,7 +82,8 @@ public class LearnTest extends AbstractLearntest {
 				
 				DecisionProbes probes = learner.learn(initProbes, result, relevantVarMap);
 				
-				/** In this way, all samples are recorded.
+				/** 
+				 * In this way, all samples are recorded.
 				 *  But record sample data after sample selecting is also important, 
 				 *  because we may want to see which sample is selected after learning. 
 				 * */
@@ -91,7 +91,7 @@ public class LearnTest extends AbstractLearntest {
 				learner.getFalseSample().clear();
 				learner.recordSample(probes, learner.getLogFile());
 				
-				RunTimeInfo info = getRuntimeInfo(probes);
+				RunTimeInfo info = cleanupTestcasesAndGetRuntimeInfo(probes);
 				if (learner instanceof PrecondDecisionLearner) { 
 					setLearnState((PrecondDecisionLearner)learner, info);
 				}
@@ -107,9 +107,15 @@ public class LearnTest extends AbstractLearntest {
 			log.warn("still cannot get entry value when coverage is not empty!");
 		}
 		if (cfgCoverage != null) {
-			return getRuntimeInfo(cfgCoverage);
+			return cleanupTestcasesAndGetRuntimeInfo(cfgCoverage);
 		} 
 		return null;
+	}
+
+	private RunTimeInfo cleanupTestcasesAndGetRuntimeInfo(CfgCoverage cfgCoverage) {
+		/* clean up testcases */
+		mediator.commitFinalTests();
+		return getRuntimeInfo(cfgCoverage);
 	}
 
 	private void setLearnState(PrecondDecisionLearner learner, RunTimeInfo info) {

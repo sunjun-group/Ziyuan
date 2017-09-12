@@ -11,7 +11,9 @@ package learntest.core.gentest;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import gentest.core.data.Sequence;
 import icsetlv.common.dto.BreakpointValue;
 import sav.common.core.utils.CollectionUtils;
 
@@ -25,6 +27,7 @@ public class GentestResult {
 	private File mainClassFile;
 	private String mainClassName;
 	private List<BreakpointValue> inputData;
+	private Map<String, Sequence> testcaseSequenceMap;
 	
 	public void addInputData(BreakpointValue value) {
 		if (inputData == null) {
@@ -92,6 +95,14 @@ public class GentestResult {
 
 	public void setMainClassName(String mainClassName) {
 		this.mainClassName = mainClassName;
+	}
+
+	public Map<String, Sequence> getTestcaseSequenceMap() {
+		return testcaseSequenceMap;
+	}
+
+	public void setTestcaseSequenceMap(Map<String, Sequence> testcaseSequenceMap) {
+		this.testcaseSequenceMap = testcaseSequenceMap;
 	}
 	
 }

@@ -57,7 +57,11 @@ public class TestGenerator {
 		PrinterParams printerParams = params.getPrinterParams();
 		TestsPrinter printer = new TestsPrinter(printerParams);
 		if (!params.generateMainClass()) {
-			return gentest(params, printer);
+			LearntestJWriter cuWriter = new LearntestJWriter(params.extractTestcaseSequenceMap());
+			printer.setCuWriter(cuWriter);
+			GentestResult result = gentest(params, printer);
+			result.setTestcaseSequenceMap(cuWriter.getTestcaseSequenceMap());
+			return result;
 		} 
 		/* if main class is required to be generated, we need to do a little more */
 		MainClassJWriter cuWriter = new MainClassJWriter(printerParams.getPkg(),
@@ -72,7 +76,7 @@ public class TestGenerator {
 		return result;
 	}
 	
-	protected GentestResult gentest(GentestParams params, TestsPrinter printer) throws SavException {
+	private GentestResult gentest(GentestParams params, TestsPrinter printer) throws SavException {
 		log.debug("start random gentest..");
 		SingleTimer timer = SingleTimer.start("random gentest");
 		Class<?> clazz = loadClass(params.getTargetClassName());
@@ -122,8 +126,12 @@ public class TestGenerator {
 		}
 		injectorModule.exit(TestcaseGenerationScope.class);
 		TestsPrinter printer = new TestsPrinter(params.getPrinterParams());
+		LearntestJWriter cuWriter = new LearntestJWriter(params.extractTestcaseSequenceMap());
+		printer.setCuWriter(cuWriter);
+		result.setTestcaseSequenceMap(cuWriter.getTestcaseSequenceMap());
 		result.setJunitClassNames(printer.printTests(Pair.of(sequences, new ArrayList<Sequence>(0))));
 		result.setJunitfiles(((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles());
+		result.setTestcaseSequenceMap(cuWriter.getTestcaseSequenceMap());
 		return result;
 	}
 

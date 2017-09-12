@@ -26,6 +26,7 @@ public class GentestParams {
 	/* for generated tests printer */
 	private PrinterParams printerParams = new PrinterParams();
 	private boolean generateMainClass;
+	private boolean extractTestcaseSequenceMap;
 
 	public String getMethodSignature() {
 		return methodSignature;
@@ -102,4 +103,13 @@ public class GentestParams {
 	public void setMethodExecTimeout(long methodExecTimeout) {
 		this.methodExecTimeout = methodExecTimeout;
 	}
+
+	public boolean extractTestcaseSequenceMap() {
+		return extractTestcaseSequenceMap;
+	}
+
+	public void setExtractTestcaseSequenceMap(boolean extractTestcaseSequenceMap) {
+		this.extractTestcaseSequenceMap = extractTestcaseSequenceMap;
+	}
+	
 }

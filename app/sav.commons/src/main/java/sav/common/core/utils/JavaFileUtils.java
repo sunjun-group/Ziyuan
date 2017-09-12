@@ -92,4 +92,14 @@ public class JavaFileUtils {
 		}
 		return className;
 	}
+	
+	public static File getSourceFile(List<String> srcFolders, String clzName) {
+		for (String srcFolder : srcFolders) {
+			File file = new File(ClassUtils.getJFilePath(srcFolder, clzName));
+			if (file.exists()) {
+				return file;
+			}
+		}
+		return null;
+	}
 }

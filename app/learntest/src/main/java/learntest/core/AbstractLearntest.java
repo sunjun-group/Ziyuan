@@ -32,8 +32,8 @@ import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.GentestResult;
-import learntest.core.gentest.TestGenerator;
 import sav.common.core.SavException;
+import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
 import sav.common.core.utils.SingleTimer;
@@ -42,8 +42,6 @@ import sav.settings.SAVExecutionTimeOutException;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.vm.JavaCompiler;
-import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT
@@ -51,9 +49,8 @@ import sav.strategies.vm.VMConfiguration;
  */
 public abstract class AbstractLearntest implements ILearnTestSolution {
 	private Logger log = LoggerFactory.getLogger(AbstractLearntest.class);
+	protected LearningMediator mediator;
 	protected AppJavaClassPath appClasspath;
-	protected TestGenerator testGenerator;
-	protected JavaCompiler compiler;
 	private TestcasesExecutor testcaseExecutor;
 	
 	public AbstractLearntest(AppJavaClassPath appClasspath) {
@@ -61,16 +58,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 	}
 	
 	public GentestResult randomGentests(GentestParams params) {
-		ensureTestGenerator();
-		ensureCompiler();
-		try {
-			GentestResult result = testGenerator.genTest(params);
-			compiler.compile(appClasspath.getTestTarget(), result.getAllFiles());
-			return result;
-		} catch (Exception e) {
-			log.warn("Cannot generate testcase: [{}] {}", e, e.getMessage());
-			return GentestResult.getEmptyResult();
-		}
+		return getMediator().randomGentestAndCompile(params);
 	}
 	
 	/**
@@ -177,16 +165,11 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		return testcaseExecutor;
 	}
 	
-	protected void ensureCompiler() {
-		if (compiler == null) {
-			compiler = new JavaCompiler(new VMConfiguration(appClasspath));
+	public LearningMediator getMediator() {
+		if (mediator == null) {
+			throw new SavRtException("learning mediator has not been initialized!");
 		}
-	}
-	
-	protected void ensureTestGenerator() {
-		if (testGenerator == null) {
-			testGenerator = new TestGenerator(appClasspath);
-		}
+		return mediator;
 	}
 
 	public AppJavaClassPath getAppClasspath() {

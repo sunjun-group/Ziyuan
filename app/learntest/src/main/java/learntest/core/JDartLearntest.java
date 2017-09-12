@@ -37,6 +37,7 @@ import sav.strategies.dto.execute.value.ExecVar;
  */
 public class JDartLearntest extends LearnTest {
 	private static Logger log = LoggerFactory.getLogger(JDartLearntest.class);
+	
 	public JDartLearntest(AppJavaClassPath appClasspath) {
 		super(appClasspath);
 	}

@@ -26,7 +26,6 @@ import sav.common.core.SavException;
 import sav.common.core.SavExceptionType;
 import sav.common.core.utils.FileUtils;
 import sav.common.core.utils.StopTimer;
-import sav.common.core.utils.TextFormatUtils;
 import sav.strategies.dto.execute.value.ExecVar;
 
 /**
@@ -48,20 +47,11 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 	 */
 	public SamplingResult runSamples(List<double[]> domains, List<ExecVar> originVars) throws SavException {
 		StopTimer timer = new StopTimer("runSample");
-//		logGeneratedInputs(domains, originVars);
 		timer.start();
 		SamplingResult samples = new SamplingResult(decisionProbes);
 		log.debug("Executing {} samples...", domains.size());
 		log.info("Executing sample data points : ");
-		StringBuffer sBuffer = new StringBuffer();
-		for (double[] points : domains) {
-			sBuffer.append("[");
-			for (double d : points) {
-				sBuffer.append(d+",");
-			}
-			sBuffer.append("],");
-		}
-		log.info(sBuffer.toString());
+		logGeneratedInputs(domains, originVars);
 		GentestResult result = null;
 		try {
 			timer.newPoint("gentest & compile");

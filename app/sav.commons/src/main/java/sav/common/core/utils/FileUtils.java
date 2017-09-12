@@ -63,11 +63,23 @@ public class FileUtils {
 		}
 	}
 	
+	public static void deleteFilesByName(List<String> fileNames) {
+		for (String fileName : CollectionUtils.nullToEmpty(fileNames)) {
+			File file = new File(fileName);
+			if (file.exists()) {
+				file.delete();
+			}
+		}
+	}
+	
 	public static void copyFiles(List<File> files, String folderPath) throws FileNotFoundException, IOException {
 		File targetFolder = mkDirs(folderPath);
 		for (File file : files) {
 			InputStream inStream = new FileInputStream(file);
 			File copyFile = new File(targetFolder, file.getName());
+			while (copyFile.exists()) {
+				copyFile = new File(targetFolder, copyFile.getName() + "_00");
+			}
 			IOUtils.copy(inStream, new FileOutputStream(copyFile));
 		}
 	}
@@ -88,6 +100,15 @@ public class FileUtils {
 		} catch (Exception e) {
 			// do nothing
 		}
+	}
+	
+	public static List<File> getFiles(List<String> filePaths) {
+		List<File> files = new ArrayList<File>(filePaths.size());
+		for (String path : filePaths) {
+			File file = new File(path);
+			files.add(file);
+		}
+		return files;
 	}
 
 	public static List<String> getFileNames(List<File> files) {

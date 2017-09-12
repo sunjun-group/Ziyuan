@@ -87,7 +87,6 @@ public class TestsPrinter implements ITestsPrinter {
 			List<Sequence> allTests = CollectionUtils.join(
 					testSeqs.a, testSeqs.b);
 			units = createCompilationUnits(allTests, params.pkg);
-			System.currentTimeMillis();
 		} else {
 			units = createCompilationUnits(testSeqs.a, params.pkg);
 			units.addAll(createCompilationUnits(testSeqs.b, params.failPkg));
@@ -190,6 +189,10 @@ public class TestsPrinter implements ITestsPrinter {
 	
 	public void setCuWriter(ICompilationUnitWriter cuWriter) {
 		this.cuWriter = cuWriter;
+	}
+	
+	public ICompilationUnitWriter getCuWriter() {
+		return cuWriter;
 	}
 
 	public enum PrintOption {
