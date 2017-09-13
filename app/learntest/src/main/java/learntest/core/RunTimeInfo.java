@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
+import learntest.core.commons.data.LineCoverageResult;
 import learntest.core.machinelearning.CfgNodeDomainInfo;
 import learntest.core.machinelearning.FormulaInfo;
 import learntest.core.machinelearning.IInputLearner;
@@ -27,7 +28,7 @@ public class RunTimeInfo {
 	
 	private String coverageInfo;
 	protected int learnState = 0; /** if only learn valid formula 1, also has rubbish learned formula 2; only rubbish -1, no formula 0 */
-	List<FormulaInfo> learnedFormulas = new LinkedList<>();
+	private List<FormulaInfo> learnedFormulas = new LinkedList<>();
 	private double validCoverage;
 	public String l2tWorseThanRand = "", randWorseThanl2t = "";
 
@@ -35,6 +36,7 @@ public class RunTimeInfo {
 			falseSample = new HashMap<>();
 	private HashMap<CfgNode, CfgNodeDomainInfo> domainMap = new HashMap<>(1);
 	private String logFile;
+	private LineCoverageResult lineCoverageResult;
 	
 	public RunTimeInfo(long time, double coverage, int testCnt) {
 		this.time = time;
@@ -191,6 +193,18 @@ public class RunTimeInfo {
 	public void setLogFile(String logFile) {
 		this.logFile = logFile;
 	}
+	
+	public void setLearnState(int learnState) {
+		this.learnState = learnState;
+	}
+
+	public LineCoverageResult getLineCoverageResult() {
+		return lineCoverageResult;
+	}
+
+	public void setLineCoverageResult(LineCoverageResult lineCoverageResult) {
+		this.lineCoverageResult = lineCoverageResult;
+	}
 
 	public static void write(String file, String log) {
 		if (log == null) {
@@ -201,7 +215,7 @@ public class RunTimeInfo {
 			writer = new FileWriter(file, true);
 			writer.write(log);
 		} catch (IOException e) {
-			logger.debug("cannot write log to file!");
+			logger.debug("minor: cannot write log to file!");
 			// ignore
 		} finally {
 			IOUtils.closeQuietly(writer);

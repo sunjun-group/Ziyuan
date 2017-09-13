@@ -11,10 +11,12 @@ package sav.common.core.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -336,5 +338,16 @@ public class CollectionUtils {
 		if (toAddMap != null) {
 			map.putAll(toAddMap);
 		}
+	}
+	
+	public static <T, V> Map<V, T> revertMap(Map<T, V> map) {
+		if (map == null) {
+			return null;
+		}
+		Map<V, T> newMap = new HashMap<V, T>(map.size());
+		for (Entry<T, V> entry : map.entrySet()) {
+			newMap.put(entry.getValue(), entry.getKey());
+		}
+		return newMap;
 	}
 }

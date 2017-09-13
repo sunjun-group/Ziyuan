@@ -23,6 +23,7 @@ import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
 import gentest.junit.TestsPrinter.PrintOption;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.LearnTestApproach;
+import learntest.core.commons.data.LineCoverageResult;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.GentestResult;
@@ -159,17 +160,23 @@ public class LearningMediator {
 		}		
 	}
 
-	public void commitFinalTests() {
-		/* delete result folder */
-		FileUtils.deleteAllFiles(JavaFileUtils.getClassFolder(appClassPath.getTestSrc(), learntestParams.getTestPackage(GenTestPackage.RESULT)));
+	public LineCoverageResult commitFinalTests(CfgCoverage cfgCoverage, TargetMethod targetMethod) {
+		/* delete init & result folder */
+		FileUtils.deleteAllFiles(JavaFileUtils.getClassFolder(appClassPath.getTestSrc(), 
+				learntestParams.getTestPackage(GenTestPackage.INIT)));
+		FileUtils.deleteAllFiles(JavaFileUtils.getClassFolder(appClassPath.getTestSrc(),
+				learntestParams.getTestPackage(GenTestPackage.RESULT)));
+		/* generate new test files from reduction tests */
 		GentestParams params = LearntestParamsUtils.createGentestParams(appClassPath, learntestParams,
 				GenTestPackage.RESULT);
 		params.setPrintOption(PrintOption.OVERRIDE);
-		List<File> junitFiles = finalTests.commit(params.getPrinterParams());
+		List<File> junitFiles = finalTests.commit(params.getPrinterParams(), cfgCoverage, targetMethod);
 		try {
 			compile(junitFiles);
+			return finalTests.getLineCoverageResult();
 		} catch (SavException e) {
 			log.error("Error when Compiling final tests: {}, {}", e.getMessage(), e);
+			return new LineCoverageResult();
 		}
 	}
 

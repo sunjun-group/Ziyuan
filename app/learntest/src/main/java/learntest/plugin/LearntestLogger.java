@@ -39,7 +39,6 @@ public class LearntestLogger {
 				props.setProperty(key, log4j.getString(key));
 			}
 			props.setProperty("log4j.appender.file.File", getLearntestLogFile(projectName));
-			System.out.println(props);
 			PropertyConfigurator.configure(props);
 		} catch (Exception e) {
 			throw new CoreException(IStatusUtils.exception(e, e.getMessage()));

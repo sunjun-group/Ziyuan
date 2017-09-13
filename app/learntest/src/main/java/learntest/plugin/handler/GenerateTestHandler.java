@@ -31,6 +31,10 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 		try {
 			LearnTestParams params = initLearntestParamsFromPreference();
 			RunTimeInfo runtimeInfo = runLearntest(params);
+			if (runtimeInfo != null && runtimeInfo.getLineCoverageResult() != null) {
+				log.info("Line coverage result:");
+				log.info(runtimeInfo.getLineCoverageResult().toString());
+			}
 			return runtimeInfo;
 		} catch (Exception e) {
 			log.debug("Error when generating test: {}", e.getMessage());
