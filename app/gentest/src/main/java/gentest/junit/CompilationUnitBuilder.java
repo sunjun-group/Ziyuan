@@ -127,6 +127,11 @@ public class CompilationUnitBuilder {
 			return this;
 		}
 		
+		public MethodBuilder modifiers(int modifier1, int modifier2) {
+			curMethod.setModifiers(ModifierSet.addModifier(modifier1, modifier2));
+			return this;
+		}
+		
 		public MethodBuilder parameters(Parameter... parameters) {
 			return parameters(Arrays.asList(parameters));
 		}

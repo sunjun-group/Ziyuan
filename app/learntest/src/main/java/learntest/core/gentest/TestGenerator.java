@@ -27,6 +27,7 @@ import gentest.core.data.Sequence;
 import gentest.injection.GentestModules;
 import gentest.injection.TestcaseGenerationScope;
 import gentest.junit.FileCompilationUnitPrinter;
+import gentest.junit.ICompilationUnitWriter;
 import gentest.junit.PrinterParams;
 import gentest.junit.TestsPrinter;
 import learntest.core.commons.LearntestExceptionType;
@@ -95,7 +96,8 @@ public class TestGenerator {
 	/**
 	 * @param printOption whether to append existing test file or create a new one.
 	 */
-	public GentestResult genTestAccordingToSolutions(GentestParams params, List<double[]> solutions, List<ExecVar> vars) throws SavException {
+	public GentestResult genTestAccordingToSolutions(GentestParams params, List<double[]> solutions, List<ExecVar> vars,
+			ICompilationUnitWriter cuWriter) throws SavException {
 		MethodCall target = createMethodCall(params);
 		if (target == null) {
 			return null;
@@ -122,6 +124,7 @@ public class TestGenerator {
 		}
 		injectorModule.exit(TestcaseGenerationScope.class);
 		TestsPrinter printer = new TestsPrinter(params.getPrinterParams());
+		printer.setCuWriter(cuWriter);
 		result.setJunitClassNames(printer.printTests(Pair.of(sequences, new ArrayList<Sequence>(0))));
 		result.setJunitfiles(((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles());
 		return result;

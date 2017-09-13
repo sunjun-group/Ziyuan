@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import cfgcoverage.jacoco.CfgJaCoCo;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
+import gentest.junit.JWriter;
+import gentest.junit.MWriter;
 import gentest.junit.TestsPrinter.PrintOption;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.LearnTestApproach;
@@ -134,7 +136,26 @@ public class LearningMediator {
 			PrintOption printOption) throws SavException {
 		GentestParams params = LearntestParamsUtils.createGentestParams(appClassPath, learntestParams, GenTestPackage.RESULT);
 		params.setPrintOption(printOption);
-		return getTestGenerator().genTestAccordingToSolutions(params, solutions, vars);
+		return getTestGenerator().genTestAccordingToSolutions(params, solutions, vars, new JWriter());
+	}
+	
+	public GentestResult genMainAndCompile(List<double[]> solutions, List<ExecVar> vars, PrintOption printOption)
+			throws SavException {
+		log.debug("gentest..");
+		GentestResult result = genMainAccordingToSolutions(solutions, vars, printOption);
+		if (!result.isEmpty()) {
+			log.debug("compile..");
+			compile(result.getJunitfiles());
+		}
+		return result;
+	}
+
+	public GentestResult genMainAccordingToSolutions(List<double[]> solutions, List<ExecVar> vars,
+			PrintOption printOption) throws SavException {
+		GentestParams params = LearntestParamsUtils.createGentestParams(appClassPath, learntestParams, GenTestPackage.MAIN);
+		params.setPrintOption(printOption);
+		params.setTestMethodPrefix("main");
+		return getTestGenerator().genTestAccordingToSolutions(params, solutions, vars, new MWriter());
 	}
 	
 }

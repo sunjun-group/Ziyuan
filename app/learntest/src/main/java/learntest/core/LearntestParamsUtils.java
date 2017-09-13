@@ -48,7 +48,8 @@ public class LearntestParamsUtils {
 	/* testdata.[approachName].{init/result}.[classSimpleName].[methodName]*/
 	public static enum GenTestPackage {
 		INIT("testdata.%s.init.%s.%s"), 
-		RESULT("testdata.%s.result.%s.%s");
+		RESULT("testdata.%s.result.%s.%s"),
+		MAIN("testdata.%s.main.%s.%s");
 		
 		private String format;
 		private GenTestPackage(String format) {

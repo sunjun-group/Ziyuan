@@ -171,3 +171,4 @@ Bundle-ClassPath: .,
  lib/spring-core-4.0.3.RELEASE.jar,
  lib/xml-apis-1.0.b2.jar
 Require-Bundle: sav.commons;bundle-version="1.0.0"
+Import-Package: japa.parser.ast.body
