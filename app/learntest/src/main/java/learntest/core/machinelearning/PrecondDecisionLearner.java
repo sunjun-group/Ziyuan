@@ -249,6 +249,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				OrCategoryCalculator preconditions = pair.first();
 				dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
 				dataPreprocessor.sampleForLoopCvg(node, preconditions, this);
+				dataPreprocessor.sampleForMissingBranch(node, this);
 
 				updatePrecondition(nodeProbe, preconditions, targetVars);
 				nodeProbe.getPrecondition().setVisited(true);
@@ -258,13 +259,43 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 
 			visitedNodes.add(node.getIdx());
 			List<CfgNode> childDecisonNodes = dominationMap.get(node).getDominatees();
+			
+			/**
+			 * handle the situation that first branch node does not dominate fellow branch node
+			 */
+			for (CfgNode cfgNode : DecisionProbes.getChildDecision(node)) {
+				if (!childDecisonNodes.contains(cfgNode) && !visitedNodes.contains(cfgNode.getIdx())) {
+					childDecisonNodes.add(cfgNode);
+				}
+			}
+			
 			childDecisonNodes.sort(new DomainationComparator(dominationMap));
 			for (CfgNode dependentee : CollectionUtils.nullToEmpty(childDecisonNodes)) {
 				if (null != dependentee && !visitedNodes.contains(dependentee.getIdx())&& !queue.contains(dependentee)) {
 					queue.add(dependentee);
 				}
 			}
+			
+			if (queue.isEmpty()) {
+				checkLearnedComplete(visitedNodes, probes.getCfg().getDecisionNodes(), queue);
+			}
 		}
+	}
+
+	/**
+	 * check if all decision nodes are learned, otherwise poll all
+	 * @param visitedNodes
+	 * @param decisionNodes
+	 * @param queue
+	 */
+	private void checkLearnedComplete(List<Integer> visitedNodes, List<CfgNode> decisionNodes, Queue<CfgNode> queue) {
+		for (CfgNode cfgNode : decisionNodes) {
+			if (!visitedNodes.contains(cfgNode.getIdx())) {
+				queue.add(cfgNode);
+				log.debug("this node is missed : "+cfgNode);
+			}
+		}
+		
 	}
 
 	private boolean needToLearn(DecisionNodeProbe nodeProbe) {

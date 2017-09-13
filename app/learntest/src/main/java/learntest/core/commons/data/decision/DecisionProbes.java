@@ -407,4 +407,27 @@ public class DecisionProbes extends CfgCoverage {
 	public void setLabels(List<String> labels) {
 		this.labels = labels;
 	}
+	
+	public static List<CfgNode> getChildDecision(CfgNode node) {
+		List<CfgNode> childDecisonNodes = new LinkedList<>();
+		List<CfgNode> children = node.getBranches();
+		for (CfgNode child : children) {
+			getChildDecision(child, childDecisonNodes);
+		}
+		return childDecisonNodes;
+	}
+
+	private static void getChildDecision(CfgNode node, List<CfgNode> list) {
+		List<CfgNode> children = node.getBranches();
+		if (null == children || children.size() == 0) {
+			;
+		} else if (children.size() == 1) {
+			getChildDecision(children.get(0), list);
+		} else if (children.size() >= 2) { /** branch node */
+			if (!list.contains(node)) {
+				list.add(node);
+			}
+		}
+
+	}
 }

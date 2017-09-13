@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Queue;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import learntest.core.commons.data.decision.DecisionProbes;
 
 /**
  * @author ZhangHr
@@ -36,7 +37,7 @@ public class CfgDomain {
 			visited.put(node, node.getLine());
 			CfgNodeDomainInfo domainInfo = dominationMap.get(node);
 			HashMap<CfgNode, Integer> postD = domainInfo.postDomain;
-			List<CfgNode> children = getChildDecision(node);
+			List<CfgNode> children = DecisionProbes.getChildDecision(node);
 			for (CfgNode child : children) {
 				if (!postD.containsKey(child)) { // child is reachable from node, and child is not post-dominator of node 
 					domainInfo.addDominatee(child);
@@ -169,28 +170,7 @@ public class CfgDomain {
 	}
 	
 
-	private List<CfgNode> getChildDecision(CfgNode node) {
-		List<CfgNode> childDecisonNodes = new LinkedList<>();
-		List<CfgNode> children = node.getBranches();
-		for (CfgNode child : children) {
-			getChildDecision(child, childDecisonNodes);
-		}
-		return childDecisonNodes;
-	}
-
-	private void getChildDecision(CfgNode node, List<CfgNode> list) {
-		List<CfgNode> children = node.getBranches();
-		if (null == children || children.size() == 0) {
-			;
-		} else if (children.size() == 1) {
-			getChildDecision(children.get(0), list);
-		} else if (children.size() >= 2) { /** branch node */
-			if (!list.contains(node)) {
-				list.add(node);
-			}
-		}
-
-	}
+	
 
 
 }
