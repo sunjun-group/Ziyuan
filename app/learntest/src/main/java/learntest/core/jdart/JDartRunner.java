@@ -37,11 +37,10 @@ public class JDartRunner {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<TestInput> runJDart(LearnTestParams learntestParams){
+	public List<TestInput> runJDart(LearnTestParams learntestParams, String mainClass){
 		try {
 			JDartParams jdartParams = initJDartParams(learntestParams);
 			/* run jdart */
-			String mainClass = learntestParams.getInitialTests().getMainClass();
 			if (mainClass == null) {
 				return Collections.EMPTY_LIST;
 			}
