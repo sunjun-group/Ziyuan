@@ -80,6 +80,6 @@ public class JDartLearntest extends LearnTest {
 		gentestParams.setGenerateMainClass(true);
 		randomGenerateInitTestWithBestEffort(params, gentestParams);
 		JDartRunner jdartRunner = new JDartRunner(appClasspath);
-		return jdartRunner.runJDart(params);
+		return jdartRunner.runJDart(params, params.getInitialTests().getMainClass());
 	}
 }

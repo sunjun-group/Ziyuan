@@ -48,7 +48,6 @@ import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
-import variable.FieldVar;
 import variable.Variable;
 
 /**
