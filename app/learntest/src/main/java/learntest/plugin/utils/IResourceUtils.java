@@ -12,12 +12,16 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import learntest.plugin.commons.LearntestPluginExeception;
+import learntest.plugin.commons.PluginException;
 
 /**
  * @author LLT
@@ -31,7 +35,7 @@ public class IResourceUtils {
 	}
 	
 	public static String getResourceAbsolutePath(String pluginId, String resourceRelativePath)
-			throws LearntestPluginExeception {
+			throws PluginException {
 		try {
 			String resourceUrl = getResourceUrl(pluginId, resourceRelativePath);
 			URL fileURL = new URL(resourceUrl);
@@ -41,7 +45,7 @@ public class IResourceUtils {
 			return file.getAbsolutePath();
 		} catch (Exception e1) {
 			log.error(e1.getMessage());
-			throw new LearntestPluginExeception(e1);
+			throw new PluginException(e1);
 		}
 	}
 
@@ -51,4 +55,12 @@ public class IResourceUtils {
 		return sb.toString();
 	}
 	
+    public static IPath relativeToAbsolute(IPath relativePath) {
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        IResource resource = root.findMember(relativePath);
+        if (resource != null) {
+            return resource.getLocation();
+        }
+        return relativePath;
+    }
 }

@@ -66,6 +66,7 @@ public class JDartLearntest extends LearnTest {
 	public RunTimeInfo jdart(LearnTestParams params) {
 		SAVTimer.startCount();
 		try {
+			init(params);
 			prepareInitTestcase(params);
 			CfgCoverage cfgCoverage = runCfgCoverage(params.getTargetMethod(), params.getInitialTests().getJunitClasses());
 			return getRuntimeInfo(cfgCoverage);

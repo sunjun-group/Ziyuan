@@ -30,7 +30,7 @@ public class TrialExcelHandlerTest {
 		TrialExcelHandler handler = null;
 		try {
 			List<Trial> trials = initTrials();
-			handler = new TrialExcelHandler("test_project", true);
+			handler = new TrialExcelHandler("", "test_project", true);
 			for (Trial trial : trials) {
 				handler.export(trial);
 			}
@@ -42,7 +42,7 @@ public class TrialExcelHandlerTest {
 	
 	@Test
 	public void testExcelReader() throws Exception {
-		TrialExcelHandler handler = new TrialExcelHandler("test_project", true);
+		TrialExcelHandler handler = new TrialExcelHandler("", "test_project", true);
 		Collection<Trial> trials = handler.readOldTrials();
 		System.out.println(TextFormatUtils.printListSeparateWithNewLine(trials));
 	}

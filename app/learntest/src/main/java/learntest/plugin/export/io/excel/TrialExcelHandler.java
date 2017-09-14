@@ -9,7 +9,6 @@
 package learntest.plugin.export.io.excel;
 
 import static learntest.plugin.export.io.excel.TrialExcelConstants.EXCEL_EXT_WITH_DOT;
-import static learntest.plugin.export.io.excel.TrialExcelConstants.EXCEL_FOLDER;
 import static learntest.plugin.export.io.excel.TrialExcelConstants.FILE_IDX_START_CH;
 import static learntest.plugin.export.io.excel.TrialExcelConstants.FIRST_FILE_IDX;
 import static learntest.plugin.export.io.excel.TrialExcelConstants.TRIAL_NUMBER_LIMIT_PER_FILE;
@@ -40,12 +39,14 @@ public class TrialExcelHandler {
 	private TrialExcelReader reader;
 	private TrialExcelWriter writer;
 	private boolean isNewFile = false;
+	private String excelRootFolder;
 	
-	public TrialExcelHandler(String trialFilePrefix) throws Exception {
-		this(trialFilePrefix, TrialExcelConstants.DEFAULT_EXCEL_APPEND);
+	public TrialExcelHandler(String excelRootFolder, String trialFilePrefix) throws Exception {
+		this(excelRootFolder, trialFilePrefix, TrialExcelConstants.DEFAULT_EXCEL_APPEND);
 	}
 	
-	public TrialExcelHandler(String trialFilePrefix, boolean appendLastFile) throws Exception {
+	public TrialExcelHandler(String excelRootFolder, String trialFilePrefix, boolean appendLastFile) throws Exception {
+		this.excelRootFolder = excelRootFolder;
 		reader = new TrialExcelReader();
 		fileInfo = getExperimentalExcel(trialFilePrefix, appendLastFile);
 		writer = new TrialExcelWriter(fileInfo.a);
@@ -81,8 +82,8 @@ public class TrialExcelHandler {
 		return newExperimentalExcelFile(trialFilePrefix, FIRST_FILE_IDX);
 	}
 
-	public static Pair<File, Integer> getLastExperimentalExcel(String trialFilePrefix) {
-		File folder = new File(EXCEL_FOLDER);
+	public Pair<File, Integer> getLastExperimentalExcel(String trialFilePrefix) {
+		File folder = new File(excelRootFolder);
 		File[] files = folder.listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File folder, String name) {
@@ -116,7 +117,7 @@ public class TrialExcelHandler {
 	}
 
 	private Pair<File, Integer> newExperimentalExcelFile(String trialFilePrefix, int fileIdx) {
-		String filepath = ResourceUtils.appendPath(EXCEL_FOLDER,
+		String filepath = ResourceUtils.appendPath(excelRootFolder,
 				StringUtils.concatenate(trialFilePrefix, FILE_IDX_START_CH, String.valueOf(fileIdx), EXCEL_EXT_WITH_DOT));
 		File file = new File(filepath);
 		isNewFile = true;

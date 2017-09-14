@@ -3,6 +3,7 @@ package learntest.plugin;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -28,7 +29,7 @@ public class LearntestPlugin extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		LearntestConsole.delegateConsole();
-		initLogger(null);
+//		initLogger(null);
 	}
 	
 	/**
@@ -67,7 +68,7 @@ public class LearntestPlugin extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	public static void initLogger(String projectName) throws Exception {
+	public static void initLogger(String projectName) throws CoreException {
 		LearntestLogger.initLog4j(projectName);
 	}
 

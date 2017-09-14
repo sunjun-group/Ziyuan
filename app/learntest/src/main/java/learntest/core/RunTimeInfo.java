@@ -214,8 +214,7 @@ public class RunTimeInfo {
 		try {
 			writer = new FileWriter(file, true);
 			writer.write(log);
-		} catch (IOException e) {
-			logger.debug("minor: cannot write log to file!");
+		} catch (Exception e) {
 			// ignore
 		} finally {
 			IOUtils.closeQuietly(writer);

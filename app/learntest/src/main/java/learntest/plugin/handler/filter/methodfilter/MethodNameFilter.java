@@ -42,7 +42,9 @@ public class MethodNameFilter implements TargetMethodFilter {
 				
 			}
 		} catch (IOException e) {
-			log.debug("cannot load file {}", excludedFileName);
+//			log.debug("cannot load file {}", excludedFileName);
+			// ignore
+			// TODO LLT: allow to configure in target eclipse.
 		}
 	}
 	

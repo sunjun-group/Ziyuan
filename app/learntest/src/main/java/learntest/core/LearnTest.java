@@ -39,7 +39,7 @@ public class LearnTest extends AbstractLearntest {
 		super(appClasspath);
 	}
 	
-	public RunTimeInfo run(LearnTestParams params) throws Exception {
+	public final RunTimeInfo run(LearnTestParams params) throws Exception {
 		init(params);
 		log.debug("Start learntest..({})", params.getApproach());
 		prepareInitTestcase(params);

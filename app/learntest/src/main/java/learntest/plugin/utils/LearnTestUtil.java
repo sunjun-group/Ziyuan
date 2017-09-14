@@ -1,6 +1,5 @@
 package learntest.plugin.utils;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -32,14 +31,12 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
-import org.eclipse.jdt.internal.core.PackageFragmentRoot;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 import learntest.plugin.LearnTestConfig;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
-import sav.common.core.utils.ObjectUtils;
 
 @SuppressWarnings("restriction")
 public class LearnTestUtil {
@@ -113,72 +110,15 @@ public class LearnTestUtil {
 		return null;
 	}
 	
-	public static String getProjectPath(){
-		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.getINSTANCE().getProjectName());
-		return iProject.getLocation().toOSString();
-	}
-	
-	public static IPackageFragmentRoot findMainPackageRootInProject(){
-		IJavaProject project = getJavaProject();
-		try {
-			for(IPackageFragmentRoot packageFragmentRoot: project.getPackageFragmentRoots()){
-				if(!(packageFragmentRoot instanceof JarPackageFragmentRoot) 
-						&& packageFragmentRoot.getResource().toString().contains("main")){
-					
-					return packageFragmentRoot;
-				}
-			}
-			
-		} catch (JavaModelException e1) {
-			e1.printStackTrace();
-		}
-		
-		return null;
-	}
-	
-	public static List<IPackageFragmentRoot> findMainPackageRootInProjects(){
-		List<IPackageFragmentRoot> roots = new ArrayList<>();
-		IJavaProject project = getJavaProject();
-		try {
-			for(IPackageFragmentRoot packageFragmentRoot: project.getPackageFragmentRoots()){
-				if(!(packageFragmentRoot instanceof JarPackageFragmentRoot) 
-						&& packageFragmentRoot.getResource().toString().contains("main")){
-					
-					roots.add(packageFragmentRoot);
-				}
-			}
-			
-		} catch (JavaModelException e1) {
-			e1.printStackTrace();
-		}
-		
-		return roots;
-	}
-	
-	public static MethodDeclaration findSpecificMethod(String className, String methodName, String lineNumberString){
-		return findSpecificMethod(className, methodName, ObjectUtils.toInteger(lineNumberString, 0));
-	}
-
 	public static MethodDeclaration findSpecificMethod(String className, String methodName, int lineNumber) {
 		CompilationUnit cu = findCompilationUnitInProject(className);
 		MethodFinder finder = new MethodFinder(cu, methodName, lineNumber);
 		cu.accept(finder);
 		return finder.getResult();
 	}
-	
-	private static String getMethodWthSignatureByBindingKey(String className, String methodName, int lineNumber) {
-		MethodDeclaration md = LearnTestUtil.findSpecificMethod(className, methodName, lineNumber);
-		String key = md.resolveBinding().getKey();
-		String mSig = key.substring(key.indexOf(".")+1);
-		return mSig;
-	}
-	
+
 	public static String getMethodWthSignature(String className, String methodName, int lineNumber)
 			throws SavException {
-		/* we cannot be sure if resolveBinding key is build in the same way as method signature, but this still works for now and faster,
-		 * otherwise, call getMethodWthSignatureBySignParser instead. */
-//		return getMethodWthSignatureByBindingKey(className, methodName, lineNumber);
 		return getMethodWthSignatureBySignParser(className, methodName, lineNumber);
 	}
 	
@@ -236,61 +176,12 @@ public class LearnTestUtil {
 		return rootList;
 	}
 	
-	public static String retrieveTestSourceFolder() {
-		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.getINSTANCE().getProjectName());
-		IJavaProject javaProject = JavaCore.create(iProject);
-		
-		try {
-			for(IPackageFragmentRoot root: javaProject.getAllPackageFragmentRoots()){
-				if(root instanceof PackageFragmentRoot && !(root instanceof JarPackageFragmentRoot)){
-					String name = root.getPath().toString();
-					if(name.contains("test")){
-						return getOsPath(root);
-					}
-					
-					
-				}
-				
-			}
-		} catch (JavaModelException e) {
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
-	
 	public static String getOsPath(IJavaElement element) {
 		try {
 			return element.getCorrespondingResource().getLocation().toString();
 		} catch (JavaModelException e) {
 			throw new SavRtException(e);
 		}
-	}
-	
-	public static String getOutputPath(){
-		String projectPath = LearnTestUtil.getProjectPath();
-		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.getINSTANCE().getProjectName());
-		IJavaProject javaProject = JavaCore.create(iProject);
-		
-		String outputFolder = "";
-		try {
-			for(String seg: javaProject.getOutputLocation().segments()){
-				if(!seg.equals(LearnTestConfig.getINSTANCE().getProjectName())){
-					outputFolder += seg + File.separator;
-				}
-			}
-		} catch (JavaModelException e) {
-			e.printStackTrace();
-		}
-		
-		String outputPath = projectPath + File.separator + outputFolder; 
-		return outputPath;
-	}
-	
-	public static Class<?> retrieveClass(String qualifiedName) throws ClassNotFoundException{
-		return getPrjClassLoader().loadClass(qualifiedName);
 	}
 	
 	public static List<MethodDeclaration> findTestingMethod(CompilationUnit cu) {
@@ -351,34 +242,6 @@ public class LearnTestUtil {
 			return packageName + "." + typeName; 			
 		}
 		
-	}
-
-	public static ClassLoader getPrjClassLoader() {
-		try {
-			List<URL> urlList = new ArrayList<URL>();
-			List<String> classPathEntries = getPrjectClasspath();
-			for (String cpEntry : classPathEntries) {
-				IPath path = new Path(cpEntry);
-				URL url = path.toFile().toURI().toURL();
-				urlList.add(url);
-			}
-			ClassLoader parentClassLoader = getJavaProject().getClass().getClassLoader();
-			URL[] urls = (URL[]) urlList.toArray(new URL[urlList.size()]);
-			URLClassLoader classLoader = new URLClassLoader(urls, parentClassLoader);
-			return classLoader;
-		} catch (MalformedURLException e) {
-			throw new SavRtException(e);
-		}
-	}
-	
-	public static List<String> getPrjectClasspath() {
-		IJavaProject project = getJavaProject();
-		try {
-			String[] classPathEntries = JavaRuntime.computeDefaultRuntimeClassPath(project);
-			return Arrays.asList(classPathEntries);
-		} catch (CoreException e) {
-			throw new SavRtException(e);
-		}
 	}
 
 	public static IJavaProject getJavaProject() {

@@ -1,16 +1,12 @@
 package learntest.plugin.handler;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -25,19 +21,19 @@ import learntest.core.LearnTestParams;
 import learntest.core.commons.LearntestConstants;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.plugin.LearnTestConfig;
+import learntest.plugin.ProjectSetting;
 import learntest.plugin.export.io.excel.MultiTrial;
 import learntest.plugin.export.io.excel.Trial;
 import learntest.plugin.export.io.excel.TrialExcelHandler;
-import learntest.plugin.export.io.excel.TrialExcelReader;
 import learntest.plugin.handler.filter.classfilter.ClassNameFilter;
 import learntest.plugin.handler.filter.classfilter.TargetClassFilter;
 import learntest.plugin.handler.filter.classfilter.TestableClassFilter;
-import learntest.plugin.handler.filter.methodfilter.MethodNameFilter;
 import learntest.plugin.handler.filter.methodfilter.NestedBlockChecker;
 import learntest.plugin.handler.filter.methodfilter.TargetMethodFilter;
 import learntest.plugin.handler.filter.methodfilter.TestableMethodFilter;
 import learntest.plugin.utils.IMethodUtils;
 import learntest.plugin.utils.IProjectUtils;
+import learntest.plugin.utils.IStatusUtils;
 import learntest.plugin.utils.LearnTestUtil;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.FileUtils;
@@ -49,7 +45,6 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	private static final int EVALUATIONS_PER_METHOD = 5;
 	private List<TargetMethodFilter> methodFilters;
 	private List<TargetClassFilter> classFilters;
-	private static Map<String, Trial> oldTrials;
 	static {
 	}
 	
@@ -58,11 +53,15 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	protected IStatus execute(IProgressMonitor monitor) {
 		SingleTimer timer = SingleTimer.start("Evaluation all methods");
 		curMethodIdx = 0;
-		final List<IPackageFragmentRoot> roots = IProjectUtils.findTargetSourcePkgRoots(LearnTestUtil.getJavaProject());
+		String projectName = LearnTestConfig.getINSTANCE().getProjectName();
+		final List<IPackageFragmentRoot> roots = IProjectUtils
+				.getSourcePkgRoots(IProjectUtils.getJavaProject(projectName));
 		TrialExcelHandler excelHandler = null;
 		try {
-			excelHandler = new TrialExcelHandler(LearnTestConfig.getINSTANCE().getProjectName());
-			initFilters(excelHandler.readOldTrials());
+			String outputFolder = ProjectSetting.getLearntestOutputFolder(projectName);
+			log.info("learntest output folder: {}", outputFolder);
+			excelHandler = new TrialExcelHandler(outputFolder, projectName);
+			initFilters();
 		} catch (Exception e1) {
 			handleException(e1);
 			return Status.CANCEL_STATUS;
@@ -74,7 +73,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			for(IPackageFragmentRoot root: roots){
 				for (IJavaElement element : root.getChildren()) {
 					if (element instanceof IPackageFragment) {
-						RunTimeCananicalInfo info = runEvaluation((IPackageFragment) element, excelHandler);
+						RunTimeCananicalInfo info = runEvaluation((IPackageFragment) element, excelHandler, monitor);
 						overalInfo.add(info);
 					}
 				}
@@ -82,14 +81,18 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			log.info(overalInfo.toString());
 		} catch (JavaModelException e) {
 			handleException(e);
+		} catch (OperationCanceledException e) {
+			timer.logResults(log);
+			log.info(e.getMessage());
+			return IStatusUtils.cancel();
 		}
 		timer.logResults(log);
 		return Status.OK_STATUS;
 	}
 
-	private void initFilters(Collection<Trial> oldTrials) {
-		methodFilters = Arrays.asList(new TestableMethodFilter(), new NestedBlockChecker(),
-				new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME));
+	private void initFilters() {
+		methodFilters = Arrays.asList(new TestableMethodFilter(), new NestedBlockChecker());
+//				new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME));
 		classFilters = Arrays.asList(new TestableClassFilter(), new ClassNameFilter(getExcludedClasses()));
 	}
 
@@ -98,12 +101,12 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		return Arrays.asList("org.apache.tools.ant.Main");
 	}
 
-	private RunTimeCananicalInfo runEvaluation(IPackageFragment pkg, TrialExcelHandler excelHandler)
-			throws JavaModelException {
+	private RunTimeCananicalInfo runEvaluation(IPackageFragment pkg, TrialExcelHandler excelHandler,
+			IProgressMonitor monitor) throws JavaModelException {
 		RunTimeCananicalInfo info = new RunTimeCananicalInfo();
 		for (IJavaElement javaElement : pkg.getChildren()) {
 			if (javaElement instanceof IPackageFragment) {
-				runEvaluation((IPackageFragment) javaElement, excelHandler);
+				runEvaluation((IPackageFragment) javaElement, excelHandler, monitor);
 			} else if (javaElement instanceof ICompilationUnit) {
 				ICompilationUnit icu = (ICompilationUnit) javaElement;
 				CompilationUnit cu = LearnTestUtil.convertICompilationUnitToASTNode(icu);
@@ -121,7 +124,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				cu.accept(collector);
 				List<TargetMethod> validMethods = collector.getValidMethods();
 				updateRuntimeInfo(info, cu, collector.getTotalMethodNum(), validMethods.size());
-				evaluateForMethodList(excelHandler, validMethods);
+				evaluateForMethodList(excelHandler, validMethods, monitor);
 			}
 		}
 		return info;
@@ -134,39 +137,18 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		info.totalNum += totalMethods;
 	}
 
-	protected void evaluateForMethodList(TrialExcelHandler excelHandler, List<TargetMethod> targetMethods) {
+	protected void evaluateForMethodList(TrialExcelHandler excelHandler, List<TargetMethod> targetMethods,
+			IProgressMonitor monitor) {
 		if (targetMethods.isEmpty()) {
 			return;
 		}
-
 		for (TargetMethod targetMethod : targetMethods) {
-
-			/* todo : test special method start*/
-//	 		try {
-//				TrialExcelReader reader = new TrialExcelReader(new File("E:/hairui/eclipse-java-mars-clean/eclipse/check.xlsx"));
-//	 			oldTrials = reader.readDataSheet();
-//	 		} catch (Exception e) {
-//	 			e.printStackTrace();
-//	 			}
-// 			String fullName = targetMethod.getMethodFullName();
-// 			int line = targetMethod.getLineNum();
-// 			if (!oldTrials.containsKey(fullName+"_"+line)) {
-// 				continue;
-// 			}		
-			 /* todo : test special method end */
 			log.info("-----------------------------------------------------------------------------------------------");
 			log.info("Method {}", ++curMethodIdx);			
 			
-			try{
-			    PrintWriter writer = new PrintWriter("latest_working_method.txt", "UTF-8");
-			    writer.println("working method: " + targetMethod.getMethodFullName());
-			    writer.close();
-			} catch (IOException e) {
-			}
-
-			
 			MultiTrial multiTrial = new MultiTrial();
 			for (int i = 0; i < EVALUATIONS_PER_METHOD; i++) {
+				checkJobCancelation(monitor);
 				try {
 					LearnTestParams params = initLearntestParams(targetMethod);
 					Trial trial = evaluateLearntestForSingleMethod(params);
@@ -186,6 +168,12 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				}
 			}
 			logSuccessfulMethod(targetMethod);
+		}
+	}
+
+	private void checkJobCancelation(IProgressMonitor monitor) {
+		if (monitor != null && monitor.isCanceled()) {
+			throw new OperationCanceledException("Operation cancelled!");
 		}
 	}
 

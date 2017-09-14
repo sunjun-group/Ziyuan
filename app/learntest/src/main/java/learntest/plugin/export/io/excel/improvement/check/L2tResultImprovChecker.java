@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Set;
 
 import learntest.plugin.export.io.excel.Trial;
-import learntest.plugin.export.io.excel.TrialExcelConstants;
 import learntest.plugin.export.io.excel.TrialExcelReader;
 import sav.common.core.utils.ResourceUtils;
 import sav.common.core.utils.TextFormatUtils;
@@ -27,10 +26,15 @@ import sav.common.core.utils.TextFormatUtils;
  *
  */
 public class L2tResultImprovChecker {
+	private String excelFolder;
+	
+	public L2tResultImprovChecker(String excelFolder) {
+		this.excelFolder = excelFolder;
+	}
 	
 	public ImprovementResult checkImprovement(String oldFileName, String newFileName) throws Exception {
-		return checkImprovement(new File(ResourceUtils.appendPath(TrialExcelConstants.EXCEL_FOLDER, oldFileName)), 
-				new File(ResourceUtils.appendPath(TrialExcelConstants.EXCEL_FOLDER, newFileName)));
+		return checkImprovement(new File(ResourceUtils.appendPath(excelFolder, oldFileName)), 
+				new File(ResourceUtils.appendPath(excelFolder, newFileName)));
 	}
 	
 	public ImprovementResult checkImprovement(File oldResult, File newResult) throws Exception {

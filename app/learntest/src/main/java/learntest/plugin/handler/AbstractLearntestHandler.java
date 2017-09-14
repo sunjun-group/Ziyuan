@@ -40,8 +40,8 @@ import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.JDartLearntest;
 import learntest.core.LearnTestParams;
-import learntest.core.RunTimeInfo;
 import learntest.core.LearnTestParams.LearntestSystemVariable;
+import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.TargetClass;
 import learntest.core.commons.data.classinfo.TargetMethod;
@@ -49,7 +49,8 @@ import learntest.core.commons.exception.LearnTestException;
 import learntest.core.machinelearning.CfgNodeDomainInfo;
 import learntest.core.machinelearning.FormulaInfo;
 import learntest.plugin.LearnTestConfig;
-import learntest.plugin.commons.LearntestPluginExeception;
+import learntest.plugin.LearntestPlugin;
+import learntest.plugin.commons.PluginException;
 import learntest.plugin.export.io.excel.Trial;
 import learntest.plugin.utils.IProjectUtils;
 import learntest.plugin.utils.IResourceUtils;
@@ -82,6 +83,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
+					setup(LearnTestConfig.getINSTANCE().getProjectName());
 					prepareData();
 					execute(monitor);
 				} catch (CoreException e) {
@@ -91,10 +93,15 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 				}
 				return IStatusUtils.afterRunning(monitor);
 			}
+
 		};
 		job.schedule();
 
 		return null;
+	}
+	
+	private void setup(String projectName) throws CoreException {
+		LearntestPlugin.initLogger(projectName);
 	}
 
 	protected abstract IStatus execute(IProgressMonitor monitor) throws CoreException;
@@ -114,7 +121,6 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 	protected void handleException(Exception e) {
 		log.debug("error: {}", (Object) e.getStackTrace());
-		e.printStackTrace();
 	}
 
 	protected void prepareData() throws CoreException {
@@ -132,20 +138,29 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		try {
 			IProject project = IProjectUtils.getProject(LearnTestConfig.getINSTANCE().getProjectName());
 			IJavaProject javaProject = IProjectUtils.getJavaProject(project);
+			
 			AppJavaClassPath appClasspath = new AppJavaClassPath();
 			appClasspath.setJavaHome(IProjectUtils.getJavaHome(javaProject));
-			appClasspath.addClasspaths(LearnTestUtil.getPrjectClasspath());
-			String outputPath = LearnTestUtil.getOutputPath();
+			String outputPath = IProjectUtils.getTargetFolder(javaProject);
 			appClasspath.setTarget(outputPath);
 			appClasspath.setTestTarget(outputPath);
-			appClasspath.setTestSrc(LearnTestUtil.retrieveTestSourceFolder());
-			appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER, LearnTestUtil.getPrjClassLoader());
+			String testSrc = IProjectUtils.getTestSourceFolder(javaProject);
+			if (testSrc == null) {
+				/* create test folder in target project */
+				testSrc = IProjectUtils.createSourceFolder(javaProject, "test");
+			}
+			appClasspath.setTestSrc(testSrc);
+			appClasspath.addClasspaths(IProjectUtils.getPrjectClasspath(javaProject));
+			appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER,
+					IProjectUtils.getPrjClassLoader(javaProject));
 			appClasspath.getPreferences().set(SystemVariables.TESTCASE_TIMEOUT,
 					Constants.DEFAULT_JUNIT_TESTCASE_TIMEOUT);
 			appClasspath.getPreferences().set(CfgJaCoCoConfigs.DUPLICATE_FILTER, true);
 			return appClasspath;
 		} catch (CoreException ex) {
 			throw new SavRtException(ex);
+		} catch (PluginException e) {
+			throw new SavRtException(e);
 		}
 	}
 
@@ -198,7 +213,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 					IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jdart/jpf.properties"));
 			params.getSystemConfig().set(LearntestSystemVariable.JDART_SITE_PROPRETIES,
 					IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jpf.properties"));
-		} catch (LearntestPluginExeception e) {
+		} catch (PluginException e) {
 			throw new CoreException(IStatusUtils.exception(e, e.getMessage()));
 		}
 	}
