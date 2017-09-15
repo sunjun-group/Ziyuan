@@ -180,6 +180,9 @@ public class LearnedDataProcessor {
 		CoveredBranches coveredType = nodeProbe.getCoveredBranches();
 		if (coveredType.isOneBranchMissing()) {
 			BranchType missingBranch = coveredType.getOnlyOneMissingBranch();
+			/**
+			 * we may only get one data point as the neighbor.
+			 */
 			List<double[]> list = getNeighborTc(missingBranch, nodeProbe);
 			List<ExecVar> vars = decisionProbes.getOriginalVars();
 			try {
