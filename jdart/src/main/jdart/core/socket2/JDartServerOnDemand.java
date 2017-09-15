@@ -2,7 +2,7 @@ package jdart.core.socket2;
 
 import jdart.core.JDartParams;
 
-public class JDartServerByRequire {
+public class JDartServerOnDemand {
 	
 	public static JDartParams constructJDartParams() {
 		String  classpathStr = "/Users/pxzhang/Documents/git/apache-common-math-2.2/apache-common-math-2.2/bin", 

@@ -15,8 +15,8 @@ import jdart.core.JDartParams;
 import jdart.core.util.ByteConverter;
 import jdart.model.TestInput;
 
-public class JDartByRequireClient {
-	private static Logger log = LoggerFactory.getLogger(JDartByRequireClient.class);
+public class JDartOnDemandClient {
+	private static Logger log = LoggerFactory.getLogger(JDartOnDemandClient.class);
 
 	public void run(JDartParams jdartParams, int port) {
 		log.info("JDart begin : " + jdartParams.getClassName() + "." + jdartParams.getMethodName());
@@ -84,10 +84,10 @@ public class JDartByRequireClient {
 			int node = Integer.parseInt(args[7]);
 			int branch = Integer.parseInt(args[8]);
 			int port = Integer.parseInt(args[9]);
-			new JDartByRequireClient().run(JDartServerByRequire.constructJDartParams(classpathStr, mainEntry, className,
+			new JDartOnDemandClient().run(JDartServerOnDemand.constructJDartParams(classpathStr, mainEntry, className,
 					methodName, paramString, app, site, node, branch), port);
 		} else {
-			new JDartByRequireClient().run(JDartServerByRequire.constructJDartParams(), 8989);
+			new JDartOnDemandClient().run(JDartServerOnDemand.constructJDartParams(), 8989);
 		}
 	}
 
