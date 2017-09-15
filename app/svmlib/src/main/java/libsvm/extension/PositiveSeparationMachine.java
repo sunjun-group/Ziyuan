@@ -17,6 +17,7 @@ import libsvm.core.Machine;
 import libsvm.core.Model;
 import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.Formula;
+import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
@@ -34,7 +35,7 @@ import sav.strategies.dto.execute.value.ExecVarType;
  * 
  */
 public class PositiveSeparationMachine extends Machine {
-	protected static final Logger LOGGER = LoggerFactory.getLogger(PositiveSeparationMachine.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PositiveSeparationMachine.class);
 
 	private List<svm_model> learnedModels = new ArrayList<svm_model>();
 
@@ -55,7 +56,7 @@ public class PositiveSeparationMachine extends Machine {
 		} catch (SAVExecutionTimeOutException e) {
 			e.printStackTrace();
 		}
-		if (model != null) {
+		if (isValidModel(model)) {
 			learnedModels.add(model);
 		} else {
 			canDivideWithOneFormula = false;
@@ -161,7 +162,7 @@ public class PositiveSeparationMachine extends Machine {
 					removeClassifiedNegativePoints(selectionData);
 					
 					/** record model and loop until the number of models is greater than modelLimit */
-					if (model != null) { 
+					if (isValidModel(model)) { 
 						if (!isContain(learnedModels, model)) {
 							learnedModels.add(model);
 							modelSize++;
@@ -175,10 +176,22 @@ public class PositiveSeparationMachine extends Machine {
 			}
 
 		} else {
-			learnedModels.add(model);
+			if (isValidModel(model)) {
+				learnedModels.add(model);
+			}
 		}
 
 		return this;
+	}
+
+	private boolean isValidModel(svm_model model) {
+		/* 
+		 * LLT: validate model (for simple case, check if sv_coef is empty or not
+		 * this is just quick fix to avoid exception due to empty sv_coef.
+		 * But the problem here is that although the model.sv_coef is empty, its coverage is sometimes really high (like 1.0)
+		 * -> Note here to check the reason.
+		 */
+		return model != null && CollectionUtils.isNotEmpty(model.sv_coef);
 	}
 
 	private List<DataPoint> select(int limit, List<DataPoint> selectionData, List<DataPoint> trainingData) {

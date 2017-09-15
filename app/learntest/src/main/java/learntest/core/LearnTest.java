@@ -41,12 +41,12 @@ public class LearnTest extends AbstractLearntest {
 	
 	public final RunTimeInfo run(LearnTestParams params) throws Exception {
 		init(params);
-		log.debug("Start learntest..({})", params.getApproach());
+		log.info("Start learntest..({})", params.getApproach());
 		prepareInitTestcase(params);
 		SAVTimer.startCount();
 		/* collect testcases in project */
 		if (CollectionUtils.isEmpty(params.getInitialTestcases())) {
-			log.info("empty testcase!");
+			log.info("Empty testcase!");
 			return null;
 		}
 		boolean learningStarted = false;
@@ -57,7 +57,7 @@ public class LearnTest extends AbstractLearntest {
 			cfgCoverage = runCfgCoverage(targetMethod, params.getInitialTests().getJunitClasses());
 
 			if (CoverageUtils.notCoverAtAll(cfgCoverage)) {
-				log.info("start node is not covered!");
+				log.info("Start node is not covered!");
 				return reconcileGeneratedTestsAndGetRuntimeInfo(cfgCoverage, targetMethod);
 			}
 			
@@ -65,14 +65,14 @@ public class LearnTest extends AbstractLearntest {
 					targetMethod.getClassName(), targetMethod.getMethodFullName(), targetMethod.getLineNum(), targetMethod.getMethodSignature())
 					.getRelevantVarMap();
 			
-			log.info("first coverage: " + CoverageUtils.calculateCoverageByBranch(cfgCoverage));
+			log.info("First coverage: " + CoverageUtils.calculateCoverageByBranch(cfgCoverage));
 			BreakPoint methodEntryBkp = BreakpointCreator.createMethodEntryBkp(targetMethod, relevantVarMap);
 			/**
 			 * run testcases
 			 */
 			BreakpointData result = executeTestcaseAndGetTestInput(params.getInitialTestcases(), methodEntryBkp);
 			if (CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
-				log.info("no decision node is covered!");
+				log.info("No decision node is covered!");
 				copyTestsToResultFolder(params);
 				return reconcileGeneratedTestsAndGetRuntimeInfo(cfgCoverage, targetMethod);
 			} else {

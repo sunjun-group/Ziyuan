@@ -125,11 +125,11 @@ public class LearningMachine extends PositiveSeparationMachine {
 					Formula current = new FormulaProcessor<ExecVar>(vars).process(explicitDivider, dataLabels, true);
 					double accuracy = getModelAccuracy(CollectionUtils.listOf(svmModel, 1));
 					if (accuracyFilter > 0 && accuracy < accuracyFilter) {
-						LOGGER.debug("{}, accuracy: {} [removed]", current, accuracy);
+						log.debug("{}, accuracy: {} [removed]", current, accuracy);
 						it.remove();
 						continue;
 					} else {
-						LOGGER.debug("{}, accuracy: {}", current, accuracy);
+						log.debug("{}, accuracy: {}", current, accuracy);
 					}
 					updatePotentialSingleFeatureModel(current, accuracy, model);
 					formulaList.add(new LearnedModel(model, current, accuracy));

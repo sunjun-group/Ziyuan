@@ -75,10 +75,18 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		int maxTry = 3;
 		int i = 0;
 		for (; i < maxTry; i++) {
+			if (i > 0) {
+				log.info("Try again for a better initial coverage..");
+			}
 			try {
 				gentestResult = randomGentests(gentestParams);
 				cfgCoverage = runCfgCoverage(targetMethod, gentestResult.getJunitClassNames());
 				double cvg = CoverageUtils.calculateCoverage(cfgCoverage);
+				if (cvg > 0) {
+					log.info("Coverage: {}, branchCoverage: {}", cvg, CoverageUtils.calculateCoverageByBranch(cfgCoverage));
+				} else {
+					log.info("Coverage: {}", cvg);
+				}
 				/* replace current init test with new generated test */
 				if (cvg > bestCvg) {
 					bestCvg = cvg;
@@ -137,7 +145,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 				coveredBranches.add(branchRelationship == BranchRelationship.TRUE ? branchRelationship : 
 										BranchRelationship.FALSE);
 			}
-			sb.append("NodeCoverage [").append(node).append(", coveredTcs=").append(nodeCvg.getCoveredTcsTotal())
+			sb.append("NodeCoverage [").append(node).append(", covered=").append(nodeCvg.isCovered())
 						.append(", coveredBranches=").append(nodeCvg.getCoveredBranches().size()).append(", ")
 						.append(coveredBranches).append("]");
 			String sbStr = sb.toString();

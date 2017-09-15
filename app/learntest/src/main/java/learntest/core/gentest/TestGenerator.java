@@ -77,7 +77,7 @@ public class TestGenerator {
 	}
 	
 	private GentestResult gentest(GentestParams params, TestsPrinter printer) throws SavException {
-		log.debug("start random gentest..");
+		log.info("Start random gentest..");
 		SingleTimer timer = SingleTimer.start("random gentest");
 		Class<?> clazz = loadClass(params.getTargetClassName());
 		RandomTraceGentestBuilder gentest = new RandomTraceGentestBuilder(params.getNumberOfTcs())
@@ -91,7 +91,7 @@ public class TestGenerator {
 		GentestResult result = new GentestResult();
 		result.setJunitClassNames(printer.printTests(pair));
 		result.setJunitfiles(((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles());
-		log.debug("generated junit classes: {}", result.getJunitClassNames());
+		log.info("Generated junit classes: {}", result.getJunitClassNames());
 		log.debug(timer.getResult());
 		return result;
 	}

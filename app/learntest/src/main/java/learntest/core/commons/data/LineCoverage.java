@@ -23,6 +23,7 @@ public class LineCoverage {
 	private TargetMethod targetMethod;
 	private List<Integer> coveredLineNums;
 	private String testcase;
+	private String branchCoverageText;
 
 	public LineCoverage(TargetMethod targetMethod, String testcase) {
 		this.targetMethod = targetMethod;
@@ -54,6 +55,14 @@ public class LineCoverage {
 			coveredLineNums = new ArrayList<Integer>();
 		}
 		CollectionUtils.addIfNotNullNotExist(coveredLineNums, line);
+	}
+	
+	public String getBranchCoverageText() {
+		return branchCoverageText;
+	}
+
+	public void setBranchCoverageText(String branchCoverageText) {
+		this.branchCoverageText = branchCoverageText;
 	}
 
 	public String getDisplayText() {

@@ -11,7 +11,6 @@ package learntest.core;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -69,7 +68,6 @@ public class FinalTests {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<File> commit(PrinterParams printerParams, CfgCoverage cfgCoverage, TargetMethod targetMethod) {
 		/* build linecoverage and do filter the sequences again by covered line numbers */
 		buildLineCoverageAndFilterSequences(cfgCoverage, targetMethod);
@@ -78,7 +76,7 @@ public class FinalTests {
 		LearntestJWriter jWriter = new LearntestJWriter(true);
 		printer.setCuWriter(jWriter);
 		List<Sequence> allSequences = new ArrayList<Sequence>(sequences.values());
-		printer.printTests(Pair.of(allSequences, Collections.EMPTY_LIST));
+		printer.printTests(Pair.of(allSequences, new ArrayList<Sequence>(0)));
 		updateNewTestcaseNameInLineCoverageResult(jWriter.getTestcaseSequenceMap());
 		return ((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles();
 	}

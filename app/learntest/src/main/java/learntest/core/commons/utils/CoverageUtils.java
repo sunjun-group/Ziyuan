@@ -9,9 +9,12 @@
 package learntest.core.commons.utils;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
@@ -78,4 +81,22 @@ public class CoverageUtils {
 		return map;
 	}
 	
+	
+	public static String getBranchCoverageDisplayText(CfgCoverage cfgCoverage, int testIdx) {
+		StringBuilder sb = new StringBuilder();
+		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
+			NodeCoverage nodeCvg = cfgCoverage.getCoverage(node);
+			Set<BranchRelationship> coveredBranches = new HashSet<BranchRelationship>(2);
+			for (int branchIdx : nodeCvg.getCoveredBranches(testIdx)) {
+				BranchRelationship branchRelationship = node.getBranchRelationship(branchIdx);
+				coveredBranches.add(branchRelationship == BranchRelationship.TRUE ? branchRelationship : 
+										BranchRelationship.FALSE);
+			}
+			sb.append("NodeCoverage [").append(node).append(", covered=").append(nodeCvg.isCovered(testIdx))
+						.append(", coveredBranches=").append(coveredBranches.size()).append(", ")
+						.append(coveredBranches).append("]");
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
 }

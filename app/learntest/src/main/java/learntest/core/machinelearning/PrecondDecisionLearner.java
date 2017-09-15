@@ -48,7 +48,6 @@ import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
-import variable.FieldVar;
 import variable.Variable;
 
 /**
@@ -73,20 +72,23 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	}
 
 	public DecisionProbes learn(DecisionProbes inputProbes, BreakpointData bpdata, Map<Integer, List<Variable>> relevantVarMap) throws SavException {
+		log.info("Start machine learning...");
 		List<CfgNode> decisionNodes = inputProbes.getCfg().getDecisionNodes();
 		DecisionProbes probes = inputProbes;
 		dataPreprocessor = new LearnedDataProcessor(mediator, inputProbes);
 		dominationMap = new CfgDomain().constructDominationMap(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()));
 		
-		StringBuffer sBuffer = new StringBuffer();
-		sBuffer.append("dominationMap : \n");
-		for (CfgNodeDomainInfo info : dominationMap.values()) {
-			if (!info.dominatees.isEmpty()) {
-				sBuffer.append(info+"\n\n");
-			}
-		}		
-		RunTimeInfo.write(logFile, sBuffer.toString());
-		log.info(sBuffer.toString());
+		if (log.isDebugEnabled()) {
+			StringBuffer sBuffer = new StringBuffer();
+			sBuffer.append("dominationMap : \n");
+			for (CfgNodeDomainInfo info : dominationMap.values()) {
+				if (!info.dominatees.isEmpty()) {
+					sBuffer.append(info+"\n\n");
+				}
+			}		
+			RunTimeInfo.write(logFile, sBuffer.toString());
+			log.debug(sBuffer.toString());
+		}
 		if (relevantVarMap == null || probes.getCfg().getNodeList().size() != relevantVarMap.size()) {
 			log.debug("The size of CfgNodes is differnt from the size of map!!!!");
 			this.relevantVars = null;
@@ -168,31 +170,6 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			}
 		}
 		
-		//llt: backup
-//		public void setExecVar(HashMap<String, ExecVar> execVarMap, List<ExecVar> originalVars) {
-//			List<VarInfo> infos = new ArrayList<>(variables.size());
-//			for (Variable var : variables) {
-//				String label = var.getName();
-//				if (var instanceof FieldVar) {
-//					label = "this."+label;
-//				}
-//				ExecVar execVar = execVarMap.get(label);
-//				if (execVar != null) {
-//					VarInfo info = new VarInfo(originalVars.indexOf(execVar), null);
-//					info.execVars = new LinkedList<>();
-//					info.execVars.add(execVar);
-//					infos.add(info);
-//				}else {
-//					log.info(var + "does not exist in original ExecVars.");
-//				}
-//			}			
-//			infos.sort(new VarInfoComparator()); // keep the sequence in originalVars
-//			execVars = new ArrayList<>(variables.size());
-//			for (VarInfo varInfo : infos) {
-//				execVars.add(varInfo.execVars.get(0));
-//			}
-//		}
-		
 		public String toString() {
 			StringBuffer sb = new StringBuffer();
 			sb.append(offset + " : ");
@@ -229,7 +206,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				}
 						
 				Pair<OrCategoryCalculator, Boolean> pair = null;
-				log.debug("learning the node in line " + node.getLine() + "(" + node + ")");
+				log.info("Learning node" + node.getLine() + "(" + node + ")");
 				if (node.isLoopHeader()) {
 					/** todo : handle the loop
 					 *  loop header dominate and is dominated by nodes in loop, 
@@ -293,8 +270,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		List<Divider> divider = trueFalseResult == null ? null : trueFalseResult.dividers;
 		nodeProbe.setPrecondition(Pair.of(truefalseFormula, null), divider);
 		nodeProbe.clearCache();
-		
-		log.info("final formula : "+ truefalseFormula);
+		if (truefalseFormula != null) {
+			log.info("final formula : "+ truefalseFormula);
+		}
 	}
 
 	protected Pair<OrCategoryCalculator, Boolean> getPreconditions(DecisionProbes probes, CfgNode node, boolean isLoopHeader) {
@@ -320,15 +298,20 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		/* do generate formula and return */
 		NegativePointSelection negative = new ByDistanceNegativePointSelection();
 		PositiveSeparationMachine mcm = new LearningMachine(negative);		
-		log.info("generate initial formula");
+		log.debug("generate initial formula");
 		trueFlaseFormula = generateInitialFormula(orgNodeProbe, mcm, targetVars);
 		double acc = mcm.getModelAccuracy();
+		if (trueFlaseFormula != null) {
+			log.info("Initial formula: {}, acc: {}", trueFlaseFormula, acc);
+		}
 		if (mcm.getDataPoints().size()<=1) {
-			log.info("there is only one data point !!! svm could not learn");
+			log.debug("there is only one data point !!! svm could not learn");
 			return null;
 		}
 		List<Divider> dividers = mcm.getFullLearnedDividers(mcm.getDataLabels(), orignalVars);
-		log.info("=============learned multiple cut: " + trueFlaseFormula);
+		if (trueFlaseFormula != null) {
+			log.info("=============learned multiple cut: " + trueFlaseFormula);
+		}
 
 		int time = 0;
 		DecisionNodeProbe nodeProbe = orgNodeProbe;
@@ -430,18 +413,18 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			PositiveSeparationMachine mcm) {
 		StringBuffer sBuffer = new StringBuffer();
 		sBuffer.append("add data point to svm : =============================\n");
-		sBuffer.append("new data true : "+trueV.size()+" , "+trueV.toString()+"\n");
+		sBuffer.append("new data true : " + trueV.size() + " , " + trueV.toString() + "\n");
 		for (BreakpointValue value : trueV) {
 			addBkp(labels, targetVars, value, Category.POSITIVE, mcm, sBuffer);
 		}
-		sBuffer.append("new data false : "+falseV.size()+" , "+falseV.toString()+"\n");		
+		sBuffer.append("new data false : " + falseV.size() + " , " + falseV.toString() + "\n");
 		for (BreakpointValue value : falseV) {
 			addBkp(labels, targetVars, value, Category.NEGATIVE, mcm, sBuffer);
 		}
-		log.info(sBuffer.toString());
-//		log.info("new data true : "+trueV.size()+" , "+trueV.toString());
-//		log.info("new data false : "+falseV.size()+" , "+falseV.toString());		
-
+		
+		log.debug(sBuffer.toString());
+//		log.debug("new data true : "+trueV.size()+" , "+trueV.toString());
+//		log.debug("new data false : "+falseV.size()+" , "+falseV.toString());		
 		RunTimeInfo.write(logFile, sBuffer.toString());
 	}
 

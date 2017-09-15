@@ -50,7 +50,8 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 		timer.start();
 		SamplingResult samples = new SamplingResult(decisionProbes);
 		log.debug("Executing {} samples...", domains.size());
-		log.info("Executing sample data points : ");
+		log.debug("Executing sample data points : ");
+		log.info("Add {} new samples", domains.size());
 		logGeneratedInputs(domains, originVars);
 		GentestResult result = null;
 		try {
@@ -60,7 +61,6 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 			/* run and update coverage */
 			timer.newPoint("coverage");
 			log.debug("run coverage..");
-			log.debug("new tcs: " + FileUtils.getFileNames(result.getJunitfiles()));
 			runCfgCoverage(samples, result.getJunitClassNames());
 			samples.updateNewData();
 			timer.logResults(log);
@@ -83,12 +83,14 @@ public class SampleExecutor extends AbstractLearningComponent implements ISample
 
 	private void logGeneratedInputs(List<double[]> domains, List<ExecVar> originVars) {
 		log.debug("vars: {}", originVars);
-		StringBuilder builder = new StringBuilder();
-		for (double[] value : domains) {
-			builder.append(Arrays.toString(value));
-			builder.append("\n");
+		if (log.isDebugEnabled()) {
+			StringBuilder builder = new StringBuilder();
+			for (double[] value : domains) {
+				builder.append(Arrays.toString(value));
+				builder.append("\n");
+			}
+			log.debug(builder.toString());
 		}
-		log.debug(builder.toString());
 	}
 
 	/**

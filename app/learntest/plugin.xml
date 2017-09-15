@@ -8,6 +8,7 @@
             id="learntest.command.generatetest"
             name="Generate Test">
       </command>
+      <!-- remove in product version
       <command
             defaultHandler="learntest.plugin.handler.EvaluationHandler"
             id="learntest.command.evaluateAllMethods"
@@ -28,6 +29,7 @@
             id="learntest.command.generateSetter"
             name="Generate Setter Method">
       </command>
+      -->
    </extension>
    <extension
          point="org.eclipse.ui.menus" id="learntestMenu">
@@ -42,6 +44,7 @@
                   label="Generate Test"
                   style="push">
             </command>
+             <!-- remove in product version
             <command
                   commandId="learntest.command.evaluateAllMethods"
                   label="Evaluate All Methods"
@@ -63,6 +66,7 @@
                   label="Generate Code coverage"
                   style="push">
             </command>
+            -->
          </menu>
          
       </menuContribution>
@@ -77,6 +81,7 @@
       </page>
    </extension>
 
+ 	<!-- remove in product version
 	<extension
        id="jdartCommands"
        point="org.eclipse.ui.commands">
@@ -91,6 +96,7 @@
             name="Run All Methods With JDart">
       </command>
    </extension>
+   
 	<extension
        id="jdartMenus"
        point="org.eclipse.ui.menus">
@@ -112,4 +118,5 @@
          </menu>
       </menuContribution>
    </extension>
+   -->
 </plugin>

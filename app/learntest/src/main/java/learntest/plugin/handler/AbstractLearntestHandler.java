@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Queue;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -413,10 +414,14 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			RunTimeInfo runtimeInfo = learntest.run(params);
 
 			if (runtimeInfo != null) {
-				log.info("{} time: {}; coverage: {}; cnt: {}", params.getApproach().getName(),
-						TextFormatUtils.printTimeString(runtimeInfo.getTime()), runtimeInfo.getCoverage(),
-						runtimeInfo.getTestCnt());
-				log.info("coverageInfo: \n{}", runtimeInfo.getCoverageInfo());
+				if (runtimeInfo.getLineCoverageResult() != null) {
+					log.info("Line coverage result:");
+					log.info(runtimeInfo.getLineCoverageResult().getDisplayText());
+				}
+				log.info("{} RESULT:", StringUtils.upperCase(params.getApproach().getName()));
+				log.info("TIME: {}; COVERAGE: {}; CNT: {}", TextFormatUtils.printTimeString(runtimeInfo.getTime()),
+						runtimeInfo.getCoverage(), runtimeInfo.getTestCnt());
+				log.info("TOTAL COVERAGE INFO: \n{}", runtimeInfo.getCoverageInfo());
 			}
 			return runtimeInfo;
 		} catch (Exception e) {
