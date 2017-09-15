@@ -37,5 +37,6 @@ Set up
 
 Contacts
 --------
-lylypp6987@gmail.com
+llmhyy@gmail.com,
+lylypp6987@gmail.com,
 sunjun@sutd.edu.sg
