@@ -23,9 +23,9 @@ import gov.nasa.jpf.jdart.ConcolicMethodExplorer;
 import gov.nasa.jpf.jdart.constraints.InternalConstraintsTree;
 import gov.nasa.jpf.vm.VM;
 
-public class ByRequireSearch extends Search {
+public class OnDemandSearch extends Search {
 
-  public ByRequireSearch (Config config, VM vm) {
+  public OnDemandSearch (Config config, VM vm) {
   	super(config,vm);
   }
 

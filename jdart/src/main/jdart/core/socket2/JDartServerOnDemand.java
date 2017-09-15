@@ -7,7 +7,7 @@ public class JDartServerOnDemand {
 	public static JDartParams constructJDartParams() {
 		String  classpathStr = "/Users/pxzhang/Documents/git/apache-common-math-2.2/apache-common-math-2.2/bin", 
 				app = "libs/jdart/jpf.properties",
-				site = "libs/jpf_by_require.properties",
+				site = "libs/jpf_on_demand.properties",
 				
 				mainEntry = "com.Test",
 				className = "org.apache.commons.math.util.FastMath",
