@@ -66,6 +66,10 @@ public class StringUtils {
 		return join(Arrays.asList(params), ".");
 	}
 	
+	public static String dotJoin(List<?> params) {
+		return join(params, ".");
+	}
+	
 	public static String lowLineJoin(Object...params) {
 		return join(Constants.LOW_LINE, params);
 	}

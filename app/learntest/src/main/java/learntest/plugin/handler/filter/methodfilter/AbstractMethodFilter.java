@@ -16,7 +16,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
  * @author LLT
  *
  */
-public abstract class AbstractMethodFilter extends ASTVisitor implements TargetMethodFilter {
+public abstract class AbstractMethodFilter extends ASTVisitor implements IMethodFilter {
 	protected boolean isValid;
 	
 	@Override

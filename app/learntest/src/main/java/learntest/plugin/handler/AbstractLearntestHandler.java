@@ -33,10 +33,11 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cfgcoverage.jacoco.CfgJaCoCoConfigs;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.JDartLearntest;
@@ -46,23 +47,21 @@ import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.TargetClass;
 import learntest.core.commons.data.classinfo.TargetMethod;
-import learntest.core.commons.exception.LearnTestException;
 import learntest.core.machinelearning.CfgNodeDomainInfo;
 import learntest.core.machinelearning.FormulaInfo;
 import learntest.plugin.LearnTestConfig;
 import learntest.plugin.LearntestPlugin;
 import learntest.plugin.commons.PluginException;
 import learntest.plugin.export.io.excel.Trial;
+import learntest.plugin.handler.gentest.GentestSettings;
 import learntest.plugin.utils.IProjectUtils;
 import learntest.plugin.utils.IResourceUtils;
 import learntest.plugin.utils.IStatusUtils;
 import learntest.plugin.utils.JdartConstants;
 import learntest.plugin.utils.LearnTestUtil;
-import sav.common.core.Constants;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
-import sav.common.core.SystemVariables;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.TextFormatUtils;
 import sav.settings.SAVTimer;
@@ -78,7 +77,8 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 	/* PLUGIN HANDLER */
 	@Override
-	public Object execute(ExecutionEvent arg0) throws ExecutionException {
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		ISelection selection = HandlerUtil.getActiveMenuSelection(event);
 		Job job = new Job(getJobName()) {
 
 			@Override
@@ -86,8 +86,10 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 				try {
 					setup(LearnTestConfig.getINSTANCE().getProjectName());
 					prepareData();
-					execute(monitor);
+					return execute(selection, monitor);
 				} catch (CoreException e) {
+					e.printStackTrace();
+				} catch (PluginException e) {
 					e.printStackTrace();
 				} finally {
 					monitor.done();
@@ -100,12 +102,18 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 		return null;
 	}
-	
-	private void setup(String projectName) throws CoreException {
+
+	protected IStatus execute(ISelection selection, IProgressMonitor monitor) throws CoreException {
+		return execute(monitor);
+	}
+
+	private void setup(String projectName) throws PluginException {
 		LearntestPlugin.initLogger(projectName);
 	}
 
-	protected abstract IStatus execute(IProgressMonitor monitor) throws CoreException;
+	protected IStatus execute(IProgressMonitor monitor) throws CoreException {
+		return IStatusUtils.ok();
+	}
 
 	protected abstract String getJobName();
 
@@ -125,44 +133,16 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	}
 
 	protected void prepareData() throws CoreException {
-		appClasspath = initAppJavaClassPath();
+		getAppClasspath();
 	}
 
 	public AppJavaClassPath getAppClasspath() {
 		if (appClasspath == null) {
-			appClasspath = initAppJavaClassPath();
-		}
-		return appClasspath;
-	}
-
-	private AppJavaClassPath initAppJavaClassPath() {
-		try {
 			IProject project = IProjectUtils.getProject(LearnTestConfig.getINSTANCE().getProjectName());
 			IJavaProject javaProject = IProjectUtils.getJavaProject(project);
-			
-			AppJavaClassPath appClasspath = new AppJavaClassPath();
-			appClasspath.setJavaHome(IProjectUtils.getJavaHome(javaProject));
-			String outputPath = IProjectUtils.getTargetFolder(javaProject);
-			appClasspath.setTarget(outputPath);
-			appClasspath.setTestTarget(outputPath);
-			String testSrc = IProjectUtils.getTestSourceFolder(javaProject);
-			if (testSrc == null) {
-				/* create test folder in target project */
-				testSrc = IProjectUtils.createSourceFolder(javaProject, "test");
-			}
-			appClasspath.setTestSrc(testSrc);
-			appClasspath.addClasspaths(IProjectUtils.getPrjectClasspath(javaProject));
-			appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER,
-					IProjectUtils.getPrjClassLoader(javaProject));
-			appClasspath.getPreferences().set(SystemVariables.TESTCASE_TIMEOUT,
-					Constants.DEFAULT_JUNIT_TESTCASE_TIMEOUT);
-			appClasspath.getPreferences().set(CfgJaCoCoConfigs.DUPLICATE_FILTER, true);
-			return appClasspath;
-		} catch (CoreException ex) {
-			throw new SavRtException(ex);
-		} catch (PluginException e) {
-			throw new SavRtException(e);
+			appClasspath = GentestSettings.initAppJavaClassPath(javaProject);
 		}
+		return appClasspath;
 	}
 
 	protected LearnTestParams initLearntestParamsFromPreference() throws CoreException {
@@ -171,7 +151,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 	protected LearnTestParams initLearntestParams(LearnTestConfig config) throws CoreException {
 		try {
-			LearnTestParams params = new LearnTestParams();
+			LearnTestParams params = new LearnTestParams(getAppClasspath());
 			params.setApproach(config.isL2TApproach() ? LearnTestApproach.L2T : LearnTestApproach.RANDOOP);
 			try {
 				TargetMethod targetMethod = initTargetMethod(config);
@@ -406,11 +386,11 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	 * To test new version of learntest which uses another cfg and jacoco for
 	 * code coverage.
 	 */
-	public RunTimeInfo runLearntest(LearnTestParams params) throws Exception {
+	public RunTimeInfo runLearntest(LearnTestParams params) throws PluginException {
 		try {
 			SAVTimer.enableExecutionTimeout = true;
 			SAVTimer.exeuctionTimeout = 50000000;
-			learntest.core.LearnTest learntest = new learntest.core.LearnTest(getAppClasspath());
+			learntest.core.LearnTest learntest = new learntest.core.LearnTest(params.getAppClasspath());
 			RunTimeInfo runtimeInfo = learntest.run(params);
 
 			if (runtimeInfo != null) {
@@ -425,7 +405,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			}
 			return runtimeInfo;
 		} catch (Exception e) {
-			throw new LearnTestException(e);
+			throw PluginException.wrapEx(e);
 		}
 	}
 }

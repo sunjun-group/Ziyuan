@@ -13,8 +13,8 @@ package learntest.core.commons.data;
  *
  */
 public enum LearnTestApproach {
-	L2T ("l2t"),
-	RANDOOP ("ram");
+	L2T ("L2T"),
+	RANDOOP ("RandomTest");
 	
 	private String name;
 	private LearnTestApproach(String name) {

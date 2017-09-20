@@ -14,6 +14,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFolder;
@@ -26,6 +27,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
@@ -33,10 +35,10 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 
-import learntest.plugin.LearnTestConfig;
 import learntest.plugin.commons.PluginException;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.StringUtils;
 
 /**
  * @author LLT
@@ -160,7 +162,7 @@ public class IProjectUtils {
 		String outputFolder = "";
 		try {
 			for(String seg: project.getOutputLocation().segments()){
-				if(!seg.equals(LearnTestConfig.getINSTANCE().getProjectName())){
+				if(!seg.equals(project.getProject().getName())){
 					outputFolder += seg + File.separator;
 				}
 			}
@@ -202,5 +204,34 @@ public class IProjectUtils {
 		} catch (MalformedURLException e) {
 			throw new SavRtException(e);
 		}
+	}
+	
+	public static String getFullName(IJavaElement element) {
+		LinkedList<String> fragments = new LinkedList<String>();
+		IJavaElement jEle = element;
+		while (true) {
+			String elementName = null;
+			switch (jEle.getElementType()) {
+			case IJavaElement.COMPILATION_UNIT:
+			case IJavaElement.JAVA_PROJECT:
+			case IJavaElement.METHOD:
+			case IJavaElement.PACKAGE_FRAGMENT:
+			case IJavaElement.TYPE:
+				elementName = jEle.getElementName();
+				break;
+			case IJavaElement.PACKAGE_FRAGMENT_ROOT:
+				IPackageFragmentRoot root = (IPackageFragmentRoot) jEle;
+				elementName = StringUtils.dotJoin((Object[])root.getResource().getProjectRelativePath().segments());
+				break;
+			}
+			if (elementName != null) {
+				fragments.addFirst(elementName);
+			}
+			if (jEle.getElementType() == IJavaElement.JAVA_PROJECT) {
+				break;
+			}
+			jEle = jEle.getParent();
+		}
+		return StringUtils.dotJoin(fragments);
 	}
 }

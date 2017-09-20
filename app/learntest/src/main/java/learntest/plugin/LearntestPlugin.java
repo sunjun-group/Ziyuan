@@ -3,11 +3,13 @@ package learntest.plugin;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import learntest.plugin.commons.PluginException;
 import learntest.plugin.console.LearntestConsole;
 
 /**
@@ -68,10 +70,21 @@ public class LearntestPlugin extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	public static void initLogger(String projectName) throws CoreException {
+	public static void initLogger(String projectName) throws PluginException {
 		LearntestLogger.initLog4j(projectName);
 	}
 
-	
-	
+	public static IWorkbenchWindow getActiveWorkbenchWindow() {
+		if (Display.getCurrent() != null) {
+			return getDefault().getWorkbench().getActiveWorkbenchWindow();
+		}
+		// need to call from UI thread
+		final IWorkbenchWindow[] window = new IWorkbenchWindow[1];
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				window[0] = getDefault().getWorkbench().getActiveWorkbenchWindow();
+			}
+		});
+		return window[0];
+	}
 }

@@ -9,13 +9,15 @@
 package learntest.plugin.handler.filter.classfilter;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 /**
  * @author LLT
  *
  */
-public interface TargetClassFilter {
+public interface ITypeFilter {
 
 	public boolean isValid(CompilationUnit cu);
 
+	public boolean isValid(TypeDeclaration typeDecl);
 }

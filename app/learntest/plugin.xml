@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+	<extension
+          point="org.eclipse.core.expressions.propertyTesters">
+       <propertyTester
+             class="learntest.plugin.selection.tester.GentestTextSelectionTester"
+             id="learntest.plugin.tester.gentest.selection.text"
+             namespace="learntest.plugin.tester"
+             properties="isTestableSelectedText"
+             type="java.lang.Object">
+       </propertyTester>
+    </extension>
    <extension
          point="org.eclipse.ui.commands" id="learntestCommands">
       <command
@@ -8,28 +18,17 @@
             id="learntest.command.generatetest"
             name="Generate Test">
       </command>
-      <!-- remove in product version
       <command
-            defaultHandler="learntest.plugin.handler.EvaluationHandler"
-            id="learntest.command.evaluateAllMethods"
-            name="Evaluate All Methods">
+            defaultHandler="learntest.plugin.handler.gentest.JavaGentestHandler"
+            id="learntest.plugin.commands.javaGentest"
+            name="Generate Testcases">
+         <commandParameter
+               id="learntest.approach"
+               name="L2T"
+               optional="false">
+         </commandParameter>
       </command>
-      <command
-            defaultHandler="learntest.plugin.handler.ChangeModiferHandler"
-            id="learntest.command.changeModifier"
-            name="Change Modifier to Public">
-      </command>
-      <command
-            defaultHandler="learntest.plugin.handler.CodeCoverageHandler"
-            id="learntest.command.codeCoverage"
-            name="Generate code coverage">
-      </command>
-      <command
-            defaultHandler="learntest.plugin.handler.SetterMethodGenerationHandler"
-            id="learntest.command.generateSetter"
-            name="Generate Setter Method">
-      </command>
-      -->
+     
    </extension>
    <extension
          point="org.eclipse.ui.menus" id="learntestMenu">
@@ -44,31 +43,75 @@
                   label="Generate Test"
                   style="push">
             </command>
-             <!-- remove in product version
-            <command
-                  commandId="learntest.command.evaluateAllMethods"
-                  label="Evaluate All Methods"
-                  style="push">
-            </command>
-            <command
-                  commandId="learntest.command.changeModifier"
-                  label="Change Modifier to Public"
-                  style="push">
-            </command>
-            <command
-                  commandId="learntest.command.generateSetter"
-                  label="Generate Setter Method for Fields"
-                  style="push">
-            </command>
-            <command
-                  commandId="learntest.command.codeCoverage"
-                  icon="icon/icon-test-management.png"
-                  label="Generate Code coverage"
-                  style="push">
-            </command>
-            -->
          </menu>
          
+      </menuContribution>
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.eclipse.ui.popup.any?before=additions">
+         <menu
+               id="learntest.plugin.popup.gentest"
+               label="Generate Testcases">
+           <command
+                 commandId="learntest.plugin.commands.javaGentest"
+                 label="as L2T">
+            <parameter
+                  name="learntest.approach"
+                  value="L2T">
+            </parameter>
+             <visibleWhen
+                  checkEnabled="true">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <or>
+                     <adapt
+                           type="org.eclipse.jdt.core.IJavaElement">
+                     </adapt>
+                     <and>
+                        <with
+                              variable="selection">
+                           <test
+                                 forcePluginActivation="true"
+                                 property="learntest.plugin.tester.isTestableSelectedText">
+                           </test>
+                        </with>
+                     </and>
+                  </or>
+               </iterate>
+            </visibleWhen>
+         </command>
+         
+         <command
+                 commandId="learntest.plugin.commands.javaGentest"
+                 label="as RandomTest">
+            <parameter
+                  name="learntest.approach"
+                  value="RANDOOP">
+            </parameter>
+             <visibleWhen
+                  checkEnabled="true">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <or>
+                     <adapt
+                           type="org.eclipse.jdt.core.IJavaElement">
+                     </adapt>
+                     <and>
+                        <with
+                              variable="selection">
+                           <test
+                                 forcePluginActivation="true"
+                                 property="learntest.plugin.tester.isTestableSelectedText">
+                           </test>
+                        </with>
+                     </and>
+                  </or>
+               </iterate>
+            </visibleWhen>
+         </command>
+         </menu>
       </menuContribution>
    </extension>
    <extension
@@ -81,42 +124,4 @@
       </page>
    </extension>
 
- 	<!-- remove in product version
-	<extension
-       id="jdartCommands"
-       point="org.eclipse.ui.commands">
-      <command
-            defaultHandler="learntest.plugin.handler.RunJDartHandler"
-            id="learntest.command.jdart"
-            name="Run JDart">
-      </command>
-      <command
-            defaultHandler="learntest.plugin.handler.RunAllJDartHandler"
-            id="jdart.command.runAll"
-            name="Run All Methods With JDart">
-      </command>
-   </extension>
-   
-	<extension
-       id="jdartMenus"
-       point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="menu:org.eclipse.ui.main.menu">
-         <menu
-               label="Run JDart">
-            <command
-                  commandId="learntest.command.jdart"
-                  label="Run JDart"
-                  style="push">
-            </command>
-            <command
-                  commandId="jdart.command.runAll"
-                  label="Run All Methods with JDart"
-                  style="push">
-            </command>
-         </menu>
-      </menuContribution>
-   </extension>
-   -->
 </plugin>

@@ -26,10 +26,10 @@ import learntest.plugin.export.io.excel.MultiTrial;
 import learntest.plugin.export.io.excel.Trial;
 import learntest.plugin.export.io.excel.TrialExcelHandler;
 import learntest.plugin.handler.filter.classfilter.ClassNameFilter;
-import learntest.plugin.handler.filter.classfilter.TargetClassFilter;
+import learntest.plugin.handler.filter.classfilter.ITypeFilter;
 import learntest.plugin.handler.filter.classfilter.TestableClassFilter;
 import learntest.plugin.handler.filter.methodfilter.NestedBlockChecker;
-import learntest.plugin.handler.filter.methodfilter.TargetMethodFilter;
+import learntest.plugin.handler.filter.methodfilter.IMethodFilter;
 import learntest.plugin.handler.filter.methodfilter.TestableMethodFilter;
 import learntest.plugin.utils.IMethodUtils;
 import learntest.plugin.utils.IProjectUtils;
@@ -43,8 +43,8 @@ import sav.settings.SAVTimer;
 public class EvaluationHandler extends AbstractLearntestHandler {
 	private static Logger log = LoggerFactory.getLogger(EvaluationHandler.class);
 	private static final int EVALUATIONS_PER_METHOD = 5;
-	private List<TargetMethodFilter> methodFilters;
-	private List<TargetClassFilter> classFilters;
+	private List<IMethodFilter> methodFilters;
+	private List<ITypeFilter> classFilters;
 	static {
 	}
 	
@@ -111,7 +111,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				ICompilationUnit icu = (ICompilationUnit) javaElement;
 				CompilationUnit cu = LearnTestUtil.convertICompilationUnitToASTNode(icu);
 				boolean valid = true;
-				for (TargetClassFilter classFilter : classFilters) {
+				for (ITypeFilter classFilter : classFilters) {
 					if (!classFilter.isValid(cu)) {
 						valid = false;
 						continue;
@@ -187,7 +187,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	}
 
 	private LearnTestParams initLearntestParams(TargetMethod targetMethod) throws CoreException {
-		LearnTestParams params = new LearnTestParams(targetMethod);
+		LearnTestParams params = new LearnTestParams(getAppClasspath(), targetMethod);
 		setSystemConfig(params);
 		return params;
 	}

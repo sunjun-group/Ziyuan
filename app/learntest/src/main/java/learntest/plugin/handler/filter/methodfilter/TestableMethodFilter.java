@@ -24,7 +24,7 @@ import sav.common.core.utils.PrimitiveUtils;
  * @author LLT
  *
  */
-public class TestableMethodFilter implements TargetMethodFilter {
+public class TestableMethodFilter implements IMethodFilter {
 	
 	@Override
 	public boolean isValid(CompilationUnit cu, MethodDeclaration md) {

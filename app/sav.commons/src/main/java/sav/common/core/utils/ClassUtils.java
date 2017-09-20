@@ -36,8 +36,20 @@ public class ClassUtils {
 		return String.format("%s.%s$%s", pkgName, ownerClName, innerClName);
 	}
 	
+	public static String getClassFullName(String pkgName, String clSimpleName, String...owners) {
+		if (CollectionUtils.isEmpty(owners)) {
+			return getCanonicalName(pkgName, clSimpleName);
+		}
+		String owner = StringUtils.join("$", (Object[]) owners);
+		return getCanonicalName(pkgName, owner, clSimpleName);
+	}
+	
 	public static String toClassCanonicalName(String classPath) {
 		return classPath.replace(Constants.FILE_SEPARATOR, Constants.DOT);
+	}
+	
+	public static String getCompilableName(String className, String newChar) {
+		return className.replace(Constants.NESTED_CLASS_SEPARATOR, newChar);
 	}
 	
 	/**

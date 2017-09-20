@@ -41,7 +41,7 @@ public class LearnTest extends AbstractLearntest {
 	
 	public final RunTimeInfo run(LearnTestParams params) throws Exception {
 		init(params);
-		log.info("Start learntest..({})", params.getApproach());
+		log.info("Start learntest..({})", params.getApproach().getName());
 		prepareInitTestcase(params);
 		SAVTimer.startCount();
 		/* collect testcases in project */
