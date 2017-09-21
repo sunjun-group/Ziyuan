@@ -8,17 +8,14 @@
 
 package learntest.core.machinelearning;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
-import icsetlv.common.dto.BreakpointData;
-import icsetlv.common.dto.BreakpointValue;
 import learntest.core.LearningMediator;
-import learntest.core.RunTimeInfo;
+import learntest.core.TestRunTimeInfo;
 import learntest.core.commons.data.decision.BranchType;
 import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
@@ -154,7 +151,7 @@ public class LearnedDataProcessor {
 		}
 		log.debug(sBuffer.toString());
 		sBuffer.append("\n");
-		RunTimeInfo.write(logFile, sBuffer.toString());
+		TestRunTimeInfo.write(logFile, sBuffer.toString());
 		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions, learnedDividers);
 	}
 	

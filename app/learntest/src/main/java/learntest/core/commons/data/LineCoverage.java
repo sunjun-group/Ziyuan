@@ -11,7 +11,7 @@ package learntest.core.commons.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import learntest.core.commons.data.classinfo.TargetMethod;
+import learntest.core.commons.data.classinfo.MethodInfo;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
 
@@ -20,13 +20,13 @@ import sav.common.core.utils.StringUtils;
  *
  */
 public class LineCoverage {
-	private TargetMethod targetMethod;
+	private MethodInfo methodInfo;
 	private List<Integer> coveredLineNums;
 	private String testcase;
 	private String branchCoverageText;
 
-	public LineCoverage(TargetMethod targetMethod, String testcase) {
-		this.targetMethod = targetMethod;
+	public LineCoverage(MethodInfo methodInfo, String testcase) {
+		this.methodInfo = methodInfo;
 		this.testcase = testcase;
 	}
 
@@ -34,8 +34,8 @@ public class LineCoverage {
 		this.coveredLineNums = coveredLineNums;
 	}
 
-	public TargetMethod getTargetMethod() {
-		return targetMethod;
+	public MethodInfo getMethodInfo() {
+		return methodInfo;
 	}
 
 	public String getTestcase() {
@@ -68,7 +68,7 @@ public class LineCoverage {
 	public String getDisplayText() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Testcase: ").append(testcase).append("\n")
-			.append("Target method: ").append(targetMethod.getMethodFullName()).append("\n")
+			.append("Target method: ").append(methodInfo.getMethodFullName()).append("\n")
 			.append("Covered lines: ").append(StringUtils.join(coveredLineNums, ", "));
 		return sb.toString();
 	}

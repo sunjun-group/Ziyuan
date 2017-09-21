@@ -44,8 +44,10 @@ import learntest.core.JDartLearntest;
 import learntest.core.LearnTestParams;
 import learntest.core.LearnTestParams.LearntestSystemVariable;
 import learntest.core.RunTimeInfo;
+import learntest.core.TestRunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;
-import learntest.core.commons.data.classinfo.TargetClass;
+import learntest.core.commons.data.classinfo.MethodInfo;
+import learntest.core.commons.data.classinfo.ClassInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.machinelearning.CfgNodeDomainInfo;
 import learntest.core.machinelearning.FormulaInfo;
@@ -154,8 +156,8 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			LearnTestParams params = new LearnTestParams(getAppClasspath());
 			params.setApproach(config.isL2TApproach() ? LearnTestApproach.L2T : LearnTestApproach.RANDOOP);
 			try {
-				TargetMethod targetMethod = initTargetMethod(config);
-				params.setTargetMethod(targetMethod);
+				MethodInfo targetMethod = initTargetMethod(config);
+				params.renew(targetMethod);
 			} catch (JavaModelException e) {
 				throw new SavException(e, ModuleEnum.UNSPECIFIED, e.getMessage());
 			}
@@ -166,9 +168,9 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		}
 	}
 
-	private static TargetMethod initTargetMethod(LearnTestConfig config) throws SavException, JavaModelException {
-		TargetClass targetClass = new TargetClass(config.getTargetClassName());
-		TargetMethod method = new TargetMethod(targetClass);
+	private static MethodInfo initTargetMethod(LearnTestConfig config) throws SavException, JavaModelException {
+		ClassInfo targetClass = new ClassInfo(config.getTargetClassName());
+		MethodInfo method = new MethodInfo(targetClass);
 		method.setMethodName(config.getTargetMethodName());
 		method.setLineNum(config.getMethodLineNumber());
 		MethodDeclaration methodDeclaration = LearnTestUtil.findSpecificMethod(method.getClassName(),
@@ -239,8 +241,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			log.info("Result: ");
 			log.info("lt2: {}", l2tAverageInfo);
 			log.info("randoop: {}", ranAverageInfo);
-			printLearnedFormulas(l2tAverageInfo.getLearnedFormulas(), l2tAverageInfo.getLogFile());
-			setBetterBranch(l2tAverageInfo, ranAverageInfo);
+			printInforForTest(l2tAverageInfo, ranAverageInfo, params.isTestMode());
 			return new Trial(method.getMethodFullName(), method.getMethodLength(), method.getLineNum(), l2tAverageInfo,
 					ranAverageInfo, jdartInfo);
 		} catch (Exception e) {
@@ -249,7 +250,17 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		return null;
 	}
 
-	private void setBetterBranch(RunTimeInfo l2tAverageInfo, RunTimeInfo ranAverageInfo) {
+	private void printInforForTest(RunTimeInfo l2tInfo, RunTimeInfo ranInfo, boolean testMode) {
+		if (!testMode) {
+			return;
+		}
+		TestRunTimeInfo l2tAverageInfo = (TestRunTimeInfo) l2tInfo;
+		TestRunTimeInfo ranAverageInfo = (TestRunTimeInfo) ranInfo;
+		printLearnedFormulas(l2tAverageInfo.getLearnedFormulas(), l2tAverageInfo.getLogFile());
+		setBetterBranch(l2tAverageInfo, ranAverageInfo);
+	}
+
+	private void setBetterBranch(TestRunTimeInfo l2tAverageInfo, TestRunTimeInfo ranAverageInfo) {
 		StringBuffer sBuffer = new StringBuffer();
 		sBuffer.append("l2t covered branch ============================= \n");
 		sBuffer.append("true branch : \n");
@@ -272,7 +283,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		for (Entry<String, Collection<BreakpointValue>> entry : ranAverageInfo.getFalseSample().entrySet()){
 			sBuffer.append(entry.getKey()+" "+":"+entry.getValue().size()+" "+entry.getValue().toString()+"\n");
 		}
-		RunTimeInfo.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
+		TestRunTimeInfo.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
 
 		HashMap<CfgNode, CfgNodeDomainInfo> domainMap = l2tAverageInfo.getDomainMap();
 		StringBuffer l2tWorseSb = new StringBuffer(), ranWorseSb = new StringBuffer();
@@ -302,7 +313,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	}
 
 	private void recordBetterInfo(CfgNode dominatee, HashMap<CfgNode,CfgNodeDomainInfo> domainMap, StringBuffer l2tWorseSb, StringBuffer ranWorseSb, 
-			FormulaInfo info, RunTimeInfo ranAverageInfo, RunTimeInfo l2tAverageInfo) {
+			FormulaInfo info, TestRunTimeInfo ranAverageInfo, TestRunTimeInfo l2tAverageInfo) {
 		StringBuffer sBuffer = new StringBuffer();
 		String formula = info.getTrueFalseFormula().get(info.getTrueFalseFormula().size()-1);
 		CfgNode ancient = info.getNode();
@@ -342,7 +353,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			ranWorseSb.append(", domainator nodes : " + dominators +";");
 		}
 		
-		RunTimeInfo.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
+		TestRunTimeInfo.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
 	}
 
 	private boolean checkIfBetter(Collection<BreakpointValue> first, Collection<BreakpointValue> second, StringBuffer sBuffer) {
@@ -364,7 +375,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			sb.append(formulaInfo + "\n");
 		}
 		log.info(sb.toString());
-		RunTimeInfo.write(logFile, sb.toString());
+		TestRunTimeInfo.write(logFile, sb.toString());
 	}
 
 	private RunTimeInfo runJdart(LearnTestParams params) throws Exception {

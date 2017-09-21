@@ -131,9 +131,15 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		return cfgCoverage;
 	}
 	
-	protected RunTimeInfo getRuntimeInfo(CfgCoverage cfgCoverage) {
+	protected RunTimeInfo getRuntimeInfo(CfgCoverage cfgCoverage, boolean test) {
 		double coverage = CoverageUtils.calculateCoverageByBranch(cfgCoverage);
 		log.debug("coverage: {}", coverage);
+		long executionTime = SAVTimer.getExecutionTime();
+		int testCnt = cfgCoverage.getTotalTcs();
+		
+		if (!test) {
+			return new RunTimeInfo(executionTime, coverage, testCnt);
+		}
 		
 		StringBuffer coverageInfoBuf = new StringBuffer();
 		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
@@ -154,7 +160,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 			coverageInfoBuf.append(sbStr + "\n");
 		}
 		
-		return new RunTimeInfo(SAVTimer.getExecutionTime(), coverage, cfgCoverage.getTotalTcs(), coverageInfoBuf.toString());
+		return new TestRunTimeInfo(executionTime, coverage, testCnt, coverageInfoBuf.toString());
 	}
 	
 	protected BreakpointData executeTestcaseAndGetTestInput(List<String> testcases, BreakPoint methodEntryBkp)

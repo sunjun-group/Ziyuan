@@ -18,7 +18,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
-import learntest.core.commons.data.classinfo.TargetMethod;
+import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.plugin.handler.filter.methodfilter.IMethodFilter;
 
 /**
@@ -30,7 +30,7 @@ public class TestableMethodCollector extends ASTVisitor {
 	private Collection<IMethodFilter> methodFilters;
 	private int totalMethodNum = 0;
 	private int typeIdx;
-	private List<TargetMethod> validMethods = new ArrayList<TargetMethod>();
+	private List<MethodInfo> validMethods = new ArrayList<MethodInfo>();
 
 	public TestableMethodCollector(CompilationUnit cu, Collection<IMethodFilter> methodFilters) {
 		this.cu = cu;
@@ -71,7 +71,7 @@ public class TestableMethodCollector extends ASTVisitor {
 		return totalMethodNum;
 	}
 	
-	public List<TargetMethod> getValidMethods() {
+	public List<MethodInfo> getValidMethods() {
 		return validMethods;
 	}
 	

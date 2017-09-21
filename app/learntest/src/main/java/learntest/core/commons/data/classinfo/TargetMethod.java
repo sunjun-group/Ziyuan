@@ -10,7 +10,6 @@ package learntest.core.commons.data.classinfo;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -26,9 +25,6 @@ import cfgcoverage.org.objectweb.asm.tree.LocalVariableNode;
 import cfgcoverage.org.objectweb.asm.tree.VarInsnNode;
 import learntest.core.BreakpointCreator;
 import sav.common.core.utils.Assert;
-import sav.common.core.utils.ClassUtils;
-import sav.common.core.utils.CollectionUtils;
-import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.BreakPoint;
 
 /**
@@ -36,24 +32,13 @@ import sav.strategies.dto.BreakPoint;
  *
  */
 public class TargetMethod {
-	private TargetClass targetClazz;
-	private String methodName;
-	private String methodSignature;
-	private int lineNum;
-	private int methodLength = -1; // can be null
-	private List<String> params;
+	private MethodInfo methodInfo;
 	private CFG cfg;
 	private Collection<String> accessedFields;
 	private BreakPoint methodEntryBkp;
-	private List<String> paramTypes;
 
-	public TargetMethod(TargetClass targetClass) {
-		this.targetClazz = targetClass;
-		targetClass.addMethod(this);
-	}
-
-	public TargetClass getTargetClazz() {
-		return targetClazz;
+	public TargetMethod(MethodInfo methodInfo) {
+		this.methodInfo = methodInfo;
 	}
 
 	public CFG getCfg() {
@@ -64,10 +49,6 @@ public class TargetMethod {
 		if (this.cfg == null) {
 			this.cfg = cfg;
 		}
-	}
-
-	public List<String> getParams() {
-		return params;
 	}
 
 	public Collection<String> getAccessedFields() {
@@ -109,42 +90,6 @@ public class TargetMethod {
 		return node.getBranches().get(0).getInsnNode();
 	}
 
-	public String getMethodName() {
-		return methodName;
-	}
-
-	public void setMethodName(String methodName) {
-		this.methodName = methodName;
-	}
-
-	public String getMethodSignature() {
-		return methodSignature;
-	}
-
-	public void setMethodSignature(String methodSignature) {
-		this.methodSignature = methodSignature;
-	}
-
-	public int getLineNum() {
-		return lineNum;
-	}
-
-	public void setLineNum(int lineNum) {
-		this.lineNum = lineNum;
-	}
-
-	public String getMethodFullName() {
-		return ClassUtils.toClassMethodStr(getClassName(), methodName);
-	}
-
-	public String getClassName() {
-		return targetClazz.getClassName();
-	}
-
-	public void setParams(List<String> params) {
-		this.params = params;
-	}
-
 	public BreakPoint getEntryBkp() {
 		if (methodEntryBkp == null) {
 			Assert.assertNotNull(cfg, "cfg for method is not set!");
@@ -153,30 +98,95 @@ public class TargetMethod {
 		return methodEntryBkp;
 	}
 
+	/**
+	 * @return
+	 * @see learntest.core.commons.data.classinfo.MethodInfo#getTargetClazz()
+	 */
+	public ClassInfo getTargetClazz() {
+		return methodInfo.getTargetClazz();
+	}
+
+	/**
+	 * @return
+	 * @see learntest.core.commons.data.classinfo.MethodInfo#getParams()
+	 */
+	public List<String> getParams() {
+		return methodInfo.getParams();
+	}
+
+	/**
+	 * @return
+	 * @see learntest.core.commons.data.classinfo.MethodInfo#getMethodName()
+	 */
+	public String getMethodName() {
+		return methodInfo.getMethodName();
+	}
+
+	/**
+	 * @return
+	 * @see learntest.core.commons.data.classinfo.MethodInfo#getMethodSignature()
+	 */
+	public String getMethodSignature() {
+		return methodInfo.getMethodSignature();
+	}
+
+	/**
+	 * @return
+	 * @see learntest.core.commons.data.classinfo.MethodInfo#getLineNum()
+	 */
+	public int getLineNum() {
+		return methodInfo.getLineNum();
+	}
+
+	/**
+	 * @return
+	 * @see learntest.core.commons.data.classinfo.MethodInfo#getMethodFullName()
+	 */
+	public String getMethodFullName() {
+		return methodInfo.getMethodFullName();
+	}
+
+	/**
+	 * @return
+	 * @see learntest.core.commons.data.classinfo.MethodInfo#getClassName()
+	 */
+	public String getClassName() {
+		return methodInfo.getClassName();
+	}
+
+	/**
+	 * @return
+	 * @see learntest.core.commons.data.classinfo.MethodInfo#createClassMethodMap()
+	 */
 	public Map<String, List<String>> createClassMethodMap() {
-		Map<String, List<String>> map = new HashMap<String, List<String>>();
-		map.put(getClassName(), CollectionUtils.listOf(methodName, 1));
-		return map;
+		return methodInfo.createClassMethodMap();
 	}
 
-	public void setParamTypes(List<String> paramTypes) {
-		this.paramTypes = paramTypes;
-	}
-	
+	/**
+	 * @return
+	 * @see learntest.core.commons.data.classinfo.MethodInfo#getParamTypes()
+	 */
 	public List<String> getParamTypes() {
-		return paramTypes;
+		return methodInfo.getParamTypes();
 	}
 
+	/**
+	 * @return
+	 * @see learntest.core.commons.data.classinfo.MethodInfo#getMethodLength()
+	 */
 	public int getMethodLength() {
-		return methodLength;
+		return methodInfo.getMethodLength();
 	}
 
-	public void setMethodLength(int methodLength) {
-		this.methodLength = methodLength;
-	}
-	
-	@Override
+	/**
+	 * @return
+	 * @see learntest.core.commons.data.classinfo.MethodInfo#toString()
+	 */
 	public String toString() {
-		return StringUtils.dotJoin(getClassName(), methodName, lineNum);
+		return methodInfo.toString();
+	}
+
+	public MethodInfo getMethodInfo() {
+		return methodInfo;
 	}
 }

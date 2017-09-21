@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import learntest.core.LearnTestParams;
 import learntest.core.commons.LearntestConstants;
-import learntest.core.commons.data.classinfo.TargetMethod;
+import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.plugin.LearnTestConfig;
 import learntest.plugin.ProjectSetting;
 import learntest.plugin.export.io.excel.MultiTrial;
@@ -28,8 +28,8 @@ import learntest.plugin.export.io.excel.TrialExcelHandler;
 import learntest.plugin.handler.filter.classfilter.ClassNameFilter;
 import learntest.plugin.handler.filter.classfilter.ITypeFilter;
 import learntest.plugin.handler.filter.classfilter.TestableClassFilter;
-import learntest.plugin.handler.filter.methodfilter.NestedBlockChecker;
 import learntest.plugin.handler.filter.methodfilter.IMethodFilter;
+import learntest.plugin.handler.filter.methodfilter.NestedBlockChecker;
 import learntest.plugin.handler.filter.methodfilter.TestableMethodFilter;
 import learntest.plugin.utils.IMethodUtils;
 import learntest.plugin.utils.IProjectUtils;
@@ -122,7 +122,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				}
 				TestableMethodCollector collector = new TestableMethodCollector(cu, methodFilters);
 				cu.accept(collector);
-				List<TargetMethod> validMethods = collector.getValidMethods();
+				List<MethodInfo> validMethods = collector.getValidMethods();
 				updateRuntimeInfo(info, cu, collector.getTotalMethodNum(), validMethods.size());
 				evaluateForMethodList(excelHandler, validMethods, monitor);
 			}
@@ -137,12 +137,12 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		info.totalNum += totalMethods;
 	}
 
-	protected void evaluateForMethodList(TrialExcelHandler excelHandler, List<TargetMethod> targetMethods,
+	protected void evaluateForMethodList(TrialExcelHandler excelHandler, List<MethodInfo> targetMethods,
 			IProgressMonitor monitor) {
 		if (targetMethods.isEmpty()) {
 			return;
 		}
-		for (TargetMethod targetMethod : targetMethods) {
+		for (MethodInfo targetMethod : targetMethods) {
 			log.info("-----------------------------------------------------------------------------------------------");
 			log.info("Method {}", ++curMethodIdx);			
 			
@@ -177,7 +177,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		}
 	}
 
-	private static void logSuccessfulMethod(TargetMethod targetMethod) {
+	private static void logSuccessfulMethod(MethodInfo targetMethod) {
 		try {
 			FileUtils.appendFile(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME, 
 					IMethodUtils.getMethodId(targetMethod.getMethodFullName(), targetMethod.getLineNum()) + "\n");
@@ -186,7 +186,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		}
 	}
 
-	private LearnTestParams initLearntestParams(TargetMethod targetMethod) throws CoreException {
+	private LearnTestParams initLearntestParams(MethodInfo targetMethod) throws CoreException {
 		LearnTestParams params = new LearnTestParams(getAppClasspath(), targetMethod);
 		setSystemConfig(params);
 		return params;

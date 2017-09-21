@@ -17,12 +17,12 @@ import sav.common.core.utils.ClassUtils;
  * @author LLT
  *
  */
-public class TargetClass {
+public class ClassInfo {
 	private String className;
 	private String classSimpleName;
-	private List<TargetMethod> targetMethods = new ArrayList<TargetMethod>();
+	private List<MethodInfo> methods = new ArrayList<MethodInfo>();
 
-	public TargetClass(String className) {
+	public ClassInfo(String className) {
 		this.className = className;
 		classSimpleName = ClassUtils.getSimpleName(className);
 	}
@@ -43,16 +43,16 @@ public class TargetClass {
 		this.classSimpleName = classSimpleName;
 	}
 
-	public List<TargetMethod> getTargetMethods() {
-		return targetMethods;
+	public List<MethodInfo> getMethods() {
+		return methods;
 	}
 
-	public void setTargetMethods(List<TargetMethod> targetMethods) {
-		this.targetMethods = targetMethods;
+	public void setMethods(List<MethodInfo> targetMethods) {
+		this.methods = targetMethods;
 	}
 
-	public void addMethod(TargetMethod targetMethod) {
-		targetMethods.add(targetMethod);
+	public void addMethod(MethodInfo targetMethod) {
+		methods.add(targetMethod);
 	}
 
 }
