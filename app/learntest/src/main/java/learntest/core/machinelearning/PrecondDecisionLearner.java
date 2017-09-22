@@ -27,6 +27,7 @@ import icsetlv.common.dto.BreakpointValue;
 import learntest.core.AbstractLearningComponent;
 import learntest.core.LearningMediator;
 import learntest.core.RunTimeInfo;
+import learntest.core.TestRunTimeInfo;
 import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
@@ -86,7 +87,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 					sBuffer.append(info+"\n\n");
 				}
 			}		
-			RunTimeInfo.write(logFile, sBuffer.toString());
+			TestRunTimeInfo.write(logFile, sBuffer.toString());
 			log.debug(sBuffer.toString());
 		}
 		if (relevantVarMap == null || probes.getCfg().getNodeList().size() != relevantVarMap.size()) {
@@ -425,7 +426,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		log.debug(sBuffer.toString());
 //		log.debug("new data true : "+trueV.size()+" , "+trueV.toString());
 //		log.debug("new data false : "+falseV.size()+" , "+falseV.toString());		
-		RunTimeInfo.write(logFile, sBuffer.toString());
+		TestRunTimeInfo.write(logFile, sBuffer.toString());
 	}
 
 	private void addBkp(List<String> labels, List<ExecVar> targetVars, BreakpointValue bValue, 

@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.RunTimeInfo;
+import learntest.core.TestRunTimeInfo;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.INodeCoveredData;
@@ -63,7 +64,7 @@ public interface IInputLearner {
 			sBuffer.append("false : " + entry.getKey() + " " + entry.getValue().size() + entry.getValue()+"\n");
 		}
 		
-		RunTimeInfo.write(logFile, sBuffer.toString());
+		TestRunTimeInfo.write(logFile, sBuffer.toString());
 	}
 
 	default void recordSample(DecisionProbes inputProbes, String logFile) {
@@ -81,7 +82,7 @@ public interface IInputLearner {
 			sBuffer.append("false : " + entry.getKey() + " " + entry.getValue().size() + entry.getValue()+"\n");
 		}
 		
-		RunTimeInfo.write(logFile, sBuffer.toString());
+		TestRunTimeInfo.write(logFile, sBuffer.toString());
 	}
 
 	default void recordSample(DecisionNodeProbe nodeProbe, Collection<BreakpointValue> collection,

@@ -21,6 +21,7 @@ import java.util.Set;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
+import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.utils.CoverageUtils;
 import sav.common.core.utils.CollectionUtils;
@@ -33,10 +34,10 @@ import sav.common.core.utils.StringUtils;
  */
 public class LineCoverageResult {
 	private Map<String, LineCoverage> testCoverageMap;
-	private TargetMethod targetMethod;
+	private MethodInfo methodInfo;
 
-	public LineCoverageResult(TargetMethod targetMethod) {
-		this.targetMethod = targetMethod;
+	public LineCoverageResult(MethodInfo methodInfo) {
+		this.methodInfo = methodInfo;
 	}
 
 	public void updateTestcase(Map<String, String> oldToNewTestcaseMap) {
@@ -59,12 +60,13 @@ public class LineCoverageResult {
 	 * */
 	public static LineCoverageResult build(Collection<String> testcases, CfgCoverage cfgCoverage,
 			TargetMethod targetMethod, boolean filterDuplicateLineCoverage) {
-		LineCoverageResult result = new LineCoverageResult(targetMethod);
+		MethodInfo methodInfo = targetMethod.getMethodInfo();
+		LineCoverageResult result = new LineCoverageResult(methodInfo);
 		result.testCoverageMap = new HashMap<String, LineCoverage>();
 		Set<String> existingCoverages = new HashSet<String>();
 		for (String testcase : testcases) {
 			int orgTcIdx = cfgCoverage.getTestIdx(testcase);
-			LineCoverage lineCoverage = buildLineCoverage(testcase, orgTcIdx, cfgCoverage, targetMethod);
+			LineCoverage lineCoverage = buildLineCoverage(testcase, orgTcIdx, cfgCoverage, methodInfo);
 			boolean add = true;
 			if (filterDuplicateLineCoverage) {
 				String coveredStr = StringUtils.join(lineCoverage.getCoveredLineNums(), ",");
@@ -82,8 +84,8 @@ public class LineCoverageResult {
 	}
 
 	private static LineCoverage buildLineCoverage(String newTc, int orgTcIdx, CfgCoverage cfgCoverage,
-			TargetMethod targetMethod) {
-		LineCoverage lineCoverage = new LineCoverage(targetMethod, newTc);
+			MethodInfo methodInfo) {
+		LineCoverage lineCoverage = new LineCoverage(methodInfo, newTc);
 		List<Integer> coveredLineNums = new ArrayList<Integer>();
 		for (NodeCoverage nodeCoverage : cfgCoverage.getNodeCoverages()) {
 			int lineNo = nodeCoverage.getCfgNode().getLine();
@@ -108,7 +110,7 @@ public class LineCoverageResult {
 			return "empty result!";
 		}
 		StringBuilder sb = new StringBuilder();
-		sb.append("\nTarget method: ").append(targetMethod.getMethodFullName()).append("\n");
+		sb.append("\nTarget method: ").append(methodInfo.getMethodFullName()).append("\n");
 		Map<String, List<String>> groupByTestClass = JunitUtils.toClassMethodsMap(testCoverageMap.keySet());
 		sb.append("Generated testcases: ").append("\n");
 		for (Entry<String, List<String>> entry : groupByTestClass.entrySet()) {

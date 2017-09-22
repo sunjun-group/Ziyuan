@@ -11,6 +11,7 @@ import org.osgi.framework.BundleContext;
 
 import learntest.plugin.commons.PluginException;
 import learntest.plugin.console.LearntestConsole;
+import learntest.plugin.event.JavaGentestEventManager;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -22,6 +23,7 @@ public class LearntestPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static LearntestPlugin plugin;
+	private JavaGentestEventManager javaGentestEventManager;
 	
 	public LearntestPlugin() {
 		
@@ -63,8 +65,6 @@ public class LearntestPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the shared instance
-	 *
-	 * @return the shared instance
 	 */
 	public static LearntestPlugin getDefault() {
 		return plugin;
@@ -73,7 +73,7 @@ public class LearntestPlugin extends AbstractUIPlugin {
 	public static void initLogger(String projectName) throws PluginException {
 		LearntestLogger.initLog4j(projectName);
 	}
-
+	
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		if (Display.getCurrent() != null) {
 			return getDefault().getWorkbench().getActiveWorkbenchWindow();
@@ -86,5 +86,12 @@ public class LearntestPlugin extends AbstractUIPlugin {
 			}
 		});
 		return window[0];
+	}
+	
+	public JavaGentestEventManager getJavaGentestEventManager() {
+		if (javaGentestEventManager == null) {
+			javaGentestEventManager = new  JavaGentestEventManager();
+		}
+		return javaGentestEventManager;
 	}
 }

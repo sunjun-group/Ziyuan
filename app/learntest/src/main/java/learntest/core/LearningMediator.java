@@ -176,7 +176,7 @@ public class LearningMediator {
 			return finalTests.getLineCoverageResult();
 		} catch (SavException e) {
 			log.error("Error when Compiling final tests: {}, {}", e.getMessage(), e);
-			return new LineCoverageResult(targetMethod);
+			return new LineCoverageResult(targetMethod.getMethodInfo());
 		}
 	}
 

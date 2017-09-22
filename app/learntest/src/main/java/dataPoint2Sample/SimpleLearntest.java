@@ -57,7 +57,7 @@ public class SimpleLearntest extends AbstractLearntest {
 
 		if (CoverageUtils.notCoverAtAll(cfgCoverage)) {
 			log.info("start node is not covered!");
-			return getRuntimeInfo(cfgCoverage);
+			return getRuntimeInfo(cfgCoverage, params.isTestMode());
 		}
 		log.info("first coverage: " + CoverageUtils.calculateCoverageByBranch(cfgCoverage));
 		BreakPoint methodEntryBkp = BreakpointCreator.createMethodEntryBkp(targetMethod);

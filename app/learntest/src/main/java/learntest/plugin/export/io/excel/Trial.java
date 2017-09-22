@@ -1,6 +1,7 @@
 package learntest.plugin.export.io.excel;
 
 import learntest.core.RunTimeInfo;
+import learntest.core.TestRunTimeInfo;
 
 public class Trial {
 	/**
@@ -27,8 +28,10 @@ public class Trial {
 		this.l2tRtInfo = l2tAverageInfo;
 		this.ranRtInfo = ranAverageInfo;
 		this.jdartRtInfo = jdartInfo;
-		this.l2tWorseThanRand = l2tAverageInfo.l2tWorseThanRand;
-		this.randWorseThanl2t = l2tAverageInfo.randWorseThanl2t;
+		if (l2tAverageInfo instanceof TestRunTimeInfo) {
+			this.l2tWorseThanRand = ((TestRunTimeInfo)l2tAverageInfo).l2tWorseThanRand;
+			this.randWorseThanl2t = ((TestRunTimeInfo)l2tAverageInfo).randWorseThanl2t;
+		}
 	}
 
 	public String getMethodName() {

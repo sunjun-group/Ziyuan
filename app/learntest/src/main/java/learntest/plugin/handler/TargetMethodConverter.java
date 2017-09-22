@@ -21,8 +21,8 @@ import org.eclipse.jdt.core.dom.NodeFinder;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
-import learntest.core.commons.data.classinfo.TargetClass;
-import learntest.core.commons.data.classinfo.TargetMethod;
+import learntest.core.commons.data.classinfo.MethodInfo;
+import learntest.core.commons.data.classinfo.ClassInfo;
 import learntest.plugin.commons.PluginException;
 import learntest.plugin.utils.AstUtils;
 import learntest.plugin.utils.IMethodUtils;
@@ -36,18 +36,18 @@ import sav.common.core.utils.CollectionUtils;
  */
 public class TargetMethodConverter {
 	
-	public static List<TargetMethod> toTargetMethods(CompilationUnit cu, List<MethodDeclaration> methodList) {
+	public static List<MethodInfo> toTargetMethods(CompilationUnit cu, List<MethodDeclaration> methodList) {
 		if (CollectionUtils.isEmpty(methodList)) {
-			return new ArrayList<TargetMethod>(0);
+			return new ArrayList<MethodInfo>(0);
 		}
-		List<TargetMethod> targetMethods = new ArrayList<TargetMethod>(methodList.size());
+		List<MethodInfo> targetMethods = new ArrayList<MethodInfo>(methodList.size());
 		for (MethodDeclaration method : methodList) {
 			targetMethods.add(toTargetMethod(cu, method));
 		}
 		return targetMethods;
 	}
 
-	public static TargetMethod toTargetMethod(IMethod imethod) throws PluginException {
+	public static MethodInfo toTargetMethod(IMethod imethod) throws PluginException {
 		try {
 			CompilationUnit cu = AstUtils.toAstNode(imethod.getCompilationUnit());
 			MethodDeclaration method = (MethodDeclaration) NodeFinder.perform(cu, imethod.getSourceRange());
@@ -57,11 +57,11 @@ public class TargetMethodConverter {
 		}
 	}
 
-	public static TargetMethod toTargetMethod(CompilationUnit cu, MethodDeclaration method) {
+	public static MethodInfo toTargetMethod(CompilationUnit cu, MethodDeclaration method) {
 		String simpleMethodName = method.getName().getIdentifier();
 		String className =  getClassFullName(method);
-		TargetClass targetClass = new TargetClass(className);
-		TargetMethod targetMethod = new TargetMethod(targetClass);
+		ClassInfo targetClass = new ClassInfo(className);
+		MethodInfo targetMethod = new MethodInfo(targetClass);
 		targetMethod.setMethodName(simpleMethodName);
 		int lineNumber = IMethodUtils.getStartLineNo(cu, method);
 		targetMethod.setLineNum(lineNumber);

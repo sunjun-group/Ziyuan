@@ -14,6 +14,7 @@ import java.util.List;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.JunitTestsInfo;
+import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import sav.common.core.ISystemVariable;
 import sav.strategies.dto.AppJavaClassPath;
@@ -24,6 +25,7 @@ import sav.strategies.dto.SystemPreferences;
  *
  */
 public class LearnTestParams {
+	private boolean testMode;
 	private AppJavaClassPath appClasspath;
 	private LearnTestApproach approach;
 	private TargetMethod targetMethod;
@@ -36,12 +38,12 @@ public class LearnTestParams {
 		systemConfig = new SystemPreferences();
 	}
 	
-	public LearnTestParams(AppJavaClassPath appClasspath, TargetMethod targetMethod) {
+	public LearnTestParams(AppJavaClassPath appClasspath, MethodInfo methodInfo) {
 		this(appClasspath);
-		this.targetMethod = targetMethod;
+		setTargetMethod(methodInfo);
 	}
 	
-	public void renew(TargetMethod targetMethod) {
+	public void renew(MethodInfo targetMethod) {
 		setTargetMethod(targetMethod);
 		initialTests = null;
 	}
@@ -50,8 +52,8 @@ public class LearnTestParams {
 		return targetMethod;
 	}
 
-	public void setTargetMethod(TargetMethod targetMethod) {
-		this.targetMethod = targetMethod;
+	public void setTargetMethod(MethodInfo methodInfo) {
+		this.targetMethod = new TargetMethod(methodInfo);
 	}
 	
 	public boolean isLearnByPrecond() {
@@ -95,6 +97,14 @@ public class LearnTestParams {
 	
 	public AppJavaClassPath getAppClasspath() {
 		return appClasspath;
+	}
+	
+	public boolean isTestMode() {
+		return testMode;
+	}
+
+	public void setTestMode(boolean testMode) {
+		this.testMode = testMode;
 	}
 
 	public String getTestPackage(GenTestPackage phase) {

@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import learntest.core.RunTimeInfo;
+import learntest.core.TestRunTimeInfo;
 
 /**
  * @author LLT
@@ -40,7 +41,6 @@ public class MultiTrial extends Trial {
 	
 	public boolean isEmpty() {
 		return methodName == null;
-//		return methodName == null || RunTimeInfo.isEmpty(l2tRtInfo);
 	}
 
 	public double getBestL2tRtCoverage() {
@@ -73,15 +73,17 @@ public class MultiTrial extends Trial {
 				ranTime += ranTimeInfo.getTime();
 				ranTestCnt += ranTimeInfo.getTestCnt();
 				
-				if (l2TimeInfo.getLearnState() > 0) {
-					l2tValidCoverage += l2TimeInfo.getCoverage();
-					ranValidCovergage += ranTimeInfo.getCoverage();
-					validNum++;
+				if (l2TimeInfo instanceof TestRunTimeInfo) {
+					if (((TestRunTimeInfo)l2TimeInfo).getLearnState() > 0) {
+						l2tValidCoverage += l2TimeInfo.getCoverage();
+						ranValidCovergage += ranTimeInfo.getCoverage();
+						validNum++;
+					}
 				}
 			}
 		}
-	   this.l2tRtInfo = new RunTimeInfo(size==0?0:l2tTime/size, size==0?0:l2tCoverage/size, size==0?0:l2tTestCnt/size, validNum == 0 ? 0: l2tValidCoverage/validNum);
-	   this.ranRtInfo = new RunTimeInfo(size==0?0:ranTime/size, size==0?0:ranCovergage/size, size==0?0:ranTestCnt/size, validNum == 0? 0:ranValidCovergage/validNum);
+	   this.l2tRtInfo = new TestRunTimeInfo(size==0?0:l2tTime/size, size==0?0:l2tCoverage/size, size==0?0:l2tTestCnt/size, validNum == 0 ? 0: l2tValidCoverage/validNum);
+	   this.ranRtInfo = new TestRunTimeInfo(size==0?0:ranTime/size, size==0?0:ranCovergage/size, size==0?0:ranTestCnt/size, validNum == 0? 0:ranValidCovergage/validNum);
 	   this.validNum = validNum;
 	}
 

@@ -58,7 +58,7 @@ public class LearnTest extends AbstractLearntest {
 
 			if (CoverageUtils.notCoverAtAll(cfgCoverage)) {
 				log.info("Start node is not covered!");
-				return reconcileGeneratedTestsAndGetRuntimeInfo(cfgCoverage, targetMethod);
+				return reconcileGeneratedTestsAndGetRuntimeInfo(cfgCoverage, targetMethod, params.isLearnByPrecond());
 			}
 			
 			Map<Integer, List<Variable>> relevantVarMap = new CFGBuilder().parsingCFG(getAppClasspath(),
@@ -74,7 +74,7 @@ public class LearnTest extends AbstractLearntest {
 			if (CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
 				log.info("No decision node is covered!");
 				copyTestsToResultFolder(params);
-				return reconcileGeneratedTestsAndGetRuntimeInfo(cfgCoverage, targetMethod);
+				return reconcileGeneratedTestsAndGetRuntimeInfo(cfgCoverage, targetMethod, params.isLearnByPrecond());
 			} else {
 				/* learn */
 				IInputLearner learner = mediator.initDecisionLearner(params);
@@ -92,7 +92,7 @@ public class LearnTest extends AbstractLearntest {
 				learner.getFalseSample().clear();
 				learner.recordSample(probes, learner.getLogFile());
 				
-				RunTimeInfo info = reconcileGeneratedTestsAndGetRuntimeInfo(probes, targetMethod);
+				RunTimeInfo info = reconcileGeneratedTestsAndGetRuntimeInfo(probes, targetMethod, params.isLearnByPrecond());
 				if (learner instanceof PrecondDecisionLearner) { 
 					setLearnState((PrecondDecisionLearner)learner, info);
 				}
@@ -108,20 +108,24 @@ public class LearnTest extends AbstractLearntest {
 			log.warn("still cannot get entry value when coverage is not empty!");
 		}
 		if (cfgCoverage != null) {
-			return reconcileGeneratedTestsAndGetRuntimeInfo(cfgCoverage, targetMethod);
+			return reconcileGeneratedTestsAndGetRuntimeInfo(cfgCoverage, targetMethod, params.isTestMode());
 		} 
 		return null;
 	}
 
-	private RunTimeInfo reconcileGeneratedTestsAndGetRuntimeInfo(CfgCoverage cfgCoverage, TargetMethod targetMethod) {
+	private RunTimeInfo reconcileGeneratedTestsAndGetRuntimeInfo(CfgCoverage cfgCoverage, TargetMethod targetMethod, boolean testMode) {
 		/* clean up testcases */
 		LineCoverageResult lineCoverageResult = mediator.commitFinalTests(cfgCoverage, targetMethod);
-		RunTimeInfo runtimeInfo = getRuntimeInfo(cfgCoverage);
+		RunTimeInfo runtimeInfo = getRuntimeInfo(cfgCoverage, testMode);
 		runtimeInfo.setLineCoverageResult(lineCoverageResult);
 		return runtimeInfo;
 	}
 
-	private void setLearnState(PrecondDecisionLearner learner, RunTimeInfo info) {
+	private void setLearnState(PrecondDecisionLearner learner, RunTimeInfo runtimeInfo) {
+		if (!(runtimeInfo instanceof TestRunTimeInfo)) {
+			return;
+		}
+		TestRunTimeInfo info = (TestRunTimeInfo) runtimeInfo;
 		boolean hasPoorFormula = false, hasValidFormula = false;;
 		if (!((PrecondDecisionLearner)learner).learnedFormulas.isEmpty()) {
 			for (Entry<CfgNode, FormulaInfo> entry : ((PrecondDecisionLearner)learner).learnedFormulas.entrySet()){
