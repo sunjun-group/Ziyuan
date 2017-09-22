@@ -8,8 +8,6 @@
 
 package learntest.plugin.commons;
 
-import org.eclipse.jdt.core.JavaModelException;
-
 /**
  * @author LLT
  *
@@ -25,7 +23,7 @@ public class PluginException extends Exception {
 		super(e);
 	}
 
-	public static PluginException wrapEx(JavaModelException e) {
+	public static PluginException wrapEx(Exception e) {
 		return new PluginException(e.getMessage());
 	}
 

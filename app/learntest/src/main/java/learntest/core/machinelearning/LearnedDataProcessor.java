@@ -152,7 +152,7 @@ public class LearnedDataProcessor {
 				sBuffer.append(d+",");
 			}
 		}
-		log.info(sBuffer.toString());
+		log.debug(sBuffer.toString());
 		sBuffer.append("\n");
 		RunTimeInfo.write(logFile, sBuffer.toString());
 		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions, learnedDividers);

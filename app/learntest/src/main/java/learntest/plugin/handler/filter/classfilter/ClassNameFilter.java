@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import sav.common.core.utils.ClassUtils;
 
@@ -19,7 +20,7 @@ import sav.common.core.utils.ClassUtils;
  * @author LLT
  *
  */
-public class ClassNameFilter implements TargetClassFilter {
+public class ClassNameFilter implements ITypeFilter {
 	private List<String> excludedClasses;
 	
 	public ClassNameFilter(List<String> excludedClasses) {
@@ -35,6 +36,10 @@ public class ClassNameFilter implements TargetClassFilter {
 				type.getName().getFullyQualifiedName()))) {
 			return false;
 		}
+		return true;
+	}
+
+	public boolean isValid(TypeDeclaration typeDecl) {
 		return true;
 	}
 }

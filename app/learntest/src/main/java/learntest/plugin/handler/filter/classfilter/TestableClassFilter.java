@@ -17,7 +17,8 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
  * @author LLT
  *
  */
-public class TestableClassFilter implements TargetClassFilter {
+public class TestableClassFilter implements ITypeFilter {
+	
 	public boolean isValid(CompilationUnit cu) {
 		if (cu.types().isEmpty()) {
 			return false;
@@ -35,5 +36,10 @@ public class TestableClassFilter implements TargetClassFilter {
 		}
 		TypeDeclaration td = (TypeDeclaration) type;
 		return td.isInterface() || Modifier.isAbstract(type.getModifiers());
+	}
+
+	@Override
+	public boolean isValid(TypeDeclaration typeDecl) {
+		return true;
 	}
 }

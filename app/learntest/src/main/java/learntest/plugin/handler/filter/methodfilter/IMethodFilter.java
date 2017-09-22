@@ -15,7 +15,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
  * @author LLT
  *
  */
-public interface TargetMethodFilter {
+public interface IMethodFilter {
 
 	boolean isValid(CompilationUnit cu, MethodDeclaration md);
 

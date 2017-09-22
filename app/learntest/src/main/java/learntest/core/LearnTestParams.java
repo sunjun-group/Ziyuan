@@ -16,6 +16,7 @@ import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.JunitTestsInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import sav.common.core.ISystemVariable;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.SystemPreferences;
 
 /**
@@ -23,19 +24,26 @@ import sav.strategies.dto.SystemPreferences;
  *
  */
 public class LearnTestParams {
+	private AppJavaClassPath appClasspath;
 	private LearnTestApproach approach;
 	private TargetMethod targetMethod;
 	private JunitTestsInfo initialTests;
 	private SystemPreferences systemConfig;
 	private int maxTcs;
 	
-	public LearnTestParams() {
+	public LearnTestParams(AppJavaClassPath appClasspath) {
+		this.appClasspath = appClasspath;
 		systemConfig = new SystemPreferences();
 	}
 	
-	public LearnTestParams(TargetMethod targetMethod) {
-		this();
+	public LearnTestParams(AppJavaClassPath appClasspath, TargetMethod targetMethod) {
+		this(appClasspath);
 		this.targetMethod = targetMethod;
+	}
+	
+	public void renew(TargetMethod targetMethod) {
+		setTargetMethod(targetMethod);
+		initialTests = null;
 	}
 
 	public TargetMethod getTargetMethod() {
@@ -84,13 +92,17 @@ public class LearnTestParams {
 	public void setMaxTcs(int maxTcs) {
 		this.maxTcs = maxTcs;
 	}
+	
+	public AppJavaClassPath getAppClasspath() {
+		return appClasspath;
+	}
 
 	public String getTestPackage(GenTestPackage phase) {
 		return LearntestParamsUtils.getTestPackage(this, phase);
 	}
 	
 	public LearnTestParams createNew() {
-		LearnTestParams params = new LearnTestParams();
+		LearnTestParams params = new LearnTestParams(appClasspath);
 		params.targetMethod = targetMethod;
 		params.systemConfig = systemConfig;
 		params.maxTcs = maxTcs;

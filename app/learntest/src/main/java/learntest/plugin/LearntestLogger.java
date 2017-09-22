@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
 import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.core.runtime.CoreException;
 
+import learntest.plugin.commons.PluginException;
 import learntest.plugin.utils.IStatusUtils;
 
 /**
@@ -24,7 +25,7 @@ import learntest.plugin.utils.IStatusUtils;
  */
 public class LearntestLogger {
 
-	public static void initLog4j(String projectName) throws CoreException {
+	public static void initLog4j(String projectName) throws PluginException {
 		try {
 			ResourceBundle log4j = ResourceBundle.getBundle("learntest_log4j");
 			Properties props = new Properties();
@@ -36,7 +37,7 @@ public class LearntestLogger {
 			props.setProperty("log4j.appender.file.File", logFilePath);
 			PropertyConfigurator.configure(props);
 		} catch (Exception e) {
-			throw new CoreException(IStatusUtils.exception(e, e.getMessage()));
+			throw PluginException.wrapEx(e);
 		}
 	}
 
