@@ -224,6 +224,10 @@ public class DataStructureSelectiveSampling {
 		List<List<Variable>> totalPairs = new ArrayList<List<Variable>>();
 		List<List<Variable>> pairsVars = Utilities.comb(selectiveVars, 2);
 		
+		// why we have a permutation here
+		// it seems that it is not necessary in swapping
+		// anyway, the normalizing matrix step remove
+		// redundant rows so this is not a problem
 		for (List<Variable> pair : pairsVars) {
 			totalPairs.addAll(Utilities.perm(pair));
 		}

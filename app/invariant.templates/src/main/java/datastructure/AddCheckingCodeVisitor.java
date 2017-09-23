@@ -405,10 +405,12 @@ public class AddCheckingCodeVisitor<A> extends ModifierVisitorAdapter<A> {
 	private void addStarCode(BlockStmt block, List<List<String>> totalResults, boolean b) {
 		outer:
 		for (List<String> results : totalResults) {
-			for (String result : results) {
-				if (resTemplateMap.get(result).contains("NodeTemplate"))
-					continue outer;
-			}
+			// should we have Node * Node or not
+			// need it for grasshopper sortll case 5 and 6
+//			for (String result : results) {
+//				if (resTemplateMap.get(result).contains("NodeTemplate"))
+//					continue outer;
+//			}
 			addStarCode(block, results);
 		}
 	}

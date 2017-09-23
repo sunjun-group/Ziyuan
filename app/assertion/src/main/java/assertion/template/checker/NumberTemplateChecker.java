@@ -237,8 +237,8 @@ public class NumberTemplateChecker extends TypeTemplateChecker {
 						failEvl.add(CollectionUtils.listOf(evl.get(i), evl.get(j), evl.get(k)));
 					}
 
-					t = new ThreeNumEqTemplate(passEvl, failEvl);
-					if (check(t)) return true;
+//					t = new ThreeNumEqTemplate(passEvl, failEvl);
+//					if (check(t)) return true;
 					
 //					t = new ThreeNumIlpTemplate(passEvl, failEvl);
 //					check(t);

@@ -8,20 +8,20 @@
 
 package gentest.core.value.generator;
 
+import java.util.List;
+import java.util.Random;
+
+import com.google.inject.Inject;
+
 import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.value.store.iface.ITypeMethodCallStore;
 import gentest.core.value.store.iface.IVariableStore;
 import gentest.main.GentestConstants;
-
-import java.util.List;
-
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
 import sav.strategies.gentest.ISubTypesScanner;
-
-import com.google.inject.Inject;
 
 /**
  * @author LLT
@@ -37,9 +37,9 @@ public class ValueGeneratorMediator {
 	@Inject
 	private PrimitiveValueGenerator primitiveGenerator;
 	
-//	private static boolean firstNull = true;
-//	
-//	private static boolean isRoot = true;
+	private static boolean firstNull = true;
+	
+	private static boolean isRoot = true;
 	
 	public GeneratedVariable generate(IType type, 
 			int firstVarId, boolean isReceiver) throws SavException {
@@ -91,10 +91,11 @@ public class ValueGeneratorMediator {
 		if (variable == null) {
 			boolean goodVariable = false;
 			variable = rootVariable.newVariable();
+			
 			/* generate the new one*/
 			if (PrimitiveValueGenerator.accept(type.getRawType())) {
 				goodVariable = primitiveGenerator.doAppend(variable, level, type.getRawType());
-			}  else if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL) {
+			}  else if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL || (level > 1 && shouldStop())) {
 				ValueGenerator.assignNull(variable, type.getRawType());
 			} else {
 				ValueGenerator generator = ValueGenerator.findGenerator(type, isReceiver);
@@ -107,6 +108,10 @@ public class ValueGeneratorMediator {
 		}
 		rootVariable.append(variable);
 		return variable;
+	}
+	
+	private boolean shouldStop() {
+		return (new Random()).nextBoolean();
 	}
 
 	protected double calculateProbToGetValFromCache(int varsSizeInCache) {

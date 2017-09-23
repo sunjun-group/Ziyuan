@@ -143,6 +143,13 @@ public class LearnDataStructureInvariant {
 				if (testResults.get(fstRow) != testResults.get(dupRow)) {
 					System.out.println(fstRow);
 					System.out.println(dupRow);
+					
+					for (int col = 0; col < matrix[0].length; col++) {
+						System.out.print(matrix[fstRow][col] + " ");
+					}
+					
+					System.out.println();
+					
 					return false;
 				}
 			}
@@ -257,7 +264,7 @@ public class LearnDataStructureInvariant {
 				boolean isPass = true;
 				
 				for (int j : region.comb) {
-					if (matrix[i][j] == 0) {
+					if (matrix[i][j] == 0 || matrix[i][j] == -1) {
 						isPass = false;
 						break;
 					}
@@ -320,17 +327,16 @@ public class LearnDataStructureInvariant {
 	public String learn() {
 		buildMatrix();
 		
-//		System.out.println(testResults.toString());
 		String testResultsStr = testResults.toString();
 		
-		System.out.println(testResults);
-		
-		for (int i1 = 0; i1 < matrix.length; i1++) {
-			for (int i2 = 0; i2 < matrix[0].length; i2++) {
-				System.out.print(matrix[i1][i2] + " ");
-			}
-			System.out.println();
-		}
+//		System.out.println(testResults);
+//		
+//		for (int i1 = 0; i1 < matrix.length; i1++) {
+//			for (int i2 = 0; i2 < matrix[0].length; i2++) {
+//				System.out.print(matrix[i1][i2] + " ");
+//			}
+//			System.out.println();
+//		}
 		
 		if (!testResultsStr.contains("true")) return "false";
 		else if (!testResultsStr.contains("false")) return "true";

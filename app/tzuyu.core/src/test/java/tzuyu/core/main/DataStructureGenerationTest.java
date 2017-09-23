@@ -50,7 +50,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		params.setTestingClassNames(testingClassNames);
 		params.setTestingPkgs(testingPackages);
 		params.setJunitClassNames(junitClassNames);
-//		params.setJunitClassNames(new ArrayList<String>());
+		params.setJunitClassNames(new ArrayList<String>());
 		
 		gen.genAssertion(params);
 	}
@@ -62,6 +62,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "moex");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/moex/");
 		genAssertion(testPkg);
@@ -78,6 +79,24 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "sll-clean");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
+		
+		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/slls/");
+		genAssertion(testPkg);
+		
+		long endTime = System.currentTimeMillis();
+		
+		System.out.println(endTime - startTime);
+	}
+	
+	@Test
+	public void testSllGetLast() throws Exception {
+		long startTime = System.currentTimeMillis();
+		
+		TestPackage testPkg = TestPackage.getPackage("data-structure", "sll-last");
+		
+		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/slls/");
 		genAssertion(testPkg);
@@ -94,6 +113,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "sll-clone");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/slls/");
 		genAssertion(testPkg);
@@ -110,6 +130,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "sll-min");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/slls/");
 		genAssertion(testPkg);
@@ -126,6 +147,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "sll-reverse");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/slls/");
 		genAssertion(testPkg);
@@ -142,6 +164,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "sll-sort");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/slls/");
 		genAssertion(testPkg);
@@ -158,6 +181,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "sll-travel");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/slls/");
 		genAssertion(testPkg);
@@ -174,6 +198,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "sll-insert");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/slls/");
 		genAssertion(testPkg);
@@ -190,6 +215,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "sll-delete");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/slls/");
 		genAssertion(testPkg);
@@ -206,8 +232,26 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "sll-append");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/slls/");
+		genAssertion(testPkg);
+		
+		long endTime = System.currentTimeMillis();
+		
+		System.out.println(endTime - startTime);
+	}
+	
+	@Test
+	public void testSll2Dll() throws Exception {
+		long startTime = System.currentTimeMillis();
+		
+		TestPackage testPkg = TestPackage.getPackage("data-structure", "sll-2dll");
+		
+		params.setMethodName("main1");
+		params.setStartTime(startTime);
+		
+		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/slls2/");
 		genAssertion(testPkg);
 		
 		long endTime = System.currentTimeMillis();
@@ -222,6 +266,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "dll-clean");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/dlls/");
 		genAssertion(testPkg);
@@ -238,6 +283,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "dll-clone");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/dlls/");
 		genAssertion(testPkg);
@@ -254,6 +300,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "dll-min");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/dlls/");
 		genAssertion(testPkg);
@@ -270,6 +317,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "dll-reverse");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/dlls/");
 		genAssertion(testPkg);
@@ -286,6 +334,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "dll-sort");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/dlls/");
 		genAssertion(testPkg);
@@ -302,6 +351,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "dll-travel");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/dlls/");
 		genAssertion(testPkg);
@@ -318,6 +368,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "dll-insert");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/dlls/");
 		genAssertion(testPkg);
@@ -334,6 +385,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "dll-delete");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/dlls/");
 		genAssertion(testPkg);
@@ -350,6 +402,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "dll-append");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/dlls/");
 		genAssertion(testPkg);
@@ -366,6 +419,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "sortll-clean");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/sortlls/");
 		genAssertion(testPkg);
@@ -382,6 +436,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "sortll-clone");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/sortlls/");
 		genAssertion(testPkg);
@@ -398,6 +453,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "sortll-min");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/sortlls/");
 		genAssertion(testPkg);
@@ -414,6 +470,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "sortll-travel");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/sortlls/");
 		genAssertion(testPkg);
@@ -430,6 +487,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "sortll-insert");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/sortlls/");
 		genAssertion(testPkg);
@@ -446,6 +504,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "sortll-delete");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/sortlls/");
 		genAssertion(testPkg);
@@ -462,6 +521,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "cll-travel");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/clls/");
 		genAssertion(testPkg);
@@ -477,7 +537,8 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "cll-min");
 		
-		params.setMethodName("check");
+		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/clls/");
 		genAssertion(testPkg);
@@ -494,6 +555,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "cll-clean");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/clls/");
 		genAssertion(testPkg);
@@ -510,6 +572,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "cll-2sll");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/clls/");
 		genAssertion(testPkg);
@@ -526,6 +589,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "bst-inorder");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/bsts/");
 		genAssertion(testPkg);
@@ -542,6 +606,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "bst-preorder");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/bsts/");
 		genAssertion(testPkg);
@@ -558,6 +623,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "bst-postorder");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/bsts/");
 		genAssertion(testPkg);
@@ -574,6 +640,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "bst-min");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/bsts/");
 		genAssertion(testPkg);
@@ -590,6 +657,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "bst-max");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/bsts/");
 		genAssertion(testPkg);
@@ -606,6 +674,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "bst-prec");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/bsts/");
 		genAssertion(testPkg);
@@ -622,6 +691,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "bst-succ");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/bsts/");
 		genAssertion(testPkg);
@@ -638,6 +708,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "bst-insert");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/bsts/");
 		genAssertion(testPkg);
@@ -653,7 +724,8 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "bst-delete");
 		
-		params.setMethodName("delete");
+		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/bsts/");
 		genAssertion(testPkg);
@@ -670,6 +742,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "avl-insert");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/avls/");
 		genAssertion(testPkg);
@@ -686,6 +759,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "avl-delete");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/avls/");
 		genAssertion(testPkg);
@@ -702,6 +776,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "rbt-insert");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/rbts/");
 		genAssertion(testPkg);
@@ -718,6 +793,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "rbt-delete");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/rbts/");
 		genAssertion(testPkg);
@@ -734,6 +810,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "rose-travel");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/rose/");
 		genAssertion(testPkg);
@@ -750,6 +827,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "mcf-travel");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/mcf/");
 		genAssertion(testPkg);
@@ -766,6 +844,7 @@ public class DataStructureGenerationTest extends AbstractTzPackageTest {
 		TestPackage testPkg = TestPackage.getPackage("data-structure", "tll-setright");
 		
 		params.setMethodName("main1");
+		params.setStartTime(startTime);
 		
 		gen.setTemplatesPath("/Users/HongLongPham/Workspace/testdata/data-structure/templates/tlls/");
 		genAssertion(testPkg);

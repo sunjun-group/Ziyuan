@@ -9,6 +9,7 @@ import libsvm.core.Machine;
 import libsvm.extension.ByDistanceNegativePointSelection;
 import libsvm.extension.NegativePointSelection;
 import libsvm.extension.PositiveSeparationMachine;
+import libsvm.extension.RandomNegativePointSelection;
 import sav.common.core.formula.Eq;
 import sav.common.core.formula.Var;
 import sav.strategies.dto.execute.value.ExecValue;
@@ -208,6 +209,7 @@ public abstract class SingleTemplate extends Template {
 	
 	public Machine getMultiCutMachine() {
 		NegativePointSelection negative = new ByDistanceNegativePointSelection();
+//		NegativePointSelection negative = new RandomNegativePointSelection();
 		PositiveSeparationMachine machine = new PositiveSeparationMachine(negative);
 		machine.setDefaultParams();
 		return machine;

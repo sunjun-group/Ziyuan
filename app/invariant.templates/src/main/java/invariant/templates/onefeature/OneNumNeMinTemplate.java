@@ -38,7 +38,7 @@ public class OneNumNeMinTemplate extends OneFeatureTemplate {
 		case FLOAT:
 			return ((FloatValue) evl.get(0)).getFloatVal() != Float.MIN_VALUE;
 		case DOUBLE:
-			return ((DoubleValue) evl.get(0)).getDoubleVal() != Double.MAX_VALUE;
+			return ((DoubleValue) evl.get(0)).getDoubleVal() != Double.MIN_VALUE;
 		default:
 			break;
 		}

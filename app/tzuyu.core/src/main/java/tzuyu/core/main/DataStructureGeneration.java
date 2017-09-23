@@ -88,17 +88,16 @@ public class DataStructureGeneration extends TzuyuCore {
 		}
 		
 		List<BreakPoint> learnLocs = collectLearningLocations(params);
-//		getRandomTestCases(params);
-//		params.setJunitClassNames(getRandomTestCases(params));
+		params.setJunitClassNames(getRandomTestCases(params));
 		
 		System.out.println(params.getJunitClassNames());
 		
 		List<Boolean> testResults = new ArrayList<Boolean>();//runTestCases(params, params.getJunitClassNames(), false);
 		
-		learnLocs.get(0).setLineNo(44);
-		
-		for (int i = 0; i >= 0; i--) {
-//		for (int i = learnLocs.size() - 2; i >= 1; i--) {
+//		for (int i = 0; i >= 0; i--) {
+		for (int i = learnLocs.size() - 2; i >= 1; i--) {
+			params.setStartTime(System.currentTimeMillis());
+			
 			FileUtils.cleanDirectory(new File(resultPath)); 
 			
 			System.out.println(learnLocs.get(i));
@@ -189,17 +188,17 @@ public class DataStructureGeneration extends TzuyuCore {
 	            JunitResult jresult = future.get(3, TimeUnit.SECONDS);
 	            
 	            if (jresult.getTestResult().get(0)) {
-	            	fillInTestResult(testResults, true);
-//	            	testResults.add(true);
+//	            	fillInTestResult(testResults, true);
+	            	testResults.add(true);
 //	            	if (passTests.isEmpty()) tmp.add(test);
 	            } else {
-	            	fillInTestResult(testResults, false);
-//	            	testResults.add(false);
+//	            	fillInTestResult(testResults, false);
+	            	testResults.add(false);
 	            }
 	        } catch (TimeoutException e) {
 	            future.cancel(true);
-	            fillInTestResult(testResults, false);
-//	            testResults.add(false);
+//	            fillInTestResult(testResults, false);
+	            testResults.add(false);
 	        }
 
 	        executor.shutdownNow();

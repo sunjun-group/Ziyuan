@@ -229,6 +229,10 @@ public class ObjectValueGenerator extends ValueGenerator {
 	private boolean canBeCandidateForConstructor(Constructor<?> constructor,
 			Class<?> type, List<Constructor<?>> mightCreateLoopList) {
 		Class<?>[] parameterTypes = constructor.getParameterTypes();
+		
+		// avoid constructor with no parameters when there are multiple constructors
+		if (type.getConstructors().length != 1 && parameterTypes.length == 0) return false;
+		
 		for (Class<?> paramType : parameterTypes) {
 			if (type.equals(paramType) || paramType.isAssignableFrom(type)) {
 				mightCreateLoopList.add(constructor);

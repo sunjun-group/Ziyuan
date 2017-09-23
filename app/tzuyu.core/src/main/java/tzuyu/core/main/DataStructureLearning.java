@@ -75,8 +75,10 @@ public class DataStructureLearning {
 		
 		System.out.println("Inv without ss = " + oldInv);
 		
+		long endTime = System.currentTimeMillis();
+		System.out.println("Time without ss = " + (endTime - params.getStartTime()));
+		
 		DataStructureSelectiveSampling ss = new DataStructureSelectiveSampling(this);
-		boolean b = false;
 		
 //		for (int iii = 0; iii <= 0; iii++) {
 		while (true) {
@@ -89,8 +91,6 @@ public class DataStructureLearning {
 			if (tempIdx.isEmpty()) {
 				List<Variable> selectiveVars = new ArrayList<Variable>(learnVars);
 				
-				System.out.println("gohere");
-				
 				ss.selectiveToNull(params, learnLoc, selectiveVars, learnVars,
 						testResults, origFile, backup);
 				ss.selectiveToNew(params, learnLoc, selectiveVars, learnVars,
@@ -100,29 +100,29 @@ public class DataStructureLearning {
 						testResults, origFile, backup);
 				ss.selectiveToItself(params, learnLoc, selectiveVars, learnVars,
 						testResults, origFile, backup);
-//				
-//				ss.selectiveSwap(params, learnLoc, selectiveVars, learnVars,
-//						testResults, origFile, backup);
-//				
-//				for (Variable firstVar : selectiveVars) {
-//					List<Variable> otherVars = new ArrayList<Variable>();
-//					for (Variable learnVar : learnVars) {
-//						if (!firstVar.getFullName().equals(learnVar.getFullName()) &&
-//								firstVar.getType().equals(learnVar.getType())) {
-//							otherVars.add(learnVar);
-//						}
-//					}
-//					otherVars.add(0, firstVar);
-//					
-//					ss.selectiveToOthers(params, learnLoc, otherVars, learnVars,
-//							testResults, origFile, backup);
-//				}
-//				
-//				ss.selectiveToInc(params, learnLoc, selectiveVars, learnVars,
-//						testResults, origFile, 0, backup);
-//				
-//				ss.selectiveToConst(params, learnLoc, selectiveVars, learnVars,
-//						testResults, origFile, 0, backup);
+				
+				ss.selectiveSwap(params, learnLoc, selectiveVars, learnVars,
+						testResults, origFile, backup);
+				
+				for (Variable firstVar : selectiveVars) {
+					List<Variable> otherVars = new ArrayList<Variable>();
+					for (Variable learnVar : learnVars) {
+						if (!firstVar.getFullName().equals(learnVar.getFullName()) &&
+								firstVar.getType().equals(learnVar.getType())) {
+							otherVars.add(learnVar);
+						}
+					}
+					otherVars.add(0, firstVar);
+					
+					ss.selectiveToOthers(params, learnLoc, otherVars, learnVars,
+							testResults, origFile, backup);
+				}
+				
+				ss.selectiveToInc(params, learnLoc, selectiveVars, learnVars,
+						testResults, origFile, 0, backup);
+				
+				ss.selectiveToConst(params, learnLoc, selectiveVars, learnVars,
+						testResults, origFile, 0, backup);
 			} else {
 				for (int i : tempIdx) {
 					String template = files[i].getName();
@@ -294,6 +294,9 @@ public class DataStructureLearning {
 			if (newInv.equals(oldInv)) break;
 			else oldInv = newInv;
 		}
+		
+		endTime = System.currentTimeMillis();
+		System.out.println("Time after ss = " + (endTime - params.getStartTime()));
 	}
 	
 	private List<Integer> flattenInv(String inv) {
@@ -319,7 +322,7 @@ public class DataStructureLearning {
 			File origFile, File selectiveFile) throws Exception {
 		if (selectiveFile != null) {
 			recompile(origFile, selectiveFile);
-
+			
 			File checkFile = addCode(params, origFile, learnLoc.getLineNo() + 1, CodeType.CHECKING,
 					learnVars, gen.heapTemplates, gen.pureTemplates, gen.bagTemplates);
 			recompile(origFile, checkFile);
@@ -426,7 +429,7 @@ public class DataStructureLearning {
 		File newFile = new File("/tmp/Tmp.java");
 		PrintWriter out = new PrintWriter(newFile);
 		
-		System.out.println(cu.toString());
+//		System.out.println(cu.toString());
 		out.write(cu.toString());
 		
 		out.flush();
