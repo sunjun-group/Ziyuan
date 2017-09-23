@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sav.common.core.utils.CollectionUtils;
-import sav.strategies.gentest.ISubTypesScanner;
 
 
 /**
@@ -30,36 +29,54 @@ import sav.strategies.gentest.ISubTypesScanner;
  *
  */
 public class VarTypeResolver extends TypeVisitor {
+	private static final int RESOLVE_LEVEL = 7; // to prevent stack overflow.
 	private static Logger log = LoggerFactory.getLogger(VarTypeResolver.class);
 	private Map<TypeVariable<?>, Type> rTypeMap; // value can be either Class, TypeVariable or ParameterizedType
 	private Set<Type> visitedTypes;
 	
 	private ISubTypesScanner subTypeScanner;
 	
-	VarTypeResolver(ISubTypesScanner subTypesScanner) {
+	public VarTypeResolver(ISubTypesScanner subTypesScanner) {
 		rTypeMap = new HashMap<TypeVariable<?>, Type>();
 		visitedTypes = new HashSet<Type>();
 		this.subTypeScanner = subTypesScanner;
 	}
 	
 	public Class<?> resolve(Type type) {
+		return resolve(type, 0);
+	}
+	
+	public Class<?>[] resolve(Type[] bounds) {
+		return resolve(bounds, 0);
+	}
+	
+	private Class<?> resolve(Type type, int level) {
+		if (level > RESOLVE_LEVEL) {
+			return null;
+		}
 		TypeEnum typeEnum = TypeEnum.of(type);
 		switch (typeEnum) {
 		case CLASS:
 			return (Class<?>) type;
 		case TYPE_VARIABLE:
-			return resolveTypeVariable((TypeVariable<?>) type);
+			return resolveTypeVariable((TypeVariable<?>) type, level + 1);
 		case PARAMETER_TYPE:
-			ParameterizedType paramType = (ParameterizedType) type;
-			return (Class<?>) paramType.getRawType();
+			return resolveParameterType(type);
 		case WILDCARDS_TYPE:
-			return resolveWildcardsType((WildcardType) type);
+			return resolveWildcardsType((WildcardType) type, level + 1);
+		case GENERIC_ARRAY_TYPE:
+			// todo?
 		}
 		log.debug("VarTypeResolver: missing handle for the case type=", typeEnum);
 		return null;
 	}
+
+	private Class<?> resolveParameterType(Type type) {
+		ParameterizedType paramType = (ParameterizedType) type;
+		return (Class<?>) paramType.getRawType();
+	}
 	
-	private Class<?> resolveWildcardsType(WildcardType type) {
+	private Class<?> resolveWildcardsType(WildcardType type, int level) {
 		// TODO LLT[gentest clean up]: handle lower bound case
 //		Type[] lowerBounds = type.getLowerBounds();
 //		if (!CollectionUtils.isEmpty(lowerBounds)) {
@@ -72,37 +89,41 @@ public class VarTypeResolver extends TypeVisitor {
 //		}
 		Type[] upperBounds = type.getUpperBounds();
 		if (!CollectionUtils.isEmpty(upperBounds)) {
-			return selectResolveTypeByUpperbounds(upperBounds);
+			return selectResolveTypeByUpperbounds(upperBounds, level);
 		}
 		
 		return Object.class;
 	}
 
-	private Class<?> resolveTypeVariable(TypeVariable<?> variable) {
+	private Class<?> resolveTypeVariable(TypeVariable<?> variable, int level) {
 		Type mappedType = rTypeMap.get(variable);
 		if (mappedType == null) {
 			// assign a type for it
-			return selectResolveTypeByUpperbounds(variable.getBounds());
+			Class<?> resolvedType = selectResolveTypeByUpperbounds(variable.getBounds(), level);
+			putToRTypeMap(variable, resolvedType);
+			return resolvedType;
 		}
-		Class<?> resolvedType = resolve(mappedType);
+		Class<?> resolvedType = resolve(mappedType, level + 1);
 		if ((TypeEnum.isClass(mappedType) && resolvedType != mappedType)) {
-			rTypeMap.put((TypeVariable<?>) variable, resolvedType);
+			putToRTypeMap(variable, resolvedType);
 		}
 		return resolvedType;
 	}
 
-	private Class<?> selectResolveTypeByUpperbounds(Type[] bounds) {
-		// if (CollectionUtils.isEmpty(bounds)) {
-		// return resolve(Object.class);
-		// } else {
-		return subTypeScanner.getRandomImplClzz(resolve(bounds));
-		// }
+	private Class<?> selectResolveTypeByUpperbounds(Type[] bounds, int level) {
+//		 if (CollectionUtils.isEmpty(bounds)) {
+//			 return resolve(Object.class, level);
+//		 } 
+//		 Class<?>[] implClasses = resolve(bounds, level);
+//		 return subTypeScanner.getRandomImplClzz(implClasses);
+		Class<?>[] implClazz = resolve(bounds, level);
+		return subTypeScanner.getRandomImplClzz(implClazz);
 	}
 	
-	public Class<?>[] resolve(Type[] bounds) {
+	private Class<?>[] resolve(Type[] bounds, int level) {
 		Class<?>[] resolvedTypes = new Class<?>[bounds.length];
 		for (int i = 0; i < bounds.length; i++) {
-			resolvedTypes[i] = resolve(bounds[i]);
+			resolvedTypes[i] = resolve(bounds[i], level);
 		}
 		return resolvedTypes;
 	}
@@ -159,9 +180,21 @@ public class VarTypeResolver extends TypeVisitor {
 		Type[] typeArgs = type.getActualTypeArguments();
 		for (int i = 0; i < vars.length; i++) {
 			Type argType = typeArgs[i];
-			log.debug("visit parameterized type-argType=", argType);
-			if (!rTypeMap.containsKey(vars[i])) {
-				rTypeMap.put(vars[i], argType);
+//			log.debug("visit parameterized type-argType={}", argType);
+			putToRTypeMap(vars[i], argType);
+		}
+		visit(rawClass);
+	}
+	
+	private void putToRTypeMap(TypeVariable<?> var, Type argType) {
+		if (var == null || argType == null) {
+			return;
+		}
+		if (!rTypeMap.containsKey(var)) {
+			if (var.equals(argType)) {
+				log.warn("duplicate var: type {} is not solved!", var);
+			} else {
+				rTypeMap.put(var, argType);
 			}
 		}
 	}
@@ -192,7 +225,7 @@ public class VarTypeResolver extends TypeVisitor {
 				mappedType = rTypeMap.get(lastType);
 			}
 			if (mappedType == null) {
-				rTypeMap.put(lastType, entry.getValue());
+				putToRTypeMap(lastType, entry.getValue());
 			}
 		}
 	}

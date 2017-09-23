@@ -22,14 +22,19 @@ public class SignatureUtils {
 	public static String getSignature(Method meth) {
 		StringBuffer sb = new StringBuffer();
 
+		sb.append(getParamsSignature(meth.getParameterTypes()));// avoid clone
+		sb.append(getSignature(meth.getReturnType()));
+		return sb.toString();
+	}
+
+	public static String getParamsSignature(Class<?>[] params) {
+		StringBuffer sb = new StringBuffer();
 		sb.append("(");
 
-		Class<?>[] params = meth.getParameterTypes(); // avoid clone
 		for (int j = 0; j < params.length; j++) {
 			sb.append(getSignature(params[j]));
 		}
 		sb.append(")");
-		sb.append(getSignature(meth.getReturnType()));
 		return sb.toString();
 	}
 
@@ -105,7 +110,7 @@ public class SignatureUtils {
 		if (endNameIdx > 1) {
 			return methodNameAndSign.substring(endNameIdx);
 		}
-		return methodNameAndSign;
+		return StringUtils.EMPTY;
 	}
 	
 	public static String trimSignature(String typeSign) {
@@ -113,6 +118,10 @@ public class SignatureUtils {
 	}
 
 	public static String createMethodNameSign(String methodName, String signature) {
-		return methodName + signature;
+		return new StringBuilder(methodName).append(signature).toString();
+	}
+	
+	public static String createMethodNameSign(Method method) {
+		return createMethodNameSign(method.getName(), getSignature(method));
 	}
 }

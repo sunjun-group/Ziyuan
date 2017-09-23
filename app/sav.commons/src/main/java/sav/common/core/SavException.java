@@ -24,7 +24,12 @@ public class SavException extends Exception {
 		this.params = params;
 	}
 	
-	public SavException(Enum<?> type, Exception ex, Object... params) {
+	public SavException(String msg, Enum<?> type) {
+		super(msg);
+		this.type = type;
+	}
+	
+	public SavException(Exception ex, Enum<?> type, Object... params) {
 		super(ex);
 		this.type = type;
 		this.params = params;
@@ -40,4 +45,14 @@ public class SavException extends Exception {
 	public Object[] getParams() {
 		return params;
 	}
+	
+	@Override
+	public String getMessage() {
+		return super.getMessage();
+	}
+
+	public static boolean isExceptionOfType(Exception e, Enum<?> type) {
+		return ((e instanceof SavException) && ((SavException) e).type == type);
+	}
+	
 }

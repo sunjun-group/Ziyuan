@@ -44,6 +44,7 @@ import japa.parser.ast.type.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
@@ -55,9 +56,11 @@ import sav.common.core.utils.CollectionUtils;
 public class AstNodeConverter implements StatementVisitor {
 	private IVariableNamer varNamer;
 	private Statement result;
+	private Set<String> duplicateImports;
 
-	public AstNodeConverter(IVariableNamer varNamer) {
+	public AstNodeConverter(IVariableNamer varNamer, Set<String> duplicateImports) {
 		this.varNamer = varNamer;
+		this.duplicateImports = duplicateImports;
 	}
 	
 	public void reset() {
@@ -78,7 +81,7 @@ public class AstNodeConverter implements StatementVisitor {
 					TypeUtils.getAssociatePrimitiveType(vartype));
 		} else {
 			/* primitive wrapper, enum or String */
-			paramType = toReferenceType(vartype.getSimpleName());
+			paramType = toReferenceType(vartype);
 		}
 
 		/* value */
@@ -119,7 +122,7 @@ public class AstNodeConverter implements StatementVisitor {
 	@Override
 	public boolean visit(RConstructor constructor) {
 		/* Type */
-		Type type = toReferenceType(constructor.getName());
+		Type type = toReferenceType(constructor.getDeclaringClass());
 		List<VariableDeclarator> vars = new ArrayList<VariableDeclarator>();
 		/* variable name */
 		VariableDeclarator var = new VariableDeclarator(
@@ -135,7 +138,7 @@ public class AstNodeConverter implements StatementVisitor {
 		}
 		/* statement */
 		Expression initExpr = new ObjectCreationExpr(null,
-				new ClassOrInterfaceType(constructor.getName()),
+				new ClassOrInterfaceType(getClassDeclaringName(constructor.getDeclaringClass())),
 				constructorArgs);
 		var.setInit(initExpr);
 		vars.add(var);
@@ -156,8 +159,7 @@ public class AstNodeConverter implements StatementVisitor {
 
 	@Override
 	public boolean visit(RArrayConstructor arrayConstructor) {
-		Type arrayContentType = toReferenceType(arrayConstructor
-				.getContentType().getSimpleName());
+		Type arrayContentType = toReferenceType(arrayConstructor.getContentType());
 		Type arrayType = new ReferenceType(arrayContentType,
 				arrayConstructor.getSizes().length);
 		VariableDeclarator var = new VariableDeclarator(
@@ -204,7 +206,7 @@ public class AstNodeConverter implements StatementVisitor {
 		if (TypeUtils.isEnum(varValue)) {
 			Enum<?> enumValue = (Enum<?>) varValue;
 			NameExpr scope = ASTHelper
-					.createNameExpr(enumValue.getDeclaringClass().getSimpleName());
+					.createNameExpr(getClassDeclaringName(vartype));
 			return new FieldAccessExpr(scope, enumValue.name());
 		}
 		return null;
@@ -225,7 +227,7 @@ public class AstNodeConverter implements StatementVisitor {
 			case Boolean:
 				return new BooleanLiteralExpr((Boolean) value);
 			case Char:
-				return new CharLiteralExpr(value.toString());
+				return new CharLiteralExpr(getDisplayString((Character) value));
 			case Byte:
 			case Int:
 			case Short:
@@ -257,7 +259,7 @@ public class AstNodeConverter implements StatementVisitor {
 	private Expression createMethodCallExpression(Rmethod rmethod, boolean declareValue) {
 		NameExpr scope;
 		if (rmethod.getReceiverVarId() == gentest.core.data.statement.Statement.INVALID_VAR_ID) {
-			scope = new NameExpr(rmethod.getDeclaringType().getSimpleName());
+			scope = new NameExpr(getClassDeclaringName(rmethod.getDeclaringType()));
 		} else {
 			scope = new NameExpr(varNamer.getExistVarName(rmethod.getReceiverVarId()));
 		}
@@ -273,16 +275,34 @@ public class AstNodeConverter implements StatementVisitor {
 			VariableDeclarator varDecl = new VariableDeclarator(new VariableDeclaratorId(
 					varNamer.getName(rmethod.getReturnType(), rmethod.getOutVarId())), callExpr);
 			vars.add(varDecl);
-			stmtExpr = new VariableDeclarationExpr(toReferenceType(rmethod.getReturnType()
-					.getSimpleName()), vars);
+			stmtExpr = new VariableDeclarationExpr(toReferenceType(rmethod.getReturnType()), vars);
 		} else {
 			stmtExpr = callExpr;
 		}
 		return stmtExpr;
 	}
+	
+	private static final List<Character> escapeSequence = Arrays.asList('\t', '\b', '\n', '\r', '\f', '\'', '\"', '\\');
+	private String getDisplayString(Character ch) {
+		String value;
+		if (escapeSequence.contains(ch)) {
+			value = new String(new char[] {'\\', ch});
+		} else {
+			value = ch.toString();
+		}
+		return value;
+	}
 
-	private ReferenceType toReferenceType(String typeName) {
-		return new ReferenceType(new ClassOrInterfaceType(typeName));
+	private ReferenceType toReferenceType(Class<?> vartype) {
+		String className = getClassDeclaringName(vartype);
+		return new ReferenceType(new ClassOrInterfaceType(className));
+	}
+	
+	private String getClassDeclaringName(Class<?> vartype) {
+		if (duplicateImports.contains(vartype.getCanonicalName())) {
+			return vartype.getCanonicalName();
+		}
+		return vartype.getSimpleName();
 	}
 
 	public Statement getResult() {

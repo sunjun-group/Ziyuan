@@ -40,18 +40,18 @@ public class Recompiler {
 			throws SavException {
 		CollectionBuilder<String, List<String>> builder = new CollectionBuilder<String, List<String>>(
 				new ArrayList<String>())
-				.add(VmRunnerUtils.buildJavaCPrefix(vmConfig))
-				.add("-classpath").add(vmConfig.getClasspathStr()).add("-d")
-				.add(targetFolder);
+				.append(VmRunnerUtils.buildJavaCPrefix(vmConfig))
+				.append("-classpath").append(vmConfig.getClasspathStr()).append("-d")
+				.append(targetFolder);
 		for (File mutatedFile : mutatedFiles) {
-			builder.add(mutatedFile.getAbsolutePath());
+			builder.append(mutatedFile.getAbsolutePath());
 		}
-		builder.add("-g");
+		builder.append("-g");
 		VMRunner vmRunner = VMRunner.getDefault();
 		vmRunner.setLog(vmConfig.isVmLogEnable());
 		boolean success = vmRunner.startAndWaitUntilStop(builder.toCollection());
 		if (!success) {
-			throw new SavException(ModuleEnum.JVM, "Recompilation error: " + vmRunner.getProccessError());
+			throw new SavException("Recompilation error: " + vmRunner.getProccessError(), ModuleEnum.JVM);
 		}
 		return success;
 	}

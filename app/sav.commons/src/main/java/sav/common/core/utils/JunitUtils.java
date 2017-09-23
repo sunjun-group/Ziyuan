@@ -8,17 +8,18 @@
 
 package sav.common.core.utils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.junit.Test;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import sav.common.core.Pair;
 
 /**
@@ -29,56 +30,68 @@ public class JunitUtils {
 	private static final String JUNIT_TEST_METHOD_PREFIX = "test";
 	private static final String JUNIT_TEST_SUITE_PREFIX = "suite";
 	
-	public static List<String> extractTestMethods(List<String> junitClassNames)
-			throws ClassNotFoundException {
+	public static List<String> extractTestMethods(List<String> junitClassNames, ClassLoader classLoader) throws ClassNotFoundException {
 		List<String> result = new ArrayList<String>();
 		for (String className : junitClassNames) {
-			extractTestMethods(result, className);
+			extractTestMethodsForClass(result, className, classLoader);
 		}
 		return result;
 	}
-
-	private static void extractTestMethods(List<String> result, String className)
+	
+	public static List<String> extractTestMethods(List<String> junitClassNames)
 			throws ClassNotFoundException {
-		Class<?> junitClass = Class.forName(className);
+		return extractTestMethods(junitClassNames, null);
+	}
+
+	private static void extractTestMethodsForClass(List<String> result, String className, ClassLoader classLoader)
+			throws ClassNotFoundException {
+		List<String> tcs = new ArrayList<String>();
+		Class<?> junitClass = ClassLoaderUtils.forName(className, classLoader);
 		Method[] methods = junitClass.getDeclaredMethods();
 		for (Method method : methods) {
 			if (isTestMethod(junitClass, method)) {
-				result.add(ClassUtils.toClassMethodStr(className,
+				tcs.add(ClassUtils.toClassMethodStr(className,
 						method.getName()));
 			}
 		}
 		/* TODO: to remove. just for test the specific testcases in SIR */
-		if (result.isEmpty()) {
+		if (tcs.isEmpty()) {
 			try {
 				Method suiteMth = junitClass.getMethod(JUNIT_TEST_SUITE_PREFIX);
 				TestSuite suite = (TestSuite) suiteMth.invoke(junitClass);
-				findTestcasesInSuite(suite, result);
+				findTestcasesInSuite(suite, tcs, classLoader);
 			} catch (Exception e) {
 				throw new IllegalArgumentException("cannot find testcases in class " + className);
 			}
-			
 		}
+		sortMethods(tcs);
+		result.addAll(tcs);
+	}
+
+	private static void sortMethods(List<String> tcs) {
+		Collections.sort(tcs, new AlphanumComparator());
 	}
 
 	private static void findTestcasesInSuite(TestSuite suite,
-			List<String> classMethods) throws ClassNotFoundException {
+			List<String> classMethods, ClassLoader classLoader) throws ClassNotFoundException {
 		Enumeration<junit.framework.Test> tests = suite.tests();
 		while (tests.hasMoreElements()) {
 			junit.framework.Test test = tests.nextElement();
 			if (test instanceof TestSuite) {
-				findTestcasesInSuite((TestSuite) test, classMethods);
+				findTestcasesInSuite((TestSuite) test, classMethods, classLoader);
 			} else if (test instanceof TestCase) {
 				TestCase tc = (TestCase) test;
-				extractTestMethods(classMethods, tc.getClass().getName());
+				extractTestMethodsForClass(classMethods, tc.getClass().getName(), classLoader);
 			}
 		}
 	}
 
 	public static boolean isTestMethod(Class<?> junitClass, Method method) {
-		Test test = method.getAnnotation(Test.class);
-		if (test != null) {
-			return true;
+		for (Annotation annotation : method.getAnnotations()) {
+			Class<? extends Annotation> annotationType = annotation.annotationType();
+			if (Test.class.getName().equals(annotationType.getName())) {
+				return true;
+			}
 		}
 		if (TestCase.class.isAssignableFrom(junitClass)) {
 			int modifiers = method.getModifiers();

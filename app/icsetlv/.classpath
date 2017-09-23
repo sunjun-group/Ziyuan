@@ -10,5 +10,6 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="tzuyu.parent/native"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/tzuyu.parent/libs/javailp/javailp1.2a.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

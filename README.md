@@ -40,12 +40,12 @@ Set up
 	- Download maven (binary package) at https://maven.apache.org/download.cgi
 	- Unzip maven to folder [mvn folder]
 	- copy and override /etc/maven/local-settings.xml --> [mvn folder]/conf/settings.xml
-	- Go to /etc
-	For Window:
+	- Go to /etc.
+	- For Window:
 		+ copy win-setenv-example.bat --> setenv.bat
 		+ modify setenv.bat, set absolute path to the folders on your local machine.
-		+ run win-mvn-install-libs.bat 
-	For Linux:
+		+ run win-mvn-install-libs.bat. 
+	- For Linux:
 		+ copy linux-runall-example.sh --> linux-runall.sh
 		+ modify linux-runall.sh, set absolute path to the folders on your local machine.
 		+ run linux-runall.sh
@@ -62,11 +62,16 @@ Set up
 	- All necessary settings (.classpath, .project) are ready for eclipse. 
 		+ Click on File/Import...
 		+ Select General/Existing Projects into workspace 
-		+ Browse to Ziyuan project folder, unselect modules:[tzuyuEclipsePlugin-test, tzuyuEclipsePlugin, tzuyu.repo, tzuyu.feature], 
+		+ Browse to Ziyuan project folder, select these modules:[sav.commons, slicer.wala, slicer.javaslicer, codecoverage.jacoco, cfgcoverage.jacoco, svmlib, faultLocalization, mutation, gentest, icsetlv, tzuyu.core, tzuyu, assertion, invariant.templates], 
 				then click "finish".
-		+ Wait until the building proccess finishes (this may take a while).		
-6.	Run the application:
-	- run tzuyu.core.main.TzuyuCoreDemoTest.testClass()
+		+ Wait until the building proccess finishes (this may take a while).	
+6. Configuration for ilpsolver:
+    Following the instruction in /etc/libs/javailp/javailp-native/readme.txt.
+7.	Run the application:
+    - in Eclipse, go to Run/Run Configurations, under Maven Build, there are many maven build configuration for project, run flowing launchs:
+        sav build
+        then,  parent build skip test.
+	- run tzuyu.core.main.TzuyuCoreDemoTest.testStudentEvaluate2()
 	- if everything is setup properly, we should get learning result in the console view.
 
 Contacts

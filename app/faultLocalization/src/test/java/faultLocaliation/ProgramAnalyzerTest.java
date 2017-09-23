@@ -97,9 +97,9 @@ public class ProgramAnalyzerTest extends AbstractTest {
 	}
 
 	protected void config(SystemPreferences preferences) {
-		preferences.put(SystemVariables.FAULT_LOCATE_SPECTRUM_ALGORITHM,
+		preferences.set(SystemVariables.FAULT_LOCATE_SPECTRUM_ALGORITHM,
 				SpectrumAlgorithm.JACCARD.name());
-		preferences.putBoolean(SystemVariables.FAULT_LOCATE_USE_SLICE, false);
+		preferences.setBoolean(SystemVariables.FAULT_LOCATE_USE_SLICE, false);
 	}
 	
 	

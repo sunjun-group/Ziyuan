@@ -2,6 +2,7 @@ package tzuyu.core.main;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +85,14 @@ public class DataStructureLearning {
 		while (true) {
 			
 			File folder = new File(resultPath);
-			File[] files = folder.listFiles((dir, name) -> !name.equals(".DS_Store"));
+			File[] files = folder.listFiles(new FilenameFilter() {
+				
+				@Override
+				public boolean accept(File dir, String name) {
+					return !name.equals(".DS_Store");
+				}
+			});
+			//(dir, name) -> !name.equals(".DS_Store")
 			
 			List<Integer> tempIdx = flattenInv(oldInv);
 			

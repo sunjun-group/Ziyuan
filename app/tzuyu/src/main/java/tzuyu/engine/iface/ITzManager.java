@@ -9,7 +9,7 @@
 package tzuyu.engine.iface;
 
 import sav.common.core.iface.IPrintStream;
-import sav.strategies.gentest.ISubTypesScanner;
+import tester.ISubTypesScanner;
 import tester.ITCGStrategy;
 import tzuyu.engine.algorithm.iface.Refiner;
 import tzuyu.engine.algorithm.iface.Teacher;

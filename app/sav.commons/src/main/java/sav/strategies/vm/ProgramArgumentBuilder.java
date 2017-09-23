@@ -10,6 +10,7 @@ package sav.strategies.vm;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import sav.common.core.utils.CollectionUtils;
@@ -22,19 +23,19 @@ import sav.common.core.utils.StringUtils;
 public class ProgramArgumentBuilder {
 	private List<String> arguments = new ArrayList<String>();
 
-	public ProgramArgumentBuilder addArgument(String option, List<String> values) {
-		if (!isBlank(values)) {
+	public ProgramArgumentBuilder addArgument(String option, Collection<String> testClassNames) {
+		if (!isBlank(testClassNames)) {
 			arguments.add("-" + option);
-			arguments.addAll(values);
+			arguments.addAll(testClassNames);
 		}
 		return this;
 	}
 
-	private boolean isBlank(List<String> values) {
-		if (CollectionUtils.isEmpty(values)) {
+	private boolean isBlank(Collection<String> testClassNames) {
+		if (CollectionUtils.isEmpty(testClassNames)) {
 			return true;
 		}
-		for (String val : values) {
+		for (String val : testClassNames) {
 			if (!StringUtils.isEmpty(val)) {
 				return false;
 			}

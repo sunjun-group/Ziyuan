@@ -9,10 +9,18 @@
 package sav.common.core.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+
+import sav.common.core.Constants;
 import sav.common.core.SavRtException;
 
 /**
@@ -46,6 +54,70 @@ public class FileUtils {
 			throw new SavRtException(e);
 		} catch (IOException e) {
 			throw new SavRtException(e);
+		}
+	}
+	
+	public static void deleteFiles(List<File> files) {
+		for (File file : CollectionUtils.nullToEmpty(files)) {
+			file.delete();
+		}
+	}
+	
+	public static void copyFiles(List<File> files, String folderPath) throws FileNotFoundException, IOException {
+		File targetFolder = mkDirs(folderPath);
+		for (File file : files) {
+			InputStream inStream = new FileInputStream(file);
+			File copyFile = new File(targetFolder, file.getName());
+			IOUtils.copy(inStream, new FileOutputStream(copyFile));
+		}
+	}
+
+	public static File mkDirs(String folderPath) {
+		File targetFolder = new File(folderPath);
+		if (!targetFolder.exists()) {
+			targetFolder.mkdirs();
+		}
+		return targetFolder;
+	}
+	
+	
+
+	public static void copyFilesSilently(List<File> files, String folderPath) {
+		try {
+			copyFiles(files, folderPath);
+		} catch (Exception e) {
+			// do nothing
+		}
+	}
+
+	public static List<String> getFileNames(List<File> files) {
+		List<String> names = new ArrayList<String>(CollectionUtils.getSize(files));
+		for (File file : CollectionUtils.nullToEmpty(files)) {
+			names.add(file.getName());
+		}
+		return names;
+	}
+
+	public static List<String> getFilePaths(List<File> files) {
+		List<String> paths = new ArrayList<String>(CollectionUtils.getSize(files));
+		for (File file : CollectionUtils.nullToEmpty(files)) {
+			paths.add(file.getAbsolutePath());
+		}
+		return paths;
+	}
+
+	public static String getFilePath(String... fragments) {
+		return StringUtils.join(Arrays.asList(fragments), Constants.FILE_SEPARATOR);
+	}
+
+	public static void deleteAllFiles(String folderPath) {
+		File folder = new File(folderPath);
+		if (!folder.exists() || !folder.isDirectory()) {
+			return;
+		}
+		File[] files = folder.listFiles();
+		if (!CollectionUtils.isEmpty(files)) {
+			deleteFiles(Arrays.asList(files));
 		}
 	}
 }

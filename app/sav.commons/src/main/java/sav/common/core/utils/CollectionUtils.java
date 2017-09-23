@@ -75,6 +75,13 @@ public class CollectionUtils {
 		}
 		return vals[0];
 	}
+	
+	public static <T> T getFirstElement(List<T> vals) {
+		if (isEmpty(vals)) {
+			return null;
+		}
+		return vals.get(0);
+	}
 
 	public static <T> boolean existIn(T val, T... valList) {
 		for (T valInList : valList) {
@@ -184,6 +191,15 @@ public class CollectionUtils {
 		return value;
 	}
 	
+	public static <K, E> List<E> getListInitIfEmpty(Map<K, List<E>> map, K key, int listSize) {
+		List<E> value = map.get(key);
+		if (value == null) {
+			value = new ArrayList<E>(listSize);
+			map.put(key, value);
+		}
+		return value;
+	}
+	
 	public static <K, E> Set<E> getSetInitIfEmpty(Map<K, Set<E>> map, K key) {
 		Set<E> value = map.get(key);
 		if (value == null) {
@@ -208,8 +224,11 @@ public class CollectionUtils {
 		return list;
 	}
 	
-	public static <T>List<T> copy(List<T> list) {
-		return new ArrayList<T>(initIfEmpty(list));
+	public static <T>List<T> copy(Collection<T> list) {
+		if (list == null || list.isEmpty()) {
+			return new ArrayList<T>(0);
+		}
+		return new ArrayList<T>(list);
 	}
 	
 	public static <T> T getLast(List<T> list) {
@@ -270,7 +289,7 @@ public class CollectionUtils {
 		return true;
 	}
 
-	public static int getSize(List<?> list) {
+	public static int getSize(Collection<?> list) {
 		return list == null ? 0 : list.size();
 	}
 
@@ -280,5 +299,22 @@ public class CollectionUtils {
 		}
 		return list;
 	}
-	
+
+	public static <T, V>boolean isEmpty(Map<T, V> map) {
+		return map == null || map.isEmpty();
+	}
+
+	public static <T>Set<T> initIfEmpty(Set<T> set) {
+		if (set != null) {
+			return set;
+		}
+		return new HashSet<T>();
+	}
+
+	public static <T> Set<T> nullToEmpty(Set<T> set) {
+		if (set == null) {
+			return Collections.emptySet();
+		}
+		return set;
+	}
 }

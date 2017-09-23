@@ -44,6 +44,7 @@ public class VariableNamer implements IVariableNamer {
 	
 	public VariableNamer() {
 		varPrefixIdxMap = new HashMap<String, Integer>();
+		vars = new HashMap<Integer, String>();
 	}
 	
 	@Override
@@ -95,7 +96,7 @@ public class VariableNamer implements IVariableNamer {
 	}
 
 	public void reset(Sequence method) {
-		vars = new HashMap<Integer, String>();
+		vars.clear();
 		varPrefixIdxMap.clear();
 	}
 }

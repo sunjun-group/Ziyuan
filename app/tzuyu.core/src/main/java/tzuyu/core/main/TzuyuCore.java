@@ -81,7 +81,7 @@ public class TzuyuCore {
 	protected FaultLocalizationReport computeSuspiciousness(FaultLocateParams params) throws Exception {
 		log.info("Compute suspiciousness: ");
 		appContext.getAppData().getPreferences()
-						.putBoolean(SystemVariables.FAULT_LOCATE_USE_SLICE,
+						.setBoolean(SystemVariables.FAULT_LOCATE_USE_SLICE,
 						params.isSlicerEnable() && !params.getTestingPkgs().isEmpty());
 		FaultLocalizationReport report = faultLocalization(params.getTestingClassNames(), params.getTestingPkgs(),
 				params.getJunitClassNames());
@@ -130,7 +130,7 @@ public class TzuyuCore {
 					junitClassNames.addAll(randomTests);
 					break;
 				} catch (Throwable exception) {
-
+					log.debug(exception.getMessage());
 				}
 			}
 		}

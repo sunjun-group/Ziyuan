@@ -8,24 +8,22 @@
 
 package tzuyu.engine;
 
-import gentest.RandomTester;
-
 import java.util.List;
-
-import libsvm.svm;
-import libsvm.svm_print_interface;
-import lstar.IReportHandler.OutputType;
-import lstar.LStar;
-import lstar.LStarException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 
+import gentest.RandomTester;
+import libsvm.svm;
+import libsvm.svm_print_interface;
+import lstar.IReportHandler.OutputType;
+import lstar.LStar;
+import lstar.LStarException;
 import refiner.TzuYuRefiner;
 import sav.common.core.iface.IPrintStream;
-import sav.strategies.gentest.ISubTypesScanner;
+import tester.ISubTypesScanner;
 import tester.ITCGStrategy;
 import tester.TzuYuTester;
 import tzuyu.engine.algorithm.iface.Learner;

@@ -14,7 +14,9 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 
 import sav.common.core.utils.JunitUtils;
+import sav.common.core.utils.StopTimer;
 import sav.commons.AbstractTest;
+import sav.commons.testdata.SampleProgramTest;
 import sav.strategies.junit.JunitResult;
 import sav.strategies.junit.JunitRunner;
 import sav.strategies.junit.JunitRunnerParameters;
@@ -31,8 +33,24 @@ public class JunitRunnerTest extends AbstractTest {
 		params.setTimeout(3, TimeUnit.SECONDS);
 		params.setClassMethods(JunitUtils.extractTestMethods(Arrays
 				.asList(JunitRunnerTestdata.class.getName())));
-		JunitResult result = JunitRunner.runTestcases(params);
+		JunitResult result = JunitRunner.run(params);
 		System.out.println(result);
 	}
 
+	@Test
+	public void testSampleProgram() throws Exception {
+		StopTimer timer = new StopTimer("test");
+		timer.start();
+		timer.newPoint("running");
+		JunitRunnerParameters params = new JunitRunnerParameters();
+		params.setTimeout(3, TimeUnit.SECONDS);
+//		params.setClassMethods(JunitUtils.extractTestMethods(Arrays
+//				.asList(SamplePrograms2.class.getName())));
+		params.setClassMethods(JunitUtils.extractTestMethods(Arrays
+				.asList(SampleProgramTest.class.getName())));
+		JunitResult result = JunitRunner.run(params);
+		System.out.println(result);
+		timer.stop();
+		System.out.println(timer.getResults());
+	}
 }

@@ -25,7 +25,7 @@ import sav.common.core.utils.StringUtils;
  */
 public class AgentVmRunner extends VMRunner {
 	protected String agentJarPath;
-	protected Map<String, String> agentParams;
+	private Map<String, String> agentParams;
 	private List<String> programArgs;
 
 	public AgentVmRunner(String agentJarPath) {
@@ -43,7 +43,7 @@ public class AgentVmRunner extends VMRunner {
 			sb.append("=")
 				.append(StringUtils.join(agentParams, ","));
 		}
-		builder.add(sb.toString());
+		builder.append(sb.toString());
 		super.buildVmOption(builder, config);
 	}
 	
@@ -52,8 +52,12 @@ public class AgentVmRunner extends VMRunner {
 			CollectionBuilder<String, Collection<String>> builder) {
 		super.buildProgramArgs(config, builder);
 		for (String arg : programArgs) {
-			builder.add(arg);
+			builder.append(arg);
 		}
+	}
+	
+	public void addAgentParam(String opt, String value) {
+		agentParams.put(opt, value);
 	}
 	
 	public List<String> getProgramArgs() {

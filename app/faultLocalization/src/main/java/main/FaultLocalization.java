@@ -59,7 +59,7 @@ public class FaultLocalization {
 		useSlicer = preferences
 				.getBoolean(SystemVariables.FAULT_LOCATE_USE_SLICE);
 		spectrumAlgorithm = SpectrumAlgorithm.valueOf(
-				preferences.get(SystemVariables.FAULT_LOCATE_SPECTRUM_ALGORITHM));
+				preferences.getString(SystemVariables.FAULT_LOCATE_SPECTRUM_ALGORITHM));
 	}
 	
 	public FaultLocalizationReport analyse(

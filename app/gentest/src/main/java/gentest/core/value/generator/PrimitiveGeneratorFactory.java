@@ -4,21 +4,16 @@
 package gentest.core.value.generator;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.inject.Inject;
+
 import gentest.core.ParamGeneratorConfig;
 import gentest.core.commons.utils.TypeUtils;
 import gentest.injection.TestcaseGenerationScope;
 import japa.parser.ast.type.PrimitiveType.Primitive;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.lang.RandomStringUtils;
-
-import sav.common.core.Pair;
 import sav.common.core.SavRtException;
-import sav.common.core.utils.Randomness;
-
-import com.google.inject.Inject;
 
 /**
  * @author LLT
@@ -27,6 +22,9 @@ import com.google.inject.Inject;
 public class PrimitiveGeneratorFactory {
 	@Inject
 	private ParamGeneratorConfig config;
+	
+	@Inject
+	private IRandomness randomness;
 	
 	private Map<Object, PrimitiveGenerator<?>> generators;
 	
@@ -40,17 +38,20 @@ public class PrimitiveGeneratorFactory {
 			generator = getGeneratorIfString(key);
 		}
 		if (generator == null) {
+			generator = getGeneratorIfEnum(key);
+		}
+		if (generator == null) {
 			throw new SavRtException("Primitive value generator for type " + key + " is not defined!");
 		}
 		return generator;
 	}
 	
 	public PrimitiveGenerator<?> getGeneratorIfEnum(Class<?> key) {
-		if (TypeUtils.isEnum(key)) {
+		if (TypeUtils.isEnumType(key)) {
 			PrimitiveGenerator<?> generator = generators.get(Enum.class);
 			if (generator == null) {
 				generator = new EnumGenerator();
-				generators.put(String.class, generator);
+				generators.put(Enum.class, generator);
 			}
 			return generator;
 		}
@@ -111,7 +112,7 @@ public class PrimitiveGeneratorFactory {
 	}
 	
 	static abstract class PrimitiveGenerator<T> {
-		public abstract T next();
+		abstract T next();
 		
 		public T next(Class<?> type) {
 			return next();
@@ -122,7 +123,7 @@ public class PrimitiveGeneratorFactory {
 		
 		@Override
 		public Boolean next() {
-			return Randomness.nextBoolean();
+			return randomness.randomBoolean();
 		}
 	}
 	
@@ -132,7 +133,7 @@ public class PrimitiveGeneratorFactory {
 		public Byte next() {
 			// copy from the old implementation 
 			byte[] retByte = new byte[1];
-			Randomness.nextBytes(retByte);
+			randomness.randomBytes(retByte);
 			return retByte[0];
 		}
 		
@@ -143,40 +144,35 @@ public class PrimitiveGeneratorFactory {
 		
 		@Override
 		public Character next() {
-			// The set of visible characters in the ASCII staring from the
-			// 'space'
-			// (code-point: 32) character to the 'tide'(code-point: 126)
-			// character.
-			return (char) (Randomness.nextInt(95) + 32);
+			return randomness.randomChar();
 		}
 	}
 	
 	private class DoubleGenerator extends PrimitiveGenerator<Double> {
 		@Override
 		public Double next() {
-			return Randomness.nextDouble();
+			return randomness.randomDouble();
 		}
 	}
 	
 	private class FloatGenerator extends PrimitiveGenerator<Float> {
 		@Override
 		public Float next() {
-			return Randomness.nextFloat();
+			return randomness.randomFloat();
 		}
 	}
 	
 	private class IntGenerator extends PrimitiveGenerator<Integer> {
 		@Override
 		public Integer next() {
-			Pair<Integer, Integer> range = config.getIntRanges().randomRange();
-			return Randomness.nextInt(range.a, range.b);
+			return randomness.randomInt();
 		}
 	}
 	
 	private class LongGenerator extends PrimitiveGenerator<Long> {
 		@Override
 		public Long next() {
-			return Randomness.nextLong();
+			return randomness.randomLong();
 		}
 	}
 	
@@ -184,7 +180,7 @@ public class PrimitiveGeneratorFactory {
 
 		@Override
 		public Short next() {
-			return (short) ((Randomness.nextInt(Short.MAX_VALUE - Short.MIN_VALUE) + Short.MIN_VALUE));
+			return randomness.randomShort();
 		}
 	}
 	
@@ -192,18 +188,16 @@ public class PrimitiveGeneratorFactory {
 
 		@Override
 		public String next() {
-			return RandomStringUtils.randomAlphabetic(Randomness.nextInt(config
-					.getStringMaxLength()));
+			return randomness.randomAlphabetic(config
+					.getStringMaxLength());
 		}
 	}
 	
-	private static class EnumGenerator extends PrimitiveGenerator<Enum<?>> {
+	private class EnumGenerator extends PrimitiveGenerator<Enum<?>> {
 		
 		@Override
 		public Enum<?> next(Class<?> type) {
-			Object[] constValues = type.getEnumConstants();
-			int index = Randomness.nextInt(constValues.length);
-			return (Enum<?>) constValues[index];
+			return randomness.randomEnum(type.getEnumConstants());
 		}
 		
 		@Override

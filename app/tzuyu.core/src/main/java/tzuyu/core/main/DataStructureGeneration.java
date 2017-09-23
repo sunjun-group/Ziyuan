@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -214,7 +215,14 @@ public class DataStructureGeneration extends TzuyuCore {
 		String resultPath = target.substring(0, target.lastIndexOf('/')) + "/results/";
 		
 		File folder = new File(resultPath);
-		File[] files = folder.listFiles((dir, name) -> !name.equals(".DS_Store"));
+		File[] files = folder.listFiles(new FilenameFilter() {
+
+			@Override
+			public boolean accept(File dir, String name) {
+				return !name.equals(".DS_Store");
+			}
+		});
+//				(dir, name) -> !name.equals(".DS_Store"));
 		
 		if (files.length > 0) {
 			File fst = files[0];

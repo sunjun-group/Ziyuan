@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.LocalVariable;
@@ -30,6 +33,7 @@ import sav.strategies.dto.BreakPoint.Variable;
  * 
  */
 public class DebugValueInstExtractor extends DebugValueExtractor {
+	private static Logger log = LoggerFactory.getLogger(DebugValueInstExtractor.class);
 	/**
 	 * instrument value map for {@link Variable#getId()}
 	 */

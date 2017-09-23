@@ -10,8 +10,10 @@ package gentest.core.value.generator;
 
 import static sav.common.core.utils.CollectionUtils.listOf;
 import gentest.core.data.statement.RAssignment;
+import gentest.core.data.type.ISubTypesScanner;
 import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
+import gentest.core.value.store.iface.ITypeInitializerStore;
 import gentest.core.value.store.iface.ITypeMethodCallStore;
 
 import java.util.ArrayList;
@@ -23,7 +25,6 @@ import java.util.Set;
 
 import sav.common.core.Pair;
 import sav.common.core.SavException;
-import sav.strategies.gentest.ISubTypesScanner;
 
 /**
  * @author LLT
@@ -54,19 +55,21 @@ public abstract class ValueGenerator {
 		if (type.isArray()) {
 			return new ArrayValueGenerator(type);
 		}
-		Pair<Class<?>, List<String>> typeDef = specificObjectMap.get(type.getRawType());
+		Class<?> rawType = type.getRawType();
+		Pair<Class<?>, List<String>> typeDef = specificObjectMap.get(rawType);
 		if (typeDef != null) {
 			return new ExtObjectValueGenerator(type.resolveType(typeDef.a),
 					typeDef.b);
 		}
-		// comment follwing condition will call method multiple times
-		if (isReceiver) {
+		// comment following condition will call method multiple times
+		if (isReceiver || ignoreMethodCalls.contains(rawType)) {
 			return new ObjectValueGenerator(type);
 		}
 		return new ExtObjectValueGenerator(type, null);
 	}
 	
 	private static Map<Class<?>, Pair<Class<?>, List<String>>> specificObjectMap;
+	private static List<Class<?>> ignoreMethodCalls;
 	static {
 		specificObjectMap = new HashMap<Class<?>, Pair<Class<?>,List<String>>>();
 		specificObjectMap.put(List.class, new Pair(ArrayList.class, listOf("add(Ljava/lang/Object;)Z")));
@@ -74,7 +77,10 @@ public abstract class ValueGenerator {
 		specificObjectMap.put(Map.class,
 									new Pair(HashMap.class,
 											listOf("put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")));
+		ignoreMethodCalls = new ArrayList<Class<?>>();
+		ignoreMethodCalls.add(Thread.class);
 	}
+	
 	
 	protected ISubTypesScanner getSubTypesScanner() {
 		return valueGeneratorMediator.getSubTypeScanner();
@@ -87,10 +93,17 @@ public abstract class ValueGenerator {
 	protected ITypeMethodCallStore getTypeMethodCallsStore() {
 		return valueGeneratorMediator.getTypeMethodCallsStore();
 	}
+	
+	protected ITypeInitializerStore getTypeInitializerStore() {
+		return valueGeneratorMediator.getTypeInitializerStore();
+	}
 
 	public void setValueGeneratorMediator(
 			ValueGeneratorMediator valueGeneratorMediator) {
 		this.valueGeneratorMediator = valueGeneratorMediator;
 	}
 	
+	public IRandomness getRandomness() {
+		return valueGeneratorMediator.getRandomness();
+	}
 }

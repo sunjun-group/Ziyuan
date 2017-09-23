@@ -8,14 +8,13 @@
 
 package slicer.javaslicer.instruction.variable;
 
-import sav.common.core.utils.Assert;
-import slicer.javaslicer.instruction.variable.InstVariableContext.StateId;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.LocalVariable;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.instructions.ArrayInstruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.instructions.ArrayInstruction.ArrayInstrInstanceInfo;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.instructions.FieldInstruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.instructions.IIncInstruction;
 import de.unisb.cs.st.javaslicer.common.classRepresentation.instructions.VarInstruction;
+import slicer.javaslicer.instruction.variable.InstVariableContext.StateId;
 
 /**
  * @author LLT
@@ -30,7 +29,7 @@ public class NormalState extends AbstractVariableState {
 	public void accessInstruction(VarInstruction instruction) {
 		LocalVariable localVariable = getLocalVarName(instruction);
 		boolean thisOjbRef = isThisOjbRef(localVariable);
-		Assert.assertTrue(!thisOjbRef);
+//		Assert.assertTrue(!thisOjbRef);
 		if (!thisOjbRef) {
 			addNewVariable(localVariable.getName(), false);
 		}

@@ -10,9 +10,12 @@ package codecoverage.jacoco.agent;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.jacoco.agent.AgentJar;
+import org.jacoco.core.runtime.AgentOptions;
+import org.jacoco.core.runtime.AgentOptions.OutputMode;
 
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
@@ -23,7 +26,7 @@ import sav.strategies.vm.AgentVmRunner;
  *
  */
 public class JaCoCoVmRunner extends AgentVmRunner {
-	private List<String> analyzedClassNames;
+	private Collection<String> analyzedClassNames;
 	
 	public JaCoCoVmRunner() throws IOException {
 		super(AgentJar.extractToTempLocation().getAbsolutePath());
@@ -38,26 +41,26 @@ public class JaCoCoVmRunner extends AgentVmRunner {
 	}
 	
 	public JaCoCoVmRunner setAppend(boolean append) {
-		agentParams.put("append", String.valueOf(append));
+		addAgentParam(AgentOptions.APPEND, String.valueOf(append));
 		return this;
 	}
 	
-	public JaCoCoVmRunner setOutputMode(String outputMode) {
-		agentParams.put("output", outputMode);
+	public JaCoCoVmRunner setOutputMode(OutputMode outputMode) {
+		addAgentParam(AgentOptions.OUTPUT, outputMode.name());
 		return this;
 	}
 
 	public JaCoCoVmRunner setDestfile(String destfile) {
-		agentParams.put("destfile", destfile);
+		addAgentParam(AgentOptions.DESTFILE, destfile);
 		return this;
 	}
 	
 	public JaCoCoVmRunner setClassdumpdir(String classdumpdir) {
-		agentParams.put("classdumpdir", classdumpdir);
+		addAgentParam(AgentOptions.CLASSDUMPDIR, classdumpdir);
 		return this;
 	}
-	
-	public JaCoCoVmRunner setAnalyzedClassNames(List<String> analyzedClassNames) {
+
+	public JaCoCoVmRunner setAnalyzedClassNames(Collection<String> analyzedClassNames) {
 		this.analyzedClassNames = analyzedClassNames;
 		return this;
 	}
@@ -71,5 +74,5 @@ public class JaCoCoVmRunner extends AgentVmRunner {
 		this.analyzedClassNames.add(className);
 		return this;
 	}
-	
+
 }

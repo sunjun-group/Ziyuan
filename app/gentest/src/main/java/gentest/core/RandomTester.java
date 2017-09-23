@@ -3,38 +3,53 @@
  */
 package gentest.core;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
+import gentest.core.commons.utils.GenTestUtils;
 import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
 import gentest.injection.GentestModules;
 import gentest.injection.TestcaseGenerationScope;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import sav.common.core.ModuleEnum;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.Randomness;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
  * @author LLT
  *
  */
 public class RandomTester implements ITester {
-	private GentestModules injectorModule = new GentestModules();
+	private static final Logger log = LoggerFactory.getLogger(RandomTester.class);
+	private GentestModules injectorModule;
 	private GentestListener listener;
 	// max length of joined methods.
 	private int queryMaxLength;
 	private int testPerQuery;
 	private int numberOfTcs;
+	private long methodExecTimeout;
 	
 	public RandomTester(int queryMaxLength, int testPerQuery,
-			int numberOfTcs) {
+			int numberOfTcs, ClassLoader prjClassLoader) {
 		this.queryMaxLength = queryMaxLength;
 		this.testPerQuery = testPerQuery;
 		this.numberOfTcs = numberOfTcs;
+		injectorModule = new GentestModules(prjClassLoader);
+	}
+	
+	public RandomTester(int queryMaxLength, int testPerQuery,
+			int numberOfTcs) {
+		this(queryMaxLength, testPerQuery, numberOfTcs, GenTestUtils.getDefaultClassLoader());
 	}
 	
 	/**
@@ -44,13 +59,17 @@ public class RandomTester implements ITester {
 	@Override
 	public Pair<List<Sequence>, List<Sequence>> test(
 			List<MethodCall> methodcalls) throws SavException {
+		injectorModule.setMethodExecTimeout(methodExecTimeout);
 		injectorModule.enter(TestcaseGenerationScope.class);
-		
 		List<Sequence> passTcs = new ArrayList<Sequence>();
 		List<Sequence> failTcs = new ArrayList<Sequence>();
 		TestcaseGenerator tcGenerator = getTestcaseGenerator();
 		int testsOnQuery = testPerQuery;
 		List<MethodCall> query = null;
+		removeInvalidMethodCalls(methodcalls);
+		if (methodcalls.isEmpty()) {
+			throw new SavException("No testable method is found!", ModuleEnum.TESTCASE_GENERATION);
+		}
 		while (!finish(passTcs.size(), failTcs.size())) {
 			if (testsOnQuery >= testPerQuery) {
 				query = randomWalk(methodcalls);
@@ -73,6 +92,29 @@ public class RandomTester implements ITester {
 				passTcs, failTcs);
 	}
 
+	private void removeInvalidMethodCalls(List<MethodCall> methodcalls) {
+		Iterator<MethodCall> it = methodcalls.iterator();
+		List<Method> invalidMethods = new ArrayList<Method>(methodcalls.size());
+		for (; it.hasNext(); ) {
+			Method method = it.next().getMethod();
+			for (Class<?> paramType : method.getParameterTypes()) {
+				if (!Modifier.isPublic(paramType.getModifiers())) {
+					log.debug("Invisible parameter type: {}", paramType);
+					invalidMethods.add(method);
+					it.remove();
+					break;
+				}
+			}
+		}
+		if (!invalidMethods.isEmpty()) {
+			if (invalidMethods.size() == 1) {
+				log.info("Unable to test method: {}", invalidMethods);
+			} else {
+				log.info("Unable to test these methods: {}", invalidMethods);
+			}
+		}
+	}
+
 	private TestcaseGenerator getTestcaseGenerator() {
 		Injector injector = Guice.createInjector(injectorModule);
 		return injector.getInstance(TestcaseGenerator.class);
@@ -92,7 +134,15 @@ public class RandomTester implements ITester {
 		return query;
 	}
 	
+	public GentestModules getInjectorModule() {
+		return injectorModule;
+	}
+	
 	public void setListener(GentestListener listener) {
 		this.listener = listener;
+	}
+	
+	public void setMethodExecTimeout(long methodExecTimeout) {
+		this.methodExecTimeout = methodExecTimeout;
 	}
 }

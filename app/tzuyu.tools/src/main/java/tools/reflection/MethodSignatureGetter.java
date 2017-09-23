@@ -8,6 +8,7 @@
 
 package tools.reflection;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,10 +27,19 @@ import sav.common.core.utils.SignatureUtils;
 public class MethodSignatureGetter {
 	
 	public static void main(String[] args) {
-//		List<List<String>> signs = getSignature(BoundedStack.class, "push", "pop", "size");
-//		for (List<String> sign : signs) {
-//			System.out.println(sign);
-//		}
+		List<List<String>> signs = getSignature(Thread.class, "init", "currentThread");
+		for (List<String> sign : signs) {
+			System.out.println(sign);
+		}
+	}
+	
+	@Test
+	public void getConstructorSignature() {
+		Class<?> type = Thread.class;
+		for (Constructor<?> constructor : type.getConstructors()) {
+			System.out.println(SignatureUtils.createMethodNameSign("[cinit]",
+					SignatureUtils.getParamsSignature(constructor.getParameterTypes())));
+		}
 	}
 	
 	public static List<List<String>> getSignature(Class<?> clazz,
@@ -45,7 +55,7 @@ public class MethodSignatureGetter {
 		List<String> signs = new ArrayList<String>();
 		for (Method method : clazz.getMethods()) {
 			if (method.getName().equals(methodName)) {
-				signs.add(SignatureUtils.getSignature(method));
+				signs.add(SignatureUtils.createMethodNameSign(method));
 			}
 		}
 		return signs;

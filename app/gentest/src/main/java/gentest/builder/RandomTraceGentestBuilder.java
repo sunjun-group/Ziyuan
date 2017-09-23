@@ -39,12 +39,12 @@ public class RandomTraceGentestBuilder extends GentestBuilder<RandomTraceGentest
 		this.testPerQuery = testPerQuery;
 		return this;
 	}
-
+	
 	@Override
 	public Pair<List<Sequence>, List<Sequence>> doGenerate() throws SavException {
-		RandomTester tester = new RandomTester(queryMaxLength, testPerQuery, numberOfTcs);
+		RandomTester tester = new RandomTester(queryMaxLength, testPerQuery, numberOfTcs, getPrjClassLoader());
+		tester.setMethodExecTimeout(getMethodExecTimeout());
 		return tester.test(methodCalls);
 	}
-
 	
 }

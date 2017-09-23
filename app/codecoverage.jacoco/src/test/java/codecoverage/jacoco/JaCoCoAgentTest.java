@@ -18,6 +18,9 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+import codecoverage.jacoco.agent.JaCoCo;
+import codecoverage.jacoco.testdata.CoverageSample;
+import codecoverage.jacoco.testdata.CoverageSampleTest;
 import sav.common.core.Pair;
 import sav.common.core.utils.StringUtils;
 import sav.commons.TestConfiguration;
@@ -26,9 +29,6 @@ import sav.commons.testdata.SamplePrograms;
 import sav.strategies.codecoverage.ICoverageReport;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import codecoverage.jacoco.agent.JaCoCo;
-import codecoverage.jacoco.testdata.CoverageSample;
-import codecoverage.jacoco.testdata.CoverageSampleTest;
 
 
 /**
@@ -58,15 +58,14 @@ public class JaCoCoAgentTest extends JacocoAbstractTest {
 
 	@Test
 	public void testSampleProgram() throws Exception {
-		List<String> testingClassNames = Arrays.asList(SamplePrograms.class.getName(),
-				String.class.getName());
+		List<String> testingClassNames = Arrays.asList(SamplePrograms.class.getName());
 		List<String> junitClassNames = Arrays.asList(SampleProgramTest.class.getName());
 		run(testingClassNames, junitClassNames, TestConfiguration.SAV_COMMONS_TEST_TARGET);
 		Collections.sort(new ArrayList<String>(coveredLines));
 		System.out.println(StringUtils.join(coveredLines, "\n"));
 	}
 	
-	@Test
+//	@Test
 	public void coverLineButFailTest() throws Exception {
 		List<String> testingClassNames = Arrays.asList(CoverageSample.class.getName(),
 				String.class.getName());

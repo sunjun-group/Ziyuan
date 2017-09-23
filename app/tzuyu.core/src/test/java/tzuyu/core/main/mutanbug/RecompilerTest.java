@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import sav.common.core.SavException;
 import sav.common.core.utils.ClassUtils;
+import sav.common.core.utils.StopTimer;
 import sav.commons.AbstractTest;
 import sav.commons.testdata.simplePrograms.SimplePrograms;
 import sav.commons.testdata.simplePrograms.SimpleProgramsOrg;
@@ -31,6 +32,9 @@ public class RecompilerTest extends AbstractTest {
 	
 	@Test
 	public void recompileSimpleProgram() throws SavException {
+		StopTimer timer = new StopTimer("test recompiler");
+		timer.start();
+		timer.newPoint("start");
 		AppJavaClassPath appData = context.getAppData();
 		VMConfiguration vmConfig = initVmConfig();
 		vmConfig.setEnableVmLog(true);
@@ -40,5 +44,7 @@ public class RecompilerTest extends AbstractTest {
 		recompier.recompileJFile(appData.getTarget(), new File(jFilePath),
 				new File(ClassUtils.getJFilePath(appData.getSrc(), 
 						SimpleProgramsOrg.class.getCanonicalName())));
+		timer.stop();
+		System.out.println(timer.getResults());
 	}
 }

@@ -28,74 +28,81 @@ import sav.common.core.utils.Randomness;
  */
 public class TypeInitializer {
 	private Class<?> type;
-	private Map<ConstructorType, List<Object>> constructors;
+	private Map<ConstructorType, List<Object>> constructorsMap;
+	/* bad constructors are only stored if there are no other good options found */
+	private List<Object> badConstructors;
 	
 	public TypeInitializer(Class<?> type) {
 		this.type = type;
-		constructors = new HashMap<TypeInitializer.ConstructorType, List<Object>>();
+		constructorsMap = new HashMap<TypeInitializer.ConstructorType, List<Object>>();
 	}
 
-	public boolean hasNoConstructor() {
-		return constructors.isEmpty();
+	public boolean doesNotHaveGoodConstructor() {
+		return constructorsMap.isEmpty();
 	}
 	
-	public void addConstructors(List<Constructor<?>> constructors) {
-		for (Constructor<?> constructor : constructors) {
-			ConstructorType type = ConstructorType.NO_PARAM_CONSTRUCTOR;
-			if (CollectionUtils.isEmpty(constructor.getParameterTypes())) {
-				type = ConstructorType.VISIBLE_CONSTRUCTOR;
-			}
-			addToConstructors(type, constructor);
-		}
+	public boolean hasNoConstructor() {
+		return doesNotHaveGoodConstructor() && CollectionUtils.isEmpty(badConstructors);
+	}
+	
+	public void addBadConstructors(List<Object> constructors) {
+		badConstructors = CollectionUtils.initIfEmpty(badConstructors);
+		badConstructors.addAll(constructors);
 	}
 	
 	public void addConstructor(Constructor<?> constructor, boolean hasParam) {
-		ConstructorType type = ConstructorType.NO_PARAM_CONSTRUCTOR;
 		if(hasParam) {
-			type = ConstructorType.VISIBLE_CONSTRUCTOR;
+			addParamConstructors(constructor);
+		} else {
+			addNoParamConstructors(constructor);
 		}
-		addToConstructors(type, constructor);
 	}
 	
-	private void addToConstructors(ConstructorType type, Object constructor) {
-		CollectionUtils.getListInitIfEmpty(constructors, type)
+	private void addToConstructors(ConstructorType type, Object constructor, int initListSize) {
+		CollectionUtils.getListInitIfEmpty(constructorsMap, type, initListSize)
 				.add(constructor);
 	}
 	
 	
 	public void addNoParamConstructors(Constructor<?> constructor) {
-		addToConstructors(ConstructorType.NO_PARAM_CONSTRUCTOR, constructor);
+		addToConstructors(ConstructorType.NO_PARAM_CONSTRUCTOR, constructor, 1);
 	}
 
-	public void addOtherConstructors(Constructor<?> constructor) {
-		addToConstructors(ConstructorType.VISIBLE_CONSTRUCTOR, constructor);
+	public void addParamConstructors(Constructor<?> constructor) {
+		addToConstructors(ConstructorType.VISIBLE_CONSTRUCTOR, constructor, 5);
 	}
 
 	public void addStaticMethod(Method method) {
-		addToConstructors(ConstructorType.STATIC_METHODS, method);
+		addToConstructors(ConstructorType.STATIC_METHODS, method, 5);
 	}
 	
 	public void addBuilderMethodCall(MethodCall methodCall) {
-		addToConstructors(ConstructorType.BUILDER_METHOD_CALL, methodCall);
+		addToConstructors(ConstructorType.BUILDER_METHOD_CALL, methodCall, 5);
 	}
 	
 	public Object getRandomConstructor() {
-		if (constructors.isEmpty()) {
-			return null;
+		if (constructorsMap.isEmpty()) {
+			/* random from bad constructors */
+			return Randomness.randomMember(badConstructors);
 		}
-		Set<ConstructorType> keys = constructors.keySet();
+		Set<ConstructorType> keys = constructorsMap.keySet();
 		ConstructorType key = Randomness.randomWithDistribution(keys
 				.toArray(new ConstructorType[keys.size()]));
-		return Randomness.randomMember(constructors.get(key));
+		return Randomness.randomMember(constructorsMap.get(key));
 	}
 
 	public static enum ConstructorType implements HasProbabilityType {
+		/* public, no param */
 		NO_PARAM_CONSTRUCTOR (GentestConstants.PROBABILITY_OF_PUBLIC_NO_PARAM_CONSTRUCTOR),
+		/* public, params */
 		VISIBLE_CONSTRUCTOR (GentestConstants.PROBABILITY_OF_PUBLIC_CONSTRUCTOR),
+		/* static method */
 		STATIC_METHODS (GentestConstants.PROBABILITY_OF_STATIC_METHOD_INIT),
+		/* static method of inner class */
 		BUILDER_METHOD_CALL (GentestConstants.PROBABILITY_OF_BUILDER_METHOD_CALL_INIT);
 		
 		private int prob;
+		
 		private ConstructorType(int prob) {
 			this.prob = prob;
 		}
