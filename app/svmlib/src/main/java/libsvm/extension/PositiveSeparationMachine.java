@@ -9,6 +9,8 @@ import libsvm.core.Category;
 import libsvm.core.Divider;
 import libsvm.core.Machine;
 import libsvm.core.Model;
+import libsvm.core.StringDividerProcessor;
+import sav.common.core.formula.Formula;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

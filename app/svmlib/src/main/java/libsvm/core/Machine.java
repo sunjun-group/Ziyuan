@@ -257,6 +257,8 @@ public class Machine {
 		Assert.assertNotNull(parameter, "SVM parameters is not set.");
 		Assert.assertTrue(!dataPoints.isEmpty(), "SVM training data is empty.");
 
+		System.out.println("data points here = " + dataPoints);
+		
 		final svm_problem problem = new svm_problem();
 		final int length = dataPoints.size();
 		problem.l = length;
@@ -598,6 +600,30 @@ public class Machine {
 
 	public List<DataPoint> getDataPoints() {
 		return data;
+	}
+	
+	public List<DataPoint> getPosDataPoints() {
+		List<DataPoint> res = new ArrayList<DataPoint>();
+		
+		for (DataPoint d : data) {
+			if (d.category == Category.POSITIVE) {
+				res.add(d);
+			}
+		}
+		
+		return res;
+	}
+	
+	public List<DataPoint> getNegDataPoints() {
+		List<DataPoint> res = new ArrayList<DataPoint>();
+		
+		for (DataPoint d : data) {
+			if (d.category == Category.NEGATIVE) {
+				res.add(d);
+			}
+		}
+		
+		return res;
 	}
 
 	public boolean isPerformArtificialDataSynthesis() {
