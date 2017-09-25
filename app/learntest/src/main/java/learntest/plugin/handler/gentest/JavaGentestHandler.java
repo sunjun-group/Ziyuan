@@ -121,7 +121,7 @@ public class JavaGentestHandler extends AbstractHandler {
 				}
 			}
 			JavaModelRuntimeInfo runtimeInfo = runGentest(workObject, approach);
-			getEventManager().fireOnChanged(new JavaGentestEvent(runtimeInfo));
+//			getEventManager().fireOnChanged(new JavaGentestEvent(runtimeInfo));
 		}
 		return IStatusUtils.ok();
 	}

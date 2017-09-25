@@ -173,21 +173,35 @@ public class IProjectUtils {
 		return outputPath;
 	}
 
-	public static String createSourceFolder(IJavaProject javaProject, String name) throws CoreException {
+	public static String createSourceFolder(IJavaProject javaProject, String name)
+			throws CoreException {
 		IFolder folder = javaProject.getProject().getFolder(name);
 		if (!folder.exists()) {
 			folder.create(false, true, null);
 		}
 		/* add new source folder to classpath */
-		IPackageFragmentRoot root = javaProject.getPackageFragmentRoot(folder);
-		IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
-		IClasspathEntry[] newEntries = new IClasspathEntry[oldEntries.length + 1];
-		System.arraycopy(oldEntries, 0, newEntries, 0, oldEntries.length);
-		newEntries[oldEntries.length] = JavaCore.newSourceEntry(root.getPath());
-		javaProject.setRawClasspath(newEntries, null);
+		addNewSourceFolderIntoClasspath(javaProject, folder);
 		return folder.getLocation().toOSString();
 	}
-	
+
+	private static void addNewSourceFolderIntoClasspath(IJavaProject javaProject, IFolder folder)
+			throws JavaModelException {
+		IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
+		boolean existInClasspath = false;
+		for (IClasspathEntry entry : oldEntries) {
+			if (entry.getPath().equals(folder.getFullPath())) {
+				existInClasspath = true;
+			}
+		}
+		if (!existInClasspath) {
+			IPackageFragmentRoot root = javaProject.getPackageFragmentRoot(folder);
+			IClasspathEntry[] newEntries = new IClasspathEntry[oldEntries.length + 1];
+			System.arraycopy(oldEntries, 0, newEntries, 0, oldEntries.length);
+			newEntries[oldEntries.length] = JavaCore.newSourceEntry(root.getPath());
+			javaProject.setRawClasspath(newEntries, null);
+		}
+	}
+
 	public static ClassLoader getPrjClassLoader(IJavaProject javaProject) {
 		try {
 			List<URL> urlList = new ArrayList<URL>();
@@ -206,17 +220,23 @@ public class IProjectUtils {
 		}
 	}
 	
+	public static final String DEFAULT_PACKAGE_NAME = "default";
 	public static String getFullName(IJavaElement element) {
 		LinkedList<String> fragments = new LinkedList<String>();
 		IJavaElement jEle = element;
 		while (true) {
 			String elementName = null;
 			switch (jEle.getElementType()) {
-			case IJavaElement.COMPILATION_UNIT:
 			case IJavaElement.JAVA_PROJECT:
-			case IJavaElement.METHOD:
 			case IJavaElement.PACKAGE_FRAGMENT:
+				// default package
+				if (StringUtils.isEmpty(jEle.getElementName())) {
+					elementName = DEFAULT_PACKAGE_NAME;
+					break;
+				}
+			case IJavaElement.COMPILATION_UNIT:
 			case IJavaElement.TYPE:
+			case IJavaElement.METHOD:
 				elementName = jEle.getElementName();
 				break;
 			case IJavaElement.PACKAGE_FRAGMENT_ROOT:

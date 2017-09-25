@@ -37,19 +37,14 @@ public class GentestSettings {
 			String outputPath = IProjectUtils.getTargetFolder(javaProject);
 			appClasspath.setTarget(outputPath);
 			appClasspath.setTestTarget(outputPath);
-			String testSrc = IProjectUtils.getTestSourceFolder(javaProject);
-			if (testSrc == null) {
-				/* create test folder in target project */
-				testSrc = IProjectUtils.createSourceFolder(javaProject, "test");
-			}
+			/* create l2t-test folder in target project */
+			String testSrc = IProjectUtils.createSourceFolder(javaProject, "l2t_test");
 			appClasspath.setTestSrc(testSrc);
 			appClasspath.addClasspaths(IProjectUtils.getPrjectClasspath(javaProject));
 			GentestSettings.configureSystemPreferences(appClasspath.getPreferences(), javaProject);
 			return appClasspath;
 		} catch (CoreException ex) {
 			throw new SavRtException(ex);
-		} catch (PluginException e) {
-			throw new SavRtException(e);
 		}
 	}
 	

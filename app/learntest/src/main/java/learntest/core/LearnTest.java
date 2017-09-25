@@ -92,7 +92,7 @@ public class LearnTest extends AbstractLearntest {
 				learner.getFalseSample().clear();
 				learner.recordSample(probes, learner.getLogFile());
 				
-				RunTimeInfo info = reconcileGeneratedTestsAndGetRuntimeInfo(probes, targetMethod, params.isLearnByPrecond());
+				RunTimeInfo info = reconcileGeneratedTestsAndGetRuntimeInfo(probes, targetMethod, params.isTestMode());
 				if (learner instanceof PrecondDecisionLearner) { 
 					setLearnState((PrecondDecisionLearner)learner, info);
 				}

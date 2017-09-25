@@ -137,10 +137,6 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		long executionTime = SAVTimer.getExecutionTime();
 		int testCnt = cfgCoverage.getTotalTcs();
 		
-		if (!test) {
-			return new RunTimeInfo(executionTime, coverage, testCnt);
-		}
-		
 		StringBuffer coverageInfoBuf = new StringBuffer();
 		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
 			StringBuilder sb = new StringBuilder();
@@ -158,6 +154,10 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 			log.debug(sbStr);
 			
 			coverageInfoBuf.append(sbStr + "\n");
+		}
+		
+		if (!test) {
+			return new RunTimeInfo(executionTime, coverage, testCnt, coverageInfoBuf.toString());
 		}
 		
 		return new TestRunTimeInfo(executionTime, coverage, testCnt, coverageInfoBuf.toString());
