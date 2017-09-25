@@ -20,7 +20,7 @@ public class JDartServerOnDemand {
 			    methodName = "foo",
 			    paramString = "(x:int,y:int)";
 				int node = 5; // instruction offset
-				int branch = 1; 
+				int branch = 0; 
 
 		
 		

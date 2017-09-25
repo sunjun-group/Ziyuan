@@ -8,12 +8,16 @@
 
 package jdart.core;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.commands.ExecutionException;
 
 import jdart.model.TestInput;
+import jdart.model.TestVar;
 import main.RunJPF;
 
 /**
@@ -27,12 +31,25 @@ public class JDartCore {
 	 * @param jdartParams
 	 * @return perhaps NULL
 	 */
-	public String run_on_demand(JDartParams jdartParams) {
+	public List<TestInput> run_on_demand(JDartParams jdartParams) {
 		String[] config = constructConfig(jdartParams);
 		RunJPF jpf = new RunJPF();
-		jpf.run(config);
+		List<TestInput> init_value = jpf.run(config);
+		String result = null;
         for(Entry<List<int[]>, String[]> entry : jpf.getPathMap().entrySet()) {
-        	return entry.getValue()[1];
+        	result = entry.getValue()[1];
+        }
+        LinkedList<TestVar> paramList = init_value.get(0).getParamList();
+        if(result != null){
+	        String[] values = result.split(",");
+			for(String value : values){
+				String[] temp = value.split(":=");
+				for(int i = 0; i < paramList.size(); i++){
+					if(paramList.get(i).getName().equals(temp[0]))
+						paramList.get(i).setValue(temp[1]);
+				}
+			}
+			return init_value;
         }
 		return null;
 	}
