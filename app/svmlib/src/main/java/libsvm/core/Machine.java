@@ -235,7 +235,7 @@ public class Machine {
 
 		this.data = cleanUp(data);
 		if (getNumberOfFeatures() <= 0) {
-//			LOGGER.warn("The feature list is empty. SVM will not run.");
+			// LOGGER.warn("The feature list is empty. SVM will not run.");
 			return this;
 		}
 
@@ -257,8 +257,6 @@ public class Machine {
 		Assert.assertNotNull(parameter, "SVM parameters is not set.");
 		Assert.assertTrue(!dataPoints.isEmpty(), "SVM training data is empty.");
 
-		System.out.println("data points here = " + dataPoints);
-		
 		final svm_problem problem = new svm_problem();
 		final int length = dataPoints.size();
 		problem.l = length;
@@ -274,7 +272,7 @@ public class Machine {
 		}
 
 		model = performTrainingTask(problem, parameter);
-		
+
 		return this;
 	}
 
@@ -331,7 +329,8 @@ public class Machine {
 				dp.values = cleanedValues;
 			}
 
-//			LOGGER.info("Reduced feature size from " + originalSize + " to " + cleanedSize);
+			// LOGGER.info("Reduced feature size from " + originalSize + " to "
+			// + cleanedSize);
 		}
 
 		this.isDataClean = true;
@@ -357,8 +356,8 @@ public class Machine {
 	 *         was not completed.
 	 */
 	public Model getModel() {
-		return model == null || model.l <= 0 || data == null || data.size() <= 0 ? null : new Model(model, data
-				.get(0).getNumberOfFeatures());
+		return model == null || model.l <= 0 || data == null || data.size() <= 0 ? null
+				: new Model(model, data.get(0).getNumberOfFeatures());
 	}
 
 	protected List<DataPoint> getWrongClassifiedDataPoints(final List<DataPoint> dataPoints) {
@@ -396,13 +395,12 @@ public class Machine {
 	public <R> R getLearnedLogic(IDividerProcessor<R> processor, boolean round) {
 		return getLearnedLogic(processor, getDivider(), round);
 	}
-	
+
 	public <R> R getLearnedLogic(IDividerProcessor<R> processor, Divider divider, boolean round) {
 		return processor.process(divider, dataLabels, round);
 	}
-	
-	public <R> R getLearnedLogic(IDividerProcessor<R> processor, Divider divider,
-			boolean round, int num) {
+
+	public <R> R getLearnedLogic(IDividerProcessor<R> processor, Divider divider, boolean round, int num) {
 		return processor.process(divider, dataLabels, round, num);
 	}
 
@@ -413,7 +411,7 @@ public class Machine {
 		}
 		return formula.toString();
 	}
-	
+
 	public Divider getDivider() {
 		Model currentModel = getModel();
 		if (currentModel == null) {
@@ -520,8 +518,8 @@ public class Machine {
 
 		public void setValues(final double... values) {
 			if (values.length != numberOfFeatures) {
-				throw new InvalidParameterException("The array values must have exactly "
-						+ numberOfFeatures + " number of elements");
+				throw new InvalidParameterException(
+						"The array values must have exactly " + numberOfFeatures + " number of elements");
 			}
 			for (int i = 0; i < values.length; i++) {
 				this.values[i] = values[i];
@@ -534,7 +532,7 @@ public class Machine {
 			}
 			return values[index];
 		}
-		
+
 		public double[] getValues() {
 			return values;
 		}
@@ -591,39 +589,14 @@ public class Machine {
 			return node;
 		}
 	}
-	
+
 	public void setDefaultParams() {
-		setParameter(new Parameter().setMachineType(MachineType.C_SVC)
-				.setKernelType(KernelType.LINEAR).setEps(0.00001).setUseShrinking(false)
-				.setPredictProbability(false).setC(Double.MAX_VALUE));
+		setParameter(new Parameter().setMachineType(MachineType.C_SVC).setKernelType(KernelType.LINEAR).setEps(0.00001)
+				.setUseShrinking(false).setPredictProbability(false).setC(Double.MAX_VALUE));
 	}
 
 	public List<DataPoint> getDataPoints() {
 		return data;
-	}
-	
-	public List<DataPoint> getPosDataPoints() {
-		List<DataPoint> res = new ArrayList<DataPoint>();
-		
-		for (DataPoint d : data) {
-			if (d.category == Category.POSITIVE) {
-				res.add(d);
-			}
-		}
-		
-		return res;
-	}
-	
-	public List<DataPoint> getNegDataPoints() {
-		List<DataPoint> res = new ArrayList<DataPoint>();
-		
-		for (DataPoint d : data) {
-			if (d.category == Category.NEGATIVE) {
-				res.add(d);
-			}
-		}
-		
-		return res;
 	}
 
 	public boolean isPerformArtificialDataSynthesis() {
@@ -633,5 +606,29 @@ public class Machine {
 	public Machine setPerformArtificialDataSynthesis(boolean performArtificialDataSynthesis) {
 		this.performArtificialDataSynthesis = performArtificialDataSynthesis;
 		return this;
+	}
+
+	public List<DataPoint> getPosDataPoints() {
+		List<DataPoint> res = new ArrayList<DataPoint>();
+
+		for (DataPoint d : data) {
+			if (d.category == Category.POSITIVE) {
+				res.add(d);
+			}
+		}
+
+		return res;
+	}
+
+	public List<DataPoint> getNegDataPoints() {
+		List<DataPoint> res = new ArrayList<DataPoint>();
+
+		for (DataPoint d : data) {
+			if (d.category == Category.NEGATIVE) {
+				res.add(d);
+			}
+		}
+
+		return res;
 	}
 }

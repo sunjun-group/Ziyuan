@@ -8,6 +8,12 @@
 
 package gentest.core.value.generator;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.util.List;
+
 import gentest.core.data.MethodCall;
 import gentest.core.data.statement.RConstructor;
 import gentest.core.data.statement.Rmethod;
@@ -17,14 +23,6 @@ import gentest.core.data.typeinitilizer.TypeInitializer;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.execution.VariableRuntimeExecutor;
 import gentest.main.GentestConstants;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 
@@ -44,7 +42,10 @@ public class ObjectValueGenerator extends ValueGenerator {
 	public boolean doAppendVariable(GeneratedVariable variable, int level)
 			throws SavException {
 		for (int i = 0; i < GentestConstants.OBJECT_VALUE_GENERATOR_MAX_TRY_SELECTING_CONSTRUCTOR; i++) {
-			TypeInitializer initializer = loadInitializer(type);
+			TypeInitializer initializer = loadInitializer(type, 0);
+			if (initializer == null || initializer.hasNoConstructor()) {
+				continue;
+			}
 			selectedType = type;
 			if (!initializer.getType().equals(type.getRawType())) {
 				selectedType = type.resolveType(initializer.getType());
@@ -86,8 +87,20 @@ public class ObjectValueGenerator extends ValueGenerator {
 			Type[] types = constructor.getGenericParameterTypes();
 			int[] paramIds = new int[types.length];
 			for (int i = 0; i < types.length; i++) {
+				IType paramResolvedType = selectedType.resolveType(types[i]);
+				/* in case resolved type of param is the super type of receiver, 
+				 * we try to choose a subtype for it. In the worse case that subtype is the same with receiver type,
+				 * we better ignore it to avoid a loop call */
+				if (paramResolvedType.getRawType().isAssignableFrom(constructor.getDeclaringClass())) {
+					Class<?> paramSubType = getSubTypesScanner().getRandomImplClzz(paramResolvedType);
+					if (paramSubType == null || 
+							paramSubType.isAssignableFrom(constructor.getDeclaringClass())) {
+						return false;
+					}
+					paramResolvedType = selectedType.resolveType(paramSubType);
+				}
 				GeneratedVariable newVariable = appendVariable(variable, level + 1,
-						selectedType.resolveType(types[i]));
+						paramResolvedType);
 				paramIds[i] = newVariable.getReturnVarId();
 			}
 			variable.append(rconstructor, paramIds);
@@ -141,105 +154,44 @@ public class ObjectValueGenerator extends ValueGenerator {
 		variable.append(rmethod, paramIds, addVariable);
 	}
 	
-	/**
-	 * return 
-	 * constructor: if the class has it own visible constructor 
-	 * 			or if not, the visible constructor of extended class will be returned
-	 * method: means static method, if the class does not have visible constructor but static initialization method
-	 * methodCall: if the class has a builder inside. 
-	 */
-	public TypeInitializer loadInitializer(IType itype) {
+	private static final int RESOLVE_LEVEL = 7; // to prevent stack overflow.
+	public TypeInitializer loadInitializer(IType itype, int level) {
+		if (level == RESOLVE_LEVEL) {
+			return null;
+		}
 		Class<?> type = itype.getRawType();
-		TypeInitializer initializer = getTypeMethodCallsStore()
-				.loadConstructors(type);
-		if (initializer == null) {
+		TypeInitializer initializer = getTypeInitializerStore().load(type);
+		if (initializer == null || initializer.doesNotHaveGoodConstructor()) {
 			// if type is an interface or abstract, look up for constructor of
 			// its subclass instead.
 			if (type.isInterface() || Modifier.isAbstract(type.getModifiers())) {
 				// try to search subclass
-				Class<?> subClass = getSubTypesScanner().getRandomImplClzz(type);
+				Class<?> subClass = getSubTypesScanner().getRandomImplClzz(itype);
 				if (subClass != null) {
-					return loadInitializer(itype.resolveType(subClass));
+					return loadInitializer(itype.resolveType(subClass), level + 1);
 				}
 			} 
-			initializer = new TypeInitializer(type);
-			loadConstructors(type, initializer);
-			
-			getTypeMethodCallsStore().storeConstructors(type, initializer);
-			
 			// if still cannot get constructor,
 			// try to search subclass if it's not an abstract class
-			if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())
-					&& initializer.hasNoConstructor()) {
-				Class<?> subClass = getSubTypesScanner().getRandomImplClzz(type);
+			if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())) {
+				Class<?> subClass = getSubTypesScanner().getRandomImplClzz(itype);
+				if (type.equals(subClass)) {
+					/* 
+					 * if the class do not have any subClass and has only bad constructor, we will accept it as
+					 * last choice constructor.
+					 * */
+					if (initializer != null && !initializer.hasNoConstructor()) {
+						return initializer;
+					} 
+					return null;
+				}
 				if (subClass != null) {
-					loadInitializer(itype.resolveType(subClass));
+					IType subType = itype.resolveType(subClass);
+					loadInitializer(subType, level + 1);
 				}
 			}
 		}
 		return initializer;
 	}
 	
-	private void loadConstructors(Class<?> type, TypeInitializer initializer) {
-		List<Constructor<?>> mightCreateLoopList = new ArrayList<Constructor<?>>();
-		try {
-			/*
-			 * try with the perfect one which is public constructor with no
-			 * parameter
-			 */
-			Constructor<?> constructor = type.getConstructor();
-			if (canBeCandidateForConstructor(constructor, type, mightCreateLoopList)) {
-				initializer.addConstructor(constructor, false);
-			}
-		} catch (Exception e) {
-			// do nothing, just keep trying.
-		}
-		for (Constructor<?> constructor : type.getConstructors()) {
-			if (canBeCandidateForConstructor(constructor, type, mightCreateLoopList)) {
-				initializer.addConstructor(constructor, true);
-			}
-		}
-		
-		/* try to find static method for initialization inside class */
-		for (Method method : type.getMethods()) {
-			if (Modifier.isStatic(method.getModifiers())
-					&& Modifier.isPublic(method.getModifiers())) {
-				if (method.getReturnType().equals(type)) {
-					initializer.addStaticMethod(method);
-				}
-			}
-		}
-		
-		/* try to find a builder inside class */
-		Class<?>[] declaredClasses = type.getDeclaredClasses();
-		if (declaredClasses != null) {
-			for (Class<?> innerClazz : declaredClasses) {
-				for (Method method : innerClazz.getMethods()) {
-					if (method.getReturnType().equals(type)) {
-						initializer.addBuilderMethodCall(MethodCall.of(method, innerClazz));
-					}
-				}
-			}
-		}
-		if (initializer.hasNoConstructor()) {
-			initializer.addConstructors(mightCreateLoopList);
-		}
-	}
-
-	private boolean canBeCandidateForConstructor(Constructor<?> constructor,
-			Class<?> type, List<Constructor<?>> mightCreateLoopList) {
-		Class<?>[] parameterTypes = constructor.getParameterTypes();
-		
-		// avoid constructor with no parameters when there are multiple constructors
-		if (type.getConstructors().length != 1 && parameterTypes.length == 0) return false;
-		
-		for (Class<?> paramType : parameterTypes) {
-			if (type.equals(paramType) || paramType.isAssignableFrom(type)) {
-				mightCreateLoopList.add(constructor);
-				return false;
-			}
-		}
-		return Modifier.isPublic(constructor.getModifiers());
-	}
-
 }

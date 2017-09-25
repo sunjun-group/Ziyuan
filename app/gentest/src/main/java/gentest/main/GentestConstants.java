@@ -31,7 +31,7 @@ public class GentestConstants {
 	 * generate values for list -> level 2
 	 * see {@link ValueGenerator} 
 	 * */
-	public static final int VALUE_GENERATION_MAX_LEVEL = 2;
+	public static final int VALUE_GENERATION_MAX_LEVEL = 10;
 	/**
 	 * see {@link ArrayValueGenerator}
 	 * NOTE This must be less than 255

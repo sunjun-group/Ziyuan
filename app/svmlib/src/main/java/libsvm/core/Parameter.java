@@ -41,8 +41,7 @@ public class Parameter {
 
 	private boolean isMachineTypeIn(final MachineType... types) {
 		for (MachineType type : types) {
-			if (param.svm_type == type.index()) {
-//			if (param.kernel_type == type.index()) {
+			if (param.kernel_type == type.index()) {
 				return true;
 			}
 		}
