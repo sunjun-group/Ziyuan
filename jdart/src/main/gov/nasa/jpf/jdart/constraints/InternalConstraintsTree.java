@@ -470,6 +470,10 @@ public class InternalConstraintsTree {
 	 * @return
 	 */
 	public Valuation solve(int last_node, int branch) {
+		List<int[]> path = new ArrayList<>();
+		path.add(new int[]{last_node,branch});
+		String[] str = new String[]{"","NULL"};
+		
 		Node node = currentTarget;
 		if (node == null)
 			return null;
@@ -529,6 +533,10 @@ public class InternalConstraintsTree {
 				currentTarget.dontKnow();
 				break;
 			}
+			
+			str[1] = String.valueOf(val);
+			pathMap.put(path, str);
+			
 			prev = val;
 			return ExpressionUtil.combineValuations(val);
 		}

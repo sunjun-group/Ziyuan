@@ -9,6 +9,7 @@
 package jdart.core;
 
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.eclipse.core.commands.ExecutionException;
 
@@ -20,6 +21,22 @@ import main.RunJPF;
  * extracted from RunJDartHandler.
  */
 public class JDartCore {
+	
+	/**
+	 * 
+	 * @param jdartParams
+	 * @return perhaps NULL
+	 */
+	public String run_on_demand(JDartParams jdartParams) {
+		String[] config = constructConfig(jdartParams);
+		RunJPF jpf = new RunJPF();
+		jpf.run(config);
+        for(Entry<List<int[]>, String[]> entry : jpf.getPathMap().entrySet()) {
+        	return entry.getValue()[1];
+        }
+		return null;
+	}
+	
 	/**
 	 * 
 	 * @param jdartParams
