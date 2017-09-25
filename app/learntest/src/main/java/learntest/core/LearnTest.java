@@ -61,6 +61,7 @@ public class LearnTest extends AbstractLearntest {
 				return getRuntimeInfo(cfgCoverage);
 			}
 			
+			/* <offset, relevant variables> */
 			Map<Integer, List<Variable>> relevantVarMap = new CFGBuilder().parsingCFG(getAppClasspath(),
 					targetMethod.getClassName(), targetMethod.getMethodFullName(), targetMethod.getLineNum(), targetMethod.getMethodSignature())
 					.getRelevantVarMap();

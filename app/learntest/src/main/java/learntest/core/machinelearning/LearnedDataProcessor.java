@@ -167,7 +167,7 @@ public class LearnedDataProcessor {
 	}
 
 	public void sampleForMissingBranch(CfgNode node, PrecondDecisionLearner precondDecisionLearner) {
-
+		
 		DecisionNodeProbe nodeProbe = decisionProbes.getNodeProbe(node);
 		/*
 		 * if all branches are missing, nothing we can do, and if all branches
@@ -186,19 +186,20 @@ public class LearnedDataProcessor {
 			List<double[]> list = getNeighborTc(missingBranch, nodeProbe);
 			List<ExecVar> vars = decisionProbes.getOriginalVars();
 			try {
+				int offset = precondDecisionLearner.nodeIdx2Offset(node);
 				GentestResult mainResult = mediator.genMainAndCompile(list, vars, PrintOption.APPEND);
 				List<File> generatedClasses = mainResult.getAllFiles();
-				for (File string : generatedClasses) {
-					System.out.println("generated class names : " + string.getAbsolutePath());
-					JDartRunner jdartRunner = new JDartRunner(mediator.getAppClassPath());
-					List<TestInput> result = jdartRunner.runJDart(mediator.getLearntestParams(), string.getAbsolutePath());
-					System.out.println(result);
+				File generatedClasse = generatedClasses.get(0);
+				System.out.println("generated class names : " + generatedClasse.getAbsolutePath());
+				JDartRunner jdartRunner = new JDartRunner(mediator.getAppClassPath());
+				List<TestInput> result = jdartRunner.runJDartOnDemand(mediator.getLearntestParams(), generatedClasse.getAbsolutePath(), offset, 
+						missingBranch == BranchType.FALSE ? 1 : 0);
+				System.out.println(result);
 
-					List<BreakpointValue> bkpVals = JdartTestInputUtils.toBreakpointValue(result,
-							mediator.getLearntestParams().getTargetMethod().getMethodFullName());
-					List<double[]> solutions = VarSolutionUtils.buildSolutions(bkpVals, vars);
-					selectiveSampling.runData(solutions, vars);
-				}
+				List<BreakpointValue> bkpVals = JdartTestInputUtils.toBreakpointValue(result,
+						mediator.getLearntestParams().getTargetMethod().getMethodFullName());
+				List<double[]> solutions = VarSolutionUtils.buildSolutions(bkpVals, vars);
+				selectiveSampling.runData(solutions, vars);
 			} catch (SavException e) {
 				e.printStackTrace();
 			}
