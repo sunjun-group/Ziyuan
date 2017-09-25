@@ -18,22 +18,19 @@ import jdart.core.util.ByteConverter;
 import jdart.core.util.TaskManager;
 import jdart.model.TestInput;
 
-public class JDartProcess {
+public class JDartProcessOnDemand {
 
-	private static Logger log = LoggerFactory.getLogger(JDartProcess.class);
-
-	public static void main(String[] args) {
-		new JDartProcess().run(JDartParams.defaultJDartParams());
-	}
+	private static Logger log = LoggerFactory.getLogger(JDartProcessOnDemand.class);
 
 	public List<TestInput> run(JDartParams jdartParams) {
 		TaskManager.printCurrentJVM();
 		String[] args = new String[] { jdartParams.getClasspathStr(), jdartParams.getMainEntry(),
 				jdartParams.getClassName(), jdartParams.getMethodName(), jdartParams.getParamString(),
-				jdartParams.getAppProperties(), jdartParams.getSiteProperties() };
+				jdartParams.getAppProperties(), jdartParams.getSiteProperties(),
+				""+jdartParams.getExploreNode(), ""+jdartParams.getExploreBranch()};
 		List<TestInput> list = null;
 		try {
-			list = JDartProcess.exec(JDartClient.class, args);
+			list = JDartProcessOnDemand.exec(JDartOnDemandClient.class, args);
 			if (list != null) {
 				log.info("JDart return " + list.size() +" test cases");
 			}
@@ -46,7 +43,7 @@ public class JDartProcess {
 	}
 
 	public static List<TestInput> exec(Class klass, String[] args) throws IOException, InterruptedException {
-		String classpathStr, mainEntry, targetClass, methodName, paramString, app, site;
+		String classpathStr, mainEntry, targetClass, methodName, paramString, app, site, node, branch;
 		classpathStr = args[0];
 		mainEntry = args[1];
 		targetClass = args[2];
@@ -54,6 +51,8 @@ public class JDartProcess {
 		paramString = args[4];
 		app = args[5];
 		site = args[6];
+		node = args[7];
+		branch = args[8];
 
 		String javaHome = System.getProperty("java.home");
 		String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
@@ -89,7 +88,7 @@ public class JDartProcess {
 			log.info("JDart mainEntry : "+mainEntry);
 			log.info("JDart param : "+paramString);
 			ProcessBuilder builder = new ProcessBuilder(javaBin, "-Xms1024m", "-Xmx9000m", "-cp", classpath, className, classpathStr, mainEntry,
-					targetClass, methodName, paramString, app, site, ""+port);
+					targetClass, methodName, paramString, app, site, node, branch, ""+port);
 //			builder.directory(new File("E:\\hairui\\git\\Ziyuan\\jdart"));
 			Process process = builder.start();
 			pid = TaskManager.getPid(process);

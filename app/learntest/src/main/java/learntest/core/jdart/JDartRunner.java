@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import jdart.core.JDartParams;
 import jdart.core.socket2.JDartProcess;
+import jdart.core.socket2.JDartProcessOnDemand;
 import jdart.model.TestInput;
 import learntest.core.LearnTestParams;
 import learntest.core.LearnTestParams.LearntestSystemVariable;
@@ -48,6 +49,28 @@ public class JDartRunner {
 //			JDartCore jdartCore = new JDartCore();
 //			JDartServer jdartCore = new JDartServer();
 			JDartProcess jdartCore = new JDartProcess();
+			List<TestInput> inputs = jdartCore.run(jdartParams);
+			return inputs;
+		} catch (Exception e) {
+			log.debug("Fail running JDart", e.getMessage());
+		}
+		
+		return Collections.EMPTY_LIST;
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public List<TestInput> runJDartOnDemand(LearnTestParams learntestParams, String mainClass,int node, int branch){
+		try {
+			JDartParams jdartParams = initJDartParams(learntestParams);
+			/* run jdart */
+			if (mainClass == null) {
+				return Collections.EMPTY_LIST;
+			}
+			jdartParams.setMainEntry(mainClass);
+			jdartParams.setExploreBranch(branch);
+			jdartParams.setExploreNode(node);
+			JDartProcessOnDemand jdartCore = new JDartProcessOnDemand();
 			List<TestInput> inputs = jdartCore.run(jdartParams);
 			return inputs;
 		} catch (Exception e) {

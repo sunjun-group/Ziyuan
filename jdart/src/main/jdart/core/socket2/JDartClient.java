@@ -22,14 +22,20 @@ public class JDartClient {
 		log.info("JDart begin : "+jdartParams.getClassName()+"."+jdartParams.getMethodName());
 		List<TestInput> result = new JDartCore().run(jdartParams);
 
-//		 for (int i = 0; i < result.size(); i++) {  
-//			 try {
-//				byte[] bytes = ByteConverter.convertToBytes(result.get(i));
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			 }
+		 for (int i = 0; i < result.size(); i++) {  
+			 try {
+				byte[] bytes = ByteConverter.convertToBytes(result.get(i));
+				StringBuffer stringBuffer = new StringBuffer();
+				for (byte b : bytes) {
+					stringBuffer.append(b+"\t");
+				}
+				log.info(stringBuffer.toString());
+				TestInput testInput = (TestInput) ByteConverter.convertFromBytes(bytes);
+			} catch (IOException | ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		log.info("JDart over");
 		Socket socket = null;
@@ -78,10 +84,13 @@ public class JDartClient {
 			app = args[5];
 			site = args[6];	
 			int port = Integer.parseInt(args[7]);
-			new JDartClient().run(JDartServerSingle.constructJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site), port);
+			new JDartClient().run(JDartParams.constructJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site), port);
 		}else{
-			new JDartClient().run(JDartServerSingle.constructJDartParams(), 8989);
+			new JDartClient().run(JDartParams.defaultJDartParams(), 8989);
 		}
 	}
+	
+
+	
 	
 }

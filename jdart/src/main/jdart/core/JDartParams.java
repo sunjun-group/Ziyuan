@@ -116,6 +116,102 @@ public class JDartParams {
 	public void setExploreBranch(int explore_branch) {
 		this.explore_branch = explore_branch;
 	}
-
 	
+	public static JDartParams constructOnDemandJDartParams(String classpathStr, String mainEntry, String className, 
+			String methodName, String paramString,
+			String app, String site, int node, int branch) {
+		
+		long minFree = 20*(1024<<10); // min free memory
+		long timeLimit = 30 * 1000;
+		
+		JDartParams params = new JDartParams();
+		params.setAppProperties(app);
+		params.setClassName(className);
+		params.setClasspathStr(classpathStr);
+		params.setMainEntry(mainEntry);
+		params.setMethodName(methodName);
+		params.setMinFree(minFree);
+		params.setParamString(paramString);
+		params.setSiteProperties(site);
+		params.setTimeLimit(timeLimit);
+		params.setExploreNode(node);
+		params.setExploreBranch(branch);
+
+		return params;
+	}
+	
+	public static JDartParams defaultOnDemandJDartParams() {
+		String  classpathStr = "E:\\workspace\\JPF\\data/apache-common-math-2.2/bin", 
+				app = "libs/jdart/jpf.properties",
+				site = "libs/jpf_on_demand.properties",
+				
+				mainEntry = "com.Example",
+				className = "com.Example",
+				methodName = "foo",
+				paramString = "(x:int,y:int)";
+		
+		int node = 5; // instruction offset
+		int branch = 1; // 0,1 , missing branch
+		
+		return constructOnDemandJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site, node, branch);
+	}
+	
+	public static JDartParams defaultJDartParams() {
+		String  classpathStr = "E:\\workspace\\JPF\\data/apache-common-math-2.2/bin", 
+				app = "libs/jdart/jpf.properties",
+				site = "libs/jpf.properties", //if only want to solve once, change to libs/jpf_once.properties
+				
+				mainEntry = "com.Test",
+				className = "org.apache.commons.math.util.FastMath",
+				methodName = "floor",
+				paramString = "(x:double)";
+//				mainEntry = "testdata.l2t.init.mersennetwister.next.MersenneTwisterMain",
+//				className = "org.apache.commons.math.random.MersenneTwister",
+//				methodName = "next",
+//				paramString = "(bits:int)";
+
+		/** return one results */
+//		mainEntry = "testdata.l2t.init.continuousoutputmodel.setinterpolatedtime.ContinuousOutputModelMain";
+//		className = "org.apache.commons.math.ode.ContinuousOutputModel";
+//		methodName = "setInterpolatedTime";
+//		paramString = "(time:double)";
+//		
+//		/** return two results */
+//		mainEntry = "testdata.l2t.init.mersennetwister.next.MersenneTwisterMain";
+//		className = "org.apache.commons.math.random.MersenneTwister";
+//		methodName = "next";
+//		paramString = "(bits:int)";//line 224
+		
+		/** classcast exception */
+//		mainEntry = "testdata.l2t.init.mersennetwister.setseed.MersenneTwisterMain";
+//		className = "org.apache.commons.math.random.MersenneTwister";
+//		methodName = "setSeed";
+//		paramString = "(seed:int[])";
+		mainEntry = "com.Example";
+		className = "com.Example";
+		methodName = "foo";
+		paramString = "(x:int,y:int)";
+		
+		return constructJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site);
+	}
+	
+	public static JDartParams constructJDartParams(String classpathStr, String mainEntry, String className, String methodName, String paramString,
+			String app, String site) {
+		
+		long minFree = 20*(1024<<10); // min free memory
+		long timeLimit = 300000 * 1000;
+		
+		JDartParams params = new JDartParams();
+		params.setAppProperties(app);
+		params.setClassName(className);
+		params.setClasspathStr(classpathStr);
+		params.setMainEntry(mainEntry);
+		params.setMethodName(methodName);
+		params.setMinFree(minFree);
+		params.setParamString(paramString);
+		params.setSiteProperties(site);
+		params.setTimeLimit(timeLimit);
+		
+		return params;
+	}
 }

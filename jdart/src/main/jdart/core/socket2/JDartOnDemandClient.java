@@ -24,6 +24,7 @@ public class JDartOnDemandClient {
 
 		for (int i = 0; i < result.size(); i++) {
 			try {
+				System.out.println(result.get(i));
 				byte[] bytes = ByteConverter.convertToBytes(result.get(i));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -84,10 +85,10 @@ public class JDartOnDemandClient {
 			int node = Integer.parseInt(args[7]);
 			int branch = Integer.parseInt(args[8]);
 			int port = Integer.parseInt(args[9]);
-			new JDartOnDemandClient().run(JDartServerOnDemand.constructJDartParams(classpathStr, mainEntry, className,
+			new JDartOnDemandClient().run(JDartParams.constructOnDemandJDartParams(classpathStr, mainEntry, className,
 					methodName, paramString, app, site, node, branch), port);
 		} else {
-			new JDartOnDemandClient().run(JDartServerOnDemand.constructJDartParams(), 8989);
+			new JDartOnDemandClient().run(JDartParams.defaultOnDemandJDartParams(), 8989);
 		}
 	}
 
