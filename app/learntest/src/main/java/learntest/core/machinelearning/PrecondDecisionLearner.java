@@ -246,8 +246,8 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				}
 				log.debug("relevant vars : "+targetVars);
 				OrCategoryCalculator preconditions = pair.first();
-				dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
-				dataPreprocessor.sampleForLoopCvg(node, preconditions, this);
+//				dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
+//				dataPreprocessor.sampleForLoopCvg(node, preconditions, this);
 				dataPreprocessor.sampleForMissingBranch(node, this);
 
 				updatePrecondition(nodeProbe, preconditions, targetVars);
@@ -595,6 +595,10 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	@Override
 	public String getLogFile() {
 		return logFile;
+	}
+
+	public int nodeIdx2Offset(CfgNode node) {
+		return this.relevantVars.get(node.getIdx()).offset;
 	}
 	
 	
