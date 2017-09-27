@@ -66,7 +66,7 @@ public class MWriter implements ICompilationUnitWriter {
 			methodBuilder.modifiers(ModifierSet.PUBLIC, ModifierSet.STATIC);
 			methodBuilder.throwException(Throwable.class.getSimpleName());
 			/** parameters */
-			List<Parameter> parameters = new LinkedList<>();
+			List<Parameter> parameters = new LinkedList<Parameter>();
 			Type type = new ReferenceType(new ClassOrInterfaceType("String"), 1);
 			Parameter parameter = new Parameter(type, new VariableDeclaratorId ("args"));
 			parameters.add(parameter);
