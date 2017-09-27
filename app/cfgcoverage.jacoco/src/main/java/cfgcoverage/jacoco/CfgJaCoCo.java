@@ -17,7 +17,7 @@ import sav.strategies.dto.AppJavaClassPath;
 
 /**
  * @author LLT
- *
+ * TODO LLT: make it clean when supporting cache component for multiple runs.
  */
 public class CfgJaCoCo {
 	public static final String JACOCO_LOG_FILE = "jacocoLogFile";

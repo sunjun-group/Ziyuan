@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import sav.common.core.utils.CollectionUtils;
 
@@ -90,7 +91,7 @@ public class NodeCoverage {
 		if (cfgCoverage.getDupTcs() == null || cfgCoverage.getDupTcs().containsKey(testIdx)) {
 			return testIdx;
 		}
-		for (Entry<Integer, List<Integer>> entry : cfgCoverage.getDupTcs().entrySet()) {
+		for (Entry<Integer, Set<Integer>> entry : cfgCoverage.getDupTcs().entrySet()) {
 			if (entry.getValue().contains(testIdx)) {
 				return entry.getKey();
 			}
@@ -154,7 +155,7 @@ public class NodeCoverage {
 					Integer tcIdx = it.next();
 					next[0] = tcIdx;
 					next[1] = coveredTcs.get(tcIdx);
-					List<Integer> dupTcs = cfgCoverage.getDupTcs(tcIdx);
+					Set<Integer> dupTcs = cfgCoverage.getDupTcs(tcIdx);
 					if (!dupTcs.isEmpty()) {
 						dupIt = dupTcs.iterator();
 						coveredFreq = next[1];

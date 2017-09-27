@@ -38,4 +38,11 @@ public class DuplicateFilterFreqProbesAnalyzer extends FreqProbesAnalyzer {
 		return true;
 	}
 
+	public Map<Integer, String> getUniqueHashcodes() {
+		return uniqueHashcodes;
+	}
+	
+	public void setUniqueHashcodes(Map<Integer, String> uniqueHashcodes) {
+		this.uniqueHashcodes = uniqueHashcodes;
+	}
 }

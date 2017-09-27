@@ -211,6 +211,8 @@ public class CfgCoverageBuilder {
 
 	public void commitDuplicate() {
 		for (CfgCoverage coverage : methodCfgCoverageMap.values()) {
+			/* make sure that new testcases already added to cfgCoverage */
+			coverage.addNewTestcases(testMethods);
 			coverage.updateDuplicateTcs(duplicatedTcs);
 		}
 	}

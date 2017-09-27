@@ -10,7 +10,6 @@ package cfgcoverage.jacoco.analysis.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,7 +28,7 @@ public class CfgCoverage {
 	protected CFG cfg;
 	protected List<NodeCoverage> nodeCoverages;
 	protected List<String> testcases;
-	protected Map<Integer, List<Integer>> dupTcMap;
+	protected Map<Integer, Set<Integer>> dupTcMap;
 	
 	public CfgCoverage(CFG cfg) {
 		this.cfg = cfg;
@@ -102,31 +101,11 @@ public class CfgCoverage {
 		if (CollectionUtils.isEmpty(duplicatedTcs)) {
 			return;
 		}
-//		for (Entry<String, Set<String>> entry : duplicatedTcs.entrySet()) {
-//			Set<Integer> dupIdxies = toIdx(entry.getValue());
-//			int testIdx = testcases.indexOf(entry.getKey());
-//			if (testIdx < 0) {
-//				continue;
-//			}
-//			for (NodeCoverage nodeCvg : nodeCoverages) {
-//				int count = nodeCvg.getCoveredFreq(testIdx);
-//				if (count > 0) {
-//					List<Integer> coveredBranches = nodeCvg.getCoveredBranches(testIdx);
-//					for (int dupIdx : dupIdxies) {
-//						nodeCvg.setCovered(dupIdx, count);
-//						for (int branchIdx : coveredBranches) {
-//							nodeCvg.updateCoveredBranchesForTc(branchIdx, dupIdx);
-//						}
-//					}
-//				}
-//			}
-//		}
 		if (dupTcMap == null) {
-			this.dupTcMap = new HashMap<Integer, List<Integer>>(duplicatedTcs.size());
+			this.dupTcMap = new HashMap<Integer, Set<Integer>>(duplicatedTcs.size());
 		}
 		for (Entry<String, Set<String>> entry : duplicatedTcs.entrySet()) {
-			List<Integer> dupTcIdxies = CollectionUtils.getListInitIfEmpty(dupTcMap, testcases.indexOf(entry.getKey()),
-					entry.getValue().size());
+			Set<Integer> dupTcIdxies = CollectionUtils.getSetInitIfEmpty(dupTcMap, testcases.indexOf(entry.getKey()));
 			for (String tc : entry.getValue()) {
 				dupTcIdxies.add(testcases.indexOf(tc));
 			}
@@ -136,24 +115,16 @@ public class CfgCoverage {
 	/**
 	 * map can be null
 	 */
-	public Map<Integer, List<Integer>> getDupTcs() {
+	public Map<Integer, Set<Integer>> getDupTcs() {
 		return dupTcMap;
 	}
 	
-	public List<Integer> getDupTcs(int testIdx) {
-		List<Integer> dupTcs = null;
+	public Set<Integer> getDupTcs(int testIdx) {
+		Set<Integer> dupTcs = null;
 		if (dupTcMap != null) {
 			dupTcs = dupTcMap.get(testIdx);
 		}
 		return CollectionUtils.nullToEmpty(dupTcs);
-	}
-
-	private Set<Integer> toIdx(Set<String> tcs) {
-		Set<Integer> idxies = new HashSet<Integer>(tcs.size());
-		for (String dupTc : tcs) {
-			idxies.add(testcases.indexOf(dupTc));
-		}
-		return idxies;
 	}
 
 	public int getTotalTcs() {

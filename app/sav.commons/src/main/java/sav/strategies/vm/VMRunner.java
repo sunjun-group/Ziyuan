@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -49,7 +50,7 @@ public class VMRunner {
 	private long timeout = NO_TIME_OUT;
 	private boolean isLog = true;
 	
-	private Process process;
+	protected Process process;
 	private String processError;
 	
 	public boolean startVm(VMConfiguration config) throws SavException {
@@ -89,7 +90,7 @@ public class VMRunner {
 		return processError;
 	}
 
-	public static void setupInputStream(final InputStream is, final StringBuffer sb) {
+	public void setupInputStream(final InputStream is, final StringBuffer sb) {
 		final InputStreamReader streamReader = new InputStreamReader(is);
 		new Thread(new Runnable() {
 			public void run() {
@@ -126,13 +127,15 @@ public class VMRunner {
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
 		try {
 			process = processBuilder.start();
-			setupInputStream(process.getErrorStream(), sb);
+			setupErrorStream(process.getErrorStream(), sb);
 			/* Note: The input stream must be read if available to be closed, 
 			 * otherwise, the process will never end. So, keep doing this even if 
 			 * the printStream is not set */
 			setupInputStream(process.getInputStream(), new StringBuffer());
-			Timer t = new Timer();
+			setupOutputStream(process.getOutputStream());
+			Timer t = null;
 			if (timeout != NO_TIME_OUT) {
+				t = new Timer();
 			    t.schedule(new TimerTask() {
 
 			        @Override
@@ -143,7 +146,9 @@ public class VMRunner {
 			}
 			if (waitUntilStop) {
 				waitUntilStop(process);
-				t.cancel();
+				if (t != null) {
+					t.cancel();
+				}
 				processError = sb.toString();
 				return processError.trim().isEmpty();
 			}
@@ -152,6 +157,14 @@ public class VMRunner {
 			log.error(e.getMessage());
 			throw new SavException(ModuleEnum.JVM, e, "cannot start jvm process");
 		}
+	}
+
+	protected void setupErrorStream(InputStream errorStream, StringBuffer sb) {
+		setupInputStream(errorStream, sb);
+	}
+
+	protected void setupOutputStream(OutputStream outputStream) {
+		// override if needed.
 	}
 
 	private void logCommands(List<String> commands) {

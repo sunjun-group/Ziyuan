@@ -131,9 +131,7 @@ public class CfgJaCoCoRunner {
 	
 	public Map<String, CfgCoverage> report() throws SavException {
 		try {
-			reporter = new ExecutionReporter(targetMethods,
-					new String[] { appClasspath.getTarget(), appClasspath.getTestTarget() });
-			reporter.setConfig(config);
+			ensureReporter();
 			if (cfgCoverageMap != null) {
 				reporter.setCfgCoverageMap(cfgCoverageMap);
 			}
@@ -142,6 +140,16 @@ public class CfgJaCoCoRunner {
 			return reporter.getMethodCfgCoverageMap();
 		} catch (Exception e) {
 			throw new SavException(e, ModuleEnum.UNSPECIFIED, e.getMessage());
+		}
+	}
+
+	private void ensureReporter() {
+		if (reporter == null) {
+			reporter = new ExecutionReporter(targetMethods,
+					new String[] { appClasspath.getTarget(), appClasspath.getTestTarget() });
+			reporter.setConfig(config);
+		} else {
+			reporter.reset(targetMethods, new String[] { appClasspath.getTarget(), appClasspath.getTestTarget()});
 		}
 	}
 	

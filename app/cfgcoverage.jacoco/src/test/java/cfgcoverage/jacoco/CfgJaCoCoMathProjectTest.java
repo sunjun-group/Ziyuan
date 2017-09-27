@@ -88,4 +88,12 @@ public class CfgJaCoCoMathProjectTest extends AbstractTest {
 		List<String> junitClassNames = Arrays.asList("testdata.bug.i87.l2t.init.loessinterpolator.smooth.LoessInterpolator1");
 		run(targetMethods, targetClasses, junitClassNames);
 	}
+	
+	@Test
+	public void runLevenbergEstimation() throws Exception {
+		List<String> targetClasses = Arrays.asList("org.apache.commons.math.estimation.LevenbergMarquardtEstimator");
+		List<String> targetMethods = Arrays.asList("org.apache.commons.math.estimation.LevenbergMarquardtEstimator.estimate");
+		List<String> junitClassNames = Arrays.asList("testdata.ram.init.levenbergmarquardtestimator.estimate.LevenbergMarquardtEstimator1");
+		run(targetMethods, targetClasses, junitClassNames);
+	}
 }

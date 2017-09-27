@@ -10,6 +10,7 @@ package cfgcoverage.jacoco;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ public class ExecutionReporter extends AbstractExecutionReporter implements IExe
 	private Logger log = LoggerFactory.getLogger(ExecutionDataReporter.class);
 	private CfgCoverageBuilder coverageBuilder;
 	private boolean duplicateFilter;
+	private Map<Integer, String> tcProbesUniqueHashcodes = new HashMap<Integer, String>();
 
 	public ExecutionReporter(List<String> targetMethods, String... targetFolders) {
 		super(targetFolders);
@@ -44,6 +46,7 @@ public class ExecutionReporter extends AbstractExecutionReporter implements IExe
 	}
 	
 	public void reset(List<String> targetMethods, String... targetFolders) {
+		super.reset(targetFolders);
 		coverageBuilder.setTargetMethods(targetMethods);
 	}
 	
@@ -79,7 +82,9 @@ public class ExecutionReporter extends AbstractExecutionReporter implements IExe
 
 	private FreqProbesAnalyzer initAnalyzer(ExecutionDataStore dataStore) {
 		if (duplicateFilter) {
-			return new DuplicateFilterFreqProbesAnalyzer(dataStore, coverageBuilder);
+			DuplicateFilterFreqProbesAnalyzer analyzer = new DuplicateFilterFreqProbesAnalyzer(dataStore, coverageBuilder);
+			analyzer.setUniqueHashcodes(tcProbesUniqueHashcodes);
+			return analyzer;
 		}
 		return new FreqProbesAnalyzer(dataStore, coverageBuilder);
 	}
