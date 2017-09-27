@@ -73,17 +73,15 @@ public class InterprocessVmRunner extends VMRunner {
 				final InputStreamReader streamReader = new InputStreamReader(is);
 				BufferedReader br = new BufferedReader(streamReader);
 				try {
-					while (!outputReader.isClosed()) {
-						String line = null;
-						try {
-							while ((line = br.readLine()) != null) {
-								if (!outputReader.isClosed() && outputReader.isMatched(line)) {
-									outputReader.read(br);
-								}
+					String line = null;
+					try {
+						while ((line = br.readLine()) != null) {
+							if (!outputReader.isClosed() && outputReader.isMatched(line)) {
+								outputReader.read(br);
 							}
-						} catch (IOException e) {
-							log.warn(e.getMessage());
 						}
+					} catch (IOException e) {
+						log.warn(e.getMessage());
 					}
 				} finally {
 					IOUtils.closeQuietly(streamReader);

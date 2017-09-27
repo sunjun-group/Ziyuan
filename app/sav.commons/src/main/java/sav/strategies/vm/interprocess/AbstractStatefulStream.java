@@ -10,7 +10,7 @@ package sav.strategies.vm.interprocess;
 
 /**
  * @author LLT
- * a maker stream used to communicate with GAN.
+ * a maker stream used to communicate with server.
  */
 public class AbstractStatefulStream {
 	protected volatile StreamState state;
