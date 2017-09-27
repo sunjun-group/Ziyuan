@@ -100,7 +100,6 @@ public class VMRunner {
 					while ((line = br.readLine()) != null) {
 						if (!line.contains("Class JavaLaunchHelper is implemented in both")) {
 							sb.append(line).append("\n");
-							System.out.println("warn:" + line);
 						}
 					}
 				} catch (IOException e) {
