@@ -166,7 +166,7 @@ public class LearnedDataProcessor {
 		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions, learnedDividers);
 	}
 
-	public void sampleForMissingBranch(CfgNode node, PrecondDecisionLearner precondDecisionLearner) {
+	public boolean sampleForMissingBranch(CfgNode node, PrecondDecisionLearner precondDecisionLearner) {
 		
 		DecisionNodeProbe nodeProbe = decisionProbes.getNodeProbe(node);
 		/*
@@ -174,7 +174,7 @@ public class LearnedDataProcessor {
 		 * are covered, then do not need to do anything
 		 */
 		if (nodeProbe.areAllbranchesUncovered()) {
-			return;
+			return false;
 		}
 
 		CoveredBranches coveredType = nodeProbe.getCoveredBranches();
@@ -200,10 +200,12 @@ public class LearnedDataProcessor {
 						mediator.getLearntestParams().getTargetMethod().getMethodFullName());
 				List<double[]> solutions = VarSolutionUtils.buildSolutions(bkpVals, vars);
 				selectiveSampling.runData(solutions, vars);
+				return true;
 			} catch (SavException e) {
 				e.printStackTrace();
 			}
 		}
+		return false;
 
 	}
 
