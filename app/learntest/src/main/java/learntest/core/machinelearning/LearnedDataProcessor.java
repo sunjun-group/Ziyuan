@@ -186,13 +186,12 @@ public class LearnedDataProcessor {
 			List<double[]> list = getNeighborTc(missingBranch, nodeProbe);
 			List<ExecVar> vars = decisionProbes.getOriginalVars();
 			try {
-				int offset = precondDecisionLearner.nodeIdx2Offset(node);
 				GentestResult mainResult = mediator.genMainAndCompile(list, vars, PrintOption.APPEND);
 				List<File> generatedClasses = mainResult.getAllFiles();
 				File generatedClasse = generatedClasses.get(0);
 				System.out.println("generated class names : " + generatedClasse.getAbsolutePath());
 				JDartRunner jdartRunner = new JDartRunner(mediator.getAppClassPath());
-				List<TestInput> result = jdartRunner.runJDartOnDemand(mediator.getLearntestParams(), generatedClasse.getAbsolutePath(), offset, 
+				List<TestInput> result = jdartRunner.runJDartOnDemand(mediator.getLearntestParams(), generatedClasse.getAbsolutePath(), node.getIdx(), 
 						missingBranch == BranchType.FALSE ? 1 : 0);
 				System.out.println(result);
 
