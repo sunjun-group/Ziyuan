@@ -1,7 +1,9 @@
 package jdart.core.socket2;
 
-import java.io.DataOutputStream;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
 
@@ -12,49 +14,51 @@ import jdart.core.JDartCore;
 import jdart.core.JDartParams;
 import jdart.core.util.ByteConverter;
 import jdart.model.TestInput;
+import main.RunJPF;
 
 public class JDartOnDemandClient {
 	private static Logger log = LoggerFactory.getLogger(JDartOnDemandClient.class);
-	private static int javaPathLimit = 500; /*** to constraint the number of returned result, which may cause java error : The filename or extension is too long */
-	
+
 	public void run(JDartParams jdartParams, int port) {
 		log.info("JDart begin : " + jdartParams.getClassName() + "." + jdartParams.getMethodName());
 		List<TestInput> result = new JDartCore().run_on_demand(jdartParams);
-
-		if (result != null) {
-			for (int i = 0; i < result.size() && i < javaPathLimit; i++) {
-				log.info("JDart result : " + result.get(i));
-				byte[] bytes;
-				try {
-					bytes = ByteConverter.convertToBytes(result.get(i));
-					log.info("send byte[] :" + bytes.length);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
 		
+
+//		for (int i = 0; i < result.size(); i++) {
+//			try {
+//				byte[] bytes = ByteConverter.convertToBytes(result.get(i));
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+
 		log.info("JDart over");
 		Socket socket = null;
-		DataOutputStream pw = null;
+		PrintWriter pw = null;
 		try {
 			socket = new Socket("127.0.0.1", port);
 			log.info("Connect InterSocket=" + socket);
-			pw = new DataOutputStream(socket.getOutputStream());
+			pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
 			if (result != null) {
+				int javaPathLimit = 500; /**
+											 * to constraint the number of returned
+											 * result, which may cause java
+											 * error : The filename or extension
+											 * is too long
+											 */
 				for (int i = 0; i < result.size() && i < javaPathLimit; i++) {
 					log.info("JDart result : " + result.get(i));
 					byte[] bytes = ByteConverter.convertToBytes(result.get(i));
 					log.info("send byte[] :" + bytes.length);
-					pw.writeInt(bytes.length);
-					pw.write(bytes);
+					pw.println(new String(bytes));
+					pw.flush();
+					pw.println("line end");
 					pw.flush();
 				}
-				pw.writeInt(-1);
-			}else {
-				log.info("JDart result : null");
 			}
+			pw.println("END");
+			pw.flush();
 		} catch (Exception e) {
 			log.info(e.toString());
 			e.printStackTrace();

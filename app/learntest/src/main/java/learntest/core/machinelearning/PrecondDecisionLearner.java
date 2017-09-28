@@ -248,9 +248,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				OrCategoryCalculator preconditions = pair.first();
 //				dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
 //				dataPreprocessor.sampleForLoopCvg(node, preconditions, this);
-				if (!dataPreprocessor.sampleForMissingBranch(node, this)) {
-					dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
-				};
+				dataPreprocessor.sampleForMissingBranch(node, this);
 
 				updatePrecondition(nodeProbe, preconditions, targetVars);
 				nodeProbe.getPrecondition().setVisited(true);

@@ -1,7 +1,6 @@
 package jdart.core.socket2;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,6 +61,7 @@ public class JDartProcessOnDemand {
 		String className = klass.getCanonicalName();
 		ServerSocket s = null;
 		Socket socket = null;
+		BufferedReader br = null;
 		List<TestInput> list = new ArrayList<>();
 		long pid = -1;
 		try {
@@ -108,8 +108,8 @@ public class JDartProcessOnDemand {
 			ioThread.start();
 			socket = s.accept();
 			log.info("IntraConnection accept socket:" + socket);
-			DataInputStream dIn = new DataInputStream(socket.getInputStream());
-			parseList(list, dIn);
+			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			parseList(list, br);
 			log.info("receive lines size :" + list.size());
 		} catch (Exception e) {
 			log.info(e.toString());
@@ -119,6 +119,9 @@ public class JDartProcessOnDemand {
 			TaskManager.kill(pid);
 			log.info("IntraServer Close.....");
 			try {
+				if (br != null) {
+					br.close();
+				}
 				if (socket != null) {
 					socket.close();
 				}
@@ -159,23 +162,23 @@ public class JDartProcessOnDemand {
 
 	}
 
-	private static void parseList(List<TestInput> list, DataInputStream dIn) throws IOException, ClassNotFoundException {
-		while (true) {
-			int length = dIn.readInt(); // read length of incoming message
-			if (length > 0) {
-				byte[] bytes = new byte[length];
-				dIn.readFully(bytes, 0, bytes.length); // read the message
-				log.info("receive byte[] : " + bytes.length);
-				list.add((TestInput) (ByteConverter.convertFromBytes(bytes)));
-			}else if (length < 0) {
-				break;
+	public static void parseList(List<TestInput> list, BufferedReader br) throws IOException, ClassNotFoundException {
+		StringBuffer sb  = new StringBuffer();
+		while(true){
+			String str = br.readLine();
+            if(str.equals("END")){  
+                break;  
+            }else if (str.equals("line end")) {
+            	sb.delete(sb.length()-1, sb.length());
+            	byte[] bytes = sb.toString().getBytes();
+            	log.info("receive byte[] : "+bytes.length);
+				list.add((TestInput)(ByteConverter.convertFromBytes(bytes)));
+				sb = new StringBuffer();
+			}else {
+				sb.append(str);
+				sb.append("\n");
 			}
 		}
-		System.out.println(list);
-	}
-	
-
-	public static void main(String[] args) {
-		new JDartProcessOnDemand().run(JDartParams.defaultOnDemandJDartParams());
+		
 	}
 }

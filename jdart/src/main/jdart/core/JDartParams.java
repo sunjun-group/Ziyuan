@@ -149,15 +149,9 @@ public class JDartParams {
 				className = "com.Example",
 				methodName = "foo",
 				paramString = "(x:int,y:int)";
-		int node = 15; // instruction offset 
-		int branch = 1; // 0,1 , missing branch, false,true
-
-//		mainEntry = "org.apache.commons.math.util.FastMath";
-//		className = "org.apache.commons.math.util.FastMath";
-//		methodName = "floor";
-//		paramString = "(x:double)";		
-//		node =22; 
-//		branch = 0; 
+		
+		int node = 5; // instruction offset
+		int branch = 1; // 0,1 , missing branch
 		
 		return constructOnDemandJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site, node, branch);
 	}
@@ -193,7 +187,6 @@ public class JDartParams {
 //		className = "org.apache.commons.math.random.MersenneTwister";
 //		methodName = "setSeed";
 //		paramString = "(seed:int[])";
-		
 		mainEntry = "com.Example";
 		className = "com.Example";
 		methodName = "foo";
