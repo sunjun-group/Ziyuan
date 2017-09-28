@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import org.apache.poi.hssf.record.IterationRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +27,6 @@ import learntest.core.machinelearning.sampling.javailp.ProblemBuilder;
 import learntest.core.machinelearning.sampling.javailp.ProblemSolver;
 import learntest.plugin.utils.Settings;
 import libsvm.core.Divider;
-import libsvm.core.Machine.DataPoint;
 import net.sf.javailp.Problem;
 import net.sf.javailp.Result;
 import sav.common.core.Pair;
