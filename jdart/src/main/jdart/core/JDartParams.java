@@ -150,7 +150,7 @@ public class JDartParams {
 				methodName = "foo",
 				paramString = "(x:int,y:int)";
 		
-		int node = 5; // instruction offset
+		int node = 5; // cfg node index
 		int branch = 0; // 0,1 , missing branch
 		
 		return constructOnDemandJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site, node, branch);
