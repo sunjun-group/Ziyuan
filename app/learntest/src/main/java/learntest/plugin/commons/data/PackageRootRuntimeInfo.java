@@ -8,18 +8,33 @@
 
 package learntest.plugin.commons.data;
 
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+
 /**
  * @author LLT
  *
  */
-public class PackageRootRuntimeInfo implements IModelRuntimeInfo {
+public class PackageRootRuntimeInfo extends AbstractModelRuntimeInfo<PackageRuntimeInfo> implements IModelRuntimeInfo {
 
-	/**
-	 * @param runtimeInfo
-	 */
-	public void add(PackageRuntimeInfo runtimeInfo) {
-		// TODO Auto-generated method stub
-		
+	public PackageRootRuntimeInfo(IPackageFragmentRoot element) {
+		super(element);
+	}
+	
+	@Override
+	public IModelRuntimeInfo createOrAddToParentInfo() {
+		return new ProjectRuntimeInfo(getParentElement());
 	}
 
+	@Override
+	protected IJavaProject getParentElement() {
+		return ((IPackageFragmentRoot) javaElement).getJavaProject();
+	}
+
+	@Override
+	public int getJavaElementType() {
+		return IJavaElement.PACKAGE_FRAGMENT_ROOT;
+	}
+	
 }

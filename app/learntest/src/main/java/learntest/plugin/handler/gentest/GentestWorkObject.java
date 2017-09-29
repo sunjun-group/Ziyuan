@@ -43,4 +43,8 @@ public class GentestWorkObject {
 	public List<WorkProject> getWorkProjects() {
 		return workProjects;
 	}
+	
+	public WorkProject getWorkProject(IJavaProject project) {
+		return projMap.get(project.getElementName());
+	}
 }

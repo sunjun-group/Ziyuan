@@ -8,14 +8,16 @@
 
 package learntest.plugin.view.report;
 
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+
 /**
  * @author LLT
  *
  */
 public class ReportLabelProvider {
-	
-	public String getJEleColumnText(Object element) {
-		return "TODO-LLT";
-	}
+	private WorkbenchLabelProvider workbenchLabelProvider = new WorkbenchLabelProvider();
 
+	public String getJEleColumnText(Object element) {
+		return workbenchLabelProvider.getText(element);
+	}
 }

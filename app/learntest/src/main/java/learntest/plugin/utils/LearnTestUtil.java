@@ -159,7 +159,7 @@ public class LearnTestUtil {
 	}
 
 	public static List<IPackageFragmentRoot> findAllPackageRootInProject(){
-		List<IPackageFragmentRoot> rootList = new ArrayList<>();
+		List<IPackageFragmentRoot> rootList = new ArrayList<IPackageFragmentRoot>();
 		IJavaProject project = getJavaProject();
 		try {
 			for(IPackageFragmentRoot packageFragmentRoot: project.getPackageFragmentRoots()){

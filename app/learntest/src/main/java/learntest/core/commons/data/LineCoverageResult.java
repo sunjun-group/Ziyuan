@@ -146,4 +146,21 @@ public class LineCoverageResult {
 	public String toString() {
 		return getDisplayText();
 	}
+
+	public Set<Integer> getCoveredLines(List<String> selectedTcs) {
+		Set<Integer> lines = new HashSet<Integer>();
+		if (CollectionUtils.isEmpty(selectedTcs)) {
+			for (LineCoverage lineCoverage : testCoverageMap.values()) {
+				lines.addAll(lineCoverage.getCoveredLineNums());
+			}
+		} else {
+			for (String testcase : selectedTcs) {
+				LineCoverage lineCoverage = testCoverageMap.get(testcase);
+				lines.addAll(lineCoverage.getCoveredLineNums());
+			}
+		}
+		return lines;
+	}
+	
+	
 }

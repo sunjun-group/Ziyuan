@@ -9,13 +9,13 @@
 package learntest.plugin.handler.gentest;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 
 import learntest.plugin.utils.IProjectUtils;
+import sav.common.core.Constants;
 
 /**
  * @author LLT
@@ -23,67 +23,79 @@ import learntest.plugin.utils.IProjectUtils;
  */
 public class WorkProject {
 	private IJavaProject project;
-	private List<IJavaElement> elementsToTest;
+	private List<IJavaElement> selectedElements;
+	private List<String> toTestElementFullNames = new ArrayList<String>();
+	private List<IJavaElement> toTestElements;
 
 	public WorkProject(IJavaProject project) {
-		elementsToTest = new ArrayList<IJavaElement>();
+		selectedElements = new ArrayList<IJavaElement>();
 		this.project = project;
+		toTestElements = new ArrayList<IJavaElement>();
 	}
 	
 	public void extend(IJavaElement element) {
-		elementsToTest.add(element);
+		selectedElements.add(element);
+		if (!isCovered(element, true)) {
+			toTestElements.add(element);
+		}
+	}
+
+	/**
+	 * a weak method which only checks depend on the ordered provided list of elements of a multiple selection.
+	 * like 
+	 * 		project
+	 * 			-- package
+	 * 					-- method
+	 * Note: will not work well on unordered provided element list!
+	 */
+	private boolean isCovered(IJavaElement element, boolean updateNameList) {
+		String fullName = IProjectUtils.getFullName(element);
+		return isCovered(fullName, updateNameList);
+	}
+
+	private boolean isCovered(String fullName, boolean updateNameList) {
+		boolean covered = false;
+		int joinerIdx = fullName.indexOf(Constants.DOT);
+		while (joinerIdx > 0) {
+			String parent = fullName.substring(0, joinerIdx);
+			if (toTestElementFullNames.contains(parent)) {
+				covered = true;
+				break;
+			}
+			joinerIdx = fullName.indexOf(Constants.DOT, joinerIdx + 1);
+		}
+		
+		if (joinerIdx < 0) {
+			covered = toTestElementFullNames.contains(fullName);
+		} 
+		if (!covered & updateNameList) {
+			toTestElementFullNames.add(fullName);
+		}
+		return covered;
+	}
+	
+	public boolean isTestingRelevant(IJavaElement element) {
+		String fullName = IProjectUtils.getFullName(element);
+		if (isCovered(fullName, false)) {
+			return true;
+		}
+		for (String name : toTestElementFullNames) {
+			if (name.startsWith(fullName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public IJavaProject getProject() {
 		return project;
 	}
 	
-	public Iterator<IJavaElement> elementIterator() {
-		return new Iterator<IJavaElement>() {
-			private static final int INVALID_IDX = -1;
-			int currentIdx = INVALID_IDX;
-			int nextIdx = INVALID_IDX;
-			List<String> visitedElements = new ArrayList<String>();
-			
-			@Override
-			public IJavaElement next() {
-				if (hasNext()) {
-					IJavaElement result = elementsToTest.get(nextIdx);
-					currentIdx = nextIdx;
-					nextIdx = INVALID_IDX;
-					return result;
-				}
-				return null;
-			}
-			
-			@Override
-			public boolean hasNext() {
-				if (nextIdx != INVALID_IDX) {
-					return true;
-				}
-				updateNextIdx();
-				return nextIdx != INVALID_IDX;
-			}
+	public List<IJavaElement> getToTestElements() {
+		return toTestElements;
+	}
 
-			private void updateNextIdx() {
-				for (int i = (currentIdx + 1); i < elementsToTest.size(); i++) {
-					IJavaElement ele = elementsToTest.get(i);
-					String fullName = IProjectUtils.getFullName(ele);
-					boolean visited = false;
-					for (String visitedEle : visitedElements) {
-						if (fullName.startsWith(visitedEle)) {
-							visited = true;
-							break;
-						}
-					}
-					if (!visited) {
-						visitedElements.add(fullName);
-						nextIdx = i;
-						return;
-					}
-				}
-				nextIdx = INVALID_IDX;
-			}
-		};
+	public List<String> getToTestElementFullNames() {
+		return toTestElementFullNames;
 	}
 }

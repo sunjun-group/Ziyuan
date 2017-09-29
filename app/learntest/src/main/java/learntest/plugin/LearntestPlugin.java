@@ -5,35 +5,42 @@ import java.net.URL;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import learntest.plugin.commons.PluginException;
+import learntest.plugin.commons.event.IJavaGentestEventManager;
+import learntest.plugin.commons.event.IJavaModelRuntimeInfo;
+import learntest.plugin.commons.event.JavaGentestManager;
 import learntest.plugin.console.LearntestConsole;
-import learntest.plugin.event.JavaGentestEventManager;
+import sav.common.core.pattern.IDataProvider;
 
 /**
  * The activator class controls the plug-in life cycle
  */
 public class LearntestPlugin extends AbstractUIPlugin {
-
 	// The plug-in ID
 	public static final String PLUGIN_ID = "learntest"; //$NON-NLS-1$
+	private static Logger log = LoggerFactory.getLogger(LearntestPlugin.class);
 
 	// The shared instance
 	private static LearntestPlugin plugin;
-	private JavaGentestEventManager javaGentestEventManager;
+	private JavaGentestManager javaGentestManager;
 	
 	public LearntestPlugin() {
-		
+		javaGentestManager = new JavaGentestManager();
 	}
 
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 		LearntestConsole.delegateConsole();
-//		initLogger(null);
+		javaGentestManager.start();
 	}
 	
 	/**
@@ -54,12 +61,9 @@ public class LearntestPlugin extends AbstractUIPlugin {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
+		javaGentestManager.stop();
 		super.stop(context);
 	}
 
@@ -88,10 +92,42 @@ public class LearntestPlugin extends AbstractUIPlugin {
 		return window[0];
 	}
 	
-	public JavaGentestEventManager getJavaGentestEventManager() {
-		if (javaGentestEventManager == null) {
-			javaGentestEventManager = new  JavaGentestEventManager();
+	public static void displayView(final String viewId) {
+		getDefault().getWorkbench().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				try {
+					getDefault().showCoverageView(viewId);
+				} catch (PluginException e) {
+					log.error(e.getMessage());
+				}
+			}
+		});
+	}
+
+	public void showCoverageView(String viewId) throws PluginException {
+		IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
+		if (window == null)
+			return;
+		IWorkbenchPage page = window.getActivePage();
+		if (page != null) {
+			try {
+				page.showView(viewId, null, IWorkbenchPage.VIEW_CREATE);
+				//page.bringToTop(view);
+			} catch (PartInitException e) {
+				throw PluginException.wrapEx(e);
+			}
 		}
-		return javaGentestEventManager;
+	}
+	
+	private JavaGentestManager getJavaGentestManager() {
+		return javaGentestManager;
+	}
+	
+	public static IJavaGentestEventManager getJavaGentestEventManager() {
+		return getDefault().getJavaGentestManager();
+	}
+
+	public static IDataProvider<IJavaModelRuntimeInfo> getJavaModelRuntimeInfoProvider() {
+		return getDefault().getJavaGentestManager();
 	}
 }

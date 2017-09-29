@@ -6,11 +6,12 @@
  *  Version:  $Revision: 1 $
  */
 
-package learntest.plugin.selection.tester;
+package learntest.plugin.testers;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 
 import learntest.plugin.commons.PluginException;
 import learntest.plugin.utils.WorkbenchUtils;
@@ -37,7 +38,10 @@ public class GentestTextSelectionTester extends PropertyTester {
 			} catch (PluginException e) {
 				return false;
 			}
+		} else if (receiver instanceof StructuredSelection) {
+			return true; // no need to check
 		}
+		
 		return false;
 	}
 

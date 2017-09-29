@@ -164,7 +164,8 @@ public class StringUtils {
          return 2;
 	}
 	
-	public static void sortAlphanumericStrings(List<String> list) {
+	public static List<String> sortAlphanumericStrings(List<String> list) {
 		Collections.sort(list, new AlphanumComparator());
+		return list;
 	}
 }

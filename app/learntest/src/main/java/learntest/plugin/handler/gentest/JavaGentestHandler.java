@@ -9,7 +9,6 @@
 package learntest.plugin.handler.gentest;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -55,8 +54,8 @@ import learntest.plugin.commons.data.PackageRootRuntimeInfo;
 import learntest.plugin.commons.data.PackageRuntimeInfo;
 import learntest.plugin.commons.data.ProjectRuntimeInfo;
 import learntest.plugin.commons.data.TypeRunTimeInfo;
+import learntest.plugin.commons.event.IJavaGentestEventManager;
 import learntest.plugin.commons.event.JavaGentestEvent;
-import learntest.plugin.event.JavaGentestEventManager;
 import learntest.plugin.handler.TargetMethodConverter;
 import learntest.plugin.handler.gentest.filter.GentestMethodFilter;
 import learntest.plugin.handler.gentest.filter.GentestTypeFilter;
@@ -77,8 +76,8 @@ public class JavaGentestHandler extends AbstractHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ISelection selection = HandlerUtil.getActiveMenuSelection(event);
-		String approach = event.getParameter("learntest.approach");
+		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
+		final String approach = event.getParameter("learntest.approach");
 		Job job = new Job(getJobName()) {
 
 			@Override
@@ -113,6 +112,7 @@ public class JavaGentestHandler extends AbstractHandler {
 			}
 		}
 		if (CollectionUtils.isNotEmpty(elements)) {
+			getEventManager().fireGentestStartEvent();
 			GentestWorkObject workObject = new GentestWorkObject();
 			// elements must not be empty as being configured in plugin.xml
 			for (Object obj : elements) {
@@ -121,13 +121,13 @@ public class JavaGentestHandler extends AbstractHandler {
 				}
 			}
 			JavaModelRuntimeInfo runtimeInfo = runGentest(workObject, approach);
-//			getEventManager().fireOnChanged(new JavaGentestEvent(runtimeInfo));
+			getEventManager().fireOnChangedEvent(new JavaGentestEvent(runtimeInfo));
 		}
 		return IStatusUtils.ok();
 	}
 	
 	private JavaModelRuntimeInfo runGentest(GentestWorkObject workObject, LearnTestApproach approach) {
-		JavaModelRuntimeInfo result = new JavaModelRuntimeInfo();
+		JavaModelRuntimeInfo result = new JavaModelRuntimeInfo(workObject);
 		for (WorkProject workProject : workObject.getWorkProjects()) {
 			AppJavaClassPath appClasspath = GentestSettings.initAppJavaClassPath(workProject.getProject());
 			LearnTestParams params = new LearnTestParams(appClasspath);
@@ -136,9 +136,8 @@ public class JavaGentestHandler extends AbstractHandler {
 					GentestMethodFilter.createFilters());
 			try {
 				LearntestLogger.initLog4j(workProject.getProject().getProject().getName());
-				for (Iterator<IJavaElement> it = workProject.elementIterator(); it.hasNext();) {
+				for (IJavaElement element : workProject.getToTestElements()) {
 					try {
-						IJavaElement element = it.next();
 						IModelRuntimeInfo runtimeInfo = runGentest(params, element, methodCollector);
 						result.add(runtimeInfo);
 					} catch (PluginException e) {
@@ -176,9 +175,9 @@ public class JavaGentestHandler extends AbstractHandler {
 	 */
 	private ProjectRuntimeInfo runGentestOnProject(LearnTestParams params, IJavaProject element, MethodCollector collector) {
 		try {
-			ProjectRuntimeInfo result = new ProjectRuntimeInfo();
-			for (IPackageFragment pkgFragment : element.getPackageFragments()) {
-				PackageRuntimeInfo runtimeInfo = runGentestOnPackageFragment(params, pkgFragment, collector);
+			ProjectRuntimeInfo result = new ProjectRuntimeInfo(element);
+			for (IPackageFragmentRoot pkgFragment : element.getPackageFragmentRoots()) {
+				PackageRootRuntimeInfo runtimeInfo = runGentestOnPackageFragmentRoot(params, pkgFragment, collector);
 				if (runtimeInfo != null) {
 					result.add(runtimeInfo);
 				}
@@ -196,7 +195,7 @@ public class JavaGentestHandler extends AbstractHandler {
 	private PackageRootRuntimeInfo runGentestOnPackageFragmentRoot(LearnTestParams params, IPackageFragmentRoot element,
 			MethodCollector methodCollector) {
 		try {
-			PackageRootRuntimeInfo result = new PackageRootRuntimeInfo();
+			PackageRootRuntimeInfo result = new PackageRootRuntimeInfo(element);
 			for (IJavaElement child : element.getChildren()) {
 				if (child.getElementType() == IJavaElement.PACKAGE_FRAGMENT) {
 					PackageRuntimeInfo runtimeInfo = runGentestOnPackageFragment(params, (IPackageFragment) child,
@@ -219,7 +218,7 @@ public class JavaGentestHandler extends AbstractHandler {
 	private PackageRuntimeInfo runGentestOnPackageFragment(LearnTestParams params, IPackageFragment element,
 			MethodCollector methodCollector) {
 		try {
-			PackageRuntimeInfo result = new PackageRuntimeInfo();
+			PackageRuntimeInfo result = new PackageRuntimeInfo(element);
 			for (ICompilationUnit cu : element.getCompilationUnits()) {
 				ClassRuntimeInfo runtimeInfo = runGentestOnCompilationUnit(params, cu, methodCollector);
 				if (runtimeInfo != null) {
@@ -242,9 +241,12 @@ public class JavaGentestHandler extends AbstractHandler {
 		collector.reset(false);
 		cu.accept(collector);
 		try {
-			List<MethodRuntimeInfo> runtineInfos = runGentestOnTargetMethodList(params, collector.getResult(), cu);
-			return new ClassRuntimeInfo(runtineInfos);
-		} catch (PluginException e) {
+			ClassRuntimeInfo classRuntimeInfo = new ClassRuntimeInfo(icu);
+			for (IType type : icu.getTypes()) {
+				classRuntimeInfo.add(runGentestOnType(params, type, collector));
+			}
+			return classRuntimeInfo;
+		} catch (JavaModelException e) {
 			log.error(e.getMessage());
 			return null;
 		}
@@ -259,16 +261,27 @@ public class JavaGentestHandler extends AbstractHandler {
 			methodCollector.reset(false);
 			TypeDeclaration type = AstUtils.findNode(cu, element);
 			type.accept(methodCollector);
-			List<MethodRuntimeInfo> runtimeInfos = runGentestOnTargetMethodList(params, methodCollector.getResult(),
-					cu);
-			return new TypeRunTimeInfo(runtimeInfos);
+			List<IMethod> allMethods = new ArrayList<IMethod>();
+			getAllMethods(element, allMethods);
+			List<MethodRuntimeInfo> runtimeInfos = runGentestOnTargetMethodList(params, methodCollector.getResult(), cu,
+					allMethods);
+			return new TypeRunTimeInfo(element, runtimeInfos);
 		} catch (PluginException e) {
 			log.error(e.getMessage());
 			return null;
+		} catch (JavaModelException e) {
+			log.error(e.getMessage());
+			return null;
 		}
-		
 	}
 	
+	private void getAllMethods(IType element, List<IMethod> allMethods) throws JavaModelException {
+		CollectionUtils.addAll(allMethods, element.getMethods());
+		for (IType type : element.getTypes()) {
+			getAllMethods(type, allMethods);
+		}
+	}
+
 	/**
 	 * For IMethod.
 	 */
@@ -276,7 +289,7 @@ public class JavaGentestHandler extends AbstractHandler {
 		try {
 			MethodInfo targetMethod = TargetMethodConverter.toTargetMethod(method);
 			RunTimeInfo runtimeInfo = runGentestOnSingleMethod(params, targetMethod);
-			return new MethodRuntimeInfo(runtimeInfo);
+			return new MethodRuntimeInfo(method, runtimeInfo);
 		} catch (PluginException e) {
 			log.error(e.getMessage());
 			return null;
@@ -287,13 +300,13 @@ public class JavaGentestHandler extends AbstractHandler {
 	 * for list of MethodDeclaration.
 	 */
 	private List<MethodRuntimeInfo> runGentestOnTargetMethodList(LearnTestParams params,
-			List<MethodDeclaration> targetMethods, CompilationUnit cu) throws PluginException {
-		List<MethodInfo> validMethods = TargetMethodConverter.toTargetMethods(cu, targetMethods);
+			List<MethodDeclaration> targetMethods, CompilationUnit cu, List<IMethod> iMethods) throws PluginException {
 		List<MethodRuntimeInfo> result = new ArrayList<MethodRuntimeInfo>();
-		for (MethodInfo method : validMethods) {
+		for (MethodDeclaration targetMethod : targetMethods) {
+			MethodInfo method = TargetMethodConverter.toTargetMethod(cu, targetMethod);
 			try {
 				RunTimeInfo runtimeInfo = runGentestOnSingleMethod(params, method);
-				result.add(new MethodRuntimeInfo(runtimeInfo));
+				result.add(new MethodRuntimeInfo(AstUtils.findImethod(targetMethod, iMethods), runtimeInfo));
 			} catch (PluginException e) {
 				log.error(e.getMessage());
 			}
@@ -343,8 +356,8 @@ public class JavaGentestHandler extends AbstractHandler {
 		}
 	}
 	
-	protected JavaGentestEventManager getEventManager() {
-		return LearntestPlugin.getDefault().getJavaGentestEventManager();
+	protected IJavaGentestEventManager getEventManager() {
+		return LearntestPlugin.getJavaGentestEventManager();
 	}
 
 	protected String getJobName() {

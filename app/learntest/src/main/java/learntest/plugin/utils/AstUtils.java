@@ -8,13 +8,17 @@
 
 package learntest.plugin.utils;
 
+import java.util.List;
+
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.NodeFinder;
 
 import learntest.plugin.commons.PluginException;
@@ -41,5 +45,18 @@ public class AstUtils {
 		} catch (JavaModelException e) {
 			throw PluginException.wrapEx(e);
 		}
+	}
+
+	public static IMethod findImethod(MethodDeclaration method, List<IMethod> iMethods) {
+		for (IMethod iMethod : iMethods) {
+			try {
+				if (iMethod.getSourceRange().getOffset() == method.getStartPosition()) {
+					return iMethod;
+				}
+			} catch (JavaModelException e) {
+				// do nothing
+			}
+		}
+		return null;
 	}
 }

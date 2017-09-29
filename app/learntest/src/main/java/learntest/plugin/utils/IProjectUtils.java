@@ -14,6 +14,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,14 +30,20 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import learntest.plugin.commons.PluginException;
+import sav.common.core.Pair;
 import sav.common.core.SavRtException;
+import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
 
@@ -45,7 +52,8 @@ import sav.common.core.utils.StringUtils;
  *
  */
 public class IProjectUtils {
-	public IProjectUtils(){}
+	private static Logger log = LoggerFactory.getLogger(IProjectUtils.class);
+	private IProjectUtils(){}
 	
 	public static IJavaProject getJavaProject(IProject project) {
 		return JavaCore.create(project);
@@ -93,7 +101,7 @@ public class IProjectUtils {
 	}
 	
 	public static List<IPackageFragmentRoot> getSourcePkgRoots(IJavaProject project) {
-		List<IPackageFragmentRoot> roots = new ArrayList<>();
+		List<IPackageFragmentRoot> roots = new ArrayList<IPackageFragmentRoot>();
 		try {
 			for (IPackageFragmentRoot packageFragmentRoot : project.getPackageFragmentRoots()) {
 				if (packageFragmentRoot.getKind() == IPackageFragmentRoot.K_SOURCE
@@ -253,5 +261,30 @@ public class IProjectUtils {
 			jEle = jEle.getParent();
 		}
 		return StringUtils.dotJoin(fragments);
+	}
+
+	/**
+	 * testcases from gentest would have very simple format! like pkg.testcalss.method1();
+	 * */
+	public static Pair<List<String>, List<IMethod>> getIMethods(IJavaProject javaProject,
+			Collection<String> gentestTestcases) {
+		List<IMethod> methods = new ArrayList<IMethod>();
+		List<String> testcases = new ArrayList<String>();
+		for (String methodFullName : gentestTestcases) {
+			Pair<String, String> classMethod = ClassUtils.splitClassMethod(methodFullName);
+			try {
+				IType type = javaProject.findType(classMethod.a);
+				for (IMethod method : type.getMethods()) {
+					if (method.getElementName().equals(classMethod.b)) {
+						methods.add(method);
+						testcases.add(methodFullName);
+						break;
+					}
+				}
+			} catch (JavaModelException e) {
+				log.warn(e.getMessage());
+			}
+		}
+		return Pair.of(testcases, methods);
 	}
 }

@@ -8,19 +8,44 @@
 
 package learntest.plugin.commons.data;
 
-import java.util.List;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.JavaModelException;
 
 /**
  * @author LLT
  *
  */
-public class ClassRuntimeInfo implements IModelRuntimeInfo {
+public class ClassRuntimeInfo extends AbstractModelRuntimeInfo<TypeRunTimeInfo> implements IModelRuntimeInfo {
 
-	/**
-	 * @param runtineInfos
-	 */
-	public ClassRuntimeInfo(List<MethodRuntimeInfo> runtineInfos) {
-		// TODO Auto-generated constructor stub
+	public ClassRuntimeInfo(ICompilationUnit cu) {
+		super(cu, getSize(cu));
+	}
+
+	private static int getSize(ICompilationUnit cu) {
+		try {
+			return cu.getTypes().length;
+		} catch (JavaModelException e) {
+			return 0;
+		}
+	}
+
+	@Override
+	public int getJavaElementType() {
+		return IJavaElement.COMPILATION_UNIT;
+	}
+
+	@Override
+	public IModelRuntimeInfo createOrAddToParentInfo() {
+		PackageRuntimeInfo packageRuntimeInfo = new PackageRuntimeInfo(getParentElement());
+		packageRuntimeInfo.add(this);
+		return packageRuntimeInfo;
+	}
+
+	@Override
+	protected IPackageFragment getParentElement() {
+		return (IPackageFragment) ((ICompilationUnit) javaElement).getParent();
 	}
 
 }

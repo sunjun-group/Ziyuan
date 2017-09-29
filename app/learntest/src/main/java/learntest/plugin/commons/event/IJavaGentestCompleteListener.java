@@ -12,8 +12,8 @@ package learntest.plugin.commons.event;
  * @author LLT
  *
  */
-public interface ILearntestListener<T extends ILearntestEvent> {
+public interface IJavaGentestCompleteListener extends ILearntestListener<JavaGentestEvent>{
 
-	public void onChanged(T event);
+	public void onChanged(JavaGentestEvent event);
 	
 }

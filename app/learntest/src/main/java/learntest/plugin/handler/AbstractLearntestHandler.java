@@ -80,7 +80,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	/* PLUGIN HANDLER */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ISelection selection = HandlerUtil.getActiveMenuSelection(event);
+		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
 		Job job = new Job(getJobName()) {
 
 			@Override
@@ -287,11 +287,11 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 		HashMap<CfgNode, CfgNodeDomainInfo> domainMap = l2tAverageInfo.getDomainMap();
 		StringBuffer l2tWorseSb = new StringBuffer(), ranWorseSb = new StringBuffer();
-		HashMap<CfgNode, Boolean> visited = new HashMap<>();
+		HashMap<CfgNode, Boolean> visited = new HashMap<CfgNode, Boolean>();
 		for (FormulaInfo info : l2tAverageInfo.getLearnedFormulas()){
 			if (!visited.containsKey(info.getNode()) 
 					&& info.getLearnedState() == info.VALID) {
-				Queue<CfgNode> queue = new LinkedList<>();
+				Queue<CfgNode> queue = new LinkedList<CfgNode>();
 				queue.add(info.getNode());
 				recordBetterInfo(info.getNode(), domainMap,
 						l2tWorseSb, ranWorseSb, info, ranAverageInfo, l2tAverageInfo);	

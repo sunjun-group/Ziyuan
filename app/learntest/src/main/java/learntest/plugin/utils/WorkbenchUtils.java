@@ -39,4 +39,17 @@ public class WorkbenchUtils {
 		}
 		return new IJavaElement[0];
 	}
+
+	public static ICompilationUnit getActiveCompilationUnit(ITextEditor editor) throws PluginException {
+		try {
+			IJavaElement elem = JavaUI.getEditorInputJavaElement(editor.getEditorInput());
+			if (elem != null && elem.getElementType() == IJavaElement.COMPILATION_UNIT) {
+				ICompilationUnit cu = (ICompilationUnit) elem;
+				return cu;
+			}
+		} catch (Exception e) {
+			throw PluginException.wrapEx(e);
+		}
+		return null;
+	}
 }
