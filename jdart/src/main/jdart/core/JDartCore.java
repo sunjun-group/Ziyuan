@@ -8,11 +8,11 @@
 
 package jdart.core;
 
-import java.util.HashMap;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
 
 import org.eclipse.core.commands.ExecutionException;
 
@@ -276,5 +276,39 @@ public class JDartCore {
 		params.setTimeLimit(timeLimit);
 		
 		return params;
+	}
+	
+	public static String getJarPaths(String path){
+		StringBuffer sb = new StringBuffer();
+		File root = new File(path);
+		if (root.isDirectory()) {
+			Queue<File> queue = new LinkedList<>();
+			queue.add(root);
+			while (!queue.isEmpty()) {
+				File directory= queue.poll();
+				for (File file : directory.listFiles()) {
+					if (file.isDirectory()) {
+						queue.add(file);
+					}else {
+						String jar = file.getAbsolutePath();
+						if (jar.endsWith(".jar")) {
+							sb.append(jar+";");
+						}
+					}
+				}
+			}
+		}
+		return sb.toString();
+	}
+	
+	public static String getRuntimeCP() {
+		String jdartPath = "E:\\git\\Ziyuan\\jdart", savPath = "E:\\git\\Ziyuan\\app\\sav.commons";
+		StringBuffer sb = new StringBuffer();
+		sb.append(jdartPath+"\\bin;");
+		sb.append(getJarPaths(jdartPath+"\\libs"));
+		sb.append(getJarPaths(savPath+"\\lib"));
+		sb.append(savPath+"\\target\\classes;");
+		sb.append(savPath+"\\target\\test-classes;");
+		return sb.toString();
 	}
 }

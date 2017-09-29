@@ -1,10 +1,7 @@
 package jdart.core.socket2;
 
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
 
@@ -29,20 +26,20 @@ public class JDartClient {
 		log.info("JDart begin : " + jdartParams.getClassName() + "." + jdartParams.getMethodName());
 		List<TestInput> result = new JDartCore().run(jdartParams);
 
-		for (int i = 0; i < result.size(); i++) {
-			try {
-				byte[] bytes = ByteConverter.convertToBytes(result.get(i));
-				StringBuffer stringBuffer = new StringBuffer();
-				for (byte b : bytes) {
-					stringBuffer.append(b + "\t");
-				}
-				log.info(stringBuffer.toString());
-				TestInput testInput = (TestInput) ByteConverter.convertFromBytes(bytes);
-			} catch (IOException | ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//		for (int i = 0; i < result.size(); i++) {
+//			try {
+//				byte[] bytes = ByteConverter.convertToBytes(result.get(i));
+//				StringBuffer stringBuffer = new StringBuffer();
+//				for (byte b : bytes) {
+//					stringBuffer.append(b + "\t");
+//				}
+//				log.info(stringBuffer.toString());
+//				TestInput testInput = (TestInput) ByteConverter.convertFromBytes(bytes);
+//			} catch (IOException | ClassNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 
 		log.info("JDart over");
 		Socket socket = null;
