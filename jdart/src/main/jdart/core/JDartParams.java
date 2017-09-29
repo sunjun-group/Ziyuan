@@ -151,7 +151,7 @@ public class JDartParams {
 				paramString = "(x:int,y:int)";
 		
 		int node = 5; // instruction offset
-		int branch = 1; // 0,1 , missing branch
+		int branch = 0; // 0,1 , missing branch
 		
 		return constructOnDemandJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site, node, branch);
 	}

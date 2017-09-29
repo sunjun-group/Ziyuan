@@ -1,6 +1,7 @@
 package jdart.core.socket2;
 
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -14,11 +15,11 @@ import jdart.core.JDartCore;
 import jdart.core.JDartParams;
 import jdart.core.util.ByteConverter;
 import jdart.model.TestInput;
-import main.RunJPF;
 
 public class JDartOnDemandClient {
 	private static Logger log = LoggerFactory.getLogger(JDartOnDemandClient.class);
-
+	int javaPathLimit = 500; /*** to constraint the number of returned result, which may cause java error : The filename or extension is too long*/
+	
 	public void run(JDartParams jdartParams, int port) {
 		log.info("JDart begin : " + jdartParams.getClassName() + "." + jdartParams.getMethodName());
 		List<TestInput> result = new JDartCore().run_on_demand(jdartParams);
@@ -35,30 +36,23 @@ public class JDartOnDemandClient {
 
 		log.info("JDart over");
 		Socket socket = null;
-		PrintWriter pw = null;
+		DataOutputStream pw = null;
 		try {
 			socket = new Socket("127.0.0.1", port);
 			log.info("Connect InterSocket=" + socket);
-			pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
+			pw = new DataOutputStream(socket.getOutputStream());
 			if (result != null) {
-				int javaPathLimit = 500; /**
-											 * to constraint the number of returned
-											 * result, which may cause java
-											 * error : The filename or extension
-											 * is too long
-											 */
 				for (int i = 0; i < result.size() && i < javaPathLimit; i++) {
 					log.info("JDart result : " + result.get(i));
 					byte[] bytes = ByteConverter.convertToBytes(result.get(i));
 					log.info("send byte[] :" + bytes.length);
-					pw.println(new String(bytes));
-					pw.flush();
-					pw.println("line end");
+					pw.writeInt(bytes.length);
+					pw.write(bytes);
 					pw.flush();
 				}
+				pw.writeInt(-1);
+				pw.flush();
 			}
-			pw.println("END");
-			pw.flush();
 		} catch (Exception e) {
 			log.info(e.toString());
 			e.printStackTrace();
