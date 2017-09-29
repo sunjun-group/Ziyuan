@@ -189,9 +189,10 @@ public class LearnedDataProcessor {
 				GentestResult mainResult = mediator.genMainAndCompile(list, vars, PrintOption.APPEND);
 				List<File> generatedClasses = mainResult.getAllFiles();
 				File generatedClasse = generatedClasses.get(0);
+				String generatedClassName = mainResult.getJunitClassNames().get(0);
 				System.out.println("generated class names : " + generatedClasse.getAbsolutePath());
 				JDartRunner jdartRunner = new JDartRunner(mediator.getAppClassPath());
-				List<TestInput> result = jdartRunner.runJDartOnDemand(mediator.getLearntestParams(), generatedClasse.getAbsolutePath(), node.getIdx(), 
+				List<TestInput> result = jdartRunner.runJDartOnDemand(mediator.getLearntestParams(), generatedClassName, node.getIdx(), 
 						missingBranch == BranchType.FALSE ? 0 : 1);
 				if (result.size() > 0) {
 					System.out.println(result);
