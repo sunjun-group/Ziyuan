@@ -47,9 +47,9 @@ public class JDartOnDemandClient {
 					pw.write(bytes);
 					pw.flush();
 				}
-				pw.writeInt(-1);
-				pw.flush();
 			}
+			pw.writeInt(-1);
+			pw.flush();
 		} catch (Exception e) {
 			log.info(e.toString());
 			e.printStackTrace();

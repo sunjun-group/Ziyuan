@@ -145,13 +145,13 @@ public class JDartParams {
 				app = "libs/jdart/jpf.properties",
 				site = "libs/jpf_on_demand.properties",
 				
-				mainEntry = "com.Example",
+				mainEntry = "testdata.l2t.main.example.foo.Example2",
 				className = "com.Example",
 				methodName = "foo",
 				paramString = "(x:int,y:int)";
 		
-		int node = 5; // cfg node index
-		int branch = 0; // 0,1 , missing branch
+		int node = 11; // cfg node index
+		int branch = 1; // 0,1 , missing branch
 		
 		return constructOnDemandJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site, node, branch);
 	}
