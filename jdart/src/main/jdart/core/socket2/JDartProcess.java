@@ -145,7 +145,7 @@ public class JDartProcess {
 		// return process.exitValue();
 	}
 
-	private static void printerInfo(Process process) throws IOException {
+	public static void printerInfo(Process process) throws IOException {
 		InputStream is = process.getInputStream();
 		BufferedReader ibr = new BufferedReader(new InputStreamReader(is, "utf-8"));
 		InputStream iserr = process.getErrorStream();
@@ -190,7 +190,7 @@ public class JDartProcess {
 //
 //	}
 
-	private static void parseList(List<TestInput> list, DataInputStream dIn)
+	public static void parseList(List<TestInput> list, DataInputStream dIn)
 			throws IOException, ClassNotFoundException {
 		while (true) {
 			int length = dIn.readInt(); // read length of incoming message

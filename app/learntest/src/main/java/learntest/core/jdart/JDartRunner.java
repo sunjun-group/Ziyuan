@@ -22,6 +22,8 @@ import jdart.model.TestInput;
 import learntest.core.LearnTestParams;
 import learntest.core.LearnTestParams.LearntestSystemVariable;
 import learntest.core.commons.data.classinfo.TargetMethod;
+import learntest.plugin.utils.IResourceUtils;
+import learntest.plugin.utils.JdartConstants;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
 
@@ -70,6 +72,8 @@ public class JDartRunner {
 			jdartParams.setMainEntry(mainClass);
 			jdartParams.setExploreBranch(branch);
 			jdartParams.setExploreNode(node);
+			jdartParams.setSiteProperties(IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID,
+					"libs/jpf_on_demand.properties"));
 			JDartProcessOnDemand jdartCore = new JDartProcessOnDemand();
 			List<TestInput> inputs = jdartCore.run(jdartParams);
 			return inputs;

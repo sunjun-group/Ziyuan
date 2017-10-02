@@ -1,11 +1,8 @@
 package jdart.core.socket2;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -16,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import jdart.core.JDartCore;
 import jdart.core.JDartParams;
-import jdart.core.util.ByteConverter;
 import jdart.core.util.TaskManager;
 import jdart.model.TestInput;
 
@@ -106,7 +102,7 @@ public class JDartProcessOnDemand {
 				@Override
 				public void run() {
 					try {
-						printerInfo(process);
+						JDartProcess.printerInfo(process);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -117,7 +113,7 @@ public class JDartProcessOnDemand {
 			socket = s.accept();
 			log.info("IntraConnection accept socket:" + socket);
 			DataInputStream dIn = new DataInputStream(socket.getInputStream());
-			parseList(list, dIn);
+			JDartProcess.parseList(list, dIn);
 			log.info("receive lines size :" + list.size());
 		} catch (Exception e) {
 			log.info(e.toString());
@@ -141,45 +137,5 @@ public class JDartProcessOnDemand {
 
 		// return process.exitValue();
 	}
-
-	private static void printerInfo(Process process) throws IOException {
-		InputStream is = process.getInputStream();
-		BufferedReader ibr = new BufferedReader(new InputStreamReader(is, "utf-8"));
-		InputStream iserr = process.getErrorStream();
-		BufferedReader brerr = new BufferedReader(new InputStreamReader(iserr, "utf-8"));
-		String string = "", err = "";
-		try {
-			while ((string = ibr.readLine()) != null) {
-				System.out.println(string);
-			}
-
-			while ((err = brerr.readLine()) != null) {
-				System.err.println(err);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			ibr.close();
-			is.close();
-			brerr.close();
-			ibr.close();
-		}
-
-	}
 	
-	private static void parseList(List<TestInput> list, DataInputStream dIn)
-			throws IOException, ClassNotFoundException {
-		while (true) {
-			int length = dIn.readInt(); // read length of incoming message
-			if (length > 0) {
-				byte[] bytes = new byte[length];
-				dIn.readFully(bytes, 0, bytes.length); // read the message
-				log.info("receive byte[] : " + bytes.length);
-				list.add((TestInput) (ByteConverter.convertFromBytes(bytes)));
-			} else if (length < 0) {
-				break;
-			}
-		}
-
-	}
 }
