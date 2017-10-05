@@ -27,7 +27,7 @@ import learntest.plugin.utils.IMethodUtils;
  * @author LLT
  *
  */
-public class MethodNameFilter implements TargetMethodFilter {
+public class MethodNameFilter implements IMethodFilter {
 	private static Logger log = LoggerFactory.getLogger(MethodNameFilter.class);
 	private Collection<String> excludedMethods = Collections.EMPTY_LIST;
 	
@@ -42,7 +42,9 @@ public class MethodNameFilter implements TargetMethodFilter {
 				
 			}
 		} catch (IOException e) {
-			log.debug("cannot load file {}", excludedFileName);
+//			log.debug("cannot load file {}", excludedFileName);
+			// ignore
+			// TODO LLT: allow to configure in target eclipse.
 		}
 	}
 	

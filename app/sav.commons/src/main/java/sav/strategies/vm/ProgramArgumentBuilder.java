@@ -47,6 +47,14 @@ public class ProgramArgumentBuilder {
 		return addArgument(option, Arrays.asList(values));
 	}
 	
+	public ProgramArgumentBuilder addArgument(String option, long value) {
+		return addArgument(option, String.valueOf(value));
+	}
+	
+	public ProgramArgumentBuilder addArgument(String option, int value) {
+		return addArgument(option, String.valueOf(value));
+	}
+	
 	public ProgramArgumentBuilder addOptionArgument(String option) {
 		arguments.add("-" + option);
 		return this;

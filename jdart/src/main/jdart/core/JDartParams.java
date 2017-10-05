@@ -24,6 +24,7 @@ public class JDartParams {
 	private long minFree; // min free memory, unit of byte
 	private int explore_node = -1;
 	private int explore_branch = -1;
+	private int limitNumberOfResultSet = 500; // default, copy from JDartClient class.
 	
 	public JDartParams() {
 		
@@ -116,6 +117,15 @@ public class JDartParams {
 	public void setExploreBranch(int explore_branch) {
 		this.explore_branch = explore_branch;
 	}
+	
+	public int getLimitNumberOfResultSet() {
+		return limitNumberOfResultSet;
+	}
+
+	public void setLimitNumberOfResultSet(int limitNumberOfResultSet) {
+		this.limitNumberOfResultSet = limitNumberOfResultSet;
+	}
+
 	
 	public static JDartParams constructOnDemandJDartParams(String classpathStr, String mainEntry, String className, 
 			String methodName, String paramString,

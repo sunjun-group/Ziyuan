@@ -13,17 +13,17 @@ public class LearnTestConfig {
 	private String targetMethodLineNum;
 	
 	static{
-		if(Activator.getDefault() != null){
+		if(LearntestPlugin.getDefault() != null){
 			try{
 				INSTANCE = new LearnTestConfig();
-				INSTANCE.projectName = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.TARGET_PORJECT);
-				INSTANCE.targetClassName = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.CLASS_NAME);
-				INSTANCE.targetMethodName = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.METHOD_NAME);
-				String L2TString = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.IS_L2T);
+				INSTANCE.projectName = LearntestPlugin.getDefault().getPreferenceStore().getString(LearnTestPreference.TARGET_PORJECT);
+				INSTANCE.targetClassName = LearntestPlugin.getDefault().getPreferenceStore().getString(LearnTestPreference.CLASS_NAME);
+				INSTANCE.targetMethodName = LearntestPlugin.getDefault().getPreferenceStore().getString(LearnTestPreference.METHOD_NAME);
+				String L2TString = LearntestPlugin.getDefault().getPreferenceStore().getString(LearnTestPreference.IS_L2T);
 				if(L2TString != null){
 					INSTANCE.isL2TApproach = Boolean.valueOf(L2TString);
 				}
-				INSTANCE.targetMethodLineNum = Activator.getDefault().getPreferenceStore().getString(LearnTestPreference.METHOD_LINE_NUMBER);
+				INSTANCE.targetMethodLineNum = LearntestPlugin.getDefault().getPreferenceStore().getString(LearnTestPreference.METHOD_LINE_NUMBER);
 			}
 			catch(Exception e){
 				e.printStackTrace();

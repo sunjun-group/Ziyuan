@@ -53,6 +53,21 @@ public class Parameters {
 		return null;
 	}
 	
+	protected static long getLongOption(CommandLine cmd, String optName) {
+		if (cmd.hasOption(optName)) {
+			return Long.valueOf(cmd.getOptionValue(optName));
+		}
+		return 0;
+	}
+	
+	protected static int getIntOption(CommandLine cmd, String optName) {
+		if (cmd.hasOption(optName)) {
+			return Integer.valueOf(cmd.getOptionValue(optName));
+		}
+		return 0;
+	}
+	
+	
 	protected static List<String> getListStringOption(CommandLine cmd, String optName) {
 		if (cmd.hasOption(optName)) {
 			return Arrays.asList(cmd.getOptionValues(optName));

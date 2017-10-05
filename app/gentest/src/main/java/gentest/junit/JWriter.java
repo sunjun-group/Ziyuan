@@ -22,7 +22,7 @@ public class JWriter implements ICompilationUnitWriter {
 	private static final String DEPRECATION_SUPPRESS_WARNING = "SuppressWarnings(\"deprecation\")";
 	private static final String JUNIT_TEST_ANNOTATION_IMPORT = "org.junit.Test";
 	private static final String JUNIT_ASSERT_CLAZZ = "org.junit.Assert";
-	private String clazzName;
+	private String clazzSimpleName;
 	private String packageName;
 	private String methodPrefix;
 	private Set<String> duplicateImports;
@@ -32,9 +32,9 @@ public class JWriter implements ICompilationUnitWriter {
 	}
 	
 	@Override
-	public CompilationUnit write(List<Sequence> methods, String pkgName, String className, String methodPrefix) {
+	public CompilationUnit write(List<Sequence> methods, String pkgName, String classSimpleName, String methodPrefix) {
 		setPackageName(pkgName);
-		setClazzName(className);
+		setClazzName(classSimpleName);
 		setMethodPrefix(methodPrefix);
 		return write(methods);
 	}
@@ -56,7 +56,7 @@ public class JWriter implements ICompilationUnitWriter {
 		for (int i = 0; i < methods.size(); i++) {
 			Sequence method = methods.get(i);
 			varNamer.reset(method);
-			MethodBuilder methodBuilder = cu.startMethod(getMethodName(i + 1));
+			MethodBuilder methodBuilder = cu.startMethod(getMethodName(i));
 			methodBuilder.throwException(Throwable.class.getSimpleName());
 			methodBuilder.markAnnotation(JUNIT_TEST_ANNOTATION);
 			if (!method.getStatementByType(
@@ -73,16 +73,16 @@ public class JWriter implements ICompilationUnitWriter {
 		return cu.endType().getResult();
 	}
 
-	private String getMethodName(int i) {
-		return getMethodPrefix() + i;
+	protected String getMethodName(int sequenceIdx) {
+		return getMethodPrefix() + (sequenceIdx + 1);
 	}
 
 	public String getClazzName() {
-		return clazzName;
+		return clazzSimpleName;
 	}
 
 	public void setClazzName(String clazzName) {
-		this.clazzName = clazzName;
+		this.clazzSimpleName = clazzName;
 	}
 
 	public String getPackageName() {

@@ -26,7 +26,7 @@ public class L2tResultImprovCheckerTest {
 	public void testImprovCheck() throws Exception {
 		File newFile = getFile("apache-common-math-2.2_3.xlsx");
 		File oldFile = getFile("apache-common-math-2.2_2.xlsx");
-		ImprovementResult result = new L2tResultImprovChecker().checkImprovement(oldFile, newFile);
+		ImprovementResult result = new L2tResultImprovChecker(TEST_RESULT_FOLDER).checkImprovement(oldFile, newFile);
 		System.out.println(result);
 	}
 	

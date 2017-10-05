@@ -64,25 +64,35 @@ public class LearningMachine extends PositiveSeparationMachine {
 					it.hasNext(); ) {
 				Entry<String, SingleFeatureVarModel> entry = it.next();
 				LearnedModel learnedModel = entry.getValue().learnedModel;
-				log.debug("potentialSingleFeatureModel: {}", learnedModel.formula);
+				
+				/* try to learn new classifier for selected single feature on new datapoints, 
+				 * if new classifier with higher acc is returned, we update potential model with the new one, otherwise,
+				 * we do check the acc of the old classifier on new datapoints to see if the new acc is still greater than the baseline
+				 * to be able to keep or not.
+				 *  */
 				Machine machine = createNewMachine(CollectionUtils.listOf(entry.getKey(), 1));
 				try {
 					machine.addDataPoints(dataPoints);
 					machine.train();
 					double acc = machine.getModelAccuracy();
-					log.debug("new model accuracy: {}", acc);
+					
 					if (acc < singleFeatureAccMin) {
 						double newAcc = getModelAccuracy(CollectionUtils.listOf(learnedModel.model.getModel(), 1));
 						if (newAcc > singleFeatureAccMin) {
+							log.debug("potentialSingleFeatureModel: {}, acc:{}, new acc:{}", learnedModel.formula,
+									learnedModel.accuracy, newAcc);
 							learnedModel.accuracy = acc;
 							// the potential model still valid
 						} else {
 							it.remove();
+							log.debug("potentialSingleFeatureModel: {}, acc:{}, new acc:{} [removed!]",
+									learnedModel.formula, learnedModel.accuracy, newAcc);
 						}
 					} else {
 						// update
 						learnedModel.accuracy = acc;
 						learnedModel.model = machine.getModel();
+						log.debug("potentialSingleFeatureModel: {}, acc:{}", learnedModel.formula, learnedModel.accuracy);
 					}
 				} catch (SAVExecutionTimeOutException e) {
 					it.remove();
@@ -115,11 +125,11 @@ public class LearningMachine extends PositiveSeparationMachine {
 					Formula current = new FormulaProcessor<ExecVar>(vars).process(explicitDivider, dataLabels, true);
 					double accuracy = getModelAccuracy(CollectionUtils.listOf(svmModel, 1));
 					if (accuracyFilter > 0 && accuracy < accuracyFilter) {
-						LOGGER.debug("{}, accuracy: {} [removed]", current, accuracy);
+						log.debug("{}, accuracy: {} [removed]", current, accuracy);
 						it.remove();
 						continue;
 					} else {
-						LOGGER.debug("{}, accuracy: {}", current, accuracy);
+						log.debug("{}, accuracy: {}", current, accuracy);
 					}
 					updatePotentialSingleFeatureModel(current, accuracy, model);
 					formulaList.add(new LearnedModel(model, current, accuracy));

@@ -14,8 +14,10 @@ import java.util.List;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.JunitTestsInfo;
+import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import sav.common.core.ISystemVariable;
+import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.SystemPreferences;
 
 /**
@@ -23,27 +25,35 @@ import sav.strategies.dto.SystemPreferences;
  *
  */
 public class LearnTestParams {
+	private boolean testMode = true;
+	private AppJavaClassPath appClasspath;
 	private LearnTestApproach approach;
 	private TargetMethod targetMethod;
 	private JunitTestsInfo initialTests;
 	private SystemPreferences systemConfig;
 	private int maxTcs;
 	
-	public LearnTestParams() {
+	public LearnTestParams(AppJavaClassPath appClasspath) {
+		this.appClasspath = appClasspath;
 		systemConfig = new SystemPreferences();
 	}
 	
-	public LearnTestParams(TargetMethod targetMethod) {
-		this();
-		this.targetMethod = targetMethod;
+	public LearnTestParams(AppJavaClassPath appClasspath, MethodInfo methodInfo) {
+		this(appClasspath);
+		setTargetMethod(methodInfo);
+	}
+	
+	public void renew(MethodInfo targetMethod) {
+		setTargetMethod(targetMethod);
+		initialTests = null;
 	}
 
 	public TargetMethod getTargetMethod() {
 		return targetMethod;
 	}
 
-	public void setTargetMethod(TargetMethod targetMethod) {
-		this.targetMethod = targetMethod;
+	public void setTargetMethod(MethodInfo methodInfo) {
+		this.targetMethod = new TargetMethod(methodInfo);
 	}
 	
 	public boolean isLearnByPrecond() {
@@ -84,13 +94,25 @@ public class LearnTestParams {
 	public void setMaxTcs(int maxTcs) {
 		this.maxTcs = maxTcs;
 	}
+	
+	public AppJavaClassPath getAppClasspath() {
+		return appClasspath;
+	}
+	
+	public boolean isTestMode() {
+		return testMode;
+	}
+
+	public void setTestMode(boolean testMode) {
+		this.testMode = testMode;
+	}
 
 	public String getTestPackage(GenTestPackage phase) {
 		return LearntestParamsUtils.getTestPackage(this, phase);
 	}
 	
 	public LearnTestParams createNew() {
-		LearnTestParams params = new LearnTestParams();
+		LearnTestParams params = new LearnTestParams(appClasspath);
 		params.targetMethod = targetMethod;
 		params.systemConfig = systemConfig;
 		params.maxTcs = maxTcs;

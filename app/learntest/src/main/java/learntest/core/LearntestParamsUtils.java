@@ -42,6 +42,7 @@ public class LearntestParamsUtils {
 		params.setTestPkg(getTestPackage(learntestParams, gentestPackage));
 		params.setTestClassPrefix(targetMethod.getTargetClazz().getClassSimpleName());
 		params.setTestMethodPrefix("test");
+		params.setExtractTestcaseSequenceMap(true);
 		return params;
 	}
 	
@@ -50,7 +51,9 @@ public class LearntestParamsUtils {
 		INIT("testdata.%s.init.%s.%s"), 
 		RESULT("testdata.%s.result.%s.%s"),
 		MAIN("testdata.%s.main.%s.%s");
-		
+//		INIT("testdata.%s.%s.%s"), //("testdata.%s.init.%s.%s"), 
+//		RESULT("testdata.%s.%s.%s");//("testdata.%s.result.%s.%s");
+
 		private String format;
 		private GenTestPackage(String format) {
 			this.format = format;

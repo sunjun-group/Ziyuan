@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Queue;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -32,34 +33,37 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cfgcoverage.jacoco.CfgJaCoCoConfigs;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.JDartLearntest;
 import learntest.core.LearnTestParams;
 import learntest.core.LearnTestParams.LearntestSystemVariable;
 import learntest.core.RunTimeInfo;
+import learntest.core.TestRunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;
-import learntest.core.commons.data.classinfo.TargetClass;
+import learntest.core.commons.data.classinfo.MethodInfo;
+import learntest.core.commons.data.classinfo.ClassInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
-import learntest.core.commons.exception.LearnTestException;
 import learntest.core.machinelearning.CfgNodeDomainInfo;
 import learntest.core.machinelearning.FormulaInfo;
 import learntest.plugin.LearnTestConfig;
+import learntest.plugin.LearntestPlugin;
+import learntest.plugin.commons.PluginException;
 import learntest.plugin.export.io.excel.Trial;
+import learntest.plugin.handler.gentest.GentestSettings;
 import learntest.plugin.utils.IProjectUtils;
 import learntest.plugin.utils.IResourceUtils;
 import learntest.plugin.utils.IStatusUtils;
 import learntest.plugin.utils.JdartConstants;
 import learntest.plugin.utils.LearnTestUtil;
-import sav.common.core.Constants;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
-import sav.common.core.SystemVariables;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.TextFormatUtils;
 import sav.settings.SAVTimer;
@@ -75,28 +79,43 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 	/* PLUGIN HANDLER */
 	@Override
-	public Object execute(ExecutionEvent arg0) throws ExecutionException {
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
 		Job job = new Job(getJobName()) {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
+					setup(LearnTestConfig.getINSTANCE().getProjectName());
 					prepareData();
-					execute(monitor);
+					return execute(selection, monitor);
 				} catch (CoreException e) {
+					e.printStackTrace();
+				} catch (PluginException e) {
 					e.printStackTrace();
 				} finally {
 					monitor.done();
 				}
 				return IStatusUtils.afterRunning(monitor);
 			}
+
 		};
 		job.schedule();
 
 		return null;
 	}
 
-	protected abstract IStatus execute(IProgressMonitor monitor);
+	protected IStatus execute(ISelection selection, IProgressMonitor monitor) throws CoreException {
+		return execute(monitor);
+	}
+
+	private void setup(String projectName) throws PluginException {
+		LearntestPlugin.initLogger(projectName);
+	}
+
+	protected IStatus execute(IProgressMonitor monitor) throws CoreException {
+		return IStatusUtils.ok();
+	}
 
 	protected abstract String getJobName();
 
@@ -113,52 +132,32 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 	protected void handleException(Exception e) {
 		log.debug("error: {}", (Object) e.getStackTrace());
-		e.printStackTrace();
 	}
 
 	protected void prepareData() throws CoreException {
-		appClasspath = initAppJavaClassPath();
+		getAppClasspath();
 	}
 
 	public AppJavaClassPath getAppClasspath() {
 		if (appClasspath == null) {
-			appClasspath = initAppJavaClassPath();
+			IProject project = IProjectUtils.getProject(LearnTestConfig.getINSTANCE().getProjectName());
+			IJavaProject javaProject = IProjectUtils.getJavaProject(project);
+			appClasspath = GentestSettings.initAppJavaClassPath(javaProject);
 		}
 		return appClasspath;
 	}
 
-	private AppJavaClassPath initAppJavaClassPath() {
-		try {
-			IProject project = IProjectUtils.getProject(LearnTestConfig.getINSTANCE().getProjectName());
-			IJavaProject javaProject = IProjectUtils.getJavaProject(project);
-			AppJavaClassPath appClasspath = new AppJavaClassPath();
-			appClasspath.setJavaHome(IProjectUtils.getJavaHome(javaProject));
-			appClasspath.addClasspaths(LearnTestUtil.getPrjectClasspath());
-			String outputPath = LearnTestUtil.getOutputPath();
-			appClasspath.setTarget(outputPath);
-			appClasspath.setTestTarget(outputPath);
-			appClasspath.setTestSrc(LearnTestUtil.retrieveTestSourceFolder());
-			appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER, LearnTestUtil.getPrjClassLoader());
-			appClasspath.getPreferences().set(SystemVariables.TESTCASE_TIMEOUT,
-					Constants.DEFAULT_JUNIT_TESTCASE_TIMEOUT);
-			appClasspath.getPreferences().set(CfgJaCoCoConfigs.DUPLICATE_FILTER, true);
-			return appClasspath;
-		} catch (CoreException ex) {
-			throw new SavRtException(ex);
-		}
-	}
-
-	protected LearnTestParams initLearntestParamsFromPreference() {
+	protected LearnTestParams initLearntestParamsFromPreference() throws CoreException {
 		return initLearntestParams(LearnTestConfig.getINSTANCE());
 	}
 
-	protected LearnTestParams initLearntestParams(LearnTestConfig config) {
+	protected LearnTestParams initLearntestParams(LearnTestConfig config) throws CoreException {
 		try {
-			LearnTestParams params = new LearnTestParams();
+			LearnTestParams params = new LearnTestParams(getAppClasspath());
 			params.setApproach(config.isL2TApproach() ? LearnTestApproach.L2T : LearnTestApproach.RANDOOP);
 			try {
-				TargetMethod targetMethod = initTargetMethod(config);
-				params.setTargetMethod(targetMethod);
+				MethodInfo targetMethod = initTargetMethod(config);
+				params.renew(targetMethod);
 			} catch (JavaModelException e) {
 				throw new SavException(e, ModuleEnum.UNSPECIFIED, e.getMessage());
 			}
@@ -169,9 +168,9 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		}
 	}
 
-	private static TargetMethod initTargetMethod(LearnTestConfig config) throws SavException, JavaModelException {
-		TargetClass targetClass = new TargetClass(config.getTargetClassName());
-		TargetMethod method = new TargetMethod(targetClass);
+	private static MethodInfo initTargetMethod(LearnTestConfig config) throws SavException, JavaModelException {
+		ClassInfo targetClass = new ClassInfo(config.getTargetClassName());
+		MethodInfo method = new MethodInfo(targetClass);
 		method.setMethodName(config.getTargetMethodName());
 		method.setLineNum(config.getMethodLineNumber());
 		MethodDeclaration methodDeclaration = LearnTestUtil.findSpecificMethod(method.getClassName(),
@@ -191,11 +190,15 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		return method;
 	}
 
-	public void setSystemConfig(LearnTestParams params) {
-		params.getSystemConfig().set(LearntestSystemVariable.JDART_APP_PROPRETIES,
-				IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jdart/jpf.properties"));
-		params.getSystemConfig().set(LearntestSystemVariable.JDART_SITE_PROPRETIES,
-				IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jpf.properties"));
+	public void setSystemConfig(LearnTestParams params) throws CoreException {
+		try {
+			params.getSystemConfig().set(LearntestSystemVariable.JDART_APP_PROPRETIES,
+					IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jdart/jpf.properties"));
+			params.getSystemConfig().set(LearntestSystemVariable.JDART_SITE_PROPRETIES,
+					IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jpf.properties"));
+		} catch (PluginException e) {
+			throw new CoreException(IStatusUtils.exception(e, e.getMessage()));
+		}
 	}
 
 	/* END PLUGIN HANDLER */
@@ -219,8 +222,8 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			RunTimeInfo jdartInfo = null;
 
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
-//			log.info("run jdart..");
-//			jdartInfo = runJdart(randoopParam);
+			log.info("run jdart..");
+			jdartInfo = runJdart(randoopParam);
 
 			l2tParams.setApproach(LearnTestApproach.L2T);
 			l2tParams.setInitialTests(randoopParam.getInitialTests());
@@ -238,8 +241,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			log.info("Result: ");
 			log.info("lt2: {}", l2tAverageInfo);
 			log.info("randoop: {}", ranAverageInfo);
-			printLearnedFormulas(l2tAverageInfo.getLearnedFormulas(), l2tAverageInfo.getLogFile());
-			setBetterBranch(l2tAverageInfo, ranAverageInfo);
+			printInforForTest(l2tAverageInfo, ranAverageInfo, params.isTestMode());
 			return new Trial(method.getMethodFullName(), method.getMethodLength(), method.getLineNum(), l2tAverageInfo,
 					ranAverageInfo, jdartInfo);
 		} catch (Exception e) {
@@ -248,7 +250,17 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		return null;
 	}
 
-	private void setBetterBranch(RunTimeInfo l2tAverageInfo, RunTimeInfo ranAverageInfo) {
+	private void printInforForTest(RunTimeInfo l2tInfo, RunTimeInfo ranInfo, boolean testMode) {
+		if (!testMode) {
+			return;
+		}
+		TestRunTimeInfo l2tAverageInfo = (TestRunTimeInfo) l2tInfo;
+		TestRunTimeInfo ranAverageInfo = (TestRunTimeInfo) ranInfo;
+		printLearnedFormulas(l2tAverageInfo.getLearnedFormulas(), l2tAverageInfo.getLogFile());
+		setBetterBranch(l2tAverageInfo, ranAverageInfo);
+	}
+
+	private void setBetterBranch(TestRunTimeInfo l2tAverageInfo, TestRunTimeInfo ranAverageInfo) {
 		StringBuffer sBuffer = new StringBuffer();
 		sBuffer.append("l2t covered branch ============================= \n");
 		sBuffer.append("true branch : \n");
@@ -271,15 +283,15 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		for (Entry<String, Collection<BreakpointValue>> entry : ranAverageInfo.getFalseSample().entrySet()){
 			sBuffer.append(entry.getKey()+" "+":"+entry.getValue().size()+" "+entry.getValue().toString()+"\n");
 		}
-		RunTimeInfo.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
+		TestRunTimeInfo.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
 
 		HashMap<CfgNode, CfgNodeDomainInfo> domainMap = l2tAverageInfo.getDomainMap();
 		StringBuffer l2tWorseSb = new StringBuffer(), ranWorseSb = new StringBuffer();
-		HashMap<CfgNode, Boolean> visited = new HashMap<>();
+		HashMap<CfgNode, Boolean> visited = new HashMap<CfgNode, Boolean>();
 		for (FormulaInfo info : l2tAverageInfo.getLearnedFormulas()){
 			if (!visited.containsKey(info.getNode()) 
 					&& info.getLearnedState() == info.VALID) {
-				Queue<CfgNode> queue = new LinkedList<>();
+				Queue<CfgNode> queue = new LinkedList<CfgNode>();
 				queue.add(info.getNode());
 				recordBetterInfo(info.getNode(), domainMap,
 						l2tWorseSb, ranWorseSb, info, ranAverageInfo, l2tAverageInfo);	
@@ -301,7 +313,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	}
 
 	private void recordBetterInfo(CfgNode dominatee, HashMap<CfgNode,CfgNodeDomainInfo> domainMap, StringBuffer l2tWorseSb, StringBuffer ranWorseSb, 
-			FormulaInfo info, RunTimeInfo ranAverageInfo, RunTimeInfo l2tAverageInfo) {
+			FormulaInfo info, TestRunTimeInfo ranAverageInfo, TestRunTimeInfo l2tAverageInfo) {
 		StringBuffer sBuffer = new StringBuffer();
 		String formula = info.getTrueFalseFormula().get(info.getTrueFalseFormula().size()-1);
 		CfgNode ancient = info.getNode();
@@ -341,7 +353,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			ranWorseSb.append(", domainator nodes : " + dominators +";");
 		}
 		
-		RunTimeInfo.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
+		TestRunTimeInfo.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
 	}
 
 	private boolean checkIfBetter(Collection<BreakpointValue> first, Collection<BreakpointValue> second, StringBuffer sBuffer) {
@@ -363,7 +375,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			sb.append(formulaInfo + "\n");
 		}
 		log.info(sb.toString());
-		RunTimeInfo.write(logFile, sb.toString());
+		TestRunTimeInfo.write(logFile, sb.toString());
 	}
 
 	private RunTimeInfo runJdart(LearnTestParams params) throws Exception {
@@ -385,22 +397,26 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	 * To test new version of learntest which uses another cfg and jacoco for
 	 * code coverage.
 	 */
-	public RunTimeInfo runLearntest(LearnTestParams params) throws Exception {
+	public RunTimeInfo runLearntest(LearnTestParams params) throws PluginException {
 		try {
 			SAVTimer.enableExecutionTimeout = true;
 			SAVTimer.exeuctionTimeout = 50000000;
-			learntest.core.LearnTest learntest = new learntest.core.LearnTest(getAppClasspath());
+			learntest.core.LearnTest learntest = new learntest.core.LearnTest(params.getAppClasspath());
 			RunTimeInfo runtimeInfo = learntest.run(params);
 
 			if (runtimeInfo != null) {
-				log.info("{} time: {}; coverage: {}; cnt: {}", params.getApproach().getName(),
-						TextFormatUtils.printTimeString(runtimeInfo.getTime()), runtimeInfo.getCoverage(),
-						runtimeInfo.getTestCnt());
-				log.info("coverageInfo: \n{}", runtimeInfo.getCoverageInfo());
+				if (runtimeInfo.getLineCoverageResult() != null) {
+					log.info("Line coverage result:");
+					log.info(runtimeInfo.getLineCoverageResult().getDisplayText());
+				}
+				log.info("{} RESULT:", StringUtils.upperCase(params.getApproach().getName()));
+				log.info("TIME: {}; COVERAGE: {}; CNT: {}", TextFormatUtils.printTimeString(runtimeInfo.getTime()),
+						runtimeInfo.getCoverage(), runtimeInfo.getTestCnt());
+				log.info("TOTAL COVERAGE INFO: \n{}", runtimeInfo.getCoverageInfo());
 			}
 			return runtimeInfo;
 		} catch (Exception e) {
-			throw new LearnTestException(e);
+			throw PluginException.wrapEx(e);
 		}
 	}
 }

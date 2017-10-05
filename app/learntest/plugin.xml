@@ -2,6 +2,33 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.jdt.core.IJavaElement"
+            class="learntest.plugin.commons.adapter.JavaElementRuntimeInfoAdapterFactory">
+         <adapter
+               type="learntest.plugin.commons.data.IModelRuntimeInfo">
+         </adapter>
+      </factory>
+   </extension>
+	<extension
+          point="org.eclipse.core.expressions.propertyTesters">
+       <propertyTester
+             class="learntest.plugin.testers.GentestTextSelectionTester"
+             id="learntest.plugin.tester.gentest.selection.text"
+             namespace="learntest.plugin.tester"
+             properties="isTestableSelectedText"
+             type="java.lang.Object">
+       </propertyTester>
+       <propertyTester
+             class="learntest.plugin.testers.ShowCoverageSelectionTester"
+             id="learntest.plugin.tester.selection.showCoverage"
+             namespace="learntest.plugin.tester"
+             properties="enableShowCoverageMenuItem"
+             type="java.lang.Object">
+       </propertyTester>
+    </extension>
+   <extension
          point="org.eclipse.ui.commands" id="learntestCommands">
       <command
             defaultHandler="learntest.plugin.handler.GenerateTestHandler"
@@ -9,25 +36,29 @@
             name="Generate Test">
       </command>
       <command
-            defaultHandler="learntest.plugin.handler.EvaluationHandler"
-            id="learntest.command.evaluateAllMethods"
-            name="Evaluate All Methods">
+            defaultHandler="learntest.plugin.handler.gentest.JavaGentestHandler"
+            id="learntest.plugin.commands.javaGentest"
+            name="Generate Testcases">
+         <commandParameter
+               id="learntest.approach"
+               name="L2T"
+               optional="false">
+         </commandParameter>
       </command>
       <command
-            defaultHandler="learntest.plugin.handler.ChangeModiferHandler"
-            id="learntest.command.changeModifier"
-            name="Change Modifier to Public">
+            id="learntest.plugin.commands.reportview.groupBy"
+            name="GroupByCommand">
+         <commandParameter
+               id="report.groupby.type"
+               name="type"
+               optional="false">
+         </commandParameter>
       </command>
       <command
-            defaultHandler="learntest.plugin.handler.CodeCoverageHandler"
-            id="learntest.command.codeCoverage"
-            name="Generate code coverage">
+            id="learntest.plugin.commands.reportView.updateAnnotationByTestcases"
+            name="Update Coverage Highlight">
       </command>
-      <command
-            defaultHandler="learntest.plugin.handler.SetterMethodGenerationHandler"
-            id="learntest.command.generateSetter"
-            name="Generate Setter Method">
-      </command>
+     
    </extension>
    <extension
          point="org.eclipse.ui.menus" id="learntestMenu">
@@ -42,29 +73,182 @@
                   label="Generate Test"
                   style="push">
             </command>
-            <command
-                  commandId="learntest.command.evaluateAllMethods"
-                  label="Evaluate All Methods"
-                  style="push">
-            </command>
-            <command
-                  commandId="learntest.command.changeModifier"
-                  label="Change Modifier to Public"
-                  style="push">
-            </command>
-            <command
-                  commandId="learntest.command.generateSetter"
-                  label="Generate Setter Method for Fields"
-                  style="push">
-            </command>
-            <command
-                  commandId="learntest.command.codeCoverage"
-                  icon="icon/icon-test-management.png"
-                  label="Generate Code coverage"
-                  style="push">
-            </command>
          </menu>
          
+      </menuContribution>
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.eclipse.ui.popup.any?before=additions">
+         <separator
+               name="learntest.separator.generateTestcases"
+               visible="true">
+         </separator>
+         <menu
+               id="learntest.plugin.popup.gentest"
+               label="Generate Testcases">
+           <command
+                 commandId="learntest.plugin.commands.javaGentest"
+                 label="as L2T">
+            <parameter
+                  name="learntest.approach"
+                  value="L2T">
+            </parameter>
+             <visibleWhen
+                  checkEnabled="true">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <or>
+                     <adapt
+                           type="org.eclipse.jdt.core.IJavaElement">
+                     </adapt>
+                     <and>
+                        <with
+                              variable="selection">
+                           <test
+                                 forcePluginActivation="true"
+                                 property="learntest.plugin.tester.isTestableSelectedText">
+                           </test>
+                        </with>
+                     </and>
+                  </or>
+               </iterate>
+            </visibleWhen>
+         </command>
+         
+         <command
+                 commandId="learntest.plugin.commands.javaGentest"
+                 label="as RandomTest">
+            <parameter
+                  name="learntest.approach"
+                  value="RANDOOP">
+            </parameter>
+             <visibleWhen
+                  checkEnabled="true">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <or>
+                     <adapt
+                           type="org.eclipse.jdt.core.IJavaElement">
+                     </adapt>
+                     <and>
+                        <with
+                              variable="selection">
+                           <test
+                                 forcePluginActivation="true"
+                                 property="learntest.plugin.tester.isTestableSelectedText">
+                           </test>
+                        </with>
+                     </and>
+                  </or>
+               </iterate>
+            </visibleWhen>
+         </command>
+         
+          <command
+                 commandId="learntest.plugin.commands.javaGentest"
+                 label="as L2T_GAN">
+            <parameter
+                  name="learntest.approach"
+                  value="GAN">
+            </parameter>
+             <visibleWhen
+                  checkEnabled="true">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <or>
+                     <adapt
+                           type="org.eclipse.jdt.core.IJavaElement">
+                     </adapt>
+                     <and>
+                        <with
+                              variable="selection">
+                           <test
+                                 forcePluginActivation="true"
+                                 property="learntest.plugin.tester.isTestableSelectedText">
+                           </test>
+                        </with>
+                     </and>
+                  </or>
+               </iterate>
+            </visibleWhen>
+         </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:learntest.plugin.view.reportView">
+         <command
+               commandId="learntest.plugin.commands.reportview.groupBy"
+               icon="icon/TODO-GROUPBY.png"
+               label="Group by Projects"
+               style="radio">
+            <parameter
+                  name="report.groupby.type"
+                  value="PROJECT">
+            </parameter>
+         </command>
+         <command
+               commandId="learntest.plugin.commands.reportview.groupBy"
+               icon="icon/TODO-GROUPBY.png"
+               label="Group by Methods"
+               style="radio">
+            <parameter
+                  name="report.groupby.type"
+                  value="METHOD">
+            </parameter>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:learntest.plugin.view.reportView?after=additions">
+         <separator
+               name="learntest.separator.gentestReport"
+               visible="true">
+         </separator>
+         <command
+               commandId="learntest.plugin.commands.reportView.updateAnnotationByTestcases"
+               label="Show Coverage By Testcases"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+               <iterate>
+                  <and>
+                     <with
+                           variable="selection">
+                        <test
+                              args="coverageType"
+                              forcePluginActivation="true"
+                              property="learntest.plugin.tester.enableShowCoverageMenuItem"
+                              value="BY_SELECTED_TESTCASES">
+                        </test>
+                     </with>
+                  </and>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="learntest.plugin.commands.reportView.updateAnnotationByTestcases"
+               label="Show Full Coverage"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+               <iterate>
+                  <and>
+                     <with
+                           variable="selection">
+                        <test
+                              args="coverageType"
+                              forcePluginActivation="true"
+                              property="learntest.plugin.tester.enableShowCoverageMenuItem"
+                              value="FULL">
+                        </test>
+                     </with>
+                  </and>
+               </iterate>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -76,40 +260,42 @@
             name="Test Generation">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="org.eclipse.jdt.ui.java"
+            class="learntest.plugin.view.report.ReportView"
+            id="learntest.plugin.view.reportView"
+            name="ReportView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            annotationType="learntest.plugin.specification.coverage"
+            colorPreferenceKey="coverage_color"
+            colorPreferenceValue="189,215,153"
+            contributesToHeader="false"
+            highlightPreferenceKey="coverage_highlight"
+            highlightPreferenceValue="false"
+            includeOnPreferencePage="true"
+            isGoToNextNavigationTarget="false"
+            isGoToNextNavigationTargetKey="coverage_isGoToNextNavigationTarget"
+            isGoToPreviousNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="coverage_isGoToPrevNavigationTarget"
+            label="Coverage"
+            overviewRulerPreferenceKey="coverage_overviewRuler"
+            overviewRulerPreferenceValue="false"
+            presentationLayer="0"
+            showInNextPrevDropdownToolbarAction="false"
+            showInNextPrevDropdownToolbarActionKey="coverage_showInNextPrevDropdownToolbarAction"
+            textPreferenceKey="coverage_text"
+            textPreferenceValue="false"
+            textStylePreferenceKey="coverage_textStylePreference"
+            verticalRulerPreferenceKey="coverage_verticalRuler"
+            verticalRulerPreferenceValue="false">
+      </specification>
+   </extension>
 
-	<extension
-       id="jdartCommands"
-       point="org.eclipse.ui.commands">
-      <command
-            defaultHandler="learntest.plugin.handler.RunJDartHandler"
-            id="learntest.command.jdart"
-            name="Run JDart">
-      </command>
-      <command
-            defaultHandler="learntest.plugin.handler.RunAllJDartHandler"
-            id="jdart.command.runAll"
-            name="Run All Methods With JDart">
-      </command>
-   </extension>
-	<extension
-       id="jdartMenus"
-       point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="menu:org.eclipse.ui.main.menu">
-         <menu
-               label="Run JDart">
-            <command
-                  commandId="learntest.command.jdart"
-                  label="Run JDart"
-                  style="push">
-            </command>
-            <command
-                  commandId="jdart.command.runAll"
-                  label="Run All Methods with JDart"
-                  style="push">
-            </command>
-         </menu>
-      </menuContribution>
-   </extension>
 </plugin>

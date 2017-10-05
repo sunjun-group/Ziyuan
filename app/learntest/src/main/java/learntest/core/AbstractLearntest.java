@@ -32,8 +32,8 @@ import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.GentestResult;
-import learntest.core.gentest.TestGenerator;
 import sav.common.core.SavException;
+import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
 import sav.common.core.utils.SingleTimer;
@@ -42,8 +42,6 @@ import sav.settings.SAVExecutionTimeOutException;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
-import sav.strategies.vm.JavaCompiler;
-import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT
@@ -51,9 +49,8 @@ import sav.strategies.vm.VMConfiguration;
  */
 public abstract class AbstractLearntest implements ILearnTestSolution {
 	private Logger log = LoggerFactory.getLogger(AbstractLearntest.class);
+	protected LearningMediator mediator;
 	protected AppJavaClassPath appClasspath;
-	protected TestGenerator testGenerator;
-	protected JavaCompiler compiler;
 	private TestcasesExecutor testcaseExecutor;
 	
 	public AbstractLearntest(AppJavaClassPath appClasspath) {
@@ -61,16 +58,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 	}
 	
 	public GentestResult randomGentests(GentestParams params) {
-		ensureTestGenerator();
-		ensureCompiler();
-		try {
-			GentestResult result = testGenerator.genTest(params);
-			compiler.compile(appClasspath.getTestTarget(), result.getAllFiles());
-			return result;
-		} catch (Exception e) {
-			log.warn("Cannot generate testcase: [{}] {}", e, e.getMessage());
-			return GentestResult.getEmptyResult();
-		}
+		return getMediator().randomGentestAndCompile(params);
 	}
 	
 	/**
@@ -87,10 +75,18 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		int maxTry = 3;
 		int i = 0;
 		for (; i < maxTry; i++) {
+			if (i > 0) {
+				log.info("Try again for a better initial coverage..");
+			}
 			try {
 				gentestResult = randomGentests(gentestParams);
 				cfgCoverage = runCfgCoverage(targetMethod, gentestResult.getJunitClassNames());
 				double cvg = CoverageUtils.calculateCoverage(cfgCoverage);
+				if (cvg > 0) {
+					log.info("Coverage: {}, branchCoverage: {}", cvg, CoverageUtils.calculateCoverageByBranch(cfgCoverage));
+				} else {
+					log.info("Coverage: {}", cvg);
+				}
 				/* replace current init test with new generated test */
 				if (cvg > bestCvg) {
 					bestCvg = cvg;
@@ -135,9 +131,11 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		return cfgCoverage;
 	}
 	
-	protected RunTimeInfo getRuntimeInfo(CfgCoverage cfgCoverage) {
+	protected RunTimeInfo getRuntimeInfo(CfgCoverage cfgCoverage, boolean test) {
 		double coverage = CoverageUtils.calculateCoverageByBranch(cfgCoverage);
 		log.debug("coverage: {}", coverage);
+		long executionTime = SAVTimer.getExecutionTime();
+		int testCnt = cfgCoverage.getTotalTcs();
 		
 		StringBuffer coverageInfoBuf = new StringBuffer();
 		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
@@ -149,7 +147,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 				coveredBranches.add(branchRelationship == BranchRelationship.TRUE ? branchRelationship : 
 										BranchRelationship.FALSE);
 			}
-			sb.append("NodeCoverage [").append(node).append(", coveredTcs=").append(nodeCvg.getCoveredTcsTotal())
+			sb.append("NodeCoverage [").append(node).append(", covered=").append(nodeCvg.isCovered())
 						.append(", coveredBranches=").append(nodeCvg.getCoveredBranches().size()).append(", ")
 						.append(coveredBranches).append("]");
 			String sbStr = sb.toString();
@@ -158,7 +156,11 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 			coverageInfoBuf.append(sbStr + "\n");
 		}
 		
-		return new RunTimeInfo(SAVTimer.getExecutionTime(), coverage, cfgCoverage.getTotalTcs(), coverageInfoBuf.toString());
+		if (!test) {
+			return new RunTimeInfo(executionTime, coverage, testCnt, coverageInfoBuf.toString());
+		}
+		
+		return new TestRunTimeInfo(executionTime, coverage, testCnt, coverageInfoBuf.toString());
 	}
 	
 	protected BreakpointData executeTestcaseAndGetTestInput(List<String> testcases, BreakPoint methodEntryBkp)
@@ -177,16 +179,11 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		return testcaseExecutor;
 	}
 	
-	protected void ensureCompiler() {
-		if (compiler == null) {
-			compiler = new JavaCompiler(new VMConfiguration(appClasspath));
+	public LearningMediator getMediator() {
+		if (mediator == null) {
+			throw new SavRtException("learning mediator has not been initialized!");
 		}
-	}
-	
-	protected void ensureTestGenerator() {
-		if (testGenerator == null) {
-			testGenerator = new TestGenerator(appClasspath);
-		}
+		return mediator;
 	}
 
 	public AppJavaClassPath getAppClasspath() {

@@ -158,7 +158,6 @@ public class IlpSelectiveSampling {
 			}
 		}
 		log.debug("selectiveSamplingData : " + samples.size());
-//		log.info("select sample : {}", array2Str(samples));
 		List<double[]> heuList = new LinkedList<>(), randomSamples = new LinkedList<>();
 		for(int i=0; i<2; i++){
 			int bound = 10-(2*iterationTime--);
@@ -175,14 +174,14 @@ public class IlpSelectiveSampling {
 			int heulistNum = heuList.size()* maxSamplesPerSelect/total ,
 					randomNum = randomSamples.size()  * maxSamplesPerSelect/ total,
 					orignalNum = samples.size() * maxSamplesPerSelect/total; 
-			log.info("heulistNum : {}, randomNum : {}, sampleNum : {}", heulistNum, randomNum, orignalNum);
+			log.debug("heulistNum : {}, randomNum : {}, sampleNum : {}", heulistNum, randomNum, orignalNum);
 			samples = limitSamples(samples, orignalNum > 0 ? orignalNum : 1);
 			heuList = limitSamples(heuList, heulistNum > 0 ? heulistNum : 1);
 			randomSamples = limitSamples(randomSamples, randomNum > 0 ? randomNum : 1);
 		}
-		log.info("helist : {}", array2Str(heuList));
-		log.info("randomPointsWithPrecondition : {}", array2Str(randomSamples));
-		log.info("original sample : {}", array2Str(samples));
+		log.debug("helist : {}", array2Str(heuList));
+		log.debug("randomPointsWithPrecondition : {}", array2Str(randomSamples));
+		log.debug("original sample : {}", array2Str(samples));
 		
 		samples.addAll(heuList);
 		samples.addAll(randomSamples);

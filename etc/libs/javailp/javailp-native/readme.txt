@@ -3,7 +3,8 @@ SET UP FOR JAVAILP
 1. Copy files into system folder
 	For Windows:
 		copy lpsolve55.dll and liblpsolve55.so in folder /system to folder Windows/System32
-
+	For Linux:
+		copy liblpsolve55.so into /usr/local/lib
 	For Mac:
 		copy liblpsolve55.dylib into /usr/local/lib
 		copy liblpsolve55j.jnilib into /Library/Java/Extensions

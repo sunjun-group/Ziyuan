@@ -8,9 +8,7 @@
 
 package learntest.core;
 
-import cfgcoverage.jacoco.CfgJaCoCo;
 import learntest.core.commons.data.classinfo.TargetMethod;
-import learntest.core.gentest.TestGenerator;
 import sav.strategies.dto.AppJavaClassPath;
 
 /**
@@ -24,20 +22,12 @@ public abstract class AbstractLearningComponent {
 		this.mediator = mediator;
 	}
 	
-	protected TestGenerator getTestGenerator() {
-		return mediator.getTestGenerator();
-	}
-
 	public TargetMethod getTargetMethod() {
 		return mediator.getTargetMethod();
 	}
 
 	public AppJavaClassPath getAppClassPath() {
 		return mediator.getAppClassPath();
-	}
-
-	public CfgJaCoCo getCfgCoverage() {
-		return mediator.getCfgCoverageTool();
 	}
 	
 }

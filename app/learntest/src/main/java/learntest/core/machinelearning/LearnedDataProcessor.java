@@ -11,6 +11,7 @@ package learntest.core.machinelearning;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,7 @@ import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.common.dto.BreakpointValue;
 import jdart.model.TestInput;
 import learntest.core.LearningMediator;
-import learntest.core.RunTimeInfo;
+import learntest.core.TestRunTimeInfo;
 import learntest.core.commons.data.decision.BranchType;
 import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
@@ -147,7 +148,7 @@ public class LearnedDataProcessor {
 		}
 		log.info(sBuffer.toString());
 		sBuffer.append("\n");
-		RunTimeInfo.write(logFile, sBuffer.toString());
+		TestRunTimeInfo.write(logFile, sBuffer.toString());
 		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions, learnedDividers);
 	}
 

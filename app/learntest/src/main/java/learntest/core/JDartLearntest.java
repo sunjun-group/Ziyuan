@@ -25,6 +25,7 @@ import learntest.core.gentest.GentestResult;
 import learntest.core.jdart.JDartRunner;
 import learntest.core.jdart.JdartTestInputUtils;
 import sav.common.core.SavException;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.TextFormatUtils;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
@@ -36,6 +37,7 @@ import sav.strategies.dto.execute.value.ExecVar;
  */
 public class JDartLearntest extends LearnTest {
 	private static Logger log = LoggerFactory.getLogger(JDartLearntest.class);
+	
 	public JDartLearntest(AppJavaClassPath appClasspath) {
 		super(appClasspath);
 	}
@@ -43,11 +45,10 @@ public class JDartLearntest extends LearnTest {
 	@Override
 	protected void prepareInitTestcase(LearnTestParams params) throws SavException {
 		List<TestInput> inputs = generateTestAndRunJDart(params);
-		if (inputs == null) {
+		if (CollectionUtils.isEmpty(inputs)) {
 			log.info("jdart result: {}", TextFormatUtils.printListSeparateWithNewLine(inputs));
 			return;
-		}
-		else{
+		} else{
 			log.info("jdart result (print 100 result at most):");
 			for (int i = 0; i < inputs.size() && i < 100; i++) {
 				log.info("input: {}", inputs.get(i).toString());
@@ -65,9 +66,10 @@ public class JDartLearntest extends LearnTest {
 	public RunTimeInfo jdart(LearnTestParams params) {
 		SAVTimer.startCount();
 		try {
+			init(params);
 			prepareInitTestcase(params);
 			CfgCoverage cfgCoverage = runCfgCoverage(params.getTargetMethod(), params.getInitialTests().getJunitClasses());
-			return getRuntimeInfo(cfgCoverage);
+			return getRuntimeInfo(cfgCoverage, params.isLearnByPrecond());
 		} catch (Exception e) {
 			log.debug(e.getMessage());
 			return null;

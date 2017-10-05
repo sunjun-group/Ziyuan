@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import learntest.plugin.Activator;
+import learntest.plugin.LearntestPlugin;
 
 /**
  * @author LLT
@@ -33,7 +33,7 @@ public class IStatusUtils {
 	}
 	
 	public static IStatus status(int type, String msg) {
-		return new Status(type, Activator.PLUGIN_ID, msg);
+		return new Status(type, LearntestPlugin.PLUGIN_ID, msg);
 	}
 	
 	public static IStatus ok() {
@@ -45,7 +45,7 @@ public class IStatusUtils {
 	}
 	
 	public static IStatus exception(Throwable ex, String msg) {
-		return new Status(IStatus.ERROR, Activator.PLUGIN_ID, msg, ex);
+		return new Status(IStatus.ERROR, LearntestPlugin.PLUGIN_ID, msg, ex);
 	}
 	
 	public static IStatus afterRunning(IProgressMonitor monitor) {

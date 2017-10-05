@@ -1,35 +1,16 @@
 package learntest.core;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
-import cfgcoverage.jacoco.analysis.data.CfgNode;
-import icsetlv.common.dto.BreakpointValue;
-import learntest.core.machinelearning.CfgNodeDomainInfo;
-import learntest.core.machinelearning.FormulaInfo;
+import learntest.core.commons.data.LineCoverageResult;
 import learntest.core.machinelearning.IInputLearner;
 import sav.common.core.utils.TextFormatUtils;
 
 public class RunTimeInfo {
-	private long time;
-	private double coverage;
-	private int testCnt;
-	
+	protected long time;
+	protected double coverage;
+	protected int testCnt;
 	private String coverageInfo;
-	protected int learnState = 0; /** if only learn valid formula 1, also has rubbish learned formula 2; only rubbish -1, no formula 0 */
-	List<FormulaInfo> learnedFormulas = new LinkedList<>();
-	private double validCoverage;
-	public String l2tWorseThanRand = "", randWorseThanl2t = "";
-
-	private HashMap<String, Collection<BreakpointValue>> trueSample = new HashMap<>(),
-			falseSample = new HashMap<>();
-	private HashMap<CfgNode, CfgNodeDomainInfo> domainMap = new HashMap<>(1);
-	private String logFile;
+	
+	private LineCoverageResult lineCoverageResult;
 	
 	public RunTimeInfo(long time, double coverage, int testCnt) {
 		this.time = time;
@@ -38,17 +19,8 @@ public class RunTimeInfo {
 	}
 	
 	public RunTimeInfo(long time, double coverage, int testCnt, String coverageInfo) {
-		this.time = time;
-		this.coverage = coverage;
-		this.testCnt = testCnt;
+		this(time, coverage, testCnt);
 		this.coverageInfo = coverageInfo;
-	}
-	
-	public RunTimeInfo(long time, double coverage, int testCnt, double validCoverage) {
-		this.time = time;
-		this.coverage = coverage;
-		this.testCnt = testCnt;
-		this.validCoverage = validCoverage;
 	}
 	
 	public RunTimeInfo() {
@@ -59,12 +31,6 @@ public class RunTimeInfo {
 		time += subRunInfo.time;
 		coverage += subRunInfo.coverage;
 		testCnt += subRunInfo.testCnt;
-		learnedFormulas.addAll(subRunInfo.learnedFormulas);
-		learnState = subRunInfo.learnState;
-		trueSample.putAll(subRunInfo.trueSample);
-		falseSample.putAll(subRunInfo.falseSample);
-		domainMap = subRunInfo.domainMap;
-		logFile = subRunInfo.logFile;
 	}
 
 	public long getTime() {
@@ -104,6 +70,14 @@ public class RunTimeInfo {
 		time /= times;
 		testCnt /= times;
 	}
+	
+	public String getCoverageInfo() {
+		return coverageInfo;
+	}
+
+	public void setCoverageInfo(String coverageInfo) {
+		this.coverageInfo = coverageInfo;
+	}
 
 	@Override
 	public String toString() {
@@ -138,80 +112,32 @@ public class RunTimeInfo {
 		return info.getCoverage();
 	}
 
-	public String getCoverageInfo() {
-		return coverageInfo;
+	public LineCoverageResult getLineCoverageResult() {
+		return lineCoverageResult;
 	}
 
-	public void setCoverageInfo(String coverageInfo) {
-		this.coverageInfo = coverageInfo;
+	public void setLineCoverageResult(LineCoverageResult lineCoverageResult) {
+		this.lineCoverageResult = lineCoverageResult;
 	}
 
-	public double getValidCoverage() {
-		return validCoverage;
-	}
-
-	public List<FormulaInfo> getLearnedFormulas() {
-		return learnedFormulas;
-	}
-
-	public int getLearnState() {
-		return learnState;
+	/* LLT: TO REMOVE */
+	public static void createFile(String logFile) {
+		// do nothing
 	}
 
 	public void setSample(IInputLearner learner) {
-		this.trueSample.putAll(learner.getTrueSample());
-		this.falseSample.putAll(learner.getFalseSample());		
-	}
-
-	public HashMap<String, Collection<BreakpointValue>> getTrueSample() {
-		return trueSample;
-	}
-
-	public HashMap<String, Collection<BreakpointValue>> getFalseSample() {
-		return falseSample;
-	}
-
-	public HashMap<CfgNode, CfgNodeDomainInfo> getDomainMap() {
-		return domainMap;
-	}
-
-	public void setDomainMap(HashMap<CfgNode, CfgNodeDomainInfo> domainMap) {
-		this.domainMap = domainMap;
-	}
-
-	public String getLogFile() {
-		return logFile;
+		// do nothing
 	}
 
 	public void setLogFile(String logFile) {
-		this.logFile = logFile;
+		// do nothing
 	}
 
-	public static void write(String file, String log) {
-		if (log == null) {
-			return;
-		}
-		FileWriter writer = null;
-		try {
-			writer = new FileWriter(file, true);
-			writer.write(log);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				writer.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+	public int getLearnState() {
+		return 0;
+	}
 
+	public double getValidCoverage() {
+		return 0.0;
 	}
-	
-	public static void createFile(String path) {
-		File file = new File(path);
-		if (!file.exists()) {
-			file.getParentFile().mkdirs();
-		}
-	}
-	
 }

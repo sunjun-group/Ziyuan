@@ -5,6 +5,7 @@ package gentest.core.data.statement;
 
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 
 /**
  * @author LLT
@@ -54,5 +55,10 @@ public class RConstructor extends Statement {
 	@Override
 	public String toString() {
 		return constructor.toString();
+	}
+	
+	public boolean isMemberNestedConstructor() {
+		Class<?> declaringClass = getDeclaringClass();
+		return declaringClass.getDeclaringClass() != null && !Modifier.isStatic(declaringClass.getModifiers());
 	}
 }

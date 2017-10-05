@@ -58,7 +58,11 @@ public class TestGenerator {
 		PrinterParams printerParams = params.getPrinterParams();
 		TestsPrinter printer = new TestsPrinter(printerParams);
 		if (!params.generateMainClass()) {
-			return gentest(params, printer);
+			LearntestJWriter cuWriter = new LearntestJWriter(params.extractTestcaseSequenceMap());
+			printer.setCuWriter(cuWriter);
+			GentestResult result = gentest(params, printer);
+			result.setTestcaseSequenceMap(cuWriter.getTestcaseSequenceMap());
+			return result;
 		} 
 		/* if main class is required to be generated, we need to do a little more */
 		MainClassJWriter cuWriter = new MainClassJWriter(printerParams.getPkg(),
@@ -73,8 +77,8 @@ public class TestGenerator {
 		return result;
 	}
 	
-	protected GentestResult gentest(GentestParams params, TestsPrinter printer) throws SavException {
-		log.debug("start random gentest..");
+	private GentestResult gentest(GentestParams params, TestsPrinter printer) throws SavException {
+		log.info("Start random gentest..");
 		SingleTimer timer = SingleTimer.start("random gentest");
 		Class<?> clazz = loadClass(params.getTargetClassName());
 		RandomTraceGentestBuilder gentest = new RandomTraceGentestBuilder(params.getNumberOfTcs())
@@ -88,7 +92,7 @@ public class TestGenerator {
 		GentestResult result = new GentestResult();
 		result.setJunitClassNames(printer.printTests(pair));
 		result.setJunitfiles(((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles());
-		log.debug("generated junit classes: {}", result.getJunitClassNames());
+		log.info("Generated junit classes: {}", result.getJunitClassNames());
 		log.debug(timer.getResult());
 		return result;
 	}

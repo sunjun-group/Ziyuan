@@ -10,6 +10,8 @@ package learntest.core.gentest;
 
 import gentest.junit.PrinterParams;
 import gentest.junit.TestsPrinter.PrintOption;
+import sav.common.core.Constants;
+import sav.common.core.utils.ClassUtils;
 
 /**
  * @author LLT
@@ -26,6 +28,7 @@ public class GentestParams {
 	/* for generated tests printer */
 	private PrinterParams printerParams = new PrinterParams();
 	private boolean generateMainClass;
+	private boolean extractTestcaseSequenceMap;
 
 	public String getMethodSignature() {
 		return methodSignature;
@@ -64,11 +67,11 @@ public class GentestParams {
 	}
 
 	public void setTestPkg(String testPkg) {
-		this.printerParams.setPkg(testPkg);
+		this.printerParams.setPkg(ClassUtils.getCompilableName(testPkg, Constants.DOT));
 	}
 
 	public void setTestClassPrefix(String testClassPrefix) {
-		this.printerParams.setClassPrefix(testClassPrefix);
+		this.printerParams.setClassPrefix(ClassUtils.getCompilableName(testClassPrefix, ""));
 	}
 
 	public void setTestMethodPrefix(String testMethodPrefix) {
@@ -102,4 +105,13 @@ public class GentestParams {
 	public void setMethodExecTimeout(long methodExecTimeout) {
 		this.methodExecTimeout = methodExecTimeout;
 	}
+
+	public boolean extractTestcaseSequenceMap() {
+		return extractTestcaseSequenceMap;
+	}
+
+	public void setExtractTestcaseSequenceMap(boolean extractTestcaseSequenceMap) {
+		this.extractTestcaseSequenceMap = extractTestcaseSequenceMap;
+	}
+	
 }

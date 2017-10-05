@@ -2,11 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry exported="true" kind="lib" path="lib/json-20170516.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-3.11-20141221.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-3.11-20141221.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-schemas-3.11-20141221.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xmlbeans-2.6.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/cfgcoverage.jacoco.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cfgcoverage.jacoco.jar" sourcepath="lib/cfgcoverage.jacoco.shade-0.0.1-SNAPSHOT-shaded-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/guice-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="javailp-1.2a.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/cfgcoverage.jacoco.shade-0.0.1-SNAPSHOT-shaded-sources.jar"/>

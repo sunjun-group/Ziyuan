@@ -34,6 +34,8 @@ public class GanMachine {
 		outputReader.open();
 		PythonVmRunner vmRunner = new PythonVmRunner(inputWriter, outputReader);
 		PythonVmConfiguration vmConfig = new PythonVmConfiguration();
+		vmConfig.setPythonHome("/usr/bin/python");
+		vmConfig.setLaunchClass("/Users/lylytran/Projects/Ziyuan-branches/NeuralTest/neuraltest/connect_test.py");
 		vmRunner.start(vmConfig);
 	}
 	

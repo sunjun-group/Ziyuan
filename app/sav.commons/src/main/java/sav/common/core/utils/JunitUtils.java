@@ -12,9 +12,12 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -113,6 +116,15 @@ public class JunitUtils {
 
 	public static Pair<String, String> toPair(String junitClassTestMethod) {
 		return ClassUtils.splitClassMethod(junitClassTestMethod);
+	}
+	
+	public static Map<String, List<String>> toClassMethodsMap(Collection<String> junitClassTestMethods) {
+		Map<String, List<String>> map = new HashMap<String, List<String>>();
+		for (String classMethod : junitClassTestMethods) {
+			Pair<String, String> classMethodPair = toPair(classMethod);
+			CollectionUtils.getListInitIfEmpty(map, classMethodPair.a).add(classMethodPair.b);
+		}
+		return map;
 	}
 	
 	public static List<String> toClassMethodStrs(List<Pair<String, String>> values) {

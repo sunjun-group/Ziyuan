@@ -114,7 +114,7 @@ public class DecisionProbes extends CfgCoverage {
 					path.put(dominator, branchRel);
 				}
 			} else {
-				log.info("from "+dominator + " to "+node+" : "+branchRel);
+				log.debug("from "+dominator + " to "+node+" : "+branchRel);
 				CategoryCalculator condFromDividers = null;
 				if (branchRel == BranchRelationship.TRUE || branchRel == BranchRelationship.FALSE) {
 					condFromDividers = getCalculator(domDividers, branchRel);
@@ -172,7 +172,7 @@ public class DecisionProbes extends CfgCoverage {
 					}
 				}
 			}
-			log.info("from "+dominator + " to "+node+" : "+branchRel);
+			log.debug("from "+dominator + " to "+node+" : "+branchRel);
 			CategoryCalculator condFromDividers = getCalculator(domDividers, branchRel);
 			if (condFromDividers != null) {
 				precondition.addPreconditions(domPrecond.getPreconditions(), condFromDividers);

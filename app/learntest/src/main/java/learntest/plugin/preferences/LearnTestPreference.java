@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import learntest.plugin.Activator;
+import learntest.plugin.LearntestPlugin;
 import learntest.plugin.LearnTestConfig;
 
 public class LearnTestPreference extends PreferencePage implements IWorkbenchPreferencePage {
@@ -57,15 +57,15 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 
 	@Override
 	public void init(IWorkbench workbench) {
-		this.defaultTargetProject = Activator.getDefault().getPreferenceStore().getString(TARGET_PORJECT);
-		this.defaultTestClass = Activator.getDefault().getPreferenceStore().getString(CLASS_NAME);
-		this.defaultTestMethod = Activator.getDefault().getPreferenceStore().getString(METHOD_NAME);
-		this.defaultL2T = Activator.getDefault().getPreferenceStore().getString(IS_L2T);
+		this.defaultTargetProject = LearntestPlugin.getDefault().getPreferenceStore().getString(TARGET_PORJECT);
+		this.defaultTestClass = LearntestPlugin.getDefault().getPreferenceStore().getString(CLASS_NAME);
+		this.defaultTestMethod = LearntestPlugin.getDefault().getPreferenceStore().getString(METHOD_NAME);
+		this.defaultL2T = LearntestPlugin.getDefault().getPreferenceStore().getString(IS_L2T);
 		if(this.defaultL2T == null){
 			this.defaultL2T = "true";
 		}
 		
-		this.defaultMethodLineNumber = Activator.getDefault().getPreferenceStore().getString(METHOD_LINE_NUMBER);
+		this.defaultMethodLineNumber = LearntestPlugin.getDefault().getPreferenceStore().getString(METHOD_LINE_NUMBER);
 		if(this.defaultMethodLineNumber == null){
 			this.defaultMethodLineNumber = "0";
 		}
@@ -151,11 +151,11 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 		preferences.put(IS_L2T, isL2TString);
 		preferences.put(METHOD_LINE_NUMBER, this.methodLineNumberText.getText());
 		
-		Activator.getDefault().getPreferenceStore().putValue(TARGET_PORJECT, this.projectCombo.getText());
-		Activator.getDefault().getPreferenceStore().putValue(CLASS_NAME, this.testClassText.getText());
-		Activator.getDefault().getPreferenceStore().putValue(METHOD_NAME, this.testMethodText.getText());
-		Activator.getDefault().getPreferenceStore().putValue(IS_L2T, isL2TString);
-		Activator.getDefault().getPreferenceStore().putValue(METHOD_LINE_NUMBER, this.methodLineNumberText.getText());
+		LearntestPlugin.getDefault().getPreferenceStore().putValue(TARGET_PORJECT, this.projectCombo.getText());
+		LearntestPlugin.getDefault().getPreferenceStore().putValue(CLASS_NAME, this.testClassText.getText());
+		LearntestPlugin.getDefault().getPreferenceStore().putValue(METHOD_NAME, this.testMethodText.getText());
+		LearntestPlugin.getDefault().getPreferenceStore().putValue(IS_L2T, isL2TString);
+		LearntestPlugin.getDefault().getPreferenceStore().putValue(METHOD_LINE_NUMBER, this.methodLineNumberText.getText());
 		
 		confirmChanges();
 		
