@@ -17,7 +17,6 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
@@ -35,7 +34,7 @@ public interface IInputLearner {
 
 	static Logger log = LoggerFactory.getLogger(IInputLearner.class);
 
-	DecisionProbes learn(DecisionProbes inputProbes, BreakpointData result, Map<Integer, List<Variable>> relevantVarMap)
+	DecisionProbes learn(DecisionProbes inputProbes, Map<Integer, List<Variable>> relevantVarMap)
 			throws SavException;
 
 	default void recordSample(DecisionProbes inputProbes, SamplingResult sampleResult, String logFile) {

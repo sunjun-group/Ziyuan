@@ -79,56 +79,8 @@ public class DecisionProbes extends CfgCoverage {
 		setTestcases(cfgCoverage.getTestcases());
 	}
 
-	/* build precondition of a node based on its dominatees */
-	// @Deprecated this method use cfg, but we should use cdg
-	// public OrCategoryCalculator getPrecondition(CfgNode node) {
-	// Precondition precondition = getNodeProbe(node).getPrecondition();
-	// for (CfgNode dominator : CfgUtils.getPrecondInherentDominatee(node)) {
-	// Precondition domPrecond = getNodeProbe(dominator).getPrecondition();
-	// List<Divider> domDividers = domPrecond.getDividers();
-	// if (CollectionUtils.isEmpty(domDividers)) {
-	// precondition.addPreconditions(domPrecond.getPreconditions());
-	// } else {
-	// BranchRelationship branchRel =
-	// node.getBranchRelationship(dominator.getIdx());
-	// CategoryCalculator condFromDividers = null;
-	// if (branchRel == BranchRelationship.TRUE) {
-	// condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
-	// }
-	//// else if (dominator.isLoopHeaderOf(node)) {
-	//// condFromDividers = new
-	// MultiDividerBasedCategoryCalculator(domDividers);
-	//// }
-	// else {
-	// List<Divider> clonedDividers = new ArrayList<>();
-	// for(Divider d: domDividers){
-	// double[] clonedThetas = new double[d.getThetas().length];
-	// for(int i=0; i<clonedThetas.length; i++){
-	// clonedThetas[i]=-1*d.getThetas()[i];
-	// }
-	//
-	// Divider d0 = new Divider(clonedThetas, -1*d.getTheta0(), true);
-	// clonedDividers.add(d0);
-	// }
-	// condFromDividers = new
-	// MultiDividerBasedCategoryCalculator(clonedDividers);
-	// }
-	// if (condFromDividers != null) {
-	// precondition.addPreconditions(domPrecond.getPreconditions(),
-	// condFromDividers);
-	// }
-	// }
-	// }
-	// return new OrCategoryCalculator(precondition.getPreconditions(),
-	// learningVars, originalVars);
-	// }
-	
 	/**
 	 * set the preconditions of node, and return it
-	 * @param node
-	 * @param check 
-	 * @param list
-	 * @return
 	 */
 	public Pair<OrCategoryCalculator, Boolean> getPrecondition(CfgNode node, HashMap<CfgNode, CfgNodeDomainInfo> dominationMap, boolean isLoopHeader) {
 		List<CfgNode> dominators = dominationMap.get(node).getDominators();
@@ -284,17 +236,6 @@ public class DecisionProbes extends CfgCoverage {
 			condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
 		} else if (branchRel == BranchRelationship.FALSE) {
 			condFromDividers = new MultiNotDividerBasedCategoryCalculator(domDividers);
-//			List<Divider> clonedDividers = new ArrayList<>();
-//			for (Divider d : domDividers) {
-//				double[] clonedThetas = new double[d.getThetas().length];
-//				for (int i = 0; i < clonedThetas.length; i++) {
-//					clonedThetas[i] = -1 * d.getThetas()[i];
-//				}
-//
-//				Divider d0 = new Divider(clonedThetas, -1 * d.getTheta0(), true);
-//				clonedDividers.add(d0);
-//			}
-//			condFromDividers = new MultiDividerBasedCategoryCalculator(clonedDividers);
 		}
 		return condFromDividers;
 	}

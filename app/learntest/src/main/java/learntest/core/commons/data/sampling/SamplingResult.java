@@ -41,12 +41,12 @@ public class SamplingResult implements ISampleResult {
 		newTcsFirstIdx = orgProbes.getTestcases().size();
 	}
 	
-	/**
-	 * @param target
-	 * @return
-	 */
 	public INodeCoveredData getNewData(IDecisionNode target) {
 		CfgNode node = ((DecisionNodeProbe) target).getNode();
+		return getNewData(node);
+	}
+
+	public INodeCoveredData getNewData(CfgNode node) {
 		INodeCoveredData bkpData = dataMap.get(node.getIdx());
 		if (bkpData != null) {
 			return bkpData;

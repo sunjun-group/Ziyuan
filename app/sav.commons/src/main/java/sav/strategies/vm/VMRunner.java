@@ -20,6 +20,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,11 +106,9 @@ public class VMRunner {
 				} catch (IOException e) {
 					// do nothing
 				} finally {
-					try {
-						br.close();
-					} catch (IOException e) {
-						// do nothing
-					}
+					IOUtils.closeQuietly(streamReader);
+					IOUtils.closeQuietly(br);
+					IOUtils.closeQuietly(is);
 				}
 			}
 		}).start();

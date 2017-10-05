@@ -8,7 +8,6 @@
 
 package learntest.core.commons.data.decision;
 
-import java.util.Collection;
 import java.util.List;
 
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
@@ -21,13 +20,13 @@ import icsetlv.common.dto.BreakpointValue;
 public interface INodeCoveredData {
 
 	/** note : if node is loop header, only return values that never enter loop */
-	Collection<BreakpointValue> getFalseValues();
+	List<BreakpointValue> getFalseValues();
 
-	Collection<BreakpointValue> getTrueValues();
+	List<BreakpointValue> getTrueValues();
 
-	Collection<BreakpointValue> getMoreTimesValues();
+	List<BreakpointValue> getMoreTimesValues();
 
-	Collection<BreakpointValue> getOneTimeValues();
+	List<BreakpointValue> getOneTimeValues();
 
 	void update(NodeCoverage coverage, int samplesFirstIdx, List<BreakpointValue> sampleTestInputs);
 	

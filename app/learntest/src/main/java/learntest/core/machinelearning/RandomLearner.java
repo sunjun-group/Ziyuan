@@ -12,10 +12,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.LearningMediator;
 import learntest.core.RunTimeInfo;
@@ -43,7 +43,7 @@ public class RandomLearner implements IInputLearner {
 	}
 	
 	@Override
-	public DecisionProbes learn(DecisionProbes inputProbes, BreakpointData bpdata, Map<Integer, List<Variable>> relevantVarMap) throws SavException {
+	public DecisionProbes learn(DecisionProbes inputProbes, Map<Integer, List<Variable>> relevantVarMap) throws SavException {
 		DecisionProbes probes = inputProbes;
 		SampleExecutor sampleExecutor = new SampleExecutor(mediator, inputProbes);
 

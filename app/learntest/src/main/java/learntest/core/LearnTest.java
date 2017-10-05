@@ -82,7 +82,7 @@ public class LearnTest extends AbstractLearntest {
 				DecisionProbes initProbes = initProbes(targetMethod, cfgCoverage, result);
 				learningStarted = true;
 				
-				DecisionProbes probes = learner.learn(initProbes, result, relevantVarMap);
+				DecisionProbes probes = learner.learn(initProbes, relevantVarMap);
 				
 				/** In this way, all samples are recorded.
 				 *  But record sample data after sample selecting is also important, 
@@ -175,9 +175,6 @@ public class LearnTest extends AbstractLearntest {
 			throw new LearnTestException("cannot get entry value when coverage is still not empty");
 		}
 		probes.setRunningResult(entryValues);
-//		XmlCoverageWriter writer = new XmlCoverageWriter();
-//		ProbesXmlConverter converter = new ProbesXmlConverter();
-//		writer.writeXml(converter.toMethodsElement(probes), LearntestConstant.XML_FILE_PATH);
 		return probes;
 	}
 

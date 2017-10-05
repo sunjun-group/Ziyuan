@@ -10,19 +10,16 @@ package learntest.core.machinelearning;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Queue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
-import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.AbstractLearningComponent;
 import learntest.core.LearningMediator;
@@ -33,6 +30,8 @@ import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.utils.CfgUtils;
+import learntest.core.commons.utils.VariableUtils;
+import learntest.core.commons.utils.VariableUtils.VarInfo;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import learntest.core.machinelearning.sampling.IlpSelectiveSampling;
 import learntest.plugin.utils.Settings;
@@ -61,6 +60,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	protected LearnedDataProcessor dataPreprocessor;
 	public HashMap<CfgNode, FormulaInfo> learnedFormulas = new HashMap<>();
 	private HashMap<CfgNode, CfgNodeDomainInfo> dominationMap = new HashMap<>();
+	
 	HashMap<String, Collection<BreakpointValue>> branchTrueRecord = new HashMap<>(), branchFalseRecord = new HashMap<>();
 	List<VarInfo> relevantVars ;
 	private String logFile ;
@@ -71,7 +71,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		RunTimeInfo.createFile(logFile);
 	}
 
-	public DecisionProbes learn(DecisionProbes inputProbes, BreakpointData bpdata, Map<Integer, List<Variable>> relevantVarMap) throws SavException {
+	public DecisionProbes learn(DecisionProbes inputProbes, Map<Integer, List<Variable>> relevantVarMap) throws SavException {
 		List<CfgNode> decisionNodes = inputProbes.getCfg().getDecisionNodes();
 		DecisionProbes probes = inputProbes;
 		dataPreprocessor = new LearnedDataProcessor(mediator, inputProbes);
@@ -90,115 +90,12 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			log.debug("The size of CfgNodes is differnt from the size of map!!!!");
 			this.relevantVars = null;
 		}else {
-			this.relevantVars = varsTransform(relevantVarMap, inputProbes.getOriginalVars());
+			this.relevantVars = VariableUtils.varsTransform(relevantVarMap, inputProbes.getOriginalVars());
 		}
 		
 		learn(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()), probes, new ArrayList<Integer>(decisionNodes.size()));
 				
 		return probes;
-	}
-
-	
-
-	/**
-	 * determine the responding relationship of vars between two CFG
-	 * @param relevantVarMap map from linyun'ss CFG
-	 * @param list nodes from LLY's CFG
-	 * @return
-	 */
-	private List<VarInfo> varsTransform(Map<Integer, List<Variable>> relevantVarMap, List<ExecVar> originalVars) {
-		HashMap<String, ExecVar> execVarMap = new HashMap<>();
-		for (ExecVar execVar : originalVars) {
-			execVarMap.put(execVar.getLabel(), execVar);
-		}
-		List<VarInfo> list = new ArrayList<>(relevantVarMap.size());
-		for (Entry<Integer, List<Variable>> entry : relevantVarMap.entrySet()) {
-			VarInfo info = new VarInfo(entry.getKey(), entry.getValue());
-			info.setExecVar(execVarMap, originalVars);
-			list.add(info);
-		}
-		list.sort(new VarInfoComparator());
-		return list;
-		
-	}
-	class VarInfoComparator implements Comparator<VarInfo>{
-
-		@Override
-		public int compare(VarInfo o1, VarInfo o2) {
-			return o1.offset - o2.offset;
-		}
-		
-	}
-	class VarInfo {
-		Integer offset;
-		List<Variable> variables;
-		List<ExecVar> execVars;
-		VarInfo(Integer integer, List<Variable> vars){
-			this.offset = integer;
-			this.variables = vars;
-		}
-		
-		public void setExecVar(HashMap<String, ExecVar> execVarMap, List<ExecVar> originalVars) {
-			List<VarInfo> infos = new ArrayList<>(variables.size());
-			for (Variable var : variables) {
-				boolean found = false;
-				if (var.getVarID() != null) {
-					for (String execVarId : execVarMap.keySet()) {
-						if (execVarId.startsWith(var.getVarID())) {
-							ExecVar execVar = execVarMap.get(execVarId);
-							VarInfo info = new VarInfo(originalVars.indexOf(execVar), null);
-							info.execVars = new LinkedList<>();
-							info.execVars.add(execVar);
-							infos.add(info);
-							found = true;
-						}
-					}
-				} else {
-//					log.info("{} does not exist in original ExecVars.", var);
-				}
-				if (!found) {
-//					log.info("{} does not exist in original ExecVars.", var);
-				}
-			}			
-			infos.sort(new VarInfoComparator()); // keep the sequence in originalVars
-			execVars = new ArrayList<>(variables.size());
-			for (VarInfo varInfo : infos) {
-				execVars.add(varInfo.execVars.get(0));
-			}
-		}
-		
-		//llt: backup
-//		public void setExecVar(HashMap<String, ExecVar> execVarMap, List<ExecVar> originalVars) {
-//			List<VarInfo> infos = new ArrayList<>(variables.size());
-//			for (Variable var : variables) {
-//				String label = var.getName();
-//				if (var instanceof FieldVar) {
-//					label = "this."+label;
-//				}
-//				ExecVar execVar = execVarMap.get(label);
-//				if (execVar != null) {
-//					VarInfo info = new VarInfo(originalVars.indexOf(execVar), null);
-//					info.execVars = new LinkedList<>();
-//					info.execVars.add(execVar);
-//					infos.add(info);
-//				}else {
-//					log.info(var + "does not exist in original ExecVars.");
-//				}
-//			}			
-//			infos.sort(new VarInfoComparator()); // keep the sequence in originalVars
-//			execVars = new ArrayList<>(variables.size());
-//			for (VarInfo varInfo : infos) {
-//				execVars.add(varInfo.execVars.get(0));
-//			}
-//		}
-		
-		public String toString() {
-			StringBuffer sb = new StringBuffer();
-			sb.append(offset + " : ");
-			sb.append("Variables : "+variables+";  ");
-			sb.append("ExecVars : "+execVars + "\n");
-			return sb.toString();
-		}
 	}
 
 	private void learn(CfgNode node, DecisionProbes probes, List<Integer> visitedNodes) throws SavException {
@@ -222,7 +119,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			if (needToLearn(nodeProbe)) {
 				List<ExecVar> targetVars ;
 				if (relevantVars != null) {
-					targetVars = relevantVars.get(node.getIdx()).execVars;
+					targetVars = relevantVars.get(node.getIdx()).getExecVars();
 				}else {
 					targetVars = probes.getOriginalVars();
 				}
@@ -600,7 +497,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	}
 
 	public int nodeIdx2Offset(CfgNode node) {
-		return this.relevantVars.get(node.getIdx()).offset;
+		return this.relevantVars.get(node.getIdx()).getOffset();
 	}
 	
 	

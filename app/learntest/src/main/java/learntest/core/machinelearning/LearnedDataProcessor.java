@@ -71,21 +71,6 @@ public class LearnedDataProcessor {
 		DecisionProbes processedProbes = decisionProbes;
 		coveredType = nodeProbe.getCoveredBranches();
 		if (coveredType.isOneBranchMissing()) {
-			// List<Divider> dividers = new ArrayList<>();
-			// if(preconditions!=null &&
-			// !preconditions.getCalculators().isEmpty()){
-			// List<CategoryCalculator> list =
-			// preconditions.getCalculators().get(0);
-			// if(!list.isEmpty()){
-			// CategoryCalculator cal = list.get(0);
-			// if(cal instanceof MultiDividerBasedCategoryCalculator){
-			// MultiDividerBasedCategoryCalculator mCalculator =
-			// (MultiDividerBasedCategoryCalculator)cal;
-			// dividers = mCalculator.getDividers();
-			// }
-			// }
-			// }
-
 			selectDataForEmpty(nodeProbe, preconditions, null, coveredType.getOnlyOneMissingBranch(), false, learner);
 		}
 

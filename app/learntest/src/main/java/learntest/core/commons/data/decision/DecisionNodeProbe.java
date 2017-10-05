@@ -23,7 +23,7 @@ import sav.common.core.utils.CollectionUtils;
  * @author LLT
  *
  */
-public class DecisionNodeProbe implements IDecisionNode {
+public class DecisionNodeProbe implements IDecisionNode, INodeCoveredData {
 	/* reference to cfg node */
 	private NodeCoverage coverage;
 	/* reference to its parent */
@@ -141,6 +141,11 @@ public class DecisionNodeProbe implements IDecisionNode {
 
 	public void clearCache() {
 		coveredData.clearCache();
+	}
+
+	@Override
+	public void update(NodeCoverage coverage, int samplesFirstIdx, List<BreakpointValue> sampleTestInputs) {
+		// do nothing
 	}
 
 }
