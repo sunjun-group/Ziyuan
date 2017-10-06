@@ -133,6 +133,7 @@ public class JavaGentestHandler extends AbstractHandler {
 			LearnTestParams params = new LearnTestParams(appClasspath);
 			params.setApproach(approach);
 			params.setTestMode(false);
+			GentestSettings.settingByApproach(params);
 			MethodCollector methodCollector = new MethodCollector(GentestTypeFilter.createFilters(), 
 					GentestMethodFilter.createFilters());
 			try {
@@ -332,7 +333,6 @@ public class JavaGentestHandler extends AbstractHandler {
 			SAVTimer.exeuctionTimeout = 50000000;
 			learntest.core.LearnTest learntest = new learntest.core.LearnTest(params.getAppClasspath());
 			RunTimeInfo runtimeInfo = learntest.run(params);
-
 			if (runtimeInfo != null) {
 				if (runtimeInfo.getLineCoverageResult() != null) {
 					log.info("Line coverage result:");

@@ -36,7 +36,7 @@ public class LearntestParamsUtils {
 		params.setMethodSignature(
 				SignatureUtils.createMethodNameSign(targetMethod.getMethodName(), targetMethod.getMethodSignature()));
 		params.setTargetClassName(targetMethod.getClassName());
-		params.setNumberOfTcs(1);
+		params.setNumberOfTcs(learntestParams.getInitialTcTotal());
 		params.setTestPerQuery(1);
 		params.setTestSrcFolder(appClasspath.getTestSrc());
 		params.setTestPkg(getTestPackage(learntestParams, gentestPackage));

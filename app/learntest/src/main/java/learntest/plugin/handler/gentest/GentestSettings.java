@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 
 import cfgcoverage.jacoco.CfgJaCoCoConfigs;
+import learntest.core.LearnTestParams;
 import learntest.core.LearnTestParams.LearntestSystemVariable;
 import learntest.plugin.commons.PluginException;
 import learntest.plugin.utils.IProjectUtils;
@@ -62,6 +63,20 @@ public class GentestSettings {
 					IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jpf.properties"));
 		} catch (PluginException e) {
 			throw new CoreException(IStatusUtils.exception(e, e.getMessage()));
+		}
+	}
+
+	public static void settingByApproach(LearnTestParams params) {
+		switch (params.getApproach()) {
+		case GAN:
+			params.setInitialTcTotal(100);
+			break;
+		case L2T:
+		case RANDOOP:
+			// add details if needed!
+			break;
+		default:
+			throw new IllegalArgumentException("approachType is not specified in learntestParams!");
 		}
 	}
 }

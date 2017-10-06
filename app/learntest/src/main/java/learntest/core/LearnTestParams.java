@@ -32,6 +32,7 @@ public class LearnTestParams {
 	private JunitTestsInfo initialTests;
 	private SystemPreferences systemConfig;
 	private int maxTcs;
+	private int initialTcTotal = 1;// by default
 	
 	public LearnTestParams(AppJavaClassPath appClasspath) {
 		this.appClasspath = appClasspath;
@@ -111,6 +112,14 @@ public class LearnTestParams {
 		return LearntestParamsUtils.getTestPackage(this, phase);
 	}
 	
+	public int getInitialTcTotal() {
+		return initialTcTotal;
+	}
+
+	public void setInitialTcTotal(int initialTcTotal) {
+		this.initialTcTotal = initialTcTotal;
+	}
+
 	public LearnTestParams createNew() {
 		LearnTestParams params = new LearnTestParams(appClasspath);
 		params.targetMethod = targetMethod;
