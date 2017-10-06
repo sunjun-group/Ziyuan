@@ -55,10 +55,12 @@ public class GanInput implements IGanInput {
 		return this;
 	}
 	
-	public static GanInput createTrainingRequest(String nodeId, NodeDataSet trainingSet) {
+	public static GanInput createTrainingRequest(String nodeId, NodeDataSet dataSet) {
 		GanInput input = new GanInput(RequestType.TRAIN)
 					.appendNodeId(nodeId);
-		input.obj.put(JsLabel.DATASET, trainingSet);
+		input.obj.put(JsLabel.NODE_ID, nodeId);
+		input.obj.put(JsLabel.LABELS, dataSet.getLabels());
+		input.obj.put(JsLabel.DATASET, dataSet.getDataset());
 		return input;
 	}
 	
