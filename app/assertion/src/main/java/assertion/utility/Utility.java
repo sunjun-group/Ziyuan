@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import japa.parser.ast.ImportDeclaration;
+import japa.parser.ast.PackageDeclaration;
 import japa.parser.ast.body.ConstructorDeclaration;
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.Parameter;
@@ -149,6 +151,86 @@ public class Utility {
 		} else if (typ instanceof ClassOrInterfaceType) {
 			ClassOrInterfaceType cTyp = (ClassOrInterfaceType) typ;
 			s.append("L" + cTyp.getName().replace('.', '/') + ";");
+		}
+		
+		return s.toString();
+	}
+	
+	public static String getSigType(MethodDeclaration n, PackageDeclaration pack, List<ImportDeclaration> imps) {
+		List<Parameter> params = n.getParameters();
+		Type typ = n.getType();
+		
+		StringBuilder s = new StringBuilder("(");
+		if (params != null) {
+			for (Parameter param : params) {
+				s.append(getSigType(param.getType(), pack, imps));
+			}
+		}
+		
+		s.append(")");
+		s.append(getSigType(typ, pack, imps));
+		
+		return n.getName() + s.toString();
+	}
+	
+	public static String getSigType(ConstructorDeclaration n, PackageDeclaration pack, List<ImportDeclaration> imps) {
+		List<Parameter> params = n.getParameters();
+		
+		StringBuilder s = new StringBuilder("(");
+		if (params != null) {
+			for (Parameter param : params) {
+				s.append(getSigType(param.getType(), pack, imps));
+			}
+		}
+		
+		s.append(")");
+		
+		return n.getName() + s.toString();
+	}
+	
+	public static String getSigType(Type typ, PackageDeclaration pack, List<ImportDeclaration> imps) {
+		StringBuilder s = new StringBuilder("");
+		
+		if (typ instanceof PrimitiveType) {
+			PrimitiveType pTyp = (PrimitiveType) typ;
+			if (pTyp.getType() == Primitive.Int) {
+				s.append("I");
+			} else if (pTyp.getType() == Primitive.Byte) {
+				s.append("B");
+			} else if (pTyp.getType() == Primitive.Long) {
+				s.append("J");
+			} else if (pTyp.getType() == Primitive.Float) {
+				s.append("F");
+			} else if (pTyp.getType() == Primitive.Double) {
+				s.append("D");
+			} else if (pTyp.getType() == Primitive.Short) {
+				s.append("S");
+			} else if (pTyp.getType() == Primitive.Char) {
+				s.append("C");
+			} else if (pTyp.getType() == Primitive.Boolean) {
+				s.append("Z");
+			}
+		} else if (typ instanceof VoidType) {
+			s.append("V");
+		} else if (typ instanceof ReferenceType) {
+			ReferenceType rTyp = (ReferenceType) typ;
+			for (int i = 0; i < rTyp.getArrayCount(); i++) {
+				s.append("[");
+			}
+			s.append(getSigType(rTyp.getType(), pack, imps));
+		} else if (typ instanceof ClassOrInterfaceType) {
+			ClassOrInterfaceType cTyp = (ClassOrInterfaceType) typ;
+			
+			for (ImportDeclaration imp : imps) {
+				if (imp.getName().toString().contains(cTyp.getName())) {
+					s.append("L" + imp.getName().toString().replace('.', '/') + ";");
+					break;
+				}
+			}
+			
+			if (s.length() == 0) {
+				s.append("L" + (pack.getName().toString() + "." + cTyp.getName()).replace('.', '/') + ";");
+			}
 		}
 		
 		return s.toString();

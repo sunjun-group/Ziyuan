@@ -22,13 +22,40 @@ public class CompositeTemplate extends Template {
 			List<SingleTemplate> stl = it1.next();
 			Iterator<SingleTemplate> it2 = stl.iterator();
 			
+			String tmp = "";
 			while (it2.hasNext()) {
 				SingleTemplate st = it2.next();
-				s += st;
-				if (it2.hasNext()) s += " && ";
+				tmp += st;
+				if (it2.hasNext()) tmp += " && ";
 			}
 			
-			if (it1.hasNext()) s += " || ";
+			if (!tmp.contains("isNull")) tmp = "";
+			
+			if (!tmp.isEmpty()) {
+				if (s.isEmpty()) s += tmp;
+				else s += " || " + tmp;
+			}
+		}
+		
+		it1 = disj.iterator();
+		
+		while (it1.hasNext()) {
+			List<SingleTemplate> stl = it1.next();
+			Iterator<SingleTemplate> it2 = stl.iterator();
+			
+			String tmp = "";
+			while (it2.hasNext()) {
+				SingleTemplate st = it2.next();
+				tmp += st;
+				if (it2.hasNext()) tmp += " && ";
+			}
+			
+			if (tmp.contains("isNull")) tmp = "";
+			
+			if (!tmp.isEmpty()) {
+				if (s.isEmpty()) s += tmp;
+				else s += " || " + tmp;
+			}
 		}
 		
 		return s;

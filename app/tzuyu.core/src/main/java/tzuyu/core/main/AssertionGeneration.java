@@ -25,6 +25,8 @@ import icsetlv.variable.VariableNameCollector;
 import invariant.templates.Template;
 import japa.parser.JavaParser;
 import japa.parser.ast.CompilationUnit;
+import japa.parser.ast.ImportDeclaration;
+import japa.parser.ast.PackageDeclaration;
 import japa.parser.ast.body.BodyDeclaration;
 import japa.parser.ast.body.ConstructorDeclaration;
 import japa.parser.ast.body.MethodDeclaration;
@@ -93,20 +95,24 @@ public class AssertionGeneration extends TzuyuCore {
 //			recompile(origFile, newFile);
 			
 			// generate test cases
-			if (params.getJunitClassNames().size() == 0) {
-				log.info("Generating random test cases...\n");
-				params.setJunitClassNames(getRandomTestCases(params));
-			}
+//			List<String> testcases = getRandomTestCases(params);
+//			params.setJunitClassNames(testcases);
+//			System.out.println(params.getJunitClassNames());
+			
+//			if (params.getJunitClassNames().size() == 0) {
+//				log.info("Generating random test cases...\n");
+//				params.setJunitClassNames(getRandomTestCases(params));
+//			}
 			
 			// run random test cases
 			JunitResult jresult = runTestCases(params.getJunitClassNames(), params);
-//			log.info("Test cases results: {}\n", jresult);
+			log.info("Test cases results: {}\n", jresult);
 			
 			if (jresult.getPassTests().isEmpty() || jresult.getFailTests().isEmpty()) return;
 			
 			// locations used to learn new assertion
 			List<BreakPoint> learnLocs = collectLearningLocations(params);
-//			log.info("Learning locations: {}\n", learnLocs);
+			log.info("Learning locations: {}\n", learnLocs);
 			
 			// learn assertions for new locations
 			for (int i = learnLocs.size() - 1; i >= 0; i--) {
@@ -210,8 +216,6 @@ public class AssertionGeneration extends TzuyuCore {
 		TestcasesExecutor tcExecutor = new TestcasesExecutor(params.getValueRetrieveLevel());
 		im.setTcExecutor(tcExecutor);
 		
-		long stop5 = System.currentTimeMillis();
-			
 		List<String> tests = new ArrayList<String>();
 		for (Pair<String,String> entry : jresult.getTests()) {
 			tests.add(entry.a + "." + entry.b);
@@ -248,7 +252,6 @@ public class AssertionGeneration extends TzuyuCore {
 						params.getVerificationMethod(),
 						params.getNumberOfTestCases());
 				junitClassNames.addAll(randomTests);
-				System.out.println(randomTests);
 				break;
 			} catch (Throwable e) {
 				e.printStackTrace();
@@ -376,6 +379,9 @@ public class AssertionGeneration extends TzuyuCore {
 		FileInputStream in = new FileInputStream(file);
 		CompilationUnit cu = JavaParser.parse(in);
 		
+		List<ImportDeclaration> imps = cu.getImports();
+		PackageDeclaration pack = cu.getPackage();
+		
 		/*
 		GetLearningLocationsVisitor visitor = new GetLearningLocationsVisitor(className, methodName);
 		
@@ -390,18 +396,26 @@ public class AssertionGeneration extends TzuyuCore {
 					if (body instanceof MethodDeclaration) {
 						MethodDeclaration currMethod = (MethodDeclaration) body;
 						if (methodName.indexOf("(") > 0) {
-							currMethodName = Utility.getSigType(currMethod);
+							if (methodName.indexOf("/") > 0)
+								currMethodName = Utility.getSigType(currMethod, pack, imps);
+							else
+								currMethodName = Utility.getSigType(currMethod);
 						} else {
 							currMethodName = currMethod.getName();
 						}
 					} else {
 						ConstructorDeclaration currMethod = (ConstructorDeclaration) body;
 						if (methodName.indexOf("(") > 0) {
-							currMethodName = Utility.getSigType(currMethod);
+							if (methodName.indexOf("/") > 0)
+								currMethodName = Utility.getSigType(currMethod, pack, imps);
+							else
+								currMethodName = Utility.getSigType(currMethod);
 						} else {
 							currMethodName = currMethod.getName();
 						}
 					}
+					
+					System.out.println(currMethodName);
 					
 					if (currMethodName.equals(methodName)) {
 						CFG cfg = CfgFactory.createCFG(body);
@@ -429,38 +443,38 @@ public class AssertionGeneration extends TzuyuCore {
 		return locations;
 	}
 	
-	public File addAssertionToFile(String srcFolder, String className, String methodName) throws Exception {
-		// the original file
-		File file = new File(ClassUtils.getJFilePath(srcFolder, className));
-		
-		// get class analyser
-		JParser parser = new JParser(srcFolder, new ArrayList<String>());
-		ClassAnalyzer classAnalyser = new ClassAnalyzer(srcFolder, parser);
-		
-		// get variable substitution with type information for variable
-		List<ClassDescriptor> classDecriptors = classAnalyser.analyzeJavaFile(file);
-		VariableSubstitution subst = new VariableSubstitution(classDecriptors.get(0));
-		
-		// parse the original file
-		FileInputStream in = new FileInputStream(file);
-		CompilationUnit cu = JavaParser.parse(in);
-		
-		// the visitor used to add assertions
-		AddAssertStmtVisitor visitor = new AddAssertStmtVisitor(cu.getImports(), subst, methodName);
-		
-		// visit the original file
-		List<DebugLineData> arg = new ArrayList<DebugLineData>();
-		visitor.visit(cu, arg);
-		
-		// number of initial assertion
-		log.info("Number of initial assertions: {}\n", arg.size());
-		
-		// write the new file
-		DebugLineFileWriter writer = new DebugLineFileWriter(srcFolder);
-		File newFile = writer.write(arg, className);
-		
-		// return the new file
-		return newFile;
-	}
+//	public File addAssertionToFile(String srcFolder, String className, String methodName) throws Exception {
+//		// the original file
+//		File file = new File(ClassUtils.getJFilePath(srcFolder, className));
+//		
+//		// get class analyser
+//		JParser parser = new JParser(srcFolder, new ArrayList<String>());
+//		ClassAnalyzer classAnalyser = new ClassAnalyzer(srcFolder, parser);
+//		
+//		// get variable substitution with type information for variable
+//		List<ClassDescriptor> classDecriptors = classAnalyser.analyzeJavaFile(file);
+//		VariableSubstitution subst = new VariableSubstitution(classDecriptors.get(0));
+//		
+//		// parse the original file
+//		FileInputStream in = new FileInputStream(file);
+//		CompilationUnit cu = JavaParser.parse(in);
+//		
+//		// the visitor used to add assertions
+//		AddAssertStmtVisitor visitor = new AddAssertStmtVisitor(cu.getImports(), subst, methodName);
+//		
+//		// visit the original file
+//		List<DebugLineData> arg = new ArrayList<DebugLineData>();
+//		visitor.visit(cu, arg);
+//		
+//		// number of initial assertion
+//		log.info("Number of initial assertions: {}\n", arg.size());
+//		
+//		// write the new file
+//		DebugLineFileWriter writer = new DebugLineFileWriter(srcFolder);
+//		File newFile = writer.write(arg, className);
+//		
+//		// return the new file
+//		return newFile;
+//	}
 	
 }

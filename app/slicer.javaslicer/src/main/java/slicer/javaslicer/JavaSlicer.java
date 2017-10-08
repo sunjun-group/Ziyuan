@@ -119,7 +119,7 @@ public class JavaSlicer implements ISlicer {
 		/**/
 		vmRunner.setTraceFilePath(tempFileName);
 		if (!vmRunner.startAndWaitUntilStop(vmConfig)) {
-			log.warn(vmRunner.getProccessError());
+			log.debug(vmRunner.getProccessError());
 //			throw new SavException(ModuleEnum.SLICING, vmRunner.getProccessError());
 		}
 
