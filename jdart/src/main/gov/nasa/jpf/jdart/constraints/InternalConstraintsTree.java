@@ -493,55 +493,60 @@ public class InternalConstraintsTree {
 				flag = false;
 			}
 		}
-		currentTarget = node;
+		if(node != null){
+			currentTarget = node;
 
-		DecisionData dec = currentTarget.decisionData();
-		solverCtx.push();
-		try {
-			solverCtx.add(dec.getConstraint(branch));
-		} catch (Exception ex) {
-			logger.finer(ex.getMessage());
-			// ex.printStackTrace();
-			// currentTarget.dontKnow(); // TODO good idea?
-		}
+			DecisionData dec = currentTarget.decisionData();
+			solverCtx.push();
+			try {
+				solverCtx.add(dec.getConstraint(branch));
+			} catch (Exception ex) {
+				logger.finer(ex.getMessage());
+				// ex.printStackTrace();
+				// currentTarget.dontKnow(); // TODO good idea?
+			}
 
-		Valuation val = new Valuation();
-		logger.finer("Finding new valuation");
-		Result res = solverCtx.solve(val);
-		logger.finer("Found: " + res + " : " + val);
-		// FIXME: prevent generation of valuation that has been used before.
-		switch (res) {
-		case UNSAT:
-			currentTarget.unsatisfiable();
-			break;
-		case DONT_KNOW:
-			currentTarget.dontKnow();
-			break;
-		case SAT:
-			Node predictedTarget = simulate(val);
-			if (predictedTarget != null && predictedTarget != currentTarget) {
-				boolean inconclusive = predictedTarget.isExhausted();
-				logger.info("Predicted ", inconclusive ? "inconclusive " : "", "divergence");
-				if (inconclusive) {
-					logger.finer("NOT attempting execution");
+			Valuation val = new Valuation();
+			logger.finer("Finding new valuation");
+			Result res = solverCtx.solve(val);
+			logger.finer("Found: " + res + " : " + val);
+			// FIXME: prevent generation of valuation that has been used before.
+			switch (res) {
+			case UNSAT:
+				currentTarget.unsatisfiable();
+				break;
+			case DONT_KNOW:
+				currentTarget.dontKnow();
+				break;
+			case SAT:
+				Node predictedTarget = simulate(val);
+				if (predictedTarget != null && predictedTarget != currentTarget) {
+					boolean inconclusive = predictedTarget.isExhausted();
+					logger.info("Predicted ", inconclusive ? "inconclusive " : "", "divergence");
+					if (inconclusive) {
+						logger.finer("NOT attempting execution");
+						currentTarget.dontKnow();
+						break;
+					}
+				}
+				if (val.equals(prev)) {
+					logger.finer("Wont re-execute with known valuation");
 					currentTarget.dontKnow();
 					break;
 				}
+				
+				str[1] = String.valueOf(val);
+				pathMap.put(path, str);
+				
+				prev = val;
+				return ExpressionUtil.combineValuations(val);
 			}
-			if (val.equals(prev)) {
-				logger.finer("Wont re-execute with known valuation");
-				currentTarget.dontKnow();
-				break;
-			}
-			
-			str[1] = String.valueOf(val);
-			pathMap.put(path, str);
-			
-			prev = val;
-			return ExpressionUtil.combineValuations(val);
+			System.out.println();
+			return null;
 		}
-		System.out.println();
-		return null;
+		else
+			return null;
+		
 	}
 
 	public Valuation findNext() {
