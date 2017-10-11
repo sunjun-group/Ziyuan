@@ -34,13 +34,15 @@ public class JDartProcessOnDemand {
 		List<TestInput> list = null;
 		try {
 			list = JDartProcessOnDemand.exec(JDartOnDemandClient.class, args);
-			if (list != null) {
-				log.info("JDart return " + list.size() +" test cases");
-			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			log.info("JDart return 0 test case");
+		}
+		if (list != null) {
+			log.info("JDart return " + list.size() +" test cases");
+		}else {
+			log.info("JDart return null");
 		}
 		return list;
 	}

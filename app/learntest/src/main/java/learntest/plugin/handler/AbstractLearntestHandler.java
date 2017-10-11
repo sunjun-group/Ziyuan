@@ -222,8 +222,8 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			RunTimeInfo jdartInfo = null;
 
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
-			log.info("run jdart..");
-			jdartInfo = runJdart(randoopParam);
+//			log.info("run jdart..");
+//			jdartInfo = runJdart(randoopParam);
 
 			l2tParams.setApproach(LearnTestApproach.L2T);
 			l2tParams.setInitialTests(randoopParam.getInitialTests());

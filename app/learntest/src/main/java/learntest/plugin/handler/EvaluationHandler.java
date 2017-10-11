@@ -1,7 +1,9 @@
 package learntest.plugin.handler;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,6 +27,7 @@ import learntest.plugin.ProjectSetting;
 import learntest.plugin.export.io.excel.MultiTrial;
 import learntest.plugin.export.io.excel.Trial;
 import learntest.plugin.export.io.excel.TrialExcelHandler;
+import learntest.plugin.export.io.excel.TrialExcelReader;
 import learntest.plugin.handler.filter.classfilter.ClassNameFilter;
 import learntest.plugin.handler.filter.classfilter.ITypeFilter;
 import learntest.plugin.handler.filter.classfilter.TestableClassFilter;
@@ -45,10 +48,12 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	private static final int EVALUATIONS_PER_METHOD = 5;
 	private List<IMethodFilter> methodFilters;
 	private List<ITypeFilter> classFilters;
+
 	static {
 	}
-	
+
 	private int curMethodIdx = 0;
+
 	@Override
 	protected IStatus execute(IProgressMonitor monitor) {
 		SingleTimer timer = SingleTimer.start("Evaluation all methods");
@@ -70,7 +75,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		SAVTimer.exeuctionTimeout = 300000;
 		RunTimeCananicalInfo overalInfo = new RunTimeCananicalInfo(0, 0, 0);
 		try {
-			for(IPackageFragmentRoot root: roots){
+			for (IPackageFragmentRoot root : roots) {
 				for (IJavaElement element : root.getChildren()) {
 					if (element instanceof IPackageFragment) {
 						RunTimeCananicalInfo info = runEvaluation((IPackageFragment) element, excelHandler, monitor);
@@ -92,7 +97,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 
 	private void initFilters() {
 		methodFilters = Arrays.asList(new TestableMethodFilter(), new NestedBlockChecker());
-//				new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME));
+		// new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME));
 		classFilters = Arrays.asList(new TestableClassFilter(), new ClassNameFilter(getExcludedClasses()));
 	}
 
@@ -143,9 +148,16 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			return;
 		}
 		for (MethodInfo targetMethod : targetMethods) {
+
+			/* todo : test special method start */
+			if (skip(targetMethod)) {
+				continue;
+			}
+			/* todo : test special method end */
+
 			log.info("-----------------------------------------------------------------------------------------------");
-			log.info("Method {}", ++curMethodIdx);			
-			
+			log.info("Method {}", ++curMethodIdx);
+
 			MultiTrial multiTrial = new MultiTrial();
 			for (int i = 0; i < EVALUATIONS_PER_METHOD; i++) {
 				checkJobCancelation(monitor);
@@ -171,6 +183,23 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		}
 	}
 
+	private boolean skip(MethodInfo targetMethod) {
+		Map<String, Trial> oldTrials = null;
+		try {
+			TrialExcelReader reader = new TrialExcelReader(
+					new File("D:/eclipse/apache-common-math-2.2_0-checked.xlsx"));
+			oldTrials = reader.readDataSheet();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String fullName = targetMethod.getMethodFullName();
+		int line = targetMethod.getLineNum();
+		if (!oldTrials.containsKey(fullName + "_" + line)) {
+			return false;
+		}
+		return true;
+	}
+
 	private void checkJobCancelation(IProgressMonitor monitor) {
 		if (monitor != null && monitor.isCanceled()) {
 			throw new OperationCanceledException("Operation cancelled!");
@@ -179,9 +208,9 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 
 	private static void logSuccessfulMethod(MethodInfo targetMethod) {
 		try {
-			FileUtils.appendFile(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME, 
+			FileUtils.appendFile(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME,
 					IMethodUtils.getMethodId(targetMethod.getMethodFullName(), targetMethod.getLineNum()) + "\n");
-		} catch(SavRtException e) {
+		} catch (SavRtException e) {
 			// ignore
 		}
 	}
@@ -191,37 +220,37 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		setSystemConfig(params);
 		return params;
 	}
-	
+
 	class RunTimeCananicalInfo {
 		int validNum;
 		int totalNum;
 		int totalLen;
-		
+
 		public RunTimeCananicalInfo() {
-			
+
 		}
-		
+
 		public RunTimeCananicalInfo(int validNum, int totalNum, int totalLen) {
 			this.validNum = validNum;
 			this.totalNum = totalNum;
 			this.totalLen = totalLen;
 		}
+
 		public void add(RunTimeCananicalInfo info) {
 			totalNum += info.totalNum;
 			validNum += info.validNum;
 			totalLen += info.totalLen;
 		}
-		
+
 		public void addTotalLen(int totalLen) {
 			this.totalLen += totalLen;
 		}
-		
+
 		@Override
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
-			sb.append("total valid methods: ").append(validNum).append("\n")
-				.append("total methods: ").append(totalNum).append("\n")
-				.append("total LOC: ").append(totalLen);
+			sb.append("total valid methods: ").append(validNum).append("\n").append("total methods: ").append(totalNum)
+					.append("\n").append("total LOC: ").append(totalLen);
 			return sb.toString();
 		}
 	}

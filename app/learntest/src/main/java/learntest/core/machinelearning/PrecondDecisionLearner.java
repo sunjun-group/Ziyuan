@@ -93,13 +93,14 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		}else {
 			this.relevantVars = VariableUtils.varsTransform(relevantVarMap, inputProbes.getOriginalVars());
 		}
-		
+
 		learn(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()), probes, new ArrayList<Integer>(decisionNodes.size()));
 				
 		return probes;
 	}
 
 	private void learn(CfgNode node, DecisionProbes probes, List<Integer> visitedNodes) throws SavException {
+
 		if (probes.getOriginalVars().size()>50) { /** discard those method with too many variables */
 			log.debug("OriginalVars size is "+probes.getOriginalVars().size() + " > 50, return directly!!!");
 			return;
@@ -146,7 +147,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				OrCategoryCalculator preconditions = pair.first();
 //				dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
 //				dataPreprocessor.sampleForLoopCvg(node, preconditions, this);
-				if (dataPreprocessor.sampleForMissingBranch(node, this)){
+				if (!dataPreprocessor.sampleForMissingBranch(node, this)){
 					dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
 				}
 
@@ -233,7 +234,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 
 	private TrueFalseLearningResult generateTrueFalseFormula(DecisionNodeProbe orgNodeProbe,
 			CoveredBranches coveredType, OrCategoryCalculator preconditions, List<ExecVar> targetVars) throws SavException {
-		System.currentTimeMillis();
+
 		if (!orgNodeProbe.needToLearnPrecond()) {
 			log.debug("no need to learn precondition");
 			return null;
