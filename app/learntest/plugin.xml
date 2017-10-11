@@ -35,6 +35,28 @@
             id="learntest.command.generatetest"
             name="Generate Test">
       </command>
+      <!--evaluation  -->
+      <command
+            defaultHandler="learntest.plugin.handler.EvaluationHandler"
+            id="learntest.command.evaluateAllMethods"
+            name="Evaluate All Methods">
+      </command>
+      <command
+            defaultHandler="learntest.plugin.handler.ChangeModiferHandler"
+            id="learntest.command.changeModifier"
+            name="Change Modifier to Public">
+      </command>
+      <command
+            defaultHandler="learntest.plugin.handler.CodeCoverageHandler"
+            id="learntest.command.codeCoverage"
+            name="Generate code coverage">
+      </command>
+      <command
+            defaultHandler="learntest.plugin.handler.SetterMethodGenerationHandler"
+            id="learntest.command.generateSetter"
+            name="Generate Setter Method">
+      </command>
+      <!-- -->
       <command
             defaultHandler="learntest.plugin.handler.gentest.JavaGentestHandler"
             id="learntest.plugin.commands.javaGentest"
@@ -73,6 +95,29 @@
                   label="Generate Test"
                   style="push">
             </command>
+            <!-- evaluation -->
+            <command
+                  commandId="learntest.command.evaluateAllMethods"
+                  label="Evaluate All Methods"
+                  style="push">
+            </command>
+            <command
+                  commandId="learntest.command.changeModifier"
+                  label="Change Modifier to Public"
+                  style="push">
+            </command>
+            <command
+                  commandId="learntest.command.generateSetter"
+                  label="Generate Setter Method for Fields"
+                  style="push">
+            </command>
+            <command
+                  commandId="learntest.command.codeCoverage"
+                  icon="icon/icon-test-management.png"
+                  label="Generate Code coverage"
+                  style="push">
+            </command>
+            <!-- -->
          </menu>
          
       </menuContribution>
@@ -251,6 +296,43 @@
          </command>
       </menuContribution>
    </extension>
+   <!-- evaluation -->
+   <extension
+       id="jdartCommands"
+       point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="learntest.plugin.handler.RunJDartHandler"
+            id="learntest.command.jdart"
+            name="Run JDart">
+      </command>
+      <command
+            defaultHandler="learntest.plugin.handler.RunAllJDartHandler"
+            id="jdart.command.runAll"
+            name="Run All Methods With JDart">
+      </command>
+   </extension>
+	<extension
+       id="jdartMenus"
+       point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               label="Run JDart">
+            <command
+                  commandId="learntest.command.jdart"
+                  label="Run JDart"
+                  style="push">
+            </command>
+            <command
+                  commandId="jdart.command.runAll"
+                  label="Run All Methods with JDart"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <!-- -->
    <extension
          id="learntestPreferences"
          point="org.eclipse.ui.preferencePages">
