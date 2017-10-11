@@ -229,13 +229,13 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			l2tParams.setInitialTests(randoopParam.getInitialTests());
 			l2tParams.setMaxTcs(ranAverageInfo.getTestCnt());
 			log.info("run l2t..");
-			runLearntest(l2tAverageInfo, l2tParams);
+			l2tAverageInfo = runLearntest(l2tAverageInfo, l2tParams);
 
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
 			randoopParam.setInitialTests(l2tParams.getInitialTests());
 			randoopParam.setMaxTcs(l2tAverageInfo.getTestCnt());
 			log.info("run randoop..");
-			runLearntest(ranAverageInfo, randoopParam);
+			ranAverageInfo = runLearntest(ranAverageInfo, randoopParam);
 
 			TargetMethod method = params.getTargetMethod();
 			log.info("Result: ");
@@ -385,12 +385,13 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 	private RunTimeInfo runLearntest(RunTimeInfo runInfo, LearnTestParams params) throws Exception {
 		RunTimeInfo l2tInfo = runLearntest(params);
-		if (runInfo != null && l2tInfo != null) {
-			runInfo.add(l2tInfo);
-		} else {
-			runInfo = null;
-		}
-		return runInfo;
+//		if (runInfo != null && l2tInfo != null) {
+//			runInfo.add(l2tInfo);
+//		} else {
+//			runInfo = null;
+//		}
+//		return runInfo;
+		return l2tInfo; /** this method only be invoked in one trial,  addition is not necessary. And should keep TestRuntimeInfo here */
 	}
 
 	/**
