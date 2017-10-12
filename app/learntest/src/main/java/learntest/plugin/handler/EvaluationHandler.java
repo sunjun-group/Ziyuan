@@ -2,6 +2,7 @@ package learntest.plugin.handler;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ import learntest.plugin.handler.filter.classfilter.ClassNameFilter;
 import learntest.plugin.handler.filter.classfilter.ITypeFilter;
 import learntest.plugin.handler.filter.classfilter.TestableClassFilter;
 import learntest.plugin.handler.filter.methodfilter.IMethodFilter;
+import learntest.plugin.handler.filter.methodfilter.MethodNameFilter;
 import learntest.plugin.handler.filter.methodfilter.NestedBlockChecker;
 import learntest.plugin.handler.filter.methodfilter.TestableMethodFilter;
 import learntest.plugin.utils.IMethodUtils;
@@ -96,8 +98,9 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	}
 
 	private void initFilters() {
-		methodFilters = Arrays.asList(new TestableMethodFilter(), new NestedBlockChecker());
-		// new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME));
+		methodFilters = Arrays.asList(new TestableMethodFilter(), new NestedBlockChecker(),
+		 new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME),
+		 new MethodNameFilter(LearntestConstants.SKIP_METHOD_FILE_NAME));
 		classFilters = Arrays.asList(new TestableClassFilter(), new ClassNameFilter(getExcludedClasses()));
 	}
 
@@ -184,7 +187,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	}
 
 	private boolean skip(MethodInfo targetMethod) {
-		Map<String, Trial> oldTrials = null;
+		Map<String, Trial> oldTrials = new HashMap<>();
 		try {
 			TrialExcelReader reader = new TrialExcelReader(
 					new File("D:/eclipse/apache-common-math-2.2_0-checked.xlsx"));
@@ -194,10 +197,10 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		}
 		String fullName = targetMethod.getMethodFullName();
 		int line = targetMethod.getLineNum();
-		if (!oldTrials.containsKey(fullName + "_" + line)) {
-			return false;
+		if (oldTrials.containsKey(fullName + "_" + line)) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	private void checkJobCancelation(IProgressMonitor monitor) {

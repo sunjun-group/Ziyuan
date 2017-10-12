@@ -15,7 +15,9 @@ package learntest.core.commons;
 public class LearntestConstants {
 	private LearntestConstants(){}
 
-	public static final String EXCLUSIVE_METHOD_FILE_NAME = "exclusive_methods.txt";
+	public static final String EXCLUSIVE_METHOD_FILE_NAME = "exclusive_methods.txt"; // successful
+	
+	public static final String SKIP_METHOD_FILE_NAME = "skip.txt";
 	
 	public static final long GENTEST_METHOD_EXEC_TIMEOUT = 200l; //ms
 
