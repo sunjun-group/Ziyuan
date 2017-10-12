@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import learntest.core.gan.vm.GanInputWriter.RequestType;
 import sav.common.core.utils.SingleTimer;
+import sav.common.core.utils.StringUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.vm.interprocess.ServerOutputReader;
 
@@ -34,6 +35,7 @@ public class GanOutputReader extends ServerOutputReader {
 
 	public boolean isMatched(String line) {
 		try {
+			log.debug(line);
 			requestType = RequestType.valueOf(line);
 			return true;
 		} catch (Exception ex) {
@@ -59,9 +61,21 @@ public class GanOutputReader extends ServerOutputReader {
 	}
 
 	private void readGenerateRequestOutput(BufferedReader br) throws IOException {
+		readWithJsonFormat(br);
+	}
+
+	private void readWithJsonFormat(BufferedReader br) throws IOException {
 		String line = br.readLine();
+		if (StringUtils.isEmpty(line)) {
+			line = br.readLine();
+		}
+		log.debug(line);
 		ganOutput = new GanOutput(requestType);
-		ganOutput.parse(line);
+		try {
+			ganOutput.parseJson(line);
+		} catch(Throwable e) {
+			log.debug(e.getMessage());
+		}
 	}
 	
 	@Override

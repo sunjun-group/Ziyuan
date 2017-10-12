@@ -505,5 +505,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		return this.relevantVars.get(node.getIdx()).getOffset();
 	}
 	
-	
+	@Override
+	public void cleanup() {
+		getTrueSample().clear();
+		getFalseSample().clear();
+	}
 }

@@ -328,25 +328,41 @@ public class JavaGentestHandler extends AbstractHandler {
 	}
 	
 	private RunTimeInfo runLearntest(LearnTestParams params) throws PluginException {
-		try {
-			SAVTimer.enableExecutionTimeout = true;
-			SAVTimer.exeuctionTimeout = 50000000;
-			learntest.core.LearnTest learntest = new learntest.core.LearnTest(params.getAppClasspath());
-			RunTimeInfo runtimeInfo = learntest.run(params);
-			if (runtimeInfo != null) {
-				if (runtimeInfo.getLineCoverageResult() != null) {
-					log.info("Line coverage result:");
-					log.info(runtimeInfo.getLineCoverageResult().getDisplayText());
-				}
-				log.info("{} RESULT:", StringUtils.upperCase(params.getApproach().getName()));
-				log.info("TIME: {}; COVERAGE: {}; CNT: {}", TextFormatUtils.printTimeString(runtimeInfo.getTime()),
-						runtimeInfo.getCoverage(), runtimeInfo.getTestCnt());
-				log.info("TOTAL COVERAGE INFO: \n{}", runtimeInfo.getCoverageInfo());
+		RunTimeInfo averageInfo = null;
+		double bestCoverage = 0;
+		for (int i = 0; i < 5; i++) {
+			try {
+				SAVTimer.enableExecutionTimeout = true;
+				SAVTimer.exeuctionTimeout = 50000000;
+				learntest.core.LearnTest learntest = new learntest.core.LearnTest(params.getAppClasspath());
+				RunTimeInfo runtimeInfo = learntest.run(params);
+				logRuntimeInfo(params, runtimeInfo);
+				bestCoverage = RunTimeInfo.getBestCoverage(bestCoverage, runtimeInfo);
+				averageInfo = RunTimeInfo.average(averageInfo, runtimeInfo);
+			} catch (Exception e) {
+				throw PluginException.wrapEx(e);
 			}
-			return runtimeInfo;
-		} catch (Exception e) {
-			throw PluginException.wrapEx(e);
 		}
+		/* average */
+		log.info("------------- average result ------------------------");
+		logRuntimeInfo(params, averageInfo);
+		log.info("-------------------------------------");
+		log.info("bestcoverage: {}", bestCoverage);
+		return averageInfo;
+	}
+
+	private void logRuntimeInfo(LearnTestParams params, RunTimeInfo runtimeInfo) {
+		if (runtimeInfo == null) {
+			return;
+		}
+		if (runtimeInfo.getLineCoverageResult() != null) {
+			log.info("Line coverage result:");
+			log.info(runtimeInfo.getLineCoverageResult().getDisplayText());
+		}
+		log.info("{} RESULT:", StringUtils.upperCase(params.getApproach().getName()));
+		log.info("TIME: {}; COVERAGE: {}; CNT: {}", TextFormatUtils.printTimeString(runtimeInfo.getTime()),
+				runtimeInfo.getCoverage(), runtimeInfo.getTestCnt());
+		log.info("TOTAL COVERAGE INFO: \n{}", runtimeInfo.getCoverageInfo());
 	}
 	
 	public void refreshProject(IJavaProject project) {

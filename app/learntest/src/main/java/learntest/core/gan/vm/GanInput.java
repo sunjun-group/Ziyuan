@@ -12,6 +12,8 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import learntest.core.gan.vm.GanInputWriter.IGanInput;
 import learntest.core.gan.vm.GanInputWriter.RequestType;
@@ -22,6 +24,7 @@ import learntest.core.gan.vm.NodeDataSet.Category;
  *
  */
 public class GanInput implements IGanInput {
+	private Logger log = LoggerFactory.getLogger(GanInput.class);
 	private RequestType type;
 	private JSONObject obj = new JSONObject();
 	
@@ -31,6 +34,7 @@ public class GanInput implements IGanInput {
 	
 	@Override
 	public void writeData(PrintWriter pw) {
+		log.debug("write data: {}, {}", type, obj);
 		pw.println(obj);
 	}
 

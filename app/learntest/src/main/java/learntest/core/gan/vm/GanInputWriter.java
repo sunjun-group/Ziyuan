@@ -10,6 +10,7 @@ package learntest.core.gan.vm;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.List;
 
 import sav.strategies.vm.interprocess.ServerInputWriter;
 
@@ -33,18 +34,28 @@ public class GanInputWriter extends ServerInputWriter {
 	}
 	
 	public void request(IGanInput input) {
-		if (isClosed()) {
-			throw new IllegalStateException("InputWriter is closed!");
+		while(!isWaiting()) {
+			// wait for the old data to be written.
 		}
-		this.ganInput = input;
-		ready();
+		synchronized (state) {
+			if (isClosed()) {
+				throw new IllegalStateException("InputWriter is closed!");
+			}
+			this.ganInput = input;
+			ready(); // ready to write
+		}
 	}
 	
 	@Override
 	protected void writeData() {
-		pw.println(String.valueOf(ganInput.getRequestType()));
-		ganInput.writeData(pw);
-		ganInput = null;
+		synchronized (state) {
+			if (ganInput == null) {
+				return;
+			}
+			pw.println(String.valueOf(ganInput.getRequestType()));
+			ganInput.writeData(pw);
+			ganInput = null;
+		}
 	}
 	
 	public void setOutputStream(OutputStream outputStream) {
@@ -69,6 +80,7 @@ public class GanInputWriter extends ServerInputWriter {
 	public static enum RequestType { 
 		START_TRAINING_FOR_METHOD,
 		TRAIN,
-		GENERATE_DATA
+		GENERATE_DATA,
+		EXIT
 	}
 }

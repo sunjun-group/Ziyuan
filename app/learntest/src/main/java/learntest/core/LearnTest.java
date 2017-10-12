@@ -65,14 +65,17 @@ public class LearnTest extends AbstractLearntest {
 					targetMethod.getClassName(), targetMethod.getMethodFullName(), targetMethod.getLineNum(), targetMethod.getMethodSignature())
 					.getRelevantVarMap();
 			
-			log.info("First coverage: " + CoverageUtils.calculateCoverageByBranch(cfgCoverage));
+			double firstCoverage = CoverageUtils.calculateCoverageByBranch(cfgCoverage);
+			log.info("First coverage: " + firstCoverage);
 			BreakPoint methodEntryBkp = BreakpointCreator.createMethodEntryBkp(targetMethod, relevantVarMap);
 			/**
 			 * run testcases
 			 */
 			BreakpointData result = executeTestcaseAndGetTestInput(params.getInitialTestcases(), methodEntryBkp);
-			if (CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
-				log.info("No decision node is covered!");
+			if (CoverageUtils.noDecisionNodeIsCovered(cfgCoverage) || (firstCoverage == 1.0)) {
+				if (firstCoverage != 1.0) {
+					log.info("No decision node is covered!");
+				}
 				copyTestsToResultFolder(params);
 				return reconcileGeneratedTestsAndGetRuntimeInfo(cfgCoverage, targetMethod, params.isTestMode());
 			} else {
@@ -88,8 +91,7 @@ public class LearnTest extends AbstractLearntest {
 				 *  But record sample data after sample selecting is also important, 
 				 *  because we may want to see which sample is selected after learning. 
 				 * */
-				learner.getTrueSample().clear();
-				learner.getFalseSample().clear();
+				learner.cleanup();
 				learner.recordSample(probes, learner.getLogFile());
 				
 				RunTimeInfo info = reconcileGeneratedTestsAndGetRuntimeInfo(probes, targetMethod, params.isTestMode());

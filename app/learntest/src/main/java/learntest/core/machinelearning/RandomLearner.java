@@ -84,6 +84,10 @@ public class RandomLearner implements IInputLearner {
 	public String getLogFile() {
 		return logFile;
 	}
+
+	@Override
+	public void cleanup() {
+	}
 	
 	
 }

@@ -27,6 +27,10 @@ public class PythonVmRunner extends InterprocessVmRunner {
 	public PythonVmRunner(ServerInputWriter inputWriter, ServerOutputReader outputReader) {
 		super(inputWriter, outputReader);
 	}
+	
+	public PythonVmRunner(ServerInputWriter inputWriter, ServerOutputReader outputReader, boolean closeStreamsOnStop) {
+		super(inputWriter, outputReader, closeStreamsOnStop);
+	}
 
 	public void start(PythonVmConfiguration vmConfig) throws SavException {
 		List<String> commands = buildCommandsFromConfiguration(vmConfig);

@@ -51,7 +51,9 @@ public class JavaModelRuntimeInfo implements IJavaModelRuntimeInfo {
 	}
 
 	public void add(IModelRuntimeInfo runtimeInfo) {
-		runtimeInfo.transferToMap(jEleRuntimeInfoMap);
+		if (runtimeInfo != null) {
+			runtimeInfo.transferToMap(jEleRuntimeInfoMap);
+		}
 	}
 
 	/**

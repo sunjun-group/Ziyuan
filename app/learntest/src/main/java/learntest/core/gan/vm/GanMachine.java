@@ -22,6 +22,8 @@ import sav.strategies.vm.interprocess.python.PythonVmRunner;
 public class GanMachine {
 	private GanInputWriter inputWriter;
 	private GanOutputReader outputReader;
+	private PythonVmRunner vmRunner;
+	private long timeout = -1;
 	
 	public GanMachine() {
 		// init vm configuration
@@ -32,11 +34,20 @@ public class GanMachine {
 	public void start() throws SavException {
 		inputWriter.open();
 		outputReader.open();
-		PythonVmRunner vmRunner = new PythonVmRunner(inputWriter, outputReader);
+		vmRunner = new PythonVmRunner(inputWriter, outputReader, true);
+		vmRunner.setTimeout(timeout);
 		PythonVmConfiguration vmConfig = new PythonVmConfiguration();
-		vmConfig.setPythonHome("/usr/bin/python");
-		vmConfig.setLaunchClass("/Users/lylytran/Projects/Ziyuan-branches/NeuralTest/neuraltest/connect_test.py");
+		vmConfig.setPythonHome("/Users/lylytran/tensorflow/bin/python");
+		vmConfig.setLaunchClass("/Users/lylytran/Projects/Ziyuan-branches/NeuralTest/neuraltest/GanVM.py");
 		vmRunner.start(vmConfig);
+	}
+	
+	public void stop() {
+		vmRunner.stop();
+	}
+	
+	public void setVmTimeout(long timeout) {
+		this.timeout = timeout;
 	}
 	
 	public void startTrainingMethod(String methodName) {

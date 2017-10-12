@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import sav.common.core.utils.TextFormatUtils;
+
 /**
  * @author LLT
  *
@@ -75,4 +77,11 @@ public class NodeDataSet {
 		}
 		return dataPoints;
 	}
+	
+	@Override
+	public String toString() {
+		return "NodeDataSet [nodeId=" + nodeId + ", labels=" + labels + ", dataset=" + TextFormatUtils.printMap(dataset)
+				+ "]";
+	}
+	
 }

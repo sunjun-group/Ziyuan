@@ -91,7 +91,7 @@ public class VMRunner {
 		return processError;
 	}
 
-	public void setupInputStream(final InputStream is, final StringBuffer sb) {
+	public void setupInputStream(final InputStream is, final StringBuffer sb, final boolean error) {
 		final InputStreamReader streamReader = new InputStreamReader(is);
 		new Thread(new Runnable() {
 			public void run() {
@@ -99,6 +99,9 @@ public class VMRunner {
 				String line = null;
 				try {
 					while ((line = br.readLine()) != null) {
+//						if (error) {
+//							log.warn(line);
+//						}
 						if (!line.contains("Class JavaLaunchHelper is implemented in both")) {
 							sb.append(line).append("\n");
 						}
@@ -130,7 +133,7 @@ public class VMRunner {
 			/* Note: The input stream must be read if available to be closed, 
 			 * otherwise, the process will never end. So, keep doing this even if 
 			 * the printStream is not set */
-			setupInputStream(process.getInputStream(), new StringBuffer());
+			setupInputStream(process.getInputStream(), new StringBuffer(), false);
 			setupOutputStream(process.getOutputStream());
 			Timer t = null;
 			if (timeout != NO_TIME_OUT) {
@@ -139,9 +142,10 @@ public class VMRunner {
 
 			        @Override
 			        public void run() {
-			            process.destroy();
+			            stop();
 			            log.info("destroy thread due to timeout!");
 			        }
+
 			    }, timeout); 
 			}
 			if (waitUntilStop) {
@@ -159,8 +163,12 @@ public class VMRunner {
 		}
 	}
 
+	protected void stop() {
+		process.destroy();
+	}
+	
 	protected void setupErrorStream(InputStream errorStream, StringBuffer sb) {
-		setupInputStream(errorStream, sb);
+		setupInputStream(errorStream, sb, true);
 	}
 
 	protected void setupOutputStream(OutputStream outputStream) {

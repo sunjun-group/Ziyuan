@@ -14,9 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import learntest.plugin.commons.PluginException;
+import learntest.plugin.commons.event.EmptyGentestManager;
 import learntest.plugin.commons.event.IJavaGentestEventManager;
 import learntest.plugin.commons.event.IJavaModelRuntimeInfo;
-import learntest.plugin.commons.event.JavaGentestManager;
 import learntest.plugin.console.LearntestConsole;
 import sav.common.core.pattern.IDataProvider;
 
@@ -30,10 +30,10 @@ public class LearntestPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static LearntestPlugin plugin;
-	private JavaGentestManager javaGentestManager;
+	private EmptyGentestManager javaGentestManager;
 	
 	public LearntestPlugin() {
-		javaGentestManager = new JavaGentestManager();
+		javaGentestManager = new EmptyGentestManager();
 	}
 
 	public void start(BundleContext context) throws Exception {
@@ -119,7 +119,7 @@ public class LearntestPlugin extends AbstractUIPlugin {
 		}
 	}
 	
-	private JavaGentestManager getJavaGentestManager() {
+	private EmptyGentestManager getJavaGentestManager() {
 		return javaGentestManager;
 	}
 	

@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import icsetlv.common.dto.BreakpointValue;
-import learntest.core.RunTimeInfo;
 import learntest.core.TestRunTimeInfo;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
@@ -68,6 +67,9 @@ public interface IInputLearner {
 	}
 
 	default void recordSample(DecisionProbes inputProbes, String logFile) {
+		if (getTrueSample() == null || getFalseSample() == null) {
+			return;
+		}
 		for (DecisionNodeProbe nodeProbe : inputProbes.getNodeProbes()) {
 			Collection<BreakpointValue> trueV = nodeProbe.getTrueValues(), falseV = nodeProbe.getFalseValues();
 			recordSample(nodeProbe, trueV, getTrueSample());
@@ -100,4 +102,6 @@ public interface IInputLearner {
 	public HashMap<String, Collection<BreakpointValue>> getFalseSample();
 
 	public String getLogFile(); // eclipse may crash because Log print too many characters, thus use a file to store detail content
+
+	void cleanup();
 }
