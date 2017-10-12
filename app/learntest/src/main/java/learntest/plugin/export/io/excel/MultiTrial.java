@@ -129,9 +129,11 @@ public class MultiTrial extends Trial {
 		long time = 0;
 		int testCnt = 0;
 		for (RunTimeInfo info : infos) {
-			coverage += info.getCoverage();
-			time += info.getTime();
-			testCnt += info.getTestCnt();
+			if (info != null) {
+				coverage += info.getCoverage();
+				time += info.getTime();
+				testCnt += info.getTestCnt();
+			}
 		}
 		return new TestRunTimeInfo(size == 0 ? 0 : time / size, size == 0 ? 0 : coverage / size,
 				size == 0 ? 0 : testCnt / size);
