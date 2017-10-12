@@ -379,7 +379,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		FileUtils.write(logFile, sb.toString());
 	}
 
-	private RunTimeInfo runJdart(LearnTestParams params) throws Exception {
+	protected RunTimeInfo runJdart(LearnTestParams params) throws Exception {
 		JDartLearntest learntest = new JDartLearntest(getAppClasspath());
 		return learntest.jdart(params);
 	}

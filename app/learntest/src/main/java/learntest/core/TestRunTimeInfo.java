@@ -8,14 +8,10 @@
 
 package learntest.core;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.commons.io.IOUtils;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
@@ -66,6 +62,10 @@ public class TestRunTimeInfo extends RunTimeInfo {
 		logFile = subRunInfo.logFile;
 	}
 
+	public void setValidCoverage(double cov) {
+		validCoverage = cov;
+	}
+	
 	public double getValidCoverage() {
 		return validCoverage;
 	}
