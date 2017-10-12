@@ -45,17 +45,25 @@ public class InterprocessVmRunner extends VMRunner {
 	private final Logger log = LoggerFactory.getLogger(InterprocessVmRunner.class);
 	private ServerInputWriter inputWriter;
 	private ServerOutputReader outputReader;
+	private boolean closeStreamsOnStop;
 	
 	public InterprocessVmRunner(ServerInputWriter inputWriter, ServerOutputReader outputReader) {
 		this.inputWriter = inputWriter;
 		this.outputReader = outputReader;
 	}
+	
+	public InterprocessVmRunner(ServerInputWriter inputWriter, ServerOutputReader outputReader, boolean closeStreamsOnStop) {
+		this(inputWriter, outputReader);
+		setCloseStreamsOnStop(closeStreamsOnStop);
+	}
 
-	public void stop(boolean closeStreams) {
+	@Override
+	public void stop() {
+		log.debug("stop vm!");
 		if (process != null) {
 			process.destroy();
 		}
-		if (closeStreams) {
+		if (closeStreamsOnStop) {
 			inputWriter.close();
 			outputReader.close();
 		}
@@ -63,11 +71,11 @@ public class InterprocessVmRunner extends VMRunner {
 	
 	@Override
 	protected void setupErrorStream(InputStream errorStream, StringBuffer sb) {
-		super.setupInputStream(errorStream, sb);
+		super.setupInputStream(errorStream, sb, true);
 	}
 	
 	@Override
-	public void setupInputStream(final InputStream is, final StringBuffer sb) {
+	public void setupInputStream(final InputStream is, final StringBuffer sb, boolean error) {
 		new Thread(new Runnable() {
 			public void run() {
 				final InputStreamReader streamReader = new InputStreamReader(is);
@@ -116,5 +124,9 @@ public class InterprocessVmRunner extends VMRunner {
 			}
 		});
 		thread.start();
+	}
+	
+	public void setCloseStreamsOnStop(boolean closeStreamsOnStop) {
+		this.closeStreamsOnStop = closeStreamsOnStop;
 	}
 }

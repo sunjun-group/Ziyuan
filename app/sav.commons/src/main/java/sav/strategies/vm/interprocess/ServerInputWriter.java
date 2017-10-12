@@ -23,7 +23,7 @@ public abstract class ServerInputWriter extends AbstractStatefulStream {
 			throw new IllegalStateException("GanInputWriter is not ready!");
 		}
 		writeData();
-		waiting();
+		waiting(); // wait for new data
 	}
 	
 	protected abstract void writeData();

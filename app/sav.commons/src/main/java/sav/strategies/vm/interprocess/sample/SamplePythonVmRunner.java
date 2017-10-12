@@ -21,7 +21,7 @@ import sav.strategies.vm.interprocess.InterprocessVmRunner;
 public class SamplePythonVmRunner extends InterprocessVmRunner {
 	
 	public SamplePythonVmRunner(SampleInputWriter inputWriter, SampleOutputReader outputReader) {
-		super(inputWriter, outputReader);
+		super(inputWriter, outputReader, true);
 	}
 
 	public void start() throws SavException {

@@ -38,7 +38,7 @@ public class InterprocessSample {
 			System.out.println(output);
 			System.out.println(timer.getResult());
 		} finally {
-			vmRunner.stop(true);
+			vmRunner.stop();
 		}
 	}
 }

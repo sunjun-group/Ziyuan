@@ -10,8 +10,10 @@ package learntest.core.gan;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
@@ -25,8 +27,6 @@ import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.utils.CfgUtils;
-import learntest.core.commons.utils.VariableUtils;
-import learntest.core.commons.utils.VariableUtils.VarInfo;
 import learntest.core.gan.vm.GanMachine;
 import learntest.core.gan.vm.NodeDataSet;
 import learntest.core.gan.vm.NodeDataSet.Category;
@@ -36,6 +36,7 @@ import learntest.core.machinelearning.IInputLearner;
 import learntest.core.machinelearning.SampleExecutor;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
+import sav.strategies.dto.execute.value.ExecVar;
 import variable.Variable;
 
 /**
@@ -47,83 +48,102 @@ public class GanDecisionLearner implements IInputLearner {
 	private GanMachine machine;
 	private SampleExecutor sampleExecutor;
 	protected HashMap<CfgNode, CfgNodeDomainInfo> dominationMap = new HashMap<CfgNode, CfgNodeDomainInfo>();
+	private Set<Integer> trainedNodes;
 
 	public GanDecisionLearner(LearningMediator mediator) {
 		this.mediator = mediator;
 		machine = new GanMachine();
+//		machine.setVmTimeout(600000);
+		trainedNodes = new HashSet<Integer>();
 	}
 
 	@Override
 	public DecisionProbes learn(DecisionProbes inputProbes, Map<Integer, List<Variable>> relevantVarMap)
 			throws SavException {
 		this.sampleExecutor = new SampleExecutor(mediator, inputProbes);
+		trainedNodes.clear();
 		machine.start();
 		dominationMap = new CfgDomain().constructDominationMap(CfgUtils.getVeryFirstDecisionNode(inputProbes.getCfg()));
 		machine.startTrainingMethod(inputProbes.getTargetMethod().getMethodFullName());
-		List<VarInfo> relevantVars = VariableUtils.varsTransform(relevantVarMap, inputProbes.getOriginalVars());
+		TrainingVariables trainingVars = new TrainingVariables() {
+			private List<String> labels;
+			@Override
+			public List<String> getLabel(int idx) {
+				if (labels == null) {
+					labels = BreakpointDataUtils.extractLabels(inputProbes.getOriginalVars());
+				}
+				return labels;
+			}
+
+			@Override
+			public List<ExecVar> getExecVars(int idx) {
+				return inputProbes.getOriginalVars();
+			}
+			
+		};
 		for (CfgNode node : inputProbes.getCfg().getDecisionNodes()) {
-			refineNode(node, inputProbes, relevantVars);
+			refineNode(node, inputProbes, trainingVars);
 		}
+		machine.stop();
 		return inputProbes;
 	}
 
-	private void refineNode(CfgNode node, DecisionProbes probes, List<VarInfo> relevantVars) {
+	private void refineNode(CfgNode node, DecisionProbes probes, TrainingVariables trainingVars) {
 		DecisionNodeProbe nodeProbe = probes.getNodeProbe(node);
-		VarInfo relevantVarInfo = relevantVars.get(node.getIdx());
-		train(node, nodeProbe, relevantVarInfo);
 		CoveredBranches coveredBranches = nodeProbe.getCoveredBranches();
 		if (coveredBranches == CoveredBranches.NONE) {
 			/*
 			 * generate more datapoint for its parent node for a try to get this
 			 * node covered
 			 */
-			ambitionParentNode(node, relevantVars);
+			ambitionParentNode(nodeProbe, trainingVars);
 		}
-		if (coveredBranches != CoveredBranches.TRUE_AND_FALSE) {
-			expandAtNode(node, relevantVars, getCategory(coveredBranches.getOnlyOneMissingBranch()));
+		/* update coveredbranches */
+		coveredBranches = nodeProbe.getCoveredBranches();
+		if ((coveredBranches != CoveredBranches.TRUE_AND_FALSE) && (coveredBranches != CoveredBranches.NONE)) {
+			expandAtNode(nodeProbe, trainingVars, getCategory(coveredBranches.getOnlyOneMissingBranch()));
 		}
 	}
 
-	private void ambitionParentNode(CfgNode node, List<VarInfo> relevantVars) {
+	private void ambitionParentNode(DecisionNodeProbe nodeProbe, TrainingVariables trainingVars) {
+		CfgNode node = nodeProbe.getNode();
 		CfgNode parentNode = getParentNode(node);
 		if (parentNode == null) {
 			return;
 		}
-		SamplingResult samplingResult = expandAtNode(parentNode, relevantVars,
+		expandAtNode(nodeProbe.getDecisionProbes().getNodeProbe(parentNode), trainingVars,
 				getCategory(parentNode.getBranchRelationship(node.getIdx())));
-		/* train the current node with new data */
-		train(node, samplingResult.getNewData(node), relevantVars.get(node.getIdx()));
-		/*
-		 * TODO: try to generate data from parent of parent if generated data at
-		 * the very closed parent doesnot help much
-		 */
 	}
 
-	private SamplingResult expandAtNode(CfgNode node, List<VarInfo> relevantVars, Category category) {
+	private SamplingResult expandAtNode(DecisionNodeProbe nodeProbe, TrainingVariables trainingVars, Category category) {
+		CfgNode node = nodeProbe.getNode();
 		int nodeIdx = node.getIdx();
-		VarInfo varInfo = relevantVars.get(nodeIdx);
-		NodeDataSet generatedDataSet = machine.requestData(nodeIdx, VariableUtils.getLabels(varInfo), category);
+		train(node, nodeProbe, trainingVars);
+		NodeDataSet generatedDataSet = machine.requestData(nodeIdx, trainingVars.getLabel(node.getIdx()), category);
 		SamplingResult samplingResult = null;
 		if (generatedDataSet != null) {
 			try {
-				samplingResult = sampleExecutor.runSamples(generatedDataSet.getAllDatapoints(), varInfo.getExecVars());
+				samplingResult = sampleExecutor.runSamples(generatedDataSet.getAllDatapoints(), trainingVars.getExecVars(node.getIdx()));
 			} catch (SavException e) {
 				log.debug("Error when generating new testcases: {}", e.getMessage());
 			}
-			/* train with new data */
-			train(node, samplingResult.getNewData(node), varInfo);
 		}
 		return samplingResult;
 	}
 
-	private void train(CfgNode node, INodeCoveredData nodeProbe, VarInfo relevantVarInfo) {
+	private void train(CfgNode node, INodeCoveredData nodeProbe, TrainingVariables trainingVars) {
+		if (trainedNodes.contains(node.getIdx())) {
+			return;
+		}
 		NodeDataSet trainingData = new NodeDataSet();
-		trainingData.setLabels(VariableUtils.getLabels(relevantVarInfo));
+		trainingData.setLabels(trainingVars.getLabel(node.getIdx()));
+		List<ExecVar> execVars = trainingVars.getExecVars(node.getIdx());
 		trainingData.setDatapoints(Category.TRUE,
-				BreakpointDataUtils.toDataPoint(relevantVarInfo.getExecVars(), nodeProbe.getTrueValues()));
+				BreakpointDataUtils.toDataPoint(execVars, nodeProbe.getTrueValues()));
 		trainingData.setDatapoints(Category.FALSE,
-				BreakpointDataUtils.toDataPoint(relevantVarInfo.getExecVars(), nodeProbe.getFalseValues()));
+				BreakpointDataUtils.toDataPoint(execVars, nodeProbe.getFalseValues()));
 		machine.train(node.getIdx(), trainingData);
+		trainedNodes.add(node.getIdx());
 	}
 
 	private Category getCategory(BranchRelationship branchRelationship) {
@@ -149,7 +169,7 @@ public class GanDecisionLearner implements IInputLearner {
 	}
 
 	/**
-	 * TODO-LLT: to handle for multi level.
+	 * TODO-LLT: to handle for multi level, or more than 1 parent node.
 	 */
 	private CfgNode getParentNode(CfgNode nodeProbe) {
 		List<CfgNode> dominators = dominationMap.get(nodeProbe).getDominators(); 
@@ -174,4 +194,15 @@ public class GanDecisionLearner implements IInputLearner {
 		return null;
 	}
 
+	private static interface TrainingVariables {
+
+		List<String> getLabel(int idx);
+
+		List<ExecVar> getExecVars(int idx);
+		
+	}
+
+	@Override
+	public void cleanup() {
+	}
 }

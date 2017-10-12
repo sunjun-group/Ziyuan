@@ -37,17 +37,17 @@ public class GanOutput {
 	public void setRequestType(RequestType requestType) {
 		this.requestType = requestType;
 	}
-
-	public void parse(String jsonStr) {
+	
+	public void parseJson(String jsonStr) {
 		JSONObject obj = new JSONObject(jsonStr);
 		NodeDataSet dataSet = new NodeDataSet();
 		dataSet.setNodeId(obj.getString(JsLabel.NODE_ID));
-		JSONArray arr = obj.getJSONArray(JsLabel.LABELS);
-		List<String> labels = new ArrayList<String>(arr.length());
-		for (Iterator<Object> it = arr.iterator(); it.hasNext();) {
-			labels.add((String) it.next());
-		}
-		dataSet.setLabels(labels);
+//		JSONArray arr = obj.getJSONArray(JsLabel.LABELS);
+//		List<String> labels = new ArrayList<String>(arr.length());
+//		for (Iterator<Object> it = arr.iterator(); it.hasNext();) {
+//			labels.add((String) it.next());
+//		}
+//		dataSet.setLabels(labels);
 		JSONObject datasetObj = obj.getJSONObject(JsLabel.DATASET);
 		parseDatapoints(dataSet, datasetObj, Category.TRUE);
 		parseDatapoints(dataSet, datasetObj, Category.FALSE);
