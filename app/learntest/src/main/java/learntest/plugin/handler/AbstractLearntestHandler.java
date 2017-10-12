@@ -65,6 +65,7 @@ import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.FileUtils;
 import sav.common.core.utils.TextFormatUtils;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
@@ -283,7 +284,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		for (Entry<String, Collection<BreakpointValue>> entry : ranAverageInfo.getFalseSample().entrySet()){
 			sBuffer.append(entry.getKey()+" "+":"+entry.getValue().size()+" "+entry.getValue().toString()+"\n");
 		}
-		TestRunTimeInfo.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
+		FileUtils.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
 
 		HashMap<CfgNode, CfgNodeDomainInfo> domainMap = l2tAverageInfo.getDomainMap();
 		StringBuffer l2tWorseSb = new StringBuffer(), ranWorseSb = new StringBuffer();
@@ -353,7 +354,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			ranWorseSb.append(", domainator nodes : " + dominators +";");
 		}
 		
-		TestRunTimeInfo.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
+		FileUtils.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
 	}
 
 	private boolean checkIfBetter(Collection<BreakpointValue> first, Collection<BreakpointValue> second, StringBuffer sBuffer) {
@@ -375,7 +376,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			sb.append(formulaInfo + "\n");
 		}
 		log.info(sb.toString());
-		TestRunTimeInfo.write(logFile, sb.toString());
+		FileUtils.write(logFile, sb.toString());
 	}
 
 	private RunTimeInfo runJdart(LearnTestParams params) throws Exception {

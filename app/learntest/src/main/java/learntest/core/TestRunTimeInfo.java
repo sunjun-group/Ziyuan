@@ -111,27 +111,6 @@ public class TestRunTimeInfo extends RunTimeInfo {
 		this.learnState = learnState;
 	}
 
-	public static void write(String file, String log) {
-		if (log == null) {
-			return;
-		}
-		FileWriter writer = null;
-		try {
-			writer = new FileWriter(file, true);
-			writer.write(log);
-		} catch (Exception e) {
-			// ignore
-		} finally {
-			IOUtils.closeQuietly(writer);
-		}
-
-	}
 	
-	public static void createFile(String path) {
-		File file = new File(path);
-		if (!file.exists()) {
-			file.getParentFile().mkdirs();
-		}
-	}
 	
 }

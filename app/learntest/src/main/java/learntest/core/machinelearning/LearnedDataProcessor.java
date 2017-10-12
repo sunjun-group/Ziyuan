@@ -36,6 +36,7 @@ import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import sav.common.core.SavException;
+import sav.common.core.utils.FileUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -148,7 +149,7 @@ public class LearnedDataProcessor {
 		}
 		log.info(sBuffer.toString());
 		sBuffer.append("\n");
-		TestRunTimeInfo.write(logFile, sBuffer.toString());
+		FileUtils.write(logFile, sBuffer.toString());
 		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions, learnedDividers);
 	}
 

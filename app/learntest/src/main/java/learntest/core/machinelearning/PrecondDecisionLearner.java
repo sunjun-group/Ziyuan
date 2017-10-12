@@ -46,6 +46,7 @@ import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.FileUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
 import variable.Variable;
@@ -85,7 +86,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				sBuffer.append(info+"\n\n");
 			}
 		}		
-		TestRunTimeInfo.write(logFile, sBuffer.toString());
+		FileUtils.write(logFile, sBuffer.toString());
 		log.info(sBuffer.toString());
 		if (relevantVarMap == null || probes.getCfg().getNodeList().size() != relevantVarMap.size()) {
 			log.debug("The size of CfgNodes is differnt from the size of map!!!!");
@@ -107,7 +108,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		}
 		Queue<CfgNode> queue = new LinkedList<>();
 		queue.add(node);
+		int loopTimes = 0;
 		while (!queue.isEmpty()) {
+			loopTimes++;
 			node = queue.poll();
 			log.debug("parsing the node in line " + node.getLine() + "(" + node + ")");
 
@@ -128,7 +131,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 						
 				Pair<OrCategoryCalculator, Boolean> pair = null;
 				log.debug("learning the node in line " + node.getLine() + "(" + node + ")");
-				if (node.isLoopHeader()) {
+				if (loopTimes <100 ? node.isLoopHeader() : node.isInLoop()) { // give a simple patch when there is a bug that will cause infinite loop
 					/** todo : handle the loop
 					 *  loop header dominate and is dominated by nodes in loop, 
 					 *  thus in order to break the wait lock, loop header should be learned first without learing nodes in loop 
@@ -373,7 +376,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 //		log.info("new data true : "+trueV.size()+" , "+trueV.toString());
 //		log.info("new data false : "+falseV.size()+" , "+falseV.toString());		
 
-		TestRunTimeInfo.write(logFile, sBuffer.toString());
+		FileUtils.write(logFile, sBuffer.toString());
 	}
 
 	private void addBkp(List<String> labels, List<ExecVar> targetVars, BreakpointValue bValue, 

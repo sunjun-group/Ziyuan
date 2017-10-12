@@ -25,6 +25,7 @@ import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
 import sav.common.core.SavException;
+import sav.common.core.utils.FileUtils;
 import variable.Variable;
 
 /**
@@ -63,7 +64,7 @@ public interface IInputLearner {
 			sBuffer.append("false : " + entry.getKey() + " " + entry.getValue().size() + entry.getValue()+"\n");
 		}
 		
-		TestRunTimeInfo.write(logFile, sBuffer.toString());
+		FileUtils.write(logFile, sBuffer.toString());
 	}
 
 	default void recordSample(DecisionProbes inputProbes, String logFile) {
@@ -81,7 +82,7 @@ public interface IInputLearner {
 			sBuffer.append("false : " + entry.getKey() + " " + entry.getValue().size() + entry.getValue()+"\n");
 		}
 		
-		TestRunTimeInfo.write(logFile, sBuffer.toString());
+		FileUtils.write(logFile, sBuffer.toString());
 	}
 
 	default void recordSample(DecisionNodeProbe nodeProbe, Collection<BreakpointValue> collection,
