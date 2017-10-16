@@ -1,48 +1,71 @@
 package learntest.plugin.export.io.excel;
 
-import static learntest.plugin.export.io.excel.TrialHeader.*;
+import static learntest.plugin.export.io.excel.TrialHeader.ADVANTAGE;
+import static learntest.plugin.export.io.excel.TrialHeader.AVE_COVERAGE_ADV;
+import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_L2T_WORSE_THAN_RAND;
+import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_RAND_WORSE_THAN_L2T;
+import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_TRIAL_ADV;
+import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_TRIAL_L;
+import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_TRIAL_L2T;
+import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_TRIAL_R;
+import static learntest.plugin.export.io.excel.TrialHeader.FIRST_L2T_WORSE_THAN_RAND;
+import static learntest.plugin.export.io.excel.TrialHeader.FIRST_RAND_WORSE_THAN_L2T;
+import static learntest.plugin.export.io.excel.TrialHeader.FIRST_TRIAL_ADV;
+import static learntest.plugin.export.io.excel.TrialHeader.FIRST_TRIAL_L;
+import static learntest.plugin.export.io.excel.TrialHeader.FIRST_TRIAL_L2T;
+import static learntest.plugin.export.io.excel.TrialHeader.FIRST_TRIAL_R;
+import static learntest.plugin.export.io.excel.TrialHeader.FORTH_L2T_WORSE_THAN_RAND;
+import static learntest.plugin.export.io.excel.TrialHeader.FORTH_RAND_WORSE_THAN_L2T;
+import static learntest.plugin.export.io.excel.TrialHeader.FORTH_TRIAL_ADV;
+import static learntest.plugin.export.io.excel.TrialHeader.FORTH_TRIAL_L;
+import static learntest.plugin.export.io.excel.TrialHeader.FORTH_TRIAL_L2T;
+import static learntest.plugin.export.io.excel.TrialHeader.FORTH_TRIAL_R;
+import static learntest.plugin.export.io.excel.TrialHeader.JDART_COVERAGE;
+import static learntest.plugin.export.io.excel.TrialHeader.JDART_TEST_CNT;
+import static learntest.plugin.export.io.excel.TrialHeader.JDART_TIME;
+import static learntest.plugin.export.io.excel.TrialHeader.L2T_BEST_COVERAGE;
+import static learntest.plugin.export.io.excel.TrialHeader.L2T_COVERAGE;
+import static learntest.plugin.export.io.excel.TrialHeader.L2T_TEST_CNT;
+import static learntest.plugin.export.io.excel.TrialHeader.L2T_TIME;
+import static learntest.plugin.export.io.excel.TrialHeader.L2T_VALID_COVERAGE;
+import static learntest.plugin.export.io.excel.TrialHeader.METHOD_LENGTH;
+import static learntest.plugin.export.io.excel.TrialHeader.METHOD_NAME;
+import static learntest.plugin.export.io.excel.TrialHeader.METHOD_START_LINE;
+import static learntest.plugin.export.io.excel.TrialHeader.RANDOOP_BEST_COVERAGE;
+import static learntest.plugin.export.io.excel.TrialHeader.RANDOOP_COVERAGE;
+import static learntest.plugin.export.io.excel.TrialHeader.RANDOOP_TEST_CNT;
+import static learntest.plugin.export.io.excel.TrialHeader.RANDOOP_TIME;
+import static learntest.plugin.export.io.excel.TrialHeader.RANDOOP_VALID_COVERAGE;
+import static learntest.plugin.export.io.excel.TrialHeader.SECOND_L2T_WORSE_THAN_RAND;
+import static learntest.plugin.export.io.excel.TrialHeader.SECOND_RAND_WORSE_THAN_L2T;
+import static learntest.plugin.export.io.excel.TrialHeader.SECOND_TRIAL_ADV;
+import static learntest.plugin.export.io.excel.TrialHeader.SECOND_TRIAL_L;
+import static learntest.plugin.export.io.excel.TrialHeader.SECOND_TRIAL_L2T;
+import static learntest.plugin.export.io.excel.TrialHeader.SECOND_TRIAL_R;
+import static learntest.plugin.export.io.excel.TrialHeader.THIRD_L2T_WORSE_THAN_RAND;
+import static learntest.plugin.export.io.excel.TrialHeader.THIRD_RAND_WORSE_THAN_L2T;
+import static learntest.plugin.export.io.excel.TrialHeader.THIRD_TRIAL_ADV;
+import static learntest.plugin.export.io.excel.TrialHeader.THIRD_TRIAL_L;
+import static learntest.plugin.export.io.excel.TrialHeader.THIRD_TRIAL_L2T;
+import static learntest.plugin.export.io.excel.TrialHeader.THIRD_TRIAL_R;
+import static learntest.plugin.export.io.excel.TrialHeader.VALID_COVERAGE_ADV;
+import static learntest.plugin.export.io.excel.TrialHeader.VALID_NUM;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 
-import learntest.plugin.export.io.excel.common.ExcelWriter;
+import learntest.plugin.export.io.excel.common.SimpleExcelWriter;
 
-public class TrialExcelWriter extends ExcelWriter {
-	private Sheet dataSheet;
-	private int lastDataSheetRow;
+public class TrialExcelWriter extends SimpleExcelWriter<Trial> {
 	
 	public TrialExcelWriter(File file) throws Exception {
 		super(file);
 	}
-
-	@Override
-	protected void initFromNewFile(File file) {
-		super.initFromNewFile(file);
-		lastDataSheetRow = TrialExcelConstants.DATA_SHEET_HEADER_ROW_IDX - 1;
-		dataSheet = createSheet(TrialExcelConstants.DATA_SHEET_NAME);
-		initDataSheetHeader();
-	}
 	
-	@Override
-	protected void initFromExistingFile(File file) throws Exception {
-		super.initFromExistingFile(file);
-		dataSheet = workbook.getSheet(TrialExcelConstants.DATA_SHEET_NAME);
-		lastDataSheetRow = dataSheet.getLastRowNum();
-	}
-	
-	private void initDataSheetHeader() {
-		Row headerRow = newDataSheetRow();
-		for (TrialHeader header : TrialHeader.values()) {
-			addCell(headerRow, header, header.getTitle());
-		}
-	}
-
-	public int addRowData(Trial trial) throws IOException {
-		Row row = newDataSheetRow();
+	protected void addRowData(Row row, Trial trial) throws IOException {
 		addCell(row, METHOD_NAME, trial.getMethodName());
 		
 		if (trial.getJdartRtInfo() != null) {
@@ -81,7 +104,6 @@ public class TrialExcelWriter extends ExcelWriter {
 			export5Trials(row, trials);
 		}
 		writeWorkbook();
-		return lastDataSheetRow;
 	}
 
 	private void export5Trials(Row row, List<Trial> trials) {
@@ -136,8 +158,4 @@ public class TrialExcelWriter extends ExcelWriter {
 		
 	}
 
-	private Row newDataSheetRow() {
-		return dataSheet.createRow(++lastDataSheetRow);
-	}
-	
 }

@@ -26,7 +26,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.exception.LearnTestException;
-import learntest.plugin.export.io.excel.common.ExcelReader;
+import learntest.plugin.export.io.excel.common.SimpleExcelReader;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.StringUtils;
 
@@ -34,15 +34,16 @@ import sav.common.core.utils.StringUtils;
  * @author LLT
  *
  */
-public class TrialExcelReader extends ExcelReader {
+public class TrialExcelReader extends SimpleExcelReader {
 	
 	private Sheet dataSheet;
 	
 	public TrialExcelReader() {
+		super(TrialExcelConstants.DATA_SHEET_NAME, TrialHeader.values());
 	}
 	
 	public TrialExcelReader(File file) throws Exception {
-		super(file);
+		super(TrialExcelConstants.DATA_SHEET_NAME, TrialHeader.values(), file);
 	}
 	
 	@Override
@@ -98,18 +99,6 @@ public class TrialExcelReader extends ExcelReader {
 		trial.setMethodStartLine(getIntCellValue(row, METHOD_START_LINE));
 		data.put(StringUtils.join(TrialExcelConstants.METHOD_ID_SEPARATOR, trial.getMethodName(), trial.getMethodStartLine()), 
 				trial);
-	}
-
-	private boolean isDataSheetHeader(Row header) {
-		if (header.getRowNum() != TrialExcelConstants.DATA_SHEET_HEADER_ROW_IDX) {
-			return false;
-		}
-		for (TrialHeader title : TrialHeader.values()) {
-			if (!title.getTitle().equals(header.getCell(title.getCellIdx()).getStringCellValue())) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	public int getLastDataSheetRow() {

@@ -55,6 +55,23 @@ public class ExcelWriter {
 		return workbook.createSheet(name);
 	}
 	
+	public Sheet createSheet(String name, ExcelHeader[] headers, int headerRowIdx) {
+		Sheet sheet = createSheet(name);
+		initDataSheetHeader(sheet, headers, headerRowIdx);
+		return sheet;
+	}
+	
+	public void initDataSheetHeader(Sheet sheet, ExcelHeader[] headers, int headerRowIdx) {
+		Row headerRow = newDataSheetRow(sheet, headerRowIdx);
+		for (ExcelHeader header : headers) {
+			addCell(headerRow, header, header.getTitle());
+		}
+	}
+	
+	protected Row newDataSheetRow(Sheet dataSheet, int headerRowIdx) {
+		return dataSheet.createRow(headerRowIdx);
+	}
+	
 	public void writeWorkbook() throws IOException{
 		FileOutputStream out = null;
 		try {
@@ -78,4 +95,12 @@ public class ExcelWriter {
 		row.createCell(title.getCellIdx()).setCellValue(value);
 	}
 	
+	public Sheet getSheet(String name, ExcelHeader[] headers, int headerRowIdx) {
+		Sheet sheet = workbook.getSheet(name);
+		if (sheet == null) {
+			sheet = createSheet(name, headers, headerRowIdx);
+		}
+		return sheet;
+	}
+
 }

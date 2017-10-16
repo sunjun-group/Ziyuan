@@ -8,6 +8,8 @@
 
 package learntest.core.commons.utils;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +21,7 @@ import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.StringUtils;
 
 /**
  * @author LLT
@@ -81,22 +84,45 @@ public class CoverageUtils {
 		return map;
 	}
 	
+	public static String getBranchCoverageDisplayText(CfgCoverage cfgCoverage) {
+		return getBranchCoverageDisplayText(cfgCoverage, -1);
+	}
 	
 	public static String getBranchCoverageDisplayText(CfgCoverage cfgCoverage, int testIdx) {
-		StringBuilder sb = new StringBuilder();
+		return StringUtils.newLineJoin(getBranchCoverageDisplayTexts(cfgCoverage, testIdx));
+	}
+	
+	public static List<String> getBranchCoverageDisplayTexts(CfgCoverage cfgCoverage, int testIdx) {
+		List<String> lines = new ArrayList<String>();
 		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
+			StringBuilder sb = new StringBuilder();
 			NodeCoverage nodeCvg = cfgCoverage.getCoverage(node);
 			Set<BranchRelationship> coveredBranches = new HashSet<BranchRelationship>(2);
-			for (int branchIdx : nodeCvg.getCoveredBranches(testIdx)) {
+			for (int branchIdx : getCoveredBranches(testIdx, nodeCvg)) {
 				BranchRelationship branchRelationship = node.getBranchRelationship(branchIdx);
 				coveredBranches.add(branchRelationship == BranchRelationship.TRUE ? branchRelationship : 
 										BranchRelationship.FALSE);
 			}
-			sb.append("NodeCoverage [").append(node).append(", covered=").append(nodeCvg.isCovered(testIdx))
+			sb.append("NodeCoverage [").append(node).append(", covered=").append(isCovered(testIdx, nodeCvg))
 						.append(", coveredBranches=").append(coveredBranches.size()).append(", ")
 						.append(coveredBranches).append("]");
-			sb.append("\n");
+			lines.add(sb.toString());
 		}
-		return sb.toString();
+		return lines;
 	}
+
+	private static boolean isCovered(int testIdx, NodeCoverage nodeCvg) {
+		if (testIdx < 0) {
+			return nodeCvg.isCovered();
+		}
+		return nodeCvg.isCovered(testIdx);
+	}
+
+	private static Collection<Integer> getCoveredBranches(int testIdx, NodeCoverage nodeCvg) {
+		if (testIdx < 0) {
+			return nodeCvg.getCoveredBranches();
+		}
+		return nodeCvg.getCoveredBranches(testIdx);
+	}
+	
 }
