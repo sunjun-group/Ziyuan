@@ -17,6 +17,7 @@ import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.exception.LearnTestException;
+import learntest.core.commons.test.TestTools;
 import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.commons.utils.JavaFileCopier;
 import learntest.core.gentest.GentestParams;
@@ -66,6 +67,7 @@ public class LearnTest extends AbstractLearntest {
 					.getRelevantVarMap();
 			
 			double firstCoverage = CoverageUtils.calculateCoverageByBranch(cfgCoverage);
+			TestTools.getInstance().logFirstCoverage(firstCoverage, cfgCoverage);
 			log.info("First coverage: " + firstCoverage);
 			BreakPoint methodEntryBkp = BreakpointCreator.createMethodEntryBkp(targetMethod, relevantVarMap);
 			/**
