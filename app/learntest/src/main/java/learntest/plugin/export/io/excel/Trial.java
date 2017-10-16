@@ -117,4 +117,12 @@ public class Trial {
 				+ methodStartLine + ", l2tRtInfo=" + l2tRtInfo + ", ranRtInfo=" + ranRtInfo + ", jdartRtInfo="
 				+ jdartRtInfo + "]";
 	}
+
+	public String getL2tWorseThanRand() {
+		return l2tWorseThanRand;
+	}
+
+	public String getRandWorseThanl2t() {
+		return randWorseThanl2t;
+	}
 }

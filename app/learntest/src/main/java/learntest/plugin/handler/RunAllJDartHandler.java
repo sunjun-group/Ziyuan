@@ -26,6 +26,9 @@ import learntest.core.commons.LearntestConstants;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
+import learntest.local.DetailExcelReader;
+import learntest.local.DetailTrial;
+import learntest.local.MethodTrial;
 import learntest.plugin.LearnTestConfig;
 import learntest.plugin.ProjectSetting;
 import learntest.plugin.export.io.excel.MultiTrial;
@@ -54,9 +57,10 @@ public class RunAllJDartHandler extends AbstractLearntestHandler {
 	private static final int EVALUATIONS_PER_METHOD = 5;
 	private List<IMethodFilter> methodFilters;
 	private List<ITypeFilter> classFilters;
-	private static String SUCCESSFUL_FILE_NAME = "jdart_"+LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME;
+	private static String SUCCESSFUL_FILE_NAME = "jdart_" + LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME;
 
 	private int curMethodIdx = 0;
+
 	@Override
 	protected IStatus execute(IProgressMonitor monitor) {
 
@@ -69,7 +73,7 @@ public class RunAllJDartHandler extends AbstractLearntestHandler {
 		try {
 			String outputFolder = ProjectSetting.getLearntestOutputFolder(projectName);
 			log.info("learntest output folder: {}", outputFolder);
-			excelHandler = new TrialExcelHandler(outputFolder, projectName+"_jdart");
+			excelHandler = new TrialExcelHandler(outputFolder, projectName + "_jdart");
 			initFilters();
 		} catch (Exception e1) {
 			handleException(e1);
@@ -103,14 +107,14 @@ public class RunAllJDartHandler extends AbstractLearntestHandler {
 	protected String getJobName() {
 		return "Run JDart for All Methods";
 	}
-	
+
 	private void initFilters() {
 		methodFilters = Arrays.asList(new TestableMethodFilter(), new NestedBlockChecker(),
-		 new MethodNameFilter(SUCCESSFUL_FILE_NAME),
-		 new MethodNameFilter(LearntestConstants.SKIP_METHOD_FILE_NAME));
+				new MethodNameFilter(SUCCESSFUL_FILE_NAME),
+				new MethodNameFilter(LearntestConstants.SKIP_METHOD_FILE_NAME));
 		classFilters = Arrays.asList(new TestableClassFilter(), new ClassNameFilter(getExcludedClasses()));
 	}
-	
+
 	private List<String> getExcludedClasses() {
 		/* TODO - temporary hard code */
 		return Arrays.asList("org.apache.tools.ant.Main");
@@ -144,7 +148,7 @@ public class RunAllJDartHandler extends AbstractLearntestHandler {
 		}
 		return info;
 	}
-	
+
 	private void updateRuntimeInfo(RunTimeCananicalInfo info, CompilationUnit cu, int totalMethods, int validMethods) {
 		int length0 = cu.getLineNumber(cu.getStartPosition() + cu.getLength() - 1);
 		info.addTotalLen(length0);
@@ -192,21 +196,35 @@ public class RunAllJDartHandler extends AbstractLearntestHandler {
 		}
 	}
 
+	Map<String, MethodTrial> oldTrials = null;
 	private boolean skip(MethodInfo targetMethod) {
-		Map<String, Trial> oldTrials = new HashMap<>();
-		try {
-			TrialExcelReader reader = new TrialExcelReader(
-					new File("D:/eclipse/apache-common-math-2.2_0-checked.xlsx"));
-			oldTrials = reader.readDataSheet();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (oldTrials == null) {
+			try {
+				DetailExcelReader reader = new DetailExcelReader(new File("D:/eclipse/apache-common-math-2.2_0-checked.xlsx"));
+				List<MethodTrial> list = reader.readDataSheet();
+				oldTrials = new HashMap<>();
+				for (MethodTrial methodTrial : list) {
+					String name = methodTrial.getMethodName();
+					int line = methodTrial.getLine();
+					oldTrials.put(name+"_"+line, methodTrial);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		String fullName = targetMethod.getMethodFullName();
 		int line = targetMethod.getLineNum();
+		log.debug(fullName);
 		if (oldTrials.containsKey(fullName + "_" + line)) {
-			return true;
+			MethodTrial trial = oldTrials.get(fullName + "_" + line);
+			for (DetailTrial detail : trial.getTrials()) {
+				if ((detail.getL2tBetter().length() > 0)
+						|| (detail.getRanBetter().length() > 0)) {
+					return false;
+				}
+			}
 		}
-		return false;
+		return true;
 	}
 
 	private void checkJobCancelation(IProgressMonitor monitor) {
@@ -229,11 +247,11 @@ public class RunAllJDartHandler extends AbstractLearntestHandler {
 		setSystemConfig(params);
 		return params;
 	}
-	
+
 	@Override
 	protected Trial evaluateLearntestForSingleMethod(LearnTestParams params) {
 		try {
-			
+
 			log.info("");
 			log.info("WORKING METHOD: {}, line {}", params.getTargetMethod().getMethodFullName(),
 					params.getTargetMethod().getLineNum());
@@ -259,7 +277,7 @@ public class RunAllJDartHandler extends AbstractLearntestHandler {
 		}
 		return null;
 	}
-	
+
 	class RunTimeCananicalInfo {
 		int validNum;
 		int totalNum;

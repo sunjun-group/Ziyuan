@@ -153,9 +153,9 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		for (MethodInfo targetMethod : targetMethods) {
 
 			/* todo : test special method start */
-			if (skip(targetMethod)) {
-				continue;
-			}
+//			if (skip(targetMethod)) {
+//				continue;
+//			}
 			/* todo : test special method end */
 
 			log.info("-----------------------------------------------------------------------------------------------");
@@ -189,8 +189,8 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	private boolean skip(MethodInfo targetMethod) {
 		Map<String, Trial> oldTrials = new HashMap<>();
 		try {
-			TrialExcelReader reader = new TrialExcelReader(
-					new File("D:/eclipse/apache-common-math-2.2_0-checked.xlsx"));
+			TrialExcelReader reader = new TrialExcelReader();
+			reader.reset(new File("D:/eclipse/apache-common-math-2.2_0-checked.xlsx"));
 			oldTrials = reader.readDataSheet();
 		} catch (Exception e) {
 			e.printStackTrace();
