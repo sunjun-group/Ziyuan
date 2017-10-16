@@ -375,6 +375,7 @@
             textPreferenceKey="coverage_text"
             textPreferenceValue="false"
             textStylePreferenceKey="coverage_textStylePreference"
+            textStylePreferenceValue="NONE"
             verticalRulerPreferenceKey="coverage_verticalRuler"
             verticalRulerPreferenceValue="false">
       </specification>
