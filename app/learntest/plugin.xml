@@ -352,7 +352,7 @@
             name="ReportView">
       </view>
    </extension>
-   <extension
+    <extension
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
       <specification
             annotationType="learntest.plugin.specification.coverage"
@@ -375,9 +375,9 @@
             textPreferenceKey="coverage_text"
             textPreferenceValue="false"
             textStylePreferenceKey="coverage_textStylePreference"
+            textStylePreferenceValue="NONE"
             verticalRulerPreferenceKey="coverage_verticalRuler"
             verticalRulerPreferenceValue="false">
       </specification>
-   </extension>
-
+	</extension>
 </plugin>

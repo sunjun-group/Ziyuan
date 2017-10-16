@@ -9,19 +9,14 @@
 package learntest.core;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.CfgJaCoCo;
-import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
-import cfgcoverage.jacoco.analysis.data.CfgNode;
-import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
 import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.DefaultValues;
@@ -37,6 +32,7 @@ import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
 import sav.common.core.utils.SingleTimer;
+import sav.common.core.utils.StringUtils;
 import sav.common.core.utils.TextFormatUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.settings.SAVTimer;
@@ -137,30 +133,16 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		long executionTime = SAVTimer.getExecutionTime();
 		int testCnt = cfgCoverage.getTotalTcs();
 		
-		StringBuffer coverageInfoBuf = new StringBuffer();
-		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
-			StringBuilder sb = new StringBuilder();
-			NodeCoverage nodeCvg = cfgCoverage.getCoverage(node);
-			Set<BranchRelationship> coveredBranches = new HashSet<BranchRelationship>(2);
-			for (int branchIdx : nodeCvg.getCoveredBranches()) {
-				BranchRelationship branchRelationship = node.getBranchRelationship(branchIdx);
-				coveredBranches.add(branchRelationship == BranchRelationship.TRUE ? branchRelationship : 
-										BranchRelationship.FALSE);
-			}
-			sb.append("NodeCoverage [").append(node).append(", covered=").append(nodeCvg.isCovered())
-						.append(", coveredBranches=").append(nodeCvg.getCoveredBranches().size()).append(", ")
-						.append(coveredBranches).append("]");
-			String sbStr = sb.toString();
-			log.debug(sbStr);
-			
-			coverageInfoBuf.append(sbStr + "\n");
+		List<String> lines = CoverageUtils.getBranchCoverageDisplayTexts(cfgCoverage);
+		for (String line : lines) {
+			log.debug(line);
 		}
-		
+		String cvgInfo = StringUtils.newLineJoin(lines);
 		if (!test) {
-			return new RunTimeInfo(executionTime, coverage, testCnt, coverageInfoBuf.toString());
+			return new RunTimeInfo(executionTime, coverage, testCnt, cvgInfo);
 		}
 		
-		return new TestRunTimeInfo(executionTime, coverage, testCnt, coverageInfoBuf.toString());
+		return new TestRunTimeInfo(executionTime, coverage, testCnt, cvgInfo);
 	}
 	
 	protected BreakpointData executeTestcaseAndGetTestInput(List<String> testcases, BreakPoint methodEntryBkp)

@@ -89,7 +89,7 @@ public class LearningMediator {
 	}
 	
 	private void compileAndLogTestSequences(GentestResult result) throws SavException {
-		compile(result.getJunitfiles());
+		compile(result.getAllFiles());
 		finalTests.log(result);
 	}
 
@@ -180,7 +180,7 @@ public class LearningMediator {
 		GentestResult result = genMainAccordingToSolutions(solutions, vars, printOption);
 		if (!result.isEmpty()) {
 			log.debug("compile..");
-			compile(result.getJunitfiles());
+			compile(result.getAllFiles());
 		}
 		return result;
 	}

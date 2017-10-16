@@ -26,6 +26,8 @@ import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
+import learntest.core.commons.test.TestTools;
+import learntest.core.commons.test.gan.GanTestTool;
 import learntest.core.commons.utils.CfgUtils;
 import learntest.core.gan.vm.GanMachine;
 import learntest.core.gan.vm.NodeDataSet;
@@ -44,6 +46,7 @@ import variable.Variable;
  *
  */
 public class GanDecisionLearner implements IInputLearner {
+	private GanTestTool ganLog = TestTools.getInstance().gan;
 	private LearningMediator mediator;
 	private GanMachine machine;
 	private SampleExecutor sampleExecutor;
@@ -120,10 +123,15 @@ public class GanDecisionLearner implements IInputLearner {
 		int nodeIdx = node.getIdx();
 		train(node, nodeProbe, trainingVars);
 		NodeDataSet generatedDataSet = machine.requestData(nodeIdx, trainingVars.getLabel(node.getIdx()), category);
+		ganLog.log("Generated datapoints: ");
+		
 		SamplingResult samplingResult = null;
 		if (generatedDataSet != null) {
 			try {
 				samplingResult = sampleExecutor.runSamples(generatedDataSet.getAllDatapoints(), trainingVars.getExecVars(node.getIdx()));
+				// log new coverage
+				ganLog.log("new coverage: ");
+				ganLog.logCoverage(nodeProbe.getDecisionProbes());
 			} catch (SavException e) {
 				log.debug("Error when generating new testcases: {}", e.getMessage());
 			}
@@ -142,6 +150,8 @@ public class GanDecisionLearner implements IInputLearner {
 				BreakpointDataUtils.toDataPoint(execVars, nodeProbe.getTrueValues()));
 		trainingData.setDatapoints(Category.FALSE,
 				BreakpointDataUtils.toDataPoint(execVars, nodeProbe.getFalseValues()));
+		ganLog.logFormat("Training data at node {}: ", node.getIdx());
+		ganLog.logDatapoints(trainingData);
 		machine.train(node.getIdx(), trainingData);
 		trainedNodes.add(node.getIdx());
 	}

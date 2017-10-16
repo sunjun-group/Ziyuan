@@ -41,14 +41,15 @@ public class LearntestLogger {
 		}
 	}
 
-	/**
-	 * TODO LLT: using reset configuration to set the corresponding log file for each project, instead of
-	 * using global log file for workspace. 
-	 */
 	private static String getLearntestLogFile(String projectName) throws CoreException {
+		String fileName = "learntest-eclipse.log";
+		return getLogFile(projectName, fileName);
+	}
+
+	private static String getLogFile(String projectName, String fileName) throws CoreException {
 		try {
 			String outputFolder = ProjectSetting.getLearntestOutputFolder(projectName);
-			File logFile = new File(outputFolder, "learntest-eclipse.log");
+			File logFile = new File(outputFolder, fileName);
 			if (!logFile.exists()) {
 				logFile.createNewFile();
 			}

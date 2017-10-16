@@ -7,42 +7,16 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 
-import learntest.plugin.export.io.excel.common.ExcelWriter;
+import learntest.plugin.export.io.excel.common.SimpleExcelWriter;
 
-public class TrialExcelWriter extends ExcelWriter {
-	private Sheet dataSheet;
-	private int lastDataSheetRow;
+public class TrialExcelWriter extends SimpleExcelWriter<Trial> {
 	
 	public TrialExcelWriter(File file) throws Exception {
 		super(file);
 	}
-
-	@Override
-	protected void initFromNewFile(File file) {
-		super.initFromNewFile(file);
-		lastDataSheetRow = TrialExcelConstants.DATA_SHEET_HEADER_ROW_IDX - 1;
-		dataSheet = createSheet(TrialExcelConstants.DATA_SHEET_NAME);
-		initDataSheetHeader();
-	}
 	
-	@Override
-	protected void initFromExistingFile(File file) throws Exception {
-		super.initFromExistingFile(file);
-		dataSheet = workbook.getSheet(TrialExcelConstants.DATA_SHEET_NAME);
-		lastDataSheetRow = dataSheet.getLastRowNum();
-	}
-	
-	private void initDataSheetHeader() {
-		Row headerRow = newDataSheetRow();
-		for (TrialHeader header : TrialHeader.values()) {
-			addCell(headerRow, header, header.getTitle());
-		}
-	}
-
-	public int addRowData(Trial trial) throws IOException {
-		Row row = newDataSheetRow();
+	protected void addRowData(Row row, Trial trial) throws IOException {
 		addCell(row, METHOD_NAME, trial.getMethodName());
 		
 		if (trial.getJdartRtInfo() != null) {
@@ -81,7 +55,6 @@ public class TrialExcelWriter extends ExcelWriter {
 			export5Trials(row, trials);
 		}
 		writeWorkbook();
-		return lastDataSheetRow;
 	}
 
 	private void export5Trials(Row row, List<Trial> trials) {
@@ -136,8 +109,4 @@ public class TrialExcelWriter extends ExcelWriter {
 		
 	}
 
-	private Row newDataSheetRow() {
-		return dataSheet.createRow(++lastDataSheetRow);
-	}
-	
 }

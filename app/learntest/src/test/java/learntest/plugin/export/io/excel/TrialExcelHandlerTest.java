@@ -12,11 +12,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import learntest.core.RunTimeInfo;
 import learntest.plugin.export.io.excel.Trial;
 import learntest.plugin.export.io.excel.TrialExcelHandler;
+import learntest.plugin.export.io.excel.common.ExcelSettings;
 import sav.common.core.utils.TextFormatUtils;
 
 /**
@@ -24,13 +26,19 @@ import sav.common.core.utils.TextFormatUtils;
  *
  */
 public class TrialExcelHandlerTest {
-
+	private ExcelSettings settings = new ExcelSettings("", "test_project");
+	
+	@Before
+	public void setup() {
+		settings.setAppendLastFile(true);
+	}
+	
 	@Test
 	public void testExcelWriter() throws Exception {
 		TrialExcelHandler handler = null;
 		try {
 			List<Trial> trials = initTrials();
-			handler = new TrialExcelHandler("", "test_project", true);
+			handler = new TrialExcelHandler(settings);
 			for (Trial trial : trials) {
 				handler.export(trial);
 			}
@@ -42,7 +50,7 @@ public class TrialExcelHandlerTest {
 	
 	@Test
 	public void testExcelReader() throws Exception {
-		TrialExcelHandler handler = new TrialExcelHandler("", "test_project", true);
+		TrialExcelHandler handler = new TrialExcelHandler(settings);
 		Collection<Trial> trials = handler.readOldTrials();
 		System.out.println(TextFormatUtils.printListSeparateWithNewLine(trials));
 	}
