@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import jdart.core.JDartCore;
 import jdart.core.JDartParams;
 import jdart.core.util.ByteConverter;
@@ -25,7 +24,7 @@ public class JDartProcess {
 	private static Logger log = LoggerFactory.getLogger(JDartProcess.class);
 
 	public static void main(String[] args) {
-		new JDartProcess().run(JDartParams.defaultJDartParams());
+		new JDartProcess().run(JDartParams.defaultJDartParams());		
 	}
 
 	public List<TestInput> run(JDartParams jdartParams) {

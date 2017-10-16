@@ -11,6 +11,7 @@ package learntest.core;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -88,8 +89,18 @@ public class LearningMediator {
 		getJavaCompiler().compile(getAppClassPath().getTestTarget(), junitFiles);
 	}
 	
-	private void compileAndLogTestSequences(GentestResult result) throws SavException {
-		compile(result.getJunitfiles());
+	private void compileAndLogTestSequences(GentestResult result, GentestParams params) throws SavException {
+		System.currentTimeMillis();
+//		compile(result.getJunitfiles());
+//		List<File> main = new LinkedList<>();
+//		main.add(result.getMainClassFile());
+//		compile(main);
+		List<File> needCompiled = new LinkedList<>();
+		needCompiled.addAll(result.getJunitfiles());
+		if (params.generateMainClass()) {
+			needCompiled.add(result.getMainClassFile());
+		}
+		compile(needCompiled);
 		finalTests.log(result);
 	}
 
@@ -151,7 +162,7 @@ public class LearningMediator {
 		GentestResult result = getTestGenerator().genTestAccordingToSolutions(params, solutions, vars, new JWriter());
 		if (!result.isEmpty()) {
 			log.debug("compile..");
-			compileAndLogTestSequences(result);
+			compileAndLogTestSequences(result, params);
 		}
 		return result;
 	}
@@ -159,7 +170,7 @@ public class LearningMediator {
 	public GentestResult randomGentestAndCompile(GentestParams params) {
 		try {
 			GentestResult result = getTestGenerator().genTest(params);
-			compileAndLogTestSequences(result);
+			compileAndLogTestSequences(result, params);
 			return result;
 		} catch (Exception e) {
 			log.warn("Cannot generate testcase: [{}] {}", e, e.getMessage());

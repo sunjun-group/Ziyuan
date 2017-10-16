@@ -220,7 +220,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 			RunTimeInfo l2tAverageInfo = new RunTimeInfo();
 			RunTimeInfo ranAverageInfo = new RunTimeInfo();
-			RunTimeInfo jdartInfo = null;
+			RunTimeInfo jdartInfo = new RunTimeInfo();
 
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
 //			log.info("run jdart..");
