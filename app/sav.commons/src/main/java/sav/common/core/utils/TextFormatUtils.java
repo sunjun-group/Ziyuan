@@ -29,12 +29,16 @@ public class TextFormatUtils {
 	}
 	
 	public static <K, V> String printMap(Map<K, V> values) {
+		return printMap(values, "\n");
+	}
+	
+	public static <K, V> String printMap(Map<K, V> values, String separator) {
 		if (CollectionUtils.isEmpty(values)) {
 			return StringUtils.EMPTY;
 		}
 		StringBuilder sb = new StringBuilder();
 		for (Entry<K, V> entry : values.entrySet()) {
-			sb.append(printObj(entry.getKey())).append(" : ").append(printObj(entry.getValue())).append("\n");
+			sb.append(printObj(entry.getKey())).append(" : ").append(printObj(entry.getValue())).append(separator);
 		}
 		return sb.toString();
 	}
@@ -56,6 +60,10 @@ public class TextFormatUtils {
 	}
 	
 	private static <T> String printArray(Object obj) {
+		return printArray(obj, ", ");
+	}
+	
+	private static <T> String printArray(Object obj, String separator) {
 		if (obj == null) {
 			return "null";
 		}
@@ -73,6 +81,10 @@ public class TextFormatUtils {
 	}
 	
 	public static String printCol(Collection<?> obj) {
+		return printCol(obj, ", ");
+	}
+	
+	public static String printCol(Collection<?> obj, String separator) {
 		if (CollectionUtils.isEmpty(obj)) {
 			return StringUtils.EMPTY;
 		}
@@ -83,7 +95,7 @@ public class TextFormatUtils {
 		for (Object ele : obj) {
 			sb.append(printObj(ele));
 			if (i != maxIdx) {
-				sb.append(", ");
+				sb.append(separator);
 			}
 			i++;
 		}
