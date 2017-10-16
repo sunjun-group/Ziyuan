@@ -32,7 +32,6 @@ import learntest.plugin.export.io.excel.MultiTrial;
 import learntest.plugin.export.io.excel.Trial;
 import learntest.plugin.export.io.excel.TrialExcelHandler;
 import learntest.plugin.export.io.excel.TrialExcelReader;
-import learntest.plugin.handler.EvaluationHandler.RunTimeCananicalInfo;
 import learntest.plugin.handler.filter.classfilter.ClassNameFilter;
 import learntest.plugin.handler.filter.classfilter.ITypeFilter;
 import learntest.plugin.handler.filter.classfilter.TestableClassFilter;
@@ -159,7 +158,6 @@ public class RunAllJDartHandler extends AbstractLearntestHandler {
 			return;
 		}
 		for (MethodInfo targetMethod : targetMethods) {
-
 			/* todo : test special method start */
 //			if (skip(targetMethod)) {
 //				continue;

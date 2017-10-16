@@ -24,7 +24,13 @@ public class JDartClient {
 
 	public void run(JDartParams jdartParams, int port) {
 		log.info("JDart begin : " + jdartParams.getClassName() + "." + jdartParams.getMethodName());
-		List<TestInput> result = new JDartCore().run(jdartParams);
+		List<TestInput> result = null;
+		try {
+			result = new JDartCore().run(jdartParams);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.info("Jdart error");
+		}
 
 //		for (int i = 0; i < result.size(); i++) {
 //			try {
@@ -57,9 +63,9 @@ public class JDartClient {
 					pw.write(bytes);
 					pw.flush();
 				}
-				pw.writeInt(-1);
-				pw.flush();
 			}
+			pw.writeInt(-1);
+			pw.flush();
 		} catch (Exception e) {
 			log.info(e.toString());
 			e.printStackTrace();

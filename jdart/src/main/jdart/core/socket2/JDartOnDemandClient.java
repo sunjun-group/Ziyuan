@@ -19,8 +19,13 @@ public class JDartOnDemandClient {
 	
 	public void run(JDartParams jdartParams, int port) {
 		log.info("JDart begin : " + jdartParams.getClassName() + "." + jdartParams.getMethodName());
-		List<TestInput> result = new JDartCore().run_on_demand(jdartParams);
-		
+		List<TestInput> result = null;
+		try {
+			result = new JDartCore().run_on_demand(jdartParams);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.info("Jdart error");
+		}
 
 //		for (int i = 0; i < result.size(); i++) {
 //			try {
