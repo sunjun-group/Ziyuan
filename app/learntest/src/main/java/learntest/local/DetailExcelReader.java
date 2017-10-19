@@ -102,8 +102,11 @@ public class DetailExcelReader extends ExcelReader {
 		MethodTrial trial = new MethodTrial();
 		trial.setMethodName(getStringCellValue(row, TrialHeader.METHOD_NAME));
 		trial.setLine(getIntCellValue(row, TrialHeader.METHOD_START_LINE));
-		trial.setValidCoverageAdv(getDoubleCellValue(row, TrialHeader.VALID_COVERAGE_ADV));
-
+		trial.setValidAveCoverageAdv(getDoubleCellValue(row, TrialHeader.VALID_COVERAGE_ADV));
+		trial.setJdartCnt(getIntCellValue(row, TrialHeader.JDART_TEST_CNT));
+		trial.setJdartTime(getIntCellValue(row, TrialHeader.JDART_TIME));
+		trial.setJdartCov(getDoubleCellValue(row, TrialHeader.JDART_COVERAGE));
+		
 		for (int i = 0; i < 5; i++) {
 			DetailTrial dTrial = new DetailTrial();
 			dTrial.setLine(trial.getLine());
