@@ -19,7 +19,6 @@ public class McfTravel {
         if (root.children == null)
             return true;
         else {
-        	System.out.println("abcdef");
             return checkChild(root.children, null, root);
         }
     }
