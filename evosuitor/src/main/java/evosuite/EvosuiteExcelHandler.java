@@ -20,6 +20,7 @@ import org.apache.poi.ss.usermodel.Row;
 import evosuite.commons.excel.ExcelHeader;
 import evosuite.commons.excel.SimpleExcelReader;
 import evosuite.commons.excel.SimpleExcelWriter;
+import sav.common.core.utils.StringUtils;
 
 /**
  * @author LLT
@@ -29,9 +30,9 @@ public class EvosuiteExcelHandler {
 	public static String DATA_SHEET_NAME = "data";
 	private EvoExcelReader excelReader;
 	private EvoExcelWriter excelWriter;
-	private static int methodNameColIdx;
-	private static int methodStartLineColIdx;
-	private static int evoStartIdx;
+	public static int methodNameColIdx = 0;
+	public static int methodStartLineColIdx = 1;
+	public static int evoStartIdx = 2;
 	
 	public EvosuiteExcelHandler(String fileName) throws Exception {
 		File file = new File(fileName);
@@ -65,8 +66,10 @@ public class EvosuiteExcelHandler {
 				addHeader(Header.EVOSUITE_COVERAGE_INFO);
 				evoColAdded = true;
 			}
-			addCell(dataSheet.getRow(data.getRowNum()), Header.EVOSUITE_BRANCH_COVERAGE, data.getEvoResult().branchCoverage);
-			addCell(dataSheet.getRow(data.getRowNum()), Header.EVOSUITE_COVERAGE_INFO, data.getEvoResult().coverageInfo);
+			if (data.getEvoResult() != null) {
+				addCell(dataSheet.getRow(data.getRowNum()), Header.EVOSUITE_BRANCH_COVERAGE, data.getEvoResult().branchCoverage);
+				addCell(dataSheet.getRow(data.getRowNum()), Header.EVOSUITE_COVERAGE_INFO, StringUtils.join(data.getEvoResult().coverageInfo, ";"));
+			}
 			writeWorkbook();
 		}
 	}
@@ -90,6 +93,7 @@ public class EvosuiteExcelHandler {
 		private void updateHeaderColIdx(Row row) {
 			Iterator<Cell> it = row.cellIterator();	
 			int i = 0;
+			boolean evoExist = false;
 			while(it.hasNext()) {
 				Cell cell = it.next();
 				String title = cell.getStringCellValue();
@@ -98,11 +102,12 @@ public class EvosuiteExcelHandler {
 				} else if (Header.METHOD_START_LINE.getTitle().equals(title)) {
 					methodStartLineColIdx = i;
 				} else if (Header.EVOSUITE_BRANCH_COVERAGE.getTitle().equals(title)) {
+					evoExist = true;
 					evoStartIdx = i;
 				}
 				i++;
 			}
-			if (evoStartIdx == 0) {
+			if (!evoExist) {
 				evoStartIdx = i;
 			}
 		}
@@ -116,7 +121,7 @@ public class EvosuiteExcelHandler {
 		}
 	}
 	
-	private static enum Header implements ExcelHeader {
+	public static enum Header implements ExcelHeader {
 		METHOD_NAME("method name"),
 		METHOD_START_LINE("start line"),
 		EVOSUITE_BRANCH_COVERAGE("evosuite coverage"),

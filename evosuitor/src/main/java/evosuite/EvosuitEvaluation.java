@@ -10,8 +10,12 @@ package evosuite;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import evosuite.EvosuiteRunner.EvosuiteResult;
@@ -28,6 +32,7 @@ import sav.strategies.vm.VMConfiguration;
  *
  */
 public class EvosuitEvaluation {
+	private static Logger log = LoggerFactory.getLogger(EvosuitEvaluation.class);
 	public static final String EVO_TEST = "/evosuite-tests";
 	private AppJavaClassPath appClasspath;
 	private JavaCompiler javaCompiler;
@@ -46,13 +51,14 @@ public class EvosuitEvaluation {
 			EvoJavaFileAdaptor adaptor = null;
 			try {
 				adaptor = new EvoJavaFileAdaptor(appClasspath.getSrc(), targetClass);
+				int line = 0;
 				for (int i = 0; i < targetClass.getMethods().size(); i++) {
 					try {
 						/* clean up base dir */
 						org.apache.commons.io.FileUtils.deleteDirectory(new File(config.getEvoBaseDir() + EVO_TEST));
 
 						/* modify java file */
-						int line = targetClass.getMethodStartLines().get(i);
+						line = targetClass.getMethodStartLines().get(i);
 						adaptor.enableMethod(line);
 						javaCompiler.compile(appClasspath.getTarget(), adaptor.getSourceFile());
 						
@@ -65,11 +71,13 @@ public class EvosuitEvaluation {
 						EvosuiteResult result = EvosuiteRunner.run(params);
 						CfgCoverage coverage = coverageCounter.calculateCoverage(config, targetClass.generatePackage(i), result);
 						result.branchCoverage = CoverageUtils.calculateCoverageByBranch(coverage);
-						result.coverageInfo = CoverageUtils.getBranchCoverageDisplayText(coverage, -1, "; ");
+						result.coverageInfo = CoverageUtils.getBranchCoverageDisplayTexts(coverage, -1);
 						config.updateResult(targetClass.getMethodFullName(i), line, result);
 					} catch (Exception e) {
 						revert(adaptor);
+						log.debug(e.getMessage());
 						System.out.println(e);
+						config.logError(targetClass.getMethodFullName(i), line);
 					}
 				}
 			} catch (Exception e1) {
@@ -93,7 +101,7 @@ public class EvosuitEvaluation {
 	}
 
 	private static Map<String, TargetClass> toTargetClass(List<String> methods) {
-		Map<String, TargetClass> map = new HashMap<String, TargetClass>();
+		Map<String, TargetClass> map = new LinkedHashMap<String, TargetClass>();
 		for (String name : methods) {
 			try {
 				int idx = name.lastIndexOf(Constants.DOT);

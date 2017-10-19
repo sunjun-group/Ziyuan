@@ -69,7 +69,7 @@ public class EvosuiteRunner {
 		public Set<BranchInfo> uncoveredBranches;
 		public Set<BranchInfo> coveredBranches;
 		public double branchCoverage;
-		public String coverageInfo;
+		public List<String> coverageInfo;
 		
 		
 	}

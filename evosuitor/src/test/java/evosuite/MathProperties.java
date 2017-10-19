@@ -13,6 +13,6 @@ package evosuite;
  *
  */
 public enum MathProperties {
-	trunk, evaluation_excel_path, evosuite_relative_source_folder, target_method_txt
+	trunk, evaluation_excel_path, evosuite_relative_source_folder, target_method_txt, coverage_info_file_path
 
 }

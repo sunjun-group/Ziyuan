@@ -57,6 +57,7 @@ public class EvoJavaFileAdaptor {
 		importLine = mapping.getPackageLine();
 		methodStartLineMap = mapping.getMethodStartLineMap();
 		allMethodStartLine = mapping.getAllMethodStartLine();
+		revertAll();
 		insertImports();
 //		disableClass();
 		disableAllMethods();
@@ -113,9 +114,8 @@ public class EvoJavaFileAdaptor {
 		revert(classLine, EXCLUDE_ANNOTATION);
 		for (int line : allMethodStartLine) {
 			revert(line, EXCLUDE_ANNOTATION);
+			revert(line, INCLUDE_ANNOTATION);
 		}
-		importLine = -1;
-		classLine = -1;
 		updateFile();
 	}
 	

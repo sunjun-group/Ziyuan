@@ -50,7 +50,7 @@ public class MathEvosuiteTest extends EvosuiteTest {
 		appClasspath.addClasspath(appClasspath.getTarget());
 		appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER,
 				ProjClassLoader.getClassLoader(appClasspath.getClasspaths()));
-		appClasspath.getPreferences().set(SystemVariables.TESTCASE_TIMEOUT, -1l);
+		appClasspath.getPreferences().set(SystemVariables.TESTCASE_TIMEOUT, 10000l);
 	}
 
 	private Configuration updateConfig(Configuration config) {
@@ -59,9 +59,11 @@ public class MathEvosuiteTest extends EvosuiteTest {
 		return config;
 	}
 
-	private Configuration initTxtConfiguration() {
-		Configuration config = new Configuration(appClasspath);
+	private Configuration initTxtConfiguration() throws Exception {
+		Configuration config = new Configuration(appClasspath,
+				mathBundle.getString(MathProperties.evaluation_excel_path.name()));
 		config.setConfigFile(mathBundle.getString(MathProperties.target_method_txt.name()));
+		config.setCoverageInfoLogFile(mathBundle.getString(MathProperties.coverage_info_file_path.name()));
 		updateConfig(config);
 		return config;
 	}

@@ -25,8 +25,9 @@ public abstract class SimpleExcelWriter<T> extends ExcelWriter {
 	private int headerRowIdx = ExcelSettings.DEFAULT_HEADER_ROW_IDX;
 
 	public SimpleExcelWriter(File file, ExcelHeader[] headers) throws Exception {
-		super(file);
+		super();
 		this.headers = headers;
+		super.reset(file);
 	}
 
 	@Override

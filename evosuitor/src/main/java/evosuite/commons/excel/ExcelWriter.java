@@ -28,6 +28,10 @@ public class ExcelWriter {
 	protected Workbook workbook;
 	private File file;
 	
+	public ExcelWriter() {
+		
+	}
+	
 	public ExcelWriter(File file) throws Exception {
 		reset(file);
 	}
