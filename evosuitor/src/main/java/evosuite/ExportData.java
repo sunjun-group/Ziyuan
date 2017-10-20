@@ -19,6 +19,7 @@ public class ExportData {
 	private String methodName;
 	private int startLine;
 	private EvosuiteResult evoResult;
+	private boolean evoCvgExisted;
 
 	public String getMethodName() {
 		return methodName;
@@ -52,4 +53,13 @@ public class ExportData {
 		this.rowNum = rowNum;
 	}
 
+	public boolean isEvoCvgExisted() {
+		return evoCvgExisted;
+	}
+
+	public void setEvoCvgExisted(boolean evoCvgExisted) {
+		this.evoCvgExisted = evoCvgExisted;
+	}
+
+	
 }

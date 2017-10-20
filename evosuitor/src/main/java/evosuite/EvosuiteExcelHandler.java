@@ -68,13 +68,17 @@ public class EvosuiteExcelHandler {
 			}
 			if (data.getEvoResult() != null) {
 				addCell(dataSheet.getRow(data.getRowNum()), Header.EVOSUITE_BRANCH_COVERAGE, data.getEvoResult().branchCoverage);
-				addCell(dataSheet.getRow(data.getRowNum()), Header.EVOSUITE_COVERAGE_INFO, StringUtils.join(data.getEvoResult().coverageInfo, ";"));
+				if (data.getEvoResult().coverageInfo != null) {
+					addCell(dataSheet.getRow(data.getRowNum()), Header.EVOSUITE_COVERAGE_INFO, StringUtils.join(data.getEvoResult().coverageInfo, ";"));
+				}
+			} else {
+				addCell(dataSheet.getRow(data.getRowNum()), Header.EVOSUITE_COVERAGE_INFO, "Evosuite execution error!");
 			}
 			writeWorkbook();
 		}
 	}
 
-	private static class EvoExcelReader extends SimpleExcelReader {
+	static class EvoExcelReader extends SimpleExcelReader {
 		public EvoExcelReader(File file) throws Exception {
 			super(DATA_SHEET_NAME, Header.values(), file);
 		}
@@ -117,6 +121,8 @@ public class EvosuiteExcelHandler {
 			data.setMethodName(getStringCellValue(row, Header.METHOD_NAME));
 			data.setStartLine(getIntCellValue(row, Header.METHOD_START_LINE));
 			data.setRowNum(row.getRowNum());
+			Cell cell = getCell(row, Header.EVOSUITE_BRANCH_COVERAGE);
+			data.setEvoCvgExisted(cell != null);
 			return data;
 		}
 	}

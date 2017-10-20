@@ -8,6 +8,7 @@
 
 package evosuite;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public class EvosuiteRunner {
 				Set<BranchInfo> coveredBranches = testGenerationResult.getCoveredBranches();
 				System.out.println(testGenerationResult);
 				evoResult.targetClass = testGenerationResult.getClassUnderTest();
-				evoResult.targetMethod = getTargetMethod(uncoveredBranches, coveredBranches);
+				evoResult.targetMethod = getTargetMethod(params, uncoveredBranches, coveredBranches);
 				evoResult.uncoveredBranches = uncoveredBranches;
 				evoResult.coveredBranches = coveredBranches;
 				evoResult.branchCoverage = getBranchCoverage(coveredBranches, uncoveredBranches);
@@ -45,16 +46,25 @@ public class EvosuiteRunner {
 		return evoResult;
 	}
 	
-	private static String getTargetMethod(Set<BranchInfo> uncoveredBranches, Set<BranchInfo> coveredBranches) {
-		BranchInfo info;
-		if (CollectionUtils.isNotEmpty(uncoveredBranches)) {
-			info = uncoveredBranches.iterator().next();
-		} else if (CollectionUtils.isNotEmpty(coveredBranches)) {
-			info = coveredBranches.iterator().next();
-		} else {
-			return null;
+	private static String getTargetMethod(EvosuitParams params, Set<BranchInfo> uncoveredBranches, Set<BranchInfo> coveredBranches) {
+		List<BranchInfo> allInfos = new ArrayList<BranchInfo>();
+		if (CollectionUtils.isNotEmpty(coveredBranches)) {
+			allInfos.addAll(coveredBranches);
 		}
-		return StringUtils.dotJoin(info.getClassName(), info.getMethodName());
+		if (CollectionUtils.isNotEmpty(uncoveredBranches)) {
+			allInfos.addAll(uncoveredBranches);
+		}
+		int methodStartLIne = params.getMethodPosition()[0];
+		int methodEndLine = params.getMethodPosition()[1];
+		for (BranchInfo info : allInfos) {
+			if (params.getTargetClass().equals(info.getClassName())) {
+				if (info.getLineNo() >= methodStartLIne && info.getLineNo() <= methodEndLine) {
+					return StringUtils.dotJoin(info.getClassName(), info.getMethodName()); 
+				}
+			}
+		}
+		
+		return null;
 	}
 
 	private static double getBranchCoverage(Set<BranchInfo> coveredBranches, Set<BranchInfo> uncoveredBranches) {

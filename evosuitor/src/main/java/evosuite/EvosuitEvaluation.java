@@ -66,7 +66,8 @@ public class EvosuitEvaluation {
 						EvosuitParams params = new EvosuitParams();
 						params.setClasspath(appClasspath.getClasspathStr());
 						params.setTargetClass(targetClass.getClassName());
-						params.setMethod(targetClass.getMethodFullName(i));
+						params.setMethod(targetClass.getMethods().get(i));
+						params.setMethodPosition(adaptor.getStartLine(line), adaptor.getEndLine(line));
 						params.setBaseDir(config.getEvoBaseDir());
 						EvosuiteResult result = EvosuiteRunner.run(params);
 						CfgCoverage coverage = coverageCounter.calculateCoverage(config, targetClass.generatePackage(i), result);

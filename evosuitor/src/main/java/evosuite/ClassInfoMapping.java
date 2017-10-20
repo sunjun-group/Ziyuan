@@ -18,6 +18,7 @@ import japa.parser.JavaParser;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.Node;
 import japa.parser.ast.PackageDeclaration;
+import japa.parser.ast.body.ConstructorDeclaration;
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.visitor.VoidVisitorAdapter;
 
@@ -28,6 +29,7 @@ import japa.parser.ast.visitor.VoidVisitorAdapter;
 public class ClassInfoMapping extends VoidVisitorAdapter<Boolean> {
 	private List<Integer> lines;
 	private Map<Integer, Integer> methodStartLineMap;
+	private Map<Integer, Integer> methodEndLinesMap;
 	private List<Integer> allMethodStartLine;
 	private int packageLine;
 	private int classLine;
@@ -36,6 +38,7 @@ public class ClassInfoMapping extends VoidVisitorAdapter<Boolean> {
 		CompilationUnit cu = JavaParser.parse(sourceFile);
 		this.lines = new ArrayList<>(lines);
 		methodStartLineMap = new HashMap<>();
+		methodEndLinesMap = new HashMap<>();
 		allMethodStartLine = new ArrayList<>();
 		cu.accept(this, true);
 	}
@@ -50,6 +53,10 @@ public class ClassInfoMapping extends VoidVisitorAdapter<Boolean> {
 		return node.getBeginLine() - 1;
 	}
 	
+	private int getEndLineIdx(Node node) {
+		return node.getEndLine() - 1;
+	}
+	
 	@Override
 	public void visit(CompilationUnit n, Boolean arg) {
 		classLine = getBeginLineIdx(n);
@@ -58,10 +65,15 @@ public class ClassInfoMapping extends VoidVisitorAdapter<Boolean> {
 	
 	@Override
 	public void visit(MethodDeclaration n, Boolean arg) {
+		mapMethod(n);
+	}
+
+	private void mapMethod(Node n) {
 		allMethodStartLine.add(getBeginLineIdx(n));
 		for (int line : lines) {
 			if (n.getBeginLine() <= line && n.getEndLine() >= line) {
 				methodStartLineMap.put(line, getBeginLineIdx(n));
+				methodEndLinesMap.put(line, getEndLineIdx(n));
 				break;
 			}
 		}
@@ -83,5 +95,7 @@ public class ClassInfoMapping extends VoidVisitorAdapter<Boolean> {
 		return classLine;
 	}
 	
-	
+	public Map<Integer, Integer> getMethodEndLinesMap() {
+		return methodEndLinesMap;
+	}
 }

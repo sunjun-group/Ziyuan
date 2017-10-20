@@ -36,12 +36,11 @@ import sav.strategies.vm.VMConfiguration;
  *
  */
 public class CoverageCounter {
-	private CfgJaCoCo cfgJacoco;
 	private JavaCompiler jCompiler;
 	private AppJavaClassPath appClasspath;
 	
 	public CoverageCounter(AppJavaClassPath appClassPath) {
-		cfgJacoco = new CfgJaCoCo(appClassPath);
+		
 		jCompiler = new JavaCompiler(new VMConfiguration(appClassPath));
 		this.appClasspath = appClassPath;
 	}
@@ -49,6 +48,7 @@ public class CoverageCounter {
 	public CfgCoverage calculateCoverage(Configuration config, String newPkg, EvosuiteResult result) {
 		try {
 			System.out.println();
+			CfgJaCoCo cfgJacoco = new CfgJaCoCo(appClasspath);
 			FilesInfo info = lookupJunitClasses(config, newPkg);
 			Map<String, CfgCoverage> cfgCoverage = cfgJacoco.runBySimpleRunner(extractTargetMethod(result),
 					extractTargetClass(result), info.junitClasses);

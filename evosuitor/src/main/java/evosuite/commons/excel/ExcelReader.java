@@ -50,7 +50,7 @@ public class ExcelReader {
 		return cell.getStringCellValue();
 	}
 
-	private Cell getCell(Row row, ExcelHeader header) {
+	protected Cell getCell(Row row, ExcelHeader header) {
 		return row.getCell(header.getCellIdx());
 	}
 	

@@ -8,6 +8,7 @@
 
 package evosuite;
 
+import sav.common.core.Pair;
 import sav.strategies.vm.ProgramArgumentBuilder;
 
 /**
@@ -19,6 +20,7 @@ public class EvosuitParams {
 	private String classpath;
 	private String baseDir;
 	private String method;
+	private int[] methodPosition;
 
 	public String getTargetClass() {
 		return targetClass;
@@ -60,4 +62,11 @@ public class EvosuitParams {
 		return argBuilder.getArgArr();
 	}
 
+	public void setMethodPosition(int start, int end) {
+		methodPosition = new int[]{start, end};
+	}
+
+	public int[] getMethodPosition() {
+		return methodPosition;
+	}
 }

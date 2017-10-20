@@ -11,7 +11,9 @@ package evosuite;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +50,7 @@ public class EvoJavaFileAdaptor {
 	private int classLine;
 	private Map<Integer, Integer> methodStartLineMap;
 	private List<Integer> allMethodStartLine;
+	private Map<Integer, Integer> methodEndLinesMap;
 	
 	public EvoJavaFileAdaptor(File sourceFile, List<Integer> lines) throws Exception {
 		content = IOUtils.readLines(new FileInputStream(sourceFile));
@@ -57,6 +60,7 @@ public class EvoJavaFileAdaptor {
 		importLine = mapping.getPackageLine();
 		methodStartLineMap = mapping.getMethodStartLineMap();
 		allMethodStartLine = mapping.getAllMethodStartLine();
+		methodEndLinesMap = mapping.getMethodEndLinesMap();
 		revertAll();
 		insertImports();
 //		disableClass();
@@ -147,6 +151,14 @@ public class EvoJavaFileAdaptor {
 	
 	public File getSourceFile() {
 		return sourceFile;
+	}
+	
+	public int getStartLine(int methodLine) {
+		return methodStartLineMap.get(methodLine) + 1;
+	}
+	
+	public int getEndLine(int methodLine) {
+		return methodEndLinesMap.get(methodLine) + 1;
 	}
 	
 	@Override

@@ -72,6 +72,7 @@ public class MathEvosuiteTest extends EvosuiteTest {
 		ExcelConfiguration config = new ExcelConfiguration(appClasspath,
 				mathBundle.getString(MathProperties.evaluation_excel_path.name()));
 		config.setEvoBaseDir(absoluteBaseDir);
+		config.setRerun(excelRerun);
 		updateConfig(config);
 		return config;
 	}

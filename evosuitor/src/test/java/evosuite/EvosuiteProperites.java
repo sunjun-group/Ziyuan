@@ -13,6 +13,6 @@ package evosuite;
  *
  */
 public enum EvosuiteProperites {
-	evosuite_source_folder, evosuite_result_folder
+	evosuite_source_folder, evosuite_result_folder, excel_rerun
 	
 }

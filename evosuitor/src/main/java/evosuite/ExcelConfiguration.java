@@ -26,6 +26,7 @@ public class ExcelConfiguration extends Configuration {
 	private List<ExportData> exportData;
 	private Map<String, ExportData> methodDataMap;
 	private EvosuiteExcelHandler excelHandler;
+	private boolean rerun; // whether or not to rerun if evosuite's coverage is already existed.
 
 	public ExcelConfiguration(AppJavaClassPath appClasspath, String excelFilePath) throws Exception {
 		super(appClasspath);
@@ -38,6 +39,9 @@ public class ExcelConfiguration extends Configuration {
 		List<String> methods = new ArrayList<String>(exportData.size());
 		methodDataMap = new HashMap<>();
 		for (ExportData data : exportData) {
+			if (!rerun && data.isEvoCvgExisted()) {
+				continue;
+			}
 			String methodId = StringUtils.dotJoin(data.getMethodName(), data.getStartLine());
 			methods.add(methodId);
 			methodDataMap.put(methodId, data);
@@ -55,4 +59,13 @@ public class ExcelConfiguration extends Configuration {
 			e.printStackTrace();
 		}
 	}
+
+	public boolean isRerun() {
+		return rerun;
+	}
+
+	public void setRerun(boolean rerun) {
+		this.rerun = rerun;
+	}
+	
 }
