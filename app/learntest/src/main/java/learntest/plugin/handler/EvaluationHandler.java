@@ -48,6 +48,7 @@ import sav.settings.SAVTimer;
 public class EvaluationHandler extends AbstractLearntestHandler {
 	private static Logger log = LoggerFactory.getLogger(EvaluationHandler.class);
 	private static final int EVALUATIONS_PER_METHOD = 5;
+	private static final int MAX_TRY_TIMES_PER_METHOD = 50;
 	private List<IMethodFilter> methodFilters;
 	private List<ITypeFilter> classFilters;
 
@@ -162,12 +163,14 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			log.info("Method {}", ++curMethodIdx);
 
 			MultiTrial multiTrial = new MultiTrial();
-			for (int i = 0; i < EVALUATIONS_PER_METHOD; i++) {
+			int validTrial = 0;
+			for (int i = 0; i < MAX_TRY_TIMES_PER_METHOD && validTrial < EVALUATIONS_PER_METHOD; i++) {
 				checkJobCancelation(monitor);
 				try {
 					LearnTestParams params = initLearntestParams(targetMethod);
 					Trial trial = evaluateLearntestForSingleMethod(params);
 					if (trial != null) {
+						validTrial++;
 						multiTrial.addTrial(trial);
 					}
 				} catch (Exception e) {
