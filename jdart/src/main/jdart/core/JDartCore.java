@@ -40,16 +40,28 @@ public class JDartCore {
         	result = entry.getValue()[1];
         }
         LinkedList<TestVar> paramList = init_value.get(0).getParamList();
-        if(result != null){
-	        String[] values = result.split(",");
-			for(String value : values){
-				String[] temp = value.split(":=");
-				for(int i = 0; i < paramList.size(); i++){
-					if(paramList.get(i).getName().equals(temp[0]))
-						paramList.get(i).setValue(temp[1]);
-				}
-			}
-			return init_value;
+        if(result != null) {
+        	String[] values = result.split(",");
+        	for(String value : values) {
+        		if(value.contains("[")) {
+        			String[] temp = value.split(":=");
+        			String arrayName = temp[0].substring(0, temp[0].indexOf("["));
+        			int index = Integer.valueOf(temp[0].substring(temp[0].indexOf('[')+1, temp[0].indexOf(']')));
+        			for(int i = 0; i < paramList.size(); i++){
+        				if(paramList.get(i).getName().equals(arrayName)) {
+        					paramList.get(i).getChildren().get(index).setValue(temp[1]);
+        				}
+        			}
+        		}
+        		else {
+    				String[] temp = value.split(":=");
+    				for(int i = 0; i < paramList.size(); i++){
+    					if(paramList.get(i).getName().equals(temp[0]))
+    						paramList.get(i).setValue(temp[1]);
+    				}
+        		}
+        	}
+        	return init_value;
         }
 		return null;
 	}
