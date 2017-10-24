@@ -151,7 +151,7 @@ public class JDartParams {
 	}
 	
 	public static JDartParams defaultOnDemandJDartParams() {
-		String  classpathStr = "E:\\workspace\\JPF\\data/apache-common-math-2.2/bin", 
+		String  classpathStr = "E:\\git\\data/apache-common-math-2.2/bin", 
 				app = "libs/jdart/jpf.properties",
 				site = "libs/jpf_on_demand.properties",
 				
@@ -159,15 +159,22 @@ public class JDartParams {
 				className = "com.Example",
 				methodName = "foo",
 				paramString = "(x:int,y:int)";
-		
+
 		int node = 11; // cfg node index
 		int branch = 1; // 0,1 , missing branch
+		
+		mainEntry = "runGen.L2T.init.loessinterpolator.checkstrictlyincreasing.LoessInterpolatorMain";
+		className = "org.apache.commons.math.analysis.interpolation.LoessInterpolator";
+		methodName = "checkStrictlyIncreasing";
+		paramString = "(xval:double[])";
+		node = 15;
+		branch = 1;	
 		
 		return constructOnDemandJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site, node, branch);
 	}
 	
 	public static JDartParams defaultJDartParams() {
-		String  classpathStr = "E:\\workspace\\JPF\\data/apache-common-math-2.2/bin", 
+		String  classpathStr = "E:\\git\\data/apache-common-math-2.2/bin", 
 				app = "libs/jdart/jpf.properties",
 				site = "libs/jpf.properties", //if only want to solve once, change to libs/jpf_once.properties
 				
@@ -197,10 +204,10 @@ public class JDartParams {
 //		className = "org.apache.commons.math.random.MersenneTwister";
 //		methodName = "setSeed";
 //		paramString = "(seed:int[])";
-		mainEntry = "com.Example";
-		className = "com.Example";
-		methodName = "foo";
-		paramString = "(x:int,y:int)";
+		mainEntry = "runGen.L2T.init.loessinterpolator.checkstrictlyincreasing.LoessInterpolatorMain";
+		className = "org.apache.commons.math.analysis.interpolation.LoessInterpolator";
+		methodName = "checkStrictlyIncreasing";
+		paramString = "(xval:double[])";
 		
 		return constructJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site);
 	}

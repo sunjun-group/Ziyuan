@@ -120,6 +120,11 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		if (cfgCoverage == null) {
 			log.debug("Cannot get cfgCoverage from result map!");
 			log.debug("coverageMap={}", TextFormatUtils.printMap(coverageMap));
+		}else {
+			List<String> lines = CoverageUtils.getBranchCoverageDisplayTexts(cfgCoverage, -1);
+			for (String line : lines) {
+				log.debug(line);
+			}
 		}
 		targetMethod.updateCfgIfNotExist(cfgCoverage.getCfg());
 		timer.logResults(log);

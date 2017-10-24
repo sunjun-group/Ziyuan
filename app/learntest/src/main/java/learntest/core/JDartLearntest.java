@@ -76,6 +76,12 @@ public class JDartLearntest extends LearnTest {
 		}
 	}
 
+	@Override
+	protected void init(LearnTestParams params) {
+		super.init(params);
+		mediator.setGenTestPackage(GenTestPackage.JDART);
+	}
+	
 	public List<TestInput> generateTestAndRunJDart(LearnTestParams params) throws SavException {
 		GentestParams gentestParams = LearntestParamsUtils.createGentestParams(appClasspath, params, GenTestPackage.INIT);
 		/* generate testcase and jdart entry */

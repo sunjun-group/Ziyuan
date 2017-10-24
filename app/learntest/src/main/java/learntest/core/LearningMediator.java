@@ -61,6 +61,7 @@ public class LearningMediator {
 	private AppJavaClassPath appClassPath;
 	private LearnTestParams learntestParams;
 	private FinalTests finalTests;
+	private GenTestPackage genTestPackage;
 	
 	public LearningMediator(AppJavaClassPath appClassPath, LearnTestParams params) {
 		this.appClassPath = appClassPath;
@@ -139,7 +140,7 @@ public class LearningMediator {
 	public GentestResult genTestAndCompile(List<double[]> solutions, List<ExecVar> vars, PrintOption printOption)
 			throws SavException {
 		GentestParams params = LearntestParamsUtils.createGentestParams(appClassPath, learntestParams,
-				GenTestPackage.RESULT);
+				genTestPackage == null ? GenTestPackage.RESULT : genTestPackage);
 		params.setPrintOption(printOption);
 		return gentestAndCompile(solutions, vars, params);
 	}
@@ -215,6 +216,14 @@ public class LearningMediator {
 			log.error("Error when Compiling final tests: {}, {}", e.getMessage(), e);
 			return new LineCoverageResult(targetMethod.getMethodInfo());
 		}
+	}
+
+	public GenTestPackage getGenTestPackage() {
+		return genTestPackage;
+	}
+
+	public void setGenTestPackage(GenTestPackage genTestPackage) {
+		this.genTestPackage = genTestPackage;
 	}
 
 }
