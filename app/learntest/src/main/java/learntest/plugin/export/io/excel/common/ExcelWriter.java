@@ -28,6 +28,9 @@ public class ExcelWriter {
 	protected Workbook workbook;
 	private File file;
 	
+	protected ExcelWriter() throws Exception {
+	}
+	
 	public ExcelWriter(File file) throws Exception {
 		reset(file);
 	}
@@ -93,6 +96,14 @@ public class ExcelWriter {
 
 	public void addCell(Row row, ExcelHeader title, String value) {
 		row.createCell(title.getCellIdx()).setCellValue(value);
+	}
+	
+	public void addCell(Row row, int cellIdx, double value) {
+		row.createCell(cellIdx).setCellValue(value);
+	}
+
+	public void addCell(Row row, int cellIdx, String value) {
+		row.createCell(cellIdx).setCellValue(value);
 	}
 	
 	public Sheet getSheet(String name, ExcelHeader[] headers, int headerRowIdx) {

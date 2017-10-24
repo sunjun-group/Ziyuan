@@ -17,13 +17,6 @@ import static learntest.plugin.export.io.excel.TrialHeader.FORTH_TRIAL_ADV;
 import static learntest.plugin.export.io.excel.TrialHeader.FORTH_TRIAL_L;
 import static learntest.plugin.export.io.excel.TrialHeader.FORTH_TRIAL_L2T;
 import static learntest.plugin.export.io.excel.TrialHeader.FORTH_TRIAL_R;
-import static learntest.plugin.export.io.excel.TrialHeader.L2T_COVERAGE;
-import static learntest.plugin.export.io.excel.TrialHeader.L2T_TEST_CNT;
-import static learntest.plugin.export.io.excel.TrialHeader.METHOD_LENGTH;
-import static learntest.plugin.export.io.excel.TrialHeader.METHOD_START_LINE;
-import static learntest.plugin.export.io.excel.TrialHeader.RANDOOP_COVERAGE;
-import static learntest.plugin.export.io.excel.TrialHeader.RANDOOP_TEST_CNT;
-import static learntest.plugin.export.io.excel.TrialHeader.RANDOOP_TIME;
 import static learntest.plugin.export.io.excel.TrialHeader.SECOND_L2T_WORSE_THAN_RAND;
 import static learntest.plugin.export.io.excel.TrialHeader.SECOND_RAND_WORSE_THAN_L2T;
 import static learntest.plugin.export.io.excel.TrialHeader.SECOND_TRIAL_ADV;
@@ -38,23 +31,19 @@ import static learntest.plugin.export.io.excel.TrialHeader.THIRD_TRIAL_L2T;
 import static learntest.plugin.export.io.excel.TrialHeader.THIRD_TRIAL_R;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
-import learntest.core.RunTimeInfo;
 import learntest.core.commons.exception.LearnTestException;
-import learntest.plugin.export.io.excel.Trial;
 import learntest.plugin.export.io.excel.TrialExcelConstants;
 import learntest.plugin.export.io.excel.TrialHeader;
 import learntest.plugin.export.io.excel.common.ExcelReader;
+import learntest.plugin.export.io.excel.common.ExcelSettings;
 import sav.common.core.utils.Assert;
-import sav.common.core.utils.StringUtils;
 
 /**
  * @author ZhangHr
@@ -177,7 +166,7 @@ public class DetailExcelReader extends ExcelReader {
 	}
 
 	private boolean isDataSheetHeader(Row header) {
-		if (header.getRowNum() != TrialExcelConstants.DATA_SHEET_HEADER_ROW_IDX) {
+		if (header.getRowNum() != ExcelSettings.DATA_SHEET_HEADER_ROW_IDX) {
 			return false;
 		}
 		for (TrialHeader title : TrialHeader.values()) {

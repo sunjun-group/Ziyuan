@@ -149,6 +149,10 @@ public class MethodInfo {
 	
 	@Override
 	public String toString() {
+		return getMethodId();
+	}
+
+	public String getMethodId() {
 		return StringUtils.dotJoin(getClassName(), methodName, lineNum);
 	}
 }

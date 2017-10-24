@@ -22,10 +22,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 
 import learntest.core.RunTimeInfo;
-import learntest.core.commons.exception.LearnTestException;
 import learntest.plugin.export.io.excel.common.SimpleExcelReader;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.StringUtils;
@@ -36,23 +34,13 @@ import sav.common.core.utils.StringUtils;
  */
 public class TrialExcelReader extends SimpleExcelReader {
 	
-	private Sheet dataSheet;
-	
 	public TrialExcelReader() {
 		super(TrialExcelConstants.DATA_SHEET_NAME, TrialHeader.values());
 	}
 	
 	public TrialExcelReader(File file) throws Exception {
-		super(TrialExcelConstants.DATA_SHEET_NAME, TrialHeader.values(), file);
-	}
-	
-	@Override
-	public void reset(File file) throws Exception {
-		super.reset(file);
-		dataSheet = workbook.getSheet(TrialExcelConstants.DATA_SHEET_NAME);
-		if (dataSheet == null) {
-			throw new LearnTestException("invalid experimental file! (Cannot get data sheet)");
-		}
+		super(TrialExcelConstants.DATA_SHEET_NAME, TrialHeader.values());
+		reset(file);
 	}
 	
 	public Map<String, Trial> readDataSheet() {
@@ -66,11 +54,6 @@ public class TrialExcelReader extends SimpleExcelReader {
 			readDataSheetRow(row, data);
 		}
 		return data;
-	}
-	
-	public boolean hasValidHeader() {
-		Row header = dataSheet.iterator().next();
-		return isDataSheetHeader(header);
 	}
 	
 	private void readDataSheetRow(Row row, Map<String, Trial> data) {

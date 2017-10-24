@@ -13,8 +13,14 @@ package learntest.plugin.export.io.excel.common;
  *
  */
 public class ExcelSettings {
+	public static final String EXCEL_EXT_WITH_DOT = ".xlsx";
+	public static final int FIRST_FILE_IDX = 0;
+	public static final String FILE_IDX_START_CH = "_";
 	public static final int DATA_SHEET_HEADER_ROW_IDX = 0;
+	public static final int DEFAULT_HEADER_ROW_IDX = 0;
 	public static int DEFAULT_MAX_ROW_PER_SHEET = 3000;
+	
+	
 	private int maxRowPerSheet = DEFAULT_MAX_ROW_PER_SHEET;
 	private String excelRootFolder;
 	private String excelFilePrefix;

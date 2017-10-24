@@ -15,26 +15,29 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import learntest.plugin.export.io.excel.TrialExcelConstants;
-import learntest.plugin.export.io.excel.TrialHeader;
 
 /**
  * @author LLT
  *
  */
 public abstract class SimpleExcelWriter<T> extends ExcelWriter {
-	private Sheet dataSheet;
+	private ExcelHeader[] headers;
+	protected Sheet dataSheet;
 	private int lastDataSheetRow;
+	private int headerRowIdx = ExcelSettings.DEFAULT_HEADER_ROW_IDX;
 
-	public SimpleExcelWriter(File file) throws Exception {
-		super(file);
+	public SimpleExcelWriter(File file, ExcelHeader[] headers) throws Exception {
+		super();
+		this.headers = headers;
+		super.reset(file);
 	}
 
 	@Override
 	protected void initFromNewFile(File file) {
 		super.initFromNewFile(file);
-		lastDataSheetRow = TrialExcelConstants.DATA_SHEET_HEADER_ROW_IDX - 1;
+		lastDataSheetRow = headerRowIdx - 1;
 		dataSheet = createSheet(TrialExcelConstants.DATA_SHEET_NAME, 
-				TrialHeader.values(), ++ lastDataSheetRow);
+				headers, ++ lastDataSheetRow);
 	}
 	
 	@Override
@@ -42,6 +45,18 @@ public abstract class SimpleExcelWriter<T> extends ExcelWriter {
 		super.initFromExistingFile(file);
 		dataSheet = workbook.getSheet(TrialExcelConstants.DATA_SHEET_NAME);
 		lastDataSheetRow = dataSheet.getLastRowNum();
+	}
+	
+	protected Row getRow(int rowNum){
+		return dataSheet.getRow(rowNum);
+	}
+	
+	public void addHeader(ExcelHeader header) {
+		addCell(getRow(headerRowIdx), header, header.getTitle());
+	}
+	
+	public void addHeader(int colIdx, String title) {
+		addCell(getRow(headerRowIdx), colIdx, title);
 	}
 	
 	protected Row newDataSheetRow() {
@@ -55,4 +70,8 @@ public abstract class SimpleExcelWriter<T> extends ExcelWriter {
 	}
 
 	protected abstract void addRowData(Row row, T rowData) throws IOException;
+	
+	public void setHeaderRowIdx(int headerRowIdx) {
+		this.headerRowIdx = headerRowIdx;
+	}
 }

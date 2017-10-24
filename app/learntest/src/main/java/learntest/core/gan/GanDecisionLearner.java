@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
@@ -46,6 +49,7 @@ import variable.Variable;
  *
  */
 public class GanDecisionLearner implements IInputLearner {
+	private Logger log = LoggerFactory.getLogger(GanDecisionLearner.class);
 	private GanTestTool ganLog = TestTools.getInstance().gan;
 	private LearningMediator mediator;
 	private GanMachine machine;
@@ -86,6 +90,7 @@ public class GanDecisionLearner implements IInputLearner {
 		};
 		for (CfgNode node : inputProbes.getCfg().getDecisionNodes()) {
 			refineNode(node, inputProbes, trainingVars);
+			
 		}
 		machine.stop();
 		return inputProbes;
@@ -94,17 +99,19 @@ public class GanDecisionLearner implements IInputLearner {
 	private void refineNode(CfgNode node, DecisionProbes probes, TrainingVariables trainingVars) {
 		DecisionNodeProbe nodeProbe = probes.getNodeProbe(node);
 		CoveredBranches coveredBranches = nodeProbe.getCoveredBranches();
-		if (coveredBranches == CoveredBranches.NONE) {
+		
+		/* update coveredbranches */
+		coveredBranches = nodeProbe.getCoveredBranches();
+		if ((coveredBranches != CoveredBranches.TRUE_AND_FALSE) && (coveredBranches != CoveredBranches.NONE)) {
+			expandAtNode(nodeProbe, trainingVars, getCategory(coveredBranches.getOnlyOneMissingBranch()));
+			coveredBranches = nodeProbe.getCoveredBranches();
+		}
+		if (coveredBranches != CoveredBranches.TRUE_AND_FALSE) {
 			/*
 			 * generate more datapoint for its parent node for a try to get this
 			 * node covered
 			 */
 			ambitionParentNode(nodeProbe, trainingVars);
-		}
-		/* update coveredbranches */
-		coveredBranches = nodeProbe.getCoveredBranches();
-		if ((coveredBranches != CoveredBranches.TRUE_AND_FALSE) && (coveredBranches != CoveredBranches.NONE)) {
-			expandAtNode(nodeProbe, trainingVars, getCategory(coveredBranches.getOnlyOneMissingBranch()));
 		}
 	}
 
@@ -132,6 +139,7 @@ public class GanDecisionLearner implements IInputLearner {
 				// log new coverage
 				ganLog.logFormat("new coverage: ");
 				ganLog.logCoverage(nodeProbe.getDecisionProbes());
+				ganLog.logAccuracy(node, samplingResult, category);
 			} catch (SavException e) {
 				log.debug("Error when generating new testcases: {}", e.getMessage());
 			}
@@ -150,8 +158,7 @@ public class GanDecisionLearner implements IInputLearner {
 				BreakpointDataUtils.toDataPoint(execVars, nodeProbe.getTrueValues()));
 		trainingData.setDatapoints(Category.FALSE,
 				BreakpointDataUtils.toDataPoint(execVars, nodeProbe.getFalseValues()));
-		ganLog.logFormat("Training data at node {}: ", node.getIdx());
-		ganLog.logDatapoints(trainingData);
+		ganLog.logDatapoints(node.getIdx(), trainingData);
 		machine.train(node.getIdx(), trainingData);
 		trainedNodes.add(node.getIdx());
 	}

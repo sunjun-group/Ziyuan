@@ -32,6 +32,10 @@ public class TestTools {
 		}
 	}
 	
+	public static TestTool getCurTestTool() {
+		return getInstance().curTestTool;
+	}
+	
 	public static TestTools getInstance() {
 		return instance;
 	}

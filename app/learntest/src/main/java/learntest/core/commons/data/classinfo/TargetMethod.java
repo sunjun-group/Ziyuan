@@ -189,4 +189,10 @@ public class TargetMethod {
 	public MethodInfo getMethodInfo() {
 		return methodInfo;
 	}
+
+	public String getMethodId() {
+		return methodInfo.getMethodId();
+	}
+	
+	
 }

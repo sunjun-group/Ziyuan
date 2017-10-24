@@ -43,6 +43,7 @@ import learntest.core.LearnTestParams;
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.MethodInfo;
+import learntest.core.commons.test.TestTool;
 import learntest.core.commons.test.TestTools;
 import learntest.plugin.LearntestLogger;
 import learntest.plugin.LearntestPlugin;
@@ -73,7 +74,6 @@ import sav.strategies.dto.AppJavaClassPath;
  *
  */
 public class JavaGentestHandler extends AbstractHandler {
-	private static final int TEST_MAX_ROUND = 5;
 	private static Logger log = LoggerFactory.getLogger(JavaGentestHandler.class);
 	
 	@Override
@@ -330,19 +330,30 @@ public class JavaGentestHandler extends AbstractHandler {
 		return runLearntest(params);
 	}
 	
+	/**
+	 * TODO-LLT: This is just temporary to test, TO REMOVE
+	 */
+	private static final List<Integer> sampleSizes = new ArrayList<>();
+	static {
+		for (int i = 100; i <= 1000; i+=100) {
+			sampleSizes.add(i);
+		}
+	}
 	private RunTimeInfo runLearntest(LearnTestParams params) throws PluginException {
 		RunTimeInfo averageInfo = null;
 		double bestCoverage = 0;
-		for (int i = 1; i <= TEST_MAX_ROUND; i++) {
+		TestTools.getCurTestTool().startMethod(params.getTargetMethod().getMethodFullName());
+		for (int i = 1; i <= 10; i++) {
 			try {
 				log.info("\n\n------------- Round {} ------------------------", i);
-				TestTools.log("\n\n------------- Round ", i, "------------------------");
 				SAVTimer.enableExecutionTimeout = true;
 				SAVTimer.exeuctionTimeout = 50000000;
 				learntest.core.LearnTest learntest = new learntest.core.LearnTest(params.getAppClasspath());
+				params.setInitialTcTotal(sampleSizes.get(i - 1));
+				TestTools.getCurTestTool().startRound(i, params);
 				RunTimeInfo runtimeInfo = learntest.run(params);
 				log.info("---------- Result Round {} ------------------", i);
-				TestTools.getInstance().gan.logRoundResult(runtimeInfo, i);
+				TestTools.getCurTestTool().logRoundResult(runtimeInfo, i);
 				logRuntimeInfo(params, runtimeInfo);
 				bestCoverage = RunTimeInfo.getBestCoverage(bestCoverage, runtimeInfo);
 				averageInfo = RunTimeInfo.average(averageInfo, runtimeInfo);
@@ -355,7 +366,7 @@ public class JavaGentestHandler extends AbstractHandler {
 		logRuntimeInfo(params, averageInfo);
 		log.info("-------------------------------------");
 		log.info("bestcoverage: {}", bestCoverage);
-		TestTools.getInstance().gan.logAverageResult(averageInfo, bestCoverage);
+		TestTools.getCurTestTool().endMethod(averageInfo, bestCoverage);
 		return averageInfo;
 	}
 

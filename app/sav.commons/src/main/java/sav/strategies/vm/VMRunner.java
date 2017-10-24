@@ -225,6 +225,15 @@ public class VMRunner {
 		return startVm(commands, true);
 	}
 	
+	protected boolean isProcessRunning() {
+	    try {
+	        process.exitValue();
+	        return false;
+	    } catch (Exception e) {
+	        return true;
+	    }
+	}
+	
 	public static VMRunner getDefault() {
 		return new VMRunner();
 	}

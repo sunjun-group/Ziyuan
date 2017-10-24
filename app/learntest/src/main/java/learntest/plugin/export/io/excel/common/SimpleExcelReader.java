@@ -21,7 +21,7 @@ import learntest.core.commons.exception.LearnTestException;
  */
 public class SimpleExcelReader extends ExcelReader {
 	private String sheetName;
-	private Sheet dataSheet;
+	protected Sheet dataSheet;
 	private ExcelHeader[] headers;
 	
 	public SimpleExcelReader(String sheetName, ExcelHeader[] headers) {
@@ -31,11 +31,6 @@ public class SimpleExcelReader extends ExcelReader {
 	private void init(String sheetName, ExcelHeader[] headers) {
 		this.sheetName = sheetName;
 		this.headers = headers;
-	}
-	
-	public SimpleExcelReader(String sheetName, ExcelHeader[] headers, File file) throws Exception {
-		super(file);
-		init(sheetName, headers);
 	}
 	
 	@Override

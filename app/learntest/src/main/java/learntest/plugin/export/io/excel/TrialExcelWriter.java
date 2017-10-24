@@ -62,7 +62,7 @@ import learntest.plugin.export.io.excel.common.SimpleExcelWriter;
 public class TrialExcelWriter extends SimpleExcelWriter<Trial> {
 	
 	public TrialExcelWriter(File file) throws Exception {
-		super(file);
+		super(file, TrialHeader.values());
 	}
 	
 	protected void addRowData(Row row, Trial trial) throws IOException {

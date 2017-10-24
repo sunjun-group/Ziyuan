@@ -14,6 +14,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.helpers.MessageFormatter;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
+import learntest.core.LearnTestParams;
+import learntest.core.RunTimeInfo;
 import sav.common.core.utils.FileUtils;
 
 /**
@@ -89,6 +91,19 @@ public class TestTool {
 	}
 
 	public void logFirstCoverage(double firstCoverage, CfgCoverage cfgCoverage) {
+	}
+
+	public void logRoundResult(RunTimeInfo runtimeInfo, int i) {
+	}
+
+	public void endMethod(RunTimeInfo averageInfo, double bestCoverage) {
+	}
+
+	public void startMethod(String methodFullName) {
+	}
+
+	public void startRound(int i, LearnTestParams params) {
+		TestTools.log("\n\n------------- Round ", i, "------------------------");
 	}
 	
 }

@@ -8,10 +8,7 @@
 
 package learntest.plugin.export.io.excel.common;
 
-import static learntest.plugin.export.io.excel.TrialExcelConstants.EXCEL_EXT_WITH_DOT;
-import static learntest.plugin.export.io.excel.TrialExcelConstants.FILE_IDX_START_CH;
-import static learntest.plugin.export.io.excel.TrialExcelConstants.FIRST_FILE_IDX;
-import static learntest.plugin.export.io.excel.TrialExcelConstants.TRIAL_NUMBER_LIMIT_PER_FILE;
+import static learntest.plugin.export.io.excel.common.ExcelSettings.*;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -73,7 +70,7 @@ public abstract class SimpleExcelHandler<T> {
 		/* check if the file is valid to append or not */
 		try {
 			reader.reset(lastFileInfo.a);
-			if (reader.hasValidHeader() && reader.getLastDataSheetRow() < TRIAL_NUMBER_LIMIT_PER_FILE) {
+			if (reader.hasValidHeader() && reader.getLastDataSheetRow() < ExcelSettings.DEFAULT_MAX_ROW_PER_SHEET) {
 				// appendable
 				return lastFileInfo;
 			}
@@ -84,7 +81,7 @@ public abstract class SimpleExcelHandler<T> {
 		return newExperimentalExcelFile(trialFilePrefix, FIRST_FILE_IDX);
 	}
 
-	public Pair<File, Integer> getLastExperimentalExcel(String trialFilePrefix) {
+	public Pair<File, Integer> getLastExperimentalExcel(final String trialFilePrefix) {
 		File folder = new File(excelRootFolder);
 		File[] files = folder.listFiles(new FilenameFilter() {
 			@Override
