@@ -154,7 +154,7 @@ public class LearnedDataProcessor {
 	}
 
 	public boolean sampleForMissingBranch(CfgNode node, PrecondDecisionLearner precondDecisionLearner) {
-		
+
 		DecisionNodeProbe nodeProbe = decisionProbes.getNodeProbe(node);
 		/*
 		 * if all branches are missing, nothing we can do, and if all branches
@@ -170,10 +170,10 @@ public class LearnedDataProcessor {
 			/**
 			 * we may only get one data point as the neighbor.
 			 */
-			List<double[]> list = getNeighborTc(missingBranch, nodeProbe);
 			List<ExecVar> vars = decisionProbes.getOriginalVars();
+			List<double[]> solution = getNeighborTc(missingBranch, nodeProbe, vars);
 			try {
-				GentestResult mainResult = mediator.genMainAndCompile(list, vars, PrintOption.APPEND);
+				GentestResult mainResult = mediator.genMainAndCompile(solution, vars, PrintOption.APPEND);
 				List<File> generatedClasses = mainResult.getAllFiles();
 				File generatedClasse = generatedClasses.get(0);
 				String generatedClassName = mainResult.getJunitClassNames().get(0);
@@ -199,10 +199,17 @@ public class LearnedDataProcessor {
 
 	}
 
-	private List<double[]> getNeighborTc(BranchType missingBranch, DecisionNodeProbe nodeProbe) {
+	private List<double[]> getNeighborTc(BranchType missingBranch, DecisionNodeProbe nodeProbe, List<ExecVar> vars) {
 		List<double[]> list = new LinkedList<>();
 		List<BreakpointValue> dataPoints =  missingBranch == BranchType.FALSE ? nodeProbe.getTrueValues() : nodeProbe.getFalseValues();
-		list.add(dataPoints.get(0).getAllValues());
+		BreakpointValue dataPoint = dataPoints.get(0);
+		double[] values = new double[vars.size()];
+		int i =0;
+		for (ExecVar var : vars) {
+			values[i] = dataPoint.getValue(var.getVarId(), (double)0);
+			i++;
+		}
+		list.add(dataPoint.getAllValues());
 		return list;
 	}
 
