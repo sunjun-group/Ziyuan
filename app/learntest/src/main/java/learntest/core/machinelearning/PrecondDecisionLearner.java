@@ -102,10 +102,6 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 
 	private void learn(CfgNode node, DecisionProbes probes, List<Integer> visitedNodes) throws SavException {
 
-		if (probes.getOriginalVars().size()>50) { /** discard those method with too many variables */
-			log.debug("OriginalVars size is "+probes.getOriginalVars().size() + " > 50, return directly!!!");
-			return;
-		}
 		Queue<CfgNode> queue = new LinkedList<>();
 		queue.add(node);
 		int loopTimes = 0;
@@ -129,6 +125,12 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 					targetVars = probes.getOriginalVars();
 				}
 						
+
+				if (targetVars.size()>50) { /** discard those method with too many variables */
+					log.debug("targetVars size is "+targetVars.size() + " > 50, return directly!!!");
+					return;
+				}
+				
 				Pair<OrCategoryCalculator, Boolean> pair = null;
 				log.debug("learning the node in line " + node.getLine() + "(" + node + ")");
 				if (loopTimes <100 ? node.isLoopHeader() : node.isInLoop()) { // give a simple patch when there is a bug that will cause infinite loop
