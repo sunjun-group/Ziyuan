@@ -29,6 +29,8 @@ import static learntest.plugin.export.io.excel.TrialHeader.THIRD_TRIAL_ADV;
 import static learntest.plugin.export.io.excel.TrialHeader.THIRD_TRIAL_L;
 import static learntest.plugin.export.io.excel.TrialHeader.THIRD_TRIAL_L2T;
 import static learntest.plugin.export.io.excel.TrialHeader.THIRD_TRIAL_R;
+import static learntest.plugin.export.io.excel.TrialHeader.EVOSUITECOV;
+import static learntest.plugin.export.io.excel.TrialHeader.EVOSUITEINFO;
 
 import java.io.File;
 import java.util.Iterator;
@@ -95,6 +97,8 @@ public class DetailExcelReader extends ExcelReader {
 		trial.setJdartCnt(getIntCellValue(row, TrialHeader.JDART_TEST_CNT));
 		trial.setJdartTime(getIntCellValue(row, TrialHeader.JDART_TIME));
 		trial.setJdartCov(getDoubleCellValue(row, TrialHeader.JDART_COVERAGE));
+		trial.setEvosuiteCov(getDoubleCellValue(row, EVOSUITECOV));
+		trial.setEvosuiteInfo(getStringCellValue(row, EVOSUITEINFO));
 		
 		for (int i = 0; i < 5; i++) {
 			DetailTrial dTrial = new DetailTrial();

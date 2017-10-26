@@ -14,11 +14,12 @@ public class ExcelExplorer {
 	public static void main(String[] args) throws Exception {
 		String root = "D:/eclipse/", project = "apache-common-math-2.2" ;
 		String jdartP = "apache-common-math-2.2-jdart.xlsx",
-				l2tP = "apache-common-math-2.2-l2t.xlsx";
-		ExcelExplorer.mergeJdartAndL2t(root+project, root+jdartP, root+l2tP, false);
+				l2tP = "apache-common-math-2.2_5.xlsx";
+		String output = root + project + ".merge.xlsx";
+//		ExcelExplorer.mergeJdartAndL2t(output, root+jdartP, root+l2tP, false);
 
-		String file = "apache-common-math-2.2_merge";
-		ExcelExplorer.calculateBranchD(root, file);
+		output = "apache-common-math-2.2_whole.xlsx";
+		ExcelExplorer.calculateBranchD(root, output);
 	}
 	
 	/**
@@ -28,7 +29,7 @@ public class ExcelExplorer {
 	 * @param l2tP
 	 * @param append if append the file 
 	 */
-	public static void mergeJdartAndL2t(String project, String jdartP, String l2tP, boolean append) {
+	public static void mergeJdartAndL2t(String output, String jdartP, String l2tP, boolean append) {
 
 		DetailExcelReader reader;
 		try {
@@ -56,7 +57,6 @@ public class ExcelExplorer {
 					methodTrial.setJdartTime(jTrial.getJdartTime());
 				}
 			}
-			String output = project+"_merge.xlsx";
 			if (!append) {
 				File file = new File(output);
 				file.delete();;
@@ -72,7 +72,7 @@ public class ExcelExplorer {
 	}
 	
 	public static void calculateBranchD(String root, String file){
-		String xlsx = root + file + ".xlsx";
+		String xlsx = root + file;
 		
 		try {
 			DetailExcelReader reader = new DetailExcelReader(new File(xlsx));
@@ -82,8 +82,18 @@ public class ExcelExplorer {
 			int mlearnAndAdvNum = 0, mlearnAndNegNum = 0, mlearnAndSame = 0;
 			int tlearnAndAdvNum = 0, tlearnAndNegNum = 0, tlearnAndSame = 0;
 			int jdartE = 0, jdartB = 0;
+			int evosuiteBetter = 0, evosuiteWorse = 0, evosuiteRun = 0, evosuiteError = 0;
 			for (MethodTrial trial : methodTrials) {
 				double jdartCov = trial.getJdartCov();
+				double evosuiteCov = trial.getEvosuiteCov();
+				String evosuiteInfo = trial.getEvosuiteInfo();
+				
+				if (evosuiteInfo.length() == 0) {
+					evosuiteRun++;
+				}else {
+					evosuiteError++;
+				}
+				
 				if (trial.getValidAveCoverageAdv() > 0) {
 					mlearnAndAdvNum++;
 				} else if (trial.getValidAveCoverageAdv() == 0) {
@@ -114,12 +124,18 @@ public class ExcelExplorer {
 							randBetter.add(detailTrial);
 						} 							
 					}
-					if (jdartCov > detailTrial.getL2t()) {
+					if (detailTrial.getL2t() > 0 && jdartCov > detailTrial.getL2t()) {
 						jdartB++;
 //						System.out.println("jdart better : " + trial.getMethodName() + "_" + trial.getLine() + " , " + jdartCov);
 					}else if (jdartCov == detailTrial.getL2t()) {
 						jdartE++;
 //						System.out.println("jdart equal : " + trial.getMethodName() + "_" + trial.getLine() + " , " + jdartCov);						
+					}
+					
+					if (detailTrial.getL2t() > 0 && detailTrial.getL2t() < evosuiteCov) {
+						evosuiteBetter++;
+					}else if (detailTrial.getL2t() > 0 && detailTrial.getL2t() > evosuiteCov) {
+						evosuiteWorse++;
 					}
 				}
 			}
@@ -129,8 +145,15 @@ public class ExcelExplorer {
 				writer.println("methods : " + methodTrials.size());
 				writer.println("total trial : " + trialsNum);
 				writer.println("get valid trials : " + validNum);
+				
 				writer.println("jdart better than l2t trials : " + jdartB);
 				writer.println("jdart equal to l2t trials : " + jdartE);
+				
+				writer.println("evosuite valid methods : " + evosuiteRun);
+				writer.println("evosuite error methods : " + evosuiteError);
+				writer.println("evosuite better than l2t trials : " + evosuiteBetter);
+				writer.println("evosuite worse than l2t trials : " + evosuiteWorse);
+				
 				writer.println("learn and average advantage methods: " + mlearnAndAdvNum);
 				writer.println("learn and average negative methods: " + mlearnAndNegNum);
 				writer.println("average same methods: " + mlearnAndSame);

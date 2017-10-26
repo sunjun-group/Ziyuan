@@ -15,6 +15,9 @@ public class MethodTrial {
 	private int jdartTime;
 	private double jdartCov;
 	private int jdartCnt;
+	private double evosuiteCov;
+	private String evosuiteInfo;
+	
 	public List<DetailTrial> getTrials() {
 		return trials;
 	}
@@ -56,6 +59,18 @@ public class MethodTrial {
 	}
 	public void setJdartCnt(int jdartCnt) {
 		this.jdartCnt = jdartCnt;
+	}
+	public double getEvosuiteCov() {
+		return evosuiteCov;
+	}
+	public void setEvosuiteCov(double evosuiteCov) {
+		this.evosuiteCov = evosuiteCov;
+	}
+	public String getEvosuiteInfo() {
+		return evosuiteInfo;
+	}
+	public void setEvosuiteInfo(String evosuiteInfo) {
+		this.evosuiteInfo = evosuiteInfo;
 	}
 	
 	

@@ -68,7 +68,10 @@ public enum TrialHeader implements ExcelHeader {
 	FIFTH_TRIAL_ADV("5th trial advantage"), 
 	FIFTH_TRIAL_L("5th trial learned"),
 	FIFTH_L2T_WORSE_THAN_RAND("5th l2t worse than randoop"),
-	FIFTH_RAND_WORSE_THAN_L2T("5th randoop worse than l2t")
+	FIFTH_RAND_WORSE_THAN_L2T("5th randoop worse than l2t"),
+	
+	EVOSUITECOV("evosuite coverage"),
+	EVOSUITEINFO("evosuite coverage info")
 	;
 	
 	private String title;
