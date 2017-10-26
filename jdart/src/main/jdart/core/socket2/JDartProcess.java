@@ -37,6 +37,9 @@ public class JDartProcess {
 			list = JDartProcess.exec(JDartClient.class, args);
 			if (list != null) {
 				log.info("JDart return " + list.size() + " test cases");
+				for (TestInput testInput : list) {
+					System.out.println(testInput.toString());
+				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -46,7 +49,7 @@ public class JDartProcess {
 		return list;
 	}
 
-	public static List<TestInput> exec(Class klass, String[] args) throws IOException, InterruptedException {
+	public static List<TestInput> exec(Class klass, String[] args) throws IOException, InterruptedException {	
 		String targetClassCP, mainEntry, targetClass, methodName, paramString, app, site;
 		targetClassCP = args[0];
 		mainEntry = args[1];
@@ -60,7 +63,7 @@ public class JDartProcess {
 		String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
 		
 		String classpath = JDartCore.getRuntimeCP();
-				// System.getProperty("java.class.path"); // only valid when running in single project, invalid when invoked by eclipse plug-in 
+//				 System.getProperty("java.class.path"); // only valid when running in single project, invalid when invoked by eclipse plug-in 
 		
 		String className = klass.getCanonicalName();
 		ServerSocket s = null;

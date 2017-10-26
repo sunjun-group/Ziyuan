@@ -163,12 +163,12 @@ public class JDartParams {
 		int node = 11; // cfg node index
 		int branch = 1; // 0,1 , missing branch
 		
-		mainEntry = "runGen.L2T.init.loessinterpolator.checkstrictlyincreasing.LoessInterpolatorMain";
+		mainEntry = "testdata.L2T.main.loessinterpolator.checkstrictlyincreasing.LoessInterpolator10";
 		className = "org.apache.commons.math.analysis.interpolation.LoessInterpolator";
 		methodName = "checkStrictlyIncreasing";
 		paramString = "(xval:double[])";
 		node = 15;
-		branch = 1;	
+		branch = 0;	
 		
 		return constructOnDemandJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site, node, branch);
 	}
@@ -204,7 +204,7 @@ public class JDartParams {
 //		className = "org.apache.commons.math.random.MersenneTwister";
 //		methodName = "setSeed";
 //		paramString = "(seed:int[])";
-		mainEntry = "runGen.L2T.init.loessinterpolator.checkstrictlyincreasing.LoessInterpolatorMain";
+		mainEntry = "testdata.L2T.main.loessinterpolator.checkstrictlyincreasing.LoessInterpolator10";
 		className = "org.apache.commons.math.analysis.interpolation.LoessInterpolator";
 		methodName = "checkStrictlyIncreasing";
 		paramString = "(xval:double[])";

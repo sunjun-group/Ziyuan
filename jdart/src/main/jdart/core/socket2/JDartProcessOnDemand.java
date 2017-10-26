@@ -41,6 +41,9 @@ public class JDartProcessOnDemand {
 		}
 		if (list != null) {
 			log.info("JDart return " + list.size() +" test cases");
+			for (TestInput testInput : list) {
+				System.out.println(testInput.toString());
+			}
 		}else {
 			log.info("JDart return null");
 		}
