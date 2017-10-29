@@ -1,5 +1,6 @@
 package learntest.plugin.handler;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -11,6 +12,7 @@ import learntest.core.LearnTestParams;
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.plugin.utils.IStatusUtils;
+import sav.common.core.utils.TextFormatUtils;
 
 public class GenerateTestHandler extends AbstractLearntestHandler {
 	private static Logger log = LoggerFactory.getLogger(GenerateTestHandler.class);
@@ -48,8 +50,12 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
 			randoopParam.setInitialTests(l2tParam.getInitialTests());
 			randoopParam.setMaxTcs(l2tRuntimeInfo.getTestCnt());
+			
 			log.info("run randoop..");
-			RunTimeInfo ranInfo = runLearntest(randoopParam);
+			RunTimeInfo ranInfo = runLearntest(randoopParam);		
+			
+			print(l2tRuntimeInfo, l2tParam);
+			print(ranInfo, randoopParam);
 			
 			return l2tRuntimeInfo;
 		} catch (Exception e) {
@@ -57,5 +63,18 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 			throw new CoreException(IStatusUtils.exception(e, e.getMessage()));
 		} 
 	}
-
+	
+	public void print(RunTimeInfo runtimeInfo, LearnTestParams params){
+		if (runtimeInfo != null) {
+			log.info(params.getApproach().getName());
+			if (runtimeInfo.getLineCoverageResult() != null) {
+				log.info("Line coverage result:");
+				log.info(runtimeInfo.getLineCoverageResult().getDisplayText());
+			}
+			log.info("{} RESULT:", StringUtils.upperCase(params.getApproach().getName()));
+			log.info("TIME: {}; COVERAGE: {}; CNT: {}", TextFormatUtils.printTimeString(runtimeInfo.getTime()),
+					runtimeInfo.getCoverage(), runtimeInfo.getTestCnt());
+			log.info("TOTAL COVERAGE INFO: \n{}", runtimeInfo.getCoverageInfo());
+		}
+	}
 }

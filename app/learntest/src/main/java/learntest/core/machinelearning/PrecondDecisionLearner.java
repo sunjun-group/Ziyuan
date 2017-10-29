@@ -207,6 +207,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 //		return !nodeProbe.areAllbranchesUncovered() || nodeProbe.needToLearnPrecond();
 
 		if (!nodeProbe.areAllbranchesUncovered()) {
+			log.debug("All branches are uncovered!");
 			return true;
 		}else {
 			DecisionProbes probes = nodeProbe.getDecisionProbes();

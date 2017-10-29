@@ -23,6 +23,7 @@ import gov.nasa.jpf.constraints.api.Variable;
 import gov.nasa.jpf.constraints.types.NumericType;
 import gov.nasa.jpf.constraints.types.Type;
 import gov.nasa.jpf.constraints.types.TypeContext;
+import jdart.core.JDartCore;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -61,7 +62,7 @@ public class NumericCompound<E> extends AbstractExpression<E> {
     this.left = left;
     this.right = right;
     this.startTime = System.currentTimeMillis();
-    this.timeLimit = 30 * 1000;
+    this.timeLimit = JDartCore.timeLimit;
   }
 
   @Override

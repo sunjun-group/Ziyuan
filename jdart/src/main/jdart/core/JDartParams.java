@@ -132,7 +132,7 @@ public class JDartParams {
 			String app, String site, int node, int branch) {
 		
 		long minFree = 20*(1024<<10); // min free memory
-		long timeLimit = 30 * 1000;
+		long timeLimit = 300 * 1000; // ms
 		
 		JDartParams params = new JDartParams();
 		params.setAppProperties(app);
@@ -163,12 +163,19 @@ public class JDartParams {
 		int node = 11; // cfg node index
 		int branch = 1; // 0,1 , missing branch
 		
-		mainEntry = "testdata.L2T.main.loessinterpolator.checkstrictlyincreasing.LoessInterpolator10";
-		className = "org.apache.commons.math.analysis.interpolation.LoessInterpolator";
-		methodName = "checkStrictlyIncreasing";
-		paramString = "(xval:double[])";
-		node = 15;
-		branch = 0;	
+		mainEntry = "testdata.L2T.main.fastmath.scalb1.FastMath8";
+		className = "org.apache.commons.math.util.FastMath";
+		methodName = "scalb1";
+		paramString = "(d:double, n:int)";
+		node = 41;
+		branch = 1;	
+		
+		mainEntry = "testdata.L2T.main.betadistributionimpl.inversecumulativeprobability.BetaDistributionImpl2";
+		className = "org.apache.commons.math.distribution.BetaDistributionImpl";
+		methodName = "inverseCumulativeProbability";
+		paramString = "(p:double)";
+		node = 9;
+		branch = 1;	
 		
 		return constructOnDemandJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site, node, branch);
 	}
@@ -204,10 +211,10 @@ public class JDartParams {
 //		className = "org.apache.commons.math.random.MersenneTwister";
 //		methodName = "setSeed";
 //		paramString = "(seed:int[])";
-		mainEntry = "testdata.L2T.main.loessinterpolator.checkstrictlyincreasing.LoessInterpolator10";
-		className = "org.apache.commons.math.analysis.interpolation.LoessInterpolator";
-		methodName = "checkStrictlyIncreasing";
-		paramString = "(xval:double[])";
+		mainEntry = "testdata.L2T.main.fastmath.scalb1.FastMath9";
+		className = "org.apache.commons.math.util.FastMath";
+		methodName = "scalb1";
+		paramString = "(d:double, n:int)";
 		
 		return constructJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site);
 	}
@@ -216,7 +223,7 @@ public class JDartParams {
 			String app, String site) {
 		
 		long minFree = 20*(1024<<10); // min free memory
-		long timeLimit = 300000 * 1000;
+		long timeLimit = 30 * 1000;
 		
 		JDartParams params = new JDartParams();
 		params.setAppProperties(app);
