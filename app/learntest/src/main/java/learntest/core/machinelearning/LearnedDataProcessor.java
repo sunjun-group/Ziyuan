@@ -181,8 +181,8 @@ public class LearnedDataProcessor {
 				JDartRunner jdartRunner = new JDartRunner(mediator.getAppClassPath());
 				List<TestInput> result = jdartRunner.runJDartOnDemand(mediator.getLearntestParams(), generatedClassName, node.getIdx(), 
 						missingBranch == BranchType.FALSE ? 0 : 1);
+								
 				if (result != null && result.size() > 0) {
-					System.out.println(result);
 					List<BreakpointValue> bkpVals = JdartTestInputUtils.toBreakpointValue(result,
 							mediator.getLearntestParams().getTargetMethod().getMethodFullName());
 					List<double[]> solutions = VarSolutionUtils.buildSolutions(bkpVals, vars);

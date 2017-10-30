@@ -1,11 +1,7 @@
 package learntest.plugin.handler;
 
-import java.io.File;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,15 +22,11 @@ import learntest.core.commons.LearntestConstants;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
-import learntest.local.DetailExcelReader;
-import learntest.local.DetailTrial;
-import learntest.local.MethodTrial;
 import learntest.plugin.LearnTestConfig;
 import learntest.plugin.ProjectSetting;
 import learntest.plugin.export.io.excel.MultiTrial;
 import learntest.plugin.export.io.excel.Trial;
 import learntest.plugin.export.io.excel.TrialExcelHandler;
-import learntest.plugin.export.io.excel.TrialExcelReader;
 import learntest.plugin.handler.filter.classfilter.ClassNameFilter;
 import learntest.plugin.handler.filter.classfilter.ITypeFilter;
 import learntest.plugin.handler.filter.classfilter.TestableClassFilter;
@@ -163,7 +155,7 @@ public class RunAllJDartHandler extends AbstractLearntestHandler {
 		}
 		for (MethodInfo targetMethod : targetMethods) {
 			/* todo : test special method start */
-//			if (skip(targetMethod)) {
+//			if (!ifInTxt(targetMethod)) {
 //				continue;
 //			}
 			/* todo : test special method end */
@@ -194,37 +186,6 @@ public class RunAllJDartHandler extends AbstractLearntestHandler {
 			}
 			logSuccessfulMethod(targetMethod);
 		}
-	}
-
-	Map<String, MethodTrial> oldTrials = null;
-	private boolean skip(MethodInfo targetMethod) {
-		if (oldTrials == null) {
-			try {
-				DetailExcelReader reader = new DetailExcelReader(new File("D:/eclipse/apache-common-math-2.2_0-checked.xlsx"));
-				List<MethodTrial> list = reader.readDataSheet();
-				oldTrials = new HashMap<>();
-				for (MethodTrial methodTrial : list) {
-					String name = methodTrial.getMethodName();
-					int line = methodTrial.getLine();
-					oldTrials.put(name+"_"+line, methodTrial);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		String fullName = targetMethod.getMethodFullName();
-		int line = targetMethod.getLineNum();
-		log.debug(fullName);
-		if (oldTrials.containsKey(fullName + "_" + line)) {
-			MethodTrial trial = oldTrials.get(fullName + "_" + line);
-			for (DetailTrial detail : trial.getTrials()) {
-				if ((detail.getL2tBetter().length() > 0)
-						|| (detail.getRanBetter().length() > 0)) {
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 
 	private void checkJobCancelation(IProgressMonitor monitor) {

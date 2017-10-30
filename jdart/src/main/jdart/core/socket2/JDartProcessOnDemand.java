@@ -41,9 +41,6 @@ public class JDartProcessOnDemand {
 		}
 		if (list != null) {
 			log.info("JDart return " + list.size() +" test cases");
-			for (TestInput testInput : list) {
-				System.out.println(testInput.toString());
-			}
 		}else {
 			log.info("JDart return null");
 		}
@@ -91,7 +88,7 @@ public class JDartProcessOnDemand {
 					}
 				}
 			}
-			s.setSoTimeout(40 * 1000);
+			s.setSoTimeout(60 * 1000);
 			log.info("IntraSocket Start:" + s);
 			log.info("JDart method : "+targetClass+"."+methodName);
 			log.info("JDart mainEntry : "+mainEntry);

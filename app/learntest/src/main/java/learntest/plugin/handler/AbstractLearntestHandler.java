@@ -8,11 +8,17 @@
 
 package learntest.plugin.handler;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 
@@ -55,6 +61,7 @@ import learntest.plugin.LearnTestConfig;
 import learntest.plugin.LearntestPlugin;
 import learntest.plugin.commons.PluginException;
 import learntest.plugin.export.io.excel.Trial;
+import learntest.plugin.export.io.excel.TrialExcelReader;
 import learntest.plugin.handler.gentest.GentestSettings;
 import learntest.plugin.utils.IProjectUtils;
 import learntest.plugin.utils.IResourceUtils;
@@ -420,5 +427,52 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		} catch (Exception e) {
 			throw PluginException.wrapEx(e);
 		}
+	}
+	
+	protected boolean ifInXlsx(MethodInfo targetMethod) {
+		Map<String, Trial> oldTrials = new HashMap<>();
+		try {
+			TrialExcelReader reader = new TrialExcelReader();
+			reader.reset(new File("D:/eclipse/apache-common-math-2.2_0-checked.xlsx"));
+			oldTrials = reader.readDataSheet();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String fullName = targetMethod.getMethodFullName();
+		int line = targetMethod.getLineNum();
+		if (oldTrials.containsKey(fullName + "_" + line)) {
+			return true;
+		}
+		return false;
+	}
+	
+	protected boolean ifInTxt(MethodInfo targetMethod) {
+		HashSet<String> set = new HashSet<>();
+		File file = new File("D:\\eclipse\\eclipse-java-mars-clean\\eclipse\\check.txt");
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			String tempString = null;
+			while ((tempString = reader.readLine()) != null) {
+				set.add(tempString);
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
+		String fullName = targetMethod.getMethodFullName();
+		int line = targetMethod.getLineNum();
+		if (set.contains(fullName + "." + line)) {
+			return true;
+		}
+		return false;
 	}
 }

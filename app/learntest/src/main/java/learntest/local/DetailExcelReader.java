@@ -71,7 +71,7 @@ public class DetailExcelReader extends ExcelReader {
 		Assert.assertNotNull(dataSheet, "TrialExcelReader has not initialized!");
 		Iterator<Row> it = dataSheet.rowIterator();
 		Row header = it.next(); // ignore first row (header)
-		Assert.assertTrue(isDataSheetHeader(header), "Data sheet is invalid!");
+//		Assert.assertTrue(isDataSheetHeader(header), "Data sheet is invalid!");
 		List<MethodTrial> data = new LinkedList<>();
 		try {
 			while (it.hasNext()) {

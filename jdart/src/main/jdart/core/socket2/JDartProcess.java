@@ -89,7 +89,7 @@ public class JDartProcess {
 					}
 				}
 			}
-			s.setSoTimeout(40 * 1000);
+			s.setSoTimeout(60 * 1000);
 			log.info("IntraSocket Start:" + s);
 			log.info("JDart method : " + targetClass + "." + methodName);
 			log.info("JDart mainEntry : " + mainEntry);

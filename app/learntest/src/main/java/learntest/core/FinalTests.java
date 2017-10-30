@@ -28,6 +28,7 @@ import gentest.junit.PrinterParams;
 import gentest.junit.TestsPrinter;
 import learntest.core.commons.data.LineCoverageResult;
 import learntest.core.commons.data.classinfo.TargetMethod;
+import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.gentest.GentestResult;
 import learntest.core.gentest.LearntestJWriter;
 import sav.common.core.Pair;
@@ -64,6 +65,11 @@ public class FinalTests {
 				for (Integer idx : toRemoveTcs) {
 					sequences.remove(cfgCoverage.getTestcases().get(idx));
 				}
+			}
+
+			List<String> lines = CoverageUtils.getBranchCoverageDisplayTexts(cfgCoverage, -1);
+			for (String line : lines) {
+				log.debug(line);
 			}
 		}
 	}

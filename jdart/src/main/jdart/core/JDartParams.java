@@ -131,7 +131,7 @@ public class JDartParams {
 			String methodName, String paramString,
 			String app, String site, int node, int branch) {
 		
-		long minFree = 20*(1024<<10); // min free memory
+		long minFree = (1024<<10); // min free memory
 		long timeLimit = 300 * 1000; // ms
 		
 		JDartParams params = new JDartParams();
@@ -170,12 +170,12 @@ public class JDartParams {
 		node = 41;
 		branch = 1;	
 		
-		mainEntry = "testdata.L2T.main.betadistributionimpl.inversecumulativeprobability.BetaDistributionImpl2";
-		className = "org.apache.commons.math.distribution.BetaDistributionImpl";
-		methodName = "inverseCumulativeProbability";
-		paramString = "(p:double)";
-		node = 9;
-		branch = 1;	
+//		mainEntry = "testdata.L2T.main.betadistributionimpl.inversecumulativeprobability.BetaDistributionImpl2";
+//		className = "org.apache.commons.math.distribution.BetaDistributionImpl";
+//		methodName = "inverseCumulativeProbability";
+//		paramString = "(p:double)";
+//		node = 9;
+//		branch = 1;	
 		
 		return constructOnDemandJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site, node, branch);
 	}
@@ -211,7 +211,7 @@ public class JDartParams {
 //		className = "org.apache.commons.math.random.MersenneTwister";
 //		methodName = "setSeed";
 //		paramString = "(seed:int[])";
-		mainEntry = "testdata.L2T.main.fastmath.scalb1.FastMath9";
+		mainEntry = "testdata.L2T.main.fastmath.scalb1.FastMath8";
 		className = "org.apache.commons.math.util.FastMath";
 		methodName = "scalb1";
 		paramString = "(d:double, n:int)";
@@ -222,8 +222,8 @@ public class JDartParams {
 	public static JDartParams constructJDartParams(String classpathStr, String mainEntry, String className, String methodName, String paramString,
 			String app, String site) {
 		
-		long minFree = 20*(1024<<10); // min free memory
-		long timeLimit = 30 * 1000;
+		long minFree = (1024<<10); // min free memory
+		long timeLimit = 30 * 1000; // ms
 		
 		JDartParams params = new JDartParams();
 		params.setAppProperties(app);
