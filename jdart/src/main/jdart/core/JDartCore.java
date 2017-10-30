@@ -41,6 +41,21 @@ public class JDartCore {
         	result = entry.getValue()[1];
         }
         LinkedList<TestVar> paramList = init_value.get(0).getParamList();
+        
+        if(result == null) {
+        	jdartParams.setSiteProperties("libs/jpf.properties");
+        	config = constructConfig(jdartParams);
+        	jpf.run(config);
+        	for(Entry<List<int[]>, String[]> entry : jpf.getPathMap().entrySet()) {
+            	List<int[]> tempPath = entry.getKey();
+            	int[] node_branch = tempPath.get(tempPath.size() - 1);
+            	if(node_branch[0] == jdartParams.getExploreNode() && node_branch[1] == jdartParams.getExploreBranch()){
+            		result = entry.getValue()[1];
+            		break;
+            	}
+            }
+        }
+        
         if(result != null) {
         	String[] values = result.split(",");
         	for(String value : values) {
