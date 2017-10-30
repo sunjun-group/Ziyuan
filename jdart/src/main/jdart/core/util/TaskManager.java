@@ -48,6 +48,10 @@ public class TaskManager {
 	
 	public static void kill(long pid) throws IOException {
 		String cmd = "taskkill /F /PID " + pid;
+		if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1) 
+			cmd = "taskkill /F /PID " + pid;
+		else
+		    cmd = "kill -9 " + pid;
 		Runtime.getRuntime().exec(cmd);
 	}
 	
