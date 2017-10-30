@@ -48,14 +48,26 @@ public class JDartCore {
         	jpf.run(config);
         	for(Entry<List<int[]>, String[]> entry : jpf.getPathMap().entrySet()) {
             	List<int[]> tempPath = entry.getKey();
-            	int[] node_branch = tempPath.get(tempPath.size() - 1);
-            	if(node_branch[0] == jdartParams.getExploreNode() && node_branch[1] == jdartParams.getExploreBranch()){
-            		result = entry.getValue()[1];
-            		break;
+            	for(int i = 0; i < tempPath.size(); i++) {
+            		int[] node_branch = tempPath.get(i);
+            		if(node_branch[0] == jdartParams.getExploreNode() && node_branch[1] == jdartParams.getExploreBranch()){
+                		result = entry.getValue()[1];
+                		break;
+                	}
             	}
+            	if(result != null)
+            		break;
             }
         }
-        
+//        while(i < tempPath.size() - 1){
+//			node = (i != -1) ? tempPath.get(i)[0] : cfg.getInit_node();
+//			i++;
+//			int temp_end_node = tempPath.get(i)[0];
+//			while(node != temp_end_node){
+//				path.add(node);
+//				node = getNextNode(cfg, node, tempPath, i);
+//			}
+//		}
         if(result != null) {
         	String[] values = result.split(",");
         	for(String value : values) {
