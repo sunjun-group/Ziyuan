@@ -230,8 +230,8 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			RunTimeInfo jdartInfo = new RunTimeInfo();
 
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
-//			log.info("run jdart..");
-//			jdartInfo = runJdart(randoopParam);
+			log.info("run jdart..");
+			jdartInfo = runJdart(randoopParam);
 
 			l2tParams.setApproach(LearnTestApproach.L2T);
 			l2tParams.setInitialTests(randoopParam.getInitialTests());
@@ -448,7 +448,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	
 	protected boolean ifInTxt(MethodInfo targetMethod) {
 		HashSet<String> set = new HashSet<>();
-		File file = new File("D:\\eclipse\\eclipse-java-mars-clean\\eclipse\\check.txt");
+		File file = new File("D:\\eclipse-java-mars\\eclipse\\check.txt");
 		BufferedReader reader = null;
 		try {
 			reader = new BufferedReader(new FileReader(file));
