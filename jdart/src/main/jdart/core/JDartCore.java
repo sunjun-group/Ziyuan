@@ -59,15 +59,7 @@ public class JDartCore {
             		break;
             }
         }
-//        while(i < tempPath.size() - 1){
-//			node = (i != -1) ? tempPath.get(i)[0] : cfg.getInit_node();
-//			i++;
-//			int temp_end_node = tempPath.get(i)[0];
-//			while(node != temp_end_node){
-//				path.add(node);
-//				node = getNextNode(cfg, node, tempPath, i);
-//			}
-//		}
+
         if(result != null) {
         	String[] values = result.split(",");
         	for(String value : values) {
