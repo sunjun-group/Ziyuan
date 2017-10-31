@@ -44,6 +44,7 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 	public RunTimeInfo generateTest() throws CoreException{
 		try {
 			LearnTestParams l2tParam = initLearntestParamsFromPreference();
+			l2tParam.setApproach(LearnTestApproach.L2T);
 			RunTimeInfo l2tRuntimeInfo = runLearntest(l2tParam);
 
 			LearnTestParams randoopParam = l2tParam.createNew();

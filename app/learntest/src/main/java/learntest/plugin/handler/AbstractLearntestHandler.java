@@ -447,9 +447,9 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		return false;
 	}
 	
-	protected boolean ifInTxt(MethodInfo targetMethod) {
+	protected boolean ifInTxt(MethodInfo targetMethod, String txt) {
 		HashSet<String> set = new HashSet<>();
-		File file = new File("D:\\eclipse\\eclipse-java-mars-clean\\eclipse\\check.txt");
+		File file = new File(txt);
 		BufferedReader reader = null;
 		try {
 			reader = new BufferedReader(new FileReader(file));

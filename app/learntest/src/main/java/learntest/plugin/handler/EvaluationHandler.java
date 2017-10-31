@@ -149,9 +149,9 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		for (MethodInfo targetMethod : targetMethods) {
 
 			/* todo : test special method start */
-//			if (!ifInTxt(targetMethod)) {
-//				continue;
-//			}
+			if (!ifInTxt(targetMethod, "D:\\eclipse-java-mars\\eclipse\\check.txt")) {
+				continue;
+			}
 			/* todo : test special method end */
 
 			log.info("-----------------------------------------------------------------------------------------------");
