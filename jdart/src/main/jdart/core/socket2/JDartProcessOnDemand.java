@@ -88,7 +88,7 @@ public class JDartProcessOnDemand {
 					}
 				}
 			}
-			s.setSoTimeout(3 * 60 * 1000);
+			s.setSoTimeout(JDartCore.socketWaiteTime());
 			log.info("IntraSocket Start:" + s);
 			log.info("JDart method : "+targetClass+"."+methodName);
 			log.info("JDart mainEntry : "+mainEntry);
@@ -96,7 +96,7 @@ public class JDartProcessOnDemand {
 			ProcessBuilder builder = new ProcessBuilder(javaBin, "-Xms1024m", "-Xmx9000m", "-cp", classpath, className, classpathStr, mainEntry,
 					targetClass, methodName, paramString, app, site, node, branch, ""+port);
 
-			builder.directory(new File("E:\\git\\Ziyuan\\jdart"));
+			builder.directory(new File(JDartCore.getJdartRoot()));
 			Process process = builder.start();
 			pid = TaskManager.getPid(process);
 			log.info("" + pid);

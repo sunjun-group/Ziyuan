@@ -335,7 +335,7 @@ public class JDartCore {
 	}
 	
 	public static String getRuntimeCP() {
-		String jdartPath = "E:\\git\\Ziyuan\\jdart", savPath = "E:\\git\\Ziyuan\\app\\sav.commons";
+		String jdartPath = getJdartRoot(), savPath = "E:\\git\\Ziyuan\\app\\sav.commons";
 		StringBuffer sb = new StringBuffer();
 		sb.append(jdartPath+"\\bin;");
 		sb.append(getJarPaths(jdartPath+"\\libs"));
@@ -343,5 +343,15 @@ public class JDartCore {
 		sb.append(savPath+"\\target\\classes;");
 		sb.append(savPath+"\\target\\test-classes;");
 		return sb.toString();
+	}
+	
+	public static String getJdartRoot() {
+		String jdartPath = "E:\\git\\Ziyuan\\jdart";
+		return jdartPath;
+	}
+	
+	public static int socketWaiteTime() {
+		int wait = 3 * 60 * 1000; //ms
+		return wait;
 	}
 }
