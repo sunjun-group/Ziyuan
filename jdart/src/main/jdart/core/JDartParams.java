@@ -132,7 +132,7 @@ public class JDartParams {
 			String app, String site, int node, int branch) {
 		
 		long minFree = (1024<<10); // min free memory
-		long timeLimit = 300 * 1000; // ms
+		long timeLimit = 60 * 1000; // ms
 		
 		JDartParams params = new JDartParams();
 		params.setAppProperties(app);
@@ -223,7 +223,7 @@ public class JDartParams {
 			String app, String site) {
 		
 		long minFree = (1024<<10); // min free memory
-		long timeLimit = 30 * 1000; // ms
+		long timeLimit = 60 * 1000; // ms
 		
 		JDartParams params = new JDartParams();
 		params.setAppProperties(app);

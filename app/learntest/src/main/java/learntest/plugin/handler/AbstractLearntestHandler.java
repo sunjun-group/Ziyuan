@@ -224,25 +224,26 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			LearnTestParams l2tParams = params;
 			// randoop params
 			LearnTestParams randoopParam = params.createNew();
+			LearnTestParams jdartParam = params.createNew();
 
 			RunTimeInfo l2tAverageInfo = new RunTimeInfo();
 			RunTimeInfo ranAverageInfo = new RunTimeInfo();
 			RunTimeInfo jdartInfo = new RunTimeInfo();
 
-			randoopParam.setApproach(LearnTestApproach.RANDOOP);
 			log.info("run jdart..");
-			jdartInfo = runJdart(randoopParam);
+			jdartParam.setApproach(LearnTestApproach.JDART);
+			jdartInfo = runJdart(jdartParam);
 
-			l2tParams.setApproach(LearnTestApproach.L2T);
-			l2tParams.setInitialTests(randoopParam.getInitialTests());
-			l2tParams.setMaxTcs(ranAverageInfo.getTestCnt());
 			log.info("run l2t..");
+			l2tParams.setApproach(LearnTestApproach.L2T);
+			l2tParams.setInitialTests(null);
+			l2tParams.setMaxTcs(ranAverageInfo.getTestCnt());
 			l2tAverageInfo = runLearntest(l2tAverageInfo, l2tParams);
 
+			log.info("run randoop..");
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
 			randoopParam.setInitialTests(l2tParams.getInitialTests());
 			randoopParam.setMaxTcs(l2tAverageInfo.getTestCnt());
-			log.info("run randoop..");
 			ranAverageInfo = runLearntest(ranAverageInfo, randoopParam);
 
 			TargetMethod method = params.getTargetMethod();
@@ -448,7 +449,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	
 	protected boolean ifInTxt(MethodInfo targetMethod) {
 		HashSet<String> set = new HashSet<>();
-		File file = new File("D:\\eclipse-java-mars\\eclipse\\check.txt");
+		File file = new File("D:\\eclipse\\eclipse-java-mars-clean\\eclipse\\check.txt");
 		BufferedReader reader = null;
 		try {
 			reader = new BufferedReader(new FileReader(file));

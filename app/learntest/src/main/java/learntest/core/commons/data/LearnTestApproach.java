@@ -8,6 +8,8 @@
 
 package learntest.core.commons.data;
 
+import gov.nasa.jpf.jdart.JDart;
+
 /**
  * @author LLT
  *
@@ -15,6 +17,7 @@ package learntest.core.commons.data;
 public enum LearnTestApproach {
 	L2T ("L2T"),
 	RANDOOP ("RandomTest"),
+	JDART("Jdart"),
 	GAN("L2T_GAN");
 	
 	private String name;
