@@ -46,7 +46,7 @@ public class TwoNumEqTemplate extends TwoFeaturesTemplate {
 		double y1 = passValues.get(0).get(1).getDoubleVal();
 		
 		double x2 = passValues.get(1).get(0).getDoubleVal();
-		double y2 = passValues.get(2).get(1).getDoubleVal();
+		double y2 = passValues.get(1).get(1).getDoubleVal();
 		
 		double x12 = x2 - x1;
 		double y12 = y2 - y1;
