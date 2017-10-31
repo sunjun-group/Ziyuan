@@ -2,17 +2,18 @@ package learntest.local;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.bcel.classfile.Field;
 
 /**
  * @author ZhangHr
  */
 public class ExcelExplorer2 {
-
+	HashMap<String, HashSet<MethodTrial>> map = new HashMap<>();
 	public static void main(String[] args) throws Exception {
 		String root = "D:/eclipse/", project = "apache-common-math-2.2" ;
 		String jdartP = "apache-common-math-2.2-jdart.xlsx",
@@ -21,9 +22,36 @@ public class ExcelExplorer2 {
 //		ExcelExplorer2.mergeJdartAndL2t(output, root+jdartP, root+l2tP, false);
 		
 		output = root + project + "_whole.xlsx";
-		ExcelExplorer2.calculateBranchD(root, output);
+		ExcelExplorer2 explorer = new ExcelExplorer2();
+		explorer.calculateBranchD(root, output);
+		if (explorer.map != null) {
+			HashSet<MethodTrial> set = explorer.getCommon(explorer.map);
+			System.out.println("l2t better than other approach: " + set.size());
+			for (Iterator iterator = set.iterator(); iterator.hasNext();) {
+				MethodTrial value = (MethodTrial) iterator.next();
+				System.out.println(value.getMethodName() + "." + value.getLine());				
+			}
+			System.out.println();
+		}
 	}
 	
+	private HashSet<MethodTrial> getCommon(HashMap<String, HashSet<MethodTrial>> map) {
+		Collection<HashSet<MethodTrial>> c= map.values();
+		HashSet[] array = c.toArray(new HashSet[0]);
+		HashSet<MethodTrial> set = array[0];
+		for (int i = 1; i < array.length; i++) {
+			HashSet<MethodTrial> cur = array[i], temp = new HashSet<>();
+			for (Iterator iterator = set.iterator(); iterator.hasNext();) {
+				MethodTrial value = (MethodTrial) iterator.next();
+				if (cur.contains(value)) {
+					temp.add(value);
+				}				
+			}
+			set = temp;
+		}
+		return set;
+	}
+
 	/**
 	 * 
 	 * @param project
@@ -73,7 +101,7 @@ public class ExcelExplorer2 {
 		}
 	}
 	
-	public static void calculateBranchD(String root, String xlsx){		
+	public void calculateBranchD(String root, String xlsx){		
 		try {
 			DetailExcelReader reader = new DetailExcelReader(new File(xlsx));
 			List<MethodTrial> methodTrials = reader.readDataSheet();
@@ -110,10 +138,12 @@ public class ExcelExplorer2 {
 		}
 	}
 	
-	public static String branchInfo(List<MethodTrial> methodTrials, List<DetailTrial> l2tBetter, List<DetailTrial> randBetter){
+	public String branchInfo(List<MethodTrial> methodTrials, List<DetailTrial> l2tBetter, List<DetailTrial> randBetter){
 		int trialsNum = 0, validNum = 0;
 		int mlearnAndAdvNum = 0, mlearnAndNegNum = 0, mlearnAndSame = 0;
 		int tlearnAndAdvNum = 0, tlearnAndNegNum = 0, tlearnAndSame = 0;
+		
+		HashSet<MethodTrial> set = new HashSet<>();
 		
 		for (MethodTrial trial : methodTrials) {
 			
@@ -140,6 +170,7 @@ public class ExcelExplorer2 {
 				if (detailTrial.getL2tBetter() != null && detailTrial.getL2tBetter().length() > 1) {
 					if (detailTrial.getRandoop() != 1) {
 						l2tBetter.add(detailTrial);
+						set.add(trial);
 					}
 				}
 				if (detailTrial.getRanBetter() != null && detailTrial.getRanBetter().length() > 1) {
@@ -149,7 +180,8 @@ public class ExcelExplorer2 {
 				}
 			}
 		}
-		
+
+		map.put("randoop", set);
 		StringBuilder sBuilder = new StringBuilder();
 		sBuilder.append("total trial : " + trialsNum + "\n");
 		sBuilder.append("get valid trials : " + validNum + "\n");
@@ -164,31 +196,31 @@ public class ExcelExplorer2 {
 		return sBuilder.toString();
 	}
 	
-	public static String evosuiteInfo(List<MethodTrial> methodTrials){
+	public String evosuiteInfo(List<MethodTrial> methodTrials){
 
 		StringBuilder sBuilder = new StringBuilder();
-
 		int evosuiteBetter = 0, evosuiteWorse = 0, evosuiteRun = 0, evosuiteError = 0;
 		int diffSig = 0;
+
+		HashSet<MethodTrial> set = new HashSet<>();
 		
 		for (MethodTrial trial : methodTrials) {
 			int sigCount = 0;
 			double evosuiteCov = trial.getEvosuiteCov();
-			String evosuiteInfo = trial.getEvosuiteInfo();
-			
+			String evosuiteInfo = trial.getEvosuiteInfo();			
 			if (evosuiteInfo.length() == 0) {
 				evosuiteRun++;
 			}else {
 				evosuiteError++;
 			}
-			
-			
+						
 			for (DetailTrial detailTrial : trial.getTrials()) {
 				
 				if (detailTrial.getL2t() > 0 && detailTrial.getL2t() < evosuiteCov) {
 					evosuiteBetter++;
 				}else if (detailTrial.getL2t() > 0 && detailTrial.getL2t() > evosuiteCov) {
 					evosuiteWorse++;
+					set.add(trial);
 				}
 				if (detailTrial.getL2t() <= 0.25 && evosuiteCov == 1) {
 					sigCount++;
@@ -199,46 +231,59 @@ public class ExcelExplorer2 {
 				diffSig++;
 			}
 		}
-
+		
 		sBuilder.append("evosuite valid methods : " + evosuiteRun + "\n");
 		sBuilder.append("evosuite error methods : " + evosuiteError + "\n");
 		sBuilder.append("evosuite better than l2t trials : " + evosuiteBetter + "\n");
 		sBuilder.append("evosuite worse than l2t trials : " + evosuiteWorse + "\n");
 		sBuilder.append("evosuite better than l2t significantly methods : " + diffSig + "\n");
-		
+
+		map.put("evosuite", set);
 		return sBuilder.toString();
 	}
 	
-	public static String jdartInfo(List<MethodTrial> methodTrials){
+	public String jdartInfo(List<MethodTrial> methodTrials){
 
+		HashSet<MethodTrial> set = new HashSet<>();
+		
 		StringBuilder sBuilder = new StringBuilder(), methodRecorder = new StringBuilder();
 		methodRecorder.append("jdart better methods : \n");
-		int jdartE = 0, jdartB = 0;
-		
+		List<String> jdartE ,jdartB ,jdartW;
+		jdartE = jdartB = jdartW = new LinkedList<>();
 		for (MethodTrial trial : methodTrials) {
 			double jdartCov = trial.getJdartCov();		
 			boolean jdartBetter = false;
 			for (DetailTrial detailTrial : trial.getTrials()) {
 				
 				if (detailTrial.getL2t() > 0 && jdartCov > detailTrial.getL2t()) {
-					jdartB++;
-					System.out.println("jdart better : " + trial.getMethodName() + "." + trial.getLine() + " , " + jdartCov + "," + detailTrial.getL2t());
-					sBuilder.append("jdart better : " + trial.getMethodName() + "." + trial.getLine() + " , " + jdartCov + "," + detailTrial.getL2t() + "\n");
+					jdartB.add( trial.getMethodName() + "." + trial.getLine() + " , " + jdartCov + "," + detailTrial.getL2t());
 					jdartBetter = true;
 				}else if (jdartCov == detailTrial.getL2t()) {
-					jdartE++;
-//					System.out.println("jdart equal : " + trial.getMethodName() + "." + trial.getLine() + " , " + jdartCov);	
-//					sBuilder.append("jdart equal : " + trial.getMethodName() + "." + trial.getLine() + " , " + jdartCov + "\n");						
-				}				
+					jdartE.add( trial.getMethodName() + "." + trial.getLine() + " , " + jdartCov + "," + detailTrial.getL2t());					
+				}else {
+					jdartW.add( trial.getMethodName() + "." + trial.getLine() + " , " + jdartCov + "," + detailTrial.getL2t());
+					set.add(trial);
+				}			
 				
 			}
 			if (jdartBetter) {
 				methodRecorder.append(trial.getMethodName() + "." + trial.getLine()+"\n");
 			}
 		}
-		sBuilder.append("jdart better than l2t trials : " + jdartB + "\n");
-		sBuilder.append("jdart equal to l2t trials : " + jdartE + "\n");
 		
+		sBuilder.append("jdart better than l2t trials : " + jdartB.size() + "======================================================\n");
+		for (String string : jdartB) {
+			sBuilder.append(string+"\n");
+		}
+		sBuilder.append("jdart equal to l2t trials : " + jdartE.size() + "======================================================\n");
+		for (String string : jdartE) {
+			sBuilder.append(string+"\n");
+		}
+		sBuilder.append("jdart worse than l2t trials : " + jdartW.size() + "======================================================\n");
+		for (String string : jdartW) {
+			sBuilder.append(string+"\n");
+		}
+		map.put("jdart", set);
 		return methodRecorder.toString() + sBuilder.toString();
 	}
 	
