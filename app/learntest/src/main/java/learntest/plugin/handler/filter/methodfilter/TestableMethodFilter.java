@@ -36,14 +36,21 @@ public class TestableMethodFilter implements IMethodFilter {
 	public boolean isValid(CompilationUnit cu, MethodDeclaration md) {
 		if(md.isConstructor() || md.parameters().isEmpty()
 				|| !Modifier.isPublic(md.getModifiers()) || Modifier.isAbstract(md.getModifiers())
-						|| !containsAtLeastOnePrimitiveTypeParam(md.parameters())
-						|| !containsAtLeastOnePrimitiveTypeField(cu)){
+						|| !checkPrimitiveType(md, cu)){
 			return false;
 		}
 		if (CollectionUtils.isEmpty(md.getBody().statements())) {
 			return false;
 		}
 		return true;
+	}
+	
+	private boolean checkPrimitiveType(MethodDeclaration md, CompilationUnit cu){
+		if (containsAtLeastOnePrimitiveTypeParam(md.parameters()) || containsAtLeastOnePrimitiveTypeField(cu)) {
+			return true;
+		}else {
+			return false;
+		}
 	}
 	
 	/* backup from previous implementation */
