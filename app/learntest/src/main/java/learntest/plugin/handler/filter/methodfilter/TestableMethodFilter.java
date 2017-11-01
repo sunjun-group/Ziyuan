@@ -74,7 +74,6 @@ public class TestableMethodFilter implements IMethodFilter {
 			IJavaElement[] elements = type.getChildren();
 			for (int i = 0; i < elements.length; i++) {
 				IJavaElement element = elements[i];
-				element.getElementName();
 				if (element instanceof SourceType) {
 					SourceType source = (SourceType) element;
 					IField[] fields = source.getFields();
@@ -111,7 +110,7 @@ public class TestableMethodFilter implements IMethodFilter {
 				|| signature.equals("[" + Signature.SIG_DOUBLE)
 				|| signature.equals("[" + Signature.SIG_FLOAT)
 				|| signature.equals("[" + Signature.SIG_LONG)) {
-			
+			return true;
 		}
 		return false;
 	}
