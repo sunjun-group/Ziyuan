@@ -1,9 +1,9 @@
 package learntest.core.rule;
 
-public class EqualVarRelationShip implements RelationShip{
+public class NotEqualVarRelationShip implements RelationShip{
 	private String left, right;
 	
-	public EqualVarRelationShip(String left, String right){
+	public NotEqualVarRelationShip(String left, String right){
 		this.left = left;
 		this.right = right;
 	}

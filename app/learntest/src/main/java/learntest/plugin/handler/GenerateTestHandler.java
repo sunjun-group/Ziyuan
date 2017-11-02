@@ -10,7 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import learntest.core.LearnTestParams;
 import learntest.core.RunTimeInfo;
+import learntest.core.TestRunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;
+import learntest.core.machinelearning.FormulaInfo;
 import learntest.plugin.utils.IStatusUtils;
 import sav.common.core.utils.TextFormatUtils;
 
@@ -56,6 +58,12 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 			RunTimeInfo ranInfo = runLearntest(randoopParam);		
 			
 			print(l2tRuntimeInfo, l2tParam);
+			StringBuffer sb = new StringBuffer();
+			sb.append("learned formulas : =====================================");
+			for (FormulaInfo formulaInfo : ((TestRunTimeInfo)l2tRuntimeInfo).getLearnedFormulas()) {
+				sb.append(formulaInfo + "\n");
+			}
+			log.info(sb.toString());
 			print(ranInfo, randoopParam);
 			
 			return l2tRuntimeInfo;

@@ -64,6 +64,31 @@ public class FormulaProcessor<T extends Var> implements IDividerProcessor<Formul
 		return atom;
 	}
 	
+	public Formula process(Divider divider, List<String> labels, boolean round, Operator operator) {
+		if (divider == null) {
+			return null;
+		}
+		// a1*x1 + a2*x2 + ... + an*xn >= b
+		double[] thetas = divider.getLinearExpr();
+		if (round) {
+			thetas = new CoefficientProcessing().process(divider.getLinearExpr());
+		}
+		List<LIATerm> liaTerms = new ArrayList<LIATerm>();
+		for (int i = 0; i < thetas.length - 1; i++) {
+			if (Double.compare(thetas[i], 0) == 0) {
+				continue;
+			}
+			String label = labels.get(i);
+			Var var = null;
+			if (StringUtils.isEmpty(label) || ((var = getVar(label)) == null)) {
+				continue;
+			}
+			liaTerms.add(LIATerm.of(var, thetas[i]));
+		}
+		LIAAtom atom = new LIAAtom(liaTerms, operator, thetas[thetas.length - 1]);
+		return atom;
+	}
+	
 	@Override
 	public Formula process(Divider divider, List<String> labels, boolean round, int num) {
 		if (divider == null) {
