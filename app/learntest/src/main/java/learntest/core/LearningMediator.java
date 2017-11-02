@@ -114,7 +114,9 @@ public class LearningMediator {
 		long time = System.currentTimeMillis();
 		switch (params.getApproach()) {
 		case L2T:
-			return new PrecondDecisionLearner(this, "./logs/"+methodName+".l2t."+time+".log");
+			PrecondDecisionLearner learner = new PrecondDecisionLearner(this, "./logs/"+methodName+".l2t."+time+".log");
+			learner.setCu(params.getCu());
+			return learner;
 		case RANDOOP:
 			return new RandomLearner(this, params.getMaxTcs(), "./logs/"+methodName+".randoop."+time+".log");
 		case GAN:
